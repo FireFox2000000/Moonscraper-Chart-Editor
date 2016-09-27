@@ -41,21 +41,21 @@ public class ChartEditorController : MonoBehaviour {
 
             transform.position = initPos;
 
-            Debug.Log(Utility.BinarySearchPos(currentSong.expert_single[15], currentSong.expert_single.ToArray()));
+            Debug.Log(Utility.BinarySearchChartExactNote(currentSong.expert_single[15], currentSong.expert_single.ToArray()));
         }
         catch (System.Exception e)
         {
-            Debug.Log(e.Message);
+            Debug.LogError(e.Message);
             // Most likely closed the window explorer, just ignore for now.
         }
     }
 
-    void CreateChartObjects (Note[] chart, GameObject notePrefab)
+    void CreateChartObjects (Chart chart, GameObject notePrefab)
     {
         GameObject notes = new GameObject();
         notes.name = "Notes";
 
-        foreach (Note note in chart)
+        foreach (Note note in chart.notes)
         {
             // Convert the chart data into gameobjects
             GameObject noteObject = Instantiate(notePrefab);
@@ -66,8 +66,8 @@ public class ChartEditorController : MonoBehaviour {
         }
     }
 
-    void CreateChartObjects (List<Note> chart)
+    void CreateChartObjects (Chart chart)
     {
-        CreateChartObjects(chart.ToArray(), notePrefab);
+        CreateChartObjects(chart, notePrefab);
     }
 }

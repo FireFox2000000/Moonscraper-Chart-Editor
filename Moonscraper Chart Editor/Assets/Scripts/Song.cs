@@ -10,15 +10,16 @@ public class Song {
     public readonly AudioClip musicStream;
 
     // Charts
-    List<Note>[] charts = new List<Note>[8];
-    public List<Note> easy_single { get { return charts[0]; } }
-    public List<Note> easy_double_bass { get { return charts[1]; } }
-    public List<Note> medium_single { get { return charts[2]; } }
-    public List<Note> medium_double_bass { get { return charts[3]; } }
-    public List<Note> hard_single { get { return charts[4]; } }
-    public List<Note> hard_double_bass { get { return charts[5]; } }
-    public List<Note> expert_single { get { return charts[6]; } }
-    public List<Note> expert_double_bass { get { return charts[7]; } }
+    //List<Note>[] charts = new List<Note>[8];
+    Chart[] charts = new Chart[8];
+    public Chart easy_single { get { return charts[0]; } }
+    public Chart easy_double_bass { get { return charts[1]; } }
+    public Chart medium_single { get { return charts[2]; } }
+    public Chart medium_double_bass { get { return charts[3]; } }
+    public Chart hard_single { get { return charts[4]; } }
+    public Chart hard_double_bass { get { return charts[5]; } }
+    public Chart expert_single { get { return charts[6]; } }
+    public Chart expert_double_bass { get { return charts[7]; } }
 
     public List<Event> events;
 
@@ -29,7 +30,7 @@ public class Song {
         // Chart initialisation
         for (int i = 0; i < charts.Length; ++i)     
         {
-            charts[i] = new List<Note>();
+            charts[i] = new Chart();
         }
     }
 
@@ -256,7 +257,7 @@ public class Song {
         return highway_speed * (note_time - elapsed_time);
     }
 
-    void addDataToChart (List<Note> notes, string line)
+    void addDataToChart (Chart chart, string line)
     {
         Regex noteRegex = new Regex(@"^\s+\d+ = N \d \d+$");      // 48 = N 2 0
         Regex starPowerRegex = new Regex(@"^\s+\d+ = S \d \d+$");      // 768 = S 2 768
@@ -272,10 +273,10 @@ public class Song {
                 try
                 {
                     int position = int.Parse(digits[0]);
-                    Note.Fret_Type type = Note.NoteNumberToFretType(int.Parse(digits[1]));
+                    Note.Fret_Type fret_type = Note.NoteNumberToFretType(int.Parse(digits[1]));
                     int length = int.Parse(digits[2]);
 
-                    notes.Add(new Note(position, type, length));
+                    chart.Add(new Note(position, fret_type, length));
                 }
                 catch
                 {

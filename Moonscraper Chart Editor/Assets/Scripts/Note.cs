@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 
-public class Note : IComparer
+public class Note 
 {
     public int position, sustain;
     public Fret_Type fret_type;
@@ -22,6 +22,16 @@ public class Note : IComparer
         fret_type = _fret_type;
         note_type = _note_type;
         special_type = _special_type;
+    }
+
+    public Note (Note note)
+    {
+        position = note.position;
+        sustain = note.sustain;
+        forced = note.forced;
+        fret_type = note.fret_type;
+        note_type = note.note_type;
+        special_type = note.special_type;
     }
 
     public enum Fret_Type
@@ -94,18 +104,6 @@ public class Note : IComparer
         // 10752 = S 2 3072
 
         return saveString;
-    }
-
-    public int Compare(object x, object y)
-    {
-        Note a = (Note)x, b = (Note)y;
-
-        if (a == b)
-            return 0;
-        else if (a < b)
-            return -1;
-        else
-            return 1;
     }
 
     public static bool operator == (Note a, Note b)
