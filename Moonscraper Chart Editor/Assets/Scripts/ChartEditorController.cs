@@ -40,9 +40,12 @@ public class ChartEditorController : MonoBehaviour {
             songNameText.text = currentSong.name;
 
             transform.position = initPos;
+
+            Debug.Log(Utility.BinarySearchPos(currentSong.expert_single[15], currentSong.expert_single.ToArray()));
         }
-        catch
+        catch (System.Exception e)
         {
+            Debug.Log(e.Message);
             // Most likely closed the window explorer, just ignore for now.
         }
     }

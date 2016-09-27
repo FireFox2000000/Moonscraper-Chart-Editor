@@ -244,6 +244,18 @@ public class Song {
         Debug.Log("Complete");
     }
 
+    // Calculates the amount of time elapsed between the 2 positions at a set bpm
+    static float dis_to_time(int pos_start, int pos_end, float bpm, float offset)
+    {
+        return (pos_end - pos_start) / 192 * 60 / bpm + offset;
+    }
+
+    // Returns the distance from the strikeline a note should be
+    static float note_distance(float highway_speed, float elapsed_time, float note_time)
+    {
+        return highway_speed * (note_time - elapsed_time);
+    }
+
     void addDataToChart (List<Note> notes, string line)
     {
         Regex noteRegex = new Regex(@"^\s+\d+ = N \d \d+$");      // 48 = N 2 0

@@ -1,4 +1,8 @@
-﻿public class Note {
+﻿using System;
+using System.Collections;
+
+public class Note : IComparer
+{
     public int position, sustain;
     public Fret_Type fret_type;
     public Note_Type note_type;
@@ -18,18 +22,6 @@
         fret_type = _fret_type;
         note_type = _note_type;
         special_type = _special_type;
-    }
-
-    // Returns the exact time the note should be in the middle of the strikeline
-    public static float strike_time(int note_pos, float song_bpm, float offset)
-    {
-        return note_pos / 192 * 60 / song_bpm + offset;
-    }
-
-    // Returns the distance from the strikeline a note should be
-    public static float note_distance(float highway_speed, float elapsed_time, float note_time)
-    {
-        return highway_speed * (note_time - elapsed_time);
     }
 
     public enum Fret_Type
@@ -102,5 +94,51 @@
         // 10752 = S 2 3072
 
         return saveString;
+    }
+
+    public int Compare(object x, object y)
+    {
+        Note a = (Note)x, b = (Note)y;
+
+        if (a == b)
+            return 0;
+        else if (a < b)
+            return -1;
+        else
+            return 1;
+    }
+
+    public static bool operator == (Note a, Note b)
+    {
+        if (a.position == b.position && a.fret_type == b.fret_type)
+            return true;
+        else
+            return false;
+    }
+
+    public static bool operator !=(Note a, Note b)
+    {
+        return !(a == b);
+    }
+
+    public static bool operator < (Note a, Note b)
+    {
+        if (a.position < b.position)
+            return true;
+        else if (a.position == b.position)
+        {
+            if (a.fret_type < b.fret_type)
+                return true;
+        }
+
+        return false;
+    }
+
+    public static bool operator > (Note a, Note b)
+    {
+        if (a != b)
+            return !(a < b);
+        else
+            return false;
     }
 }

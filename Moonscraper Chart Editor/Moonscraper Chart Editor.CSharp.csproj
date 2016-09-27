@@ -67,6 +67,7 @@
     <Compile Include="Assets\Scripts\Note.cs" />
     <Compile Include="Assets\Scripts\Note_Controller.cs" />
     <Compile Include="Assets\Scripts\Song.cs" />
+    <Compile Include="Assets\Scripts\Utility.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
