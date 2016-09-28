@@ -12,6 +12,8 @@ public class Chart  {
         set { notes[i] = value; }
     }
 
+    public int Length { get { return notes.Count; } }
+
     public Chart ()
     {
         notes = new List<Note>();
