@@ -14,8 +14,13 @@ public class ChartEditorController : MonoBehaviour {
     Vector3 initPos;
 
     float scrollDelta = 0;
+
     Song currentSong;
     Chart currentChart;
+
+    // Program options
+    float mouseScrollSensitivity = 0.5f;
+    float zoom = 0.01f;
 
     // Use this for initialization
     void Start () {
@@ -37,7 +42,7 @@ public class ChartEditorController : MonoBehaviour {
         if (scrollDelta != 0)
         {
             // Mouse scroll movement
-            transform.position = new Vector3(transform.position.x, transform.position.y + scrollDelta, transform.position.z);
+            transform.position = new Vector3(transform.position.x, transform.position.y + (scrollDelta * mouseScrollSensitivity), transform.position.z);
 
             if (transform.position.y < initPos.y)
                 transform.position = initPos;
@@ -81,8 +86,8 @@ public class ChartEditorController : MonoBehaviour {
         float max = user_pos;
         if (currentChart != null)
         {
-            if (currentChart.Length > 0 && currentChart[currentChart.Length - 1].position * 0.01f > user_pos)
-                max = currentChart[currentChart.Length - 1].position * 0.01f;
+            if (currentChart.Length > 0 && currentChart[currentChart.Length - 1].position * zoom > user_pos)
+                max = currentChart[currentChart.Length - 1].position * zoom;
             ContentHeight(content, max);
         }
     }
@@ -150,10 +155,16 @@ public class ChartEditorController : MonoBehaviour {
 
         foreach (Note note in chart.notes)
         {
-            // Convert the chart data into gameobjects
+            // Convert the chart data into gameobject
             GameObject noteObject = Instantiate(notePrefab);
-            noteObject.transform.position = new Vector3(Note.FretTypeToNoteNumber(note.fret_type) - 2, note.position * 0.01f, 0);
+            noteObject.transform.position = new Vector3(Note.FretTypeToNoteNumber(note.fret_type) - 2, note.position * zoom, 0);
             noteObject.transform.parent = notes.transform;
+
+            // Attach the note to the object
+            NoteController controller = noteObject.GetComponent<NoteController>();
+            controller.noteProperties = note;
+
+            // Update sprite
             SpriteRenderer ren = noteObject.GetComponent<SpriteRenderer>();
             ren.sprite = normalSprites[Note.FretTypeToNoteNumber(note.fret_type)];
         }

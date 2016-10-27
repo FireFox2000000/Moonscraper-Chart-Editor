@@ -19,9 +19,27 @@ public class Chart  {
         notes = new List<Note>();
     }
 
-    public void Add (Note note)
+    // Insert into a sorted position
+    // Return the position it was inserted into
+    public int Add (Note note)
     {
-        notes.Add(note);
+        int insertionPos;
+
+        //notes.Insert(0, note);
+        if (notes.Count > 0)
+        {
+            // Insert into sorted position
+            notes.Add(note);
+            insertionPos = notes.Count - 1;
+        }
+        else
+        {
+            // Adding the first note
+            notes.Add(note);
+            insertionPos = notes.Count - 1;
+        }
+
+        return insertionPos;
     }
 
     public Note[] ToArray()
