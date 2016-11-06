@@ -9,10 +9,6 @@ public class Note
     public Special_Type special_type;
     public bool forced;
 
-    // Linked list style
-    public Note prevNote;
-    public Note nextNote;
-
     public Note(int _position, 
                 Fret_Type _fret_type, 
                 int _sustain = 0, 

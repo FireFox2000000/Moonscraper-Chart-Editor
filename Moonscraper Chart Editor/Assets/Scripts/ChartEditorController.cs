@@ -20,7 +20,6 @@ public class ChartEditorController : MonoBehaviour {
 
     // Program options
     float mouseScrollSensitivity = 0.5f;
-    float zoom = 0.01f;
 
     // Use this for initialization
     void Start () {
@@ -86,8 +85,8 @@ public class ChartEditorController : MonoBehaviour {
         float max = user_pos;
         if (currentChart != null)
         {
-            if (currentChart.Length > 0 && currentChart[currentChart.Length - 1].position * zoom > user_pos)
-                max = currentChart[currentChart.Length - 1].position * zoom;
+            if (currentChart.Length > 0 && currentChart[currentChart.Length - 1].position * Globals.zoom > user_pos)
+                max = currentChart[currentChart.Length - 1].position * Globals.zoom;
             ContentHeight(content, max);
         }
     }
@@ -113,6 +112,7 @@ public class ChartEditorController : MonoBehaviour {
         }
     }
 
+    // Wrapper function
     public void LoadChart()
     {
         StartCoroutine(_LoadChart());
@@ -148,30 +148,73 @@ public class ChartEditorController : MonoBehaviour {
         scrollBar.value = 0; 
     }
 
-    void CreateChartObjects (Chart chart, GameObject notePrefab)
+    public void AddNewNoteToCurrentChart(Note note, GameObject parent)
     {
-        GameObject notes = new GameObject();
-        notes.name = "Notes";
+        // Insert note into current chart
+        int position = currentChart.Add(note);
 
-        foreach (Note note in chart.notes)
-        {
-            // Convert the chart data into gameobject
-            GameObject noteObject = Instantiate(notePrefab);
-            noteObject.transform.position = new Vector3(Note.FretTypeToNoteNumber(note.fret_type) - 2, note.position * zoom, 0);
-            noteObject.transform.parent = notes.transform;
+        // Create note object
+        NoteController controller = CreateNoteObject(note, parent);
 
-            // Attach the note to the object
-            NoteController controller = noteObject.GetComponent<NoteController>();
-            controller.noteProperties = note;
-
-            // Update sprite
-            SpriteRenderer ren = noteObject.GetComponent<SpriteRenderer>();
-            ren.sprite = normalSprites[Note.FretTypeToNoteNumber(note.fret_type)];
-        }
+        if (position > 0)
+            controller.prevNote = currentChart.notes[position - 1];
+        if (position < currentChart.notes.Count - 1)
+            controller.nextNote = currentChart.notes[position + 1];
     }
 
-    void CreateChartObjects (Chart chart)
+    public void DeleteNoteFromCurrentChart(GameObject note)
     {
-        CreateChartObjects(chart, notePrefab);
+        NoteController controller = note.GetComponent<NoteController>();
+
+        // Remove note from the chart data
+        currentChart.Remove(controller.noteProperties);
+
+        // Remove the note from the scene
+        Destroy(note);
+    }
+
+    GameObject CreateChartObjects (Chart chart, GameObject notePrefab)
+    {
+        GameObject parent = new GameObject();
+        parent.name = "Notes";
+
+        for(int i = 0; i < chart.notes.Count; ++i)
+        {
+            NoteController controller = CreateNoteObject(chart.notes[i], parent);
+            /*
+            if (i > 0)
+                controller.prevNote = chart.notes[i - 1];
+            if (i < chart.notes.Count - 1)
+                controller.nextNote = chart.notes[i + 1];
+                */
+        }
+
+        return parent;
+    }
+
+    GameObject CreateChartObjects (Chart chart)
+    {
+        return CreateChartObjects(chart, notePrefab);
+    }
+
+    NoteController CreateNoteObject(Note note, GameObject parent = null)
+    {
+        
+        // Convert the chart data into gameobject
+        GameObject noteObject = Instantiate(notePrefab);   
+
+        if (parent)
+            noteObject.transform.parent = parent.transform;
+        
+        // Attach the note to the object
+        NoteController controller = noteObject.GetComponent<NoteController>();
+        controller.noteProperties = note;
+        controller.UpdateNote();
+
+        // Update sprite, eventually move this to the note controller
+        SpriteRenderer ren = noteObject.GetComponent<SpriteRenderer>();
+        ren.sprite = normalSprites[Note.FretTypeToNoteNumber(note.fret_type)];
+
+        return controller;
     }
 }

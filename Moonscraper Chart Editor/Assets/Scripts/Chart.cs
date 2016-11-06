@@ -28,7 +28,7 @@ public class Chart  {
         //notes.Insert(0, note);
         if (notes.Count > 0)
         {
-            // Insert into sorted position
+            // TODO Insert into sorted position
             notes.Add(note);
             insertionPos = notes.Count - 1;
         }
@@ -40,6 +40,19 @@ public class Chart  {
         }
 
         return insertionPos;
+    }
+
+    public bool Remove (Note note)
+    {
+        int pos = BinarySearchChartExactNote(note);
+
+        if (pos == NOTFOUND)
+            return false;
+        else
+        {
+            notes.RemoveAt(pos);
+            return true;
+        }
     }
 
     public Note[] ToArray()
