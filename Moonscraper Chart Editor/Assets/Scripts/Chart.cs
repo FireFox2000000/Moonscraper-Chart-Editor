@@ -114,7 +114,24 @@ public class Chart  {
     // Returns all the notes found at the specified position, i.e. chords
     public Note[] GetNotes(int pos)
     {
-        
         return new Note[0];
+    }
+
+    public Note searchPreviousNote (Note note)
+    {
+        int pos = BinarySearchChartExactNote(note);
+        if (pos != NOTFOUND && pos > 0)
+            return notes[pos - 1];
+        else
+            return null;
+    }
+
+    public Note searchNextNote (Note note)
+    {
+        int pos = BinarySearchChartExactNote(note);
+        if (pos != NOTFOUND && pos < notes.Count - 1)
+            return notes[pos + 1];
+        else
+            return null;
     }
 }

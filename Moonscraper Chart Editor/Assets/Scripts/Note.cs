@@ -9,6 +9,8 @@ public class Note
     public Special_Type special_type;
     public bool forced;
 
+    public NoteController controller = null;
+
     public Note(int _position, 
                 Fret_Type _fret_type, 
                 int _sustain = 0, 
@@ -49,50 +51,12 @@ public class Note
         NONE, STAR_POW, BATTLE
     }
 
-    public static Fret_Type NoteNumberToFretType (int number)
-    {
-        switch (number)
-        {
-            case (0):
-                return Fret_Type.GREEN;
-            case (1):
-                return Fret_Type.RED;
-            case (2):
-                return Fret_Type.YELLOW;
-            case (3):
-                return Fret_Type.BLUE;
-            case (4):
-                return Fret_Type.ORANGE;
-            default:
-                throw new System.Exception("Note number out of range");
-        }
-    }
-
-    public static int FretTypeToNoteNumber(Fret_Type fretType)
-    {
-        switch (fretType)
-        {
-            case (Fret_Type.GREEN):
-                return 0;
-            case (Fret_Type.RED):
-                return 1;
-            case (Fret_Type.YELLOW):
-                return 2;
-            case (Fret_Type.BLUE):
-                return 3;
-            case (Fret_Type.ORANGE):
-                return 4;
-            default:
-                return 0;
-        }
-    }
-
     public string GetSaveString()
     {
         string saveString = "";
         const string TABSPACE = "  ";
         
-        saveString += TABSPACE + position + " = N " + FretTypeToNoteNumber(fret_type) + " " + sustain + "\n";          // 48 = N 2 0
+        saveString += TABSPACE + position + " = N " + fret_type + " " + sustain + "\n";          // 48 = N 2 0
 
         if (forced)
             saveString += TABSPACE + position + " = N 5 0 \n";
@@ -108,10 +72,22 @@ public class Note
 
     public static bool operator == (Note a, Note b)
     {
-        if (a.position == b.position && a.fret_type == b.fret_type)
-            return true;
+        if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+        {
+            if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
+                return true;
+            else if (!ReferenceEquals(a, null) && !ReferenceEquals(b, null))
+                return true;
+            else
+                return false;
+        }
         else
-            return false;
+        {
+            if (a.position == b.position && a.fret_type == b.fret_type)
+                return true;
+            else
+                return false;
+        }
     }
 
     public static bool operator !=(Note a, Note b)

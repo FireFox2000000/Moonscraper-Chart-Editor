@@ -8,7 +8,6 @@ public class ChartEditorController : MonoBehaviour {
     public GameObject notePrefab;
     public Scrollbar scrollBar;
     public RectTransform content;
-    public Sprite[] normalSprites = new Sprite[5];
     public Text songNameText;
 
     Vector3 initPos;
@@ -156,21 +155,35 @@ public class ChartEditorController : MonoBehaviour {
         // Create note object
         NoteController controller = CreateNoteObject(note, parent);
 
+        // Update the linked list
         if (position > 0)
+        {
             controller.prevNote = currentChart.notes[position - 1];
+            controller.prevNote.controller.nextNote = controller.noteProperties;
+        }
         if (position < currentChart.notes.Count - 1)
+        {
             controller.nextNote = currentChart.notes[position + 1];
+            controller.nextNote.controller.prevNote = controller.noteProperties;
+        }
     }
-
-    public void DeleteNoteFromCurrentChart(GameObject note)
+    
+    public void DeleteNoteFromCurrentChart(NoteController controller)
     {
-        NoteController controller = note.GetComponent<NoteController>();
+        // Update the linked list
+        if (controller.prevNote != null)
+            controller.prevNote.controller.nextNote = controller.nextNote;
+        if (controller.nextNote != null)
+            controller.nextNote.controller.prevNote = controller.prevNote;
 
         // Remove note from the chart data
-        currentChart.Remove(controller.noteProperties);
+        if (currentChart.Remove(controller.noteProperties))
+            Debug.Log("Note successfully removed");
+        else
+            Debug.LogError("Note was not removed from data");
 
         // Remove the note from the scene
-        Destroy(note);
+        Destroy(controller.gameObject);
     }
 
     GameObject CreateChartObjects (Chart chart, GameObject notePrefab)
@@ -181,12 +194,14 @@ public class ChartEditorController : MonoBehaviour {
         for(int i = 0; i < chart.notes.Count; ++i)
         {
             NoteController controller = CreateNoteObject(chart.notes[i], parent);
-            /*
+            
+            // Join the linked list
             if (i > 0)
                 controller.prevNote = chart.notes[i - 1];
             if (i < chart.notes.Count - 1)
                 controller.nextNote = chart.notes[i + 1];
-                */
+                
+            controller.UpdateNote();
         }
 
         return parent;
@@ -198,8 +213,7 @@ public class ChartEditorController : MonoBehaviour {
     }
 
     NoteController CreateNoteObject(Note note, GameObject parent = null)
-    {
-        
+    {    
         // Convert the chart data into gameobject
         GameObject noteObject = Instantiate(notePrefab);   
 
@@ -208,12 +222,10 @@ public class ChartEditorController : MonoBehaviour {
         
         // Attach the note to the object
         NoteController controller = noteObject.GetComponent<NoteController>();
-        controller.noteProperties = note;
-        controller.UpdateNote();
 
-        // Update sprite, eventually move this to the note controller
-        SpriteRenderer ren = noteObject.GetComponent<SpriteRenderer>();
-        ren.sprite = normalSprites[Note.FretTypeToNoteNumber(note.fret_type)];
+        // Link
+        controller.noteProperties = note;
+        note.controller = controller;
 
         return controller;
     }

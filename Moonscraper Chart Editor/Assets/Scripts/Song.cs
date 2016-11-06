@@ -273,7 +273,7 @@ public class Song {
                 try
                 {
                     int position = int.Parse(digits[0]);
-                    Note.Fret_Type fret_type = Note.NoteNumberToFretType(int.Parse(digits[1]));
+                    Note.Fret_Type fret_type = (Note.Fret_Type)int.Parse(digits[1]);
                     int length = int.Parse(digits[2]);
 
                     chart.Add(new Note(position, fret_type, length));
