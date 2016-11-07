@@ -23,13 +23,16 @@ public class Chart  {
     // Return the position it was inserted into
     public int Add (Note note)
     {
-        int insertionPos;
-
-        if (notes.Count > 0)
+        int insertionPos = BinarySearchChartClosestNote(note);
+        
+        if (notes.Count > 0 && insertionPos != NOTFOUND)
         {
             // TODO Insert into sorted position
-            notes.Add(note);
-            insertionPos = notes.Count - 1;
+            if (note > notes[insertionPos])
+            {
+                ++insertionPos;
+            }
+            notes.Insert(insertionPos, note);     
         }
         else
         {
@@ -62,19 +65,18 @@ public class Chart  {
     public int BinarySearchChartClosestNote(Note searchItem)
     {
         int lowerBound = 0;
-        int upperBound = notes.Count;
+        int upperBound = notes.Count - 1;
         int index = NOTFOUND;
 
         int midPoint = NOTFOUND;
 
         while (lowerBound <= upperBound)
         {
-            midPoint = lowerBound + (upperBound - lowerBound) / 2;
+            midPoint = (lowerBound + upperBound) / 2;
+            index = midPoint;
 
             if (notes[midPoint] == searchItem)
             {
-                index = midPoint;
-
                 break;
             }
             else
@@ -92,8 +94,6 @@ public class Chart  {
             }
         }
 
-        index = midPoint;
-
         return index;
     }
 
@@ -101,10 +101,9 @@ public class Chart  {
     {
         int pos = BinarySearchChartClosestNote(searchItem);
 
-        if (pos != NOTFOUND)
-        {
-            if (notes[pos] != searchItem)
-                pos = NOTFOUND;
+        if (pos != NOTFOUND && notes[pos] != searchItem)
+        { 
+            pos = NOTFOUND;
         }
 
         return pos;

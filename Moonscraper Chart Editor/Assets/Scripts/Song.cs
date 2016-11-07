@@ -298,10 +298,10 @@ public class Song {
                             }
                         }
                     }
-                    catch
+                    catch (System.Exception e)
                     {
                         // Parsing error
-                        Debug.LogError("Bad note data found: " + line);
+                        Debug.LogError(e.Message);
                     }
                 }
             }
