@@ -101,9 +101,9 @@ public class ChartEditorController : MonoBehaviour {
 
     void OnGUI()
     {
-        if (Event.current.type == EventType.ScrollWheel)
+        if (UnityEngine.Event.current.type == EventType.ScrollWheel)
         {
-            scrollDelta = -Event.current.delta.y;
+            scrollDelta = -UnityEngine.Event.current.delta.y;
         }
         else
         {

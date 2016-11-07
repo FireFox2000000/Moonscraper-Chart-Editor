@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
 
-public class Note 
+public class Note : ChartObject 
 {
-    public int position, sustain;
+    public int sustain;
     public Fret_Type fret_type;
     public Note_Type note_type;
     public Special_Type special_type;
@@ -51,7 +51,7 @@ public class Note
         NONE, STAR_POW, BATTLE
     }
 
-    public string GetSaveString()
+    public override string GetSaveString()
     {
         string saveString = "";
         const string TABSPACE = "  ";

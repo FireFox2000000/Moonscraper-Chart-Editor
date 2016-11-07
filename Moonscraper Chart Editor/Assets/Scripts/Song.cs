@@ -23,6 +23,10 @@ public class Song {
 
     public List<Event> events;
 
+    const string QUOTEVALIDATE = @"""[^""\\]*(?:\\.[^""\\]*)*""";
+    const string QUOTESEARCH = "\"([^\"]*)\"";
+    const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";
+
     void Init()
     {
         events = new List<Event>();
@@ -43,206 +47,64 @@ public class Song {
     // Constructor for loading a chart
     public Song(string filepath)
     {
-        string[] chartFileLines;
-
-        // Open file
         try
         {
-            chartFileLines = File.ReadAllLines(filepath);
+            bool open = false;
+            string dataName = string.Empty;
+
+            List<string> dataStrings = new List<string>();
+
+            string[] fileLines = File.ReadAllLines(filepath);
+            Debug.Log("Loading");
+
+            Init();
+
+            for (int i = 0; i < fileLines.Length; ++i)
+            {
+                string trimmedLine = fileLines[i].Trim();
+                
+                if (new Regex(@"\[.+\]").IsMatch(trimmedLine))
+                {
+                    dataName = trimmedLine;//.Trim(new char[] { '[', ']' });
+                }
+                else if (trimmedLine == "{")
+                {
+                    open = true;
+                }
+                else if (trimmedLine == "}")
+                {
+                    open = false;
+                    
+                    // Submit data
+                    submitChartData(dataName, dataStrings);
+
+                    dataName = string.Empty;
+                    dataStrings.Clear();
+                }
+                else
+                {
+                    if (open)
+                    {
+                        // Add data into the array
+                        dataStrings.Add(trimmedLine);
+                    }
+                    else if (dataStrings.Count > 0 && dataName != string.Empty)
+                    {
+                        // Submit data
+                        submitChartData(dataName, dataStrings);
+
+                        dataName = string.Empty;
+                        dataStrings.Clear();
+                    }
+                }    
+            }
+
+            Debug.Log("Complete");
         }
         catch
         {
             throw new System.Exception("Could not open file");
         }
-
-        Debug.Log("Loading");
-
-        // Initialisation
-        LoadingPoint loadPoint = LoadingPoint.None;
-        bool open = false;
-        Init();
-
-        foreach (string line in chartFileLines)
-        {
-            // Remove leadning and trailing whitespace
-            line.Trim();
-
-            // Update which section of the chart we're reading data from
-            switch (line)
-            {
-                case ("[Song]"):
-                    loadPoint = LoadingPoint.Song;
-                    break;
-                case ("[SyncTrack]"):
-                    loadPoint = LoadingPoint.SyncTrack;
-                    break;
-                case ("[Events]"):
-                    loadPoint = LoadingPoint.Events;
-                    break;
-                case ("[EasySingle]"):
-                    loadPoint = LoadingPoint.EasySingle;
-                    break;
-                case ("[EasyDoubleBass]"):
-                    loadPoint = LoadingPoint.EasyDoubleBass;
-                    break;
-                case ("[MediumSingle]"):
-                    loadPoint = LoadingPoint.MediumSingle;
-                    break;
-                case ("[MediumDoubleBass]"):
-                    loadPoint = LoadingPoint.MediumDoubleBass;
-                    break;
-                case ("[HardSingle]"):
-                    loadPoint = LoadingPoint.HardSingle;
-                    break;
-                case ("[HardDoubleBass]"):
-                    loadPoint = LoadingPoint.HardDoubleBass;
-                    break;
-                case ("[ExpertSingle]"):
-                    loadPoint = LoadingPoint.ExpertSingle;
-                    break;
-                case ("[ExpertDoubleBass]"):
-                    loadPoint = LoadingPoint.ExpertDoubleBass;
-                    break;
-                case ("{"):
-                    open = true;
-                    break;
-                case ("}"):
-                    loadPoint = LoadingPoint.None;
-                    open = false;
-                    break;
-                default:
-                    break;
-            }
-
-            // Make sure we're inbetween these things { }
-            if (open)
-            {
-                const string QUOTEVALIDATE = @"""[^""\\]*(?:\\.[^""\\]*)*""";
-                const string QUOTESEARCH = "\"([^\"]*)\"";
-                const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";
-
-                switch (loadPoint)
-                {
-
-                    case (LoadingPoint.Song):
-                        /*
-                        Name = "5000 Robots"
-                        Artist = "TheEruptionOffer"
-                        Charter = "TheEruptionOffer"
-                        Offset = 0
-                        Resolution = 192
-                        Player2 = bass
-                        Difficulty = 0
-                        PreviewStart = 0.00
-                        PreviewEnd = 0.00
-                        Genre = "rock"
-                        MediaType = "cd"
-                        MusicStream = "5000 Robots.ogg"
-                        */
-
-                        // Name = "5000 Robots"
-                        if (new Regex(@"Name = " + QUOTEVALIDATE).IsMatch(line))
-                        {                            
-                            name = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-                        }
-
-                        // Artist = "TheEruptionOffer"
-                        else if (new Regex(@"Artist = " + QUOTEVALIDATE).IsMatch(line))
-                        {
-                            artist = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-                        }
-
-                        // Charter = "TheEruptionOffer"
-                        else if (new Regex(@"Charter = " + QUOTEVALIDATE).IsMatch(line))
-                        {
-                            charter = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-                        }
-
-                        // Offset = 0
-                        else if (new Regex(@"Offset = " + FLOATSEARCH).IsMatch(line))
-                        {
-                            offset = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
-                        }
-
-                        // Resolution = 192
-                        else if (new Regex(@"Resolution = " + FLOATSEARCH).IsMatch(line))
-                        {
-                            resolution = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
-                        }
-
-                        // Player2 = bass
-                        // Difficulty = 0
-                        // PreviewStart = 0.00
-                        // PreviewEnd = 0.00
-
-                        // Genre = "rock"
-                        else if (new Regex(@"Genre = " + QUOTEVALIDATE).IsMatch(line))
-                        {
-                            genre = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-                        }
-
-                        // MediaType = "cd"
-                        else if (new Regex(@"MediaType = " + QUOTEVALIDATE).IsMatch(line))
-                        {
-                            mediatype = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-                        }
-
-                        break;
-
-                    case (LoadingPoint.SyncTrack):
-                        /*
-                        0 = B 140000
-	                    0 = TS 4
-	                    13824 = B 280000
-                        */
-                        break;
-                    case (LoadingPoint.Events):
-                        if (Section.regexMatch(line))       // 0 = E "section Intro"
-                        {
-                            // Add a section
-                            string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"').Substring(8);                         
-                            int position = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
-                            events.Add(new Section(title, position));
-                        }
-                        else if (Event.regexMatch(line))    // 125952 = E "end"
-                        {
-                            // Add an event
-                            string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-                            int position = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
-                            events.Add(new Event(title, position));
-                        }
-
-                        break;
-
-                    case (LoadingPoint.EasySingle):
-                        addDataToChart(easy_single, line);
-                        break;
-                    case (LoadingPoint.EasyDoubleBass):
-                        addDataToChart(easy_double_bass, line);
-                        break;
-                    case (LoadingPoint.MediumSingle):
-                        addDataToChart(medium_single, line);
-                        break;
-                    case (LoadingPoint.MediumDoubleBass):
-                        addDataToChart(medium_double_bass, line);
-                        break;
-                    case (LoadingPoint.HardSingle):
-                        addDataToChart(hard_single, line);
-                        break;
-                    case (LoadingPoint.HardDoubleBass):
-                        addDataToChart(hard_double_bass, line);
-                        break;
-                    case (LoadingPoint.ExpertSingle):
-                        addDataToChart(expert_single, line);
-                        break;
-                    case (LoadingPoint.ExpertDoubleBass):
-                        addDataToChart(expert_double_bass, line);
-                        break;
-                }
-            }
-        }
-
-        Debug.Log("Complete");
     }
 
     // Calculates the amount of time elapsed between the 2 positions at a set bpm
@@ -257,31 +119,183 @@ public class Song {
         return highway_speed * (note_time - elapsed_time);
     }
 
-    void addDataToChart (Chart chart, string line)
+    void submitChartData(string dataName, List<string> stringData)
     {
-        Regex noteRegex = new Regex(@"^\s+\d+ = N \d \d+$");      // 48 = N 2 0
-        Regex starPowerRegex = new Regex(@"^\s+\d+ = S \d \d+$");      // 768 = S 2 768
-        Regex noteEventRegex = new Regex(@"^\s+\d+ = E \S");      // 1728 = E T
-
-        if (noteRegex.IsMatch(line))
+        switch(dataName)
         {
-            // Split string to get note information
-            string[] digits = Regex.Split(line.Trim(), @"\D+");
+            case ("[Song]"):
+                submitDataSong(stringData);
+                break;
+            case ("[SyncTrack]"):
+                submitDataSyncTrack(stringData);
+                break;
+            case ("[Events]"):
+                submitDataEvents(stringData);
+                break;
+            case ("[EasySingle]"):
+                submitDataChart(easy_single, stringData);
+                break;
+            case ("[EasyDoubleBass]"):
+                submitDataChart(easy_double_bass, stringData);
+                break;
+            case ("[MediumSingle]"):
+                submitDataChart(medium_single, stringData);
+                break;
+            case ("[MediumDoubleBass]"):
+                submitDataChart(medium_double_bass, stringData);
+                break;
+            case ("[HardSingle]"):
+                submitDataChart(hard_single, stringData);
+                break;
+            case ("[HardDoubleBass]"):
+                submitDataChart(hard_double_bass, stringData);
+                break;
+            case ("[ExpertSingle]"):
+                submitDataChart(expert_single, stringData);
+                break;
+            case ("[ExpertDoubleBass]"):
+                submitDataChart(expert_double_bass, stringData);
+                break;
+            default:
+                return;
+        }
+    }
 
-            if (digits.Length == 3)
+    void submitDataSong(List<string> stringData)
+    {
+        /*
+        Name = "5000 Robots"
+        Artist = "TheEruptionOffer"
+        Charter = "TheEruptionOffer"
+        Offset = 0
+        Resolution = 192
+        Player2 = bass
+        Difficulty = 0
+        PreviewStart = 0.00
+        PreviewEnd = 0.00
+        Genre = "rock"
+        MediaType = "cd"
+        MusicStream = "5000 Robots.ogg"
+        */
+
+        foreach (string line in stringData)
+        {
+            // Name = "5000 Robots"
+            if (new Regex(@"Name = " + QUOTEVALIDATE).IsMatch(line))
             {
-                try
-                {
-                    int position = int.Parse(digits[0]);
-                    Note.Fret_Type fret_type = (Note.Fret_Type)int.Parse(digits[1]);
-                    int length = int.Parse(digits[2]);
+                name = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+            }
 
-                    chart.Add(new Note(position, fret_type, length));
-                }
-                catch
+            // Artist = "TheEruptionOffer"
+            else if (new Regex(@"Artist = " + QUOTEVALIDATE).IsMatch(line))
+            {
+                artist = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+            }
+
+            // Charter = "TheEruptionOffer"
+            else if (new Regex(@"Charter = " + QUOTEVALIDATE).IsMatch(line))
+            {
+                charter = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+            }
+
+            // Offset = 0
+            else if (new Regex(@"Offset = " + FLOATSEARCH).IsMatch(line))
+            {
+                offset = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+            }
+
+            // Resolution = 192
+            else if (new Regex(@"Resolution = " + FLOATSEARCH).IsMatch(line))
+            {
+                resolution = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+            }
+
+            // Player2 = bass
+            // Difficulty = 0
+            // PreviewStart = 0.00
+            // PreviewEnd = 0.00
+
+            // Genre = "rock"
+            else if (new Regex(@"Genre = " + QUOTEVALIDATE).IsMatch(line))
+            {
+                genre = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+            }
+
+            // MediaType = "cd"
+            else if (new Regex(@"MediaType = " + QUOTEVALIDATE).IsMatch(line))
+            {
+                mediatype = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+            }
+        }
+    }
+
+    void submitDataSyncTrack(List<string> stringData)
+    {
+        /*
+        0 = B 140000
+        0 = TS 4
+        13824 = B 280000
+        */
+    }
+
+    void submitDataEvents(List<string> stringData)
+    {
+        foreach(string line in stringData)
+        { 
+            if (Section.regexMatch(line))       // 0 = E "section Intro"
+            {               
+                // Add a section
+                string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"').Substring(8);     
+                int position = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
+                events.Add(new Section(title, position));
+            }
+            else if (Event.regexMatch(line))    // 125952 = E "end"
+            {
+                // Add an event
+                string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                int position = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
+                events.Add(new Event(title, position));
+            }
+        }
+    }
+
+    void submitDataChart(Chart chart, List<string> stringData)
+    {
+        Regex noteRegex = new Regex(@"^\s*\d+ = N \d \d+$");            // 48 = N 2 0
+        Regex starPowerRegex = new Regex(@"^\s*\d+ = S \d \d+$");       // 768 = S 2 768
+        Regex noteEventRegex = new Regex(@"^\s*\d+ = E \S");            // 1728 = E T
+
+        foreach (string line in stringData)
+        {  
+            //Debug.Log(line);
+            if (noteRegex.IsMatch(line))
+            {
+                // Split string to get note information
+                string[] digits = Regex.Split(line.Trim(), @"\D+");
+
+                if (digits.Length == 3)
                 {
-                    // Probably hit N 5 0 or N 6 0
+                    try
+                    {
+                        int position = int.Parse(digits[0]);
+                        Note.Fret_Type fret_type = (Note.Fret_Type)int.Parse(digits[1]);
+                        int length = int.Parse(digits[2]);
+                        
+                        chart.Add(new Note(position, fret_type, length));
+                    }
+                    catch
+                    {
+                        // Probably hit N 5 0 or N 6 0
+                    }
                 }
+            }
+            else if (starPowerRegex.IsMatch(line))
+            {
+
+            }
+            else if (noteEventRegex.IsMatch(line))
+            {
+
             }
         }
     }
@@ -289,49 +303,5 @@ public class Song {
     public void Save (string filepath)
     {
 
-    }
-
-    public class Event
-    {
-        public string title;
-        public int position;
-
-        public Event(string _title, int _position)
-        {
-            title = _title;
-            position = _position;
-        }
-
-        public string GetSaveString()
-        {
-            const string TABSPACE = "  ";
-            return TABSPACE + position + " = E \"" + title + "\"\n";
-        }
-
-        public static bool regexMatch(string line)
-        {
-            return new Regex(@"\d+ = E " + @"""[^""\\]*(?:\\.[^""\\]*)*""").IsMatch(line);
-        }
-    }
-
-    public class Section : Event
-    {
-        public Section(string _title, int _position) : base(_title, _position) {}
-
-        new public string GetSaveString()
-        {
-            const string TABSPACE = "  ";
-            return TABSPACE + position + " = E \"section " + title + "\"\n";
-        }
-
-        new public static bool regexMatch(string line)
-        {
-            return new Regex(@"\d+ = E " + @"""section [^""\\]*(?:\\.[^""\\]*)*""").IsMatch(line);
-        }
-    }
-
-    enum LoadingPoint
-    {
-        None, Song, SyncTrack, Events, EasySingle, EasyDoubleBass, MediumSingle, MediumDoubleBass, HardSingle, HardDoubleBass, ExpertSingle, ExpertDoubleBass
     }
 }

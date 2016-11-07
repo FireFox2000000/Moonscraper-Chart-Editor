@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Chart.cs" />
     <Compile Include="Assets\Scripts\ChartEditorController.cs" />
+    <Compile Include="Assets\Scripts\ChartObject.cs" />
     <Compile Include="Assets\Scripts\Globals.cs" />
     <Compile Include="Assets\Scripts\Note.cs" />
     <Compile Include="Assets\Scripts\NoteController.cs" />
