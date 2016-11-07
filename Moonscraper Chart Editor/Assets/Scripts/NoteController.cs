@@ -25,7 +25,11 @@ public class NoteController : MonoBehaviour {
         transform.position = new Vector3((int)noteProperties.fret_type - 2, noteProperties.position * Globals.zoom, 0);
 
         // Type
-        if (noteProperties.note_type != Note.Note_Type.TAP)
+        if ((noteProperties.flags & Note.Flags.TAP) == Note.Flags.TAP)
+        {
+            noteProperties.note_type = Note.Note_Type.TAP;
+        }
+        else
         {
             if (IsHopo)
                 noteProperties.note_type = Note.Note_Type.HOPO;
@@ -81,7 +85,7 @@ public class NoteController : MonoBehaviour {
             }
 
             // Check if forced
-            if (noteProperties.forced)
+            if ((noteProperties.flags & Note.Flags.FORCED) == Note.Flags.FORCED)
                 HOPO = !HOPO;
 
             return HOPO;

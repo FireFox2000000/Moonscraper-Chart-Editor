@@ -7,20 +7,20 @@ public class Note : ChartObject
     public Fret_Type fret_type;
     public Note_Type note_type;
     public Special_Type special_type;
-    public bool forced;
+    public Flags flags;
 
     public NoteController controller = null;
 
     public Note(int _position, 
                 Fret_Type _fret_type, 
                 int _sustain = 0, 
-                bool _forced = false,
+                Flags _flags = Flags.NONE,
                 Note_Type _note_type = Note_Type.NORMAL, 
                 Special_Type _special_type = Special_Type.NONE)
     {
         position = _position;
         sustain = _sustain;
-        forced = _forced;
+        flags = _flags;
         fret_type = _fret_type;
         note_type = _note_type;
         special_type = _special_type;
@@ -30,7 +30,7 @@ public class Note : ChartObject
     {
         position = note.position;
         sustain = note.sustain;
-        forced = note.forced;
+        flags = note.flags;
         fret_type = note.fret_type;
         note_type = note.note_type;
         special_type = note.special_type;
@@ -51,6 +51,14 @@ public class Note : ChartObject
         NONE, STAR_POW, BATTLE
     }
 
+    [Flags]
+    public enum Flags
+    {
+        NONE = 0,
+        FORCED = 1,
+        TAP = 2
+    }
+
     public override string GetSaveString()
     {
         string saveString = "";
@@ -58,10 +66,10 @@ public class Note : ChartObject
         
         saveString += TABSPACE + position + " = N " + fret_type + " " + sustain + "\n";          // 48 = N 2 0
 
-        if (forced)
+        if ((flags & Flags.FORCED) == Flags.FORCED)
             saveString += TABSPACE + position + " = N 5 0 \n";
 
-        if (note_type == Note_Type.TAP)
+        if ((flags & Flags.TAP) == Flags.TAP)
             saveString += TABSPACE + position + " = N 6 0 \n";
 
         // Still need to do star power, will probably do it independant of the note

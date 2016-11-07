@@ -276,16 +276,32 @@ public class Song {
                 if (digits.Length == 3)
                 {
                     try
-                    {
+                    {    
                         int position = int.Parse(digits[0]);
-                        Note.Fret_Type fret_type = (Note.Fret_Type)int.Parse(digits[1]);
+                        int fret_type = int.Parse(digits[1]);
                         int length = int.Parse(digits[2]);
-                        
-                        chart.Add(new Note(position, fret_type, length));
+
+                        if (fret_type > 4 || fret_type < 0)
+                        {
+                            // Hit flags rather than notes
+
+                        }
+                        else
+                        {
+                            Note newNote = new Note(position, (Note.Fret_Type)fret_type, length);
+                            int pos = chart.Add(newNote);
+
+                            // Inherit flags
+                            if (pos > 0 && newNote.position == chart[pos - 1].position)
+                            {
+                                newNote.flags = chart[pos - 1].flags;
+                            }
+                        }
                     }
                     catch
                     {
-                        // Probably hit N 5 0 or N 6 0
+                        // Parsing error
+                        Debug.LogError("Bad note data found: " + line);
                     }
                 }
             }

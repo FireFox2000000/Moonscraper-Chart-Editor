@@ -25,7 +25,6 @@ public class Chart  {
     {
         int insertionPos;
 
-        //notes.Insert(0, note);
         if (notes.Count > 0)
         {
             // TODO Insert into sorted position
