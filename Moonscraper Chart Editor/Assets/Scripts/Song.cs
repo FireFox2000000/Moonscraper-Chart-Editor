@@ -3,10 +3,12 @@ using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-public class Song {
+public class Song { 
     public string name = string.Empty, artist = string.Empty, charter = string.Empty;
-    public float offset = 0, resolution = 192, bpm = 120;
-    string genre = string.Empty, mediatype = string.Empty;
+    public string player2 = "Bass";
+    public int difficulty = 0;
+    public float offset = 0, resolution = 192, previewStart = 0, previewEnd = 0;
+    string genre = "rock", mediatype = "cd";
     public readonly AudioClip musicStream;
 
     // Charts
@@ -27,12 +29,14 @@ public class Song {
     const string QUOTESEARCH = "\"([^\"]*)\"";
     const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";
 
+    public readonly string[] instrumentTypes = { "Bass", "Rhythm" };
+
     void Init()
     {
         events = new List<Event>();
 
         // Chart initialisation
-        for (int i = 0; i < charts.Length; ++i)     
+        for (int i = 0; i < charts.Length; ++i)
         {
             charts[i] = new Chart();
         }
@@ -62,7 +66,7 @@ public class Song {
             for (int i = 0; i < fileLines.Length; ++i)
             {
                 string trimmedLine = fileLines[i].Trim();
-                
+
                 if (new Regex(@"\[.+\]").IsMatch(trimmedLine))
                 {
                     dataName = trimmedLine;//.Trim(new char[] { '[', ']' });
@@ -74,7 +78,7 @@ public class Song {
                 else if (trimmedLine == "}")
                 {
                     open = false;
-                    
+
                     // Submit data
                     submitChartData(dataName, dataStrings);
 
@@ -96,7 +100,7 @@ public class Song {
                         dataName = string.Empty;
                         dataStrings.Clear();
                     }
-                }    
+                }
             }
 
             Debug.Log("Complete");
@@ -121,7 +125,7 @@ public class Song {
 
     void submitChartData(string dataName, List<string> stringData)
     {
-        switch(dataName)
+        switch (dataName)
         {
             case ("[Song]"):
                 submitDataSong(stringData);
@@ -133,28 +137,28 @@ public class Song {
                 submitDataEvents(stringData);
                 break;
             case ("[EasySingle]"):
-                submitDataChart(easy_single, stringData);
+                easy_single.Load(stringData);
                 break;
             case ("[EasyDoubleBass]"):
-                submitDataChart(easy_double_bass, stringData);
+                easy_double_bass.Load(stringData);
                 break;
             case ("[MediumSingle]"):
-                submitDataChart(medium_single, stringData);
+                medium_single.Load(stringData);
                 break;
             case ("[MediumDoubleBass]"):
-                submitDataChart(medium_double_bass, stringData);
+                medium_double_bass.Load(stringData);
                 break;
             case ("[HardSingle]"):
-                submitDataChart(hard_single, stringData);
+                hard_single.Load(stringData);
                 break;
             case ("[HardDoubleBass]"):
-                submitDataChart(hard_double_bass, stringData);
+                hard_double_bass.Load(stringData);
                 break;
             case ("[ExpertSingle]"):
-                submitDataChart(expert_single, stringData);
+                expert_single.Load(stringData);
                 break;
             case ("[ExpertDoubleBass]"):
-                submitDataChart(expert_double_bass, stringData);
+                expert_double_bass.Load(stringData);
                 break;
             default:
                 return;
@@ -163,70 +167,125 @@ public class Song {
 
     void submitDataSong(List<string> stringData)
     {
-        /*
-        Name = "5000 Robots"
-        Artist = "TheEruptionOffer"
-        Charter = "TheEruptionOffer"
-        Offset = 0
-        Resolution = 192
-        Player2 = bass
-        Difficulty = 0
-        PreviewStart = 0.00
-        PreviewEnd = 0.00
-        Genre = "rock"
-        MediaType = "cd"
-        MusicStream = "5000 Robots.ogg"
-        */
+        Regex nameRegex = new Regex(@"Name = " + QUOTEVALIDATE);
+        Regex artistRegex = new Regex(@"Artist = " + QUOTEVALIDATE);
+        Regex charterRegex = new Regex(@"Charter = " + QUOTEVALIDATE);
+        Regex offsetRegex = new Regex(@"Offset = " + FLOATSEARCH);
+        Regex resolutionRegex = new Regex(@"Resolution = " + FLOATSEARCH);
+        Regex player2TypeRegex = new Regex(@"Player2 = \w+");
+        Regex difficultyRegex = new Regex(@"Difficulty = \d+");
+        Regex previewStartRegex = new Regex(@"PreviewStart = " + FLOATSEARCH);
+        Regex previewEndRegex = new Regex(@"PreviewEnd = " + FLOATSEARCH);
+        Regex genreRegex = new Regex(@"Genre = " + QUOTEVALIDATE);
+        Regex mediaTypeRegex = new Regex(@"MediaType = " + QUOTEVALIDATE);
+        Regex musicStreamRegex = new Regex(@"MusicStream = " + QUOTEVALIDATE);
 
-        foreach (string line in stringData)
+        try
         {
-            // Name = "5000 Robots"
-            if (new Regex(@"Name = " + QUOTEVALIDATE).IsMatch(line))
+            foreach (string line in stringData)
             {
-                name = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                // Name = "5000 Robots"
+                if (nameRegex.IsMatch(line))
+                {
+                    name = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                }
+
+                // Artist = "TheEruptionOffer"
+                else if (artistRegex.IsMatch(line))
+                {
+                    artist = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                }
+
+                // Charter = "TheEruptionOffer"
+                else if (charterRegex.IsMatch(line))
+                {
+                    charter = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                }
+
+                // Offset = 0
+                else if (offsetRegex.IsMatch(line))
+                {
+                    offset = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+                }
+
+                // Resolution = 192
+                else if (resolutionRegex.IsMatch(line))
+                {
+                    resolution = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+                }
+
+                // Player2 = bass
+                else if (player2TypeRegex.IsMatch(line))
+                {
+                    string split = line.Split('=')[1].Trim();
+
+                    foreach (string instrument in instrumentTypes)
+                    {
+                        if (split.Equals(instrument, System.StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            player2 = instrument;
+                            break;
+                        }
+                    }
+                }
+
+                // Difficulty = 0
+                else if (difficultyRegex.IsMatch(line))
+                {
+                    difficulty = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
+                }
+
+                // PreviewStart = 0.00
+                else if (previewStartRegex.IsMatch(line))
+                {
+                    previewStart = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+                }
+
+                // PreviewEnd = 0.00
+                else if (previewEndRegex.IsMatch(line))
+                {
+                    previewEnd = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+                }
+
+                // Genre = "rock"
+                else if (genreRegex.IsMatch(line))
+                {
+                    genre = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                }
+
+                // MediaType = "cd"
+                else if (mediaTypeRegex.IsMatch(line))
+                {
+                    mediatype = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                }
+
+                else if (musicStreamRegex.IsMatch(line))
+                {
+
+                }
             }
 
-            // Artist = "TheEruptionOffer"
-            else if (new Regex(@"Artist = " + QUOTEVALIDATE).IsMatch(line))
-            {
-                artist = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-            }
-
-            // Charter = "TheEruptionOffer"
-            else if (new Regex(@"Charter = " + QUOTEVALIDATE).IsMatch(line))
-            {
-                charter = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-            }
-
-            // Offset = 0
-            else if (new Regex(@"Offset = " + FLOATSEARCH).IsMatch(line))
-            {
-                offset = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
-            }
-
-            // Resolution = 192
-            else if (new Regex(@"Resolution = " + FLOATSEARCH).IsMatch(line))
-            {
-                resolution = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
-            }
-
-            // Player2 = bass
-            // Difficulty = 0
-            // PreviewStart = 0.00
-            // PreviewEnd = 0.00
-
-            // Genre = "rock"
-            else if (new Regex(@"Genre = " + QUOTEVALIDATE).IsMatch(line))
-            {
-                genre = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-            }
-
-            // MediaType = "cd"
-            else if (new Regex(@"MediaType = " + QUOTEVALIDATE).IsMatch(line))
-            {
-                mediatype = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-            }
+            Debug.Log(GetPropertiesString());
         }
+        catch (System.Exception e)
+        {
+            Debug.Log(e.Message);
+        }
+    }
+
+    string GetPropertiesString()
+    {
+        return name + "\n" +
+                artist + "\n" +
+                charter + "\n" +
+                offset + "\n" +
+                resolution + "\n" +
+                player2 + "\n" +
+                difficulty + "\n" +
+                previewStart + "\n" +
+                previewEnd + "\n" +
+                genre + "\n" +
+                mediatype;
     }
 
     void submitDataSyncTrack(List<string> stringData)
@@ -238,14 +297,19 @@ public class Song {
         */
     }
 
+    string GetSyncTrackString()
+    {
+        return string.Empty;
+    }
+
     void submitDataEvents(List<string> stringData)
     {
-        foreach(string line in stringData)
-        { 
+        foreach (string line in stringData)
+        {
             if (Section.regexMatch(line))       // 0 = E "section Intro"
-            {               
+            {
                 // Add a section
-                string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"').Substring(8);     
+                string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"').Substring(8);
                 int position = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
                 events.Add(new Section(title, position));
             }
@@ -259,64 +323,12 @@ public class Song {
         }
     }
 
-    void submitDataChart(Chart chart, List<string> stringData)
+    string GetEventsString()
     {
-        Regex noteRegex = new Regex(@"^\s*\d+ = N \d \d+$");            // 48 = N 2 0
-        Regex starPowerRegex = new Regex(@"^\s*\d+ = S \d \d+$");       // 768 = S 2 768
-        Regex noteEventRegex = new Regex(@"^\s*\d+ = E \S");            // 1728 = E T
-
-        foreach (string line in stringData)
-        {  
-            //Debug.Log(line);
-            if (noteRegex.IsMatch(line))
-            {
-                // Split string to get note information
-                string[] digits = Regex.Split(line.Trim(), @"\D+");
-
-                if (digits.Length == 3)
-                {
-                    try
-                    {    
-                        int position = int.Parse(digits[0]);
-                        int fret_type = int.Parse(digits[1]);
-                        int length = int.Parse(digits[2]);
-
-                        if (fret_type > 4 || fret_type < 0)
-                        {
-                            // Hit flags rather than notes
-
-                        }
-                        else
-                        {
-                            Note newNote = new Note(position, (Note.Fret_Type)fret_type, length);
-                            int pos = chart.Add(newNote);
-
-                            // Inherit flags
-                            if (pos > 0 && newNote.position == chart[pos - 1].position)
-                            {
-                                newNote.flags = chart[pos - 1].flags;
-                            }
-                        }
-                    }
-                    catch (System.Exception e)
-                    {
-                        // Parsing error
-                        Debug.LogError(e.Message);
-                    }
-                }
-            }
-            else if (starPowerRegex.IsMatch(line))
-            {
-
-            }
-            else if (noteEventRegex.IsMatch(line))
-            {
-
-            }
-        }
+        return string.Empty;
     }
 
-    public void Save (string filepath)
+    public void Save(string filepath)
     {
 
     }
