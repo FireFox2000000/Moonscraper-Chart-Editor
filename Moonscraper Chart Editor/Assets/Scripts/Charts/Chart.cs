@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 public class Chart  {
-    public const int NOTFOUND = -1;
-
     public List<Note> notes;
 
     public Note this[int i]
@@ -24,9 +22,9 @@ public class Chart  {
     // Return the position it was inserted into
     public int Add (Note note)
     {
-        int insertionPos = BinarySearchChartClosestNote(note);
+        int insertionPos = ChartObject.FindClosestPosition(note, notes.ToArray()); //BinarySearchChartClosestNote(note);
         
-        if (notes.Count > 0 && insertionPos != NOTFOUND)
+        if (notes.Count > 0 && insertionPos != Globals.NOTFOUND)
         {
             // TODO Insert into sorted position
             if (note > notes[insertionPos])
@@ -47,9 +45,9 @@ public class Chart  {
 
     public bool Remove (Note note)
     {
-        int pos = BinarySearchChartExactNote(note);
+        int pos = ChartObject.FindObjectPosition(note, notes.ToArray()); //BinarySearchChartExactNote(note);
 
-        if (pos == NOTFOUND)
+        if (pos == Globals.NOTFOUND)
             return false;
         else
         {
@@ -63,110 +61,10 @@ public class Chart  {
         return notes.ToArray();
     }
 
-    public int BinarySearchChartClosestNote(Note searchItem)
-    {
-        int lowerBound = 0;
-        int upperBound = notes.Count - 1;
-        int index = NOTFOUND;
-
-        int midPoint = NOTFOUND;
-
-        while (lowerBound <= upperBound)
-        {
-            midPoint = (lowerBound + upperBound) / 2;
-            index = midPoint;
-
-            if (notes[midPoint] == searchItem)
-            {
-                break;
-            }
-            else
-            {
-                if (notes[midPoint] < searchItem)
-                {
-                    // data is in upper half
-                    lowerBound = midPoint + 1;
-                }
-                else
-                {
-                    // data is in lower half 
-                    upperBound = midPoint - 1;
-                }
-            }
-        }
-
-        return index;
-    }
-
-    public int BinarySearchChartExactNote(Note searchItem)
-    {
-        int pos = BinarySearchChartClosestNote(searchItem);
-
-        if (pos != NOTFOUND && notes[pos] != searchItem)
-        { 
-            pos = NOTFOUND;
-        }
-
-        return pos;
-    }
-
-    // Returns all the notes found at the specified position, i.e. chords
-    public Note[] FindNotes(int notePosition)
-    {
-        int lowerBound = 0;
-        int upperBound = notes.Count - 1;
-        int index = NOTFOUND;
-
-        int midPoint = NOTFOUND;
-
-        while (lowerBound <= upperBound)
-        {
-            midPoint = (lowerBound + upperBound) / 2;
-
-            if (notes[midPoint].position == notePosition)
-            {
-                index = midPoint;
-                break;
-            }
-            else
-            {
-                if (notes[midPoint].position < notePosition)
-                {
-                    // data is in upper half
-                    lowerBound = midPoint + 1;
-                }
-                else
-                {
-                    // data is in lower half 
-                    upperBound = midPoint - 1;
-                }
-            }
-        }
-
-        if (index != NOTFOUND)
-        {
-            int lowRange = index, highRange = index;
-
-            while (lowRange > 0 && notes[index].position == notes[lowRange - 1].position)
-            {
-                --lowRange;
-            }
-
-            while (highRange < notes.Count - 1 && notes[index].position == notes[highRange + 1].position)
-            {
-                ++highRange;
-            }
-
-            return notes.GetRange(lowRange, highRange - lowRange + 1).ToArray();
-        }
-        else
-            return new Note[0];
-    }
-
     public Note searchPreviousNote (Note note)
     {
-        int pos = BinarySearchChartExactNote(note);
-        if (pos != NOTFOUND && pos > 0)
+        int pos = ChartObject.FindObjectPosition(note, notes.ToArray());
+        if (pos != Globals.NOTFOUND && pos > 0)
             return notes[pos - 1];
         else
             return null;
@@ -174,8 +72,8 @@ public class Chart  {
 
     public Note searchNextNote (Note note)
     {
-        int pos = BinarySearchChartExactNote(note);
-        if (pos != NOTFOUND && pos < notes.Count - 1)
+        int pos = ChartObject.FindObjectPosition(note, notes.ToArray());
+        if (pos != Globals.NOTFOUND && pos < notes.Count - 1)
             return notes[pos + 1];
         else
             return null;
@@ -249,7 +147,7 @@ public class Chart  {
                         int fret_type = int.Parse(digits[1]);
                         int length = int.Parse(digits[2]);
 
-                        Note[] notesToFlag = FindNotes(position);
+                        Note[] notesToFlag = ChartObject.FindObjectsAtPosition(position, notes.ToArray());
 
                         // TODO
                         if (fret_type > 4 || fret_type < 0)
