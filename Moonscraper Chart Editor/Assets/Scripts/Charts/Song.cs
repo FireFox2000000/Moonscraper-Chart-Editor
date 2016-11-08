@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 public class Song { 
+    // Song properties
     public string name = string.Empty, artist = string.Empty, charter = string.Empty;
     public string player2 = "Bass";
     public int difficulty = 0;
@@ -12,7 +13,6 @@ public class Song {
     public readonly AudioClip musicStream;
 
     // Charts
-    //List<Note>[] charts = new List<Note>[8];
     Chart[] charts = new Chart[8];
     public Chart easy_single { get { return charts[0]; } }
     public Chart easy_double_bass { get { return charts[1]; } }
@@ -24,7 +24,9 @@ public class Song {
     public Chart expert_double_bass { get { return charts[7]; } }
 
     public List<Event> events;
+    public List<SyncTrack> syncTrack;
 
+    // For regexing
     const string QUOTEVALIDATE = @"""[^""\\]*(?:\\.[^""\\]*)*""";
     const string QUOTESEARCH = "\"([^\"]*)\"";
     const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";
@@ -34,6 +36,7 @@ public class Song {
     void Init()
     {
         events = new List<Event>();
+        syncTrack = new List<SyncTrack>();
 
         // Chart initialisation
         for (int i = 0; i < charts.Length; ++i)
@@ -293,13 +296,43 @@ public class Song {
         /*
         0 = B 140000
         0 = TS 4
-        13824 = B 280000
         */
-    }
+        foreach (string line in stringData)
+        {
+            if (TimeScale.regexMatch(line))
+            {
+                MatchCollection matches = Regex.Matches(line, @"\d+");
+                int position = int.Parse(matches[0].ToString());
+                int value = int.Parse(matches[0].ToString());
 
-    string GetSyncTrackString()
-    {
-        return string.Empty;
+                ChartObject.SortedInsert(new TimeScale(position, value), syncTrack);
+            }
+            else if (BPM.regexMatch(line))
+            {
+                MatchCollection matches = Regex.Matches(line, @"\d+");
+                int position = int.Parse(matches[0].ToString());
+                int value = int.Parse(matches[0].ToString());
+
+                ChartObject.SortedInsert(new BPM(position, value), syncTrack);
+            }
+        }
+
+        // Validate that there are base values
+        SyncTrack[] initSync = ChartObject.FindObjectsAtPosition(0, syncTrack.ToArray());
+        bool bpmInit = false, timeScaleInit = false;
+
+        foreach (SyncTrack sync in initSync)
+        {
+            if (sync.GetType() == typeof(BPM))
+                bpmInit = true;
+            else if (sync.GetType() == typeof(TimeScale))
+                timeScaleInit = true;
+        }
+
+        if (bpmInit == false)
+            ChartObject.SortedInsert(new BPM(), syncTrack);
+        if (timeScaleInit == false)
+            ChartObject.SortedInsert(new TimeScale(), syncTrack);
     }
 
     void submitDataEvents(List<string> stringData)
@@ -323,13 +356,93 @@ public class Song {
         }
     }
 
-    string GetEventsString()
+    string GetSaveString<T>(List<T> list) where T : ChartObject
     {
-        return string.Empty;
+        string saveString = string.Empty;
+
+        foreach (T item in list)
+        {
+            saveString += item.GetSaveString();
+        }
+
+        return saveString;
     }
 
+    // TODO
     public void Save(string filepath)
     {
+        string saveString = string.Empty;
+
+        // Song
+        saveString += "[Song]\n{\n";
+        saveString += Globals.TABSPACE + "Name = \"" + name + "\"\n";
+        saveString += Globals.TABSPACE + "Artist = \"" + artist + "\"\n";
+        saveString += Globals.TABSPACE + "Charter = \"" + charter + "\"\n";
+        saveString += Globals.TABSPACE + "Offset = " + offset + "\n";
+        saveString += Globals.TABSPACE + "Resolution = " + resolution + "\n";
+        saveString += Globals.TABSPACE + "Player2 = " + player2.ToLower() + "\n";
+        saveString += Globals.TABSPACE + "Difficulty = " + difficulty + "\n";
+        saveString += Globals.TABSPACE + "PreviewStart = " + previewStart + "\n";
+        saveString += Globals.TABSPACE + "PreviewEnd = " + previewEnd + "\n";
+        saveString += Globals.TABSPACE + "Genre = \"" + genre + "\"\n";
+        saveString += Globals.TABSPACE + "MediaType = \"" + mediatype + "\"\n";
+        saveString += Globals.TABSPACE + "MusicStream = \"" + musicStream.name + "\"\n";    // Gonna be wrong, needs extention
+        saveString += "}\n";
+
+        // SyncTrack
+        saveString += "[SyncTrack]\n{\n";
+        saveString += GetSaveString(syncTrack);
+        saveString += "}\n";
+
+        // Events
+        saveString += "[Events]\n{\n";
+        saveString += GetSaveString(events);
+        saveString += "}\n";
+
+        // Charts
+        string chartString = string.Empty;
+        for(int i = 0; i < charts.Length; ++i)
+        {
+            chartString = charts[i].GetChartString();
+
+            if (chartString != string.Empty)
+            {
+                switch(i)
+                {
+                    case (0):
+                        saveString += "[EasySingle]\n{\n";
+                        break;
+                    case (1):
+                        saveString += "[EasyDoubleBass]\n{\n";
+                        break;
+                    case (2):
+                        saveString += "[MediumSingle]\n{\n";
+                        break;
+                    case (3):
+                        saveString += "[MediumDoubleBass]\n{\n";
+                        break;
+                    case (4):
+                        saveString += "[HardSingle]\n{\n";
+                        break;
+                    case (5):
+                        saveString += "[HardDoubleBass]\n{\n";
+                        break;
+                    case (6):
+                        saveString += "[ExpertSingle]\n{\n";
+                        break;
+                    case (7):
+                        saveString += "[ExpertDoubleBass]\n{\n";
+                        break;
+                    default:
+                        break;
+                }
+
+                saveString += charts[i].GetChartString();
+                saveString += "}\n";
+            }
+        }
+
+        // Save to file
 
     }
 }

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 public abstract class ChartObject {
@@ -158,6 +158,29 @@ public abstract class ChartObject {
 
         return pos;
     }
+
+    public static int SortedInsert<T>(T item, List<T> list) where T : ChartObject
+    {
+        int insertionPos = FindClosestPosition(item, list.ToArray()); //BinarySearchChartClosestNote(note);
+
+        if (list.Count > 0 && insertionPos != Globals.NOTFOUND && list[insertionPos] != item)
+        {
+            // Insert into sorted position
+            if (item > list[insertionPos])
+            {
+                ++insertionPos;
+            }
+            list.Insert(insertionPos, item);
+        }
+        else
+        {
+            // Adding the first note
+            list.Add(item);
+            insertionPos = list.Count - 1;
+        }
+
+        return insertionPos;
+    }
 }
 
 public class Event : ChartObject
@@ -172,8 +195,7 @@ public class Event : ChartObject
 
     public override string GetSaveString()
     {
-        const string TABSPACE = "  ";
-        return TABSPACE + position + " = E \"" + title + "\"\n";
+        return Globals.TABSPACE + position + " = E \"" + title + "\"\n";
     }
 
     public static bool regexMatch(string line)
@@ -186,14 +208,56 @@ public class Section : Event
 {
     public Section(string _title, int _position) : base(_title, _position) { }
 
-    new public string GetSaveString()
+    public override string GetSaveString()
     {
-        const string TABSPACE = "  ";
-        return TABSPACE + position + " = E \"section " + title + "\"\n";
+        return Globals.TABSPACE + position + " = E \"section " + title + "\"\n";
     }
 
     new public static bool regexMatch(string line)
     {
         return new Regex(@"\d+ = E " + @"""section [^""\\]*(?:\\.[^""\\]*)*""").IsMatch(line);
+    }
+}
+
+public abstract class SyncTrack : ChartObject
+{
+    public int value;
+
+    public SyncTrack (int _position, int _value)
+    {
+        position = _position;
+        value = _value;
+    }
+}
+
+public class TimeScale : SyncTrack
+{
+    public TimeScale(int _position = 0, int _value = 4) : base (_position, _value) {}
+
+    override public string GetSaveString()
+    {
+        //0 = TS 4
+        return Globals.TABSPACE + position + " = TS " + value + "\n";
+    }
+
+    public static bool regexMatch(string line)
+    {
+        return new Regex(@"\d+ = TS \d+").IsMatch(line);
+    }
+}
+
+public class BPM : SyncTrack
+{
+    public BPM(int _position = 0, int _value = 120000) : base (_position, _value) { }
+
+    override public string GetSaveString()
+    {
+        //0 = B 140000
+        return Globals.TABSPACE + position + " = B " + value + "\n";
+    }
+
+    public static bool regexMatch(string line)
+    {
+        return new Regex(@"\d+ = B \d+").IsMatch(line);
     }
 }

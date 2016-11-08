@@ -22,25 +22,7 @@ public class Chart  {
     // Return the position it was inserted into
     public int Add (Note note)
     {
-        int insertionPos = ChartObject.FindClosestPosition(note, notes.ToArray()); //BinarySearchChartClosestNote(note);
-        
-        if (notes.Count > 0 && insertionPos != Globals.NOTFOUND)
-        {
-            // TODO Insert into sorted position
-            if (note > notes[insertionPos])
-            {
-                ++insertionPos;
-            }
-            notes.Insert(insertionPos, note);     
-        }
-        else
-        {
-            // Adding the first note
-            notes.Add(note);
-            insertionPos = notes.Count - 1;
-        }
-
-        return insertionPos;
+        return ChartObject.SortedInsert(note, notes);
     }
 
     public bool Remove (Note note)

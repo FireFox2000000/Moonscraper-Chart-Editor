@@ -4,6 +4,7 @@ using System.Collections;
 public class Globals : MonoBehaviour {
     public static float zoom = 0.01f;
     public static readonly int NOTFOUND = -1;
+    public static readonly string TABSPACE = "  ";
 
     public static Sprite[] normalSprites { get; private set; }
     public static Sprite[] hopoSprites { get; private set; }
