@@ -17,6 +17,7 @@ public class NoteController : MonoBehaviour {
     void OnMouseDown()
     {
         Debug.Log(noteProperties.position);
+        Debug.Log(noteProperties.forced);
     }
 
     public void UpdateNote()
@@ -77,7 +78,7 @@ public class NoteController : MonoBehaviour {
                 if (prevNote.controller.IsChord || (!prevNote.controller.IsChord && noteProperties.fret_type != prevNote.fret_type))
                 {
                     // Check distance from previous note 
-                    const int HOPODistance = 20;
+                    const int HOPODistance = 50;
 
                     if (noteProperties.position - prevNote.position < HOPODistance)
                         HOPO = true;
@@ -85,7 +86,7 @@ public class NoteController : MonoBehaviour {
             }
 
             // Check if forced
-            if ((noteProperties.flags & Note.Flags.FORCED) == Note.Flags.FORCED)
+            if (noteProperties.forced)
                 HOPO = !HOPO;
 
             return HOPO;

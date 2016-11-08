@@ -191,8 +191,12 @@ public class Chart  {
         Regex noteRegex = new Regex(@"^\s*\d+ = N \d \d+$");            // 48 = N 2 0
         Regex starPowerRegex = new Regex(@"^\s*\d+ = S \d \d+$");       // 768 = S 2 768
         Regex noteEventRegex = new Regex(@"^\s*\d+ = E \S");            // 1728 = E T
+
+        List<string> flags = new List<string>();
+
         try
         {
+            // Load notes, collect flags
             foreach (string line in data)
             {
                 if (noteRegex.IsMatch(line))
@@ -206,38 +210,16 @@ public class Chart  {
                         int fret_type = int.Parse(digits[1]);
                         int length = int.Parse(digits[2]);
 
-                        // TODO
+                        // Collect flags
                         if (fret_type > 4 || fret_type < 0)
                         {
-                            // Hit flags rather than notes
-                            Note[] notesToFlag = FindNotes(position);
-                            switch(fret_type)
-                            {
-                                case (5):
-                                    Note.addFlags(notesToFlag, Note.Flags.FORCED);
-                                    break;
-                                case (6):
-                                    Note.addFlags(notesToFlag, Note.Flags.TAP);
-                                    break;
-                                default:
-                                    break;
-                            }
+                            flags.Add(line);
                         }
                         else
                         {
                             // Add note to the data
                             Note newNote = new Note(position, (Note.Fret_Type)fret_type, length);
                             int pos = Add(newNote);
-
-                            // Inherit flags
-                            if (pos > 0 && newNote.position == notes[pos - 1].position)
-                            {
-                                newNote.flags = notes[pos - 1].flags;
-                            }
-                            else if (pos < notes.Count - 1 && newNote.position == notes[pos + 1].position)
-                            {
-                                newNote.flags = notes[pos + 1].flags;
-                            }
                         }
                     }
                 }
@@ -250,6 +232,41 @@ public class Chart  {
                 else if (noteEventRegex.IsMatch(line))
                 {
 
+                }
+            }
+
+            // Load flags
+            foreach (string line in flags)
+            {
+                if (noteRegex.IsMatch(line))
+                {
+                    // Split string to get note information
+                    string[] digits = Regex.Split(line.Trim(), @"\D+");
+
+                    if (digits.Length == 3)
+                    {
+                        int position = int.Parse(digits[0]);
+                        int fret_type = int.Parse(digits[1]);
+                        int length = int.Parse(digits[2]);
+
+                        Note[] notesToFlag = FindNotes(position);
+
+                        // TODO
+                        if (fret_type > 4 || fret_type < 0)
+                        {
+                            switch (fret_type)
+                            {
+                                case (5):
+                                    Note.groupAddFlags(notesToFlag, Note.Flags.FORCED);
+                                    break;
+                                case (6):
+                                    Note.groupAddFlags(notesToFlag, Note.Flags.TAP);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
                 }
             }
         }

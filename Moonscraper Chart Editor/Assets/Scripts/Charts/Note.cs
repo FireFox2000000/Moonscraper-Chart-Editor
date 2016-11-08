@@ -59,6 +59,21 @@ public class Note : ChartObject
         TAP = 2
     }
 
+    public bool forced
+    {
+        get
+        {
+            return (flags & Flags.FORCED) == Flags.FORCED;
+        }
+        set
+        {
+            if (value)
+                flags = flags | Flags.FORCED;
+            else
+                flags = flags & ~Flags.FORCED;
+        }
+    }
+
     public override string GetSaveString()
     {
         string saveString = "";
@@ -124,11 +139,12 @@ public class Note : ChartObject
             return false;
     }
 
-    public static void addFlags (Note[] notes, Flags flag)
+    public static void groupAddFlags (Note[] notes, Flags flag)
     {
         for (int i = 0; i < notes.Length; ++i)
         {
             notes[i].flags = notes[i].flags | flag;
         }
     }
+
 }
