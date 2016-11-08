@@ -77,7 +77,7 @@ public class NoteController : MonoBehaviour {
                 if (prevNote.controller.IsChord || (!prevNote.controller.IsChord && noteProperties.fret_type != prevNote.fret_type))
                 {
                     // Check distance from previous note 
-                    const int HOPODistance = 100;
+                    const int HOPODistance = 20;
 
                     if (noteProperties.position - prevNote.position < HOPODistance)
                         HOPO = true;

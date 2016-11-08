@@ -123,4 +123,12 @@ public class Note : ChartObject
         else
             return false;
     }
+
+    public static void addFlags (Note[] notes, Flags flag)
+    {
+        for (int i = 0; i < notes.Length; ++i)
+        {
+            notes[i].flags = notes[i].flags | flag;
+        }
+    }
 }

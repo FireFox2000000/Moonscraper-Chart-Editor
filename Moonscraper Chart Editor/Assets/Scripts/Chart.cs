@@ -110,11 +110,57 @@ public class Chart  {
         return pos;
     }
 
-    // TODO
     // Returns all the notes found at the specified position, i.e. chords
-    public Note[] GetNotes(int pos)
+    public Note[] FindNotes(int notePosition)
     {
-        return new Note[0];
+        int lowerBound = 0;
+        int upperBound = notes.Count - 1;
+        int index = NOTFOUND;
+
+        int midPoint = NOTFOUND;
+
+        while (lowerBound <= upperBound)
+        {
+            midPoint = (lowerBound + upperBound) / 2;
+
+            if (notes[midPoint].position == notePosition)
+            {
+                index = midPoint;
+                break;
+            }
+            else
+            {
+                if (notes[midPoint].position < notePosition)
+                {
+                    // data is in upper half
+                    lowerBound = midPoint + 1;
+                }
+                else
+                {
+                    // data is in lower half 
+                    upperBound = midPoint - 1;
+                }
+            }
+        }
+
+        if (index != NOTFOUND)
+        {
+            int lowRange = index, highRange = index;
+
+            while (lowRange > 0 && notes[index].position == notes[lowRange - 1].position)
+            {
+                --lowRange;
+            }
+
+            while (highRange < notes.Count - 1 && notes[index].position == notes[highRange + 1].position)
+            {
+                ++highRange;
+            }
+
+            return notes.GetRange(lowRange, highRange - lowRange + 1).ToArray();
+        }
+        else
+            return new Note[0];
     }
 
     public Note searchPreviousNote (Note note)
@@ -164,7 +210,18 @@ public class Chart  {
                         if (fret_type > 4 || fret_type < 0)
                         {
                             // Hit flags rather than notes
-
+                            Note[] notesToFlag = FindNotes(position);
+                            switch(fret_type)
+                            {
+                                case (5):
+                                    Note.addFlags(notesToFlag, Note.Flags.FORCED);
+                                    break;
+                                case (6):
+                                    Note.addFlags(notesToFlag, Note.Flags.TAP);
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                         else
                         {
