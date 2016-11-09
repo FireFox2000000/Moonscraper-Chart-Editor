@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class NoteController : MonoBehaviour {
+    public Song currentSong;
 
     public Note noteProperties;
     public Note prevNote = null;        // Linked list style
@@ -20,10 +21,17 @@ public class NoteController : MonoBehaviour {
         Debug.Log(noteProperties.forced);
     }
 
+    public void Init(Note note, Song song)
+    {
+        noteProperties = note;
+        currentSong = song;
+        noteProperties.controller = this;
+    }
+
     public void UpdateNote()
     {
         // Position
-        transform.position = new Vector3((int)noteProperties.fret_type - 2, noteProperties.position * Globals.zoom, 0);
+        transform.position = new Vector3((int)noteProperties.fret_type - 2, noteProperties.WorldPosition(currentSong), 0);
 
         // Type
         if ((noteProperties.flags & Note.Flags.TAP) == Note.Flags.TAP)
@@ -78,7 +86,7 @@ public class NoteController : MonoBehaviour {
                 if (prevNote.controller.IsChord || (!prevNote.controller.IsChord && noteProperties.fret_type != prevNote.fret_type))
                 {
                     // Check distance from previous note 
-                    const int HOPODistance = 50;
+                    const int HOPODistance = 95;
 
                     if (noteProperties.position - prevNote.position < HOPODistance)
                         HOPO = true;

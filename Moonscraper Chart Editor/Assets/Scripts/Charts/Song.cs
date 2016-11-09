@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 public class Song { 
     // Song properties
@@ -114,10 +115,33 @@ public class Song {
         }
     }
 
-    // Calculates the amount of time elapsed between the 2 positions at a set bpm
-    static float dis_to_time(int pos_start, int pos_end, float bpm, float offset)
+    public float positionToTime(int position)
     {
-        return (pos_end - pos_start) / 192 * 60 / bpm + offset;
+        double time = 0;
+        BPM prevBPM = new BPM ();
+
+        foreach(BPM bpmInfo in syncTrack.OfType<BPM>())
+        {
+            if (bpmInfo.position > position)
+            {
+                break;
+            }
+            else
+            {
+                time += dis_to_time(prevBPM.position, bpmInfo.position, prevBPM.value / 1000.0);
+                prevBPM = bpmInfo;
+            }
+        }
+
+        time += dis_to_time(prevBPM.position, position, prevBPM.value / 1000.0) + offset;
+
+        return (float)time;
+    }
+
+    // Calculates the amount of time elapsed between the 2 positions at a set bpm
+    static double dis_to_time(int pos_start, int pos_end, double bpm)
+    {
+        return (pos_end - pos_start) / 192.0 * 60.0 / bpm;
     }
 
     // Returns the distance from the strikeline a note should be
@@ -311,7 +335,7 @@ public class Song {
             {
                 MatchCollection matches = Regex.Matches(line, @"\d+");
                 int position = int.Parse(matches[0].ToString());
-                int value = int.Parse(matches[0].ToString());
+                int value = int.Parse(matches[1].ToString());
 
                 ChartObject.SortedInsert(new BPM(position, value), syncTrack);
             }
