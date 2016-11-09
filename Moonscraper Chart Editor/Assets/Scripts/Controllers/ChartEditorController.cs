@@ -161,12 +161,12 @@ public class ChartEditorController : MonoBehaviour {
         // Update the linked list
         if (position > 0)
         {
-            controller.prevNote = currentChart.notes[position - 1];
+            controller.prevNote = currentChart.FindPreviousNote(position);
             controller.prevNote.controller.nextNote = controller.noteProperties;
         }
-        if (position < currentChart.notes.Count - 1)
+        if (position < currentChart.Length - 1)
         {
-            controller.nextNote = currentChart.notes[position + 1];
+            controller.nextNote = currentChart.FindNextNote(position);
             controller.nextNote.controller.prevNote = controller.noteProperties;
         }
     }
@@ -194,15 +194,17 @@ public class ChartEditorController : MonoBehaviour {
         GameObject parent = new GameObject();
         parent.name = "Notes";
 
-        for(int i = 0; i < chart.notes.Count; ++i)
+        Note[] notes = chart.GetNotes();
+
+        for(int i = 0; i < notes.Length; ++i)
         {
-            NoteController controller = CreateNoteObject(chart.notes[i], song, parent);
+            NoteController controller = CreateNoteObject(notes[i], song, parent);
             
             // Join the linked list
             if (i > 0)
-                controller.prevNote = chart.notes[i - 1];
-            if (i < chart.notes.Count - 1)
-                controller.nextNote = chart.notes[i + 1];
+                controller.prevNote = notes[i - 1];
+            if (i < notes.Length - 1)
+                controller.nextNote = notes[i + 1];
                 
             controller.UpdateNote();
         }

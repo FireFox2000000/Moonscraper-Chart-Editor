@@ -120,7 +120,7 @@ public class Song {
         double time = 0;
         BPM prevBPM = new BPM ();
 
-        foreach(BPM bpmInfo in syncTrack.OfType<BPM>())
+        foreach (BPM bpmInfo in syncTrack.OfType<BPM>())
         {
             if (bpmInfo.position > position)
             {
@@ -329,7 +329,7 @@ public class Song {
                 int position = int.Parse(matches[0].ToString());
                 int value = int.Parse(matches[0].ToString());
 
-                ChartObject.SortedInsert(new TimeScale(position, value), syncTrack);
+                SongObject.SortedInsert(new TimeScale(position, value), syncTrack);
             }
             else if (BPM.regexMatch(line))
             {
@@ -337,12 +337,12 @@ public class Song {
                 int position = int.Parse(matches[0].ToString());
                 int value = int.Parse(matches[1].ToString());
 
-                ChartObject.SortedInsert(new BPM(position, value), syncTrack);
+                SongObject.SortedInsert(new BPM(position, value), syncTrack);
             }
         }
 
         // Validate that there are base values
-        SyncTrack[] initSync = ChartObject.FindObjectsAtPosition(0, syncTrack.ToArray());
+        SyncTrack[] initSync = SongObject.FindObjectsAtPosition(0, syncTrack.ToArray());
         bool bpmInit = false, timeScaleInit = false;
 
         foreach (SyncTrack sync in initSync)
@@ -354,9 +354,9 @@ public class Song {
         }
 
         if (bpmInit == false)
-            ChartObject.SortedInsert(new BPM(), syncTrack);
+            SongObject.SortedInsert(new BPM(), syncTrack);
         if (timeScaleInit == false)
-            ChartObject.SortedInsert(new TimeScale(), syncTrack);
+            SongObject.SortedInsert(new TimeScale(), syncTrack);
     }
 
     void submitDataEvents(List<string> stringData)
@@ -380,7 +380,7 @@ public class Song {
         }
     }
 
-    string GetSaveString<T>(List<T> list) where T : ChartObject
+    string GetSaveString<T>(List<T> list) where T : SongObject
     {
         string saveString = string.Empty;
 

@@ -67,6 +67,7 @@
     <Compile Include="Assets\Scripts\Charts\ChartObject.cs" />
     <Compile Include="Assets\Scripts\Charts\Note.cs" />
     <Compile Include="Assets\Scripts\Charts\Song.cs" />
+    <Compile Include="Assets\Scripts\Charts\SongObject.cs" />
     <Compile Include="Assets\Scripts\Controllers\ChartEditorController.cs" />
     <Compile Include="Assets\Scripts\Controllers\NoteController.cs" />
     <Compile Include="Assets\Scripts\Globals.cs" />

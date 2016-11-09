@@ -4,7 +4,7 @@ using System.Collections;
 
 public class Note : ChartObject 
 {
-    public int sustain;
+    public int sustain_length;
     public Fret_Type fret_type;
     public Note_Type note_type;
     public Special_Type special_type;
@@ -20,7 +20,7 @@ public class Note : ChartObject
                 Special_Type _special_type = Special_Type.NONE)
     {
         position = _position;
-        sustain = _sustain;
+        sustain_length = _sustain;
         flags = _flags;
         fret_type = _fret_type;
         note_type = _note_type;
@@ -30,7 +30,7 @@ public class Note : ChartObject
     public Note (Note note)
     {
         position = note.position;
-        sustain = note.sustain;
+        sustain_length = note.sustain_length;
         flags = note.flags;
         fret_type = note.fret_type;
         note_type = note.note_type;
@@ -76,20 +76,19 @@ public class Note : ChartObject
     }
 
     public override string GetSaveString()
+    {    
+        return Globals.TABSPACE + position + " = N " + fret_type + " " + sustain_length + "\n";          // 48 = N 2 0
+    }
+
+    public string GetFlagsSaveString()
     {
-        string saveString = "";
-        const string TABSPACE = "  ";
-        
-        saveString += TABSPACE + position + " = N " + fret_type + " " + sustain + "\n";          // 48 = N 2 0
+        string saveString = string.Empty;
 
         if ((flags & Flags.FORCED) == Flags.FORCED)
-            saveString += TABSPACE + position + " = N 5 0 \n";
+            saveString += Globals.TABSPACE + position + " = N 5 0 \n";
 
         if ((flags & Flags.TAP) == Flags.TAP)
-            saveString += TABSPACE + position + " = N 6 0 \n";
-
-        // Still need to do star power, will probably do it independant of the note
-        // 10752 = S 2 3072
+            saveString += Globals.TABSPACE + position + " = N 6 0 \n";
 
         return saveString;
     }
