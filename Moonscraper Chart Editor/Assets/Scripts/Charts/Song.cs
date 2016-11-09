@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
@@ -10,8 +11,9 @@ public class Song {
     public string player2 = "Bass";
     public int difficulty = 0;
     public float offset = 0, resolution = 192, previewStart = 0, previewEnd = 0;
-    string genre = "rock", mediatype = "cd";
-    public readonly AudioClip musicStream;
+    public string genre = "rock", mediatype = "cd";
+    public AudioClip musicStream;
+    string audioLocation = string.Empty;
 
     // Charts
     Chart[] charts = new Chart[8];
@@ -33,6 +35,7 @@ public class Song {
     const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";
 
     public readonly string[] instrumentTypes = { "Bass", "Rhythm" };
+    public readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3" };
 
     void Init()
     {
@@ -57,6 +60,9 @@ public class Song {
     {
         try
         {
+            if (!File.Exists(filepath))
+                throw new System.Exception("File does not exist");
+
             bool open = false;
             string dataName = string.Empty;
 
@@ -73,7 +79,7 @@ public class Song {
 
                 if (new Regex(@"\[.+\]").IsMatch(trimmedLine))
                 {
-                    dataName = trimmedLine;//.Trim(new char[] { '[', ']' });
+                    dataName = trimmedLine;
                 }
                 else if (trimmedLine == "{")
                 {
@@ -84,7 +90,7 @@ public class Song {
                     open = false;
 
                     // Submit data
-                    submitChartData(dataName, dataStrings);
+                    submitChartData(dataName, dataStrings, filepath);
 
                     dataName = string.Empty;
                     dataStrings.Clear();
@@ -99,7 +105,7 @@ public class Song {
                     else if (dataStrings.Count > 0 && dataName != string.Empty)
                     {
                         // Submit data
-                        submitChartData(dataName, dataStrings);
+                        submitChartData(dataName, dataStrings, filepath);
 
                         dataName = string.Empty;
                         dataStrings.Clear();
@@ -112,6 +118,27 @@ public class Song {
         catch
         {
             throw new System.Exception("Could not open file");
+        }
+    }
+
+    public void LoadAudio(string filepath)
+    {
+        // Need to check extension
+        if (filepath != string.Empty && File.Exists(filepath))
+        {
+            audioLocation = filepath;
+
+            Debug.Log("Loading audio");
+
+            WWW www = new WWW("file://" + filepath);
+            musicStream = www.GetAudioClip(false, false);
+
+            musicStream.name = Path.GetFileName(filepath);
+            Debug.Log(musicStream.name);
+        }
+        else
+        {
+            Debug.LogError("Unable to locate audio file");
         }
     }
 
@@ -150,41 +177,52 @@ public class Song {
         return highway_speed * (note_time - elapsed_time);
     }
 
-    void submitChartData(string dataName, List<string> stringData)
+    void submitChartData(string dataName, List<string> stringData, string filePath = "")
     {
         switch (dataName)
         {
             case ("[Song]"):
-                submitDataSong(stringData);
+                Debug.Log("Loading chart properties");
+                submitDataSong(stringData, new FileInfo(filePath).Directory.FullName);
                 break;
             case ("[SyncTrack]"):
+                Debug.Log("Loading sync data");
                 submitDataSyncTrack(stringData);
                 break;
             case ("[Events]"):
+                Debug.Log("Loading events data");
                 submitDataEvents(stringData);
                 break;
             case ("[EasySingle]"):
+                Debug.Log("Loading chart EasySingle");
                 easy_single.Load(stringData);
                 break;
             case ("[EasyDoubleBass]"):
+                Debug.Log("Loading chart EasyDoubleBass");
                 easy_double_bass.Load(stringData);
                 break;
             case ("[MediumSingle]"):
+                Debug.Log("Loading chart MediumSingle");
                 medium_single.Load(stringData);
                 break;
             case ("[MediumDoubleBass]"):
+                Debug.Log("Loading chart MediumDoubleBass");
                 medium_double_bass.Load(stringData);
                 break;
             case ("[HardSingle]"):
+                Debug.Log("Loading chart HardSingle");
                 hard_single.Load(stringData);
                 break;
             case ("[HardDoubleBass]"):
+                Debug.Log("Loading chart HardDoubleBass");
                 hard_double_bass.Load(stringData);
                 break;
             case ("[ExpertSingle]"):
+                Debug.Log("Loading chart ExpertSingle");
                 expert_single.Load(stringData);
                 break;
             case ("[ExpertDoubleBass]"):
+                Debug.Log("Loading chart ExpertDoubleBass");
                 expert_double_bass.Load(stringData);
                 break;
             default:
@@ -192,8 +230,12 @@ public class Song {
         }
     }
 
-    void submitDataSong(List<string> stringData)
+    void submitDataSong(List<string> stringData, string audioDirectory = "")
     {
+        Debug.Log("Loading song properties");
+
+        string audioFilepath = string.Empty;
+
         Regex nameRegex = new Regex(@"Name = " + QUOTEVALIDATE);
         Regex artistRegex = new Regex(@"Artist = " + QUOTEVALIDATE);
         Regex charterRegex = new Regex(@"Charter = " + QUOTEVALIDATE);
@@ -205,7 +247,7 @@ public class Song {
         Regex previewEndRegex = new Regex(@"PreviewEnd = " + FLOATSEARCH);
         Regex genreRegex = new Regex(@"Genre = " + QUOTEVALIDATE);
         Regex mediaTypeRegex = new Regex(@"MediaType = " + QUOTEVALIDATE);
-        Regex musicStreamRegex = new Regex(@"MusicStream = " + QUOTEVALIDATE);
+        Regex musicStreamRegex = new Regex(@"MusicStream = " + QUOTEVALIDATE);  
 
         try
         {
@@ -286,9 +328,14 @@ public class Song {
                     mediatype = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
                 }
 
+                // MusicStream = "ENDLESS REBIRTH.ogg"
                 else if (musicStreamRegex.IsMatch(line))
                 {
+                    audioFilepath = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
 
+                    // Check if it's already the full path. If not, make it relative to the chart file.
+                    if (!File.Exists(audioFilepath))
+                        audioFilepath = audioDirectory + "\\" + audioFilepath;
                 }
             }
 
@@ -298,6 +345,9 @@ public class Song {
         {
             Debug.Log(e.Message);
         }
+
+        // Load audio
+        LoadAudio(audioFilepath);
     }
 
     string GetPropertiesString()
@@ -317,19 +367,15 @@ public class Song {
 
     void submitDataSyncTrack(List<string> stringData)
     {
-        /*
-        0 = B 140000
-        0 = TS 4
-        */
         foreach (string line in stringData)
         {
-            if (TimeScale.regexMatch(line))
+            if (TimeSignature.regexMatch(line))
             {
                 MatchCollection matches = Regex.Matches(line, @"\d+");
                 int position = int.Parse(matches[0].ToString());
-                int value = int.Parse(matches[0].ToString());
+                int value = int.Parse(matches[1].ToString());
 
-                SongObject.SortedInsert(new TimeScale(position, value), syncTrack);
+                SongObject.SortedInsert(new TimeSignature(position, value), syncTrack);
             }
             else if (BPM.regexMatch(line))
             {
@@ -349,14 +395,14 @@ public class Song {
         {
             if (sync.GetType() == typeof(BPM))
                 bpmInit = true;
-            else if (sync.GetType() == typeof(TimeScale))
+            else if (sync.GetType() == typeof(TimeSignature))
                 timeScaleInit = true;
         }
 
         if (bpmInit == false)
             SongObject.SortedInsert(new BPM(), syncTrack);
         if (timeScaleInit == false)
-            SongObject.SortedInsert(new TimeScale(), syncTrack);
+            SongObject.SortedInsert(new TimeSignature(), syncTrack);
     }
 
     void submitDataEvents(List<string> stringData)
@@ -410,7 +456,22 @@ public class Song {
         saveString += Globals.TABSPACE + "PreviewEnd = " + previewEnd + "\n";
         saveString += Globals.TABSPACE + "Genre = \"" + genre + "\"\n";
         saveString += Globals.TABSPACE + "MediaType = \"" + mediatype + "\"\n";
-        saveString += Globals.TABSPACE + "MusicStream = \"" + musicStream.name + "\"\n";    // Gonna be wrong, needs extention
+
+        if (musicStream != null)
+        {
+            string musicString;
+
+            // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
+            if (Path.GetDirectoryName(audioLocation) == Path.GetDirectoryName(filepath))
+                musicString = musicStream.name;
+            else
+                musicString = audioLocation;
+
+            saveString += Globals.TABSPACE + "MusicStream = \"" + musicString + "\"\n";
+        }
+        else
+            saveString += Globals.TABSPACE + "MusicStream = \"\"\n";
+
         saveString += "}\n";
 
         // SyncTrack
@@ -466,7 +527,13 @@ public class Song {
             }
         }
 
-        // Save to file
-
+        try {
+            // Save to file
+            File.WriteAllText(filepath, saveString);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError(e.Message);
+        }
     }
 }

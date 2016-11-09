@@ -39,7 +39,7 @@ public class Note : ChartObject
 
     public enum Fret_Type
     {
-        GREEN, RED, YELLOW, BLUE, ORANGE
+        GREEN = 0, RED = 1, YELLOW = 2, BLUE = 3, ORANGE = 4
     }
 
     public enum Note_Type
@@ -77,7 +77,7 @@ public class Note : ChartObject
 
     public override string GetSaveString()
     {    
-        return Globals.TABSPACE + position + " = N " + fret_type + " " + sustain_length + "\n";          // 48 = N 2 0
+        return Globals.TABSPACE + position + " = N " + (int)fret_type + " " + sustain_length + "\n";          // 48 = N 2 0
     }
 
     public string GetFlagsSaveString()

@@ -10,12 +10,15 @@ public class ChartEditorController : MonoBehaviour {
     public RectTransform content;
     public Text songNameText;
 
+    AudioSource source;
+
     Vector3 initPos;
 
     float scrollDelta = 0;
 
     Song currentSong;
     Chart currentChart;
+    string currentFileName = string.Empty;
 
     // Program options
     float mouseScrollSensitivity = 0.5f;
@@ -27,6 +30,8 @@ public class ChartEditorController : MonoBehaviour {
         initPos = transform.position;
         scrollBar.value = 0;
         UpdatePosBasedScrollValue();
+
+        source = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -120,11 +125,18 @@ public class ChartEditorController : MonoBehaviour {
         StartCoroutine(_LoadChart());
     }
 
-    public IEnumerator _LoadChart()
+    public void Save()
+    {
+        if (currentSong != null)
+            currentSong.Save("test.chart");
+    }
+
+    IEnumerator _LoadChart()
     {
         try
         {
-            currentSong = new Song(UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart"));
+            currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart");
+            currentSong = new Song(currentFileName);
 
             // Remove notes from previous chart
             foreach (GameObject note in GameObject.FindGameObjectsWithTag("Note"))
@@ -143,11 +155,26 @@ public class ChartEditorController : MonoBehaviour {
         }
         catch (System.Exception e)
         {
-            Debug.LogError(e.Message);
             // Most likely closed the window explorer, just ignore for now.
+            currentFileName = string.Empty;
+            currentSong = new Song();
+            Debug.LogError(e.Message);
         }
+
         yield return null;
-        scrollBar.value = 0; 
+        scrollBar.value = 0;
+
+        while (currentSong.musicStream != null && currentSong.musicStream.loadState == AudioDataLoadState.Loading)
+        {
+            Debug.Log("Loading audio...");
+            yield return null;
+        }
+
+        if (currentSong.musicStream != null)
+        {
+            source.clip = currentSong.musicStream;
+            source.Play();
+        }
     }
 
     public void AddNewNoteToCurrentChart(Note note, Song song, GameObject parent)

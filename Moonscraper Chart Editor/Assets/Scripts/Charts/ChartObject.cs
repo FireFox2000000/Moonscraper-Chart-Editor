@@ -2,9 +2,7 @@
 using System.Collections;
 using System;
 
-public abstract class ChartObject : SongObject {
-
-}
+public abstract class ChartObject : SongObject {}
 
 public class StarPower : ChartObject
 {

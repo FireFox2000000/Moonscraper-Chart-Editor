@@ -235,9 +235,9 @@ public abstract class SyncTrack : SongObject
     }
 }
 
-public class TimeScale : SyncTrack
+public class TimeSignature : SyncTrack
 {
-    public TimeScale(int _position = 0, int _value = 4) : base (_position, _value) {}
+    public TimeSignature(int _position = 0, int _value = 4) : base (_position, _value) {}
 
     override public string GetSaveString()
     {
