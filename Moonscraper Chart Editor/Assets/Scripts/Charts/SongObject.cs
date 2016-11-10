@@ -181,11 +181,6 @@ public abstract class SongObject {
 
         return insertionPos;
     }
-
-    public float WorldPosition(Song song)
-    {
-        return song.positionToTime(position) / Globals.zoom;
-    }
 }
 
 public class Event : SongObject

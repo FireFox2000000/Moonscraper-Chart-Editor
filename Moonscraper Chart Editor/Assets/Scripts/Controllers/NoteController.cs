@@ -31,7 +31,7 @@ public class NoteController : MonoBehaviour {
     public void UpdateNote()
     {
         // Position
-        transform.position = new Vector3((int)noteProperties.fret_type - 2, noteProperties.WorldPosition(currentSong), 0);
+        transform.position = new Vector3((int)noteProperties.fret_type - 2, currentSong.ChartPositionToWorldYPosition(noteProperties.position), 0);
 
         // Type
         if ((noteProperties.flags & Note.Flags.TAP) == Note.Flags.TAP)

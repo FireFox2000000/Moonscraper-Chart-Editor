@@ -187,7 +187,6 @@ public class Chart  {
                     {
                         int position = int.Parse(digits[0]);
                         int fret_type = int.Parse(digits[1]);
-                        int length = int.Parse(digits[2]);
 
                         Note[] notesToFlag = SongObject.FindObjectsAtPosition(position, chartObjects.OfType<Note>().ToArray());
 

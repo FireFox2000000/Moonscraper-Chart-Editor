@@ -142,6 +142,22 @@ public class Song {
         }
     }
 
+    public float ChartPositionToWorldYPosition(int position)
+    {
+        return positionToTime(position) * Globals.hyperspeed;
+    }
+
+    // TODO - Will be used for snapping
+    public int WorldYPositionToChartPosition(float worldYPos)
+    {
+        return 0;
+    }
+
+    public float WorldYPositionToTime (float worldYPosition)
+    {
+        return worldYPosition / Globals.hyperspeed;
+    }
+
     public float positionToTime(int position)
     {
         double time = 0;
@@ -438,7 +454,6 @@ public class Song {
         return saveString;
     }
 
-    // TODO
     public void Save(string filepath)
     {
         string saveString = string.Empty;

@@ -1,122 +1,25 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 
-public class ChartEditorController : MonoBehaviour {
+public class ChartEditor : MonoBehaviour {
     public GameObject notePrefab;
-    public Scrollbar scrollBar;
-    public RectTransform content;
     public Text songNameText;
+    public Transform strikeline;
 
-    AudioSource source;
+    AudioSource musicSource;
 
-    Vector3 initPos;
-
-    float scrollDelta = 0;
-
-    Song currentSong;
-    Chart currentChart;
+    public Song currentSong { get; private set; }
+    public Chart currentChart { get; private set; }
     string currentFileName = string.Empty;
 
-    // Program options
-    float mouseScrollSensitivity = 0.5f;
+    public MovementController movement;
 
     // Use this for initialization
     void Start () {
         currentSong = new Song();
         currentChart = currentSong.expert_single;
-        initPos = transform.position;
-        scrollBar.value = 0;
-        UpdatePosBasedScrollValue();
-
-        source = GetComponent<AudioSource>();
-    }
-
-    // Update is called once per frame
-	void Update () {
-        if (scrollDelta == 0)
-        {
-            scrollDelta = Input.mouseScrollDelta.y;
-        }
-
-        // Position changes scroll bar value
-        if (scrollDelta != 0)
-        {
-            // Mouse scroll movement
-            transform.position = new Vector3(transform.position.x, transform.position.y + (scrollDelta * mouseScrollSensitivity), transform.position.z);
-
-            if (transform.position.y < initPos.y)
-                transform.position = initPos;
-
-            UpdateScrollValueBasedPos();
-        }
-
-        // Scroll bar value changes position
-        else
-        {
-            UpdatePosBasedScrollValue();
-        }
-    }
-
-    void UpdateScrollValueBasedPos()
-    {
-        UpdateContentHeight();
-
-        // Update the scroll value
-        scrollBar.value = (transform.position.y - initPos.y) / (content.sizeDelta.y * content.transform.lossyScale.y);
-    }
-
-    void UpdatePosBasedScrollValue()
-    {
-        // Scales the ditance moved to the size of the content height
-        float distanceScale = 1 - 2.0f * Camera.main.orthographicSize / (content.rect.height * content.lossyScale.y);
-        
-        // Grabbing the scrollbar
-        float pos = content.rect.height * content.lossyScale.y * scrollBar.value;
-
-        // Apply the position
-        transform.position = new Vector3(transform.position.x, pos + initPos.y, transform.position.z);
-
-        UpdateContentHeight();
-    }
-
-    void UpdateContentHeight()
-    {
-        // Update the content height
-        float user_pos = transform.position.y + Camera.main.orthographicSize - initPos.y;
-        float max = user_pos;
-        if (currentChart != null && currentChart.Length > 0)
-        {
-            float posOfFinalNote = currentChart[currentChart.Length - 1].WorldPosition(currentSong);
-
-            if (currentChart.Length > 0 && posOfFinalNote > user_pos)
-                max = posOfFinalNote;
-
-            ContentHeight(content, max);
-        }
-    }
-
-    void ContentHeight(RectTransform content, float maxHeight)
-    {
-        const float MINHEIGHT = 300;
-        float height = maxHeight / content.transform.lossyScale.y;
-        if (height < MINHEIGHT)
-            height = MINHEIGHT;
-        content.sizeDelta = new Vector2(content.sizeDelta.x, height);
-    }
-
-    void OnGUI()
-    {
-        if (UnityEngine.Event.current.type == EventType.ScrollWheel)
-        {
-            scrollDelta = -UnityEngine.Event.current.delta.y;
-        }
-        else
-        {
-            scrollDelta = 0;
-        }
+        musicSource = GetComponent<AudioSource>();
     }
 
     // Wrapper function
@@ -129,6 +32,21 @@ public class ChartEditorController : MonoBehaviour {
     {
         if (currentSong != null)
             currentSong.Save("test.chart");
+    }
+
+    public void Play()
+    {
+        float strikelinePos = strikeline.position.y;     
+        musicSource.time = currentSong.WorldYPositionToTime(strikelinePos);
+
+        movement.movementMode = MovementController.MovementMode.Playing;
+        musicSource.Play();
+    }
+
+    public void Stop()
+    {
+        movement.movementMode = MovementController.MovementMode.Editor;
+        musicSource.Stop();
     }
 
     IEnumerator _LoadChart()
@@ -147,11 +65,11 @@ public class ChartEditorController : MonoBehaviour {
             currentChart = currentSong.expert_single;
 
             // Add notes for current chart
-            CreateChartObjects(currentChart); 
+            CreateChartObjects(currentChart);
 
             songNameText.text = currentSong.name;
 
-            transform.position = initPos;
+            movement.SetPosition(0);
         }
         catch (System.Exception e)
         {
@@ -159,10 +77,7 @@ public class ChartEditorController : MonoBehaviour {
             currentFileName = string.Empty;
             currentSong = new Song();
             Debug.LogError(e.Message);
-        }
-
-        yield return null;
-        scrollBar.value = 0;
+        } 
 
         while (currentSong.musicStream != null && currentSong.musicStream.loadState == AudioDataLoadState.Loading)
         {
@@ -172,8 +87,7 @@ public class ChartEditorController : MonoBehaviour {
 
         if (currentSong.musicStream != null)
         {
-            source.clip = currentSong.musicStream;
-            source.Play();
+            musicSource.clip = currentSong.musicStream;
         }
     }
 
@@ -197,7 +111,7 @@ public class ChartEditorController : MonoBehaviour {
             controller.nextNote.controller.prevNote = controller.noteProperties;
         }
     }
-    
+
     public void DeleteNoteFromCurrentChart(NoteController controller)
     {
         // Update the linked list
@@ -216,42 +130,42 @@ public class ChartEditorController : MonoBehaviour {
         Destroy(controller.gameObject);
     }
 
-    GameObject CreateChartObjects (Chart chart, Song song, GameObject notePrefab)
+    GameObject CreateChartObjects(Chart chart, Song song, GameObject notePrefab)
     {
         GameObject parent = new GameObject();
         parent.name = "Notes";
 
         Note[] notes = chart.GetNotes();
 
-        for(int i = 0; i < notes.Length; ++i)
+        for (int i = 0; i < notes.Length; ++i)
         {
             NoteController controller = CreateNoteObject(notes[i], song, parent);
-            
+
             // Join the linked list
             if (i > 0)
                 controller.prevNote = notes[i - 1];
             if (i < notes.Length - 1)
                 controller.nextNote = notes[i + 1];
-                
+
             controller.UpdateNote();
         }
 
         return parent;
     }
 
-    GameObject CreateChartObjects (Chart chart)
+    GameObject CreateChartObjects(Chart chart)
     {
         return CreateChartObjects(chart, currentSong, notePrefab);
     }
 
     NoteController CreateNoteObject(Note note, Song song, GameObject parent = null)
-    {    
+    {
         // Convert the chart data into gameobject
-        GameObject noteObject = Instantiate(notePrefab);   
+        GameObject noteObject = Instantiate(notePrefab);
 
         if (parent)
             noteObject.transform.parent = parent.transform;
-        
+
         // Attach the note to the object
         NoteController controller = noteObject.GetComponent<NoteController>();
 

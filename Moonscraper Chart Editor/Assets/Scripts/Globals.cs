@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class Globals : MonoBehaviour {
-    public static float zoom = 0.1f;
+    public static float hyperspeed = 5.0f;
     public static readonly int NOTFOUND = -1;
     public static readonly string TABSPACE = "  ";
 
