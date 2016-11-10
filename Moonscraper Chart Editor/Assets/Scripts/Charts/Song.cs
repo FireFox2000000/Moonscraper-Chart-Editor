@@ -144,13 +144,33 @@ public class Song {
 
     public float ChartPositionToWorldYPosition(int position)
     {
-        return positionToTime(position) * Globals.hyperspeed;
+        return ChartPositionToTime(position) * Globals.hyperspeed;
     }
 
     // TODO - Will be used for snapping
     public int WorldYPositionToChartPosition(float worldYPos)
     {
-        return 0;
+        float time = WorldYPositionToTime(worldYPos);
+        int position = 0;
+
+        BPM prevBPM = new BPM();
+
+        foreach (BPM bpmInfo in syncTrack.OfType<BPM>())
+        {
+            if (ChartPositionToTime(bpmInfo.position) >= time)
+            {
+                break;
+            }
+            else
+            {
+                position += prevBPM.position;
+                prevBPM = bpmInfo;
+            }
+        }
+
+        position += time_to_dis(ChartPositionToTime(prevBPM.position), time, prevBPM.value);
+
+        return position;
     }
 
     public float WorldYPositionToTime (float worldYPosition)
@@ -158,7 +178,7 @@ public class Song {
         return worldYPosition / Globals.hyperspeed;
     }
 
-    public float positionToTime(int position)
+    public float ChartPositionToTime(int position)
     {
         double time = 0;
         BPM prevBPM = new BPM ();
@@ -187,10 +207,9 @@ public class Song {
         return (pos_end - pos_start) / 192.0 * 60.0 / bpm;
     }
 
-    // Returns the distance from the strikeline a note should be
-    static float note_distance(float highway_speed, float elapsed_time, float note_time)
+    static int time_to_dis(float time_start, float time_end, double bpm)
     {
-        return highway_speed * (note_time - elapsed_time);
+        return (int)((time_end - time_start) * bpm / 60.0 * 192);
     }
 
     void submitChartData(string dataName, List<string> stringData, string filePath = "")
