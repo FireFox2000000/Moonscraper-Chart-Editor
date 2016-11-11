@@ -20,7 +20,6 @@ public class StrikelineController : MonoBehaviour {
     {
         if (movement.movementMode == MovementController.MovementMode.Playing && col.transform.position.y != lastClapPos)
         {
-            Debug.Log("Note");
             source.PlayOneShot(clap);
 
             lastClapPos = col.transform.position.y;

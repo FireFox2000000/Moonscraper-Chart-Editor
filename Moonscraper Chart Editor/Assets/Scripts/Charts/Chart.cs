@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 
 public class Chart  {
+    Song song;
     public List<ChartObject> chartObjects;
 
     public ChartObject this[int i]
@@ -14,8 +15,9 @@ public class Chart  {
 
     public int Length { get { return chartObjects.Count; } }
 
-    public Chart ()
+    public Chart (Song _song)
     {
+        song = _song;
         chartObjects = new List<ChartObject>();
     }
 
@@ -148,7 +150,7 @@ public class Chart  {
                         else
                         {
                             // Add note to the data
-                            Note newNote = new Note(position, (Note.Fret_Type)fret_type, length);
+                            Note newNote = new Note(song, this, position, (Note.Fret_Type)fret_type, length);
                             Add(newNote);
                         }
                     }
@@ -161,7 +163,7 @@ public class Chart  {
                     int position = int.Parse(digits[0]);
                     int length = int.Parse(digits[2]);
 
-                    Add(new StarPower(position, length));
+                    Add(new StarPower(song, this, position, length));
                 }
                 
                 else if (noteEventRegex.IsMatch(line))
@@ -171,7 +173,7 @@ public class Chart  {
                     int position = int.Parse(strings[0]);
                     string eventName = strings[3];
 
-                    Add(new ChartEvent(position, eventName));
+                    Add(new ChartEvent(song, this, position, eventName));
                 }
             }
 

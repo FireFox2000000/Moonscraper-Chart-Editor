@@ -12,14 +12,13 @@ public class Note : ChartObject
 
     public NoteController controller = null;
 
-    public Note(int _position, 
+    public Note(Song song, Chart chart, int _position, 
                 Fret_Type _fret_type, 
                 int _sustain = 0, 
                 Flags _flags = Flags.NONE,
                 Note_Type _note_type = Note_Type.NORMAL, 
-                Special_Type _special_type = Special_Type.NONE)
+                Special_Type _special_type = Special_Type.NONE) : base(song, chart, _position)
     {
-        position = _position;
         sustain_length = _sustain;
         flags = _flags;
         fret_type = _fret_type;
@@ -27,7 +26,7 @@ public class Note : ChartObject
         special_type = _special_type;
     }
 
-    public Note (Note note)
+    public Note (Note note) : base(note.song, note.chart, note.position)
     {
         position = note.position;
         sustain_length = note.sustain_length;

@@ -1,12 +1,19 @@
-﻿public abstract class ChartObject : SongObject {}
+﻿public abstract class ChartObject : SongObject
+{
+    public Chart chart;
+
+    public ChartObject(Song song, Chart _chart, int position) : base(song, position)
+    {
+        chart = _chart;
+    }
+}
 
 public class StarPower : ChartObject
 {
     public int length;
 
-    public StarPower(int _position, int _length)
+    public StarPower(Song song, Chart chart, int _position, int _length) : base (song, chart, _position)
     {
-        position = _position;
         length = _length;
     }
 
@@ -21,9 +28,8 @@ public class ChartEvent : ChartObject
 {
     public string eventName;
 
-    public ChartEvent(int _position, string _eventName)
+    public ChartEvent(Song song, Chart chart, int _position, string _eventName) : base(song, chart, _position)
     {
-        position = _position;
         eventName = _eventName;
     }
 

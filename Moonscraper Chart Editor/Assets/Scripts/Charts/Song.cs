@@ -37,7 +37,8 @@ public class Song {
     public readonly string[] instrumentTypes = { "Bass", "Rhythm" };
     public readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3" };
 
-    void Init()
+    // Constructor for a new chart
+    public Song()
     {
         events = new List<Event>();
         syncTrack = new List<SyncTrack>();
@@ -45,18 +46,12 @@ public class Song {
         // Chart initialisation
         for (int i = 0; i < charts.Length; ++i)
         {
-            charts[i] = new Chart();
+            charts[i] = new Chart(this);
         }
     }
 
-    // Constructor for a new chart
-    public Song()
-    {
-        Init();
-    }
-
     // Constructor for loading a chart
-    public Song(string filepath)
+    public Song(string filepath) : this()
     {
         try
         {
@@ -70,8 +65,6 @@ public class Song {
 
             string[] fileLines = File.ReadAllLines(filepath);
             Debug.Log("Loading");
-
-            Init();
 
             for (int i = 0; i < fileLines.Length; ++i)
             {
@@ -141,7 +134,7 @@ public class Song {
             Debug.LogError("Unable to locate audio file");
         }
     }
-
+    
     public float ChartPositionToWorldYPosition(int position)
     {
         return ChartPositionToTime(position) * Globals.hyperspeed;
@@ -153,7 +146,7 @@ public class Song {
         float time = WorldYPositionToTime(worldYPos);
         int position = 0;
 
-        BPM prevBPM = new BPM();
+        BPM prevBPM = new BPM(this);
 
         foreach (BPM bpmInfo in syncTrack.OfType<BPM>())
         {
@@ -181,7 +174,7 @@ public class Song {
     public float ChartPositionToTime(int position)
     {
         double time = 0;
-        BPM prevBPM = new BPM ();
+        BPM prevBPM = new BPM (this);
 
         foreach (BPM bpmInfo in syncTrack.OfType<BPM>())
         {
@@ -410,7 +403,7 @@ public class Song {
                 int position = int.Parse(matches[0].ToString());
                 int value = int.Parse(matches[1].ToString());
 
-                SongObject.SortedInsert(new TimeSignature(position, value), syncTrack);
+                SongObject.SortedInsert(new TimeSignature(this, position, value), syncTrack);
             }
             else if (BPM.regexMatch(line))
             {
@@ -418,7 +411,7 @@ public class Song {
                 int position = int.Parse(matches[0].ToString());
                 int value = int.Parse(matches[1].ToString());
 
-                SongObject.SortedInsert(new BPM(position, value), syncTrack);
+                SongObject.SortedInsert(new BPM(this, position, value), syncTrack);
             }
         }
 
@@ -435,9 +428,9 @@ public class Song {
         }
 
         if (bpmInit == false)
-            SongObject.SortedInsert(new BPM(), syncTrack);
+            SongObject.SortedInsert(new BPM(this), syncTrack);
         if (timeScaleInit == false)
-            SongObject.SortedInsert(new TimeSignature(), syncTrack);
+            SongObject.SortedInsert(new TimeSignature(this), syncTrack);
     }
 
     void submitDataEvents(List<string> stringData)
@@ -449,14 +442,14 @@ public class Song {
                 // Add a section
                 string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"').Substring(8);
                 int position = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
-                events.Add(new Section(title, position));
+                events.Add(new Section(this, title, position));
             }
             else if (Event.regexMatch(line))    // 125952 = E "end"
             {
                 // Add an event
                 string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
                 int position = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
-                events.Add(new Event(title, position));
+                events.Add(new Event(this, title, position));
             }
         }
     }

@@ -107,7 +107,7 @@ public class MovementController : MonoBehaviour {
         float max = user_pos;
         if (editor.currentChart != null && editor.currentChart.Length > 0)
         {
-            float posOfFinalNote = editor.currentSong.ChartPositionToWorldYPosition(editor.currentChart[editor.currentChart.Length - 1].position);
+            float posOfFinalNote = editor.currentChart[editor.currentChart.Length - 1].worldYPosition;
 
             if (editor.currentChart.Length > 0 && posOfFinalNote > user_pos)
                 max = posOfFinalNote;

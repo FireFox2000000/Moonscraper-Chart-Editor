@@ -3,7 +3,22 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 public abstract class SongObject {
+    public Song song;
     public int position;
+
+    public SongObject (Song _song, int _position)
+    {
+        song = _song;
+        position = _position;
+    }
+    
+    public float worldYPosition
+    {
+        get
+        {
+            return song.ChartPositionToWorldYPosition(position);
+        }
+    }
 
     public abstract string GetSaveString();
     
@@ -187,10 +202,9 @@ public class Event : SongObject
 {
     public string title;
 
-    public Event(string _title, int _position)
+    public Event(Song song, string _title, int _position) : base(song, _position)
     {
         title = _title;
-        position = _position;
     }
 
     public override string GetSaveString()
@@ -206,7 +220,7 @@ public class Event : SongObject
 
 public class Section : Event
 {
-    public Section(string _title, int _position) : base(_title, _position) { }
+    public Section(Song song, string _title, int _position) : base(song, _title, _position) { }
 
     public override string GetSaveString()
     {
@@ -223,16 +237,15 @@ public abstract class SyncTrack : SongObject
 {
     public int value;
 
-    public SyncTrack (int _position, int _value)
+    public SyncTrack (Song song, int _position, int _value) : base (song, _position)
     {
-        position = _position;
         value = _value;
     }
 }
 
 public class TimeSignature : SyncTrack
 {
-    public TimeSignature(int _position = 0, int _value = 4) : base (_position, _value) {}
+    public TimeSignature(Song song, int _position = 0, int _value = 4) : base (song, _position, _value) {}
 
     override public string GetSaveString()
     {
@@ -248,7 +261,7 @@ public class TimeSignature : SyncTrack
 
 public class BPM : SyncTrack
 {
-    public BPM(int _position = 0, int _value = 120000) : base (_position, _value) { }
+    public BPM(Song song, int _position = 0, int _value = 120000) : base (song, _position, _value) { }
 
     override public string GetSaveString()
     {

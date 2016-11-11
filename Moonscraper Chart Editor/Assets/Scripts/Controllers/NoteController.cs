@@ -2,9 +2,7 @@
 using System.Collections;
 
 public class NoteController : MonoBehaviour {
-    public Song currentSong;
-
-    public Note noteProperties;
+    public Note note;
     public Note prevNote = null;        // Linked list style
     public Note nextNote = null;
 
@@ -17,46 +15,44 @@ public class NoteController : MonoBehaviour {
 
     void OnMouseDown()
     {
-        Debug.Log(noteProperties.position);
-        Debug.Log(noteProperties.forced);
+        Debug.Log(note.position);
     }
 
-    public void Init(Note note, Song song)
+    public void Init(Note note)
     {
-        noteProperties = note;
-        currentSong = song;
-        noteProperties.controller = this;
+        this.note = note;
+        this.note.controller = this;
     }
 
     public void UpdateNote()
     {
         // Position
-        transform.position = new Vector3((int)noteProperties.fret_type - 2, currentSong.ChartPositionToWorldYPosition(noteProperties.position), 0);
+        transform.position = new Vector3((int)note.fret_type - 2, note.song.ChartPositionToWorldYPosition(note.position), 0);
 
         // Type
-        if ((noteProperties.flags & Note.Flags.TAP) == Note.Flags.TAP)
+        if ((note.flags & Note.Flags.TAP) == Note.Flags.TAP)
         {
-            noteProperties.note_type = Note.Note_Type.TAP;
+            note.note_type = Note.Note_Type.TAP;
         }
         else
         {
             if (IsHopo)
-                noteProperties.note_type = Note.Note_Type.HOPO;
+                note.note_type = Note.Note_Type.HOPO;
             else
-                noteProperties.note_type = Note.Note_Type.NORMAL;
+                note.note_type = Note.Note_Type.NORMAL;
         }
 
         // Sprite
-        switch (noteProperties.note_type)
+        switch (note.note_type)
         {
             case (Note.Note_Type.HOPO):
-                noteRenderer.sprite = Globals.hopoSprites[(int)noteProperties.fret_type];
+                noteRenderer.sprite = Globals.hopoSprites[(int)note.fret_type];
                 break;
             case (Note.Note_Type.TAP):
-                noteRenderer.sprite = Globals.tapSprites[(int)noteProperties.fret_type];
+                noteRenderer.sprite = Globals.tapSprites[(int)note.fret_type];
                 break;
             default:
-                noteRenderer.sprite = Globals.normalSprites[(int)noteProperties.fret_type];
+                noteRenderer.sprite = Globals.normalSprites[(int)note.fret_type];
                 break;
         }
     }
@@ -65,9 +61,9 @@ public class NoteController : MonoBehaviour {
     {
         get
         {
-            if (prevNote != null && prevNote.position == noteProperties.position)
+            if (prevNote != null && prevNote.position == note.position)
                 return true;
-            else if (nextNote != null && nextNote.position == noteProperties.position)
+            else if (nextNote != null && nextNote.position == note.position)
                 return true;
             else
                 return false;
@@ -83,18 +79,18 @@ public class NoteController : MonoBehaviour {
             if (!IsChord && prevNote != null)
             {
                 // Need to consider whether the previous note was a chord, and if they are the same type of note
-                if (prevNote.controller.IsChord || (!prevNote.controller.IsChord && noteProperties.fret_type != prevNote.fret_type))
+                if (prevNote.controller.IsChord || (!prevNote.controller.IsChord && note.fret_type != prevNote.fret_type))
                 {
                     // Check distance from previous note 
                     const int HOPODistance = 95;
 
-                    if (noteProperties.position - prevNote.position < HOPODistance)
+                    if (note.position - prevNote.position < HOPODistance)
                         HOPO = true;
                 }
             }
 
             // Check if forced
-            if (noteProperties.forced)
+            if (note.forced)
                 HOPO = !HOPO;
 
             return HOPO;

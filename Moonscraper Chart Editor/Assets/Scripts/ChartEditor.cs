@@ -91,24 +91,24 @@ public class ChartEditor : MonoBehaviour {
         }
     }
 
-    public void AddNewNoteToCurrentChart(Note note, Song song, GameObject parent)
+    public void AddNewNoteToCurrentChart(Note note, GameObject parent)
     {
         // Insert note into current chart
         int position = currentChart.Add(note);
 
         // Create note object
-        NoteController controller = CreateNoteObject(note, song, parent);
+        NoteController controller = CreateNoteObject(note, parent);
 
         // Update the linked list
         if (position > 0)
         {
             controller.prevNote = currentChart.FindPreviousNote(position);
-            controller.prevNote.controller.nextNote = controller.noteProperties;
+            controller.prevNote.controller.nextNote = controller.note;
         }
         if (position < currentChart.Length - 1)
         {
             controller.nextNote = currentChart.FindNextNote(position);
-            controller.nextNote.controller.prevNote = controller.noteProperties;
+            controller.nextNote.controller.prevNote = controller.note;
         }
     }
 
@@ -121,7 +121,7 @@ public class ChartEditor : MonoBehaviour {
             controller.nextNote.controller.prevNote = controller.prevNote;
 
         // Remove note from the chart data
-        if (currentChart.Remove(controller.noteProperties))
+        if (currentChart.Remove(controller.note))
             Debug.Log("Note successfully removed");
         else
             Debug.LogError("Note was not removed from data");
@@ -130,7 +130,7 @@ public class ChartEditor : MonoBehaviour {
         Destroy(controller.gameObject);
     }
 
-    GameObject CreateChartObjects(Chart chart, Song song, GameObject notePrefab)
+    GameObject CreateChartObjects(Chart chart, GameObject notePrefab)
     {
         GameObject parent = new GameObject();
         parent.name = "Notes";
@@ -139,7 +139,7 @@ public class ChartEditor : MonoBehaviour {
 
         for (int i = 0; i < notes.Length; ++i)
         {
-            NoteController controller = CreateNoteObject(notes[i], song, parent);
+            NoteController controller = CreateNoteObject(notes[i], parent);
 
             // Join the linked list
             if (i > 0)
@@ -155,10 +155,10 @@ public class ChartEditor : MonoBehaviour {
 
     GameObject CreateChartObjects(Chart chart)
     {
-        return CreateChartObjects(chart, currentSong, notePrefab);
+        return CreateChartObjects(chart, notePrefab);
     }
 
-    NoteController CreateNoteObject(Note note, Song song, GameObject parent = null)
+    NoteController CreateNoteObject(Note note, GameObject parent = null)
     {
         // Convert the chart data into gameobject
         GameObject noteObject = Instantiate(notePrefab);
@@ -170,7 +170,7 @@ public class ChartEditor : MonoBehaviour {
         NoteController controller = noteObject.GetComponent<NoteController>();
 
         // Link controller and note together
-        controller.Init(note, song);
+        controller.Init(note);
 
         return controller;
     }

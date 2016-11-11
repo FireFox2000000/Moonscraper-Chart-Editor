@@ -11,7 +11,7 @@ public class Globals : MonoBehaviour {
 
     public static void IncrementStep()
     {
-        if (_step < 192)
+        if (_step < 768)
         {
             if (lsbOffset % 2 == 0)
             {
