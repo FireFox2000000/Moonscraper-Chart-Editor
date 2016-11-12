@@ -13,7 +13,17 @@ public class Chart  {
         set { chartObjects[i] = value; }
     }
 
+    public int noteCount { get { return chartObjects.OfType<Note>().Count(); } }
     public int Length { get { return chartObjects.Count; } }
+    public float endTime
+    {
+        get
+        {
+            float objectTime = chartObjects[chartObjects.Count - 1].time;
+
+            return song.length > objectTime ? song.length : objectTime;
+        }
+    }
 
     public Chart (Song _song)
     {

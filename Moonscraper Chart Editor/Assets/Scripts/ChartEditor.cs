@@ -40,13 +40,13 @@ public class ChartEditor : MonoBehaviour {
         float strikelinePos = strikeline.position.y;
         musicSource.time = Song.WorldYPositionToTime(strikelinePos) + currentSong.offset;       // No need to add audio calibration as position is base on the strikeline position
 
-        movement.movementMode = MovementController.MovementMode.Playing;
+        movement.applicationMode = MovementController.ApplicationMode.Playing;
         musicSource.Play();
     }
 
     public void Stop()
     {
-        movement.movementMode = MovementController.MovementMode.Editor;
+        movement.applicationMode = MovementController.ApplicationMode.Editor;
         musicSource.Stop();
     }
 

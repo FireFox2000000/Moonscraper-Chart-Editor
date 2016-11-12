@@ -12,13 +12,9 @@ public abstract class SongObject {
         position = _position;
     }
     
-    public float worldYPosition
-    {
-        get
-        {
-            return song.ChartPositionToWorldYPosition(position);
-        }
-    }
+    public float worldYPosition { get { return song.ChartPositionToWorldYPosition(position); } }
+
+    public float time { get { return song.ChartPositionToTime(position); } }
 
     public abstract string GetSaveString();
     

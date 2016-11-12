@@ -12,8 +12,11 @@ public class Song {
     public int difficulty = 0;
     public float offset = 0, resolution = 192, previewStart = 0, previewEnd = 0;
     public string genre = "rock", mediatype = "cd";
-    public AudioClip musicStream;
+    public AudioClip musicStream = null;
+
     string audioLocation = string.Empty;
+
+    public float length { get { return musicStream == null ? 0 : musicStream.length; } }
 
     // Charts
     Chart[] charts = new Chart[8];
@@ -50,7 +53,13 @@ public class Song {
         }
     }
 
-    // Constructor for loading a chart
+    // Creating a new song
+    public Song(AudioClip _musicStream) : this()
+    {
+        musicStream = _musicStream;
+    }
+
+    // Loading a chart file
     public Song(string filepath) : this()
     {
         try

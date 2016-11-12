@@ -29,7 +29,7 @@ public class StrikelineAudioController : MonoBehaviour {
     {
         NoteController note = col.gameObject.GetComponentInParent<NoteController>();
 
-        if (note != null && movement.movementMode == MovementController.MovementMode.Playing && col.transform.position.y != lastClapPos)
+        if (note != null && movement.applicationMode == MovementController.ApplicationMode.Playing && col.transform.position.y != lastClapPos)
         {
             switch (note.note.note_type)
             {

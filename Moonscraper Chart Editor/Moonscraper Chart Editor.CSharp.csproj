@@ -71,6 +71,7 @@
     <Compile Include="Assets\Scripts\Charts\SongObject.cs" />
     <Compile Include="Assets\Scripts\Controllers\MovementController.cs" />
     <Compile Include="Assets\Scripts\Controllers\NoteController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\ScrollbarMovementController.cs" />
     <Compile Include="Assets\Scripts\Controllers\StrikelineAudioController.cs" />
     <Compile Include="Assets\Scripts\Globals.cs" />
     <Compile Include="Assets\Scripts\Utility.cs" />
