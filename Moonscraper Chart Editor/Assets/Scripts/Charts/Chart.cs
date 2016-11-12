@@ -5,21 +5,23 @@ using System.Linq;
 
 public class Chart  {
     Song song;
-    List<ChartObject> chartObjects;
+    List<ChartObject> _chartObjects;
+
+    public ChartObject[] chartObjects { get { return _chartObjects.ToArray(); } }
 
     public ChartObject this[int i]
     {
-        get { return chartObjects[i]; }
-        set { chartObjects[i] = value; }
+        get { return _chartObjects[i]; }
+        set { _chartObjects[i] = value; }
     }
 
-    public int noteCount { get { return chartObjects.OfType<Note>().Count(); } }
-    public int Length { get { return chartObjects.Count; } }
+    public int noteCount { get { return _chartObjects.OfType<Note>().Count(); } }
+    public int Length { get { return _chartObjects.Count; } }
     public float endTime
     {
         get
         {
-            float objectTime = chartObjects[chartObjects.Count - 1].time;
+            float objectTime = _chartObjects[_chartObjects.Count - 1].time;
 
             return song.length > objectTime ? song.length : objectTime;
         }
@@ -28,34 +30,34 @@ public class Chart  {
     public Chart (Song _song)
     {
         song = _song;
-        chartObjects = new List<ChartObject>();
+        _chartObjects = new List<ChartObject>();
     }
 
     // Insert into a sorted position
     // Return the position it was inserted into
     public int Add (ChartObject chartObject)
     {
-        return SongObject.SortedInsert(chartObject, chartObjects);
+        return SongObject.SortedInsert(chartObject, _chartObjects);
     }
 
     public bool Remove (ChartObject chartObject)
     {
-        int pos = SongObject.FindObjectPosition(chartObject, chartObjects.ToArray()); //BinarySearchChartExactNote(note);
+        int pos = SongObject.FindObjectPosition(chartObject, _chartObjects.ToArray()); //BinarySearchChartExactNote(note);
 
         if (pos == Globals.NOTFOUND)
             return false;
         else
         {
-            chartObjects.RemoveAt(pos);
+            _chartObjects.RemoveAt(pos);
             return true;
         }
     }
 
     public ChartObject[] ToArray()
     {
-        return chartObjects.ToArray();
+        return _chartObjects.ToArray();
     }
-
+    /*
     public Note FindPreviousNote (Note note)
     {
         // Binary search
@@ -66,27 +68,7 @@ public class Chart  {
         else
             return null;
     }
-
-    public Note FindPreviousNote (int position)
-    {
-        // Linear search
-        if (position < 0 || position > chartObjects.Count - 1 || chartObjects[position].GetType() != typeof(Note))
-            return null;
-        else
-        {
-            --position;
-
-            while (position >= 0)
-            {
-                if (chartObjects[position].GetType() == typeof(Note))
-                    return (Note)chartObjects[position];
-                --position;
-            }
-
-            return null;
-        }
-    }
-
+    
     public Note FindNextNote (Note note)
     {
         // Binary search
@@ -97,30 +79,11 @@ public class Chart  {
         else
             return null;
     }
-
-    public Note FindNextNote (int position)
-    {
-        // Linear search
-        if (position < 0 || position > chartObjects.Count - 1 || chartObjects[position].GetType() != typeof(Note))
-            return null;
-        else
-        {
-            ++position;
-
-            while (position < chartObjects.Count)
-            {
-                if (chartObjects[position].GetType() == typeof(Note))
-                    return (Note)chartObjects[position];
-                ++position;
-            }
-
-            return null;
-        }
-    }
+    */
 
     public Note[] GetNotes()
     {
-        return chartObjects.OfType<Note>().ToArray();
+        return _chartObjects.OfType<Note>().ToArray();
     }
 
     public void Load(List<string> data)
@@ -200,7 +163,7 @@ public class Chart  {
                         int position = int.Parse(digits[0]);
                         int fret_type = int.Parse(digits[1]);
 
-                        Note[] notesToFlag = SongObject.FindObjectsAtPosition(position, chartObjects.OfType<Note>().ToArray());
+                        Note[] notesToFlag = SongObject.FindObjectsAtPosition(position, _chartObjects.OfType<Note>().ToArray());
 
                         // TODO
                         if (fret_type > 4 || fret_type < 0)
@@ -225,7 +188,7 @@ public class Chart  {
         {
             // Bad load, most likely a parsing error
             Debug.LogError(e.Message);
-            chartObjects.Clear();
+            _chartObjects.Clear();
         }
     }
 
@@ -233,15 +196,16 @@ public class Chart  {
     {
         string chart = string.Empty;
 
-        for(int i = 0; i < chartObjects.Count; ++i)
+        for(int i = 0; i < _chartObjects.Count; ++i)
         {
-            chart += chartObjects[i].GetSaveString();
+            chart += _chartObjects[i].GetSaveString();
 
-            if (chartObjects[i].GetType() == typeof(Note))
+            if (_chartObjects[i].GetType() == typeof(Note))
             {
                 // if the next note is not at the same position, add flags
-                Note currentNote = (Note)chartObjects[i];    
-                Note nextNote = FindNextNote(i);
+                Note currentNote = (Note)_chartObjects[i];    
+                //Note nextNote = FindNextNote(i);
+                Note nextNote = (Note)SongObject.FindNext(typeof(Note), i, chartObjects);
 
                 if (nextNote != null && nextNote.position != currentNote.position)
                     chart += currentNote.GetFlagsSaveString();

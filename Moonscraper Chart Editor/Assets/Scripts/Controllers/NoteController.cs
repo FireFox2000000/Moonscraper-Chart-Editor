@@ -16,6 +16,7 @@ public class NoteController : MonoBehaviour {
     void OnMouseDown()
     {
         Debug.Log(note.position);
+        Debug.Log(note.forced);
     }
 
     public void Init(Note note)

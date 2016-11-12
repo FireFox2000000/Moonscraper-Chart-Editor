@@ -46,6 +46,9 @@ public class Song {
         events = new List<Event>();
         syncTrack = new List<SyncTrack>();
 
+        Add(new BPM(this));
+        Add(new TimeSignature(this));
+
         // Chart initialisation
         for (int i = 0; i < charts.Length; ++i)
         {
@@ -114,6 +117,8 @@ public class Song {
                     }
                 }
             }
+
+            // Check that there is an initial bpm and time signature
 
             Debug.Log("Complete");
         }
@@ -215,9 +220,9 @@ public class Song {
 
     public bool Remove<T>(T syncTrackObject) where T : SyncTrack
     {
-        if (syncTrackObject.position >= 0)
+        if (syncTrackObject.position > 0)
         {
-            int pos = SongObject.FindObjectPosition(syncTrackObject, syncTrack.ToArray()); //BinarySearchChartExactNote(note);
+            int pos = SongObject.FindObjectPosition(syncTrackObject, syncTrack.ToArray());
 
             if (pos == Globals.NOTFOUND)
                 return false;
@@ -451,23 +456,6 @@ public class Song {
                 Add(new BPM(this, position, value));
             }
         }
-
-        // Validate that there are base values
-        SyncTrack[] initSync = SongObject.FindObjectsAtPosition(0, syncTrack.ToArray());
-        bool bpmInit = false, timeScaleInit = false;
-
-        foreach (SyncTrack sync in initSync)
-        {
-            if (sync.GetType() == typeof(BPM))
-                bpmInit = true;
-            else if (sync.GetType() == typeof(TimeSignature))
-                timeScaleInit = true;
-        }
-
-        if (bpmInit == false)
-            Add(new BPM(this));
-        if (timeScaleInit == false)
-            Add(new TimeSignature(this));
     }
 
     void submitDataEvents(List<string> stringData)

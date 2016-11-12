@@ -112,12 +112,12 @@ public class ChartEditor : MonoBehaviour {
         // Update the linked list
         if (position > 0)
         {
-            controller.prevNote = currentChart.FindPreviousNote(position);
+            controller.prevNote = (Note)SongObject.FindPrevious(typeof(Note), position, currentChart.chartObjects);
             controller.prevNote.controller.nextNote = controller.note;
         }
         if (position < currentChart.Length - 1)
         {
-            controller.nextNote = currentChart.FindNextNote(position);
+            controller.nextNote = (Note)SongObject.FindNext(typeof(Note), position, currentChart.chartObjects);
             controller.nextNote.controller.prevNote = controller.note;
         }
     }

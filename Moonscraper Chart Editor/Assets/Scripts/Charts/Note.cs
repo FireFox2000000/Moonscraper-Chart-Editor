@@ -91,53 +91,40 @@ public class Note : ChartObject
 
         return saveString;
     }
-
-    public static bool operator == (Note a, Note b)
+    
+    protected override bool Equals(SongObject b)
     {
-        if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+        if (b.GetType() == typeof(Note))
         {
-            if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
-                return true;
-            else if (!ReferenceEquals(a, null) && !ReferenceEquals(b, null))
+            Note realB = b as Note;
+            if (position == realB.position && fret_type == realB.fret_type)
                 return true;
             else
                 return false;
         }
         else
+            return base.Equals(b);
+    }
+
+    protected override bool LessThan(SongObject b)
+    {
+        if (b.GetType() == typeof(Note))
         {
-            if (a.position == b.position && a.fret_type == b.fret_type)
+            Note realB = b as Note;
+            if (position < b.position)
                 return true;
-            else
-                return false;
-        }
-    }
+            else if (position == b.position)
+            {
+                if (fret_type < realB.fret_type)
+                    return true;
+            }
 
-    public static bool operator !=(Note a, Note b)
-    {
-        return !(a == b);
-    }
-
-    public static bool operator < (Note a, Note b)
-    {
-        if (a.position < b.position)
-            return true;
-        else if (a.position == b.position)
-        {
-            if (a.fret_type < b.fret_type)
-                return true;
-        }
-
-        return false;
-    }
-
-    public static bool operator > (Note a, Note b)
-    {
-        if (a != b)
-            return !(a < b);
-        else
             return false;
+        }
+        else
+            return base.LessThan(b);
     }
-
+    
     public static void groupAddFlags (Note[] notes, Flags flag)
     {
         for (int i = 0; i < notes.Length; ++i)

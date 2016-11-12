@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 public abstract class SongObject {
     public Song song;
@@ -30,12 +31,15 @@ public abstract class SongObject {
                 return false;
         }
         else
-        {
-            if (a.position == b.position)
-                return true;
-            else
-                return false;
-        }
+            return a.Equals(b);
+    }
+
+    protected virtual bool Equals(SongObject b)
+    {
+        if (position == b.position)
+            return true;
+        else
+            return false;
     }
 
     public static bool operator !=(SongObject a, SongObject b)
@@ -43,12 +47,17 @@ public abstract class SongObject {
         return !(a == b);
     }
 
+    protected virtual bool LessThan(SongObject b)
+    {
+        if (position < b.position)
+            return true;
+        else
+            return false;
+    }
+
     public static bool operator <(SongObject a, SongObject b)
     {
-        if (a.position < b.position)
-            return true;
-        else 
-            return false;
+        return a.LessThan(b);
     }
 
     public static bool operator >(SongObject a, SongObject b)
@@ -170,18 +179,102 @@ public abstract class SongObject {
         return pos;
     }
 
+    public static int FindPreviousPosition<T>(System.Type type, int startPosition, T[] list) where T : SongObject
+    {
+        // Linear search
+        if (startPosition < 0 || startPosition > list.Length - 1)
+            return Globals.NOTFOUND;
+        else
+        {
+            --startPosition;
+
+            while (startPosition >= 0)
+            {
+                if (list[startPosition].GetType() == type)
+                    return startPosition;
+                --startPosition;
+            }
+
+            return Globals.NOTFOUND;
+        }
+    }
+
+    public static T FindPrevious<T>(System.Type type, int startPosition, T[] list) where T : SongObject
+    {
+        int pos = FindPreviousPosition(type, startPosition, list);
+        if (pos == Globals.NOTFOUND)
+            return null;
+        else
+            return list[pos];
+    }
+
+    public static int FindNextPosition<T>(System.Type type, int startPosition, T[] list) where T : SongObject
+    {
+        // Linear search
+        if (startPosition < 0 || startPosition > list.Length - 1)
+            return Globals.NOTFOUND;
+        else
+        {
+            ++startPosition;
+
+            while (startPosition < list.Length)
+            {
+                if (list[startPosition].GetType() == type)
+                    return startPosition;
+                ++startPosition;
+            }
+
+            return Globals.NOTFOUND;
+        }
+    }
+
+    public static T FindNext<T>(System.Type type, int startPosition, T[] list) where T : SongObject
+    {
+        int pos = FindNextPosition(type, startPosition, list);
+        if (pos == Globals.NOTFOUND)
+            return null;
+        else
+            return list[pos];
+    }
+
     public static int SortedInsert<T>(T item, List<T> list) where T : SongObject
     {
-        int insertionPos = FindClosestPosition(item, list.ToArray()); //BinarySearchChartClosestNote(note);
+        bool overwrite = false;
+        
+        int insertionPos = FindClosestPosition(item, list.ToArray());   
 
-        if (list.Count > 0 && insertionPos != Globals.NOTFOUND && list[insertionPos] != item)
+        // Needs to overwrite
+        if (list.Count > 0 && insertionPos != Globals.NOTFOUND)// && list[insertionPos] != item)
         {
-            // Insert into sorted position
-            if (item > list[insertionPos])
+            int prevPosition = FindPreviousPosition(item.GetType(), insertionPos, list.ToArray());
+            int nextPosition = FindNextPosition(item.GetType(), insertionPos, list.ToArray());
+
+            if (prevPosition != Globals.NOTFOUND && list[prevPosition] == item)
             {
-                ++insertionPos;
+                // Overwrite
+                list[prevPosition] = item;
+                insertionPos = prevPosition;       
             }
-            list.Insert(insertionPos, item);
+            else if (nextPosition != Globals.NOTFOUND && list[nextPosition] == item)
+            {
+                // Overwrite
+                list[nextPosition] = item;
+                insertionPos = nextPosition;
+            }
+            else if (item == list[insertionPos] && item.GetType() == list[insertionPos].GetType())
+            {
+                // Overwrite 
+                list[insertionPos] = item;
+            }
+            // Insert into sorted position
+            else
+            {   
+                if (item > list[insertionPos])
+                {
+                    ++insertionPos;
+                }
+                list.Insert(insertionPos, item);
+            }
         }
         else
         {
