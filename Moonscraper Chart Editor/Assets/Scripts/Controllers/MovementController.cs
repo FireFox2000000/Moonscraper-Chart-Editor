@@ -14,6 +14,7 @@ public class MovementController : MonoBehaviour {
 
     public ChartEditor editor;
 
+    [HideInInspector]
     public MovementMode movementMode = MovementMode.Editor;
 
     // Use this for initialization
@@ -26,7 +27,7 @@ public class MovementController : MonoBehaviour {
     Vector3 prevPos = Vector3.zero;
 
     // Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
         if (movementMode == MovementMode.Editor)
         {
             if (scrollDelta == 0)
@@ -57,7 +58,7 @@ public class MovementController : MonoBehaviour {
             // Auto scroll camera
             float speed = Globals.hyperspeed;
             Vector3 pos = transform.position;
-            pos.y += (speed * Time.deltaTime);
+            pos.y += (speed * Time.fixedDeltaTime);
             transform.position = pos;
 
             UpdateScrollValueBasedPos();
@@ -66,19 +67,11 @@ public class MovementController : MonoBehaviour {
         prevPos = transform.position;
     }
 
-    public void SetPosition(int chartPosition)
+    public void SetPosition(uint chartPosition)
     {
         Vector3 pos = initPos;
         pos.y += editor.currentSong.ChartPositionToWorldYPosition(chartPosition);
-        transform.position = pos;
-    }
-
-    public IEnumerator ResetPosition()
-    {
-        transform.position = initPos;
-
-        yield return null;
-        scrollBar.value = 0;
+        transform.position = pos;   
     }
 
     void UpdateScrollValueBasedPos()
@@ -112,8 +105,9 @@ public class MovementController : MonoBehaviour {
             if (editor.currentChart.Length > 0 && posOfFinalNote > user_pos)
                 max = posOfFinalNote;
 
-            ContentHeight(content, max);
+            
         }
+        ContentHeight(content, max);
     }
 
     void ContentHeight(RectTransform content, float maxHeight)

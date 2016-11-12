@@ -5,7 +5,7 @@ using System.Linq;
 
 public class Chart  {
     Song song;
-    public List<ChartObject> chartObjects;
+    List<ChartObject> chartObjects;
 
     public ChartObject this[int i]
     {
@@ -138,9 +138,9 @@ public class Chart  {
 
                     if (digits.Length == 3)
                     {
-                        int position = int.Parse(digits[0]);
+                        uint position = uint.Parse(digits[0]);
                         int fret_type = int.Parse(digits[1]);
-                        int length = int.Parse(digits[2]);
+                        uint length = uint.Parse(digits[2]);
 
                         // Collect flags
                         if (fret_type > 4 || fret_type < 0)
@@ -160,8 +160,8 @@ public class Chart  {
                 {
                     string[] digits = Regex.Split(line.Trim(), @"\D+");
 
-                    int position = int.Parse(digits[0]);
-                    int length = int.Parse(digits[2]);
+                    uint position = uint.Parse(digits[0]);
+                    uint length = uint.Parse(digits[2]);
 
                     Add(new StarPower(song, this, position, length));
                 }
@@ -170,7 +170,7 @@ public class Chart  {
                 {
                     string[] strings = Regex.Split(line.Trim(), @"\s+");
 
-                    int position = int.Parse(strings[0]);
+                    uint position = uint.Parse(strings[0]);
                     string eventName = strings[3];
 
                     Add(new ChartEvent(song, this, position, eventName));

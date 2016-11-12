@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 
+[RequireComponent(typeof(AudioSource))]
 public class ChartEditor : MonoBehaviour {
     public GameObject notePrefab;
     public Text songNameText;
@@ -37,7 +38,7 @@ public class ChartEditor : MonoBehaviour {
     public void Play()
     {
         float strikelinePos = strikeline.position.y;     
-        musicSource.time = currentSong.WorldYPositionToTime(strikelinePos);
+        musicSource.time = Song.WorldYPositionToTime(strikelinePos) + currentSong.offset;
 
         movement.movementMode = MovementController.MovementMode.Playing;
         musicSource.Play();
@@ -84,7 +85,7 @@ public class ChartEditor : MonoBehaviour {
             Debug.Log("Loading audio...");
             yield return null;
         }
-
+        
         if (currentSong.musicStream != null)
         {
             musicSource.clip = currentSong.musicStream;

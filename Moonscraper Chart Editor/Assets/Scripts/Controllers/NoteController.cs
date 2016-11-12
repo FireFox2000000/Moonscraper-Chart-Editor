@@ -39,7 +39,7 @@ public class NoteController : MonoBehaviour {
             if (IsHopo)
                 note.note_type = Note.Note_Type.HOPO;
             else
-                note.note_type = Note.Note_Type.NORMAL;
+                note.note_type = Note.Note_Type.STRUM;
         }
 
         // Sprite

@@ -26,8 +26,8 @@ public class Song {
     public Chart expert_single { get { return charts[6]; } }
     public Chart expert_double_bass { get { return charts[7]; } }
 
-    public List<Event> events;
-    public List<SyncTrack> syncTrack;
+    List<Event> events;
+    List<SyncTrack> syncTrack;
 
     // For regexing
     const string QUOTEVALIDATE = @"""[^""\\]*(?:\\.[^""\\]*)*""";
@@ -135,16 +135,16 @@ public class Song {
         }
     }
     
-    public float ChartPositionToWorldYPosition(int position)
+    public float ChartPositionToWorldYPosition(uint position)
     {
-        return ChartPositionToTime(position) * Globals.hyperspeed;
+        return TimeToWorldYPosition(ChartPositionToTime(position));
     }
 
     // TODO - Will be used for snapping
-    public int WorldYPositionToChartPosition(float worldYPos)
+    public uint WorldYPositionToChartPosition(float worldYPos)
     {
         float time = WorldYPositionToTime(worldYPos);
-        int position = 0;
+        uint position = 0;
 
         BPM prevBPM = new BPM(this);
 
@@ -166,12 +166,17 @@ public class Song {
         return position;
     }
 
-    public float WorldYPositionToTime (float worldYPosition)
+    public static float WorldYPositionToTime (float worldYPosition)
     {
         return worldYPosition / Globals.hyperspeed;
     }
 
-    public float ChartPositionToTime(int position)
+    public static float TimeToWorldYPosition(float time)
+    {
+        return time * Globals.hyperspeed;
+    }
+
+    public float ChartPositionToTime(uint position)
     {
         double time = 0;
         BPM prevBPM = new BPM (this);
@@ -184,25 +189,48 @@ public class Song {
             }
             else
             {
-                time += dis_to_time(prevBPM.position, bpmInfo.position, prevBPM.value / 1000.0);
+                time += dis_to_time(prevBPM.position, bpmInfo.position, prevBPM.value / 1000.0f);
                 prevBPM = bpmInfo;
             }
         }
 
-        time += dis_to_time(prevBPM.position, position, prevBPM.value / 1000.0) + offset;
+        time += dis_to_time(prevBPM.position, position, prevBPM.value / 1000.0f);
 
         return (float)time;
     }
 
-    // Calculates the amount of time elapsed between the 2 positions at a set bpm
-    static double dis_to_time(int pos_start, int pos_end, double bpm)
+    public void Add<T>(T syncTrackObject) where T : SyncTrack
     {
-        return (pos_end - pos_start) / 192.0 * 60.0 / bpm;
+        SongObject.SortedInsert(syncTrackObject, syncTrack);
     }
 
-    static int time_to_dis(float time_start, float time_end, double bpm)
+    public bool Remove<T>(T syncTrackObject) where T : SyncTrack
     {
-        return (int)((time_end - time_start) * bpm / 60.0 * 192);
+        if (syncTrackObject.position >= 0)
+        {
+            int pos = SongObject.FindObjectPosition(syncTrackObject, syncTrack.ToArray()); //BinarySearchChartExactNote(note);
+
+            if (pos == Globals.NOTFOUND)
+                return false;
+            else
+            {
+                syncTrack.RemoveAt(pos);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Calculates the amount of time elapsed between the 2 positions at a set bpm
+    static double dis_to_time(uint pos_start, uint pos_end, float bpm)
+    {
+        return (pos_end - pos_start) / 192.0f * 60.0f / bpm;
+    }
+
+    static uint time_to_dis(float time_start, float time_end, float bpm)
+    {
+        return (uint)((time_end - time_start) * bpm / 60.0f * 192.0f);
     }
 
     void submitChartData(string dataName, List<string> stringData, string filePath = "")
@@ -400,18 +428,18 @@ public class Song {
             if (TimeSignature.regexMatch(line))
             {
                 MatchCollection matches = Regex.Matches(line, @"\d+");
-                int position = int.Parse(matches[0].ToString());
-                int value = int.Parse(matches[1].ToString());
+                uint position = uint.Parse(matches[0].ToString());
+                uint value = uint.Parse(matches[1].ToString());
 
-                SongObject.SortedInsert(new TimeSignature(this, position, value), syncTrack);
+                Add(new TimeSignature(this, position, value));
             }
             else if (BPM.regexMatch(line))
             {
                 MatchCollection matches = Regex.Matches(line, @"\d+");
-                int position = int.Parse(matches[0].ToString());
-                int value = int.Parse(matches[1].ToString());
+                uint position = uint.Parse(matches[0].ToString());
+                uint value = uint.Parse(matches[1].ToString());
 
-                SongObject.SortedInsert(new BPM(this, position, value), syncTrack);
+                Add(new BPM(this, position, value));
             }
         }
 
@@ -428,9 +456,9 @@ public class Song {
         }
 
         if (bpmInit == false)
-            SongObject.SortedInsert(new BPM(this), syncTrack);
+            Add(new BPM(this));
         if (timeScaleInit == false)
-            SongObject.SortedInsert(new TimeSignature(this), syncTrack);
+            Add(new TimeSignature(this));
     }
 
     void submitDataEvents(List<string> stringData)
@@ -441,14 +469,14 @@ public class Song {
             {
                 // Add a section
                 string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"').Substring(8);
-                int position = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
+                uint position = uint.Parse(Regex.Matches(line, @"\d+")[0].ToString());
                 events.Add(new Section(this, title, position));
             }
             else if (Event.regexMatch(line))    // 125952 = E "end"
             {
                 // Add an event
                 string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-                int position = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
+                uint position = uint.Parse(Regex.Matches(line, @"\d+")[0].ToString());
                 events.Add(new Event(this, title, position));
             }
         }

@@ -4,7 +4,7 @@ using System.Collections;
 
 public class Note : ChartObject 
 {
-    public int sustain_length;
+    public uint sustain_length;
     public Fret_Type fret_type;
     public Note_Type note_type;
     public Special_Type special_type;
@@ -12,11 +12,11 @@ public class Note : ChartObject
 
     public NoteController controller = null;
 
-    public Note(Song song, Chart chart, int _position, 
+    public Note(Song song, Chart chart, uint _position, 
                 Fret_Type _fret_type, 
-                int _sustain = 0, 
+                uint _sustain = 0, 
                 Flags _flags = Flags.NONE,
-                Note_Type _note_type = Note_Type.NORMAL, 
+                Note_Type _note_type = Note_Type.STRUM, 
                 Special_Type _special_type = Special_Type.NONE) : base(song, chart, _position)
     {
         sustain_length = _sustain;
@@ -43,7 +43,7 @@ public class Note : ChartObject
 
     public enum Note_Type
     {
-        NORMAL, HOPO, TAP
+        STRUM, HOPO, TAP
     }
 
     public enum Special_Type

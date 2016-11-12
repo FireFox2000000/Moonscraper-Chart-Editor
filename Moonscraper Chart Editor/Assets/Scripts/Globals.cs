@@ -2,12 +2,14 @@
 using System.Collections;
 
 public class Globals : MonoBehaviour {
-    // Settings
-    public static float hyperspeed = 5.0f;
     static int lsbOffset = 3;
     static int _step = 4;
 
+    // Settings
+    public static float hyperspeed = 5.0f;
     public static int step { get { return _step; } }
+    public static ClapToggle clapToggle = ClapToggle.ALL;
+    public static int audioCalibrationMS = 100;
 
     public static void IncrementStep()
     {
@@ -51,6 +53,7 @@ public class Globals : MonoBehaviour {
     public static Sprite[] hopoSprites { get; private set; }
     public static Sprite[] tapSprites { get; private set; }
 
+    [Header("Note sprites")]
     [SerializeField]
     Sprite[] normalNotes = new Sprite[5];
     [SerializeField]
@@ -63,5 +66,11 @@ public class Globals : MonoBehaviour {
         normalSprites = normalNotes;
         hopoSprites = hopoNotes;
         tapSprites = tapNotes;
+    }
+
+    [System.Flags]
+    public enum ClapToggle
+    {
+        NONE = 0, ALL = ~0, STRUM = 1, HOPO = 2, TAP = 4
     }
 }
