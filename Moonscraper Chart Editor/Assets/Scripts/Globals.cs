@@ -9,7 +9,7 @@ public class Globals : MonoBehaviour {
     public static float hyperspeed = 5.0f;
     public static int step { get { return _step; } }
     public static ClapToggle clapToggle = ClapToggle.ALL;
-    public static int audioCalibrationMS = 100;
+    public static int audioCalibrationMS = 100;                     // Increase to start the audio sooner
 
     public static void IncrementStep()
     {

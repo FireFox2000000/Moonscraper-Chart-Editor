@@ -71,7 +71,7 @@ public class MovementController : MonoBehaviour {
     {
         Vector3 pos = initPos;
         pos.y += editor.currentSong.ChartPositionToWorldYPosition(chartPosition);
-        transform.position = pos;   
+        transform.position = pos;
     }
 
     void UpdateScrollValueBasedPos()
