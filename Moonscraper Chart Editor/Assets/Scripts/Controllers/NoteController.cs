@@ -3,8 +3,9 @@ using System.Collections;
 
 public class NoteController : MonoBehaviour {
     public Note note;
-    public Note prevNote = null;        // Linked list style
-    public Note nextNote = null;
+
+    public Note.Note_Type noteType = Note.Note_Type.STRUM;
+    public Note.Special_Type specialType = Note.Special_Type.NONE;
 
     SpriteRenderer noteRenderer;
     
@@ -30,21 +31,21 @@ public class NoteController : MonoBehaviour {
         // Position
         transform.position = new Vector3((int)note.fret_type - 2, note.song.ChartPositionToWorldYPosition(note.position), 0);
 
-        // Type
+        // Note Type
         if ((note.flags & Note.Flags.TAP) == Note.Flags.TAP)
         {
-            note.note_type = Note.Note_Type.TAP;
+            noteType = Note.Note_Type.TAP;
         }
         else
         {
             if (IsHopo)
-                note.note_type = Note.Note_Type.HOPO;
+                noteType = Note.Note_Type.HOPO;
             else
-                note.note_type = Note.Note_Type.STRUM;
+                noteType = Note.Note_Type.STRUM;
         }
 
         // Sprite
-        switch (note.note_type)
+        switch (noteType)
         {
             case (Note.Note_Type.HOPO):
                 noteRenderer.sprite = Globals.hopoSprites[(int)note.fret_type];
@@ -62,9 +63,9 @@ public class NoteController : MonoBehaviour {
     {
         get
         {
-            if (prevNote != null && prevNote.position == note.position)
+            if (note.previous != null && note.previous.position == note.position)
                 return true;
-            else if (nextNote != null && nextNote.position == note.position)
+            else if (note.next != null && note.next.position == note.position)
                 return true;
             else
                 return false;
@@ -77,15 +78,15 @@ public class NoteController : MonoBehaviour {
         {
             bool HOPO = false;
 
-            if (!IsChord && prevNote != null)
+            if (!IsChord && note.previous != null)
             {
                 // Need to consider whether the previous note was a chord, and if they are the same type of note
-                if (prevNote.controller.IsChord || (!prevNote.controller.IsChord && note.fret_type != prevNote.fret_type))
+                if (note.previous.controller.IsChord || (!note.previous.controller.IsChord && note.fret_type != note.previous.fret_type))
                 {
                     // Check distance from previous note 
                     const int HOPODistance = 95;
 
-                    if (note.position - prevNote.position < HOPODistance)
+                    if (note.position - note.previous.position < HOPODistance)
                         HOPO = true;
                 }
             }

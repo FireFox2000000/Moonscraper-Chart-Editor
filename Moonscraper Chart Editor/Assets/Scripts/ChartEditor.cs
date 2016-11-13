@@ -108,28 +108,10 @@ public class ChartEditor : MonoBehaviour {
 
         // Create note object
         NoteController controller = CreateNoteObject(note, parent);
-
-        // Update the linked list
-        if (position > 0)
-        {
-            controller.prevNote = (Note)SongObject.FindPrevious(typeof(Note), position, currentChart.chartObjects);
-            controller.prevNote.controller.nextNote = controller.note;
-        }
-        if (position < currentChart.Length - 1)
-        {
-            controller.nextNote = (Note)SongObject.FindNext(typeof(Note), position, currentChart.chartObjects);
-            controller.nextNote.controller.prevNote = controller.note;
-        }
     }
 
     public void DeleteNoteFromCurrentChart(NoteController controller)
     {
-        // Update the linked list
-        if (controller.prevNote != null)
-            controller.prevNote.controller.nextNote = controller.nextNote;
-        if (controller.nextNote != null)
-            controller.nextNote.controller.prevNote = controller.prevNote;
-
         // Remove note from the chart data
         if (currentChart.Remove(controller.note))
             Debug.Log("Note successfully removed");
@@ -150,12 +132,6 @@ public class ChartEditor : MonoBehaviour {
         for (int i = 0; i < notes.Length; ++i)
         {
             NoteController controller = CreateNoteObject(notes[i], parent);
-
-            // Join the linked list
-            if (i > 0)
-                controller.prevNote = notes[i - 1];
-            if (i < notes.Length - 1)
-                controller.nextNote = notes[i + 1];
 
             controller.UpdateNote();
         }

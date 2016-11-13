@@ -6,24 +6,25 @@ public class Note : ChartObject
 {
     public uint sustain_length;
     public Fret_Type fret_type;
-    public Note_Type note_type;
-    public Special_Type special_type;
+
     public Flags flags;
+
+    public Note previous;
+    public Note next;
 
     public NoteController controller = null;
 
     public Note(Song song, Chart chart, uint _position, 
                 Fret_Type _fret_type, 
                 uint _sustain = 0, 
-                Flags _flags = Flags.NONE,
-                Note_Type _note_type = Note_Type.STRUM, 
-                Special_Type _special_type = Special_Type.NONE) : base(song, chart, _position)
+                Flags _flags = Flags.NONE) : base(song, chart, _position)
     {
         sustain_length = _sustain;
         flags = _flags;
         fret_type = _fret_type;
-        note_type = _note_type;
-        special_type = _special_type;
+
+        previous = null;
+        next = null;
     }
 
     public Note (Note note) : base(note.song, note.chart, note.position)
@@ -32,8 +33,6 @@ public class Note : ChartObject
         sustain_length = note.sustain_length;
         flags = note.flags;
         fret_type = note.fret_type;
-        note_type = note.note_type;
-        special_type = note.special_type;
     }
 
     public enum Fret_Type

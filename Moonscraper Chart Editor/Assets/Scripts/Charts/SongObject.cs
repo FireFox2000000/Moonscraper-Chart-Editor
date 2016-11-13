@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
 
-public abstract class SongObject {
+public abstract class SongObject
+{
     public Song song;
     public uint position;
 
@@ -179,7 +180,7 @@ public abstract class SongObject {
         return pos;
     }
 
-    public static int FindPreviousPosition<T>(System.Type type, int startPosition, T[] list) where T : SongObject
+    static int FindPreviousPosition<T>(System.Type type, int startPosition, T[] list) where T : SongObject
     {
         // Linear search
         if (startPosition < 0 || startPosition > list.Length - 1)
@@ -199,7 +200,7 @@ public abstract class SongObject {
         }
     }
 
-    public static T FindPrevious<T>(System.Type type, int startPosition, T[] list) where T : SongObject
+    public static T FindPreviousOfType<T>(System.Type type, int startPosition, T[] list) where T : SongObject
     {
         int pos = FindPreviousPosition(type, startPosition, list);
         if (pos == Globals.NOTFOUND)
@@ -208,7 +209,7 @@ public abstract class SongObject {
             return list[pos];
     }
 
-    public static int FindNextPosition<T>(System.Type type, int startPosition, T[] list) where T : SongObject
+    static int FindNextPosition<T>(System.Type type, int startPosition, T[] list) where T : SongObject
     {
         // Linear search
         if (startPosition < 0 || startPosition > list.Length - 1)
@@ -228,7 +229,7 @@ public abstract class SongObject {
         }
     }
 
-    public static T FindNext<T>(System.Type type, int startPosition, T[] list) where T : SongObject
+    public static T FindNextOfType<T>(System.Type type, int startPosition, T[] list) where T : SongObject
     {
         int pos = FindNextPosition(type, startPosition, list);
         if (pos == Globals.NOTFOUND)
@@ -237,10 +238,8 @@ public abstract class SongObject {
             return list[pos];
     }
 
-    public static int SortedInsert<T>(T item, List<T> list) where T : SongObject
-    {
-        bool overwrite = false;
-        
+    public static int Insert<T>(T item, List<T> list) where T : SongObject
+    {       
         int insertionPos = FindClosestPosition(item, list.ToArray());   
 
         // Needs to overwrite
@@ -283,7 +282,49 @@ public abstract class SongObject {
             insertionPos = list.Count - 1;
         }
 
+        if (item.GetType() == typeof(Note))
+        {
+            // Update linked list
+            Note current = list[insertionPos] as Note;
+            Note previous = FindPreviousOfType(typeof(Note), insertionPos, list.ToArray()) as Note;
+            Note next = FindNextOfType(typeof(Note), insertionPos, list.ToArray()) as Note;
+
+            current.previous = previous;
+            if (previous != null)
+                previous.next = current;
+
+            current.next = next;
+            if (next != null)
+                next.previous = current;
+        }
+
         return insertionPos;
+    }
+
+    public static bool Remove<T>(T item, List<T> list) where T : SongObject
+    {
+        int pos = FindObjectPosition(item, list.ToArray());
+
+        if (pos != Globals.NOTFOUND)
+        {
+            if (item.GetType() == typeof(Note))
+            {
+                // Update linked list
+                Note previous = FindPreviousOfType(item.GetType(), pos, list.ToArray()) as Note;
+                Note next = FindNextOfType(item.GetType(), pos, list.ToArray()) as Note;
+
+                if (previous != null)
+                    previous.next = next;
+                if (next != null)
+                    next.previous = previous;
+            }
+
+            list.RemoveAt(pos);
+
+            return true;
+        }
+
+        return false;
     }
 }
 

@@ -32,6 +32,9 @@ public class Song {
     List<Event> events;
     List<SyncTrack> syncTrack;
 
+    public BPM[] bpms { get; private set; }
+    public TimeSignature[] timeSignatures { get; private set; }
+
     // For regexing
     const string QUOTEVALIDATE = @"""[^""\\]*(?:\\.[^""\\]*)*""";
     const string QUOTESEARCH = "\"([^\"]*)\"";
@@ -45,6 +48,9 @@ public class Song {
     {
         events = new List<Event>();
         syncTrack = new List<SyncTrack>();
+
+        bpms = new BPM[0];
+        timeSignatures = new TimeSignature[0];
 
         Add(new BPM(this));
         Add(new TimeSignature(this));
@@ -76,7 +82,7 @@ public class Song {
             List<string> dataStrings = new List<string>();
 
             string[] fileLines = File.ReadAllLines(filepath);
-            Debug.Log("Loading");
+            Debug.Log("Loading file");
 
             for (int i = 0; i < fileLines.Length; ++i)
             {
@@ -162,7 +168,7 @@ public class Song {
 
         BPM prevBPM = new BPM(this);
 
-        foreach (BPM bpmInfo in syncTrack.OfType<BPM>())
+        foreach (BPM bpmInfo in bpms)
         {
             if (ChartPositionToTime(bpmInfo.position) >= time)
             {
@@ -195,7 +201,7 @@ public class Song {
         double time = 0;
         BPM prevBPM = new BPM (this);
 
-        foreach (BPM bpmInfo in syncTrack.OfType<BPM>())
+        foreach (BPM bpmInfo in bpms)
         {
             if (bpmInfo.position > position)
             {
@@ -213,27 +219,27 @@ public class Song {
         return (float)time;
     }
 
-    public void Add<T>(T syncTrackObject) where T : SyncTrack
+    public void Add<T>(T syncTrackObject, bool update = true) where T : SyncTrack
     {
-        SongObject.SortedInsert(syncTrackObject, syncTrack);
+        SongObject.Insert(syncTrackObject, syncTrack);
+
+        if (update)
+            updateArrays();
     }
 
-    public bool Remove<T>(T syncTrackObject) where T : SyncTrack
+    public bool Remove<T>(T syncTrackObject, bool update) where T : SyncTrack
     {
+        bool success = false;
+
         if (syncTrackObject.position > 0)
         {
-            int pos = SongObject.FindObjectPosition(syncTrackObject, syncTrack.ToArray());
-
-            if (pos == Globals.NOTFOUND)
-                return false;
-            else
-            {
-                syncTrack.RemoveAt(pos);
-                return true;
-            }
+            success = SongObject.Remove(syncTrackObject, syncTrack);
         }
 
-        return false;
+        if (update)
+            updateArrays();
+
+        return success;
     }
 
     // Calculates the amount of time elapsed between the 2 positions at a set bpm
@@ -408,8 +414,6 @@ public class Song {
                         audioFilepath = audioDirectory + "\\" + audioFilepath;
                 }
             }
-
-            Debug.Log(GetPropertiesString());
         }
         catch (System.Exception e)
         {
@@ -445,7 +449,7 @@ public class Song {
                 uint position = uint.Parse(matches[0].ToString());
                 uint value = uint.Parse(matches[1].ToString());
 
-                Add(new TimeSignature(this, position, value));
+                Add(new TimeSignature(this, position, value), false);
             }
             else if (BPM.regexMatch(line))
             {
@@ -453,9 +457,11 @@ public class Song {
                 uint position = uint.Parse(matches[0].ToString());
                 uint value = uint.Parse(matches[1].ToString());
 
-                Add(new BPM(this, position, value));
+                Add(new BPM(this, position, value), false);
             }
         }
+
+        updateArrays();
     }
 
     void submitDataEvents(List<string> stringData)
@@ -587,5 +593,11 @@ public class Song {
         {
             Debug.LogError(e.Message);
         }
+    }
+
+    void updateArrays()
+    {
+        bpms = syncTrack.OfType<BPM>().ToArray();
+        timeSignatures = syncTrack.OfType<TimeSignature>().ToArray();
     }
 }

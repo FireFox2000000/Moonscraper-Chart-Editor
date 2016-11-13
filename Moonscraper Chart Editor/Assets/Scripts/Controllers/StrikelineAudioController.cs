@@ -31,7 +31,7 @@ public class StrikelineAudioController : MonoBehaviour {
 
         if (note != null && movement.applicationMode == MovementController.ApplicationMode.Playing && col.transform.position.y != lastClapPos)
         {
-            switch (note.note.note_type)
+            switch (note.noteType)
             {
                 case (Note.Note_Type.STRUM):
                     if ((Globals.clapToggle & Globals.ClapToggle.STRUM) == 0)
