@@ -29,26 +29,30 @@ public class Song {
     public Chart expert_single { get { return charts[6]; } }
     public Chart expert_double_bass { get { return charts[7]; } }
 
-    List<Event> events;
+    List<Event> _events;
     List<SyncTrack> syncTrack;
 
+    public Event[] events { get; private set; }
+    public Section[] sections { get; private set; }
     public BPM[] bpms { get; private set; }
     public TimeSignature[] timeSignatures { get; private set; }
 
     // For regexing
     const string QUOTEVALIDATE = @"""[^""\\]*(?:\\.[^""\\]*)*""";
     const string QUOTESEARCH = "\"([^\"]*)\"";
-    const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";
+    const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";  
 
     public readonly string[] instrumentTypes = { "Bass", "Rhythm" };
     public readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3" };
 
     // Constructor for a new chart
     public Song()
-    {
-        events = new List<Event>();
+    { 
+        _events = new List<Event>();
         syncTrack = new List<SyncTrack>();
 
+        events = new Event[0];
+        sections = new Section[0];
         bpms = new BPM[0];
         timeSignatures = new TimeSignature[0];
 
@@ -60,12 +64,16 @@ public class Song {
         {
             charts[i] = new Chart(this);
         }
+
+        updateArrays();
     }
 
     // Creating a new song
     public Song(AudioClip _musicStream) : this()
     {
         musicStream = _musicStream;
+
+        Debug.Log("Complete");
     }
 
     // Loading a chart file
@@ -124,7 +132,7 @@ public class Song {
                 }
             }
 
-            // Check that there is an initial bpm and time signature
+            updateArrays();
 
             Debug.Log("Complete");
         }
@@ -147,7 +155,6 @@ public class Song {
             musicStream = www.GetAudioClip(false, false);
 
             musicStream.name = Path.GetFileName(filepath);
-            Debug.Log(musicStream.name);
         }
         else
         {
@@ -460,8 +467,6 @@ public class Song {
                 Add(new BPM(this, position, value), false);
             }
         }
-
-        updateArrays();
     }
 
     void submitDataEvents(List<string> stringData)
@@ -473,14 +478,14 @@ public class Song {
                 // Add a section
                 string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"').Substring(8);
                 uint position = uint.Parse(Regex.Matches(line, @"\d+")[0].ToString());
-                events.Add(new Section(this, title, position));
+                _events.Add(new Section(this, title, position));
             }
             else if (Event.regexMatch(line))    // 125952 = E "end"
             {
                 // Add an event
                 string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
                 uint position = uint.Parse(Regex.Matches(line, @"\d+")[0].ToString());
-                events.Add(new Event(this, title, position));
+                _events.Add(new Event(this, title, position));
             }
         }
     }
@@ -539,7 +544,7 @@ public class Song {
 
         // Events
         saveString += "[Events]\n{\n";
-        saveString += GetSaveString(events);
+        saveString += GetSaveString(_events);
         saveString += "}\n";
 
         // Charts
@@ -597,6 +602,8 @@ public class Song {
 
     void updateArrays()
     {
+        events = _events.ToArray();
+        sections = _events.OfType<Section>().ToArray();
         bpms = syncTrack.OfType<BPM>().ToArray();
         timeSignatures = syncTrack.OfType<TimeSignature>().ToArray();
     }

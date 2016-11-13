@@ -67,8 +67,15 @@ public class NoteController : MonoBehaviour {
         UpdateSustain();
     }
 
-    void UpdateSustain()
+    public void UpdateSustain()
     {
+        Note nextSameFret = FindNextSameFret();
+        if (nextSameFret != null && note.position + note.sustain_length > nextSameFret.position)
+        {
+            // Cap sustain
+            note.sustain_length = nextSameFret.position - note.position;
+        }
+
         float length = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length) - note.song.ChartPositionToWorldYPosition(note.position);
 
         Vector3 scale = sustain.transform.localScale;
@@ -120,5 +127,39 @@ public class NoteController : MonoBehaviour {
 
             return HOPO;
         }
+    }
+
+    Note FindPreviousSameFret()
+    {
+        int pos = SongObject.FindObjectPosition(note, note.chart.notes);
+        if (pos != Globals.NOTFOUND)
+        {
+            --pos;
+            while (pos >= 0)
+            {
+                if (note.chart.notes[pos].fret_type == note.fret_type)
+                    return note.chart.notes[pos];
+
+                --pos;
+            }
+        }
+        return null;
+    }
+
+    Note FindNextSameFret()
+    {
+        int pos = SongObject.FindObjectPosition(note, note.chart.notes);
+        if (pos != Globals.NOTFOUND)
+        {
+            ++pos;
+            while (pos < note.chart.notes.Length)
+            {
+                if (note.chart.notes[pos].fret_type == note.fret_type)
+                    return note.chart.notes[pos];
+
+                ++pos;
+            }
+        }
+        return null;
     }
 }

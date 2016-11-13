@@ -5,25 +5,22 @@ using System.Linq;
 
 public class Chart  {
     Song song;
-    List<ChartObject> _chartObjects;
+    List<ChartObject> chartObjects;
 
     public Note[] notes { get; private set; }
     public StarPower[] starPower { get; private set; }
     public ChartEvent[] events { get; private set; }
 
-    public ChartObject this[int i]
-    {
-        get { return _chartObjects[i]; }
-        set { _chartObjects[i] = value; }
-    }
-
-    public int noteCount { get { return _chartObjects.OfType<Note>().Count(); } }
-    public int Length { get { return _chartObjects.Count; } }
     public float endTime
     {
         get
         {
-            float objectTime = _chartObjects[_chartObjects.Count - 1].time;
+            SongObject finalObject = chartObjects[chartObjects.Count - 1];
+            finalObject = finalObject > song.events[song.events.Length - 1] ? finalObject : song.events[song.events.Length - 1];
+            finalObject = finalObject > song.bpms[song.bpms.Length - 1] ? finalObject : song.bpms[song.bpms.Length - 1];
+            finalObject = finalObject > song.timeSignatures[song.timeSignatures.Length - 1] ? finalObject : song.timeSignatures[song.timeSignatures.Length - 1];
+
+            float objectTime = finalObject.time;
 
             return song.length > objectTime ? song.length : objectTime;
         }
@@ -32,7 +29,7 @@ public class Chart  {
     public Chart (Song _song)
     {
         song = _song;
-        _chartObjects = new List<ChartObject>();
+        chartObjects = new List<ChartObject>();
 
         notes = new Note[0];
         starPower = new StarPower[0];
@@ -41,16 +38,16 @@ public class Chart  {
 
     private void updateArrays()
     {
-        notes = _chartObjects.OfType<Note>().ToArray();
-        starPower = _chartObjects.OfType<StarPower>().ToArray();
-        events = _chartObjects.OfType<ChartEvent>().ToArray();
+        notes = chartObjects.OfType<Note>().ToArray();
+        starPower = chartObjects.OfType<StarPower>().ToArray();
+        events = chartObjects.OfType<ChartEvent>().ToArray();
     }
 
     // Insert into a sorted position
     // Return the position it was inserted into
     public int Add(ChartObject chartObject, bool update = true)
     {
-        int pos = SongObject.Insert(chartObject, _chartObjects);
+        int pos = SongObject.Insert(chartObject, chartObjects);
 
         if (update)
             updateArrays();
@@ -60,17 +57,12 @@ public class Chart  {
 
     public bool Remove(ChartObject chartObject, bool update = true)
     {
-        bool success = SongObject.Remove(chartObject, _chartObjects);
+        bool success = SongObject.Remove(chartObject, chartObjects);
 
         if (update)
             updateArrays();
 
         return success;
-    }
-
-    public Note[] GetNotes()
-    {
-        return _chartObjects.OfType<Note>().ToArray();
     }
 
     public void Load(List<string> data)
@@ -150,7 +142,7 @@ public class Chart  {
                         int position = int.Parse(digits[0]);
                         int fret_type = int.Parse(digits[1]);
 
-                        Note[] notesToFlag = SongObject.FindObjectsAtPosition(position, _chartObjects.OfType<Note>().ToArray());
+                        Note[] notesToFlag = SongObject.FindObjectsAtPosition(position, chartObjects.OfType<Note>().ToArray());
 
                         if (fret_type > 4 || fret_type < 0)
                         {
@@ -176,7 +168,7 @@ public class Chart  {
         {
             // Bad load, most likely a parsing error
             Debug.LogError(e.Message);
-            _chartObjects.Clear();
+            chartObjects.Clear();
         }
     }
 
@@ -184,14 +176,14 @@ public class Chart  {
     {
         string chart = string.Empty;
 
-        for(int i = 0; i < _chartObjects.Count; ++i)
+        for(int i = 0; i < chartObjects.Count; ++i)
         {
-            chart += _chartObjects[i].GetSaveString();
+            chart += chartObjects[i].GetSaveString();
 
-            if (_chartObjects[i].GetType() == typeof(Note))
+            if (chartObjects[i].GetType() == typeof(Note))
             {
                 // if the next note is not at the same position, add flags into the string
-                Note currentNote = (Note)_chartObjects[i];    
+                Note currentNote = (Note)chartObjects[i];    
 
                 if (currentNote.next != null && currentNote.next.position != currentNote.position)
                     chart += currentNote.GetFlagsSaveString();

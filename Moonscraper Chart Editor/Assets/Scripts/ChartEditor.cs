@@ -61,10 +61,18 @@ public class ChartEditor : MonoBehaviour {
 
     IEnumerator _LoadChart()
     {
+        float totalLoadTime = 0;
+
         try
         {
             currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart");
+
+            totalLoadTime = Time.realtimeSinceStartup;
+
             currentSong = new Song(currentFileName);
+            Debug.Log("Song load time: " + (Time.realtimeSinceStartup - totalLoadTime));
+
+            float objectLoadTime = Time.realtimeSinceStartup;
 
             // Remove notes from previous chart
             foreach (GameObject note in GameObject.FindGameObjectsWithTag("Note"))
@@ -77,6 +85,8 @@ public class ChartEditor : MonoBehaviour {
             // Add notes for current chart
             CreateChartObjects(currentChart);
 
+            Debug.Log("Chart objects load time: " + (Time.realtimeSinceStartup - objectLoadTime));
+
             songNameText.text = currentSong.name;
 
             movement.SetPosition(0);
@@ -87,7 +97,7 @@ public class ChartEditor : MonoBehaviour {
             currentFileName = string.Empty;
             currentSong = new Song();
             Debug.LogError(e.Message);
-        } 
+        }
 
         while (currentSong.musicStream != null && currentSong.musicStream.loadState == AudioDataLoadState.Loading)
         {
@@ -99,6 +109,8 @@ public class ChartEditor : MonoBehaviour {
         {
             musicSource.clip = currentSong.musicStream;
         }
+
+        Debug.Log("Total load time: " + (Time.realtimeSinceStartup - totalLoadTime));
     }
 
     public void AddNewNoteToCurrentChart(Note note, GameObject parent)
@@ -127,7 +139,7 @@ public class ChartEditor : MonoBehaviour {
         GameObject parent = new GameObject();
         parent.name = "Notes";
 
-        Note[] notes = chart.GetNotes();
+        Note[] notes = chart.notes;
 
         for (int i = 0; i < notes.Length; ++i)
         {

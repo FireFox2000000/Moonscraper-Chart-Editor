@@ -52,11 +52,7 @@ public class ScrollbarMovementController : MovementController {
         }
         else if (applicationMode == ApplicationMode.Playing)
         {
-            // Auto scroll camera
-            float speed = Globals.hyperspeed;
-            Vector3 pos = transform.position;
-            pos.y += (speed * Time.fixedDeltaTime);
-            transform.position = pos;
+            PlayingMovement();
 
             UpdateScrollValueBasedPos();
         }
@@ -95,11 +91,11 @@ public class ScrollbarMovementController : MovementController {
         // Update the content height
         float user_pos = transform.position.y + Camera.main.orthographicSize - initPos.y;
         float max = user_pos;
-        if (editor.currentChart != null && editor.currentChart.Length > 0)
+        if (editor.currentChart != null && editor.currentChart.notes.Length > 0)
         {
-            float posOfFinalNote = editor.currentChart[editor.currentChart.Length - 1].worldYPosition;
+            float posOfFinalNote = editor.currentChart.notes[editor.currentChart.notes.Length - 1].worldYPosition;
             //max = Song.TimeToWorldYPosition(editor.currentChart.endTime);
-            if (editor.currentChart.Length > 0 && posOfFinalNote > user_pos)
+            if (editor.currentChart.notes.Length > 0 && posOfFinalNote > user_pos)
                 max = posOfFinalNote;
 
             
