@@ -3,15 +3,21 @@ using System.Collections;
 
 public class NoteController : MonoBehaviour {
     public Note note;
+    public GameObject sustain;   
 
+    [HideInInspector]
     public Note.Note_Type noteType = Note.Note_Type.STRUM;
+    [HideInInspector]
     public Note.Special_Type specialType = Note.Special_Type.NONE;
 
     SpriteRenderer noteRenderer;
-    
+    Renderer sustainRen;
+
     void Awake()
-    {
+    {      
         noteRenderer = GetComponent<SpriteRenderer>();
+        sustainRen = sustain.GetComponent<Renderer>();
+        sustainRen.material = new Material(sustainRen.sharedMaterial);
     }
 
     void OnMouseDown()
@@ -57,6 +63,23 @@ public class NoteController : MonoBehaviour {
                 noteRenderer.sprite = Globals.normalSprites[(int)note.fret_type];
                 break;
         }
+
+        UpdateSustain();
+    }
+
+    void UpdateSustain()
+    {
+        float length = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length) - note.song.ChartPositionToWorldYPosition(note.position);
+
+        Vector3 scale = sustain.transform.localScale;
+        scale.y = length;
+        sustain.transform.localScale = scale;
+
+        Vector3 position = transform.position;
+        position.y += length / 2.0f;
+        sustain.transform.position = position;
+
+        sustainRen.sharedMaterial = Globals.sustainColours[(int)note.fret_type];
     }
 
     public bool IsChord

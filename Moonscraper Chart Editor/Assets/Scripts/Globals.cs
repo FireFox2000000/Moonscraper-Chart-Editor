@@ -52,6 +52,7 @@ public class Globals : MonoBehaviour {
     public static Sprite[] normalSprites { get; private set; }
     public static Sprite[] hopoSprites { get; private set; }
     public static Sprite[] tapSprites { get; private set; }
+    public static Material[] sustainColours { get; private set; }
 
     [Header("Note sprites")]
     [SerializeField]
@@ -60,12 +61,15 @@ public class Globals : MonoBehaviour {
     Sprite[] hopoNotes = new Sprite[5];
     [SerializeField]
     Sprite[] tapNotes = new Sprite[5];
+    [SerializeField]
+    Material[] sustains = new Material[5];
 
     void Awake()
     {
         normalSprites = normalNotes;
         hopoSprites = hopoNotes;
         tapSprites = tapNotes;
+        sustainColours = sustains;
     }
 
     [System.Flags]
