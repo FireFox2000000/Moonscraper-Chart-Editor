@@ -23,7 +23,24 @@ public class NoteController : MonoBehaviour {
     void OnMouseDown()
     {
         Debug.Log(note.position);
-        Debug.Log(note.forced);
+        Debug.Log(note.forced);     
+    }
+
+    void OnMouseOver()
+    {
+        // Delete the note
+        if (Input.GetMouseButtonDown(1))
+        {
+            note.chart.Remove(note);
+
+            // Update the previous note in the case of chords with 2 notes
+            if (note.previous != null)
+                note.previous.controller.UpdateNote();
+            if (note.next != null)
+                note.next.controller.UpdateNote();
+
+            Destroy(gameObject);
+        }
     }
 
     public void Init(Note note)
@@ -69,8 +86,8 @@ public class NoteController : MonoBehaviour {
 
     public void UpdateSustain()
     {
-        Note nextSameFret = FindNextSameFret();
-        if (nextSameFret != null && note.position + note.sustain_length > nextSameFret.position)
+        Note nextSameFret = FindNextSameFretWithinSustain();
+        if (nextSameFret != null)
         {
             // Cap sustain
             note.sustain_length = nextSameFret.position - note.position;
@@ -129,24 +146,7 @@ public class NoteController : MonoBehaviour {
         }
     }
 
-    Note FindPreviousSameFret()
-    {
-        int pos = SongObject.FindObjectPosition(note, note.chart.notes);
-        if (pos != Globals.NOTFOUND)
-        {
-            --pos;
-            while (pos >= 0)
-            {
-                if (note.chart.notes[pos].fret_type == note.fret_type)
-                    return note.chart.notes[pos];
-
-                --pos;
-            }
-        }
-        return null;
-    }
-
-    Note FindNextSameFret()
+    Note FindNextSameFretWithinSustain()
     {
         int pos = SongObject.FindObjectPosition(note, note.chart.notes);
         if (pos != Globals.NOTFOUND)
@@ -154,8 +154,12 @@ public class NoteController : MonoBehaviour {
             ++pos;
             while (pos < note.chart.notes.Length)
             {
-                if (note.chart.notes[pos].fret_type == note.fret_type)
+                Note next = note.chart.notes[pos];
+
+                if (next.fret_type == note.fret_type && note.position + note.sustain_length > next.position)
                     return note.chart.notes[pos];
+                else if (next.position >= note.position + note.sustain_length)
+                    return null;
 
                 ++pos;
             }
