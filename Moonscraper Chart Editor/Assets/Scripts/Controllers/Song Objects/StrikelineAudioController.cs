@@ -6,7 +6,7 @@ public class StrikelineAudioController : MonoBehaviour {
 
     public AudioClip clap;
     AudioSource source;
-    public MovementController movement;
+    MovementController movement;
 
     float lastClapPos = -1;
     Vector3 initLocalPos;
@@ -14,6 +14,7 @@ public class StrikelineAudioController : MonoBehaviour {
     void Start()
     {
         source = GetComponent<AudioSource>();
+        movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
 
         initLocalPos = transform.localPosition;
     }

@@ -5,18 +5,11 @@ using System.Collections;
 public class ScrollbarMovementController : MovementController {   
     public Scrollbar scrollBar;
     public RectTransform content;
-    
-    Vector3 initPos;
-    float scrollDelta = 0;
-
-    // Program options
-    float mouseScrollSensitivity = 0.5f;
-
-    public ChartEditor editor;
 
     // Use this for initialization
-    void Start () {
-        initPos = transform.position;
+    new void Start () {
+        base.Start();
+
         scrollBar.value = 0;
         UpdatePosBasedScrollValue();       
     }
@@ -110,17 +103,5 @@ public class ScrollbarMovementController : MovementController {
         if (height < MINHEIGHT)
             height = MINHEIGHT;
         content.sizeDelta = new Vector2(content.sizeDelta.x, height);
-    }
-
-    void OnGUI()
-    {
-        if (UnityEngine.Event.current.type == EventType.ScrollWheel)
-        {
-            scrollDelta = -UnityEngine.Event.current.delta.y;
-        }
-        else
-        {
-            scrollDelta = 0;
-        }
     }
 }

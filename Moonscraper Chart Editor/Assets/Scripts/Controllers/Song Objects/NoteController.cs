@@ -31,15 +31,8 @@ public class NoteController : MonoBehaviour {
         // Delete the note
         if (Input.GetMouseButtonDown(1))
         {
-            note.chart.Remove(note);
-
-            // Update the previous note in the case of chords with 2 notes
-            if (note.previous != null)
-                note.previous.controller.UpdateNote();
-            if (note.next != null)
-                note.next.controller.UpdateNote();
-
-            Destroy(gameObject);
+            //RaycastHit2D[] hits = Physics2D.GetRayIntersectionAll(Camera.main.ScreenPointToRay(Input.mousePosition));
+            Delete();
         }
     }
 
@@ -53,6 +46,8 @@ public class NoteController : MonoBehaviour {
     {
         // Position
         transform.position = new Vector3((int)note.fret_type - 2, note.song.ChartPositionToWorldYPosition(note.position), 0);
+
+        noteRenderer.sortingOrder = -(int)note.position;
 
         // Note Type
         if ((note.flags & Note.Flags.TAP) == Note.Flags.TAP)
@@ -104,6 +99,20 @@ public class NoteController : MonoBehaviour {
         sustain.transform.position = position;
 
         sustainRen.sharedMaterial = Globals.sustainColours[(int)note.fret_type];
+    }
+
+    public void Delete()
+    {
+        note.chart.Remove(note);
+
+        // Update the previous note in the case of chords with 2 notes
+        if (note.previous != null)
+            note.previous.controller.UpdateNote();
+        if (note.next != null)
+            note.next.controller.UpdateNote();
+
+        Debug.Log("Delete");
+        Destroy(gameObject);
     }
 
     public bool IsChord

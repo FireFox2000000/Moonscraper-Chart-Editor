@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿//#define SONG_DEBUG
+
+using UnityEngine;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -72,8 +74,9 @@ public class Song {
     public Song(AudioClip _musicStream) : this()
     {
         musicStream = _musicStream;
-
+#if SONG_DEBUG
         Debug.Log("Complete");
+#endif
     }
 
     // Loading a chart file
@@ -90,7 +93,9 @@ public class Song {
             List<string> dataStrings = new List<string>();
 
             string[] fileLines = File.ReadAllLines(filepath);
+#if SONG_DEBUG
             Debug.Log("Loading file");
+#endif
 
             for (int i = 0; i < fileLines.Length; ++i)
             {
@@ -134,7 +139,9 @@ public class Song {
 
             updateArrays();
 
+#if SONG_DEBUG
             Debug.Log("Complete");
+#endif
         }
         catch
         {
@@ -148,8 +155,9 @@ public class Song {
         if (filepath != string.Empty && File.Exists(filepath))
         {
             audioLocation = filepath;
-
+#if SONG_DEBUG
             Debug.Log("Loading audio");
+#endif
 
             WWW www = new WWW("file://" + filepath);
             musicStream = www.GetAudioClip(false, false);
@@ -265,47 +273,69 @@ public class Song {
         switch (dataName)
         {
             case ("[Song]"):
+#if SONG_DEBUG
                 Debug.Log("Loading chart properties");
+#endif
                 submitDataSong(stringData, new FileInfo(filePath).Directory.FullName);
                 break;
             case ("[SyncTrack]"):
+#if SONG_DEBUG
                 Debug.Log("Loading sync data");
+#endif
                 submitDataSyncTrack(stringData);
                 break;
             case ("[Events]"):
+#if SONG_DEBUG
                 Debug.Log("Loading events data");
+#endif
                 submitDataEvents(stringData);
                 break;
             case ("[EasySingle]"):
+#if SONG_DEBUG
                 Debug.Log("Loading chart EasySingle");
+#endif
                 easy_single.Load(stringData);
                 break;
             case ("[EasyDoubleBass]"):
+#if SONG_DEBUG
                 Debug.Log("Loading chart EasyDoubleBass");
+#endif
                 easy_double_bass.Load(stringData);
                 break;
             case ("[MediumSingle]"):
+#if SONG_DEBUG
                 Debug.Log("Loading chart MediumSingle");
+#endif
                 medium_single.Load(stringData);
                 break;
             case ("[MediumDoubleBass]"):
+#if SONG_DEBUG
                 Debug.Log("Loading chart MediumDoubleBass");
+#endif
                 medium_double_bass.Load(stringData);
                 break;
             case ("[HardSingle]"):
+#if SONG_DEBUG
                 Debug.Log("Loading chart HardSingle");
+#endif
                 hard_single.Load(stringData);
                 break;
             case ("[HardDoubleBass]"):
+#if SONG_DEBUG
                 Debug.Log("Loading chart HardDoubleBass");
+#endif
                 hard_double_bass.Load(stringData);
                 break;
             case ("[ExpertSingle]"):
+#if SONG_DEBUG
                 Debug.Log("Loading chart ExpertSingle");
+#endif
                 expert_single.Load(stringData);
                 break;
             case ("[ExpertDoubleBass]"):
+#if SONG_DEBUG
                 Debug.Log("Loading chart ExpertDoubleBass");
+#endif
                 expert_double_bass.Load(stringData);
                 break;
             default:
@@ -315,7 +345,9 @@ public class Song {
 
     void submitDataSong(List<string> stringData, string audioDirectory = "")
     {
+#if SONG_DEBUG
         Debug.Log("Loading song properties");
+#endif
 
         string audioFilepath = string.Empty;
 
@@ -424,7 +456,7 @@ public class Song {
         }
         catch (System.Exception e)
         {
-            Debug.Log(e.Message);
+            Debug.LogError(e.Message);
         }
 
         // Load audio

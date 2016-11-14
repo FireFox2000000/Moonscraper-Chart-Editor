@@ -14,13 +14,15 @@ public class ChartEditor : MonoBehaviour {
     public Chart currentChart { get; private set; }
     string currentFileName = string.Empty;
 
-    public MovementController movement;
+    MovementController movement;
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
         currentSong = new Song();
         currentChart = currentSong.expert_single;
         musicSource = GetComponent<AudioSource>();
+
+        movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
     }
 
     // Wrapper function
@@ -48,15 +50,6 @@ public class ChartEditor : MonoBehaviour {
     {
         movement.applicationMode = MovementController.ApplicationMode.Editor;
         musicSource.Stop();
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown("u"))
-        {
-            movement.SetPosition(0);
-            Debug.Log("Set");
-        }
     }
 
     IEnumerator _LoadChart()
