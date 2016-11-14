@@ -253,7 +253,7 @@ public class Song {
         return (float)time;
     }
 
-    public void Add<T>(T syncTrackObject, bool update = true) where T : SyncTrack
+    public void Add(SyncTrack syncTrackObject, bool update = true)
     {
         SongObject.Insert(syncTrackObject, syncTrack);
 
@@ -261,7 +261,7 @@ public class Song {
             updateArrays();
     }
 
-    public bool Remove<T>(T syncTrackObject, bool update) where T : SyncTrack
+    public bool Remove(SyncTrack syncTrackObject, bool update = true)
     {
         bool success = false;
 
@@ -269,6 +269,25 @@ public class Song {
         {
             success = SongObject.Remove(syncTrackObject, syncTrack);
         }
+
+        if (update)
+            updateArrays();
+
+        return success;
+    }
+
+    public void Add(Event eventObject, bool update = true)
+    {
+        SongObject.Insert(eventObject, _events);
+
+        if (update)
+            updateArrays();
+    }
+
+    public bool Remove(Event eventObject, bool update = true)
+    {
+        bool success = false;
+        success = SongObject.Remove(eventObject, _events);
 
         if (update)
             updateArrays();
@@ -529,14 +548,14 @@ public class Song {
                 // Add a section
                 string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"').Substring(8);
                 uint position = uint.Parse(Regex.Matches(line, @"\d+")[0].ToString());
-                _events.Add(new Section(this, title, position));
+                Add(new Section(this, title, position), false);
             }
             else if (Event.regexMatch(line))    // 125952 = E "end"
             {
                 // Add an event
                 string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
                 uint position = uint.Parse(Regex.Matches(line, @"\d+")[0].ToString());
-                _events.Add(new Event(this, title, position));
+                Add(new Event(this, title, position), false);
             }
         }
     }

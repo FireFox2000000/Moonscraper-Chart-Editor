@@ -4,7 +4,12 @@ using System.Collections;
 
 [RequireComponent(typeof(AudioSource))]
 public class ChartEditor : MonoBehaviour {
-    public GameObject notePrefab;
+    [Header("Prefabs")]
+    public GameObject note;
+    public GameObject section;
+    [Header("Indicator Parents")]
+    public GameObject sectionIndicators;
+    [Header("Misc.")]
     public Button play;
     public Text songNameText;
     public Transform strikeline;
@@ -31,9 +36,9 @@ public class ChartEditor : MonoBehaviour {
     }
 
     // Wrapper function
-    public void LoadChart()
+    public void LoadSong()
     {
-        StartCoroutine(_LoadChart());
+        StartCoroutine(_LoadSong());
     }
 
     public void Save()
@@ -58,7 +63,7 @@ public class ChartEditor : MonoBehaviour {
         musicSource.Stop();
     }
 
-    IEnumerator _LoadChart()
+    IEnumerator _LoadSong()
     {
         float totalLoadTime = 0;
 
@@ -73,15 +78,20 @@ public class ChartEditor : MonoBehaviour {
 
             float objectLoadTime = Time.realtimeSinceStartup;
 
-            // Remove notes from previous chart
-            foreach (GameObject note in GameObject.FindGameObjectsWithTag("Note"))
+            // Remove objects from previous chart
+            foreach (GameObject chartObject in GameObject.FindGameObjectsWithTag("Chart Object"))
             {
-                Destroy(note);
+                Destroy(chartObject);
+            }
+            foreach (GameObject songObject in GameObject.FindGameObjectsWithTag("Song Object"))
+            {
+                Destroy(songObject);
             }
 
             currentChart = currentSong.expert_single;
 
-            // Add notes for current chart
+            // Create the actual objects
+            CreateSongObjects(currentSong);
             CreateChartObjects(currentChart);
 
             Debug.Log("Chart objects load time: " + (Time.realtimeSinceStartup - objectLoadTime));
@@ -122,22 +132,22 @@ public class ChartEditor : MonoBehaviour {
         NoteController controller = CreateNoteObject(note, parent);
     }
 
-    public void DeleteNoteFromCurrentChart(NoteController controller)
+    // Create Sections, bpms, events and time signature objects
+    GameObject CreateSongObjects(Song song)
     {
-        // Remove note from the chart data
-        if (currentChart.Remove(controller.note))
-            Debug.Log("Note successfully removed");
-        else
-            Debug.LogError("Note was not removed from data");
+        GameObject parent = new GameObject();
+        parent.name = "Song Objects";
+        parent.tag = "Song Object";
 
-        // Remove the note from the scene
-        Destroy(controller.gameObject);
+        return parent;
     }
 
+    // Create note, starpower and chart event objects
     GameObject CreateChartObjects(Chart chart, GameObject notePrefab)
     {
         GameObject parent = new GameObject();
-        parent.name = "Notes";
+        parent.name = "Chart Objects";
+        parent.tag = "Chart Object";
 
         Note[] notes = chart.notes;
 
@@ -145,7 +155,7 @@ public class ChartEditor : MonoBehaviour {
         {
             NoteController controller = CreateNoteObject(notes[i], parent);
 
-            controller.UpdateNote();
+            controller.UpdateSongObject();
         }
 
         return parent;
@@ -153,13 +163,13 @@ public class ChartEditor : MonoBehaviour {
 
     GameObject CreateChartObjects(Chart chart)
     {
-        return CreateChartObjects(chart, notePrefab);
+        return CreateChartObjects(chart, note);
     }
 
     NoteController CreateNoteObject(Note note, GameObject parent = null)
     {
         // Convert the chart data into gameobject
-        GameObject noteObject = Instantiate(notePrefab);
+        GameObject noteObject = Instantiate(this.note);
 
         if (parent)
             noteObject.transform.parent = parent.transform;
@@ -168,7 +178,7 @@ public class ChartEditor : MonoBehaviour {
         NoteController controller = noteObject.GetComponent<NoteController>();
 
         // Link controller and note together
-        controller.Init(note);
+        controller.Init(movement, note);
 
         return controller;
     }

@@ -72,6 +72,9 @@
     <Compile Include="Assets\Scripts\Controllers\MovementController.cs" />
     <Compile Include="Assets\Scripts\Controllers\ScrollbarMovementController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\NoteController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Song Objects\SectionController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Song Objects\SectionGuiController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Song Objects\SongObjectController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\StrikelineAudioController.cs" />
     <Compile Include="Assets\Scripts\Controllers\TimelineMovementController.cs" />
     <Compile Include="Assets\Scripts\Globals.cs" />

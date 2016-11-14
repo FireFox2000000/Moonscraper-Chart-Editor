@@ -20,18 +20,11 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     {
         get
         {
-            return (handle.transform.localPosition.y + halfHeight) / rectTransform.sizeDelta.y;
+            return (handle.transform.localPosition.y.Round(2) + halfHeight.Round(2)) / rectTransform.sizeDelta.y.Round(2);
         }
         set
         {
-            if (value > 1)
-                value = 1;
-            else if (value < 0)
-                value = 0;
-
-            Vector3 pos = handle.transform.localPosition;
-            pos.y = value * rectTransform.sizeDelta.y - halfHeight;
-            handle.transform.localPosition = pos;
+            handle.transform.localPosition = handlePosToLocal(value);
         }
     }                    
 
@@ -51,8 +44,6 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         scaledHalfHeight = halfHeight * transform.lossyScale.y;
 
         percentage.text = ((int)(handlePos * 100)).ToString() + "%";
-
-        //Debug.Log(handlePos);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -79,5 +70,14 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
             handle.transform.position = pos;
         }
+    }
+
+    public Vector3 handlePosToLocal(float pos)
+    {
+        if (pos > 1)
+            pos = 1;
+        else if (pos < 0)
+            pos = 0;
+        return new Vector3(handle.transform.localPosition.x, pos * rectTransform.sizeDelta.y - halfHeight, handle.transform.localPosition.z);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class NoteController : MonoBehaviour {
+public class NoteController : SongObjectController {
     public Note note;
     public GameObject sustain;   
 
@@ -26,23 +26,14 @@ public class NoteController : MonoBehaviour {
         Debug.Log(note.forced);     
     }
 
-    void OnMouseOver()
+    public void Init(MovementController movement, Note note)
     {
-        // Delete the note
-        if (Input.GetMouseButtonDown(1))
-        {
-            //RaycastHit2D[] hits = Physics2D.GetRayIntersectionAll(Camera.main.ScreenPointToRay(Input.mousePosition));
-            Delete();
-        }
-    }
-
-    public void Init(Note note)
-    {
+        Init(movement);
         this.note = note;
         this.note.controller = this;
     }
 
-    public void UpdateNote()
+    public override void UpdateSongObject()
     {
         // Position
         transform.position = new Vector3((int)note.fret_type - 2, note.song.ChartPositionToWorldYPosition(note.position), 0);
@@ -101,15 +92,15 @@ public class NoteController : MonoBehaviour {
         sustainRen.sharedMaterial = Globals.sustainColours[(int)note.fret_type];
     }
 
-    public void Delete()
+    public override void Delete()
     {
         note.chart.Remove(note);
 
         // Update the previous note in the case of chords with 2 notes
         if (note.previous != null)
-            note.previous.controller.UpdateNote();
+            note.previous.controller.UpdateSongObject();
         if (note.next != null)
-            note.next.controller.UpdateNote();
+            note.next.controller.UpdateSongObject();
 
         Debug.Log("Delete");
         Destroy(gameObject);
