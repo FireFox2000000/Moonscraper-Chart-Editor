@@ -5,6 +5,7 @@ using System.Collections;
 [RequireComponent(typeof(AudioSource))]
 public class ChartEditor : MonoBehaviour {
     public GameObject notePrefab;
+    public Button play;
     public Text songNameText;
     public Transform strikeline;
 
@@ -25,6 +26,10 @@ public class ChartEditor : MonoBehaviour {
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
     }
 
+    void Update()
+    {
+    }
+
     // Wrapper function
     public void LoadChart()
     {
@@ -41,13 +46,14 @@ public class ChartEditor : MonoBehaviour {
     {
         float strikelinePos = strikeline.position.y;
         musicSource.time = Song.WorldYPositionToTime(strikelinePos) + currentSong.offset;       // No need to add audio calibration as position is base on the strikeline position
-
+        play.interactable = false;
         movement.applicationMode = MovementController.ApplicationMode.Playing;
         musicSource.Play();
     }
 
     public void Stop()
     {
+        play.interactable = true;
         movement.applicationMode = MovementController.ApplicationMode.Editor;
         musicSource.Stop();
     }
@@ -80,9 +86,7 @@ public class ChartEditor : MonoBehaviour {
 
             Debug.Log("Chart objects load time: " + (Time.realtimeSinceStartup - objectLoadTime));
 
-            songNameText.text = currentSong.name;
-
-            movement.SetPosition(0);
+            songNameText.text = currentSong.name;    
         }
         catch (System.Exception e)
         {
@@ -90,17 +94,20 @@ public class ChartEditor : MonoBehaviour {
             currentFileName = string.Empty;
             currentSong = new Song();
             Debug.LogError(e.Message);
+
+            yield break;
         }
 
-        while (currentSong.musicStream != null && currentSong.musicStream.loadState == AudioDataLoadState.Loading)
+        while (currentSong.musicStream != null && currentSong.musicStream.loadState != AudioDataLoadState.Loaded)
         {
             Debug.Log("Loading audio...");
             yield return null;
         }
-        
+
         if (currentSong.musicStream != null)
         {
             musicSource.clip = currentSong.musicStream;
+            movement.SetPosition(0);
         }
 
         Debug.Log("Total load time: " + (Time.realtimeSinceStartup - totalLoadTime));

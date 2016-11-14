@@ -67,7 +67,7 @@ public class TimelineMovementController : MovementController
     {
         if (editor.currentChart != null)
         {
-            float endYPos = Song.TimeToWorldYPosition(editor.currentChart.endTime);
+            float endYPos = Song.TimeToWorldYPosition(editor.currentSong.length);
             float totalDistance = endYPos - initPos.y;
             float currentDistance = transform.position.y - initPos.y;
 
@@ -82,7 +82,7 @@ public class TimelineMovementController : MovementController
     {      
         if (editor.currentChart != null)
         {         
-            float endYPos = Song.TimeToWorldYPosition(editor.currentChart.endTime);
+            float endYPos = Song.TimeToWorldYPosition(editor.currentSong.length);
             float totalDistance = endYPos - initPos.y;
 
             if (totalDistance > 0)

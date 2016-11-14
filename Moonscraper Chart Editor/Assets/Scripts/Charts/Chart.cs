@@ -11,22 +11,6 @@ public class Chart  {
     public StarPower[] starPower { get; private set; }
     public ChartEvent[] events { get; private set; }
 
-    public float endTime
-    {
-        get
-        {
-            /*
-            SongObject finalObject = chartObjects[chartObjects.Count - 1];
-            finalObject = finalObject > song.events[song.events.Length - 1] ? finalObject : song.events[song.events.Length - 1];
-            finalObject = finalObject > song.bpms[song.bpms.Length - 1] ? finalObject : song.bpms[song.bpms.Length - 1];
-            finalObject = finalObject > song.timeSignatures[song.timeSignatures.Length - 1] ? finalObject : song.timeSignatures[song.timeSignatures.Length - 1];
-
-            float objectTime = finalObject.time;
-            */
-            return song.length;// > objectTime ? song.length : objectTime;
-        }
-    }
-
     public Chart (Song _song)
     {
         song = _song;

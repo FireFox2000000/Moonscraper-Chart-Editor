@@ -7,6 +7,8 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 {
     [SerializeField]
     GameObject handle;
+    public UnityEngine.UI.Text percentage;
+
     RectTransform rectTransform;
     MovementController movement;
 
@@ -47,6 +49,10 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     {
         halfHeight = rectTransform.sizeDelta.y / 2.0f;
         scaledHalfHeight = halfHeight * transform.lossyScale.y;
+
+        percentage.text = ((int)(handlePos * 100)).ToString() + "%";
+
+        //Debug.Log(handlePos);
     }
 
     public void OnDrag(PointerEventData eventData)

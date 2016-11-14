@@ -87,7 +87,7 @@ public class ScrollbarMovementController : MovementController {
         if (editor.currentChart != null && editor.currentChart.notes.Length > 0)
         {
             float posOfFinalNote = editor.currentChart.notes[editor.currentChart.notes.Length - 1].worldYPosition;
-            //max = Song.TimeToWorldYPosition(editor.currentChart.endTime);
+
             if (editor.currentChart.notes.Length > 0 && posOfFinalNote > user_pos)
                 max = posOfFinalNote;
 

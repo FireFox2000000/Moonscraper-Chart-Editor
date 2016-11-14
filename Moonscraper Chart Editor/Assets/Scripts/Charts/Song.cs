@@ -15,10 +15,9 @@ public class Song {
     public float offset = 0, resolution = 192, previewStart = 0, previewEnd = 0;
     public string genre = "rock", mediatype = "cd";
     public AudioClip musicStream = null;
+    public float length = 0;
 
     string audioLocation = string.Empty;
-
-    public float length { get { return musicStream == null ? 0 : musicStream.length; } }
 
     // Charts
     Chart[] charts = new Chart[8];
@@ -67,10 +66,12 @@ public class Song {
             charts[i] = new Chart(this);
         }
 
+        length = 60 * 5;
+
         updateArrays();
     }
 
-    // Creating a new song
+    // Creating a new song from audio
     public Song(AudioClip _musicStream) : this()
     {
         musicStream = _musicStream;
@@ -149,7 +150,13 @@ public class Song {
         }
     }
 
-    public void LoadAudio(string filepath)
+    public void LoadAudio (string filepath)
+    {
+        GameObject obj = new GameObject("Music Load");
+        obj.AddComponent<MonoBehaviour>().StartCoroutine(LoadAudio(filepath, obj));
+    }
+
+    IEnumerator LoadAudio(string filepath, GameObject musicLoad)
     {
         // Need to check extension
         if (filepath != string.Empty && File.Exists(filepath))
@@ -163,11 +170,23 @@ public class Song {
             musicStream = www.GetAudioClip(false, false);
 
             musicStream.name = Path.GetFileName(filepath);
+
+            while (musicStream != null && musicStream.loadState != AudioDataLoadState.Loaded)
+            {
+#if SONG_DEBUG
+                Debug.Log("Loading audio...");
+#endif
+                yield return null;
+            }
+
+            length = musicStream.length;
         }
         else
         {
             Debug.LogError("Unable to locate audio file");
         }
+
+        MonoBehaviour.Destroy(musicLoad);
     }
     
     public float ChartPositionToWorldYPosition(uint position)
