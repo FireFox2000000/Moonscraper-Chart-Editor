@@ -16,7 +16,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     float scaledHalfHeight;
 
     // Value between 0 and 1
-    public float handlePos
+    public float handlePosRound
     {
         get
         {
@@ -26,7 +26,19 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         {
             handle.transform.localPosition = handlePosToLocal(value);
         }
-    }                    
+    }
+
+    public float handlePos
+    {
+        get
+        {
+            return (handle.transform.localPosition.y + halfHeight) / rectTransform.sizeDelta.y;
+        }
+        set
+        {
+            handle.transform.localPosition = handlePosToLocal(value);
+        }
+    }
 
     void Awake()
     {
@@ -43,7 +55,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         halfHeight = rectTransform.sizeDelta.y / 2.0f;
         scaledHalfHeight = halfHeight * transform.lossyScale.y;
 
-        percentage.text = ((int)(handlePos * 100)).ToString() + "%";
+        percentage.text = ((int)(handlePosRound * 100)).ToString() + "%";
     }
 
     public void OnDrag(PointerEventData eventData)

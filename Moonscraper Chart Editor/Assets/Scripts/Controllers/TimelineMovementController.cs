@@ -8,9 +8,12 @@ public class TimelineMovementController : MovementController
 
     public override void SetPosition(uint chartPosition)
     {
-        Vector3 pos = initPos;
-        pos.y += editor.currentSong.ChartPositionToWorldYPosition(chartPosition);
-        transform.position = pos;
+        if (applicationMode == ApplicationMode.Editor)
+        {
+            Vector3 pos = initPos;
+            pos.y += editor.currentSong.ChartPositionToWorldYPosition(chartPosition);
+            transform.position = pos;
+        }
     }
 
     // Use this for initialization

@@ -13,6 +13,7 @@ public class ChartEditor : MonoBehaviour {
     public Button play;
     public Text songNameText;
     public Transform strikeline;
+    public TimelineHandler timeHandler;
 
     AudioSource musicSource;
 
@@ -139,7 +140,24 @@ public class ChartEditor : MonoBehaviour {
         parent.name = "Song Objects";
         parent.tag = "Song Object";
 
-        return parent;
+        for (int i = 0; i < song.sections.Length; ++i)
+        {
+            // Convert the chart data into gameobject
+            GameObject sectionObject = Instantiate(this.section);
+
+            if (parent)
+                sectionObject.transform.parent = parent.transform;
+
+            // Attach the note to the object
+            SectionController controller = sectionObject.GetComponentInChildren<SectionController>();
+
+            // Link controller and note together
+            controller.Init(movement, song.sections[i], timeHandler, sectionIndicators);
+
+            controller.UpdateSongObject();
+        }
+
+         return parent;
     }
 
     // Create note, starpower and chart event objects

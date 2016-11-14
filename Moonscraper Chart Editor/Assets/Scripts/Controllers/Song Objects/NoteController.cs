@@ -23,7 +23,7 @@ public class NoteController : SongObjectController {
     void OnMouseDown()
     {
         Debug.Log(note.position);
-        Debug.Log(note.forced);     
+        Debug.Log(note.forced);  
     }
 
     public void Init(MovementController movement, Note note)

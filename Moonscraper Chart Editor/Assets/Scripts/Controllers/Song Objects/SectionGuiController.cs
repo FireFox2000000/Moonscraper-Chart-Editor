@@ -1,22 +1,27 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections;
 
-public class SectionGuiController : MonoBehaviour {
+public class SectionGuiController : MonoBehaviour
+{
     Section section;
     TimelineHandler timelineHandler;
+    MovementController movement;
 
     void Update()
     {
         transform.localPosition = GetLocalPos();
     }
 
-	public void Init(Section _section, TimelineHandler _timelineHandler, GameObject bpmGuiParent)
+	public void Init(Section _section, TimelineHandler _timelineHandler, MovementController _movement, GameObject bpmGuiParent)
     {
         section = _section;
         timelineHandler = _timelineHandler;
+        movement = _movement;
 
         transform.parent = bpmGuiParent.transform;
         transform.localPosition = Vector3.zero;
+        transform.localScale = new Vector3(1, 1, 1);
     }
 
     public Vector3 GetLocalPos()
@@ -28,5 +33,10 @@ public class SectionGuiController : MonoBehaviour {
             return timelineHandler.handlePosToLocal(time / endTime);
         else
             return Vector3.zero;
+    }
+
+    public void JumpToPos()
+    {
+        movement.SetPosition(section.position);
     }
 }

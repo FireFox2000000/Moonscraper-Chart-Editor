@@ -1,14 +1,24 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
+[RequireComponent(typeof(Text))]
 public class SectionController : SongObjectController
 {
     public SectionGuiController sectionGui;
     Section section;
+    Text sectionText;
+
+    void Awake()
+    {
+        sectionText = GetComponent<Text>();
+    }
 
     public override void UpdateSongObject()
     {
-        transform.position = new Vector3(7, section.song.ChartPositionToWorldYPosition(section.position), 0);
+        transform.position = new Vector3(5, section.song.ChartPositionToWorldYPosition(section.position), 0);
+
+        sectionText.text = section.title;
     }
 
     public override void Delete()
@@ -24,6 +34,6 @@ public class SectionController : SongObjectController
     {
         Init(movement);
         section = _section;
-        sectionGui.Init(_section, _timelineHandler, bpmGuiParent);
+        sectionGui.Init(_section, _timelineHandler, movement, bpmGuiParent);
     }
 }

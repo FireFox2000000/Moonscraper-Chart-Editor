@@ -16,7 +16,7 @@ public class StrikelineAudioController : MonoBehaviour {
         source = GetComponent<AudioSource>();
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
 
-        initLocalPos = transform.localPosition;
+        initLocalPos = transform.localPosition;  
     }
 
     void Update()
@@ -53,6 +53,24 @@ public class StrikelineAudioController : MonoBehaviour {
             source.PlayOneShot(clap);
 
             lastClapPos = col.transform.position.y;
+        }
+    }
+
+    bool modeSwitch = false;
+    void OnTriggerStay2D (Collider2D col)
+    {
+        if (modeSwitch)
+        {
+            if (movement.applicationMode == MovementController.ApplicationMode.Editor)
+                modeSwitch = false;
+        }
+        else
+        {
+            if (movement.applicationMode == MovementController.ApplicationMode.Playing)
+            {
+                modeSwitch = true;
+                OnTriggerEnter2D(col);
+            }
         }
     }
 }
