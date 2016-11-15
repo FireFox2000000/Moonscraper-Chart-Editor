@@ -96,7 +96,7 @@ public class Chart  {
                                 break;
                             case (7):
                                 Note newOpenNote = new Note(song, this, position, Note.Fret_Type.OPEN, length);
-                                // TODO- Add overwrite logic in SongObject.Insert function
+                                Add(newOpenNote, false);
                                 break;
                             default:
                                 break;
@@ -137,7 +137,7 @@ public class Chart  {
 
                     if (digits.Length == 3)
                     {
-                        int position = int.Parse(digits[0]);
+                        uint position = uint.Parse(digits[0]);
                         int fret_type = int.Parse(digits[1]);
 
                         Note[] notesToAddFlagTo = SongObject.FindObjectsAtPosition(position, notes);

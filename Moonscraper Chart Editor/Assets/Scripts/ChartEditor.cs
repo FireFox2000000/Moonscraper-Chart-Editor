@@ -1,4 +1,4 @@
-﻿//#define TIMING_DEBUG
+﻿#define TIMING_DEBUG
 
 using UnityEngine;
 using UnityEngine.UI;
@@ -185,11 +185,20 @@ public class ChartEditor : MonoBehaviour {
         parent.name = "Chart Objects";
         parent.tag = "Chart Object";
 
-        Note[] notes = chart.notes;
+        // Configure in case the notes get added or deleted
+        int length = chart.notes.Length;
+        int prevLength = length;
+        int lengthDiff = 0;
 
-        for (int i = 0; i < notes.Length; ++i)
+        for (int i = 0; i < length; ++i)
         {
-            NoteController controller = CreateNoteObject(notes[i], parent);
+            if (prevLength != chart.notes.Length)
+            {
+                lengthDiff += prevLength - chart.notes.Length;
+                prevLength = chart.notes.Length;
+            }
+
+            NoteController controller = CreateNoteObject(chart.notes[i - lengthDiff], parent);
 
             controller.UpdateSongObject();
         }

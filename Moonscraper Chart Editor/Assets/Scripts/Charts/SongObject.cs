@@ -104,7 +104,7 @@ public abstract class SongObject
         return index;
     }
 
-    public static int FindClosestPosition<T>(int position, T[] objects) where T : SongObject
+    public static int FindClosestPosition<T>(uint position, T[] objects) where T : SongObject
     {
         int lowerBound = 0;
         int upperBound = objects.Length - 1;
@@ -139,7 +139,7 @@ public abstract class SongObject
         return index;
     }
 
-    public static T[] FindObjectsAtPosition<T>(int position, T[] objects) where T : SongObject
+    public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T : SongObject
     {
         int index = FindClosestPosition(position, objects);
 
