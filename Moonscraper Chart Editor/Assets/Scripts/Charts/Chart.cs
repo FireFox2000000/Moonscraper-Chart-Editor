@@ -79,6 +79,26 @@ public class Chart  {
                         int fret_type = int.Parse(digits[1]);
                         uint length = uint.Parse(digits[2]);
 
+                        switch (fret_type)
+                        {
+                            case (0):
+                            case (1):
+                            case (2):
+                            case (3):
+                            case (4):
+                                // Add note to the data
+                                Note newNote = new Note(song, this, position, (Note.Fret_Type)fret_type, length);
+                                Add(newNote, false);
+                                break;
+                            case (5):
+                            case (6):
+                                flags.Add(line);
+                                break;
+                            default:
+                                break;
+                        }
+
+                        /*
                         // Collect flags
                         if (fret_type > 4 || fret_type < 0)
                         {
@@ -90,6 +110,7 @@ public class Chart  {
                             Note newNote = new Note(song, this, position, (Note.Fret_Type)fret_type, length);
                             Add(newNote, false);
                         }
+                        */
                     }
                 }
                 
@@ -114,7 +135,10 @@ public class Chart  {
                 }
             }
 
+            updateArrays();
+
             // Load flags
+            //Note[] notes = chartObjects.OfType<Note>().ToArray();
             foreach (string line in flags)
             {
                 if (noteRegex.IsMatch(line))
@@ -127,27 +151,21 @@ public class Chart  {
                         int position = int.Parse(digits[0]);
                         int fret_type = int.Parse(digits[1]);
 
-                        Note[] notesToFlag = SongObject.FindObjectsAtPosition(position, chartObjects.OfType<Note>().ToArray());
-
-                        if (fret_type > 4 || fret_type < 0)
+                        Note[] notesToAddFlagTo = SongObject.FindObjectsAtPosition(position, notes);
+                        switch (fret_type)
                         {
-                            switch (fret_type)
-                            {
-                                case (5):
-                                    Note.groupAddFlags(notesToFlag, Note.Flags.FORCED);
-                                    break;
-                                case (6):
-                                    Note.groupAddFlags(notesToFlag, Note.Flags.TAP);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
+                            case (5):
+                                Note.groupAddFlags(notesToAddFlagTo, Note.Flags.FORCED);
+                                break;
+                            case (6):
+                                Note.groupAddFlags(notesToAddFlagTo, Note.Flags.TAP);
+                                break;
+                            default:
+                                break;
+                        }       
                     }
                 }
             }
-
-            updateArrays();
         }
         catch (System.Exception e)
         {

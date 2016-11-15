@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿//#define TIMING_DEBUG
+
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
@@ -8,7 +10,7 @@ public class ChartEditor : MonoBehaviour {
     public GameObject note;
     public GameObject section;
     [Header("Indicator Parents")]
-    public GameObject sectionIndicators;
+    public GameObject guiIndicators;
     [Header("Misc.")]
     public Button play;
     public Text songNameText;
@@ -66,19 +68,22 @@ public class ChartEditor : MonoBehaviour {
 
     IEnumerator _LoadSong()
     {
+#if TIMING_DEBUG
         float totalLoadTime = 0;
+#endif
 
         try
         {
             currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart");
-
+#if TIMING_DEBUG
             totalLoadTime = Time.realtimeSinceStartup;
-
+#endif
             currentSong = new Song(currentFileName);
+#if TIMING_DEBUG
             Debug.Log("Song load time: " + (Time.realtimeSinceStartup - totalLoadTime));
 
-            float objectLoadTime = Time.realtimeSinceStartup;
-
+            float objectDestroyTime = Time.realtimeSinceStartup;
+#endif
             // Remove objects from previous chart
             foreach (GameObject chartObject in GameObject.FindGameObjectsWithTag("Chart Object"))
             {
@@ -88,14 +93,23 @@ public class ChartEditor : MonoBehaviour {
             {
                 Destroy(songObject);
             }
-
+            foreach (Transform child in guiIndicators.transform)
+            {
+                Destroy(child.gameObject);
+            }
+#if TIMING_DEBUG
+            Debug.Log("Chart objects destroy time: " + (Time.realtimeSinceStartup - objectDestroyTime));
+#endif
             currentChart = currentSong.expert_single;
-
+#if TIMING_DEBUG
+            float objectLoadTime = Time.realtimeSinceStartup;
+#endif
             // Create the actual objects
             CreateSongObjects(currentSong);
             CreateChartObjects(currentChart);
-
+#if TIMING_DEBUG
             Debug.Log("Chart objects load time: " + (Time.realtimeSinceStartup - objectLoadTime));
+#endif
 
             songNameText.text = currentSong.name;    
         }
@@ -120,8 +134,9 @@ public class ChartEditor : MonoBehaviour {
             musicSource.clip = currentSong.musicStream;
             movement.SetPosition(0);
         }
-
+#if TIMING_DEBUG
         Debug.Log("Total load time: " + (Time.realtimeSinceStartup - totalLoadTime));
+#endif
     }
 
     public void AddNewNoteToCurrentChart(Note note, GameObject parent)
@@ -152,7 +167,7 @@ public class ChartEditor : MonoBehaviour {
             SectionController controller = sectionObject.GetComponentInChildren<SectionController>();
 
             // Link controller and note together
-            controller.Init(movement, song.sections[i], timeHandler, sectionIndicators);
+            controller.Init(movement, song.sections[i], timeHandler, guiIndicators);
 
             controller.UpdateSongObject();
         }

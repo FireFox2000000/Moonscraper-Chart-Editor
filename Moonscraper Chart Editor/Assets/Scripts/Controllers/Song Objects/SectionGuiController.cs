@@ -19,7 +19,7 @@ public class SectionGuiController : MonoBehaviour
         timelineHandler = _timelineHandler;
         movement = _movement;
 
-        transform.parent = bpmGuiParent.transform;
+        transform.SetParent(bpmGuiParent.transform);
         transform.localPosition = Vector3.zero;
         transform.localScale = new Vector3(1, 1, 1);
     }
@@ -37,6 +37,7 @@ public class SectionGuiController : MonoBehaviour
 
     public void JumpToPos()
     {
-        movement.SetPosition(section.position);
+        movement.editor.Stop();
+        movement.SetPosition(section.position); 
     }
 }

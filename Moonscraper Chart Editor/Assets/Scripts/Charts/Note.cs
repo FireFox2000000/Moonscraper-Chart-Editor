@@ -37,7 +37,8 @@ public class Note : ChartObject
 
     public enum Fret_Type
     {
-        GREEN = 0, RED = 1, YELLOW = 2, BLUE = 3, ORANGE = 4
+        // Assign to the sprite array position
+        GREEN = 0, RED = 1, YELLOW = 2, BLUE = 3, ORANGE = 4, OPEN = 5
     }
 
     public enum Note_Type
