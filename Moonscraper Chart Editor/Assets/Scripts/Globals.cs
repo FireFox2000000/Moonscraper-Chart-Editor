@@ -11,8 +11,10 @@ public class Globals : MonoBehaviour {
     // Settings
     public static float hyperspeed = 5.0f;
     public static int step { get { return _step; } }
-    public static ClapToggle clapToggle = ClapToggle.ALL;
+    public static ClapToggle clapToggle = ClapToggle.NONE;
     public static int audioCalibrationMS = 100;                     // Increase to start the audio sooner
+
+    ClapToggle currentClapSettings;
 
     public void IncrementStep()
     {
@@ -49,6 +51,14 @@ public class Globals : MonoBehaviour {
         }
     }
 
+    public void ToggleClap()
+    {
+        if (clapToggle == ClapToggle.NONE)
+            clapToggle = currentClapSettings;
+        else
+            clapToggle = ClapToggle.NONE;
+    }
+
     public static readonly int NOTFOUND = -1;
     public static readonly string TABSPACE = "  ";
 
@@ -73,6 +83,12 @@ public class Globals : MonoBehaviour {
         hopoSprites = hopoNotes;
         tapSprites = tapNotes;
         sustainColours = sustains;
+
+        // Load clap settings (eventually from save file)
+        currentClapSettings = ClapToggle.ALL;
+
+        // Enable clap
+        ToggleClap();
     }
 
     void Update()
