@@ -87,30 +87,20 @@ public class Chart  {
                             case (3):
                             case (4):
                                 // Add note to the data
-                                Note newNote = new Note(song, this, position, (Note.Fret_Type)fret_type, length);
-                                Add(newNote, false);
+                                Note newStandardNote = new Note(song, this, position, (Note.Fret_Type)fret_type, length);
+                                Add(newStandardNote, false);
                                 break;
                             case (5):
                             case (6):
                                 flags.Add(line);
                                 break;
+                            case (7):
+                                Note newOpenNote = new Note(song, this, position, Note.Fret_Type.OPEN, length);
+                                // TODO- Add overwrite logic in SongObject.Insert function
+                                break;
                             default:
                                 break;
                         }
-
-                        /*
-                        // Collect flags
-                        if (fret_type > 4 || fret_type < 0)
-                        {
-                            flags.Add(line);
-                        }
-                        else
-                        {
-                            // Add note to the data
-                            Note newNote = new Note(song, this, position, (Note.Fret_Type)fret_type, length);
-                            Add(newNote, false);
-                        }
-                        */
                     }
                 }
                 
@@ -138,7 +128,6 @@ public class Chart  {
             updateArrays();
 
             // Load flags
-            //Note[] notes = chartObjects.OfType<Note>().ToArray();
             foreach (string line in flags)
             {
                 if (noteRegex.IsMatch(line))

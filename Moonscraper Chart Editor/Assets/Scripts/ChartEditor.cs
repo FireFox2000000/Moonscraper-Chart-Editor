@@ -11,9 +11,10 @@ public class ChartEditor : MonoBehaviour {
     public GameObject section;
     [Header("Indicator Parents")]
     public GameObject guiIndicators;
+    [Header("Song properties Display")]
+    public Text songNameText;
     [Header("Misc.")]
     public Button play;
-    public Text songNameText;
     public Transform strikeline;
     public TimelineHandler timeHandler;
 
@@ -36,11 +37,13 @@ public class ChartEditor : MonoBehaviour {
 
     void Update()
     {
+
     }
 
     // Wrapper function
     public void LoadSong()
     {
+        Stop();
         StartCoroutine(_LoadSong());
     }
 

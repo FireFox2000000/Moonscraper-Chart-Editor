@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Globals : MonoBehaviour {
+    public Text stepText;
+
     static int lsbOffset = 3;
     static int _step = 4;
 
@@ -11,7 +14,7 @@ public class Globals : MonoBehaviour {
     public static ClapToggle clapToggle = ClapToggle.ALL;
     public static int audioCalibrationMS = 100;                     // Increase to start the audio sooner
 
-    public static void IncrementStep()
+    public void IncrementStep()
     {
         if (_step < 768)
         {
@@ -28,7 +31,7 @@ public class Globals : MonoBehaviour {
         }
     }
 
-    public static void DecrementStep()
+    public void DecrementStep()
     {
         if (_step > 1)
         {
@@ -56,13 +59,13 @@ public class Globals : MonoBehaviour {
 
     [Header("Note sprites")]
     [SerializeField]
-    Sprite[] normalNotes = new Sprite[5];
+    Sprite[] normalNotes = new Sprite[6];
     [SerializeField]
-    Sprite[] hopoNotes = new Sprite[5];
+    Sprite[] hopoNotes = new Sprite[6];
     [SerializeField]
-    Sprite[] tapNotes = new Sprite[5];
+    Sprite[] tapNotes = new Sprite[6];
     [SerializeField]
-    Material[] sustains = new Material[5];
+    Material[] sustains = new Material[6];
 
     void Awake()
     {
@@ -70,6 +73,16 @@ public class Globals : MonoBehaviour {
         hopoSprites = hopoNotes;
         tapSprites = tapNotes;
         sustainColours = sustains;
+    }
+
+    void Update()
+    {
+        stepText.text = "1/" + _step.ToString();
+
+        if (Input.GetKeyDown("a"))
+            IncrementStep();
+        if (Input.GetKeyDown("s"))
+            DecrementStep();
     }
 
     [System.Flags]

@@ -23,7 +23,7 @@ public class SectionController : SongObjectController
 
     public override void Delete()
     {
-        Destroy(sectionGui);
+        Destroy(sectionGui.gameObject);
 
         section.song.Remove(section);
   
