@@ -27,6 +27,8 @@ public class NoteController : SongObjectController {
     void OnMouseDown()
     {
         Debug.Log(note.position);
+        Debug.Log(note.previous.position);
+        Debug.Log(IsHopo);
     }
 
     public void Init(MovementController movement, Note note)

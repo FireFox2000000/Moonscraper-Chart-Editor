@@ -185,22 +185,17 @@ public class ChartEditor : MonoBehaviour {
         parent.name = "Chart Objects";
         parent.tag = "Chart Object";
 
-        // Configure in case the notes get added or deleted
-        int length = chart.notes.Length;
-        int prevLength = length;
-        int lengthDiff = 0;
-
-        for (int i = 0; i < length; ++i)
+        // Get reference to the current set of notes in case real notes get deleted
+        Note[] notes = chart.notes;
+        for (int i = 0; i < notes.Length; ++i)
         {
-            if (prevLength != chart.notes.Length)
+            // Make sure notes haven't been deleted
+            if (notes[i].song != null)
             {
-                lengthDiff += prevLength - chart.notes.Length;
-                prevLength = chart.notes.Length;
+                NoteController controller = CreateNoteObject(notes[i], parent);
+
+                controller.UpdateSongObject();
             }
-
-            NoteController controller = CreateNoteObject(chart.notes[i - lengthDiff], parent);
-
-            controller.UpdateSongObject();
         }
 
         return parent;

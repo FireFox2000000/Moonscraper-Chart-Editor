@@ -319,6 +319,7 @@ public abstract class SongObject
                     next.previous = previous;
             }
 
+            item.song = null;
             list.RemoveAt(pos);
 
             return true;
