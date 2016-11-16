@@ -2,18 +2,23 @@
 using UnityEngine.UI;
 using System.Collections;
 
+[RequireComponent(typeof(Renderer))]
 public abstract class SongObjectController : MonoBehaviour {
     private SongObject songObject = null;
+    Renderer ren;
 
     public abstract void Delete();
     public abstract void UpdateSongObject();
 
+    protected void Awake()
+    {
+        ren = GetComponent<Renderer>();
+    }
+
     protected void Update()
     {
-        if (gameObject.layer == LayerMask.NameToLayer("UI"))
-        {
+        if (ren.isVisible)
             UpdatePosition();
-        }
     }
 
     protected void OnBecameVisible()

@@ -102,6 +102,7 @@ public class Globals : MonoBehaviour {
         if (Input.GetKeyDown("s"))
             DecrementStep();
             */
+            /*
         if (Input.GetKeyDown("a"))
         {
             hyperspeed += 1;
@@ -111,7 +112,7 @@ public class Globals : MonoBehaviour {
         {
             hyperspeed -= 1;
             Debug.Log(hyperspeed);
-        }
+        }*/
 
         if (Screen.width != lastWidth)
         {

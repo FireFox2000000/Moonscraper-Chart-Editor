@@ -17,8 +17,9 @@ public class NoteController : SongObjectController {
     SpriteRenderer noteRenderer;
     Renderer sustainRen;
 
-    void Awake()
-    {      
+    new void Awake()
+    {
+        base.Awake();
         noteRenderer = GetComponent<SpriteRenderer>();
         sustainRen = sustain.GetComponent<Renderer>();
         sustainRen.material = new Material(sustainRen.sharedMaterial);
@@ -27,7 +28,8 @@ public class NoteController : SongObjectController {
     void OnMouseDown()
     {
         Debug.Log(note.position);
-        Debug.Log(note.song.WorldYPositionToChartPosition(transform.position.y));
+        Debug.Log(note.song);
+        Debug.Log(note.controller);
     }
 
     public void Init(Note note)

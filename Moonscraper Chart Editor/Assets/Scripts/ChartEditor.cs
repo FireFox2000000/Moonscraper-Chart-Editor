@@ -39,48 +39,50 @@ public class ChartEditor : MonoBehaviour {
 
     void Update()
     {
-        // Update object positions that are theoretically in range of camera
+        // Update object positions that supposed to be visible into the range of the camera
         uint minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
         uint maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
+
         int arrayPos;
 
         // Update chart objects
         ChartObject[] chartObjects = currentChart.chartObjects;
         arrayPos = SongObject.FindClosestPosition(minPos, chartObjects);
-        while ( arrayPos != Globals.NOTFOUND && 
-                arrayPos < chartObjects.Length && 
-                chartObjects[arrayPos].song != null && 
-                chartObjects[arrayPos].position < maxPos && 
-                chartObjects[arrayPos].controller != null)
+        //Debug.Log(chartObjects[arrayPos].position + ", " + minPos + ", " + maxPos);
+        if (arrayPos != Globals.NOTFOUND)
         {
-            chartObjects[arrayPos].controller.UpdatePosition();
-            ++arrayPos;
-        }
+            while (arrayPos < chartObjects.Length && chartObjects[arrayPos].position < maxPos)
+            {
+                if (chartObjects[arrayPos].song != null && chartObjects[arrayPos].controller != null)
+                    chartObjects[arrayPos].controller.UpdatePosition();
+                ++arrayPos;
+            }
+        }        
 
         // Update song events
         Event[] songEvents = currentSong.events;
         arrayPos = SongObject.FindClosestPosition(minPos, songEvents);
-        while (arrayPos != Globals.NOTFOUND &&
-                arrayPos < songEvents.Length &&
-                songEvents[arrayPos].song != null &&
-                songEvents[arrayPos].position < maxPos &&
-                songEvents[arrayPos].controller != null)
+        if (arrayPos != Globals.NOTFOUND)
         {
-            songEvents[arrayPos].controller.UpdatePosition();
-            ++arrayPos;
+            while (arrayPos < songEvents.Length && songEvents[arrayPos].position < maxPos)
+            {
+                if (songEvents[arrayPos].song != null && songEvents[arrayPos].controller != null)
+                    songEvents[arrayPos].controller.UpdatePosition();
+                ++arrayPos;
+            }
         }
 
         // Update song synctrack
         SyncTrack[] songSyncTrack = currentSong.syncTrack;
         arrayPos = SongObject.FindClosestPosition(minPos, songSyncTrack);
-        while (arrayPos != Globals.NOTFOUND &&
-                arrayPos < songEvents.Length &&
-                songSyncTrack[arrayPos].song != null &&
-                songSyncTrack[arrayPos].position < maxPos &&
-                songSyncTrack[arrayPos].controller != null)
+        if (arrayPos != Globals.NOTFOUND)
         {
-            songSyncTrack[arrayPos].controller.UpdatePosition();
-            ++arrayPos;
+            while (arrayPos < songSyncTrack.Length && songSyncTrack[arrayPos].position < maxPos)
+            {
+                if (songSyncTrack[arrayPos].song != null && songSyncTrack[arrayPos].controller != null)
+                    songSyncTrack[arrayPos].controller.UpdatePosition();
+                ++arrayPos;
+            }
         }
     }
 
@@ -131,7 +133,6 @@ public class ChartEditor : MonoBehaviour {
 #if TIMING_DEBUG
         float totalLoadTime = 0;
 #endif
-
         try
         {
             currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart");
@@ -170,7 +171,6 @@ public class ChartEditor : MonoBehaviour {
 #if TIMING_DEBUG
             Debug.Log("Chart objects load time: " + (Time.realtimeSinceStartup - objectLoadTime));
 #endif
-
             songNameText.text = currentSong.name;    
         }
         catch (System.Exception e)
@@ -222,17 +222,18 @@ public class ChartEditor : MonoBehaviour {
 
             if (parent)
                 sectionObject.transform.parent = parent.transform;
-
+            
             // Attach the note to the object
             SectionController controller = sectionObject.GetComponentInChildren<SectionController>();
 
             // Link controller and note together
             controller.Init(song.sections[i], timeHandler, guiIndicators);
-
+            
             controller.UpdateSongObject();
+            
         }
-
-         return parent;
+        
+        return parent;
     }
 
     // Create note, starpower and chart event objects
