@@ -8,16 +8,20 @@ public class SectionGuiController : MonoBehaviour
     TimelineHandler timelineHandler;
     MovementController movement;
 
+    void Awake()
+    {
+        movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
+    }
+
     void Update()
     {
         transform.localPosition = GetLocalPos();
     }
 
-	public void Init(Section _section, TimelineHandler _timelineHandler, MovementController _movement, GameObject bpmGuiParent)
+	public void Init(Section _section, TimelineHandler _timelineHandler, GameObject bpmGuiParent)
     {
         section = _section;
         timelineHandler = _timelineHandler;
-        movement = _movement;
 
         transform.SetParent(bpmGuiParent.transform);
         transform.localPosition = Vector3.zero;

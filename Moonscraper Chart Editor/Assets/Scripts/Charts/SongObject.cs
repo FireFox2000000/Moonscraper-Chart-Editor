@@ -7,6 +7,7 @@ public abstract class SongObject
 {
     public Song song;
     public uint position;
+    public SongObjectController controller;
 
     public SongObject (Song _song, uint _position)
     {
@@ -351,6 +352,14 @@ public class Event : SongObject
 
 public class Section : Event
 {
+    SectionController _controller = null;
+    
+    new public SectionController controller
+    {
+        get { return _controller; }
+        set { _controller = value; base.controller = value; }
+    }
+
     public Section(Song song, string _title, uint _position) : base(song, _title, _position) { }
 
     public override string GetSaveString()

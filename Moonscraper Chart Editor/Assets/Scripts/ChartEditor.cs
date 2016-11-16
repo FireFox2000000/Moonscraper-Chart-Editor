@@ -17,6 +17,8 @@ public class ChartEditor : MonoBehaviour {
     public Button play;
     public Transform strikeline;
     public TimelineHandler timeHandler;
+    public Transform camYMin;
+    public Transform camYMax;
 
     AudioSource musicSource;
 
@@ -37,7 +39,62 @@ public class ChartEditor : MonoBehaviour {
 
     void Update()
     {
+        // Update object positions that are theoretically in range of camera
+        uint minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
+        uint maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
+        int arrayPos;
 
+        // Update chart objects
+        ChartObject[] chartObjects = currentChart.chartObjects;
+        arrayPos = SongObject.FindClosestPosition(minPos, chartObjects);
+        while ( arrayPos != Globals.NOTFOUND && 
+                arrayPos < chartObjects.Length && 
+                chartObjects[arrayPos].song != null && 
+                chartObjects[arrayPos].position < maxPos && 
+                chartObjects[arrayPos].controller != null)
+        {
+            chartObjects[arrayPos].controller.UpdatePosition();
+            ++arrayPos;
+        }
+
+        // Update song events
+        Event[] songEvents = currentSong.events;
+        arrayPos = SongObject.FindClosestPosition(minPos, songEvents);
+        while (arrayPos != Globals.NOTFOUND &&
+                arrayPos < songEvents.Length &&
+                songEvents[arrayPos].song != null &&
+                songEvents[arrayPos].position < maxPos &&
+                songEvents[arrayPos].controller != null)
+        {
+            songEvents[arrayPos].controller.UpdatePosition();
+            ++arrayPos;
+        }
+
+        // Update song synctrack
+        SyncTrack[] songSyncTrack = currentSong.syncTrack;
+        arrayPos = SongObject.FindClosestPosition(minPos, songSyncTrack);
+        while (arrayPos != Globals.NOTFOUND &&
+                arrayPos < songEvents.Length &&
+                songSyncTrack[arrayPos].song != null &&
+                songSyncTrack[arrayPos].position < maxPos &&
+                songSyncTrack[arrayPos].controller != null)
+        {
+            songSyncTrack[arrayPos].controller.UpdatePosition();
+            ++arrayPos;
+        }
+    }
+
+    void OnApplicationFocus(bool hasFocus)
+    {
+        if (hasFocus && Globals.applicationMode == Globals.ApplicationMode.Playing)
+            Play();
+        else
+            musicSource.Stop();
+    }
+
+    void OnApplicationQuit()
+    {
+        // Check for unsaved changes
     }
 
     // Wrapper function
@@ -58,14 +115,14 @@ public class ChartEditor : MonoBehaviour {
         float strikelinePos = strikeline.position.y;
         musicSource.time = Song.WorldYPositionToTime(strikelinePos) + currentSong.offset;       // No need to add audio calibration as position is base on the strikeline position
         play.interactable = false;
-        movement.applicationMode = MovementController.ApplicationMode.Playing;
+        Globals.applicationMode = Globals.ApplicationMode.Playing;
         musicSource.Play();
     }
 
     public void Stop()
     {
         play.interactable = true;
-        movement.applicationMode = MovementController.ApplicationMode.Editor;
+        Globals.applicationMode = Globals.ApplicationMode.Editor;
         musicSource.Stop();
     }
 
@@ -170,7 +227,7 @@ public class ChartEditor : MonoBehaviour {
             SectionController controller = sectionObject.GetComponentInChildren<SectionController>();
 
             // Link controller and note together
-            controller.Init(movement, song.sections[i], timeHandler, guiIndicators);
+            controller.Init(song.sections[i], timeHandler, guiIndicators);
 
             controller.UpdateSongObject();
         }
@@ -218,7 +275,7 @@ public class ChartEditor : MonoBehaviour {
         NoteController controller = noteObject.GetComponent<NoteController>();
 
         // Link controller and note together
-        controller.Init(movement, note);
+        controller.Init(note);
 
         return controller;
     }

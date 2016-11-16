@@ -2,9 +2,6 @@
 using System.Collections;
 
 public abstract class MovementController : MonoBehaviour {
-    [HideInInspector]
-    public ApplicationMode applicationMode = ApplicationMode.Editor;
-
     public ChartEditor editor;
 
     protected Vector3 initPos;
@@ -40,10 +37,5 @@ public abstract class MovementController : MonoBehaviour {
         {
             scrollDelta = 0;
         }
-    }
-
-    public enum ApplicationMode
-    {
-        Editor, Playing
     }
 }

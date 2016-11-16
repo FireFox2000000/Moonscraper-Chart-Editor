@@ -30,10 +30,10 @@ public class SectionController : SongObjectController
         Destroy(gameObject);
     }
 
-    public void Init(MovementController movement, Section _section, TimelineHandler _timelineHandler, GameObject bpmGuiParent)
+    public void Init(Section _section, TimelineHandler _timelineHandler, GameObject bpmGuiParent)
     {
-        Init(movement);
+        base.Init( _section);
         section = _section;
-        sectionGui.Init(_section, _timelineHandler, movement, bpmGuiParent);
+        sectionGui.Init(_section, _timelineHandler, bpmGuiParent);
     }
 }

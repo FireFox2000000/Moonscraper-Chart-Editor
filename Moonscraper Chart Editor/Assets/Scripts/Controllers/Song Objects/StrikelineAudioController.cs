@@ -6,7 +6,6 @@ public class StrikelineAudioController : MonoBehaviour {
 
     public AudioClip clap;
     AudioSource source;
-    MovementController movement;
 
     float lastClapPos = -1;
     Vector3 initLocalPos;
@@ -14,7 +13,6 @@ public class StrikelineAudioController : MonoBehaviour {
     void Start()
     {
         source = GetComponent<AudioSource>();
-        movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
 
         initLocalPos = transform.localPosition;  
     }
@@ -30,7 +28,7 @@ public class StrikelineAudioController : MonoBehaviour {
     {
         NoteController note = col.gameObject.GetComponentInParent<NoteController>();
 
-        if (note != null && movement.applicationMode == MovementController.ApplicationMode.Playing && col.transform.position.y != lastClapPos)
+        if (note != null && Globals.applicationMode == Globals.ApplicationMode.Playing && col.transform.position.y != lastClapPos)
         {
             switch (note.noteType)
             {
@@ -61,12 +59,12 @@ public class StrikelineAudioController : MonoBehaviour {
     {
         if (modeSwitch)
         {
-            if (movement.applicationMode == MovementController.ApplicationMode.Editor)
+            if (Globals.applicationMode == Globals.ApplicationMode.Editor)
                 modeSwitch = false;
         }
         else
         {
-            if (movement.applicationMode == MovementController.ApplicationMode.Playing)
+            if (Globals.applicationMode == Globals.ApplicationMode.Playing)
             {
                 modeSwitch = true;
                 OnTriggerEnter2D(col);

@@ -31,10 +31,12 @@ public class Song {
     public Chart expert_double_bass { get { return charts[7]; } }
 
     List<Event> _events;
-    List<SyncTrack> syncTrack;
+    List<SyncTrack> _syncTrack;
 
     public Event[] events { get; private set; }
     public Section[] sections { get; private set; }
+
+    public SyncTrack[] syncTrack { get { return _syncTrack.ToArray(); } }
     public BPM[] bpms { get; private set; }
     public TimeSignature[] timeSignatures { get; private set; }
 
@@ -50,7 +52,7 @@ public class Song {
     public Song()
     { 
         _events = new List<Event>();
-        syncTrack = new List<SyncTrack>();
+        _syncTrack = new List<SyncTrack>();
 
         events = new Event[0];
         sections = new Section[0];
@@ -198,6 +200,11 @@ public class Song {
     public uint WorldYPositionToChartPosition(float worldYPos)
     {
         float time = WorldYPositionToTime(worldYPos);
+        if (time < 0)
+            time = 0;
+        else if (time > length)
+            time = length;
+
         uint position = 0;
 
         BPM prevBPM = new BPM(this);
@@ -215,7 +222,7 @@ public class Song {
             }
         }
 
-        position += time_to_dis(ChartPositionToTime(prevBPM.position), time, prevBPM.value);
+        position += time_to_dis(ChartPositionToTime(prevBPM.position), time, prevBPM.value / 1000.0f);
 
         return position;
     }
@@ -255,7 +262,7 @@ public class Song {
 
     public void Add(SyncTrack syncTrackObject, bool update = true)
     {
-        SongObject.Insert(syncTrackObject, syncTrack);
+        SongObject.Insert(syncTrackObject, _syncTrack);
 
         if (update)
             updateArrays();
@@ -267,7 +274,7 @@ public class Song {
 
         if (syncTrackObject.position > 0)
         {
-            success = SongObject.Remove(syncTrackObject, syncTrack);
+            success = SongObject.Remove(syncTrackObject, _syncTrack);
         }
 
         if (update)
@@ -609,7 +616,7 @@ public class Song {
 
         // SyncTrack
         saveString += "[SyncTrack]\n{\n";
-        saveString += GetSaveString(syncTrack);
+        saveString += GetSaveString(_syncTrack);
         saveString += "}\n";
 
         // Events
@@ -674,7 +681,7 @@ public class Song {
     {
         events = _events.ToArray();
         sections = _events.OfType<Section>().ToArray();
-        bpms = syncTrack.OfType<BPM>().ToArray();
-        timeSignatures = syncTrack.OfType<TimeSignature>().ToArray();
+        bpms = _syncTrack.OfType<BPM>().ToArray();
+        timeSignatures = _syncTrack.OfType<TimeSignature>().ToArray();
     }
 }

@@ -71,7 +71,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     void moveHandle(PointerEventData eventData)
     {
         movement.editor.Stop();
-        if (movement.applicationMode == MovementController.ApplicationMode.Editor)
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             Vector3 pos = handle.transform.position;
             pos.y = eventData.position.y;

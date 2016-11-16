@@ -18,7 +18,7 @@ public class ScrollbarMovementController : MovementController {
 
     // Update is called once per frame
 	void FixedUpdate () {
-        if (applicationMode == ApplicationMode.Editor)
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             if (scrollDelta == 0)
             {
@@ -43,7 +43,7 @@ public class ScrollbarMovementController : MovementController {
                 UpdatePosBasedScrollValue();
             }
         }
-        else if (applicationMode == ApplicationMode.Playing)
+        else if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
             PlayingMovement();
 

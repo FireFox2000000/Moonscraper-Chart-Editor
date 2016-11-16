@@ -27,13 +27,12 @@ public class NoteController : SongObjectController {
     void OnMouseDown()
     {
         Debug.Log(note.position);
-        Debug.Log(note.previous.position);
-        Debug.Log(IsHopo);
+        Debug.Log(note.song.WorldYPositionToChartPosition(transform.position.y));
     }
 
-    public void Init(MovementController movement, Note note)
+    public void Init(Note note)
     {
-        Init(movement);
+        base.Init(note);
         this.note = note;
         this.note.controller = this;
 
@@ -120,6 +119,12 @@ public class NoteController : SongObjectController {
         UpdateSustain();
     }
 
+    public override void UpdatePosition()
+    {
+        base.UpdatePosition();
+        UpdateSustainLength();
+    }
+
     public void UpdateSustain()
     {
         Note nextSameFret = FindNextSameFretWithinSustain();
@@ -129,6 +134,13 @@ public class NoteController : SongObjectController {
             note.sustain_length = nextSameFret.position - note.position;
         }
 
+        UpdateSustainLength();       
+
+        sustainRen.sharedMaterial = Globals.sustainColours[(int)note.fret_type];
+    }
+
+    public void UpdateSustainLength()
+    {
         float length = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length) - note.song.ChartPositionToWorldYPosition(note.position);
 
         Vector3 scale = sustain.transform.localScale;
@@ -138,8 +150,6 @@ public class NoteController : SongObjectController {
         Vector3 position = transform.position;
         position.y += length / 2.0f;
         sustain.transform.position = position;
-
-        sustainRen.sharedMaterial = Globals.sustainColours[(int)note.fret_type];
     }
 
     public override void Delete()

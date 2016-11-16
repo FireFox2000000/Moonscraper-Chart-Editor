@@ -12,7 +12,11 @@ public class Note : ChartObject
     public Note previous;
     public Note next;
 
-    public NoteController controller = null;
+    NoteController _controller = null;
+    new public NoteController controller {
+        get { return _controller; }
+        set { _controller = value; base.controller = value; }
+    }
 
     public Note(Song song, Chart chart, uint _position, 
                 Fret_Type _fret_type, 

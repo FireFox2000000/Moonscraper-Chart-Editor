@@ -8,7 +8,7 @@ public class TimelineMovementController : MovementController
 
     public override void SetPosition(uint chartPosition)
     {
-        if (applicationMode == ApplicationMode.Editor)
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             Vector3 pos = initPos;
             pos.y += editor.currentSong.ChartPositionToWorldYPosition(chartPosition);
@@ -27,7 +27,7 @@ public class TimelineMovementController : MovementController
 
     // Update is called once per frame
     void FixedUpdate () {
-	    if (applicationMode == ApplicationMode.Editor)
+	    if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             if (scrollDelta == 0)
             {
@@ -52,7 +52,7 @@ public class TimelineMovementController : MovementController
                 UpdatePosBasedTimelineHandle();
             }
         }
-        else if(applicationMode == ApplicationMode.Playing)
+        else if(Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
             PlayingMovement();
 

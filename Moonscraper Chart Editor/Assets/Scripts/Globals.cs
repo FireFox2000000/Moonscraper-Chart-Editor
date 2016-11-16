@@ -13,6 +13,7 @@ public class Globals : MonoBehaviour {
     public static int step { get { return _step; } }
     public static ClapToggle clapToggle = ClapToggle.NONE;
     public static int audioCalibrationMS = 100;                     // Increase to start the audio sooner
+    public static ApplicationMode applicationMode = ApplicationMode.Editor;
 
     ClapToggle currentClapSettings;
 
@@ -91,19 +92,48 @@ public class Globals : MonoBehaviour {
         ToggleClap();
     }
 
+    int lastWidth = Screen.width;
     void Update()
     {
         stepText.text = "1/" + _step.ToString();
-
+        /*
         if (Input.GetKeyDown("a"))
             IncrementStep();
         if (Input.GetKeyDown("s"))
             DecrementStep();
+            */
+        if (Input.GetKeyDown("a"))
+        {
+            hyperspeed += 1;
+            Debug.Log(hyperspeed);
+        }
+        if (Input.GetKeyDown("s"))
+        {
+            hyperspeed -= 1;
+            Debug.Log(hyperspeed);
+        }
+
+        if (Screen.width != lastWidth)
+        {
+            // User is resizing width
+            Screen.SetResolution(Screen.width, Screen.width * 9 / 16, false);
+            lastWidth = Screen.width;
+        }
+        else
+        {
+            // User is resizing height
+            Screen.SetResolution(Screen.height * 16 / 9, Screen.height, false);
+        }
     }
 
     [System.Flags]
     public enum ClapToggle
     {
         NONE = 0, ALL = ~0, STRUM = 1, HOPO = 2, TAP = 4
+    }
+
+    public enum ApplicationMode
+    {
+        Editor, Playing
     }
 }
