@@ -28,8 +28,7 @@ public class NoteController : SongObjectController {
     void OnMouseDown()
     {
         Debug.Log(note.position);
-        Debug.Log(note.song);
-        Debug.Log(note.controller);
+        Debug.Log(note.song.WorldYPositionToChartPosition(transform.position.y));
     }
 
     public void Init(Note note)

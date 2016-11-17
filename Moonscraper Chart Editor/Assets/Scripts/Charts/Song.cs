@@ -209,6 +209,7 @@ public class Song {
 
         BPM prevBPM = new BPM(this);
 
+        // Search for the last bpm
         foreach (BPM bpmInfo in bpms)
         {
             if (ChartPositionToTime(bpmInfo.position) >= time)
@@ -217,11 +218,11 @@ public class Song {
             }
             else
             {
-                position += prevBPM.position;
                 prevBPM = bpmInfo;
             }
         }
 
+        position = prevBPM.position;
         position += time_to_dis(ChartPositionToTime(prevBPM.position), time, prevBPM.value / 1000.0f);
 
         return position;
