@@ -196,7 +196,7 @@ public class Song {
         return TimeToWorldYPosition(ChartPositionToTime(position));
     }
 
-    // TODO - Will be used for snapping
+    // Used for snapping
     public uint WorldYPositionToChartPosition(float worldYPos)
     {
         float time = WorldYPositionToTime(worldYPos);

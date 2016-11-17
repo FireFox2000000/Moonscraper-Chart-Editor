@@ -70,6 +70,16 @@ public abstract class SongObject
             return false;
     }
 
+    public override bool Equals(System.Object obj)
+    {
+        return base.Equals(obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
+
     public static int FindClosestPosition<T>(T searchItem, T[] objects) where T : SongObject
     {
         int lowerBound = 0;

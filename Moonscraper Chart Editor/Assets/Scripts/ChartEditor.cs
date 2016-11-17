@@ -1,8 +1,8 @@
 ﻿#define TIMING_DEBUG
-
+//#undef UNITY_EDITOR
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
+using System.Windows.Forms;
 
 [RequireComponent(typeof(AudioSource))]
 public class ChartEditor : MonoBehaviour {
@@ -15,9 +15,9 @@ public class ChartEditor : MonoBehaviour {
     [Header("Indicator Parents")]
     public GameObject guiIndicators;
     [Header("Song properties Display")]
-    public Text songNameText;
+    public UnityEngine.UI.Text songNameText;
     [Header("Misc.")]
-    public Button play;
+    public UnityEngine.UI.Button play;
     public Transform strikeline;
     public TimelineHandler timeHandler;
     public Transform camYMin;
@@ -40,11 +40,24 @@ public class ChartEditor : MonoBehaviour {
     GameObject songObjectParent;
     GameObject chartObjectParent;
 
+#if !UNITY_EDITOR
+    OpenFileDialog openDialog;
+    SaveFileDialog saveDialog;
+#endif
+
     // Use this for initialization
-    void Awake () {
+    void Awake () {  
         minPos = 0;
         maxPos = 0;
+#if !UNITY_EDITOR
+        openDialog = new OpenFileDialog();
+        openDialog.InitialDirectory = "";    
+        openDialog.RestoreDirectory = true;
 
+        saveDialog = new SaveFileDialog();
+        saveDialog.InitialDirectory = "";
+        saveDialog.RestoreDirectory = true;
+#endif
         songObjectParent = new GameObject();
         songObjectParent.name = "Song Objects";
         songObjectParent.tag = "Song Object";
@@ -92,7 +105,7 @@ public class ChartEditor : MonoBehaviour {
 
         //Debug.Log(currentSong.ChartPositionToTime(maxPos) + ", " + currentSong.length);
     }
-
+    
     void OnApplicationFocus(bool hasFocus)
     {
         if (hasFocus && Globals.applicationMode == Globals.ApplicationMode.Playing)
@@ -104,6 +117,7 @@ public class ChartEditor : MonoBehaviour {
     void OnApplicationQuit()
     {
         // Check for unsaved changes
+        Debug.Log("Quit");
     }
 
     // Wrapper function
@@ -124,10 +138,22 @@ public class ChartEditor : MonoBehaviour {
     public void SaveAs()
     {
         try {
-            string fileName = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", currentSong.name, "chart");
-
+            string fileName;
+#if UNITY_EDITOR
+            fileName = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", currentSong.name, "chart");
+#else
+            saveDialog.Filter = "chart files (*.chart)|*.chart";
+            saveDialog.FilterIndex = 1;
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                fileName = saveDialog.FileName;
+            }
+            else
+                throw new System.Exception("File was not saved");
+#endif
             Save(fileName);
             lastLoadedFile = fileName;
+
         }
         catch (System.Exception e)
         {
@@ -165,7 +191,22 @@ public class ChartEditor : MonoBehaviour {
 #endif
         try
         {
+#if UNITY_EDITOR
             currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart");
+#else
+            openDialog.Filter = "chart files (*.chart)|*.chart";
+            openDialog.FilterIndex = 1;
+
+            if (openDialog.ShowDialog() == DialogResult.OK)
+            {
+                currentFileName = openDialog.FileName;
+            }
+            else
+            {
+                throw new System.Exception("Could not open file");
+            }
+#endif
+
 #if TIMING_DEBUG
             totalLoadTime = Time.realtimeSinceStartup;
 #endif
