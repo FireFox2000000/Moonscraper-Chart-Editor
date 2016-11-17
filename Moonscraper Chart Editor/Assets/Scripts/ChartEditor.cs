@@ -35,6 +35,8 @@ public class ChartEditor : MonoBehaviour {
     GameObject[] timeSignatureLinePool = new GameObject[POOL_SIZE];
     GameObject timeSignatureLineParent;
 
+    string lastLoadedFile = string.Empty;
+
     // Use this for initialization
     void Awake () {
         minPos = 0;
@@ -102,8 +104,31 @@ public class ChartEditor : MonoBehaviour {
 
     public void Save()
     {
+        if (lastLoadedFile != string.Empty)
+            Save(lastLoadedFile);
+        else
+            SaveAs();
+    }
+
+    public void SaveAs()
+    {
+        try {
+            string fileName = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", currentSong.name, "chart");
+
+            Save(fileName);
+            lastLoadedFile = fileName;
+        }
+        catch (System.Exception e)
+        {
+            // User probably just canceled
+            Debug.LogError(e.Message);
+        }
+    }
+
+    void Save (string filename)
+    {
         if (currentSong != null)
-            currentSong.Save("test.chart");
+            currentSong.Save(filename);
     }
 
     public void Play()
@@ -165,7 +190,9 @@ public class ChartEditor : MonoBehaviour {
 #if TIMING_DEBUG
             Debug.Log("Chart objects load time: " + (Time.realtimeSinceStartup - objectLoadTime));
 #endif
-            songNameText.text = currentSong.name;    
+            songNameText.text = currentSong.name;
+
+            lastLoadedFile = currentFileName;
         }
         catch (System.Exception e)
         {
