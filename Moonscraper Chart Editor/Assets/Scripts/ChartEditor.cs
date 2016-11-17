@@ -6,9 +6,12 @@ using System.Collections;
 
 [RequireComponent(typeof(AudioSource))]
 public class ChartEditor : MonoBehaviour {
+    const int POOL_SIZE = 100;
+
     [Header("Prefabs")]
     public GameObject note;
     public GameObject section;
+    public GameObject timeSignatureLine;
     [Header("Indicator Parents")]
     public GameObject guiIndicators;
     [Header("Song properties Display")]
@@ -20,6 +23,8 @@ public class ChartEditor : MonoBehaviour {
     public Transform camYMin;
     public Transform camYMax;
 
+    public uint minPos { get; private set; }
+    public uint maxPos { get; private set; }
     AudioSource musicSource;
 
     public Song currentSong { get; private set; }
@@ -27,63 +32,52 @@ public class ChartEditor : MonoBehaviour {
     string currentFileName = string.Empty;
 
     MovementController movement;
+    GameObject[] timeSignatureLinePool = new GameObject[POOL_SIZE];
+    GameObject timeSignatureLineParent;
 
     // Use this for initialization
     void Awake () {
+        minPos = 0;
+        maxPos = 0;
+
         currentSong = new Song();
         currentChart = currentSong.expert_single;
         musicSource = GetComponent<AudioSource>();
 
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
+        timeSignatureLineParent = new GameObject("Time Signature Lines");
+        for (int i = 0; i < POOL_SIZE; ++i)
+        {
+            timeSignatureLinePool[i] = Instantiate(timeSignatureLine);
+            timeSignatureLinePool[i].transform.SetParent(timeSignatureLineParent.transform);
+            timeSignatureLinePool[i].SetActive(false);
+        }
     }
 
     void Update()
     {
         // Update object positions that supposed to be visible into the range of the camera
-        uint minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
-        uint maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
+        minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
+        maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
 
-        int arrayPos;
-
-        // Update chart objects
-        ChartObject[] chartObjects = currentChart.chartObjects;
-        arrayPos = SongObject.FindClosestPosition(minPos, chartObjects);
-        //Debug.Log(chartObjects[arrayPos].position + ", " + minPos + ", " + maxPos);
-        if (arrayPos != Globals.NOTFOUND)
+        // Update time signature lines SNAPPED
+        uint snappedLinePos = Snapable.ChartPositionToSnappedChartPosition(minPos, 4);
+        int i = 0;
+        while (snappedLinePos < maxPos && i < timeSignatureLinePool.Length)
         {
-            while (arrayPos < chartObjects.Length && chartObjects[arrayPos].position < maxPos)
-            {
-                if (chartObjects[arrayPos].song != null && chartObjects[arrayPos].controller != null)
-                    chartObjects[arrayPos].controller.UpdatePosition();
-                ++arrayPos;
-            }
-        }        
-
-        // Update song events
-        Event[] songEvents = currentSong.events;
-        arrayPos = SongObject.FindClosestPosition(minPos, songEvents);
-        if (arrayPos != Globals.NOTFOUND)
-        {
-            while (arrayPos < songEvents.Length && songEvents[arrayPos].position < maxPos)
-            {
-                if (songEvents[arrayPos].song != null && songEvents[arrayPos].controller != null)
-                    songEvents[arrayPos].controller.UpdatePosition();
-                ++arrayPos;
-            }
+            timeSignatureLinePool[i].SetActive(true);
+            timeSignatureLinePool[i].transform.position = new Vector3(0, currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+            snappedLinePos += Globals.FULL_STEP / 4;
+            ++i;
         }
 
-        // Update song synctrack
-        SyncTrack[] songSyncTrack = currentSong.syncTrack;
-        arrayPos = SongObject.FindClosestPosition(minPos, songSyncTrack);
-        if (arrayPos != Globals.NOTFOUND)
+        // Disable any unused lines
+        while (i < timeSignatureLinePool.Length)
         {
-            while (arrayPos < songSyncTrack.Length && songSyncTrack[arrayPos].position < maxPos)
-            {
-                if (songSyncTrack[arrayPos].song != null && songSyncTrack[arrayPos].controller != null)
-                    songSyncTrack[arrayPos].controller.UpdatePosition();
-                ++arrayPos;
-            }
+            timeSignatureLinePool[i++].SetActive(false);
         }
+
+        //Debug.Log(currentSong.ChartPositionToTime(maxPos) + ", " + currentSong.length);
     }
 
     void OnApplicationFocus(bool hasFocus)
@@ -221,7 +215,7 @@ public class ChartEditor : MonoBehaviour {
             GameObject sectionObject = Instantiate(this.section);
 
             if (parent)
-                sectionObject.transform.parent = parent.transform;
+                sectionObject.transform.SetParent(parent.transform);
             
             // Attach the note to the object
             SectionController controller = sectionObject.GetComponentInChildren<SectionController>();
@@ -270,7 +264,7 @@ public class ChartEditor : MonoBehaviour {
         GameObject noteObject = Instantiate(this.note);
 
         if (parent)
-            noteObject.transform.parent = parent.transform;
+            noteObject.transform.SetParent(parent.transform);
 
         // Attach the note to the object
         NoteController controller = noteObject.GetComponent<NoteController>();

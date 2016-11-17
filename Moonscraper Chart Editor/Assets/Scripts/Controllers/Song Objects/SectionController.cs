@@ -5,12 +5,13 @@ using System.Collections;
 public class SectionController : SongObjectController
 {
     Section section;
+    public float position = 4.5f;
     public SectionGuiController sectionGui;
     public Text sectionText;
 
     public override void UpdateSongObject()
     {
-        transform.position = new Vector3(5, section.song.ChartPositionToWorldYPosition(section.position), 0);
+        transform.position = new Vector3(position, section.song.ChartPositionToWorldYPosition(section.position), 0);
 
         sectionText.text = section.title;
     }

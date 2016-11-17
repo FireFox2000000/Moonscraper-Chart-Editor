@@ -23,7 +23,7 @@ public abstract class MovementController : MonoBehaviour {
         // Auto scroll camera- Run in FixedUpdate
         float speed = Globals.hyperspeed;
         Vector3 pos = transform.position;
-        pos.y += (speed * Time.fixedDeltaTime);
+        pos.y += (speed * Time.deltaTime);
         transform.position = pos;
     }
 

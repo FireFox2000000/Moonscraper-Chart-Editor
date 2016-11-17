@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class Globals : MonoBehaviour {
+    public static readonly uint FULL_STEP = 768;
     public Text stepText;
 
     static int lsbOffset = 3;
@@ -19,7 +20,7 @@ public class Globals : MonoBehaviour {
 
     public void IncrementStep()
     {
-        if (_step < 768)
+        if (_step < FULL_STEP)
         {
             if (lsbOffset % 2 == 0)
             {
@@ -96,23 +97,29 @@ public class Globals : MonoBehaviour {
     void Update()
     {
         stepText.text = "1/" + _step.ToString();
-        /*
-        if (Input.GetKeyDown("a"))
-            IncrementStep();
-        if (Input.GetKeyDown("s"))
-            DecrementStep();
-            */
+
+        if (applicationMode == ApplicationMode.Editor)
+        {
             /*
-        if (Input.GetKeyDown("a"))
-        {
-            hyperspeed += 1;
-            Debug.Log(hyperspeed);
+            if (Input.GetKeyDown("a"))
+                IncrementStep();
+            if (Input.GetKeyDown("s"))
+                DecrementStep();
+                */
+
+            if (Input.GetKeyDown("a"))
+            {
+                if (hyperspeed < 15)
+                    hyperspeed += 1;
+                Debug.Log(hyperspeed);
+            }
+            if (Input.GetKeyDown("s"))
+            {
+                if (hyperspeed > 1)
+                    hyperspeed -= 1;
+                Debug.Log(hyperspeed);
+            }
         }
-        if (Input.GetKeyDown("s"))
-        {
-            hyperspeed -= 1;
-            Debug.Log(hyperspeed);
-        }*/
 
         if (Screen.width != lastWidth)
         {

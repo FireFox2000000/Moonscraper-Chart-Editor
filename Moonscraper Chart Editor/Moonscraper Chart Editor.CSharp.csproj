@@ -70,7 +70,6 @@
     <Compile Include="Assets\Scripts\Charts\Song.cs" />
     <Compile Include="Assets\Scripts\Charts\SongObject.cs" />
     <Compile Include="Assets\Scripts\Controllers\MovementController.cs" />
-    <Compile Include="Assets\Scripts\Controllers\ScrollbarMovementController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\NoteController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SectionController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SectionGuiController.cs" />
@@ -79,6 +78,7 @@
     <Compile Include="Assets\Scripts\Controllers\TimelineMovementController.cs" />
     <Compile Include="Assets\Scripts\Globals.cs" />
     <Compile Include="Assets\Scripts\RendererLayerExpose.cs" />
+    <Compile Include="Assets\Scripts\Snapable.cs" />
     <Compile Include="Assets\Scripts\TimelineHandler.cs" />
     <Compile Include="Assets\Scripts\Utility.cs" />
   </ItemGroup>

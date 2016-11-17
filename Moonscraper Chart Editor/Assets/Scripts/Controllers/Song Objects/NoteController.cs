@@ -80,6 +80,21 @@ public class NoteController : SongObjectController {
             }
         }
     }
+    
+    protected override void Update()
+    {
+        if (noteRenderer.isVisible || sustainRen.isVisible)
+            UpdateSongObject();
+        else if (note != null)
+        {
+            uint endPosition = note.position + note.sustain_length;
+
+            if ((note.position > editor.minPos && note.position < editor.maxPos) ||
+                    (endPosition > editor.minPos && endPosition < editor.maxPos) ||
+                    (note.position < editor.minPos && endPosition > editor.maxPos))
+                UpdateSongObject();
+        }
+    }
 
     public override void UpdateSongObject()
     {
@@ -119,12 +134,6 @@ public class NoteController : SongObjectController {
         }
 
         UpdateSustain();
-    }
-
-    public override void UpdatePosition()
-    {
-        base.UpdatePosition();
-        UpdateSustainLength();
     }
 
     public void UpdateSustain()

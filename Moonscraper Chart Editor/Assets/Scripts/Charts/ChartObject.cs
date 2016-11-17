@@ -33,6 +33,20 @@ public class ChartEvent : ChartObject
         eventName = _eventName;
     }
 
+    protected override bool Equals(SongObject b)
+    {
+        if (b.GetType() == typeof(ChartEvent))
+        {
+            ChartEvent realB = b as ChartEvent;
+            if (position == realB.position && eventName == realB.eventName)
+                return true;
+            else
+                return false;
+        }
+        else
+            return base.Equals(b);
+    }
+
     public override string GetSaveString()
     {
         // 1728 = E T

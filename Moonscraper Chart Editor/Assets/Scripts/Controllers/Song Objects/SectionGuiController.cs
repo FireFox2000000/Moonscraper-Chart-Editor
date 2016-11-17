@@ -6,11 +6,13 @@ public class SectionGuiController : MonoBehaviour
 {
     Section section;
     TimelineHandler timelineHandler;
+    ChartEditor editor;
     MovementController movement;
 
     void Awake()
     {
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
+        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
     }
 
     void Update()
@@ -41,7 +43,7 @@ public class SectionGuiController : MonoBehaviour
 
     public void JumpToPos()
     {
-        movement.editor.Stop();
+        editor.Stop();
         movement.SetPosition(section.position); 
     }
 }

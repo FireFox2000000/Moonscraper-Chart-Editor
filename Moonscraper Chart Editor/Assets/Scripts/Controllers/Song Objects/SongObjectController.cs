@@ -4,6 +4,7 @@ using System.Collections;
 
 [RequireComponent(typeof(Renderer))]
 public abstract class SongObjectController : MonoBehaviour {
+    protected ChartEditor editor;
     private SongObject songObject = null;
     Renderer ren;
 
@@ -13,22 +14,18 @@ public abstract class SongObjectController : MonoBehaviour {
     protected void Awake()
     {
         ren = GetComponent<Renderer>();
+        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
     }
 
-    protected void Update()
+    protected virtual void Update()
     {
-        if (ren.isVisible)
-            UpdatePosition();
+        if (ren.isVisible || songObject != null && (songObject.position > editor.minPos && songObject.position < editor.maxPos))
+            UpdateSongObject();
     }
-
+    
     protected void OnBecameVisible()
     {
-        UpdatePosition();
-    }
-
-    public virtual void UpdatePosition()
-    {
-        transform.position = new Vector3(transform.position.x, songObject.song.ChartPositionToWorldYPosition(songObject.position), transform.position.z);
+        UpdateSongObject();
     }
 
     protected void OnMouseOver()

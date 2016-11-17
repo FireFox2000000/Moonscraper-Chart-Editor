@@ -5,6 +5,7 @@ using System;
 public class TimelineMovementController : MovementController
 {
     public TimelineHandler timeline;
+    public Transform strikeLine;
 
     public override void SetPosition(uint chartPosition)
     {
@@ -26,7 +27,7 @@ public class TimelineMovementController : MovementController
     Vector3 prevPos = Vector3.zero;
 
     // Update is called once per frame
-    void FixedUpdate () {
+    void LateUpdate () {
 	    if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             if (scrollDelta == 0)
@@ -71,7 +72,7 @@ public class TimelineMovementController : MovementController
         if (editor.currentChart != null)
         {
             float endYPos = Song.TimeToWorldYPosition(editor.currentSong.length);
-            float totalDistance = endYPos - initPos.y;
+            float totalDistance = endYPos - initPos.y - strikeLine.localPosition.y;
             float currentDistance = transform.position.y - initPos.y;
 
             if (totalDistance > 0)
@@ -86,7 +87,7 @@ public class TimelineMovementController : MovementController
         if (editor.currentChart != null)
         {         
             float endYPos = Song.TimeToWorldYPosition(editor.currentSong.length);
-            float totalDistance = endYPos - initPos.y;
+            float totalDistance = endYPos - initPos.y - strikeLine.localPosition.y;
 
             if (totalDistance > 0)
             {
