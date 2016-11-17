@@ -37,10 +37,21 @@ public class ChartEditor : MonoBehaviour {
 
     string lastLoadedFile = string.Empty;
 
+    GameObject songObjectParent;
+    GameObject chartObjectParent;
+
     // Use this for initialization
     void Awake () {
         minPos = 0;
         maxPos = 0;
+
+        songObjectParent = new GameObject();
+        songObjectParent.name = "Song Objects";
+        songObjectParent.tag = "Song Object";
+
+        chartObjectParent = new GameObject();
+        chartObjectParent.name = "Chart Objects";
+        chartObjectParent.tag = "Chart Object";
 
         currentSong = new Song();
         currentChart = currentSong.expert_single;
@@ -165,13 +176,13 @@ public class ChartEditor : MonoBehaviour {
             float objectDestroyTime = Time.realtimeSinceStartup;
 #endif
             // Remove objects from previous chart
-            foreach (GameObject chartObject in GameObject.FindGameObjectsWithTag("Chart Object"))
+            foreach (Transform chartObject in chartObjectParent.transform)
             {
-                Destroy(chartObject);
+                Destroy(chartObject.gameObject);
             }
-            foreach (GameObject songObject in GameObject.FindGameObjectsWithTag("Song Object"))
+            foreach (Transform songObject in songObjectParent.transform)
             {
-                Destroy(songObject);
+                Destroy(songObject.gameObject);
             }
             foreach (Transform child in guiIndicators.transform)
             {
@@ -187,6 +198,7 @@ public class ChartEditor : MonoBehaviour {
             // Create the actual objects
             CreateSongObjects(currentSong);
             CreateChartObjects(currentChart);
+
 #if TIMING_DEBUG
             Debug.Log("Chart objects load time: " + (Time.realtimeSinceStartup - objectLoadTime));
 #endif
@@ -220,29 +232,15 @@ public class ChartEditor : MonoBehaviour {
 #endif
     }
 
-    public void AddNewNoteToCurrentChart(Note note, GameObject parent)
-    {
-        // Insert note into current chart
-        int position = currentChart.Add(note);
-
-        // Create note object
-        NoteController controller = CreateNoteObject(note, parent);
-    }
-
     // Create Sections, bpms, events and time signature objects
     GameObject CreateSongObjects(Song song)
     {
-        GameObject parent = new GameObject();
-        parent.name = "Song Objects";
-        parent.tag = "Song Object";
-
         for (int i = 0; i < song.sections.Length; ++i)
         {
             // Convert the chart data into gameobject
             GameObject sectionObject = Instantiate(this.section);
 
-            if (parent)
-                sectionObject.transform.SetParent(parent.transform);
+            sectionObject.transform.SetParent(songObjectParent.transform);
             
             // Attach the note to the object
             SectionController controller = sectionObject.GetComponentInChildren<SectionController>();
@@ -254,16 +252,12 @@ public class ChartEditor : MonoBehaviour {
             
         }
         
-        return parent;
+        return songObjectParent;
     }
 
     // Create note, starpower and chart event objects
-    GameObject CreateChartObjects(Chart chart, GameObject notePrefab)
-    {
-        GameObject parent = new GameObject();
-        parent.name = "Chart Objects";
-        parent.tag = "Chart Object";
-
+    GameObject CreateChartObjects(Chart chart)
+    {    
         // Get reference to the current set of notes in case real notes get deleted
         Note[] notes = chart.notes;
         for (int i = 0; i < notes.Length; ++i)
@@ -271,27 +265,23 @@ public class ChartEditor : MonoBehaviour {
             // Make sure notes haven't been deleted
             if (notes[i].song != null)
             {
-                NoteController controller = CreateNoteObject(notes[i], parent);
-
+                NoteController controller = CreateNoteObject(notes[i], chartObjectParent);
                 controller.UpdateSongObject();
             }
         }
 
-        return parent;
+        return chartObjectParent;
     }
 
-    GameObject CreateChartObjects(Chart chart)
-    {
-        return CreateChartObjects(chart, note);
-    }
-
-    NoteController CreateNoteObject(Note note, GameObject parent = null)
+    public NoteController CreateNoteObject(Note note, GameObject parent = null)
     {
         // Convert the chart data into gameobject
         GameObject noteObject = Instantiate(this.note);
 
         if (parent)
             noteObject.transform.SetParent(parent.transform);
+        else
+            noteObject.transform.SetParent(chartObjectParent.transform);
 
         // Attach the note to the object
         NoteController controller = noteObject.GetComponent<NoteController>();

@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(BoxCollider2D))]
 public class NoteController : SongObjectController {
     const float OPEN_NOTE_SUSTAIN_WIDTH = 4;
     const float OPEN_NOTE_COLLIDER_WIDTH = 5;
@@ -27,8 +26,8 @@ public class NoteController : SongObjectController {
 
     void OnMouseDown()
     {
-        Debug.Log(note.position);
-        Debug.Log(note.song.WorldYPositionToChartPosition(transform.position.y));
+        //Debug.Log(note.position);
+        //Debug.Log(note.song.WorldYPositionToChartPosition(transform.position.y));
     }
 
     public void Init(Note note)
@@ -42,10 +41,11 @@ public class NoteController : SongObjectController {
             // Apply scaling
             sustain.transform.localScale = new Vector3(OPEN_NOTE_SUSTAIN_WIDTH, sustain.transform.localScale.y, sustain.transform.localScale.z);
             BoxCollider2D hitBox = GetComponent<BoxCollider2D>();
-            hitBox.size = new Vector2(OPEN_NOTE_COLLIDER_WIDTH, hitBox.size.y);
+            if (hitBox)
+                hitBox.size = new Vector2(OPEN_NOTE_COLLIDER_WIDTH, hitBox.size.y);
         }
 
-        if (IsChord)
+        if (note.IsChord)
         {
             Note[] chordNotes = SongObject.FindObjectsAtPosition(note.position, note.chart.notes);
 
@@ -102,7 +102,6 @@ public class NoteController : SongObjectController {
             transform.position = new Vector3((int)note.fret_type - 2, note.song.ChartPositionToWorldYPosition(note.position), 0);
         else
             transform.position = new Vector3(0, note.song.ChartPositionToWorldYPosition(note.position), 0);
-
         noteRenderer.sortingOrder = -(int)note.position;
 
         // Note Type
@@ -176,29 +175,16 @@ public class NoteController : SongObjectController {
         Destroy(gameObject);
     }
 
-    public bool IsChord
-    {
-        get
-        {
-            if (note.previous != null && note.previous.position == note.position)
-                return true;
-            else if (note.next != null && note.next.position == note.position)
-                return true;
-            else
-                return false;
-        }
-    }
-
     public bool IsHopo
     {
         get
         {
             bool HOPO = false;
 
-            if (!IsChord && note.previous != null)
+            if (!note.IsChord && note.previous != null)
             {
                 // Need to consider whether the previous note was a chord, and if they are the same type of note
-                if (note.previous.controller.IsChord || (!note.previous.controller.IsChord && note.fret_type != note.previous.fret_type))
+                if (note.previous.IsChord || (!note.previous.IsChord && note.fret_type != note.previous.fret_type))
                 {
                     // Check distance from previous note 
                     const int HOPODistance = 95;

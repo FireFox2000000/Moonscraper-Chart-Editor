@@ -99,14 +99,19 @@ public class Globals : MonoBehaviour {
         stepText.text = "1/" + _step.ToString();
 
         if (applicationMode == ApplicationMode.Editor)
-        {
-            /*
+        { 
             if (Input.GetKeyDown("a"))
+            {
                 IncrementStep();
+                Debug.Log(_step);
+            }
             if (Input.GetKeyDown("s"))
+            {
                 DecrementStep();
-                */
-
+                Debug.Log(_step);
+            }
+                
+            /*
             if (Input.GetKeyDown("a"))
             {
                 if (hyperspeed < 15)
@@ -118,7 +123,7 @@ public class Globals : MonoBehaviour {
                 if (hyperspeed > 1)
                     hyperspeed -= 1;
                 Debug.Log(hyperspeed);
-            }
+            */
         }
 
         if (Screen.width != lastWidth)

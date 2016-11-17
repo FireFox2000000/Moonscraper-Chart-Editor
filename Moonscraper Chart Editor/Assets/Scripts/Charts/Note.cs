@@ -79,8 +79,13 @@ public class Note : ChartObject
     }
 
     public override string GetSaveString()
-    {    
-        return Globals.TABSPACE + position + " = N " + (int)fret_type + " " + sustain_length + "\n";          // 48 = N 2 0
+    {
+        int fretNumber = (int)fret_type;
+
+        if (fret_type == Fret_Type.OPEN)
+            fretNumber = 7;
+
+        return Globals.TABSPACE + position + " = N " + fretNumber + " " + sustain_length + "\n";          // 48 = N 2 0
     }
 
     public string GetFlagsSaveString()
@@ -137,4 +142,16 @@ public class Note : ChartObject
         }
     }
 
+    public bool IsChord
+    {
+        get
+        {
+            if (previous != null && previous.position == position)
+                return true;
+            else if (next != null && next.position == position)
+                return true;
+            else
+                return false;
+        }
+    }
 }

@@ -1,16 +1,42 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Snapable : MonoBehaviour {
+public abstract class Snapable : MonoBehaviour {
     public ChartEditor editor;
+    protected Vector2 mousePos = Vector2.zero;
+    protected uint objectSnappedChartPos = 0;
+    protected Renderer objectRen;
+
+    protected virtual void Awake()
+    {
+        objectRen = GetComponent<Renderer>();
+    }
 	
 	// Update is called once per frame
-	protected void Update () {
+	protected virtual void Update () {
         // Read in mouse world position
-        float ypos = Camera.main.ScreenToWorldPoint(Input.mousePosition).y;
+        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        float ypos = mousePos.y;
 
-        transform.position = new Vector3(transform.position.x, editor.currentSong.ChartPositionToWorldYPosition(WorldPositionToSnappedChartPosition(ypos, Globals.step)), transform.position.z);
+        objectSnappedChartPos = WorldPositionToSnappedChartPosition(ypos, Globals.step);
+
+        transform.position = new Vector3(transform.position.x, editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos), transform.position.z);
     }
+
+    protected void LateUpdate()
+    {
+        if (objectRen)
+        {
+            objectRen.sortingOrder = 5;
+        }
+
+        if (Input.GetButtonDown("Add Object"))
+        {
+            AddObject();
+        }
+    }
+
+    protected abstract void AddObject();
 
     public uint WorldPositionToSnappedChartPosition(float worldYPos, int step)
     {

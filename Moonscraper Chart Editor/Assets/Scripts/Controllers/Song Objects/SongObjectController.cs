@@ -1,6 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
 
 [RequireComponent(typeof(Renderer))]
 public abstract class SongObjectController : MonoBehaviour {
@@ -30,11 +28,12 @@ public abstract class SongObjectController : MonoBehaviour {
 
     protected void OnMouseOver()
     {
-        // Delete the object on right-click
-        if (Input.GetMouseButtonDown(1) && Globals.applicationMode == Globals.ApplicationMode.Editor)
+        // Delete the object on erase tool
+        /*
+        if (Input.GetButtonDown("Delete Object") && Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             Delete();
-        }
+        }*/
     }
 
     protected void Init(SongObject _songObject)
