@@ -3,6 +3,8 @@
 using UnityEngine;
 using System.Collections;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
+using System;
 
 [RequireComponent(typeof(AudioSource))]
 public class ChartEditor : MonoBehaviour {
@@ -40,8 +42,10 @@ public class ChartEditor : MonoBehaviour {
     GameObject songObjectParent;
     GameObject chartObjectParent;
 
+    OpenFileName openFileDialog;
+    OpenFileName saveFileDialog;
+
 #if !UNITY_EDITOR
-    OpenFileDialog openDialog;
     SaveFileDialog saveDialog;
 #endif
 
@@ -49,15 +53,28 @@ public class ChartEditor : MonoBehaviour {
     void Awake () {  
         minPos = 0;
         maxPos = 0;
-#if !UNITY_EDITOR
-        openDialog = new OpenFileDialog();
-        openDialog.InitialDirectory = "";    
-        openDialog.RestoreDirectory = true;
 
+#if !UNITY_EDITOR
         saveDialog = new SaveFileDialog();
         saveDialog.InitialDirectory = "";
         saveDialog.RestoreDirectory = true;
 #endif
+
+        openFileDialog = new OpenFileName();
+
+        openFileDialog.structSize = Marshal.SizeOf(openFileDialog);
+
+        openFileDialog.file = new String(new char[256]);
+        openFileDialog.maxFile = openFileDialog.file.Length;
+
+        openFileDialog.fileTitle = new String(new char[64]);
+        openFileDialog.maxFileTitle = openFileDialog.fileTitle.Length;
+
+        openFileDialog.initialDir = "";
+        openFileDialog.title = "Open file";
+        openFileDialog.defExt = "txt";
+
+        // Create grouping objects to make reading the inspector easier
         songObjectParent = new GameObject();
         songObjectParent.name = "Song Objects";
         songObjectParent.tag = "Song Object";
@@ -66,11 +83,14 @@ public class ChartEditor : MonoBehaviour {
         chartObjectParent.name = "Chart Objects";
         chartObjectParent.tag = "Chart Object";
 
+        // Create a default song
         currentSong = new Song();
         currentChart = currentSong.expert_single;
         musicSource = GetComponent<AudioSource>();
 
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
+
+        // Initialize object pool
         timeSignatureLineParent = new GameObject("Time Signature Lines");
         for (int i = 0; i < POOL_SIZE; ++i)
         {
@@ -120,6 +140,20 @@ public class ChartEditor : MonoBehaviour {
         Debug.Log("Quit");
     }
 
+    public void New()
+    {
+        openFileDialog.filter = "Audio files\0*.mp3\0*.ogg\0.wav";
+
+#if UNITY_EDITOR
+        UnityEditor.EditorUtility.OpenFilePanel("Select Audio", "", "*.mp3;*.ogg;*.wav");
+#else
+        if (LibWrap.GetOpenFileName(openFileDialog))
+        {
+            currentFileName = openFileDialog.file;
+        }
+#endif
+    }
+
     // Wrapper function
     public void LoadSong()
     {
@@ -143,7 +177,7 @@ public class ChartEditor : MonoBehaviour {
             fileName = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", currentSong.name, "chart");
 #else
             saveDialog.Filter = "chart files (*.chart)|*.chart";
-            saveDialog.FilterIndex = 1;
+
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
                 fileName = saveDialog.FileName;
@@ -153,7 +187,6 @@ public class ChartEditor : MonoBehaviour {
 #endif
             Save(fileName);
             lastLoadedFile = fileName;
-
         }
         catch (System.Exception e)
         {
@@ -191,21 +224,20 @@ public class ChartEditor : MonoBehaviour {
 #endif
         try
         {
+            openFileDialog.filter = "Chart files\0*.chart";
 #if UNITY_EDITOR
             currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart");
 #else
-            openDialog.Filter = "chart files (*.chart)|*.chart";
-            openDialog.FilterIndex = 1;
-
-            if (openDialog.ShowDialog() == DialogResult.OK)
+            if (LibWrap.GetOpenFileName(openFileDialog))
             {
-                currentFileName = openDialog.FileName;
+                currentFileName = openFileDialog.file;
             }
             else
             {
                 throw new System.Exception("Could not open file");
             }
 #endif
+
 
 #if TIMING_DEBUG
             totalLoadTime = Time.realtimeSinceStartup;

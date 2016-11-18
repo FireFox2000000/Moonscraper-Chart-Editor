@@ -7,6 +7,8 @@ public abstract class MovementController : MonoBehaviour {
     protected Vector3 initPos;
     protected float scrollDelta = 0;
 
+    bool focused = true;
+
     // Program options
     protected float mouseScrollSensitivity = 0.5f;
 
@@ -27,15 +29,23 @@ public abstract class MovementController : MonoBehaviour {
         transform.position = pos;
     }
 
+    void OnApplicationFocus(bool hasFocus)
+    {
+        focused = hasFocus;
+    }
+
     void OnGUI()
     {
-        if (UnityEngine.Event.current.type == EventType.ScrollWheel)
+        if (focused)
         {
-            scrollDelta = -UnityEngine.Event.current.delta.y;
-        }
-        else
-        {
-            scrollDelta = 0;
+            if (UnityEngine.Event.current.type == EventType.ScrollWheel)
+            {
+                scrollDelta = -UnityEngine.Event.current.delta.y;
+            }
+            else
+            {
+                scrollDelta = 0;
+            }
         }
     }
 }
