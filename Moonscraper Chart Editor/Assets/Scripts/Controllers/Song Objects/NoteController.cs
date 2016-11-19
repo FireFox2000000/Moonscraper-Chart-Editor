@@ -24,21 +24,31 @@ public class NoteController : SongObjectController {
         sustainRen.material = new Material(sustainRen.sharedMaterial);
     }
 
+    Vector2 prevMousePos = Vector2.zero;
+
     void OnMouseDown()
     {
-        //Debug.Log(note.position);
-        //Debug.Log(note.song.WorldYPositionToChartPosition(transform.position.y));
+        editor.currentSelectedObject = note;
+        prevMousePos = Input.mousePosition;
     }
 
     void OnMouseDrag()
     {
-        // Pass note data to a ghost note
-        GameObject moveNote = Instantiate(editor.note);
-        moveNote.name = "Moving note";
-        moveNote.AddComponent<MoveNote>().Init(note);
+        // Prevent note from snapping if the user is just clicking and not dragging
+        if (prevMousePos != (Vector2)Input.mousePosition)
+        {
+            // Pass note data to a ghost note
+            GameObject moveNote = Instantiate(editor.note);
+            moveNote.name = "Moving note";
+            moveNote.AddComponent<MoveNote>().Init(note);
 
-        // Delete note
-        Delete();
+            // Delete note
+            Delete();
+        }
+        else
+        {
+            prevMousePos = Input.mousePosition;
+        }
     }
 
     public void Init(Note note)

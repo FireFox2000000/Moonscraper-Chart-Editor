@@ -18,6 +18,8 @@ public class ChartEditor : MonoBehaviour {
     public GameObject guiIndicators;
     [Header("Song properties Display")]
     public UnityEngine.UI.Text songNameText;
+    [Header("Inspectors")]
+    public NotePropertiesPanelController noteInspector;
     [Header("Misc.")]
     public UnityEngine.UI.Button play;
     public Transform strikeline;
@@ -45,6 +47,8 @@ public class ChartEditor : MonoBehaviour {
     OpenFileName openFileDialog;
     OpenFileName saveFileDialog;
 
+    public SongObject currentSelectedObject = null;
+
 #if !UNITY_EDITOR
     SaveFileDialog saveDialog;
 #endif
@@ -53,6 +57,8 @@ public class ChartEditor : MonoBehaviour {
     void Awake () {
         minPos = 0;
         maxPos = 0;
+
+        noteInspector.gameObject.SetActive(false);
 
 #if !UNITY_EDITOR
         saveDialog = new SaveFileDialog();
@@ -102,6 +108,14 @@ public class ChartEditor : MonoBehaviour {
 
     void Update()
     {
+        if (currentSelectedObject != null && currentSelectedObject.GetType() == typeof(Note))
+        {
+            noteInspector.currentNote = (Note)currentSelectedObject;
+            noteInspector.gameObject.SetActive(true);
+        }
+        else
+            noteInspector.gameObject.SetActive(false);
+
         Shortcuts();
 
         // Update object positions that supposed to be visible into the range of the camera
