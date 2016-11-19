@@ -2,13 +2,14 @@
 using System.Collections;
 
 public abstract class Snapable : MonoBehaviour {
-    public ChartEditor editor;
+    protected ChartEditor editor;
     protected Vector2 mousePos = Vector2.zero;
     protected uint objectSnappedChartPos = 0;
     protected Renderer objectRen;
 
     protected virtual void Awake()
     {
+        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
         objectRen = GetComponent<Renderer>();
     }
 	
@@ -23,6 +24,14 @@ public abstract class Snapable : MonoBehaviour {
         transform.position = new Vector3(transform.position.x, editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos), transform.position.z);
     }
 
+    protected virtual void Controls()
+    {
+        if (Input.GetButtonDown("Add Object"))
+        {
+            AddObject();
+        }
+    }
+
     protected void LateUpdate()
     {
         if (objectRen)
@@ -30,10 +39,7 @@ public abstract class Snapable : MonoBehaviour {
             objectRen.sortingOrder = 5;
         }
 
-        if (Input.GetButtonDown("Add Object"))
-        {
-            AddObject();
-        }
+        Controls();
     }
 
     protected abstract void AddObject();

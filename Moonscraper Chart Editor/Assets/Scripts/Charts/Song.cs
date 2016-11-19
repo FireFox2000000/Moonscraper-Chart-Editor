@@ -48,6 +48,18 @@ public class Song {
     public readonly string[] instrumentTypes = { "Bass", "Rhythm" };
     public readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3" };
 
+    public bool IsSaving
+    {
+        get
+        {
+            if (saveThread != null && saveThread.IsAlive)
+                return true;
+            else
+                return false;
+        }
+    }
+    System.Threading.Thread saveThread;
+
     // Constructor for a new chart
     public Song()
     { 
@@ -151,14 +163,14 @@ public class Song {
             throw new System.Exception("Could not open file");
         }
     }
-
+    /*
     public void LoadAudio (string filepath)
     {
         GameObject obj = new GameObject("Music Load");
         obj.AddComponent<MonoBehaviour>().StartCoroutine(LoadAudio(filepath, obj));
-    }
+    }*/
 
-    IEnumerator LoadAudio(string filepath, GameObject musicLoad)
+    void LoadAudio(string filepath)
     {
         // Need to check extension
         if (filepath != string.Empty && File.Exists(filepath))
@@ -178,7 +190,6 @@ public class Song {
 #if SONG_DEBUG
                 Debug.Log("Loading audio...");
 #endif
-                yield return null;
             }
 
             length = musicStream.length;
@@ -187,8 +198,6 @@ public class Song {
         {
             Debug.LogError("Unable to locate audio file");
         }
-
-        MonoBehaviour.Destroy(musicLoad);
     }
     
     public float ChartPositionToWorldYPosition(uint position)
@@ -581,6 +590,12 @@ public class Song {
     }
 
     public void Save(string filepath)
+    {
+        saveThread = new System.Threading.Thread(() => SongSave(filepath));
+        saveThread.Start();
+    }
+
+    void SongSave(string filepath)
     {
         string saveString = string.Empty;
 

@@ -30,6 +30,17 @@ public class NoteController : SongObjectController {
         //Debug.Log(note.song.WorldYPositionToChartPosition(transform.position.y));
     }
 
+    void OnMouseDrag()
+    {
+        // Pass note data to a ghost note
+        GameObject moveNote = Instantiate(editor.note);
+        moveNote.name = "Moving note";
+        moveNote.AddComponent<MoveNote>().Init(note);
+
+        // Delete note
+        Delete();
+    }
+
     public void Init(Note note)
     {
         base.Init(note);
@@ -97,41 +108,44 @@ public class NoteController : SongObjectController {
 
     public override void UpdateSongObject()
     {
-        // Position
-        if (note.fret_type != Note.Fret_Type.OPEN)
-            transform.position = new Vector3((int)note.fret_type - 2, note.song.ChartPositionToWorldYPosition(note.position), 0);
-        else
-            transform.position = new Vector3(0, note.song.ChartPositionToWorldYPosition(note.position), 0);
-        noteRenderer.sortingOrder = -(int)note.position;
-
-        // Note Type
-        if ((note.flags & Note.Flags.TAP) == Note.Flags.TAP)
+        if (note.song != null)
         {
-            noteType = Note.Note_Type.TAP;
-        }
-        else
-        {
-            if (IsHopo)
-                noteType = Note.Note_Type.HOPO;
+            // Position
+            if (note.fret_type != Note.Fret_Type.OPEN)
+                transform.position = new Vector3((int)note.fret_type - 2, note.song.ChartPositionToWorldYPosition(note.position), 0);
             else
-                noteType = Note.Note_Type.STRUM;
-        }
+                transform.position = new Vector3(0, note.song.ChartPositionToWorldYPosition(note.position), 0);
+            noteRenderer.sortingOrder = -(int)note.position;
 
-        // Sprite
-        switch (noteType)
-        {
-            case (Note.Note_Type.HOPO):
-                noteRenderer.sprite = Globals.hopoSprites[(int)note.fret_type];
-                break;
-            case (Note.Note_Type.TAP):
-                noteRenderer.sprite = Globals.tapSprites[(int)note.fret_type];
-                break;
-            default:
-                noteRenderer.sprite = Globals.normalSprites[(int)note.fret_type];
-                break;
-        }
+            // Note Type
+            if ((note.flags & Note.Flags.TAP) == Note.Flags.TAP)
+            {
+                noteType = Note.Note_Type.TAP;
+            }
+            else
+            {
+                if (IsHopo)
+                    noteType = Note.Note_Type.HOPO;
+                else
+                    noteType = Note.Note_Type.STRUM;
+            }
 
-        UpdateSustain();
+            // Sprite
+            switch (noteType)
+            {
+                case (Note.Note_Type.HOPO):
+                    noteRenderer.sprite = Globals.hopoSprites[(int)note.fret_type];
+                    break;
+                case (Note.Note_Type.TAP):
+                    noteRenderer.sprite = Globals.tapSprites[(int)note.fret_type];
+                    break;
+                default:
+                    noteRenderer.sprite = Globals.normalSprites[(int)note.fret_type];
+                    break;
+            }
+
+            UpdateSustain();
+        }
     }
 
     public void UpdateSustain()
@@ -139,8 +153,11 @@ public class NoteController : SongObjectController {
         Note nextSameFret = FindNextSameFretWithinSustain();
         if (nextSameFret != null)
         {
-            // Cap sustain
-            note.sustain_length = nextSameFret.position - note.position;
+            if (nextSameFret.position < note.position)
+                note.sustain_length = 0;
+            else
+                // Cap sustain
+                note.sustain_length = nextSameFret.position - note.position;
         }
 
         UpdateSustainLength();       
@@ -159,6 +176,22 @@ public class NoteController : SongObjectController {
         Vector3 position = transform.position;
         position.y += length / 2.0f;
         sustain.transform.position = position;
+    }
+
+    Note GetPreviousOfOpen(uint openNotePos, Note previousNote)
+    {
+        if (previousNote == null || previousNote.position != openNotePos || (!previousNote.IsChord && previousNote.position != openNotePos))
+            return previousNote;
+        else
+            return GetPreviousOfOpen(openNotePos, previousNote.previous);
+    }
+
+    Note GetNextOfOpen(uint openNotePos, Note nextNote)
+    {
+        if (nextNote == null || nextNote.position != openNotePos || (!nextNote.IsChord && nextNote.position != openNotePos))
+            return nextNote;
+        else
+            return GetNextOfOpen(openNotePos, nextNote.next);
     }
 
     public override void Delete()

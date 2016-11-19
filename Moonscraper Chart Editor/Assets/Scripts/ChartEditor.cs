@@ -50,7 +50,7 @@ public class ChartEditor : MonoBehaviour {
 #endif
 
     // Use this for initialization
-    void Awake () {  
+    void Awake () {
         minPos = 0;
         maxPos = 0;
 
@@ -102,6 +102,8 @@ public class ChartEditor : MonoBehaviour {
 
     void Update()
     {
+        Shortcuts();
+
         // Update object positions that supposed to be visible into the range of the camera
         minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
         maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
@@ -125,6 +127,17 @@ public class ChartEditor : MonoBehaviour {
 
         //Debug.Log(currentSong.ChartPositionToTime(maxPos) + ", " + currentSong.length);
     }
+
+    void Shortcuts()
+    {
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand))
+        {
+            if (Input.GetKeyDown("s"))
+                Save();
+            else if (Input.GetKeyDown("o"))
+                LoadSong();
+        }
+    }
     
     void OnApplicationFocus(bool hasFocus)
     {
@@ -136,6 +149,8 @@ public class ChartEditor : MonoBehaviour {
 
     void OnApplicationQuit()
     {
+        while (currentSong.IsSaving) ;
+
         // Check for unsaved changes
         Debug.Log("Quit");
     }
@@ -219,6 +234,7 @@ public class ChartEditor : MonoBehaviour {
 
     IEnumerator _LoadSong()
     {
+        Song backup = currentSong;
 #if TIMING_DEBUG
         float totalLoadTime = 0;
 #endif
@@ -237,11 +253,10 @@ public class ChartEditor : MonoBehaviour {
                 throw new System.Exception("Could not open file");
             }
 #endif
-
-
 #if TIMING_DEBUG
             totalLoadTime = Time.realtimeSinceStartup;
 #endif
+            while (currentSong.IsSaving) ;
             currentSong = new Song(currentFileName);
 #if TIMING_DEBUG
             Debug.Log("Song load time: " + (Time.realtimeSinceStartup - totalLoadTime));
@@ -282,8 +297,7 @@ public class ChartEditor : MonoBehaviour {
         catch (System.Exception e)
         {
             // Most likely closed the window explorer, just ignore for now.
-            currentFileName = string.Empty;
-            currentSong = new Song();
+            currentSong = backup;
             Debug.LogError(e.Message);
 
             yield break;

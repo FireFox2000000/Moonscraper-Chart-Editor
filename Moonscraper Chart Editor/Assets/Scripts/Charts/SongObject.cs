@@ -254,7 +254,7 @@ public abstract class SongObject
         int insertionPos = FindClosestPosition(item, list.ToArray());   
 
         // Needs to overwrite
-        if (list.Count > 0 && insertionPos != Globals.NOTFOUND)// && list[insertionPos] != item)
+        if (list.Count > 0 && insertionPos != Globals.NOTFOUND)
         {
             int prevPosition = FindPreviousPosition(item.GetType(), insertionPos, list.ToArray());
             int nextPosition = FindNextPosition(item.GetType(), insertionPos, list.ToArray());
@@ -262,19 +262,28 @@ public abstract class SongObject
             if (prevPosition != Globals.NOTFOUND && list[prevPosition] == item)
             {
                 // Overwrite
-                list[prevPosition] = item;
+                if (list[prevPosition].controller != null)
+                    list[prevPosition].controller.Delete();
+                else
+                    list[prevPosition] = item;
                 insertionPos = prevPosition;       
             }
             else if (nextPosition != Globals.NOTFOUND && list[nextPosition] == item)
             {
                 // Overwrite
-                list[nextPosition] = item;
+                if (list[nextPosition].controller != null)
+                    list[nextPosition].controller.Delete();
+                else
+                    list[nextPosition] = item;
                 insertionPos = nextPosition;
             }
             else if (item == list[insertionPos] && item.GetType() == list[insertionPos].GetType())
             {
                 // Overwrite 
-                list[insertionPos] = item;
+                if (list[insertionPos].controller != null)
+                    list[insertionPos].controller.Delete();
+                else
+                    list[insertionPos] = item;
             }
             // Insert into sorted position
             else
