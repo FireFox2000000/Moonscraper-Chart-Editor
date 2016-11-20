@@ -125,7 +125,7 @@ public class Globals : MonoBehaviour {
         stepText.text = "1/" + _step.ToString();
 
         if (applicationMode == ApplicationMode.Editor)
-        { 
+        { /*
             if (Input.GetKeyDown("a"))
             {
                 IncrementStep();
@@ -137,7 +137,7 @@ public class Globals : MonoBehaviour {
                 Debug.Log(_step);
             }
                 
-            /*
+            
             if (Input.GetKeyDown("a"))
             {
                 if (hyperspeed < 15)

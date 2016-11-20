@@ -30,10 +30,10 @@ public class MouseDrag : MonoBehaviour {
 
         if (dragging && selectedGameObject)
         {
-            Draggable[] monos = selectedGameObject.GetComponents<Draggable>();
-            foreach(Draggable mono in monos)
+            MonoBehaviour[] monos = selectedGameObject.GetComponents<MonoBehaviour>();
+            foreach (MonoBehaviour mono in monos)
             {
-                mono.OnRightMouseDrag();
+                mono.SendMessage("OnMouseDrag");
             }
         }
     }

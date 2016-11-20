@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Renderer))]
-public abstract class SongObjectController : Draggable {
+public abstract class SongObjectController : MonoBehaviour {
     protected const float CHART_CENTER_POS = 0;
 
     protected ChartEditor editor;

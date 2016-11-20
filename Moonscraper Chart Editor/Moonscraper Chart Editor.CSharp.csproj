@@ -83,7 +83,6 @@
     <Compile Include="Assets\Scripts\Controllers\TimelineMovementController.cs" />
     <Compile Include="Assets\Scripts\DialogBox.cs" />
     <Compile Include="Assets\Scripts\DropDownMenu.cs" />
-    <Compile Include="Assets\Scripts\Edit Controls\NoteEdit.cs" />
     <Compile Include="Assets\Scripts\Globals.cs" />
     <Compile Include="Assets\Scripts\MouseDrag.cs" />
     <Compile Include="Assets\Scripts\Placeable\MoveNote.cs" />

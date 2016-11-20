@@ -1,8 +1,8 @@
 ﻿#define TIMING_DEBUG
 //#undef UNITY_EDITOR
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System;
 
@@ -17,11 +17,12 @@ public class ChartEditor : MonoBehaviour {
     [Header("Indicator Parents")]
     public GameObject guiIndicators;
     [Header("Song properties Display")]
-    public UnityEngine.UI.Text songNameText;
+    public Text songNameText;
+    public Slider hyperspeedSlider;
     [Header("Inspectors")]
     public NotePropertiesPanelController noteInspector;
     [Header("Misc.")]
-    public UnityEngine.UI.Button play;
+    public Button play;
     public Transform strikeline;
     public TimelineHandler timeHandler;
     public Transform camYMin;
@@ -139,7 +140,7 @@ public class ChartEditor : MonoBehaviour {
             timeSignatureLinePool[i++].SetActive(false);
         }
 
-        //Debug.Log(currentSong.ChartPositionToTime(maxPos) + ", " + currentSong.length);
+        Globals.hyperspeed = hyperspeedSlider.value;
     }
 
     void Shortcuts()
@@ -232,6 +233,7 @@ public class ChartEditor : MonoBehaviour {
 
     public void Play()
     {
+        hyperspeedSlider.enabled = false;
         float strikelinePos = strikeline.position.y;
         musicSource.time = Song.WorldYPositionToTime(strikelinePos) + currentSong.offset;       // No need to add audio calibration as position is base on the strikeline position
         play.interactable = false;
@@ -241,6 +243,7 @@ public class ChartEditor : MonoBehaviour {
 
     public void Stop()
     {
+        hyperspeedSlider.enabled = true;
         play.interactable = true;
         Globals.applicationMode = Globals.ApplicationMode.Editor;
         musicSource.Stop();

@@ -56,11 +56,8 @@ public class NoteController : SongObjectController {
                 prevMousePos = Input.mousePosition;
             }
         }
-    }
-
-    public override void OnRightMouseDrag()
-    {
-        SustainDrag();
+        else if(Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
+            SustainDrag();
     }
 
     public void SustainDrag()
@@ -156,6 +153,13 @@ public class NoteController : SongObjectController {
                 transform.position = new Vector3(CHART_CENTER_POS, note.song.ChartPositionToWorldYPosition(note.position), 0);
 
             noteRenderer.sortingOrder = -(int)note.position;
+
+            // Update flags
+            if (note.previous != null && note.previous.position == note.position)
+            {
+                note.previous.flags |= note.flags;
+                note.flags = note.previous.flags;
+            }
 
             // Note Type
             if ((note.flags & Note.Flags.TAP) == Note.Flags.TAP)
