@@ -3,20 +3,37 @@ using System.Collections;
 using System;
 
 [RequireComponent(typeof(NoteController))]
-public class PlaceNote : Snapable {
+public class PlaceNote : ToolObject {
     protected Note note;
     NoteController controller;
 
     protected override void Awake()
     {
         base.Awake();
-        note = new Note(editor.currentSong, editor.currentChart, 0, Note.Fret_Type.GREEN);
-        controller = GetComponent<NoteController>();
-        controller.note = note;
+        Init(null);
     }
 
-	// Update is called once per frame
-	protected override void Update () {
+    protected void Init(Note note)
+    {
+        if (note == null)
+            this.note = new Note(editor.currentSong, editor.currentChart, 0, Note.Fret_Type.GREEN);
+        else
+            this.note = new Note(note);
+
+        controller = GetComponent<NoteController>();
+        controller.note = this.note;
+    }
+
+    protected override void Controls()
+    {
+        if (Toolpane.currentTool == Toolpane.Tools.Note && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+        {
+            AddObject();
+        }
+    }
+
+    // Update is called once per frame
+    protected override void Update () {
         base.Update();
 
         note.song = editor.currentSong;
@@ -101,6 +118,6 @@ public class PlaceNote : Snapable {
         editor.currentChart.Add(note);
         editor.CreateNoteObject(note);
 
-        Awake();
+        Init(note);
     }
 }

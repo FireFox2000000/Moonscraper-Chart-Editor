@@ -233,7 +233,7 @@ public class ChartEditor : MonoBehaviour {
 
     public void Play()
     {
-        hyperspeedSlider.enabled = false;
+        hyperspeedSlider.interactable = false;
         float strikelinePos = strikeline.position.y;
         musicSource.time = Song.WorldYPositionToTime(strikelinePos) + currentSong.offset;       // No need to add audio calibration as position is base on the strikeline position
         play.interactable = false;
@@ -243,7 +243,7 @@ public class ChartEditor : MonoBehaviour {
 
     public void Stop()
     {
-        hyperspeedSlider.enabled = true;
+        hyperspeedSlider.interactable = true;
         play.interactable = true;
         Globals.applicationMode = Globals.ApplicationMode.Editor;
         musicSource.Stop();

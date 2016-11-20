@@ -13,3 +13,11 @@ public static class floatExtension
         return Mathf.Round((sourceFloat * places) / places);
     }
 }
+
+public static class RectTransformExtension
+{
+    public static Vector2 GetScreenPosition(this RectTransform source)
+    {
+        return RectTransformUtility.WorldToScreenPoint(null, source.transform.position);
+    }
+}

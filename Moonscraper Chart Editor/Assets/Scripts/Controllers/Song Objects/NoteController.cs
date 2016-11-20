@@ -155,7 +155,7 @@ public class NoteController : SongObjectController {
             noteRenderer.sortingOrder = -(int)note.position;
 
             // Note Type
-            if ((note.flags & Note.Flags.TAP) == Note.Flags.TAP)
+            if (note.fret_type != Note.Fret_Type.OPEN && (note.flags & Note.Flags.TAP) == Note.Flags.TAP)
             {
                 noteType = Note.Note_Type.TAP;
             }

@@ -339,7 +339,7 @@ public abstract class SongObject
 
             while (next != null && next.position == current.position)
             {
-                if (previous.fret_type == Note.Fret_Type.OPEN)
+                if (next.fret_type == Note.Fret_Type.OPEN)
                     openFound = true;
                 else
                     standardFound = true;
