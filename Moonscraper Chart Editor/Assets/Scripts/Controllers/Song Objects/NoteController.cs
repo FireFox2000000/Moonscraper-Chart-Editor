@@ -154,13 +154,6 @@ public class NoteController : SongObjectController {
 
             noteRenderer.sortingOrder = -(int)note.position;
 
-            // Update flags
-            if (note.previous != null && note.previous.position == note.position)
-            {
-                note.previous.flags |= note.flags;
-                note.flags = note.previous.flags;
-            }
-
             // Note Type
             if ((note.flags & Note.Flags.TAP) == Note.Flags.TAP)
             {

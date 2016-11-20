@@ -316,6 +316,61 @@ public abstract class SongObject
             current.next = next;
             if (next != null)
                 next.previous = current;
+
+            // Update flags depending on open notes
+            Note.Flags flags = current.flags;
+            previous = current.previous;
+            next = current.next;
+
+            bool openFound = false;
+            bool standardFound = false;
+
+            // Collect all the flags
+            while (previous != null && previous.position == current.position)
+            {
+                if (previous.fret_type == Note.Fret_Type.OPEN)
+                    openFound = true;
+                else
+                    standardFound = true;
+
+                flags |= previous.flags;
+                previous = previous.previous;
+            }
+
+            while (next != null && next.position == current.position)
+            {
+                if (previous.fret_type == Note.Fret_Type.OPEN)
+                    openFound = true;
+                else
+                    standardFound = true;
+
+                flags |= next.flags;
+                next = next.previous;
+            }
+
+            previous = current.previous;
+            next = current.next;
+
+            // Apply flags
+            if (current.fret_type != Note.Fret_Type.OPEN && openFound)
+            { }
+            else if (current.fret_type == Note.Fret_Type.OPEN && standardFound)
+            { }
+            else
+            {
+                current.flags = flags;
+                while (previous != null && previous.position == current.position)
+                {
+                    previous.flags = flags;
+                    previous = previous.previous;
+                }
+
+                while (next != null && next.position == current.position)
+                {
+                    next.flags = flags;
+                    next = next.previous;
+                }
+            }
         }
 
         return insertionPos;
