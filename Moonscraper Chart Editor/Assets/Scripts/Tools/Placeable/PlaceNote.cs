@@ -24,11 +24,20 @@ public class PlaceNote : ToolObject {
         }
     }
 
+    void OnEnable()
+    {
+        editor.currentSelectedNote = note;
+    }
+
+    void OnDisable()
+    {
+        note.previous = null;
+        note.next = null;
+    }
+
     // Update is called once per frame
     protected override void Update () {
         base.Update();
-
-        editor.currentSelectedNote = note;
 
         note.song = editor.currentSong;
         note.chart = editor.currentChart;
@@ -107,8 +116,6 @@ public class PlaceNote : ToolObject {
 
     protected override void AddObject()
     {
-        Debug.Log("Add");
-        // TODO- Check if the mouse is in the correct position to add in the first place
         Note noteToAdd = new Note(note);
         editor.currentChart.Add(noteToAdd);
         editor.CreateNoteObject(noteToAdd);

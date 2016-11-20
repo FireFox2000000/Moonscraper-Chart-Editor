@@ -113,6 +113,8 @@ public class ChartEditor : MonoBehaviour {
         {
             noteInspector.currentNote = currentSelectedNote;
             noteInspector.gameObject.SetActive(true);
+
+            
         }
         else
             noteInspector.gameObject.SetActive(false);
