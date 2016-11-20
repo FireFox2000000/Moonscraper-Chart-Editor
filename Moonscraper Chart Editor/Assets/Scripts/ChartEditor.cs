@@ -331,6 +331,7 @@ public class ChartEditor : MonoBehaviour {
     // Chart should be part of the current song
     void LoadChart(Chart chart)
     {
+        Stop();
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
 #endif
@@ -411,49 +412,41 @@ public class ChartEditor : MonoBehaviour {
     // For dropdown UI
     public void LoadExpert()
     {
-        Stop();
         LoadChart(currentSong.expert_single);
     }
 
     public void LoadExpertBass()
     {
-        Stop();
         LoadChart(currentSong.expert_double_bass);
     }
 
     public void LoadHard()
     {
-        Stop();
         LoadChart(currentSong.hard_single);
     }
 
     public void LoadHardBass()
     {
-        Stop();
         LoadChart(currentSong.hard_double_bass);
     }
 
     public void LoadMedium()
     {
-        Stop();
         LoadChart(currentSong.medium_single);
     }
 
     public void LoadMediumBass()
     {
-        Stop();
         LoadChart(currentSong.medium_double_bass);
     }
 
     public void LoadEasy()
     {
-        Stop();
         LoadChart(currentSong.easy_single);
     }
 
     public void LoadEasyBass()
     {
-        Stop();
         LoadChart(currentSong.easy_double_bass);
     }
 }

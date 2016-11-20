@@ -58,31 +58,46 @@ public class PlaceNote : Snapable {
         }
     }
 
-    protected virtual void UpdateFretType()
+    void UpdateFretType()
     {
-        // Snap to either -2, -1, 0, 1 or 2
-        if (mousePos.x > -0.5f)
+        if (Input.GetKey("1"))
+            note.fret_type = Note.Fret_Type.GREEN;
+        else if (Input.GetKey("2"))
+            note.fret_type = Note.Fret_Type.RED;
+        else if (Input.GetKey("3"))
+            note.fret_type = Note.Fret_Type.YELLOW;
+        else if (Input.GetKey("4"))
+            note.fret_type = Note.Fret_Type.BLUE;
+        else if (Input.GetKey("5"))
+            note.fret_type = Note.Fret_Type.ORANGE;
+        else if (Input.GetKey("6"))
+            note.fret_type = Note.Fret_Type.OPEN;
+        else if (note.fret_type != Note.Fret_Type.OPEN)
         {
-            if (mousePos.x < 0.5f)
-                note.fret_type = Note.Fret_Type.YELLOW;
-            else if (mousePos.x < 1.5f)
-                note.fret_type = Note.Fret_Type.BLUE;
+            // Snap to either -2, -1, 0, 1 or 2
+            if (mousePos.x > -0.5f)
+            {
+                if (mousePos.x < 0.5f)
+                    note.fret_type = Note.Fret_Type.YELLOW;
+                else if (mousePos.x < 1.5f)
+                    note.fret_type = Note.Fret_Type.BLUE;
+                else
+                    note.fret_type = Note.Fret_Type.ORANGE;
+            }
             else
-                note.fret_type = Note.Fret_Type.ORANGE;
-        }
-        else
-        {
-            if (mousePos.x > -1.5f)
-                note.fret_type = Note.Fret_Type.RED;
-            else
-                note.fret_type = Note.Fret_Type.GREEN;
+            {
+                if (mousePos.x > -1.5f)
+                    note.fret_type = Note.Fret_Type.RED;
+                else
+                    note.fret_type = Note.Fret_Type.GREEN;
+            }
         }
     }
 
     protected override void AddObject()
     {
         Debug.Log("Add");
-        // Check if the mouse is in the correct position to add in the first place
+        // TODO- Check if the mouse is in the correct position to add in the first place
         editor.currentChart.Add(note);
         editor.CreateNoteObject(note);
 

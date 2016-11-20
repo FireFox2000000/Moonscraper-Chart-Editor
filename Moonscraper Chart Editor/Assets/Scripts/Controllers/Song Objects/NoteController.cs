@@ -28,26 +28,55 @@ public class NoteController : SongObjectController {
 
     void OnMouseDown()
     {
-        editor.currentSelectedObject = note;
-        prevMousePos = Input.mousePosition;
+        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+        {
+            editor.currentSelectedObject = note;
+            prevMousePos = Input.mousePosition;
+        }
     }
 
     void OnMouseDrag()
     {
-        // Prevent note from snapping if the user is just clicking and not dragging
-        if (prevMousePos != (Vector2)Input.mousePosition)
+        // Move note
+        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
         {
-            // Pass note data to a ghost note
-            GameObject moveNote = Instantiate(editor.note);
-            moveNote.name = "Moving note";
-            moveNote.AddComponent<MoveNote>().Init(note);
+            // Prevent note from snapping if the user is just clicking and not dragging
+            if (prevMousePos != (Vector2)Input.mousePosition)
+            {
+                // Pass note data to a ghost note
+                GameObject moveNote = Instantiate(editor.note);
+                moveNote.name = "Moving note";
+                moveNote.AddComponent<MoveNote>().Init(note);
 
-            // Delete note
-            Delete();
+                // Delete note
+                Delete();
+            }
+            else
+            {
+                prevMousePos = Input.mousePosition;
+            }
         }
-        else
+    }
+
+    public override void OnRightMouseDrag()
+    {
+        SustainDrag();
+    }
+
+    public void SustainDrag()
+    {
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
-            prevMousePos = Input.mousePosition;
+            float mousePosY = Camera.main.ScreenToWorldPoint(Input.mousePosition).y;
+
+            uint snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(note.song.WorldYPositionToChartPosition(mousePosY), Globals.step);
+
+            if (snappedChartPos > note.position)
+                note.sustain_length = snappedChartPos - note.position;
+            else
+                note.sustain_length = 0;
+
+            Debug.Log(note.fret_type + ", " + note.sustain_length);
         }
     }
 
@@ -125,6 +154,7 @@ public class NoteController : SongObjectController {
                 transform.position = new Vector3(CHART_CENTER_POS + (int)note.fret_type - 2, note.song.ChartPositionToWorldYPosition(note.position), 0);
             else
                 transform.position = new Vector3(CHART_CENTER_POS, note.song.ChartPositionToWorldYPosition(note.position), 0);
+
             noteRenderer.sortingOrder = -(int)note.position;
 
             // Note Type
@@ -159,17 +189,22 @@ public class NoteController : SongObjectController {
     }
 
     public void UpdateSustain()
-    {
-        Note nextSameFret = FindNextSameFretWithinSustain();
-        if (nextSameFret != null)
-        {
-            if (nextSameFret.position < note.position)
-                note.sustain_length = 0;
-            else
-                // Cap sustain
-                note.sustain_length = nextSameFret.position - note.position;
-        }
+    {       
+        Note nextFret;
+        if (note.fret_type == Note.Fret_Type.OPEN)
+            nextFret = note.next;
+        else
+            nextFret = FindNextSameFretWithinSustain();
 
+        if (nextFret != null)
+        {
+            if (nextFret.position < note.position)
+                note.sustain_length = 0;
+            else if (note.position + note.sustain_length > nextFret.position)
+                // Cap sustain
+                note.sustain_length = nextFret.position - note.position;
+        }
+        
         UpdateSustainLength();       
 
         sustainRen.sharedMaterial = Globals.sustainColours[(int)note.fret_type];
@@ -255,7 +290,7 @@ public class NoteController : SongObjectController {
             {
                 Note next = note.chart.notes[pos];
 
-                if (next.fret_type == note.fret_type && note.position + note.sustain_length > next.position)
+                if (next.fret_type == Note.Fret_Type.OPEN || (next.fret_type == note.fret_type && note.position + note.sustain_length > next.position))
                     return note.chart.notes[pos];
                 else if (next.position >= note.position + note.sustain_length)
                     return null;

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Renderer))]
-public abstract class SongObjectController : MonoBehaviour {
+public abstract class SongObjectController : Draggable {
     protected const float CHART_CENTER_POS = 0;
 
     protected ChartEditor editor;
@@ -28,14 +28,18 @@ public abstract class SongObjectController : MonoBehaviour {
         UpdateSongObject();
     }
 
+    protected void OnMouseEnter()
+    {
+        OnMouseOver();
+    }
+
     protected void OnMouseOver()
     {
         // Delete the object on erase tool
-        /*
-        if (Input.GetButton("Delete Object") && Globals.applicationMode == Globals.ApplicationMode.Editor)
+        if (Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButton(0) && Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             Delete();
-        }*/
+        }
     }
 
     protected void Init(SongObject _songObject)

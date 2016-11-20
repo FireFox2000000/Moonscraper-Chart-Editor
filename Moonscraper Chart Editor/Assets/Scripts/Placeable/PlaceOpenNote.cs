@@ -3,11 +3,6 @@ using System.Collections;
 
 public class PlaceOpenNote : PlaceNote {
 
-    protected override void UpdateFretType()
-    {
-        note.fret_type = Note.Fret_Type.OPEN;
-    }
-
     protected override void UpdatePrevAndNext(int closestNoteArrayPos)
     {
         if (editor.currentChart.notes[closestNoteArrayPos] < note)

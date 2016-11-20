@@ -26,7 +26,7 @@ public abstract class Snapable : MonoBehaviour {
 
     protected virtual void Controls()
     {
-        if (Input.GetButtonDown("Add Object"))
+        if (Toolpane.currentTool == Toolpane.Tools.Note && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
         {
             AddObject();
         }
