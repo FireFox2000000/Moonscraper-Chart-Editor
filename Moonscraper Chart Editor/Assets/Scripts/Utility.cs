@@ -20,4 +20,20 @@ public static class RectTransformExtension
     {
         return RectTransformUtility.WorldToScreenPoint(null, source.transform.position);
     }
+
+    public static Rect GetScreenCorners(this RectTransform source)
+    {
+        Vector3[] corners = new Vector3[4];
+        Vector3[] screenCorners = new Vector3[2];
+
+        source.GetWorldCorners(corners);
+
+        screenCorners[0] = RectTransformUtility.WorldToScreenPoint(null, corners[0]);
+        screenCorners[1] = RectTransformUtility.WorldToScreenPoint(null, corners[2]);
+
+        //screenCorners[0].y = Screen.height - screenCorners[0].y;
+        //screenCorners[1].y = Screen.height - screenCorners[1].y;
+
+        return new Rect(screenCorners[0], screenCorners[1] - screenCorners[0]);
+    }
 }

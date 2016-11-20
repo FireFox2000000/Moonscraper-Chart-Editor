@@ -8,10 +8,7 @@ public class Toolpane : MonoBehaviour {
     public static Tools currentTool = Tools.Cursor;
     ToolObject currentToolObject;
     [Header("Tool Use Screen Area")]
-    public RectTransform x_min;
-    public RectTransform x_max;
-    public RectTransform y_min;
-    public RectTransform y_max;
+    public RectTransform area;
 
     void Start()
     {
@@ -23,24 +20,23 @@ public class Toolpane : MonoBehaviour {
     {
         if (currentToolObject)
         {
-            if (Input.GetMouseButtonDown(1))
-                currentToolObject.gameObject.SetActive(false);
-            else if (Input.GetMouseButtonUp(1))
-                currentToolObject.gameObject.SetActive(true);
-
+            Rect toolScreenArea = area.GetScreenCorners();
             // Range check
-            if( Input.mousePosition.x < x_min.GetScreenPosition().x ||
-                Input.mousePosition.x > x_max.GetScreenPosition().x ||
-                Input.mousePosition.y < y_min.GetScreenPosition().y ||
-                Input.mousePosition.y > y_max.GetScreenPosition().y)
+            if (Input.mousePosition.x < toolScreenArea.xMin ||
+                Input.mousePosition.x > toolScreenArea.xMax ||
+                Input.mousePosition.y < toolScreenArea.yMin ||
+                Input.mousePosition.y > toolScreenArea.yMax)
             {
                 currentToolObject.gameObject.SetActive(false);
             }
             else
             {
                 currentToolObject.gameObject.SetActive(true);
-            }
-            
+                if (Input.GetMouseButton(1))
+                    currentToolObject.gameObject.SetActive(false);
+                else if (!Input.GetMouseButton(1))
+                    currentToolObject.gameObject.SetActive(true);
+            }             
         }
     }
 

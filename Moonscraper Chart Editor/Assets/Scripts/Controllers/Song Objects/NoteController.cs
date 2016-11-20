@@ -30,7 +30,7 @@ public class NoteController : SongObjectController {
     {
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
         {
-            editor.currentSelectedObject = note;
+            editor.currentSelectedNote = note;
             prevMousePos = Input.mousePosition;
         }
     }

@@ -48,7 +48,7 @@ public class ChartEditor : MonoBehaviour {
     OpenFileName openFileDialog;
     OpenFileName saveFileDialog;
 
-    public SongObject currentSelectedObject = null;
+    public Note currentSelectedNote = null;
 
 #if !UNITY_EDITOR
     SaveFileDialog saveDialog;
@@ -109,9 +109,9 @@ public class ChartEditor : MonoBehaviour {
 
     void Update()
     {
-        if (currentSelectedObject != null && currentSelectedObject.GetType() == typeof(Note))
+        if (currentSelectedNote != null)
         {
-            noteInspector.currentNote = (Note)currentSelectedObject;
+            noteInspector.currentNote = currentSelectedNote;
             noteInspector.gameObject.SetActive(true);
         }
         else

@@ -12,6 +12,7 @@ public class NotePropertiesPanelController : MonoBehaviour {
     public Toggle tapToggle;
     public Toggle forcedToggle;
 
+    Note prevNote = null;
     void Update()
     {
         if (currentNote != null)
@@ -37,6 +38,8 @@ public class NotePropertiesPanelController : MonoBehaviour {
             gameObject.SetActive(false);
             Debug.LogError("No note loaded into note inspector");
         }
+
+        prevNote = currentNote;
     }
 
     void OnDisable()
@@ -46,28 +49,34 @@ public class NotePropertiesPanelController : MonoBehaviour {
 	
     public void setTap()
     {
-        if (currentNote != null)
+        if (currentNote == prevNote)
         {
-            if (tapToggle.isOn)
-                currentNote.flags = currentNote.flags | Note.Flags.TAP;
-            else
-                currentNote.flags = currentNote.flags & ~Note.Flags.TAP;
-        }
+            if (currentNote != null)
+            {
+                if (tapToggle.isOn)
+                    currentNote.flags = currentNote.flags | Note.Flags.TAP;
+                else
+                    currentNote.flags = currentNote.flags & ~Note.Flags.TAP;
+            }
 
-        setFlags(currentNote);
+            setFlags(currentNote);
+        }
     }
 
     public void setForced()
     {
-        if (currentNote != null)
+        if (currentNote == prevNote)
         {
-            if (forcedToggle.isOn)
-                currentNote.flags = currentNote.flags | Note.Flags.FORCED;
-            else
-                currentNote.flags = currentNote.flags & ~Note.Flags.FORCED;
-        }
+            if (currentNote != null)
+            {
+                if (forcedToggle.isOn)
+                    currentNote.flags = currentNote.flags | Note.Flags.FORCED;
+                else
+                    currentNote.flags = currentNote.flags & ~Note.Flags.FORCED;
+            }
 
-        setFlags(currentNote);
+            setFlags(currentNote);
+        }
     }
 
     void setFlags(Note note)

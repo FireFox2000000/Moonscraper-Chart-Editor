@@ -251,8 +251,8 @@ public abstract class SongObject
 
     public static int Insert<T>(T item, List<T> list) where T : SongObject
     {       
-        int insertionPos = FindClosestPosition(item, list.ToArray());   
-
+        int insertionPos = FindClosestPosition(item, list.ToArray());
+        
         // Needs to overwrite
         if (list.Count > 0 && insertionPos != Globals.NOTFOUND)
         {
@@ -263,27 +263,27 @@ public abstract class SongObject
             {
                 // Overwrite
                 if (list[prevPosition].controller != null)
-                    list[prevPosition].controller.Delete();
-                else
-                    list[prevPosition] = item;
+                    GameObject.Destroy(list[prevPosition].controller.gameObject);
+                
+                list[prevPosition] = item;
                 insertionPos = prevPosition;       
             }
             else if (nextPosition != Globals.NOTFOUND && list[nextPosition] == item)
             {
                 // Overwrite
                 if (list[nextPosition].controller != null)
-                    list[nextPosition].controller.Delete();
-                else
-                    list[nextPosition] = item;
+                    GameObject.Destroy(list[nextPosition].controller.gameObject);
+                
+                list[nextPosition] = item;
                 insertionPos = nextPosition;
             }
             else if (item == list[insertionPos] && item.GetType() == list[insertionPos].GetType())
             {
                 // Overwrite 
                 if (list[insertionPos].controller != null)
-                    list[insertionPos].controller.Delete();
-                else
-                    list[insertionPos] = item;
+                    GameObject.Destroy(list[insertionPos].controller.gameObject);
+                
+                list[insertionPos] = item;
             }
             // Insert into sorted position
             else
@@ -301,14 +301,15 @@ public abstract class SongObject
             list.Add(item);
             insertionPos = list.Count - 1;
         }
-
+        
         if (item.GetType() == typeof(Note))
         {
             // Update linked list
             Note current = list[insertionPos] as Note;
+            
             Note previous = FindPreviousOfType(typeof(Note), insertionPos, list.ToArray()) as Note;
             Note next = FindNextOfType(typeof(Note), insertionPos, list.ToArray()) as Note;
-
+            
             current.previous = previous;
             if (previous != null)
                 previous.next = current;
@@ -324,7 +325,7 @@ public abstract class SongObject
 
             bool openFound = false;
             bool standardFound = false;
-
+            
             // Collect all the flags
             while (previous != null && previous.position == current.position)
             {
@@ -348,9 +349,6 @@ public abstract class SongObject
                 next = next.previous;
             }
 
-            previous = current.previous;
-            next = current.next;
-
             // Apply flags
             if (current.fret_type != Note.Fret_Type.OPEN && openFound)
             { }
@@ -359,6 +357,9 @@ public abstract class SongObject
             else
             {
                 current.flags = flags;
+
+                previous = current.previous;
+                next = current.next;
                 while (previous != null && previous.position == current.position)
                 {
                     previous.flags = flags;

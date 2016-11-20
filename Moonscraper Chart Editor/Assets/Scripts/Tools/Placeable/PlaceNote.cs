@@ -10,23 +10,15 @@ public class PlaceNote : ToolObject {
     protected override void Awake()
     {
         base.Awake();
-        Init(null);
-    }
-
-    protected void Init(Note note)
-    {
-        if (note == null)
-            this.note = new Note(editor.currentSong, editor.currentChart, 0, Note.Fret_Type.GREEN);
-        else
-            this.note = new Note(note);
+        note = new Note(editor.currentSong, editor.currentChart, 0, Note.Fret_Type.GREEN);
 
         controller = GetComponent<NoteController>();
-        controller.note = this.note;
+        controller.note = note;
     }
 
     protected override void Controls()
     {
-        if (Toolpane.currentTool == Toolpane.Tools.Note && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+        if (Toolpane.currentTool == Toolpane.Tools.Note && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
         {
             AddObject();
         }
@@ -35,6 +27,8 @@ public class PlaceNote : ToolObject {
     // Update is called once per frame
     protected override void Update () {
         base.Update();
+
+        editor.currentSelectedNote = note;
 
         note.song = editor.currentSong;
         note.chart = editor.currentChart;
@@ -115,9 +109,8 @@ public class PlaceNote : ToolObject {
     {
         Debug.Log("Add");
         // TODO- Check if the mouse is in the correct position to add in the first place
-        editor.currentChart.Add(note);
-        editor.CreateNoteObject(note);
-
-        Init(note);
+        Note noteToAdd = new Note(note);
+        editor.currentChart.Add(noteToAdd);
+        editor.CreateNoteObject(noteToAdd);
     }
 }
