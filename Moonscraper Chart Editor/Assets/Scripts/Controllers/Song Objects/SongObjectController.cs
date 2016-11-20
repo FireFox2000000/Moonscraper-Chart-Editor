@@ -2,6 +2,8 @@
 
 [RequireComponent(typeof(Renderer))]
 public abstract class SongObjectController : MonoBehaviour {
+    protected const float CHART_CENTER_POS = 0;
+
     protected ChartEditor editor;
     private SongObject songObject = null;
     Renderer ren;
@@ -30,7 +32,7 @@ public abstract class SongObjectController : MonoBehaviour {
     {
         // Delete the object on erase tool
         /*
-        if (Input.GetButtonDown("Delete Object") && Globals.applicationMode == Globals.ApplicationMode.Editor)
+        if (Input.GetButton("Delete Object") && Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             Delete();
         }*/

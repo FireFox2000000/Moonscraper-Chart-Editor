@@ -53,6 +53,8 @@ public class NotePropertiesPanelController : MonoBehaviour {
             else
                 currentNote.flags = currentNote.flags & ~Note.Flags.TAP;
         }
+
+        setFlags(currentNote);
     }
 
     public void setForced()
@@ -63,6 +65,25 @@ public class NotePropertiesPanelController : MonoBehaviour {
                 currentNote.flags = currentNote.flags | Note.Flags.FORCED;
             else
                 currentNote.flags = currentNote.flags & ~Note.Flags.FORCED;
+        }
+
+        setFlags(currentNote);
+    }
+
+    void setFlags(Note note)
+    {
+        Note previous = currentNote.previous;
+        while (previous != null && previous.position == currentNote.position)
+        {
+            previous.flags = currentNote.flags;
+            previous = previous.previous;
+        }
+
+        Note next = currentNote.next;
+        while (next != null && next.position == currentNote.position)
+        {
+            next.flags = currentNote.flags;
+            next = next.next;
         }
     }
 }

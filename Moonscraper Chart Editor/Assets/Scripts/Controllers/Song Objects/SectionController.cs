@@ -11,7 +11,7 @@ public class SectionController : SongObjectController
 
     public override void UpdateSongObject()
     {
-        transform.position = new Vector3(position, section.song.ChartPositionToWorldYPosition(section.position), 0);
+        transform.position = new Vector3(CHART_CENTER_POS + position, section.song.ChartPositionToWorldYPosition(section.position), 0);
 
         sectionText.text = section.title;
     }

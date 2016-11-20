@@ -270,18 +270,15 @@ public class ChartEditor : MonoBehaviour {
 #if TIMING_DEBUG
             totalLoadTime = Time.realtimeSinceStartup;
 #endif
+            // Wait for saving to complete just in case
             while (currentSong.IsSaving) ;
+
             currentSong = new Song(currentFileName);
 #if TIMING_DEBUG
-            Debug.Log("Song load time: " + (Time.realtimeSinceStartup - totalLoadTime));
+            Debug.Log("File load time: " + (Time.realtimeSinceStartup - totalLoadTime));
 
             float objectDestroyTime = Time.realtimeSinceStartup;
 #endif
-            // Remove objects from previous chart
-            foreach (Transform chartObject in chartObjectParent.transform)
-            {
-                Destroy(chartObject.gameObject);
-            }
             foreach (Transform songObject in songObjectParent.transform)
             {
                 Destroy(songObject.gameObject);
@@ -290,22 +287,20 @@ public class ChartEditor : MonoBehaviour {
             {
                 Destroy(child.gameObject);
             }
-#if TIMING_DEBUG
-            Debug.Log("Chart objects destroy time: " + (Time.realtimeSinceStartup - objectDestroyTime));
-#endif
-            currentChart = currentSong.expert_single;
+
 #if TIMING_DEBUG
             float objectLoadTime = Time.realtimeSinceStartup;
 #endif
-            // Create the actual objects
+            // Create the song objects
             CreateSongObjects(currentSong);
-            CreateChartObjects(currentChart);
 
 #if TIMING_DEBUG
-            Debug.Log("Chart objects load time: " + (Time.realtimeSinceStartup - objectLoadTime));
+            Debug.Log("Song objects load time: " + (Time.realtimeSinceStartup - objectLoadTime));
 #endif
-            songNameText.text = currentSong.name;
+            // Load the default chart
+            LoadChart(currentSong.expert_single);
 
+            songNameText.text = currentSong.name;
             lastLoadedFile = currentFileName;
         }
         catch (System.Exception e)
@@ -330,6 +325,26 @@ public class ChartEditor : MonoBehaviour {
         }
 #if TIMING_DEBUG
         Debug.Log("Total load time: " + (Time.realtimeSinceStartup - totalLoadTime));
+#endif
+    }
+
+    // Chart should be part of the current song
+    void LoadChart(Chart chart)
+    {
+#if TIMING_DEBUG
+        float time = Time.realtimeSinceStartup;
+#endif
+        // Remove objects from previous chart
+        foreach (Transform chartObject in chartObjectParent.transform)
+        {
+            Destroy(chartObject.gameObject);
+        }
+
+        currentChart = chart;
+
+        CreateChartObjects(currentChart);
+#if TIMING_DEBUG
+        Debug.Log("Chart objects load time: " + (Time.realtimeSinceStartup - time));
 #endif
     }
 
@@ -391,5 +406,54 @@ public class ChartEditor : MonoBehaviour {
         controller.Init(note);
 
         return controller;
+    }
+
+    // For dropdown UI
+    public void LoadExpert()
+    {
+        Stop();
+        LoadChart(currentSong.expert_single);
+    }
+
+    public void LoadExpertBass()
+    {
+        Stop();
+        LoadChart(currentSong.expert_double_bass);
+    }
+
+    public void LoadHard()
+    {
+        Stop();
+        LoadChart(currentSong.hard_single);
+    }
+
+    public void LoadHardBass()
+    {
+        Stop();
+        LoadChart(currentSong.hard_double_bass);
+    }
+
+    public void LoadMedium()
+    {
+        Stop();
+        LoadChart(currentSong.medium_single);
+    }
+
+    public void LoadMediumBass()
+    {
+        Stop();
+        LoadChart(currentSong.medium_double_bass);
+    }
+
+    public void LoadEasy()
+    {
+        Stop();
+        LoadChart(currentSong.easy_single);
+    }
+
+    public void LoadEasyBass()
+    {
+        Stop();
+        LoadChart(currentSong.easy_double_bass);
     }
 }

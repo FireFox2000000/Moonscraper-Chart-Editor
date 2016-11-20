@@ -4,6 +4,7 @@ using System.Collections;
 
 public class Globals : MonoBehaviour {
     public static readonly uint FULL_STEP = 768;
+    static readonly uint MIN_STEP = 1;
     public Text stepText;
 
     static int lsbOffset = 3;
@@ -37,7 +38,7 @@ public class Globals : MonoBehaviour {
 
     public void DecrementStep()
     {
-        if (_step > 1)
+        if (_step > MIN_STEP)
         {
             if (lsbOffset % 2 == 0)
             {
@@ -50,6 +51,29 @@ public class Globals : MonoBehaviour {
             }
 
             --lsbOffset;
+        }
+    }
+
+    public void SetStep(uint step)
+    {
+        if (step < MIN_STEP)
+            step = MIN_STEP;
+        else if (step > FULL_STEP)
+            step = FULL_STEP;
+
+        if (_step < step)
+        {
+            while (_step < step)
+            {
+                IncrementStep();
+            }
+        }
+        else
+        {
+            while (_step > step)
+            {
+                DecrementStep();
+            }
         }
     }
 
@@ -91,6 +115,8 @@ public class Globals : MonoBehaviour {
 
         // Enable clap
         ToggleClap();
+
+        SetStep(16);
     }
 
     int lastWidth = Screen.width;
