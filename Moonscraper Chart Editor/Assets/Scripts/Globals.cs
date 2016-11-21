@@ -173,6 +173,6 @@ public class Globals : MonoBehaviour {
 
     public enum ApplicationMode
     {
-        Editor, Playing
+        Editor, Playing, Menu
     }
 }

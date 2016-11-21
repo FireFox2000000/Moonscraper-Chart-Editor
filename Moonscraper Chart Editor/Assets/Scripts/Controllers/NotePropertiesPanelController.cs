@@ -15,6 +15,7 @@ public class NotePropertiesPanelController : MonoBehaviour {
     Note prevNote = null;
     void Update()
     {
+        
         if (currentNote != null)
         {
             fretText.text = "Fret: " + currentNote.fret_type.ToString();

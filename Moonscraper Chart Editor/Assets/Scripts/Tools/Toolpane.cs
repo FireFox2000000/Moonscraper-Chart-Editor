@@ -20,23 +20,28 @@ public class Toolpane : MonoBehaviour {
     {
         if (currentToolObject)
         {
-            Rect toolScreenArea = area.GetScreenCorners();
-            // Range check
-            if (Input.mousePosition.x < toolScreenArea.xMin ||
-                Input.mousePosition.x > toolScreenArea.xMax ||
-                Input.mousePosition.y < toolScreenArea.yMin ||
-                Input.mousePosition.y > toolScreenArea.yMax)
+            if (Globals.applicationMode == Globals.ApplicationMode.Editor)
             {
-                currentToolObject.gameObject.SetActive(false);
+                Rect toolScreenArea = area.GetScreenCorners();
+                // Range check
+                if (Input.mousePosition.x < toolScreenArea.xMin ||
+                    Input.mousePosition.x > toolScreenArea.xMax ||
+                    Input.mousePosition.y < toolScreenArea.yMin ||
+                    Input.mousePosition.y > toolScreenArea.yMax)
+                {
+                    currentToolObject.gameObject.SetActive(false);
+                }
+                else
+                {
+                    currentToolObject.gameObject.SetActive(true);
+                    if (Input.GetMouseButton(1))
+                        currentToolObject.gameObject.SetActive(false);
+                    else if (!Input.GetMouseButton(1))
+                        currentToolObject.gameObject.SetActive(true);
+                }
             }
             else
-            {
-                currentToolObject.gameObject.SetActive(true);
-                if (Input.GetMouseButton(1))
-                    currentToolObject.gameObject.SetActive(false);
-                else if (!Input.GetMouseButton(1))
-                    currentToolObject.gameObject.SetActive(true);
-            }             
+                currentToolObject.gameObject.SetActive(false);
         }
     }
 
@@ -46,7 +51,7 @@ public class Toolpane : MonoBehaviour {
             currentToolObject.gameObject.SetActive(false);
 
         currentToolObject = toolObject;
-
+            
         if (currentToolObject)
         {
             currentTool = currentToolObject.GetTool();

@@ -47,7 +47,7 @@ public class NoteController : SongObjectController {
                 GameObject moveNote = Instantiate(editor.note);
                 moveNote.name = "Moving note";
                 moveNote.AddComponent<MoveNote>().Init(note);
-
+                editor.currentSelectedNote = note;
                 // Delete note
                 Delete();
             }
@@ -262,9 +262,9 @@ public class NoteController : SongObjectController {
                 if (note.previous.IsChord || (!note.previous.IsChord && note.fret_type != note.previous.fret_type))
                 {
                     // Check distance from previous note 
-                    const int HOPODistance = 95;
+                    const int HOPODistance = 65;
 
-                    if (note.position - note.previous.position < HOPODistance)
+                    if (note.position - note.previous.position <= HOPODistance)
                         HOPO = true;
                 }
             }
