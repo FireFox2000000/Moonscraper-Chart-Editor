@@ -167,17 +167,38 @@ public class NoteController : SongObjectController {
                     noteType = Note.Note_Type.STRUM;
             }
 
+            // Star power?
+            specialType = Note.Special_Type.NONE;
+            foreach (StarPower sp in note.chart.starPower)
+            {
+                if (sp.position <= note.position && sp.position + sp.length > note.position)
+                {
+                    specialType = Note.Special_Type.STAR_POW;
+                }
+                else if (sp.position > note.position)
+                    break;
+            }
+
             // Sprite
             switch (noteType)
             {
                 case (Note.Note_Type.HOPO):
-                    noteRenderer.sprite = Globals.hopoSprites[(int)note.fret_type];
+                    if (specialType == Note.Special_Type.STAR_POW)
+                        noteRenderer.sprite = Globals.spHopoSprite[(int)note.fret_type];
+                    else
+                        noteRenderer.sprite = Globals.hopoSprites[(int)note.fret_type];
                     break;
                 case (Note.Note_Type.TAP):
-                    noteRenderer.sprite = Globals.tapSprites[(int)note.fret_type];
+                    if (specialType == Note.Special_Type.STAR_POW)
+                        noteRenderer.sprite = Globals.spTapSprite[(int)note.fret_type];
+                    else
+                        noteRenderer.sprite = Globals.tapSprites[(int)note.fret_type];
                     break;
                 default:
-                    noteRenderer.sprite = Globals.normalSprites[(int)note.fret_type];
+                    if (specialType == Note.Special_Type.STAR_POW)
+                        noteRenderer.sprite = Globals.spStrumSprite[(int)note.fret_type];
+                    else
+                        noteRenderer.sprite = Globals.strumSprites[(int)note.fret_type];
                     break;
             }
 

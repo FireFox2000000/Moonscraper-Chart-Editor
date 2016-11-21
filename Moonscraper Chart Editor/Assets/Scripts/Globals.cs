@@ -88,27 +88,39 @@ public class Globals : MonoBehaviour {
     public static readonly int NOTFOUND = -1;
     public static readonly string TABSPACE = "  ";
 
-    public static Sprite[] normalSprites { get; private set; }
+    public static Sprite[] strumSprites { get; private set; }
     public static Sprite[] hopoSprites { get; private set; }
     public static Sprite[] tapSprites { get; private set; }
     public static Material[] sustainColours { get; private set; }
+    public static Sprite[] spStrumSprite { get; private set; }
+    public static Sprite[] spHopoSprite { get; private set; }
+    public static Sprite[] spTapSprite { get; private set; }
 
     [Header("Note sprites")]
     [SerializeField]
-    Sprite[] normalNotes = new Sprite[6];
+    Sprite[] strumNotes = new Sprite[6];
     [SerializeField]
     Sprite[] hopoNotes = new Sprite[6];
     [SerializeField]
     Sprite[] tapNotes = new Sprite[6];
     [SerializeField]
     Material[] sustains = new Material[6];
+    [SerializeField]
+    Sprite[] spStrumNote = new Sprite[6];
+    [SerializeField]
+    Sprite[] spHOPONote = new Sprite[6];
+    [SerializeField]
+    Sprite[] spTapNote = new Sprite[6];
 
     void Awake()
     {
-        normalSprites = normalNotes;
+        strumSprites = strumNotes;
         hopoSprites = hopoNotes;
         tapSprites = tapNotes;
         sustainColours = sustains;
+        spStrumSprite = spStrumNote;
+        spHopoSprite = spHOPONote;
+        spTapSprite = spTapNote;
 
         // Load clap settings (eventually from save file)
         currentClapSettings = ClapToggle.ALL;

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PlaceOpenNote : PlaceNote {
 
-    protected override void UpdatePrevAndNext(int closestNoteArrayPos)
+    protected void UpdateOpenPrevAndNext(int closestNoteArrayPos)
     {
         if (editor.currentChart.notes[closestNoteArrayPos] < note)
         {
