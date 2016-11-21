@@ -10,6 +10,10 @@
 
 public class StarPower : ChartObject
 {
+    private readonly ID _classID = ID.Starpower;
+
+    public override int classID { get { return (int)_classID; } }
+
     public uint length;
 
     public StarPower(Song song, Chart chart, uint _position, uint _length) : base (song, chart, _position)
@@ -26,6 +30,10 @@ public class StarPower : ChartObject
 
 public class ChartEvent : ChartObject
 {
+    private readonly ID _classID = ID.ChartEvent;
+
+    public override int classID { get { return (int)_classID; } }
+
     public string eventName;
 
     public ChartEvent(Song song, Chart chart, uint _position, string _eventName) : base(song, chart, _position)

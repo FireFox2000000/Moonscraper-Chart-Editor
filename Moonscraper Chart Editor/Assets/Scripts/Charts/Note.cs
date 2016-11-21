@@ -4,6 +4,10 @@ using System.Collections;
 
 public class Note : ChartObject 
 {
+    private readonly ID _classID = ID.Note;
+
+    public override int classID { get { return (int)_classID; } }
+
     public uint sustain_length;
     public Fret_Type fret_type;
 

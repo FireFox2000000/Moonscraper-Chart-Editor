@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System;
 
 public abstract class SongObject
 {
     public Song song;
     public uint position;
     public SongObjectController controller;
+
+    public abstract int classID { get; }
 
     public SongObject (Song _song, uint _position)
     {
@@ -38,7 +41,7 @@ public abstract class SongObject
 
     protected virtual bool Equals(SongObject b)
     {
-        if (position == b.position)
+        if (position == b.position && classID == b.classID)
             return true;
         else
             return false;
@@ -52,6 +55,8 @@ public abstract class SongObject
     protected virtual bool LessThan(SongObject b)
     {
         if (position < b.position)
+            return true;
+        else if (position == b.position && classID < b.classID)
             return true;
         else
             return false;
@@ -109,42 +114,6 @@ public abstract class SongObject
                     // data is in lower half 
                     upperBound = midPoint - 1;
                 }
-            }
-        }
-
-        if (index != Globals.NOTFOUND && searchItem.GetType() != objects[index].GetType())
-        {
-            int linearPos = index;
-
-            // Linear search backwards to first object at position
-            while (linearPos - 1 >= 0 && objects[linearPos - 1].position == searchItem.position)
-            {
-                --linearPos;
-            }
-
-            bool objectFound = false;
-            // Linear search forwards for nearest object of same type
-            while (linearPos < objects.Length && objects[linearPos].position == searchItem.position)
-            {
-                if (objects[linearPos].GetType() == searchItem.GetType())
-                {
-                    if (!objectFound)
-                    {
-                        index = linearPos;
-                        objectFound = true;
-                    }
-                    else
-                    {
-                        if (objects[linearPos] < searchItem)
-                        {
-                            index = linearPos;
-                        }
-                        else
-                            break;
-                    }
-                }
-
-                ++linearPos;
             }
         }
         
@@ -427,7 +396,6 @@ public abstract class SongObject
                 Note previous = FindPreviousOfType(item.GetType(), pos, list.ToArray()) as Note;
                 Note next = FindNextOfType(item.GetType(), pos, list.ToArray()) as Note;
 
-                Debug.Log("Linked remove update: " + previous.position + ", " + next.position);
                 if (previous != null)
                     previous.next = next;
                 if (next != null)
@@ -442,10 +410,19 @@ public abstract class SongObject
 
         return false;
     }
+
+    public enum ID
+    {
+        TimeSignature, BPM, Event, Section, Note, Starpower, ChartEvent
+    }
 }
 
 public class Event : SongObject
 {
+    private readonly ID _classID = ID.Event;
+
+    public override int classID { get { return (int)_classID; } } 
+
     public string title;
 
     public Event(Song song, string _title, uint _position) : base(song, _position)
@@ -466,6 +443,10 @@ public class Event : SongObject
 
 public class Section : Event
 {
+    private readonly ID _classID = ID.Section;
+
+    public override int classID { get { return (int)_classID; } }
+
     SectionController _controller = null;
     
     new public SectionController controller
@@ -499,6 +480,10 @@ public abstract class SyncTrack : SongObject
 
 public class TimeSignature : SyncTrack
 {
+    private readonly ID _classID = ID.TimeSignature;
+
+    public override int classID { get { return (int)_classID; } }
+
     public TimeSignature(Song song, uint _position = 0, uint _value = 4) : base (song, _position, _value) {}
 
     override public string GetSaveString()
@@ -515,6 +500,10 @@ public class TimeSignature : SyncTrack
 
 public class BPM : SyncTrack
 {
+    private readonly int _classID = 1;
+
+    public override int classID { get { return _classID; } }
+
     public BPM(Song song, uint _position = 0, uint _value = 120000) : base (song, _position, _value) { }
 
     override public string GetSaveString()
