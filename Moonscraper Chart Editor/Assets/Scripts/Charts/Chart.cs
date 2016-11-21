@@ -126,7 +126,6 @@ public class Chart  {
                     Add(new ChartEvent(song, this, position, eventName), false);
                 }
             }
-
             updateArrays();
 
             // Load flags

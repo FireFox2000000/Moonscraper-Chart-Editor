@@ -83,7 +83,7 @@ public class PlaceNote : ToolObject {
             // Found own note
             note.previous = editor.currentChart.notes[closestNoteArrayPos].previous;
             note.next = editor.currentChart.notes[closestNoteArrayPos].next;
-        }
+        }     
     }
 
     void UpdateOpenPrevAndNext(int closestNoteArrayPos)

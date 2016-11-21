@@ -110,6 +110,8 @@ public class ChartEditor : MonoBehaviour {
 
     void Update()
     {
+        //Debug.Log(currentChart.notes.Length);
+        //Debug.Log(currentChart.chartObjects.Length);
         if (currentSelectedNote != null)
         {
             noteInspector.currentNote = currentSelectedNote;
@@ -280,8 +282,6 @@ public class ChartEditor : MonoBehaviour {
             currentSong = new Song(currentFileName);
 #if TIMING_DEBUG
             Debug.Log("File load time: " + (Time.realtimeSinceStartup - totalLoadTime));
-
-            float objectDestroyTime = Time.realtimeSinceStartup;
 #endif
             foreach (Transform songObject in songObjectParent.transform)
             {

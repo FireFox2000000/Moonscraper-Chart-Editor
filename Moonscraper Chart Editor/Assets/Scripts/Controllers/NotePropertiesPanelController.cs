@@ -33,8 +33,6 @@ public class NotePropertiesPanelController : MonoBehaviour {
                 forcedToggle.isOn = true;
             else
                 forcedToggle.isOn = false;
-
-            Debug.Log(currentNote.fret_type);
         }
         else
         {

@@ -112,6 +112,42 @@ public abstract class SongObject
             }
         }
 
+        if (index != Globals.NOTFOUND && searchItem.GetType() != objects[index].GetType())
+        {
+            int linearPos = index;
+
+            // Linear search backwards to first object at position
+            while (linearPos - 1 >= 0 && objects[linearPos - 1].position == searchItem.position)
+            {
+                --linearPos;
+            }
+
+            bool objectFound = false;
+            // Linear search forwards for nearest object of same type
+            while (linearPos < objects.Length && objects[linearPos].position == searchItem.position)
+            {
+                if (objects[linearPos].GetType() == searchItem.GetType())
+                {
+                    if (!objectFound)
+                    {
+                        index = linearPos;
+                        objectFound = true;
+                    }
+                    else
+                    {
+                        if (objects[linearPos] < searchItem)
+                        {
+                            index = linearPos;
+                        }
+                        else
+                            break;
+                    }
+                }
+
+                ++linearPos;
+            }
+        }
+        
         return index;
     }
 
@@ -213,7 +249,9 @@ public abstract class SongObject
 
     public static T FindPreviousOfType<T>(System.Type type, int startPosition, T[] list) where T : SongObject
     {
+        
         int pos = FindPreviousPosition(type, startPosition, list);
+
         if (pos == Globals.NOTFOUND)
             return null;
         else
@@ -250,7 +288,7 @@ public abstract class SongObject
     }
 
     public static int Insert<T>(T item, List<T> list) where T : SongObject
-    {       
+    {
         int insertionPos = FindClosestPosition(item, list.ToArray());
         
         // Needs to overwrite
@@ -389,6 +427,7 @@ public abstract class SongObject
                 Note previous = FindPreviousOfType(item.GetType(), pos, list.ToArray()) as Note;
                 Note next = FindNextOfType(item.GetType(), pos, list.ToArray()) as Note;
 
+                Debug.Log("Linked remove update: " + previous.position + ", " + next.position);
                 if (previous != null)
                     previous.next = next;
                 if (next != null)
@@ -397,7 +436,7 @@ public abstract class SongObject
 
             item.song = null;
             list.RemoveAt(pos);
-
+            
             return true;
         }
 

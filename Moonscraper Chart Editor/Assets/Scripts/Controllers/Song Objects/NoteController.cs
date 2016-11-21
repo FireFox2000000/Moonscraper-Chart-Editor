@@ -267,7 +267,7 @@ public class NoteController : SongObjectController {
         if (note.next != null)
             note.next.controller.UpdateSongObject();
 
-        Debug.Log("Delete");
+        //Debug.Log("Delete");
         Destroy(gameObject);
     }
 

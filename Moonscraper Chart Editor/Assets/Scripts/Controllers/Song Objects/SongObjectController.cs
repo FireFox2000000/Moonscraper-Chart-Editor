@@ -1,7 +1,11 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(Renderer))]
 public abstract class SongObjectController : MonoBehaviour {
+    static int lastDeleteFrame = 0;
+    bool deleteStart = false;
+
     protected const float CHART_CENTER_POS = 0;
 
     protected ChartEditor editor;
@@ -38,8 +42,22 @@ public abstract class SongObjectController : MonoBehaviour {
         // Delete the object on erase tool
         if (Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButton(0) && Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
-            Delete();
+            if (!deleteStart)
+                StartCoroutine(startDelete());
         }
+    }
+
+    IEnumerator startDelete()
+    {
+        deleteStart = true;
+
+        while (Time.frameCount == lastDeleteFrame)
+        {           
+            yield return null;
+        }
+
+        lastDeleteFrame = Time.frameCount;
+        Delete();
     }
 
     protected void Init(SongObject _songObject)
