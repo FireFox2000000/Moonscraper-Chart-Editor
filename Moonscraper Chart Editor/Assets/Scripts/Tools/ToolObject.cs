@@ -9,4 +9,10 @@ public abstract class ToolObject : Snapable {
     {
         return tool;
     }
+
+    public virtual void ToolDisable()
+    { }
+
+    public virtual void ToolEnable()
+    { }
 }

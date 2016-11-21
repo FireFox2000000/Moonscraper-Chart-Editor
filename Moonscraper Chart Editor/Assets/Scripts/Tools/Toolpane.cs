@@ -48,12 +48,16 @@ public class Toolpane : MonoBehaviour {
     public void SetTool(ToolObject toolObject)
     {
         if (currentToolObject)
+        {
+            currentToolObject.ToolDisable();
             currentToolObject.gameObject.SetActive(false);
+        }
 
         currentToolObject = toolObject;
             
         if (currentToolObject)
         {
+            currentToolObject.ToolEnable();
             currentTool = currentToolObject.GetTool();
             currentToolObject.gameObject.SetActive(true);
         }

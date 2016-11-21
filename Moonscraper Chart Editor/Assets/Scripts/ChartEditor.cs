@@ -3,6 +3,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System;
 
@@ -22,7 +23,7 @@ public class ChartEditor : MonoBehaviour {
     [Header("Inspectors")]
     public NotePropertiesPanelController noteInspector;
     [Header("Misc.")]
-    public Button play;
+    public UnityEngine.UI.Button play;
     public Transform strikeline;
     public TimelineHandler timeHandler;
     public Transform camYMin;
