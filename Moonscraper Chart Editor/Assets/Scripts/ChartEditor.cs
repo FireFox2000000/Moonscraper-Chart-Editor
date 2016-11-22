@@ -9,6 +9,7 @@ using System;
 
 [RequireComponent(typeof(AudioSource))]
 public class ChartEditor : MonoBehaviour {
+    public static bool editOccurred = false;
     const int POOL_SIZE = 100;
 
     [Header("Prefabs")]
@@ -51,12 +52,21 @@ public class ChartEditor : MonoBehaviour {
 
     public Note currentSelectedNote = null;
 
+    [DllImport("user32.dll", EntryPoint = "SetWindowText")]
+    public static extern bool SetWindowText(System.IntPtr hwnd, System.String lpString);
+    [DllImport("user32.dll", EntryPoint = "FindWindow")]
+    public static extern System.IntPtr FindWindow(System.String className, System.String windowName);
+
 #if !UNITY_EDITOR
     SaveFileDialog saveDialog;
 #endif
 
+    System.IntPtr windowPtr;
+
     // Use this for initialization
     void Awake () {
+        windowPtr = FindWindow(null, "Moonscraper Chart Editor v0.1");
+
         minPos = 0;
         maxPos = 0;
 
@@ -93,6 +103,8 @@ public class ChartEditor : MonoBehaviour {
 
         // Create a default song
         currentSong = new Song();
+        editOccurred = false;
+
         currentChart = currentSong.expert_single;
         musicSource = GetComponent<AudioSource>();
 
@@ -110,8 +122,6 @@ public class ChartEditor : MonoBehaviour {
 
     void Update()
     {
-        //Debug.Log(currentChart.notes.Length);
-        //Debug.Log(currentChart.chartObjects.Length);
         if (currentSelectedNote != null)
         {
             noteInspector.currentNote = currentSelectedNote;
@@ -166,11 +176,35 @@ public class ChartEditor : MonoBehaviour {
     }
 
     void OnApplicationQuit()
-    {
-        while (currentSong.IsSaving) ;
+    {    
+        editCheck();
 
-        // Check for unsaved changes
+        while (currentSong.IsSaving);
+
+        //UnityEngine.Application.Quit();
         Debug.Log("Quit");
+    }
+    bool checking = false;
+    void editCheck()
+    {
+        /*
+        if (editOccurred)
+        {
+            //#if !UNITY_EDITOR
+            // Check for unsaved changes
+            UnityEngine.Application.CancelQuit();
+            DialogResult result = MessageBox.Show("Want to save unsaved changes?", "Warning", MessageBoxButtons.YesNo);
+
+            if (result == DialogResult.Yes)
+            {                    
+                Save();
+                return true;
+            }
+//#endif
+        }
+    
+        return false;
+        */
     }
 
     public void New()
@@ -209,8 +243,7 @@ public class ChartEditor : MonoBehaviour {
             else
                 throw new System.Exception("File was not saved");
 #endif
-            Save(fileName);
-            lastLoadedFile = fileName;
+            Save(fileName);           
         }
         catch (System.Exception e)
         {
@@ -222,7 +255,11 @@ public class ChartEditor : MonoBehaviour {
     void Save (string filename)
     {
         if (currentSong != null)
+        {
+            editOccurred = false;            
             currentSong.Save(filename);
+            lastLoadedFile = filename;
+        }
     }
 
     public void Play()
@@ -267,10 +304,14 @@ public class ChartEditor : MonoBehaviour {
 #if TIMING_DEBUG
             totalLoadTime = Time.realtimeSinceStartup;
 #endif
+            editCheck();
+
             // Wait for saving to complete just in case
-            while (currentSong.IsSaving) ;
+            while (currentSong.IsSaving) ;    
 
             currentSong = new Song(currentFileName);
+            editOccurred = false;
+
 #if TIMING_DEBUG
             Debug.Log("File load time: " + (Time.realtimeSinceStartup - totalLoadTime));
 #endif
@@ -375,7 +416,7 @@ public class ChartEditor : MonoBehaviour {
             if (currentSong.musicStream != null)
             {
                 musicSource.clip = currentSong.musicStream;
-                movement.SetPosition(0);
+                //movement.SetPosition(0);
             }
         }
         catch

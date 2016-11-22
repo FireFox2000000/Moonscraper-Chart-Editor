@@ -5,7 +5,7 @@ public class MoveNote : PlaceNote {
 
     protected override void Controls()
     {
-        if (Input.GetButtonUp("Add Object"))
+        if (Input.GetMouseButtonUp(0))
         {
             AddObject();
 
@@ -17,5 +17,13 @@ public class MoveNote : PlaceNote {
     {
         this.note = note;
         GetComponent<NoteController>().Init(note);
+    }
+
+    protected override void AddObject()
+    {
+        Note noteToAdd = new Note(note);
+        editor.currentChart.Add(noteToAdd);
+        editor.CreateNoteObject(noteToAdd);
+        editor.currentSelectedNote = noteToAdd;
     }
 }

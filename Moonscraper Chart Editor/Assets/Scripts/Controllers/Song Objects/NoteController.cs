@@ -64,6 +64,7 @@ public class NoteController : SongObjectController {
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
+            ChartEditor.editOccurred = true;
             float mousePosY = Camera.main.ScreenToWorldPoint(Input.mousePosition).y;
 
             uint snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(note.song.WorldYPositionToChartPosition(mousePosY), Globals.step);

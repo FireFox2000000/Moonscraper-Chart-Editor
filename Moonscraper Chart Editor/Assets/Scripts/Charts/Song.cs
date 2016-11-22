@@ -80,6 +80,8 @@ public class Song {
             charts[i] = new Chart(this);
         }
 
+        audioLocation = string.Empty;
+        musicStream = null;
         length = 60 * 5;
 
         updateArrays();
@@ -520,16 +522,16 @@ public class Song {
 
     string GetPropertiesString()
     {
-        return name + "\n" +
-                artist + "\n" +
-                charter + "\n" +
-                offset + "\n" +
-                resolution + "\n" +
-                player2 + "\n" +
-                difficulty + "\n" +
-                previewStart + "\n" +
-                previewEnd + "\n" +
-                genre + "\n" +
+        return name + Globals.LINE_ENDING +
+                artist + Globals.LINE_ENDING +
+                charter + Globals.LINE_ENDING +
+                offset + Globals.LINE_ENDING +
+                resolution + Globals.LINE_ENDING +
+                player2 + Globals.LINE_ENDING +
+                difficulty + Globals.LINE_ENDING +
+                previewStart + Globals.LINE_ENDING +
+                previewEnd + Globals.LINE_ENDING +
+                genre + Globals.LINE_ENDING +
                 mediatype;
     }
 
@@ -591,54 +593,54 @@ public class Song {
 
     public void Save(string filepath)
     {
-        saveThread = new System.Threading.Thread(() => SongSave(filepath));
+        string musicString;
+        Debug.Log(filepath + ", " + audioLocation);
+        // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
+        if (Path.GetDirectoryName(audioLocation).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
+            musicString = musicStream.name;
+        else
+            musicString = audioLocation;
+
+        saveThread = new System.Threading.Thread(() => SongSave(filepath, musicString));
         saveThread.Start();
     }
 
-    void SongSave(string filepath)
+    void SongSave(string filepath, string musicString)
     {
         string saveString = string.Empty;
 
         // Song
-        saveString += "[Song]\n{\n";
-        saveString += Globals.TABSPACE + "Name = \"" + name + "\"\n";
-        saveString += Globals.TABSPACE + "Artist = \"" + artist + "\"\n";
-        saveString += Globals.TABSPACE + "Charter = \"" + charter + "\"\n";
-        saveString += Globals.TABSPACE + "Offset = " + offset + "\n";
-        saveString += Globals.TABSPACE + "Resolution = " + resolution + "\n";
-        saveString += Globals.TABSPACE + "Player2 = " + player2.ToLower() + "\n";
-        saveString += Globals.TABSPACE + "Difficulty = " + difficulty + "\n";
-        saveString += Globals.TABSPACE + "PreviewStart = " + previewStart + "\n";
-        saveString += Globals.TABSPACE + "PreviewEnd = " + previewEnd + "\n";
-        saveString += Globals.TABSPACE + "Genre = \"" + genre + "\"\n";
-        saveString += Globals.TABSPACE + "MediaType = \"" + mediatype + "\"\n";
+        saveString += "[Song]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "Name = \"" + name + "\"" + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "Artist = \"" + artist + "\"" + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "Charter = \"" + charter + "\"" + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "Offset = " + offset + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "Resolution = " + resolution + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "Player2 = " + player2.ToLower() + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "Difficulty = " + difficulty + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "PreviewStart = " + previewStart + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "PreviewEnd = " + previewEnd + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "Genre = \"" + genre + "\"" + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "MediaType = \"" + mediatype + "\"" + Globals.LINE_ENDING;
 
         if (musicStream != null)
         {
-            string musicString;
-
-            // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
-            if (Path.GetDirectoryName(audioLocation) == Path.GetDirectoryName(filepath))
-                musicString = musicStream.name;
-            else
-                musicString = audioLocation;
-
-            saveString += Globals.TABSPACE + "MusicStream = \"" + musicString + "\"\n";
+            saveString += Globals.TABSPACE + "MusicStream = \"" + musicString + "\"" + Globals.LINE_ENDING;
         }
         else
-            saveString += Globals.TABSPACE + "MusicStream = \"\"\n";
+            saveString += Globals.TABSPACE + "MusicStream = \"\"" + Globals.LINE_ENDING;
 
-        saveString += "}\n";
+        saveString += "}" + Globals.LINE_ENDING;
 
         // SyncTrack
-        saveString += "[SyncTrack]\n{\n";
+        saveString += "[SyncTrack]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
         saveString += GetSaveString(_syncTrack);
-        saveString += "}\n";
+        saveString += "}" + Globals.LINE_ENDING;
 
         // Events
-        saveString += "[Events]\n{\n";
+        saveString += "[Events]" + Globals.LINE_ENDING +"{" + Globals.LINE_ENDING;
         saveString += GetSaveString(_events);
-        saveString += "}\n";
+        saveString += "}" + Globals.LINE_ENDING;
 
         // Charts
         string chartString = string.Empty;
@@ -651,35 +653,35 @@ public class Song {
                 switch(i)
                 {
                     case (0):
-                        saveString += "[EasySingle]\n{\n";
+                        saveString += "[EasySingle]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
                         break;
                     case (1):
-                        saveString += "[EasyDoubleBass]\n{\n";
+                        saveString += "[EasyDoubleBass]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
                         break;
                     case (2):
-                        saveString += "[MediumSingle]\n{\n";
+                        saveString += "[MediumSingle]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
                         break;
                     case (3):
-                        saveString += "[MediumDoubleBass]\n{\n";
+                        saveString += "[MediumDoubleBass]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
                         break;
                     case (4):
-                        saveString += "[HardSingle]\n{\n";
+                        saveString += "[HardSingle]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
                         break;
                     case (5):
-                        saveString += "[HardDoubleBass]\n{\n";
+                        saveString += "[HardDoubleBass]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
                         break;
                     case (6):
-                        saveString += "[ExpertSingle]\n{\n";
+                        saveString += "[ExpertSingle]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
                         break;
                     case (7):
-                        saveString += "[ExpertDoubleBass]\n{\n";
+                        saveString += "[ExpertDoubleBass]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
                         break;
                     default:
                         break;
                 }
 
                 saveString += charts[i].GetChartString();
-                saveString += "}\n";
+                saveString += "}" + Globals.LINE_ENDING;
             }
         }
 

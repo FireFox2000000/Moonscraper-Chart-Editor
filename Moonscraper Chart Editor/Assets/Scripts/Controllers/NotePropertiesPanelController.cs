@@ -95,5 +95,7 @@ public class NotePropertiesPanelController : MonoBehaviour {
             next.flags = currentNote.flags;
             next = next.next;
         }
+
+        ChartEditor.editOccurred = true;
     }
 }

@@ -258,6 +258,7 @@ public abstract class SongObject
 
     public static int Insert<T>(T item, List<T> list) where T : SongObject
     {
+        ChartEditor.editOccurred = true;
         int insertionPos = FindClosestPosition(item, list.ToArray());
         
         // Needs to overwrite
@@ -386,6 +387,7 @@ public abstract class SongObject
 
     public static bool Remove<T>(T item, List<T> list) where T : SongObject
     {
+        ChartEditor.editOccurred = true;
         int pos = FindObjectPosition(item, list.ToArray());
 
         if (pos != Globals.NOTFOUND)
@@ -432,7 +434,7 @@ public class Event : SongObject
 
     public override string GetSaveString()
     {
-        return Globals.TABSPACE + position + " = E \"" + title + "\"\n";
+        return Globals.TABSPACE + position + " = E \"" + title + "\"" + Globals.LINE_ENDING;
     }
 
     public static bool regexMatch(string line)
@@ -459,7 +461,7 @@ public class Section : Event
 
     public override string GetSaveString()
     {
-        return Globals.TABSPACE + position + " = E \"section " + title + "\"\n";
+        return Globals.TABSPACE + position + " = E \"section " + title + "\"" + Globals.LINE_ENDING;
     }
 
     new public static bool regexMatch(string line)
@@ -489,7 +491,7 @@ public class TimeSignature : SyncTrack
     override public string GetSaveString()
     {
         //0 = TS 4
-        return Globals.TABSPACE + position + " = TS " + value + "\n";
+        return Globals.TABSPACE + position + " = TS " + value + Globals.LINE_ENDING;
     }
 
     public static bool regexMatch(string line)
@@ -509,7 +511,7 @@ public class BPM : SyncTrack
     override public string GetSaveString()
     {
         //0 = B 140000
-        return Globals.TABSPACE + position + " = B " + value + "\n";
+        return Globals.TABSPACE + position + " = B " + value + Globals.LINE_ENDING;
     }
 
     public static bool regexMatch(string line)

@@ -24,7 +24,7 @@ public class StarPower : ChartObject
     public override string GetSaveString()
     {
         // 768 = S 2 768
-        return Globals.TABSPACE + position + " = S 2 " + length + "\n";
+        return Globals.TABSPACE + position + " = S 2 " + length + Globals.LINE_ENDING; ;
     }
 }
 
@@ -58,6 +58,6 @@ public class ChartEvent : ChartObject
     public override string GetSaveString()
     {
         // 1728 = E T
-        return Globals.TABSPACE + position + " = E " + eventName + "\n";
+        return Globals.TABSPACE + position + " = E " + eventName + Globals.LINE_ENDING;
     }
 }

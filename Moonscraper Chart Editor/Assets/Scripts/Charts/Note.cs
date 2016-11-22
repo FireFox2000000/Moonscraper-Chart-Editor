@@ -89,7 +89,7 @@ public class Note : ChartObject
         if (fret_type == Fret_Type.OPEN)
             fretNumber = 7;
 
-        return Globals.TABSPACE + position + " = N " + fretNumber + " " + sustain_length + "\n";          // 48 = N 2 0
+        return Globals.TABSPACE + position + " = N " + fretNumber + " " + sustain_length + Globals.LINE_ENDING;          // 48 = N 2 0
     }
 
     public string GetFlagsSaveString()
@@ -97,10 +97,10 @@ public class Note : ChartObject
         string saveString = string.Empty;
 
         if ((flags & Flags.FORCED) == Flags.FORCED)
-            saveString += Globals.TABSPACE + position + " = N 5 0 \n";
+            saveString += Globals.TABSPACE + position + " = N 5 0 " + Globals.LINE_ENDING;
 
         if ((flags & Flags.TAP) == Flags.TAP)
-            saveString += Globals.TABSPACE + position + " = N 6 0 \n";
+            saveString += Globals.TABSPACE + position + " = N 6 0 " + Globals.LINE_ENDING;
 
         return saveString;
     }
