@@ -165,12 +165,6 @@ public class Song {
             throw new System.Exception("Could not open file");
         }
     }
-    /*
-    public void LoadAudio (string filepath)
-    {
-        GameObject obj = new GameObject("Music Load");
-        obj.AddComponent<MonoBehaviour>().StartCoroutine(LoadAudio(filepath, obj));
-    }*/
 
     public void LoadAudio(string filepath)
     {
@@ -594,10 +588,10 @@ public class Song {
     public void Save(string filepath)
     {
         string musicString;
-        Debug.Log(filepath + ", " + audioLocation);
+
         // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
         if (Path.GetDirectoryName(audioLocation).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
-            musicString = musicStream.name;
+             musicString = musicStream.name;
         else
             musicString = audioLocation;
 

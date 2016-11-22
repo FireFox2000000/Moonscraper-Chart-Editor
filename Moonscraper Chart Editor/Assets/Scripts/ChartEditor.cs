@@ -47,7 +47,6 @@ public class ChartEditor : MonoBehaviour {
     GameObject songObjectParent;
     GameObject chartObjectParent;
 
-    OpenFileName openFileDialog;
     OpenFileName saveFileDialog;
 
     public Note currentSelectedNote = null;
@@ -77,20 +76,6 @@ public class ChartEditor : MonoBehaviour {
         saveDialog.InitialDirectory = "";
         saveDialog.RestoreDirectory = true;
 #endif
-
-        openFileDialog = new OpenFileName();
-
-        openFileDialog.structSize = Marshal.SizeOf(openFileDialog);
-
-        openFileDialog.file = new String(new char[256]);
-        openFileDialog.maxFile = openFileDialog.file.Length;
-
-        openFileDialog.fileTitle = new String(new char[64]);
-        openFileDialog.maxFileTitle = openFileDialog.fileTitle.Length;
-
-        openFileDialog.initialDir = "";
-        openFileDialog.title = "Open file";
-        openFileDialog.defExt = "txt";
 
         // Create grouping objects to make reading the inspector easier
         songObjectParent = new GameObject();
@@ -287,14 +272,31 @@ public class ChartEditor : MonoBehaviour {
         float totalLoadTime = 0;
 #endif
         try
-        {
-            openFileDialog.filter = "Chart files (*.chart)\0*.chart";
+        {          
 #if UNITY_EDITOR
             currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart");
 #else
-            if (LibWrap.GetOpenFileName(openFileDialog))
+            OpenFileName openChartFileDialog;
+
+            openChartFileDialog = new OpenFileName();
+
+            openChartFileDialog.structSize = Marshal.SizeOf(openChartFileDialog);
+
+            openChartFileDialog.file = new String(new char[256]);
+            openChartFileDialog.maxFile = openChartFileDialog.file.Length;
+
+            openChartFileDialog.fileTitle = new String(new char[64]);
+            openChartFileDialog.maxFileTitle = openChartFileDialog.fileTitle.Length;
+
+            openChartFileDialog.initialDir = "";
+            openChartFileDialog.title = "Open file";
+            openChartFileDialog.defExt = "txt";
+
+            openChartFileDialog.filter = "Chart files (*.chart)\0*.chart";
+
+            if (LibWrap.GetOpenFileName(openChartFileDialog))
             {
-                currentFileName = openFileDialog.file;
+                currentFileName = openChartFileDialog.file;
             }
             else
             {
@@ -391,20 +393,36 @@ public class ChartEditor : MonoBehaviour {
         {
             Stop();
             string audioFilepath = string.Empty;
-            
-            openFileDialog.filter = "Audio files (*.ogg,*.mp3,*.wav)\0*.mp3;*.ogg;*.wav";
+            string file = lastLoadedFile;
 
 #if UNITY_EDITOR
             audioFilepath = UnityEditor.EditorUtility.OpenFilePanel("Select Audio", "", "*.mp3;*.ogg;*.wav");
 #else
-            if (LibWrap.GetOpenFileName(openFileDialog))
+            OpenFileName openAudioDialog = new OpenFileName();
+            openAudioDialog = new OpenFileName();
+
+            openAudioDialog.structSize = Marshal.SizeOf(openAudioDialog);
+
+            openAudioDialog.file = new String(new char[256]);
+            openAudioDialog.maxFile = openAudioDialog.file.Length;
+
+            openAudioDialog.fileTitle = new String(new char[64]);
+            openAudioDialog.maxFileTitle = openAudioDialog.fileTitle.Length;
+
+            openAudioDialog.initialDir = "";
+            openAudioDialog.title = "Open file";
+            openAudioDialog.defExt = "txt";
+
+            openAudioDialog.filter = "Audio files (*.ogg,*.mp3,*.wav)\0*.mp3;*.ogg;*.wav";
+
+            if (LibWrap.GetOpenFileName(openAudioDialog))
             {
-                audioFilepath = openFileDialog.file;
+                audioFilepath = openAudioDialog.file;
+            
             }
             else
                 throw new System.Exception("Could not open file");
 #endif
-
             currentSong.LoadAudio(audioFilepath);
 
             while (currentSong.musicStream != null && currentSong.musicStream.loadState != AudioDataLoadState.Loaded)
