@@ -64,6 +64,7 @@ public class ChartEditor : MonoBehaviour {
 
     // Use this for initialization
     void Awake () {
+        UnityEngine.Application.targetFrameRate = 200;
         windowPtr = FindWindow(null, "Moonscraper Chart Editor v0.1");
 
         minPos = 0;

@@ -154,7 +154,7 @@ public class NoteController : SongObjectController {
                 transform.position = new Vector3(CHART_CENTER_POS, note.song.ChartPositionToWorldYPosition(note.position), 0);
 
             noteRenderer.sortingOrder = -(int)note.position;
-
+            
             // Note Type
             if (note.fret_type != Note.Fret_Type.OPEN && (note.flags & Note.Flags.TAP) == Note.Flags.TAP)
             {
@@ -301,22 +301,18 @@ public class NoteController : SongObjectController {
 
     Note FindNextSameFretWithinSustain()
     {
-        int pos = SongObject.FindObjectPosition(note, note.chart.notes);
-        if (pos != Globals.NOTFOUND)
+        Note next = note.next;
+
+        while (next != null)
         {
-            ++pos;
-            while (pos < note.chart.notes.Length)
-            {
-                Note next = note.chart.notes[pos];
+            if (next.fret_type == Note.Fret_Type.OPEN || (next.fret_type == note.fret_type && note.position + note.sustain_length > next.position))
+                return next;
+            else if (next.position >= note.position + note.sustain_length)
+                return null;
 
-                if (next.fret_type == Note.Fret_Type.OPEN || (next.fret_type == note.fret_type && note.position + note.sustain_length > next.position))
-                    return note.chart.notes[pos];
-                else if (next.position >= note.position + note.sustain_length)
-                    return null;
-
-                ++pos;
-            }
+            next = next.next;
         }
-        return null;
+
+        return null;     
     }
 }

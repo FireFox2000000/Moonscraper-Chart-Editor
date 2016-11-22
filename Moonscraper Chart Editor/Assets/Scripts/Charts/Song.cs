@@ -246,7 +246,7 @@ public class Song {
     public float ChartPositionToTime(uint position)
     {
         double time = 0;
-        BPM prevBPM = new BPM (this);
+        BPM prevBPM = bpms[0];
 
         foreach (BPM bpmInfo in bpms)
         {
