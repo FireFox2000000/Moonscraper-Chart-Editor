@@ -170,7 +170,7 @@ public class Song {
         obj.AddComponent<MonoBehaviour>().StartCoroutine(LoadAudio(filepath, obj));
     }*/
 
-    void LoadAudio(string filepath)
+    public void LoadAudio(string filepath)
     {
         // Need to check extension
         if (filepath != string.Empty && File.Exists(filepath))

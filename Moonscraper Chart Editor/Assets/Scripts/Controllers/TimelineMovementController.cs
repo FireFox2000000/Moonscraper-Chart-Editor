@@ -6,6 +6,7 @@ public class TimelineMovementController : MovementController
 {
     public TimelineHandler timeline;
     public Transform strikeLine;
+    public UnityEngine.UI.Text timePosition;
 
     public override void SetPosition(uint chartPosition)
     {
@@ -22,6 +23,23 @@ public class TimelineMovementController : MovementController
         base.Start();
         timeline.handlePos = 0;
         UpdatePosBasedTimelineHandle();
+    }
+
+    void Update()
+    {
+        if (timePosition)
+        {
+            if (editor.currentSong.musicStream == null)
+            {
+                timePosition.color = Color.red;
+                timePosition.text = "No audio";               
+            }
+            else
+            {
+                timePosition.color = Color.white;
+                timePosition.text = Utility.timeConvertion(Song.WorldYPositionToTime(strikeLine.position.y));
+            }
+        }
     }
 
     Vector3 prevPos = Vector3.zero;

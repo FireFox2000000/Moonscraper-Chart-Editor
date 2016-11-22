@@ -56,10 +56,10 @@ public class Toolpane : MonoBehaviour {
         currentToolObject = toolObject;
             
         if (currentToolObject)
-        {
-            currentToolObject.ToolEnable();
+        {            
             currentTool = currentToolObject.GetTool();
             currentToolObject.gameObject.SetActive(true);
+            currentToolObject.ToolEnable();
         }
         else
             currentTool = Tools.Cursor;

@@ -175,16 +175,7 @@ public class ChartEditor : MonoBehaviour {
 
     public void New()
     {
-        openFileDialog.filter = "Audio files\0*.mp3\0*.ogg\0.wav";
 
-#if UNITY_EDITOR
-        UnityEditor.EditorUtility.OpenFilePanel("Select Audio", "", "*.mp3;*.ogg;*.wav");
-#else
-        if (LibWrap.GetOpenFileName(openFileDialog))
-        {
-            currentFileName = openFileDialog.file;
-        }
-#endif
     }
 
     // Wrapper function
@@ -260,7 +251,7 @@ public class ChartEditor : MonoBehaviour {
 #endif
         try
         {
-            openFileDialog.filter = "Chart files\0*.chart";
+            openFileDialog.filter = "Chart files (*.chart)\0*.chart";
 #if UNITY_EDITOR
             currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart");
 #else
@@ -351,6 +342,46 @@ public class ChartEditor : MonoBehaviour {
 #if TIMING_DEBUG
         Debug.Log("Chart objects load time: " + (Time.realtimeSinceStartup - time));
 #endif
+    }
+
+    public void LoadAudio()
+    {
+        try
+        {
+            Stop();
+            string audioFilepath = string.Empty;
+            
+            openFileDialog.filter = "Audio files (*.ogg,*.mp3,*.wav)\0*.mp3;*.ogg;*.wav";
+
+#if UNITY_EDITOR
+            audioFilepath = UnityEditor.EditorUtility.OpenFilePanel("Select Audio", "", "*.mp3;*.ogg;*.wav");
+#else
+            if (LibWrap.GetOpenFileName(openFileDialog))
+            {
+                audioFilepath = openFileDialog.file;
+            }
+            else
+                throw new System.Exception("Could not open file");
+#endif
+
+            currentSong.LoadAudio(audioFilepath);
+
+            while (currentSong.musicStream != null && currentSong.musicStream.loadState != AudioDataLoadState.Loaded)
+            {
+                Debug.Log("Loading audio...");
+                //yield return null;
+            }
+
+            if (currentSong.musicStream != null)
+            {
+                musicSource.clip = currentSong.musicStream;
+                movement.SetPosition(0);
+            }
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
     }
 
     // Create Sections, bpms, events and time signature objects

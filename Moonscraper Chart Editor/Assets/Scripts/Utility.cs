@@ -2,7 +2,26 @@
 using System.Collections;
 
 static class Utility {
-    public const int NOTFOUND = -1;  
+    public const int NOTFOUND = -1;
+
+    public static string timeConvertion(float time)
+    {
+        System.TimeSpan levelTime = System.TimeSpan.FromSeconds(time);
+
+        return string.Format("{0:D2}:{1:D2}:{2:D2}",
+                levelTime.Minutes,
+                levelTime.Seconds,
+                millisecondRounding(levelTime.Milliseconds, 2));
+    }
+
+    static int millisecondRounding(int value, int roundPlaces)
+    {
+        string sVal = value.ToString();
+        if (sVal.Length > roundPlaces)
+            sVal = sVal.Remove(roundPlaces);
+
+        return int.Parse(sVal);
+    }
 }
 
 public static class floatExtension
