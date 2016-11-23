@@ -85,7 +85,7 @@
     <Compile Include="Assets\Scripts\DropDownMenu.cs" />
     <Compile Include="Assets\Scripts\FPSDisplay.cs" />
     <Compile Include="Assets\Scripts\Globals.cs" />
-    <Compile Include="Assets\Scripts\MouseDrag.cs" />
+    <Compile Include="Assets\Scripts\Mouse.cs" />
     <Compile Include="Assets\Scripts\RendererLayerExpose.cs" />
     <Compile Include="Assets\Scripts\TimelineHandler.cs" />
     <Compile Include="Assets\Scripts\Tools\Eraser.cs" />

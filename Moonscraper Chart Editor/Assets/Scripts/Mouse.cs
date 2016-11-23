@@ -1,13 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class MouseDrag : MonoBehaviour {
+public class Mouse : MonoBehaviour {
     bool dragging;
 
     GameObject selectedGameObject;
 	
+    public static Vector2? world2DPosition = null;
+
 	// Update is called once per frame
 	void Update () {
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        int layerMask = 1 << LayerMask.NameToLayer("Ignore Raycast");
+        RaycastHit[] planeHit;
+        planeHit = Physics.RaycastAll(ray, Mathf.Infinity, layerMask);
+
+        if (planeHit.Length > 0)
+            world2DPosition = planeHit[0].point;
+        else
+            world2DPosition = null;
+
         if (Input.GetMouseButtonDown(1))
         {
             dragging = true;

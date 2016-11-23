@@ -3,7 +3,7 @@ using System.Collections;
 
 public abstract class Snapable : MonoBehaviour {
     protected ChartEditor editor;
-    protected Vector2 mousePos = Vector2.zero;
+    
     protected uint objectSnappedChartPos = 0;
     protected Renderer objectRen;
 
@@ -16,12 +16,16 @@ public abstract class Snapable : MonoBehaviour {
 	// Update is called once per frame
 	protected virtual void Update () {
         // Read in mouse world position
-        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        float ypos = mousePos.y;
+        if (Mouse.world2DPosition != null)
+        {
+            Vector2 mousePos = (Vector2)Mouse.world2DPosition;
+            //mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            float ypos = mousePos.y;
 
-        objectSnappedChartPos = WorldPositionToSnappedChartPosition(ypos, Globals.step);
+            objectSnappedChartPos = WorldPositionToSnappedChartPosition(ypos, Globals.step);
 
-        transform.position = new Vector3(transform.position.x, editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos), transform.position.z);
+            transform.position = new Vector3(transform.position.x, editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos), transform.position.z);
+        }
     }
 
     protected virtual void Controls()

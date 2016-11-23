@@ -140,24 +140,43 @@ public class PlaceNote : ToolObject {
             note.fret_type = Note.Fret_Type.ORANGE;
         else if (Input.GetKey("6"))
             note.fret_type = Note.Fret_Type.OPEN;
-        else if (note.fret_type != Note.Fret_Type.OPEN)
+        else if (note.fret_type != Note.Fret_Type.OPEN && Mouse.world2DPosition != null)
         {
-            // Snap to either -2, -1, 0, 1 or 2
-            if (mousePos.x > -0.5f)
+            Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
+            if (mousePosition.x > -0.5f)
             {
-                if (mousePos.x < 0.5f)
+                if (mousePosition.x < 0.5f)
                     note.fret_type = Note.Fret_Type.YELLOW;
-                else if (mousePos.x < 1.5f)
+                else if (mousePosition.x < 1.5f)
                     note.fret_type = Note.Fret_Type.BLUE;
                 else
                     note.fret_type = Note.Fret_Type.ORANGE;
             }
             else
             {
-                if (mousePos.x > -1.5f)
+                if (mousePosition.x > -1.5f)
                     note.fret_type = Note.Fret_Type.RED;
                 else
                     note.fret_type = Note.Fret_Type.GREEN;
+
+                // Snap to either -2, -1, 0, 1 or 2
+                /*
+                if (mousePos.x > -0.5f)
+                {
+                    if (mousePos.x < 0.5f)
+                        note.fret_type = Note.Fret_Type.YELLOW;
+                    else if (mousePos.x < 1.5f)
+                        note.fret_type = Note.Fret_Type.BLUE;
+                    else
+                        note.fret_type = Note.Fret_Type.ORANGE;
+                }
+                else
+                {
+                    if (mousePos.x > -1.5f)
+                        note.fret_type = Note.Fret_Type.RED;
+                    else
+                        note.fret_type = Note.Fret_Type.GREEN;
+                }*/
             }
         }
     }
