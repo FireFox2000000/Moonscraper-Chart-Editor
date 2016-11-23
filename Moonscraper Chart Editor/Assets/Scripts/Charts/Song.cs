@@ -168,6 +168,8 @@ public class Song {
 
     public void LoadAudio(string filepath)
     {
+        
+        filepath = filepath.Replace('\\', '/');
         // Need to check extension
         if (filepath != string.Empty && File.Exists(filepath))
         {
@@ -177,8 +179,9 @@ public class Song {
 #endif
 
             WWW www = new WWW("file://" + filepath);
+            Debug.Log(www.url);
             musicStream = www.GetAudioClip(false, false);
-
+            Debug.Log(www.url);
             musicStream.name = Path.GetFileName(filepath);
 
             while (musicStream != null && musicStream.loadState != AudioDataLoadState.Loaded)
@@ -511,7 +514,13 @@ public class Song {
         }
 
         // Load audio
-        LoadAudio(audioFilepath);
+        try {
+            LoadAudio(audioFilepath);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError(e.Message);
+        }
     }
 
     string GetPropertiesString()

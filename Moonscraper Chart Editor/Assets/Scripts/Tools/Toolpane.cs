@@ -24,7 +24,8 @@ public class Toolpane : MonoBehaviour {
             {
                 Rect toolScreenArea = area.GetScreenCorners();
                 // Range check
-                if (Input.mousePosition.x < toolScreenArea.xMin ||
+                if (Mouse.world2DPosition == null ||
+                    Input.mousePosition.x < toolScreenArea.xMin ||
                     Input.mousePosition.x > toolScreenArea.xMax ||
                     Input.mousePosition.y < toolScreenArea.yMin ||
                     Input.mousePosition.y > toolScreenArea.yMax)
