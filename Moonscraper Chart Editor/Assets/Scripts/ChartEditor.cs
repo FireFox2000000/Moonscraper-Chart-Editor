@@ -29,7 +29,7 @@ public class ChartEditor : MonoBehaviour {
     public TimelineHandler timeHandler;
     public Transform camYMin;
     public Transform camYMax;
-
+    
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
     AudioSource musicSource;
@@ -126,7 +126,7 @@ public class ChartEditor : MonoBehaviour {
         uint beatMaxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y, 192.0f);
 
         // Update time signature lines SNAPPED
-        uint snappedLinePos = Snapable.ChartPositionToSnappedChartPosition(beatMinPos, 4);
+        uint snappedLinePos = currentSong.WorldPositionToSnappedChartPosition(camYMin.position.y, 4);
         int i = 0;
         while (snappedLinePos < beatMaxPos && i < timeSignatureLinePool.Length)
         {
@@ -507,6 +507,8 @@ public class ChartEditor : MonoBehaviour {
 
         return controller;
     }
+
+
 
     // For dropdown UI
     public void LoadExpert()

@@ -22,7 +22,7 @@ public abstract class Snapable : MonoBehaviour {
             //mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             float ypos = mousePos.y;
 
-            objectSnappedChartPos = WorldPositionToSnappedChartPosition(ypos, Globals.step);
+            objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedChartPosition(ypos, Globals.step);
 
             transform.position = new Vector3(transform.position.x, editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos), transform.position.z);
         }
@@ -44,17 +44,10 @@ public abstract class Snapable : MonoBehaviour {
 
     protected abstract void AddObject();
 
-    public uint WorldPositionToSnappedChartPosition(float worldYPos, int step)
-    {
-        uint chartPos = editor.currentSong.WorldYPositionToChartPosition(worldYPos);
-
-        return ChartPositionToSnappedChartPosition(chartPos, step);
-    }
-
-    public static uint ChartPositionToSnappedChartPosition(uint chartPosition, int step)
+    public static uint ChartPositionToSnappedChartPosition(uint chartPosition, int step, float resolution)
     {
         // Snap position based on step
-        int factor = (int)Globals.FULL_STEP / step;
+        int factor = (int)(Globals.FULL_STEP / step * resolution / Globals.BEAT_RESOLUTION);
         float divisor = (float)chartPosition / (float)factor;
         uint lowerBound = (uint)((int)divisor * factor);
         float remainder = divisor - (int)divisor;

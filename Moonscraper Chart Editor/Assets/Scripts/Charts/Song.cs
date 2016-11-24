@@ -207,7 +207,14 @@ public class Song {
             Debug.LogError("Unable to locate audio file");
         }
     }
-    
+
+    public uint WorldPositionToSnappedChartPosition(float worldYPos, int step)
+    {
+        uint chartPos = WorldYPositionToChartPosition(worldYPos);
+
+        return Snapable.ChartPositionToSnappedChartPosition(chartPos, step, resolution);
+    }
+
     public float ChartPositionToWorldYPosition(uint position)
     {
         return TimeToWorldYPosition(ChartPositionToTime(position, resolution));

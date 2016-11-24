@@ -67,14 +67,12 @@ public class NoteController : SongObjectController {
             ChartEditor.editOccurred = true;
             float mousePosY = Camera.main.ScreenToWorldPoint(Input.mousePosition).y;
 
-            uint snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(note.song.WorldYPositionToChartPosition(mousePosY), Globals.step);
+            uint snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(note.song.WorldYPositionToChartPosition(mousePosY), Globals.step, note.song.resolution);
 
             if (snappedChartPos > note.position)
                 note.sustain_length = snappedChartPos - note.position;
             else
                 note.sustain_length = 0;
-
-            Debug.Log(note.fret_type + ", " + note.sustain_length);
         }
     }
 
@@ -284,7 +282,7 @@ public class NoteController : SongObjectController {
                 if (note.previous.IsChord || (!note.previous.IsChord && note.fret_type != note.previous.fret_type))
                 {
                     // Check distance from previous note 
-                    const int HOPODistance = 65;
+                    int HOPODistance = (int)(65 * note.song.resolution / 192.0f);
 
                     if (note.position - note.previous.position <= HOPODistance)
                         HOPO = true;

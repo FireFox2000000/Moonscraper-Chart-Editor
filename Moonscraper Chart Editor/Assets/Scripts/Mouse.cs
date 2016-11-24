@@ -2,6 +2,10 @@
 using System.Collections;
 
 public class Mouse : MonoBehaviour {
+    [Header("Viewing modes")]
+    public Camera camera2D;
+    public Camera camera3D;
+
     bool dragging;
 
     GameObject selectedGameObject;
@@ -10,7 +14,6 @@ public class Mouse : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         int layerMask = 1 << LayerMask.NameToLayer("Ignore Raycast");
         RaycastHit[] planeHit;
@@ -48,6 +51,20 @@ public class Mouse : MonoBehaviour {
             {
                 mono.SendMessage("OnMouseDrag");
             }
+        }
+    }
+
+    public void SwitchCamera()
+    {
+        if (camera2D.gameObject.activeSelf)
+        {
+            camera2D.gameObject.SetActive(false);
+            camera3D.gameObject.SetActive(true);
+        }
+        else
+        {
+            camera3D.gameObject.SetActive(false);
+            camera2D.gameObject.SetActive(true);
         }
     }
 }

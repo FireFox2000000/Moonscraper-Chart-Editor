@@ -4,6 +4,7 @@ using System.Collections;
 
 public class Globals : MonoBehaviour {
     public static readonly uint FULL_STEP = 768;
+    public static readonly float BEAT_RESOLUTION = 192.0f;
     public static readonly string LINE_ENDING = "\r\n";
     static readonly uint MIN_STEP = 1;
     public Text stepText;
