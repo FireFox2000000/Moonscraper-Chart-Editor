@@ -64,6 +64,9 @@
     <Reference Include="System.Windows.Forms">
       <HintPath>Assets\Plugins\System.Windows.Forms.dll</HintPath>
     </Reference>
+    <Reference Include="NAudio">
+      <HintPath>Assets\Plugins\NAudio.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\ChartEditor.cs" />
@@ -86,6 +89,7 @@
     <Compile Include="Assets\Scripts\FPSDisplay.cs" />
     <Compile Include="Assets\Scripts\Globals.cs" />
     <Compile Include="Assets\Scripts\Mouse.cs" />
+    <Compile Include="Assets\Scripts\NAudioPlayer.cs" />
     <Compile Include="Assets\Scripts\RendererLayerExpose.cs" />
     <Compile Include="Assets\Scripts\TimelineHandler.cs" />
     <Compile Include="Assets\Scripts\Tools\Eraser.cs" />

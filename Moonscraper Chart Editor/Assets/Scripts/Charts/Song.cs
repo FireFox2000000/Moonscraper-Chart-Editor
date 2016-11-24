@@ -167,20 +167,29 @@ public class Song {
     }
 
     public void LoadAudio(string filepath)
-    {
-        
+    {      
         filepath = filepath.Replace('\\', '/');
-        // Need to check extension
+        
         if (filepath != string.Empty && File.Exists(filepath))
         {
+            if (!Utility.validateExtension(filepath, validAudioExtensions))
+            {
+                throw new System.Exception("Invalid file extension");
+            }
+
             audioLocation = filepath;
 #if SONG_DEBUG
             Debug.Log("Loading audio");
 #endif
 
             WWW www = new WWW("file://" + filepath);
-            Debug.Log(www.url);
-            musicStream = www.GetAudioClip(false, false);
+
+            while (!www.isDone) ;
+
+            if (Path.GetExtension(filepath) == ".mp3")
+                musicStream = NAudioPlayer.FromMp3Data(www.bytes);
+            else
+                musicStream = www.GetAudioClip(false, false);
             Debug.Log(www.url);
             musicStream.name = Path.GetFileName(filepath);
 

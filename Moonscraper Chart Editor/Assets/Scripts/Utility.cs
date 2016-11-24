@@ -22,6 +22,19 @@ static class Utility {
 
         return int.Parse(sVal);
     }
+
+    public static bool validateExtension(string filepath, string[] validExtensions)
+    {
+        // Need to check extension
+        string extension = System.IO.Path.GetExtension(filepath);
+
+        foreach (string validExtension in validExtensions)
+        {
+            if (extension == validExtension)
+                return true;
+        }
+        return false;
+    }
 }
 
 public static class floatExtension

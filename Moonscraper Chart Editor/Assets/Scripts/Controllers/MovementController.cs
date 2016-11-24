@@ -10,7 +10,7 @@ public abstract class MovementController : MonoBehaviour {
     bool focused = true;
 
     // Program options
-    protected float mouseScrollSensitivity = 0.5f;
+    protected float mouseScrollSensitivity = 0.2f;      // May miss snap gaps if placed too high
 
     // Jump to a chart position
     public abstract void SetPosition(uint chartPosition);
