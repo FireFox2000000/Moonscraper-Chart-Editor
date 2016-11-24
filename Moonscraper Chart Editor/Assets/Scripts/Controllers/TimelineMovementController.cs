@@ -57,7 +57,7 @@ public class TimelineMovementController : MovementController
             if (scrollDelta != 0 || transform.position != prevPos)
             {
                 // Mouse scroll movement
-                transform.position = new Vector3(transform.position.x, transform.position.y + (scrollDelta * mouseScrollSensitivity), transform.position.z);
+                transform.position = new Vector3(transform.position.x, prevPos.y + (scrollDelta * mouseScrollSensitivity), transform.position.z);
 
                 if (transform.position.y < initPos.y)
                     transform.position = initPos;
@@ -81,8 +81,7 @@ public class TimelineMovementController : MovementController
             if (timeline.handlePos >= 1)
                 editor.Stop();
         }
-
-        prevPos = transform.position;
+        prevPos = transform.position;     
     }
 
     void UpdateTimelineHandleBasedPos()
@@ -119,5 +118,15 @@ public class TimelineMovementController : MovementController
                 transform.position = initPos;
             }
         }
+    }
+
+    public float pixelToUnits = 40f;
+
+    public float RoundToNearestPixel(float unityUnits)
+    {
+        float valueInPixels = unityUnits * pixelToUnits;
+        valueInPixels = Mathf.Round(valueInPixels);
+        float roundedUnityUnits = valueInPixels * (1 / pixelToUnits);
+        return roundedUnityUnits;
     }
 }

@@ -15,7 +15,8 @@ public class ChartEditor : MonoBehaviour {
     [Header("Prefabs")]
     public GameObject note;
     public GameObject section;
-    public GameObject timeSignatureLine;
+    public GameObject beatLine1;
+    public GameObject beatLine2;
     [Header("Indicator Parents")]
     public GameObject guiIndicators;
     [Header("Song properties Display")]
@@ -39,7 +40,8 @@ public class ChartEditor : MonoBehaviour {
     string currentFileName = string.Empty;
 
     MovementController movement;
-    GameObject[] timeSignatureLinePool = new GameObject[POOL_SIZE];
+    GameObject[] beatLinePool1 = new GameObject[POOL_SIZE];
+    GameObject[] beatLinePool2 = new GameObject[POOL_SIZE];
     GameObject timeSignatureLineParent;
 
     string lastLoadedFile = string.Empty;
@@ -100,9 +102,13 @@ public class ChartEditor : MonoBehaviour {
         timeSignatureLineParent = new GameObject("Time Signature Lines");
         for (int i = 0; i < POOL_SIZE; ++i)
         {
-            timeSignatureLinePool[i] = Instantiate(timeSignatureLine);
-            timeSignatureLinePool[i].transform.SetParent(timeSignatureLineParent.transform);
-            timeSignatureLinePool[i].SetActive(false);
+            beatLinePool1[i] = Instantiate(beatLine1);
+            beatLinePool1[i].transform.SetParent(timeSignatureLineParent.transform);
+            beatLinePool1[i].SetActive(false);
+
+            beatLinePool2[i] = Instantiate(beatLine2);
+            beatLinePool2[i].transform.SetParent(timeSignatureLineParent.transform);
+            beatLinePool2[i].SetActive(false);
         }
     }
 
@@ -122,23 +128,45 @@ public class ChartEditor : MonoBehaviour {
         minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
         maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
 
-        uint beatMaxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
-
         // Update time signature lines SNAPPED
-        uint snappedLinePos = currentSong.WorldPositionToSnappedChartPosition(camYMin.position.y, 4);
+        uint initSnappedLinePos = currentSong.WorldPositionToSnappedChartPosition(camYMin.position.y, 4);
+        uint snappedLinePos = initSnappedLinePos;
+
+        // Place main beat lines
         int i = 0;
-        while (snappedLinePos < beatMaxPos && i < timeSignatureLinePool.Length)
+        while (snappedLinePos < maxPos && i < beatLinePool1.Length)
         {
-            timeSignatureLinePool[i].SetActive(true);
-            timeSignatureLinePool[i].transform.position = new Vector3(0, currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+            beatLinePool1[i].SetActive(true);
+            beatLinePool1[i].transform.position = new Vector3(0, currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
             snappedLinePos += (uint)(currentSong.resolution);
             ++i;
         }
 
         // Disable any unused lines
-        while (i < timeSignatureLinePool.Length)
+        while (i < beatLinePool1.Length)
         {
-            timeSignatureLinePool[i++].SetActive(false);
+            beatLinePool1[i++].SetActive(false);
+        }
+
+        // Place faded beat lines
+        i = 0;
+        if ((uint)(currentSong.resolution / 2) < initSnappedLinePos)
+            snappedLinePos = initSnappedLinePos - (uint)(currentSong.resolution / 2);
+        else
+            snappedLinePos = initSnappedLinePos + (uint)(currentSong.resolution / 2);
+
+        while (snappedLinePos < maxPos && i < beatLinePool2.Length)
+        {
+            beatLinePool2[i].SetActive(true);
+            beatLinePool2[i].transform.position = new Vector3(0, currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+            snappedLinePos += (uint)(currentSong.resolution);
+            ++i;
+        }
+
+        // Disable any unused lines
+        while (i < beatLinePool2.Length)
+        {
+            beatLinePool2[i++].SetActive(false);
         }
 
         Globals.hyperspeed = hyperspeedSlider.value;
