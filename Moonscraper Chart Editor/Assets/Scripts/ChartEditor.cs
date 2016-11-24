@@ -122,8 +122,7 @@ public class ChartEditor : MonoBehaviour {
         minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
         maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
 
-        uint beatMinPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y, 192.0f);
-        uint beatMaxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y, 192.0f);
+        uint beatMaxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
 
         // Update time signature lines SNAPPED
         uint snappedLinePos = currentSong.WorldPositionToSnappedChartPosition(camYMin.position.y, 4);
@@ -131,8 +130,8 @@ public class ChartEditor : MonoBehaviour {
         while (snappedLinePos < beatMaxPos && i < timeSignatureLinePool.Length)
         {
             timeSignatureLinePool[i].SetActive(true);
-            timeSignatureLinePool[i].transform.position = new Vector3(0, currentSong.ChartPositionToWorldYPosition(snappedLinePos, 192.0f), 0);
-            snappedLinePos += Globals.FULL_STEP / 4;
+            timeSignatureLinePool[i].transform.position = new Vector3(0, currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+            snappedLinePos += (uint)(currentSong.resolution);
             ++i;
         }
 
