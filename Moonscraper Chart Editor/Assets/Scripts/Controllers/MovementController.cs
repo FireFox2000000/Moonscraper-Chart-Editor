@@ -30,7 +30,7 @@ public abstract class MovementController : MonoBehaviour {
     }
 
     void OnApplicationFocus(bool hasFocus)
-    {
+    {        
         focused = hasFocus;
     }
 
@@ -47,5 +47,7 @@ public abstract class MovementController : MonoBehaviour {
                 scrollDelta = 0;
             }
         }
+        else
+            scrollDelta = 0;
     }
 }

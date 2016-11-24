@@ -20,7 +20,7 @@ public abstract class SongObject
     
     public float worldYPosition { get { return song.ChartPositionToWorldYPosition(position); } }
 
-    public float time { get { return song.ChartPositionToTime(position); } }
+    public float time { get { return song.ChartPositionToTime(position, song.resolution); } }
 
     public abstract string GetSaveString();
     

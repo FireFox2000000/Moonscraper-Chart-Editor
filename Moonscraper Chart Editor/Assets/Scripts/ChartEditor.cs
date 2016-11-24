@@ -122,13 +122,16 @@ public class ChartEditor : MonoBehaviour {
         minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
         maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
 
+        uint beatMinPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y, 192.0f);
+        uint beatMaxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y, 192.0f);
+
         // Update time signature lines SNAPPED
-        uint snappedLinePos = Snapable.ChartPositionToSnappedChartPosition(minPos, 4);
+        uint snappedLinePos = Snapable.ChartPositionToSnappedChartPosition(beatMinPos, 4);
         int i = 0;
-        while (snappedLinePos < maxPos && i < timeSignatureLinePool.Length)
+        while (snappedLinePos < beatMaxPos && i < timeSignatureLinePool.Length)
         {
             timeSignatureLinePool[i].SetActive(true);
-            timeSignatureLinePool[i].transform.position = new Vector3(0, currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+            timeSignatureLinePool[i].transform.position = new Vector3(0, currentSong.ChartPositionToWorldYPosition(snappedLinePos, 192.0f), 0);
             snappedLinePos += Globals.FULL_STEP / 4;
             ++i;
         }
@@ -341,6 +344,7 @@ public class ChartEditor : MonoBehaviour {
 
             songNameText.text = currentSong.name;
             lastLoadedFile = currentFileName;
+
         }
         catch (System.Exception e)
         {

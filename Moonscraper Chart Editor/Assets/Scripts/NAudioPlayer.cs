@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿/**** SCRIPT FOUND AT http://gamedev.stackexchange.com/questions/114885/how-do-i-play-mp3-files-in-unity-standalone ****/
+
+using UnityEngine;
 using System.IO;
 using System;
 using NAudio;

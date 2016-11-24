@@ -149,9 +149,9 @@ public class NoteController : SongObjectController {
         {
             // Position
             if (note.fret_type != Note.Fret_Type.OPEN)
-                transform.position = new Vector3(CHART_CENTER_POS + (int)note.fret_type - 2, note.song.ChartPositionToWorldYPosition(note.position), 0);
+                transform.position = new Vector3(CHART_CENTER_POS + (int)note.fret_type - 2, note.worldYPosition, 0);
             else
-                transform.position = new Vector3(CHART_CENTER_POS, note.song.ChartPositionToWorldYPosition(note.position), 0);
+                transform.position = new Vector3(CHART_CENTER_POS, note.worldYPosition, 0);
 
             noteRenderer.sortingOrder = -(int)note.position;
             

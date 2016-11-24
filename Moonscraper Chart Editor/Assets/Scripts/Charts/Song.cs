@@ -210,13 +210,27 @@ public class Song {
     
     public float ChartPositionToWorldYPosition(uint position)
     {
-        return TimeToWorldYPosition(ChartPositionToTime(position));
+        return TimeToWorldYPosition(ChartPositionToTime(position, resolution));
+    }
+
+    public float ChartPositionToWorldYPosition(uint position, float resolution)
+    {
+        return TimeToWorldYPosition(ChartPositionToTime(position, resolution));
+    }
+
+    public uint WorldYPositionToChartPosition(float worldYPos)
+    {
+        return TimeToChartPosition(WorldYPositionToTime(worldYPos), resolution);
+    }
+
+    public uint WorldYPositionToChartPosition(float worldYPos, float resolution)
+    {
+        return TimeToChartPosition(WorldYPositionToTime(worldYPos), resolution);
     }
 
     // Used for snapping
-    public uint WorldYPositionToChartPosition(float worldYPos)
+    public uint TimeToChartPosition(float time, float resolution)
     {
-        float time = WorldYPositionToTime(worldYPos);
         if (time < 0)
             time = 0;
         else if (time > length)
@@ -224,12 +238,12 @@ public class Song {
 
         uint position = 0;
 
-        BPM prevBPM = new BPM(this);
+        BPM prevBPM = bpms[0];
 
         // Search for the last bpm
         foreach (BPM bpmInfo in bpms)
         {
-            if (ChartPositionToTime(bpmInfo.position) >= time)
+            if (ChartPositionToTime(bpmInfo.position, resolution) >= time)
             {
                 break;
             }
@@ -240,7 +254,7 @@ public class Song {
         }
 
         position = prevBPM.position;
-        position += time_to_dis(ChartPositionToTime(prevBPM.position), time, prevBPM.value / 1000.0f);
+        position += time_to_dis(ChartPositionToTime(prevBPM.position, resolution), time, resolution, prevBPM.value / 1000.0f);
 
         return position;
     }
@@ -255,7 +269,7 @@ public class Song {
         return time * Globals.hyperspeed;
     }
 
-    public float ChartPositionToTime(uint position)
+    public float ChartPositionToTime(uint position, float resolution)
     {
         double time = 0;
         BPM prevBPM = bpms[0];
@@ -268,12 +282,12 @@ public class Song {
             }
             else
             {
-                time += dis_to_time(prevBPM.position, bpmInfo.position, prevBPM.value / 1000.0f);
+                time += dis_to_time(prevBPM.position, bpmInfo.position, resolution, prevBPM.value / 1000.0f);
                 prevBPM = bpmInfo;
             }
         }
 
-        time += dis_to_time(prevBPM.position, position, prevBPM.value / 1000.0f);
+        time += dis_to_time(prevBPM.position, position, resolution, prevBPM.value / 1000.0f);
 
         return (float)time;
     }
@@ -321,14 +335,14 @@ public class Song {
     }
 
     // Calculates the amount of time elapsed between the 2 positions at a set bpm
-    static double dis_to_time(uint pos_start, uint pos_end, float bpm)
+    static double dis_to_time(uint pos_start, uint pos_end, float resolution, float bpm)
     {
-        return (pos_end - pos_start) / 192.0f * 60.0f / bpm;
+        return (pos_end - pos_start) / resolution * 60.0f / bpm;
     }
 
-    static uint time_to_dis(float time_start, float time_end, float bpm)
+    static uint time_to_dis(float time_start, float time_end, float resolution, float bpm)
     {
-        return (uint)((time_end - time_start) * bpm / 60.0f * 192.0f);
+        return (uint)((time_end - time_start) * bpm / 60.0f * resolution);
     }
 
     void submitChartData(string dataName, List<string> stringData, string filePath = "")
@@ -551,6 +565,7 @@ public class Song {
     {
         foreach (string line in stringData)
         {
+            
             if (TimeSignature.regexMatch(line))
             {
                 MatchCollection matches = Regex.Matches(line, @"\d+");

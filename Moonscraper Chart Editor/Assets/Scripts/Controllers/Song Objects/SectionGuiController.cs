@@ -32,7 +32,7 @@ public class SectionGuiController : MonoBehaviour
 
     public Vector3 GetLocalPos()
     {
-        float time = section.song.ChartPositionToTime(section.position);
+        float time = section.song.ChartPositionToTime(section.position, section.song.resolution);
         float endTime = section.song.length;
 
         if (endTime > 0)
