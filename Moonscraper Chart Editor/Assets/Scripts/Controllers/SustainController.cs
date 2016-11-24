@@ -7,6 +7,7 @@ public class SustainController : MonoBehaviour {
 
 	void OnMouseDrag()
     {
+        Debug.Log("Drag");
         // Update sustain
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {

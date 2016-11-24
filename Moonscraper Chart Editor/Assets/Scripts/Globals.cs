@@ -4,7 +4,7 @@ using System.Collections;
 
 public class Globals : MonoBehaviour {
     public static readonly uint FULL_STEP = 768;
-    public static readonly float BEAT_RESOLUTION = 192.0f;
+    public static readonly float STANDARD_BEAT_RESOLUTION = 192.0f;
     public static readonly string LINE_ENDING = "\r\n";
     static readonly uint MIN_STEP = 1;
     public Text stepText;
@@ -137,34 +137,6 @@ public class Globals : MonoBehaviour {
     void Update()
     {
         stepText.text = "1/" + _step.ToString();
-
-        if (applicationMode == ApplicationMode.Editor)
-        { /*
-            if (Input.GetKeyDown("a"))
-            {
-                IncrementStep();
-                Debug.Log(_step);
-            }
-            if (Input.GetKeyDown("s"))
-            {
-                DecrementStep();
-                Debug.Log(_step);
-            }
-                
-            
-            if (Input.GetKeyDown("a"))
-            {
-                if (hyperspeed < 15)
-                    hyperspeed += 1;
-                Debug.Log(hyperspeed);
-            }
-            if (Input.GetKeyDown("s"))
-            {
-                if (hyperspeed > 1)
-                    hyperspeed -= 1;
-                Debug.Log(hyperspeed);
-            */
-        }
 
         if (Screen.width != lastWidth)
         {

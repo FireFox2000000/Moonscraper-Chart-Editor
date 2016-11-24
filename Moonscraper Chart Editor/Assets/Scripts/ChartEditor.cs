@@ -151,12 +151,27 @@ public class ChartEditor : MonoBehaviour {
             if (Input.GetKeyDown("s"))
                 Save();
             else if (Input.GetKeyDown("o"))
-                LoadSong();
+                LoadSong();   
+        }
+
+        if (Input.GetButtonDown("PlayPause"))
+        {
+            if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+                Play();
+            else if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+                Stop();
         }
     }
     
     void OnApplicationFocus(bool hasFocus)
-    {
+    {      
+        if (hasFocus)
+            Time.timeScale = 1;
+        else
+        {
+            Time.timeScale = 0;
+        }
+
         if (hasFocus && Globals.applicationMode == Globals.ApplicationMode.Playing)
             Play();
         else
@@ -397,7 +412,6 @@ public class ChartEditor : MonoBehaviour {
         {
             Stop();
             string audioFilepath = string.Empty;
-            string file = lastLoadedFile;
 
 #if UNITY_EDITOR
             audioFilepath = UnityEditor.EditorUtility.OpenFilePanel("Select Audio", "", "*.mp3;*.ogg;*.wav");
@@ -429,16 +443,9 @@ public class ChartEditor : MonoBehaviour {
 #endif
             currentSong.LoadAudio(audioFilepath);
 
-            while (currentSong.musicStream != null && currentSong.musicStream.loadState != AudioDataLoadState.Loaded)
-            {
-                Debug.Log("Loading audio...");
-                //yield return null;
-            }
-
             if (currentSong.musicStream != null)
             {
                 musicSource.clip = currentSong.musicStream;
-                //movement.SetPosition(0);
             }
         }
         catch

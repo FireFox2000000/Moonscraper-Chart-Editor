@@ -47,7 +47,7 @@ public abstract class Snapable : MonoBehaviour {
     public static uint ChartPositionToSnappedChartPosition(uint chartPosition, int step, float resolution)
     {
         // Snap position based on step
-        int factor = (int)(Globals.FULL_STEP / step * resolution / Globals.BEAT_RESOLUTION);
+        int factor = (int)(Globals.FULL_STEP / step * resolution / Globals.STANDARD_BEAT_RESOLUTION);
         float divisor = (float)chartPosition / (float)factor;
         uint lowerBound = (uint)((int)divisor * factor);
         float remainder = divisor - (int)divisor;

@@ -24,12 +24,12 @@ public class Mouse : MonoBehaviour {
         else
             world2DPosition = null;
 
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && world2DPosition != null)
         {
             dragging = true;
 
-            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
+            //Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast((Vector2)world2DPosition, Vector2.zero);
 
             if (hit.collider)
             {
