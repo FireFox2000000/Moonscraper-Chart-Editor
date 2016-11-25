@@ -88,6 +88,7 @@
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SectionController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SectionGuiController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SongObjectController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Song Objects\StarpowerController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\StrikelineAudioController.cs" />
     <Compile Include="Assets\Scripts\Controllers\SustainController.cs" />
     <Compile Include="Assets\Scripts\Controllers\TimelineMovementController.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Assets\Scripts\Mouse.cs" />
     <Compile Include="Assets\Scripts\NAudioPlayer.cs" />
     <Compile Include="Assets\Scripts\RendererLayerExpose.cs" />
+    <Compile Include="Assets\Scripts\SpriteGlow.cs" />
     <Compile Include="Assets\Scripts\TimelineHandler.cs" />
     <Compile Include="Assets\Scripts\Tools\Eraser.cs" />
     <Compile Include="Assets\Scripts\Tools\ObjectlessTool.cs" />
@@ -112,6 +114,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\ShinySprites.shader" />
+    <None Include="Assets\Shaders\SpriteGlow.shader" />
+    <None Include="Assets\Shaders\Sprites-Default-HDR.shader" />
+    <None Include="Assets\Shaders\Sprites-Default.shader" />
     <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />
     <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\BlendModesOverlay.shader" />
     <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\BlurEffectConeTaps.shader" />

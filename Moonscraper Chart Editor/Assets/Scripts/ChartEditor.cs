@@ -13,8 +13,9 @@ public class ChartEditor : MonoBehaviour {
     const int POOL_SIZE = 100;
 
     [Header("Prefabs")]
-    public GameObject note;
-    public GameObject section;
+    public GameObject notePrefab;
+    public GameObject starpowerPrefab;
+    public GameObject sectionPrefab;
     public GameObject beatLine1;
     public GameObject beatLine2;
     [Header("Indicator Parents")]
@@ -122,8 +123,6 @@ public class ChartEditor : MonoBehaviour {
         else
             noteInspector.gameObject.SetActive(false);
 
-        Shortcuts();
-
         // Update object positions that supposed to be visible into the range of the camera
         minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
         maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
@@ -170,25 +169,6 @@ public class ChartEditor : MonoBehaviour {
         }
 
         Globals.hyperspeed = hyperspeedSlider.value;
-    }
-
-    void Shortcuts()
-    {
-        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand))
-        {
-            if (Input.GetKeyDown("s"))
-                Save();
-            else if (Input.GetKeyDown("o"))
-                LoadSong();   
-        }
-
-        if (Input.GetButtonDown("PlayPause"))
-        {
-            if (Globals.applicationMode == Globals.ApplicationMode.Editor)
-                Play();
-            else if (Globals.applicationMode == Globals.ApplicationMode.Playing)
-                Stop();
-        }
     }
     
     void OnApplicationFocus(bool hasFocus)
@@ -488,7 +468,7 @@ public class ChartEditor : MonoBehaviour {
         for (int i = 0; i < song.sections.Length; ++i)
         {
             // Convert the chart data into gameobject
-            GameObject sectionObject = Instantiate(this.section);
+            GameObject sectionObject = Instantiate(this.sectionPrefab);
 
             sectionObject.transform.SetParent(songObjectParent.transform);
             
@@ -515,7 +495,18 @@ public class ChartEditor : MonoBehaviour {
             // Make sure notes haven't been deleted
             if (notes[i].song != null)
             {
-                NoteController controller = CreateNoteObject(notes[i], chartObjectParent);
+                NoteController controller = CreateNoteObject(notes[i]);
+                controller.UpdateSongObject();
+            }
+        }
+
+        StarPower[] starpowers = chart.starPower;
+        for (int i = 0; i < starpowers.Length; ++i)
+        {
+            // Make sure notes haven't been deleted
+            if (notes[i].song != null)
+            {
+                StarpowerController controller = CreateStarpowerObject(starpowers[i]);
                 controller.UpdateSongObject();
             }
         }
@@ -523,23 +514,36 @@ public class ChartEditor : MonoBehaviour {
         return chartObjectParent;
     }
 
-    public NoteController CreateNoteObject(Note note, GameObject parent = null)
+    public NoteController CreateNoteObject(Note note)
     {
-        // Convert the chart data into gameobject
-        GameObject noteObject = Instantiate(this.note);
-
-        if (parent)
-            noteObject.transform.SetParent(parent.transform);
-        else
-            noteObject.transform.SetParent(chartObjectParent.transform);
-
         // Attach the note to the object
-        NoteController controller = noteObject.GetComponent<NoteController>();
+        NoteController controller = CreateChartObject(this.notePrefab).GetComponent<NoteController>();
 
         // Link controller and note together
         controller.Init(note);
 
         return controller;
+    }
+
+    public StarpowerController CreateStarpowerObject(StarPower starpower)
+    {
+        // Attach the note to the object
+        StarpowerController controller = CreateChartObject(this.starpowerPrefab).GetComponent<StarpowerController>();
+
+        // Link controller and note together
+        controller.Init(starpower);
+
+        return controller;
+    }
+
+    GameObject CreateChartObject(GameObject chartObjectPrefab)
+    {
+        // Convert the chart data into gameobject
+        GameObject chartObject = Instantiate(chartObjectPrefab);
+
+        chartObject.transform.SetParent(chartObjectParent.transform);
+
+        return chartObject;
     }
 
 

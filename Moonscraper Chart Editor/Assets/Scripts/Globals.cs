@@ -15,12 +15,130 @@ public class Globals : MonoBehaviour {
     static int lsbOffset = 3;
     static int _step = 4;
 
+    public static readonly int NOTFOUND = -1;
+    public static readonly string TABSPACE = "  ";
+
+    public static Sprite[] strumSprites { get; private set; }
+    public static Sprite[] hopoSprites { get; private set; }
+    public static Sprite[] tapSprites { get; private set; }
+    public static Material[] sustainColours { get; private set; }
+    public static Sprite[] spStrumSprite { get; private set; }
+    public static Sprite[] spHopoSprite { get; private set; }
+    public static Sprite[] spTapSprite { get; private set; }
+
+    [Header("Note sprites")]
+    [SerializeField]
+    Sprite[] strumNotes = new Sprite[6];
+    [SerializeField]
+    Sprite[] hopoNotes = new Sprite[6];
+    [SerializeField]
+    Sprite[] tapNotes = new Sprite[6];
+    [SerializeField]
+    Material[] sustains = new Material[6];
+    [SerializeField]
+    Sprite[] spStrumNote = new Sprite[6];
+    [SerializeField]
+    Sprite[] spHOPONote = new Sprite[6];
+    [SerializeField]
+    Sprite[] spTapNote = new Sprite[6];
+
     // Settings
     public static float hyperspeed = 5.0f;
     public static int step { get { return _step; } }
     public static ClapToggle clapSetting = ClapToggle.NONE;
     public static int audioCalibrationMS = 100;                     // Increase to start the audio sooner
     public static ApplicationMode applicationMode = ApplicationMode.Editor;
+
+    ChartEditor editor;
+
+    void Awake()
+    {
+        INIParser iniparse = new INIParser();
+        iniparse.Open("config.ini");
+
+        hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
+        audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 100);
+        clapSetting = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
+        // Audio levels
+
+        iniparse.Close();
+
+        // Initialize notes
+        strumSprites = strumNotes;
+        hopoSprites = hopoNotes;
+        tapSprites = tapNotes;
+        sustainColours = sustains;
+        spStrumSprite = spStrumNote;
+        spHopoSprite = spHOPONote;
+        spTapSprite = spTapNote;
+
+        SetStep(16);
+    }
+
+    void Start()
+    {
+        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+
+        // Initialize GUI
+        editor.hyperspeedSlider.value = hyperspeed;
+        clapToggle.onValueChanged.AddListener((value) => { ToggleClap(value); });
+        if (clapSetting == ClapToggle.NONE)
+            clapToggle.isOn = false;
+        else
+            clapToggle.isOn = true;
+    }
+
+    int lastWidth = Screen.width;
+    void Update()
+    {
+        stepText.text = "1/" + _step.ToString();
+
+        if (Screen.width != lastWidth)
+        {
+            // User is resizing width
+            Screen.SetResolution(Screen.width, Screen.width * 9 / 16, false);
+            lastWidth = Screen.width;
+        }
+        else
+        {
+            // User is resizing height
+            Screen.SetResolution(Screen.height * 16 / 9, Screen.height, false);
+        }
+
+        Controls();
+    }
+
+    void Controls()
+    {
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand))
+        {
+            if (Input.GetKeyDown("s"))
+                editor.Save();
+            else if (Input.GetKeyDown("o"))
+                editor.LoadSong();
+        }
+
+        if (Input.GetButtonDown("PlayPause"))
+        {
+            if (applicationMode == Globals.ApplicationMode.Editor)
+                editor.Play();
+            else if (applicationMode == Globals.ApplicationMode.Playing)
+                editor.Stop();
+        }
+
+        if (Input.GetButtonDown("ToggleClap"))
+        {
+            if (clapToggle.isOn)
+                clapToggle.isOn = false;
+            else
+                clapToggle.isOn = true;
+        }
+
+        if (Input.GetButtonDown("IncreaseStep"))
+            IncrementStep();
+        else if (Input.GetButtonDown("DecreaseStep"))
+            DecrementStep();
+    }
 
     public void IncrementStep()
     {
@@ -88,70 +206,6 @@ public class Globals : MonoBehaviour {
             clapSetting = ClapToggle.NONE;
     }
 
-    public static readonly int NOTFOUND = -1;
-    public static readonly string TABSPACE = "  ";
-
-    public static Sprite[] strumSprites { get; private set; }
-    public static Sprite[] hopoSprites { get; private set; }
-    public static Sprite[] tapSprites { get; private set; }
-    public static Material[] sustainColours { get; private set; }
-    public static Sprite[] spStrumSprite { get; private set; }
-    public static Sprite[] spHopoSprite { get; private set; }
-    public static Sprite[] spTapSprite { get; private set; }
-
-    [Header("Note sprites")]
-    [SerializeField]
-    Sprite[] strumNotes = new Sprite[6];
-    [SerializeField]
-    Sprite[] hopoNotes = new Sprite[6];
-    [SerializeField]
-    Sprite[] tapNotes = new Sprite[6];
-    [SerializeField]
-    Material[] sustains = new Material[6];
-    [SerializeField]
-    Sprite[] spStrumNote = new Sprite[6];
-    [SerializeField]
-    Sprite[] spHOPONote = new Sprite[6];
-    [SerializeField]
-    Sprite[] spTapNote = new Sprite[6];
-
-    void Awake()
-    {
-        INIParser iniparse = new INIParser();
-        iniparse.Open("config.ini");
-        
-        hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
-        audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 100);
-        clapSetting = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
-        // Audio levels
-
-        iniparse.Close();
-
-        // Initialize notes
-        strumSprites = strumNotes;
-        hopoSprites = hopoNotes;
-        tapSprites = tapNotes;
-        sustainColours = sustains;
-        spStrumSprite = spStrumNote;
-        spHopoSprite = spHOPONote;
-        spTapSprite = spTapNote;
-
-        SetStep(16);
-    }
-
-    void Start()
-    {
-        ChartEditor editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
-
-        // Initialize GUI
-        editor.hyperspeedSlider.value = hyperspeed;
-        clapToggle.onValueChanged.AddListener((value) => { ToggleClap(value); });
-        if (clapSetting == ClapToggle.NONE)
-            clapToggle.isOn = false;
-        else
-            clapToggle.isOn = true;
-    }
-
     void OnApplicationQuit()
     {
         INIParser iniparse = new INIParser();
@@ -165,23 +219,7 @@ public class Globals : MonoBehaviour {
         iniparse.Close();
     }
 
-    int lastWidth = Screen.width;
-    void Update()
-    {
-        stepText.text = "1/" + _step.ToString();
 
-        if (Screen.width != lastWidth)
-        {
-            // User is resizing width
-            Screen.SetResolution(Screen.width, Screen.width * 9 / 16, false);
-            lastWidth = Screen.width;
-        }
-        else
-        {
-            // User is resizing height
-            Screen.SetResolution(Screen.height * 16 / 9, Screen.height, false);
-        }
-    }
 
     [System.Flags]
     public enum ClapToggle
