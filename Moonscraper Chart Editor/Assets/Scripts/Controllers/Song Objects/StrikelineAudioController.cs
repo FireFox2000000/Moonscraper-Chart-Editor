@@ -33,15 +33,15 @@ public class StrikelineAudioController : MonoBehaviour {
             switch (note.noteType)
             {
                 case (Note.Note_Type.STRUM):
-                    if ((Globals.clapToggle & Globals.ClapToggle.STRUM) == 0)
+                    if ((Globals.clapSetting & Globals.ClapToggle.STRUM) == 0)
                         return;
                     break;
                 case (Note.Note_Type.HOPO):
-                    if ((Globals.clapToggle & Globals.ClapToggle.HOPO) == 0)
+                    if ((Globals.clapSetting & Globals.ClapToggle.HOPO) == 0)
                         return;
                     break;
                 case (Note.Note_Type.TAP):
-                    if ((Globals.clapToggle & Globals.ClapToggle.TAP) == 0)
+                    if ((Globals.clapSetting & Globals.ClapToggle.TAP) == 0)
                         return;
                     break;
                 default:

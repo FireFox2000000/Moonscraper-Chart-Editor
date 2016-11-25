@@ -9,17 +9,18 @@ public class Globals : MonoBehaviour {
     static readonly uint MIN_STEP = 1;
     public Text stepText;
 
+    [Header("Initialize GUI")]
+    public Toggle clapToggle;
+
     static int lsbOffset = 3;
     static int _step = 4;
 
     // Settings
     public static float hyperspeed = 5.0f;
     public static int step { get { return _step; } }
-    public static ClapToggle clapToggle = ClapToggle.NONE;
+    public static ClapToggle clapSetting = ClapToggle.NONE;
     public static int audioCalibrationMS = 100;                     // Increase to start the audio sooner
     public static ApplicationMode applicationMode = ApplicationMode.Editor;
-
-    ClapToggle currentClapSettings;
 
     public void IncrementStep()
     {
@@ -79,12 +80,12 @@ public class Globals : MonoBehaviour {
         }
     }
 
-    public void ToggleClap()
+    public void ToggleClap(bool value)
     {
-        if (clapToggle == ClapToggle.NONE)
-            clapToggle = currentClapSettings;
+        if (value)
+            clapSetting = ClapToggle.ALL;
         else
-            clapToggle = ClapToggle.NONE;
+            clapSetting = ClapToggle.NONE;
     }
 
     public static readonly int NOTFOUND = -1;
@@ -116,6 +117,17 @@ public class Globals : MonoBehaviour {
 
     void Awake()
     {
+        INIParser iniparse = new INIParser();
+        iniparse.Open("config.ini");
+        
+        hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
+        audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 100);
+        clapSetting = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
+        // Audio levels
+
+        iniparse.Close();
+
+        // Initialize notes
         strumSprites = strumNotes;
         hopoSprites = hopoNotes;
         tapSprites = tapNotes;
@@ -124,13 +136,33 @@ public class Globals : MonoBehaviour {
         spHopoSprite = spHOPONote;
         spTapSprite = spTapNote;
 
-        // Load clap settings (eventually from save file)
-        currentClapSettings = ClapToggle.ALL;
-
-        // Enable clap
-        ToggleClap();
-
         SetStep(16);
+    }
+
+    void Start()
+    {
+        ChartEditor editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+
+        // Initialize GUI
+        editor.hyperspeedSlider.value = hyperspeed;
+        clapToggle.onValueChanged.AddListener((value) => { ToggleClap(value); });
+        if (clapSetting == ClapToggle.NONE)
+            clapToggle.isOn = false;
+        else
+            clapToggle.isOn = true;
+    }
+
+    void OnApplicationQuit()
+    {
+        INIParser iniparse = new INIParser();
+        iniparse.Open("config.ini");
+
+        iniparse.WriteValue("Settings", "Hyperspeed", hyperspeed);
+        iniparse.WriteValue("Settings", "Audio calibration", audioCalibrationMS);
+        iniparse.WriteValue("Settings", "Clap", (int)clapSetting);
+        // Audio levels
+
+        iniparse.Close();
     }
 
     int lastWidth = Screen.width;
