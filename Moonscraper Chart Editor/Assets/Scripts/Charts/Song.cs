@@ -181,7 +181,7 @@ public class Song {
                 throw new System.Exception("Invalid file extension");
             }
 
-            audioLocation = filepath;
+            audioLocation = Path.GetFullPath(filepath);
 #if SONG_DEBUG
             Debug.Log("Loading audio");
 #endif
@@ -659,7 +659,7 @@ public class Song {
 
         // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
         if (Path.GetDirectoryName(audioLocation).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
-             musicString = musicStream.name;
+            musicString = musicStream.name;
         else
             musicString = audioLocation;
 

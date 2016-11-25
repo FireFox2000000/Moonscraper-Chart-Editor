@@ -82,5 +82,5 @@ public class LibWrap
     [DllImport("comdlg32.dll", CharSet = CharSet.Auto)]
     public static extern bool GetOpenFileName([In, Out] OpenFileName ofn);
     [DllImport("comdlg32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern bool GetSaveFileName(OpenFileName ofn);
+    public static extern bool GetSaveFileName([In, Out] OpenFileName ofn);
 }

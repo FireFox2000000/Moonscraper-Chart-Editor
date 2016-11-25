@@ -245,6 +245,7 @@ public class ChartEditor : MonoBehaviour {
 #if UNITY_EDITOR
             fileName = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", currentSong.name, "chart");
 #else
+            /*
             saveDialog.Filter = "chart files (*.chart)|*.chart";
 
             if (saveDialog.ShowDialog() == DialogResult.OK)
@@ -252,7 +253,31 @@ public class ChartEditor : MonoBehaviour {
                 fileName = saveDialog.FileName;
             }
             else
-                throw new System.Exception("File was not saved");
+                throw new System.Exception("File was not saved");*/
+
+            OpenFileName openSaveFileDialog = new OpenFileName();
+
+            openSaveFileDialog.structSize = Marshal.SizeOf(openSaveFileDialog);
+            openSaveFileDialog.filter = "Chart files (*.chart)\0*.chart";
+            openSaveFileDialog.file = new String(new char[256]);
+            openSaveFileDialog.maxFile = openSaveFileDialog.file.Length;
+
+            openSaveFileDialog.fileTitle = new String(new char[64]);
+            openSaveFileDialog.maxFileTitle = openSaveFileDialog.fileTitle.Length;
+
+            openSaveFileDialog.initialDir = "";
+            openSaveFileDialog.title = "Save as";
+            openSaveFileDialog.defExt = "chart";
+            openSaveFileDialog.flags = 0x000002;        // Overwrite warning
+
+            if (LibWrap.GetSaveFileName(openSaveFileDialog))
+            {
+                fileName = openSaveFileDialog.file;
+            }
+            else
+            {
+                throw new System.Exception("Could not open file");
+            }
 #endif
             Save(fileName);           
         }
@@ -302,17 +327,6 @@ public class ChartEditor : MonoBehaviour {
 #if UNITY_EDITOR
             currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart");
 #else
-#if false
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "Chart files (*.chart)|*.chart";
-            if(openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                currentFileName = openFileDialog.FileName;
-            }
-            else
-                throw new System.Exception("Could not open file");
-#else
-
             OpenFileName openChartFileDialog = new OpenFileName();
 
             openChartFileDialog.structSize = Marshal.SizeOf(openChartFileDialog);
@@ -334,8 +348,7 @@ public class ChartEditor : MonoBehaviour {
             else
             {
                 throw new System.Exception("Could not open file");
-            }
-#endif        
+            }        
 #endif
 #if TIMING_DEBUG
             totalLoadTime = Time.realtimeSinceStartup;
