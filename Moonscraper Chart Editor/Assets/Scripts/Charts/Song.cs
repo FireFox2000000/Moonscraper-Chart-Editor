@@ -194,7 +194,7 @@ public class Song {
                 musicStream = NAudioPlayer.FromMp3Data(www.bytes);
             else
                 musicStream = www.GetAudioClip(false, false);
-            Debug.Log(www.url);
+
             musicStream.name = Path.GetFileName(filepath);
 
             while (musicStream != null && musicStream.loadState != AudioDataLoadState.Loaded)

@@ -84,13 +84,3 @@ public class LibWrap
     [DllImport("comdlg32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     public static extern bool GetSaveFileName(OpenFileName ofn);
 }
-
-/*
-if( LibWrap.GetOpenFileName( ofn ))
-        {
-            Console.WriteLine( "Selected file with full path: {0}", ofn.file );
-            Console.WriteLine( "Selected file name: {0}", ofn.fileTitle );
-            Console.WriteLine( "Offset from file name: {0}", ofn.fileOffset );
-            Console.WriteLine( "Offset from file extension: {0}", ofn.fileExtension );
-        }
-*/

@@ -298,16 +298,25 @@ public class ChartEditor : MonoBehaviour {
         float totalLoadTime = 0;
 #endif
         try
-        {          
+        {
 #if UNITY_EDITOR
             currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart");
 #else
-            OpenFileName openChartFileDialog;
+#if false
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Chart files (*.chart)|*.chart";
+            if(openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                currentFileName = openFileDialog.FileName;
+            }
+            else
+                throw new System.Exception("Could not open file");
+#else
 
-            openChartFileDialog = new OpenFileName();
+            OpenFileName openChartFileDialog = new OpenFileName();
 
             openChartFileDialog.structSize = Marshal.SizeOf(openChartFileDialog);
-
+            openChartFileDialog.filter = "Chart files (*.chart)\0*.chart";
             openChartFileDialog.file = new String(new char[256]);
             openChartFileDialog.maxFile = openChartFileDialog.file.Length;
 
@@ -316,9 +325,7 @@ public class ChartEditor : MonoBehaviour {
 
             openChartFileDialog.initialDir = "";
             openChartFileDialog.title = "Open file";
-            openChartFileDialog.defExt = "txt";
-
-            openChartFileDialog.filter = "Chart files (*.chart)\0*.chart";
+            openChartFileDialog.defExt = "chart";
 
             if (LibWrap.GetOpenFileName(openChartFileDialog))
             {
@@ -328,6 +335,7 @@ public class ChartEditor : MonoBehaviour {
             {
                 throw new System.Exception("Could not open file");
             }
+#endif        
 #endif
 #if TIMING_DEBUG
             totalLoadTime = Time.realtimeSinceStartup;

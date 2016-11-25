@@ -50,9 +50,12 @@ public class Globals : MonoBehaviour {
     public static ApplicationMode applicationMode = ApplicationMode.Editor;
 
     ChartEditor editor;
+    string workingDirectory;
 
     void Awake()
     {
+        workingDirectory = System.IO.Directory.GetCurrentDirectory();
+
         INIParser iniparse = new INIParser();
         iniparse.Open("config.ini");
 
@@ -209,7 +212,7 @@ public class Globals : MonoBehaviour {
     void OnApplicationQuit()
     {
         INIParser iniparse = new INIParser();
-        iniparse.Open("config.ini");
+        iniparse.Open(workingDirectory + "\\config.ini");
 
         iniparse.WriteValue("Settings", "Hyperspeed", hyperspeed);
         iniparse.WriteValue("Settings", "Audio calibration", audioCalibrationMS);
@@ -218,8 +221,6 @@ public class Globals : MonoBehaviour {
 
         iniparse.Close();
     }
-
-
 
     [System.Flags]
     public enum ClapToggle

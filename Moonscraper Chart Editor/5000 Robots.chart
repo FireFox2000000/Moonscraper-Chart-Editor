@@ -11,7 +11,7 @@
   PreviewEnd = 0
   Genre = "rock"
   MediaType = "cd"
-  MusicStream = "E:\Alex's stuff\GH3 Customs\Charts\5000 Robots\5000 Robots.ogg"
+  MusicStream = "E:/Alex's stuff/GH3 Customs/Charts/5000 Robots/5000 Robots.ogg"
 }
 [SyncTrack]
 {
