@@ -21,6 +21,11 @@ public class StarPower : ChartObject
         length = _length;
     }
 
+    public StarPower(StarPower _starpower) : base(_starpower.song, _starpower.chart, _starpower.position)
+    {
+        length = _starpower.length;
+    }
+
     public override string GetSaveString()
     {
         // 768 = S 2 768

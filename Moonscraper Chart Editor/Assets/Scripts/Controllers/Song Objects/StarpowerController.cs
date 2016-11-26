@@ -7,6 +7,15 @@ public class StarpowerController : SongObjectController
     public GameObject tail;
     public StarPower starpower;
 
+    Renderer spRen, spTailRen;
+
+    new void Awake()
+    {
+        base.Awake();
+        spRen = GetComponent<SpriteRenderer>();
+        spTailRen = tail.GetComponent<Renderer>();
+    }
+
     public void Init(StarPower _starpower)
     {
         base.Init(_starpower);
@@ -18,6 +27,21 @@ public class StarpowerController : SongObjectController
     {
         starpower.chart.Remove(starpower);
         Destroy(gameObject);
+    }
+
+    protected override void Update()
+    {
+        if (spRen.isVisible || spTailRen.isVisible)
+            UpdateSongObject();
+        else if (starpower != null)
+        {
+            uint endPosition = starpower.position + starpower.length;
+
+            if ((starpower.position > editor.minPos && starpower.position < editor.maxPos) ||
+                    (endPosition > editor.minPos && endPosition < editor.maxPos) ||
+                    (starpower.position < editor.minPos && endPosition > editor.maxPos))
+                UpdateSongObject();
+        }
     }
 
     public override void UpdateSongObject()
@@ -43,6 +67,21 @@ public class StarpowerController : SongObjectController
         tail.transform.position = position;
     }
 
+    public void TailDrag()
+    {
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1) && Mouse.world2DPosition != null)
+        {
+            ChartEditor.editOccurred = true;
+
+            uint snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(starpower.song.WorldYPositionToChartPosition(((Vector2)Mouse.world2DPosition).y), Globals.step, starpower.song.resolution);
+
+            if (snappedChartPos > starpower.position)
+                starpower.length = snappedChartPos - starpower.position;
+            else
+                starpower.length = 0;
+        }
+    }
+
     void OnMouseDrag()
     {
         // Move note
@@ -61,7 +100,7 @@ public class StarpowerController : SongObjectController
         }
         else if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
-            // Edit length
+            TailDrag();
         }
     }
 }

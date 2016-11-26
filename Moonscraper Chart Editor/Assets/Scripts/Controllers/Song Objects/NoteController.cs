@@ -24,15 +24,6 @@ public class NoteController : SongObjectController {
         sustainRen.material = new Material(sustainRen.sharedMaterial);
     }
 
-    void OnMouseDown()
-    {
-        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
-        {
-            editor.currentSelectedObject = note;
-            prevMousePos = Input.mousePosition;
-        }
-    }
-
     void OnMouseDrag()
     {
         // Move note

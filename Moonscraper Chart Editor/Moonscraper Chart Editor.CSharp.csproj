@@ -90,8 +90,9 @@
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SectionGuiController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SongObjectController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\StarpowerController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Song Objects\StarpowerTailController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\StrikelineAudioController.cs" />
-    <Compile Include="Assets\Scripts\Controllers\SustainController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Song Objects\SustainController.cs" />
     <Compile Include="Assets\Scripts\Controllers\TimelineMovementController.cs" />
     <Compile Include="Assets\Scripts\DialogBox.cs" />
     <Compile Include="Assets\Scripts\DropDownMenu.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="Assets\Scripts\Tools\Placeable\MoveNote.cs" />
     <Compile Include="Assets\Scripts\Tools\Placeable\PlaceNote.cs" />
     <Compile Include="Assets\Scripts\Tools\Placeable\PlaceOpenNote.cs" />
+    <Compile Include="Assets\Scripts\Tools\Placeable\PlaceStarpower.cs" />
     <Compile Include="Assets\Scripts\Tools\Placeable\Snapable.cs" />
     <Compile Include="Assets\Scripts\Tools\ToolObject.cs" />
     <Compile Include="Assets\Scripts\Tools\Toolpane.cs" />

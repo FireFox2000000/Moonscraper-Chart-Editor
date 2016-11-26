@@ -64,6 +64,6 @@ public class Toolpane : MonoBehaviour {
 
     public enum Tools
     {
-        Cursor, Eraser, Note
+        Cursor, Eraser, Note, Starpower
     }
 }

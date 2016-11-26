@@ -158,25 +158,6 @@ public class PlaceNote : ToolObject {
                     note.fret_type = Note.Fret_Type.RED;
                 else
                     note.fret_type = Note.Fret_Type.GREEN;
-
-                // Snap to either -2, -1, 0, 1 or 2
-                /*
-                if (mousePos.x > -0.5f)
-                {
-                    if (mousePos.x < 0.5f)
-                        note.fret_type = Note.Fret_Type.YELLOW;
-                    else if (mousePos.x < 1.5f)
-                        note.fret_type = Note.Fret_Type.BLUE;
-                    else
-                        note.fret_type = Note.Fret_Type.ORANGE;
-                }
-                else
-                {
-                    if (mousePos.x > -1.5f)
-                        note.fret_type = Note.Fret_Type.RED;
-                    else
-                        note.fret_type = Note.Fret_Type.GREEN;
-                }*/
             }
         }
     }
@@ -186,6 +167,5 @@ public class PlaceNote : ToolObject {
         Note noteToAdd = new Note(note);
         editor.currentChart.Add(noteToAdd);
         editor.CreateNoteObject(noteToAdd);
-        //editor.currentSelectedNote = noteToAdd;
     }
 }
