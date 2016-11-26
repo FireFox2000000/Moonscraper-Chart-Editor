@@ -459,6 +459,8 @@ public class Section : Event
 
     public Section(Song song, string _title, uint _position) : base(song, _title, _position) { }
 
+    public Section(Section section) : base(section.song, section.title, section.position) { }
+
     public override string GetSaveString()
     {
         return Globals.TABSPACE + position + " = E \"section " + title + "\"" + Globals.LINE_ENDING;

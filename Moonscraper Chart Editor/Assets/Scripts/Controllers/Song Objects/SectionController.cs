@@ -4,7 +4,7 @@ using System.Collections;
 
 public class SectionController : SongObjectController
 {
-    Section section;
+    public Section section;
     public float position = 4.5f;
     public SectionGuiController sectionGui;
     public Text sectionText;
@@ -18,7 +18,8 @@ public class SectionController : SongObjectController
 
     public override void Delete()
     {
-        Destroy(sectionGui.gameObject);
+        if (sectionGui)
+            Destroy(sectionGui.gameObject);
 
         section.song.Remove(section);
   
@@ -30,6 +31,8 @@ public class SectionController : SongObjectController
         base.Init(_section);
         section = _section;
         section.controller = this;
-        sectionGui.Init(_section, _timelineHandler, bpmGuiParent);
+
+        if (sectionGui)
+            sectionGui.Init(_section, _timelineHandler, bpmGuiParent);
     }
 }

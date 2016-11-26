@@ -518,23 +518,26 @@ public class ChartEditor : MonoBehaviour {
     GameObject CreateSongObjects(Song song)
     {
         for (int i = 0; i < song.sections.Length; ++i)
-        {
-            // Convert the chart data into gameobject
-            GameObject sectionObject = Instantiate(this.sectionPrefab);
-
-            sectionObject.transform.SetParent(songObjectParent.transform);
-            
+        {           
             // Attach the note to the object
-            SectionController controller = sectionObject.GetComponentInChildren<SectionController>();
-
-            // Link controller and note together
-            controller.Init(song.sections[i], timeHandler, guiIndicators);
+            SectionController controller = CreateSectionObject(song.sections[i]);
             
             controller.UpdateSongObject();
             
         }
         
         return songObjectParent;
+    }
+
+    public SectionController CreateSectionObject(Section section)
+    {
+        // Attach the note to the object
+        SectionController controller = CreateSongObject(this.sectionPrefab).GetComponentInChildren<SectionController>();
+
+        // Link controller and note together
+        controller.Init(section, timeHandler, guiIndicators);
+
+        return controller;
     }
 
     // Create note, starpower and chart event objects
@@ -598,7 +601,15 @@ public class ChartEditor : MonoBehaviour {
         return chartObject;
     }
 
+    GameObject CreateSongObject(GameObject songObjectPrefab)
+    {
+        // Convert the chart data into gameobject
+        GameObject chartObject = Instantiate(songObjectPrefab);
 
+        chartObject.transform.SetParent(songObjectParent.transform);
+
+        return chartObject;
+    }
 
     // For dropdown UI
     public void LoadExpert()
