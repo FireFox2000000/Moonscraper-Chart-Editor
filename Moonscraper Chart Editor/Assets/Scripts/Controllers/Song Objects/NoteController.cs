@@ -24,13 +24,11 @@ public class NoteController : SongObjectController {
         sustainRen.material = new Material(sustainRen.sharedMaterial);
     }
 
-    Vector2 prevMousePos = Vector2.zero;
-
     void OnMouseDown()
     {
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
         {
-            editor.currentSelectedNote = note;
+            editor.currentSelectedObject = note;
             prevMousePos = Input.mousePosition;
         }
     }
@@ -47,7 +45,7 @@ public class NoteController : SongObjectController {
                 GameObject moveNote = Instantiate(editor.notePrefab);
                 moveNote.name = "Moving note";
                 moveNote.AddComponent<MoveNote>().Init(note);
-                editor.currentSelectedNote = note;
+                editor.currentSelectedObject = note;
                 // Delete note
                 Delete();
             }

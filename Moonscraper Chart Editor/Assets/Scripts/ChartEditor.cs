@@ -25,6 +25,7 @@ public class ChartEditor : MonoBehaviour {
     public Slider hyperspeedSlider;
     [Header("Inspectors")]
     public NotePropertiesPanelController noteInspector;
+    public SectionPropertiesPanelController sectionInspector;
     [Header("Misc.")]
     public UnityEngine.UI.Button play;
     public Transform strikeline;
@@ -52,7 +53,8 @@ public class ChartEditor : MonoBehaviour {
 
     OpenFileName saveFileDialog;
 
-    public Note currentSelectedNote = null;
+    public SongObject currentSelectedObject = null;
+    GameObject currentPropertiesPanel = null;
 
     [DllImport("user32.dll", EntryPoint = "SetWindowText")]
     public static extern bool SetWindowText(System.IntPtr hwnd, System.String lpString);
@@ -74,6 +76,7 @@ public class ChartEditor : MonoBehaviour {
         maxPos = 0;
 
         noteInspector.gameObject.SetActive(false);
+        sectionInspector.gameObject.SetActive(false);
 
 #if !UNITY_EDITOR
         saveDialog = new SaveFileDialog();
@@ -115,13 +118,41 @@ public class ChartEditor : MonoBehaviour {
 
     void Update()
     {
-        if (currentSelectedNote != null)
+        if (currentSelectedObject != null)
         {
-            noteInspector.currentNote = currentSelectedNote;
-            noteInspector.gameObject.SetActive(true);  
+            GameObject previousPanel = currentPropertiesPanel;
+
+            switch (currentSelectedObject.classID)
+            {
+                case ((int)SongObject.ID.Note):
+                    noteInspector.currentNote = (Note)currentSelectedObject;
+                    currentPropertiesPanel = noteInspector.gameObject;
+                    break;
+                case ((int)SongObject.ID.Section):
+                    sectionInspector.currentSection = (Section)currentSelectedObject;
+                    currentPropertiesPanel = sectionInspector.gameObject;
+                    break;
+                default:
+                    currentPropertiesPanel = null;
+                    currentSelectedObject = null;
+                    break;
+            }
+
+            if (currentPropertiesPanel != previousPanel)
+            {
+                if (previousPanel)
+                    previousPanel.SetActive(false);
+            }
+
+            if (currentPropertiesPanel != null)
+            {
+                currentPropertiesPanel.gameObject.SetActive(true);
+            }
         }
-        else
-            noteInspector.gameObject.SetActive(false);
+        else if (currentPropertiesPanel)
+        {
+            currentPropertiesPanel.gameObject.SetActive(false);
+        }
 
         // Update object positions that supposed to be visible into the range of the camera
         minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);

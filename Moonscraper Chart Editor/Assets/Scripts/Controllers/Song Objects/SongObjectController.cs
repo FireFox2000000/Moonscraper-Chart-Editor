@@ -64,4 +64,14 @@ public abstract class SongObjectController : MonoBehaviour {
     {
         songObject = _songObject;
     }
+
+    protected Vector2 prevMousePos = Vector2.zero;
+    void OnMouseDown()
+    {
+        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+        {
+            editor.currentSelectedObject = songObject;
+            prevMousePos = Input.mousePosition;
+        }
+    }
 }

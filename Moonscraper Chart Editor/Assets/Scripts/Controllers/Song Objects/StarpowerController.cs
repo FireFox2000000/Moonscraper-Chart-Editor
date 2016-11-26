@@ -43,16 +43,6 @@ public class StarpowerController : SongObjectController
         tail.transform.position = position;
     }
 
-    Vector2 prevMousePos = Vector2.zero;
-    void OnMouseDown()
-    {
-        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
-        {
-            // Move note around
-            prevMousePos = Input.mousePosition;
-        }
-    }
-
     void OnMouseDrag()
     {
         // Move note
@@ -62,6 +52,7 @@ public class StarpowerController : SongObjectController
             if (prevMousePos != (Vector2)Input.mousePosition)
             {
                 // Pass sp data to starpower tool placement
+
             }
             else
             {

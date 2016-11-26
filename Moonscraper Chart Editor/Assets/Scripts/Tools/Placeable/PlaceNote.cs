@@ -26,12 +26,12 @@ public class PlaceNote : ToolObject {
 
     public override void ToolDisable()
     {
-        editor.currentSelectedNote = null;
+        editor.currentSelectedObject = null;
     }
 
     void OnEnable()
     {
-        editor.currentSelectedNote = note;
+        editor.currentSelectedObject = note;
     }
 
     void OnDisable()

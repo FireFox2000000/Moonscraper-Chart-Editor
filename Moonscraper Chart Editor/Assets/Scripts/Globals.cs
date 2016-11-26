@@ -130,7 +130,10 @@ public class Globals : MonoBehaviour {
             Screen.SetResolution(Screen.height * 16 / 9, Screen.height, false);
         }
 
-        Controls();
+        // Disable controls while user is in an input field
+        if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null ||
+            UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() == null)
+            Controls();
     }
 
     void Controls()

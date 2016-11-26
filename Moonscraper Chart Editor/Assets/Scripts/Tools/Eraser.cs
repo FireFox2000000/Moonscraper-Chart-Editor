@@ -9,6 +9,6 @@ public class Eraser : ToolObject {
 
     public override void ToolEnable()
     {
-        editor.currentSelectedNote = null;
+        editor.currentSelectedObject = null;
     }
 }
