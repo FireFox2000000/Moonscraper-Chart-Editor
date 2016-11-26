@@ -4,6 +4,7 @@ using System;
 
 public class StarpowerController : SongObjectController
 {
+    public GameObject tail;
     public StarPower starpower;
 
     public void Init(StarPower _starpower)
@@ -24,7 +25,22 @@ public class StarpowerController : SongObjectController
         if (starpower != null)
         {
             transform.position = new Vector3(CHART_CENTER_POS - 3, starpower.worldYPosition, 0);
+
+            UpdateTailLength();
         }
+    }
+
+    public void UpdateTailLength()
+    {
+        float length = starpower.song.ChartPositionToWorldYPosition(starpower.position + starpower.length) - starpower.song.ChartPositionToWorldYPosition(starpower.position);
+
+        Vector3 scale = tail.transform.localScale;
+        scale.y = length;
+        tail.transform.localScale = scale;
+
+        Vector3 position = transform.position;
+        position.y += length / 2.0f;
+        tail.transform.position = position;
     }
 
     Vector2 prevMousePos = Vector2.zero;

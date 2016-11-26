@@ -169,7 +169,7 @@ public class NoteController : SongObjectController {
             specialType = Note.Special_Type.NONE;
             foreach (StarPower sp in note.chart.starPower)
             {
-                if (sp.position <= note.position && sp.position + sp.length > note.position)
+                if (sp.position == note.position || (sp.position <= note.position && sp.position + sp.length > note.position))
                 {
                     specialType = Note.Special_Type.STAR_POW;
                 }
