@@ -42,6 +42,28 @@ public class Globals : MonoBehaviour {
     [SerializeField]
     Sprite[] spTapNote = new Sprite[6];
 
+    [SerializeField]
+    MeshFilter strumNote3D;
+
+    [Header("Area range")]
+    public RectTransform area;
+
+    public bool InToolArea
+    {
+        get
+        {
+            Rect toolScreenArea = area.GetScreenCorners();
+
+            if (Input.mousePosition.x < toolScreenArea.xMin ||
+                    Input.mousePosition.x > toolScreenArea.xMax ||
+                    Input.mousePosition.y < toolScreenArea.yMin ||
+                    Input.mousePosition.y > toolScreenArea.yMax)
+                return false;
+            else
+                return true;
+        }
+    }
+
     // Settings
     public static float hyperspeed = 5.0f;
     public static int step { get { return _step; } }

@@ -7,13 +7,15 @@ using System.Runtime.InteropServices;
 public class Toolpane : MonoBehaviour {
     public static Tools currentTool = Tools.Cursor;
     ToolObject currentToolObject;
-    [Header("Tool Use Screen Area")]
-    public RectTransform area;
+
+    Globals globals;
 
     void Start()
     {
         if (currentToolObject)
             SetTool(currentToolObject);
+
+        globals = GameObject.FindGameObjectWithTag("Globals").GetComponent<Globals>();
     }
 
     void Update()
@@ -22,13 +24,9 @@ public class Toolpane : MonoBehaviour {
         {
             if (Globals.applicationMode == Globals.ApplicationMode.Editor)
             {
-                Rect toolScreenArea = area.GetScreenCorners();
                 // Range check
                 if (Mouse.world2DPosition == null ||
-                    Input.mousePosition.x < toolScreenArea.xMin ||
-                    Input.mousePosition.x > toolScreenArea.xMax ||
-                    Input.mousePosition.y < toolScreenArea.yMin ||
-                    Input.mousePosition.y > toolScreenArea.yMax)
+                    !globals.InToolArea)
                 {
                     currentToolObject.gameObject.SetActive(false);
                 }

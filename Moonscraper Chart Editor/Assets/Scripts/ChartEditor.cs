@@ -575,7 +575,12 @@ public class ChartEditor : MonoBehaviour {
         LoadChart(currentSong.expert_single);
     }
 
-    public void LoadExpertBass()
+    public void LoadExpertDoubleGuitar()
+    {
+        LoadChart(currentSong.expert_double_guitar);
+    }
+
+    public void LoadExpertDoubleBass()
     {
         LoadChart(currentSong.expert_double_bass);
     }
@@ -585,7 +590,12 @@ public class ChartEditor : MonoBehaviour {
         LoadChart(currentSong.hard_single);
     }
 
-    public void LoadHardBass()
+    public void LoadHardDoubleGuitar()
+    {
+        LoadChart(currentSong.hard_double_guitar);
+    }
+
+    public void LoadHardDoubleBass()
     {
         LoadChart(currentSong.hard_double_bass);
     }
@@ -595,7 +605,12 @@ public class ChartEditor : MonoBehaviour {
         LoadChart(currentSong.medium_single);
     }
 
-    public void LoadMediumBass()
+    public void LoadMediumDoubleGuitar()
+    {
+        LoadChart(currentSong.medium_double_guitar);
+    }
+
+    public void LoadMediumDoubleBass()
     {
         LoadChart(currentSong.medium_double_bass);
     }
@@ -605,7 +620,12 @@ public class ChartEditor : MonoBehaviour {
         LoadChart(currentSong.easy_single);
     }
 
-    public void LoadEasyBass()
+    public void LoadEasyDoubleGuitar()
+    {
+        LoadChart(currentSong.easy_double_guitar);
+    }
+
+    public void LoadEasyDoubleBass()
     {
         LoadChart(currentSong.easy_double_bass);
     }

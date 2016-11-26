@@ -48,7 +48,7 @@ public class TimelineMovementController : MovementController
     void LateUpdate () {
 	    if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
-            if (scrollDelta == 0)
+            if (scrollDelta == 0 && focused && globals.InToolArea)
             {
                 scrollDelta = Input.mouseScrollDelta.y;
             }

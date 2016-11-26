@@ -3,11 +3,12 @@ using System.Collections;
 
 public abstract class MovementController : MonoBehaviour {
     public ChartEditor editor;
+    protected Globals globals;
 
     protected Vector3 initPos;
     protected float scrollDelta = 0;
 
-    bool focused = true;
+    protected bool focused = true;
 
     // Program options
     protected float mouseScrollSensitivity = 0.2f;      // May miss snap gaps if placed too high
@@ -18,6 +19,7 @@ public abstract class MovementController : MonoBehaviour {
     protected void Start()
     {
         initPos = transform.position;
+        globals = GameObject.FindGameObjectWithTag("Globals").GetComponent<Globals>();
     }
 
     public void PlayingMovement()
@@ -36,7 +38,7 @@ public abstract class MovementController : MonoBehaviour {
 
     void OnGUI()
     {
-        if (focused)
+        if (focused && globals.InToolArea)
         {
             if (UnityEngine.Event.current.type == EventType.ScrollWheel)
             {
