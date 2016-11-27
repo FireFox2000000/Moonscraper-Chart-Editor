@@ -36,6 +36,7 @@ public class ChartEditor : MonoBehaviour {
     public TimelineHandler timeHandler;
     public Transform camYMin;
     public Transform camYMax;
+    public Transform autoUpScroll;
     
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }

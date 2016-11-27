@@ -19,6 +19,13 @@ public class MoveStarpower : PlaceStarpower {
         GetComponent<StarpowerController>().Init(starpower);
     }
 
+    protected override void Update()
+    {
+        starpower.chart.Remove(starpower);
+        base.Update();
+        starpower.chart.Add(starpower);
+    }
+
     protected override void AddObject()
     {
         StarPower starpowerToAdd = new StarPower(starpower);

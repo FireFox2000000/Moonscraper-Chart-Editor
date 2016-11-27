@@ -8,7 +8,6 @@ public class PlaceSection : ToolObject {
 
     protected override void Awake()
     {
-        Debug.Log("Awake");
         base.Awake();
         section = new Section(editor.currentSong, "Default", 0);
 
@@ -40,7 +39,7 @@ public class PlaceSection : ToolObject {
 
     void OnEnable()
     {
-        editor.currentSelectedObject = section;
+        //editor.currentSelectedObject = section;
     }
 
     protected override void AddObject()
@@ -48,6 +47,7 @@ public class PlaceSection : ToolObject {
         Section sectionToAdd = new Section(section);
         editor.currentSong.Add(sectionToAdd);
         editor.CreateSectionObject(sectionToAdd);
+        editor.currentSelectedObject = sectionToAdd;
     }
 
 }
