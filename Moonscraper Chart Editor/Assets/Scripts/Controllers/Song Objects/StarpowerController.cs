@@ -46,7 +46,7 @@ public class StarpowerController : SongObjectController
 
     public override void UpdateSongObject()
     {
-        if (starpower != null)
+        if (starpower.song != null)
         {
             transform.position = new Vector3(CHART_CENTER_POS - 3, starpower.worldYPosition, 0);
 
@@ -56,7 +56,7 @@ public class StarpowerController : SongObjectController
 
     public void UpdateTailLength()
     {
-        float length = starpower.song.ChartPositionToWorldYPosition(starpower.position + starpower.length) - starpower.song.ChartPositionToWorldYPosition(starpower.position);
+        float length = starpower.song.ChartPositionToWorldYPosition(starpower.position + starpower.length) - starpower.worldYPosition;
 
         Vector3 scale = tail.transform.localScale;
         scale.y = length;
@@ -90,8 +90,17 @@ public class StarpowerController : SongObjectController
             // Prevent note from snapping if the user is just clicking and not dragging
             if (prevMousePos != (Vector2)Input.mousePosition)
             {
-                // Pass sp data to starpower tool placement
+                // Pass note data to a ghost note
+                GameObject moveSP = Instantiate(editor.starpowerPrefab);
+                moveSP.SetActive(true);
+                moveSP.name = "Moving starpower";
+                Destroy(moveSP.GetComponent<PlaceStarpower>());
+                moveSP.AddComponent<MoveStarpower>().Init(starpower);
+                
+                editor.currentSelectedObject = starpower;
+                moveSP.SetActive(true);
 
+                Delete();
             }
             else
             {

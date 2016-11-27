@@ -26,6 +26,10 @@ public class ChartEditor : MonoBehaviour {
     [Header("Inspectors")]
     public NotePropertiesPanelController noteInspector;
     public SectionPropertiesPanelController sectionInspector;
+    [Header("Tool prefabs")]
+    public GameObject ghostNote;
+    public GameObject ghostStarpower;
+    public GameObject ghostSection;
     [Header("Misc.")]
     public UnityEngine.UI.Button play;
     public Transform strikeline;

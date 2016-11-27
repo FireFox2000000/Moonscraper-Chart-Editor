@@ -33,10 +33,16 @@ public class NoteController : SongObjectController {
             if (prevMousePos != (Vector2)Input.mousePosition)
             {
                 // Pass note data to a ghost note
-                GameObject moveNote = Instantiate(editor.notePrefab);
+                GameObject moveNote = Instantiate(editor.ghostNote);
+                moveNote.SetActive(true);
+
                 moveNote.name = "Moving note";
+                Destroy(moveNote.GetComponent<PlaceNote>());
                 moveNote.AddComponent<MoveNote>().Init(note);
+                
                 editor.currentSelectedObject = note;
+                
+
                 // Delete note
                 Delete();
             }

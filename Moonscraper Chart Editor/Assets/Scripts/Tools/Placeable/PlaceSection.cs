@@ -3,11 +3,12 @@ using System.Collections;
 using System;
 
 public class PlaceSection : ToolObject {
-    Section section;
+    protected Section section;
     SectionController controller;
 
     protected override void Awake()
     {
+        Debug.Log("Awake");
         base.Awake();
         section = new Section(editor.currentSong, "Default", 0);
 
