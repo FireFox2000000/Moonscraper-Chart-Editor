@@ -37,6 +37,7 @@ public class ChartEditor : MonoBehaviour {
     public Transform camYMin;
     public Transform camYMax;
     public Transform autoUpScroll;
+    public GameObject willClickOn;
     
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
@@ -119,6 +120,8 @@ public class ChartEditor : MonoBehaviour {
             beatLinePool2[i].transform.SetParent(timeSignatureLineParent.transform);
             beatLinePool2[i].SetActive(false);
         }
+
+        willClickOn.SetActive(false);
     }
 
     void Update()
@@ -158,6 +161,22 @@ public class ChartEditor : MonoBehaviour {
         {
             currentPropertiesPanel.gameObject.SetActive(false);
         }
+
+        // Show a preview if the user will click on an object
+        GameObject songObject = Mouse.GetSongObjectUnderMouse();
+        if (!Input.GetMouseButton(0) && !Input.GetMouseButton(1) && songObject != null)
+        {
+            willClickOn.SetActive(true);
+            willClickOn.transform.position = songObject.transform.position;
+
+            Vector3 scale = songObject.transform.localScale;
+            Collider2D col = songObject.GetComponent<Collider2D>();
+            scale = col.bounds.size;
+            scale.z = 0.1f;
+            willClickOn.transform.localScale = scale;
+        }
+        else
+            willClickOn.SetActive(false);
 
         // Update object positions that supposed to be visible into the range of the camera
         minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);

@@ -125,6 +125,8 @@
     <None Include="Assets\Shaders\SpriteGlow.shader" />
     <None Include="Assets\Shaders\Sprites-Default-HDR.shader" />
     <None Include="Assets\Shaders\Sprites-Default.shader" />
+    <None Include="Assets\Shaders\Standard ZTest.shader" />
+    <None Include="Assets\Shaders\Standard.shader" />
     <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />
     <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\BlendModesOverlay.shader" />
     <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\BlurEffectConeTaps.shader" />

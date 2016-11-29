@@ -9,7 +9,7 @@ public abstract class SongObjectController : MonoBehaviour {
     protected const float CHART_CENTER_POS = 0;
 
     protected ChartEditor editor;
-    private SongObject songObject = null;
+    public SongObject songObject = null;
     Renderer ren;
 
     public abstract void Delete();
