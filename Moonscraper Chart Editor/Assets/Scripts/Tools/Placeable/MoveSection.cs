@@ -15,7 +15,6 @@ public class MoveSection : PlaceSection {
 
     public void Init(Section section)
     {
-        Debug.Log("Init");
         this.section = section;
         GetComponent<SectionController>().section = section;
         editor.currentSelectedObject = section;

@@ -20,18 +20,25 @@ public class Mouse : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        // Calculate world2DPosition
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        int layerMask = 1 << LayerMask.NameToLayer("Ignore Raycast");
-        RaycastHit[] planeHit;
-        planeHit = Physics.RaycastAll(ray, Mathf.Infinity, layerMask);
+        Vector2 viewportPos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
 
-        if (planeHit.Length > 0)
-            world2DPosition = planeHit[0].point;
-        else
+        if (viewportPos.x < 0 || viewportPos.x > 1 || viewportPos.y < 0 || viewportPos.y > 1)
             world2DPosition = null;
+        else
+        {
+            // Calculate world2DPosition
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            int layerMask = 1 << LayerMask.NameToLayer("Ignore Raycast");
+            RaycastHit[] planeHit;
+            planeHit = Physics.RaycastAll(ray, Mathf.Infinity, layerMask);
 
-        if ((Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) && world2DPosition != null)
+            if (planeHit.Length > 0)
+                world2DPosition = planeHit[0].point;
+            else
+                world2DPosition = null;
+        }
+
+        if ((Input.GetMouseButtonDown(1)) && world2DPosition != null)
         {
             dragging = true;
 
@@ -40,7 +47,7 @@ public class Mouse : MonoBehaviour {
             if (Toolpane.currentTool == Toolpane.Tools.Cursor && selectedGameObject == null)
                 editor.currentSelectedObject = null;*/
         }
-        if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))
+        if (Input.GetMouseButtonUp(1))
         {
             dragging = false;
 

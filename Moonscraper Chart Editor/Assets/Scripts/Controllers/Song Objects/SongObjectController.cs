@@ -27,9 +27,9 @@ public abstract class SongObjectController : MonoBehaviour {
         if (ren.isVisible || songObject != null && (songObject.position > editor.minPos && songObject.position < editor.maxPos))
             UpdateSongObject();
 #else
-        if (songObject.position >= editor.minPos && songObject.position < editor.maxPos)
+        if (songObject != null && songObject.position >= editor.minPos && songObject.position < editor.maxPos)
             UpdateSongObject();
-        else
+        else if (songObject != null)
             gameObject.SetActive(false);
 #endif
     }

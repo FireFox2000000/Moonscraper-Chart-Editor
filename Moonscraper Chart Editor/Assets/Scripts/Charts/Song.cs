@@ -669,7 +669,7 @@ public class Song {
         string musicString;
 
         // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
-        if (Path.GetDirectoryName(audioLocation).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
+        if (musicStream && Path.GetDirectoryName(audioLocation).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
             musicString = musicStream.name;
         else
             musicString = audioLocation;
