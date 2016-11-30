@@ -64,7 +64,7 @@ Shader "Standard ZTest"
 			//ZTest Always
 			Blend [_SrcBlend] [_DstBlend]
 			ZWrite [_ZWrite]
-			
+			ZTest Always
 
 			CGPROGRAM
 			#pragma target 3.0

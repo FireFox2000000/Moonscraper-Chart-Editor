@@ -31,6 +31,7 @@ public class StarpowerController : SongObjectController
 
     protected override void Update()
     {
+#if false
         if (spRen.isVisible || spTailRen.isVisible)
             UpdateSongObject();
         else if (starpower != null)
@@ -42,6 +43,21 @@ public class StarpowerController : SongObjectController
                     (starpower.position < editor.minPos && endPosition > editor.maxPos))
                 UpdateSongObject();
         }
+#else
+        if (starpower != null)
+        {
+            uint endPosition = starpower.position + starpower.length;
+
+            if ((starpower.position >= editor.minPos && starpower.position < editor.maxPos) ||
+                    (endPosition > editor.minPos && endPosition < editor.maxPos) ||
+                    (starpower.position < editor.minPos && endPosition > editor.maxPos))
+                UpdateSongObject();
+            else
+                gameObject.SetActive(false);
+        }
+        else
+            gameObject.SetActive(false);
+#endif
     }
 
     public override void UpdateSongObject()

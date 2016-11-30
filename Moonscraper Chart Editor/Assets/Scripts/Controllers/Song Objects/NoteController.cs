@@ -122,6 +122,7 @@ public class NoteController : SongObjectController {
     
     protected override void Update()
     {
+#if false
         if (noteRenderer.isVisible || sustainRen.isVisible)
             UpdateSongObject();
         else if (note != null)
@@ -131,8 +132,27 @@ public class NoteController : SongObjectController {
             if ((note.position > editor.minPos && note.position < editor.maxPos) ||
                     (endPosition > editor.minPos && endPosition < editor.maxPos) ||
                     (note.position < editor.minPos && endPosition > editor.maxPos))
+            {              
                 UpdateSongObject();
+            }
         }
+#else
+        if (note != null)
+        {
+            uint endPosition = note.position + note.sustain_length;
+
+            if ((note.position >= editor.minPos && note.position < editor.maxPos) ||
+                    (endPosition > editor.minPos && endPosition < editor.maxPos) ||
+                    (note.position < editor.minPos && endPosition > editor.maxPos))
+            {
+                UpdateSongObject();
+            }
+            else
+                gameObject.SetActive(false);
+        }
+        else
+            gameObject.SetActive(false);
+#endif
     }
 
     public override void UpdateSongObject()
@@ -144,8 +164,6 @@ public class NoteController : SongObjectController {
                 transform.position = new Vector3(CHART_CENTER_POS + (int)note.fret_type - 2, note.worldYPosition, 0);
             else
                 transform.position = new Vector3(CHART_CENTER_POS, note.worldYPosition, 0);
-
-            noteRenderer.sortingOrder = -(int)note.position;
             
             // Note Type
             if (note.fret_type != Note.Fret_Type.OPEN && (note.flags & Note.Flags.TAP) == Note.Flags.TAP)
@@ -173,6 +191,7 @@ public class NoteController : SongObjectController {
             }
 
             // Sprite
+            noteRenderer.sortingOrder = -(int)note.position;
             switch (noteType)
             {
                 case (Note.Note_Type.HOPO):

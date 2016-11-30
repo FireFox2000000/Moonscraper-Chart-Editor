@@ -27,6 +27,7 @@ public class TimelineMovementController : MovementController
 
     void Update()
     {
+        // Update timer text
         if (timePosition)
         {
             if (editor.currentSong.musicStream == null)

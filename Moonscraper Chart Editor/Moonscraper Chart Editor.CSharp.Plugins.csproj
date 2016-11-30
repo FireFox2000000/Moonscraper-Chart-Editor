@@ -109,6 +109,7 @@
     <Compile Include="Assets\Standard Assets\Effects\ImageEffects\Scripts\Vortex.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Shaders\GHRenderOrder.shader" />
     <None Include="Assets\Shaders\ShinySprites.shader" />
     <None Include="Assets\Shaders\SpriteGlow.shader" />
     <None Include="Assets\Shaders\Sprites-Default-HDR.shader" />

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿//#define TIMING_DEBUG
+
+using UnityEngine;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
@@ -59,6 +61,9 @@ public class Chart  {
 
     public void Load(string[] data)
     {
+#if TIMING_DEBUG
+        float time = Time.realtimeSinceStartup;
+#endif
         Regex noteRegex = new Regex(@"^\s*\d+ = N \d \d+$");            // 48 = N 2 0
         Regex starPowerRegex = new Regex(@"^\s*\d+ = S 2 \d+$");        // 768 = S 2 768
         Regex noteEventRegex = new Regex(@"^\s*\d+ = E \S");            // 1728 = E T
@@ -156,6 +161,9 @@ public class Chart  {
                     }
                 }
             }
+#if TIMING_DEBUG
+            Debug.Log("Chart load time: " + (Time.realtimeSinceStartup - time));
+#endif
         }
         catch (System.Exception e)
         {

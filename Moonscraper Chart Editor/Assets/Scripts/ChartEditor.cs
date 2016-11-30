@@ -38,6 +38,7 @@ public class ChartEditor : MonoBehaviour {
     public Transform camYMax;
     public Transform autoUpScroll;
     public GameObject willClickOn;
+    public GameObject selectedHighlight;
     
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
@@ -75,7 +76,6 @@ public class ChartEditor : MonoBehaviour {
 
     // Use this for initialization
     void Awake () {
-        UnityEngine.Application.targetFrameRate = 200;
         windowPtr = FindWindow(null, "Moonscraper Chart Editor v0.1");
 
         minPos = 0;
@@ -122,10 +122,28 @@ public class ChartEditor : MonoBehaviour {
         }
 
         willClickOn.SetActive(false);
+        selectedHighlight.SetActive(false);
     }
 
     void Update()
     {
+        // Update object positions that supposed to be visible into the range of the camera
+        minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
+        maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
+
+        // Update song objects within range
+#if true
+        enableSongObjects(currentSong.events, SongObject.ID.Event, minPos, maxPos);
+        enableSongObjects(currentSong.syncTrack, SongObject.ID.BPM, minPos, maxPos);
+
+        enableSongObjects(currentChart.notes, SongObject.ID.Note, minPos, maxPos);
+        enableSongObjects(currentChart.starPower, SongObject.ID.Starpower, minPos, maxPos);
+        enableSongObjects(currentChart.events, SongObject.ID.ChartEvent, minPos, maxPos);
+#endif
+        // Update the lines that go on the fretboard
+        UpdateBeatLines();
+
+        // Update the current properties panel
         if (currentSelectedObject != null)
         {
             GameObject previousPanel = currentPropertiesPanel;
@@ -162,9 +180,30 @@ public class ChartEditor : MonoBehaviour {
             currentPropertiesPanel.gameObject.SetActive(false);
         }
 
+        // Show a highlight over the current selected object
+        if (currentSelectedObject != null && currentSelectedObject.controller != null && currentSelectedObject.controller.gameObject != null)
+        {
+            Collider2D col = currentSelectedObject.controller.GetComponent<Collider2D>();
+            if (col)
+            {
+                selectedHighlight.SetActive(true);
+                selectedHighlight.transform.position = currentSelectedObject.controller.transform.position;
+
+                Vector3 scale = currentSelectedObject.controller.transform.localScale;
+
+                scale = col.bounds.size;
+                scale.z = 0.1f;
+                selectedHighlight.transform.localScale = scale;
+            }
+            else
+                selectedHighlight.SetActive(false);
+        }
+        else
+            selectedHighlight.SetActive(false);
+
         // Show a preview if the user will click on an object
         GameObject songObject = Mouse.GetSongObjectUnderMouse();
-        if (!Input.GetMouseButton(0) && !Input.GetMouseButton(1) && songObject != null)
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor && !Input.GetMouseButton(0) && !Input.GetMouseButton(1) && songObject != null)
         {
             willClickOn.SetActive(true);
             willClickOn.transform.position = songObject.transform.position;
@@ -177,51 +216,6 @@ public class ChartEditor : MonoBehaviour {
         }
         else
             willClickOn.SetActive(false);
-
-        // Update object positions that supposed to be visible into the range of the camera
-        minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
-        maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
-
-        // Update time signature lines SNAPPED
-        uint initSnappedLinePos = currentSong.WorldPositionToSnappedChartPosition(camYMin.position.y, 4);
-        uint snappedLinePos = initSnappedLinePos;
-
-        // Place main beat lines
-        int i = 0;
-        while (snappedLinePos < maxPos && i < beatLinePool1.Length)
-        {
-            beatLinePool1[i].SetActive(true);
-            beatLinePool1[i].transform.position = new Vector3(0, currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
-            snappedLinePos += (uint)(currentSong.resolution);
-            ++i;
-        }
-
-        // Disable any unused lines
-        while (i < beatLinePool1.Length)
-        {
-            beatLinePool1[i++].SetActive(false);
-        }
-
-        // Place faded beat lines
-        i = 0;
-        if ((uint)(currentSong.resolution / 2) < initSnappedLinePos)
-            snappedLinePos = initSnappedLinePos - (uint)(currentSong.resolution / 2);
-        else
-            snappedLinePos = initSnappedLinePos + (uint)(currentSong.resolution / 2);
-
-        while (snappedLinePos < maxPos && i < beatLinePool2.Length)
-        {
-            beatLinePool2[i].SetActive(true);
-            beatLinePool2[i].transform.position = new Vector3(0, currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
-            snappedLinePos += (uint)(currentSong.resolution);
-            ++i;
-        }
-
-        // Disable any unused lines
-        while (i < beatLinePool2.Length)
-        {
-            beatLinePool2[i++].SetActive(false);
-        }
 
         Globals.hyperspeed = hyperspeedSlider.value;
     }
@@ -246,9 +240,6 @@ public class ChartEditor : MonoBehaviour {
         editCheck();
 
         while (currentSong.IsSaving);
-
-        //UnityEngine.Application.Quit();
-        Debug.Log("Quit");
     }
     bool checking = false;
     void editCheck()
@@ -560,7 +551,6 @@ public class ChartEditor : MonoBehaviour {
 
         // Link controller and note together
         controller.Init(section, timeHandler, guiIndicators);
-
         return controller;
     }
 
@@ -600,7 +590,6 @@ public class ChartEditor : MonoBehaviour {
 
         // Link controller and note together
         controller.Init(note);
-
         return controller;
     }
 
@@ -611,7 +600,6 @@ public class ChartEditor : MonoBehaviour {
 
         // Link controller and note together
         controller.Init(starpower);
-
         return controller;
     }
 
@@ -621,7 +609,7 @@ public class ChartEditor : MonoBehaviour {
         GameObject chartObject = Instantiate(chartObjectPrefab);
 
         chartObject.transform.SetParent(chartObjectParent.transform);
-
+        chartObject.SetActive(false);
         return chartObject;
     }
 
@@ -631,7 +619,7 @@ public class ChartEditor : MonoBehaviour {
         GameObject chartObject = Instantiate(songObjectPrefab);
 
         chartObject.transform.SetParent(songObjectParent.transform);
-
+        chartObject.SetActive(false);
         return chartObject;
     }
 
@@ -694,5 +682,143 @@ public class ChartEditor : MonoBehaviour {
     public void LoadEasyDoubleBass()
     {
         LoadChart(currentSong.easy_double_bass);
+    }
+
+    void enableSongObjects(SongObject[] songObjects, SongObject.ID id, uint min, uint max)
+    {
+        // Enable all objects within the min-max position
+        int arrayPos = SongObject.FindClosestPosition(min, songObjects);
+        if (arrayPos != Globals.NOTFOUND)
+        {
+            // Find the back-most position
+            while (arrayPos > 0 && songObjects[arrayPos].position > min)
+            {
+                --arrayPos;
+            }
+
+            // Check if sustains need to be rendered
+            if (id == SongObject.ID.Note)
+            {
+                // Find the last known note of each fret type to find any sustains that might overlap. Cancel if there's an open note.
+                bool green = false, red = false, yellow = false, blue = false, orange = false, open = false;
+                Note[] notes = (Note[])songObjects;
+
+                int pos = arrayPos - 1;
+                while (pos > 0)
+                {
+                    switch (notes[pos].fret_type)
+                    {
+                        case (Note.Fret_Type.GREEN):
+                            if (!green && notes[pos].controller != null)
+                                notes[pos].controller.gameObject.SetActive(true);
+
+                            green = true;
+                            break;
+                        case (Note.Fret_Type.RED):
+                            if (!red && notes[pos].controller != null)
+                                notes[pos].controller.gameObject.SetActive(true);
+
+                            red = true;
+                            break;
+                        case (Note.Fret_Type.YELLOW):
+                            if (!yellow && notes[pos].controller != null)
+                                notes[pos].controller.gameObject.SetActive(true);
+
+                            yellow = true;
+                            break;
+                        case (Note.Fret_Type.BLUE):
+                            if (!blue && notes[pos].controller != null)
+                                notes[pos].controller.gameObject.SetActive(true);
+
+                            blue = true;
+                            break;
+                        case (Note.Fret_Type.ORANGE):
+                            if (!orange && notes[pos].controller != null)
+                                notes[pos].controller.gameObject.SetActive(true);
+
+                            orange = true;
+                            break;
+                        case (Note.Fret_Type.OPEN):
+                            if (!open && notes[pos].controller != null)
+                                notes[pos].controller.gameObject.SetActive(true);
+
+                            open = true;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if ((green && red && yellow && blue && orange) || open)
+                        break;
+
+                    --pos;
+                }
+            }
+            else if (id == SongObject.ID.Starpower)
+            {
+                // Render previous sp sustain in case of overlap into current position
+                if (songObjects[arrayPos].position > min && arrayPos > 0)
+                {
+                    if (songObjects[arrayPos - 1].controller != null)
+                        songObjects[arrayPos - 1].controller.gameObject.SetActive(true);
+                }
+            }
+
+            enableSongObjects(songObjects, arrayPos, max);
+        }
+    }
+
+    void enableSongObjects(SongObject[] songObjects, int startArrayPos, uint max)
+    {
+        // Enable objects through range
+        for (int i = startArrayPos; i < songObjects.Length && songObjects[i].position < max; ++i)
+        {
+            if (songObjects[i].controller != null)
+                songObjects[i].controller.gameObject.SetActive(true);
+        }
+    }
+
+    void UpdateBeatLines()
+    {
+        // Update time signature lines SNAPPED
+        uint initSnappedLinePos = currentSong.WorldPositionToSnappedChartPosition(camYMin.position.y, 4);
+        uint snappedLinePos = initSnappedLinePos;
+
+        // Place main beat lines
+        int i = 0;
+        while (snappedLinePos < maxPos && i < beatLinePool1.Length)
+        {
+            beatLinePool1[i].SetActive(true);
+            beatLinePool1[i].transform.position = new Vector3(0, currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+            snappedLinePos += (uint)(currentSong.resolution);
+            ++i;
+        }
+
+        // Disable any unused lines
+        while (i < beatLinePool1.Length)
+        {
+            beatLinePool1[i++].SetActive(false);
+        }
+
+        // Place faded beat lines
+        i = 0;
+        if ((uint)(currentSong.resolution / 2) < initSnappedLinePos)
+            snappedLinePos = initSnappedLinePos - (uint)(currentSong.resolution / 2);
+        else
+            snappedLinePos = initSnappedLinePos + (uint)(currentSong.resolution / 2);
+
+        while (snappedLinePos < maxPos && i < beatLinePool2.Length)
+        {
+            beatLinePool2[i].SetActive(true);
+            beatLinePool2[i].transform.position = new Vector3(0, currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+            snappedLinePos += (uint)(currentSong.resolution);
+            ++i;
+        }
+
+        // Disable any unused lines
+        while (i < beatLinePool2.Length)
+        {
+            beatLinePool2[i++].SetActive(false);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿//#define SONG_DEBUG
+//#define TIMING_DEBUG
 
 using UnityEngine;
 using System.IO;
@@ -114,10 +115,8 @@ public class Song {
             List<string> dataStrings = new List<string>();
 
             string[] fileLines = File.ReadAllLines(filepath);
-#if SONG_DEBUG
-            Debug.Log("Loading file");
-#endif
 
+            // Convert file data into song data
             for (int i = 0; i < fileLines.Length; ++i)
             {
                 string trimmedLine = fileLines[i].Trim();
@@ -159,10 +158,6 @@ public class Song {
             }
 
             updateArrays();
-
-#if SONG_DEBUG
-            Debug.Log("Complete");
-#endif
         }
         catch
         {
@@ -176,15 +171,15 @@ public class Song {
         
         if (filepath != string.Empty && File.Exists(filepath))
         {
+#if TIMING_DEBUG
+            float time = Time.realtimeSinceStartup;
+#endif
             if (!Utility.validateExtension(filepath, validAudioExtensions))
             {
                 throw new System.Exception("Invalid file extension");
             }
 
             audioLocation = Path.GetFullPath(filepath);
-#if SONG_DEBUG
-            Debug.Log("Loading audio");
-#endif
 
             WWW www = new WWW("file://" + filepath);
 
@@ -197,14 +192,13 @@ public class Song {
 
             musicStream.name = Path.GetFileName(filepath);
 
-            while (musicStream != null && musicStream.loadState != AudioDataLoadState.Loaded)
-            {
-#if SONG_DEBUG
-                Debug.Log("Loading audio...");
-#endif
-            }
+            while (musicStream != null && musicStream.loadState != AudioDataLoadState.Loaded) ;
 
             length = musicStream.length;
+
+#if TIMING_DEBUG
+            Debug.Log("Audio load time: " + (Time.realtimeSinceStartup - time));
+#endif
         }
         else
         {
@@ -460,7 +454,9 @@ public class Song {
 #if SONG_DEBUG
         Debug.Log("Loading song properties");
 #endif
-
+#if TIMING_DEBUG
+        float time = Time.realtimeSinceStartup;
+#endif
         string audioFilepath = string.Empty;
 
         Regex nameRegex = new Regex(@"Name = " + QUOTEVALIDATE);
@@ -565,6 +561,10 @@ public class Song {
                         audioFilepath = audioDirectory + "\\" + audioFilepath;
                 }
             }
+
+#if TIMING_DEBUG
+            Debug.Log("Song properties load time: " + (Time.realtimeSinceStartup - time));
+#endif
         }
         catch (System.Exception e)
         {
@@ -598,9 +598,11 @@ public class Song {
 
     void submitDataSyncTrack(List<string> stringData)
     {
+#if TIMING_DEBUG
+        float time = Time.realtimeSinceStartup;
+#endif
         foreach (string line in stringData)
-        {
-            
+        {     
             if (TimeSignature.regexMatch(line))
             {
                 MatchCollection matches = Regex.Matches(line, @"\d+");
@@ -618,10 +620,16 @@ public class Song {
                 Add(new BPM(this, position, value), false);
             }
         }
+#if TIMING_DEBUG
+        Debug.Log("Synctrack load time: " + (Time.realtimeSinceStartup - time));
+#endif
     }
 
     void submitDataEvents(List<string> stringData)
     {
+#if TIMING_DEBUG
+        float time = Time.realtimeSinceStartup;
+#endif
         foreach (string line in stringData)
         {
             if (Section.regexMatch(line))       // 0 = E "section Intro"
@@ -639,6 +647,9 @@ public class Song {
                 Add(new Event(this, title, position), false);
             }
         }
+#if TIMING_DEBUG
+        Debug.Log("Events load time: " + (Time.realtimeSinceStartup - time));
+#endif
     }
 
     string GetSaveString<T>(List<T> list) where T : SongObject
@@ -777,3 +788,5 @@ public class Song {
         timeSignatures = _syncTrack.OfType<TimeSignature>().ToArray();
     }
 }
+
+class MonoWrapper : MonoBehaviour { }
