@@ -32,6 +32,7 @@ public class PlaceNote : ToolObject {
     void OnEnable()
     {
         editor.currentSelectedObject = note;
+        Update();
     }
 
     void OnDisable()
@@ -43,7 +44,7 @@ public class PlaceNote : ToolObject {
     // Update is called once per frame
     protected override void Update () {
         base.Update();
-
+       
         note.song = editor.currentSong;
         note.chart = editor.currentChart;
         note.position = objectSnappedChartPos;

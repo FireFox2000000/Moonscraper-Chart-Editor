@@ -42,6 +42,7 @@ public class PlaceStarpower : ToolObject {
     void OnEnable()
     {
         editor.currentSelectedObject = starpower;
+        Update();
     }
 
     protected override void AddObject()

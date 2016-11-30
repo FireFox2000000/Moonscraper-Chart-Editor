@@ -40,6 +40,7 @@ public class PlaceSection : ToolObject {
     void OnEnable()
     {
         //editor.currentSelectedObject = section;
+        Update();
     }
 
     protected override void AddObject()

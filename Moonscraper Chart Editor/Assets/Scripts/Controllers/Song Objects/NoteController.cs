@@ -13,8 +13,8 @@ public class NoteController : SongObjectController {
     [HideInInspector]
     public Note.Special_Type specialType = Note.Special_Type.NONE;
 
-    SpriteRenderer noteRenderer;
-    Renderer sustainRen;
+    protected SpriteRenderer noteRenderer;
+    protected Renderer sustainRen;
 
     new void Awake()
     {
@@ -89,22 +89,9 @@ public class NoteController : SongObjectController {
         {
             Note[] chordNotes = SongObject.FindObjectsAtPosition(note.position, note.chart.notes);
 
-            if (note.fret_type != Note.Fret_Type.OPEN)
+            if (note.fret_type == Note.Fret_Type.OPEN)
             {
-                // Check for open notes and delete
-                foreach (Note chordNote in chordNotes)
-                {
-                    if (chordNote.fret_type == Note.Fret_Type.OPEN)
-                    {
-                        if (chordNote.controller != null)
-                            chordNote.controller.Delete();
-                        else
-                            note.chart.Remove(chordNote);
-                    }
-                }
-            }
-            else
-            {
+
                 // Check for non-open notes and delete
                 foreach (Note chordNote in chordNotes)
                 {
@@ -147,10 +134,10 @@ public class NoteController : SongObjectController {
             {
                 UpdateSongObject();
             }
-            else
+            else 
                 gameObject.SetActive(false);
         }
-        else
+        else 
             gameObject.SetActive(false);
 #endif
     }
