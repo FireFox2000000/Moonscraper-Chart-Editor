@@ -4,7 +4,7 @@ using System;
 
 [RequireComponent(typeof(NoteController))]
 public class PlaceNote : ToolObject {
-    protected Note note;
+    public Note note;
     NoteController controller;
 
     protected override void Awake()
@@ -127,7 +127,7 @@ public class PlaceNote : ToolObject {
             return GetNextOfOpen(openNotePos, nextNote.next);
     }
 
-    void UpdateFretType()
+    protected virtual void UpdateFretType()
     {
         if (Input.GetKey("1"))
             note.fret_type = Note.Fret_Type.GREEN;

@@ -49,23 +49,10 @@ public abstract class SongObjectController : MonoBehaviour {
         // Delete the object on erase tool
         if (Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButton(0) && Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
-            if (!deleteStart)
-                StartCoroutine(startDelete());
+            Delete();
         }
     }
 
-    IEnumerator startDelete()
-    {
-        deleteStart = true;
-
-        while (Time.frameCount == lastDeleteFrame)
-        {           
-            yield return null;
-        }
-
-        lastDeleteFrame = Time.frameCount;
-        Delete();
-    }
 
     protected void Init(SongObject _songObject)
     {

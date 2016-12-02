@@ -267,9 +267,10 @@ public abstract class SongObject
         ChartEditor.editOccurred = true;
         int insertionPos = FindClosestPosition(item, list.ToArray());
         
-        // Needs to overwrite
         if (list.Count > 0 && insertionPos != Globals.NOTFOUND)
         {
+            // Check for duplicates to overwrite
+            /*
             int prevPosition = FindPreviousPosition(item.GetType(), insertionPos, list.ToArray());
             int nextPosition = FindNextPosition(item.GetType(), insertionPos, list.ToArray());
 
@@ -298,6 +299,14 @@ public abstract class SongObject
                     GameObject.Destroy(list[insertionPos].controller.gameObject);
                 
                 list[insertionPos] = item;
+            }*/
+            if (list[insertionPos] == item && item.classID == list[insertionPos].classID)
+            {
+                // Overwrite 
+                if (list[insertionPos].controller != null)
+                    GameObject.Destroy(list[insertionPos].controller.gameObject);
+
+                list[insertionPos] = item;
             }
             // Insert into sorted position
             else
@@ -320,10 +329,10 @@ public abstract class SongObject
         {
             // Update linked list
             Note current = list[insertionPos] as Note;
-            
+
             Note previous = FindPreviousOfType(typeof(Note), insertionPos, list.ToArray()) as Note;
             Note next = FindNextOfType(typeof(Note), insertionPos, list.ToArray()) as Note;
-            
+
             current.previous = previous;
             if (previous != null)
                 previous.next = current;

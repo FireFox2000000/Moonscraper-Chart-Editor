@@ -1,4 +1,4 @@
-﻿//#define TIMING_DEBUG
+﻿#define TIMING_DEBUG
 
 using UnityEngine;
 using System.Collections.Generic;
@@ -69,6 +69,8 @@ public class Chart  {
         Regex noteEventRegex = new Regex(@"^\s*\d+ = E \S");            // 1728 = E T
 
         List<string> flags = new List<string>();
+
+        _chartObjects.Capacity = data.Length;
 
         try
         {
