@@ -609,7 +609,7 @@ public class ChartEditor : MonoBehaviour {
         GameObject chartObject = Instantiate(chartObjectPrefab);
 
         chartObject.transform.SetParent(chartObjectParent.transform);
-        //chartObject.SetActive(false);
+        chartObject.SetActive(false);
         return chartObject;
     }
 
@@ -619,7 +619,7 @@ public class ChartEditor : MonoBehaviour {
         GameObject chartObject = Instantiate(songObjectPrefab);
 
         chartObject.transform.SetParent(songObjectParent.transform);
-        //chartObject.SetActive(false);
+        chartObject.SetActive(false);
         return chartObject;
     }
 

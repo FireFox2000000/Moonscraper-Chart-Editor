@@ -81,18 +81,11 @@ public class NotePropertiesPanelController : MonoBehaviour {
 
     void setFlags(Note note)
     {
-        Note previous = currentNote.previous;
-        while (previous != null && previous.position == currentNote.position)
-        {
-            previous.flags = currentNote.flags;
-            previous = previous.previous;
-        }
+        Note[] chordNotes = note.GetChord();
 
-        Note next = currentNote.next;
-        while (next != null && next.position == currentNote.position)
+        foreach (Note chordNote in chordNotes)
         {
-            next.flags = currentNote.flags;
-            next = next.next;
+            chordNote.flags = note.flags;
         }
 
         ChartEditor.editOccurred = true;

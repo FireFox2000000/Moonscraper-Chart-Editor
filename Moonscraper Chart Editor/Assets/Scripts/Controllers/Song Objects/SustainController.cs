@@ -10,7 +10,10 @@ public class SustainController : MonoBehaviour {
         // Update sustain
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
-            nCon.SustainDrag();
+            if (Input.GetButton("ChordSelect"))
+                nCon.ChordSustainDrag();
+            else
+                nCon.SustainDrag();
         }
     }
 }

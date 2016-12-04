@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 public class Note : ChartObject 
 {
@@ -157,5 +157,27 @@ public class Note : ChartObject
             else
                 return false;
         }
+    }
+
+    public Note[] GetChord()
+    {
+        List<Note> chord = new List<Note>();
+        chord.Add(this);
+
+        Note previous = this.previous;
+        while (previous != null && previous.position == this.position)
+        {
+            chord.Add(previous);
+            previous = previous.previous;
+        }
+
+        Note next = this.next;
+        while (next != null && next.position == this.position)
+        {
+            chord.Add(next);
+            next = next.next;
+        }
+
+        return chord.ToArray();
     }
 }

@@ -39,9 +39,9 @@ public class NoteController : SongObjectController {
                 moveNote.name = "Moving note";
                 Destroy(moveNote.GetComponent<PlaceNote>());
                 moveNote.AddComponent<MoveNote>().Init(note);
-                
+
                 editor.currentSelectedObject = note;
-                
+
 
                 // Delete note
                 Delete();
@@ -51,13 +51,18 @@ public class NoteController : SongObjectController {
                 prevMousePos = Input.mousePosition;
             }
         }
-        else if(Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
-            SustainDrag();
+        else if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
+        {
+            if (Input.GetButton("ChordSelect"))
+                ChordSustainDrag();
+            else
+                SustainDrag();
+        }
     }
 
     public void SustainDrag()
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1) && Mouse.world2DPosition != null)
+        if (Mouse.world2DPosition != null)
         {
             ChartEditor.editOccurred = true;
 
@@ -67,6 +72,21 @@ public class NoteController : SongObjectController {
                 note.sustain_length = snappedChartPos - note.position;
             else
                 note.sustain_length = 0;
+        }
+    }
+
+    public void ChordSustainDrag()
+    {
+        if (Mouse.world2DPosition != null)
+        {
+            Note[] chordNotes = note.GetChord();
+            foreach (Note chordNote in chordNotes)
+            {
+                if (chordNote.controller != null)
+                {
+                    chordNote.controller.SustainDrag();
+                }
+            }
         }
     }
 
