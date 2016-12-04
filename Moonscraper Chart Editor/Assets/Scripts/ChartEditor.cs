@@ -192,7 +192,8 @@ public class ChartEditor : MonoBehaviour {
                 Vector3 scale = currentSelectedObject.controller.transform.localScale;
 
                 scale = col.bounds.size;
-                scale.z = 0.1f;
+                if (scale.z == 0)
+                    scale.z = 0.1f;
                 selectedHighlight.transform.localScale = scale;
             }
             else
@@ -211,7 +212,8 @@ public class ChartEditor : MonoBehaviour {
             Vector3 scale = songObject.transform.localScale;
             Collider2D col = songObject.GetComponent<Collider2D>();
             scale = col.bounds.size;
-            scale.z = 0.1f;
+            if (scale.z == 0)
+                scale.z = 0.1f;
             willClickOn.transform.localScale = scale;
         }
         else

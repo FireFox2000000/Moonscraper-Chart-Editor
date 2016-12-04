@@ -61,10 +61,9 @@ Shader "Standard ZTest"
 		{
 			Name "FORWARD" 
 			Tags { "LightMode" = "ForwardBase" }
-			//ZTest Always
+			ZTest Always
 			Blend [_SrcBlend] [_DstBlend]
 			ZWrite [_ZWrite]
-			ZTest Always
 
 			CGPROGRAM
 			#pragma target 3.0
