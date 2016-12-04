@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#define NOTE_TYPE_2D
+
+using UnityEngine;
 using System.Collections;
 
 public class NoteController : SongObjectController {
@@ -13,13 +15,21 @@ public class NoteController : SongObjectController {
     [HideInInspector]
     public Note.Special_Type specialType = Note.Special_Type.NONE;
 
+#if NOTE_TYPE_2D
     protected SpriteRenderer noteRenderer;
+#else
+    protected Renderer noteRenderer;
+#endif
     protected Renderer sustainRen;
 
     new void Awake()
     {
         base.Awake();
+#if NOTE_TYPE_2D
         noteRenderer = GetComponent<SpriteRenderer>();
+#else
+        noteRenderer = GetComponent<Renderer>();
+#endif
         sustainRen = sustain.GetComponent<Renderer>();
         sustainRen.material = new Material(sustainRen.sharedMaterial);
     }
@@ -30,21 +40,27 @@ public class NoteController : SongObjectController {
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
         {
             // Prevent note from snapping if the user is just clicking and not dragging
-            if (prevMousePos != (Vector2)Input.mousePosition)
+            if (prevMousePos != (Vector2)Input.mousePosition && Mouse.world2DPosition != null)
             {
-                // Pass note data to a ghost note
-                GameObject moveNote = Instantiate(editor.ghostNote);
-                moveNote.SetActive(true);
+                
 
-                moveNote.name = "Moving note";
-                Destroy(moveNote.GetComponent<PlaceNote>());
-                moveNote.AddComponent<MoveNote>().Init(note);
+                if (Input.GetButton("ChordSelect"))
+                {
+                    Note[] chordNotes = note.GetChord();
+                    foreach (Note chordNote in chordNotes)
+                    {
+                        if (chordNote.controller != null)
+                        {
+                            createPlaceNote(chordNote.controller);
+                        }
+                    }
+                }
+                else
+                {
+                    createPlaceNote(this);
+                }
 
                 editor.currentSelectedObject = note;
-
-
-                // Delete note
-                Delete();
             }
             else
             {
@@ -58,6 +74,23 @@ public class NoteController : SongObjectController {
             else
                 SustainDrag();
         }
+    }
+
+    void createPlaceNote(NoteController nCon)
+    {
+        // Pass note data to a ghost note
+        GameObject moveNote = Instantiate(editor.ghostNote);
+        moveNote.SetActive(true);
+
+        moveNote.name = "Moving note";
+        Destroy(moveNote.GetComponent<PlaceNote>());
+        MoveNote moveNoteController = moveNote.AddComponent<MoveNote>();
+        moveNoteController.Init(nCon.note);
+
+        moveNoteController.horizontalMouseOffset = nCon.gameObject.transform.position.x - snapToNearestHorizontalNotePos(((Vector2)Mouse.world2DPosition).x);
+
+        // Delete note
+        nCon.Delete();
     }
 
     public void SustainDrag()
@@ -197,8 +230,9 @@ public class NoteController : SongObjectController {
                     break;
             }
 
-            // Sprite
+            // Update note visuals
             noteRenderer.sortingOrder = -(int)note.position;
+#if NOTE_TYPE_2D
             switch (noteType)
             {
                 case (Note.Note_Type.HOPO):
@@ -220,6 +254,29 @@ public class NoteController : SongObjectController {
                         noteRenderer.sprite = Globals.strumSprites[(int)note.fret_type];
                     break;
             }
+#else
+            switch (noteType)
+            {
+                case (Note.Note_Type.HOPO):
+                    if (specialType == Note.Special_Type.STAR_POW)
+                        noteRenderer.sprite = Globals.spHopoSprite[(int)note.fret_type];
+                    else
+                        noteRenderer.sprite = Globals.hopoSprites[(int)note.fret_type];
+                    break;
+                case (Note.Note_Type.TAP):
+                    if (specialType == Note.Special_Type.STAR_POW)
+                        noteRenderer.sprite = Globals.spTapSprite[(int)note.fret_type];
+                    else
+                        noteRenderer.sprite = Globals.tapSprites[(int)note.fret_type];
+                    break;
+                default:
+                    if (specialType == Note.Special_Type.STAR_POW)
+                        noteRenderer.sprite = Globals.spStrumSprite[(int)note.fret_type];
+                    else
+                        noteRenderer.sprite = Globals.strumSprites[(int)note.fret_type];
+                    break;
+            }
+#endif
 
             UpdateSustain();
         }
@@ -331,5 +388,31 @@ public class NoteController : SongObjectController {
         }
 
         return null;     
+    }
+
+    float snapToNearestHorizontalNotePos(float pos)
+    {
+        // CHART_CENTER_POS + (int)note.fret_type - 2
+        if (pos < CHART_CENTER_POS - 0.5f)
+        {
+            // -2
+            if (pos < CHART_CENTER_POS - 1.5f)
+                return CHART_CENTER_POS - 2;
+            // -1
+            else
+            {
+                return CHART_CENTER_POS - 1;
+            }
+        }
+        else
+        {
+            // 0, 1 or 2
+            if (pos > CHART_CENTER_POS + 1.5f)
+                return CHART_CENTER_POS + 2;
+            else if (pos > CHART_CENTER_POS + 0.5f)
+                return CHART_CENTER_POS + 1;
+            else
+                return CHART_CENTER_POS;
+        }
     }
 }

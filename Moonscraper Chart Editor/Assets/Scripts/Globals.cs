@@ -42,8 +42,20 @@ public class Globals : MonoBehaviour {
     [SerializeField]
     Sprite[] spTapNote = new Sprite[6];
 
+    [Header("Note models")]
     [SerializeField]
-    MeshFilter strumNote3D;
+    MeshFilter standardNoteModel;
+    [SerializeField]
+    MeshFilter starpowerNoteModel;
+    [SerializeField]
+    MeshFilter openNoteModel;
+
+    [SerializeField]
+    Material[] strum3dColorMaterials = new Material[6];
+    [SerializeField]
+    Material[] hopo3dColorMaterials = new Material[6];
+    [SerializeField]
+    Material[] tap3dColorMaterials = new Material[6];
 
     [Header("Area range")]
     public RectTransform area;

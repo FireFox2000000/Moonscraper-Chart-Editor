@@ -7,6 +7,9 @@ public class PlaceNote : ToolObject {
     public Note note;
     NoteController controller;
 
+    [HideInInspector]
+    public float horizontalMouseOffset = 0;
+
     protected override void Awake()
     {
         base.Awake();
@@ -144,6 +147,7 @@ public class PlaceNote : ToolObject {
         else if (note.fret_type != Note.Fret_Type.OPEN && Mouse.world2DPosition != null)
         {
             Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
+            mousePosition.x += horizontalMouseOffset;
             if (mousePosition.x > -0.5f)
             {
                 if (mousePosition.x < 0.5f)
