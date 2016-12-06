@@ -92,7 +92,15 @@ public class TimelineMovementController : MovementController
         {
             float endYPos = Song.TimeToWorldYPosition(editor.currentSong.length);
             float totalDistance = endYPos - initPos.y - strikeLine.localPosition.y;
+
+            if (transform.position.y + strikeLine.localPosition.y > endYPos)
+            {
+                transform.position = new Vector3(transform.position.x, endYPos - strikeLine.localPosition.y, transform.position.z);
+            }
+
             float currentDistance = transform.position.y - initPos.y;
+
+            
 
             if (totalDistance > 0)
                 timeline.handlePos = currentDistance / totalDistance;

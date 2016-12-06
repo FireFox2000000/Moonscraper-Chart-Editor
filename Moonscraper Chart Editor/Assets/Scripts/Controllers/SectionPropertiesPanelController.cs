@@ -32,5 +32,7 @@ public class SectionPropertiesPanelController : MonoBehaviour {
     {
         if (currentSection != null)
             currentSection.title = name;
+
+        ChartEditor.editOccurred = true;
     }
 }

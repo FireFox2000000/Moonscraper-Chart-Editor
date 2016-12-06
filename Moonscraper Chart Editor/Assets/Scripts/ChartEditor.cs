@@ -649,7 +649,7 @@ public class ChartEditor : MonoBehaviour {
         GameObject chartObject = Instantiate(songObjectPrefab);
 
         chartObject.transform.SetParent(songObjectParent.transform);
-        chartObject.SetActive(false);
+        //chartObject.SetActive(false);
         return chartObject;
     }
 
