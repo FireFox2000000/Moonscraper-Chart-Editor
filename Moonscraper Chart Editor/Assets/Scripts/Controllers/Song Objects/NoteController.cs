@@ -1,4 +1,4 @@
-﻿#define NOTE_TYPE_2D
+﻿//#define NOTE_TYPE_2D
 
 using UnityEngine;
 using System.Collections;
@@ -19,6 +19,7 @@ public class NoteController : SongObjectController {
     protected SpriteRenderer noteRenderer;
 #else
     protected Renderer noteRenderer;
+    MeshFilter meshFilter;
 #endif
     protected Renderer sustainRen;
 
@@ -29,9 +30,9 @@ public class NoteController : SongObjectController {
         noteRenderer = GetComponent<SpriteRenderer>();
 #else
         noteRenderer = GetComponent<Renderer>();
+        meshFilter = GetComponent<MeshFilter>();
 #endif
         sustainRen = sustain.GetComponent<Renderer>();
-        sustainRen.material = new Material(sustainRen.sharedMaterial);
     }
 
     void OnMouseDrag()
@@ -255,27 +256,26 @@ public class NoteController : SongObjectController {
                     break;
             }
 #else
+            // Update mesh
+            
+            meshFilter.sharedMesh = Globals.standardModel.sharedMesh;
+            Material[] materials;
             switch (noteType)
             {
                 case (Note.Note_Type.HOPO):
-                    if (specialType == Note.Special_Type.STAR_POW)
-                        noteRenderer.sprite = Globals.spHopoSprite[(int)note.fret_type];
-                    else
-                        noteRenderer.sprite = Globals.hopoSprites[(int)note.fret_type];
+                    materials = Globals.hopoRenderer.sharedMaterials;
+                    materials[1] = Globals.strumColors[(int)note.fret_type];
                     break;
                 case (Note.Note_Type.TAP):
-                    if (specialType == Note.Special_Type.STAR_POW)
-                        noteRenderer.sprite = Globals.spTapSprite[(int)note.fret_type];
-                    else
-                        noteRenderer.sprite = Globals.tapSprites[(int)note.fret_type];
+                    materials = Globals.tapRenderer.sharedMaterials;
+                    materials[1] = Globals.tapColors[(int)note.fret_type];
                     break;
-                default:
-                    if (specialType == Note.Special_Type.STAR_POW)
-                        noteRenderer.sprite = Globals.spStrumSprite[(int)note.fret_type];
-                    else
-                        noteRenderer.sprite = Globals.strumSprites[(int)note.fret_type];
+                default:    // strum
+                    materials = Globals.strumRenderer.sharedMaterials;
+                    materials[1] = Globals.strumColors[(int)note.fret_type];
                     break;
             }
+            noteRenderer.sharedMaterials = materials;
 #endif
 
             UpdateSustain();

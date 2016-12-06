@@ -18,6 +18,7 @@ public class Globals : MonoBehaviour {
     public static readonly int NOTFOUND = -1;
     public static readonly string TABSPACE = "  ";
 
+    // 2D
     public static Sprite[] strumSprites { get; private set; }
     public static Sprite[] hopoSprites { get; private set; }
     public static Sprite[] tapSprites { get; private set; }
@@ -25,6 +26,18 @@ public class Globals : MonoBehaviour {
     public static Sprite[] spStrumSprite { get; private set; }
     public static Sprite[] spHopoSprite { get; private set; }
     public static Sprite[] spTapSprite { get; private set; }
+
+    // 3D
+    public static MeshFilter standardModel { get; private set; }
+    public static MeshFilter spModel { get; private set; }
+    public static MeshFilter openModel { get; private set; }
+
+    public static Renderer strumRenderer { get; private set; }
+    public static Renderer hopoRenderer { get; private set; }
+    public static Renderer tapRenderer { get; private set; }
+
+    public static Material[] strumColors { get; private set; }
+    public static Material[] tapColors { get; private set; }
 
     [Header("Note sprites")]
     [SerializeField]
@@ -49,13 +62,17 @@ public class Globals : MonoBehaviour {
     MeshFilter starpowerNoteModel;
     [SerializeField]
     MeshFilter openNoteModel;
+    [SerializeField]
+    Renderer strum3dRenderer;
+    [SerializeField]
+    Renderer hopo3dRenderer;
+    [SerializeField]
+    Renderer tap3dRenderer;
 
     [SerializeField]
     Material[] strum3dColorMaterials = new Material[6];
     [SerializeField]
-    Material[] hopo3dColorMaterials = new Material[6];
-    [SerializeField]
-    Material[] tap3dColorMaterials = new Material[6];
+    Material[] tap3dColorMaterials = new Material[5];
 
     [Header("Area range")]
     public RectTransform area;
@@ -101,13 +118,24 @@ public class Globals : MonoBehaviour {
         iniparse.Close();
 
         // Initialize notes
-        strumSprites = strumNotes;
+        strumSprites = strumNotes;          // 2D
         hopoSprites = hopoNotes;
         tapSprites = tapNotes;
         sustainColours = sustains;
         spStrumSprite = spStrumNote;
         spHopoSprite = spHOPONote;
         spTapSprite = spTapNote;
+
+        standardModel = standardNoteModel;          // 3D
+        spModel = standardNoteModel;
+        openModel = openNoteModel;
+
+        strumRenderer = strum3dRenderer;
+        hopoRenderer = hopo3dRenderer;
+        tapRenderer = tap3dRenderer;
+
+        strumColors = strum3dColorMaterials;
+        tapColors = tap3dColorMaterials;
 
         SetStep(16);
     }

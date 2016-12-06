@@ -183,15 +183,20 @@ public class ChartEditor : MonoBehaviour {
         // Show a highlight over the current selected object
         if (currentSelectedObject != null && currentSelectedObject.controller != null && currentSelectedObject.controller.gameObject != null)
         {
+            Collider col3d = currentSelectedObject.controller.GetComponent<Collider>();
             Collider2D col = currentSelectedObject.controller.GetComponent<Collider2D>();
-            if (col)
+            if (col3d || col)
             {
                 selectedHighlight.SetActive(true);
                 selectedHighlight.transform.position = currentSelectedObject.controller.transform.position;
 
                 Vector3 scale = currentSelectedObject.controller.transform.localScale;
 
-                scale = col.bounds.size;
+                if (col3d)
+                    scale = col3d.bounds.size;
+                else
+                    scale = col.bounds.size;
+
                 if (scale.z == 0)
                     scale.z = 0.1f;
                 selectedHighlight.transform.localScale = scale;
@@ -210,8 +215,14 @@ public class ChartEditor : MonoBehaviour {
             willClickOn.transform.position = songObject.transform.position;
 
             Vector3 scale = songObject.transform.localScale;
+            Collider col3d = songObject.GetComponent<Collider>();
             Collider2D col = songObject.GetComponent<Collider2D>();
-            scale = col.bounds.size;
+
+            if (col3d)
+                scale = col3d.bounds.size;
+            else
+                scale = col.bounds.size;
+
             if (scale.z == 0)
                 scale.z = 0.1f;
             willClickOn.transform.localScale = scale;

@@ -2,30 +2,35 @@
 using System.Collections;
 
 public class MeshSwapTest : MonoBehaviour {
+    public Renderer[] renderers;
+    public MeshFilter[] meshes;
 
-    public Mesh[] meshes;
-
+    Renderer currentRenderer;
     MeshFilter currentMesh;
 
 	// Use this for initialization
 	void Start () {
+        currentRenderer = GetComponent<Renderer>();
         currentMesh = GetComponent<MeshFilter>();
     }
 	
 	// Update is called once per frame
 	void Update () {
-        /*
+        
 	    if (Input.GetKeyDown("h"))
         {
-            currentMesh.mesh = meshes[0];
+            currentRenderer.materials = renderers[0].materials;
+            currentMesh.mesh = meshes[0].mesh;
         }
         else if (Input.GetKeyDown("j"))
         {
-            currentMesh.mesh = meshes[1];
+            currentRenderer.materials = renderers[1].materials;
+            currentMesh.mesh = meshes[1].mesh;
         }
         else if (Input.GetKeyDown("k"))
         {
-            currentMesh.mesh = meshes[2];
-        }*/
+            currentRenderer.materials = renderers[2].materials;
+            currentMesh.mesh = meshes[2].mesh;
+        }
     }
 }
