@@ -1,5 +1,6 @@
 ﻿//#define SONG_DEBUG
 //#define TIMING_DEBUG
+//#define LOAD_AUDIO_ASYNC
 
 using UnityEngine;
 using System.IO;
@@ -63,7 +64,20 @@ public class Song {
                 return false;
         }
     }
+    public bool IsAudioLoading
+    {
+        get
+        {
+            if (audioLoads <= 0)
+                return true;
+            else
+                return false;
+        }
+    }
+
     System.Threading.Thread saveThread;
+
+    int audioLoads = 0;
 
     // Constructor for a new chart
     public Song()
@@ -164,8 +178,18 @@ public class Song {
             throw new System.Exception("Could not open file");
         }
     }
-
+#if LOAD_AUDIO_ASYNC
     public void LoadAudio(string filepath)
+    {
+        ++audioLoads;
+        GameObject monoWrap = new GameObject();
+        monoWrap.AddComponent<MonoWrapper>().StartCoroutine(_LoadAudio(filepath, monoWrap));
+    }
+
+    public IEnumerator _LoadAudio(string filepath, GameObject monoWrap)
+#else
+    public void LoadAudio(string filepath)
+#endif
     {      
         filepath = filepath.Replace('\\', '/');
         
@@ -183,7 +207,12 @@ public class Song {
 
             WWW www = new WWW("file://" + filepath);
 
-            while (!www.isDone) ;
+            while (!www.isDone)
+            {
+#if LOAD_AUDIO_ASYNC
+                yield return null;
+#endif
+            }
 
             if (Path.GetExtension(filepath) == ".mp3")
                 musicStream = NAudioPlayer.FromMp3Data(www.bytes);
@@ -204,6 +233,11 @@ public class Song {
         {
             Debug.LogError("Unable to locate audio file");
         }
+
+#if LOAD_AUDIO_ASYNC
+        GameObject.Destroy(monoWrap);
+        --audioLoads;
+#endif
     }
 
     public uint WorldPositionToSnappedChartPosition(float worldYPos, int step)

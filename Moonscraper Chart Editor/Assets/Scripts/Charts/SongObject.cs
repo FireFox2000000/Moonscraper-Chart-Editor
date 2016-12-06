@@ -269,37 +269,6 @@ public abstract class SongObject
         
         if (list.Count > 0 && insertionPos != Globals.NOTFOUND)
         {
-            // Check for duplicates to overwrite
-            /*
-            int prevPosition = FindPreviousPosition(item.GetType(), insertionPos, list.ToArray());
-            int nextPosition = FindNextPosition(item.GetType(), insertionPos, list.ToArray());
-
-            if (prevPosition != Globals.NOTFOUND && list[prevPosition] == item)
-            {
-                // Overwrite
-                if (list[prevPosition].controller != null)
-                    GameObject.Destroy(list[prevPosition].controller.gameObject);
-                
-                list[prevPosition] = item;
-                insertionPos = prevPosition;       
-            }
-            else if (nextPosition != Globals.NOTFOUND && list[nextPosition] == item)
-            {
-                // Overwrite
-                if (list[nextPosition].controller != null)
-                    GameObject.Destroy(list[nextPosition].controller.gameObject);
-                
-                list[nextPosition] = item;
-                insertionPos = nextPosition;
-            }
-            else if (item == list[insertionPos] && item.GetType() == list[insertionPos].GetType())
-            {
-                // Overwrite 
-                if (list[insertionPos].controller != null)
-                    GameObject.Destroy(list[insertionPos].controller.gameObject);
-                
-                list[insertionPos] = item;
-            }*/
             if (list[insertionPos] == item && item.classID == list[insertionPos].classID)
             {
                 // Overwrite 

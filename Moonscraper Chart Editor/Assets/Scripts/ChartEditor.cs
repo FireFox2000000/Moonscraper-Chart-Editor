@@ -67,16 +67,26 @@ public class ChartEditor : MonoBehaviour {
     public static extern bool SetWindowText(System.IntPtr hwnd, System.String lpString);
     [DllImport("user32.dll", EntryPoint = "FindWindow")]
     public static extern System.IntPtr FindWindow(System.String className, System.String windowName);
+    [DllImport("user32.dll")]
+    public static extern System.IntPtr GetForegroundWindow();
+    [DllImport("user32.dll")]
+    static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
 
 #if !UNITY_EDITOR
     SaveFileDialog saveDialog;
 #endif
 
     System.IntPtr windowPtr;
+    string originalWindowName;
 
     // Use this for initialization
     void Awake () {
-        windowPtr = FindWindow(null, "Moonscraper Chart Editor v0.1");
+        const int nChars = 256;
+        System.Text.StringBuilder buffer = new System.Text.StringBuilder(nChars);
+
+        windowPtr = GetForegroundWindow();
+        GetWindowText(windowPtr, buffer, nChars);
+        originalWindowName = buffer.ToString();
 
         minPos = 0;
         maxPos = 0;
@@ -230,6 +240,13 @@ public class ChartEditor : MonoBehaviour {
         else
             willClickOn.SetActive(false);
 
+        // Set window text to represent if the current song has been saved or not
+#if !UNITY_EDITOR
+        if (editOccurred)
+            SetWindowText(windowPtr, originalWindowName + "*");
+        else
+            SetWindowText(windowPtr, originalWindowName);
+#endif
         Globals.hyperspeed = hyperspeedSlider.value;
     }
     
