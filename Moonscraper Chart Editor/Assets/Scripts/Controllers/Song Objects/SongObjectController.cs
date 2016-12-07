@@ -48,19 +48,16 @@ public abstract class SongObjectController : SelectableClick {
         }
     }
 
-
     protected void Init(SongObject _songObject)
     {
         songObject = _songObject;
     }
 
-    protected Vector2 prevMousePos = Vector2.zero;
     public override void OnSelectableMouseDown()
     {
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
         {
             editor.currentSelectedObject = songObject;
-            prevMousePos = Input.mousePosition;
         }
     }
 }

@@ -48,9 +48,9 @@ public class StarpowerController : SongObjectController
         {
             uint endPosition = starpower.position + starpower.length;
 
-            if ((starpower.position >= editor.minPos && starpower.position < editor.maxPos) ||
+            if (    (starpower.position >= editor.minPos && starpower.position < editor.maxPos) ||
                     (endPosition > editor.minPos && endPosition < editor.maxPos) ||
-                    (starpower.position < editor.minPos && endPosition > editor.maxPos))
+                    (starpower.position < editor.minPos && endPosition >= editor.maxPos))
                 UpdateSongObject();
             else
                 gameObject.SetActive(false);
@@ -103,25 +103,17 @@ public class StarpowerController : SongObjectController
         // Move note
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
         {
-            // Prevent note from snapping if the user is just clicking and not dragging
-            if (prevMousePos != (Vector2)Input.mousePosition)
-            {
-                // Pass note data to a ghost note
-                GameObject moveSP = Instantiate(editor.starpowerPrefab);
-                moveSP.SetActive(true);
-                moveSP.name = "Moving starpower";
-                Destroy(moveSP.GetComponent<PlaceStarpower>());
-                moveSP.AddComponent<MoveStarpower>().Init(starpower);
+            // Pass note data to a ghost note
+            GameObject moveSP = Instantiate(editor.starpowerPrefab);
+            moveSP.SetActive(true);
+            moveSP.name = "Moving starpower";
+            Destroy(moveSP.GetComponent<PlaceStarpower>());
+            moveSP.AddComponent<MoveStarpower>().Init(starpower);
                 
-                editor.currentSelectedObject = starpower;
-                moveSP.SetActive(true);
+            editor.currentSelectedObject = starpower;
+            moveSP.SetActive(true);
 
-                Delete();
-            }
-            else
-            {
-                prevMousePos = Input.mousePosition;
-            }
+            Delete();
         }
         else if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {

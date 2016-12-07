@@ -45,29 +45,21 @@ public class SectionController : SongObjectController
             sectionGui.Init(_section, _timelineHandler, _bpmGuiParent);
     }
 
-    void OnMouseDrag()
+    public override void OnSelectableMouseDrag()
     {
         // Move note
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
         {
-            // Prevent note from snapping if the user is just clicking and not dragging
-            if (prevMousePos != (Vector2)Input.mousePosition)
-            {
-                // Pass note data to a ghost note
-                GameObject moveSection = Instantiate(editor.ghostSection);
-                moveSection.SetActive(true);
+            // Pass note data to a ghost note
+            GameObject moveSection = Instantiate(editor.ghostSection);
+            moveSection.SetActive(true);
 
-                moveSection.name = "Moving section";
-                Destroy(moveSection.GetComponent<PlaceSection>());
-                MoveSection movement = moveSection.AddComponent<MoveSection>();
-                movement.Init(section);
+            moveSection.name = "Moving section";
+            Destroy(moveSection.GetComponent<PlaceSection>());
+            MoveSection movement = moveSection.AddComponent<MoveSection>();
+            movement.Init(section);
                 
-                Delete();
-            }
-            else
-            {
-                prevMousePos = Input.mousePosition;
-            }
+            Delete();
         }
     }
 }

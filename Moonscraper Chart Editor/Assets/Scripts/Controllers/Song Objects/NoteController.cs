@@ -43,30 +43,30 @@ public class NoteController : SongObjectController {
             // Prevent note from snapping if the user is just clicking and not dragging
             //if (prevMousePos != (Vector2)Input.mousePosition && Mouse.world2DPosition != null)
             //{
-                if (Input.GetButton("ChordSelect"))
+            if (Input.GetButton("ChordSelect"))
+            {
+                Note[] chordNotes = note.GetChord();
+                foreach (Note chordNote in chordNotes)
                 {
-                    Note[] chordNotes = note.GetChord();
-                    foreach (Note chordNote in chordNotes)
+                    if (chordNote.controller != null)
                     {
-                        if (chordNote.controller != null)
-                        {
-                            createPlaceNote(chordNote.controller);
-                        }
+                        createPlaceNote(chordNote.controller);
                     }
                 }
-                else
-                {
-                    createPlaceNote(this);
-                }
+            }
+            else
+            {
+                createPlaceNote(this);
+            }
 
-                editor.currentSelectedObject = note;
+            editor.currentSelectedObject = note;
             //}
             //else
             //{
             //    prevMousePos = Input.mousePosition;
            // }
         }
-        else if (Input.GetMouseButton(1))
+        else if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
             if (Input.GetButton("ChordSelect"))
                 ChordSustainDrag();
@@ -182,7 +182,7 @@ public class NoteController : SongObjectController {
 
             if ((note.position >= editor.minPos && note.position < editor.maxPos) ||
                     (endPosition > editor.minPos && endPosition < editor.maxPos) ||
-                    (note.position < editor.minPos && endPosition > editor.maxPos))
+                    (note.position < editor.minPos && endPosition >= editor.maxPos))
             {
                 UpdateSongObject();
             }

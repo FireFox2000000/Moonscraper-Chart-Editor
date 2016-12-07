@@ -5,6 +5,12 @@ public class SustainController : SelectableClick {
 
     public NoteController nCon;
 
+    public override void OnSelectableMouseDown()
+    {
+        if (Input.GetMouseButton(1))
+            OnSelectableMouseDrag();
+    }
+
     public override void OnSelectableMouseDrag()
     {
         // Update sustain
