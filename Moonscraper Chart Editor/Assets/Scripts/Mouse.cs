@@ -18,8 +18,10 @@ public class Mouse : MonoBehaviour {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
     }
 
+    Vector2 initMouseDragPos = Vector2.zero;
 	// Update is called once per frame
 	void Update () {
+        GameObject objectUnderMouse = GetSelectableObjectUnderMouse();
         Vector2 viewportPos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
 
         if (viewportPos.x < 0 || viewportPos.x > 1 || viewportPos.y < 0 || viewportPos.y > 1)
@@ -38,29 +40,52 @@ public class Mouse : MonoBehaviour {
                 world2DPosition = null;
         }
 
-        if ((Input.GetMouseButtonDown(1)) && world2DPosition != null)
+        // OnSelectableMouseDown
+        if ((Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) && world2DPosition != null)
         {
-            dragging = true;
+            initMouseDragPos = (Vector2)world2DPosition;
 
-            selectedGameObject = GetSongObjectUnderMouse();
-            /*
-            if (Toolpane.currentTool == Toolpane.Tools.Cursor && selectedGameObject == null)
-                editor.currentSelectedObject = null;*/
+            selectedGameObject = objectUnderMouse;
+
+            if (selectedGameObject)
+            {
+                SelectableClick[] monos = selectedGameObject.GetComponents<SelectableClick>();
+                foreach (SelectableClick mono in monos)
+                {
+                    mono.OnSelectableMouseDown();
+                }
+            }
         }
-        if (Input.GetMouseButtonUp(1))
+        // OnSelectableMouseUp
+        if ((Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1)))
         {
             dragging = false;
 
             selectedGameObject = null;
         }
 
-        // OnMouseDrag
+        if ((Input.GetMouseButton(0) || Input.GetMouseButton(1)) && world2DPosition != initMouseDragPos)
+        {
+            dragging = true;
+        }
+
+        // OnSelectableMouseDrag
         if (dragging && selectedGameObject)
         {
-            MonoBehaviour[] monos = selectedGameObject.GetComponents<MonoBehaviour>();
-            foreach (MonoBehaviour mono in monos)
+            SelectableClick[] monos = selectedGameObject.GetComponents<SelectableClick>();
+            foreach (SelectableClick mono in monos)
             {
-                mono.SendMessage("OnMouseDrag");
+                mono.OnSelectableMouseDrag();
+            }
+        }
+
+        // OnSelectableMouseOver
+        if (objectUnderMouse)
+        {
+            SelectableClick[] mouseOver = objectUnderMouse.GetComponents<SelectableClick>();
+            foreach (SelectableClick mono in mouseOver)
+            {
+                mono.OnSelectableMouseOver();
             }
         }
     }
@@ -105,6 +130,28 @@ public class Mouse : MonoBehaviour {
         return lowestHit;
     }
 
+    static GameObject[] raySortLowestY(GameObject[] hits)
+    {
+        int length = hits.Length;
+
+        for (int i = 1; i < length; i++)
+        {
+            int j = i;
+
+            while ((j > 0) && (hits[j].transform.position.y < hits[j - 1].transform.position.y))
+            {
+                int k = j - 1;
+                GameObject temp = hits[k];
+                hits[k] = hits[j];
+                hits[j] = temp;
+
+                j--;
+            }
+        }
+
+        return hits;
+    }
+    /*
     public static GameObject GetSongObjectUnderMouse()
     {
         if (world2DPosition != null)
@@ -126,6 +173,49 @@ public class Mouse : MonoBehaviour {
 
                 if (lowestYHit.collider)
                     return lowestYHit.collider.gameObject;
+            }
+        }
+
+        return null;
+    }*/
+
+    public static GameObject GetSelectableObjectUnderMouse()
+    {
+        if (world2DPosition != null)
+        {
+            RaycastHit[] hits3d = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition), Mathf.Infinity); //Physics.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0, mask);
+            RaycastHit2D[] hits = Physics2D.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0);
+
+            GameObject[] hitGameObjects;
+
+            if (hits3d.Length > 0)
+            {
+                hitGameObjects = new GameObject[hits3d.Length];
+                for (int i = 0; i < hits3d.Length; ++i)
+                    hitGameObjects[i] = hits3d[i].collider.gameObject;
+
+                GameObject[] sortedObjects = raySortLowestY(hitGameObjects);
+
+                foreach(GameObject selectedObject in sortedObjects)
+                {
+                    if (selectedObject.GetComponent<SelectableClick>())
+                        return selectedObject;
+                }
+            }
+            else if (hits.Length > 0)
+            {
+                hitGameObjects = new GameObject[hits.Length];
+
+                for (int i = 0; i < hits.Length; ++i)
+                    hitGameObjects[i] = hits[i].collider.gameObject;
+
+                GameObject[] sortedObjects = raySortLowestY(hitGameObjects);
+
+                foreach (GameObject selectedObject in sortedObjects)
+                {
+                    if (selectedObject.GetComponent<SelectableClick>())
+                        return selectedObject;
+                }
             }
         }
 

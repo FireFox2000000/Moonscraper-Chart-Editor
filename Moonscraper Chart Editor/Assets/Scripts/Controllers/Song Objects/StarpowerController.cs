@@ -98,7 +98,7 @@ public class StarpowerController : SongObjectController
         }
     }
 
-    void OnMouseDrag()
+    public override void OnSelectableMouseDrag()
     {
         // Move note
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))

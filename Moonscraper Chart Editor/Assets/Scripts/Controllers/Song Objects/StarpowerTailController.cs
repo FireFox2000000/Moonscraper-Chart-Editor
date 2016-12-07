@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class StarpowerTailController : MonoBehaviour {
+public class StarpowerTailController : SelectableClick {
     public StarpowerController spCon;
 
-    void OnMouseDrag()
+    public override void OnSelectableMouseDrag()
     {
         // Update sustain
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))

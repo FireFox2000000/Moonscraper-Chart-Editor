@@ -103,6 +103,7 @@
     <Compile Include="Assets\Scripts\Mouse.cs" />
     <Compile Include="Assets\Scripts\NAudioPlayer.cs" />
     <Compile Include="Assets\Scripts\RendererLayerExpose.cs" />
+    <Compile Include="Assets\Scripts\SelectableClick.cs" />
     <Compile Include="Assets\Scripts\SpriteGlow.cs" />
     <Compile Include="Assets\Scripts\TimelineHandler.cs" />
     <Compile Include="Assets\Scripts\Tools\Eraser.cs" />

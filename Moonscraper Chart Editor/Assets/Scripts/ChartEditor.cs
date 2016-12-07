@@ -218,7 +218,7 @@ public class ChartEditor : MonoBehaviour {
             selectedHighlight.SetActive(false);
 
         // Show a preview if the user will click on an object
-        GameObject songObject = Mouse.GetSongObjectUnderMouse();
+        GameObject songObject = Mouse.GetSelectableObjectUnderMouse();
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && !Input.GetMouseButton(0) && !Input.GetMouseButton(1) && songObject != null)
         {
             willClickOn.SetActive(true);

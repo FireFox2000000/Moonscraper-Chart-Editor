@@ -35,16 +35,14 @@ public class NoteController : SongObjectController {
         sustainRen = sustain.GetComponent<Renderer>();
     }
 
-    void OnMouseDrag()
+    public override void OnSelectableMouseDrag()
     {
         // Move note
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
         {
             // Prevent note from snapping if the user is just clicking and not dragging
-            if (prevMousePos != (Vector2)Input.mousePosition && Mouse.world2DPosition != null)
-            {
-                
-
+            //if (prevMousePos != (Vector2)Input.mousePosition && Mouse.world2DPosition != null)
+            //{
                 if (Input.GetButton("ChordSelect"))
                 {
                     Note[] chordNotes = note.GetChord();
@@ -62,13 +60,13 @@ public class NoteController : SongObjectController {
                 }
 
                 editor.currentSelectedObject = note;
-            }
-            else
-            {
-                prevMousePos = Input.mousePosition;
-            }
+            //}
+            //else
+            //{
+            //    prevMousePos = Input.mousePosition;
+           // }
         }
-        else if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
+        else if (Input.GetMouseButton(1))
         {
             if (Input.GetButton("ChordSelect"))
                 ChordSustainDrag();

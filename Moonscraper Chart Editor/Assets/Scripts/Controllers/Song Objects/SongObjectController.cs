@@ -2,7 +2,7 @@
 using System.Collections;
 
 [RequireComponent(typeof(Renderer))]
-public abstract class SongObjectController : MonoBehaviour {
+public abstract class SongObjectController : SelectableClick {
     static int lastDeleteFrame = 0;
     bool deleteStart = false;
 
@@ -39,12 +39,7 @@ public abstract class SongObjectController : MonoBehaviour {
         UpdateSongObject();
     }
 
-    protected void OnMouseEnter()
-    {
-        OnMouseOver();
-    }
-
-    protected void OnMouseOver()
+    public override void OnSelectableMouseOver()
     {
         // Delete the object on erase tool
         if (Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButton(0) && Globals.applicationMode == Globals.ApplicationMode.Editor)
@@ -60,7 +55,7 @@ public abstract class SongObjectController : MonoBehaviour {
     }
 
     protected Vector2 prevMousePos = Vector2.zero;
-    void OnMouseDown()
+    public override void OnSelectableMouseDown()
     {
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
         {

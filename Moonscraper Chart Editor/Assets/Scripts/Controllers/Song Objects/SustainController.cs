@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SustainController : MonoBehaviour {
+public class SustainController : SelectableClick {
 
     public NoteController nCon;
 
-	void OnMouseDrag()
+    public override void OnSelectableMouseDrag()
     {
         // Update sustain
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
