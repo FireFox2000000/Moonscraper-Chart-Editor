@@ -40,9 +40,6 @@ public class NoteController : SongObjectController {
         // Move note
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
         {
-            // Prevent note from snapping if the user is just clicking and not dragging
-            //if (prevMousePos != (Vector2)Input.mousePosition && Mouse.world2DPosition != null)
-            //{
             if (Input.GetButton("ChordSelect"))
             {
                 Note[] chordNotes = note.GetChord();
@@ -58,13 +55,6 @@ public class NoteController : SongObjectController {
             {
                 createPlaceNote(this);
             }
-
-            editor.currentSelectedObject = note;
-            //}
-            //else
-            //{
-            //    prevMousePos = Input.mousePosition;
-           // }
         }
         else if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
@@ -77,15 +67,18 @@ public class NoteController : SongObjectController {
 
     void createPlaceNote(NoteController nCon)
     {
+        editor.currentSelectedObject = nCon.note;
+
         // Pass note data to a ghost note
         GameObject moveNote = Instantiate(editor.ghostNote);
-        moveNote.SetActive(true);
 
         moveNote.name = "Moving note";
         Destroy(moveNote.GetComponent<PlaceNote>());
         MoveNote moveNoteController = moveNote.AddComponent<MoveNote>();
-        moveNoteController.Init(nCon.note);
 
+        
+        moveNoteController.Init(nCon.note);
+        moveNote.SetActive(true);
         moveNoteController.horizontalMouseOffset = nCon.gameObject.transform.position.x - snapToNearestHorizontalNotePos(((Vector2)Mouse.world2DPosition).x);
 
         // Delete note
@@ -132,9 +125,15 @@ public class NoteController : SongObjectController {
         {
             // Apply scaling
             sustain.transform.localScale = new Vector3(OPEN_NOTE_SUSTAIN_WIDTH, sustain.transform.localScale.y, sustain.transform.localScale.z);
+#if NOTE_TYPE_2D
             BoxCollider2D hitBox = GetComponent<BoxCollider2D>();
             if (hitBox)
                 hitBox.size = new Vector2(OPEN_NOTE_COLLIDER_WIDTH, hitBox.size.y);
+#else
+            BoxCollider hitBox = GetComponent<BoxCollider>();
+            if (hitBox)
+                hitBox.size = new Vector3(OPEN_NOTE_COLLIDER_WIDTH, hitBox.size.y, hitBox.size.z);
+#endif
         }
 
         if (note.IsChord)

@@ -64,7 +64,7 @@ public class Mouse : MonoBehaviour {
             selectedGameObject = null;
         }
 
-        if ((Input.GetMouseButton(0) || Input.GetMouseButton(1)) && world2DPosition != initMouseDragPos)
+        if ((Input.GetMouseButton(0) || Input.GetMouseButton(1)) && world2DPosition != null && world2DPosition != initMouseDragPos)
         {
             dragging = true;
         }
