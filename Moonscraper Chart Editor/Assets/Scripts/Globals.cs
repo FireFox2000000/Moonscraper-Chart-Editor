@@ -93,6 +93,18 @@ public class Globals : MonoBehaviour {
         }
     }
 
+    public static bool IsTyping
+    {
+        get
+        {
+            if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null ||
+                UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() == null)
+                return false;
+            else
+                return true;
+        }
+    }
+
     // Settings
     public static float hyperspeed = 5.0f;
     public static int step { get { return _step; } }
@@ -171,8 +183,7 @@ public class Globals : MonoBehaviour {
         }
 
         // Disable controls while user is in an input field
-        if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null ||
-            UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() == null)
+        if (!IsTyping)
             Controls();
     }
 

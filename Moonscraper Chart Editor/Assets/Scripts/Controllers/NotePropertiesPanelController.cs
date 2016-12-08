@@ -39,7 +39,25 @@ public class NotePropertiesPanelController : MonoBehaviour {
             Debug.LogError("No note loaded into note inspector");
         }
 
+        if (!Globals.IsTyping)
+            controls();
+
         prevNote = currentNote;
+    }
+
+    void controls()
+    {
+        if (Input.GetButtonDown("ToggleTap"))
+            if (tapToggle.isOn)
+                tapToggle.isOn = false;
+            else
+                tapToggle.isOn = true;
+
+        if (Input.GetButtonDown("ToggleForced"))
+            if (forcedToggle.isOn)
+                forcedToggle.isOn = false;
+            else
+                forcedToggle.isOn = true;
     }
     
     void OnDisable()
