@@ -95,11 +95,8 @@
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SustainController.cs" />
     <Compile Include="Assets\Scripts\Controllers\TimelineMovementController.cs" />
     <Compile Include="Assets\Scripts\DialogBox.cs" />
-    <Compile Include="Assets\Scripts\DropDownMenu.cs" />
-    <Compile Include="Assets\Scripts\FPSDisplay.cs" />
     <Compile Include="Assets\Scripts\FretboardWrapMovement.cs" />
     <Compile Include="Assets\Scripts\Globals.cs" />
-    <Compile Include="Assets\Scripts\MeshSwapTest.cs" />
     <Compile Include="Assets\Scripts\Mouse.cs" />
     <Compile Include="Assets\Scripts\NAudioPlayer.cs" />
     <Compile Include="Assets\Scripts\RendererLayerExpose.cs" />
@@ -121,6 +118,10 @@
     <Compile Include="Assets\Scripts\Tools\ToolObject.cs" />
     <Compile Include="Assets\Scripts\Tools\Toolpane.cs" />
     <Compile Include="Assets\Scripts\Tools\ToolpaneButtonController.cs" />
+    <Compile Include="Assets\Scripts\UI\DisplayMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\DropDownMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\FPSDisplay.cs" />
+    <Compile Include="Assets\Scripts\UI\SongPropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\Utility.cs" />
     <Compile Include="Assets\_MK\_MKGlow\_Internal\MKGlow.cs" />
   </ItemGroup>

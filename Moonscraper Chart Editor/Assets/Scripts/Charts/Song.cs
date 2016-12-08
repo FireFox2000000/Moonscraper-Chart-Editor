@@ -17,6 +17,8 @@ public class Song {
     public float offset = 0, resolution = 192, previewStart = 0, previewEnd = 0;
     public string genre = "rock", mediatype = "cd";
     public AudioClip musicStream = null;
+    public AudioClip guitarStream = null;
+    public AudioClip rhythmStream = null;
     public float length = 0;
 
     string audioLocation = string.Empty;
@@ -178,19 +180,35 @@ public class Song {
             throw new System.Exception("Could not open file");
         }
     }
+
+    public void LoadMusicStream(string filepath)
+    {
+        LoadAudio(filepath, ref musicStream);
+    }
+
+    public void LoadGuitarStream(string filepath)
+    {
+        LoadAudio(filepath, ref guitarStream);
+    }
+
+    public void LoadRhythmStream(string filepath)
+    {
+        LoadAudio(filepath, ref rhythmStream);
+    }
+
 #if LOAD_AUDIO_ASYNC
-    public void LoadAudio(string filepath)
+    void LoadAudio(string filepath, AudioClip audioStream)
     {
         ++audioLoads;
         GameObject monoWrap = new GameObject();
-        monoWrap.AddComponent<MonoWrapper>().StartCoroutine(_LoadAudio(filepath, monoWrap));
+        monoWrap.AddComponent<MonoWrapper>().StartCoroutine(_LoadAudio(filepath, audioStream, monoWrap));
     }
 
-    public IEnumerator _LoadAudio(string filepath, GameObject monoWrap)
+    IEnumerator _LoadAudio(string filepath, AudioClip audioStream, GameObject monoWrap)
 #else
-    public void LoadAudio(string filepath)
+    void LoadAudio(string filepath, ref AudioClip audioStream)
 #endif
-    {      
+    {
         filepath = filepath.Replace('\\', '/');
         
         if (filepath != string.Empty && File.Exists(filepath))
@@ -215,15 +233,16 @@ public class Song {
             }
 
             if (Path.GetExtension(filepath) == ".mp3")
-                musicStream = NAudioPlayer.FromMp3Data(www.bytes);
+                audioStream = NAudioPlayer.FromMp3Data(www.bytes);
             else
-                musicStream = www.GetAudioClip(false, false);
+                audioStream = www.GetAudioClip(false, false);
 
-            musicStream.name = Path.GetFileName(filepath);
+            audioStream.name = Path.GetFileName(filepath);
 
-            while (musicStream != null && musicStream.loadState != AudioDataLoadState.Loaded) ;
+            while (audioStream != null && audioStream.loadState != AudioDataLoadState.Loaded) ;
 
-            length = musicStream.length;
+            if (audioStream == musicStream)
+                length = musicStream.length;
 
 #if TIMING_DEBUG
             Debug.Log("Audio load time: " + (Time.realtimeSinceStartup - time));
@@ -607,7 +626,7 @@ public class Song {
 
         // Load audio
         try {
-            LoadAudio(audioFilepath);
+            LoadMusicStream(audioFilepath);
         }
         catch (System.Exception e)
         {

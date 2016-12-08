@@ -42,7 +42,8 @@ public class ChartEditor : MonoBehaviour {
     
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
-    AudioSource musicSource;
+    [HideInInspector]
+    public AudioSource musicSource;
 
     public Song currentSong { get; private set; }
     public Chart currentChart { get; private set; }
@@ -137,6 +138,8 @@ public class ChartEditor : MonoBehaviour {
 
     void Update()
     {
+        songNameText.text = currentSong.name;
+
         // Update object positions that supposed to be visible into the range of the camera
         minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
         maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
@@ -461,7 +464,6 @@ public class ChartEditor : MonoBehaviour {
             // Load the default chart
             LoadChart(currentSong.expert_single);
 
-            songNameText.text = currentSong.name;
             lastLoadedFile = currentFileName;
 
         }
@@ -509,54 +511,6 @@ public class ChartEditor : MonoBehaviour {
 #if TIMING_DEBUG
         Debug.Log("Chart objects load time: " + (Time.realtimeSinceStartup - time));
 #endif
-    }
-
-    public void LoadAudio()
-    {
-        try
-        {
-            Stop();
-            string audioFilepath = string.Empty;
-
-#if UNITY_EDITOR
-            audioFilepath = UnityEditor.EditorUtility.OpenFilePanel("Select Audio", "", "*.mp3;*.ogg;*.wav");
-#else
-            OpenFileName openAudioDialog = new OpenFileName();
-            openAudioDialog = new OpenFileName();
-
-            openAudioDialog.structSize = Marshal.SizeOf(openAudioDialog);
-
-            openAudioDialog.file = new String(new char[256]);
-            openAudioDialog.maxFile = openAudioDialog.file.Length;
-
-            openAudioDialog.fileTitle = new String(new char[64]);
-            openAudioDialog.maxFileTitle = openAudioDialog.fileTitle.Length;
-
-            openAudioDialog.initialDir = "";
-            openAudioDialog.title = "Open file";
-            openAudioDialog.defExt = "txt";
-
-            openAudioDialog.filter = "Audio files (*.ogg,*.mp3,*.wav)\0*.mp3;*.ogg;*.wav";
-
-            if (LibWrap.GetOpenFileName(openAudioDialog))
-            {
-                audioFilepath = openAudioDialog.file;
-            
-            }
-            else
-                throw new System.Exception("Could not open file");
-#endif
-            currentSong.LoadAudio(audioFilepath);
-
-            if (currentSong.musicStream != null)
-            {
-                musicSource.clip = currentSong.musicStream;
-            }
-        }
-        catch
-        {
-            Debug.LogError("Could not open audio");
-        }
     }
 
     // Create Sections, bpms, events and time signature objects
@@ -850,5 +804,10 @@ public class ChartEditor : MonoBehaviour {
         {
             beatLinePool2[i++].SetActive(false);
         }
+    }
+
+    public void EnableMenu(DisplayMenu menu)
+    {
+        menu.gameObject.SetActive(true);
     }
 }
