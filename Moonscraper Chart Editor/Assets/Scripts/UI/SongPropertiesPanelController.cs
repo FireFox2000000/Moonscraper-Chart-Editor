@@ -136,23 +136,19 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void LoadMusicStream()
     {
+        editor.Stop();
         try
         {
-            editor.Stop();
-
-            editor.currentSong.LoadMusicStream(GetAudioFile());
-
-            if (editor.currentSong.musicStream != null)
-            {
-                editor.musicSource.clip = editor.currentSong.musicStream;
-            }
-
-            setAudioTextLabels();
+            editor.currentSong.LoadMusicStream(GetAudioFile()); 
         }
         catch
         {
             Debug.LogError("Could not open audio");
         }
+
+        editor.SetAudioSources();
+
+        setAudioTextLabels();       
     }
 
     public void LoadGuitarStream()
@@ -163,10 +159,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
             editor.currentSong.LoadGuitarStream(GetAudioFile());
 
-            if (editor.currentSong.guitarStream != null)
-            {
-                //musicSource.clip = currentSong.guitarStream;
-            }
+            editor.SetAudioSources();
 
             setAudioTextLabels();
         }
@@ -184,10 +177,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
             editor.currentSong.LoadRhythmStream(GetAudioFile());
 
-            if (editor.currentSong.rhythmStream != null)
-            {
-                //musicSource.clip = currentSong.rhythmStream;
-            }
+            editor.SetAudioSources();
 
             setAudioTextLabels();
         }

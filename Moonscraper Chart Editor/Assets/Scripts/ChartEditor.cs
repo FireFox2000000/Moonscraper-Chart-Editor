@@ -7,10 +7,12 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System;
 
-[RequireComponent(typeof(AudioSource))]
 public class ChartEditor : MonoBehaviour {
     public static bool editOccurred = false;
     const int POOL_SIZE = 100;
+    public const int MUSIC_STREAM_ARRAY_POS = 0;
+    public const int GUITAR_STREAM_ARRAY_POS = 1;
+    public const int RHYTHM_STREAM_ARRAY_POS = 2;
 
     [Header("Prefabs")]
     public GameObject notePrefab;
@@ -41,7 +43,7 @@ public class ChartEditor : MonoBehaviour {
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
     [HideInInspector]
-    public AudioSource musicSource;
+    public AudioSource[] musicSources;
 
     public Song currentSong { get; private set; }
     public Chart currentChart { get; private set; }
@@ -110,7 +112,13 @@ public class ChartEditor : MonoBehaviour {
         editOccurred = false;
 
         currentChart = currentSong.expert_single;
-        musicSource = GetComponent<AudioSource>();
+
+        musicSources = new AudioSource[3];
+        for (int i = 0; i < musicSources.Length; ++i)
+        {
+            musicSources[i] = gameObject.AddComponent<AudioSource>();
+            musicSources[i].volume = 0.5f;
+        }
 
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
 
@@ -245,7 +253,10 @@ public class ChartEditor : MonoBehaviour {
         if (hasFocus && Globals.applicationMode == Globals.ApplicationMode.Playing)
             Play();
         else
-            musicSource.Stop();
+        {
+            foreach (AudioSource source in musicSources)
+                source.Stop();
+        }
     }
 
     void OnApplicationQuit()
@@ -361,10 +372,16 @@ public class ChartEditor : MonoBehaviour {
     {
         hyperspeedSlider.interactable = false;
         float strikelinePos = strikeline.position.y;
-        musicSource.time = Song.WorldYPositionToTime(strikelinePos) + currentSong.offset;       // No need to add audio calibration as position is base on the strikeline position
+        foreach (AudioSource source in musicSources)
+            source.time = Song.WorldYPositionToTime(strikelinePos) + currentSong.offset;       // No need to add audio calibration as position is base on the strikeline position
+
         play.interactable = false;
         Globals.applicationMode = Globals.ApplicationMode.Playing;
-        musicSource.Play();
+
+        foreach (AudioSource source in musicSources)
+        {
+            source.Play();
+        }
     }
 
     public void Stop()
@@ -372,7 +389,8 @@ public class ChartEditor : MonoBehaviour {
         hyperspeedSlider.interactable = true;
         play.interactable = true;
         Globals.applicationMode = Globals.ApplicationMode.Editor;
-        musicSource.Stop();
+        foreach (AudioSource source in musicSources)
+            source.Stop();
     }
 
     IEnumerator _LoadSong()
@@ -431,21 +449,6 @@ public class ChartEditor : MonoBehaviour {
             {
                 Destroy(child.gameObject);
             }
-
-#if TIMING_DEBUG
-            float objectLoadTime = Time.realtimeSinceStartup;
-#endif
-            // Create the song objects
-            CreateSongObjects(currentSong);
-
-#if TIMING_DEBUG
-            Debug.Log("Song objects load time: " + (Time.realtimeSinceStartup - objectLoadTime));
-#endif
-            // Load the default chart
-            LoadChart(currentSong.expert_single);
-
-            lastLoadedFile = currentFileName;
-
         }
         catch (System.Exception e)
         {
@@ -456,6 +459,23 @@ public class ChartEditor : MonoBehaviour {
             yield break;
         }
 
+        while (currentSong.IsAudioLoading)
+            yield return null;
+
+#if TIMING_DEBUG
+        float objectLoadTime = Time.realtimeSinceStartup;
+#endif
+        // Create the song objects
+        CreateSongObjects(currentSong);
+
+#if TIMING_DEBUG
+        Debug.Log("Song objects load time: " + (Time.realtimeSinceStartup - objectLoadTime));
+#endif
+        // Load the default chart
+        LoadChart(currentSong.expert_single);
+
+        lastLoadedFile = currentFileName;
+        
         while (currentSong.musicStream != null && currentSong.musicStream.loadState != AudioDataLoadState.Loaded)
         {
             Debug.Log("Loading audio...");
@@ -464,7 +484,7 @@ public class ChartEditor : MonoBehaviour {
 
         if (currentSong.musicStream != null)
         {
-            musicSource.clip = currentSong.musicStream;
+            SetAudioSources();
             movement.SetPosition(0);
         }
 #if TIMING_DEBUG
@@ -745,5 +765,12 @@ public class ChartEditor : MonoBehaviour {
     public void EnableMenu(DisplayMenu menu)
     {
         menu.gameObject.SetActive(true);
+    }
+
+    public void SetAudioSources()
+    {
+        musicSources[MUSIC_STREAM_ARRAY_POS].clip = currentSong.musicStream;
+        musicSources[GUITAR_STREAM_ARRAY_POS].clip = currentSong.guitarStream;
+        musicSources[RHYTHM_STREAM_ARRAY_POS].clip = currentSong.rhythmStream;
     }
 }

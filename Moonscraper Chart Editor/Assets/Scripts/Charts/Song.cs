@@ -9,16 +9,22 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
 
-public class Song { 
+public class Song {
+    const int MUSIC_STREAM_ARRAY_POS = 0;
+    const int GUITAR_STREAM_ARRAY_POS = 1;
+    const int RHYTHM_STREAM_ARRAY_POS = 2;
+
     // Song properties
     public string name = string.Empty, artist = string.Empty, charter = string.Empty;
     public string player2 = "Bass";
     public int difficulty = 0;
     public float offset = 0, resolution = 192, previewStart = 0, previewEnd = 0;
     public string genre = "rock", mediatype = "cd";
-    public AudioClip musicStream = null;
-    public AudioClip guitarStream = null;
-    public AudioClip rhythmStream = null;
+    AudioClip[] audioStreams = new AudioClip[3];
+
+    public AudioClip musicStream { get { return audioStreams[MUSIC_STREAM_ARRAY_POS]; } set { audioStreams[MUSIC_STREAM_ARRAY_POS] = value; } }
+    public AudioClip guitarStream { get { return audioStreams[GUITAR_STREAM_ARRAY_POS]; } set { audioStreams[GUITAR_STREAM_ARRAY_POS] = value; } }
+    public AudioClip rhythmStream { get { return audioStreams[RHYTHM_STREAM_ARRAY_POS]; } set { audioStreams[RHYTHM_STREAM_ARRAY_POS] = value; } }
     public float length = 0;
 
     string audioLocation = string.Empty;
@@ -70,7 +76,7 @@ public class Song {
     {
         get
         {
-            if (audioLoads <= 0)
+            if (audioLoads > 0)
                 return true;
             else
                 return false;
@@ -183,30 +189,30 @@ public class Song {
 
     public void LoadMusicStream(string filepath)
     {
-        LoadAudio(filepath, ref musicStream);
+        LoadAudio(filepath, MUSIC_STREAM_ARRAY_POS);
     }
 
     public void LoadGuitarStream(string filepath)
     {
-        LoadAudio(filepath, ref guitarStream);
+        LoadAudio(filepath, GUITAR_STREAM_ARRAY_POS);
     }
 
     public void LoadRhythmStream(string filepath)
     {
-        LoadAudio(filepath, ref rhythmStream);
+        LoadAudio(filepath, RHYTHM_STREAM_ARRAY_POS);
     }
 
 #if LOAD_AUDIO_ASYNC
-    void LoadAudio(string filepath, AudioClip audioStream)
+    void LoadAudio(string filepath, int audioStreamArrayPos)
     {
         ++audioLoads;
         GameObject monoWrap = new GameObject();
-        monoWrap.AddComponent<MonoWrapper>().StartCoroutine(_LoadAudio(filepath, audioStream, monoWrap));
+        monoWrap.AddComponent<MonoWrapper>().StartCoroutine(_LoadAudio(filepath, audioStreamArrayPos, monoWrap));
     }
 
-    IEnumerator _LoadAudio(string filepath, AudioClip audioStream, GameObject monoWrap)
+    IEnumerator _LoadAudio(string filepath, int audioStreamArrayPos, GameObject monoWrap)
 #else
-    void LoadAudio(string filepath, ref AudioClip audioStream)
+    void LoadAudio(string filepath, int audioStreamArrayPos)
 #endif
     {
         filepath = filepath.Replace('\\', '/');
@@ -233,15 +239,15 @@ public class Song {
             }
 
             if (Path.GetExtension(filepath) == ".mp3")
-                audioStream = NAudioPlayer.FromMp3Data(www.bytes);
+                audioStreams[audioStreamArrayPos] = NAudioPlayer.FromMp3Data(www.bytes);
             else
-                audioStream = www.GetAudioClip(false, false);
+                audioStreams[audioStreamArrayPos] = www.GetAudioClip(false, false);
 
-            audioStream.name = Path.GetFileName(filepath);
+            audioStreams[audioStreamArrayPos].name = Path.GetFileName(filepath);
 
-            while (audioStream != null && audioStream.loadState != AudioDataLoadState.Loaded) ;
+            while (audioStreams[audioStreamArrayPos] != null && audioStreams[audioStreamArrayPos].loadState != AudioDataLoadState.Loaded) ;
 
-            if (audioStream == musicStream)
+            if (audioStreamArrayPos == MUSIC_STREAM_ARRAY_POS)
                 length = musicStream.length;
 
 #if TIMING_DEBUG
@@ -510,7 +516,6 @@ public class Song {
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
 #endif
-        string audioFilepath = string.Empty;
 
         Regex nameRegex = new Regex(@"Name = " + QUOTEVALIDATE);
         Regex artistRegex = new Regex(@"Artist = " + QUOTEVALIDATE);
@@ -523,7 +528,9 @@ public class Song {
         Regex previewEndRegex = new Regex(@"PreviewEnd = " + FLOATSEARCH);
         Regex genreRegex = new Regex(@"Genre = " + QUOTEVALIDATE);
         Regex mediaTypeRegex = new Regex(@"MediaType = " + QUOTEVALIDATE);
-        Regex musicStreamRegex = new Regex(@"MusicStream = " + QUOTEVALIDATE);  
+        Regex musicStreamRegex = new Regex(@"MusicStream = " + QUOTEVALIDATE);
+        Regex guitarStreamRegex = new Regex(@"GuitarStream = " + QUOTEVALIDATE);
+        Regex rhythmStreamRegex = new Regex(@"RhythmStream = " + QUOTEVALIDATE);
 
         try
         {
@@ -607,11 +614,54 @@ public class Song {
                 // MusicStream = "ENDLESS REBIRTH.ogg"
                 else if (musicStreamRegex.IsMatch(line))
                 {
-                    audioFilepath = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                    string audioFilepath = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
 
                     // Check if it's already the full path. If not, make it relative to the chart file.
                     if (!File.Exists(audioFilepath))
                         audioFilepath = audioDirectory + "\\" + audioFilepath;
+
+                    try
+                    {
+                        LoadMusicStream(audioFilepath);
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogError(e.Message);
+                    }
+                }
+                else if (guitarStreamRegex.IsMatch(line))
+                {
+                    string audioFilepath = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+
+                    // Check if it's already the full path. If not, make it relative to the chart file.
+                    if (!File.Exists(audioFilepath))
+                        audioFilepath = audioDirectory + "\\" + audioFilepath;
+
+                    try
+                    {
+                        LoadGuitarStream(audioFilepath);
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogError(e.Message);
+                    }
+                }
+                else if (rhythmStreamRegex.IsMatch(line))
+                {
+                    string audioFilepath = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+
+                    // Check if it's already the full path. If not, make it relative to the chart file.
+                    if (!File.Exists(audioFilepath))
+                        audioFilepath = audioDirectory + "\\" + audioFilepath;
+
+                    try
+                    {
+                        LoadRhythmStream(audioFilepath);
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogError(e.Message);
+                    }
                 }
             }
 
@@ -623,15 +673,7 @@ public class Song {
         {
             Debug.LogError(e.Message);
         }
-
-        // Load audio
-        try {
-            LoadMusicStream(audioFilepath);
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError(e.Message);
-        }
+        
     }
 
     string GetPropertiesString()
@@ -750,11 +792,13 @@ public class Song {
         saveString += Globals.TABSPACE + "MediaType = \"" + mediatype + "\"" + Globals.LINE_ENDING;
 
         if (musicStream != null)
-        {
             saveString += Globals.TABSPACE + "MusicStream = \"" + musicString + "\"" + Globals.LINE_ENDING;
-        }
-        else
-            saveString += Globals.TABSPACE + "MusicStream = \"\"" + Globals.LINE_ENDING;
+
+        if (guitarStream != null)
+            saveString += Globals.TABSPACE + "GuitarStream = \"" + musicString + "\"" + Globals.LINE_ENDING;
+
+        if (rhythmStream != null)
+            saveString += Globals.TABSPACE + "RhythmStream = \"" + musicString + "\"" + Globals.LINE_ENDING;
 
         saveString += "}" + Globals.LINE_ENDING;
 
