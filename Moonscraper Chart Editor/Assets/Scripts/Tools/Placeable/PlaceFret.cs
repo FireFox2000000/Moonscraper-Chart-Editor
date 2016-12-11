@@ -25,7 +25,7 @@ public class PlaceFret : PlaceNote {
 
     void OnEnable()
     {
-        // Don't set the current songobject, let the controller do that
+        editor.currentSelectedObject = note;
         Update();
     }
 }

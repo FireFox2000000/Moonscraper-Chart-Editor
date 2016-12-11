@@ -261,15 +261,27 @@ public class NoteController : SongObjectController {
             {
                 case (Note.Note_Type.HOPO):
                     materials = Globals.hopoRenderer.sharedMaterials;
-                    materials[1] = Globals.strumColors[(int)note.fret_type];
+
+                    if (specialType == Note.Special_Type.STAR_POW)
+                        materials[1] = Globals.spTemp;
+                    else
+                        materials[1] = Globals.strumColors[(int)note.fret_type];
                     break;
                 case (Note.Note_Type.TAP):
                     materials = Globals.tapRenderer.sharedMaterials;
-                    materials[1] = Globals.tapColors[(int)note.fret_type];
+
+                    if (specialType == Note.Special_Type.STAR_POW)
+                        materials[1] = Globals.spTapTemp;
+                    else
+                        materials[1] = Globals.tapColors[(int)note.fret_type];
                     break;
                 default:    // strum
                     materials = Globals.strumRenderer.sharedMaterials;
-                    materials[1] = Globals.strumColors[(int)note.fret_type];
+
+                    if (specialType == Note.Special_Type.STAR_POW)
+                        materials[1] = Globals.spTemp;
+                    else
+                        materials[1] = Globals.strumColors[(int)note.fret_type];
                     break;
             }
             noteRenderer.sharedMaterials = materials;

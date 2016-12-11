@@ -39,6 +39,9 @@ public class Globals : MonoBehaviour {
     public static Material[] strumColors { get; private set; }
     public static Material[] tapColors { get; private set; }
 
+    public static Material spTemp { get; private set; }
+    public static Material spTapTemp { get; private set; }
+
     [Header("Note sprites")]
     [SerializeField]
     Sprite[] strumNotes = new Sprite[6];
@@ -73,6 +76,11 @@ public class Globals : MonoBehaviour {
     Material[] strum3dColorMaterials = new Material[6];
     [SerializeField]
     Material[] tap3dColorMaterials = new Material[5];
+
+    [SerializeField]
+    Material spTempColor;
+    [SerializeField]
+    Material spTapTempColor;
 
     [Header("Area range")]
     public RectTransform area;
@@ -148,6 +156,9 @@ public class Globals : MonoBehaviour {
 
         strumColors = strum3dColorMaterials;
         tapColors = tap3dColorMaterials;
+
+        spTemp = spTempColor;
+        spTapTemp = spTapTempColor;
 
         SetStep(16);
     }

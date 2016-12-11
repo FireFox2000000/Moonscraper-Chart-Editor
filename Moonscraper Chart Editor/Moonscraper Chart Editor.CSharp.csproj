@@ -82,6 +82,7 @@
     <Compile Include="Assets\Scripts\Charts\Note.cs" />
     <Compile Include="Assets\Scripts\Charts\Song.cs" />
     <Compile Include="Assets\Scripts\Charts\SongObject.cs" />
+    <Compile Include="Assets\Scripts\Controllers\HighwayController.cs" />
     <Compile Include="Assets\Scripts\Controllers\MovementController.cs" />
     <Compile Include="Assets\Scripts\Controllers\NotePropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\Controllers\SectionPropertiesPanelController.cs" />

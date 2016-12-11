@@ -16,8 +16,6 @@ public class ChartEditor : MonoBehaviour {
     public GameObject notePrefab;
     public GameObject starpowerPrefab;
     public GameObject sectionPrefab;
-    public GameObject beatLine1;
-    public GameObject beatLine2;
     [Header("Indicator Parents")]
     public GameObject guiIndicators;
     [Header("Song properties Display")]
@@ -50,9 +48,6 @@ public class ChartEditor : MonoBehaviour {
     string currentFileName = string.Empty;
 
     MovementController movement;
-    GameObject[] beatLinePool1 = new GameObject[POOL_SIZE];
-    GameObject[] beatLinePool2 = new GameObject[POOL_SIZE];
-    GameObject timeSignatureLineParent;
 
     string lastLoadedFile = string.Empty;
 
@@ -119,19 +114,6 @@ public class ChartEditor : MonoBehaviour {
 
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
 
-        // Initialize object pool
-        timeSignatureLineParent = new GameObject("Time Signature Lines");
-        for (int i = 0; i < POOL_SIZE; ++i)
-        {
-            beatLinePool1[i] = Instantiate(beatLine1);
-            beatLinePool1[i].transform.SetParent(timeSignatureLineParent.transform);
-            beatLinePool1[i].SetActive(false);
-
-            beatLinePool2[i] = Instantiate(beatLine2);
-            beatLinePool2[i].transform.SetParent(timeSignatureLineParent.transform);
-            beatLinePool2[i].SetActive(false);
-        }
-
         willClickOn.SetActive(false);
         selectedHighlight.SetActive(false);
     }
@@ -153,8 +135,6 @@ public class ChartEditor : MonoBehaviour {
         enableSongObjects(currentChart.starPower, SongObject.ID.Starpower, minPos, maxPos);
         enableSongObjects(currentChart.events, SongObject.ID.ChartEvent, minPos, maxPos);
 #endif
-        // Update the lines that go on the fretboard
-        UpdateBeatLines();
 
         // Update the current properties panel
         if (currentSelectedObject != null)
@@ -759,50 +739,6 @@ public class ChartEditor : MonoBehaviour {
         {
             if (songObjects[i].controller != null)
                 songObjects[i].controller.gameObject.SetActive(true);
-        }
-    }
-
-    void UpdateBeatLines()
-    {
-        // Update time signature lines SNAPPED
-        uint initSnappedLinePos = currentSong.WorldPositionToSnappedChartPosition(camYMin.position.y, 4);
-        uint snappedLinePos = initSnappedLinePos;
-
-        // Place main beat lines
-        int i = 0;
-        while (snappedLinePos < maxPos && i < beatLinePool1.Length)
-        {
-            beatLinePool1[i].SetActive(true);
-            beatLinePool1[i].transform.position = new Vector3(0, currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
-            snappedLinePos += (uint)(currentSong.resolution);
-            ++i;
-        }
-
-        // Disable any unused lines
-        while (i < beatLinePool1.Length)
-        {
-            beatLinePool1[i++].SetActive(false);
-        }
-
-        // Place faded beat lines
-        i = 0;
-        if ((uint)(currentSong.resolution / 2) < initSnappedLinePos)
-            snappedLinePos = initSnappedLinePos - (uint)(currentSong.resolution / 2);
-        else
-            snappedLinePos = initSnappedLinePos + (uint)(currentSong.resolution / 2);
-
-        while (snappedLinePos < maxPos && i < beatLinePool2.Length)
-        {
-            beatLinePool2[i].SetActive(true);
-            beatLinePool2[i].transform.position = new Vector3(0, currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
-            snappedLinePos += (uint)(currentSong.resolution);
-            ++i;
-        }
-
-        // Disable any unused lines
-        while (i < beatLinePool2.Length)
-        {
-            beatLinePool2[i++].SetActive(false);
         }
     }
 

@@ -5,16 +5,44 @@ public class PlaceNoteController : ObjectlessTool {
 
     public PlaceNote[] notes = new PlaceNote[7];        // Starts at multi-note before heading into green (1), red (2) through to open (6)
 
-    void OnDisable()
+    protected override void Awake()
     {
+        base.Awake();
+        // Initialise the notes
+        foreach (PlaceNote note in notes)
+        {
+            note.gameObject.SetActive(true);
+            note.gameObject.SetActive(false);
+        }
+    }
+
+    void OnEnable()
+    {
+        // Update flags in the note panel
+        if (editor.currentSelectedObject.GetType() == typeof(Note))
+        {
+            foreach (PlaceNote note in notes)
+            {
+                note.note.flags = ((Note)editor.currentSelectedObject).flags;
+            }
+        }
+    }
+
+    void OnDisable()
+    {/*
         foreach (PlaceNote placeableNotes in notes)
         {
             placeableNotes.gameObject.SetActive(false);
-        }
+        }*/
     }
-	
-	// Update is called once per frame
-	protected override void Update () {
+
+    public override void ToolDisable()
+    {
+        editor.currentSelectedObject = null;
+    }
+
+    // Update is called once per frame
+    protected override void Update () {
         foreach(PlaceNote placeableNotes in notes)
         {
             placeableNotes.gameObject.SetActive(false);
@@ -83,5 +111,12 @@ public class PlaceNoteController : ObjectlessTool {
         }
 
         // Update flags in the note panel
+        if (editor.currentSelectedObject.GetType() == typeof(Note))
+        {
+            foreach (PlaceNote note in notes)
+            {
+                note.note.flags = ((Note)editor.currentSelectedObject).flags;
+            }
+        }
 	}
 }

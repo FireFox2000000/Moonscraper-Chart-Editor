@@ -14,6 +14,12 @@ public class FretboardWrapMovement : MonoBehaviour {
         ren.sharedMaterial.mainTextureOffset = Vector2.zero;
     }
 
+    void OnApplicationQuit()
+    {
+        // Reset purely for editor
+        ren.sharedMaterial.mainTextureOffset = Vector2.zero;
+    }
+
     void LateUpdate()
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
@@ -34,10 +40,7 @@ public class FretboardWrapMovement : MonoBehaviour {
             if (prevHyperspeed == Globals.hyperspeed)
             {
                 Vector2 offset = ren.sharedMaterial.mainTextureOffset;
-                Debug.Log(offset);
                 offset.y += (transform.position.y - prevYPos) / transform.localScale.y;
-                Debug.Log((transform.position.y - prevYPos) / transform.localScale.y);
-                Debug.Log(offset);
                 ren.sharedMaterial.mainTextureOffset = offset;
             }
             prevYPos = transform.position.y;
