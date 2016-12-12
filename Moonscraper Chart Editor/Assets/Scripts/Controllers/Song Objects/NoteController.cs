@@ -21,7 +21,7 @@ public class NoteController : SongObjectController {
     protected Renderer noteRenderer;
     MeshFilter meshFilter;
 #endif
-    protected Renderer sustainRen;
+    protected SpriteRenderer sustainRen;
 
     new void Awake()
     {
@@ -32,7 +32,7 @@ public class NoteController : SongObjectController {
         noteRenderer = GetComponent<Renderer>();
         meshFilter = GetComponent<MeshFilter>();
 #endif
-        sustainRen = sustain.GetComponent<Renderer>();
+        sustainRen = sustain.GetComponent<SpriteRenderer>();
     }
 
     public override void OnSelectableMouseOver()
@@ -150,7 +150,14 @@ public class NoteController : SongObjectController {
         if (note.fret_type == Note.Fret_Type.OPEN)
         {
             // Apply scaling
-            sustain.transform.localScale = new Vector3(OPEN_NOTE_SUSTAIN_WIDTH, sustain.transform.localScale.y, sustain.transform.localScale.z);
+            //sustain.transform.localScale = new Vector3(OPEN_NOTE_SUSTAIN_WIDTH, sustain.transform.localScale.y, sustain.transform.localScale.z);
+            sustainRen.sprite = Globals.openSustainSprite;
+
+            BoxCollider2D sustainHitBox = sustain.GetComponent<BoxCollider2D>();
+            if (sustainHitBox)
+                sustainHitBox.size = new Vector2(OPEN_NOTE_COLLIDER_WIDTH, sustainHitBox.size.y);
+
+            // Adjust note hitbox size
 #if NOTE_TYPE_2D
             BoxCollider2D hitBox = GetComponent<BoxCollider2D>();
             if (hitBox)
@@ -203,8 +210,6 @@ public class NoteController : SongObjectController {
 #else
         if (note != null)
         {
-            if (note.fret_type == Note.Fret_Type.GREEN)
-                Debug.Log("Here");
             uint endPosition = note.position + note.sustain_length;
 
             if ((note.position >= editor.minPos && note.position < editor.maxPos) ||

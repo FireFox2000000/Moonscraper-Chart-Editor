@@ -26,6 +26,7 @@ public class Globals : MonoBehaviour {
     public static Sprite[] spStrumSprite { get; private set; }
     public static Sprite[] spHopoSprite { get; private set; }
     public static Sprite[] spTapSprite { get; private set; }
+    public static Sprite openSustainSprite { get; private set; }
 
     // 3D
     public static MeshFilter standardModel { get; private set; }
@@ -57,6 +58,8 @@ public class Globals : MonoBehaviour {
     Sprite[] spHOPONote = new Sprite[6];
     [SerializeField]
     Sprite[] spTapNote = new Sprite[6];
+    [SerializeField]
+    Sprite openSustain;
 
     [Header("Note models")]
     [SerializeField]
@@ -154,6 +157,8 @@ public class Globals : MonoBehaviour {
         spStrumSprite = spStrumNote;
         spHopoSprite = spHOPONote;
         spTapSprite = spTapNote;
+
+        openSustainSprite = openSustain;
 
         standardModel = standardNoteModel;          // 3D
         spModel = standardNoteModel;

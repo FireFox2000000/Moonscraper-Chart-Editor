@@ -3,7 +3,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System;
 
@@ -71,10 +70,6 @@ public class ChartEditor : MonoBehaviour {
     [DllImport("user32.dll")]
     static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
 
-#if !UNITY_EDITOR
-    SaveFileDialog saveDialog;
-#endif
-
     System.IntPtr windowPtr;
     string originalWindowName;
 
@@ -92,12 +87,6 @@ public class ChartEditor : MonoBehaviour {
 
         noteInspector.gameObject.SetActive(false);
         sectionInspector.gameObject.SetActive(false);
-
-#if !UNITY_EDITOR
-        saveDialog = new SaveFileDialog();
-        saveDialog.InitialDirectory = "";
-        saveDialog.RestoreDirectory = true;
-#endif
 
         // Create grouping objects to make reading the inspector easier
         songObjectParent = new GameObject();
@@ -291,15 +280,6 @@ public class ChartEditor : MonoBehaviour {
 #if UNITY_EDITOR
             fileName = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", currentSong.name, "chart");
 #else
-            /*
-            saveDialog.Filter = "chart files (*.chart)|*.chart";
-
-            if (saveDialog.ShowDialog() == DialogResult.OK)
-            {
-                fileName = saveDialog.FileName;
-            }
-            else
-                throw new System.Exception("File was not saved");*/
 
             OpenFileName openSaveFileDialog = new OpenFileName();
 

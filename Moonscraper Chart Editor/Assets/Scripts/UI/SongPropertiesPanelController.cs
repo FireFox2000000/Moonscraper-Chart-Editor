@@ -1,6 +1,9 @@
-﻿using UnityEngine;
+﻿//#undef UNITY_EDITOR
+
+using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using System;
+using System.Runtime.InteropServices;
 
 public class SongPropertiesPanelController : DisplayMenu {
 
