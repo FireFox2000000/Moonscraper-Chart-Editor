@@ -84,6 +84,10 @@ public class Globals : MonoBehaviour {
 
     [Header("Area range")]
     public RectTransform area;
+    [Header("Misc.")]
+    [SerializeField]
+    AudioSource clapSource;
+
 
     public bool InToolArea
     {
@@ -125,6 +129,7 @@ public class Globals : MonoBehaviour {
 
     void Awake()
     {
+        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
         workingDirectory = System.IO.Directory.GetCurrentDirectory();
 
         INIParser iniparse = new INIParser();
@@ -134,6 +139,10 @@ public class Globals : MonoBehaviour {
         audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 100);
         clapSetting = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
         // Audio levels
+        editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
+        editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
+        editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
+        clapSource.volume = (float)iniparse.ReadValue("Audio Volume", "Clap", 1.0f);
 
         iniparse.Close();
 
@@ -165,8 +174,6 @@ public class Globals : MonoBehaviour {
 
     void Start()
     {
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
-
         // Initialize GUI
         editor.hyperspeedSlider.value = hyperspeed;
         clapToggle.onValueChanged.AddListener((value) => { ToggleClap(value); });
@@ -305,6 +312,10 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Settings", "Audio calibration", audioCalibrationMS);
         iniparse.WriteValue("Settings", "Clap", (int)clapSetting);
         // Audio levels
+        iniparse.WriteValue("Audio Volume", "Music Stream", editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume);
+        iniparse.WriteValue("Audio Volume", "Guitar Stream", editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume);
+        iniparse.WriteValue("Audio Volume", "Rhythm Stream", editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume);
+        iniparse.WriteValue("Audio Volume", "Clap", clapSource.volume);
 
         iniparse.Close();
     }
