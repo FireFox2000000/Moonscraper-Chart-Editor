@@ -283,7 +283,11 @@ public class NoteController : SongObjectController {
 #else
             // Update mesh
             
-            meshFilter.sharedMesh = Globals.standardModel.sharedMesh;
+            if (note.fret_type == Note.Fret_Type.OPEN)
+                meshFilter.sharedMesh = Globals.openModel.sharedMesh;
+            else
+                meshFilter.sharedMesh = Globals.standardModel.sharedMesh;
+
             Material[] materials;
             switch (noteType)
             {
