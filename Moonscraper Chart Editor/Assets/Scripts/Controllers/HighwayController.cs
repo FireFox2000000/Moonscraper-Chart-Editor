@@ -61,15 +61,41 @@ public class HighwayController : MonoBehaviour {
 
         // Place faded beat lines
         i = 0;
-        if ((uint)(editor.currentSong.resolution / 2) < initSnappedLinePos)
-            snappedLinePos = initSnappedLinePos - (uint)(editor.currentSong.resolution / 2);
+        uint offset = (uint)(editor.currentSong.resolution / 2);
+
+        if (offset < initSnappedLinePos)
+            snappedLinePos = initSnappedLinePos - offset;
         else
-            snappedLinePos = initSnappedLinePos + (uint)(editor.currentSong.resolution / 2);
+            snappedLinePos = initSnappedLinePos + offset;
 
         while (snappedLinePos < editor.maxPos && i < beatLinePool2.Length)
         {
-            beatLinePool2[i].SetActive(true);
-            beatLinePool2[i].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+            beatLinePool2[i].SetActive(false);
+            if (editor.currentSong.GetPrevTS(snappedLinePos) < 7)     // secondary beat lines don't appear in-game if the ts is more than 6
+            {
+                uint bpm = editor.currentSong.GetPrevBPM(snappedLinePos);
+
+                if (bpm < 181000)               //  secondary beat lines don't appear in-game if the bpm is greater than 181
+                {
+                    if (bpm < 180000)
+                    {
+                        // Line for every beat
+                        beatLinePool2[i].SetActive(true);
+                        beatLinePool2[i].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+                    }
+                    else
+                    {
+                        // Line every 3 beats for the range 180-181, offset by 1 beat
+                        float factor = editor.currentSong.resolution * 3;
+                        if ((int)snappedLinePos - (int)offset - editor.currentSong.resolution >= 0 && (snappedLinePos - offset - editor.currentSong.resolution) % factor == 0)
+                        {
+                            beatLinePool2[i].SetActive(true);
+                            beatLinePool2[i].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+                        }
+                    }
+                }
+            }
+
             snappedLinePos += (uint)(editor.currentSong.resolution);
             ++i;
         }

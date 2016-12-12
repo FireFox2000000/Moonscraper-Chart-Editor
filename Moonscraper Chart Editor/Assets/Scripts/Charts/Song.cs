@@ -323,6 +323,32 @@ public class Song {
         return position;
     }
 
+    public uint GetPrevBPM(uint position)
+    {
+        for (int i = 0; i < bpms.Length; ++i)
+        {
+            if (i + 1 >= bpms.Length)
+                return bpms[i].value;
+            else if (bpms[i + 1].position > position)
+                return bpms[i].value;
+        }
+
+        return bpms[0].value;
+    }
+
+    public uint GetPrevTS(uint position)
+    {
+        for (int i = 0; i < timeSignatures.Length; ++i)
+        {
+            if (i + 1 >= timeSignatures.Length)
+                return timeSignatures[i].value;
+            else if (timeSignatures[i + 1].position > position)
+                return timeSignatures[i].value;
+        }
+
+        return timeSignatures[0].value;
+    }
+
     public static float WorldYPositionToTime (float worldYPosition)
     {
         return worldYPosition / Globals.hyperspeed;
