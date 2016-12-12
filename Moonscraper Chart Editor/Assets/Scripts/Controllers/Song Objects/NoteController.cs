@@ -8,7 +8,7 @@ public class NoteController : SongObjectController {
     const float OPEN_NOTE_COLLIDER_WIDTH = 5;
 
     public Note note;
-    public GameObject sustain;   
+    public SustainController sustain;   
 
     [HideInInspector]
     public Note.Note_Type noteType = Note.Note_Type.STRUM;

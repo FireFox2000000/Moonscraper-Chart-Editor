@@ -37,7 +37,6 @@ public class ChartEditor : MonoBehaviour {
     public Transform camYMin;
     public Transform camYMax;
     public Transform autoUpScroll;
-    public GameObject willClickOn;
     public GameObject selectedHighlight;
     
     public uint minPos { get; private set; }
@@ -121,8 +120,6 @@ public class ChartEditor : MonoBehaviour {
         }
 
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
-
-        willClickOn.SetActive(false);
         selectedHighlight.SetActive(false);
     }
 
@@ -207,29 +204,6 @@ public class ChartEditor : MonoBehaviour {
         }
         else
             selectedHighlight.SetActive(false);
-
-        // Show a preview if the user will click on an object
-        GameObject songObject = Mouse.GetSelectableObjectUnderMouse();
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor && !Input.GetMouseButton(0) && !Input.GetMouseButton(1) && songObject != null)
-        {
-            willClickOn.SetActive(true);
-            willClickOn.transform.position = songObject.transform.position;
-
-            Vector3 scale = songObject.transform.localScale;
-            Collider col3d = songObject.GetComponent<Collider>();
-            Collider2D col = songObject.GetComponent<Collider2D>();
-
-            if (col3d)
-                scale = col3d.bounds.size;
-            else
-                scale = col.bounds.size;
-
-            if (scale.z == 0)
-                scale.z = 0.1f;
-            willClickOn.transform.localScale = scale;
-        }
-        else
-            willClickOn.SetActive(false);
 
         // Set window text to represent if the current song has been saved or not
 #if !UNITY_EDITOR
