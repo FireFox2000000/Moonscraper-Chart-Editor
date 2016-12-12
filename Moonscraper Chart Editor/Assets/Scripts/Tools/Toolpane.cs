@@ -23,8 +23,7 @@ public class Toolpane : MonoBehaviour {
             if (Globals.applicationMode == Globals.ApplicationMode.Editor)
             {
                 // Range check
-                if (Mouse.world2DPosition == null ||
-                    !globals.InToolArea)
+                if (!globals.InToolArea)
                 {
                     currentToolObject.gameObject.SetActive(false);
                 }

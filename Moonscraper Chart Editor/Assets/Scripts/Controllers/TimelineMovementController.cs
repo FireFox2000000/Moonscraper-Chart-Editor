@@ -8,6 +8,8 @@ public class TimelineMovementController : MovementController
     public Transform strikeLine;
     public UnityEngine.UI.Text timePosition;
 
+    const float autoscrollSpeed = 10.0f;
+
     public override void SetPosition(uint chartPosition)
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
@@ -47,6 +49,7 @@ public class TimelineMovementController : MovementController
 
     // Update is called once per frame
     void LateUpdate () {
+        
 	    if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             if (scrollDelta == 0 && focused && globals.InToolArea)
@@ -65,7 +68,19 @@ public class TimelineMovementController : MovementController
 
                 UpdateTimelineHandleBasedPos();
             }
-
+            // else check mouse range
+            else if (globals.InToolArea && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
+            { 
+                if (Input.mousePosition.y > Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y)
+                {
+                    transform.position = new Vector3(transform.position.x, transform.position.y + autoscrollSpeed * Time.deltaTime, transform.position.z);
+                    UpdateTimelineHandleBasedPos();
+                }
+                else
+                {
+                    UpdatePosBasedTimelineHandle();
+                }
+            }
             // Scroll bar value changes position
             else
             {
@@ -90,6 +105,9 @@ public class TimelineMovementController : MovementController
     {
         if (editor.currentChart != null)
         {
+            if (transform.position.y < initPos.y)
+                transform.position = initPos;
+
             float endYPos = Song.TimeToWorldYPosition(editor.currentSong.length);
             float totalDistance = endYPos - initPos.y - strikeLine.localPosition.y;
 
@@ -99,8 +117,6 @@ public class TimelineMovementController : MovementController
             }
 
             float currentDistance = transform.position.y - initPos.y;
-
-            
 
             if (totalDistance > 0)
                 timeline.handlePos = currentDistance / totalDistance;

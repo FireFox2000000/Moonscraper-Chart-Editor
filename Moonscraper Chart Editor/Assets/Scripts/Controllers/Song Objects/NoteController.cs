@@ -35,6 +35,27 @@ public class NoteController : SongObjectController {
         sustainRen = sustain.GetComponent<Renderer>();
     }
 
+    public override void OnSelectableMouseOver()
+    {
+        // Delete the object on erase tool
+        if (Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButton(0) && Globals.applicationMode == Globals.ApplicationMode.Editor)
+        {
+            if (Input.GetButton("ChordSelect"))
+            {
+                Note[] chordNotes = note.GetChord();
+                foreach (Note chordNote in chordNotes)
+                {
+                    if (chordNote.controller != null)
+                    {
+                        chordNote.controller.Delete();
+                    }
+                }
+            }
+            else
+                Delete();
+        }
+    }
+
     public override void OnSelectableMouseDrag()
     {
         // Move note
@@ -87,17 +108,22 @@ public class NoteController : SongObjectController {
 
     public void SustainDrag()
     {
-        if (Mouse.world2DPosition != null)
+        uint snappedChartPos;
+        ChartEditor.editOccurred = true;
+
+        if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
         {
-            ChartEditor.editOccurred = true;
-
-            uint snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(note.song.WorldYPositionToChartPosition(((Vector2)Mouse.world2DPosition).y), Globals.step, note.song.resolution);
-
-            if (snappedChartPos > note.position)
-                note.sustain_length = snappedChartPos - note.position;
-            else
-                note.sustain_length = 0;
+            snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(note.song.WorldYPositionToChartPosition(((Vector2)Mouse.world2DPosition).y), Globals.step, note.song.resolution);
         }
+        else
+        {
+            snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(note.song.WorldYPositionToChartPosition(editor.mouseYMaxLimit.position.y), Globals.step, note.song.resolution);
+        }
+
+        if (snappedChartPos > note.position)
+            note.sustain_length = snappedChartPos - note.position;
+        else
+            note.sustain_length = 0;
     }
 
     public void ChordSustainDrag()
@@ -155,7 +181,7 @@ public class NoteController : SongObjectController {
                     }
                 }
             }
-        }
+        }   
     }
     
     protected override void Update()
@@ -177,6 +203,8 @@ public class NoteController : SongObjectController {
 #else
         if (note != null)
         {
+            if (note.fret_type == Note.Fret_Type.GREEN)
+                Debug.Log("Here");
             uint endPosition = note.position + note.sustain_length;
 
             if ((note.position >= editor.minPos && note.position < editor.maxPos) ||

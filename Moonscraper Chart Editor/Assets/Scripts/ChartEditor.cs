@@ -38,6 +38,8 @@ public class ChartEditor : MonoBehaviour {
     public Transform camYMax;
     public Transform autoUpScroll;
     public GameObject selectedHighlight;
+    public Transform mouseYMaxLimit;
+    public Transform mouseYMinLimit;
     
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
@@ -649,7 +651,7 @@ public class ChartEditor : MonoBehaviour {
         if (arrayPos != Globals.NOTFOUND)
         {
             // Find the back-most position
-            while (arrayPos > 0 && songObjects[arrayPos].position > min)
+            while (arrayPos > 0 && songObjects[arrayPos].position >= min)
             {
                 --arrayPos;
             }
