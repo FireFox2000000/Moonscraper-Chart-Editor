@@ -146,6 +146,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     public void LoadMusicStream()
     {
         editor.Stop();
+        Globals.applicationMode = Globals.ApplicationMode.Menu;
         try
         {
             editor.currentSong.LoadMusicStream(GetAudioFile()); 
@@ -162,10 +163,10 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void LoadGuitarStream()
     {
+        editor.Stop();
+        Globals.applicationMode = Globals.ApplicationMode.Menu;
         try
         {
-            editor.Stop();
-
             editor.currentSong.LoadGuitarStream(GetAudioFile());
 
             editor.SetAudioSources();
@@ -180,10 +181,10 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void LoadRhythmStream()
     {
+        editor.Stop();
+        Globals.applicationMode = Globals.ApplicationMode.Menu;
         try
         {
-            editor.Stop();
-
             editor.currentSong.LoadRhythmStream(GetAudioFile());
 
             editor.SetAudioSources();

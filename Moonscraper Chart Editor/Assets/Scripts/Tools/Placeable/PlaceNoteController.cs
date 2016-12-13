@@ -43,7 +43,11 @@ public class PlaceNoteController : ObjectlessTool {
 
     // Update is called once per frame
     protected override void Update () {
-        foreach(PlaceNote placeableNotes in notes)
+        bool openActive = false;
+        if (notes[6].gameObject.activeSelf)
+            openActive = true;
+
+        foreach (PlaceNote placeableNotes in notes)
         {
             placeableNotes.gameObject.SetActive(false);
         }
@@ -51,11 +55,16 @@ public class PlaceNoteController : ObjectlessTool {
         List<PlaceNote> activeNotes = new List<PlaceNote>();
 
         // Select which notes to run based on keyboard input
-        if (Input.GetKey("6"))  // Open note takes priority
+        if (Input.GetKeyDown("6"))  // Open note takes priority
         {
-            notes[6].gameObject.SetActive(true);
-        }
-        else if (Input.GetKey("1") || Input.GetKey("2") || Input.GetKey("3") || Input.GetKey("4") || Input.GetKey("5"))
+            if (openActive)
+            {
+                notes[0].gameObject.SetActive(true);
+            }
+            else
+                notes[6].gameObject.SetActive(true);
+        }      
+        else if (!Input.GetKey("6") && (Input.GetKey("1") || Input.GetKey("2") || Input.GetKey("3") || Input.GetKey("4") || Input.GetKey("5")))
         {
             if (Input.GetKey("1"))
             {
@@ -82,6 +91,10 @@ public class PlaceNoteController : ObjectlessTool {
                 notes[5].gameObject.SetActive(true);
                 activeNotes.Add(notes[5]);
             }
+        }
+        else if (openActive)
+        {
+            notes[6].gameObject.SetActive(true);
         }
         else
         {

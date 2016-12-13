@@ -88,7 +88,7 @@ public class NoteController : SongObjectController {
 
     void createPlaceNote(NoteController nCon)
     {
-        editor.currentSelectedObject = nCon.note;
+        //editor.currentSelectedObject = nCon.note;
 
         // Pass note data to a ghost note
         GameObject moveNote = Instantiate(editor.ghostNote);
@@ -97,7 +97,6 @@ public class NoteController : SongObjectController {
         Destroy(moveNote.GetComponent<PlaceNote>());
         MoveNote moveNoteController = moveNote.AddComponent<MoveNote>();
 
-        
         moveNoteController.Init(nCon.note);
         moveNote.SetActive(true);
         moveNoteController.horizontalMouseOffset = nCon.gameObject.transform.position.x - snapToNearestHorizontalNotePos(((Vector2)Mouse.world2DPosition).x);

@@ -36,7 +36,6 @@ public class ChartEditor : MonoBehaviour {
     public Transform camYMin;
     public Transform camYMax;
     public Transform autoUpScroll;
-    public GameObject selectedHighlight;
     public Transform mouseYMaxLimit;
     public Transform mouseYMinLimit;
     
@@ -111,7 +110,6 @@ public class ChartEditor : MonoBehaviour {
         }
 
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
-        selectedHighlight.SetActive(false);
     }
 
     void Update()
@@ -168,33 +166,6 @@ public class ChartEditor : MonoBehaviour {
         {
             currentPropertiesPanel.gameObject.SetActive(false);
         }
-
-        // Show a highlight over the current selected object
-        if (currentSelectedObject != null && currentSelectedObject.controller != null && currentSelectedObject.controller.gameObject != null)
-        {
-            Collider col3d = currentSelectedObject.controller.GetComponent<Collider>();
-            Collider2D col = currentSelectedObject.controller.GetComponent<Collider2D>();
-            if (col3d || col)
-            {
-                selectedHighlight.SetActive(true);
-                selectedHighlight.transform.position = currentSelectedObject.controller.transform.position;
-
-                Vector3 scale = currentSelectedObject.controller.transform.localScale;
-
-                if (col3d)
-                    scale = col3d.bounds.size;
-                else
-                    scale = col.bounds.size;
-
-                if (scale.z == 0)
-                    scale.z = 0.1f;
-                selectedHighlight.transform.localScale = scale;
-            }
-            else
-                selectedHighlight.SetActive(false);
-        }
-        else
-            selectedHighlight.SetActive(false);
 
         // Set window text to represent if the current song has been saved or not
 #if !UNITY_EDITOR

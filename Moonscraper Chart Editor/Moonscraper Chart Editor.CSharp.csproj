@@ -87,6 +87,7 @@
     <Compile Include="Assets\Scripts\Controllers\MovementController.cs" />
     <Compile Include="Assets\Scripts\Controllers\NotePropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\Controllers\SectionPropertiesPanelController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\SelectedHighlightController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\NoteController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SectionController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SectionGuiController.cs" />

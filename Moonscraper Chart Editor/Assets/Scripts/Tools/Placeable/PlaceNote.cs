@@ -5,7 +5,7 @@ using System;
 [RequireComponent(typeof(NoteController))]
 public class PlaceNote : ToolObject {
     public Note note;
-    NoteController controller;
+    protected NoteController controller;
 
     [HideInInspector]
     public float horizontalMouseOffset = 0;
@@ -32,7 +32,7 @@ public class PlaceNote : ToolObject {
         editor.currentSelectedObject = null;
     }
 
-    void OnEnable()
+    protected virtual void OnEnable()
     {
         editor.currentSelectedObject = note;
         Update();
@@ -47,7 +47,7 @@ public class PlaceNote : ToolObject {
     // Update is called once per frame
     protected override void Update () {
         base.Update();
-       
+
         note.song = editor.currentSong;
         note.chart = editor.currentChart;
         note.position = objectSnappedChartPos;
@@ -142,8 +142,8 @@ public class PlaceNote : ToolObject {
             note.fret_type = Note.Fret_Type.BLUE;
         else if (Input.GetKey("5"))
             note.fret_type = Note.Fret_Type.ORANGE;
-        else if (Input.GetKey("6"))
-            note.fret_type = Note.Fret_Type.OPEN;
+        //else if (Input.GetKey("6"))
+            //note.fret_type = Note.Fret_Type.OPEN;
         else if (note.fret_type != Note.Fret_Type.OPEN && Mouse.world2DPosition != null)
         {
             Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
