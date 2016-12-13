@@ -69,7 +69,7 @@ public class TimelineMovementController : MovementController
                 UpdateTimelineHandleBasedPos();
             }
             // else check mouse range
-            else if (globals.InToolArea && (Input.GetMouseButton(0) || Input.GetMouseButton(1)))
+            else if (Toolpane.mouseDownInArea && (globals.InToolArea && (Input.GetMouseButton(0) || Input.GetMouseButton(1))))
             { 
                 if (Input.mousePosition.y > Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y)
                 {
