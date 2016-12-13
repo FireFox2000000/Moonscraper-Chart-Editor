@@ -338,7 +338,7 @@ public abstract class SongObject
                     standardFound = true;
 
                 flags |= next.flags;
-                next = next.previous;
+                next = next.next;
             }
 
             // Apply flags
@@ -361,7 +361,7 @@ public abstract class SongObject
                 while (next != null && next.position == current.position)
                 {
                     next.flags = flags;
-                    next = next.previous;
+                    next = next.next;
                 }
             }
         }

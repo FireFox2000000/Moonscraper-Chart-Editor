@@ -97,7 +97,10 @@ public class PlaceNote : ToolObject {
             Note previous = GetPreviousOfOpen(note.position, editor.currentChart.notes[closestNoteArrayPos]);
 
             note.previous = previous;
-            note.next = GetNextOfOpen(note.position, previous.next);
+            if (previous != null)
+                note.next = GetNextOfOpen(note.position, previous.next);
+            else
+                note.next = GetNextOfOpen(note.position, editor.currentChart.notes[closestNoteArrayPos]);
         }
         else if (editor.currentChart.notes[closestNoteArrayPos] > note)
         {
