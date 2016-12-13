@@ -18,11 +18,13 @@ public class SongPropertiesPanelController : DisplayMenu {
     public Text guitarStream;
     public Text rhythmStream;
 
+    bool init = false;
     protected override void OnEnable()
     {
         base.OnEnable();
-
-        Song song = editor.currentSong;
+        init = true;
+        Song song = editor.currentSong;   
+           
         songName.text = song.name;
         artist.text = song.artist;
         charter.text = song.charter;
@@ -32,6 +34,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
         // Init audio names
         setAudioTextLabels();
+        init = false;
     }
 
 	void Apply()
@@ -42,24 +45,27 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void setSongProperties()
     {
-        Song song = editor.currentSong;
-        song.name = songName.text;
-        song.artist = artist.text;
-        song.charter = charter.text;
-
-        try
+        if (!init)
         {
-            song.difficulty = int.Parse(difficulty.text);
-        }
-        catch
-        {
-            song.difficulty = 0;
-        }
+            Song song = editor.currentSong;
+            song.name = songName.text;
+            song.artist = artist.text;
+            song.charter = charter.text;
 
-        song.genre = genre.text;
-        song.mediatype = mediaType.text;
+            try
+            {
+                song.difficulty = int.Parse(difficulty.text);
+            }
+            catch
+            {
+                song.difficulty = 0;
+            }
 
-        ChartEditor.editOccurred = true;
+            song.genre = genre.text;
+            song.mediatype = mediaType.text;
+
+            ChartEditor.editOccurred = true;
+        }
     }
 
     void setAudioTextLabels()
