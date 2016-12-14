@@ -787,19 +787,26 @@ public class Song {
 
     public void Save(string filepath)
     {
-        string musicString;
+        string musicString = string.Empty;
+        string guitarString = string.Empty;
+        string rhythmString = string.Empty;
 
         // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
         if (musicStream && Path.GetDirectoryName(audioLocation).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
             musicString = musicStream.name;
         else
             musicString = audioLocation;
+        /*
+        if (guitarStream && Path.GetDirectoryName(audioLocation).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
+            guitarString = musicStream.name;
+        else
+            guitarString = audioLocation;*/
 
-        saveThread = new System.Threading.Thread(() => SongSave(filepath, musicString));
+        saveThread = new System.Threading.Thread(() => SongSave(filepath, musicString, guitarString, rhythmString));
         saveThread.Start();
     }
 
-    void SongSave(string filepath, string musicString)
+    void SongSave(string filepath, string musicString, string guitarString, string rhythmString)
     {
         string saveString = string.Empty;
 
@@ -821,10 +828,10 @@ public class Song {
             saveString += Globals.TABSPACE + "MusicStream = \"" + musicString + "\"" + Globals.LINE_ENDING;
 
         if (guitarStream != null)
-            saveString += Globals.TABSPACE + "GuitarStream = \"" + musicString + "\"" + Globals.LINE_ENDING;
+            saveString += Globals.TABSPACE + "GuitarStream = \"" + guitarString + "\"" + Globals.LINE_ENDING;
 
         if (rhythmStream != null)
-            saveString += Globals.TABSPACE + "RhythmStream = \"" + musicString + "\"" + Globals.LINE_ENDING;
+            saveString += Globals.TABSPACE + "RhythmStream = \"" + rhythmString + "\"" + Globals.LINE_ENDING;
 
         saveString += "}" + Globals.LINE_ENDING;
 

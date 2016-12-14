@@ -189,21 +189,25 @@ public class Globals : MonoBehaviour {
     }
 
     int lastWidth = Screen.width;
+    int lastHeight = Screen.height;
     void Update()
     {
         stepText.text = "1/" + _step.ToString();
-
+        /*
         if (Screen.width != lastWidth)
         {
             // User is resizing width
             Screen.SetResolution(Screen.width, Screen.width * 9 / 16, false);
-            lastWidth = Screen.width;
+            
         }
         else
         {
             // User is resizing height
             Screen.SetResolution(Screen.height * 16 / 9, Screen.height, false);
-        }
+        }*/
+
+        lastWidth = Screen.width;
+        lastHeight = Screen.height;
 
         // Disable controls while user is in an input field
         if (!IsTyping)
