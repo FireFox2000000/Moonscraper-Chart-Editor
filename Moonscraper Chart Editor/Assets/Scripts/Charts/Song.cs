@@ -27,7 +27,8 @@ public class Song {
     public AudioClip rhythmStream { get { return audioStreams[RHYTHM_STREAM_ARRAY_POS]; } set { audioStreams[RHYTHM_STREAM_ARRAY_POS] = value; } }
     public float length = 0;
 
-    string audioLocation = string.Empty;
+    //string audioLocation = string.Empty;
+    string[] audioLocations = new string[3];
 
     // Charts
     Chart[] charts = new Chart[12];
@@ -107,7 +108,9 @@ public class Song {
             charts[i] = new Chart(this);
         }
 
-        audioLocation = string.Empty;
+        for (int i = 0; i < audioLocations.Length; ++i)
+            audioLocations[i] = string.Empty;
+
         musicStream = null;
         length = 60 * 5;
 
@@ -227,7 +230,7 @@ public class Song {
                 throw new System.Exception("Invalid file extension");
             }
 
-            audioLocation = Path.GetFullPath(filepath);
+            audioLocations[audioStreamArrayPos] = Path.GetFullPath(filepath);
 
             WWW www = new WWW("file://" + filepath);
 
@@ -792,15 +795,20 @@ public class Song {
         string rhythmString = string.Empty;
 
         // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
-        if (musicStream && Path.GetDirectoryName(audioLocation).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
+        if (musicStream && Path.GetDirectoryName(audioLocations[MUSIC_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
             musicString = musicStream.name;
         else
-            musicString = audioLocation;
-        /*
-        if (guitarStream && Path.GetDirectoryName(audioLocation).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
-            guitarString = musicStream.name;
+            musicString = audioLocations[MUSIC_STREAM_ARRAY_POS];
+        
+        if (guitarStream && Path.GetDirectoryName(audioLocations[GUITAR_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
+            guitarString = guitarStream.name;
         else
-            guitarString = audioLocation;*/
+            guitarString = audioLocations[GUITAR_STREAM_ARRAY_POS];
+
+        if (rhythmStream && Path.GetDirectoryName(audioLocations[RHYTHM_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
+            rhythmString= rhythmStream.name;
+        else
+            rhythmString = audioLocations[RHYTHM_STREAM_ARRAY_POS];
 
         saveThread = new System.Threading.Thread(() => SongSave(filepath, musicString, guitarString, rhythmString));
         saveThread.Start();

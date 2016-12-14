@@ -12,6 +12,7 @@
   Genre = ""
   MediaType = ""
   MusicStream = "ts.ogg"
+  GuitarStream = "E:\Alex's stuff\GH3 Customs\Charts\5000 Robots\5000 Robots.ogg"
 }
 [SyncTrack]
 {
