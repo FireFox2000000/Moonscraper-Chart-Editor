@@ -11,6 +11,7 @@ public class Globals : MonoBehaviour {
 
     [Header("Initialize GUI")]
     public Toggle clapToggle;
+    public Toggle viewModeToggle;
 
     static int lsbOffset = 3;
     static int _step = 4;
@@ -91,7 +92,6 @@ public class Globals : MonoBehaviour {
     [SerializeField]
     AudioSource clapSource;
 
-
     public bool InToolArea
     {
         get
@@ -126,12 +126,14 @@ public class Globals : MonoBehaviour {
     public static ClapToggle clapSetting = ClapToggle.NONE;
     public static int audioCalibrationMS = 100;                     // Increase to start the audio sooner
     public static ApplicationMode applicationMode = ApplicationMode.Editor;
+    public static ViewMode viewMode { get; private set; }
 
     ChartEditor editor;
     string workingDirectory;
 
     void Awake()
     {
+        viewMode = ViewMode.Chart;
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
         workingDirectory = System.IO.Directory.GetCurrentDirectory();
 
@@ -192,6 +194,7 @@ public class Globals : MonoBehaviour {
     int lastHeight = Screen.height;
     void Update()
     {
+        Debug.Log(viewMode);
         stepText.text = "1/" + _step.ToString();
         /*
         if (Screen.width != lastWidth)
@@ -312,6 +315,17 @@ public class Globals : MonoBehaviour {
             clapSetting = ClapToggle.NONE;
     }
 
+    public void ToggleSongViewMode(bool value)
+    {
+        if (value)
+            viewMode = ViewMode.Song;
+        else
+            viewMode = ViewMode.Chart;
+
+        if (viewModeToggle.isOn != value)
+            viewModeToggle.isOn = value;
+    }
+
     void OnApplicationQuit()
     {
         INIParser iniparse = new INIParser();
@@ -329,6 +343,11 @@ public class Globals : MonoBehaviour {
         iniparse.Close();
     }
 
+    public void ClickButton(Button button)
+    {
+        button.onClick.Invoke();
+    }
+
     [System.Flags]
     public enum ClapToggle
     {
@@ -338,5 +357,10 @@ public class Globals : MonoBehaviour {
     public enum ApplicationMode
     {
         Editor, Playing, Menu
+    }
+
+    public enum ViewMode
+    {
+        Chart, Song
     }
 }

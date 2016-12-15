@@ -21,6 +21,26 @@ public class Mouse : MonoBehaviour {
     Vector2 initMouseDragPos = Vector2.zero;
 	// Update is called once per frame
 	void Update () {
+        
+        if (Globals.viewMode == Globals.ViewMode.Chart)
+        {
+            // Configure camera to ignore song
+            camera2D.cullingMask |= 1 << LayerMask.NameToLayer("ChartObject");
+            camera2D.cullingMask &= ~(1 << LayerMask.NameToLayer("SongObject"));
+
+            camera3D.cullingMask |= 1 << LayerMask.NameToLayer("ChartObject");
+            camera3D.cullingMask &= ~(1 << LayerMask.NameToLayer("SongObject"));
+        }
+        else
+        {
+            // Configure camera to ignore chart
+            camera2D.cullingMask |= 1 << LayerMask.NameToLayer("SongObject");
+            camera2D.cullingMask &= ~(1 << LayerMask.NameToLayer("ChartObject"));
+
+            camera3D.cullingMask |= 1 << LayerMask.NameToLayer("SongObject");
+            camera3D.cullingMask &= ~(1 << LayerMask.NameToLayer("ChartObject"));
+        }
+
         GameObject objectUnderMouse = GetSelectableObjectUnderMouse();
         Vector2 viewportPos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
 
@@ -183,8 +203,15 @@ public class Mouse : MonoBehaviour {
     {
         if (world2DPosition != null)
         {
-            RaycastHit[] hits3d = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition), Mathf.Infinity); //Physics.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0, mask);
-            RaycastHit2D[] hits = Physics2D.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0);
+            LayerMask mask;
+
+            if (Globals.viewMode == Globals.ViewMode.Chart)
+                mask = 1 << LayerMask.NameToLayer("ChartObject");
+            else
+                mask = 1 << LayerMask.NameToLayer("SongObject");
+
+            RaycastHit[] hits3d = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition), Mathf.Infinity, mask); //Physics.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0, mask);
+            RaycastHit2D[] hits = Physics2D.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0, mask);
 
             GameObject[] hitGameObjects;
 
