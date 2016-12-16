@@ -174,6 +174,7 @@ public class PlaceNote : ToolObject {
     {
         Note noteToAdd = new Note(note);
         editor.currentChart.Add(noteToAdd);
-        editor.CreateNoteObject(noteToAdd);
+        NoteController nCon = editor.CreateNoteObject(noteToAdd);
+        nCon.standardOverwriteOpen();
     }
 }

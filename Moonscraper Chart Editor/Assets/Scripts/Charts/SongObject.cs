@@ -279,7 +279,7 @@ public abstract class SongObject
             }
             // Insert into sorted position
             else
-            {   
+            {
                 if (item > list[insertionPos])
                 {
                     ++insertionPos;
@@ -315,14 +315,15 @@ public abstract class SongObject
             previous = current.previous;
             next = current.next;
 
-            bool openFound = false;
+            Note openNote = null;
+            //bool openFound = false;
             bool standardFound = false;
             
             // Collect all the flags
             while (previous != null && previous.position == current.position)
             {
                 if (previous.fret_type == Note.Fret_Type.OPEN)
-                    openFound = true;
+                    openNote = previous;
                 else
                     standardFound = true;
 
@@ -333,7 +334,7 @@ public abstract class SongObject
             while (next != null && next.position == current.position)
             {
                 if (next.fret_type == Note.Fret_Type.OPEN)
-                    openFound = true;
+                    openNote = next;
                 else
                     standardFound = true;
 
@@ -342,8 +343,10 @@ public abstract class SongObject
             }
 
             // Apply flags
-            if (current.fret_type != Note.Fret_Type.OPEN && openFound)
-            { }
+            if (current.fret_type != Note.Fret_Type.OPEN && openNote != null)
+            {
+                //openNote.controller.Delete();
+            }
             else if (current.fret_type == Note.Fret_Type.OPEN && standardFound)
             { }
             else
@@ -365,6 +368,7 @@ public abstract class SongObject
                 }
             }
         }
+        //Debug.Log(list.Count);
 
         return insertionPos;
     }

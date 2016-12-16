@@ -168,26 +168,43 @@ public class NoteController : SongObjectController {
 #endif
         }
 
-        if (note.IsChord)
+        // Open notes overwrite here for initial loading
+        if (note.fret_type == Note.Fret_Type.OPEN)
+        {
+            Note[] chordNotes = SongObject.FindObjectsAtPosition(note.position, note.chart.notes);
+            Debug.Log(note.chart.notes.Length);
+            // Check for non-open notes and delete
+            foreach (Note chordNote in chordNotes)
+            {
+                if (chordNote.fret_type != Note.Fret_Type.OPEN)
+                {
+                    if (chordNote.controller != null)
+                        chordNote.controller.Delete();
+                    else
+                        note.chart.Remove(chordNote);
+                }
+            }
+        }       
+    }
+
+    public void standardOverwriteOpen()
+    {
+        if (note.fret_type != Note.Fret_Type.OPEN)
         {
             Note[] chordNotes = SongObject.FindObjectsAtPosition(note.position, note.chart.notes);
 
-            if (note.fret_type == Note.Fret_Type.OPEN)
+            // Check for open notes and delete
+            foreach (Note chordNote in chordNotes)
             {
-
-                // Check for non-open notes and delete
-                foreach (Note chordNote in chordNotes)
+                if (chordNote.fret_type == Note.Fret_Type.OPEN)
                 {
-                    if (chordNote.fret_type != Note.Fret_Type.OPEN)
-                    {
-                        if (chordNote.controller != null)
-                            chordNote.controller.Delete();
-                        else
-                            note.chart.Remove(chordNote);
-                    }
+                    if (chordNote.controller != null)
+                        chordNote.controller.Delete();
+                    else
+                        note.chart.Remove(chordNote);
                 }
             }
-        }   
+        }
     }
     
     protected override void Update()

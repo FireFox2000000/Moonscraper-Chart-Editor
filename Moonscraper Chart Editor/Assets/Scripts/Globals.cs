@@ -194,7 +194,6 @@ public class Globals : MonoBehaviour {
     int lastHeight = Screen.height;
     void Update()
     {
-        Debug.Log(viewMode);
         stepText.text = "1/" + _step.ToString();
         /*
         if (Screen.width != lastWidth)
