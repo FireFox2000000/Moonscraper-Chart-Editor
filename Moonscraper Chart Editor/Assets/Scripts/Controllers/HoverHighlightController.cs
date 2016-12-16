@@ -22,7 +22,8 @@ public class HoverHighlightController : MonoBehaviour {
         foreach (GameObject highlight in highlights)
             highlight.SetActive(false);
 
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor && !Input.GetMouseButton(0) && !Input.GetMouseButton(1) && songObject != null)
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor && !Input.GetMouseButton(0) && !Input.GetMouseButton(1) && songObject != null 
+            && (Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.Eraser))
         {
             List<GameObject> songObjects = new List<GameObject>();
 

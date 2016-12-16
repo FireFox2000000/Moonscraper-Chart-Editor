@@ -383,6 +383,7 @@ public class ChartEditor : MonoBehaviour {
             currentSong = backup;
             Debug.LogError(e.Message);
 
+            // Immediate exit
             yield break;
         }
 
@@ -408,6 +409,10 @@ public class ChartEditor : MonoBehaviour {
             Debug.Log("Loading audio...");
             yield return null;
         }
+
+        // Reset audioSources upon successfull load
+        foreach (AudioSource source in musicSources)
+            source.clip = null;
 
         if (currentSong.musicStream != null)
         {

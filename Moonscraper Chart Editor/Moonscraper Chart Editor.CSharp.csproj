@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Advanced INI Parser\INIParser.cs" />
+    <Compile Include="Assets\Scripts\BillboardingXAxis.cs" />
     <Compile Include="Assets\Scripts\ChartEditor.cs" />
     <Compile Include="Assets\Scripts\Charts\Chart.cs" />
     <Compile Include="Assets\Scripts\Charts\ChartObject.cs" />
@@ -131,6 +132,7 @@
   <ItemGroup>
     <None Include="Assets\Shaders\GHRenderOrder.shader" />
     <None Include="Assets\Shaders\ShinySprites.shader" />
+    <None Include="Assets\Shaders\Silhouetted Outline.shader" />
     <None Include="Assets\Shaders\SpriteGlow.shader" />
     <None Include="Assets\Shaders\Sprites-Default-HDR.shader" />
     <None Include="Assets\Shaders\Sprites-Default.shader" />

@@ -11,7 +11,7 @@
   PreviewEnd = 0
   Genre = "rock"
   MediaType = "cd"
-  MusicStream = "E:/Alex's stuff/GH3 Customs/FeedBack0.97b/Songs/Endless Rebirth/ENDLESS REBIRTH.ogg"
+  MusicStream = "E:\Alex's stuff\GH3 Customs\FeedBack0.97b\Songs\Endless Rebirth\ENDLESS REBIRTH.ogg"
 }
 [SyncTrack]
 {
@@ -80,7 +80,7 @@
   1120 = N 6 0 
   1136 = N 1 0
   1136 = N 6 0 
-  1152 = N 3 96
+  1152 = N 3 0
   1152 = N 6 0 
   1184 = N 2 0
   1184 = N 6 0 

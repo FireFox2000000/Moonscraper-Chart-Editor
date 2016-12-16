@@ -251,18 +251,26 @@ public class NoteController : SongObjectController {
                 transform.position = new Vector3(CHART_CENTER_POS + (int)note.fret_type - 2, note.worldYPosition, 0);
             else
                 transform.position = new Vector3(CHART_CENTER_POS, note.worldYPosition, 0);
-            
+
             // Note Type
-            if (note.fret_type != Note.Fret_Type.OPEN && (note.flags & Note.Flags.TAP) == Note.Flags.TAP)
+            if (Globals.viewMode == Globals.ViewMode.Chart)
             {
-                noteType = Note.Note_Type.TAP;
+                if (note.fret_type != Note.Fret_Type.OPEN && (note.flags & Note.Flags.TAP) == Note.Flags.TAP)
+                {
+                    noteType = Note.Note_Type.TAP;
+                }
+                else
+                {
+                    if (IsHopo)
+                        noteType = Note.Note_Type.HOPO;
+                    else
+                        noteType = Note.Note_Type.STRUM;
+                }
             }
             else
             {
-                if (IsHopo)
-                    noteType = Note.Note_Type.HOPO;
-                else
-                    noteType = Note.Note_Type.STRUM;
+                // Do this simply because the HOPO glow by itself looks pretty cool
+                noteType = Note.Note_Type.HOPO;
             }
 
             // Star power?
@@ -302,13 +310,13 @@ public class NoteController : SongObjectController {
                     break;
             }
 #else
+            // Visuals
             // Update mesh
-            
             if (note.fret_type == Note.Fret_Type.OPEN)
                 meshFilter.sharedMesh = Globals.openModel.sharedMesh;
             else
                 meshFilter.sharedMesh = Globals.standardModel.sharedMesh;
-
+ 
             Material[] materials;
             switch (noteType)
             {
