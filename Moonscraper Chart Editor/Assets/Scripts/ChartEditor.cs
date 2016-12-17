@@ -17,6 +17,8 @@ public class ChartEditor : MonoBehaviour {
     public GameObject notePrefab;
     public GameObject starpowerPrefab;
     public GameObject sectionPrefab;
+    public GameObject bpmPrefab;
+    public GameObject tsPrefab;
     [Header("Indicator Parents")]
     public GameObject guiIndicators;
     [Header("Song properties Display")]
@@ -98,9 +100,9 @@ public class ChartEditor : MonoBehaviour {
 
         // Create a default song
         currentSong = new Song();
-        editOccurred = false;
-
         currentChart = currentSong.expert_single;
+
+        editOccurred = false;
 
         musicSources = new AudioSource[3];
         for (int i = 0; i < musicSources.Length; ++i)
@@ -453,10 +455,25 @@ public class ChartEditor : MonoBehaviour {
             // Attach the note to the object
             SectionController controller = CreateSectionObject(song.sections[i]);
             
-            controller.UpdateSongObject();
-            
+            controller.UpdateSongObject(); 
         }
-        
+
+        for (int i = 0; i < song.bpms.Length; ++i)
+        {
+            // Attach the note to the object
+            BPMController controller = CreateBPMObject(song.bpms[i]);
+
+            controller.UpdateSongObject();
+        }
+
+        for (int i = 0; i < song.timeSignatures.Length; ++i)
+        {
+            // Attach the note to the object
+            TimesignatureController controller = CreateTSObject(song.timeSignatures[i]);
+
+            controller.UpdateSongObject();
+        }
+
         return songObjectParent;
     }
 
@@ -467,6 +484,26 @@ public class ChartEditor : MonoBehaviour {
 
         // Link controller and note together
         controller.Init(section, timeHandler, guiIndicators);
+        return controller;
+    }
+
+    public BPMController CreateBPMObject(BPM bpm)
+    {
+        // Attach the note to the object
+        BPMController controller = CreateSongObject(this.bpmPrefab).GetComponent<BPMController>();
+
+        // Link controller and note together
+        controller.Init(bpm);
+        return controller;
+    }
+
+    public TimesignatureController CreateTSObject(TimeSignature ts)
+    {
+        // Attach the note to the object
+        TimesignatureController controller = CreateSongObject(this.tsPrefab).GetComponent<TimesignatureController>();
+
+        // Link controller and note together
+        controller.Init(ts);
         return controller;
     }
 

@@ -89,6 +89,7 @@
     <Compile Include="Assets\Scripts\Controllers\NotePropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\Controllers\SectionPropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\Controllers\SelectedHighlightController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Song Objects\BPMController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\NoteController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SectionController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SectionGuiController.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Assets\Scripts\Controllers\Song Objects\StarpowerTailController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\StrikelineAudioController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SustainController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Song Objects\TimesignatureController.cs" />
     <Compile Include="Assets\Scripts\Controllers\TimelineMovementController.cs" />
     <Compile Include="Assets\Scripts\DialogBox.cs" />
     <Compile Include="Assets\Scripts\FretboardWrapMovement.cs" />
