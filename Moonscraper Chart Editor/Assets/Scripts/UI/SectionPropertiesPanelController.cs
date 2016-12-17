@@ -2,10 +2,8 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class SectionPropertiesPanelController : MonoBehaviour {
-
+public class SectionPropertiesPanelController : PropertiesPanelController {
     public Section currentSection;
-    public Text positionText;
     public InputField sectionName;
 
     void Update()

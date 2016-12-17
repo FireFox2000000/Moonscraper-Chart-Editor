@@ -86,8 +86,6 @@
     <Compile Include="Assets\Scripts\Controllers\HighwayController.cs" />
     <Compile Include="Assets\Scripts\Controllers\HoverHighlightController.cs" />
     <Compile Include="Assets\Scripts\Controllers\MovementController.cs" />
-    <Compile Include="Assets\Scripts\Controllers\NotePropertiesPanelController.cs" />
-    <Compile Include="Assets\Scripts\Controllers\SectionPropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\Controllers\SelectedHighlightController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\BPMController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\NoteController.cs" />
@@ -124,10 +122,15 @@
     <Compile Include="Assets\Scripts\Tools\ToolObject.cs" />
     <Compile Include="Assets\Scripts\Tools\Toolpane.cs" />
     <Compile Include="Assets\Scripts\Tools\ToolpaneButtonController.cs" />
+    <Compile Include="Assets\Scripts\UI\BPMPropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\DisplayMenu.cs" />
     <Compile Include="Assets\Scripts\UI\DropDownMenu.cs" />
     <Compile Include="Assets\Scripts\UI\FPSDisplay.cs" />
+    <Compile Include="Assets\Scripts\UI\NotePropertiesPanelController.cs" />
+    <Compile Include="Assets\Scripts\UI\PropertiesPanelController.cs" />
+    <Compile Include="Assets\Scripts\UI\SectionPropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\SongPropertiesPanelController.cs" />
+    <Compile Include="Assets\Scripts\UI\TimesignaturePropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\Utility.cs" />
     <Compile Include="Assets\_MK\_MKGlow\_Internal\MKGlow.cs" />
   </ItemGroup>

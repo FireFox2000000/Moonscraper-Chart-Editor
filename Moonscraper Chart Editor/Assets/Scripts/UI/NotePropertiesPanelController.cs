@@ -2,12 +2,11 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class NotePropertiesPanelController : MonoBehaviour {
+public class NotePropertiesPanelController : PropertiesPanelController {
 
     public Note currentNote;
 
     public Text fretText;
-    public Text positionText;
 
     public Toggle tapToggle;
     public Toggle forcedToggle;
