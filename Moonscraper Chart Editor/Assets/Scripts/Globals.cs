@@ -223,7 +223,7 @@ public class Globals : MonoBehaviour {
             if (Input.GetKeyDown("s"))
                 editor.Save();
             else if (Input.GetKeyDown("o"))
-                editor.LoadSong();
+                editor.Load();
         }
 
         if (Input.GetButtonDown("PlayPause"))

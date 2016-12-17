@@ -34,4 +34,23 @@ public class TimesignatureController : SongObjectController {
             Destroy(gameObject);
         }
     }
+
+    public override void OnSelectableMouseDrag()
+    {
+        // Move note
+        if (ts.position != 0 && Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
+        {
+            // Pass note data to a ghost note
+            /*
+            GameObject moveTS = Instantiate(editor.ghostTimesignature);
+            moveTS.SetActive(true);
+
+            moveTS.name = "Moving Timesignature";
+            Destroy(moveTS.GetComponent<PlaceTS>());
+            moveTS movement = moveBPM.AddComponent<MoveTS>();
+            movement.Init(ts);
+
+            Delete();*/
+        }
+    }
 }

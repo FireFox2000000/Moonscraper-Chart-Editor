@@ -27,11 +27,31 @@ public class BPMController : SongObjectController {
 
     public override void Delete()
     {
+        // First bpm cannot be removed, block the functionality
         if (bpm.position != 0)
         {
             bpm.song.Remove(bpm);
 
             Destroy(gameObject);
+        }
+    }
+
+    public override void OnSelectableMouseDrag()
+    {
+        // Move note
+        if (bpm.position != 0 && Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
+        {
+            // Pass note data to a ghost note
+            /*
+            GameObject moveBPM = Instantiate(editor.ghostBPM);
+            moveBPM.SetActive(true);
+
+            moveBPM.name = "Moving BPM";
+            Destroy(moveBPM.GetComponent<PlaceBPM>());
+            MoveBPM movement = moveBPM.AddComponent<MoveBPM>();
+            movement.Init(bpm);
+
+            Delete();*/
         }
     }
 }

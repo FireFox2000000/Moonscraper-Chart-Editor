@@ -99,8 +99,7 @@ public class ChartEditor : MonoBehaviour {
         chartObjectParent.tag = "Chart Object";
 
         // Create a default song
-        currentSong = new Song();
-        currentChart = currentSong.expert_single;
+        NewSong();
 
         editOccurred = false;
 
@@ -226,16 +225,18 @@ public class ChartEditor : MonoBehaviour {
         */
     }
 
-    public void New()
+    public void NewSong()
     {
+        currentSong = new Song();
 
+        LoadSong(currentSong);
     }
 
     // Wrapper function
-    public void LoadSong()
+    public void Load()
     {
         Stop();
-        StartCoroutine(_LoadSong());
+        StartCoroutine(_Load());
     }
 
     public void Save()
@@ -322,7 +323,7 @@ public class ChartEditor : MonoBehaviour {
             source.Stop();
     }
 
-    IEnumerator _LoadSong()
+    IEnumerator _Load()
     {
         Song backup = currentSong;
 #if TIMING_DEBUG
@@ -356,28 +357,7 @@ public class ChartEditor : MonoBehaviour {
                 throw new System.Exception("Could not open file");
             }        
 #endif
-#if TIMING_DEBUG
-            totalLoadTime = Time.realtimeSinceStartup;
-#endif
             editCheck();
-
-            // Wait for saving to complete just in case
-            while (currentSong.IsSaving) ;    
-
-            currentSong = new Song(currentFileName);
-            editOccurred = false;
-
-#if TIMING_DEBUG
-            Debug.Log("File load time: " + (Time.realtimeSinceStartup - totalLoadTime));
-#endif
-            foreach (Transform songObject in songObjectParent.transform)
-            {
-                Destroy(songObject.gameObject);
-            }
-            foreach (Transform child in guiIndicators.transform)
-            {
-                Destroy(child.gameObject);
-            }
         }
         catch (System.Exception e)
         {
@@ -389,41 +369,69 @@ public class ChartEditor : MonoBehaviour {
             yield break;
         }
 
+        // Wait for saving to complete just in case
+        while (currentSong.IsSaving) ;
+
+#if TIMING_DEBUG
+        totalLoadTime = Time.realtimeSinceStartup;
+#endif
+        currentSong = new Song(currentFileName);
+        editOccurred = false;
+
+#if TIMING_DEBUG
+        Debug.Log("File load time: " + (Time.realtimeSinceStartup - totalLoadTime));
+#endif
+
+        // Wait for audio to fully load
         while (currentSong.IsAudioLoading)
             yield return null;
+
+        lastLoadedFile = currentFileName;
+
+        LoadSong(currentSong);
+
+#if TIMING_DEBUG
+        Debug.Log("Total load time: " + (Time.realtimeSinceStartup - totalLoadTime));
+#endif
+    }
+
+    void LoadSong(Song song)
+    {
+        editOccurred = false;
+
+        // Clear the previous song in the game-view
+        foreach (Transform songObject in songObjectParent.transform)
+        {
+            Destroy(songObject.gameObject);
+        }
+        foreach (Transform child in guiIndicators.transform)
+        {
+            Destroy(child.gameObject);
+        }
 
 #if TIMING_DEBUG
         float objectLoadTime = Time.realtimeSinceStartup;
 #endif
         // Create the song objects
-        CreateSongObjects(currentSong);
+        CreateSongObjects(song);
 
 #if TIMING_DEBUG
         Debug.Log("Song objects load time: " + (Time.realtimeSinceStartup - objectLoadTime));
 #endif
-        // Load the default chart
-        LoadChart(currentSong.expert_single);
 
-        lastLoadedFile = currentFileName;
-        
-        while (currentSong.musicStream != null && currentSong.musicStream.loadState != AudioDataLoadState.Loaded)
-        {
-            Debug.Log("Loading audio...");
-            yield return null;
-        }
+        // Load the default chart
+        LoadChart(song.expert_single);
 
         // Reset audioSources upon successfull load
         foreach (AudioSource source in musicSources)
             source.clip = null;
 
+        // Load audio
         if (currentSong.musicStream != null)
         {
             SetAudioSources();
             movement.SetPosition(0);
         }
-#if TIMING_DEBUG
-        Debug.Log("Total load time: " + (Time.realtimeSinceStartup - totalLoadTime));
-#endif
     }
 
     // Chart should be part of the current song
