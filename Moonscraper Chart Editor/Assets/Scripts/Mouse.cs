@@ -21,25 +21,6 @@ public class Mouse : MonoBehaviour {
     Vector2 initMouseDragPos = Vector2.zero;
 	// Update is called once per frame
 	void Update () {
-        
-        if (Globals.viewMode == Globals.ViewMode.Chart)
-        {
-            // Configure camera to ignore song
-            camera2D.cullingMask |= 1 << LayerMask.NameToLayer("ChartObject");
-            camera2D.cullingMask &= ~(1 << LayerMask.NameToLayer("SongObject"));
-
-            camera3D.cullingMask |= 1 << LayerMask.NameToLayer("ChartObject");
-            camera3D.cullingMask &= ~(1 << LayerMask.NameToLayer("SongObject"));
-        }
-        else
-        {
-            // Configure camera to ignore chart
-            camera2D.cullingMask |= 1 << LayerMask.NameToLayer("SongObject");
-            camera2D.cullingMask &= ~(1 << LayerMask.NameToLayer("ChartObject"));
-
-            camera3D.cullingMask |= 1 << LayerMask.NameToLayer("SongObject");
-            camera3D.cullingMask &= ~(1 << LayerMask.NameToLayer("ChartObject"));
-        }
 
         GameObject objectUnderMouse = GetSelectableObjectUnderMouse();
         Vector2 viewportPos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
