@@ -27,6 +27,8 @@ public class ChartEditor : MonoBehaviour {
     [Header("Inspectors")]
     public NotePropertiesPanelController noteInspector;
     public SectionPropertiesPanelController sectionInspector;
+    public BPMPropertiesPanelController bpmInspector;
+    public TimesignaturePropertiesPanelController tsInspector;
     [Header("Tool prefabs")]
     public GameObject ghostNote;
     public GameObject ghostStarpower;
@@ -88,6 +90,8 @@ public class ChartEditor : MonoBehaviour {
 
         noteInspector.gameObject.SetActive(false);
         sectionInspector.gameObject.SetActive(false);
+        bpmInspector.gameObject.SetActive(false);
+        tsInspector.gameObject.SetActive(false);
 
         // Create grouping objects to make reading the inspector easier
         songObjectParent = new GameObject();
@@ -99,7 +103,8 @@ public class ChartEditor : MonoBehaviour {
         chartObjectParent.tag = "Chart Object";
 
         // Create a default song
-        NewSong();
+        currentSong = new Song();
+        LoadSong(currentSong);
 
         editOccurred = false;
 
@@ -145,6 +150,14 @@ public class ChartEditor : MonoBehaviour {
                 case ((int)SongObject.ID.Section):
                     sectionInspector.currentSection = (Section)currentSelectedObject;
                     currentPropertiesPanel = sectionInspector.gameObject;
+                    break;
+                case ((int)SongObject.ID.BPM):
+                    bpmInspector.currentBPM = (BPM)currentSelectedObject;
+                    currentPropertiesPanel = bpmInspector.gameObject;
+                    break;
+                case ((int)SongObject.ID.TimeSignature):
+                    tsInspector.currentTS = (TimeSignature)currentSelectedObject;
+                    currentPropertiesPanel = tsInspector.gameObject;
                     break;
                 default:
                     currentPropertiesPanel = null;
@@ -227,6 +240,7 @@ public class ChartEditor : MonoBehaviour {
 
     public void NewSong()
     {
+        // Prompt user to select an audio file
         currentSong = new Song();
 
         LoadSong(currentSong);

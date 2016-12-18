@@ -21,7 +21,7 @@ public class BPMController : SongObjectController {
         {
             transform.position = new Vector3(CHART_CENTER_POS + position, bpm.worldYPosition, 0);
 
-            bpmText.text = ((float)bpm.value / 1000.0f).ToString();
+            bpmText.text = "BPM: " + ((float)bpm.value / 1000.0f).ToString();
         }
     }
 
