@@ -71,6 +71,6 @@ public class Toolpane : MonoBehaviour {
 
     public enum Tools
     {
-        Cursor, Eraser, Note, Starpower, Section
+        Cursor, Eraser, Note, Starpower, ChartEvent, BPM, Timesignature, Section, SongEvent
     }
 }

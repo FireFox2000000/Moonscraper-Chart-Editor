@@ -91,6 +91,8 @@ public class Globals : MonoBehaviour {
     [Header("Misc.")]
     [SerializeField]
     AudioSource clapSource;
+    [SerializeField]
+    Button defaultViewSwitchButton;
 
     public bool InToolArea
     {
@@ -317,12 +319,28 @@ public class Globals : MonoBehaviour {
     public void ToggleSongViewMode(bool value)
     {
         if (value)
+        {
             viewMode = ViewMode.Song;
+
+            if (Toolpane.currentTool == Toolpane.Tools.Note || Toolpane.currentTool == Toolpane.Tools.Starpower || Toolpane.currentTool == Toolpane.Tools.ChartEvent)
+            {
+                defaultViewSwitchButton.onClick.Invoke();
+            }
+        }
         else
+        {
             viewMode = ViewMode.Chart;
+
+            if (Toolpane.currentTool == Toolpane.Tools.BPM || Toolpane.currentTool == Toolpane.Tools.Timesignature || Toolpane.currentTool == Toolpane.Tools.Section || Toolpane.currentTool == Toolpane.Tools.SongEvent)
+            {
+                defaultViewSwitchButton.onClick.Invoke();
+            }
+        }
 
         if (viewModeToggle.isOn != value)
             viewModeToggle.isOn = value;
+
+
 
         editor.currentSelectedObject = null;
     }
