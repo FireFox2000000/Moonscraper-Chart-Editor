@@ -478,6 +478,8 @@ public class TimeSignature : SyncTrack
 
     public TimeSignature(Song song, uint _position = 0, uint _value = 4) : base (song, _position, _value) {}
 
+    public TimeSignature(TimeSignature ts) : base(ts.song, ts.position, ts.value) { }
+
     override public string GetSaveString()
     {
         //0 = TS 4
@@ -497,6 +499,8 @@ public class BPM : SyncTrack
     public override int classID { get { return _classID; } }
 
     public BPM(Song song, uint _position = 0, uint _value = 120000) : base (song, _position, _value) { }
+
+    public BPM(BPM _bpm) : base(_bpm.song, _bpm.position, _bpm.value) { }
 
     override public string GetSaveString()
     {

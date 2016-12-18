@@ -128,6 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\GHRenderOrder.shader" />
+    <None Include="Assets\Shaders\Glass.shader" />
     <None Include="Assets\Shaders\ShinySprites.shader" />
     <None Include="Assets\Shaders\Silhouetted Outline.shader" />
     <None Include="Assets\Shaders\SpriteGlow.shader" />
