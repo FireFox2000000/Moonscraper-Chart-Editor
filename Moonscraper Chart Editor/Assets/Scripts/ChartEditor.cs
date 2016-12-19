@@ -33,6 +33,8 @@ public class ChartEditor : MonoBehaviour {
     public GameObject ghostNote;
     public GameObject ghostStarpower;
     public GameObject ghostSection;
+    public GameObject ghostBPM;
+    public GameObject ghostTimeSignature;
     [Header("Misc.")]
     public UnityEngine.UI.Button play;
     public Transform strikeline;

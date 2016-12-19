@@ -41,16 +41,15 @@ public class TimesignatureController : SongObjectController {
         if (ts.position != 0 && Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
         {
             // Pass note data to a ghost note
-            /*
-            GameObject moveTS = Instantiate(editor.ghostTimesignature);
+            GameObject moveTS = Instantiate(editor.ghostTimeSignature);
             moveTS.SetActive(true);
 
             moveTS.name = "Moving Timesignature";
-            Destroy(moveTS.GetComponent<PlaceTS>());
-            moveTS movement = moveBPM.AddComponent<MoveTS>();
+            Destroy(moveTS.GetComponent<PlaceTimesignature>());
+            MoveTimeSignature movement = moveTS.AddComponent<MoveTimeSignature>();
             movement.Init(ts);
 
-            Delete();*/
+            Delete();
         }
     }
 }

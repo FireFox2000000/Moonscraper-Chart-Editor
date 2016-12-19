@@ -5,6 +5,7 @@ using System;
 [RequireComponent(typeof(NoteController))]
 public class PlaceNote : PlaceSongObject {
     public Note note { get { return (Note)songObject; } set { songObject = value; } }
+    new public NoteController controller { get { return (NoteController)base.controller; } set { base.controller = value; } }
 
     [HideInInspector]
     public float horizontalMouseOffset = 0;
@@ -15,7 +16,7 @@ public class PlaceNote : PlaceSongObject {
         note = new Note(editor.currentSong, editor.currentChart, 0, Note.Fret_Type.GREEN);
 
         controller = GetComponent<NoteController>();
-        ((NoteController)controller).note = note;
+        controller.note = note;
     }
 
     protected override void Controls()

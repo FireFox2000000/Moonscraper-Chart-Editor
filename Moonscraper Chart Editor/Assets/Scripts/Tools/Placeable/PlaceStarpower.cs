@@ -5,6 +5,7 @@ using System;
 [RequireComponent(typeof(StarpowerController))]
 public class PlaceStarpower : PlaceSongObject {
     public StarPower starpower { get { return (StarPower)songObject; } set { songObject = value; } }
+    new public StarpowerController controller { get { return (StarpowerController)base.controller; } set { base.controller = value; } }
 
     protected override void Awake()
     {
@@ -12,7 +13,7 @@ public class PlaceStarpower : PlaceSongObject {
         starpower = new StarPower(editor.currentSong, editor.currentChart, 0, 0);
 
         controller = GetComponent<StarpowerController>();
-        ((StarpowerController)controller).starpower = starpower;
+        controller.starpower = starpower;
     }
 
     protected override void Controls()

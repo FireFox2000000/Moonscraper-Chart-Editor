@@ -3,6 +3,7 @@ using System.Collections;
 
 public class PlaceTimesignature : PlaceSongObject {
     public TimeSignature ts { get { return (TimeSignature)songObject; } set { songObject = value; } }
+    new public TimesignatureController controller { get { return (TimesignatureController)base.controller; } set { base.controller = value; } }
 
     protected override void Awake()
     {
@@ -10,7 +11,7 @@ public class PlaceTimesignature : PlaceSongObject {
         ts = new TimeSignature(editor.currentSong);
 
         controller = GetComponent<TimesignatureController>();
-        ((TimesignatureController)controller).ts = ts;
+        controller.ts = ts;
     }
 
     protected override void Controls()

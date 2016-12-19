@@ -4,6 +4,7 @@ using System;
 
 public class PlaceSection : PlaceSongObject {
     public Section section { get { return (Section)songObject; } set { songObject = value; } }
+    new public SectionController controller { get { return (SectionController)base.controller; } set { base.controller = value; } }
 
     protected override void Awake()
     {
@@ -11,7 +12,7 @@ public class PlaceSection : PlaceSongObject {
         section = new Section(editor.currentSong, "Default", 0);
 
         controller = GetComponent<SectionController>();
-        ((SectionController)controller).section = section;
+        controller.section = section;
     }
 
     protected override void Controls()

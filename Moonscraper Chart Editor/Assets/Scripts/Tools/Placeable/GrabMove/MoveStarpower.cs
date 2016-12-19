@@ -5,18 +5,13 @@ public class MoveStarpower : PlaceStarpower {
 
     protected override void Controls()
     {
-        if (Input.GetMouseButtonUp(0))
-        {
-            AddObject();
-
-            Destroy(gameObject);
-        }
+        MovementControls();
     }
 
     public void Init(StarPower starpower)
     {
         this.starpower = starpower;
-        GetComponent<StarpowerController>().Init(starpower);
+        controller.Init(starpower);
     }
 
     protected override void Update()

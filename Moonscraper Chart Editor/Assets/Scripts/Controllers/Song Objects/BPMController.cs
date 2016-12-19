@@ -41,8 +41,7 @@ public class BPMController : SongObjectController {
         // Move note
         if (bpm.position != 0 && Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
         {
-            // Pass note data to a ghost note
-            /*
+            // Pass note data to a ghost bpm
             GameObject moveBPM = Instantiate(editor.ghostBPM);
             moveBPM.SetActive(true);
 
@@ -51,7 +50,7 @@ public class BPMController : SongObjectController {
             MoveBPM movement = moveBPM.AddComponent<MoveBPM>();
             movement.Init(bpm);
 
-            Delete();*/
+            Delete();
         }
     }
 }

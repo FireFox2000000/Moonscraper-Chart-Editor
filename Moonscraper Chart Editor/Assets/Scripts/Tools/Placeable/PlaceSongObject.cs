@@ -25,4 +25,14 @@ public abstract class PlaceSongObject : ToolObject {
     }
 
     protected abstract void AddObject();
+
+    protected void MovementControls()
+    {
+        if (Input.GetMouseButtonUp(0))
+        {
+            AddObject();
+
+            Destroy(gameObject);
+        }
+    }
 }

@@ -5,18 +5,13 @@ public class MoveNote : PlaceNote {
 
     protected override void Controls()
     {
-        if (Input.GetMouseButtonUp(0))
-        {
-            AddObject();
-
-            Destroy(gameObject);
-        }
+        MovementControls();
     }
 
     public void Init(Note note)
     {
         this.note = new Note (note);
-        ((NoteController)controller).Init(this.note);
+        controller.Init(this.note);
         editor.currentSelectedObject = this.note;
     }
 
