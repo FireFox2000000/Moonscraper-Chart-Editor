@@ -2,9 +2,8 @@
 using System.Collections;
 using System;
 
-public class PlaceBPM : ToolObject {
-    protected BPM bpm;
-    BPMController controller;
+public class PlaceBPM : PlaceSongObject {
+    public BPM bpm { get { return (BPM)songObject; } set { songObject = value; } }
 
     protected override void Awake()
     {
@@ -12,16 +11,7 @@ public class PlaceBPM : ToolObject {
         bpm = new BPM(editor.currentSong);
 
         controller = GetComponent<BPMController>();
-        controller.bpm = bpm;
-    }
-
-    // Update is called once per frame
-    protected override void Update()
-    {
-        base.Update();
-
-        bpm.song = editor.currentSong;
-        bpm.position = objectSnappedChartPos;
+        ((BPMController)controller).bpm = bpm;
     }
 
     protected override void Controls()
@@ -30,16 +20,6 @@ public class PlaceBPM : ToolObject {
         {
             AddObject();
         }
-    }
-
-    public override void ToolDisable()
-    {
-        editor.currentSelectedObject = null;
-    }
-
-    void OnEnable()
-    {
-        Update();
     }
 
     protected override void AddObject()

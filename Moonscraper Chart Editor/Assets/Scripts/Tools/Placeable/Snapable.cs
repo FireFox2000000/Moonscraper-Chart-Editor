@@ -45,8 +45,6 @@ public abstract class Snapable : MonoBehaviour {
         Controls();
     }
 
-    protected abstract void AddObject();
-
     public static uint ChartPositionToSnappedChartPosition(uint chartPosition, int step, float resolution)
     {
         // Snap position based on step

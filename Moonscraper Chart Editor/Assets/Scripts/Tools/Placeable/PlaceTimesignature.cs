@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlaceTimesignature : ToolObject {
-
-    protected TimeSignature ts;
-    TimesignatureController controller;
+public class PlaceTimesignature : PlaceSongObject {
+    public TimeSignature ts { get { return (TimeSignature)songObject; } set { songObject = value; } }
 
     protected override void Awake()
     {
@@ -12,16 +10,7 @@ public class PlaceTimesignature : ToolObject {
         ts = new TimeSignature(editor.currentSong);
 
         controller = GetComponent<TimesignatureController>();
-        controller.ts = ts;
-    }
-
-    // Update is called once per frame
-    protected override void Update()
-    {
-        base.Update();
-
-        ts.song = editor.currentSong;
-        ts.position = objectSnappedChartPos;
+        ((TimesignatureController)controller).ts = ts;
     }
 
     protected override void Controls()
@@ -32,21 +21,13 @@ public class PlaceTimesignature : ToolObject {
         }
     }
 
-    public override void ToolDisable()
-    {
-        editor.currentSelectedObject = null;
-    }
-
-    void OnEnable()
-    {
-        Update();
-    }
-
     protected override void AddObject()
     {
         TimeSignature tsToAdd = new TimeSignature(ts);
         editor.currentSong.Add(tsToAdd);
         editor.CreateTSObject(tsToAdd);
+
+        // Only show the panel once the object has been placed down
         editor.currentSelectedObject = tsToAdd;
     }
 }

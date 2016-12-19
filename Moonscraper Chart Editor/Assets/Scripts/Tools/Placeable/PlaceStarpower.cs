@@ -3,9 +3,8 @@ using System.Collections;
 using System;
 
 [RequireComponent(typeof(StarpowerController))]
-public class PlaceStarpower : ToolObject {
-    protected StarPower starpower;
-    StarpowerController controller;
+public class PlaceStarpower : PlaceSongObject {
+    public StarPower starpower { get { return (StarPower)songObject; } set { songObject = value; } }
 
     protected override void Awake()
     {
@@ -13,7 +12,7 @@ public class PlaceStarpower : ToolObject {
         starpower = new StarPower(editor.currentSong, editor.currentChart, 0, 0);
 
         controller = GetComponent<StarpowerController>();
-        controller.starpower = starpower;
+        ((StarpowerController)controller).starpower = starpower;
     }
 
     protected override void Controls()
@@ -27,19 +26,11 @@ public class PlaceStarpower : ToolObject {
     // Update is called once per frame
     protected override void Update()
     {
-        base.Update();
-
-        starpower.song = editor.currentSong;
         starpower.chart = editor.currentChart;
-        starpower.position = objectSnappedChartPos;
+        base.Update();       
     }
 
-    public override void ToolDisable()
-    {
-        editor.currentSelectedObject = null;
-    }
-
-    void OnEnable()
+    protected override void OnEnable()
     {
         editor.currentSelectedObject = starpower;
         Update();

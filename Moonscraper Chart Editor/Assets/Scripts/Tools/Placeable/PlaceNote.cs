@@ -3,9 +3,8 @@ using System.Collections;
 using System;
 
 [RequireComponent(typeof(NoteController))]
-public class PlaceNote : ToolObject {
-    public Note note;
-    protected NoteController controller;
+public class PlaceNote : PlaceSongObject {
+    public Note note { get { return (Note)songObject; } set { songObject = value; } }
 
     [HideInInspector]
     public float horizontalMouseOffset = 0;
@@ -16,7 +15,7 @@ public class PlaceNote : ToolObject {
         note = new Note(editor.currentSong, editor.currentChart, 0, Note.Fret_Type.GREEN);
 
         controller = GetComponent<NoteController>();
-        controller.note = note;
+        ((NoteController)controller).note = note;
     }
 
     protected override void Controls()
@@ -27,12 +26,7 @@ public class PlaceNote : ToolObject {
         }
     }
 
-    public override void ToolDisable()
-    {
-        editor.currentSelectedObject = null;
-    }
-
-    protected virtual void OnEnable()
+    protected override void OnEnable()
     {
         editor.currentSelectedObject = note;
         Update();
@@ -46,11 +40,8 @@ public class PlaceNote : ToolObject {
 
     // Update is called once per frame
     protected override void Update () {
-        base.Update();
-
-        note.song = editor.currentSong;
         note.chart = editor.currentChart;
-        note.position = objectSnappedChartPos;
+        base.Update();
 
         // Get previous and next note
         int pos = SongObject.FindClosestPosition(note.position, editor.currentChart.notes);

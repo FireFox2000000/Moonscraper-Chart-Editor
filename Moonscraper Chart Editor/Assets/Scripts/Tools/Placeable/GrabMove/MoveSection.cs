@@ -15,14 +15,15 @@ public class MoveSection : PlaceSection {
 
     public void Init(Section section)
     {
-        this.section = section;
-        GetComponent<SectionController>().section = section;
+        this.songObject = section;
+        ((SectionController)controller).section = section;
         editor.currentSelectedObject = section;
+        ((SectionController)controller).sectionText.text = section.title;       // Fixes 1-frame text mutation
     }
 
     protected override void AddObject()
     {
-        Section sectionToAdd = new Section(section);
+        Section sectionToAdd = new Section((Section)songObject);
         editor.currentSong.Add(sectionToAdd);
         editor.CreateSectionObject(sectionToAdd);
         editor.currentSelectedObject = sectionToAdd;

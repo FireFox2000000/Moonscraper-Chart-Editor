@@ -2,9 +2,8 @@
 using System.Collections;
 using System;
 
-public class PlaceSection : ToolObject {
-    protected Section section;
-    SectionController controller;
+public class PlaceSection : PlaceSongObject {
+    public Section section { get { return (Section)songObject; } set { songObject = value; } }
 
     protected override void Awake()
     {
@@ -12,16 +11,7 @@ public class PlaceSection : ToolObject {
         section = new Section(editor.currentSong, "Default", 0);
 
         controller = GetComponent<SectionController>();
-        controller.section = section;
-    }
-
-    // Update is called once per frame
-    protected override void Update()
-    {
-        base.Update();
-
-        section.song = editor.currentSong;
-        section.position = objectSnappedChartPos;
+        ((SectionController)controller).section = section;
     }
 
     protected override void Controls()
@@ -32,17 +22,6 @@ public class PlaceSection : ToolObject {
         }
     }
 
-    public override void ToolDisable()
-    {
-        editor.currentSelectedObject = null;
-    }
-
-    void OnEnable()
-    {
-        //editor.currentSelectedObject = section;
-        Update();
-    }
-
     protected override void AddObject()
     {
         Section sectionToAdd = new Section(section);
@@ -50,5 +29,4 @@ public class PlaceSection : ToolObject {
         editor.CreateSectionObject(sectionToAdd);
         editor.currentSelectedObject = sectionToAdd;
     }
-
 }
