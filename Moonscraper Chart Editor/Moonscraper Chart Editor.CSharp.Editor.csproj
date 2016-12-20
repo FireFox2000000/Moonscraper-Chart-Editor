@@ -274,6 +274,7 @@
     <None Include="Assets\_MK\_MKGlow\_Shader\_MKGlowEffect\MKGlowBlurVHP.shader" />
     <None Include="Assets\_MK\_MKGlow\_Shader\_MKGlowEffect\MKGlowCompose.shader" />
     <None Include="Assets\_MK\_MKGlow\_Shader\_MKGlowEffect\MKGlowRender.shader" />
+    <None Include="Assets\attribution.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
