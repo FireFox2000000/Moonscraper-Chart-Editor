@@ -4,18 +4,24 @@ using System.Collections;
 
 public class SettingsController : DisplayMenu
 {
-    public Toggle ClapOnOff;
-    public Toggle ClapStrum;
-    public Toggle ClapHopo;
-    public Toggle ClapTap;
+    public Toggle clapOnOff;
+    public Toggle clapStrum;
+    public Toggle clapHopo;
+    public Toggle clapTap;
+    public Toggle extendedSustainsToggle;
 
     protected override void OnEnable()
     {
         base.OnEnable();
 
-        initClapToggle(ClapStrum, Globals.ClapToggle.STRUM);
-        initClapToggle(ClapHopo, Globals.ClapToggle.HOPO);
-        initClapToggle(ClapTap, Globals.ClapToggle.TAP);
+        initClapToggle(clapStrum, Globals.ClapToggle.STRUM);
+        initClapToggle(clapHopo, Globals.ClapToggle.HOPO);
+        initClapToggle(clapTap, Globals.ClapToggle.TAP);
+
+        if (Globals.extendedSustainsEnabled)
+            extendedSustainsToggle.isOn = true;
+        else
+            extendedSustainsToggle.isOn = false;
     }  
 
     public void SetClapStrum(bool value)
@@ -31,6 +37,11 @@ public class SettingsController : DisplayMenu
     public void SetClapTap(bool value)
     {
         SetClapProperties(value, Globals.ClapToggle.TAP);
+    }
+
+    public void SetExtendedSustains(bool value)
+    {
+        Globals.extendedSustainsEnabled = value;
     }
 
     void initClapToggle(Toggle toggle, Globals.ClapToggle setting)

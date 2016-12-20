@@ -16,7 +16,7 @@ public class SustainController : SelectableClick {
         // Update sustain
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
-            if (Input.GetButton("ChordSelect"))
+            if (!Globals.extendedSustainsEnabled || Input.GetButton("ChordSelect"))
                 nCon.ChordSustainDrag();
             else
                 nCon.SustainDrag();

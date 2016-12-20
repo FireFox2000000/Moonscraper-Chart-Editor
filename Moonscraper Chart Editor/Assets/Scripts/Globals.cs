@@ -130,6 +130,7 @@ public class Globals : MonoBehaviour {
     public static int audioCalibrationMS = 100;                     // Increase to start the audio sooner
     public static ApplicationMode applicationMode = ApplicationMode.Editor;
     public static ViewMode viewMode { get; private set; }
+    public static bool extendedSustainsEnabled = false;
 
     ChartEditor editor;
     string workingDirectory;
@@ -146,6 +147,7 @@ public class Globals : MonoBehaviour {
         hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
         audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 100);
         clapProperties = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
+        extendedSustainsEnabled = iniparse.ReadValue("Settings", "Extended sustains", false);
         clapSetting = ClapToggle.NONE;
 
         // Audio levels
@@ -354,6 +356,8 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Settings", "Hyperspeed", hyperspeed);
         iniparse.WriteValue("Settings", "Audio calibration", audioCalibrationMS);
         iniparse.WriteValue("Settings", "Clap", (int)clapProperties);
+        iniparse.WriteValue("Settings", "Extended sustains", extendedSustainsEnabled);
+
         // Audio levels
         iniparse.WriteValue("Audio Volume", "Music Stream", editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume);
         iniparse.WriteValue("Audio Volume", "Guitar Stream", editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume);

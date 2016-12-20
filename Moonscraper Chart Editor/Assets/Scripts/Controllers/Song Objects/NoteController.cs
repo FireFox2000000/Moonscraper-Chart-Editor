@@ -79,7 +79,7 @@ public class NoteController : SongObjectController {
         }
         else if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
-            if (Input.GetButton("ChordSelect"))
+            if (!Globals.extendedSustainsEnabled || Input.GetButton("ChordSelect"))
                 ChordSustainDrag();
             else
                 SustainDrag();
@@ -362,6 +362,7 @@ public class NoteController : SongObjectController {
 
         if (nextFret != null)
         {
+            // Cap sustain length
             if (nextFret.position < note.position)
                 note.sustain_length = 0;
             else if (note.position + note.sustain_length > nextFret.position)
@@ -447,12 +448,24 @@ public class NoteController : SongObjectController {
     {
         Note next = note.next;
 
+
         while (next != null)
         {
-            if (next.fret_type == Note.Fret_Type.OPEN || (next.fret_type == note.fret_type && note.position + note.sustain_length > next.position))
-                return next;
-            else if (next.position >= note.position + note.sustain_length)
-                return null;
+            if (Globals.extendedSustainsEnabled)
+            {
+                if (next.fret_type == Note.Fret_Type.OPEN || (next.fret_type == note.fret_type && note.position + note.sustain_length > next.position))
+                    return next;
+                else if (next.position >= note.position + note.sustain_length)      // Stop searching early
+                    return null;
+            }
+            else
+            {
+                // Find next note that's not a chord
+                if (next.position > note.position)
+                    return next;
+                else if (next.position >= note.position + note.sustain_length)      // Stop searching early
+                    return null;
+            }
 
             next = next.next;
         }
