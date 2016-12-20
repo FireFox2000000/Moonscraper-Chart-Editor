@@ -124,8 +124,9 @@ public class Globals : MonoBehaviour {
 
     // Settings
     public static float hyperspeed = 5.0f;
-    public static int step { get { return _step; } }
+    public static int step { get { return _step; } }   
     public static ClapToggle clapSetting = ClapToggle.NONE;
+    public static ClapToggle clapProperties = ClapToggle.NONE;
     public static int audioCalibrationMS = 100;                     // Increase to start the audio sooner
     public static ApplicationMode applicationMode = ApplicationMode.Editor;
     public static ViewMode viewMode { get; private set; }
@@ -144,7 +145,9 @@ public class Globals : MonoBehaviour {
 
         hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
         audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 100);
-        clapSetting = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
+        clapProperties = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
+        clapSetting = ClapToggle.NONE;
+
         // Audio levels
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
         editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
@@ -185,7 +188,7 @@ public class Globals : MonoBehaviour {
     {
         // Initialize GUI
         editor.hyperspeedSlider.value = hyperspeed;
-        clapToggle.onValueChanged.AddListener((value) => { ToggleClap(value); });
+
         if (clapSetting == ClapToggle.NONE)
             clapToggle.isOn = false;
         else
@@ -311,7 +314,7 @@ public class Globals : MonoBehaviour {
     public void ToggleClap(bool value)
     {
         if (value)
-            clapSetting = ClapToggle.ALL;
+            clapSetting = clapProperties;
         else
             clapSetting = ClapToggle.NONE;
     }
@@ -340,8 +343,6 @@ public class Globals : MonoBehaviour {
         if (viewModeToggle.isOn != value)
             viewModeToggle.isOn = value;
 
-
-
         editor.currentSelectedObject = null;
     }
 
@@ -352,7 +353,7 @@ public class Globals : MonoBehaviour {
 
         iniparse.WriteValue("Settings", "Hyperspeed", hyperspeed);
         iniparse.WriteValue("Settings", "Audio calibration", audioCalibrationMS);
-        iniparse.WriteValue("Settings", "Clap", (int)clapSetting);
+        iniparse.WriteValue("Settings", "Clap", (int)clapProperties);
         // Audio levels
         iniparse.WriteValue("Audio Volume", "Music Stream", editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume);
         iniparse.WriteValue("Audio Volume", "Guitar Stream", editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume);
