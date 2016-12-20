@@ -44,7 +44,8 @@ public class ChartEditor : MonoBehaviour {
     public Transform autoUpScroll;
     public Transform mouseYMaxLimit;
     public Transform mouseYMinLimit;
-    
+    public SongPropertiesPanelController songPropertiesCon;
+
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
     [HideInInspector]
@@ -118,6 +119,10 @@ public class ChartEditor : MonoBehaviour {
         }
 
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
+
+        // Initialise object
+        songPropertiesCon.gameObject.SetActive(true);
+        songPropertiesCon.gameObject.SetActive(false);
     }
 
     void Update()
@@ -240,12 +245,17 @@ public class ChartEditor : MonoBehaviour {
         */
     }
 
-    public void NewSong()
-    {
-        // Prompt user to select an audio file
+    public void New()
+    {      
         currentSong = new Song();
 
         LoadSong(currentSong);
+
+        // Prompt user to select an audio file
+        songPropertiesCon.LoadMusicStream();
+
+        editOccurred = true;
+        movement.SetPosition(0);
     }
 
     // Wrapper function
