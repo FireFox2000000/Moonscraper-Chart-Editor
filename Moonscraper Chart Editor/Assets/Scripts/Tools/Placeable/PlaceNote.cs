@@ -168,5 +168,49 @@ public class PlaceNote : PlaceSongObject {
         editor.currentChart.Add(noteToAdd);
         NoteController nCon = editor.CreateNoteObject(noteToAdd);
         nCon.standardOverwriteOpen();
+        
+        if (!Globals.extendedSustainsEnabled)
+        {
+            // Overwrite any sustains
+            Note previous = noteToAdd.previous;
+
+            const int allVisited = 31; // 0001 1111
+            int noteTypeVisited = 0;
+
+            while (previous != null && noteTypeVisited < allVisited)
+            {
+                // Cut off sustains until all notes of each standard type are found, or an open note is found
+                if (previous.position + previous.sustain_length > noteToAdd.position)
+                    previous.sustain_length = noteToAdd.position - previous.position;
+
+                if (previous.fret_type == Note.Fret_Type.OPEN)
+                    break;
+                else
+                {
+                    switch (previous.fret_type)
+                    {
+                        case (Note.Fret_Type.GREEN):
+                            noteTypeVisited |= 1 << 0;
+                            break;
+                        case (Note.Fret_Type.RED):
+                            noteTypeVisited |= 1 << 1;
+                            break;
+                        case (Note.Fret_Type.YELLOW):
+                            noteTypeVisited |= 1 << 2;
+                            break;
+                        case (Note.Fret_Type.BLUE):
+                            noteTypeVisited |= 1 << 3;
+                            break;
+                        case (Note.Fret_Type.ORANGE):
+                            noteTypeVisited |= 1 << 4;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                previous = previous.previous;
+            }
+        }
     }
 }

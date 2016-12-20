@@ -127,17 +127,14 @@ public class NoteController : SongObjectController {
 
     public void ChordSustainDrag()
     {
-        if (Mouse.world2DPosition != null)
+        Note[] chordNotes = note.GetChord();
+        foreach (Note chordNote in chordNotes)
         {
-            Note[] chordNotes = note.GetChord();
-            foreach (Note chordNote in chordNotes)
+            if (chordNote.controller != null)
             {
-                if (chordNote.controller != null)
-                {
-                    chordNote.controller.SustainDrag();
-                }
+                chordNote.controller.SustainDrag();
             }
-        }
+        }      
     }
 
     public void Init(Note note)
@@ -172,7 +169,7 @@ public class NoteController : SongObjectController {
         if (note.fret_type == Note.Fret_Type.OPEN)
         {
             Note[] chordNotes = SongObject.FindObjectsAtPosition(note.position, note.chart.notes);
-            Debug.Log(note.chart.notes.Length);
+
             // Check for non-open notes and delete
             foreach (Note chordNote in chordNotes)
             {
@@ -448,24 +445,12 @@ public class NoteController : SongObjectController {
     {
         Note next = note.next;
 
-
         while (next != null)
         {
-            if (Globals.extendedSustainsEnabled)
-            {
-                if (next.fret_type == Note.Fret_Type.OPEN || (next.fret_type == note.fret_type && note.position + note.sustain_length > next.position))
-                    return next;
-                else if (next.position >= note.position + note.sustain_length)      // Stop searching early
-                    return null;
-            }
-            else
-            {
-                // Find next note that's not a chord
-                if (next.position > note.position)
-                    return next;
-                else if (next.position >= note.position + note.sustain_length)      // Stop searching early
-                    return null;
-            }
+            if (next.fret_type == Note.Fret_Type.OPEN || (next.fret_type == note.fret_type && note.position + note.sustain_length > next.position))
+                return next;
+            else if (next.position >= note.position + note.sustain_length)      // Stop searching early
+                return null;
 
             next = next.next;
         }
