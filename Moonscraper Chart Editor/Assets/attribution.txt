@@ -1,11 +1,20 @@
-Eraser UI Icon- 
+Eraser UI Icon- http://icongal.com/gallery/icon/8544/24/eraser
 Copyright (C) 2010 Yusuke Kamiyamane. All rights reserved. 
 The icons are licensed under a Creative Commons Attribution 
 3.0 license. http://creativecommons.org/licenses/by/3.0/
-(Downloaded on 20/12/2016)
+(as of 20/12/2016)
 
-Clap sound-
-Spark-1 by ERH: Attribution https://www.freesound.org/people/ERH/sounds/31348/ (Downloaded on 17/10/16)
+Metronome UI Icon- https://www.iconfinder.com/icons/64462/metronome_icon
+Copyright (C) 2011 FatCow Web Hosting. All rights reserved. 
+The icons are licensed under a Creative Commons Attribution 
+3.0 Unported License (US). https://creativecommons.org/licenses/by/3.0/us/
+(as of 21/20/2016)
+
+Clap sound- https://www.freesound.org/people/ERH/sounds/31348/ 
+Copyright (C) 2007 ERH. All rights reserved. 
+The icons are licensed under a Creative Commons Attribution 
+3.0 license. https://creativecommons.org/licenses/by/3.0/
+(as of 17/10/16)
 
 Note model-
-Provided by sandsky0 from the Rhythm Gaming Community Discord server (Downloaded on 06/12/16)
+Provided by sandsky0 from the Rhythm Gaming Community Discord server (downloaded on 06/12/16)
