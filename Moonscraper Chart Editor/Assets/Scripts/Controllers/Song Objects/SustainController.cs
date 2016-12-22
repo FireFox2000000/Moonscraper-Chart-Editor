@@ -105,25 +105,15 @@ public class SustainController : SelectableClick {
                 note.sustain_length = 0;
             else if (note.position + note.sustain_length >= nextFret.position)
             {
-                if (Globals.sustainGapEnabled)      // Create a gap between this note and the next
-                {
-                    // Calculate the distance of the gap
-                    uint gapDis = (uint)(editor.currentSong.resolution * 4.0f / Globals.sustainGap);
-                    
-                    if (nextFret.position - gapDis <= note.position)
-                    {
-                        note.sustain_length = nextFret.position - note.position;
-                    }            
-                    else
-                    {
-                        note.sustain_length = nextFret.position - note.position - gapDis;
-                    }
-                }
-                else
-                {
-                    // Cap sustain
-                    note.sustain_length = nextFret.position - note.position;
-                }
+                // Cap sustain
+                note.sustain_length = nextFret.position - note.position;
+            }
+
+            uint gapDis = (uint)(editor.currentSong.resolution * 4.0f / Globals.sustainGap);
+
+            if (Globals.sustainGapEnabled && note.sustain_length > 0 && (note.position + note.sustain_length > nextFret.position - gapDis))
+            { 
+                note.sustain_length = nextFret.position - gapDis - note.position;
             }
         }
     }
@@ -169,15 +159,15 @@ public class SustainController : SelectableClick {
             {
                 if (next.fret_type == Note.Fret_Type.OPEN || (note.position < next.position))
                     return next;
-                else if (next.position >= note.position + note.sustain_length)      // Stop searching early
-                    return null;
+                //else if (next.position >= note.position + note.sustain_length)      // Stop searching early
+                    //return null;
             }
             else
             {
-                if (next.fret_type == Note.Fret_Type.OPEN || (next.fret_type == note.fret_type && note.position + note.sustain_length > next.position))
+                if (next.fret_type == Note.Fret_Type.OPEN || (next.fret_type == note.fret_type))
                     return next;
-                else if (next.position >= note.position + note.sustain_length)      // Stop searching early
-                    return null;
+                //else if (next.position >= note.position + note.sustain_length)      // Stop searching early
+                    //return null;
             }
 
             next = next.next;

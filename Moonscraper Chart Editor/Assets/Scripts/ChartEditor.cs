@@ -21,9 +21,6 @@ public class ChartEditor : MonoBehaviour {
     public GameObject tsPrefab;
     [Header("Indicator Parents")]
     public GameObject guiIndicators;
-    [Header("Song properties Display")]
-    public Text songNameText;
-    public Slider hyperspeedSlider;
     [Header("Inspectors")]
     public NotePropertiesPanelController noteInspector;
     public SectionPropertiesPanelController sectionInspector;
@@ -127,8 +124,6 @@ public class ChartEditor : MonoBehaviour {
 
     void Update()
     {
-        songNameText.text = currentSong.name;
-
         // Update object positions that supposed to be visible into the range of the camera
         minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
         maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
@@ -195,7 +190,6 @@ public class ChartEditor : MonoBehaviour {
         else
             SetWindowText(windowPtr, originalWindowName);
 #endif
-        Globals.hyperspeed = hyperspeedSlider.value;
     }
     
     void OnApplicationFocus(bool hasFocus)
@@ -326,7 +320,6 @@ public class ChartEditor : MonoBehaviour {
 
     public void Play()
     {
-        hyperspeedSlider.interactable = false;
         float strikelinePos = strikeline.position.y;
         foreach (AudioSource source in musicSources)
             source.time = Song.WorldYPositionToTime(strikelinePos) + currentSong.offset;       // No need to add audio calibration as position is base on the strikeline position
@@ -342,7 +335,6 @@ public class ChartEditor : MonoBehaviour {
 
     public void Stop()
     {
-        hyperspeedSlider.interactable = true;
         play.interactable = true;
         Globals.applicationMode = Globals.ApplicationMode.Editor;
         foreach (AudioSource source in musicSources)

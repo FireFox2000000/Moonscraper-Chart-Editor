@@ -9,6 +9,20 @@ public class SettingsController : DisplayMenu
     public Toggle clapHopo;
     public Toggle clapTap;
     public Toggle extendedSustainsToggle;
+    public Toggle sustainGapEnabledToggle;
+
+    public Text sustainGapText;
+
+    void Start()
+    {
+        sustainGapEnabledToggle.isOn = Globals.sustainGapEnabled;
+    }
+
+    void Update()
+    {
+        sustainGapText.text = "1/" + Globals.sustainGap.ToString();
+        Globals.sustainGapEnabled = sustainGapEnabledToggle.isOn;
+    }
 
     protected override void OnEnable()
     {
@@ -22,6 +36,9 @@ public class SettingsController : DisplayMenu
             extendedSustainsToggle.isOn = true;
         else
             extendedSustainsToggle.isOn = false;
+
+        Start();
+        Update();
     }  
 
     public void SetClapStrum(bool value)
@@ -42,6 +59,16 @@ public class SettingsController : DisplayMenu
     public void SetExtendedSustains(bool value)
     {
         Globals.extendedSustainsEnabled = value;
+    }
+
+    public void IncrementSustainsGapStep()
+    {
+        Globals.sustainGapStep.Increment();
+    }
+
+    public void DecrementSustainsGapStep()
+    {
+        Globals.sustainGapStep.Decrement();
     }
 
     void initClapToggle(Toggle toggle, Globals.ClapToggle setting)

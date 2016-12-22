@@ -6,7 +6,6 @@ public class Globals : MonoBehaviour {
     public const uint FULL_STEP = 768;
     public static readonly float STANDARD_BEAT_RESOLUTION = 192.0f;
     public static readonly string LINE_ENDING = "\r\n";
-    public Text stepText;
 
     [Header("Initialize GUI")]
     public Toggle clapToggle;
@@ -120,7 +119,7 @@ public class Globals : MonoBehaviour {
 
     // Settings
     public static float hyperspeed = 5.0f;
-    static Step snappingStep = new Step(16);
+    public static Step snappingStep = new Step(16);
     public static int step { get { return snappingStep.value; } }  
      
     public static ClapToggle clapSetting = ClapToggle.NONE;
@@ -129,8 +128,8 @@ public class Globals : MonoBehaviour {
     public static ApplicationMode applicationMode = ApplicationMode.Editor;
     public static ViewMode viewMode { get; private set; }
     public static bool extendedSustainsEnabled = false;
-    public static bool sustainGapEnabled { get; private set; }
-    static Step sustainGapStep = new Step(16);
+    public static bool sustainGapEnabled { get; set; }
+    public static Step sustainGapStep;
     public static int sustainGap { get { return sustainGapStep.value; } }
 
     ChartEditor editor;
@@ -150,6 +149,8 @@ public class Globals : MonoBehaviour {
         clapProperties = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
         extendedSustainsEnabled = iniparse.ReadValue("Settings", "Extended sustains", false);
         clapSetting = ClapToggle.NONE;
+        sustainGapEnabled = iniparse.ReadValue("Settings", "Sustain Gap", false);
+        sustainGapStep = new Step((uint)iniparse.ReadValue("Settings", "Sustain Gap Step", (uint)16));
 
         // Audio levels
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
@@ -183,15 +184,10 @@ public class Globals : MonoBehaviour {
 
         spTemp = spTempColor;
         spTapTemp = spTapTempColor;
-
-        sustainGapEnabled = false;
     }
 
     void Start()
     {
-        // Initialize GUI
-        editor.hyperspeedSlider.value = hyperspeed;
-
         if (clapSetting == ClapToggle.NONE)
             clapToggle.isOn = false;
         else
@@ -202,7 +198,6 @@ public class Globals : MonoBehaviour {
     int lastHeight = Screen.height;
     void Update()
     {
-        stepText.text = "1/" + step.ToString();
         /*
         if (Screen.width != lastWidth)
         {
@@ -256,14 +251,6 @@ public class Globals : MonoBehaviour {
             snappingStep.Decrement();
     }
 
-    public void ToggleClap(bool value)
-    {
-        if (value)
-            clapSetting = clapProperties;
-        else
-            clapSetting = ClapToggle.NONE;
-    }
-
     public void ToggleSongViewMode(bool value)
     {
         if (value)
@@ -300,6 +287,8 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Settings", "Audio calibration", audioCalibrationMS);
         iniparse.WriteValue("Settings", "Clap", (int)clapProperties);
         iniparse.WriteValue("Settings", "Extended sustains", extendedSustainsEnabled);
+        iniparse.WriteValue("Settings", "Sustain Gap", sustainGapEnabled);
+        iniparse.WriteValue("Settings", "Sustain Gap Step", sustainGap);
 
         // Audio levels
         iniparse.WriteValue("Audio Volume", "Music Stream", editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume);
@@ -313,16 +302,6 @@ public class Globals : MonoBehaviour {
     public void ClickButton(Button button)
     {
         button.onClick.Invoke();
-    }
-
-    public void IncrementSnappingStep()
-    {
-        snappingStep.Increment();
-    }
-
-    public void DecrementSnappingStep()
-    {
-        snappingStep.Decrement();
     }
 
     [System.Flags]
