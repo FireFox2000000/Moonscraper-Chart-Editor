@@ -269,7 +269,7 @@ public class ChartEditor : MonoBehaviour {
             SaveAs();
     }
 
-    public void SaveAs()
+    public void SaveAs(bool forced = true)
     {
         try {
             string fileName;
@@ -310,12 +310,17 @@ public class ChartEditor : MonoBehaviour {
         }
     }
 
-    void Save (string filename)
+    void ExportUnforced()
+    {
+        SaveAs(false);
+    }
+
+    void Save (string filename, bool forced = true)
     {
         if (currentSong != null)
         {
             editOccurred = false;            
-            currentSong.Save(filename);
+            currentSong.Save(filename, forced);
             lastLoadedFile = filename;
         }
     }

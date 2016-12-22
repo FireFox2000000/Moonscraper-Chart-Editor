@@ -175,7 +175,7 @@ public class Chart  {
         }
     }
 
-    public string GetChartString()
+    public string GetChartString(bool forced = true)
     {
         string chart = string.Empty;
 
@@ -183,7 +183,7 @@ public class Chart  {
         {
             chart += _chartObjects[i].GetSaveString();
 
-            if (_chartObjects[i].GetType() == typeof(Note))
+            if (forced && _chartObjects[i].GetType() == typeof(Note))
             {
                 // if the next note is not at the same position, add flags into the string
                 Note currentNote = (Note)_chartObjects[i];    

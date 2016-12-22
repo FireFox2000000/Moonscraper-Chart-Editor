@@ -23,8 +23,10 @@ public class SettingsController : DisplayMenu
         base.Awake();      
     }
 
-    void Update()
+    protected override void Update()
     {
+        base.Update();
+
         sustainGapText.text = "1/" + Globals.sustainGap.ToString();
         Globals.sustainGapEnabled = sustainGapEnabledToggle.isOn;
 

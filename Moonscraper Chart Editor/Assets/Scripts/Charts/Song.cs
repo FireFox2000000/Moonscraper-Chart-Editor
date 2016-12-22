@@ -788,7 +788,7 @@ public class Song {
         return saveString;
     }
 
-    public void Save(string filepath)
+    public void Save(string filepath, bool forced = true)
     {
         string musicString = string.Empty;
         string guitarString = string.Empty;
@@ -810,11 +810,11 @@ public class Song {
         else
             rhythmString = audioLocations[RHYTHM_STREAM_ARRAY_POS];
 
-        saveThread = new System.Threading.Thread(() => SongSave(filepath, musicString, guitarString, rhythmString));
+        saveThread = new System.Threading.Thread(() => SongSave(filepath, musicString, guitarString, rhythmString, forced));
         saveThread.Start();
     }
 
-    void SongSave(string filepath, string musicString, string guitarString, string rhythmString)
+    void SongSave(string filepath, string musicString, string guitarString, string rhythmString, bool forced = true)
     {
         string saveString = string.Empty;
 
@@ -857,7 +857,7 @@ public class Song {
         for(int i = 0; i < charts.Length; ++i)
         {
             string chartString = string.Empty;
-            chartString = charts[i].GetChartString();
+            chartString = charts[i].GetChartString(forced);
 
             if (chartString != string.Empty)
             {
@@ -903,7 +903,7 @@ public class Song {
                         break;
                 }
 
-                saveString += charts[i].GetChartString();
+                saveString += charts[i].GetChartString(forced);
                 saveString += "}" + Globals.LINE_ENDING;
             }
         }
