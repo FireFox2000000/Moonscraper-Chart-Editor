@@ -107,6 +107,7 @@
     <Compile Include="Assets\Scripts\RendererLayerExpose.cs" />
     <Compile Include="Assets\Scripts\SelectableClick.cs" />
     <Compile Include="Assets\Scripts\SpriteGlow.cs" />
+    <Compile Include="Assets\Scripts\Step.cs" />
     <Compile Include="Assets\Scripts\TimelineHandler.cs" />
     <Compile Include="Assets\Scripts\Tools\Eraser.cs" />
     <Compile Include="Assets\Scripts\Tools\ObjectlessTool.cs" />

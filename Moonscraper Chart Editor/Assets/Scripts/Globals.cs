@@ -3,18 +3,14 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class Globals : MonoBehaviour {
-    public static readonly uint FULL_STEP = 768;
+    public const uint FULL_STEP = 768;
     public static readonly float STANDARD_BEAT_RESOLUTION = 192.0f;
     public static readonly string LINE_ENDING = "\r\n";
-    static readonly uint MIN_STEP = 1;
     public Text stepText;
 
     [Header("Initialize GUI")]
     public Toggle clapToggle;
     public Toggle viewModeToggle;
-
-    static int lsbOffset = 3;
-    static int _step = 4;
 
     public static readonly int NOTFOUND = -1;
     public static readonly string TABSPACE = "  ";
@@ -124,13 +120,18 @@ public class Globals : MonoBehaviour {
 
     // Settings
     public static float hyperspeed = 5.0f;
-    public static int step { get { return _step; } }   
+    static Step snappingStep = new Step(16);
+    public static int step { get { return snappingStep.value; } }  
+     
     public static ClapToggle clapSetting = ClapToggle.NONE;
     public static ClapToggle clapProperties = ClapToggle.NONE;
     public static int audioCalibrationMS = 100;                     // Increase to start the audio sooner
     public static ApplicationMode applicationMode = ApplicationMode.Editor;
     public static ViewMode viewMode { get; private set; }
     public static bool extendedSustainsEnabled = false;
+    public static bool sustainGapEnabled { get; private set; }
+    static Step sustainGapStep = new Step(16);
+    public static int sustainGap { get { return sustainGapStep.value; } }
 
     ChartEditor editor;
     string workingDirectory;
@@ -183,7 +184,7 @@ public class Globals : MonoBehaviour {
         spTemp = spTempColor;
         spTapTemp = spTapTempColor;
 
-        SetStep(16);
+        sustainGapEnabled = false;
     }
 
     void Start()
@@ -201,7 +202,7 @@ public class Globals : MonoBehaviour {
     int lastHeight = Screen.height;
     void Update()
     {
-        stepText.text = "1/" + _step.ToString();
+        stepText.text = "1/" + step.ToString();
         /*
         if (Screen.width != lastWidth)
         {
@@ -250,67 +251,9 @@ public class Globals : MonoBehaviour {
         }
 
         if (Input.GetButtonDown("IncreaseStep"))
-            IncrementStep();
+            snappingStep.Increment();
         else if (Input.GetButtonDown("DecreaseStep"))
-            DecrementStep();
-    }
-
-    public void IncrementStep()
-    {
-        if (_step < FULL_STEP)
-        {
-            if (lsbOffset % 2 == 0)
-            {
-                _step &= 1 << (lsbOffset / 2);
-                _step <<= 1;
-            }
-            else
-            {
-                _step |= 1 << (lsbOffset / 2);
-            }
-            ++lsbOffset;
-        }
-    }
-
-    public void DecrementStep()
-    {
-        if (_step > MIN_STEP)
-        {
-            if (lsbOffset % 2 == 0)
-            {
-                _step &= ~(1 << ((lsbOffset - 1) / 2));
-            }
-            else
-            {
-                _step |= 1 << (lsbOffset / 2);
-                _step >>= 1;              
-            }
-
-            --lsbOffset;
-        }
-    }
-
-    public void SetStep(uint step)
-    {
-        if (step < MIN_STEP)
-            step = MIN_STEP;
-        else if (step > FULL_STEP)
-            step = FULL_STEP;
-
-        if (_step < step)
-        {
-            while (_step < step)
-            {
-                IncrementStep();
-            }
-        }
-        else
-        {
-            while (_step > step)
-            {
-                DecrementStep();
-            }
-        }
+            snappingStep.Decrement();
     }
 
     public void ToggleClap(bool value)
@@ -370,6 +313,16 @@ public class Globals : MonoBehaviour {
     public void ClickButton(Button button)
     {
         button.onClick.Invoke();
+    }
+
+    public void IncrementSnappingStep()
+    {
+        snappingStep.Increment();
+    }
+
+    public void DecrementSnappingStep()
+    {
+        snappingStep.Decrement();
     }
 
     [System.Flags]

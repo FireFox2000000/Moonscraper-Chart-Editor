@@ -80,9 +80,9 @@ public class NoteController : SongObjectController {
         else if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
             if (!Globals.extendedSustainsEnabled || Input.GetButton("ChordSelect"))
-                ChordSustainDrag();
+                sustain.ChordSustainDrag();
             else
-                SustainDrag();
+                sustain.SustainDrag();
         }
     }
 
@@ -105,37 +105,7 @@ public class NoteController : SongObjectController {
         nCon.Delete();
     }
 
-    public void SustainDrag()
-    {
-        uint snappedChartPos;
-        ChartEditor.editOccurred = true;
 
-        if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
-        {
-            snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(note.song.WorldYPositionToChartPosition(((Vector2)Mouse.world2DPosition).y), Globals.step, note.song.resolution);
-        }
-        else
-        {
-            snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(note.song.WorldYPositionToChartPosition(editor.mouseYMaxLimit.position.y), Globals.step, note.song.resolution);
-        }
-
-        if (snappedChartPos > note.position)
-            note.sustain_length = snappedChartPos - note.position;
-        else
-            note.sustain_length = 0;
-    }
-
-    public void ChordSustainDrag()
-    {
-        Note[] chordNotes = note.GetChord();
-        foreach (Note chordNote in chordNotes)
-        {
-            if (chordNote.controller != null)
-            {
-                chordNote.controller.SustainDrag();
-            }
-        }      
-    }
 
     public void Init(Note note)
     {
@@ -345,44 +315,8 @@ public class NoteController : SongObjectController {
             noteRenderer.sharedMaterials = materials;
 #endif
 
-            UpdateSustain();
+            sustain.UpdateSustain();
         }
-    }
-
-    public void UpdateSustain()
-    {       
-        Note nextFret;
-        if (note.fret_type == Note.Fret_Type.OPEN)
-            nextFret = note.next;
-        else
-            nextFret = FindNextSameFretWithinSustain();
-
-        if (nextFret != null)
-        {
-            // Cap sustain length
-            if (nextFret.position < note.position)
-                note.sustain_length = 0;
-            else if (note.position + note.sustain_length > nextFret.position)
-                // Cap sustain
-                note.sustain_length = nextFret.position - note.position;
-        }
-        
-        UpdateSustainLength();       
-
-        sustainRen.sharedMaterial = Globals.sustainColours[(int)note.fret_type];
-    }
-
-    public void UpdateSustainLength()
-    {
-        float length = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length) - note.song.ChartPositionToWorldYPosition(note.position);
-
-        Vector3 scale = sustain.transform.localScale;
-        scale.y = length;
-        sustain.transform.localScale = scale;
-
-        Vector3 position = transform.position;
-        position.y += length / 2.0f;
-        sustain.transform.position = position;
     }
 
     Note GetPreviousOfOpen(uint openNotePos, Note previousNote)
@@ -439,23 +373,6 @@ public class NoteController : SongObjectController {
 
             return HOPO;
         }
-    }
-
-    Note FindNextSameFretWithinSustain()
-    {
-        Note next = note.next;
-
-        while (next != null)
-        {
-            if (next.fret_type == Note.Fret_Type.OPEN || (next.fret_type == note.fret_type && note.position + note.sustain_length > next.position))
-                return next;
-            else if (next.position >= note.position + note.sustain_length)      // Stop searching early
-                return null;
-
-            next = next.next;
-        }
-
-        return null;     
     }
 
     float snapToNearestHorizontalNotePos(float pos)
