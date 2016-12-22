@@ -100,21 +100,30 @@ public class SustainController : SelectableClick {
 
         if (nextFret != null)
         {
-            // Cap sustain length
-            if (nextFret.position < note.position)
+            CapSustain(nextFret);
+        }
+    }
+
+    public void CapSustain(Note cap)
+    {
+        Note note = nCon.note;
+
+        // Cap sustain length
+        if (cap.position <= note.position)
+            note.sustain_length = 0;
+        else if (note.position + note.sustain_length > cap.position)        // Sustain extends beyond cap note 
+        {
+            note.sustain_length = cap.position - note.position;
+        }
+
+        uint gapDis = (uint)(editor.currentSong.resolution * 4.0f / Globals.sustainGap);
+
+        if (Globals.sustainGapEnabled && note.sustain_length > 0 && (note.position + note.sustain_length > cap.position - gapDis))
+        {
+            if ((int)(cap.position - gapDis - note.position) > 0)
+                note.sustain_length = cap.position - gapDis - note.position;
+            else
                 note.sustain_length = 0;
-            else if (note.position + note.sustain_length >= nextFret.position)
-            {
-                // Cap sustain
-                note.sustain_length = nextFret.position - note.position;
-            }
-
-            uint gapDis = (uint)(editor.currentSong.resolution * 4.0f / Globals.sustainGap);
-
-            if (Globals.sustainGapEnabled && note.sustain_length > 0 && (note.position + note.sustain_length > nextFret.position - gapDis))
-            { 
-                note.sustain_length = nextFret.position - gapDis - note.position;
-            }
         }
     }
 

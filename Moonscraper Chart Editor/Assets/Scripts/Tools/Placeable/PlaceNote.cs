@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System;
 
 [RequireComponent(typeof(NoteController))]
@@ -168,49 +169,91 @@ public class PlaceNote : PlaceSongObject {
         editor.currentChart.Add(noteToAdd);
         NoteController nCon = editor.CreateNoteObject(noteToAdd);
         nCon.standardOverwriteOpen();
-        
+
+        Note[] previousNotes = GetPreviousOfSustains(noteToAdd);
+
         if (!Globals.extendedSustainsEnabled)
         {
-            // Overwrite any sustains
-            Note previous = noteToAdd.previous;
-
-            const int allVisited = 31; // 0001 1111
-            int noteTypeVisited = 0;
-
-            while (previous != null && noteTypeVisited < allVisited)
+            // Cap all the notes
+            foreach (Note prevNote in previousNotes)
             {
-                // Cut off sustains until all notes of each standard type are found, or an open note is found
-                if (previous.position + previous.sustain_length > noteToAdd.position)
-                    previous.sustain_length = noteToAdd.position - previous.position;
-
-                if (previous.fret_type == Note.Fret_Type.OPEN)
-                    break;
-                else
-                {
-                    switch (previous.fret_type)
-                    {
-                        case (Note.Fret_Type.GREEN):
-                            noteTypeVisited |= 1 << 0;
-                            break;
-                        case (Note.Fret_Type.RED):
-                            noteTypeVisited |= 1 << 1;
-                            break;
-                        case (Note.Fret_Type.YELLOW):
-                            noteTypeVisited |= 1 << 2;
-                            break;
-                        case (Note.Fret_Type.BLUE):
-                            noteTypeVisited |= 1 << 3;
-                            break;
-                        case (Note.Fret_Type.ORANGE):
-                            noteTypeVisited |= 1 << 4;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                previous = previous.previous;
+                if (prevNote.controller != null)
+                    prevNote.controller.sustain.CapSustain(noteToAdd);
             }
         }
+        else
+        {
+            // Cap only the sustain of the same fret type and open notes
+            foreach (Note prevNote in previousNotes)
+            {
+                if (prevNote.controller != null && (prevNote.fret_type == noteToAdd.fret_type || prevNote.fret_type == Note.Fret_Type.OPEN))
+                    prevNote.controller.sustain.CapSustain(noteToAdd);
+            }
+        }
+    }
+    
+    Note[] GetPreviousOfSustains(Note startNote)
+    {
+        List<Note> list = new List<Note>();
+
+        Note previous = startNote.previous;
+
+        const int allVisited = 31; // 0001 1111
+        int noteTypeVisited = 0;
+
+        while (previous != null && noteTypeVisited < allVisited)
+        {
+            if (previous.fret_type == Note.Fret_Type.OPEN)
+            {
+                return new Note[] { previous };
+            }
+            else
+            {
+                switch (previous.fret_type)
+                {
+                    case (Note.Fret_Type.GREEN):
+                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.GREEN)) == 0)
+                        {
+                            list.Add(previous);
+                            noteTypeVisited |= 1 << (int)Note.Fret_Type.GREEN;
+                        }
+                        break;
+                    case (Note.Fret_Type.RED):
+                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.RED)) == 0)
+                        {
+                            list.Add(previous);
+                            noteTypeVisited |= 1 << (int)Note.Fret_Type.RED;
+                        }
+                        break;
+                    case (Note.Fret_Type.YELLOW):
+                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.YELLOW)) == 0)
+                        {
+                            list.Add(previous);
+                            noteTypeVisited |= 1 << (int)Note.Fret_Type.YELLOW;
+                        }
+                        break;
+                    case (Note.Fret_Type.BLUE):
+                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.BLUE)) == 0)
+                        {
+                            list.Add(previous);
+                            noteTypeVisited |= 1 << (int)Note.Fret_Type.BLUE;
+                        }
+                        break;
+                    case (Note.Fret_Type.ORANGE):
+                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.ORANGE)) == 0)
+                        {
+                            list.Add(previous);
+                            noteTypeVisited |= 1 << (int)Note.Fret_Type.ORANGE;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            previous = previous.previous;
+        }
+
+        return list.ToArray();
     }
 }
