@@ -42,6 +42,7 @@ public class ChartEditor : MonoBehaviour {
     public Transform mouseYMaxLimit;
     public Transform mouseYMinLimit;
     public SongPropertiesPanelController songPropertiesCon;
+    public AudioSource clapSource;
 
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
@@ -240,7 +241,8 @@ public class ChartEditor : MonoBehaviour {
     }
 
     public void New()
-    {      
+    {
+        lastLoadedFile = string.Empty;
         currentSong = new Song();
 
         LoadSong(currentSong);

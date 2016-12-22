@@ -11,33 +11,52 @@ public class SettingsController : DisplayMenu
     public Toggle extendedSustainsToggle;
     public Toggle sustainGapEnabledToggle;
 
+    public Slider musicSourceSlider;
+    public Slider guitarSourceSlider;
+    public Slider rhythmSourceSlider;
+    public Slider clapSourceSlider;
+
     public Text sustainGapText;
 
-    void Start()
+    protected override void Awake()
     {
-        sustainGapEnabledToggle.isOn = Globals.sustainGapEnabled;
+        base.Awake();      
     }
 
     void Update()
     {
         sustainGapText.text = "1/" + Globals.sustainGap.ToString();
         Globals.sustainGapEnabled = sustainGapEnabledToggle.isOn;
+
+        editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = musicSourceSlider.value;
+        editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume = guitarSourceSlider.value;
+        editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume = rhythmSourceSlider.value;
+
+        editor.clapSource.volume = clapSourceSlider.value;
     }
 
     protected override void OnEnable()
     {
         base.OnEnable();
 
+        // Initialise GUI
+        sustainGapEnabledToggle.isOn = Globals.sustainGapEnabled;
+
         initClapToggle(clapStrum, Globals.ClapToggle.STRUM);
         initClapToggle(clapHopo, Globals.ClapToggle.HOPO);
         initClapToggle(clapTap, Globals.ClapToggle.TAP);
+
+        musicSourceSlider.value = editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume;
+        guitarSourceSlider.value = editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume;
+        rhythmSourceSlider.value = editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume;
+
+        clapSourceSlider.value = editor.clapSource.volume;
 
         if (Globals.extendedSustainsEnabled)
             extendedSustainsToggle.isOn = true;
         else
             extendedSustainsToggle.isOn = false;
 
-        Start();
         Update();
     }  
 

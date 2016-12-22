@@ -85,8 +85,6 @@ public class Globals : MonoBehaviour {
     public RectTransform area;
     [Header("Misc.")]
     [SerializeField]
-    AudioSource clapSource;
-    [SerializeField]
     Button defaultViewSwitchButton;
 
     public bool InToolArea
@@ -156,7 +154,7 @@ public class Globals : MonoBehaviour {
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
         editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
         editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
-        clapSource.volume = (float)iniparse.ReadValue("Audio Volume", "Clap", 1.0f);
+        editor.clapSource.volume = (float)iniparse.ReadValue("Audio Volume", "Clap", 1.0f);
 
         iniparse.Close();
 
@@ -294,7 +292,7 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Audio Volume", "Music Stream", editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume);
         iniparse.WriteValue("Audio Volume", "Guitar Stream", editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume);
         iniparse.WriteValue("Audio Volume", "Rhythm Stream", editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume);
-        iniparse.WriteValue("Audio Volume", "Clap", clapSource.volume);
+        iniparse.WriteValue("Audio Volume", "Clap", editor.clapSource.volume);
 
         iniparse.Close();
     }
