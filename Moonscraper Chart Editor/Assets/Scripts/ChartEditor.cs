@@ -108,8 +108,6 @@ public class ChartEditor : MonoBehaviour {
         currentSong = new Song();
         LoadSong(currentSong);
 
-        editOccurred = false;
-
         musicSources = new AudioSource[3];
         for (int i = 0; i < musicSources.Length; ++i)
         {
@@ -122,6 +120,8 @@ public class ChartEditor : MonoBehaviour {
         // Initialise object
         songPropertiesCon.gameObject.SetActive(true);
         songPropertiesCon.gameObject.SetActive(false);
+
+        editOccurred = false;
     }
 
     void Update()
@@ -250,10 +250,12 @@ public class ChartEditor : MonoBehaviour {
         currentSong = new Song();
 
         LoadSong(currentSong);
-
-        //editOccurred = true;
+    
         movement.SetPosition(0);
         StartCoroutine(resetLag());
+
+        currentSelectedObject = null;
+        editOccurred = true;
     }
 
     IEnumerator resetLag()

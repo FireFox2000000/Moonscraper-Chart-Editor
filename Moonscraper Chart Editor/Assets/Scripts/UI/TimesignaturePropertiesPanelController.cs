@@ -13,8 +13,12 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
 
     void OnEnable()
     {
+        bool edit = ChartEditor.editOccurred;
+
         if (currentTS != null)
             tsValue.text = currentTS.value.ToString();
+
+        ChartEditor.editOccurred = edit;
     }
 
     void Update()

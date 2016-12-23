@@ -17,8 +17,12 @@ public class SectionPropertiesPanelController : PropertiesPanelController {
 
     void OnEnable()
     {
+        bool edit = ChartEditor.editOccurred;
+
         if (currentSection != null)
             sectionName.text = currentSection.title;
+
+        ChartEditor.editOccurred = edit;
     }
 
     void OnDisable()

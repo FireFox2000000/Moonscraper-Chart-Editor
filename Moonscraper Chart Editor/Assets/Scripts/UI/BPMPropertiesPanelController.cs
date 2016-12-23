@@ -13,8 +13,12 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     void OnEnable()
     {
+        bool edit = ChartEditor.editOccurred;
+
         if (currentBPM != null)
             bpmValue.text = ((float)currentBPM.value / 1000.0f).ToString();
+
+        ChartEditor.editOccurred = edit;
     }
 
     void Update()

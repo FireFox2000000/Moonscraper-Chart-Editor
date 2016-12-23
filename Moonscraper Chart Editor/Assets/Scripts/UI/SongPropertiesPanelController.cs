@@ -21,6 +21,8 @@ public class SongPropertiesPanelController : DisplayMenu {
     bool init = false;
     protected override void OnEnable()
     {
+        bool edit = ChartEditor.editOccurred;
+
         base.OnEnable();
         init = true;
         Song song = editor.currentSong;   
@@ -35,6 +37,8 @@ public class SongPropertiesPanelController : DisplayMenu {
         // Init audio names
         setAudioTextLabels();
         init = false;
+
+        ChartEditor.editOccurred = edit;
     }
 
 	void Apply()
