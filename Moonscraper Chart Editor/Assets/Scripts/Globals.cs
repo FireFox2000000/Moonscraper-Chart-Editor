@@ -32,6 +32,9 @@ public class Globals : MonoBehaviour {
     public static Renderer strumRenderer { get; private set; }
     public static Renderer hopoRenderer { get; private set; }
     public static Renderer tapRenderer { get; private set; }
+    public static Renderer spStrumRenderer { get; private set; }
+    public static Renderer spHopoRenderer { get; private set; }
+    public static Renderer spTapRenderer { get; private set; }
 
     public static Material[] strumColors { get; private set; }
     public static Material[] tapColors { get; private set; }
@@ -70,6 +73,12 @@ public class Globals : MonoBehaviour {
     Renderer hopo3dRenderer;
     [SerializeField]
     Renderer tap3dRenderer;
+    [SerializeField]
+    Renderer spStrum3dRenderer;
+    [SerializeField]
+    Renderer spHopo3dRenderer;
+    [SerializeField]
+    Renderer spTap3dRenderer;
 
     [SerializeField]
     Material[] strum3dColorMaterials = new Material[6];
@@ -170,12 +179,15 @@ public class Globals : MonoBehaviour {
         openSustainSprite = openSustain;
 
         standardModel = standardNoteModel;          // 3D
-        spModel = standardNoteModel;
+        spModel = starpowerNoteModel;
         openModel = openNoteModel;
 
         strumRenderer = strum3dRenderer;
         hopoRenderer = hopo3dRenderer;
         tapRenderer = tap3dRenderer;
+        spStrumRenderer = spStrum3dRenderer;
+        spHopoRenderer = spHopo3dRenderer;
+        spTapRenderer = spTap3dRenderer;
 
         strumColors = strum3dColorMaterials;
         tapColors = tap3dColorMaterials;

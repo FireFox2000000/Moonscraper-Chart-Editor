@@ -281,35 +281,51 @@ public class NoteController : SongObjectController {
             // Update mesh
             if (note.fret_type == Note.Fret_Type.OPEN)
                 meshFilter.sharedMesh = Globals.openModel.sharedMesh;
+            else if (specialType == Note.Special_Type.STAR_POW)
+                meshFilter.sharedMesh = Globals.spModel.sharedMesh;
             else
                 meshFilter.sharedMesh = Globals.standardModel.sharedMesh;
  
             Material[] materials;
+            const int standardColMatPos = 1;
+            const int spColMatPos = 3;
             switch (noteType)
             {
                 case (Note.Note_Type.HOPO):
-                    materials = Globals.hopoRenderer.sharedMaterials;
-
                     if (specialType == Note.Special_Type.STAR_POW)
-                        materials[1] = Globals.spTemp;
+                    {
+                        materials = Globals.spHopoRenderer.sharedMaterials;
+                        materials[spColMatPos] = Globals.strumColors[(int)note.fret_type];
+                    }
                     else
-                        materials[1] = Globals.strumColors[(int)note.fret_type];
+                    {
+                        materials = Globals.hopoRenderer.sharedMaterials;
+                        materials[standardColMatPos] = Globals.strumColors[(int)note.fret_type];
+                    }
                     break;
                 case (Note.Note_Type.TAP):
-                    materials = Globals.tapRenderer.sharedMaterials;
-
                     if (specialType == Note.Special_Type.STAR_POW)
-                        materials[1] = Globals.spTapTemp;
+                    {
+                        materials = Globals.spTapRenderer.sharedMaterials;
+                        materials[spColMatPos] = Globals.tapColors[(int)note.fret_type];
+                    }
                     else
-                        materials[1] = Globals.tapColors[(int)note.fret_type];
+                    {
+                        materials = Globals.tapRenderer.sharedMaterials;
+                        materials[standardColMatPos] = Globals.tapColors[(int)note.fret_type];
+                    }
                     break;
                 default:    // strum
-                    materials = Globals.strumRenderer.sharedMaterials;
-
                     if (specialType == Note.Special_Type.STAR_POW)
-                        materials[1] = Globals.spTemp;
+                    {
+                        materials = Globals.spStrumRenderer.sharedMaterials;
+                        materials[spColMatPos] = Globals.strumColors[(int)note.fret_type];
+                    }
                     else
-                        materials[1] = Globals.strumColors[(int)note.fret_type];
+                    {
+                        materials = Globals.strumRenderer.sharedMaterials;
+                        materials[standardColMatPos] = Globals.strumColors[(int)note.fret_type];
+                    }
                     break;
             }
             noteRenderer.sharedMaterials = materials;
