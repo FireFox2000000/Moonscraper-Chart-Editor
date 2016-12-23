@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using System;
 
 public class ChartEditor : MonoBehaviour {
@@ -210,48 +211,55 @@ public class ChartEditor : MonoBehaviour {
                 source.Stop();
         }
     }
-
+    static bool quitting = false;
     void OnApplicationQuit()
-    {    
+    {
+        quitting = true;
         editCheck();
 
         while (currentSong.IsSaving);
     }
-    bool checking = false;
+    static bool checking = false;
     void editCheck()
-    {
-        /*
+    {    
+        // Check for unsaved changes
         if (editOccurred)
         {
-            //#if !UNITY_EDITOR
-            // Check for unsaved changes
-            UnityEngine.Application.CancelQuit();
+            if (quitting)
+                UnityEngine.Application.CancelQuit();
+#if !UNITY_EDITOR
+            
             DialogResult result = MessageBox.Show("Want to save unsaved changes?", "Warning", MessageBoxButtons.YesNo);
 
             if (result == DialogResult.Yes)
             {                    
                 Save();
-                return true;
             }
-//#endif
+#endif
+
+            if (quitting)
+                UnityEngine.Application.Quit();
         }
-    
-        return false;
-        */
     }
 
     public void New()
     {
+        editCheck();
+
         lastLoadedFile = string.Empty;
         currentSong = new Song();
 
         LoadSong(currentSong);
 
-        // Prompt user to select an audio file
-        songPropertiesCon.LoadMusicStream();
-
-        editOccurred = true;
+        //editOccurred = true;
         movement.SetPosition(0);
+        StartCoroutine(resetLag());
+    }
+
+    IEnumerator resetLag()
+    {
+        yield return null;
+        songPropertiesCon.gameObject.SetActive(true);
     }
 
     // Wrapper function
@@ -353,12 +361,14 @@ public class ChartEditor : MonoBehaviour {
 
     IEnumerator _Load()
     {
+        editCheck();
+
         Song backup = currentSong;
 #if TIMING_DEBUG
         float totalLoadTime = 0;
 #endif
         try
-        {
+        {           
 #if UNITY_EDITOR
             currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart");
 #else
@@ -385,7 +395,7 @@ public class ChartEditor : MonoBehaviour {
                 throw new System.Exception("Could not open file");
             }        
 #endif
-            editCheck();
+            
         }
         catch (System.Exception e)
         {
