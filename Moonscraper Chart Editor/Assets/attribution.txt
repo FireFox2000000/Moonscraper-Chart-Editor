@@ -1,5 +1,5 @@
-Note model-
-Provided by sandsky0 from the Rhythm Gaming Community Discord server (downloaded on 06/12/16)
+Standard note, star note and open note model-
+Provided by sandsky0 from the Rhythm Gaming Community Discord server (downloaded on 06/12/16 - 23/12/2016)
 
 Eraser UI Icon- http://icongal.com/gallery/icon/8544/24/eraser
 Copyright (C) 2010 Yusuke Kamiyamane. All rights reserved. 
