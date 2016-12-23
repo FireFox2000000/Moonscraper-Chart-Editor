@@ -32,6 +32,7 @@ public class Globals : MonoBehaviour {
     public static Renderer strumRenderer { get; private set; }
     public static Renderer hopoRenderer { get; private set; }
     public static Renderer tapRenderer { get; private set; }
+    public static Renderer openRenderer { get; private set; }
     public static Renderer spStrumRenderer { get; private set; }
     public static Renderer spHopoRenderer { get; private set; }
     public static Renderer spTapRenderer { get; private set; }
@@ -41,6 +42,8 @@ public class Globals : MonoBehaviour {
 
     public static Material spTemp { get; private set; }
     public static Material spTapTemp { get; private set; }
+
+    public static Material[] openMaterials { get; private set; }
 
     [Header("Note sprites")]
     [SerializeField]
@@ -68,11 +71,15 @@ public class Globals : MonoBehaviour {
     [SerializeField]
     MeshFilter openNoteModel;
     [SerializeField]
+
+    [Header("Note renderers")]
     Renderer strum3dRenderer;
     [SerializeField]
     Renderer hopo3dRenderer;
     [SerializeField]
     Renderer tap3dRenderer;
+    [SerializeField]
+    Renderer open3dRenderer;
     [SerializeField]
     Renderer spStrum3dRenderer;
     [SerializeField]
@@ -80,6 +87,7 @@ public class Globals : MonoBehaviour {
     [SerializeField]
     Renderer spTap3dRenderer;
 
+    [Header("Note colours")]
     [SerializeField]
     Material[] strum3dColorMaterials = new Material[6];
     [SerializeField]
@@ -89,6 +97,9 @@ public class Globals : MonoBehaviour {
     Material spTempColor;
     [SerializeField]
     Material spTapTempColor;
+
+    [SerializeField]
+    Material[] open3dMaterials = new Material[4];
 
     [Header("Area range")]
     public RectTransform area;
@@ -185,6 +196,7 @@ public class Globals : MonoBehaviour {
         strumRenderer = strum3dRenderer;
         hopoRenderer = hopo3dRenderer;
         tapRenderer = tap3dRenderer;
+        openRenderer = open3dRenderer;
         spStrumRenderer = spStrum3dRenderer;
         spHopoRenderer = spHopo3dRenderer;
         spTapRenderer = spTap3dRenderer;
@@ -194,6 +206,8 @@ public class Globals : MonoBehaviour {
 
         spTemp = spTempColor;
         spTapTemp = spTapTempColor;
+
+        openMaterials = open3dMaterials;
     }
 
     void Start()

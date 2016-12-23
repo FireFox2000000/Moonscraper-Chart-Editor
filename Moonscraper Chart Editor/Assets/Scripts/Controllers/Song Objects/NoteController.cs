@@ -287,46 +287,71 @@ public class NoteController : SongObjectController {
                 meshFilter.sharedMesh = Globals.standardModel.sharedMesh;
  
             Material[] materials;
-            const int standardColMatPos = 1;
-            const int spColMatPos = 3;
-            switch (noteType)
+
+            // Determine materials
+            if (note.fret_type == Note.Fret_Type.OPEN)
             {
-                case (Note.Note_Type.HOPO):
-                    if (specialType == Note.Special_Type.STAR_POW)
-                    {
-                        materials = Globals.spHopoRenderer.sharedMaterials;
-                        materials[spColMatPos] = Globals.strumColors[(int)note.fret_type];
-                    }
+                materials = Globals.openRenderer.sharedMaterials;
+
+                if (specialType == Note.Special_Type.STAR_POW)
+                {
+                    if (noteType == Note.Note_Type.HOPO)
+                        materials[2] = Globals.openMaterials[3];
                     else
-                    {
-                        materials = Globals.hopoRenderer.sharedMaterials;
-                        materials[standardColMatPos] = Globals.strumColors[(int)note.fret_type];
-                    }
-                    break;
-                case (Note.Note_Type.TAP):
-                    if (specialType == Note.Special_Type.STAR_POW)
-                    {
-                        materials = Globals.spTapRenderer.sharedMaterials;
-                        materials[spColMatPos] = Globals.tapColors[(int)note.fret_type];
-                    }
+                        materials[2] = Globals.openMaterials[2];
+                }
+                else
+                {
+                    if (noteType == Note.Note_Type.HOPO)
+                        materials[2] = Globals.openMaterials[1];
                     else
-                    {
-                        materials = Globals.tapRenderer.sharedMaterials;
-                        materials[standardColMatPos] = Globals.tapColors[(int)note.fret_type];
-                    }
-                    break;
-                default:    // strum
-                    if (specialType == Note.Special_Type.STAR_POW)
-                    {
-                        materials = Globals.spStrumRenderer.sharedMaterials;
-                        materials[spColMatPos] = Globals.strumColors[(int)note.fret_type];
-                    }
-                    else
-                    {
-                        materials = Globals.strumRenderer.sharedMaterials;
-                        materials[standardColMatPos] = Globals.strumColors[(int)note.fret_type];
-                    }
-                    break;
+                        materials[2] = Globals.openMaterials[0];
+                }
+            }
+            else
+            {
+                const int standardColMatPos = 1;
+                const int spColMatPos = 3;
+
+                switch (noteType)
+                {
+                    case (Note.Note_Type.HOPO):
+                        if (specialType == Note.Special_Type.STAR_POW)
+                        {
+                            materials = Globals.spHopoRenderer.sharedMaterials;
+                            materials[spColMatPos] = Globals.strumColors[(int)note.fret_type];
+                        }
+                        else
+                        {
+                            materials = Globals.hopoRenderer.sharedMaterials;
+                            materials[standardColMatPos] = Globals.strumColors[(int)note.fret_type];
+                        }
+                        break;
+                    case (Note.Note_Type.TAP):
+                        if (specialType == Note.Special_Type.STAR_POW)
+                        {
+                            materials = Globals.spTapRenderer.sharedMaterials;
+                            materials[spColMatPos] = Globals.tapColors[(int)note.fret_type];
+                        }
+                        else
+                        {
+                            materials = Globals.tapRenderer.sharedMaterials;
+                            materials[standardColMatPos] = Globals.tapColors[(int)note.fret_type];
+                        }
+                        break;
+                    default:    // strum
+                        if (specialType == Note.Special_Type.STAR_POW)
+                        {
+                            materials = Globals.spStrumRenderer.sharedMaterials;
+                            materials[spColMatPos] = Globals.strumColors[(int)note.fret_type];
+                        }
+                        else
+                        {
+                            materials = Globals.strumRenderer.sharedMaterials;
+                            materials[standardColMatPos] = Globals.strumColors[(int)note.fret_type];
+                        }
+                        break;
+                }
             }
             noteRenderer.sharedMaterials = materials;
 #endif
