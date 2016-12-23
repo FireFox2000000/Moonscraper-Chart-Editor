@@ -287,6 +287,14 @@ public class ChartEditor : MonoBehaviour {
             openSaveFileDialog.fileTitle = new String(new char[64]);
             openSaveFileDialog.maxFileTitle = openSaveFileDialog.fileTitle.Length;
 
+            if (lastLoadedFile != string.Empty)
+                openSaveFileDialog.file = System.IO.Path.GetFileNameWithoutExtension(lastLoadedFile);
+            else
+                openSaveFileDialog.file = currentSong.name;
+
+            if (!forced)
+                openSaveFileDialog.file += "(UNFORCED)";
+
             openSaveFileDialog.initialDir = "";
             openSaveFileDialog.title = "Save as";
             openSaveFileDialog.defExt = "chart";
@@ -301,18 +309,13 @@ public class ChartEditor : MonoBehaviour {
                 throw new System.Exception("Could not open file");
             }
 #endif
-            Save(fileName);           
+            Save(fileName, forced);           
         }
         catch (System.Exception e)
         {
             // User probably just canceled
             Debug.LogError(e.Message);
         }
-    }
-
-    void ExportUnforced()
-    {
-        SaveAs(false);
     }
 
     void Save (string filename, bool forced = true)
