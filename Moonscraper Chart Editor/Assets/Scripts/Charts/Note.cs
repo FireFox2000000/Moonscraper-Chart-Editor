@@ -159,6 +159,43 @@ public class Note : ChartObject
         }
     }
 
+    bool IsHopoUnforced
+    {
+        get
+        {
+            bool HOPO = false;
+
+            if (!IsChord && previous != null)
+            {
+                // Need to consider whether the previous note was a chord, and if they are the same type of note
+                if (previous.IsChord || (!previous.IsChord && fret_type != previous.fret_type))
+                {
+                    // Check distance from previous note 
+                    int HOPODistance = (int)(65 * song.resolution / Globals.STANDARD_BEAT_RESOLUTION);
+
+                    if (position - previous.position <= HOPODistance)
+                        HOPO = true;
+                }
+            }
+
+            return HOPO;
+        }
+    }
+
+    public bool IsHopo
+    {
+        get
+        {
+            bool HOPO = IsHopoUnforced;
+
+            // Check if forced
+            if (forced)
+                HOPO = !HOPO;
+
+            return HOPO;
+        }
+    }
+
     public Note[] GetChord()
     {
         List<Note> chord = new List<Note>();
@@ -179,5 +216,59 @@ public class Note : ChartObject
         }
 
         return chord.ToArray();
+    }
+
+    public void applyFlagsToChord()
+    {
+        Note[] chordNotes = GetChord();
+
+        foreach (Note chordNote in chordNotes)
+        {
+            chordNote.flags = flags;
+        }
+    }
+
+    public void SetNoteType(Note_Type noteType)
+    {
+        flags &= ~Flags.TAP;
+        switch (noteType)
+        {
+            case (Note_Type.STRUM):
+                if (IsChord)
+                    flags &= ~Flags.FORCED;
+                else
+                {
+                    if (IsHopoUnforced)
+                        flags |= Flags.FORCED;
+                    else
+                        flags &= ~Flags.FORCED;
+                }
+
+                break;
+
+            case (Note_Type.HOPO):
+                if (IsChord)
+                    flags |= Flags.FORCED;
+                else
+                {
+                    if (!IsHopoUnforced)
+                        flags |= Flags.FORCED;
+                    else
+                        flags &= ~Flags.FORCED;
+                }
+
+                break;
+
+            case (Note_Type.TAP):
+                flags |= Flags.TAP;
+                break;
+
+            default:
+                break;
+        }
+
+        applyFlagsToChord();
+
+        ChartEditor.editOccurred = true;
     }
 }

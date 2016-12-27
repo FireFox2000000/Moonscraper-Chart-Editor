@@ -24,22 +24,24 @@ public class PlaceNoteController : ObjectlessTool {
             foreach (PlaceNote note in notes)
             {
                 note.note.flags = ((Note)editor.currentSelectedObject).flags;
-                note.gameObject.SetActive(false);
+                //note.gameObject.SetActive(false);
             }
         }
     }
 
     void OnDisable()
     {
-        foreach (PlaceNote placeableNotes in notes)
-        {
-            placeableNotes.gameObject.SetActive(false);
-        }
+        
     }
 
     public override void ToolDisable()
     {
         editor.currentSelectedObject = null;
+        Debug.Log("Disable");
+        foreach (PlaceNote placeableNotes in notes)
+        {
+            placeableNotes.gameObject.SetActive(false);
+        }
     }
 
     // Update is called once per frame

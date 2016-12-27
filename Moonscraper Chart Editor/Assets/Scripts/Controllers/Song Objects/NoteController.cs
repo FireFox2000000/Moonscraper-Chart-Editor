@@ -228,7 +228,7 @@ public class NoteController : SongObjectController {
                 }
                 else
                 {
-                    if (IsHopo)
+                    if (note.IsHopo)
                         noteType = Note.Note_Type.HOPO;
                     else
                         noteType = Note.Note_Type.STRUM;
@@ -387,33 +387,6 @@ public class NoteController : SongObjectController {
             note.next.controller.UpdateSongObject();
 
         Destroy(gameObject);
-    }
-
-    public bool IsHopo
-    {
-        get
-        {
-            bool HOPO = false;
-
-            if (!note.IsChord && note.previous != null)
-            {
-                // Need to consider whether the previous note was a chord, and if they are the same type of note
-                if (note.previous.IsChord || (!note.previous.IsChord && note.fret_type != note.previous.fret_type))
-                {
-                    // Check distance from previous note 
-                    int HOPODistance = (int)(65 * note.song.resolution / Globals.STANDARD_BEAT_RESOLUTION);
-
-                    if (note.position - note.previous.position <= HOPODistance)
-                        HOPO = true;
-                }
-            }
-
-            // Check if forced
-            if (note.forced)
-                HOPO = !HOPO;
-
-            return HOPO;
-        }
     }
 
     float snapToNearestHorizontalNotePos(float pos)

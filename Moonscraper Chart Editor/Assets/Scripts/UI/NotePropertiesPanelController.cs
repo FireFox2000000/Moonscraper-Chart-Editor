@@ -98,12 +98,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
     void setFlags(Note note)
     {
-        Note[] chordNotes = note.GetChord();
-
-        foreach (Note chordNote in chordNotes)
-        {
-            chordNote.flags = note.flags;
-        }
+        note.applyFlagsToChord();
 
         ChartEditor.editOccurred = true;
     }
