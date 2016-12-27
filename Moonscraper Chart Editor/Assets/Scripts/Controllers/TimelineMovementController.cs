@@ -60,8 +60,45 @@ public class TimelineMovementController : MovementController
             // Position changes scroll bar value
             if (scrollDelta != 0 || transform.position != prevPos)
             {
-                // Mouse scroll movement
-                transform.position = new Vector3(transform.position.x, transform.position.y + (scrollDelta * mouseScrollSensitivity), transform.position.z);
+                if (Input.GetKey(KeyCode.LeftAlt) && editor.currentSong.sections.Length > 0)
+                {
+                    // Jump to the previous or next sections
+                    float position = Mathf.Round(strikeLine.position.y);
+
+                    int i = 0;
+                    while (i < editor.currentSong.sections.Length && Mathf.Round(editor.currentSong.sections[i].worldYPosition) <= position)
+                    {
+                        ++i;
+                    }
+
+                    float newYPos = transform.position.y;
+                    
+                    // Jump forward
+                    if (scrollDelta > 0)
+                    {
+                        // Found section ahead
+                        if (i < editor.currentSong.sections.Length && Mathf.Round(editor.currentSong.sections[i].worldYPosition) > position)
+                            SetPosition(editor.currentSong.sections[i].position);
+                        else
+                            SetPosition(editor.currentSong.TimeToChartPosition(editor.currentSong.length, editor.currentSong.resolution));       // Jump to the end of the song
+
+                    }
+                    // Jump backwards
+                    else
+                    {
+                        while (i >= 0 && Mathf.Round(editor.currentSong.sections[i].worldYPosition) >= position)
+                            --i;
+
+                        if (i >= 0)
+                            SetPosition(editor.currentSong.sections[i].position);
+                        else
+                            SetPosition(0);
+                    }
+
+                }
+                else
+                    // Mouse scroll movement
+                    transform.position = new Vector3(transform.position.x, transform.position.y + (scrollDelta * mouseScrollSensitivity), transform.position.z);
 
                 if (transform.position.y < initPos.y)
                     transform.position = initPos;

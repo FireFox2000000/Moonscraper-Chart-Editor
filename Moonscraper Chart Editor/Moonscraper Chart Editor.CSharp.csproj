@@ -110,6 +110,7 @@
     <Compile Include="Assets\Scripts\Step.cs" />
     <Compile Include="Assets\Scripts\TimelineHandler.cs" />
     <Compile Include="Assets\Scripts\Tools\Eraser.cs" />
+    <Compile Include="Assets\Scripts\Tools\GroupSelect.cs" />
     <Compile Include="Assets\Scripts\Tools\ObjectlessTool.cs" />
     <Compile Include="Assets\Scripts\Tools\Placeable\GrabMove\MoveBPM.cs" />
     <Compile Include="Assets\Scripts\Tools\Placeable\GrabMove\MoveNote.cs" />
