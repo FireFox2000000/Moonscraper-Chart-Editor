@@ -73,14 +73,62 @@ public class GroupSelect : ToolObject {
 
         ChartObject[] allChartObjects = editor.currentChart.chartObjects;
         int minPos = SongObject.FindClosestPosition(minChartPos, allChartObjects);
-
     }
 
-    public void SetNoteType(Note.Note_Type type)
+    public void SetNoteType(AppliedNoteType type)
     {
         Note[] notes = chartObjectsList.OfType<Note>().ToArray();
 
         foreach (Note note in notes)
-            note.SetNoteType(type);
+            SetNoteType(note, type);
+    }
+
+    public void SetNoteType(Note note, AppliedNoteType noteType)
+    {
+        note.flags &= ~Note.Flags.TAP;
+        switch (noteType)
+        {
+            case (AppliedNoteType.Strum):
+                if (note.IsChord)
+                    note.flags &= ~Note.Flags.FORCED;
+                else
+                {
+                    if (note.IsHopoUnforced)
+                        note.flags |= Note.Flags.FORCED;
+                    else
+                        note.flags &= ~Note.Flags.FORCED;
+                }
+
+                break;
+
+            case (AppliedNoteType.Hopo):
+                if (note.IsChord)
+                    note.flags |= Note.Flags.FORCED;
+                else
+                {
+                    if (!note.IsHopoUnforced)
+                        note.flags |= Note.Flags.FORCED;
+                    else
+                        note.flags &= ~Note.Flags.FORCED;
+                }
+
+                break;
+
+            case (AppliedNoteType.Tap):
+                note.flags |= Note.Flags.TAP;
+                break;
+
+            default:
+                break;
+        }
+
+        note.applyFlagsToChord();
+
+        ChartEditor.editOccurred = true;
+    }
+
+    public enum AppliedNoteType
+    {
+        Natural, Strum, Hopo, Tap
     }
 }

@@ -151,7 +151,7 @@ public class NoteController : SongObjectController {
                         note.chart.Remove(chordNote);
                 }
             }
-        }       
+        }
     }
 
     public void standardOverwriteOpen()
@@ -211,6 +211,10 @@ public class NoteController : SongObjectController {
 
     public override void UpdateSongObject()
     {
+        // Guard to prevent forcing errors
+        if (note.CannotBeForcedCheck)
+            note.flags &= ~Note.Flags.FORCED;
+
         if (note.song != null)
         {
             // Position

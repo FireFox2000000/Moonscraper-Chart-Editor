@@ -12,8 +12,46 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     public Toggle forcedToggle;
 
     Note prevNote = null;
+
+    bool prevForcedProperty = false;
+
+    void OnEnable()
+    {
+        if ((currentNote.flags & Note.Flags.TAP) == Note.Flags.TAP)
+            tapToggle.isOn = true;
+        else
+            tapToggle.isOn = false;
+
+        if ((currentNote.flags & Note.Flags.FORCED) == Note.Flags.FORCED)
+            forcedToggle.isOn = true;
+        else
+            forcedToggle.isOn = false;
+
+        prevForcedProperty = forcedToggle.isOn;
+    }
+    
     void Update()
-    {      
+    {
+        if (currentNote.CannotBeForcedCheck)
+        { 
+            forcedToggle.interactable = false;
+            currentNote.flags &= ~Note.Flags.FORCED;
+        }
+        else
+        {
+            if (!forcedToggle.interactable)
+            {
+                forcedToggle.isOn = prevForcedProperty;
+                setForced();
+            }
+            forcedToggle.interactable = true;
+        }
+
+        if (forcedToggle.interactable)
+        {
+            prevForcedProperty = forcedToggle.isOn;
+        }
+
         if (currentNote != null)
         {
             fretText.text = "Fret: " + currentNote.fret_type.ToString();
@@ -46,17 +84,21 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
     void controls()
     {
-        if (Input.GetButtonDown("ToggleTap"))
+        if (Input.GetButtonDown("ToggleTap") && tapToggle.interactable)
+        {
             if (tapToggle.isOn)
                 tapToggle.isOn = false;
             else
                 tapToggle.isOn = true;
+        }
 
-        if (Input.GetButtonDown("ToggleForced"))
+        if (Input.GetButtonDown("ToggleForced") && forcedToggle.interactable)
+        {
             if (forcedToggle.isOn)
                 forcedToggle.isOn = false;
             else
                 forcedToggle.isOn = true;
+        }
     }
     
     void OnDisable()

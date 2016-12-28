@@ -159,7 +159,7 @@ public class Note : ChartObject
         }
     }
 
-    bool IsHopoUnforced
+    public bool IsHopoUnforced
     {
         get
         {
@@ -228,47 +228,23 @@ public class Note : ChartObject
         }
     }
 
-    public void SetNoteType(Note_Type noteType)
+    public bool CannotBeForcedCheck
     {
-        flags &= ~Flags.TAP;
-        switch (noteType)
+        get
         {
-            case (Note_Type.STRUM):
-                if (IsChord)
-                    flags &= ~Flags.FORCED;
-                else
+            if ((previous == null) || (previous != null && !IsChord && !previous.IsChord && previous.fret_type == fret_type))
+                return true;
+            else
+            {
+                Note[] chordNotes = GetChord();
+
+                foreach (Note chordNote in chordNotes)
                 {
-                    if (IsHopoUnforced)
-                        flags |= Flags.FORCED;
-                    else
-                        flags &= ~Flags.FORCED;
+                    if (chordNote.previous == null)
+                        return true;
                 }
-
-                break;
-
-            case (Note_Type.HOPO):
-                if (IsChord)
-                    flags |= Flags.FORCED;
-                else
-                {
-                    if (!IsHopoUnforced)
-                        flags |= Flags.FORCED;
-                    else
-                        flags &= ~Flags.FORCED;
-                }
-
-                break;
-
-            case (Note_Type.TAP):
-                flags |= Flags.TAP;
-                break;
-
-            default:
-                break;
+                return false;
+            }
         }
-
-        applyFlagsToChord();
-
-        ChartEditor.editOccurred = true;
     }
 }
