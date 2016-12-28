@@ -86,7 +86,8 @@ public class TimelineMovementController : MovementController
                     // Jump backwards
                     else
                     {
-                        while (i >= 0 && Mathf.Round(editor.currentSong.sections[i].worldYPosition) >= position)
+                        
+                        while (i > editor.currentSong.sections.Length - 1 || (i >= 0 && Mathf.Round(editor.currentSong.sections[i].worldYPosition) >= position))
                             --i;
 
                         if (i >= 0)

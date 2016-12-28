@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class GroupSelect : ToolObject {
-    List<ChartObject> chartObjectsList = new List<ChartObject>();
+    ChartObject[] chartObjectsList = new ChartObject[0];
 
     Vector2 initWorld2DPos = Vector2.zero;
     Vector2 endWorld2DPos = Vector2.zero;
@@ -21,7 +21,7 @@ public class GroupSelect : ToolObject {
         if (Input.GetMouseButtonDown(0) && Mouse.world2DPosition != null)
         {
             initWorld2DPos = (Vector2)Mouse.world2DPosition;
-            chartObjectsList.Clear();
+            chartObjectsList = new ChartObject[0];
         }
 
         if (Input.GetMouseButton(0) && Mouse.world2DPosition != null)
@@ -71,8 +71,9 @@ public class GroupSelect : ToolObject {
             maxChartPos = editor.currentSong.WorldYPositionToChartPosition(initWorld2DPos.y);
         }
 
-        ChartObject[] allChartObjects = editor.currentChart.chartObjects;
-        int minPos = SongObject.FindClosestPosition(minChartPos, allChartObjects);
+        chartObjectsList = SongObject.GetRange(editor.currentChart.chartObjects, minChartPos, maxChartPos);
+
+        Debug.Log(chartObjectsList.Length);
     }
 
     public void SetNoteType(AppliedNoteType type)

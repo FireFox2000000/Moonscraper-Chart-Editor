@@ -408,6 +408,55 @@ public abstract class SongObject
         return false;
     }
 
+    public static T[] GetRange<T>(T[] list, uint minPos, uint maxPos) where T : SongObject
+    {
+        if (minPos > maxPos || list.Length < 1)
+            return new T[0];
+
+        int minArrayPos = FindClosestPosition(minPos, list);
+        int maxArrayPos = FindClosestPosition(maxPos, list);
+
+        if (minArrayPos == Globals.NOTFOUND || maxArrayPos == Globals.NOTFOUND)
+            return new T[0];
+        else
+        {
+            // Find position may return an object locationed at a lower position than the minimum position
+            while (minArrayPos < list.Length && list[minArrayPos].position < minPos)
+            {
+                ++minArrayPos;
+            }
+
+            if (minArrayPos > list.Length - 1)
+                return new T[0];
+
+            // Iterate to the very first object at a greater position, as there may be multiple objects located at the same position
+            while (minArrayPos - 1 >= 0 && list[minArrayPos - 1].position > minPos)
+            {
+                --minArrayPos;
+            }
+
+            // Find position may return an object locationed at a greater position than the maximum position
+            while (maxArrayPos >= 0 && list[maxArrayPos].position > maxPos)
+            {
+                --maxArrayPos;
+            }
+
+            if (maxArrayPos < 0)
+                return new T[0];
+
+            // Iterate to the very last object at a lesser position, as there may be multiple objects located at the same position
+            while (maxArrayPos + 1 < list.Length && list[maxArrayPos + 1].position < maxPos)
+            {
+                ++maxArrayPos;
+            }
+
+            if (minArrayPos > maxArrayPos)
+                return new T[0];
+
+            return list.Skip(minArrayPos).Take(maxArrayPos - minArrayPos + 1).ToArray();
+        }
+    }
+
     public enum ID
     {
         TimeSignature, BPM, Event, Section, Note, Starpower, ChartEvent
