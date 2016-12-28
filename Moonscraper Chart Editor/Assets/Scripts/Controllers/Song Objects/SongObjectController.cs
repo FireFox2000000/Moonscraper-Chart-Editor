@@ -11,14 +11,21 @@ public abstract class SongObjectController : SelectableClick {
     protected ChartEditor editor;
     public SongObject songObject = null;
     Renderer ren;
+    Bounds bounds;
 
     public abstract void Delete();
     public abstract void UpdateSongObject();
+
+    Collider col3d;
+    Collider2D col2d;
 
     protected void Awake()
     {
         ren = GetComponent<Renderer>();
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+
+        col3d = GetComponent<Collider>();
+        col2d = GetComponent<Collider2D>();
     }
 
     protected virtual void Update()
@@ -59,5 +66,29 @@ public abstract class SongObjectController : SelectableClick {
         {
             editor.currentSelectedObject = songObject;
         }
+    }
+
+    public bool AABBcheck(Rect rect)
+    {
+        Rect colRect;
+
+        // Lower left corner
+        if (col3d)
+            colRect = new Rect(col3d.bounds.min, col3d.bounds.size);
+        else if (col2d)
+            colRect = new Rect(col2d.bounds.min, col2d.bounds.size);
+        else
+            return false;
+
+        // AABB, check for any gaps
+        if (colRect.x < rect.x + rect.width &&
+               colRect.x + colRect.width > rect.x &&
+               colRect.y < rect.y + rect.height &&
+               colRect.height + colRect.y > rect.y)
+        {
+            return true;
+        }
+        else
+            return false;
     }
 }

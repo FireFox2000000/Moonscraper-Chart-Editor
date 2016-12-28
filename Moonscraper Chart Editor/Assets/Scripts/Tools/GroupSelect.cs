@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class GroupSelect : ToolObject {
-    ChartObject[] chartObjectsList = new ChartObject[0];
+    List<ChartObject> chartObjectsList = new List<ChartObject>();
 
     Vector2 initWorld2DPos = Vector2.zero;
     Vector2 endWorld2DPos = Vector2.zero;
@@ -21,7 +21,7 @@ public class GroupSelect : ToolObject {
         if (Input.GetMouseButtonDown(0) && Mouse.world2DPosition != null)
         {
             initWorld2DPos = (Vector2)Mouse.world2DPosition;
-            chartObjectsList = new ChartObject[0];
+            chartObjectsList.Clear();
         }
 
         if (Input.GetMouseButton(0) && Mouse.world2DPosition != null)
@@ -29,7 +29,8 @@ public class GroupSelect : ToolObject {
 
         UpdateVisuals();
 
-        UpdateChartObjectList();
+        if (Input.GetMouseButtonUp(0))
+            UpdateChartObjectList();
     }
 
     void UpdateVisuals()
@@ -57,6 +58,7 @@ public class GroupSelect : ToolObject {
     void UpdateChartObjectList()
     {
         // Update what objects are currently within the selected range
+        /*
         uint minChartPos;
         uint maxChartPos;
 
@@ -71,9 +73,33 @@ public class GroupSelect : ToolObject {
             maxChartPos = editor.currentSong.WorldYPositionToChartPosition(initWorld2DPos.y);
         }
 
-        chartObjectsList = SongObject.GetRange(editor.currentChart.chartObjects, minChartPos, maxChartPos);
+        chartObjectsList = SongObject.GetRange(editor.currentChart.chartObjects, minChartPos, maxChartPos);*/
 
-        Debug.Log(chartObjectsList.Length);
+        Rect rect;
+        Vector2 min = new Vector2();
+
+        if (initWorld2DPos.x < endWorld2DPos.x)
+            min.x = initWorld2DPos.x;
+        else
+            min.x = endWorld2DPos.x;
+
+        if (initWorld2DPos.y < endWorld2DPos.y)
+            min.y = initWorld2DPos.y;
+        else
+            min.y = endWorld2DPos.y;
+
+        Vector2 size = new Vector2(Mathf.Abs(initWorld2DPos.x - endWorld2DPos.x), Mathf.Abs(initWorld2DPos.y - endWorld2DPos.y));
+        rect = new Rect(min, size);
+
+        chartObjectsList.Clear();
+
+        foreach(ChartObject chartObject in editor.currentChart.chartObjects)
+        {
+            if (chartObject.controller && chartObject.controller.AABBcheck(rect))
+                chartObjectsList.Add(chartObject);
+        }
+
+        Debug.Log(chartObjectsList.Count);
     }
 
     public void SetNoteType(AppliedNoteType type)
