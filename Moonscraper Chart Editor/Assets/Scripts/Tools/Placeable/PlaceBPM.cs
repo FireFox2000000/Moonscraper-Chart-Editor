@@ -9,7 +9,7 @@ public class PlaceBPM : PlaceSongObject {
     protected override void Awake()
     {
         base.Awake();
-        bpm = new BPM(editor.currentSong);
+        bpm = new BPM();
 
         controller = GetComponent<BPMController>();
         controller.bpm = bpm;

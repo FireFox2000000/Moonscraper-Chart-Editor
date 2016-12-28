@@ -36,6 +36,9 @@ public class Chart  {
     // Return the position it was inserted into
     public int Add(ChartObject chartObject, bool update = true)
     {
+        chartObject.chart = this;
+        chartObject.song = this.song;
+
         int pos = SongObject.Insert(chartObject, _chartObjects);
 
         if (update)
@@ -47,6 +50,12 @@ public class Chart  {
     public bool Remove(ChartObject chartObject, bool update = true)
     {
         bool success = SongObject.Remove(chartObject, _chartObjects);
+
+        if (success)
+        {
+            chartObject.chart = null;
+            chartObject.song = null;
+        }
 
         if (update)
             updateArrays();
@@ -96,7 +105,7 @@ public class Chart  {
                             case (3):
                             case (4):
                                 // Add note to the data
-                                Note newStandardNote = new Note(song, this, position, (Note.Fret_Type)fret_type, length);
+                                Note newStandardNote = new Note(position, (Note.Fret_Type)fret_type, length);
                                 Add(newStandardNote, false);
                                 break;
                             case (5):
@@ -104,7 +113,7 @@ public class Chart  {
                                 flags.Add(line);
                                 break;
                             case (7):
-                                Note newOpenNote = new Note(song, this, position, Note.Fret_Type.OPEN, length);
+                                Note newOpenNote = new Note(position, Note.Fret_Type.OPEN, length);
                                 Add(newOpenNote, false);
                                 break;
                             default:
@@ -120,7 +129,7 @@ public class Chart  {
                     uint position = uint.Parse(digits[0]);
                     uint length = uint.Parse(digits[2]);
 
-                    Add(new StarPower(song, this, position, length), false);
+                    Add(new StarPower(position, length), false);
                 }
                 
                 else if (noteEventRegex.IsMatch(line))
@@ -130,7 +139,7 @@ public class Chart  {
                     uint position = uint.Parse(strings[0]);
                     string eventName = strings[3];
 
-                    Add(new ChartEvent(song, this, position, eventName), false);
+                    Add(new ChartEvent(position, eventName), false);
                 }
             }
             updateArrays();

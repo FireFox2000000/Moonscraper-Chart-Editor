@@ -2,9 +2,8 @@
 {
     public Chart chart;
 
-    public ChartObject(Song song, Chart _chart, uint position) : base(song, position)
+    public ChartObject(uint position) : base(position)
     {
-        chart = _chart;
     }
 }
 
@@ -16,12 +15,12 @@ public class StarPower : ChartObject
 
     public uint length;
 
-    public StarPower(Song song, Chart chart, uint _position, uint _length) : base (song, chart, _position)
+    public StarPower(uint _position, uint _length) : base (_position)
     {
         length = _length;
     }
 
-    public StarPower(StarPower _starpower) : base(_starpower.song, _starpower.chart, _starpower.position)
+    public StarPower(StarPower _starpower) : base(_starpower.position)
     {
         length = _starpower.length;
     }
@@ -41,7 +40,7 @@ public class ChartEvent : ChartObject
 
     public string eventName;
 
-    public ChartEvent(Song song, Chart chart, uint _position, string _eventName) : base(song, chart, _position)
+    public ChartEvent(uint _position, string _eventName) : base(_position)
     {
         eventName = _eventName;
     }

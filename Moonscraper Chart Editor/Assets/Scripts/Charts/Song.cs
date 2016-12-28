@@ -99,8 +99,8 @@ public class Song {
         bpms = new BPM[0];
         timeSignatures = new TimeSignature[0];
 
-        Add(new BPM(this));
-        Add(new TimeSignature(this));
+        Add(new BPM());
+        Add(new TimeSignature());
 
         // Chart initialisation
         for (int i = 0; i < charts.Length; ++i)
@@ -387,6 +387,7 @@ public class Song {
 
     public void Add(SyncTrack syncTrackObject, bool update = true)
     {
+        syncTrackObject.song = this;
         SongObject.Insert(syncTrackObject, _syncTrack);
 
         if (update)
@@ -402,6 +403,9 @@ public class Song {
             success = SongObject.Remove(syncTrackObject, _syncTrack);
         }
 
+        if (success)
+            syncTrackObject.song = null;
+
         if (update)
             updateArrays();
 
@@ -410,6 +414,7 @@ public class Song {
 
     public void Add(Event eventObject, bool update = true)
     {
+        eventObject.song = this;
         SongObject.Insert(eventObject, _events);
 
         if (update)
@@ -420,6 +425,9 @@ public class Song {
     {
         bool success = false;
         success = SongObject.Remove(eventObject, _events);
+
+        if (success)
+            eventObject.song = null;
 
         if (update)
             updateArrays();
@@ -733,7 +741,7 @@ public class Song {
                 uint position = uint.Parse(matches[0].ToString());
                 uint value = uint.Parse(matches[1].ToString());
 
-                Add(new TimeSignature(this, position, value), false);
+                Add(new TimeSignature(position, value), false);
             }
             else if (BPM.regexMatch(line))
             {
@@ -741,7 +749,7 @@ public class Song {
                 uint position = uint.Parse(matches[0].ToString());
                 uint value = uint.Parse(matches[1].ToString());
 
-                Add(new BPM(this, position, value), false);
+                Add(new BPM(position, value), false);
             }
         }
 #if TIMING_DEBUG

@@ -10,7 +10,7 @@ public class PlaceStarpower : PlaceSongObject {
     protected override void Awake()
     {
         base.Awake();
-        starpower = new StarPower(editor.currentSong, editor.currentChart, 0, 0);
+        starpower = new StarPower(0, 0);
 
         controller = GetComponent<StarpowerController>();
         controller.starpower = starpower;

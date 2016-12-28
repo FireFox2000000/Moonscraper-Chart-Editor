@@ -22,10 +22,10 @@ public class Note : ChartObject
         set { _controller = value; base.controller = value; }
     }
 
-    public Note(Song song, Chart chart, uint _position, 
+    public Note(uint _position, 
                 Fret_Type _fret_type, 
                 uint _sustain = 0, 
-                Flags _flags = Flags.NONE) : base(song, chart, _position)
+                Flags _flags = Flags.NONE) : base(_position)
     {
         sustain_length = _sustain;
         flags = _flags;
@@ -35,7 +35,7 @@ public class Note : ChartObject
         next = null;
     }
 
-    public Note (Note note) : base(note.song, note.chart, note.position)
+    public Note (Note note) : base(note.position)
     {
         position = note.position;
         sustain_length = note.sustain_length;

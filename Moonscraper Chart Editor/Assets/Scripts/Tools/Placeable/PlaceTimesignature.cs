@@ -8,7 +8,7 @@ public class PlaceTimesignature : PlaceSongObject {
     protected override void Awake()
     {
         base.Awake();
-        ts = new TimeSignature(editor.currentSong);
+        ts = new TimeSignature();
 
         controller = GetComponent<TimesignatureController>();
         controller.ts = ts;

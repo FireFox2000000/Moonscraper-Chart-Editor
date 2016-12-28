@@ -37,7 +37,7 @@ public class PlaceNoteController : ObjectlessTool {
     public override void ToolDisable()
     {
         editor.currentSelectedObject = null;
-        Debug.Log("Disable");
+
         foreach (PlaceNote placeableNotes in notes)
         {
             placeableNotes.gameObject.SetActive(false);

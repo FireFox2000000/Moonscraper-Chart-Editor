@@ -12,9 +12,8 @@ public abstract class SongObject
 
     public abstract int classID { get; }
 
-    public SongObject (Song _song, uint _position)
+    public SongObject (uint _position)
     {
-        song = _song;
         position = _position;
     }
     
@@ -79,6 +78,16 @@ public abstract class SongObject
             return !(a < b);
         else
             return false;
+    }
+
+    public static bool operator <=(SongObject a, SongObject b)
+    {
+        return (a < b || a == b);
+    }
+
+    public static bool operator >=(SongObject a, SongObject b)
+    {
+        return (a > b || a == b);
     }
 
     public override bool Equals(System.Object obj)
@@ -262,7 +271,7 @@ public abstract class SongObject
             return list[pos];
     }
 
-    public static int Insert<T>(T item, List<T> list) where T : SongObject
+    public static int Insert<T>(T item, List<T> list, bool uniqueData = true) where T : SongObject
     {
         ChartEditor.editOccurred = true;
         int insertionPos = FindClosestPosition(item, list.ToArray());
@@ -272,7 +281,7 @@ public abstract class SongObject
             if (list[insertionPos] == item && item.classID == list[insertionPos].classID)
             {
                 // Overwrite 
-                if (list[insertionPos].controller != null)
+                if (uniqueData && list[insertionPos].controller != null)
                     GameObject.Destroy(list[insertionPos].controller.gameObject);
 
                 list[insertionPos] = item;
@@ -294,7 +303,7 @@ public abstract class SongObject
             insertionPos = list.Count - 1;
         }
         
-        if (item.GetType() == typeof(Note))
+        if (uniqueData && item.GetType() == typeof(Note))
         {
             // Update linked list
             Note current = list[insertionPos] as Note;
@@ -373,14 +382,14 @@ public abstract class SongObject
         return insertionPos;
     }
 
-    public static bool Remove<T>(T item, List<T> list) where T : SongObject
+    public static bool Remove<T>(T item, List<T> list, bool uniqueData = true) where T : SongObject
     {
         ChartEditor.editOccurred = true;
         int pos = FindObjectPosition(item, list.ToArray());
 
         if (pos != Globals.NOTFOUND)
         {
-            if (item.GetType() == typeof(Note))
+            if (uniqueData && item.GetType() == typeof(Note))
             {
                 // Update linked list
                 Note previous = FindPreviousOfType(item.GetType(), pos, list.ToArray()) as Note;
@@ -391,8 +400,6 @@ public abstract class SongObject
                 if (next != null)
                     next.previous = previous;
             }
-
-            item.song = null;
             list.RemoveAt(pos);
             
             return true;
@@ -415,7 +422,7 @@ public class Event : SongObject
 
     public string title;
 
-    public Event(Song song, string _title, uint _position) : base(song, _position)
+    public Event(Song song, string _title, uint _position) : base(_position)
     {
         title = _title;
     }
@@ -464,7 +471,7 @@ public abstract class SyncTrack : SongObject
 {
     public uint value;
 
-    public SyncTrack (Song song, uint _position, uint _value) : base (song, _position)
+    public SyncTrack (uint _position, uint _value) : base (_position)
     {
         value = _value;
     }
@@ -476,9 +483,9 @@ public class TimeSignature : SyncTrack
 
     public override int classID { get { return (int)_classID; } }
 
-    public TimeSignature(Song song, uint _position = 0, uint _value = 4) : base (song, _position, _value) {}
+    public TimeSignature(uint _position = 0, uint _value = 4) : base (_position, _value) {}
 
-    public TimeSignature(TimeSignature ts) : base(ts.song, ts.position, ts.value) { }
+    public TimeSignature(TimeSignature ts) : base(ts.position, ts.value) { }
 
     override public string GetSaveString()
     {
@@ -498,9 +505,9 @@ public class BPM : SyncTrack
 
     public override int classID { get { return _classID; } }
 
-    public BPM(Song song, uint _position = 0, uint _value = 120000) : base (song, _position, _value) { }
+    public BPM(uint _position = 0, uint _value = 120000) : base (_position, _value) { }
 
-    public BPM(BPM _bpm) : base(_bpm.song, _bpm.position, _bpm.value) { }
+    public BPM(BPM _bpm) : base(_bpm.position, _bpm.value) { }
 
     override public string GetSaveString()
     {

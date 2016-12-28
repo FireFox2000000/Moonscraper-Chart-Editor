@@ -14,7 +14,7 @@ public class PlaceNote : PlaceSongObject {
     protected override void Awake()
     {
         base.Awake();
-        note = new Note(editor.currentSong, editor.currentChart, 0, Note.Fret_Type.GREEN);
+        note = new Note(0, Note.Fret_Type.GREEN);
 
         controller = GetComponent<NoteController>();
         controller.note = note;
