@@ -78,7 +78,10 @@ public abstract class SongObjectController : SelectableClick {
         else if (col2d)
             colRect = new Rect(col2d.bounds.min, col2d.bounds.size);
         else
+        {
+            Debug.Log("No collider");
             return false;
+        }
 
         // AABB, check for any gaps
         if (colRect.x < rect.x + rect.width &&

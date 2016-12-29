@@ -4,10 +4,27 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class GroupSelect : ToolObject {
+    public GameObject selectedHighlight;
+
     List<ChartObject> chartObjectsList = new List<ChartObject>();
+    GameObject[] highlightPool = new GameObject[100];
 
     Vector2 initWorld2DPos = Vector2.zero;
     Vector2 endWorld2DPos = Vector2.zero;
+
+    Globals globals;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        globals = GameObject.FindGameObjectWithTag("Globals").GetComponent<Globals>();
+
+        for (int i = 0; i < highlightPool.Length; ++i)
+        {
+            highlightPool[i] = GameObject.Instantiate(selectedHighlight);
+            highlightPool[i].SetActive(false);
+        }
+    }
 
     public override void ToolDisable()
     {
@@ -15,6 +32,7 @@ public class GroupSelect : ToolObject {
         endWorld2DPos = Vector2.zero;
     }
 
+    bool userDraggingSelectArea = false;
     protected override void Update()
     {
         UpdateSnappedPos();
@@ -24,6 +42,8 @@ public class GroupSelect : ToolObject {
         {
             initWorld2DPos = (Vector2)Mouse.world2DPosition;
             chartObjectsList.Clear();
+
+            userDraggingSelectArea = true;
         }
 
         if (Input.GetMouseButton(0) && Mouse.world2DPosition != null)
@@ -31,8 +51,32 @@ public class GroupSelect : ToolObject {
 
         UpdateVisuals();
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && userDraggingSelectArea)
+        {
             UpdateChartObjectList();
+            userDraggingSelectArea = false;
+        }
+
+        // Show a highlight over each selected object
+        int arrayPos = SongObject.FindClosestPosition(editor.minPos, chartObjectsList.ToArray());
+        int poolPos = 0;
+
+        while (arrayPos != Globals.NOTFOUND && arrayPos < chartObjectsList.Count && poolPos < highlightPool.Length && chartObjectsList[arrayPos].position < editor.maxPos)
+        {
+            if (chartObjectsList[arrayPos].controller)
+            {
+                highlightPool[poolPos].transform.position = chartObjectsList[arrayPos].controller.transform.position;
+                highlightPool[poolPos].SetActive(true);
+                ++poolPos;
+            }
+
+            ++arrayPos;
+        }
+
+        while (poolPos < highlightPool.Length)
+        {
+            highlightPool[poolPos++].SetActive(false);
+        }
     }
 
     void UpdateVisuals()
@@ -83,20 +127,43 @@ public class GroupSelect : ToolObject {
                 chartObjectsList.Add(chartObject);
         }
 
-        Debug.Log(chartObjectsList.Count);
+        //Debug.Log(chartObjectsList.Count);
+    }
+
+    public void SetNatural()
+    {
+        SetNoteType(AppliedNoteType.Natural);
+    }
+
+    public void SetStrum()
+    {
+        SetNoteType(AppliedNoteType.Strum);
+    }
+
+    public void SetHopo()
+    {
+        SetNoteType(AppliedNoteType.Hopo);
+    }
+
+    public void SetTap()
+    {
+        SetNoteType(AppliedNoteType.Tap);
     }
 
     public void SetNoteType(AppliedNoteType type)
     {
-        Note[] notes = chartObjectsList.OfType<Note>().ToArray();
+        //Note[] notes = chartObjectsList.OfType<Note>().ToArray();
 
-        foreach (Note note in notes)
-            SetNoteType(note, type);
+        foreach (ChartObject note in chartObjectsList)
+        {
+            if (note.classID == (int)SongObject.ID.Note)
+                SetNoteType(note as Note, type);
+        }
     }
 
     public void SetNoteType(Note note, AppliedNoteType noteType)
     {
-        note.flags &= ~Note.Flags.TAP;
+        note.flags = Note.Flags.NONE;
         switch (noteType)
         {
             case (AppliedNoteType.Strum):

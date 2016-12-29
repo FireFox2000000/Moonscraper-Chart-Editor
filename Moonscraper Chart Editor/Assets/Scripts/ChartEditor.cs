@@ -27,6 +27,7 @@ public class ChartEditor : MonoBehaviour {
     public SectionPropertiesPanelController sectionInspector;
     public BPMPropertiesPanelController bpmInspector;
     public TimesignaturePropertiesPanelController tsInspector;
+    public GameObject groupSelectInspector;
     [Header("Tool prefabs")]
     public GameObject ghostNote;
     public GameObject ghostStarpower;
@@ -183,6 +184,12 @@ public class ChartEditor : MonoBehaviour {
         else if (currentPropertiesPanel)
         {
             currentPropertiesPanel.gameObject.SetActive(false);
+        }
+
+        if (Toolpane.currentTool == Toolpane.Tools.GroupSelect)
+        {
+            currentPropertiesPanel = groupSelectInspector;
+            currentPropertiesPanel.gameObject.SetActive(true);
         }
 
         // Set window text to represent if the current song has been saved or not
