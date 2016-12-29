@@ -19,6 +19,8 @@ public abstract class SongObjectController : SelectableClick {
     Collider col3d;
     Collider2D col2d;
 
+    Vector2 colSize = Vector2.zero;
+
     protected void Awake()
     {
         ren = GetComponent<Renderer>();
@@ -26,6 +28,14 @@ public abstract class SongObjectController : SelectableClick {
 
         col3d = GetComponent<Collider>();
         col2d = GetComponent<Collider2D>();
+
+        /************ Note Unity documentation- ************/
+        // Bounds: The world space bounding volume of the collider.
+        // Note that this will be an empty bounding box if the collider is disabled or the game object is inactive.
+        if (col3d)
+            colSize = col3d.bounds.size;
+        else if (col2d)
+            colSize = col2d.bounds.size;           
     }
 
     protected virtual void Update()
@@ -68,30 +78,45 @@ public abstract class SongObjectController : SelectableClick {
         }
     }
 
+    public Rect GetAABBBoundsRect()
+    {
+        if (colSize == Vector2.zero)
+            throw new System.Exception("No collision attached to object");
+
+        if (col3d)
+            return new Rect(col3d.bounds.min, colSize);
+        else if (col2d)
+            return new Rect(col2d.bounds.min, colSize);
+        else
+        {
+            throw new System.Exception("No collision attached to object");
+        }
+    }
+
     public bool AABBcheck(Rect rect)
     {
         Rect colRect;
 
-        // Lower left corner
-        if (col3d)
-            colRect = new Rect(col3d.bounds.min, col3d.bounds.size);
-        else if (col2d)
-            colRect = new Rect(col2d.bounds.min, col2d.bounds.size);
-        else
+        try
         {
-            Debug.Log("No collider");
+            colRect = GetAABBBoundsRect();
+        }
+        catch
+        {
             return false;
         }
 
         // AABB, check for any gaps
-        if (colRect.x < rect.x + rect.width &&
-               colRect.x + colRect.width > rect.x &&
-               colRect.y < rect.y + rect.height &&
-               colRect.height + colRect.y > rect.y)
+        if (colRect.x <= rect.x + rect.width &&
+               colRect.x + colRect.width >= rect.x &&
+               colRect.y <= rect.y + rect.height &&
+               colRect.height + colRect.y >= rect.y)
         {
             return true;
         }
         else
+        { 
             return false;
+        }
     }
 }

@@ -66,6 +66,15 @@ public class GroupSelect : ToolObject {
             if (chartObjectsList[arrayPos].controller)
             {
                 highlightPool[poolPos].transform.position = chartObjectsList[arrayPos].controller.transform.position;
+                /*
+                try
+                {
+                    Vector3 size = chartObjectsList[arrayPos].controller.GetAABBBoundsRect().size;
+                    size.z = transform.lossyScale.z;
+                    highlightPool[poolPos].transform.localScale = size;
+                }
+                catch { }*/
+
                 highlightPool[poolPos].SetActive(true);
                 ++poolPos;
             }
