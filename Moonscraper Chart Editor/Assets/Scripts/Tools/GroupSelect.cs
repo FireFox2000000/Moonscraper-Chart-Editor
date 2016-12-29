@@ -11,6 +11,7 @@ public class GroupSelect : ToolObject {
 
     Vector2 initWorld2DPos = Vector2.zero;
     Vector2 endWorld2DPos = Vector2.zero;
+    uint endWorld2DChartPos = 0;
 
     Globals globals;
 
@@ -41,19 +42,24 @@ public class GroupSelect : ToolObject {
         if (Input.GetMouseButtonDown(0) && Mouse.world2DPosition != null)
         {
             initWorld2DPos = (Vector2)Mouse.world2DPosition;
+            initWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
             chartObjectsList.Clear();
 
             userDraggingSelectArea = true;
         }
 
         if (Input.GetMouseButton(0) && Mouse.world2DPosition != null)
+        {
             endWorld2DPos = (Vector2)Mouse.world2DPosition;
+            endWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
+            endWorld2DChartPos = objectSnappedChartPos;
+        }
 
         UpdateVisuals();
 
         if (Input.GetMouseButtonUp(0) && userDraggingSelectArea)
         {
-            UpdateChartObjectList();
+            UpdateChartObjectList(endWorld2DChartPos);
             userDraggingSelectArea = false;
         }
 
@@ -118,7 +124,7 @@ public class GroupSelect : ToolObject {
         transform.position = pos;
     }
 
-    void UpdateChartObjectList()
+    void UpdateChartObjectList(uint? maxLimitNonInclusive = null)
     {
         Rect rect;
         Vector2 min = new Vector2();
@@ -141,7 +147,15 @@ public class GroupSelect : ToolObject {
         foreach(ChartObject chartObject in editor.currentChart.chartObjects)
         {
             if (chartObject.controller && chartObject.controller.AABBcheck(rect))
-                chartObjectsList.Add(chartObject);
+            {
+                if (maxLimitNonInclusive != null)
+                {
+                    if (chartObject.position < maxLimitNonInclusive)
+                        chartObjectsList.Add(chartObject);
+                }
+                else
+                    chartObjectsList.Add(chartObject);
+            }
         }
 
         //Debug.Log(chartObjectsList.Count);
