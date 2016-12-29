@@ -380,9 +380,9 @@ public class NoteController : SongObjectController {
             return GetNextOfOpen(openNotePos, nextNote.next);
     }
 
-    public override void Delete()
+    public override void Delete(bool update = true)
     {
-        note.chart.Remove(note);
+        note.chart.Remove(note, update);
 
         // Update the previous note in the case of chords with 2 notes
         if (note.previous != null)

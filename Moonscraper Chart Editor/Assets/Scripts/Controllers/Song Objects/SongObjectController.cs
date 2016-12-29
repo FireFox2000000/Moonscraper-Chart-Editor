@@ -13,7 +13,7 @@ public abstract class SongObjectController : SelectableClick {
     Renderer ren;
     Bounds bounds;
 
-    public abstract void Delete();
+    public abstract void Delete(bool update = true);
     public abstract void UpdateSongObject();
 
     Collider col3d;

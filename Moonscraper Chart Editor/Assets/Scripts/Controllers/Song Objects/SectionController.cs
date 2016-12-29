@@ -22,12 +22,12 @@ public class SectionController : SongObjectController
         }
     }
 
-    public override void Delete()
+    public override void Delete(bool update = true)
     {
         if (sectionGui)
             Destroy(sectionGui.gameObject);
 
-        section.song.Remove(section);
+        section.song.Remove(section, update);
   
         Destroy(gameObject);
     }

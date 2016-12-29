@@ -25,12 +25,12 @@ public class BPMController : SongObjectController {
         }
     }
 
-    public override void Delete()
+    public override void Delete(bool update = true)
     {
         // First bpm cannot be removed, block the functionality
         if (bpm.position != 0)
         {
-            bpm.song.Remove(bpm);
+            bpm.song.Remove(bpm, update);
 
             Destroy(gameObject);
         }

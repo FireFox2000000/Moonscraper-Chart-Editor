@@ -25,11 +25,11 @@ public class TimesignatureController : SongObjectController {
         }
     }
 
-    public override void Delete()
+    public override void Delete(bool update = true)
     {
         if (ts.position != 0)
         {
-            ts.song.Remove(ts);
+            ts.song.Remove(ts, update);
 
             Destroy(gameObject);
         }

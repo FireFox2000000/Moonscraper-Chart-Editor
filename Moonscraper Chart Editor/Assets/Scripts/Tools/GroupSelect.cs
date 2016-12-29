@@ -227,8 +227,9 @@ public class GroupSelect : ToolObject {
         foreach (ChartObject cObject in chartObjectsList)
         {
             if (cObject.controller)
-                cObject.controller.Delete();
+                cObject.controller.Delete(false);
         }
+        editor.currentChart.updateArrays();
         chartObjectsList.Clear();
     }
 

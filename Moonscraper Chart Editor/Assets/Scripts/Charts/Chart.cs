@@ -25,7 +25,7 @@ public class Chart  {
         events = new ChartEvent[0];
     }
 
-    private void updateArrays()
+    public void updateArrays()
     {
         notes = _chartObjects.OfType<Note>().ToArray();
         starPower = _chartObjects.OfType<StarPower>().ToArray();

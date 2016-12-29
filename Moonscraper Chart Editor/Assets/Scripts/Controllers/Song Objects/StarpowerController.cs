@@ -23,9 +23,9 @@ public class StarpowerController : SongObjectController
         starpower.controller = this;
     }
 
-    public override void Delete()
+    public override void Delete(bool update = true)
     {
-        starpower.chart.Remove(starpower);
+        starpower.chart.Remove(starpower, update);
         Destroy(gameObject);
     }
 
