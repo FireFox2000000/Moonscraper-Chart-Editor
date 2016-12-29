@@ -76,6 +76,8 @@ public class ChartEditor : MonoBehaviour {
     [DllImport("user32.dll")]
     static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
 
+    public static SongObject[] clipboard = new SongObject[0];
+
     System.IntPtr windowPtr;
     string originalWindowName;
 

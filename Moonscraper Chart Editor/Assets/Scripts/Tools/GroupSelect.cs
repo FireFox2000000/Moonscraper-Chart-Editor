@@ -57,6 +57,14 @@ public class GroupSelect : ToolObject {
             userDraggingSelectArea = false;
         }
 
+        UpdateHighlights();
+
+        if (Input.GetKeyDown(KeyCode.Delete))
+            Delete();
+    }
+
+    void UpdateHighlights()
+    {
         // Show a highlight over each selected object
         int arrayPos = SongObject.FindClosestPosition(editor.minPos, chartObjectsList.ToArray());
         int poolPos = 0;
@@ -212,6 +220,27 @@ public class GroupSelect : ToolObject {
         note.applyFlagsToChord();
 
         ChartEditor.editOccurred = true;
+    }
+
+    void Delete()
+    {
+        foreach (ChartObject cObject in chartObjectsList)
+        {
+            if (cObject.controller)
+                cObject.controller.Delete();
+        }
+        chartObjectsList.Clear();
+    }
+
+    void Copy()
+    {
+        ChartEditor.clipboard = chartObjectsList.ToArray();
+    }
+
+    void Cut()
+    {
+        Copy();
+        Delete();
     }
 
     public enum AppliedNoteType

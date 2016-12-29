@@ -187,15 +187,16 @@ public class Chart  {
     public string GetChartString(bool forced = true)
     {
         string chart = string.Empty;
+        ChartObject[] chartObjects = _chartObjects.ToArray();
 
-        for(int i = 0; i < _chartObjects.Count; ++i)
+        for (int i = 0; i < chartObjects.Length; ++i)
         {
-            chart += _chartObjects[i].GetSaveString();
+            chart += chartObjects[i].GetSaveString();
 
-            if (forced && _chartObjects[i].GetType() == typeof(Note))
+            if (forced && chartObjects[i].GetType() == typeof(Note))
             {
                 // if the next note is not at the same position, add flags into the string
-                Note currentNote = (Note)_chartObjects[i];    
+                Note currentNote = (Note)chartObjects[i];    
 
                 if (currentNote.next != null && currentNote.next.position != currentNote.position)
                     chart += currentNote.GetFlagsSaveString();

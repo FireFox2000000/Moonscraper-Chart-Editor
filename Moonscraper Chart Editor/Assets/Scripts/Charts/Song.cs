@@ -786,7 +786,7 @@ public class Song {
 #endif
     }
 
-    string GetSaveString<T>(List<T> list) where T : SongObject
+    string GetSaveString<T>(T[] list) where T : SongObject
     {
         string saveString = string.Empty;
 
@@ -855,12 +855,12 @@ public class Song {
 
         // SyncTrack
         saveString += "[SyncTrack]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
-        saveString += GetSaveString(_syncTrack);
+        saveString += GetSaveString(_syncTrack.ToArray());
         saveString += "}" + Globals.LINE_ENDING;
 
         // Events
         saveString += "[Events]" + Globals.LINE_ENDING +"{" + Globals.LINE_ENDING;
-        saveString += GetSaveString(_events);
+        saveString += GetSaveString(_events.ToArray());
         saveString += "}" + Globals.LINE_ENDING;
 
         // Charts      
@@ -913,7 +913,7 @@ public class Song {
                         break;
                 }
 
-                saveString += charts[i].GetChartString(forced);
+                saveString += chartString;
                 saveString += "}" + Globals.LINE_ENDING;
             }
         }
