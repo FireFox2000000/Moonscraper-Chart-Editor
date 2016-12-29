@@ -354,6 +354,8 @@ public class Song {
 
     public static float WorldYPositionToTime (float worldYPosition)
     {
+        if (worldYPosition < 0)
+            worldYPosition = 0;
         return worldYPosition / Globals.hyperspeed;
     }
 

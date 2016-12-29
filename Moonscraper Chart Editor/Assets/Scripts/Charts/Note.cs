@@ -196,6 +196,20 @@ public class Note : ChartObject
         }
     }
 
+    public int mask
+    {
+        get
+        {
+            Note[] chord = GetChord();
+            int mask = 0;
+
+            foreach (Note note in chord)
+                mask |= (1 << (int)note.fret_type);
+
+            return mask;
+        }
+    }
+
     public Note[] GetChord()
     {
         List<Note> chord = new List<Note>();
@@ -232,8 +246,14 @@ public class Note : ChartObject
     {
         get
         {
-            if ((previous == null) || (previous != null && !IsChord && !previous.IsChord && previous.fret_type == fret_type))
+            Note seperatePrevious = previous;
+            while (seperatePrevious != null && seperatePrevious.position == position)
+                seperatePrevious = seperatePrevious.previous;
+
+            /*if ((previous == null) || (previous != null && !IsChord && !previous.IsChord && previous.fret_type == fret_type))*/
+            if ((seperatePrevious == null) || (seperatePrevious != null && mask == seperatePrevious.mask))
                 return true;
+            /*
             else
             {
                 Note[] chordNotes = GetChord();
@@ -244,7 +264,9 @@ public class Note : ChartObject
                         return true;
                 }
                 return false;
-            }
+            }*/
+
+            return false;
         }
     }
 }

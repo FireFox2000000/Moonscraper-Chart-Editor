@@ -14,25 +14,31 @@ public abstract class Snapable : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	protected virtual void Update () {
-        // Read in mouse world position
-        if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
-        {
-            Vector2 mousePos = (Vector2)Mouse.world2DPosition;
-            float ypos = mousePos.y;
-
-            objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedChartPosition(ypos, Globals.step);          
-        }
-        else
-        {
-            objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedChartPosition(editor.mouseYMaxLimit.position.y, Globals.step);
-        }
+	protected virtual void Update ()
+    {
+        UpdateSnappedPos();
 
         transform.position = new Vector3(transform.position.x, editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos), transform.position.z);
     }
 
     protected virtual void Controls()
     {
+    }
+
+    protected void UpdateSnappedPos()
+    {
+        // Read in mouse world position
+        if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
+        {
+            Vector2 mousePos = (Vector2)Mouse.world2DPosition;
+            float ypos = mousePos.y;
+
+            objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedChartPosition(ypos, Globals.step);
+        }
+        else
+        {
+            objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedChartPosition(editor.mouseYMaxLimit.position.y, Globals.step);
+        }
     }
 
     protected void LateUpdate()

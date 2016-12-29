@@ -29,8 +29,14 @@ public class Mouse : MonoBehaviour {
             world2DPosition = null;
         else
         {
+            Vector3 screenPos = Input.mousePosition;
+            float maxY = Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y;
+
             // Calculate world2DPosition
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Input.mousePosition.y > maxY)
+                screenPos.y = maxY;
+
+            Ray ray = Camera.main.ScreenPointToRay(screenPos);
             int layerMask = 1 << LayerMask.NameToLayer("Ignore Raycast");
             RaycastHit[] planeHit;
             planeHit = Physics.RaycastAll(ray, Mathf.Infinity, layerMask);

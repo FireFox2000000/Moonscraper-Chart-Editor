@@ -17,6 +17,8 @@ public class GroupSelect : ToolObject {
 
     protected override void Update()
     {
+        UpdateSnappedPos();
+
         // Update the corner positions
         if (Input.GetMouseButtonDown(0) && Mouse.world2DPosition != null)
         {
@@ -57,24 +59,6 @@ public class GroupSelect : ToolObject {
 
     void UpdateChartObjectList()
     {
-        // Update what objects are currently within the selected range
-        /*
-        uint minChartPos;
-        uint maxChartPos;
-
-        if (initWorld2DPos.y < endWorld2DPos.y)
-        {
-            minChartPos = editor.currentSong.WorldYPositionToChartPosition(initWorld2DPos.y);
-            maxChartPos = editor.currentSong.WorldYPositionToChartPosition(endWorld2DPos.y);
-        }
-        else
-        {
-            minChartPos = editor.currentSong.WorldYPositionToChartPosition(endWorld2DPos.y);
-            maxChartPos = editor.currentSong.WorldYPositionToChartPosition(initWorld2DPos.y);
-        }
-
-        chartObjectsList = SongObject.GetRange(editor.currentChart.chartObjects, minChartPos, maxChartPos);*/
-
         Rect rect;
         Vector2 min = new Vector2();
 
