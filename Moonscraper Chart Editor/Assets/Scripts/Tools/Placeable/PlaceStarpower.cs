@@ -42,5 +42,6 @@ public class PlaceStarpower : PlaceSongObject {
         StarPower starpowerToAdd = new StarPower(starpower);
         editor.currentChart.Add(starpowerToAdd);
         editor.CreateStarpowerObject(starpowerToAdd);
+        editor.currentSelectedObject = starpowerToAdd;
     }
 }

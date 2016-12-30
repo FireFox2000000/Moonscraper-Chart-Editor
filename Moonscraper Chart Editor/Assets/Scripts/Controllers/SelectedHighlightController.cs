@@ -19,8 +19,7 @@ public class SelectedHighlightController : MonoBehaviour {
             Collider col3d = editor.currentSelectedObject.controller.GetComponent<Collider>();
             Collider2D col = currentSelectedObject.controller.GetComponent<Collider2D>();
             if (col3d || col)
-            {
-                selectedHighlight.SetActive(true);
+            {   
                 selectedHighlight.transform.position = currentSelectedObject.controller.transform.position;
 
                 Vector3 scale = currentSelectedObject.controller.transform.localScale;
@@ -33,6 +32,8 @@ public class SelectedHighlightController : MonoBehaviour {
                 if (scale.z == 0)
                     scale.z = 0.1f;
                 selectedHighlight.transform.localScale = scale;
+
+                selectedHighlight.SetActive(true);
             }
             else
                 selectedHighlight.SetActive(false);

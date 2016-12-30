@@ -70,8 +70,6 @@ public class TimelineMovementController : MovementController
                     {
                         ++i;
                     }
-
-                    float newYPos = transform.position.y;
                     
                     // Jump forward
                     if (scrollDelta > 0)

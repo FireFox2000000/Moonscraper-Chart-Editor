@@ -76,20 +76,21 @@ public class ChartEditor : MonoBehaviour {
     [DllImport("user32.dll")]
     static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
 
-    public static SongObject[] clipboard = new SongObject[0];
+    public static Clipboard clipboard = new Clipboard();
 
+#if !UNITY_EDITOR
     System.IntPtr windowPtr;
     string originalWindowName;
-
+#endif
     // Use this for initialization
     void Awake () {
+#if !UNITY_EDITOR
         const int nChars = 256;
         System.Text.StringBuilder buffer = new System.Text.StringBuilder(nChars);
-
         windowPtr = GetForegroundWindow();
         GetWindowText(windowPtr, buffer, nChars);
         originalWindowName = buffer.ToString();
-
+#endif
         minPos = 0;
         maxPos = 0;
 
@@ -153,6 +154,8 @@ public class ChartEditor : MonoBehaviour {
                 case ((int)SongObject.ID.Note):
                     noteInspector.currentNote = (Note)currentSelectedObject;
                     currentPropertiesPanel = noteInspector.gameObject;
+                    break;
+                case ((int)SongObject.ID.Starpower):
                     break;
                 case ((int)SongObject.ID.Section):
                     sectionInspector.currentSection = (Section)currentSelectedObject;
@@ -228,7 +231,7 @@ public class ChartEditor : MonoBehaviour {
 
         while (currentSong.IsSaving);
     }
-    static bool checking = false;
+
     void editCheck()
     {    
         // Check for unsaved changes
@@ -510,25 +513,19 @@ public class ChartEditor : MonoBehaviour {
         for (int i = 0; i < song.sections.Length; ++i)
         {           
             // Attach the note to the object
-            SectionController controller = CreateSectionObject(song.sections[i]);
-            
-            controller.UpdateSongObject(); 
+            CreateSectionObject(song.sections[i]);
         }
 
         for (int i = 0; i < song.bpms.Length; ++i)
         {
             // Attach the note to the object
-            BPMController controller = CreateBPMObject(song.bpms[i]);
-
-            controller.UpdateSongObject();
+            CreateBPMObject(song.bpms[i]);
         }
 
         for (int i = 0; i < song.timeSignatures.Length; ++i)
         {
             // Attach the note to the object
-            TimesignatureController controller = CreateTSObject(song.timeSignatures[i]);
-
-            controller.UpdateSongObject();
+            CreateTSObject(song.timeSignatures[i]);
         }
 
         return songObjectParent;
@@ -541,6 +538,7 @@ public class ChartEditor : MonoBehaviour {
 
         // Link controller and note together
         controller.Init(section, timeHandler, guiIndicators);
+        controller.UpdateSongObject();
         return controller;
     }
 
@@ -551,6 +549,7 @@ public class ChartEditor : MonoBehaviour {
 
         // Link controller and note together
         controller.Init(bpm);
+        controller.UpdateSongObject();
         return controller;
     }
 
@@ -561,6 +560,7 @@ public class ChartEditor : MonoBehaviour {
 
         // Link controller and note together
         controller.Init(ts);
+        controller.UpdateSongObject();
         return controller;
     }
 
@@ -574,8 +574,7 @@ public class ChartEditor : MonoBehaviour {
             // Make sure notes haven't been deleted
             if (notes[i].song != null)
             {
-                NoteController controller = CreateNoteObject(notes[i]);
-                controller.UpdateSongObject();
+                CreateNoteObject(notes[i]);
             }
         }
 
@@ -585,8 +584,7 @@ public class ChartEditor : MonoBehaviour {
             // Make sure notes haven't been deleted
             if (notes[i].song != null)
             {
-                StarpowerController controller = CreateStarpowerObject(starpowers[i]);
-                controller.UpdateSongObject();
+                CreateStarpowerObject(starpowers[i]);
             }
         }
 
@@ -600,6 +598,7 @@ public class ChartEditor : MonoBehaviour {
 
         // Link controller and note together
         controller.Init(note);
+        controller.UpdateSongObject();
         return controller;
     }
 
@@ -610,6 +609,7 @@ public class ChartEditor : MonoBehaviour {
 
         // Link controller and note together
         controller.Init(starpower);
+        controller.UpdateSongObject();
         return controller;
     }
 

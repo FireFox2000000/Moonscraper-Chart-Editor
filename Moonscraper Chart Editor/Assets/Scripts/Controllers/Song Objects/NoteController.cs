@@ -88,8 +88,6 @@ public class NoteController : SongObjectController {
 
     void createPlaceNote(NoteController nCon)
     {
-        //editor.currentSelectedObject = nCon.note;
-
         // Pass note data to a ghost note
         GameObject moveNote = Instantiate(editor.ghostNote);
 
@@ -176,21 +174,6 @@ public class NoteController : SongObjectController {
     
     protected override void Update()
     {
-#if false
-        if (noteRenderer.isVisible || sustainRen.isVisible)
-            UpdateSongObject();
-        else if (note != null)
-        {
-            uint endPosition = note.position + note.sustain_length;
-
-            if ((note.position > editor.minPos && note.position < editor.maxPos) ||
-                    (endPosition > editor.minPos && endPosition < editor.maxPos) ||
-                    (note.position < editor.minPos && endPosition > editor.maxPos))
-            {              
-                UpdateSongObject();
-            }
-        }
-#else
         if (note != null)
         {
             uint endPosition = note.position + note.sustain_length;
@@ -206,7 +189,6 @@ public class NoteController : SongObjectController {
         }
         else 
             gameObject.SetActive(false);
-#endif
     }
 
     public override void UpdateSongObject()

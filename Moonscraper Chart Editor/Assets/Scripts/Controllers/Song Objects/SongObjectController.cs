@@ -3,14 +3,10 @@ using System.Collections;
 
 [RequireComponent(typeof(Renderer))]
 public abstract class SongObjectController : SelectableClick {
-    static int lastDeleteFrame = 0;
-    bool deleteStart = false;
-
     protected const float CHART_CENTER_POS = 0;
 
     protected ChartEditor editor;
     public SongObject songObject = null;
-    Renderer ren;
     Bounds bounds;
 
     public abstract void Delete(bool update = true);
@@ -23,7 +19,6 @@ public abstract class SongObjectController : SelectableClick {
 
     protected void Awake()
     {
-        ren = GetComponent<Renderer>();
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
 
         col3d = GetComponent<Collider>();
@@ -35,20 +30,15 @@ public abstract class SongObjectController : SelectableClick {
         if (col3d)
             colSize = col3d.bounds.size;
         else if (col2d)
-            colSize = col2d.bounds.size;           
+            colSize = col2d.bounds.size;
     }
 
     protected virtual void Update()
     {
-#if false
-        if (ren.isVisible || songObject != null && (songObject.position > editor.minPos && songObject.position < editor.maxPos))
-            UpdateSongObject();
-#else
         if (songObject != null && songObject.position >= editor.minPos && songObject.position < editor.maxPos)
             UpdateSongObject();
         else if (songObject != null)
             gameObject.SetActive(false);
-#endif
     }
     
     protected void OnBecameVisible()

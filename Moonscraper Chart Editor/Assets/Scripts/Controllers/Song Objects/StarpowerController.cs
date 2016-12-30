@@ -7,13 +7,9 @@ public class StarpowerController : SongObjectController
     public GameObject tail;
     public StarPower starpower;
 
-    Renderer spRen, spTailRen;
-
     new void Awake()
     {
         base.Awake();
-        spRen = GetComponent<SpriteRenderer>();
-        spTailRen = tail.GetComponent<Renderer>();
     }
 
     public void Init(StarPower _starpower)
@@ -31,19 +27,6 @@ public class StarpowerController : SongObjectController
 
     protected override void Update()
     {
-#if false
-        if (spRen.isVisible || spTailRen.isVisible)
-            UpdateSongObject();
-        else if (starpower != null)
-        {
-            uint endPosition = starpower.position + starpower.length;
-
-            if ((starpower.position > editor.minPos && starpower.position < editor.maxPos) ||
-                    (endPosition > editor.minPos && endPosition < editor.maxPos) ||
-                    (starpower.position < editor.minPos && endPosition > editor.maxPos))
-                UpdateSongObject();
-        }
-#else
         if (starpower != null)
         {
             uint endPosition = starpower.position + starpower.length;
@@ -57,7 +40,6 @@ public class StarpowerController : SongObjectController
         }
         else
             gameObject.SetActive(false);
-#endif
     }
 
     public override void UpdateSongObject()

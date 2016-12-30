@@ -218,26 +218,8 @@ public class Globals : MonoBehaviour {
             clapToggle.isOn = true;
     }
 
-    int lastWidth = Screen.width;
-    int lastHeight = Screen.height;
     void Update()
     {
-        /*
-        if (Screen.width != lastWidth)
-        {
-            // User is resizing width
-            Screen.SetResolution(Screen.width, Screen.width * 9 / 16, false);
-            
-        }
-        else
-        {
-            // User is resizing height
-            Screen.SetResolution(Screen.height * 16 / 9, Screen.height, false);
-        }*/
-
-        lastWidth = Screen.width;
-        lastHeight = Screen.height;
-
         // Disable controls while user is in an input field
         if (!IsTyping)
             Controls();
@@ -273,6 +255,12 @@ public class Globals : MonoBehaviour {
             snappingStep.Increment();
         else if (Input.GetButtonDown("DecreaseStep"))
             snappingStep.Decrement();
+
+        if (Input.GetButtonDown("Delete") && editor.currentSelectedObject != null)
+        {
+            if (editor.currentSelectedObject.controller)
+                editor.currentSelectedObject.controller.Delete();
+        }
     }
 
     public void ToggleSongViewMode(bool value)

@@ -9,9 +9,6 @@ public class SectionController : SongObjectController
     public SectionGuiController sectionGui;
     public Text sectionText;
 
-    TimelineHandler timelineHandler;
-    GameObject bpmGuiParent;
-
     public override void UpdateSongObject()
     {
         if (section.song != null)
@@ -32,17 +29,14 @@ public class SectionController : SongObjectController
         Destroy(gameObject);
     }
 
-    public void Init(Section _section, TimelineHandler _timelineHandler, GameObject _bpmGuiParent)
+    public void Init(Section _section, TimelineHandler timelineHandler, GameObject bpmGuiParent)
     {
         base.Init(_section);
         section = _section;
         section.controller = this;
 
-        timelineHandler = _timelineHandler;
-        bpmGuiParent = _bpmGuiParent;
-
         if (sectionGui)
-            sectionGui.Init(_section, _timelineHandler, _bpmGuiParent);
+            sectionGui.Init(_section, timelineHandler, bpmGuiParent);
     }
 
     public override void OnSelectableMouseDrag()
