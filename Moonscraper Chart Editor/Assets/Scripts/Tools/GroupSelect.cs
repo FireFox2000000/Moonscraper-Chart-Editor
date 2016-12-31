@@ -6,7 +6,7 @@ using System.Linq;
 public class GroupSelect : ToolObject {
     public GameObject selectedHighlight;
 
-    //List<ChartObject> chartObjectsList = new List<ChartObject>();
+    GameObject highlightPoolParent;
     GameObject[] highlightPool = new GameObject[100];
 
     Vector2 initWorld2DPos = Vector2.zero;
@@ -22,9 +22,11 @@ public class GroupSelect : ToolObject {
     {
         base.Awake();
 
+        highlightPoolParent = new GameObject("Group Select Highlights");
         for (int i = 0; i < highlightPool.Length; ++i)
         {
             highlightPool[i] = GameObject.Instantiate(selectedHighlight);
+            highlightPoolParent.transform.SetParent(highlightPoolParent.transform);
             highlightPool[i].SetActive(false);
         }
 
@@ -46,7 +48,7 @@ public class GroupSelect : ToolObject {
         editor.currentSelectedObject = null;
     }
 
-    void reset()
+    public void reset()
     {
         initWorld2DPos = Vector2.zero;
         endWorld2DPos = Vector2.zero;
@@ -90,6 +92,18 @@ public class GroupSelect : ToolObject {
 
         if (Input.GetButtonDown("Delete"))
             Delete();
+
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand))
+        {
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                Cut();
+            }
+            else if (Input.GetKeyDown(KeyCode.C))
+            {
+                Copy();
+            }
+        }
 
         prevSong = editor.currentSong;
         prevChart = editor.currentChart;
@@ -266,6 +280,8 @@ public class GroupSelect : ToolObject {
         {
             if (cObject.controller)
                 cObject.controller.Delete(false);
+            else
+                editor.currentChart.Remove(cObject);
         }
         editor.currentChart.updateArrays();
 
@@ -274,7 +290,7 @@ public class GroupSelect : ToolObject {
 
     void Copy()
     {
-        ChartEditor.clipboard = data;
+        ClipboardObjectController.clipboard = data;
     }
 
     void Cut()

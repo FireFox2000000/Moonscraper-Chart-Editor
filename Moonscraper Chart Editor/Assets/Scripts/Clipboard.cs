@@ -11,18 +11,29 @@ public class Clipboard {
     public uint areaChartPosMin { get { return _areaChartPosMin; } }
     public uint areaChartPosMax { get { return _areaChartPosMax; } }
 
-    public Rect GetCollisionRect (Song song)
+    public uint collisionAreaToDataDistance
+    {
+        get
+        {
+            if (data.Length > 0)
+                return (data[0].position - _areaChartPosMin);
+            else
+                return 0;
+        }
+    }
+
+    public Rect GetCollisionRect (uint chartPosInit, Song song)
     {
         Vector2 size;
 
-        float minWorldPos = song.ChartPositionToWorldYPosition(_areaChartPosMin);
-        float maxWorldPos = song.ChartPositionToWorldYPosition(_areaChartPosMax);
+        float minWorldPos = song.ChartPositionToWorldYPosition(chartPosInit);
+        float maxWorldPos = song.ChartPositionToWorldYPosition(_areaChartPosMax - _areaChartPosMin + chartPosInit);
 
         size = new Vector2(collisionAreaXSize, maxWorldPos - minWorldPos);
 
-        Vector2 min = new Vector2(xPosition, minWorldPos);
+        Vector2 position = new Vector2(xPosition, minWorldPos);
 
-        return new Rect(min, size);
+        return new Rect(position, size);
     }
 
     public Clipboard()

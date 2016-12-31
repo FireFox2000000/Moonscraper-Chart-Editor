@@ -40,6 +40,11 @@ public class ChartEvent : ChartObject
 
     public string eventName;
 
+    public ChartEvent(ChartEvent chartEvent) : base(chartEvent.position)
+    {
+        eventName = chartEvent.eventName;
+    }
+
     public ChartEvent(uint _position, string _eventName) : base(_position)
     {
         eventName = _eventName;

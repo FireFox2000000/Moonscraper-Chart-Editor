@@ -76,8 +76,6 @@ public class ChartEditor : MonoBehaviour {
     [DllImport("user32.dll")]
     static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
 
-    public static Clipboard clipboard = new Clipboard();
-
 #if !UNITY_EDITOR
     System.IntPtr windowPtr;
     string originalWindowName;
