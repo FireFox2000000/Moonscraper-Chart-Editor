@@ -208,17 +208,7 @@ public class NoteController : SongObjectController {
             // Note Type
             if (Globals.viewMode == Globals.ViewMode.Chart)
             {
-                if (note.fret_type != Note.Fret_Type.OPEN && (note.flags & Note.Flags.TAP) == Note.Flags.TAP)
-                {
-                    noteType = Note.Note_Type.TAP;
-                }
-                else
-                {
-                    if (note.IsHopo)
-                        noteType = Note.Note_Type.HOPO;
-                    else
-                        noteType = Note.Note_Type.STRUM;
-                }
+                noteType = note.type;
             }
             else
             {

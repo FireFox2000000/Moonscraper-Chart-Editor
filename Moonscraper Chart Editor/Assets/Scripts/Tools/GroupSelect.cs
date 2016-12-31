@@ -240,7 +240,7 @@ public class GroupSelect : ToolObject {
                     note.flags &= ~Note.Flags.FORCED;
                 else
                 {
-                    if (note.IsHopoUnforced)
+                    if (note.IsNaturalHopo)
                         note.flags |= Note.Flags.FORCED;
                     else
                         note.flags &= ~Note.Flags.FORCED;
@@ -253,7 +253,7 @@ public class GroupSelect : ToolObject {
                     note.flags |= Note.Flags.FORCED;
                 else
                 {
-                    if (!note.IsHopoUnforced)
+                    if (!note.IsNaturalHopo)
                         note.flags |= Note.Flags.FORCED;
                     else
                         note.flags &= ~Note.Flags.FORCED;

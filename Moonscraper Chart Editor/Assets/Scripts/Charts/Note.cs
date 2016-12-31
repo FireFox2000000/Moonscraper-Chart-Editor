@@ -159,7 +159,7 @@ public class Note : ChartObject
         }
     }
 
-    public bool IsHopoUnforced
+    public bool IsNaturalHopo
     {
         get
         {
@@ -182,11 +182,11 @@ public class Note : ChartObject
         }
     }
 
-    public bool IsHopo
+    bool IsHopo
     {
         get
         {
-            bool HOPO = IsHopoUnforced;
+            bool HOPO = IsNaturalHopo;
 
             // Check if forced
             if (forced)
@@ -207,6 +207,24 @@ public class Note : ChartObject
                 mask |= (1 << (int)note.fret_type);
 
             return mask;
+        }
+    }
+
+    public Note_Type type
+    {
+        get
+        {
+            if (fret_type != Fret_Type.OPEN && (flags & Flags.TAP) == Flags.TAP)
+            {
+                return Note_Type.TAP;
+            }
+            else
+            {
+                if (IsHopo)
+                    return Note_Type.HOPO;
+                else
+                    return Note_Type.STRUM;
+            }
         }
     }
 
