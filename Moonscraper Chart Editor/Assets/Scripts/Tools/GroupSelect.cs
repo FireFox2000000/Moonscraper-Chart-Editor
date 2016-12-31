@@ -17,7 +17,9 @@ public class GroupSelect : ToolObject {
     Song prevSong;
     Chart prevChart;
 
-    Clipboard data;
+    //Clipboard data;
+    List<ChartObject> data = new List<ChartObject>();
+    Rect rect;
 
     protected override void Awake()
     {
@@ -34,7 +36,7 @@ public class GroupSelect : ToolObject {
         prevSong = editor.currentSong;
         prevChart = editor.currentChart;
 
-        data = new Clipboard();
+        data = new List<ChartObject>();
     }
 
     public override void ToolDisable()
@@ -53,7 +55,8 @@ public class GroupSelect : ToolObject {
     {
         initWorld2DPos = Vector2.zero;
         endWorld2DPos = Vector2.zero;
-        data = new Clipboard();
+        data = new List<ChartObject>();
+        rect = new Rect();
     }
 
     bool userDraggingSelectArea = false;
@@ -70,7 +73,7 @@ public class GroupSelect : ToolObject {
             initWorld2DPos = (Vector2)Mouse.world2DPosition;
             initWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
             startWorld2DChartPos = objectSnappedChartPos;
-            data = new Clipboard();
+            data = new List<ChartObject>();
 
             userDraggingSelectArea = true;
         }
@@ -117,7 +120,7 @@ public class GroupSelect : ToolObject {
 
     void UpdateHighlights()
     {
-        ChartObject[] chartObjects = data.data;
+        ChartObject[] chartObjects = data.ToArray();
 
         // Show a highlight over each selected object
         int arrayPos = SongObject.FindClosestPosition(editor.minPos, chartObjects);
@@ -165,8 +168,7 @@ public class GroupSelect : ToolObject {
     }
 
     void UpdateGroupedData(uint? maxLimitNonInclusive = null)
-    {
-        Rect rect;
+    { 
         Vector2 position = new Vector2();
 
         // Bottom left corner is position
@@ -201,8 +203,8 @@ public class GroupSelect : ToolObject {
         }
 
         //Debug.Log(chartObjectsList.Count);
-
-        data = new Clipboard(chartObjectsList.ToArray(), rect, editor.currentSong);
+        data = chartObjectsList;
+        //data = new Clipboard(chartObjectsList.ToArray(), rect, editor.currentSong);
     }
 
     public void SetNatural()
@@ -229,7 +231,7 @@ public class GroupSelect : ToolObject {
     {
         //Note[] notes = chartObjectsList.OfType<Note>().ToArray();
 
-        foreach (ChartObject note in data.data)
+        foreach (ChartObject note in data)
         {
             if (note.classID == (int)SongObject.ID.Note)
                 SetNoteType(note as Note, type);
@@ -282,7 +284,7 @@ public class GroupSelect : ToolObject {
 
     void Delete()
     {
-        foreach (ChartObject cObject in data.data)
+        foreach (ChartObject cObject in data)
         {
             if (cObject.controller)
                 cObject.controller.Delete(false);
@@ -296,7 +298,28 @@ public class GroupSelect : ToolObject {
 
     void Copy()
     {
-        ClipboardObjectController.clipboard = data;
+        List<ChartObject> chartObjectsCopy = new List<ChartObject>();
+        foreach (ChartObject chartObject in data)
+        {
+            ChartObject objectToAdd;
+            switch (chartObject.classID)
+            {
+                case ((int)SongObject.ID.Note):
+                    objectToAdd = new Note(chartObject as Note);
+                    break;
+                case ((int)SongObject.ID.Starpower):
+                    objectToAdd = new StarPower(chartObject as StarPower);
+                    break;
+                case ((int)SongObject.ID.ChartEvent):
+                    objectToAdd = new ChartEvent(chartObject as ChartEvent);
+                    break;
+                default:
+                    continue;
+            }
+
+            chartObjectsCopy.Add(objectToAdd);
+        }
+        ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), rect, editor.currentSong);
     }
 
     void Cut()
