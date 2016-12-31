@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 static class Utility {
     public const int NOTFOUND = -1;
@@ -41,8 +42,10 @@ public static class floatExtension
 {
     public static float Round(this float sourceFloat, int decimalPlaces)
     {
-        float places = Mathf.Pow(10, decimalPlaces);
-        return Mathf.Round((sourceFloat * places) / places);
+        return (float)Math.Round(sourceFloat, decimalPlaces);
+        //float places = Mathf.Pow(10, decimalPlaces);
+        //return Mathf.Round(sourceFloat * places) / places;
+
     }
 }
 
