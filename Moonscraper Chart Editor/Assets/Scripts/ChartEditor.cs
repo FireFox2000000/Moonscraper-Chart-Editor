@@ -295,6 +295,7 @@ public class ChartEditor : MonoBehaviour {
     {
         try {
             string fileName;
+
 #if UNITY_EDITOR
             fileName = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", currentSong.name, "chart");
 #else
@@ -312,7 +313,9 @@ public class ChartEditor : MonoBehaviour {
             if (lastLoadedFile != string.Empty)
                 openSaveFileDialog.file = System.IO.Path.GetFileNameWithoutExtension(lastLoadedFile);
             else
-                openSaveFileDialog.file = currentSong.name;
+            {
+                openSaveFileDialog.file = new String(currentSong.name.ToCharArray());
+            }
 
             if (!forced)
                 openSaveFileDialog.file += "(UNFORCED)";
@@ -331,6 +334,7 @@ public class ChartEditor : MonoBehaviour {
                 throw new System.Exception("Could not open file");
             }
 #endif
+
             Save(fileName, forced);           
         }
         catch (System.Exception e)

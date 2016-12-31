@@ -26,6 +26,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         if (currentBPM != null)
         {
             positionText.text = "Position: " + currentBPM.position.ToString();
+            if (bpmValue.text != string.Empty)
+                bpmValue.text = (currentBPM.value / 1000.0f).ToString();
         }
     }
 
