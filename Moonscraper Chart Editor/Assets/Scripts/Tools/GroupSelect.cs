@@ -11,6 +11,7 @@ public class GroupSelect : ToolObject {
 
     Vector2 initWorld2DPos = Vector2.zero;
     Vector2 endWorld2DPos = Vector2.zero;
+    uint startWorld2DChartPos = 0;
     uint endWorld2DChartPos = 0;
 
     Song prevSong;
@@ -68,6 +69,7 @@ public class GroupSelect : ToolObject {
         {
             initWorld2DPos = (Vector2)Mouse.world2DPosition;
             initWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
+            startWorld2DChartPos = objectSnappedChartPos;
             data = new Clipboard();
 
             userDraggingSelectArea = true;
@@ -77,6 +79,7 @@ public class GroupSelect : ToolObject {
         {
             endWorld2DPos = (Vector2)Mouse.world2DPosition;
             endWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
+
             endWorld2DChartPos = objectSnappedChartPos;
         }
 
@@ -84,7 +87,10 @@ public class GroupSelect : ToolObject {
 
         if (Input.GetMouseButtonUp(0) && userDraggingSelectArea)
         {
-            UpdateGroupedData(endWorld2DChartPos);
+            if (startWorld2DChartPos > endWorld2DChartPos)
+                UpdateGroupedData(startWorld2DChartPos);
+            else
+                UpdateGroupedData(endWorld2DChartPos);
             userDraggingSelectArea = false;
         }
 

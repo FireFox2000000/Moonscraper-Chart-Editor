@@ -229,7 +229,7 @@ public class NoteController : SongObjectController {
             }
 
             // Update note visuals
-            noteRenderer.sortingOrder = -(int)note.position;
+            noteRenderer.sortingOrder = -Mathf.Abs((int)note.position);
 #if NOTE_TYPE_2D
             switch (noteType)
             {
