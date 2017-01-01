@@ -170,6 +170,11 @@ public class PlaceNote : PlaceSongObject {
         NoteController nCon = editor.CreateNoteObject(noteToAdd);
         nCon.standardOverwriteOpen();
 
+        CapNoteCheck(noteToAdd);  
+    }
+
+    protected void CapNoteCheck(Note noteToAdd)
+    {
         Note[] previousNotes = GetPreviousOfSustains(noteToAdd);
 
         if (!Globals.extendedSustainsEnabled)

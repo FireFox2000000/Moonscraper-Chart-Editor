@@ -16,18 +16,27 @@ public class SettingsController : DisplayMenu
     public Slider rhythmSourceSlider;
     public Slider clapSourceSlider;
 
-    public Text sustainGapText;
+    public InputField sustainGapInput;
 
     protected override void Awake()
     {
         base.Awake();      
     }
 
+    void Start()
+    {
+        sustainGapInput.onValidateInput = Step.validateStepVal;
+        sustainGapInput.text = Globals.sustainGap.ToString(); 
+    }
+
     protected override void Update()
     {
         base.Update();
 
-        sustainGapText.text = "1/" + Globals.sustainGap.ToString();
+        //sustainGapText.text = "1/" + Globals.sustainGap.ToString();
+        if (sustainGapInput.text != string.Empty)
+            sustainGapInput.text = Globals.sustainGap.ToString();
+
         Globals.sustainGapEnabled = sustainGapEnabledToggle.isOn;
 
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = musicSourceSlider.value;
@@ -111,5 +120,41 @@ public class SettingsController : DisplayMenu
         {
             Globals.clapSetting = Globals.clapProperties;
         }
+    }
+
+    public void SetStep(string value)
+    {
+        if (value != string.Empty)
+        {
+            StepInputEndEdit(value);
+        }
+    }
+
+    public void StepInputEndEdit(string value)
+    {
+        int stepVal;
+        const int defaultControlsStepVal = 16;
+
+        if (value == string.Empty)
+            stepVal = defaultControlsStepVal;
+        else
+        {
+            try
+            {
+                stepVal = int.Parse(value);
+
+                if (stepVal < Step.MIN_STEP)
+                    stepVal = Step.MIN_STEP;
+                else if (stepVal > Step.FULL_STEP)
+                    stepVal = Step.FULL_STEP;
+            }
+            catch
+            {
+                stepVal = defaultControlsStepVal;
+            }
+        }
+
+        Globals.sustainGap = stepVal;
+        sustainGapInput.text = Globals.sustainGap.ToString();
     }
 }

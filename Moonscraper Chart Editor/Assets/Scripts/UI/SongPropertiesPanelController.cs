@@ -25,22 +25,6 @@ public class SongPropertiesPanelController : DisplayMenu {
     {
        // offset.onValidateInput = validateOffsetValue;
     }
-    /*
-    public char validateOffsetValue(string text, int charIndex, char addedChar)
-    {
-        if ((addedChar == '.' && !text.Contains(".") && text.Length > 0) || (addedChar == '-' && !text.Contains("-") && text.Length > 0) || (addedChar >= '0' && addedChar <= '9'))
-        {
-            if (addedChar != '.')
-            {
-                if (text.Contains(".") && text.IndexOf('.') <= 3)
-                    return addedChar;
-            }
-            else
-                return addedChar;
-        }
-
-        return '\0';
-    }*/
 
     protected override void OnEnable()
     {

@@ -3,7 +3,6 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class DisplayProperties : MonoBehaviour {
-    public Text stepText;
     public Text songNameText;
     public Slider hyperspeedSlider;
     public InputField snappingStep;
@@ -21,7 +20,6 @@ public class DisplayProperties : MonoBehaviour {
 
     void Update()
     {
-        //stepText.text = "1/" + Globals.step.ToString();
         songNameText.text = editor.currentSong.name;
         Globals.hyperspeed = hyperspeedSlider.value;
 
@@ -87,6 +85,4 @@ public class DisplayProperties : MonoBehaviour {
         Globals.step = stepVal;
         snappingStep.text = Globals.step.ToString();
     }
-
-
 }

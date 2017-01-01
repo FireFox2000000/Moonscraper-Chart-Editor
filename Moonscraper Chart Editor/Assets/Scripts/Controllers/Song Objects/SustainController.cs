@@ -75,11 +75,6 @@ public class SustainController : SelectableClick {
             nextFret = note.next;
         else
             nextFret = FindNextSameFretWithinSustainExtendedCheck();
-
-        if (nextFret != null)
-        {
-            CapSustain(nextFret);
-        }
     }
 
     public void SustainDrag()
