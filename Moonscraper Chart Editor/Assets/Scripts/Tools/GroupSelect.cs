@@ -55,6 +55,8 @@ public class GroupSelect : ToolObject {
     {
         initWorld2DPos = Vector2.zero;
         endWorld2DPos = Vector2.zero;
+        startWorld2DChartPos = 0;
+        endWorld2DChartPos = 0;
         data = new List<ChartObject>();
         rect = new Rect();
     }
@@ -319,7 +321,13 @@ public class GroupSelect : ToolObject {
 
             chartObjectsCopy.Add(objectToAdd);
         }
-        ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), rect, editor.currentSong);
+        
+        if (startWorld2DChartPos < endWorld2DChartPos)
+            ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), rect, editor.currentSong, startWorld2DChartPos, endWorld2DChartPos);
+        else
+            ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), rect, editor.currentSong, endWorld2DChartPos, startWorld2DChartPos);
+
+        //ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), rect, editor.currentSong);
     }
 
     void Cut()

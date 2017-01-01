@@ -4,17 +4,29 @@ using System.Collections;
 public class ClipboardObjectController : Snapable {
 
     public GroupSelect groupSelectTool;
+    public Transform strikeline;
     public static Clipboard clipboard = new Clipboard();
 
-    protected override void Update()
+    uint pastePos = 0;
+
+    new void LateUpdate()
     {
-        base.Update();
+        if (Mouse.world2DPosition != null && Input.mousePosition.y < Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y)
+        {
+            pastePos = objectSnappedChartPos;
+        }
+        else
+        {
+            pastePos = editor.currentSong.WorldPositionToSnappedChartPosition(strikeline.position.y, Globals.step);
+        }
+
+        transform.position = new Vector3(transform.position.x, editor.currentSong.ChartPositionToWorldYPosition(pastePos), transform.position.z);
 
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand))
         {
             if (Input.GetKeyDown(KeyCode.V))
             {
-                Paste(objectSnappedChartPos);
+                Paste(pastePos);
                 groupSelectTool.reset();
             }
         }

@@ -47,18 +47,21 @@ public class Clipboard {
         _areaChartPosMax = 0;
     }
 
-    public Clipboard(ChartObject[] data, Rect rect, Song song)
+    public Clipboard(ChartObject[] data, Rect rect, Song song, uint tickMin, uint tickMax)
     {
         this.data = data;
-        SetCollisionArea(rect, song);
+        SetCollisionArea(rect, song, tickMin, tickMax);
     }
 
-    public void SetCollisionArea(Rect rect, Song song)
+    public void SetCollisionArea(Rect rect, Song song, uint tickMin, uint tickMax)
     {
         xPosition = rect.x;
         collisionAreaXSize = rect.width;
 
-        _areaChartPosMin = song.WorldYPositionToChartPosition(rect.position.y);
-        _areaChartPosMax = song.WorldYPositionToChartPosition(rect.position.y + rect.height);
+        _areaChartPosMin = tickMin;
+        _areaChartPosMax = tickMax;
+
+        //_areaChartPosMin = song.WorldYPositionToChartPosition(rect.position.y);
+        //_areaChartPosMax = song.WorldYPositionToChartPosition(rect.position.y + rect.height);
     }
 }
