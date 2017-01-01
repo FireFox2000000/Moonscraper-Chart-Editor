@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class MoveNote : PlaceNote {
+    public Note explicitPrevious = null, explicitNext = null;
 
     protected override void Controls()
     {
@@ -13,6 +14,17 @@ public class MoveNote : PlaceNote {
         this.note = new Note (note);
         controller.Init(this.note);
         editor.currentSelectedObject = this.note;
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        if (explicitPrevious != null)
+            note.previous = explicitPrevious;
+
+        if (explicitNext != null)
+            note.next = explicitNext;
     }
 
     protected override void AddObject()

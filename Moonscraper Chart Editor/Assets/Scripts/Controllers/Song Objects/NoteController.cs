@@ -64,11 +64,22 @@ public class NoteController : SongObjectController {
             if (Input.GetButton("ChordSelect"))
             {
                 Note[] chordNotes = note.GetChord();
+                SongObject.sort(chordNotes);
+
+                MoveNote previousInChord = null;
                 foreach (Note chordNote in chordNotes)
                 {
                     if (chordNote.controller != null)
                     {
-                        createPlaceNote(chordNote.controller);
+                        MoveNote mCon = createPlaceNote(chordNote.controller);
+
+                        if (previousInChord != null)
+                        {
+                            previousInChord.explicitNext = mCon.note;
+                            mCon.explicitPrevious = previousInChord.note;
+                        }
+
+                        previousInChord = mCon;
                     }
                 }
             }
@@ -86,7 +97,7 @@ public class NoteController : SongObjectController {
         }
     }
 
-    void createPlaceNote(NoteController nCon)
+    MoveNote createPlaceNote(NoteController nCon)
     {
         // Pass note data to a ghost note
         GameObject moveNote = Instantiate(editor.ghostNote);
@@ -101,6 +112,8 @@ public class NoteController : SongObjectController {
 
         // Delete note
         nCon.Delete();
+
+        return moveNoteController;
     }
 
 

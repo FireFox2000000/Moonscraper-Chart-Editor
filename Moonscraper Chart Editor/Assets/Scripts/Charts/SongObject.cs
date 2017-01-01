@@ -457,6 +457,25 @@ public abstract class SongObject
         }
     }
 
+    public static void sort<T>(T[] songObjects) where T : SongObject
+    {
+        int j;
+        T temp;
+        for (int i = 1; i < songObjects.Length; i++)
+        {
+            temp = songObjects[i];
+            j = i - 1;
+
+            while (j >= 0 && songObjects[j] > temp)
+            {
+                songObjects[j + 1] = songObjects[j];
+                j--;
+            }
+
+            songObjects[j + 1] = temp;
+        }
+    }
+
     public enum ID
     {
         TimeSignature, BPM, Event, Section, Note, Starpower, ChartEvent
