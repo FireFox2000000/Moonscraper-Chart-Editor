@@ -10,6 +10,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     public InputField songName;
     public InputField artist;
     public InputField charter;
+    public InputField offset;
     public InputField difficulty;
     public InputField genre;
     public InputField mediaType;
@@ -19,6 +20,28 @@ public class SongPropertiesPanelController : DisplayMenu {
     public Text rhythmStream;
 
     bool init = false;
+
+    void Start()
+    {
+       // offset.onValidateInput = validateOffsetValue;
+    }
+    /*
+    public char validateOffsetValue(string text, int charIndex, char addedChar)
+    {
+        if ((addedChar == '.' && !text.Contains(".") && text.Length > 0) || (addedChar == '-' && !text.Contains("-") && text.Length > 0) || (addedChar >= '0' && addedChar <= '9'))
+        {
+            if (addedChar != '.')
+            {
+                if (text.Contains(".") && text.IndexOf('.') <= 3)
+                    return addedChar;
+            }
+            else
+                return addedChar;
+        }
+
+        return '\0';
+    }*/
+
     protected override void OnEnable()
     {
         bool edit = ChartEditor.editOccurred;
@@ -30,6 +53,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         songName.text = song.name;
         artist.text = song.artist;
         charter.text = song.charter;
+        offset.text = song.offset.ToString();
         difficulty.text = song.difficulty.ToString();
         genre.text = song.genre;
         mediaType.text = song.mediatype;
@@ -55,6 +79,15 @@ public class SongPropertiesPanelController : DisplayMenu {
             song.name = songName.text;
             song.artist = artist.text;
             song.charter = charter.text;
+
+            try
+            {
+                song.offset = float.Parse(offset.text);
+            }
+            catch
+            {
+                song.offset = 0;
+            }
 
             try
             {
