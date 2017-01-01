@@ -3,22 +3,25 @@ using System.Collections;
 
 public class Step 
 {
-    const uint FULL_STEP = 768;
-    const uint MIN_STEP = 1;
+    public const int FULL_STEP = 768;
+    public const int MIN_STEP = 1;
 
     int step;
     int lsbOffset;
 
-    public int value { get { return step; } }
+    public int value;// { get { return step; } }
 
-    public Step(uint value = 4)
+    public Step(int value = 4)
     {
         step = 4;
         lsbOffset = 3;
 
-        SetStep(value);
+        this.value = value;
+
+        //SetStep(value);
     }
-    public void Increment()
+
+    void _Increment()
     {
         if (step < FULL_STEP)
         {
@@ -35,7 +38,19 @@ public class Step
         }
     }
 
-    public void Decrement()
+    public void Increment()
+    {
+        SetStep(value);
+
+        if (step <= value)
+        { 
+            _Increment();
+        }
+
+        value = step;
+    }
+
+    void _Decrement()
     {
         if (step > MIN_STEP)
         {
@@ -53,26 +68,47 @@ public class Step
         }
     }
 
-    public void SetStep(uint step)
+    public void Decrement()
     {
+        SetStep(value);
+
+        if (step >= value)
+        {
+            _Decrement();
+        }
+
+        value = step;
+    }
+
+    public void SetStep(int step)
+    {
+        // Cap
         if (step < MIN_STEP)
             step = MIN_STEP;
         else if (step > FULL_STEP)
             step = FULL_STEP;
 
-        if (value < step)
+        if (this.step < step)
         {
-            while (value < step)
+            while (this.step < step)
             {
-                Increment();
+                _Increment();
             }
         }
         else
         {
-            while (value > step)
+            while (this.step > step)
             {
-                Decrement();
+                _Decrement();
             }
         }
+    }
+
+    public static char validateStepVal(string text, int charIndex, char addedChar)
+    {
+        if (addedChar >= '0' && addedChar <= '9')
+            return addedChar;
+        else
+            return '\0';
     }
 }

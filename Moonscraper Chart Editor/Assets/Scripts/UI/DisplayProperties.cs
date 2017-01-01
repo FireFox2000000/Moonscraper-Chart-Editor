@@ -6,6 +6,7 @@ public class DisplayProperties : MonoBehaviour {
     public Text stepText;
     public Text songNameText;
     public Slider hyperspeedSlider;
+    public InputField snappingStep;
 
     ChartEditor editor;
 
@@ -13,11 +14,14 @@ public class DisplayProperties : MonoBehaviour {
     {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
         hyperspeedSlider.value = Globals.hyperspeed;
+
+        snappingStep.onValidateInput = Step.validateStepVal;
+        snappingStep.text = Globals.step.ToString();
     }
 
     void Update()
     {
-        stepText.text = "1/" + Globals.step.ToString();
+        //stepText.text = "1/" + Globals.step.ToString();
         songNameText.text = editor.currentSong.name;
         Globals.hyperspeed = hyperspeedSlider.value;
 
@@ -25,6 +29,9 @@ public class DisplayProperties : MonoBehaviour {
             hyperspeedSlider.interactable = false;
         else
             hyperspeedSlider.interactable = true;
+
+        if (snappingStep.text != string.Empty)
+            snappingStep.text = Globals.step.ToString();
     }
 
     public void ToggleClap(bool value)
@@ -44,4 +51,42 @@ public class DisplayProperties : MonoBehaviour {
     {
         Globals.snappingStep.Decrement();
     }
+
+    public void SetStep(string value)
+    {
+        if (value != string.Empty)
+        {
+            StepInputEndEdit(value);
+        }
+    }
+
+    public void StepInputEndEdit(string value)
+    {
+        int stepVal;
+        const int defaultControlsStepVal = 16;
+
+        if (value == string.Empty)
+            stepVal = defaultControlsStepVal;
+        else
+        {
+            try
+            {
+                stepVal = int.Parse(value);
+
+                if (stepVal < Step.MIN_STEP)
+                    stepVal = Step.MIN_STEP;
+                else if (stepVal > Step.FULL_STEP)
+                    stepVal = Step.FULL_STEP;
+            }
+            catch
+            {
+                stepVal = defaultControlsStepVal;
+            }
+        }
+
+        Globals.step = stepVal;
+        snappingStep.text = Globals.step.ToString();
+    }
+
+
 }

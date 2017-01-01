@@ -40,10 +40,6 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     {
         if (value != string.Empty && value[value.Length - 1] != '.' && currentBPM != null && float.Parse(value) != 0)
         {
-            int rounding = 0;
-            if (value.Contains("."))
-                rounding = value.Length - value.IndexOf('.') - 1;
-
             float floatVal = float.Parse(value) * 1000;     // Store it in another variable due to weird parsing-casting bug at decimal points of 2 or so. Seems to fix it for whatever reason.
 
             currentBPM.value = (uint)floatVal;

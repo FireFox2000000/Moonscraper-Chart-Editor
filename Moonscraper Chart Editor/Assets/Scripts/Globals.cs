@@ -138,7 +138,7 @@ public class Globals : MonoBehaviour {
     // Settings
     public static float hyperspeed = 5.0f;
     public static Step snappingStep = new Step(16);
-    public static int step { get { return snappingStep.value; } }  
+    public static int step { get { return snappingStep.value; } set { snappingStep.value = value; } }  
      
     public static ClapToggle clapSetting = ClapToggle.NONE;
     public static ClapToggle clapProperties = ClapToggle.NONE;
@@ -168,7 +168,7 @@ public class Globals : MonoBehaviour {
         extendedSustainsEnabled = iniparse.ReadValue("Settings", "Extended sustains", false);
         clapSetting = ClapToggle.NONE;
         sustainGapEnabled = iniparse.ReadValue("Settings", "Sustain Gap", false);
-        sustainGapStep = new Step((uint)iniparse.ReadValue("Settings", "Sustain Gap Step", (uint)16));
+        sustainGapStep = new Step((int)iniparse.ReadValue("Settings", "Sustain Gap Step", (int)16));
 
         // Audio levels
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
