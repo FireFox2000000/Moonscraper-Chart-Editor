@@ -18,6 +18,7 @@ public class PlaceNote : PlaceSongObject {
 
         controller = GetComponent<NoteController>();
         controller.note = note;
+        note.controller = controller;
     }
 
     protected override void Controls()

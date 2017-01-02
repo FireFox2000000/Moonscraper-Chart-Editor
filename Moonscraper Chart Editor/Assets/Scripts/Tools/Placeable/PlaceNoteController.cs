@@ -19,6 +19,7 @@ public class PlaceNoteController : ObjectlessTool {
     void OnEnable()
     {
         // Update flags in the note panel
+        /*
         if (editor.currentSelectedObject != null && editor.currentSelectedObject.GetType() == typeof(Note))
         {
             foreach (PlaceNote note in notes)
@@ -26,7 +27,7 @@ public class PlaceNoteController : ObjectlessTool {
                 note.note.flags = ((Note)editor.currentSelectedObject).flags;
                 //note.gameObject.SetActive(false);
             }
-        }
+        }*/
     }
 
     void OnDisable()

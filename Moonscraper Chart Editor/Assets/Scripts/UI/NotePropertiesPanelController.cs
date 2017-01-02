@@ -11,6 +11,8 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     public Toggle tapToggle;
     public Toggle forcedToggle;
 
+    public GameObject noteToolObject;
+
     Note prevNote = null;
 
     bool prevForcedProperty = false;
@@ -32,19 +34,30 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     
     void Update()
     {
-        if (currentNote.CannotBeForcedCheck)
-        { 
-            forcedToggle.interactable = false;
-            currentNote.flags &= ~Note.Flags.FORCED;
+        if (Toolpane.currentTool != Toolpane.Tools.Note || (Toolpane.currentTool == Toolpane.Tools.Note && noteToolObject.activeSelf))
+        {
+            if (currentNote.CannotBeForcedCheck)
+            {
+                forcedToggle.interactable = false;
+                currentNote.flags &= ~Note.Flags.FORCED;
+            }
+            else
+            {
+                if (!forcedToggle.interactable)
+                {
+                    forcedToggle.isOn = prevForcedProperty;
+                    setForced();
+                }
+                forcedToggle.interactable = true;
+            }
         }
         else
         {
             if (!forcedToggle.interactable)
             {
+                forcedToggle.interactable = true;
                 forcedToggle.isOn = prevForcedProperty;
-                setForced();
             }
-            forcedToggle.interactable = true;
         }
 
         if (forcedToggle.interactable)
@@ -124,8 +137,8 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
     public void setForced()
     {
-        if (currentNote == prevNote)
-        {
+        //if (currentNote == prevNote)
+        //{
             if (currentNote != null)
             {
                 if (forcedToggle.isOn)
@@ -135,12 +148,13 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             }
 
             setFlags(currentNote);
-        }
+        //}
     }
 
     void setFlags(Note note)
     {
-        note.applyFlagsToChord();
+        if (Toolpane.currentTool != Toolpane.Tools.Note)
+            note.applyFlagsToChord();
 
         ChartEditor.editOccurred = true;
     }

@@ -269,7 +269,7 @@ public class Globals : MonoBehaviour {
         {
             viewMode = ViewMode.Song;
 
-            if (Toolpane.currentTool == Toolpane.Tools.Note || Toolpane.currentTool == Toolpane.Tools.Starpower || Toolpane.currentTool == Toolpane.Tools.ChartEvent)
+            if (Toolpane.currentTool == Toolpane.Tools.Note || Toolpane.currentTool == Toolpane.Tools.Starpower || Toolpane.currentTool == Toolpane.Tools.ChartEvent || Toolpane.currentTool == Toolpane.Tools.GroupSelect)
             {
                 defaultViewSwitchButton.onClick.Invoke();
             }
