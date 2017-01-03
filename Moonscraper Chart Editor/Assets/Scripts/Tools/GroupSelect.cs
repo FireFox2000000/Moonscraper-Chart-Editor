@@ -94,9 +94,9 @@ public class GroupSelect : ToolObject {
             if (Input.GetMouseButtonUp(0) && userDraggingSelectArea)
             {
                 if (startWorld2DChartPos > endWorld2DChartPos)
-                    UpdateGroupedData(startWorld2DChartPos);
+                    UpdateGroupedData(endWorld2DChartPos, startWorld2DChartPos);
                 else
-                    UpdateGroupedData(endWorld2DChartPos);
+                    UpdateGroupedData(startWorld2DChartPos, endWorld2DChartPos);
                 userDraggingSelectArea = false;
             }
 
@@ -171,7 +171,7 @@ public class GroupSelect : ToolObject {
         transform.position = pos;
     }
 
-    void UpdateGroupedData(uint? maxLimitNonInclusive = null)
+    void UpdateGroupedData(uint minLimitInclusive, uint maxLimitNonInclusive)
     { 
         Vector2 position = new Vector2();
 
@@ -195,13 +195,7 @@ public class GroupSelect : ToolObject {
         {
             if (chartObject.controller && chartObject.controller.AABBcheck(rect))
             {
-                if (maxLimitNonInclusive != null)
-                {
-                    // Vertical limit
-                    if (chartObject.position < maxLimitNonInclusive)
-                        chartObjectsList.Add(chartObject);
-                }
-                else
+                if (chartObject.position >= minLimitInclusive && chartObject.position < maxLimitNonInclusive)
                     chartObjectsList.Add(chartObject);
             }
         }
