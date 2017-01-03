@@ -67,6 +67,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         {
             if (addedChar != '.')
             {
+                if (bpmValue.selectionAnchorPosition == text.Length && bpmValue.selectionFocusPosition == 0)
+                    return addedChar;
+
                 if (!text.Contains(".") && text.Length < 3)         // Adding a number, no decimal point
                     return addedChar;
                 else if (text.Contains(".") && text.IndexOf('.') <= 3)
