@@ -193,10 +193,9 @@ public class GroupSelect : ToolObject {
 
         foreach (ChartObject chartObject in editor.currentChart.chartObjects)
         {
-            if (chartObject.controller && chartObject.controller.AABBcheck(rect))
+            if (chartObject.position >= minLimitInclusive && chartObject.position < maxLimitNonInclusive && chartObject.controller && chartObject.controller.AABBcheck(rect))
             {
-                if (chartObject.position >= minLimitInclusive && chartObject.position < maxLimitNonInclusive)
-                    chartObjectsList.Add(chartObject);
+                chartObjectsList.Add(chartObject);
             }
         }
 

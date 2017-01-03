@@ -17,6 +17,11 @@ public abstract class SongObjectController : SelectableClick {
 
     Vector2 colSize = Vector2.zero;
 
+    void OnMouseDown()
+    {
+        Debug.Log(GetAABBBoundsRect());
+    }
+
     protected void Awake()
     {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
@@ -73,14 +78,8 @@ public abstract class SongObjectController : SelectableClick {
         if (colSize == Vector2.zero)
             throw new System.Exception("No collision attached to object");
 
-        if (col3d)
-            return new Rect(col3d.bounds.min, colSize);
-        else if (col2d)
-            return new Rect(col2d.bounds.min, colSize);
-        else
-        {
-            throw new System.Exception("No collision attached to object");
-        }
+        Vector2 min = new Vector2(transform.position.x - colSize.x, transform.position.y - colSize.y);
+        return new Rect(min, colSize);
     }
 
     public bool AABBcheck(Rect rect)
@@ -97,11 +96,15 @@ public abstract class SongObjectController : SelectableClick {
         }
 
         // AABB, check for any gaps
-        if (colRect.x <= rect.x + rect.width &&
-               colRect.x + colRect.width >= rect.x &&
-               colRect.y <= rect.y + rect.height &&
-               colRect.height + colRect.y >= rect.y)
+        if (colRect.x < rect.x + rect.width &&
+               colRect.x + colRect.width > rect.x &&
+               colRect.y < rect.y + rect.height &&
+               colRect.height + colRect.y > rect.y)
         {
+            if (songObject.classID == (int)SongObject.ID.Starpower)
+            {
+                Debug.Log(colRect);
+            }
             return true;
         }
         else
