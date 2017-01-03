@@ -66,53 +66,55 @@ public class GroupSelect : ToolObject {
     {
         if (prevChart != editor.currentChart || prevSong != editor.currentSong)
             reset();
-
-        UpdateSnappedPos();
-
-        // Update the corner positions
-        if (Input.GetMouseButtonDown(0) && Mouse.world2DPosition != null)
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
-            initWorld2DPos = (Vector2)Mouse.world2DPosition;
-            initWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
-            startWorld2DChartPos = objectSnappedChartPos;
-            data = new List<ChartObject>();
+            UpdateSnappedPos();
 
-            userDraggingSelectArea = true;
-        }
-
-        if (Input.GetMouseButton(0) && Mouse.world2DPosition != null)
-        {
-            endWorld2DPos = (Vector2)Mouse.world2DPosition;
-            endWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
-
-            endWorld2DChartPos = objectSnappedChartPos;
-        }
-
-        UpdateVisuals();
-
-        if (Input.GetMouseButtonUp(0) && userDraggingSelectArea)
-        {
-            if (startWorld2DChartPos > endWorld2DChartPos)
-                UpdateGroupedData(startWorld2DChartPos);
-            else
-                UpdateGroupedData(endWorld2DChartPos);
-            userDraggingSelectArea = false;
-        }
-
-        UpdateHighlights();
-
-        if (Input.GetButtonDown("Delete"))
-            Delete();
-
-        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand))
-        {
-            if (Input.GetKeyDown(KeyCode.X))
+            // Update the corner positions
+            if (Input.GetMouseButtonDown(0) && Mouse.world2DPosition != null)
             {
-                Cut();
+                initWorld2DPos = (Vector2)Mouse.world2DPosition;
+                initWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
+                startWorld2DChartPos = objectSnappedChartPos;
+                data = new List<ChartObject>();
+
+                userDraggingSelectArea = true;
             }
-            else if (Input.GetKeyDown(KeyCode.C))
+
+            if (Input.GetMouseButton(0) && Mouse.world2DPosition != null)
             {
-                Copy();
+                endWorld2DPos = (Vector2)Mouse.world2DPosition;
+                endWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
+
+                endWorld2DChartPos = objectSnappedChartPos;
+            }
+
+            UpdateVisuals();
+
+            if (Input.GetMouseButtonUp(0) && userDraggingSelectArea)
+            {
+                if (startWorld2DChartPos > endWorld2DChartPos)
+                    UpdateGroupedData(startWorld2DChartPos);
+                else
+                    UpdateGroupedData(endWorld2DChartPos);
+                userDraggingSelectArea = false;
+            }
+
+            UpdateHighlights();
+
+            if (Input.GetButtonDown("Delete"))
+                Delete();
+
+            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand))
+            {
+                if (Input.GetKeyDown(KeyCode.X))
+                {
+                    Cut();
+                }
+                else if (Input.GetKeyDown(KeyCode.C))
+                {
+                    Copy();
+                }
             }
         }
 

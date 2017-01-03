@@ -6,11 +6,23 @@ public class ClipboardObjectController : Snapable {
     public GroupSelect groupSelectTool;
     public Transform strikeline;
     public static Clipboard clipboard = new Clipboard();
+    Renderer ren;
 
     uint pastePos = 0;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        ren = GetComponent<Renderer>();
+    }
+
     new void LateUpdate()
     {
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+            ren.enabled = true;
+        else
+            ren.enabled = false;
+
         if (Mouse.world2DPosition != null && Input.mousePosition.y < Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y)
         {
             pastePos = objectSnappedChartPos;
@@ -35,7 +47,7 @@ public class ClipboardObjectController : Snapable {
     // Paste the clipboard data into the chart, overwriting anything else in the process
     public void Paste(uint chartLocationToPaste)
     {
-        if (clipboard.data.Length > 0)
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor && clipboard.data.Length > 0)
         {
             Rect collisionRect = clipboard.GetCollisionRect(chartLocationToPaste, editor.currentSong);
             uint colliderChartDistance = clipboard.areaChartPosMax - clipboard.areaChartPosMin;
