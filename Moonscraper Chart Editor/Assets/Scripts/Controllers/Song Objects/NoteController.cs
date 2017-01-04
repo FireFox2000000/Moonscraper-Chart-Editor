@@ -19,10 +19,21 @@ public class NoteController : SongObjectController {
     protected SpriteRenderer noteRenderer;
 #else
     protected Renderer noteRenderer;
+    EdgeCollider2D noteHitCollider;
     MeshFilter meshFilter;
 #endif
     protected SpriteRenderer sustainRen;
 
+    public bool isActivated
+    {
+        get
+        {
+            if (noteRenderer && noteHitCollider && noteRenderer.enabled && noteHitCollider.enabled)
+                return true;
+            else
+                return false;
+        }
+    }
     new void Awake()
     {
         base.Awake();
@@ -30,6 +41,7 @@ public class NoteController : SongObjectController {
         noteRenderer = GetComponent<SpriteRenderer>();
 #else
         noteRenderer = GetComponent<Renderer>();
+        noteHitCollider = GetComponentInChildren<EdgeCollider2D>();
         meshFilter = GetComponent<MeshFilter>();
 #endif
         sustainRen = sustain.GetComponent<SpriteRenderer>();
@@ -347,6 +359,18 @@ public class NoteController : SongObjectController {
 
             sustain.UpdateSustain();
         }
+    }
+
+    public void Activate()
+    {
+        noteRenderer.enabled = true;
+        noteHitCollider.enabled = true;
+    }
+
+    public void Deactivate()
+    {
+        noteRenderer.enabled = false;
+        noteHitCollider.enabled = false;
     }
 
     Note GetPreviousOfOpen(uint openNotePos, Note previousNote)
