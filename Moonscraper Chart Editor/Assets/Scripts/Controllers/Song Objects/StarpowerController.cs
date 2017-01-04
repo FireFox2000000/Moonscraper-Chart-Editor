@@ -48,6 +48,24 @@ public class StarpowerController : SongObjectController
         {
             transform.position = new Vector3(CHART_CENTER_POS - 3, starpower.worldYPosition, 0);
 
+            StarPower nextSp = null;
+            foreach (StarPower sp in starpower.chart.starPower)
+            {
+                if (sp.position > starpower.position)
+                    nextSp = sp;
+            }
+
+            if (nextSp != null)
+            {
+                // Cap sustain length
+                if (nextSp.position < starpower.position)
+                    starpower.length = 0;
+                else if (starpower.position + starpower.length > nextSp.position)
+                    // Cap sustain
+                    starpower.length = nextSp.position - starpower.position;
+            }
+            // else it's the only starpower or it's the last starpower
+
             UpdateTailLength();
         }
     }
