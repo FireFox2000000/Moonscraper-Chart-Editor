@@ -25,7 +25,7 @@ public class StarpowerController : SongObjectController
         Destroy(gameObject);
     }
 
-    protected override void Update()
+    protected override void UpdateCheck()
     {
         if (starpower != null)
         {

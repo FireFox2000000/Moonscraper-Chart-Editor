@@ -79,6 +79,7 @@
     <Compile Include="Assets\Scripts\BillboardingXAxis.cs" />
     <Compile Include="Assets\Scripts\CameraLayering.cs" />
     <Compile Include="Assets\Scripts\ChartEditor.cs" />
+    <Compile Include="Assets\Scripts\Charts\BPM.cs" />
     <Compile Include="Assets\Scripts\Charts\Chart.cs" />
     <Compile Include="Assets\Scripts\Charts\ChartObject.cs" />
     <Compile Include="Assets\Scripts\Charts\Note.cs" />

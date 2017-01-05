@@ -366,6 +366,19 @@ public class Song {
 
     public float ChartPositionToTime(uint position, float resolution)
     {
+        int previousBPMPos = SongObject.FindClosestPosition(position, bpms);
+        if (bpms[previousBPMPos].position > position)
+            --previousBPMPos;
+
+        BPM prevBPM = bpms[previousBPMPos];
+        float time = prevBPM.assignedTime;
+        time += (float)Song.dis_to_time(prevBPM.position, position, resolution, prevBPM.value / 1000.0f);
+
+        return time;
+    }
+
+    public float LiveChartPositionToTime(uint position, float resolution)
+    {
         double time = 0;
         BPM prevBPM = bpms[0];
 
@@ -438,7 +451,7 @@ public class Song {
     }
 
     // Calculates the amount of time elapsed between the 2 positions at a set bpm
-    static double dis_to_time(uint pos_start, uint pos_end, float resolution, float bpm)
+    public static double dis_to_time(uint pos_start, uint pos_end, float resolution, float bpm)
     {
         return (pos_end - pos_start) / resolution * 60.0f / bpm;
     }
@@ -928,12 +941,21 @@ public class Song {
         }
     }
 
-    void updateArrays()
+    public void updateArrays()
     {
         events = _events.ToArray();
         sections = _events.OfType<Section>().ToArray();
         bpms = _syncTrack.OfType<BPM>().ToArray();
         timeSignatures = _syncTrack.OfType<TimeSignature>().ToArray();
+        updateBPMTimeValues();
+    }
+
+    void updateBPMTimeValues()
+    {
+        foreach (BPM bpm in bpms)
+        {
+            bpm.assignedTime = LiveChartPositionToTime(bpm.position, resolution);
+        }
     }
 }
 

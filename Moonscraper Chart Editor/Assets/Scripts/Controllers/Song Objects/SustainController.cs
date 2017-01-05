@@ -59,7 +59,7 @@ public class SustainController : SelectableClick {
     public void UpdateSustainLength()
     {
         Note note = nCon.note;
-        float length = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length) - note.song.ChartPositionToWorldYPosition(note.position);
+        float length = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length) - note.worldYPosition;
 
         Vector3 scale = transform.localScale;
         scale.y = length;

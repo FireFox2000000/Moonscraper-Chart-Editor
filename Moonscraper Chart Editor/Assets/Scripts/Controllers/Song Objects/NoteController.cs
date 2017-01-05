@@ -196,7 +196,7 @@ public class NoteController : SongObjectController {
         }
     }
     
-    protected override void Update()
+    protected override void UpdateCheck()
     {
         if (note != null)
         {

@@ -40,10 +40,15 @@ public abstract class SongObjectController : SelectableClick {
 
     protected virtual void OnEnable()
     {
-        Update();
+        UpdateCheck();
+    }
+    
+    void Update()
+    {
+        UpdateCheck();
     }
 
-    protected virtual void Update()
+    protected virtual void UpdateCheck()
     {
         if (songObject != null && songObject.position >= editor.minPos && songObject.position < editor.maxPos)
             UpdateSongObject();

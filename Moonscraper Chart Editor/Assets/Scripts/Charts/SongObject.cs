@@ -23,9 +23,17 @@ public abstract class SongObject
         {
             if (song == null)
                 Debug.Log("null");
-            return song.ChartPositionToWorldYPosition(position); } }
+            return song.ChartPositionToWorldYPosition(position);
+        }
+    }
 
-    public float time { get { return song.ChartPositionToTime(position, song.resolution); } }
+    float time
+    {
+        get
+        {
+            return song.ChartPositionToTime(position, song.resolution);
+        }
+    }
 
     public abstract string GetSaveString();
     
@@ -564,27 +572,5 @@ public class TimeSignature : SyncTrack
     public static bool regexMatch(string line)
     {
         return new Regex(@"\d+ = TS \d+").IsMatch(line);
-    }
-}
-
-public class BPM : SyncTrack
-{
-    private readonly int _classID = 1;
-
-    public override int classID { get { return _classID; } }
-
-    public BPM(uint _position = 0, uint _value = 120000) : base (_position, _value) { }
-
-    public BPM(BPM _bpm) : base(_bpm.position, _bpm.value) { }
-
-    override public string GetSaveString()
-    {
-        //0 = B 140000
-        return Globals.TABSPACE + position + " = B " + value + Globals.LINE_ENDING;
-    }
-
-    public static bool regexMatch(string line)
-    {
-        return new Regex(@"\d+ = B \d+").IsMatch(line);
     }
 }

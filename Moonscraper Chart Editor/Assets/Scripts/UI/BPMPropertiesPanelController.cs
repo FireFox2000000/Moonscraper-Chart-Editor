@@ -29,11 +29,14 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             if (bpmValue.text != string.Empty && bpmValue.text[bpmValue.text.Length - 1] != '.')
                 bpmValue.text = (currentBPM.value / 1000.0f).ToString();
         }
+
+        editor.currentSong.updateArrays();
     }
 
     void OnDisable()
     {
         currentBPM = null;
+        editor.currentSong.updateArrays();
     }
 
     public void UpdateBPMValue(string value)
