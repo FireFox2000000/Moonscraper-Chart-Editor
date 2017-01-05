@@ -47,7 +47,7 @@ public class GameplayManager : MonoBehaviour {
 
             if (notesInWindow.Count > 0)
             {
-                
+
                 if (noteStreak > 0)
                 {
                     if (ValidateFrets(notesInWindow[0].note, canTap) && ValidateStrum(notesInWindow[0].note))
@@ -55,7 +55,7 @@ public class GameplayManager : MonoBehaviour {
                         ++noteStreak;
                         foreach (Note note in notesInWindow[0].note.GetChord())
                         {
-                            note.controller.Deactivate();
+                            note.controller.hit = true;
                         }
 
                         notesInWindow.RemoveAt(0);
@@ -63,37 +63,41 @@ public class GameplayManager : MonoBehaviour {
                 }
                 else
                 {
-                bool hit = false;
-                // Search to see if user is hitting a note ahead
-                for (int i = 0; i < notesInWindow.Count; ++i)
-                {
-                    if (ValidateFrets(notesInWindow[i].note, canTap) && ValidateStrum(notesInWindow[i].note))
+                    bool hit = false;
+                    // Search to see if user is hitting a note ahead
+                    for (int i = 0; i < notesInWindow.Count; ++i)
                     {
-                        if (i > 0)
-                            noteStreak = 0;
-                        ++noteStreak;
-
-                        canTap = false;
-
-                        // Remove all previous notes
-                        for (int j = i; j >= 0; --j)
+                        if (ValidateFrets(notesInWindow[i].note, canTap) && ValidateStrum(notesInWindow[i].note))
                         {
-                            foreach (Note note in notesInWindow[j].note.GetChord())
-                            {
-                                note.controller.Deactivate();
-                            }
-                        }
-                        hit = true;
-                        break;
-                    }
-                }
+                            if (i > 0)
+                                noteStreak = 0;
+                            ++noteStreak;
 
-                // Will not reach here if user hit a note
-                if (!hit && strum)
-                {
-                    //Debug.Log("Strummed incorrect note");
-                    noteStreak = 0;
-                }
+                            canTap = false;
+
+                            foreach (Note note in notesInWindow[i].note.GetChord())
+                            {
+                                note.controller.hit = true;
+                            }
+
+                            // Remove all previous notes
+                            NoteController[] nConArray = notesInWindow.ToArray();
+                            for (int j = i; j >= 0; --j)
+                            {
+                                notesInWindow.Remove(nConArray[j]);
+                            }
+
+                            hit = true;
+                            break;
+                        }
+                    }
+
+                    // Will not reach here if user hit a note
+                    if (!hit && strum)
+                    {
+                        //Debug.Log("Strummed incorrect note");
+                        noteStreak = 0;
+                    }
                 }
             }
             else
@@ -129,7 +133,10 @@ public class GameplayManager : MonoBehaviour {
             previousInputMask = inputMask;
         }
         else if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+        {
             notesInWindow.Clear();
+            noteStreakText.text = string.Empty;
+        }
     }
 
     void OnTriggerEnter2D(Collider2D col)

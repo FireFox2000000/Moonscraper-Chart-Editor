@@ -24,6 +24,7 @@ public class NoteController : SongObjectController {
 #endif
     protected SpriteRenderer sustainRen;
 
+    public bool hit = false;
     public bool isActivated
     {
         get
@@ -214,6 +215,9 @@ public class NoteController : SongObjectController {
         }
         else 
             gameObject.SetActive(false);
+
+        if (hit && transform.position.y < editor.strikeline.position.y - 2)
+            Deactivate();
     }
 
     public override void UpdateSongObject()
@@ -365,9 +369,10 @@ public class NoteController : SongObjectController {
     {
         noteRenderer.enabled = true;
         noteHitCollider.enabled = true;
+        hit = false;
     }
 
-    public void Deactivate()
+    void Deactivate()
     {
         noteRenderer.enabled = false;
         noteHitCollider.enabled = false;
