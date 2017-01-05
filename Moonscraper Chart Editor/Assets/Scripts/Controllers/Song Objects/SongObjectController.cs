@@ -60,7 +60,7 @@ public abstract class SongObjectController : SelectableClick {
     {
         UpdateSongObject();
     }
-
+    /*
     public override void OnSelectableMouseOver()
     {
         // Delete the object on erase tool
@@ -68,7 +68,7 @@ public abstract class SongObjectController : SelectableClick {
         {
             Delete();
         }
-    }
+    }*/
 
     protected void Init(SongObject _songObject)
     {
@@ -80,6 +80,12 @@ public abstract class SongObjectController : SelectableClick {
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
         {
             editor.currentSelectedObject = songObject;
+        }
+
+        // Delete the object on erase tool
+        if (Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButtonDown(0) && Globals.applicationMode == Globals.ApplicationMode.Editor)
+        {
+            Delete();
         }
     }
 

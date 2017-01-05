@@ -48,10 +48,10 @@ public class NoteController : SongObjectController {
         sustainRen = sustain.GetComponent<SpriteRenderer>();
     }
 
-    public override void OnSelectableMouseOver()
+    public override void OnSelectableMouseDown()
     {
         // Delete the object on erase tool
-        if (Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButton(0) && Globals.applicationMode == Globals.ApplicationMode.Editor)
+        if (Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButtonDown(0) && Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             if (Input.GetButton("ChordSelect"))
             {
