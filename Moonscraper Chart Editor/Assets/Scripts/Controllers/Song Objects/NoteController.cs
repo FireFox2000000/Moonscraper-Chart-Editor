@@ -25,6 +25,7 @@ public class NoteController : SongObjectController {
     protected SpriteRenderer sustainRen;
 
     public bool hit = false;
+    public bool sustainBroken = false;
     public bool isActivated
     {
         get
@@ -214,8 +215,30 @@ public class NoteController : SongObjectController {
         else 
             gameObject.SetActive(false);
 
-        if (hit && transform.position.y < editor.visibleStrikeline.position.y + 0.5f)
-            Deactivate();
+        const float offset = 0.5f;
+        if (hit && transform.position.y < editor.visibleStrikeline.position.y + offset)
+        {
+            DeactivateNote();
+
+            // Resize sustain
+            if (!sustainBroken && note.sustain_length > 0)
+            {
+                float sustainEndPoint = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length);
+                float yPos = (sustainEndPoint + editor.visibleStrikeline.position.y) / 2;
+                float yScale = sustainEndPoint - (editor.visibleStrikeline.position.y);
+
+                if (yPos > editor.visibleStrikeline.position.y && yScale > 0)
+                {
+                    sustain.transform.position = new Vector3(sustain.transform.position.x, yPos, sustain.transform.position.z);
+                    sustain.transform.localScale = new Vector3(sustain.transform.localScale.x, yScale, sustain.transform.localScale.z);
+                }
+                else
+                    sustainBroken = true;
+            }
+        }
+
+        if (sustainBroken)
+            sustainRen.enabled = false;
     }
 
     public override void UpdateSongObject()
@@ -367,10 +390,13 @@ public class NoteController : SongObjectController {
     {
         noteRenderer.enabled = true;
         noteHitCollider.enabled = true;
+        sustainRen.enabled = true;
         hit = false;
+        sustainBroken = false;
+        
     }
 
-    void Deactivate()
+    void DeactivateNote()
     {
         noteRenderer.enabled = false;
         noteHitCollider.enabled = false;

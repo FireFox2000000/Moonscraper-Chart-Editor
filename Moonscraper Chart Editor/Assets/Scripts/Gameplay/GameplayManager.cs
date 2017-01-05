@@ -50,7 +50,7 @@ public class GameplayManager : MonoBehaviour {
 
                 if (noteStreak > 0)
                 {
-                    if (ValidateFrets(notesInWindow[0].note, canTap) && ValidateStrum(notesInWindow[0].note))
+                    if (ValidateFrets(notesInWindow[0].note) && ValidateStrum(notesInWindow[0].note, canTap))
                     {
                         ++noteStreak;
                         foreach (Note note in notesInWindow[0].note.GetChord())
@@ -67,7 +67,7 @@ public class GameplayManager : MonoBehaviour {
                     // Search to see if user is hitting a note ahead
                     for (int i = 0; i < notesInWindow.Count; ++i)
                     {
-                        if (ValidateFrets(notesInWindow[i].note, canTap) && ValidateStrum(notesInWindow[i].note))
+                        if (ValidateFrets(notesInWindow[i].note) && ValidateStrum(notesInWindow[i].note, canTap))
                         {
                             if (i > 0)
                                 noteStreak = 0;
@@ -177,18 +177,26 @@ public class GameplayManager : MonoBehaviour {
             {
                 // Missed note
                 //Debug.Log("Missed note");
+                foreach (Note note in nCon.note.GetChord())
+                    note.controller.sustainBroken = true;
+
                 notesInWindow.Remove(nCon);
                 noteStreak = 0;
             }
         }
     }
 
-    bool ValidateStrum(Note note)
+    bool ValidateStrum(Note note, bool canTap)
     {
         switch (note.type)
         {
             case (Note.Note_Type.TAP):
-                return true;
+                if (canTap)
+                    return true;
+                else if (strum)
+                    return true;
+                else
+                    return false;
             case (Note.Note_Type.HOPO):
                 if (noteStreak > 0)
                     return true;
@@ -204,7 +212,7 @@ public class GameplayManager : MonoBehaviour {
         }
     }
 
-	bool ValidateFrets(Note note, bool canTap)
+	bool ValidateFrets(Note note)
     {
         int inputMask = GetFretInputMask();
 
@@ -217,11 +225,6 @@ public class GameplayManager : MonoBehaviour {
         }
         else
         {
-            if (note.type == Note.Note_Type.TAP && !canTap)
-            {
-                return false;
-            }
-
             // Chords
             if (note.IsChord)
             {
