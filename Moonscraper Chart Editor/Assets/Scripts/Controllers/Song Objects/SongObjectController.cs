@@ -38,6 +38,11 @@ public abstract class SongObjectController : SelectableClick {
             colSize = col2d.bounds.size;
     }
 
+    protected virtual void OnEnable()
+    {
+        Update();
+    }
+
     protected virtual void Update()
     {
         if (songObject != null && songObject.position >= editor.minPos && songObject.position < editor.maxPos)

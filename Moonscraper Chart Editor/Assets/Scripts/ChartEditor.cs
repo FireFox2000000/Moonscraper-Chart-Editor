@@ -36,7 +36,8 @@ public class ChartEditor : MonoBehaviour {
     public GameObject ghostTimeSignature;
     [Header("Misc.")]
     public UnityEngine.UI.Button play;
-    public Transform strikeline;
+    public Transform strikelineAudio;
+    public Transform visibleStrikeline;
     public TimelineHandler timeHandler;
     public Transform camYMin;
     public Transform camYMax;
@@ -354,7 +355,7 @@ public class ChartEditor : MonoBehaviour {
 
     public void Play()
     {
-        float strikelinePos = strikeline.position.y;
+        float strikelinePos = strikelineAudio.position.y;
         foreach (AudioSource source in musicSources)
             source.time = Song.WorldYPositionToTime(strikelinePos) + currentSong.offset;       // No need to add audio calibration as position is base on the strikeline position
 

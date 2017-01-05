@@ -30,6 +30,30 @@ public class Chart  {
         notes = _chartObjects.OfType<Note>().ToArray();
         starPower = _chartObjects.OfType<StarPower>().ToArray();
         events = _chartObjects.OfType<ChartEvent>().ToArray();
+
+        Debug.Log(GetNoteCount());
+    }
+
+    int GetNoteCount()
+    {
+        if (notes.Length > 0)
+        {
+            int count = 1;
+
+            uint previousPos = notes[0].position;
+            for (int i = 1; i < notes.Length; ++i)
+            {
+                if (notes[i].position > previousPos)
+                {
+                    ++count;
+                    previousPos = notes[i].position;
+                }
+            }
+
+            return count;
+        }
+        else
+            return 0;
     }
 
     // Insert into a sorted position

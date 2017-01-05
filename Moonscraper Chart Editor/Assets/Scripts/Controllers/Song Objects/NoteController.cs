@@ -129,8 +129,6 @@ public class NoteController : SongObjectController {
         return moveNoteController;
     }
 
-
-
     public void Init(Note note)
     {
         base.Init(note);
@@ -216,7 +214,7 @@ public class NoteController : SongObjectController {
         else 
             gameObject.SetActive(false);
 
-        if (hit && transform.position.y < editor.strikeline.position.y - 2)
+        if (hit && transform.position.y < editor.visibleStrikeline.position.y + 0.5f)
             Deactivate();
     }
 
