@@ -16,11 +16,11 @@ public abstract class SongObjectController : SelectableClick {
     Collider2D col2d;
 
     Vector2 colSize = Vector2.zero;
-
+    /*
     void OnMouseDown()
     {
         Debug.Log(GetAABBBoundsRect());
-    }
+    }*/
 
     protected void Awake()
     {
@@ -88,7 +88,7 @@ public abstract class SongObjectController : SelectableClick {
         if (colSize == Vector2.zero)
             throw new System.Exception("No collision attached to object");
 
-        Vector2 min = new Vector2(transform.position.x - colSize.x, transform.position.y - colSize.y);
+        Vector2 min = new Vector2(transform.position.x - colSize.x / 2, transform.position.y - colSize.y / 2);
         return new Rect(min, colSize);
     }
 
@@ -106,15 +106,11 @@ public abstract class SongObjectController : SelectableClick {
         }
 
         // AABB, check for any gaps
-        if (colRect.x < rect.x + rect.width &&
-               colRect.x + colRect.width > rect.x &&
-               colRect.y < rect.y + rect.height &&
-               colRect.height + colRect.y > rect.y)
+        if (colRect.x <= rect.x + rect.width &&
+               colRect.x + colRect.width >= rect.x &&
+               colRect.y <= rect.y + rect.height &&
+               colRect.height + colRect.y >= rect.y)
         {
-            if (songObject.classID == (int)SongObject.ID.Starpower)
-            {
-                Debug.Log(colRect);
-            }
             return true;
         }
         else

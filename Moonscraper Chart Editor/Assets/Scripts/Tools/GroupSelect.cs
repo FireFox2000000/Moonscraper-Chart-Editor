@@ -42,6 +42,10 @@ public class GroupSelect : ToolObject {
     public override void ToolDisable()
     {
         reset();
+        foreach (GameObject highlight in highlightPool)
+        {
+            highlight.SetActive(false);
+        }
     }
 
     public override void ToolEnable()
@@ -172,7 +176,7 @@ public class GroupSelect : ToolObject {
     }
 
     void UpdateGroupedData(uint minLimitInclusive, uint maxLimitNonInclusive)
-    { 
+    {
         Vector2 position = new Vector2();
 
         // Bottom left corner is position
