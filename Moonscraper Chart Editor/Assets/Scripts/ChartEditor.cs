@@ -373,6 +373,15 @@ public class ChartEditor : MonoBehaviour {
         Globals.applicationMode = Globals.ApplicationMode.Editor;
         foreach (AudioSource source in musicSources)
             source.Stop();
+
+        if (currentChart != null)
+        {
+            foreach (Note note in currentChart.notes)
+            {
+                if (note.controller)
+                    note.controller.Activate();
+            }
+        }
     }
 
     IEnumerator _Load()

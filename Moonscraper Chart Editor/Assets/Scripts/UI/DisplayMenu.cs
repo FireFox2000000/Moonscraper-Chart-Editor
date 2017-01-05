@@ -22,6 +22,9 @@ public class DisplayMenu : MonoBehaviour {
         {
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
+
+        if (Input.GetButtonDown("CloseMenu"))
+            Disable();
     }
 
     protected virtual void OnEnable()
@@ -39,6 +42,7 @@ public class DisplayMenu : MonoBehaviour {
 
     public void Disable()
     {
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         gameObject.SetActive(false);
     }
 

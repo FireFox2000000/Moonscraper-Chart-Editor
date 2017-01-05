@@ -9,55 +9,71 @@ public class GameplayManager : MonoBehaviour {
     ChartEditor editor;
 
     float initSize;
+    float previousStrumValue;
+    int previousInputMask;
 
     bool strum = false;
+    bool canTap;
 
     void Start()
     {
+        previousStrumValue = Input.GetAxisRaw("Strum");
+        previousInputMask = GetFretInputMask();
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
         initSize = transform.localScale.y;
     }
 
-    float previousStrumValue = 0;
     void Update()
     {
-        if (Input.GetAxis("Strum") != 0 && Input.GetAxis("Strum") != previousStrumValue)
-            strum = true;
-        else
-            strum = false;
-
-        transform.localScale = new Vector3(transform.localScale.x, initSize * Globals.hyperspeed, transform.localScale.z);
-
-        // Guard in case there are notes that shouldn't be in the window
-        foreach (NoteController nCon in notesInWindow.ToArray())
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
-            if (!nCon.isActivated)
-                notesInWindow.Remove(nCon);
-        }
-
-        if (notesInWindow.Count > 0)
-        {
-            if (noteStreak > 0)
-            {
-                if (ValidateFrets(notesInWindow[0].note) && ValidateStrum(notesInWindow[0].note))
-                {
-                    ++noteStreak;
-                    foreach (Note note in notesInWindow[0].note.GetChord())
-                    {
-                        note.controller.Deactivate();
-                    }
-
-                    notesInWindow.RemoveAt(0);
-                }
-            }
+            if (Input.GetAxisRaw("Strum") != 0 && Input.GetAxisRaw("Strum") != previousStrumValue)
+                strum = true;
             else
+                strum = false;
+
+            int inputMask = GetFretInputMask();
+            if (inputMask != previousInputMask)
+                canTap = true;
+
+            transform.localScale = new Vector3(transform.localScale.x, initSize * Globals.hyperspeed, transform.localScale.z);
+
+            // Guard in case there are notes that shouldn't be in the window
+            foreach (NoteController nCon in notesInWindow.ToArray())
             {
+                if (!nCon.isActivated)
+                    notesInWindow.Remove(nCon);
+            }
+
+            if (notesInWindow.Count > 0)
+            {
+                
+                if (noteStreak > 0)
+                {
+                    if (ValidateFrets(notesInWindow[0].note, canTap) && ValidateStrum(notesInWindow[0].note))
+                    {
+                        ++noteStreak;
+                        foreach (Note note in notesInWindow[0].note.GetChord())
+                        {
+                            note.controller.Deactivate();
+                        }
+
+                        notesInWindow.RemoveAt(0);
+                    }
+                }
+                else
+                {
+                bool hit = false;
                 // Search to see if user is hitting a note ahead
                 for (int i = 0; i < notesInWindow.Count; ++i)
                 {
-                    if (ValidateFrets(notesInWindow[i].note) && ValidateStrum(notesInWindow[i].note))
+                    if (ValidateFrets(notesInWindow[i].note, canTap) && ValidateStrum(notesInWindow[i].note))
                     {
+                        if (i > 0)
+                            noteStreak = 0;
                         ++noteStreak;
+
+                        canTap = false;
 
                         // Remove all previous notes
                         for (int j = i; j >= 0; --j)
@@ -67,87 +83,96 @@ public class GameplayManager : MonoBehaviour {
                                 note.controller.Deactivate();
                             }
                         }
-                        return;
+                        hit = true;
+                        break;
                     }
                 }
-            }
-        }
-        else
-        {
-            if (strum)
-            {
-                if (notesInWindow.Count > 0)
+
+                // Will not reach here if user hit a note
+                if (!hit && strum)
                 {
-                    foreach (Note note in notesInWindow[0].note.GetChord())
-                    {
-                        note.controller.Deactivate();
-                    }
-
-                    notesInWindow.RemoveAt(0);
+                    //Debug.Log("Strummed incorrect note");
+                    noteStreak = 0;
                 }
-
-                noteStreak = 0;
-                Debug.Log("Reset NS");
+                }
             }
+            else
+            {
+                if (strum)
+                {
+                    //Debug.Log("Strummed when no note");
+                    noteStreak = 0;
+                }
+            }
+            /*
+            for (int i = 0; i < 20; i++)
+            {
+                if (Input.GetKeyDown("joystick 1 button " + i))
+                {
+                    Debug.Log("joystick 1 button " + i);
+                }
+            }*/
+
+            /*
+            foreach (KeyCode vKey in System.Enum.GetValues(typeof(KeyCode)))
+            {
+                if (Input.GetKeyDown(vKey))
+                {
+                    //your code here
+                    Debug.Log(vKey);
+                }
+            }*/
+
+            noteStreakText.text = "Note streak: " + noteStreak.ToString();
+
+            previousStrumValue = Input.GetAxisRaw("Strum");
+            previousInputMask = inputMask;
         }
-        /*
-        for (int i = 0; i < 20; i++)
-        {
-            if (Input.GetKeyDown("joystick 1 button " + i))
-            {
-                Debug.Log("joystick 1 button " + i);
-            }
-        }*/
-
-        /*
-        foreach (KeyCode vKey in System.Enum.GetValues(typeof(KeyCode)))
-        {
-            if (Input.GetKeyDown(vKey))
-            {
-                //your code here
-                Debug.Log(vKey);
-            }
-        }*/
-
-        noteStreakText.text = "Note streak: " + noteStreak.ToString();
-
-        previousStrumValue = Input.GetAxis("Strum");
+        else if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+            notesInWindow.Clear();
     }
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        NoteController nCon = col.gameObject.GetComponentInParent<NoteController>();
-        if (nCon)
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
-            // We only want 1 note per position so that we can compare using the note mask
-            foreach (NoteController insertedNCon in notesInWindow)
+            NoteController nCon = col.gameObject.GetComponentInParent<NoteController>();
+            if (nCon)
             {
-                if (nCon.note.position == insertedNCon.note.position)
-                    return;
-            }
-
-            // Insert into sorted position
-            for (int i = 0; i < notesInWindow.Count; ++i)
-            {
-                if (nCon.note < notesInWindow[i].note)
+                // We only want 1 note per position so that we can compare using the note mask
+                foreach (NoteController insertedNCon in notesInWindow)
                 {
-                    notesInWindow.Insert(i, nCon);
-                    return;
+                    if (nCon.note.position == insertedNCon.note.position)
+                        return;
                 }
-            }
 
-            notesInWindow.Add(nCon);
+                // Insert into sorted position
+                for (int i = 0; i < notesInWindow.Count; ++i)
+                {
+                    if (nCon.note < notesInWindow[i].note)
+                    {
+                        notesInWindow.Insert(i, nCon);
+                        return;
+                    }
+                }
+
+                notesInWindow.Add(nCon);
+            }
         }
     }
 
     void OnTriggerExit2D(Collider2D col)
     {
-        NoteController nCon = col.gameObject.GetComponentInParent<NoteController>();
-        if (nCon && notesInWindow.Contains(nCon) && nCon.isActivated)
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
-            // Missed note
-            notesInWindow.Remove(nCon);
-            noteStreak = 0;
+            NoteController nCon = col.gameObject.GetComponentInParent<NoteController>();
+            if (nCon && notesInWindow.Contains(nCon) && nCon.isActivated)
+            {
+                // Missed note
+                //Debug.Log("Missed note");
+                notesInWindow.Remove(nCon);
+                noteStreak = 0;
+            }
         }
     }
 
@@ -172,24 +197,9 @@ public class GameplayManager : MonoBehaviour {
         }
     }
 
-	bool ValidateFrets(Note note)
+	bool ValidateFrets(Note note, bool canTap)
     {
-        int inputMask = 0;
-
-        if (Input.GetButton("FretGreen"))
-            inputMask |= 1 << (int)Note.Fret_Type.GREEN;
-
-        if (Input.GetButton("FretRed"))
-            inputMask |= 1 << (int)Note.Fret_Type.RED;
-
-        if (Input.GetButton("FretYellow"))
-            inputMask |= 1 << (int)Note.Fret_Type.YELLOW;
-
-        if (Input.GetButton("FretBlue"))
-            inputMask |= 1 << (int)Note.Fret_Type.BLUE;
-
-        if (Input.GetButton("FretOrange"))
-            inputMask |= 1 << (int)Note.Fret_Type.ORANGE;
+        int inputMask = GetFretInputMask();
 
         if (inputMask == 0)
         {
@@ -200,6 +210,11 @@ public class GameplayManager : MonoBehaviour {
         }
         else
         {
+            if (note.type == Note.Note_Type.TAP && !canTap)
+            {
+                return false;
+            }
+
             // Chords
             if (note.IsChord)
             {
@@ -244,5 +259,27 @@ public class GameplayManager : MonoBehaviour {
                     return false;
             }
         }
+    }
+
+    int GetFretInputMask()
+    {
+        int inputMask = 0;
+
+        if (Input.GetButton("FretGreen"))
+            inputMask |= 1 << (int)Note.Fret_Type.GREEN;
+
+        if (Input.GetButton("FretRed"))
+            inputMask |= 1 << (int)Note.Fret_Type.RED;
+
+        if (Input.GetButton("FretYellow"))
+            inputMask |= 1 << (int)Note.Fret_Type.YELLOW;
+
+        if (Input.GetButton("FretBlue"))
+            inputMask |= 1 << (int)Note.Fret_Type.BLUE;
+
+        if (Input.GetButton("FretOrange"))
+            inputMask |= 1 << (int)Note.Fret_Type.ORANGE;
+
+        return inputMask;
     }
 }
