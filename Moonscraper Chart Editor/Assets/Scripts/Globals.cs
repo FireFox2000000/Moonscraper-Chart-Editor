@@ -142,14 +142,14 @@ public class Globals : MonoBehaviour {
      
     public static ClapToggle clapSetting = ClapToggle.NONE;
     public static ClapToggle clapProperties = ClapToggle.NONE;
-    public static int audioCalibrationMS = 100;                     // Increase to start the audio sooner
+    public static int audioCalibrationMS = 200;                     // Increase to start the audio sooner
     public static ApplicationMode applicationMode = ApplicationMode.Editor;
     public static ViewMode viewMode { get; private set; }
     public static bool extendedSustainsEnabled = false;
     public static bool sustainGapEnabled { get; set; }
     public static Step sustainGapStep;
     public static int sustainGap { get { return sustainGapStep.value; } set { sustainGapStep.value = value; } }
-    public static bool bot = true;
+    public static bool bot = false;
 
     ChartEditor editor;
     string workingDirectory;
@@ -164,7 +164,7 @@ public class Globals : MonoBehaviour {
         iniparse.Open("config.ini");
 
         hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
-        audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 100);
+        audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 200);
         clapProperties = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
         extendedSustainsEnabled = iniparse.ReadValue("Settings", "Extended sustains", false);
         clapSetting = ClapToggle.NONE;

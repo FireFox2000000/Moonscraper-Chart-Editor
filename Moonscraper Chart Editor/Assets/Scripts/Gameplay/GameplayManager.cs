@@ -5,11 +5,14 @@ using System.Collections.Generic;
 public class GameplayManager : MonoBehaviour {
     public UnityEngine.UI.Text noteStreakText;
     uint noteStreak = 0;
+    List<NoteController> physicsWindow = new List<NoteController>();
     List<NoteController> notesInWindow = new List<NoteController>();
     List<NoteController> currentSustains = new List<NoteController>();
     ChartEditor editor;
 
+    float hitWindowHeight = 0.19f;
     float initSize;
+    float initYPos;
     float previousStrumValue;
     int previousInputMask;
 
@@ -21,11 +24,36 @@ public class GameplayManager : MonoBehaviour {
         previousStrumValue = Input.GetAxisRaw("Strum");
         previousInputMask = GetFretInputMask();
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
-        initSize = transform.localScale.y;
+        initSize = hitWindowHeight;
+        initYPos = transform.localPosition.y;
     }
 
     void Update()
     {
+        // Configure the timing window to take into account hyperspeed changes
+        //transform.localScale = new Vector3(transform.localScale.x, initSize * Globals.hyperspeed, transform.localScale.z);
+        hitWindowHeight = initSize * Globals.hyperspeed;
+        transform.localPosition = new Vector3(transform.localPosition.x, initYPos * Globals.hyperspeed, transform.localPosition.z);
+
+        // Update the hit window
+        foreach (NoteController note in physicsWindow.ToArray())
+        {
+            if (EnterWindow(note))
+                physicsWindow.Remove(note);
+        }
+
+        foreach (NoteController note in notesInWindow.ToArray())
+        {
+            if (ExitWindow(note) && !note.hit)
+            {
+                Debug.Log("Missed note");
+                foreach (Note chordNote in note.note.GetChord())
+                    chordNote.controller.sustainBroken = true;
+
+                noteStreak = 0;
+            }
+        }
+
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
             if (Globals.bot)
@@ -42,19 +70,15 @@ public class GameplayManager : MonoBehaviour {
                 if (inputMask != previousInputMask)
                     canTap = true;
 
-                // Configure the timing window to take into account hyperspeed changes
-                transform.localScale = new Vector3(transform.localScale.x, initSize * Globals.hyperspeed, transform.localScale.z);
-
                 // Guard in case there are notes that shouldn't be in the window
                 foreach (NoteController nCon in notesInWindow.ToArray())
                 {
-                    if (!nCon.isActivated)
+                    if (nCon.hit)
                         notesInWindow.Remove(nCon);
                 }
 
                 if (notesInWindow.Count > 0)
                 {
-
                     if (noteStreak > 0)
                     {
                         if (ValidateFrets(notesInWindow[0].note) && ValidateStrum(notesInWindow[0].note, canTap))
@@ -69,6 +93,11 @@ public class GameplayManager : MonoBehaviour {
                                 currentSustains.Add(notesInWindow[0]);
 
                             notesInWindow.RemoveAt(0);
+                        }
+                        else if (strum)
+                        {
+                            Debug.Log("Strummed incorrect note 2");
+                            noteStreak = 0;
                         }
                     }
                     else
@@ -108,7 +137,7 @@ public class GameplayManager : MonoBehaviour {
                         // Will not reach here if user hit a note
                         if (!hit && strum)
                         {
-                            //Debug.Log("Strummed incorrect note");
+                            Debug.Log("Strummed incorrect note");
                             noteStreak = 0;
                         }
                     }
@@ -117,7 +146,7 @@ public class GameplayManager : MonoBehaviour {
                 {
                     if (strum)
                     {
-                        //Debug.Log("Strummed when no note");
+                        Debug.Log("Strummed when no note");
                         noteStreak = 0;
                     }
                 }
@@ -169,41 +198,64 @@ public class GameplayManager : MonoBehaviour {
         }
     }
 
-    void OnTriggerEnter2D(Collider2D col)
+    void OnTriggerStay2D(Collider2D col)
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
             NoteController nCon = col.gameObject.GetComponentInParent<NoteController>();
-            if (nCon)
+            if (nCon && !nCon.hit && !physicsWindow.Contains(nCon))
             {
                 // We only want 1 note per position so that we can compare using the note mask
-                foreach (NoteController insertedNCon in notesInWindow)
+                foreach (NoteController insertedNCon in physicsWindow)
                 {
                     if (nCon.note.position == insertedNCon.note.position)
                         return;
                 }
 
                 // Insert into sorted position
-                for (int i = 0; i < notesInWindow.Count; ++i)
+                for (int i = 0; i < physicsWindow.Count; ++i)
                 {
-                    if (nCon.note < notesInWindow[i].note)
+                    if (nCon.note < physicsWindow[i].note)
                     {
-                        notesInWindow.Insert(i, nCon);
+                        physicsWindow.Insert(i, nCon);
                         return;
                     }
                 }
 
-                notesInWindow.Add(nCon);
+                physicsWindow.Add(nCon);
             }
         }
     }
 
+    bool EnterWindow(NoteController note)
+    {
+        if (!note.hit && note.transform.position.y < transform.position.y + (hitWindowHeight / 2))
+        {
+            notesInWindow.Add(note);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool ExitWindow(NoteController note)
+    {
+        if (note.transform.position.y < transform.position.y - (hitWindowHeight / 2))
+        {
+            notesInWindow.Remove(note);
+            return true;
+        }
+
+        return false;
+    }
+    /*
     void OnTriggerExit2D(Collider2D col)
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
             NoteController nCon = col.gameObject.GetComponentInParent<NoteController>();
-            if (nCon && notesInWindow.Contains(nCon) && nCon.isActivated)
+            if (nCon && notesInWindow.Contains(nCon) && !nCon.hit)
             {
                 // Missed note
                 //Debug.Log("Missed note");
@@ -211,10 +263,9 @@ public class GameplayManager : MonoBehaviour {
                     note.controller.sustainBroken = true;
 
                 notesInWindow.Remove(nCon);
-                noteStreak = 0;
             }
         }
-    }
+    }*/
 
     bool ValidateStrum(Note note, bool canTap)
     {
