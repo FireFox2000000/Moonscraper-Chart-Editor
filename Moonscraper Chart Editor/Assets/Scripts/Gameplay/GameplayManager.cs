@@ -6,6 +6,7 @@ public class GameplayManager : MonoBehaviour {
     public UnityEngine.UI.Text noteStreakText;
     uint noteStreak = 0;
     List<NoteController> notesInWindow = new List<NoteController>();
+    List<NoteController> currentSustains = new List<NoteController>();
     ChartEditor editor;
 
     float initSize;
@@ -31,6 +32,7 @@ public class GameplayManager : MonoBehaviour {
                 noteStreakText.text = "BOT";
             else
             {
+                // Get player input
                 if (Input.GetAxisRaw("Strum") != 0 && Input.GetAxisRaw("Strum") != previousStrumValue)
                     strum = true;
                 else
@@ -40,6 +42,7 @@ public class GameplayManager : MonoBehaviour {
                 if (inputMask != previousInputMask)
                     canTap = true;
 
+                // Configure the timing window to take into account hyperspeed changes
                 transform.localScale = new Vector3(transform.localScale.x, initSize * Globals.hyperspeed, transform.localScale.z);
 
                 // Guard in case there are notes that shouldn't be in the window
@@ -62,6 +65,9 @@ public class GameplayManager : MonoBehaviour {
                                 note.controller.hit = true;
                             }
 
+                            if (notesInWindow[0].note.sustain_length > 0)
+                                currentSustains.Add(notesInWindow[0]);
+
                             notesInWindow.RemoveAt(0);
                         }
                     }
@@ -83,6 +89,9 @@ public class GameplayManager : MonoBehaviour {
                                 {
                                     note.controller.hit = true;
                                 }
+
+                                if (notesInWindow[i].note.sustain_length > 0)
+                                    currentSustains.Add(notesInWindow[i]);
 
                                 // Remove all previous notes
                                 NoteController[] nConArray = notesInWindow.ToArray();
@@ -112,6 +121,18 @@ public class GameplayManager : MonoBehaviour {
                         noteStreak = 0;
                     }
                 }
+
+                // Handle sustain breaking
+                foreach (NoteController note in currentSustains.ToArray())
+                {
+                    if (noteStreak == 0 || !ValidateFrets(note.note))
+                    {
+                        foreach (Note chordNote in note.note.GetChord())
+                            chordNote.controller.sustainBroken = true;
+                        currentSustains.Remove(note);
+                    }
+                }
+
                 /*
                 for (int i = 0; i < 20; i++)
                 {
