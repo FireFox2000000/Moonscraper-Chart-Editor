@@ -227,7 +227,10 @@ public class NoteController : SongObjectController {
 
             if (hit && transform.position.y <= editor.visibleStrikeline.position.y + offset)
             {
-                DeactivateNote();
+                if (isActivated)
+                {
+                    DeactivateNote();
+                }
 
                 // Resize sustain
                 if (!sustainBroken && note.sustain_length > 0)
