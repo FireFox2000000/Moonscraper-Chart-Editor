@@ -11,6 +11,7 @@ public class GameplayManager : MonoBehaviour {
     ChartEditor editor;
 
     float hitWindowHeight = 0.19f;
+    float initWindowSize;
     float initSize;
     float initYPos;
     float previousStrumValue;
@@ -24,16 +25,28 @@ public class GameplayManager : MonoBehaviour {
         previousStrumValue = Input.GetAxisRaw("Strum");
         previousInputMask = GetFretInputMask();
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
-        initSize = hitWindowHeight;
+        initWindowSize = hitWindowHeight;
         initYPos = transform.localPosition.y;
+
+        initSize = transform.localScale.y;
+        transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
     }
 
     void Update()
     {
         // Configure the timing window to take into account hyperspeed changes
         //transform.localScale = new Vector3(transform.localScale.x, initSize * Globals.hyperspeed, transform.localScale.z);
-        hitWindowHeight = initSize * Globals.hyperspeed;
-        transform.localPosition = new Vector3(transform.localPosition.x, initYPos * Globals.hyperspeed, transform.localPosition.z);
+        hitWindowHeight = initWindowSize * Globals.hyperspeed;
+        //transform.localPosition = new Vector3(transform.localPosition.x, initYPos * Globals.hyperspeed, transform.localPosition.z);
+
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+        {
+            transform.localScale = new Vector3(transform.localScale.x, initSize, transform.localScale.z);
+        }
+        else
+        {
+            transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
+        }
 
         // Update the hit window
         foreach (NoteController note in physicsWindow.ToArray())
@@ -46,7 +59,7 @@ public class GameplayManager : MonoBehaviour {
         {
             if (ExitWindow(note) && !note.hit)
             {
-                Debug.Log("Missed note");
+                //Debug.Log("Missed note");
                 foreach (Note chordNote in note.note.GetChord())
                     chordNote.controller.sustainBroken = true;
 
@@ -80,7 +93,7 @@ public class GameplayManager : MonoBehaviour {
                 if (notesInWindow.Count > 0)
                 {
                     if (noteStreak > 0)
-                    {
+                    { 
                         if (ValidateFrets(notesInWindow[0].note) && ValidateStrum(notesInWindow[0].note, canTap))
                         {
                             ++noteStreak;
@@ -154,7 +167,9 @@ public class GameplayManager : MonoBehaviour {
                 // Handle sustain breaking
                 foreach (NoteController note in currentSustains.ToArray())
                 {
-                    if (noteStreak == 0 || !ValidateFrets(note.note))
+                    bool isChord = note.note.IsChord;
+
+                    if (!note.isActivated && (noteStreak == 0 || (!note.note.IsChord && !ValidateFrets(note.note)) || (note.note.IsChord && note.note.mask != inputMask)))
                     {
                         foreach (Note chordNote in note.note.GetChord())
                             chordNote.controller.sustainBroken = true;
@@ -198,10 +213,8 @@ public class GameplayManager : MonoBehaviour {
         }
     }
 
-    void OnTriggerStay2D(Collider2D col)
+    void OnTriggerEnter2D(Collider2D col)
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
-        {
             NoteController nCon = col.gameObject.GetComponentInParent<NoteController>();
             if (nCon && !nCon.hit && !physicsWindow.Contains(nCon))
             {
@@ -224,13 +237,29 @@ public class GameplayManager : MonoBehaviour {
 
                 physicsWindow.Add(nCon);
             }
-        }
     }
 
     bool EnterWindow(NoteController note)
     {
-        if (!note.hit && note.transform.position.y < transform.position.y + (hitWindowHeight / 2))
+        if (!note.hit && note.transform.position.y < editor.visibleStrikeline.position.y + (hitWindowHeight / 2))
         {
+            // We only want 1 note per position so that we can compare using the note mask
+            foreach (NoteController insertedNCon in notesInWindow)
+            {
+                if (note.note.position == insertedNCon.note.position)
+                    return false;
+            }
+
+            // Insert into sorted position
+            for (int i = 0; i < notesInWindow.Count; ++i)
+            {
+                if (note.note < notesInWindow[i].note)
+                {
+                    notesInWindow.Insert(i, note);
+                    return true;
+                }
+            }
+
             notesInWindow.Add(note);
 
             return true;
@@ -241,7 +270,7 @@ public class GameplayManager : MonoBehaviour {
 
     bool ExitWindow(NoteController note)
     {
-        if (note.transform.position.y < transform.position.y - (hitWindowHeight / 2))
+        if (note.transform.position.y < editor.visibleStrikeline.position.y - (hitWindowHeight / 2))
         {
             notesInWindow.Remove(note);
             return true;

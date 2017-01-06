@@ -217,7 +217,7 @@ public class NoteController : SongObjectController {
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
-            const float offset = 0.5f;
+            const float offset = 0.25f;
             
             if (Globals.bot)
             {
@@ -225,7 +225,7 @@ public class NoteController : SongObjectController {
                 sustainBroken = false;
             }
 
-            if (hit && transform.position.y < editor.visibleStrikeline.position.y + offset)
+            if (hit && transform.position.y <= editor.visibleStrikeline.position.y + offset)
             {
                 DeactivateNote();
 

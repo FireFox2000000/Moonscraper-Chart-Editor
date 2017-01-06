@@ -353,23 +353,50 @@ public class ChartEditor : MonoBehaviour {
         }
     }
 
+    bool cancel;
     public void Play()
     {
-        float strikelinePos = strikelineAudio.position.y;
-        foreach (AudioSource source in musicSources)
-            source.time = Song.WorldYPositionToTime(strikelinePos) + currentSong.offset;       // No need to add audio calibration as position is base on the strikeline position
-
         play.interactable = false;
         Globals.applicationMode = Globals.ApplicationMode.Playing;
+        cancel = false;
 
-        foreach (AudioSource source in musicSources)
+        float strikelinePos = strikelineAudio.position.y;
+        float playPoint = Song.WorldYPositionToTime(strikelinePos) + currentSong.offset;
+        if (playPoint < 0)
         {
-            source.Play();
+            StartCoroutine(delayedStartAudio(-playPoint));
+        }
+        else
+        {
+            foreach (AudioSource source in musicSources)
+                source.time = playPoint;       // No need to add audio calibration as position is base on the strikeline position
+
+            foreach (AudioSource source in musicSources)
+            {
+                source.Play();
+            }
+        } 
+    }
+
+    IEnumerator delayedStartAudio(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (!cancel)
+        {
+            foreach (AudioSource source in musicSources)
+                source.time = 0;       // No need to add audio calibration as position is base on the strikeline position
+
+            foreach (AudioSource source in musicSources)
+            {
+                source.Play();
+            }
         }
     }
 
     public void Stop()
     {
+        cancel = true;
         play.interactable = true;
         Globals.applicationMode = Globals.ApplicationMode.Editor;
         foreach (AudioSource source in musicSources)
