@@ -6,6 +6,7 @@ public class DisplayProperties : MonoBehaviour {
     public Text songNameText;
     public Slider hyperspeedSlider;
     public InputField snappingStep;
+    public Text noteCount;
 
     ChartEditor editor;
 
@@ -30,6 +31,8 @@ public class DisplayProperties : MonoBehaviour {
 
         if (snappingStep.text != string.Empty)
             snappingStep.text = Globals.step.ToString();
+
+        noteCount.text = "Notes: " + editor.currentChart.note_count.ToString();
     }
 
     public void ToggleClap(bool value)
