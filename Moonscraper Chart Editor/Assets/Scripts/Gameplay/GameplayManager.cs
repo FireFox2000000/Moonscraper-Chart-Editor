@@ -82,17 +82,21 @@ public class GameplayManager : MonoBehaviour {
             }
         }
 
-        NoteController nextNote;
-        if (notesInWindow.Count > 0)
-            nextNote = notesInWindow[0];
-        else
-            nextNote = null;
+        bool noStrumInWindow = false;
+        foreach (NoteController note in notesInWindow)
+        {
+            if (note.noteType != Note.Note_Type.STRUM)
+            {
+                noStrumInWindow = true;
+                break;
+            }
+        }
 
         // Handle freestrum timer
-        if (nextNote != null && nextNote.noteType != Note.Note_Type.STRUM)
+        if (noStrumInWindow)
             freestrumTimer = 0;
 
-        if ((nextNote == null || nextNote.noteType == Note.Note_Type.STRUM) && freestrumTimer > FREESTRUM_TIME)
+        if (!noStrumInWindow && freestrumTimer > FREESTRUM_TIME)
         {
             freestrum = 0;
         }
@@ -103,7 +107,7 @@ public class GameplayManager : MonoBehaviour {
             freestrumTimer = 0;
 
         // Handle strum window
-        if (nextNote == null || strumWindowTimer > STRUM_WINDOW_TIME)
+        if (strumWindowTimer > STRUM_WINDOW_TIME)
         {
             if (strumWindowOpen)        // Overstrum
                 noteStreak = 0;
