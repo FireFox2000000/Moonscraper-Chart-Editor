@@ -15,6 +15,9 @@ public class Chart  {
 
     public ChartObject[] chartObjects { get { return _chartObjects.ToArray(); } }
 
+    int _note_count;
+    public int note_count { get { return _note_count; } }
+
     public Chart (Song _song)
     {
         song = _song;
@@ -23,6 +26,8 @@ public class Chart  {
         notes = new Note[0];
         starPower = new StarPower[0];
         events = new ChartEvent[0];
+
+        _note_count = 0;
     }
 
     public void updateArrays()
@@ -31,7 +36,7 @@ public class Chart  {
         starPower = _chartObjects.OfType<StarPower>().ToArray();
         events = _chartObjects.OfType<ChartEvent>().ToArray();
 
-        Debug.Log(GetNoteCount());
+        _note_count = GetNoteCount();
     }
 
     int GetNoteCount()

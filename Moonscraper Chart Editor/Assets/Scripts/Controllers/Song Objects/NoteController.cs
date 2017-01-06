@@ -215,30 +215,40 @@ public class NoteController : SongObjectController {
         else 
             gameObject.SetActive(false);
 
-        const float offset = 0.5f;
-        if (hit && transform.position.y < editor.visibleStrikeline.position.y + offset)
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
-            DeactivateNote();
-
-            // Resize sustain
-            if (!sustainBroken && note.sustain_length > 0)
+            const float offset = 0.5f;
+            
+            if (Globals.bot)
             {
-                float sustainEndPoint = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length);
-                float yPos = (sustainEndPoint + editor.visibleStrikeline.position.y) / 2;
-                float yScale = sustainEndPoint - (editor.visibleStrikeline.position.y);
-
-                if (yPos > editor.visibleStrikeline.position.y && yScale > 0)
-                {
-                    sustain.transform.position = new Vector3(sustain.transform.position.x, yPos, sustain.transform.position.z);
-                    sustain.transform.localScale = new Vector3(sustain.transform.localScale.x, yScale, sustain.transform.localScale.z);
-                }
-                else
-                    sustainBroken = true;
+                hit = true;
+                sustainBroken = false;
             }
-        }
 
-        if (sustainBroken)
-            sustainRen.enabled = false;
+            if (hit && transform.position.y < editor.visibleStrikeline.position.y + offset)
+            {
+                DeactivateNote();
+
+                // Resize sustain
+                if (!sustainBroken && note.sustain_length > 0)
+                {
+                    float sustainEndPoint = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length);
+                    float yPos = (sustainEndPoint + editor.visibleStrikeline.position.y) / 2;
+                    float yScale = sustainEndPoint - (editor.visibleStrikeline.position.y);
+
+                    if (yPos > editor.visibleStrikeline.position.y && yScale > 0)
+                    {
+                        sustain.transform.position = new Vector3(sustain.transform.position.x, yPos, sustain.transform.position.z);
+                        sustain.transform.localScale = new Vector3(sustain.transform.localScale.x, yScale, sustain.transform.localScale.z);
+                    }
+                    else
+                        sustainBroken = true;
+                }
+            }
+
+            if (sustainBroken)
+                sustainRen.enabled = false;
+        }
     }
 
     public override void UpdateSongObject()

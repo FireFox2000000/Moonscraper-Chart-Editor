@@ -27,114 +27,123 @@ public class GameplayManager : MonoBehaviour {
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
-            if (Input.GetAxisRaw("Strum") != 0 && Input.GetAxisRaw("Strum") != previousStrumValue)
-                strum = true;
+            if (Globals.bot)
+                noteStreakText.text = "BOT";
             else
-                strum = false;
-
-            int inputMask = GetFretInputMask();
-            if (inputMask != previousInputMask)
-                canTap = true;
-
-            transform.localScale = new Vector3(transform.localScale.x, initSize * Globals.hyperspeed, transform.localScale.z);
-
-            // Guard in case there are notes that shouldn't be in the window
-            foreach (NoteController nCon in notesInWindow.ToArray())
             {
-                if (!nCon.isActivated)
-                    notesInWindow.Remove(nCon);
-            }
-
-            if (notesInWindow.Count > 0)
-            {
-
-                if (noteStreak > 0)
-                {
-                    if (ValidateFrets(notesInWindow[0].note) && ValidateStrum(notesInWindow[0].note, canTap))
-                    {
-                        ++noteStreak;
-                        foreach (Note note in notesInWindow[0].note.GetChord())
-                        {
-                            note.controller.hit = true;
-                        }
-
-                        notesInWindow.RemoveAt(0);
-                    }
-                }
+                if (Input.GetAxisRaw("Strum") != 0 && Input.GetAxisRaw("Strum") != previousStrumValue)
+                    strum = true;
                 else
+                    strum = false;
+
+                int inputMask = GetFretInputMask();
+                if (inputMask != previousInputMask)
+                    canTap = true;
+
+                transform.localScale = new Vector3(transform.localScale.x, initSize * Globals.hyperspeed, transform.localScale.z);
+
+                // Guard in case there are notes that shouldn't be in the window
+                foreach (NoteController nCon in notesInWindow.ToArray())
                 {
-                    bool hit = false;
-                    // Search to see if user is hitting a note ahead
-                    for (int i = 0; i < notesInWindow.Count; ++i)
+                    if (!nCon.isActivated)
+                        notesInWindow.Remove(nCon);
+                }
+
+                if (notesInWindow.Count > 0)
+                {
+
+                    if (noteStreak > 0)
                     {
-                        if (ValidateFrets(notesInWindow[i].note) && ValidateStrum(notesInWindow[i].note, canTap))
+                        if (ValidateFrets(notesInWindow[0].note) && ValidateStrum(notesInWindow[0].note, canTap))
                         {
-                            if (i > 0)
-                                noteStreak = 0;
                             ++noteStreak;
-
-                            canTap = false;
-
-                            foreach (Note note in notesInWindow[i].note.GetChord())
+                            foreach (Note note in notesInWindow[0].note.GetChord())
                             {
                                 note.controller.hit = true;
                             }
 
-                            // Remove all previous notes
-                            NoteController[] nConArray = notesInWindow.ToArray();
-                            for (int j = i; j >= 0; --j)
-                            {
-                                notesInWindow.Remove(nConArray[j]);
-                            }
-
-                            hit = true;
-                            break;
+                            notesInWindow.RemoveAt(0);
                         }
                     }
-
-                    // Will not reach here if user hit a note
-                    if (!hit && strum)
+                    else
                     {
-                        //Debug.Log("Strummed incorrect note");
+                        bool hit = false;
+                        // Search to see if user is hitting a note ahead
+                        for (int i = 0; i < notesInWindow.Count; ++i)
+                        {
+                            if (ValidateFrets(notesInWindow[i].note) && ValidateStrum(notesInWindow[i].note, canTap))
+                            {
+                                if (i > 0)
+                                    noteStreak = 0;
+                                ++noteStreak;
+
+                                canTap = false;
+
+                                foreach (Note note in notesInWindow[i].note.GetChord())
+                                {
+                                    note.controller.hit = true;
+                                }
+
+                                // Remove all previous notes
+                                NoteController[] nConArray = notesInWindow.ToArray();
+                                for (int j = i; j >= 0; --j)
+                                {
+                                    notesInWindow.Remove(nConArray[j]);
+                                }
+
+                                hit = true;
+                                break;
+                            }
+                        }
+
+                        // Will not reach here if user hit a note
+                        if (!hit && strum)
+                        {
+                            //Debug.Log("Strummed incorrect note");
+                            noteStreak = 0;
+                        }
+                    }
+                }
+                else
+                {
+                    if (strum)
+                    {
+                        //Debug.Log("Strummed when no note");
                         noteStreak = 0;
                     }
                 }
+                /*
+                for (int i = 0; i < 20; i++)
+                {
+                    if (Input.GetKeyDown("joystick 1 button " + i))
+                    {
+                        Debug.Log("joystick 1 button " + i);
+                    }
+                }*/
+
+                /*
+                foreach (KeyCode vKey in System.Enum.GetValues(typeof(KeyCode)))
+                {
+                    if (Input.GetKeyDown(vKey))
+                    {
+                        //your code here
+                        Debug.Log(vKey);
+                    }
+                }*/
+
+                noteStreakText.text = "Note streak: " + noteStreak.ToString();
+
+                previousStrumValue = Input.GetAxisRaw("Strum");
+                previousInputMask = inputMask;
             }
-            else
-            {
-                if (strum)
-                {
-                    //Debug.Log("Strummed when no note");
-                    noteStreak = 0;
-                }
-            }
-            /*
-            for (int i = 0; i < 20; i++)
-            {
-                if (Input.GetKeyDown("joystick 1 button " + i))
-                {
-                    Debug.Log("joystick 1 button " + i);
-                }
-            }*/
-
-            /*
-            foreach (KeyCode vKey in System.Enum.GetValues(typeof(KeyCode)))
-            {
-                if (Input.GetKeyDown(vKey))
-                {
-                    //your code here
-                    Debug.Log(vKey);
-                }
-            }*/
-
-            noteStreakText.text = "Note streak: " + noteStreak.ToString();
-
-            previousStrumValue = Input.GetAxisRaw("Strum");
-            previousInputMask = inputMask;
         }
         else if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             notesInWindow.Clear();
+            noteStreakText.text = string.Empty;
+        }
+        else
+        {
             noteStreakText.text = string.Empty;
         }
     }
