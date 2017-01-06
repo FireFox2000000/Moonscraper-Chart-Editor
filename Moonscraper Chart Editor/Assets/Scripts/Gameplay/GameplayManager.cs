@@ -9,7 +9,7 @@ public class GameplayManager : MonoBehaviour {
     int freestrum = 0;
     float freestrumTimer = 0;
 
-    const float STRUM_WINDOW_TIME = 0.1f;
+    const float STRUM_WINDOW_TIME = 0.05f;
     bool strumWindowOpen = false;
     float strumWindowTimer = 0;
 
