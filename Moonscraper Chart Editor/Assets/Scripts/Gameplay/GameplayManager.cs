@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using XInputDotNetPure;
 
 public class GameplayManager : MonoBehaviour {
-    const float FREESTRUM_TIME = 0.3f;
+    const float FREESTRUM_TIME = 0.1f;
 
     public UnityEngine.UI.Text noteStreakText;
     uint noteStreak = 0;
@@ -24,7 +24,7 @@ public class GameplayManager : MonoBehaviour {
     bool canTap;
 
     GamePadState gamepad;
-    bool freestrum = false;
+    int freestrum = 0;
     float freestrumTime = 0;
 
     void Start()
@@ -76,10 +76,25 @@ public class GameplayManager : MonoBehaviour {
             }
         }
 
-        if (freestrumTime > FREESTRUM_TIME)
-            freestrum = false;
+        bool noStrumInWindow = false;
+        foreach (NoteController note in notesInWindow)
+        {
+            if (note.noteType != Note.Note_Type.STRUM)
+            {
+                noStrumInWindow = true;
+                break;
+            }
+        }
 
-        if (freestrum)
+        if (noStrumInWindow)
+            freestrumTime = 0;
+
+        if (!noStrumInWindow && freestrumTime > FREESTRUM_TIME)
+        {
+            freestrum = 0;
+        }
+
+        if (freestrum > 0)
             freestrumTime += Time.deltaTime;
         else
             freestrumTime = 0;
@@ -106,7 +121,6 @@ public class GameplayManager : MonoBehaviour {
             else
             {
                 //Debug.Log(gamepad.DPad.Down);
-                
 
                 int inputMask = GetFretInputMask();
                 if (inputMask != previousInputMask)
@@ -135,16 +149,15 @@ public class GameplayManager : MonoBehaviour {
                                 currentSustains.Add(notesInWindow[0]);
 
                             if (notesInWindow[0].noteType != Note.Note_Type.STRUM)
-                                freestrum = true;
+                                freestrum = 2;
 
                             notesInWindow.RemoveAt(0);
                         }
                         else if (strum)
                         {
-                            if (freestrum)
+                            if (freestrum > 0)
                             {
-                                Debug.Log("Freestrum");
-                                freestrum = false;
+                                --freestrum;
                             }
                             else
                             {
@@ -189,7 +202,7 @@ public class GameplayManager : MonoBehaviour {
                             ++noteStreak;
 
                             if (notesInWindow[index].noteType != Note.Note_Type.STRUM)
-                                freestrum = true;
+                                freestrum = 2;
 
                             canTap = false;
 
@@ -213,8 +226,15 @@ public class GameplayManager : MonoBehaviour {
                             // Will not reach here if user hit a note
                             if (strum)
                             {
-                                //Debug.Log("Strummed incorrect note");
-                                noteStreak = 0;
+                                if (freestrum > 0)
+                                {
+                                    --freestrum;
+                                }
+                                else
+                                {
+                                    Debug.Log("Strummed when no note");
+                                    noteStreak = 0;
+                                }
                             }
                         }
                         /*
@@ -255,13 +275,14 @@ public class GameplayManager : MonoBehaviour {
                 {
                     if (strum)
                     {
-                        //Debug.Log("Strummed when no note");
-                        if (!freestrum)
-                            noteStreak = 0;
+                        if (freestrum > 0)
+                        {
+                            --freestrum;
+                        }
                         else
                         {
-                            Debug.Log("Freestrum");
-                            freestrum = false;
+                            //Debug.Log("Strummed when no note 2");
+                            noteStreak = 0;                            
                         }
                     }
                 }
@@ -316,6 +337,8 @@ public class GameplayManager : MonoBehaviour {
         }
 
         previousStrumValue = strumValue;
+        if (freestrum > 2)
+            freestrum = 2;
     }
 
     void OnTriggerEnter2D(Collider2D col)
