@@ -10,6 +10,7 @@ public class Globals : MonoBehaviour {
     [Header("Initialize GUI")]
     public Toggle clapToggle;
     public Toggle viewModeToggle;
+    public AudioCalibrationMenuScript audioCalibrationMenu;
 
     public static readonly int NOTFOUND = -1;
     public static readonly string TABSPACE = "  ";
@@ -161,6 +162,10 @@ public class Globals : MonoBehaviour {
         workingDirectory = System.IO.Directory.GetCurrentDirectory();
 
         INIParser iniparse = new INIParser();
+
+        bool configFileExisted;
+        configFileExisted = System.IO.File.Exists("config.ini");
+
         iniparse.Open("config.ini");
 
         hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
@@ -178,6 +183,9 @@ public class Globals : MonoBehaviour {
         editor.clapSource.volume = (float)iniparse.ReadValue("Audio Volume", "Clap", 1.0f);
 
         iniparse.Close();
+
+        if (!configFileExisted)
+            editor.EnableMenu(audioCalibrationMenu);
 
         // Initialize notes
         strumSprites = strumNotes;          // 2D

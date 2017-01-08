@@ -360,8 +360,7 @@ public class ChartEditor : MonoBehaviour {
         Globals.applicationMode = Globals.ApplicationMode.Playing;
         cancel = false;
 
-        float strikelinePos = strikelineAudio.position.y;
-        float playPoint = Song.WorldYPositionToTime(strikelinePos) + currentSong.offset;
+        float playPoint = Song.WorldYPositionToTime(strikelineAudio.position.y) + currentSong.offset;
         if (playPoint < 0)
         {
             StartCoroutine(delayedStartAudio(-playPoint));
@@ -381,11 +380,12 @@ public class ChartEditor : MonoBehaviour {
     IEnumerator delayedStartAudio(float delay)
     {
         yield return new WaitForSeconds(delay);
+        float playPoint = Song.WorldYPositionToTime(strikelineAudio.position.y) + currentSong.offset;
 
         if (!cancel)
         {
             foreach (AudioSource source in musicSources)
-                source.time = 0;       // No need to add audio calibration as position is base on the strikeline position
+                source.time = playPoint;
 
             foreach (AudioSource source in musicSources)
             {
