@@ -29,6 +29,12 @@ public class TimelineMovementController : MovementController
 
     void Update()
     {
+        if (Input.GetMouseButtonUp(0) && Globals.applicationMode == Globals.ApplicationMode.Editor)
+            cancel = false;
+
+        if (Globals.IsInDropDown)
+            cancel = true;
+
         // Update timer text
         if (timePosition)
         {
@@ -49,13 +55,15 @@ public class TimelineMovementController : MovementController
 
     // Update is called once per frame
     void LateUpdate () {
-        
 	    if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             if (scrollDelta == 0 && focused && globals.InToolArea)
             {
                 scrollDelta = Input.mouseScrollDelta.y;
             }
+
+            if (Globals.IsInDropDown)
+                scrollDelta = 0;
 
             // Position changes scroll bar value
             if (scrollDelta != 0 || transform.position != prevPos)
@@ -107,8 +115,9 @@ public class TimelineMovementController : MovementController
             // else check mouse range
             else if (Toolpane.mouseDownInArea && (globals.InToolArea && (Input.GetMouseButton(0) || Input.GetMouseButton(1))))
             { 
-                if (Input.mousePosition.y > Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y)
+                if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null && Input.mousePosition.y > Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y)
                 {
+                    // Autoscroll
                     transform.position = new Vector3(transform.position.x, transform.position.y + autoscrollSpeed * Time.deltaTime, transform.position.z);
                     UpdateTimelineHandleBasedPos();
                 }

@@ -2,10 +2,11 @@
 using System.Collections;
 
 public abstract class MovementController : MonoBehaviour {
+    public static bool cancel = false;
     public ChartEditor editor;
     protected Globals globals;
 
-    protected Vector3 initPos;
+    public Vector3 initPos { get; protected set; }
     protected float scrollDelta = 0;
 
     protected bool focused = true;

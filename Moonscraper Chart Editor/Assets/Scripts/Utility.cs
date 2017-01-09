@@ -9,15 +9,25 @@ static class Utility {
     {
         System.TimeSpan levelTime = System.TimeSpan.FromSeconds(time);
 
-        return string.Format("{0:D2}:{1:D2}:{2:D2}",
-                levelTime.Minutes,
-                levelTime.Seconds,
-                millisecondRounding(levelTime.Milliseconds, 2));
+        string format = string.Empty;
+        if (time < 0)
+            format += "-";
+
+        format += "{0:D2}:{1:D2}:{2:D2}";
+
+        return string.Format(format,
+                Mathf.Abs(levelTime.Minutes),
+                Mathf.Abs(levelTime.Seconds),
+                millisecondRounding(Mathf.Abs(levelTime.Milliseconds), 2));
     }
 
     static int millisecondRounding(int value, int roundPlaces)
     {
         string sVal = value.ToString();
+
+        if (sVal.Length > 0 && sVal[0] == '-')
+            ++roundPlaces;
+
         if (sVal.Length > roundPlaces)
             sVal = sVal.Remove(roundPlaces);
 

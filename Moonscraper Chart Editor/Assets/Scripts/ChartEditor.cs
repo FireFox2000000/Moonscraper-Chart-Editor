@@ -355,6 +355,9 @@ public class ChartEditor : MonoBehaviour {
 
     public void StartGameplay()
     {
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing || movement.transform.position.y < movement.initPos.y)
+            return;
+
         float strikelineYPos = visibleStrikeline.position.y;
 
         foreach (Note note in currentChart.notes)

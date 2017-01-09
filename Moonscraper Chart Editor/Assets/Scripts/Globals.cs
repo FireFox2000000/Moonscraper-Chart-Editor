@@ -124,6 +124,18 @@ public class Globals : MonoBehaviour {
         }
     }
 
+    public static bool IsInDropDown
+    {
+        get
+        {
+            if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null ||
+                UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponentInParent<Dropdown>() == null)
+                return false;
+            else
+                return true;
+        }
+    }
+
     public static bool IsTyping
     {
         get

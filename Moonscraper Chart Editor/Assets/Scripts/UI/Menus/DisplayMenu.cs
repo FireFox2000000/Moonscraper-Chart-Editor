@@ -23,6 +23,8 @@ public class DisplayMenu : MonoBehaviour {
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
 
+        MovementController.cancel = true;
+
         if (Input.GetButtonDown("CloseMenu"))
             Disable();
     }
@@ -34,7 +36,7 @@ public class DisplayMenu : MonoBehaviour {
     }
 
     protected virtual void OnDisable()
-    {
+    { 
         Globals.applicationMode = Globals.ApplicationMode.Editor;
 
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
