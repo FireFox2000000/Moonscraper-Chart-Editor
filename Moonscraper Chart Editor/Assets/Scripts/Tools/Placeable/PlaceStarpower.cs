@@ -7,6 +7,9 @@ public class PlaceStarpower : PlaceSongObject {
     public StarPower starpower { get { return (StarPower)songObject; } set { songObject = value; } }
     new public StarpowerController controller { get { return (StarpowerController)base.controller; } set { base.controller = value; } }
 
+    StarPower lastPlacedSP = null;
+    Renderer spRen;
+
     protected override void Awake()
     {
         base.Awake();
@@ -14,13 +17,19 @@ public class PlaceStarpower : PlaceSongObject {
 
         controller = GetComponent<StarpowerController>();
         controller.starpower = starpower;
+        spRen = GetComponent<Renderer>();
     }
 
     protected override void Controls()
     {
         if (Toolpane.currentTool == Toolpane.Tools.Starpower && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
         {
-            AddObject();
+            if (lastPlacedSP == null)
+                AddObject();
+            else
+            {
+                ((StarpowerController)lastPlacedSP.controller).TailDrag();
+            }
         }
     }
 
@@ -28,7 +37,15 @@ public class PlaceStarpower : PlaceSongObject {
     protected override void Update()
     {
         starpower.chart = editor.currentChart;
-        base.Update();       
+        base.Update();
+
+        if (Input.GetMouseButtonUp(0))
+            lastPlacedSP = null;
+
+        if (lastPlacedSP != null)
+            spRen.enabled = false;
+        else
+            spRen.enabled = true;
     }
 
     protected override void OnEnable()
@@ -43,5 +60,6 @@ public class PlaceStarpower : PlaceSongObject {
         editor.currentChart.Add(starpowerToAdd);
         editor.CreateStarpowerObject(starpowerToAdd);
         editor.currentSelectedObject = starpowerToAdd;
+        lastPlacedSP = starpowerToAdd;
     }
 }
