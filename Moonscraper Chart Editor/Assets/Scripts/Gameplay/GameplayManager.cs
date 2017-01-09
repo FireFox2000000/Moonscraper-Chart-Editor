@@ -9,12 +9,18 @@ public class GameplayManager : MonoBehaviour {
     int freestrum = 0;
     float freestrumTimer = 0;
 
-    const float STRUM_WINDOW_TIME = 0.05f;
+    const float STRUM_WINDOW_TIME = 0.06f;
     bool strumWindowOpen = false;
     float strumWindowTimer = 0;
 
     public UnityEngine.UI.Text noteStreakText;
+    public UnityEngine.UI.Text percentHitText;
+    public UnityEngine.UI.Text debugHitText;
+
     uint noteStreak = 0;
+    uint notesHit = 0;
+    uint totalNotes = 0;
+
     List<NoteController> physicsWindow = new List<NoteController>();
     List<NoteController> notesInWindow = new List<NoteController>();
     List<NoteController> currentSustains = new List<NoteController>();
@@ -79,6 +85,7 @@ public class GameplayManager : MonoBehaviour {
                     chordNote.controller.sustainBroken = true;
 
                 noteStreak = 0;
+                ++totalNotes;
             }
         }
 
@@ -135,202 +142,215 @@ public class GameplayManager : MonoBehaviour {
         else
             strum = false;
 
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
         {
-            if (Globals.bot)
-                noteStreakText.text = "BOT";
-            else
+            //Debug.Log(gamepad.DPad.Down);
+
+            int inputMask = GetFretInputMask();
+            if (inputMask != previousInputMask)
+                canTap = true;
+
+            // Guard in case there are notes that shouldn't be in the window
+            foreach (NoteController nCon in notesInWindow.ToArray())
             {
-                //Debug.Log(gamepad.DPad.Down);
+                if (nCon.hit)
+                    notesInWindow.Remove(nCon);
+            }
 
-                int inputMask = GetFretInputMask();
-                if (inputMask != previousInputMask)
-                    canTap = true;
-
-                // Guard in case there are notes that shouldn't be in the window
-                foreach (NoteController nCon in notesInWindow.ToArray())
+            if (notesInWindow.Count > 0)
+            {
+                if (strumWindowOpen)
                 {
-                    if (nCon.hit)
-                        notesInWindow.Remove(nCon);
+                    if (ValidateFrets(notesInWindow[0].note))
+                    {
+                        hitNote(notesInWindow[0]);
+
+                        strumWindowOpen = false;
+                    }
+                    else if (strum)
+                    {
+                        if (overstrumCheck())
+                        { }
+                    }
                 }
-
-                if (notesInWindow.Count > 0)
-                {
-                    if (strumWindowOpen)
+                else if ((notesInWindow[0].noteType != Note.Note_Type.STRUM && noteStreak > 0) || noteStreak > 10)       // Gives time for strumming to get back on beat
+                { 
+                    if (ValidateFrets(notesInWindow[0].note) && ValidateStrum(notesInWindow[0].note, canTap))
                     {
-                        if (ValidateFrets(notesInWindow[0].note))
-                        {
-                            hitNote(notesInWindow[0]);
-
-                            strumWindowOpen = false;
-                        }
-                        else if (strum)
-                        {
-                            if (overstrumCheck())
-                            { }
-                        }
+                        hitNote(notesInWindow[0]);
                     }
-                    else if ((notesInWindow[0].noteType != Note.Note_Type.STRUM && noteStreak > 0) || noteStreak > 10)       // Gives time for strumming to get back on beat
-                    { 
-                        if (ValidateFrets(notesInWindow[0].note) && ValidateStrum(notesInWindow[0].note, canTap))
-                        {
-                            hitNote(notesInWindow[0]);
-                        }
-                        else if (strum)
-                        {
-                            if (overstrumCheck())
-                                Debug.Log("Strummed incorrect note 2, " + "Frets: " + System.Convert.ToString(inputMask, 2) + ", Strum: " + strum);
-                        }
-                    }
-                    else
+                    else if (strum)
                     {
-                        bool hit = false;
-                        // Search to see if user is hitting a note ahead
-                        List<NoteController> validatedNotes = new List<NoteController>();
-                        foreach (NoteController note in notesInWindow)
-                        {
-                            if (ValidateFrets(note.note) && ValidateStrum(note.note, canTap))
-                                validatedNotes.Add(note);
-                        }
-
-                        if (validatedNotes.Count > 0)
-                        {
-                            // Select the note closest to the strikeline
-                            float aimYPos = editor.visibleStrikeline.transform.position.y + 0.25f;  // Added offset from the note controller
-
-                            NoteController selectedNote = validatedNotes[0];
-                            float dis = Mathf.Abs(aimYPos - selectedNote.transform.position.y);
-                            
-                            foreach (NoteController validatedNote in validatedNotes)
-                            {
-                                float distance = Mathf.Abs(aimYPos - validatedNote.transform.position.y);
-                                if (distance < dis)
-                                {
-                                    selectedNote = validatedNote;
-                                    dis = distance;
-                                }                    
-                            }
-
-                            int index = notesInWindow.IndexOf(selectedNote);
-                            NoteController note = notesInWindow[notesInWindow.IndexOf(selectedNote)];
-                            if (index > 0)
-                                noteStreak = 0;
-
-                            hitNote(note);
-
-                            canTap = false;
-
-                            // Remove all previous notes
-                            NoteController[] nConArray = notesInWindow.ToArray();
-                            for (int j = index - 1; j >= 0; --j)
-                            {
-                                notesInWindow.Remove(nConArray[j]);
-                            }
-                        }
-                        else
-                        {
-                            // Will not reach here if user hit a note
-                            if (strum)
-                            {
-                                if (overstrumCheck())
-                                    Debug.Log("Strummed when no note");
-                            }
-                        }
-                        /*
-                        for (int i = 0; i < notesInWindow.Count; ++i)
-                        {
-                            if (ValidateFrets(notesInWindow[i].note) && ValidateStrum(notesInWindow[i].note, canTap))
-                            {
-                                if (i > 0)
-                                    noteStreak = 0;
-                                ++noteStreak;
-
-                                canTap = false;
-
-                                foreach (Note note in notesInWindow[i].note.GetChord())
-                                {
-                                    note.controller.hit = true;
-                                }
-
-                                if (notesInWindow[i].note.sustain_length > 0)
-                                    currentSustains.Add(notesInWindow[i]);
-
-                                // Remove all previous notes
-                                NoteController[] nConArray = notesInWindow.ToArray();
-                                for (int j = i; j >= 0; --j)
-                                {
-                                    notesInWindow.Remove(nConArray[j]);
-                                }
-
-                                hit = true;
-                                break;
-                            }
-                        }*/
-
-                        
+                        if (overstrumCheck())
+                            Debug.Log("Strummed incorrect note 2, " + "Frets: " + System.Convert.ToString(inputMask, 2) + ", Strum: " + strum);
                     }
                 }
                 else
                 {
-                    if (strum)
+                    bool hit = false;
+                    // Search to see if user is hitting a note ahead
+                    List<NoteController> validatedNotes = new List<NoteController>();
+                    foreach (NoteController note in notesInWindow)
                     {
-                        if (overstrumCheck())
-                            Debug.Log("Strummed when no note 2");
+                        if (ValidateFrets(note.note) && ValidateStrum(note.note, canTap))
+                            validatedNotes.Add(note);
                     }
+
+                    if (validatedNotes.Count > 0)
+                    {
+                        // Select the note closest to the strikeline
+                        float aimYPos = editor.visibleStrikeline.transform.position.y + 0.25f;  // Added offset from the note controller
+
+                        NoteController selectedNote = validatedNotes[0];
+                        float dis = Mathf.Abs(aimYPos - selectedNote.transform.position.y);
+                            
+                        foreach (NoteController validatedNote in validatedNotes)
+                        {
+                            float distance = Mathf.Abs(aimYPos - validatedNote.transform.position.y);
+                            if (distance < dis)
+                            {
+                                selectedNote = validatedNote;
+                                dis = distance;
+                            }                    
+                        }
+
+                        int index = notesInWindow.IndexOf(selectedNote);
+                        NoteController note = notesInWindow[notesInWindow.IndexOf(selectedNote)];
+                        if (index > 0)
+                            noteStreak = 0;
+
+                        hitNote(note);
+
+                        canTap = false;
+
+                        // Remove all previous notes
+                        NoteController[] nConArray = notesInWindow.ToArray();
+                        for (int j = index - 1; j >= 0; --j)
+                        {
+                            ++totalNotes;
+                            notesInWindow.Remove(nConArray[j]);
+                        }
+                    }
+                    else
+                    {
+                        // Will not reach here if user hit a note
+                        if (strum)
+                        {
+                            if (overstrumCheck())
+                                Debug.Log("Strummed when no note");
+                        }
+                    }
+                    /*
+                    for (int i = 0; i < notesInWindow.Count; ++i)
+                    {
+                        if (ValidateFrets(notesInWindow[i].note) && ValidateStrum(notesInWindow[i].note, canTap))
+                        {
+                            if (i > 0)
+                                noteStreak = 0;
+                            ++noteStreak;
+
+                            canTap = false;
+
+                            foreach (Note note in notesInWindow[i].note.GetChord())
+                            {
+                                note.controller.hit = true;
+                            }
+
+                            if (notesInWindow[i].note.sustain_length > 0)
+                                currentSustains.Add(notesInWindow[i]);
+
+                            // Remove all previous notes
+                            NoteController[] nConArray = notesInWindow.ToArray();
+                            for (int j = i; j >= 0; --j)
+                            {
+                                notesInWindow.Remove(nConArray[j]);
+                            }
+
+                            hit = true;
+                            break;
+                        }
+                    }*/
+
+                        
                 }
-
-                // Handle sustain breaking
-                foreach (NoteController note in currentSustains.ToArray())
-                {
-                    bool isChord = note.note.IsChord;
-
-                    if (!note.isActivated && (noteStreak == 0 || (!note.note.IsChord && !ValidateFrets(note.note)) || (note.note.IsChord && note.note.mask != inputMask)))
-                    {
-                        foreach (Note chordNote in note.note.GetChord())
-                            chordNote.controller.sustainBroken = true;
-                        currentSustains.Remove(note);
-                    }
-                }
-
-                /*
-                for (int i = 0; i < 20; i++)
-                {
-                    if (Input.GetKeyDown("joystick 1 button " + i))
-                    {
-                        Debug.Log("joystick 1 button " + i);
-                    }
-                }*/
-
-                /*
-                foreach (KeyCode vKey in System.Enum.GetValues(typeof(KeyCode)))
-                {
-                    if (Input.GetKeyDown(vKey))
-                    {
-                        //your code here
-                        Debug.Log(vKey);
-                    }
-                }*/
-
-                noteStreakText.text = "Note streak: " + noteStreak.ToString();
-
-                
-                previousInputMask = inputMask;
             }
+            else
+            {
+                if (strum)
+                {
+                    if (overstrumCheck())
+                        Debug.Log("Strummed when no note 2");
+                }
+            }
+
+            // Handle sustain breaking
+            foreach (NoteController note in currentSustains.ToArray())
+            {
+                bool isChord = note.note.IsChord;
+
+                if (!note.isActivated && (noteStreak == 0 || (!note.note.IsChord && !ValidateFrets(note.note)) || (note.note.IsChord && note.note.mask != inputMask)))
+                {
+                    foreach (Note chordNote in note.note.GetChord())
+                        chordNote.controller.sustainBroken = true;
+                    currentSustains.Remove(note);
+                }
+            }
+
+            /*
+            for (int i = 0; i < 20; i++)
+            {
+                if (Input.GetKeyDown("joystick 1 button " + i))
+                {
+                    Debug.Log("joystick 1 button " + i);
+                }
+            }*/
+
+            /*
+            foreach (KeyCode vKey in System.Enum.GetValues(typeof(KeyCode)))
+            {
+                if (Input.GetKeyDown(vKey))
+                {
+                    //your code here
+                    Debug.Log(vKey);
+                }
+            }*/
+
+            noteStreakText.text = "Note streak: " + noteStreak.ToString();
+            if (totalNotes > 0)
+                percentHitText.text = ((float)notesHit / (float)totalNotes * 100).Round(2).ToString() + "%";
+            else
+                percentHitText.text = "0.00%";
+
+            debugHitText.text = notesHit.ToString() + " / " + totalNotes.ToString();
+
+            previousInputMask = inputMask;
+            
         }
         else if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
-            notesInWindow.Clear();
-            physicsWindow.Clear();
-            noteStreakText.text = string.Empty;
+            reset();
         }
         else
         {
-            noteStreakText.text = string.Empty;
+            reset();
+            //noteStreakText.text = string.Empty;
         }
 
         previousStrumValue = strumValue;
         if (freestrum > NUM_OF_FREESTRUMS)
             freestrum = NUM_OF_FREESTRUMS;
+    }
+
+    void reset()
+    {
+        noteStreakText.text = string.Empty;
+        percentHitText.text = string.Empty;
+        debugHitText.text = string.Empty;
+        noteStreak = 0;
+        notesHit = 0;
+        totalNotes = 0;
+        notesInWindow.Clear();
+        physicsWindow.Clear();
     }
 
     bool overstrumCheck()
@@ -356,6 +376,9 @@ public class GameplayManager : MonoBehaviour {
     void hitNote(NoteController note)
     {
         ++noteStreak;
+        ++notesHit;
+        ++totalNotes;
+
         foreach (Note chordNote in note.note.GetChord())
         {
             chordNote.controller.hit = true;
