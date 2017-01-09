@@ -150,7 +150,7 @@ public class Globals : MonoBehaviour {
     public static bool sustainGapEnabled { get; set; }
     public static Step sustainGapStep;
     public static int sustainGap { get { return sustainGapStep.value; } set { sustainGapStep.value = value; } }
-    public static bool bot = false;
+    public static bool bot = true;
 
     ChartEditor editor;
     string workingDirectory;

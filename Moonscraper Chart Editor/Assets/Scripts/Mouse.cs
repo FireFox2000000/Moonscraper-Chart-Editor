@@ -101,14 +101,24 @@ public class Mouse : MonoBehaviour {
     {
         if (camera2D.gameObject.activeSelf)
         {
-            camera2D.gameObject.SetActive(false);
-            camera3D.gameObject.SetActive(true);
+            Set3DCamera();
         }
         else
         {
-            camera3D.gameObject.SetActive(false);
-            camera2D.gameObject.SetActive(true);
+            Set2DCamera();
         }
+    }
+
+    public void Set3DCamera()
+    {
+        camera2D.gameObject.SetActive(false);
+        camera3D.gameObject.SetActive(true);
+    }
+
+    public void Set2DCamera()
+    {
+        camera3D.gameObject.SetActive(false);
+        camera2D.gameObject.SetActive(true);
     }
 
     static RaycastHit2D lowestY(RaycastHit2D[] hits)

@@ -141,8 +141,12 @@ public class TimelineMovementController : MovementController
     {
         if (editor.currentChart != null)
         {
-            if (transform.position.y < initPos.y)
-                transform.position = initPos;
+            // Front cap
+            if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+            {
+                if (transform.position.y < initPos.y)
+                    transform.position = initPos;
+            }
 
             float endYPos = Song.TimeToWorldYPosition(editor.currentSong.length);
             float totalDistance = endYPos - initPos.y - strikeLine.localPosition.y;
@@ -154,15 +158,18 @@ public class TimelineMovementController : MovementController
 
             float currentDistance = transform.position.y - initPos.y;
 
-            if (totalDistance > 0)
-                timeline.handlePos = currentDistance / totalDistance;
-            else
-                timeline.handlePos = 0;
+            //if (Globals.applicationMode != Globals.ApplicationMode.Playing)
+            //{
+                if (totalDistance > 0)
+                    timeline.handlePos = currentDistance / totalDistance;
+                else
+                    timeline.handlePos = 0;
+            //}
         }
     }
 
     void UpdatePosBasedTimelineHandle()
-    {      
+    {
         if (editor.currentChart != null)
         {         
             float endYPos = Song.TimeToWorldYPosition(editor.currentSong.length);

@@ -7,7 +7,7 @@ public class AudioCalibrationMenuScript : DisplayMenu {
 
     protected override void OnEnable()
     {
-        base.OnDisable();
+        base.OnEnable();
         audioInput.text = Globals.audioCalibrationMS.ToString();
     }
 	

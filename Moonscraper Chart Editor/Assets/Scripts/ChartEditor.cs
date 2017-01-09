@@ -353,6 +353,29 @@ public class ChartEditor : MonoBehaviour {
         }
     }
 
+    public void StartGameplay()
+    {
+        float strikelineYPos = visibleStrikeline.position.y;
+
+        foreach (Note note in currentChart.notes)
+        {
+            if (note.controller)
+            {
+                if (note.controller.transform.position.y < strikelineYPos)
+                    note.controller.HideFullNote();
+                else
+                    break;
+            }
+        }
+
+        // Set position 3 seconds beforehand
+        float time = Song.WorldYPositionToTime(strikelineYPos);
+        movement.transform.position = new Vector3(movement.transform.position.x, Song.TimeToWorldYPosition(time - 3), movement.transform.position.z);
+
+        Globals.bot = false;
+        Play();
+    }
+
     bool cancel;
     public void Play()
     {
@@ -410,6 +433,8 @@ public class ChartEditor : MonoBehaviour {
                     note.controller.Activate();
             }
         }
+
+        Globals.bot = true;
     }
 
     IEnumerator _Load()

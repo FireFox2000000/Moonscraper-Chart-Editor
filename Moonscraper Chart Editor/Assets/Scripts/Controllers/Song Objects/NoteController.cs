@@ -415,6 +415,14 @@ public class NoteController : SongObjectController {
         noteHitCollider.enabled = false;
     }
 
+    public void HideFullNote()
+    {
+        DeactivateNote();
+        hit = true;
+        sustainBroken = true;
+        sustainRen.enabled = false;
+    }
+
     Note GetPreviousOfOpen(uint openNotePos, Note previousNote)
     {
         if (previousNote == null || previousNote.position != openNotePos || (!previousNote.IsChord && previousNote.position != openNotePos))
