@@ -8,16 +8,19 @@ public class SectionGuiController : MonoBehaviour
     TimelineHandler timelineHandler;
     ChartEditor editor;
     MovementController movement;
+    UnityEngine.UI.Text timelineText;
 
     void Awake()
     {
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        timelineText = GetComponentInChildren<UnityEngine.UI.Text>();
     }
 
     void Update()
     {
         transform.localPosition = GetLocalPos();
+        timelineText.text = section.title;
     }
 
 	public void Init(Section _section, TimelineHandler _timelineHandler, GameObject bpmGuiParent)

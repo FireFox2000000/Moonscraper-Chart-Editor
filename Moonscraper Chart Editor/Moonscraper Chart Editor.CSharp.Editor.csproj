@@ -130,6 +130,7 @@
     <Compile Include="Assets\_MK\_MKGlow\_Internal\Editor\MKGlowEditor.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Fonts\Roboto\Apache License.txt" />
     <None Include="Assets\Shaders\GHRenderOrder.shader" />
     <None Include="Assets\Shaders\Glass.shader" />
     <None Include="Assets\Shaders\ShinySprites.shader" />

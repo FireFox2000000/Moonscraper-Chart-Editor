@@ -112,6 +112,7 @@
     <Compile Include="Assets\Standard Assets\Effects\ImageEffects\Scripts\Vortex.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Fonts\Roboto\Apache License.txt" />
     <None Include="Assets\Shaders\GHRenderOrder.shader" />
     <None Include="Assets\Shaders\Glass.shader" />
     <None Include="Assets\Shaders\ShinySprites.shader" />
