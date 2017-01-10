@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System;
 
-public class ChartEditor : MonoBehaviour {
+public class ChartEditor : MonoBehaviour { 
     public static bool editOccurred = false;
     const int POOL_SIZE = 100;
     public const int MUSIC_STREAM_ARRAY_POS = 0;
@@ -78,18 +78,29 @@ public class ChartEditor : MonoBehaviour {
     static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
 
 #if !UNITY_EDITOR
-    System.IntPtr windowPtr;
+    System.IntPtr windowPtr = IntPtr.Zero;
     string originalWindowName;
 #endif
-    // Use this for initialization
-    void Awake () {
+
+    void SetApplicationWindowPointer()
+    {
 #if !UNITY_EDITOR
         const int nChars = 256;
         System.Text.StringBuilder buffer = new System.Text.StringBuilder(nChars);
         windowPtr = GetForegroundWindow();
         GetWindowText(windowPtr, buffer, nChars);
-        originalWindowName = buffer.ToString();
+        if (buffer.ToString() != GetComponent<Settings>().productName)
+        {
+            windowPtr = IntPtr.Zero;
+            buffer.Length = 0;
+        }
+        else
+            originalWindowName = buffer.ToString();
 #endif
+    }
+
+    // Use this for initialization
+    void Awake () {
         minPos = 0;
         maxPos = 0;
 
@@ -198,15 +209,22 @@ public class ChartEditor : MonoBehaviour {
 
         // Set window text to represent if the current song has been saved or not
 #if !UNITY_EDITOR
-        if (editOccurred)
-            SetWindowText(windowPtr, originalWindowName + "*");
-        else
-            SetWindowText(windowPtr, originalWindowName);
+        if (windowPtr != IntPtr.Zero)
+        {
+            if (editOccurred)
+                SetWindowText(windowPtr, originalWindowName + "*");
+            else
+                SetWindowText(windowPtr, originalWindowName);
+        }
 #endif
     }
-    
+
     void OnApplicationFocus(bool hasFocus)
-    {      
+    {
+#if !UNITY_EDITOR
+        if (hasFocus && windowPtr == IntPtr.Zero)
+            SetApplicationWindowPointer();
+#endif
         if (hasFocus)
             Time.timeScale = 1;
         else
