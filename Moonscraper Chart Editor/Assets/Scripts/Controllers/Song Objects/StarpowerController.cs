@@ -5,7 +5,7 @@ using System;
 public class StarpowerController : SongObjectController
 {
     public GameObject tail;
-    public StarPower starpower;
+    public StarPower starpower { get { return (StarPower)songObject; } set { songObject = value; } }
 
     new void Awake()
     {

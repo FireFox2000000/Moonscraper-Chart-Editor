@@ -6,7 +6,7 @@ public abstract class SongObjectController : SelectableClick {
     protected const float CHART_CENTER_POS = 0;
 
     protected ChartEditor editor;
-    public SongObject songObject = null;
+    protected SongObject songObject = null;
     Bounds bounds;
 
     public abstract void Delete(bool update = true);

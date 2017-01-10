@@ -7,7 +7,7 @@ public class NoteController : SongObjectController {
     const float OPEN_NOTE_SUSTAIN_WIDTH = 4;
     const float OPEN_NOTE_COLLIDER_WIDTH = 5;
 
-    public Note note;
+    public Note note { get { return (Note)songObject; } set { songObject = value; } }
     public SustainController sustain;   
 
     [HideInInspector]
@@ -51,6 +51,11 @@ public class NoteController : SongObjectController {
 
     public override void OnSelectableMouseDown()
     {
+        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+        {
+            editor.currentSelectedObject = songObject;
+        }
+
         // Delete the object on erase tool
         if (Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButtonDown(0) && Globals.applicationMode == Globals.ApplicationMode.Editor)
         {

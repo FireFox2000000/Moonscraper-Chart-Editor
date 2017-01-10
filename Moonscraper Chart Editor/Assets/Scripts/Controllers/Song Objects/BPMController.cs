@@ -4,7 +4,7 @@ using System.Collections;
 using System;
 
 public class BPMController : SongObjectController {
-    public BPM bpm;
+    public BPM bpm { get { return (BPM)songObject; } set { songObject = value; } }
     public Text bpmText;
     public float position = 0.0f;
 
@@ -19,10 +19,10 @@ public class BPMController : SongObjectController {
     {
         if (bpm.song != null)
         {
-            transform.position = new Vector3(CHART_CENTER_POS + position, bpm.worldYPosition, 0);
-
-            bpmText.text = "BPM: " + ((float)bpm.value / 1000.0f).ToString();
+            transform.position = new Vector3(CHART_CENTER_POS + position, bpm.worldYPosition, 0); 
         }
+
+        bpmText.text = "BPM: " + ((float)bpm.value / 1000.0f).ToString();
     }
 
     public override void Delete(bool update = true)

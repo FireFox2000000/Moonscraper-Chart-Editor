@@ -23,6 +23,25 @@ public class PlaceBPM : PlaceSongObject {
         }
     }
 
+    protected override void Update()
+    {
+        base.Update();
+
+        // Set BPM value to the last bpm in the chart from the current position
+        int lastBpmArrayPos = SongObject.FindClosestPosition(bpm.position, editor.currentSong.bpms);
+
+        if (editor.currentSong.bpms[lastBpmArrayPos].position > bpm.position)
+            --lastBpmArrayPos;
+
+        if (lastBpmArrayPos != Globals.NOTFOUND && lastBpmArrayPos >= 0)
+        {
+            bpm.value = editor.currentSong.bpms[lastBpmArrayPos].value;   
+        }
+
+        //Debug.Log(controller.bpm.value);
+
+    }
+
     protected override void AddObject()
     {
         BPM bpmToAdd = new BPM(bpm);

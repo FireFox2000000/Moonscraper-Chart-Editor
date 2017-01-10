@@ -4,7 +4,7 @@ using System.Collections;
 
 public class TimesignatureController : SongObjectController {
 
-    public TimeSignature ts;
+    public TimeSignature ts { get { return (TimeSignature)songObject; } set { songObject = value; } }
     public Text tsText;
     public float position = 0.0f;
 

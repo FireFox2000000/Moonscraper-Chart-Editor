@@ -4,7 +4,7 @@ using System.Collections;
 
 public class SectionController : SongObjectController
 {
-    public Section section;
+    public Section section { get { return (Section)songObject; } set { songObject = value; } }
     public float position = 4.5f;
     public SectionGuiController sectionGui;
     public Text sectionText;
