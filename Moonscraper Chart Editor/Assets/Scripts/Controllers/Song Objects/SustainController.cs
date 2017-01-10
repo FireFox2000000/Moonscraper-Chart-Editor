@@ -16,19 +16,25 @@ public class SustainController : SelectableClick {
 
     public override void OnSelectableMouseDown()
     {
-        if (Input.GetMouseButton(1))
-            OnSelectableMouseDrag();
+        if (nCon.note.song != null)
+        {
+            if (Input.GetMouseButton(1))
+                OnSelectableMouseDrag();
+        }
     }
 
     public override void OnSelectableMouseDrag()
     {
-        // Update sustain
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
+        if (nCon.note.song != null)
         {
-            if (!Globals.extendedSustainsEnabled || Input.GetButton("ChordSelect"))
-                ChordSustainDrag();
-            else
-                SustainDrag();
+            // Update sustain
+            if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
+            {
+                if (!Globals.extendedSustainsEnabled || Input.GetButton("ChordSelect"))
+                    ChordSustainDrag();
+                else
+                    SustainDrag();
+            }
         }
     }
 

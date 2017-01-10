@@ -46,6 +46,11 @@ public class Toolpane : MonoBehaviour {
             }
             else if (currentTool != Tools.GroupSelect)
                 currentToolObject.gameObject.SetActive(false);
+
+            if (Input.GetMouseButton(1))
+            {
+                currentToolObject.gameObject.SetActive(false);
+            }
         }
     }
 
