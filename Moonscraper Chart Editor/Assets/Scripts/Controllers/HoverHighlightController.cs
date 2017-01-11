@@ -6,8 +6,14 @@ public class HoverHighlightController : MonoBehaviour {
 
     GameObject[] highlights = new GameObject[5];
 
+    Renderer hoverHighlightRen;
+    Color initColor;
+
 	// Use this for initialization
 	void Start () {
+        hoverHighlightRen = hoverHighlight.GetComponent<Renderer>();
+        initColor = hoverHighlightRen.sharedMaterial.color;
+
         for (int i = 0; i < highlights.Length; ++i)
         {
             highlights[i] = Instantiate(hoverHighlight);
@@ -17,10 +23,17 @@ public class HoverHighlightController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
         // Show a preview if the user will click on an object
         GameObject songObject = Mouse.GetSelectableObjectUnderMouse();
         foreach (GameObject highlight in highlights)
+        {
             highlight.SetActive(false);
+        }
+        if (Input.GetMouseButton(1))
+            hoverHighlightRen.sharedMaterial.color = new Color(Color.red.r, Color.red.g, Color.red.b, initColor.a);
+        else
+            hoverHighlightRen.sharedMaterial.color = initColor;
 
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && !Input.GetMouseButton(0) && songObject != null
             && ((Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.Eraser) || 

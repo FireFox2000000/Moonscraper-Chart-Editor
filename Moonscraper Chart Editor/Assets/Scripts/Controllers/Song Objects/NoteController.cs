@@ -51,7 +51,7 @@ public class NoteController : SongObjectController {
 
     public override void OnSelectableMouseDown()
     {
-        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
         {
             editor.currentSelectedObject = songObject;
         }
@@ -72,14 +72,16 @@ public class NoteController : SongObjectController {
                 }
             }
             else
+            {
                 Delete();
+            }
         }
     }
 
     public override void OnSelectableMouseDrag()
     {
         // Move note
-        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
+        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1))
         {
             if (Input.GetButton("ChordSelect"))
             {

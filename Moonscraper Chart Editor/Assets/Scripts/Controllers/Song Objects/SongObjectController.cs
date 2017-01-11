@@ -87,6 +87,7 @@ public abstract class SongObjectController : SelectableClick {
             (Input.GetMouseButtonDown(0) && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1)))
         {
             Delete();
+            editor.currentSelectedObject = null;
         }
     }
 

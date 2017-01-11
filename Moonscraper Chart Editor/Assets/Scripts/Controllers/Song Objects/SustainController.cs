@@ -85,6 +85,9 @@ public class SustainController : SelectableClick {
 
     public void SustainDrag()
     {
+        if (nCon.note.song == null || Input.GetMouseButton(0))
+            return;
+
         uint snappedChartPos;
         ChartEditor.editOccurred = true;
 
