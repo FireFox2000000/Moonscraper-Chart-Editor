@@ -1,0 +1,4 @@
+Moonscraper v0.6 changelog (since v0.5)
+
+KNOWN ISSUES
+-Note highlight removes open note glow effect

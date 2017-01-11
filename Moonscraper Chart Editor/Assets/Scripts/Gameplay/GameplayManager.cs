@@ -3,7 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using XInputDotNetPure;
 
+[RequireComponent(typeof(AudioSource))]
 public class GameplayManager : MonoBehaviour {
+    public AudioClip comboBreak;
+
+    AudioSource audioSource;
+
     const float FREESTRUM_TIME = 0.1f;
     const int NUM_OF_FREESTRUMS = 1;
     int freestrum = 0;
@@ -38,9 +43,10 @@ public class GameplayManager : MonoBehaviour {
 
     GamePadState gamepad;
 
-
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+
         previousStrumValue = Input.GetAxisRaw("Strum");
         previousInputMask = GetFretInputMask();
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
@@ -53,6 +59,7 @@ public class GameplayManager : MonoBehaviour {
 
     void Update()
     {
+        uint startNS = noteStreak;
         gamepad = GamePad.GetState(0);
 
         // Configure the timing window to take into account hyperspeed changes
@@ -187,7 +194,6 @@ public class GameplayManager : MonoBehaviour {
                 }
                 else
                 {
-                    bool hit = false;
                     // Search to see if user is hitting a note ahead
                     List<NoteController> validatedNotes = new List<NoteController>();
                     foreach (NoteController note in notesInWindow)
@@ -239,39 +245,7 @@ public class GameplayManager : MonoBehaviour {
                             if (overstrumCheck())
                                 Debug.Log("Strummed when no note");
                         }
-                    }
-                    /*
-                    for (int i = 0; i < notesInWindow.Count; ++i)
-                    {
-                        if (ValidateFrets(notesInWindow[i].note) && ValidateStrum(notesInWindow[i].note, canTap))
-                        {
-                            if (i > 0)
-                                noteStreak = 0;
-                            ++noteStreak;
-
-                            canTap = false;
-
-                            foreach (Note note in notesInWindow[i].note.GetChord())
-                            {
-                                note.controller.hit = true;
-                            }
-
-                            if (notesInWindow[i].note.sustain_length > 0)
-                                currentSustains.Add(notesInWindow[i]);
-
-                            // Remove all previous notes
-                            NoteController[] nConArray = notesInWindow.ToArray();
-                            for (int j = i; j >= 0; --j)
-                            {
-                                notesInWindow.Remove(nConArray[j]);
-                            }
-
-                            hit = true;
-                            break;
-                        }
-                    }*/
-
-                        
+                    }     
                 }
             }
             else
@@ -324,6 +298,12 @@ public class GameplayManager : MonoBehaviour {
             debugHitText.text = notesHit.ToString() + " / " + totalNotes.ToString();
 
             previousInputMask = inputMask;
+
+            if (startNS >= 10 && noteStreak < startNS)
+            {
+                audioSource.PlayOneShot(comboBreak, 1);
+                Debug.Log("Play combo break");
+            }
             
         }
         else if (Globals.applicationMode == Globals.ApplicationMode.Editor)

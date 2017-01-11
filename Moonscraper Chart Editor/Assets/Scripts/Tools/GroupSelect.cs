@@ -29,7 +29,7 @@ public class GroupSelect : ToolObject {
         for (int i = 0; i < highlightPool.Length; ++i)
         {
             highlightPool[i] = GameObject.Instantiate(selectedHighlight);
-            highlightPoolParent.transform.SetParent(highlightPoolParent.transform);
+            highlightPool[i].transform.SetParent(highlightPoolParent.transform);
             highlightPool[i].SetActive(false);
         }
 

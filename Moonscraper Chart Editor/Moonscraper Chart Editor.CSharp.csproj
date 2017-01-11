@@ -156,6 +156,9 @@
     <Compile Include="Assets\_MK\_MKGlow\_Internal\MKGlow.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Documentation\README.txt" />
+    <None Include="Assets\Documentation\attribution.txt" />
+    <None Include="Assets\Documentation\changelog.txt" />
     <None Include="Assets\Fonts\Roboto\Apache License.txt" />
     <None Include="Assets\Shaders\GHRenderOrder.shader" />
     <None Include="Assets\Shaders\Glass.shader" />
@@ -305,7 +308,6 @@
     <None Include="Assets\_MK\_MKGlow\_Shader\_MKGlowEffect\MKGlowBlurVHP.shader" />
     <None Include="Assets\_MK\_MKGlow\_Shader\_MKGlowEffect\MKGlowCompose.shader" />
     <None Include="Assets\_MK\_MKGlow\_Shader\_MKGlowEffect\MKGlowRender.shader" />
-    <None Include="Assets\attribution.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
