@@ -15,6 +15,7 @@ public class SettingsController : DisplayMenu
     public Slider guitarSourceSlider;
     public Slider rhythmSourceSlider;
     public Slider clapSourceSlider;
+    public Slider sfxSlider;
 
     public InputField sustainGapInput;
 
@@ -42,6 +43,7 @@ public class SettingsController : DisplayMenu
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = musicSourceSlider.value;
         editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume = guitarSourceSlider.value;
         editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume = rhythmSourceSlider.value;
+        Globals.sfxVolume = sfxSlider.value;
 
         editor.clapSource.volume = clapSourceSlider.value;
     }
@@ -60,6 +62,7 @@ public class SettingsController : DisplayMenu
         musicSourceSlider.value = editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume;
         guitarSourceSlider.value = editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume;
         rhythmSourceSlider.value = editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume;
+        sfxSlider.value = Globals.sfxVolume;
 
         clapSourceSlider.value = editor.clapSource.volume;
 

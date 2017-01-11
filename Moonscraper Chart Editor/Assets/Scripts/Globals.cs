@@ -163,6 +163,20 @@ public class Globals : MonoBehaviour {
     public static Step sustainGapStep;
     public static int sustainGap { get { return sustainGapStep.value; } set { sustainGapStep.value = value; } }
     public static bool bot = true;
+    static float _sfxVolume = 1;
+    public static float sfxVolume
+    {
+        get { return _sfxVolume; }
+        set
+        {
+            if (value < 0)
+                _sfxVolume = 0;
+            else if (value > 1)
+                _sfxVolume = 1;
+            else
+                _sfxVolume = value;
+        }
+    }
 
     ChartEditor editor;
     string workingDirectory;
@@ -193,11 +207,12 @@ public class Globals : MonoBehaviour {
         editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
         editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
         editor.clapSource.volume = (float)iniparse.ReadValue("Audio Volume", "Clap", 1.0f);
+        sfxVolume = (float)iniparse.ReadValue("Audio Volume", "SFX", 1.0f);
 
         iniparse.Close();
-
+        /*
         if (!configFileExisted)
-            editor.EnableMenu(audioCalibrationMenu);
+            editor.EnableMenu(audioCalibrationMenu);*/
 
         // Initialize notes
         strumSprites = strumNotes;          // 2D
@@ -328,6 +343,7 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Audio Volume", "Guitar Stream", editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume);
         iniparse.WriteValue("Audio Volume", "Rhythm Stream", editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume);
         iniparse.WriteValue("Audio Volume", "Clap", editor.clapSource.volume);
+        iniparse.WriteValue("Audio Volume", "SFX", sfxVolume);
 
         iniparse.Close();
     }

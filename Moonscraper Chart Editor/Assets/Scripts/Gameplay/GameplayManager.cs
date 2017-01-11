@@ -301,8 +301,7 @@ public class GameplayManager : MonoBehaviour {
 
             if (startNS >= 10 && noteStreak < startNS)
             {
-                audioSource.PlayOneShot(comboBreak, 1);
-                Debug.Log("Play combo break");
+                audioSource.PlayOneShot(comboBreak, Globals.sfxVolume);
             }
             
         }
