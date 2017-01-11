@@ -165,8 +165,6 @@ public class ChartEditor : MonoBehaviour {
                     noteInspector.currentNote = (Note)currentSelectedObject;
                     currentPropertiesPanel = noteInspector.gameObject;
                     break;
-                case ((int)SongObject.ID.Starpower):
-                    break;
                 case ((int)SongObject.ID.Section):
                     sectionInspector.currentSection = (Section)currentSelectedObject;
                     currentPropertiesPanel = sectionInspector.gameObject;
@@ -868,7 +866,7 @@ public class ChartEditor : MonoBehaviour {
         // Enable objects through range
         for (int i = startArrayPos; i < songObjects.Length && songObjects[i].position < max; ++i)
         {
-            if (songObjects[i].controller != null)
+            if (songObjects[i].controller != null && !songObjects[i].controller.gameObject.activeSelf)
                 songObjects[i].controller.gameObject.SetActive(true);
         }
     }

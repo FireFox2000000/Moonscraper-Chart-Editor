@@ -17,8 +17,7 @@ public class Toolpane : MonoBehaviour {
 
         globals = GameObject.FindGameObjectWithTag("Globals").GetComponent<Globals>();
     }
-
-   
+ 
     void Update()
     {
         if (((Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))) && !globals.InToolArea)
@@ -39,13 +38,17 @@ public class Toolpane : MonoBehaviour {
                 {
                     currentToolObject.gameObject.SetActive(true);
                     if (Input.GetMouseButton(1))
+                    {
                         currentToolObject.gameObject.SetActive(false);
+                    }
                     else if (!Input.GetMouseButton(1))
                         currentToolObject.gameObject.SetActive(true);
                 }
             }
             else if (currentTool != Tools.GroupSelect)
+            {
                 currentToolObject.gameObject.SetActive(false);
+            }
 
             if (Input.GetMouseButton(1))
             {

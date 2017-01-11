@@ -9,7 +9,6 @@ Moonscraper v0.6 changelog (since v0.5)
 -Added stats that get displayed in gameplay mode
 -Editor now shows total notes in the chart
 -Optimised position calculation for extremely long charts
--Removed eraser drag function. Clicking will only now delete 1 note. Use the group select and then press the delete key for multiple notes.
 -Added audio calibration panel
 -Moved settings into the options panel
 -Added GH-style strikeline to improve visual feedback

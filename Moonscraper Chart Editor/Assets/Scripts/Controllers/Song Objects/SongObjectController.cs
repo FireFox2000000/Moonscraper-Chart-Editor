@@ -40,7 +40,8 @@ public abstract class SongObjectController : SelectableClick {
 
     protected virtual void OnEnable()
     {
-        UpdateCheck();
+        if (songObject != null)
+            UpdateSongObject();
     }
     
     void Update()
