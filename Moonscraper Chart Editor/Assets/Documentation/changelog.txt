@@ -1,4 +1,25 @@
 Moonscraper v0.6 changelog (since v0.5)
 
+-Can now quick-delete by holding right-click and pressing left-click over an object from the placement tools
+-Added end cap to sp tails to prevent overlapping
+-Added gameplay, activated by clicking the guitar symbol next to the play button (with fixed strumming engine)
+-Added combo break SFX when a note streak above 10 breaks
+-Added bot to play when previewing the chart the regular way
+-Added SFX volume control
+-Added stats that get displayed in gameplay mode
+-Editor now shows total notes in the chart
+-Optimised position calculation for extremely long charts
+-Removed eraser drag function. Clicking will only now delete 1 note. Use the group select and then press the delete key for multiple notes.
+-Added audio calibration panel
+-Moved settings into the options panel
+-Added GH-style strikeline to improve visual feedback
+-Added section tool icon (may change later)
+-BPM tool now copies the value of the bpm before it, similar to Feedback
+-Added section text next to timeline buttons
+
+-Various bug fixes on group selection
+-Fixed the application grabbing the wrong window handle if users clicked away from the window during startup
+-Fixed pasting bug where it would delete notes just before the pasting area if they were close enough
+
 KNOWN ISSUES
 -Note highlight removes open note glow effect

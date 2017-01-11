@@ -1,7 +1,7 @@
 Moonscraper Chart Editor (v0.5) for Guitar Hero III - Legends of Rock and GHTCP+ (WINDOWS ONLY)
 By Alexander "FireFox" Ong
 
-  Controls-
+  Basic controls-
     Use the mouse scroll to navigate the chart, or click/drag the timeline on the right to jump to a position. You can also hold the 'alt' key to jump between sections when scrolling as well. 
     The red lines on the timeline indicate sections. Clicking on the buttons next to those lines will jump the chart to that section.
     The timeline is based on the audio length of the loaded song. If there is no audio loaded, a default window of 5 minutes is given.
@@ -28,20 +28,25 @@ By Alexander "FireFox" Ong
     Group selection:
       Left-click and drag to create a highlighted area. Releasing will select all objects in the area. The vertical area will snap to the current snap setting, but the horizontal area is completely free). The group select inspector (on the left) will allow you to force any notes in the current selection. All objects within the selection (including starpower, and in the future chart events) and be cut, copied or deleted using the shortcuts listing below. Copied objects will have it's data copied into the clipboard. 
       Press ctrl-v to paste this data into the current chart, starting at the position of the red arrow to the right of the highway.
+
+	Activate gameplay mode:
+	  Click the guitar symbol in the top-right, located to the left of the play button
     
-  Shortcuts-
+  Shortcuts/Advanced controls-
     ctrl-s: Save
     ctrl-o: Load chart
     ctrl-x: Cut (group select tool only)
     ctrl-c: Copy (group select tool only)
     ctrl-v: Paste
     del: Delete currently selected objects (cursor and group select tools)
+	Hold right-click and press left click: Delete the object under the mouse (no matter what tool is selected)
     space: Play/pause
     n: Toggle clap
     w: Increase step
     q: Reduce step
     t: Toggle tap note property
     f: Toggle force note
+	"Start" on 360/GH controller: Enter/exit gameplay mode
     
   What's not implemented-
     Cannot add/edit chart events

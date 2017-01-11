@@ -426,7 +426,7 @@ public class ChartEditor : MonoBehaviour {
         yield return new WaitForSeconds(delay);
         float playPoint = Song.WorldYPositionToTime(strikelineAudio.position.y) + currentSong.offset;
 
-        if (!cancel)
+        if (!cancel && Globals.applicationMode == Globals.ApplicationMode.Playing && playPoint >= 0)
         {
             foreach (AudioSource source in musicSources)
                 source.time = playPoint;

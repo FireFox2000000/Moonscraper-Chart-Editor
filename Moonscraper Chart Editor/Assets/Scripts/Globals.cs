@@ -297,6 +297,14 @@ public class Globals : MonoBehaviour {
             if (editor.currentSelectedObject.controller)
                 editor.currentSelectedObject.controller.Delete();
         }
+
+        if (Input.GetButtonDown("Start Gameplay"))
+        {
+            if (applicationMode != ApplicationMode.Playing)
+                editor.StartGameplay();
+            else
+                editor.Stop();
+        }
     }
 
     public void ToggleSongViewMode(bool value)
