@@ -169,7 +169,7 @@ public class NoteController : SongObjectController {
         // Open notes overwrite here for initial loading
         if (note.fret_type == Note.Fret_Type.OPEN)
         {
-            Note[] chordNotes = SongObject.FindObjectsAtPosition(note.position, note.chart.notes);
+            Note[] chordNotes = note.GetChord();
 
             // Check for non-open notes and delete
             foreach (Note chordNote in chordNotes)

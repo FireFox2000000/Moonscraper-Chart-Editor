@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿//#define GAMEPAD
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using XInputDotNetPure;
@@ -40,8 +42,9 @@ public class GameplayManager : MonoBehaviour {
 
     bool strum = false;
     bool canTap;
-
+#if GAMEPAD
     GamePadState gamepad;
+#endif
 
     void Start()
     {
@@ -60,8 +63,21 @@ public class GameplayManager : MonoBehaviour {
     void Update()
     {
         uint startNS = noteStreak;
-        gamepad = GamePad.GetState(0);
 
+#if GAMEPAD
+        for (int i = 0; i < 4; ++i)
+        {
+            PlayerIndex playerIndex = (PlayerIndex)i;
+            GamePadState testState = GamePad.GetState(playerIndex);
+            if (testState.IsConnected)
+            {
+                gamepad = GamePad.GetState(playerIndex);
+                break;
+            }
+        }
+
+        //gamepad = GamePad.GetState(0);
+#endif
         // Configure the timing window to take into account hyperspeed changes
         //transform.localScale = new Vector3(transform.localScale.x, initSize * Globals.hyperspeed, transform.localScale.z);
         hitWindowHeight = initWindowSize * Globals.hyperspeed;
@@ -135,12 +151,16 @@ public class GameplayManager : MonoBehaviour {
 
         // Configure current strum input
         float strumValue;
+#if GAMEPAD
         if (gamepad.DPad.Down == ButtonState.Pressed)
             strumValue = -1;
         else if (gamepad.DPad.Up == ButtonState.Pressed)
             strumValue = 1;
         else
             strumValue = 0;
+#else
+        strumValue = Input.GetAxisRaw("Strum");
+#endif
 
         // Get player input
         if (strumValue != 0 && strumValue != previousStrumValue)
@@ -151,8 +171,6 @@ public class GameplayManager : MonoBehaviour {
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
         {
-            //Debug.Log(gamepad.DPad.Down);
-
             int inputMask = GetFretInputMask();
             if (inputMask != previousInputMask)
                 canTap = true;
@@ -543,7 +561,7 @@ public class GameplayManager : MonoBehaviour {
     int GetFretInputMask()
     {
         int inputMask = 0;
-
+#if GAMEPAD
         if (gamepad.Buttons.A == ButtonState.Pressed)
             inputMask |= 1 << (int)Note.Fret_Type.GREEN;
 
@@ -558,8 +576,8 @@ public class GameplayManager : MonoBehaviour {
 
         if (gamepad.Buttons.LeftShoulder == ButtonState.Pressed)
             inputMask |= 1 << (int)Note.Fret_Type.ORANGE;
-
-        /*
+#else
+        
         if (Input.GetButton("FretGreen"))
             inputMask |= 1 << (int)Note.Fret_Type.GREEN;
 
@@ -574,7 +592,8 @@ public class GameplayManager : MonoBehaviour {
 
         if (Input.GetButton("FretOrange"))
             inputMask |= 1 << (int)Note.Fret_Type.ORANGE;
-            */
+            
+#endif
         return inputMask;
     }
 }

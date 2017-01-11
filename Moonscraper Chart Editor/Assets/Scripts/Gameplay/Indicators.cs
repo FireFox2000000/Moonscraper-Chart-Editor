@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿//#define GAMEPAD
+
+using UnityEngine;
 using System.Collections;
 using XInputDotNetPure;
 
@@ -12,6 +14,7 @@ public class Indicators : MonoBehaviour {
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
         {
+#if GAMEPAD
             if (gamepad.Buttons.A == ButtonState.Pressed)
                 indicators[0].SetActive(true);
             else
@@ -36,6 +39,32 @@ public class Indicators : MonoBehaviour {
                 indicators[4].SetActive(true);
             else
                 indicators[4].SetActive(false);
+#else
+            if (Input.GetButton("FretGreen"))
+                indicators[0].SetActive(true);
+            else
+                indicators[0].SetActive(false);
+
+            if (Input.GetButton("FretRed"))
+                indicators[1].SetActive(true);
+            else
+                indicators[1].SetActive(false);
+
+            if (Input.GetButton("FretYellow"))
+                indicators[2].SetActive(true);
+            else
+                indicators[2].SetActive(false);
+
+            if (Input.GetButton("FretBlue"))
+                indicators[3].SetActive(true);
+            else
+                indicators[3].SetActive(false);
+
+            if (Input.GetButton("FretOrange"))
+                indicators[4].SetActive(true);
+            else
+                indicators[4].SetActive(false);
+#endif
         }
         else
         {

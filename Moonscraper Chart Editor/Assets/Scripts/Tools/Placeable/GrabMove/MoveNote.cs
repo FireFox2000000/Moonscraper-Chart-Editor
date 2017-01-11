@@ -31,7 +31,7 @@ public class MoveNote : PlaceNote {
     {
         Note noteToAdd = new Note(note);
         editor.currentChart.Add(noteToAdd);
-        editor.CreateNoteObject(noteToAdd);
+        editor.CreateNoteObject(noteToAdd).standardOverwriteOpen();
         editor.currentSelectedObject = noteToAdd;
 
         CapNoteCheck(noteToAdd);
