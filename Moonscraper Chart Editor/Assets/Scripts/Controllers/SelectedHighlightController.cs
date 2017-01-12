@@ -14,7 +14,7 @@ public class SelectedHighlightController : MonoBehaviour {
 	void Update () {
         // Show a highlight over the current selected object
         SongObject currentSelectedObject = editor.currentSelectedObject;
-        if (currentSelectedObject != null && currentSelectedObject.controller != null && currentSelectedObject.controller.gameObject != null && currentSelectedObject.controller.gameObject.activeSelf)
+        if (Globals.applicationMode != Globals.ApplicationMode.Playing && currentSelectedObject != null && currentSelectedObject.controller != null && currentSelectedObject.controller.gameObject != null && currentSelectedObject.controller.gameObject.activeSelf)
         {
             Collider col3d = editor.currentSelectedObject.controller.GetComponent<Collider>();
             Collider2D col = currentSelectedObject.controller.GetComponent<Collider2D>();

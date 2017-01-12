@@ -374,13 +374,13 @@ public class ChartEditor : MonoBehaviour {
         if (Globals.applicationMode == Globals.ApplicationMode.Playing || movement.transform.position.y < movement.initPos.y)
             return;
 
-        float strikelineYPos = visibleStrikeline.position.y;
+        float strikelineYPos = visibleStrikeline.position.y - (0.01f * Globals.hyperspeed);     // Offset to prevent errors where it removes a note that is on the strikeline
 
         foreach (Note note in currentChart.notes)
         {
             if (note.controller)
             {
-                if (note.controller.transform.position.y < strikelineYPos)
+                if (note.worldYPosition < strikelineYPos)
                     note.controller.HideFullNote();
                 else
                     break;
@@ -424,14 +424,21 @@ public class ChartEditor : MonoBehaviour {
         yield return new WaitForSeconds(delay);
         float playPoint = Song.WorldYPositionToTime(strikelineAudio.position.y) + currentSong.offset;
 
-        if (!cancel && Globals.applicationMode == Globals.ApplicationMode.Playing && playPoint >= 0)
+        if (!cancel && Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
-            foreach (AudioSource source in musicSources)
-                source.time = playPoint;
-
-            foreach (AudioSource source in musicSources)
+            if (playPoint >= 0)
             {
-                source.Play();
+                foreach (AudioSource source in musicSources)
+                    source.time = playPoint;
+
+                foreach (AudioSource source in musicSources)
+                {
+                    source.Play();
+                }
+            }
+            else
+            {
+                StartCoroutine(delayedStartAudio(-playPoint));
             }
         }
     }
