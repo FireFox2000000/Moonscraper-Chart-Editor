@@ -263,7 +263,7 @@ public class Mouse : MonoBehaviour {
         return false;
     }
 
-    public static GameObject GetUIUnderPointer<T>() where T : MonoBehaviour
+    public static T GetUIUnderPointer<T>() where T : MonoBehaviour
     {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         pointer.position = Input.mousePosition;
@@ -279,11 +279,11 @@ public class Mouse : MonoBehaviour {
 
                 if (hoveredObj.GetComponent<T>())
                 {
-                    return hoveredObj;
+                    return hoveredObj.GetComponent<T>();
                 }
                 else if (hoveredObj.transform.parent.gameObject.GetComponent<T>())
                 {
-                    return hoveredObj.transform.parent.gameObject;
+                    return hoveredObj.transform.parent.gameObject.GetComponent<T>();
                 }
             }
         }

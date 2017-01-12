@@ -141,6 +141,7 @@
     <Compile Include="Assets\Scripts\Tools\ToolpaneButtonController.cs" />
     <Compile Include="Assets\Scripts\UI\BPMPropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\DisplayProperties.cs" />
+    <Compile Include="Assets\Scripts\UI\DropDownHoverActivate.cs" />
     <Compile Include="Assets\Scripts\UI\DropDownMenu.cs" />
     <Compile Include="Assets\Scripts\UI\FPSDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\AudioCalibrationMenuScript.cs" />
