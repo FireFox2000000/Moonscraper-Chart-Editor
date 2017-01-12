@@ -54,6 +54,9 @@ public class Toolpane : MonoBehaviour {
             {
                 currentToolObject.gameObject.SetActive(false);
             }
+
+            if (Mouse.IsUIUnderPointer())
+                currentToolObject.gameObject.SetActive(false);
         }
     }
 

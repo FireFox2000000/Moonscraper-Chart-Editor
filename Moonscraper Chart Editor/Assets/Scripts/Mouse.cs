@@ -1,4 +1,7 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 using System.Collections;
 
 public class Mouse : MonoBehaviour {
@@ -239,6 +242,48 @@ public class Mouse : MonoBehaviour {
                 {
                     if (selectedObject.GetComponent<SelectableClick>())
                         return selectedObject;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static bool IsUIUnderPointer()
+    {
+        PointerEventData pointer = new PointerEventData(EventSystem.current);
+        pointer.position = Input.mousePosition;
+
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, raycastResults);
+
+        if (raycastResults.Count > 0)
+            return true;
+
+        return false;
+    }
+
+    public static GameObject GetUIUnderPointer<T>() where T : MonoBehaviour
+    {
+        PointerEventData pointer = new PointerEventData(EventSystem.current);
+        pointer.position = Input.mousePosition;
+
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, raycastResults);
+
+        if (raycastResults.Count > 0)
+        {
+            foreach (RaycastResult raycastResult in raycastResults)
+            {
+                GameObject hoveredObj = raycastResult.gameObject;
+
+                if (hoveredObj.GetComponent<T>())
+                {
+                    return hoveredObj;
+                }
+                else if (hoveredObj.transform.parent.gameObject.GetComponent<T>())
+                {
+                    return hoveredObj.transform.parent.gameObject;
                 }
             }
         }
