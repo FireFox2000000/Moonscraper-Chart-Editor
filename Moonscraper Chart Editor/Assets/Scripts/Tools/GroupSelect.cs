@@ -302,21 +302,7 @@ public class GroupSelect : ToolObject {
         List<ChartObject> chartObjectsCopy = new List<ChartObject>();
         foreach (ChartObject chartObject in data)
         {
-            ChartObject objectToAdd;
-            switch (chartObject.classID)
-            {
-                case ((int)SongObject.ID.Note):
-                    objectToAdd = new Note(chartObject as Note);
-                    break;
-                case ((int)SongObject.ID.Starpower):
-                    objectToAdd = new StarPower(chartObject as StarPower);
-                    break;
-                case ((int)SongObject.ID.ChartEvent):
-                    objectToAdd = new ChartEvent(chartObject as ChartEvent);
-                    break;
-                default:
-                    continue;
-            }
+            ChartObject objectToAdd = (ChartObject)chartObject.Clone();
 
             chartObjectsCopy.Add(objectToAdd);
         }

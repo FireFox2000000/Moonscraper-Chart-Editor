@@ -64,22 +64,7 @@ public class ClipboardObjectController : Snapable {
             // Paste the new objects in
             foreach (ChartObject clipboardChartObject in clipboard.data)
             {
-                ChartObject objectToAdd;
-
-                switch (clipboardChartObject.classID)
-                {
-                    case ((int)SongObject.ID.Note):
-                        objectToAdd = new Note((Note)clipboardChartObject);
-                        break;
-                    case ((int)SongObject.ID.Starpower):
-                        objectToAdd = new StarPower((StarPower)clipboardChartObject);
-                        break;
-                    case ((int)SongObject.ID.ChartEvent):
-                        objectToAdd = new ChartEvent((ChartEvent)clipboardChartObject);
-                        break;
-                    default:
-                        continue;
-                }
+                ChartObject objectToAdd = (ChartObject)clipboardChartObject.Clone();
 
                 objectToAdd.position = chartLocationToPaste + clipboardChartObject.position - clipboard.areaChartPosMin;
                 editor.currentChart.Add(objectToAdd, false);

@@ -36,6 +36,8 @@ public abstract class SongObject
     }
 
     public abstract string GetSaveString();
+
+    public abstract SongObject Clone();
     
     public static bool operator ==(SongObject a, SongObject b)
     {
@@ -498,9 +500,15 @@ public class Event : SongObject
 
     public string title;
 
-    public Event(Song song, string _title, uint _position) : base(_position)
+    public Event(string _title, uint _position) : base(_position)
     {
         title = _title;
+    }
+
+    public Event(Event songEvent) : base (songEvent.position)
+    {
+        position = songEvent.position;
+        title = songEvent.title;
     }
 
     public override string GetSaveString()
@@ -511,6 +519,11 @@ public class Event : SongObject
     public static bool regexMatch(string line)
     {
         return new Regex(@"\d+ = E " + @"""[^""\\]*(?:\\.[^""\\]*)*""").IsMatch(line);
+    }
+
+    public override SongObject Clone()
+    {
+        return new Event(this);
     }
 }
 
@@ -528,9 +541,9 @@ public class Section : Event
         set { _controller = value; base.controller = value; }
     }
 
-    public Section(Song song, string _title, uint _position) : base(song, _title, _position) { }
+    public Section(Song song, string _title, uint _position) : base(_title, _position) { }
 
-    public Section(Section section) : base(section.song, section.title, section.position) { }
+    public Section(Section section) : base(section.title, section.position) { }
 
     public override string GetSaveString()
     {
@@ -572,5 +585,10 @@ public class TimeSignature : SyncTrack
     public static bool regexMatch(string line)
     {
         return new Regex(@"\d+ = TS \d+").IsMatch(line);
+    }
+
+    public override SongObject Clone()
+    {
+        return new TimeSignature(this);
     }
 }

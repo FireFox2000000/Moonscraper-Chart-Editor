@@ -92,6 +92,11 @@ public class Note : ChartObject
         return Globals.TABSPACE + position + " = N " + fretNumber + " " + sustain_length + Globals.LINE_ENDING;          // 48 = N 2 0
     }
 
+    public override SongObject Clone()
+    {
+        return new Note(this);
+    }
+
     public string GetFlagsSaveString()
     {
         string saveString = string.Empty;

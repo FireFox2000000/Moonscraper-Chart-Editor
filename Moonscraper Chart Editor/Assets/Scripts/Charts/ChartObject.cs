@@ -1,10 +1,10 @@
-﻿public abstract class ChartObject : SongObject
+﻿using System;
+
+public abstract class ChartObject : SongObject
 {
     public Chart chart;
 
-    public ChartObject(uint position) : base(position)
-    {
-    }
+    public ChartObject(uint position) : base(position){}
 }
 
 public class StarPower : ChartObject
@@ -29,6 +29,11 @@ public class StarPower : ChartObject
     {
         // 768 = S 2 768
         return Globals.TABSPACE + position + " = S 2 " + length + Globals.LINE_ENDING; ;
+    }
+
+    public override SongObject Clone()
+    {
+        return new StarPower(this);
     }
 }
 
@@ -68,5 +73,10 @@ public class ChartEvent : ChartObject
     {
         // 1728 = E T
         return Globals.TABSPACE + position + " = E " + eventName + Globals.LINE_ENDING;
+    }
+
+    public override SongObject Clone()
+    {
+        return new ChartEvent(this);
     }
 }

@@ -24,4 +24,9 @@ public class BPM : SyncTrack
     {
         return new Regex(@"\d+ = B \d+").IsMatch(line);
     }
+
+    public override SongObject Clone()
+    {
+        return new BPM(this);
+    }
 }

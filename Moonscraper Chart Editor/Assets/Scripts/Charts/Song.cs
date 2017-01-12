@@ -791,7 +791,7 @@ public class Song {
                 // Add an event
                 string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
                 uint position = uint.Parse(Regex.Matches(line, @"\d+")[0].ToString());
-                Add(new Event(this, title, position), false);
+                Add(new Event(title, position), false);
             }
         }
 #if TIMING_DEBUG

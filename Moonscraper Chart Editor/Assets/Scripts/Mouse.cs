@@ -263,7 +263,7 @@ public class Mouse : MonoBehaviour {
         return false;
     }
 
-    public static T GetUIUnderPointer<T>() where T : MonoBehaviour
+    public static T GetUIUnderPointer<T>() where T : Selectable
     {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         pointer.position = Input.mousePosition;
