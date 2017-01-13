@@ -166,15 +166,27 @@ public class PlaceNote : PlaceSongObject {
 
     protected override void AddObject()
     {
+        AddObjectToCurrentChart(note, editor);
+        /*
         Note noteToAdd = new Note(note);
         editor.currentChart.Add(noteToAdd);
         NoteController nCon = editor.CreateNoteObject(noteToAdd);
         nCon.standardOverwriteOpen();
 
-        CapNoteCheck(noteToAdd);  
+        CapNoteCheck(noteToAdd);  */
     }
 
-    protected void CapNoteCheck(Note noteToAdd)
+    public static void AddObjectToCurrentChart(Note note, ChartEditor editor, bool update = true)
+    {
+        Note noteToAdd = new Note(note);
+        editor.currentChart.Add(noteToAdd, update);
+        NoteController nCon = editor.CreateNoteObject(noteToAdd);
+        nCon.standardOverwriteOpen();
+
+        CapNoteCheck(noteToAdd);
+    }
+
+    protected static void CapNoteCheck(Note noteToAdd)
     {
         Note[] previousNotes = GetPreviousOfSustains(noteToAdd);
 
@@ -198,7 +210,7 @@ public class PlaceNote : PlaceSongObject {
         }
     }
     
-    Note[] GetPreviousOfSustains(Note startNote)
+    static Note[] GetPreviousOfSustains(Note startNote)
     {
         List<Note> list = new List<Note>();
 

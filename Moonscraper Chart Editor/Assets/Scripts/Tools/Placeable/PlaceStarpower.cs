@@ -62,4 +62,12 @@ public class PlaceStarpower : PlaceSongObject {
         editor.currentSelectedObject = starpowerToAdd;
         lastPlacedSP = starpowerToAdd;
     }
+
+    public static void AddObjectToCurrentChart(StarPower starpower, ChartEditor editor, bool update = true)
+    {
+        StarPower starpowerToAdd = new StarPower(starpower);
+        editor.currentChart.Add(starpowerToAdd, update);
+        editor.CreateStarpowerObject(starpowerToAdd);
+        editor.currentSelectedObject = starpowerToAdd;
+    }
 }

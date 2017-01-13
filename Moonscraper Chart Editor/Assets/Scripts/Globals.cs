@@ -269,6 +269,15 @@ public class Globals : MonoBehaviour {
                 editor.Save();
             else if (Input.GetKeyDown("o"))
                 editor.Load();
+            else if (Input.GetKeyDown("z"))
+            {
+                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                    editor.actionHistory.Redo(editor);
+                else
+                    editor.actionHistory.Undo(editor);
+            }
+            else if (Input.GetKeyDown("y"))
+                editor.actionHistory.Redo(editor);
         }
 
         if (Input.GetButtonDown("PlayPause"))

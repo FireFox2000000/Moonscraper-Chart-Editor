@@ -37,15 +37,22 @@ public class PlaceBPM : PlaceSongObject {
         {
             bpm.value = editor.currentSong.bpms[lastBpmArrayPos].value;   
         }
-
-        //Debug.Log(controller.bpm.value);
-
     }
 
     protected override void AddObject()
     {
+        AddObjectToCurrentSong(bpm, editor);
+        /*
         BPM bpmToAdd = new BPM(bpm);
         editor.currentSong.Add(bpmToAdd);
+        editor.CreateBPMObject(bpmToAdd);
+        editor.currentSelectedObject = bpmToAdd;*/
+    }
+
+    public static void AddObjectToCurrentSong(BPM bpm, ChartEditor editor, bool update = true)
+    {
+        BPM bpmToAdd = new BPM(bpm);
+        editor.currentSong.Add(bpmToAdd, update);
         editor.CreateBPMObject(bpmToAdd);
         editor.currentSelectedObject = bpmToAdd;
     }

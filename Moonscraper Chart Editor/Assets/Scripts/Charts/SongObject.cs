@@ -210,7 +210,7 @@ public abstract class SongObject
     }
 
     public static int FindObjectPosition<T>(T searchItem, T[] objects) where T : SongObject
-    {
+    {      
         int pos = FindClosestPosition(searchItem, objects);
 
         if (pos != Globals.NOTFOUND && objects[pos] != searchItem)

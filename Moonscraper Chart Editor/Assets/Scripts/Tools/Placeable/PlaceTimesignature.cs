@@ -24,8 +24,20 @@ public class PlaceTimesignature : PlaceSongObject {
 
     protected override void AddObject()
     {
+        AddObjectToCurrentSong(ts, editor);
+        /*
         TimeSignature tsToAdd = new TimeSignature(ts);
         editor.currentSong.Add(tsToAdd);
+        editor.CreateTSObject(tsToAdd);
+
+        // Only show the panel once the object has been placed down
+        editor.currentSelectedObject = tsToAdd;*/
+    }
+
+    public static void AddObjectToCurrentSong(TimeSignature ts, ChartEditor editor, bool update = true)
+    {
+        TimeSignature tsToAdd = new TimeSignature(ts);
+        editor.currentSong.Add(tsToAdd, update);
         editor.CreateTSObject(tsToAdd);
 
         // Only show the panel once the object has been placed down

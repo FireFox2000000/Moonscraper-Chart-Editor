@@ -6,21 +6,22 @@ using System.Text.RegularExpressions;
 using System.Linq;
 
 public class Chart  {
-    Song song;
+    Song _song;
     List<ChartObject> _chartObjects;
 
     public Note[] notes { get; private set; }
     public StarPower[] starPower { get; private set; }
     public ChartEvent[] events { get; private set; }
+    public Song song { get { return _song; } }
 
     public ChartObject[] chartObjects { get { return _chartObjects.ToArray(); } }
 
     int _note_count;
     public int note_count { get { return _note_count; } }
 
-    public Chart (Song _song)
+    public Chart (Song song)
     {
-        song = _song;
+        _song = song;
         _chartObjects = new List<ChartObject>();
 
         notes = new Note[0];
@@ -66,7 +67,7 @@ public class Chart  {
     public int Add(ChartObject chartObject, bool update = true)
     {
         chartObject.chart = this;
-        chartObject.song = this.song;
+        chartObject.song = this._song;
 
         int pos = SongObject.Insert(chartObject, _chartObjects);
 

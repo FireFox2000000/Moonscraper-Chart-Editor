@@ -39,7 +39,7 @@ public abstract class MovementController : MonoBehaviour {
 
     void OnGUI()
     {
-        if (focused && globals.InToolArea)
+        if (focused)
         {
             if (UnityEngine.Event.current.type == EventType.ScrollWheel)
             {

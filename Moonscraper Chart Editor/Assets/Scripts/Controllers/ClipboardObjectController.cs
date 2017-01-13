@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class ClipboardObjectController : Snapable {
 
@@ -52,21 +52,33 @@ public class ClipboardObjectController : Snapable {
             Rect collisionRect = clipboard.GetCollisionRect(chartLocationToPaste, editor.currentSong);
             uint colliderChartDistance = clipboard.areaChartPosMax - clipboard.areaChartPosMin;
 
+            List<SongObject> objectsGettingDeleted = new List<SongObject>();
+
             // Overwrite any objects in the clipboard space
             foreach (ChartObject chartObject in editor.currentChart.chartObjects)
             {
                 if (chartObject.controller && chartObject.position >= chartLocationToPaste && chartObject.position < chartLocationToPaste + colliderChartDistance && chartObject.controller.AABBcheck(collisionRect))
                 {
+                    objectsGettingDeleted.Add(chartObject);
                     chartObject.controller.Delete(false);
                 }
             }
 
+            //editor.actionHistory.Insert(new ActionHistory.Delete(actions.ToArray()));
+
+            List<SongObject> objectsGettingAdded = new List<SongObject>();
+
             // Paste the new objects in
             foreach (ChartObject clipboardChartObject in clipboard.data)
-            {
+            { 
                 ChartObject objectToAdd = (ChartObject)clipboardChartObject.Clone();
 
                 objectToAdd.position = chartLocationToPaste + clipboardChartObject.position - clipboard.areaChartPosMin;
+
+                PlaceSongObject.AddObjectToCurrentEditor(objectToAdd, editor, false);
+
+                objectsGettingAdded.Add(objectToAdd);
+                /*
                 editor.currentChart.Add(objectToAdd, false);
 
                 switch (clipboardChartObject.classID)
@@ -82,10 +94,11 @@ public class ClipboardObjectController : Snapable {
                     default:
                         continue;
                 }
-
+                */
                 editor.currentChart.updateArrays();
-
             }
+
+            editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(objectsGettingDeleted.ToArray()), new ActionHistory.Add(objectsGettingAdded.ToArray()) });
         }
         // else don't bother pasting
     }

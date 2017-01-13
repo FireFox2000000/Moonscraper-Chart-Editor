@@ -65,6 +65,8 @@ public class ChartEditor : MonoBehaviour {
 
     OpenFileName saveFileDialog;
 
+    public ActionHistory actionHistory;
+
     public SongObject currentSelectedObject = null;
     GameObject currentPropertiesPanel = null;
 
@@ -277,7 +279,7 @@ public class ChartEditor : MonoBehaviour {
         currentSong = new Song();
 
         LoadSong(currentSong);
-    
+
         movement.SetPosition(0);
         StartCoroutine(resetLag());
 
@@ -579,6 +581,7 @@ public class ChartEditor : MonoBehaviour {
     // Chart should be part of the current song
     void LoadChart(Chart chart)
     {
+        actionHistory = new ActionHistory();
         Stop();
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;

@@ -4,40 +4,87 @@ using System.Collections.Generic;
 using System;
 
 public class ActionHistory {
-    int historyPoint = 0;
+    int historyPoint;
+    List<Action[]> actionList;
+
+    public ActionHistory()
+    {
+        actionList = new List<Action[]>();
+        historyPoint = -1;
+    }
+
+    public void Insert (Action[] action)
+    {
+        // Clear all actions above the history point
+        if (historyPoint >= 0 && historyPoint < actionList.Count)
+            actionList.RemoveRange(historyPoint + 1, actionList.Count - (historyPoint + 1));
+
+        // Add the action in
+        actionList.Add(action);
+        ++historyPoint;
+    }
+
+    public void Insert(Action action)
+    {
+        Insert(new Action[] { action });
+    }
+
+    public void Undo(ChartEditor editor)
+    {
+        if (historyPoint >= 0)
+        {
+            for (int i = actionList[historyPoint].Length - 1; i >= 0; --i)
+                actionList[historyPoint][i].Revoke(editor);
+
+            --historyPoint;
+        }
+    }
+
+    public void Redo(ChartEditor editor)
+    {
+        if (historyPoint + 1 < actionList.Count)
+        {
+            ++historyPoint;
+            for (int i = 0; i < actionList[historyPoint].Length; ++i)
+                actionList[historyPoint][i].Invoke(editor); 
+        }
+    }
 
     public abstract class Action
     {
-        SongObject[] songObjects;
+        protected SongObject[] songObjects;
 
         protected Action(SongObject[] _songObjects)
         {
-            List<SongObject> objectsList = new List<SongObject>();
-
-            foreach (SongObject songObject in _songObjects)
+            songObjects = new SongObject[_songObjects.Length];
+            
+            for (int i = 0; i < _songObjects.Length; ++i)
             {
-                objectsList.Add(songObject.Clone());
+                songObjects[i] = _songObjects[i].Clone();
             }
-
-            songObjects = objectsList.ToArray();
         }
 
-        public abstract void Revoke(Song song, Chart chart);
-        public abstract void Invoke(Song song, Chart chart);
+        public abstract void Revoke(ChartEditor editor);
+        public abstract void Invoke(ChartEditor editor);
     }
 
     public class Add : Action
     {
         public Add(SongObject[] songObjects) : base(songObjects){}
 
-        public override void Invoke(Song song, Chart chart)
+        public override void Invoke(ChartEditor editor)
         {
-            throw new NotImplementedException();
+            foreach (SongObject songObject in songObjects)
+            {
+                PlaceSongObject.AddObjectToCurrentEditor(songObject, editor, false);
+            }
+            editor.currentChart.updateArrays();
+            editor.currentSong.updateArrays();
         }
 
-        public override void Revoke(Song song, Chart chart)
+        public override void Revoke(ChartEditor editor)
         {
-            throw new NotImplementedException();
+            new Delete(songObjects).Invoke(editor);
         }
     }
 
@@ -45,27 +92,62 @@ public class ActionHistory {
     {
         public Delete(SongObject[] songObjects) : base(songObjects){}
 
-        public override void Invoke(Song song, Chart chart)
+        public override void Invoke(ChartEditor editor)
         {
-            throw new NotImplementedException();
+            foreach(SongObject songObject in songObjects)
+            {
+                SongObject foundSongObject;
+                SongObject[] arrayToSearch;
+                int arrayPos;
+
+                // Find each item
+                if (songObject.GetType().IsSubclassOf(typeof(ChartObject)) || songObject.GetType() == typeof(ChartObject))
+                {
+                    arrayToSearch = editor.currentChart.chartObjects;
+                }
+                else
+                {
+                    if (songObject.GetType().IsSubclassOf(typeof(Event)) || songObject.GetType() == typeof(Event))
+                        arrayToSearch = editor.currentSong.events;
+                    
+                    else
+                        arrayToSearch = editor.currentSong.syncTrack;
+                }
+
+                arrayPos = SongObject.FindObjectPosition(songObject, arrayToSearch);
+
+                if (arrayPos == Globals.NOTFOUND)
+                    continue;
+                else
+                    foundSongObject = arrayToSearch[arrayPos];
+
+                if (foundSongObject.controller)
+                    foundSongObject.controller.Delete(false);
+            }
+
+            editor.currentChart.updateArrays();
+            editor.currentSong.updateArrays();
         }
 
-        public override void Revoke(Song song, Chart chart)
+        public override void Revoke(ChartEditor editor)
         {
-            throw new NotImplementedException();
+            new Add(songObjects).Invoke(editor);
         }
     }
 
     public class Modify : Action
     {
+        public SongObject before { get { return songObjects[0]; } set { songObjects[0] = value.Clone(); } }
+        public SongObject after { get { return songObjects[1]; } set { songObjects[1] = value.Clone(); } }
+
         public Modify(SongObject before, SongObject after) : base(new SongObject[]{ before, after }) {}
 
-        public override void Invoke(Song song, Chart chart)
+        public override void Invoke(ChartEditor editor)
         {
             throw new NotImplementedException();
         }
 
-        public override void Revoke(Song song, Chart chart)
+        public override void Revoke(ChartEditor editor)
         {
             throw new NotImplementedException();
         }
