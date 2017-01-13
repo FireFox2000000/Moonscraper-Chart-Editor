@@ -47,8 +47,6 @@ public class ActionHistory {
             ++historyPoint;
             for (int i = 0; i < actionList[historyPoint].Length; ++i)
                 actionList[historyPoint][i].Invoke(editor);
-
-            Debug.Log(historyPoint);
         }
     }
 
@@ -73,6 +71,7 @@ public class ActionHistory {
     public class Add : Action
     {
         public Add(SongObject[] songObjects) : base(songObjects){}
+        public Add(SongObject songObjects) : base(new SongObject[] { songObjects }) { }
 
         public override void Invoke(ChartEditor editor)
         {
@@ -93,6 +92,7 @@ public class ActionHistory {
     public class Delete : Action
     {
         public Delete(SongObject[] songObjects) : base(songObjects){}
+        public Delete(SongObject songObjects) : base(new SongObject[] { songObjects }) { }
 
         public override void Invoke(ChartEditor editor)
         {

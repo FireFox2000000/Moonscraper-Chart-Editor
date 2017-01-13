@@ -554,6 +554,11 @@ public class Section : Event
     {
         return new Regex(@"\d+ = E " + @"""section [^""\\]*(?:\\.[^""\\]*)*""").IsMatch(line);
     }
+
+    public override SongObject Clone()
+    {
+        return new Section(this);
+    }
 }
 
 public abstract class SyncTrack : SongObject

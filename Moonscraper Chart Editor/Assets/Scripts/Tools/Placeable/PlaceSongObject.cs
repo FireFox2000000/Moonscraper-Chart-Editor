@@ -5,6 +5,8 @@ public abstract class PlaceSongObject : ToolObject {
     protected SongObject songObject;
     protected SongObjectController controller;
 
+    protected SongObject initObject;        // Only used for moving objects
+
     public override void ToolDisable()
     {
         editor.currentSelectedObject = null;

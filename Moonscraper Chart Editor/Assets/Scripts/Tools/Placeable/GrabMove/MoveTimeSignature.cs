@@ -14,6 +14,7 @@ public class MoveTimeSignature : PlaceTimesignature {
         controller.ts = ts;
         editor.currentSelectedObject = ts;
         controller.tsText.text = ts.value.ToString() + "/4";       // Fixes 1-frame text mutation
+        initObject = this.ts.Clone();
     }
 
     protected override void AddObject()
@@ -22,5 +23,7 @@ public class MoveTimeSignature : PlaceTimesignature {
         editor.currentSong.Add(tsToAdd);
         editor.CreateTSObject(tsToAdd);
         editor.currentSelectedObject = tsToAdd;
+
+        editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(initObject), new ActionHistory.Add(tsToAdd) });
     }
 }

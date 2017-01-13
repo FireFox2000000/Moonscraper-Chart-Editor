@@ -12,13 +12,7 @@ public class MoveStarpower : PlaceStarpower {
     {
         this.starpower = starpower;
         controller.Init(starpower);
-    }
-
-    protected override void Update()
-    {
-        starpower.chart.Remove(starpower);
-        base.Update();
-        starpower.chart.Add(starpower);
+        initObject = this.starpower.Clone();
     }
 
     protected override void AddObject()
@@ -27,5 +21,7 @@ public class MoveStarpower : PlaceStarpower {
         editor.currentChart.Add(starpowerToAdd);
         editor.CreateStarpowerObject(starpowerToAdd);
         editor.currentSelectedObject = starpowerToAdd;
+
+        editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(initObject), new ActionHistory.Add(starpowerToAdd) });
     }
 }

@@ -14,6 +14,7 @@ public class MoveNote : PlaceNote {
         this.note = new Note (note);
         controller.Init(this.note);
         editor.currentSelectedObject = this.note;
+        initObject = this.note.Clone();
     }
 
     protected override void Update()
@@ -35,5 +36,7 @@ public class MoveNote : PlaceNote {
         editor.currentSelectedObject = noteToAdd;
 
         CapNoteCheck(noteToAdd);
+
+        editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(initObject), new ActionHistory.Add(noteToAdd) });
     }
 }
