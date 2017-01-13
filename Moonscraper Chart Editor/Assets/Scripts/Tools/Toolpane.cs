@@ -50,12 +50,12 @@ public class Toolpane : MonoBehaviour {
                 currentToolObject.gameObject.SetActive(false);
             }
 
-            if (Input.GetMouseButton(1))
+            else if (Input.GetMouseButton(1))
             {
                 currentToolObject.gameObject.SetActive(false);
             }
 
-            if (Mouse.IsUIUnderPointer())
+            else if (Mouse.IsUIUnderPointer())
                 currentToolObject.gameObject.SetActive(false);
         }
     }

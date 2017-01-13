@@ -57,6 +57,7 @@ public class GroupSelect : ToolObject {
 
     public void reset()
     {
+        transform.localScale = new Vector3(0, 0, transform.localScale.z);
         initWorld2DPos = Vector2.zero;
         endWorld2DPos = Vector2.zero;
         startWorld2DChartPos = 0;
@@ -285,13 +286,18 @@ public class GroupSelect : ToolObject {
 
     void Delete()
     {
+        List<SongObject> deletedObjects = new List<SongObject>();
+
         foreach (ChartObject cObject in data)
         {
+            deletedObjects.Add(cObject);
             if (cObject.controller)
                 cObject.controller.Delete(false);
             else
                 editor.currentChart.Remove(cObject);
         }
+
+        editor.actionHistory.Insert(new ActionHistory.Delete(deletedObjects.ToArray()));
         editor.currentChart.updateArrays();
 
         reset();

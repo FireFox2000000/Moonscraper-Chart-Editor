@@ -198,6 +198,12 @@ public class PlaceNote : PlaceSongObject {
                 if (prevNote.controller != null)
                     prevNote.controller.sustain.CapSustain(noteToAdd);
             }
+
+            foreach(Note chordNote in noteToAdd.GetChord())
+            {
+                if (chordNote.controller != null)
+                    chordNote.controller.note.sustain_length = noteToAdd.sustain_length; 
+            }
         }
         else
         {
@@ -225,7 +231,7 @@ public class PlaceNote : PlaceSongObject {
             {
                 return new Note[] { previous };
             }
-            else
+            else if (previous.position < startNote.position)
             {
                 switch (previous.fret_type)
                 {

@@ -16,8 +16,7 @@ public class ActionHistory {
     public void Insert (Action[] action)
     {
         // Clear all actions above the history point
-        if (historyPoint >= 0 && historyPoint < actionList.Count)
-            actionList.RemoveRange(historyPoint + 1, actionList.Count - (historyPoint + 1));
+        actionList.RemoveRange(historyPoint + 1, actionList.Count - (historyPoint + 1));
 
         // Add the action in
         actionList.Add(action);
@@ -31,6 +30,7 @@ public class ActionHistory {
 
     public void Undo(ChartEditor editor)
     {
+        //Debug.Log(historyPoint);
         if (historyPoint >= 0)
         {
             for (int i = actionList[historyPoint].Length - 1; i >= 0; --i)
@@ -46,7 +46,9 @@ public class ActionHistory {
         {
             ++historyPoint;
             for (int i = 0; i < actionList[historyPoint].Length; ++i)
-                actionList[historyPoint][i].Invoke(editor); 
+                actionList[historyPoint][i].Invoke(editor);
+
+            Debug.Log(historyPoint);
         }
     }
 
@@ -76,7 +78,7 @@ public class ActionHistory {
         {
             foreach (SongObject songObject in songObjects)
             {
-                PlaceSongObject.AddObjectToCurrentEditor(songObject, editor, false);
+                PlaceSongObject.AddObjectToCurrentEditor(songObject.Clone(), editor, false);
             }
             editor.currentChart.updateArrays();
             editor.currentSong.updateArrays();
