@@ -301,10 +301,13 @@ public class Globals : MonoBehaviour {
         else if (Input.GetButtonDown("DecreaseStep"))
             snappingStep.Decrement();
 
-        if (Input.GetButtonDown("Delete") && editor.currentSelectedObject != null)
+        if (Input.GetButtonDown("Delete") && editor.currentSelectedObject != null && Toolpane.currentTool == Toolpane.Tools.Cursor)
         {
             if (editor.currentSelectedObject.controller)
+            {
+                editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentSelectedObject));
                 editor.currentSelectedObject.controller.Delete();
+            }
         }
 
         if (Input.GetButtonDown("Start Gameplay"))

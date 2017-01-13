@@ -63,6 +63,7 @@ public class NoteController : SongObjectController {
             if (Input.GetButton("ChordSelect"))
             {
                 Note[] chordNotes = note.GetChord();
+                editor.actionHistory.Insert(new ActionHistory.Delete(chordNotes));
                 foreach (Note chordNote in chordNotes)
                 {
                     if (chordNote.controller != null)
@@ -73,6 +74,7 @@ public class NoteController : SongObjectController {
             }
             else
             {
+                editor.actionHistory.Insert(new ActionHistory.Delete(note));
                 Delete();
             }
         }

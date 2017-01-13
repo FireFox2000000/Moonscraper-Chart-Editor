@@ -38,8 +38,8 @@ public class BPMController : SongObjectController {
 
     public override void OnSelectableMouseDrag()
     {
-        // Move note
-        if (bpm.position != 0 && Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
+        // Move object
+        if (bpm.position != 0 && Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1))
         {
             // Pass note data to a ghost bpm
             GameObject moveBPM = Instantiate(editor.ghostBPM);

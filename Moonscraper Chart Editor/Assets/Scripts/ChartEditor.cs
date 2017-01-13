@@ -680,7 +680,7 @@ public class ChartEditor : MonoBehaviour {
                 CreateStarpowerObject(starpowers[i]);
             }
         }
-
+        
         return chartObjectParent;
     }
 

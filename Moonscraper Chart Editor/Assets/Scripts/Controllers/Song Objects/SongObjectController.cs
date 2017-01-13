@@ -83,10 +83,11 @@ public abstract class SongObjectController : SelectableClick {
             editor.currentSelectedObject = songObject;
         }
 
-        // Delete the object on erase tool
+        // Delete the object on erase tool or by holding right click and pressing left-click
         if ((Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButtonDown(0) && Globals.applicationMode == Globals.ApplicationMode.Editor) ||
             (Input.GetMouseButtonDown(0) && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1)))
         {
+            editor.actionHistory.Insert(new ActionHistory.Delete(songObject));
             Delete();
             editor.currentSelectedObject = null;
         }
