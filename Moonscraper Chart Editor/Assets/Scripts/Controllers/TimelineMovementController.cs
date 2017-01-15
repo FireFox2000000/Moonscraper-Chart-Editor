@@ -115,7 +115,7 @@ public class TimelineMovementController : MovementController
             // else check mouse range
             else if (Toolpane.mouseDownInArea && (globals.InToolArea && (Input.GetMouseButton(0) || Input.GetMouseButton(1))))
             { 
-                if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null && Input.mousePosition.y > Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y)
+                if (!Toolpane.menuCancel && UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null && Input.mousePosition.y > Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y)
                 {
                     // Autoscroll
                     transform.position = new Vector3(transform.position.x, transform.position.y + autoscrollSpeed * Time.deltaTime, transform.position.z);

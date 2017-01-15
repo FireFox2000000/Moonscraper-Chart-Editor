@@ -34,6 +34,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     
     void Update()
     {
+        // Prevent users from forcing notes when they shouldn't be forcable but retain the previous user-set forced property when using the note tool
         if (Toolpane.currentTool != Toolpane.Tools.Note || (Toolpane.currentTool == Toolpane.Tools.Note && noteToolObject.activeSelf))
         {
             if (currentNote.CannotBeForcedCheck)
@@ -53,7 +54,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         }
         else
         {
-            if (!forcedToggle.interactable)
+            if (!forcedToggle.interactable) 
             {
                 forcedToggle.interactable = true;
                 forcedToggle.isOn = prevForcedProperty;

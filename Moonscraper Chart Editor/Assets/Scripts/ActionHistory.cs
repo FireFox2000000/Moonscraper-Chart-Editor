@@ -30,9 +30,9 @@ public class ActionHistory {
 
     public void Undo(ChartEditor editor)
     {
-        //Debug.Log(historyPoint);
         if (historyPoint >= 0)
         {
+            ChartEditor.editOccurred = true;
             for (int i = actionList[historyPoint].Length - 1; i >= 0; --i)
                 actionList[historyPoint][i].Revoke(editor);
 
@@ -44,6 +44,7 @@ public class ActionHistory {
     {
         if (historyPoint + 1 < actionList.Count)
         {
+            ChartEditor.editOccurred = true;
             ++historyPoint;
             for (int i = 0; i < actionList[historyPoint].Length; ++i)
                 actionList[historyPoint][i].Invoke(editor);
