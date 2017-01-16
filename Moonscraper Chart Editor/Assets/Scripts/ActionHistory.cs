@@ -37,6 +37,9 @@ public class ActionHistory {
                 actionList[historyPoint][i].Revoke(editor);
 
             --historyPoint;
+
+            editor.currentChart.updateArrays();
+            editor.currentSong.updateArrays();
         }
     }
 
@@ -48,6 +51,9 @@ public class ActionHistory {
             ++historyPoint;
             for (int i = 0; i < actionList[historyPoint].Length; ++i)
                 actionList[historyPoint][i].Invoke(editor);
+
+            editor.currentChart.updateArrays();
+            editor.currentSong.updateArrays();
         }
     }
 
@@ -80,8 +86,6 @@ public class ActionHistory {
             {
                 PlaceSongObject.AddObjectToCurrentEditor(songObject.Clone(), editor, false);
             }
-            editor.currentChart.updateArrays();
-            editor.currentSong.updateArrays();
         }
 
         public override void Revoke(ChartEditor editor)
@@ -127,9 +131,6 @@ public class ActionHistory {
                 if (foundSongObject.controller)
                     foundSongObject.controller.Delete(false);
             }
-
-            editor.currentChart.updateArrays();
-            editor.currentSong.updateArrays();
         }
 
         public override void Revoke(ChartEditor editor)
@@ -147,12 +148,14 @@ public class ActionHistory {
 
         public override void Invoke(ChartEditor editor)
         {
-            throw new NotImplementedException();
+            new Delete(before).Invoke(editor);
+            new Add(after).Invoke(editor);
         }
 
         public override void Revoke(ChartEditor editor)
         {
-            throw new NotImplementedException();
+            new Delete(after).Invoke(editor);
+            new Add(before).Invoke(editor);
         }
     }
 }

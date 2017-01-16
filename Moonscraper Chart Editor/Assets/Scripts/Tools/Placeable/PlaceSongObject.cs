@@ -68,9 +68,10 @@ public abstract class PlaceSongObject : ToolObject {
         int arrayPos = SongObject.FindObjectPosition(overwriteCheck, overWriteSearch);
         if (arrayPos != Globals.NOTFOUND)       // Found an object that matches
         {
-            if (!overwriteCheck.ValueCompare(overWriteSearch[arrayPos]))
+            if (!overwriteCheck.AllValuesCompare(overWriteSearch[arrayPos]))
                 // Object will changed, therefore record
-                editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(overWriteSearch[arrayPos]), new ActionHistory.Add(overwriteCheck) });
+                editor.actionHistory.Insert(new ActionHistory.Modify(overWriteSearch[arrayPos], overwriteCheck));
+                //editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(overWriteSearch[arrayPos]), new ActionHistory.Add(overwriteCheck) });
         }
         else
         {

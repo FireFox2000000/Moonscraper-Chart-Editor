@@ -38,7 +38,7 @@ public abstract class SongObject
     public abstract string GetSaveString();
 
     public abstract SongObject Clone();
-    public abstract bool ValueCompare<T>(T songObject) where T : SongObject;
+    public abstract bool AllValuesCompare<T>(T songObject) where T : SongObject;
     
     public static bool operator ==(SongObject a, SongObject b)
     {
@@ -527,7 +527,7 @@ public class Event : SongObject
         return new Event(this);
     }
 
-    public override bool ValueCompare<T>(T songObject)
+    public override bool AllValuesCompare<T>(T songObject)
     {
         if (this == songObject && (songObject as Event).title == title)
             return true;
@@ -579,7 +579,7 @@ public abstract class SyncTrack : SongObject
         value = _value;
     }
 
-    public override bool ValueCompare<T>(T songObject)
+    public override bool AllValuesCompare<T>(T songObject)
     {
         if (this == songObject && (songObject as SyncTrack).value == value)
             return true;

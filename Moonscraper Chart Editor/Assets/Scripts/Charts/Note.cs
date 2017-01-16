@@ -97,7 +97,7 @@ public class Note : ChartObject
         return new Note(this);
     }
 
-    public override bool ValueCompare<T>(T songObject)
+    public override bool AllValuesCompare<T>(T songObject)
     {
         if (this == songObject && (songObject as Note).sustain_length == sustain_length && (songObject as Note).fret_type == fret_type && (songObject as Note).flags == flags)
             return true;

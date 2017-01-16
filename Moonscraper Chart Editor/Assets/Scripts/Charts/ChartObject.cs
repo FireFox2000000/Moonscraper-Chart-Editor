@@ -36,7 +36,7 @@ public class StarPower : ChartObject
         return new StarPower(this);
     }
 
-    public override bool ValueCompare<T>(T songObject)
+    public override bool AllValuesCompare<T>(T songObject)
     {
         if (this == songObject && (songObject as StarPower).length == length)
             return true;
@@ -88,7 +88,7 @@ public class ChartEvent : ChartObject
         return new ChartEvent(this);
     }
 
-    public override bool ValueCompare<T>(T songObject)
+    public override bool AllValuesCompare<T>(T songObject)
     {
         if (this == songObject && (songObject as ChartEvent).eventName == eventName)
             return true;

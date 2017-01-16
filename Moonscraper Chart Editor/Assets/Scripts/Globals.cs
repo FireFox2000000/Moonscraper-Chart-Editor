@@ -269,14 +269,14 @@ public class Globals : MonoBehaviour {
                 editor.Save();
             else if (Input.GetKeyDown("o"))
                 editor.Load();
-            else if (Input.GetKeyDown("z"))
+            else if (Input.GetKeyDown("z") && !Input.GetMouseButton(0) && !Input.GetMouseButton(1))
             {
                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                     editor.actionHistory.Redo(editor);
                 else
                     editor.actionHistory.Undo(editor);
             }
-            else if (Input.GetKeyDown("y"))
+            else if (Input.GetKeyDown("y") && !Input.GetMouseButton(0) && !Input.GetMouseButton(1))
                 editor.actionHistory.Redo(editor);
         }
 
