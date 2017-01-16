@@ -9,6 +9,7 @@ public class PlaceStarpower : PlaceSongObject {
 
     StarPower lastPlacedSP = null;
     Renderer spRen;
+    StarPower overwrittenSP = null;
 
     protected override void Awake()
     {
@@ -25,7 +26,16 @@ public class PlaceStarpower : PlaceSongObject {
         if (Toolpane.currentTool == Toolpane.Tools.Starpower && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
         {
             if (lastPlacedSP == null)
+            {
+                // Check if there's a starpower already in that position
+                int arrayPos = SongObject.FindObjectPosition(starpower, editor.currentChart.starPower);
+                if (arrayPos != Globals.NOTFOUND)       // Found an object that matches
+                {
+                    overwrittenSP = (StarPower)editor.currentChart.starPower[arrayPos].Clone();
+                }
+
                 AddObject();
+            }
             else
             {
                 ((StarpowerController)lastPlacedSP.controller).TailDrag();
@@ -40,7 +50,20 @@ public class PlaceStarpower : PlaceSongObject {
         base.Update();
 
         if (Input.GetMouseButtonUp(0))
+        {
+            if (lastPlacedSP != null)
+            {
+                // Make a record of the last SP
+                if (overwrittenSP == null)
+                    editor.actionHistory.Insert(new ActionHistory.Add(lastPlacedSP));
+                else
+                    editor.actionHistory.Insert(new ActionHistory.Modify(overwrittenSP, lastPlacedSP));
+            }
+
+            // Reset
             lastPlacedSP = null;
+            overwrittenSP = null;
+        }
 
         if (lastPlacedSP != null)
             spRen.enabled = false;
@@ -60,6 +83,7 @@ public class PlaceStarpower : PlaceSongObject {
         editor.currentChart.Add(starpowerToAdd);
         editor.CreateStarpowerObject(starpowerToAdd);
         editor.currentSelectedObject = starpowerToAdd;
+
         lastPlacedSP = starpowerToAdd;
     }
 
