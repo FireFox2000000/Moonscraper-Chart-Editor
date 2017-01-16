@@ -7,6 +7,8 @@ public class DisplayProperties : MonoBehaviour {
     public Slider hyperspeedSlider;
     public InputField snappingStep;
     public Text noteCount;
+    public Text gameSpeed;
+    public Slider gameSpeedSlider;
 
     ChartEditor editor;
 
@@ -25,14 +27,23 @@ public class DisplayProperties : MonoBehaviour {
         Globals.hyperspeed = hyperspeedSlider.value;
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+        {
             hyperspeedSlider.interactable = false;
+            gameSpeedSlider.interactable = false;
+        }
         else
+        {
             hyperspeedSlider.interactable = true;
+            gameSpeedSlider.interactable = true;
+        }
 
         if (snappingStep.text != string.Empty)
             snappingStep.text = Globals.step.ToString();
 
         noteCount.text = "Notes: " + editor.currentChart.note_count.ToString();
+
+        Time.timeScale = gameSpeedSlider.value / 100.0f;
+        gameSpeed.text = "Speed- " + (Time.timeScale * 100).ToString() + "%";
     }
 
     public void ToggleClap(bool value)

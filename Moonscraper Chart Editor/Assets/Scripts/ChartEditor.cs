@@ -407,7 +407,7 @@ public class ChartEditor : MonoBehaviour {
         float playPoint = Song.WorldYPositionToTime(strikelineAudio.position.y) + currentSong.offset;
         if (playPoint < 0)
         {
-            StartCoroutine(delayedStartAudio(-playPoint));
+            StartCoroutine(delayedStartAudio(-playPoint * Time.timeScale));
         }
         else
         {
@@ -416,6 +416,7 @@ public class ChartEditor : MonoBehaviour {
 
             foreach (AudioSource source in musicSources)
             {
+                source.pitch = Time.timeScale;
                 source.Play();
             }
         } 
@@ -435,6 +436,7 @@ public class ChartEditor : MonoBehaviour {
 
                 foreach (AudioSource source in musicSources)
                 {
+                    source.pitch = Time.timeScale;
                     source.Play();
                 }
             }

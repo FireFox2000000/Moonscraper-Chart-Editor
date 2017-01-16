@@ -20,7 +20,7 @@ public class StrikelineAudioController : MonoBehaviour {
     void Update()
     {
         Vector3 pos = initLocalPos;
-        pos.y += Song.TimeToWorldYPosition((float)Globals.audioCalibrationMS / 1000.0f);
+        pos.y += Song.TimeToWorldYPosition((float)Globals.audioCalibrationMS / 1000.0f * Time.timeScale);
         transform.localPosition = pos;
     }
 
