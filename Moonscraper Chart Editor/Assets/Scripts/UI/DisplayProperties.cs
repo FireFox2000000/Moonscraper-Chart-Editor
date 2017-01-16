@@ -42,8 +42,13 @@ public class DisplayProperties : MonoBehaviour {
 
         noteCount.text = "Notes: " + editor.currentChart.note_count.ToString();
 
+        gameSpeedSlider.value = Mathf.Round(gameSpeedSlider.value / 10.0f) * 10;
         Time.timeScale = gameSpeedSlider.value / 100.0f;
-        gameSpeed.text = "Speed- " + (Time.timeScale * 100).ToString() + "%";
+
+        if (Time.timeScale < 1)
+            gameSpeed.text = "Speed- x" + Time.timeScale.ToString().Substring(0, 3);
+        else
+            gameSpeed.text = "Speed- x1.0";
     }
 
     public void ToggleClap(bool value)
