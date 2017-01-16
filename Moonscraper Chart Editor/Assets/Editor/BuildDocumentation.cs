@@ -19,28 +19,36 @@ public class BuildDocumentation  {
     {
         // Get filename.
         string path = EditorUtility.SaveFolderPanel("Choose Location of Built Game", "", "");
-        string[] levels = new string[] { "Assets/Scenes/test.unity" };
-
-        // Build player.
-        BuildPipeline.BuildPlayer(levels, path + "/Moonscraper Chart Editor.exe", buildTarget, BuildOptions.None);
-
-        if (Directory.Exists("Assets/Custom Resources"))
-        {
-            // Copy a file from the project folder to the build folder, alongside the built game.
-            clearAndDeleteDirectory(path + "/Custom Resources");
-            FileUtil.CopyFileOrDirectory("Assets/Custom Resources", path + "/Custom Resources");
-        }
-
-        if (Directory.Exists("Assets/Documentation"))
-        {
-            // Copy a file from the project folder to the build folder, alongside the built game.
-            clearAndDeleteDirectory(path + "/Documentation");
-            FileUtil.CopyFileOrDirectory("Assets/Documentation", path + "/Documentation");
-        }
         
-        foreach (string file in Directory.GetFiles(path, "*.meta", SearchOption.AllDirectories))
+        if (path != string.Empty)
+        {      
+            string[] levels = new string[] { "Assets/Scenes/test.unity" };
+
+            // Build player.
+            BuildPipeline.BuildPlayer(levels, path + "/Moonscraper Chart Editor.exe", buildTarget, BuildOptions.None);
+
+            if (Directory.Exists("Assets/Custom Resources"))
+            {
+                // Copy a file from the project folder to the build folder, alongside the built game.
+                clearAndDeleteDirectory(path + "/Custom Resources");
+                FileUtil.CopyFileOrDirectory("Assets/Custom Resources", path + "/Custom Resources");
+            }
+
+            if (Directory.Exists("Assets/Documentation"))
+            {
+                // Copy a file from the project folder to the build folder, alongside the built game.
+                clearAndDeleteDirectory(path + "/Documentation");
+                FileUtil.CopyFileOrDirectory("Assets/Documentation", path + "/Documentation");
+            }
+
+            foreach (string file in Directory.GetFiles(path, "*.meta", SearchOption.AllDirectories))
+            {
+                File.Delete(file);
+            }
+        }
+        else
         {
-            File.Delete(file);
+            UnityEngine.Debug.Log("Build canceled");
         }
     }
 

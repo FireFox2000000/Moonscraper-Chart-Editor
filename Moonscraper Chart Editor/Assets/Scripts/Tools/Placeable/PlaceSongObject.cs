@@ -52,6 +52,7 @@ public abstract class PlaceSongObject : ToolObject {
         }
     }
 
+    // Used when grabbing and moving objects with the cursor tool
     protected void MovementControls()
     {
         if (Input.GetMouseButtonUp(0))
@@ -59,6 +60,21 @@ public abstract class PlaceSongObject : ToolObject {
             AddObject();
 
             Destroy(gameObject);
+        }
+    }
+
+    protected void RecordActionHistory<T>(T overwriteCheck, T[] overWriteSearch) where T : SongObject
+    {
+        int arrayPos = SongObject.FindObjectPosition(overwriteCheck, overWriteSearch);
+        if (arrayPos != Globals.NOTFOUND)       // Found an object that matches
+        {
+            if (!overwriteCheck.ValueCompare(overWriteSearch[arrayPos]))
+                // Object will changed, therefore record
+                editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(overWriteSearch[arrayPos]), new ActionHistory.Add(overwriteCheck) });
+        }
+        else
+        {
+            editor.actionHistory.Insert(new ActionHistory.Add(overwriteCheck));
         }
     }
 }

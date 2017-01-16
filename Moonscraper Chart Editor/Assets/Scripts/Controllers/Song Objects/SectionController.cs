@@ -29,6 +29,14 @@ public class SectionController : SongObjectController
         Destroy(gameObject);
     }
 
+    public override void DestroyGameObject()
+    {
+        if (sectionGui)
+            Destroy(sectionGui.gameObject);
+
+        base.DestroyGameObject();
+    }
+
     public void Init(Section _section, TimelineHandler timelineHandler, GameObject bpmGuiParent)
     {
         base.Init(_section);

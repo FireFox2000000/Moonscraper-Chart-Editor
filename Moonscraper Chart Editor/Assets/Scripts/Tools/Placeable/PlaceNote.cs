@@ -11,6 +11,14 @@ public class PlaceNote : PlaceSongObject {
     [HideInInspector]
     public float horizontalMouseOffset = 0;
 
+    public static bool addNoteCheck
+    {
+        get
+        {
+            return (Toolpane.currentTool == Toolpane.Tools.Note && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0));
+        }
+    }
+
     protected override void Awake()
     {
         base.Awake();
@@ -23,7 +31,7 @@ public class PlaceNote : PlaceSongObject {
 
     protected override void Controls()
     {
-        if (Toolpane.currentTool == Toolpane.Tools.Note && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
+        if (addNoteCheck)
         {
             AddObject();
         }

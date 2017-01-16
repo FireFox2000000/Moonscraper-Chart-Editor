@@ -49,6 +49,12 @@ public abstract class SongObjectController : SelectableClick {
         UpdateCheck();
     }
 
+    // Allows things like section GUI to be destroyed
+    public virtual void DestroyGameObject()
+    {
+        Destroy(gameObject);
+    }
+
     protected virtual void UpdateCheck()
     {
         if (songObject != null && songObject.position >= editor.minPos && songObject.position < editor.maxPos)

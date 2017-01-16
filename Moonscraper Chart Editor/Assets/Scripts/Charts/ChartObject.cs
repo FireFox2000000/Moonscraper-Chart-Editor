@@ -35,6 +35,14 @@ public class StarPower : ChartObject
     {
         return new StarPower(this);
     }
+
+    public override bool ValueCompare<T>(T songObject)
+    {
+        if (this == songObject && (songObject as StarPower).length == length)
+            return true;
+        else
+            return false;
+    }
 }
 
 public class ChartEvent : ChartObject
@@ -78,5 +86,13 @@ public class ChartEvent : ChartObject
     public override SongObject Clone()
     {
         return new ChartEvent(this);
+    }
+
+    public override bool ValueCompare<T>(T songObject)
+    {
+        if (this == songObject && (songObject as ChartEvent).eventName == eventName)
+            return true;
+        else
+            return false;
     }
 }

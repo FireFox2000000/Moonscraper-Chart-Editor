@@ -38,6 +38,7 @@ public abstract class SongObject
     public abstract string GetSaveString();
 
     public abstract SongObject Clone();
+    public abstract bool ValueCompare<T>(T songObject) where T : SongObject;
     
     public static bool operator ==(SongObject a, SongObject b)
     {
@@ -292,7 +293,7 @@ public abstract class SongObject
             {
                 // Overwrite 
                 if (uniqueData && list[insertionPos].controller != null)
-                    GameObject.Destroy(list[insertionPos].controller.gameObject);
+                    list[insertionPos].controller.DestroyGameObject();
 
                 list[insertionPos] = item;
             }
@@ -525,6 +526,14 @@ public class Event : SongObject
     {
         return new Event(this);
     }
+
+    public override bool ValueCompare<T>(T songObject)
+    {
+        if (this == songObject && (songObject as Event).title == title)
+            return true;
+        else
+            return false;
+    }
 }
 
 public class Section : Event
@@ -568,6 +577,14 @@ public abstract class SyncTrack : SongObject
     public SyncTrack (uint _position, uint _value) : base (_position)
     {
         value = _value;
+    }
+
+    public override bool ValueCompare<T>(T songObject)
+    {
+        if (this == songObject && (songObject as SyncTrack).value == value)
+            return true;
+        else
+            return false;
     }
 }
 
