@@ -107,6 +107,8 @@ public class Globals : MonoBehaviour {
     [Header("Misc.")]
     [SerializeField]
     Button defaultViewSwitchButton;
+    [SerializeField]
+    GroupSelect groupSelect;
 
     public bool InToolArea
     {
@@ -271,13 +273,21 @@ public class Globals : MonoBehaviour {
                 editor.Load();
             else if (Input.GetKeyDown("z") && !Input.GetMouseButton(0) && !Input.GetMouseButton(1))
             {
+                bool success;
+
                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-                    editor.actionHistory.Redo(editor);
+                    success = editor.actionHistory.Redo(editor);
                 else
-                    editor.actionHistory.Undo(editor);
+                    success = editor.actionHistory.Undo(editor);
+
+                if (success)
+                    groupSelect.reset();
             }
             else if (Input.GetKeyDown("y") && !Input.GetMouseButton(0) && !Input.GetMouseButton(1))
-                editor.actionHistory.Redo(editor);
+            {
+                if (editor.actionHistory.Redo(editor));
+                    groupSelect.reset();
+            }
         }
 
         if (Input.GetButtonDown("PlayPause"))

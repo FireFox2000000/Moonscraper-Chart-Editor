@@ -231,13 +231,24 @@ public class GroupSelect : ToolObject {
 
     public void SetNoteType(AppliedNoteType type)
     {
-        //Note[] notes = chartObjectsList.OfType<Note>().ToArray();
+        List<ActionHistory.Modify> actions = new List<ActionHistory.Modify>();
 
         foreach (ChartObject note in data)
         {
             if (note.classID == (int)SongObject.ID.Note)
+            {
+                Note unmodified = (Note)note.Clone();
+
                 SetNoteType(note as Note, type);
+
+                if(((Note)note).flags != unmodified.flags)
+                {
+                    actions.Add(new ActionHistory.Modify(unmodified, (Note)note));
+                }
+            }
         }
+
+        editor.actionHistory.Insert(actions.ToArray());
     }
 
     public void SetNoteType(Note note, AppliedNoteType noteType)

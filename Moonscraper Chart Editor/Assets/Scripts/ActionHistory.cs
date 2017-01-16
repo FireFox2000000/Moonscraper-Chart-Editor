@@ -28,7 +28,7 @@ public class ActionHistory {
         Insert(new Action[] { action });
     }
 
-    public void Undo(ChartEditor editor)
+    public bool Undo(ChartEditor editor)
     {
         if (historyPoint >= 0)
         {
@@ -40,10 +40,14 @@ public class ActionHistory {
 
             editor.currentChart.updateArrays();
             editor.currentSong.updateArrays();
+
+            return true;
         }
+
+        return false;
     }
 
-    public void Redo(ChartEditor editor)
+    public bool Redo(ChartEditor editor)
     {
         if (historyPoint + 1 < actionList.Count)
         {
@@ -54,7 +58,11 @@ public class ActionHistory {
 
             editor.currentChart.updateArrays();
             editor.currentSong.updateArrays();
+
+            return true;
         }
+
+        return false;
     }
 
     public abstract class Action
