@@ -73,24 +73,22 @@ public class SustainController : SelectableClick {
     public void UpdateSustain()
     {
         Note note = nCon.note;
-        /*Note nextFret;
+        Note nextFret;
+        if (note.fret_type == Note.Fret_Type.OPEN)
+            nextFret = note.next;
+        else
+            nextFret = FindNextSameFretWithinSustain();
 
-       if (note.fret_type == Note.Fret_Type.OPEN)
-           nextFret = note.next;
-       else
-           nextFret = FindNextSameFretWithinSustain();
+        if (nextFret != null)
+        {
+            // Cap sustain length
+            if (nextFret.position < note.position)
+                note.sustain_length = 0;
+            else if (note.position + note.sustain_length > nextFret.position)
+                // Cap sustain
+                note.sustain_length = nextFret.position - note.position;
+        }
 
-       if (nextFret != null)
-       {
-           // Cap sustain length
-
-           if (nextFret.position < note.position)
-               note.sustain_length = 0;
-           else if (note.position + note.sustain_length > nextFret.position)
-               // Cap sustain
-               note.sustain_length = nextFret.position - note.position;
-       }
-       */
         UpdateSustainLength();
 
         sustainRen.sharedMaterial = Globals.sustainColours[(int)note.fret_type];
@@ -150,11 +148,11 @@ public class SustainController : SelectableClick {
 
         if (nextFret != null)
         {
-            CapSustain(nextFret, false);
+            CapSustain(nextFret);
         }
     }
 
-    public void CapSustain(Note cap, bool record = true)
+    public void CapSustain(Note cap)
     {
         Note note = nCon.note;
         Note originalNote = (Note)nCon.note.Clone();
@@ -177,15 +175,8 @@ public class SustainController : SelectableClick {
                 note.sustain_length = 0;
         }
 
-        if (record && note.sustain_length != originalNote.sustain_length)
-        {
-            if (Toolpane.currentTool == Toolpane.Tools.Note)
-            {
-                PlaceNoteController.draggedNotesRecord.Add(new ActionHistory.Modify(originalNote, note));
-            }
-            else 
-                editor.actionHistory.Insert(new ActionHistory.Modify(originalNote, note));
-        }
+        if (note.sustain_length != originalNote.sustain_length)
+            editor.actionHistory.Insert(new ActionHistory.Modify(originalNote, note));
     }
 
     public void ChordSustainDrag()

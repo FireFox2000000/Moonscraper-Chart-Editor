@@ -106,11 +106,7 @@ public class ActionHistory {
         {
             foreach (SongObject songObject in songObjects)
             {
-                if (songObject.GetType() == typeof(Note))
-                    PlaceNote.AddObjectToCurrentChart(songObject as Note, editor, false, false);
-                    //PlaceSongObject.AddObjectToCurrentEditor(songObject.Clone(), editor, false);
-                else
-                    PlaceSongObject.AddObjectToCurrentEditor(songObject.Clone(), editor, false);
+                PlaceSongObject.AddObjectToCurrentEditor(songObject.Clone(), editor, false);
             }
         }
 
