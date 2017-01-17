@@ -19,20 +19,11 @@ public class StarpowerTailController : SelectableClick {
     public override void OnSelectableMouseDrag()
     {
         // Update sustain
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
-        {
-            if (spCon.unmodifiedSP == null)
-                spCon.unmodifiedSP = (StarPower)spCon.starpower.Clone();
-
-            spCon.TailDrag();
-        }
+        spCon.dragCheck();
     }
 
     public override void OnSelectableMouseUp()
     {
-        if (spCon.unmodifiedSP != null)
-            editor.actionHistory.Insert(new ActionHistory.Modify(spCon.unmodifiedSP, spCon.starpower));
-
-        spCon.unmodifiedSP = null;
+        spCon.OnSelectableMouseUp();
     }
 }

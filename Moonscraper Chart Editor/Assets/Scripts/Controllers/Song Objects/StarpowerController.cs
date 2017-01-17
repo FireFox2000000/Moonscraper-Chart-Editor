@@ -122,7 +122,15 @@ public class StarpowerController : SongObjectController
 
             Delete();
         }
-        else if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
+        else 
+        {
+            dragCheck();
+        }
+    }
+
+    public void dragCheck()
+    {
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
             if (unmodifiedSP == null)
                 unmodifiedSP = (StarPower)starpower.Clone();
@@ -133,8 +141,10 @@ public class StarpowerController : SongObjectController
 
     public override void OnSelectableMouseUp()
     {
-        if (unmodifiedSP != null)
+        if (unmodifiedSP != null && unmodifiedSP.length != starpower.length)
+        {
             editor.actionHistory.Insert(new ActionHistory.Modify(unmodifiedSP, starpower));
+        }
 
         unmodifiedSP = null;
     }

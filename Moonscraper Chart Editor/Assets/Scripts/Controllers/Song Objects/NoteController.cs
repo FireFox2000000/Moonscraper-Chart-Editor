@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class NoteController : SongObjectController {
     const float OPEN_NOTE_SUSTAIN_WIDTH = 4;
@@ -23,7 +24,7 @@ public class NoteController : SongObjectController {
     MeshFilter meshFilter;
 #endif
     protected SpriteRenderer sustainRen;
-
+    
     public bool hit = false;
     public bool sustainBroken = false;
     public bool isActivated
@@ -112,13 +113,21 @@ public class NoteController : SongObjectController {
                 createPlaceNote(this);
             }
         }
-        else if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
+        else
+            sustain.OnSelectableMouseDrag();
+        /*
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
             if (!Globals.extendedSustainsEnabled || Input.GetButton("ChordSelect"))
                 sustain.ChordSustainDrag();
             else
                 sustain.SustainDrag();
-        }
+        }*/
+    }
+
+    public override void OnSelectableMouseUp()
+    {
+        sustain.OnSelectableMouseUp();
     }
 
     MoveNote createPlaceNote(NoteController nCon)

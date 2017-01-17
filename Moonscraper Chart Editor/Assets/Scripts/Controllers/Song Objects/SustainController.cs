@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class SustainController : SelectableClick {
@@ -7,6 +8,8 @@ public class SustainController : SelectableClick {
     public NoteController nCon;
     ChartEditor editor;
     SpriteRenderer sustainRen;
+
+    List<Note[]> unmodifiedNotes = new List<Note[]>();
 
     public void Awake()
     {
@@ -31,11 +34,40 @@ public class SustainController : SelectableClick {
             if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
             {
                 if (!Globals.extendedSustainsEnabled || Input.GetButton("ChordSelect"))
+                {                 
+                    if (unmodifiedNotes.Count == 0)
+                    {
+                        foreach (Note chordNote in nCon.note.GetChord())
+                        {
+                            unmodifiedNotes.Add(new Note[] { (Note)chordNote.Clone(), chordNote });
+                        }
+                    }
                     ChordSustainDrag();
+                }
                 else
+                {
+                    unmodifiedNotes.Add(new Note[] { (Note)nCon.note.Clone(), nCon.note });
                     SustainDrag();
+                }
             }
         }
+    }
+
+    public override void OnSelectableMouseUp()
+    {
+        if (unmodifiedNotes.Count > 0 && unmodifiedNotes[0][0].sustain_length != unmodifiedNotes[0][1].sustain_length)
+        {
+            List<ActionHistory.Modify> actions = new List<ActionHistory.Modify>();
+
+            foreach(Note[] notes in unmodifiedNotes)
+            {
+                actions.Add(new ActionHistory.Modify(notes[0], notes[1]));
+            }
+
+            editor.actionHistory.Insert(actions.ToArray());
+        }
+
+        unmodifiedNotes.Clear();
     }
 
     public void UpdateSustain()
@@ -146,6 +178,7 @@ public class SustainController : SelectableClick {
     public void ChordSustainDrag()
     {
         Note[] chordNotes = nCon.note.GetChord();
+
         foreach (Note chordNote in chordNotes)
         {
             if (chordNote.controller != null)
