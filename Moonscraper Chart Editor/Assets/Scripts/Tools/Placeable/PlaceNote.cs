@@ -184,14 +184,15 @@ public class PlaceNote : PlaceSongObject {
         CapNoteCheck(noteToAdd);  */
     }
 
-    public static void AddObjectToCurrentChart(Note note, ChartEditor editor, bool update = true)
+    public static void AddObjectToCurrentChart(Note note, ChartEditor editor, bool update = true, bool updateSustains = true)
     {
         Note noteToAdd = new Note(note);
         editor.currentChart.Add(noteToAdd, update);
         NoteController nCon = editor.CreateNoteObject(noteToAdd);
         nCon.standardOverwriteOpen();
-
-        CapNoteCheck(noteToAdd);
+        
+        if (updateSustains)     // False when undoing or redoing an action, as this probably would have already been checked. Prevents crash.
+            CapNoteCheck(noteToAdd);
     }
 
     protected static void CapNoteCheck(Note noteToAdd)
@@ -210,7 +211,8 @@ public class PlaceNote : PlaceSongObject {
             foreach(Note chordNote in noteToAdd.GetChord())
             {
                 if (chordNote.controller != null)
-                    chordNote.controller.note.sustain_length = noteToAdd.sustain_length; 
+                    chordNote.controller.sustain.CapSustain(noteToAdd);
+                    //chordNote.controller.note.sustain_length = noteToAdd.sustain_length; 
             }
         }
         else
