@@ -211,6 +211,7 @@ public class Song {
         ++audioLoads;
         GameObject monoWrap = new GameObject();
         monoWrap.AddComponent<MonoWrapper>().StartCoroutine(_LoadAudio(filepath, audioStreamArrayPos, monoWrap));
+        Debug.Log("Load audio");
     }
 
     IEnumerator _LoadAudio(string filepath, int audioStreamArrayPos, GameObject monoWrap)

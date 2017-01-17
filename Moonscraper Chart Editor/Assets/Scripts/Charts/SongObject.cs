@@ -221,7 +221,7 @@ public abstract class SongObject
 
         return pos;
     }
-
+    /*
     static int FindPreviousPosition<T>(System.Type type, int startPosition, T[] list) where T : SongObject
     {
         // Linear search
@@ -242,9 +242,38 @@ public abstract class SongObject
         }
     }
 
-    public static T FindPreviousOfType<T>(System.Type type, int startPosition, T[] list) where T : SongObject
+    static T FindPreviousOfType<T>(System.Type type, int startPosition, T[] list) where T : SongObject
     {
-        
+        int pos = FindPreviousPosition(type, startPosition, list);
+
+        if (pos == Globals.NOTFOUND)
+            return null;
+        else
+            return list[pos];
+    }*/
+
+    static int FindPreviousPosition<T>(System.Type type, int startPosition, List<T> list) where T : SongObject
+    {
+        // Linear search
+        if (startPosition < 0 || startPosition > list.Count - 1)
+            return Globals.NOTFOUND;
+        else
+        {
+            --startPosition;
+
+            while (startPosition >= 0)
+            {
+                if (list[startPosition].GetType() == type)
+                    return startPosition;
+                --startPosition;
+            }
+
+            return Globals.NOTFOUND;
+        }
+    }
+
+    static T FindPreviousOfType<T>(System.Type type, int startPosition, List<T> list) where T : SongObject
+    {
         int pos = FindPreviousPosition(type, startPosition, list);
 
         if (pos == Globals.NOTFOUND)
@@ -252,7 +281,7 @@ public abstract class SongObject
         else
             return list[pos];
     }
-
+    /*
     static int FindNextPosition<T>(System.Type type, int startPosition, T[] list) where T : SongObject
     {
         // Linear search
@@ -273,7 +302,36 @@ public abstract class SongObject
         }
     }
 
-    public static T FindNextOfType<T>(System.Type type, int startPosition, T[] list) where T : SongObject
+    static T FindNextOfType<T>(System.Type type, int startPosition, T[] list) where T : SongObject
+    {
+        int pos = FindNextPosition(type, startPosition, list);
+        if (pos == Globals.NOTFOUND)
+            return null;
+        else
+            return list[pos];
+    }*/
+
+    static int FindNextPosition<T>(System.Type type, int startPosition, List<T> list) where T : SongObject
+    {
+        // Linear search
+        if (startPosition < 0 || startPosition > list.Count - 1)
+            return Globals.NOTFOUND;
+        else
+        {
+            ++startPosition;
+
+            while (startPosition < list.Count)
+            {
+                if (list[startPosition].GetType() == type)
+                    return startPosition;
+                ++startPosition;
+            }
+
+            return Globals.NOTFOUND;
+        }
+    }
+
+    static T FindNextOfType<T>(System.Type type, int startPosition, List<T> list) where T : SongObject
     {
         int pos = FindNextPosition(type, startPosition, list);
         if (pos == Globals.NOTFOUND)
@@ -285,6 +343,7 @@ public abstract class SongObject
     public static int Insert<T>(T item, List<T> list, bool uniqueData = true) where T : SongObject
     {
         ChartEditor.editOccurred = true;
+#if false
         int insertionPos = FindClosestPosition(item, list.ToArray());
         
         if (list.Count > 0 && insertionPos != Globals.NOTFOUND)
@@ -313,14 +372,58 @@ public abstract class SongObject
             list.Add(item);
             insertionPos = list.Count - 1;
         }
-        
-        if (uniqueData && item.GetType() == typeof(Note))
+#else
+        int insertionPos = Globals.NOTFOUND;
+
+        if (list.Count > 0)
+        {
+            if (list[list.Count - 1] < item)
+            {
+                insertionPos = list.Count;
+                list.Insert(insertionPos, item);
+            }
+            else
+            {
+                insertionPos = FindClosestPosition(item, list.ToArray());
+
+                if (insertionPos != Globals.NOTFOUND)
+                {
+                    if (list[insertionPos] == item && item.classID == list[insertionPos].classID)
+                    {
+                        // Overwrite 
+                        if (uniqueData && list[insertionPos].controller != null)
+                            list[insertionPos].controller.DestroyGameObject();
+
+                        list[insertionPos] = item;
+                    }
+                    // Insert into sorted position
+                    else
+                    {
+                        if (item > list[insertionPos])
+                        {
+                            ++insertionPos;
+                        }
+                        list.Insert(insertionPos, item);
+                    }
+                }
+            }
+        }
+
+        if (insertionPos == Globals.NOTFOUND)
+        {
+            // Adding the first note
+            list.Add(item);
+            insertionPos = list.Count - 1;
+        }
+#endif
+
+        if (uniqueData && (ID)item.classID == ID.Note)
         {
             // Update linked list
             Note current = list[insertionPos] as Note;
-
-            Note previous = FindPreviousOfType(typeof(Note), insertionPos, list.ToArray()) as Note;
-            Note next = FindNextOfType(typeof(Note), insertionPos, list.ToArray()) as Note;
+            
+            Note previous = FindPreviousOfType(typeof(Note), insertionPos, list) as Note;
+            Note next = FindNextOfType(typeof(Note), insertionPos, list) as Note;
 
             current.previous = previous;
             if (previous != null)
@@ -329,7 +432,7 @@ public abstract class SongObject
             current.next = next;
             if (next != null)
                 next.previous = current;
-
+            
             // Update flags depending on open notes
             Note.Flags flags = current.flags;
             previous = current.previous;
@@ -388,7 +491,6 @@ public abstract class SongObject
                 }
             }
         }
-        //Debug.Log(list.Count);
 
         return insertionPos;
     }
@@ -403,8 +505,8 @@ public abstract class SongObject
             if (uniqueData && item.GetType() == typeof(Note))
             {
                 // Update linked list
-                Note previous = FindPreviousOfType(item.GetType(), pos, list.ToArray()) as Note;
-                Note next = FindNextOfType(item.GetType(), pos, list.ToArray()) as Note;
+                Note previous = FindPreviousOfType(item.GetType(), pos, list) as Note;
+                Note next = FindNextOfType(item.GetType(), pos, list) as Note;
 
                 if (previous != null)
                     previous.next = next;
