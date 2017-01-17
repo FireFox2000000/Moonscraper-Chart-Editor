@@ -7,6 +7,8 @@ public class StarpowerController : SongObjectController
     public GameObject tail;
     public StarPower starpower { get { return (StarPower)songObject; } set { songObject = value; } }
 
+    public StarPower unmodifiedSP = null;
+
     new void Awake()
     {
         base.Awake();
@@ -122,7 +124,18 @@ public class StarpowerController : SongObjectController
         }
         else if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
+            if (unmodifiedSP == null)
+                unmodifiedSP = (StarPower)starpower.Clone();
+
             TailDrag();
         }
+    }
+
+    public override void OnSelectableMouseUp()
+    {
+        if (unmodifiedSP != null)
+            editor.actionHistory.Insert(new ActionHistory.Modify(unmodifiedSP, starpower));
+
+        unmodifiedSP = null;
     }
 }

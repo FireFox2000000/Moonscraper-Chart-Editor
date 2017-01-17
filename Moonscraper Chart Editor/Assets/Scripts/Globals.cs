@@ -285,7 +285,7 @@ public class Globals : MonoBehaviour {
             }
             else if (Input.GetKeyDown("y") && !Input.GetMouseButton(0) && !Input.GetMouseButton(1))
             {
-                if (editor.actionHistory.Redo(editor));
+                if (editor.actionHistory.Redo(editor))
                     groupSelect.reset();
             }
         }

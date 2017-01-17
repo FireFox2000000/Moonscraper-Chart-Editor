@@ -65,14 +65,7 @@ public class Mouse : MonoBehaviour {
                     mono.OnSelectableMouseDown();
                 }
             }
-        }
-        // OnSelectableMouseUp
-        if ((Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1)))
-        {
-            dragging = false;
-
-            selectedGameObject = null;
-        }
+        }  
 
         if ((Input.GetMouseButton(0) || Input.GetMouseButton(1)) && world2DPosition != null && world2DPosition != initMouseDragPos)
         {
@@ -97,6 +90,23 @@ public class Mouse : MonoBehaviour {
             {
                 mono.OnSelectableMouseOver();
             }
+        }
+
+        // OnSelectableMouseUp
+        if ((Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1)) && world2DPosition != null)
+        {
+            if (selectedGameObject)
+            {
+                SelectableClick[] monos = selectedGameObject.GetComponents<SelectableClick>();
+                foreach (SelectableClick mono in monos)
+                {
+                    mono.OnSelectableMouseUp();
+                }
+            }
+
+            dragging = false;
+
+            selectedGameObject = null;
         }
     }
 

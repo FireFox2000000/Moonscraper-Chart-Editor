@@ -278,8 +278,6 @@ public class GameplayManager : MonoBehaviour {
             // Handle sustain breaking
             foreach (NoteController note in currentSustains.ToArray())
             {
-                bool isChord = note.note.IsChord;
-
                 if (!note.isActivated && (noteStreak == 0 || (!note.note.IsChord && !ValidateFrets(note.note)) || (note.note.IsChord && note.note.mask != inputMask)))
                 {
                     foreach (Note chordNote in note.note.GetChord())
