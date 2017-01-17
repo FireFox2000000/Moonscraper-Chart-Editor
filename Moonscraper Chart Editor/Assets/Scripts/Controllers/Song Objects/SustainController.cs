@@ -155,6 +155,7 @@ public class SustainController : SelectableClick {
     public void CapSustain(Note cap)
     {
         Note note = nCon.note;
+        Note originalNote = (Note)nCon.note.Clone();
 
         // Cap sustain length
         if (cap.position <= note.position)
@@ -173,6 +174,9 @@ public class SustainController : SelectableClick {
             else
                 note.sustain_length = 0;
         }
+
+        if (note.sustain_length != originalNote.sustain_length)
+            editor.actionHistory.Insert(new ActionHistory.Modify(originalNote, note));
     }
 
     public void ChordSustainDrag()
