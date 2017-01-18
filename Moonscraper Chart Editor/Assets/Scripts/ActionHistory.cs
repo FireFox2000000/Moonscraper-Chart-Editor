@@ -6,12 +6,10 @@ using System;
 public class ActionHistory {
     int historyPoint;
     List<Action[]> actionList;
-    List<int> frameRecord;
 
     public ActionHistory()
     {
         actionList = new List<Action[]>();
-        frameRecord = new List<int>();
         historyPoint = -1;
     }
 
@@ -19,11 +17,9 @@ public class ActionHistory {
     {
         // Clear all actions above the history point
         actionList.RemoveRange(historyPoint + 1, actionList.Count - (historyPoint + 1));
-        frameRecord.RemoveRange(historyPoint + 1, actionList.Count - (historyPoint + 1));
 
         // Add the action in
         actionList.Add(action);
-        frameRecord.Add(Time.frameCount);
         ++historyPoint;
     }
 
@@ -37,15 +33,10 @@ public class ActionHistory {
         if (historyPoint >= 0)
         {
             ChartEditor.editOccurred = true;
-            int frame = frameRecord[historyPoint];
+            for (int i = actionList[historyPoint].Length - 1; i >= 0; --i)
+                actionList[historyPoint][i].Revoke(editor);
 
-            while (historyPoint >= 0 && frameRecord[historyPoint] == frame)
-            {
-                for (int i = actionList[historyPoint].Length - 1; i >= 0; --i)
-                    actionList[historyPoint][i].Revoke(editor);
-
-                --historyPoint;
-            }
+            --historyPoint;
 
             editor.currentChart.updateArrays();
             editor.currentSong.updateArrays();
@@ -61,14 +52,9 @@ public class ActionHistory {
         if (historyPoint + 1 < actionList.Count)
         {
             ChartEditor.editOccurred = true;
-            int frame = frameRecord[historyPoint + 1];
-
-            while (historyPoint + 1 < actionList.Count && frameRecord[historyPoint + 1] == frame)
-            {        
-                ++historyPoint;
-                for (int i = 0; i < actionList[historyPoint].Length; ++i)
-                    actionList[historyPoint][i].Invoke(editor);
-            }
+            ++historyPoint;
+            for (int i = 0; i < actionList[historyPoint].Length; ++i)
+                actionList[historyPoint][i].Invoke(editor);
 
             editor.currentChart.updateArrays();
             editor.currentSong.updateArrays();
