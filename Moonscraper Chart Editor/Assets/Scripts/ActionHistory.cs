@@ -3,23 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class ActionHistory {
+public class ActionHistory
+{
     int historyPoint;
     List<Action[]> actionList;
+    List<int> timestamps;
 
     public ActionHistory()
     {
         actionList = new List<Action[]>();
+        timestamps = new List<int>();
         historyPoint = -1;
     }
 
-    public void Insert (Action[] action)
+    public void Insert(Action[] action)
     {
         // Clear all actions above the history point
         actionList.RemoveRange(historyPoint + 1, actionList.Count - (historyPoint + 1));
+        timestamps.RemoveRange(historyPoint + 1, actionList.Count - (historyPoint + 1));
 
         // Add the action in
         actionList.Add(action);
+        timestamps.Add(Time.frameCount);
         ++historyPoint;
     }
 
@@ -33,10 +38,15 @@ public class ActionHistory {
         if (historyPoint >= 0)
         {
             ChartEditor.editOccurred = true;
-            for (int i = actionList[historyPoint].Length - 1; i >= 0; --i)
-                actionList[historyPoint][i].Revoke(editor);
+            int frame = timestamps[historyPoint];
 
-            --historyPoint;
+            while (historyPoint >= 0 && timestamps[historyPoint] == frame)
+            {
+                for (int i = actionList[historyPoint].Length - 1; i >= 0; --i)
+                    actionList[historyPoint][i].Revoke(editor);
+
+                --historyPoint;
+            }
 
             editor.currentChart.updateArrays();
             editor.currentSong.updateArrays();
@@ -52,9 +62,14 @@ public class ActionHistory {
         if (historyPoint + 1 < actionList.Count)
         {
             ChartEditor.editOccurred = true;
-            ++historyPoint;
-            for (int i = 0; i < actionList[historyPoint].Length; ++i)
-                actionList[historyPoint][i].Invoke(editor);
+            int frame = timestamps[historyPoint + 1];
+
+            while (historyPoint + 1 < actionList.Count && timestamps[historyPoint + 1] == frame)
+            {
+                ++historyPoint;
+                for (int i = 0; i < actionList[historyPoint].Length; ++i)
+                    actionList[historyPoint][i].Invoke(editor);
+            }
 
             editor.currentChart.updateArrays();
             editor.currentSong.updateArrays();
@@ -72,7 +87,7 @@ public class ActionHistory {
         protected Action(SongObject[] _songObjects)
         {
             songObjects = new SongObject[_songObjects.Length];
-            
+
             for (int i = 0; i < _songObjects.Length; ++i)
             {
                 songObjects[i] = _songObjects[i].Clone();
@@ -85,7 +100,7 @@ public class ActionHistory {
 
     public class Add : Action
     {
-        public Add(SongObject[] songObjects) : base(songObjects){}
+        public Add(SongObject[] songObjects) : base(songObjects) { }
         public Add(SongObject songObjects) : base(new SongObject[] { songObjects }) { }
 
         public override void Invoke(ChartEditor editor)
@@ -104,12 +119,12 @@ public class ActionHistory {
 
     public class Delete : Action
     {
-        public Delete(SongObject[] songObjects) : base(songObjects){}
+        public Delete(SongObject[] songObjects) : base(songObjects) { }
         public Delete(SongObject songObjects) : base(new SongObject[] { songObjects }) { }
 
         public override void Invoke(ChartEditor editor)
         {
-            foreach(SongObject songObject in songObjects)
+            foreach (SongObject songObject in songObjects)
             {
                 SongObject foundSongObject;
                 SongObject[] arrayToSearch;
@@ -124,7 +139,7 @@ public class ActionHistory {
                 {
                     if (songObject.GetType().IsSubclassOf(typeof(Event)) || songObject.GetType() == typeof(Event))
                         arrayToSearch = editor.currentSong.events;
-                    
+
                     else
                         arrayToSearch = editor.currentSong.syncTrack;
                 }
@@ -152,7 +167,7 @@ public class ActionHistory {
         public SongObject before { get { return songObjects[0]; } set { songObjects[0] = value.Clone(); } }
         public SongObject after { get { return songObjects[1]; } set { songObjects[1] = value.Clone(); } }
 
-        public Modify(SongObject before, SongObject after) : base(new SongObject[]{ before, after }) {}
+        public Modify(SongObject before, SongObject after) : base(new SongObject[] { before, after }) { }
 
         public override void Invoke(ChartEditor editor)
         {
