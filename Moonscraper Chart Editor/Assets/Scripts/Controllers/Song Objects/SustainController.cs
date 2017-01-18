@@ -72,26 +72,38 @@ public class SustainController : SelectableClick {
 
     public void UpdateSustain()
     {
+        ForwardCap();
+
+        UpdateSustainLength();
+
+        sustainRen.sharedMaterial = Globals.sustainColours[(int)nCon.note.fret_type];
+    }
+
+    public void ForwardCap()
+    {
         Note note = nCon.note;
         Note nextFret;
         if (note.fret_type == Note.Fret_Type.OPEN)
             nextFret = note.next;
         else
-            nextFret = FindNextSameFretWithinSustain();
+        {
+            if (Globals.extendedSustainsEnabled)
+                nextFret = FindNextSameFretWithinSustain();
+            else
+                nextFret = note.nextSeperateNote;
+        }
 
         if (nextFret != null)
         {
-            // Cap sustain length
-            if (nextFret.position < note.position)
-                note.sustain_length = 0;
-            else if (note.position + note.sustain_length > nextFret.position)
-                // Cap sustain
-                note.sustain_length = nextFret.position - note.position;
+            if (Globals.extendedSustainsEnabled)
+                CapSustain(nextFret);
+            else
+                foreach (Note chordNote in note.GetChord())
+                {
+                    if (chordNote.controller != null && chordNote.controller.sustain != null)
+                        chordNote.controller.sustain.CapSustain(nextFret);
+                }
         }
-
-        UpdateSustainLength();
-
-        sustainRen.sharedMaterial = Globals.sustainColours[(int)note.fret_type];
     }
 
     public void UpdateSustainLength()

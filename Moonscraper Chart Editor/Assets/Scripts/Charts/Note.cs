@@ -82,6 +82,28 @@ public class Note : ChartObject
         }
     }
 
+    public Note nextSeperateNote
+    {
+        get
+        {
+            Note nextNote = next;
+            while (nextNote != null && nextNote.position == position)
+                nextNote = nextNote.next;
+            return nextNote;
+        }
+    }
+
+    public Note previousSeperateNote
+    {
+        get
+        {
+            Note previousNote = previous;
+            while (previousNote != null && previousNote.position == position)
+                previousNote = previousNote.previous;
+            return previousNote;
+        }
+    }
+
     public override string GetSaveString()
     {
         int fretNumber = (int)fret_type;
