@@ -44,6 +44,7 @@ public class ChartEditor : MonoBehaviour {
     public Transform mouseYMinLimit;
     public SongPropertiesPanelController songPropertiesCon;
     public AudioSource clapSource;
+    public UnityEngine.Audio.AudioMixerGroup mixer;
 
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
@@ -127,6 +128,7 @@ public class ChartEditor : MonoBehaviour {
         {
             musicSources[i] = gameObject.AddComponent<AudioSource>();
             musicSources[i].volume = 0.5f;
+            musicSources[i].outputAudioMixerGroup = mixer;
         }
 
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
@@ -398,6 +400,7 @@ public class ChartEditor : MonoBehaviour {
     bool cancel;
     public void Play()
     {
+        mixer.audioMixer.SetFloat("Pitch", 1 / (Time.timeScale));
         play.interactable = false;
         Globals.applicationMode = Globals.ApplicationMode.Playing;
         cancel = false;

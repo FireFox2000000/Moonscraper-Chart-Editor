@@ -78,7 +78,7 @@ public class GameplayManager : MonoBehaviour {
 #endif
         // Configure the timing window to take into account hyperspeed changes
         //transform.localScale = new Vector3(transform.localScale.x, initSize * Globals.hyperspeed, transform.localScale.z);
-        hitWindowHeight = initWindowSize * Globals.hyperspeed;
+        hitWindowHeight = initWindowSize * Globals.hyperspeed * Time.timeScale;
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
