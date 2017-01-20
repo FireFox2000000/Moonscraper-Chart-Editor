@@ -153,22 +153,27 @@ public class PlaceNote : PlaceSongObject {
         {
             Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
             mousePosition.x += horizontalMouseOffset;
-            if (mousePosition.x > -0.5f)
-            {
-                if (mousePosition.x < 0.5f)
-                    note.fret_type = Note.Fret_Type.YELLOW;
-                else if (mousePosition.x < 1.5f)
-                    note.fret_type = Note.Fret_Type.BLUE;
-                else
-                    note.fret_type = Note.Fret_Type.ORANGE;
-            }
+            note.fret_type = XPosToFretType(mousePosition.x);
+        }
+    }
+
+    public static Note.Fret_Type XPosToFretType(float xPos)
+    {
+        if (xPos > -0.5f)
+        {
+            if (xPos < 0.5f)
+                return Note.Fret_Type.YELLOW;
+            else if (xPos < 1.5f)
+                return Note.Fret_Type.BLUE;
             else
-            {
-                if (mousePosition.x > -1.5f)
-                    note.fret_type = Note.Fret_Type.RED;
-                else
-                    note.fret_type = Note.Fret_Type.GREEN;
-            }
+                return Note.Fret_Type.ORANGE;
+        }
+        else
+        {
+            if (xPos > -1.5f)
+                return Note.Fret_Type.RED;
+            else
+                return Note.Fret_Type.GREEN;
         }
     }
 
@@ -196,7 +201,7 @@ public class PlaceNote : PlaceSongObject {
 
     protected static void CapNoteCheck(Note noteToAdd)
     {
-        Note[] previousNotes = GetPreviousOfSustains(noteToAdd);
+        Note[] previousNotes = Note.GetPreviousOfSustains(noteToAdd);
 
         if (!Globals.extendedSustainsEnabled)
         {
@@ -222,70 +227,5 @@ public class PlaceNote : PlaceSongObject {
                     prevNote.controller.sustain.CapSustain(noteToAdd);
             }
         }
-    }
-    
-    static Note[] GetPreviousOfSustains(Note startNote)
-    {
-        List<Note> list = new List<Note>();
-
-        Note previous = startNote.previous;
-
-        const int allVisited = 31; // 0001 1111
-        int noteTypeVisited = 0;
-
-        while (previous != null && noteTypeVisited < allVisited)
-        {
-            if (previous.fret_type == Note.Fret_Type.OPEN)
-            {
-                return new Note[] { previous };
-            }
-            else if (previous.position < startNote.position)
-            {
-                switch (previous.fret_type)
-                {
-                    case (Note.Fret_Type.GREEN):
-                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.GREEN)) == 0)
-                        {
-                            list.Add(previous);
-                            noteTypeVisited |= 1 << (int)Note.Fret_Type.GREEN;
-                        }
-                        break;
-                    case (Note.Fret_Type.RED):
-                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.RED)) == 0)
-                        {
-                            list.Add(previous);
-                            noteTypeVisited |= 1 << (int)Note.Fret_Type.RED;
-                        }
-                        break;
-                    case (Note.Fret_Type.YELLOW):
-                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.YELLOW)) == 0)
-                        {
-                            list.Add(previous);
-                            noteTypeVisited |= 1 << (int)Note.Fret_Type.YELLOW;
-                        }
-                        break;
-                    case (Note.Fret_Type.BLUE):
-                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.BLUE)) == 0)
-                        {
-                            list.Add(previous);
-                            noteTypeVisited |= 1 << (int)Note.Fret_Type.BLUE;
-                        }
-                        break;
-                    case (Note.Fret_Type.ORANGE):
-                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.ORANGE)) == 0)
-                        {
-                            list.Add(previous);
-                            noteTypeVisited |= 1 << (int)Note.Fret_Type.ORANGE;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            previous = previous.previous;
-        }
-
-        return list.ToArray();
     }
 }

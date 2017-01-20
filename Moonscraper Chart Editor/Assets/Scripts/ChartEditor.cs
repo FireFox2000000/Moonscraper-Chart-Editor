@@ -632,7 +632,7 @@ public class ChartEditor : MonoBehaviour {
         SectionController controller = CreateSongObject(this.sectionPrefab).GetComponentInChildren<SectionController>();
 
         // Link controller and note together
-        controller.Init(section, timeHandler, guiIndicators);
+        controller.Init(section);
         controller.UpdateSongObject();
         return controller;
     }
@@ -805,58 +805,10 @@ public class ChartEditor : MonoBehaviour {
             if (id == SongObject.ID.Note)
             {
                 // Find the last known note of each fret type to find any sustains that might overlap. Cancel if there's an open note.
-                bool green = false, red = false, yellow = false, blue = false, orange = false, open = false;
-                Note[] notes = (Note[])songObjects;
-
-                int pos = arrayPos - 1;
-                while (pos > 0)
+                foreach(Note prevNote in Note.GetPreviousOfSustains(songObjects[arrayPos] as Note))
                 {
-                    switch (notes[pos].fret_type)
-                    {
-                        case (Note.Fret_Type.GREEN):
-                            if (!green && notes[pos].controller != null)
-                                notes[pos].controller.gameObject.SetActive(true);
-
-                            green = true;
-                            break;
-                        case (Note.Fret_Type.RED):
-                            if (!red && notes[pos].controller != null)
-                                notes[pos].controller.gameObject.SetActive(true);
-
-                            red = true;
-                            break;
-                        case (Note.Fret_Type.YELLOW):
-                            if (!yellow && notes[pos].controller != null)
-                                notes[pos].controller.gameObject.SetActive(true);
-
-                            yellow = true;
-                            break;
-                        case (Note.Fret_Type.BLUE):
-                            if (!blue && notes[pos].controller != null)
-                                notes[pos].controller.gameObject.SetActive(true);
-
-                            blue = true;
-                            break;
-                        case (Note.Fret_Type.ORANGE):
-                            if (!orange && notes[pos].controller != null)
-                                notes[pos].controller.gameObject.SetActive(true);
-
-                            orange = true;
-                            break;
-                        case (Note.Fret_Type.OPEN):
-                            if (!open && notes[pos].controller != null)
-                                notes[pos].controller.gameObject.SetActive(true);
-
-                            open = true;
-                            break;
-                        default:
-                            break;
-                    }
-
-                    if ((green && red && yellow && blue && orange) || open)
-                        break;
-
-                    --pos;
+                    if (prevNote.controller != null)
+                        prevNote.controller.gameObject.SetActive(true);
                 }
             }
             else if (id == SongObject.ID.Starpower)
@@ -869,7 +821,14 @@ public class ChartEditor : MonoBehaviour {
                 }
             }
 
-            enableSongObjects(songObjects, arrayPos, max);
+
+            //enableSongObjects(songObjects, arrayPos, max);
+        }
+
+        foreach (SongObject songObject in SongObject.GetRange(songObjects, min, max))
+        {
+            if (songObject.controller != null && !songObject.controller.gameObject.activeSelf)
+                songObject.controller.gameObject.SetActive(true);
         }
     }
 

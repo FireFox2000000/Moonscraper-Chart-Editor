@@ -533,7 +533,7 @@ public abstract class SongObject
             return new T[0];
         else
         {
-            // Find position may return an object locationed at a lower position than the minimum position
+            // Find position may return an object located at a lower position than the minimum position
             while (minArrayPos < list.Length && list[minArrayPos].position < minPos)
             {
                 ++minArrayPos;
@@ -566,7 +566,12 @@ public abstract class SongObject
             if (minArrayPos > maxArrayPos)
                 return new T[0];
 
-            return list.Skip(minArrayPos).Take(maxArrayPos - minArrayPos + 1).ToArray();
+            T[] rangedList = new T[maxArrayPos - minArrayPos + 1];
+
+            for (int i = 0; i < rangedList.Length; ++i)
+                rangedList[i] = list[minArrayPos + i];
+
+            return rangedList;
         }
     }
 

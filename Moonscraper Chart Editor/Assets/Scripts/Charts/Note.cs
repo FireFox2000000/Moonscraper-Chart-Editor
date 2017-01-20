@@ -322,4 +322,69 @@ public class Note : ChartObject
             return false;
         }
     }
+
+    public static Note[] GetPreviousOfSustains(Note startNote)
+    {
+        List<Note> list = new List<Note>();
+
+        Note previous = startNote.previous;
+
+        const int allVisited = 31; // 0001 1111
+        int noteTypeVisited = 0;
+
+        while (previous != null && noteTypeVisited < allVisited)
+        {
+            if (previous.fret_type == Note.Fret_Type.OPEN)
+            {
+                return new Note[] { previous };
+            }
+            else if (previous.position < startNote.position)
+            {
+                switch (previous.fret_type)
+                {
+                    case (Note.Fret_Type.GREEN):
+                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.GREEN)) == 0)
+                        {
+                            list.Add(previous);
+                            noteTypeVisited |= 1 << (int)Note.Fret_Type.GREEN;
+                        }
+                        break;
+                    case (Note.Fret_Type.RED):
+                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.RED)) == 0)
+                        {
+                            list.Add(previous);
+                            noteTypeVisited |= 1 << (int)Note.Fret_Type.RED;
+                        }
+                        break;
+                    case (Note.Fret_Type.YELLOW):
+                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.YELLOW)) == 0)
+                        {
+                            list.Add(previous);
+                            noteTypeVisited |= 1 << (int)Note.Fret_Type.YELLOW;
+                        }
+                        break;
+                    case (Note.Fret_Type.BLUE):
+                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.BLUE)) == 0)
+                        {
+                            list.Add(previous);
+                            noteTypeVisited |= 1 << (int)Note.Fret_Type.BLUE;
+                        }
+                        break;
+                    case (Note.Fret_Type.ORANGE):
+                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.ORANGE)) == 0)
+                        {
+                            list.Add(previous);
+                            noteTypeVisited |= 1 << (int)Note.Fret_Type.ORANGE;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            previous = previous.previous;
+        }
+
+        return list.ToArray();
+    }
 }

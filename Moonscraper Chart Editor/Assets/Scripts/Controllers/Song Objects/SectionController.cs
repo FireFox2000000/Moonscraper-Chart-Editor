@@ -6,7 +6,6 @@ public class SectionController : SongObjectController
 {
     public Section section { get { return (Section)songObject; } set { songObject = value; } }
     public float position = 4.5f;
-    public SectionGuiController sectionGui;
     public Text sectionText;
 
     public override void UpdateSongObject()
@@ -21,9 +20,6 @@ public class SectionController : SongObjectController
 
     public override void Delete(bool update = true)
     {
-        if (sectionGui)
-            Destroy(sectionGui.gameObject);
-
         section.song.Remove(section, update);
   
         Destroy(gameObject);
@@ -31,20 +27,14 @@ public class SectionController : SongObjectController
 
     public override void DestroyGameObject()
     {
-        if (sectionGui)
-            Destroy(sectionGui.gameObject);
-
         base.DestroyGameObject();
     }
 
-    public void Init(Section _section, TimelineHandler timelineHandler, GameObject bpmGuiParent)
+    public void Init(Section _section)
     {
         base.Init(_section);
         section = _section;
         section.controller = this;
-
-        if (sectionGui)
-            sectionGui.Init(_section, timelineHandler, bpmGuiParent);
     }
 
     public override void OnSelectableMouseDrag()

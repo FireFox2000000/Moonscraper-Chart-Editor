@@ -8,12 +8,18 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     [SerializeField]
     GameObject handle;
     public UnityEngine.UI.Text percentage;
+    public GameObject sectionIndicatorPrefab;
+
+    GameObject indicators;
+    SectionGuiController[] sectionIndicatorPool = new SectionGuiController[100];
 
     RectTransform rectTransform;
     MovementController movement;
 
     float halfHeight;
     float scaledHalfHeight;
+
+    ChartEditor editor;
 
     // Value between 0 and 1
     public float handlePosRound
@@ -50,12 +56,51 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
     }
 
+    void Start()
+    {
+        indicators = new GameObject("Indicators");
+        indicators.transform.SetParent(this.transform.parent);
+        indicators.transform.localPosition = Vector3.zero;
+        indicators.transform.localScale = new Vector3(1, 1, 1);
+        indicators.transform.SetSiblingIndex(1);
+
+        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+
+        for (int i = 0; i < sectionIndicatorPool.Length; ++i)
+        {
+            GameObject sectionIndicator = Instantiate(sectionIndicatorPrefab);
+            sectionIndicator.gameObject.transform.SetParent(indicators.transform);
+
+            sectionIndicatorPool[i] = sectionIndicator.GetComponent<SectionGuiController>();
+            sectionIndicatorPool[i].timelineHandler = this;
+            sectionIndicatorPool[i].gameObject.SetActive(false);
+        }
+    }
+
     void Update()
     {
         halfHeight = rectTransform.sizeDelta.y / 2.0f;
         scaledHalfHeight = halfHeight * transform.lossyScale.y;
 
         percentage.text = ((int)(handlePosRound * 100)).ToString() + "%";
+
+        // Set the sections
+        for (int i = 0; i < editor.currentSong.sections.Length; ++i)
+        {
+            if (i < sectionIndicatorPool.Length)
+            {
+                sectionIndicatorPool[i].Init(editor.currentSong.sections[i]);
+                sectionIndicatorPool[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                while (i < sectionIndicatorPool.Length)
+                {
+                    sectionIndicatorPool[i++].gameObject.SetActive(false);
+                }
+                break;
+            }
+        }
     }
 
     public void OnDrag(PointerEventData eventData)

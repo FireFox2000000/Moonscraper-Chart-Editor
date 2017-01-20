@@ -5,7 +5,7 @@ using System.Collections;
 public class SectionGuiController : MonoBehaviour
 {
     Section section;
-    TimelineHandler timelineHandler;
+    public TimelineHandler timelineHandler;
     ChartEditor editor;
     MovementController movement;
     UnityEngine.UI.Text timelineText;
@@ -17,31 +17,35 @@ public class SectionGuiController : MonoBehaviour
         timelineText = GetComponentInChildren<UnityEngine.UI.Text>();
     }
 
-    void Update()
+    void LateUpdate()
     {
         transform.localPosition = GetLocalPos();
-        timelineText.text = section.title;
+        if (section != null)
+            timelineText.text = section.title;
     }
 
-	public void Init(Section _section, TimelineHandler _timelineHandler, GameObject bpmGuiParent)
+	public void Init(Section _section)
     {
         section = _section;
-        timelineHandler = _timelineHandler;
 
-        transform.SetParent(bpmGuiParent.transform);
-        transform.localPosition = Vector3.zero;
+        transform.localPosition = GetLocalPos();
         transform.localScale = new Vector3(1, 1, 1);
     }
 
     public Vector3 GetLocalPos()
     {
-        float time = section.song.ChartPositionToTime(section.position, section.song.resolution);
-        float endTime = section.song.length;
+        if (section != null && section.song != null)
+        {
+            float time = section.song.ChartPositionToTime(section.position, section.song.resolution);
+            float endTime = section.song.length;
 
-        if (endTime > 0)
-            return timelineHandler.handlePosToLocal(time / endTime);
-        else
-            return Vector3.zero;
+            if (endTime > 0)
+                return timelineHandler.handlePosToLocal(time / endTime);
+            else
+                return Vector3.zero;
+        }
+
+        return Vector3.zero;
     }
 
     public void JumpToPos()

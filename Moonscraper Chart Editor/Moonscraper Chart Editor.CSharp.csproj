@@ -122,6 +122,7 @@
     <Compile Include="Assets\Scripts\Tools\Eraser.cs" />
     <Compile Include="Assets\Scripts\Tools\GroupSelect.cs" />
     <Compile Include="Assets\Scripts\Tools\ObjectlessTool.cs" />
+    <Compile Include="Assets\Scripts\Tools\Placeable\GrabMove\GroupMove.cs" />
     <Compile Include="Assets\Scripts\Tools\Placeable\GrabMove\MoveBPM.cs" />
     <Compile Include="Assets\Scripts\Tools\Placeable\GrabMove\MoveNote.cs" />
     <Compile Include="Assets\Scripts\Tools\Placeable\GrabMove\MoveSection.cs" />
