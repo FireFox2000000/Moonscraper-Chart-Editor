@@ -20,8 +20,6 @@ public class ChartEditor : MonoBehaviour {
     public GameObject sectionPrefab;
     public GameObject bpmPrefab;
     public GameObject tsPrefab;
-    [Header("Indicator Parents")]
-    public GameObject guiIndicators;
     [Header("Inspectors")]
     public NotePropertiesPanelController noteInspector;
     public SectionPropertiesPanelController sectionInspector;
@@ -549,10 +547,6 @@ public class ChartEditor : MonoBehaviour {
         foreach (Transform songObject in songObjectParent.transform)
         {
             Destroy(songObject.gameObject);
-        }
-        foreach (Transform child in guiIndicators.transform)
-        {
-            Destroy(child.gameObject);
         }
 
 #if TIMING_DEBUG

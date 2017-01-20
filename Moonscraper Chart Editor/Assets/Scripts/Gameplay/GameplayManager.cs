@@ -36,7 +36,6 @@ public class GameplayManager : MonoBehaviour {
     float hitWindowHeight = 0.19f;
     float initWindowSize;
     float initSize;
-    float initYPos;
     float previousStrumValue;
     int previousInputMask;
 
@@ -54,7 +53,6 @@ public class GameplayManager : MonoBehaviour {
         previousInputMask = GetFretInputMask();
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
         initWindowSize = hitWindowHeight;
-        initYPos = transform.localPosition.y;
 
         initSize = transform.localScale.y;
         transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
@@ -81,7 +79,6 @@ public class GameplayManager : MonoBehaviour {
         // Configure the timing window to take into account hyperspeed changes
         //transform.localScale = new Vector3(transform.localScale.x, initSize * Globals.hyperspeed, transform.localScale.z);
         hitWindowHeight = initWindowSize * Globals.hyperspeed;
-        //transform.localPosition = new Vector3(transform.localPosition.x, initYPos * Globals.hyperspeed, transform.localPosition.z);
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {

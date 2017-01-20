@@ -11,17 +11,17 @@ public class StarpowerGUIController : TimelineIndicator {
 
         // Change scale to represent starpower length
         Vector3 spLengthLocalPos = GetLocalPos(starpower.position + starpower.length, starpower.song);
-        float diff = spLengthLocalPos.y - transform.localPosition.y;
+        float size = spLengthLocalPos.y - transform.localPosition.y;
 
         Vector3 scale = transform.localScale;
         Vector3 position = transform.localPosition;
 
-        scale.y = diff - 1.0f;      // Offset because it extends past above and beyond for some reason. Possibly look into this later.
+        scale.y = size;      // Offset because it extends past above and beyond for some reason. Possibly look into this later.
 
         if (scale.y < MIN_SIZE)
             scale.y = MIN_SIZE;
 
-        position.y += diff / 2.0f;
+        position.y += size / 2.0f;
 
         transform.localPosition = position;
         transform.localScale = scale;
