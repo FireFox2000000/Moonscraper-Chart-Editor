@@ -814,13 +814,12 @@ public class ChartEditor : MonoBehaviour {
             else if (id == SongObject.ID.Starpower)
             {
                 // Render previous sp sustain in case of overlap into current position
-                if (songObjects[arrayPos].position > min && arrayPos > 0)
+                if (arrayPos >= 0)
                 {
-                    if (songObjects[arrayPos - 1].controller != null)
-                        songObjects[arrayPos - 1].controller.gameObject.SetActive(true);
+                    if (songObjects[arrayPos].controller != null)
+                        songObjects[arrayPos].controller.gameObject.SetActive(true);
                 }
             }
-
 
             //enableSongObjects(songObjects, arrayPos, max);
         }

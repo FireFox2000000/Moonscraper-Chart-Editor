@@ -98,12 +98,14 @@
     <Compile Include="Assets\Scripts\Controllers\Song Objects\BPMController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\NoteController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SectionController.cs" />
-    <Compile Include="Assets\Scripts\Controllers\Song Objects\SectionGuiController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SongObjectController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\StarpowerController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\StarpowerTailController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\StrikelineAudioController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\SustainController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Song Objects\Timeline Indicators\SectionGuiController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Song Objects\Timeline Indicators\StarpowerGUIController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Song Objects\Timeline Indicators\TimelineIndicator.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\TimesignatureController.cs" />
     <Compile Include="Assets\Scripts\Controllers\TimelineMovementController.cs" />
     <Compile Include="Assets\Scripts\DialogBox.cs" />
