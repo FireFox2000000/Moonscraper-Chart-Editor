@@ -95,7 +95,7 @@ public class SustainController : SelectableClick {
 
         if (nextFret != null)
         {
-            if (nextFret.position > note.position + note.sustain_length)
+            if (nextFret.position < note.position + note.sustain_length)
                 note.sustain_length = nextFret.position - note.position;
                     /*
             if (Globals.extendedSustainsEnabled)

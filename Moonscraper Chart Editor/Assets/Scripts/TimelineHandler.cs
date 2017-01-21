@@ -109,7 +109,8 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         percentage.text = ((int)(handlePosRound * 100)).ToString() + "%";
 
         // Set the sections
-        for (int i = 0; i < editor.currentSong.sections.Length; ++i)
+        int i;
+        for (i = 0; i < editor.currentSong.sections.Length; ++i)
         {
             if (i < sectionIndicatorPool.Length)
             {
@@ -117,17 +118,18 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
                 sectionIndicatorPool[i].gameObject.SetActive(true);
             }
             else
-            {
-                while (i < sectionIndicatorPool.Length)
-                {
-                    sectionIndicatorPool[i++].gameObject.SetActive(false);
-                }
+            { 
                 break;
             }
         }
 
+        while (i < sectionIndicatorPool.Length)
+        {
+            sectionIndicatorPool[i++].gameObject.SetActive(false);
+        }
+
         // Set the sp
-        for (int i = 0; i < editor.currentChart.starPower.Length; ++i)
+        for (i = 0; i < editor.currentChart.starPower.Length; ++i)
         {
             if (i < starpowerIndicatorPool.Length)
             {
@@ -135,13 +137,14 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
                 starpowerIndicatorPool[i].gameObject.SetActive(true);
             }
             else
-            {
-                while (i < starpowerIndicatorPool.Length)
-                {
-                    starpowerIndicatorPool[i++].gameObject.SetActive(false);
-                }
+            {               
                 break;
             }
+        }
+
+        while (i < starpowerIndicatorPool.Length)
+        {
+            starpowerIndicatorPool[i++].gameObject.SetActive(false);
         }
     }
 
