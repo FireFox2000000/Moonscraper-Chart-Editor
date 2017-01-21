@@ -95,6 +95,9 @@ public class SustainController : SelectableClick {
 
         if (nextFret != null)
         {
+            if (nextFret.position > note.position + note.sustain_length)
+                note.sustain_length = nextFret.position - note.position;
+                    /*
             if (Globals.extendedSustainsEnabled)
                 CapSustain(nextFret);
             else
@@ -102,7 +105,7 @@ public class SustainController : SelectableClick {
                 {
                     if (chordNote.controller != null && chordNote.controller.sustain != null)
                         chordNote.controller.sustain.CapSustain(nextFret);
-                }
+                }*/
         }
     }
 
