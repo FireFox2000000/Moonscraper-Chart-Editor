@@ -201,6 +201,8 @@ public class PlaceNote : PlaceSongObject {
 
     protected static void CapNoteCheck(Note noteToAdd)
     {
+        List<ActionHistory.Action> actionRecord = new List<ActionHistory.Action>();
+
         Note[] previousNotes = Note.GetPreviousOfSustains(noteToAdd);
 
         if (!Globals.extendedSustainsEnabled)

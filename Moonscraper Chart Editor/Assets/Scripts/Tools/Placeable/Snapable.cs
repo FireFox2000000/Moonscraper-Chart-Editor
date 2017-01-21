@@ -54,15 +54,15 @@ public abstract class Snapable : MonoBehaviour {
     public static uint ChartPositionToSnappedChartPosition(uint chartPosition, int step, float resolution)
     {
         // Snap position based on step
-        int factor = (int)(Globals.FULL_STEP / step * resolution / Globals.STANDARD_BEAT_RESOLUTION);
-        float divisor = (float)chartPosition / (float)factor;
-        uint lowerBound = (uint)((int)divisor * factor);
+        float factor = Globals.FULL_STEP / (float)step * resolution / Globals.STANDARD_BEAT_RESOLUTION;
+        float divisor = chartPosition / factor;
+        float lowerBound = (int)divisor * factor;
         float remainder = divisor - (int)divisor;
 
         if (remainder > 0.5f)
-            chartPosition = lowerBound + (uint)factor;
+            chartPosition = (uint)Mathf.Round(lowerBound + factor);
         else
-            chartPosition = (lowerBound);
+            chartPosition = (uint)Mathf.Round(lowerBound);
 
         return chartPosition;
     }

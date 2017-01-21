@@ -72,7 +72,7 @@ public class SustainController : SelectableClick {
 
     public void UpdateSustain()
     {
-        ForwardCap();
+        //ForwardCap();
 
         UpdateSustainLength();
 

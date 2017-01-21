@@ -459,7 +459,7 @@ public class Song {
 
     static uint time_to_dis(float time_start, float time_end, float resolution, float bpm)
     {
-        return (uint)((time_end - time_start) * bpm / 60.0f * resolution);
+        return (uint)Mathf.Round((time_end - time_start) * bpm / 60.0f * resolution);
     }
 
     void submitChartData(string dataName, List<string> stringData, string filePath = "")
