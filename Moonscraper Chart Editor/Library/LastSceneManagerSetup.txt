@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/test.unity
+- path: Assets/Scenes/Load Custom Resources.unity
   isLoaded: 1
   isActive: 1

@@ -195,7 +195,7 @@ public class Globals : MonoBehaviour {
         configFileExisted = System.IO.File.Exists("config.ini");
 
         iniparse.Open("config.ini");
-
+        
         hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
         audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 200);
         clapProperties = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);

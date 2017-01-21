@@ -230,11 +230,11 @@ public class Song {
             {
                 throw new System.Exception("Invalid file extension");
             }
-
+            
             audioLocations[audioStreamArrayPos] = Path.GetFullPath(filepath);
-
+      
             WWW www = new WWW("file://" + filepath);
-
+            
             while (!www.isDone)
             {
 #if LOAD_AUDIO_ASYNC
@@ -357,12 +357,12 @@ public class Song {
     {
         //if (worldYPosition < 0)
             //worldYPosition = 0;
-        return worldYPosition / Globals.hyperspeed;
+        return worldYPosition / (Globals.hyperspeed / Time.timeScale);
     }
 
     public static float TimeToWorldYPosition(float time)
     {
-        return time * Globals.hyperspeed;
+        return time * Globals.hyperspeed / Time.timeScale;
     }
 
     public float ChartPositionToTime(uint position, float resolution)

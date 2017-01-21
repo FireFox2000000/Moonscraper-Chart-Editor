@@ -21,8 +21,14 @@ public class BuildDocumentation  {
         string path = EditorUtility.SaveFolderPanel("Choose Location of Built Game", "", "");
         
         if (path != string.Empty)
-        {      
-            string[] levels = new string[] { "Assets/Scenes/test.unity" };
+        {
+            string[] levels = new string[EditorBuildSettings.scenes.Length];
+
+            for (int i = 0; i < levels.Length; ++i)
+            {             
+                levels[i] = EditorBuildSettings.scenes[i].path;
+                UnityEngine.Debug.Log(levels[i]);
+            }
 
             // Build player.
             BuildPipeline.BuildPlayer(levels, path + "/Moonscraper Chart Editor.exe", buildTarget, BuildOptions.None);
