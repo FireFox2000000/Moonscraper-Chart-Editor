@@ -49,24 +49,20 @@ public class ClipboardObjectController : Snapable {
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && clipboard.data.Length > 0)
         {
+            List<ActionHistory.Action> record = new List<ActionHistory.Action>();
             Rect collisionRect = clipboard.GetCollisionRect(chartLocationToPaste, editor.currentSong);
             uint colliderChartDistance = clipboard.areaChartPosMax - clipboard.areaChartPosMin;
-
-            List<SongObject> objectsGettingDeleted = new List<SongObject>();
 
             // Overwrite any objects in the clipboard space
             foreach (ChartObject chartObject in editor.currentChart.chartObjects)
             {
                 if (chartObject.controller && chartObject.position >= chartLocationToPaste && chartObject.position < chartLocationToPaste + colliderChartDistance && chartObject.controller.AABBcheck(collisionRect))
                 {
-                    objectsGettingDeleted.Add(chartObject);
                     chartObject.controller.Delete(false);
+
+                    record.Add(new ActionHistory.Delete(chartObject));
                 }
-            }
-
-            //editor.actionHistory.Insert(new ActionHistory.Delete(actions.ToArray()));
-
-            List<SongObject> objectsGettingAdded = new List<SongObject>();
+            }           
 
             // Paste the new objects in
             foreach (ChartObject clipboardChartObject in clipboard.data)
@@ -75,14 +71,20 @@ public class ClipboardObjectController : Snapable {
 
                 objectToAdd.position = chartLocationToPaste + clipboardChartObject.position - clipboard.areaChartPosMin;
 
-                PlaceSongObject.AddObjectToCurrentEditor(objectToAdd, editor, false);
+                if (objectToAdd.GetType() == typeof(Note))
+                {
+                    record.AddRange(PlaceNote.AddObjectToCurrentChart((Note)objectToAdd, editor, false));
+                }
+                else
+                {
+                    PlaceSongObject.AddObjectToCurrentEditor(objectToAdd, editor, false);
 
-                objectsGettingAdded.Add(objectToAdd);
-
-                editor.currentChart.updateArrays();
+                    record.Add(new ActionHistory.Add(objectToAdd));
+                }
+                
             }
-
-            editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(objectsGettingDeleted.ToArray()), new ActionHistory.Add(objectsGettingAdded.ToArray()) });
+            editor.currentChart.updateArrays();
+            editor.actionHistory.Insert(record.ToArray());
         }
         // else don't bother pasting
     }

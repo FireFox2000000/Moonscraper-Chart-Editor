@@ -44,7 +44,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             }
             else
             {
-                if (!forcedToggle.interactable)
+                if (!forcedToggle.interactable && Toolpane.currentTool == Toolpane.Tools.Note)
                 {
                     forcedToggle.isOn = prevForcedProperty;
                     setForced();
