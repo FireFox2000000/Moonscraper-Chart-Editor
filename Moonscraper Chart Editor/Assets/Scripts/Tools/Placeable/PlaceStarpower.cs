@@ -94,4 +94,14 @@ public class PlaceStarpower : PlaceSongObject {
         editor.CreateStarpowerObject(starpowerToAdd);
         editor.currentSelectedObject = starpowerToAdd;
     }
+
+    protected static ActionHistory.Action CapSP(StarPower sp)
+    {
+        // Cap the previous sp
+
+        // Cap own sp
+
+
+        return null;
+    }
 }

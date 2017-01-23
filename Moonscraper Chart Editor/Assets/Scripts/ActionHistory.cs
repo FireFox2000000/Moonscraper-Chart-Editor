@@ -50,6 +50,7 @@ public class ActionHistory
 
             editor.currentChart.updateArrays();
             editor.currentSong.updateArrays();
+            editor.currentSelectedObject = null;
 
             return true;
         }
@@ -73,6 +74,7 @@ public class ActionHistory
 
             editor.currentChart.updateArrays();
             editor.currentSong.updateArrays();
+            editor.currentSelectedObject = null;
 
             return true;
         }

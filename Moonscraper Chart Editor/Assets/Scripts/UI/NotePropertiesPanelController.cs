@@ -124,6 +124,10 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     {
         if (currentNote == prevNote)
         {
+            System.Collections.Generic.List<ActionHistory.Action> record = new System.Collections.Generic.List<ActionHistory.Action>();
+            foreach (Note chordNote in currentNote.GetChord())
+                record.Add(new ActionHistory.Delete(chordNote));
+
             if (currentNote != null)
             {
                 if (tapToggle.isOn)
@@ -132,7 +136,13 @@ public class NotePropertiesPanelController : PropertiesPanelController {
                     currentNote.flags = currentNote.flags & ~Note.Flags.TAP;
             }
 
-            setFlags(currentNote);
+            setFlags(currentNote);          
+
+            foreach (Note chordNote in currentNote.GetChord())
+                record.Add(new ActionHistory.Add(chordNote));
+
+            if (Toolpane.currentTool == Toolpane.Tools.Cursor)
+                editor.actionHistory.Insert(record.ToArray());
         }
     }
 
@@ -140,15 +150,25 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     {
         //if (currentNote == prevNote)
         //{
-            if (currentNote != null)
-            {
-                if (forcedToggle.isOn)
-                    currentNote.flags = currentNote.flags | Note.Flags.FORCED;
-                else
-                    currentNote.flags = currentNote.flags & ~Note.Flags.FORCED;
-            }
+        System.Collections.Generic.List<ActionHistory.Action> record = new System.Collections.Generic.List<ActionHistory.Action>();
+        foreach (Note chordNote in currentNote.GetChord())
+            record.Add(new ActionHistory.Delete(chordNote));
 
-            setFlags(currentNote);
+        if (currentNote != null)
+        {
+            if (forcedToggle.isOn)
+                currentNote.flags = currentNote.flags | Note.Flags.FORCED;
+            else
+                currentNote.flags = currentNote.flags & ~Note.Flags.FORCED;
+        }
+
+        setFlags(currentNote);
+
+        foreach (Note chordNote in currentNote.GetChord())
+            record.Add(new ActionHistory.Add(chordNote));
+
+        if (currentNote == prevNote && Toolpane.currentTool == Toolpane.Tools.Cursor)
+            editor.actionHistory.Insert(record.ToArray());
         //}
     }
 
@@ -158,5 +178,17 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             note.applyFlagsToChord();
 
         ChartEditor.editOccurred = true;
+    }
+
+    Note[] CloneChord(Note note)
+    {
+        Note[] chord = note.GetChord();
+        Note[] original = new Note[chord.Length];
+        for (int i = 0; i < chord.Length; ++i)
+        {
+            original[i] = (Note)chord[i].Clone();
+        }
+
+        return original;
     }
 }
