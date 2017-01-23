@@ -159,6 +159,7 @@
     <Compile Include="Assets\Scripts\UI\TimesignaturePropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\ToolPanelController.cs" />
     <Compile Include="Assets\Scripts\Utility.cs" />
+    <Compile Include="Assets\Scripts\WaveformDraw.cs" />
     <Compile Include="Assets\XInputDotNet\Examples\XInputTestCS.cs" />
     <Compile Include="Assets\_MK\_MKGlow\_Internal\MKGlow.cs" />
   </ItemGroup>

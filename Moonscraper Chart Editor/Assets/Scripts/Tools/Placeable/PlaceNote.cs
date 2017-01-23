@@ -216,10 +216,29 @@ public class PlaceNote : PlaceSongObject {
         NoteController nCon = editor.CreateNoteObject(noteToAdd);
         nCon.standardOverwriteOpen();
 
-
         noteRecord.AddRange(CapNoteCheck(noteToAdd));
         noteRecord.AddRange(ForwardCap(noteToAdd));     // Do this due to pasting from the clipboard
+
+        // Check if the automatic un-force will kick in
+        ActionHistory.Action forceCheck = AutoForcedCheck(noteToAdd);
+        if (forceCheck != null)
+            noteRecord.Insert(0, forceCheck);           // Insert at the start so that the modification happens at the end of the undo function, otherwise the natural force check prevents it from being forced
+
         return noteRecord.ToArray();
+    }
+
+    protected static ActionHistory.Action AutoForcedCheck(Note note)
+    {
+        Note next = note.nextSeperateNote;
+        if (next != null && (next.flags & Note.Flags.FORCED) == Note.Flags.FORCED && next.CannotBeForcedCheck)
+        {           
+            Note originalNext = (Note)next.Clone();
+            next.flags &= ~Note.Flags.FORCED;
+
+            return new ActionHistory.Modify(originalNext, next);
+        }
+        else
+            return null;
     }
 
     protected static ActionHistory.Action[] ForwardCap(Note note)

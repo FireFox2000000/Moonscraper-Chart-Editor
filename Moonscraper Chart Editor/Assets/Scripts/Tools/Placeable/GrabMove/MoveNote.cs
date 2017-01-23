@@ -53,6 +53,11 @@ public class MoveNote : PlaceNote {
         noteRecord.AddRange(CapNoteCheck(noteToAdd));
         noteRecord.AddRange(ForwardCap(noteToAdd));     // Do this due to pasting from the clipboard
 
+        // Check if the automatic un-force will kick in
+        ActionHistory.Action forceCheck = AutoForcedCheck(noteToAdd);
+        if (forceCheck != null)
+            noteRecord.Insert(0, forceCheck);           // Insert at the start so that the modification happens at the end of the undo function, otherwise the natural force check prevents it from being forced
+
         editor.currentSelectedObject = noteToAdd;
         editor.actionHistory.Insert(noteRecord.ToArray());
     }
