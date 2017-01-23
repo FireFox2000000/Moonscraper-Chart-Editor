@@ -127,23 +127,13 @@ public class PlaceNoteController : ObjectlessTool {
             }
         }
 
-        // Determine action history
+        // Place the notes down manuall then determine action history
         if (PlaceNote.addNoteCheck)
         {
             foreach (PlaceNote placeNote in activeNotes)
             { 
                 // Find if there's already note in that position. If the notes match exactly, add it to the list, but if it's the same, don't bother.
-                int arrayPos = SongObject.FindObjectPosition(placeNote.note, editor.currentChart.notes);
-                if (arrayPos != Globals.NOTFOUND)       // Found an object that matches
-                {
-                    if (!placeNote.note.AllValuesCompare(editor.currentChart.notes[arrayPos]))
-                        // Object will changed, therefore record
-                        draggedNotesRecord.Add(new ActionHistory.Modify(editor.currentChart.notes[arrayPos], placeNote.note));
-                }
-                else
-                {
-                    draggedNotesRecord.Add(new ActionHistory.Add(placeNote.note));
-                }
+                draggedNotesRecord.AddRange(placeNote.AddNoteWithRecord());
             }
         }
         else

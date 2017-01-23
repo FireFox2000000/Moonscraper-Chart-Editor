@@ -33,7 +33,7 @@ public class PlaceNote : PlaceSongObject {
     {
         if (addNoteCheck)
         {
-            AddObject();
+            //AddObject();
         }
     }
 
@@ -177,6 +177,11 @@ public class PlaceNote : PlaceSongObject {
         }
     }
 
+    public ActionHistory.Action[] AddNoteWithRecord()
+    {
+        return AddObjectToCurrentChart(note, editor);
+    }
+
     protected override void AddObject()
     {
         AddObjectToCurrentChart(note, editor);
@@ -189,17 +194,34 @@ public class PlaceNote : PlaceSongObject {
         CapNoteCheck(noteToAdd);  */
     }
 
-    public static void AddObjectToCurrentChart(Note note, ChartEditor editor, bool update = true)
+    public static ActionHistory.Action[] AddObjectToCurrentChart(Note note, ChartEditor editor, bool update = true)
     {
+        List<ActionHistory.Action> noteRecord = new List<ActionHistory.Action>();
+
+        int arrayPos = SongObject.FindObjectPosition(note, editor.currentChart.notes);
+        if (arrayPos != Globals.NOTFOUND)       // Found an object that matches
+        {
+            if (!note.AllValuesCompare(editor.currentChart.notes[arrayPos]))
+                // Object will changed, therefore record
+                noteRecord.Add(new ActionHistory.Modify(editor.currentChart.notes[arrayPos], note));
+        }
+        else
+        {
+            noteRecord.Add(new ActionHistory.Add(note));
+        }
+
         Note noteToAdd = new Note(note);
         editor.currentChart.Add(noteToAdd, update);
         NoteController nCon = editor.CreateNoteObject(noteToAdd);
         nCon.standardOverwriteOpen();
 
-        CapNoteCheck(noteToAdd);
+        noteRecord.AddRange(CapNoteCheck(noteToAdd));
+        return noteRecord.ToArray();
+
+        // Need to implement forward check
     }
 
-    protected static void CapNoteCheck(Note noteToAdd)
+    protected static ActionHistory.Action[] CapNoteCheck(Note noteToAdd)
     {
         List<ActionHistory.Action> actionRecord = new List<ActionHistory.Action>();
 
@@ -211,7 +233,11 @@ public class PlaceNote : PlaceSongObject {
             foreach (Note prevNote in previousNotes)
             {
                 if (prevNote.controller != null)
-                    prevNote.controller.sustain.CapSustain(noteToAdd);
+                {
+                    ActionHistory.Action action = prevNote.controller.sustain.CapSustain(noteToAdd);
+                    if (action != null)
+                        actionRecord.Add(action);
+                }
             }
 
             foreach(Note chordNote in noteToAdd.GetChord())
@@ -226,8 +252,14 @@ public class PlaceNote : PlaceSongObject {
             foreach (Note prevNote in previousNotes)
             {
                 if (prevNote.controller != null && (prevNote.fret_type == noteToAdd.fret_type || prevNote.fret_type == Note.Fret_Type.OPEN))
-                    prevNote.controller.sustain.CapSustain(noteToAdd);
+                {
+                    ActionHistory.Action action = prevNote.controller.sustain.CapSustain(noteToAdd);
+                    if (action != null)
+                        actionRecord.Add(action);
+                }
             }
         }
+
+        return actionRecord.ToArray();
     }
 }

@@ -61,7 +61,6 @@ public class Song {
     const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";  
 
     public readonly string[] instrumentTypes = { "Bass", "Rhythm" };
-    public readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3" };
 
     public bool IsSaving
     {
@@ -226,7 +225,7 @@ public class Song {
 #if TIMING_DEBUG
             float time = Time.realtimeSinceStartup;
 #endif
-            if (!Utility.validateExtension(filepath, validAudioExtensions))
+            if (!Utility.validateExtension(filepath, Globals.validAudioExtensions))
             {
                 throw new System.Exception("Invalid file extension");
             }

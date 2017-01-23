@@ -7,6 +7,8 @@ public class Globals : MonoBehaviour {
     public static readonly float STANDARD_BEAT_RESOLUTION = 192.0f;
     public static readonly string LINE_ENDING = "\r\n";
 
+    public static readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3" };
+
     [Header("Initialize GUI")]
     public Toggle clapToggle;
     public Toggle viewModeToggle;
