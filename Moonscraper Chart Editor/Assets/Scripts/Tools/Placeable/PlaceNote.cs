@@ -211,14 +211,41 @@ public class PlaceNote : PlaceSongObject {
         }
 
         Note noteToAdd = new Note(note);
+
         editor.currentChart.Add(noteToAdd, update);
         NoteController nCon = editor.CreateNoteObject(noteToAdd);
         nCon.standardOverwriteOpen();
 
-        noteRecord.AddRange(CapNoteCheck(noteToAdd));
-        return noteRecord.ToArray();
 
-        // Need to implement forward check
+        noteRecord.AddRange(CapNoteCheck(noteToAdd));
+        noteRecord.AddRange(ForwardCap(noteToAdd));     // Do this due to pasting from the clipboard
+        return noteRecord.ToArray();
+    }
+
+    protected static ActionHistory.Action[] ForwardCap(Note note)
+    {
+        List<ActionHistory.Action> actionRecord = new List<ActionHistory.Action>();
+        Note next;
+
+        if (Globals.extendedSustainsEnabled)
+        {
+            next = note.nextSeperateNote;         
+        }
+        else
+        {
+            next = note.next;
+            while (next != null && next.fret_type != note.fret_type)
+                next = next.next;
+        }
+
+        if (next != null)
+        {
+            ActionHistory.Action action = note.controller.sustain.CapSustain(next);
+            if (action != null)
+                actionRecord.Add(action);
+        }
+
+        return actionRecord.ToArray();
     }
 
     protected static ActionHistory.Action[] CapNoteCheck(Note noteToAdd)

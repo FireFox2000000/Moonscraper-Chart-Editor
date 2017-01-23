@@ -78,23 +78,7 @@ public class ClipboardObjectController : Snapable {
                 PlaceSongObject.AddObjectToCurrentEditor(objectToAdd, editor, false);
 
                 objectsGettingAdded.Add(objectToAdd);
-                /*
-                editor.currentChart.Add(objectToAdd, false);
 
-                switch (clipboardChartObject.classID)
-                {
-                    case ((int)SongObject.ID.Note):
-                        editor.CreateNoteObject((Note)objectToAdd);
-                        break;
-                    case ((int)SongObject.ID.Starpower):
-                        editor.CreateStarpowerObject((StarPower)objectToAdd);
-                        break;
-                    case ((int)SongObject.ID.ChartEvent):
-                        break;
-                    default:
-                        continue;
-                }
-                */
                 editor.currentChart.updateArrays();
             }
 
