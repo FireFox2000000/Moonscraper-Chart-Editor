@@ -30,13 +30,30 @@ public class MoveNote : PlaceNote {
 
     protected override void AddObject()
     {
+        System.Collections.Generic.List<ActionHistory.Action> noteRecord = new System.Collections.Generic.List<ActionHistory.Action>();
+        noteRecord.Add(new ActionHistory.Delete(initObject));
+        int arrayPos = SongObject.FindObjectPosition(note, editor.currentChart.notes);
+        if (arrayPos != Globals.NOTFOUND)       // Found an object that matches
+        {
+            if (!note.AllValuesCompare(editor.currentChart.notes[arrayPos]))
+                // Object will changed, therefore record
+                noteRecord.Add(new ActionHistory.Modify(editor.currentChart.notes[arrayPos], note));
+        }
+        else
+        {
+            noteRecord.Add(new ActionHistory.Add(note));
+        }
+
         Note noteToAdd = new Note(note);
+
         editor.currentChart.Add(noteToAdd);
-        editor.CreateNoteObject(noteToAdd).standardOverwriteOpen();
+        NoteController nCon = editor.CreateNoteObject(noteToAdd);
+        nCon.standardOverwriteOpen();
+
+        noteRecord.AddRange(CapNoteCheck(noteToAdd));
+        noteRecord.AddRange(ForwardCap(noteToAdd));     // Do this due to pasting from the clipboard
+
         editor.currentSelectedObject = noteToAdd;
-
-        CapNoteCheck(noteToAdd);
-
-        editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(initObject), new ActionHistory.Add(noteToAdd) });
+        editor.actionHistory.Insert(noteRecord.ToArray());
     }
 }
