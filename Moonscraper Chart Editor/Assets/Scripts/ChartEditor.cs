@@ -801,6 +801,13 @@ public class ChartEditor : MonoBehaviour {
             // Check if sustains need to be rendered
             if (id == SongObject.ID.Note)
             {
+                // Check if the note found needs to be rendered for it's sustain
+                foreach (Note chordNote in (songObjects[arrayPos] as Note).GetChord())
+                {
+                    if (chordNote.controller != null)
+                        chordNote.controller.gameObject.SetActive(true);
+                }
+
                 // Find the last known note of each fret type to find any sustains that might overlap. Cancel if there's an open note.
                 foreach(Note prevNote in Note.GetPreviousOfSustains(songObjects[arrayPos] as Note))
                 {
