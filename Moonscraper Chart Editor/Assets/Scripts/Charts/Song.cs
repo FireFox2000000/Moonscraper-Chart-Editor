@@ -356,15 +356,12 @@ public class Song {
     {
         //if (worldYPosition < 0)
             //worldYPosition = 0;
-        return worldYPosition / (Globals.hyperspeed / Time.timeScale);
+        return worldYPosition / (Globals.hyperspeed / Globals.gameSpeed);
     }
 
     public static float TimeToWorldYPosition(float time)
     {
-        if (Time.timeScale > 0)
-            return time * Globals.hyperspeed / Time.timeScale;
-        else
-            return time * Globals.hyperspeed;
+        return time * Globals.hyperspeed / Globals.gameSpeed;
     }
 
     public float ChartPositionToTime(uint position, float resolution)

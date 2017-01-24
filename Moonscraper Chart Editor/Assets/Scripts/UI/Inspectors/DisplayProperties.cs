@@ -45,10 +45,10 @@ public class DisplayProperties : MonoBehaviour {
 
         // Speed slider snapping
         gameSpeedSlider.value = Mathf.Round(gameSpeedSlider.value / 5.0f) * 5;
-        Time.timeScale = gameSpeedSlider.value / 100.0f;
+        Globals.gameSpeed = gameSpeedSlider.value / 100.0f;
 
         // if (Time.timeScale < 1)
-        gameSpeed.text = "Speed- x" + Time.timeScale.ToString();//.Substring(0, 3);
+        gameSpeed.text = "Speed- x" + Globals.gameSpeed.ToString();//.Substring(0, 3);
       //  else
         //    gameSpeed.text = "Speed- x1.0";
     }

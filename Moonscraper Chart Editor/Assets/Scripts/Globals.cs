@@ -168,6 +168,7 @@ public class Globals : MonoBehaviour {
     public static int sustainGap { get { return sustainGapStep.value; } set { sustainGapStep.value = value; } }
     public static bool bot = true;
     static float _sfxVolume = 1;
+    public static float gameSpeed = 1;
     public static float sfxVolume
     {
         get { return _sfxVolume; }

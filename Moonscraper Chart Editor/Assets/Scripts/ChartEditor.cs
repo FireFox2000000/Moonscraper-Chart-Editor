@@ -400,7 +400,7 @@ public class ChartEditor : MonoBehaviour {
     bool cancel;
     public void Play()
     {
-        mixer.audioMixer.SetFloat("Pitch", 1 / (Time.timeScale));
+        mixer.audioMixer.SetFloat("Pitch", 1 / (Globals.gameSpeed));
         play.interactable = false;
         Globals.applicationMode = Globals.ApplicationMode.Playing;
         cancel = false;
@@ -408,7 +408,7 @@ public class ChartEditor : MonoBehaviour {
         float playPoint = Song.WorldYPositionToTime(strikelineAudio.position.y) + currentSong.offset;
         if (playPoint < 0)
         {
-            StartCoroutine(delayedStartAudio(-playPoint * Time.timeScale));
+            StartCoroutine(delayedStartAudio(-playPoint * Globals.gameSpeed));
         }
         else
         {
@@ -417,7 +417,7 @@ public class ChartEditor : MonoBehaviour {
 
             foreach (AudioSource source in musicSources)
             {
-                source.pitch = Time.timeScale;
+                source.pitch = Globals.gameSpeed;
                 source.Play();
             }
         } 
@@ -437,7 +437,7 @@ public class ChartEditor : MonoBehaviour {
 
                 foreach (AudioSource source in musicSources)
                 {
-                    source.pitch = Time.timeScale;
+                    source.pitch = Globals.gameSpeed;
                     source.Play();
                 }
             }
