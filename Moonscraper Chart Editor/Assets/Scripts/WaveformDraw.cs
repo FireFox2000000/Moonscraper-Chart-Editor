@@ -1,61 +1,97 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
+[RequireComponent(typeof(LineRenderer))]
 public class WaveformDraw : MonoBehaviour {
-    public AudioClip testAudio;
+    ChartEditor editor;
+    LineRenderer lineRen;
+    float[] data = new float[0];
+    AudioClip currentClip = null;
 
-    float[] data;
+	// Use this for initialization
+	void Start () {
+        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        lineRen = GetComponent<LineRenderer>();
+	}
+	
+	// Update is called once per frame
+	void Update () {
+        // Get new data
+        if (currentClip == null || currentClip != editor.currentSong.musicStream)
+        {
+            currentClip = editor.currentSong.musicStream;
 
-    void Start()
-    {
-        data = new float[testAudio.samples * testAudio.channels];
-        testAudio.GetData(data, 0);
+            if (currentClip == null)
+            {
+                data = new float[0];
+            }
+            else
+            {
+                data = new float[currentClip.samples * currentClip.channels];
+                currentClip.GetData(data, 0);
+            }
+        } 
+
+        // Choose whether to display the waveform or not
+	    if (Globals.viewMode == Globals.ViewMode.Song && editor.currentSong.musicStream != null)
+        {
+            UpdateWaveformPoints();
+
+            // Then activate
+            lineRen.enabled = true;          
+        }
+        else
+            lineRen.enabled = false;
     }
 
-    static Material lineMaterial;
-    static void CreateLineMaterial()
+    void UpdateWaveformPoints()
     {
-        if (!lineMaterial)
+        if (data.Length <= 0 || currentClip == null)
+            return;
+
+        float sampleRate = currentClip.length / data.Length;// currentClip.samples / currentClip.length;
+
+        int iteration = 20;
+        int startPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMin.position.y), iteration);
+        int endPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMax.position.y), iteration);
+
+        List<Vector3> points = new List<Vector3>();
+        for (int i = startPos; i < endPos; i += (int)(currentClip.channels * iteration))
         {
-            // Unity has a built-in shader that is useful for drawing
-            // simple colored things.
-            Shader shader = Shader.Find("Hidden/Internal-Colored");
-            lineMaterial = new Material(shader);
-            lineMaterial.hideFlags = HideFlags.HideAndDontSave;
-            // Turn on alpha blending
-            lineMaterial.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-            lineMaterial.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            // Turn backface culling off
-            lineMaterial.SetInt("_Cull", (int)UnityEngine.Rendering.CullMode.Off);
-            // Turn off depth writes
-            lineMaterial.SetInt("_ZWrite", 0);
+            float sampleAverage = 0;
+
+            for (int j = 0; j < currentClip.channels; ++j)
+            {
+                sampleAverage += data[i + j];
+            }
+
+            sampleAverage /= currentClip.channels;
+
+            points.Add(new Vector3(sampleAverage, Song.TimeToWorldYPosition(i * sampleRate), 0));
         }
+
+        lineRen.SetVertexCount(points.Count);
+        lineRen.SetPositions(points.ToArray());
     }
 
-    public void OnRenderObject()
+    int timeToArrayPos(float time, int iteration)
     {
-        CreateLineMaterial();
-        // Apply the line material
-        lineMaterial.SetPass(0);
+        if (time < 0)
+            return 0;
+        else if (time >= currentClip.length)
+            return data.Length - 1;
 
-        GL.PushMatrix();
-        // Set transformation matrix for drawing to
-        // match our transform
-        GL.MultMatrix(transform.localToWorldMatrix);
+        // Get the point the data should start reading from
+        int singleChannelLength = data.Length / currentClip.channels;
+        //int arrayPoint = (int)(time / currentClip.length * data.Length);
 
-        // Draw lines
-        GL.Begin(GL.LINES);
-        GL.Color(Color.green);
+        // Need to floor it so it lines up with the first channel
+        int arrayPoint = (int)((time / currentClip.length * data.Length) / (currentClip.channels * iteration)) * currentClip.channels * iteration;
 
-        float prevPos = -5;
-        for (int i = 1000; i < data.Length; i += 1000)
-        {
-            // One vertex at transform position
-            GL.Vertex3(data[i - 1000] * 500, prevPos, 0);
-            prevPos += i / 5000;
-            GL.Vertex3(data[i] * 500, prevPos, 0); 
-        }
-        GL.End();
-        GL.PopMatrix();
+        if (arrayPoint >= data.Length)
+            arrayPoint = data.Length - 1;
+
+        return arrayPoint;
     }
 }

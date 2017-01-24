@@ -105,4 +105,6 @@ public class DisplayProperties : MonoBehaviour {
         Globals.step = stepVal;
         snappingStep.text = Globals.step.ToString();
     }
+
+
 }
