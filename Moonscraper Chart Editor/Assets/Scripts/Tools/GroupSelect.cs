@@ -231,19 +231,32 @@ public class GroupSelect : ToolObject {
 
     public void SetNoteType(AppliedNoteType type)
     {
-        List<ActionHistory.Modify> actions = new List<ActionHistory.Modify>();
+        List<ActionHistory.Action> actions = new List<ActionHistory.Action>();
 
         foreach (ChartObject note in data)
         {
             if (note.classID == (int)SongObject.ID.Note)
             {
+                // Need to record the whole chord
                 Note unmodified = (Note)note.Clone();
+                Note[] chord = ((Note)note).GetChord();
+
+                ActionHistory.Action[] deleteRecord = new ActionHistory.Action[chord.Length];
+                for (int i = 0; i < deleteRecord.Length; ++i)
+                    deleteRecord[i] = new ActionHistory.Delete(chord[i]);
 
                 SetNoteType(note as Note, type);
 
-                if(((Note)note).flags != unmodified.flags)
+                chord = ((Note)note).GetChord();
+
+                ActionHistory.Action[] addRecord = new ActionHistory.Action[chord.Length];
+                for (int i = 0; i < addRecord.Length; ++i)
+                    addRecord[i] = new ActionHistory.Add(chord[i]);
+
+                if (((Note)note).flags != unmodified.flags)
                 {
-                    actions.Add(new ActionHistory.Modify(unmodified, (Note)note));
+                    actions.AddRange(deleteRecord);
+                    actions.AddRange(addRecord);
                 }
             }
         }
