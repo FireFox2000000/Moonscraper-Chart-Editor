@@ -11,6 +11,7 @@ public class DisplayProperties : MonoBehaviour {
     public Slider gameSpeedSlider;
 
     ChartEditor editor;
+    protected ActionHistory.Modify inputFieldModify = null;
 
     void Start()
     {

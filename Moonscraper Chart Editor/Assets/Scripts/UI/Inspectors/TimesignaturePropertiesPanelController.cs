@@ -39,10 +39,13 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
 
     public void UpdateTSValue(string value)
     {
+        float prevValue = currentTS.value;
+
         if (value != string.Empty && currentTS != null)
             currentTS.value = uint.Parse(value);
 
-        ChartEditor.editOccurred = true;
+        if (prevValue != currentTS.value)
+            ChartEditor.editOccurred = true;
     }
 
     public void EndEdit(string value)

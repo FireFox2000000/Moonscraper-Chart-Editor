@@ -32,9 +32,11 @@ public class SectionPropertiesPanelController : PropertiesPanelController {
 
     public void UpdateSectionName (string name)
     {
+        string prevName = currentSection.title;
         if (currentSection != null)
             currentSection.title = name;
 
-        ChartEditor.editOccurred = true;
+        if (prevName != currentSection.title)
+            ChartEditor.editOccurred = true;
     }
 }

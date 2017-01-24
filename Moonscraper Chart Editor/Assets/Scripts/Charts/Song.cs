@@ -361,7 +361,10 @@ public class Song {
 
     public static float TimeToWorldYPosition(float time)
     {
-        return time * Globals.hyperspeed / Time.timeScale;
+        if (Time.timeScale > 0)
+            return time * Globals.hyperspeed / Time.timeScale;
+        else
+            return time * Globals.hyperspeed;
     }
 
     public float ChartPositionToTime(uint position, float resolution)

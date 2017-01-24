@@ -41,6 +41,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     public void UpdateBPMValue(string value)
     {
+        float prevValue = currentBPM.value;
         if (value != string.Empty && value[value.Length - 1] != '.' && currentBPM != null && float.Parse(value) != 0)
         {
             float floatVal = float.Parse(value) * 1000;     // Store it in another variable due to weird parsing-casting bug at decimal points of 2 or so. Seems to fix it for whatever reason.
@@ -50,7 +51,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         else if (value == ".")
             bpmValue.text = string.Empty;
 
-        ChartEditor.editOccurred = true;
+        if (prevValue != currentBPM.value)
+            ChartEditor.editOccurred = true;
     }
 
     public void EndEdit(string value)
