@@ -248,6 +248,10 @@ public class Globals : MonoBehaviour {
         spTapTemp = spTapTempColor;
 
         openMaterials = open3dMaterials;
+
+        InputField[] allInputFields = Resources.FindObjectsOfTypeAll<InputField>();
+        foreach (InputField inputField in allInputFields)
+            inputField.gameObject.AddComponent<InputFieldDoubleClick>();
     }
 
     void Start()
