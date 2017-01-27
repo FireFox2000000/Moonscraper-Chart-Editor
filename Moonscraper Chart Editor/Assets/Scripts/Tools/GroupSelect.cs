@@ -9,6 +9,10 @@ public class GroupSelect : ToolObject {
     GameObject highlightPoolParent;
     GameObject[] highlightPool = new GameObject[100];
 
+    SpriteRenderer ren;
+
+    bool addMode = true;
+
     Vector2 initWorld2DPos = Vector2.zero;
     Vector2 endWorld2DPos = Vector2.zero;
     uint startWorld2DChartPos = 0;
@@ -24,7 +28,7 @@ public class GroupSelect : ToolObject {
     protected override void Awake()
     {
         base.Awake();
-
+        ren = GetComponent<SpriteRenderer>();
         highlightPoolParent = new GameObject("Group Select Highlights");
         for (int i = 0; i < highlightPool.Length; ++i)
         {
@@ -37,6 +41,8 @@ public class GroupSelect : ToolObject {
         prevChart = editor.currentChart;
 
         data = new List<ChartObject>();
+
+        //ren.sharedMaterial.color = new Color(1, 1, 1, 1);
     }
 
     public override void ToolDisable()
@@ -81,7 +87,25 @@ public class GroupSelect : ToolObject {
                 initWorld2DPos = (Vector2)Mouse.world2DPosition;
                 initWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
                 startWorld2DChartPos = objectSnappedChartPos;
-                data = new List<ChartObject>();
+
+                Color col = Color.green;
+                col.a = ren.color.a;
+
+                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                    addMode = true;
+                else if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+                {
+                    addMode = false;
+                    col = Color.red;
+                    col.a = ren.color.a;                    
+                }
+                else
+                {
+                    addMode = true;
+                    data = new List<ChartObject>();
+                }
+
+                ren.color = col;
 
                 userDraggingSelectArea = true;
             }
@@ -99,9 +123,19 @@ public class GroupSelect : ToolObject {
             if (Input.GetMouseButtonUp(0) && userDraggingSelectArea)
             {
                 if (startWorld2DChartPos > endWorld2DChartPos)
-                    UpdateGroupedData(endWorld2DChartPos, startWorld2DChartPos);
+                {
+                    if (addMode)
+                        AddToSelection(ScanCurrentSelection(endWorld2DChartPos, startWorld2DChartPos));
+                    else
+                        RemoveFromSelection(ScanCurrentSelection(endWorld2DChartPos, startWorld2DChartPos));
+                }
                 else
-                    UpdateGroupedData(startWorld2DChartPos, endWorld2DChartPos);
+                {
+                    if (addMode)
+                        AddToSelection(ScanCurrentSelection(startWorld2DChartPos, endWorld2DChartPos));
+                    else
+                        RemoveFromSelection(ScanCurrentSelection(startWorld2DChartPos, endWorld2DChartPos));
+                }
                 userDraggingSelectArea = false;
             }
 
@@ -176,7 +210,7 @@ public class GroupSelect : ToolObject {
         transform.position = pos;
     }
 
-    void UpdateGroupedData(uint minLimitInclusive, uint maxLimitNonInclusive)
+    ChartObject[] ScanCurrentSelection(uint minLimitInclusive, uint maxLimitNonInclusive)
     {
         Vector2 position = new Vector2();
 
@@ -204,9 +238,9 @@ public class GroupSelect : ToolObject {
             }
         }
 
-        //Debug.Log(chartObjectsList.Count);
-        data = chartObjectsList;
-        //data = new Clipboard(chartObjectsList.ToArray(), rect, editor.currentSong);
+        //data = chartObjectsList;
+        return chartObjectsList.ToArray();
+       // AddToSelection(chartObjectsList);
     }
 
     public void SetNatural()
@@ -349,6 +383,23 @@ public class GroupSelect : ToolObject {
     {
         Copy();
         Delete();
+    }
+
+    void AddToSelection(IEnumerable<ChartObject> chartObjects)
+    {
+        foreach(ChartObject chartObject in chartObjects)
+        {
+            if (!data.Contains(chartObject))
+                data.Add(chartObject);
+        }
+    }
+
+    void RemoveFromSelection(IEnumerable<ChartObject> chartObjects)
+    {
+        foreach (ChartObject chartObject in chartObjects)
+        {
+            data.Remove(chartObject);
+        }
     }
 
     public enum AppliedNoteType
