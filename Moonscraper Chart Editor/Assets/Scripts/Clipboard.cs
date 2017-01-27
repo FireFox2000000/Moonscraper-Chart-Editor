@@ -47,21 +47,111 @@ public class Clipboard {
         _areaChartPosMax = 0;
     }
 
-    public Clipboard(ChartObject[] data, Rect rect, Song song, uint tickMin, uint tickMax)
+    public Clipboard(ChartObject[] data, SelectionArea area, Song song)
     {
         this.data = data;
-        SetCollisionArea(rect, song, tickMin, tickMax);
+        SetCollisionArea(area, song);
     }
 
-    public void SetCollisionArea(Rect rect, Song song, uint tickMin, uint tickMax)
+    public void SetCollisionArea(SelectionArea area, Song song)
     {
-        xPosition = rect.x;
-        collisionAreaXSize = rect.width;
+        xPosition = area.xPos;
+        collisionAreaXSize = area.width;
 
-        _areaChartPosMin = tickMin;
-        _areaChartPosMax = tickMax;
+        _areaChartPosMin = area.tickMin;
+        _areaChartPosMax = area.tickMax;
 
         //_areaChartPosMin = song.WorldYPositionToChartPosition(rect.position.y);
         //_areaChartPosMax = song.WorldYPositionToChartPosition(rect.position.y + rect.height);
+    }
+
+    public struct SelectionArea
+    {
+        public float xPos, width;
+        public uint tickMin;
+        public uint tickMax;
+
+        public SelectionArea(Rect rect, uint tickMin, uint tickMax)
+        {
+            this.xPos = rect.x;
+            this.width = rect.width;
+            this.tickMin = tickMin;
+            this.tickMax = tickMax;
+        }
+
+        public SelectionArea(Vector2 cornerA, Vector2 cornerB, uint tickMin, uint tickMax)
+        {
+            // Bottom left corner is position
+            if (cornerA.x < cornerB.x)
+                xPos = cornerA.x;
+            else
+                xPos = cornerB.x;
+
+            Vector2 size = new Vector2(Mathf.Abs(cornerA.x - cornerB.x), Mathf.Abs(cornerA.y - cornerB.y));
+
+            this.width = size.x;
+            this.tickMin = tickMin;
+            this.tickMax = tickMax;
+        }
+
+        public Rect GetRect(Song song)
+        {
+            Vector2 position;
+            Vector2 size;
+
+            float yMin = song.ChartPositionToWorldYPosition(tickMin);
+            float yMax = song.ChartPositionToWorldYPosition(tickMax);
+            size.x = width;
+            size.y = yMax - yMin;
+
+            position.x = xPos;
+            position.y = yMin;
+
+            return new Rect(position, size);
+        }
+
+        public static SelectionArea operator +(SelectionArea a, SelectionArea b)
+        {
+            SelectionArea area = a;
+
+            if (area.tickMin > b.tickMin)
+                area.tickMin = b.tickMin;
+
+            if (area.tickMax < b.tickMax)
+                area.tickMax = b.tickMax;
+
+            // Extend the rect
+            float xMin, xMax;
+
+            if (area.xPos < b.xPos)
+                xMin = area.xPos;
+            else
+                xMin = b.xPos;
+
+            if (area.xPos + area.width > b.xPos + b.width)
+                xMax = area.xPos + area.width;
+            else
+                xMax = b.xPos + b.width;
+
+            area.xPos = xMin;
+            area.width = xMax - xMin;
+
+            return area;
+        }
+        /*
+        public static SelectionArea operator -(SelectionArea a, SelectionArea b)
+        {
+            SelectionArea area = a;
+
+            if (area.tickMin < b.tickMin)
+                area.tickMin = b.tickMin;
+
+            if (area.tickMax > b.tickMax)
+                area.tickMax = b.tickMax;
+
+            // Leave rect x size
+
+            return area;
+        }*/
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 
 public class GroupSelect : ToolObject {
     public GameObject selectedHighlight;
+    public Transform selectedArea;
 
     GameObject highlightPoolParent;
     GameObject[] highlightPool = new GameObject[100];
@@ -23,7 +24,8 @@ public class GroupSelect : ToolObject {
 
     //Clipboard data;
     List<ChartObject> data = new List<ChartObject>();
-    Rect rect;
+    //Rect rect;
+    Clipboard.SelectionArea area;
 
     protected override void Awake()
     {
@@ -41,7 +43,7 @@ public class GroupSelect : ToolObject {
         prevChart = editor.currentChart;
 
         data = new List<ChartObject>();
-
+        area = new Clipboard.SelectionArea(new Rect(), 0, 0);
         //ren.sharedMaterial.color = new Color(1, 1, 1, 1);
     }
 
@@ -61,15 +63,21 @@ public class GroupSelect : ToolObject {
         editor.currentSelectedObject = null;
     }
 
-    public void reset()
+    void selfAreaDisable()
     {
         transform.localScale = new Vector3(0, 0, transform.localScale.z);
         initWorld2DPos = Vector2.zero;
         endWorld2DPos = Vector2.zero;
         startWorld2DChartPos = 0;
         endWorld2DChartPos = 0;
+    }
+
+    public void reset()
+    {
+        selfAreaDisable();
         data = new List<ChartObject>();
-        rect = new Rect();
+        //rect = new Rect();
+        area = new Clipboard.SelectionArea(new Rect(), 0, 0);
     }
 
     bool userDraggingSelectArea = false;
@@ -103,6 +111,7 @@ public class GroupSelect : ToolObject {
                 {
                     addMode = true;
                     data = new List<ChartObject>();
+                    area = new Clipboard.SelectionArea(new Rect(), startWorld2DChartPos, endWorld2DChartPos);
                 }
 
                 ren.color = col;
@@ -118,24 +127,34 @@ public class GroupSelect : ToolObject {
                 endWorld2DChartPos = objectSnappedChartPos;
             }
 
-            UpdateVisuals();
+            UpdateSelectionAreaVisual(transform, initWorld2DPos, endWorld2DPos);
+            UpdateSelectionAreaVisual(selectedArea, area);
 
             if (Input.GetMouseButtonUp(0) && userDraggingSelectArea)
             {
                 if (startWorld2DChartPos > endWorld2DChartPos)
                 {
                     if (addMode)
-                        AddToSelection(ScanCurrentSelection(endWorld2DChartPos, startWorld2DChartPos));
+                    {
+                        AddToSelection(ScanArea(initWorld2DPos, endWorld2DPos, endWorld2DChartPos, startWorld2DChartPos));
+
+                        area += new Clipboard.SelectionArea(initWorld2DPos, endWorld2DPos, endWorld2DChartPos, startWorld2DChartPos);
+                    }
                     else
-                        RemoveFromSelection(ScanCurrentSelection(endWorld2DChartPos, startWorld2DChartPos));
+                        RemoveFromSelection(ScanArea(initWorld2DPos, endWorld2DPos, endWorld2DChartPos, startWorld2DChartPos));
                 }
                 else
                 {
                     if (addMode)
-                        AddToSelection(ScanCurrentSelection(startWorld2DChartPos, endWorld2DChartPos));
+                    {
+                        AddToSelection(ScanArea(initWorld2DPos, endWorld2DPos, startWorld2DChartPos, endWorld2DChartPos));
+
+                        area += new Clipboard.SelectionArea(initWorld2DPos, endWorld2DPos, startWorld2DChartPos, endWorld2DChartPos);
+                    }
                     else
-                        RemoveFromSelection(ScanCurrentSelection(startWorld2DChartPos, endWorld2DChartPos));
+                        RemoveFromSelection(ScanArea(initWorld2DPos, endWorld2DPos, startWorld2DChartPos, endWorld2DChartPos));
                 }
+                selfAreaDisable();
                 userDraggingSelectArea = false;
             }
 
@@ -188,15 +207,15 @@ public class GroupSelect : ToolObject {
         }
     }
 
-    void UpdateVisuals()
+    void UpdateSelectionAreaVisual(Transform areaTransform, Vector2 initWorld2DPos, Vector2 endWorld2DPos)
     {
         Vector2 diff = new Vector2(Mathf.Abs(initWorld2DPos.x - endWorld2DPos.x), Mathf.Abs(initWorld2DPos.y - endWorld2DPos.y));
 
         // Set size
-        transform.localScale = new Vector3(diff.x, diff.y, transform.localScale.z);
+        areaTransform.localScale = new Vector3(diff.x, diff.y, transform.localScale.z);
 
         // Calculate center pos
-        Vector3 pos = transform.position;
+        Vector3 pos = areaTransform.position;
         if (initWorld2DPos.x < endWorld2DPos.x)
             pos.x = initWorld2DPos.x + diff.x / 2;
         else
@@ -207,40 +226,37 @@ public class GroupSelect : ToolObject {
         else
             pos.y = endWorld2DPos.y + diff.y / 2;
 
-        transform.position = pos;
+        areaTransform.position = pos;
     }
 
-    ChartObject[] ScanCurrentSelection(uint minLimitInclusive, uint maxLimitNonInclusive)
+    void UpdateSelectionAreaVisual(Transform areaTransform, Clipboard.SelectionArea area)
     {
-        Vector2 position = new Vector2();
+        float minTickWorldPos = editor.currentSong.ChartPositionToWorldYPosition(area.tickMin);
+        float maxTickWorldPos = editor.currentSong.ChartPositionToWorldYPosition(area.tickMax);
 
-        // Bottom left corner is position
-        if (initWorld2DPos.x < endWorld2DPos.x)
-            position.x = initWorld2DPos.x;
-        else
-            position.x = endWorld2DPos.x;
+        Vector3 scale = new Vector3(area.width, maxTickWorldPos - minTickWorldPos, areaTransform.localScale.z);
+        Vector3 position = new Vector3(area.xPos + (area.width / 2), (minTickWorldPos + maxTickWorldPos) / 2, areaTransform.position.z);
 
-        if (initWorld2DPos.y < endWorld2DPos.y)
-            position.y = initWorld2DPos.y;
-        else
-            position.y = endWorld2DPos.y;
+        areaTransform.localScale = scale;
+        areaTransform.position = position;
+    }
 
-        Vector2 size = new Vector2(Mathf.Abs(initWorld2DPos.x - endWorld2DPos.x), Mathf.Abs(initWorld2DPos.y - endWorld2DPos.y));
-        rect = new Rect(position, size);
+    ChartObject[] ScanArea(Vector2 cornerA, Vector2 cornerB, uint minLimitInclusive, uint maxLimitNonInclusive)
+    {
+        Clipboard.SelectionArea area = new Clipboard.SelectionArea(cornerA, cornerB, minLimitInclusive, maxLimitNonInclusive);
+        Rect areaRect = area.GetRect(editor.currentSong);
 
         List<ChartObject> chartObjectsList = new List<ChartObject>();
 
         foreach (ChartObject chartObject in editor.currentChart.chartObjects)
         {
-            if (chartObject.position >= minLimitInclusive && chartObject.position < maxLimitNonInclusive && chartObject.controller && chartObject.controller.AABBcheck(rect))
+            if (chartObject.position >= minLimitInclusive && chartObject.position < maxLimitNonInclusive && chartObject.controller && chartObject.controller.AABBcheck(areaRect))
             {
                 chartObjectsList.Add(chartObject);
             }
         }
 
-        //data = chartObjectsList;
         return chartObjectsList.ToArray();
-       // AddToSelection(chartObjectsList);
     }
 
     public void SetNatural()
@@ -370,11 +386,13 @@ public class GroupSelect : ToolObject {
 
             chartObjectsCopy.Add(objectToAdd);
         }
+
+        //Clipboard.SelectionArea area = new Clipboard.SelectionArea(rect, startWorld2DChartPos, endWorld2DChartPos);
         
         if (startWorld2DChartPos < endWorld2DChartPos)
-            ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), rect, editor.currentSong, startWorld2DChartPos, endWorld2DChartPos);
+            ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), area, editor.currentSong);
         else
-            ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), rect, editor.currentSong, endWorld2DChartPos, startWorld2DChartPos);
+            ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), area, editor.currentSong);
 
         //ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), rect, editor.currentSong);
     }
@@ -390,7 +408,18 @@ public class GroupSelect : ToolObject {
         foreach(ChartObject chartObject in chartObjects)
         {
             if (!data.Contains(chartObject))
-                data.Add(chartObject);
+            {
+                int pos = SongObject.FindClosestPosition(chartObject, data.ToArray());
+                if (pos != Globals.NOTFOUND)
+                {
+                    if (data[pos] > chartObject)
+                        data.Insert(pos, chartObject);
+                    else
+                        data.Insert(pos + 1, chartObject);
+                }
+                else
+                    data.Add(chartObject);
+            }
         }
     }
 
