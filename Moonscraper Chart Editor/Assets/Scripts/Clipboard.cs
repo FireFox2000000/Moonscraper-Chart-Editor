@@ -114,6 +114,9 @@ public class Clipboard {
         {
             SelectionArea area = a;
 
+            if (area.tickMin >= area.tickMax)
+                return b;
+
             if (area.tickMin > b.tickMin)
                 area.tickMin = b.tickMin;
 
@@ -138,20 +141,39 @@ public class Clipboard {
 
             return area;
         }
-        /*
+        
         public static SelectionArea operator -(SelectionArea a, SelectionArea b)
         {
             SelectionArea area = a;
 
-            if (area.tickMin < b.tickMin)
-                area.tickMin = b.tickMin;
+            if (b.xPos < area.xPos && b.xPos + b.width > area.xPos + area.width)
+            {
+                // Eligable to reduce the tick size
+                if (area.tickMin >= b.tickMin)
+                    area.tickMin = b.tickMax;
 
-            if (area.tickMax > b.tickMax)
-                area.tickMax = b.tickMax;
+                if (area.tickMax <= b.tickMax)
+                    area.tickMax = b.tickMin;
 
-            // Leave rect x size
+                if (area.tickMin > area.tickMax)
+                    area.tickMin = area.tickMax;
+            }
+
+            if (b.tickMax > area.tickMax && b.tickMin < area.tickMin)
+            {
+                // Eligable to reduce the width
+                if (area.xPos >= b.xPos)
+                {
+                    float originalXPos = area.xPos;
+                    area.xPos = b.xPos + b.width;
+                    area.width -= area.xPos - originalXPos;
+                }
+
+                if (area.xPos + area.width <= b.xPos + b.width)
+                    area.width = b.xPos - area.xPos;
+            }
 
             return area;
-        }*/
+        }
     }
 }

@@ -50,6 +50,7 @@ public class GroupSelect : ToolObject {
     public override void ToolDisable()
     {
         reset();
+        selectedArea.gameObject.SetActive(false);
         foreach (GameObject highlight in highlightPool)
         {
             highlight.SetActive(false);
@@ -59,7 +60,7 @@ public class GroupSelect : ToolObject {
     public override void ToolEnable()
     {
         base.ToolEnable();
-
+        selectedArea.gameObject.SetActive(true);
         editor.currentSelectedObject = null;
     }
 
@@ -141,7 +142,11 @@ public class GroupSelect : ToolObject {
                         area += new Clipboard.SelectionArea(initWorld2DPos, endWorld2DPos, endWorld2DChartPos, startWorld2DChartPos);
                     }
                     else
+                    {
                         RemoveFromSelection(ScanArea(initWorld2DPos, endWorld2DPos, endWorld2DChartPos, startWorld2DChartPos));
+
+                        area -= new Clipboard.SelectionArea(initWorld2DPos, endWorld2DPos, endWorld2DChartPos, startWorld2DChartPos);
+                    }
                 }
                 else
                 {
@@ -152,7 +157,11 @@ public class GroupSelect : ToolObject {
                         area += new Clipboard.SelectionArea(initWorld2DPos, endWorld2DPos, startWorld2DChartPos, endWorld2DChartPos);
                     }
                     else
+                    {
                         RemoveFromSelection(ScanArea(initWorld2DPos, endWorld2DPos, startWorld2DChartPos, endWorld2DChartPos));
+
+                        area -= new Clipboard.SelectionArea(initWorld2DPos, endWorld2DPos, startWorld2DChartPos, endWorld2DChartPos);
+                    }
                 }
                 selfAreaDisable();
                 userDraggingSelectArea = false;
