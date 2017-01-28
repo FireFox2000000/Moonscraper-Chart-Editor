@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System;
 
 [RequireComponent(typeof(StarpowerController))]
@@ -56,7 +56,7 @@ public class PlaceStarpower : PlaceSongObject {
                 // Make a record of the last SP
                 if (overwrittenSP == null)
                     editor.actionHistory.Insert(new ActionHistory.Add(lastPlacedSP));
-                else
+                else if (!overwrittenSP.AllValuesCompare(lastPlacedSP))
                     editor.actionHistory.Insert(new ActionHistory.Modify(overwrittenSP, lastPlacedSP));
             }
 
@@ -95,13 +95,43 @@ public class PlaceStarpower : PlaceSongObject {
         editor.currentSelectedObject = starpowerToAdd;
     }
 
-    protected static ActionHistory.Action CapSP(StarPower sp)
+    ActionHistory.Action[] CapPrevAndNextPreInsert(StarPower sp, Chart chart)
     {
-        // Cap the previous sp
+        List<ActionHistory.Action> record = new List<ActionHistory.Action>();
+        int arrayPos = SongObject.FindObjectPosition(sp, chart.starPower);
+        if (arrayPos != Globals.NOTFOUND)       // Found an object that matches
+        {
+            if (chart.starPower[arrayPos] > sp)
+            {
+                ++arrayPos;
+            }
 
-        // Cap own sp
+            if (arrayPos > 0 && chart.starPower[arrayPos - 1].position < starpower.position)
+            {
+                StarPower prevSp = chart.starPower[arrayPos - 1];
+                // Cap previous sp
+                if (prevSp.position + prevSp.length > sp.position)
+                {
+                    StarPower originalPrev = (StarPower)prevSp.Clone();
+                    prevSp.length = sp.position = prevSp.position;
+                    record.Add(new ActionHistory.Modify(originalPrev, prevSp));
+                }
+            }
 
+            if (arrayPos < chart.starPower.Length && chart.starPower[arrayPos].position > starpower.position)
+            {
+                StarPower nextSp = chart.starPower[arrayPos];
 
-        return null;
+                // Cap self
+                if (sp.position + sp.length > nextSp.position)
+                {
+                    StarPower originalNext = (StarPower)nextSp.Clone();
+                    sp.length = nextSp.position - sp.position;
+                    record.Add(new ActionHistory.Modify(originalNext, nextSp));
+                }
+            }
+        }
+
+        return record.ToArray();
     }
 }

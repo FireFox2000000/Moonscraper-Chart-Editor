@@ -406,4 +406,12 @@ public class Globals : MonoBehaviour {
     {
         Chart, Song
     }
+
+    public void ResetAspectRatio()
+    {
+        int height = Screen.height;
+        int width = (int)(16.0f / 9.0f * height);
+
+        Screen.SetResolution(width, height, false);
+    }
 }
