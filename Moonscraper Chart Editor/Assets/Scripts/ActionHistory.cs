@@ -9,6 +9,9 @@ public class ActionHistory
     List<Action[]> actionList;
     List<int> timestamps;
 
+    public bool canUndo { get { return historyPoint >= 0; } }
+    public bool canRedo { get { return historyPoint + 1 < actionList.Count; } }
+
     public ActionHistory()
     {
         actionList = new List<Action[]>();
@@ -35,7 +38,7 @@ public class ActionHistory
 
     public bool Undo(ChartEditor editor)
     {
-        if (historyPoint >= 0)
+        if (canUndo)
         {
             ChartEditor.editOccurred = true;
             int frame = timestamps[historyPoint];
@@ -60,7 +63,7 @@ public class ActionHistory
 
     public bool Redo(ChartEditor editor)
     {
-        if (historyPoint + 1 < actionList.Count)
+        if (canRedo)
         {
             ChartEditor.editOccurred = true;
             int frame = timestamps[historyPoint + 1];

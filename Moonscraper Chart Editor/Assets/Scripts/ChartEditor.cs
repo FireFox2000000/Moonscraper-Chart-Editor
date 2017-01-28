@@ -34,6 +34,8 @@ public class ChartEditor : MonoBehaviour {
     public GameObject ghostTimeSignature;
     [Header("Misc.")]
     public UnityEngine.UI.Button play;
+    public UnityEngine.UI.Button undo;
+    public UnityEngine.UI.Button redo;
     public Transform strikelineAudio;
     public Transform visibleStrikeline;
     public TimelineHandler timeHandler;
@@ -206,6 +208,9 @@ public class ChartEditor : MonoBehaviour {
             currentPropertiesPanel = groupSelectInspector;
             currentPropertiesPanel.gameObject.SetActive(true);
         }
+
+        undo.interactable = actionHistory.canUndo;
+        redo.interactable = actionHistory.canRedo;
 
         // Set window text to represent if the current song has been saved or not
 #if !UNITY_EDITOR
@@ -855,5 +860,15 @@ public class ChartEditor : MonoBehaviour {
         musicSources[MUSIC_STREAM_ARRAY_POS].clip = currentSong.musicStream;
         musicSources[GUITAR_STREAM_ARRAY_POS].clip = currentSong.guitarStream;
         musicSources[RHYTHM_STREAM_ARRAY_POS].clip = currentSong.rhythmStream;
+    }
+
+    public void UndoWrap()
+    {
+        actionHistory.Undo(this);
+    }
+
+    public void RedoWrap()
+    {
+        actionHistory.Redo(this);
     }
 }
