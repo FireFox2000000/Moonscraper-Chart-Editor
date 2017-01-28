@@ -8,6 +8,7 @@ public class Globals : MonoBehaviour {
     public static readonly string LINE_ENDING = "\r\n";
 
     public static readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3" };
+    public static readonly string[] validTextureExtensions = { ".jpg", ".png" };
 
     [Header("Initialize GUI")]
     public Toggle clapToggle;

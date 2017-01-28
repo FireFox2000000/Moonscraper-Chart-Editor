@@ -28,3 +28,6 @@ The icons are licensed under a Creative Commons
 Attribution-Noncommercial-Share Alike 3.0 Unported 
 license. https://creativecommons.org/licenses/by-nc-sa/3.0/)
 Changes: Removed "gp5" text.
+
+Undo Icon from Turbomilk - http://www.turbomilk.com/
+  Further edited for redo and blank icons.

@@ -80,6 +80,12 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\ActionHistory.cs" />
     <Compile Include="Assets\Scripts\Advanced INI Parser\INIParser.cs" />
+    <Compile Include="Assets\Scripts\Assign Custom Resources\AssignCustomResources.cs" />
+    <Compile Include="Assets\Scripts\Assign Custom Resources\CustomResource.cs" />
+    <Compile Include="Assets\Scripts\Assign Custom Resources\LoadCustomResources.cs" />
+    <Compile Include="Assets\Scripts\Audio\NAudioPlayer.cs" />
+    <Compile Include="Assets\Scripts\Audio\WaveformDraw.cs" />
+    <Compile Include="Assets\Scripts\BGScaling.cs" />
     <Compile Include="Assets\Scripts\BillboardingXAxis.cs" />
     <Compile Include="Assets\Scripts\CameraLayering.cs" />
     <Compile Include="Assets\Scripts\ChartEditor.cs" />
@@ -113,9 +119,7 @@
     <Compile Include="Assets\Scripts\Gameplay\GameplayManager.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Indicators.cs" />
     <Compile Include="Assets\Scripts\Globals.cs" />
-    <Compile Include="Assets\Scripts\LoadCustomResources.cs" />
     <Compile Include="Assets\Scripts\Mouse.cs" />
-    <Compile Include="Assets\Scripts\NAudioPlayer.cs" />
     <Compile Include="Assets\Scripts\RendererLayerExpose.cs" />
     <Compile Include="Assets\Scripts\SelectableClick.cs" />
     <Compile Include="Assets\Scripts\Settings.cs" />
@@ -160,7 +164,6 @@
     <Compile Include="Assets\Scripts\UI\PropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\ToolPanelController.cs" />
     <Compile Include="Assets\Scripts\Utility.cs" />
-    <Compile Include="Assets\Scripts\WaveformDraw.cs" />
     <Compile Include="Assets\XInputDotNet\Examples\XInputTestCS.cs" />
     <Compile Include="Assets\_MK\_MKGlow\_Internal\MKGlow.cs" />
   </ItemGroup>
