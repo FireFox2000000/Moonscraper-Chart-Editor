@@ -112,6 +112,7 @@
     <Compile Include="Assets\Standard Assets\Effects\ImageEffects\Scripts\Vortex.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Custom Resources\Filenames.txt" />
     <None Include="Assets\Documentation\README.txt" />
     <None Include="Assets\Documentation\attribution.txt" />
     <None Include="Assets\Documentation\changelog.txt" />

@@ -1,0 +1,10 @@
+Audio compatibility- .wav, .ogg
+Image compatibility- .jpg, .png
+
+Audio files-
+  break-0
+  clap
+  
+Image files
+  background-0
+  fretboard

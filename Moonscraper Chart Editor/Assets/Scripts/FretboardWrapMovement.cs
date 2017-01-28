@@ -10,7 +10,7 @@ public class FretboardWrapMovement : MonoBehaviour {
     void Start () {
         ren = GetComponent<Renderer>();
         prevYPos = transform.position.y;
-        prevHyperspeed = Globals.hyperspeed;
+        prevHyperspeed = Globals.hyperspeed * Globals.gameSpeed;
         ren.sharedMaterial.mainTextureOffset = Vector2.zero;
     }
 
@@ -29,7 +29,7 @@ public class FretboardWrapMovement : MonoBehaviour {
             ren.sharedMaterial.mainTextureOffset = offset;
 
             prevYPos = transform.position.y;
-            prevHyperspeed = Globals.hyperspeed;
+            prevHyperspeed = Globals.hyperspeed * Globals.gameSpeed;
         }
     }
     
@@ -37,14 +37,14 @@ public class FretboardWrapMovement : MonoBehaviour {
 	void FixedUpdate () {
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)  
         {
-            if (prevHyperspeed == Globals.hyperspeed)
+            if (prevHyperspeed == Globals.hyperspeed * Globals.gameSpeed)
             {
                 Vector2 offset = ren.sharedMaterial.mainTextureOffset;
                 offset.y += (transform.position.y - prevYPos) / transform.localScale.y;
                 ren.sharedMaterial.mainTextureOffset = offset;
             }
             prevYPos = transform.position.y;
-            prevHyperspeed = Globals.hyperspeed;
+            prevHyperspeed = Globals.hyperspeed * Globals.gameSpeed;
         } 
     }
 }

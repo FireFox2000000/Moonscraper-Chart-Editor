@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
 public class LoadCustomResources : MonoBehaviour {
     public UnityEngine.UI.Text progressText;
+    public ImageFade fader;
 
     string initialDirectory = "Custom Resources";
     string[] filepaths = new string[0];
@@ -61,18 +63,27 @@ public class LoadCustomResources : MonoBehaviour {
 
         progressText.text = "Loading custom resources... " + Mathf.Round(progress * 100).ToString() + "%";
 
-        if (complete)
+        if (complete && !fader.fadeOutRunning)
         {
-            foreach (CustomResource resource in resourcesLoading)
-            {
-                resource.AssignResource();
-            }
-
-            // Load editor
-            int buildIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
-            enabled = false;
-            UnityEngine.SceneManagement.SceneManager.LoadScene(buildIndex + 1);
+            StartCoroutine(LoadEditor());
         }
+    }
+
+    IEnumerator LoadEditor()
+    {
+        // Fade
+        yield return fader.fadeOut(1.0f);
+
+        foreach (CustomResource resource in resourcesLoading)
+        {
+            resource.AssignResource();
+        }
+
+        // Load editor
+        int buildIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+        enabled = false;
+        fader = null;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(buildIndex + 1);
     }
 
     List<string> GetAllFiles(string dir)

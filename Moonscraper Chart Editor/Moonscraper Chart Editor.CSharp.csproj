@@ -151,6 +151,7 @@
     <Compile Include="Assets\Scripts\UI\DropDownHoverActivate.cs" />
     <Compile Include="Assets\Scripts\UI\DropDownMenu.cs" />
     <Compile Include="Assets\Scripts\UI\FPSDisplay.cs" />
+    <Compile Include="Assets\Scripts\UI\ImageFade.cs" />
     <Compile Include="Assets\Scripts\UI\InputFieldDoubleClick.cs" />
     <Compile Include="Assets\Scripts\UI\Inspectors\BPMPropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\Inspectors\DisplayProperties.cs" />
@@ -168,6 +169,7 @@
     <Compile Include="Assets\_MK\_MKGlow\_Internal\MKGlow.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Custom Resources\Filenames.txt" />
     <None Include="Assets\Documentation\README.txt" />
     <None Include="Assets\Documentation\attribution.txt" />
     <None Include="Assets\Documentation\changelog.txt" />
