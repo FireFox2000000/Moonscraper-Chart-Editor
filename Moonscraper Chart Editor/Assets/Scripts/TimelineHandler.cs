@@ -173,6 +173,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
             handle.transform.position = pos;
         }
+        MovementController.explicitChartPos = null;
     }
 
     public Vector3 handlePosToLocal(float pos)

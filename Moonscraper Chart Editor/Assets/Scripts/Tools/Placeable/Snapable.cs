@@ -66,4 +66,31 @@ public abstract class Snapable : MonoBehaviour {
 
         return chartPosition;
     }
+
+    public static uint ChartIncrementStep(uint chartPosition, int step, float resolution)
+    {
+        uint currentSnap = ChartPositionToSnappedChartPosition(chartPosition, step, resolution);
+
+        if (currentSnap <= chartPosition)
+        {
+            currentSnap = ChartPositionToSnappedChartPosition(chartPosition + (uint)(Globals.FULL_STEP / (float)step * resolution / Globals.STANDARD_BEAT_RESOLUTION), step, resolution);
+        }
+
+        return currentSnap;
+    }
+
+    public static uint ChartDecrementStep(uint chartPosition, int step, float resolution)
+    {
+        uint currentSnap = ChartPositionToSnappedChartPosition(chartPosition, step, resolution);
+
+        if (currentSnap >= chartPosition)
+        {
+            if ((uint)(Globals.FULL_STEP / (float)step * resolution / Globals.STANDARD_BEAT_RESOLUTION) >= chartPosition)
+                currentSnap = 0;
+            else
+                currentSnap = ChartPositionToSnappedChartPosition(chartPosition - (uint)(Globals.FULL_STEP / (float)step * resolution / Globals.STANDARD_BEAT_RESOLUTION), step, resolution);
+        }
+
+        return currentSnap;
+    }
 }

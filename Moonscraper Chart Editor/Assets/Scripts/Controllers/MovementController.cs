@@ -10,6 +10,7 @@ public abstract class MovementController : MonoBehaviour {
     protected float scrollDelta = 0;
 
     protected bool focused = true;
+    public static uint? explicitChartPos = null;
 
     // Program options
     protected float mouseScrollSensitivity = 0.2f;      // May miss snap gaps if placed too high
@@ -30,6 +31,7 @@ public abstract class MovementController : MonoBehaviour {
         Vector3 pos = transform.position;
         pos.y += (speed * Time.deltaTime);
         transform.position = pos;
+        explicitChartPos = null;
     }
 
     void OnApplicationFocus(bool hasFocus)

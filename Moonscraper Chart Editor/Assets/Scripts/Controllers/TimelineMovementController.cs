@@ -17,6 +17,8 @@ public class TimelineMovementController : MovementController
             Vector3 pos = initPos;
             pos.y += editor.currentSong.ChartPositionToWorldYPosition(chartPosition);
             transform.position = pos;
+
+            explicitChartPos = chartPosition;
         }
     }
 
@@ -78,7 +80,7 @@ public class TimelineMovementController : MovementController
                     {
                         ++i;
                     }
-                    
+
                     // Jump forward
                     if (scrollDelta > 0)
                     {
@@ -92,7 +94,7 @@ public class TimelineMovementController : MovementController
                     // Jump backwards
                     else
                     {
-                        
+
                         while (i > editor.currentSong.sections.Length - 1 || (i >= 0 && Mathf.Round(editor.currentSong.sections[i].worldYPosition) >= position))
                             --i;
 
@@ -104,11 +106,34 @@ public class TimelineMovementController : MovementController
 
                 }
                 else
+                {
                     // Mouse scroll movement
                     transform.position = new Vector3(transform.position.x, transform.position.y + (scrollDelta * mouseScrollSensitivity), transform.position.z);
+                    explicitChartPos = null;
+                }
 
                 if (transform.position.y < initPos.y)
                     transform.position = initPos;
+
+                UpdateTimelineHandleBasedPos();
+            }
+            else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                uint currentPos;
+                if (explicitChartPos != null)
+                    currentPos = (uint)explicitChartPos;
+                else
+                    currentPos = editor.currentSong.WorldYPositionToChartPosition(editor.visibleStrikeline.position.y);
+
+                // Navigate to snapped pos ahead or behind
+                if (Input.GetKeyDown(KeyCode.UpArrow))
+                {
+                    SetPosition(Snapable.ChartIncrementStep(currentPos, Globals.step, editor.currentSong.resolution));
+                }
+                else
+                {
+                    SetPosition(Snapable.ChartDecrementStep(currentPos, Globals.step, editor.currentSong.resolution));
+                }
 
                 UpdateTimelineHandleBasedPos();
             }
