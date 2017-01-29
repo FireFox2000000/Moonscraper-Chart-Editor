@@ -23,6 +23,7 @@ public class MoveBPM : PlaceBPM {
         editor.CreateBPMObject(bpmToAdd);
         editor.currentSelectedObject = bpmToAdd;
 
-        editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(initObject), new ActionHistory.Add(bpmToAdd) });
+        if (!initObject.AllValuesCompare(bpmToAdd))
+            editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(initObject), new ActionHistory.Add(bpmToAdd) });
     }
 }

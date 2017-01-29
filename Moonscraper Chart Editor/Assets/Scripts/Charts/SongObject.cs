@@ -22,7 +22,9 @@ public abstract class SongObject
         get
         {
             if (song == null)
+            {
                 Debug.Log("null");
+            }
             return song.ChartPositionToWorldYPosition(position);
         }
     }

@@ -24,6 +24,7 @@ public class MoveTimeSignature : PlaceTimesignature {
         editor.CreateTSObject(tsToAdd);
         editor.currentSelectedObject = tsToAdd;
 
-        editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(initObject), new ActionHistory.Add(tsToAdd) });
+        if (!initObject.AllValuesCompare(tsToAdd))
+            editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(initObject), new ActionHistory.Add(tsToAdd) });
     }
 }

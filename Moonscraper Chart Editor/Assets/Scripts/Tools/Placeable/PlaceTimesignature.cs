@@ -18,7 +18,7 @@ public class PlaceTimesignature : PlaceSongObject {
     {
         if (Toolpane.currentTool == Toolpane.Tools.Timesignature && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
         {
-            RecordActionHistory(ts, editor.currentSong.timeSignatures);
+            RecordAddActionHistory(ts, editor.currentSong.timeSignatures);
 
             AddObject();
         }

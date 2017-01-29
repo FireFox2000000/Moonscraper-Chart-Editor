@@ -19,7 +19,7 @@ public class PlaceBPM : PlaceSongObject {
     {
         if (Toolpane.currentTool == Toolpane.Tools.BPM && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
         {
-            RecordActionHistory(bpm, editor.currentSong.bpms);
+            RecordAddActionHistory(bpm, editor.currentSong.bpms);
 
             AddObject();
         }

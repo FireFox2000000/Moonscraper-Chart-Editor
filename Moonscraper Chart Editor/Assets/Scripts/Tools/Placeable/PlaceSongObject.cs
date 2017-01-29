@@ -63,19 +63,27 @@ public abstract class PlaceSongObject : ToolObject {
         }
     }
 
-    protected void RecordActionHistory<T>(T overwriteCheck, T[] overWriteSearch) where T : SongObject
+    protected void RecordAddActionHistory<T>(T overwriteCheck, T[] overWriteSearch) where T : SongObject
+    {
+        ActionHistory.Action record = OverwriteActionHistory(overwriteCheck, overWriteSearch);
+        if (record != null)
+            editor.actionHistory.Insert(record);
+    }
+
+    public static ActionHistory.Action OverwriteActionHistory<T>(T overwriteCheck, T[] overWriteSearch) where T : SongObject
     {
         int arrayPos = SongObject.FindObjectPosition(overwriteCheck, overWriteSearch);
         if (arrayPos != Globals.NOTFOUND)       // Found an object that matches
         {
             if (!overwriteCheck.AllValuesCompare(overWriteSearch[arrayPos]))
                 // Object will changed, therefore record
-                editor.actionHistory.Insert(new ActionHistory.Modify(overWriteSearch[arrayPos], overwriteCheck));
-                //editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(overWriteSearch[arrayPos]), new ActionHistory.Add(overwriteCheck) });
+                return new ActionHistory.Modify(overWriteSearch[arrayPos], overwriteCheck);
+            else
+                return null;
         }
         else
         {
-            editor.actionHistory.Insert(new ActionHistory.Add(overwriteCheck));
+            return new ActionHistory.Add(overwriteCheck);
         }
     }
 }

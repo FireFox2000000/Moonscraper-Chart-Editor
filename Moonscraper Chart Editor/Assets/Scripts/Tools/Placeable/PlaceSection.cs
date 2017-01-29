@@ -19,7 +19,7 @@ public class PlaceSection : PlaceSongObject {
     {
         if (Toolpane.currentTool == Toolpane.Tools.Section && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
         {
-            RecordActionHistory(section, editor.currentSong.sections);
+            RecordAddActionHistory(section, editor.currentSong.sections);
 
             AddObject();
         }

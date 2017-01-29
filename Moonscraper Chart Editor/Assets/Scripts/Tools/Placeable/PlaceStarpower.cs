@@ -83,6 +83,7 @@ public class PlaceStarpower : PlaceSongObject {
     protected override void OnEnable()
     {
         editor.currentSelectedObject = starpower;
+        
         Update();
     }
 
@@ -97,15 +98,24 @@ public class PlaceStarpower : PlaceSongObject {
         lastPlacedSP = starpowerToAdd;
     }
 
-    public static void AddObjectToCurrentChart(StarPower starpower, ChartEditor editor, bool update = true)
+    public static ActionHistory.Action[] AddObjectToCurrentChart(StarPower starpower, ChartEditor editor, bool update = true)
     {
+        List<ActionHistory.Action> record = new List<ActionHistory.Action>();
+
         StarPower starpowerToAdd = new StarPower(starpower);
+        record.AddRange(CapPrevAndNextPreInsert(starpowerToAdd, editor.currentChart));
+        ActionHistory.Action overwriteRecord = OverwriteActionHistory(starpowerToAdd, editor.currentChart.starPower);
+        if (overwriteRecord != null)
+            record.Add(overwriteRecord);
+
         editor.currentChart.Add(starpowerToAdd, update);
         editor.CreateStarpowerObject(starpowerToAdd);
         editor.currentSelectedObject = starpowerToAdd;
+
+        return record.ToArray();
     }
 
-    ActionHistory.Action[] CapPrevAndNextPreInsert(StarPower sp, Chart chart)
+    static ActionHistory.Action[] CapPrevAndNextPreInsert(StarPower sp, Chart chart)
     {
         List<ActionHistory.Action> record = new List<ActionHistory.Action>();
         int arrayPos = SongObject.FindClosestPosition(sp, chart.starPower);
@@ -117,14 +127,13 @@ public class PlaceStarpower : PlaceSongObject {
                 ++arrayPos;
             }
            
-            if (arrayPos > 0 && chart.starPower[arrayPos - 1].position < starpower.position)
+            if (arrayPos > 0 && chart.starPower[arrayPos - 1].position < sp.position)
             {
                 
                 StarPower prevSp = chart.starPower[arrayPos - 1];
                 // Cap previous sp
                 if (prevSp.position + prevSp.length > sp.position)
                 {
-                    Debug.Log("Previous");
                     StarPower originalPrev = (StarPower)prevSp.Clone();
                     
                     prevSp.length = sp.position - prevSp.position;
@@ -132,7 +141,7 @@ public class PlaceStarpower : PlaceSongObject {
                 }
             }
 
-            if (arrayPos < chart.starPower.Length && chart.starPower[arrayPos].position > starpower.position)
+            if (arrayPos < chart.starPower.Length && chart.starPower[arrayPos].position > sp.position)
             {       
                 StarPower nextSp = chart.starPower[arrayPos];
 

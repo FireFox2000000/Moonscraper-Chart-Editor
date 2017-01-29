@@ -59,6 +59,7 @@ public class MoveNote : PlaceNote {
             noteRecord.Insert(0, forceCheck);           // Insert at the start so that the modification happens at the end of the undo function, otherwise the natural force check prevents it from being forced
 
         editor.currentSelectedObject = noteToAdd;
-        editor.actionHistory.Insert(noteRecord.ToArray());
+        if (noteRecord.Count > 0 && !initObject.AllValuesCompare(noteToAdd))
+            editor.actionHistory.Insert(noteRecord.ToArray());
     }
 }

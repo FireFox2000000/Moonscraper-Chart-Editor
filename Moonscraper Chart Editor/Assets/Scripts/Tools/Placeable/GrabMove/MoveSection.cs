@@ -23,6 +23,7 @@ public class MoveSection : PlaceSection {
         editor.CreateSectionObject(sectionToAdd);
         editor.currentSelectedObject = sectionToAdd;
 
-        editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(initObject), new ActionHistory.Add(sectionToAdd) });
+        if (!initObject.AllValuesCompare(sectionToAdd))
+            editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(initObject), new ActionHistory.Add(sectionToAdd) });
     }
 }
