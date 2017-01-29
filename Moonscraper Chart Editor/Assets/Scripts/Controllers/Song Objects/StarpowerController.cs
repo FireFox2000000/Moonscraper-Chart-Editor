@@ -53,10 +53,10 @@ public class StarpowerController : SongObjectController
             StarPower nextSp = null;
             foreach (StarPower sp in starpower.chart.starPower)
             {
-                if (sp.position > starpower.position)
+                if (sp.song != null && sp.position > starpower.position)
                     nextSp = sp;
             }
-
+            
             if (nextSp != null)
             {
                 // Cap sustain length
