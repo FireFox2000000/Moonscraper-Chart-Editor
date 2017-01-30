@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class TimesignaturePropertiesPanelController : PropertiesPanelController {
-    public TimeSignature currentTS;
+    public TimeSignature currentTS { get { return (TimeSignature)currentSongObject; } set { currentSongObject = value; } }
     public InputField tsValue;
 
     void Start()
@@ -21,8 +21,9 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
         ChartEditor.editOccurred = edit;
     }
 
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         if (currentTS != null)
         {
             positionText.text = "Position: " + currentTS.position.ToString();
@@ -32,8 +33,9 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
         }
     }
 
-    void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnDisable();
         currentTS = null;
     }
 
@@ -42,7 +44,10 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
         float prevValue = currentTS.value;
 
         if (value != string.Empty && currentTS != null)
+        {
             currentTS.value = uint.Parse(value);
+            UpdateInputFieldRecord();
+        }
 
         if (prevValue != currentTS.value)
             ChartEditor.editOccurred = true;
@@ -53,6 +58,7 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
         if (value == string.Empty || currentTS.value < 1)
         {
             currentTS.value = 4;
+            UpdateInputFieldRecord();
         }
 
         tsValue.text = currentTS.value.ToString();

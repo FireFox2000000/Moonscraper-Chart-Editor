@@ -156,13 +156,13 @@
     <Compile Include="Assets\Scripts\UI\Inspectors\BPMPropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\Inspectors\DisplayProperties.cs" />
     <Compile Include="Assets\Scripts\UI\Inspectors\NotePropertiesPanelController.cs" />
+    <Compile Include="Assets\Scripts\UI\Inspectors\PropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\Inspectors\SectionPropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\Inspectors\TimesignaturePropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\AudioCalibrationMenuScript.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\DisplayMenu.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\SettingsController.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\SongPropertiesPanelController.cs" />
-    <Compile Include="Assets\Scripts\UI\PropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\ToolPanelController.cs" />
     <Compile Include="Assets\Scripts\Utility.cs" />
     <Compile Include="Assets\XInputDotNet\Examples\XInputTestCS.cs" />

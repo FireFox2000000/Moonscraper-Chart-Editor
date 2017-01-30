@@ -209,8 +209,16 @@ public class ChartEditor : MonoBehaviour {
             currentPropertiesPanel.gameObject.SetActive(true);
         }
 
-        undo.interactable = actionHistory.canUndo;
-        redo.interactable = actionHistory.canRedo;
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+        {
+            undo.interactable = actionHistory.canUndo;
+            redo.interactable = actionHistory.canRedo;
+        }
+        else
+        {
+            undo.interactable = false;
+            redo.interactable = false;
+        }
 
         // Set window text to represent if the current song has been saved or not
 #if !UNITY_EDITOR

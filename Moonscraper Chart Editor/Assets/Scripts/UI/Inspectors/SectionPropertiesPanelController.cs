@@ -3,11 +3,12 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class SectionPropertiesPanelController : PropertiesPanelController {
-    public Section currentSection;
+    public Section currentSection { get { return (Section)currentSongObject; } set { currentSongObject = value; } }
     public InputField sectionName;
 
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         if (currentSection != null)
         {
             positionText.text = "Position: " + currentSection.position.ToString();
@@ -16,7 +17,7 @@ public class SectionPropertiesPanelController : PropertiesPanelController {
     }
 
     void OnEnable()
-    {
+    {       
         bool edit = ChartEditor.editOccurred;
 
         if (currentSection != null)
@@ -25,8 +26,9 @@ public class SectionPropertiesPanelController : PropertiesPanelController {
         ChartEditor.editOccurred = edit;
     }
 
-    void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnDisable();
         currentSection = null;
     }
 
@@ -34,7 +36,10 @@ public class SectionPropertiesPanelController : PropertiesPanelController {
     {
         string prevName = currentSection.title;
         if (currentSection != null)
+        {
             currentSection.title = name;
+            UpdateInputFieldRecord();
+        }
 
         if (prevName != currentSection.title)
             ChartEditor.editOccurred = true;

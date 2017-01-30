@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class BPMPropertiesPanelController : PropertiesPanelController {
-    public BPM currentBPM;
+    public BPM currentBPM { get { return (BPM)currentSongObject; } set { currentSongObject = value; } }
     public InputField bpmValue;
 
     void Start()
@@ -21,8 +21,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         ChartEditor.editOccurred = edit;
     }
 
-    void Update()
+    protected override void Update()
     {
+        base.Update();
         if (currentBPM != null)
         {
             positionText.text = "Position: " + currentBPM.position.ToString();
@@ -33,8 +34,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         editor.currentSong.updateArrays();
     }
 
-    void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnDisable();
         currentBPM = null;
         editor.currentSong.updateArrays();
     }
@@ -46,7 +48,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         {
             float floatVal = float.Parse(value) * 1000;     // Store it in another variable due to weird parsing-casting bug at decimal points of 2 or so. Seems to fix it for whatever reason.
 
-            currentBPM.value = (uint)floatVal;           
+            currentBPM.value = (uint)floatVal;
+            UpdateInputFieldRecord();
         }
         else if (value == ".")
             bpmValue.text = string.Empty;
@@ -59,7 +62,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     {
         if (value == string.Empty || currentBPM.value <= 0)
         {
-            currentBPM.value = 120000; 
+            currentBPM.value = 120000;
+            UpdateInputFieldRecord();
         }
 
         bpmValue.text = ((float)currentBPM.value / 1000.0f).ToString();

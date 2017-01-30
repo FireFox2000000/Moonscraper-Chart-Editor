@@ -269,9 +269,10 @@ public class Globals : MonoBehaviour {
         // Disable controls while user is in an input field
         if (!IsTyping)
             Controls();
+        ModifierControls();
     }
 
-    void Controls()
+    void ModifierControls()
     {
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand))
         {
@@ -297,7 +298,10 @@ public class Globals : MonoBehaviour {
                     groupSelect.reset();
             }
         }
+    }
 
+    void Controls()
+    {
         if (Input.GetButtonDown("PlayPause"))
         {
             if (applicationMode == Globals.ApplicationMode.Editor)

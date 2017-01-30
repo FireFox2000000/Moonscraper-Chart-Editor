@@ -4,7 +4,7 @@ using System.Collections;
 
 public class NotePropertiesPanelController : PropertiesPanelController {
 
-    public Note currentNote;
+    public Note currentNote { get { return (Note)currentSongObject; } set { currentSongObject = value; } }
 
     public Text fretText;
 
@@ -31,8 +31,8 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
         prevForcedProperty = forcedToggle.isOn;
     }
-    
-    void Update()
+
+    protected override void Update()
     {
         // Prevent users from forcing notes when they shouldn't be forcable but retain the previous user-set forced property when using the note tool
         if (Toolpane.currentTool != Toolpane.Tools.Note || (Toolpane.currentTool == Toolpane.Tools.Note && noteToolObject.activeSelf))

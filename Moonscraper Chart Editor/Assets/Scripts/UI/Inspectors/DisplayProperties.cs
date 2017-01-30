@@ -11,7 +11,6 @@ public class DisplayProperties : MonoBehaviour {
     public Slider gameSpeedSlider;
 
     ChartEditor editor;
-    protected ActionHistory.Modify inputFieldModify = null;
 
     void Start()
     {
@@ -106,6 +105,4 @@ public class DisplayProperties : MonoBehaviour {
         Globals.step = stepVal;
         snappingStep.text = Globals.step.ToString();
     }
-
-
 }
