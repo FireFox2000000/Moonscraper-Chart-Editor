@@ -63,8 +63,6 @@ public class PropertiesPanelController : MonoBehaviour {
                 lastKnownDirection = ValueDirection.UP;
             else
                 lastKnownDirection = ValueDirection.NONE;
-
-            Debug.Log(GetValue(currentSongObject) + ", " + GetValue(prevSongObject));
         }
         // Else check if a new record needs to overwrite this current one or if this one needs to be edited
         else if (inputFieldModify != null)
@@ -82,7 +80,6 @@ public class PropertiesPanelController : MonoBehaviour {
                     inputFieldModify = new ActionHistory.Modify(prevSongObject, currentSongObject);
                     // Add to action history
                     editor.actionHistory.Insert(inputFieldModify);
-                    Debug.Log("Add2");
                 }
 
                 lastKnownDirection = ValueDirection.DOWN;
@@ -100,14 +97,16 @@ public class PropertiesPanelController : MonoBehaviour {
                     inputFieldModify = new ActionHistory.Modify(prevSongObject, currentSongObject);
                     // Add to action history
                     editor.actionHistory.Insert(inputFieldModify);
-                    Debug.Log("Add3");
                 }
 
                 lastKnownDirection = ValueDirection.UP;
             }
             else
             {
-
+                // Add a new record
+                inputFieldModify = new ActionHistory.Modify(prevSongObject, currentSongObject);
+                // Add to action history
+                editor.actionHistory.Insert(inputFieldModify);
             }
         }
 
