@@ -48,8 +48,15 @@ public class HighwayController : MonoBehaviour {
         while (snappedLinePos < editor.maxPos && i < beatLinePool1.Length)
         {
             beatLinePool1[i].SetActive(true);
+
+            if (Globals.viewMode == Globals.ViewMode.Song && snappedLinePos % (editor.currentSong.resolution * 4) == 0)
+                beatLinePool1[i].transform.localScale = new Vector3(1.1f, beatLinePool1[i].transform.localScale.y, beatLinePool1[i].transform.localScale.z);
+            else
+                beatLinePool1[i].transform.localScale = new Vector3(1, beatLinePool1[i].transform.localScale.y, beatLinePool1[i].transform.localScale.z);
+
             beatLinePool1[i].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
             snappedLinePos += (uint)(editor.currentSong.resolution);
+            
             ++i;
         }
 
