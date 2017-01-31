@@ -22,6 +22,8 @@ CHANGES
 -Reduced section indicators from being infinite to 100 instances
 -Background now scales to window size
 -Increased minimum hyperspeed setting from a minimum of 1 to a minimum of 5
+-When in global view mode, bpm lines drawn at 1/1 will be slightly extended
+-When exiting from gameplay mode, timeline position will reset back to the point gameplay mode was enabled from
 
 FIXES
 -Fixed gameplay cutting off the first note

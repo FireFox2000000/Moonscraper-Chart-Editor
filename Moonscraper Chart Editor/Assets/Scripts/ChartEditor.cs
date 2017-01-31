@@ -70,6 +70,7 @@ public class ChartEditor : MonoBehaviour {
 
     public SongObject currentSelectedObject = null;
     GameObject currentPropertiesPanel = null;
+    Vector3? stopResetPos = null;
 
     [DllImport("user32.dll", EntryPoint = "SetWindowText")]
     public static extern bool SetWindowText(System.IntPtr hwnd, System.String lpString);
@@ -389,6 +390,8 @@ public class ChartEditor : MonoBehaviour {
         if (Globals.applicationMode == Globals.ApplicationMode.Playing || movement.transform.position.y < movement.initPos.y)
             return;
 
+        stopResetPos = movement.transform.position;
+
         float strikelineYPos = visibleStrikeline.position.y - (0.01f * Globals.hyperspeed);     // Offset to prevent errors where it removes a note that is on the strikeline
 
         foreach (Note note in currentChart.notes)
@@ -477,8 +480,11 @@ public class ChartEditor : MonoBehaviour {
                     note.controller.Activate();
             }
         }
+        if (stopResetPos != null)
+            movement.transform.position = (Vector3)stopResetPos;
 
         Globals.bot = true;
+        stopResetPos = null;
     }
 
     IEnumerator _Load()

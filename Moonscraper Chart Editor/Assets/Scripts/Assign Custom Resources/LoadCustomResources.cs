@@ -12,7 +12,7 @@ public class LoadCustomResources : MonoBehaviour {
     CustomResource[] resources = new CustomResource[] {
         new CustomAudioClip("break-0"),
         new CustomTexture("background-0", 1920, 1080),
-        new CustomTexture("fretboard", 512, 1024),
+        new CustomTexture("fretboard-0", 512, 1024),
         new CustomAudioClip("clap")
     };
 

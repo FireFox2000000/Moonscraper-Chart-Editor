@@ -6,5 +6,5 @@ Audio files-
   clap
   
 Image files
-  background-0
-  fretboard
+  background-0		(Recommended size: 1920x1080)
+  fretboard-0		(Recommended size: 512x1024)
