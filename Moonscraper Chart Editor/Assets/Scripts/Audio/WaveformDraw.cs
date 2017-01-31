@@ -18,7 +18,7 @@ public class WaveformDraw : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         // Get new data
-        if (currentClip == null || currentClip != editor.currentSong.musicStream)
+        if (Globals.viewMode == Globals.ViewMode.Song && (currentClip == null || currentClip != editor.currentSong.musicStream))
         {
             currentClip = editor.currentSong.musicStream;
 

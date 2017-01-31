@@ -1,4 +1,4 @@
-Moonscraper Chart Editor (v0.5) for Guitar Hero III - Legends of Rock and GHTCP+ (WINDOWS ONLY)
+Moonscraper Chart Editor (v0.7) for Guitar Hero III - Legends of Rock and GHTCP+ (WINDOWS ONLY)
 By Alexander "FireFox" Ong
 
   Basic controls-
@@ -39,6 +39,8 @@ By Alexander "FireFox" Ong
     ctrl-x: Cut (group select tool only)
     ctrl-c: Copy (group select tool only)
     ctrl-v: Paste
+	ctrl-z: Undo
+	ctrl-shift-z/ctrl-y: Redo
     del: Delete currently selected objects (cursor and group select tools)
 	Hold right-click and press left click: Delete the object under the mouse (no matter what tool is selected)
     space: Play/pause
@@ -47,12 +49,12 @@ By Alexander "FireFox" Ong
     q: Reduce step
     t: Toggle tap note property
     f: Toggle force note
+	g: Toggle song view mode
 	"Start" on 360/GH controller: Enter/exit gameplay mode
     
   What's not implemented-
     Cannot add/edit chart events
     Cannot add/edit song events
     More keyboard shortcuts
-    Time slowdown
     Art
-    + probably more
+    + probably more random crap. Feel free to request

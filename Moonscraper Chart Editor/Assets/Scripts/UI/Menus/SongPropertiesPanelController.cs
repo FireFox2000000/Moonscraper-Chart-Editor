@@ -168,16 +168,19 @@ public class SongPropertiesPanelController : DisplayMenu {
     {
         try
         {
-            editor.currentSong.LoadMusicStream(GetAudioFile()); 
+            editor.currentSong.LoadMusicStream(GetAudioFile());
+            editor.SetAudioSources();
+            setAudioTextLabels();
         }
         catch
         {
             Debug.LogError("Could not open audio");
-        }
+        }        
+    }
 
-        editor.SetAudioSources();
-
-        setAudioTextLabels();       
+    public void ClearMusicStream()
+    {
+        clearAudioStream(0);
     }
 
     public void LoadGuitarStream()
@@ -187,13 +190,17 @@ public class SongPropertiesPanelController : DisplayMenu {
             editor.currentSong.LoadGuitarStream(GetAudioFile());
 
             editor.SetAudioSources();
-
             setAudioTextLabels();
         }
         catch
         {
             Debug.LogError("Could not open audio");
         }
+    }
+
+    public void ClearGuitarStream()
+    {
+        clearAudioStream(1);
     }
 
     public void LoadRhythmStream()
@@ -203,12 +210,37 @@ public class SongPropertiesPanelController : DisplayMenu {
             editor.currentSong.LoadRhythmStream(GetAudioFile());
 
             editor.SetAudioSources();
-
             setAudioTextLabels();
         }
         catch
         {
             Debug.LogError("Could not open audio");
         }
+    }
+
+    public void ClearRhythmStream()
+    {
+        clearAudioStream(2);
+    }
+
+    void clearAudioStream(int songAudioIndex)
+    {
+        switch (songAudioIndex)
+        {
+            case (0):
+                editor.currentSong.musicStream = null;
+                break;
+            case (1):
+                editor.currentSong.guitarStream = null;
+                break;
+            case (2):
+                editor.currentSong.rhythmStream = null;
+                break;
+            default:
+                break;
+        }
+        
+        editor.SetAudioSources();
+        setAudioTextLabels();
     }
 }

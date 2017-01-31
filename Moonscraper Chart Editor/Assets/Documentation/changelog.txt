@@ -1,24 +1,34 @@
-Moonscraper v0.6 changelog (since v0.5)
+Moonscraper v0.7 changelog - 31/01/2017
 
--Can now quick-delete by holding right-click and pressing left-click over an object from the placement tools
--Added end cap to sp tails to prevent overlapping
--Added gameplay, activated by clicking the guitar symbol next to the play button (with fixed strumming engine)
--Added combo break SFX when a note streak above 10 breaks
--Added bot to play when previewing the chart the regular way
--Added SFX volume control
--Added stats that get displayed in gameplay mode
--Editor now shows total notes in the chart
--Optimised position calculation for extremely long charts
--Added audio calibration panel
--Moved settings into the options panel
--Added GH-style strikeline to improve visual feedback
--Added section tool icon (may change later)
--BPM tool now copies the value of the bpm before it, similar to Feedback
--Added section text next to timeline buttons
+NEW FEATURES
+-Added undo/redo feature to all main aspects of charting
+-Added chart speed controls with automatic pitch-correction
+-Added waveform visualizer to the global view
+-Can now hold "shift" or "alt" when in the group select tool to add or remove from the current selection respectively
+-Implemented custom resources for custom backgrounds, miss sounds etc
+-Added fretboards (when using custom fretboards, otherwise it's just black)
+-Added starpower indicators to the timeline (limited to 100 instances)
+-Added shortcut on the "g" key to switch between view modes
+-Can now click outside of menus to exit them
+-Added double-click highlighting to all input fields
+-Added a "Reset Aspect Ratio" option to the options drop-down to snap the window back to 16:9 
+-Added basic arrow key chart navigation
+-Added buttons to clear an audio file from the music/guitar/rhythm slots
 
--Various bug fixes on group selection
--Fixed the application grabbing the wrong window handle if users clicked away from the window during startup
--Fixed pasting bug where it would delete notes just before the pasting area if they were close enough
+CHANGES
+-Dropdown menus now act more like traditional dropdown menus when hovering over and another dropdown is already selected
+-Added guard to prevent note tool from placing notes when coming out of the delete mode
+-Load time optimisation (eg. 8 Pillars of Mercy load time reduced by ~50%)
+-Reduced section indicators from being infinite to 100 instances
+-Background now scales to window size
+-Increased minimum hyperspeed setting from a minimum of 1 to a minimum of 5
+
+FIXES
+-Fixed gameplay cutting off the first note
+-Fixed objects were sometimes getting placed when going into menus such as the settings or calibration menu
+-Fixed mousescroll not working until dropdown was completely selected
+-Fixed mousescroll not working when mouse was over any UI, not just dropdowns
+-Fixed rounding error in snapping calculations when using custom step settings
 
 KNOWN ISSUES
 -Note highlight removes open note glow effect
