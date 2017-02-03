@@ -25,16 +25,6 @@ public class TimesignatureController : SongObjectController {
         }
     }
 
-    public override void Delete(bool update = true)
-    {
-        if (ts.position != 0)
-        {
-            ts.song.Remove(ts, update);
-
-            Destroy(gameObject);
-        }
-    }
-
     public override void OnSelectableMouseDrag()
     {
         // Move note
@@ -49,7 +39,7 @@ public class TimesignatureController : SongObjectController {
             MoveTimeSignature movement = moveTS.AddComponent<MoveTimeSignature>();
             movement.Init(ts);
 
-            Delete();
+            ts.Delete();
         }
     }
 }

@@ -5,26 +5,20 @@ using System;
 public class StarpowerController : SongObjectController
 {
     public GameObject tail;
-    public StarPower starpower { get { return (StarPower)songObject; } set { songObject = value; } }
+    public Starpower starpower { get { return (Starpower)songObject; } set { songObject = value; } }
 
-    public StarPower unmodifiedSP = null;
+    public Starpower unmodifiedSP = null;
 
     new void Awake()
     {
         base.Awake();
     }
 
-    public void Init(StarPower _starpower)
+    public void Init(Starpower _starpower)
     {
         base.Init(_starpower);
         starpower = _starpower;
         starpower.controller = this;
-    }
-
-    public override void Delete(bool update = true)
-    {
-        starpower.chart.Remove(starpower, update);
-        Destroy(gameObject);
     }
 
     protected override void UpdateCheck()
@@ -124,7 +118,7 @@ public class StarpowerController : SongObjectController
             editor.currentSelectedObject = starpower;
             moveSP.SetActive(true);
 
-            Delete();
+            starpower.Delete();
         }
         else 
         {
@@ -137,7 +131,7 @@ public class StarpowerController : SongObjectController
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
             if (unmodifiedSP == null)
-                unmodifiedSP = (StarPower)starpower.Clone();
+                unmodifiedSP = (Starpower)starpower.Clone();
 
             TailDrag();
         }

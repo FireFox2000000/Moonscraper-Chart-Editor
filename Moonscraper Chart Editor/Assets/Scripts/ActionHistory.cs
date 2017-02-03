@@ -156,8 +156,7 @@ public class ActionHistory
                 else
                     foundSongObject = arrayToSearch[arrayPos];
 
-                if (foundSongObject.controller)
-                    foundSongObject.controller.Delete(false);
+                foundSongObject.Delete(false);
             }
         }
 

@@ -387,4 +387,43 @@ public class Note : ChartObject
 
         return list.ToArray();
     }
+
+    public ActionHistory.Modify CapSustain(Note cap)
+    {
+        Note originalNote = (Note)this.Clone();
+
+        // Cap sustain length
+        if (cap.position <= position)
+            sustain_length = 0;
+        else if (position + sustain_length > cap.position)        // Sustain extends beyond cap note 
+        {
+            sustain_length = cap.position - position;
+        }
+
+        uint gapDis = (uint)(song.resolution * 4.0f / Globals.sustainGap);
+
+        if (Globals.sustainGapEnabled && sustain_length > 0 && (position + sustain_length > cap.position - gapDis))
+        {
+            if ((int)(cap.position - gapDis - position) > 0)
+                sustain_length = cap.position - gapDis - position;
+            else
+                sustain_length = 0;
+        }
+
+        if (originalNote.sustain_length != sustain_length)
+            return new ActionHistory.Modify(originalNote, this);
+        else
+            return null;
+    }
+
+    public override void Delete(bool update = true)
+    {
+        base.Delete();
+
+        // Update the previous note in the case of chords with 2 notes
+        if (previous != null && previous.controller)
+            previous.controller.UpdateSongObject();
+        if (next != null && next.controller)
+            next.controller.UpdateSongObject();
+    }
 }
