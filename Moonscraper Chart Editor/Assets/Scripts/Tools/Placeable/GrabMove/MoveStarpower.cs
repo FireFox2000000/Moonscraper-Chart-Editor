@@ -8,9 +8,9 @@ public class MoveStarpower : PlaceStarpower {
         MovementControls();
     }
 
-    public void Init(Starpower starpower)
+    public void Init(StarPower starpower)
     {
-        this.starpower = new Starpower(starpower);
+        this.starpower = new StarPower(starpower);
         controller.Init(this.starpower);
         initObject = this.starpower.Clone();
     }

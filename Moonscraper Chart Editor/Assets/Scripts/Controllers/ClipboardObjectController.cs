@@ -58,7 +58,7 @@ public class ClipboardObjectController : Snapable {
             {
                 if (chartObject.controller && chartObject.position >= chartLocationToPaste && chartObject.position < chartLocationToPaste + colliderChartDistance && chartObject.controller.AABBcheck(collisionRect))
                 {
-                    chartObject.Delete(false);
+                    chartObject.controller.Delete(false);
 
                     record.Add(new ActionHistory.Delete(chartObject));
                 }
@@ -75,9 +75,9 @@ public class ClipboardObjectController : Snapable {
                 {
                     record.AddRange(PlaceNote.AddObjectToCurrentChart((Note)objectToAdd, editor, false));
                 }
-                else if (objectToAdd.GetType() == typeof(Starpower))
+                else if (objectToAdd.GetType() == typeof(StarPower))
                 {
-                    record.AddRange(PlaceStarpower.AddObjectToCurrentChart((Starpower)objectToAdd, editor, false));
+                    record.AddRange(PlaceStarpower.AddObjectToCurrentChart((StarPower)objectToAdd, editor, false));
                 }
                 else
                 {

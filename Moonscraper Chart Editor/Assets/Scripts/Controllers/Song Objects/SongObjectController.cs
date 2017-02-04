@@ -9,6 +9,7 @@ public abstract class SongObjectController : SelectableClick {
     protected SongObject songObject = null;
     Bounds bounds;
 
+    public abstract void Delete(bool update = true);
     public abstract void UpdateSongObject();
 
     Collider col3d;
@@ -46,6 +47,12 @@ public abstract class SongObjectController : SelectableClick {
     void Update()
     {
         UpdateCheck();
+    }
+
+    // Allows things like section GUI to be destroyed
+    public virtual void DestroyGameObject()
+    {
+        Destroy(gameObject);
     }
 
     protected virtual void UpdateCheck()
@@ -87,7 +94,7 @@ public abstract class SongObjectController : SelectableClick {
             (Input.GetMouseButtonDown(0) && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1)))
         {
             editor.actionHistory.Insert(new ActionHistory.Delete(songObject));
-            songObject.Delete();
+            Delete();
             editor.currentSelectedObject = null;
         }
     }

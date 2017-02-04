@@ -10,7 +10,7 @@ public class Chart  {
     List<ChartObject> _chartObjects;
 
     public Note[] notes { get; private set; }
-    public Starpower[] starPower { get; private set; }
+    public StarPower[] starPower { get; private set; }
     public ChartEvent[] events { get; private set; }
     public Song song { get { return _song; } }
 
@@ -25,7 +25,7 @@ public class Chart  {
         _chartObjects = new List<ChartObject>();
 
         notes = new Note[0];
-        starPower = new Starpower[0];
+        starPower = new StarPower[0];
         events = new ChartEvent[0];
 
         _note_count = 0;
@@ -34,7 +34,7 @@ public class Chart  {
     public void updateArrays()
     {
         notes = _chartObjects.OfType<Note>().ToArray();
-        starPower = _chartObjects.OfType<Starpower>().ToArray();
+        starPower = _chartObjects.OfType<StarPower>().ToArray();
         events = _chartObjects.OfType<ChartEvent>().ToArray();
 
         _note_count = GetNoteCount();
@@ -159,7 +159,7 @@ public class Chart  {
                     uint position = uint.Parse(digits[0]);
                     uint length = uint.Parse(digits[2]);
 
-                    Add(new Starpower(position, length), false);
+                    Add(new StarPower(position, length), false);
                 }
                 
                 else if (noteEventRegex.IsMatch(line))

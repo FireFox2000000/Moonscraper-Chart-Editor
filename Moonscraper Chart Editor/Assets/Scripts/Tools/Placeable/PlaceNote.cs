@@ -259,7 +259,7 @@ public class PlaceNote : PlaceSongObject {
 
         if (next != null)
         {
-            ActionHistory.Action action = note.CapSustain(next);
+            ActionHistory.Action action = note.controller.sustain.CapSustain(next);
             if (action != null)
                 actionRecord.Add(action);
         }
@@ -280,7 +280,7 @@ public class PlaceNote : PlaceSongObject {
             {
                 if (prevNote.controller != null)
                 {
-                    ActionHistory.Action action = prevNote.CapSustain(noteToAdd);
+                    ActionHistory.Action action = prevNote.controller.sustain.CapSustain(noteToAdd);
                     if (action != null)
                         actionRecord.Add(action);
                 }
@@ -299,7 +299,7 @@ public class PlaceNote : PlaceSongObject {
             {
                 if (prevNote.controller != null && (prevNote.fret_type == noteToAdd.fret_type || prevNote.fret_type == Note.Fret_Type.OPEN))
                 {
-                    ActionHistory.Action action = prevNote.CapSustain(noteToAdd);
+                    ActionHistory.Action action = prevNote.controller.sustain.CapSustain(noteToAdd);
                     if (action != null)
                         actionRecord.Add(action);
                 }

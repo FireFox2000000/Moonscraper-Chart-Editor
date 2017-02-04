@@ -325,11 +325,10 @@ public class Globals : MonoBehaviour {
 
         if (Input.GetButtonDown("Delete") && editor.currentSelectedObject != null && Toolpane.currentTool == Toolpane.Tools.Cursor)
         {
-            if (!editor.currentSelectedObject.GetType().IsSubclassOf(typeof(SyncTrack)) || editor.currentSelectedObject.position != 0)
+            if (editor.currentSelectedObject.controller)
             {
                 editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentSelectedObject));
-                editor.currentSelectedObject.Delete();
-                editor.currentSelectedObject = null;
+                editor.currentSelectedObject.controller.Delete();
             }
         }
 

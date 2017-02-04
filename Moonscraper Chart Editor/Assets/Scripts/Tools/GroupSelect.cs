@@ -374,7 +374,10 @@ public class GroupSelect : ToolObject {
         foreach (ChartObject cObject in data)
         {
             deletedObjects.Add(cObject);
-            cObject.Delete(false);
+            if (cObject.controller)
+                cObject.controller.Delete(false);
+            else
+                editor.currentChart.Remove(cObject);
         }
 
         editor.actionHistory.Insert(new ActionHistory.Delete(deletedObjects.ToArray()));
