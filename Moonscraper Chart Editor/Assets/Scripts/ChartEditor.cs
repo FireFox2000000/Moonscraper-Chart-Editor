@@ -689,7 +689,7 @@ public class ChartEditor : MonoBehaviour {
             }
         }
 
-        StarPower[] starpowers = chart.starPower;
+        Starpower[] starpowers = chart.starPower;
         for (int i = 0; i < starpowers.Length; ++i)
         {
             // Make sure notes haven't been deleted
@@ -713,7 +713,7 @@ public class ChartEditor : MonoBehaviour {
         return controller;
     }
 
-    public StarpowerController CreateStarpowerObject(StarPower starpower)
+    public StarpowerController CreateStarpowerObject(Starpower starpower)
     {
         // Attach the note to the object
         StarpowerController controller = CreateChartObject(this.starpowerPrefab).GetComponent<StarpowerController>();
