@@ -97,6 +97,15 @@ public class SustainController : SelectableClick {
         {
             if (nextFret.position < note.position + note.sustain_length)
                 note.sustain_length = nextFret.position - note.position;
+                    /*
+            if (Globals.extendedSustainsEnabled)
+                CapSustain(nextFret);
+            else
+                foreach (Note chordNote in note.GetChord())
+                {
+                    if (chordNote.controller != null && chordNote.controller.sustain != null)
+                        chordNote.controller.sustain.CapSustain(nextFret);
+                }*/
         }
     }
 
@@ -118,35 +127,17 @@ public class SustainController : SelectableClick {
         if (note.fret_type == Note.Fret_Type.OPEN)
             nextFret = note.next;
         else
-            nextFret = note.FindNextSameFretWithinSustainExtendedCheck();
+            nextFret = FindNextSameFretWithinSustainExtendedCheck();
     }
 
-    void SustainDrag()
+    public void SustainDrag()
     {
         if (nCon.note.song == null || Input.GetMouseButton(0))
             return;
 
-        ChartEditor.editOccurred = true;
-        nCon.note.SetSustainByPos(GetSnappedSustainPos());
-    }
-
-    void ChordSustainDrag()
-    {
-        if (nCon.note.song == null || Input.GetMouseButton(0))
-            return;
-        ChartEditor.editOccurred = true;
-        Note[] chordNotes = nCon.note.GetChord();
-        uint snappedPos = GetSnappedSustainPos();
-
-        foreach (Note chordNote in chordNotes)
-        {
-            chordNote.SetSustainByPos(snappedPos);
-        }
-    }
-
-    uint GetSnappedSustainPos()
-    {
         uint snappedChartPos;
+        ChartEditor.editOccurred = true;
+
         Note note = nCon.note;
 
         if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
@@ -158,7 +149,35 @@ public class SustainController : SelectableClick {
             snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(note.song.WorldYPositionToChartPosition(editor.mouseYMaxLimit.position.y), Globals.step, note.song.resolution);
         }
 
-        return snappedChartPos;
+        if (snappedChartPos > note.position)
+            note.sustain_length = snappedChartPos - note.position;
+        else
+            note.sustain_length = 0;
+
+        // Cap the sustain
+        Note nextFret;
+        if (note.fret_type == Note.Fret_Type.OPEN)
+            nextFret = note.next;
+        else
+            nextFret = FindNextSameFretWithinSustainExtendedCheck();
+
+        if (nextFret != null)
+        {
+            note.CapSustain(nextFret);
+        }
+    }
+
+    public void ChordSustainDrag()
+    {
+        Note[] chordNotes = nCon.note.GetChord();
+
+        foreach (Note chordNote in chordNotes)
+        {
+            if (chordNote.controller != null)
+            {
+                chordNote.controller.sustain.SustainDrag();
+            }
+        }
     }
 
     Note FindNextSameFretWithinSustain()
@@ -172,6 +191,34 @@ public class SustainController : SelectableClick {
                 return next;
             else if (next.position >= note.position + note.sustain_length)      // Stop searching early
                 return null;
+
+            next = next.next;
+        }
+
+        return null;
+    }
+
+    Note FindNextSameFretWithinSustainExtendedCheck()
+    {
+        Note note = nCon.note;
+        Note next = note.next;
+
+        while (next != null)
+        {
+            if (!Globals.extendedSustainsEnabled)
+            {
+                if (next.fret_type == Note.Fret_Type.OPEN || (note.position < next.position))
+                    return next;
+                //else if (next.position >= note.position + note.sustain_length)      // Stop searching early
+                    //return null;
+            }
+            else
+            {
+                if (next.fret_type == Note.Fret_Type.OPEN || (next.fret_type == note.fret_type))
+                    return next;
+                //else if (next.position >= note.position + note.sustain_length)      // Stop searching early
+                    //return null;
+            }
 
             next = next.next;
         }

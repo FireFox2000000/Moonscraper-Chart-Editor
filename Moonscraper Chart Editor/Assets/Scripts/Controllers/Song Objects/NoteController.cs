@@ -88,7 +88,6 @@ public class NoteController : SongObjectController {
                 Note[] chordNotes = note.GetChord();
                 SongObject.sort(chordNotes);
 
-                // Moving a chord
                 MoveNote previousInChord = null;
                 foreach (Note chordNote in chordNotes)
                 {
@@ -113,6 +112,14 @@ public class NoteController : SongObjectController {
         }
         else
             sustain.OnSelectableMouseDrag();
+        /*
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
+        {
+            if (!Globals.extendedSustainsEnabled || Input.GetButton("ChordSelect"))
+                sustain.ChordSustainDrag();
+            else
+                sustain.SustainDrag();
+        }*/
     }
 
     public override void OnSelectableMouseUp()
@@ -218,7 +225,6 @@ public class NoteController : SongObjectController {
         else 
             gameObject.SetActive(false);
 
-        // Handle gameplay operation
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
             const float offset = 0.25f;
