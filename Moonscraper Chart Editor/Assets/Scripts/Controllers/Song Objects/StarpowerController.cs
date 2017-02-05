@@ -5,16 +5,16 @@ using System;
 public class StarpowerController : SongObjectController
 {
     public GameObject tail;
-    public Starpower starpower { get { return (Starpower)songObject; } set { songObject = value; } }
+    public StarPower starpower { get { return (StarPower)songObject; } set { songObject = value; } }
 
-    public Starpower unmodifiedSP = null;
+    public StarPower unmodifiedSP = null;
 
     new void Awake()
     {
         base.Awake();
     }
 
-    public void Init(Starpower _starpower)
+    public void Init(StarPower _starpower)
     {
         base.Init(_starpower);
         starpower = _starpower;
@@ -137,7 +137,7 @@ public class StarpowerController : SongObjectController
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
             if (unmodifiedSP == null)
-                unmodifiedSP = (Starpower)starpower.Clone();
+                unmodifiedSP = (StarPower)starpower.Clone();
 
             TailDrag();
         }

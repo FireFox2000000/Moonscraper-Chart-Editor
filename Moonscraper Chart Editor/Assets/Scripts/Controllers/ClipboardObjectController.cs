@@ -75,9 +75,9 @@ public class ClipboardObjectController : Snapable {
                 {
                     record.AddRange(PlaceNote.AddObjectToCurrentChart((Note)objectToAdd, editor, false));
                 }
-                else if (objectToAdd.GetType() == typeof(Starpower))
+                else if (objectToAdd.GetType() == typeof(StarPower))
                 {
-                    record.AddRange(PlaceStarpower.AddObjectToCurrentChart((Starpower)objectToAdd, editor, false));
+                    record.AddRange(PlaceStarpower.AddObjectToCurrentChart((StarPower)objectToAdd, editor, false));
                 }
                 else
                 {

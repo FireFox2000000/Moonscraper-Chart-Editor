@@ -36,7 +36,7 @@ public abstract class PlaceSongObject : ToolObject {
                 PlaceNote.AddObjectToCurrentChart((Note)songObject, editor, update);
                 break;
             case ((int)SongObject.ID.Starpower):
-                PlaceStarpower.AddObjectToCurrentChart((Starpower)songObject, editor, update);
+                PlaceStarpower.AddObjectToCurrentChart((StarPower)songObject, editor, update);
                 break;
             case ((int)SongObject.ID.BPM):
                 PlaceBPM.AddObjectToCurrentSong((BPM)songObject, editor, update);
