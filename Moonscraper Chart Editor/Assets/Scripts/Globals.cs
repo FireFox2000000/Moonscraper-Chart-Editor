@@ -269,7 +269,12 @@ public class Globals : MonoBehaviour {
         // Disable controls while user is in an input field
         if (!IsTyping)
             Controls();
-        ModifierControls();
+        ModifierControls();   
+    }
+
+    void OnGUI()
+    {
+        //Debug.Log(System.Windows.Forms.Control.IsKeyLocked(System.Windows.Forms.Keys.CapsLock));
     }
 
     void ModifierControls()

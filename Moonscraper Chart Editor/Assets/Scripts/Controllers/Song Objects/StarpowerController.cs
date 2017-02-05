@@ -36,28 +36,6 @@ public class StarpowerController : SongObjectController
         if (starpower.song != null)
         {
             transform.position = new Vector3(CHART_CENTER_POS - 3, starpower.worldYPosition, 0);
-            /*
-            StarPower nextSp = null;
-            if (starpower.song != null && starpower.chart != null)
-            {
-                // Automatic capping
-                foreach (StarPower sp in starpower.chart.starPower)
-                {
-                    if (sp.song != null && sp.position > starpower.position)
-                        nextSp = sp;
-                }
-
-                if (nextSp != null)
-                {
-                    // Cap sustain length
-                    if (nextSp.position < starpower.position)
-                        starpower.length = 0;
-                    else if (starpower.position + starpower.length > nextSp.position)
-                        // Cap sustain
-                        starpower.length = nextSp.position - starpower.position;
-                }
-                // else it's the only starpower or it's the last starpower 
-            }*/
 
             UpdateTailLength();
         }
@@ -76,7 +54,7 @@ public class StarpowerController : SongObjectController
         tail.transform.position = position;
     }
 
-    public void TailDrag()
+    void TailDrag()
     {
         ChartEditor.editOccurred = true;
         uint snappedChartPos;
@@ -90,10 +68,7 @@ public class StarpowerController : SongObjectController
             snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(starpower.song.WorldYPositionToChartPosition(editor.mouseYMaxLimit.position.y), Globals.step, starpower.song.resolution);
         }
 
-        if (snappedChartPos > starpower.position)
-            starpower.length = snappedChartPos - starpower.position;
-        else
-            starpower.length = 0;     
+        starpower.SetLengthByPos(snappedChartPos);   
     }
 
     public override void OnSelectableMouseDrag()

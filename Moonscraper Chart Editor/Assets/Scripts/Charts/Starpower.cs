@@ -37,4 +37,39 @@ public class Starpower : ChartObject
         else
             return false;
     }
+
+    public void SetLengthByPos(uint pos)
+    {
+        if (pos > position)
+            length = pos - position;
+        else
+            length = 0;
+
+        Starpower nextSp = null;
+        if (song != null && chart != null)
+        {
+            int arrayPos = FindClosestPosition(this, chart.starPower);
+            if (arrayPos == Globals.NOTFOUND)
+                return;
+
+            while (arrayPos < chart.starPower.Length && chart.starPower[arrayPos].position <= position)
+            {
+                ++arrayPos;
+            }
+
+            if (chart.starPower[arrayPos].position > position)
+                nextSp = chart.starPower[arrayPos];
+
+            if (nextSp != null)
+            {
+                // Cap sustain length
+                if (nextSp.position < position)
+                    length = 0;
+                else if (position + length > nextSp.position)
+                    // Cap sustain
+                    length = nextSp.position - position;
+            }
+            // else it's the only starpower or it's the last starpower 
+        }
+    }
 }
