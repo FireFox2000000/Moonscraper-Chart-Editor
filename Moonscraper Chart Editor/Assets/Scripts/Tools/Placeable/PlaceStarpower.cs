@@ -40,6 +40,7 @@ public class PlaceStarpower : PlaceSongObject {
             }
             else
             {
+                if (lastPlacedSP.controller != null)
                 ((StarpowerController)lastPlacedSP.controller).TailDrag();
             }
         }

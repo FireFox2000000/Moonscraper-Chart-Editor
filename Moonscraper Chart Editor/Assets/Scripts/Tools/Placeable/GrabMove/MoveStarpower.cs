@@ -11,7 +11,7 @@ public class MoveStarpower : PlaceStarpower {
     public void Init(Starpower starpower)
     {
         this.starpower = new Starpower(starpower);
-        controller.Init(this.starpower);
+        controller.starpower = this.starpower;
         initObject = this.starpower.Clone();
     }
 

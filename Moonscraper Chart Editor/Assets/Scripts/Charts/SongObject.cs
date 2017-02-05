@@ -549,7 +549,7 @@ public abstract class SongObject
                 return new T[0];
 
             // Iterate to the very first object at a greater position, as there may be multiple objects located at the same position
-            while (minArrayPos - 1 >= 0 && list[minArrayPos - 1].position > minPos)
+            while (minArrayPos - 1 >= 0 && list[minArrayPos - 1].position >= minPos)
             {
                 --minArrayPos;
             }

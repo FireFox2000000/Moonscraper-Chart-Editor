@@ -648,7 +648,7 @@ public class ChartEditor : MonoBehaviour {
         SectionController controller = CreateSongObject(this.sectionPrefab).GetComponentInChildren<SectionController>();
 
         // Link controller and note together
-        controller.Init(section);
+        controller.section = section;
         controller.UpdateSongObject();
         return controller;
     }
@@ -659,7 +659,7 @@ public class ChartEditor : MonoBehaviour {
         BPMController controller = CreateSongObject(this.bpmPrefab).GetComponent<BPMController>();
 
         // Link controller and note together
-        controller.Init(bpm);
+        controller.bpm = bpm;
         controller.UpdateSongObject();
         return controller;
     }
@@ -670,7 +670,7 @@ public class ChartEditor : MonoBehaviour {
         TimesignatureController controller = CreateSongObject(this.tsPrefab).GetComponent<TimesignatureController>();
 
         // Link controller and note together
-        controller.Init(ts);
+        controller.ts = ts;
         controller.UpdateSongObject();
         return controller;
     }
@@ -708,7 +708,7 @@ public class ChartEditor : MonoBehaviour {
         NoteController controller = CreateChartObject(this.notePrefab).GetComponent<NoteController>();
 
         // Link controller and note together
-        controller.Init(note);
+        controller.note = note;
         controller.UpdateSongObject();
         return controller;
     }
@@ -719,7 +719,7 @@ public class ChartEditor : MonoBehaviour {
         StarpowerController controller = CreateChartObject(this.starpowerPrefab).GetComponent<StarpowerController>();
 
         // Link controller and note together
-        controller.Init(starpower);
+        controller.starpower = starpower;
         controller.UpdateSongObject();
         return controller;
     }

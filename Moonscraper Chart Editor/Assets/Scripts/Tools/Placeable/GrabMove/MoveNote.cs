@@ -12,7 +12,7 @@ public class MoveNote : PlaceNote {
     public void Init(Note note)
     {
         this.note = new Note (note);
-        controller.Init(this.note);
+        controller.note = this.note;
         editor.currentSelectedObject = this.note;
         initObject = this.note.Clone();
     }
@@ -48,7 +48,7 @@ public class MoveNote : PlaceNote {
 
         editor.currentChart.Add(noteToAdd);
         NoteController nCon = editor.CreateNoteObject(noteToAdd);
-        nCon.standardOverwriteOpen();
+        standardOverwriteOpen(nCon.note);
 
         noteRecord.AddRange(CapNoteCheck(noteToAdd));
         noteRecord.AddRange(ForwardCap(noteToAdd));     // Do this due to pasting from the clipboard

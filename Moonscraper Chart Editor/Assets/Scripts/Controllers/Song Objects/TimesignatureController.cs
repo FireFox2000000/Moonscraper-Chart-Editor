@@ -4,16 +4,9 @@ using System.Collections;
 
 public class TimesignatureController : SongObjectController {
 
-    public TimeSignature ts { get { return (TimeSignature)songObject; } set { songObject = value; } }
+    public TimeSignature ts { get { return (TimeSignature)songObject; } set { Init(value, this); } }
     public Text tsText;
     public float position = 0.0f;
-
-    public void Init(TimeSignature _ts)
-    {
-        base.Init(_ts);
-        ts = _ts;
-        ts.controller = this;
-    }
 
     public override void UpdateSongObject()
     {

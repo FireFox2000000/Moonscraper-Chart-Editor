@@ -4,7 +4,7 @@ using System.Collections;
 
 public class SectionController : SongObjectController
 {
-    public Section section { get { return (Section)songObject; } set { songObject = value; } }
+    public Section section { get { return (Section)songObject; } set { Init(value, this); } }
     public float position = 4.5f;
     public Text sectionText;
 
@@ -16,13 +16,6 @@ public class SectionController : SongObjectController
 
             sectionText.text = section.title;
         }
-    }
-
-    public void Init(Section _section)
-    {
-        base.Init(_section);
-        section = _section;
-        section.controller = this;
     }
 
     public override void OnSelectableMouseDrag()

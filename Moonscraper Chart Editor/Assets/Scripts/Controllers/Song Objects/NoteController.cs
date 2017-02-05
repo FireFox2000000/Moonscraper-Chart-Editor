@@ -8,7 +8,7 @@ public class NoteController : SongObjectController {
     const float OPEN_NOTE_SUSTAIN_WIDTH = 4;
     const float OPEN_NOTE_COLLIDER_WIDTH = 5;
 
-    public Note note { get { return (Note)songObject; } set { songObject = value; } }
+    public Note note { get { return (Note)songObject; } set { Init(value); } }
     public SustainController sustain;   
 
     [HideInInspector]
@@ -139,11 +139,9 @@ public class NoteController : SongObjectController {
         return moveNoteController;
     }
 
-    public void Init(Note note)
+    void Init(Note note)
     {
-        base.Init(note);
-        this.note = note;
-        this.note.controller = this;
+        base.Init(note, this);
 
         if (note.fret_type == Note.Fret_Type.OPEN)
         {
@@ -165,34 +163,13 @@ public class NoteController : SongObjectController {
             if (hitBox)
                 hitBox.size = new Vector3(OPEN_NOTE_COLLIDER_WIDTH, hitBox.size.y, hitBox.size.z);
 #endif
-        }
 
-        // Open notes overwrite here for initial loading
-        if (note.fret_type == Note.Fret_Type.OPEN)
-        {
             Note[] chordNotes = note.GetChord();
 
             // Check for non-open notes and delete
             foreach (Note chordNote in chordNotes)
             {
                 if (chordNote.fret_type != Note.Fret_Type.OPEN)
-                {
-                    chordNote.Delete();
-                }
-            }
-        }
-    }
-
-    public void standardOverwriteOpen()
-    {
-        if (note.fret_type != Note.Fret_Type.OPEN)
-        {
-            Note[] chordNotes = SongObject.FindObjectsAtPosition(note.position, note.chart.notes);
-
-            // Check for open notes and delete
-            foreach (Note chordNote in chordNotes)
-            {
-                if (chordNote.fret_type == Note.Fret_Type.OPEN)
                 {
                     chordNote.Delete();
                 }

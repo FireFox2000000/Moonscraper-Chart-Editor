@@ -214,7 +214,7 @@ public class PlaceNote : PlaceSongObject {
 
         editor.currentChart.Add(noteToAdd, update);
         NoteController nCon = editor.CreateNoteObject(noteToAdd);
-        nCon.standardOverwriteOpen();
+        standardOverwriteOpen(nCon.note);
 
         noteRecord.AddRange(CapNoteCheck(noteToAdd));
         noteRecord.AddRange(ForwardCap(noteToAdd));     // Do this due to pasting from the clipboard
@@ -225,6 +225,23 @@ public class PlaceNote : PlaceSongObject {
             noteRecord.Insert(0, forceCheck);           // Insert at the start so that the modification happens at the end of the undo function, otherwise the natural force check prevents it from being forced
 
         return noteRecord.ToArray();
+    }
+
+    protected static void standardOverwriteOpen(Note note)
+    {
+        if (note.fret_type != Note.Fret_Type.OPEN)
+        {
+            Note[] chordNotes = SongObject.FindObjectsAtPosition(note.position, note.chart.notes);
+
+            // Check for open notes and delete
+            foreach (Note chordNote in chordNotes)
+            {
+                if (chordNote.fret_type == Note.Fret_Type.OPEN)
+                {
+                    chordNote.Delete();
+                }
+            }
+        }
     }
 
     protected static ActionHistory.Action AutoForcedCheck(Note note)

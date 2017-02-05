@@ -5,20 +5,13 @@ using System;
 public class StarpowerController : SongObjectController
 {
     public GameObject tail;
-    public Starpower starpower { get { return (Starpower)songObject; } set { songObject = value; } }
+    public Starpower starpower { get { return (Starpower)songObject; } set { Init(value, this); } }
 
     public Starpower unmodifiedSP = null;
 
     new void Awake()
     {
         base.Awake();
-    }
-
-    public void Init(Starpower _starpower)
-    {
-        base.Init(_starpower);
-        starpower = _starpower;
-        starpower.controller = this;
     }
 
     protected override void UpdateCheck()

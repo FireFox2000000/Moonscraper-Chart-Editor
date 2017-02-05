@@ -70,9 +70,10 @@ public abstract class SongObjectController : SelectableClick {
         }
     }*/
 
-    protected void Init(SongObject _songObject)
+    protected void Init(SongObject _songObject, SongObjectController controller)
     {
         songObject = _songObject;
+        songObject.controller = controller;
     }
 
     public override void OnSelectableMouseDown()

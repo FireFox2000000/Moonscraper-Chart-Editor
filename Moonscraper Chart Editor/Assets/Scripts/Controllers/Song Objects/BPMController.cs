@@ -4,16 +4,9 @@ using System.Collections;
 using System;
 
 public class BPMController : SongObjectController {
-    public BPM bpm { get { return (BPM)songObject; } set { songObject = value; } }
+    public BPM bpm { get { return (BPM)songObject; } set { Init(value, this); } }
     public Text bpmText;
     public float position = 0.0f;
-
-    public void Init(BPM _bpm)
-    {
-        base.Init(_bpm);
-        bpm = _bpm;
-        bpm.controller = this;
-    }
 
     public override void UpdateSongObject()
     {
