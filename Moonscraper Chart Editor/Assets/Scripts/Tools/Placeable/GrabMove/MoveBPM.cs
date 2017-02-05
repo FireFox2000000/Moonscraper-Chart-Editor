@@ -14,6 +14,7 @@ public class MoveBPM : PlaceBPM {
         editor.currentSelectedObject = bpm;
         controller.bpmText.text = "BPM: " + ((float)bpm.value / 1000.0f).ToString();       // Fixes 1-frame text mutation
         initObject = this.bpm.Clone();
+        setAsLastBpm = false;
     }
 
     protected override void AddObject()

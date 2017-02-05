@@ -5,6 +5,7 @@ using System;
 public class PlaceBPM : PlaceSongObject {
     public BPM bpm { get { return (BPM)songObject; } set { songObject = value; } }
     new public BPMController controller { get { return (BPMController)base.controller; } set { base.controller = value; } }
+    protected bool setAsLastBpm = true;
 
     protected override void Awake()
     {
@@ -29,15 +30,18 @@ public class PlaceBPM : PlaceSongObject {
     {
         base.Update();
 
-        // Set BPM value to the last bpm in the chart from the current position
-        int lastBpmArrayPos = SongObject.FindClosestPosition(bpm.position, editor.currentSong.bpms);
-
-        if (editor.currentSong.bpms[lastBpmArrayPos].position > bpm.position)
-            --lastBpmArrayPos;
-
-        if (lastBpmArrayPos != Globals.NOTFOUND && lastBpmArrayPos >= 0)
+        if (setAsLastBpm)
         {
-            bpm.value = editor.currentSong.bpms[lastBpmArrayPos].value;   
+            // Set BPM value to the last bpm in the chart from the current position
+            int lastBpmArrayPos = SongObject.FindClosestPosition(bpm.position, editor.currentSong.bpms);
+
+            if (editor.currentSong.bpms[lastBpmArrayPos].position > bpm.position)
+                --lastBpmArrayPos;
+
+            if (lastBpmArrayPos != Globals.NOTFOUND && lastBpmArrayPos >= 0)
+            {
+                bpm.value = editor.currentSong.bpms[lastBpmArrayPos].value;
+            }
         }
     }
 
