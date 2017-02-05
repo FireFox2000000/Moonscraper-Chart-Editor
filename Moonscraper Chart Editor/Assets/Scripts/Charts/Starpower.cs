@@ -52,7 +52,7 @@ public class Starpower : ChartObject
             if (arrayPos == Globals.NOTFOUND)
                 return;
 
-            while (arrayPos < chart.starPower.Length && chart.starPower[arrayPos].position <= position)
+            while (arrayPos < chart.starPower.Length - 1 && chart.starPower[arrayPos].position <= position)
             {
                 ++arrayPos;
             }
