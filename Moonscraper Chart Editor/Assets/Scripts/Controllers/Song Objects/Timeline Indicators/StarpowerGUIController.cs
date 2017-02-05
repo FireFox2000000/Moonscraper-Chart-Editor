@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class StarpowerGUIController : TimelineIndicator {
-    public StarPower starpower { get { return (StarPower)songObject; } set { songObject = value; } }
+    public Starpower starpower { get { return (Starpower)songObject; } set { songObject = value; } }
     const float MIN_SIZE = 0.2f;
 
     protected override void LateUpdate()

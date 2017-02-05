@@ -67,16 +67,13 @@ public class NoteController : SongObjectController {
                 editor.actionHistory.Insert(new ActionHistory.Delete(chordNotes));
                 foreach (Note chordNote in chordNotes)
                 {
-                    if (chordNote.controller != null)
-                    {
-                        chordNote.controller.Delete();
-                    }
+                    chordNote.Delete();
                 }
             }
             else
             {
                 editor.actionHistory.Insert(new ActionHistory.Delete(note));
-                Delete();
+                note.Delete();
             }
         }
     }
@@ -144,7 +141,7 @@ public class NoteController : SongObjectController {
         moveNoteController.horizontalMouseOffset = nCon.gameObject.transform.position.x - snapToNearestHorizontalNotePos(((Vector2)Mouse.world2DPosition).x);
 
         // Delete note
-        nCon.Delete();
+        nCon.note.Delete();
 
         return moveNoteController;
     }
@@ -187,10 +184,7 @@ public class NoteController : SongObjectController {
             {
                 if (chordNote.fret_type != Note.Fret_Type.OPEN)
                 {
-                    if (chordNote.controller != null)
-                        chordNote.controller.Delete();
-                    else
-                        note.chart.Remove(chordNote);
+                    chordNote.Delete();
                 }
             }
         }
@@ -207,10 +201,7 @@ public class NoteController : SongObjectController {
             {
                 if (chordNote.fret_type == Note.Fret_Type.OPEN)
                 {
-                    if (chordNote.controller != null)
-                        chordNote.controller.Delete();
-                    else
-                        note.chart.Remove(chordNote);
+                    chordNote.Delete();
                 }
             }
         }
@@ -300,7 +291,7 @@ public class NoteController : SongObjectController {
 
             // Star power?
             specialType = Note.Special_Type.NONE;
-            foreach (StarPower sp in note.chart.starPower)
+            foreach (Starpower sp in note.chart.starPower)
             {
                 if (sp.position == note.position || (sp.position <= note.position && sp.position + sp.length > note.position))
                 {
@@ -442,7 +433,7 @@ public class NoteController : SongObjectController {
         sustainRen.enabled = false;
     }
 
-    Note GetPreviousOfOpen(uint openNotePos, Note previousNote)
+    static Note GetPreviousOfOpen(uint openNotePos, Note previousNote)
     {
         if (previousNote == null || previousNote.position != openNotePos || (!previousNote.IsChord && previousNote.position != openNotePos))
             return previousNote;
@@ -450,25 +441,12 @@ public class NoteController : SongObjectController {
             return GetPreviousOfOpen(openNotePos, previousNote.previous);
     }
 
-    Note GetNextOfOpen(uint openNotePos, Note nextNote)
+    static Note GetNextOfOpen(uint openNotePos, Note nextNote)
     {
         if (nextNote == null || nextNote.position != openNotePos || (!nextNote.IsChord && nextNote.position != openNotePos))
             return nextNote;
         else
             return GetNextOfOpen(openNotePos, nextNote.next);
-    }
-
-    public override void Delete(bool update = true)
-    {
-        note.chart.Remove(note, update);
-
-        // Update the previous note in the case of chords with 2 notes
-        if (note.previous != null)
-            note.previous.controller.UpdateSongObject();
-        if (note.next != null)
-            note.next.controller.UpdateSongObject();
-
-        Destroy(gameObject);
     }
 
     float snapToNearestHorizontalNotePos(float pos)

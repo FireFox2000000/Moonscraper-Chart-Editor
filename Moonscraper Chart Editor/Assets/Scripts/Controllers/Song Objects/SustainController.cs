@@ -163,37 +163,8 @@ public class SustainController : SelectableClick {
 
         if (nextFret != null)
         {
-            CapSustain(nextFret);
+            note.CapSustain(nextFret);
         }
-    }
-
-    public ActionHistory.Modify CapSustain(Note cap)
-    {
-        Note note = nCon.note;
-        Note originalNote = (Note)note.Clone();
-
-        // Cap sustain length
-        if (cap.position <= note.position)
-            note.sustain_length = 0;
-        else if (note.position + note.sustain_length > cap.position)        // Sustain extends beyond cap note 
-        {
-            note.sustain_length = cap.position - note.position;
-        }
-
-        uint gapDis = (uint)(editor.currentSong.resolution * 4.0f / Globals.sustainGap);
-
-        if (Globals.sustainGapEnabled && note.sustain_length > 0 && (note.position + note.sustain_length > cap.position - gapDis))
-        {
-            if ((int)(cap.position - gapDis - note.position) > 0)
-                note.sustain_length = cap.position - gapDis - note.position;
-            else
-                note.sustain_length = 0;
-        }
-
-        if (originalNote.sustain_length != note.sustain_length)
-            return new ActionHistory.Modify(originalNote, note);
-        else
-            return null;
     }
 
     public void ChordSustainDrag()

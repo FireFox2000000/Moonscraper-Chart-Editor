@@ -242,7 +242,7 @@ public class Song {
             }
 
             if (Path.GetExtension(filepath) == ".mp3")
-                audioStreams[audioStreamArrayPos] = NAudioPlayer.FromMp3Data(www.bytes);
+                audioStreams[audioStreamArrayPos] = NAudioPlayer.FromMp3Data(www.bytes);           
             else
                 audioStreams[audioStreamArrayPos] = www.GetAudioClip(false, false);
 

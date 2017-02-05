@@ -18,18 +18,6 @@ public class SectionController : SongObjectController
         }
     }
 
-    public override void Delete(bool update = true)
-    {
-        section.song.Remove(section, update);
-  
-        Destroy(gameObject);
-    }
-
-    public override void DestroyGameObject()
-    {
-        base.DestroyGameObject();
-    }
-
     public void Init(Section _section)
     {
         base.Init(_section);
@@ -51,7 +39,7 @@ public class SectionController : SongObjectController
             MoveSection movement = moveSection.AddComponent<MoveSection>();
             movement.Init(section);
                 
-            Delete();
+            section.Delete();
         }
     }
 }

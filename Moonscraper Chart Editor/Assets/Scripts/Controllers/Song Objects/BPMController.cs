@@ -25,17 +25,6 @@ public class BPMController : SongObjectController {
         bpmText.text = "BPM: " + ((float)bpm.value / 1000.0f).ToString();
     }
 
-    public override void Delete(bool update = true)
-    {
-        // First bpm cannot be removed, block the functionality
-        if (bpm.position != 0)
-        {
-            bpm.song.Remove(bpm, update);
-
-            Destroy(gameObject);
-        }
-    }
-
     public override void OnSelectableMouseDrag()
     {
         // Move object
@@ -50,7 +39,7 @@ public class BPMController : SongObjectController {
             MoveBPM movement = moveBPM.AddComponent<MoveBPM>();
             movement.Init(bpm);
 
-            Delete();
+            bpm.Delete();
         }
     }
 }

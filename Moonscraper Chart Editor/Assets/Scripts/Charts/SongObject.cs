@@ -38,7 +38,11 @@ public abstract class SongObject
     }
 
     public abstract string GetSaveString();
-
+    public virtual void Delete(bool update = true)
+    {
+        if (controller)
+            UnityEngine.Object.Destroy(controller.gameObject);
+    }
     public abstract SongObject Clone();
     public abstract bool AllValuesCompare<T>(T songObject) where T : SongObject;
     
@@ -394,7 +398,7 @@ public abstract class SongObject
                     {
                         // Overwrite 
                         if (uniqueData && list[insertionPos].controller != null)
-                            list[insertionPos].controller.DestroyGameObject();
+                            list[insertionPos].Delete();
 
                         list[insertionPos] = item;
                     }
@@ -599,127 +603,5 @@ public abstract class SongObject
     public enum ID
     {
         TimeSignature, BPM, Event, Section, Note, Starpower, ChartEvent
-    }
-}
-
-public class Event : SongObject
-{
-    private readonly ID _classID = ID.Event;
-
-    public override int classID { get { return (int)_classID; } } 
-
-    public string title;
-
-    public Event(string _title, uint _position) : base(_position)
-    {
-        title = _title;
-    }
-
-    public Event(Event songEvent) : base (songEvent.position)
-    {
-        position = songEvent.position;
-        title = songEvent.title;
-    }
-
-    public override string GetSaveString()
-    {
-        return Globals.TABSPACE + position + " = E \"" + title + "\"" + Globals.LINE_ENDING;
-    }
-
-    public static bool regexMatch(string line)
-    {
-        return new Regex(@"\d+ = E " + @"""[^""\\]*(?:\\.[^""\\]*)*""").IsMatch(line);
-    }
-
-    public override SongObject Clone()
-    {
-        return new Event(this);
-    }
-
-    public override bool AllValuesCompare<T>(T songObject)
-    {
-        if (this == songObject && (songObject as Event).title == title)
-            return true;
-        else
-            return false;
-    }
-}
-
-public class Section : Event
-{
-    private readonly ID _classID = ID.Section;
-
-    public override int classID { get { return (int)_classID; } }
-
-    SectionController _controller = null;
-    
-    new public SectionController controller
-    {
-        get { return _controller; }
-        set { _controller = value; base.controller = value; }
-    }
-
-    public Section(Song song, string _title, uint _position) : base(_title, _position) { }
-
-    public Section(Section section) : base(section.title, section.position) { }
-
-    public override string GetSaveString()
-    {
-        return Globals.TABSPACE + position + " = E \"section " + title + "\"" + Globals.LINE_ENDING;
-    }
-
-    new public static bool regexMatch(string line)
-    {
-        return new Regex(@"\d+ = E " + @"""section [^""\\]*(?:\\.[^""\\]*)*""").IsMatch(line);
-    }
-
-    public override SongObject Clone()
-    {
-        return new Section(this);
-    }
-}
-
-public abstract class SyncTrack : SongObject
-{
-    public uint value;
-
-    public SyncTrack (uint _position, uint _value) : base (_position)
-    {
-        value = _value;
-    }
-
-    public override bool AllValuesCompare<T>(T songObject)
-    {
-        if (this == songObject && (songObject as SyncTrack).value == value)
-            return true;
-        else
-            return false;
-    }
-}
-
-public class TimeSignature : SyncTrack
-{
-    private readonly ID _classID = ID.TimeSignature;
-
-    public override int classID { get { return (int)_classID; } }
-
-    public TimeSignature(uint _position = 0, uint _value = 4) : base (_position, _value) {}
-
-    public TimeSignature(TimeSignature ts) : base(ts.position, ts.value) { }
-
-    override public string GetSaveString()
-    {
-        //0 = TS 4
-        return Globals.TABSPACE + position + " = TS " + value + Globals.LINE_ENDING;
-    }
-
-    public static bool regexMatch(string line)
-    {
-        return new Regex(@"\d+ = TS \d+").IsMatch(line);
-    }
-
-    public override SongObject Clone()
-    {
-        return new TimeSignature(this);
     }
 }
