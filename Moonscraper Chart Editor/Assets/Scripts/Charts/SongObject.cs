@@ -398,7 +398,7 @@ public abstract class SongObject
                     {
                         // Overwrite 
                         if (uniqueData && list[insertionPos].controller != null)
-                            list[insertionPos].Delete();
+                            GameObject.Destroy(list[insertionPos].controller.gameObject);
 
                         list[insertionPos] = item;
                     }

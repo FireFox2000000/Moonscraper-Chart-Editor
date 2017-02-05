@@ -20,10 +20,10 @@ public abstract class SyncTrack : SongObject
 
     public override void Delete(bool update = true)
     {
-        //if (position != 0)
-        //{
+        if (position != 0)
+        {
             base.Delete();
             song.Remove(this, update);
-       // }
+        }
     }
 }
