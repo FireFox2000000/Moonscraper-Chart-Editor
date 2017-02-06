@@ -10,6 +10,7 @@ public abstract class SongObjectController : SelectableClick {
     Bounds bounds;
 
     public abstract void UpdateSongObject();
+    public bool disableCancel = true;
 
     Collider col3d;
     Collider2D col2d;
@@ -46,7 +47,7 @@ public abstract class SongObjectController : SelectableClick {
     
     void OnDisable()
     {
-        if (songObject != null)
+        if (disableCancel && songObject != null)
         {
             Init(null, null);
         }

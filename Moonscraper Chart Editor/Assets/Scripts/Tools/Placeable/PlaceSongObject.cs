@@ -7,6 +7,14 @@ public abstract class PlaceSongObject : ToolObject {
 
     protected SongObject initObject;        // Only used for moving objects
 
+    protected override void Awake()
+    {
+        base.Awake();
+
+        SongObjectController controller = GetComponent<SongObjectController>();
+        controller.disableCancel = false;
+    }
+
     public override void ToolDisable()
     {
         editor.currentSelectedObject = null;

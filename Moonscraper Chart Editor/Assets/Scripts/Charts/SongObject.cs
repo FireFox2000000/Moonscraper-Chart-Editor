@@ -41,7 +41,7 @@ public abstract class SongObject
     public virtual void Delete(bool update = true)
     {
         if (controller)
-            UnityEngine.Object.Destroy(controller.gameObject);
+            controller.gameObject.SetActive(false);
     }
     public abstract SongObject Clone();
     public abstract bool AllValuesCompare<T>(T songObject) where T : SongObject;
@@ -369,7 +369,10 @@ public abstract class SongObject
                     {
                         // Overwrite 
                         if (list[insertionPos].controller != null)
-                            GameObject.Destroy(list[insertionPos].controller.gameObject);
+                        {
+                            list[insertionPos].controller.gameObject.SetActive(false);
+                            //GameObject.Destroy(list[insertionPos].controller.gameObject);
+                        }
 
                         list[insertionPos] = item;
                     }

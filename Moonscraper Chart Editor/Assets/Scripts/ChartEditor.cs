@@ -707,8 +707,8 @@ public class ChartEditor : MonoBehaviour {
         
         return chartObjectParent;
     }
-
-    public NoteController CreateNoteObject(Note note)
+    
+    NoteController CreateNoteObject(Note note)
     {
         // Attach the note to the object
         NoteController controller = CreateChartObject(this.notePrefab).GetComponent<NoteController>();
