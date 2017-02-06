@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(ChartEditor))]
 public class SongObjectPoolManager : MonoBehaviour {
 
     const int POOL_SIZE = 100;
 
     ChartEditor editor;
 
-    NoteController[] noteControllers;
-    StarpowerController[] starpowerControllers;
-    BPMController[] bpmControllers;
-    TimesignatureController[] tsControllers;
-    SectionController[] sectionControllers;
+    public NoteController[] noteControllers { get; private set; }
+    public StarpowerController[] starpowerControllers { get; private set; }
+    public BPMController[] bpmControllers { get; private set; }
+    public TimesignatureController[] tsControllers { get; private set; }
+    public SectionController[] sectionControllers { get; private set; }
 
     // Use this for initialization
     void Start () {
@@ -49,9 +50,31 @@ public class SongObjectPoolManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        EnableNotes();
+        // If a new chart is loaded, all objects need to be disabled/reset
 
-        // If a new chart is loaded, all objects need to be disabled
+        EnableNotes();
+        EnableSP();
+        EnableBPM();
+        EnableTS();
+        EnableSections();
+    }
+
+    public void NewChartReset()
+    {
+        if (enabled)
+        {
+            disableReset(noteControllers);
+            disableReset(starpowerControllers);
+            disableReset(bpmControllers);
+            disableReset(tsControllers);
+            disableReset(sectionControllers);
+        }
+    }
+
+    void disableReset(SongObjectController[] controllers)
+    {
+        foreach (SongObjectController controller in controllers)
+            controller.gameObject.SetActive(false);
     }
 
     void EnableNotes()
@@ -68,7 +91,6 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
 
         int pos = 0;
-
         foreach (Note note in rangedNotes)
         {
             if (note.controller == null)
@@ -87,21 +109,111 @@ public class SongObjectPoolManager : MonoBehaviour {
                     break;
             }
         }
-        /*
-            // Assign pooled objects
-            foreach (NoteController nCon in noteControllers)
+    }
+
+    void EnableSP()
+    {
+        List<Starpower> rangedSP = new List<Starpower>(SongObject.GetRange(editor.currentChart.starPower, editor.minPos, editor.maxPos));
+
+        int arrayPos = SongObject.FindClosestPosition(editor.minPos, editor.currentChart.starPower);
+        if (arrayPos != Globals.NOTFOUND)
         {
-            if (pos < rangedNotes.Count)
+            // Find the back-most position
+            while (arrayPos > 0 && editor.currentChart.starPower[arrayPos].position >= editor.minPos)
             {
-                if (!nCon.gameObject.activeSelf && rangedNotes[pos].controller == null)
-                {                 
-                    nCon.note = rangedNotes[pos++];
-                    nCon.gameObject.SetActive(true);                 
-                }
+                --arrayPos;
             }
-            else
-                break;
-        }    */  
+            // Render previous sp sustain in case of overlap into current position
+            if (arrayPos >= 0)
+            {
+                rangedSP.Add(editor.currentChart.starPower[arrayPos]);
+            }
+        }
+
+        int pos = 0;
+        foreach (Starpower sp in rangedSP)
+        {
+            if (sp.controller == null)
+            {
+                while (starpowerControllers[pos].gameObject.activeSelf && pos < starpowerControllers.Length)
+                    ++pos;
+
+                if (pos < starpowerControllers.Length)
+                {
+                    // Assign pooled objects
+                    starpowerControllers[pos].starpower = sp;
+                    starpowerControllers[pos].gameObject.SetActive(true);
+                }
+                else
+                    break;
+            }
+        }
+    }
+
+    void EnableBPM()
+    {
+        int pos = 0;
+        foreach (BPM bpm in SongObject.GetRange(editor.currentSong.bpms, editor.minPos, editor.maxPos))
+        {
+            if (bpm.controller == null)
+            {
+                while (bpmControllers[pos].gameObject.activeSelf && pos < bpmControllers.Length)
+                    ++pos;
+
+                if (pos < bpmControllers.Length)
+                {
+                    // Assign pooled objects
+                    bpmControllers[pos].bpm = bpm;
+                    bpmControllers[pos].gameObject.SetActive(true);
+                }
+                else
+                    break;
+            }
+        }
+    }
+
+    void EnableTS()
+    {
+        int pos = 0;
+        foreach (TimeSignature ts in SongObject.GetRange(editor.currentSong.timeSignatures, editor.minPos, editor.maxPos))
+        {
+            if (ts.controller == null)
+            {
+                while (tsControllers[pos].gameObject.activeSelf && pos < tsControllers.Length)
+                    ++pos;
+
+                if (pos < tsControllers.Length)
+                {
+                    // Assign pooled objects
+                    tsControllers[pos].ts = ts;
+                    tsControllers[pos].gameObject.SetActive(true);
+                }
+                else
+                    break;
+            }
+        }
+    }
+
+    void EnableSections()
+    {
+        int pos = 0;
+        foreach (Section section in SongObject.GetRange(editor.currentSong.sections, editor.minPos, editor.maxPos))
+        {
+            if (section.controller == null)
+            {
+                while (sectionControllers[pos].gameObject.activeSelf && pos < sectionControllers.Length)
+                    ++pos;
+
+                if (pos < sectionControllers.Length)
+                {
+                    // Assign pooled objects
+                    sectionControllers[pos].section = section;
+                    sectionControllers[pos].gameObject.SetActive(true);
+                }
+                else
+                    break;
+            }
+        }
     }
 
     T[] GetRangeOfSongObjectsToEnable<T>(T[] songObjects, uint min, uint max) where T : SongObject

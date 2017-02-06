@@ -42,7 +42,17 @@ public abstract class SongObjectController : SelectableClick {
         if (songObject != null)
             UpdateSongObject();
     }
-    
+
+    /*
+    void OnDisable()
+    {
+        if (songObject != null)
+        {
+            songObject = null;
+            Init(songObject, null);
+        }
+    }*/
+
     void Update()
     {
         if (songObject != null)

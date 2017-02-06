@@ -58,6 +58,7 @@ public class ChartEditor : MonoBehaviour {
     string currentFileName = string.Empty;
 
     MovementController movement;
+    SongObjectPoolManager songObjectPoolManager;
 
     string lastLoadedFile = string.Empty;
 
@@ -105,6 +106,8 @@ public class ChartEditor : MonoBehaviour {
 
     // Use this for initialization
     void Awake () {
+        songObjectPoolManager = GetComponent<SongObjectPoolManager>();
+
         minPos = 0;
         maxPos = 0;
 
@@ -612,6 +615,8 @@ public class ChartEditor : MonoBehaviour {
         }
 
         currentChart = chart;
+
+        songObjectPoolManager.NewChartReset();
 
         CreateChartObjects(currentChart);
 #if TIMING_DEBUG
