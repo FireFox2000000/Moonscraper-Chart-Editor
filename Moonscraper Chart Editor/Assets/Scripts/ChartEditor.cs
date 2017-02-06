@@ -153,7 +153,7 @@ public class ChartEditor : MonoBehaviour {
         maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
 
         // Update song objects within range
-#if true
+#if false
         enableSongObjects(currentSong.events, SongObject.ID.Event, minPos, maxPos);
         enableSongObjects(currentSong.syncTrack, SongObject.ID.BPM, minPos, maxPos);
 
@@ -570,16 +570,16 @@ public class ChartEditor : MonoBehaviour {
         editOccurred = false;
 
         // Clear the previous song in the game-view
-        foreach (Transform songObject in songObjectParent.transform)
+       /* foreach (Transform songObject in songObjectParent.transform)
         {
             Destroy(songObject.gameObject);
-        }
+        }*/
 
 #if TIMING_DEBUG
         float objectLoadTime = Time.realtimeSinceStartup;
 #endif
         // Create the song objects
-        CreateSongObjects(song);
+        //CreateSongObjects(song);
 
 #if TIMING_DEBUG
         Debug.Log("Song objects load time: " + (Time.realtimeSinceStartup - objectLoadTime));
@@ -609,16 +609,16 @@ public class ChartEditor : MonoBehaviour {
         float time = Time.realtimeSinceStartup;
 #endif
         // Remove objects from previous chart
-        foreach (Transform chartObject in chartObjectParent.transform)
+        /*foreach (Transform chartObject in chartObjectParent.transform)
         {
             Destroy(chartObject.gameObject);
-        }
+        }*/
 
         currentChart = chart;
 
         songObjectPoolManager.NewChartReset();
 
-        CreateChartObjects(currentChart);
+        //CreateChartObjects(currentChart);
 #if TIMING_DEBUG
         Debug.Log("Chart objects load time: " + (Time.realtimeSinceStartup - time));
 #endif

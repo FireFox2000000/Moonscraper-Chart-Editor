@@ -61,7 +61,7 @@ public class SongObjectPoolManager : MonoBehaviour {
 
     public void NewChartReset()
     {
-        if (enabled)
+        if (enabled && noteControllers != null)
         {
             disableReset(noteControllers);
             disableReset(starpowerControllers);
@@ -95,10 +95,10 @@ public class SongObjectPoolManager : MonoBehaviour {
         {
             if (note.controller == null)
             {
-                while (noteControllers[pos].gameObject.activeSelf && pos < noteControllers.Length)
+                while (pos < noteControllers.Length && noteControllers[pos].gameObject.activeSelf)
                     ++pos;
 
-                if (pos < noteControllers.Length)
+                if (pos < noteControllers.Length && !noteControllers[pos].gameObject.activeSelf)
                 {
                     // Assign pooled objects
                     noteControllers[pos].note = note;
@@ -135,10 +135,10 @@ public class SongObjectPoolManager : MonoBehaviour {
         {
             if (sp.controller == null)
             {
-                while (starpowerControllers[pos].gameObject.activeSelf && pos < starpowerControllers.Length)
+                while (pos < starpowerControllers.Length && starpowerControllers[pos].gameObject.activeSelf)
                     ++pos;
 
-                if (pos < starpowerControllers.Length)
+                if (pos < starpowerControllers.Length && !starpowerControllers[pos].gameObject.activeSelf)
                 {
                     // Assign pooled objects
                     starpowerControllers[pos].starpower = sp;
@@ -157,10 +157,10 @@ public class SongObjectPoolManager : MonoBehaviour {
         {
             if (bpm.controller == null)
             {
-                while (bpmControllers[pos].gameObject.activeSelf && pos < bpmControllers.Length)
+                while (pos < bpmControllers.Length && bpmControllers[pos].gameObject.activeSelf)
                     ++pos;
 
-                if (pos < bpmControllers.Length)
+                if (pos < bpmControllers.Length && !bpmControllers[pos].gameObject.activeSelf)
                 {
                     // Assign pooled objects
                     bpmControllers[pos].bpm = bpm;
@@ -179,10 +179,10 @@ public class SongObjectPoolManager : MonoBehaviour {
         {
             if (ts.controller == null)
             {
-                while (tsControllers[pos].gameObject.activeSelf && pos < tsControllers.Length)
+                while (pos < tsControllers.Length && tsControllers[pos].gameObject.activeSelf)
                     ++pos;
 
-                if (pos < tsControllers.Length)
+                if (pos < tsControllers.Length && !tsControllers[pos].gameObject.activeSelf)
                 {
                     // Assign pooled objects
                     tsControllers[pos].ts = ts;
@@ -197,14 +197,15 @@ public class SongObjectPoolManager : MonoBehaviour {
     void EnableSections()
     {
         int pos = 0;
+
         foreach (Section section in SongObject.GetRange(editor.currentSong.sections, editor.minPos, editor.maxPos))
         {
             if (section.controller == null)
             {
-                while (sectionControllers[pos].gameObject.activeSelf && pos < sectionControllers.Length)
+                while (pos < sectionControllers.Length && sectionControllers[pos].gameObject.activeSelf)
                     ++pos;
 
-                if (pos < sectionControllers.Length)
+                if (pos < sectionControllers.Length && !sectionControllers[pos].gameObject.activeSelf)
                 {
                     // Assign pooled objects
                     sectionControllers[pos].section = section;

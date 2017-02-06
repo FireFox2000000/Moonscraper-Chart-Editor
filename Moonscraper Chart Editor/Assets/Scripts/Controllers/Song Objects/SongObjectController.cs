@@ -43,15 +43,14 @@ public abstract class SongObjectController : SelectableClick {
             UpdateSongObject();
     }
 
-    /*
+    
     void OnDisable()
     {
         if (songObject != null)
         {
-            songObject = null;
-            Init(songObject, null);
+            Init(null, null);
         }
-    }*/
+    }
 
     void Update()
     {

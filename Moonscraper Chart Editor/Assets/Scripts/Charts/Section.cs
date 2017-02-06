@@ -7,14 +7,6 @@ public class Section : Event
 
     public override int classID { get { return (int)_classID; } }
 
-    SectionController _controller = null;
-
-    new public SectionController controller
-    {
-        get { return _controller; }
-        set { _controller = value; base.controller = value; }
-    }
-
     public Section(Song song, string _title, uint _position) : base(_title, _position) { }
 
     public Section(Section section) : base(section.title, section.position) { }
