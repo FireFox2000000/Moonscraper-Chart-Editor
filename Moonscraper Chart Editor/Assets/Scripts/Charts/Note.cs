@@ -16,10 +16,9 @@ public class Note : ChartObject
     public Note previous;
     public Note next;
 
-    NoteController _controller = null;
     new public NoteController controller {
-        get { return _controller; }
-        set { _controller = value; base.controller = value; }
+        get { return (NoteController)base.controller; }
+        set { base.controller = value; }
     }
 
     public Note(uint _position, 
