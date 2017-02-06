@@ -29,27 +29,27 @@ public class GroupMove : ToolObject
         GameObject groupMovePool = new GameObject("Group Move Object Pool");
 
         GameObject notes;
-        noteControllers = (NoteController[])ChartEditor.SOConInstanciate(editor.notePrefab, POOL_SIZE, out notes);
+        noteControllers = SongObjectPoolManager.SOConInstanciate<NoteController>(editor.notePrefab, POOL_SIZE, out notes);
         notes.name = "Group Move notes";
         notes.transform.SetParent(groupMovePool.transform);
 
         GameObject starpowers;
-        starpowerControllers = (StarpowerController[])ChartEditor.SOConInstanciate(editor.starpowerPrefab, POOL_SIZE, out starpowers);
+        starpowerControllers = SongObjectPoolManager.SOConInstanciate<StarpowerController>(editor.starpowerPrefab, POOL_SIZE, out starpowers);
         starpowers.name = "Group Move SP";
         starpowers.transform.SetParent(groupMovePool.transform);
 
         GameObject bpms;
-        bpmControllers = (BPMController[])ChartEditor.SOConInstanciate(editor.bpmPrefab, POOL_SIZE, out bpms);
+        bpmControllers = SongObjectPoolManager.SOConInstanciate<BPMController>(editor.bpmPrefab, POOL_SIZE, out bpms);
         bpms.name = "Group Move BPMs";
         bpms.transform.SetParent(groupMovePool.transform);
 
         GameObject timesignatures;
-        tsControllers = (TimesignatureController[])ChartEditor.SOConInstanciate(editor.bpmPrefab, POOL_SIZE, out timesignatures);
+        tsControllers = SongObjectPoolManager.SOConInstanciate<TimesignatureController>(editor.tsPrefab, POOL_SIZE, out timesignatures);
         timesignatures.name = "Group Move TSs";
         timesignatures.transform.SetParent(groupMovePool.transform);
 
         GameObject sections;
-        sectionControllers = (SectionController[])ChartEditor.SOConInstanciate(editor.sectionPrefab, POOL_SIZE, out sections);
+        sectionControllers = SongObjectPoolManager.SOConInstanciate<SectionController>(editor.sectionPrefab, POOL_SIZE, out sections);
         sections.name = "Group Move sections";
         sections.transform.SetParent(groupMovePool.transform);
     }

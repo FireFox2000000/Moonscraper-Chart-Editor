@@ -47,6 +47,8 @@ public abstract class SongObjectController : SelectableClick {
     {
         if (songObject != null)
             UpdateCheck();
+        else
+            gameObject.SetActive(false);
     }
 
     protected virtual void UpdateCheck()
@@ -59,7 +61,7 @@ public abstract class SongObjectController : SelectableClick {
     
     protected void OnBecameVisible()
     {
-        UpdateSongObject();
+        UpdateCheck();
     }
     /*
     public override void OnSelectableMouseOver()
@@ -73,8 +75,15 @@ public abstract class SongObjectController : SelectableClick {
 
     protected void Init(SongObject _songObject, SongObjectController controller)
     {
+        if (_songObject == null && songObject != null)
+        {
+            songObject.controller = null;
+        }
+
         songObject = _songObject;
-        songObject.controller = controller;
+
+        if (songObject != null)
+            songObject.controller = controller;
     }
 
     public override void OnSelectableMouseDown()

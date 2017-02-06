@@ -24,7 +24,9 @@ public class NoteController : SongObjectController {
     MeshFilter meshFilter;
 #endif
     protected SpriteRenderer sustainRen;
-    
+    BoxCollider2D sustainHitBox;
+    BoxCollider hitBox;
+
     public bool hit = false;
     public bool sustainBroken = false;
     public bool isActivated
@@ -143,27 +145,31 @@ public class NoteController : SongObjectController {
     {
         base.Init(note, this);
 
+        if (note == null)
+            return;
+
+        if (!hitBox)
+            hitBox = GetComponent<BoxCollider>();
+        if (!sustainHitBox)
+            sustainHitBox = sustain.GetComponent<BoxCollider2D>();
+
         if (note.fret_type == Note.Fret_Type.OPEN)
         {
             // Apply scaling
-            //sustain.transform.localScale = new Vector3(OPEN_NOTE_SUSTAIN_WIDTH, sustain.transform.localScale.y, sustain.transform.localScale.z);
             sustainRen.sprite = Globals.openSustainSprite;
-
-            BoxCollider2D sustainHitBox = sustain.GetComponent<BoxCollider2D>();
+          
             if (sustainHitBox)
                 sustainHitBox.size = new Vector2(OPEN_NOTE_COLLIDER_WIDTH, sustainHitBox.size.y);
 
             // Adjust note hitbox size
 #if NOTE_TYPE_2D
-            BoxCollider2D hitBox = GetComponent<BoxCollider2D>();
+            hitBox = GetComponent<BoxCollider2D>();
             if (hitBox)
                 hitBox.size = new Vector2(OPEN_NOTE_COLLIDER_WIDTH, hitBox.size.y);
-#else
-            BoxCollider hitBox = GetComponent<BoxCollider>();
+#else            
             if (hitBox)
                 hitBox.size = new Vector3(OPEN_NOTE_COLLIDER_WIDTH, hitBox.size.y, hitBox.size.z);
 #endif
-
             Note[] chordNotes = note.GetChord();
 
             // Check for non-open notes and delete
@@ -175,7 +181,23 @@ public class NoteController : SongObjectController {
                 }
             }
         }
+        else
+        {
+            if (sustainHitBox)
+                sustainHitBox.size = new Vector2(1, sustainHitBox.size.y);
+
+            if (hitBox)
+                hitBox.size = new Vector3(1, hitBox.size.y, hitBox.size.z);
+        }
     }
+    /*
+    void OnDisable()
+    {
+        if (note != null)
+        {
+            note = null;
+        }
+    }*/
     
     protected override void UpdateCheck()
     {
@@ -189,49 +211,54 @@ public class NoteController : SongObjectController {
             {
                 UpdateSongObject();
             }
-            else 
+            else
+            {
                 gameObject.SetActive(false);
-        }
-        else 
-            gameObject.SetActive(false);
-
-        // Handle gameplay operation
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
-        {
-            const float offset = 0.25f;
-            
-            if (Globals.bot)
-            {
-                hit = true;
-                sustainBroken = false;
+                return;
             }
 
-            if (hit && transform.position.y <= editor.visibleStrikeline.position.y + offset)
+            // Handle gameplay operation
+            if (Globals.applicationMode == Globals.ApplicationMode.Playing)
             {
-                if (isActivated)
+                const float offset = 0.25f;
+
+                if (Globals.bot)
                 {
-                    DeactivateNote();
+                    hit = true;
+                    sustainBroken = false;
                 }
 
-                // Resize sustain
-                if (!sustainBroken && note.sustain_length > 0)
+                if (hit && transform.position.y <= editor.visibleStrikeline.position.y + offset)
                 {
-                    float sustainEndPoint = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length);
-                    float yPos = (sustainEndPoint + editor.visibleStrikeline.position.y) / 2;
-                    float yScale = sustainEndPoint - (editor.visibleStrikeline.position.y);
-
-                    if (yPos > editor.visibleStrikeline.position.y && yScale > 0)
+                    if (isActivated)
                     {
-                        sustain.transform.position = new Vector3(sustain.transform.position.x, yPos, sustain.transform.position.z);
-                        sustain.transform.localScale = new Vector3(sustain.transform.localScale.x, yScale, sustain.transform.localScale.z);
+                        DeactivateNote();
                     }
-                    else
-                        sustainBroken = true;
-                }
-            }
+                    
+                    // Resize sustain
+                    if (!sustainBroken && note.sustain_length > 0)
+                    {
+                        float sustainEndPoint = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length);
+                        float yPos = (sustainEndPoint + editor.visibleStrikeline.position.y) / 2;
+                        float yScale = sustainEndPoint - (editor.visibleStrikeline.position.y);
 
-            if (sustainBroken)
-                sustainRen.enabled = false;
+                        if (yPos > editor.visibleStrikeline.position.y && yScale > 0)
+                        {
+                            sustain.transform.position = new Vector3(sustain.transform.position.x, yPos, sustain.transform.position.z);
+                            sustain.transform.localScale = new Vector3(sustain.transform.localScale.x, yScale, sustain.transform.localScale.z);
+                        }
+                        else
+                            sustainBroken = true;
+                    }
+                }
+
+                if (sustainBroken)
+                    sustainRen.enabled = false;
+            }
+        }
+        else
+        {
+            gameObject.SetActive(false);
         }
     }
 

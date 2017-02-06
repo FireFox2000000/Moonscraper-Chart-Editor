@@ -394,6 +394,7 @@ public class ChartEditor : MonoBehaviour {
 
         float strikelineYPos = visibleStrikeline.position.y - (0.01f * Globals.hyperspeed);     // Offset to prevent errors where it removes a note that is on the strikeline
 
+        // Hide everything behind the strikeline
         foreach (Note note in currentChart.notes)
         {
             if (note.controller)
@@ -807,6 +808,44 @@ public class ChartEditor : MonoBehaviour {
 
     void enableSongObjects(SongObject[] songObjects, SongObject.ID id, uint min, uint max)
     {
+        SongObject[] songObjectsRanged = SongObject.GetRange(songObjects, min, max);
+
+        foreach (SongObject songObject in songObjectsRanged)
+        {
+            if (songObject.controller != null && !songObject.controller.gameObject.activeSelf)
+                songObject.controller.gameObject.SetActive(true);
+        }
+
+        // Check if sustains need to be rendered
+        if (id == SongObject.ID.Note && songObjectsRanged.Length > 0)
+        {
+
+            // Find the last known note of each fret type to find any sustains that might overlap. Cancel if there's an open note.
+            foreach (Note prevNote in Note.GetPreviousOfSustains(songObjectsRanged[0] as Note))
+            {
+                if (prevNote.controller != null)
+                    prevNote.controller.gameObject.SetActive(true);
+            }
+        }
+        else if (id == SongObject.ID.Starpower)
+        {
+            int arrayPos = SongObject.FindClosestPosition(min, songObjects);
+            if (arrayPos != Globals.NOTFOUND)
+            {
+                // Find the back-most position
+                while (arrayPos > 0 && songObjects[arrayPos].position >= min)
+                {
+                    --arrayPos;
+                }
+                // Render previous sp sustain in case of overlap into current position
+                if (arrayPos >= 0)
+                {
+                    if (songObjects[arrayPos].controller != null)
+                        songObjects[arrayPos].controller.gameObject.SetActive(true);
+                }
+            }              
+        }
+        /*
         // Enable all objects within the min-max position
         int arrayPos = SongObject.FindClosestPosition(min, songObjects);
         if (arrayPos != Globals.NOTFOUND)
@@ -843,25 +882,13 @@ public class ChartEditor : MonoBehaviour {
                         songObjects[arrayPos].controller.gameObject.SetActive(true);
                 }
             }
-
-            //enableSongObjects(songObjects, arrayPos, max);
         }
 
         foreach (SongObject songObject in SongObject.GetRange(songObjects, min, max))
         {
             if (songObject.controller != null && !songObject.controller.gameObject.activeSelf)
                 songObject.controller.gameObject.SetActive(true);
-        }
-    }
-
-    void enableSongObjects(SongObject[] songObjects, int startArrayPos, uint max)
-    {
-        // Enable objects through range
-        for (int i = startArrayPos; i < songObjects.Length && songObjects[i].position < max; ++i)
-        {
-            if (songObjects[i].controller != null && !songObjects[i].controller.gameObject.activeSelf)
-                songObjects[i].controller.gameObject.SetActive(true);
-        }
+        }*/
     }
 
     public void EnableMenu(DisplayMenu menu)
@@ -884,25 +911,5 @@ public class ChartEditor : MonoBehaviour {
     public void RedoWrap()
     {
         actionHistory.Redo(this);
-    }
-
-    public static SongObjectController[] SOConInstanciate(GameObject prefab, int count, out GameObject parent)
-    {
-        if (!prefab.GetComponent<SongObjectController>())
-        {
-            throw new System.Exception("No SongObjectController attached to prefab");
-        }
-
-        SongObjectController[] soCons = new SongObjectController[count];
-        parent = new GameObject();
-
-        for (int i = 0; i < soCons.Length; ++i)
-        {
-            GameObject gameObject = Instantiate(prefab);
-            gameObject.transform.SetParent(parent.transform);
-            soCons[i] = gameObject.GetComponent<SongObjectController>();
-        }
-
-        return soCons;
     }
 }
