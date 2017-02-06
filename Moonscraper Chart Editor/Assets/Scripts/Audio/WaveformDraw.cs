@@ -71,7 +71,7 @@ public class WaveformDraw : MonoBehaviour {
             points.Add(new Vector3(sampleAverage, Song.TimeToWorldYPosition(i * sampleRate), 0));
         }
 
-        lineRen.SetVertexCount(points.Count);
+        lineRen.numPositions = points.Count;
         lineRen.SetPositions(points.ToArray());
     }
 
@@ -81,10 +81,6 @@ public class WaveformDraw : MonoBehaviour {
             return 0;
         else if (time >= currentClip.length)
             return data.Length - 1;
-
-        // Get the point the data should start reading from
-        int singleChannelLength = data.Length / currentClip.channels;
-        //int arrayPoint = (int)(time / currentClip.length * data.Length);
 
         // Need to floor it so it lines up with the first channel
         int arrayPoint = (int)((time / currentClip.length * data.Length) / (currentClip.channels * iteration)) * currentClip.channels * iteration;

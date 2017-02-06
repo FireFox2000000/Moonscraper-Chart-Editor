@@ -2,7 +2,8 @@
 using System.Collections;
 using System.Linq;
 
-public class GroupMove : Snapable {
+public class GroupMove : ToolObject
+{
     public GameObject notePrefab;
     public GameObject spPrefab;
     public GameObject bpmPrefab;
@@ -16,31 +17,41 @@ public class GroupMove : Snapable {
     uint initObjectSnappedChartPos = 0;
 
     const int POOL_SIZE = 50;
-    NoteController[] noteControllers = new NoteController[POOL_SIZE];
-    StarpowerController[] starpowerControllers = new StarpowerController[POOL_SIZE];
-    BPMController[] bpmControllers = new BPMController[POOL_SIZE];
-    TimesignatureController[] tsControllers = new TimesignatureController[POOL_SIZE];
-    SectionController[] sectionControllers = new SectionController[POOL_SIZE];
+    
+    NoteController[] noteControllers;
+    StarpowerController[] starpowerControllers;
+    BPMController[] bpmControllers;
+    TimesignatureController[] tsControllers;
+    SectionController[] sectionControllers;
 
     void Start()
     {
-        for (int i = 0; i < POOL_SIZE; ++i)
-        {
-            noteControllers[i] = Instantiate(notePrefab).GetComponent<NoteController>();
-            noteControllers[i].gameObject.SetActive(false);
+        GameObject groupMovePool = new GameObject("Group Move Object Pool");
 
-            starpowerControllers[i] = Instantiate(spPrefab).GetComponent<StarpowerController>();
-            starpowerControllers[i].gameObject.SetActive(false);
+        GameObject notes;
+        noteControllers = (NoteController[])ChartEditor.SOConInstanciate(editor.notePrefab, POOL_SIZE, out notes);
+        notes.name = "Group Move notes";
+        notes.transform.SetParent(groupMovePool.transform);
 
-            bpmControllers[i] = Instantiate(bpmPrefab).GetComponent<BPMController>();
-            bpmControllers[i].gameObject.SetActive(false);
+        GameObject starpowers;
+        starpowerControllers = (StarpowerController[])ChartEditor.SOConInstanciate(editor.starpowerPrefab, POOL_SIZE, out starpowers);
+        starpowers.name = "Group Move SP";
+        starpowers.transform.SetParent(groupMovePool.transform);
 
-            tsControllers[i] = Instantiate(tsPrefab).GetComponent<TimesignatureController>();
-            tsControllers[i].gameObject.SetActive(false);
+        GameObject bpms;
+        bpmControllers = (BPMController[])ChartEditor.SOConInstanciate(editor.bpmPrefab, POOL_SIZE, out bpms);
+        bpms.name = "Group Move BPMs";
+        bpms.transform.SetParent(groupMovePool.transform);
 
-            sectionControllers[i] = Instantiate(sectionPrefab).GetComponent<SectionController>();
-            sectionControllers[i].gameObject.SetActive(false);
-        }
+        GameObject timesignatures;
+        tsControllers = (TimesignatureController[])ChartEditor.SOConInstanciate(editor.bpmPrefab, POOL_SIZE, out timesignatures);
+        timesignatures.name = "Group Move TSs";
+        timesignatures.transform.SetParent(groupMovePool.transform);
+
+        GameObject sections;
+        sectionControllers = (SectionController[])ChartEditor.SOConInstanciate(editor.sectionPrefab, POOL_SIZE, out sections);
+        sections.name = "Group Move sections";
+        sections.transform.SetParent(groupMovePool.transform);
     }
 
     // Update is called once per frame
@@ -82,10 +93,33 @@ public class GroupMove : Snapable {
                 }
             }
         }
-
-        // Assign in-view songObjects to gameobjects
-        int notePos = 0, spPos = 0, bpmPos = 0, tsPos = 0, sectionPos = 0;
 	}
+
+    void AddSongObjects()
+    {
+        throw new System.NotImplementedException();     
+        // Need to remember to undo/redo. This current will only work once object pools are implemented.
+        // Check to see what the current offset is to decide how to record
+        // Will also need to check for overwrites
+
+        foreach (SongObject songObject in movingSongObjects)
+        {
+            if (songObject.GetType().IsSubclassOf(typeof(ChartObject)))
+            {
+                editor.currentChart.Add((ChartObject)songObject, false);
+            }
+            else
+            {
+                editor.currentSong.Add(songObject, false);
+            }
+        }
+
+        editor.currentSong.updateArrays();
+        editor.currentChart.updateArrays();
+
+        originalSongObjects = new ChartObject[0];
+        movingSongObjects = new ChartObject[0];
+    }
 
     public void SetSongObjects(SongObject[] songObjects)
     {
@@ -115,5 +149,12 @@ public class GroupMove : Snapable {
                 lastNotePos = i;
             }
         }
+    }
+
+    public override void ToolDisable()
+    {
+        base.ToolDisable();
+        originalSongObjects = new ChartObject[0];
+        movingSongObjects = new ChartObject[0];
     }
 }

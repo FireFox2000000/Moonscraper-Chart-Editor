@@ -45,7 +45,8 @@ public abstract class SongObjectController : SelectableClick {
     
     void Update()
     {
-        UpdateCheck();
+        if (songObject != null)
+            UpdateCheck();
     }
 
     protected virtual void UpdateCheck()

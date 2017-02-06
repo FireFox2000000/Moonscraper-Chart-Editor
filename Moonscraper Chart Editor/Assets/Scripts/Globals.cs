@@ -195,9 +195,6 @@ public class Globals : MonoBehaviour {
 
         INIParser iniparse = new INIParser();
 
-        bool configFileExisted;
-        configFileExisted = System.IO.File.Exists("config.ini");
-
         iniparse.Open("config.ini");
         
         hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);

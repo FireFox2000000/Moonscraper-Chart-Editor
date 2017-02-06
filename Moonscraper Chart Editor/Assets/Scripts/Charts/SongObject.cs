@@ -346,39 +346,10 @@ public abstract class SongObject
             return list[pos];
     }
 
-    public static int Insert<T>(T item, List<T> list, bool uniqueData = true) where T : SongObject
+    public static int Insert<T>(T item, List<T> list) where T : SongObject
     {
         ChartEditor.editOccurred = true;
-#if false
-        int insertionPos = FindClosestPosition(item, list.ToArray());
-        
-        if (list.Count > 0 && insertionPos != Globals.NOTFOUND)
-        {
-            if (list[insertionPos] == item && item.classID == list[insertionPos].classID)
-            {
-                // Overwrite 
-                if (uniqueData && list[insertionPos].controller != null)
-                    list[insertionPos].controller.DestroyGameObject();
 
-                list[insertionPos] = item;
-            }
-            // Insert into sorted position
-            else
-            {
-                if (item > list[insertionPos])
-                {
-                    ++insertionPos;
-                }
-                list.Insert(insertionPos, item);
-            }
-        }
-        else
-        {
-            // Adding the first note
-            list.Add(item);
-            insertionPos = list.Count - 1;
-        }
-#else
         int insertionPos = Globals.NOTFOUND;
 
         if (list.Count > 0)
@@ -397,7 +368,7 @@ public abstract class SongObject
                     if (list[insertionPos] == item && item.classID == list[insertionPos].classID)
                     {
                         // Overwrite 
-                        if (uniqueData && list[insertionPos].controller != null)
+                        if (list[insertionPos].controller != null)
                             GameObject.Destroy(list[insertionPos].controller.gameObject);
 
                         list[insertionPos] = item;
@@ -421,9 +392,8 @@ public abstract class SongObject
             list.Add(item);
             insertionPos = list.Count - 1;
         }
-#endif
 
-        if (uniqueData && (ID)item.classID == ID.Note)
+        if ((ID)item.classID == ID.Note)
         {
             // Update linked list
             Note current = list[insertionPos] as Note;

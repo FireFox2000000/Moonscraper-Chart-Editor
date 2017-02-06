@@ -885,4 +885,24 @@ public class ChartEditor : MonoBehaviour {
     {
         actionHistory.Redo(this);
     }
+
+    public static SongObjectController[] SOConInstanciate(GameObject prefab, int count, out GameObject parent)
+    {
+        if (!prefab.GetComponent<SongObjectController>())
+        {
+            throw new System.Exception("No SongObjectController attached to prefab");
+        }
+
+        SongObjectController[] soCons = new SongObjectController[count];
+        parent = new GameObject();
+
+        for (int i = 0; i < soCons.Length; ++i)
+        {
+            GameObject gameObject = Instantiate(prefab);
+            gameObject.transform.SetParent(parent.transform);
+            soCons[i] = gameObject.GetComponent<SongObjectController>();
+        }
+
+        return soCons;
+    }
 }
