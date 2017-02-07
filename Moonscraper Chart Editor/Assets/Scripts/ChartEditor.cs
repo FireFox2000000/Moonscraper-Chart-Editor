@@ -648,7 +648,7 @@ public class ChartEditor : MonoBehaviour {
         return songObjectParent;
     }
 
-    public SectionController CreateSectionObject(Section section)
+    SectionController CreateSectionObject(Section section)
     {
         // Attach the note to the object
         SectionController controller = CreateSongObject(this.sectionPrefab).GetComponentInChildren<SectionController>();
@@ -659,7 +659,7 @@ public class ChartEditor : MonoBehaviour {
         return controller;
     }
 
-    public BPMController CreateBPMObject(BPM bpm)
+    BPMController CreateBPMObject(BPM bpm)
     {
         // Attach the note to the object
         BPMController controller = CreateSongObject(this.bpmPrefab).GetComponent<BPMController>();
@@ -670,7 +670,7 @@ public class ChartEditor : MonoBehaviour {
         return controller;
     }
 
-    public TimesignatureController CreateTSObject(TimeSignature ts)
+    TimesignatureController CreateTSObject(TimeSignature ts)
     {
         // Attach the note to the object
         TimesignatureController controller = CreateSongObject(this.tsPrefab).GetComponent<TimesignatureController>();
@@ -719,7 +719,7 @@ public class ChartEditor : MonoBehaviour {
         return controller;
     }
 
-    public StarpowerController CreateStarpowerObject(Starpower starpower)
+    StarpowerController CreateStarpowerObject(Starpower starpower)
     {
         // Attach the note to the object
         StarpowerController controller = CreateChartObject(this.starpowerPrefab).GetComponent<StarpowerController>();

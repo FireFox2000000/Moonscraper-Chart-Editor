@@ -39,7 +39,7 @@ public class PlaceSection : PlaceSongObject {
     {
         Section sectionToAdd = new Section(section);
         editor.currentSong.Add(sectionToAdd, update);
-        editor.CreateSectionObject(sectionToAdd);
+        //editor.CreateSectionObject(sectionToAdd);
         editor.currentSelectedObject = sectionToAdd;
     }
 }

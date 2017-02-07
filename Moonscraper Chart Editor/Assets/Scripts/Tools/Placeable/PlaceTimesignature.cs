@@ -40,7 +40,7 @@ public class PlaceTimesignature : PlaceSongObject {
     {
         TimeSignature tsToAdd = new TimeSignature(ts);
         editor.currentSong.Add(tsToAdd, update);
-        editor.CreateTSObject(tsToAdd);
+        //editor.CreateTSObject(tsToAdd);
 
         // Only show the panel once the object has been placed down
         editor.currentSelectedObject = tsToAdd;

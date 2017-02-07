@@ -21,7 +21,7 @@ public class MoveTimeSignature : PlaceTimesignature {
     {
         TimeSignature tsToAdd = new TimeSignature(ts);
         editor.currentSong.Add(tsToAdd);
-        editor.CreateTSObject(tsToAdd);
+        //editor.CreateTSObject(tsToAdd);
         editor.currentSelectedObject = tsToAdd;
 
         if (!initObject.AllValuesCompare(tsToAdd))

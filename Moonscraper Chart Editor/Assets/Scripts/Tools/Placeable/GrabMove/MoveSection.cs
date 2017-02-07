@@ -20,7 +20,7 @@ public class MoveSection : PlaceSection {
     {
         Section sectionToAdd = new Section(section);
         editor.currentSong.Add(sectionToAdd);
-        editor.CreateSectionObject(sectionToAdd);
+        //editor.CreateSectionObject(sectionToAdd);
         editor.currentSelectedObject = sectionToAdd;
 
         if (!initObject.AllValuesCompare(sectionToAdd))

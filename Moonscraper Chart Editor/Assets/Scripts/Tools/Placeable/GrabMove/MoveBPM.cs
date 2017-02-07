@@ -21,7 +21,7 @@ public class MoveBPM : PlaceBPM {
     {
         BPM bpmToAdd = new BPM(bpm);
         editor.currentSong.Add(bpmToAdd);
-        editor.CreateBPMObject(bpmToAdd);
+        //editor.CreateBPMObject(bpmToAdd);
         editor.currentSelectedObject = bpmToAdd;
 
         if (!initObject.AllValuesCompare(bpmToAdd))

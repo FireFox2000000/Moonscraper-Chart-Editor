@@ -92,7 +92,7 @@ public class PlaceStarpower : PlaceSongObject {
         Starpower starpowerToAdd = new Starpower(starpower);
         record.AddRange(CapPrevAndNextPreInsert(starpowerToAdd, editor.currentChart));
         editor.currentChart.Add(starpowerToAdd);
-        editor.CreateStarpowerObject(starpowerToAdd);
+        //editor.CreateStarpowerObject(starpowerToAdd);
         editor.currentSelectedObject = starpowerToAdd;
 
         lastPlacedSP = starpowerToAdd;
@@ -109,7 +109,7 @@ public class PlaceStarpower : PlaceSongObject {
             record.Add(overwriteRecord);
 
         editor.currentChart.Add(starpowerToAdd, update);
-        editor.CreateStarpowerObject(starpowerToAdd);
+        //editor.CreateStarpowerObject(starpowerToAdd);
         editor.currentSelectedObject = starpowerToAdd;
 
         return record.ToArray();

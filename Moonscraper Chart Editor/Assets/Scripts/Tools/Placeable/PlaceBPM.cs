@@ -59,7 +59,7 @@ public class PlaceBPM : PlaceSongObject {
     {
         BPM bpmToAdd = new BPM(bpm);
         editor.currentSong.Add(bpmToAdd, update);
-        editor.CreateBPMObject(bpmToAdd);
+        //editor.CreateBPMObject(bpmToAdd);
         editor.currentSelectedObject = bpmToAdd;
     }
 }
