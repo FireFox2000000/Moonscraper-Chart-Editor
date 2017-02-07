@@ -50,6 +50,9 @@ public class Mouse : MonoBehaviour {
                 world2DPosition = null;
         }
 
+        if (selectedGameObject && !selectedGameObject.activeSelf)
+            selectedGameObject = null;
+
         // OnSelectableMouseDown
         if ((Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) && world2DPosition != null)
         {

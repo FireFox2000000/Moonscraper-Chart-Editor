@@ -190,14 +190,6 @@ public class NoteController : SongObjectController {
                 hitBox.size = new Vector3(1, hitBox.size.y, hitBox.size.z);
         }
     }
-    /*
-    void OnDisable()
-    {
-        if (note != null)
-        {
-            note = null;
-        }
-    }*/
     
     protected override void UpdateCheck()
     {
