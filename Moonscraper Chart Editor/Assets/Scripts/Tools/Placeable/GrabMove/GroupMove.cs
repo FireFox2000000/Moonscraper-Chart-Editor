@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 public class GroupMove : ToolObject
@@ -68,39 +69,58 @@ public class GroupMove : ToolObject
 	}  
 
     void AddSongObjects()
-    {  
+    {
+        List<ActionHistory.Action> record = new List<ActionHistory.Action>();
+        List<ActionHistory.Action> deleteRecord = new List<ActionHistory.Action>();
+
         // Need to remember to undo/redo. This current will only work once object pools are implemented.
         // Check to see what the current offset is to decide how to record
         // Will also need to check for overwrites
         // All relative to the original notes
 
-        foreach (SongObject songObject in movingSongObjects)
+        for (int i = 0; i < movingSongObjects.Length; ++i)
         {
-            switch ((SongObject.ID)songObject.classID)
+            ActionHistory.Action overwriteRecord;
+
+            if (movingSongObjects[i] != originalSongObjects[i])
+                deleteRecord.Add(new ActionHistory.Delete(originalSongObjects[i]));
+
+            switch ((SongObject.ID)movingSongObjects[i].classID)
             {
                 case (SongObject.ID.Note):
-                    PlaceNote.AddObjectToCurrentChart((Note)songObject, editor, false);     // Capping
+                    record.AddRange(PlaceNote.AddObjectToCurrentChart((Note)movingSongObjects[i], editor, false));     // Capping
                     break;
                 case (SongObject.ID.Starpower):
-                    PlaceStarpower.AddObjectToCurrentChart((Starpower)songObject, editor, false);       // Capping
+                    record.AddRange(PlaceStarpower.AddObjectToCurrentChart((Starpower)movingSongObjects[i], editor, false));       // Capping
                     break;
                 case (SongObject.ID.BPM):
-                    editor.currentSong.Add((BPM)songObject, false);
+                    overwriteRecord = PlaceSongObject.OverwriteActionHistory(movingSongObjects[i], editor.currentSong.bpms);
+                    if (record != null)
+                        record.Add(overwriteRecord);
+                    editor.currentSong.Add((BPM)movingSongObjects[i], false);
                     break;
                 case (SongObject.ID.TimeSignature):
-                    editor.currentSong.Add((TimeSignature)songObject, false);
+                    overwriteRecord = PlaceSongObject.OverwriteActionHistory(movingSongObjects[i], editor.currentSong.timeSignatures);
+                    if (record != null)
+                        record.Add(overwriteRecord);
+                    editor.currentSong.Add((TimeSignature)movingSongObjects[i], false);
                     break;
                 case (SongObject.ID.Section):
-                    editor.currentSong.Add((Section)songObject, false);
+                    overwriteRecord = PlaceSongObject.OverwriteActionHistory(movingSongObjects[i], editor.currentSong.sections);
+                    if (record != null)
+                        record.Add(overwriteRecord);
+                    editor.currentSong.Add((Section)movingSongObjects[i], false);
                     break;
                 default:
                     break;
-            }
+            }     
         }
 
         if (movingSongObjects.Length == 1)
             editor.currentSelectedObject = movingSongObjects[0];
 
+        editor.actionHistory.Insert(deleteRecord.ToArray());
+        editor.actionHistory.Insert(record.ToArray());
         editor.currentSong.updateArrays();
         editor.currentChart.updateArrays();
 

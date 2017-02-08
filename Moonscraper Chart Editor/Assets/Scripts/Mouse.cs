@@ -56,7 +56,6 @@ public class Mouse : MonoBehaviour {
         {
             selectedGameObject = null;
             cancel = false;
-            Debug.Log("cancel");
         }
 
         // OnSelectableMouseDown
