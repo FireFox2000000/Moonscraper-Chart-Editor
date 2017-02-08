@@ -263,7 +263,7 @@ public class PlaceNote : PlaceSongObject {
         List<ActionHistory.Action> actionRecord = new List<ActionHistory.Action>();
         Note next;
 
-        if (Globals.extendedSustainsEnabled)
+        if (!Globals.extendedSustainsEnabled)
         {
             next = note.nextSeperateNote;         
         }

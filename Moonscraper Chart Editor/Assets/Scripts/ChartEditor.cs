@@ -32,6 +32,7 @@ public class ChartEditor : MonoBehaviour {
     public GameObject ghostSection;
     public GameObject ghostBPM;
     public GameObject ghostTimeSignature;
+    public GroupMove groupMove;
     [Header("Misc.")]
     public UnityEngine.UI.Button play;
     public UnityEngine.UI.Button undo;
@@ -58,7 +59,8 @@ public class ChartEditor : MonoBehaviour {
     string currentFileName = string.Empty;
 
     MovementController movement;
-    SongObjectPoolManager songObjectPoolManager;
+    SongObjectPoolManager _songObjectPoolManager;
+    public SongObjectPoolManager songObjectPoolManager { get { return _songObjectPoolManager; } }
 
     string lastLoadedFile = string.Empty;
 
@@ -106,7 +108,7 @@ public class ChartEditor : MonoBehaviour {
 
     // Use this for initialization
     void Awake () {
-        songObjectPoolManager = GetComponent<SongObjectPoolManager>();
+        _songObjectPoolManager = GetComponent<SongObjectPoolManager>();
 
         minPos = 0;
         maxPos = 0;

@@ -17,7 +17,7 @@ public class SongObjectPoolManager : MonoBehaviour {
     public SectionController[] sectionControllers { get; private set; }
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
         editor = GetComponent<ChartEditor>();
 
         GameObject groupMovePool = new GameObject("Main Song Object Pool");
@@ -112,6 +112,11 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
     }
 
+    public void EnableNotes(Note note)
+    {
+        EnableNotes(new Note[] { note });
+    }
+
     public void EnableSP(Starpower[] stapowers)
     {
         List<Starpower> rangedSP = new List<Starpower>(SongObject.GetRange(stapowers, editor.minPos, editor.maxPos));
@@ -151,6 +156,11 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
     }
 
+    public void EnableSP(Starpower starpower)
+    {
+        EnableSP(new Starpower[] { starpower });
+    }
+
     public void EnableBPM(BPM[] bpms)
     {
         int pos = 0;
@@ -171,6 +181,11 @@ public class SongObjectPoolManager : MonoBehaviour {
                     break;
             }
         }
+    }
+
+    public void EnableBPM(BPM bpm)
+    {
+        EnableBPM(new BPM[] { bpm });
     }
 
     public void EnableTS(TimeSignature[] timeSignatures)
@@ -195,6 +210,11 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
     }
 
+    public void EnableTS(TimeSignature timeSignature)
+    {
+        EnableTS(new TimeSignature[] { timeSignature });
+    }
+
     public void EnableSections(Section[] sections)
     {
         int pos = 0;
@@ -216,6 +236,11 @@ public class SongObjectPoolManager : MonoBehaviour {
                     break;
             }
         }
+    }
+
+    public void EnableSections(Section section)
+    {
+        EnableSections(new Section[] { section });
     }
 
     public static T[] SOConInstanciate<T>(GameObject prefab, int count, out GameObject parent) where T : SongObjectController

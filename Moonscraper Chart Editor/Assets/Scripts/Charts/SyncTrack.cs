@@ -23,7 +23,8 @@ public abstract class SyncTrack : SongObject
         if (position != 0)
         {
             base.Delete();
-            song.Remove(this, update);
+            if (song != null)
+                song.Remove(this, update);
         }
     }
 }

@@ -46,6 +46,7 @@ public class Event : SongObject
     public override void Delete(bool update = true)
     {
         base.Delete();
-        song.Remove(this, update);
+        if (song != null)
+            song.Remove(this, update);
     }
 }

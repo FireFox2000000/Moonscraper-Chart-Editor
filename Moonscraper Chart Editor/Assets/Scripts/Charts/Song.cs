@@ -400,14 +400,6 @@ public class Song {
         return (float)time;
     }
 
-    public void Add(SongObject songObject, bool update = true)
-    {
-        if (songObject.GetType().IsSubclassOf(typeof(SyncTrack)))
-            Add((SyncTrack)songObject, false);
-        else
-            Add((Event)songObject, false);
-    }
-
     public void Add(SyncTrack syncTrackObject, bool update = true)
     {
         syncTrackObject.song = this;

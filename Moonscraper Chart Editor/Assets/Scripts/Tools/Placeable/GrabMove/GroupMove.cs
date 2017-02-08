@@ -4,125 +4,133 @@ using System.Linq;
 
 public class GroupMove : ToolObject
 {
-    public GameObject notePrefab;
-    public GameObject spPrefab;
-    public GameObject bpmPrefab;
-    public GameObject tsPrefab;
-    public GameObject sectionPrefab;
-
     SongObject[] originalSongObjects = new ChartObject[0];
     SongObject[] movingSongObjects = new ChartObject[0];
     
     Vector2 initMousePos = Vector2.zero;
     uint initObjectSnappedChartPos = 0;
 
-    const int POOL_SIZE = 50;
-    
-    NoteController[] noteControllers;
-    StarpowerController[] starpowerControllers;
-    BPMController[] bpmControllers;
-    TimesignatureController[] tsControllers;
-    SectionController[] sectionControllers;
-
-    void Start()
-    {
-        GameObject groupMovePool = new GameObject("Group Move Object Pool");
-
-        GameObject notes;
-        noteControllers = SongObjectPoolManager.SOConInstanciate<NoteController>(editor.notePrefab, POOL_SIZE, out notes);
-        notes.name = "Group Move notes";
-        notes.transform.SetParent(groupMovePool.transform);
-
-        GameObject starpowers;
-        starpowerControllers = SongObjectPoolManager.SOConInstanciate<StarpowerController>(editor.starpowerPrefab, POOL_SIZE, out starpowers);
-        starpowers.name = "Group Move SP";
-        starpowers.transform.SetParent(groupMovePool.transform);
-
-        GameObject bpms;
-        bpmControllers = SongObjectPoolManager.SOConInstanciate<BPMController>(editor.bpmPrefab, POOL_SIZE, out bpms);
-        bpms.name = "Group Move BPMs";
-        bpms.transform.SetParent(groupMovePool.transform);
-
-        GameObject timesignatures;
-        tsControllers = SongObjectPoolManager.SOConInstanciate<TimesignatureController>(editor.tsPrefab, POOL_SIZE, out timesignatures);
-        timesignatures.name = "Group Move TSs";
-        timesignatures.transform.SetParent(groupMovePool.transform);
-
-        GameObject sections;
-        sectionControllers = SongObjectPoolManager.SOConInstanciate<SectionController>(editor.sectionPrefab, POOL_SIZE, out sections);
-        sections.name = "Group Move sections";
-        sections.transform.SetParent(groupMovePool.transform);
-    }
-
     // Update is called once per frame
+    
     protected override void Update () {
-        UpdateSnappedPos();
-
-        if (Mouse.world2DPosition != null)
+        if (movingSongObjects.Length > 0 && Input.GetMouseButtonUp(0))
         {
-            Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
-            int chartPosOffset = (int)(objectSnappedChartPos - initObjectSnappedChartPos);
-            bool hitStartOfChart = false;
+            AddSongObjects();
+        }
+        else
+        {
+            UpdateSnappedPos();
 
-            // Guard for chart limit, if the offset was negative, yet the position becomes greater
-            if (movingSongObjects.Length > 0 && chartPosOffset < 0 && (uint)((int)originalSongObjects[0].position + chartPosOffset) > originalSongObjects[0].position)
+            if (Mouse.world2DPosition != null)
             {
-                hitStartOfChart = true;
-            }
+                Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
+                int chartPosOffset = (int)(objectSnappedChartPos - initObjectSnappedChartPos);
+                bool hitStartOfChart = false;
 
-            // Update the new positions of all the notes that have been moved
-            for (int i = 0; i < movingSongObjects.Length; ++i)
-            {
-                // Alter X position
-                if ((SongObject.ID)movingSongObjects[i].classID == SongObject.ID.Note)
+                // Guard for chart limit, if the offset was negative, yet the position becomes greater
+                if (movingSongObjects.Length > 0 && chartPosOffset < 0 && (uint)((int)originalSongObjects[0].position + chartPosOffset) > originalSongObjects[0].position)
                 {
-                    Note note = movingSongObjects[i] as Note;
-                    if (note.fret_type != Note.Fret_Type.OPEN)
+                    hitStartOfChart = true;
+                }
+
+                // Update the new positions of all the notes that have been moved
+                for (int i = 0; i < movingSongObjects.Length; ++i)
+                {
+                    // Alter X position
+                    if ((SongObject.ID)movingSongObjects[i].classID == SongObject.ID.Note)
                     {
-                        mousePosition.x -= initMousePos.x;      // Offset
-                        note.fret_type = PlaceNote.XPosToFretType(mousePosition.x);
+                        Note note = movingSongObjects[i] as Note;
+                        if (note.fret_type != Note.Fret_Type.OPEN)
+                        {
+                            float position = NoteController.GetXPos(0, originalSongObjects[i] as Note) + (mousePosition.x - initMousePos.x);      // Offset
+                            note.fret_type = PlaceNote.XPosToFretType(position);
+                        }
+                    }
+
+                    // Alter chart position
+                    if (!hitStartOfChart)
+                        movingSongObjects[i].position = (uint)((int)originalSongObjects[i].position + chartPosOffset);
+                    else
+                    {
+                        movingSongObjects[i].position = originalSongObjects[i].position - originalSongObjects[0].position;
                     }
                 }
-
-                // Alter chart position
-                if (!hitStartOfChart)
-                    movingSongObjects[i].position = (uint)((int)originalSongObjects[i].position + chartPosOffset);
-                else
-                {
-                    movingSongObjects[i].position = originalSongObjects[i].position - originalSongObjects[0].position;
-                }
             }
+
+            // Enable objects into the pool
+            
+            editor.songObjectPoolManager.EnableNotes(movingSongObjects.OfType<Note>().ToArray());
+            editor.songObjectPoolManager.EnableSP(movingSongObjects.OfType<Starpower>().ToArray());
+            editor.songObjectPoolManager.EnableBPM(movingSongObjects.OfType<BPM>().ToArray());
+            editor.songObjectPoolManager.EnableTS(movingSongObjects.OfType<TimeSignature>().ToArray());
+            editor.songObjectPoolManager.EnableSections(movingSongObjects.OfType<Section>().ToArray());
         }
-	}
+	}  
 
     void AddSongObjects()
-    {
-        throw new System.NotImplementedException();     
+    {  
         // Need to remember to undo/redo. This current will only work once object pools are implemented.
         // Check to see what the current offset is to decide how to record
         // Will also need to check for overwrites
+        // All relative to the original notes
 
         foreach (SongObject songObject in movingSongObjects)
         {
-            if (songObject.GetType().IsSubclassOf(typeof(ChartObject)))
+            switch ((SongObject.ID)songObject.classID)
             {
-                editor.currentChart.Add((ChartObject)songObject, false);
-            }
-            else
-            {
-                editor.currentSong.Add(songObject, false);
+                case (SongObject.ID.Note):
+                    PlaceNote.AddObjectToCurrentChart((Note)songObject, editor, false);
+                    break;
+                case (SongObject.ID.Starpower):
+                    PlaceStarpower.AddObjectToCurrentChart((Starpower)songObject, editor, false);
+                    break;
+                case (SongObject.ID.BPM):
+                    editor.currentSong.Add((BPM)songObject, false);
+                    break;
+                case (SongObject.ID.TimeSignature):
+                    editor.currentSong.Add((TimeSignature)songObject, false);
+                    break;
+                case (SongObject.ID.Section):
+                    editor.currentSong.Add((Section)songObject, false);
+                    break;
+                default:
+                    break;
             }
         }
 
         editor.currentSong.updateArrays();
         editor.currentChart.updateArrays();
 
+        Reset();
+    }
+
+    void Reset()
+    {
         originalSongObjects = new ChartObject[0];
+
+        foreach (SongObject songObject in movingSongObjects)
+        {
+            if (songObject.controller)
+                songObject.controller.gameObject.SetActive(false);
+        }
         movingSongObjects = new ChartObject[0];
+    }
+
+    public void SetSongObjects(SongObject songObject)
+    {
+        SetSongObjects(new SongObject[] { songObject });
     }
 
     public void SetSongObjects(SongObject[] songObjects)
     {
+        if (Mouse.world2DPosition != null)
+            initMousePos = (Vector2)Mouse.world2DPosition;
+        else
+            initMousePos = Vector2.zero;
+
+        editor.currentSelectedObject = null;
+        Reset();
+
         originalSongObjects = new SongObject[songObjects.Length];
         movingSongObjects = new SongObject[songObjects.Length];
 
@@ -148,13 +156,23 @@ public class GroupMove : ToolObject
 
                 lastNotePos = i;
             }
+
+            originalSongObjects[i].song = editor.currentSong;
+            movingSongObjects[i].song = editor.currentSong;
+
+            if (originalSongObjects[i].GetType().IsSubclassOf(typeof(ChartObject)))
+            {
+                ((ChartObject)originalSongObjects[i]).chart = editor.currentChart;
+                ((ChartObject)movingSongObjects[i]).chart = editor.currentChart;
+            }
         }
+
+        Mouse.cancel = true;
     }
 
     public override void ToolDisable()
     {
         base.ToolDisable();
-        originalSongObjects = new ChartObject[0];
-        movingSongObjects = new ChartObject[0];
+        Reset();
     }
 }

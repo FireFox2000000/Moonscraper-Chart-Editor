@@ -21,6 +21,8 @@ public class Mouse : MonoBehaviour {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
     }
 
+    public static bool cancel = false;
+
     Vector2 initMouseDragPos = Vector2.zero;
 	// Update is called once per frame
 	void Update () {
@@ -50,8 +52,12 @@ public class Mouse : MonoBehaviour {
                 world2DPosition = null;
         }
 
-        if (selectedGameObject && !selectedGameObject.activeSelf)
+        if (cancel || (selectedGameObject && !selectedGameObject.activeSelf))
+        {
             selectedGameObject = null;
+            cancel = false;
+            Debug.Log("cancel");
+        }
 
         // OnSelectableMouseDown
         if ((Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)) && world2DPosition != null)

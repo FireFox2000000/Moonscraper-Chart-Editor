@@ -88,6 +88,11 @@ public class NoteController : SongObjectController {
             if (Input.GetButton("ChordSelect"))
             {
                 Note[] chordNotes = note.GetChord();
+                editor.groupMove.SetSongObjects(chordNotes);
+
+                foreach (Note chordNote in chordNotes)
+                    chordNote.Delete();
+                /*
                 SongObject.sort(chordNotes);
 
                 // Moving a chord
@@ -106,11 +111,13 @@ public class NoteController : SongObjectController {
 
                         previousInChord = mCon;
                     }
-                }
+                }*/
             }
             else
             {
-                createPlaceNote(this);
+                editor.groupMove.SetSongObjects(note);
+                note.Delete();
+                //createPlaceNote(this);
             }
         }
         else
