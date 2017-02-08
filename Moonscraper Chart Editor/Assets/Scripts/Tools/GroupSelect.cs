@@ -257,9 +257,9 @@ public class GroupSelect : ToolObject {
 
         List<ChartObject> chartObjectsList = new List<ChartObject>();
 
-        foreach (ChartObject chartObject in editor.currentChart.chartObjects)
+        foreach (ChartObject chartObject in SongObject.GetRange(editor.currentChart.chartObjects, minLimitInclusive, maxLimitNonInclusive))
         {
-            if (chartObject.position >= minLimitInclusive && chartObject.position < maxLimitNonInclusive && chartObject.controller && chartObject.controller.AABBcheck(areaRect))
+            if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), areaRect))
             {
                 chartObjectsList.Add(chartObject);
             }

@@ -3,7 +3,7 @@ using System.Collections;
 
 [RequireComponent(typeof(Renderer))]
 public abstract class SongObjectController : SelectableClick {
-    protected const float CHART_CENTER_POS = 0;
+    public const float CHART_CENTER_POS = 0;
 
     protected ChartEditor editor;
     protected SongObject songObject = null;
@@ -112,9 +112,11 @@ public abstract class SongObjectController : SelectableClick {
             editor.currentSelectedObject = null;
         }
     }
-
+    /*
     public Rect GetAABBBoundsRect()
     {
+        // Move this and get direct static value
+
         if (colSize == Vector2.zero)
             throw new System.Exception("No collision attached to object");
 
@@ -122,24 +124,11 @@ public abstract class SongObjectController : SelectableClick {
         return new Rect(min, colSize);
     }
 
-    public bool AABBcheck(Rect rect)
+    public bool HorizontalCollisionCheck(Rect rectA, Rect rectB)
     {
-        Rect colRect;
-
-        try
-        {
-            colRect = GetAABBBoundsRect();
-        }
-        catch
-        {
-            return false;
-        }
-
         // AABB, check for any gaps
-        if (colRect.x <= rect.x + rect.width &&
-               colRect.x + colRect.width >= rect.x &&
-               colRect.y <= rect.y + rect.height &&
-               colRect.height + colRect.y >= rect.y)
+        if (rectA.x <= rectB.x + rectB.width &&
+               rectA.x + rectA.width >= rectB.x)
         {
             return true;
         }
@@ -147,5 +136,5 @@ public abstract class SongObjectController : SelectableClick {
         { 
             return false;
         }
-    }
+    }*/
 }

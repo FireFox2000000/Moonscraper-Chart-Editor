@@ -56,7 +56,7 @@ public class ClipboardObjectController : Snapable {
             // Overwrite any objects in the clipboard space
             foreach (ChartObject chartObject in editor.currentChart.chartObjects)
             {
-                if (chartObject.controller && chartObject.position >= chartLocationToPaste && chartObject.position < chartLocationToPaste + colliderChartDistance && chartObject.controller.AABBcheck(collisionRect))
+                if (chartObject.position >= chartLocationToPaste && chartObject.position < chartLocationToPaste + colliderChartDistance && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), collisionRect))
                 {
                     chartObject.Delete(false);
 

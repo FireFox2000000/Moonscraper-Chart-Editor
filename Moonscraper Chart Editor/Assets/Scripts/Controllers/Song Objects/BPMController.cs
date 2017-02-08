@@ -6,7 +6,7 @@ using System;
 public class BPMController : SongObjectController {
     public BPM bpm { get { return (BPM)songObject; } set { Init(value, this); } }
     public Text bpmText;
-    public float position = 0.0f;
+    public const float position = -1.0f;
 
     public override void UpdateSongObject()
     {

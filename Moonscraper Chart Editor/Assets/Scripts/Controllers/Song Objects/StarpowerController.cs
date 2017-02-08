@@ -6,7 +6,7 @@ public class StarpowerController : SongObjectController
 {
     public GameObject tail;
     public Starpower starpower { get { return (Starpower)songObject; } set { Init(value, this); } }
-
+    public const float position = -3.0f;
     public Starpower unmodifiedSP = null;
 
     new void Awake()
@@ -35,7 +35,7 @@ public class StarpowerController : SongObjectController
     {
         if (starpower.song != null)
         {
-            transform.position = new Vector3(CHART_CENTER_POS - 3, starpower.worldYPosition, 0);
+            transform.position = new Vector3(CHART_CENTER_POS + position, starpower.worldYPosition, 0);
 
             UpdateTailLength();
         }

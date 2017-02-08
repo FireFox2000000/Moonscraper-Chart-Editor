@@ -5,7 +5,7 @@ using System.Collections;
 public class SectionController : SongObjectController
 {
     public Section section { get { return (Section)songObject; } set { Init(value, this); } }
-    public float position = 4.5f;
+    public const float position = 4.0f;
     public Text sectionText;
 
     public override void UpdateSongObject()

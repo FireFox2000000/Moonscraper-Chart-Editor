@@ -5,8 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class NoteController : SongObjectController {
-    const float OPEN_NOTE_SUSTAIN_WIDTH = 4;
-    const float OPEN_NOTE_COLLIDER_WIDTH = 5;
+    public const float OPEN_NOTE_SUSTAIN_WIDTH = 4;
+    public const float OPEN_NOTE_COLLIDER_WIDTH = 5;
 
     public Note note { get { return (Note)songObject; } set { Init(value); } }
     public SustainController sustain;   
@@ -254,6 +254,22 @@ public class NoteController : SongObjectController {
         }
     }
 
+    public static float GetXPos(float chartPos, Note note)
+    {
+        if (note.fret_type != Note.Fret_Type.OPEN)
+            return chartPos + (int)note.fret_type - 2;
+        else
+            return chartPos;
+    }
+
+    public static float noteToXPos(Note note)
+    {
+        if (note.fret_type != Note.Fret_Type.OPEN)
+            return (int)note.fret_type - 2;
+        else
+            return 0;
+    }
+
     public override void UpdateSongObject()
     {
         // Guard to prevent forcing errors
@@ -263,10 +279,7 @@ public class NoteController : SongObjectController {
         if (note.song != null)
         {
             // Position
-            if (note.fret_type != Note.Fret_Type.OPEN)
-                transform.position = new Vector3(CHART_CENTER_POS + (int)note.fret_type - 2, note.worldYPosition, 0);
-            else
-                transform.position = new Vector3(CHART_CENTER_POS, note.worldYPosition, 0);
+            transform.position = new Vector3(CHART_CENTER_POS + noteToXPos(note), note.worldYPosition, 0);
 
             // Note Type
             if (Globals.viewMode == Globals.ViewMode.Chart)

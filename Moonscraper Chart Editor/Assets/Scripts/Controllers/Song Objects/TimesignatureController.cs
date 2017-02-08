@@ -6,7 +6,7 @@ public class TimesignatureController : SongObjectController {
 
     public TimeSignature ts { get { return (TimeSignature)songObject; } set { Init(value, this); } }
     public Text tsText;
-    public float position = 0.0f;
+    public const float position = 1.5f;
 
     public override void UpdateSongObject()
     {
