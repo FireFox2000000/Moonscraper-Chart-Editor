@@ -23,6 +23,7 @@ public class TimesignatureController : SongObjectController {
         // Move note
         if (ts.position != 0 && Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1))
         {
+            /*
             // Pass note data to a ghost note
             GameObject moveTS = Instantiate(editor.ghostTimeSignature);
             moveTS.SetActive(true);
@@ -30,8 +31,8 @@ public class TimesignatureController : SongObjectController {
             moveTS.name = "Moving Timesignature";
             Destroy(moveTS.GetComponent<PlaceTimesignature>());
             MoveTimeSignature movement = moveTS.AddComponent<MoveTimeSignature>();
-            movement.Init(ts);
-
+            movement.Init(ts);*/
+            editor.groupMove.SetSongObjects(ts);
             ts.Delete();
         }
     }

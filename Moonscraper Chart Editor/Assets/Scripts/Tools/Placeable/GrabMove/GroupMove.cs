@@ -79,10 +79,10 @@ public class GroupMove : ToolObject
             switch ((SongObject.ID)songObject.classID)
             {
                 case (SongObject.ID.Note):
-                    PlaceNote.AddObjectToCurrentChart((Note)songObject, editor, false);
+                    PlaceNote.AddObjectToCurrentChart((Note)songObject, editor, false);     // Capping
                     break;
                 case (SongObject.ID.Starpower):
-                    PlaceStarpower.AddObjectToCurrentChart((Starpower)songObject, editor, false);
+                    PlaceStarpower.AddObjectToCurrentChart((Starpower)songObject, editor, false);       // Capping
                     break;
                 case (SongObject.ID.BPM):
                     editor.currentSong.Add((BPM)songObject, false);
@@ -97,6 +97,9 @@ public class GroupMove : ToolObject
                     break;
             }
         }
+
+        if (movingSongObjects.Length == 1)
+            editor.currentSelectedObject = movingSongObjects[0];
 
         editor.currentSong.updateArrays();
         editor.currentChart.updateArrays();

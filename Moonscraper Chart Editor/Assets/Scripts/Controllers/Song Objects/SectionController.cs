@@ -23,6 +23,7 @@ public class SectionController : SongObjectController
         // Move note
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
         {
+            /*
             // Pass note data to a ghost note
             GameObject moveSection = Instantiate(editor.ghostSection);
             moveSection.SetActive(true);
@@ -31,7 +32,8 @@ public class SectionController : SongObjectController
             Destroy(moveSection.GetComponent<PlaceSection>());
             MoveSection movement = moveSection.AddComponent<MoveSection>();
             movement.Init(section);
-                
+                */
+            editor.groupMove.SetSongObjects(section);
             section.Delete();
         }
     }

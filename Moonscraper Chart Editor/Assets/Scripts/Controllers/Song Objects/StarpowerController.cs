@@ -76,7 +76,6 @@ public class StarpowerController : SongObjectController
         // Move note
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
         {
-            editor.groupMove.SetSongObjects(starpower);
             /*
             // Pass note data to a ghost note
             GameObject moveSP = Instantiate(editor.starpowerPrefab);
@@ -88,6 +87,7 @@ public class StarpowerController : SongObjectController
             editor.currentSelectedObject = starpower;
             moveSP.SetActive(true);
             */
+            editor.groupMove.SetSongObjects(starpower);
             starpower.Delete();
         }
         else 
