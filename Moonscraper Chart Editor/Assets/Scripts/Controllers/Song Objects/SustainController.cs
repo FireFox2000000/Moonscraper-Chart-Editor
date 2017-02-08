@@ -76,7 +76,7 @@ public class SustainController : SelectableClick {
 
         UpdateSustainLength();
 
-        sustainRen.sharedMaterial = Globals.sustainColours[(int)nCon.note.fret_type];
+        sustainRen.sharedMaterial = PrefabGlobals.sustainColours[(int)nCon.note.fret_type];
     }
 
     public void ForwardCap()

@@ -5,7 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(ChartEditor))]
 public class SongObjectPoolManager : MonoBehaviour {
 
-    const int POOL_SIZE = 100;
+    const int NOTE_POOL_SIZE = 200;
+    const int POOL_SIZE = 50;
 
     ChartEditor editor;
 
@@ -22,7 +23,7 @@ public class SongObjectPoolManager : MonoBehaviour {
         GameObject groupMovePool = new GameObject("Main Song Object Pool");
 
         GameObject notes;
-        noteControllers = SOConInstanciate<NoteController>(editor.notePrefab, POOL_SIZE, out notes);
+        noteControllers = SOConInstanciate<NoteController>(editor.notePrefab, NOTE_POOL_SIZE, out notes);
         notes.name = "Notes";
         notes.transform.SetParent(groupMovePool.transform);
 
@@ -52,11 +53,11 @@ public class SongObjectPoolManager : MonoBehaviour {
 	void Update () {
         // If a new chart is loaded, all objects need to be disabled/reset
 
-        EnableNotes();
-        EnableSP();
-        EnableBPM();
-        EnableTS();
-        EnableSections();
+        EnableNotes(editor.currentChart.notes);
+        EnableSP(editor.currentChart.starPower);
+        EnableBPM(editor.currentSong.bpms);
+        EnableTS(editor.currentSong.timeSignatures);
+        EnableSections(editor.currentSong.sections);
     }
 
     public void NewChartReset()
@@ -77,9 +78,9 @@ public class SongObjectPoolManager : MonoBehaviour {
             controller.gameObject.SetActive(false);
     }
 
-    void EnableNotes()
+    public void EnableNotes(Note[] notes)
     {
-        List<Note> rangedNotes = new List<Note>(SongObject.GetRange(editor.currentChart.notes, editor.minPos, editor.maxPos));
+        List<Note> rangedNotes = new List<Note>(SongObject.GetRange(notes, editor.minPos, editor.maxPos));
 
         if (rangedNotes.Count > 0)
         {
@@ -111,9 +112,9 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
     }
 
-    void EnableSP()
+    public void EnableSP(Starpower[] stapowers)
     {
-        List<Starpower> rangedSP = new List<Starpower>(SongObject.GetRange(editor.currentChart.starPower, editor.minPos, editor.maxPos));
+        List<Starpower> rangedSP = new List<Starpower>(SongObject.GetRange(stapowers, editor.minPos, editor.maxPos));
 
         int arrayPos = SongObject.FindClosestPosition(editor.minPos, editor.currentChart.starPower);
         if (arrayPos != Globals.NOTFOUND)
@@ -150,10 +151,10 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
     }
 
-    void EnableBPM()
+    public void EnableBPM(BPM[] bpms)
     {
         int pos = 0;
-        foreach (BPM bpm in SongObject.GetRange(editor.currentSong.bpms, editor.minPos, editor.maxPos))
+        foreach (BPM bpm in SongObject.GetRange(bpms, editor.minPos, editor.maxPos))
         {
             if (bpm.controller == null)
             {
@@ -172,10 +173,10 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
     }
 
-    void EnableTS()
+    public void EnableTS(TimeSignature[] timeSignatures)
     {
         int pos = 0;
-        foreach (TimeSignature ts in SongObject.GetRange(editor.currentSong.timeSignatures, editor.minPos, editor.maxPos))
+        foreach (TimeSignature ts in SongObject.GetRange(timeSignatures, editor.minPos, editor.maxPos))
         {
             if (ts.controller == null)
             {
@@ -194,11 +195,11 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
     }
 
-    void EnableSections()
+    public void EnableSections(Section[] sections)
     {
         int pos = 0;
 
-        foreach (Section section in SongObject.GetRange(editor.currentSong.sections, editor.minPos, editor.maxPos))
+        foreach (Section section in SongObject.GetRange(sections, editor.minPos, editor.maxPos))
         {
             if (section.controller == null)
             {
@@ -215,40 +216,6 @@ public class SongObjectPoolManager : MonoBehaviour {
                     break;
             }
         }
-    }
-
-    T[] GetRangeOfSongObjectsToEnable<T>(T[] songObjects, uint min, uint max) where T : SongObject
-    {
-        List<T> songObjectsRanged = new List<T>(SongObject.GetRange(songObjects, min, max));
-
-        // Check if sustains need to be rendered
-        if (typeof(T) == typeof(Note) && songObjectsRanged.Count > 0)
-        {
-            // Find the last known note of each fret type to find any sustains that might overlap. Cancel if there's an open note.
-            foreach (Note prevNote in Note.GetPreviousOfSustains(songObjectsRanged[0] as Note))
-            {
-                songObjectsRanged.Add(prevNote as T);
-            }
-        }
-        else if (typeof(T) == typeof(Starpower))
-        {
-            int arrayPos = SongObject.FindClosestPosition(min, songObjects);
-            if (arrayPos != Globals.NOTFOUND)
-            {
-                // Find the back-most position
-                while (arrayPos > 0 && songObjects[arrayPos].position >= min)
-                {
-                    --arrayPos;
-                }
-                // Render previous sp sustain in case of overlap into current position
-                if (arrayPos >= 0)
-                {
-                    songObjectsRanged.Add(songObjects[arrayPos]);
-                }
-            }
-        }
-
-        return songObjectsRanged.ToArray();
     }
 
     public static T[] SOConInstanciate<T>(GameObject prefab, int count, out GameObject parent) where T : SongObjectController

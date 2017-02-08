@@ -156,7 +156,7 @@ public class NoteController : SongObjectController {
         if (note.fret_type == Note.Fret_Type.OPEN)
         {
             // Apply scaling
-            sustainRen.sprite = Globals.openSustainSprite;
+            sustainRen.sprite = PrefabGlobals.openSustainSprite;
           
             if (sustainHitBox)
                 sustainHitBox.size = new Vector2(OPEN_NOTE_COLLIDER_WIDTH, sustainHitBox.size.y);
@@ -332,32 +332,32 @@ public class NoteController : SongObjectController {
             // Visuals
             // Update mesh
             if (note.fret_type == Note.Fret_Type.OPEN)
-                meshFilter.sharedMesh = Globals.openModel.sharedMesh;
+                meshFilter.sharedMesh = PrefabGlobals.openModel.sharedMesh;
             else if (specialType == Note.Special_Type.STAR_POW)
-                meshFilter.sharedMesh = Globals.spModel.sharedMesh;
+                meshFilter.sharedMesh = PrefabGlobals.spModel.sharedMesh;
             else
-                meshFilter.sharedMesh = Globals.standardModel.sharedMesh;
+                meshFilter.sharedMesh = PrefabGlobals.standardModel.sharedMesh;
  
             Material[] materials;
 
             // Determine materials
             if (note.fret_type == Note.Fret_Type.OPEN)
             {
-                materials = Globals.openRenderer.sharedMaterials;
+                materials = PrefabGlobals.openRenderer.sharedMaterials;
 
                 if (specialType == Note.Special_Type.STAR_POW)
                 {
                     if (noteType == Note.Note_Type.HOPO)
-                        materials[2] = Globals.openMaterials[3];
+                        materials[2] = PrefabGlobals.openMaterials[3];
                     else
-                        materials[2] = Globals.openMaterials[2];
+                        materials[2] = PrefabGlobals.openMaterials[2];
                 }
                 else
                 {
                     if (noteType == Note.Note_Type.HOPO)
-                        materials[2] = Globals.openMaterials[1];
+                        materials[2] = PrefabGlobals.openMaterials[1];
                     else
-                        materials[2] = Globals.openMaterials[0];
+                        materials[2] = PrefabGlobals.openMaterials[0];
                 }
             }
             else
@@ -370,37 +370,37 @@ public class NoteController : SongObjectController {
                     case (Note.Note_Type.HOPO):
                         if (specialType == Note.Special_Type.STAR_POW)
                         {
-                            materials = Globals.spHopoRenderer.sharedMaterials;
-                            materials[spColMatPos] = Globals.strumColors[(int)note.fret_type];
+                            materials = PrefabGlobals.spHopoRenderer.sharedMaterials;
+                            materials[spColMatPos] = PrefabGlobals.strumColors[(int)note.fret_type];
                         }
                         else
                         {
-                            materials = Globals.hopoRenderer.sharedMaterials;
-                            materials[standardColMatPos] = Globals.strumColors[(int)note.fret_type];
+                            materials = PrefabGlobals.hopoRenderer.sharedMaterials;
+                            materials[standardColMatPos] = PrefabGlobals.strumColors[(int)note.fret_type];
                         }
                         break;
                     case (Note.Note_Type.TAP):
                         if (specialType == Note.Special_Type.STAR_POW)
                         {
-                            materials = Globals.spTapRenderer.sharedMaterials;
-                            materials[spColMatPos] = Globals.tapColors[(int)note.fret_type];
+                            materials = PrefabGlobals.spTapRenderer.sharedMaterials;
+                            materials[spColMatPos] = PrefabGlobals.tapColors[(int)note.fret_type];
                         }
                         else
                         {
-                            materials = Globals.tapRenderer.sharedMaterials;
-                            materials[standardColMatPos] = Globals.tapColors[(int)note.fret_type];
+                            materials = PrefabGlobals.tapRenderer.sharedMaterials;
+                            materials[standardColMatPos] = PrefabGlobals.tapColors[(int)note.fret_type];
                         }
                         break;
                     default:    // strum
                         if (specialType == Note.Special_Type.STAR_POW)
                         {
-                            materials = Globals.spStrumRenderer.sharedMaterials;
-                            materials[spColMatPos] = Globals.strumColors[(int)note.fret_type];
+                            materials = PrefabGlobals.spStrumRenderer.sharedMaterials;
+                            materials[spColMatPos] = PrefabGlobals.strumColors[(int)note.fret_type];
                         }
                         else
                         {
-                            materials = Globals.strumRenderer.sharedMaterials;
-                            materials[standardColMatPos] = Globals.strumColors[(int)note.fret_type];
+                            materials = PrefabGlobals.strumRenderer.sharedMaterials;
+                            materials[standardColMatPos] = PrefabGlobals.strumColors[(int)note.fret_type];
                         }
                         break;
                 }
