@@ -29,7 +29,7 @@ public abstract class SongObject
         }
     }
 
-    float time
+    public float time
     {
         get
         {

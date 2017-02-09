@@ -84,6 +84,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Plugins\NAudio\Midi\MetaEvent.cs" />
+    <Compile Include="Assets\Plugins\NAudio\Midi\MetaEventType.cs" />
+    <Compile Include="Assets\Plugins\NAudio\Midi\MidiCommandCode.cs" />
+    <Compile Include="Assets\Plugins\NAudio\Midi\MidiEvent.cs" />
+    <Compile Include="Assets\Plugins\NAudio\Midi\MidiEventCollection.cs" />
+    <Compile Include="Assets\Plugins\NAudio\Midi\MidiFile.cs" />
+    <Compile Include="Assets\Plugins\NAudio\Midi\NoteEvent.cs" />
+    <Compile Include="Assets\Plugins\NAudio\Midi\NoteOnEvent.cs" />
+    <Compile Include="Assets\Plugins\NAudio\Midi\SysexEvent.cs" />
+    <Compile Include="Assets\Plugins\NAudio\Midi\TempoEvent.cs" />
+    <Compile Include="Assets\Plugins\NAudio\Midi\TextEvent.cs" />
+    <Compile Include="Assets\Plugins\NAudio\Midi\TimeSignatureEvent.cs" />
+    <Compile Include="Assets\Plugins\NAudio\Utils\ByteEncoding.cs" />
     <Compile Include="Assets\Standard Assets\Effects\ImageEffects\Scripts\Antialiasing.cs" />
     <Compile Include="Assets\Standard Assets\Effects\ImageEffects\Scripts\Bloom.cs" />
     <Compile Include="Assets\Standard Assets\Effects\ImageEffects\Scripts\BloomAndFlares.cs" />

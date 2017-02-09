@@ -112,7 +112,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         int i;
         for (i = 0; i < editor.currentSong.sections.Length; ++i)
         {
-            if (i < sectionIndicatorPool.Length)
+            if (i < sectionIndicatorPool.Length && editor.currentSong.sections[i].time <= editor.currentSong.length)
             {
                 sectionIndicatorPool[i].section = editor.currentSong.sections[i];
                 sectionIndicatorPool[i].gameObject.SetActive(true);
@@ -131,7 +131,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         // Set the sp
         for (i = 0; i < editor.currentChart.starPower.Length; ++i)
         {
-            if (i < starpowerIndicatorPool.Length)
+            if (i < starpowerIndicatorPool.Length && editor.currentChart.starPower[i].time <= editor.currentSong.length)
             {
                 starpowerIndicatorPool[i].starpower = editor.currentChart.starPower[i];
                 starpowerIndicatorPool[i].gameObject.SetActive(true);
