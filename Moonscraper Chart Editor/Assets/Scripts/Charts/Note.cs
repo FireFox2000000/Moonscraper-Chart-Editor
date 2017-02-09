@@ -417,7 +417,7 @@ public class Note : ChartObject
 
     public override void Delete(bool update = true)
     {
-        base.Delete();
+        base.Delete(update);
 
         // Update the previous note in the case of chords with 2 notes
         if (previous != null && previous.controller)

@@ -22,7 +22,7 @@ public abstract class SyncTrack : SongObject
     {
         if (position != 0)
         {
-            base.Delete();
+            base.Delete(update);
             if (song != null)
                 song.Remove(this, update);
         }

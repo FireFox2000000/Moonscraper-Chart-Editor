@@ -154,6 +154,7 @@ public class GroupMove : ToolObject
 
     public void SetSongObjects(SongObject[] songObjects, bool delete = false)
     {
+        float time = Time.realtimeSinceStartup;
         if (Mouse.world2DPosition != null)
             initMousePos = (Vector2)Mouse.world2DPosition;
         else
@@ -162,7 +163,7 @@ public class GroupMove : ToolObject
         editor.currentSelectedObject = null;
         Reset();
 
-        originalSongObjects = new SongObject[songObjects.Length];
+        originalSongObjects = songObjects;
         movingSongObjects = new SongObject[songObjects.Length];
 
         initObjectSnappedChartPos = objectSnappedChartPos;
@@ -170,19 +171,20 @@ public class GroupMove : ToolObject
         int lastNotePos = -1;
         for (int i = 0; i < songObjects.Length; ++i)
         {
-            originalSongObjects[i] = songObjects[i].Clone();
+            //originalSongObjects[i] = songObjects[i];
             movingSongObjects[i] = songObjects[i].Clone();
 
             if (delete)
-                songObjects[i].Delete();
+                songObjects[i].Delete(false);
 
             // Rebuild linked list
+            
             if ((SongObject.ID)songObjects[i].classID == SongObject.ID.Note)
             {
                 if (lastNotePos >= 0)
                 {
-                    ((Note)originalSongObjects[i]).previous = ((Note)originalSongObjects[lastNotePos]);
-                    ((Note)originalSongObjects[lastNotePos]).next = ((Note)originalSongObjects[i]);
+                    //((Note)originalSongObjects[i]).previous = ((Note)originalSongObjects[lastNotePos]);
+                    //((Note)originalSongObjects[lastNotePos]).next = ((Note)originalSongObjects[i]);
 
                     ((Note)movingSongObjects[i]).previous = ((Note)movingSongObjects[lastNotePos]);
                     ((Note)movingSongObjects[lastNotePos]).next = ((Note)movingSongObjects[i]);
@@ -202,6 +204,10 @@ public class GroupMove : ToolObject
         }
 
         Mouse.cancel = true;
+        editor.currentSong.updateArrays();
+        editor.currentChart.updateArrays();
+
+        Debug.Log(Time.realtimeSinceStartup - time);
     }
 
     public override void ToolDisable()

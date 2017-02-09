@@ -6,7 +6,7 @@
 
     public override void Delete(bool update = true)
     {
-        base.Delete();
+        base.Delete(update);
         if (chart != null)
             chart.Remove(this, update);
     }
