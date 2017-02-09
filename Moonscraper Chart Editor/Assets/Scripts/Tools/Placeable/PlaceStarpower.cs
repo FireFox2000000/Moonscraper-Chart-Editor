@@ -98,11 +98,16 @@ public class PlaceStarpower : PlaceSongObject {
         lastPlacedSP = starpowerToAdd;
     }
 
-    public static ActionHistory.Action[] AddObjectToCurrentChart(Starpower starpower, ChartEditor editor, bool update = true)
+    public static ActionHistory.Action[] AddObjectToCurrentChart(Starpower starpower, ChartEditor editor, bool update = true, bool copy = true)
     {
         List<ActionHistory.Action> record = new List<ActionHistory.Action>();
 
-        Starpower starpowerToAdd = new Starpower(starpower);
+        Starpower starpowerToAdd;
+        if (copy)
+            starpowerToAdd = new Starpower(starpower);
+        else
+            starpowerToAdd = starpower;
+
         record.AddRange(CapPrevAndNextPreInsert(starpowerToAdd, editor.currentChart));
         ActionHistory.Action overwriteRecord = OverwriteActionHistory(starpowerToAdd, editor.currentChart.starPower);
         if (overwriteRecord != null)

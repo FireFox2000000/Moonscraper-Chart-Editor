@@ -194,7 +194,7 @@ public class PlaceNote : PlaceSongObject {
         CapNoteCheck(noteToAdd);  */
     }
 
-    public static ActionHistory.Action[] AddObjectToCurrentChart(Note note, ChartEditor editor, bool update = true)
+    public static ActionHistory.Action[] AddObjectToCurrentChart(Note note, ChartEditor editor, bool update = true, bool copy = true)
     {
         List<ActionHistory.Action> noteRecord = new List<ActionHistory.Action>();
 
@@ -210,7 +210,11 @@ public class PlaceNote : PlaceSongObject {
             noteRecord.Add(new ActionHistory.Add(note));
         }
 
-        Note noteToAdd = new Note(note);
+        Note noteToAdd;
+        if (copy)
+            noteToAdd = new Note(note);
+        else
+            noteToAdd = note;
 
         editor.currentChart.Add(noteToAdd, update);
         //NoteController nCon = editor.CreateNoteObject(noteToAdd);

@@ -78,20 +78,25 @@ public class GroupMove : ToolObject
         // Will also need to check for overwrites
         // All relative to the original notes
 
+        bool moved = false;
+
         for (int i = 0; i < movingSongObjects.Length; ++i)
         {
             ActionHistory.Action overwriteRecord;
 
             if (movingSongObjects[i] != originalSongObjects[i])
+            {
+                moved = true;
                 deleteRecord.Add(new ActionHistory.Delete(originalSongObjects[i]));
-
+            }
+            
             switch ((SongObject.ID)movingSongObjects[i].classID)
             {
                 case (SongObject.ID.Note):
-                    record.AddRange(PlaceNote.AddObjectToCurrentChart((Note)movingSongObjects[i], editor, false));     // Capping
+                    record.AddRange(PlaceNote.AddObjectToCurrentChart((Note)movingSongObjects[i], editor, false, false));     // Capping
                     break;
                 case (SongObject.ID.Starpower):
-                    record.AddRange(PlaceStarpower.AddObjectToCurrentChart((Starpower)movingSongObjects[i], editor, false));       // Capping
+                    record.AddRange(PlaceStarpower.AddObjectToCurrentChart((Starpower)movingSongObjects[i], editor, false, false));       // Capping
                     break;
                 case (SongObject.ID.BPM):
                     overwriteRecord = PlaceSongObject.OverwriteActionHistory(movingSongObjects[i], editor.currentSong.bpms);
@@ -116,13 +121,14 @@ public class GroupMove : ToolObject
             }     
         }
 
-        if (movingSongObjects.Length == 1)
-            editor.currentSelectedObject = movingSongObjects[0];
-        else
-            editor.currentSelectedObjects = movingSongObjects;
+        editor.currentSelectedObjects = movingSongObjects;
 
-        editor.actionHistory.Insert(deleteRecord.ToArray());
-        editor.actionHistory.Insert(record.ToArray());
+        if (moved)
+        {
+            editor.actionHistory.Insert(deleteRecord.ToArray());
+            editor.actionHistory.Insert(record.ToArray());
+        }
+
         editor.currentSong.updateArrays();
         editor.currentChart.updateArrays();
 
@@ -146,7 +152,7 @@ public class GroupMove : ToolObject
         SetSongObjects(new SongObject[] { songObject });
     }
 
-    public void SetSongObjects(SongObject[] songObjects)
+    public void SetSongObjects(SongObject[] songObjects, bool delete = false)
     {
         if (Mouse.world2DPosition != null)
             initMousePos = (Vector2)Mouse.world2DPosition;
@@ -166,6 +172,9 @@ public class GroupMove : ToolObject
         {
             originalSongObjects[i] = songObjects[i].Clone();
             movingSongObjects[i] = songObjects[i].Clone();
+
+            if (delete)
+                songObjects[i].Delete();
 
             // Rebuild linked list
             if ((SongObject.ID)songObjects[i].classID == SongObject.ID.Note)

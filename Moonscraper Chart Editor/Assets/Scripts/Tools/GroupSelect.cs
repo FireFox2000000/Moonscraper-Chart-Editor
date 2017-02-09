@@ -4,11 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 public class GroupSelect : ToolObject {
-    public GameObject selectedHighlight;
     public Transform selectedArea;
-
-    GameObject highlightPoolParent;
-    GameObject[] highlightPool = new GameObject[200];
 
     SpriteRenderer ren;
 
@@ -28,14 +24,8 @@ public class GroupSelect : ToolObject {
     protected override void Awake()
     {
         base.Awake();
+
         ren = GetComponent<SpriteRenderer>();
-        highlightPoolParent = new GameObject("Group Select Highlights");
-        for (int i = 0; i < highlightPool.Length; ++i)
-        {
-            highlightPool[i] = GameObject.Instantiate(selectedHighlight);
-            highlightPool[i].transform.SetParent(highlightPoolParent.transform);
-            highlightPool[i].SetActive(false);
-        }
 
         prevSong = editor.currentSong;
         prevChart = editor.currentChart;
@@ -46,17 +36,10 @@ public class GroupSelect : ToolObject {
 
     public override void ToolDisable()
     {
-        if (data.Count == 1)
-            editor.currentSelectedObject = data[0];
-        else if (data.Count > 1)
-            editor.currentSelectedObjects = data.ToArray();
+        editor.currentSelectedObjects = data.ToArray();
 
         reset();
         selectedArea.gameObject.SetActive(false);
-        foreach (GameObject highlight in highlightPool)
-        {
-            highlight.SetActive(false);
-        }
     }
 
     public override void ToolEnable()
@@ -168,8 +151,6 @@ public class GroupSelect : ToolObject {
                 userDraggingSelectArea = false;
             }
 
-            UpdateHighlights();
-
             if (Input.GetButtonDown("Delete"))
                 Delete();
 
@@ -188,33 +169,8 @@ public class GroupSelect : ToolObject {
 
         prevSong = editor.currentSong;
         prevChart = editor.currentChart;
-    }
 
-    void UpdateHighlights()
-    {
-        ChartObject[] chartObjects = data.ToArray();
-
-        // Show a highlight over each selected object
-        int arrayPos = SongObject.FindClosestPosition(editor.minPos, chartObjects);
-        int poolPos = 0;
-
-        while (arrayPos != Globals.NOTFOUND && arrayPos < chartObjects.Length && poolPos < highlightPool.Length && chartObjects[arrayPos].position < editor.maxPos)
-        {
-            if (chartObjects[arrayPos].controller)
-            {
-                highlightPool[poolPos].transform.position = chartObjects[arrayPos].controller.transform.position;
-
-                highlightPool[poolPos].SetActive(true);
-                ++poolPos;
-            }
-
-            ++arrayPos;
-        }
-
-        while (poolPos < highlightPool.Length)
-        {
-            highlightPool[poolPos++].SetActive(false);
-        }
+        editor.currentSelectedObjects = data.ToArray();
     }
 
     void UpdateSelectionAreaVisual(Transform areaTransform, Vector2 initWorld2DPos, Vector2 endWorld2DPos)

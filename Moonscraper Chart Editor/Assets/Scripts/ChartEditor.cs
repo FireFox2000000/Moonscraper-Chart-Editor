@@ -166,8 +166,27 @@ public class ChartEditor : MonoBehaviour {
         editOccurred = false;
     }
 
+    Vector3 mousePos = Vector3.zero;
     void Update()
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            mousePos = Input.mousePosition;
+        }
+
+        if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && currentSelectedObjects.Length > 0 && !Mouse.GetSelectableObjectUnderMouse())
+        {
+            groupMove.SetSongObjects(currentSelectedObjects, true);
+
+            currentSelectedObject = null;
+        }
+
+        if (Input.GetMouseButtonUp(0) && !Mouse.GetSelectableObjectUnderMouse() && !Mouse.IsUIUnderPointer() && mousePos == Input.mousePosition)
+        {
+            currentSelectedObject = null;
+            mousePos = Vector3.zero;
+        }
+
         // Update object positions that supposed to be visible into the range of the camera
         minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
         maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
@@ -181,7 +200,7 @@ public class ChartEditor : MonoBehaviour {
         enableSongObjects(currentChart.starPower, SongObject.ID.Starpower, minPos, maxPos);
         enableSongObjects(currentChart.events, SongObject.ID.ChartEvent, minPos, maxPos);
 #endif
-
+        //Debug.Log(currentSelectedObjects.Length);
         // Update the current properties panel
         if (currentSelectedObject != null)
         {
