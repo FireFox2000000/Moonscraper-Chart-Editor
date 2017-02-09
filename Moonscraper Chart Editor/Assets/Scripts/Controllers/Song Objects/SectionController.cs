@@ -17,24 +17,4 @@ public class SectionController : SongObjectController
             sectionText.text = section.title;
         }
     }
-
-    public override void OnSelectableMouseDrag()
-    {
-        // Move note
-        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
-        {
-            /*
-            // Pass note data to a ghost note
-            GameObject moveSection = Instantiate(editor.ghostSection);
-            moveSection.SetActive(true);
-
-            moveSection.name = "Moving section";
-            Destroy(moveSection.GetComponent<PlaceSection>());
-            MoveSection movement = moveSection.AddComponent<MoveSection>();
-            movement.Init(section);
-                */
-            editor.groupMove.SetSongObjects(section);
-            section.Delete();
-        }
-    }
 }

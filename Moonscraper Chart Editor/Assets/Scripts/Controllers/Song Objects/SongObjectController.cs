@@ -53,6 +53,18 @@ public abstract class SongObjectController : SelectableClick {
         }
     }
 
+    protected bool moveCheck { get { return Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1); } }
+
+    public override void OnSelectableMouseDrag()
+    {
+        // Move note
+        if (moveCheck)
+        {
+            editor.groupMove.SetSongObjects(songObject);
+            songObject.Delete();
+        }
+    }
+
     void Update()
     {
         if (songObject != null)

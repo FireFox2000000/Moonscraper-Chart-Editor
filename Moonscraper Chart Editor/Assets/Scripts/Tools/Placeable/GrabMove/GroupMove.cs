@@ -68,7 +68,7 @@ public class GroupMove : ToolObject
         }
 	}  
 
-    void AddSongObjects()
+    public void AddSongObjects()
     {
         List<ActionHistory.Action> record = new List<ActionHistory.Action>();
         List<ActionHistory.Action> deleteRecord = new List<ActionHistory.Action>();
@@ -118,6 +118,8 @@ public class GroupMove : ToolObject
 
         if (movingSongObjects.Length == 1)
             editor.currentSelectedObject = movingSongObjects[0];
+        else
+            editor.currentSelectedObjects = movingSongObjects;
 
         editor.actionHistory.Insert(deleteRecord.ToArray());
         editor.actionHistory.Insert(record.ToArray());

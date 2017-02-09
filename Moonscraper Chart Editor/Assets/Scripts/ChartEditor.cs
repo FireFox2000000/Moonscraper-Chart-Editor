@@ -71,7 +71,25 @@ public class ChartEditor : MonoBehaviour {
 
     public ActionHistory actionHistory;
 
-    public SongObject currentSelectedObject = null;
+    public SongObject currentSelectedObject
+    {
+        get
+        {
+            if (currentSelectedObjects.Length == 1)
+                return currentSelectedObjects[0];
+            else
+                return null;
+        }
+        set
+        {
+            if (value == null)
+                currentSelectedObjects = new SongObject[0];
+            else
+                currentSelectedObjects = new SongObject[] { value };
+        }
+    }
+    public SongObject[] currentSelectedObjects = new SongObject[0];
+
     GameObject currentPropertiesPanel = null;
     Vector3? stopResetPos = null;
 
@@ -169,7 +187,7 @@ public class ChartEditor : MonoBehaviour {
         {
             GameObject previousPanel = currentPropertiesPanel;
 
-            switch (currentSelectedObject.classID)
+            switch (currentSelectedObjects[0].classID)
             {
                 case ((int)SongObject.ID.Note):
                     noteInspector.currentNote = (Note)currentSelectedObject;

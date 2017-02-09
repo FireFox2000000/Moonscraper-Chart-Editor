@@ -8,7 +8,7 @@ public class GroupSelect : ToolObject {
     public Transform selectedArea;
 
     GameObject highlightPoolParent;
-    GameObject[] highlightPool = new GameObject[100];
+    GameObject[] highlightPool = new GameObject[200];
 
     SpriteRenderer ren;
 
@@ -22,9 +22,7 @@ public class GroupSelect : ToolObject {
     Song prevSong;
     Chart prevChart;
 
-    //Clipboard data;
     List<ChartObject> data = new List<ChartObject>();
-    //Rect rect;
     Clipboard.SelectionArea area;
 
     protected override void Awake()
@@ -44,11 +42,15 @@ public class GroupSelect : ToolObject {
 
         data = new List<ChartObject>();
         area = new Clipboard.SelectionArea(new Rect(), 0, 0);
-        //ren.sharedMaterial.color = new Color(1, 1, 1, 1);
     }
 
     public override void ToolDisable()
     {
+        if (data.Count == 1)
+            editor.currentSelectedObject = data[0];
+        else if (data.Count > 1)
+            editor.currentSelectedObjects = data.ToArray();
+
         reset();
         selectedArea.gameObject.SetActive(false);
         foreach (GameObject highlight in highlightPool)
@@ -77,7 +79,6 @@ public class GroupSelect : ToolObject {
     {
         selfAreaDisable();
         data = new List<ChartObject>();
-        //rect = new Rect();
         area = new Clipboard.SelectionArea(new Rect(), 0, 0);
     }
 
@@ -392,15 +393,11 @@ public class GroupSelect : ToolObject {
 
             chartObjectsCopy.Add(objectToAdd);
         }
-
-        //Clipboard.SelectionArea area = new Clipboard.SelectionArea(rect, startWorld2DChartPos, endWorld2DChartPos);
         
         if (startWorld2DChartPos < endWorld2DChartPos)
             ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), area, editor.currentSong);
         else
             ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), area, editor.currentSong);
-
-        //ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), rect, editor.currentSong);
     }
 
     void Cut()

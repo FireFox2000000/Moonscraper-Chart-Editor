@@ -83,7 +83,7 @@ public class NoteController : SongObjectController {
     public override void OnSelectableMouseDrag()
     {
         // Move note
-        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1))
+        if (moveCheck)
         {
             if (Input.GetButton("ChordSelect"))
             {
@@ -92,32 +92,10 @@ public class NoteController : SongObjectController {
 
                 foreach (Note chordNote in chordNotes)
                     chordNote.Delete();
-                /*
-                SongObject.sort(chordNotes);
-
-                // Moving a chord
-                MoveNote previousInChord = null;
-                foreach (Note chordNote in chordNotes)
-                {
-                    if (chordNote.controller != null)
-                    {
-                        MoveNote mCon = createPlaceNote(chordNote.controller);
-
-                        if (previousInChord != null)
-                        {
-                            previousInChord.explicitNext = mCon.note;
-                            mCon.explicitPrevious = previousInChord.note;
-                        }
-
-                        previousInChord = mCon;
-                    }
-                }*/
             }
             else
             {
-                editor.groupMove.SetSongObjects(note);
-                note.Delete();
-                //createPlaceNote(this);
+                base.OnSelectableMouseDrag();
             }
         }
         else

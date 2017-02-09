@@ -74,29 +74,11 @@ public class StarpowerController : SongObjectController
     public override void OnSelectableMouseDrag()
     {
         // Move note
-        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
-        {
-            /*
-            // Pass note data to a ghost note
-            GameObject moveSP = Instantiate(editor.starpowerPrefab);
-            moveSP.SetActive(true);
-            moveSP.name = "Moving starpower";
-            Destroy(moveSP.GetComponent<PlaceStarpower>());
-            moveSP.AddComponent<MoveStarpower>().Init(starpower);
-                
-            editor.currentSelectedObject = starpower;
-            moveSP.SetActive(true);
-            */
-            editor.groupMove.SetSongObjects(starpower);
-            starpower.Delete();
-        }
-        else 
-        {
-            dragCheck();
-        }
+        if (!dragCheck())
+            base.OnSelectableMouseDrag();
     }
 
-    public void dragCheck()
+    public bool dragCheck()
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
@@ -104,7 +86,10 @@ public class StarpowerController : SongObjectController
                 unmodifiedSP = (Starpower)starpower.Clone();
 
             TailDrag();
+            return true;
         }
+
+        return false;
     }
 
     public override void OnSelectableMouseUp()

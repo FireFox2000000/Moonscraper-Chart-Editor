@@ -46,7 +46,7 @@ public class Toolpane : MonoBehaviour {
 
         if (currentToolObject)
         {
-            if (deleteModeCancel || ((menuCancel || Mouse.IsUIUnderPointer()) && currentTool != Tools.GroupSelect))
+            if ((deleteModeCancel && currentTool != Tools.GroupSelect) || ((menuCancel || Mouse.IsUIUnderPointer()) && currentTool != Tools.GroupSelect))
             {
                 currentToolObject.gameObject.SetActive(false);
             }
@@ -60,6 +60,7 @@ public class Toolpane : MonoBehaviour {
                 else
                 {
                     currentToolObject.gameObject.SetActive(true);
+                    
                     if (Input.GetMouseButton(1))
                     {
                         currentToolObject.gameObject.SetActive(false);

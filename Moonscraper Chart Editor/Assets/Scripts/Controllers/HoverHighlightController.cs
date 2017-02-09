@@ -5,25 +5,28 @@ public class HoverHighlightController : MonoBehaviour {
     public GameObject hoverHighlight;
 
     GameObject[] highlights = new GameObject[5];
+    GameObject hoverHighlightParent;
 
     Renderer hoverHighlightRen;
     Color initColor;
 
 	// Use this for initialization
 	void Start () {
+        hoverHighlightParent = new GameObject("Hover Highlights");
+
         hoverHighlightRen = hoverHighlight.GetComponent<Renderer>();
         initColor = hoverHighlightRen.sharedMaterial.color;
 
         for (int i = 0; i < highlights.Length; ++i)
         {
             highlights[i] = Instantiate(hoverHighlight);
+            highlights[i].transform.SetParent(hoverHighlightParent.transform);
             highlights[i].SetActive(false);
         }
 	}
 	
 	// Update is called once per frame
 	void Update () {
-
         // Show a preview if the user will click on an object
         GameObject songObject = Mouse.GetSelectableObjectUnderMouse();
         foreach (GameObject highlight in highlights)
