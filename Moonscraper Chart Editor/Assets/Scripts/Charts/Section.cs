@@ -7,7 +7,7 @@ public class Section : Event
 
     public override int classID { get { return (int)_classID; } }
 
-    public Section(Song song, string _title, uint _position) : base(_title, _position) { }
+    public Section(string _title, uint _position) : base(_title, _position) { }
 
     public Section(Section section) : base(section.title, section.position) { }
 

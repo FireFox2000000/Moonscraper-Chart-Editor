@@ -9,7 +9,7 @@ public class PlaceSection : PlaceSongObject {
     protected override void Awake()
     {
         base.Awake();
-        section = new Section(editor.currentSong, "Default", 0);
+        section = new Section("Default", 0);
 
         controller = GetComponent<SectionController>();
         controller.section = section;

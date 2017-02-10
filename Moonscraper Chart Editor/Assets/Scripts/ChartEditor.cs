@@ -530,6 +530,20 @@ public class ChartEditor : MonoBehaviour {
         stopResetPos = null;
     }
 
+    public string ImportMidToTempChart(string filepath)
+    {
+        if (System.IO.File.Exists(filepath) && System.IO.Path.GetExtension(filepath) == ".mid")
+        {
+            string file = System.IO.Path.GetDirectoryName(filepath) + "/" + System.IO.Path.GetFileNameWithoutExtension(filepath);
+
+            mid2chart.Program.Run(new string[] { filepath, "-p", "-m", "-k" });
+            if (System.IO.File.Exists(file + ".chart"))
+                return file + ".chart";
+        }
+
+        return string.Empty;
+    }
+
     IEnumerator _Load()
     {
         editCheck();
@@ -541,12 +555,12 @@ public class ChartEditor : MonoBehaviour {
         try
         {           
 #if UNITY_EDITOR
-            currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart");
+            currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart,mid");
 #else
             OpenFileName openChartFileDialog = new OpenFileName();
 
             openChartFileDialog.structSize = Marshal.SizeOf(openChartFileDialog);
-            openChartFileDialog.filter = "Chart files (*.chart)\0*.chart";
+            openChartFileDialog.filter = "Chart files (*.chart, *.mid)\0*.chart;*.mid";
             openChartFileDialog.file = new String(new char[256]);
             openChartFileDialog.maxFile = openChartFileDialog.file.Length;
 
@@ -566,7 +580,7 @@ public class ChartEditor : MonoBehaviour {
                 throw new System.Exception("Could not open file");
             }        
 #endif
-            
+
         }
         catch (System.Exception e)
         {
@@ -584,6 +598,14 @@ public class ChartEditor : MonoBehaviour {
 #if TIMING_DEBUG
         totalLoadTime = Time.realtimeSinceStartup;
 #endif
+        string originalMidFile = string.Empty;
+
+        if (System.IO.Path.GetExtension(currentFileName) == ".mid")
+        {
+            originalMidFile = currentFileName;
+            currentFileName = ImportMidToTempChart(currentFileName);   
+        }
+
         currentSong = new Song(currentFileName);
         editOccurred = false;
 
@@ -595,13 +617,28 @@ public class ChartEditor : MonoBehaviour {
         while (currentSong.IsAudioLoading)
             yield return null;
 
-        lastLoadedFile = currentFileName;
+        if (originalMidFile != string.Empty)
+        {
+            // Delete the temp chart
+            System.IO.File.Delete(currentFileName);
+            currentFileName = string.Empty;
+        }
+
+        if (currentFileName != string.Empty)
+            lastLoadedFile = currentFileName;
+        else
+            lastLoadedFile = string.Empty;
 
         LoadSong(currentSong);
 
 #if TIMING_DEBUG
         Debug.Log("Total load time: " + (Time.realtimeSinceStartup - totalLoadTime));
 #endif
+
+        if (originalMidFile != string.Empty)
+        {
+            editOccurred = true;
+        }
     }
 
     void LoadSong(Song song)

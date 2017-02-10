@@ -8,6 +8,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
+using NAudio.Midi;
+using System;
 
 public class Song {
     const int MUSIC_STREAM_ARRAY_POS = 0;
@@ -125,6 +127,59 @@ public class Song {
 #endif
     }
 
+    void LoadChartFile(string filepath)
+    {
+        bool open = false;
+        string dataName = string.Empty;
+
+        List<string> dataStrings = new List<string>();
+
+        string[] fileLines = File.ReadAllLines(filepath);
+
+        // Gather lines between {} brackets and submit data
+        for (int i = 0; i < fileLines.Length; ++i)
+        {
+            string trimmedLine = fileLines[i].Trim();
+
+            if (new Regex(@"\[.+\]").IsMatch(trimmedLine))
+            {
+                dataName = trimmedLine;
+            }
+            else if (trimmedLine == "{")
+            {
+                open = true;
+            }
+            else if (trimmedLine == "}")
+            {
+                open = false;
+
+                // Submit data
+                submitChartData(dataName, dataStrings, filepath);
+
+                dataName = string.Empty;
+                dataStrings.Clear();
+            }
+            else
+            {
+                if (open)
+                {
+                    // Add data into the array
+                    dataStrings.Add(trimmedLine);
+                }
+                else if (dataStrings.Count > 0 && dataName != string.Empty)
+                {
+                    // Submit data
+                    submitChartData(dataName, dataStrings, filepath);
+
+                    dataName = string.Empty;
+                    dataStrings.Clear();
+                }
+            }
+        }
+
+        updateArrays();
+    }
+
     // Loading a chart file
     public Song(string filepath) : this()
     {
@@ -133,55 +188,13 @@ public class Song {
             if (!File.Exists(filepath))
                 throw new System.Exception("File does not exist");
 
-            bool open = false;
-            string dataName = string.Empty;
-
-            List<string> dataStrings = new List<string>();
-
-            string[] fileLines = File.ReadAllLines(filepath);
-
-            // Convert file data into song data
-            for (int i = 0; i < fileLines.Length; ++i)
+            if (Path.GetExtension(filepath) == ".chart")
+                LoadChartFile(filepath);
+            else
             {
-                string trimmedLine = fileLines[i].Trim();
-
-                if (new Regex(@"\[.+\]").IsMatch(trimmedLine))
-                {
-                    dataName = trimmedLine;
-                }
-                else if (trimmedLine == "{")
-                {
-                    open = true;
-                }
-                else if (trimmedLine == "}")
-                {
-                    open = false;
-
-                    // Submit data
-                    submitChartData(dataName, dataStrings, filepath);
-
-                    dataName = string.Empty;
-                    dataStrings.Clear();
-                }
-                else
-                {
-                    if (open)
-                    {
-                        // Add data into the array
-                        dataStrings.Add(trimmedLine);
-                    }
-                    else if (dataStrings.Count > 0 && dataName != string.Empty)
-                    {
-                        // Submit data
-                        submitChartData(dataName, dataStrings, filepath);
-
-                        dataName = string.Empty;
-                        dataStrings.Clear();
-                    }
-                }
+                throw new System.Exception("Bad file type");
             }
-
-            updateArrays();
+            
         }
         catch
         {
@@ -784,7 +797,7 @@ public class Song {
                 // Add a section
                 string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"').Substring(8);
                 uint position = uint.Parse(Regex.Matches(line, @"\d+")[0].ToString());
-                Add(new Section(this, title, position), false);
+                Add(new Section(title, position), false);
             }
             else if (Event.regexMatch(line))    // 125952 = E "end"
             {
