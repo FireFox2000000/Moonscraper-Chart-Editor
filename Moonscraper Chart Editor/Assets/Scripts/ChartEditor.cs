@@ -118,6 +118,7 @@ public class ChartEditor : MonoBehaviour {
         {
             windowPtr = IntPtr.Zero;
             buffer.Length = 0;
+            Debug.LogError("Couldn't find window handle");  
         }
         else
             originalWindowName = buffer.ToString();
@@ -164,28 +165,34 @@ public class ChartEditor : MonoBehaviour {
         songPropertiesCon.gameObject.SetActive(false);
 
         editOccurred = false;
+        SetApplicationWindowPointer();
     }
 
     Vector3 mousePos = Vector3.zero;
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Toolpane.currentTool == Toolpane.Tools.Cursor)
         {
-            mousePos = Input.mousePosition;
+            if (Input.GetMouseButtonDown(0))
+            {
+                mousePos = Input.mousePosition;
+            }
+
+            if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && currentSelectedObjects.Length > 0 && !Mouse.GetSelectableObjectUnderMouse())
+            {
+                groupMove.SetSongObjects(currentSelectedObjects, true);
+
+                currentSelectedObject = null;
+            }
+
+            if (Input.GetMouseButtonUp(0) && !Mouse.GetSelectableObjectUnderMouse() && !Mouse.IsUIUnderPointer() && mousePos == Input.mousePosition)
+            {
+                currentSelectedObject = null;
+                mousePos = Vector3.zero;
+            }
         }
-
-        if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && currentSelectedObjects.Length > 0 && !Mouse.GetSelectableObjectUnderMouse())
-        {
-            groupMove.SetSongObjects(currentSelectedObjects, true);
-
-            currentSelectedObject = null;
-        }
-
-        if (Input.GetMouseButtonUp(0) && !Mouse.GetSelectableObjectUnderMouse() && !Mouse.IsUIUnderPointer() && mousePos == Input.mousePosition)
-        {
-            currentSelectedObject = null;
+        else
             mousePos = Vector3.zero;
-        }
 
         // Update object positions that supposed to be visible into the range of the camera
         minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
@@ -305,7 +312,7 @@ public class ChartEditor : MonoBehaviour {
         while (currentSong.IsSaving);
     }
 
-    void editCheck()
+    bool editCheck()
     {    
         // Check for unsaved changes
         if (editOccurred)
@@ -314,22 +321,30 @@ public class ChartEditor : MonoBehaviour {
                 UnityEngine.Application.CancelQuit();
 #if !UNITY_EDITOR
             
-            DialogResult result = MessageBox.Show("Want to save unsaved changes?", "Warning", MessageBoxButtons.YesNo);
+            DialogResult result = MessageBox.Show("Want to save unsaved changes?", "Warning", MessageBoxButtons.YesNoCancel);
 
             if (result == DialogResult.Yes)
-            {                    
+            {
                 Save();
+            }
+            else if (result == DialogResult.Cancel)
+            {
+                quitting = false;
+                return false;
             }
 #endif
 
             if (quitting)
                 UnityEngine.Application.Quit();
         }
+
+        return true;
     }
 
     public void New()
     {
-        editCheck();
+        if (!editCheck())
+            return;
 
         lastLoadedFile = string.Empty;
         currentSong = new Song();
@@ -546,7 +561,8 @@ public class ChartEditor : MonoBehaviour {
 
     IEnumerator _Load()
     {
-        editCheck();
+        if (!editCheck())
+            yield break;
 
         Song backup = currentSong;
 #if TIMING_DEBUG

@@ -74,6 +74,8 @@ public class Chart  {
         if (update)
             updateArrays();
 
+        ChartEditor.editOccurred = true;
+
         return pos;
     }
 
@@ -85,6 +87,7 @@ public class Chart  {
         {
             chartObject.chart = null;
             chartObject.song = null;
+            ChartEditor.editOccurred = true;
         }
 
         if (update)

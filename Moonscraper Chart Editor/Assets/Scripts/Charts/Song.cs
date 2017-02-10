@@ -420,6 +420,8 @@ public class Song {
 
         if (update)
             updateArrays();
+
+        ChartEditor.editOccurred = true;
     }
 
     public bool Remove(SyncTrack syncTrackObject, bool update = true)
@@ -432,7 +434,10 @@ public class Song {
         }
 
         if (success)
+        {
             syncTrackObject.song = null;
+            ChartEditor.editOccurred = true;
+        }
 
         if (update)
             updateArrays();
@@ -447,6 +452,8 @@ public class Song {
 
         if (update)
             updateArrays();
+
+        ChartEditor.editOccurred = true;
     }
 
     public bool Remove(Event eventObject, bool update = true)
@@ -455,7 +462,10 @@ public class Song {
         success = SongObject.Remove(eventObject, _events);
 
         if (success)
+        {
             eventObject.song = null;
+            ChartEditor.editOccurred = true;
+        }
 
         if (update)
             updateArrays();

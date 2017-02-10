@@ -175,9 +175,11 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     void setFlags(Note note)
     {
         if (Toolpane.currentTool != Toolpane.Tools.Note)
+        {
             note.applyFlagsToChord();
 
-        ChartEditor.editOccurred = true;
+            ChartEditor.editOccurred = true;
+        }
     }
 
     Note[] CloneChord(Note note)
