@@ -545,7 +545,7 @@ public class ChartEditor : MonoBehaviour {
         stopResetPos = null;
     }
 
-    public string ImportMidToTempChart(string filepath)
+    string ImportMidToTempChart(string filepath)
     {
         if (System.IO.File.Exists(filepath) && System.IO.Path.GetExtension(filepath) == ".mid")
         {
@@ -608,21 +608,52 @@ public class ChartEditor : MonoBehaviour {
             yield break;
         }
 
+        // Start loading animation
+        Globals.applicationMode = Globals.ApplicationMode.Loading;
+
         // Wait for saving to complete just in case
-        while (currentSong.IsSaving) ;
+        while (currentSong.IsSaving)
+            yield return null;
 
 #if TIMING_DEBUG
         totalLoadTime = Time.realtimeSinceStartup;
 #endif
         string originalMidFile = string.Empty;
 
+        // Convert mid to chart
         if (System.IO.Path.GetExtension(currentFileName) == ".mid")
         {
             originalMidFile = currentFileName;
-            currentFileName = ImportMidToTempChart(currentFileName);   
-        }
+            System.Threading.Thread midConversionThread = new System.Threading.Thread(() => { currentFileName = ImportMidToTempChart(currentFileName); });
 
-        currentSong = new Song(currentFileName);
+            midConversionThread.Start();
+
+            while (midConversionThread.ThreadState == System.Threading.ThreadState.Running)
+                yield return null;
+
+#if TIMING_DEBUG
+            Debug.Log("Mid conversion time: " + (Time.realtimeSinceStartup - totalLoadTime));
+#endif
+        }
+#if TIMING_DEBUG
+        float time = Time.realtimeSinceStartup;
+#endif
+        // Load the actual file
+        System.Threading.Thread songLoadThread = new System.Threading.Thread(() => { currentSong = new Song(currentFileName); });
+        songLoadThread.Start();
+        while (songLoadThread.ThreadState == System.Threading.ThreadState.Running)
+            yield return null;
+
+#if TIMING_DEBUG
+        Debug.Log("Chart file load time: " + (Time.realtimeSinceStartup - time));
+        time = Time.realtimeSinceStartup;
+#endif
+        // Load the audio clips
+        currentSong.LoadAllAudioClips();
+#if TIMING_DEBUG
+        Debug.Log("All audio files load time: " + (Time.realtimeSinceStartup - time));
+#endif
+        //currentSong = new Song(currentFileName);
         editOccurred = false;
 
 #if TIMING_DEBUG
@@ -655,27 +686,14 @@ public class ChartEditor : MonoBehaviour {
         {
             editOccurred = true;
         }
+
+        // Stop loading animation
+        Globals.applicationMode = Globals.ApplicationMode.Editor;
     }
 
     void LoadSong(Song song)
     {
         editOccurred = false;
-
-        // Clear the previous song in the game-view
-       /* foreach (Transform songObject in songObjectParent.transform)
-        {
-            Destroy(songObject.gameObject);
-        }*/
-
-#if TIMING_DEBUG
-        float objectLoadTime = Time.realtimeSinceStartup;
-#endif
-        // Create the song objects
-        //CreateSongObjects(song);
-
-#if TIMING_DEBUG
-        Debug.Log("Song objects load time: " + (Time.realtimeSinceStartup - objectLoadTime));
-#endif
 
         // Load the default chart
         LoadChart(song.expert_single);
@@ -697,23 +715,10 @@ public class ChartEditor : MonoBehaviour {
     {
         actionHistory = new ActionHistory();
         Stop();
-#if TIMING_DEBUG
-        float time = Time.realtimeSinceStartup;
-#endif
-        // Remove objects from previous chart
-        /*foreach (Transform chartObject in chartObjectParent.transform)
-        {
-            Destroy(chartObject.gameObject);
-        }*/
 
         currentChart = chart;
 
         songObjectPoolManager.NewChartReset();
-
-        //CreateChartObjects(currentChart);
-#if TIMING_DEBUG
-        Debug.Log("Chart objects load time: " + (Time.realtimeSinceStartup - time));
-#endif
     }
 
     // Create Sections, bpms, events and time signature objects

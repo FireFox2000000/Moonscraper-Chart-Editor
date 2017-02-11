@@ -1,4 +1,4 @@
-﻿#define TIMING_DEBUG
+﻿//#define TIMING_DEBUG
 
 using UnityEngine;
 using System.Collections.Generic;

@@ -28,13 +28,20 @@ public class WaveformDraw : MonoBehaviour {
             }
             else
             {
-                data = new float[currentClip.samples * currentClip.channels];
-                currentClip.GetData(data, 0);
+                if (!Song.streamAudio)
+                {
+                    data = new float[currentClip.samples * currentClip.channels];
+                    currentClip.GetData(data, 0);
+                }
+                else
+                {
+                    data = new float[0];
+                }
             }
         } 
 
         // Choose whether to display the waveform or not
-	    if (Globals.viewMode == Globals.ViewMode.Song && editor.currentSong.musicStream != null)
+	    if (Globals.viewMode == Globals.ViewMode.Song && editor.currentSong.musicStream != null && data.Length > 0)
         {
             UpdateWaveformPoints();
 
@@ -48,7 +55,9 @@ public class WaveformDraw : MonoBehaviour {
     void UpdateWaveformPoints()
     {
         if (data.Length <= 0 || currentClip == null)
+        {
             return;
+        }
 
         float sampleRate = currentClip.length / data.Length;// currentClip.samples / currentClip.length;
 

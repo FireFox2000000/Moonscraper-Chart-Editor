@@ -285,7 +285,7 @@ public class Globals : MonoBehaviour {
 
     public enum ApplicationMode
     {
-        Editor, Playing, Menu
+        Editor, Playing, Menu, Loading
     }
 
     public enum ViewMode

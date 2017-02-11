@@ -23,6 +23,19 @@ public static class NAudioPlayer
         return audioClip;
     }
 
+    public static WAV WAVFromMp3Data(byte[] data)
+    {
+        // Load the data into a stream
+        MemoryStream mp3stream = new MemoryStream(data);
+        // Convert the data in the stream to WAV format
+        Mp3FileReader mp3audio = new Mp3FileReader(mp3stream);
+        WaveStream waveStream = WaveFormatConversionStream.CreatePcmStream(mp3audio);
+        // Convert to WAV data
+        WAV wav = new WAV(AudioMemStream(waveStream).ToArray());
+
+        return wav;
+    }
+
     private static MemoryStream AudioMemStream(WaveStream waveStream)
     {
         MemoryStream outputStream = new MemoryStream();

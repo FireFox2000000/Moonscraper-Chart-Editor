@@ -12,6 +12,8 @@ using NAudio.Midi;
 using System;
 
 public class Song {
+    public static bool streamAudio = true;
+
     const int MUSIC_STREAM_ARRAY_POS = 0;
     const int GUITAR_STREAM_ARRAY_POS = 1;
     const int RHYTHM_STREAM_ARRAY_POS = 2;
@@ -133,7 +135,9 @@ public class Song {
         string dataName = string.Empty;
 
         List<string> dataStrings = new List<string>();
-
+#if TIMING_DEBUG
+        float time = Time.realtimeSinceStartup;
+#endif
         string[] fileLines = File.ReadAllLines(filepath);
 
         // Gather lines between {} brackets and submit data
@@ -176,6 +180,13 @@ public class Song {
                 }
             }
         }
+        /*
+#if TIMING_DEBUG
+        Debug.Log("Chart file load time: " + (Time.realtimeSinceStartup - time));
+        time = Time.realtimeSinceStartup;
+
+        LoadAllAudioClips();
+#endif*/
 
         updateArrays();
     }
@@ -200,6 +211,19 @@ public class Song {
         {
             throw new System.Exception("Could not open file");
         }
+    }
+
+    public void LoadAllAudioClips()
+    {
+#if TIMING_DEBUG
+        float time = Time.realtimeSinceStartup;
+#endif
+        LoadMusicStream(audioLocations[MUSIC_STREAM_ARRAY_POS]);
+        LoadGuitarStream(audioLocations[GUITAR_STREAM_ARRAY_POS]);
+        LoadRhythmStream(audioLocations[RHYTHM_STREAM_ARRAY_POS]);
+#if TIMING_DEBUG
+        Debug.Log("Total audio files load time: " + (Time.realtimeSinceStartup - time));
+#endif
     }
 
     public void LoadMusicStream(string filepath)
@@ -255,9 +279,22 @@ public class Song {
             }
 
             if (Path.GetExtension(filepath) == ".mp3")
-                audioStreams[audioStreamArrayPos] = NAudioPlayer.FromMp3Data(www.bytes);           
+            {
+                /*
+                WAV wav = null;
+                byte[] bytes = www.bytes;
+                System.Threading.Thread wavConversionThread = new System.Threading.Thread(() => { wav = NAudioPlayer.WAVFromMp3Data(bytes); });
+                wavConversionThread.Start();
+
+                while (wavConversionThread.ThreadState == System.Threading.ThreadState.Running) ;
+
+                audioStreams[audioStreamArrayPos] = AudioClip.Create("testSound", wav.SampleCount, 1, wav.Frequency, false);
+                audioStreams[audioStreamArrayPos].SetData(wav.LeftChannel, 0);
+                */
+                audioStreams[audioStreamArrayPos] = NAudioPlayer.FromMp3Data(www.bytes);
+            }
             else
-                audioStreams[audioStreamArrayPos] = www.GetAudioClip(false, false);
+                audioStreams[audioStreamArrayPos] = www.GetAudioClip(false, streamAudio);
 
             audioStreams[audioStreamArrayPos].name = Path.GetFileName(filepath);
 
@@ -272,7 +309,10 @@ public class Song {
         }
         else
         {
-            Debug.LogError("Unable to locate audio file");
+            audioStreams[audioStreamArrayPos] = null;
+
+            if (filepath != string.Empty)
+                Debug.LogError("Unable to locate audio file");
         }
 
 #if LOAD_AUDIO_ASYNC
@@ -695,14 +735,8 @@ public class Song {
                     if (!File.Exists(audioFilepath))
                         audioFilepath = audioDirectory + "\\" + audioFilepath;
 
-                    try
-                    {
-                        LoadMusicStream(audioFilepath);
-                    }
-                    catch (System.Exception e)
-                    {
-                        Debug.LogError(e.Message);
-                    }
+                    if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions))
+                        audioLocations[MUSIC_STREAM_ARRAY_POS] = Path.GetFullPath(audioFilepath);
                 }
                 else if (guitarStreamRegex.IsMatch(line))
                 {
@@ -712,14 +746,8 @@ public class Song {
                     if (!File.Exists(audioFilepath))
                         audioFilepath = audioDirectory + "\\" + audioFilepath;
 
-                    try
-                    {
-                        LoadGuitarStream(audioFilepath);
-                    }
-                    catch (System.Exception e)
-                    {
-                        Debug.LogError(e.Message);
-                    }
+                    if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions))
+                        audioLocations[GUITAR_STREAM_ARRAY_POS] = Path.GetFullPath(audioFilepath);
                 }
                 else if (rhythmStreamRegex.IsMatch(line))
                 {
@@ -729,14 +757,8 @@ public class Song {
                     if (!File.Exists(audioFilepath))
                         audioFilepath = audioDirectory + "\\" + audioFilepath;
 
-                    try
-                    {
-                        LoadRhythmStream(audioFilepath);
-                    }
-                    catch (System.Exception e)
-                    {
-                        Debug.LogError(e.Message);
-                    }
+                    if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions))
+                        audioLocations[RHYTHM_STREAM_ARRAY_POS] = Path.GetFullPath(audioFilepath);
                 }
             }
 
