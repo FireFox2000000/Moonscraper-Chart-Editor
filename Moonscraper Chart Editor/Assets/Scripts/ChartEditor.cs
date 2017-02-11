@@ -48,6 +48,7 @@ public class ChartEditor : MonoBehaviour {
     public SongPropertiesPanelController songPropertiesCon;
     public AudioSource clapSource;
     public UnityEngine.Audio.AudioMixerGroup mixer;
+    public LoadingScreenFader loadingScreen;
 
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
@@ -610,6 +611,7 @@ public class ChartEditor : MonoBehaviour {
 
         // Start loading animation
         Globals.applicationMode = Globals.ApplicationMode.Loading;
+        loadingScreen.FadeIn();
 
         // Wait for saving to complete just in case
         while (currentSong.IsSaving)
@@ -624,6 +626,7 @@ public class ChartEditor : MonoBehaviour {
         if (System.IO.Path.GetExtension(currentFileName) == ".mid")
         {
             originalMidFile = currentFileName;
+            loadingScreen.loadingInformation.text = "Coverting .mid to .chart";
             System.Threading.Thread midConversionThread = new System.Threading.Thread(() => { currentFileName = ImportMidToTempChart(currentFileName); });
 
             midConversionThread.Start();
@@ -639,6 +642,7 @@ public class ChartEditor : MonoBehaviour {
         float time = Time.realtimeSinceStartup;
 #endif
         // Load the actual file
+        loadingScreen.loadingInformation.text = "Loading file";
         System.Threading.Thread songLoadThread = new System.Threading.Thread(() => { currentSong = new Song(currentFileName); });
         songLoadThread.Start();
         while (songLoadThread.ThreadState == System.Threading.ThreadState.Running)
@@ -649,10 +653,13 @@ public class ChartEditor : MonoBehaviour {
         time = Time.realtimeSinceStartup;
 #endif
         // Load the audio clips
+        loadingScreen.loadingInformation.text = "Loading audio";
+        yield return null;
         currentSong.LoadAllAudioClips();
 #if TIMING_DEBUG
         Debug.Log("All audio files load time: " + (Time.realtimeSinceStartup - time));
 #endif
+        yield return null;
         //currentSong = new Song(currentFileName);
         editOccurred = false;
 
@@ -689,6 +696,8 @@ public class ChartEditor : MonoBehaviour {
 
         // Stop loading animation
         Globals.applicationMode = Globals.ApplicationMode.Editor;
+        loadingScreen.FadeOut();
+        loadingScreen.loadingInformation.text = "Complete!";
     }
 
     void LoadSong(Song song)

@@ -294,7 +294,9 @@ public class Song {
                 audioStreams[audioStreamArrayPos] = NAudioPlayer.FromMp3Data(www.bytes);
             }
             else
+            {
                 audioStreams[audioStreamArrayPos] = www.GetAudioClip(false, streamAudio);
+            }
 
             audioStreams[audioStreamArrayPos].name = Path.GetFileName(filepath);
 

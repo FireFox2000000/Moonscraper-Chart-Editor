@@ -117,6 +117,12 @@
     <Compile Include="Assets\Scripts\Controllers\ClipboardObjectController.cs" />
     <Compile Include="Assets\Scripts\Controllers\HighwayController.cs" />
     <Compile Include="Assets\Scripts\Controllers\HoverHighlightController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Inspectors\BPMPropertiesPanelController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Inspectors\DisplayProperties.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Inspectors\NotePropertiesPanelController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Inspectors\PropertiesPanelController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Inspectors\SectionPropertiesPanelController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Inspectors\TimesignaturePropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\Controllers\MovementController.cs" />
     <Compile Include="Assets\Scripts\Controllers\SelectedHighlightController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\BPMController.cs" />
@@ -173,12 +179,8 @@
     <Compile Include="Assets\Scripts\UI\FPSDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\ImageFade.cs" />
     <Compile Include="Assets\Scripts\UI\InputFieldDoubleClick.cs" />
-    <Compile Include="Assets\Scripts\UI\Inspectors\BPMPropertiesPanelController.cs" />
-    <Compile Include="Assets\Scripts\UI\Inspectors\DisplayProperties.cs" />
-    <Compile Include="Assets\Scripts\UI\Inspectors\NotePropertiesPanelController.cs" />
-    <Compile Include="Assets\Scripts\UI\Inspectors\PropertiesPanelController.cs" />
-    <Compile Include="Assets\Scripts\UI\Inspectors\SectionPropertiesPanelController.cs" />
-    <Compile Include="Assets\Scripts\UI\Inspectors\TimesignaturePropertiesPanelController.cs" />
+    <Compile Include="Assets\Scripts\UI\LoadingScreenFader.cs" />
+    <Compile Include="Assets\Scripts\UI\LoadingSpin.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\AudioCalibrationMenuScript.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\DisplayMenu.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\SettingsController.cs" />
