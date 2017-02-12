@@ -19,6 +19,8 @@ public class SongPropertiesPanelController : DisplayMenu {
     public Text guitarStream;
     public Text rhythmStream;
 
+    public LoadingScreenFader loadingScreen;
+
     bool init = false;
 
     void Start()
@@ -168,6 +170,9 @@ public class SongPropertiesPanelController : DisplayMenu {
     {
         try
         {
+            // = "Loading audio";
+            //loadingScreen.FadeIn();
+
             editor.currentSong.LoadMusicStream(GetAudioFile());
             editor.SetAudioSources();
             setAudioTextLabels();

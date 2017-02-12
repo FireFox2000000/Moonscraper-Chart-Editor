@@ -168,6 +168,7 @@ public class NoteController : SongObjectController {
         }
         else
         {
+            sustainRen.sprite = PrefabGlobals.standardSustainSprite;
             if (sustainHitBox)
                 sustainHitBox.size = new Vector2(1, sustainHitBox.size.y);
 

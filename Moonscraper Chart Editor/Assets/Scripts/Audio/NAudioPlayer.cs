@@ -1,6 +1,7 @@
 ﻿/**** SCRIPT FOUND AT http://gamedev.stackexchange.com/questions/114885/how-do-i-play-mp3-files-in-unity-standalone ****/
 
 using UnityEngine;
+using System.Collections;
 using System.IO;
 using System;
 using NAudio;
@@ -10,6 +11,7 @@ public static class NAudioPlayer
 {
     public static AudioClip FromMp3Data(byte[] data)
     {
+        float time = Time.realtimeSinceStartup;
         // Load the data into a stream
         MemoryStream mp3stream = new MemoryStream(data);
         // Convert the data in the stream to WAV format
@@ -17,11 +19,31 @@ public static class NAudioPlayer
         WaveStream waveStream = WaveFormatConversionStream.CreatePcmStream(mp3audio);
         // Convert to WAV data
         WAV wav = new WAV(AudioMemStream(waveStream).ToArray());
+        Debug.Log("mp3 time: " + (Time.realtimeSinceStartup - time));
+        time = Time.realtimeSinceStartup;
         AudioClip audioClip = AudioClip.Create("testSound", wav.SampleCount, 1, wav.Frequency, false);
         audioClip.SetData(wav.LeftChannel, 0);
+        Debug.Log("mp3 time: " + (Time.realtimeSinceStartup - time));
         // Return the clip
         return audioClip;
     }
+    /*
+    public static IEnumerator FromMp3DataASync(byte[] data, Action<AudioClip> audioClip)
+    {
+        System.Threading.Thread wavConversionThread = new System.Threading.Thread(() => { wav = NAudioPlayer.WAVFromMp3Data(bytes); });
+        // Load the data into a stream
+        MemoryStream mp3stream = new MemoryStream(data);
+        // Convert the data in the stream to WAV format
+        Mp3FileReader mp3audio = new Mp3FileReader(mp3stream);
+        WaveStream waveStream = WaveFormatConversionStream.CreatePcmStream(mp3audio);
+        // Convert to WAV data
+        WAV wav = new WAV(AudioMemStream(waveStream).ToArray());
+
+        audioClip(AudioClip.Create("testSound", wav.SampleCount, 1, wav.Frequency, false));
+        audioClip.SetData(wav.LeftChannel, 0);
+        // Return the clip
+        return audioClip;
+    }*/
 
     public static WAV WAVFromMp3Data(byte[] data)
     {

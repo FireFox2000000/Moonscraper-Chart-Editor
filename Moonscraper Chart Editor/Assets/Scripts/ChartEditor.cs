@@ -550,11 +550,23 @@ public class ChartEditor : MonoBehaviour {
     {
         if (System.IO.File.Exists(filepath) && System.IO.Path.GetExtension(filepath) == ".mid")
         {
-            string file = System.IO.Path.GetDirectoryName(filepath) + "/" + System.IO.Path.GetFileNameWithoutExtension(filepath);
+            const string tempFileName = "moonscraperMid2Chart.temp.chart";
 
+            string file = System.IO.Path.GetDirectoryName(filepath) + "/" + tempFileName;
+
+            mid2chart.Program.readOpenNotes = true;
+            mid2chart.Program.dontWriteDummy = true;
+            mid2chart.Program.skipPause = true;
+            mid2chart.Song midSong = mid2chart.MidReader.ReadMidi(filepath, false);
+            mid2chart.ChartWriter.WriteChart(midSong, file, false);
+
+            if (System.IO.File.Exists(file))
+                return file;
+
+            /*
             mid2chart.Program.Run(new string[] { filepath, "-p", "-m", "-k" });
             if (System.IO.File.Exists(file + ".chart"))
-                return file + ".chart";
+                return file + ".chart";*/
         }
 
         return string.Empty;
@@ -612,6 +624,7 @@ public class ChartEditor : MonoBehaviour {
         // Start loading animation
         Globals.applicationMode = Globals.ApplicationMode.Loading;
         loadingScreen.FadeIn();
+        yield return null;
 
         // Wait for saving to complete just in case
         while (currentSong.IsSaving)
@@ -626,6 +639,7 @@ public class ChartEditor : MonoBehaviour {
         if (System.IO.Path.GetExtension(currentFileName) == ".mid")
         {
             originalMidFile = currentFileName;
+            
             loadingScreen.loadingInformation.text = "Coverting .mid to .chart";
             System.Threading.Thread midConversionThread = new System.Threading.Thread(() => { currentFileName = ImportMidToTempChart(currentFileName); });
 
@@ -643,6 +657,7 @@ public class ChartEditor : MonoBehaviour {
 #endif
         // Load the actual file
         loadingScreen.loadingInformation.text = "Loading file";
+        yield return null;
         System.Threading.Thread songLoadThread = new System.Threading.Thread(() => { currentSong = new Song(currentFileName); });
         songLoadThread.Start();
         while (songLoadThread.ThreadState == System.Threading.ThreadState.Running)

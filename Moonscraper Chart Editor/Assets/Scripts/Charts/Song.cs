@@ -241,19 +241,7 @@ public class Song {
         LoadAudio(filepath, RHYTHM_STREAM_ARRAY_POS);
     }
 
-#if LOAD_AUDIO_ASYNC
     void LoadAudio(string filepath, int audioStreamArrayPos)
-    {
-        ++audioLoads;
-        GameObject monoWrap = new GameObject();
-        monoWrap.AddComponent<MonoWrapper>().StartCoroutine(_LoadAudio(filepath, audioStreamArrayPos, monoWrap));
-        Debug.Log("Load audio");
-    }
-
-    IEnumerator _LoadAudio(string filepath, int audioStreamArrayPos, GameObject monoWrap)
-#else
-    void LoadAudio(string filepath, int audioStreamArrayPos)
-#endif
     {
         filepath = filepath.Replace('\\', '/');
         
@@ -273,14 +261,11 @@ public class Song {
             
             while (!www.isDone)
             {
-#if LOAD_AUDIO_ASYNC
-                yield return null;
-#endif
             }
 
             if (Path.GetExtension(filepath) == ".mp3")
             {
-                /*
+                
                 WAV wav = null;
                 byte[] bytes = www.bytes;
                 System.Threading.Thread wavConversionThread = new System.Threading.Thread(() => { wav = NAudioPlayer.WAVFromMp3Data(bytes); });
@@ -290,8 +275,8 @@ public class Song {
 
                 audioStreams[audioStreamArrayPos] = AudioClip.Create("testSound", wav.SampleCount, 1, wav.Frequency, false);
                 audioStreams[audioStreamArrayPos].SetData(wav.LeftChannel, 0);
-                */
-                audioStreams[audioStreamArrayPos] = NAudioPlayer.FromMp3Data(www.bytes);
+
+                //audioStreams[audioStreamArrayPos] = NAudioPlayer.FromMp3Data(www.bytes);
             }
             else
             {
@@ -316,11 +301,6 @@ public class Song {
             if (filepath != string.Empty)
                 Debug.LogError("Unable to locate audio file");
         }
-
-#if LOAD_AUDIO_ASYNC
-        GameObject.Destroy(monoWrap);
-        --audioLoads;
-#endif
     }
 
     public uint WorldPositionToSnappedChartPosition(float worldYPos, int step)

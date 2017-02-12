@@ -14,6 +14,7 @@ public class PrefabGlobals : MonoBehaviour {
     public static Sprite[] spStrumSprite { get; private set; }
     public static Sprite[] spHopoSprite { get; private set; }
     public static Sprite[] spTapSprite { get; private set; }
+    public static Sprite standardSustainSprite { get; private set; }
     public static Sprite openSustainSprite { get; private set; }
 
     // 3D
@@ -52,6 +53,8 @@ public class PrefabGlobals : MonoBehaviour {
     Sprite[] spHOPONote = new Sprite[6];
     [SerializeField]
     Sprite[] spTapNote = new Sprite[6];
+    [SerializeField]
+    Sprite standardSustain;
     [SerializeField]
     Sprite openSustain;
 
@@ -129,6 +132,7 @@ public class PrefabGlobals : MonoBehaviour {
         spHopoSprite = spHOPONote;
         spTapSprite = spTapNote;
 
+        standardSustainSprite = standardSustain;
         openSustainSprite = openSustain;
 
         standardModel = standardNoteModel;          // 3D
