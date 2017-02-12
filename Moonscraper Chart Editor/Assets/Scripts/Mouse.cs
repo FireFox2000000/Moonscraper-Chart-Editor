@@ -189,33 +189,6 @@ public class Mouse : MonoBehaviour {
 
         return hits;
     }
-    /*
-    public static GameObject GetSongObjectUnderMouse()
-    {
-        if (world2DPosition != null)
-        {
-            LayerMask mask = 1 << LayerMask.NameToLayer("SongObject");
-            RaycastHit[] hits3d = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition), Mathf.Infinity, mask); //Physics.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0, mask);
-            RaycastHit2D[] hits = Physics2D.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0, mask);
-
-            if (hits3d.Length > 0)
-            {
-                RaycastHit lowestYHit = lowestY(hits3d);
-
-                if (lowestYHit.collider)
-                    return lowestYHit.collider.gameObject;
-            }
-            else if (hits.Length > 0)
-            {
-                RaycastHit2D lowestYHit = lowestY(hits);
-
-                if (lowestYHit.collider)
-                    return lowestYHit.collider.gameObject;
-            }
-        }
-
-        return null;
-    }*/
 
     public static GameObject GetSelectableObjectUnderMouse()
     {

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System;
 
 public class SongPropertiesPanelController : DisplayMenu {
 
@@ -246,6 +247,9 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     IEnumerator SetAudio()
     {
+        Globals.ApplicationMode initMode = Globals.applicationMode;
+        Globals.applicationMode = Globals.ApplicationMode.Loading;
+
         loadingScreen.loadingInformation.text = "Loading audio";
         loadingScreen.FadeIn();
 
@@ -255,5 +259,6 @@ public class SongPropertiesPanelController : DisplayMenu {
         editor.SetAudioSources();
         setAudioTextLabels();
         loadingScreen.FadeOut();
+        Globals.applicationMode = Globals.ApplicationMode.Menu;
     }
 }

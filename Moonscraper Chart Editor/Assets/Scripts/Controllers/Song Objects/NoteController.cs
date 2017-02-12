@@ -140,9 +140,7 @@ public class NoteController : SongObjectController {
 
         if (note.fret_type == Note.Fret_Type.OPEN)
         {
-            // Apply scaling
-            sustainRen.sprite = PrefabGlobals.openSustainSprite;
-          
+            // Apply scaling     
             if (sustainHitBox)
                 sustainHitBox.size = new Vector2(OPEN_NOTE_COLLIDER_WIDTH, sustainHitBox.size.y);
 
@@ -168,7 +166,6 @@ public class NoteController : SongObjectController {
         }
         else
         {
-            sustainRen.sprite = PrefabGlobals.standardSustainSprite;
             if (sustainHitBox)
                 sustainHitBox.size = new Vector2(1, sustainHitBox.size.y);
 
