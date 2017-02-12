@@ -8,6 +8,8 @@ public class LoadingScreenFader : MonoBehaviour {
     public float fadeSpeed;
     public Text loadingInformation;
 
+    public Image rayCastableImage;
+
     Image[] images;
     float currentAlpha = 0;
     int fadeDirection = 0;
@@ -34,6 +36,7 @@ public class LoadingScreenFader : MonoBehaviour {
         {
             currentAlpha = 0;
             fadeDirection = 0;
+            rayCastableImage.raycastTarget = false;
         }
 
         setAlpha(currentAlpha);
@@ -51,6 +54,7 @@ public class LoadingScreenFader : MonoBehaviour {
     public void FadeIn()
     {
         fadeDirection = 1;
+        rayCastableImage.raycastTarget = true;
     }
 
     public void FadeOut()

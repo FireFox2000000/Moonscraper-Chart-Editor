@@ -2,7 +2,7 @@
 
 using UnityEngine;
 using UnityEngine.UI;
-using System;
+using System.Collections;
 using System.Runtime.InteropServices;
 
 public class SongPropertiesPanelController : DisplayMenu {
@@ -135,7 +135,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         string audioFilepath = string.Empty;
 
 #if UNITY_EDITOR
-        audioFilepath = UnityEditor.EditorUtility.OpenFilePanel("Select Audio", "", "*.mp3;*.ogg;*.wav");
+        audioFilepath = UnityEditor.EditorUtility.OpenFilePanel("Select Audio", "", "mp3,ogg,wav");
 #else
             OpenFileName openAudioDialog = new OpenFileName();
             openAudioDialog = new OpenFileName();
@@ -170,12 +170,9 @@ public class SongPropertiesPanelController : DisplayMenu {
     {
         try
         {
-            // = "Loading audio";
-            //loadingScreen.FadeIn();
-
             editor.currentSong.LoadMusicStream(GetAudioFile());
-            editor.SetAudioSources();
-            setAudioTextLabels();
+
+            StartCoroutine(SetAudio());
         }
         catch
         {
@@ -194,8 +191,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         {
             editor.currentSong.LoadGuitarStream(GetAudioFile());
 
-            editor.SetAudioSources();
-            setAudioTextLabels();
+            StartCoroutine(SetAudio());
         }
         catch
         {
@@ -214,8 +210,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         {
             editor.currentSong.LoadRhythmStream(GetAudioFile());
 
-            editor.SetAudioSources();
-            setAudioTextLabels();
+            StartCoroutine(SetAudio());
         }
         catch
         {
@@ -247,5 +242,18 @@ public class SongPropertiesPanelController : DisplayMenu {
         
         editor.SetAudioSources();
         setAudioTextLabels();
+    }
+
+    IEnumerator SetAudio()
+    {
+        loadingScreen.loadingInformation.text = "Loading audio";
+        loadingScreen.FadeIn();
+
+        while (editor.currentSong.IsAudioLoading)
+            yield return null;
+
+        editor.SetAudioSources();
+        setAudioTextLabels();
+        loadingScreen.FadeOut();
     }
 }

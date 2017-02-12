@@ -228,20 +228,29 @@ public class Song {
 
     public void LoadMusicStream(string filepath)
     {
-        LoadAudio(filepath, MUSIC_STREAM_ARRAY_POS);
+        GameObject loadAudioObject = new GameObject("Load Rhythm Audio");
+        MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
+
+        coroutine.StartCoroutine(LoadAudio(filepath, MUSIC_STREAM_ARRAY_POS, loadAudioObject));
     }
 
     public void LoadGuitarStream(string filepath)
     {
-        LoadAudio(filepath, GUITAR_STREAM_ARRAY_POS);
+        GameObject loadAudioObject = new GameObject("Load Rhythm Audio");
+        MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
+
+        coroutine.StartCoroutine(LoadAudio(filepath, GUITAR_STREAM_ARRAY_POS, loadAudioObject));
     }
 
     public void LoadRhythmStream(string filepath)
     {
-        LoadAudio(filepath, RHYTHM_STREAM_ARRAY_POS);
+        GameObject loadAudioObject = new GameObject("Load Rhythm Audio");
+        MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
+
+        coroutine.StartCoroutine(LoadAudio(filepath, RHYTHM_STREAM_ARRAY_POS, loadAudioObject));
     }
 
-    void LoadAudio(string filepath, int audioStreamArrayPos)
+    IEnumerator LoadAudio(string filepath, int audioStreamArrayPos, GameObject coroutine)
     {
         filepath = filepath.Replace('\\', '/');
         
@@ -256,11 +265,12 @@ public class Song {
             }
             
             audioLocations[audioStreamArrayPos] = Path.GetFullPath(filepath);
-      
+            ++audioLoads;
             WWW www = new WWW("file://" + filepath);
             
             while (!www.isDone)
             {
+                yield return null;
             }
 
             if (Path.GetExtension(filepath) == ".mp3")
@@ -271,7 +281,8 @@ public class Song {
                 System.Threading.Thread wavConversionThread = new System.Threading.Thread(() => { wav = NAudioPlayer.WAVFromMp3Data(bytes); });
                 wavConversionThread.Start();
 
-                while (wavConversionThread.ThreadState == System.Threading.ThreadState.Running) ;
+                while (wavConversionThread.ThreadState == System.Threading.ThreadState.Running)
+                    yield return null;
 
                 audioStreams[audioStreamArrayPos] = AudioClip.Create("testSound", wav.SampleCount, 1, wav.Frequency, false);
                 audioStreams[audioStreamArrayPos].SetData(wav.LeftChannel, 0);
@@ -283,6 +294,8 @@ public class Song {
                 audioStreams[audioStreamArrayPos] = www.GetAudioClip(false, streamAudio);
             }
 
+            --audioLoads;
+
             audioStreams[audioStreamArrayPos].name = Path.GetFileName(filepath);
 
             while (audioStreams[audioStreamArrayPos] != null && audioStreams[audioStreamArrayPos].loadState != AudioDataLoadState.Loaded) ;
@@ -292,7 +305,7 @@ public class Song {
 
 #if TIMING_DEBUG
             Debug.Log("Audio load time: " + (Time.realtimeSinceStartup - time));
-#endif
+#endif            
         }
         else
         {
@@ -301,6 +314,8 @@ public class Song {
             if (filepath != string.Empty)
                 Debug.LogError("Unable to locate audio file");
         }
+
+        GameObject.Destroy(coroutine);
     }
 
     public uint WorldPositionToSnappedChartPosition(float worldYPos, int step)

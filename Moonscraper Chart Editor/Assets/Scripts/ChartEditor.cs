@@ -671,6 +671,10 @@ public class ChartEditor : MonoBehaviour {
         loadingScreen.loadingInformation.text = "Loading audio";
         yield return null;
         currentSong.LoadAllAudioClips();
+
+        while (currentSong.IsAudioLoading)
+            yield return null;
+
 #if TIMING_DEBUG
         Debug.Log("All audio files load time: " + (Time.realtimeSinceStartup - time));
 #endif
