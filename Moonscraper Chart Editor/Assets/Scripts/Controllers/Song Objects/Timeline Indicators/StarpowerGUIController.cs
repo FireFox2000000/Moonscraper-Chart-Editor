@@ -8,22 +8,24 @@ public class StarpowerGUIController : TimelineIndicator {
     protected override void LateUpdate()
     {
         base.LateUpdate();
+        if (songObject != null && songObject.song != null)
+        {
+            // Change scale to represent starpower length
+            Vector3 spLengthLocalPos = GetLocalPos(starpower.position + starpower.length, starpower.song);
+            float size = spLengthLocalPos.y - transform.localPosition.y;
 
-        // Change scale to represent starpower length
-        Vector3 spLengthLocalPos = GetLocalPos(starpower.position + starpower.length, starpower.song);
-        float size = spLengthLocalPos.y - transform.localPosition.y;
+            Vector3 scale = transform.localScale;
+            Vector3 position = transform.localPosition;
 
-        Vector3 scale = transform.localScale;
-        Vector3 position = transform.localPosition;
+            scale.y = size;      // Offset because it extends past above and beyond for some reason. Possibly look into this later.
 
-        scale.y = size;      // Offset because it extends past above and beyond for some reason. Possibly look into this later.
+            if (scale.y < MIN_SIZE)
+                scale.y = MIN_SIZE;
 
-        if (scale.y < MIN_SIZE)
-            scale.y = MIN_SIZE;
+            position.y += size / 2.0f;
 
-        position.y += size / 2.0f;
-
-        transform.localPosition = position;
-        transform.localScale = scale;
+            transform.localPosition = position;
+            transform.localScale = scale;
+        }
     }
 }

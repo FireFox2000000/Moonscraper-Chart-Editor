@@ -62,6 +62,17 @@ public class Chart  {
             return 0;
     }
 
+    public void Add(ChartObject[] chartObjects)
+    {
+        foreach (ChartObject chartObject in chartObjects)
+        {
+            Add(chartObject, false);        
+        }
+
+        updateArrays();
+        ChartEditor.editOccurred = true;
+    }
+
     // Insert into a sorted position
     // Return the position it was inserted into
     public int Add(ChartObject chartObject, bool update = true)
@@ -77,6 +88,17 @@ public class Chart  {
         ChartEditor.editOccurred = true;
 
         return pos;
+    }
+
+    public void Remove(ChartObject[] chartObjects)
+    {
+        foreach (ChartObject chartObject in chartObjects)
+        {
+            Remove(chartObject, false);
+        }
+
+        updateArrays();
+        ChartEditor.editOccurred = true;
     }
 
     public bool Remove(ChartObject chartObject, bool update = true)

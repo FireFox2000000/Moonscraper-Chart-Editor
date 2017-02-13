@@ -25,7 +25,7 @@ public abstract class TimelineIndicator : MonoBehaviour {
 
     protected virtual void LateUpdate()
     {
-        if (songObject != null)
+        if (songObject != null && songObject.song != null)
             transform.localPosition = GetLocalPos(songObject.position, songObject.song);
     }
 }

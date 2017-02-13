@@ -326,7 +326,12 @@ public class GroupSelect : ToolObject {
 
     void Delete()
     {
-        List<SongObject> deletedObjects = new List<SongObject>();
+        ChartObject[] dataArray = data.ToArray();
+
+        editor.actionHistory.Insert(new ActionHistory.Delete(dataArray));
+        editor.currentChart.Remove(dataArray);
+        /*
+        List<ChartObject> deletedObjects = new List<ChartObject>();
 
         foreach (ChartObject cObject in data)
         {
@@ -336,7 +341,7 @@ public class GroupSelect : ToolObject {
 
         editor.actionHistory.Insert(new ActionHistory.Delete(deletedObjects.ToArray()));
         editor.currentChart.updateArrays();
-
+        */
         reset();
     }
 

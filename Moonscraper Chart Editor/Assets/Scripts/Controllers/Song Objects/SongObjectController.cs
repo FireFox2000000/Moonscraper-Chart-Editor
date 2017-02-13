@@ -67,7 +67,7 @@ public abstract class SongObjectController : SelectableClick {
 
     void Update()
     {
-        if (songObject != null)
+        if (songObject != null && songObject.song != null)
             UpdateCheck();
         else
             gameObject.SetActive(false);

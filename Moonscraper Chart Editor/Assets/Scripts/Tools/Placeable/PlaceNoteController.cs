@@ -145,4 +145,20 @@ public class PlaceNoteController : ObjectlessTool {
             }
         }
 	}
+
+    void KeyboardControls()
+    {
+        for (int i = 1; i < notes.Length; ++i)
+        {
+            // Need to make sure the note is at it's correct tick position
+            if (Input.GetKeyDown(i.ToString()))
+            {
+                int pos = SongObject.FindObjectPosition(notes[i].note, editor.currentChart.notes);
+                if (pos == Globals.NOTFOUND)
+                    editor.currentChart.Add(notes[i].note);
+                else
+                    editor.currentChart.Remove(notes[i].note);
+            }
+        }
+    }
 }
