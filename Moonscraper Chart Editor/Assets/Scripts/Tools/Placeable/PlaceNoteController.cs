@@ -37,6 +37,33 @@ public class PlaceNoteController : ObjectlessTool {
 
     // Update is called once per frame
     protected override void Update () {
+        MouseControls();
+    }
+
+    void KeyboardControls()
+    {
+        for (int i = 1; i < notes.Length; ++i)
+        {
+            // Need to make sure the note is at it's correct tick position
+            if (Input.GetKeyDown(i.ToString()))
+            {
+                notes[i].ExplicitUpdate();
+                int pos = SongObject.FindObjectPosition(notes[i].note, editor.currentChart.notes);
+
+                if (pos == Globals.NOTFOUND)
+                    PlaceNote.AddObjectToCurrentChart((Note)notes[i].note.Clone(), editor);
+                else
+                {
+                    editor.currentChart.notes[pos].Delete();
+                }
+
+                Debug.Log(editor.currentChart.chartObjects.Length);
+            }
+        }
+    }
+
+    void MouseControls()
+    {
         bool openActive = false;
         if (notes[6].gameObject.activeSelf)
             openActive = true;
@@ -61,7 +88,7 @@ public class PlaceNoteController : ObjectlessTool {
                 notes[6].gameObject.SetActive(true);
                 activeNotes.Add(notes[6]);
             }
-        }      
+        }
         else if (!Input.GetKey("6") && (Input.GetKey("1") || Input.GetKey("2") || Input.GetKey("3") || Input.GetKey("4") || Input.GetKey("5")))
         {
             if (Input.GetKey("1"))
@@ -136,7 +163,7 @@ public class PlaceNoteController : ObjectlessTool {
         if (PlaceNote.addNoteCheck)
         {
             foreach (PlaceNote placeNote in activeNotes)
-            { 
+            {
                 // Find if there's already note in that position. If the notes match exactly, add it to the list, but if it's the same, don't bother.
                 draggedNotesRecord.AddRange(placeNote.AddNoteWithRecord());
             }
@@ -147,23 +174,6 @@ public class PlaceNoteController : ObjectlessTool {
             {
                 editor.actionHistory.Insert(draggedNotesRecord.ToArray());
                 draggedNotesRecord.Clear();
-            }
-        }
-	}
-
-    void KeyboardControls()
-    {
-        for (int i = 1; i < notes.Length; ++i)
-        {
-            // Need to make sure the note is at it's correct tick position
-            if (Input.GetKeyDown(i.ToString()))
-            {
-                notes[i].controller.UpdateSongObject();
-                int pos = SongObject.FindObjectPosition(notes[i].note, editor.currentChart.notes);
-                if (pos == Globals.NOTFOUND)
-                    editor.currentChart.Add(notes[i].note);
-                else
-                    editor.currentChart.Remove(notes[i].note);
             }
         }
     }

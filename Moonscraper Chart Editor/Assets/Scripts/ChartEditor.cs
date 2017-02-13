@@ -85,8 +85,6 @@ public class ChartEditor : MonoBehaviour {
         {
             if (value == null)
             {
-
-                Debug.Log("Set null");
                 currentSelectedObjects = new SongObject[0];
             }
             else
@@ -591,6 +589,8 @@ public class ChartEditor : MonoBehaviour {
         {           
 #if UNITY_EDITOR
             currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart,mid");
+            if (currentFileName == string.Empty)
+                yield break;
 #else
             OpenFileName openChartFileDialog = new OpenFileName();
 

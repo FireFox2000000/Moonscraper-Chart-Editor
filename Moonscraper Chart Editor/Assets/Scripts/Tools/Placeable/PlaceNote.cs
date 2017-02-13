@@ -50,6 +50,11 @@ public class PlaceNote : PlaceSongObject {
         note.next = null;
     }
 
+    public void ExplicitUpdate()
+    {
+        Update();
+    }
+
     // Update is called once per frame
     protected override void Update () {
         note.chart = editor.currentChart;
