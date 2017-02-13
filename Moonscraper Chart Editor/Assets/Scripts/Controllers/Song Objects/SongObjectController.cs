@@ -12,30 +12,9 @@ public abstract class SongObjectController : SelectableClick {
     public abstract void UpdateSongObject();
     public bool disableCancel = true;
 
-    Collider col3d;
-    Collider2D col2d;
-
-    Vector2 colSize = Vector2.zero;
-    /*
-    void OnMouseDown()
-    {
-        Debug.Log(GetAABBBoundsRect());
-    }*/
-
     protected void Awake()
     {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
-
-        col3d = GetComponent<Collider>();
-        col2d = GetComponent<Collider2D>();
-
-        /************ Note Unity documentation- ************/
-        // Bounds: The world space bounding volume of the collider.
-        // Note that this will be an empty bounding box if the collider is disabled or the game object is inactive.
-        if (col3d)
-            colSize = col3d.bounds.size;
-        else if (col2d)
-            colSize = col2d.bounds.size;
     }
 
     protected virtual void OnEnable()
@@ -43,7 +22,6 @@ public abstract class SongObjectController : SelectableClick {
         if (songObject != null)
             UpdateSongObject();
     }
-
     
     void OnDisable()
     {

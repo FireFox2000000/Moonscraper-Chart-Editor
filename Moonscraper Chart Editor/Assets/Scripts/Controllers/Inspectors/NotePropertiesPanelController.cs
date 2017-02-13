@@ -115,7 +115,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         }
     }
     
-    void OnDisable()
+    new void OnDisable()
     {
         currentNote = null;
     }

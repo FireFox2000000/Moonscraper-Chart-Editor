@@ -116,13 +116,6 @@ public class SustainController : SelectableClick {
         Vector3 position = nCon.transform.position;
         position.y += length / 2.0f;
         transform.position = position;
-
-        // Cap the sustain
-        Note nextFret;
-        if (note.fret_type == Note.Fret_Type.OPEN)
-            nextFret = note.next;
-        else
-            nextFret = note.FindNextSameFretWithinSustainExtendedCheck();
     }
 
     void SustainDrag()

@@ -247,7 +247,6 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     IEnumerator SetAudio()
     {
-        Globals.ApplicationMode initMode = Globals.applicationMode;
         Globals.applicationMode = Globals.ApplicationMode.Loading;
 
         loadingScreen.loadingInformation.text = "Loading audio";

@@ -84,7 +84,11 @@ public class ChartEditor : MonoBehaviour {
         set
         {
             if (value == null)
+            {
+
+                Debug.Log("Set null");
                 currentSelectedObjects = new SongObject[0];
+            }
             else
                 currentSelectedObjects = new SongObject[] { value };
         }
@@ -170,8 +174,9 @@ public class ChartEditor : MonoBehaviour {
     }
 
     Vector3 mousePos = Vector3.zero;
-    void Update()
+    public void Update()
     {
+        // Group move/deselect
         if (Toolpane.currentTool == Toolpane.Tools.Cursor)
         {
             if (Input.GetMouseButtonDown(0))
@@ -208,12 +213,11 @@ public class ChartEditor : MonoBehaviour {
         enableSongObjects(currentChart.starPower, SongObject.ID.Starpower, minPos, maxPos);
         enableSongObjects(currentChart.events, SongObject.ID.ChartEvent, minPos, maxPos);
 #endif
-        //Debug.Log(currentSelectedObjects.Length);
-        // Update the current properties panel
+        // Update the current properties panel     
         if (currentSelectedObject != null)
         {
             GameObject previousPanel = currentPropertiesPanel;
-
+            
             switch (currentSelectedObjects[0].classID)
             {
                 case ((int)SongObject.ID.Note):
@@ -241,7 +245,9 @@ public class ChartEditor : MonoBehaviour {
             if (currentPropertiesPanel != previousPanel)
             {
                 if (previousPanel)
+                {
                     previousPanel.SetActive(false);
+                }
             }
 
             if (currentPropertiesPanel != null)

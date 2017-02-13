@@ -148,7 +148,7 @@ public class Globals : MonoBehaviour {
         // Disable controls while user is in an input field
         if (!IsTyping)
             Controls();
-        ModifierControls();   
+        ModifierControls();
     }
 
     void OnGUI()
@@ -245,9 +245,10 @@ public class Globals : MonoBehaviour {
         }
 
         if (viewModeToggle.isOn != value)
+        {
             viewModeToggle.isOn = value;
-
-        editor.currentSelectedObject = null;
+            editor.currentSelectedObject = null;
+        }
     }
 
     void OnApplicationQuit()

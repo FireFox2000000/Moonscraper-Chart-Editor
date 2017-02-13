@@ -40,6 +40,7 @@ public class PlaceNote : PlaceSongObject {
     protected override void OnEnable()
     {
         editor.currentSelectedObject = note;
+        
         Update();
     }
 

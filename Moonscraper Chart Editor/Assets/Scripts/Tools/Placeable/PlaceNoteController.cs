@@ -20,6 +20,11 @@ public class PlaceNoteController : ObjectlessTool {
         draggedNotesRecord = new List<ActionHistory.Action>();
     }
 
+    public override void ToolEnable()
+    {
+        editor.currentSelectedObject = notes[0].note;
+    }
+
     public override void ToolDisable()
     {
         editor.currentSelectedObject = null;
@@ -153,6 +158,7 @@ public class PlaceNoteController : ObjectlessTool {
             // Need to make sure the note is at it's correct tick position
             if (Input.GetKeyDown(i.ToString()))
             {
+                notes[i].controller.UpdateSongObject();
                 int pos = SongObject.FindObjectPosition(notes[i].note, editor.currentChart.notes);
                 if (pos == Globals.NOTFOUND)
                     editor.currentChart.Add(notes[i].note);

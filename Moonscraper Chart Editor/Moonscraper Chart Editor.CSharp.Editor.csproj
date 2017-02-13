@@ -134,20 +134,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Editor\BuildDocumentation.cs" />
-    <Compile Include="Assets\Editor\ImageEffects\AntialiasingEditor.cs" />
-    <Compile Include="Assets\Editor\ImageEffects\BloomAndFlaresEditor.cs" />
-    <Compile Include="Assets\Editor\ImageEffects\BloomEditor.cs" />
-    <Compile Include="Assets\Editor\ImageEffects\CameraMotionBlurEditor.cs" />
-    <Compile Include="Assets\Editor\ImageEffects\ColorCorrectionCurvesEditor.cs" />
-    <Compile Include="Assets\Editor\ImageEffects\ColorCorrectionLookupEditor.cs" />
-    <Compile Include="Assets\Editor\ImageEffects\CreaseShadingEditor.cs" />
-    <Compile Include="Assets\Editor\ImageEffects\DepthOfFieldDeprecatedEditor.cs" />
-    <Compile Include="Assets\Editor\ImageEffects\DepthOfFieldEditor.cs" />
-    <Compile Include="Assets\Editor\ImageEffects\EdgeDetectionEditor.cs" />
-    <Compile Include="Assets\Editor\ImageEffects\NoiseAndGrainEditor.cs" />
-    <Compile Include="Assets\Editor\ImageEffects\SunShaftsEditor.cs" />
-    <Compile Include="Assets\Editor\ImageEffects\TonemappingEditor.cs" />
-    <Compile Include="Assets\Editor\ImageEffects\VignetteAndChromaticAberrationEditor.cs" />
     <Compile Include="Assets\Editor\MeshRendererSortingLayersEditor.cs" />
     <Compile Include="Assets\_MK\_MKGlow\_Internal\Editor\MKGlowEditor.cs" />
   </ItemGroup>

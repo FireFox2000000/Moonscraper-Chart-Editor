@@ -180,13 +180,13 @@ public class Song {
                 }
             }
         }
-        /*
+        
 #if TIMING_DEBUG
         Debug.Log("Chart file load time: " + (Time.realtimeSinceStartup - time));
         time = Time.realtimeSinceStartup;
 
         LoadAllAudioClips();
-#endif*/
+#endif
 
         updateArrays();
     }
@@ -404,8 +404,6 @@ public class Song {
 
     public static float WorldYPositionToTime (float worldYPosition)
     {
-        //if (worldYPosition < 0)
-            //worldYPosition = 0;
         return worldYPosition / (Globals.hyperspeed / Globals.gameSpeed);
     }
 
@@ -427,41 +425,18 @@ public class Song {
         return time;
     }
 
-    public float LiveChartPositionToTime(uint position, float resolution)
-    {
-        double time = 0;
-        BPM prevBPM = bpms[0];
-
-        foreach (BPM bpmInfo in bpms)
-        {
-            if (bpmInfo.position > position)
-            {
-                break;
-            }
-            else
-            {
-                time += dis_to_time(prevBPM.position, bpmInfo.position, resolution, prevBPM.value / 1000.0f);
-                prevBPM = bpmInfo;
-            }
-        }
-
-        time += dis_to_time(prevBPM.position, position, resolution, prevBPM.value / 1000.0f);
-
-        return (float)time;
-    }
-
-    public void Add(SyncTrack syncTrackObject, bool update = true)
+    public void Add(SyncTrack syncTrackObject, bool autoUpdate = true)
     {
         syncTrackObject.song = this;
         SongObject.Insert(syncTrackObject, _syncTrack);
 
-        if (update)
+        if (autoUpdate)
             updateArrays();
 
         ChartEditor.editOccurred = true;
     }
 
-    public bool Remove(SyncTrack syncTrackObject, bool update = true)
+    public bool Remove(SyncTrack syncTrackObject, bool autoUpdate = true)
     {
         bool success = false;
 
@@ -476,24 +451,24 @@ public class Song {
             ChartEditor.editOccurred = true;
         }
 
-        if (update)
+        if (autoUpdate)
             updateArrays();
 
         return success;
     }
 
-    public void Add(Event eventObject, bool update = true)
+    public void Add(Event eventObject, bool autoUpdate = true)
     {
         eventObject.song = this;
         SongObject.Insert(eventObject, _events);
 
-        if (update)
+        if (autoUpdate)
             updateArrays();
 
         ChartEditor.editOccurred = true;
     }
 
-    public bool Remove(Event eventObject, bool update = true)
+    public bool Remove(Event eventObject, bool autoUpdate = true)
     {
         bool success = false;
         success = SongObject.Remove(eventObject, _events);
@@ -504,7 +479,7 @@ public class Song {
             ChartEditor.editOccurred = true;
         }
 
-        if (update)
+        if (autoUpdate)
             updateArrays();
 
         return success;
@@ -855,6 +830,12 @@ public class Song {
 
     public void Save(string filepath, bool forced = true)
     {
+        saveThread = new System.Threading.Thread(() => SongSave(filepath, forced));
+        saveThread.Start();
+    }
+
+    void SongSave(string filepath, bool forced = true)
+    {
         string musicString = string.Empty;
         string guitarString = string.Empty;
         string rhythmString = string.Empty;
@@ -864,26 +845,20 @@ public class Song {
             musicString = musicStream.name;
         else
             musicString = audioLocations[MUSIC_STREAM_ARRAY_POS];
-        
+
         if (guitarStream && Path.GetDirectoryName(audioLocations[GUITAR_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
             guitarString = guitarStream.name;
         else
             guitarString = audioLocations[GUITAR_STREAM_ARRAY_POS];
 
         if (rhythmStream && Path.GetDirectoryName(audioLocations[RHYTHM_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
-            rhythmString= rhythmStream.name;
+            rhythmString = rhythmStream.name;
         else
             rhythmString = audioLocations[RHYTHM_STREAM_ARRAY_POS];
 
-        saveThread = new System.Threading.Thread(() => SongSave(filepath, musicString, guitarString, rhythmString, forced));
-        saveThread.Start();
-    }
-
-    void SongSave(string filepath, string musicString, string guitarString, string rhythmString, bool forced = true)
-    {
         string saveString = string.Empty;
 
-        // Song
+        // Song properties
         saveString += "[Song]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
         saveString += Globals.TABSPACE + "Name = \"" + name + "\"" + Globals.LINE_ENDING;
         saveString += Globals.TABSPACE + "Artist = \"" + artist + "\"" + Globals.LINE_ENDING;
@@ -998,6 +973,29 @@ public class Song {
         {
             bpm.assignedTime = LiveChartPositionToTime(bpm.position, resolution);
         }
+    }
+
+    float LiveChartPositionToTime(uint position, float resolution)
+    {
+        double time = 0;
+        BPM prevBPM = bpms[0];
+
+        foreach (BPM bpmInfo in bpms)
+        {
+            if (bpmInfo.position > position)
+            {
+                break;
+            }
+            else
+            {
+                time += dis_to_time(prevBPM.position, bpmInfo.position, resolution, prevBPM.value / 1000.0f);
+                prevBPM = bpmInfo;
+            }
+        }
+
+        time += dis_to_time(prevBPM.position, position, resolution, prevBPM.value / 1000.0f);
+
+        return (float)time;
     }
 }
 
