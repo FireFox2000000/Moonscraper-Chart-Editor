@@ -49,9 +49,8 @@ public class PlaceNoteController : ObjectlessTool {
         {
             placeableNotes.gameObject.SetActive(false);
         }
-
         for (int i = 1; i < notes.Length; ++i)
-        {
+        {          
             // Need to make sure the note is at it's correct tick position
             if (Input.GetKeyDown(i.ToString()))
             {
@@ -59,9 +58,12 @@ public class PlaceNoteController : ObjectlessTool {
                 int pos = SongObject.FindObjectPosition(notes[i].note, editor.currentChart.notes);
 
                 if (pos == Globals.NOTFOUND)
-                    PlaceNote.AddObjectToCurrentChart((Note)notes[i].note.Clone(), editor);
+                {
+                    editor.actionHistory.Insert(PlaceNote.AddObjectToCurrentChart((Note)notes[i].note.Clone(), editor));
+                }
                 else
                 {
+                    editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentChart.notes[pos]));
                     editor.currentChart.notes[pos].Delete();
                 }
             }

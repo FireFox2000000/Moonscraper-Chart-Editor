@@ -152,7 +152,7 @@ public class Globals : MonoBehaviour {
             Controls();
         ModifierControls();
 
-        lockToStrikeline = System.Windows.Forms.Control.IsKeyLocked(System.Windows.Forms.Keys.CapsLock);
+        lockToStrikeline = System.Windows.Forms.Control.IsKeyLocked(System.Windows.Forms.Keys.Scroll);
         snapLockWarning.gameObject.SetActive(lockToStrikeline);
     }
 

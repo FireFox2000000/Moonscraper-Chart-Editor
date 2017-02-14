@@ -144,6 +144,7 @@
     <Compile Include="Assets\Scripts\Gameplay\Indicators.cs" />
     <Compile Include="Assets\Scripts\Globals.cs" />
     <Compile Include="Assets\Scripts\Mouse.cs" />
+    <Compile Include="Assets\Scripts\NoteVisuals\NoteVisuals3DManager.cs" />
     <Compile Include="Assets\Scripts\PrefabGlobals.cs" />
     <Compile Include="Assets\Scripts\RendererLayerExpose.cs" />
     <Compile Include="Assets\Scripts\SelectableClick.cs" />

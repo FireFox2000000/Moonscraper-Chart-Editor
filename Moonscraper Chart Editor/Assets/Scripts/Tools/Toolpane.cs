@@ -78,12 +78,8 @@ public class Toolpane : MonoBehaviour {
                 {
                     currentToolObject.gameObject.SetActive(false);
                 }
-            }
-
-            
+            }          
         }
-
-        
     }
 
     public void SetTool(ToolObject toolObject)

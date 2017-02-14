@@ -41,8 +41,6 @@ public abstract class Snapable : MonoBehaviour {
         {
             objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedChartPosition(editor.mouseYMaxLimit.position.y, Globals.step);
         }
-
-
     }
 
     protected void LateUpdate()
@@ -52,7 +50,8 @@ public abstract class Snapable : MonoBehaviour {
             objectRen.sortingOrder = 5;
         }
 
-        Controls();
+        if (!Globals.lockToStrikeline)
+            Controls();
     }
 
     public static uint ChartPositionToSnappedChartPosition(uint chartPosition, int step, float resolution)

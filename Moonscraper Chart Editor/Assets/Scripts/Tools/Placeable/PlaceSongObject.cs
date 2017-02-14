@@ -5,10 +5,13 @@ public abstract class PlaceSongObject : ToolObject {
     protected SongObject songObject;
     protected SongObjectController controller;
 
+    Renderer[] renderers;
+
     protected SongObject initObject;        // Only used for moving objects
 
     protected override void Awake()
     {
+        renderers = GetComponentsInChildren<Renderer>();
         base.Awake();
 
         SongObjectController controller = GetComponent<SongObjectController>();
@@ -29,6 +32,22 @@ public abstract class PlaceSongObject : ToolObject {
     protected override void Update()
     {
         base.Update();
+
+        foreach (Renderer ren in renderers)
+        {
+            if (Globals.lockToStrikeline)
+                ren.enabled = false;
+            else
+                ren.enabled = true;
+        }
+
+        foreach (Transform child in transform)
+        {
+            if (Globals.lockToStrikeline)
+                child.gameObject.SetActive(false);
+            else
+                child.gameObject.SetActive(true);
+        }
 
         songObject.song = editor.currentSong;
         songObject.position = objectSnappedChartPos;

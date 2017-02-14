@@ -49,6 +49,10 @@ public class PlaceStarpower : PlaceSongObject {
     protected override void Update()
     {
         starpower.chart = editor.currentChart;
+        if (lastPlacedSP != null)
+            spRen.enabled = false;
+        else
+            spRen.enabled = true;
         base.Update();
 
         if (Input.GetMouseButtonUp(0))
@@ -72,12 +76,7 @@ public class PlaceStarpower : PlaceSongObject {
             lastPlacedSP = null;
             overwrittenSP = null;
             record.Clear();
-        }
-
-        if (lastPlacedSP != null)
-            spRen.enabled = false;
-        else
-            spRen.enabled = true;
+        } 
     }
 
     protected override void OnEnable()
