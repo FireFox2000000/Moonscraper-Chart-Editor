@@ -37,11 +37,19 @@ public class PlaceNoteController : ObjectlessTool {
 
     // Update is called once per frame
     protected override void Update () {
-        MouseControls();
+        if (!Globals.lockToStrikeline)
+            MouseControls();
+        else
+            KeyboardControls();
     }
 
     void KeyboardControls()
     {
+        foreach (PlaceNote placeableNotes in notes)
+        {
+            placeableNotes.gameObject.SetActive(false);
+        }
+
         for (int i = 1; i < notes.Length; ++i)
         {
             // Need to make sure the note is at it's correct tick position
@@ -56,8 +64,6 @@ public class PlaceNoteController : ObjectlessTool {
                 {
                     editor.currentChart.notes[pos].Delete();
                 }
-
-                Debug.Log(editor.currentChart.chartObjects.Length);
             }
         }
     }

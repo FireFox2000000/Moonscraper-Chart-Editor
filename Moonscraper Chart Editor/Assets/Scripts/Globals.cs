@@ -25,6 +25,8 @@ public class Globals : MonoBehaviour {
     Button defaultViewSwitchButton;
     [SerializeField]
     GroupSelect groupSelect;
+    [SerializeField]
+    Text snapLockWarning;
 
     public bool InToolArea
     {
@@ -69,8 +71,8 @@ public class Globals : MonoBehaviour {
     // Settings
     public static float hyperspeed = 5.0f;
     public static Step snappingStep = new Step(16);
-    public static int step { get { return snappingStep.value; } set { snappingStep.value = value; } }  
-     
+    public static int step { get { return snappingStep.value; } set { snappingStep.value = value; } }
+    public static bool lockToStrikeline = false;
     public static ClapToggle clapSetting = ClapToggle.NONE;
     public static ClapToggle clapProperties = ClapToggle.NONE;
     public static int audioCalibrationMS = 200;                     // Increase to start the audio sooner
@@ -149,6 +151,9 @@ public class Globals : MonoBehaviour {
         if (!IsTyping)
             Controls();
         ModifierControls();
+
+        lockToStrikeline = System.Windows.Forms.Control.IsKeyLocked(System.Windows.Forms.Keys.CapsLock);
+        snapLockWarning.gameObject.SetActive(lockToStrikeline);
     }
 
     void OnGUI()

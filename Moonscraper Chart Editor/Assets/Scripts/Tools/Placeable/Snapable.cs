@@ -27,8 +27,10 @@ public abstract class Snapable : MonoBehaviour {
 
     protected void UpdateSnappedPos()
     {
+        if (Globals.lockToStrikeline)
+            objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedChartPosition(editor.visibleStrikeline.position.y, Globals.step);
         // Read in mouse world position
-        if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
+        else if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
         {
             Vector2 mousePos = (Vector2)Mouse.world2DPosition;
             float ypos = mousePos.y;
@@ -39,6 +41,8 @@ public abstract class Snapable : MonoBehaviour {
         {
             objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedChartPosition(editor.mouseYMaxLimit.position.y, Globals.step);
         }
+
+
     }
 
     protected void LateUpdate()

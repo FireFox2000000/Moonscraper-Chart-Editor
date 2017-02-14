@@ -44,36 +44,46 @@ public class Toolpane : MonoBehaviour {
             menuCancel = true;
         }
 
+
         if (currentToolObject)
         {
-            if ((deleteModeCancel && currentTool != Tools.GroupSelect) || ((menuCancel || Mouse.IsUIUnderPointer()) && currentTool != Tools.GroupSelect))
+            if (Globals.lockToStrikeline)
+                currentToolObject.gameObject.SetActive(true);
+            else
             {
-                currentToolObject.gameObject.SetActive(false);
-            }
-            else if (Globals.applicationMode == Globals.ApplicationMode.Editor && mouseDownInArea)
-            {
-                // Range check
-                if (!globals.InToolArea && currentTool != Tools.GroupSelect)
+                if ((deleteModeCancel && currentTool != Tools.GroupSelect) || ((menuCancel || Mouse.IsUIUnderPointer()) && currentTool != Tools.GroupSelect))
                 {
                     currentToolObject.gameObject.SetActive(false);
                 }
-                else
+                else if (Globals.applicationMode == Globals.ApplicationMode.Editor && mouseDownInArea)
                 {
-                    currentToolObject.gameObject.SetActive(true);
-                    
-                    if (Input.GetMouseButton(1))
+                    // Range check
+                    if (!globals.InToolArea && currentTool != Tools.GroupSelect)
                     {
                         currentToolObject.gameObject.SetActive(false);
                     }
-                    else if (!Input.GetMouseButton(1))
+                    else
+                    {
                         currentToolObject.gameObject.SetActive(true);
+
+                        if (Input.GetMouseButton(1))
+                        {
+                            currentToolObject.gameObject.SetActive(false);
+                        }
+                        else if (!Input.GetMouseButton(1))
+                            currentToolObject.gameObject.SetActive(true);
+                    }
+                }
+                else if (currentTool != Tools.GroupSelect)
+                {
+                    currentToolObject.gameObject.SetActive(false);
                 }
             }
-            else if (currentTool != Tools.GroupSelect)
-            {
-                currentToolObject.gameObject.SetActive(false);
-            }
+
+            
         }
+
+        
     }
 
     public void SetTool(ToolObject toolObject)

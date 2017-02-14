@@ -117,8 +117,9 @@ public class TimelineMovementController : MovementController
 
                 UpdateTimelineHandleBasedPos();
             }
-            else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
+            else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow))
             {
+                // Arrow key controls
                 uint currentPos;
                 if (explicitChartPos != null)
                     currentPos = (uint)explicitChartPos;
@@ -130,7 +131,7 @@ public class TimelineMovementController : MovementController
                 {
                     SetPosition(Snapable.ChartIncrementStep(currentPos, Globals.step, editor.currentSong.resolution));
                 }
-                else
+                else if (Input.GetKeyDown(KeyCode.DownArrow))
                 {
                     SetPosition(Snapable.ChartDecrementStep(currentPos, Globals.step, editor.currentSong.resolution));
                 }
