@@ -189,6 +189,7 @@
     <Compile Include="Assets\Scripts\UI\Menus\SongPropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\ToolPanelController.cs" />
     <Compile Include="Assets\Scripts\Utility.cs" />
+    <Compile Include="Assets\Scripts\Whammy.cs" />
     <Compile Include="Assets\Scripts\mid2chart\ChartWriter.cs" />
     <Compile Include="Assets\Scripts\mid2chart\Event.cs" />
     <Compile Include="Assets\Scripts\mid2chart\MidReader.cs" />
