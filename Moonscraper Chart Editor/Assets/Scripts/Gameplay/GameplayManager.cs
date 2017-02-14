@@ -112,7 +112,7 @@ public class GameplayManager : MonoBehaviour {
         bool noStrumInWindow = false;
         foreach (NoteController note in notesInWindow)
         {
-            if (note.noteType != Note.Note_Type.STRUM)
+            if (note.note.type != Note.Note_Type.STRUM)
             {
                 noStrumInWindow = true;
                 break;
@@ -195,7 +195,7 @@ public class GameplayManager : MonoBehaviour {
                         { }
                     }
                 }
-                else if ((notesInWindow[0].noteType != Note.Note_Type.STRUM && noteStreak > 0) || noteStreak > 10)       // Gives time for strumming to get back on beat
+                else if ((notesInWindow[0].note.type != Note.Note_Type.STRUM && noteStreak > 0) || noteStreak > 10)       // Gives time for strumming to get back on beat
                 { 
                     if (ValidateFrets(notesInWindow[0].note) && ValidateStrum(notesInWindow[0].note, canTap))
                     {
@@ -379,7 +379,7 @@ public class GameplayManager : MonoBehaviour {
         if (note.note.sustain_length > 0)
             currentSustains.Add(note);
 
-        if (note.noteType != Note.Note_Type.STRUM)
+        if (note.note.type != Note.Note_Type.STRUM)
             freestrum = NUM_OF_FREESTRUMS;
 
         notesInWindow.Remove(note);

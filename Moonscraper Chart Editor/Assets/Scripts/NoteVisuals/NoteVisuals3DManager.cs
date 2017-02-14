@@ -2,127 +2,101 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NoteVisuals3DManager : MonoBehaviour {
-    public NoteController nCon;
-    protected Renderer noteRenderer;
+public class NoteVisuals3DManager : NoteVisualsManager
+{
     MeshFilter meshFilter;
-    [HideInInspector]
-    public Note.Note_Type noteType = Note.Note_Type.STRUM;
-    [HideInInspector]
-    public Note.Special_Type specialType = Note.Special_Type.NONE;
 
     // Use this for initialization
-    void Start () {
-        noteRenderer = GetComponent<Renderer>();
+    protected override void Start ()
+    {
+        base.Start();
         meshFilter = GetComponent<MeshFilter>();
     }
 	
 	// Update is called once per frame
-	void Update () {
+	protected override void UpdateVisuals () {
+        base.UpdateVisuals();
+
         Note note = nCon.note;
+        if (note != null)
+        {
+            // Visuals
+            // Update mesh
+            if (note.fret_type == Note.Fret_Type.OPEN)
+                meshFilter.sharedMesh = PrefabGlobals.openModel.sharedMesh;
+            else if (specialType == Note.Special_Type.STAR_POW)
+                meshFilter.sharedMesh = PrefabGlobals.spModel.sharedMesh;
+            else
+                meshFilter.sharedMesh = PrefabGlobals.standardModel.sharedMesh;
 
-        // Note Type
-        if (Globals.viewMode == Globals.ViewMode.Chart)
-        {
-            noteType = note.type;
-        }
-        else
-        {
-            // Do this simply because the HOPO glow by itself looks pretty cool
-            noteType = Note.Note_Type.HOPO;
-        }
+            Material[] materials;
 
-        // Star power?
-        specialType = Note.Special_Type.NONE;
-        foreach (Starpower sp in note.chart.starPower)
-        {
-            if (sp.position == note.position || (sp.position <= note.position && sp.position + sp.length > note.position))
+            // Determine materials
+            if (note.fret_type == Note.Fret_Type.OPEN)
             {
-                specialType = Note.Special_Type.STAR_POW;
-            }
-            else if (sp.position > note.position)
-                break;
-        }
+                materials = PrefabGlobals.openRenderer.sharedMaterials;
 
-        // Update note visuals
-        noteRenderer.sortingOrder = -Mathf.Abs((int)note.position);
-
-        // Visuals
-        // Update mesh
-        if (note.fret_type == Note.Fret_Type.OPEN)
-            meshFilter.sharedMesh = PrefabGlobals.openModel.sharedMesh;
-        else if (specialType == Note.Special_Type.STAR_POW)
-            meshFilter.sharedMesh = PrefabGlobals.spModel.sharedMesh;
-        else
-            meshFilter.sharedMesh = PrefabGlobals.standardModel.sharedMesh;
-
-        Material[] materials;
-
-        // Determine materials
-        if (note.fret_type == Note.Fret_Type.OPEN)
-        {
-            materials = PrefabGlobals.openRenderer.sharedMaterials;
-
-            if (specialType == Note.Special_Type.STAR_POW)
-            {
-                if (noteType == Note.Note_Type.HOPO)
-                    materials[2] = PrefabGlobals.openMaterials[3];
+                if (specialType == Note.Special_Type.STAR_POW)
+                {
+                    if (noteType == Note.Note_Type.HOPO)
+                        materials[2] = PrefabGlobals.openMaterials[3];
+                    else
+                        materials[2] = PrefabGlobals.openMaterials[2];
+                }
                 else
-                    materials[2] = PrefabGlobals.openMaterials[2];
+                {
+                    if (noteType == Note.Note_Type.HOPO)
+                        materials[2] = PrefabGlobals.openMaterials[1];
+                    else
+                        materials[2] = PrefabGlobals.openMaterials[0];
+                }
             }
             else
             {
-                if (noteType == Note.Note_Type.HOPO)
-                    materials[2] = PrefabGlobals.openMaterials[1];
-                else
-                    materials[2] = PrefabGlobals.openMaterials[0];
-            }
-        }
-        else
-        {
-            const int standardColMatPos = 1;
-            const int spColMatPos = 3;
+                const int standardColMatPos = 1;
+                const int spColMatPos = 3;
 
-            switch (noteType)
-            {
-                case (Note.Note_Type.HOPO):
-                    if (specialType == Note.Special_Type.STAR_POW)
-                    {
-                        materials = PrefabGlobals.spHopoRenderer.sharedMaterials;
-                        materials[spColMatPos] = PrefabGlobals.strumColors[(int)note.fret_type];
-                    }
-                    else
-                    {
-                        materials = PrefabGlobals.hopoRenderer.sharedMaterials;
-                        materials[standardColMatPos] = PrefabGlobals.strumColors[(int)note.fret_type];
-                    }
-                    break;
-                case (Note.Note_Type.TAP):
-                    if (specialType == Note.Special_Type.STAR_POW)
-                    {
-                        materials = PrefabGlobals.spTapRenderer.sharedMaterials;
-                        materials[spColMatPos] = PrefabGlobals.tapColors[(int)note.fret_type];
-                    }
-                    else
-                    {
-                        materials = PrefabGlobals.tapRenderer.sharedMaterials;
-                        materials[standardColMatPos] = PrefabGlobals.tapColors[(int)note.fret_type];
-                    }
-                    break;
-                default:    // strum
-                    if (specialType == Note.Special_Type.STAR_POW)
-                    {
-                        materials = PrefabGlobals.spStrumRenderer.sharedMaterials;
-                        materials[spColMatPos] = PrefabGlobals.strumColors[(int)note.fret_type];
-                    }
-                    else
-                    {
-                        materials = PrefabGlobals.strumRenderer.sharedMaterials;
-                        materials[standardColMatPos] = PrefabGlobals.strumColors[(int)note.fret_type];
-                    }
-                    break;
+                switch (noteType)
+                {
+                    case (Note.Note_Type.HOPO):
+                        if (specialType == Note.Special_Type.STAR_POW)
+                        {
+                            materials = PrefabGlobals.spHopoRenderer.sharedMaterials;
+                            materials[spColMatPos] = PrefabGlobals.strumColors[(int)note.fret_type];
+                        }
+                        else
+                        {
+                            materials = PrefabGlobals.hopoRenderer.sharedMaterials;
+                            materials[standardColMatPos] = PrefabGlobals.strumColors[(int)note.fret_type];
+                        }
+                        break;
+                    case (Note.Note_Type.TAP):
+                        if (specialType == Note.Special_Type.STAR_POW)
+                        {
+                            materials = PrefabGlobals.spTapRenderer.sharedMaterials;
+                            materials[spColMatPos] = PrefabGlobals.tapColors[(int)note.fret_type];
+                        }
+                        else
+                        {
+                            materials = PrefabGlobals.tapRenderer.sharedMaterials;
+                            materials[standardColMatPos] = PrefabGlobals.tapColors[(int)note.fret_type];
+                        }
+                        break;
+                    default:    // strum
+                        if (specialType == Note.Special_Type.STAR_POW)
+                        {
+                            materials = PrefabGlobals.spStrumRenderer.sharedMaterials;
+                            materials[spColMatPos] = PrefabGlobals.strumColors[(int)note.fret_type];
+                        }
+                        else
+                        {
+                            materials = PrefabGlobals.strumRenderer.sharedMaterials;
+                            materials[standardColMatPos] = PrefabGlobals.strumColors[(int)note.fret_type];
+                        }
+                        break;
+                }
             }
+            noteRenderer.sharedMaterials = materials;
         }
-        noteRenderer.sharedMaterials = materials;
     }
 }

@@ -446,7 +446,7 @@ public class ChartEditor : MonoBehaviour {
             lastLoadedFile = filename;
         }
     }
-
+    public static float? startGameplayPos = null;
     public void StartGameplay()
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Playing || movement.transform.position.y < movement.initPos.y)
@@ -455,6 +455,7 @@ public class ChartEditor : MonoBehaviour {
         stopResetPos = movement.transform.position;
 
         float strikelineYPos = visibleStrikeline.position.y - (0.01f * Globals.hyperspeed);     // Offset to prevent errors where it removes a note that is on the strikeline
+        startGameplayPos = strikelineYPos;
 
         // Hide everything behind the strikeline
         foreach (Note note in currentChart.notes)
@@ -462,7 +463,9 @@ public class ChartEditor : MonoBehaviour {
             if (note.controller)
             {
                 if (note.worldYPosition < strikelineYPos)
+                {
                     note.controller.HideFullNote();
+                }
                 else
                     break;
             }
@@ -529,6 +532,7 @@ public class ChartEditor : MonoBehaviour {
 
     public void Stop()
     {
+        startGameplayPos = null;
         cancel = true;
         play.interactable = true;
         Globals.applicationMode = Globals.ApplicationMode.Editor;

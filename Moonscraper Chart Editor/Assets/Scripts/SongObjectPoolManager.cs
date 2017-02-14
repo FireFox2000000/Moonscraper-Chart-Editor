@@ -94,6 +94,8 @@ public class SongObjectPoolManager : MonoBehaviour {
         int pos = 0;
         foreach (Note note in rangedNotes)
         {
+            if (ChartEditor.startGameplayPos != null && note.worldYPosition < (float)ChartEditor.startGameplayPos)
+                continue;
             if (note.controller == null)
             {
                 while (pos < noteControllers.Length && noteControllers[pos].gameObject.activeSelf)
