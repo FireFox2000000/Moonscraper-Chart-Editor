@@ -2,28 +2,42 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(LineRenderer))]
 public class Whammy : MonoBehaviour {
-    public LineRenderer rightLine;
-    public LineRenderer leftLine;
-
-    public int pointsPerUnit;
+    public float keyShiftSpeed = 5;
+    LineRenderer lineRenderer;
+    AnimationCurve lineCurve;
 
     // Use this for initialization
     void Start () {
-        StartCoroutine(waveWhammy());
+        //StartCoroutine(waveWhammy());
+        lineRenderer = GetComponent<LineRenderer>();
+
+        lineCurve = lineRenderer.widthCurve;
+        
 	}
 	
 	// Update is called once per frame
 	void Update () {
+        AnimationCurve lineCurve = lineRenderer.widthCurve;
 
         Debug.Log(Input.GetAxisRaw("Whammy"));
-        float whammyVal = (lerpedWhammyVal() + 1) / 3.0f;
+        float whammyVal = (lerpedWhammyVal() + 1) / 1.0f;
 
-        Vector3 rightWhammyOriginalPos = rightLine.GetPosition(0);
-        rightLine.SetPosition(0, new Vector3(whammyVal, rightWhammyOriginalPos.y, rightWhammyOriginalPos.z));
+        for (int i = lineCurve.keys.Length - 1; i >= 0; --i)
+        {
+            float keyTime = lineCurve.keys[i].time + keyShiftSpeed * Time.deltaTime;
+            float keyValue = lineCurve.keys[i].value;
 
-        Vector3 leftWhammyOriginalPos = leftLine.GetPosition(0);
-        leftLine.SetPosition(0, new Vector3(-whammyVal, leftWhammyOriginalPos.y, leftWhammyOriginalPos.z));
+            if (keyTime <= 1)
+                lineCurve.MoveKey(i, new Keyframe(keyTime, keyValue));
+            else
+                lineCurve.RemoveKey(i);
+        }
+
+        lineCurve.AddKey(new Keyframe(0, whammyVal + 1));
+
+        lineRenderer.widthCurve = lineCurve;
     }
 
     float currentWhammyVal = -1;
@@ -46,7 +60,7 @@ public class Whammy : MonoBehaviour {
 
         return currentWhammyVal;
     }
-
+    /*
     IEnumerator waveWhammy()
     {
         while (true)
@@ -65,10 +79,5 @@ public class Whammy : MonoBehaviour {
 
             yield return new WaitForSeconds(0.012f);
         }
-    }
-
-    void SetSize(LineRenderer line)
-    {
-        
-    }
+    }*/
 }
