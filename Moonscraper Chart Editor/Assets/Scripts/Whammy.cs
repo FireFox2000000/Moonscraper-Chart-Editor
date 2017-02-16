@@ -5,6 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(LineRenderer))]
 public class Whammy : MonoBehaviour {
     public float keyShiftSpeed = 5;
+    public float widthMultiplier = 1;
+    public float whammyLerpSpeed = 20;
+
     LineRenderer lineRenderer;
     AnimationCurve lineCurve;
 
@@ -22,7 +25,7 @@ public class Whammy : MonoBehaviour {
         AnimationCurve lineCurve = lineRenderer.widthCurve;
 
         Debug.Log(Input.GetAxisRaw("Whammy"));
-        float whammyVal = (lerpedWhammyVal() + 1) / 1.0f;
+        float whammyVal = (lerpedWhammyVal() + 1) * widthMultiplier;
 
         for (int i = lineCurve.keys.Length - 1; i >= 0; --i)
         {
@@ -43,17 +46,16 @@ public class Whammy : MonoBehaviour {
     float currentWhammyVal = -1;
     float lerpedWhammyVal()
     {
-        const float increment = 20;
-        float rawVal = Input.GetAxisRaw("Whammy").Round(2);
+        float rawVal = Input.GetAxisRaw("Whammy");
         if (rawVal > currentWhammyVal)
         {
-            currentWhammyVal += increment * Time.deltaTime;
+            currentWhammyVal += whammyLerpSpeed * Time.deltaTime;
             if (currentWhammyVal > rawVal)
                 currentWhammyVal = rawVal;
         }
         else if (rawVal.Round(2) < currentWhammyVal)
         {
-            currentWhammyVal -= increment * Time.deltaTime;
+            currentWhammyVal -= whammyLerpSpeed * Time.deltaTime;
             if (currentWhammyVal < rawVal)
                 currentWhammyVal = rawVal;
         }

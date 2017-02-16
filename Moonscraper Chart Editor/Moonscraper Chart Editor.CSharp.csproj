@@ -149,6 +149,7 @@
     <Compile Include="Assets\Scripts\PrefabGlobals.cs" />
     <Compile Include="Assets\Scripts\RendererLayerExpose.cs" />
     <Compile Include="Assets\Scripts\SelectableClick.cs" />
+    <Compile Include="Assets\Scripts\SetLineRendererPoints.cs" />
     <Compile Include="Assets\Scripts\Settings.cs" />
     <Compile Include="Assets\Scripts\SongObjectPoolManager.cs" />
     <Compile Include="Assets\Scripts\SpriteGlow.cs" />
