@@ -21,7 +21,9 @@ public class NoteController : SongObjectController {
     BoxCollider2D sustainHitBox;
     BoxCollider hitBox;
 
+    [HideInInspector]
     public bool hit = false;
+    [HideInInspector]
     public bool sustainBroken = false;
     public bool isActivated
     {
@@ -271,7 +273,7 @@ public class NoteController : SongObjectController {
         
     }
 
-    void DeactivateNote()
+    public void DeactivateNote()
     {
         noteRenderer.enabled = false;
         noteHitCollider.enabled = false;

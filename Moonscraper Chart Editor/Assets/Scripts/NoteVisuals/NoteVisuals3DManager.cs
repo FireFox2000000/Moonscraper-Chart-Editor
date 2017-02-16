@@ -18,6 +18,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
         base.UpdateVisuals();
 
         Note note = nCon.note;
+
         if (note != null)
         {
             // Visuals

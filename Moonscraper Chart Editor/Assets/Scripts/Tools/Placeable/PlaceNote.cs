@@ -62,6 +62,7 @@ public class PlaceNote : PlaceSongObject {
 
         // Get previous and next note
         int pos = SongObject.FindClosestPosition(note.position, editor.currentChart.notes);
+        //Debug.Log(pos);
         if (pos == Globals.NOTFOUND)
         {
             note.previous = null;
@@ -95,7 +96,7 @@ public class PlaceNote : PlaceSongObject {
             // Found own note
             note.previous = editor.currentChart.notes[closestNoteArrayPos].previous;
             note.next = editor.currentChart.notes[closestNoteArrayPos].next;
-        }     
+        }
     }
 
     void UpdateOpenPrevAndNext(int closestNoteArrayPos)

@@ -33,7 +33,7 @@ public class GameplayManager : MonoBehaviour {
     List<NoteController> currentSustains = new List<NoteController>();
     ChartEditor editor;
 
-    float hitWindowHeight = 0.19f;
+    float hitWindowHeight = 0.14f;
     float initWindowSize;
     float initSize;
     float previousStrumValue;
@@ -275,6 +275,11 @@ public class GameplayManager : MonoBehaviour {
             // Handle sustain breaking
             foreach (NoteController note in currentSustains.ToArray())
             {
+                if (!note.gameObject.activeSelf || note.note == null)
+                {
+                    currentSustains.Remove(note);
+                    continue;
+                }
                 if (!note.isActivated && (noteStreak == 0 || (!note.note.IsChord && !ValidateFrets(note.note)) || (note.note.IsChord && note.note.mask != inputMask)))
                 {
                     foreach (Note chordNote in note.note.GetChord())
@@ -282,25 +287,6 @@ public class GameplayManager : MonoBehaviour {
                     currentSustains.Remove(note);
                 }
             }
-
-            /*
-            for (int i = 0; i < 20; i++)
-            {
-                if (Input.GetKeyDown("joystick 1 button " + i))
-                {
-                    Debug.Log("joystick 1 button " + i);
-                }
-            }*/
-
-            /*
-            foreach (KeyCode vKey in System.Enum.GetValues(typeof(KeyCode)))
-            {
-                if (Input.GetKeyDown(vKey))
-                {
-                    //your code here
-                    Debug.Log(vKey);
-                }
-            }*/
 
             noteStreakText.text = "Note streak: " + noteStreak.ToString();
             if (totalNotes > 0)
@@ -374,6 +360,9 @@ public class GameplayManager : MonoBehaviour {
         foreach (Note chordNote in note.note.GetChord())
         {
             chordNote.controller.hit = true;
+
+            if (strum)
+                chordNote.controller.DeactivateNote();
         }
 
         if (note.note.sustain_length > 0)
@@ -442,7 +431,7 @@ public class GameplayManager : MonoBehaviour {
 
     bool ExitWindow(NoteController note)
     {
-        if (note.transform.position.y < editor.visibleStrikeline.position.y - (hitWindowHeight / 2))
+        if (note.hit || note.transform.position.y < editor.visibleStrikeline.position.y - (hitWindowHeight / 2))
         {
             notesInWindow.Remove(note);
             return true;
@@ -450,23 +439,6 @@ public class GameplayManager : MonoBehaviour {
 
         return false;
     }
-    /*
-    void OnTriggerExit2D(Collider2D col)
-    {
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
-        {
-            NoteController nCon = col.gameObject.GetComponentInParent<NoteController>();
-            if (nCon && notesInWindow.Contains(nCon) && !nCon.hit)
-            {
-                // Missed note
-                //Debug.Log("Missed note");
-                foreach (Note note in nCon.note.GetChord())
-                    note.controller.sustainBroken = true;
-
-                notesInWindow.Remove(nCon);
-            }
-        }
-    }*/
 
     bool ValidateStrum(Note note, bool canTap)
     {
