@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/Main Editor.unity
+- path: Assets/Scenes/WhammyTest.unity
   isLoaded: 1
   isActive: 1

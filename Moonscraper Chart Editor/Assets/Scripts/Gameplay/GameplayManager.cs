@@ -166,6 +166,7 @@ public class GameplayManager : MonoBehaviour {
         else
             strum = false;
 
+        // Gameplay
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
         {
             int inputMask = GetFretInputMask();
@@ -368,7 +369,7 @@ public class GameplayManager : MonoBehaviour {
         if (note.note.sustain_length > 0)
             currentSustains.Add(note);
 
-        if (note.note.type != Note.Note_Type.STRUM)
+        if (note.note.type != Note.Note_Type.STRUM)     // Allow a strum to happen after the note has already been hit
             freestrum = NUM_OF_FREESTRUMS;
 
         notesInWindow.Remove(note);

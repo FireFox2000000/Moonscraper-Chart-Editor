@@ -5,8 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(LineRenderer))]
 [ExecuteInEditMode]
 public class SetLineRendererPoints : MonoBehaviour {
-    public float min, max;
-    public int iterations;
+    const float MIN = -0.5f, MAX = 0.5f;
+    public int iterationsPerUnit = 1000;
 
     LineRenderer lineRen;
 
@@ -17,14 +17,19 @@ public class SetLineRendererPoints : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        lineRen.numPositions = iterations + 1;
-        float offset = (max - min) / (float)iterations;
+        if (iterationsPerUnit <= 0)
+            iterationsPerUnit = 1;
 
-		for (int i = 0; i < iterations; ++i)
+        int totalIterations = (int)(iterationsPerUnit * transform.localScale.y);
+
+        lineRen.numPositions = totalIterations + 1;
+        float offset = (MAX - MIN) / (float)totalIterations;
+
+		for (int i = 0; i < totalIterations; ++i)
         {
-            lineRen.SetPosition(i, new Vector3(0, min + i * offset));
+            lineRen.SetPosition(i, new Vector3(0, MIN + i * offset));
         }
 
-        lineRen.SetPosition(lineRen.numPositions - 1, new Vector3(0, max));
+        lineRen.SetPosition(lineRen.numPositions - 1, new Vector3(0, MAX));
 	}
 }

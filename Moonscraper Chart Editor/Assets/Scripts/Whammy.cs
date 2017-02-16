@@ -22,11 +22,20 @@ public class Whammy : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        AnimationCurve lineCurve = lineRenderer.widthCurve;
+        lineCurve = lineRenderer.widthCurve;
+
+        IncrementAnimationKeys();
 
         Debug.Log(Input.GetAxisRaw("Whammy"));
         float whammyVal = (lerpedWhammyVal() + 1) * widthMultiplier;
 
+        lineCurve.AddKey(new Keyframe(0, whammyVal + 1));
+
+        lineRenderer.widthCurve = lineCurve;
+    }
+
+    void IncrementAnimationKeys()
+    {
         for (int i = lineCurve.keys.Length - 1; i >= 0; --i)
         {
             float keyTime = lineCurve.keys[i].time + keyShiftSpeed * Time.deltaTime;
@@ -37,10 +46,6 @@ public class Whammy : MonoBehaviour {
             else
                 lineCurve.RemoveKey(i);
         }
-
-        lineCurve.AddKey(new Keyframe(0, whammyVal + 1));
-
-        lineRenderer.widthCurve = lineCurve;
     }
 
     float currentWhammyVal = -1;
@@ -62,24 +67,4 @@ public class Whammy : MonoBehaviour {
 
         return currentWhammyVal;
     }
-    /*
-    IEnumerator waveWhammy()
-    {
-        while (true)
-        {
-            for (int i = rightLine.numPositions - 1; i > 0; --i)
-            {
-                Vector3 originalPos = rightLine.GetPosition(i);
-                rightLine.SetPosition(i, new Vector3(rightLine.GetPosition(i - 1).x, originalPos.y, originalPos.z));
-            }
-
-            for (int i = leftLine.numPositions - 1; i > 0; --i)
-            {
-                Vector3 originalPos = leftLine.GetPosition(i);
-                leftLine.SetPosition(i, new Vector3(leftLine.GetPosition(i - 1).x, originalPos.y, originalPos.z));
-            }
-
-            yield return new WaitForSeconds(0.012f);
-        }
-    }*/
 }
