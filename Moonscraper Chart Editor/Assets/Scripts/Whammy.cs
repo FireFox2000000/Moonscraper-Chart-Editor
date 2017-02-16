@@ -13,7 +13,6 @@ public class Whammy : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        //StartCoroutine(waveWhammy());
         lineRenderer = GetComponent<LineRenderer>();
 
         lineCurve = lineRenderer.widthCurve;
@@ -24,7 +23,7 @@ public class Whammy : MonoBehaviour {
 	void Update () {
         lineCurve = lineRenderer.widthCurve;
 
-        IncrementAnimationKeys();
+        ShiftAnimationKeys(lineCurve, keyShiftSpeed * Time.deltaTime);
 
         Debug.Log(Input.GetAxisRaw("Whammy"));
         float whammyVal = (lerpedWhammyVal() + 1) * widthMultiplier;
@@ -34,11 +33,11 @@ public class Whammy : MonoBehaviour {
         lineRenderer.widthCurve = lineCurve;
     }
 
-    void IncrementAnimationKeys()
+    static void ShiftAnimationKeys(AnimationCurve lineCurve, float shiftDistance)
     {
         for (int i = lineCurve.keys.Length - 1; i >= 0; --i)
         {
-            float keyTime = lineCurve.keys[i].time + keyShiftSpeed * Time.deltaTime;
+            float keyTime = lineCurve.keys[i].time + shiftDistance;
             float keyValue = lineCurve.keys[i].value;
 
             if (keyTime <= 1)
@@ -46,6 +45,29 @@ public class Whammy : MonoBehaviour {
             else
                 lineCurve.RemoveKey(i);
         }
+    }
+
+    public static Keyframe[] KeyframeSizeReduction(Keyframe[] keys, float timeCutoff)
+    {
+        List<Keyframe> newKeys = new List<Keyframe>();
+
+        if (timeCutoff <= 0)
+            return keys;
+        else if (timeCutoff >= 1)
+            return new Keyframe[0];
+
+        foreach(Keyframe key in keys)
+        {
+            if (key.time < timeCutoff)
+                continue;
+            else
+            {
+                float newTime = key.time - timeCutoff / (1 - timeCutoff);
+                newKeys.Add(new Keyframe(newTime, key.value));
+            }
+        }
+
+        return newKeys.ToArray();
     }
 
     float currentWhammyVal = -1;
