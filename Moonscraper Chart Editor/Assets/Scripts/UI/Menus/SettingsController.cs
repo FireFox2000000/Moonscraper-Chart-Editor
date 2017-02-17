@@ -8,6 +8,7 @@ public class SettingsController : DisplayMenu
     public Toggle clapStrum;
     public Toggle clapHopo;
     public Toggle clapTap;
+    public Toggle leftyFlipToggle;
     public Toggle extendedSustainsToggle;
     public Toggle sustainGapEnabledToggle;
 
@@ -59,6 +60,11 @@ public class SettingsController : DisplayMenu
         initClapToggle(clapHopo, Globals.ClapToggle.HOPO);
         initClapToggle(clapTap, Globals.ClapToggle.TAP);
 
+        if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+            leftyFlipToggle.isOn = true;
+        else
+            leftyFlipToggle.isOn = false;
+
         musicSourceSlider.value = editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume;
         guitarSourceSlider.value = editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume;
         rhythmSourceSlider.value = editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume;
@@ -87,6 +93,14 @@ public class SettingsController : DisplayMenu
     public void SetClapTap(bool value)
     {
         SetClapProperties(value, Globals.ClapToggle.TAP);
+    }
+
+    public void SetLeftyFlip(bool value)
+    {
+        if (value == true)
+            Globals.notePlacementMode = Globals.NotePlacementMode.LeftyFlip;
+        else
+            Globals.notePlacementMode = Globals.NotePlacementMode.Default;
     }
 
     public void SetExtendedSustains(bool value)

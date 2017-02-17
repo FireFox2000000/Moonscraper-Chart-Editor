@@ -78,6 +78,7 @@ public class Globals : MonoBehaviour {
     public static int audioCalibrationMS = 200;                     // Increase to start the audio sooner
     public static ApplicationMode applicationMode = ApplicationMode.Editor;
     public static ViewMode viewMode { get; private set; }
+    public static NotePlacementMode notePlacementMode = NotePlacementMode.LeftyFlip;
     public static bool extendedSustainsEnabled = false;
     public static bool sustainGapEnabled { get; set; }
     public static Step sustainGapStep;
@@ -119,6 +120,7 @@ public class Globals : MonoBehaviour {
         clapSetting = ClapToggle.NONE;
         sustainGapEnabled = iniparse.ReadValue("Settings", "Sustain Gap", false);
         sustainGapStep = new Step((int)iniparse.ReadValue("Settings", "Sustain Gap Step", (int)16));
+        notePlacementMode = (NotePlacementMode)iniparse.ReadValue("Settings", "Note Placement Mode", (int)NotePlacementMode.Default);
 
         // Audio levels
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
@@ -267,6 +269,7 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Settings", "Extended sustains", extendedSustainsEnabled);
         iniparse.WriteValue("Settings", "Sustain Gap", sustainGapEnabled);
         iniparse.WriteValue("Settings", "Sustain Gap Step", sustainGap);
+        iniparse.WriteValue("Settings", "Note Placement Mode", (int)notePlacementMode);
 
         // Audio levels
         iniparse.WriteValue("Audio Volume", "Music Stream", editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume);
@@ -297,6 +300,11 @@ public class Globals : MonoBehaviour {
     public enum ViewMode
     {
         Chart, Song
+    }
+
+    public enum NotePlacementMode
+    {
+        Default, LeftyFlip
     }
 
     public void ResetAspectRatio()

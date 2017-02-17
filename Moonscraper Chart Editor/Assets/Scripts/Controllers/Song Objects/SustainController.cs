@@ -73,14 +73,17 @@ public class SustainController : SelectableClick {
     public void UpdateSustain()
     {
         //ForwardCap();
-        if (nCon.note.fret_type == Note.Fret_Type.OPEN)
-            sustainRen.sprite = PrefabGlobals.openSustainSprite;
-        else
-            sustainRen.sprite = PrefabGlobals.standardSustainSprite;
+        if (sustainRen)
+        {
+            if (nCon.note.fret_type == Note.Fret_Type.OPEN)
+                sustainRen.sprite = PrefabGlobals.openSustainSprite;
+            else
+                sustainRen.sprite = PrefabGlobals.standardSustainSprite;
 
-        UpdateSustainLength();
+            UpdateSustainLength();
 
-        sustainRen.sharedMaterial = PrefabGlobals.sustainColours[(int)nCon.note.fret_type];
+            sustainRen.sharedMaterial = PrefabGlobals.sustainColours[(int)nCon.note.fret_type];
+        }
     }
 
     public void ForwardCap()

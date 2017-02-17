@@ -235,7 +235,13 @@ public class NoteController : SongObjectController {
     public static float GetXPos(float chartPos, Note note)
     {
         if (note.fret_type != Note.Fret_Type.OPEN)
-            return chartPos + (int)note.fret_type - 2;
+        {
+            if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+                return -chartPos + (int)note.fret_type + 2;
+            else
+                return chartPos + (int)note.fret_type - 2;
+
+        }
         else
             return chartPos;
     }
@@ -243,7 +249,12 @@ public class NoteController : SongObjectController {
     public static float noteToXPos(Note note)
     {
         if (note.fret_type != Note.Fret_Type.OPEN)
-            return (int)note.fret_type - 2;
+        {
+            if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+                return -(int)note.fret_type + 2;
+            else
+                return (int)note.fret_type - 2;
+        }
         else
             return 0;
     }

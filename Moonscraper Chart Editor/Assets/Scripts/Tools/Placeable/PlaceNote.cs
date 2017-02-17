@@ -144,28 +144,55 @@ public class PlaceNote : PlaceSongObject {
 
     protected virtual void UpdateFretType()
     {
-        if (Input.GetKey("1"))
-            note.fret_type = Note.Fret_Type.GREEN;
-        else if (Input.GetKey("2"))
-            note.fret_type = Note.Fret_Type.RED;
-        else if (Input.GetKey("3"))
-            note.fret_type = Note.Fret_Type.YELLOW;
-        else if (Input.GetKey("4"))
-            note.fret_type = Note.Fret_Type.BLUE;
-        else if (Input.GetKey("5"))
-            note.fret_type = Note.Fret_Type.ORANGE;
-        //else if (Input.GetKey("6"))
-            //note.fret_type = Note.Fret_Type.OPEN;
-        else if (note.fret_type != Note.Fret_Type.OPEN && Mouse.world2DPosition != null)
+        if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
         {
-            Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
-            mousePosition.x += horizontalMouseOffset;
-            note.fret_type = XPosToFretType(mousePosition.x);
+            if (Input.GetKey("1"))
+                note.fret_type = Note.Fret_Type.ORANGE;
+            else if (Input.GetKey("2"))
+                note.fret_type = Note.Fret_Type.BLUE;
+            else if (Input.GetKey("3"))
+                note.fret_type = Note.Fret_Type.YELLOW;
+            else if (Input.GetKey("4"))
+                note.fret_type = Note.Fret_Type.RED;
+            else if (Input.GetKey("5"))
+                note.fret_type = Note.Fret_Type.GREEN;
+            //else if (Input.GetKey("6"))
+            //note.fret_type = Note.Fret_Type.OPEN;
+            else if (note.fret_type != Note.Fret_Type.OPEN && Mouse.world2DPosition != null)
+            {
+                Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
+                mousePosition.x += horizontalMouseOffset;
+                note.fret_type = XPosToFretType(mousePosition.x);
+            }
+        }
+        else
+        {
+            if (Input.GetKey("1"))
+                note.fret_type = Note.Fret_Type.GREEN;
+            else if (Input.GetKey("2"))
+                note.fret_type = Note.Fret_Type.RED;
+            else if (Input.GetKey("3"))
+                note.fret_type = Note.Fret_Type.YELLOW;
+            else if (Input.GetKey("4"))
+                note.fret_type = Note.Fret_Type.BLUE;
+            else if (Input.GetKey("5"))
+                note.fret_type = Note.Fret_Type.ORANGE;
+            //else if (Input.GetKey("6"))
+            //note.fret_type = Note.Fret_Type.OPEN;
+            else if (note.fret_type != Note.Fret_Type.OPEN && Mouse.world2DPosition != null)
+            {
+                Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
+                mousePosition.x += horizontalMouseOffset;
+                note.fret_type = XPosToFretType(mousePosition.x);
+            }
         }
     }
 
     public static Note.Fret_Type XPosToFretType(float xPos)
     {
+        if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+            xPos *= -1;
+
         if (xPos > -0.5f)
         {
             if (xPos < 0.5f)

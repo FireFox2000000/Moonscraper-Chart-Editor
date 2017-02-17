@@ -54,12 +54,19 @@ public class PlaceNoteController : ObjectlessTool {
             // Need to make sure the note is at it's correct tick position
             if (Input.GetKeyDown(i.ToString()))
             {
-                notes[i].ExplicitUpdate();
-                int pos = SongObject.FindObjectPosition(notes[i].note, editor.currentChart.notes);
+                int notePos = i;
+
+                if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip && notePos > 0 && notePos < 6)
+                {
+                    notePos = 6 - notePos;
+                }
+
+                notes[notePos].ExplicitUpdate();
+                int pos = SongObject.FindObjectPosition(notes[notePos].note, editor.currentChart.notes);
 
                 if (pos == Globals.NOTFOUND)
                 {
-                    editor.actionHistory.Insert(PlaceNote.AddObjectToCurrentChart((Note)notes[i].note.Clone(), editor));
+                    editor.actionHistory.Insert(PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor));
                 }
                 else
                 {
@@ -101,13 +108,29 @@ public class PlaceNoteController : ObjectlessTool {
         {
             if (Input.GetKey("1"))
             {
-                notes[1].gameObject.SetActive(true);
-                activeNotes.Add(notes[1]);
+                if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+                {
+                    notes[5].gameObject.SetActive(true);
+                    activeNotes.Add(notes[5]);
+                }
+                else
+                {
+                    notes[1].gameObject.SetActive(true);
+                    activeNotes.Add(notes[1]);
+                }
             }
             if (Input.GetKey("2"))
             {
-                notes[2].gameObject.SetActive(true);
-                activeNotes.Add(notes[2]);
+                if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+                {
+                    notes[4].gameObject.SetActive(true);
+                    activeNotes.Add(notes[4]);
+                }
+                else
+                {
+                    notes[2].gameObject.SetActive(true);
+                    activeNotes.Add(notes[2]);
+                }
             }
             if (Input.GetKey("3"))
             {
@@ -116,13 +139,29 @@ public class PlaceNoteController : ObjectlessTool {
             }
             if (Input.GetKey("4"))
             {
-                notes[4].gameObject.SetActive(true);
-                activeNotes.Add(notes[4]);
+                if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+                {
+                    notes[2].gameObject.SetActive(true);
+                    activeNotes.Add(notes[2]);
+                }
+                else
+                {
+                    notes[4].gameObject.SetActive(true);
+                    activeNotes.Add(notes[4]);
+                }
             }
             if (Input.GetKey("5"))
             {
-                notes[5].gameObject.SetActive(true);
-                activeNotes.Add(notes[5]);
+                if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+                {
+                    notes[1].gameObject.SetActive(true);
+                    activeNotes.Add(notes[1]);
+                }
+                else
+                {
+                    notes[5].gameObject.SetActive(true);
+                    activeNotes.Add(notes[5]);
+                }
             }
         }
         else if (openActive)

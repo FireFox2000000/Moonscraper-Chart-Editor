@@ -137,6 +137,7 @@
     <Compile Include="Assets\Scripts\Controllers\Song Objects\Timeline Indicators\StarpowerGUIController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\Timeline Indicators\TimelineIndicator.cs" />
     <Compile Include="Assets\Scripts\Controllers\Song Objects\TimesignatureController.cs" />
+    <Compile Include="Assets\Scripts\Controllers\StrikelineFretPlacement.cs" />
     <Compile Include="Assets\Scripts\Controllers\TimelineMovementController.cs" />
     <Compile Include="Assets\Scripts\DialogBox.cs" />
     <Compile Include="Assets\Scripts\FretboardWrapMovement.cs" />
