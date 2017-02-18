@@ -46,21 +46,26 @@ public class PlaceStarpower : PlaceSongObject {
                 }
             }
         }
-        else if (Input.GetButtonDown("Add Object"))
+        else if (Input.GetButton("Add Object"))
         {
-            SongObject[] searchArray = editor.currentChart.starPower;
-            int pos = SongObject.FindObjectPosition(starpower, searchArray);
-            if (pos == Globals.NOTFOUND)
+            if (Input.GetButtonDown("Add Object"))
             {
-                editor.actionHistory.Insert(new ActionHistory.Add(starpower));
-                AddObject();
+                SongObject[] searchArray = editor.currentChart.starPower;
+                int pos = SongObject.FindObjectPosition(starpower, searchArray);
+                if (pos == Globals.NOTFOUND)
+                {
+                    editor.actionHistory.Insert(new ActionHistory.Add(starpower));
+                    AddObject();
+                }
+                else
+                {
+                    editor.actionHistory.Insert(new ActionHistory.Delete(searchArray[pos]));
+                    searchArray[pos].Delete();
+                    editor.currentSelectedObject = null;
+                }
             }
-            else
-            {
-                editor.actionHistory.Insert(new ActionHistory.Delete(searchArray[pos]));
-                searchArray[pos].Delete();
-                editor.currentSelectedObject = null;
-            }
+            else if (lastPlacedSP != null)
+                lastPlacedSP.SetLengthByPos(objectSnappedChartPos);
         }
     }
 
@@ -74,7 +79,7 @@ public class PlaceStarpower : PlaceSongObject {
             spRen.enabled = true;
         base.Update();
 
-        if (Input.GetMouseButtonUp(0))
+        if ((Input.GetMouseButtonUp(0) && !Globals.lockToStrikeline) || (Globals.lockToStrikeline && Input.GetButtonUp("Add Object")))
         {
             if (lastPlacedSP != null)
             {
