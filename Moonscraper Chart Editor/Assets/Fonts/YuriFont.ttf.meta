@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 2e4970c185db220408da833322ff835e
+timeCreated: 1487311758
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: GahkthunCustom
+  fontNames:
+  - GahkthunCustom
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

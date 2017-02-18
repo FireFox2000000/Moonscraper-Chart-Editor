@@ -16,11 +16,30 @@ public class PlaceTimesignature : PlaceSongObject {
 
     protected override void Controls()
     {
-        if (Toolpane.currentTool == Toolpane.Tools.Timesignature && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+        if (!Globals.lockToStrikeline)
         {
-            RecordAddActionHistory(ts, editor.currentSong.timeSignatures);
+            if (Toolpane.currentTool == Toolpane.Tools.Timesignature && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+            {
+                RecordAddActionHistory(ts, editor.currentSong.timeSignatures);
 
-            AddObject();
+                AddObject();
+            }
+        }
+        else if (Input.GetButtonDown("Add Object"))
+        {
+            SongObject[] searchArray = editor.currentSong.syncTrack;
+            int pos = SongObject.FindObjectPosition(ts, searchArray);
+            if (pos == Globals.NOTFOUND)
+            {
+                editor.actionHistory.Insert(new ActionHistory.Add(ts));
+                AddObject();
+            }
+            else if (searchArray[pos].position != 0)
+            {
+                editor.actionHistory.Insert(new ActionHistory.Delete(searchArray[pos]));
+                searchArray[pos].Delete();
+                editor.currentSelectedObject = null;
+            }
         }
     }
 

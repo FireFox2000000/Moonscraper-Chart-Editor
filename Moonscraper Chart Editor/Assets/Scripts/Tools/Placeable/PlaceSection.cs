@@ -17,12 +17,31 @@ public class PlaceSection : PlaceSongObject {
 
     protected override void Controls()
     {
-        if (Toolpane.currentTool == Toolpane.Tools.Section && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+        if (!Globals.lockToStrikeline)
         {
-            RecordAddActionHistory(section, editor.currentSong.sections);
+            if (Toolpane.currentTool == Toolpane.Tools.Section && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+            {
+                RecordAddActionHistory(section, editor.currentSong.sections);
 
-            AddObject();
+                AddObject();
+            }
         }
+        else if (Input.GetButtonDown("Add Object"))
+        {
+            SongObject[] searchArray = editor.currentSong.sections;
+            int pos = SongObject.FindObjectPosition(section, searchArray);
+            if (pos == Globals.NOTFOUND)
+            {
+                editor.actionHistory.Insert(new ActionHistory.Add(section));
+                AddObject();
+            }
+            else
+            {
+                editor.actionHistory.Insert(new ActionHistory.Delete(searchArray[pos]));
+                searchArray[pos].Delete();
+                editor.currentSelectedObject = null;
+            }
+        } 
     }
 
     protected override void AddObject()

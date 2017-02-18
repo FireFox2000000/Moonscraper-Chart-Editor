@@ -25,22 +25,41 @@ public class PlaceStarpower : PlaceSongObject {
 
     protected override void Controls()
     {
-        if (Toolpane.currentTool == Toolpane.Tools.Starpower && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
+        if (!Globals.lockToStrikeline)
         {
-            if (lastPlacedSP == null)
+            if (Toolpane.currentTool == Toolpane.Tools.Starpower && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
             {
-                // Check if there's a starpower already in that position
-                int arrayPos = SongObject.FindObjectPosition(starpower, editor.currentChart.starPower);
-                if (arrayPos != Globals.NOTFOUND)       // Found an object that matches
+                if (lastPlacedSP == null)
                 {
-                    overwrittenSP = (Starpower)editor.currentChart.starPower[arrayPos].Clone();
-                }
+                    // Check if there's a starpower already in that position
+                    int arrayPos = SongObject.FindObjectPosition(starpower, editor.currentChart.starPower);
+                    if (arrayPos != Globals.NOTFOUND)       // Found an object that matches
+                    {
+                        overwrittenSP = (Starpower)editor.currentChart.starPower[arrayPos].Clone();
+                    }
 
+                    AddObject();
+                }
+                else
+                {
+                    lastPlacedSP.SetLengthByPos(objectSnappedChartPos);
+                }
+            }
+        }
+        else if (Input.GetButtonDown("Add Object"))
+        {
+            SongObject[] searchArray = editor.currentChart.starPower;
+            int pos = SongObject.FindObjectPosition(starpower, searchArray);
+            if (pos == Globals.NOTFOUND)
+            {
+                editor.actionHistory.Insert(new ActionHistory.Add(starpower));
                 AddObject();
             }
             else
             {
-                lastPlacedSP.SetLengthByPos(objectSnappedChartPos);
+                editor.actionHistory.Insert(new ActionHistory.Delete(searchArray[pos]));
+                searchArray[pos].Delete();
+                editor.currentSelectedObject = null;
             }
         }
     }

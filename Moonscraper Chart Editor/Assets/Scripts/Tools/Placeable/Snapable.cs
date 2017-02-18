@@ -50,7 +50,7 @@ public abstract class Snapable : MonoBehaviour {
             objectRen.sortingOrder = 5;
         }
 
-        if (!Globals.lockToStrikeline)
+        if (!Globals.IsTyping)
             Controls();
     }
 

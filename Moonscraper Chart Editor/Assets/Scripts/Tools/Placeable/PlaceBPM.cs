@@ -18,11 +18,30 @@ public class PlaceBPM : PlaceSongObject {
 
     protected override void Controls()
     {
-        if (Toolpane.currentTool == Toolpane.Tools.BPM && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+        if (!Globals.lockToStrikeline)
         {
-            RecordAddActionHistory(bpm, editor.currentSong.bpms);
+            if (Toolpane.currentTool == Toolpane.Tools.BPM && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+            {
+                RecordAddActionHistory(bpm, editor.currentSong.bpms);
 
-            AddObject();
+                AddObject();
+            }
+        }
+        else if (Input.GetButtonDown("Add Object"))
+        {
+            SongObject[] searchArray = editor.currentSong.syncTrack;
+            int pos = SongObject.FindObjectPosition(bpm, searchArray);
+            if (pos == Globals.NOTFOUND)
+            {
+                editor.actionHistory.Insert(new ActionHistory.Add(bpm));
+                AddObject();
+            }
+            else if (searchArray[pos].position != 0)
+            {
+                editor.actionHistory.Insert(new ActionHistory.Delete(searchArray[pos]));
+                searchArray[pos].Delete();
+                editor.currentSelectedObject = null;
+            }
         }
     }
 
