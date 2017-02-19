@@ -258,7 +258,7 @@ public class ChartEditor : MonoBehaviour {
             currentPropertiesPanel.gameObject.SetActive(false);
         }
 
-        if (Toolpane.currentTool == Toolpane.Tools.GroupSelect)
+        if (Toolpane.currentTool == Toolpane.Tools.GroupSelect && currentSelectedObjects.Length > 1)
         {
             currentPropertiesPanel = groupSelectInspector;
             currentPropertiesPanel.gameObject.SetActive(true);

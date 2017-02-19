@@ -156,11 +156,11 @@ public class GroupSelect : ToolObject {
 
             if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand))
             {
-                if (Input.GetKeyDown(KeyCode.X))
+                if (data.Count > 0 && Input.GetKeyDown(KeyCode.X))
                 {
                     Cut();
                 }
-                else if (Input.GetKeyDown(KeyCode.C))
+                else if (data.Count > 0 && Input.GetKeyDown(KeyCode.C))
                 {
                     Copy();
                 }
