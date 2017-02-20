@@ -29,6 +29,11 @@ public class TimelineMovementController : MovementController
         UpdatePosBasedTimelineHandle();
     }
 
+    const float ARROW_INIT_DELAY_TIME = 0.5f;
+    const float ARROW_HOLD_MOVE_ITERATION_TIME = 0.1f;
+    float arrowMoveTimer = 0;
+    float lastMoveTime = 0;  
+
     void Update()
     {
         if (Input.GetMouseButtonUp(0) && Globals.applicationMode == Globals.ApplicationMode.Editor)
@@ -51,6 +56,13 @@ public class TimelineMovementController : MovementController
                 timePosition.text = Utility.timeConvertion(Song.WorldYPositionToTime(strikeLine.position.y));
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
+            arrowMoveTimer = 0;
+        else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow))
+            arrowMoveTimer += Time.deltaTime;
+        else
+            arrowMoveTimer = 0;
     }
 
     Vector3 prevPos = Vector3.zero;
@@ -103,7 +115,6 @@ public class TimelineMovementController : MovementController
                         else
                             SetPosition(0);
                     }
-
                 }
                 else
                 {
@@ -126,14 +137,25 @@ public class TimelineMovementController : MovementController
                 else
                     currentPos = editor.currentSong.WorldYPositionToChartPosition(editor.visibleStrikeline.position.y);
 
-                // Navigate to snapped pos ahead or behind
-                if (Input.GetKeyDown(KeyCode.UpArrow))
+                if (arrowMoveTimer == 0 || (arrowMoveTimer > ARROW_INIT_DELAY_TIME && Time.realtimeSinceStartup > lastMoveTime + ARROW_HOLD_MOVE_ITERATION_TIME))
                 {
-                    SetPosition(Snapable.ChartIncrementStep(currentPos, Globals.step, editor.currentSong.resolution));
-                }
-                else if (Input.GetKeyDown(KeyCode.DownArrow))
-                {
-                    SetPosition(Snapable.ChartDecrementStep(currentPos, Globals.step, editor.currentSong.resolution));
+                    uint snappedPos;
+                    // Navigate to snapped pos ahead or behind
+                    if (Input.GetKey(KeyCode.UpArrow))
+                    {
+                        snappedPos = Snapable.ChartIncrementStep(currentPos, Globals.step, editor.currentSong.resolution);
+                    }
+                    else
+                    {
+                        snappedPos = Snapable.ChartDecrementStep(currentPos, Globals.step, editor.currentSong.resolution);
+                    }
+
+                    if (editor.currentSong.ChartPositionToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSong.length)
+                    {
+                        SetPosition(snappedPos);
+                    }
+
+                    lastMoveTime = Time.realtimeSinceStartup;
                 }
 
                 UpdateTimelineHandleBasedPos();
