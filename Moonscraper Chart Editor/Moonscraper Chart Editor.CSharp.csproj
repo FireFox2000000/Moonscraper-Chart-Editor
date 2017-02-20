@@ -190,6 +190,7 @@
     <Compile Include="Assets\Scripts\UI\Menus\DisplayMenu.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\SettingsController.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\SongPropertiesPanelController.cs" />
+    <Compile Include="Assets\Scripts\UI\TextTruncExt.cs" />
     <Compile Include="Assets\Scripts\UI\ToolPanelController.cs" />
     <Compile Include="Assets\Scripts\Utility.cs" />
     <Compile Include="Assets\Scripts\Whammy.cs" />

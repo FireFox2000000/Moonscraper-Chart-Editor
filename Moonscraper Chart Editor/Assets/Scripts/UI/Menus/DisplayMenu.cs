@@ -5,7 +5,6 @@ using System.Collections;
 public class DisplayMenu : MonoBehaviour {
     protected ChartEditor editor;
     public RectTransform mouseArea;
-    public Texture2D mouseNotWorkingTex;
 
     protected virtual void Awake()
     {
@@ -14,16 +13,6 @@ public class DisplayMenu : MonoBehaviour {
 
     protected virtual void Update()
     {
-        /*
-        if(!RectTransformUtility.RectangleContainsScreenPoint(mouseArea, Input.mousePosition))
-        {
-            Cursor.SetCursor(mouseNotWorkingTex, Vector2.zero, CursorMode.ForceSoftware);
-        }
-        else
-        {
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-        }*/
-
         MovementController.cancel = true;
 
         if (Input.GetButtonDown("CloseMenu") || (Input.GetMouseButtonDown(0) && !RectTransformUtility.RectangleContainsScreenPoint(mouseArea, Input.mousePosition)))

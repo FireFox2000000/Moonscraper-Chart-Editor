@@ -290,7 +290,8 @@ public class NoteController : SongObjectController {
         noteRenderer.enabled = false;
         noteHitCollider.enabled = false;
 
-        PlayIndicatorAnim();
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+            PlayIndicatorAnim();
     }
 
     void PlayIndicatorAnim()
