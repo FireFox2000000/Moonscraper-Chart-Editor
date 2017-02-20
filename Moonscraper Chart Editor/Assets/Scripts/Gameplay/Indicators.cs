@@ -6,7 +6,16 @@ using XInputDotNetPure;
 
 public class Indicators : MonoBehaviour {
     public GameObject[] indicators = new GameObject[5];
+    public HitAnimation[] animations = new HitAnimation[5];
     GamePadState gamepad;
+
+    void Awake()
+    {
+        for(int i = 0; i < animations.Length; ++i)
+        {
+            animations[i] = indicators[i].GetComponent<HitAnimation>();
+        }
+    }
 
     // Update is called once per frame
     void Update () {
@@ -42,34 +51,37 @@ public class Indicators : MonoBehaviour {
 #else
             if (Input.GetButton("FretGreen"))
                 indicators[0].SetActive(true);
-            else
+            else if (!animations[0].running)
                 indicators[0].SetActive(false);
 
             if (Input.GetButton("FretRed"))
                 indicators[1].SetActive(true);
-            else
+            else if(!animations[0].running)
                 indicators[1].SetActive(false);
 
             if (Input.GetButton("FretYellow"))
                 indicators[2].SetActive(true);
-            else
+            else if (!animations[0].running)
                 indicators[2].SetActive(false);
 
             if (Input.GetButton("FretBlue"))
                 indicators[3].SetActive(true);
-            else
+            else if (!animations[0].running)
                 indicators[3].SetActive(false);
 
             if (Input.GetButton("FretOrange"))
                 indicators[4].SetActive(true);
-            else
+            else if (!animations[0].running)
                 indicators[4].SetActive(false);
 #endif
         }
         else
         {
-            foreach (GameObject indicator in indicators)
-                indicator.SetActive(false);
+            for (int i = 0; i < indicators.Length; ++i)
+            {
+                if (!animations[i].running)
+                    indicators[i].SetActive(false);
+            }
         }
     }
 }

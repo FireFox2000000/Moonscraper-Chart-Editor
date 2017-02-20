@@ -137,7 +137,10 @@ public class GameplayManager : MonoBehaviour {
         if (strumWindowTimer > STRUM_WINDOW_TIME)
         {
             if (strumWindowOpen)        // Overstrum
+            {
                 noteStreak = 0;
+                Debug.Log("Overstrum");
+            }
             strumWindowOpen = false;
         }
 
@@ -182,7 +185,7 @@ public class GameplayManager : MonoBehaviour {
 
             if (notesInWindow.Count > 0)
             {
-                if (strumWindowOpen)
+                if (strumWindowOpen)            // Allows for the strum buffer
                 {
                     if (ValidateFrets(notesInWindow[0].note))
                     {
@@ -193,7 +196,9 @@ public class GameplayManager : MonoBehaviour {
                     else if (strum)
                     {
                         if (overstrumCheck())
-                        { }
+                        {
+                            Debug.Log("Strummed incorrect frets");
+                        }
                     }
                 }
                 else if ((notesInWindow[0].note.type != Note.Note_Type.STRUM && noteStreak > 0) || noteStreak > 10)       // Gives time for strumming to get back on beat
@@ -269,7 +274,7 @@ public class GameplayManager : MonoBehaviour {
                 if (strum)
                 {
                     if (overstrumCheck())
-                        Debug.Log("Strummed when no note 2");
+                        Debug.Log("Strummed when no note v2");
                 }
             }
 

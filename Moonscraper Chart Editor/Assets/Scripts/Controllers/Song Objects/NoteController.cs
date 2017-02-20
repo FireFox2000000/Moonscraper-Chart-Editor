@@ -216,6 +216,7 @@ public class NoteController : SongObjectController {
                         {
                             sustain.transform.position = new Vector3(sustain.transform.position.x, yPos, sustain.transform.position.z);
                             sustain.transform.localScale = new Vector3(sustain.transform.localScale.x, yScale, sustain.transform.localScale.z);
+                            PlayIndicatorAnim();
                         }
                         else
                             sustainBroken = true;
@@ -288,6 +289,23 @@ public class NoteController : SongObjectController {
     {
         noteRenderer.enabled = false;
         noteHitCollider.enabled = false;
+
+        PlayIndicatorAnim();
+    }
+
+    void PlayIndicatorAnim()
+    {
+        if (note.fret_type != Note.Fret_Type.OPEN)
+        {
+            editor.indicators.animations[(int)note.fret_type].PlayOneShot();
+        }
+        else
+        {
+            foreach (HitAnimation hitAnimation in editor.indicators.animations)
+            {
+                hitAnimation.PlayOneShot();
+            }
+        }
     }
 
     public void HideFullNote()

@@ -49,6 +49,7 @@ public class ChartEditor : MonoBehaviour {
     public AudioSource clapSource;
     public UnityEngine.Audio.AudioMixerGroup mixer;
     public LoadingScreenFader loadingScreen;
+    public Indicators indicators;
 
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
