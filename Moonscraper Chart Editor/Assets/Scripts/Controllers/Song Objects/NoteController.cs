@@ -209,7 +209,7 @@ public class NoteController : SongObjectController {
                     if (!sustainBroken && note.sustain_length > 0)
                     {
                         float sustainEndPoint = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length);
-                        float yPos = (sustainEndPoint + editor.visibleStrikeline.position.y) / 2;
+                        float yPos = (sustainEndPoint + editor.visibleStrikeline.position.y) / 2 + 0.3f;        // Added offset
                         float yScale = sustainEndPoint - (editor.visibleStrikeline.position.y);
 
                         if (yPos > editor.visibleStrikeline.position.y && yScale > 0)
