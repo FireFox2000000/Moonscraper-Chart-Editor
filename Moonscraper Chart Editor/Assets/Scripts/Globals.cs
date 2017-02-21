@@ -154,7 +154,11 @@ public class Globals : MonoBehaviour {
             Controls();
         ModifierControls();
 
-        lockToStrikeline = System.Windows.Forms.Control.IsKeyLocked(System.Windows.Forms.Keys.Scroll);
+        if (System.Windows.Forms.Control.IsKeyLocked(System.Windows.Forms.Keys.Scroll) && 
+            (Toolpane.currentTool != Toolpane.Tools.Cursor && Toolpane.currentTool != Toolpane.Tools.Eraser && Toolpane.currentTool != Toolpane.Tools.GroupSelect))
+            lockToStrikeline = true;
+        else
+            lockToStrikeline = false;
         snapLockWarning.gameObject.SetActive(lockToStrikeline);
     }
 
