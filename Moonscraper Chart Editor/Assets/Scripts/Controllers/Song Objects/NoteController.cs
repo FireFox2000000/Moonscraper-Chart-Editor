@@ -9,7 +9,8 @@ public class NoteController : SongObjectController {
     public const float OPEN_NOTE_COLLIDER_WIDTH = 5;
 
     public Note note { get { return (Note)songObject; } set { Init(value); } }
-    public SustainController sustain;   
+    public SustainController sustain;
+    Whammy whammy;  
 
 #if NOTE_TYPE_2D
     protected SpriteRenderer noteRenderer;
@@ -17,7 +18,7 @@ public class NoteController : SongObjectController {
     Renderer noteRenderer;
     EdgeCollider2D noteHitCollider;
 #endif
-    protected SpriteRenderer sustainRen;
+    protected Renderer sustainRen;
     BoxCollider2D sustainHitBox;
     BoxCollider hitBox;
 
@@ -44,7 +45,8 @@ public class NoteController : SongObjectController {
         noteRenderer = GetComponent<Renderer>();
         noteHitCollider = GetComponentInChildren<EdgeCollider2D>();
 #endif
-        sustainRen = sustain.GetComponent<SpriteRenderer>();
+        sustainRen = sustain.GetComponent<Renderer>();
+        whammy = sustainRen.GetComponent<Whammy>();
     }
 
     public override void OnSelectableMouseDown()
@@ -139,6 +141,9 @@ public class NoteController : SongObjectController {
             if (sustainHitBox)
                 sustainHitBox.size = new Vector2(OPEN_NOTE_COLLIDER_WIDTH, sustainHitBox.size.y);
 
+            if (whammy)
+                whammy.widthMultiplier = 0.25f;
+
             // Adjust note hitbox size
 #if NOTE_TYPE_2D
             hitBox = GetComponent<BoxCollider2D>();
@@ -161,6 +166,9 @@ public class NoteController : SongObjectController {
         }
         else
         {
+            if (whammy)
+                whammy.widthMultiplier = 1;
+
             if (sustainHitBox)
                 sustainHitBox.size = new Vector2(1, sustainHitBox.size.y);
 
@@ -208,7 +216,14 @@ public class NoteController : SongObjectController {
                     // Resize sustain
                     if (!sustainBroken && note.sustain_length > 0)
                     {
+                        float? prevSustainHeight = null;
+
                         float sustainEndPoint = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length);
+                        if (sustainEndPoint > editor.camYMax.position.y)
+                            sustainEndPoint = editor.camYMax.position.y;
+                        else
+                            prevSustainHeight = sustain.transform.localScale.y;
+
                         float yPos = (sustainEndPoint + editor.visibleStrikeline.position.y) / 2 + 0.3f;        // Added offset
                         float yScale = sustainEndPoint - (editor.visibleStrikeline.position.y);
 
@@ -216,6 +231,12 @@ public class NoteController : SongObjectController {
                         {
                             sustain.transform.position = new Vector3(sustain.transform.position.x, yPos, sustain.transform.position.z);
                             sustain.transform.localScale = new Vector3(sustain.transform.localScale.x, yScale, sustain.transform.localScale.z);
+
+                            if (prevSustainHeight != null)
+                            {
+                                //whammy.ReduceSustainSizeKeysAdjust((float)prevSustainHeight, sustain.transform.localScale.y);
+                            }
+
                             PlayIndicatorAnim();
                         }
                         else
@@ -225,6 +246,15 @@ public class NoteController : SongObjectController {
 
                 if (sustainBroken)
                     sustainRen.enabled = false;
+
+                if (whammy)
+                {
+                    if (hit && !sustainBroken && !Globals.bot)
+                        whammy.canWhammy = true;
+                    else
+                        whammy.canWhammy = false;
+                }
+
             }
         }
         else

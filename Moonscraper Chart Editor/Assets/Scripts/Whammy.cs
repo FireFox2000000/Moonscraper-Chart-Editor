@@ -9,28 +9,39 @@ public class Whammy : MonoBehaviour {
     public float whammyLerpSpeed = 20;
 
     LineRenderer lineRenderer;
-    AnimationCurve lineCurve;
+   // AnimationCurve lineCurve;
+
+    float prevHeight = 0;
+
+    public bool canWhammy = false;
 
     // Use this for initialization
     void Start () {
         lineRenderer = GetComponent<LineRenderer>();
 
-        lineCurve = lineRenderer.widthCurve;
-        
+        prevHeight = transform.localScale.y; 
 	}
-	
+
+    
 	// Update is called once per frame
 	void Update () {
-        lineCurve = lineRenderer.widthCurve;
+        AnimationCurve lineCurve = lineRenderer.widthCurve;
 
-        ShiftAnimationKeys(lineCurve, keyShiftSpeed * Time.deltaTime);
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing && transform.localScale.y > 0)
+        {
+            ShiftAnimationKeys(lineCurve, keyShiftSpeed * Time.deltaTime * (Globals.hyperspeed / Globals.gameSpeed) / transform.localScale.y);
 
-        Debug.Log(Input.GetAxisRaw("Whammy"));
-        float whammyVal = (lerpedWhammyVal() + 1) * widthMultiplier;
+            float whammyVal = (lerpedWhammyVal() + 1) * widthMultiplier;
 
-        lineCurve.AddKey(new Keyframe(0, whammyVal + 1));
+            lineCurve.AddKey(new Keyframe(0, whammyVal + 1));
+        }
+        else
+        {
+            lineCurve.keys = new Keyframe[] { new Keyframe(0, 1) };           
+        }
 
         lineRenderer.widthCurve = lineCurve;
+        prevHeight = transform.localScale.y;
     }
 
     static void ShiftAnimationKeys(AnimationCurve lineCurve, float shiftDistance)
@@ -47,14 +58,27 @@ public class Whammy : MonoBehaviour {
         }
     }
 
-    public static Keyframe[] KeyframeSizeReduction(Keyframe[] keys, float timeCutoff)
+    public void ReduceSustainSizeKeysAdjust(float previousHeight, float newHeight)
     {
+        if (newHeight >= previousHeight)
+            return;
+
+        AnimationCurve lineCurve = lineRenderer.widthCurve;
+
+        if (prevHeight > 0)
+            lineCurve.keys = KeyframeSizeReduction(lineCurve.keys, 1 - (newHeight / prevHeight));
+
+        lineRenderer.widthCurve = lineCurve;
+    }
+
+    static Keyframe[] KeyframeSizeReduction(Keyframe[] keys, float timeCutoff)
+    {       
         List<Keyframe> newKeys = new List<Keyframe>();
 
         if (timeCutoff <= 0)
             return keys;
-        else if (timeCutoff >= 1)
-            return new Keyframe[0];
+        else if (timeCutoff > 1)
+            return new Keyframe[] { new Keyframe(0, 1) };
 
         foreach(Keyframe key in keys)
         {
@@ -62,29 +86,41 @@ public class Whammy : MonoBehaviour {
                 continue;
             else
             {
-                float newTime = key.time - timeCutoff / (1 - timeCutoff);
+                float newTime = (key.time - timeCutoff) / (1 - timeCutoff);
                 newKeys.Add(new Keyframe(newTime, key.value));
             }
         }
 
-        return newKeys.ToArray();
+        if (newKeys.Count > 0)
+            return newKeys.ToArray();
+        else
+        {
+            
+            return keys;
+        }
     }
 
     float currentWhammyVal = -1;
     float lerpedWhammyVal()
     {
         float rawVal = Input.GetAxisRaw("Whammy");
-        if (rawVal > currentWhammyVal)
+
+        if (!canWhammy)
+            currentWhammyVal = -1;
+        else
         {
-            currentWhammyVal += whammyLerpSpeed * Time.deltaTime;
-            if (currentWhammyVal > rawVal)
-                currentWhammyVal = rawVal;
-        }
-        else if (rawVal.Round(2) < currentWhammyVal)
-        {
-            currentWhammyVal -= whammyLerpSpeed * Time.deltaTime;
-            if (currentWhammyVal < rawVal)
-                currentWhammyVal = rawVal;
+            if (rawVal > currentWhammyVal)
+            {
+                currentWhammyVal += whammyLerpSpeed * Time.deltaTime;
+                if (currentWhammyVal > rawVal)
+                    currentWhammyVal = rawVal;
+            }
+            else if (rawVal.Round(2) < currentWhammyVal)
+            {
+                currentWhammyVal -= whammyLerpSpeed * Time.deltaTime;
+                if (currentWhammyVal < rawVal)
+                    currentWhammyVal = rawVal;
+            }
         }
 
         return currentWhammyVal;

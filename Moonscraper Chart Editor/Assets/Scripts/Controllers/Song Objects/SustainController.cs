@@ -1,20 +1,30 @@
-﻿using UnityEngine;
+﻿#define WHAMMY
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-[RequireComponent(typeof(SpriteRenderer))]
 public class SustainController : SelectableClick {
 
     public NoteController nCon;
     ChartEditor editor;
+#if WHAMMY
+    LineRenderer sustainRen;
+#else
     SpriteRenderer sustainRen;
+#endif
 
     List<Note[]> unmodifiedNotes = new List<Note[]>();
 
     public void Awake()
     {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+#if WHAMMY
+        sustainRen = GetComponent<LineRenderer>();
+#else
         sustainRen = GetComponent<SpriteRenderer>();
+#endif
+        sustainRen.sortingLayerName = "Sustains";
     }
 
     public override void OnSelectableMouseDown()
@@ -74,12 +84,13 @@ public class SustainController : SelectableClick {
     {
         //ForwardCap();
         if (sustainRen)
-        {
+        {          
+#if !WHAMMY
             if (nCon.note.fret_type == Note.Fret_Type.OPEN)
                 sustainRen.sprite = PrefabGlobals.openSustainSprite;
             else
                 sustainRen.sprite = PrefabGlobals.standardSustainSprite;
-
+#endif
             UpdateSustainLength();
 
             sustainRen.sharedMaterial = PrefabGlobals.sustainColours[(int)nCon.note.fret_type];
