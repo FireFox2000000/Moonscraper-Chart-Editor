@@ -179,6 +179,7 @@
     <Compile Include="Assets\Scripts\Tools\ToolObject.cs" />
     <Compile Include="Assets\Scripts\Tools\Toolpane.cs" />
     <Compile Include="Assets\Scripts\Tools\ToolpaneButtonController.cs" />
+    <Compile Include="Assets\Scripts\UI\ContextSizeAutoAdjust.cs" />
     <Compile Include="Assets\Scripts\UI\DropDownHoverActivate.cs" />
     <Compile Include="Assets\Scripts\UI\DropDownMenu.cs" />
     <Compile Include="Assets\Scripts\UI\FPSDisplay.cs" />
