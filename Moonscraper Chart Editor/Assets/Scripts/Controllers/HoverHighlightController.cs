@@ -34,7 +34,12 @@ public class HoverHighlightController : MonoBehaviour {
             highlight.SetActive(false);
         }
         if (Input.GetMouseButton(1))
-            hoverHighlightRen.sharedMaterial.color = new Color(Color.red.r, Color.red.g, Color.red.b, initColor.a);
+        {
+            if (songObject && songObject.GetComponent<SustainController>())
+                return;
+            else
+                hoverHighlightRen.sharedMaterial.color = new Color(Color.red.r, Color.red.g, Color.red.b, initColor.a);
+        }
         else
             hoverHighlightRen.sharedMaterial.color = initColor;
 

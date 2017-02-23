@@ -24,7 +24,8 @@ public class SustainController : SelectableClick {
 #else
         sustainRen = GetComponent<SpriteRenderer>();
 #endif
-        sustainRen.sortingLayerName = "Sustains";
+        if (sustainRen)
+            sustainRen.sortingLayerName = "Sustains";
     }
 
     public override void OnSelectableMouseDown()

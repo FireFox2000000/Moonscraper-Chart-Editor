@@ -142,7 +142,10 @@ public class NoteController : SongObjectController {
                 sustainHitBox.size = new Vector2(OPEN_NOTE_COLLIDER_WIDTH, sustainHitBox.size.y);
 
             if (whammy)
+            {
                 whammy.widthMultiplier = 0.25f;
+                whammy.SetWidth(4);
+            }
 
             // Adjust note hitbox size
 #if NOTE_TYPE_2D
@@ -167,7 +170,10 @@ public class NoteController : SongObjectController {
         else
         {
             if (whammy)
+            {
                 whammy.widthMultiplier = 1;
+                whammy.SetWidth(1);
+            }
 
             if (sustainHitBox)
                 sustainHitBox.size = new Vector2(1, sustainHitBox.size.y);

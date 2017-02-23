@@ -21,7 +21,6 @@ public class Whammy : MonoBehaviour {
 
         prevHeight = transform.localScale.y; 
 	}
-
     
 	// Update is called once per frame
 	void Update () {
@@ -58,46 +57,12 @@ public class Whammy : MonoBehaviour {
         }
     }
 
-    public void ReduceSustainSizeKeysAdjust(float previousHeight, float newHeight)
+    public void SetWidth(float lineWidth)
     {
-        if (newHeight >= previousHeight)
-            return;
+        if (!lineRenderer)
+            lineRenderer = GetComponent<LineRenderer>();
 
-        AnimationCurve lineCurve = lineRenderer.widthCurve;
-
-        if (prevHeight > 0)
-            lineCurve.keys = KeyframeSizeReduction(lineCurve.keys, 1 - (newHeight / prevHeight));
-
-        lineRenderer.widthCurve = lineCurve;
-    }
-
-    static Keyframe[] KeyframeSizeReduction(Keyframe[] keys, float timeCutoff)
-    {       
-        List<Keyframe> newKeys = new List<Keyframe>();
-
-        if (timeCutoff <= 0)
-            return keys;
-        else if (timeCutoff > 1)
-            return new Keyframe[] { new Keyframe(0, 1) };
-
-        foreach(Keyframe key in keys)
-        {
-            if (key.time < timeCutoff)
-                continue;
-            else
-            {
-                float newTime = (key.time - timeCutoff) / (1 - timeCutoff);
-                newKeys.Add(new Keyframe(newTime, key.value));
-            }
-        }
-
-        if (newKeys.Count > 0)
-            return newKeys.ToArray();
-        else
-        {
-            
-            return keys;
-        }
+        lineRenderer.widthMultiplier = lineWidth;
     }
 
     float currentWhammyVal = -1;
