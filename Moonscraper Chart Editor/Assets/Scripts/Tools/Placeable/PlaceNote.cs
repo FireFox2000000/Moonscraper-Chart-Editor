@@ -9,6 +9,9 @@ public class PlaceNote : PlaceSongObject {
     new public NoteController controller { get { return (NoteController)base.controller; } set { base.controller = value; } }
 
     [HideInInspector]
+    public NoteVisualsManager visuals;
+
+    [HideInInspector]
     public float horizontalMouseOffset = 0;
 
     public static bool addNoteCheck
@@ -22,6 +25,7 @@ public class PlaceNote : PlaceSongObject {
     protected override void Awake()
     {
         base.Awake();
+        visuals = GetComponent<NoteVisualsManager>();
         note = new Note(0, Note.Fret_Type.GREEN);
 
         controller = GetComponent<NoteController>();
@@ -219,13 +223,6 @@ public class PlaceNote : PlaceSongObject {
     protected override void AddObject()
     {
         AddObjectToCurrentChart(note, editor);
-        /*
-        Note noteToAdd = new Note(note);
-        editor.currentChart.Add(noteToAdd);
-        NoteController nCon = editor.CreateNoteObject(noteToAdd);
-        nCon.standardOverwriteOpen();
-
-        CapNoteCheck(noteToAdd);  */
     }
 
     public static ActionHistory.Action[] AddObjectToCurrentChart(Note note, ChartEditor editor, bool update = true, bool copy = true)

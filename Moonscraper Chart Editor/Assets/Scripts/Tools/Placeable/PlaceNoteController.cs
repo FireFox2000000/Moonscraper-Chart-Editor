@@ -36,7 +36,7 @@ public class PlaceNoteController : ObjectlessTool {
     }
 
     // Update is called once per frame
-    protected override void Update () {
+    protected override void Update () { 
         if (!Globals.lockToStrikeline)
             MouseControls();
         else
@@ -183,18 +183,23 @@ public class PlaceNoteController : ObjectlessTool {
             {
                 if (i == 0)     // Start
                 {
-                    activeNotes[i].note.next = activeNotes[i + 1].note;
+                    activeNotes[i].controller.note.previous = null;
+                    activeNotes[i].controller.note.next = activeNotes[i + 1].note;
                 }
                 else if (i >= (activeNotes.Count - 1))      // End
                 {
-                    activeNotes[i].note.previous = activeNotes[i - 1].note;
+                    activeNotes[i].controller.note.previous = activeNotes[i - 1].note;
+                    activeNotes[i].controller.note.next = null;
                 }
                 else
                 {
-                    activeNotes[i].note.previous = activeNotes[i - 1].note;
-                    activeNotes[i].note.next = activeNotes[i + 1].note;
+                    activeNotes[i].controller.note.previous = activeNotes[i - 1].note;
+                    activeNotes[i].controller.note.next = activeNotes[i + 1].note;
                 }
-            }
+
+                // Visuals for some reason aren't being updated in this cycle
+                activeNotes[i].visuals.UpdateVisuals();
+            }      
         }
 
         // Update flags in the note panel

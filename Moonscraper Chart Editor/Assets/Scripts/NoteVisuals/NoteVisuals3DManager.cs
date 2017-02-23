@@ -7,14 +7,15 @@ public class NoteVisuals3DManager : NoteVisualsManager
     MeshFilter meshFilter;
 
     // Use this for initialization
-    protected override void Start ()
+    protected override void Awake ()
     {
-        base.Start();
+        base.Awake();
         meshFilter = GetComponent<MeshFilter>();
     }
-	
-	// Update is called once per frame
-	protected override void UpdateVisuals () {
+
+    // Update is called once per frame
+    public override void UpdateVisuals () {
+
         base.UpdateVisuals();
 
         Note note = nCon.note;

@@ -100,7 +100,7 @@ public class TimelineMovementController : MovementController
             }
             else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow))
             {
-                if (Input.GetKey(KeyCode.LeftAlt) && (Input.GetKeyDown(KeyCode.UpArrow)) || Input.GetKeyDown(KeyCode.DownArrow))
+                if (Input.GetKey(KeyCode.LeftAlt) && (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)))
                 {
                     if (Input.GetKeyDown(KeyCode.UpArrow))
                         SectionJump(1);

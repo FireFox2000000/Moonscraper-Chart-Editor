@@ -12,10 +12,9 @@ public class NoteVisualsManager : MonoBehaviour {
     public Note.Special_Type specialType = Note.Special_Type.NONE;
 
     Note prevNote;
-    Globals.ApplicationMode prevMode;
 
     // Use this for initialization
-    protected virtual void Start () {
+    protected virtual void Awake () {
         noteRenderer = GetComponent<Renderer>();
     }
 
@@ -26,14 +25,12 @@ public class NoteVisualsManager : MonoBehaviour {
     }
 
     void Update()
-    {
+    {        
         UpdateVisuals();
-
-        prevMode = Globals.applicationMode;
     }
 
     // Update is called once per frame
-    protected virtual void UpdateVisuals() {
+    public virtual void UpdateVisuals() {
         Note note = nCon.note;
         if (nCon.note != null)
         {

@@ -181,6 +181,8 @@ public class NoteController : SongObjectController {
             if (hitBox)
                 hitBox.size = new Vector3(1, hitBox.size.y, hitBox.size.z);
         }
+
+        UpdateSongObject();
     }
     
     protected override void UpdateCheck()

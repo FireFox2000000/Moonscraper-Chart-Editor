@@ -5,14 +5,15 @@ NEW FEATURES
 -Can now import .mid files.
 -Added cancel option to save warning.
 -Added loading screens.
--Added basic keyboard controls for the main placement tools.
 -Added whammy to gameplay mode. Idk why.
 -Added hit animation
+-Added basic keyboard controls for the main placement tools.
+-Added ability to hold arrow keys to navigate the chart.
+-Added section jumping with arrow key movement.
 -Added lefty-flip option.
 -Added icon.
 -Added background panel to menus.
 -Added help dropdown, complete with an "About", "Credits", "Contact", "FAQ" and "Manual" sections.
-Added ability to hold arrow keys to navigate the chart.
 
 CHANGES
 -Huge system reconfiguration for optimisation to use object pooling and audio streaming. Provides near-instant load times in most cases.
