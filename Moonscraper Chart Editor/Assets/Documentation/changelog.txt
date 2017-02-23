@@ -1,10 +1,30 @@
-Moonscraper v0.8 changelog - DATE
+Moonscraper v0.8 changelog - 23/02/2017
 
 NEW FEATURES
+-Added group-move with the group-select and cursor tool.
+-Can now import .mid files.
+-Added cancel option to save warning.
+-Added loading screens.
+-Added basic keyboard controls for the main placement tools.
+-Added whammy to gameplay mode. Idk why.
+-Added hit animation
+-Added lefty-flip option.
+-Added icon.
+-Added background panel to menus.
+-Added help dropdown, complete with an "About", "Credits", "Contact", "FAQ" and "Manual" sections.
+Added ability to hold arrow keys to navigate the chart.
 
 CHANGES
+-Huge system reconfiguration for optimisation to use object pooling and audio streaming. Provides near-instant load times in most cases.
+-Multi-threaded song loading.
+-Removed waveform visualiser.
+-Reduced gameplay hit-window size.
+-Copy/paste now doesn't overwrite clipboard if there isn't anything to copy.
+-Reorganised panels.
+-Changed panel font.
 
 FIXES
+-Fixed BPM value being changed when moving.
 
 KNOWN ISSUES
--Note highlight removes open note glow effect
+-Note highlight removes open note glow effect.

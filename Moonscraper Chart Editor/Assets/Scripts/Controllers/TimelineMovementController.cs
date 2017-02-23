@@ -84,37 +84,7 @@ public class TimelineMovementController : MovementController
             {
                 if (Input.GetKey(KeyCode.LeftAlt) && editor.currentSong.sections.Length > 0)
                 {
-                    // Jump to the previous or next sections
-                    float position = Mathf.Round(strikeLine.position.y);
-
-                    int i = 0;
-                    while (i < editor.currentSong.sections.Length && Mathf.Round(editor.currentSong.sections[i].worldYPosition) <= position)
-                    {
-                        ++i;
-                    }
-
-                    // Jump forward
-                    if (scrollDelta > 0)
-                    {
-                        // Found section ahead
-                        if (i < editor.currentSong.sections.Length && Mathf.Round(editor.currentSong.sections[i].worldYPosition) > position)
-                            SetPosition(editor.currentSong.sections[i].position);
-                        else
-                            SetPosition(editor.currentSong.TimeToChartPosition(editor.currentSong.length, editor.currentSong.resolution));       // Jump to the end of the song
-
-                    }
-                    // Jump backwards
-                    else
-                    {
-
-                        while (i > editor.currentSong.sections.Length - 1 || (i >= 0 && Mathf.Round(editor.currentSong.sections[i].worldYPosition) >= position))
-                            --i;
-
-                        if (i >= 0)
-                            SetPosition(editor.currentSong.sections[i].position);
-                        else
-                            SetPosition(0);
-                    }
+                    SectionJump(scrollDelta);
                 }
                 else
                 {
@@ -130,32 +100,42 @@ public class TimelineMovementController : MovementController
             }
             else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow))
             {
-                // Arrow key controls
-                uint currentPos;
-                if (explicitChartPos != null)
-                    currentPos = (uint)explicitChartPos;
-                else
-                    currentPos = editor.currentSong.WorldYPositionToChartPosition(editor.visibleStrikeline.position.y);
-
-                if (arrowMoveTimer == 0 || (arrowMoveTimer > ARROW_INIT_DELAY_TIME && Time.realtimeSinceStartup > lastMoveTime + ARROW_HOLD_MOVE_ITERATION_TIME))
+                if (Input.GetKey(KeyCode.LeftAlt) && (Input.GetKeyDown(KeyCode.UpArrow)) || Input.GetKeyDown(KeyCode.DownArrow))
                 {
-                    uint snappedPos;
-                    // Navigate to snapped pos ahead or behind
-                    if (Input.GetKey(KeyCode.UpArrow))
-                    {
-                        snappedPos = Snapable.ChartIncrementStep(currentPos, Globals.step, editor.currentSong.resolution);
-                    }
+                    if (Input.GetKeyDown(KeyCode.UpArrow))
+                        SectionJump(1);
+                    else if (Input.GetKeyDown(KeyCode.DownArrow))
+                        SectionJump(-1);
+                }
+                else
+                {
+                    // Arrow key controls
+                    uint currentPos;
+                    if (explicitChartPos != null)
+                        currentPos = (uint)explicitChartPos;
                     else
-                    {
-                        snappedPos = Snapable.ChartDecrementStep(currentPos, Globals.step, editor.currentSong.resolution);
-                    }
+                        currentPos = editor.currentSong.WorldYPositionToChartPosition(editor.visibleStrikeline.position.y);
 
-                    if (editor.currentSong.ChartPositionToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSong.length)
+                    if (arrowMoveTimer == 0 || (arrowMoveTimer > ARROW_INIT_DELAY_TIME && Time.realtimeSinceStartup > lastMoveTime + ARROW_HOLD_MOVE_ITERATION_TIME))
                     {
-                        SetPosition(snappedPos);
-                    }
+                        uint snappedPos;
+                        // Navigate to snapped pos ahead or behind
+                        if (Input.GetKey(KeyCode.UpArrow))
+                        {
+                            snappedPos = Snapable.ChartIncrementStep(currentPos, Globals.step, editor.currentSong.resolution);
+                        }
+                        else
+                        {
+                            snappedPos = Snapable.ChartDecrementStep(currentPos, Globals.step, editor.currentSong.resolution);
+                        }
 
-                    lastMoveTime = Time.realtimeSinceStartup;
+                        if (editor.currentSong.ChartPositionToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSong.length)
+                        {
+                            SetPosition(snappedPos);
+                        }
+
+                        lastMoveTime = Time.realtimeSinceStartup;
+                    }
                 }
 
                 UpdateTimelineHandleBasedPos();
@@ -243,6 +223,40 @@ public class TimelineMovementController : MovementController
                 timeline.handlePos = 0;
                 transform.position = initPos;
             }
+        }
+    }
+
+    void SectionJump(float direction)
+    {
+        // Jump to the previous or next sections
+        float position = Mathf.Round(strikeLine.position.y);
+
+        int i = 0;
+        while (i < editor.currentSong.sections.Length && Mathf.Round(editor.currentSong.sections[i].worldYPosition) <= position)
+        {
+            ++i;
+        }
+
+        // Jump forward
+        if (direction > 0)
+        {
+            // Found section ahead
+            if (i < editor.currentSong.sections.Length && Mathf.Round(editor.currentSong.sections[i].worldYPosition) > position)
+                SetPosition(editor.currentSong.sections[i].position);
+            else
+                SetPosition(editor.currentSong.TimeToChartPosition(editor.currentSong.length, editor.currentSong.resolution));       // Jump to the end of the song
+
+        }
+        // Jump backwards
+        else
+        {
+            while (i > editor.currentSong.sections.Length - 1 || (i >= 0 && Mathf.Round(editor.currentSong.sections[i].worldYPosition) >= position))
+                --i;
+
+            if (i >= 0)
+                SetPosition(editor.currentSong.sections[i].position);
+            else
+                SetPosition(0);
         }
     }
 }
