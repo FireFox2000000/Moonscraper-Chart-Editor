@@ -39,7 +39,7 @@ public class SustainController : SelectableClick {
 
     public override void OnSelectableMouseDrag()
     {
-        if (nCon.note.song != null)
+        if (nCon.note != null && nCon.note.song != null)
         {
             // Update sustain
             if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))

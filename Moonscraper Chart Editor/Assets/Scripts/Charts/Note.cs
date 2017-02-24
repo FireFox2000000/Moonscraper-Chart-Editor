@@ -335,7 +335,10 @@ public class Note : ChartObject
         {
             if (previous.fret_type == Note.Fret_Type.OPEN)
             {
-                return new Note[] { previous };
+                if (list.Count > 0)
+                    return list.ToArray();
+                else
+                    return new Note[] { previous };
             }
             else if (previous.position < startNote.position)
             {
