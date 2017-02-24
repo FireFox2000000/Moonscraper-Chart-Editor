@@ -33,11 +33,18 @@ public class HitAnimation : MonoBehaviour {
 
         position.z += SPEED * Time.deltaTime;
 
-        if (position.z > initZPos)
+        if (position.z > initZPos || Globals.applicationMode != Globals.ApplicationMode.Playing)
             position.z = initZPos;
 
         transform.position = position;
         
+    }
+
+    public void StopAnim()
+    {
+        Vector3 position = transform.position;
+        position.z = initZPos;
+        transform.position = position;
     }
 
     public void PlayOneShot()

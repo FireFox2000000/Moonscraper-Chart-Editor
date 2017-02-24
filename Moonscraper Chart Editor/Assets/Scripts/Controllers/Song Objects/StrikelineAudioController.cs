@@ -47,8 +47,9 @@ public class StrikelineAudioController : MonoBehaviour {
                 default:
                     break;
             }
-
+            
             source.PlayOneShot(clap);
+            Debug.Log("Played clap");
 
             lastClapPos = col.transform.position.y;
         }

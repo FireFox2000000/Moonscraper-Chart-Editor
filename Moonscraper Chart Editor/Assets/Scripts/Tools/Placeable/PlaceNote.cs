@@ -248,6 +248,9 @@ public class PlaceNote : PlaceSongObject {
             noteToAdd = note;
 
         editor.currentChart.Add(noteToAdd, update);
+        if (noteToAdd.CannotBeForcedCheck)
+            noteToAdd.flags &= ~Note.Flags.FORCED;
+
         //NoteController nCon = editor.CreateNoteObject(noteToAdd);
         standardOverwriteOpen(noteToAdd);
 

@@ -483,6 +483,9 @@ public class ChartEditor : MonoBehaviour {
     bool cancel;
     public void Play()
     {
+        foreach (HitAnimation hitAnim in indicators.animations)
+            hitAnim.StopAnim();
+
         mixer.audioMixer.SetFloat("Pitch", 1 / (Globals.gameSpeed));
         play.interactable = false;
         Globals.applicationMode = Globals.ApplicationMode.Playing;

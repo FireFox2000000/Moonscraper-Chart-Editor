@@ -49,6 +49,16 @@ public class PlaceNoteController : ObjectlessTool {
         {
             placeableNotes.gameObject.SetActive(false);
         }
+
+        // Update flags in the note panel
+        if (editor.currentSelectedObject.GetType() == typeof(Note))
+        {
+            foreach (PlaceNote note in notes)
+            {
+                note.note.flags = ((Note)editor.currentSelectedObject).flags;
+            }
+        }
+
         for (int i = 1; i < notes.Length; ++i)
         {          
             // Need to make sure the note is at it's correct tick position
