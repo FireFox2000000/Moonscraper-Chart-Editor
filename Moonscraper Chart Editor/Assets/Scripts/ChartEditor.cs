@@ -536,6 +536,13 @@ public class ChartEditor : MonoBehaviour {
 
     public void Stop()
     {
+        if (indicators && indicators.animations != null)
+            foreach (HitAnimation hitAnim in indicators.animations)
+            {
+                if (hitAnim)
+                    hitAnim.StopAnim();
+            }
+
         startGameplayPos = null;
         cancel = true;
         play.interactable = true;

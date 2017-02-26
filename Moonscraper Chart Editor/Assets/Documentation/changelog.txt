@@ -1,3 +1,12 @@
+Moonscraper v0.8.02 changelog - 25/02/2017
+
+NEW FEATURES
+-Can now adjust snap with the left and right arrow keys alongside the q and w keys. 
+
+FIXES
+-Fixed sometimes sustains not being capped when placing new note involving open notes.
+-Fixed tap and forced properties not being applied to the note tool in keyboard mode.
+
 Moonscraper v0.8 changelog - 23/02/2017
 
 NEW FEATURES

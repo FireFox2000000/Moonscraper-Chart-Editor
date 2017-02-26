@@ -227,36 +227,6 @@ public abstract class SongObject
 
         return pos;
     }
-    /*
-    static int FindPreviousPosition<T>(System.Type type, int startPosition, T[] list) where T : SongObject
-    {
-        // Linear search
-        if (startPosition < 0 || startPosition > list.Length - 1)
-            return Globals.NOTFOUND;
-        else
-        {
-            --startPosition;
-
-            while (startPosition >= 0)
-            {
-                if (list[startPosition].GetType() == type)
-                    return startPosition;
-                --startPosition;
-            }
-
-            return Globals.NOTFOUND;
-        }
-    }
-
-    static T FindPreviousOfType<T>(System.Type type, int startPosition, T[] list) where T : SongObject
-    {
-        int pos = FindPreviousPosition(type, startPosition, list);
-
-        if (pos == Globals.NOTFOUND)
-            return null;
-        else
-            return list[pos];
-    }*/
 
     static int FindPreviousPosition<T>(System.Type type, int startPosition, List<T> list) where T : SongObject
     {
@@ -287,35 +257,6 @@ public abstract class SongObject
         else
             return list[pos];
     }
-    /*
-    static int FindNextPosition<T>(System.Type type, int startPosition, T[] list) where T : SongObject
-    {
-        // Linear search
-        if (startPosition < 0 || startPosition > list.Length - 1)
-            return Globals.NOTFOUND;
-        else
-        {
-            ++startPosition;
-
-            while (startPosition < list.Length)
-            {
-                if (list[startPosition].GetType() == type)
-                    return startPosition;
-                ++startPosition;
-            }
-
-            return Globals.NOTFOUND;
-        }
-    }
-
-    static T FindNextOfType<T>(System.Type type, int startPosition, T[] list) where T : SongObject
-    {
-        int pos = FindNextPosition(type, startPosition, list);
-        if (pos == Globals.NOTFOUND)
-            return null;
-        else
-            return list[pos];
-    }*/
 
     static int FindNextPosition<T>(System.Type type, int startPosition, List<T> list) where T : SongObject
     {
@@ -537,7 +478,7 @@ public abstract class SongObject
                 return new T[0];
 
             // Iterate to the very last object at a lesser position, as there may be multiple objects located at the same position
-            while (maxArrayPos + 1 < list.Length && list[maxArrayPos + 1].position < maxPos)
+            while (maxArrayPos + 1 < list.Length && list[maxArrayPos + 1].position <= maxPos)
             {
                 ++maxArrayPos;
             }

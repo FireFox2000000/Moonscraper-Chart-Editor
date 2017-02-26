@@ -229,18 +229,45 @@ public class PlaceNote : PlaceSongObject {
     {
         List<ActionHistory.Action> noteRecord = new List<ActionHistory.Action>();
 
+        Note[] notesToCheckOverwrite = SongObject.GetRange(editor.currentChart.notes, note.position, note.position);
+        
+        // Account for when adding an exact note as what's already in   
+        if (notesToCheckOverwrite.Length > 0)
+        {
+            bool cancelAdd = false;
+            foreach (Note overwriteNote in notesToCheckOverwrite)
+            {              
+                if (note.AllValuesCompare(overwriteNote))
+                {
+                    cancelAdd = true;
+                    break;
+                }
+                if ((note.fret_type == Note.Fret_Type.OPEN || note.fret_type == overwriteNote.fret_type || overwriteNote.fret_type == Note.Fret_Type.OPEN) && !note.AllValuesCompare(overwriteNote))
+                {
+                    noteRecord.Add(new ActionHistory.Delete(overwriteNote));
+                }
+            }
+            if (!cancelAdd)
+                noteRecord.Add(new ActionHistory.Add(note));
+        }
+        else
+            noteRecord.Add(new ActionHistory.Add(note));
+        /*
         int arrayPos = SongObject.FindObjectPosition(note, editor.currentChart.notes);
         if (arrayPos != Globals.NOTFOUND)       // Found an object that matches
         {
             if (!note.AllValuesCompare(editor.currentChart.notes[arrayPos]))
-                // Object will changed, therefore record
-                noteRecord.Add(new ActionHistory.Modify(editor.currentChart.notes[arrayPos], note));
+            {
+                if (note.fret_type != Note.Fret_Type.OPEN)
+                    // Object will changed, therefore record
+                    noteRecord.Add(new ActionHistory.Modify(editor.currentChart.notes[arrayPos], note));
+            }
         }
         else
         {
             noteRecord.Add(new ActionHistory.Add(note));
-        }
-
+        }*/
+                
         Note noteToAdd;
         if (copy)
             noteToAdd = new Note(note);

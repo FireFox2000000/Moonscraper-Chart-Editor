@@ -49,7 +49,7 @@ public class StrikelineAudioController : MonoBehaviour {
             }
             
             source.PlayOneShot(clap);
-            Debug.Log("Played clap");
+            //Debug.Log("Played clap");
 
             lastClapPos = col.transform.position.y;
         }
