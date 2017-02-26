@@ -5,7 +5,7 @@
   Charter = "FireFox2000000"
   Offset = 0.05
   Resolution = 192
-  Player2 = bass
+  Player2 = "bass
   Difficulty = 0
   PreviewStart = 0
   PreviewEnd = 0

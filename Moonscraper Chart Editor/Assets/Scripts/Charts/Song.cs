@@ -24,6 +24,7 @@ public class Song {
     public int difficulty = 0;
     public float offset = 0, resolution = 192, previewStart = 0, previewEnd = 0;
     public string genre = "rock", mediatype = "cd";
+    public string year = string.Empty;
     AudioClip[] audioStreams = new AudioClip[3];
 
     public AudioClip musicStream { get { return audioStreams[MUSIC_STREAM_ARRAY_POS]; } set { audioStreams[MUSIC_STREAM_ARRAY_POS] = value; } }
@@ -614,6 +615,7 @@ public class Song {
         Regex previewStartRegex = new Regex(@"PreviewStart = " + FLOATSEARCH);
         Regex previewEndRegex = new Regex(@"PreviewEnd = " + FLOATSEARCH);
         Regex genreRegex = new Regex(@"Genre = " + QUOTEVALIDATE);
+        Regex yearRegex = new Regex(@"Year = " + QUOTEVALIDATE);
         Regex mediaTypeRegex = new Regex(@"MediaType = " + QUOTEVALIDATE);
         Regex musicStreamRegex = new Regex(@"MusicStream = " + QUOTEVALIDATE);
         Regex guitarStreamRegex = new Regex(@"GuitarStream = " + QUOTEVALIDATE);
@@ -698,6 +700,9 @@ public class Song {
                     mediatype = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
                 }
 
+                else if (yearRegex.IsMatch(line))
+                    year = Regex.Replace(Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"'), @"\D", "");
+
                 // MusicStream = "ENDLESS REBIRTH.ogg"
                 else if (musicStreamRegex.IsMatch(line))
                 {
@@ -745,19 +750,32 @@ public class Song {
         
     }
 
-    string GetPropertiesString()
+    string GetPropertiesStringWithoutAudio()
     {
-        return name + Globals.LINE_ENDING +
-                artist + Globals.LINE_ENDING +
-                charter + Globals.LINE_ENDING +
-                offset + Globals.LINE_ENDING +
-                resolution + Globals.LINE_ENDING +
-                player2 + Globals.LINE_ENDING +
-                difficulty + Globals.LINE_ENDING +
-                previewStart + Globals.LINE_ENDING +
-                previewEnd + Globals.LINE_ENDING +
-                genre + Globals.LINE_ENDING +
-                mediatype;
+        string saveString = string.Empty;
+
+        // Song properties  
+        if (name != string.Empty)      
+            saveString += Globals.TABSPACE + "Name = \"" + name + "\"" + Globals.LINE_ENDING;
+        if (artist != string.Empty)
+            saveString += Globals.TABSPACE + "Artist = \"" + artist + "\"" + Globals.LINE_ENDING;
+        if (charter != string.Empty)
+            saveString += Globals.TABSPACE + "Charter = \"" + charter + "\"" + Globals.LINE_ENDING;
+        if (year != string.Empty)
+            saveString += Globals.TABSPACE + "Year = \", " + year + "\"" + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "Offset = " + offset + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "Resolution = " + resolution + Globals.LINE_ENDING;
+        if (player2 != string.Empty)
+            saveString += Globals.TABSPACE + "Player2 = \"" + player2.ToLower() + Globals.LINE_ENDING;       
+        saveString += Globals.TABSPACE + "Difficulty = " + difficulty + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "PreviewStart = " + previewStart + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "PreviewEnd = " + previewEnd + Globals.LINE_ENDING;
+        if (genre != string.Empty)
+            saveString += Globals.TABSPACE + "Genre = \"" + genre + "\"" + Globals.LINE_ENDING;
+        if (mediatype != string.Empty)
+            saveString += Globals.TABSPACE + "MediaType = \"" + mediatype + "\"" + Globals.LINE_ENDING;
+
+        return saveString;
     }
 
     void submitDataSyncTrack(List<string> stringData)
@@ -860,18 +878,9 @@ public class Song {
 
         // Song properties
         saveString += "[Song]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "Name = \"" + name + "\"" + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "Artist = \"" + artist + "\"" + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "Charter = \"" + charter + "\"" + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "Offset = " + offset + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "Resolution = " + resolution + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "Player2 = " + player2.ToLower() + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "Difficulty = " + difficulty + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "PreviewStart = " + previewStart + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "PreviewEnd = " + previewEnd + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "Genre = \"" + genre + "\"" + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "MediaType = \"" + mediatype + "\"" + Globals.LINE_ENDING;
+        saveString += GetPropertiesStringWithoutAudio();
 
+        // Song audio
         if (musicStream != null)
             saveString += Globals.TABSPACE + "MusicStream = \"" + musicString + "\"" + Globals.LINE_ENDING;
 

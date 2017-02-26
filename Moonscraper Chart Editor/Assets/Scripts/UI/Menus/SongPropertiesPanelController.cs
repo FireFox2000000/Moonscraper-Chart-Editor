@@ -11,6 +11,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     public InputField songName;
     public InputField artist;
     public InputField charter;
+    public InputField year;
     public InputField offset;
     public InputField difficulty;
     public InputField genre;
@@ -40,6 +41,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         songName.text = song.name;
         artist.text = song.artist;
         charter.text = song.charter;
+        year.text = song.year;
         offset.text = song.offset.ToString();
         difficulty.text = song.difficulty.ToString();
         genre.text = song.genre;
@@ -66,6 +68,7 @@ public class SongPropertiesPanelController : DisplayMenu {
             song.name = songName.text;
             song.artist = artist.text;
             song.charter = charter.text;
+            song.year = year.text;
 
             try
             {
