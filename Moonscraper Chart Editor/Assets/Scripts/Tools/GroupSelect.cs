@@ -249,7 +249,7 @@ public class GroupSelect : ToolObject {
     {
         List<ActionHistory.Action> actions = new List<ActionHistory.Action>();
 
-        foreach (ChartObject note in data)
+        foreach (ChartObject note in editor.currentSelectedObjects)
         {
             if (note.classID == (int)SongObject.ID.Note)
             {
