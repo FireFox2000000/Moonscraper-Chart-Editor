@@ -6,6 +6,7 @@ public class Globals : MonoBehaviour {
     public const uint FULL_STEP = 768;
     public static readonly float STANDARD_BEAT_RESOLUTION = 192.0f;
     public static readonly string LINE_ENDING = "\r\n";
+    const float FRAMERATE = 25;
 
     public static readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3" };
     public static readonly string[] validTextureExtensions = { ".jpg", ".png" };
@@ -232,6 +233,9 @@ public class Globals : MonoBehaviour {
             else
                 editor.Stop();
         }
+
+        //if (Input.GetButtonDown("Next Frame"))
+            //StartCoroutine(editor.PlayAutoStop(1 / FRAMERATE));
     }
 
     public void ToggleSongViewMode(bool value)

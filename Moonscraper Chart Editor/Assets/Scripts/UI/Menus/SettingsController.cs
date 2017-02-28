@@ -18,6 +18,8 @@ public class SettingsController : DisplayMenu
     public Slider clapSourceSlider;
     public Slider sfxSlider;
 
+    public Slider masterVolumeSlider;
+
     public InputField sustainGapInput;
 
     protected override void Awake()
@@ -47,6 +49,8 @@ public class SettingsController : DisplayMenu
         Globals.sfxVolume = sfxSlider.value;
 
         editor.clapSource.volume = clapSourceSlider.value;
+
+        AudioListener.volume = masterVolumeSlider.value;
     }
 
     protected override void OnEnable()
@@ -76,6 +80,8 @@ public class SettingsController : DisplayMenu
             extendedSustainsToggle.isOn = true;
         else
             extendedSustainsToggle.isOn = false;
+
+        masterVolumeSlider.value = AudioListener.volume;
 
         Update();
     }  

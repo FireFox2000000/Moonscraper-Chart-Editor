@@ -534,6 +534,14 @@ public class ChartEditor : MonoBehaviour {
         }
     }
 
+    public IEnumerator PlayAutoStop(float playTime)
+    {
+        Debug.Log(playTime);
+        Play();
+        yield return new WaitForSeconds(playTime);
+        Stop();
+    }
+
     public void Stop()
     {
         if (indicators && indicators.animations != null)
