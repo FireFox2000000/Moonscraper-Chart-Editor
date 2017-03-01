@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(Renderer))]
 public abstract class SongObjectController : SelectableClick {
     public const float CHART_CENTER_POS = 0;
 

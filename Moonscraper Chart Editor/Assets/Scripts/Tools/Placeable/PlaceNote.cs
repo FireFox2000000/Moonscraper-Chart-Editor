@@ -25,7 +25,7 @@ public class PlaceNote : PlaceSongObject {
     protected override void Awake()
     {
         base.Awake();
-        visuals = GetComponent<NoteVisualsManager>();
+        visuals = GetComponentInChildren<NoteVisualsManager>();
         note = new Note(0, Note.Fret_Type.GREEN);
 
         controller = GetComponent<NoteController>();

@@ -10,6 +10,7 @@ public class NoteController : SongObjectController {
 
     public Note note { get { return (Note)songObject; } set { Init(value); } }
     public SustainController sustain;
+    public NoteVisualsManager noteVisuals;
     Whammy whammy;  
 
 #if NOTE_TYPE_2D
@@ -30,7 +31,8 @@ public class NoteController : SongObjectController {
     {
         get
         {
-            if (noteRenderer && noteHitCollider && noteRenderer.enabled && noteHitCollider.enabled)
+            if (noteVisuals.gameObject.activeSelf)
+            //if (noteRenderer && noteHitCollider && noteRenderer.enabled && noteHitCollider.enabled)
                 return true;
             else
                 return false;
@@ -42,8 +44,8 @@ public class NoteController : SongObjectController {
 #if NOTE_TYPE_2D
         noteRenderer = GetComponent<SpriteRenderer>();
 #else
-        noteRenderer = GetComponent<Renderer>();
-        noteHitCollider = GetComponentInChildren<EdgeCollider2D>();
+        //noteRenderer = GetComponent<Renderer>();
+        //noteHitCollider = GetComponentInChildren<EdgeCollider2D>();
 #endif
         sustainRen = sustain.GetComponent<Renderer>();
         whammy = sustainRen.GetComponent<Whammy>();
@@ -315,8 +317,9 @@ public class NoteController : SongObjectController {
 
     public void Activate()
     {
-        noteRenderer.enabled = true;
-        noteHitCollider.enabled = true;
+        noteVisuals.gameObject.SetActive(true);
+       // noteRenderer.enabled = true;
+        //noteHitCollider.enabled = true;
         sustainRen.enabled = true;
         hit = false;
         sustainBroken = false;
@@ -325,8 +328,9 @@ public class NoteController : SongObjectController {
 
     public void DeactivateNote()
     {
-        noteRenderer.enabled = false;
-        noteHitCollider.enabled = false;
+        noteVisuals.gameObject.SetActive(false);
+        //noteRenderer.enabled = false;
+        //noteHitCollider.enabled = false;
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
             PlayIndicatorAnim();

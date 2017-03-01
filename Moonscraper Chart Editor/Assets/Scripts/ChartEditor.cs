@@ -170,6 +170,8 @@ public class ChartEditor : MonoBehaviour {
 
         editOccurred = false;
         SetApplicationWindowPointer();
+
+        loadingScreen.gameObject.SetActive(true);
     }
 
     Vector3 mousePos = Vector3.zero;
