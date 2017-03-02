@@ -10,11 +10,18 @@ public class HitAnimation : MonoBehaviour {
     public bool running = false;
 
     SpriteRenderer ren;
+    public SpriteRenderer baseRen;
+
+    string initBaseLayerName;
+    int initBaseLayerPos;
 
 	// Use this for initialization
 	void Start () {
         initZPos = transform.position.z;
         ren = GetComponent<SpriteRenderer>();
+
+        initBaseLayerName = baseRen.sortingLayerName;
+        initBaseLayerPos = baseRen.sortingOrder;
 	}
 	
 	// Update is called once per frame
@@ -24,10 +31,16 @@ public class HitAnimation : MonoBehaviour {
         {
             gameObject.SetActive(true);
             ren.sortingLayerName = "Highlights";
+
+            baseRen.sortingOrder = ren.sortingOrder - 1;
+            baseRen.sortingLayerName = "Highlights";
         }
         else
         {
             ren.sortingLayerName = "Sustains";
+            baseRen.sortingLayerName = initBaseLayerName;
+            baseRen.sortingOrder = initBaseLayerPos;
+
             running = false;
         }
 

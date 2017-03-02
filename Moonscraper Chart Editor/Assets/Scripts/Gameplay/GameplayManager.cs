@@ -33,7 +33,7 @@ public class GameplayManager : MonoBehaviour {
     List<NoteController> currentSustains = new List<NoteController>();
     ChartEditor editor;
 
-    float hitWindowHeight = 0.14f;
+    float hitWindowHeight = 0.17f;
     float initWindowSize;
     float initSize;
     float previousStrumValue;

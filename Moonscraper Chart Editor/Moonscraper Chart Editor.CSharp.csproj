@@ -94,6 +94,7 @@
     <Compile Include="Assets\Scripts\Advanced INI Parser\INIParser.cs" />
     <Compile Include="Assets\Scripts\Animations\HitAnimation.cs" />
     <Compile Include="Assets\Scripts\Animations\NoteSpin.cs" />
+    <Compile Include="Assets\Scripts\Animations\PerspectiveBillboarding.cs" />
     <Compile Include="Assets\Scripts\Assign Custom Resources\AssignCustomResources.cs" />
     <Compile Include="Assets\Scripts\Assign Custom Resources\CustomResource.cs" />
     <Compile Include="Assets\Scripts\Assign Custom Resources\LoadCustomResources.cs" />
