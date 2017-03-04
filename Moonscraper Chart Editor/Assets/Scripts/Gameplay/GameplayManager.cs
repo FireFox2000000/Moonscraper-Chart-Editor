@@ -366,9 +366,10 @@ public class GameplayManager : MonoBehaviour {
         foreach (Note chordNote in note.note.GetChord())
         {
             chordNote.controller.hit = true;
+            chordNote.controller.PlayIndicatorAnim();
 
-            if (strum)
-                chordNote.controller.DeactivateNote();
+            //if (strum)
+                //chordNote.controller.DeactivateNote();
         }
 
         if (note.note.sustain_length > 0)

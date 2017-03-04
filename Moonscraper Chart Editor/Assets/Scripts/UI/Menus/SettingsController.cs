@@ -51,6 +51,7 @@ public class SettingsController : DisplayMenu
         editor.clapSource.volume = clapSourceSlider.value;
 
         AudioListener.volume = masterVolumeSlider.value;
+       // editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo
     }
 
     protected override void OnEnable()

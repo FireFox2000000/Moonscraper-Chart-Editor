@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PerspectiveBillboarding : MonoBehaviour {
     const float ROTATION_FACTOR = 15;
+
     Vector3 initRotation;
 
 	// Use this for initialization

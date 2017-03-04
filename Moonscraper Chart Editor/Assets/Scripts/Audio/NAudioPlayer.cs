@@ -13,19 +13,37 @@ public static class NAudioPlayer
     {
         float time = Time.realtimeSinceStartup;
         // Load the data into a stream
+        /*
         MemoryStream mp3stream = new MemoryStream(data);
         // Convert the data in the stream to WAV format
         Mp3FileReader mp3audio = new Mp3FileReader(mp3stream);
-        WaveStream waveStream = WaveFormatConversionStream.CreatePcmStream(mp3audio);
+        WaveStream waveStream = WaveFormatConversionStream.CreatePcmStream(mp3audio);*/
+
+        float[] interleavedData;
+
         // Convert to WAV data
-        WAV wav = new WAV(AudioMemStream(waveStream).ToArray());
+        WAV wav = WAVFromMp3Data(data, out interleavedData);
         Debug.Log("mp3 time: " + (Time.realtimeSinceStartup - time));
         time = Time.realtimeSinceStartup;
-        AudioClip audioClip = AudioClip.Create("testSound", wav.SampleCount, 1, wav.Frequency, false);
-        audioClip.SetData(wav.LeftChannel, 0);
+        AudioClip audioClip = AudioClip.Create("testSound", wav.SampleCount, 2, wav.Frequency, false);
+
+        audioClip.SetData(interleavedData, 0);
         Debug.Log("mp3 time: " + (Time.realtimeSinceStartup - time));
         // Return the clip
         return audioClip;
+    }
+
+    public static float[] InterleaveChannels(WAV wav)
+    {
+        float[] data = new float[wav.LeftChannel.Length + wav.RightChannel.Length];
+
+        for (int i = 0; i < wav.LeftChannel.Length; ++i)
+        {
+            data[i * 2] = wav.LeftChannel[i];
+            data[i * 2 + 1] = wav.RightChannel[i];
+        }
+
+        return data;
     }
     /*
     public static IEnumerator FromMp3DataASync(byte[] data, Action<AudioClip> audioClip)
@@ -45,7 +63,7 @@ public static class NAudioPlayer
         return audioClip;
     }*/
 
-    public static WAV WAVFromMp3Data(byte[] data)
+    public static WAV WAVFromMp3Data(byte[] data, out float[] interleavedChannelData)
     {
         // Load the data into a stream
         MemoryStream mp3stream = new MemoryStream(data);
@@ -54,6 +72,8 @@ public static class NAudioPlayer
         WaveStream waveStream = WaveFormatConversionStream.CreatePcmStream(mp3audio);
         // Convert to WAV data
         WAV wav = new WAV(AudioMemStream(waveStream).ToArray());
+
+        interleavedChannelData = InterleaveChannels(wav);
 
         return wav;
     }

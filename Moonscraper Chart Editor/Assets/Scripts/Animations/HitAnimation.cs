@@ -53,11 +53,20 @@ public class HitAnimation : MonoBehaviour {
         
     }
 
+    void OnDisable ()
+    {
+        StopAnim();
+    }
+
     public void StopAnim()
     {
         Vector3 position = transform.position;
         position.z = initZPos;
         transform.position = position;
+
+        ren.sortingLayerName = "Sustains";
+        baseRen.sortingLayerName = initBaseLayerName;
+        baseRen.sortingOrder = initBaseLayerPos;
     }
 
     public void PlayOneShot()

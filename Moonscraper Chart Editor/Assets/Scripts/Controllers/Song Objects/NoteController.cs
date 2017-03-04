@@ -208,7 +208,7 @@ public class NoteController : SongObjectController {
             // Handle gameplay operation
             if (Globals.applicationMode == Globals.ApplicationMode.Playing)
             {
-                const float offset = 0.25f;
+                const float offset = 0.4f;
 
                 if (Globals.bot)
                 {
@@ -220,6 +220,8 @@ public class NoteController : SongObjectController {
                 {
                     if (isActivated)
                     {
+                        if (Globals.bot)
+                            PlayIndicatorAnim();
                         DeactivateNote();
                     }
                     
@@ -246,7 +248,7 @@ public class NoteController : SongObjectController {
                             {
                                 //whammy.ReduceSustainSizeKeysAdjust((float)prevSustainHeight, sustain.transform.localScale.y);
                             }
-
+                         
                             PlayIndicatorAnim();
                         }
                         else
@@ -332,11 +334,11 @@ public class NoteController : SongObjectController {
         //noteRenderer.enabled = false;
         //noteHitCollider.enabled = false;
 
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
-            PlayIndicatorAnim();
+        //if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+            //PlayIndicatorAnim();
     }
 
-    void PlayIndicatorAnim()
+    public void PlayIndicatorAnim()
     {
         if (note.fret_type != Note.Fret_Type.OPEN)
         {

@@ -275,18 +275,26 @@ public class Song {
             }
 
             if (Path.GetExtension(filepath) == ".mp3")
-            {
-                
+            {              
                 WAV wav = null;
+                float[] interleavedData = null;
+
                 byte[] bytes = www.bytes;
-                System.Threading.Thread wavConversionThread = new System.Threading.Thread(() => { wav = NAudioPlayer.WAVFromMp3Data(bytes); });
+                System.Threading.Thread wavConversionThread = new System.Threading.Thread(() => { wav = NAudioPlayer.WAVFromMp3Data(bytes, out interleavedData); });
                 wavConversionThread.Start();
 
                 while (wavConversionThread.ThreadState == System.Threading.ThreadState.Running)
                     yield return null;
 
-                audioStreams[audioStreamArrayPos] = AudioClip.Create("testSound", wav.SampleCount, 1, wav.Frequency, false);
-                audioStreams[audioStreamArrayPos].SetData(wav.LeftChannel, 0);
+                audioStreams[audioStreamArrayPos] = AudioClip.Create("testSound", wav.SampleCount, 2, wav.Frequency, false);
+                /*
+                float[] interleavedData = new float[0];
+                System.Threading.Thread interleaveChannelsThread = new System.Threading.Thread(() => { interleavedData = NAudioPlayer.InterleaveChannels(wav); });
+                interleaveChannelsThread.Start();
+                while (interleaveChannelsThread.ThreadState == System.Threading.ThreadState.Running)
+                    yield return null;
+                    */
+                audioStreams[audioStreamArrayPos].SetData(interleavedData, 0);
 
                 //audioStreams[audioStreamArrayPos] = NAudioPlayer.FromMp3Data(www.bytes);
             }
