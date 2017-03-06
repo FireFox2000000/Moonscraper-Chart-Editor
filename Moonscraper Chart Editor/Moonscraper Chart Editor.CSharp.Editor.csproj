@@ -121,6 +121,9 @@
     <Reference Include="XInputDotNetPure">
       <HintPath>Assets\Plugins\x86_64\XInputDotNetPure.dll</HintPath>
     </Reference>
+    <Reference Include="NVorbis">
+      <HintPath>Assets\Plugins\NVorbis.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Moonscraper Chart Editor.CSharp.Plugins.csproj">

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -7,7 +8,14 @@ public class WaveformDraw : MonoBehaviour {
     ChartEditor editor;
     LineRenderer lineRen;
     float[] data = new float[0];
-    AudioClip currentClip = null;
+    SampleData currentSample = null;
+    AudioClip currentAudio = null;
+
+    SampleData selectedSample = null;
+    AudioClip selectedAudio = null;
+
+    public Dropdown waveformSelect;
+    public Text loadingText;
 
 	// Use this for initialization
 	void Start () {
@@ -17,31 +25,56 @@ public class WaveformDraw : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        // Get new data
-        if (Globals.viewMode == Globals.ViewMode.Song && (currentClip == null || currentClip != editor.currentSong.musicStream))
+        switch (waveformSelect.value)
         {
-            currentClip = editor.currentSong.musicStream;
+            case (0):
+                selectedSample = editor.currentSong.musicSample;
+                selectedAudio = editor.currentSong.musicStream;
+                break;
+            case (1):
+                selectedSample = editor.currentSong.guitarSample;
+                selectedAudio = editor.currentSong.guitarStream;
+                break;
+            case (2):
+                selectedSample = editor.currentSong.rhythmSample;
+                selectedAudio = editor.currentSong.rhythmStream;
+                break;
+            default:
+                break;
+        }
 
-            if (currentClip == null)
+        waveformSelect.gameObject.SetActive(Globals.viewMode == Globals.ViewMode.Song);
+        loadingText.gameObject.SetActive(Globals.viewMode == Globals.ViewMode.Song && selectedSample.IsLoading);
+
+        // Get new data
+        if (Globals.viewMode == Globals.ViewMode.Song && (currentSample == null || currentSample != selectedSample || data.Length == 0))
+        {
+            currentAudio = selectedAudio;
+            currentSample = selectedSample;
+
+            if (currentSample == null)
             {
                 data = new float[0];
             }
             else
             {
+                data = currentSample.data;
+                /*
                 if (!Song.streamAudio)
                 {
-                    data = new float[currentClip.samples * currentClip.channels];
-                    currentClip.GetData(data, 0);
+                    data = currentSample.data;
+                    data = new float[currentSample.samples * currentSample.channels];
+                    currentSample.GetData(data, 0);
                 }
                 else
                 {
                     data = new float[0];
-                }
+                }*/
             }
         } 
 
         // Choose whether to display the waveform or not
-	    if (Globals.viewMode == Globals.ViewMode.Song && editor.currentSong.musicStream != null && data.Length > 0)
+	    if (Globals.viewMode == Globals.ViewMode.Song && currentSample != null && currentAudio != null && data.Length > 0)
         {
             UpdateWaveformPoints();
 
@@ -54,30 +87,38 @@ public class WaveformDraw : MonoBehaviour {
 
     void UpdateWaveformPoints()
     {
-        if (data.Length <= 0 || currentClip == null)
+        const float MAX_SCALE = 2.5f;
+
+        if (data.Length <= 0 || currentSample == null)
         {
             return;
         }
 
-        float sampleRate = currentClip.length / data.Length;// currentClip.samples / currentClip.length;
+        float sampleRate = currentAudio.length / data.Length;// currentClip.samples / currentClip.length;
 
         int iteration = 20;
         int startPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMin.position.y), iteration);
         int endPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMax.position.y), iteration);
 
         List<Vector3> points = new List<Vector3>();
-        for (int i = startPos; i < endPos; i += (int)(currentClip.channels * iteration))
+
+        float scaling = 1;
+#if false
+        if (currentSample.clip > 0)
+            scaling = (MAX_SCALE / currentSample.clip);
+#endif
+        for (int i = startPos; i < endPos; i += (int)(currentAudio.channels * iteration))
         {
             float sampleAverage = 0;
 
-            for (int j = 0; j < currentClip.channels; ++j)
+            for (int j = 0; j < currentAudio.channels; ++j)
             {
                 sampleAverage += data[i + j];
             }
 
-            sampleAverage /= currentClip.channels;
+            sampleAverage /= currentAudio.channels;
 
-            points.Add(new Vector3(sampleAverage, Song.TimeToWorldYPosition(i * sampleRate), 0));
+            points.Add(new Vector3(sampleAverage * scaling, Song.TimeToWorldYPosition(i * sampleRate), 0));
         }
 
         lineRen.numPositions = points.Count;
@@ -88,11 +129,11 @@ public class WaveformDraw : MonoBehaviour {
     {
         if (time < 0)
             return 0;
-        else if (time >= currentClip.length)
+        else if (time >= currentAudio.length)
             return data.Length - 1;
 
         // Need to floor it so it lines up with the first channel
-        int arrayPoint = (int)((time / currentClip.length * data.Length) / (currentClip.channels * iteration)) * currentClip.channels * iteration;
+        int arrayPoint = (int)((time / currentAudio.length * data.Length) / (currentAudio.channels * iteration)) * currentAudio.channels * iteration;
 
         if (arrayPoint >= data.Length)
             arrayPoint = data.Length - 1;

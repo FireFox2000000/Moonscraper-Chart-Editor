@@ -26,10 +26,16 @@ public class Song {
     public string genre = "rock", mediatype = "cd";
     public string year = string.Empty;
     AudioClip[] audioStreams = new AudioClip[3];
+    SampleData[] audioSampleData = new SampleData[3];
 
     public AudioClip musicStream { get { return audioStreams[MUSIC_STREAM_ARRAY_POS]; } set { audioStreams[MUSIC_STREAM_ARRAY_POS] = value; } }
     public AudioClip guitarStream { get { return audioStreams[GUITAR_STREAM_ARRAY_POS]; } set { audioStreams[GUITAR_STREAM_ARRAY_POS] = value; } }
     public AudioClip rhythmStream { get { return audioStreams[RHYTHM_STREAM_ARRAY_POS]; } set { audioStreams[RHYTHM_STREAM_ARRAY_POS] = value; } }
+
+    public SampleData musicSample { get { return audioSampleData[MUSIC_STREAM_ARRAY_POS]; } private set { audioSampleData[MUSIC_STREAM_ARRAY_POS] = value; } }
+    public SampleData guitarSample { get { return audioSampleData[GUITAR_STREAM_ARRAY_POS]; } private set { audioSampleData[GUITAR_STREAM_ARRAY_POS] = value; } }
+    public SampleData rhythmSample { get { return audioSampleData[RHYTHM_STREAM_ARRAY_POS]; } private set { audioSampleData[RHYTHM_STREAM_ARRAY_POS] = value; } }
+
     public float length = 0;
 
     //string audioLocation = string.Empty;
@@ -114,6 +120,9 @@ public class Song {
 
         for (int i = 0; i < audioLocations.Length; ++i)
             audioLocations[i] = string.Empty;
+
+        for (int i = 0; i < audioSampleData.Length; ++i)
+            audioSampleData[i] = new SampleData();
 
         musicStream = null;
         length = 60 * 5;
@@ -229,6 +238,7 @@ public class Song {
 
     public void LoadMusicStream(string filepath)
     {
+        musicSample.ReadAudioFile(filepath);
         GameObject loadAudioObject = new GameObject("Load Rhythm Audio");
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
 
@@ -237,6 +247,7 @@ public class Song {
 
     public void LoadGuitarStream(string filepath)
     {
+        guitarSample.ReadAudioFile(filepath);
         GameObject loadAudioObject = new GameObject("Load Rhythm Audio");
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
 
@@ -245,6 +256,7 @@ public class Song {
 
     public void LoadRhythmStream(string filepath)
     {
+        rhythmSample.ReadAudioFile(filepath);
         GameObject loadAudioObject = new GameObject("Load Rhythm Audio");
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
 
