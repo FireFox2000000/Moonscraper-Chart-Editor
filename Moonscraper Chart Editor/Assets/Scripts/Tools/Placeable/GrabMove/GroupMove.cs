@@ -154,7 +154,6 @@ public class GroupMove : ToolObject
 
     public void SetSongObjects(SongObject[] songObjects, bool delete = false)
     {
-        float time = Time.realtimeSinceStartup;
         if (Mouse.world2DPosition != null)
             initMousePos = (Vector2)Mouse.world2DPosition;
         else
@@ -206,8 +205,6 @@ public class GroupMove : ToolObject
         Mouse.cancel = true;
         editor.currentSong.updateArrays();
         editor.currentChart.updateArrays();
-
-        Debug.Log(Time.realtimeSinceStartup - time);
     }
 
     public override void ToolDisable()

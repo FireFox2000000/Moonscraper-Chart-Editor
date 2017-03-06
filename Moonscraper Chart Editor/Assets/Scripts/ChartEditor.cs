@@ -175,6 +175,7 @@ public class ChartEditor : MonoBehaviour {
     }
 
     Vector3 mousePos = Vector3.zero;
+    bool mouseDownOverUI = false;
     public void Update()
     {
         // Group move/deselect
@@ -183,12 +184,13 @@ public class ChartEditor : MonoBehaviour {
             if (Input.GetMouseButtonDown(0))
             {
                 mousePos = Input.mousePosition;
+
+                mouseDownOverUI = Mouse.IsUIUnderPointer();
             }
 
-            if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && currentSelectedObjects.Length > 0 && !Mouse.GetSelectableObjectUnderMouse())
+            if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && currentSelectedObjects.Length > 0 && !Mouse.GetSelectableObjectUnderMouse() && !mouseDownOverUI)
             {
                 groupMove.SetSongObjects(currentSelectedObjects, true);
-
                 currentSelectedObject = null;
             }
 
