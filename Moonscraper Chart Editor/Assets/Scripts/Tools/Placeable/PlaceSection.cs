@@ -21,9 +21,15 @@ public class PlaceSection : PlaceSongObject {
         {
             if (Toolpane.currentTool == Toolpane.Tools.Section && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
             {
-                RecordAddActionHistory(section, editor.currentSong.sections);
+                Section sectionSearched = sectionSearch(section.position);
+                if (sectionSearched == null)
+                {
+                    RecordAddActionHistory(section, editor.currentSong.sections);
 
-                AddObject();
+                    AddObject();
+                }
+                else
+                    editor.currentSelectedObject = sectionSearched;
             }
         }
         else if (Input.GetButtonDown("Add Object"))
@@ -60,5 +66,15 @@ public class PlaceSection : PlaceSongObject {
         editor.currentSong.Add(sectionToAdd, update);
         //editor.CreateSectionObject(sectionToAdd);
         editor.currentSelectedObject = sectionToAdd;
+    }
+
+    Section sectionSearch(uint pos)
+    {
+        Section[] sectionsFound = SongObject.FindObjectsAtPosition(pos, editor.currentSong.sections);
+
+        if (sectionsFound.Length > 0)
+            return sectionsFound[0];
+        else
+            return null;
     }
 }
