@@ -66,10 +66,16 @@ public class TimelineMovementController : MovementController
     }
 
     Vector3 prevPos = Vector3.zero;
+    Vector3 lastMouseDownPos = Vector3.zero;
 
     // Update is called once per frame
     void LateUpdate () {
-	    if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+        {
+            lastMouseDownPos = Input.mousePosition;
+        }
+
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             if (scrollDelta == 0 && focused /*&& globals.InToolArea*/)
             {
@@ -141,9 +147,11 @@ public class TimelineMovementController : MovementController
                 UpdateTimelineHandleBasedPos();
             }
             // else check mouse range
-            else if (Toolpane.mouseDownInArea && (globals.InToolArea && (Input.GetMouseButton(0) || Input.GetMouseButton(1))))
+            else if (Toolpane.mouseDownInArea && (globals.InToolArea && (Input.GetMouseButton(0) || Input.GetMouseButton(1)) && Input.mousePosition != lastMouseDownPos))
             { 
-                if (!Toolpane.menuCancel && UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null && Input.mousePosition.y > Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y)
+                if (!Toolpane.menuCancel && 
+                    UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null && 
+                    Input.mousePosition.y > Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y)
                 {
                     // Autoscroll
                     transform.position = new Vector3(transform.position.x, transform.position.y + autoscrollSpeed * Time.deltaTime, transform.position.z);

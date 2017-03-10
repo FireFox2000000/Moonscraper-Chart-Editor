@@ -127,6 +127,11 @@ public class Globals : MonoBehaviour {
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
         editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
         editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
+
+        editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
+        editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].panStereo = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
+        editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].panStereo = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
+
         editor.clapSource.volume = (float)iniparse.ReadValue("Audio Volume", "Clap", 1.0f);
         sfxVolume = (float)iniparse.ReadValue("Audio Volume", "SFX", 1.0f);
 
@@ -283,6 +288,9 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Audio Volume", "Music Stream", editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume);
         iniparse.WriteValue("Audio Volume", "Guitar Stream", editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume);
         iniparse.WriteValue("Audio Volume", "Rhythm Stream", editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume);
+
+        iniparse.WriteValue("Audio Volume", "Audio Pan", editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo);
+
         iniparse.WriteValue("Audio Volume", "Clap", editor.clapSource.volume);
         iniparse.WriteValue("Audio Volume", "SFX", sfxVolume);
 

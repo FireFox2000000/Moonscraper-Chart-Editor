@@ -46,6 +46,12 @@ public class SampleData {
         }
     }
 
+    public void Stop()
+    {
+        if (loadThread.IsAlive)
+            loadThread.Abort();
+    }
+
     public void ReadAudioFile(string filepath)
     {
         if (loadThread.IsAlive)
@@ -55,11 +61,11 @@ public class SampleData {
         _data = new float[0];
         _clip = 0;
 
-        loadThread.Start();
+        loadThread.Start(); 
     }
 
     void loadData()
-    {
+    {   
         if (File.Exists(filepath))
         {
             byte[] bytes = File.ReadAllBytes(filepath);
@@ -67,16 +73,20 @@ public class SampleData {
             switch (Path.GetExtension(filepath))
             {
                 case (".ogg"):
-                    
                     NVorbis.VorbisReader vorbis = new NVorbis.VorbisReader(filepath);
                     vorbis.ClipSamples = false;
+
                     _data = new float[vorbis.TotalSamples * vorbis.Channels];
                     vorbis.ReadSamples(_data, 0, _data.Length);
-                    /*int count;
-                    while ((count = vorbis.ReadSamples(_data, 0, _data.Length)) > 0)
+                    /*
+                    int count = 0;
+                    while ((count += vorbis.ReadSamples(_data, count, 2)) > 0)
                     {
-                        Debug.Log(count);
-                    }*/
+                        //count += vorbis.Channels * 20;
+                        vorbis.DecodedPosition += 2000;
+                        
+                    }
+                    Debug.Log(count);*/
                     break;
                 case (".wav"):
                     WAV wav = new WAV(bytes);
@@ -88,6 +98,7 @@ public class SampleData {
                 default:
                     return;
             }
+
             Debug.Log("Sample length: " + _data.Length);
 
             foreach(float sample in _data)

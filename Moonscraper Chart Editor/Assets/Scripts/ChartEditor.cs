@@ -319,6 +319,10 @@ public class ChartEditor : MonoBehaviour {
         quitting = true;
         editCheck();
 
+        currentSong.musicSample.Stop();
+        currentSong.guitarSample.Stop();
+        currentSong.rhythmSample.Stop();
+
         while (currentSong.IsSaving);
     }
 
@@ -662,6 +666,10 @@ public class ChartEditor : MonoBehaviour {
         // Wait for saving to complete just in case
         while (currentSong.IsSaving)
             yield return null;
+
+        currentSong.musicSample.Stop();
+        currentSong.guitarSample.Stop();
+        currentSong.rhythmSample.Stop();
 
 #if TIMING_DEBUG
         totalLoadTime = Time.realtimeSinceStartup;

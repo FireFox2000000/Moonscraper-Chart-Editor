@@ -19,6 +19,7 @@ public class SettingsController : DisplayMenu
     public Slider sfxSlider;
 
     public Slider masterVolumeSlider;
+    public Slider musicPanSlider;
 
     public InputField sustainGapInput;
 
@@ -51,7 +52,10 @@ public class SettingsController : DisplayMenu
         editor.clapSource.volume = clapSourceSlider.value;
 
         AudioListener.volume = masterVolumeSlider.value;
-       // editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo
+        editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo = musicPanSlider.value / 10.0f;
+        editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].panStereo = musicPanSlider.value / 10.0f;
+        editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].panStereo = musicPanSlider.value / 10.0f;
+        // editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo
     }
 
     protected override void OnEnable()
@@ -76,6 +80,7 @@ public class SettingsController : DisplayMenu
         sfxSlider.value = Globals.sfxVolume;
 
         clapSourceSlider.value = editor.clapSource.volume;
+        musicPanSlider.value = editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo * 10.0f;
 
         if (Globals.extendedSustainsEnabled)
             extendedSustainsToggle.isOn = true;
