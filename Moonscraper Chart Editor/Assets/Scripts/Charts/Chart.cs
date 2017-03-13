@@ -253,7 +253,8 @@ public class Chart  {
                 // if the next note is not at the same position, add flags into the string
                 Note currentNote = (Note)chartObjects[i];    
 
-                if (currentNote.next != null && currentNote.next.position != currentNote.position)
+                // Only add the flags of the last note at that position
+                if (currentNote.next == null || (currentNote.next != null && currentNote.next.position != currentNote.position))
                     chart += currentNote.GetFlagsSaveString();
             }
         }
