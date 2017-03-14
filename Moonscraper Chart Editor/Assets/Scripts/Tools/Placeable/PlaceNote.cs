@@ -227,6 +227,12 @@ public class PlaceNote : PlaceSongObject {
 
     public static ActionHistory.Action[] AddObjectToCurrentChart(Note note, ChartEditor editor, bool update = true, bool copy = true)
     {
+        Note throwaway;
+        return AddObjectToCurrentChart(note, editor, out throwaway, update, copy);
+    }
+
+    public static ActionHistory.Action[] AddObjectToCurrentChart(Note note, ChartEditor editor, out Note addedNote, bool update = true, bool copy = true)
+    {
         List<ActionHistory.Action> noteRecord = new List<ActionHistory.Action>();
 
         Note[] notesToCheckOverwrite = SongObject.GetRange(editor.currentChart.notes, note.position, note.position);
@@ -286,6 +292,9 @@ public class PlaceNote : PlaceSongObject {
 
         // Check if the automatic un-force will kick in
         ActionHistory.Action forceCheck = AutoForcedCheck(noteToAdd);
+
+        addedNote = noteToAdd;
+
         if (forceCheck != null)
             noteRecord.Insert(0, forceCheck);           // Insert at the start so that the modification happens at the end of the undo function, otherwise the natural force check prevents it from being forced
 

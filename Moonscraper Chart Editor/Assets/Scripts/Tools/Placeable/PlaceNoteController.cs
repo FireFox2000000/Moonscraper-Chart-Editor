@@ -36,13 +36,32 @@ public class PlaceNoteController : ObjectlessTool {
     }
 
     // Update is called once per frame
-    protected override void Update () { 
+    protected override void Update () {
         if (!Globals.lockToStrikeline)
             MouseControls();
         else
+        {
+            UpdateSnappedPos();
+
+            for(int i = 0; i < heldNotes.Length; ++i)
+            {
+                if (heldNotes[i] != null)
+                {
+                    if (heldNotes[i].song != null)
+                    {
+                        foreach (Note chordNote in heldNotes[i].GetChord())
+                            chordNote.SetSustainByPos(objectSnappedChartPos);
+                    }
+                    else
+                        heldNotes[i] = null;
+                }
+            }
+
             KeyboardControls();
+        }
     }
 
+    Note[] heldNotes = new Note[6];
     void KeyboardControls()
     {
         foreach (PlaceNote placeableNotes in notes)
@@ -56,6 +75,15 @@ public class PlaceNoteController : ObjectlessTool {
             foreach (PlaceNote note in notes)
             {
                 note.note.flags = ((Note)editor.currentSelectedObject).flags;
+            }
+        }
+
+        for (int i = 0; i < notes.Length; ++i)
+        {
+            // Need to make sure the note is at it's correct tick position
+            if (Input.GetKeyUp((i + 1).ToString()))
+            {
+                heldNotes[i] = null;
             }
         }
 
@@ -76,7 +104,7 @@ public class PlaceNoteController : ObjectlessTool {
 
                 if (pos == Globals.NOTFOUND)
                 {
-                    editor.actionHistory.Insert(PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor));
+                    editor.actionHistory.Insert(PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor, out heldNotes[i - 1]));
                 }
                 else
                 {
