@@ -6,6 +6,7 @@ using NAudio;
 using NAudio.Wave;
 
 public class SampleData {
+    bool stop = false;
 
     float[] _data;
     float _clip = 0;
@@ -48,6 +49,8 @@ public class SampleData {
 
     public void Stop()
     {
+        stop = true;
+
         if (loadThread.IsAlive)
             loadThread.Abort();
     }
@@ -69,15 +72,20 @@ public class SampleData {
         if (File.Exists(filepath))
         {
             byte[] bytes = File.ReadAllBytes(filepath);
+            float[] sampleData = new float[0];
 
             switch (Path.GetExtension(filepath))
             {
                 case (".ogg"):
+                    TanjentOGG.TanjentOGG t = new TanjentOGG.TanjentOGG();
+                    t.DecodeToFloats(bytes);
+                    sampleData = t.DecodedFloats;// new float[t.DecodedFloats.Length * t.Channels];
+                    /*
                     NVorbis.VorbisReader vorbis = new NVorbis.VorbisReader(filepath);
                     vorbis.ClipSamples = false;
 
                     _data = new float[vorbis.TotalSamples * vorbis.Channels];
-                    vorbis.ReadSamples(_data, 0, _data.Length);
+                    vorbis.ReadSamples(_data, 0, _data.Length);*/
                     /*
                     int count = 0;
                     while ((count += vorbis.ReadSamples(_data, count, 2)) > 0)
@@ -90,24 +98,29 @@ public class SampleData {
                     break;
                 case (".wav"):
                     WAV wav = new WAV(bytes);
-                    _data = NAudioPlayer.InterleaveChannels(wav);
+                    sampleData = NAudioPlayer.InterleaveChannels(wav);
                     break;
                 case (".mp3"):
-                    NAudioPlayer.WAVFromMp3Data(bytes, out _data);
+                    NAudioPlayer.WAVFromMp3Data(bytes, out sampleData);
                     break;
                 default:
                     return;
             }
 
-            Debug.Log("Sample length: " + _data.Length);
-
-            foreach(float sample in _data)
+            if (!stop)
             {
-                if (Mathf.Abs(sample) > _clip)
-                    _clip = Mathf.Abs(sample);
-            }
+                _data = sampleData;
 
-            Debug.Log("Clip: " + clip);
+                Debug.Log("Sample length: " + _data.Length);
+
+                foreach (float sample in _data)
+                {
+                    if (Mathf.Abs(sample) > _clip)
+                        _clip = Mathf.Abs(sample);
+                }
+
+                Debug.Log("Clip: " + clip);
+            }
         }
     }
 }

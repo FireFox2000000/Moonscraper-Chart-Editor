@@ -90,6 +90,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Plugins\TanjentOGG\Bitwise.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Block.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\CPtr.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Codebook.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Codec.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Floor0.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Floor1.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Framing.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Info.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Lsp.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Mapping0.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Mdct.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Ogg.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Registry.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Res012.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Sharedbook.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Synthesis.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\TanjentOGG.cs" />
+    <Compile Include="Assets\Plugins\TanjentOGG\Window.cs" />
     <Compile Include="Assets\Standard Assets\Effects\ImageEffects\Scripts\Antialiasing.cs" />
     <Compile Include="Assets\Standard Assets\Effects\ImageEffects\Scripts\Bloom.cs" />
     <Compile Include="Assets\Standard Assets\Effects\ImageEffects\Scripts\BloomAndFlares.cs" />
