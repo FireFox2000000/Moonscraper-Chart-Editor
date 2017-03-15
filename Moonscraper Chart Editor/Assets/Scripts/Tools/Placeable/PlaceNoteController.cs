@@ -5,7 +5,7 @@ public class PlaceNoteController : ObjectlessTool {
 
     public PlaceNote[] notes = new PlaceNote[7];        // Starts at multi-note before heading into green (1), red (2) through to open (6)
 
-    List<ActionHistory.Action> draggedNotesRecord;
+    List<ActionHistory.Action> draggedBurstNotesRecord;
 
     protected override void Awake()
     {
@@ -17,7 +17,7 @@ public class PlaceNoteController : ObjectlessTool {
             note.gameObject.SetActive(false);
         }
 
-        draggedNotesRecord = new List<ActionHistory.Action>();
+        draggedBurstNotesRecord = new List<ActionHistory.Action>();
     }
 
     public override void ToolEnable()
@@ -34,6 +34,9 @@ public class PlaceNoteController : ObjectlessTool {
             placeableNotes.gameObject.SetActive(false);
         }
     }
+
+    Note[] heldNotes = new Note[6];
+    ActionHistory.Action[] heldInitialOverwriteActions = new ActionHistory.Action[6];
 
     // Update is called once per frame
     protected override void Update () {
@@ -53,15 +56,22 @@ public class PlaceNoteController : ObjectlessTool {
                             chordNote.SetSustainByPos(objectSnappedChartPos);
                     }
                     else
+                    {
+                        if (heldNotes[i] != null)
+                        {
+                            // Todo- Action history
+                        }
+
                         heldNotes[i] = null;
+                        heldInitialOverwriteActions = null;
+                    }
                 }
             }
 
             KeyboardControls();
         }
     }
-
-    Note[] heldNotes = new Note[6];
+    
     void KeyboardControls()
     {
         foreach (PlaceNote placeableNotes in notes)
@@ -83,12 +93,28 @@ public class PlaceNoteController : ObjectlessTool {
             // Need to make sure the note is at it's correct tick position
             if (Input.GetKeyUp((i + 1).ToString()))
             {
+                if (heldNotes[i] != null)
+                {
+                    // Todo- Action history
+                }
+
                 heldNotes[i] = null;
+                heldInitialOverwriteActions = null;
+            }
+        }
+
+        // Guard to prevent users from pressing keys while dragging out sustains
+        if (!Globals.extendedSustainsEnabled)
+        {
+            foreach (Note heldNote in heldNotes)
+            {
+                if (heldNote != null && heldNote.sustain_length > 0)
+                    return;
             }
         }
 
         for (int i = 1; i < notes.Length; ++i)
-        {          
+        {                     
             // Need to make sure the note is at it's correct tick position
             if (Input.GetKeyDown(i.ToString()))
             {
@@ -249,21 +275,21 @@ public class PlaceNoteController : ObjectlessTool {
             }
         }
 
-        // Place the notes down manuall then determine action history
+        // Place the notes down manually then determine action history
         if (PlaceNote.addNoteCheck)
         {
             foreach (PlaceNote placeNote in activeNotes)
             {
                 // Find if there's already note in that position. If the notes match exactly, add it to the list, but if it's the same, don't bother.
-                draggedNotesRecord.AddRange(placeNote.AddNoteWithRecord());
+                draggedBurstNotesRecord.AddRange(placeNote.AddNoteWithRecord());
             }
         }
         else
         {
-            if (draggedNotesRecord.Count > 0)
+            if (draggedBurstNotesRecord.Count > 0)
             {
-                editor.actionHistory.Insert(draggedNotesRecord.ToArray());
-                draggedNotesRecord.Clear();
+                editor.actionHistory.Insert(draggedBurstNotesRecord.ToArray());
+                draggedBurstNotesRecord.Clear();
             }
         }
     }
