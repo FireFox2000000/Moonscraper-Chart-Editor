@@ -36,7 +36,7 @@ public class PlaceNoteController : ObjectlessTool {
     }
 
     Note[] heldNotes = new Note[6];
-    ActionHistory.Action[] heldInitialOverwriteActions = new ActionHistory.Action[6];
+    ActionHistory.Action[][] heldInitialOverwriteActions = new ActionHistory.Action[6][];
 
     // Update is called once per frame
     protected override void Update () {
@@ -57,13 +57,7 @@ public class PlaceNoteController : ObjectlessTool {
                     }
                     else
                     {
-                        if (heldNotes[i] != null)
-                        {
-                            // Todo- Action history
-                        }
-
-                        heldNotes[i] = null;
-                        heldInitialOverwriteActions = null;
+                        keyActionHistoryInsert(i);
                     }
                 }
             }
@@ -71,7 +65,26 @@ public class PlaceNoteController : ObjectlessTool {
             KeyboardControls();
         }
     }
-    
+
+    void keyActionHistoryInsert(int i)
+    {
+        if (heldNotes[i] != null && heldInitialOverwriteActions[i] != null)
+        {
+            // Todo- Action history
+            editor.actionHistory.Insert(heldInitialOverwriteActions[i]);
+            
+            //if (heldNotes[i].sustain_length > 0)
+            //{
+                Note initialNote = new Note(heldNotes[i]);
+                initialNote.sustain_length = 0;
+                editor.actionHistory.Insert(new ActionHistory.Modify(initialNote, heldNotes[i]));
+            //}
+        }
+
+        heldNotes[i] = null;
+        heldInitialOverwriteActions[i] = null;
+    }
+
     void KeyboardControls()
     {
         foreach (PlaceNote placeableNotes in notes)
@@ -80,7 +93,7 @@ public class PlaceNoteController : ObjectlessTool {
         }
 
         // Update flags in the note panel
-        if (editor.currentSelectedObject.GetType() == typeof(Note))
+        if (editor.currentSelectedObject != null && editor.currentSelectedObject.GetType() == typeof(Note))
         {
             foreach (PlaceNote note in notes)
             {
@@ -88,18 +101,12 @@ public class PlaceNoteController : ObjectlessTool {
             }
         }
 
-        for (int i = 0; i < notes.Length; ++i)
+        for (int i = 0; i < heldNotes.Length; ++i)
         {
             // Need to make sure the note is at it's correct tick position
             if (Input.GetKeyUp((i + 1).ToString()))
             {
-                if (heldNotes[i] != null)
-                {
-                    // Todo- Action history
-                }
-
-                heldNotes[i] = null;
-                heldInitialOverwriteActions = null;
+                keyActionHistoryInsert(i);
             }
         }
 
@@ -113,7 +120,7 @@ public class PlaceNoteController : ObjectlessTool {
             }
         }
 
-        for (int i = 1; i < notes.Length; ++i)
+        for (int i = 1; i < notes.Length; ++i)      // Ignore the multinote
         {                     
             // Need to make sure the note is at it's correct tick position
             if (Input.GetKeyDown(i.ToString()))
@@ -130,7 +137,8 @@ public class PlaceNoteController : ObjectlessTool {
 
                 if (pos == Globals.NOTFOUND)
                 {
-                    editor.actionHistory.Insert(PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor, out heldNotes[i - 1]));
+                    heldInitialOverwriteActions[i - 1] = PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor, out heldNotes[i - 1]);
+                    //editor.actionHistory.Insert(PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor, out heldNotes[i - 1]));
                 }
                 else
                 {

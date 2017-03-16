@@ -53,7 +53,8 @@ public class ActionHistory
 
             editor.currentChart.updateArrays();
             editor.currentSong.updateArrays();
-            editor.currentSelectedObject = null;
+            if (Toolpane.currentTool != Toolpane.Tools.Note)
+                editor.currentSelectedObject = null;
 
             return true;
         }
@@ -77,7 +78,8 @@ public class ActionHistory
 
             editor.currentChart.updateArrays();
             editor.currentSong.updateArrays();
-            editor.currentSelectedObject = null;
+            if (Toolpane.currentTool != Toolpane.Tools.Note)
+                editor.currentSelectedObject = null;
 
             return true;
         }
