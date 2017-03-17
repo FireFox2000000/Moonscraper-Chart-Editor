@@ -8,6 +8,11 @@ using System.Windows.Forms;
 using System;
 
 public class ChartEditor : MonoBehaviour { 
+    public static ChartEditor FindCurrentEditor ()
+    {
+        return GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+    }
+
     public static bool editOccurred = false;
     const int POOL_SIZE = 100;
     public const int MUSIC_STREAM_ARRAY_POS = 0;

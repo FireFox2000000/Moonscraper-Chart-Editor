@@ -154,6 +154,7 @@
     <Compile Include="Assets\Scripts\Gameplay\GameplayManager.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Indicators.cs" />
     <Compile Include="Assets\Scripts\Globals.cs" />
+    <Compile Include="Assets\Scripts\Metronome.cs" />
     <Compile Include="Assets\Scripts\Mouse.cs" />
     <Compile Include="Assets\Scripts\NoteVisuals\NoteVisuals3DManager.cs" />
     <Compile Include="Assets\Scripts\NoteVisuals\NoteVisualsManager.cs" />

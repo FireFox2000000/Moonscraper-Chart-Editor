@@ -13,7 +13,7 @@ public abstract class SongObjectController : SelectableClick {
 
     protected void Awake()
     {
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        editor = ChartEditor.FindCurrentEditor();
     }
 
     protected virtual void OnEnable()
