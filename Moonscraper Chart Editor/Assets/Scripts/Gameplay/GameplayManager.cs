@@ -42,7 +42,7 @@ public class GameplayManager : MonoBehaviour {
     bool strum = false;
     bool canTap;
 #if GAMEPAD
-    GamePadState gamepad;
+    public static GamePadState? gamepad;
 #endif
 
     void Start()
@@ -63,6 +63,7 @@ public class GameplayManager : MonoBehaviour {
         uint startNS = noteStreak;
 
 #if GAMEPAD
+        gamepad = null;
         for (int i = 0; i < 4; ++i)
         {
             PlayerIndex playerIndex = (PlayerIndex)i;
@@ -152,9 +153,9 @@ public class GameplayManager : MonoBehaviour {
         // Configure current strum input
         float strumValue;
 #if GAMEPAD
-        if (gamepad.DPad.Down == ButtonState.Pressed)
+        if (gamepad != null && ((GamePadState)gamepad).DPad.Down == ButtonState.Pressed)
             strumValue = -1;
-        else if (gamepad.DPad.Up == ButtonState.Pressed)
+        else if (gamepad != null && ((GamePadState)gamepad).DPad.Up == ButtonState.Pressed)
             strumValue = 1;
         else
             strumValue = 0;
@@ -536,20 +537,25 @@ public class GameplayManager : MonoBehaviour {
     {
         int inputMask = 0;
 #if GAMEPAD
-        if (gamepad.Buttons.A == ButtonState.Pressed)
-            inputMask |= 1 << (int)Note.Fret_Type.GREEN;
+        if (GameplayManager.gamepad != null)
+        {
+            GamePadState gamepad = (GamePadState)GameplayManager.gamepad;
 
-        if (gamepad.Buttons.B == ButtonState.Pressed)
-            inputMask |= 1 << (int)Note.Fret_Type.RED;
+            if (gamepad.Buttons.A == ButtonState.Pressed)
+                inputMask |= 1 << (int)Note.Fret_Type.GREEN;
 
-        if (gamepad.Buttons.Y == ButtonState.Pressed)
-            inputMask |= 1 << (int)Note.Fret_Type.YELLOW;
+            if (gamepad.Buttons.B == ButtonState.Pressed)
+                inputMask |= 1 << (int)Note.Fret_Type.RED;
 
-        if (gamepad.Buttons.X == ButtonState.Pressed)
-            inputMask |= 1 << (int)Note.Fret_Type.BLUE;
+            if (gamepad.Buttons.Y == ButtonState.Pressed)
+                inputMask |= 1 << (int)Note.Fret_Type.YELLOW;
 
-        if (gamepad.Buttons.LeftShoulder == ButtonState.Pressed)
-            inputMask |= 1 << (int)Note.Fret_Type.ORANGE;
+            if (gamepad.Buttons.X == ButtonState.Pressed)
+                inputMask |= 1 << (int)Note.Fret_Type.BLUE;
+
+            if (gamepad.Buttons.LeftShoulder == ButtonState.Pressed)
+                inputMask |= 1 << (int)Note.Fret_Type.ORANGE;
+        }
 #else
         
         if (Input.GetButton("FretGreen"))
