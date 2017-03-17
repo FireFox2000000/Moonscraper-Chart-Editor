@@ -22,9 +22,9 @@ public class SampleData {
     {
         get
         {
-            if (IsLoading)
-                return new float[0];
-            else
+            //if (IsLoading)
+                //return new float[0];
+            //else
                 return _data;
         }
     }
@@ -77,24 +77,25 @@ public class SampleData {
             switch (Path.GetExtension(filepath))
             {
                 case (".ogg"):
-                    TanjentOGG.TanjentOGG t = new TanjentOGG.TanjentOGG();
+                   /* TanjentOGG.TanjentOGG t = new TanjentOGG.TanjentOGG();
                     t.DecodeToFloats(bytes);
-                    sampleData = t.DecodedFloats;// new float[t.DecodedFloats.Length * t.Channels];
-                    /*
+                    
+                    sampleData = t.DecodedFloats;// new float[t.DecodedFloats.Length * t.Channels];*/
+                    
                     NVorbis.VorbisReader vorbis = new NVorbis.VorbisReader(filepath);
                     vorbis.ClipSamples = false;
-
+                    
                     _data = new float[vorbis.TotalSamples * vorbis.Channels];
-                    vorbis.ReadSamples(_data, 0, _data.Length);*/
-                    /*
+                    //vorbis.ReadSamples(_data, 0, _data.Length);*/
+                    
                     int count = 0;
-                    while ((count += vorbis.ReadSamples(_data, count, 2)) > 0)
+                    while ((count += vorbis.ReadSamples(_data, count, 16000)) > 0 && !stop)
                     {
                         //count += vorbis.Channels * 20;
-                        vorbis.DecodedPosition += 2000;
-                        
+                        //vorbis.DecodedPosition += 2000;
+                        //Debug.Log(loadThread.ThreadState);
                     }
-                    Debug.Log(count);*/
+                    
                     break;
                 case (".wav"):
                     WAV wav = new WAV(bytes);

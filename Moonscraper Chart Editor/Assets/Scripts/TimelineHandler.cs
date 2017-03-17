@@ -152,7 +152,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         {
             starpowerIndicatorPool[i++].gameObject.SetActive(false);
         }
-        Debug.Log(prevHandlePos);
+
         if (prevScreenSize.x != Screen.width || prevScreenSize.y != Screen.height)
         {
             handlePos = prevHandlePos;
@@ -160,8 +160,6 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
         prevScreenSize = new Vector2(Screen.width, Screen.height);
         prevHandlePos = handlePos;
-        
-        Debug.Log(prevHandlePos);
     }
 
     public void OnDrag(PointerEventData eventData)
