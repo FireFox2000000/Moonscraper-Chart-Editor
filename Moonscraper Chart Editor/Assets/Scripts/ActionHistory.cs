@@ -5,9 +5,10 @@ using System;
 
 public class ActionHistory
 {
+    const float ACTION_WINDOW_TIME = 0.2f;
     int historyPoint;
     List<Action[]> actionList;
-    List<int> timestamps;
+    List<float> timestamps;
 
     public bool canUndo { get { return historyPoint >= 0; } }
     public bool canRedo { get { return historyPoint + 1 < actionList.Count; } }
@@ -15,7 +16,7 @@ public class ActionHistory
     public ActionHistory()
     {
         actionList = new List<Action[]>();
-        timestamps = new List<int>();
+        timestamps = new List<float>();
         historyPoint = -1;
     }
 
@@ -23,11 +24,12 @@ public class ActionHistory
     {
         // Clear all actions above the history point
         actionList.RemoveRange(historyPoint + 1, actionList.Count - (historyPoint + 1));
-        timestamps.RemoveRange(historyPoint + 1, actionList.Count - (historyPoint + 1));
+        timestamps.RemoveRange(historyPoint + 1, timestamps.Count - (historyPoint + 1));
 
         // Add the action in
         actionList.Add(action);
-        timestamps.Add(Time.frameCount);
+        timestamps.Add(Time.time);
+
         ++historyPoint;
     }
 
@@ -41,9 +43,9 @@ public class ActionHistory
         if (canUndo)
         {
             ChartEditor.editOccurred = true;
-            int frame = timestamps[historyPoint];
+            float frame = timestamps[historyPoint];
 
-            while (historyPoint >= 0 && timestamps[historyPoint] == frame)
+            while (historyPoint >= 0 && Mathf.Abs(timestamps[historyPoint] - frame) < ACTION_WINDOW_TIME)
             {
                 for (int i = actionList[historyPoint].Length - 1; i >= 0; --i)
                     actionList[historyPoint][i].Revoke(editor);
@@ -58,7 +60,7 @@ public class ActionHistory
 
             return true;
         }
-
+        
         return false;
     }
 
@@ -67,9 +69,9 @@ public class ActionHistory
         if (canRedo)
         {
             ChartEditor.editOccurred = true;
-            int frame = timestamps[historyPoint + 1];
+            float frame = timestamps[historyPoint + 1];
 
-            while (historyPoint + 1 < actionList.Count && timestamps[historyPoint + 1] == frame)
+            while (historyPoint + 1 < actionList.Count && Mathf.Abs(timestamps[historyPoint + 1] - frame) < ACTION_WINDOW_TIME)
             {
                 ++historyPoint;
                 for (int i = 0; i < actionList[historyPoint].Length; ++i)
