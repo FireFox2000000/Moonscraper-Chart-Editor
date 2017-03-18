@@ -152,11 +152,11 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         {
             starpowerIndicatorPool[i++].gameObject.SetActive(false);
         }
-
+        /*
         if (prevScreenSize.x != Screen.width || prevScreenSize.y != Screen.height)
         {
             handlePos = prevHandlePos;
-        }
+        }*/
 
         prevScreenSize = new Vector2(Screen.width, Screen.height);
         prevHandlePos = handlePos;
