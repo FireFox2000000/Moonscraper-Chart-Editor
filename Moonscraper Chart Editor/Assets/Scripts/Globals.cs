@@ -49,9 +49,17 @@ public class Globals : MonoBehaviour {
     {
         get
         {
-            if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null ||
-                UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponentInParent<Dropdown>() == null)
+            GameObject currentUIUnderPointer = Mouse.GetUIRaycastableUnderPointer();
+            if (currentUIUnderPointer != null && (currentUIUnderPointer.GetComponentInChildren<ScrollRect>() || currentUIUnderPointer.GetComponentInParent<ScrollRect>()))
+                return true;
+
+            if ((UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null ||
+                UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponentInParent<Dropdown>() == null) && !Mouse.GetUIUnderPointer<UnityEngine.UI.Dropdown>())
+            {
+                
+
                 return false;
+            }
             else
                 return true;
         }

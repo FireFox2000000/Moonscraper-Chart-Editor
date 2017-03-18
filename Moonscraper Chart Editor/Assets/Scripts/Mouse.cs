@@ -24,9 +24,9 @@ public class Mouse : MonoBehaviour {
     public static bool cancel = false;
 
     Vector2 initMouseDragPos = Vector2.zero;
+
 	// Update is called once per frame
 	void Update () {
-
         GameObject objectUnderMouse = GetSelectableObjectUnderMouse();
         Vector2 viewportPos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
 
@@ -252,6 +252,20 @@ public class Mouse : MonoBehaviour {
             return true;
 
         return false;
+    }
+
+    public static GameObject GetUIRaycastableUnderPointer()
+    {
+        PointerEventData pointer = new PointerEventData(EventSystem.current);
+        pointer.position = Input.mousePosition;
+
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, raycastResults);
+
+        if (raycastResults.Count > 0)
+            return raycastResults[0].gameObject;
+
+        return null;
     }
 
     public static T GetUIUnderPointer<T>() where T : Selectable
