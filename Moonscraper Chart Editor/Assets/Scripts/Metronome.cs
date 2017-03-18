@@ -31,7 +31,8 @@ public class Metronome : MonoBehaviour {
         {
             if (currentTickPos >= nextClapPos)
             {
-                clapSource.PlayOneShot(clap);
+                if (Globals.metronomeActive)
+                    clapSource.PlayOneShot(clap);
 
                 nextClapPos += (uint)editor.currentSong.resolution;
             }

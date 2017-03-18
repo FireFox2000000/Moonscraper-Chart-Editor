@@ -60,6 +60,11 @@ public class DisplayProperties : MonoBehaviour {
             Globals.clapSetting = Globals.ClapToggle.NONE;
     }
 
+    public void ToggleMetronome(bool value)
+    {
+        Globals.metronomeActive = value;
+    }
+
     public void IncrementSnappingStep()
     {
         Globals.snappingStep.Increment();

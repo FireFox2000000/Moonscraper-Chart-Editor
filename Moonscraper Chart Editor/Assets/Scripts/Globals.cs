@@ -76,6 +76,7 @@ public class Globals : MonoBehaviour {
     public static bool lockToStrikeline = false;
     public static ClapToggle clapSetting = ClapToggle.NONE;
     public static ClapToggle clapProperties = ClapToggle.NONE;
+    public static bool metronomeActive = false;
     public static int audioCalibrationMS = 200;                     // Increase to start the audio sooner
     public static ApplicationMode applicationMode = ApplicationMode.Editor;
     public static ViewMode viewMode { get; private set; }
@@ -115,7 +116,7 @@ public class Globals : MonoBehaviour {
         iniparse.Open("config.ini");
         
         hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
-        audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 200);
+        audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 0);
         clapProperties = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
         extendedSustainsEnabled = iniparse.ReadValue("Settings", "Extended sustains", false);
         clapSetting = ClapToggle.NONE;
