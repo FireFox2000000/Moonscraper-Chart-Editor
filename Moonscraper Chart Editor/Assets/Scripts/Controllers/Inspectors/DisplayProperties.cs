@@ -9,6 +9,7 @@ public class DisplayProperties : MonoBehaviour {
     public Text noteCount;
     public Text gameSpeed;
     public Slider gameSpeedSlider;
+    public Toggle metronomeToggle;
 
     ChartEditor editor;
 
@@ -47,9 +48,10 @@ public class DisplayProperties : MonoBehaviour {
         Globals.gameSpeed = gameSpeedSlider.value / 100.0f;
 
         // if (Time.timeScale < 1)
-        gameSpeed.text = "Speed- x" + Globals.gameSpeed.ToString();//.Substring(0, 3);
-      //  else
-        //    gameSpeed.text = "Speed- x1.0";
+        gameSpeed.text = "Speed- x" + Globals.gameSpeed.ToString();                                                                  
+
+        if (Input.GetButtonDown("Toggle Metronome"))
+            metronomeToggle.isOn = !metronomeToggle.isOn;
     }
 
     public void ToggleClap(bool value)

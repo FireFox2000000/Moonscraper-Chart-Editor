@@ -13,7 +13,7 @@ public class ToolPanelController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetButtonDown("Toggle View") && Globals.applicationMode == Globals.ApplicationMode.Editor 
+        if (Input.GetButtonDown("Toggle View") && Globals.applicationMode != Globals.ApplicationMode.Menu 
             && !Globals.IsTyping)
         {
             viewModeToggle.isOn = !viewModeToggle.isOn;
