@@ -181,10 +181,16 @@ public class ChartEditor : MonoBehaviour {
 
     Vector3 mousePos = Vector3.zero;
     bool mouseDownOverUI = false;
+    GameObject clickedSelectableObject;
     public void Update()
     {
-        // Group move/deselect
-        if (Toolpane.currentTool == Toolpane.Tools.Cursor)
+        if (Input.GetMouseButtonDown(0))
+            clickedSelectableObject = Mouse.GetSelectableObjectUnderMouse();
+        else if (Input.GetMouseButtonUp(0))
+            clickedSelectableObject = null;
+
+            // Group move/deselect
+            if (Toolpane.currentTool == Toolpane.Tools.Cursor)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -193,9 +199,26 @@ public class ChartEditor : MonoBehaviour {
                 mouseDownOverUI = Mouse.IsUIUnderPointer();
             }
 
-            if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && currentSelectedObjects.Length > 0 && !Mouse.GetSelectableObjectUnderMouse() && !mouseDownOverUI)
+            if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && currentSelectedObjects.Length > 0 && clickedSelectableObject/*Mouse.GetSelectableObjectUnderMouse()*/ && !mouseDownOverUI)
             {
-                groupMove.SetSongObjects(currentSelectedObjects, true);
+                // Find anchor point
+                int anchorPoint = Globals.NOTFOUND;
+
+                if (clickedSelectableObject)
+                {
+                    for (int i = 0; i < currentSelectedObjects.Length; ++i)
+                    {
+                        //Debug.Log(currentSelectedObjects[i].controller.gameObject.GetInstanceID());
+                        //Debug.Log(clickedSelectableObject.gameObject.GetInstanceID());
+                        if (currentSelectedObjects[i].controller != null && currentSelectedObjects[i].controller.gameObject == clickedSelectableObject)
+                        {
+                            anchorPoint = i;
+                            break;
+                        }
+                    }
+                    //Debug.Log("Not found " + anchorPoint);
+                }
+                groupMove.SetSongObjects(currentSelectedObjects, anchorPoint, true);
                 currentSelectedObject = null;
             }
 

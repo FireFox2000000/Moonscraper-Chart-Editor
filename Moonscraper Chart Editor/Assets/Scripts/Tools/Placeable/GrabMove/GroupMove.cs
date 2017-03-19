@@ -5,14 +5,14 @@ using System.Linq;
 
 public class GroupMove : ToolObject
 {
+    int anchorArrayPos = Globals.NOTFOUND;
     SongObject[] originalSongObjects = new ChartObject[0];
     SongObject[] movingSongObjects = new ChartObject[0];
     
     Vector2 initMousePos = Vector2.zero;
     uint initObjectSnappedChartPos = 0;
 
-    // Update is called once per frame
-    
+    // Update is called once per frame  
     protected override void Update () {
         if (movingSongObjects.Length > 0 && Input.GetMouseButtonUp(0))
         {
@@ -26,6 +26,9 @@ public class GroupMove : ToolObject
             {
                 Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
                 int chartPosOffset = (int)(objectSnappedChartPos - initObjectSnappedChartPos);
+                if (anchorArrayPos >= 0)
+                    chartPosOffset = (int)(objectSnappedChartPos - originalSongObjects[anchorArrayPos].position);
+                //Debug.Log(anchorArrayPos);
                 bool hitStartOfChart = false;
 
                 // Guard for chart limit, if the offset was negative, yet the position becomes greater
@@ -145,14 +148,15 @@ public class GroupMove : ToolObject
                 songObject.controller.gameObject.SetActive(false);
         }
         movingSongObjects = new ChartObject[0];
+        anchorArrayPos = Globals.NOTFOUND;
     }
 
     public void SetSongObjects(SongObject songObject)
     {
-        SetSongObjects(new SongObject[] { songObject });
+        SetSongObjects(new SongObject[] { songObject }, 0);
     }
 
-    public void SetSongObjects(SongObject[] songObjects, bool delete = false)
+    public void SetSongObjects(SongObject[] songObjects, int anchorArrayPos, bool delete = false)
     {
         if (Mouse.world2DPosition != null)
             initMousePos = (Vector2)Mouse.world2DPosition;
@@ -161,6 +165,8 @@ public class GroupMove : ToolObject
 
         editor.currentSelectedObject = null;
         Reset();
+
+        this.anchorArrayPos = anchorArrayPos;
 
         originalSongObjects = songObjects;
         movingSongObjects = new SongObject[songObjects.Length];

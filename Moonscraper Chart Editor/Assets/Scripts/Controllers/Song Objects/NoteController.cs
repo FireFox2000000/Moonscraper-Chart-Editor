@@ -55,7 +55,16 @@ public class NoteController : SongObjectController {
     {
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
         {
-            editor.currentSelectedObject = songObject;
+            // Todo- need to check if already selected and part of a group selection
+            bool noteFound = false;
+            foreach (Note selectedNote in editor.currentSelectedObjects)
+            {
+                if (selectedNote == note)
+                noteFound = true;
+            }
+
+            if (!noteFound)
+                editor.currentSelectedObject = songObject;
         }
 
         // Delete the object on erase tool
@@ -81,20 +90,20 @@ public class NoteController : SongObjectController {
 
     public override void OnSelectableMouseDrag()
     {
-        // Move note
+        // Move note        
         if (moveCheck)
         {
             if (Input.GetButton("ChordSelect"))
             {
                 Note[] chordNotes = note.GetChord();
-                editor.groupMove.SetSongObjects(chordNotes);
+                editor.groupMove.SetSongObjects(chordNotes, 0);
 
                 foreach (Note chordNote in chordNotes)
                     chordNote.Delete();
             }
             else
             {
-                base.OnSelectableMouseDrag();
+                //base.OnSelectableMouseDrag();
             }
         }
         else
