@@ -341,17 +341,19 @@ public class ChartEditor : MonoBehaviour {
                 source.Stop();
         }
     }
+
     static bool quitting = false;
     void OnApplicationQuit()
     {
         quitting = true;
-        editCheck();
+        if (editCheck())
+        {
+            currentSong.musicSample.Stop();
+            currentSong.guitarSample.Stop();
+            currentSong.rhythmSample.Stop();
 
-        currentSong.musicSample.Stop();
-        currentSong.guitarSample.Stop();
-        currentSong.rhythmSample.Stop();
-
-        while (currentSong.IsSaving);
+            while (currentSong.IsSaving) ;
+        }
     }
 
     bool editCheck()
@@ -475,12 +477,14 @@ public class ChartEditor : MonoBehaviour {
     }
 
     void Save (string filename, bool forced = true)
-    {
+    {       
         if (currentSong != null)
         {
+            Debug.Log("Saving to file- " + System.IO.Path.GetFullPath(filename));
+
             editOccurred = false;            
             currentSong.Save(filename, forced);
-            lastLoadedFile = filename;
+            lastLoadedFile = System.IO.Path.GetFullPath(filename);
         }
     }
     public static float? startGameplayPos = null;
@@ -613,23 +617,32 @@ public class ChartEditor : MonoBehaviour {
     {
         if (System.IO.File.Exists(filepath) && System.IO.Path.GetExtension(filepath) == ".mid")
         {
-            const string tempFileName = "moonscraperMid2Chart.temp.chart";
+            try
+            {
+                const string tempFileName = "moonscraperMid2Chart.temp.chart";
 
-            string file = System.IO.Path.GetDirectoryName(filepath) + "/" + tempFileName;
+                string file = System.IO.Path.GetDirectoryName(filepath) + "/" + tempFileName;
 
-            mid2chart.Program.readOpenNotes = true;
-            mid2chart.Program.dontWriteDummy = true;
-            mid2chart.Program.skipPause = true;
-            mid2chart.Song midSong = mid2chart.MidReader.ReadMidi(filepath, false);
-            mid2chart.ChartWriter.WriteChart(midSong, file, false);
+                mid2chart.Program.readOpenNotes = true;
+                mid2chart.Program.dontWriteDummy = true;
+                mid2chart.Program.skipPause = true;
+            
+                mid2chart.Song midSong = mid2chart.MidReader.ReadMidi(filepath, false);
+            
+                mid2chart.ChartWriter.WriteChart(midSong, file, false);
 
-            if (System.IO.File.Exists(file))
-                return file;
+                if (System.IO.File.Exists(file))
+                    return file;
 
-            /*
-            mid2chart.Program.Run(new string[] { filepath, "-p", "-m", "-k" });
-            if (System.IO.File.Exists(file + ".chart"))
-                return file + ".chart";*/
+                /*
+                mid2chart.Program.Run(new string[] { filepath, "-p", "-m", "-k" });
+                if (System.IO.File.Exists(file + ".chart"))
+                    return file + ".chart";*/
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Failed to cenvert mid file: " + e.Message);
+            }
         }
 
         return string.Empty;
@@ -685,6 +698,7 @@ public class ChartEditor : MonoBehaviour {
             // Immediate exit
             yield break;
         }
+        Debug.Log("Loading song: " + System.IO.Path.GetFullPath(currentFileName));
 
         // Start loading animation
         Globals.applicationMode = Globals.ApplicationMode.Loading;
@@ -694,10 +708,6 @@ public class ChartEditor : MonoBehaviour {
         // Wait for saving to complete just in case
         while (currentSong.IsSaving)
             yield return null;
-
-        currentSong.musicSample.Stop();
-        currentSong.guitarSample.Stop();
-        currentSong.rhythmSample.Stop();
 
 #if TIMING_DEBUG
         totalLoadTime = Time.realtimeSinceStartup;
@@ -717,10 +727,24 @@ public class ChartEditor : MonoBehaviour {
             while (midConversionThread.ThreadState == System.Threading.ThreadState.Running)
                 yield return null;
 
+            if (currentFileName == string.Empty)
+            {
+                currentSong = backup;
+                Globals.applicationMode = Globals.ApplicationMode.Editor;
+                loadingScreen.FadeOut();
+
+                // Immediate exit
+                yield break;
+            }
 #if TIMING_DEBUG
             Debug.Log("Mid conversion time: " + (Time.realtimeSinceStartup - totalLoadTime));
 #endif
         }
+
+        currentSong.musicSample.Stop();
+        currentSong.guitarSample.Stop();
+        currentSong.rhythmSample.Stop();
+
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
 #endif
@@ -767,7 +791,7 @@ public class ChartEditor : MonoBehaviour {
         }
 
         if (currentFileName != string.Empty)
-            lastLoadedFile = currentFileName;
+            lastLoadedFile = System.IO.Path.GetFullPath(currentFileName);
         else
             lastLoadedFile = string.Empty;
 

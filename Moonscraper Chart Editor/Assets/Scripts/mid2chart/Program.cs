@@ -79,6 +79,7 @@ namespace mid2chart {
                             break;
                     }
                 }
+
                 for (int i = 0; i < args.Length; i++) {
                     if (args[i] != "-e" && args[i] != "-r" && (args[i] != "-b")
                         && args[i] != "-f" && (args[i] != "-s") && (args[i] != "-d")

@@ -14,7 +14,7 @@ namespace mid2chart {
             var trackCount = midi.Events.Count();
             scaler = 192.0D / midi.DeltaTicksPerQuarterNote;
             WriteSync(midi.Events[0]);
-            for (var i = 1; i < trackCount; i++) {
+            for (var i = 1; i < trackCount; i++) {               
                 var trackName = midi.Events[i][0] as TextEvent;
                 switch (trackName.Text.ToLower()) {
                     case ("events"): WriteSongSections(midi.Events[i]); break;
@@ -53,6 +53,7 @@ namespace mid2chart {
                         break;
                 }
             }
+            UnityEngine.Debug.Log("2");
             return s;
         }
 
