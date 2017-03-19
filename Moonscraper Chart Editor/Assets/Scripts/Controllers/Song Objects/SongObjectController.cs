@@ -87,6 +87,20 @@ public abstract class SongObjectController : SelectableClick {
 
     public override void OnSelectableMouseDown()
     {
+        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
+        {
+            // Todo- need to check if already selected and part of a group selection
+            bool songObjectFound = false;
+            foreach (SongObject selectedObject in editor.currentSelectedObjects)
+            {
+                if (selectedObject == songObject)
+                    songObjectFound = true;
+            }
+
+            if (!songObjectFound)
+                editor.currentSelectedObject = songObject;
+        }
+        /*
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
         {
             editor.currentSelectedObject = songObject;
@@ -99,7 +113,7 @@ public abstract class SongObjectController : SelectableClick {
             editor.actionHistory.Insert(new ActionHistory.Delete(songObject));
             songObject.Delete();
             editor.currentSelectedObject = null;
-        }
+        }*/
     }
     /*
     public Rect GetAABBBoundsRect()

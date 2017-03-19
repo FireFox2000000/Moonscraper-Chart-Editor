@@ -70,7 +70,7 @@ public class StarpowerController : SongObjectController
 
         starpower.SetLengthByPos(snappedChartPos);   
     }
-
+    
     public override void OnSelectableMouseDrag()
     {
         // Move note

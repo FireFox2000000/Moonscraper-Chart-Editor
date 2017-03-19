@@ -3,6 +3,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class NoteController : SongObjectController {
     public const float OPEN_NOTE_SUSTAIN_WIDTH = 4;
@@ -55,16 +56,22 @@ public class NoteController : SongObjectController {
     {
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
         {
-            // Todo- need to check if already selected and part of a group selection
             bool noteFound = false;
-            foreach (Note selectedNote in editor.currentSelectedObjects)
+            foreach (Note selectedNote in editor.currentSelectedObjects.OfType<Note>())
             {
                 if (selectedNote == note)
-                noteFound = true;
+                    noteFound = true;
             }
 
             if (!noteFound)
-                editor.currentSelectedObject = songObject;
+            {
+                if (Input.GetButton("ChordSelect"))
+                {
+                    editor.currentSelectedObjects = note.GetChord();
+                }
+                else
+                    editor.currentSelectedObject = songObject;
+            }
         }
 
         // Delete the object on erase tool
