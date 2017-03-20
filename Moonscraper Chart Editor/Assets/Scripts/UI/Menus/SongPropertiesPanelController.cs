@@ -232,12 +232,15 @@ public class SongPropertiesPanelController : DisplayMenu {
         switch (songAudioIndex)
         {
             case (0):
+                editor.currentSong.musicSample.Stop();
                 editor.currentSong.musicStream = null;
                 break;
             case (1):
+                editor.currentSong.guitarSample.Stop();
                 editor.currentSong.guitarStream = null;
                 break;
             case (2):
+                editor.currentSong.rhythmSample.Stop();
                 editor.currentSong.rhythmStream = null;
                 break;
             default:

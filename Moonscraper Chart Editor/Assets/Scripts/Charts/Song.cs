@@ -283,6 +283,8 @@ public class Song {
 
     public void LoadMusicStream(string filepath)
     {
+        musicSample.Stop();
+        musicSample = new SampleData();
         musicSample.ReadAudioFile(filepath);
         GameObject loadAudioObject = new GameObject("Load Rhythm Audio");
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
@@ -292,6 +294,8 @@ public class Song {
 
     public void LoadGuitarStream(string filepath)
     {
+        guitarSample.Stop();
+        guitarSample = new SampleData();
         guitarSample.ReadAudioFile(filepath);
         GameObject loadAudioObject = new GameObject("Load Rhythm Audio");
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
@@ -301,6 +305,8 @@ public class Song {
 
     public void LoadRhythmStream(string filepath)
     {
+        rhythmSample.Stop();
+        rhythmSample = new SampleData();
         rhythmSample.ReadAudioFile(filepath);
         GameObject loadAudioObject = new GameObject("Load Rhythm Audio");
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
