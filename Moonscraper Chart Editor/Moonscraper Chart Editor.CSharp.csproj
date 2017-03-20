@@ -192,6 +192,7 @@
     <Compile Include="Assets\Scripts\UI\ContextSizeAutoAdjust.cs" />
     <Compile Include="Assets\Scripts\UI\DropDownHoverActivate.cs" />
     <Compile Include="Assets\Scripts\UI\DropDownMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\DynamicTextScrollView.cs" />
     <Compile Include="Assets\Scripts\UI\FPSDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\ImageFade.cs" />
     <Compile Include="Assets\Scripts\UI\InputFieldDoubleClick.cs" />
@@ -199,6 +200,7 @@
     <Compile Include="Assets\Scripts\UI\LoadingSpin.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\AudioCalibrationMenuScript.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\DisplayMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\Menus\ErrorMessage.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\SettingsController.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\SongPropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\TextTruncExt.cs" />

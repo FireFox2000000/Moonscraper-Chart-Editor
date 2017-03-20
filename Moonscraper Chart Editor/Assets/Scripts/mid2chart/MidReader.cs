@@ -56,7 +56,6 @@ namespace mid2chart {
                         break;
                 }
             }
-            UnityEngine.Debug.Log("2");
             return s;
         }
 

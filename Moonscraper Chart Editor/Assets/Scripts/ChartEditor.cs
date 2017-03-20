@@ -54,6 +54,7 @@ public class ChartEditor : MonoBehaviour {
     public AudioSource clapSource;
     public UnityEngine.Audio.AudioMixerGroup mixer;
     public LoadingScreenFader loadingScreen;
+    public ErrorMessage errorMenu;
     public Indicators indicators;
 
     public uint minPos { get; private set; }
@@ -641,7 +642,8 @@ public class ChartEditor : MonoBehaviour {
             }
             catch (Exception e)
             {
-                Debug.LogError("Failed to cenvert mid file: " + e.Message);
+                ErrorMessage.errorMessage = "Failed to convert mid file: " + e.Message;
+                Debug.LogError("Failed to convert mid file: " + e.Message);
             }
         }
 
@@ -730,9 +732,9 @@ public class ChartEditor : MonoBehaviour {
             if (currentFileName == string.Empty)
             {
                 currentSong = backup;
-                Globals.applicationMode = Globals.ApplicationMode.Editor;
+                //Globals.applicationMode = Globals.ApplicationMode.Editor;
                 loadingScreen.FadeOut();
-
+                errorMenu.gameObject.SetActive(true);
                 // Immediate exit
                 yield break;
             }
