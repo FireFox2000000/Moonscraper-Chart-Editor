@@ -16,6 +16,9 @@ namespace mid2chart {
             WriteSync(midi.Events[0]);
             for (var i = 1; i < trackCount; i++) {               
                 var trackName = midi.Events[i][0] as TextEvent;
+                if (trackName == null)
+                    continue;
+
                 switch (trackName.Text.ToLower()) {
                     case ("events"): WriteSongSections(midi.Events[i]); break;
                     case ("part guitar"):
