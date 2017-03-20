@@ -115,7 +115,52 @@ public class Song {
         // Chart initialisation
         for (int i = 0; i < charts.Length; ++i)
         {
-            charts[i] = new Chart(this);
+            string name;
+
+            switch (i)
+            {
+                case(0):
+                    name = "Easy Single";
+                    break;
+                case (1):
+                    name = "Easy Double Guitar";
+                    break;
+                case (2):
+                    name = "Easy Double Bass";
+                    break;
+                case (3):
+                    name = "Medium Single";
+                    break;
+                case (4):
+                    name = "Medium Double Guitar";
+                    break;
+                case (5):
+                    name = "Medium Double Bass";
+                    break;
+                case (6):
+                    name = "Hard Single";
+                    break;
+                case (7):
+                    name = "Hard Double Guitar";
+                    break;
+                case (8):
+                    name = "Hard Double Bass";
+                    break;
+                case (9):
+                    name = "Expert Single";
+                    break;
+                case (10):
+                    name = "Expert Double Guitar";
+                    break;
+                case (11):
+                    name = "Expert Double Bass";
+                    break;
+                default:
+                    name = string.Empty;
+                    break;
+            }
+
+            charts[i] = new Chart(this, name);
         }
 
         for (int i = 0; i < audioLocations.Length; ++i)

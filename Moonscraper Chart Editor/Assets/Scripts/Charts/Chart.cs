@@ -19,7 +19,9 @@ public class Chart  {
     int _note_count;
     public int note_count { get { return _note_count; } }
 
-    public Chart (Song song)
+    public string name = string.Empty;
+
+    public Chart (Song song, string name = "")
     {
         _song = song;
         _chartObjects = new List<ChartObject>();
@@ -29,6 +31,8 @@ public class Chart  {
         events = new ChartEvent[0];
 
         _note_count = 0;
+
+        this.name = name;
     }
 
     public void updateArrays()

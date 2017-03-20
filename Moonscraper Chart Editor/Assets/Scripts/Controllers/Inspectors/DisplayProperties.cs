@@ -24,7 +24,7 @@ public class DisplayProperties : MonoBehaviour {
 
     void Update()
     {
-        songNameText.text = editor.currentSong.name;
+        songNameText.text = editor.currentSong.name + " - " + editor.currentChart.name;
         Globals.hyperspeed = hyperspeedSlider.value;
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
