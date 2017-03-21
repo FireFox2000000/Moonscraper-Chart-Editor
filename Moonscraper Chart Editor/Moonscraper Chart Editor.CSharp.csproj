@@ -153,6 +153,7 @@
     <Compile Include="Assets\Scripts\FretboardWrapMovement.cs" />
     <Compile Include="Assets\Scripts\Gameplay\GameplayManager.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Indicators.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Whammy.cs" />
     <Compile Include="Assets\Scripts\Globals.cs" />
     <Compile Include="Assets\Scripts\Metronome.cs" />
     <Compile Include="Assets\Scripts\Mouse.cs" />
@@ -166,6 +167,7 @@
     <Compile Include="Assets\Scripts\SongObjectPoolManager.cs" />
     <Compile Include="Assets\Scripts\SpriteGlow.cs" />
     <Compile Include="Assets\Scripts\Step.cs" />
+    <Compile Include="Assets\Scripts\TapBPMCalculator.cs" />
     <Compile Include="Assets\Scripts\TimelineHandler.cs" />
     <Compile Include="Assets\Scripts\Tools\Eraser.cs" />
     <Compile Include="Assets\Scripts\Tools\GroupSelect.cs" />
@@ -206,7 +208,6 @@
     <Compile Include="Assets\Scripts\UI\TextTruncExt.cs" />
     <Compile Include="Assets\Scripts\UI\ToolPanelController.cs" />
     <Compile Include="Assets\Scripts\Utility.cs" />
-    <Compile Include="Assets\Scripts\Whammy.cs" />
     <Compile Include="Assets\Scripts\mid2chart\ChartWriter.cs" />
     <Compile Include="Assets\Scripts\mid2chart\Event.cs" />
     <Compile Include="Assets\Scripts\mid2chart\MidReader.cs" />
