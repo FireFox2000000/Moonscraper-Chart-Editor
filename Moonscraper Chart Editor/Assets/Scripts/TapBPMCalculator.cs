@@ -37,8 +37,6 @@ public class TapBPMCalculator {
             lastTapTime = Time.realtimeSinceStartup;
 
         ++numOfTaps;
-
-        Debug.Log("Taps: " + numOfTaps + ", Total time: " + (lastTapTime - initTapTime) + " seconds");
     }
 
     public void Reset()

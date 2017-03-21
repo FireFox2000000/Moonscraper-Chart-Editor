@@ -95,6 +95,7 @@ public class Globals : MonoBehaviour {
     public static bool bot = true;
     static float _sfxVolume = 1;
     public static float gameSpeed = 1;
+    public static float gameplayStartDelayTime = 3.0f;
     public static float sfxVolume
     {
         get { return _sfxVolume; }
@@ -130,6 +131,11 @@ public class Globals : MonoBehaviour {
         sustainGapEnabled = iniparse.ReadValue("Settings", "Sustain Gap", false);
         sustainGapStep = new Step((int)iniparse.ReadValue("Settings", "Sustain Gap Step", (int)16));
         notePlacementMode = (NotePlacementMode)iniparse.ReadValue("Settings", "Note Placement Mode", (int)NotePlacementMode.Default);
+        gameplayStartDelayTime = (float)iniparse.ReadValue("Settings", "Gameplay Start Delay", 3.0f);
+
+        // Check that the gameplay start delay time is a multiple of 0.5 and is
+        gameplayStartDelayTime = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
+        gameplayStartDelayTime = (float)(System.Math.Round(gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f);
 
         // Audio levels
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
@@ -275,6 +281,7 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Settings", "Sustain Gap", sustainGapEnabled);
         iniparse.WriteValue("Settings", "Sustain Gap Step", sustainGap);
         iniparse.WriteValue("Settings", "Note Placement Mode", (int)notePlacementMode);
+        iniparse.WriteValue("Settings", "Gameplay Start Delay", gameplayStartDelayTime);
 
         // Audio levels
         iniparse.WriteValue("Audio Volume", "Music Stream", editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume);

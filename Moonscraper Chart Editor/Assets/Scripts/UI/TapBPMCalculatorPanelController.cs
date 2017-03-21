@@ -22,4 +22,14 @@ public class TapBPMCalculatorPanelController : MonoBehaviour {
             bpmCalculator.Tap();
         }
     }
+
+    public void Reset()
+    {
+        bpmCalculator.Reset();
+    }
+
+    public void Disable()
+    {
+        gameObject.SetActive(false);
+    }
 }

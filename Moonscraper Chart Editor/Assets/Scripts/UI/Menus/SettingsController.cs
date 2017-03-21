@@ -22,6 +22,7 @@ public class SettingsController : DisplayMenu
     public Slider musicPanSlider;
 
     public InputField sustainGapInput;
+    public Dropdown gameplayStartDelayDropdown;
 
     protected override void Awake()
     {
@@ -38,10 +39,10 @@ public class SettingsController : DisplayMenu
     {
         base.Update();
 
-        //sustainGapText.text = "1/" + Globals.sustainGap.ToString();
         if (sustainGapInput.text != string.Empty)
             sustainGapInput.text = Globals.sustainGap.ToString();
 
+        // Set all variables' values based on the UI
         Globals.sustainGapEnabled = sustainGapEnabledToggle.isOn;
 
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = musicSourceSlider.value;
@@ -55,7 +56,8 @@ public class SettingsController : DisplayMenu
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo = musicPanSlider.value / 10.0f;
         editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].panStereo = musicPanSlider.value / 10.0f;
         editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].panStereo = musicPanSlider.value / 10.0f;
-        // editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo
+
+        Globals.gameplayStartDelayTime = gameplayStartDelayDropdown.value * 0.5f;
     }
 
     protected override void OnEnable()
@@ -88,6 +90,8 @@ public class SettingsController : DisplayMenu
             extendedSustainsToggle.isOn = false;
 
         masterVolumeSlider.value = AudioListener.volume;
+
+        gameplayStartDelayDropdown.value = (int)(Globals.gameplayStartDelayTime * 2.0f);
 
         Update();
     }  
