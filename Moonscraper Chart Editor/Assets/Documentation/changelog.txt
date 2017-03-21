@@ -1,40 +1,26 @@
-Moonscraper v0.8.02 changelog - 25/02/2017
+Moonscraper v0.8.4 changelog - 21/03/2017
 
 NEW FEATURES
--Can now adjust snap with the left and right arrow keys alongside the q and w keys. 
-
-FIXES
--Fixed sometimes sustains not being capped when placing new note involving open notes.
--Fixed tap and forced properties not being applied to the note tool in keyboard mode.
-
-Moonscraper v0.8 changelog - 23/02/2017
-
-NEW FEATURES
--Added group-move with the group-select and cursor tool.
--Can now import .mid files.
--Added cancel option to save warning.
--Added loading screens.
--Added whammy to gameplay mode. Idk why.
--Added hit animation
--Added basic keyboard controls for the main placement tools.
--Added ability to hold arrow keys to navigate the chart.
--Added section jumping with arrow key movement.
--Added lefty-flip option.
--Added icon.
--Added background panel to menus.
--Added help dropdown, complete with an "About", "Credits", "Contact", "FAQ" and "Manual" sections.
+-Added master volume control to the settings.
+-Re-added waveform display and added dropdown to view seperate song, guitar and rhythm audio tracks. Loading asyncronously.
+-Sustain dragging now working in keyboard mode.
+-Added metronome (shortcut 'm').
+-Added error screen to display errors to the user should they occur.
+-Added current chart level being worked on next to the current song name to identify the current difficulty/instrument the user is currently working on.
 
 CHANGES
--Huge system reconfiguration for optimisation to use object pooling and audio streaming. Provides near-instant load times in most cases.
--Multi-threaded song loading.
--Removed waveform visualiser.
--Reduced gameplay hit-window size.
--Copy/paste now doesn't overwrite clipboard if there isn't anything to copy.
--Reorganised panels.
--Changed panel font.
+-Group selection panel can now appear when the cursor mode is selected.
+-Adding a section over another section now just selects that section.
+-Removed "g" shortcut restriction during play mode.
+-Changed group move to only move when the user has clicked and is dragging an object that is part of a selection, removing the idea of click where there isn't a note. Allows for more accurate move snapping.
 
 FIXES
--Fixed BPM value being changed when moving.
+-Fix with undo/redo functionality with open notes.
+-Fixed right channel of .mp3 files not being loaded.
+-Autoscroll now only occurs if the mouse has actually shifted position.
+-Fixed bug when the flags of the last note of a chart wouldn't be saved.
+-Timeline UI now scales according to resolution changes.
+-Fixed Phase Shift/bad midi's from being deleted when loaded.
 
 KNOWN ISSUES
 -Note highlight removes open note glow effect.
