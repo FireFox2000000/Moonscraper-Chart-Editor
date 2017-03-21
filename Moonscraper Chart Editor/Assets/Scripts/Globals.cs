@@ -12,7 +12,6 @@ public class Globals : MonoBehaviour {
     public static readonly string[] validTextureExtensions = { ".jpg", ".png" };
 
     [Header("Initialize GUI")]
-    public Toggle clapToggle;
     public Toggle viewModeToggle;
     public AudioCalibrationMenuScript audioCalibrationMenu;
 
@@ -154,14 +153,6 @@ public class Globals : MonoBehaviour {
             inputField.gameObject.AddComponent<InputFieldDoubleClick>();
     }
 
-    void Start()
-    {
-        if (clapSetting == ClapToggle.NONE)
-            clapToggle.isOn = false;
-        else
-            clapToggle.isOn = true;
-    }
-
     void Update()
     {
         // Disable controls while user is in an input field
@@ -218,14 +209,6 @@ public class Globals : MonoBehaviour {
                 editor.Play();
             else if (applicationMode == Globals.ApplicationMode.Playing)
                 editor.Stop();
-        }
-
-        if (Input.GetButtonDown("ToggleClap"))
-        {
-            if (clapToggle.isOn)
-                clapToggle.isOn = false;
-            else
-                clapToggle.isOn = true;
         }
 
         if (Input.GetButtonDown("IncreaseStep"))

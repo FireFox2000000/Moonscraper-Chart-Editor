@@ -9,6 +9,7 @@ public class DisplayProperties : MonoBehaviour {
     public Text noteCount;
     public Text gameSpeed;
     public Slider gameSpeedSlider;
+    public Toggle clapToggle; 
     public Toggle metronomeToggle;
 
     ChartEditor editor;
@@ -20,6 +21,14 @@ public class DisplayProperties : MonoBehaviour {
 
         snappingStep.onValidateInput = Step.validateStepVal;
         snappingStep.text = Globals.step.ToString();
+
+        OnEnable();
+    }
+
+    void OnEnable()
+    {
+        clapToggle.isOn = (Globals.clapSetting != Globals.ClapToggle.NONE);
+        metronomeToggle.isOn = Globals.metronomeActive;
     }
 
     void Update()
@@ -48,9 +57,12 @@ public class DisplayProperties : MonoBehaviour {
         Globals.gameSpeed = gameSpeedSlider.value / 100.0f;
 
         // if (Time.timeScale < 1)
-        gameSpeed.text = "Speed- x" + Globals.gameSpeed.ToString();                                                                  
+        gameSpeed.text = "Speed- x" + Globals.gameSpeed.ToString();
 
-        if (Input.GetButtonDown("Toggle Metronome"))
+        if (Input.GetButtonDown("ToggleClap") && !Globals.IsTyping)
+            clapToggle.isOn = !clapToggle.isOn;
+
+        if (Input.GetButtonDown("Toggle Metronome") && !Globals.IsTyping)
             metronomeToggle.isOn = !metronomeToggle.isOn;
     }
 
@@ -60,11 +72,15 @@ public class DisplayProperties : MonoBehaviour {
             Globals.clapSetting = Globals.clapProperties;
         else
             Globals.clapSetting = Globals.ClapToggle.NONE;
+
+        Debug.Log("Clap toggled: " + value);
     }
 
     public void ToggleMetronome(bool value)
     {
         Globals.metronomeActive = value;
+
+        Debug.Log("Metronome toggled: " + value);
     }
 
     public void IncrementSnappingStep()

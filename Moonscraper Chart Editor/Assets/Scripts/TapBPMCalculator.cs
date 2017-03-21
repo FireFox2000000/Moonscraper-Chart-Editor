@@ -3,38 +3,48 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TapBPMCalculator {
-    const float RESET_TIME = 2.0f;
+    float resetTime;
 
-    float bpm
+    public float bpm
     {
         get
         {
-            if (numOfTaps != 0)
-                return (lastTapTime - initTapTime) / numOfTaps * 60.0f;
+            if (numOfTaps > 1)
+                return (float)(numOfTaps - 1) / ((lastTapTime - initTapTime) / 60.0f);
             else
                 return 0;
         }
     }
 
+    public int taps { get { return numOfTaps; } }
+
     float lastTapTime = 0;
     float initTapTime = 0;
-    float numOfTaps = 0;
+    int numOfTaps = 0;
+
+    public TapBPMCalculator(float resetTime = 2.0f)
+    {
+        this.resetTime = resetTime;
+    }
 	
     public void Tap()
     {
-        if (Time.realtimeSinceStartup - lastTapTime >= RESET_TIME)
+        if (numOfTaps == 0 || Time.realtimeSinceStartup - lastTapTime >= resetTime)
         {
             Reset();
         }
+        else
+            lastTapTime = Time.realtimeSinceStartup;
 
-        lastTapTime = Time.realtimeSinceStartup;
         ++numOfTaps;
+
+        Debug.Log("Taps: " + numOfTaps + ", Total time: " + (lastTapTime - initTapTime) + " seconds");
     }
 
     public void Reset()
     {
         initTapTime = Time.realtimeSinceStartup;
-        lastTapTime = Time.realtimeSinceStartup;
+        lastTapTime = initTapTime;
         numOfTaps = 0;
     }
 }
