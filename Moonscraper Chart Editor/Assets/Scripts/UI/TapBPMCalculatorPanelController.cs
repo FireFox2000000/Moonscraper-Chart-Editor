@@ -8,6 +8,7 @@ public class TapBPMCalculatorPanelController : MonoBehaviour {
     public Text roundedBPMText;
     public Text numOfTapsText;
     public InputField tapInputField;
+    public Button activationButton;
 
     TapBPMCalculator bpmCalculator = new TapBPMCalculator();
 	
@@ -31,5 +32,12 @@ public class TapBPMCalculatorPanelController : MonoBehaviour {
     public void Disable()
     {
         gameObject.SetActive(false);
+        activationButton.gameObject.SetActive(true);
+    }
+
+    public void Enable()
+    {
+        gameObject.SetActive(true);
+        activationButton.gameObject.SetActive(false);
     }
 }
