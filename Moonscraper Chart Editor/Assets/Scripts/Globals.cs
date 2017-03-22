@@ -296,6 +296,11 @@ public class Globals : MonoBehaviour {
         iniparse.Close();
     }
 
+    public static void DeselectCurrentUI()
+    {
+        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
+    }
+
     public void ClickButton(Button button)
     {
         button.onClick.Invoke();

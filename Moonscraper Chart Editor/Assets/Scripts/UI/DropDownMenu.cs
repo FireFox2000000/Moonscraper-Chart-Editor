@@ -11,8 +11,7 @@ public class DropDownMenu : MonoBehaviour {
     public Text titleText;
     public UnityEvent[] menuEvent;
 
-    Dropdown dropdown;
-    
+    Dropdown dropdown;   
 
     public void Start()
     {
@@ -29,12 +28,19 @@ public class DropDownMenu : MonoBehaviour {
     public void InvokeFuction(int pos)
     {
         if (pos < menuEvent.Length && pos >= 0)
-        {
+        {           
             menuEvent[pos].Invoke();
             titleText.text = title;
 
             resetDropdown();
+            StartCoroutine(deselectDropdown());
         }
+    }
+
+    IEnumerator deselectDropdown()
+    {
+        yield return null;
+        Globals.DeselectCurrentUI();
     }
 
     IEnumerator selectFunction(int pos)
