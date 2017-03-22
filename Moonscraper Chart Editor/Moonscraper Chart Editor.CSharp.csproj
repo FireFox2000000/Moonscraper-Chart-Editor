@@ -205,6 +205,7 @@
     <Compile Include="Assets\Scripts\UI\Menus\ErrorMessage.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\SettingsController.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\SongPropertiesPanelController.cs" />
+    <Compile Include="Assets\Scripts\UI\SaveAnimController.cs" />
     <Compile Include="Assets\Scripts\UI\TapBPMCalculatorPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\TextTruncExt.cs" />
     <Compile Include="Assets\Scripts\UI\ToolPanelController.cs" />
