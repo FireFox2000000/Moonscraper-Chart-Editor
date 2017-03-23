@@ -22,10 +22,7 @@ public class SampleData {
     {
         get
         {
-            //if (IsLoading)
-                //return new float[0];
-            //else
-                return _data;
+            return _data;
         }
     }
 
@@ -51,20 +48,26 @@ public class SampleData {
     {
         stop = true;
 
-        if (loadThread.IsAlive)
-            loadThread.Abort();
+        //if (loadThread.IsAlive)
+            //loadThread.Abort();
+    }
+
+    public void SetData (float[] data)
+    {
+        _data = data;
     }
 
     public void ReadAudioFile(string filepath)
     {
-        if (loadThread.IsAlive)
-            loadThread.Abort();
+        //if (loadThread.IsAlive)
+          //  loadThread.Abort();
 
         this.filepath = filepath;
         _data = new float[0];
         _clip = 0;
 
         loadThread.Start(); 
+        //loadData();
     }
 
     void loadData()
@@ -76,17 +79,13 @@ public class SampleData {
 
             switch (Path.GetExtension(filepath))
             {
-                case (".ogg"):
-                   /* TanjentOGG.TanjentOGG t = new TanjentOGG.TanjentOGG();
-                    t.DecodeToFloats(bytes);
-                    
-                    sampleData = t.DecodedFloats;// new float[t.DecodedFloats.Length * t.Channels];*/
-                    
+                case (".ogg"):   
                     NVorbis.VorbisReader vorbis = new NVorbis.VorbisReader(filepath);
                     vorbis.ClipSamples = false;
-                    
+
                     _data = new float[vorbis.TotalSamples * vorbis.Channels];
-                    //vorbis.ReadSamples(_data, 0, _data.Length);*/
+                    
+                    //vorbis.ReadSamples(_data, 0, _data.Length);
                     
                     int count = 0;
                     while ((count += vorbis.ReadSamples(_data, count, 16000)) > 0 && !stop)
@@ -107,7 +106,7 @@ public class SampleData {
                 default:
                     return;
             }
-
+            
             if (!stop)
             {
                 _data = sampleData;
@@ -121,6 +120,10 @@ public class SampleData {
                 }
 
                 Debug.Log("Clip: " + clip);
+            }
+            else
+            {
+                _data = new float[0];
             }
         }
     }

@@ -1,4 +1,4 @@
-Moonscraper v0.8.4 changelog - 21/03/2017
+Moonscraper v0.8.5 changelog - 22/03/2017
 
 NEW FEATURES
 -Added master volume control to the settings.
@@ -7,6 +7,7 @@ NEW FEATURES
 -Added metronome (shortcut 'm').
 -Added error screen to display errors to the user should they occur.
 -Added current chart level being worked on next to the current song name to identify the current difficulty/instrument the user is currently working on.
+-Added small save notification.
 
 CHANGES
 -Group selection panel can now appear when the cursor mode is selected.
@@ -21,6 +22,7 @@ FIXES
 -Fixed bug when the flags of the last note of a chart wouldn't be saved.
 -Timeline UI now scales according to resolution changes.
 -Fixed Phase Shift/bad midi's from being deleted when loaded.
+Dropdown now fully deselected once an option is clicked.
 
 KNOWN ISSUES
 -Note highlight removes open note glow effect.

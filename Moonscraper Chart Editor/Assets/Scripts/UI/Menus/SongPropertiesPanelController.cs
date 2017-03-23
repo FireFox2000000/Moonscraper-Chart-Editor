@@ -233,14 +233,29 @@ public class SongPropertiesPanelController : DisplayMenu {
         {
             case (0):
                 editor.currentSong.musicSample.Stop();
+                if (editor.currentSong.musicStream)
+                {
+                    editor.currentSong.musicStream.UnloadAudioData();
+                    Destroy(editor.currentSong.musicStream);
+                }
                 editor.currentSong.musicStream = null;
                 break;
             case (1):
                 editor.currentSong.guitarSample.Stop();
+                if (editor.currentSong.guitarStream)
+                {
+                    editor.currentSong.guitarStream.UnloadAudioData();
+                    Destroy(editor.currentSong.guitarStream);
+                }
                 editor.currentSong.guitarStream = null;
                 break;
             case (2):
                 editor.currentSong.rhythmSample.Stop();
+                if (editor.currentSong.rhythmStream)
+                {
+                    editor.currentSong.rhythmStream.UnloadAudioData();
+                    Destroy(editor.currentSong.rhythmStream);
+                }
                 editor.currentSong.rhythmStream = null;
                 break;
             default:

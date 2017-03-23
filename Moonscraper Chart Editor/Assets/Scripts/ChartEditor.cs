@@ -392,6 +392,7 @@ public class ChartEditor : MonoBehaviour {
             return;
 
         lastLoadedFile = string.Empty;
+        FreeAudioClips();
         currentSong = new Song();
 
         LoadSong(currentSong);
@@ -700,6 +701,7 @@ public class ChartEditor : MonoBehaviour {
             // Immediate exit
             yield break;
         }
+
         Debug.Log("Loading song: " + System.IO.Path.GetFullPath(currentFileName));
 
         // Start loading animation
@@ -753,6 +755,10 @@ public class ChartEditor : MonoBehaviour {
         // Load the actual file
         loadingScreen.loadingInformation.text = "Loading file";
         yield return null;
+
+        // Free the audio clips
+        FreeAudioClips();
+
         System.Threading.Thread songLoadThread = new System.Threading.Thread(() => { currentSong = new Song(currentFileName); });
         songLoadThread.Start();
         while (songLoadThread.ThreadState == System.Threading.ThreadState.Running)
@@ -812,6 +818,8 @@ public class ChartEditor : MonoBehaviour {
         Globals.applicationMode = Globals.ApplicationMode.Editor;
         loadingScreen.FadeOut();
         loadingScreen.loadingInformation.text = "Complete!";
+
+        //GC.Collect();
     }
 
     void LoadSong(Song song)
@@ -1126,6 +1134,19 @@ public class ChartEditor : MonoBehaviour {
         musicSources[MUSIC_STREAM_ARRAY_POS].clip = currentSong.musicStream;
         musicSources[GUITAR_STREAM_ARRAY_POS].clip = currentSong.guitarStream;
         musicSources[RHYTHM_STREAM_ARRAY_POS].clip = currentSong.rhythmStream;
+    }
+
+    public void FreeAudioClips()
+    {
+        currentSong.FreeAudioClips();
+        /*
+        foreach (AudioSource source in musicSources)
+        {
+            if (source.clip)
+                source.clip.UnloadAudioData();
+
+            Destroy(source.clip);
+        }*/
     }
 
     public void UndoWrap()

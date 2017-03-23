@@ -28,7 +28,9 @@ public class Song {
     AudioClip[] audioStreams = new AudioClip[3];
     SampleData[] audioSampleData = new SampleData[3];
 
-    public AudioClip musicStream { get { return audioStreams[MUSIC_STREAM_ARRAY_POS]; } set { audioStreams[MUSIC_STREAM_ARRAY_POS] = value; } }
+    public AudioClip musicStream { get { return audioStreams[MUSIC_STREAM_ARRAY_POS]; }
+        set { audioStreams[MUSIC_STREAM_ARRAY_POS] = value; }
+    }
     public AudioClip guitarStream { get { return audioStreams[GUITAR_STREAM_ARRAY_POS]; } set { audioStreams[GUITAR_STREAM_ARRAY_POS] = value; } }
     public AudioClip rhythmStream { get { return audioStreams[RHYTHM_STREAM_ARRAY_POS]; } set { audioStreams[RHYTHM_STREAM_ARRAY_POS] = value; } }
 
@@ -283,9 +285,6 @@ public class Song {
 
     public void LoadMusicStream(string filepath)
     {
-        musicSample.Stop();
-        musicSample = new SampleData();
-        musicSample.ReadAudioFile(filepath);
         GameObject loadAudioObject = new GameObject("Load Rhythm Audio");
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
 
@@ -294,9 +293,6 @@ public class Song {
 
     public void LoadGuitarStream(string filepath)
     {
-        guitarSample.Stop();
-        guitarSample = new SampleData();
-        guitarSample.ReadAudioFile(filepath);
         GameObject loadAudioObject = new GameObject("Load Rhythm Audio");
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
 
@@ -305,9 +301,6 @@ public class Song {
 
     public void LoadRhythmStream(string filepath)
     {
-        rhythmSample.Stop();
-        rhythmSample = new SampleData();
-        rhythmSample.ReadAudioFile(filepath);
         GameObject loadAudioObject = new GameObject("Load Rhythm Audio");
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
 
@@ -316,6 +309,17 @@ public class Song {
 
     IEnumerator LoadAudio(string filepath, int audioStreamArrayPos, GameObject coroutine)
     {
+        if (audioStreams[audioStreamArrayPos])
+        {
+            audioStreams[audioStreamArrayPos].UnloadAudioData();
+            GameObject.Destroy(audioStreams[audioStreamArrayPos]);
+        }
+
+        audioSampleData[audioStreamArrayPos].Stop();
+        audioSampleData[audioStreamArrayPos] = new SampleData();
+        if (Path.GetExtension(filepath) != ".mp3")
+            audioSampleData[audioStreamArrayPos].ReadAudioFile(filepath);
+
         filepath = filepath.Replace('\\', '/');
         
         if (filepath != string.Empty && File.Exists(filepath))
@@ -338,7 +342,7 @@ public class Song {
             }
 
             if (Path.GetExtension(filepath) == ".mp3")
-            {              
+            {             
                 WAV wav = null;
                 float[] interleavedData = null;
 
@@ -350,15 +354,9 @@ public class Song {
                     yield return null;
 
                 audioStreams[audioStreamArrayPos] = AudioClip.Create("testSound", wav.SampleCount, 2, wav.Frequency, false);
-                /*
-                float[] interleavedData = new float[0];
-                System.Threading.Thread interleaveChannelsThread = new System.Threading.Thread(() => { interleavedData = NAudioPlayer.InterleaveChannels(wav); });
-                interleaveChannelsThread.Start();
-                while (interleaveChannelsThread.ThreadState == System.Threading.ThreadState.Running)
-                    yield return null;
-                    */
                 audioStreams[audioStreamArrayPos].SetData(interleavedData, 0);
 
+                audioSampleData[audioStreamArrayPos].SetData(interleavedData);
                 //audioStreams[audioStreamArrayPos] = NAudioPlayer.FromMp3Data(www.bytes);
             }
             else
@@ -388,6 +386,19 @@ public class Song {
         }
 
         GameObject.Destroy(coroutine);
+    }
+
+    public void FreeAudioClips()
+    {
+        foreach (AudioClip clip in audioStreams)
+        {
+            if (clip)
+            {
+                clip.UnloadAudioData();
+
+                GameObject.Destroy(clip);
+            }
+        }
     }
 
     public uint WorldPositionToSnappedChartPosition(float worldYPos, int step)

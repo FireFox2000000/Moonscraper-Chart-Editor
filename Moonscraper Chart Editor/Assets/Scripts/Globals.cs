@@ -138,6 +138,7 @@ public class Globals : MonoBehaviour {
         gameplayStartDelayTime = (float)(System.Math.Round(gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f);
 
         // Audio levels
+        AudioListener.volume = (float)iniparse.ReadValue("Audio Volume", "Master", 0.5f);
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
         editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
         editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
@@ -284,6 +285,8 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Settings", "Gameplay Start Delay", gameplayStartDelayTime);
 
         // Audio levels
+        
+        //iniparse.WriteValue("Audio Volume", "Master", AudioListener.volume);
         iniparse.WriteValue("Audio Volume", "Music Stream", editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume);
         iniparse.WriteValue("Audio Volume", "Guitar Stream", editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume);
         iniparse.WriteValue("Audio Volume", "Rhythm Stream", editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume);
