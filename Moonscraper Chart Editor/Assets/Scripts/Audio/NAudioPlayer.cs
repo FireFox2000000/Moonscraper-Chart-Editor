@@ -98,6 +98,7 @@ public class WAV
         }
         return value;
     }
+
     // properties
     public float[] LeftChannel { get; internal set; }
     public float[] RightChannel { get; internal set; }

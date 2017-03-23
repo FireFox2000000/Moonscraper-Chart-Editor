@@ -111,7 +111,8 @@ public class Globals : MonoBehaviour {
     }
 
     ChartEditor editor;
-    string workingDirectory;
+    static string workingDirectory;
+    public static string realWorkingDirectory { get { return workingDirectory; } }
 
     void Awake()
     {
@@ -297,6 +298,11 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Audio Volume", "SFX", sfxVolume);
 
         iniparse.Close();
+
+        if (System.IO.File.Exists(realWorkingDirectory + "\\" + Song.TEMP_MP3_TO_WAV_FILEPATH))
+        {
+            System.IO.File.Delete(realWorkingDirectory + "\\" + Song.TEMP_MP3_TO_WAV_FILEPATH);
+        }
     }
 
     public static void DeselectCurrentUI()

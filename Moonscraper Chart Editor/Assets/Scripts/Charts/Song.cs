@@ -17,6 +17,7 @@ public class Song {
     const int MUSIC_STREAM_ARRAY_POS = 0;
     const int GUITAR_STREAM_ARRAY_POS = 1;
     const int RHYTHM_STREAM_ARRAY_POS = 2;
+    public const string TEMP_MP3_TO_WAV_FILEPATH = "moonscraper_mp3_to_wav_conversion_temp.wav";
 
     // Song properties
     public string name = string.Empty, artist = string.Empty, charter = string.Empty;
@@ -309,6 +310,9 @@ public class Song {
 
     IEnumerator LoadAudio(string filepath, int audioStreamArrayPos, GameObject coroutine)
     {
+        string temp_wav_filepath = Globals.realWorkingDirectory + "\\" + TEMP_MP3_TO_WAV_FILEPATH;
+        string convertedFromMp3 = string.Empty;
+
         if (audioStreams[audioStreamArrayPos])
         {
             audioStreams[audioStreamArrayPos].UnloadAudioData();
@@ -334,15 +338,33 @@ public class Song {
             
             audioLocations[audioStreamArrayPos] = Path.GetFullPath(filepath);
             ++audioLoads;
+
+            if (Path.GetExtension(filepath) == ".mp3")
+            {
+                Debug.Log("Converting Mp3 to wav...");
+                System.Threading.Thread wavConversionThread = new System.Threading.Thread(() => { ConvertMp3ToWav(filepath, temp_wav_filepath); });
+                wavConversionThread.Start();
+
+                while (wavConversionThread.ThreadState == System.Threading.ThreadState.Running)
+                    yield return null;
+
+                File.SetAttributes(temp_wav_filepath, FileAttributes.Hidden);
+                convertedFromMp3 = filepath;
+                filepath = temp_wav_filepath;
+
+                Debug.Log("Mp3 to wav conversion complete!");            
+            }
+
             WWW www = new WWW("file://" + filepath);
-            
+
             while (!www.isDone)
             {
                 yield return null;
             }
 
             if (Path.GetExtension(filepath) == ".mp3")
-            {             
+            {
+                Debug.Log("Still scanning for mp3 for whatever reason");
                 WAV wav = null;
                 float[] interleavedData = null;
 
@@ -351,7 +373,7 @@ public class Song {
                 wavConversionThread.Start();
 
                 while (wavConversionThread.ThreadState == System.Threading.ThreadState.Running)
-                    yield return null;
+                    yield return null;            
 
                 audioStreams[audioStreamArrayPos] = AudioClip.Create("testSound", wav.SampleCount, 2, wav.Frequency, false);
                 audioStreams[audioStreamArrayPos].SetData(interleavedData, 0);
@@ -366,7 +388,10 @@ public class Song {
 
             --audioLoads;
 
-            audioStreams[audioStreamArrayPos].name = Path.GetFileName(filepath);
+            if (convertedFromMp3 == string.Empty)
+                audioStreams[audioStreamArrayPos].name = Path.GetFileName(filepath);
+            else
+                audioStreams[audioStreamArrayPos].name = Path.GetFileName(convertedFromMp3);
 
             while (audioStreams[audioStreamArrayPos] != null && audioStreams[audioStreamArrayPos].loadState != AudioDataLoadState.Loaded) ;
 
@@ -375,7 +400,8 @@ public class Song {
 
 #if TIMING_DEBUG
             Debug.Log("Audio load time: " + (Time.realtimeSinceStartup - time));
-#endif            
+#endif     
+            Debug.Log("Finished loading audio");       
         }
         else
         {
@@ -386,6 +412,17 @@ public class Song {
         }
 
         GameObject.Destroy(coroutine);
+    }
+
+    private static void ConvertMp3ToWav(string _inPath_, string _outPath_)
+    {
+        using (NAudio.Wave.Mp3FileReader mp3 = new NAudio.Wave.Mp3FileReader(_inPath_))
+        {
+            using (NAudio.Wave.WaveStream pcm = NAudio.Wave.WaveFormatConversionStream.CreatePcmStream(mp3))
+            {
+                NAudio.Wave.WaveFileWriter.CreateWaveFile(_outPath_, pcm);
+            }
+        }
     }
 
     public void FreeAudioClips()

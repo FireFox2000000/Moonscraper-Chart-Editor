@@ -71,7 +71,7 @@ public class SampleData {
     }
 
     void loadData()
-    {   
+    {   /*
         if (File.Exists(filepath))
         {
             byte[] bytes = File.ReadAllBytes(filepath);
@@ -125,6 +125,6 @@ public class SampleData {
             {
                 _data = new float[0];
             }
-        }
+        }*/
     }
 }
