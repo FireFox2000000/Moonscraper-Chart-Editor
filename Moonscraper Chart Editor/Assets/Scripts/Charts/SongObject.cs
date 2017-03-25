@@ -9,6 +9,7 @@ public abstract class SongObject
     public Song song;
     public uint position;
     public SongObjectController controller;
+    public const int NOTFOUND = -1;
 
     public abstract int classID { get; }
 
@@ -121,9 +122,9 @@ public abstract class SongObject
     {
         int lowerBound = 0;
         int upperBound = objects.Length - 1;
-        int index = Globals.NOTFOUND;
+        int index = NOTFOUND;
 
-        int midPoint = Globals.NOTFOUND;
+        int midPoint = NOTFOUND;
 
         while (lowerBound <= upperBound)
         {
@@ -156,9 +157,9 @@ public abstract class SongObject
     {
         int lowerBound = 0;
         int upperBound = objects.Length - 1;
-        int index = Globals.NOTFOUND;
+        int index = NOTFOUND;
 
-        int midPoint = Globals.NOTFOUND;
+        int midPoint = NOTFOUND;
 
         while (lowerBound <= upperBound)
         {
@@ -191,7 +192,7 @@ public abstract class SongObject
     {
         int index = FindClosestPosition(position, objects);
 
-        if (index != Globals.NOTFOUND && objects[index].position == position)
+        if (index != NOTFOUND && objects[index].position == position)
         {
             int lowRange = index, highRange = index;
 
@@ -220,9 +221,9 @@ public abstract class SongObject
     {      
         int pos = FindClosestPosition(searchItem, objects);
 
-        if (pos != Globals.NOTFOUND && objects[pos] != searchItem)
+        if (pos != NOTFOUND && objects[pos] != searchItem)
         {
-            pos = Globals.NOTFOUND;
+            pos = NOTFOUND;
         }
 
         return pos;
@@ -232,7 +233,7 @@ public abstract class SongObject
     {
         // Linear search
         if (startPosition < 0 || startPosition > list.Count - 1)
-            return Globals.NOTFOUND;
+            return NOTFOUND;
         else
         {
             --startPosition;
@@ -244,7 +245,7 @@ public abstract class SongObject
                 --startPosition;
             }
 
-            return Globals.NOTFOUND;
+            return NOTFOUND;
         }
     }
 
@@ -252,7 +253,7 @@ public abstract class SongObject
     {
         int pos = FindPreviousPosition(type, startPosition, list);
 
-        if (pos == Globals.NOTFOUND)
+        if (pos == NOTFOUND)
             return null;
         else
             return list[pos];
@@ -262,7 +263,7 @@ public abstract class SongObject
     {
         // Linear search
         if (startPosition < 0 || startPosition > list.Count - 1)
-            return Globals.NOTFOUND;
+            return NOTFOUND;
         else
         {
             ++startPosition;
@@ -274,14 +275,14 @@ public abstract class SongObject
                 ++startPosition;
             }
 
-            return Globals.NOTFOUND;
+            return NOTFOUND;
         }
     }
 
     static T FindNextOfType<T>(System.Type type, int startPosition, List<T> list) where T : SongObject
     {
         int pos = FindNextPosition(type, startPosition, list);
-        if (pos == Globals.NOTFOUND)
+        if (pos == NOTFOUND)
             return null;
         else
             return list[pos];
@@ -291,7 +292,7 @@ public abstract class SongObject
     {
         ChartEditor.editOccurred = true;
 
-        int insertionPos = Globals.NOTFOUND;
+        int insertionPos = NOTFOUND;
 
         if (list.Count > 0)
         {
@@ -304,7 +305,7 @@ public abstract class SongObject
             {
                 insertionPos = FindClosestPosition(item, list.ToArray());
 
-                if (insertionPos != Globals.NOTFOUND)
+                if (insertionPos != NOTFOUND)
                 {
                     if (list[insertionPos] == item && item.classID == list[insertionPos].classID)
                     {
@@ -330,7 +331,7 @@ public abstract class SongObject
             }
         }
 
-        if (insertionPos == Globals.NOTFOUND)
+        if (insertionPos == NOTFOUND)
         {
             // Adding the first note
             list.Add(item);
@@ -420,7 +421,7 @@ public abstract class SongObject
         ChartEditor.editOccurred = true;
         int pos = FindObjectPosition(item, list.ToArray());
 
-        if (pos != Globals.NOTFOUND)
+        if (pos != NOTFOUND)
         {
             if (uniqueData && item.GetType() == typeof(Note))
             {
@@ -449,7 +450,7 @@ public abstract class SongObject
         int minArrayPos = FindClosestPosition(minPos, list);
         int maxArrayPos = FindClosestPosition(maxPos, list);
 
-        if (minArrayPos == Globals.NOTFOUND || maxArrayPos == Globals.NOTFOUND)
+        if (minArrayPos == NOTFOUND || maxArrayPos == NOTFOUND)
             return new T[0];
         else
         {

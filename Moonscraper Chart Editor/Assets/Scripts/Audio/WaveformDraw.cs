@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿//#define REQUESTED_SAMPLE
+
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
@@ -51,7 +53,7 @@ public class WaveformDraw : MonoBehaviour {
         {
             currentAudio = selectedAudio;
             currentSample = selectedSample;
-
+#if !REQUESTED_SAMPLE
             if (currentSample == null)
             {
                 data = new float[0];
@@ -59,24 +61,33 @@ public class WaveformDraw : MonoBehaviour {
             else
             {
                 data = currentSample.data;
-                /*
-                if (!Song.streamAudio)
-                {
-                    data = currentSample.data;
-                    data = new float[currentSample.samples * currentSample.channels];
-                    currentSample.GetData(data, 0);
-                }
-                else
-                {
-                    data = new float[0];
-                }*/
             }
-        } 
+#endif
+        }
+
+#if REQUESTED_SAMPLE
+        if (Globals.viewMode == Globals.ViewMode.Song)
+        {
+            if (currentSample == null)
+            {
+                data = new float[0];
+            }
+            else
+            {              
+                data = currentSample.ReadSampleSegment(Song.WorldYPositionToTime(editor.camYMin.position.y), Song.WorldYPositionToTime(editor.camYMax.position.y));
+
+            }
+        }
+#endif
 
         // Choose whether to display the waveform or not
-	    if (Globals.viewMode == Globals.ViewMode.Song && currentSample != null && currentAudio != null && data.Length > 0)
+        if (Globals.viewMode == Globals.ViewMode.Song && currentSample != null && currentAudio != null && data.Length > 0)
         {
-            UpdateWaveformPoints();
+#if REQUESTED_SAMPLE
+            UpdateWaveformPointRequestedData();
+#else
+            UpdateWaveformPointsFullData();
+#endif
 
             // Then activate
             lineRen.enabled = true;          
@@ -85,7 +96,38 @@ public class WaveformDraw : MonoBehaviour {
             lineRen.enabled = false;
     }
 
-    void UpdateWaveformPoints()
+    void UpdateWaveformPointRequestedData()
+    {
+        const float MAX_SCALE = 2.5f;
+
+        if (data.Length <= 0 || currentSample == null)
+        {
+            return;
+        }
+
+        int iteration = 20;
+        float scaling = 1;
+        List<Vector3> points = new List<Vector3>();
+
+        for (int i = 0; i < data.Length; i += (int)(currentAudio.channels * iteration))
+        {
+            float sampleAverage = 0;
+
+            for (int j = 0; j < currentAudio.channels; ++j)
+            {
+                sampleAverage += data[i + j];
+            }
+
+            sampleAverage /= currentAudio.channels;
+
+            points.Add(new Vector3(sampleAverage * scaling, Song.TimeToWorldYPosition(i * currentSample.samplerate), 0));
+        }
+
+        lineRen.numPositions = points.Count;
+        lineRen.SetPositions(points.ToArray());
+    }
+
+    void UpdateWaveformPointsFullData()
     {
         const float MAX_SCALE = 2.5f;
 

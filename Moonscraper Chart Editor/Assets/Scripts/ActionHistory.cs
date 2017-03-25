@@ -155,7 +155,7 @@ public class ActionHistory
 
                 arrayPos = SongObject.FindObjectPosition(songObject, arrayToSearch);
 
-                if (arrayPos == Globals.NOTFOUND)
+                if (arrayPos == SongObject.NOTFOUND)
                     continue;
                 else
                     foundSongObject = arrayToSearch[arrayPos];

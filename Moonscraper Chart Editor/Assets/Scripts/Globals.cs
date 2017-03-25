@@ -15,7 +15,6 @@ public class Globals : MonoBehaviour {
     public Toggle viewModeToggle;
     public AudioCalibrationMenuScript audioCalibrationMenu;
 
-    public static readonly int NOTFOUND = -1;
     public static readonly string TABSPACE = "  ";
 
     [Header("Area range")]
@@ -161,6 +160,7 @@ public class Globals : MonoBehaviour {
             inputField.gameObject.AddComponent<InputFieldDoubleClick>();
     }
 
+    float lastKnownMasterLevel = 0.5f;
     void Update()
     {
         // Disable controls while user is in an input field
@@ -174,6 +174,8 @@ public class Globals : MonoBehaviour {
         else
             lockToStrikeline = false;
         snapLockWarning.gameObject.SetActive(lockToStrikeline);
+
+        lastKnownMasterLevel = AudioListener.volume;    // When OnApplicationQuit is run, AudioListener.volume becomes a value of 1 for some reason
     }
 
     void OnGUI()
@@ -286,8 +288,8 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Settings", "Gameplay Start Delay", gameplayStartDelayTime);
 
         // Audio levels
-        
-        //iniparse.WriteValue("Audio Volume", "Master", AudioListener.volume);
+        //Debug.Log(lastKnownMasterLevel);
+        iniparse.WriteValue("Audio Volume", "Master", lastKnownMasterLevel);
         iniparse.WriteValue("Audio Volume", "Music Stream", editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume);
         iniparse.WriteValue("Audio Volume", "Guitar Stream", editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume);
         iniparse.WriteValue("Audio Volume", "Rhythm Stream", editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume);

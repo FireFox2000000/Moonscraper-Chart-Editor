@@ -29,7 +29,7 @@ public class PlaceTimesignature : PlaceSongObject {
         {
             SongObject[] searchArray = editor.currentSong.syncTrack;
             int pos = SongObject.FindObjectPosition(ts, searchArray);
-            if (pos == Globals.NOTFOUND)
+            if (pos == SongObject.NOTFOUND)
             {
                 editor.actionHistory.Insert(new ActionHistory.Add(ts));
                 AddObject();

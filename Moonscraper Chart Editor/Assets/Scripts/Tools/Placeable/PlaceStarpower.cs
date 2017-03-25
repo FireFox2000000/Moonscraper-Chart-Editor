@@ -33,7 +33,7 @@ public class PlaceStarpower : PlaceSongObject {
                 {
                     // Check if there's a starpower already in that position
                     int arrayPos = SongObject.FindObjectPosition(starpower, editor.currentChart.starPower);
-                    if (arrayPos != Globals.NOTFOUND)       // Found an object that matches
+                    if (arrayPos != SongObject.NOTFOUND)       // Found an object that matches
                     {
                         overwrittenSP = (Starpower)editor.currentChart.starPower[arrayPos].Clone();
                     }
@@ -52,7 +52,7 @@ public class PlaceStarpower : PlaceSongObject {
             {
                 SongObject[] searchArray = editor.currentChart.starPower;
                 int pos = SongObject.FindObjectPosition(starpower, searchArray);
-                if (pos == Globals.NOTFOUND)
+                if (pos == SongObject.NOTFOUND)
                 {
                     editor.actionHistory.Insert(new ActionHistory.Add(starpower));
                     AddObject();
@@ -148,7 +148,7 @@ public class PlaceStarpower : PlaceSongObject {
         List<ActionHistory.Action> record = new List<ActionHistory.Action>();
         int arrayPos = SongObject.FindClosestPosition(sp, chart.starPower);
 
-        if (arrayPos != Globals.NOTFOUND)       // Found an object that matches
+        if (arrayPos != SongObject.NOTFOUND)       // Found an object that matches
         {
             if (chart.starPower[arrayPos] < sp)
             {

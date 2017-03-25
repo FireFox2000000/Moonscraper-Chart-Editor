@@ -170,7 +170,7 @@ public class Song {
             audioLocations[i] = string.Empty;
 
         for (int i = 0; i < audioSampleData.Length; ++i)
-            audioSampleData[i] = new SampleData();
+            audioSampleData[i] = new SampleData(string.Empty);
 
         musicStream = null;
         length = 60 * 5;
@@ -320,9 +320,8 @@ public class Song {
         }
 
         audioSampleData[audioStreamArrayPos].Stop();
-        audioSampleData[audioStreamArrayPos] = new SampleData();
-        if (Path.GetExtension(filepath) != ".mp3")
-            audioSampleData[audioStreamArrayPos].ReadAudioFile(filepath);
+        audioSampleData[audioStreamArrayPos] = new SampleData(filepath);
+        audioSampleData[audioStreamArrayPos].ReadAudioFile();
 
         filepath = filepath.Replace('\\', '/');
         

@@ -124,7 +124,7 @@ public class SongObjectPoolManager : MonoBehaviour {
         List<Starpower> rangedSP = new List<Starpower>(SongObject.GetRange(stapowers, editor.minPos, editor.maxPos));
 
         int arrayPos = SongObject.FindClosestPosition(editor.minPos, editor.currentChart.starPower);
-        if (arrayPos != Globals.NOTFOUND)
+        if (arrayPos != SongObject.NOTFOUND)
         {
             // Find the back-most position
             while (arrayPos > 0 && editor.currentChart.starPower[arrayPos].position >= editor.minPos)

@@ -31,7 +31,7 @@ public class PlaceBPM : PlaceSongObject {
         {
             SongObject[] searchArray = editor.currentSong.syncTrack;
             int pos = SongObject.FindObjectPosition(bpm, searchArray);
-            if (pos == Globals.NOTFOUND)
+            if (pos == SongObject.NOTFOUND)
             {
                 editor.actionHistory.Insert(new ActionHistory.Add(bpm));
                 AddObject();
@@ -57,7 +57,7 @@ public class PlaceBPM : PlaceSongObject {
             if (editor.currentSong.bpms[lastBpmArrayPos].position > bpm.position)
                 --lastBpmArrayPos;
 
-            if (lastBpmArrayPos != Globals.NOTFOUND && lastBpmArrayPos >= 0)
+            if (lastBpmArrayPos != SongObject.NOTFOUND && lastBpmArrayPos >= 0)
             {
                 bpm.value = editor.currentSong.bpms[lastBpmArrayPos].value;
             }

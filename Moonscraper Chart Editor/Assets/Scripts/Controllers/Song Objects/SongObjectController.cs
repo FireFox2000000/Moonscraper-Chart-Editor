@@ -105,15 +105,19 @@ public abstract class SongObjectController : SelectableClick {
         {
             editor.currentSelectedObject = songObject;
         }
-
+        */
         // Delete the object on erase tool or by holding right click and pressing left-click
         if ((Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButtonDown(0) && Globals.applicationMode == Globals.ApplicationMode.Editor) ||
             (Input.GetMouseButtonDown(0) && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1)))
         {
-            editor.actionHistory.Insert(new ActionHistory.Delete(songObject));
-            songObject.Delete();
-            editor.currentSelectedObject = null;
-        }*/
+            if ((songObject.classID != (int)SongObject.ID.BPM && songObject.classID != (int)SongObject.ID.TimeSignature) || songObject.position != 0)
+            {
+                Debug.Log("Deleted " + songObject + " with eraser tool");
+                editor.actionHistory.Insert(new ActionHistory.Delete(songObject));
+                songObject.Delete();
+                editor.currentSelectedObject = null;
+            }
+        }
     }
     /*
     public Rect GetAABBBoundsRect()

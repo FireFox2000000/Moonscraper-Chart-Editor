@@ -374,7 +374,7 @@ public class GroupSelect : ToolObject {
             if (!data.Contains(chartObject))
             {
                 int pos = SongObject.FindClosestPosition(chartObject, data.ToArray());
-                if (pos != Globals.NOTFOUND)
+                if (pos != SongObject.NOTFOUND)
                 {
                     if (data[pos] > chartObject)
                         data.Insert(pos, chartObject);

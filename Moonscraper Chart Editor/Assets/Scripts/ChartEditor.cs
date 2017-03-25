@@ -203,7 +203,7 @@ public class ChartEditor : MonoBehaviour {
             if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && currentSelectedObjects.Length > 0 && clickedSelectableObject/*Mouse.GetSelectableObjectUnderMouse()*/ && !mouseDownOverUI)
             {
                 // Find anchor point
-                int anchorPoint = Globals.NOTFOUND;
+                int anchorPoint = SongObject.NOTFOUND;
 
                 if (clickedSelectableObject)
                 {
@@ -1063,7 +1063,7 @@ public class ChartEditor : MonoBehaviour {
         else if (id == SongObject.ID.Starpower)
         {
             int arrayPos = SongObject.FindClosestPosition(min, songObjects);
-            if (arrayPos != Globals.NOTFOUND)
+            if (arrayPos != SongObject.NOTFOUND)
             {
                 // Find the back-most position
                 while (arrayPos > 0 && songObjects[arrayPos].position >= min)

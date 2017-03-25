@@ -135,7 +135,7 @@ public class PlaceNoteController : ObjectlessTool {
                 notes[notePos].ExplicitUpdate();
                 int pos = SongObject.FindObjectPosition(notes[notePos].note, editor.currentChart.notes);
 
-                if (pos == Globals.NOTFOUND)
+                if (pos == SongObject.NOTFOUND)
                 {
                     heldInitialOverwriteActions[i - 1] = PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor, out heldNotes[i - 1]);
                     //editor.actionHistory.Insert(PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor, out heldNotes[i - 1]));

@@ -27,13 +27,44 @@ public class SampleData {
     }
 
     Thread loadThread;
-
     string filepath;
+    public float samplerate = 0;
+    int sampleCount = 0;
 
-    public SampleData()
+    public SampleData(string filepath)
     {
+        if (filepath != string.Empty)
+        {
+            this.filepath = Path.GetFullPath(filepath);
+        }
+        else
+            this.filepath = filepath;
         _data = new float[0];
         loadThread = new Thread(new ThreadStart(loadData));
+
+        if (this.filepath != string.Empty)
+        {
+            switch (Path.GetExtension(filepath))
+            {
+                case (".ogg"):
+                    NVorbis.VorbisReader vorbis = new NVorbis.VorbisReader(filepath);
+                    samplerate = vorbis.SampleRate;
+                    sampleCount = (int)vorbis.TotalSamples;
+                    break;
+                case (".wav"):
+                    WaveFileReader wav = new WaveFileReader(filepath);
+                    samplerate = wav.WaveFormat.SampleRate;
+                    sampleCount = (int)wav.SampleCount;
+                    break;
+                case (".mp3"):
+                    Mp3FileReader mp3 = new Mp3FileReader(filepath);
+                    samplerate = mp3.WaveFormat.SampleRate;
+                    sampleCount = 0;
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     public bool IsLoading
@@ -57,22 +88,102 @@ public class SampleData {
         _data = data;
     }
 
-    public void ReadAudioFile(string filepath)
+    public void ReadAudioFile()
     {
         //if (loadThread.IsAlive)
-          //  loadThread.Abort();
-
-        this.filepath = filepath;
+          //  loadThread.Abort();       
         _data = new float[0];
         _clip = 0;
 
-        loadThread.Start(); 
+        //loadThread.Start(); 
         //loadData();
     }
 
+    /// <summary>Request the samples within a specific time frame
+    /// </summary>
+    public float[] ReadSampleSegment(float startTime, float endTime)
+    {
+        float maxLength;
+        float channels;
+
+        NVorbis.VorbisReader vorbis = null;
+        WaveFileReader wav = null;
+        Mp3FileReader mp3 = null;
+
+        switch (Path.GetExtension(filepath))
+        {
+            case (".ogg"):
+                vorbis = new NVorbis.VorbisReader(filepath);              
+                maxLength = (float)vorbis.TotalTime.TotalSeconds;
+                channels = vorbis.Channels;
+                break;
+            case (".wav"):
+                wav = new WaveFileReader(filepath);
+                maxLength = (float)wav.TotalTime.TotalSeconds;
+                channels = wav.WaveFormat.Channels;
+                break;
+            case (".mp3"):
+                mp3 = new Mp3FileReader(filepath);
+                maxLength = (float)mp3.TotalTime.TotalSeconds;
+                channels = mp3.WaveFormat.Channels;
+                break;
+            default:
+                maxLength = 0;
+                channels = 2;
+                break;
+        }
+
+        int startPoint = timeToArrayPos(startTime, 1, maxLength, channels);
+        int endPoint = timeToArrayPos(endTime, 1, maxLength, channels);
+
+        float[] buffer;
+        if (endPoint - startPoint > 0)
+            buffer = new float[endPoint - startPoint];
+        else
+        {
+            return new float[0];
+        }
+
+        switch (Path.GetExtension(filepath))
+        {
+            case (".ogg"):
+                vorbis.DecodedPosition = startPoint;
+                vorbis.ReadSamples(buffer, 0, buffer.Length);
+                break;
+            case (".wav"):
+                wav.Seek(startPoint, new SeekOrigin());
+                wav.ToSampleProvider().Read(buffer, 0, buffer.Length);
+                break;
+            case (".mp3"):
+                mp3.Seek(startPoint, new SeekOrigin());
+                mp3.ToSampleProvider().Read(buffer, 0, buffer.Length);
+                break;
+            default:
+                break;
+        }
+
+        return buffer;
+    }
+
+    int timeToArrayPos(float time, int iteration, float maxLength, float channels)
+    {
+        if (time < 0)
+            return 0;
+        else if (time >= maxLength)
+            return sampleCount - 1;
+
+        // Need to floor it so it lines up with the first channel
+        int arrayPoint = (int)(((time / maxLength * sampleCount) / (channels * iteration)) * channels * iteration);
+
+        if (arrayPoint >= sampleCount)
+            arrayPoint = sampleCount - 1;
+
+        return arrayPoint;
+    }
+
     void loadData()
-    {   /*
-        if (File.Exists(filepath))
+    {   
+        if (filepath != string.Empty && File.Exists(filepath))
         {
             byte[] bytes = File.ReadAllBytes(filepath);
             float[] sampleData = new float[0];
@@ -102,6 +213,9 @@ public class SampleData {
                     break;
                 case (".mp3"):
                     NAudioPlayer.WAVFromMp3Data(bytes, out sampleData);
+                    //NAudio.Wave.Mp3FileReader mp3 = new NAudio.Wave.Mp3FileReader(filepath);
+                    //mp3.ToSampleProvider().Read(new float[16000], 3, 16000);
+
                     break;
                 default:
                     return;
@@ -125,6 +239,6 @@ public class SampleData {
             {
                 _data = new float[0];
             }
-        }*/
+        }
     }
 }
