@@ -258,21 +258,6 @@ public class PlaceNote : PlaceSongObject {
         }
         else
             noteRecord.Add(new ActionHistory.Add(note));
-        /*
-        int arrayPos = SongObject.FindObjectPosition(note, editor.currentChart.notes);
-        if (arrayPos != Globals.NOTFOUND)       // Found an object that matches
-        {
-            if (!note.AllValuesCompare(editor.currentChart.notes[arrayPos]))
-            {
-                if (note.fret_type != Note.Fret_Type.OPEN)
-                    // Object will changed, therefore record
-                    noteRecord.Add(new ActionHistory.Modify(editor.currentChart.notes[arrayPos], note));
-            }
-        }
-        else
-        {
-            noteRecord.Add(new ActionHistory.Add(note));
-        }*/
                 
         Note noteToAdd;
         if (copy)

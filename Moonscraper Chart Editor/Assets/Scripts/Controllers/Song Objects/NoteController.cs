@@ -80,7 +80,7 @@ public class NoteController : SongObjectController {
         {
             if (Input.GetButton("ChordSelect"))
             {
-                Debug.Log("Deleted " + note + " chord with eraser tool");
+                Debug.Log("Deleted " + note + " chord at position " + note.position + " with eraser tool");
                 Note[] chordNotes = note.GetChord();
                 editor.actionHistory.Insert(new ActionHistory.Delete(chordNotes));
                 foreach (Note chordNote in chordNotes)
@@ -90,7 +90,7 @@ public class NoteController : SongObjectController {
             }
             else
             {
-                Debug.Log("Deleted " + note + " with eraser tool");
+                Debug.Log("Deleted " + note + " at position " + note.position + " with eraser tool");
                 editor.actionHistory.Insert(new ActionHistory.Delete(note));
                 note.Delete();
             }

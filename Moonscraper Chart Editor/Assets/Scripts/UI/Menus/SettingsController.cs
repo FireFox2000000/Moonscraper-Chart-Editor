@@ -52,7 +52,7 @@ public class SettingsController : DisplayMenu
 
         editor.clapSource.volume = clapSourceSlider.value;
 
-        AudioListener.volume = masterVolumeSlider.value;
+        AudioListener.volume = masterVolumeSlider.value / 10.0f;
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo = musicPanSlider.value / 10.0f;
         editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].panStereo = musicPanSlider.value / 10.0f;
         editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].panStereo = musicPanSlider.value / 10.0f;
@@ -89,7 +89,7 @@ public class SettingsController : DisplayMenu
         else
             extendedSustainsToggle.isOn = false;
 
-        masterVolumeSlider.value = AudioListener.volume;
+        masterVolumeSlider.value = AudioListener.volume * 10.0f;
 
         gameplayStartDelayDropdown.value = (int)(Globals.gameplayStartDelayTime * 2.0f);
 

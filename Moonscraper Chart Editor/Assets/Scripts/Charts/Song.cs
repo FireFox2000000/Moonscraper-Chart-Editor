@@ -62,11 +62,23 @@ public class Song {
     List<Event> _events;
     List<SyncTrack> _syncTrack;
 
+    /// <summary>
+    /// Read only list of song events.
+    /// </summary>
     public Event[] events { get; private set; }
+    /// <summary>
+    /// Read only list of song sections.
+    /// </summary>
     public Section[] sections { get; private set; }
 
     public SyncTrack[] syncTrack { get { return _syncTrack.ToArray(); } }
+    /// <summary>
+    /// Read only list of a song's bpm changes.
+    /// </summary>
     public BPM[] bpms { get; private set; }
+    /// <summary>
+    /// Read only list of a song's time signature changes.
+    /// </summary>
     public TimeSignature[] timeSignatures { get; private set; }
 
     // For regexing
@@ -101,7 +113,9 @@ public class Song {
 
     int audioLoads = 0;
 
-    // Constructor for a new chart
+    /// <summary>
+    /// Default constructor for a new chart. Initialises all lists and adds locked bpm and timesignature objects.
+    /// </summary>
     public Song()
     { 
         _events = new List<Event>();
@@ -249,7 +263,10 @@ public class Song {
         updateArrays();
     }
 
-    // Loading a chart file
+    /// <summary>
+    /// Generates a song object loaded from a .chart file.
+    /// </summary>
+    /// <param name="filepath">The path to the .chart file you want to load.</param>
     public Song(string filepath) : this()
     {
         try
@@ -271,6 +288,9 @@ public class Song {
         }
     }
 
+    /// <summary>
+    /// Unity context only. Loads the audio provided from the .chart file into AudioClips for song, guitar and rhythm tracks.
+    /// </summary>
     public void LoadAllAudioClips()
     {
 #if TIMING_DEBUG
@@ -464,7 +484,12 @@ public class Song {
         return TimeToChartPosition(WorldYPositionToTime(worldYPos), resolution);
     }
 
-    // Used for snapping
+    /// <summary>
+    /// Converts a time value into a tick position value. May be inaccurate due to interger rounding.
+    /// </summary>
+    /// <param name="time">The time (in seconds) to convert.</param>
+    /// <param name="resolution">Ticks per beat, usually provided from the resolution song of a Song class.</param>
+    /// <returns>Returns the calculated tick position.</returns>
     public uint TimeToChartPosition(float time, float resolution)
     {
         if (time < 0)
@@ -495,6 +520,11 @@ public class Song {
         return position;
     }
 
+    /// <summary>
+    /// Finds the value of the first bpm that appears before the specified tick position.
+    /// </summary>
+    /// <param name="position">The tick position</param>
+    /// <returns>Returns the value of the bpm that was found.</returns>
     public uint GetPrevBPM(uint position)
     {
         for (int i = 0; i < bpms.Length; ++i)
@@ -508,6 +538,11 @@ public class Song {
         return bpms[0].value;
     }
 
+    /// <summary>
+    /// Finds the value of the first time signature that appears before the specified tick position.
+    /// </summary>
+    /// <param name="position">The tick position</param>
+    /// <returns>Returns the value of the time signature that was found.</returns>
     public uint GetPrevTS(uint position)
     {
         for (int i = 0; i < timeSignatures.Length; ++i)
@@ -531,6 +566,12 @@ public class Song {
         return time * Globals.hyperspeed / Globals.gameSpeed;
     }
 
+    /// <summary>
+    /// Converts a tick position into the time it will appear in the song.
+    /// </summary>
+    /// <param name="position">Tick position.</param>
+    /// <param name="resolution">Ticks per beat, usually provided from the resolution song of a Song class.</param>
+    /// <returns>Returns the time in seconds.</returns>
     public float ChartPositionToTime(uint position, float resolution)
     {
         int previousBPMPos = SongObject.FindClosestPosition(position, bpms);
@@ -544,6 +585,12 @@ public class Song {
         return time;
     }
 
+    /// <summary>
+    /// Adds a synctrack object (bpm or time signature) into the song.
+    /// </summary>
+    /// <param name="syncTrackObject">Item to add.</param>
+    /// <param name="autoUpdate">Automatically update all read-only arrays? 
+    /// If set to false, you must manually call the updateArrays() method, but is useful when adding multiple objects as it increases performance dramatically.</param>
     public void Add(SyncTrack syncTrackObject, bool autoUpdate = true)
     {
         syncTrackObject.song = this;
@@ -555,6 +602,12 @@ public class Song {
         ChartEditor.editOccurred = true;
     }
 
+    /// <summary>
+    /// Removes a synctrack object (bpm or time signature) from the song.
+    /// </summary>
+    /// <param name="autoUpdate">Automatically update all read-only arrays? 
+    /// If set to false, you must manually call the updateArrays() method, but is useful when removing multiple objects as it increases performance dramatically.</param>
+    /// <returns>Returns whether the removal was successful or not (item may not have been found if false).</returns>
     public bool Remove(SyncTrack syncTrackObject, bool autoUpdate = true)
     {
         bool success = false;
@@ -576,6 +629,12 @@ public class Song {
         return success;
     }
 
+    /// <summary>
+    /// Adds an event object (section or event) into the song.
+    /// </summary>
+    /// <param name="syncTrackObject">Item to add.</param>
+    /// <param name="autoUpdate">Automatically update all read-only arrays? 
+    /// If set to false, you must manually call the updateArrays() method, but is useful when adding multiple objects as it increases performance dramatically.</param>
     public void Add(Event eventObject, bool autoUpdate = true)
     {
         eventObject.song = this;
@@ -587,6 +646,12 @@ public class Song {
         ChartEditor.editOccurred = true;
     }
 
+    /// <summary>
+    /// Removes an event object (section or event) from the song.
+    /// </summary>
+    /// <param name="autoUpdate">Automatically update all read-only arrays? 
+    /// If set to false, you must manually call the updateArrays() method, but is useful when removing multiple objects as it increases performance dramatically.</param>
+    /// <returns>Returns whether the removal was successful or not (item may not have been found if false).</returns>
     public bool Remove(Event eventObject, bool autoUpdate = true)
     {
         bool success = false;
@@ -604,7 +669,14 @@ public class Song {
         return success;
     }
 
-    // Calculates the amount of time elapsed between the 2 positions at a set bpm
+    /// <summary>
+    /// Calculates the amount of time elapsed between 2 tick positions.
+    /// </summary>
+    /// <param name="pos_start">Initial tick position.</param>
+    /// <param name="pos_end">Final tick position.</param>
+    /// <param name="resolution">Ticks per beat, usually provided from the resolution song of a Song class.</param>
+    /// <param name="bpm">The beats per minute value. BPMs provided from a BPM object need to be divded by 1000 as it is stored as the value read from a .chart file.</param>
+    /// <returns></returns>
     public static double dis_to_time(uint pos_start, uint pos_end, float resolution, float bpm)
     {
         return (pos_end - pos_start) / resolution * 60.0f / bpm;
@@ -964,6 +1036,11 @@ public class Song {
         return saveString;
     }
 
+    /// <summary>
+    /// Saves the song data in a .chart format to the specified path asynchonously (starts a thread).
+    /// </summary>
+    /// <param name="filepath">The path and filename to save to.</param>
+    /// <param name="forced">Will the notes from each chart have their flags properties saved into the file?</param>
     public void Save(string filepath, bool forced = true)
     {
         saveThread = new System.Threading.Thread(() => SongSave(filepath, forced));
@@ -1085,6 +1162,9 @@ public class Song {
         }
     }
 
+    /// <summary>
+    /// Updates all read-only values and bpm assigned time values. 
+    /// </summary>
     public void updateArrays()
     {
         events = _events.ToArray();
@@ -1094,6 +1174,9 @@ public class Song {
         updateBPMTimeValues();
     }
 
+    /// <summary>
+    /// Dramatically speeds up calculations of songs with lots of bpm changes.
+    /// </summary>
     void updateBPMTimeValues()
     {
         foreach (BPM bpm in bpms)

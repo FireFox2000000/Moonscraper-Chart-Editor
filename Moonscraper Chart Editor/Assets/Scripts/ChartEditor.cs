@@ -1149,13 +1149,13 @@ public class ChartEditor : MonoBehaviour {
         }*/
     }
 
-    public void UndoWrap()
+    public bool UndoWrapper()
     {
-        actionHistory.Undo(this);
+        return actionHistory.Undo(this);
     }
 
-    public void RedoWrap()
+    public bool RedoWrapper()
     {
-        actionHistory.Redo(this);
+        return actionHistory.Redo(this);
     }
 }

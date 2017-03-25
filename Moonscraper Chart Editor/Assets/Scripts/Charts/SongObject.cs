@@ -6,8 +6,17 @@ using System;
 
 public abstract class SongObject
 {
+    /// <summary>
+    /// The song this object is connected to.
+    /// </summary>
     public Song song;
+    /// <summary>
+    /// The tick position of the object
+    /// </summary>
     public uint position;
+    /// <summary>
+    /// Unity only.
+    /// </summary>
     public SongObjectController controller;
     public const int NOTFOUND = -1;
 
@@ -30,6 +39,9 @@ public abstract class SongObject
         }
     }
 
+    /// <summary>
+    /// Automatically converts the object's tick position into the time it will appear in the song.
+    /// </summary>
     public float time
     {
         get
@@ -39,6 +51,12 @@ public abstract class SongObject
     }
 
     public abstract string GetSaveString();
+
+    /// <summary>
+    /// Removes this object from it's song/chart
+    /// </summary>
+    /// <param name="update">Automatically update all read-only arrays? 
+    /// If set to false, you must manually call the updateArrays() method, but is useful when deleting multiple objects as it increases performance dramatically.</param>
     public virtual void Delete(bool update = true)
     {
         if (controller)
@@ -118,6 +136,14 @@ public abstract class SongObject
         return base.GetHashCode();
     }
 
+    /// <summary>
+    /// Searches through the array and finds the array position of item most similar to the one provided.
+    /// </summary>
+    /// <typeparam name="T">Only objects that extend from the SongObject class.</typeparam>
+    /// <param name="searchItem">The item you want to search for.</param>
+    /// <param name="objects">The items you want to search through.</param>
+    /// <returns>Returns the array position of the object most similar to the search item provided in the 'objects' parameter. 
+    /// Returns SongObject.NOTFOUND if there are no objects provided. </returns>
     public static int FindClosestPosition<T>(T searchItem, T[] objects) where T : SongObject
     {
         int lowerBound = 0;
@@ -149,10 +175,17 @@ public abstract class SongObject
                 }
             }
         }
-        
         return index;
     }
 
+    /// <summary>
+    /// Searches through the array and finds the array position of item with the closest position to the one provided.
+    /// </summary>
+    /// <typeparam name="T">Only objects that extend from the SongObject class.</typeparam>
+    /// <param name="searchItem">The item you want to search for.</param>
+    /// <param name="objects">The items you want to search through.</param>
+    /// <returns>Returns the array position of the closest object located at the specified tick position. 
+    /// Returns SongObject.NOTFOUND if there are no objects provided. </returns>
     public static int FindClosestPosition<T>(uint position, T[] objects) where T : SongObject
     {
         int lowerBound = 0;
@@ -188,6 +221,14 @@ public abstract class SongObject
         return index;
     }
 
+    /// <summary>
+    /// Searches through the array to collect all the items found at the specified position.
+    /// </summary>
+    /// <typeparam name="T">Only objects that extend from the SongObject class.</typeparam>
+    /// <param name="position">The tick position of the items.</param>
+    /// <param name="objects">The list you want to search through.</param>
+    /// <returns>Returns an array of items located at the specified tick position. 
+    /// Returns an empty array if no items are at that exact tick position. </returns>
     public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T : SongObject
     {
         int index = FindClosestPosition(position, objects);
@@ -217,6 +258,14 @@ public abstract class SongObject
             return new T[0];
     }
 
+    /// <summary>
+    /// Searches through the provided array to find the item specified.  
+    /// </summary>
+    /// <typeparam name="T">Only objects that extend from the SongObject class.</typeparam>
+    /// <param name="searchItem">The item you want to search for.</param>
+    /// <param name="objects">The items you want to search through.</param>
+    /// <returns>Returns the array position that the search item was found at within the objects array. 
+    /// Returns SongObject.NOTFOUND if the item does not exist in the objects array. </returns>
     public static int FindObjectPosition<T>(T searchItem, T[] objects) where T : SongObject
     {      
         int pos = FindClosestPosition(searchItem, objects);
@@ -288,6 +337,13 @@ public abstract class SongObject
             return list[pos];
     }
 
+    /// <summary>
+    /// Adds the item into a sorted position into the specified list and updates the note linked list if a note is inserted. 
+    /// </summary>
+    /// <typeparam name="T">Only objects that extend from the SongObject class.</typeparam>
+    /// <param name="item">The item to be inserted.</param>
+    /// <param name="list">The list in which the item will be inserted.</param>
+    /// <returns>Returns the list position it was inserted into.</returns>
     public static int Insert<T>(T item, List<T> list) where T : SongObject
     {
         ChartEditor.editOccurred = true;
@@ -416,6 +472,13 @@ public abstract class SongObject
         return insertionPos;
     }
 
+    /// <summary>
+    /// Removes the item from the specified list and updates the note linked list if a note is removed. 
+    /// </summary>
+    /// <typeparam name="T">Only objects that extend from the SongObject class.</typeparam>
+    /// <param name="item">The item to be remove.</param>
+    /// <param name="list">The list in which the item will be removed from.</param>
+    /// <returns>Returns whether the item was successfully removed or not (may not be removed if the objects was not found).</returns>
     public static bool Remove<T>(T item, List<T> list, bool uniqueData = true) where T : SongObject
     {
         ChartEditor.editOccurred = true;
@@ -442,6 +505,14 @@ public abstract class SongObject
         return false;
     }
 
+    /// <summary>
+    /// Gets a collection of items between a minimum and maximum tick position range.
+    /// </summary>
+    /// <typeparam name="T">Only objects that extend from the SongObject class.</typeparam>
+    /// <param name="list">The list to search through.</param>
+    /// <param name="minPos">The minimum range (inclusive).</param>
+    /// <param name="maxPos">The maximum range (inclusive).</param>
+    /// <returns>Returns all the objects found between the minimum and maximum tick positions specified.</returns>
     public static T[] GetRange<T>(T[] list, uint minPos, uint maxPos) where T : SongObject
     {
         if (minPos > maxPos || list.Length < 1)
@@ -515,6 +586,9 @@ public abstract class SongObject
         }
     }
 
+    /// <summary>
+    /// Allows different classes to be sorted and grouped together in arrays by giving each class a comparable numeric value that is greater or less than other classes.
+    /// </summary>
     public enum ID
     {
         TimeSignature, BPM, Event, Section, Note, Starpower, ChartEvent

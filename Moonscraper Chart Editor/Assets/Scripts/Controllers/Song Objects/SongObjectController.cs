@@ -112,7 +112,7 @@ public abstract class SongObjectController : SelectableClick {
         {
             if ((songObject.classID != (int)SongObject.ID.BPM && songObject.classID != (int)SongObject.ID.TimeSignature) || songObject.position != 0)
             {
-                Debug.Log("Deleted " + songObject + " with eraser tool");
+                Debug.Log("Deleted " + songObject + " at position " + songObject.position + " with eraser tool");
                 editor.actionHistory.Insert(new ActionHistory.Delete(songObject));
                 songObject.Delete();
                 editor.currentSelectedObject = null;

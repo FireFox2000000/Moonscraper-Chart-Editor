@@ -103,7 +103,7 @@ public class PlaceNoteController : ObjectlessTool {
 
         for (int i = 0; i < heldNotes.Length; ++i)
         {
-            // Need to make sure the note is at it's correct tick position
+            // Add in the held note history
             if (Input.GetKeyUp((i + 1).ToString()))
             {
                 keyActionHistoryInsert(i);
@@ -120,7 +120,7 @@ public class PlaceNoteController : ObjectlessTool {
             }
         }
 
-        for (int i = 1; i < notes.Length; ++i)      // Ignore the multinote
+        for (int i = 1; i < notes.Length; ++i)      // Start at 1 to ignore the multinote
         {                     
             // Need to make sure the note is at it's correct tick position
             if (Input.GetKeyDown(i.ToString()))
@@ -137,12 +137,15 @@ public class PlaceNoteController : ObjectlessTool {
 
                 if (pos == SongObject.NOTFOUND)
                 {
+                    Debug.Log("Added " + notes[notePos].note.fret_type + " note at position " + notes[notePos].note.position + " using keyboard controls");
                     heldInitialOverwriteActions[i - 1] = PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor, out heldNotes[i - 1]);
+                    
                     //editor.actionHistory.Insert(PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor, out heldNotes[i - 1]));
                 }
                 else
                 {
                     editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentChart.notes[pos]));
+                    Debug.Log("Removed " + editor.currentChart.notes[pos].fret_type + " note at position " + editor.currentChart.notes[pos].position + " using keyboard controls");
                     editor.currentChart.notes[pos].Delete();
                 }
             }

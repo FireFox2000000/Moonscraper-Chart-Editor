@@ -11,9 +11,18 @@ public class Note : ChartObject
     public uint sustain_length;
     public Fret_Type fret_type;
 
+    /// <summary>
+    /// Properties, such as forced or taps, are stored here in a bitwise format.
+    /// </summary>
     public Flags flags;
 
+    /// <summary>
+    /// The previous note in the linked-list.
+    /// </summary>
     public Note previous;
+    /// <summary>
+    /// The next note in the linked-list.
+    /// </summary>
     public Note next;
 
     new public NoteController controller {
@@ -81,6 +90,9 @@ public class Note : ChartObject
         }
     }
 
+    /// <summary>
+    /// Gets the next note in the linked-list that's not part of this note's chord.
+    /// </summary>
     public Note nextSeperateNote
     {
         get
@@ -92,6 +104,9 @@ public class Note : ChartObject
         }
     }
 
+    /// <summary>
+    /// Gets the previous note in the linked-list that's not part of this note's chord.
+    /// </summary>
     public Note previousSeperateNote
     {
         get
@@ -193,6 +208,9 @@ public class Note : ChartObject
         }
     }
 
+    /// <summary>
+    /// Ignores the note's forced flag when determining whether it would be a hopo or not
+    /// </summary>
     public bool IsNaturalHopo
     {
         get
@@ -216,6 +234,9 @@ public class Note : ChartObject
         }
     }
 
+    /// <summary>
+    /// Would this note be a hopo or not? (Ignores whether the note's tap flag is set or not.)
+    /// </summary>
     bool IsHopo
     {
         get
@@ -230,6 +251,10 @@ public class Note : ChartObject
         }
     }
 
+    /// <summary>
+    /// Returns a bit mask representing the whole note's chord. For example, a green, red and blue chord would have a mask of 0000 1011. A yellow and orange chord would have a mask of 0001 0100. 
+    /// Shifting occurs accoring the values of the Fret_Type enum, so open notes currently output with a mask of 0010 0000.
+    /// </summary>
     public int mask
     {
         get
@@ -244,6 +269,9 @@ public class Note : ChartObject
         }
     }
 
+    /// <summary>
+    /// Live calculation of what Note_Type this note would currently be. 
+    /// </summary>
     public Note_Type type
     {
         get
@@ -262,6 +290,10 @@ public class Note : ChartObject
         }
     }
 
+    /// <summary>
+    /// Gets all the notes (including this one) that share the same tick position as this one.
+    /// </summary>
+    /// <returns>Returns an array of all the notes currently sharing the same tick position as this note.</returns>
     public Note[] GetChord()
     {
         List<Note> chord = new List<Note>();
@@ -456,6 +488,10 @@ public class Note : ChartObject
         return null;
     }
 
+    /// <summary>
+    /// Calculates and sets the sustain length based the tick position it should end at. Will be a length of 0 if the note position is greater than the specified position.
+    /// </summary>
+    /// <param name="pos">The end-point for the sustain.</param>
     public void SetSustainByPos(uint pos)
     {
         if (pos > position)

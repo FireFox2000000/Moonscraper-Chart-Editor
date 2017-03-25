@@ -9,18 +9,41 @@ public class Chart  {
     Song _song;
     List<ChartObject> _chartObjects;
 
+    /// <summary>
+    /// Read only list of notes.
+    /// </summary>
     public Note[] notes { get; private set; }
+    /// <summary>
+    /// Read only list of starpower.
+    /// </summary>
     public Starpower[] starPower { get; private set; }
+    /// <summary>
+    /// Read only list of local events.
+    /// </summary>
     public ChartEvent[] events { get; private set; }
+    /// <summary>
+    /// The song this chart is connected to.
+    /// </summary>
     public Song song { get { return _song; } }
 
+    /// <summary>
+    /// Read only list containing all chart notes, starpower and events.
+    /// </summary>
     public ChartObject[] chartObjects { get { return _chartObjects.ToArray(); } }
 
     int _note_count;
+    /// <summary>
+    /// The total amount of notes in the chart, counting chord (notes sharing the same tick position) as a single note.
+    /// </summary>
     public int note_count { get { return _note_count; } }
 
     public string name = string.Empty;
 
+    /// <summary>
+    /// Creates a new chart object.
+    /// </summary>
+    /// <param name="song">The song to associate this chart with.</param>
+    /// <param name="name">The name of the chart (easy single, expert double guitar, etc.</param>
     public Chart (Song song, string name = "")
     {
         _song = song;
@@ -35,6 +58,9 @@ public class Chart  {
         this.name = name;
     }
 
+    /// <summary>
+    /// Updates all read-only values and the total note count.
+    /// </summary>
     public void updateArrays()
     {
         notes = _chartObjects.OfType<Note>().ToArray();
@@ -66,6 +92,10 @@ public class Chart  {
             return 0;
     }
 
+    /// <summary>
+    /// Adds a series of chart objects (note, starpower and/or chart events) into the chart.
+    /// </summary>
+    /// <param name="chartObjects">Items to add.</param>
     public void Add(ChartObject[] chartObjects)
     {
         foreach (ChartObject chartObject in chartObjects)
@@ -77,8 +107,12 @@ public class Chart  {
         ChartEditor.editOccurred = true;
     }
 
-    // Insert into a sorted position
-    // Return the position it was inserted into
+    /// <summary>
+    /// Adds a chart object (note, starpower and/or chart event) into the chart.
+    /// </summary>
+    /// <param name="chartObject">The item to add</param>
+    /// <param name="update">Automatically update all read-only arrays? 
+    /// If set to false, you must manually call the updateArrays() method, but is useful when adding multiple objects as it increases performance dramatically.</param>
     public int Add(ChartObject chartObject, bool update = true)
     {
         chartObject.chart = this;
@@ -94,6 +128,10 @@ public class Chart  {
         return pos;
     }
 
+    /// <summary>
+    /// Removes a series of chart objects (note, starpower and/or chart events) from the chart.
+    /// </summary>
+    /// <param name="chartObjects">Items to add.</param>
     public void Remove(ChartObject[] chartObjects)
     {
         foreach (ChartObject chartObject in chartObjects)
@@ -105,6 +143,13 @@ public class Chart  {
         ChartEditor.editOccurred = true;
     }
 
+    /// <summary>
+    /// Removes a chart object (note, starpower and/or chart event) from the chart.
+    /// </summary>
+    /// <param name="chartObject">Item to add.</param>
+    /// <param name="update">Automatically update all read-only arrays? 
+    /// If set to false, you must manually call the updateArrays() method, but is useful when removing multiple objects as it increases performance dramatically.</param>
+    /// <returns>Returns whether the removal was successful or not (item may not have been found if false).</returns>
     public bool Remove(ChartObject chartObject, bool update = true)
     {
         bool success = SongObject.Remove(chartObject, _chartObjects);

@@ -45,10 +45,15 @@ public class ActionHistory
             ChartEditor.editOccurred = true;
             float frame = timestamps[historyPoint];
 
+            int actionsUndone = 0;
+
             while (historyPoint >= 0 && Mathf.Abs(timestamps[historyPoint] - frame) < ACTION_WINDOW_TIME)
             {
                 for (int i = actionList[historyPoint].Length - 1; i >= 0; --i)
+                {
                     actionList[historyPoint][i].Revoke(editor);
+                    ++actionsUndone;
+                }
 
                 --historyPoint;
             }
@@ -58,9 +63,12 @@ public class ActionHistory
             if (Toolpane.currentTool != Toolpane.Tools.Note)
                 editor.currentSelectedObject = null;
 
+            Debug.Log("Undo: " + actionsUndone + " actions");
             return true;
         }
-        
+
+        Debug.Log("Undo: 0 actions");
+
         return false;
     }
 
@@ -70,12 +78,15 @@ public class ActionHistory
         {
             ChartEditor.editOccurred = true;
             float frame = timestamps[historyPoint + 1];
-
+            int actionsUndone = 0;
             while (historyPoint + 1 < actionList.Count && Mathf.Abs(timestamps[historyPoint + 1] - frame) < ACTION_WINDOW_TIME)
             {
                 ++historyPoint;
                 for (int i = 0; i < actionList[historyPoint].Length; ++i)
+                {                  
                     actionList[historyPoint][i].Invoke(editor);
+                    ++actionsUndone;
+                }
             }
 
             editor.currentChart.updateArrays();
@@ -83,8 +94,12 @@ public class ActionHistory
             if (Toolpane.currentTool != Toolpane.Tools.Note)
                 editor.currentSelectedObject = null;
 
+            Debug.Log("Redo: " + actionsUndone + " actions");
+
             return true;
         }
+
+        Debug.Log("Redo: 0 actions");
 
         return false;
     }

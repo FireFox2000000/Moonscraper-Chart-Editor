@@ -95,8 +95,7 @@ public class SampleData {
         _data = new float[0];
         _clip = 0;
 
-        //loadThread.Start(); 
-        //loadData();
+        loadThread.Start(); 
     }
 
     /// <summary>Request the samples within a specific time frame
