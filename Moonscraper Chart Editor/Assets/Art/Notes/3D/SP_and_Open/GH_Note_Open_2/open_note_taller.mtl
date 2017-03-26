@@ -1,0 +1,32 @@
+newmtl GH_Note_Open:Material
+illum 4
+Kd 0.53 0.09 0.54
+Ka 1.00 1.00 1.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 1.00 1.00 1.00
+Ns 96.08
+newmtl GH_Note_Open:Material_001
+illum 4
+Kd 1.00 1.00 1.00
+Ka 1.00 1.00 1.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.50 0.50 0.50
+Ns 96.08
+newmtl GH_Note_Open:Material_003
+illum 4
+Kd 0.78 0.15 0.80
+Ka 1.00 1.00 1.00
+Tf 0.00 0.00 0.00
+Ni 1.00
+Ks 0.50 0.50 0.50
+Ns 96.08
+newmtl GH_Note_Open:Material_005
+illum 4
+Kd 0.00 0.00 0.00
+Ka 1.00 1.00 1.00
+Tf 1.00 1.00 1.00
+Ni 1.00
+Ks 0.13 0.13 0.13
+Ns 96.08
