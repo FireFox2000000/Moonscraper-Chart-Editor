@@ -10,7 +10,6 @@ public class Mouse : MonoBehaviour {
     public Camera camera3D;
 
     bool dragging;
-
     ChartEditor editor;
     GameObject selectedGameObject;
 	
@@ -64,12 +63,11 @@ public class Mouse : MonoBehaviour {
             initMouseDragPos = (Vector2)world2DPosition;
 
             selectedGameObject = objectUnderMouse;
-            if (selectedGameObject)
-            Debug.Log(selectedGameObject.transform.position.y);
 
-            if (selectedGameObject)
+            if (selectedGameObject && selectedGameObject.activeSelf)
             {
                 SelectableClick[] monos = selectedGameObject.GetComponents<SelectableClick>();
+
                 foreach (SelectableClick mono in monos)
                 {
                     mono.OnSelectableMouseDown();
@@ -83,7 +81,7 @@ public class Mouse : MonoBehaviour {
         }
 
         // OnSelectableMouseDrag
-        if (dragging && selectedGameObject)
+        if (dragging && selectedGameObject && selectedGameObject.activeSelf)
         {
             SelectableClick[] monos = selectedGameObject.GetComponents<SelectableClick>();
             foreach (SelectableClick mono in monos)
@@ -93,7 +91,7 @@ public class Mouse : MonoBehaviour {
         }
 
         // OnSelectableMouseOver
-        if (objectUnderMouse)
+        if (objectUnderMouse && objectUnderMouse.activeSelf)
         {
             SelectableClick[] mouseOver = objectUnderMouse.GetComponents<SelectableClick>();
             foreach (SelectableClick mono in mouseOver)
@@ -117,6 +115,12 @@ public class Mouse : MonoBehaviour {
             dragging = false;
 
             selectedGameObject = null;
+        }
+
+        if (cancel || (selectedGameObject && !selectedGameObject.activeSelf))
+        {
+            selectedGameObject = null;
+            cancel = false;
         }
     }
 

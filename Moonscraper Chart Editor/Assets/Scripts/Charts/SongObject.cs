@@ -60,7 +60,9 @@ public abstract class SongObject
     public virtual void Delete(bool update = true)
     {
         if (controller)
+        {
             controller.gameObject.SetActive(false);
+        }
     }
     public abstract SongObject Clone();
     public abstract bool AllValuesCompare<T>(T songObject) where T : SongObject;

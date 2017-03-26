@@ -33,7 +33,9 @@ public class SustainController : SelectableClick {
         if (nCon.note.song != null)
         {
             if (Input.GetMouseButton(1))
+            {
                 OnSelectableMouseDrag();
+            }
         }
     }
 

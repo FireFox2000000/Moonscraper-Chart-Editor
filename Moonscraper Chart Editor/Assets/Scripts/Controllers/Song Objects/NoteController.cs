@@ -80,7 +80,11 @@ public class NoteController : SongObjectController {
         {
             if (Input.GetButton("ChordSelect"))
             {
-                Debug.Log("Deleted " + note + " chord at position " + note.position + " with eraser tool");
+                if (Toolpane.currentTool == Toolpane.Tools.Eraser)
+                    Debug.Log("Deleted " + note + " chord at position " + note.position + " with eraser tool");
+                else
+                    Debug.Log("Deleted " + note + " chord at position " + note.position + " with hold-right left-click shortcut");
+
                 Note[] chordNotes = note.GetChord();
                 editor.actionHistory.Insert(new ActionHistory.Delete(chordNotes));
                 foreach (Note chordNote in chordNotes)
@@ -90,7 +94,11 @@ public class NoteController : SongObjectController {
             }
             else
             {
-                Debug.Log("Deleted " + note + " at position " + note.position + " with eraser tool");
+                if (Toolpane.currentTool == Toolpane.Tools.Eraser)
+                    Debug.Log("Deleted " + note + " at position " + note.position + " with eraser tool");
+                else
+                    Debug.Log("Deleted " + note + " at position " + note.position + " with hold-right left-click shortcut");
+
                 editor.actionHistory.Insert(new ActionHistory.Delete(note));
                 note.Delete();
             }
@@ -116,7 +124,9 @@ public class NoteController : SongObjectController {
             }
         }
         else
+        {
             sustain.OnSelectableMouseDrag();
+        }
     }
 
     public override void OnSelectableMouseUp()
