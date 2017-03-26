@@ -123,7 +123,7 @@ public class PropertiesPanelController : MonoBehaviour {
             case (SongObject.ID.BPM):
                 return ((BPM)songObject).value.ToString();
             case (SongObject.ID.TimeSignature):
-                return ((TimeSignature)songObject).value.ToString();
+                return ((TimeSignature)songObject).numerator.ToString();
             case (SongObject.ID.Event):
                 return ((Event)songObject).title.ToString();
             case (SongObject.ID.Section):

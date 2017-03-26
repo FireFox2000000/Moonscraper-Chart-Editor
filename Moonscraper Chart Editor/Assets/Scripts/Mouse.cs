@@ -64,6 +64,8 @@ public class Mouse : MonoBehaviour {
             initMouseDragPos = (Vector2)world2DPosition;
 
             selectedGameObject = objectUnderMouse;
+            if (selectedGameObject)
+            Debug.Log(selectedGameObject.transform.position.y);
 
             if (selectedGameObject)
             {

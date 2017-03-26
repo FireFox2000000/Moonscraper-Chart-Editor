@@ -13,7 +13,7 @@ public class MoveTimeSignature : PlaceTimesignature {
         this.ts = ts;
         controller.ts = ts;
         editor.currentSelectedObject = ts;
-        controller.tsText.text = ts.value.ToString() + "/4";       // Fixes 1-frame text mutation
+        controller.tsText.text = ts.numerator.ToString() + "/4";       // Fixes 1-frame text mutation
         initObject = this.ts.Clone();
     }
 

@@ -7,14 +7,23 @@ public class TimeSignature : SyncTrack
 
     public override int classID { get { return (int)_classID; } }
 
-    public TimeSignature(uint _position = 0, uint _value = 4) : base(_position, _value) { }
+    public uint numerator;
+    public readonly uint denominator = 4;
 
-    public TimeSignature(TimeSignature ts) : base(ts.position, ts.value) { }
+    public TimeSignature(uint _position = 0, uint _numerator = 4) : base(_position)
+    {
+        numerator = _numerator;
+    }
+
+    public TimeSignature(TimeSignature ts) : base(ts.position)
+    {
+        numerator = ts.numerator;
+    }
 
     override public string GetSaveString()
     {
         //0 = TS 4
-        return Globals.TABSPACE + position + " = TS " + value + Globals.LINE_ENDING;
+        return Globals.TABSPACE + position + " = TS " + numerator + Globals.LINE_ENDING;
     }
 
     public static bool regexMatch(string line)
@@ -25,5 +34,13 @@ public class TimeSignature : SyncTrack
     public override SongObject Clone()
     {
         return new TimeSignature(this);
+    }
+
+    public override bool AllValuesCompare<T>(T songObject)
+    {
+        if (this == songObject && songObject as TimeSignature != null && (songObject as TimeSignature).numerator == numerator)
+            return true;
+        else
+            return false;
     }
 }

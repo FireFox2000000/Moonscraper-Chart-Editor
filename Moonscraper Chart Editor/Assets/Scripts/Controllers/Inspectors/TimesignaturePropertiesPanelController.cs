@@ -16,7 +16,7 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
         bool edit = ChartEditor.editOccurred;
 
         if (currentTS != null)
-            tsValue.text = currentTS.value.ToString();
+            tsValue.text = currentTS.numerator.ToString();
 
         ChartEditor.editOccurred = edit;
     }
@@ -29,7 +29,7 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
             positionText.text = "Position: " + currentTS.position.ToString();
 
             if (tsValue.text != string.Empty)
-                tsValue.text = currentTS.value.ToString();
+                tsValue.text = currentTS.numerator.ToString();
         }
     }
 
@@ -41,27 +41,27 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
 
     public void UpdateTSValue(string value)
     {
-        float prevValue = currentTS.value;
+        float prevValue = currentTS.numerator;
 
         if (value != string.Empty && currentTS != null)
         {
-            currentTS.value = uint.Parse(value);
+            currentTS.numerator = uint.Parse(value);
             UpdateInputFieldRecord();
         }
 
-        if (prevValue != currentTS.value)
+        if (prevValue != currentTS.numerator)
             ChartEditor.editOccurred = true;
     }
 
     public void EndEdit(string value)
     {
-        if (value == string.Empty || currentTS.value < 1)
+        if (value == string.Empty || currentTS.numerator < 1)
         {
-            currentTS.value = 4;
+            currentTS.numerator = 4;
             UpdateInputFieldRecord();
         }
 
-        tsValue.text = currentTS.value.ToString();
+        tsValue.text = currentTS.numerator.ToString();
     }
 
     public char validatePositiveInteger(string text, int charIndex, char addedChar)

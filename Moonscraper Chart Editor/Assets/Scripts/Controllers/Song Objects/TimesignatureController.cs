@@ -14,7 +14,7 @@ public class TimesignatureController : SongObjectController {
         {
             transform.position = new Vector3(CHART_CENTER_POS + position, ts.worldYPosition, 0);
 
-            tsText.text = ts.value.ToString() + "/4";
+            tsText.text = ts.numerator.ToString() + "/" + ts.denominator.ToString();
         }
     }
 

@@ -548,12 +548,12 @@ public class Song {
         for (int i = 0; i < timeSignatures.Length; ++i)
         {
             if (i + 1 >= timeSignatures.Length)
-                return timeSignatures[i].value;
+                return timeSignatures[i].numerator;
             else if (timeSignatures[i + 1].position > position)
-                return timeSignatures[i].value;
+                return timeSignatures[i].numerator;
         }
 
-        return timeSignatures[0].value;
+        return timeSignatures[0].numerator;
     }
 
     public static float WorldYPositionToTime (float worldYPosition)
@@ -1055,17 +1055,20 @@ public class Song {
 
         // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
         if (musicStream && Path.GetDirectoryName(audioLocations[MUSIC_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
-            musicString = musicStream.name;
+            //musicString = musicStream.name;
+            musicString = Path.GetFileName(audioLocations[MUSIC_STREAM_ARRAY_POS]);
         else
             musicString = audioLocations[MUSIC_STREAM_ARRAY_POS];
 
         if (guitarStream && Path.GetDirectoryName(audioLocations[GUITAR_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
-            guitarString = guitarStream.name;
+            //guitarString = guitarStream.name;
+            guitarString = Path.GetFileName(audioLocations[GUITAR_STREAM_ARRAY_POS]);
         else
             guitarString = audioLocations[GUITAR_STREAM_ARRAY_POS];
 
         if (rhythmStream && Path.GetDirectoryName(audioLocations[RHYTHM_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
-            rhythmString = rhythmStream.name;
+            //rhythmString = rhythmStream.name;
+            rhythmString = Path.GetFileName(audioLocations[RHYTHM_STREAM_ARRAY_POS]);
         else
             rhythmString = audioLocations[RHYTHM_STREAM_ARRAY_POS];
 
