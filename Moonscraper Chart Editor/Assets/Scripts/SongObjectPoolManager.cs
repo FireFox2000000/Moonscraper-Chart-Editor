@@ -90,6 +90,20 @@ public class SongObjectPoolManager : MonoBehaviour {
                 rangedNotes.Add(prevNote);
             }
         }
+        else
+        {
+            int minArrayPos = SongObject.FindClosestPosition(editor.minPos, editor.currentChart.notes);
+
+            if (minArrayPos != SongObject.NOTFOUND)
+            {
+                rangedNotes.Add(editor.currentChart.notes[minArrayPos]);
+
+                foreach (Note prevNote in Note.GetPreviousOfSustains(editor.currentChart.notes[minArrayPos] as Note))
+                {
+                    rangedNotes.Add(prevNote);
+                }
+            }
+        }
 
         int pos = 0;
         foreach (Note note in rangedNotes)
