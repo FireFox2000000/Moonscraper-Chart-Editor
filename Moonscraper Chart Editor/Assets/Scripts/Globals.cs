@@ -268,9 +268,10 @@ public class Globals : MonoBehaviour {
 
         if (viewModeToggle.isOn != value)
         {
-            viewModeToggle.isOn = value;
-            editor.currentSelectedObject = null;
+            viewModeToggle.isOn = value;         
         }
+
+        editor.currentSelectedObject = null;
     }
 
     void OnApplicationQuit()

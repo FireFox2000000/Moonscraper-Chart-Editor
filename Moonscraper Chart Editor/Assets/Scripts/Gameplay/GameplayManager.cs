@@ -249,7 +249,7 @@ public class GameplayManager : MonoBehaviour {
 
                         hitNote(note);
 
-                        canTap = false;
+                        //canTap = false;
 
                         // Remove all previous notes
                         NoteController[] nConArray = notesInWindow.ToArray();
@@ -380,6 +380,7 @@ public class GameplayManager : MonoBehaviour {
             freestrum = NUM_OF_FREESTRUMS;
 
         notesInWindow.Remove(note);
+        canTap = false;
     }
 
     void OnTriggerEnter2D(Collider2D col)
