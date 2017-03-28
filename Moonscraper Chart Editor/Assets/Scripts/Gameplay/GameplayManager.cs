@@ -11,7 +11,7 @@ public class GameplayManager : MonoBehaviour {
 
     AudioSource audioSource;
 
-    const float FREESTRUM_TIME = 0.1f;
+    const float FREESTRUM_TIME = 0.13f;
     const int NUM_OF_FREESTRUMS = 1;
     int freestrum = 0;
     float freestrumTimer = 0;
@@ -24,7 +24,8 @@ public class GameplayManager : MonoBehaviour {
     public UnityEngine.UI.Text percentHitText;
     public UnityEngine.UI.Text debugHitText;
 
-    uint noteStreak = 0;
+    static uint noteStreak = 0;
+    public static uint ns { get { return noteStreak; } }
     uint notesHit = 0;
     uint totalNotes = 0;
 
@@ -38,6 +39,7 @@ public class GameplayManager : MonoBehaviour {
     float initSize;
     float previousStrumValue;
     int previousInputMask;
+    float lastNoteHitTime = 0;
 
     bool strum = false;
     bool canTap;
@@ -160,7 +162,7 @@ public class GameplayManager : MonoBehaviour {
         else
             strumValue = 0;
 #else
-        strumValue = Input.GetAxisRaw("Strum");
+        strumValue = Input.GetAxisRaw("Strum");    
 #endif
 
         // Get player input
@@ -170,6 +172,10 @@ public class GameplayManager : MonoBehaviour {
         else
             strum = false;
 
+        // Keyboard controls
+        if (Input.GetButtonDown("Strum Up") || Input.GetButtonDown("Strum Down"))
+            strum = true;
+
         // Gameplay
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
         {
@@ -178,10 +184,19 @@ public class GameplayManager : MonoBehaviour {
                 canTap = true;
 
             // Guard in case there are notes that shouldn't be in the window
-            foreach (NoteController nCon in notesInWindow.ToArray())
+            foreach (NoteController nCon in notesInWindow)
             {
                 if (nCon.hit)
                     notesInWindow.Remove(nCon);
+                /*
+                if (Time.realtimeSinceStartup < lastNoteHitTime + 0.1f && nCon.belowStrikeLine)
+                {
+                    foreach (Note chordNote in nCon.note.GetChord())
+                    {
+                        if (chordNote.controller)
+                            chordNote.controller.DeactivateNote();
+                    }
+                }*/
             }
 
             if (notesInWindow.Count > 0)
@@ -381,6 +396,7 @@ public class GameplayManager : MonoBehaviour {
 
         notesInWindow.Remove(note);
         canTap = false;
+        lastNoteHitTime = Time.realtimeSinceStartup;
     }
 
     void OnTriggerEnter2D(Collider2D col)
@@ -559,19 +575,19 @@ public class GameplayManager : MonoBehaviour {
         }
 #else
         
-        if (Input.GetButton("FretGreen"))
+        if (Input.GetButton("Fret0"))
             inputMask |= 1 << (int)Note.Fret_Type.GREEN;
 
-        if (Input.GetButton("FretRed"))
+        if (Input.GetButton("Fret1"))
             inputMask |= 1 << (int)Note.Fret_Type.RED;
 
-        if (Input.GetButton("FretYellow"))
+        if (Input.GetButton("Fret2"))
             inputMask |= 1 << (int)Note.Fret_Type.YELLOW;
 
-        if (Input.GetButton("FretBlue"))
+        if (Input.GetButton("Fret3"))
             inputMask |= 1 << (int)Note.Fret_Type.BLUE;
 
-        if (Input.GetButton("FretOrange"))
+        if (Input.GetButton("Fret4"))
             inputMask |= 1 << (int)Note.Fret_Type.ORANGE;
             
 #endif

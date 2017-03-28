@@ -17,13 +17,13 @@ public class PerspectiveBillboarding : MonoBehaviour {
         float screenPosY = Camera.main.WorldToScreenPoint(transform.position).y;
         float percentageofScreenHeight = screenPosY / Screen.height;
 
-        Vector3 rotation = transform.rotation.eulerAngles;      // Rotate on z axis
+        Vector3 rotation = transform.rotation.eulerAngles;  
 
         if (Camera.main.orthographic)
-            rotation.z = initRotation.z;
+            rotation.x = initRotation.x;
         else
-            rotation.z = initRotation.z + (percentageofScreenHeight * 2 - 1) * ROTATION_FACTOR;
+            rotation.x = initRotation.x - (percentageofScreenHeight * 2 - 1) * ROTATION_FACTOR;
 
-        transform.rotation = Quaternion.Euler(rotation);
+        transform.rotation = Quaternion.Euler(new Vector3(rotation.x, 0, 0));
     }
 }

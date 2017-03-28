@@ -58,30 +58,14 @@ public class Indicators : MonoBehaviour {
                 }
             }
 #else
-            if (Input.GetButton("FretGreen"))
-                indicators[0].SetActive(true);
-            else if (!animations[0].running)
-                indicators[0].SetActive(false);
 
-            if (Input.GetButton("FretRed"))
-                indicators[1].SetActive(true);
-            else if(!animations[0].running)
-                indicators[1].SetActive(false);
-
-            if (Input.GetButton("FretYellow"))
-                indicators[2].SetActive(true);
-            else if (!animations[0].running)
-                indicators[2].SetActive(false);
-
-            if (Input.GetButton("FretBlue"))
-                indicators[3].SetActive(true);
-            else if (!animations[0].running)
-                indicators[3].SetActive(false);
-
-            if (Input.GetButton("FretOrange"))
-                indicators[4].SetActive(true);
-            else if (!animations[0].running)
-                indicators[4].SetActive(false);
+            for (int i = 0; i < 5; ++i)
+            {
+                if (Input.GetButton("Fret" + i))
+                    indicators[i].SetActive(true);
+                else if (!animations[i].running)
+                    indicators[i].SetActive(false);
+            }
 #endif
         }
         else

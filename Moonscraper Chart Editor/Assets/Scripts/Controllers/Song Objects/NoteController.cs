@@ -214,6 +214,8 @@ public class NoteController : SongObjectController {
 
         UpdateSongObject();
     }
+
+    public bool belowStrikeLine { get { const float offset = 0.4f; return (transform.position.y <= editor.visibleStrikeline.position.y + offset); } }
     
     protected override void UpdateCheck()
     {
@@ -236,15 +238,13 @@ public class NoteController : SongObjectController {
             // Handle gameplay operation
             if (Globals.applicationMode == Globals.ApplicationMode.Playing)
             {
-                const float offset = 0.4f;
-
                 if (Globals.bot)
                 {
                     hit = true;
                     sustainBroken = false;
                 }
 
-                if (hit && transform.position.y <= editor.visibleStrikeline.position.y + offset)
+                if (hit && belowStrikeLine)
                 {
                     if (isActivated)
                     {
@@ -353,7 +353,6 @@ public class NoteController : SongObjectController {
         sustainRen.enabled = true;
         hit = false;
         sustainBroken = false;
-        
     }
 
     public void DeactivateNote()
