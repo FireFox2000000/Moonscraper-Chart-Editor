@@ -11,12 +11,12 @@ public class GameplayManager : MonoBehaviour {
 
     AudioSource audioSource;
 
-    const float FREESTRUM_TIME = 0.13f;
+    const float FREESTRUM_TIME = 0.17f;
     const int NUM_OF_FREESTRUMS = 1;
     int freestrum = 0;
     float freestrumTimer = 0;
 
-    const float STRUM_WINDOW_TIME = 0.06f;
+    const float STRUM_WINDOW_TIME = 0.15f;
     bool strumWindowOpen = false;
     float strumWindowTimer = 0;
 
@@ -205,7 +205,11 @@ public class GameplayManager : MonoBehaviour {
                 {
                     if (ValidateFrets(notesInWindow[0].note))
                     {
-                        hitNote(notesInWindow[0]);
+                        NoteController next = null;
+                        if (notesInWindow.Count > 1)
+                            next = notesInWindow[1];
+
+                        hitNote(notesInWindow[0], next);
 
                         strumWindowOpen = false;
                     }
@@ -221,7 +225,11 @@ public class GameplayManager : MonoBehaviour {
                 { 
                     if (ValidateFrets(notesInWindow[0].note) && ValidateStrum(notesInWindow[0].note, canTap))
                     {
-                        hitNote(notesInWindow[0]);
+                        NoteController next = null;
+                        if (notesInWindow.Count > 1)
+                            next = notesInWindow[1];
+
+                        hitNote(notesInWindow[0], next);
                     }
                     else if (strum)
                     {
@@ -258,11 +266,15 @@ public class GameplayManager : MonoBehaviour {
                         }
 
                         int index = notesInWindow.IndexOf(selectedNote);
-                        NoteController note = notesInWindow[notesInWindow.IndexOf(selectedNote)];
+                        NoteController note = notesInWindow[index];
+                        NoteController next = null;
+                        if (index < notesInWindow.Count - 1)
+                            next = notesInWindow[index + 1];
+
                         if (index > 0)
                             noteStreak = 0;
 
-                        hitNote(note);
+                        hitNote(note, next);
 
                         //canTap = false;
 
@@ -373,7 +385,7 @@ public class GameplayManager : MonoBehaviour {
         return false;
     }
 
-    void hitNote(NoteController note)
+    void hitNote(NoteController note, NoteController next)
     {
         ++noteStreak;
         ++notesHit;
@@ -391,7 +403,7 @@ public class GameplayManager : MonoBehaviour {
         if (note.note.sustain_length > 0)
             currentSustains.Add(note);
 
-        if (note.note.type != Note.Note_Type.STRUM)     // Allow a strum to happen after the note has already been hit
+        if (note.note.type != Note.Note_Type.STRUM && next != null && next.note.mask != note.note.mask)     // Allow a strum to happen after the note has already been hit
             freestrum = NUM_OF_FREESTRUMS;
 
         notesInWindow.Remove(note);
