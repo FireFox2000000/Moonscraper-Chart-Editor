@@ -11,14 +11,7 @@ public class GameplayManager : MonoBehaviour {
 
     AudioSource audioSource;
 
-    const float FREESTRUM_TIME = 0.17f;
-    const int NUM_OF_FREESTRUMS = 1;
-    int freestrum = 0;
-    float freestrumTimer = 0;
-
-    const float STRUM_WINDOW_TIME = 0.15f;
-    bool strumWindowOpen = false;
-    float strumWindowTimer = 0;
+    const float FREESTRUM_TIME = 0.2f;
 
     public UnityEngine.UI.Text noteStreakText;
     public UnityEngine.UI.Text percentHitText;
@@ -34,12 +27,17 @@ public class GameplayManager : MonoBehaviour {
     List<NoteController> currentSustains = new List<NoteController>();
     ChartEditor editor;
 
-    float hitWindowHeight = 0.17f;
-    float initWindowSize;
+    float hitWindowTime = 0.17f;
     float initSize;
+
     float previousStrumValue;
     int previousInputMask;
-    float lastNoteHitTime = 0;
+
+    Note lastNoteHit = null;
+    float? lastStrumTime = null;
+
+    const float SLOP_WINDOW_SIZE = 0.2f;
+    float slopWindowTimer = 0;
 
     bool strum = false;
     bool canTap;
@@ -54,7 +52,6 @@ public class GameplayManager : MonoBehaviour {
         previousStrumValue = Input.GetAxisRaw("Strum");
         previousInputMask = GetFretInputMask();
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
-        initWindowSize = hitWindowHeight;
 
         initSize = transform.localScale.y;
         transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
@@ -76,13 +73,7 @@ public class GameplayManager : MonoBehaviour {
                 break;
             }
         }
-
-        //gamepad = GamePad.GetState(0);
 #endif
-        // Configure the timing window to take into account hyperspeed changes
-        //transform.localScale = new Vector3(transform.localScale.x, initSize * Globals.hyperspeed, transform.localScale.z);
-        hitWindowHeight = initWindowSize * Globals.hyperspeed;// * Time.timeScale;
-
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
             transform.localScale = new Vector3(transform.localScale.x, initSize, transform.localScale.z);
@@ -112,45 +103,20 @@ public class GameplayManager : MonoBehaviour {
             }
         }
 
-        bool noStrumInWindow = false;
-        foreach (NoteController note in notesInWindow)
+        if (slopWindowTimer > SLOP_WINDOW_SIZE)
         {
-            if (note.note.type != Note.Note_Type.STRUM)
-            {
-                noStrumInWindow = true;
-                break;
-            }
-        }
-
-        // Handle freestrum timer
-        if (noStrumInWindow)
-            freestrumTimer = 0;
-
-        if (!noStrumInWindow && freestrumTimer > FREESTRUM_TIME)
-        {
-            freestrum = 0;
-        }
-
-        if (freestrum > 0)
-            freestrumTimer += Time.deltaTime;
-        else
-            freestrumTimer = 0;
-
-        // Handle strum window
-        if (strumWindowTimer > STRUM_WINDOW_TIME)
-        {
-            if (strumWindowOpen)        // Overstrum
-            {
+            if (lastStrumTime == null || !(NoteInHitWindow(lastNoteHit, (float)lastStrumTime) && lastNoteHit.type != Note.Note_Type.STRUM))
                 noteStreak = 0;
-                Debug.Log("Overstrum");
-            }
-            strumWindowOpen = false;
+
+            lastStrumTime = null;
         }
 
-        if (strumWindowOpen)
-            strumWindowTimer += Time.deltaTime;
+        if (lastStrumTime != null)
+        {
+            slopWindowTimer += Time.deltaTime;
+        }
         else
-            strumWindowTimer = 0;
+            slopWindowTimer = 0;
 
         // Configure current strum input
         float strumValue;
@@ -167,7 +133,6 @@ public class GameplayManager : MonoBehaviour {
 
         // Get player input
         if (strumValue != 0 && strumValue != previousStrumValue)
-            //if (Input.GetAxisRaw("Strum") != 0 && Input.GetAxisRaw("Strum") != previousStrumValue)
             strum = true;
         else
             strum = false;
@@ -188,122 +153,83 @@ public class GameplayManager : MonoBehaviour {
             {
                 if (nCon.hit)
                     notesInWindow.Remove(nCon);
-                /*
-                if (Time.realtimeSinceStartup < lastNoteHitTime + 0.1f && nCon.belowStrikeLine)
-                {
-                    foreach (Note chordNote in nCon.note.GetChord())
-                    {
-                        if (chordNote.controller)
-                            chordNote.controller.DeactivateNote();
-                    }
-                }*/
             }
 
+            // What note is the player trying to hit next?
+            Note nextNote = null;
             if (notesInWindow.Count > 0)
+                nextNote = notesInWindow[0].note;
+
+            if (nextNote != null)
             {
-                if (strumWindowOpen)            // Allows for the strum buffer
+                if (noteStreak > 0)
                 {
-                    if (ValidateFrets(notesInWindow[0].note))
+                    bool fretsCorrect = ValidateFrets(notesInWindow[0].note);
+                    bool strummingCorrect = ValidateStrum(notesInWindow[0].note, canTap);
+
+                    if (fretsCorrect && (strummingCorrect || (lastStrumTime != null && NoteInHitWindow(nextNote, (float)lastStrumTime))))
                     {
                         NoteController next = null;
                         if (notesInWindow.Count > 1)
                             next = notesInWindow[1];
 
-                        hitNote(notesInWindow[0], next);
+                        hitNote(notesInWindow[0], next, strum);
 
-                        strumWindowOpen = false;
-                    }
-                    else if (strum)
-                    {
-                        if (overstrumCheck())
+                        if (!strummingCorrect)  // Using a previous strum
                         {
-                            Debug.Log("Strummed incorrect frets");
+                            lastStrumTime = null;
                         }
                     }
-                }
-                else if ((notesInWindow[0].note.type != Note.Note_Type.STRUM && noteStreak > 0) || noteStreak > 10)       // Gives time for strumming to get back on beat
-                { 
-                    if (ValidateFrets(notesInWindow[0].note) && ValidateStrum(notesInWindow[0].note, canTap))
-                    {
-                        NoteController next = null;
-                        if (notesInWindow.Count > 1)
-                            next = notesInWindow[1];
-
-                        hitNote(notesInWindow[0], next);
-                    }
                     else if (strum)
                     {
-                        if (overstrumCheck())
-                            Debug.Log("Strummed incorrect note 2, " + "Frets: " + System.Convert.ToString(inputMask, 2) + ", Strum: " + strum);
+                        if (lastStrumTime != null)
+                        {
+                            noteStreak = 0;
+                            lastStrumTime = null;
+                            Debug.Log("Overstrum v4");
+                        }
+                        else
+                        {
+                            if (lastNoteHit != null && lastNoteHit.mask != nextNote.mask && NoteInHitWindow(nextNote, Song.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
+                                lastStrumTime = Song.WorldYPositionToTime(editor.visibleStrikeline.position.y);
+                            else
+                            {
+                                noteStreak = 0;
+                                lastStrumTime = null;
+                                Debug.Log("Overstrum v6");
+
+                                // Possible false-positive here when strumming a HOPO, and then strumming the next HOPO but the user hasn't moved to the correct fret just yet
+                            }
+                        }
                     }
                 }
                 else
                 {
-                    // Search to see if user is hitting a note ahead
-                    List<NoteController> validatedNotes = new List<NoteController>();
-                    foreach (NoteController note in notesInWindow)
-                    {
-                        if (ValidateFrets(note.note) && ValidateStrum(note.note, canTap))
-                            validatedNotes.Add(note);
-                    }
-
-                    if (validatedNotes.Count > 0)
-                    {
-                        // Select the note closest to the strikeline
-                        float aimYPos = editor.visibleStrikeline.transform.position.y + 0.25f;  // Added offset from the note controller
-
-                        NoteController selectedNote = validatedNotes[0];
-                        float dis = Mathf.Abs(aimYPos - selectedNote.transform.position.y);
-                            
-                        foreach (NoteController validatedNote in validatedNotes)
-                        {
-                            float distance = Mathf.Abs(aimYPos - validatedNote.transform.position.y);
-                            if (distance < dis)
-                            {
-                                selectedNote = validatedNote;
-                                dis = distance;
-                            }                    
-                        }
-
-                        int index = notesInWindow.IndexOf(selectedNote);
-                        NoteController note = notesInWindow[index];
-                        NoteController next = null;
-                        if (index < notesInWindow.Count - 1)
-                            next = notesInWindow[index + 1];
-
-                        if (index > 0)
-                            noteStreak = 0;
-
-                        hitNote(note, next);
-
-                        //canTap = false;
-
-                        // Remove all previous notes
-                        NoteController[] nConArray = notesInWindow.ToArray();
-                        for (int j = index - 1; j >= 0; --j)
-                        {
-                            ++totalNotes;
-                            notesInWindow.Remove(nConArray[j]);
-                        }
-                    }
-                    else
-                    {
-                        // Will not reach here if user hit a note
-                        if (strum)
-                        {
-                            if (overstrumCheck())
-                                Debug.Log("Strummed when no note");
-                        }
-                    }     
+                    HitNoteCheckRecovery();
                 }
             }
-            else
+            else if (strum)
             {
-                if (strum)
+                if (lastNoteHit != null && lastNoteHit.type != Note.Note_Type.STRUM && NoteInHitWindow(lastNoteHit, Song.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
                 {
-                    if (overstrumCheck())
-                        Debug.Log("Strummed when no note v2");
+                    lastStrumTime = null;
+                    lastNoteHit = null;
                 }
+                else
+                {
+                    noteStreak = 0;
+                    lastStrumTime = null;
+                    Debug.Log("Strummed when no note v3");
+                }
+                /*
+                if (lastStrumTime == null)
+                    lastStrumTime = Song.WorldYPositionToTime(editor.visibleStrikeline.position.y);
+                else
+                {
+                    noteStreak = 0;
+                    lastStrumTime = null;
+                    Debug.Log("Strummed when no note v3");
+                }*/
             }
 
             // Handle sustain breaking
@@ -322,6 +248,7 @@ public class GameplayManager : MonoBehaviour {
                 }
             }
 
+            // Update UI
             noteStreakText.text = "Note streak: " + noteStreak.ToString();
             if (totalNotes > 0)
                 percentHitText.text = ((float)notesHit / (float)totalNotes * 100).Round(2).ToString() + "%";
@@ -332,6 +259,7 @@ public class GameplayManager : MonoBehaviour {
 
             previousInputMask = inputMask;
 
+            // Lost combo auditorial feedback
             if (startNS >= 10 && noteStreak < startNS)
             {
                 audioSource.PlayOneShot(comboBreak, Globals.sfxVolume);
@@ -345,12 +273,14 @@ public class GameplayManager : MonoBehaviour {
         else
         {
             reset();
-            //noteStreakText.text = string.Empty;
         }
 
         previousStrumValue = strumValue;
-        if (freestrum > NUM_OF_FREESTRUMS)
-            freestrum = NUM_OF_FREESTRUMS;
+    }
+
+    bool NoteInHitWindow (Note note, float currentTime)
+    {
+        return Mathf.Abs(note.time - currentTime) < hitWindowTime / 2.0f;
     }
 
     void reset()
@@ -363,83 +293,118 @@ public class GameplayManager : MonoBehaviour {
         totalNotes = 0;
         notesInWindow.Clear();
         physicsWindow.Clear();
+        lastNoteHit = null;
     }
 
-    bool overstrumCheck()
+    void HitNoteCheckRecovery()
     {
-        if (freestrum > 0)
+        // Search to see if user is hitting a note ahead
+        List<NoteController> validatedNotes = new List<NoteController>();
+        foreach (NoteController note in notesInWindow)
         {
-            --freestrum;
+            // Collect all notes the user is possibly hitting
+            if (ValidateFrets(note.note) && ValidateStrum(note.note, canTap))
+                validatedNotes.Add(note);
+        }
+
+        if (validatedNotes.Count > 0)
+        {
+            // Recovery algorithm
+            // Select the note closest to the strikeline
+            float aimYPos = editor.visibleStrikeline.transform.position.y + 0.25f;  // Added offset from the note controller
+
+            NoteController selectedNote = validatedNotes[0];
+            float dis = Mathf.Abs(aimYPos - selectedNote.transform.position.y);
+
+            foreach (NoteController validatedNote in validatedNotes)
+            {
+                float distance = Mathf.Abs(aimYPos - validatedNote.transform.position.y);
+                if (distance < dis)
+                {
+                    selectedNote = validatedNote;
+                    dis = distance;
+                }
+            }
+
+            int index = notesInWindow.IndexOf(selectedNote);
+            NoteController note = notesInWindow[index];
+            NoteController next = null;
+            if (index < notesInWindow.Count - 1)
+                next = notesInWindow[index + 1];
+
+            if (index > 0)
+                noteStreak = 0;
+
+            hitNote(note, next, strum);
+
+            // Remove all previous notes
+            NoteController[] nConArray = notesInWindow.ToArray();
+            for (int j = index - 1; j >= 0; --j)
+            {
+                ++totalNotes;
+                notesInWindow.Remove(nConArray[j]);
+            }
         }
         else
         {
-            if (strumWindowOpen)
+            // Will not reach here if user hit a note
+            if (strum)
             {
-                noteStreak = 0;
-                return true;
+                    Debug.Log("Strummed when no note");
             }
-            else
-                strumWindowOpen = true;
         }
-
-        return false;
     }
 
-    void hitNote(NoteController note, NoteController next)
+    void hitNote(NoteController note, NoteController next, bool strummed)
     {
         ++noteStreak;
         ++notesHit;
         ++totalNotes;
+        lastStrumTime = null;
 
         foreach (Note chordNote in note.note.GetChord())
         {
             chordNote.controller.hit = true;
             chordNote.controller.PlayIndicatorAnim();
-
-            //if (strum)
-                //chordNote.controller.DeactivateNote();
         }
 
         if (note.note.sustain_length > 0)
             currentSustains.Add(note);
 
-        if (note.note.type != Note.Note_Type.STRUM && next != null && next.note.mask != note.note.mask)     // Allow a strum to happen after the note has already been hit
-            freestrum = NUM_OF_FREESTRUMS;
-
+        lastNoteHit = note.note;
         notesInWindow.Remove(note);
         canTap = false;
-        lastNoteHitTime = Time.realtimeSinceStartup;
     }
 
     void OnTriggerEnter2D(Collider2D col)
     {
-            NoteController nCon = col.gameObject.GetComponentInParent<NoteController>();
-            if (nCon && !nCon.hit && !physicsWindow.Contains(nCon))
+        NoteController nCon = col.gameObject.GetComponentInParent<NoteController>();
+        if (nCon && !nCon.hit && !physicsWindow.Contains(nCon))
+        {
+            // We only want 1 note per position so that we can compare using the note mask
+            foreach (NoteController insertedNCon in physicsWindow)
             {
-                // We only want 1 note per position so that we can compare using the note mask
-                foreach (NoteController insertedNCon in physicsWindow)
-                {
-                    if (nCon.note.position == insertedNCon.note.position)
-                        return;
-                }
-
-                // Insert into sorted position
-                for (int i = 0; i < physicsWindow.Count; ++i)
-                {
-                    if (nCon.note < physicsWindow[i].note)
-                    {
-                        physicsWindow.Insert(i, nCon);
-                        return;
-                    }
-                }
-
-                physicsWindow.Add(nCon);
+                if (nCon.note.position == insertedNCon.note.position)
+                    return;
             }
+
+            // Insert into sorted position
+            for (int i = 0; i < physicsWindow.Count; ++i)
+            {
+                if (nCon.note < physicsWindow[i].note)
+                {
+                    physicsWindow.Insert(i, nCon);
+                    return;
+                }
+            }
+
+            physicsWindow.Add(nCon);
+        }
     }
 
     bool EnterWindow(NoteController note)
     {
-        if (!note.hit && note.transform.position.y < editor.visibleStrikeline.position.y + (hitWindowHeight / 2))
+        if (!note.hit && note.transform.position.y < editor.visibleStrikeline.position.y + (Song.TimeToWorldYPosition(hitWindowTime) / 2))
         {
             // We only want 1 note per position so that we can compare using the note mask
             foreach (NoteController insertedNCon in notesInWindow)
@@ -468,7 +433,7 @@ public class GameplayManager : MonoBehaviour {
 
     bool ExitWindow(NoteController note)
     {
-        if (note.hit || note.transform.position.y < editor.visibleStrikeline.position.y - (hitWindowHeight / 2))
+        if (note.hit || note.transform.position.y < editor.visibleStrikeline.position.y - (Song.TimeToWorldYPosition(hitWindowTime / 2)))
         {
             notesInWindow.Remove(note);
             return true;
