@@ -9,6 +9,7 @@ public class AssignCustomResources : MonoBehaviour {
 
     Texture initBGTex;
     Texture initFretboardTex;
+    public Skin currentSkin;
 
     // Use this for initialization
     void Start () {
@@ -17,16 +18,14 @@ public class AssignCustomResources : MonoBehaviour {
 
         try
         {
-            LoadCustomResources resources = GameObject.FindGameObjectWithTag("Resources").GetComponent<LoadCustomResources>();
-
-            if (resources.break0 != null)
-                break0.comboBreak = resources.break0;
-            if (resources.clap != null)
-                clap.clap = resources.clap;
-            if (resources.background0 != null)
-                background.sharedMaterial.mainTexture = resources.background0;
-            if (resources.fretboard != null)
-                fretboard.sharedMaterial.mainTexture = resources.fretboard;
+            if (currentSkin.break0 != null)
+                break0.comboBreak = currentSkin.break0;
+            if (currentSkin.clap != null)
+                clap.clap = currentSkin.clap;
+            if (currentSkin.background0 != null)
+                background.sharedMaterial.mainTexture = currentSkin.background0;
+            if (currentSkin.fretboard != null)
+                fretboard.sharedMaterial.mainTexture = currentSkin.fretboard;
         }
         catch (System.Exception e)
         {

@@ -110,6 +110,7 @@
     <Compile Include="Assets\Scripts\Assign Custom Resources\AssignCustomResources.cs" />
     <Compile Include="Assets\Scripts\Assign Custom Resources\CustomResource.cs" />
     <Compile Include="Assets\Scripts\Assign Custom Resources\LoadCustomResources.cs" />
+    <Compile Include="Assets\Scripts\Assign Custom Resources\Skin.cs" />
     <Compile Include="Assets\Scripts\Audio\NAudioPlayer.cs" />
     <Compile Include="Assets\Scripts\Audio\SampleData.cs" />
     <Compile Include="Assets\Scripts\Audio\WaveformDraw.cs" />
