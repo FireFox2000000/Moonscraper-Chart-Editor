@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-public class CurrentSkinAsset
+public class SkinAsset
 {
-    [MenuItem("Assets/Create/Current Skin")]
+    [MenuItem("Assets/Create/Skin")]
     public static void CreateAsset()
     {
         ScriptableObjectUtility.CreateAsset<Skin>();

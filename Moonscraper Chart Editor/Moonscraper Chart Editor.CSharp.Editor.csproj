@@ -152,9 +152,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Editor\BuildDocumentation.cs" />
-    <Compile Include="Assets\Editor\CurrentSkinAsset.cs" />
     <Compile Include="Assets\Editor\MeshRendererSortingLayersEditor.cs" />
-    <Compile Include="Assets\Editor\ScriptableObjectUtility.cs" />
+    <Compile Include="Assets\Editor\ScriptableObjectBuildTools\MeshNoteResourcesAsset.cs" />
+    <Compile Include="Assets\Editor\ScriptableObjectBuildTools\ScriptableObjectUtility.cs" />
+    <Compile Include="Assets\Editor\ScriptableObjectBuildTools\SkinAsset.cs" />
     <Compile Include="Assets\_MK\_MKGlow\_Internal\Editor\MKGlowEditor.cs" />
   </ItemGroup>
   <ItemGroup>

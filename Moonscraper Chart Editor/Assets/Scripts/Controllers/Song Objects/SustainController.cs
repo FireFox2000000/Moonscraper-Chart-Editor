@@ -5,8 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class SustainController : SelectableClick {
-
     public NoteController nCon;
+    public MeshNoteResources resources;
+
     ChartEditor editor;
 #if WHAMMY
     LineRenderer sustainRen;
@@ -96,7 +97,7 @@ public class SustainController : SelectableClick {
 #endif
             UpdateSustainLength();
 
-            sustainRen.sharedMaterial = PrefabGlobals.sustainColours[(int)nCon.note.fret_type];
+            sustainRen.sharedMaterial = resources.sustainColours[(int)nCon.note.fret_type];
         }
     }
 
