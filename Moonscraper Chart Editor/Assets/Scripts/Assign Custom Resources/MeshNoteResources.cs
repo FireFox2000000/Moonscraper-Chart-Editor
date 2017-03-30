@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MeshNoteResources : ScriptableObject {
-    [Header("Sustain Colours (Line Renderer)")]
-    public Material[] sustainColours = new Material[6];
-
     [Header("Note models")]
     public MeshFilter standardModel;
     public MeshFilter spModel;

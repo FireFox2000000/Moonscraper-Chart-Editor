@@ -7,4 +7,5 @@ public class Skin : ScriptableObject {
     public Texture2D background0;
     public Texture2D fretboard;
     public AudioClip clap;
+    public AudioClip metronome;
 }

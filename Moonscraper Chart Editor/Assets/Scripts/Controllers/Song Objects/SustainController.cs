@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 public class SustainController : SelectableClick {
     public NoteController nCon;
-    public MeshNoteResources resources;
+    public SustainResources resources;
 
     ChartEditor editor;
 #if WHAMMY

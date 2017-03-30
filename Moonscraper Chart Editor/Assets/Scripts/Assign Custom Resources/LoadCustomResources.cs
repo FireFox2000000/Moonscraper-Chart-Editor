@@ -15,15 +15,42 @@ public class LoadCustomResources : MonoBehaviour {
         new CustomAudioClip("break-0"),
         new CustomTexture("background-0", 1920, 1080),
         new CustomTexture("fretboard-0", 512, 1024),
-        new CustomAudioClip("clap")
+        new CustomAudioClip("clap"),
+        new CustomAudioClip("metronome")
     };
 
     public AudioClip break0 { get { return ((CustomAudioClip)resources[0]).audio; } }
     public Texture2D background0 { get { return ((CustomTexture)resources[1]).texture; } }
     public Texture2D fretboard { get { return ((CustomTexture)resources[2]).texture; } }
     public AudioClip clap { get { return ((CustomAudioClip)resources[3]).audio; } }
+    public AudioClip metronome { get { return ((CustomAudioClip)resources[3]).audio; } }
 
     List<CustomResource> resourcesLoading = new List<CustomResource>();
+
+    IEnumerator LoadEditor()
+    {
+        // Fade
+        yield return fader.fadeOut(1.0f);
+
+        // Link the loaded asset to the public file we can grab from
+        foreach (CustomResource resource in resourcesLoading)
+        {
+            resource.AssignResource();
+        }
+
+        // Assign to the custom database
+        customSkin.break0 = break0;
+        customSkin.background0 = background0;
+        customSkin.clap = clap;
+        customSkin.fretboard = fretboard;
+        customSkin.metronome = metronome;
+
+        // Load editor
+        int buildIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+        enabled = false;
+        fader = null;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(buildIndex + 1);
+    }
 
     // Use this for initialization
     void Start () {
@@ -70,30 +97,6 @@ public class LoadCustomResources : MonoBehaviour {
         {
             StartCoroutine(LoadEditor());
         }
-    }
-
-    IEnumerator LoadEditor()
-    {
-        // Fade
-        yield return fader.fadeOut(1.0f);
-
-        // Link the loaded asset to the public file we can grab from
-        foreach (CustomResource resource in resourcesLoading)
-        {
-            resource.AssignResource();
-        }
-
-        // Assign to the custom database
-        customSkin.break0 = break0;
-        customSkin.background0 = background0;
-        customSkin.clap = clap;
-        customSkin.fretboard = fretboard;
-
-        // Load editor
-        int buildIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
-        enabled = false;
-        fader = null;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(buildIndex + 1);
     }
 
     List<string> GetAllFiles(string dir)

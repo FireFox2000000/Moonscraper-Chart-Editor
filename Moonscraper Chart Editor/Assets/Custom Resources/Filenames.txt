@@ -4,6 +4,7 @@ Image compatibility- .jpg, .png
 Audio files-
   break-0
   clap
+  metronome
   
 Image files
   background-0		(Recommended size: 1920x1080)

@@ -6,6 +6,7 @@ public class AssignCustomResources : MonoBehaviour {
     public StrikelineAudioController clap;
     public Renderer background;
     public Renderer fretboard;
+    public Metronome metronome;
 
     Texture initBGTex;
     Texture initFretboardTex;
@@ -26,6 +27,8 @@ public class AssignCustomResources : MonoBehaviour {
                 background.sharedMaterial.mainTexture = customSkin.background0;
             if (customSkin.fretboard != null)
                 fretboard.sharedMaterial.mainTexture = customSkin.fretboard;
+            if (customSkin.metronome != null)
+                metronome.clap = customSkin.metronome;
         }
         catch (System.Exception e)
         {
@@ -35,6 +38,7 @@ public class AssignCustomResources : MonoBehaviour {
 	
     void OnApplicationQuit()
     {
+        // This is purely for the sake of editor resetting, otherwise any custom textures used will be saved between testing
         background.sharedMaterial.mainTexture = initBGTex;
         fretboard.sharedMaterial.mainTexture = initFretboardTex;
     }

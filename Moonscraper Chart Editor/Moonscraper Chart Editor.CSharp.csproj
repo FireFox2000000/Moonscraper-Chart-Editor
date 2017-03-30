@@ -112,6 +112,7 @@
     <Compile Include="Assets\Scripts\Assign Custom Resources\LoadCustomResources.cs" />
     <Compile Include="Assets\Scripts\Assign Custom Resources\MeshNoteResources.cs" />
     <Compile Include="Assets\Scripts\Assign Custom Resources\Skin.cs" />
+    <Compile Include="Assets\Scripts\Assign Custom Resources\SustainResources.cs" />
     <Compile Include="Assets\Scripts\Audio\NAudioPlayer.cs" />
     <Compile Include="Assets\Scripts\Audio\SampleData.cs" />
     <Compile Include="Assets\Scripts\Audio\WaveformDraw.cs" />

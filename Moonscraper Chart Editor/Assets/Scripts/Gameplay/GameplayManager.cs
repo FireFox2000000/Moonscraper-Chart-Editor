@@ -280,7 +280,7 @@ public class GameplayManager : MonoBehaviour {
 
     bool NoteInHitWindow (Note note, float currentTime)
     {
-        return Mathf.Abs(note.time - currentTime) < hitWindowTime / 2.0f;
+        return Mathf.Abs(note.time - currentTime) < (hitWindowTime * Globals.gameSpeed / 2.0f);
     }
 
     void reset()
@@ -404,7 +404,7 @@ public class GameplayManager : MonoBehaviour {
 
     bool EnterWindow(NoteController note)
     {
-        if (!note.hit && note.transform.position.y < editor.visibleStrikeline.position.y + (Song.TimeToWorldYPosition(hitWindowTime) / 2))
+        if (!note.hit && NoteInHitWindow(note.note, Song.TimeToWorldYPosition(editor.visibleStrikeline.position.y)))// note.transform.position.y < editor.visibleStrikeline.position.y + (Song.TimeToWorldYPosition(hitWindowTime) / 2))
         {
             // We only want 1 note per position so that we can compare using the note mask
             foreach (NoteController insertedNCon in notesInWindow)
@@ -433,7 +433,7 @@ public class GameplayManager : MonoBehaviour {
 
     bool ExitWindow(NoteController note)
     {
-        if (note.hit || note.transform.position.y < editor.visibleStrikeline.position.y - (Song.TimeToWorldYPosition(hitWindowTime / 2)))
+        if (note.hit || !NoteInHitWindow(note.note, Song.TimeToWorldYPosition(editor.visibleStrikeline.position.y)))//note.transform.position.y < editor.visibleStrikeline.position.y - (Song.TimeToWorldYPosition(hitWindowTime / 2)))
         {
             notesInWindow.Remove(note);
             return true;
