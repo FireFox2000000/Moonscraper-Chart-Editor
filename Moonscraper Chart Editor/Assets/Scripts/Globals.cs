@@ -302,9 +302,9 @@ public class Globals : MonoBehaviour {
 
         iniparse.Close();
 
-        if (System.IO.File.Exists(realWorkingDirectory + "\\" + Song.TEMP_MP3_TO_WAV_FILEPATH))
+        if (System.IO.File.Exists(Application.persistentDataPath + "\\" + Song.TEMP_MP3_TO_WAV_FILEPATH))
         {
-            System.IO.File.Delete(realWorkingDirectory + "\\" + Song.TEMP_MP3_TO_WAV_FILEPATH);
+            System.IO.File.Delete(Application.persistentDataPath + "\\" + Song.TEMP_MP3_TO_WAV_FILEPATH);
         }
     }
 

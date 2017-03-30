@@ -330,7 +330,7 @@ public class Song {
 
     IEnumerator LoadAudio(string filepath, int audioStreamArrayPos, GameObject coroutine)
     {
-        string temp_wav_filepath = Globals.realWorkingDirectory + "\\" + TEMP_MP3_TO_WAV_FILEPATH;
+        string temp_wav_filepath = Application.persistentDataPath + "\\" + TEMP_MP3_TO_WAV_FILEPATH;
         string convertedFromMp3 = string.Empty;
 
         if (audioStreams[audioStreamArrayPos])
@@ -358,6 +358,7 @@ public class Song {
             audioLocations[audioStreamArrayPos] = Path.GetFullPath(filepath);
             ++audioLoads;
 
+            // Create a temp file
             if (Path.GetExtension(filepath) == ".mp3")
             {
                 Debug.Log("Converting Mp3 to wav...");
@@ -1037,17 +1038,22 @@ public class Song {
     }
 
     /// <summary>
-    /// Saves the song data in a .chart format to the specified path asynchonously (starts a thread).
+    /// Starts a thread that saves the song data in a .chart format to the specified path asynchonously. Can be monitored with the "IsSaving" parameter. 
     /// </summary>
     /// <param name="filepath">The path and filename to save to.</param>
-    /// <param name="forced">Will the notes from each chart have their flags properties saved into the file?</param>
-    public void Save(string filepath, bool forced = true)
+    /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
+    public void SaveAsync(string filepath, bool forced = true)
     {
-        saveThread = new System.Threading.Thread(() => SongSave(filepath, forced));
+        saveThread = new System.Threading.Thread(() => Save(filepath, forced));
         saveThread.Start();
     }
 
-    void SongSave(string filepath, bool forced = true)
+    /// <summary>
+    /// Saves the song data in a .chart format to the specified path.
+    /// </summary>
+    /// <param name="filepath">The path and filename to save to.</param>
+    /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
+    public void Save(string filepath, bool forced = true)
     {
         string musicString = string.Empty;
         string guitarString = string.Empty;
@@ -1212,4 +1218,7 @@ public class Song {
     }
 }
 
+/// <summary>
+/// Allows coroutines to be run by dynamically creating a MonoBehaviour derived instance by creating it with this class.
+/// </summary>
 class MonoWrapper : MonoBehaviour { }

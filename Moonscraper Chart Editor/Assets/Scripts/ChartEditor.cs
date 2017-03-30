@@ -319,7 +319,18 @@ public class ChartEditor : MonoBehaviour {
                 SetWindowText(windowPtr, originalWindowName);
         }
 #endif
+
+        if (quitting)
+        {
+            if (editCheck())
+            {
+                wantsToQuit = true;
+                UnityEngine.Application.Quit();
+            }
+        }
     }
+
+    bool wantsToQuit = false;
 
     void OnApplicationFocus(bool hasFocus)
     {
@@ -347,7 +358,9 @@ public class ChartEditor : MonoBehaviour {
     void OnApplicationQuit()
     {
         quitting = true;
-        if (editCheck())
+
+        //if (editCheck())
+        if (wantsToQuit)
         {
             currentSong.musicSample.Stop();
             currentSong.guitarSample.Stop();
@@ -355,6 +368,9 @@ public class ChartEditor : MonoBehaviour {
 
             while (currentSong.IsSaving) ;
         }
+        // Can't run edit check here because it seems to run in a seperate thread
+        else
+            UnityEngine.Application.CancelQuit();
     }
 
     bool editCheck()
@@ -364,13 +380,21 @@ public class ChartEditor : MonoBehaviour {
         {
             if (quitting)
                 UnityEngine.Application.CancelQuit();
-#if !UNITY_EDITOR
-            
-            DialogResult result = MessageBox.Show("Want to save unsaved changes?", "Warning", MessageBoxButtons.YesNoCancel);
-
+#if UNITY_EDITOR
+            DialogResult result;
+            //if (windowPtr != IntPtr.Zero)
+                //result = MessageBox.Show("Want to save unsaved changes?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, (MessageBoxOptions)0x40000);
+            //else
+            result = MessageBox.Show("Want to save unsaved changes?", "Warning", MessageBoxButtons.YesNoCancel);
+            if (quitting)
+                UnityEngine.Application.CancelQuit();
             if (result == DialogResult.Yes)
             {
-                Save();
+                if (!Save())
+                {
+                    quitting = false;
+                    return false;
+                }
             }
             else if (result == DialogResult.Cancel)
             {
@@ -417,15 +441,18 @@ public class ChartEditor : MonoBehaviour {
         StartCoroutine(_Load());
     }
 
-    public void Save()
+    public bool Save()
     {
         if (lastLoadedFile != string.Empty)
+        {
             Save(lastLoadedFile);
+            return true;
+        }
         else
-            SaveAs();
+            return SaveAs();
     }
 
-    public void SaveAs(bool forced = true)
+    public bool SaveAs(bool forced = true)
     {
         try {
             string fileName;
@@ -469,12 +496,15 @@ public class ChartEditor : MonoBehaviour {
             }
 #endif
 
-            Save(fileName, forced);           
+            Save(fileName, forced);
+
+            return true;          
         }
         catch (System.Exception e)
         {
             // User probably just canceled
             Debug.LogError(e.Message);
+            return false;
         }
     }
 
@@ -485,7 +515,7 @@ public class ChartEditor : MonoBehaviour {
             Debug.Log("Saving to file- " + System.IO.Path.GetFullPath(filename));
 
             editOccurred = false;            
-            currentSong.Save(filename, forced);
+            currentSong.SaveAsync(filename, forced);
             lastLoadedFile = System.IO.Path.GetFullPath(filename);
         }
     }
@@ -623,7 +653,7 @@ public class ChartEditor : MonoBehaviour {
             {
                 const string tempFileName = "moonscraperMid2Chart.temp.chart";
 
-                string file = System.IO.Path.GetDirectoryName(filepath) + "/" + tempFileName;
+                string file = System.IO.Path.GetDirectoryName(filepath) + "\\" + tempFileName;
 
                 mid2chart.Program.readOpenNotes = true;
                 mid2chart.Program.dontWriteDummy = true;
@@ -850,132 +880,6 @@ public class ChartEditor : MonoBehaviour {
         currentChart = chart;
 
         songObjectPoolManager.NewChartReset();
-    }
-
-    // Create Sections, bpms, events and time signature objects
-    GameObject CreateSongObjects(Song song)
-    {
-        for (int i = 0; i < song.sections.Length; ++i)
-        {           
-            // Attach the note to the object
-            CreateSectionObject(song.sections[i]);
-        }
-
-        for (int i = 0; i < song.bpms.Length; ++i)
-        {
-            // Attach the note to the object
-            CreateBPMObject(song.bpms[i]);
-        }
-
-        for (int i = 0; i < song.timeSignatures.Length; ++i)
-        {
-            // Attach the note to the object
-            CreateTSObject(song.timeSignatures[i]);
-        }
-
-        return songObjectParent;
-    }
-
-    SectionController CreateSectionObject(Section section)
-    {
-        // Attach the note to the object
-        SectionController controller = CreateSongObject(this.sectionPrefab).GetComponentInChildren<SectionController>();
-
-        // Link controller and note together
-        controller.section = section;
-        controller.UpdateSongObject();
-        return controller;
-    }
-
-    BPMController CreateBPMObject(BPM bpm)
-    {
-        // Attach the note to the object
-        BPMController controller = CreateSongObject(this.bpmPrefab).GetComponent<BPMController>();
-
-        // Link controller and note together
-        controller.bpm = bpm;
-        controller.UpdateSongObject();
-        return controller;
-    }
-
-    TimesignatureController CreateTSObject(TimeSignature ts)
-    {
-        // Attach the note to the object
-        TimesignatureController controller = CreateSongObject(this.tsPrefab).GetComponent<TimesignatureController>();
-
-        // Link controller and note together
-        controller.ts = ts;
-        controller.UpdateSongObject();
-        return controller;
-    }
-
-    // Create note, starpower and chart event objects
-    GameObject CreateChartObjects(Chart chart)
-    {    
-        // Get reference to the current set of notes in case real notes get deleted
-        Note[] notes = chart.notes;
-        for (int i = 0; i < notes.Length; ++i)
-        {
-            // Make sure notes haven't been deleted
-            if (notes[i].song != null)
-            {
-                CreateNoteObject(notes[i]);
-            }
-        }
-
-        Starpower[] starpowers = chart.starPower;
-        for (int i = 0; i < starpowers.Length; ++i)
-        {
-            // Make sure notes haven't been deleted
-            if (notes[i].song != null)
-            {
-                CreateStarpowerObject(starpowers[i]);
-            }
-        }
-        
-        return chartObjectParent;
-    }
-    
-    NoteController CreateNoteObject(Note note)
-    {
-        // Attach the note to the object
-        NoteController controller = CreateChartObject(this.notePrefab).GetComponent<NoteController>();
-
-        // Link controller and note together
-        controller.note = note;
-        controller.UpdateSongObject();
-        return controller;
-    }
-
-    StarpowerController CreateStarpowerObject(Starpower starpower)
-    {
-        // Attach the note to the object
-        StarpowerController controller = CreateChartObject(this.starpowerPrefab).GetComponent<StarpowerController>();
-
-        // Link controller and note together
-        controller.starpower = starpower;
-        controller.UpdateSongObject();
-        return controller;
-    }
-
-    GameObject CreateChartObject(GameObject chartObjectPrefab)
-    {
-        // Convert the chart data into gameobject
-        GameObject chartObject = Instantiate(chartObjectPrefab);
-
-        chartObject.transform.SetParent(chartObjectParent.transform);
-        chartObject.SetActive(false);
-        return chartObject;
-    }
-
-    GameObject CreateSongObject(GameObject songObjectPrefab)
-    {
-        // Convert the chart data into gameobject
-        GameObject chartObject = Instantiate(songObjectPrefab);
-
-        chartObject.transform.SetParent(songObjectParent.transform);
-        //chartObject.SetActive(false);
-        return chartObject;
     }
 
     // For dropdown UI
