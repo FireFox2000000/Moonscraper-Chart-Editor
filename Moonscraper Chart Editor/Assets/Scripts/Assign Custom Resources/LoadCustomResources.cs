@@ -23,7 +23,7 @@ public class LoadCustomResources : MonoBehaviour {
     public Texture2D background0 { get { return ((CustomTexture)resources[1]).texture; } }
     public Texture2D fretboard { get { return ((CustomTexture)resources[2]).texture; } }
     public AudioClip clap { get { return ((CustomAudioClip)resources[3]).audio; } }
-    public AudioClip metronome { get { return ((CustomAudioClip)resources[3]).audio; } }
+    public AudioClip metronome { get { return ((CustomAudioClip)resources[4]).audio; } }
 
     List<CustomResource> resourcesLoading = new List<CustomResource>();
 
