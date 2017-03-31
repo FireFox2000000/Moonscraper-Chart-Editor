@@ -11,6 +11,7 @@ public class AssignCustomResources : MonoBehaviour {
     Texture initBGTex;
     Texture initFretboardTex;
     public Skin customSkin;
+    public SpriteNoteResources defaultNoteSprites;
 
     // Use this for initialization
     void Start () {
@@ -29,10 +30,32 @@ public class AssignCustomResources : MonoBehaviour {
                 fretboard.sharedMaterial.mainTexture = customSkin.fretboard;
             if (customSkin.metronome != null)
                 metronome.clap = customSkin.metronome;
+            
+            setSpriteTextures(defaultNoteSprites.reg_strum, customSkin.reg_strum);
+            setSpriteTextures(defaultNoteSprites.reg_hopo, customSkin.reg_hopo);
+            setSpriteTextures(defaultNoteSprites.reg_tap, customSkin.reg_tap);
+            setSpriteTextures(defaultNoteSprites.sp_strum, customSkin.sp_strum);
+            setSpriteTextures(defaultNoteSprites.sp_hopo, customSkin.sp_hopo);
+            setSpriteTextures(defaultNoteSprites.sp_tap, customSkin.sp_tap);
         }
         catch (System.Exception e)
         {
             Debug.LogError(e.Message);
+        }
+    }
+
+    void setSpriteTextures(Sprite[] sprites, Texture2D[] customTextures)
+    {
+        for (int i = 0; i < customSkin.reg_strum.Length; ++i)
+        {
+            if (i < sprites.Length && customTextures[i] && sprites[i]/* && customTextures[i].width == sprites[i].texture.width && customTextures[i].height == sprites[i].texture.height*/)
+            {
+                Debug.Log(sprites[i].texture.format);
+                Debug.Log(customTextures[i].format);
+                sprites[i].texture.SetPixels(customTextures[i].GetPixels());
+                sprites[i].texture.Apply();
+                Debug.Log("PixelsSet");
+            }
         }
     }
 	

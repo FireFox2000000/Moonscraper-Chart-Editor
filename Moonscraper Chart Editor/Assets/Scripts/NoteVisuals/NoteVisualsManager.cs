@@ -24,8 +24,9 @@ public class NoteVisualsManager : MonoBehaviour {
             UpdateVisuals();
     }
 
-    void Update()
+    void LateUpdate()
     {        
+        // Placed in late update to be able to manipulate the animator
         UpdateVisuals();
     }
 
@@ -34,31 +35,43 @@ public class NoteVisualsManager : MonoBehaviour {
         Note note = nCon.note;
         if (nCon.note != null)
         {
-            // Note Type
-            if (Globals.viewMode == Globals.ViewMode.Chart)
-            {
-                noteType = note.type;
-            }
-            else
-            {
-                // Do this simply because the HOPO glow by itself looks pretty cool
-                noteType = Note.Note_Type.HOPO;
-            }
+            noteType = GetTypeWithViewChange(note);
 
             // Star power?
-            specialType = Note.Special_Type.NONE;
-            foreach (Starpower sp in note.chart.starPower)
-            {
-                if (sp.position == note.position || (sp.position <= note.position && sp.position + sp.length > note.position))
-                {
-                    specialType = Note.Special_Type.STAR_POW;
-                }
-                else if (sp.position > note.position)
-                    break;
-            }
+            specialType = IsStarpower(note);
 
             // Update note visuals
             noteRenderer.sortingOrder = -Mathf.Abs((int)note.position);
         }
+    }
+
+    public static Note.Note_Type GetTypeWithViewChange(Note note)
+    {
+        if (Globals.viewMode == Globals.ViewMode.Chart)
+        {
+            return note.type;
+        }
+        else
+        {
+            // Do this simply because the HOPO glow by itself looks pretty cool
+            return Note.Note_Type.HOPO;
+        }
+    }
+
+    public static Note.Special_Type IsStarpower(Note note)
+    {
+        Note.Special_Type specialType = Note.Special_Type.NONE;
+
+        foreach (Starpower sp in note.chart.starPower)
+        {
+            if (sp.position == note.position || (sp.position <= note.position && sp.position + sp.length > note.position))
+            {
+                specialType = Note.Special_Type.STAR_POW;
+            }
+            else if (sp.position > note.position)
+                break;
+        }
+
+        return specialType;
     }
 }

@@ -112,6 +112,7 @@
     <Compile Include="Assets\Scripts\Assign Custom Resources\LoadCustomResources.cs" />
     <Compile Include="Assets\Scripts\Assign Custom Resources\MeshNoteResources.cs" />
     <Compile Include="Assets\Scripts\Assign Custom Resources\Skin.cs" />
+    <Compile Include="Assets\Scripts\Assign Custom Resources\SpriteNoteResources.cs" />
     <Compile Include="Assets\Scripts\Assign Custom Resources\SustainResources.cs" />
     <Compile Include="Assets\Scripts\Audio\NAudioPlayer.cs" />
     <Compile Include="Assets\Scripts\Audio\SampleData.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="Assets\Scripts\Controllers\Song Objects\TimesignatureController.cs" />
     <Compile Include="Assets\Scripts\Controllers\StrikelineFretPlacement.cs" />
     <Compile Include="Assets\Scripts\Controllers\TimelineMovementController.cs" />
+    <Compile Include="Assets\Scripts\CustomSpriteTest.cs" />
     <Compile Include="Assets\Scripts\DialogBox.cs" />
     <Compile Include="Assets\Scripts\FretboardWrapMovement.cs" />
     <Compile Include="Assets\Scripts\Gameplay\GameplayManager.cs" />
@@ -166,6 +168,8 @@
     <Compile Include="Assets\Scripts\Globals.cs" />
     <Compile Include="Assets\Scripts\Metronome.cs" />
     <Compile Include="Assets\Scripts\Mouse.cs" />
+    <Compile Include="Assets\Scripts\NoteVisuals\Note2D3DSelector.cs" />
+    <Compile Include="Assets\Scripts\NoteVisuals\NoteVisuals2DManager.cs" />
     <Compile Include="Assets\Scripts\NoteVisuals\NoteVisuals3DManager.cs" />
     <Compile Include="Assets\Scripts\NoteVisuals\NoteVisualsManager.cs" />
     <Compile Include="Assets\Scripts\PrefabGlobals.cs" />

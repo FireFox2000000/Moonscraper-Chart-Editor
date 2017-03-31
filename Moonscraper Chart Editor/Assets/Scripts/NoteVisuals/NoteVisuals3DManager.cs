@@ -16,7 +16,6 @@ public class NoteVisuals3DManager : NoteVisualsManager
 
     // Update is called once per frame
     public override void UpdateVisuals () {
-
         base.UpdateVisuals();
 
         Note note = nCon.note;

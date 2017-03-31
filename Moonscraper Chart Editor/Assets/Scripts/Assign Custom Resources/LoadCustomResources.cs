@@ -2,8 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 public class LoadCustomResources : MonoBehaviour {
+    const int NOTE_TEXTURE_1X1_WIDTH = 128, NOTE_TEXTURE_1X1_HEIGHT = 64;
+    const int NOTE_TEXTURE_4X2_WIDTH = 256, NOTE_TEXTURE_4X2_HEIGHT = 256;
+    const int NOTE_TEXTURE_4X4_WIDTH = 512, NOTE_TEXTURE_4X4_HEIGHT = 256;
+
     public UnityEngine.UI.Text progressText;
     public ImageFade fader;
     public Skin customSkin;
@@ -16,14 +21,43 @@ public class LoadCustomResources : MonoBehaviour {
         new CustomTexture("background-0", 1920, 1080),
         new CustomTexture("fretboard-0", 512, 1024),
         new CustomAudioClip("clap"),
-        new CustomAudioClip("metronome")
-    };
+        new CustomAudioClip("metronome"),
 
-    public AudioClip break0 { get { return ((CustomAudioClip)resources[0]).audio; } }
-    public Texture2D background0 { get { return ((CustomTexture)resources[1]).texture; } }
-    public Texture2D fretboard { get { return ((CustomTexture)resources[2]).texture; } }
-    public AudioClip clap { get { return ((CustomAudioClip)resources[3]).audio; } }
-    public AudioClip metronome { get { return ((CustomAudioClip)resources[4]).audio; } }
+        new CustomTexture("0_reg_strum", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("0_reg_hopo", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("0_reg_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
+        new CustomTexture("0_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
+        new CustomTexture("0_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
+        new CustomTexture("0_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
+
+        new CustomTexture("1_reg_strum", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("1_reg_hopo", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("1_reg_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
+        new CustomTexture("1_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
+        new CustomTexture("1_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
+        new CustomTexture("1_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
+
+        new CustomTexture("2_reg_strum", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("2_reg_hopo", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("2_reg_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
+        new CustomTexture("2_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
+        new CustomTexture("2_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
+        new CustomTexture("2_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
+
+        new CustomTexture("3_reg_strum", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("3_reg_hopo", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("3_reg_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
+        new CustomTexture("3_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
+        new CustomTexture("3_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
+        new CustomTexture("3_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
+
+        new CustomTexture("4_reg_strum", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("4_reg_hopo", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("4_reg_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
+        new CustomTexture("4_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
+        new CustomTexture("4_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
+        new CustomTexture("4_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
+    };
 
     List<CustomResource> resourcesLoading = new List<CustomResource>();
 
@@ -32,24 +66,88 @@ public class LoadCustomResources : MonoBehaviour {
         // Fade
         yield return fader.fadeOut(1.0f);
 
-        // Link the loaded asset to the public file we can grab from
-        foreach (CustomResource resource in resourcesLoading)
+        // Assign to the custom database
+        customSkin.break0 = GetAudioClipFromLoadedResources("break-0", resources);
+        customSkin.background0 = GetTextureFromLoadedResources("background-0", resources);
+        customSkin.clap = GetAudioClipFromLoadedResources("clap", resources);
+        customSkin.fretboard = GetTextureFromLoadedResources("fretboard-0", resources);
+        customSkin.metronome = GetAudioClipFromLoadedResources("metronome", resources);
+
+        for (int i = 0; i < customSkin.reg_strum.Length; ++i)
         {
-            resource.AssignResource();
+            customSkin.reg_strum[i] = GetTextureFromLoadedResources(i + "_reg_strum", resources);
         }
 
-        // Assign to the custom database
-        customSkin.break0 = break0;
-        customSkin.background0 = background0;
-        customSkin.clap = clap;
-        customSkin.fretboard = fretboard;
-        customSkin.metronome = metronome;
+        for (int i = 0; i < customSkin.reg_hopo.Length; ++i)
+        {
+            customSkin.reg_hopo[i] = GetTextureFromLoadedResources(i + "_reg_hopo", resources);
+        }
+
+        for (int i = 0; i < customSkin.reg_tap.Length; ++i)
+        {
+            customSkin.reg_tap[i] = GetTextureFromLoadedResources(i + "_reg_tap", resources);
+        }
+
+        for (int i = 0; i < customSkin.sp_strum.Length; ++i)
+        {
+            customSkin.sp_strum[i] = GetTextureFromLoadedResources(i + "_sp_strum", resources);
+        }
+
+        for (int i = 0; i < customSkin.sp_hopo.Length; ++i)
+        {
+            customSkin.sp_hopo[i] = GetTextureFromLoadedResources(i + "_sp_hopo", resources);
+        }
+
+        for (int i = 0; i < customSkin.sp_tap.Length; ++i)
+        {
+            customSkin.sp_tap[i] = GetTextureFromLoadedResources(i + "_sp_tap", resources);
+        }
 
         // Load editor
         int buildIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
         enabled = false;
         fader = null;
         UnityEngine.SceneManagement.SceneManager.LoadScene(buildIndex + 1);
+    }
+
+    static Texture2D GetTextureFromLoadedResources(string name, CustomResource[] resources)
+    {
+        foreach(CustomResource resource in resources)
+        {
+            if (resource.GetType() == typeof(CustomTexture) && resource.name == name)
+            {
+                try
+                {
+                    resource.AssignResource();
+                    return ((CustomTexture)resource).texture;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    AudioClip GetAudioClipFromLoadedResources(string name, CustomResource[] resources)
+    {
+        foreach (CustomResource resource in resources)
+        {
+            if (resources.GetType() == typeof(CustomAudioClip) && resource.name == name)
+            {
+                try
+                {
+                    resource.AssignResource();
+                    return ((CustomAudioClip)resource).audio;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+        return null;
     }
 
     // Use this for initialization

@@ -1,5 +1,5 @@
 Audio compatibility- .wav, .ogg
-Image compatibility- .jpg, .png
+Image compatibility- .jpg, .png, .dds
 
 Audio files-
   break-0

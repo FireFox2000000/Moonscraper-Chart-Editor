@@ -82,3 +82,37 @@ public static class RectTransformExtension
         return new Rect(screenCorners[0], screenCorners[1] - screenCorners[0]);
     }
 }
+
+public static class Texture2DExtension
+{
+    public static Texture2D Inverse(this Texture2D sourceTex)
+    {
+        Color32[] pix = sourceTex.GetPixels32();
+        System.Array.Reverse(pix);
+        Texture2D destTex = new Texture2D(sourceTex.width, sourceTex.height);
+        destTex.SetPixels32(pix);
+        destTex.Apply();
+        return destTex;
+    }
+
+    public static Texture2D HorizontalFlip(this Texture2D sourceTex)
+    {
+        Color32[] pix = sourceTex.GetPixels32();
+        Color32[] flipped_pix = new Color32[pix.Length];
+
+        for (int i = 0; i < pix.Length; i += sourceTex.width)
+        {
+            // Reverse the pixels row by row
+            for (int j = i; j < i + sourceTex.width; ++j)
+            {
+                flipped_pix[j] = pix[i + sourceTex.width - (j - i) - 1];
+            }
+        }
+
+        Texture2D destTex = new Texture2D(sourceTex.width, sourceTex.height);
+        //destTex.alphaIsTransparency = sourceTex.alphaIsTransparency;
+        destTex.SetPixels32(flipped_pix);
+        destTex.Apply();
+        return destTex;
+    }
+}
