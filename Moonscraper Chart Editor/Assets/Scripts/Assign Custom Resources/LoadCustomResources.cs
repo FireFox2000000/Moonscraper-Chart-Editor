@@ -134,7 +134,7 @@ public class LoadCustomResources : MonoBehaviour {
     {
         foreach (CustomResource resource in resources)
         {
-            if (resources.GetType() == typeof(CustomAudioClip) && resource.name == name)
+            if (resource.GetType() == typeof(CustomAudioClip) && resource.name == name)
             {
                 try
                 {

@@ -11,7 +11,7 @@ public class NoteController : SongObjectController {
 
     public Note note { get { return (Note)songObject; } set { Init(value); } }
     public SustainController sustain;
-    public NoteVisualsManager noteVisuals;
+    public GameObject noteVisuals;
     Whammy whammy;  
 
 #if NOTE_TYPE_2D
