@@ -42,8 +42,9 @@ public class Globals : MonoBehaviour {
                 return true;
         }
     }
+    public static bool IsInDropDown = false;
 
-    public static bool IsInDropDown
+    static bool _IsInDropDown
     {
         get
         {
@@ -54,8 +55,6 @@ public class Globals : MonoBehaviour {
             if ((UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null ||
                 UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponentInParent<Dropdown>() == null) && !Mouse.GetUIUnderPointer<UnityEngine.UI.Dropdown>())
             {
-                
-
                 return false;
             }
             else
@@ -163,6 +162,8 @@ public class Globals : MonoBehaviour {
     float lastKnownMasterLevel = 0.5f;
     void Update()
     {
+        IsInDropDown = _IsInDropDown;
+
         // Disable controls while user is in an input field
         if (!IsTyping)
             Controls();

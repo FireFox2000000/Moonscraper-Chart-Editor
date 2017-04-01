@@ -30,13 +30,15 @@ public class AssignCustomResources : MonoBehaviour {
                 fretboard.sharedMaterial.mainTexture = customSkin.fretboard;
             if (customSkin.metronome != null)
                 metronome.clap = customSkin.metronome;
-            
+
+            WriteCustomTexturesToAtlus(defaultNoteSprites.fullAtlus);
+            /*
             setSpriteTextures(defaultNoteSprites.reg_strum, customSkin.reg_strum);
             setSpriteTextures(defaultNoteSprites.reg_hopo, customSkin.reg_hopo);
             setSpriteTextures(defaultNoteSprites.reg_tap, customSkin.reg_tap);
             setSpriteTextures(defaultNoteSprites.sp_strum, customSkin.sp_strum);
             setSpriteTextures(defaultNoteSprites.sp_hopo, customSkin.sp_hopo);
-            setSpriteTextures(defaultNoteSprites.sp_tap, customSkin.sp_tap);
+            setSpriteTextures(defaultNoteSprites.sp_tap, customSkin.sp_tap);*/
         }
         catch (System.Exception e)
         {
@@ -52,7 +54,64 @@ public class AssignCustomResources : MonoBehaviour {
             {
                 sprites[i].texture.SetPixels(customTextures[i].GetPixels());
                 sprites[i].texture.Apply();
-                Debug.Log("PixelsSet");
+            }
+        }
+    }
+
+    void WriteCustomTexturesToAtlus(Texture2D atlus)
+    {
+        Color[] atlusPixels = atlus.GetPixels();
+        Utility.IntVector2 fullTextureAtlusSize = new Utility.IntVector2(atlus.width, atlus.height);
+
+        SetCustomTexturesToAtlus(defaultNoteSprites.reg_strum, customSkin.reg_strum, atlusPixels, fullTextureAtlusSize);
+        SetCustomTexturesToAtlus(defaultNoteSprites.reg_hopo, customSkin.reg_hopo, atlusPixels, fullTextureAtlusSize);
+        SetCustomTexturesToAtlus(defaultNoteSprites.reg_tap, customSkin.reg_tap, atlusPixels, fullTextureAtlusSize);
+        SetCustomTexturesToAtlus(defaultNoteSprites.sp_strum, customSkin.sp_strum, atlusPixels, fullTextureAtlusSize);
+        SetCustomTexturesToAtlus(defaultNoteSprites.sp_hopo, customSkin.sp_hopo, atlusPixels, fullTextureAtlusSize);
+        SetCustomTexturesToAtlus(defaultNoteSprites.sp_tap, customSkin.sp_tap, atlusPixels, fullTextureAtlusSize);
+
+        atlus.SetPixels(atlusPixels);
+        atlus.Apply();
+    }
+
+    void SetCustomTexturesToAtlus(Sprite[] spritesLocation, Texture2D[] customTextures, Color[] fullTextureAtlusPixels, Utility.IntVector2 fullTextureAtlusSize)
+    {
+        if (spritesLocation.Length != customTextures.Length)
+            throw new System.Exception("Mis-aligned sprite locations to textures provided");
+
+        for (int i = 0; i < customTextures.Length; ++i)
+        {
+            if (customTextures[i] && spritesLocation[i])
+            {
+                try
+                {
+                    WritePixelsToArea(customTextures[i].GetPixels(),
+                        new Utility.IntVector2(customTextures[i].width, customTextures[i].height),
+                        new Utility.IntVector2((int)(spritesLocation[i].rect.xMin), (int)(spritesLocation[i].texture.height - spritesLocation[i].rect.yMax)),
+                        fullTextureAtlusPixels, fullTextureAtlusSize);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError(e.Message);
+                    customTextures[i] = null;
+                }
+            }
+        }
+    }
+
+    void WritePixelsToArea(Color[] texturePixels, Utility.IntVector2 textureSize, Utility.IntVector2 topLeftCornerToStartWriteFrom, Color[] pixelsToOverwrite, Utility.IntVector2 textureToWriteSize)
+    {
+        if (textureSize.x * textureSize.y != texturePixels.Length)
+            throw new System.Exception("Invalid texture size.");
+        
+        if (topLeftCornerToStartWriteFrom.x + textureSize.x > textureToWriteSize.x || topLeftCornerToStartWriteFrom.y + textureSize.y > textureToWriteSize.y)
+            throw new System.Exception("Invalid texture write location.");
+
+        for (int j = 0; j < textureSize.y; ++j)
+        {
+            for (int i = 0; i < textureSize.x; ++i)
+            {
+                pixelsToOverwrite[(textureToWriteSize.y - topLeftCornerToStartWriteFrom.y - textureSize.y + j) * textureToWriteSize.x + topLeftCornerToStartWriteFrom.x + i] = texturePixels[j * textureSize.x + i];
             }
         }
     }

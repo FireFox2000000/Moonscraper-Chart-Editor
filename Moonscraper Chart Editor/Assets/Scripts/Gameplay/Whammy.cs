@@ -24,23 +24,26 @@ public class Whammy : MonoBehaviour {
     
 	// Update is called once per frame
 	void Update () {
-        AnimationCurve lineCurve = lineRenderer.widthCurve;
-
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing && transform.localScale.y > 0)
+        if (transform.localScale.y > 0)
         {
-            ShiftAnimationKeys(lineCurve, keyShiftSpeed * Time.deltaTime * (Globals.hyperspeed / Globals.gameSpeed) / transform.localScale.y);
+            AnimationCurve lineCurve = lineRenderer.widthCurve;
 
-            float whammyVal = (lerpedWhammyVal() + 1) * widthMultiplier;
+            if (Globals.applicationMode == Globals.ApplicationMode.Playing && transform.localScale.y > 0)
+            {
+                ShiftAnimationKeys(lineCurve, keyShiftSpeed * Time.deltaTime * (Globals.hyperspeed / Globals.gameSpeed) / transform.localScale.y);
 
-            lineCurve.AddKey(new Keyframe(0, whammyVal + 1));
+                float whammyVal = (lerpedWhammyVal() + 1) * widthMultiplier;
+
+                lineCurve.AddKey(new Keyframe(0, whammyVal + 1));
+            }
+            else
+            {
+                lineCurve.keys = new Keyframe[] { new Keyframe(0, 1) };
+            }
+
+            lineRenderer.widthCurve = lineCurve;
+            prevHeight = transform.localScale.y;
         }
-        else
-        {
-            lineCurve.keys = new Keyframe[] { new Keyframe(0, 1) };           
-        }
-
-        lineRenderer.widthCurve = lineCurve;
-        prevHeight = transform.localScale.y;
     }
 
     static void ShiftAnimationKeys(AnimationCurve lineCurve, float shiftDistance)

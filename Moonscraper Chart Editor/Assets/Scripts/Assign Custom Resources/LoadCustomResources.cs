@@ -9,6 +9,9 @@ public class LoadCustomResources : MonoBehaviour {
     const int NOTE_TEXTURE_4X2_WIDTH = 256, NOTE_TEXTURE_4X2_HEIGHT = 256;
     const int NOTE_TEXTURE_4X4_WIDTH = 512, NOTE_TEXTURE_4X4_HEIGHT = 256;
 
+    const int OPEN_NOTE_TEXTURE_1X1_WIDTH = 512, OPEN_NOTE_TEXTURE_1X1_HEIGHT = 64;
+    const int OPEN_NOTE_TEXTURE_4X4_WIDTH = 2048, OPEN_NOTE_TEXTURE_4X4_HEIGHT = 256;
+
     public UnityEngine.UI.Text progressText;
     public ImageFade fader;
     public Skin customSkin;
@@ -57,6 +60,11 @@ public class LoadCustomResources : MonoBehaviour {
         new CustomTexture("4_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
         new CustomTexture("4_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
         new CustomTexture("4_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
+
+        new CustomTexture("5_reg_strum", OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("5_reg_hopo", OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("5_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
+        new CustomTexture("5_sp_hopo", OPEN_NOTE_TEXTURE_4X4_WIDTH, OPEN_NOTE_TEXTURE_4X4_HEIGHT),
     };
 
     List<CustomResource> resourcesLoading = new List<CustomResource>();

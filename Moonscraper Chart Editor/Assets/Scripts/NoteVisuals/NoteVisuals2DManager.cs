@@ -21,6 +21,7 @@ public class NoteVisuals2DManager : NoteVisualsManager {
 
         Note note = nCon.note;
 
+        Vector3 scale = new Vector3(1, 1, 1);
         if (note != null)
         {
             if (noteType == Note.Note_Type.STRUM)
@@ -48,6 +49,13 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                         ren.sprite = spriteResources.reg_tap[(int)note.fret_type];
                 }
             }
+
+            if (note.fret_type == Note.Fret_Type.OPEN)
+                scale = new Vector3(1.2f, 1, 1);
+            else if (specialType == Note.Special_Type.STAR_POW)
+                scale = new Vector3(1.2f, 1.2f, 1);
         }
+
+        transform.localScale = scale;
     }
 }

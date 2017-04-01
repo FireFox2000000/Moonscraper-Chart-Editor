@@ -46,6 +46,16 @@ static class Utility {
         }
         return false;
     }
+
+    public struct IntVector2
+    {
+        public int x, y;
+        public IntVector2(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
 }
 
 public static class floatExtension
@@ -111,6 +121,25 @@ public static class Texture2DExtension
 
         Texture2D destTex = new Texture2D(sourceTex.width, sourceTex.height);
         //destTex.alphaIsTransparency = sourceTex.alphaIsTransparency;
+        destTex.SetPixels32(flipped_pix);
+        destTex.Apply();
+        return destTex;
+    }
+
+    public static Texture2D VerticalFlip(this Texture2D sourceTex)
+    {
+        Color32[] pix = sourceTex.GetPixels32();
+        Color32[] flipped_pix = new Color32[pix.Length];
+
+        for (int j = 0; j < sourceTex.height; ++j)
+        {
+            for (int i = 0; i < sourceTex.width; ++i)
+            {
+                flipped_pix[j * sourceTex.width + i] = pix[(sourceTex.height - 1 - j) * sourceTex.width + i];
+            }
+        }
+
+        Texture2D destTex = new Texture2D(sourceTex.width, sourceTex.height);
         destTex.SetPixels32(flipped_pix);
         destTex.Apply();
         return destTex;

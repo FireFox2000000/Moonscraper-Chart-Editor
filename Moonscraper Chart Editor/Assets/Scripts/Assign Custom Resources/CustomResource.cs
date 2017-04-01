@@ -86,7 +86,6 @@ public class CustomTexture : CustomResource
                     try
                     {
                         texture = LoadTextureDXT(www.bytes, TextureFormat.DXT5);
-                        Debug.Log("dds");
                     }
                     catch (Exception e)
                     {
@@ -124,7 +123,7 @@ public class CustomTexture : CustomResource
         texture.LoadRawTextureData(dxtBytes);
         texture.Apply();
 
-        texture = texture.Inverse();    // dds files load in upsidedown for some reason
+        texture = texture.VerticalFlip();    // dds files load in upsidedown for some reason
 
         return (texture);
     }
