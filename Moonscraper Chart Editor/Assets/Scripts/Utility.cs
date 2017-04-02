@@ -145,3 +145,16 @@ public static class Texture2DExtension
         return destTex;
     }
 }
+
+public static class ColorExtension
+{
+    public static string GetHex(this Color col)
+    {
+        string hex = string.Empty;
+        hex += ((int)col.r).ToString("x2");
+        hex += ((int)col.g).ToString("x2");
+        hex += ((int)col.b).ToString("x2");
+        hex += ((int)col.a).ToString("x2");
+        return hex;
+    }
+}

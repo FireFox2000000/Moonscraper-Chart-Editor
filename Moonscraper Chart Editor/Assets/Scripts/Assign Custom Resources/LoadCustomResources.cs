@@ -77,6 +77,54 @@ public class LoadCustomResources : MonoBehaviour {
 
     List<CustomResource> resourcesLoading = new List<CustomResource>();
 
+    void LoadSettingsConfig()
+    {
+        if (Directory.Exists(skinDirectory))
+        {
+            // Load in all settings
+            INIParser iniparse = new INIParser();
+
+            iniparse.Open(skinDirectory + "\\settings.ini");
+            System.Text.RegularExpressions.Regex hexRegex = new System.Text.RegularExpressions.Regex("#[a-fA-f0-9]{8,8}");
+
+            for (int i = 0; i < customSkin.sustain_colors.Length; ++i)
+            {
+                customSkin.sustain_colors[i] = new Color(0, 0, 0, 0);
+
+                string hex = iniparse.ReadValue("Sustain Colors", i.ToString(), "#00000000");
+                if (hex.Length == 9 && hexRegex.IsMatch(hex))    // # r g b a
+                {
+                    try
+                    {
+                        int r = int.Parse(new string(new char[] { hex[1], hex[2] }), System.Globalization.NumberStyles.HexNumber);
+                        int g = int.Parse(new string(new char[] { hex[3], hex[4] }), System.Globalization.NumberStyles.HexNumber);
+                        int b = int.Parse(new string(new char[] { hex[5], hex[6] }), System.Globalization.NumberStyles.HexNumber);
+                        int a = int.Parse(new string(new char[] { hex[7], hex[8] }), System.Globalization.NumberStyles.HexNumber);
+
+                        customSkin.sustain_colors[i] = new Color(r, g, b, a);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError(e.Message);
+                    }
+                }
+
+                //iniparse.WriteValue("Sustain Colors", i.ToString(), customSkin.sustain_colors[i].GetHex());
+            }
+
+            iniparse.Close();
+
+            iniparse.Open(skinDirectory + "\\settings.ini");
+
+            for (int i = 0; i < customSkin.sustain_colors.Length; ++i)
+            {
+                iniparse.WriteValue("Sustain Colors", i.ToString(), "#" + customSkin.sustain_colors[i].GetHex());
+            }
+
+            iniparse.Close();
+        }
+    }
+
     IEnumerator LoadEditor()
     {
         // Fade
@@ -131,46 +179,6 @@ public class LoadCustomResources : MonoBehaviour {
         UnityEngine.SceneManagement.SceneManager.LoadScene(buildIndex + 1);
     }
 
-    static Texture2D GetTextureFromLoadedResources(string name, CustomResource[] resources)
-    {
-        foreach(CustomResource resource in resources)
-        {
-            if (resource.GetType() == typeof(CustomTexture) && resource.name == name)
-            {
-                try
-                {
-                    resource.AssignResource();
-                    return ((CustomTexture)resource).texture;
-                }
-                catch
-                {
-                    return null;
-                }
-            }
-        }
-        return null;
-    }
-
-    AudioClip GetAudioClipFromLoadedResources(string name, CustomResource[] resources)
-    {
-        foreach (CustomResource resource in resources)
-        {
-            if (resource.GetType() == typeof(CustomAudioClip) && resource.name == name)
-            {
-                try
-                {
-                    resource.AssignResource();
-                    return ((CustomAudioClip)resource).audio;
-                }
-                catch
-                {
-                    return null;
-                }
-            }
-        }
-        return null;
-    }
-
     // Use this for initialization
     void Start () {
         if (Directory.Exists(skinDirectory))
@@ -185,6 +193,8 @@ public class LoadCustomResources : MonoBehaviour {
                     resourcesLoading.Add(resource);
                 }
             }
+
+            LoadSettingsConfig();
         }
         else
             Debug.LogError("Custom Resources not found");
@@ -238,5 +248,45 @@ public class LoadCustomResources : MonoBehaviour {
         }
 
         return files;
+    }
+
+    static Texture2D GetTextureFromLoadedResources(string name, CustomResource[] resources)
+    {
+        foreach (CustomResource resource in resources)
+        {
+            if (resource.GetType() == typeof(CustomTexture) && resource.name == name)
+            {
+                try
+                {
+                    resource.AssignResource();
+                    return ((CustomTexture)resource).texture;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+        return null;
+    }
+
+    static AudioClip GetAudioClipFromLoadedResources(string name, CustomResource[] resources)
+    {
+        foreach (CustomResource resource in resources)
+        {
+            if (resource.GetType() == typeof(CustomAudioClip) && resource.name == name)
+            {
+                try
+                {
+                    resource.AssignResource();
+                    return ((CustomAudioClip)resource).audio;
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+        return null;
     }
 }
