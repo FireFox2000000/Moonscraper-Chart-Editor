@@ -32,13 +32,6 @@ public class AssignCustomResources : MonoBehaviour {
                 metronome.clap = customSkin.metronome;
 
             WriteCustomTexturesToAtlus(defaultNoteSprites.fullAtlus);
-            /*
-            setSpriteTextures(defaultNoteSprites.reg_strum, customSkin.reg_strum);
-            setSpriteTextures(defaultNoteSprites.reg_hopo, customSkin.reg_hopo);
-            setSpriteTextures(defaultNoteSprites.reg_tap, customSkin.reg_tap);
-            setSpriteTextures(defaultNoteSprites.sp_strum, customSkin.sp_strum);
-            setSpriteTextures(defaultNoteSprites.sp_hopo, customSkin.sp_hopo);
-            setSpriteTextures(defaultNoteSprites.sp_tap, customSkin.sp_tap);*/
         }
         catch (System.Exception e)
         {
@@ -69,6 +62,8 @@ public class AssignCustomResources : MonoBehaviour {
         SetCustomTexturesToAtlus(defaultNoteSprites.sp_strum, customSkin.sp_strum, atlusPixels, fullTextureAtlusSize);
         SetCustomTexturesToAtlus(defaultNoteSprites.sp_hopo, customSkin.sp_hopo, atlusPixels, fullTextureAtlusSize);
         SetCustomTexturesToAtlus(defaultNoteSprites.sp_tap, customSkin.sp_tap, atlusPixels, fullTextureAtlusSize);
+
+        SetCustomTexturesToAtlus(defaultNoteSprites.sustains, customSkin.sustains, atlusPixels, fullTextureAtlusSize);
 
         atlus.SetPixels(atlusPixels);
         atlus.Apply();

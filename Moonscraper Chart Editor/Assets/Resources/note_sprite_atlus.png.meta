@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: a0e343bdab32d3a47a8b1da5df9cfceb
-timeCreated: 1491104570
+timeCreated: 1491115361
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -261,9 +261,9 @@ TextureImporter:
     21300508: note_sprite_atlus_254
     21300510: note_sprite_atlus_255
     21300512: note_sprite_atlus_256
-    21300514: note_sprite_atlus_257
-    21300516: note_sprite_atlus_258
-    21300518: note_sprite_atlus_259
+    21300514: note_sprite_atlus_276
+    21300516: note_sprite_atlus_277
+    21300518: note_sprite_atlus_278
     21300520: note_sprite_atlus_260
     21300522: note_sprite_atlus_261
     21300524: note_sprite_atlus_262
@@ -280,8 +280,8 @@ TextureImporter:
     21300546: note_sprite_atlus_273
     21300548: note_sprite_atlus_274
     21300550: note_sprite_atlus_275
-    21300552: note_sprite_atlus_276
-    21300554: note_sprite_atlus_277
+    21300552: note_sprite_atlus_279
+    21300554: note_sprite_atlus_280
     21300556: note_sprite_atlus_278
     21300558: note_sprite_atlus_279
     21300560: note_sprite_atlus_264
@@ -484,6 +484,7 @@ TextureImporter:
     21300954: note_sprite_atlus_477
     21300956: note_sprite_atlus_478
     21300958: note_sprite_atlus_479
+    21300960: note_sprite_atlus_252
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -3959,19 +3960,6 @@ TextureImporter:
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: note_sprite_atlus_301
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 512
-        width: 512
-        height: 64
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      tessellationDetail: 0
-    - serializedVersion: 2
       name: note_sprite_atlus_270
       rect:
         serializedVersion: 2
@@ -4028,7 +4016,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1024
-        y: 448
+        y: 447
         width: 512
         height: 64
       alignment: 0
@@ -4265,6 +4253,136 @@ TextureImporter:
         y: 512
         width: 512
         height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: note_sprite_atlus_252
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 742
+        width: 32
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: note_sprite_atlus_253
+      rect:
+        serializedVersion: 2
+        x: 2336
+        y: 742
+        width: 32
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: note_sprite_atlus_254
+      rect:
+        serializedVersion: 2
+        x: 2368
+        y: 742
+        width: 32
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: note_sprite_atlus_255
+      rect:
+        serializedVersion: 2
+        x: 2400
+        y: 742
+        width: 32
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: note_sprite_atlus_256
+      rect:
+        serializedVersion: 2
+        x: 2432
+        y: 742
+        width: 32
+        height: 26
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: note_sprite_atlus_276
+      rect:
+        serializedVersion: 2
+        x: 2304
+        y: 736
+        width: 32
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: note_sprite_atlus_277
+      rect:
+        serializedVersion: 2
+        x: 2336
+        y: 736
+        width: 32
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: note_sprite_atlus_278
+      rect:
+        serializedVersion: 2
+        x: 2368
+        y: 736
+        width: 32
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: note_sprite_atlus_279
+      rect:
+        serializedVersion: 2
+        x: 2400
+        y: 736
+        width: 32
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: note_sprite_atlus_280
+      rect:
+        serializedVersion: 2
+        x: 2432
+        y: 736
+        width: 32
+        height: 6
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

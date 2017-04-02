@@ -12,6 +12,8 @@ public class LoadCustomResources : MonoBehaviour {
     const int OPEN_NOTE_TEXTURE_1X1_WIDTH = 512, OPEN_NOTE_TEXTURE_1X1_HEIGHT = 64;
     const int OPEN_NOTE_TEXTURE_4X4_WIDTH = 2048, OPEN_NOTE_TEXTURE_4X4_HEIGHT = 256;
 
+    const int SUSTAIN_TEXTURE_WIDTH = 32, SUSTAIN_TEXTURE_HEIGHT = 32;
+
     public UnityEngine.UI.Text progressText;
     public ImageFade fader;
     public Skin customSkin;
@@ -65,6 +67,12 @@ public class LoadCustomResources : MonoBehaviour {
         new CustomTexture("5_reg_hopo", OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT),
         new CustomTexture("5_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
         new CustomTexture("5_sp_hopo", OPEN_NOTE_TEXTURE_4X4_WIDTH, OPEN_NOTE_TEXTURE_4X4_HEIGHT),
+
+        new CustomTexture("0_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
+        new CustomTexture("1_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
+        new CustomTexture("2_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
+        new CustomTexture("3_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
+        new CustomTexture("4_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
     };
 
     List<CustomResource> resourcesLoading = new List<CustomResource>();
@@ -109,6 +117,11 @@ public class LoadCustomResources : MonoBehaviour {
         for (int i = 0; i < customSkin.sp_tap.Length; ++i)
         {
             customSkin.sp_tap[i] = GetTextureFromLoadedResources(i + "_sp_tap", resources);
+        }
+
+        for (int i = 0; i < customSkin.sustains.Length; ++i)
+        {
+            customSkin.sustains[i] = GetTextureFromLoadedResources(i + "_sustain", resources);
         }
 
         // Load editor

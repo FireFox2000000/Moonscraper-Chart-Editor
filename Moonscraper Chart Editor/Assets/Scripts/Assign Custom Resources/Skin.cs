@@ -15,4 +15,6 @@ public class Skin : ScriptableObject {
     public Texture2D[] sp_strum = new Texture2D[6];
     public Texture2D[] sp_hopo = new Texture2D[6];
     public Texture2D[] sp_tap = new Texture2D[5];
+
+    public Texture2D[] sustains = new Texture2D[5];
 }

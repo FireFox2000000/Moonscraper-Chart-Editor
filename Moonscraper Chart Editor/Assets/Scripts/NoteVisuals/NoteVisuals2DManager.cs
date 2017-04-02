@@ -7,7 +7,7 @@ public class NoteVisuals2DManager : NoteVisualsManager {
     SpriteRenderer ren;
     public SpriteNoteResources spriteResources;
     public NoteSpriteAnimations animations;
-    const float ANIMATION_FRAMERATE = 60;
+    const float ANIMATION_FRAMERATE = 30;
 
     static Dictionary<string, Sprite> spritesDictionary = null;
     static Dictionary<string, NoteSpriteAnimationData> animationDataDictionary = null;

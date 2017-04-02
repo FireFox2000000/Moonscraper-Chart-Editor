@@ -10,4 +10,6 @@ public class SpriteNoteResources : ScriptableObject {
     public Sprite[] sp_strum = new Sprite[6];
     public Sprite[] sp_hopo = new Sprite[6];
     public Sprite[] sp_tap = new Sprite[5];
+
+    public Sprite[] sustains = new Sprite[5];
 }
