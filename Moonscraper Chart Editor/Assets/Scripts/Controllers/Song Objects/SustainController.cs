@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class SustainController : SelectableClick {
     public NoteController nCon;
     public SustainResources resources;
+    public Skin customSkin;
 
     ChartEditor editor;
 #if WHAMMY
@@ -97,7 +98,12 @@ public class SustainController : SelectableClick {
 #endif
             UpdateSustainLength();
 
-            sustainRen.sharedMaterial = resources.sustainColours[(int)nCon.note.fret_type];
+            if (customSkin.sustain_mats[(int)nCon.note.fret_type])
+            {
+                sustainRen.sharedMaterial = customSkin.sustain_mats[(int)nCon.note.fret_type];
+            }
+            else
+                sustainRen.sharedMaterial = resources.sustainColours[(int)nCon.note.fret_type];
         }
     }
 

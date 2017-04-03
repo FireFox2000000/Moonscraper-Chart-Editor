@@ -118,7 +118,13 @@ public class AssignCustomResources : MonoBehaviour {
         fretboard.sharedMaterial.mainTexture = initFretboardTex;
 
         // Reset after play
-        for (int i = 0; i < customSkin.sustain_colors.Length; ++i)
-            customSkin.sustain_colors[i] = new Color(0, 0, 0, 0);
+        for (int i = 0; i < customSkin.sustain_mats.Length; ++i)
+        {
+            if (customSkin.sustain_mats[i])
+            {
+                Destroy(customSkin.sustain_mats[i]);
+                customSkin.sustain_mats[i] = null;
+            }
+        }
     }
 }

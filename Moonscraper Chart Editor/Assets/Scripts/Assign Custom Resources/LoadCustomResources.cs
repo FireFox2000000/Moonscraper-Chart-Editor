@@ -17,6 +17,7 @@ public class LoadCustomResources : MonoBehaviour {
     public UnityEngine.UI.Text progressText;
     public ImageFade fader;
     public Skin customSkin;
+    public SustainResources sustainResources;
 
     static string skinDirectory = "Custom Resources";
     string[] filepaths = new string[0];
@@ -87,10 +88,8 @@ public class LoadCustomResources : MonoBehaviour {
             iniparse.Open(skinDirectory + "\\settings.ini");
             System.Text.RegularExpressions.Regex hexRegex = new System.Text.RegularExpressions.Regex("#[a-fA-F0-9]{8,8}");
 
-            for (int i = 0; i < customSkin.sustain_colors.Length; ++i)
+            for (int i = 0; i < customSkin.sustain_mats.Length; ++i)
             {
-                customSkin.sustain_colors[i] = new Color(0, 0, 0, 0);
-
                 string hex = iniparse.ReadValue("Sustain Colors", i.ToString(), "#00000000");
                 if (hex.Length == 9 && hexRegex.IsMatch(hex))    // # r g b a
                 {
@@ -101,7 +100,12 @@ public class LoadCustomResources : MonoBehaviour {
                         int b = int.Parse(new string(new char[] { hex[5], hex[6] }), System.Globalization.NumberStyles.HexNumber);
                         int a = int.Parse(new string(new char[] { hex[7], hex[8] }), System.Globalization.NumberStyles.HexNumber);
 
-                        customSkin.sustain_colors[i] = new Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
+                        if (a > 0)
+                        {
+                            customSkin.sustain_mats[i] = new Material(sustainResources.sustainColours[i]);
+                            customSkin.sustain_mats[i].name = i.ToString();
+                            customSkin.sustain_mats[i].SetColor("_Color", new Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f));
+                        }
                     }
                     catch (Exception e)
                     {
@@ -116,9 +120,10 @@ public class LoadCustomResources : MonoBehaviour {
 
             iniparse.Open(skinDirectory + "\\settings.ini");
 
-            for (int i = 0; i < customSkin.sustain_colors.Length; ++i)
+            for (int i = 0; i < customSkin.sustain_mats.Length; ++i)
             {
-                iniparse.WriteValue("Sustain Colors", i.ToString(), "#" + customSkin.sustain_colors[i].GetHex());
+                if (customSkin.sustain_mats[i])
+                    iniparse.WriteValue("Sustain Colors", i.ToString(), "#" + customSkin.sustain_mats[i].GetColor("_Color").GetHex());
             }
 
             iniparse.Close();
