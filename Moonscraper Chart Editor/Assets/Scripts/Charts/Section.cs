@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-
-public class Section : Event
+﻿public class Section : Event
 {
     private readonly ID _classID = ID.Section;
 
@@ -11,7 +8,7 @@ public class Section : Event
 
     public Section(Section section) : base(section.title, section.position) { }
 
-    public override string GetSaveString()
+    internal override string GetSaveString()
     {
         return Globals.TABSPACE + position + " = E \"section " + title + "\"" + Globals.LINE_ENDING;
     }

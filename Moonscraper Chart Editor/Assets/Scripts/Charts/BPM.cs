@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Text.RegularExpressions;
-using System;
+﻿using System.Text.RegularExpressions;
 
 public class BPM : SyncTrack
 {
@@ -29,7 +26,7 @@ public class BPM : SyncTrack
         value = _bpm.value;
     }
 
-    override public string GetSaveString()
+    internal override string GetSaveString()
     {
         //0 = B 140000
         return Globals.TABSPACE + position + " = B " + value + Globals.LINE_ENDING;

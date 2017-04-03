@@ -789,7 +789,17 @@ public class ChartEditor : MonoBehaviour {
         // Free the audio clips
         FreeAudioClips();
 
-        System.Threading.Thread songLoadThread = new System.Threading.Thread(() => { currentSong = new Song(currentFileName); });
+        System.Threading.Thread songLoadThread = new System.Threading.Thread(() => 
+        {
+            try
+            {
+                currentSong = new Song(currentFileName);
+            }
+            catch
+            {
+                currentSong = backup;
+            }
+        });
         songLoadThread.Start();
         while (songLoadThread.ThreadState == System.Threading.ThreadState.Running)
             yield return null;

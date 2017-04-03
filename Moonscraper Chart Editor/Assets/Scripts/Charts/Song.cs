@@ -41,7 +41,6 @@ public class Song {
 
     public float length = 0;
 
-    //string audioLocation = string.Empty;
     string[] audioLocations = new string[3];
 
     // Charts
@@ -88,6 +87,9 @@ public class Song {
 
     public readonly string[] instrumentTypes = { "Bass", "Rhythm" };
 
+    /// <summary>
+    /// Is this song currently being saved asyncronously?
+    /// </summary>
     public bool IsSaving
     {
         get

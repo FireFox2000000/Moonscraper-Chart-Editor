@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-
-public class ChartEvent : ChartObject
+﻿public class ChartEvent : ChartObject
 {
     private readonly ID _classID = ID.ChartEvent;
 
@@ -33,7 +30,7 @@ public class ChartEvent : ChartObject
             return base.Equals(b);
     }
 
-    public override string GetSaveString()
+    internal override string GetSaveString()
     {
         // 1728 = E T
         return Globals.TABSPACE + position + " = E " + eventName + Globals.LINE_ENDING;

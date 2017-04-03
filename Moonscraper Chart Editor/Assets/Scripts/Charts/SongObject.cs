@@ -1,8 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Linq;
-using System;
 
 public abstract class SongObject
 {
@@ -50,7 +47,7 @@ public abstract class SongObject
         }
     }
 
-    public abstract string GetSaveString();
+    internal abstract string GetSaveString();
 
     /// <summary>
     /// Removes this object from it's song/chart

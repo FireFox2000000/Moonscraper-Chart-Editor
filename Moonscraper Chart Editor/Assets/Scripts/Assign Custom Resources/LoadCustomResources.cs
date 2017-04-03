@@ -85,7 +85,7 @@ public class LoadCustomResources : MonoBehaviour {
             INIParser iniparse = new INIParser();
 
             iniparse.Open(skinDirectory + "\\settings.ini");
-            System.Text.RegularExpressions.Regex hexRegex = new System.Text.RegularExpressions.Regex("#[a-fA-f0-9]{8,8}");
+            System.Text.RegularExpressions.Regex hexRegex = new System.Text.RegularExpressions.Regex("#[a-fA-F0-9]{8,8}");
 
             for (int i = 0; i < customSkin.sustain_colors.Length; ++i)
             {
@@ -101,7 +101,7 @@ public class LoadCustomResources : MonoBehaviour {
                         int b = int.Parse(new string(new char[] { hex[5], hex[6] }), System.Globalization.NumberStyles.HexNumber);
                         int a = int.Parse(new string(new char[] { hex[7], hex[8] }), System.Globalization.NumberStyles.HexNumber);
 
-                        customSkin.sustain_colors[i] = new Color(r, g, b, a);
+                        customSkin.sustain_colors[i] = new Color(r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f);
                     }
                     catch (Exception e)
                     {

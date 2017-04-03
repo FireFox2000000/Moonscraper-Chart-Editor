@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-
-public class TimeSignature : SyncTrack
+﻿public class TimeSignature : SyncTrack
 {
     private readonly ID _classID = ID.TimeSignature;
 
@@ -20,7 +17,7 @@ public class TimeSignature : SyncTrack
         numerator = ts.numerator;
     }
 
-    override public string GetSaveString()
+    internal override string GetSaveString()
     {
         //0 = TS 4
         return Globals.TABSPACE + position + " = TS " + numerator + Globals.LINE_ENDING;

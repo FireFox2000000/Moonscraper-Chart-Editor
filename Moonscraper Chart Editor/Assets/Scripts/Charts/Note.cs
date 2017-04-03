@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 public class Note : ChartObject 
@@ -118,7 +117,7 @@ public class Note : ChartObject
         }
     }
 
-    public override string GetSaveString()
+    internal override string GetSaveString()
     {
         int fretNumber = (int)fret_type;
 

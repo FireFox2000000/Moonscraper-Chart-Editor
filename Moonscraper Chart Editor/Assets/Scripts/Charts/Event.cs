@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-
-public class Event : SongObject
+﻿public class Event : SongObject
 {
     private readonly ID _classID = ID.Event;
 
@@ -20,7 +17,7 @@ public class Event : SongObject
         title = songEvent.title;
     }
 
-    public override string GetSaveString()
+    internal override string GetSaveString()
     {
         return Globals.TABSPACE + position + " = E \"" + title + "\"" + Globals.LINE_ENDING;
     }

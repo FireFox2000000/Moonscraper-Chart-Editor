@@ -15,7 +15,7 @@ public class Globals : MonoBehaviour {
     public Toggle viewModeToggle;
     public AudioCalibrationMenuScript audioCalibrationMenu;
 
-    public static readonly string TABSPACE = "  ";
+    public const string TABSPACE = "  ";
 
     [Header("Area range")]
     public RectTransform area;

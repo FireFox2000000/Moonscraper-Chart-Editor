@@ -116,5 +116,9 @@ public class AssignCustomResources : MonoBehaviour {
         // This is purely for the sake of editor resetting, otherwise any custom textures used will be saved between testing
         background.sharedMaterial.mainTexture = initBGTex;
         fretboard.sharedMaterial.mainTexture = initFretboardTex;
+
+        // Reset after play
+        for (int i = 0; i < customSkin.sustain_colors.Length; ++i)
+            customSkin.sustain_colors[i] = new Color(0, 0, 0, 0);
     }
 }

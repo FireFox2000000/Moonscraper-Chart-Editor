@@ -1,7 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-
-public class Starpower : ChartObject
+﻿public class Starpower : ChartObject
 {
     private readonly ID _classID = ID.Starpower;
 
@@ -19,7 +16,7 @@ public class Starpower : ChartObject
         length = _starpower.length;
     }
 
-    public override string GetSaveString()
+    internal override string GetSaveString()
     {
         // 768 = S 2 768
         return Globals.TABSPACE + position + " = S 2 " + length + Globals.LINE_ENDING; ;
