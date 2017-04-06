@@ -7,15 +7,13 @@ public class CustomFretManager : HitAnimation
     public GameObject fretPress;
     public GameObject fretRelease;
     public GameObject toAnimate;
-
-    const float SPEED = 3;
 	
 	// Update is called once per frame
 	void Update () {
 		if (running)
         {
-            toAnimate.transform.position = new Vector3(toAnimate.transform.position.x, toAnimate.transform.position.y - SPEED * Time.deltaTime, toAnimate.transform.position.z);
-            if (toAnimate.transform.position.y < 0)
+            toAnimate.transform.localPosition = new Vector3(toAnimate.transform.localPosition.x, toAnimate.transform.localPosition.y - SPEED * Time.deltaTime, toAnimate.transform.localPosition.z);
+            if (toAnimate.transform.localPosition.y < 0)
             {
                 StopAnim();
             }
@@ -34,6 +32,7 @@ public class CustomFretManager : HitAnimation
         fretPress.SetActive(false);
         fretRelease.SetActive(false);
         toAnimate.SetActive(true);
+        toAnimate.transform.localPosition = new Vector3(toAnimate.transform.localPosition.x, START_ANIM_HEIGHT, toAnimate.transform.localPosition.z);
 
         running = true;
     }

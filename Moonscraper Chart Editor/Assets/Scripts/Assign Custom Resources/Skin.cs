@@ -18,4 +18,10 @@ public class Skin : ScriptableObject {
 
     public Texture2D[] sustains = new Texture2D[5];
     public Material[] sustain_mats = new Material[6];
+
+    public Texture2D[] fret_base = new Texture2D[5];
+    public Texture2D[] fret_cover = new Texture2D[5];
+    public Texture2D[] fret_release = new Texture2D[5];
+    public Texture2D[] fret_press = new Texture2D[5];
+    public Texture2D[] fret_anim = new Texture2D[5];
 }

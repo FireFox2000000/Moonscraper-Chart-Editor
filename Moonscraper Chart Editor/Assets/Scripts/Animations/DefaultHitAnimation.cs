@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class DefaultHitAnimation : HitAnimation {
     float initZPos;
-    const float START_Z_POS = -0.25f;
-    const float SPEED = 3;
+    const float START_Z_POS = -START_ANIM_HEIGHT;
 
     SpriteRenderer ren;
     public SpriteRenderer baseRen;

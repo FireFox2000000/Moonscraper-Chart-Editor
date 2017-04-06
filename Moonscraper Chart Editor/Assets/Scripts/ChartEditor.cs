@@ -555,7 +555,7 @@ public class ChartEditor : MonoBehaviour {
     bool cancel;
     public void Play()
     {
-        foreach (DefaultHitAnimation hitAnim in indicators.animations)
+        foreach (HitAnimation hitAnim in indicators.animations)
             hitAnim.StopAnim();
 
         mixer.audioMixer.SetFloat("Pitch", 1 / (Globals.gameSpeed));
@@ -617,7 +617,7 @@ public class ChartEditor : MonoBehaviour {
     public void Stop()
     {
         if (indicators && indicators.animations != null)
-            foreach (DefaultHitAnimation hitAnim in indicators.animations)
+            foreach (HitAnimation hitAnim in indicators.animations)
             {
                 if (hitAnim)
                     hitAnim.StopAnim();

@@ -7,7 +7,7 @@ using XInputDotNetPure;
 public class Indicators : MonoBehaviour {
     public GameObject[] indicators = new GameObject[5];
     [HideInInspector]
-    public HitAnimation[] animations = new DefaultHitAnimation[5];
+    public HitAnimation[] animations = new HitAnimation[5];
 
     void Start()
     {
@@ -27,36 +27,41 @@ public class Indicators : MonoBehaviour {
                 GamePadState gamepad = (GamePadState)GameplayManager.gamepad;
 
                 if (gamepad.Buttons.A == ButtonState.Pressed)
-                    indicators[0].SetActive(true);
+                    animations[0].Press();
                 else
-                    indicators[0].SetActive(false);
+                    animations[0].Release();
 
                 if (gamepad.Buttons.B == ButtonState.Pressed)
-                    indicators[1].SetActive(true);
+                    animations[1].Press();
                 else
-                    indicators[1].SetActive(false);
+                    animations[1].Release();
 
                 if (gamepad.Buttons.Y == ButtonState.Pressed)
-                    indicators[2].SetActive(true);
+                    animations[2].Press();
                 else
-                    indicators[2].SetActive(false);
+                    animations[2].Release();
 
                 if (gamepad.Buttons.X == ButtonState.Pressed)
-                    indicators[3].SetActive(true);
+                    animations[3].Press();
                 else
-                    indicators[3].SetActive(false);
+                    animations[3].Release();
 
                 if (gamepad.Buttons.LeftShoulder == ButtonState.Pressed)
-                    indicators[4].SetActive(true);
+                    animations[4].Press();
                 else
-                    indicators[4].SetActive(false);
+                    animations[4].Release();
             }
             else
             {
+                for (int i = 0; i < animations.Length; ++i)
+                {
+                    animations[i].Release();
+                }
+                /*
                 foreach (GameObject indicator in indicators)
                 {
                     indicator.SetActive(false);
-                }
+                }*/
             }
 #else
 
