@@ -1,4 +1,4 @@
-namespace NAudio.Midi 
+namespace NAudioM.Midi 
 {
     /// <summary>
     /// MIDI command codes

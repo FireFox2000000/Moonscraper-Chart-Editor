@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace NAudio.Midi
+namespace NAudioM.Midi
 {
     /// <summary>
     /// Represents a note MIDI event

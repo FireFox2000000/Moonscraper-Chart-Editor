@@ -11,7 +11,7 @@ public class Whammy : MonoBehaviour {
     LineRenderer lineRenderer;
    // AnimationCurve lineCurve;
 
-    float prevHeight = 0;
+    //float prevHeight = 0;
 
     public bool canWhammy = false;
 
@@ -19,7 +19,7 @@ public class Whammy : MonoBehaviour {
     void Start () {
         lineRenderer = GetComponent<LineRenderer>();
 
-        prevHeight = transform.localScale.y; 
+        //prevHeight = transform.localScale.y; 
 	}
     
 	// Update is called once per frame
@@ -42,7 +42,7 @@ public class Whammy : MonoBehaviour {
             }
 
             lineRenderer.widthCurve = lineCurve;
-            prevHeight = transform.localScale.y;
+            //prevHeight = transform.localScale.y;
         }
     }
 

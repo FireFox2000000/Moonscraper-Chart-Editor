@@ -47,15 +47,15 @@ namespace TanjentOGG
             ret = (b.ptr.bytes[b.ptr.offset + 0] & 0xFF) >> b.endbit;
             if (bits > 8)
             {
-                ret |= (b.ptr.bytes[b.ptr.offset + 1] & 0xFF) << (8 - b.endbit);
+                ret |= (long)(b.ptr.bytes[b.ptr.offset + 1] & 0xFF) << (8 - b.endbit);
                 if (bits > 16)
                 {
-                    ret |= (b.ptr.bytes[b.ptr.offset + 2] & 0xFF) << (16 - b.endbit);
+                    ret |= (long)(b.ptr.bytes[b.ptr.offset + 2] & 0xFF) << (16 - b.endbit);
                     if (bits > 24)
                     {
-                        ret |= (b.ptr.bytes[b.ptr.offset + 3] & 0xFF) << (24 - b.endbit);
+                        ret |= (long)(b.ptr.bytes[b.ptr.offset + 3] & 0xFF) << (24 - b.endbit);
                         if (bits > 32 && (b.endbit != 0))
-                            ret |= (b.ptr.bytes[b.ptr.offset + 4] & 0xFF) << (32 - b.endbit);
+                            ret |= (long)(b.ptr.bytes[b.ptr.offset + 4] & 0xFF) << (32 - b.endbit);
                     }
                 }
             }
@@ -112,16 +112,16 @@ namespace TanjentOGG
             ret = (b.ptr.bytes[b.ptr.offset + 0] & 0xFF) >> b.endbit;
             if (bits > 8)
             {
-                ret |= (b.ptr.bytes[b.ptr.offset + 1] & 0xFF) << (8 - b.endbit);
+                ret |= (long)(b.ptr.bytes[b.ptr.offset + 1] & 0xFF) << (8 - b.endbit);
                 if (bits > 16)
                 {
-                    ret |= (b.ptr.bytes[b.ptr.offset + 2] & 0xFF) << (16 - b.endbit);
+                    ret |= (long)(b.ptr.bytes[b.ptr.offset + 2] & 0xFF) << (16 - b.endbit);
                     if (bits > 24)
                     {
-                        ret |= (b.ptr.bytes[b.ptr.offset + 3] & 0xFF) << (24 - b.endbit);
+                        ret |= (long)(b.ptr.bytes[b.ptr.offset + 3] & 0xFF) << (24 - b.endbit);
                         if (bits > 32 && b.endbit != 0)
                         {
-                            ret |= (b.ptr.bytes[b.ptr.offset + 4] & 0xFF) << (32 - b.endbit);
+                            ret |= (long)(b.ptr.bytes[b.ptr.offset + 4] & 0xFF) << (32 - b.endbit);
                         }
                     }
                 }

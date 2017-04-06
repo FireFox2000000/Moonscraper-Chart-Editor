@@ -32,13 +32,13 @@ namespace TanjentOGG
         {
             CPtr.BytePtr page = og.header;
             long granulepos = page.bytes[page.offset + 13] & (0xff);
-            granulepos = (granulepos << 8) | (page.bytes[page.offset + 12] & 0xff);
-            granulepos = (granulepos << 8) | (page.bytes[page.offset + 11] & 0xff);
-            granulepos = (granulepos << 8) | (page.bytes[page.offset + 10] & 0xff);
-            granulepos = (granulepos << 8) | (page.bytes[page.offset + 9] & 0xff);
-            granulepos = (granulepos << 8) | (page.bytes[page.offset + 8] & 0xff);
-            granulepos = (granulepos << 8) | (page.bytes[page.offset + 7] & 0xff);
-            granulepos = (granulepos << 8) | (page.bytes[page.offset + 6] & 0xff);
+            granulepos = (granulepos << 8) | ((long)page.bytes[page.offset + 12] & 0xff);
+            granulepos = (granulepos << 8) | ((long)page.bytes[page.offset + 11] & 0xff);
+            granulepos = (granulepos << 8) | ((long)page.bytes[page.offset + 10] & 0xff);
+            granulepos = (granulepos << 8) | ((long)page.bytes[page.offset + 9] & 0xff);
+            granulepos = (granulepos << 8) | ((long)page.bytes[page.offset + 8] & 0xff);
+            granulepos = (granulepos << 8) | ((long)page.bytes[page.offset + 7] & 0xff);
+            granulepos = (granulepos << 8) | ((long)page.bytes[page.offset + 6] & 0xff);
             return (granulepos);
         }
 

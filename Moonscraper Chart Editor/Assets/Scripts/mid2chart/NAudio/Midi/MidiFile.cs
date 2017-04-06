@@ -4,7 +4,7 @@ using System.Text;
 using System.Collections.Generic;
 using NAudio.Utils;
 
-namespace NAudio.Midi 
+namespace NAudioM.Midi 
 {
     /// <summary>
     /// Class able to read a MIDI file

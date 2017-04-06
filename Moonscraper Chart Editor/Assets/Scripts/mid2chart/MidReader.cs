@@ -1,5 +1,5 @@
 ﻿using System;
-using NAudio.Midi;
+using NAudioM.Midi;
 using System.Linq;
 using System.Collections.Generic;
 

@@ -7,7 +7,9 @@ public class NoteSpin : MonoBehaviour {
     static Vector3 initEular;
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+    {
+        initEular = transform.rotation.eulerAngles;
 	}
 	
 	// Update is called once per frame

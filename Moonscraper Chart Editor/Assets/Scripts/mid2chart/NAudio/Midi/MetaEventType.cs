@@ -1,6 +1,6 @@
 using System;
 
-namespace NAudio.Midi
+namespace NAudioM.Midi
 {
     /// <summary>
     /// MIDI MetaEvent Type

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NAudio.Utils;
 
-namespace NAudio.Midi
+namespace NAudioM.Midi
 {
     /// <summary>
     /// A helper class to manage collection of MIDI events

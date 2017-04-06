@@ -24,7 +24,7 @@ namespace TanjentOGG
    biased exponent) : neeeeeee eeemmmmm mmmmmmmm mmmmmmmm
    Why not IEEE?  It's just not that important here. */
 
-    static  int VQ_FEXP = 10;
+    //static  int VQ_FEXP = 10;
     static  int VQ_FMAN = 21;
     static  int VQ_FEXP_BIAS = 768;
 
@@ -328,7 +328,7 @@ namespace TanjentOGG
                 if (c.dec_codelengths[i] <= c.dec_firsttablen) {
                     long orig = bitreverse(c.codelist[i]);
                     for (j = 0; j < (1 << (c.dec_firsttablen - c.dec_codelengths[i])); j++)
-                        c.dec_firsttable[((int) (orig | (j << c.dec_codelengths[i])))] = i + 1;
+                        c.dec_firsttable[((int) (orig | ((long)j << c.dec_codelengths[i])))] = i + 1;
                 }
             }
 

@@ -22,7 +22,10 @@ public class LoadCustomResources : MonoBehaviour {
     static string skinDirectory = "Custom Resources";
     string[] filepaths = new string[0];
 
-    CustomResource[] resources = new CustomResource[] {
+    Dictionary<string, CustomResource> resourcesDictionary = new Dictionary<string, CustomResource>();
+
+    CustomResource[] resources = new CustomResource[] 
+    {
         new CustomAudioClip("break-0"),
         new CustomTexture("background-0", 1920, 1080),
         new CustomTexture("fretboard-0", 512, 1024),
@@ -68,12 +71,42 @@ public class LoadCustomResources : MonoBehaviour {
         new CustomTexture("5_reg_hopo", OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT),
         new CustomTexture("5_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
         new CustomTexture("5_sp_hopo", OPEN_NOTE_TEXTURE_4X4_WIDTH, OPEN_NOTE_TEXTURE_4X4_HEIGHT),
-
+        /*
         new CustomTexture("0_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
         new CustomTexture("1_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
         new CustomTexture("2_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
         new CustomTexture("3_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
-        new CustomTexture("4_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
+        new CustomTexture("4_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),*/
+
+        new CustomTexture("0_fret_base", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("0_fret_cover", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("0_fret_press", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("0_fret_release", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("0_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+
+        new CustomTexture("1_fret_base", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("1_fret_cover", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("1_fret_press", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("1_fret_release", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("1_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+
+        new CustomTexture("2_fret_base", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("2_fret_cover", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("2_fret_press", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("2_fret_release", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("2_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+
+        new CustomTexture("3_fret_base", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("3_fret_cover", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("3_fret_press", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("3_fret_release", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("3_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+
+        new CustomTexture("4_fret_base", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("4_fret_cover", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("4_fret_press", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("4_fret_release", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("4_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
     };
 
     List<CustomResource> resourcesLoading = new List<CustomResource>();
@@ -136,45 +169,70 @@ public class LoadCustomResources : MonoBehaviour {
         yield return fader.fadeOut(1.0f);
 
         // Assign to the custom database
-        customSkin.break0 = GetAudioClipFromLoadedResources("break-0", resources);
-        customSkin.background0 = GetTextureFromLoadedResources("background-0", resources);
-        customSkin.clap = GetAudioClipFromLoadedResources("clap", resources);
-        customSkin.fretboard = GetTextureFromLoadedResources("fretboard-0", resources);
-        customSkin.metronome = GetAudioClipFromLoadedResources("metronome", resources);
+        customSkin.break0 = GetAudioClipFromLoadedResources("break-0", resourcesDictionary);
+        customSkin.background0 = GetTextureFromLoadedResources("background-0", resourcesDictionary);
+        customSkin.clap = GetAudioClipFromLoadedResources("clap", resourcesDictionary);
+        customSkin.fretboard = GetTextureFromLoadedResources("fretboard-0", resourcesDictionary);
+        customSkin.metronome = GetAudioClipFromLoadedResources("metronome", resourcesDictionary);
 
         for (int i = 0; i < customSkin.reg_strum.Length; ++i)
         {
-            customSkin.reg_strum[i] = GetTextureFromLoadedResources(i + "_reg_strum", resources);
+            customSkin.reg_strum[i] = GetTextureFromLoadedResources(i + "_reg_strum", resourcesDictionary);
         }
 
         for (int i = 0; i < customSkin.reg_hopo.Length; ++i)
         {
-            customSkin.reg_hopo[i] = GetTextureFromLoadedResources(i + "_reg_hopo", resources);
+            customSkin.reg_hopo[i] = GetTextureFromLoadedResources(i + "_reg_hopo", resourcesDictionary);
         }
 
         for (int i = 0; i < customSkin.reg_tap.Length; ++i)
         {
-            customSkin.reg_tap[i] = GetTextureFromLoadedResources(i + "_reg_tap", resources);
+            customSkin.reg_tap[i] = GetTextureFromLoadedResources(i + "_reg_tap", resourcesDictionary);
         }
 
         for (int i = 0; i < customSkin.sp_strum.Length; ++i)
         {
-            customSkin.sp_strum[i] = GetTextureFromLoadedResources(i + "_sp_strum", resources);
+            customSkin.sp_strum[i] = GetTextureFromLoadedResources(i + "_sp_strum", resourcesDictionary);
         }
 
         for (int i = 0; i < customSkin.sp_hopo.Length; ++i)
         {
-            customSkin.sp_hopo[i] = GetTextureFromLoadedResources(i + "_sp_hopo", resources);
+            customSkin.sp_hopo[i] = GetTextureFromLoadedResources(i + "_sp_hopo", resourcesDictionary);
         }
 
         for (int i = 0; i < customSkin.sp_tap.Length; ++i)
         {
-            customSkin.sp_tap[i] = GetTextureFromLoadedResources(i + "_sp_tap", resources);
+            customSkin.sp_tap[i] = GetTextureFromLoadedResources(i + "_sp_tap", resourcesDictionary);
         }
-
+        /*
         for (int i = 0; i < customSkin.sustains.Length; ++i)
         {
-            customSkin.sustains[i] = GetTextureFromLoadedResources(i + "_sustain", resources);
+            customSkin.sustains[i] = GetTextureFromLoadedResources(i + "_sustain", resourcesDictionary);
+        }*/
+
+        for (int i = 0; i < customSkin.fret_base.Length; ++i)
+        {
+            customSkin.fret_base[i] = GetTextureFromLoadedResources(i + "_fret_base", resourcesDictionary);
+        }
+
+        for (int i = 0; i < customSkin.fret_cover.Length; ++i)
+        {
+            customSkin.fret_cover[i] = GetTextureFromLoadedResources(i + "_fret_cover", resourcesDictionary);
+        }
+
+        for (int i = 0; i < customSkin.fret_press.Length; ++i)
+        {
+            customSkin.fret_press[i] = GetTextureFromLoadedResources(i + "_fret_press", resourcesDictionary);
+        }
+
+        for (int i = 0; i < customSkin.fret_release.Length; ++i)
+        {
+            customSkin.fret_release[i] = GetTextureFromLoadedResources(i + "_fret_release", resourcesDictionary);
+        }
+
+        for (int i = 0; i < customSkin.fret_anim.Length; ++i)
+        {
+            customSkin.fret_anim[i] = GetTextureFromLoadedResources(i + "_fret_anim", resourcesDictionary);
         }
 
         // Load editor
@@ -196,6 +254,7 @@ public class LoadCustomResources : MonoBehaviour {
                 if (resource.InitWWW(filepaths))
                 {
                     resourcesLoading.Add(resource);
+                    resourcesDictionary.Add(resource.name, resource);
                 }
             }
 
@@ -203,7 +262,7 @@ public class LoadCustomResources : MonoBehaviour {
         }
         else
             Debug.LogError("Custom Resources not found");
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -255,8 +314,21 @@ public class LoadCustomResources : MonoBehaviour {
         return files;
     }
 
-    static Texture2D GetTextureFromLoadedResources(string name, CustomResource[] resources)
+    static Texture2D GetTextureFromLoadedResources(string name, Dictionary<string, CustomResource> resources)
     {
+        CustomResource resource;
+        resources.TryGetValue(name, out resource);
+
+        try
+        {
+            resource.AssignResource();
+            return ((CustomTexture)resource).texture;
+        }
+        catch
+        {
+            return null;
+        }
+        /*
         foreach (CustomResource resource in resources)
         {
             if (resource.GetType() == typeof(CustomTexture) && resource.name == name)
@@ -272,11 +344,24 @@ public class LoadCustomResources : MonoBehaviour {
                 }
             }
         }
-        return null;
+        return null;*/
     }
 
-    static AudioClip GetAudioClipFromLoadedResources(string name, CustomResource[] resources)
+    static AudioClip GetAudioClipFromLoadedResources(string name, Dictionary<string, CustomResource> resources)
     {
+        CustomResource resource;
+        resources.TryGetValue(name, out resource);
+        try
+        {
+            resource.AssignResource();
+            return ((CustomAudioClip)resource).audio;
+        }
+        catch
+        {
+            return null;
+        }
+
+        /*
         foreach (CustomResource resource in resources)
         {
             if (resource.GetType() == typeof(CustomAudioClip) && resource.name == name)
@@ -292,6 +377,6 @@ public class LoadCustomResources : MonoBehaviour {
                 }
             }
         }
-        return null;
+        return null;*/
     }
 }
