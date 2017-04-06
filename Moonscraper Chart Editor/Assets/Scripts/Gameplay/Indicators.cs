@@ -6,9 +6,10 @@ using XInputDotNetPure;
 
 public class Indicators : MonoBehaviour {
     public GameObject[] indicators = new GameObject[5];
-    public HitAnimation[] animations = new HitAnimation[5];
+    [HideInInspector]
+    public HitAnimation[] animations = new DefaultHitAnimation[5];
 
-    void Awake()
+    void Start()
     {
         for(int i = 0; i < animations.Length; ++i)
         {
@@ -62,9 +63,11 @@ public class Indicators : MonoBehaviour {
             for (int i = 0; i < 5; ++i)
             {
                 if (Input.GetButton("Fret" + i))
-                    indicators[i].SetActive(true);
+                    //indicators[i].SetActive(true);
+                    animations[i].Press();
                 else if (!animations[i].running)
-                    indicators[i].SetActive(false);
+                    animations[i].Release();
+                //indicators[i].SetActive(false);
             }
 #endif
         }
@@ -73,7 +76,8 @@ public class Indicators : MonoBehaviour {
             for (int i = 0; i < indicators.Length; ++i)
             {
                 if (!animations[i].running)
-                    indicators[i].SetActive(false);
+                    animations[i].Release();
+                //indicators[i].SetActive(false);
             }
         }
     }

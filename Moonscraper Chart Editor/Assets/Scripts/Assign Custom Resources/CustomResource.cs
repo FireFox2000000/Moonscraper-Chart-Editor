@@ -85,7 +85,7 @@ public class CustomTexture : CustomResource
                 case (".dds"):
                     try
                     {
-                        texture = LoadTextureDXT(www.bytes, TextureFormat.DXT5);
+                        //texture = LoadTextureDXT(www.bytes, TextureFormat.DXT5, width, height);
                     }
                     catch (Exception e)
                     {
@@ -103,7 +103,7 @@ public class CustomTexture : CustomResource
     }
 
     // Method from http://answers.unity3d.com/questions/555984/can-you-load-dds-textures-during-runtime.html#answer-707772
-    public static Texture2D LoadTextureDXT(byte[] ddsBytes, TextureFormat textureFormat)
+    public static Texture2D LoadTextureDXT(byte[] ddsBytes, TextureFormat textureFormat, int width, int height)
     {
         if (textureFormat != TextureFormat.DXT1 && textureFormat != TextureFormat.DXT5)
             throw new Exception("Invalid TextureFormat. Only DXT1 and DXT5 formats are supported by this method.");
@@ -112,8 +112,8 @@ public class CustomTexture : CustomResource
         if (ddsSizeCheck != 124)
             throw new Exception("Invalid DDS DXTn texture. Unable to read");  //this header byte should be 124 for DDS image files
 
-        int height = ddsBytes[13] * 256 + ddsBytes[12];
-        int width = ddsBytes[17] * 256 + ddsBytes[16];
+        //int height = ddsBytes[13] * 256 + ddsBytes[12];
+        //int width = ddsBytes[17] * 256 + ddsBytes[16];
 
         int DDS_HEADER_SIZE = 128;
         byte[] dxtBytes = new byte[ddsBytes.Length - DDS_HEADER_SIZE];

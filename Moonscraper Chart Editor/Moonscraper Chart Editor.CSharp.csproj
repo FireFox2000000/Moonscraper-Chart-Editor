@@ -104,6 +104,8 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\ActionHistory.cs" />
     <Compile Include="Assets\Scripts\Advanced INI Parser\INIParser.cs" />
+    <Compile Include="Assets\Scripts\Animations\CustomFretManager.cs" />
+    <Compile Include="Assets\Scripts\Animations\DefaultHitAnimation.cs" />
     <Compile Include="Assets\Scripts\Animations\HitAnimation.cs" />
     <Compile Include="Assets\Scripts\Animations\NoteSpin.cs" />
     <Compile Include="Assets\Scripts\Animations\NoteSpriteAnimations.cs" />

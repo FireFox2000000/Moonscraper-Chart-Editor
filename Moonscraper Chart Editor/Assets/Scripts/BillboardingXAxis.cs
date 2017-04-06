@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[ExecuteInEditMode]
 public class BillboardingXAxis : MonoBehaviour {
 	
 	// Update is called once per frame
