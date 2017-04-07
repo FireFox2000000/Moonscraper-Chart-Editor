@@ -53,7 +53,8 @@ public class DefaultHitAnimation : HitAnimation {
 
     void OnDisable ()
     {
-        StopAnim();
+        if (ren)
+            StopAnim();
     }
 
     public override void StopAnim()

@@ -69,7 +69,7 @@ public class LoadCustomResources : MonoBehaviour {
 
         new CustomTexture("5_reg_strum", OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT),
         new CustomTexture("5_reg_hopo", OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("5_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
+        new CustomTexture("5_sp_strum", OPEN_NOTE_TEXTURE_4X4_WIDTH, OPEN_NOTE_TEXTURE_4X4_HEIGHT),
         new CustomTexture("5_sp_hopo", OPEN_NOTE_TEXTURE_4X4_WIDTH, OPEN_NOTE_TEXTURE_4X4_HEIGHT),
         /*
         new CustomTexture("0_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
@@ -107,6 +107,8 @@ public class LoadCustomResources : MonoBehaviour {
         new CustomTexture("4_fret_press", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
         new CustomTexture("4_fret_release", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
         new CustomTexture("4_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+
+        new CustomTexture("fret_stem", 64, 16),
     };
 
     List<CustomResource> resourcesLoading = new List<CustomResource>();
@@ -234,6 +236,8 @@ public class LoadCustomResources : MonoBehaviour {
         {
             customSkin.fret_anim[i] = GetTextureFromLoadedResources(i + "_fret_anim", resourcesDictionary);
         }
+
+        customSkin.fret_stem = GetTextureFromLoadedResources("fret_stem", resourcesDictionary);
 
         // Load editor
         int buildIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;

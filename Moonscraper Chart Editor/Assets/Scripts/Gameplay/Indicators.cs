@@ -5,7 +5,10 @@ using System.Collections;
 using XInputDotNetPure;
 
 public class Indicators : MonoBehaviour {
-    public GameObject[] indicators = new GameObject[5];
+    [SerializeField]
+    GameObject[] indicators = new GameObject[5];
+    [SerializeField]
+    GameObject[] customIndicators = new GameObject[5];
     [HideInInspector]
     public HitAnimation[] animations = new HitAnimation[5];
 
@@ -13,7 +16,13 @@ public class Indicators : MonoBehaviour {
     {
         for(int i = 0; i < animations.Length; ++i)
         {
-            animations[i] = indicators[i].GetComponent<HitAnimation>();
+            if (customIndicators[i].activeSelf)
+            {
+                animations[i] = customIndicators[i].GetComponent<HitAnimation>();
+                indicators[i].transform.parent.gameObject.SetActive(false);
+            }
+            else
+                animations[i] = indicators[i].GetComponent<HitAnimation>();
         }
     }
 
@@ -78,7 +87,7 @@ public class Indicators : MonoBehaviour {
         }
         else
         {
-            for (int i = 0; i < indicators.Length; ++i)
+            for (int i = 0; i < animations.Length; ++i)
             {
                 if (!animations[i].running)
                     animations[i].Release();

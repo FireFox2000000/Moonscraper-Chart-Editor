@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class CustomFretManager : HitAnimation
 {
-    public GameObject fretPress;
-    public GameObject fretRelease;
-    public GameObject toAnimate;
+    public SpriteRenderer fretBase;
+    public SpriteRenderer fretCover;
+    public SpriteRenderer fretPress;
+    public SpriteRenderer fretRelease;
+    public SpriteRenderer toAnimate;
 	
 	// Update is called once per frame
 	void Update () {
@@ -23,15 +25,15 @@ public class CustomFretManager : HitAnimation
     public override void StopAnim()
     {
         running = false;
-        toAnimate.SetActive(false);
+        toAnimate.gameObject.SetActive(false);
         Release();
     }
 
     public override void PlayOneShot()
     {
-        fretPress.SetActive(false);
-        fretRelease.SetActive(false);
-        toAnimate.SetActive(true);
+        fretPress.gameObject.SetActive(false);
+        fretRelease.gameObject.SetActive(false);
+        toAnimate.gameObject.SetActive(true);
         toAnimate.transform.localPosition = new Vector3(toAnimate.transform.localPosition.x, START_ANIM_HEIGHT, toAnimate.transform.localPosition.z);
 
         running = true;
@@ -41,8 +43,8 @@ public class CustomFretManager : HitAnimation
     {
         if (!running)
         {
-            fretPress.SetActive(true);
-            fretRelease.SetActive(false);
+            fretPress.gameObject.SetActive(true);
+            fretRelease.gameObject.SetActive(false);
         }
     }
 
@@ -50,8 +52,8 @@ public class CustomFretManager : HitAnimation
     {
         if (!running)
         {
-            fretPress.SetActive(false);
-            fretRelease.SetActive(true);
+            fretPress.gameObject.SetActive(false);
+            fretRelease.gameObject.SetActive(true);
         }
     }
 }

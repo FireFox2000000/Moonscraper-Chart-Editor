@@ -12,9 +12,10 @@ public class AssignCustomResources : MonoBehaviour {
     Texture initFretboardTex;
     public Skin customSkin;
     public SpriteNoteResources defaultNoteSprites;
+    public CustomFretManager[] customFrets = new CustomFretManager[5];
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
         initBGTex = background.sharedMaterial.mainTexture;
         initFretboardTex = fretboard.sharedMaterial.mainTexture;
 
@@ -32,6 +33,71 @@ public class AssignCustomResources : MonoBehaviour {
                 metronome.clap = customSkin.metronome;
 
             WriteCustomTexturesToAtlus(defaultNoteSprites.fullAtlus);
+
+            const int PIXELS_PER_UNIT = 125;
+            for (int i = 0; i < customFrets.Length; ++i)
+            {
+                if (i < customSkin.fret_base.Length)
+                {
+                    Sprite sprite = null;
+                    if (customSkin.fret_base[i])
+                    {
+                        sprite = Sprite.Create(customSkin.fret_base[i], new Rect(0.0f, 0.0f, customSkin.fret_base[i].width, customSkin.fret_base[i].height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
+                        customFrets[i].gameObject.SetActive(true);
+                    }
+
+                    customFrets[i].fretBase.sprite = sprite;
+                }
+
+                if (i < customSkin.fret_cover.Length)
+                {
+                    Sprite sprite = null;
+                    if (customSkin.fret_cover[i])
+                    {
+                        sprite = Sprite.Create(customSkin.fret_cover[i], new Rect(0.0f, 0.0f, customSkin.fret_cover[i].width, customSkin.fret_cover[i].height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
+                        customFrets[i].gameObject.SetActive(true);
+                    }
+
+                    customFrets[i].fretCover.sprite = sprite;
+
+                }
+
+                if (i < customSkin.fret_press.Length)
+                {
+                    Sprite sprite = null;
+                    if (customSkin.fret_press[i])
+                    {
+                        sprite = Sprite.Create(customSkin.fret_press[i], new Rect(0.0f, 0.0f, customSkin.fret_press[i].width, customSkin.fret_press[i].height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
+                        customFrets[i].gameObject.SetActive(true);
+                    }
+
+                    customFrets[i].fretPress.sprite = sprite;
+                }
+
+                if (i < customSkin.fret_release.Length)
+                {
+                    Sprite sprite = null;
+                    if (customSkin.fret_release[i])
+                    {
+                        sprite = Sprite.Create(customSkin.fret_release[i], new Rect(0.0f, 0.0f, customSkin.fret_release[i].width, customSkin.fret_release[i].height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
+                        customFrets[i].gameObject.SetActive(true);
+                    }
+
+                    customFrets[i].fretRelease.sprite = sprite;
+                }
+
+                if (i < customSkin.fret_anim.Length)
+                {
+                    Sprite sprite = null;
+                    if (customSkin.fret_anim[i])
+                    {
+                        sprite = Sprite.Create(customSkin.fret_anim[i], new Rect(0.0f, 0.0f, customSkin.fret_anim[i].width, customSkin.fret_anim[i].height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
+                        customFrets[i].gameObject.SetActive(true);
+                    }
+
+                    customFrets[i].toAnimate.sprite = sprite;
+                }
+            }
         }
         catch (System.Exception e)
         {
@@ -69,7 +135,7 @@ public class AssignCustomResources : MonoBehaviour {
         atlus.Apply();
     }
 
-    void SetCustomTexturesToAtlus(Sprite[] spritesLocation, Texture2D[] customTextures, Color[] fullTextureAtlusPixels, Utility.IntVector2 fullTextureAtlusSize)
+    static void SetCustomTexturesToAtlus(Sprite[] spritesLocation, Texture2D[] customTextures, Color[] fullTextureAtlusPixels, Utility.IntVector2 fullTextureAtlusSize)
     {
         if (spritesLocation.Length != customTextures.Length)
             throw new System.Exception("Mis-aligned sprite locations to textures provided");
@@ -94,7 +160,7 @@ public class AssignCustomResources : MonoBehaviour {
         }
     }
 
-    void WritePixelsToArea(Color[] texturePixels, Utility.IntVector2 textureSize, Utility.IntVector2 topLeftCornerToStartWriteFrom, Color[] pixelsToOverwrite, Utility.IntVector2 textureToWriteSize)
+    static void WritePixelsToArea(Color[] texturePixels, Utility.IntVector2 textureSize, Utility.IntVector2 topLeftCornerToStartWriteFrom, Color[] pixelsToOverwrite, Utility.IntVector2 textureToWriteSize)
     {
         if (textureSize.x * textureSize.y != texturePixels.Length)
             throw new System.Exception("Invalid texture size.");
