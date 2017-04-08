@@ -11,6 +11,8 @@ public class SettingsController : DisplayMenu
     public Toggle leftyFlipToggle;
     public Toggle extendedSustainsToggle;
     public Toggle sustainGapEnabledToggle;
+    public Toggle resetAfterPlay;
+    public Toggle resetAfterGameplay;
 
     public Slider musicSourceSlider;
     public Slider guitarSourceSlider;
@@ -89,6 +91,9 @@ public class SettingsController : DisplayMenu
         else
             extendedSustainsToggle.isOn = false;
 
+        resetAfterPlay.isOn = Globals.resetAfterPlay;
+        resetAfterGameplay.isOn = Globals.resetAfterGameplay;
+
         masterVolumeSlider.value = AudioListener.volume * 10.0f;
 
         gameplayStartDelayDropdown.value = (int)(Globals.gameplayStartDelayTime * 2.0f);
@@ -117,6 +122,16 @@ public class SettingsController : DisplayMenu
             Globals.notePlacementMode = Globals.NotePlacementMode.LeftyFlip;
         else
             Globals.notePlacementMode = Globals.NotePlacementMode.Default;
+    }
+
+    public void SetResetAfterPlay(bool value)
+    {
+        Globals.resetAfterPlay = value;
+    }
+
+    public void SetResetAfterGameplay(bool value)
+    {
+        Globals.resetAfterGameplay = value;
     }
 
     public void SetExtendedSustains(bool value)

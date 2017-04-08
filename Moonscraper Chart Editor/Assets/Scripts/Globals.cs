@@ -88,6 +88,8 @@ public class Globals : MonoBehaviour {
     public static NotePlacementMode notePlacementMode = NotePlacementMode.LeftyFlip;
     public static bool extendedSustainsEnabled = false;
     public static bool sustainGapEnabled { get; set; }
+    public static bool resetAfterPlay = false;
+    public static bool resetAfterGameplay = false;
     public static Step sustainGapStep;
     public static int sustainGap { get { return sustainGapStep.value; } set { sustainGapStep.value = value; } }
     public static bool bot = true;
@@ -131,6 +133,8 @@ public class Globals : MonoBehaviour {
         sustainGapStep = new Step((int)iniparse.ReadValue("Settings", "Sustain Gap Step", (int)16));
         notePlacementMode = (NotePlacementMode)iniparse.ReadValue("Settings", "Note Placement Mode", (int)NotePlacementMode.Default);
         gameplayStartDelayTime = (float)iniparse.ReadValue("Settings", "Gameplay Start Delay", 3.0f);
+        resetAfterPlay = iniparse.ReadValue("Settings", "Reset After Play", false);
+        resetAfterGameplay = iniparse.ReadValue("Settings", "Reset After Gameplay", false);
 
         // Check that the gameplay start delay time is a multiple of 0.5 and is
         gameplayStartDelayTime = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
@@ -288,9 +292,10 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Settings", "Sustain Gap Step", sustainGap);
         iniparse.WriteValue("Settings", "Note Placement Mode", (int)notePlacementMode);
         iniparse.WriteValue("Settings", "Gameplay Start Delay", gameplayStartDelayTime);
+        iniparse.WriteValue("Settings", "Reset After Play", resetAfterPlay);
+        iniparse.WriteValue("Settings", "Reset After Gameplay", resetAfterGameplay);
 
         // Audio levels
-        //Debug.Log(lastKnownMasterLevel);
         iniparse.WriteValue("Audio Volume", "Master", lastKnownMasterLevel);
         iniparse.WriteValue("Audio Volume", "Music Stream", editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume);
         iniparse.WriteValue("Audio Volume", "Guitar Stream", editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume);

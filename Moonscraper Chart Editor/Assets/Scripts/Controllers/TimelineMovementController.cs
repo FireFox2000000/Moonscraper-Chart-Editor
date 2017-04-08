@@ -78,12 +78,12 @@ public class TimelineMovementController : MovementController
 
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
-            if (scrollDelta == 0 && focused /*&& globals.InToolArea*/)
+            if (scrollDelta == 0 && focused)
             {
                 scrollDelta = Input.mouseScrollDelta.y;
             }
 
-            if (Globals.IsInDropDown /*&& Mouse.GetUIUnderPointer<UnityEngine.UI.Dropdown>()*/)
+            if (Globals.IsInDropDown)
                 scrollDelta = 0;
 
             // Position changes scroll bar value

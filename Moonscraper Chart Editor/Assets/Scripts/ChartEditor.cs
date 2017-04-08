@@ -525,7 +525,8 @@ public class ChartEditor : MonoBehaviour {
         if (Globals.applicationMode == Globals.ApplicationMode.Playing || movement.transform.position.y < movement.initPos.y)
             return;
 
-        stopResetPos = movement.transform.position;
+        if (Globals.resetAfterGameplay)
+            stopResetPos = movement.transform.position;
 
         float strikelineYPos = visibleStrikeline.position.y - (0.01f * Globals.hyperspeed);     // Offset to prevent errors where it removes a note that is on the strikeline
         startGameplayPos = strikelineYPos;
@@ -555,6 +556,9 @@ public class ChartEditor : MonoBehaviour {
     bool cancel;
     public void Play()
     {
+        if (Globals.bot && Globals.resetAfterPlay)
+            stopResetPos = movement.transform.position;
+
         foreach (HitAnimation hitAnim in indicators.animations)
             hitAnim.StopAnim();
 
