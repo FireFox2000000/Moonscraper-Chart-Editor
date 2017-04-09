@@ -28,7 +28,7 @@ public class DropDownMenu : MonoBehaviour {
     public void InvokeFuction(int pos)
     {
         if (pos < menuEvent.Length && pos >= 0)
-        {           
+        {
             menuEvent[pos].Invoke();
             titleText.text = title;
 

@@ -193,7 +193,7 @@ public class Globals : MonoBehaviour {
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand))
         {
             if (Input.GetKeyDown("s"))
-                editor.Save();
+                editor._Save();
             else if (Input.GetKeyDown("o"))
                 editor.Load();
             else if (Input.GetKeyDown("z") && !Input.GetMouseButton(0) && !Input.GetMouseButton(1))

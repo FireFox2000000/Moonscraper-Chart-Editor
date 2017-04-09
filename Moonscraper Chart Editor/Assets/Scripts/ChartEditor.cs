@@ -390,7 +390,7 @@ public class ChartEditor : MonoBehaviour {
                 UnityEngine.Application.CancelQuit();
             if (result == DialogResult.Yes)
             {
-                if (!Save())
+                if (!_Save())
                 {
                     quitting = false;
                     return false;
@@ -441,7 +441,17 @@ public class ChartEditor : MonoBehaviour {
         StartCoroutine(_Load());
     }
 
-    public bool Save()
+    public void Save()
+    {
+        _Save();
+    }
+
+    public void SaveAs(bool forced = true)
+    {
+        _SaveAs(forced);
+    }
+
+    public bool _Save()
     {
         if (lastLoadedFile != string.Empty)
         {
@@ -449,10 +459,10 @@ public class ChartEditor : MonoBehaviour {
             return true;
         }
         else
-            return SaveAs();
+            return _SaveAs();
     }
 
-    public bool SaveAs(bool forced = true)
+    public bool _SaveAs(bool forced = true)
     {
         try {
             string fileName;
@@ -509,7 +519,7 @@ public class ChartEditor : MonoBehaviour {
     }
 
     void Save (string filename, bool forced = true)
-    {       
+    {
         if (currentSong != null)
         {
             Debug.Log("Saving to file- " + System.IO.Path.GetFullPath(filename));

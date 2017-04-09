@@ -39,7 +39,41 @@ public class Song {
     public SampleData guitarSample { get { return audioSampleData[GUITAR_STREAM_ARRAY_POS]; } private set { audioSampleData[GUITAR_STREAM_ARRAY_POS] = value; } }
     public SampleData rhythmSample { get { return audioSampleData[RHYTHM_STREAM_ARRAY_POS]; } private set { audioSampleData[RHYTHM_STREAM_ARRAY_POS] = value; } }
 
-    public float length = 0;
+    float _length = 300;
+    public float length
+    {
+        get
+        {
+            if (manualLength)
+                return _length;
+            else
+            {
+                if (musicStream)
+                    return musicStream.length + offset;
+                else
+                    return 300;     // 5 minutes
+            }
+        }
+        set
+        {
+            if (manualLength)
+                _length = value;
+        }
+    }
+
+    bool _manualLength = false;
+    public bool manualLength
+    {
+        get
+        {
+            return _manualLength;
+        }
+        set
+        {
+            _manualLength = value;
+            _length = length;
+        }
+    }
 
     string[] audioLocations = new string[3];
 
@@ -189,7 +223,6 @@ public class Song {
             audioSampleData[i] = new SampleData(string.Empty);
 
         musicStream = null;
-        length = 60 * 5;
 
         updateArrays();
     }
@@ -416,9 +449,6 @@ public class Song {
                 audioStreams[audioStreamArrayPos].name = Path.GetFileName(convertedFromMp3);
 
             while (audioStreams[audioStreamArrayPos] != null && audioStreams[audioStreamArrayPos].loadState != AudioDataLoadState.Loaded) ;
-
-            if (audioStreamArrayPos == MUSIC_STREAM_ARRAY_POS)
-                length = musicStream.length;
 
 #if TIMING_DEBUG
             Debug.Log("Audio load time: " + (Time.realtimeSinceStartup - time));
@@ -805,6 +835,7 @@ public class Song {
         Regex resolutionRegex = new Regex(@"Resolution = " + FLOATSEARCH);
         Regex player2TypeRegex = new Regex(@"Player2 = \w+");
         Regex difficultyRegex = new Regex(@"Difficulty = \d+");
+        Regex lengthRegex = new Regex(@"Length = " + FLOATSEARCH);
         Regex previewStartRegex = new Regex(@"PreviewStart = " + FLOATSEARCH);
         Regex previewEndRegex = new Regex(@"PreviewEnd = " + FLOATSEARCH);
         Regex genreRegex = new Regex(@"Genre = " + QUOTEVALIDATE);
@@ -867,6 +898,13 @@ public class Song {
                 else if (difficultyRegex.IsMatch(line))
                 {
                     difficulty = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
+                }
+
+                // Length = 300
+                else if (lengthRegex.IsMatch(line))
+                {
+                    manualLength = true;
+                    length = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
                 }
 
                 // PreviewStart = 0.00
@@ -961,6 +999,8 @@ public class Song {
         if (player2 != string.Empty)
             saveString += Globals.TABSPACE + "Player2 = \"" + player2.ToLower() + Globals.LINE_ENDING;       
         saveString += Globals.TABSPACE + "Difficulty = " + difficulty + Globals.LINE_ENDING;
+        if (manualLength)
+            saveString += Globals.TABSPACE + "Length = " + _length + Globals.LINE_ENDING;
         saveString += Globals.TABSPACE + "PreviewStart = " + previewStart + Globals.LINE_ENDING;
         saveString += Globals.TABSPACE + "PreviewEnd = " + previewEnd + Globals.LINE_ENDING;
         if (genre != string.Empty)
