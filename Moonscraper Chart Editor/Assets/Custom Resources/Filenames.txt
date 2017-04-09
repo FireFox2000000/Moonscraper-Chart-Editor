@@ -11,14 +11,21 @@ Image files
   fretboard-0		(Recommended size: 512x1024)
 
 Notes- Replace [x] with numbers 0-4 for each image
-	[x]_reg_strum	1 note of image size (128, 64)
-	[x]_reg_hopo	1 note of image size (128, 64)
-	[x]_reg_tap		4x2 notes of image size (256, 256)
-	[x]_sp_strum	4x4 notes of image size (512, 256)
-	[x]_sp_hopo		4x4 notes of image size (512, 256)
-	[x]_sp_tap		4x2 notes of image size (256, 256)
+	[x]_reg_strum		1 note of image size (128, 64)
+	[x]_reg_hopo		1 note of image size (128, 64)
+	[x]_reg_tap			4x2 notes of image size (256, 256)
+	[x]_sp_strum		4x4 notes of image size (512, 256)
+	[x]_sp_hopo			4x4 notes of image size (512, 256)
+	[x]_sp_tap			4x2 notes of image size (256, 256)
 
-	5_reg_strum		1 note of image size (512, 64)
-	5_reg_hopo		1 note of image size (512, 64)
-	5_sp_strum		4x4 notes of image size (2048, 256)
-	5_sp_hopo		4x4 notes of image size (2048, 256)
+	5_reg_strum			1 note of image size (512, 64)
+	5_reg_hopo			1 note of image size (512, 64)
+	5_sp_strum			4x4 notes of image size (2048, 256)
+	5_sp_hopo			4x4 notes of image size (2048, 256)
+
+Strikeline Frets- Replace [x] with numbers 0-4 for each image
+	[x]_fret_anim		image size (128, 64)
+	[x]_fret_base		image size (128, 64)
+	[x]_fret_cover		image size (128, 64)
+	[x]_fret_press		image size (128, 64)
+	[x]_fret_release	image size (128, 64)

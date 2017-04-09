@@ -4,7 +4,7 @@ using System.Collections;
 public class AssignCustomResources : MonoBehaviour {
     public GameplayManager break0;
     public StrikelineAudioController clap;
-    public Renderer background;
+    public Renderer[] background = new Renderer[2];
     public Renderer fretboard;
     public Metronome metronome;
 
@@ -16,7 +16,7 @@ public class AssignCustomResources : MonoBehaviour {
 
     // Use this for initialization
     void Awake () {
-        initBGTex = background.sharedMaterial.mainTexture;
+        initBGTex = background[0].sharedMaterial.mainTexture;
         initFretboardTex = fretboard.sharedMaterial.mainTexture;
 
         try
@@ -26,7 +26,10 @@ public class AssignCustomResources : MonoBehaviour {
             if (customSkin.clap != null)
                 clap.clap = customSkin.clap;
             if (customSkin.background0 != null)
-                background.sharedMaterial.mainTexture = customSkin.background0;
+            {
+                foreach (Renderer bg in background)
+                    bg.sharedMaterial.mainTexture = customSkin.background0;
+            }
             if (customSkin.fretboard != null)
                 fretboard.sharedMaterial.mainTexture = customSkin.fretboard;
             if (customSkin.metronome != null)
@@ -180,7 +183,8 @@ public class AssignCustomResources : MonoBehaviour {
     void OnApplicationQuit()
     {
         // This is purely for the sake of editor resetting, otherwise any custom textures used will be saved between testing
-        background.sharedMaterial.mainTexture = initBGTex;
+        foreach (Renderer bg in background)
+            bg.sharedMaterial.mainTexture = initBGTex;
         fretboard.sharedMaterial.mainTexture = initFretboardTex;
 
         // Reset after play
