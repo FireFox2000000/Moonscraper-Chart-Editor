@@ -14,6 +14,5 @@ public class SetMatColor : MonoBehaviour {
 
         if (materialSlot < ren.materials.Length)
             ren.materials[materialSlot].color = col;
-	}
-	
+	}	
 }

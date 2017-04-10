@@ -139,8 +139,9 @@ public class WaveformDraw : MonoBehaviour {
         float sampleRate = currentAudio.length / data.Length;// currentClip.samples / currentClip.length;
 
         int iteration = 20;
-        int startPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMin.position.y), iteration);
-        int endPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMax.position.y), iteration);
+        float fullOffset = editor.currentSong.offset - (Globals.audioCalibrationMS / 1000.0f);
+        int startPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMin.position.y) - fullOffset, iteration);
+        int endPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMax.position.y) - fullOffset, iteration);
 
         List<Vector3> points = new List<Vector3>();
 
@@ -160,7 +161,7 @@ public class WaveformDraw : MonoBehaviour {
 
             sampleAverage /= currentAudio.channels;
 
-            points.Add(new Vector3(sampleAverage * scaling, Song.TimeToWorldYPosition(i * sampleRate), 0));
+            points.Add(new Vector3(sampleAverage * scaling, Song.TimeToWorldYPosition(i * sampleRate + fullOffset), 0));
         }
 
         lineRen.numPositions = points.Count;
