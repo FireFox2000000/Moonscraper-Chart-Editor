@@ -89,8 +89,18 @@ public class CustomTexture : CustomResource
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError(e.Message);
-                        texture = null;
+                        Debug.LogError("DXT5 Error: " + e.Message);
+
+                        try
+                        {
+                            texture = LoadTextureDXT(www.bytes, TextureFormat.DXT1, width, height);
+                            Debug.Log("DTX1 read successful");
+                        }
+                        catch (Exception e1)
+                        {
+                            Debug.LogError("DXT1 Error: " + e1.Message);
+                            texture = null;
+                        } 
                     }
                     return;
                 default:

@@ -183,10 +183,11 @@ public class AssignCustomResources : MonoBehaviour {
     void OnApplicationQuit()
     {
         // This is purely for the sake of editor resetting, otherwise any custom textures used will be saved between testing
+#if UNITY_EDITOR
         foreach (Renderer bg in background)
             bg.sharedMaterial.mainTexture = initBGTex;
         fretboard.sharedMaterial.mainTexture = initFretboardTex;
-
+#endif
         // Reset after play
         for (int i = 0; i < customSkin.sustain_mats.Length; ++i)
         {

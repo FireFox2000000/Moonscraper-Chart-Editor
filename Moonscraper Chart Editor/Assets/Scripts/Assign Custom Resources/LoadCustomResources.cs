@@ -109,6 +109,7 @@ public class LoadCustomResources : MonoBehaviour {
         new CustomTexture("4_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
 
         new CustomTexture("fret_stem", 64, 16),
+        new CustomTexture("hit_flames", 512, 1024),
     };
 
     List<CustomResource> resourcesLoading = new List<CustomResource>();
@@ -238,6 +239,7 @@ public class LoadCustomResources : MonoBehaviour {
         }
 
         customSkin.fret_stem = GetTextureFromLoadedResources("fret_stem", resourcesDictionary);
+        customSkin.hit_flames = GetTextureFromLoadedResources("hit_flames", resourcesDictionary);
 
         // Load editor
         int buildIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
@@ -332,23 +334,6 @@ public class LoadCustomResources : MonoBehaviour {
         {
             return null;
         }
-        /*
-        foreach (CustomResource resource in resources)
-        {
-            if (resource.GetType() == typeof(CustomTexture) && resource.name == name)
-            {
-                try
-                {
-                    resource.AssignResource();
-                    return ((CustomTexture)resource).texture;
-                }
-                catch
-                {
-                    return null;
-                }
-            }
-        }
-        return null;*/
     }
 
     static AudioClip GetAudioClipFromLoadedResources(string name, Dictionary<string, CustomResource> resources)
@@ -364,23 +349,5 @@ public class LoadCustomResources : MonoBehaviour {
         {
             return null;
         }
-
-        /*
-        foreach (CustomResource resource in resources)
-        {
-            if (resource.GetType() == typeof(CustomAudioClip) && resource.name == name)
-            {
-                try
-                {
-                    resource.AssignResource();
-                    return ((CustomAudioClip)resource).audio;
-                }
-                catch
-                {
-                    return null;
-                }
-            }
-        }
-        return null;*/
     }
 }

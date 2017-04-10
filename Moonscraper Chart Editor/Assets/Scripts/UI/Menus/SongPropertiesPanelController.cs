@@ -25,6 +25,8 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     bool init = false;
 
+    TimeSpan customTime = new TimeSpan();
+
     void Start()
     {
        // offset.onValidateInput = validateOffsetValue;
@@ -50,6 +52,8 @@ public class SongPropertiesPanelController : DisplayMenu {
         // Init audio names
         setAudioTextLabels();
         init = false;
+
+        customTime = TimeSpan.FromSeconds(editor.currentSong.length);
 
         ChartEditor.editOccurred = edit;
     }
@@ -90,6 +94,11 @@ public class SongPropertiesPanelController : DisplayMenu {
 
             song.genre = genre.text;
             song.mediatype = mediaType.text;
+
+            if (editor.currentSong.manualLength)
+            {
+                editor.currentSong.length = (float)customTime.TotalSeconds;
+            }
 
             ChartEditor.editOccurred = true;
         }
