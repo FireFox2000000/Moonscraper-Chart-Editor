@@ -564,8 +564,12 @@ public class ChartEditor : MonoBehaviour {
     }
 
     bool cancel;
+    SongObject[] selectedBeforePlay = new SongObject[0];
     public void Play()
     {
+        selectedBeforePlay = currentSelectedObjects;
+        currentSelectedObject = null;
+
         if (Globals.bot && Globals.resetAfterPlay)
             stopResetPos = movement.transform.position;
 
@@ -655,6 +659,7 @@ public class ChartEditor : MonoBehaviour {
         if (stopResetPos != null)
             movement.transform.position = (Vector3)stopResetPos;
 
+        currentSelectedObjects = selectedBeforePlay;
         Globals.bot = true;
         stopResetPos = null;
     }
