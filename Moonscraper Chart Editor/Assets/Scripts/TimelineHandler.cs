@@ -23,9 +23,6 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     float halfHeight;
     float scaledHalfHeight;
 
-    Vector2 prevScreenSize;
-    float prevHandlePos;
-
     ChartEditor editor;
 
     // Value between 0 and 1
@@ -61,9 +58,6 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         scaledHalfHeight = halfHeight * transform.lossyScale.y;
 
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
-
-        prevScreenSize = new Vector2(Screen.width, Screen.height);
-        prevHandlePos = handlePos;
     }
 
     void Start()
@@ -107,6 +101,11 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         }
     }
 
+    int prevSectionLength = 0;
+    int prevSPLength = 0;
+    float prevSongLength = 0;
+    Song prevSong;
+
     void Update()
     {
         halfHeight = rectTransform.rect.height / 2.0f;
@@ -115,51 +114,56 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         percentage.text = ((int)(handlePosRound * 100)).ToString() + "%";
 
         // Set the sections
-        int i;
-        for (i = 0; i < editor.currentSong.sections.Length; ++i)
+        if (prevSong != editor.currentSong || editor.currentSong.sections.Length != prevSectionLength || prevSongLength != editor.currentSong.length)
         {
-            if (i < sectionIndicatorPool.Length && editor.currentSong.sections[i].time <= editor.currentSong.length)
+            int i;
+            for (i = 0; i < editor.currentSong.sections.Length; ++i)
             {
-                sectionIndicatorPool[i].section = editor.currentSong.sections[i];
-                sectionIndicatorPool[i].gameObject.SetActive(true);
+                if (i < sectionIndicatorPool.Length && editor.currentSong.sections[i].time <= editor.currentSong.length)
+                {
+                    sectionIndicatorPool[i].section = editor.currentSong.sections[i];
+                    sectionIndicatorPool[i].gameObject.SetActive(true);
+                }
+                else
+                {
+                    break;
+                }
             }
-            else
-            { 
-                break;
-            }
-        }
+        
 
-        while (i < sectionIndicatorPool.Length)
-        {
-            sectionIndicatorPool[i++].gameObject.SetActive(false);
-        }
-
-        // Set the sp
-        for (i = 0; i < editor.currentChart.starPower.Length; ++i)
-        {
-            if (i < starpowerIndicatorPool.Length && editor.currentChart.starPower[i].time <= editor.currentSong.length)
+            while (i < sectionIndicatorPool.Length)
             {
-                starpowerIndicatorPool[i].starpower = editor.currentChart.starPower[i];
-                starpowerIndicatorPool[i].gameObject.SetActive(true);
-            }
-            else
-            {               
-                break;
+                sectionIndicatorPool[i++].gameObject.SetActive(false);
             }
         }
 
-        while (i < starpowerIndicatorPool.Length)
+        if (prevSong != editor.currentSong || editor.currentChart.starPower.Length != prevSPLength || prevSongLength != editor.currentSong.length)
         {
-            starpowerIndicatorPool[i++].gameObject.SetActive(false);
-        }
-        /*
-        if (prevScreenSize.x != Screen.width || prevScreenSize.y != Screen.height)
-        {
-            handlePos = prevHandlePos;
-        }*/
+            // Set the sp
+            int i;
+            for (i = 0; i < editor.currentChart.starPower.Length; ++i)
+            {
+                if (i < starpowerIndicatorPool.Length && editor.currentChart.starPower[i].time <= editor.currentSong.length)
+                {
+                    starpowerIndicatorPool[i].starpower = editor.currentChart.starPower[i];
+                    starpowerIndicatorPool[i].gameObject.SetActive(true);
+                }
+                else
+                {
+                    break;
+                }
+            }
 
-        prevScreenSize = new Vector2(Screen.width, Screen.height);
-        prevHandlePos = handlePos;
+            while (i < starpowerIndicatorPool.Length)
+            {
+                starpowerIndicatorPool[i++].gameObject.SetActive(false);
+            }
+        }
+
+        prevSong = editor.currentSong;
+        prevSongLength = editor.currentSong.length;
+        prevSPLength = editor.currentChart.starPower.Length;
+        prevSectionLength = editor.currentSong.sections.Length;
     }
 
     public void OnDrag(PointerEventData eventData)

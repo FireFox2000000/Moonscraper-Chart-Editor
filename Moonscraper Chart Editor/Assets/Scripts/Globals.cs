@@ -53,7 +53,7 @@ public class Globals : MonoBehaviour {
                 return true;
 
             if ((UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null ||
-                UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponentInParent<Dropdown>() == null) && !Mouse.GetUIUnderPointer<UnityEngine.UI.Dropdown>())
+                UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponentInParent<Dropdown>() == null) && !Mouse.GetUIUnderPointer<Dropdown>())
             {
                 return false;
             }

@@ -235,7 +235,7 @@ public class SongPropertiesPanelController : DisplayMenu {
                 editor.currentSong.musicSample.Stop();
                 if (editor.currentSong.musicStream)
                 {
-                    editor.currentSong.musicStream.UnloadAudioData();
+                    //editor.currentSong.musicStream.UnloadAudioData();
                     Destroy(editor.currentSong.musicStream);
                 }
                 editor.currentSong.musicStream = null;
@@ -244,7 +244,7 @@ public class SongPropertiesPanelController : DisplayMenu {
                 editor.currentSong.guitarSample.Stop();
                 if (editor.currentSong.guitarStream)
                 {
-                    editor.currentSong.guitarStream.UnloadAudioData();
+                    //editor.currentSong.guitarStream.UnloadAudioData();
                     Destroy(editor.currentSong.guitarStream);
                 }
                 editor.currentSong.guitarStream = null;
@@ -253,7 +253,7 @@ public class SongPropertiesPanelController : DisplayMenu {
                 editor.currentSong.rhythmSample.Stop();
                 if (editor.currentSong.rhythmStream)
                 {
-                    editor.currentSong.rhythmStream.UnloadAudioData();
+                    //editor.currentSong.rhythmStream.UnloadAudioData();
                     Destroy(editor.currentSong.rhythmStream);
                 }
                 editor.currentSong.rhythmStream = null;

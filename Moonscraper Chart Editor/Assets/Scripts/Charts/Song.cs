@@ -29,9 +29,7 @@ public class Song {
     AudioClip[] audioStreams = new AudioClip[3];
     SampleData[] audioSampleData = new SampleData[3];
 
-    public AudioClip musicStream { get { return audioStreams[MUSIC_STREAM_ARRAY_POS]; }
-        set { audioStreams[MUSIC_STREAM_ARRAY_POS] = value; }
-    }
+    public AudioClip musicStream { get { return audioStreams[MUSIC_STREAM_ARRAY_POS]; } set { audioStreams[MUSIC_STREAM_ARRAY_POS] = value; } }
     public AudioClip guitarStream { get { return audioStreams[GUITAR_STREAM_ARRAY_POS]; } set { audioStreams[GUITAR_STREAM_ARRAY_POS] = value; } }
     public AudioClip rhythmStream { get { return audioStreams[RHYTHM_STREAM_ARRAY_POS]; } set { audioStreams[RHYTHM_STREAM_ARRAY_POS] = value; } }
 
@@ -49,7 +47,9 @@ public class Song {
             else
             {
                 if (musicStream)
+                {
                     return musicStream.length + offset;
+                }
                 else
                     return 300;     // 5 minutes
             }
