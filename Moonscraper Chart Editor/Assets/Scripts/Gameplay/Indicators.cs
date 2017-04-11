@@ -77,8 +77,10 @@ public class Indicators : MonoBehaviour {
             for (int i = 0; i < 5; ++i)
             {
                 if (Input.GetButton("Fret" + i))
+                {
                     //indicators[i].SetActive(true);
                     animations[i].Press();
+                }
                 else if (!animations[i].running)
                     animations[i].Release();
                 //indicators[i].SetActive(false);

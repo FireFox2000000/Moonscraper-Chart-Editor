@@ -25,7 +25,7 @@ public class DefaultHitAnimation : HitAnimation {
 	// Update is called once per frame
 	void Update () {
         Vector3 position = transform.position;
-        if (position.z != initZPos)
+        if (position.z != initZPos && running)
         {
             gameObject.SetActive(true);
             ren.sortingLayerName = "Highlights";

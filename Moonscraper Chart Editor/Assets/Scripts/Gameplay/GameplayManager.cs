@@ -99,6 +99,7 @@ public class GameplayManager : MonoBehaviour {
                     chordNote.controller.sustainBroken = true;
 
                 noteStreak = 0;
+                Debug.Log("Missed note: " + note.note.fret_type + ", " + note.note.position);
                 ++totalNotes;
             }
         }
@@ -106,7 +107,10 @@ public class GameplayManager : MonoBehaviour {
         if (slopWindowTimer > SLOP_WINDOW_SIZE)
         {
             if (lastStrumTime == null || !(NoteInHitWindow(lastNoteHit, (float)lastStrumTime) && lastNoteHit.type != Note.Note_Type.STRUM))
+            {
                 noteStreak = 0;
+                Debug.Log("Slop timer");
+            }
 
             lastStrumTime = null;
         }
@@ -208,6 +212,7 @@ public class GameplayManager : MonoBehaviour {
                     HitNoteCheckRecovery();
                 }
             }
+            // No note in window
             else if (strum)
             {
                 if (lastNoteHit != null && lastNoteHit.type != Note.Note_Type.STRUM && NoteInHitWindow(lastNoteHit, Song.WorldYPositionToTime(editor.visibleStrikeline.position.y)))

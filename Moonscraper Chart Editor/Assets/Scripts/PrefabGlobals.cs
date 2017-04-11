@@ -1,102 +1,10 @@
-﻿/************ NO LONGER IN USE ************/
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Stores all collider information for group select collision detection
 public class PrefabGlobals : MonoBehaviour {
-
     ChartEditor editor;
-
-    // 2D
-    public static Sprite[] strumSprites { get; private set; }
-    public static Sprite[] hopoSprites { get; private set; }
-    public static Sprite[] tapSprites { get; private set; }
-    public static Material[] sustainColours { get; private set; }
-    public static Sprite[] spStrumSprite { get; private set; }
-    public static Sprite[] spHopoSprite { get; private set; }
-    public static Sprite[] spTapSprite { get; private set; }
-    public static Sprite standardSustainSprite { get; private set; }
-    public static Sprite openSustainSprite { get; private set; }
-
-    // 3D
-    public static MeshFilter standardModel { get; private set; }
-    public static MeshFilter spModel { get; private set; }
-    public static MeshFilter openModel { get; private set; }
-
-    public static Renderer strumRenderer { get; private set; }
-    public static Renderer hopoRenderer { get; private set; }
-    public static Renderer tapRenderer { get; private set; }
-    public static Renderer openRenderer { get; private set; }
-    public static Renderer spStrumRenderer { get; private set; }
-    public static Renderer spHopoRenderer { get; private set; }
-    public static Renderer spTapRenderer { get; private set; }
-
-    public static Material[] strumColors { get; private set; }
-    public static Material[] tapColors { get; private set; }
-
-    public static Material spTemp { get; private set; }
-    public static Material spTapTemp { get; private set; }
-
-    public static Material[] openMaterials { get; private set; }
-
-    [Header("Note sprites")]
-    [SerializeField]
-    Sprite[] strumNotes = new Sprite[6];
-    [SerializeField]
-    Sprite[] hopoNotes = new Sprite[6];
-    [SerializeField]
-    Sprite[] tapNotes = new Sprite[6];
-    [SerializeField]
-    Material[] sustains = new Material[6];
-    [SerializeField]
-    Sprite[] spStrumNote = new Sprite[6];
-    [SerializeField]
-    Sprite[] spHOPONote = new Sprite[6];
-    [SerializeField]
-    Sprite[] spTapNote = new Sprite[6];
-    [SerializeField]
-    Sprite standardSustain;
-    [SerializeField]
-    Sprite openSustain;
-
-    [Header("Note models")]
-    [SerializeField]
-    MeshFilter standardNoteModel;
-    [SerializeField]
-    MeshFilter starpowerNoteModel;
-    [SerializeField]
-    MeshFilter openNoteModel;
-    [SerializeField]
-
-    [Header("Note renderers")]
-    Renderer strum3dRenderer;
-    [SerializeField]
-    Renderer hopo3dRenderer;
-    [SerializeField]
-    Renderer tap3dRenderer;
-    [SerializeField]
-    Renderer open3dRenderer;
-    [SerializeField]
-    Renderer spStrum3dRenderer;
-    [SerializeField]
-    Renderer spHopo3dRenderer;
-    [SerializeField]
-    Renderer spTap3dRenderer;
-
-    [Header("Note colours")]
-    [SerializeField]
-    Material[] strum3dColorMaterials = new Material[6];
-    [SerializeField]
-    Material[] tap3dColorMaterials = new Material[5];
-
-    [SerializeField]
-    Material spTempColor;
-    [SerializeField]
-    Material spTapTempColor;
-
-    [SerializeField]
-    Material[] open3dMaterials = new Material[4];
 
     static Vector2 noteColliderSize, spColliderSize, bpmColliderSize, tsColliderSize, sectionColliderSize;
 
@@ -125,38 +33,6 @@ public class PrefabGlobals : MonoBehaviour {
 
     // Use this for initialization
     void Awake () {
-        // Initialize notes
-        strumSprites = strumNotes;          // 2D
-        hopoSprites = hopoNotes;
-        tapSprites = tapNotes;
-        sustainColours = sustains;
-        spStrumSprite = spStrumNote;
-        spHopoSprite = spHOPONote;
-        spTapSprite = spTapNote;
-
-        standardSustainSprite = standardSustain;
-        openSustainSprite = openSustain;
-
-        standardModel = standardNoteModel;          // 3D
-        spModel = starpowerNoteModel;
-        openModel = openNoteModel;
-
-        strumRenderer = strum3dRenderer;
-        hopoRenderer = hopo3dRenderer;
-        tapRenderer = tap3dRenderer;
-        openRenderer = open3dRenderer;
-        spStrumRenderer = spStrum3dRenderer;
-        spHopoRenderer = spHopo3dRenderer;
-        spTapRenderer = spTap3dRenderer;
-
-        strumColors = strum3dColorMaterials;
-        tapColors = tap3dColorMaterials;
-
-        spTemp = spTempColor;
-        spTapTemp = spTapTempColor;
-
-        openMaterials = open3dMaterials;
-
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
 
         // Collect prefab collider sizes
@@ -166,11 +42,6 @@ public class PrefabGlobals : MonoBehaviour {
         tsColliderSize = GetColliderSize(editor.tsPrefab);
         sectionColliderSize = GetColliderSize(editor.sectionPrefab);
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
     public static Rect GetCollisionRect(SongObject songObject, float posOfChart = 0)
     {
