@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 public class Globals : MonoBehaviour {
     public const uint FULL_STEP = 768;
@@ -48,12 +49,14 @@ public class Globals : MonoBehaviour {
     {
         get
         {
+            //System.Collections.Generic.List<RaycastResult> result = Mouse.RaycastFromPointer();
+
             GameObject currentUIUnderPointer = Mouse.GetUIRaycastableUnderPointer();
             if (currentUIUnderPointer != null && (currentUIUnderPointer.GetComponentInChildren<ScrollRect>() || currentUIUnderPointer.GetComponentInParent<ScrollRect>()))
                 return true;
 
-            if ((UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null ||
-                UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponentInParent<Dropdown>() == null) && !Mouse.GetUIUnderPointer<Dropdown>())
+            if ((EventSystem.current.currentSelectedGameObject == null ||
+                EventSystem.current.currentSelectedGameObject.GetComponentInParent<Dropdown>() == null) && !Mouse.GetUIUnderPointer<Dropdown>())
             {
                 return false;
             }
