@@ -380,7 +380,7 @@ public class ChartEditor : MonoBehaviour {
         {
             if (quitting)
                 UnityEngine.Application.CancelQuit();
-#if UNITY_EDITOR
+#if !UNITY_EDITOR
             DialogResult result;
             //if (windowPtr != IntPtr.Zero)
                 //result = MessageBox.Show("Want to save unsaved changes?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, (MessageBoxOptions)0x40000);

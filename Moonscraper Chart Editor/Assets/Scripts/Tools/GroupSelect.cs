@@ -299,16 +299,18 @@ public class GroupSelect : ToolObject {
                 break;
 
             case (AppliedNoteType.Hopo):
-                if (note.IsChord)
-                    note.flags |= Note.Flags.FORCED;
-                else
+                if (!note.CannotBeForcedCheck)
                 {
-                    if (!note.IsNaturalHopo)
+                    if (note.IsChord)
                         note.flags |= Note.Flags.FORCED;
                     else
-                        note.flags &= ~Note.Flags.FORCED;
+                    {
+                        if (!note.IsNaturalHopo)
+                            note.flags |= Note.Flags.FORCED;
+                        else
+                            note.flags &= ~Note.Flags.FORCED;
+                    }
                 }
-
                 break;
 
             case (AppliedNoteType.Tap):
