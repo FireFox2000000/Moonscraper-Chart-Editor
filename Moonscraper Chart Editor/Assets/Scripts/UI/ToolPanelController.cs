@@ -2,15 +2,10 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class ToolPanelController : MonoBehaviour {
-
+public class ToolPanelController : MonoBehaviour { 
     public Toggle viewModeToggle;
+    public KeysNotePlacementModePanelController keysModePanel;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
 	// Update is called once per frame
 	void Update () {
         if (Input.GetButtonDown("Toggle View") && (Globals.applicationMode == Globals.ApplicationMode.Editor || Globals.applicationMode == Globals.ApplicationMode.Playing)
@@ -18,5 +13,7 @@ public class ToolPanelController : MonoBehaviour {
         {
             viewModeToggle.isOn = !viewModeToggle.isOn;
         }
+
+        keysModePanel.gameObject.SetActive(Toolpane.currentTool == Toolpane.Tools.Note && Globals.lockToStrikeline);
 	}
 }

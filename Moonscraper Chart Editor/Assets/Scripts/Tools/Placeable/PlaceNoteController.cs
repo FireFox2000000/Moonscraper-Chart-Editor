@@ -50,19 +50,20 @@ public class PlaceNoteController : ObjectlessTool {
             {
                 if (heldNotes[i] != null)
                 {
-                    if (heldNotes[i].song != null)
+                    if (heldNotes[i].song != null && KeysNotePlacementModePanelController.currentPlacementMode == KeysNotePlacementModePanelController.PlacementMode.Sustain)
                     {
                         foreach (Note chordNote in heldNotes[i].GetChord())
                             chordNote.SetSustainByPos(objectSnappedChartPos);
                     }
                     else
                     {
+                        // Controls sustain recording
                         keyActionHistoryInsert(i);
                     }
                 }
             }
 
-            KeyboardControls();
+            KeyboardControlsSustainMode();
         }
     }
 
@@ -70,22 +71,18 @@ public class PlaceNoteController : ObjectlessTool {
     {
         if (heldNotes[i] != null && heldInitialOverwriteActions[i] != null)
         {
-            // Todo- Action history
             editor.actionHistory.Insert(heldInitialOverwriteActions[i]);
             
-            //if (heldNotes[i].sustain_length > 0)
-            //{
-                Note initialNote = new Note(heldNotes[i]);
-                initialNote.sustain_length = 0;
-                editor.actionHistory.Insert(new ActionHistory.Modify(initialNote, heldNotes[i]));
-            //}
+            Note initialNote = new Note(heldNotes[i]);
+            initialNote.sustain_length = 0;
+            editor.actionHistory.Insert(new ActionHistory.Modify(initialNote, heldNotes[i]));
         }
 
         heldNotes[i] = null;
         heldInitialOverwriteActions[i] = null;
     }
 
-    void KeyboardControls()
+    void KeyboardControlsSustainMode()
     {
         foreach (PlaceNote placeableNotes in notes)
         {
@@ -103,7 +100,7 @@ public class PlaceNoteController : ObjectlessTool {
 
         for (int i = 0; i < heldNotes.Length; ++i)
         {
-            // Add in the held note history
+            // Add in the held note history when user lifts off the keys
             if (Input.GetKeyUp((i + 1).ToString()))
             {
                 keyActionHistoryInsert(i);

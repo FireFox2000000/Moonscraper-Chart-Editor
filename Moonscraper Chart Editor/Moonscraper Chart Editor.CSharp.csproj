@@ -215,6 +215,7 @@
     <Compile Include="Assets\Scripts\UI\FPSDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\ImageFade.cs" />
     <Compile Include="Assets\Scripts\UI\InputFieldDoubleClick.cs" />
+    <Compile Include="Assets\Scripts\UI\KeysNotePlacementModePanelController.cs" />
     <Compile Include="Assets\Scripts\UI\LoadingScreenFader.cs" />
     <Compile Include="Assets\Scripts\UI\LoadingSpin.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\AudioCalibrationMenuScript.cs" />
