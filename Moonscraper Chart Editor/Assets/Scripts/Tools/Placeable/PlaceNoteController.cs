@@ -41,33 +41,69 @@ public class PlaceNoteController : ObjectlessTool {
     // Update is called once per frame
     protected override void Update () {
         if (!Globals.lockToStrikeline)
+        {
+            burstRecordingInsertCheck();
+            draggedSustainRecordingCheck();
             MouseControls();
+        }
         else
         {
             UpdateSnappedPos();
+            KeysControlsInit();
 
-            for(int i = 0; i < heldNotes.Length; ++i)
+            if (KeysNotePlacementModePanelController.currentPlacementMode == KeysNotePlacementModePanelController.PlacementMode.Sustain)
             {
-                if (heldNotes[i] != null)
+                burstRecordingInsertCheck();
+
+                for (int i = 0; i < heldNotes.Length; ++i)
                 {
-                    if (heldNotes[i].song != null && KeysNotePlacementModePanelController.currentPlacementMode == KeysNotePlacementModePanelController.PlacementMode.Sustain)
+                    if (heldNotes[i] != null)
                     {
-                        foreach (Note chordNote in heldNotes[i].GetChord())
-                            chordNote.SetSustainByPos(objectSnappedChartPos);
-                    }
-                    else
-                    {
-                        // Controls sustain recording
-                        keyActionHistoryInsert(i);
+                        if (heldNotes[i].song != null)
+                        {
+                            foreach (Note chordNote in heldNotes[i].GetChord())
+                                chordNote.SetSustainByPos(objectSnappedChartPos);
+                        }
+                        else
+                        {
+                            // Controls sustain recording
+                            keySustainActionHistoryInsert(i);
+                        }
                     }
                 }
-            }
 
-            KeyboardControlsSustainMode();
+                KeyboardControlsSustainMode();
+            }
+            else
+            {
+                draggedSustainRecordingCheck();
+
+                KeyboardControlsBurstMode();
+            }
         }
     }
 
-    void keyActionHistoryInsert(int i)
+    void draggedSustainRecordingCheck()
+    {
+        for (int i = 0; i < heldNotes.Length; ++i)
+        {
+            if (heldNotes[i] != null)
+            {
+                keySustainActionHistoryInsert(i);
+            }
+        }
+    }
+
+    void burstRecordingInsertCheck()
+    {
+        if (burstAddHistory.Count > 0)
+        {
+            editor.actionHistory.Insert(burstAddHistory.ToArray());
+            burstAddHistory.Clear();
+        }
+    }
+
+    void keySustainActionHistoryInsert(int i)
     {
         if (heldNotes[i] != null && heldInitialOverwriteActions[i] != null)
         {
@@ -82,7 +118,7 @@ public class PlaceNoteController : ObjectlessTool {
         heldInitialOverwriteActions[i] = null;
     }
 
-    void KeyboardControlsSustainMode()
+    void KeysControlsInit()
     {
         foreach (PlaceNote placeableNotes in notes)
         {
@@ -97,13 +133,16 @@ public class PlaceNoteController : ObjectlessTool {
                 note.note.flags = ((Note)editor.currentSelectedObject).flags;
             }
         }
+    }
 
+    void KeyboardControlsSustainMode()
+    {
         for (int i = 0; i < heldNotes.Length; ++i)
         {
             // Add in the held note history when user lifts off the keys
             if (Input.GetKeyUp((i + 1).ToString()))
             {
-                keyActionHistoryInsert(i);
+                keySustainActionHistoryInsert(i);
             }
         }
 
@@ -125,9 +164,7 @@ public class PlaceNoteController : ObjectlessTool {
                 int notePos = i;
 
                 if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip && notePos > 0 && notePos < 6)
-                {
                     notePos = 6 - notePos;
-                }
 
                 notes[notePos].ExplicitUpdate();
                 int pos = SongObject.FindObjectPosition(notes[notePos].note, editor.currentChart.notes);
@@ -147,6 +184,51 @@ public class PlaceNoteController : ObjectlessTool {
                 }
             }
         }
+    }
+
+    bool[] inputBlock = new bool[6];        // Prevents controls from ocilating between placing and removing notes
+    List<ActionHistory.Action> burstAddHistory = new List<ActionHistory.Action>();
+
+    void KeyboardControlsBurstMode()
+    {
+        int keysPressed = 0;
+        for (int i = 1; i < notes.Length; ++i)      // Start at 1 to ignore the multinote
+        {
+            if (i + 1 >= notes.Length && keysPressed > 0)           // Prevents open notes while holding other keys
+                continue;
+          
+            if (Input.GetKey(i.ToString()) && !inputBlock[i - 1])
+            {
+                ++keysPressed;
+                int notePos = i;
+
+                if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip && notePos > 0 && notePos < 6)
+                    notePos = 6 - notePos;
+
+                notes[notePos].ExplicitUpdate();
+
+                int pos = SongObject.FindObjectPosition(notes[notePos].note, editor.currentChart.notes);
+
+                if (pos == SongObject.NOTFOUND)
+                {
+                    burstAddHistory.AddRange(PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor));
+                }
+                else if (Input.GetKeyDown(i.ToString()))
+                {
+                    editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentChart.notes[pos]));
+                    Debug.Log("Removed " + editor.currentChart.notes[pos].fret_type + " note at position " + editor.currentChart.notes[pos].position + " using keyboard controls");
+                    editor.currentChart.notes[pos].Delete();
+                    inputBlock[i - 1] = true;
+                }
+            }
+            else if (!Input.GetKey(i.ToString()))
+            {
+                inputBlock[i - 1] = false;
+            }
+        }
+
+        if (keysPressed == 0)
+            burstRecordingInsertCheck();
     }
 
     void MouseControls()

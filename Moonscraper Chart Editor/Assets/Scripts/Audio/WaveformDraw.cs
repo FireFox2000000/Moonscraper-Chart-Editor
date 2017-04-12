@@ -127,7 +127,7 @@ public class WaveformDraw : MonoBehaviour {
         lineRen.numPositions = points.Count;
         lineRen.SetPositions(points.ToArray());
     }
-
+    /*
     void UpdateWaveformPointsFullCompressedData()
     {
         if (data.Length <= 0 || currentSample == null)
@@ -148,11 +148,9 @@ public class WaveformDraw : MonoBehaviour {
 
         lineRen.numPositions = points.Count;
         lineRen.SetPositions(points.ToArray());
-    }
+    }*/
     void UpdateWaveformPointsFullData()
     {
-        const float MAX_SCALE = 2.5f;
-
         if (data.Length <= 0 || currentSample == null)
         {
             return;
