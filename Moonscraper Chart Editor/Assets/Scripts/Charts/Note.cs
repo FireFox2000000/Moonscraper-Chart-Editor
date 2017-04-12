@@ -198,9 +198,7 @@ public class Note : ChartObject
     {
         get
         {
-            if (previous != null && previous.position == position)
-                return true;
-            else if (next != null && next.position == position)
+            if ((previous != null && previous.position == position) || (next != null && next.position == position))
                 return true;
             else
                 return false;
@@ -218,8 +216,9 @@ public class Note : ChartObject
 
             if (!IsChord && previous != null)
             {
+                bool prevIsChord = previous.IsChord;
                 // Need to consider whether the previous note was a chord, and if they are the same type of note
-                if (previous.IsChord || (!previous.IsChord && fret_type != previous.fret_type))
+                if (prevIsChord || (!prevIsChord && fret_type != previous.fret_type))
                 {
                     // Check distance from previous note 
                     int HOPODistance = (int)(65 * song.resolution / Globals.STANDARD_BEAT_RESOLUTION);

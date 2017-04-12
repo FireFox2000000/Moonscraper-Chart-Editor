@@ -61,7 +61,7 @@ public class HighwayController : MonoBehaviour {
         }
 
         // Disable any unused lines
-        while (i < beatLinePool1.Length)
+        while (i < beatLinePool1.Length && beatLinePool1[i].activeSelf)
         {
             beatLinePool1[i++].SetActive(false);
         }
@@ -108,7 +108,7 @@ public class HighwayController : MonoBehaviour {
         }
 
         // Disable any unused lines
-        while (i < beatLinePool2.Length)
+        while (i < beatLinePool2.Length && beatLinePool2[i].activeSelf)
         {
             beatLinePool2[i++].SetActive(false);
         }

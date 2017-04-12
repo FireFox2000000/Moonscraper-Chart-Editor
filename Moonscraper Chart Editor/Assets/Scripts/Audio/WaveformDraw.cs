@@ -87,6 +87,7 @@ public class WaveformDraw : MonoBehaviour {
             UpdateWaveformPointRequestedData();
 #else
             UpdateWaveformPointsFullData();
+            //UpdateWaveformPointsFullCompressedData();
 #endif
 
             // Then activate
@@ -127,6 +128,27 @@ public class WaveformDraw : MonoBehaviour {
         lineRen.SetPositions(points.ToArray());
     }
 
+    void UpdateWaveformPointsFullCompressedData()
+    {
+        if (data.Length <= 0 || currentSample == null)
+        {
+            return;
+        }
+
+        List<Vector3> points = new List<Vector3>();
+        float fullOffset = editor.currentSong.offset - (Globals.audioCalibrationMS / 1000.0f);
+        int startPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMin.position.y) - fullOffset, 1, 1);
+        int endPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMax.position.y) - fullOffset, 1, 1);
+        float scaling = 1;
+
+        for (int i = startPos; i < endPos; ++i)
+        {
+            points.Add(new Vector3(data[i] * scaling, Song.TimeToWorldYPosition(i * data[i] + fullOffset), 0));
+        }
+
+        lineRen.numPositions = points.Count;
+        lineRen.SetPositions(points.ToArray());
+    }
     void UpdateWaveformPointsFullData()
     {
         const float MAX_SCALE = 2.5f;
@@ -137,38 +159,45 @@ public class WaveformDraw : MonoBehaviour {
         }
 
         float sampleRate = currentAudio.length / data.Length;// currentClip.samples / currentClip.length;
-
-        int iteration = 20;
-        float fullOffset = editor.currentSong.offset - (Globals.audioCalibrationMS / 1000.0f);
-        int startPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMin.position.y) - fullOffset, iteration);
-        int endPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMax.position.y) - fullOffset, iteration);
-
-        List<Vector3> points = new List<Vector3>();
-
         float scaling = 1;
+        const int iteration = 20;
+        int channels = currentAudio.channels;
+        float fullOffset = editor.currentSong.offset - (Globals.audioCalibrationMS / 1000.0f);
+        int startPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMin.position.y) - fullOffset, iteration, channels);
+        int endPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMax.position.y) - fullOffset, iteration, channels);
+
+        int skipFactor = channels * iteration;
+        Vector3[] points = new Vector3[Mathf.CeilToInt((endPos - startPos) / (float)skipFactor)];
+        //List<Vector3> points = new List<Vector3>();
 #if false
         if (currentSample.clip > 0)
             scaling = (MAX_SCALE / currentSample.clip);
 #endif
-        for (int i = startPos; i < endPos; i += (int)(currentAudio.channels * iteration))
+
+        Vector3 point = Vector3.zero;
+        for (int i = startPos; i < endPos; i += skipFactor)
         {
             float sampleAverage = 0;
 
-            for (int j = 0; j < currentAudio.channels; ++j)
+            for (int j = 0; j < channels; ++j)
             {
                 sampleAverage += data[i + j];
             }
 
-            sampleAverage /= currentAudio.channels;
+            sampleAverage /= channels;
 
-            points.Add(new Vector3(sampleAverage * scaling, Song.TimeToWorldYPosition(i * sampleRate + fullOffset), 0));
+            point.x = sampleAverage * scaling;
+            point.y = Song.TimeToWorldYPosition(i * sampleRate + fullOffset);
+            points[(i - startPos) / skipFactor] = point;
+
+            //points[i - startPos] = new Vector3(sampleAverage * scaling, Song.TimeToWorldYPosition(i * sampleRate + fullOffset), 0);
         }
 
-        lineRen.numPositions = points.Count;
-        lineRen.SetPositions(points.ToArray());
+        lineRen.numPositions = points.Length;
+        lineRen.SetPositions(points);
     }
 
-    int timeToArrayPos(float time, int iteration)
+    int timeToArrayPos(float time, int iteration, int channels)
     {
         if (time < 0)
             return 0;
@@ -176,7 +205,7 @@ public class WaveformDraw : MonoBehaviour {
             return data.Length - 1;
 
         // Need to floor it so it lines up with the first channel
-        int arrayPoint = (int)((time / currentAudio.length * data.Length) / (currentAudio.channels * iteration)) * currentAudio.channels * iteration;
+        int arrayPoint = (int)((time / currentAudio.length * data.Length) / (channels * iteration)) * channels * iteration;
 
         if (arrayPoint >= data.Length)
             arrayPoint = data.Length - 1;

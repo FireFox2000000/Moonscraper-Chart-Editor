@@ -27,4 +27,9 @@ public class Skin : ScriptableObject {
 
     public Texture2D fret_stem;
     public Texture2D hit_flames;
+
+    public enum AssestsAvaliable
+    {
+        None, All, Mixed
+    }
 }

@@ -30,6 +30,7 @@ public class SampleData {
     string filepath;
     public float samplerate = 0;
     int sampleCount = 0;
+    int channels = 2;
 
     public SampleData(string filepath)
     {
@@ -50,16 +51,19 @@ public class SampleData {
                     NVorbis.VorbisReader vorbis = new NVorbis.VorbisReader(filepath);
                     samplerate = vorbis.SampleRate;
                     sampleCount = (int)vorbis.TotalSamples;
+                    channels = vorbis.Channels;
                     break;
                 case (".wav"):
                     WaveFileReader wav = new WaveFileReader(filepath);
                     samplerate = wav.WaveFormat.SampleRate;
                     sampleCount = (int)wav.SampleCount;
+                    channels = wav.WaveFormat.Channels;
                     break;
                 case (".mp3"):
                     Mp3FileReader mp3 = new Mp3FileReader(filepath);
                     samplerate = mp3.WaveFormat.SampleRate;
                     sampleCount = 0;
+                    channels = mp3.WaveFormat.Channels;
                     break;
                 default:
                     break;
@@ -221,8 +225,31 @@ public class SampleData {
             }
             
             if (!stop)
-            {
+            {/*
+                const int iteration = 20;
+                var newData = new System.Collections.Generic.List<float>();
+
+                for (int i = 0; i < sampleData.Length; i += (int)(channels * iteration))
+                {
+                    if (stop)
+                        break;
+
+                    float sampleAverage = 0;
+
+                    for (int j = 0; j < channels; ++j)
+                    {
+                        sampleAverage += data[i + j];
+                    }
+
+                    sampleAverage /= channels;
+
+                    newData.Add(sampleAverage);
+                    //points.Add(new Vector3(sampleAverage * scaling, Song.TimeToWorldYPosition(i * sampleRate + fullOffset), 0));
+                }
+                _data = newData.ToArray();
+                */
                 _data = sampleData;
+
 
                 Debug.Log("Sample length: " + _data.Length);
 

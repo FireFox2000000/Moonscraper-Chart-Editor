@@ -131,30 +131,36 @@ public class SustainController : SelectableClick {
     public void UpdateSustainLength()
     {
         Note note = nCon.note;
-        //float length = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length) - note.worldYPosition;
-        
-        float lowerPos = note.worldYPosition;
-        float higherPos = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length);
 
-        if (higherPos > editor.camYMax.position.y)
-            higherPos = editor.camYMax.position.y;
+        if (note.sustain_length != 0)
+        {
+            float lowerPos = note.worldYPosition;
+            float higherPos = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length);
 
-        if (lowerPos < editor.camYMin.position.y)
-            lowerPos = editor.camYMin.position.y;
+            if (higherPos > editor.camYMax.position.y)
+                higherPos = editor.camYMax.position.y;
 
-        float length = higherPos - lowerPos;
-        if (length < 0)
-            length = 0;
-        float centerYPos = (higherPos + lowerPos) / 2.0f;
+            if (lowerPos < editor.camYMin.position.y)
+                lowerPos = editor.camYMin.position.y;
 
-        Vector3 scale = transform.localScale;
-        scale.y = length;
-        transform.localScale = scale;
+            float length = higherPos - lowerPos;
+            if (length < 0)
+                length = 0;
+            float centerYPos = (higherPos + lowerPos) / 2.0f;
 
-        Vector3 position = nCon.transform.position;
-        //position.y += length / 2.0f;
-        position.y = centerYPos;
-        transform.position = position;
+            Vector3 scale = transform.localScale;
+            scale.y = length;
+            transform.localScale = scale;
+
+            Vector3 position = nCon.transform.position;
+            //position.y += length / 2.0f;
+            position.y = centerYPos;
+            transform.position = position;
+        }
+        else
+        {
+            transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
+        }
     }
 
     void SustainDrag()

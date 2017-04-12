@@ -332,16 +332,13 @@ public class NoteController : SongObjectController {
 
     public override void UpdateSongObject()
     {
-        // Guard to prevent forcing errors
-        //if (note.CannotBeForcedCheck)
-            //note.flags &= ~Note.Flags.FORCED;
-
         if (note.song != null)
         {
             // Position
             transform.position = new Vector3(CHART_CENTER_POS + noteToXPos(note), note.worldYPosition, 0);
 
-            sustain.UpdateSustain();
+            if (!(note.sustain_length == 0 && sustain.transform.localScale.y == 0))
+                sustain.UpdateSustain();
         }
     }
 

@@ -289,7 +289,7 @@ public class Mouse : MonoBehaviour {
             {
                 GameObject hoveredObj = raycastResult.gameObject;
 
-                if (hoveredObj.GetComponent<T>())
+                if (hoveredObj && hoveredObj.GetComponent<T>())
                 {
                     return hoveredObj.GetComponent<T>();
                 }

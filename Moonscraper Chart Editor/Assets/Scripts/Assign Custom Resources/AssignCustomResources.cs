@@ -14,6 +14,8 @@ public class AssignCustomResources : MonoBehaviour {
     public SpriteNoteResources defaultNoteSprites;
     public CustomFretManager[] customFrets = new CustomFretManager[5];
 
+    public static Skin.AssestsAvaliable? noteSpritesAvaliable = null;
+
     // Use this for initialization
     void Awake () {
         initBGTex = background[0].sharedMaterial.mainTexture;
@@ -35,8 +37,8 @@ public class AssignCustomResources : MonoBehaviour {
             if (customSkin.metronome != null)
                 metronome.clap = customSkin.metronome;
 
-            WriteCustomTexturesToAtlus(defaultNoteSprites.fullAtlus);
-
+            WriteCustomNoteTexturesToAtlus(defaultNoteSprites.fullAtlus);
+            Debug.Log(noteSpritesAvaliable);
             const int PIXELS_PER_UNIT = 125;
             for (int i = 0; i < customFrets.Length; ++i)
             {
@@ -120,7 +122,7 @@ public class AssignCustomResources : MonoBehaviour {
         }
     }
 
-    void WriteCustomTexturesToAtlus(Texture2D atlus)
+    void WriteCustomNoteTexturesToAtlus(Texture2D atlus)
     {
         Color[] atlusPixels = atlus.GetPixels();
         Utility.IntVector2 fullTextureAtlusSize = new Utility.IntVector2(atlus.width, atlus.height);
@@ -132,7 +134,9 @@ public class AssignCustomResources : MonoBehaviour {
         SetCustomTexturesToAtlus(defaultNoteSprites.sp_hopo, customSkin.sp_hopo, atlusPixels, fullTextureAtlusSize);
         SetCustomTexturesToAtlus(defaultNoteSprites.sp_tap, customSkin.sp_tap, atlusPixels, fullTextureAtlusSize);
 
+        Skin.AssestsAvaliable? sprites = noteSpritesAvaliable;
         SetCustomTexturesToAtlus(defaultNoteSprites.sustains, customSkin.sustains, atlusPixels, fullTextureAtlusSize);
+        noteSpritesAvaliable = sprites;
 
         atlus.SetPixels(atlusPixels);
         atlus.Apply();
@@ -147,6 +151,11 @@ public class AssignCustomResources : MonoBehaviour {
         {
             if (customTextures[i] && spritesLocation[i])
             {
+                if (noteSpritesAvaliable == null)
+                    noteSpritesAvaliable = Skin.AssestsAvaliable.All;
+                else if (noteSpritesAvaliable == Skin.AssestsAvaliable.None)
+                    noteSpritesAvaliable = Skin.AssestsAvaliable.Mixed;
+
                 try
                 {
                     WritePixelsToArea(customTextures[i].GetPixels(),
@@ -159,6 +168,13 @@ public class AssignCustomResources : MonoBehaviour {
                     Debug.LogError(e.Message);
                     customTextures[i] = null;
                 }
+            }
+            else if (!customTextures[i])
+            {
+                if (noteSpritesAvaliable == null)
+                    noteSpritesAvaliable = Skin.AssestsAvaliable.None;
+                else if (noteSpritesAvaliable == Skin.AssestsAvaliable.All)
+                    noteSpritesAvaliable = Skin.AssestsAvaliable.Mixed;
             }
         }
     }

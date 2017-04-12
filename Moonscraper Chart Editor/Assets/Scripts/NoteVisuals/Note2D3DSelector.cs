@@ -7,6 +7,28 @@ public class Note2D3DSelector : MonoBehaviour {
     public GameObject note2D;
     public GameObject note3D;
     public Skin customSkin;
+
+    void Start()
+    {
+        if (AssignCustomResources.noteSpritesAvaliable != null)
+        {
+            switch (AssignCustomResources.noteSpritesAvaliable)
+            {
+                case (Skin.AssestsAvaliable.All):
+                    note2D.SetActive(true);
+                    note3D.SetActive(false);
+                    enabled = false;
+                    break;
+                case (Skin.AssestsAvaliable.None):
+                    note2D.SetActive(false);
+                    note3D.SetActive(true);
+                    enabled = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 	
 	// Update is called once per frame
 	void Update () {
