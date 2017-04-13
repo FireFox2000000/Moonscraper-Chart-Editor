@@ -5,7 +5,16 @@ public class PlaceNoteController : ObjectlessTool {
 
     public PlaceNote[] notes = new PlaceNote[7];        // Starts at multi-note before heading into green (1), red (2) through to open (6)
 
-    List<ActionHistory.Action> draggedBurstNotesRecord;
+    // Mouse mode burst mode
+    List<ActionHistory.Action> mouseBurstAddHistory = new List<ActionHistory.Action>();
+
+    // Keyboard mode sustain dragging
+    Note[] heldNotes = new Note[6];
+    ActionHistory.Action[][] heldInitialOverwriteActions = new ActionHistory.Action[6][];
+
+    // Keyboard mode burst mode
+    bool[] inputBlock = new bool[6];        // Prevents controls from ocilating between placing and removing notes
+    List<ActionHistory.Action> keysBurstAddHistory = new List<ActionHistory.Action>();
 
     protected override void Awake()
     {
@@ -16,8 +25,6 @@ public class PlaceNoteController : ObjectlessTool {
             note.gameObject.SetActive(true);
             note.gameObject.SetActive(false);
         }
-
-        draggedBurstNotesRecord = new List<ActionHistory.Action>();
     }
 
     public override void ToolEnable()
@@ -33,27 +40,29 @@ public class PlaceNoteController : ObjectlessTool {
         {
             placeableNotes.gameObject.SetActive(false);
         }
-    }
 
-    Note[] heldNotes = new Note[6];
-    ActionHistory.Action[][] heldInitialOverwriteActions = new ActionHistory.Action[6][];
+        BurstRecordingInsertCheck(keysBurstAddHistory);
+        BurstRecordingInsertCheck(mouseBurstAddHistory);
+        KeysDraggedSustainRecordingCheck();
+    }
 
     // Update is called once per frame
     protected override void Update () {
         if (!Globals.lockToStrikeline)
         {
-            burstRecordingInsertCheck();
-            draggedSustainRecordingCheck();
+            BurstRecordingInsertCheck(keysBurstAddHistory);
+            KeysDraggedSustainRecordingCheck();
             MouseControls();
         }
         else
         {
+            BurstRecordingInsertCheck(mouseBurstAddHistory);
             UpdateSnappedPos();
             KeysControlsInit();
 
             if (KeysNotePlacementModePanelController.currentPlacementMode == KeysNotePlacementModePanelController.PlacementMode.Sustain)
             {
-                burstRecordingInsertCheck();
+                BurstRecordingInsertCheck(keysBurstAddHistory);
 
                 for (int i = 0; i < heldNotes.Length; ++i)
                 {
@@ -76,14 +85,14 @@ public class PlaceNoteController : ObjectlessTool {
             }
             else
             {
-                draggedSustainRecordingCheck();
+                KeysDraggedSustainRecordingCheck();
 
                 KeyboardControlsBurstMode();
             }
         }
     }
 
-    void draggedSustainRecordingCheck()
+    void KeysDraggedSustainRecordingCheck()
     {
         for (int i = 0; i < heldNotes.Length; ++i)
         {
@@ -94,12 +103,12 @@ public class PlaceNoteController : ObjectlessTool {
         }
     }
 
-    void burstRecordingInsertCheck()
+    void BurstRecordingInsertCheck(List<ActionHistory.Action> burstHistory)
     {
-        if (burstAddHistory.Count > 0)
+        if (burstHistory.Count > 0)
         {
-            editor.actionHistory.Insert(burstAddHistory.ToArray());
-            burstAddHistory.Clear();
+            editor.actionHistory.Insert(burstHistory.ToArray());
+            burstHistory.Clear();
         }
     }
 
@@ -186,9 +195,6 @@ public class PlaceNoteController : ObjectlessTool {
         }
     }
 
-    bool[] inputBlock = new bool[6];        // Prevents controls from ocilating between placing and removing notes
-    List<ActionHistory.Action> burstAddHistory = new List<ActionHistory.Action>();
-
     void KeyboardControlsBurstMode()
     {
         int keysPressed = 0;
@@ -211,7 +217,7 @@ public class PlaceNoteController : ObjectlessTool {
 
                 if (pos == SongObject.NOTFOUND)
                 {
-                    burstAddHistory.AddRange(PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor));
+                    keysBurstAddHistory.AddRange(PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor));
                 }
                 else if (Input.GetKeyDown(i.ToString()))
                 {
@@ -228,7 +234,7 @@ public class PlaceNoteController : ObjectlessTool {
         }
 
         if (keysPressed == 0)
-            burstRecordingInsertCheck();
+            BurstRecordingInsertCheck(keysBurstAddHistory);
     }
 
     void MouseControls()
@@ -371,16 +377,12 @@ public class PlaceNoteController : ObjectlessTool {
             foreach (PlaceNote placeNote in activeNotes)
             {
                 // Find if there's already note in that position. If the notes match exactly, add it to the list, but if it's the same, don't bother.
-                draggedBurstNotesRecord.AddRange(placeNote.AddNoteWithRecord());
+                mouseBurstAddHistory.AddRange(placeNote.AddNoteWithRecord());
             }
         }
         else
         {
-            if (draggedBurstNotesRecord.Count > 0)
-            {
-                editor.actionHistory.Insert(draggedBurstNotesRecord.ToArray());
-                draggedBurstNotesRecord.Clear();
-            }
+            BurstRecordingInsertCheck(mouseBurstAddHistory);
         }
     }
 }
