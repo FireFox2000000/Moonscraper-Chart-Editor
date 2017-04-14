@@ -59,11 +59,14 @@ public class DisplayProperties : MonoBehaviour {
         // if (Time.timeScale < 1)
         gameSpeed.text = "Speed- x" + Globals.gameSpeed.ToString();
 
-        if (Input.GetButtonDown("ToggleClap") && !Globals.IsTyping)
-            clapToggle.isOn = !clapToggle.isOn;
+        if (!Globals.modifierInputActive && !Globals.IsTyping)
+        {
+            if (Input.GetButtonDown("ToggleClap"))
+                clapToggle.isOn = !clapToggle.isOn;
 
-        if (Input.GetButtonDown("Toggle Metronome") && !Globals.IsTyping)
-            metronomeToggle.isOn = !metronomeToggle.isOn;
+            if (Input.GetButtonDown("Toggle Metronome"))
+                metronomeToggle.isOn = !metronomeToggle.isOn;
+        }
     }
 
     public void ToggleClap(bool value)

@@ -15,5 +15,13 @@ public class ToolPanelController : MonoBehaviour {
         }
 
         keysModePanel.gameObject.SetActive(Toolpane.currentTool == Toolpane.Tools.Note && Globals.lockToStrikeline);
-	}
+
+        if (!Globals.IsTyping && !Globals.modifierInputActive)
+            Shortcuts();
+    }
+
+    void Shortcuts()
+    {
+
+    }
 }

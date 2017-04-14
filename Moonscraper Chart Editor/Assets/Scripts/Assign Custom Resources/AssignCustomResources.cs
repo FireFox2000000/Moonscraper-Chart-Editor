@@ -101,6 +101,16 @@ public class AssignCustomResources : MonoBehaviour {
                     }
 
                     customFrets[i].toAnimate.sprite = sprite;
+                }             
+            }
+
+            Sprite stem = null;
+            if (customSkin.fret_stem)
+            {
+                stem = Sprite.Create(customSkin.fret_stem, new Rect(0.0f, 0.0f, customSkin.fret_stem.width, customSkin.fret_stem.height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
+                for (int i = 0; i < customFrets.Length; ++i)
+                {
+                    customFrets[i].fretStem.sprite = stem;
                 }
             }
         }

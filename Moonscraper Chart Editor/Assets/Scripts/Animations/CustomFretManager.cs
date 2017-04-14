@@ -9,6 +9,7 @@ public class CustomFretManager : HitAnimation
     public SpriteRenderer fretPress;
     public SpriteRenderer fretRelease;
     public SpriteRenderer toAnimate;
+    public SpriteRenderer fretStem;
 	
 	// Update is called once per frame
 	void Update () {

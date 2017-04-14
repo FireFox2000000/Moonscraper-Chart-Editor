@@ -90,13 +90,13 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             Debug.LogError("No note loaded into note inspector");
         }
 
-        if (!Globals.IsTyping)
-            controls();
+        if (!Globals.IsTyping && !Globals.modifierInputActive)
+            Controls();
 
         prevNote = currentNote;
     }
 
-    void controls()
+    void Controls()
     {
         if (Input.GetButtonDown("ToggleTap") && tapToggle.interactable)
         {

@@ -52,7 +52,7 @@ public class PlaceNoteController : ObjectlessTool {
         {
             BurstRecordingInsertCheck(keysBurstAddHistory);
             KeysDraggedSustainRecordingCheck();
-            MouseControls();
+            MouseControlsBurstMode();
         }
         else
         {
@@ -237,7 +237,7 @@ public class PlaceNoteController : ObjectlessTool {
             BurstRecordingInsertCheck(keysBurstAddHistory);
     }
 
-    void MouseControls()
+    void MouseControlsBurstMode()
     {
         bool openActive = false;
         if (notes[6].gameObject.activeSelf)

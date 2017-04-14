@@ -191,9 +191,11 @@ public class Globals : MonoBehaviour {
         //Debug.Log(System.Windows.Forms.Control.IsKeyLocked(System.Windows.Forms.Keys.CapsLock));
     }
 
+    public static bool modifierInputActive { get { return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand); } }
+
     void ModifierControls()
     {
-        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand))
+        if (modifierInputActive)
         {
             if (Input.GetKeyDown("s"))
                 editor._Save();
@@ -221,36 +223,39 @@ public class Globals : MonoBehaviour {
 
     void Controls()
     {
-        if (Input.GetButtonDown("PlayPause"))
+        if (!modifierInputActive)
         {
-            if (applicationMode == Globals.ApplicationMode.Editor)
-                editor.Play();
-            else if (applicationMode == Globals.ApplicationMode.Playing)
-                editor.Stop();
-        }
+            if (Input.GetButtonDown("PlayPause"))
+            {
+                if (applicationMode == Globals.ApplicationMode.Editor)
+                    editor.Play();
+                else if (applicationMode == Globals.ApplicationMode.Playing)
+                    editor.Stop();
+            }
 
-        if (Input.GetButtonDown("IncreaseStep"))
-            snappingStep.Increment();
-        else if (Input.GetButtonDown("DecreaseStep"))
-            snappingStep.Decrement();
+            if (Input.GetButtonDown("IncreaseStep"))
+                snappingStep.Increment();
+            else if (Input.GetButtonDown("DecreaseStep"))
+                snappingStep.Decrement();
 
-        if (Input.GetButtonDown("Delete") && editor.currentSelectedObject != null && Toolpane.currentTool == Toolpane.Tools.Cursor)
-        {
-            editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentSelectedObject));
-            editor.currentSelectedObject.Delete();
-            editor.currentSelectedObject = null;
-        }
+            if (Input.GetButtonDown("Delete") && editor.currentSelectedObject != null && Toolpane.currentTool == Toolpane.Tools.Cursor)
+            {
+                editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentSelectedObject));
+                editor.currentSelectedObject.Delete();
+                editor.currentSelectedObject = null;
+            }
 
-        if (Input.GetButtonDown("Start Gameplay"))
-        {
-            if (applicationMode != ApplicationMode.Playing)
-                editor.StartGameplay();
-            else
-                editor.Stop();
-        }
+            if (Input.GetButtonDown("Start Gameplay"))
+            {
+                if (applicationMode != ApplicationMode.Playing)
+                    editor.StartGameplay();
+                else
+                    editor.Stop();
+            }
 
-        //if (Input.GetButtonDown("Next Frame"))
+            //if (Input.GetButtonDown("Next Frame"))
             //StartCoroutine(editor.PlayAutoStop(1 / FRAMERATE));
+        }
     }
 
     public void ToggleSongViewMode(bool value)

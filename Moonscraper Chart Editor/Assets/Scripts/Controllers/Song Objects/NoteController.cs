@@ -215,7 +215,7 @@ public class NoteController : SongObjectController {
         UpdateSongObject();
     }
 
-    public bool belowStrikeLine { get { const float offset = 0.4f; return (transform.position.y <= editor.visibleStrikeline.position.y + offset); } }
+    public bool belowStrikeLine { get { const float offset = 0.02f; return (transform.position.y <= editor.visibleStrikeline.position.y + (offset * Globals.hyperspeed / Globals.gameSpeed)); } }
     
     protected override void UpdateCheck()
     {

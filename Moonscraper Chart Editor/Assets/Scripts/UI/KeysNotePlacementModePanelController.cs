@@ -18,7 +18,7 @@ public class KeysNotePlacementModePanelController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         // Shortcuts
-        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand))
+        if (!Globals.IsTyping && !Globals.modifierInputActive)
         {
             if (Input.GetKeyDown("h"))                  // hold
                 buttons[0].onClick.Invoke();
