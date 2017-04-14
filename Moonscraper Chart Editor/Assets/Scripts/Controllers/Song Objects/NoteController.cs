@@ -55,7 +55,7 @@ public class NoteController : SongObjectController {
     public override void OnSelectableMouseDown()
     {
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
-        {
+        {/*
             bool noteFound = false;
             foreach (Note selectedNote in editor.currentSelectedObjects.OfType<Note>())
             {
@@ -64,6 +64,23 @@ public class NoteController : SongObjectController {
             }
 
             if (!noteFound)
+            {
+                if (Input.GetButton("ChordSelect"))
+                {
+                    editor.currentSelectedObjects = note.GetChord();
+                }
+                else
+                    editor.currentSelectedObject = songObject;
+            }*/
+
+            if (Globals.modifierInputActive)
+            {
+                if (editor.IsSelected(songObject))
+                    editor.RemoveFromSelectedObjects(songObject);
+                else
+                    editor.AddToSelectedObjects(songObject);
+            }
+            else if (!editor.IsSelected(songObject))
             {
                 if (Input.GetButton("ChordSelect"))
                 {

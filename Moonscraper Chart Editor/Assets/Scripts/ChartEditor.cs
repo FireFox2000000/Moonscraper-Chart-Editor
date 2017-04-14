@@ -56,6 +56,9 @@ public class ChartEditor : MonoBehaviour {
     public LoadingScreenFader loadingScreen;
     public ErrorMessage errorMenu;
     public Indicators indicators;
+    [SerializeField]
+    GroupSelect groupSelect;
+    public Globals globals;
 
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
@@ -66,7 +69,7 @@ public class ChartEditor : MonoBehaviour {
     public Chart currentChart { get; private set; }
     string currentFileName = string.Empty;
 
-    MovementController movement;
+    public MovementController movement;
     SongObjectPoolManager _songObjectPoolManager;
     public SongObjectPoolManager songObjectPoolManager { get { return _songObjectPoolManager; } }
 
@@ -236,15 +239,6 @@ public class ChartEditor : MonoBehaviour {
         minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
         maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
 
-        // Update song objects within range
-#if false
-        enableSongObjects(currentSong.events, SongObject.ID.Event, minPos, maxPos);
-        enableSongObjects(currentSong.syncTrack, SongObject.ID.BPM, minPos, maxPos);
-
-        enableSongObjects(currentChart.notes, SongObject.ID.Note, minPos, maxPos);
-        enableSongObjects(currentChart.starPower, SongObject.ID.Starpower, minPos, maxPos);
-        enableSongObjects(currentChart.events, SongObject.ID.ChartEvent, minPos, maxPos);
-#endif
         // Update the current properties panel     
         if (currentSelectedObject != null)
         {
@@ -877,8 +871,6 @@ public class ChartEditor : MonoBehaviour {
         Globals.applicationMode = Globals.ApplicationMode.Editor;
         loadingScreen.FadeOut();
         loadingScreen.loadingInformation.text = "Complete!";
-
-        //GC.Collect();
     }
 
     void LoadSong(Song song)
@@ -972,91 +964,6 @@ public class ChartEditor : MonoBehaviour {
         LoadChart(currentSong.easy_double_bass);
     }
 
-    void enableSongObjects(SongObject[] songObjects, SongObject.ID id, uint min, uint max)
-    {
-        SongObject[] songObjectsRanged = SongObject.GetRange(songObjects, min, max);
-
-        foreach (SongObject songObject in songObjectsRanged)
-        {
-            if (songObject.controller != null && !songObject.controller.gameObject.activeSelf)
-                songObject.controller.gameObject.SetActive(true);
-        }
-
-        // Check if sustains need to be rendered
-        if (id == SongObject.ID.Note && songObjectsRanged.Length > 0)
-        {
-
-            // Find the last known note of each fret type to find any sustains that might overlap. Cancel if there's an open note.
-            foreach (Note prevNote in Note.GetPreviousOfSustains(songObjectsRanged[0] as Note))
-            {
-                if (prevNote.controller != null)
-                    prevNote.controller.gameObject.SetActive(true);
-            }
-        }
-        else if (id == SongObject.ID.Starpower)
-        {
-            int arrayPos = SongObject.FindClosestPosition(min, songObjects);
-            if (arrayPos != SongObject.NOTFOUND)
-            {
-                // Find the back-most position
-                while (arrayPos > 0 && songObjects[arrayPos].position >= min)
-                {
-                    --arrayPos;
-                }
-                // Render previous sp sustain in case of overlap into current position
-                if (arrayPos >= 0)
-                {
-                    if (songObjects[arrayPos].controller != null)
-                        songObjects[arrayPos].controller.gameObject.SetActive(true);
-                }
-            }              
-        }
-        /*
-        // Enable all objects within the min-max position
-        int arrayPos = SongObject.FindClosestPosition(min, songObjects);
-        if (arrayPos != Globals.NOTFOUND)
-        {
-            // Find the back-most position
-            while (arrayPos > 0 && songObjects[arrayPos].position >= min)
-            {
-                --arrayPos;
-            }
-
-            // Check if sustains need to be rendered
-            if (id == SongObject.ID.Note)
-            {
-                // Check if the note found needs to be rendered for it's sustain
-                foreach (Note chordNote in (songObjects[arrayPos] as Note).GetChord())
-                {
-                    if (chordNote.controller != null)
-                        chordNote.controller.gameObject.SetActive(true);
-                }
-
-                // Find the last known note of each fret type to find any sustains that might overlap. Cancel if there's an open note.
-                foreach(Note prevNote in Note.GetPreviousOfSustains(songObjects[arrayPos] as Note))
-                {
-                    if (prevNote.controller != null)
-                        prevNote.controller.gameObject.SetActive(true);
-                }
-            }
-            else if (id == SongObject.ID.Starpower)
-            {
-                // Render previous sp sustain in case of overlap into current position
-                if (arrayPos >= 0)
-                {
-                    if (songObjects[arrayPos].controller != null)
-                        songObjects[arrayPos].controller.gameObject.SetActive(true);
-                }
-            }
-        }
-
-        foreach (SongObject songObject in SongObject.GetRange(songObjects, min, max))
-        {
-            if (songObject.controller != null && !songObject.controller.gameObject.activeSelf)
-                songObject.controller.gameObject.SetActive(true);
-        }*/
-    }
-
     public void EnableMenu(DisplayMenu menu)
     {
         menu.gameObject.SetActive(true);
@@ -1082,13 +989,66 @@ public class ChartEditor : MonoBehaviour {
         }*/
     }
 
-    public bool UndoWrapper()
+    public void AddToSelectedObjects(SongObject songObjects)
     {
-        return actionHistory.Undo(this);
+        AddToSelectedObjects(new SongObject[] { songObjects });
     }
 
-    public bool RedoWrapper()
+    public void AddToSelectedObjects(SongObject[] songObjects)
     {
-        return actionHistory.Redo(this);
+        var selectedObjectsList = new System.Collections.Generic.List<SongObject>(currentSelectedObjects);
+
+        foreach (SongObject songObject in songObjects)
+        {
+            if (!selectedObjectsList.Contains(songObject))
+            {
+                int pos = SongObject.FindClosestPosition(songObject, selectedObjectsList.ToArray());
+                if (pos != SongObject.NOTFOUND)
+                {
+                    if (selectedObjectsList[pos] > songObject)
+                        selectedObjectsList.Insert(pos, songObject);
+                    else
+                        selectedObjectsList.Insert(pos + 1, songObject);
+                }
+                else
+                    selectedObjectsList.Add(songObject);
+            }
+        }
+
+        currentSelectedObjects = selectedObjectsList.ToArray();
+    }
+
+    public void RemoveFromSelectedObjects(SongObject songObjects)
+    {
+        RemoveFromSelectedObjects(new SongObject[] { songObjects });
+    }
+
+    public void RemoveFromSelectedObjects(SongObject[] songObjects)
+    {
+        var selectedObjectsList = new System.Collections.Generic.List<SongObject>(currentSelectedObjects);
+
+        foreach (SongObject songObject in songObjects)
+        {
+            selectedObjectsList.Remove(songObject);
+        }
+
+        currentSelectedObjects = selectedObjectsList.ToArray();
+    }
+
+    public bool IsSelected(SongObject songObject)
+    {
+        return (SongObject.FindObjectPosition(songObject, currentSelectedObjects) != SongObject.NOTFOUND);
+    }
+
+    public void UndoWrapper()
+    {
+        if (actionHistory.Undo(this))
+            groupSelect.reset();
+    }
+
+    public void RedoWrapper()
+    {
+        if (actionHistory.Redo(this))
+            groupSelect.reset();
     }
 }

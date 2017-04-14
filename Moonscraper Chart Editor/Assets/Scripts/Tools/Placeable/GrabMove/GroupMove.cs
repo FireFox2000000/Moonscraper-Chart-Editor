@@ -14,9 +14,6 @@ public class GroupMove : ToolObject
 
     // Update is called once per frame  
     protected override void Update () {
-        if (Toolpane.currentTool != Toolpane.Tools.GroupSelect)
-            return;
-
         if (movingSongObjects.Length > 0 && Input.GetMouseButtonUp(0))
         {
             AddSongObjects();

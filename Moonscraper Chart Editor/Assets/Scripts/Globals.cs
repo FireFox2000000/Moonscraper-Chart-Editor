@@ -69,8 +69,8 @@ public class Globals : MonoBehaviour {
     {
         get
         {
-            if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null ||
-                UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() == null)
+            if (EventSystem.current.currentSelectedGameObject == null ||
+                EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() == null)
                 return false;
             else
                 return true;
@@ -258,9 +258,9 @@ public class Globals : MonoBehaviour {
         }
     }
 
-    public void ToggleSongViewMode(bool value)
+    public void ToggleSongViewMode(bool globalView)
     {
-        if (value)
+        if (globalView)
         {
             viewMode = ViewMode.Song;
 
@@ -279,9 +279,9 @@ public class Globals : MonoBehaviour {
             }
         }
 
-        if (viewModeToggle.isOn != value)
+        if (viewModeToggle.isOn != globalView)
         {
-            viewModeToggle.isOn = value;         
+            viewModeToggle.isOn = globalView;         
         }
 
         editor.currentSelectedObject = null;

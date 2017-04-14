@@ -46,12 +46,12 @@ public class ActionHistory
             float frame = timestamps[historyPoint];
 
             int actionsUndone = 0;
-
+            SongObject setPos = null;
             while (historyPoint >= 0 && Mathf.Abs(timestamps[historyPoint] - frame) < ACTION_WINDOW_TIME)
             {
                 for (int i = actionList[historyPoint].Length - 1; i >= 0; --i)
                 {
-                    actionList[historyPoint][i].Revoke(editor);
+                    setPos = actionList[historyPoint][i].Revoke(editor);
                     ++actionsUndone;
                 }
 
@@ -62,6 +62,17 @@ public class ActionHistory
             editor.currentSong.updateArrays();
             if (Toolpane.currentTool != Toolpane.Tools.Note)
                 editor.currentSelectedObject = null;
+
+            if (setPos.position < editor.currentSong.WorldYPositionToChartPosition(editor.visibleStrikeline.position.y) || setPos.position > editor.maxPos)
+                editor.movement.SetPosition(setPos.position);
+
+            if (setPos.GetType().IsSubclassOf(typeof(ChartObject)))
+            {
+                if (Globals.viewMode == Globals.ViewMode.Song)          // Placing local object while in chart view
+                    editor.globals.ToggleSongViewMode(false);
+            }
+            else if (Globals.viewMode == Globals.ViewMode.Chart)        // Placing global object while in local view
+                editor.globals.ToggleSongViewMode(true);
 
             Debug.Log("Undo: " + actionsUndone + " actions");
             return true;
@@ -79,12 +90,14 @@ public class ActionHistory
             ChartEditor.editOccurred = true;
             float frame = timestamps[historyPoint + 1];
             int actionsUndone = 0;
+            SongObject setPos = null;
+
             while (historyPoint + 1 < actionList.Count && Mathf.Abs(timestamps[historyPoint + 1] - frame) < ACTION_WINDOW_TIME)
             {
                 ++historyPoint;
                 for (int i = 0; i < actionList[historyPoint].Length; ++i)
-                {                  
-                    actionList[historyPoint][i].Invoke(editor);
+                {
+                    setPos = actionList[historyPoint][i].Invoke(editor);
                     ++actionsUndone;
                 }
             }
@@ -94,8 +107,10 @@ public class ActionHistory
             if (Toolpane.currentTool != Toolpane.Tools.Note)
                 editor.currentSelectedObject = null;
 
-            Debug.Log("Redo: " + actionsUndone + " actions");
+            if (setPos.position < editor.currentSong.WorldYPositionToChartPosition(editor.visibleStrikeline.position.y) || setPos.position > editor.maxPos)
+                editor.movement.SetPosition(setPos.position);
 
+            Debug.Log("Redo: " + actionsUndone + " actions");
             return true;
         }
 
@@ -118,8 +133,8 @@ public class ActionHistory
             }
         }
 
-        public abstract void Revoke(ChartEditor editor);
-        public abstract void Invoke(ChartEditor editor);
+        public abstract SongObject Revoke(ChartEditor editor);
+        public abstract SongObject Invoke(ChartEditor editor);
     }
 
     public class Add : Action
@@ -127,17 +142,19 @@ public class ActionHistory
         public Add(SongObject[] songObjects) : base(songObjects) { }
         public Add(SongObject songObjects) : base(new SongObject[] { songObjects }) { }
 
-        public override void Invoke(ChartEditor editor)
+        public override SongObject Invoke(ChartEditor editor)
         {
             foreach (SongObject songObject in songObjects)
             {
                 PlaceSongObject.AddObjectToCurrentEditor(songObject.Clone(), editor, false);
             }
+
+            return songObjects[0];
         }
 
-        public override void Revoke(ChartEditor editor)
+        public override SongObject Revoke(ChartEditor editor)
         {
-            new Delete(songObjects).Invoke(editor);
+            return new Delete(songObjects).Invoke(editor);
         }
     }
 
@@ -146,7 +163,7 @@ public class ActionHistory
         public Delete(SongObject[] songObjects) : base(songObjects) { }
         public Delete(SongObject songObjects) : base(new SongObject[] { songObjects }) { }
 
-        public override void Invoke(ChartEditor editor)
+        public override SongObject Invoke(ChartEditor editor)
         {
             foreach (SongObject songObject in songObjects)
             {
@@ -177,11 +194,13 @@ public class ActionHistory
 
                 foundSongObject.Delete(false);
             }
+
+            return songObjects[0];
         }
 
-        public override void Revoke(ChartEditor editor)
+        public override SongObject Revoke(ChartEditor editor)
         {
-            new Add(songObjects).Invoke(editor);
+            return new Add(songObjects).Invoke(editor);
         }
     }
 
@@ -192,16 +211,16 @@ public class ActionHistory
 
         public Modify(SongObject before, SongObject after) : base(new SongObject[] { before, after }) { }
 
-        public override void Invoke(ChartEditor editor)
+        public override SongObject Invoke(ChartEditor editor)
         {
             new Delete(before).Invoke(editor);
-            new Add(after).Invoke(editor);
+            return new Add(after).Invoke(editor);
         }
 
-        public override void Revoke(ChartEditor editor)
+        public override SongObject Revoke(ChartEditor editor)
         {
             new Delete(after).Invoke(editor);
-            new Add(before).Invoke(editor);
+            return new Add(before).Invoke(editor);
         }
     }
 }

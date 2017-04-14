@@ -162,7 +162,7 @@ public class GroupSelect : ToolObject {
                 }
                 else if (data.Count > 0 && Input.GetKeyDown(KeyCode.C))
                 {
-                    Copy();
+                    Copy(data, area);
                 }
             }
         }
@@ -221,7 +221,7 @@ public class GroupSelect : ToolObject {
                 chartObjectsList.Add(chartObject);
             }
         }
-
+        
         return chartObjectsList.ToArray();
     }
 
@@ -332,22 +332,11 @@ public class GroupSelect : ToolObject {
 
         editor.actionHistory.Insert(new ActionHistory.Delete(dataArray));
         editor.currentChart.Remove(dataArray);
-        /*
-        List<ChartObject> deletedObjects = new List<ChartObject>();
 
-        foreach (ChartObject cObject in data)
-        {
-            deletedObjects.Add(cObject);
-            cObject.Delete(false);
-        }
-
-        editor.actionHistory.Insert(new ActionHistory.Delete(deletedObjects.ToArray()));
-        editor.currentChart.updateArrays();
-        */
         reset();
     }
 
-    void Copy()
+    void Copy(IEnumerable data, Clipboard.SelectionArea area)
     {
         List<ChartObject> chartObjectsCopy = new List<ChartObject>();
         foreach (ChartObject chartObject in data)
@@ -356,21 +345,22 @@ public class GroupSelect : ToolObject {
 
             chartObjectsCopy.Add(objectToAdd);
         }
-        
-        if (startWorld2DChartPos < endWorld2DChartPos)
-            ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), area, editor.currentSong);
-        else
-            ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), area, editor.currentSong);
+
+        /* if (startWorld2DChartPos < endWorld2DChartPos)
+             ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), area, editor.currentSong);
+         else*/
+        ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), area, editor.currentSong);
     }
 
     void Cut()
     {
-        Copy();
+        Copy(data, area);
         Delete();
     }
 
     void AddToSelection(IEnumerable<ChartObject> chartObjects)
     {
+        // Insertion sort
         foreach(ChartObject chartObject in chartObjects)
         {
             if (!data.Contains(chartObject))
