@@ -104,6 +104,21 @@ public class SongPropertiesPanelController : DisplayMenu {
         }
     }
 
+    void ClipText(Text text)
+    {
+        float maxWidth = text.rectTransform.rect.width;
+        if (text.preferredWidth > maxWidth)
+        {
+            int removePos = text.text.Length - 1;
+            text.text += "...";
+
+            while (removePos > 0 && text.preferredWidth > maxWidth)
+            {
+                text.text = text.text.Remove(removePos--, 1);
+            }
+        }
+    }
+
     void setAudioTextLabels()
     {
         Song song = editor.currentSong;
@@ -111,6 +126,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         {
             musicStream.color = Color.white;
             musicStream.text = song.musicStream.name;
+            ClipText(musicStream);
         }
         else
         {
@@ -122,6 +138,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         {
             guitarStream.color = Color.white;
             guitarStream.text = song.guitarStream.name;
+            ClipText(guitarStream);
         }
         else
         {
@@ -133,6 +150,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         {
             rhythmStream.color = Color.white;
             rhythmStream.text = song.rhythmStream.name;
+            ClipText(rhythmStream);
         }
         else
         {
