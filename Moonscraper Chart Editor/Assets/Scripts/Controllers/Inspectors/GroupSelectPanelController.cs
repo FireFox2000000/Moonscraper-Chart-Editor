@@ -1,15 +1,52 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GroupSelectPanelController : MonoBehaviour
 {
     ChartEditor editor;
+    [SerializeField]
+    Dropdown fretSelectDropdown;
 
 	// Use this for initialization
 	void Start () {
         editor = ChartEditor.FindCurrentEditor();
 	}
+
+    public void ApplyFretDropdownSelection()
+    {
+        if (fretSelectDropdown.value >= 0 && fretSelectDropdown.value < 6)
+        {
+            SetFretType((Note.Fret_Type)fretSelectDropdown.value);
+        }
+    }
+
+    public void SetFretType(Note.Fret_Type type)
+    {
+        List<ActionHistory.Action> actions = new List<ActionHistory.Action>();
+
+        foreach (ChartObject chartObject in editor.currentSelectedObjects)
+        {
+            if (chartObject.classID == (int)SongObject.ID.Note && chartObject.song != null) // check null in case note was already deleted when overwritten by changing a note before it
+            {  
+                Note note = chartObject as Note;
+                if (note.fret_type != type)
+                {
+                    // Delete original then re-add to let notes be overwritten, chaing a note into an open note that was already part of a chord
+                    actions.Add(new ActionHistory.Delete(note));
+                    note.Delete();
+                    note.fret_type = type;
+                    actions.AddRange(PlaceNote.AddObjectToCurrentChart(note, editor, false, true));
+                }
+            }
+        }
+
+        editor.currentChart.updateArrays();
+
+        if (actions.Count > 0)
+            editor.actionHistory.Insert(actions.ToArray());
+    }
 
     public void SetZeroSustain()
     {

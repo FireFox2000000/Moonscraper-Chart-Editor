@@ -253,7 +253,18 @@ public class ChartEditor : MonoBehaviour {
         maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
 
         // Update the current properties panel     
-        if (currentSelectedObject != null)
+        if ((Toolpane.currentTool == Toolpane.Tools.GroupSelect || Toolpane.currentTool == Toolpane.Tools.Cursor) && currentSelectedObjects.Length > 1)
+        {
+            if (currentPropertiesPanel != groupSelectInspector)
+            {
+                currentPropertiesPanel.SetActive(false);
+                currentPropertiesPanel = groupSelectInspector;
+            }
+            if (!currentPropertiesPanel.gameObject.activeSelf)
+                currentPropertiesPanel.gameObject.SetActive(true);
+        }
+
+        else if (currentSelectedObject != null)
         {
             GameObject previousPanel = currentPropertiesPanel;
             
@@ -289,7 +300,7 @@ public class ChartEditor : MonoBehaviour {
                 }
             }
 
-            if (currentPropertiesPanel != null)
+            if (currentPropertiesPanel != null && !currentPropertiesPanel.gameObject.activeSelf)
             {
                 currentPropertiesPanel.gameObject.SetActive(true);
             }
@@ -297,13 +308,14 @@ public class ChartEditor : MonoBehaviour {
         else if (currentPropertiesPanel)
         {
             currentPropertiesPanel.gameObject.SetActive(false);
-        }
+        }/*
 
         if ((Toolpane.currentTool == Toolpane.Tools.GroupSelect || Toolpane.currentTool == Toolpane.Tools.Cursor) && currentSelectedObjects.Length > 1)
         {
             currentPropertiesPanel = groupSelectInspector;
-            currentPropertiesPanel.gameObject.SetActive(true);
-        }
+            if (!currentPropertiesPanel.gameObject.activeSelf)
+                currentPropertiesPanel.gameObject.SetActive(true);
+        }*/
 
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {

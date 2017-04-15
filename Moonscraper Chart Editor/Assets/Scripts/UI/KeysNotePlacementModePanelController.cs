@@ -11,8 +11,8 @@ public class KeysNotePlacementModePanelController : MonoBehaviour {
 
     void OnEnable()
     {
-        if (buttons.Length > 0)
-            buttons[0].onClick.Invoke();
+        //if (buttons.Length > 0)
+           // buttons[0].onClick.Invoke();
     }
 	
 	// Update is called once per frame
