@@ -142,6 +142,7 @@
     <Compile Include="Assets\Scripts\Controllers\HoverHighlightController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Inspectors\BPMPropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Inspectors\DisplayProperties.cs" />
+    <Compile Include="Assets\Scripts\Controllers\Inspectors\GroupSelectPanelController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Inspectors\NotePropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Inspectors\PropertiesPanelController.cs" />
     <Compile Include="Assets\Scripts\Controllers\Inspectors\SectionPropertiesPanelController.cs" />

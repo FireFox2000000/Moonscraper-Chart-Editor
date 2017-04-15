@@ -293,7 +293,7 @@ public class Mouse : MonoBehaviour {
                 {
                     return hoveredObj.GetComponent<T>();
                 }
-                else if (hoveredObj.transform.parent.gameObject.GetComponent<T>())
+                else if (hoveredObj && hoveredObj.transform.parent.gameObject.GetComponent<T>())
                 {
                     return hoveredObj.transform.parent.gameObject.GetComponent<T>();
                 }

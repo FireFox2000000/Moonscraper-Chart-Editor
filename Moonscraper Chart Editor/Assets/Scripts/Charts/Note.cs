@@ -422,6 +422,9 @@ public class Note : ChartObject
 
     public ActionHistory.Modify CapSustain(Note cap)
     {
+        if (cap == null)
+            return null;
+
         Note originalNote = (Note)this.Clone();
 
         // Cap sustain length
