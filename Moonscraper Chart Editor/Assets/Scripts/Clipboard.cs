@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class Clipboard {
-    public ChartObject[] data;
+    public SongObject[] data;
 
     uint _areaChartPosMin, _areaChartPosMax;
     float xPosition;
@@ -38,7 +38,7 @@ public class Clipboard {
 
     public Clipboard()
     {
-        data = new ChartObject[0];
+        data = new SongObject[0];
 
         xPosition = 0;
         collisionAreaXSize = 0;
@@ -47,7 +47,7 @@ public class Clipboard {
         _areaChartPosMax = 0;
     }
 
-    public Clipboard(ChartObject[] data, SelectionArea area, Song song)
+    public Clipboard(SongObject[] data, SelectionArea area, Song song)
     {
         this.data = data;
         SetCollisionArea(area, song);

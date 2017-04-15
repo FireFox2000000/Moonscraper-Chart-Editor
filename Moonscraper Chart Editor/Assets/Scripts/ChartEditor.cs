@@ -188,6 +188,21 @@ public class ChartEditor : MonoBehaviour {
     GameObject clickedSelectableObject;
     public void Update()
     {
+        if ((Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.GroupSelect) && Input.GetButtonDown("Delete"))
+            Delete();
+
+        if (Globals.modifierInputActive && Toolpane.currentTool == Toolpane.Tools.Cursor)
+        {
+            if (Input.GetKeyDown(KeyCode.X))
+            {
+                Cut();
+            }
+            else if (Input.GetKeyDown(KeyCode.C))
+            {
+                Copy();
+            }
+        }
+
         if (Input.GetMouseButtonDown(0))
             clickedSelectableObject = Mouse.GetSelectableObjectUnderMouse();
         else if (Input.GetMouseButtonUp(0))
@@ -212,8 +227,6 @@ public class ChartEditor : MonoBehaviour {
                 {
                     for (int i = 0; i < currentSelectedObjects.Length; ++i)
                     {
-                        //Debug.Log(currentSelectedObjects[i].controller.gameObject.GetInstanceID());
-                        //Debug.Log(clickedSelectableObject.gameObject.GetInstanceID());
                         if (currentSelectedObjects[i].controller != null && currentSelectedObjects[i].controller.gameObject == clickedSelectableObject)
                         {
                             anchorPoint = i;
@@ -1050,5 +1063,63 @@ public class ChartEditor : MonoBehaviour {
     {
         if (actionHistory.Redo(this))
             groupSelect.reset();
+    }
+
+    void Copy()
+    {
+        var songObjectsCopy = new SongObject[currentSelectedObjects.Length];
+        float? left = null, right = null;
+        float position = 0;
+
+        for (int i = 0; i < currentSelectedObjects.Length; ++i)
+        {
+            songObjectsCopy[i] = currentSelectedObjects[i].Clone();
+
+            position = SongObjectController.GetXPos(currentSelectedObjects[i]);
+
+            if (left == null || position < left)
+                left = position;
+
+            if (right == null || position > right)
+                right = position;
+        }
+
+        if (left == null)
+            left = 0;
+        if (right == null)
+            right = 0;
+
+        Vector2 bottomLeft = new Vector2((float)left, currentSong.ChartPositionToWorldYPosition(songObjectsCopy[0].position));
+        Vector2 upperRight = new Vector2((float)right, currentSong.ChartPositionToWorldYPosition(songObjectsCopy[songObjectsCopy.Length - 1].position));
+
+        var area = new Clipboard.SelectionArea(bottomLeft, upperRight, songObjectsCopy[0].position, songObjectsCopy[songObjectsCopy.Length - 1].position);
+
+        ClipboardObjectController.clipboard = new Clipboard(songObjectsCopy, area, currentSong);
+    }
+
+    public void Delete()
+    {
+        if (currentSelectedObjects.Length > 0)
+        {
+            actionHistory.Insert(new ActionHistory.Delete(currentSelectedObjects));
+
+            foreach (SongObject songObject in currentSelectedObjects)
+            {
+                songObject.Delete(false);
+            }
+
+            currentChart.updateArrays();
+            currentSong.updateArrays();
+
+            currentSelectedObject = null;
+
+            groupSelect.reset();
+        }
+    }
+
+    void Cut()
+    {
+        Copy();
+        Delete();
     }
 }

@@ -53,11 +53,6 @@ public class PlaceSection : PlaceSongObject {
     protected override void AddObject()
     {
         AddObjectToCurrentSong(section, editor);
-        /*
-        Section sectionToAdd = new Section(section);
-        editor.currentSong.Add(sectionToAdd);
-        editor.CreateSectionObject(sectionToAdd);
-        editor.currentSelectedObject = sectionToAdd;*/
     }
 
     public static void AddObjectToCurrentSong(Section section, ChartEditor editor, bool update = true)

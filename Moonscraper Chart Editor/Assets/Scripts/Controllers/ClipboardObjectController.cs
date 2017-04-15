@@ -34,7 +34,7 @@ public class ClipboardObjectController : Snapable {
 
         transform.position = new Vector3(transform.position.x, editor.currentSong.ChartPositionToWorldYPosition(pastePos), transform.position.z);
 
-        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand))
+        if (Globals.modifierInputActive)
         {
             if (Input.GetKeyDown(KeyCode.V))
             {
@@ -54,22 +54,38 @@ public class ClipboardObjectController : Snapable {
             uint colliderChartDistance = clipboard.areaChartPosMax - clipboard.areaChartPosMin;
 
             // Overwrite any objects in the clipboard space
-            foreach (ChartObject chartObject in editor.currentChart.chartObjects)
+            if (clipboard.data[0].GetType().IsSubclassOf(typeof(ChartObject)))
             {
-                if (chartObject.position >= chartLocationToPaste && chartObject.position < chartLocationToPaste + colliderChartDistance && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), collisionRect))
+                foreach (ChartObject chartObject in editor.currentChart.chartObjects)
                 {
-                    chartObject.Delete(false);
+                    if (chartObject.position >= chartLocationToPaste && chartObject.position < chartLocationToPaste + colliderChartDistance && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), collisionRect))
+                    {
+                        chartObject.Delete(false);
 
-                    record.Add(new ActionHistory.Delete(chartObject));
+                        record.Add(new ActionHistory.Delete(chartObject));
+                    }
                 }
-            }           
+            }
+            else
+            {
+                // Overwrite synctrack, leave sections alone
+                foreach (SyncTrack syncObject in editor.currentSong.syncTrack)
+                {
+                    if (syncObject.position >= chartLocationToPaste && syncObject.position < chartLocationToPaste + colliderChartDistance && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(syncObject), collisionRect))
+                    {
+                        syncObject.Delete(false);
+
+                        record.Add(new ActionHistory.Delete(syncObject));
+                    }
+                }
+            }     
 
             // Paste the new objects in
-            foreach (ChartObject clipboardChartObject in clipboard.data)
-            { 
-                ChartObject objectToAdd = (ChartObject)clipboardChartObject.Clone();
+            foreach (SongObject clipboardSongObject in clipboard.data)
+            {
+                SongObject objectToAdd = clipboardSongObject.Clone();
 
-                objectToAdd.position = chartLocationToPaste + clipboardChartObject.position - clipboard.areaChartPosMin;
+                objectToAdd.position = chartLocationToPaste + clipboardSongObject.position - clipboard.areaChartPosMin;
 
                 if (objectToAdd.GetType() == typeof(Note))
                 {
@@ -88,8 +104,9 @@ public class ClipboardObjectController : Snapable {
                 
             }
             editor.currentChart.updateArrays();
+            editor.currentSong.updateArrays();
             editor.actionHistory.Insert(record.ToArray());
         }
-        // else don't bother pasting
+        // 0 objects in clipboard, don't bother pasting
     }
 }

@@ -151,16 +151,13 @@ public class GroupSelect : ToolObject {
                 userDraggingSelectArea = false;
             }
 
-            if (Input.GetButtonDown("Delete"))
-                Delete();
-
-            if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand))
+            if (Globals.modifierInputActive && data.Count > 0)
             {
-                if (data.Count > 0 && Input.GetKeyDown(KeyCode.X))
+                if (Input.GetKeyDown(KeyCode.X))
                 {
                     Cut();
                 }
-                else if (data.Count > 0 && Input.GetKeyDown(KeyCode.C))
+                else if (Input.GetKeyDown(KeyCode.C))
                 {
                     Copy(data, area);
                 }
@@ -325,7 +322,8 @@ public class GroupSelect : ToolObject {
 
         ChartEditor.editOccurred = true;
     }
-
+    // Moved to editor script
+    /*
     void Delete()
     {
         ChartObject[] dataArray = data.ToArray();
@@ -334,7 +332,7 @@ public class GroupSelect : ToolObject {
         editor.currentChart.Remove(dataArray);
 
         reset();
-    }
+    }*/
 
     void Copy(IEnumerable data, Clipboard.SelectionArea area)
     {
@@ -355,7 +353,7 @@ public class GroupSelect : ToolObject {
     void Cut()
     {
         Copy(data, area);
-        Delete();
+        editor.Delete();
     }
 
     void AddToSelection(IEnumerable<ChartObject> chartObjects)

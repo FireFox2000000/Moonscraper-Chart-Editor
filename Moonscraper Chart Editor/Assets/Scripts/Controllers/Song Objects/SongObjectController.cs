@@ -89,7 +89,7 @@ public abstract class SongObjectController : SelectableClick {
              }
 
              if (!songObjectFound)*/
-            if (Globals.modifierInputActive)
+            if (Globals.viewMode == Globals.ViewMode.Chart && Globals.modifierInputActive)
             {
                 if (editor.IsSelected(songObject))
                     editor.RemoveFromSelectedObjects(songObject);
@@ -112,6 +112,35 @@ public abstract class SongObjectController : SelectableClick {
                 editor.currentSelectedObject = null;
             }
         }
+    }
+
+    public static float GetXPos (SongObject songObject)
+    {
+        float position;
+
+        switch ((SongObject.ID)songObject.classID)
+        {
+            case (SongObject.ID.Starpower):
+                position = StarpowerController.position;
+                break;
+            case (SongObject.ID.Note):
+                position = NoteController.noteToXPos((Note)songObject);
+                break;
+            case (SongObject.ID.BPM):
+                position = BPMController.position;
+                break;
+            case (SongObject.ID.TimeSignature):
+                position = TimesignatureController.position;
+                break;
+            case (SongObject.ID.Section):
+                position = SectionController.position;
+                break;
+            default:
+                position = 0;
+                break;
+        }
+
+        return position;
     }
     /*
     public Rect GetAABBBoundsRect()
