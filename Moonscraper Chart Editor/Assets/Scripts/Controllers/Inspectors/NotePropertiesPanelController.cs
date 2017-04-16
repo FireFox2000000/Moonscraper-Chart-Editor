@@ -3,11 +3,11 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class NotePropertiesPanelController : PropertiesPanelController {
-
     public Note currentNote { get { return (Note)currentSongObject; } set { currentSongObject = value; } }
 
+    public Text sustainText;
     public Text fretText;
-
+    
     public Toggle tapToggle;
     public Toggle forcedToggle;
 
@@ -70,6 +70,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         {
             fretText.text = "Fret: " + currentNote.fret_type.ToString();
             positionText.text = "Position: " + currentNote.position.ToString();
+            sustainText.text = "Length: " + currentNote.sustain_length.ToString(); 
         }
 
         if (currentNote != null)

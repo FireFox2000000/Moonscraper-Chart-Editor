@@ -1,11 +1,14 @@
 ﻿#define TIMING_DEBUG
+//#define BASS_AUDIO
 //#undef UNITY_EDITOR
+
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System;
+using Un4seen.Bass;
 
 public class ChartEditor : MonoBehaviour { 
     public static ChartEditor FindCurrentEditor ()
@@ -62,9 +65,10 @@ public class ChartEditor : MonoBehaviour {
 
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
+#if !BASS_AUDIO
     [HideInInspector]
     public AudioSource[] musicSources;
-
+#endif
     public Song currentSong { get; private set; }
     public Chart currentChart { get; private set; }
     string currentFileName = string.Empty;
@@ -163,6 +167,14 @@ public class ChartEditor : MonoBehaviour {
         currentSong = new Song();
         LoadSong(currentSong);
 
+#if BASS_AUDIO
+        // Bass init
+        if (!Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero))
+        {
+            Debug.LogError("Bass audio not initialised");
+        }
+#else
+
         musicSources = new AudioSource[3];
         for (int i = 0; i < musicSources.Length; ++i)
         {
@@ -170,7 +182,7 @@ public class ChartEditor : MonoBehaviour {
             musicSources[i].volume = 0.5f;
             musicSources[i].outputAudioMixerGroup = mixer;
         }
-
+#endif
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
 
         // Initialise object
@@ -368,8 +380,7 @@ public class ChartEditor : MonoBehaviour {
             Play();
         else
         {
-            foreach (AudioSource source in musicSources)
-                source.Stop();
+            StopAudio();
         }
     }
 
@@ -381,10 +392,14 @@ public class ChartEditor : MonoBehaviour {
         //if (editCheck())
         if (wantsToQuit)
         {
+#if !BASS_AUDIO
             currentSong.musicSample.Stop();
             currentSong.guitarSample.Stop();
             currentSong.rhythmSample.Stop();
-
+#else
+            currentSong.FreeBassAudioStreams();
+            Bass.BASS_Free();
+#endif
             while (currentSong.IsSaving) ;
         }
         // Can't run edit check here because it seems to run in a seperate thread
@@ -582,6 +597,54 @@ public class ChartEditor : MonoBehaviour {
         Play();
     }
 
+    void PlayAudio(float playPoint)
+    {
+#if !BASS_AUDIO
+        foreach (AudioSource source in musicSources)
+            source.time = playPoint;       // No need to add audio calibration as position is base on the strikeline position
+
+        foreach (AudioSource source in musicSources)
+        {
+            source.pitch = Globals.gameSpeed;
+            source.Play();
+        }
+
+#else
+        playBassStream(currentSong.bassMusicStream, playPoint, Globals.gameSpeed);
+        playBassStream(currentSong.bassGuitarStream, playPoint, Globals.gameSpeed);
+        playBassStream(currentSong.bassRhythmStream, playPoint, Globals.gameSpeed);
+#endif
+    }
+
+    void StopAudio()
+    {
+#if !BASS_AUDIO
+        // Stop the audio from continuing to play
+        foreach (AudioSource source in musicSources)
+            source.Stop();
+#else
+        if (currentSong.bassMusicStream != 0)
+            Bass.BASS_ChannelStop(currentSong.bassMusicStream);
+
+        if (currentSong.bassGuitarStream != 0)
+            Bass.BASS_ChannelStop(currentSong.bassGuitarStream);
+
+        if (currentSong.bassRhythmStream != 0)
+            Bass.BASS_ChannelStop(currentSong.bassRhythmStream);
+#endif
+    }
+
+    void playBassStream(int handle, float playPoint, float speed)
+    {
+        if (handle != 0)
+        {
+            Bass.BASS_ChannelSetPosition(handle, playPoint);
+            //Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_MUSIC_SPEED, 255);
+            //Bass.BASS_ChannelSetFX(handle, )
+            Bass.BASS_ChannelPlay(handle, false);
+        }
+    }
+
     bool cancel;
     SongObject[] selectedBeforePlay = new SongObject[0];
     public void Play()
@@ -600,21 +663,15 @@ public class ChartEditor : MonoBehaviour {
         Globals.applicationMode = Globals.ApplicationMode.Playing;
         cancel = false;
 
-        float playPoint = Song.WorldYPositionToTime(strikelineAudio.position.y) + currentSong.offset;
+        float playPoint = Song.WorldYPositionToTime(strikelineAudio.position.y) + currentSong.offset;       // Audio calibration handled by the position of the strikeline audio
+
         if (playPoint < 0)
         {
             StartCoroutine(delayedStartAudio(-playPoint * Globals.gameSpeed));
         }
         else
         {
-            foreach (AudioSource source in musicSources)
-                source.time = playPoint;       // No need to add audio calibration as position is base on the strikeline position
-
-            foreach (AudioSource source in musicSources)
-            {
-                source.pitch = Globals.gameSpeed;
-                source.Play();
-            }
+            PlayAudio(playPoint);
         } 
     }
 
@@ -627,14 +684,7 @@ public class ChartEditor : MonoBehaviour {
         {
             if (playPoint >= 0)
             {
-                foreach (AudioSource source in musicSources)
-                    source.time = playPoint;
-
-                foreach (AudioSource source in musicSources)
-                {
-                    source.pitch = Globals.gameSpeed;
-                    source.Play();
-                }
+                PlayAudio(playPoint);
             }
             else
             {
@@ -664,8 +714,8 @@ public class ChartEditor : MonoBehaviour {
         cancel = true;
         play.interactable = true;
         Globals.applicationMode = Globals.ApplicationMode.Editor;
-        foreach (AudioSource source in musicSources)
-            source.Stop();
+
+        StopAudio();
 
         if (currentChart != null)
         {
@@ -904,11 +954,11 @@ public class ChartEditor : MonoBehaviour {
 
         // Load the default chart
         LoadChart(song.expert_single);
-
+#if !BASS_AUDIO
         // Reset audioSources upon successfull load
         foreach (AudioSource source in musicSources)
             source.clip = null;
-
+#endif
         // Load audio
         if (currentSong.musicStream != null)
         {
@@ -996,9 +1046,11 @@ public class ChartEditor : MonoBehaviour {
 
     public void SetAudioSources()
     {
+#if !BASS_AUDIO
         musicSources[MUSIC_STREAM_ARRAY_POS].clip = currentSong.musicStream;
         musicSources[GUITAR_STREAM_ARRAY_POS].clip = currentSong.guitarStream;
         musicSources[RHYTHM_STREAM_ARRAY_POS].clip = currentSong.rhythmStream;
+#endif
     }
 
     public void FreeAudioClips()

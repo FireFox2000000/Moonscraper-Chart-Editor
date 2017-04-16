@@ -1,5 +1,7 @@
 fileFormatVersion: 2
-guid: ea895df4f09804d47ac0a43ce22418cb
+guid: 1ff6c59691841d94297b27bdbfa9eefa
+timeCreated: 1492307689
+licenseType: Free
 PluginImporter:
   serializedVersion: 1
   iconMap: {}
@@ -8,53 +10,53 @@ PluginImporter:
   isOverridable: 0
   platformData:
     Android:
-      enabled: 0
+      enabled: 1
       settings:
         CPU: ARMv7
     Any:
-      enabled: 0
+      enabled: 1
       settings:
-        Exclude Android: 1
-        Exclude Editor: 1
-        Exclude Linux: 0
-        Exclude Linux64: 0
-        Exclude LinuxUniversal: 0
-        Exclude OSXIntel: 0
-        Exclude OSXIntel64: 0
-        Exclude OSXUniversal: 0
+        Exclude Android: 0
+        Exclude Editor: 0
+        Exclude Linux: 1
+        Exclude Linux64: 1
+        Exclude LinuxUniversal: 1
+        Exclude OSXIntel: 1
+        Exclude OSXIntel64: 1
+        Exclude OSXUniversal: 1
         Exclude Win: 1
         Exclude Win64: 0
-        Exclude iOS: 1
+        Exclude iOS: 0
     Editor:
-      enabled: 0
+      enabled: 1
       settings:
-        CPU: x86_64
+        CPU: AnyCPU
         DefaultValueInitialized: true
         OS: AnyOS
     Linux:
-      enabled: 1
+      enabled: 0
       settings:
         CPU: None
     Linux64:
-      enabled: 1
+      enabled: 0
       settings:
-        CPU: x86_64
+        CPU: None
     LinuxUniversal:
-      enabled: 1
+      enabled: 0
       settings:
-        CPU: AnyCPU
+        CPU: None
     OSXIntel:
-      enabled: 1
+      enabled: 0
       settings:
         CPU: None
     OSXIntel64:
-      enabled: 1
+      enabled: 0
       settings:
-        CPU: AnyCPU
+        CPU: None
     OSXUniversal:
-      enabled: 1
+      enabled: 0
       settings:
-        CPU: AnyCPU
+        CPU: None
     Win:
       enabled: 0
       settings:
@@ -63,8 +65,12 @@ PluginImporter:
       enabled: 1
       settings:
         CPU: AnyCPU
-    iOS:
+    WindowsStoreApps:
       enabled: 0
+      settings:
+        CPU: AnyCPU
+    iOS:
+      enabled: 1
       settings:
         CompileFlags: 
         FrameworkDependencies: 

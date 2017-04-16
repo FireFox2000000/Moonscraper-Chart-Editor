@@ -1,6 +1,7 @@
 ﻿//#define SONG_DEBUG
 //#define TIMING_DEBUG
 //#define LOAD_AUDIO_ASYNC
+//#define BASS_AUDIO
 
 using UnityEngine;
 using System.IO;
@@ -10,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using NAudio.Midi;
 using System;
+using Un4seen.Bass;
 
 public class Song {
     public static bool streamAudio = true;
@@ -26,17 +28,59 @@ public class Song {
     public float offset = 0, resolution = 192, previewStart = 0, previewEnd = 0;
     public string genre = "rock", mediatype = "cd";
     public string year = string.Empty;
+#if !BASS_AUDIO
     AudioClip[] audioStreams = new AudioClip[3];
-    SampleData[] audioSampleData = new SampleData[3];
-
     public AudioClip musicStream { get { return audioStreams[MUSIC_STREAM_ARRAY_POS]; } set { audioStreams[MUSIC_STREAM_ARRAY_POS] = value; } }
     public AudioClip guitarStream { get { return audioStreams[GUITAR_STREAM_ARRAY_POS]; } set { audioStreams[GUITAR_STREAM_ARRAY_POS] = value; } }
     public AudioClip rhythmStream { get { return audioStreams[RHYTHM_STREAM_ARRAY_POS]; } set { audioStreams[RHYTHM_STREAM_ARRAY_POS] = value; } }
-
+#endif
+    SampleData[] audioSampleData = new SampleData[3];
     public SampleData musicSample { get { return audioSampleData[MUSIC_STREAM_ARRAY_POS]; } private set { audioSampleData[MUSIC_STREAM_ARRAY_POS] = value; } }
     public SampleData guitarSample { get { return audioSampleData[GUITAR_STREAM_ARRAY_POS]; } private set { audioSampleData[GUITAR_STREAM_ARRAY_POS] = value; } }
     public SampleData rhythmSample { get { return audioSampleData[RHYTHM_STREAM_ARRAY_POS]; } private set { audioSampleData[RHYTHM_STREAM_ARRAY_POS] = value; } }
 
+#if BASS_AUDIO
+    int[] bassAudioStreams = new int[3];
+    public int bassMusicStream
+    {
+        get
+        {
+            return bassAudioStreams[MUSIC_STREAM_ARRAY_POS];
+        }
+        set
+        {
+            if (bassAudioStreams[MUSIC_STREAM_ARRAY_POS] != 0)
+                Bass.BASS_StreamFree(bassAudioStreams[MUSIC_STREAM_ARRAY_POS]);
+
+            bassAudioStreams[MUSIC_STREAM_ARRAY_POS] = value;
+        }
+    }
+    public int bassGuitarStream
+    {
+        get { return bassAudioStreams[GUITAR_STREAM_ARRAY_POS]; }
+        set
+        {
+            if (bassAudioStreams[GUITAR_STREAM_ARRAY_POS] != 0)
+                Bass.BASS_StreamFree(bassAudioStreams[GUITAR_STREAM_ARRAY_POS]);
+
+            bassAudioStreams[GUITAR_STREAM_ARRAY_POS] = value;
+        }
+    }
+    public int bassRhythmStream
+    {
+        get
+        {
+            return bassAudioStreams[RHYTHM_STREAM_ARRAY_POS];
+        }
+        set
+        {
+            if (bassAudioStreams[RHYTHM_STREAM_ARRAY_POS] != 0)
+                Bass.BASS_StreamFree(bassAudioStreams[RHYTHM_STREAM_ARRAY_POS]);
+
+            bassAudioStreams[RHYTHM_STREAM_ARRAY_POS] = value;
+        }
+    }
+#endif
     float _length = 300;
     public float length
     {
@@ -46,10 +90,13 @@ public class Song {
                 return _length;
             else
             {
+#if BASS_AUDIO
+                if (bassMusicStream != 0)
+                    return (float)Bass.BASS_ChannelBytes2Seconds(bassMusicStream, Bass.BASS_ChannelGetLength(bassMusicStream, BASSMode.BASS_POS_BYTES)) + offset;
+#else
                 if (musicStream)
-                {
                     return musicStream.length + offset;
-                }
+#endif
                 else
                     return 300;     // 5 minutes
             }
@@ -153,7 +200,7 @@ public class Song {
     /// Default constructor for a new chart. Initialises all lists and adds locked bpm and timesignature objects.
     /// </summary>
     public Song()
-    { 
+    {
         _events = new List<Event>();
         _syncTrack = new List<SyncTrack>();
 
@@ -222,20 +269,24 @@ public class Song {
         for (int i = 0; i < audioSampleData.Length; ++i)
             audioSampleData[i] = new SampleData(string.Empty);
 
-        musicStream = null;
-
         updateArrays();
     }
 
-    // Creating a new song from audio
-    public Song(AudioClip _musicStream) : this()
+#if BASS_AUDIO
+    ~Song()
     {
-        musicStream = _musicStream;
-#if SONG_DEBUG
-        Debug.Log("Complete");
-#endif
+        FreeBassAudioStreams();
     }
 
+    public void FreeBassAudioStreams()
+    {
+        foreach (int stream in bassAudioStreams)
+        {
+            if (stream != 0)
+                Bass.BASS_StreamFree(stream);
+        }
+    }
+#endif
     void LoadChartFile(string filepath)
     {
         bool open = false;
@@ -367,13 +418,13 @@ public class Song {
     {
         string temp_wav_filepath = Application.persistentDataPath + "\\" + TEMP_MP3_TO_WAV_FILEPATH;
         string convertedFromMp3 = string.Empty;
-
+#if !BASS_AUDIO
         if (audioStreams[audioStreamArrayPos])
         {
             audioStreams[audioStreamArrayPos].UnloadAudioData();
             GameObject.Destroy(audioStreams[audioStreamArrayPos]);
         }
-
+#endif
         audioSampleData[audioStreamArrayPos].Stop();
         audioSampleData[audioStreamArrayPos] = new SampleData(filepath);
         audioSampleData[audioStreamArrayPos].ReadAudioFile();
@@ -385,14 +436,21 @@ public class Song {
 #if TIMING_DEBUG
             float time = Time.realtimeSinceStartup;
 #endif
+            // Check for valid extension
             if (!Utility.validateExtension(filepath, Globals.validAudioExtensions))
             {
                 throw new System.Exception("Invalid file extension");
             }
             
+            // Record the filepath
             audioLocations[audioStreamArrayPos] = Path.GetFullPath(filepath);
             ++audioLoads;
+#if BASS_AUDIO
+            yield return null;
 
+            // Load Bass Audio Streams
+            bassAudioStreams[audioStreamArrayPos] = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_DEFAULT);
+#else
             // Create a temp file
             if (Path.GetExtension(filepath) == ".mp3")
             {
@@ -449,16 +507,17 @@ public class Song {
                 audioStreams[audioStreamArrayPos].name = Path.GetFileName(convertedFromMp3);
 
             while (audioStreams[audioStreamArrayPos] != null && audioStreams[audioStreamArrayPos].loadState != AudioDataLoadState.Loaded) ;
-
+#endif
 #if TIMING_DEBUG
             Debug.Log("Audio load time: " + (Time.realtimeSinceStartup - time));
-#endif     
+#endif
             Debug.Log("Finished loading audio");       
         }
         else
         {
+#if !BASS_AUDIO
             audioStreams[audioStreamArrayPos] = null;
-
+#endif
             if (filepath != string.Empty)
                 Debug.LogError("Unable to locate audio file");
         }
@@ -476,7 +535,7 @@ public class Song {
             }
         }
     }
-
+#if !BASS_AUDIO
     public void FreeAudioClips()
     {
         foreach (AudioClip clip in audioStreams)
@@ -489,7 +548,7 @@ public class Song {
             }
         }
     }
-
+#endif
     public uint WorldPositionToSnappedChartPosition(float worldYPos, int step)
     {
         uint chartPos = WorldYPositionToChartPosition(worldYPos);
@@ -1100,21 +1159,33 @@ public class Song {
         string musicString = string.Empty;
         string guitarString = string.Empty;
         string rhythmString = string.Empty;
-
+#if BASS_AUDIO
+        bool[] audioExists = new bool[bassAudioStreams.Length];
+#else
+        bool[] audioExists = new bool[audioStreams.Length];
+#endif
+        for (int i = 0; i < audioExists.Length; ++i)
+        {
+#if BASS_AUDIO
+            audioExists[i] = (bassAudioStreams[i] != 0);
+#else
+            audioExists[i] = audioStreams[i] ? true : false;
+#endif
+        }
         // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
-        if (musicStream && Path.GetDirectoryName(audioLocations[MUSIC_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
+        if (audioExists[MUSIC_STREAM_ARRAY_POS] && Path.GetDirectoryName(audioLocations[MUSIC_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
             //musicString = musicStream.name;
             musicString = Path.GetFileName(audioLocations[MUSIC_STREAM_ARRAY_POS]);
         else
             musicString = audioLocations[MUSIC_STREAM_ARRAY_POS];
 
-        if (guitarStream && Path.GetDirectoryName(audioLocations[GUITAR_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
+        if (audioExists[GUITAR_STREAM_ARRAY_POS] && Path.GetDirectoryName(audioLocations[GUITAR_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
             //guitarString = guitarStream.name;
             guitarString = Path.GetFileName(audioLocations[GUITAR_STREAM_ARRAY_POS]);
         else
             guitarString = audioLocations[GUITAR_STREAM_ARRAY_POS];
 
-        if (rhythmStream && Path.GetDirectoryName(audioLocations[RHYTHM_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
+        if (audioExists[RHYTHM_STREAM_ARRAY_POS] && Path.GetDirectoryName(audioLocations[RHYTHM_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
             //rhythmString = rhythmStream.name;
             rhythmString = Path.GetFileName(audioLocations[RHYTHM_STREAM_ARRAY_POS]);
         else
@@ -1127,13 +1198,13 @@ public class Song {
         saveString += GetPropertiesStringWithoutAudio();
 
         // Song audio
-        if (musicStream != null)
+        if (audioExists[MUSIC_STREAM_ARRAY_POS])
             saveString += Globals.TABSPACE + "MusicStream = \"" + musicString + "\"" + Globals.LINE_ENDING;
 
-        if (guitarStream != null)
+        if (audioExists[GUITAR_STREAM_ARRAY_POS])
             saveString += Globals.TABSPACE + "GuitarStream = \"" + guitarString + "\"" + Globals.LINE_ENDING;
 
-        if (rhythmStream != null)
+        if (audioExists[RHYTHM_STREAM_ARRAY_POS])
             saveString += Globals.TABSPACE + "RhythmStream = \"" + rhythmString + "\"" + Globals.LINE_ENDING;
 
         saveString += "}" + Globals.LINE_ENDING;
