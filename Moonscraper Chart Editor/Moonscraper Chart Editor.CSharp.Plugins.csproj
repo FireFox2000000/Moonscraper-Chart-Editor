@@ -91,14 +91,11 @@
     <Reference Include="System.Windows.Forms">
       <HintPath>Assets\Plugins\System.Windows.Forms.dll</HintPath>
     </Reference>
-    <Reference Include="XInputDotNetPure">
-      <HintPath>Assets\Plugins\x86_64\XInputDotNetPure.dll</HintPath>
-    </Reference>
     <Reference Include="Bass.Net">
       <HintPath>Assets\Plugins\Bass Audio\x64\Bass.Net.dll</HintPath>
     </Reference>
-    <Reference Include="Bass.Net">
-      <HintPath>Assets\Plugins\Bass Audio\x86\Bass.Net.dll</HintPath>
+    <Reference Include="XInputDotNetPure">
+      <HintPath>Assets\Plugins\x86_64\XInputDotNetPure.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

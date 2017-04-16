@@ -1,5 +1,5 @@
 ﻿#define TIMING_DEBUG
-//#define BASS_AUDIO
+#define BASS_AUDIO
 //#undef UNITY_EDITOR
 
 using UnityEngine;
@@ -195,6 +195,11 @@ public class ChartEditor : MonoBehaviour {
         loadingScreen.gameObject.SetActive(true);
     }
 
+    void Start()
+    {
+        SetVolume();
+    }
+
     Vector3 mousePos = Vector3.zero;
     bool mouseDownOverUI = false;
     GameObject clickedSelectableObject;
@@ -360,8 +365,11 @@ public class ChartEditor : MonoBehaviour {
             }
         }
     }
-
+#if UNITY_EDITOR
+    bool wantsToQuit = true;        // Won't be save checking if in editor
+#else
     bool wantsToQuit = false;
+#endif
 
     void OnApplicationFocus(bool hasFocus)
     {
@@ -392,19 +400,20 @@ public class ChartEditor : MonoBehaviour {
         //if (editCheck())
         if (wantsToQuit)
         {
-#if !BASS_AUDIO
             currentSong.musicSample.Stop();
             currentSong.guitarSample.Stop();
             currentSong.rhythmSample.Stop();
-#else
             currentSong.FreeBassAudioStreams();
+
             Bass.BASS_Free();
-#endif
+            Debug.Log("Freed Bass Audio memory");
             while (currentSong.IsSaving) ;
         }
         // Can't run edit check here because it seems to run in a seperate thread
         else
+        {
             UnityEngine.Application.CancelQuit();
+        }
     }
 
     bool editCheck()
@@ -610,9 +619,9 @@ public class ChartEditor : MonoBehaviour {
         }
 
 #else
-        playBassStream(currentSong.bassMusicStream, playPoint, Globals.gameSpeed);
-        playBassStream(currentSong.bassGuitarStream, playPoint, Globals.gameSpeed);
-        playBassStream(currentSong.bassRhythmStream, playPoint, Globals.gameSpeed);
+        playBassStream(currentSong.bassMusicStream, playPoint, Globals.gameSpeed, Globals.vol_song);
+        playBassStream(currentSong.bassGuitarStream, playPoint, Globals.gameSpeed, Globals.vol_guitar);
+        playBassStream(currentSong.bassRhythmStream, playPoint, Globals.gameSpeed, Globals.vol_rhythm);
 #endif
     }
 
@@ -634,13 +643,19 @@ public class ChartEditor : MonoBehaviour {
 #endif
     }
 
-    void playBassStream(int handle, float playPoint, float speed)
+    void playBassStream(int handle, float playPoint, float speed, float vol)
     {
         if (handle != 0)
         {
             Bass.BASS_ChannelSetPosition(handle, playPoint);
-            //Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_MUSIC_SPEED, 255);
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_VOL, vol * Globals.vol_master);
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_PAN,  Globals.audio_pan);
+
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO, speed * 100 - 100);
+
+                //Debug.LogError(Bass.BASS_ErrorGetCode());
             //Bass.BASS_ChannelSetFX(handle, )
+            //Un4seen.Bass.AddOn.Fx.BassFx.
             Bass.BASS_ChannelPlay(handle, false);
         }
     }
@@ -958,9 +973,12 @@ public class ChartEditor : MonoBehaviour {
         // Reset audioSources upon successfull load
         foreach (AudioSource source in musicSources)
             source.clip = null;
-#endif
+
         // Load audio
         if (currentSong.musicStream != null)
+#else
+        if (currentSong.bassMusicStream != 0)
+#endif
         {
             SetAudioSources();
             movement.SetPosition(0);
@@ -1055,7 +1073,9 @@ public class ChartEditor : MonoBehaviour {
 
     public void FreeAudioClips()
     {
+#if !BASS_AUDIO
         currentSong.FreeAudioClips();
+#endif
         /*
         foreach (AudioSource source in musicSources)
         {
@@ -1185,5 +1205,20 @@ public class ChartEditor : MonoBehaviour {
     {
         Copy();
         Delete();
+    }
+
+    public void SetVolume()
+    {
+#if !BASS_AUDIO
+        AudioListener.volume = Globals.vol_master;
+
+        musicSources[MUSIC_STREAM_ARRAY_POS].volume = Globals.vol_song;
+        musicSources[GUITAR_STREAM_ARRAY_POS].volume = Globals.vol_guitar;
+        musicSources[RHYTHM_STREAM_ARRAY_POS].volume = Globals.vol_rhythm;
+
+        musicSources[MUSIC_STREAM_ARRAY_POS].panStereo = Globals.audio_pan;
+        musicSources[GUITAR_STREAM_ARRAY_POS].panStereo = Globals.audio_pan;
+        musicSources[RHYTHM_STREAM_ARRAY_POS].panStereo = Globals.audio_pan;
+#endif
     }
 }

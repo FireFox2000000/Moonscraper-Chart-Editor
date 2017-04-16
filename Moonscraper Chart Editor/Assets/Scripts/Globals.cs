@@ -112,6 +112,7 @@ public class Globals : MonoBehaviour {
                 _sfxVolume = value;
         }
     }
+    public static float vol_master, vol_song, vol_guitar, vol_rhythm, audio_pan;
 
     ChartEditor editor;
     static string workingDirectory;
@@ -144,6 +145,12 @@ public class Globals : MonoBehaviour {
         gameplayStartDelayTime = (float)(System.Math.Round(gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f);
 
         // Audio levels
+        vol_master = (float)iniparse.ReadValue("Audio Volume", "Master", 0.5f);
+        vol_song = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
+        vol_guitar = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
+        vol_rhythm = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
+        audio_pan = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
+        /*
         AudioListener.volume = (float)iniparse.ReadValue("Audio Volume", "Master", 0.5f);
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
         editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
@@ -152,7 +159,7 @@ public class Globals : MonoBehaviour {
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
         editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].panStereo = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
         editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].panStereo = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
-
+        */
         editor.clapSource.volume = (float)iniparse.ReadValue("Audio Volume", "Clap", 1.0f);
         sfxVolume = (float)iniparse.ReadValue("Audio Volume", "SFX", 1.0f);
 
@@ -166,7 +173,6 @@ public class Globals : MonoBehaviour {
             inputField.gameObject.AddComponent<InputFieldDoubleClick>();
     }
 
-    float lastKnownMasterLevel = 0.5f;
     void Update()
     {
         IsInDropDown = _IsInDropDown;
@@ -182,8 +188,6 @@ public class Globals : MonoBehaviour {
         else
             lockToStrikeline = false;
         snapLockWarning.gameObject.SetActive(lockToStrikeline);
-
-        lastKnownMasterLevel = AudioListener.volume;    // When OnApplicationQuit is run, AudioListener.volume becomes a value of 1 for some reason
     }
 
     void OnGUI()
@@ -304,12 +308,12 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Settings", "Reset After Gameplay", resetAfterGameplay);
 
         // Audio levels
-        iniparse.WriteValue("Audio Volume", "Master", lastKnownMasterLevel);
-        iniparse.WriteValue("Audio Volume", "Music Stream", editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume);
-        iniparse.WriteValue("Audio Volume", "Guitar Stream", editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume);
-        iniparse.WriteValue("Audio Volume", "Rhythm Stream", editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume);
+        iniparse.WriteValue("Audio Volume", "Master", vol_master);
+        iniparse.WriteValue("Audio Volume", "Music Stream", vol_song);
+        iniparse.WriteValue("Audio Volume", "Guitar Stream", vol_guitar);
+        iniparse.WriteValue("Audio Volume", "Rhythm Stream", vol_rhythm);
 
-        iniparse.WriteValue("Audio Volume", "Audio Pan", editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo);
+        iniparse.WriteValue("Audio Volume", "Audio Pan", audio_pan);
 
         iniparse.WriteValue("Audio Volume", "Clap", editor.clapSource.volume);
         iniparse.WriteValue("Audio Volume", "SFX", sfxVolume);

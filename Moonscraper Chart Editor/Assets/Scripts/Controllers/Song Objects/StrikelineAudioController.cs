@@ -16,7 +16,7 @@ public class StrikelineAudioController : MonoBehaviour {
 
         initLocalPos = transform.localPosition;  
     }
-
+    
     void Update()
     {
         Vector3 pos = initLocalPos;

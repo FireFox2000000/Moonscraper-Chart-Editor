@@ -46,7 +46,7 @@ public class TimelineMovementController : MovementController
         // Update timer text
         if (timePosition)
         {
-            if (editor.currentSong.musicStream == null)
+            if (!editor.currentSong.songAudioLoaded)
             {
                 timePosition.color = Color.red;
                 timePosition.text = "No audio";               

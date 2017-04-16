@@ -1,7 +1,7 @@
 ﻿//#define SONG_DEBUG
 //#define TIMING_DEBUG
 //#define LOAD_AUDIO_ASYNC
-//#define BASS_AUDIO
+#define BASS_AUDIO
 
 using UnityEngine;
 using System.IO;
@@ -123,6 +123,46 @@ public class Song {
     }
 
     string[] audioLocations = new string[3];
+
+    public string musicSongName { get { return Path.GetFileName(audioLocations[MUSIC_STREAM_ARRAY_POS]); } }
+    public string guitarSongName { get { return Path.GetFileName(audioLocations[GUITAR_STREAM_ARRAY_POS]); } }
+    public string rhythmSongName { get { return Path.GetFileName(audioLocations[RHYTHM_STREAM_ARRAY_POS]); } }
+
+    public bool songAudioLoaded
+    {
+        get
+        {
+#if BASS_AUDIO
+            return bassMusicStream != 0;
+#else
+            return musicStream ? true : false;
+#endif
+        }
+    }
+
+    public bool guitarAudioLoaded
+    {
+        get
+        {
+#if BASS_AUDIO
+            return bassGuitarStream != 0;
+#else
+            return guitarStream ? true : false;
+#endif
+        }
+    }
+
+    public bool rhythmAudioLoaded
+    {
+        get
+        {
+#if BASS_AUDIO
+            return bassRhythmStream != 0;
+#else
+            return rhythmStream ? true : false;
+#endif
+        }
+    }
 
     // Charts
     Chart[] charts = new Chart[12];
@@ -446,10 +486,19 @@ public class Song {
             audioLocations[audioStreamArrayPos] = Path.GetFullPath(filepath);
             ++audioLoads;
 #if BASS_AUDIO
-            yield return null;
-
             // Load Bass Audio Streams
-            bassAudioStreams[audioStreamArrayPos] = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_DEFAULT);
+            System.Threading.Thread streamCreateFileThread = new System.Threading.Thread(() =>
+            {
+                bassAudioStreams[audioStreamArrayPos] = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE);
+                bassAudioStreams[audioStreamArrayPos] = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_TempoCreate(bassAudioStreams[audioStreamArrayPos], BASSFlag.BASS_FX_FREESOURCE);
+            });
+
+            streamCreateFileThread.Start();
+
+            while (streamCreateFileThread.ThreadState == System.Threading.ThreadState.Running)
+                yield return null;
+
+            --audioLoads;
 #else
             // Create a temp file
             if (Path.GetExtension(filepath) == ".mp3")
@@ -1159,33 +1208,21 @@ public class Song {
         string musicString = string.Empty;
         string guitarString = string.Empty;
         string rhythmString = string.Empty;
-#if BASS_AUDIO
-        bool[] audioExists = new bool[bassAudioStreams.Length];
-#else
-        bool[] audioExists = new bool[audioStreams.Length];
-#endif
-        for (int i = 0; i < audioExists.Length; ++i)
-        {
-#if BASS_AUDIO
-            audioExists[i] = (bassAudioStreams[i] != 0);
-#else
-            audioExists[i] = audioStreams[i] ? true : false;
-#endif
-        }
+
         // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
-        if (audioExists[MUSIC_STREAM_ARRAY_POS] && Path.GetDirectoryName(audioLocations[MUSIC_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
+        if (songAudioLoaded && Path.GetDirectoryName(audioLocations[MUSIC_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
             //musicString = musicStream.name;
             musicString = Path.GetFileName(audioLocations[MUSIC_STREAM_ARRAY_POS]);
         else
             musicString = audioLocations[MUSIC_STREAM_ARRAY_POS];
 
-        if (audioExists[GUITAR_STREAM_ARRAY_POS] && Path.GetDirectoryName(audioLocations[GUITAR_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
+        if (guitarAudioLoaded && Path.GetDirectoryName(audioLocations[GUITAR_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
             //guitarString = guitarStream.name;
             guitarString = Path.GetFileName(audioLocations[GUITAR_STREAM_ARRAY_POS]);
         else
             guitarString = audioLocations[GUITAR_STREAM_ARRAY_POS];
 
-        if (audioExists[RHYTHM_STREAM_ARRAY_POS] && Path.GetDirectoryName(audioLocations[RHYTHM_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
+        if (rhythmAudioLoaded && Path.GetDirectoryName(audioLocations[RHYTHM_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
             //rhythmString = rhythmStream.name;
             rhythmString = Path.GetFileName(audioLocations[RHYTHM_STREAM_ARRAY_POS]);
         else
@@ -1198,13 +1235,13 @@ public class Song {
         saveString += GetPropertiesStringWithoutAudio();
 
         // Song audio
-        if (audioExists[MUSIC_STREAM_ARRAY_POS])
+        if (songAudioLoaded)
             saveString += Globals.TABSPACE + "MusicStream = \"" + musicString + "\"" + Globals.LINE_ENDING;
 
-        if (audioExists[GUITAR_STREAM_ARRAY_POS])
+        if (guitarAudioLoaded)
             saveString += Globals.TABSPACE + "GuitarStream = \"" + guitarString + "\"" + Globals.LINE_ENDING;
 
-        if (audioExists[RHYTHM_STREAM_ARRAY_POS])
+        if (rhythmAudioLoaded)
             saveString += Globals.TABSPACE + "RhythmStream = \"" + rhythmString + "\"" + Globals.LINE_ENDING;
 
         saveString += "}" + Globals.LINE_ENDING;

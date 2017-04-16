@@ -1,4 +1,5 @@
 ﻿//#undef UNITY_EDITOR
+#define BASS_AUDIO
 
 using UnityEngine;
 using UnityEngine.UI;
@@ -122,10 +123,10 @@ public class SongPropertiesPanelController : DisplayMenu {
     void setAudioTextLabels()
     {
         Song song = editor.currentSong;
-        if (song.musicStream)
+        if (song.songAudioLoaded)
         {
             musicStream.color = Color.white;
-            musicStream.text = song.musicStream.name;
+            musicStream.text = song.musicSongName;
             ClipText(musicStream);
         }
         else
@@ -134,10 +135,10 @@ public class SongPropertiesPanelController : DisplayMenu {
             musicStream.text = "No audio";
         }
 
-        if (song.guitarStream)
+        if (song.guitarAudioLoaded)
         {
             guitarStream.color = Color.white;
-            guitarStream.text = song.guitarStream.name;
+            guitarStream.text = song.guitarSongName;
             ClipText(guitarStream);
         }
         else
@@ -146,10 +147,10 @@ public class SongPropertiesPanelController : DisplayMenu {
             guitarStream.text = "No audio";
         }
 
-        if (song.rhythmStream)
+        if (song.rhythmAudioLoaded)
         {
             rhythmStream.color = Color.white;
-            rhythmStream.text = song.rhythmStream.name;
+            rhythmStream.text = song.rhythmSongName;
             ClipText(rhythmStream);
         }
         else
@@ -260,30 +261,42 @@ public class SongPropertiesPanelController : DisplayMenu {
         {
             case (0):
                 editor.currentSong.musicSample.Stop();
-                if (editor.currentSong.musicStream)
+                if (editor.currentSong.songAudioLoaded)
                 {
-                    //editor.currentSong.musicStream.UnloadAudioData();
+#if !BASS_AUDIO
                     Destroy(editor.currentSong.musicStream);
                 }
                 editor.currentSong.musicStream = null;
+#else
+                }
+                editor.currentSong.bassMusicStream = 0;
+#endif
                 break;
             case (1):
                 editor.currentSong.guitarSample.Stop();
-                if (editor.currentSong.guitarStream)
+                if (editor.currentSong.guitarAudioLoaded)
                 {
-                    //editor.currentSong.guitarStream.UnloadAudioData();
+#if !BASS_AUDIO
                     Destroy(editor.currentSong.guitarStream);
                 }
                 editor.currentSong.guitarStream = null;
+#else
+                }
+                editor.currentSong.bassGuitarStream = 0;
+#endif
                 break;
             case (2):
                 editor.currentSong.rhythmSample.Stop();
-                if (editor.currentSong.rhythmStream)
+                if (editor.currentSong.rhythmAudioLoaded)
                 {
-                    //editor.currentSong.rhythmStream.UnloadAudioData();
+#if !BASS_AUDIO
                     Destroy(editor.currentSong.rhythmStream);
                 }
                 editor.currentSong.rhythmStream = null;
+#else
+                }
+                editor.currentSong.bassGuitarStream = 0;
+#endif
                 break;
             default:
                 break;

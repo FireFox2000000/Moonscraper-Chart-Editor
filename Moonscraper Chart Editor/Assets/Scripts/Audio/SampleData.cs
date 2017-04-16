@@ -30,6 +30,8 @@ public class SampleData {
     string filepath;
     public float samplerate = 0;
     int sampleCount = 0;
+    public int channels;
+    public float length;
 
     public SampleData(string filepath)
     {
@@ -50,16 +52,22 @@ public class SampleData {
                     NVorbis.VorbisReader vorbis = new NVorbis.VorbisReader(filepath);
                     samplerate = vorbis.SampleRate;
                     sampleCount = (int)vorbis.TotalSamples;
+                    channels = vorbis.Channels;
+                    length = (float)vorbis.TotalTime.TotalSeconds;
                     break;
                 case (".wav"):
                     WaveFileReader wav = new WaveFileReader(filepath);
                     samplerate = wav.WaveFormat.SampleRate;
                     sampleCount = (int)wav.SampleCount;
+                    channels = wav.WaveFormat.Channels;
+                    length = (float)wav.TotalTime.TotalSeconds;
                     break;
                 case (".mp3"):
                     Mp3FileReader mp3 = new Mp3FileReader(filepath);
                     samplerate = mp3.WaveFormat.SampleRate;
                     sampleCount = 0;
+                    channels = mp3.WaveFormat.Channels;
+                    length = (float)mp3.TotalTime.TotalSeconds;
                     break;
                 default:
                     break;

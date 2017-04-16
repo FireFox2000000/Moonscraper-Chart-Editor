@@ -47,18 +47,18 @@ public class SettingsController : DisplayMenu
         // Set all variables' values based on the UI
         Globals.sustainGapEnabled = sustainGapEnabledToggle.isOn;
 
-        editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = musicSourceSlider.value;
-        editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume = guitarSourceSlider.value;
-        editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume = rhythmSourceSlider.value;
+        Globals.vol_song = musicSourceSlider.value;
+        Globals.vol_guitar = guitarSourceSlider.value;
+        Globals.vol_rhythm = rhythmSourceSlider.value;
+
         Globals.sfxVolume = sfxSlider.value;
 
         editor.clapSource.volume = clapSourceSlider.value;
 
-        AudioListener.volume = masterVolumeSlider.value / 10.0f;
-        editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo = musicPanSlider.value / 10.0f;
-        editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].panStereo = musicPanSlider.value / 10.0f;
-        editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].panStereo = musicPanSlider.value / 10.0f;
+        Globals.vol_master = masterVolumeSlider.value / 10.0f;
+        Globals.audio_pan = musicPanSlider.value / 10.0f;
 
+        editor.SetVolume();
         Globals.gameplayStartDelayTime = gameplayStartDelayDropdown.value * 0.5f;
     }
 
@@ -78,13 +78,15 @@ public class SettingsController : DisplayMenu
         else
             leftyFlipToggle.isOn = false;
 
-        musicSourceSlider.value = editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume;
-        guitarSourceSlider.value = editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume;
-        rhythmSourceSlider.value = editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume;
+        // Set volume sliders
+        masterVolumeSlider.value = Globals.vol_master * 10.0f;
+        musicSourceSlider.value = Globals.vol_song;
+        guitarSourceSlider.value = Globals.vol_guitar;
+        rhythmSourceSlider.value = Globals.vol_rhythm;
         sfxSlider.value = Globals.sfxVolume;
 
         clapSourceSlider.value = editor.clapSource.volume;
-        musicPanSlider.value = editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo * 10.0f;
+        musicPanSlider.value = Globals.audio_pan * 10.0f;
 
         if (Globals.extendedSustainsEnabled)
             extendedSustainsToggle.isOn = true;
@@ -94,10 +96,9 @@ public class SettingsController : DisplayMenu
         resetAfterPlay.isOn = Globals.resetAfterPlay;
         resetAfterGameplay.isOn = Globals.resetAfterGameplay;
 
-        masterVolumeSlider.value = AudioListener.volume * 10.0f;
-
         gameplayStartDelayDropdown.value = (int)(Globals.gameplayStartDelayTime * 2.0f);
 
+        editor.SetVolume();
         Update();
     }  
 
