@@ -56,6 +56,7 @@ public class SettingsController : DisplayMenu
         editor.clapSource.volume = clapSourceSlider.value;
 
         Globals.vol_master = masterVolumeSlider.value / 10.0f;
+        AudioListener.volume = Globals.vol_master;
         Globals.audio_pan = musicPanSlider.value / 10.0f;
 
         editor.SetVolume();

@@ -1,28 +1,40 @@
-Moonscraper v0.8.5 changelog - 22/03/2017
+Moonscraper v0.9 changelog (since v0.8.52)- 17/04/2017
 
 NEW FEATURES
--Added master volume control to the settings.
--Re-added waveform display and added dropdown to view seperate song, guitar and rhythm audio tracks. Loading asyncronously.
--Sustain dragging now working in keyboard mode.
--Added metronome (shortcut 'm').
--Added error screen to display errors to the user should they occur.
--Added current chart level being worked on next to the current song name to identify the current difficulty/instrument the user is currently working on.
--Added small save notification.
+-Added note sprites to custom resources (i.e. GH3 ZONES)
+-Added custom sustain colours to custom resources (via Settings config file)
+-Added toggles to control position resetting after preview and demo playing
+-Added keyboard strumming on to the up and down keys.
+-Added burst mode and mode panel to note tool keyboard mode, with shortcuts on 'h' and 'b' to switch between sustain drawing and burth drawing
+-Added ctrl-click for multi-selection/deselection to the cursor tool
+-Added copy/cut/delete functionality to the cursor tool
+-Added group sustain length setting (0 or max) function to selection panel
+-Added group note fret setting function to selection panel
+-Added seperate sfx calibration for clap and metronome
 
 CHANGES
--Group selection panel can now appear when the cursor mode is selected.
--Adding a section over another section now just selects that section.
--Removed "g" shortcut restriction during play mode.
--Changed group move to only move when the user has clicked and is dragging an object that is part of a selection, removing the idea of click where there isn't a note. Allows for more accurate move snapping.
+-Music now playing through Bass.Net audio library (the one that Osu! uses) instead of using Unity's standard. Allows for proper mp3 streaming and hopefully better audio quality.
+-Rewrote gameplay strumming engine
+-Changed metrnome sfx and added it to the custom resources list to be swapped out
+-Adjusted camera angle to more closely mimic GH3
+-Added alpha mask to background to create a fading effect at the end of the highway
+-Disabled 2D mode
+-Applied greyscale filter to all tool objects
+-Objects now deselected and reselected after play
+-Waveform position now affected by offset and audio calibration settings
+-UI adjustments
 
 FIXES
--Fix with undo/redo functionality with open notes.
--Fixed right channel of .mp3 files not being loaded.
--Autoscroll now only occurs if the mouse has actually shifted position.
--Fixed bug when the flags of the last note of a chart wouldn't be saved.
--Timeline UI now scales according to resolution changes.
--Fixed Phase Shift/bad midi's from being deleted when loaded.
-Dropdown now fully deselected once an option is clicked.
+-Fixed save threading issue on charts where audio was in the same location as the chart file
+-Fixed random sustain creation bug when using right-mouse-hold left-click delete shortcut
+-Fixed open note HOPO glow not showing through highlight boxes by raising the height of the model
+-Fixed sustains sometimes not being drawn when jumping to a spot on the timeline where there are sustains are drawn but there are no notes on screen
+-Fixed multiple save warning boxes popping up if the the program is quit multiple times
+-Fixed set HOPO function in Selection panel not checking if notes can be forced or not
+-Waveform drawing optimisation
+-Added ellipsis cutoff to audio filenames
+-Clap logic now linked to note hit animation. 
+-Clap now cannot be used during gameplay.
 
 KNOWN ISSUES
--Note highlight removes open note glow effect.
+-None

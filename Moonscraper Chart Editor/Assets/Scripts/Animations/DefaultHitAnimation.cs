@@ -25,7 +25,7 @@ public class DefaultHitAnimation : HitAnimation {
 	// Update is called once per frame
 	void Update () {
         Vector3 position = transform.position;
-        if (position.z != initZPos && running)
+        if (position.z < initZPos && running)
         {
             gameObject.SetActive(true);
             ren.sortingLayerName = "Highlights";
@@ -45,10 +45,12 @@ public class DefaultHitAnimation : HitAnimation {
         position.z += SPEED * Time.deltaTime;
 
         if (position.z > initZPos || Globals.applicationMode != Globals.ApplicationMode.Playing)
+        {
             position.z = initZPos;
+            running = false;
+        }
 
-        transform.position = position;
-        
+        transform.position = position;        
     }
 
     void OnDisable ()

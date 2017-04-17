@@ -1,4 +1,5 @@
 ﻿//#define GAMEPAD
+//#define MISS_DEBUG
 
 using UnityEngine;
 using System.Collections;
@@ -94,12 +95,13 @@ public class GameplayManager : MonoBehaviour {
         {
             if (ExitWindow(note) && !note.hit)
             {
-                //Debug.Log("Missed note");
                 foreach (Note chordNote in note.note.GetChord())
                     chordNote.controller.sustainBroken = true;
 
                 noteStreak = 0;
+#if MISS_DEBUG
                 Debug.Log("Missed note: " + note.note.fret_type + ", " + note.note.position);
+#endif
                 ++totalNotes;
             }
         }
@@ -109,7 +111,9 @@ public class GameplayManager : MonoBehaviour {
             if (lastStrumTime == null || !(NoteInHitWindow(lastNoteHit, (float)lastStrumTime) && lastNoteHit.type != Note.Note_Type.STRUM))
             {
                 noteStreak = 0;
+#if MISS_DEBUG
                 Debug.Log("Slop timer");
+#endif
             }
 
             lastStrumTime = null;
@@ -190,7 +194,9 @@ public class GameplayManager : MonoBehaviour {
                         {
                             noteStreak = 0;
                             lastStrumTime = null;
+#if MISS_DEBUG
                             Debug.Log("Overstrum v4");
+#endif
                         }
                         else
                         {
@@ -200,7 +206,9 @@ public class GameplayManager : MonoBehaviour {
                             {
                                 noteStreak = 0;
                                 lastStrumTime = null;
+#if MISS_DEBUG
                                 Debug.Log("Overstrum v6");
+#endif
 
                                 // Possible false-positive here when strumming a HOPO, and then strumming the next HOPO but the user hasn't moved to the correct fret just yet
                             }
@@ -224,7 +232,9 @@ public class GameplayManager : MonoBehaviour {
                 {
                     noteStreak = 0;
                     lastStrumTime = null;
+#if MISS_DEBUG
                     Debug.Log("Strummed when no note v3");
+#endif
                 }
                 /*
                 if (lastStrumTime == null)
@@ -355,7 +365,9 @@ public class GameplayManager : MonoBehaviour {
             // Will not reach here if user hit a note
             if (strum)
             {
-                    Debug.Log("Strummed when no note");
+#if MISS_DEBUG
+                Debug.Log("Strummed when no note");
+#endif
             }
         }
     }

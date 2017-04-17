@@ -131,7 +131,7 @@ public class Globals : MonoBehaviour {
         
         hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
         audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 0);
-        clapCalibrationMS = iniparse.ReadValue("Settings", "Clap calibration", 200);
+        clapCalibrationMS = iniparse.ReadValue("Settings", "Clap calibration", 0);
         clapProperties = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
         extendedSustainsEnabled = iniparse.ReadValue("Settings", "Extended sustains", false);
         clapSetting = ClapToggle.NONE;
@@ -152,8 +152,9 @@ public class Globals : MonoBehaviour {
         vol_guitar = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
         vol_rhythm = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
         audio_pan = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
+        
+        AudioListener.volume = vol_master;
         /*
-        AudioListener.volume = (float)iniparse.ReadValue("Audio Volume", "Master", 0.5f);
         editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
         editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
         editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
