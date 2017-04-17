@@ -23,7 +23,8 @@ public class Metronome : MonoBehaviour {
 
         // Offset by audio calibration
         Vector3 pos = initLocalPos;
-        pos.y += Song.TimeToWorldYPosition((float)Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
+        //pos.y += Song.TimeToWorldYPosition((float)Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
+        pos.y += Song.TimeToWorldYPosition(Song.TimeToWorldYPosition(Globals.clapCalibrationMS / 1000.0f));
         transform.localPosition = pos;
 
         uint currentTickPos = editor.currentSong.WorldYPositionToChartPosition(gameObject.transform.position.y);

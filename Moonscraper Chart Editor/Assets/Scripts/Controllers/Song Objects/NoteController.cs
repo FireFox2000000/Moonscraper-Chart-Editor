@@ -232,8 +232,9 @@ public class NoteController : SongObjectController {
         UpdateSongObject();
     }
 
+    public bool belowClapLine { get { return (transform.position.y <= editor.visibleStrikeline.position.y + (Song.TimeToWorldYPosition(Globals.clapCalibrationMS / 1000.0f))); } }
     public bool belowStrikeLine { get { const float offset = 0.02f; return (transform.position.y <= editor.visibleStrikeline.position.y + (offset * Globals.hyperspeed / Globals.gameSpeed)); } }
-    
+
     protected override void UpdateCheck()
     {
         if (note != null)
@@ -255,8 +256,34 @@ public class NoteController : SongObjectController {
             // Handle gameplay operation
             if (Globals.applicationMode == Globals.ApplicationMode.Playing)
             {
-                if (Globals.bot)
+                if (Globals.bot && belowClapLine)
                 {
+                    if (!hit)
+                    {
+                        bool playClap = true;
+
+                        switch (note.type)
+                        {
+                            case (Note.Note_Type.STRUM):
+                                if ((Globals.clapSetting & Globals.ClapToggle.STRUM) == 0)
+                                    playClap = false;
+                                break;
+                            case (Note.Note_Type.HOPO):
+                                if ((Globals.clapSetting & Globals.ClapToggle.HOPO) == 0)
+                                    playClap = false;
+                                break;
+                            case (Note.Note_Type.TAP):
+                                if ((Globals.clapSetting & Globals.ClapToggle.TAP) == 0)
+                                    playClap = false;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        if (playClap)
+                            StrikelineAudioController.Clap(transform.position.y);
+                    }
+
                     hit = true;
                     sustainBroken = false;
                 }
@@ -266,7 +293,9 @@ public class NoteController : SongObjectController {
                     if (isActivated)
                     {
                         if (Globals.bot)
+                        {
                             PlayIndicatorAnim();
+                        }
                         DeactivateNote();
                     }
                     

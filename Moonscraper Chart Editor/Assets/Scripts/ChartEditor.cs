@@ -45,7 +45,7 @@ public class ChartEditor : MonoBehaviour {
     public UnityEngine.UI.Button play;
     public UnityEngine.UI.Button undo;
     public UnityEngine.UI.Button redo;
-    public Transform strikelineAudio;
+    public StrikelineAudioController strikelineAudio;
     public Transform visibleStrikeline;
     public TimelineHandler timeHandler;
     public Transform camYMin;
@@ -608,6 +608,7 @@ public class ChartEditor : MonoBehaviour {
 
     void PlayAudio(float playPoint)
     {
+        StrikelineAudioController.startYPoint = visibleStrikeline.transform.position.y;
 #if !BASS_AUDIO
         foreach (AudioSource source in musicSources)
             source.time = playPoint;       // No need to add audio calibration as position is base on the strikeline position
@@ -678,7 +679,7 @@ public class ChartEditor : MonoBehaviour {
         Globals.applicationMode = Globals.ApplicationMode.Playing;
         cancel = false;
 
-        float playPoint = Song.WorldYPositionToTime(strikelineAudio.position.y) + currentSong.offset;       // Audio calibration handled by the position of the strikeline audio
+        float playPoint = Song.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
 
         if (playPoint < 0)
         {
@@ -693,7 +694,7 @@ public class ChartEditor : MonoBehaviour {
     IEnumerator delayedStartAudio(float delay)
     {
         yield return new WaitForSeconds(delay);
-        float playPoint = Song.WorldYPositionToTime(strikelineAudio.position.y) + currentSong.offset;
+        float playPoint = Song.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
 
         if (!cancel && Globals.applicationMode == Globals.ApplicationMode.Playing)
         {

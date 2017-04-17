@@ -160,7 +160,7 @@ public class WaveformDraw : MonoBehaviour {
         float scaling = 1;
         const int iteration = 20;
         int channels = currentSample.channels;
-        float fullOffset = editor.currentSong.offset - (Globals.audioCalibrationMS / 1000.0f);
+        float fullOffset = -editor.currentSong.offset - (Globals.audioCalibrationMS / 1000.0f);
         int startPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMin.position.y) - fullOffset, iteration, channels, currentSample.length);
         int endPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMax.position.y) - fullOffset, iteration, channels, currentSample.length);
 

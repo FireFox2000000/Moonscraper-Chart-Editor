@@ -86,6 +86,7 @@ public class Globals : MonoBehaviour {
     public static ClapToggle clapProperties = ClapToggle.NONE;
     public static bool metronomeActive = false;
     public static int audioCalibrationMS = 200;                     // Increase to start the audio sooner
+    public static int clapCalibrationMS = 200;
     public static ApplicationMode applicationMode = ApplicationMode.Editor;
     public static ViewMode viewMode { get; private set; }
     public static NotePlacementMode notePlacementMode = NotePlacementMode.LeftyFlip;
@@ -130,6 +131,7 @@ public class Globals : MonoBehaviour {
         
         hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
         audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 0);
+        clapCalibrationMS = iniparse.ReadValue("Settings", "Clap calibration", 200);
         clapProperties = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
         extendedSustainsEnabled = iniparse.ReadValue("Settings", "Extended sustains", false);
         clapSetting = ClapToggle.NONE;
@@ -298,6 +300,7 @@ public class Globals : MonoBehaviour {
 
         iniparse.WriteValue("Settings", "Hyperspeed", hyperspeed);
         iniparse.WriteValue("Settings", "Audio calibration", audioCalibrationMS);
+        iniparse.WriteValue("Settings", "Clap calibration", clapCalibrationMS);
         iniparse.WriteValue("Settings", "Clap", (int)clapProperties);
         iniparse.WriteValue("Settings", "Extended sustains", extendedSustainsEnabled);
         iniparse.WriteValue("Settings", "Sustain Gap", sustainGapEnabled);

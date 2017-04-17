@@ -5,30 +5,42 @@ using System.Collections;
 public class StrikelineAudioController : MonoBehaviour {
 
     public AudioClip clap;
-    AudioSource source;
+    static AudioClip _clap;
+    static AudioSource source;
 
-    float lastClapPos = -1;
+    static float lastClapPos = -1;
+    public static float startYPoint = -1;
     Vector3 initLocalPos;
 
     void Start()
     {
         source = GetComponent<AudioSource>();
-
+        _clap = clap;
         initLocalPos = transform.localPosition;  
     }
     
     void Update()
     {
         Vector3 pos = initLocalPos;
-        pos.y += Song.TimeToWorldYPosition((float)Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
+        pos.y += 0.02f * Globals.hyperspeed / Globals.gameSpeed; // Song.TimeToWorldYPosition((float)Globals.audioCalibrationMS / 1000.0f);
         transform.localPosition = pos;
+
+        if (Globals.applicationMode != Globals.ApplicationMode.Playing)
+            lastClapPos = -1;
     }
 
+    public static void Clap(float worldYPos)
+    {
+        if (worldYPos > lastClapPos && worldYPos >= startYPoint)
+            source.PlayOneShot(_clap);
+        lastClapPos = worldYPos;
+    }
+    /*
     void OnTriggerEnter2D (Collider2D col)
     {
         NoteController note = col.gameObject.GetComponentInParent<NoteController>();
 
-        if (note != null && Globals.applicationMode == Globals.ApplicationMode.Playing && col.transform.position.y != lastClapPos)
+        if (note != null && Globals.applicationMode == Globals.ApplicationMode.Playing && col.transform.position.y != lastClapPos && !note.isActivated)
         {
             switch (note.note.type)
             {
@@ -71,5 +83,5 @@ public class StrikelineAudioController : MonoBehaviour {
                 OnTriggerEnter2D(col);
             }
         }
-    }
+    }*/
 }
