@@ -160,6 +160,8 @@ public class LoadCustomResources : MonoBehaviour {
             {
                 if (customSkin.sustain_mats[i])
                     iniparse.WriteValue("Sustain Colors", i.ToString(), "#" + customSkin.sustain_mats[i].GetColor("_Color").GetHex());
+                else
+                    iniparse.WriteValue("Sustain Colors", i.ToString(), "#00000000");
             }
 
             iniparse.Close();

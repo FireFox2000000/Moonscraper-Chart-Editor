@@ -416,7 +416,7 @@ public class NoteController : SongObjectController {
         }
         else
         {
-            foreach (DefaultHitAnimation hitAnimation in editor.indicators.animations)
+            foreach (HitAnimation hitAnimation in editor.indicators.animations)
             {
                 hitAnimation.PlayOneShot();
             }
