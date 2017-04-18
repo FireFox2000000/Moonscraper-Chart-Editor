@@ -1,3 +1,9 @@
+Moonscraper v0.9.02 changelog- 18/04/2017
+FIXES
+-Fixed open note hit animation when using custom frets
+-Fixed mass select panel not popping up after using group select when there was no panel already active
+-Fixed sustain capping issues when using the selection max sustain button
+
 Moonscraper v0.9 changelog (since v0.8.52)- 17/04/2017
 
 NEW FEATURES
