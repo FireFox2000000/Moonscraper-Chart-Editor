@@ -3,14 +3,14 @@ Moonscraper v0.9 changelog (since v0.8.52)- 17/04/2017
 NEW FEATURES
 -Added note sprites to custom resources (i.e. GH3 ZONES)
 -Added custom sustain colours to custom resources (via Settings config file)
--Added toggles to control position resetting after preview and demo playing
--Added keyboard strumming on to the up and down keys.
--Added burst mode and mode panel to note tool keyboard mode, with shortcuts on 'h' and 'b' to switch between sustain drawing and burth drawing
+-Added seperate sfx calibration for clap and metronome
+-Added burst mode and mode panel to note tool keyboard mode, with shortcuts on 'h' and 'b' to switch between sustain drawing and burst drawing
 -Added ctrl-click for multi-selection/deselection to the cursor tool
 -Added copy/cut/delete functionality to the cursor tool
 -Added group sustain length setting (0 or max) function to selection panel
 -Added group note fret setting function to selection panel
--Added seperate sfx calibration for clap and metronome
+-Added toggles to control position resetting after preview and demo playing
+-Added keyboard strumming on to the up and down keys.
 
 CHANGES
 -Music now playing through Bass.Net audio library (the one that Osu! uses) instead of using Unity's standard. Allows for proper mp3 streaming and hopefully better audio quality.
@@ -21,7 +21,7 @@ CHANGES
 -Disabled 2D mode
 -Applied greyscale filter to all tool objects
 -Objects now deselected and reselected after play
--Waveform position now affected by offset and audio calibration settings
+-Waveform position now affected by song offset
 -UI adjustments
 
 FIXES

@@ -75,8 +75,8 @@ public class GroupSelectPanelController : MonoBehaviour
                 if (Globals.extendedSustainsEnabled)
                 {
                     Note original = (Note)note.Clone();
-                    note.sustain_length = assignedLength;
-                    note.CapSustain(note.nextSeperateNote);
+                    note.sustain_length = assignedLength;          
+                    note.CapSustain(note.FindNextSameFretWithinSustainExtendedCheck());
 
                     if (original.sustain_length != note.sustain_length)
                         actions.Add(new ActionHistory.Modify(original, note));
@@ -86,12 +86,13 @@ public class GroupSelectPanelController : MonoBehaviour
                     // Needs to handle chords
                     Note[] chordNotes = note.GetChord();
                     Note[] chordNotesCopy = new Note[chordNotes.Length];
+                    Note capNote = note.nextSeperateNote;
 
                     for (int i = 0; i < chordNotes.Length; ++i)
                     {
                         chordNotesCopy[i] = (Note)chordNotes[i].Clone();
                         chordNotes[i].sustain_length = assignedLength;
-                        note.CapSustain(note.nextSeperateNote);
+                        chordNotes[i].CapSustain(capNote);
 
                         if (chordNotesCopy[i].sustain_length != chordNotes[i].sustain_length)
                             actions.Add(new ActionHistory.Modify(chordNotesCopy[i], chordNotes[i]));
