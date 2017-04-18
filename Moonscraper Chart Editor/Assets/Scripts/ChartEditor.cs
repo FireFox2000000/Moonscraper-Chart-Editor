@@ -272,12 +272,13 @@ public class ChartEditor : MonoBehaviour {
         // Update the current properties panel     
         if ((Toolpane.currentTool == Toolpane.Tools.GroupSelect || Toolpane.currentTool == Toolpane.Tools.Cursor) && currentSelectedObjects.Length > 1)
         {
-            if (currentPropertiesPanel != groupSelectInspector)
+            if (!currentPropertiesPanel || currentPropertiesPanel != groupSelectInspector)
             {
-                currentPropertiesPanel.SetActive(false);
+                if (currentPropertiesPanel)
+                    currentPropertiesPanel.SetActive(false);
                 currentPropertiesPanel = groupSelectInspector;
             }
-            if (!currentPropertiesPanel.gameObject.activeSelf)
+            if (currentPropertiesPanel && !currentPropertiesPanel.gameObject.activeSelf)
                 currentPropertiesPanel.gameObject.SetActive(true);
         }
 
