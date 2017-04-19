@@ -8,14 +8,14 @@ PluginImporter:
   isOverridable: 0
   platformData:
     Android:
-      enabled: 0
+      enabled: 1
       settings:
         CPU: ARMv7
     Any:
-      enabled: 0
+      enabled: 1
       settings:
-        Exclude Android: 1
-        Exclude Editor: 1
+        Exclude Android: 0
+        Exclude Editor: 0
         Exclude Linux: 0
         Exclude Linux64: 0
         Exclude LinuxUniversal: 0
@@ -24,9 +24,9 @@ PluginImporter:
         Exclude OSXUniversal: 0
         Exclude Win: 1
         Exclude Win64: 0
-        Exclude iOS: 1
+        Exclude iOS: 0
     Editor:
-      enabled: 0
+      enabled: 1
       settings:
         CPU: x86_64
         DefaultValueInitialized: true
@@ -64,7 +64,7 @@ PluginImporter:
       settings:
         CPU: AnyCPU
     iOS:
-      enabled: 0
+      enabled: 1
       settings:
         CompileFlags: 
         FrameworkDependencies: 

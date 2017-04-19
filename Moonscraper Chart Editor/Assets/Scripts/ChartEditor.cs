@@ -225,8 +225,8 @@ public class ChartEditor : MonoBehaviour {
         else if (Input.GetMouseButtonUp(0))
             clickedSelectableObject = null;
 
-            // Group move/deselect
-            if (Toolpane.currentTool == Toolpane.Tools.Cursor)
+        // Group move/deselect
+        if (Toolpane.currentTool == Toolpane.Tools.Cursor)
         {
             if (Input.GetMouseButtonDown(0))
             {

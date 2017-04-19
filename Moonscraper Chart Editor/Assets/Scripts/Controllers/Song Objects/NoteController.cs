@@ -14,12 +14,9 @@ public class NoteController : SongObjectController {
     public GameObject noteVisuals;
     Whammy whammy;  
 
-#if NOTE_TYPE_2D
-    protected SpriteRenderer noteRenderer;
-#else
     Renderer noteRenderer;
     EdgeCollider2D noteHitCollider;
-#endif
+
     protected Renderer sustainRen;
     BoxCollider2D sustainHitBox;
     BoxCollider hitBox;
@@ -33,7 +30,6 @@ public class NoteController : SongObjectController {
         get
         {
             if (noteVisuals.gameObject.activeSelf)
-            //if (noteRenderer && noteHitCollider && noteRenderer.enabled && noteHitCollider.enabled)
                 return true;
             else
                 return false;
@@ -42,12 +38,6 @@ public class NoteController : SongObjectController {
     new void Awake()
     {
         base.Awake();
-#if NOTE_TYPE_2D
-        noteRenderer = GetComponent<SpriteRenderer>();
-#else
-        //noteRenderer = GetComponent<Renderer>();
-        //noteHitCollider = GetComponentInChildren<EdgeCollider2D>();
-#endif
         sustainRen = sustain.GetComponent<Renderer>();
         whammy = sustainRen.GetComponent<Whammy>();
     }
@@ -55,24 +45,8 @@ public class NoteController : SongObjectController {
     public override void OnSelectableMouseDown()
     {
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
-        {/*
-            bool noteFound = false;
-            foreach (Note selectedNote in editor.currentSelectedObjects.OfType<Note>())
-            {
-                if (selectedNote == note)
-                    noteFound = true;
-            }
-
-            if (!noteFound)
-            {
-                if (Input.GetButton("ChordSelect"))
-                {
-                    editor.currentSelectedObjects = note.GetChord();
-                }
-                else
-                    editor.currentSelectedObject = songObject;
-            }*/
-
+        {
+            // Ctrl-clicking
             if (Globals.modifierInputActive)
             {
                 if (editor.IsSelected(songObject))
@@ -80,8 +54,14 @@ public class NoteController : SongObjectController {
                 else
                     editor.AddToSelectedObjects(songObject);
             }
+            // Regular clicking
             else if (!editor.IsSelected(songObject))
-            {
+            {/*
+                if (Globals.secondaryInputActive && editor.currentSelectedObjects.Length > 0)
+                {
+
+                }
+                else*/
                 if (Input.GetButton("ChordSelect"))
                 {
                     editor.currentSelectedObjects = note.GetChord();
@@ -391,8 +371,6 @@ public class NoteController : SongObjectController {
     public void Activate()
     {
         noteVisuals.gameObject.SetActive(true);
-       // noteRenderer.enabled = true;
-        //noteHitCollider.enabled = true;
         sustainRen.enabled = true;
         hit = false;
         sustainBroken = false;
@@ -401,11 +379,6 @@ public class NoteController : SongObjectController {
     public void DeactivateNote()
     {
         noteVisuals.gameObject.SetActive(false);
-        //noteRenderer.enabled = false;
-        //noteHitCollider.enabled = false;
-
-        //if (Globals.applicationMode == Globals.ApplicationMode.Playing)
-            //PlayIndicatorAnim();
     }
 
     public void PlayIndicatorAnim()

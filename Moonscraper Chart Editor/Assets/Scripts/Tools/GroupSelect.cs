@@ -84,9 +84,9 @@ public class GroupSelect : ToolObject {
                 Color col = Color.green;
                 col.a = ren.color.a;
 
-                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                if (Globals.secondaryInputActive)
                     addMode = true;
-                else if (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
+                else if (Globals.modifierInputActive)
                 {
                     addMode = false;
                     col = Color.red;
@@ -115,6 +115,7 @@ public class GroupSelect : ToolObject {
             UpdateSelectionAreaVisual(transform, initWorld2DPos, endWorld2DPos);
             UpdateSelectionAreaVisual(selectedArea, area);
 
+            // User has finished creating a selection area
             if (Input.GetMouseButtonUp(0) && userDraggingSelectArea)
             {
                 if (startWorld2DChartPos > endWorld2DChartPos)
@@ -151,6 +152,7 @@ public class GroupSelect : ToolObject {
                 userDraggingSelectArea = false;
             }
 
+            // Handle copy and cut functions
             if (Globals.modifierInputActive && data.Count > 0)
             {
                 if (Input.GetKeyDown(KeyCode.X))

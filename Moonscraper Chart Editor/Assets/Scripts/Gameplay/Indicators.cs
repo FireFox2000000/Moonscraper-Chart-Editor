@@ -1,4 +1,4 @@
-﻿//#define GAMEPAD
+﻿#define GAMEPAD
 
 using UnityEngine;
 using System.Collections;
@@ -62,9 +62,15 @@ public class Indicators : MonoBehaviour {
             }
             else
             {
-                for (int i = 0; i < animations.Length; ++i)
+                // Keyboard controls
+                for (int i = 0; i < 5; ++i)
                 {
-                    animations[i].Release();
+                    if (Input.GetKey((i + 1).ToString()))
+                    {
+                        animations[i].Press();
+                    }
+                    else if (!animations[i].running)
+                        animations[i].Release();
                 }
                 /*
                 foreach (GameObject indicator in indicators)
@@ -93,7 +99,6 @@ public class Indicators : MonoBehaviour {
             {
                 if (!animations[i].running)
                     animations[i].Release();
-                //indicators[i].SetActive(false);
             }
         }
     }

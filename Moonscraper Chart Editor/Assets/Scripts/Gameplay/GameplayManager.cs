@@ -1,4 +1,4 @@
-﻿//#define GAMEPAD
+﻿#define GAMEPAD
 //#define MISS_DEBUG
 
 using UnityEngine;
@@ -127,27 +127,38 @@ public class GameplayManager : MonoBehaviour {
             slopWindowTimer = 0;
 
         // Configure current strum input
-        float strumValue;
+        float strumValue = 0;
 #if GAMEPAD
-        if (gamepad != null && ((GamePadState)gamepad).DPad.Down == ButtonState.Pressed)
-            strumValue = -1;
-        else if (gamepad != null && ((GamePadState)gamepad).DPad.Up == ButtonState.Pressed)
-            strumValue = 1;
+        if (gamepad != null)
+        {
+            if (((GamePadState)gamepad).DPad.Down == ButtonState.Pressed)
+                strumValue = -1;
+            else if (((GamePadState)gamepad).DPad.Up == ButtonState.Pressed)
+                strumValue = 1;
+        }
         else
-            strumValue = 0;
+        {
+            // Keyboard controls
+            if (Input.GetButtonDown("Strum Up"))
+                strumValue = 1;
+            else if (Input.GetButtonDown("Strum Down"))
+                strumValue = -1;
+        }
+       // if (strumValue != 0)
+          //  Debug.Log(strumValue);
 #else
         strumValue = Input.GetAxisRaw("Strum");    
 #endif
 
-        // Get player input
+        // Finalise if a strum has occoured or not
         if (strumValue != 0 && strumValue != previousStrumValue)
             strum = true;
         else
             strum = false;
-
-        // Keyboard controls
+       
+        /*
         if (Input.GetButtonDown("Strum Up") || Input.GetButtonDown("Strum Down"))
-            strum = true;
+            strum = true;*/
 
         // Gameplay
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
@@ -566,6 +577,15 @@ public class GameplayManager : MonoBehaviour {
 
             if (gamepad.Buttons.LeftShoulder == ButtonState.Pressed)
                 inputMask |= 1 << (int)Note.Fret_Type.ORANGE;
+        }
+        else
+        {
+            // Keyboard controls
+            for (int i = 0; i < 5; ++i)
+            {
+                if (Input.GetKey((i + 1).ToString()))
+                    inputMask |= 1 << i;
+            }
         }
 #else
         
