@@ -16,9 +16,13 @@ public class SetLineRendererPoints : MonoBehaviour {
         lineRen = GetComponent<LineRenderer>();
         prevScale = transform.localScale;
 	}
+
+    public void SetPositionsMinimum()
+    {
+        SetPoints(1);
+    }
 	
-	// Update is called once per frame
-	void Update () {
+	public void UpdateLineRendererPoints () {
         if (transform.localScale != prevScale)
         {
             if (iterationsPerUnit <= 0)
@@ -26,16 +30,27 @@ public class SetLineRendererPoints : MonoBehaviour {
 
             int totalIterations = (int)(iterationsPerUnit * transform.localScale.y);
 
-            lineRen.numPositions = totalIterations + 1;
-            float offset = (MAX - MIN) / (float)totalIterations;
-
-            for (int i = 0; i < totalIterations; ++i)
-            {
-                lineRen.SetPosition(i, new Vector3(0, MIN + i * offset));
-            }
-
-            lineRen.SetPosition(lineRen.numPositions - 1, new Vector3(0, MAX));
+            SetPoints(totalIterations);
         }
         prevScale = transform.localScale;
+    }
+
+    void SetPoints (int totalIterations)
+    {
+        lineRen.numPositions = totalIterations + 1;
+
+        float offset = (MAX - MIN) / (float)totalIterations;
+
+        Vector3 pos = Vector3.zero;
+        Vector3[] positions = new Vector3[lineRen.numPositions];
+
+        for (int i = 0; i < totalIterations; ++i)
+        {
+            pos.y = MIN + i * offset;
+            positions[i] = pos;
+        }
+
+        positions[positions.Length - 1] = new Vector3(0, MAX);
+        lineRen.SetPositions(positions);
     }
 }

@@ -12,13 +12,15 @@ public class Whammy : MonoBehaviour {
     public float whammyLerpSpeed = 20;
 
     LineRenderer lineRenderer;
-
+    SetLineRendererPoints pointsController;
+    [HideInInspector]
     public bool canWhammy = false;
 
     // Use this for initialization
     void Start () {
         lineRenderer = GetComponent<LineRenderer>();
-	}
+        pointsController = GetComponent<SetLineRendererPoints>();
+    }
     
 	// Update is called once per frame
 	void Update () {
@@ -26,8 +28,10 @@ public class Whammy : MonoBehaviour {
         {
             AnimationCurve lineCurve = lineRenderer.widthCurve;
 
-            if (Globals.applicationMode == Globals.ApplicationMode.Playing && transform.localScale.y > 0)
+            if (Globals.applicationMode == Globals.ApplicationMode.Playing && transform.localScale.y > 0 && canWhammy)
             {
+                pointsController.UpdateLineRendererPoints();
+
                 ShiftAnimationKeys(lineCurve, keyShiftSpeed * Time.deltaTime * (Globals.hyperspeed / Globals.gameSpeed) / transform.localScale.y);
 
                 float whammyVal = (lerpedWhammyVal() + 1) * widthMultiplier;
@@ -37,6 +41,7 @@ public class Whammy : MonoBehaviour {
             else
             {
                 lineCurve.keys = new Keyframe[] { new Keyframe(0, 1) };
+                pointsController.SetPositionsMinimum();
             }
 
             lineRenderer.widthCurve = lineCurve;

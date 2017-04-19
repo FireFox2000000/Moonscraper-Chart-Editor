@@ -168,6 +168,7 @@ public class NoteController : SongObjectController {
             if (sustainHitBox)
                 sustainHitBox.size = new Vector2(OPEN_NOTE_COLLIDER_WIDTH, sustainHitBox.size.y);
 
+            // Change line renderer to fit open note
             if (whammy)
             {
                 whammy.widthMultiplier = 0.25f;
@@ -196,6 +197,7 @@ public class NoteController : SongObjectController {
         }
         else
         {
+            // CHange line renderer to standard note
             if (whammy)
             {
                 whammy.widthMultiplier = 1;
@@ -297,11 +299,6 @@ public class NoteController : SongObjectController {
                         {
                             sustain.transform.position = new Vector3(sustain.transform.position.x, yPos, sustain.transform.position.z);
                             sustain.transform.localScale = new Vector3(sustain.transform.localScale.x, yScale, sustain.transform.localScale.z);
-
-                            if (prevSustainHeight != null)
-                            {
-                                //whammy.ReduceSustainSizeKeysAdjust((float)prevSustainHeight, sustain.transform.localScale.y);
-                            }
                          
                             PlayIndicatorAnim();
                         }
@@ -320,8 +317,9 @@ public class NoteController : SongObjectController {
                     else
                         whammy.canWhammy = false;
                 }
-
             }
+            else if(whammy)
+                whammy.canWhammy = false;
         }
         else
         {
