@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿#define GAMEPAD
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using XInputDotNetPure;
 
 [RequireComponent(typeof(LineRenderer))]
 public class Whammy : MonoBehaviour {
@@ -9,17 +12,12 @@ public class Whammy : MonoBehaviour {
     public float whammyLerpSpeed = 20;
 
     LineRenderer lineRenderer;
-   // AnimationCurve lineCurve;
-
-    //float prevHeight = 0;
 
     public bool canWhammy = false;
 
     // Use this for initialization
     void Start () {
         lineRenderer = GetComponent<LineRenderer>();
-
-        //prevHeight = transform.localScale.y; 
 	}
     
 	// Update is called once per frame
@@ -42,7 +40,6 @@ public class Whammy : MonoBehaviour {
             }
 
             lineRenderer.widthCurve = lineCurve;
-            //prevHeight = transform.localScale.y;
         }
     }
 
@@ -71,8 +68,13 @@ public class Whammy : MonoBehaviour {
     float currentWhammyVal = -1;
     float lerpedWhammyVal()
     {
-        float rawVal = Input.GetAxisRaw("Whammy");
-
+        float rawVal = -1;
+#if GAMEPAD
+        if (GameplayManager.gamepad != null)
+            rawVal = ((GamePadState)GameplayManager.gamepad).ThumbSticks.Right.X;
+#else
+        rawVal = Input.GetAxisRaw("Whammy");
+#endif
         if (!canWhammy)
             currentWhammyVal = -1;
         else
