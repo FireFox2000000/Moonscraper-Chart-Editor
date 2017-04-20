@@ -21,10 +21,13 @@ public class StarpowerController : SongObjectController
         {
             uint endPosition = starpower.position + starpower.length;
 
-            if (    (starpower.position >= editor.minPos && starpower.position < editor.maxPos) ||
+            if ((starpower.position >= editor.minPos && starpower.position < editor.maxPos) ||
                     (endPosition > editor.minPos && endPosition < editor.maxPos) ||
                     (starpower.position < editor.minPos && endPosition >= editor.maxPos))
-                UpdateSongObject();
+            {
+                if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+                    UpdateSongObject();
+            }
             else
                 gameObject.SetActive(false);
         }

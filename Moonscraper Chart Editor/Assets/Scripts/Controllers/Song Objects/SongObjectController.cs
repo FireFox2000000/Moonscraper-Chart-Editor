@@ -53,7 +53,10 @@ public abstract class SongObjectController : SelectableClick {
     protected virtual void UpdateCheck()
     {
         if (songObject != null && songObject.position >= editor.minPos && songObject.position < editor.maxPos)
-            UpdateSongObject();
+        {
+            if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+                UpdateSongObject();
+        }
         else if (songObject != null)
             gameObject.SetActive(false);
     }

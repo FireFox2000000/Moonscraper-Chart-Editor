@@ -81,12 +81,16 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                 scale = new Vector3(1.2f, 1, 1);
             else if (specialType == Note.Special_Type.STAR_POW)
                 scale = new Vector3(1.2f, 1.2f, 1);
-
-            // Handle animations here
-            SpriteAnimation(note);
         }
 
         transform.localScale = scale;
+    }
+
+    protected override void Animate()
+    {
+        base.Animate();
+
+        SpriteAnimation(nCon.note);
     }
 
     void SpriteAnimation(Note note)

@@ -22,13 +22,15 @@ public class Mouse : MonoBehaviour {
 
     public static bool cancel = false;
     public static List<RaycastResult> currentRaycastFromPointer = new List<RaycastResult>();
+    public static GameObject currentSelectableUnderMouse;
 
     Vector2 initMouseDragPos = Vector2.zero;
 
 	// Update is called once per frame
 	void Update () {
         currentRaycastFromPointer = RaycastFromPointer();
-        GameObject objectUnderMouse = GetSelectableObjectUnderMouse();
+        currentSelectableUnderMouse = GetSelectableObjectUnderMouse();
+
         Vector2 viewportPos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
 
         if (viewportPos.x < 0 || viewportPos.x > 1 || viewportPos.y < 0 || viewportPos.y > 1)
@@ -64,7 +66,7 @@ public class Mouse : MonoBehaviour {
         {
             initMouseDragPos = (Vector2)world2DPosition;
 
-            selectedGameObject = objectUnderMouse;
+            selectedGameObject = currentSelectableUnderMouse;
 
             if (selectedGameObject && selectedGameObject.activeSelf)
             {
@@ -93,9 +95,9 @@ public class Mouse : MonoBehaviour {
         }
 
         // OnSelectableMouseOver
-        if (objectUnderMouse && objectUnderMouse.activeSelf)
+        if (currentSelectableUnderMouse && currentSelectableUnderMouse.activeSelf)
         {
-            SelectableClick[] mouseOver = objectUnderMouse.GetComponents<SelectableClick>();
+            SelectableClick[] mouseOver = currentSelectableUnderMouse.GetComponents<SelectableClick>();
             foreach (SelectableClick mono in mouseOver)
             {
                 mono.OnSelectableMouseOver();
@@ -198,7 +200,7 @@ public class Mouse : MonoBehaviour {
         return hits;
     }
 
-    public static GameObject GetSelectableObjectUnderMouse()
+    static GameObject GetSelectableObjectUnderMouse()
     {
         if (world2DPosition != null)
         {
@@ -262,7 +264,7 @@ public class Mouse : MonoBehaviour {
         return false;
     }
 
-    public static List<RaycastResult> RaycastFromPointer()
+    static List<RaycastResult> RaycastFromPointer()
     {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         pointer.position = Input.mousePosition;

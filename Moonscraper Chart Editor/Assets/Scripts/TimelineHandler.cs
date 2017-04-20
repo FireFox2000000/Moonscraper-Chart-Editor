@@ -137,9 +137,9 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
             }
         }
 
+        // Set the sp
         if (prevSong != editor.currentSong || editor.currentChart.starPower.Length != prevSPLength || prevSongLength != editor.currentSong.length)
         {
-            // Set the sp
             int i;
             for (i = 0; i < editor.currentChart.starPower.Length; ++i)
             {

@@ -64,14 +64,17 @@ public class GameplayManager : MonoBehaviour {
 
 #if GAMEPAD
         gamepad = null;
-        for (int i = 0; i < 4; ++i)
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
         {
-            PlayerIndex playerIndex = (PlayerIndex)i;
-            GamePadState testState = GamePad.GetState(playerIndex);
-            if (testState.IsConnected)
+            for (int i = 0; i < 4; ++i)
             {
-                gamepad = GamePad.GetState(playerIndex);
-                break;
+                PlayerIndex playerIndex = (PlayerIndex)i;
+                GamePadState testState = GamePad.GetState(playerIndex);
+                if (testState.IsConnected)
+                {
+                    gamepad = testState;
+                    break;
+                }
             }
         }
 #endif

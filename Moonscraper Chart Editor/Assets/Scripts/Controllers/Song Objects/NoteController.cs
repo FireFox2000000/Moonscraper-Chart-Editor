@@ -222,18 +222,20 @@ public class NoteController : SongObjectController {
         if (note != null)
         {
             uint endPosition = note.position + note.sustain_length;
-
+            
             if ((note.position >= editor.minPos && note.position < editor.maxPos) ||
                     (endPosition > editor.minPos && endPosition < editor.maxPos) ||
                     (note.position < editor.minPos && endPosition >= editor.maxPos))
             {
-                UpdateSongObject();
+                if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+                    UpdateSongObject();
             }
             else
             {
                 gameObject.SetActive(false);
                 return;
             }
+           
 
             // Handle gameplay operation
             if (Globals.applicationMode == Globals.ApplicationMode.Playing)

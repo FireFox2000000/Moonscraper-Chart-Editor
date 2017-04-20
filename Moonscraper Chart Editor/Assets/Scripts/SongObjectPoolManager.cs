@@ -87,7 +87,8 @@ public class SongObjectPoolManager : MonoBehaviour {
             // Find the last known note of each fret type to find any sustains that might overlap into the camera view
             foreach (Note prevNote in Note.GetPreviousOfSustains(rangedNotes[0] as Note))
             {
-                rangedNotes.Add(prevNote);
+                if (prevNote.position + prevNote.sustain_length > editor.minPos)
+                    rangedNotes.Add(prevNote);
             }
         }
         else
@@ -97,10 +98,11 @@ public class SongObjectPoolManager : MonoBehaviour {
             if (minArrayPos != SongObject.NOTFOUND)
             {
                 rangedNotes.Add(editor.currentChart.notes[minArrayPos]);
-
+                
                 foreach (Note prevNote in Note.GetPreviousOfSustains(editor.currentChart.notes[minArrayPos] as Note))
                 {
-                    rangedNotes.Add(prevNote);
+                    if (prevNote.position + prevNote.sustain_length > editor.minPos)
+                        rangedNotes.Add(prevNote);
                 }
             }
         }
@@ -110,6 +112,7 @@ public class SongObjectPoolManager : MonoBehaviour {
         {
             if (ChartEditor.startGameplayPos != null && note.worldYPosition < (float)ChartEditor.startGameplayPos)
                 continue;
+
             if (note.controller == null)
             {
                 while (pos < noteControllers.Length && noteControllers[pos].gameObject.activeSelf)
@@ -133,9 +136,9 @@ public class SongObjectPoolManager : MonoBehaviour {
         EnableNotes(new Note[] { note });
     }
 
-    public void EnableSP(Starpower[] stapowers)
+    public void EnableSP(Starpower[] starpowers)
     {
-        List<Starpower> rangedSP = new List<Starpower>(SongObject.GetRange(stapowers, editor.minPos, editor.maxPos));
+        List<Starpower> rangedSP = new List<Starpower>(SongObject.GetRange(starpowers, editor.minPos, editor.maxPos));
 
         int arrayPos = SongObject.FindClosestPosition(editor.minPos, editor.currentChart.starPower);
         if (arrayPos != SongObject.NOTFOUND)
@@ -146,7 +149,7 @@ public class SongObjectPoolManager : MonoBehaviour {
                 --arrayPos;
             }
             // Render previous sp sustain in case of overlap into current position
-            if (arrayPos >= 0)
+            if (arrayPos >= 0 && editor.currentChart.starPower[arrayPos].position + editor.currentChart.starPower[arrayPos].length > editor.minPos)
             {
                 rangedSP.Add(editor.currentChart.starPower[arrayPos]);
             }

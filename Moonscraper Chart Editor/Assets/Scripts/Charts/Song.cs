@@ -465,11 +465,6 @@ public class Song {
             GameObject.Destroy(audioStreams[audioStreamArrayPos]);
         }
 #endif
-        audioSampleData[audioStreamArrayPos].Stop();
-        audioSampleData[audioStreamArrayPos] = new SampleData(filepath);
-        audioSampleData[audioStreamArrayPos].ReadAudioFile();
-
-        filepath = filepath.Replace('\\', '/');
         
         if (filepath != string.Empty && File.Exists(filepath))
         {
@@ -481,7 +476,13 @@ public class Song {
             {
                 throw new System.Exception("Invalid file extension");
             }
-            
+
+            audioSampleData[audioStreamArrayPos].Stop();
+            audioSampleData[audioStreamArrayPos] = new SampleData(filepath);
+            audioSampleData[audioStreamArrayPos].ReadAudioFile();
+
+            filepath = filepath.Replace('\\', '/');
+
             // Record the filepath
             audioLocations[audioStreamArrayPos] = Path.GetFullPath(filepath);
             ++audioLoads;

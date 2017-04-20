@@ -26,8 +26,10 @@ public class NoteVisualsManager : MonoBehaviour {
 
     void LateUpdate()
     {        
-        // Placed in late update to be able to manipulate the animator
-        UpdateVisuals();
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+            UpdateVisuals();
+
+        Animate();
     }
 
     // Update is called once per frame
@@ -44,6 +46,8 @@ public class NoteVisualsManager : MonoBehaviour {
             noteRenderer.sortingOrder = -Mathf.Abs((int)note.position);
         }
     }
+
+    protected virtual void Animate() {}
 
     public static Note.Note_Type GetTypeWithViewChange(Note note)
     {

@@ -221,7 +221,7 @@ public class ChartEditor : MonoBehaviour {
         }
 
         if (Input.GetMouseButtonDown(0))
-            clickedSelectableObject = Mouse.GetSelectableObjectUnderMouse();
+            clickedSelectableObject = Mouse.currentSelectableUnderMouse;
         else if (Input.GetMouseButtonUp(0))
             clickedSelectableObject = null;
 
@@ -256,7 +256,7 @@ public class ChartEditor : MonoBehaviour {
                 currentSelectedObject = null;
             }
 
-            if (Input.GetMouseButtonUp(0) && !Mouse.GetSelectableObjectUnderMouse() && !Mouse.IsUIUnderPointer() && mousePos == Input.mousePosition && !Globals.modifierInputActive)
+            if (Input.GetMouseButtonUp(0) && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer() && mousePos == Input.mousePosition && !Globals.modifierInputActive)
             {
                 currentSelectedObject = null;
                 mousePos = Vector3.zero;

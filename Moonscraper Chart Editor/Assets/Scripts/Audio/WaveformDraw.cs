@@ -165,6 +165,7 @@ public class WaveformDraw : MonoBehaviour {
         int endPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMax.position.y) - fullOffset, iteration, channels, currentSample.length);
 
         int skipFactor = channels * iteration;
+
         Vector3[] points = new Vector3[Mathf.CeilToInt((endPos - startPos) / (float)skipFactor)];
         //List<Vector3> points = new List<Vector3>();
 #if false

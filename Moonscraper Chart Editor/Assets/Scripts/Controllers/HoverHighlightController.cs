@@ -28,7 +28,7 @@ public class HoverHighlightController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         // Show a preview if the user will click on an object
-        GameObject songObject = Mouse.GetSelectableObjectUnderMouse();
+        GameObject songObject = Mouse.currentSelectableUnderMouse;
         foreach (GameObject highlight in highlights)
         {
             highlight.SetActive(false);
