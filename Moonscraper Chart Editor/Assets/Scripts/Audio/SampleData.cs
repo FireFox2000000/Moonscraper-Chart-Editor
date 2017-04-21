@@ -1,4 +1,4 @@
-﻿//#define BASS_AUDIO
+﻿#define BASS_AUDIO
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -43,7 +43,7 @@ public class SampleData {
         if (this.filepath != string.Empty)
         {
 #if BASS_AUDIO
-            handle = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT);
+            handle = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE);
             BASS_SAMPLE info = Bass.BASS_SampleGetInfo(handle);
 
             length = (float)Bass.BASS_ChannelBytes2Seconds(handle, Bass.BASS_ChannelGetLength(handle, BASSMode.BASS_POS_BYTES));
@@ -97,7 +97,10 @@ public class SampleData {
         if (handle != 0)
         {
             if (Bass.BASS_StreamFree(handle))
+            {
+                handle = 0;
                 Debug.Log("Sample handle freed");
+            }
             else
                 Debug.LogError("Error while freeing sample data handle");
         }
@@ -115,12 +118,29 @@ public class SampleData {
         if (filepath != string.Empty && File.Exists(filepath))
         {
 #if BASS_AUDIO
-
+            /*
             int byteLength = (int)Bass.BASS_ChannelGetLength(handle, BASSMode.BASS_POS_BYTES | BASSMode.BASS_POS_OGG);
             Debug.Log(byteLength);
-            Debug.Log(handle);
-            const int iteration = 20;
+            Debug.Log(handle);*/
+
+            long trackLengthInBytes = Bass.BASS_ChannelGetLength(handle);
+            const float FRAME_TIME = 0.002f;
+            long frameLengthInBytes = Bass.BASS_ChannelSeconds2Bytes(handle, FRAME_TIME);
+            int NumFrames = (int)System.Math.Round(1f * trackLengthInBytes / frameLengthInBytes);
+            
+            _data = new float[NumFrames * 2];
+
+            float[] levels = new float[2];
+            for (int i = 0; i < _data.Length; i += 2)
+            {
+                Bass.BASS_ChannelGetLevel(handle, levels, FRAME_TIME, BASSLevel.BASS_LEVEL_STEREO);
+                float average = (levels[0] + levels[1]) / 2.0f;
+                _data[i] = -average;
+                _data[i + 1] = average;
+            }
 #if true
+
+#elif true
             float[] samples = new float[byteLength / sizeof(float)];
             int length = Bass.BASS_ChannelGetData(handle, samples, byteLength);
             if (length == -1)
