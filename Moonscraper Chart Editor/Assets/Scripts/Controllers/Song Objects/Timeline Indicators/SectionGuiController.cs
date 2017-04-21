@@ -7,6 +7,7 @@ public class SectionGuiController : TimelineIndicator
     public Section section { get { return (Section)songObject; } set { songObject = value; } }
     MovementController movement;
     UnityEngine.UI.Text timelineText;
+    string prevName = string.Empty;
 
     protected override void Awake()
     {
@@ -16,9 +17,19 @@ public class SectionGuiController : TimelineIndicator
         timelineText = GetComponentInChildren<UnityEngine.UI.Text>();
     }
 
-    protected override void LateUpdate()
+    void LateUpdate()
     {
-        base.LateUpdate();
+        if (songObject != null && songObject.song != null && prevName != section.title)
+        {
+            ExplicitUpdate();
+        }
+
+        prevName = section.title;
+    }
+
+    protected override void ExplicitUpdate()
+    {
+        base.ExplicitUpdate();
         if (section != null)
             timelineText.text = section.title;
     }

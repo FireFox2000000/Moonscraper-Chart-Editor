@@ -260,7 +260,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         switch (songAudioIndex)
         {
             case (0):
-                editor.currentSong.musicSample.Stop();
+                editor.currentSong.musicSample.Free();
                 if (editor.currentSong.songAudioLoaded)
                 {
 #if !BASS_AUDIO
@@ -273,7 +273,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 #endif
                 break;
             case (1):
-                editor.currentSong.guitarSample.Stop();
+                editor.currentSong.guitarSample.Free();
                 if (editor.currentSong.guitarAudioLoaded)
                 {
 #if !BASS_AUDIO
@@ -286,7 +286,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 #endif
                 break;
             case (2):
-                editor.currentSong.rhythmSample.Stop();
+                editor.currentSong.rhythmSample.Free();
                 if (editor.currentSong.rhythmAudioLoaded)
                 {
 #if !BASS_AUDIO

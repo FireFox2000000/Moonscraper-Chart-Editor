@@ -401,10 +401,12 @@ public class ChartEditor : MonoBehaviour {
         //if (editCheck())
         if (wantsToQuit)
         {
-            currentSong.musicSample.Stop();
-            currentSong.guitarSample.Stop();
-            currentSong.rhythmSample.Stop();
-            currentSong.FreeBassAudioStreams();
+            FreeAudio();
+            /*
+            currentSong.musicSample.Free();
+            currentSong.guitarSample.Free();
+            currentSong.rhythmSample.Free();
+            currentSong.FreeBassAudioStreams();*/
 
             Bass.BASS_Free();
             Debug.Log("Freed Bass Audio memory");
@@ -460,7 +462,7 @@ public class ChartEditor : MonoBehaviour {
             return;
 
         lastLoadedFile = string.Empty;
-        FreeAudioClips();
+        FreeAudio();
         currentSong = new Song();
 
         LoadSong(currentSong);
@@ -879,10 +881,10 @@ public class ChartEditor : MonoBehaviour {
             Debug.Log("Mid conversion time: " + (Time.realtimeSinceStartup - totalLoadTime));
 #endif
         }
-
-        currentSong.musicSample.Stop();
-        currentSong.guitarSample.Stop();
-        currentSong.rhythmSample.Stop();
+        /*
+        currentSong.musicSample.Free();
+        currentSong.guitarSample.Free();
+        currentSong.rhythmSample.Free();*/
 
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
@@ -892,7 +894,7 @@ public class ChartEditor : MonoBehaviour {
         yield return null;
 
         // Free the audio clips
-        FreeAudioClips();
+        FreeAudio();
 
         System.Threading.Thread songLoadThread = new System.Threading.Thread(() => 
         {
@@ -1073,10 +1075,15 @@ public class ChartEditor : MonoBehaviour {
 #endif
     }
 
-    public void FreeAudioClips()
+    public void FreeAudio()
     {
+        currentSong.musicSample.Free();
+        currentSong.guitarSample.Free();
+        currentSong.rhythmSample.Free();
 #if !BASS_AUDIO
         currentSong.FreeAudioClips();
+#else
+        currentSong.FreeBassAudioStreams();
 #endif
         /*
         foreach (AudioSource source in musicSources)
@@ -1175,10 +1182,16 @@ public class ChartEditor : MonoBehaviour {
         if (right == null)
             right = 0;
 
-        Vector2 bottomLeft = new Vector2((float)left, currentSong.ChartPositionToWorldYPosition(songObjectsCopy[0].position));
-        Vector2 upperRight = new Vector2((float)right, currentSong.ChartPositionToWorldYPosition(songObjectsCopy[songObjectsCopy.Length - 1].position));
+        Vector2 bottomLeft = Vector2.zero;
+        Vector2 upperRight = Vector2.zero;
+        var area = new Clipboard.SelectionArea();
 
-        var area = new Clipboard.SelectionArea(bottomLeft, upperRight, songObjectsCopy[0].position, songObjectsCopy[songObjectsCopy.Length - 1].position);
+        if (currentSelectedObjects.Length > 0)
+        {
+            bottomLeft = new Vector2((float)left, currentSong.ChartPositionToWorldYPosition(songObjectsCopy[0].position));
+            upperRight = new Vector2((float)right, currentSong.ChartPositionToWorldYPosition(songObjectsCopy[songObjectsCopy.Length - 1].position));
+            area = new Clipboard.SelectionArea(bottomLeft, upperRight, songObjectsCopy[0].position, songObjectsCopy[songObjectsCopy.Length - 1].position);
+        }        
 
         ClipboardObjectController.clipboard = new Clipboard(songObjectsCopy, area, currentSong);
     }

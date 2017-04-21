@@ -1,4 +1,4 @@
-﻿#define BASS_AUDIO
+﻿//#define BASS_AUDIO
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -90,23 +90,21 @@ public class SampleData {
         }
     }
 
-    public void Stop()
+    public void Free()
     {
         stop = true;
-
-        //if (loadThread.IsAlive)
-            //loadThread.Abort();
-    }
-
-    public void SetData (float[] data)
-    {
-        _data = data;
+        _data = new float[0];
+        if (handle != 0)
+        {
+            if (Bass.BASS_StreamFree(handle))
+                Debug.Log("Sample handle freed");
+            else
+                Debug.LogError("Error while freeing sample data handle");
+        }
     }
 
     public void ReadAudioFile()
-    {
-        //if (loadThread.IsAlive)
-          //  loadThread.Abort();       
+    {     
         _data = new float[0];
 
         loadThread.Start(); 
@@ -117,21 +115,93 @@ public class SampleData {
         if (filepath != string.Empty && File.Exists(filepath))
         {
 #if BASS_AUDIO
-            float[] samples = new float[32768];
-            int byteLength = (int)Bass.BASS_ChannelGetLength(handle, BASSMode.BASS_POS_BYTES);
 
-            _data = new float[byteLength / 4];
+            int byteLength = (int)Bass.BASS_ChannelGetLength(handle, BASSMode.BASS_POS_BYTES | BASSMode.BASS_POS_OGG);
+            Debug.Log(byteLength);
+            Debug.Log(handle);
+            const int iteration = 20;
+#if true
+            float[] samples = new float[byteLength / sizeof(float)];
+            int length = Bass.BASS_ChannelGetData(handle, samples, byteLength);
+            if (length == -1)
+            {
+                Debug.LogError(Bass.BASS_ErrorGetCode());
+                return;
+            }
+            _data = new float[(int)System.Math.Ceiling((float)length / (iteration * (float)channels) / sizeof(float))];
+
+            int count = 0;
+            for (int i = 0; i + channels < samples.Length; i += iteration * channels)
+            {
+                
+                    if (stop)
+                        break;
+
+                    float sampleAverage = 0;
+
+                    for (int j = 0; j < channels; ++j)
+                    {
+                    try
+                    {
+                        sampleAverage += samples[i + j];
+                    }
+                    catch (System.Exception e)
+                    {
+                        //Debug.LogError("1: " + count + ", " + e.Message);
+                    }
+                }
+
+                    sampleAverage /= channels;
+                try
+                {
+                    _data[count++] = sampleAverage;
+                }
+                catch (System.Exception e)
+                {
+                    //Debug.LogError("2: " + count + ", " + e.Message);
+                }
+
+            }
+
+#else
+
+            _data = new float[(int)System.Math.Ceiling((float)byteLength / (iteration * (float)channels) / sizeof(float))];
             int offset = 0;
-
+            int count = 0;
+            int startOffset = 0;
+            float[] samples = new float[32768];
             while (Bass.BASS_ChannelIsActive(handle) == BASSActive.BASS_ACTIVE_PLAYING && !stop)
             {
-                int length = Bass.BASS_ChannelGetData(handle, samples, samples.Length * 4);
-                System.Buffer.BlockCopy(samples, 0, _data, offset, length);
+                int length = Bass.BASS_ChannelGetData(handle, samples, samples.Length);
+                Debug.Log(length);
+                try
+                {
+                    int i;
 
-                offset += length;
+                    for (i = startOffset; i < length; i += iteration * channels)
+                    {                 
+                        float sampleAverage = 0;
+
+                        for (int j = 0; j < channels; ++j)
+                        {
+                            sampleAverage += samples[i + j];
+                        }
+
+                        sampleAverage /= channels;
+                        
+                        _data[count++] = sampleAverage;
+                    }
+                
+                    //System.Buffer.BlockCopy(samples, 0, _data, offset, length);
+                    startOffset = i - length;
+                    offset += length;
+                }
+                catch (System.Exception e) { Debug.LogError(e.Message); }
             }
+#endif
 #else
             byte[] bytes = File.ReadAllBytes(filepath);
+            float[] sampleData = new float[0]; 
             switch (Path.GetExtension(filepath))
             {
                 case (".ogg"):   
@@ -157,9 +227,6 @@ public class SampleData {
                     break;
                 case (".mp3"):
                     NAudioPlayer.WAVFromMp3Data(bytes, out sampleData);
-                    //NAudio.Wave.Mp3FileReader mp3 = new NAudio.Wave.Mp3FileReader(filepath);
-                    //mp3.ToSampleProvider().Read(new float[16000], 3, 16000);
-
                     break;
                 default:
                     return;
@@ -167,7 +234,9 @@ public class SampleData {
 #endif
             if (!stop)
             {
-                //_data = sampleData;
+#if !BASS_AUDIO
+                _data = sampleData;
+#endif
 
                 Debug.Log("Sample length: " + _data.Length);
             }

@@ -50,7 +50,12 @@ public class Song {
         set
         {
             if (bassAudioStreams[MUSIC_STREAM_ARRAY_POS] != 0)
-                Bass.BASS_StreamFree(bassAudioStreams[MUSIC_STREAM_ARRAY_POS]);
+            {
+                if (Bass.BASS_StreamFree(bassAudioStreams[MUSIC_STREAM_ARRAY_POS]))
+                    Debug.Log("Song audio stream successfully freed");
+                else
+                    Debug.LogError("Error while attempting to free song audio stream");
+            }
 
             bassAudioStreams[MUSIC_STREAM_ARRAY_POS] = value;
         }
@@ -61,7 +66,12 @@ public class Song {
         set
         {
             if (bassAudioStreams[GUITAR_STREAM_ARRAY_POS] != 0)
-                Bass.BASS_StreamFree(bassAudioStreams[GUITAR_STREAM_ARRAY_POS]);
+            {
+                if (Bass.BASS_StreamFree(bassAudioStreams[GUITAR_STREAM_ARRAY_POS]))
+                    Debug.Log("Guitar audio stream successfully freed");
+                else
+                    Debug.LogError("Error while attempting to free guitar audio stream");
+            }
 
             bassAudioStreams[GUITAR_STREAM_ARRAY_POS] = value;
         }
@@ -75,7 +85,12 @@ public class Song {
         set
         {
             if (bassAudioStreams[RHYTHM_STREAM_ARRAY_POS] != 0)
-                Bass.BASS_StreamFree(bassAudioStreams[RHYTHM_STREAM_ARRAY_POS]);
+            {
+                if (Bass.BASS_StreamFree(bassAudioStreams[RHYTHM_STREAM_ARRAY_POS]))
+                    Debug.Log("Rhythm audio stream successfully freed");
+                else
+                    Debug.LogError("Error while attempting to free rhythm audio stream");
+            }
 
             bassAudioStreams[RHYTHM_STREAM_ARRAY_POS] = value;
         }
@@ -320,11 +335,19 @@ public class Song {
 
     public void FreeBassAudioStreams()
     {
-        foreach (int stream in bassAudioStreams)
+        for (int i = 0; i < bassAudioStreams.Length; ++i)
         {
-            if (stream != 0)
-                Bass.BASS_StreamFree(stream);
+            if (bassAudioStreams[i] != 0)
+            {
+                if (!Bass.BASS_StreamFree(bassAudioStreams[i]))
+                    Debug.LogError("Error while freeing audio stream " + bassAudioStreams[i]);
+                else
+                    bassAudioStreams[i] = 0;
+            }
         }
+
+        foreach (SampleData sample in audioSampleData)
+            sample.Free();
     }
 #endif
     void LoadChartFile(string filepath)
@@ -477,19 +500,20 @@ public class Song {
                 throw new System.Exception("Invalid file extension");
             }
 
-            audioSampleData[audioStreamArrayPos].Stop();
-            audioSampleData[audioStreamArrayPos] = new SampleData(filepath);
-            audioSampleData[audioStreamArrayPos].ReadAudioFile();
-
             filepath = filepath.Replace('\\', '/');
 
             // Record the filepath
             audioLocations[audioStreamArrayPos] = Path.GetFullPath(filepath);
             ++audioLoads;
 #if BASS_AUDIO
-            // Load Bass Audio Streams
+                   
             System.Threading.Thread streamCreateFileThread = new System.Threading.Thread(() =>
             {
+                // Load Bass Audio Streams   
+                audioSampleData[audioStreamArrayPos].Free();
+                audioSampleData[audioStreamArrayPos] = new SampleData(filepath);
+                audioSampleData[audioStreamArrayPos].ReadAudioFile();
+
                 bassAudioStreams[audioStreamArrayPos] = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE);
                 bassAudioStreams[audioStreamArrayPos] = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_TempoCreate(bassAudioStreams[audioStreamArrayPos], BASSFlag.BASS_FX_FREESOURCE);
             });
@@ -646,7 +670,7 @@ public class Song {
         // Search for the last bpm
         foreach (BPM bpmInfo in bpms)
         {
-            if (ChartPositionToTime(bpmInfo.position, resolution) >= time)
+            if (bpmInfo.assignedTime >= time)
             {
                 break;
             }
@@ -657,7 +681,7 @@ public class Song {
         }
 
         position = prevBPM.position;
-        position += time_to_dis(ChartPositionToTime(prevBPM.position, resolution), time, resolution, prevBPM.value / 1000.0f);
+        position += time_to_dis(prevBPM.time, time, resolution, prevBPM.value / 1000.0f);
 
         return position;
     }
@@ -669,12 +693,14 @@ public class Song {
     /// <returns>Returns the value of the bpm that was found.</returns>
     public uint GetPrevBPM(uint position)
     {
-        for (int i = 0; i < bpms.Length; ++i)
+        int closestPos = SongObject.FindClosestPosition(position, bpms);
+        if (closestPos != SongObject.NOTFOUND)
         {
-            if (i + 1 >= bpms.Length)
-                return bpms[i].value;
-            else if (bpms[i + 1].position > position)
-                return bpms[i].value;
+            // Select the smaller of the two
+            if (bpms[closestPos].position <= position)
+                return bpms[closestPos].position;
+            else if (closestPos > 0)
+                return bpms[closestPos - 1].position;
         }
 
         return bpms[0].value;
@@ -687,12 +713,14 @@ public class Song {
     /// <returns>Returns the value of the time signature that was found.</returns>
     public uint GetPrevTS(uint position)
     {
-        for (int i = 0; i < timeSignatures.Length; ++i)
+        int closestPos = SongObject.FindClosestPosition(position, timeSignatures);
+        if (closestPos != SongObject.NOTFOUND)
         {
-            if (i + 1 >= timeSignatures.Length)
-                return timeSignatures[i].numerator;
-            else if (timeSignatures[i + 1].position > position)
-                return timeSignatures[i].numerator;
+            // Select the smaller of the two
+            if (timeSignatures[closestPos].position <= position)
+                return timeSignatures[closestPos].position;
+            else if (closestPos > 0)
+                return timeSignatures[closestPos - 1].position;
         }
 
         return timeSignatures[0].numerator;

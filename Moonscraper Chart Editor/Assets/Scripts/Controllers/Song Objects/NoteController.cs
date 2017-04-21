@@ -227,7 +227,7 @@ public class NoteController : SongObjectController {
                     (endPosition > editor.minPos && endPosition < editor.maxPos) ||
                     (note.position < editor.minPos && endPosition >= editor.maxPos))
             {
-                if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+                //if (Globals.applicationMode == Globals.ApplicationMode.Editor)
                     UpdateSongObject();
             }
             else
