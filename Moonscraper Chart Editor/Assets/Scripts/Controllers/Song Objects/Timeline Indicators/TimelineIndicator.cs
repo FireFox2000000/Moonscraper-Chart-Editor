@@ -11,12 +11,12 @@ public abstract class TimelineIndicator : MonoBehaviour {
     {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
     }
-
+    /*
     void OnEnable()
     {
         if (songObject != null && songObject.song != null)
            ExplicitUpdate();
-    }
+    }*/
 
     protected Vector3 GetLocalPos(uint position, Song song)
     {
@@ -29,7 +29,7 @@ public abstract class TimelineIndicator : MonoBehaviour {
             return Vector3.zero;
     }
 
-    protected virtual void ExplicitUpdate()
+    public virtual void ExplicitUpdate()
     {
         if (songObject != null && songObject.song != null)
             transform.localPosition = GetLocalPos(songObject.position, songObject.song);

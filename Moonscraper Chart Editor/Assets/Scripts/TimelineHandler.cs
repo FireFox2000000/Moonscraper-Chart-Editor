@@ -123,6 +123,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
                 {
                     sectionIndicatorPool[i].section = editor.currentSong.sections[i];
                     sectionIndicatorPool[i].gameObject.SetActive(true);
+                    sectionIndicatorPool[i].ExplicitUpdate();
                 }
                 else
                 {
@@ -147,6 +148,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
                 {
                     starpowerIndicatorPool[i].starpower = editor.currentChart.starPower[i];
                     starpowerIndicatorPool[i].gameObject.SetActive(true);
+                    starpowerIndicatorPool[i].ExplicitUpdate();
                 }
                 else
                 {

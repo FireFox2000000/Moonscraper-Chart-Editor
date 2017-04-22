@@ -25,6 +25,7 @@ public class SettingsController : DisplayMenu
 
     public InputField sustainGapInput;
     public Dropdown gameplayStartDelayDropdown;
+    public Dropdown fpsSelectDropdown;
 
     protected override void Awake()
     {
@@ -79,6 +80,22 @@ public class SettingsController : DisplayMenu
         else
             leftyFlipToggle.isOn = false;
 
+        switch(Application.targetFrameRate)
+        {
+            case (60):
+                fpsSelectDropdown.value = 0;
+                break;
+            case (120):
+                fpsSelectDropdown.value = 1;
+                break;
+            case (240):
+                fpsSelectDropdown.value = 2;
+                break;
+            default:
+                fpsSelectDropdown.value = 3;
+                break;
+        }
+
         // Set volume sliders
         masterVolumeSlider.value = Globals.vol_master * 10.0f;
         musicSourceSlider.value = Globals.vol_song;
@@ -102,6 +119,15 @@ public class SettingsController : DisplayMenu
         editor.SetVolume();
         Update();
     }  
+
+    public void SetFPS(int dropdownValue)
+    {
+        int fps = 60 * (int)(Mathf.Pow(2, dropdownValue));
+        if (fps > 240)
+            Application.targetFrameRate = -1;
+        else
+            Application.targetFrameRate = fps;
+    }
 
     public void SetClapStrum(bool value)
     {

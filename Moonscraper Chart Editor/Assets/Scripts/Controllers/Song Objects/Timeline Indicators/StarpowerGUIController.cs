@@ -17,7 +17,7 @@ public class StarpowerGUIController : TimelineIndicator {
         prevLength = starpower.length;
     }
 
-    protected override void ExplicitUpdate()
+    public override void ExplicitUpdate()
     {
         base.ExplicitUpdate();
         // Change scale to represent starpower length

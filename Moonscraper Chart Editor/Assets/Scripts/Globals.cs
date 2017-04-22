@@ -128,7 +128,13 @@ public class Globals : MonoBehaviour {
         INIParser iniparse = new INIParser();
 
         iniparse.Open("config.ini");
-        
+        // Check for valid fps values
+        int fps = iniparse.ReadValue("Settings", "Framerate", 120);
+        if (fps != 60 && fps != 120 && fps != 240)
+            Application.targetFrameRate = -1;
+        else
+            Application.targetFrameRate = fps;
+
         hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
         audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 0);
         clapCalibrationMS = iniparse.ReadValue("Settings", "Clap calibration", 0);
@@ -300,6 +306,7 @@ public class Globals : MonoBehaviour {
         INIParser iniparse = new INIParser();
         iniparse.Open(workingDirectory + "\\config.ini");
 
+        iniparse.WriteValue("Settings", "Framerate", Application.targetFrameRate);
         iniparse.WriteValue("Settings", "Hyperspeed", hyperspeed);
         iniparse.WriteValue("Settings", "Audio calibration", audioCalibrationMS);
         iniparse.WriteValue("Settings", "Clap calibration", clapCalibrationMS);

@@ -27,7 +27,7 @@ public class SectionGuiController : TimelineIndicator
         prevName = section.title;
     }
 
-    protected override void ExplicitUpdate()
+    public override void ExplicitUpdate()
     {
         base.ExplicitUpdate();
         if (section != null)

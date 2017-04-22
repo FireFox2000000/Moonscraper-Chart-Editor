@@ -21,8 +21,6 @@ public class WaveformDraw : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        //if (currentSample != null)
-           // Debug.Log(currentSample.data.Length);
         switch (waveformSelect.value)
         {
             case (0):
@@ -69,34 +67,24 @@ public class WaveformDraw : MonoBehaviour {
         const int iteration = 1;// 20;
         int channels = 1;// currentSample.channels;
         float fullOffset = -editor.currentSong.offset;
+
+        // Determine what points of data to draw
         int startPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMin.position.y) - fullOffset, iteration, channels, currentSample.length);
         int endPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMax.position.y) - fullOffset, iteration, channels, currentSample.length);
 
-        int skipFactor = channels * iteration;
-
-        Vector3[] points = new Vector3[Mathf.CeilToInt((endPos - startPos) / (float)skipFactor)];
+        Vector3[] points = new Vector3[endPos - startPos];
 #if false
         if (currentSample.clip > 0)
             scaling = (MAX_SCALE / currentSample.clip);
 #endif
 
+        // Turn data into world-position points to feed the line renderer
         Vector3 point = Vector3.zero;
-        for (int i = startPos; i < endPos; i += skipFactor)
+        for (int i = startPos; i < endPos; ++i)
         {
-            float sampleAverage = 0;
-
-            for (int j = 0; j < channels; ++j)
-            {
-                sampleAverage += currentSample.data[i + j];
-            }
-
-            sampleAverage /= channels;
-
-            point.x = sampleAverage * scaling;
+            point.x = currentSample.data[i] * scaling;
             point.y = Song.TimeToWorldYPosition(i * sampleRate + fullOffset);
-            points[(i - startPos) / skipFactor] = point;
-
-            //points[i - startPos] = new Vector3(sampleAverage * scaling, Song.TimeToWorldYPosition(i * sampleRate + fullOffset), 0);
+            points[i - startPos] = point;
         }
 
         lineRen.numPositions = points.Length;

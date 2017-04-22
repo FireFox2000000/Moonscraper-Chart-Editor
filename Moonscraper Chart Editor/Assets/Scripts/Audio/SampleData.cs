@@ -118,11 +118,6 @@ public class SampleData {
         if (filepath != string.Empty && File.Exists(filepath))
         {
 #if BASS_AUDIO
-            /*
-            int byteLength = (int)Bass.BASS_ChannelGetLength(handle, BASSMode.BASS_POS_BYTES | BASSMode.BASS_POS_OGG);
-            Debug.Log(byteLength);
-            Debug.Log(handle);*/
-
             long trackLengthInBytes = Bass.BASS_ChannelGetLength(handle);
             const float FRAME_TIME = 0.002f;
             long frameLengthInBytes = Bass.BASS_ChannelSeconds2Bytes(handle, FRAME_TIME);
@@ -131,94 +126,14 @@ public class SampleData {
             _data = new float[NumFrames * 2];
 
             float[] levels = new float[2];
-            for (int i = 0; i < _data.Length; i += 2)
+            for (int i = 0; i < _data.Length && !stop; i += 2)
             {
                 Bass.BASS_ChannelGetLevel(handle, levels, FRAME_TIME, BASSLevel.BASS_LEVEL_STEREO);
                 float average = (levels[0] + levels[1]) / 2.0f;
                 _data[i] = -average;
                 _data[i + 1] = average;
             }
-#if true
 
-#elif true
-            float[] samples = new float[byteLength / sizeof(float)];
-            int length = Bass.BASS_ChannelGetData(handle, samples, byteLength);
-            if (length == -1)
-            {
-                Debug.LogError(Bass.BASS_ErrorGetCode());
-                return;
-            }
-            _data = new float[(int)System.Math.Ceiling((float)length / (iteration * (float)channels) / sizeof(float))];
-
-            int count = 0;
-            for (int i = 0; i + channels < samples.Length; i += iteration * channels)
-            {
-                
-                    if (stop)
-                        break;
-
-                    float sampleAverage = 0;
-
-                    for (int j = 0; j < channels; ++j)
-                    {
-                    try
-                    {
-                        sampleAverage += samples[i + j];
-                    }
-                    catch (System.Exception e)
-                    {
-                        //Debug.LogError("1: " + count + ", " + e.Message);
-                    }
-                }
-
-                    sampleAverage /= channels;
-                try
-                {
-                    _data[count++] = sampleAverage;
-                }
-                catch (System.Exception e)
-                {
-                    //Debug.LogError("2: " + count + ", " + e.Message);
-                }
-
-            }
-
-#else
-
-            _data = new float[(int)System.Math.Ceiling((float)byteLength / (iteration * (float)channels) / sizeof(float))];
-            int offset = 0;
-            int count = 0;
-            int startOffset = 0;
-            float[] samples = new float[32768];
-            while (Bass.BASS_ChannelIsActive(handle) == BASSActive.BASS_ACTIVE_PLAYING && !stop)
-            {
-                int length = Bass.BASS_ChannelGetData(handle, samples, samples.Length);
-                Debug.Log(length);
-                try
-                {
-                    int i;
-
-                    for (i = startOffset; i < length; i += iteration * channels)
-                    {                 
-                        float sampleAverage = 0;
-
-                        for (int j = 0; j < channels; ++j)
-                        {
-                            sampleAverage += samples[i + j];
-                        }
-
-                        sampleAverage /= channels;
-                        
-                        _data[count++] = sampleAverage;
-                    }
-                
-                    //System.Buffer.BlockCopy(samples, 0, _data, offset, length);
-                    startOffset = i - length;
-                    offset += length;
-                }
-                catch (System.Exception e) { Debug.LogError(e.Message); }
-            }
-#endif
 #else
             byte[] bytes = File.ReadAllBytes(filepath);
             float[] sampleData = new float[0]; 
@@ -235,9 +150,6 @@ public class SampleData {
                     int count = 0;
                     while ((count += vorbis.ReadSamples(_data, count, 16000)) > 0 && !stop)
                     {
-                        //count += vorbis.Channels * 20;
-                        //vorbis.DecodedPosition += 2000;
-                        //Debug.Log(loadThread.ThreadState);
                     }
                     
                     break;
