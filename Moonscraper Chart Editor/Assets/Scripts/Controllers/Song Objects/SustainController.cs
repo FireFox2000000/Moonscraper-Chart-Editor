@@ -1,6 +1,4 @@
-﻿#define WHAMMY
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -10,22 +8,17 @@ public class SustainController : SelectableClick {
     public Skin customSkin;
 
     ChartEditor editor;
-#if WHAMMY
+
     LineRenderer sustainRen;
-#else
-    SpriteRenderer sustainRen;
-#endif
 
     List<Note[]> unmodifiedNotes = new List<Note[]>();
 
     public void Awake()
     {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
-#if WHAMMY
+
         sustainRen = GetComponent<LineRenderer>();
-#else
-        sustainRen = GetComponent<SpriteRenderer>();
-#endif
+
         if (sustainRen)
             sustainRen.sortingLayerName = "Sustains";
     }
@@ -87,15 +80,8 @@ public class SustainController : SelectableClick {
 
     public void UpdateSustain()
     {
-        //ForwardCap();
         if (sustainRen)
         {          
-#if !WHAMMY
-            if (nCon.note.fret_type == Note.Fret_Type.OPEN)
-                sustainRen.sprite = PrefabGlobals.openSustainSprite;
-            else
-                sustainRen.sprite = PrefabGlobals.standardSustainSprite;
-#endif
             UpdateSustainLength();
 
             if (customSkin.sustain_mats[(int)nCon.note.fret_type])

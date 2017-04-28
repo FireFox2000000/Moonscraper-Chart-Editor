@@ -4,9 +4,17 @@ using UnityEngine;
 
 public class Note2D3DSelector : MonoBehaviour {
     public NoteController nCon;
-    public GameObject note2D;
-    public GameObject note3D;
+    public NoteVisuals2DManager note2D;
+    public NoteVisuals3DManager note3D;
     public Skin customSkin;
+
+    public NoteVisualsManager currentVisualsManager
+    {
+        get
+        {
+            return note2D.gameObject.activeSelf ? note2D : (NoteVisualsManager)note3D;
+        }
+    }
 
     void Start()
     {
@@ -15,13 +23,13 @@ public class Note2D3DSelector : MonoBehaviour {
             switch (AssignCustomResources.noteSpritesAvaliable)
             {
                 case (Skin.AssestsAvaliable.All):
-                    note2D.SetActive(true);
-                    note3D.SetActive(false);
+                    note2D.gameObject.SetActive(true);
+                    note3D.gameObject.SetActive(false);
                     enabled = false;
                     break;
                 case (Skin.AssestsAvaliable.None):
-                    note2D.SetActive(false);
-                    note3D.SetActive(true);
+                    note2D.gameObject.SetActive(false);
+                    note3D.gameObject.SetActive(true);
                     enabled = false;
                     break;
                 default:
@@ -31,7 +39,10 @@ public class Note2D3DSelector : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () {
+	public void UpdateSelectedGameObject () {
+        if (!enabled)
+            return;
+
         Note note = nCon.note;
         Note.Note_Type noteType = NoteVisualsManager.GetTypeWithViewChange(note);
         Note.Special_Type specialType = NoteVisualsManager.IsStarpower(note);
@@ -69,13 +80,13 @@ public class Note2D3DSelector : MonoBehaviour {
 
         if (textureInSkin)
         {
-            note2D.SetActive(true);
-            note3D.SetActive(false);
+            note2D.gameObject.SetActive(true);
+            note3D.gameObject.SetActive(false);
         }
         else
         {
-            note2D.SetActive(false);
-            note3D.SetActive(true);
+            note2D.gameObject.SetActive(false);
+            note3D.gameObject.SetActive(true);
         }
     }
 }

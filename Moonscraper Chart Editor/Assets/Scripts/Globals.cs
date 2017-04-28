@@ -259,7 +259,13 @@ public class Globals : MonoBehaviour {
                 editor.currentSelectedObject = null;
             }
 
+#if true
+            if (GameplayManager.gamepad != null && GameplayManager.previousGamepad != null &&
+                ((XInputDotNetPure.GamePadState)GameplayManager.gamepad).Buttons.Start == XInputDotNetPure.ButtonState.Pressed &&
+                ((XInputDotNetPure.GamePadState)GameplayManager.previousGamepad).Buttons.Start == XInputDotNetPure.ButtonState.Released)
+#else
             if (Input.GetButtonDown("Start Gameplay"))
+#endif
             {
                 if (applicationMode != ApplicationMode.Playing)
                     editor.StartGameplay();

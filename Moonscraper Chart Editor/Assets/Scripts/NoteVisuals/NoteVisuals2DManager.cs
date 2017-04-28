@@ -15,6 +15,8 @@ public class NoteVisuals2DManager : NoteVisualsManager {
     static int globalAnimationFrame = 0;
     static int lastUpdatedFrame = -1;
 
+    Sprite lastUpdatedSprite = null;
+
     // Use this for initialization
     protected override void Awake()
     {
@@ -82,7 +84,7 @@ public class NoteVisuals2DManager : NoteVisualsManager {
             else if (specialType == Note.Special_Type.STAR_POW)
                 scale = new Vector3(1.2f, 1.2f, 1);
         }
-
+        lastUpdatedSprite = ren.sprite;
         transform.localScale = scale;
     }
 
@@ -95,7 +97,7 @@ public class NoteVisuals2DManager : NoteVisualsManager {
 
     void SpriteAnimation(Note note)
     {
-        if (note != null)
+        if (note != null && lastUpdatedSprite != null)
         {
             if (Time.frameCount != lastUpdatedFrame)
             {
@@ -134,7 +136,7 @@ public class NoteVisuals2DManager : NoteVisualsManager {
             if (animationDataDictionary.TryGetValue(animationName, out animationData))
             { 
                 // Get sprite name and number
-                string spriteText = ren.sprite.name;
+                string spriteText = lastUpdatedSprite.name;
                 string spriteName = string.Empty;
                 int spriteNumber = -1;
 
@@ -153,12 +155,9 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                     int alteredGlobalAnimationFrame = (int)(globalAnimationFrame * animationData.speed);
                     // Change sprite number
                     int frame = alteredGlobalAnimationFrame - ((int)(alteredGlobalAnimationFrame / animationData.offsets.Length) * animationData.offsets.Length);
-                    //Debug.Log(frame + ", " + (animationData.offsets.Length - 1));
-                   // Debug.Log(spriteNumber);
                     spriteNumber += animationData.offsets[frame];
-                    //Debug.Log(spriteNumber);
                     spriteName += spriteNumber.ToString();
-                    //Debug.Log(spriteName);
+
                     Sprite newSprite;
                     if (spritesDictionary.TryGetValue(spriteName, out newSprite))
                     {

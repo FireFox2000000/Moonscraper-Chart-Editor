@@ -20,14 +20,14 @@ public class NoteVisualsManager : MonoBehaviour {
 
     void OnEnable()
     {
-        if (noteRenderer)
-            UpdateVisuals();
+        //if (noteRenderer)
+            //UpdateVisuals();
     }
 
     void LateUpdate()
     {        
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
-            UpdateVisuals();
+        //if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+            //UpdateVisuals();
 
         Animate();
     }
@@ -43,6 +43,8 @@ public class NoteVisualsManager : MonoBehaviour {
             specialType = IsStarpower(note);
 
             // Update note visuals
+            if (!noteRenderer)
+                noteRenderer = GetComponent<Renderer>();
             noteRenderer.sortingOrder = -Mathf.Abs((int)note.position);
         }
     }

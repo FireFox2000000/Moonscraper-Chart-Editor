@@ -12,6 +12,7 @@ public class NoteController : SongObjectController {
     public Note note { get { return (Note)songObject; } set { Init(value); } }
     public SustainController sustain;
     public GameObject noteVisuals;
+    public Note2D3DSelector noteObjectSelector;
     Whammy whammy;  
 
     Renderer noteRenderer;
@@ -56,12 +57,7 @@ public class NoteController : SongObjectController {
             }
             // Regular clicking
             else if (!editor.IsSelected(songObject))
-            {/*
-                if (Globals.secondaryInputActive && editor.currentSelectedObjects.Length > 0)
-                {
-
-                }
-                else*/
+            {
                 if (Input.GetButton("ChordSelect"))
                 {
                     editor.currentSelectedObjects = note.GetChord();
@@ -175,15 +171,10 @@ public class NoteController : SongObjectController {
                 whammy.SetWidth(4);
             }
 
-            // Adjust note hitbox size
-#if NOTE_TYPE_2D
-            hitBox = GetComponent<BoxCollider2D>();
-            if (hitBox)
-                hitBox.size = new Vector2(OPEN_NOTE_COLLIDER_WIDTH, hitBox.size.y);
-#else            
+            // Adjust note hitbox size        
             if (hitBox)
                 hitBox.size = new Vector3(OPEN_NOTE_COLLIDER_WIDTH, hitBox.size.y, hitBox.size.z);
-#endif
+
             Note[] chordNotes = note.GetChord();
 
             // Check for non-open notes and delete
@@ -197,7 +188,7 @@ public class NoteController : SongObjectController {
         }
         else
         {
-            // CHange line renderer to standard note
+            // Change line renderer to standard note
             if (whammy)
             {
                 whammy.widthMultiplier = 1;
@@ -219,23 +210,49 @@ public class NoteController : SongObjectController {
 
     protected override void UpdateCheck()
     {
+        Note note = this.note;
         if (note != null)
         {
             uint endPosition = note.position + note.sustain_length;
-            
+
+            // Determine if a note is outside of the view range
+            if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+            {
+                // Only need to determine if behind strikeline
+                if (endPosition < editor.minPos)
+                    gameObject.SetActive(false);
+                //else
+                   // UpdateSongObject();
+            }
+            else if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+            {
+                if (endPosition < editor.minPos || note.position > editor.maxPos)
+                    gameObject.SetActive(false);
+                else
+                    UpdateSongObject();         // Always update the position in case of hyperspeed changes
+            }
+
+            if (this.note == null)      // Was deactivated
+                return;
+
+            // Sustain is constantly updated unless it has no length or it's length is meant to be zero but isn't
+            if (!(note.sustain_length == 0 && sustain.transform.localScale.y == 0))
+                sustain.UpdateSustain();
+
+            /*
             if ((note.position >= editor.minPos && note.position < editor.maxPos) ||
-                    (endPosition > editor.minPos && endPosition < editor.maxPos) ||
-                    (note.position < editor.minPos && endPosition >= editor.maxPos))
+                (endPosition > editor.minPos && endPosition < editor.maxPos) ||
+                (note.position < editor.minPos && endPosition >= editor.maxPos))
             {
                 //if (Globals.applicationMode == Globals.ApplicationMode.Editor)
-                    UpdateSongObject();
+                    //UpdateSongObject();
             }
             else
             {
                 gameObject.SetActive(false);
                 return;
-            }
-           
+            }*/
+
 
             // Handle gameplay operation
             if (Globals.applicationMode == Globals.ApplicationMode.Playing)
@@ -363,8 +380,8 @@ public class NoteController : SongObjectController {
             // Position
             transform.position = new Vector3(CHART_CENTER_POS + noteToXPos(note), note.worldYPosition, 0);
 
-            if (!(note.sustain_length == 0 && sustain.transform.localScale.y == 0))
-                sustain.UpdateSustain();
+            noteObjectSelector.UpdateSelectedGameObject();
+            noteObjectSelector.currentVisualsManager.UpdateVisuals();
         }
     }
 

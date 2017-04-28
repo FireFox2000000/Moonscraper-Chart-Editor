@@ -44,6 +44,7 @@ public class GameplayManager : MonoBehaviour {
     bool canTap;
 #if GAMEPAD
     public static GamePadState? gamepad;
+    public static GamePadState? previousGamepad;
 #endif
 
     void Start()
@@ -63,9 +64,10 @@ public class GameplayManager : MonoBehaviour {
         uint startNS = noteStreak;
 
 #if GAMEPAD
+        previousGamepad = gamepad;
         gamepad = null;
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
-        {
+        //if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
+        //{
             for (int i = 0; i < 4; ++i)
             {
                 PlayerIndex playerIndex = (PlayerIndex)i;
@@ -76,7 +78,7 @@ public class GameplayManager : MonoBehaviour {
                     break;
                 }
             }
-        }
+       // }
 #endif
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
