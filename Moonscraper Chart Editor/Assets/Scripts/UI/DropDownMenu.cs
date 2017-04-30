@@ -29,7 +29,8 @@ public class DropDownMenu : MonoBehaviour {
     {
         if (pos < menuEvent.Length && pos >= 0)
         {
-            menuEvent[pos].Invoke();
+            if (menuEvent[pos] != null)
+                menuEvent[pos].Invoke();
             titleText.text = title;
 
             resetDropdown();

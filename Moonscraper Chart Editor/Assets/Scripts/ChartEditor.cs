@@ -62,6 +62,10 @@ public class ChartEditor : MonoBehaviour {
     [SerializeField]
     GroupSelect groupSelect;
     public Globals globals;
+    [SerializeField]
+    Dropdown instrumentSelectDropdown;
+    [SerializeField]
+    Dropdown difficultySelectDropdown;
 
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
@@ -72,6 +76,9 @@ public class ChartEditor : MonoBehaviour {
     public Song currentSong { get; private set; }
     public Chart currentChart { get; private set; }
     string currentFileName = string.Empty;
+
+    Song.Instrument currentInstrument = Song.Instrument.Guitar;
+    Song.Difficulty currentDifficulty = Song.Difficulty.Expert;
 
     public MovementController movement;
     SongObjectPoolManager _songObjectPoolManager;
@@ -971,8 +978,11 @@ public class ChartEditor : MonoBehaviour {
     {
         editOccurred = false;
 
+        currentInstrument = Song.Instrument.Guitar;
+        currentDifficulty = Song.Difficulty.Expert;
+
         // Load the default chart
-        LoadChart(song.expert_single);
+        LoadChart(currentSong.GetChart(Song.Instrument.Guitar, Song.Difficulty.Expert));
 #if !BASS_AUDIO
         // Reset audioSources upon successfull load
         foreach (AudioSource source in musicSources)
@@ -1000,65 +1010,80 @@ public class ChartEditor : MonoBehaviour {
         songObjectPoolManager.NewChartReset();
     }
 
+    public void SetInstrument(int value)
+    {
+        currentInstrument = (Song.Instrument)value;
+    }
+
+    public void SetDifficulty(int value)
+    {
+        currentDifficulty = (Song.Difficulty)value;
+    }
+
+    public void LoadCurrentInstumentAndDifficulty()
+    {
+        LoadChart(currentSong.GetChart(currentInstrument, currentDifficulty));
+    }
+
     // For dropdown UI
     public void LoadExpert()
     {
-        LoadChart(currentSong.expert_single);
+        LoadChart(currentSong.GetChart(Song.Instrument.Guitar, Song.Difficulty.Expert));
     }
 
     public void LoadExpertDoubleGuitar()
     {
-        LoadChart(currentSong.expert_double_guitar);
+        LoadChart(currentSong.GetChart(Song.Instrument.GuitarCoop, Song.Difficulty.Expert));
     }
 
     public void LoadExpertDoubleBass()
     {
-        LoadChart(currentSong.expert_double_bass);
+        LoadChart(currentSong.GetChart(Song.Instrument.Bass, Song.Difficulty.Expert));
     }
 
     public void LoadHard()
     {
-        LoadChart(currentSong.hard_single);
+        LoadChart(currentSong.GetChart(Song.Instrument.Guitar, Song.Difficulty.Hard));
     }
 
     public void LoadHardDoubleGuitar()
     {
-        LoadChart(currentSong.hard_double_guitar);
+        LoadChart(currentSong.GetChart(Song.Instrument.GuitarCoop, Song.Difficulty.Hard));
     }
 
     public void LoadHardDoubleBass()
     {
-        LoadChart(currentSong.hard_double_bass);
+        LoadChart(currentSong.GetChart(Song.Instrument.Bass, Song.Difficulty.Hard));
     }
 
     public void LoadMedium()
     {
-        LoadChart(currentSong.medium_single);
+        LoadChart(currentSong.GetChart(Song.Instrument.Guitar, Song.Difficulty.Medium));
     }
 
     public void LoadMediumDoubleGuitar()
     {
-        LoadChart(currentSong.medium_double_guitar);
+        LoadChart(currentSong.GetChart(Song.Instrument.GuitarCoop, Song.Difficulty.Medium));
     }
 
     public void LoadMediumDoubleBass()
     {
-        LoadChart(currentSong.medium_double_bass);
+        LoadChart(currentSong.GetChart(Song.Instrument.Bass, Song.Difficulty.Medium));
     }
 
     public void LoadEasy()
     {
-        LoadChart(currentSong.easy_single);
+        LoadChart(currentSong.GetChart(Song.Instrument.Guitar, Song.Difficulty.Easy));
     }
 
     public void LoadEasyDoubleGuitar()
     {
-        LoadChart(currentSong.easy_double_guitar);
+        LoadChart(currentSong.GetChart(Song.Instrument.GuitarCoop, Song.Difficulty.Easy));
     }
 
     public void LoadEasyDoubleBass()
     {
-        LoadChart(currentSong.easy_double_bass);
+        LoadChart(currentSong.GetChart(Song.Instrument.Bass, Song.Difficulty.Easy));
     }
 
     public void EnableMenu(DisplayMenu menu)
