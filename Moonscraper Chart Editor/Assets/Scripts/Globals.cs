@@ -7,6 +7,7 @@ public class Globals : MonoBehaviour {
     public const uint FULL_STEP = 768;
     public static readonly float STANDARD_BEAT_RESOLUTION = 192.0f;
     public static readonly string LINE_ENDING = "\r\n";
+    public static string autosaveLocation;
     const float FRAMERATE = 25;
 
     public static readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3" };
@@ -121,6 +122,8 @@ public class Globals : MonoBehaviour {
 
     void Awake()
     {
+        autosaveLocation = Application.persistentDataPath + "/autosave.chart";
+
         viewMode = ViewMode.Chart;
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
         workingDirectory = System.IO.Directory.GetCurrentDirectory();
@@ -160,26 +163,41 @@ public class Globals : MonoBehaviour {
         audio_pan = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
         
         AudioListener.volume = vol_master;
-        /*
-        editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
-        editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
-        editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].volume = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
 
-        editor.musicSources[ChartEditor.MUSIC_STREAM_ARRAY_POS].panStereo = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
-        editor.musicSources[ChartEditor.GUITAR_STREAM_ARRAY_POS].panStereo = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
-        editor.musicSources[ChartEditor.RHYTHM_STREAM_ARRAY_POS].panStereo = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
-        */
         editor.clapSource.volume = (float)iniparse.ReadValue("Audio Volume", "Clap", 1.0f);
         sfxVolume = (float)iniparse.ReadValue("Audio Volume", "SFX", 1.0f);
 
         iniparse.Close();
-        /*
-        if (!configFileExisted)
-            editor.EnableMenu(audioCalibrationMenu);*/
 
         InputField[] allInputFields = Resources.FindObjectsOfTypeAll<InputField>();
         foreach (InputField inputField in allInputFields)
             inputField.gameObject.AddComponent<InputFieldDoubleClick>();
+    }
+
+    void Start()
+    {
+        StartCoroutine(AutosaveCheck());
+    }
+
+    IEnumerator AutosaveCheck()
+    {
+        yield return null;
+
+        if (System.IO.File.Exists(autosaveLocation))
+        {
+#if !UNITY_EDITOR
+            System.Windows.Forms.DialogResult result;
+
+            result = System.Windows.Forms.MessageBox.Show("An autosave was detected indicating that the program did not corretly shut down during the last session. \nWould you like to reload the autosave?", 
+                "Warning", System.Windows.Forms.MessageBoxButtons.YesNo);
+
+            if (result == System.Windows.Forms.DialogResult.Yes)
+            {
+                yield return StartCoroutine(editor._Load(autosaveLocation, false));
+                ChartEditor.editOccurred = true;
+            }
+#endif
+        }
     }
 
     void Update()
@@ -307,7 +325,7 @@ public class Globals : MonoBehaviour {
         editor.currentSelectedObject = null;
     }
 
-    void OnApplicationQuit()
+    public void Quit()
     {
         INIParser iniparse = new INIParser();
         iniparse.Open(workingDirectory + "\\config.ini");
@@ -330,18 +348,20 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Audio Volume", "Music Stream", vol_song);
         iniparse.WriteValue("Audio Volume", "Guitar Stream", vol_guitar);
         iniparse.WriteValue("Audio Volume", "Rhythm Stream", vol_rhythm);
-
         iniparse.WriteValue("Audio Volume", "Audio Pan", audio_pan);
-
         iniparse.WriteValue("Audio Volume", "Clap", editor.clapSource.volume);
         iniparse.WriteValue("Audio Volume", "SFX", sfxVolume);
 
         iniparse.Close();
-
+/*
         if (System.IO.File.Exists(Application.persistentDataPath + "\\" + Song.TEMP_MP3_TO_WAV_FILEPATH))
         {
             System.IO.File.Delete(Application.persistentDataPath + "\\" + Song.TEMP_MP3_TO_WAV_FILEPATH);
-        }
+        }*/
+
+        // Delete autosaved chart. If chart is not deleted then that means there may have been a problem like a crash and the autosave should be reloaded the next time the program is opened. 
+        if (System.IO.File.Exists(autosaveLocation))
+            System.IO.File.Delete(autosaveLocation);
     }
 
     public static void DeselectCurrentUI()

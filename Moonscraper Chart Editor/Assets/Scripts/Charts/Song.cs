@@ -20,7 +20,7 @@ public class Song {
     const int MUSIC_STREAM_ARRAY_POS = 0;
     const int GUITAR_STREAM_ARRAY_POS = 1;
     const int RHYTHM_STREAM_ARRAY_POS = 2;
-    public const string TEMP_MP3_TO_WAV_FILEPATH = "moonscraper_mp3_to_wav_conversion_temp.wav";
+    //public const string TEMP_MP3_TO_WAV_FILEPATH = "moonscraper_mp3_to_wav_conversion_temp.wav";
 
     // Song properties
     public string name = string.Empty, artist = string.Empty, charter = string.Empty;
@@ -481,7 +481,7 @@ public class Song {
 
     IEnumerator LoadAudio(string filepath, int audioStreamArrayPos, GameObject coroutine)
     {
-        string temp_wav_filepath = Application.persistentDataPath + "\\" + TEMP_MP3_TO_WAV_FILEPATH;
+        //string temp_wav_filepath = Application.persistentDataPath + "\\" + TEMP_MP3_TO_WAV_FILEPATH;
         string convertedFromMp3 = string.Empty;
 #if !BASS_AUDIO
         if (audioStreams[audioStreamArrayPos])
@@ -689,7 +689,7 @@ public class Song {
     }
 
     /// <summary>
-    /// Finds the value of the first bpm that appears before the specified tick position.
+    /// Finds the value of the first bpm that appears before or on the specified tick position.
     /// </summary>
     /// <param name="position">The tick position</param>
     /// <returns>Returns the value of the bpm that was found.</returns>

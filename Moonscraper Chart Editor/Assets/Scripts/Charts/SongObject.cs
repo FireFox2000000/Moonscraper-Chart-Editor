@@ -559,8 +559,6 @@ public abstract class SongObject
 
             T[] rangedList = new T[maxArrayPos - minArrayPos + 1];
             System.Array.Copy(list, minArrayPos, rangedList, 0, rangedList.Length);
-            //for (int i = 0; i < rangedList.Length; ++i)
-                //rangedList[i] = list[minArrayPos + i];
 
             return rangedList;
         }

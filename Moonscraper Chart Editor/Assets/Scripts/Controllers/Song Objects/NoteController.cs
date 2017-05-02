@@ -213,6 +213,7 @@ public class NoteController : SongObjectController {
         Note note = this.note;
         if (note != null)
         {
+            
             uint endPosition = note.position + note.sustain_length;
 
             // Determine if a note is outside of the view range

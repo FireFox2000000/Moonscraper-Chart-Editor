@@ -77,6 +77,10 @@ public class ChartEditor : MonoBehaviour {
     public Chart currentChart { get; private set; }
     string currentFileName = string.Empty;
 
+    System.Threading.Thread autosave;
+    const float AUTOSAVE_RUN_INTERVAL = 60; // Once a minute
+    float autosaveTimer = 0;
+
     Song.Instrument currentInstrument = Song.Instrument.Guitar;
     Song.Difficulty currentDifficulty = Song.Difficulty.Expert;
 
@@ -92,7 +96,6 @@ public class ChartEditor : MonoBehaviour {
     OpenFileName saveFileDialog;
 
     public ActionHistory actionHistory;
-
     public SongObject currentSelectedObject
     {
         get
@@ -364,6 +367,18 @@ public class ChartEditor : MonoBehaviour {
         }
 #endif
 
+        if (autosave == null || autosave.ThreadState != System.Threading.ThreadState.Running)
+        {
+            autosaveTimer += Time.deltaTime;
+
+            if (autosaveTimer > AUTOSAVE_RUN_INTERVAL)
+            {
+                Autosave();
+            }
+        }
+        else
+            autosaveTimer = 0;
+
         if (quitting)
         {
             if (editCheck())
@@ -372,6 +387,20 @@ public class ChartEditor : MonoBehaviour {
                 UnityEngine.Application.Quit();
             }
         }
+    }
+
+    void Autosave()
+    {
+        autosave = new System.Threading.Thread(() =>
+        {
+            autosaveTimer = 0;
+            Debug.Log("Autosaving...");
+            currentSong.Save(Globals.autosaveLocation);
+            Debug.Log("Autosave complete!");
+            autosaveTimer = 0;
+        });
+
+        autosave.Start();
     }
 #if UNITY_EDITOR
     bool wantsToQuit = true;        // Won't be save checking if in editor
@@ -405,21 +434,16 @@ public class ChartEditor : MonoBehaviour {
     {
         quitting = true;
 
-        //if (editCheck())
         if (wantsToQuit)
         {
+            globals.Quit();
             FreeAudio();
-            /*
-            currentSong.musicSample.Free();
-            currentSong.guitarSample.Free();
-            currentSong.rhythmSample.Free();
-            currentSong.FreeBassAudioStreams();*/
 
             Bass.BASS_Free();
             Debug.Log("Freed Bass Audio memory");
             while (currentSong.IsSaving) ;
         }
-        // Can't run edit check here because it seems to run in a seperate thread
+        // Can't run edit check here because quitting seems to run in a seperate thread
         else
         {
             UnityEngine.Application.CancelQuit();
@@ -491,6 +515,10 @@ public class ChartEditor : MonoBehaviour {
     public void Load()
     {
         Stop();
+        autosaveTimer = 0;
+        if (System.IO.File.Exists(Globals.autosaveLocation))
+            System.IO.File.Delete(Globals.autosaveLocation);
+
         StartCoroutine(_Load());
     }
 
@@ -795,15 +823,142 @@ public class ChartEditor : MonoBehaviour {
         return string.Empty;
     }
 
+    public IEnumerator _Load(string currentFileName, bool recordLastLoaded = true)
+    {
+        Song backup = currentSong;
+#if TIMING_DEBUG
+        float totalLoadTime = 0;
+#endif
+
+        // Start loading animation
+        Globals.applicationMode = Globals.ApplicationMode.Loading;
+        loadingScreen.FadeIn();
+        yield return null;
+
+        // Wait for saving to complete just in case
+        while (currentSong.IsSaving)
+            yield return null;
+
+#if TIMING_DEBUG
+        totalLoadTime = Time.realtimeSinceStartup;
+#endif
+        string originalMidFile = string.Empty;
+
+        // Convert mid to chart
+        if (System.IO.Path.GetExtension(currentFileName) == ".mid")
+        {
+            originalMidFile = currentFileName;
+
+            loadingScreen.loadingInformation.text = "Coverting .mid to .chart";
+            System.Threading.Thread midConversionThread = new System.Threading.Thread(() => { currentFileName = ImportMidToTempChart(currentFileName); });
+
+            midConversionThread.Start();
+
+            while (midConversionThread.ThreadState == System.Threading.ThreadState.Running)
+                yield return null;
+
+            if (currentFileName == string.Empty)
+            {
+                currentSong = backup;
+                //Globals.applicationMode = Globals.ApplicationMode.Editor;
+                loadingScreen.FadeOut();
+                errorMenu.gameObject.SetActive(true);
+                // Immediate exit
+                yield break;
+            }
+#if TIMING_DEBUG
+            Debug.Log("Mid conversion time: " + (Time.realtimeSinceStartup - totalLoadTime));
+#endif
+        }
+
+#if TIMING_DEBUG
+        float time = Time.realtimeSinceStartup;
+#endif
+        // Load the actual file
+        loadingScreen.loadingInformation.text = "Loading file";
+        yield return null;
+
+        // Free the audio clips
+        FreeAudio();
+
+        System.Threading.Thread songLoadThread = new System.Threading.Thread(() =>
+        {
+            try
+            {
+                currentSong = new Song(currentFileName);
+            }
+            catch
+            {
+                currentSong = backup;
+            }
+        });
+        songLoadThread.Start();
+        while (songLoadThread.ThreadState == System.Threading.ThreadState.Running)
+            yield return null;
+
+#if TIMING_DEBUG
+        Debug.Log("Chart file load time: " + (Time.realtimeSinceStartup - time));
+        time = Time.realtimeSinceStartup;
+#endif
+        // Load the audio clips
+        loadingScreen.loadingInformation.text = "Loading audio";
+        yield return null;
+        currentSong.LoadAllAudioClips();
+
+        while (currentSong.IsAudioLoading)
+            yield return null;
+
+#if TIMING_DEBUG
+        Debug.Log("All audio files load time: " + (Time.realtimeSinceStartup - time));
+#endif
+        yield return null;
+        //currentSong = new Song(currentFileName);
+        editOccurred = false;
+
+#if TIMING_DEBUG
+        Debug.Log("File load time: " + (Time.realtimeSinceStartup - totalLoadTime));
+#endif
+
+        // Wait for audio to fully load
+        while (currentSong.IsAudioLoading)
+            yield return null;
+
+        if (originalMidFile != string.Empty)
+        {
+            // Delete the temp chart
+            System.IO.File.Delete(currentFileName);
+            currentFileName = string.Empty;
+        }
+
+        if (recordLastLoaded && currentFileName != string.Empty)
+            lastLoadedFile = System.IO.Path.GetFullPath(currentFileName);
+        else
+            lastLoadedFile = string.Empty;
+
+        LoadSong(currentSong);
+
+#if TIMING_DEBUG
+        Debug.Log("Total load time: " + (Time.realtimeSinceStartup - totalLoadTime));
+#endif
+
+        if (originalMidFile != string.Empty)
+        {
+            editOccurred = true;
+        }
+
+        // Stop loading animation
+        Globals.applicationMode = Globals.ApplicationMode.Editor;
+        loadingScreen.FadeOut();
+        loadingScreen.loadingInformation.text = "Complete!";
+    }
+
     IEnumerator _Load()
     {
         if (!editCheck())
             yield break;
 
         Song backup = currentSong;
-#if TIMING_DEBUG
-        float totalLoadTime = 0;
-#endif
+
         try
         {           
 #if UNITY_EDITOR
@@ -848,6 +1003,8 @@ public class ChartEditor : MonoBehaviour {
 
         Debug.Log("Loading song: " + System.IO.Path.GetFullPath(currentFileName));
 
+        yield return StartCoroutine(_Load(currentFileName));
+        /*
         // Start loading animation
         Globals.applicationMode = Globals.ApplicationMode.Loading;
         loadingScreen.FadeIn();
@@ -888,10 +1045,6 @@ public class ChartEditor : MonoBehaviour {
             Debug.Log("Mid conversion time: " + (Time.realtimeSinceStartup - totalLoadTime));
 #endif
         }
-        /*
-        currentSong.musicSample.Free();
-        currentSong.guitarSample.Free();
-        currentSong.rhythmSample.Free();*/
 
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
@@ -971,7 +1124,7 @@ public class ChartEditor : MonoBehaviour {
         // Stop loading animation
         Globals.applicationMode = Globals.ApplicationMode.Editor;
         loadingScreen.FadeOut();
-        loadingScreen.loadingInformation.text = "Complete!";
+        loadingScreen.loadingInformation.text = "Complete!";*/
     }
 
     void LoadSong(Song song)

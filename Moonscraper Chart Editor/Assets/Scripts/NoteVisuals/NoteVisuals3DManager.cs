@@ -16,6 +16,9 @@ public class NoteVisuals3DManager : NoteVisualsManager
 
     // Update is called once per frame
     public override void UpdateVisuals () {
+        if (!meshFilter)
+            Awake();
+
         base.UpdateVisuals();
 
         Note note = nCon.note;

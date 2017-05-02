@@ -334,6 +334,7 @@ public class PlaceNoteController : ObjectlessTool {
             // Multi-note
             notes[0].gameObject.SetActive(true);
             activeNotes.Add(notes[0]);
+            //notes[0].gameObject.SendMessage("Update");
         }
 
         // Update prev and next if chord
@@ -358,7 +359,8 @@ public class PlaceNoteController : ObjectlessTool {
                 }
 
                 // Visuals for some reason aren't being updated in this cycle
-                activeNotes[i].visuals.UpdateVisuals();
+                //activeNotes[i].gameObject.SendMessage("Update");
+                //activeNotes[i].visuals.UpdateVisuals();
             }      
         }
 
