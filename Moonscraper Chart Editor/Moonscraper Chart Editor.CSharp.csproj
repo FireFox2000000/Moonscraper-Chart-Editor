@@ -132,6 +132,7 @@
     <Compile Include="Assets\Scripts\Charts\ChartEvent.cs" />
     <Compile Include="Assets\Scripts\Charts\ChartObject.cs" />
     <Compile Include="Assets\Scripts\Charts\Event.cs" />
+    <Compile Include="Assets\Scripts\Charts\MidWriter.cs" />
     <Compile Include="Assets\Scripts\Charts\Note.cs" />
     <Compile Include="Assets\Scripts\Charts\Section.cs" />
     <Compile Include="Assets\Scripts\Charts\Song.cs" />

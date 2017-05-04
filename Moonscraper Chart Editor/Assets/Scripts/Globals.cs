@@ -176,6 +176,11 @@ public class Globals : MonoBehaviour {
 
     void Start()
     {
+        System.IO.BinaryReader bin = new System.IO.BinaryReader(System.IO.File.Open("notes.mid", System.IO.FileMode.Open));
+        Debug.Log(System.BitConverter.ToString(bin.ReadBytes(14)));
+
+        bin.Close();
+        MidWriter.WriteToFile("notes.mid", null);
         StartCoroutine(AutosaveCheck());
     }
 

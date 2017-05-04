@@ -26,7 +26,8 @@ public class Song {
     public string name = string.Empty, artist = string.Empty, charter = string.Empty;
     public string player2 = "Bass";
     public int difficulty = 0;
-    public float offset = 0, resolution = 192, previewStart = 0, previewEnd = 0;
+    public float offset = 0, previewStart = 0, previewEnd = 0;
+    public short resolution = 192;
     public string genre = "rock", mediatype = "cd";
     public string year = string.Empty;
 #if !BASS_AUDIO
@@ -1015,7 +1016,7 @@ public class Song {
                 // Resolution = 192
                 else if (resolutionRegex.IsMatch(line))
                 {
-                    resolution = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+                    resolution = short.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
                 }
 
                 // Player2 = bass

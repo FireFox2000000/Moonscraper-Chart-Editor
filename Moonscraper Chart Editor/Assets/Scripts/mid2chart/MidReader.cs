@@ -11,6 +11,8 @@ namespace mid2chart {
         internal static Song ReadMidi(string path, bool unforceNAudioStrictMode) {
             s = new Song();
             midi = new MidiFile(path, !unforceNAudioStrictMode);
+            UnityEngine.Debug.Log(midi.Events.Count());
+            UnityEngine.Debug.Log(midi.Tracks);
             var trackCount = midi.Events.Count();
             scaler = 192.0D / midi.DeltaTicksPerQuarterNote;
             WriteSync(midi.Events[0]);
