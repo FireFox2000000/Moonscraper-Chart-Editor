@@ -113,7 +113,7 @@ public class GameplayManager : MonoBehaviour {
 
         if (slopWindowTimer > SLOP_WINDOW_SIZE)
         {
-            if (lastStrumTime == null || !(NoteInHitWindow(lastNoteHit, (float)lastStrumTime) && lastNoteHit.type != Note.Note_Type.STRUM))
+            if (lastStrumTime == null || !(NoteInHitWindow(lastNoteHit, (float)lastStrumTime) && lastNoteHit.type != Note.Note_Type.Strum))
             {
                 noteStreak = 0;
 #if MISS_DEBUG
@@ -239,7 +239,7 @@ public class GameplayManager : MonoBehaviour {
             // No note in window
             else if (strum)
             {
-                if (lastNoteHit != null && lastNoteHit.type != Note.Note_Type.STRUM && NoteInHitWindow(lastNoteHit, Song.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
+                if (lastNoteHit != null && lastNoteHit.type != Note.Note_Type.Strum && NoteInHitWindow(lastNoteHit, Song.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
                 {
                     lastStrumTime = null;
                     lastNoteHit = null;
@@ -479,14 +479,14 @@ public class GameplayManager : MonoBehaviour {
     {
         switch (note.type)
         {
-            case (Note.Note_Type.TAP):
+            case (Note.Note_Type.Tap):
                 if (canTap)
                     return true;
                 else if (strum)
                     return true;
                 else
                     return false;
-            case (Note.Note_Type.HOPO):
+            case (Note.Note_Type.Hopo):
                 if (noteStreak > 0)
                     return true;
                 else if (strum)
@@ -518,7 +518,7 @@ public class GameplayManager : MonoBehaviour {
             if (note.IsChord)
             {
                 // Regular chords
-                if (noteStreak == 0 || note.type == Note.Note_Type.STRUM)
+                if (noteStreak == 0 || note.type == Note.Note_Type.Strum)
                 {
                     if (inputMask == note.mask)
                         return true;

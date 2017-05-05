@@ -11,13 +11,11 @@ namespace mid2chart {
         internal static Song ReadMidi(string path, bool unforceNAudioStrictMode) {
             s = new Song();
             midi = new MidiFile(path, !unforceNAudioStrictMode);
-            UnityEngine.Debug.Log(midi.Events.Count());
-            UnityEngine.Debug.Log(midi.Tracks);
             var trackCount = midi.Events.Count();
             scaler = 192.0D / midi.DeltaTicksPerQuarterNote;
             WriteSync(midi.Events[0]);
             for (var i = 1; i < trackCount; i++) {               
-                var trackName = midi.Events[i][0] as TextEvent;
+                var trackName = midi.Events[i][0] as TextEvent;               
                 if (trackName == null)
                     continue;
 
@@ -107,15 +105,16 @@ namespace mid2chart {
             for (int i = 0; i < track.Count; i++) {
                 var se = track[i] as SysexEvent;
                 if (se != null) {
-                    var b = se.GetData();
-                    if (b.Length == 8 && b[5] == 255 && b[7] == 1) {
+                    //UnityEngine.Debug.Log(se.ToString());
+                    var bytes = se.GetData();
+                    if (bytes.Length == 8 && bytes[5] == 255 && bytes[7] == 1) {
                         long tick = RoundToValidValue((long)Math.Floor(se.AbsoluteTime*scaler));
                         long sus = 0;
                         for (int j = i; j < track.Count; j++) {
                             var se2 = track[j] as SysexEvent;
                             if (se2 != null) {
-                                var b2 = se2.GetData();
-                                if (b2.Length == 8 && b2[5] == 255 && b2[7] == 0) {
+                                var bytes2 = se2.GetData();
+                                if (bytes2.Length == 8 && bytes2[5] == 255 && bytes2[7] == 0) {
                                     sus = RoundToValidValue((long)Math.Floor(se2.AbsoluteTime*scaler))-tick;
                                     break;
                                 }
@@ -291,16 +290,20 @@ namespace mid2chart {
         }
 
         private static void WriteSync(IList<MidiEvent> track) {
-            foreach(var me in track) {
+            int cumulativeDT = 0;
+
+            foreach (var me in track) {
+                cumulativeDT += me.DeltaTime;
+
                 var ts = me as TimeSignatureEvent;
                 if (ts != null) {
-                    var tick = RoundToValidValue((long)Math.Floor(ts.AbsoluteTime*scaler));
+                    var tick = cumulativeDT;// RoundToValidValue((long)Math.Floor(ts.AbsoluteTime*scaler));
                     s.sync.Add(new Sync(tick, ts.Numerator, false));
                     continue;
                 }
                 var tempo = me as TempoEvent;
                 if (tempo != null) {
-                    var tick = RoundToValidValue((long)Math.Floor(tempo.AbsoluteTime*scaler));
+                    var tick = cumulativeDT;// RoundToValidValue((long)Math.Floor(tempo.AbsoluteTime*scaler));
                     s.sync.Add(new Sync(tick, (int)Math.Floor(tempo.Tempo*1000), true));
                     continue;
                 }

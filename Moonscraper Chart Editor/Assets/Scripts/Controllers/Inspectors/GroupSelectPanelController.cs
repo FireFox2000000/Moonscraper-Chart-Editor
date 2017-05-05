@@ -111,25 +111,25 @@ public class GroupSelectPanelController : MonoBehaviour
 
     public void SetNatural()
     {
-        SetNoteType(AppliedNoteType.Natural);
+        SetNoteType(Note.Note_Type.Natural);
     }
 
     public void SetStrum()
     {
-        SetNoteType(AppliedNoteType.Strum);
+        SetNoteType(Note.Note_Type.Strum);
     }
 
     public void SetHopo()
     {
-        SetNoteType(AppliedNoteType.Hopo);
+        SetNoteType(Note.Note_Type.Hopo);
     }
 
     public void SetTap()
     {
-        SetNoteType(AppliedNoteType.Tap);
+        SetNoteType(Note.Note_Type.Tap);
     }
 
-    public void SetNoteType(AppliedNoteType type)
+    public void SetNoteType(Note.Note_Type type)
     {
         List<ActionHistory.Action> actions = new List<ActionHistory.Action>();
 
@@ -145,7 +145,8 @@ public class GroupSelectPanelController : MonoBehaviour
                 for (int i = 0; i < deleteRecord.Length; ++i)
                     deleteRecord[i] = new ActionHistory.Delete(chord[i]);
 
-                SetNoteType(note as Note, type);
+                (note as Note).SetType(type);
+                //SetNoteType(note as Note, type);
 
                 chord = ((Note)note).GetChord();
 
@@ -166,8 +167,8 @@ public class GroupSelectPanelController : MonoBehaviour
 
         ChartEditor.editOccurred = true;
     }
-
-    public void SetNoteType(Note note, AppliedNoteType noteType)
+    /*
+    public static void SetNoteType(Note note, AppliedNoteType noteType)
     {
         note.flags = Note.Flags.NONE;
         switch (noteType)
@@ -209,12 +210,10 @@ public class GroupSelectPanelController : MonoBehaviour
         }
 
         note.applyFlagsToChord();
-
-        ChartEditor.editOccurred = true;
     }
 
     public enum AppliedNoteType
     {
         Natural, Strum, Hopo, Tap
-    }
+    }*/
 }

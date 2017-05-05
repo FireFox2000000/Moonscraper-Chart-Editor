@@ -97,6 +97,9 @@
     <Reference Include="XInputDotNetPure">
       <HintPath>Assets\Plugins\x86_64\XInputDotNetPure.dll</HintPath>
     </Reference>
+    <Reference Include="MiscUtil-DotNet2-r285">
+      <HintPath>Assets\Plugins\MiscUtil-DotNet2-r285.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Plugins\TanjentOGG\Bitwise.cs" />

@@ -43,14 +43,14 @@ public class NoteVisuals3DManager : NoteVisualsManager
 
                 if (specialType == Note.Special_Type.STAR_POW)
                 {
-                    if (noteType == Note.Note_Type.HOPO)
+                    if (noteType == Note.Note_Type.Hopo)
                         materials[2] = resources.openMaterials[3];
                     else
                         materials[2] = resources.openMaterials[2];
                 }
                 else
                 {
-                    if (noteType == Note.Note_Type.HOPO)
+                    if (noteType == Note.Note_Type.Hopo)
                         materials[2] = resources.openMaterials[1];
                     else
                         materials[2] = resources.openMaterials[0];
@@ -63,7 +63,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
 
                 switch (noteType)
                 {
-                    case (Note.Note_Type.HOPO):
+                    case (Note.Note_Type.Hopo):
                         if (specialType == Note.Special_Type.STAR_POW)
                         {
                             materials = resources.spHopoRenderer.sharedMaterials;
@@ -75,7 +75,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
                             materials[standardColMatPos] = resources.strumColors[(int)note.fret_type];
                         }
                         break;
-                    case (Note.Note_Type.TAP):
+                    case (Note.Note_Type.Tap):
                         if (specialType == Note.Special_Type.STAR_POW)
                         {
                             materials = resources.spTapRenderer.sharedMaterials;

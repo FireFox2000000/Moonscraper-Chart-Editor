@@ -182,7 +182,7 @@ public class Song {
     }
 
     // Charts
-    Chart[] charts = new Chart[12];
+    Chart[] charts;// = new Chart[12];
 
     List<Event> _events;
     List<SyncTrack> _syncTrack;
@@ -258,54 +258,36 @@ public class Song {
         Add(new TimeSignature());
 
         // Chart initialisation
+        charts = new Chart[Enum.GetNames(typeof(Instrument)).Length * Enum.GetNames(typeof(Difficulty)).Length];
+
         for (int i = 0; i < charts.Length; ++i)
         {
-            string name;
+            charts[i] = new Chart(this);
+        }
 
-            switch (i)
+        // Set the name of the chart
+        foreach (Instrument instrument in Enum.GetValues(typeof(Instrument)))
+        {
+            string instrumentName = string.Empty;
+            switch (instrument)
             {
-                case(0):
-                    name = "Guitar - Expert";
+                case (Instrument.Guitar):
+                    instrumentName += "Guitar - ";
                     break;
-                case (1):
-                    name = "Guitar - Hard";
+                case (Instrument.GuitarCoop):
+                    instrumentName += "Guitar - Co-op - ";
                     break;
-                case (2):
-                    name = "Guitar - Medium";
-                    break;
-                case (3):
-                    name = "Guitar - Easy";
-                    break;
-                case (4):
-                    name = "Guitar - Co-op - Expert";
-                    break;
-                case (5):
-                    name = "Guitar - Co-op - Hard";
-                    break;
-                case (6):
-                    name = "Guitar - Co-op - Medium";
-                    break;
-                case (7):
-                    name = "Guitar - Co-op - Easy";
-                    break;
-                case (8):
-                    name = "Bass - Expert";
-                    break;
-                case (9):
-                    name = "Bass - Hard";
-                    break;
-                case (10):
-                    name = "Bass - Medium";
-                    break;
-                case (11):
-                    name = "Bass - Easy";
+                case (Instrument.Bass):
+                    instrumentName += "Bass - ";
                     break;
                 default:
-                    name = string.Empty;
-                    break;
+                    continue;
             }
 
-            charts[i] = new Chart(this, name);
+            foreach (Difficulty difficulty in Enum.GetValues(typeof(Difficulty)))
+            {
+                GetChart(instrument, difficulty).name = instrumentName + difficulty.ToString();
+            }
         }
 
         for (int i = 0; i < audioLocations.Length; ++i)
@@ -1292,6 +1274,38 @@ public class Song {
         for(int i = 0; i < charts.Length; ++i)
         {
             string chartString = string.Empty;
+            var difficulties = Enum.GetValues(typeof(Difficulty));
+
+            foreach (Instrument instrument in Enum.GetValues(typeof(Instrument)))
+            {
+                string instrumentSaveString = string.Empty;
+                switch (instrument)
+                {
+                    case (Instrument.Guitar):
+                        instrumentSaveString = "Single";
+                        break;
+                    case (Instrument.GuitarCoop):
+                        instrumentSaveString = "DoubleGuitar";
+                        break;
+                    case (Instrument.Bass):
+                        instrumentSaveString = "DoubleBass";
+                        break;
+                    default:
+                        continue;
+                }
+
+                foreach (Difficulty difficulty in Enum.GetValues(typeof(Difficulty)))
+                {
+                    string difficultySaveString = difficulty.ToString();
+                    string seperator = "[" + difficultySaveString + instrumentSaveString + "]";
+                    chartString = GetChart(instrument, difficulty).GetChartString();
+
+                    saveString += seperator + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
+                    saveString += chartString;
+                    saveString += "}" + Globals.LINE_ENDING;
+                }
+            }
+            /*
             chartString = charts[i].GetChartString(forced);
 
             if (chartString != string.Empty)
@@ -1342,7 +1356,7 @@ public class Song {
                 saveString += seperator + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
                 saveString += chartString;
                 saveString += "}" + Globals.LINE_ENDING;
-            }
+            }*/
         }
 
         try {
@@ -1365,6 +1379,12 @@ public class Song {
         bpms = _syncTrack.OfType<BPM>().ToArray();
         timeSignatures = _syncTrack.OfType<TimeSignature>().ToArray();
         updateBPMTimeValues();
+    }
+
+    public void updateAllChartArrays()
+    {
+        foreach (Chart chart in charts)
+            chart.updateArrays();
     }
 
     /// <summary>

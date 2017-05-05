@@ -79,6 +79,9 @@
     <Reference Include="UnityEditor.iOS.Extensions.Common">
       <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Common.dll</HintPath>
     </Reference>
+    <Reference Include="MiscUtil-DotNet2-r285">
+      <HintPath>Assets\Plugins\MiscUtil-DotNet2-r285.dll</HintPath>
+    </Reference>
     <Reference Include="NAudio">
       <HintPath>Assets\Plugins\NAudio.dll</HintPath>
     </Reference>
@@ -132,6 +135,7 @@
     <Compile Include="Assets\Scripts\Charts\ChartEvent.cs" />
     <Compile Include="Assets\Scripts\Charts\ChartObject.cs" />
     <Compile Include="Assets\Scripts\Charts\Event.cs" />
+    <Compile Include="Assets\Scripts\Charts\MidReader.cs" />
     <Compile Include="Assets\Scripts\Charts\MidWriter.cs" />
     <Compile Include="Assets\Scripts\Charts\Note.cs" />
     <Compile Include="Assets\Scripts\Charts\Section.cs" />

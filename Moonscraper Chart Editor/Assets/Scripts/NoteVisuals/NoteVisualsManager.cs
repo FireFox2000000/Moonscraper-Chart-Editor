@@ -7,7 +7,7 @@ public class NoteVisualsManager : MonoBehaviour {
     protected Renderer noteRenderer;
 
     [HideInInspector]
-    public Note.Note_Type noteType = Note.Note_Type.STRUM;
+    public Note.Note_Type noteType = Note.Note_Type.Strum;
     [HideInInspector]
     public Note.Special_Type specialType = Note.Special_Type.NONE;
 
@@ -60,7 +60,7 @@ public class NoteVisualsManager : MonoBehaviour {
         else
         {
             // Do this simply because the HOPO glow by itself looks pretty cool
-            return Note.Note_Type.HOPO;
+            return Note.Note_Type.Hopo;
         }
     }
 

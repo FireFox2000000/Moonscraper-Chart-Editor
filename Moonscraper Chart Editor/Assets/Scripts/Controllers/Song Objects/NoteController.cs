@@ -266,15 +266,15 @@ public class NoteController : SongObjectController {
 
                         switch (note.type)
                         {
-                            case (Note.Note_Type.STRUM):
+                            case (Note.Note_Type.Strum):
                                 if ((Globals.clapSetting & Globals.ClapToggle.STRUM) == 0)
                                     playClap = false;
                                 break;
-                            case (Note.Note_Type.HOPO):
+                            case (Note.Note_Type.Hopo):
                                 if ((Globals.clapSetting & Globals.ClapToggle.HOPO) == 0)
                                     playClap = false;
                                 break;
-                            case (Note.Note_Type.TAP):
+                            case (Note.Note_Type.Tap):
                                 if ((Globals.clapSetting & Globals.ClapToggle.TAP) == 0)
                                     playClap = false;
                                 break;

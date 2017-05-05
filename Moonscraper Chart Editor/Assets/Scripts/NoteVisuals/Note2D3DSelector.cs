@@ -51,14 +51,14 @@ public class Note2D3DSelector : MonoBehaviour {
 
         if (note != null)
         {
-            if (noteType == Note.Note_Type.STRUM)
+            if (noteType == Note.Note_Type.Strum)
             {
                 if (specialType == Note.Special_Type.STAR_POW)
                     textureInSkin = customSkin.sp_strum[(int)note.fret_type];
                 else
                     textureInSkin = customSkin.reg_strum[(int)note.fret_type];
             }
-            else if (noteType == Note.Note_Type.HOPO)
+            else if (noteType == Note.Note_Type.Hopo)
             {
                 if (specialType == Note.Special_Type.STAR_POW)
                     textureInSkin = customSkin.sp_hopo[(int)note.fret_type];

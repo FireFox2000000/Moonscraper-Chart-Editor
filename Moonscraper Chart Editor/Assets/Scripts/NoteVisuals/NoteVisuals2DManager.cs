@@ -53,14 +53,14 @@ public class NoteVisuals2DManager : NoteVisualsManager {
         Vector3 scale = new Vector3(1, 1, 1);
         if (note != null)
         {
-            if (noteType == Note.Note_Type.STRUM)
+            if (noteType == Note.Note_Type.Strum)
             {
                 if (specialType == Note.Special_Type.STAR_POW)
                     ren.sprite = spriteResources.sp_strum[(int)note.fret_type];
                 else
                     ren.sprite = spriteResources.reg_strum[(int)note.fret_type];
             }
-            else if (noteType == Note.Note_Type.HOPO)
+            else if (noteType == Note.Note_Type.Hopo)
             {
                 if (specialType == Note.Special_Type.STAR_POW)
                     ren.sprite = spriteResources.sp_hopo[(int)note.fret_type];
@@ -123,9 +123,9 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                 animationName = "open_" + animationName;
             }
 
-            if (noteType == Note.Note_Type.HOPO)
+            if (noteType == Note.Note_Type.Hopo)
                 animationName += "hopo";
-            else if (noteType == Note.Note_Type.STRUM)
+            else if (noteType == Note.Note_Type.Strum)
                 animationName += "strum";
             else
                 animationName += "tap";

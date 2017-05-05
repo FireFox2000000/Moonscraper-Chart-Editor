@@ -277,6 +277,18 @@ public abstract class SongObject
         return pos;
     }
 
+    public static int FindObjectPosition<T>(uint position, T[] objects) where T : SongObject
+    {
+        int pos = FindClosestPosition(position, objects);
+
+        if (pos != NOTFOUND && objects[pos].position != position)
+        {
+            pos = NOTFOUND;
+        }
+
+        return pos;
+    }
+
     static int FindPreviousPosition<T>(System.Type type, int startPosition, List<T> list) where T : SongObject
     {
         // Linear search
