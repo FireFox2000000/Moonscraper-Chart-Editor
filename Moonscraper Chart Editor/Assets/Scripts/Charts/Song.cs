@@ -666,17 +666,13 @@ public class Song {
         foreach (BPM bpmInfo in bpms)
         {
             if (bpmInfo.assignedTime >= time)
-            {
                 break;
-            }
             else
-            {
                 prevBPM = bpmInfo;
-            }
         }
 
         position = prevBPM.position;
-        position += time_to_dis(prevBPM.time, time, resolution, prevBPM.value / 1000.0f);
+        position += time_to_dis(prevBPM.assignedTime, time, resolution, prevBPM.value / 1000.0f);
 
         return position;
     }
@@ -847,7 +843,7 @@ public class Song {
         return (pos_end - pos_start) / resolution * 60.0f / bpm;
     }
 
-    static uint time_to_dis(float time_start, float time_end, float resolution, float bpm)
+    public static uint time_to_dis(float time_start, float time_end, float resolution, float bpm)
     {
         return (uint)Mathf.Round((time_end - time_start) * bpm / 60.0f * resolution);
     }

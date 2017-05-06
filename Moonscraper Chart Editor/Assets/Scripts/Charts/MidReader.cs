@@ -34,10 +34,12 @@ public static class MidReader {
                     ReadSongSections(midi.Events[i], song);
                     break;
                 case ("part guitar"):
+                    ReadNotes(midi.Events[i], song, Song.Instrument.Guitar);
                     break;
                 case ("t1 gems"):
                     break;
                 case ("part bass"):
+                    //ReadNotes(midi.Events[i], song, Song.Instrument.Bass);
                     break;
                 case ("part keys"):
                     break;
@@ -51,25 +53,19 @@ public static class MidReader {
 
     private static void ReadSync(IList<MidiEvent> track, Song song)
     {
-        // Might be able to use song.TimeToChartPosition and the absolute time instead of cumulativeDT, assuming everything is in order, which it should. Both methods make sense.
-
-        int cumulativeDT = 0;
-
         foreach (var me in track)
         {
-            cumulativeDT += me.DeltaTime;
-
             var ts = me as TimeSignatureEvent;
             if (ts != null)
             {
-                var tick = cumulativeDT;
+                var tick = me.AbsoluteTime;
                 song.Add(new TimeSignature((uint)tick, (uint)ts.Numerator), false);
                 continue;
             }
             var tempo = me as TempoEvent;
             if (tempo != null)
             {
-                var tick = cumulativeDT;
+                var tick = me.AbsoluteTime;
                 song.Add(new BPM((uint)tick, (uint)(tempo.Tempo * 1000)), false); 
                 continue;
             }
@@ -93,12 +89,10 @@ public static class MidReader {
 
             if (text != null)
             {            
-                var tick = song.TimeToChartPosition(track[i].AbsoluteTime / 1000.0f, song.resolution, false);
-
                 if (text.Text.Contains("[section "))
-                    song.Add(new Section(text.Text.Substring(9, text.Text.Length - 10), tick), false);
+                    song.Add(new Section(text.Text.Substring(9, text.Text.Length - 10), (uint)text.AbsoluteTime), false);
                 else if (text.Text.Contains("[prc_"))       // No idea what this actually is
-                    song.Add(new Section(text.Text.Substring(5, text.Text.Length - 6), tick), false);
+                    song.Add(new Section(text.Text.Substring(5, text.Text.Length - 6), (uint)text.AbsoluteTime), false);
             }
         }
 
@@ -108,6 +102,7 @@ public static class MidReader {
     private static void ReadNotes(IList<MidiEvent> track, Song song, Song.Instrument instrument)
     {
         List<NoteOnEvent> forceNotesList = new List<NoteOnEvent>();
+        int rbSustainFixLength = (int)(song.resolution / Globals.STANDARD_BEAT_RESOLUTION * 64);
 
         // Load all the notes
         for (int i = 0; i < track.Count; i++)
@@ -115,8 +110,9 @@ public static class MidReader {
             var note = track[i] as NoteOnEvent;
             if (note != null && note.OffEvent != null)
             {
-                var tick = song.TimeToChartPosition(note.AbsoluteTime / 1000.0f, song.resolution, false);
-                var sus = song.TimeToChartPosition(note.OffEvent.AbsoluteTime / 1000.0f, song.resolution, false) - tick;
+                var tick = (uint)note.AbsoluteTime;
+                var sus = (uint)(note.OffEvent.AbsoluteTime - tick);
+
                 Song.Difficulty difficulty;
 
                 // Check if starpower event
@@ -157,33 +153,36 @@ public static class MidReader {
 
                 Note.Fret_Type fret;
 
+                if (sus <= rbSustainFixLength)
+                    sus = 0;
+
                 // Determine the fret type of the note
                 switch (note.NoteNumber)
                 {
                     case 60:
                     case 72:
                     case 84:
-                    case 96: if (sus <= 64L) sus = 0; fret = Note.Fret_Type.GREEN; break;
+                    case 96: fret = Note.Fret_Type.GREEN; break;
 
                     case 61:
                     case 73:
                     case 85:
-                    case 97: if (sus <= 64L) sus = 0; fret = Note.Fret_Type.RED; break;
+                    case 97: fret = Note.Fret_Type.RED; break;
 
                     case 62:
                     case 74:
                     case 86:
-                    case 98: if (sus <= 64L) sus = 0; fret = Note.Fret_Type.YELLOW; break;
+                    case 98: fret = Note.Fret_Type.YELLOW; break;
 
                     case 63:
                     case 75:
                     case 87:
-                    case 99: if (sus <= 64L) sus = 0; fret = Note.Fret_Type.BLUE; break;
+                    case 99: fret = Note.Fret_Type.BLUE; break;
 
                     case 64:
                     case 76:
                     case 88:
-                    case 100: if (sus <= 64L) sus = 0; fret = Note.Fret_Type.ORANGE; break;
+                    case 100: fret = Note.Fret_Type.ORANGE; break;
 
                     default:
                         continue;
@@ -197,12 +196,12 @@ public static class MidReader {
         // Update all chart arrays
         foreach (Song.Difficulty diff in System.Enum.GetValues(typeof(Song.Difficulty)))
             song.GetChart(instrument, diff).updateArrays();
-
+        
         // Apply forcing events
         foreach (NoteOnEvent flagEvent in forceNotesList)
         {
-            var tick = song.TimeToChartPosition(flagEvent.AbsoluteTime / 1000.0f, song.resolution, false);
-            var susEndPos = song.TimeToChartPosition(flagEvent.OffEvent.AbsoluteTime / 1000.0f, song.resolution, false);
+            uint tick = (uint)flagEvent.AbsoluteTime;
+            uint susEndPos = (uint)(flagEvent.OffEvent.AbsoluteTime - tick); //song.TimeToChartPosition(flagEvent.OffEvent.AbsoluteTime / 1000.0f, song.resolution, false);
             Song.Difficulty difficulty;
 
             // Determine which difficulty we are manipulating
