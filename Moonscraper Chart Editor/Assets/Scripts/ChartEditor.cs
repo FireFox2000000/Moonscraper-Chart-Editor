@@ -845,6 +845,7 @@ public class ChartEditor : MonoBehaviour {
         string originalMidFile = string.Empty;
 
         // Convert mid to chart
+        /*
         if (System.IO.Path.GetExtension(currentFileName) == ".mid")
         {
             originalMidFile = currentFileName;
@@ -869,7 +870,7 @@ public class ChartEditor : MonoBehaviour {
 #if TIMING_DEBUG
             Debug.Log("Mid conversion time: " + (Time.realtimeSinceStartup - totalLoadTime));
 #endif
-        }
+        }*/
 
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
@@ -885,11 +886,15 @@ public class ChartEditor : MonoBehaviour {
         {
             try
             {
-                currentSong = new Song(currentFileName);
+                if (System.IO.Path.GetExtension(currentFileName) == ".mid")
+                    currentSong = MidReader.ReadMidi(currentFileName);
+                else
+                    currentSong = new Song(currentFileName);
             }
-            catch
+            catch (Exception e)
             {
                 currentSong = backup;
+                Debug.LogError(e.Message);
             }
         });
         songLoadThread.Start();

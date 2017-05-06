@@ -8,9 +8,14 @@ using System.Text.RegularExpressions;
 
 public static class MidReader {
 
-    public static Song ReadMidi(string path, bool unforceNAudioStrictMode)
+    public static Song ReadMidi(string path)
     {
         Song song = new Song();
+        string directory = System.IO.Path.GetDirectoryName(path);
+        song.musicSongName = directory + "\\song.ogg";
+        song.guitarSongName = directory + "\\guitar.ogg";
+        song.rhythmSongName = directory + "\\bass.ogg";
+
         MidiFile midi = new MidiFile(path);
         song.resolution = (short)midi.DeltaTicksPerQuarterNote;
 
@@ -58,36 +63,41 @@ public static class MidReader {
             if (ts != null)
             {
                 var tick = cumulativeDT;
-                song.Add(new TimeSignature((uint)tick, (uint)ts.Numerator));
+                song.Add(new TimeSignature((uint)tick, (uint)ts.Numerator), false);
                 continue;
             }
             var tempo = me as TempoEvent;
             if (tempo != null)
             {
                 var tick = cumulativeDT;
-                song.Add(new BPM((uint)tick, (uint)(tempo.Tempo * 1000))); 
+                song.Add(new BPM((uint)tick, (uint)(tempo.Tempo * 1000)), false); 
                 continue;
             }
+
+            // Read the song name
             var text = me as TextEvent;
             if (text != null)
             {
                 song.name = text.Text;
             }
         }
+
+        song.updateArrays();
     }
 
     private static void ReadSongSections(IList<MidiEvent> track, Song song)
     {
-        for (int i = 0; i < track.Count; i++)
+        for (int i = 0; i < track.Count; ++i)
         {
             var text = track[i] as TextEvent;
 
             if (text != null)
-            {
-                var tick = song.TimeToChartPosition(track[i].AbsoluteTime, song.resolution);
+            {            
+                var tick = song.TimeToChartPosition(track[i].AbsoluteTime / 1000.0f, song.resolution, false);
+
                 if (text.Text.Contains("[section "))
                     song.Add(new Section(text.Text.Substring(9, text.Text.Length - 10), tick), false);
-                else if (text.Text.Contains("[prc_"))
+                else if (text.Text.Contains("[prc_"))       // No idea what this actually is
                     song.Add(new Section(text.Text.Substring(5, text.Text.Length - 6), tick), false);
             }
         }
@@ -105,8 +115,18 @@ public static class MidReader {
             var note = track[i] as NoteOnEvent;
             if (note != null && note.OffEvent != null)
             {
-                var tick = song.TimeToChartPosition(note.AbsoluteTime, song.resolution);
+                var tick = song.TimeToChartPosition(note.AbsoluteTime / 1000.0f, song.resolution, false);
+                var sus = song.TimeToChartPosition(note.OffEvent.AbsoluteTime / 1000.0f, song.resolution, false) - tick;
                 Song.Difficulty difficulty;
+
+                // Check if starpower event
+                if (note.NoteNumber == 116)
+                {                
+                    foreach (Song.Difficulty diff in System.Enum.GetValues(typeof(Song.Difficulty)))
+                        song.GetChart(instrument, diff).Add(new Starpower(tick, sus), false);
+
+                    continue;
+                }
 
                 // Determine which difficulty we are manipulating
                 try
@@ -136,7 +156,6 @@ public static class MidReader {
                 }
 
                 Note.Fret_Type fret;
-                var sus = song.TimeToChartPosition(note.OffEvent.AbsoluteTime, song.resolution) - tick;
 
                 // Determine the fret type of the note
                 switch (note.NoteNumber)
@@ -175,13 +194,15 @@ public static class MidReader {
             }  
         }
 
-        song.updateAllChartArrays();
+        // Update all chart arrays
+        foreach (Song.Difficulty diff in System.Enum.GetValues(typeof(Song.Difficulty)))
+            song.GetChart(instrument, diff).updateArrays();
 
         // Apply forcing events
         foreach (NoteOnEvent flagEvent in forceNotesList)
         {
-            var tick = song.TimeToChartPosition(flagEvent.AbsoluteTime, song.resolution);
-            var susEndPos = song.TimeToChartPosition(flagEvent.OffEvent.AbsoluteTime, song.resolution);
+            var tick = song.TimeToChartPosition(flagEvent.AbsoluteTime / 1000.0f, song.resolution, false);
+            var susEndPos = song.TimeToChartPosition(flagEvent.OffEvent.AbsoluteTime / 1000.0f, song.resolution, false);
             Song.Difficulty difficulty;
 
             // Determine which difficulty we are manipulating

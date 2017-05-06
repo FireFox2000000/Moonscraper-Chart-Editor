@@ -141,9 +141,19 @@ public class Song {
 
     string[] audioLocations = new string[3];
 
-    public string musicSongName { get { return Path.GetFileName(audioLocations[MUSIC_STREAM_ARRAY_POS]); } }
-    public string guitarSongName { get { return Path.GetFileName(audioLocations[GUITAR_STREAM_ARRAY_POS]); } }
-    public string rhythmSongName { get { return Path.GetFileName(audioLocations[RHYTHM_STREAM_ARRAY_POS]); } }
+    public string musicSongName { get { return Path.GetFileName(audioLocations[MUSIC_STREAM_ARRAY_POS]); }
+        set {
+            if (File.Exists(value))
+                audioLocations[MUSIC_STREAM_ARRAY_POS] = Path.GetFullPath(value);
+        } }
+    public string guitarSongName { get { return Path.GetFileName(audioLocations[GUITAR_STREAM_ARRAY_POS]); }
+        set {
+            if (File.Exists(value))
+                audioLocations[GUITAR_STREAM_ARRAY_POS] = Path.GetFullPath(value); } }
+    public string rhythmSongName { get { return Path.GetFileName(audioLocations[RHYTHM_STREAM_ARRAY_POS]); }
+        set {
+            if (File.Exists(value))
+                audioLocations[RHYTHM_STREAM_ARRAY_POS] = Path.GetFullPath(value); } }
 
     public bool songAudioLoaded
     {
@@ -641,11 +651,11 @@ public class Song {
     /// <param name="time">The time (in seconds) to convert.</param>
     /// <param name="resolution">Ticks per beat, usually provided from the resolution song of a Song class.</param>
     /// <returns>Returns the calculated tick position.</returns>
-    public uint TimeToChartPosition(float time, float resolution)
+    public uint TimeToChartPosition(float time, float resolution, bool capByLength = true)
     {
         if (time < 0)
             time = 0;
-        else if (time > length)
+        else if (capByLength && time > length)
             time = length;
 
         uint position = 0;
@@ -1273,7 +1283,6 @@ public class Song {
         // Charts      
         for(int i = 0; i < charts.Length; ++i)
         {
-            string chartString = string.Empty;
             var difficulties = Enum.GetValues(typeof(Difficulty));
 
             foreach (Instrument instrument in Enum.GetValues(typeof(Instrument)))
@@ -1297,9 +1306,12 @@ public class Song {
                 foreach (Difficulty difficulty in Enum.GetValues(typeof(Difficulty)))
                 {
                     string difficultySaveString = difficulty.ToString();
-                    string seperator = "[" + difficultySaveString + instrumentSaveString + "]";
-                    chartString = GetChart(instrument, difficulty).GetChartString();
+                    string chartString = GetChart(instrument, difficulty).GetChartString(forced);
 
+                    if (chartString == string.Empty)
+                        continue;
+
+                    string seperator = "[" + difficultySaveString + instrumentSaveString + "]";
                     saveString += seperator + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
                     saveString += chartString;
                     saveString += "}" + Globals.LINE_ENDING;
