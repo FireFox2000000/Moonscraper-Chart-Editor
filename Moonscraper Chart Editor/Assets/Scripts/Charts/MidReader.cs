@@ -1,10 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NAudio.Midi;
-using System.Text.RegularExpressions;
-
-// *Footnote: Alternatively convert absolute time to tick pos instead of cumlating the delta time 
 
 public static class MidReader {
 
@@ -16,7 +14,17 @@ public static class MidReader {
         song.guitarSongName = directory + "\\guitar.ogg";
         song.rhythmSongName = directory + "\\bass.ogg";
 
-        MidiFile midi = new MidiFile(path);
+        MidiFile midi;
+
+        try
+        {
+            midi = new MidiFile(path);
+        }
+        catch (SystemException e)
+        {
+            throw new SystemException("Bad or corrupted midi file- " + e.Message);
+        }
+
         song.resolution = (short)midi.DeltaTicksPerQuarterNote;
 
         // Read all bpm data in first. This will also allow song.TimeToChartPosition to function properly.
@@ -27,7 +35,7 @@ public static class MidReader {
             var trackName = midi.Events[i][0] as TextEvent;
             if (trackName == null)
                 continue;
-
+            Debug.Log(trackName.Text);
             switch (trackName.Text.ToLower())
             {
                 case ("events"):
@@ -36,12 +44,13 @@ public static class MidReader {
                 case ("part guitar"):
                     ReadNotes(midi.Events[i], song, Song.Instrument.Guitar);
                     break;
-                case ("t1 gems"):
+                case ("t1 gems"):   // GH1 midi file related
                     break;
                 case ("part bass"):
-                    //ReadNotes(midi.Events[i], song, Song.Instrument.Bass);
+                    ReadNotes(midi.Events[i], song, Song.Instrument.Bass);
                     break;
                 case ("part keys"):
+                    ReadNotes(midi.Events[i], song, Song.Instrument.Keys);
                     break;
                 default:
                     break;
@@ -102,6 +111,8 @@ public static class MidReader {
     private static void ReadNotes(IList<MidiEvent> track, Song song, Song.Instrument instrument)
     {
         List<NoteOnEvent> forceNotesList = new List<NoteOnEvent>();
+        List<SysexEvent> tapAndOpenEvents = new List<SysexEvent>();
+
         int rbSustainFixLength = (int)(song.resolution / Globals.STANDARD_BEAT_RESOLUTION * 64);
 
         // Load all the notes
@@ -190,7 +201,13 @@ public static class MidReader {
 
                 // Add the note to the correct chart
                 song.GetChart(instrument, difficulty).Add(new Note(tick, fret, sus), false);             
-            }  
+            }
+
+            var sysexEvent = track[i] as SysexEvent;
+            if (sysexEvent != null)
+            {
+                tapAndOpenEvents.Add(sysexEvent);
+            }
         }
 
         // Update all chart arrays
@@ -201,7 +218,7 @@ public static class MidReader {
         foreach (NoteOnEvent flagEvent in forceNotesList)
         {
             uint tick = (uint)flagEvent.AbsoluteTime;
-            uint susEndPos = (uint)(flagEvent.OffEvent.AbsoluteTime - tick); //song.TimeToChartPosition(flagEvent.OffEvent.AbsoluteTime / 1000.0f, song.resolution, false);
+            uint endPos = (uint)(flagEvent.OffEvent.AbsoluteTime - tick); //song.TimeToChartPosition(flagEvent.OffEvent.AbsoluteTime / 1000.0f, song.resolution, false);
             Song.Difficulty difficulty;
 
             // Determine which difficulty we are manipulating
@@ -215,7 +232,7 @@ public static class MidReader {
             }
 
             Chart chart = song.GetChart(instrument, difficulty);
-            Note[] notesToFlag = SongObject.GetRange(chart.notes, tick, tick + susEndPos);
+            Note[] notesToFlag = SongObject.GetRange(chart.notes, tick, tick + endPos);
             foreach (Note note in notesToFlag)
             { 
                 // if NoteNumber is odd force hopo, if even force strum
@@ -225,20 +242,92 @@ public static class MidReader {
                     note.SetType(Note.Note_Type.Strum);
             }
         }
-    }
 
-    private static void ReadTapEvents(IList<MidiEvent> track, Song song, Song.Instrument instrument)
-    {
-        for (int i = 0; i < track.Count; i++)
+        // Apply tap and open note events
+
+        System.Array difficultyValues = System.Enum.GetValues(typeof(Song.Difficulty));
+        Chart[] chartsOfInstrument = new Chart[difficultyValues.Length];
+
+        int difficultyCount = 0;
+        foreach (Song.Difficulty difficulty in difficultyValues)
+            chartsOfInstrument[difficultyCount++] = song.GetChart(instrument, difficulty);
+    
+        for(int i = 0; i < tapAndOpenEvents.Count; ++i)
         {
-            // Open notes or tap notes are stored as SysexEvents (whoever thought open notes shouldn't be considered regular notes was an idiot)
-            var sysexEvent = track[i] as SysexEvent;
-            if (sysexEvent != null)
+            var se1 = tapAndOpenEvents[i];
+            byte[] bytes = se1.GetData();
+
+            // Check for tap event
+            if (bytes.Length == 8 && bytes[5] == 255 && bytes[7] == 1)
             {
-                string sysexDescription = sysexEvent.ToString();
-                string hex;     // 8 total bytes, 5th byte is FF, 7th is 1 to start, 0 to end
-                //const Regex tapRegex = new Regex();
+                Debug.Log(System.BitConverter.ToString(bytes));
+                // Identified a tap section
+                // 8 total bytes, 5th byte is FF, 7th is 1 to start, 0 to end
+                uint tick = (uint)se1.AbsoluteTime;
+                uint endPos = 0;
+
+                // Find the end of the tap section
+                for (int j = i; j < tapAndOpenEvents.Count; j++)
+                {
+                    var se2 = tapAndOpenEvents[j];
+                    var bytes2 = se2.GetData();
+                    /// Check for tap section end
+                    if (bytes2.Length == 8 && bytes2[5] == 255 && bytes2[7] == 0)
+                    {
+                        endPos = (uint)(se2.AbsoluteTime - tick);
+                        break;
+                    }
+                    
+                }
+
+                // Apply tap property
+                foreach (Chart chart in chartsOfInstrument)
+                {
+                    Note[] notesToFlag = SongObject.GetRange(chart.notes, tick, tick + endPos);
+                    foreach (Note note in notesToFlag)
+                    {
+                        note.SetType(Note.Note_Type.Tap);
+                    }
+                }
             }
+
+            // Check for open notes
+            // 5th byte determines the difficulty to apply to
+            else if (bytes.Length == 8 && bytes[5] >= 0 && bytes[5] <= 4 && bytes[7] == 1)
+            {
+                uint tick = (uint)se1.AbsoluteTime;
+                Song.Difficulty difficulty;
+                switch (bytes[5])
+                {
+                    case 0: difficulty = Song.Difficulty.Easy; break;
+                    case 1: difficulty = Song.Difficulty.Medium; break;
+                    case 2: difficulty = Song.Difficulty.Hard; break;
+                    case 3: difficulty = Song.Difficulty.Expert; break;
+                    default: continue;
+                }
+
+                uint endPos = 0;
+                for (int j = i; j < track.Count; j++)
+                {
+                    var se2 = track[j] as SysexEvent;
+                    if (se2 != null)
+                    {
+                        var b2 = se2.GetData();
+                        if (b2.Length == 8 && b2[5] == bytes[5] && b2[7] == 0)
+                        {
+                            endPos = (uint)(se2.AbsoluteTime - tick);
+                            break;
+                        }
+                    }
+                }
+
+                Note[] notesToConvert = SongObject.GetRange(song.GetChart(instrument, difficulty).notes, tick, tick + endPos);
+                foreach (Note note in notesToConvert)
+                {
+                    note.fret_type = Note.Fret_Type.OPEN;
+                }
+            }
+
         }
     }
 

@@ -825,6 +825,7 @@ public class ChartEditor : MonoBehaviour {
 
     public IEnumerator _Load(string currentFileName, bool recordLastLoaded = true)
     {
+        bool error = false;
         Song backup = currentSong;
 #if TIMING_DEBUG
         float totalLoadTime = 0;
@@ -884,9 +885,11 @@ public class ChartEditor : MonoBehaviour {
 
         System.Threading.Thread songLoadThread = new System.Threading.Thread(() =>
         {
+            bool mid = (System.IO.Path.GetExtension(currentFileName) == ".mid");
+
             try
             {
-                if (System.IO.Path.GetExtension(currentFileName) == ".mid")
+                if (mid)
                     currentSong = MidReader.ReadMidi(currentFileName);
                 else
                     currentSong = new Song(currentFileName);
@@ -894,12 +897,29 @@ public class ChartEditor : MonoBehaviour {
             catch (Exception e)
             {
                 currentSong = backup;
+
+                if (mid)
+                    ErrorMessage.errorMessage = "Failed to open mid file: " + e.Message;
+                else
+                    ErrorMessage.errorMessage = "Failed to open chart file: " + e.Message;
+
+                error = true;
+
+                // Immediate exit
                 Debug.LogError(e.Message);
             }
         });
+
         songLoadThread.Start();
         while (songLoadThread.ThreadState == System.Threading.ThreadState.Running)
             yield return null;
+
+        if (error)
+        {
+            loadingScreen.FadeOut();
+            errorMenu.gameObject.SetActive(true);
+            yield break;
+        }
 
 #if TIMING_DEBUG
         Debug.Log("Chart file load time: " + (Time.realtimeSinceStartup - time));
@@ -1168,14 +1188,48 @@ public class ChartEditor : MonoBehaviour {
         songObjectPoolManager.NewChartReset();
     }
 
-    public void SetInstrument(int value)
+    public void SetInstrument(string value)
     {
-        currentInstrument = (Song.Instrument)value;
+        switch (value.ToLower())
+        {
+            case ("guitar"):
+                currentInstrument = Song.Instrument.Guitar;
+                break;
+            case ("guitarcoop"):
+                currentInstrument = Song.Instrument.GuitarCoop;
+                break;
+            case ("bass"):
+                currentInstrument = Song.Instrument.Bass;
+                break;
+            case ("keys"):
+                currentInstrument = Song.Instrument.Keys;
+                break;
+            default:
+                Debug.LogError("Invalid difficulty set: " + value);
+                break;
+        }
     }
 
-    public void SetDifficulty(int value)
+    public void SetDifficulty(string value)
     {
-        currentDifficulty = (Song.Difficulty)value;
+        switch (value.ToLower())
+        {
+            case ("easy"):
+                currentDifficulty = Song.Difficulty.Easy;
+                break;
+            case ("medium"):
+                currentDifficulty = Song.Difficulty.Medium;
+                break;
+            case ("hard"):
+                currentDifficulty = Song.Difficulty.Hard;
+                break;
+            case ("expert"):
+                currentDifficulty = Song.Difficulty.Expert;
+                break;
+            default:
+                Debug.LogError("Invalid difficulty set: " + value);
+                break;
+        }
     }
 
     public void LoadCurrentInstumentAndDifficulty()

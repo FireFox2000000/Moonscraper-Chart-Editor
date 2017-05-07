@@ -14,7 +14,7 @@ using System;
 using Un4seen.Bass;
 
 public class Song {
-    const int NUM_OF_DIFFICULTIES = 4;
+    static int NUM_OF_DIFFICULTIES;
     public static bool streamAudio = true;
 
     const int MUSIC_STREAM_ARRAY_POS = 0;
@@ -256,6 +256,8 @@ public class Song {
     /// </summary>
     public Song()
     {
+        NUM_OF_DIFFICULTIES = Enum.GetValues(typeof(Difficulty)).Length;
+
         _events = new List<Event>();
         _syncTrack = new List<SyncTrack>();
 
@@ -1436,7 +1438,7 @@ public class Song {
 
     public enum Instrument
     {
-        Guitar = 0, GuitarCoop = 1, Bass = 2
+        Guitar = 0, GuitarCoop = 1, Bass = 2, Keys = 3
     }
 }
 
