@@ -67,7 +67,7 @@ public class NoteVisualsManager : MonoBehaviour {
     public static Note.Special_Type IsStarpower(Note note)
     {
         Note.Special_Type specialType = Note.Special_Type.NONE;
-
+ 
         foreach (Starpower sp in note.chart.starPower)
         {
             if (sp.position == note.position || (sp.position <= note.position && sp.position + sp.length > note.position))

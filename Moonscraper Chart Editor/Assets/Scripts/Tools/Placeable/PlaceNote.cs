@@ -320,14 +320,21 @@ public class PlaceNote : PlaceSongObject {
     protected static ActionHistory.Action[] ForwardCap(Note note)
     {
         List<ActionHistory.Action> actionRecord = new List<ActionHistory.Action>();
+        Note[] notesToCap;
         Note next;
-
+        next = note.nextSeperateNote;      
+        
         if (!Globals.extendedSustainsEnabled)
         {
-            next = note.nextSeperateNote;         
+            // Get chord  
+            next = note.nextSeperateNote;
+            notesToCap = note.GetChord();          
         }
         else
         {
+            notesToCap = new Note[] { note };
+
+            // Find the next note of the same fre type
             next = note.next;
             while (next != null && next.fret_type != note.fret_type)
                 next = next.next;
@@ -335,9 +342,12 @@ public class PlaceNote : PlaceSongObject {
 
         if (next != null)
         {
-            ActionHistory.Action action = note.CapSustain(next);
-            if (action != null)
-                actionRecord.Add(action);
+            foreach (Note noteToCap in notesToCap)
+            {
+                ActionHistory.Action action = noteToCap.CapSustain(next);
+                if (action != null)
+                    actionRecord.Add(action);
+            }
         }
 
         return actionRecord.ToArray();

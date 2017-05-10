@@ -18,7 +18,7 @@ public static class MidWriter {
 
     public static void WriteToFile(string path, Song song)
     {
-        byte[] header = GetMidiHeader(0, 1, song.resolution);
+        byte[] header = GetMidiHeader(0, 1, (short)song.resolution);
         byte[] track_sync = MakeTrack(GetSyncBytes(song), "synctrack");
         //byte[] track_events = MakeTrack(GetSectionBytes(song), "events");
 

@@ -244,7 +244,6 @@ public static class MidReader {
         }
 
         // Apply tap and open note events
-
         System.Array difficultyValues = System.Enum.GetValues(typeof(Song.Difficulty));
         Chart[] chartsOfInstrument = new Chart[difficultyValues.Length];
 
@@ -260,14 +259,13 @@ public static class MidReader {
             // Check for tap event
             if (bytes.Length == 8 && bytes[5] == 255 && bytes[7] == 1)
             {
-                Debug.Log(System.BitConverter.ToString(bytes));
                 // Identified a tap section
                 // 8 total bytes, 5th byte is FF, 7th is 1 to start, 0 to end
                 uint tick = (uint)se1.AbsoluteTime;
                 uint endPos = 0;
 
                 // Find the end of the tap section
-                for (int j = i; j < tapAndOpenEvents.Count; j++)
+                for (int j = i; j < tapAndOpenEvents.Count; ++j)
                 {
                     var se2 = tapAndOpenEvents[j];
                     var bytes2 = se2.GetData();
@@ -307,9 +305,9 @@ public static class MidReader {
                 }
 
                 uint endPos = 0;
-                for (int j = i; j < track.Count; j++)
+                for (int j = i; j < tapAndOpenEvents.Count; ++j)
                 {
-                    var se2 = track[j] as SysexEvent;
+                    var se2 = tapAndOpenEvents[j] as SysexEvent;
                     if (se2 != null)
                     {
                         var b2 = se2.GetData();
@@ -320,7 +318,7 @@ public static class MidReader {
                         }
                     }
                 }
-
+                
                 Note[] notesToConvert = SongObject.GetRange(song.GetChart(instrument, difficulty).notes, tick, tick + endPos);
                 foreach (Note note in notesToConvert)
                 {

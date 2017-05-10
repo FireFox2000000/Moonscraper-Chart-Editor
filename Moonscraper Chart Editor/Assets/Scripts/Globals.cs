@@ -230,12 +230,12 @@ public class Globals : MonoBehaviour {
         else
             lockToStrikeline = false;
         snapLockWarning.gameObject.SetActive(lockToStrikeline);
-
+        /*
         if (Input.GetKeyDown(KeyCode.Z))
         {
             Debug.Log("Writing mid");
             MidWriter.WriteToFile("test.mid", editor.currentSong);
-        }
+        }*/
     }
 
     void OnGUI()
@@ -251,9 +251,16 @@ public class Globals : MonoBehaviour {
         if (modifierInputActive)
         {
             if (Input.GetKeyDown("s"))
-                editor._Save();
+            {
+                if (secondaryInputActive)
+                    editor.SaveAs();
+                else
+                    editor._Save();
+            }
             else if (Input.GetKeyDown("o"))
                 editor.Load();
+            else if (Input.GetKeyDown("n"))
+                editor.New();
             else if (Input.GetKeyDown("z") && !Input.GetMouseButton(0) && !Input.GetMouseButton(1))
             {
                 bool success;

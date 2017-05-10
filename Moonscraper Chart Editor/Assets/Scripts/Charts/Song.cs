@@ -9,7 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
-using NAudio.Midi;
 using System;
 using Un4seen.Bass;
 
@@ -20,14 +19,12 @@ public class Song {
     const int MUSIC_STREAM_ARRAY_POS = 0;
     const int GUITAR_STREAM_ARRAY_POS = 1;
     const int RHYTHM_STREAM_ARRAY_POS = 2;
-    //public const string TEMP_MP3_TO_WAV_FILEPATH = "moonscraper_mp3_to_wav_conversion_temp.wav";
 
     // Song properties
     public string name = string.Empty, artist = string.Empty, charter = string.Empty;
     public string player2 = "Bass";
     public int difficulty = 0;
-    public float offset = 0, previewStart = 0, previewEnd = 0;
-    public short resolution = 192;
+    public float offset = 0, previewStart = 0, previewEnd = 0, resolution = 192;
     public string genre = "rock", mediatype = "cd";
     public string year = string.Empty;
 #if !BASS_AUDIO
@@ -521,63 +518,6 @@ public class Song {
                 yield return null;
 
             --audioLoads;
-#else
-            // Create a temp file
-            if (Path.GetExtension(filepath) == ".mp3")
-            {
-                Debug.Log("Converting Mp3 to wav...");
-                System.Threading.Thread wavConversionThread = new System.Threading.Thread(() => { ConvertMp3ToWav(filepath, temp_wav_filepath); });
-                wavConversionThread.Start();
-
-                while (wavConversionThread.ThreadState == System.Threading.ThreadState.Running)
-                    yield return null;
-
-                File.SetAttributes(temp_wav_filepath, FileAttributes.Hidden);
-                convertedFromMp3 = filepath;
-                filepath = temp_wav_filepath;
-
-                Debug.Log("Mp3 to wav conversion complete!");            
-            }
-
-            WWW www = new WWW("file://" + filepath);
-
-            while (!www.isDone)
-            {
-                yield return null;
-            }
-
-            if (Path.GetExtension(filepath) == ".mp3")
-            {
-                Debug.Log("Still scanning for mp3 for whatever reason");
-                WAV wav = null;
-                float[] interleavedData = null;
-
-                byte[] bytes = www.bytes;
-                System.Threading.Thread wavConversionThread = new System.Threading.Thread(() => { wav = NAudioPlayer.WAVFromMp3Data(bytes, out interleavedData); });
-                wavConversionThread.Start();
-
-                while (wavConversionThread.ThreadState == System.Threading.ThreadState.Running)
-                    yield return null;            
-
-                audioStreams[audioStreamArrayPos] = AudioClip.Create("testSound", wav.SampleCount, 2, wav.Frequency, false);
-                audioStreams[audioStreamArrayPos].SetData(interleavedData, 0);
-
-                audioSampleData[audioStreamArrayPos].SetData(interleavedData);
-                //audioStreams[audioStreamArrayPos] = NAudioPlayer.FromMp3Data(www.bytes);
-            }
-            else
-            {
-                audioStreams[audioStreamArrayPos] = www.GetAudioClip(false, streamAudio);
-            }
-
-            --audioLoads;
-
-            if (convertedFromMp3 == string.Empty)
-                audioStreams[audioStreamArrayPos].name = Path.GetFileName(filepath);
-            else
-                audioStreams[audioStreamArrayPos].name = Path.GetFileName(convertedFromMp3);
-
-            while (audioStreams[audioStreamArrayPos] != null && audioStreams[audioStreamArrayPos].loadState != AudioDataLoadState.Loaded) ;
 #endif
 #if TIMING_DEBUG
             Debug.Log("Audio load time: " + (Time.realtimeSinceStartup - time));
@@ -586,9 +526,6 @@ public class Song {
         }
         else
         {
-#if !BASS_AUDIO
-            audioStreams[audioStreamArrayPos] = null;
-#endif
             if (filepath != string.Empty)
                 Debug.LogError("Unable to locate audio file");
         }
@@ -596,30 +533,6 @@ public class Song {
         GameObject.Destroy(coroutine);
     }
 
-    private static void ConvertMp3ToWav(string _inPath_, string _outPath_)
-    {
-        using (NAudio.Wave.Mp3FileReader mp3 = new NAudio.Wave.Mp3FileReader(_inPath_))
-        {
-            using (NAudio.Wave.WaveStream pcm = NAudio.Wave.WaveFormatConversionStream.CreatePcmStream(mp3))
-            {
-                NAudio.Wave.WaveFileWriter.CreateWaveFile(_outPath_, pcm);
-            }
-        }
-    }
-#if !BASS_AUDIO
-    public void FreeAudioClips()
-    {
-        foreach (AudioClip clip in audioStreams)
-        {
-            if (clip)
-            {
-                clip.UnloadAudioData();
-
-                GameObject.Destroy(clip);
-            }
-        }
-    }
-#endif
     public uint WorldPositionToSnappedChartPosition(float worldYPos, int step)
     {
         uint chartPos = WorldYPositionToChartPosition(worldYPos);
@@ -727,6 +640,16 @@ public class Song {
     public static float TimeToWorldYPosition(float time)
     {
         return time * Globals.hyperspeed / Globals.gameSpeed;
+    }
+
+    /// <summary>
+    /// Converts a tick position into the time it will appear in the song.
+    /// </summary>
+    /// <param name="position">Tick position.</param>
+    /// <returns>Returns the time in seconds.</returns>
+    public float ChartPositionToTime(uint position)
+    {
+        return ChartPositionToTime(position, this.resolution);
     }
 
     /// <summary>
@@ -1233,19 +1156,16 @@ public class Song {
 
         // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
         if (songAudioLoaded && Path.GetDirectoryName(audioLocations[MUSIC_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
-            //musicString = musicStream.name;
             musicString = Path.GetFileName(audioLocations[MUSIC_STREAM_ARRAY_POS]);
         else
             musicString = audioLocations[MUSIC_STREAM_ARRAY_POS];
 
         if (guitarAudioLoaded && Path.GetDirectoryName(audioLocations[GUITAR_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
-            //guitarString = guitarStream.name;
             guitarString = Path.GetFileName(audioLocations[GUITAR_STREAM_ARRAY_POS]);
         else
             guitarString = audioLocations[GUITAR_STREAM_ARRAY_POS];
 
         if (rhythmAudioLoaded && Path.GetDirectoryName(audioLocations[RHYTHM_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
-            //rhythmString = rhythmStream.name;
             rhythmString = Path.GetFileName(audioLocations[RHYTHM_STREAM_ARRAY_POS]);
         else
             rhythmString = audioLocations[RHYTHM_STREAM_ARRAY_POS];
@@ -1315,58 +1235,6 @@ public class Song {
                     saveString += "}" + Globals.LINE_ENDING;
                 }
             }
-            /*
-            chartString = charts[i].GetChartString(forced);
-
-            if (chartString != string.Empty)
-            {
-                string seperator;
-                switch(i)
-                {
-                    case (0):
-                        seperator = "[ExpertSingle]";
-                        break;
-                    case (1):
-                        seperator = "[ExpertDoubleBass]";
-                        break;
-                    case (2):
-                        seperator = "[ExpertDoubleGuitar]";
-                        break;
-                    case (3):
-                        seperator = "[HardSingle]";
-                        break;
-                    case (4):
-                        seperator = "[HardDoubleGuitar]";
-                        break;
-                    case (5):
-                        seperator = "[HardDoubleBass]";
-                        break;
-                    case (6):
-                        seperator = "[MediumSingle]";
-                        break;
-                    case (7):
-                        seperator = "[MediumDoubleGuitar]";
-                        break;
-                    case (8):
-                        seperator = "[MediumDoubleBass]";
-                        break;
-                    case (9):
-                        seperator = "[EasySingle]";
-                        break;
-                    case (10):
-                        seperator = "[EasyDoubleGuitar]";
-                        break;
-                    case (11):
-                        seperator = "[EasyDoubleBass]";
-                        break;
-                    default:
-                        seperator = "[ChartUnknown]";
-                        break;
-                }
-                saveString += seperator + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
-                saveString += chartString;
-                saveString += "}" + Globals.LINE_ENDING;
-            }*/
         }
 
         try {
