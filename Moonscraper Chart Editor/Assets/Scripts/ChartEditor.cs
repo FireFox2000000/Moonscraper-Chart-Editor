@@ -108,7 +108,7 @@ public class ChartEditor : MonoBehaviour {
         set
         {
             if (value == null)
-            {
+            {  
                 currentSelectedObjects = new SongObject[0];
             }
             else
@@ -263,7 +263,7 @@ public class ChartEditor : MonoBehaviour {
                     //Debug.Log("Not found " + anchorPoint);
                 }
                 groupMove.SetSongObjects(currentSelectedObjects, anchorPoint, true);
-                currentSelectedObject = null;
+                Debug.Log("Here");
             }
 
             if (Input.GetMouseButtonUp(0) && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer() && mousePos == Input.mousePosition && !Globals.modifierInputActive)
@@ -782,7 +782,11 @@ public class ChartEditor : MonoBehaviour {
         if (stopResetPos != null)
             movement.transform.position = (Vector3)stopResetPos;
 
-        currentSelectedObjects = selectedBeforePlay;
+        if (selectedBeforePlay.Length > 0)
+            currentSelectedObjects = selectedBeforePlay;
+
+        selectedBeforePlay = new SongObject[0];
+
         Globals.bot = true;
         stopResetPos = null;
     }

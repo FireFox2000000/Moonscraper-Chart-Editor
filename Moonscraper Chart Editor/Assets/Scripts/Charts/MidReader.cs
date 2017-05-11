@@ -113,7 +113,7 @@ public static class MidReader {
         List<NoteOnEvent> forceNotesList = new List<NoteOnEvent>();
         List<SysexEvent> tapAndOpenEvents = new List<SysexEvent>();
 
-        int rbSustainFixLength = (int)(song.resolution / Globals.STANDARD_BEAT_RESOLUTION * 64);
+        int rbSustainFixLength = (int)(64 * song.resolution / Globals.STANDARD_BEAT_RESOLUTION);
 
         // Load all the notes
         for (int i = 0; i < track.Count; i++)
@@ -218,7 +218,8 @@ public static class MidReader {
         foreach (NoteOnEvent flagEvent in forceNotesList)
         {
             uint tick = (uint)flagEvent.AbsoluteTime;
-            uint endPos = (uint)(flagEvent.OffEvent.AbsoluteTime - tick); //song.TimeToChartPosition(flagEvent.OffEvent.AbsoluteTime / 1000.0f, song.resolution, false);
+            uint endPos = (uint)(flagEvent.OffEvent.AbsoluteTime - tick);
+
             Song.Difficulty difficulty;
 
             // Determine which difficulty we are manipulating
@@ -273,6 +274,10 @@ public static class MidReader {
                     if (bytes2.Length == 8 && bytes2[5] == 255 && bytes2[7] == 0)
                     {
                         endPos = (uint)(se2.AbsoluteTime - tick);
+
+                        if (endPos > 0)
+                            --endPos;
+
                         break;
                     }
                     
@@ -314,6 +319,10 @@ public static class MidReader {
                         if (b2.Length == 8 && b2[5] == bytes[5] && b2[7] == 0)
                         {
                             endPos = (uint)(se2.AbsoluteTime - tick);
+
+                            if (endPos > 0)
+                                --endPos;
+
                             break;
                         }
                     }

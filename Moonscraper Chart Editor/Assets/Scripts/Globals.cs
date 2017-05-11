@@ -278,6 +278,13 @@ public class Globals : MonoBehaviour {
                 if (editor.actionHistory.Redo(editor))
                     groupSelect.reset();
             }
+            else if (Input.GetKeyDown("a") && viewMode == ViewMode.Chart)
+            {
+                editor.currentSelectedObject = null;
+
+                editor.currentSelectedObjects = editor.currentChart.notes;
+                editor.AddToSelectedObjects(editor.currentChart.starPower);
+            }
         }
     }
 
