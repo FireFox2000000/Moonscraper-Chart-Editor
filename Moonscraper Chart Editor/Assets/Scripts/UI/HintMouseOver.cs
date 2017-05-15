@@ -6,14 +6,14 @@ using UnityEngine.UI;
 
 public class HintMouseOver : MonoBehaviour {
     const float WAIT_TIME = 0.25f;
-    const float MAX_TEXTBOX_WIDTH = 100;
+    const float MAX_TEXTBOX_WIDTH = 150;
 
     // Used for GUI matrix scaling
     const float NATIVE_WIDTH = 1920.0f;
     const float nativeHeight = 1080.0f;
 
     public string message;
-    public GUIStyle style;
+    public static GUIStyle style;
     public Vector2 offset;
 
     Vector2? lastMousePos = null;
@@ -26,6 +26,8 @@ public class HintMouseOver : MonoBehaviour {
 
     void Start()
     {
+        message = message.Replace("\\n", "\n");
+
         // Generate event triggers for when script is placed on UI
         var trigger = gameObject.AddComponent<EventTrigger>();
 
@@ -81,8 +83,7 @@ public class HintMouseOver : MonoBehaviour {
         lastMousePos = null;
         timer = 0;
 
-        if (active)
-            DestroyHintBox();
+        DestroyHintBox();
     }
 
     void OnGUI()
@@ -124,15 +125,20 @@ public class HintMouseOver : MonoBehaviour {
         StartCoroutine(FadeOut());
     }
 
+    const float FADE_SPEED = 10.0f;
+
+    bool cancel = false;
     IEnumerator FadeIn()
     {
-        const float SPEED = 10.0f;
-
         alpha = 0;
 
-        while (alpha < 1)
+        cancel = true;
+        yield return null;
+        cancel = false;
+
+        while (alpha < 1 && !cancel)
         {
-            alpha += SPEED * Time.deltaTime;
+            alpha += FADE_SPEED * Time.deltaTime;
 
             yield return null;
         }
@@ -142,13 +148,15 @@ public class HintMouseOver : MonoBehaviour {
 
     IEnumerator FadeOut()
     {
-        const float SPEED = 10.0f;
-
         alpha = 1;
 
-        while (alpha > 0)
+        cancel = true;
+        yield return null;
+        cancel = false;
+
+        while (alpha > 0 && !cancel)
         {
-            alpha -= SPEED * Time.deltaTime;
+            alpha -= FADE_SPEED * Time.deltaTime;
 
             yield return null;
         }

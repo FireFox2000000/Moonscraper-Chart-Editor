@@ -28,6 +28,8 @@ public class Globals : MonoBehaviour {
     GroupSelect groupSelect;
     [SerializeField]
     Text snapLockWarning;
+    [SerializeField]
+    GUIStyle hintMouseOverStyle;
 
     public bool InToolArea
     {
@@ -172,6 +174,8 @@ public class Globals : MonoBehaviour {
         InputField[] allInputFields = Resources.FindObjectsOfTypeAll<InputField>();
         foreach (InputField inputField in allInputFields)
             inputField.gameObject.AddComponent<InputFieldDoubleClick>();
+
+        HintMouseOver.style = hintMouseOverStyle;
     }
 
     void Start()
