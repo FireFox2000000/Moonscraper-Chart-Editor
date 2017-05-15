@@ -228,6 +228,7 @@
     <Compile Include="Assets\Scripts\UI\DropDownMenu.cs" />
     <Compile Include="Assets\Scripts\UI\DynamicTextScrollView.cs" />
     <Compile Include="Assets\Scripts\UI\FPSDisplay.cs" />
+    <Compile Include="Assets\Scripts\UI\HintMouseOver.cs" />
     <Compile Include="Assets\Scripts\UI\ImageFade.cs" />
     <Compile Include="Assets\Scripts\UI\InputFieldDoubleClick.cs" />
     <Compile Include="Assets\Scripts\UI\KeysNotePlacementModePanelController.cs" />
