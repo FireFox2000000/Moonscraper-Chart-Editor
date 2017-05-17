@@ -25,7 +25,7 @@ public class Toolpane : MonoBehaviour {
     {
         if (((Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))) && !globals.InToolArea)
             mouseDownInArea = false;
-        else if (!mouseDownInArea && (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1)))
+        else if (!mouseDownInArea && (!Input.GetMouseButton(0) && !Input.GetMouseButton(1)))//(Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1)))
             mouseDownInArea = true;
 
         // Handle delete mode cancel

@@ -1,5 +1,8 @@
-﻿using UnityEngine;
+﻿//#define BASS_AUDIO
+
+using UnityEngine;
 using System.Collections;
+using Un4seen.Bass;
 
 [RequireComponent(typeof(AudioSource))]
 public class StrikelineAudioController : MonoBehaviour {
@@ -7,15 +10,23 @@ public class StrikelineAudioController : MonoBehaviour {
     public AudioClip clap;
     static AudioClip _clap;
     static AudioSource source;
+    public 
 
     static float lastClapPos = -1;
     public static float startYPoint = -1;
     Vector3 initLocalPos;
 
+    static byte[] clapBytes;
+    static int sample;
+
     void Start()
     {
         source = GetComponent<AudioSource>();
         _clap = clap;
+#if BASS_AUDIO
+        //clapBytes = clap.
+        sample = Bass.BASS_SampleLoad(clapBytes, 0, 0, 5, BASSFlag.BASS_DEFAULT);
+#endif
         initLocalPos = transform.localPosition;  
     }
     
@@ -32,56 +43,20 @@ public class StrikelineAudioController : MonoBehaviour {
     public static void Clap(float worldYPos)
     {
         if (worldYPos > lastClapPos && worldYPos >= startYPoint)
+        {
             source.PlayOneShot(_clap);
+#if BASS_AUDIO
+            int channel = Bass.BASS_SampleGetChannel(sample, false); // get a sample channel
+            if (channel != 0)
+                Bass.BASS_ChannelPlay(channel, false); // play it
+#endif
+        }
         lastClapPos = worldYPos;
     }
-    /*
-    void OnTriggerEnter2D (Collider2D col)
+#if BASS_AUDIO
+    ~StrikelineAudioController()
     {
-        NoteController note = col.gameObject.GetComponentInParent<NoteController>();
-
-        if (note != null && Globals.applicationMode == Globals.ApplicationMode.Playing && col.transform.position.y != lastClapPos && !note.isActivated)
-        {
-            switch (note.note.type)
-            {
-                case (Note.Note_Type.STRUM):
-                    if ((Globals.clapSetting & Globals.ClapToggle.STRUM) == 0)
-                        return;
-                    break;
-                case (Note.Note_Type.HOPO):
-                    if ((Globals.clapSetting & Globals.ClapToggle.HOPO) == 0)
-                        return;
-                    break;
-                case (Note.Note_Type.TAP):
-                    if ((Globals.clapSetting & Globals.ClapToggle.TAP) == 0)
-                        return;
-                    break;
-                default:
-                    break;
-            }
-            
-            source.PlayOneShot(clap);
-            //Debug.Log("Played clap");
-
-            lastClapPos = col.transform.position.y;
-        }
+        Bass.BASS_SampleFree(sample);
     }
-
-    bool modeSwitch = false;
-    void OnTriggerStay2D (Collider2D col)
-    {
-        if (modeSwitch)
-        {
-            if (Globals.applicationMode == Globals.ApplicationMode.Editor)
-                modeSwitch = false;
-        }
-        else
-        {
-            if (Globals.applicationMode == Globals.ApplicationMode.Playing)
-            {
-                modeSwitch = true;
-                OnTriggerEnter2D(col);
-            }
-        }
-    }*/
+#endif
 }
