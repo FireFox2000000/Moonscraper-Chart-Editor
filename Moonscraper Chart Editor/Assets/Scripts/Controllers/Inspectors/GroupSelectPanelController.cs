@@ -8,11 +8,37 @@ public class GroupSelectPanelController : MonoBehaviour
     ChartEditor editor;
     [SerializeField]
     Dropdown fretSelectDropdown;
+    [SerializeField]
+    Button setNoteNatural;
+    [SerializeField]
+    Button setNoteStrum;
+    [SerializeField]
+    Button setNoteHopo;
+    [SerializeField]
+    Button setNoteTap;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         editor = ChartEditor.FindCurrentEditor();
 	}
+
+    void Update()
+    {
+        if (!Globals.IsTyping && !Globals.modifierInputActive)
+            Shortcuts();
+    }
+
+    void Shortcuts()
+    {
+        if (Input.GetKeyDown(KeyCode.X))
+            setNoteNatural.onClick.Invoke();
+        else if (Input.GetKeyDown(KeyCode.S))
+            setNoteStrum.onClick.Invoke();
+        else if (Input.GetKeyDown(KeyCode.H))
+            setNoteHopo.onClick.Invoke();
+        else if (Input.GetKeyDown(KeyCode.T))
+            setNoteTap.onClick.Invoke();
+    }
 
     public void ApplyFretDropdownSelection()
     {

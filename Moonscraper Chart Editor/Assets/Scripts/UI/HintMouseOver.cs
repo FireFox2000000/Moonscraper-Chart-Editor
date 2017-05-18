@@ -92,15 +92,19 @@ public class HintMouseOver : MonoBehaviour {
         {
             Vector2 scaledOffset = new Vector2(offset.x * transform.lossyScale.x, offset.y * transform.lossyScale.y);
             Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(null, ((Vector2)transform.position + scaledOffset));
+            screenPos.y = Screen.height - screenPos.y;      // Alter for GUI label position
 
+            // Apply matrix transformations
             const float NATIVE_WIDTH = 1920.0f;
             const float NATIVE_HEIGHT = 1080.0f;
             float rx = Screen.width / NATIVE_WIDTH;
             float ry = Screen.height / NATIVE_HEIGHT;
             GUI.matrix = Matrix4x4.TRS(new Vector3(0, 0, 0), Quaternion.identity, new Vector3(rx, ry, 1));
 
+            // Apply fading
             GUI.color = new Color(GUI.color.r, GUI.color.g, GUI.color.b, alpha);
 
+            // Calculate the size of the textbox
             Vector2 size = style.CalcSize(new GUIContent(message));
             if (size.x > MAX_TEXTBOX_WIDTH)
             {
@@ -108,7 +112,20 @@ public class HintMouseOver : MonoBehaviour {
                 size.y = style.CalcHeight(new GUIContent(message), MAX_TEXTBOX_WIDTH);
             }
 
-            GUI.Label(new Rect(screenPos.x / rx, (Screen.height - screenPos.y) / ry, size.x, size.y), message, style);
+            // Check if the box is going to appear offscreen and fix
+            if (screenPos.x < 0)
+                screenPos.x = 0;
+
+            if (screenPos.x + size.x * rx > Screen.width)
+                screenPos.x = Screen.width - size.x * rx;
+
+            if (screenPos.y < 0)
+                screenPos.y = 0;
+
+            if (screenPos.y + size.y * ry > Screen.height)
+                screenPos.y = Screen.height - size.y * ry;
+
+            GUI.Label(new Rect(screenPos.x / rx, screenPos.y / ry, size.x, size.y), message, style);
         }
     }
 
