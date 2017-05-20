@@ -180,18 +180,19 @@ public class Globals : MonoBehaviour {
 
     void Start()
     {
-        System.IO.FileStream fp1 = System.IO.File.Open("notes.mid", System.IO.FileMode.Open);
+        System.IO.BinaryReader bin;
+        //System.IO.FileStream fp1 = System.IO.File.Open("notes.mid", System.IO.FileMode.Open);
         System.IO.FileStream fp2 = System.IO.File.Open("test.mid", System.IO.FileMode.Open);
 
-        System.IO.BinaryReader bin = new System.IO.BinaryReader(fp1);
-        Debug.Log(System.BitConverter.ToString(bin.ReadBytes(22)));
+        //bin = new System.IO.BinaryReader(fp1);
+        Debug.Log(System.BitConverter.ToString(System.IO.File.ReadAllBytes("notes.mid")));
 
-        bin.Close();
+        //bin.Close();
 
         bin = new System.IO.BinaryReader(fp2);
         Debug.Log(System.BitConverter.ToString(bin.ReadBytes(22)));
         bin.Close();
-        fp1.Close();
+        //fp1.Close();
         fp2.Close();
         
         //MidWriter.WriteToFile("test.mid", editor.currentSong);
@@ -234,12 +235,12 @@ public class Globals : MonoBehaviour {
         else
             lockToStrikeline = false;
         snapLockWarning.gameObject.SetActive(lockToStrikeline);
-        /*
+        
         if (Input.GetKeyDown(KeyCode.Z))
         {
             Debug.Log("Writing mid");
             MidWriter.WriteToFile("test.mid", editor.currentSong);
-        }*/
+        }
     }
 
     void OnGUI()

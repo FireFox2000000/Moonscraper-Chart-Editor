@@ -14,9 +14,10 @@ public class GameplayManager : MonoBehaviour {
 
     const float FREESTRUM_TIME = 0.2f;
 
+    public GameObject statsPanel;
     public UnityEngine.UI.Text noteStreakText;
     public UnityEngine.UI.Text percentHitText;
-    public UnityEngine.UI.Text debugHitText;
+    public UnityEngine.UI.Text totalHitText;
 
     static uint noteStreak = 0;
     public static uint ns { get { return noteStreak; } }
@@ -61,6 +62,8 @@ public class GameplayManager : MonoBehaviour {
 
     void Update()
     {
+        statsPanel.SetActive(Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot);
+
         uint startNS = noteStreak;
 
 #if GAMEPAD
@@ -280,13 +283,13 @@ public class GameplayManager : MonoBehaviour {
             }
 
             // Update UI
-            noteStreakText.text = "Note streak: " + noteStreak.ToString();
+            noteStreakText.text = noteStreak.ToString();
             if (totalNotes > 0)
                 percentHitText.text = ((float)notesHit / (float)totalNotes * 100).Round(2).ToString() + "%";
             else
                 percentHitText.text = "0.00%";
 
-            debugHitText.text = notesHit.ToString() + " / " + totalNotes.ToString();
+            totalHitText.text = notesHit.ToString() + " / " + totalNotes.ToString();
 
             previousInputMask = inputMask;
 
@@ -316,9 +319,9 @@ public class GameplayManager : MonoBehaviour {
 
     void reset()
     {
-        noteStreakText.text = string.Empty;
-        percentHitText.text = string.Empty;
-        debugHitText.text = string.Empty;
+        noteStreakText.text = "0";
+        percentHitText.text = "0%";
+        totalHitText.text = "0/0";
         noteStreak = 0;
         notesHit = 0;
         totalNotes = 0;

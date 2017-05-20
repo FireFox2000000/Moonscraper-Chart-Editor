@@ -658,9 +658,13 @@ public class ChartEditor : MonoBehaviour {
         }
 
 #else
-        playBassStream(currentSong.bassMusicStream, playPoint, Globals.gameSpeed, Globals.vol_song);
-        playBassStream(currentSong.bassGuitarStream, playPoint, Globals.gameSpeed, Globals.vol_guitar);
-        playBassStream(currentSong.bassRhythmStream, playPoint, Globals.gameSpeed, Globals.vol_rhythm);
+        SetBassStreamProperties(currentSong.bassMusicStream, Globals.gameSpeed, Globals.vol_song);
+        SetBassStreamProperties(currentSong.bassGuitarStream, Globals.gameSpeed, Globals.vol_guitar);
+        SetBassStreamProperties(currentSong.bassRhythmStream, Globals.gameSpeed, Globals.vol_rhythm);
+
+        PlayBassStream(currentSong.bassMusicStream, playPoint);
+        PlayBassStream(currentSong.bassGuitarStream, playPoint);
+        PlayBassStream(currentSong.bassRhythmStream, playPoint);
 #endif
     }
 
@@ -682,20 +686,28 @@ public class ChartEditor : MonoBehaviour {
 #endif
     }
 
-    void playBassStream(int handle, float playPoint, float speed, float vol)
+    void PlayBassStream(int handle, float playPoint)
     {
         if (handle != 0)
         {
             Bass.BASS_ChannelSetPosition(handle, playPoint);
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_VOL, vol * Globals.vol_master);
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_PAN,  Globals.audio_pan);
-
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO, speed * 100 - 100);
-
-                //Debug.LogError(Bass.BASS_ErrorGetCode());
-            //Bass.BASS_ChannelSetFX(handle, )
-            //Un4seen.Bass.AddOn.Fx.BassFx.
             Bass.BASS_ChannelPlay(handle, false);
+        }
+    }
+
+    void SetBassStreamProperties(int handle, float speed, float vol)
+    {
+        if (handle != 0)
+        {
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_VOL, vol * Globals.vol_master);
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_PAN, Globals.audio_pan);
+
+            //Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_OPTION_SEQUENCE_MS, 500);
+            //Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_OPTION_SEEKWINDOW_MS, 2);
+            //Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_OPTION_OVERLAP_MS, 200);
+            //Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_MUSIC_SPEED, 1);
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO, speed * 100 - 100);
+            //Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_MUSIC_SPEED, 0);
         }
     }
 
@@ -989,7 +1001,7 @@ public class ChartEditor : MonoBehaviour {
         Song backup = currentSong;
 
         try
-        {           
+        {
 #if UNITY_EDITOR
             currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart,mid");
             if (currentFileName == string.Empty)
@@ -1033,127 +1045,6 @@ public class ChartEditor : MonoBehaviour {
         Debug.Log("Loading song: " + System.IO.Path.GetFullPath(currentFileName));
 
         yield return StartCoroutine(_Load(currentFileName));
-        /*
-        // Start loading animation
-        Globals.applicationMode = Globals.ApplicationMode.Loading;
-        loadingScreen.FadeIn();
-        yield return null;
-
-        // Wait for saving to complete just in case
-        while (currentSong.IsSaving)
-            yield return null;
-
-#if TIMING_DEBUG
-        totalLoadTime = Time.realtimeSinceStartup;
-#endif
-        string originalMidFile = string.Empty;
-
-        // Convert mid to chart
-        if (System.IO.Path.GetExtension(currentFileName) == ".mid")
-        {
-            originalMidFile = currentFileName;
-            
-            loadingScreen.loadingInformation.text = "Coverting .mid to .chart";
-            System.Threading.Thread midConversionThread = new System.Threading.Thread(() => { currentFileName = ImportMidToTempChart(currentFileName); });
-
-            midConversionThread.Start();
-
-            while (midConversionThread.ThreadState == System.Threading.ThreadState.Running)
-                yield return null;
-
-            if (currentFileName == string.Empty)
-            {
-                currentSong = backup;
-                //Globals.applicationMode = Globals.ApplicationMode.Editor;
-                loadingScreen.FadeOut();
-                errorMenu.gameObject.SetActive(true);
-                // Immediate exit
-                yield break;
-            }
-#if TIMING_DEBUG
-            Debug.Log("Mid conversion time: " + (Time.realtimeSinceStartup - totalLoadTime));
-#endif
-        }
-
-#if TIMING_DEBUG
-        float time = Time.realtimeSinceStartup;
-#endif
-        // Load the actual file
-        loadingScreen.loadingInformation.text = "Loading file";
-        yield return null;
-
-        // Free the audio clips
-        FreeAudio();
-
-        System.Threading.Thread songLoadThread = new System.Threading.Thread(() => 
-        {
-            try
-            {
-                currentSong = new Song(currentFileName);
-            }
-            catch
-            {
-                currentSong = backup;
-            }
-        });
-        songLoadThread.Start();
-        while (songLoadThread.ThreadState == System.Threading.ThreadState.Running)
-            yield return null;
-
-#if TIMING_DEBUG
-        Debug.Log("Chart file load time: " + (Time.realtimeSinceStartup - time));
-        time = Time.realtimeSinceStartup;
-#endif
-        // Load the audio clips
-        loadingScreen.loadingInformation.text = "Loading audio";
-        yield return null;
-        currentSong.LoadAllAudioClips();
-
-        while (currentSong.IsAudioLoading)
-            yield return null;
-
-#if TIMING_DEBUG
-        Debug.Log("All audio files load time: " + (Time.realtimeSinceStartup - time));
-#endif
-        yield return null;
-        //currentSong = new Song(currentFileName);
-        editOccurred = false;
-
-#if TIMING_DEBUG
-        Debug.Log("File load time: " + (Time.realtimeSinceStartup - totalLoadTime));
-#endif
-
-        // Wait for audio to fully load
-        while (currentSong.IsAudioLoading)
-            yield return null;
-
-        if (originalMidFile != string.Empty)
-        {
-            // Delete the temp chart
-            System.IO.File.Delete(currentFileName);
-            currentFileName = string.Empty;
-        }
-
-        if (currentFileName != string.Empty)
-            lastLoadedFile = System.IO.Path.GetFullPath(currentFileName);
-        else
-            lastLoadedFile = string.Empty;
-
-        LoadSong(currentSong);
-
-#if TIMING_DEBUG
-        Debug.Log("Total load time: " + (Time.realtimeSinceStartup - totalLoadTime));
-#endif
-
-        if (originalMidFile != string.Empty)
-        {
-            editOccurred = true;
-        }
-
-        // Stop loading animation
-        Globals.applicationMode = Globals.ApplicationMode.Editor;
-        loadingScreen.FadeOut();
-        loadingScreen.loadingInformation.text = "Complete!";*/
     }
 
     void LoadSong(Song song)

@@ -14,13 +14,13 @@ public static class MidWriter {
     const string BASS_TRACK = "part bass";
     const string KEYS_TRACK = "part keys";
 
-    static readonly byte[] END_OF_TRACK = new byte[] { 0xFF, 0x2F, 0x00 };
+    static readonly byte[] END_OF_TRACK = new byte[] { 0, 0xFF, 0x2F, 0x00 };
 
     public static void WriteToFile(string path, Song song)
     {
-        byte[] header = GetMidiHeader(0, 1, (short)song.resolution);
+        byte[] header = GetMidiHeader(1, 1, (short)song.resolution);
         byte[] track_sync = MakeTrack(GetSyncBytes(song), "synctrack");
-        //byte[] track_events = MakeTrack(GetSectionBytes(song), "events");
+        //byte[] track_sync = MakeTrack(new byte[0], "synctrack");
 
         FileStream file = File.Open(path, FileMode.OpenOrCreate);
         BinaryWriter bw = new BinaryWriter(file);
@@ -36,11 +36,9 @@ public static class MidWriter {
         // Write synctrack
         // Write sections
         // Write instuments
-        /*
+        
         Debug.Log(BitConverter.ToString(header));
-        Debug.Log(BitConverter.ToString(MetaTextEvent(TRACK_NAME_EVENT, "Test")));
-        Debug.Log(BitConverter.ToString(TimedEvent(64, TempoEvent(new BPM()))));
-        Debug.Log(BitConverter.ToString(GetSyncBytes(song))); */
+        Debug.Log(BitConverter.ToString(track_sync));
     }
 
     static byte[] GetChartBytes(Chart chart)
@@ -138,7 +136,7 @@ public static class MidWriter {
 
     static byte[] MakeTrack(byte[] trackEvents, string trackName)
     {
-        byte[] trackNameEvent = MetaTextEvent(TEXT_EVENT, trackName);
+        byte[] trackNameEvent = TimedEvent(0, MetaTextEvent(TRACK_NAME_EVENT, trackName));
 
         byte[] header = GetTrackHeader(trackNameEvent.Length + trackEvents.Length + END_OF_TRACK.Length);
         byte[] fullTrack = new byte[header.Length + trackNameEvent.Length + trackEvents.Length + END_OF_TRACK.Length];
@@ -201,15 +199,16 @@ public static class MidWriter {
     static byte[] TempoEvent(BPM bpm)
     {
         const byte TEMPO_EVENT = 0x51;
-        byte[] bytes = new byte[5];
+        byte[] bytes = new byte[6];
 
-        bytes[0] = TEMPO_EVENT;
-        bytes[1] = 0x03;            // Size
+        bytes[0] = 0xFF;
+        bytes[1] = TEMPO_EVENT;
+        bytes[2] = 0x03;            // Size
 
         // Microseconds per quarter note for the last 3 bytes stored as a 24-bit binary
         byte[] microPerSec = EndianBitConverter.Big.GetBytes((uint)(6.0f * Mathf.Pow(10, 10) / bpm.value));
 
-        Array.Copy(microPerSec, 1, bytes, 2, 3);        // Offset of 1 and length of 3 cause 24 bit
+        Array.Copy(microPerSec, 1, bytes, 3, 3);        // Offset of 1 and length of 3 cause 24 bit
 
         return bytes;
     }
@@ -217,14 +216,15 @@ public static class MidWriter {
     static byte[] TimeSignatureEvent(TimeSignature ts)
     {
         const byte TIME_SIGNATURE_EVENT = 0x58;
-        byte[] bytes = new byte[6];
+        byte[] bytes = new byte[7];
 
-        bytes[0] = TIME_SIGNATURE_EVENT;
-        bytes[1] = 0x04;            // Size
-        bytes[2] = EndianBitConverter.Big.GetBytes((short)ts.numerator)[1];
-        bytes[3] = EndianBitConverter.Big.GetBytes((short)ts.denominator)[1];
-        bytes[4] = 0x18; // 24, 24 clock ticks in metronome click, so once every quater note. I doubt this is important, but I'm sure irony will strike.
-        bytes[5] = 0x08; // 8, a quater note should happen every quarter note.
+        bytes[0] = 0xFF;
+        bytes[1] = TIME_SIGNATURE_EVENT;
+        bytes[2] = 0x04;            // Size
+        bytes[3] = EndianBitConverter.Big.GetBytes((short)ts.numerator)[1];
+        bytes[4] = EndianBitConverter.Big.GetBytes((short)ts.denominator)[1];
+        bytes[5] = 0x18; // 24, 24 clock ticks in metronome click, so once every quater note. I doubt this is important, but I'm sure irony will strike.
+        bytes[6] = 0x08; // 8, a quater note should happen every quarter note.
 
         return bytes;
     }

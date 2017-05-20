@@ -18,6 +18,7 @@ public static class MidReader {
 
         try
         {
+            Debug.Log(path);
             midi = new MidiFile(path);
         }
         catch (SystemException e)
