@@ -18,16 +18,16 @@ public static class MidWriter {
 
     public static void WriteToFile(string path, Song song)
     {
-        byte[] header = GetMidiHeader(1, 1, (short)song.resolution);
+        byte[] header = GetMidiHeader(1, 2, (short)song.resolution);
         byte[] track_sync = MakeTrack(GetSyncBytes(song), "synctrack");
-        //byte[] track_sync = MakeTrack(new byte[0], "synctrack");
+        byte[] track_events = MakeTrack(GetSectionBytes(song), "events");
 
         FileStream file = File.Open(path, FileMode.OpenOrCreate);
         BinaryWriter bw = new BinaryWriter(file);
 
         bw.Write(header);
         bw.Write(track_sync);
-        //bw.Write(track_events);
+        bw.Write(track_events);
 
         bw.Close();
         file.Close();
@@ -82,7 +82,7 @@ public static class MidWriter {
             if (i > 0)
                 deltaTime -= song.sections[i - 1].position;
 
-            sectionBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, "[section " + song.sections[i].title)));
+            sectionBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, "[section " + song.sections[i].title + "]")));
         }
 
         return sectionBytes.ToArray();
