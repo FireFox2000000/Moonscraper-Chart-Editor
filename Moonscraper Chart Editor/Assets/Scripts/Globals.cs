@@ -185,7 +185,8 @@ public class Globals : MonoBehaviour {
         System.IO.FileStream fp2 = System.IO.File.Open("test.mid", System.IO.FileMode.Open);
 
         //bin = new System.IO.BinaryReader(fp1);
-        Debug.Log(System.BitConverter.ToString(System.IO.File.ReadAllBytes("notes.mid")));
+        //Debug.Log(System.BitConverter.ToString(System.IO.File.ReadAllBytes("notes.mid")));
+        System.IO.File.WriteAllText("notes.chart", System.BitConverter.ToString(System.IO.File.ReadAllBytes("notes.mid")));
 
         //bin.Close();
 

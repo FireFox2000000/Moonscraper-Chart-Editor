@@ -143,21 +143,22 @@ public static class MidWriter {
 
             if (note != null)
             {
+                int difficultyNumber;
                 int noteNumber;
 
                 switch (difficulty)
                 {
                     case (Song.Difficulty.Easy):
-                        noteNumber = 60;
+                        difficultyNumber = 60;
                         break;
                     case (Song.Difficulty.Medium):
-                        noteNumber = 72;
+                        difficultyNumber = 72;
                         break;
                     case (Song.Difficulty.Hard):
-                        noteNumber = 84;
+                        difficultyNumber = 84;
                         break;
                     case (Song.Difficulty.Expert):
-                        noteNumber = 96;
+                        difficultyNumber = 96;
                         break;
                     default:
                         continue;
@@ -166,19 +167,19 @@ public static class MidWriter {
                 switch (note.fret_type)
                 {
                     case (Note.Fret_Type.GREEN):
-                        noteNumber += 0;
+                        noteNumber = difficultyNumber + 0;
                         break;
                     case (Note.Fret_Type.RED):
-                        noteNumber += 1;
+                        noteNumber = difficultyNumber + 1;
                         break;
                     case (Note.Fret_Type.YELLOW):
-                        noteNumber += 2;
+                        noteNumber = difficultyNumber + 2;
                         break;
                     case (Note.Fret_Type.BLUE):
-                        noteNumber += 3;
+                        noteNumber = difficultyNumber + 3;
                         break;
                     case (Note.Fret_Type.ORANGE):
-                        noteNumber += 4;
+                        noteNumber = difficultyNumber + 4;
                         break;
                     case (Note.Fret_Type.OPEN):
                         continue;
@@ -189,7 +190,49 @@ public static class MidWriter {
                 onEvent = new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)noteNumber, VELOCITY });
                 offEvent = new SortableBytes(note.position + note.sustain_length, new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY });
 
-                // Add flag and open note Sysex events if we're doing the expert chart
+                // Forced notes
+                
+                if ((note.flags & Note.Flags.FORCED) != 0 && (note.previous == null || (note.previous.position != note.position)))     // Don't overlap on chords
+                {
+                    // Add a note
+                    int forcedNoteNumber;
+
+                    if (note.type == Note.Note_Type.Hopo)
+                        forcedNoteNumber = difficultyNumber + 5;
+                    else
+                        forcedNoteNumber = difficultyNumber + 6;
+
+                    eventList.Add(new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)forcedNoteNumber, VELOCITY }));
+                    eventList.Add(new SortableBytes(note.position + 1, new byte[] { OFF_EVENT, (byte)forcedNoteNumber, VELOCITY }));
+                }
+                
+                // Add tap sysex events
+                if ((note.flags & Note.Flags.TAP) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.TAP) == 0))  // This note is a tap while the previous one isn't as we're creating a range
+                {
+                    // Find the next non-tap note
+                    Note nextNonTap = note;
+                    while (nextNonTap.next != null && (nextNonTap.next.flags & Note.Flags.TAP) != 0)
+                        nextNonTap = nextNonTap.next;
+
+                    // 10 bytes
+                    // F0, ID
+                    // 08-50-53-00-00-FF-04-01      end with 01 for On, 00 for Off
+                    // F7
+                    
+                    const byte SYSEX_START = 0xF0;
+                    const byte SYSEX_END = 0xF7;
+                    const byte SYSEX_ON = 0x01;
+                    const byte SYSEX_OFF = 0x00;
+
+                    byte[] tapOnEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_ON, SYSEX_END };
+                    byte[] tapOffEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_OFF, SYSEX_END };
+
+                    SortableBytes tapOnEvent = new SortableBytes(note.position, tapOnEventBytes);
+                    SortableBytes tapOffEvent = new SortableBytes(nextNonTap.position + 1, tapOffEventBytes);
+
+                    eventList.Add(tapOnEvent);
+                    eventList.Add(tapOffEvent);
+                }
             }
 
             Starpower sp = chartObject as Starpower;
