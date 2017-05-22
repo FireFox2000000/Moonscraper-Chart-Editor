@@ -131,6 +131,7 @@
     <Compile Include="Assets\Scripts\CameraLayering.cs" />
     <Compile Include="Assets\Scripts\ChartEditor.cs" />
     <Compile Include="Assets\Scripts\Charts\BPM.cs" />
+    <Compile Include="Assets\Scripts\Charts\ByteSort.cs" />
     <Compile Include="Assets\Scripts\Charts\Chart.cs" />
     <Compile Include="Assets\Scripts\Charts\ChartEvent.cs" />
     <Compile Include="Assets\Scripts\Charts\ChartObject.cs" />

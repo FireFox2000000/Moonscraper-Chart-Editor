@@ -18,9 +18,22 @@ public static class MidWriter {
 
     public static void WriteToFile(string path, Song song)
     {
-        byte[] header = GetMidiHeader(1, 2, (short)song.resolution);
+        short track_count = 1;
         byte[] track_sync = MakeTrack(GetSyncBytes(song), "synctrack");
+
         byte[] track_events = MakeTrack(GetSectionBytes(song), "events");
+        if (track_events.Length > 0)
+            track_count++;
+
+        byte[] track_guitar = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Guitar), "part guitar");
+        if (track_guitar.Length > 0)
+            track_count++;
+        /*
+        byte[] track_bass = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Bass), "part bass");
+        if (track_bass.Length > 0)
+            track_count++;*/
+
+        byte[] header = GetMidiHeader(1, track_count, (short)song.resolution);
 
         FileStream file = File.Open(path, FileMode.OpenOrCreate);
         BinaryWriter bw = new BinaryWriter(file);
@@ -28,17 +41,13 @@ public static class MidWriter {
         bw.Write(header);
         bw.Write(track_sync);
         bw.Write(track_events);
+        bw.Write(track_guitar);
 
         bw.Close();
         file.Close();
-
-        // Write header
-        // Write synctrack
-        // Write sections
-        // Write instuments
-        
+        /*
         Debug.Log(BitConverter.ToString(header));
-        Debug.Log(BitConverter.ToString(track_sync));
+        Debug.Log(BitConverter.ToString(track_sync));*/
     }
 
     static byte[] GetChartBytes(Chart chart)
@@ -76,16 +85,132 @@ public static class MidWriter {
     {
         List<byte> sectionBytes = new List<byte>();
 
+        const string section_id = "section ";     // "section " is rb2 and former, "prc_" is rb3
+
         for (int i = 0; i < song.sections.Length; ++i)
         {
             uint deltaTime = song.sections[i].position;
             if (i > 0)
                 deltaTime -= song.sections[i - 1].position;
 
-            sectionBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, "[section " + song.sections[i].title + "]")));
+            sectionBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, "[" + section_id + song.sections[i].title + "]")));        
         }
 
         return sectionBytes.ToArray();
+    }
+
+    static byte[] GetInstrumentBytes(Song song, Song.Instrument instrument)
+    {
+        // Collect all bytes from each difficulty of the instrument, assigning the position for each event unsorted
+        List<SortableBytes> byteEvents = new List<SortableBytes>();
+        byteEvents.AddRange(GetChartSortableBytes(song.GetChart(instrument, Song.Difficulty.Easy), Song.Difficulty.Easy));
+        byteEvents.AddRange(GetChartSortableBytes(song.GetChart(instrument, Song.Difficulty.Medium), Song.Difficulty.Medium));
+        byteEvents.AddRange(GetChartSortableBytes(song.GetChart(instrument, Song.Difficulty.Hard), Song.Difficulty.Hard));
+        byteEvents.AddRange(GetChartSortableBytes(song.GetChart(instrument, Song.Difficulty.Expert), Song.Difficulty.Expert));
+
+        // Perform merge sort to re-order everything correctly
+        SortableBytes[] sortedEvents = byteEvents.ToArray();
+        SortableBytes.Sort(sortedEvents);
+
+        List<byte> bytes = new List<byte>();
+        
+        for (int i = 0; i < sortedEvents.Length; ++i)
+        {
+            uint deltaTime = sortedEvents[i].position;
+            if (i > 0)
+                deltaTime -= sortedEvents[i - 1].position;
+
+            // Apply time to the midi event
+            bytes.AddRange(TimedEvent(deltaTime, sortedEvents[i].bytes));
+        }
+
+        return bytes.ToArray();
+    }
+
+    static SortableBytes[] GetChartSortableBytes(Chart chart, Song.Difficulty difficulty)
+    {
+        List<SortableBytes> eventList = new List<SortableBytes>();
+        const byte ON_EVENT = 0x91;         // Note on channel 1
+        const byte OFF_EVENT = 0x81;
+        const byte VELOCITY = 0x64;         // 100
+        const byte STARPOWER_NOTE = 0x74;   // 116
+
+        foreach (ChartObject chartObject in chart.chartObjects)
+        {
+            Note note = chartObject as Note;
+            SortableBytes onEvent = null;
+            SortableBytes offEvent = null;
+
+            if (note != null)
+            {
+                int noteNumber;
+
+                switch (difficulty)
+                {
+                    case (Song.Difficulty.Easy):
+                        noteNumber = 60;
+                        break;
+                    case (Song.Difficulty.Medium):
+                        noteNumber = 72;
+                        break;
+                    case (Song.Difficulty.Hard):
+                        noteNumber = 84;
+                        break;
+                    case (Song.Difficulty.Expert):
+                        noteNumber = 96;
+                        break;
+                    default:
+                        continue;
+                }
+
+                switch (note.fret_type)
+                {
+                    case (Note.Fret_Type.GREEN):
+                        noteNumber += 0;
+                        break;
+                    case (Note.Fret_Type.RED):
+                        noteNumber += 1;
+                        break;
+                    case (Note.Fret_Type.YELLOW):
+                        noteNumber += 2;
+                        break;
+                    case (Note.Fret_Type.BLUE):
+                        noteNumber += 3;
+                        break;
+                    case (Note.Fret_Type.ORANGE):
+                        noteNumber += 4;
+                        break;
+                    case (Note.Fret_Type.OPEN):
+                        continue;
+                    default:
+                        continue;
+                }
+
+                onEvent = new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)noteNumber, VELOCITY });
+                offEvent = new SortableBytes(note.position + note.sustain_length, new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY });
+
+                // Add flag and open note Sysex events if we're doing the expert chart
+            }
+
+            Starpower sp = chartObject as Starpower;
+            if (sp != null && difficulty == Song.Difficulty.Expert)     // Starpower cannot be split up between charts in a midi file
+            {
+                onEvent = new SortableBytes(sp.position, new byte[] { ON_EVENT, STARPOWER_NOTE, VELOCITY });
+                offEvent = new SortableBytes(sp.position + sp.length, new byte[] { OFF_EVENT, STARPOWER_NOTE, VELOCITY });
+            }
+
+            if (onEvent != null && offEvent != null)
+            {
+                eventList.Add(onEvent);
+
+                if (offEvent.position == onEvent.position)
+                    ++offEvent.position;
+
+                eventList.Add(offEvent);
+            }
+        }
+
+        return eventList.ToArray();
     }
 
     static byte[] GetMidiHeader(short fileFormat, short trackCount, short resolution)
@@ -250,4 +375,6 @@ public static class MidWriter {
 
         return vlvEncodedBytesList.ToArray();
     }
+
+    
 }
