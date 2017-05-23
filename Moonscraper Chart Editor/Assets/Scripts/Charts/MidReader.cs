@@ -207,6 +207,7 @@ public static class MidReader {
             var sysexEvent = track[i] as SysexEvent;
             if (sysexEvent != null)
             {
+                //Debug.Log(BitConverter.ToString(sysexEvent.GetData()));
                 tapAndOpenEvents.Add(sysexEvent);
             }
         }
@@ -297,7 +298,7 @@ public static class MidReader {
 
             // Check for open notes
             // 5th byte determines the difficulty to apply to
-            else if (bytes.Length == 8 && bytes[5] >= 0 && bytes[5] <= 4 && bytes[7] == 1)
+            else if (bytes.Length == 8 && bytes[5] >= 0 && bytes[5] < 4 && bytes[7] == 1)
             {
                 uint tick = (uint)se1.AbsoluteTime;
                 Song.Difficulty difficulty;

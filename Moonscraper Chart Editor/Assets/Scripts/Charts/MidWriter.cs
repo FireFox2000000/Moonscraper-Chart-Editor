@@ -28,10 +28,10 @@ public static class MidWriter {
         byte[] track_guitar = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Guitar), "part guitar");
         if (track_guitar.Length > 0)
             track_count++;
-        /*
+        
         byte[] track_bass = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Bass), "part bass");
         if (track_bass.Length > 0)
-            track_count++;*/
+            track_count++;
 
         byte[] header = GetMidiHeader(1, track_count, (short)song.resolution);
 
@@ -42,6 +42,7 @@ public static class MidWriter {
         bw.Write(track_sync);
         bw.Write(track_events);
         bw.Write(track_guitar);
+        bw.Write(track_bass);
 
         bw.Close();
         file.Close();
@@ -103,10 +104,10 @@ public static class MidWriter {
     {
         // Collect all bytes from each difficulty of the instrument, assigning the position for each event unsorted
         List<SortableBytes> byteEvents = new List<SortableBytes>();
-        byteEvents.AddRange(GetChartSortableBytes(song.GetChart(instrument, Song.Difficulty.Easy), Song.Difficulty.Easy));
-        byteEvents.AddRange(GetChartSortableBytes(song.GetChart(instrument, Song.Difficulty.Medium), Song.Difficulty.Medium));
-        byteEvents.AddRange(GetChartSortableBytes(song.GetChart(instrument, Song.Difficulty.Hard), Song.Difficulty.Hard));
-        byteEvents.AddRange(GetChartSortableBytes(song.GetChart(instrument, Song.Difficulty.Expert), Song.Difficulty.Expert));
+        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Easy));
+        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Medium));
+        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Hard));
+        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Expert));
 
         // Perform merge sort to re-order everything correctly
         SortableBytes[] sortedEvents = byteEvents.ToArray();
@@ -127,13 +128,20 @@ public static class MidWriter {
         return bytes.ToArray();
     }
 
-    static SortableBytes[] GetChartSortableBytes(Chart chart, Song.Difficulty difficulty)
+    static SortableBytes[] GetChartSortableBytes(Song song, Song.Instrument instrument, Song.Difficulty difficulty)
     {
+        Chart chart = song.GetChart(instrument, difficulty);
+
         List<SortableBytes> eventList = new List<SortableBytes>();
         const byte ON_EVENT = 0x91;         // Note on channel 1
         const byte OFF_EVENT = 0x81;
         const byte VELOCITY = 0x64;         // 100
         const byte STARPOWER_NOTE = 0x74;   // 116
+
+        const byte SYSEX_START = 0xF0;
+        const byte SYSEX_END = 0xF7;
+        const byte SYSEX_ON = 0x01;
+        const byte SYSEX_OFF = 0x00;
 
         foreach (ChartObject chartObject in chart.chartObjects)
         {
@@ -166,6 +174,7 @@ public static class MidWriter {
 
                 switch (note.fret_type)
                 {
+                    case (Note.Fret_Type.OPEN):     // Open note highlighted as an SysEx event. Use green as default.
                     case (Note.Fret_Type.GREEN):
                         noteNumber = difficultyNumber + 0;
                         break;
@@ -181,8 +190,6 @@ public static class MidWriter {
                     case (Note.Fret_Type.ORANGE):
                         noteNumber = difficultyNumber + 4;
                         break;
-                    case (Note.Fret_Type.OPEN):
-                        continue;
                     default:
                         continue;
                 }
@@ -190,8 +197,7 @@ public static class MidWriter {
                 onEvent = new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)noteNumber, VELOCITY });
                 offEvent = new SortableBytes(note.position + note.sustain_length, new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY });
 
-                // Forced notes
-                
+                // Forced notes               
                 if ((note.flags & Note.Flags.FORCED) != 0 && (note.previous == null || (note.previous.position != note.position)))     // Don't overlap on chords
                 {
                     // Add a note
@@ -214,16 +220,7 @@ public static class MidWriter {
                     while (nextNonTap.next != null && (nextNonTap.next.flags & Note.Flags.TAP) != 0)
                         nextNonTap = nextNonTap.next;
 
-                    // 10 bytes
-                    // F0, ID
-                    // 08-50-53-00-00-FF-04-01      end with 01 for On, 00 for Off
-                    // F7
-                    
-                    const byte SYSEX_START = 0xF0;
-                    const byte SYSEX_END = 0xF7;
-                    const byte SYSEX_ON = 0x01;
-                    const byte SYSEX_OFF = 0x00;
-
+                    // Tap event = 08-50-53-00-00-FF-04-01, end with 01 for On, 00 for Off
                     byte[] tapOnEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_ON, SYSEX_END };
                     byte[] tapOffEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_OFF, SYSEX_END };
 
@@ -232,6 +229,43 @@ public static class MidWriter {
 
                     eventList.Add(tapOnEvent);
                     eventList.Add(tapOffEvent);
+                }
+                
+                if (note.fret_type == Note.Fret_Type.OPEN && (note.previous == null || (note.previous.fret_type != Note.Fret_Type.OPEN)))
+                {
+                    // Find the next non-open note
+                    Note nextNonOpen = note;
+                    while (nextNonOpen.next != null && nextNonOpen.next.fret_type == Note.Fret_Type.OPEN)
+                        nextNonOpen = nextNonOpen.next;
+
+                    byte diff;
+
+                    switch (difficulty)
+                    {
+                        case (Song.Difficulty.Easy):
+                            diff = 0;
+                            break;
+                        case (Song.Difficulty.Medium):
+                            diff = 1;
+                            break;
+                        case (Song.Difficulty.Hard):
+                            diff = 2;
+                            break;
+                        case (Song.Difficulty.Expert):
+                            diff = 3;
+                            break;
+                        default:
+                            continue;
+                    }
+
+                    byte[] openOnEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, diff, 0x01, SYSEX_ON, SYSEX_END };
+                    byte[] openOffEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, diff, 0x01, SYSEX_OFF, SYSEX_END };
+
+                    SortableBytes openOnEvent = new SortableBytes(note.position, openOnEventBytes);
+                    SortableBytes openOffEvent = new SortableBytes(nextNonOpen.position + 1, openOffEventBytes);
+
+                    eventList.Add(openOnEvent);
+                    eventList.Add(openOffEvent);
                 }
             }
 
