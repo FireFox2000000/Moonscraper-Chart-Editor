@@ -8,11 +8,13 @@ public static class FileExplorer  {
         string filename = string.Empty;
 #if UNITY_EDITOR
         filename = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", defaultFileName, defExt);
+        if (filename == string.Empty)
+            throw new Exception("Could not open file");
 #else
         OpenFileName openSaveFileDialog = new OpenFileName();
 
         openSaveFileDialog.structSize = Marshal.SizeOf(openSaveFileDialog);
-        openSaveFileDialog.filter = "Chart files (*.chart)\0*.chart";
+        openSaveFileDialog.filter = filter;
         openSaveFileDialog.file = new String(new char[256]);
         openSaveFileDialog.maxFile = openSaveFileDialog.file.Length;
 

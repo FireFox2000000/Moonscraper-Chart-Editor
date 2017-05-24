@@ -128,12 +128,13 @@ public class Globals : MonoBehaviour {
 
         viewMode = ViewMode.Chart;
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+#if !UNITY_EDITOR
         workingDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
-
+#endif
         INIParser iniparse = new INIParser();
 
         iniparse.Open(workingDirectory + "\\config.ini");
-        Debug.Log("********************** " + workingDirectory + "\\config.ini");
+
         // Check for valid fps values
         int fps = iniparse.ReadValue("Settings", "Framerate", 120);
         if (fps != 60 && fps != 120 && fps != 240)
