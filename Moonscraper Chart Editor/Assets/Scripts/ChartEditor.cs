@@ -205,9 +205,24 @@ public class ChartEditor : MonoBehaviour {
         loadingScreen.gameObject.SetActive(true);
     }
 
-    void Start()
+    IEnumerator Start()
     {
         SetVolume();
+
+        yield return null;
+        yield return null;
+
+#if !UNITY_EDITOR
+        string[] args = Environment.GetCommandLineArgs();
+        foreach (string arg in args)
+        {
+            if (System.IO.File.Exists(arg) && (System.IO.Path.GetExtension(arg) == ".chart" || System.IO.Path.GetExtension(arg) == ".mid"))
+            {
+                StartCoroutine(_Load(arg));
+                break;
+            }
+        }
+#endif
     }
 
     Vector3 mousePos = Vector3.zero;
@@ -546,8 +561,18 @@ public class ChartEditor : MonoBehaviour {
     public bool _SaveAs(bool forced = true)
     {
         try {
-            string fileName;
+            string defaultFileName;
 
+            if (lastLoadedFile != string.Empty)
+                defaultFileName = System.IO.Path.GetFileNameWithoutExtension(lastLoadedFile);
+            else
+                defaultFileName = new String(currentSong.name.ToCharArray());
+
+            if (!forced)
+                defaultFileName += "(UNFORCED)";
+
+            string fileName = FileExplorer.SaveFilePanel("Chart files (*.chart)\0*.chart", defaultFileName, "chart");
+            /*
 #if UNITY_EDITOR
             fileName = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", currentSong.name, "chart");
 #else
@@ -585,7 +610,7 @@ public class ChartEditor : MonoBehaviour {
             {
                 throw new System.Exception("Could not open file");
             }
-#endif
+#endif*/
 
             Save(fileName, forced);
 
@@ -880,34 +905,6 @@ public class ChartEditor : MonoBehaviour {
         totalLoadTime = Time.realtimeSinceStartup;
 #endif
         string originalMidFile = string.Empty;
-
-        // Convert mid to chart
-        /*
-        if (System.IO.Path.GetExtension(currentFileName) == ".mid")
-        {
-            originalMidFile = currentFileName;
-
-            loadingScreen.loadingInformation.text = "Coverting .mid to .chart";
-            System.Threading.Thread midConversionThread = new System.Threading.Thread(() => { currentFileName = ImportMidToTempChart(currentFileName); });
-
-            midConversionThread.Start();
-
-            while (midConversionThread.ThreadState == System.Threading.ThreadState.Running)
-                yield return null;
-
-            if (currentFileName == string.Empty)
-            {
-                currentSong = backup;
-                //Globals.applicationMode = Globals.ApplicationMode.Editor;
-                loadingScreen.FadeOut();
-                errorMenu.gameObject.SetActive(true);
-                // Immediate exit
-                yield break;
-            }
-#if TIMING_DEBUG
-            Debug.Log("Mid conversion time: " + (Time.realtimeSinceStartup - totalLoadTime));
-#endif
-        }*/
 
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;

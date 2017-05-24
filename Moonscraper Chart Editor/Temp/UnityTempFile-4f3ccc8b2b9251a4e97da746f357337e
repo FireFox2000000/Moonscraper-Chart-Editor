@@ -1,0 +1,260 @@
+-debug
+-target:library
+-nowarn:0169
+-langversion:4
+-out:Temp/Assembly-CSharp.dll
+-r:"C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll"
+-r:Library/ScriptAssemblies/Assembly-CSharp-firstpass.dll
+-r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll"
+-r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll"
+-r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/PlaymodeTestsRunner/UnityEngine.PlaymodeTestsRunner.dll"
+-r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll"
+-r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll"
+-r:"C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll"
+-r:Assets/Plugins/MiscUtil-DotNet2-r285.dll
+-r:Assets/Plugins/NAudio.dll
+-r:Assets/Plugins/NVorbis.dll
+-r:Assets/Plugins/NVorbis.NAudioSupport.dll
+-r:Assets/Plugins/System.Windows.Forms.dll
+-r:"Assets/Plugins/Bass Audio/x64/Bass.Net.dll"
+-r:Assets/Plugins/x86_64/XInputDotNetPure.dll
+-r:"C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll"
+-r:"C:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll"
+-r:"C:/Program Files/Unity/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Common.dll"
+-define:UNITY_5_3_OR_NEWER
+-define:UNITY_5_4_OR_NEWER
+-define:UNITY_5_5_OR_NEWER
+-define:UNITY_5_5_1
+-define:UNITY_5_5
+-define:UNITY_5
+-define:UNITY_64
+-define:ENABLE_AUDIO
+-define:ENABLE_CACHING
+-define:ENABLE_CLOTH
+-define:ENABLE_DUCK_TYPING
+-define:ENABLE_GENERICS
+-define:ENABLE_MICROPHONE
+-define:ENABLE_MULTIPLE_DISPLAYS
+-define:ENABLE_PHYSICS
+-define:ENABLE_SPRITERENDERER_FLIPPING
+-define:ENABLE_SPRITES
+-define:ENABLE_TERRAIN
+-define:ENABLE_RAKNET
+-define:ENABLE_UNET
+-define:ENABLE_LZMA
+-define:ENABLE_UNITYEVENTS
+-define:ENABLE_WEBCAM
+-define:ENABLE_WWW
+-define:ENABLE_CLOUD_SERVICES_COLLAB
+-define:ENABLE_CLOUD_SERVICES_ADS
+-define:ENABLE_CLOUD_HUB
+-define:ENABLE_CLOUD_PROJECT_ID
+-define:ENABLE_CLOUD_SERVICES_UNET
+-define:ENABLE_CLOUD_SERVICES_BUILD
+-define:ENABLE_CLOUD_LICENSE
+-define:ENABLE_EDITOR_METRICS
+-define:ENABLE_EDITOR_METRICS_CACHING
+-define:INCLUDE_DYNAMIC_GI
+-define:INCLUDE_GI
+-define:PLATFORM_SUPPORTS_MONO
+-define:RENDER_SOFTWARE_CURSOR
+-define:INCLUDE_PUBNUB
+-define:ENABLE_PLAYMODE_TESTS_RUNNER
+-define:ENABLE_SCRIPTING_NEW_CSHARP_COMPILER
+-define:UNITY_STANDALONE_WIN
+-define:UNITY_STANDALONE
+-define:ENABLE_SUBSTANCE
+-define:ENABLE_RUNTIME_GI
+-define:ENABLE_MOVIES
+-define:ENABLE_NETWORK
+-define:ENABLE_CRUNCH_TEXTURE_COMPRESSION
+-define:ENABLE_UNITYWEBREQUEST
+-define:ENABLE_CLOUD_SERVICES
+-define:ENABLE_CLOUD_SERVICES_ANALYTICS
+-define:ENABLE_CLOUD_SERVICES_PURCHASING
+-define:ENABLE_CLOUD_SERVICES_CRASH_REPORTING
+-define:ENABLE_EVENT_QUEUE
+-define:ENABLE_CLUSTERINPUT
+-define:ENABLE_VIDEO
+-define:ENABLE_VR
+-define:ENABLE_WEBSOCKET_HOST
+-define:ENABLE_MONO
+-define:ENABLE_PROFILER
+-define:DEBUG
+-define:TRACE
+-define:UNITY_ASSERTIONS
+-define:UNITY_EDITOR
+-define:UNITY_EDITOR_64
+-define:UNITY_EDITOR_WIN
+-define:ENABLE_VSTU
+Assets/Scripts/ActionHistory.cs
+"Assets/Scripts/Advanced INI Parser/INIParser.cs"
+Assets/Scripts/Animations/CustomFretManager.cs
+Assets/Scripts/Animations/DefaultHitAnimation.cs
+Assets/Scripts/Animations/HitAnimation.cs
+Assets/Scripts/Animations/NoteSpin.cs
+Assets/Scripts/Animations/NoteSpriteAnimations.cs
+Assets/Scripts/Animations/PerspectiveBillboarding.cs
+"Assets/Scripts/Assign Custom Resources/AssignCustomResources.cs"
+"Assets/Scripts/Assign Custom Resources/CustomResource.cs"
+"Assets/Scripts/Assign Custom Resources/LoadCustomResources.cs"
+"Assets/Scripts/Assign Custom Resources/MeshNoteResources.cs"
+"Assets/Scripts/Assign Custom Resources/Skin.cs"
+"Assets/Scripts/Assign Custom Resources/SpriteNoteResources.cs"
+"Assets/Scripts/Assign Custom Resources/SustainResources.cs"
+Assets/Scripts/Audio/NAudioPlayer.cs
+Assets/Scripts/Audio/SampleData.cs
+Assets/Scripts/Audio/WaveformDraw.cs
+Assets/Scripts/BGScaling.cs
+Assets/Scripts/BillboardingXAxis.cs
+Assets/Scripts/CameraLayering.cs
+Assets/Scripts/ChartEditor.cs
+Assets/Scripts/Charts/BPM.cs
+Assets/Scripts/Charts/ByteSort.cs
+Assets/Scripts/Charts/Chart.cs
+Assets/Scripts/Charts/ChartEvent.cs
+Assets/Scripts/Charts/ChartObject.cs
+Assets/Scripts/Charts/Event.cs
+Assets/Scripts/Charts/MidReader.cs
+Assets/Scripts/Charts/MidWriter.cs
+Assets/Scripts/Charts/Note.cs
+Assets/Scripts/Charts/Section.cs
+Assets/Scripts/Charts/Song.cs
+Assets/Scripts/Charts/SongObject.cs
+Assets/Scripts/Charts/Starpower.cs
+Assets/Scripts/Charts/SyncTrack.cs
+Assets/Scripts/Charts/TimeSignature.cs
+Assets/Scripts/Clipboard.cs
+Assets/Scripts/Controllers/ClipboardObjectController.cs
+Assets/Scripts/Controllers/HighwayController.cs
+Assets/Scripts/Controllers/HoverHighlightController.cs
+Assets/Scripts/Controllers/Inspectors/BPMPropertiesPanelController.cs
+Assets/Scripts/Controllers/Inspectors/DisplayProperties.cs
+Assets/Scripts/Controllers/Inspectors/GroupSelectPanelController.cs
+Assets/Scripts/Controllers/Inspectors/NotePropertiesPanelController.cs
+Assets/Scripts/Controllers/Inspectors/PropertiesPanelController.cs
+Assets/Scripts/Controllers/Inspectors/SectionPropertiesPanelController.cs
+Assets/Scripts/Controllers/Inspectors/TimesignaturePropertiesPanelController.cs
+Assets/Scripts/Controllers/MovementController.cs
+Assets/Scripts/Controllers/SelectedHighlightController.cs
+"Assets/Scripts/Controllers/Song Objects/BPMController.cs"
+"Assets/Scripts/Controllers/Song Objects/NoteController.cs"
+"Assets/Scripts/Controllers/Song Objects/SectionController.cs"
+"Assets/Scripts/Controllers/Song Objects/SongObjectController.cs"
+"Assets/Scripts/Controllers/Song Objects/StarpowerController.cs"
+"Assets/Scripts/Controllers/Song Objects/StarpowerTailController.cs"
+"Assets/Scripts/Controllers/Song Objects/StrikelineAudioController.cs"
+"Assets/Scripts/Controllers/Song Objects/SustainController.cs"
+"Assets/Scripts/Controllers/Song Objects/Timeline Indicators/SectionGuiController.cs"
+"Assets/Scripts/Controllers/Song Objects/Timeline Indicators/StarpowerGUIController.cs"
+"Assets/Scripts/Controllers/Song Objects/Timeline Indicators/TimelineIndicator.cs"
+"Assets/Scripts/Controllers/Song Objects/TimesignatureController.cs"
+Assets/Scripts/Controllers/StrikelineFretPlacement.cs
+Assets/Scripts/Controllers/TimelineMovementController.cs
+Assets/Scripts/CustomSpriteTest.cs
+Assets/Scripts/DialogBox.cs
+Assets/Scripts/FretboardWrapMovement.cs
+Assets/Scripts/Gameplay/GameplayManager.cs
+Assets/Scripts/Gameplay/Indicators.cs
+Assets/Scripts/Gameplay/Whammy.cs
+Assets/Scripts/Globals.cs
+Assets/Scripts/Metronome.cs
+Assets/Scripts/Mouse.cs
+Assets/Scripts/NoteVisuals/Note2D3DSelector.cs
+Assets/Scripts/NoteVisuals/NoteVisuals2DManager.cs
+Assets/Scripts/NoteVisuals/NoteVisuals3DManager.cs
+Assets/Scripts/NoteVisuals/NoteVisualsManager.cs
+Assets/Scripts/Pooling/BPMPool.cs
+Assets/Scripts/Pooling/NotePool.cs
+Assets/Scripts/Pooling/SectionPool.cs
+Assets/Scripts/Pooling/SongObjectPool.cs
+Assets/Scripts/Pooling/SongObjectPoolManager.cs
+Assets/Scripts/Pooling/StarpowerPool.cs
+Assets/Scripts/Pooling/TimesignaturePool.cs
+Assets/Scripts/PrefabGlobals.cs
+Assets/Scripts/RendererLayerExpose.cs
+Assets/Scripts/SelectableClick.cs
+Assets/Scripts/SetLineRendererPoints.cs
+Assets/Scripts/Settings.cs
+Assets/Scripts/SpriteGlow.cs
+Assets/Scripts/Step.cs
+Assets/Scripts/TapBPMCalculator.cs
+Assets/Scripts/TimelineHandler.cs
+Assets/Scripts/Tools/Eraser.cs
+Assets/Scripts/Tools/GroupSelect.cs
+Assets/Scripts/Tools/ObjectlessTool.cs
+Assets/Scripts/Tools/Placeable/GrabMove/GroupMove.cs
+Assets/Scripts/Tools/Placeable/GrabMove/MoveBPM.cs
+Assets/Scripts/Tools/Placeable/GrabMove/MoveNote.cs
+Assets/Scripts/Tools/Placeable/GrabMove/MoveSection.cs
+Assets/Scripts/Tools/Placeable/GrabMove/MoveStarpower.cs
+Assets/Scripts/Tools/Placeable/GrabMove/MoveTimeSignature.cs
+Assets/Scripts/Tools/Placeable/PlaceBPM.cs
+Assets/Scripts/Tools/Placeable/PlaceFret.cs
+Assets/Scripts/Tools/Placeable/PlaceNote.cs
+Assets/Scripts/Tools/Placeable/PlaceNoteController.cs
+Assets/Scripts/Tools/Placeable/PlaceOpenNote.cs
+Assets/Scripts/Tools/Placeable/PlaceSection.cs
+Assets/Scripts/Tools/Placeable/PlaceSongObject.cs
+Assets/Scripts/Tools/Placeable/PlaceStarpower.cs
+Assets/Scripts/Tools/Placeable/PlaceTimesignature.cs
+Assets/Scripts/Tools/Placeable/Snapable.cs
+Assets/Scripts/Tools/SetMatColor.cs
+Assets/Scripts/Tools/ToolObject.cs
+Assets/Scripts/Tools/Toolpane.cs
+Assets/Scripts/Tools/ToolpaneButtonController.cs
+Assets/Scripts/UI/ContextSizeAutoAdjust.cs
+Assets/Scripts/UI/DropDownHoverActivate.cs
+Assets/Scripts/UI/DropDownMenu.cs
+Assets/Scripts/UI/DynamicTextScrollView.cs
+Assets/Scripts/UI/FPSDisplay.cs
+Assets/Scripts/UI/HintMouseOver.cs
+Assets/Scripts/UI/ImageFade.cs
+Assets/Scripts/UI/InputFieldDoubleClick.cs
+Assets/Scripts/UI/KeysNotePlacementModePanelController.cs
+Assets/Scripts/UI/LoadingScreenFader.cs
+Assets/Scripts/UI/LoadingSpin.cs
+Assets/Scripts/UI/Menus/AudioCalibrationMenuScript.cs
+Assets/Scripts/UI/Menus/DisplayMenu.cs
+Assets/Scripts/UI/Menus/ErrorMessage.cs
+Assets/Scripts/UI/Menus/Export.cs
+Assets/Scripts/UI/Menus/SettingsController.cs
+Assets/Scripts/UI/Menus/SongPropertiesPanelController.cs
+Assets/Scripts/UI/ReplaceToEscapedCharater.cs
+Assets/Scripts/UI/SaveAnimController.cs
+Assets/Scripts/UI/TapBPMCalculatorPanelController.cs
+Assets/Scripts/UI/TextTruncExt.cs
+Assets/Scripts/UI/ToolPanelController.cs
+Assets/Scripts/Utility.cs
+Assets/Scripts/mid2chart/ChartWriter.cs
+Assets/Scripts/mid2chart/Event.cs
+Assets/Scripts/mid2chart/MidReader.cs
+Assets/Scripts/mid2chart/NAudio/Midi/MetaEvent.cs
+Assets/Scripts/mid2chart/NAudio/Midi/MetaEventType.cs
+Assets/Scripts/mid2chart/NAudio/Midi/MidiCommandCode.cs
+Assets/Scripts/mid2chart/NAudio/Midi/MidiEvent.cs
+Assets/Scripts/mid2chart/NAudio/Midi/MidiEventCollection.cs
+Assets/Scripts/mid2chart/NAudio/Midi/MidiFile.cs
+Assets/Scripts/mid2chart/NAudio/Midi/NoteEvent.cs
+Assets/Scripts/mid2chart/NAudio/Midi/NoteOnEvent.cs
+Assets/Scripts/mid2chart/NAudio/Midi/SysexEvent.cs
+Assets/Scripts/mid2chart/NAudio/Midi/TempoEvent.cs
+Assets/Scripts/mid2chart/NAudio/Midi/TextEvent.cs
+Assets/Scripts/mid2chart/NAudio/Midi/TimeSignatureEvent.cs
+Assets/Scripts/mid2chart/NAudio/Utils/ByteEncoding.cs
+Assets/Scripts/mid2chart/Note.cs
+Assets/Scripts/mid2chart/NoteSection.cs
+Assets/Scripts/mid2chart/Program.cs
+Assets/Scripts/mid2chart/Properties/AssemblyInfo.cs
+Assets/Scripts/mid2chart/Section.cs
+Assets/Scripts/mid2chart/Song.cs
+Assets/Scripts/mid2chart/Stopwatch.cs
+Assets/Scripts/mid2chart/Sync.cs
+Assets/XInputDotNet/Examples/XInputTestCS.cs
+Assets/_MK/_MKGlow/_Internal/MKGlow.cs
+-r:"C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api\System.Runtime.Serialization.dll"
+-r:"C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api\System.Xml.Linq.dll"
+-r:"C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api\UnityScript.dll"
+-r:"C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api\UnityScript.Lang.dll"
+-r:"C:\Program Files\Unity\Editor\Data\MonoBleedingEdge\lib\mono\2.0-api\Boo.Lang.dll"
+-sdk:2.0

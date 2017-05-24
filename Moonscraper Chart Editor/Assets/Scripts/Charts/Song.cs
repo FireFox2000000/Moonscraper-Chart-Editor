@@ -1199,44 +1199,41 @@ public class Song {
         saveString += "}" + Globals.LINE_ENDING;
 
         // Charts      
-        for(int i = 0; i < charts.Length; ++i)
+        var difficulties = Enum.GetValues(typeof(Difficulty));
+
+        foreach (Instrument instrument in Enum.GetValues(typeof(Instrument)))
         {
-            var difficulties = Enum.GetValues(typeof(Difficulty));
-
-            foreach (Instrument instrument in Enum.GetValues(typeof(Instrument)))
+            string instrumentSaveString = string.Empty;
+            switch (instrument)
             {
-                string instrumentSaveString = string.Empty;
-                switch (instrument)
-                {
-                    case (Instrument.Guitar):
-                        instrumentSaveString = "Single";
-                        break;
-                    case (Instrument.GuitarCoop):
-                        instrumentSaveString = "DoubleGuitar";
-                        break;
-                    case (Instrument.Bass):
-                        instrumentSaveString = "DoubleBass";
-                        break;
-                    default:
-                        continue;
-                }
+                case (Instrument.Guitar):
+                    instrumentSaveString = "Single";
+                    break;
+                case (Instrument.GuitarCoop):
+                    instrumentSaveString = "DoubleGuitar";
+                    break;
+                case (Instrument.Bass):
+                    instrumentSaveString = "DoubleBass";
+                    break;
+                default:
+                    continue;
+            }
 
-                foreach (Difficulty difficulty in Enum.GetValues(typeof(Difficulty)))
-                {
-                    string difficultySaveString = difficulty.ToString();
-                    string chartString = GetChart(instrument, difficulty).GetChartString(forced);
+            foreach (Difficulty difficulty in Enum.GetValues(typeof(Difficulty)))
+            {
+                string difficultySaveString = difficulty.ToString();
+                string chartString = GetChart(instrument, difficulty).GetChartString(forced);
 
-                    if (chartString == string.Empty)
-                        continue;
+                if (chartString == string.Empty)
+                    continue;
 
-                    string seperator = "[" + difficultySaveString + instrumentSaveString + "]";
-                    saveString += seperator + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
-                    saveString += chartString;
-                    saveString += "}" + Globals.LINE_ENDING;
-                }
+                string seperator = "[" + difficultySaveString + instrumentSaveString + "]";
+                saveString += seperator + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
+                saveString += chartString;
+                saveString += "}" + Globals.LINE_ENDING;
             }
         }
-
+       
         try {
             // Save to file
             File.WriteAllText(filepath, saveString);
