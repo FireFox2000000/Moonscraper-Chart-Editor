@@ -16,7 +16,7 @@ public static class MidWriter {
 
     static readonly byte[] END_OF_TRACK = new byte[] { 0, 0xFF, 0x2F, 0x00 };
 
-    public static void WriteToFile(string path, Song song)
+    public static void WriteToFile(string path, Song song, bool forced)
     {
         short track_count = 1;
         byte[] track_sync = MakeTrack(GetSyncBytes(song), "synctrack");
@@ -25,11 +25,11 @@ public static class MidWriter {
         if (track_events.Length > 0)
             track_count++;
 
-        byte[] track_guitar = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Guitar), "part guitar");
+        byte[] track_guitar = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Guitar, forced), "part guitar");
         if (track_guitar.Length > 0)
             track_count++;
         
-        byte[] track_bass = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Bass), "part bass");
+        byte[] track_bass = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Bass, forced), "part bass");
         if (track_bass.Length > 0)
             track_count++;
 
@@ -100,14 +100,14 @@ public static class MidWriter {
         return sectionBytes.ToArray();
     }
 
-    static byte[] GetInstrumentBytes(Song song, Song.Instrument instrument)
+    static byte[] GetInstrumentBytes(Song song, Song.Instrument instrument, bool forced)
     {
         // Collect all bytes from each difficulty of the instrument, assigning the position for each event unsorted
         List<SortableBytes> byteEvents = new List<SortableBytes>();
-        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Easy));
-        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Medium));
-        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Hard));
-        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Expert));
+        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Easy, forced));
+        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Medium, forced));
+        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Hard, forced));
+        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Expert, forced));
 
         // Perform merge sort to re-order everything correctly
         SortableBytes[] sortedEvents = byteEvents.ToArray();
@@ -128,7 +128,7 @@ public static class MidWriter {
         return bytes.ToArray();
     }
 
-    static SortableBytes[] GetChartSortableBytes(Song song, Song.Instrument instrument, Song.Difficulty difficulty)
+    static SortableBytes[] GetChartSortableBytes(Song song, Song.Instrument instrument, Song.Difficulty difficulty, bool forced)
     {
         Chart chart = song.GetChart(instrument, difficulty);
 
@@ -197,38 +197,41 @@ public static class MidWriter {
                 onEvent = new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)noteNumber, VELOCITY });
                 offEvent = new SortableBytes(note.position + note.sustain_length, new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY });
 
-                // Forced notes               
-                if ((note.flags & Note.Flags.FORCED) != 0 && (note.previous == null || (note.previous.position != note.position)))     // Don't overlap on chords
+                if (forced)
                 {
-                    // Add a note
-                    int forcedNoteNumber;
+                    // Forced notes               
+                    if ((note.flags & Note.Flags.FORCED) != 0 && (note.previous == null || (note.previous.position != note.position)))     // Don't overlap on chords
+                    {
+                        // Add a note
+                        int forcedNoteNumber;
 
-                    if (note.type == Note.Note_Type.Hopo)
-                        forcedNoteNumber = difficultyNumber + 5;
-                    else
-                        forcedNoteNumber = difficultyNumber + 6;
+                        if (note.type == Note.Note_Type.Hopo)
+                            forcedNoteNumber = difficultyNumber + 5;
+                        else
+                            forcedNoteNumber = difficultyNumber + 6;
 
-                    eventList.Add(new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)forcedNoteNumber, VELOCITY }));
-                    eventList.Add(new SortableBytes(note.position + 1, new byte[] { OFF_EVENT, (byte)forcedNoteNumber, VELOCITY }));
-                }
-                
-                // Add tap sysex events
-                if ((note.flags & Note.Flags.TAP) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.TAP) == 0))  // This note is a tap while the previous one isn't as we're creating a range
-                {
-                    // Find the next non-tap note
-                    Note nextNonTap = note;
-                    while (nextNonTap.next != null && (nextNonTap.next.flags & Note.Flags.TAP) != 0)
-                        nextNonTap = nextNonTap.next;
+                        eventList.Add(new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)forcedNoteNumber, VELOCITY }));
+                        eventList.Add(new SortableBytes(note.position + 1, new byte[] { OFF_EVENT, (byte)forcedNoteNumber, VELOCITY }));
+                    }
 
-                    // Tap event = 08-50-53-00-00-FF-04-01, end with 01 for On, 00 for Off
-                    byte[] tapOnEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_ON, SYSEX_END };
-                    byte[] tapOffEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_OFF, SYSEX_END };
+                    // Add tap sysex events
+                    if ((note.flags & Note.Flags.TAP) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.TAP) == 0))  // This note is a tap while the previous one isn't as we're creating a range
+                    {
+                        // Find the next non-tap note
+                        Note nextNonTap = note;
+                        while (nextNonTap.next != null && (nextNonTap.next.flags & Note.Flags.TAP) != 0)
+                            nextNonTap = nextNonTap.next;
 
-                    SortableBytes tapOnEvent = new SortableBytes(note.position, tapOnEventBytes);
-                    SortableBytes tapOffEvent = new SortableBytes(nextNonTap.position + 1, tapOffEventBytes);
+                        // Tap event = 08-50-53-00-00-FF-04-01, end with 01 for On, 00 for Off
+                        byte[] tapOnEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_ON, SYSEX_END };
+                        byte[] tapOffEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_OFF, SYSEX_END };
 
-                    eventList.Add(tapOnEvent);
-                    eventList.Add(tapOffEvent);
+                        SortableBytes tapOnEvent = new SortableBytes(note.position, tapOnEventBytes);
+                        SortableBytes tapOffEvent = new SortableBytes(nextNonTap.position + 1, tapOffEventBytes);
+
+                        eventList.Add(tapOnEvent);
+                        eventList.Add(tapOffEvent);
+                    }
                 }
                 
                 if (note.fret_type == Note.Fret_Type.OPEN && (note.previous == null || (note.previous.fret_type != Note.Fret_Type.OPEN)))

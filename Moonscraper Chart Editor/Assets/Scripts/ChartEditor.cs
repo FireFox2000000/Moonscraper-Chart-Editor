@@ -699,15 +699,35 @@ public class ChartEditor : MonoBehaviour {
     {
         if (handle != 0)
         {
+            // Reset
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_FREQ, 0);
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_PITCH, 0);
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO, 0);
+
             Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_VOL, vol * Globals.vol_master);
             Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_PAN, Globals.audio_pan);
 
-            //Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_OPTION_SEQUENCE_MS, 500);
-            //Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_OPTION_SEEKWINDOW_MS, 2);
-            //Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_OPTION_OVERLAP_MS, 200);
-            //Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_MUSIC_SPEED, 1);
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO, speed * 100 - 100);
-            //Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_MUSIC_SPEED, 0);
+            if (speed < 1)
+            {
+                float originalFreq = 0;
+
+                Bass.BASS_ChannelGetAttribute(handle, BASSAttribute.BASS_ATTRIB_FREQ, ref originalFreq);
+
+                float freq = originalFreq * speed;
+                if (freq < 100)
+                    freq = 100;
+                else if (freq > 100000)
+                    freq = 100000;
+                Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_FREQ, freq);
+#if false
+                // Pitch shifting equation
+                Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_PITCH, Mathf.Log(1.0f / speed, Mathf.Pow(2, 1.0f / 12.0f)));
+#endif
+            }
+            else
+            {
+                Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO, speed * 100 - 100);
+            }
         }
     }
 
