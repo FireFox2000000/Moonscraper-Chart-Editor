@@ -278,7 +278,6 @@ public class ChartEditor : MonoBehaviour {
                     //Debug.Log("Not found " + anchorPoint);
                 }
                 groupMove.SetSongObjects(currentSelectedObjects, anchorPoint, true);
-                Debug.Log("Here");
             }
 
             if (Input.GetMouseButtonUp(0) && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer() && mousePos == Input.mousePosition && !Globals.modifierInputActive)

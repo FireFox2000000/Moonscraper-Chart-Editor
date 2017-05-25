@@ -55,6 +55,31 @@ public class NoteController : SongObjectController {
                 else
                     editor.AddToSelectedObjects(songObject);
             }
+            // Shift-clicking
+            else if (Globals.secondaryInputActive)
+            {
+                var selectedObjectsList = new List<SongObject>(editor.currentSelectedObjects);
+                int pos = SongObject.FindClosestPosition(this.songObject, editor.currentSelectedObjects);
+
+                if (pos != SongObject.NOTFOUND)
+                {
+                    uint min;
+                    uint max;
+
+                    if (editor.currentSelectedObjects[pos].position > songObject.position)
+                    {
+                        max = editor.currentSelectedObjects[pos].position;
+                        min = songObject.position;
+                    }
+                    else
+                    {
+                        min = editor.currentSelectedObjects[pos].position;
+                        max = songObject.position;
+                    }
+
+                    editor.currentSelectedObjects = SongObject.GetRange(editor.currentChart.chartObjects, min, max);
+                }
+            }
             // Regular clicking
             else if (!editor.IsSelected(songObject))
             {

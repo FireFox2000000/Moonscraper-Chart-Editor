@@ -83,21 +83,45 @@ public abstract class SongObjectController : SelectableClick {
     {
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
         {
-            // Need to check if already selected and part of a group selection
-            /* bool songObjectFound = false;
-             foreach (SongObject selectedObject in editor.currentSelectedObjects)
-             {
-                 if (selectedObject == songObject)
-                     songObjectFound = true;
-             }
-
-             if (!songObjectFound)*/
-            if (Globals.viewMode == Globals.ViewMode.Chart && Globals.modifierInputActive)
+            // Shift-clicking
+            // Find the closest object already selected
+            // Select all objects in range of that found and the clicked object
+            
+            if (Globals.viewMode == Globals.ViewMode.Chart && (Globals.modifierInputActive || Globals.secondaryInputActive))
             {
-                if (editor.IsSelected(songObject))
-                    editor.RemoveFromSelectedObjects(songObject);
+                // Ctrl-clicking
+                if (Globals.modifierInputActive)
+                {
+                    if (editor.IsSelected(songObject))
+                        editor.RemoveFromSelectedObjects(songObject);
+                    else
+                        editor.AddToSelectedObjects(songObject);
+                }
+                // Shift-clicking
                 else
-                    editor.AddToSelectedObjects(songObject);
+                {
+                    var selectedObjectsList = new System.Collections.Generic.List<SongObject>(editor.currentSelectedObjects);
+                    int pos = SongObject.FindClosestPosition(this.songObject, editor.currentSelectedObjects);
+
+                    if (pos != SongObject.NOTFOUND)
+                    {
+                        uint min;
+                        uint max;
+
+                        if (editor.currentSelectedObjects[pos].position > songObject.position)
+                        {
+                            max = editor.currentSelectedObjects[pos].position;
+                            min = songObject.position;
+                        }
+                        else
+                        {
+                            min = editor.currentSelectedObjects[pos].position;
+                            max = songObject.position;
+                        }
+
+                        editor.currentSelectedObjects = SongObject.GetRange(editor.currentChart.chartObjects, min, max);
+                    }
+                }
             }
             else if (!editor.IsSelected(songObject))
                 editor.currentSelectedObject = songObject;
