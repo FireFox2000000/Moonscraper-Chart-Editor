@@ -6,6 +6,13 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     public BPM currentBPM { get { return (BPM)currentSongObject; } set { currentSongObject = value; } }
     public InputField bpmValue;
 
+    float incrementalTimer = 0;
+    float autoIncrementTimer = 0;
+    const float AUTO_INCREMENT_WAIT_TIME = 0.5f;
+    const float AUTO_INCREMENT_RATE = 0.08f;
+
+    uint lastAutoVal = 0;
+
     void Start()
     {
         bpmValue.onValidateInput = validatePositiveDecimal;
@@ -17,6 +24,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
         if (currentBPM != null)
             bpmValue.text = ((float)currentBPM.value / 1000.0f).ToString();
+
+        incrementalTimer = 0;
+        autoIncrementTimer = 0;
 
         ChartEditor.editOccurred = edit;
     }
@@ -32,6 +42,57 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         }
 
         editor.currentSong.updateArrays();
+
+        if (incrementalTimer > AUTO_INCREMENT_WAIT_TIME)
+            autoIncrementTimer += Time.deltaTime;
+        else
+            autoIncrementTimer = 0;
+
+        if (!(Input.GetKey(KeyCode.Equals) && Input.GetKey(KeyCode.Minus)))
+        {
+            if (!Globals.IsTyping && !Globals.modifierInputActive)
+            {
+                if (Input.GetKeyDown(KeyCode.Minus))
+                {
+                    lastAutoVal = currentBPM.value;
+                    DecrementBPM();
+                }
+                else if (Input.GetKeyDown(KeyCode.Equals))
+                {
+                    lastAutoVal = currentBPM.value;
+                    IncrementBPM();
+                }
+
+                // Adjust to time rather than framerate
+                if (incrementalTimer > AUTO_INCREMENT_WAIT_TIME && autoIncrementTimer > AUTO_INCREMENT_RATE)
+                {
+                    if (Input.GetKey(KeyCode.Minus))
+                        DecrementBPM();
+                    else if (Input.GetKey(KeyCode.Equals))
+                        IncrementBPM();
+
+                    autoIncrementTimer = 0;
+                }
+
+                // 
+                if (Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.Minus))
+                {
+                    incrementalTimer += Time.deltaTime;
+                    ChartEditor.editOccurred = true;
+                }
+            }
+            else
+                incrementalTimer = 0;
+
+            // Handle key release, add in action history
+            if (Input.GetKeyUp(KeyCode.Equals) || Input.GetKeyUp(KeyCode.Minus))
+            {
+                incrementalTimer = 0;
+                editor.actionHistory.Insert(new ActionHistory.Modify(new BPM(currentSongObject.position, lastAutoVal), currentSongObject));
+                ChartEditor.editOccurred = true;
+                lastAutoVal = currentBPM.value;
+            }
+        }
     }
 
     protected override void OnDisable()
