@@ -89,4 +89,15 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
         return '\0';
     }
+
+    public void IncrementBPM()
+    {
+        currentBPM.value += 1000;
+    }
+
+    public void DecrementBPM()
+    {
+        if (currentBPM.value > 1000)
+            currentBPM.value -= 1000;
+    }
 }

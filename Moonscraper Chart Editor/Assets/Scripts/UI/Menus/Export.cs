@@ -19,11 +19,16 @@ public class Export : DisplayMenu {
     string fileExportType = FILE_EXT_CHART;
 
     string chartInfoText = "Exports into the .chart format.";
-    string midInfoText = "Exports into the .mid format. \nWarning: \n\t-Audio will disconnect from file and forced \n\t-Tap and open note events will be defined by the expert chart if enabled \n\t-Drum charts will be empty";
+    string midInfoText = "Exports into the .mid format. \n\n" + 
+        "Warning: \n" +
+        "\t-Audio will disconnect from file \n" +
+        "\t-Tap and open note events will be defined by the expert chart if enabled \n" +
+        "\t-Guitar co-op chart will not be exported, they are \".chart\" exclusive \n" +
+        "\t-Drum charts will be empty\n";
 
     void Start()
     {
-        exportingInfo.text = chartInfoText;
+        setAsChartFile();
     }
 
     protected override void OnEnable()
@@ -98,14 +103,24 @@ public class Export : DisplayMenu {
         switch (value)
         {
             case 1:
-                fileExportType = FILE_EXT_MIDI;
-                exportingInfo.text = midInfoText;
+                setAsMidFile();
                 break;
             case 0:
             default:
-                fileExportType = FILE_EXT_CHART;
-                exportingInfo.text = chartInfoText;
+                setAsChartFile();
                 break;
         }
+    }
+
+    void setAsChartFile()
+    {
+        fileExportType = FILE_EXT_CHART;
+        exportingInfo.text = chartInfoText;
+    }
+
+    void setAsMidFile()
+    {
+        fileExportType = FILE_EXT_MIDI;
+        exportingInfo.text = midInfoText;
     }
 }
