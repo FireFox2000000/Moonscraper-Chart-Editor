@@ -33,6 +33,10 @@ public static class MidWriter {
         if (track_bass.Length > 0)
             track_count++;
 
+        byte[] track_keys = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Keys, forced), "part keys");
+        if (track_keys.Length > 0)
+            track_count++;
+
         byte[] header = GetMidiHeader(1, track_count, (short)song.resolution);
 
         FileStream file = File.Open(path, FileMode.OpenOrCreate);
@@ -43,6 +47,7 @@ public static class MidWriter {
         bw.Write(track_events);
         bw.Write(track_guitar);
         bw.Write(track_bass);
+        bw.Write(track_keys);
 
         bw.Close();
         file.Close();

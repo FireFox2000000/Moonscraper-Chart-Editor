@@ -20,6 +20,10 @@ public class Song {
     const int GUITAR_STREAM_ARRAY_POS = 1;
     const int RHYTHM_STREAM_ARRAY_POS = 2;
 
+    const int TEXT_POS_TICK = 0;
+    const int TEXT_POS_EVENT_TYPE = 2;
+    const int TEXT_POS_DATA_1 = 3;
+
     // Song properties
     public string name = string.Empty, artist = string.Empty, charter = string.Empty;
     public string player2 = "Bass";
@@ -288,6 +292,9 @@ public class Song {
                     break;
                 case (Instrument.Bass):
                     instrumentName += "Bass - ";
+                    break;
+                case (Instrument.Keys):
+                    instrumentName += "Keys - ";
                     break;
                 default:
                     continue;
@@ -787,13 +794,14 @@ public class Song {
 #if SONG_DEBUG
                 Debug.Log("Loading sync data");
 #endif
-                submitDataSyncTrack(stringData);
-                break;
+                //submitDataGlobals(stringData);
+                //break;
             case ("[Events]"):
 #if SONG_DEBUG
                 Debug.Log("Loading events data");
 #endif
-                submitDataEvents(stringData);
+                //submitDataEvents(stringData);
+                submitDataGlobals(stringData);
                 break;
             case ("[EasySingle]"):
 #if SONG_DEBUG
@@ -1064,35 +1072,70 @@ public class Song {
         return saveString;
     }
 
-    void submitDataSyncTrack(List<string> stringData)
+    void submitDataGlobals(List<string> stringData)
     {
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
 #endif
         foreach (string line in stringData)
-        {     
-            if (TimeSignature.regexMatch(line))
+        {
+            string[] stringSplit = Regex.Split(line, @"\s+");
+            uint position;
+            string eventType;
+            if (stringSplit.Length > TEXT_POS_DATA_1 && uint.TryParse(stringSplit[TEXT_POS_TICK], out position))
             {
-                MatchCollection matches = Regex.Matches(line, @"\d+");
-                uint position = uint.Parse(matches[0].ToString());
-                uint value = uint.Parse(matches[1].ToString());
-
-                Add(new TimeSignature(position, value), false);
+                eventType = stringSplit[TEXT_POS_EVENT_TYPE];
+                eventType = eventType.ToLower();
             }
-            else if (BPM.regexMatch(line))
+            else
+                continue;
+
+            if (eventType == "ts")
             {
-                MatchCollection matches = Regex.Matches(line, @"\d+");
-                uint position = uint.Parse(matches[0].ToString());
-                uint value = uint.Parse(matches[1].ToString());
+                uint numerator;
+                uint denominator = 4;
+
+                if (!uint.TryParse(stringSplit[TEXT_POS_DATA_1], out numerator))
+                    continue;
+
+                if (stringSplit.Length > TEXT_POS_DATA_1 + 1 && !uint.TryParse(stringSplit[TEXT_POS_DATA_1 + 1], out denominator))
+                    continue;                   
+
+                Add(new TimeSignature(position, numerator, denominator), false);
+            }
+            else if (eventType == "b")
+            {
+                uint value;
+                if (!uint.TryParse(stringSplit[TEXT_POS_DATA_1], out value))
+                    continue;
 
                 Add(new BPM(position, value), false);
+            }
+            else if (eventType == "e")       // 0 = E "section Intro"
+            {
+                if (stringSplit.Length > TEXT_POS_DATA_1 + 1 && stringSplit[TEXT_POS_DATA_1] == "\"section")
+                {
+                    string title = string.Empty;// = stringSplit[TEXT_POS_DATA_1 + 1].Trim('"');
+                    for (int i = TEXT_POS_DATA_1 + 1; i < stringSplit.Length; ++i)
+                    {
+                        title += stringSplit[i].Trim('"');
+                        if (i < stringSplit.Length - 1)
+                            title += " ";
+                    }
+                    Add(new Section(title, position), false);
+                }
+                else
+                {
+                    string title = stringSplit[TEXT_POS_DATA_1].Trim('"');
+                    Add(new Event(title, position), false);
+                }
             }
         }
 #if TIMING_DEBUG
         Debug.Log("Synctrack load time: " + (Time.realtimeSinceStartup - time));
 #endif
     }
-
+    /*
     void submitDataEvents(List<string> stringData)
     {
 #if TIMING_DEBUG
@@ -1100,25 +1143,34 @@ public class Song {
 #endif
         foreach (string line in stringData)
         {
+            string[] stringSplit = Regex.Split(line, @"\s+");
+            uint position;
+            string eventType;
+            if (stringSplit.Length > TEXT_POS_DATA_1 && uint.TryParse(stringSplit[TEXT_POS_TICK], out position))
+            {
+                eventType = stringSplit[TEXT_POS_EVENT_TYPE];
+                eventType = eventType.ToLower();
+            }
+            else
+                continue;
+
             if (Section.regexMatch(line))       // 0 = E "section Intro"
             {
                 // Add a section
                 string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"').Substring(8);
-                uint position = uint.Parse(Regex.Matches(line, @"\d+")[0].ToString());
                 Add(new Section(title, position), false);
             }
             else if (Event.regexMatch(line))    // 125952 = E "end"
             {
                 // Add an event
                 string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-                uint position = uint.Parse(Regex.Matches(line, @"\d+")[0].ToString());
                 Add(new Event(title, position), false);
             }
         }
 #if TIMING_DEBUG
         Debug.Log("Events load time: " + (Time.realtimeSinceStartup - time));
 #endif
-    }
+    }*/
 
     string GetSaveString<T>(T[] list) where T : SongObject
     {

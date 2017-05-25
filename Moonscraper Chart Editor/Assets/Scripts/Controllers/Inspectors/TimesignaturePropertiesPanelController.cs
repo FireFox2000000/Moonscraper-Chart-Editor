@@ -5,10 +5,12 @@ using System.Collections;
 public class TimesignaturePropertiesPanelController : PropertiesPanelController {
     public TimeSignature currentTS { get { return (TimeSignature)currentSongObject; } set { currentSongObject = value; } }
     public InputField tsValue;
+    public InputField tsDenomValue;
 
     void Start()
     {
         tsValue.onValidateInput = validatePositiveInteger;
+        tsDenomValue.onValidateInput = validatePositiveInteger;
     }
 
     void OnEnable()
@@ -16,7 +18,10 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
         bool edit = ChartEditor.editOccurred;
 
         if (currentTS != null)
+        {
             tsValue.text = currentTS.numerator.ToString();
+            tsDenomValue.text = currentTS.denominator.ToString();
+        }
 
         ChartEditor.editOccurred = edit;
     }
@@ -30,6 +35,9 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
 
             if (tsValue.text != string.Empty)
                 tsValue.text = currentTS.numerator.ToString();
+
+            if (tsDenomValue.text != string.Empty)
+                tsDenomValue.text = currentTS.denominator.ToString();
         }
     }
 
@@ -53,6 +61,20 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
             ChartEditor.editOccurred = true;
     }
 
+    public void UpdateTSDenom(string value)
+    {
+        float prevValue = currentTS.denominator;
+
+        if (value != string.Empty && currentTS != null)
+        {
+            currentTS.denominator = uint.Parse(value);
+            UpdateInputFieldRecord();
+        }
+
+        if (prevValue != currentTS.denominator)
+            ChartEditor.editOccurred = true;
+    }
+
     public void EndEdit(string value)
     {
         if (value == string.Empty || currentTS.numerator < 1)
@@ -62,6 +84,17 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
         }
 
         tsValue.text = currentTS.numerator.ToString();
+    }
+
+    public void EndEditDenom(string value)
+    {
+        if (value == string.Empty || currentTS.denominator < 1)
+        {
+            currentTS.denominator = 4;
+            UpdateInputFieldRecord();
+        }
+
+        tsDenomValue.text = currentTS.denominator.ToString();
     }
 
     public char validatePositiveInteger(string text, int charIndex, char addedChar)

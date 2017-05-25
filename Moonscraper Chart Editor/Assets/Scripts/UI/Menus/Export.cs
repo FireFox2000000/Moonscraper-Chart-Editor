@@ -19,7 +19,7 @@ public class Export : DisplayMenu {
     string fileExportType = FILE_EXT_CHART;
 
     string chartInfoText = "Exports into the .chart format.";
-    string midInfoText = "Exports into the .mid format. \nWarning: Audio will disconnect from file and forced, tap and open note events will be defined by the expert chart if enabled.";
+    string midInfoText = "Exports into the .mid format. \nWarning: \n\t-Audio will disconnect from file and forced \n\t-Tap and open note events will be defined by the expert chart if enabled \n\t-Drum charts will be empty";
 
     void Start()
     {
