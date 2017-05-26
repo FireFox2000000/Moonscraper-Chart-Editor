@@ -324,6 +324,8 @@ public class Globals : MonoBehaviour {
 
     public void ToggleSongViewMode(bool globalView)
     {
+        ViewMode originalView = viewMode;
+
         if (globalView)
         {
             viewMode = ViewMode.Song;
@@ -348,7 +350,8 @@ public class Globals : MonoBehaviour {
             viewModeToggle.isOn = globalView;         
         }
 
-        editor.currentSelectedObject = null;
+        if (Toolpane.currentTool != Toolpane.Tools.Note)        // Allows the note panel to pop up instantly
+            editor.currentSelectedObject = null;
     }
 
     public void Quit()

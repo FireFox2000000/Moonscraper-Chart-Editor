@@ -9,8 +9,7 @@ public class StrikelineAudioController : MonoBehaviour {
 
     public AudioClip clap;
     static AudioClip _clap;
-    static AudioSource source;
-    public 
+    static AudioSource source; 
 
     static float lastClapPos = -1;
     public static float startYPoint = -1;
@@ -24,7 +23,7 @@ public class StrikelineAudioController : MonoBehaviour {
         source = GetComponent<AudioSource>();
         _clap = clap;
 #if BASS_AUDIO
-        //clapBytes = clap.
+        clapBytes = clap.
         sample = Bass.BASS_SampleLoad(clapBytes, 0, 0, 5, BASSFlag.BASS_DEFAULT);
 #endif
         initLocalPos = transform.localPosition;  

@@ -108,7 +108,7 @@ public class ChartEditor : MonoBehaviour {
         set
         {
             if (value == null)
-            {  
+            {
                 currentSelectedObjects = new SongObject[0];
             }
             else
@@ -283,6 +283,7 @@ public class ChartEditor : MonoBehaviour {
             if (Input.GetMouseButtonUp(0) && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer() && mousePos == Input.mousePosition && !Globals.modifierInputActive)
             {
                 currentSelectedObject = null;
+                Debug.Log("null");
                 mousePos = Vector3.zero;
             }
         }
@@ -295,7 +296,7 @@ public class ChartEditor : MonoBehaviour {
 
         // Update the current properties panel     
         if ((Toolpane.currentTool == Toolpane.Tools.GroupSelect || Toolpane.currentTool == Toolpane.Tools.Cursor) && currentSelectedObjects.Length > 1)
-        {
+        {       
             if (!currentPropertiesPanel || currentPropertiesPanel != groupSelectInspector)
             {
                 if (currentPropertiesPanel)
@@ -333,7 +334,7 @@ public class ChartEditor : MonoBehaviour {
                     currentSelectedObject = null;
                     break;
             }
-
+            
             if (currentPropertiesPanel != previousPanel)
             {
                 if (previousPanel)
@@ -350,14 +351,7 @@ public class ChartEditor : MonoBehaviour {
         else if (currentPropertiesPanel)
         {
             currentPropertiesPanel.gameObject.SetActive(false);
-        }/*
-
-        if ((Toolpane.currentTool == Toolpane.Tools.GroupSelect || Toolpane.currentTool == Toolpane.Tools.Cursor) && currentSelectedObjects.Length > 1)
-        {
-            currentPropertiesPanel = groupSelectInspector;
-            if (!currentPropertiesPanel.gameObject.activeSelf)
-                currentPropertiesPanel.gameObject.SetActive(true);
-        }*/
+        }
 
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {

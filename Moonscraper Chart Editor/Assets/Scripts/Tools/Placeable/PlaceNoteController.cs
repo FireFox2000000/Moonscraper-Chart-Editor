@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 public class PlaceNoteController : ObjectlessTool {
-
+    public NotePropertiesPanelController panel;
     public PlaceNote[] notes = new PlaceNote[7];        // Starts at multi-note before heading into green (1), red (2) through to open (6)
 
     // Mouse mode burst mode

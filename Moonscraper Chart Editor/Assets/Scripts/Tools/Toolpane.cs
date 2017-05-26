@@ -44,7 +44,6 @@ public class Toolpane : MonoBehaviour {
             menuCancel = true;
         }
 
-
         if (currentToolObject)
         {
             if (Globals.lockToStrikeline)
@@ -55,7 +54,7 @@ public class Toolpane : MonoBehaviour {
                 {
                     currentToolObject.gameObject.SetActive(false);
                 }
-                else if (Globals.applicationMode == Globals.ApplicationMode.Editor && mouseDownInArea)
+                else if (Globals.applicationMode == Globals.ApplicationMode.Editor && (mouseDownInArea))
                 {
                     // Range check
                     if (!globals.InToolArea && currentTool != Tools.GroupSelect)
