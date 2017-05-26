@@ -7,16 +7,15 @@ public abstract class TimelineIndicator : MonoBehaviour {
     [HideInInspector]
     public TimelineHandler handle;
 
+    protected Vector2 previousScreenSize = Vector2.zero;
+
     protected virtual void Awake()
     {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+
+        previousScreenSize.x = Screen.width;
+        previousScreenSize.y = Screen.height;
     }
-    /*
-    void OnEnable()
-    {
-        if (songObject != null && songObject.song != null)
-           ExplicitUpdate();
-    }*/
 
     protected Vector3 GetLocalPos(uint position, Song song)
     {
@@ -33,5 +32,11 @@ public abstract class TimelineIndicator : MonoBehaviour {
     {
         if (songObject != null && songObject.song != null)
             transform.localPosition = GetLocalPos(songObject.position, songObject.song);
+    }
+
+    protected void UpdatePreviousVals()
+    {
+        previousScreenSize.x = Screen.width;
+        previousScreenSize.y = Screen.height;
     }
 }

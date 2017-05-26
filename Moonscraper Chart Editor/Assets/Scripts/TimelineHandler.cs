@@ -244,10 +244,9 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
     public Vector3 handlePosToLocal(float pos)
     {
-        // Audio may be shorter than the chart
-        /*if (pos > 1)
-            pos = 1;
-        else */if (pos < 0)
+        // Pos is a value between 0 and 1, 0 representing the start of the song and 1 being the end
+
+        if (pos < 0)
             pos = 0;
         return new Vector3(handle.transform.localPosition.x, pos * rectTransform.rect.height - halfHeight, handle.transform.localPosition.z);
     }

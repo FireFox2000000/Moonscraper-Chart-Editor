@@ -9,12 +9,14 @@ public class StarpowerGUIController : TimelineIndicator {
 
     void LateUpdate()
     {        
-        if (songObject != null && songObject.song != null && prevLength != starpower.length)
+        if ((songObject != null && songObject.song != null && prevLength != starpower.length) ||
+            previousScreenSize.x != Screen.width || previousScreenSize.y != Screen.height)
         {
             ExplicitUpdate();
         }
 
         prevLength = starpower.length;
+        UpdatePreviousVals();
     }
 
     public override void ExplicitUpdate()

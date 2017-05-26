@@ -25,3 +25,4 @@ FIXES
 -Fixed sustain capping bug when moving a chord
 -Fixed clap offset at variable speeds
 -Note properties panel now appears immdiately upon selecting the note tool
+-Fixed timeline indicators falling out of sync when change screen size
