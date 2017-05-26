@@ -283,7 +283,6 @@ public class ChartEditor : MonoBehaviour {
             if (Input.GetMouseButtonUp(0) && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer() && mousePos == Input.mousePosition && !Globals.modifierInputActive)
             {
                 currentSelectedObject = null;
-                Debug.Log("null");
                 mousePos = Vector3.zero;
             }
         }

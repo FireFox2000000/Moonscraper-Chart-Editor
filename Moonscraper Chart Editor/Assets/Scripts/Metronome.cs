@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿#define BASS_AUDIO
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Un4seen.Bass;
 
 public class Metronome : MonoBehaviour {
     ChartEditor editor;
@@ -8,6 +11,8 @@ public class Metronome : MonoBehaviour {
     Vector3 initLocalPos;
 
     public AudioClip clap;
+    static byte[] clapBytes;
+    static int sample;
 
     uint nextClapPos = 0;
 
@@ -16,15 +21,23 @@ public class Metronome : MonoBehaviour {
         editor = ChartEditor.FindCurrentEditor();
         clapSource = gameObject.AddComponent<AudioSource>();
         initLocalPos = transform.localPosition;
+
+#if BASS_AUDIO
+        clapBytes = clap.GetWavBytes();
+        sample = Bass.BASS_SampleLoad(clapBytes, 0, clapBytes.Length, 15, BASSFlag.BASS_DEFAULT);
+#endif
     }
-    
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update () {
 
         // Offset by audio calibration
         Vector3 pos = initLocalPos;
-        //pos.y += Song.TimeToWorldYPosition((float)Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
-        pos.y += Song.TimeToWorldYPosition(Globals.clapCalibrationMS / 1000.0f);
+#if BASS_AUDIO
+        pos.y += Song.TimeToWorldYPosition(Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
+#else
+        pos.y += Song.TimeToWorldYPosition(Globals.clapCalibrationMS / 1000.0f * Globals.gameSpeed);
+#endif
         transform.localPosition = pos;
 
         uint currentTickPos = editor.currentSong.WorldYPositionToChartPosition(transform.position.y);
@@ -33,7 +46,17 @@ public class Metronome : MonoBehaviour {
             if (currentTickPos >= nextClapPos)
             {
                 if (Globals.metronomeActive)
+                {
+#if BASS_AUDIO
+                    int channel = Bass.BASS_SampleGetChannel(sample, false); // get a sample channel
+                    if (channel != 0)
+                        Bass.BASS_ChannelPlay(channel, false); // play it
+                    else
+                        Debug.LogError("Clap error: " + Bass.BASS_ErrorGetCode() + ", " + sample);
+#else
                     clapSource.PlayOneShot(clap);
+#endif
+                }
 
                 nextClapPos += (uint)editor.currentSong.resolution;
             }

@@ -230,7 +230,7 @@ public class NoteController : SongObjectController {
         UpdateSongObject();
     }
 
-    public bool belowClapLine { get { return (transform.position.y <= editor.visibleStrikeline.position.y + (Song.TimeToWorldYPosition(Globals.clapCalibrationMS / 1000.0f) * Globals.gameSpeed)); } }
+    public bool belowClapLine { get { return (transform.position.y <= editor.visibleStrikeline.position.y + (Song.TimeToWorldYPosition(Globals.audioCalibrationMS / 1000.0f) * Globals.gameSpeed)); } }
     public bool belowStrikeLine { get { const float offset = 0.02f; return (transform.position.y <= editor.visibleStrikeline.position.y + (offset * Globals.hyperspeed / Globals.gameSpeed)); } }
 
     protected override void UpdateCheck()

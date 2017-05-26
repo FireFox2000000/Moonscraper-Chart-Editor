@@ -63,9 +63,102 @@ public static class floatExtension
     public static float Round(this float sourceFloat, int decimalPlaces)
     {
         return (float)Math.Round(sourceFloat, decimalPlaces);
-        //float places = Mathf.Pow(10, decimalPlaces);
-        //return Mathf.Round(sourceFloat * places) / places;
+    }
+}
 
+// https://gist.github.com/darktable/2317063
+public static class AudioClipExtension
+{
+    const int HEADER_SIZE = 44;
+
+    public static byte[] GetWavBytes(this AudioClip clip)
+    {
+        byte[] chunk = GetSampleBytes(clip);
+        byte[] header = GetHeader(clip, chunk.Length);
+        byte[] bytes = new byte[chunk.Length + header.Length];
+        Array.Copy(header, bytes, header.Length);
+        Array.Copy(chunk, 0, bytes, header.Length, chunk.Length);
+
+        return bytes;
+    }
+
+    static byte[] GetSampleBytes(AudioClip clip)
+    {
+        var samples = new float[clip.samples];
+
+        clip.GetData(samples, 0);
+
+        Int16[] intData = new Int16[samples.Length];
+        //converting in 2 float[] steps to Int16[], //then Int16[] to Byte[]
+
+        Byte[] bytesData = new Byte[samples.Length * 2];
+        //bytesData array is twice the size of
+        //dataSource array because a float converted in Int16 is 2 bytes.
+
+        int rescaleFactor = 32767; //to convert float to Int16
+
+        for (int i = 0; i < samples.Length; i++)
+        {
+            intData[i] = (short)(samples[i] * rescaleFactor);
+            Byte[] byteArr = new Byte[2];
+            byteArr = BitConverter.GetBytes(intData[i]);
+            byteArr.CopyTo(bytesData, i * 2);
+        }
+
+        return bytesData;
+    }
+
+    static byte[] GetHeader(AudioClip clip, int chunk_length)
+    {
+        var bytes = new System.Collections.Generic.List<byte>();
+        var hz = clip.frequency;
+        var channels = clip.channels;
+        var samples = clip.samples;
+
+        byte[] riff = System.Text.Encoding.UTF8.GetBytes("RIFF");
+        bytes.AddRange(riff);
+
+        byte[] chunkSize = BitConverter.GetBytes(chunk_length - 8);
+        bytes.AddRange(chunkSize);
+
+        byte[] wave = System.Text.Encoding.UTF8.GetBytes("WAVE");
+        bytes.AddRange(wave);
+
+        byte[] fmt = System.Text.Encoding.UTF8.GetBytes("fmt ");
+        bytes.AddRange(fmt);
+
+        byte[] subChunk1 = BitConverter.GetBytes(16);
+        bytes.AddRange(subChunk1);
+
+        ushort two = 2;
+        ushort one = 1;
+
+        byte[] audioFormat = BitConverter.GetBytes(one);
+        bytes.AddRange(audioFormat);
+
+        byte[] numChannels = BitConverter.GetBytes((short)channels);
+        bytes.AddRange(numChannels);
+
+        byte[] sampleRate = BitConverter.GetBytes(hz);
+        bytes.AddRange(sampleRate);
+
+        byte[] byteRate = BitConverter.GetBytes(hz * channels * 2); // sampleRate * bytesPerSample*number of channels, here 44100*2*2
+        bytes.AddRange(byteRate);
+
+        ushort blockAlign = (ushort)(channels * 2);
+        bytes.AddRange(BitConverter.GetBytes(blockAlign));
+
+        ushort bps = 16;
+        byte[] bitsPerSample = BitConverter.GetBytes(bps);
+        bytes.AddRange(bitsPerSample);
+
+        byte[] datastring = System.Text.Encoding.UTF8.GetBytes("data");
+        bytes.AddRange(datastring);
+
+        byte[] subChunk2 = BitConverter.GetBytes(samples * channels * 2);
+        bytes.AddRange(subChunk2);
+
+        return bytes.ToArray();
     }
 }
 
