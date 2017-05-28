@@ -9,31 +9,31 @@ using NAudio.Midi;
 public static class MidWriter {   
     const byte TRACK_NAME_EVENT = 0x03;
     const byte TEXT_EVENT = 0x01;
-    const string EVENTS_TRACK = "events";           // Sections
-    const string GUITAR_TRACK = "part guitar";
-    const string BASS_TRACK = "part bass";
-    const string KEYS_TRACK = "part keys";
+    const string EVENTS_TRACK = "EVENTS";           // Sections
+    const string GUITAR_TRACK = "PART GUITAR";
+    const string BASS_TRACK = "PART BASS";
+    const string KEYS_TRACK = "PART KEYS";
 
     static readonly byte[] END_OF_TRACK = new byte[] { 0, 0xFF, 0x2F, 0x00 };
 
     public static void WriteToFile(string path, Song song, bool forced)
     {
         short track_count = 1;
-        byte[] track_sync = MakeTrack(GetSyncBytes(song), "synctrack");
+        byte[] track_sync = MakeTrack(GetSyncBytes(song), "SYNCTRACK");
 
-        byte[] track_events = MakeTrack(GetSectionBytes(song), "events");
+        byte[] track_events = MakeTrack(GetSectionBytes(song), EVENTS_TRACK);
         if (track_events.Length > 0)
             track_count++;
 
-        byte[] track_guitar = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Guitar, forced), "part guitar");
+        byte[] track_guitar = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Guitar, forced), GUITAR_TRACK);
         if (track_guitar.Length > 0)
             track_count++;
         
-        byte[] track_bass = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Bass, forced), "part bass");
+        byte[] track_bass = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Bass, forced), BASS_TRACK);
         if (track_bass.Length > 0)
             track_count++;
 
-        byte[] track_keys = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Keys, forced), "part keys");
+        byte[] track_keys = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Keys, forced), KEYS_TRACK);
         if (track_keys.Length > 0)
             track_count++;
 
@@ -92,6 +92,7 @@ public static class MidWriter {
         List<byte> sectionBytes = new List<byte>();
 
         const string section_id = "section ";     // "section " is rb2 and former, "prc_" is rb3
+        uint summation_of_dt = 0;
 
         for (int i = 0; i < song.sections.Length; ++i)
         {
@@ -99,8 +100,18 @@ public static class MidWriter {
             if (i > 0)
                 deltaTime -= song.sections[i - 1].position;
 
+            summation_of_dt += deltaTime;
             sectionBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, "[" + section_id + song.sections[i].title + "]")));        
         }
+
+        uint music_end = song.TimeToChartPosition(song.length, song.resolution);
+        uint final_end_dt = 0;
+        if (music_end > summation_of_dt)
+            final_end_dt = music_end - summation_of_dt;
+
+        // Add music_end and end text events.
+        sectionBytes.AddRange(TimedEvent(final_end_dt, MetaTextEvent(TEXT_EVENT, "[music_end]")));
+        sectionBytes.AddRange(TimedEvent(final_end_dt, MetaTextEvent(TEXT_EVENT, "[end]")));
 
         return sectionBytes.ToArray();
     }
@@ -432,7 +443,7 @@ public static class MidWriter {
         bytes[1] = TIME_SIGNATURE_EVENT;
         bytes[2] = 0x04;            // Size
         bytes[3] = EndianBitConverter.Big.GetBytes((short)ts.numerator)[1];
-        bytes[4] = EndianBitConverter.Big.GetBytes((short)ts.denominator)[1];
+        bytes[4] = EndianBitConverter.Big.GetBytes((short)(Mathf.Log(ts.denominator, 2)))[1];
         bytes[5] = 0x18; // 24, 24 clock ticks in metronome click, so once every quater note. I doubt this is important, but I'm sure irony will strike.
         bytes[6] = 0x08; // 8, a quater note should happen every quarter note.
 

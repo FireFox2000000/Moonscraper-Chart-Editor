@@ -252,6 +252,9 @@ public class LoadCustomResources : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+#if !UNITY_EDITOR
+        skinDirectory = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + "\\" + skinDirectory;
+#endif
         if (Directory.Exists(skinDirectory))
         {
             // Collect all the files

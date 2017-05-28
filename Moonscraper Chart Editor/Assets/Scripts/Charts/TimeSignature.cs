@@ -25,7 +25,7 @@
         string saveString = Globals.TABSPACE + position + " = TS " + numerator;
 
         if (denominator != 4)
-            saveString +=  " " + denominator + Globals.LINE_ENDING;
+            saveString +=  " " + (uint)UnityEngine.Mathf.Log(denominator, 2) + Globals.LINE_ENDING;
         else
             saveString += Globals.LINE_ENDING;
 

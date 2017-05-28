@@ -50,7 +50,11 @@ public class Metronome : MonoBehaviour {
 #if BASS_AUDIO
                     int channel = Bass.BASS_SampleGetChannel(sample, false); // get a sample channel
                     if (channel != 0)
+                    {
+                        Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, Globals.sfxVolume * Globals.vol_master);
+                        Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, Globals.audio_pan);
                         Bass.BASS_ChannelPlay(channel, false); // play it
+                    }
                     else
                         Debug.LogError("Clap error: " + Bass.BASS_ErrorGetCode() + ", " + sample);
 #else
@@ -70,4 +74,11 @@ public class Metronome : MonoBehaviour {
                 nextClapPos = (currentTickPos / (uint)editor.currentSong.resolution) * (uint)editor.currentSong.resolution;
         }
 	}
+
+#if BASS_AUDIO
+    ~Metronome()
+    {
+        Bass.BASS_SampleFree(sample);
+    }
+#endif
 }

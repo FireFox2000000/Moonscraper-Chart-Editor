@@ -44,15 +44,18 @@ public class Export : DisplayMenu {
         try
         {
             string saveLocation;
+            string defaultFileName = new string(editor.currentSong.name.ToCharArray());
+            if (!forced)
+                defaultFileName += "(UNFORCED)";
 
             // Open up file explorer and get save location
             if (fileExportType == FILE_EXT_CHART)
             {
-                saveLocation = FileExplorer.SaveFilePanel("Chart files (*.chart)\0*.chart", editor.currentSong.name, "chart");
+                saveLocation = FileExplorer.SaveFilePanel("Chart files (*.chart)\0*.chart", defaultFileName, "chart");
             }
             else if (fileExportType == FILE_EXT_MIDI)
             {
-                saveLocation = FileExplorer.SaveFilePanel("Midi files (*.mid)\0*.mid", editor.currentSong.name, "mid");
+                saveLocation = FileExplorer.SaveFilePanel("Midi files (*.mid)\0*.mid", defaultFileName, "mid");
             }
             else
                 throw new Exception("Invalid file extension");
@@ -88,7 +91,6 @@ public class Export : DisplayMenu {
             yield return null;
 
         // Stop loading animation
-        Globals.applicationMode = Globals.ApplicationMode.Editor;
         loadingScreen.FadeOut();
         loadingScreen.loadingInformation.text = "Complete!";
     }

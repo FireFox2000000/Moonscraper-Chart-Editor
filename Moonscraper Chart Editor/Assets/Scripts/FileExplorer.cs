@@ -6,6 +6,8 @@ public static class FileExplorer  {
 	public static string SaveFilePanel(string filter, string defaultFileName, string defExt)
     {
         string filename = string.Empty;
+        defaultFileName = new string(defaultFileName.ToCharArray());
+
 #if UNITY_EDITOR
         filename = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", defaultFileName, defExt);
         if (filename == string.Empty)

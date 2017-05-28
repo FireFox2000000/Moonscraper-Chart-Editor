@@ -47,7 +47,11 @@ public class StrikelineAudioController : MonoBehaviour {
 #if BASS_AUDIO
             int channel = Bass.BASS_SampleGetChannel(sample, false); // get a sample channel
             if (channel != 0)
+            {
+                Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, Globals.sfxVolume * Globals.vol_master);
+                Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, Globals.audio_pan);
                 Bass.BASS_ChannelPlay(channel, false); // play it
+            }
             else
                 Debug.LogError("Clap error: " + Bass.BASS_ErrorGetCode() + ", " + sample);
 #else

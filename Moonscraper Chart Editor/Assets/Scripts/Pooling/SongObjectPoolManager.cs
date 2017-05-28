@@ -80,29 +80,39 @@ public class SongObjectPoolManager : MonoBehaviour {
 
     public void EnableNotes(Note[] notes)
     {
-        List<Note> rangedNotes = new List<Note>(SongObject.GetRange(notes, editor.minPos, editor.maxPos));
-
-        if (rangedNotes.Count > 0)
+        uint min_pos = editor.minPos;
+        if (ChartEditor.startGameplayPos != null)
         {
-            // Find the last known note of each fret type to find any sustains that might overlap into the camera view
-            foreach (Note prevNote in Note.GetPreviousOfSustains(rangedNotes[0] as Note))
-            {
-                if (prevNote.position + prevNote.sustain_length > editor.minPos)
-                    rangedNotes.Add(prevNote);
-            }
+            uint gameplayPos = editor.currentSong.WorldYPositionToChartPosition((float)ChartEditor.startGameplayPos, editor.currentSong.resolution);
+            if (min_pos < gameplayPos)
+                min_pos = gameplayPos;
         }
-        else
+        
+        List<Note> rangedNotes = new List<Note>(SongObject.GetRange(notes, min_pos, editor.maxPos));
+        if (min_pos == editor.minPos)
         {
-            int minArrayPos = SongObject.FindClosestPosition(editor.minPos, editor.currentChart.notes);
-
-            if (minArrayPos != SongObject.NOTFOUND)
+            if (rangedNotes.Count > 0)
             {
-                rangedNotes.Add(editor.currentChart.notes[minArrayPos]);
-                
-                foreach (Note prevNote in Note.GetPreviousOfSustains(editor.currentChart.notes[minArrayPos] as Note))
+                // Find the last known note of each fret type to find any sustains that might overlap into the camera view
+                foreach (Note prevNote in Note.GetPreviousOfSustains(rangedNotes[0] as Note))
                 {
                     if (prevNote.position + prevNote.sustain_length > editor.minPos)
                         rangedNotes.Add(prevNote);
+                }
+            }
+            else
+            {
+                int minArrayPos = SongObject.FindClosestPosition(editor.minPos, editor.currentChart.notes);
+
+                if (minArrayPos != SongObject.NOTFOUND)
+                {
+                    rangedNotes.Add(editor.currentChart.notes[minArrayPos]);
+
+                    foreach (Note prevNote in Note.GetPreviousOfSustains(editor.currentChart.notes[minArrayPos] as Note))
+                    {
+                        if (prevNote.position + prevNote.sustain_length > editor.minPos)
+                            rangedNotes.Add(prevNote);
+                    }
                 }
             }
         }

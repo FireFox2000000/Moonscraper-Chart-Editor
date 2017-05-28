@@ -19,6 +19,8 @@ CHANGES
 -Added cleaner dropdown visuals
 -Moved "export unforced" option into the exporter menu
 -Removed pitch correction when speed is less than 1.0x to improve audio quality
+-Shifted clap and metronome implementation to use the Bass.net audio system
+-Removed SFX calibration option from Calibration menu. 
 
 FIXES
 -Object limit now not restrcted and dymanically grows if limit is reached

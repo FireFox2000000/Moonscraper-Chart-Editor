@@ -653,7 +653,7 @@ public class ChartEditor : MonoBehaviour {
             }
         }
 
-        // Set position 3 seconds beforehand
+        // Set position x seconds beforehand
         float time = Song.WorldYPositionToTime(strikelineYPos);
         movement.transform.position = new Vector3(movement.transform.position.x, Song.TimeToWorldYPosition(time - Globals.gameplayStartDelayTime), movement.transform.position.z);
 

@@ -1093,7 +1093,7 @@ public class Song {
             if (eventType == "ts")
             {
                 uint numerator;
-                uint denominator = 4;
+                uint denominator = 2;
 
                 if (!uint.TryParse(stringSplit[TEXT_POS_DATA_1], out numerator))
                     continue;
@@ -1101,7 +1101,7 @@ public class Song {
                 if (stringSplit.Length > TEXT_POS_DATA_1 + 1 && !uint.TryParse(stringSplit[TEXT_POS_DATA_1 + 1], out denominator))
                     continue;                   
 
-                Add(new TimeSignature(position, numerator, denominator), false);
+                Add(new TimeSignature(position, numerator, (uint)(Mathf.Pow(2, denominator))), false);
             }
             else if (eventType == "b")
             {
