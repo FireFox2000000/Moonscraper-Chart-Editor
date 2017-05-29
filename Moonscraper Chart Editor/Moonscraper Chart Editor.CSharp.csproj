@@ -131,13 +131,14 @@
     <Compile Include="Assets\Scripts\CameraLayering.cs" />
     <Compile Include="Assets\Scripts\ChartEditor.cs" />
     <Compile Include="Assets\Scripts\Charts\BPM.cs" />
-    <Compile Include="Assets\Scripts\Charts\ByteSort.cs" />
     <Compile Include="Assets\Scripts\Charts\Chart.cs" />
     <Compile Include="Assets\Scripts\Charts\ChartEvent.cs" />
     <Compile Include="Assets\Scripts\Charts\ChartObject.cs" />
     <Compile Include="Assets\Scripts\Charts\Event.cs" />
-    <Compile Include="Assets\Scripts\Charts\MidReader.cs" />
-    <Compile Include="Assets\Scripts\Charts\MidWriter.cs" />
+    <Compile Include="Assets\Scripts\Charts\Midi\ByteSort.cs" />
+    <Compile Include="Assets\Scripts\Charts\Midi\ExportOptions.cs" />
+    <Compile Include="Assets\Scripts\Charts\Midi\MidReader.cs" />
+    <Compile Include="Assets\Scripts\Charts\Midi\MidWriter.cs" />
     <Compile Include="Assets\Scripts\Charts\Note.cs" />
     <Compile Include="Assets\Scripts\Charts\Section.cs" />
     <Compile Include="Assets\Scripts\Charts\Song.cs" />

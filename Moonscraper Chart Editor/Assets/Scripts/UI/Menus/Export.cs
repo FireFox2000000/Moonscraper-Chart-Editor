@@ -12,19 +12,25 @@ public class Export : DisplayMenu {
     public Dropdown fileTypeDropdown;
     public Toggle forcedToggle;
 
+    ExportOptions exportOptions;
+
     const string FILE_EXT_CHART = ".chart";
     const string FILE_EXT_MIDI = ".mid";
 
-    bool forced = true;
-    string fileExportType = FILE_EXT_CHART;
-
     string chartInfoText = "Exports into the .chart format.";
-    string midInfoText = "Exports into the .mid format. \n\n" + 
+    string midInfoText = "Exports into the .mid format. \n\n" +
         "Warning: \n" +
         "\t-Audio will disconnect from file \n" +
-        "\t-Tap and open note events will be defined by the expert chart if enabled \n" +
+        "\t-Starpower, taps and open note events will be defined by the expert chart if enabled \n" +
         "\t-Guitar co-op chart will not be exported, they are \".chart\" exclusive \n" +
-        "\t-Drum charts will be empty\n";
+        "\t-Drum charts will be empty\n\n" +
+
+        "Exporting to Magma (Rock Band) notes: \n" +
+        "\t-Notes cannot be within the first 2.45 seconds of a song \n" +
+        "\t-Charts must be UNFORCED and contain no open notes \n" +
+        "\t-Magma has reserved names for sections that must be followed for successful compilation. " +
+        "For example, for Magma to read a section called \"Intro a\", the section should be labeled as \"intro_a\" in Moonscraper. " +
+        "A full list of sections can be found at http://pksage.com/rbndocs/index.php?title=All_Practice_Sections \n";
 
     void Start()
     {
@@ -45,15 +51,15 @@ public class Export : DisplayMenu {
         {
             string saveLocation;
             string defaultFileName = new string(editor.currentSong.name.ToCharArray());
-            if (!forced)
+            if (!exportOptions.forced)
                 defaultFileName += "(UNFORCED)";
 
             // Open up file explorer and get save location
-            if (fileExportType == FILE_EXT_CHART)
+            if (exportOptions.format == ExportOptions.Format.Chart)
             {
                 saveLocation = FileExplorer.SaveFilePanel("Chart files (*.chart)\0*.chart", defaultFileName, "chart");
             }
-            else if (fileExportType == FILE_EXT_MIDI)
+            else if (exportOptions.format == ExportOptions.Format.Midi)
             {
                 saveLocation = FileExplorer.SaveFilePanel("Midi files (*.mid)\0*.mid", defaultFileName, "mid");
             }
@@ -73,22 +79,47 @@ public class Export : DisplayMenu {
         // Start saving
         Globals.applicationMode = Globals.ApplicationMode.Loading;
         loadingScreen.FadeIn();
-        loadingScreen.loadingInformation.text = "Exporting " + fileExportType;
+        loadingScreen.loadingInformation.text = "Exporting " + exportOptions.format;
 
         Song song = editor.currentSong;
-
+        float timer = Time.realtimeSinceStartup;
+        
         Thread exportingThread = new Thread(() =>
         {
-            if (fileExportType == FILE_EXT_CHART)
-                song.Save(filepath, forced);
-            else if (fileExportType == FILE_EXT_MIDI)
-                MidWriter.WriteToFile(filepath, song, forced);
+            if (exportOptions.format == ExportOptions.Format.Chart)
+                song.Save(filepath, exportOptions.forced);
+            else if (exportOptions.format == ExportOptions.Format.Midi)
+            {
+                // TEMP
+                exportOptions.targetResolution = 480;
+                exportOptions.copyDownEmptyDifficulty = true;
+                exportOptions.tickOffset = Song.time_to_dis(0, 2.5f, 480, 120);
+
+
+                MidWriter.WriteToFile(filepath, song, exportOptions);
+            }
         });
 
         exportingThread.Start();
 
         while (exportingThread.ThreadState == ThreadState.Running)
             yield return null;
+        
+        /*
+        if (exportOptions.format == ExportOptions.Format.Chart)
+            song.Save(filepath, exportOptions.forced);
+        else if (exportOptions.format == ExportOptions.Format.Midi)
+        {
+            // TEMP
+            exportOptions.targetResolution = 480;
+            exportOptions.copyDownEmptyDifficulty = true;
+            exportOptions.tickOffset = Song.time_to_dis(0, 2.5f, 480, 120);
+
+
+            MidWriter.WriteToFile(filepath, song, exportOptions);
+        }*/
+
+        Debug.Log("Total exporting time: " + (Time.realtimeSinceStartup - timer));
 
         // Stop loading animation
         loadingScreen.FadeOut();
@@ -97,7 +128,7 @@ public class Export : DisplayMenu {
 
     public void SetForced(bool forced)
     {
-        this.forced = forced;
+        exportOptions.forced = forced;
     }
 
     public void SetFile(int value)
@@ -116,13 +147,13 @@ public class Export : DisplayMenu {
 
     void setAsChartFile()
     {
-        fileExportType = FILE_EXT_CHART;
+        exportOptions.format = ExportOptions.Format.Chart;
         exportingInfo.text = chartInfoText;
     }
 
     void setAsMidFile()
     {
-        fileExportType = FILE_EXT_MIDI;
+        exportOptions.format = ExportOptions.Format.Midi;
         exportingInfo.text = midInfoText;
     }
 }

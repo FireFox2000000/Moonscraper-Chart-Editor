@@ -21,10 +21,32 @@ public class SortableBytes
 
     public static void Sort(SortableBytes[] bytes)
     {
-        Sort(bytes, 0, bytes.Length - 1);
+        MergeSort(bytes, 0, bytes.Length - 1);
     }
 
-    static void Sort(SortableBytes[] bytes, int left, int right)
+    public static SortableBytes[] MergeAlreadySorted(SortableBytes[] a, SortableBytes[] b)
+    {
+        SortableBytes[] merged = new SortableBytes[a.Length + b.Length];
+        int i = 0, j = 0;
+
+        for(int k = 0; k < merged.Length; ++k)
+        {
+            SortableBytes selected;
+
+            if (i >= a.Length)
+                selected = b[j++];
+            else if (j >= b.Length)
+                selected = a[i++];
+            else
+                selected = a[i].position < b[j].position ? a[i++] : b[j++];
+
+            merged[k] = selected;
+        }
+
+        return merged;
+    }
+
+    static void MergeSort(SortableBytes[] bytes, int left, int right)
     {
         int mid;
 
@@ -32,8 +54,8 @@ public class SortableBytes
         {
             mid = (right + left) / 2;
 
-            Sort(bytes, left, mid);
-            Sort(bytes, mid + 1, right);
+            MergeSort(bytes, left, mid);
+            MergeSort(bytes, mid + 1, right);
 
             Merge(bytes, left, (mid + 1), right);
         }

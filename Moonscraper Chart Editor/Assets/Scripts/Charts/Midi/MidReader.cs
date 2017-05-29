@@ -69,9 +69,6 @@ public static class MidReader {
             if (ts != null)
             {
                 var tick = me.AbsoluteTime;
-                Debug.Log(ts.Denominator);
-                Debug.Log(ts.No32ndNotesInQuarterNote);
-                Debug.Log(ts.TicksInMetronomeClick);
 
                 song.Add(new TimeSignature((uint)tick, (uint)ts.Numerator, (uint)(Mathf.Pow(2, ts.Denominator))), false);
                 continue;

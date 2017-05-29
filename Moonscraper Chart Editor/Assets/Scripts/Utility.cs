@@ -88,10 +88,10 @@ public static class AudioClipExtension
 
         clip.GetData(samples, 0);
 
-        Int16[] intData = new Int16[samples.Length];
+        short[] intData = new short[samples.Length];
         //converting in 2 float[] steps to Int16[], //then Int16[] to Byte[]
 
-        Byte[] bytesData = new Byte[samples.Length * 2];
+        byte[] bytesData = new byte[samples.Length * 2];
         //bytesData array is twice the size of
         //dataSource array because a float converted in Int16 is 2 bytes.
 
@@ -100,8 +100,7 @@ public static class AudioClipExtension
         for (int i = 0; i < samples.Length; i++)
         {
             intData[i] = (short)(samples[i] * rescaleFactor);
-            Byte[] byteArr = new Byte[2];
-            byteArr = BitConverter.GetBytes(intData[i]);
+            byte[] byteArr = BitConverter.GetBytes(intData[i]);
             byteArr.CopyTo(bytesData, i * 2);
         }
 
@@ -130,10 +129,9 @@ public static class AudioClipExtension
         byte[] subChunk1 = BitConverter.GetBytes(16);
         bytes.AddRange(subChunk1);
 
-        ushort two = 2;
-        ushort one = 1;
+        const ushort AUDIO_FORMAT = 1;
 
-        byte[] audioFormat = BitConverter.GetBytes(one);
+        byte[] audioFormat = BitConverter.GetBytes(AUDIO_FORMAT);
         bytes.AddRange(audioFormat);
 
         byte[] numChannels = BitConverter.GetBytes((short)channels);

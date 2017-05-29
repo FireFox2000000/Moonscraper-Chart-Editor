@@ -14,40 +14,52 @@ public static class MidWriter {
     const string BASS_TRACK = "PART BASS";
     const string KEYS_TRACK = "PART KEYS";
 
+    const float RB3_RESOLUTION = 480.0f;
+
     static readonly byte[] END_OF_TRACK = new byte[] { 0, 0xFF, 0x2F, 0x00 };
 
-    public static void WriteToFile(string path, Song song, bool forced)
+    public static void WriteToFile(string path, Song song, ExportOptions exportOptions)
     {
-        short track_count = 1;
-        byte[] track_sync = MakeTrack(GetSyncBytes(song), "SYNCTRACK");
+        short track_count = 2; 
 
-        byte[] track_events = MakeTrack(GetSectionBytes(song), EVENTS_TRACK);
+        byte[] track_sync = MakeTrack(GetSyncBytes(song, exportOptions), "SYNCTRACK");
+        byte[] track_beat = MakeTrack(new byte[0], "BEAT");
+
+        byte[] track_events = MakeTrack(GetSectionBytes(song, exportOptions), EVENTS_TRACK);
         if (track_events.Length > 0)
             track_count++;
 
-        byte[] track_guitar = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Guitar, forced), GUITAR_TRACK);
+        byte[] track_guitar = GetInstrumentBytes(song, Song.Instrument.Guitar, exportOptions);
         if (track_guitar.Length > 0)
             track_count++;
-        
-        byte[] track_bass = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Bass, forced), BASS_TRACK);
+
+        byte[] track_bass = GetInstrumentBytes(song, Song.Instrument.Bass, exportOptions);
         if (track_bass.Length > 0)
             track_count++;
 
-        byte[] track_keys = MakeTrack(GetInstrumentBytes(song, Song.Instrument.Keys, forced), KEYS_TRACK);
+        byte[] track_keys = GetInstrumentBytes(song, Song.Instrument.Keys, exportOptions);
         if (track_keys.Length > 0)
             track_count++;
 
-        byte[] header = GetMidiHeader(1, track_count, (short)song.resolution);
+        byte[] header = GetMidiHeader(1, track_count, (short)(exportOptions.targetResolution));
 
+        Debug.Log(track_count);
         FileStream file = File.Open(path, FileMode.OpenOrCreate);
         BinaryWriter bw = new BinaryWriter(file);
 
         bw.Write(header);
         bw.Write(track_sync);
+        bw.Write(track_beat);
         bw.Write(track_events);
-        bw.Write(track_guitar);
-        bw.Write(track_bass);
-        bw.Write(track_keys);
+
+        if (track_guitar.Length > 0)
+            bw.Write(MakeTrack(track_guitar, GUITAR_TRACK));
+
+        if (track_bass.Length > 0)
+            bw.Write(MakeTrack(track_bass, BASS_TRACK));
+
+        if (track_keys.Length > 0)
+            bw.Write(MakeTrack(track_keys, KEYS_TRACK));
 
         bw.Close();
         file.Close();
@@ -56,25 +68,32 @@ public static class MidWriter {
         Debug.Log(BitConverter.ToString(track_sync));*/
     }
 
-    static byte[] GetChartBytes(Chart chart)
-    {
-        throw new NotImplementedException();
-
-        // First event is a text event describing the track name
-        //MetaTextEvent(TRACK_NAME_EVENT, trackName);
-    }
-
-    static byte[] GetSyncBytes(Song song)
+    static byte[] GetSyncBytes(Song song, ExportOptions exportOptions)
     {
         List<byte> syncTrackBytes = new List<byte>();
         syncTrackBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, song.name)));
 
+        // Set default bpm and time signature
+        if (exportOptions.tickOffset > 0)
+        {
+            syncTrackBytes.AddRange(TimedEvent(0, TempoEvent(new BPM())));
+            syncTrackBytes.AddRange(TimedEvent(0, TimeSignatureEvent(new TimeSignature())));
+        }
+
+        float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
+
+        // Loop through all synctrack events
         for (int i = 0; i < song.syncTrack.Length; ++i)
         {
             uint deltaTime = song.syncTrack[i].position;
             if (i > 0)
                 deltaTime -= song.syncTrack[i - 1].position;
-            
+
+            deltaTime = (uint)Mathf.Round(deltaTime * resolutionScaleRatio);
+
+            if (i == 0)
+                deltaTime += exportOptions.tickOffset;
+
             var bpm = song.syncTrack[i] as BPM;
             if (bpm != null)
                 syncTrackBytes.AddRange(TimedEvent(deltaTime, TempoEvent(bpm)));
@@ -87,12 +106,16 @@ public static class MidWriter {
         return syncTrackBytes.ToArray();
     }
 
-    static byte[] GetSectionBytes(Song song)
+    static byte[] GetSectionBytes(Song song, ExportOptions exportOptions)
     {
         List<byte> sectionBytes = new List<byte>();
 
         const string section_id = "section ";     // "section " is rb2 and former, "prc_" is rb3
-        uint summation_of_dt = 0;
+
+        sectionBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[music_start]")));
+
+        uint deltaTickSum = 0;
+        float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
 
         for (int i = 0; i < song.sections.Length; ++i)
         {
@@ -100,42 +123,60 @@ public static class MidWriter {
             if (i > 0)
                 deltaTime -= song.sections[i - 1].position;
 
-            summation_of_dt += deltaTime;
-            sectionBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, "[" + section_id + song.sections[i].title + "]")));        
+            deltaTime = (uint)Mathf.Round(deltaTime * resolutionScaleRatio);
+
+            if (i == 0)
+                deltaTime += exportOptions.tickOffset;
+
+            deltaTickSum += deltaTime;
+
+            sectionBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, "[" + section_id + song.sections[i].title + "]")));
         }
 
-        uint music_end = song.TimeToChartPosition(song.length, song.resolution);
-        uint final_end_dt = 0;
-        if (music_end > summation_of_dt)
-            final_end_dt = music_end - summation_of_dt;
+        uint music_end = song.TimeToChartPosition(song.length, song.resolution * resolutionScaleRatio);
+
+        if (music_end > deltaTickSum)
+            music_end -= deltaTickSum;
+        else
+            music_end = deltaTickSum;
 
         // Add music_end and end text events.
-        sectionBytes.AddRange(TimedEvent(final_end_dt, MetaTextEvent(TEXT_EVENT, "[music_end]")));
-        sectionBytes.AddRange(TimedEvent(final_end_dt, MetaTextEvent(TEXT_EVENT, "[end]")));
+        sectionBytes.AddRange(TimedEvent(music_end, MetaTextEvent(TEXT_EVENT, "[music_end]")));
+        sectionBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[end]")));
 
         return sectionBytes.ToArray();
     }
 
-    static byte[] GetInstrumentBytes(Song song, Song.Instrument instrument, bool forced)
+    static byte[] GetInstrumentBytes(Song song, Song.Instrument instrument, ExportOptions exportOptions)
     {
         // Collect all bytes from each difficulty of the instrument, assigning the position for each event unsorted
         List<SortableBytes> byteEvents = new List<SortableBytes>();
-        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Easy, forced));
-        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Medium, forced));
-        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Hard, forced));
-        byteEvents.AddRange(GetChartSortableBytes(song, instrument, Song.Difficulty.Expert, forced));
+        SortableBytes[] easyBytes = GetChartSortableBytes(song, instrument, Song.Difficulty.Easy, exportOptions);
+        SortableBytes[] mediumBytes = GetChartSortableBytes(song, instrument, Song.Difficulty.Medium, exportOptions);
+        SortableBytes[] hardBytes = GetChartSortableBytes(song, instrument, Song.Difficulty.Hard, exportOptions);
+        SortableBytes[] expertBytes = GetChartSortableBytes(song, instrument, Song.Difficulty.Expert, exportOptions);
+
+        SortableBytes[] em = SortableBytes.MergeAlreadySorted(easyBytes, mediumBytes);
+        SortableBytes[] he = SortableBytes.MergeAlreadySorted(hardBytes, expertBytes);
+        SortableBytes[] sortedEvents = SortableBytes.MergeAlreadySorted(em, he);
 
         // Perform merge sort to re-order everything correctly
-        SortableBytes[] sortedEvents = byteEvents.ToArray();
-        SortableBytes.Sort(sortedEvents);
+        //SortableBytes[] sortedEvents = new SortableBytes[easyBytes.Length + mediumBytes.Length + hardBytes.Length + expertBytes.Length];//byteEvents.ToArray();
+        //SortableBytes.Sort(sortedEvents);
 
         List<byte> bytes = new List<byte>();
-        
+        float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
+
         for (int i = 0; i < sortedEvents.Length; ++i)
         {
             uint deltaTime = sortedEvents[i].position;
             if (i > 0)
                 deltaTime -= sortedEvents[i - 1].position;
+
+            deltaTime = (uint)Mathf.Round(deltaTime * resolutionScaleRatio);
+
+            if (i == 0)
+                deltaTime += exportOptions.tickOffset;
 
             // Apply time to the midi event
             bytes.AddRange(TimedEvent(deltaTime, sortedEvents[i].bytes));
@@ -144,9 +185,35 @@ public static class MidWriter {
         return bytes.ToArray();
     }
 
-    static SortableBytes[] GetChartSortableBytes(Song song, Song.Instrument instrument, Song.Difficulty difficulty, bool forced)
+    delegate void del(SortableBytes sortableByte);
+    static SortableBytes[] GetChartSortableBytes(Song song, Song.Instrument instrument, Song.Difficulty difficulty, ExportOptions exportOptions)
     {
         Chart chart = song.GetChart(instrument, difficulty);
+
+        if (exportOptions.copyDownEmptyDifficulty)
+        {
+            Song.Difficulty chartDiff = difficulty;
+            while (chart.notes.Length <= 0)
+            {
+                switch (chartDiff)
+                {
+                    case (Song.Difficulty.Easy):
+                        chartDiff = Song.Difficulty.Medium;
+                        break;
+                    case (Song.Difficulty.Medium):
+                        chartDiff = Song.Difficulty.Hard;
+                        break;
+                    case (Song.Difficulty.Hard):
+                        chartDiff = Song.Difficulty.Expert;
+                        break;
+                    case (Song.Difficulty.Expert):
+                    default:
+                        return new SortableBytes[0];
+                }
+
+                chart = song.GetChart(instrument, chartDiff);
+            }
+        }
 
         List<SortableBytes> eventList = new List<SortableBytes>();
         const byte ON_EVENT = 0x91;         // Note on channel 1
@@ -158,6 +225,16 @@ public static class MidWriter {
         const byte SYSEX_END = 0xF7;
         const byte SYSEX_ON = 0x01;
         const byte SYSEX_OFF = 0x00;
+
+        del InsertionSort = (sortableByte) =>
+        {
+            int index = eventList.Count - 1;
+
+            while (index > 0 && sortableByte.position < eventList[index].position)
+                --index;
+
+            eventList.Insert(index + 1, sortableByte);
+        };
 
         foreach (ChartObject chartObject in chart.chartObjects)
         {
@@ -213,7 +290,7 @@ public static class MidWriter {
                 onEvent = new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)noteNumber, VELOCITY });
                 offEvent = new SortableBytes(note.position + note.sustain_length, new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY });
 
-                if (forced)
+                if (exportOptions.forced)
                 {
                     // Forced notes               
                     if ((note.flags & Note.Flags.FORCED) != 0 && (note.previous == null || (note.previous.position != note.position)))     // Don't overlap on chords
@@ -226,12 +303,15 @@ public static class MidWriter {
                         else
                             forcedNoteNumber = difficultyNumber + 6;
 
-                        eventList.Add(new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)forcedNoteNumber, VELOCITY }));
-                        eventList.Add(new SortableBytes(note.position + 1, new byte[] { OFF_EVENT, (byte)forcedNoteNumber, VELOCITY }));
+                        SortableBytes forceOnEvent = new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)forcedNoteNumber, VELOCITY });
+                        SortableBytes forceOffEvent = new SortableBytes(note.position + 1, new byte[] { OFF_EVENT, (byte)forcedNoteNumber, VELOCITY });
+
+                        InsertionSort(forceOnEvent);
+                        InsertionSort(forceOffEvent);
                     }
 
                     // Add tap sysex events
-                    if ((note.flags & Note.Flags.TAP) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.TAP) == 0))  // This note is a tap while the previous one isn't as we're creating a range
+                    if (difficulty == Song.Difficulty.Expert && (note.flags & Note.Flags.TAP) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.TAP) == 0))  // This note is a tap while the previous one isn't as we're creating a range
                     {
                         // Find the next non-tap note
                         Note nextNonTap = note;
@@ -245,12 +325,12 @@ public static class MidWriter {
                         SortableBytes tapOnEvent = new SortableBytes(note.position, tapOnEventBytes);
                         SortableBytes tapOffEvent = new SortableBytes(nextNonTap.position + 1, tapOffEventBytes);
 
-                        eventList.Add(tapOnEvent);
-                        eventList.Add(tapOffEvent);
+                        InsertionSort(tapOnEvent);
+                        InsertionSort(tapOffEvent);
                     }
                 }
                 
-                if (note.fret_type == Note.Fret_Type.OPEN && (note.previous == null || (note.previous.fret_type != Note.Fret_Type.OPEN)))
+                if (difficulty == Song.Difficulty.Expert && note.fret_type == Note.Fret_Type.OPEN && (note.previous == null || (note.previous.fret_type != Note.Fret_Type.OPEN)))
                 {
                     // Find the next non-open note
                     Note nextNonOpen = note;
@@ -283,8 +363,8 @@ public static class MidWriter {
                     SortableBytes openOnEvent = new SortableBytes(note.position, openOnEventBytes);
                     SortableBytes openOffEvent = new SortableBytes(nextNonOpen.position + 1, openOffEventBytes);
 
-                    eventList.Add(openOnEvent);
-                    eventList.Add(openOffEvent);
+                    InsertionSort(openOnEvent);
+                    InsertionSort(openOffEvent);
                 }
             }
 
@@ -297,12 +377,14 @@ public static class MidWriter {
 
             if (onEvent != null && offEvent != null)
             {
-                eventList.Add(onEvent);
+                InsertionSort(onEvent);
+                //eventList.Add(onEvent);
 
                 if (offEvent.position == onEvent.position)
                     ++offEvent.position;
 
-                eventList.Add(offEvent);
+                InsertionSort(offEvent);
+                //eventList.Add(offEvent);
             }
         }
 

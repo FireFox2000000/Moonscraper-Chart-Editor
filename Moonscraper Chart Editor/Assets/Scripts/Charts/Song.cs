@@ -1348,6 +1348,11 @@ public class Song {
         return (float)time;
     }
 
+    public float ResolutionScaleRatio (float targetResoltion)
+    {
+        return (targetResoltion / resolution);
+    }
+
     public enum Difficulty
     {
         Expert = 0, Hard = 1, Medium = 2, Easy = 3
