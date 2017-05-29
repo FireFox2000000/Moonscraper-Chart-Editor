@@ -19,14 +19,12 @@ public class SectionGuiController : TimelineIndicator
 
     void LateUpdate()
     {
-        if ((songObject != null && songObject.song != null && prevName != section.title) || previousScreenSize.x != Screen.width || previousScreenSize.y != Screen.height)
+        if ((songObject != null && songObject.song != null && prevName != section.title))
         {
             ExplicitUpdate();
         }
 
         prevName = section.title;
-
-        UpdatePreviousVals();
     }
 
     public override void ExplicitUpdate()

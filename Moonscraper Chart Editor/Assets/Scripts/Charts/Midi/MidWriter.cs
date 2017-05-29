@@ -230,7 +230,7 @@ public static class MidWriter {
         {
             int index = eventList.Count - 1;
 
-            while (index > 0 && sortableByte.position < eventList[index].position)
+            while (index >= 0 && sortableByte.position < eventList[index].position)
                 --index;
 
             eventList.Insert(index + 1, sortableByte);

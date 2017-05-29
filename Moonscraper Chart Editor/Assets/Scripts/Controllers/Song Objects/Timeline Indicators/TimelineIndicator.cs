@@ -8,7 +8,6 @@ public abstract class TimelineIndicator : MonoBehaviour {
     public TimelineHandler handle;
 
     protected Vector2 previousScreenSize = Vector2.zero;
-    protected Song previousSong = null;
 
     protected virtual void Awake()
     {
@@ -33,13 +32,5 @@ public abstract class TimelineIndicator : MonoBehaviour {
     {
         if (songObject != null && songObject.song != null)
             transform.localPosition = GetLocalPos(songObject.position, songObject.song);
-    }
-
-    protected void UpdatePreviousVals()
-    {
-        previousScreenSize.x = Screen.width;
-        previousScreenSize.y = Screen.height;
-
-        previousSong = editor.currentSong;
     }
 }

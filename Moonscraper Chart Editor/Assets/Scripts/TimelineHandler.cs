@@ -24,6 +24,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     float scaledHalfHeight;
 
     ChartEditor editor;
+    Vector2 previousScreenSize = Vector2.zero;
 
     // Value between 0 and 1
     public float handlePosRound
@@ -137,6 +138,9 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
             starpowerIndicatorPool[i].handle = this;
             starpowerIndicatorPool[i].gameObject.SetActive(false);
         }
+
+        previousScreenSize.x = Screen.width;
+        previousScreenSize.y = Screen.height;
     }
 
     int prevSectionLength = 0;
@@ -151,8 +155,11 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
         percentage.text = ((int)(handlePosRound * 100)).ToString() + "%";
 
+        bool update = (!ReferenceEquals(prevSong, editor.currentSong) || prevSongLength != editor.currentSong.length
+             || previousScreenSize.x != Screen.width || previousScreenSize.y != Screen.height);
+
         // Set the sections
-        if (prevSong != editor.currentSong || editor.currentSong.sections.Length != prevSectionLength || prevSongLength != editor.currentSong.length)
+        if (update || editor.currentSong.sections.Length != prevSectionLength)
         {
             int i;
             for (i = 0; i < editor.currentSong.sections.Length; ++i)
@@ -177,7 +184,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         }
 
         // Set the sp
-        if (prevSong != editor.currentSong || editor.currentChart.starPower.Length != prevSPLength || prevSongLength != editor.currentSong.length)
+        if (update || editor.currentChart.starPower.Length != prevSPLength)
         {
             int i;
             for (i = 0; i < editor.currentChart.starPower.Length; ++i)
@@ -204,6 +211,8 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         prevSongLength = editor.currentSong.length;
         prevSPLength = editor.currentChart.starPower.Length;
         prevSectionLength = editor.currentSong.sections.Length;
+        previousScreenSize.x = Screen.width;
+        previousScreenSize.y = Screen.height;
     }
 
     public void OnDrag(PointerEventData eventData)

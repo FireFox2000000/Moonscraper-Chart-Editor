@@ -9,19 +9,18 @@ public class StarpowerGUIController : TimelineIndicator {
 
     void LateUpdate()
     {        
-        if ((songObject != null && songObject.song != null && prevLength != starpower.length) ||
-            previousScreenSize.x != Screen.width || previousScreenSize.y != Screen.height || editor.currentSong != previousSong)
+        if ((songObject != null && songObject.song != null && prevLength != starpower.length))
         {
             ExplicitUpdate();
         }
 
         prevLength = starpower.length;
-        UpdatePreviousVals();
     }
 
     public override void ExplicitUpdate()
     {
         base.ExplicitUpdate();
+
         // Change scale to represent starpower length
         Vector3 spLengthLocalPos = GetLocalPos(starpower.position + starpower.length, starpower.song);
         float size = spLengthLocalPos.y - transform.localPosition.y;
