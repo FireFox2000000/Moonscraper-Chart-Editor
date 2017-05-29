@@ -11,8 +11,12 @@ public class Export : DisplayMenu {
     public Text exportingInfo;
     public Dropdown fileTypeDropdown;
     public Toggle forcedToggle;
+    public InputField targetResolution;
+    public InputField delayInputField;
+    public Toggle copyDifficultiesToggle;
 
     ExportOptions exportOptions;
+    float delayTime = 0;
 
     const string FILE_EXT_CHART = ".chart";
     const string FILE_EXT_MIDI = ".mid";
@@ -26,6 +30,7 @@ public class Export : DisplayMenu {
         "\t-Drum charts will be empty\n\n" +
 
         "Exporting to Magma (Rock Band) notes: \n" +
+        "\t-Resolution must be 480 \n" +
         "\t-Notes cannot be within the first 2.45 seconds of a song \n" +
         "\t-Charts must be UNFORCED and contain no open notes \n" +
         "\t-Magma has reserved names for sections that must be followed for successful compilation. " +
@@ -42,7 +47,13 @@ public class Export : DisplayMenu {
         base.OnEnable();
 
         fileTypeDropdown.value = 0;
-        forcedToggle.isOn = true;
+        //forcedToggle.isOn = true;
+        copyDifficultiesToggle.isOn = false;
+        exportOptions.targetResolution = editor.currentSong.resolution;
+        delayTime = 0;
+
+        targetResolution.text = exportOptions.targetResolution.ToString();
+        delayInputField.text = delayTime.ToString();
     }
 
     public void ExportSong()
@@ -91,10 +102,8 @@ public class Export : DisplayMenu {
             else if (exportOptions.format == ExportOptions.Format.Midi)
             {
                 // TEMP
-                exportOptions.targetResolution = 480;
                 exportOptions.copyDownEmptyDifficulty = true;
-                exportOptions.tickOffset = Song.time_to_dis(0, 2.5f, 480, 120);
-
+                exportOptions.tickOffset = Song.time_to_dis(0, delayTime, exportOptions.targetResolution, 120);
 
                 MidWriter.WriteToFile(filepath, song, exportOptions);
             }
@@ -131,6 +140,11 @@ public class Export : DisplayMenu {
         exportOptions.forced = forced;
     }
 
+    public void SetCopyDiff(bool val)
+    {
+        exportOptions.copyDownEmptyDifficulty = val;
+    }
+
     public void SetFile(int value)
     {
         switch (value)
@@ -155,5 +169,51 @@ public class Export : DisplayMenu {
     {
         exportOptions.format = ExportOptions.Format.Midi;
         exportingInfo.text = midInfoText;
+    }
+
+    public void SetResolution(string val)
+    {
+        int res;
+        if (int.TryParse(val, out res) && res != 0)
+            exportOptions.targetResolution = Mathf.Abs(res);
+    }
+
+    public void SetResolutionEnd(string val)
+    {
+        int res;
+        if (!int.TryParse(val, out res))
+            res = 192;
+
+        if (res == 0)
+            res = (int)(editor.currentSong.resolution);
+
+        exportOptions.targetResolution = Mathf.Abs(res);
+        targetResolution.text = exportOptions.targetResolution.ToString();
+    }
+
+    public void SetDelay(string val)
+    {
+        float delay;
+        if (float.TryParse(val, out delay) && delay != 0)
+            delayTime = Mathf.Abs(delay);
+    }
+
+    public void SetDelayEnd(string val)
+    {
+        float delay;
+        if (!float.TryParse(val, out delay))
+            delay = 0;
+
+        delayTime = Mathf.Abs(delay);
+        delayInputField.text = delayTime.ToString();
+    }
+
+    public void SetRBMagmaExport()
+    {
+        fileTypeDropdown.value = 1;
+        forcedToggle.isOn = false;
+        copyDifficultiesToggle.isOn = true;
+        targetResolution.text = "480";
+        delayInputField.text = "2.5";
     }
 }
