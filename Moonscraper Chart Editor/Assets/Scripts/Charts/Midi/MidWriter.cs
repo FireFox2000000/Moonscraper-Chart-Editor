@@ -14,15 +14,13 @@ public static class MidWriter {
     const string BASS_TRACK = "PART BASS";
     const string KEYS_TRACK = "PART KEYS";
 
-    const float RB3_RESOLUTION = 480.0f;
-
     static readonly byte[] END_OF_TRACK = new byte[] { 0, 0xFF, 0x2F, 0x00 };
 
     public static void WriteToFile(string path, Song song, ExportOptions exportOptions)
     {
         short track_count = 2; 
 
-        byte[] track_sync = MakeTrack(GetSyncBytes(song, exportOptions), "SYNCTRACK");
+        byte[] track_sync = MakeTrack(GetSyncBytes(song, exportOptions), song.name);
         byte[] track_beat = MakeTrack(new byte[0], "BEAT");
 
         byte[] track_events = MakeTrack(GetSectionBytes(song, exportOptions), EVENTS_TRACK);
@@ -71,7 +69,7 @@ public static class MidWriter {
     static byte[] GetSyncBytes(Song song, ExportOptions exportOptions)
     {
         List<byte> syncTrackBytes = new List<byte>();
-        syncTrackBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, song.name)));
+        //syncTrackBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, song.name)));
 
         // Set default bpm and time signature
         if (exportOptions.tickOffset > 0)
@@ -133,7 +131,7 @@ public static class MidWriter {
             sectionBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, "[" + section_id + song.sections[i].title + "]")));
         }
 
-        uint music_end = song.TimeToChartPosition(song.length, song.resolution * resolutionScaleRatio);
+        uint music_end = song.TimeToChartPosition(song.length + exportOptions.tickOffset, song.resolution * resolutionScaleRatio, false);
 
         if (music_end > deltaTickSum)
             music_end -= deltaTickSum;

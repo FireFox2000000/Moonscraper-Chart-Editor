@@ -1,5 +1,5 @@
 Moonscraper Chart Editor (v0.9.5) 
-Designed for Guitar Hero III - Legends of Rock and GHTCP+ (WINDOWS ONLY)
+Originally designed for Guitar Hero III - Legends of Rock and GHTCP+ (WINDOWS ONLY)
 By Alexander "FireFox" Ong
 
 To run, simply extract the archive and run Moonscraper Chart Editor.exe.
