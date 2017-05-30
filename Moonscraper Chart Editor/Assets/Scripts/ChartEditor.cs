@@ -402,7 +402,7 @@ public class ChartEditor : MonoBehaviour {
         {
             autosaveTimer = 0;
             Debug.Log("Autosaving...");
-            currentSong.Save(Globals.autosaveLocation);
+            currentSong.Save(Globals.autosaveLocation, currentSong.defaultExportOptions);
             Debug.Log("Autosave complete!");
             autosaveTimer = 0;
         });
@@ -543,7 +543,7 @@ public class ChartEditor : MonoBehaviour {
     {
         if (lastLoadedFile != string.Empty)
         {
-            Save(lastLoadedFile);
+            Save(lastLoadedFile, currentSong.defaultExportOptions);
             return true;
         }
         else
@@ -564,47 +564,11 @@ public class ChartEditor : MonoBehaviour {
                 defaultFileName += "(UNFORCED)";
 
             string fileName = FileExplorer.SaveFilePanel("Chart files (*.chart)\0*.chart", defaultFileName, "chart");
-            /*
-#if UNITY_EDITOR
-            fileName = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", currentSong.name, "chart");
-#else
 
-            OpenFileName openSaveFileDialog = new OpenFileName();
+            ExportOptions exportOptions = currentSong.defaultExportOptions;
+            exportOptions.forced = forced;
 
-            openSaveFileDialog.structSize = Marshal.SizeOf(openSaveFileDialog);
-            openSaveFileDialog.filter = "Chart files (*.chart)\0*.chart";
-            openSaveFileDialog.file = new String(new char[256]);
-            openSaveFileDialog.maxFile = openSaveFileDialog.file.Length;
-
-            openSaveFileDialog.fileTitle = new String(new char[64]);
-            openSaveFileDialog.maxFileTitle = openSaveFileDialog.fileTitle.Length;
-
-            if (lastLoadedFile != string.Empty)
-                openSaveFileDialog.file = System.IO.Path.GetFileNameWithoutExtension(lastLoadedFile);
-            else
-            {
-                openSaveFileDialog.file = new String(currentSong.name.ToCharArray());
-            }
-
-            if (!forced)
-                openSaveFileDialog.file += "(UNFORCED)";
-
-            openSaveFileDialog.initialDir = "";
-            openSaveFileDialog.title = "Save as";
-            openSaveFileDialog.defExt = "chart";
-            openSaveFileDialog.flags = 0x000002;        // Overwrite warning
-
-            if (LibWrap.GetSaveFileName(openSaveFileDialog))
-            {
-                fileName = openSaveFileDialog.file;
-            }
-            else
-            {
-                throw new System.Exception("Could not open file");
-            }
-#endif*/
-
-            Save(fileName, forced);
+            Save(fileName, exportOptions);
 
             return true;          
         }
@@ -616,14 +580,14 @@ public class ChartEditor : MonoBehaviour {
         }
     }
 
-    void Save (string filename, bool forced = true)
+    void Save (string filename, ExportOptions exportOptions)
     {
         if (currentSong != null)
         {
             Debug.Log("Saving to file- " + System.IO.Path.GetFullPath(filename));
 
             editOccurred = false;            
-            currentSong.SaveAsync(filename, forced);
+            currentSong.SaveAsync(filename, exportOptions);
             lastLoadedFile = System.IO.Path.GetFullPath(filename);
         }
     }

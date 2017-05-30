@@ -19,7 +19,7 @@
     internal override string GetSaveString()
     {
         // 768 = S 2 768
-        return Globals.TABSPACE + position + " = S 2 " + length + Globals.LINE_ENDING; ;
+        return Globals.TABSPACE + position + " = S 2 " + length + Globals.LINE_ENDING;
     }
 
     public override SongObject Clone()

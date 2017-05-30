@@ -47,12 +47,17 @@ public class Export : DisplayMenu {
         base.OnEnable();
 
         fileTypeDropdown.value = 0;
-        //forcedToggle.isOn = true;
-        copyDifficultiesToggle.isOn = false;
-        exportOptions.targetResolution = editor.currentSong.resolution;
-        delayTime = 0;
 
+        exportOptions.forced = true;
+        forcedToggle.isOn = exportOptions.forced;
+
+        exportOptions.copyDownEmptyDifficulty = false;
+        copyDifficultiesToggle.isOn = exportOptions.copyDownEmptyDifficulty;
+
+        exportOptions.targetResolution = editor.currentSong.resolution;
         targetResolution.text = exportOptions.targetResolution.ToString();
+
+        delayTime = 0;
         delayInputField.text = delayTime.ToString();
     }
 
@@ -93,18 +98,17 @@ public class Export : DisplayMenu {
         loadingScreen.loadingInformation.text = "Exporting " + exportOptions.format;
 
         Song song = editor.currentSong;
+        exportOptions.tickOffset = Song.time_to_dis(0, delayTime, exportOptions.targetResolution, 120);
+
         float timer = Time.realtimeSinceStartup;
-        
+
         Thread exportingThread = new Thread(() =>
         {
             if (exportOptions.format == ExportOptions.Format.Chart)
-                song.Save(filepath, exportOptions.forced);
+                ChartWriter.WriteToFile(filepath, song, exportOptions);
+                //song.Save(filepath, exportOptions);
             else if (exportOptions.format == ExportOptions.Format.Midi)
             {
-                // TEMP
-                exportOptions.copyDownEmptyDifficulty = true;
-                exportOptions.tickOffset = Song.time_to_dis(0, delayTime, exportOptions.targetResolution, 120);
-
                 MidWriter.WriteToFile(filepath, song, exportOptions);
             }
         });

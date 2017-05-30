@@ -16,9 +16,9 @@ public class Song {
     static int NUM_OF_DIFFICULTIES;
     public static bool streamAudio = true;
 
-    const int MUSIC_STREAM_ARRAY_POS = 0;
-    const int GUITAR_STREAM_ARRAY_POS = 1;
-    const int RHYTHM_STREAM_ARRAY_POS = 2;
+    public const int MUSIC_STREAM_ARRAY_POS = 0;
+    public const int GUITAR_STREAM_ARRAY_POS = 1;
+    public const int RHYTHM_STREAM_ARRAY_POS = 2;
 
     const int TEXT_POS_TICK = 0;
     const int TEXT_POS_EVENT_TYPE = 2;
@@ -99,6 +99,23 @@ public class Song {
         }
     }
 #endif
+
+    public ExportOptions defaultExportOptions
+    {
+        get
+        {
+            ExportOptions exportOptions = default(ExportOptions);
+
+            exportOptions.forced = true;
+            exportOptions.copyDownEmptyDifficulty = false;
+            exportOptions.format = ExportOptions.Format.Chart;
+            exportOptions.targetResolution = this.resolution;
+            exportOptions.tickOffset = 0;
+
+            return exportOptions;
+        }
+    }
+
     float _length = 300;
     public float length
     {
@@ -140,7 +157,7 @@ public class Song {
         }
     }
 
-    string[] audioLocations = new string[3];
+    public string[] audioLocations = new string[3];
 
     public string musicSongName { get { return Path.GetFileName(audioLocations[MUSIC_STREAM_ARRAY_POS]); }
         set {
@@ -1058,7 +1075,7 @@ public class Song {
         saveString += Globals.TABSPACE + "Offset = " + offset + Globals.LINE_ENDING;
         saveString += Globals.TABSPACE + "Resolution = " + resolution + Globals.LINE_ENDING;
         if (player2 != string.Empty)
-            saveString += Globals.TABSPACE + "Player2 = \"" + player2.ToLower() + Globals.LINE_ENDING;       
+            saveString += Globals.TABSPACE + "Player2 = " + player2.ToLower() + Globals.LINE_ENDING;       
         saveString += Globals.TABSPACE + "Difficulty = " + difficulty + Globals.LINE_ENDING;
         if (manualLength)
             saveString += Globals.TABSPACE + "Length = " + _length + Globals.LINE_ENDING;
@@ -1189,9 +1206,9 @@ public class Song {
     /// </summary>
     /// <param name="filepath">The path and filename to save to.</param>
     /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
-    public void SaveAsync(string filepath, bool forced = true)
+    public void SaveAsync(string filepath, ExportOptions exportOptions)
     {
-        saveThread = new System.Threading.Thread(() => Save(filepath, forced));
+        saveThread = new System.Threading.Thread(() => Save(filepath, exportOptions));
         saveThread.Start();
     }
 
@@ -1200,8 +1217,10 @@ public class Song {
     /// </summary>
     /// <param name="filepath">The path and filename to save to.</param>
     /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
-    public void Save(string filepath, bool forced = true)
+    public void Save(string filepath, ExportOptions exportOptions)
     {
+        ChartWriter.WriteToFile(filepath, this, exportOptions);
+        /*
         string musicString = string.Empty;
         string guitarString = string.Empty;
         string rhythmString = string.Empty;
@@ -1274,7 +1293,7 @@ public class Song {
             foreach (Difficulty difficulty in Enum.GetValues(typeof(Difficulty)))
             {
                 string difficultySaveString = difficulty.ToString();
-                string chartString = GetChart(instrument, difficulty).GetChartString(forced);
+                string chartString = GetChart(instrument, difficulty).GetChartString(exportOptions.forced);
 
                 if (chartString == string.Empty)
                     continue;
@@ -1290,10 +1309,10 @@ public class Song {
             // Save to file
             File.WriteAllText(filepath, saveString);
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             Debug.LogError(e.Message);
-        }
+        }*/
     }
 
     /// <summary>

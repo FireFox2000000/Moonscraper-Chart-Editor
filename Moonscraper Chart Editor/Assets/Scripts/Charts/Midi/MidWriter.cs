@@ -41,7 +41,6 @@ public static class MidWriter {
 
         byte[] header = GetMidiHeader(1, track_count, (short)(exportOptions.targetResolution));
 
-        Debug.Log(track_count);
         FileStream file = File.Open(path, FileMode.OpenOrCreate);
         BinaryWriter bw = new BinaryWriter(file);
 
@@ -61,15 +60,11 @@ public static class MidWriter {
 
         bw.Close();
         file.Close();
-        /*
-        Debug.Log(BitConverter.ToString(header));
-        Debug.Log(BitConverter.ToString(track_sync));*/
     }
 
     static byte[] GetSyncBytes(Song song, ExportOptions exportOptions)
     {
         List<byte> syncTrackBytes = new List<byte>();
-        //syncTrackBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, song.name)));
 
         // Set default bpm and time signature
         if (exportOptions.tickOffset > 0)
