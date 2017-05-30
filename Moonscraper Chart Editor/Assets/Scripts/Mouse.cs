@@ -252,13 +252,14 @@ public class Mouse : MonoBehaviour {
 
     public static bool IsUIUnderPointer()
     {
+        /*
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         pointer.position = Input.mousePosition;
 
         List<RaycastResult> raycastResults = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(pointer, raycastResults);
+        EventSystem.current.RaycastAll(pointer, raycastResults);*/
 
-        if (raycastResults.Count > 0)
+        if (RaycastFromPointer().Count > 0)
             return true;
 
         return false;
@@ -266,11 +267,24 @@ public class Mouse : MonoBehaviour {
 
     static List<RaycastResult> RaycastFromPointer()
     {
-        PointerEventData pointer = new PointerEventData(EventSystem.current);
-        pointer.position = Input.mousePosition;
-
         List<RaycastResult> raycastResults = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(pointer, raycastResults);
+
+        // Gives some kind of dictionary error when first played. Wrapping in try-catch to shut it up.
+        try
+        {
+            var standaloneInputModule = EventSystem.current.currentInputModule as CustomStandaloneInputModule;
+
+            if (standaloneInputModule != null)
+            {
+                RaycastResult result = standaloneInputModule.GetPointerData().pointerCurrentRaycast;
+
+                if (result.gameObject != null)
+                    raycastResults.Add(standaloneInputModule.GetPointerData().pointerCurrentRaycast);
+            }
+        }
+        catch
+        {
+        }
 
         return raycastResults;
     }

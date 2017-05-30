@@ -32,11 +32,12 @@ public class LoadingScreenFader : MonoBehaviour {
             currentAlpha = alphaMax;
             fadeDirection = 0;
         }
-        else if (currentAlpha < 0)
+        else if (currentAlpha <= 0)
         {
             currentAlpha = 0;
             fadeDirection = 0;
             rayCastableImage.raycastTarget = false;
+            gameObject.SetActive(false);
         }
 
         setAlpha(currentAlpha);
@@ -53,6 +54,7 @@ public class LoadingScreenFader : MonoBehaviour {
 
     public void FadeIn()
     {
+        gameObject.SetActive(true);
         fadeDirection = 1;
         rayCastableImage.raycastTarget = true;
     }

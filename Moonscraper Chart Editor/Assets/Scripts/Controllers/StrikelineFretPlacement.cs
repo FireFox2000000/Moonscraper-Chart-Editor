@@ -9,10 +9,15 @@ public class StrikelineFretPlacement : MonoBehaviour {
     public GameObject yellowStrike;
     public GameObject blueStrike;
     public GameObject orangeStrike;
-	
-	// Update is called once per frame
-	void Update () {
-		if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+
+    void Start()
+    {
+        SetFretPlacement();
+        enabled = false;
+    }
+    public void SetFretPlacement()
+    {
+        if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
         {
             greenStrike.transform.position = new Vector3(2, greenStrike.transform.position.y, greenStrike.transform.position.z);
             redStrike.transform.position = new Vector3(1, redStrike.transform.position.y, redStrike.transform.position.z);
@@ -28,5 +33,5 @@ public class StrikelineFretPlacement : MonoBehaviour {
             blueStrike.transform.position = new Vector3(1, blueStrike.transform.position.y, blueStrike.transform.position.z);
             orangeStrike.transform.position = new Vector3(2, orangeStrike.transform.position.y, orangeStrike.transform.position.z);
         }
-	}
+    }
 }

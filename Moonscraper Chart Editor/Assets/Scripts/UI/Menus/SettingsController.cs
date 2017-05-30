@@ -27,6 +27,8 @@ public class SettingsController : DisplayMenu
     public Dropdown gameplayStartDelayDropdown;
     public Dropdown fpsSelectDropdown;
 
+    public StrikelineFretPlacement strikelineFretPlacement;
+
     protected override void Awake()
     {
         base.Awake();      
@@ -150,6 +152,8 @@ public class SettingsController : DisplayMenu
             Globals.notePlacementMode = Globals.NotePlacementMode.LeftyFlip;
         else
             Globals.notePlacementMode = Globals.NotePlacementMode.Default;
+
+        strikelineFretPlacement.SetFretPlacement();
     }
 
     public void SetResetAfterPlay(bool value)

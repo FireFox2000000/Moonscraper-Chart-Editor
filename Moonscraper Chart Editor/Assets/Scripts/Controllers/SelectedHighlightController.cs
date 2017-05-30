@@ -25,13 +25,14 @@ public class SelectedHighlightController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         SongObject[] viewRange = SongObject.GetRange(editor.currentSelectedObjects, editor.minPos, editor.maxPos);
-        
+
+        bool showHighlight = (Globals.applicationMode != Globals.ApplicationMode.Playing &&
+                (Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.Eraser || Toolpane.currentTool == Toolpane.Tools.GroupSelect));
+
         int pos = 0;
         foreach (GameObject selectedHighlight in selectedHighlightPool)
         {
-            if (Globals.applicationMode != Globals.ApplicationMode.Playing && 
-                (Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.Eraser || Toolpane.currentTool == Toolpane.Tools.GroupSelect) 
-                && pos < viewRange.Length && viewRange[pos].controller != null && viewRange[pos].controller.gameObject.activeSelf)
+            if (showHighlight && pos < viewRange.Length && viewRange[pos].controller != null && viewRange[pos].controller.gameObject.activeSelf)
             {
                 selectedHighlight.transform.position = viewRange[pos].controller.transform.position;
 
@@ -53,37 +54,12 @@ public class SelectedHighlightController : MonoBehaviour {
                 ++pos;
             }
             else
+            {
+                if (!selectedHighlight.activeSelf)
+                    break;
+
                 selectedHighlight.SetActive(false);
-        }
-        /*
-        // Show a highlight over the current selected object
-        SongObject currentSelectedObject = editor.currentSelectedObject;
-        if (Globals.applicationMode != Globals.ApplicationMode.Playing && currentSelectedObject != null && currentSelectedObject.controller != null && currentSelectedObject.controller.gameObject != null && currentSelectedObject.controller.gameObject.activeSelf)
-        {
-            Collider col3d = editor.currentSelectedObject.controller.GetComponent<Collider>();
-            Collider2D col = currentSelectedObject.controller.GetComponent<Collider2D>();
-            if (col3d || col)
-            {   
-                selectedHighlight.transform.position = currentSelectedObject.controller.transform.position;
-
-                Vector3 scale = currentSelectedObject.controller.transform.localScale;
-
-                if (col3d)
-                    scale = col3d.bounds.size;
-                else
-                    scale = col.bounds.size;
-
-                if (scale.z == 0)
-                    scale.z = 0.1f;
-                selectedHighlight.transform.localScale = scale;
-
-                selectedHighlight.SetActive(true);
             }
-            else
-                selectedHighlight.SetActive(false);
         }
-        else
-            selectedHighlight.SetActive(false);
-            */
     }
 }

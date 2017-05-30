@@ -34,7 +34,6 @@ public class DisplayProperties : MonoBehaviour {
     void Update()
     {
         songNameText.text = editor.currentSong.name + " - " + editor.currentChart.name;
-        Globals.hyperspeed = hyperspeedSlider.value;
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
@@ -52,13 +51,7 @@ public class DisplayProperties : MonoBehaviour {
 
         noteCount.text = "Notes: " + editor.currentChart.note_count.ToString();
 
-        // Speed slider snapping
-        gameSpeedSlider.value = Mathf.Round(gameSpeedSlider.value / 5.0f) * 5;
-        Globals.gameSpeed = gameSpeedSlider.value / 100.0f;
-
-        // if (Time.timeScale < 1)
-        gameSpeed.text = "Speed- x" + Globals.gameSpeed.ToString();
-
+        // Shortcuts
         if (!Globals.modifierInputActive && !Globals.IsTyping)
         {
             if (Input.GetButtonDown("ToggleClap"))
@@ -67,6 +60,18 @@ public class DisplayProperties : MonoBehaviour {
             if (Input.GetButtonDown("Toggle Metronome"))
                 metronomeToggle.isOn = !metronomeToggle.isOn;
         }
+    }
+
+    public void SetHyperspeed(float value)
+    {
+        Globals.hyperspeed = value;
+    }
+
+    public void SetGameSpeed(float value)
+    {
+        value = Mathf.Round(value / 5.0f) * 5;
+        Globals.gameSpeed = value / 100.0f;
+        gameSpeed.text = "Speed- x" + Globals.gameSpeed.ToString();
     }
 
     public void ToggleClap(bool value)

@@ -72,11 +72,6 @@ public class Indicators : MonoBehaviour {
                     else if (!animations[i].running)
                         animations[i].Release();
                 }
-                /*
-                foreach (GameObject indicator in indicators)
-                {
-                    indicator.SetActive(false);
-                }*/
             }
 #else
 
