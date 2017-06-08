@@ -44,7 +44,6 @@ public class SampleData {
         {
 #if BASS_AUDIO
             handle = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE);
-            BASS_SAMPLE info = Bass.BASS_SampleGetInfo(handle);
 
             length = (float)Bass.BASS_ChannelBytes2Seconds(handle, Bass.BASS_ChannelGetLength(handle, BASSMode.BASS_POS_BYTES));
             channels = 2;

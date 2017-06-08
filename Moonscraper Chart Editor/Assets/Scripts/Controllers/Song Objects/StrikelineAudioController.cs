@@ -8,9 +8,10 @@ using Un4seen.Bass;
 public class StrikelineAudioController : MonoBehaviour {
 
     public AudioClip clap;
+#if !BASS_AUDIO
     static AudioClip _clap;
     static AudioSource source; 
-
+#endif
     static float lastClapPos = -1;
     public static float startYPoint = -1;
     Vector3 initLocalPos;
@@ -19,12 +20,13 @@ public class StrikelineAudioController : MonoBehaviour {
     static int sample;
 
     void Start()
-    {
-        source = GetComponent<AudioSource>();
-        _clap = clap;
+    {   
 #if BASS_AUDIO
         clapBytes = clap.GetWavBytes();
         sample = Bass.BASS_SampleLoad(clapBytes, 0, clapBytes.Length, 15, BASSFlag.BASS_DEFAULT);
+#else
+        source = GetComponent<AudioSource>();
+        _clap = clap;
 #endif
         initLocalPos = transform.localPosition;  
     }

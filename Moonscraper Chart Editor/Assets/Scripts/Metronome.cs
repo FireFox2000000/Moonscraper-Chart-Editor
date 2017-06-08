@@ -7,7 +7,9 @@ using Un4seen.Bass;
 
 public class Metronome : MonoBehaviour {
     ChartEditor editor;
+#if !BASS_AUDIO
     AudioSource clapSource;
+#endif
     Vector3 initLocalPos;
 
     public AudioClip clap;
@@ -18,13 +20,14 @@ public class Metronome : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        editor = ChartEditor.FindCurrentEditor();
-        clapSource = gameObject.AddComponent<AudioSource>();
+        editor = ChartEditor.FindCurrentEditor();      
         initLocalPos = transform.localPosition;
 
 #if BASS_AUDIO
         clapBytes = clap.GetWavBytes();
         sample = Bass.BASS_SampleLoad(clapBytes, 0, clapBytes.Length, 15, BASSFlag.BASS_DEFAULT);
+#else
+        clapSource = gameObject.AddComponent<AudioSource>();
 #endif
     }
 

@@ -30,8 +30,6 @@ public class SaveAnimController : MonoBehaviour {
 
         alpha = Mathf.Clamp01(alpha);
 
-        saveText.color = new Color(saveText.color.r, saveText.color.g, saveText.color.b, alpha);
-
-        
+        saveText.color = new Color(saveText.color.r, saveText.color.g, saveText.color.b, alpha); 
 	}
 }

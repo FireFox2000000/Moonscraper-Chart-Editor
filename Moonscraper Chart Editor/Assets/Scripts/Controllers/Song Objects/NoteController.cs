@@ -58,7 +58,6 @@ public class NoteController : SongObjectController {
             // Shift-clicking
             else if (Globals.secondaryInputActive)
             {
-                var selectedObjectsList = new List<SongObject>(editor.currentSelectedObjects);
                 int pos = SongObject.FindClosestPosition(this.songObject, editor.currentSelectedObjects);
 
                 if (pos != SongObject.NOTFOUND)
@@ -329,13 +328,9 @@ public class NoteController : SongObjectController {
                     // Resize sustain
                     if (!sustainBroken && note.sustain_length > 0)
                     {
-                        float? prevSustainHeight = null;
-
                         float sustainEndPoint = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length);
                         if (sustainEndPoint > editor.camYMax.position.y)
                             sustainEndPoint = editor.camYMax.position.y;
-                        else
-                            prevSustainHeight = sustain.transform.localScale.y;
 
                         float yPos = (sustainEndPoint + editor.visibleStrikeline.position.y) / 2 + 0.3f;        // Added offset
                         float yScale = sustainEndPoint - (editor.visibleStrikeline.position.y);

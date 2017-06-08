@@ -210,7 +210,7 @@ public class Song {
     }
 
     // Charts
-    Chart[] charts;// = new Chart[12];
+    Chart[] charts;
 
     List<Event> _events;
     List<SyncTrack> _syncTrack;
@@ -423,22 +423,23 @@ public class Song {
     /// <param name="filepath">The path to the .chart file you want to load.</param>
     public Song(string filepath) : this()
     {
+        
         try
         {
             if (!File.Exists(filepath))
-                throw new System.Exception("File does not exist");
+                throw new Exception("File does not exist");
 
             if (Path.GetExtension(filepath) == ".chart")
                 LoadChartFile(filepath);
             else
             {
-                throw new System.Exception("Bad file type");
+                throw new Exception("Bad file type");
             }
             
         }
         catch
         {
-            throw new System.Exception("Could not open file");
+            throw new Exception("Could not open file");
         }
     }
 
@@ -497,8 +498,6 @@ public class Song {
 
     IEnumerator LoadAudio(string filepath, int audioStreamArrayPos, GameObject coroutine)
     {
-        //string temp_wav_filepath = Application.persistentDataPath + "\\" + TEMP_MP3_TO_WAV_FILEPATH;
-        string convertedFromMp3 = string.Empty;
 #if !BASS_AUDIO
         if (audioStreams[audioStreamArrayPos])
         {
@@ -1219,7 +1218,7 @@ public class Song {
     /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
     public void Save(string filepath, ExportOptions exportOptions)
     {
-        ChartWriter.WriteToFile(filepath, this, exportOptions);
+        new ChartWriter(filepath).Write(this, exportOptions);
         /*
         string musicString = string.Empty;
         string guitarString = string.Empty;

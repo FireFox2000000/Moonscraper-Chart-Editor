@@ -1,30 +1,11 @@
-Moonscraper v0.9.5 changelog- 25/05/2017
+Moonscraper v0.9.6 changelog- 02/06/2017
 
 NEW FEATURES
--Added midi exporting
--Added exporting menu
--Added ctrl-a shortcut to chart view
--Added shift-clicking mass-select in the chart view
--Added hint/help overlay when users hover their mouse over UI
--Added shortcut keys to all tools in the tool panel
--Added "Open with" compatibility with .chart and .mid files
--Added customisable denominator to time signatures
--Added buttons to increment and decrement bpms by 1
--Added keyboard controls to bpm increment and decrement controls
--Added autosave recovery feature (in case of crashes)
--Added Keys chart option (for midi reading/writing)
+-Added a lot more options to the exporter menu, including resolution changes, offsetting and difficulty copying
 
 CHANGES
--Chart selection navigation now represented in seperate instrument and difficulty dropdown selections
--Added cleaner dropdown visuals
--Moved "export unforced" option into the exporter menu
--Removed pitch correction when speed is less than 1.0x to improve audio quality
--Shifted clap and metronome implementation to use the Bass.net audio system
--Removed SFX calibration option from Calibration menu. 
+-Big chart saving optimisation
+-Big midi file exporting optimisation
 
 FIXES
--Object limit now not restrcted and dymanically grows if limit is reached
--Fixed sustain capping bug when moving a chord
--Fixed clap offset at variable speeds
--Note properties panel now appears immdiately upon selecting the note tool
--Fixed timeline indicators falling out of sync when change screen size
+-Fixed toggles not working with mouse clicks on the note inspector

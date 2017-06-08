@@ -17,6 +17,16 @@ namespace MKGlowSystem
     [RequireComponent(typeof(Camera))]
     public class MKGlow : MonoBehaviour
     {
+        // External edit for optimisation since OnPreRender is expensive
+        void Start()
+        {
+            if (Application.isEditor && !Application.isPlaying)
+                return;
+
+            if (AssignCustomResources.noteSpritesAvaliable != null && AssignCustomResources.noteSpritesAvaliable == Skin.AssestsAvaliable.All)
+                enabled = false;
+        }
+
         #region Get/Set
         private GameObject GlowCameraObject
         {
@@ -322,7 +332,7 @@ namespace MKGlowSystem
                 glowTexture = RenderTexture.GetTemporary((int)((GetComponent<Camera>().pixelWidth) / samples), (int)((GetComponent<Camera>().pixelHeight) / samples), 16, RenderTextureFormat.Default);
                 SetupGlowCamera();
                 SetupKeywords();
-                GlowCamera.RenderWithShader(glowRenderShader, "RenderType");
+                GlowCamera.RenderWithShader(glowRenderShader, "RenderType");//
             }
             else
             {

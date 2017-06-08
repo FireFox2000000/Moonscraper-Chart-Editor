@@ -100,7 +100,6 @@ public abstract class SongObjectController : SelectableClick {
                 // Shift-clicking
                 else
                 {
-                    var selectedObjectsList = new System.Collections.Generic.List<SongObject>(editor.currentSelectedObjects);
                     int pos = SongObject.FindClosestPosition(this.songObject, editor.currentSelectedObjects);
 
                     if (pos != SongObject.NOTFOUND)

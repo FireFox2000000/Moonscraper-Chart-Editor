@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
 using System.Threading;
+using System.IO;
 using UnityEngine.UI;
 
 public class Export : DisplayMenu {
@@ -105,7 +106,7 @@ public class Export : DisplayMenu {
         Thread exportingThread = new Thread(() =>
         {
             if (exportOptions.format == ExportOptions.Format.Chart)
-                ChartWriter.WriteToFile(filepath, song, exportOptions);
+                new ChartWriter(filepath).Write(song, exportOptions);
                 //song.Save(filepath, exportOptions);
             else if (exportOptions.format == ExportOptions.Format.Midi)
             {
@@ -219,5 +220,63 @@ public class Export : DisplayMenu {
         copyDifficultiesToggle.isOn = true;
         targetResolution.text = "480";
         delayInputField.text = "2.5";
+    }
+
+    void ExportWAV(string srcPath, string destPath, ExportOptions exportOptions)
+    {
+        const int WAV_HEADER_LENGTH = 44;
+
+        if (!File.Exists(srcPath))
+            return;
+
+        FileStream ifs = null;
+        BinaryReader br = null;
+
+        FileStream ofs = null;
+        BinaryWriter bw = null;
+        
+        try
+        {
+            ifs = new FileStream(srcPath, FileMode.Open, FileAccess.Read);
+            br = new BinaryReader(ifs);
+
+            ofs = new FileStream(destPath, FileMode.OpenOrCreate, FileAccess.Write);
+            bw = new BinaryWriter(ofs);
+
+            ifs.Seek(0, SeekOrigin.Begin);
+
+            byte[] header = br.ReadBytes(WAV_HEADER_LENGTH);
+
+            ifs.Seek(4, SeekOrigin.Begin);
+            int chunkLength = br.ReadInt32(); // bytes 4 to 7
+
+            ifs.Seek(16, SeekOrigin.Current);
+            int frequency = br.ReadInt32();
+            int byterate = br.ReadInt32();
+
+            ifs.Seek(WAV_HEADER_LENGTH, SeekOrigin.Begin);
+            byte[] chunk = br.ReadBytes(chunkLength); 
+
+            
+        }
+        catch
+        {
+            Debug.LogError("Error with writing wav file");
+        }
+        finally
+        {
+            try { br.Close(); }
+            catch { }
+
+            try { ifs.Close(); }
+            catch { }
+
+            try { bw.Close(); }
+            catch { }
+
+            try { ofs.Close(); }
+            catch { }
+        }
+        
     }
 }

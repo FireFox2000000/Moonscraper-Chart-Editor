@@ -6,8 +6,8 @@ using System.Linq;
 public class GroupMove : ToolObject
 {
     int anchorArrayPos = SongObject.NOTFOUND;
-    SongObject[] originalSongObjects = new ChartObject[0];
-    SongObject[] movingSongObjects = new ChartObject[0];
+    SongObject[] originalSongObjects = new SongObject[0];
+    SongObject[] movingSongObjects = new SongObject[0];
     
     Vector2 initMousePos = Vector2.zero;
     uint initObjectSnappedChartPos = 0;
@@ -17,60 +17,60 @@ public class GroupMove : ToolObject
         if (Globals.applicationMode != Globals.ApplicationMode.Editor)
             return;
 
-        if (movingSongObjects.Length > 0 && Input.GetMouseButtonUp(0))
+        if (movingSongObjects.Length > 0)
         {
-            AddSongObjects();
-        }
-        else
-        {
-            UpdateSnappedPos();
-
-            if (Mouse.world2DPosition != null)
+            if (Input.GetMouseButtonUp(0))
+                AddSongObjects();
+            else
             {
-                Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
-                int chartPosOffset = (int)(objectSnappedChartPos - initObjectSnappedChartPos);
-                if (anchorArrayPos >= 0)
-                    chartPosOffset = (int)(objectSnappedChartPos - originalSongObjects[anchorArrayPos].position);
-                //Debug.Log(anchorArrayPos);
-                bool hitStartOfChart = false;
+                UpdateSnappedPos();
 
-                // Guard for chart limit, if the offset was negative, yet the position becomes greater
-                if (movingSongObjects.Length > 0 && chartPosOffset < 0 && (uint)((int)originalSongObjects[0].position + chartPosOffset) > originalSongObjects[0].position)
+                if (Mouse.world2DPosition != null)
                 {
-                    hitStartOfChart = true;
-                }
+                    Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
+                    int chartPosOffset = (int)(objectSnappedChartPos - initObjectSnappedChartPos);
+                    if (anchorArrayPos >= 0)
+                        chartPosOffset = (int)(objectSnappedChartPos - originalSongObjects[anchorArrayPos].position);
+                    //Debug.Log(anchorArrayPos);
+                    bool hitStartOfChart = false;
 
-                // Update the new positions of all the notes that have been moved
-                for (int i = 0; i < movingSongObjects.Length; ++i)
-                {
-                    // Alter X position
-                    if ((SongObject.ID)movingSongObjects[i].classID == SongObject.ID.Note)
+                    // Guard for chart limit, if the offset was negative, yet the position becomes greater
+                    if (movingSongObjects.Length > 0 && chartPosOffset < 0 && (uint)((int)originalSongObjects[0].position + chartPosOffset) > originalSongObjects[0].position)
                     {
-                        Note note = movingSongObjects[i] as Note;
-                        if (note.fret_type != Note.Fret_Type.OPEN)
+                        hitStartOfChart = true;
+                    }
+
+                    // Update the new positions of all the notes that have been moved
+                    for (int i = 0; i < movingSongObjects.Length; ++i)
+                    {
+                        // Alter X position
+                        if ((SongObject.ID)movingSongObjects[i].classID == SongObject.ID.Note)
                         {
-                            float position = NoteController.GetXPos(0, originalSongObjects[i] as Note) + (mousePosition.x - initMousePos.x);      // Offset
-                            note.fret_type = PlaceNote.XPosToFretType(position);
+                            Note note = movingSongObjects[i] as Note;
+                            if (note.fret_type != Note.Fret_Type.OPEN)
+                            {
+                                float position = NoteController.GetXPos(0, originalSongObjects[i] as Note) + (mousePosition.x - initMousePos.x);      // Offset
+                                note.fret_type = PlaceNote.XPosToFretType(position);
+                            }
+                        }
+
+                        // Alter chart position
+                        if (!hitStartOfChart)
+                            movingSongObjects[i].position = (uint)((int)originalSongObjects[i].position + chartPosOffset);
+                        else
+                        {
+                            movingSongObjects[i].position = originalSongObjects[i].position - originalSongObjects[0].position;
                         }
                     }
-
-                    // Alter chart position
-                    if (!hitStartOfChart)
-                        movingSongObjects[i].position = (uint)((int)originalSongObjects[i].position + chartPosOffset);
-                    else
-                    {
-                        movingSongObjects[i].position = originalSongObjects[i].position - originalSongObjects[0].position;
-                    }
                 }
-            }
 
-            // Enable objects into the pool
-            
-            editor.songObjectPoolManager.EnableNotes(movingSongObjects.OfType<Note>().ToArray());
-            editor.songObjectPoolManager.EnableSP(movingSongObjects.OfType<Starpower>().ToArray());
-            editor.songObjectPoolManager.EnableBPM(movingSongObjects.OfType<BPM>().ToArray());
-            editor.songObjectPoolManager.EnableTS(movingSongObjects.OfType<TimeSignature>().ToArray());
-            editor.songObjectPoolManager.EnableSections(movingSongObjects.OfType<Section>().ToArray());
+                // Enable objects into the pool
+                editor.songObjectPoolManager.EnableNotes(movingSongObjects.OfType<Note>().ToArray());
+                editor.songObjectPoolManager.EnableSP(movingSongObjects.OfType<Starpower>().ToArray());
+                editor.songObjectPoolManager.EnableBPM(movingSongObjects.OfType<BPM>().ToArray());
+                editor.songObjectPoolManager.EnableTS(movingSongObjects.OfType<TimeSignature>().ToArray());
+                editor.songObjectPoolManager.EnableSections(movingSongObjects.OfType<Section>().ToArray());
+            }
         }
 	}  
 

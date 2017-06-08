@@ -50,7 +50,7 @@ public class CustomAudioClip : CustomResource
     {
         if (www.isDone)
         {
-            audio = www.GetAudioClip(false, true);
+            audio = www.GetAudioClip(false, false);
         }
     }
 }

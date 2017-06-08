@@ -29,6 +29,8 @@ public class Globals : MonoBehaviour {
     [SerializeField]
     Text snapLockWarning;
     [SerializeField]
+    Toggle mouseModeToggle;
+    [SerializeField]
     GUIStyle hintMouseOverStyle;
 
     public bool InToolArea
@@ -119,7 +121,7 @@ public class Globals : MonoBehaviour {
     public static float vol_master, vol_song, vol_guitar, vol_rhythm, audio_pan;
 
     ChartEditor editor;
-    static string workingDirectory;
+    static string workingDirectory = string.Empty;
     public static string realWorkingDirectory { get { return workingDirectory; } }
 
     void Awake()
@@ -214,19 +216,13 @@ public class Globals : MonoBehaviour {
         if (!IsTyping)
             Controls();
         ModifierControls();
-
+        /*
         if (System.Windows.Forms.Control.IsKeyLocked(System.Windows.Forms.Keys.Scroll) && 
             (Toolpane.currentTool != Toolpane.Tools.Cursor && Toolpane.currentTool != Toolpane.Tools.Eraser && Toolpane.currentTool != Toolpane.Tools.GroupSelect))
             lockToStrikeline = true;
         else
-            lockToStrikeline = false;
+            lockToStrikeline = false;*/
         snapLockWarning.gameObject.SetActive(lockToStrikeline);
-        /*
-        if (Input.GetKeyDown(KeyCode.Z))
-        {
-            Debug.Log("Writing mid");
-            MidWriter.WriteToFile("test.mid", editor.currentSong);
-        }*/
     }
 
     void OnGUI()
@@ -285,9 +281,9 @@ public class Globals : MonoBehaviour {
         {
             if (Input.GetButtonDown("PlayPause"))
             {
-                if (applicationMode == Globals.ApplicationMode.Editor)
+                if (applicationMode == ApplicationMode.Editor)
                     editor.Play();
-                else if (applicationMode == Globals.ApplicationMode.Playing)
+                else if (applicationMode == ApplicationMode.Playing)
                     editor.Stop();
             }
 
@@ -296,6 +292,7 @@ public class Globals : MonoBehaviour {
             else if (Input.GetButtonDown("DecreaseStep"))
                 snappingStep.Decrement();
 
+            // Generic delete key
             if (Input.GetButtonDown("Delete") && editor.currentSelectedObject != null && Toolpane.currentTool == Toolpane.Tools.Cursor)
             {
                 editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentSelectedObject));
@@ -315,6 +312,11 @@ public class Globals : MonoBehaviour {
                     editor.StartGameplay();
                 else
                     editor.Stop();
+            }
+
+            if (Input.GetKeyDown(KeyCode.BackQuote))
+            {
+                mouseModeToggle.isOn = !mouseModeToggle.isOn;
             }
 
             //if (Input.GetButtonDown("Next Frame"))
@@ -352,6 +354,12 @@ public class Globals : MonoBehaviour {
 
         if (Toolpane.currentTool != Toolpane.Tools.Note)        // Allows the note panel to pop up instantly
             editor.currentSelectedObject = null;
+    }
+
+    public void ToggleMouseLockMode(bool value)
+    {    
+        lockToStrikeline = value;
+        Debug.Log("Keys mode toggled " + value);
     }
 
     public void Quit()

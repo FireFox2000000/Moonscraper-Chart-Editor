@@ -85,12 +85,6 @@
     <Reference Include="NAudio">
       <HintPath>Assets\Plugins\NAudio.dll</HintPath>
     </Reference>
-    <Reference Include="NVorbis">
-      <HintPath>Assets\Plugins\NVorbis.dll</HintPath>
-    </Reference>
-    <Reference Include="NVorbis.NAudioSupport">
-      <HintPath>Assets\Plugins\NVorbis.NAudioSupport.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows.Forms">
       <HintPath>Assets\Plugins\System.Windows.Forms.dll</HintPath>
     </Reference>
@@ -98,14 +92,8 @@
       <HintPath>Assets\Plugins\Bass Audio\x64\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="XInputDotNetPure">
-      <HintPath>Assets\Plugins\x86_64\XInputDotNetPure.dll</HintPath>
+      <HintPath>Assets\Plugins\XInput\x86_64\XInputDotNetPure.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="Moonscraper Chart Editor.CSharp.Plugins.csproj">
-      <Project>{6CEEBAE3-C1BC-9B82-0B76-6216BBAD4948}</Project>
-      <Name>Moonscraper Chart Editor.CSharp.Plugins</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\ActionHistory.cs" />
@@ -134,12 +122,12 @@
     <Compile Include="Assets\Scripts\Charts\Chart.cs" />
     <Compile Include="Assets\Scripts\Charts\ChartEvent.cs" />
     <Compile Include="Assets\Scripts\Charts\ChartObject.cs" />
-    <Compile Include="Assets\Scripts\Charts\ChartWriter.cs" />
     <Compile Include="Assets\Scripts\Charts\Event.cs" />
-    <Compile Include="Assets\Scripts\Charts\Midi\ByteSort.cs" />
-    <Compile Include="Assets\Scripts\Charts\Midi\ExportOptions.cs" />
-    <Compile Include="Assets\Scripts\Charts\Midi\MidReader.cs" />
-    <Compile Include="Assets\Scripts\Charts\Midi\MidWriter.cs" />
+    <Compile Include="Assets\Scripts\Charts\IO\ChartWriter.cs" />
+    <Compile Include="Assets\Scripts\Charts\IO\ExportOptions.cs" />
+    <Compile Include="Assets\Scripts\Charts\IO\Midi\ByteSort.cs" />
+    <Compile Include="Assets\Scripts\Charts\IO\Midi\MidReader.cs" />
+    <Compile Include="Assets\Scripts\Charts\IO\Midi\MidWriter.cs" />
     <Compile Include="Assets\Scripts\Charts\Note.cs" />
     <Compile Include="Assets\Scripts\Charts\Section.cs" />
     <Compile Include="Assets\Scripts\Charts\Song.cs" />
@@ -283,7 +271,6 @@
     <None Include="Assets\Documentation\README.txt" />
     <None Include="Assets\Documentation\changelog.txt" />
     <None Include="Assets\Fonts\Roboto\Apache License.txt" />
-    <None Include="Assets\Plugins\TanjentOGG\license.txt" />
     <None Include="Assets\Shaders\AlphaHide.shader" />
     <None Include="Assets\Shaders\GHRenderOrder.shader" />
     <None Include="Assets\Shaders\Glass.shader" />

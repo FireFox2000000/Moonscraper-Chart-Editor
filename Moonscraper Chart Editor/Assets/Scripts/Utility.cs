@@ -140,7 +140,7 @@ public static class AudioClipExtension
         byte[] sampleRate = BitConverter.GetBytes(hz);
         bytes.AddRange(sampleRate);
 
-        byte[] byteRate = BitConverter.GetBytes(hz * channels * 2); // sampleRate * bytesPerSample*number of channels, here 44100*2*2
+        byte[] byteRate = BitConverter.GetBytes(hz * channels * 2); // sampleRate * bytesPerSample * number of channels, here 44100*2*2
         bytes.AddRange(byteRate);
 
         ushort blockAlign = (ushort)(channels * 2);

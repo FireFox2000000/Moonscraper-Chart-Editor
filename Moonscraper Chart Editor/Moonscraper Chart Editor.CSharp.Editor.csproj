@@ -130,12 +130,6 @@
     <Reference Include="NAudio">
       <HintPath>Assets\Plugins\NAudio.dll</HintPath>
     </Reference>
-    <Reference Include="NVorbis">
-      <HintPath>Assets\Plugins\NVorbis.dll</HintPath>
-    </Reference>
-    <Reference Include="NVorbis.NAudioSupport">
-      <HintPath>Assets\Plugins\NVorbis.NAudioSupport.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows.Forms">
       <HintPath>Assets\Plugins\System.Windows.Forms.dll</HintPath>
     </Reference>
@@ -143,14 +137,10 @@
       <HintPath>Assets\Plugins\Bass Audio\x64\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="XInputDotNetPure">
-      <HintPath>Assets\Plugins\x86_64\XInputDotNetPure.dll</HintPath>
+      <HintPath>Assets\Plugins\XInput\x86_64\XInputDotNetPure.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Moonscraper Chart Editor.CSharp.Plugins.csproj">
-      <Project>{6CEEBAE3-C1BC-9B82-0B76-6216BBAD4948}</Project>
-      <Name>Moonscraper Chart Editor.CSharp.Plugins</Name>
-    </ProjectReference>
     <ProjectReference Include="Moonscraper Chart Editor.CSharp.csproj">
       <Project>{92F2632B-35F1-FF57-EC01-EEACD9382B90}</Project>
       <Name>Moonscraper Chart Editor.CSharp</Name>
@@ -172,7 +162,6 @@
     <None Include="Assets\Documentation\README.txt" />
     <None Include="Assets\Documentation\changelog.txt" />
     <None Include="Assets\Fonts\Roboto\Apache License.txt" />
-    <None Include="Assets\Plugins\TanjentOGG\license.txt" />
     <None Include="Assets\Shaders\AlphaHide.shader" />
     <None Include="Assets\Shaders\GHRenderOrder.shader" />
     <None Include="Assets\Shaders\Glass.shader" />
