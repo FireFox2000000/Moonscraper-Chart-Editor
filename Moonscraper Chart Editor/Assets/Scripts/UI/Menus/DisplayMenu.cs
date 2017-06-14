@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 public class DisplayMenu : MonoBehaviour {
     protected ChartEditor editor;
     public RectTransform mouseArea;
+    public Selectable defaultSelectable;
 
     protected virtual void Awake()
     {
@@ -23,6 +25,21 @@ public class DisplayMenu : MonoBehaviour {
     {
         editor.Stop();
         Globals.applicationMode = Globals.ApplicationMode.Menu;
+        UITabbing.defaultSelectable = defaultSelectable;
+
+        StartCoroutine(SetUIDelayed());
+    }
+
+    IEnumerator SetUIDelayed()
+    {
+        yield return null;
+        if (defaultSelectable)
+        {
+            InputField inputfield = defaultSelectable.GetComponent<InputField>();
+            if (inputfield != null) inputfield.OnPointerClick(new PointerEventData(EventSystem.current));  //if it's an input field, also set the text caret
+
+            EventSystem.current.SetSelectedGameObject(defaultSelectable.gameObject);
+        }
     }
 
     protected virtual void OnDisable()
@@ -36,6 +53,7 @@ public class DisplayMenu : MonoBehaviour {
     {
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         gameObject.SetActive(false);
+        UITabbing.defaultSelectable = null;
     }
 
 }

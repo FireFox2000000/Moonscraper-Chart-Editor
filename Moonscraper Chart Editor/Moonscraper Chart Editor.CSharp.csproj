@@ -238,6 +238,7 @@
     <Compile Include="Assets\Scripts\UI\TapBPMCalculatorPanelController.cs" />
     <Compile Include="Assets\Scripts\UI\TextTruncExt.cs" />
     <Compile Include="Assets\Scripts\UI\ToolPanelController.cs" />
+    <Compile Include="Assets\Scripts\UI\UITabbing.cs" />
     <Compile Include="Assets\Scripts\Utility.cs" />
     <Compile Include="Assets\Scripts\mid2chart\ChartWriter.cs" />
     <Compile Include="Assets\Scripts\mid2chart\Event.cs" />

@@ -38,6 +38,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         bool edit = ChartEditor.editOccurred;
 
         base.OnEnable();
+
         init = true;
         Song song = editor.currentSong;   
            
