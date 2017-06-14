@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System;
 using System.IO;
 
@@ -8,25 +8,20 @@ public abstract class CustomResource
     protected string _name;
     public string name { get { return _name; } }
     public WWW www;
-    protected string[] validExtentions;
+    protected readonly string[] validExtentions;
 
-    public CustomResource(string name)
+    protected CustomResource(string name, string[] validExtentions)
     {
         this._name = name;
+        this.validExtentions = validExtentions;
     }
 
-    public bool InitWWW(string[] files)
+    public bool InitWWW(Dictionary<string, string> files)
     {
         string file = string.Empty;
 
-        foreach(string searchFile in files)
-        {
-            if (Utility.validateExtension(searchFile, validExtentions) && Path.GetFileNameWithoutExtension(searchFile) == _name)
-            {
-                file = searchFile;
-                break;
-            }
-        }
+        if (!(files.TryGetValue(_name, out file) && Utility.validateExtension(file, validExtentions)))
+            return false;
 
         if (file != string.Empty)
         {
@@ -44,7 +39,7 @@ public class CustomAudioClip : CustomResource
 {
     public AudioClip audio;
 
-    public CustomAudioClip(string name) : base(name) { validExtentions = new string[] { ".ogg", ".wav" }; }
+    public CustomAudioClip(string name) : base(name, new string[] { ".ogg", ".wav" }) { }
 
     public override void AssignResource()
     {
@@ -60,9 +55,8 @@ public class CustomTexture : CustomResource
     public Texture2D texture;
     int width, height;
 
-    public CustomTexture(string name, int width, int height) : base(name)
+    public CustomTexture(string name, int width, int height) : base(name, new string[] { ".png", ".jpg", ".dds" })
     {
-        validExtentions = new string[] { ".png", ".jpg", ".dds" }; 
         this.width = width;
         this.height = height;
     }

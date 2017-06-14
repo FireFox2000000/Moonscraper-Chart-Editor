@@ -12,6 +12,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     public GameObject starpowerIndicatorPrefab;
 
     const int POOL_SIZE = 100;
+    const int POOL_EXTEND_SIZE = 50;
     GameObject sectionIndicatorParent;
     SectionGuiController[] sectionIndicatorPool = new SectionGuiController[POOL_SIZE];
     GameObject starpowerIndicatorParent;
@@ -117,27 +118,11 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
         // Create section pool
         for (int i = 0; i < sectionIndicatorPool.Length; ++i)
-        {
-            GameObject sectionIndicator = Instantiate(sectionIndicatorPrefab);
-            sectionIndicator.transform.SetParent(sectionIndicatorParent.transform);
-            sectionIndicator.transform.localScale = new Vector3(1, 1, 1);
-
-            sectionIndicatorPool[i] = sectionIndicator.GetComponent<SectionGuiController>();
-            sectionIndicatorPool[i].handle = this;     
-            sectionIndicatorPool[i].gameObject.SetActive(false);
-        }
+            sectionIndicatorPool[i] = CreateSectionIndicator();
 
         // Create starpower pool
         for (int i = 0; i < starpowerIndicatorPool.Length; ++i)
-        {
-            GameObject spIndicator = Instantiate(starpowerIndicatorPrefab);
-            spIndicator.transform.SetParent(starpowerIndicatorParent.transform);
-            spIndicator.transform.localScale = new Vector3(1, 1, 1);
-
-            starpowerIndicatorPool[i] = spIndicator.GetComponent<StarpowerGUIController>();
-            starpowerIndicatorPool[i].handle = this;
-            starpowerIndicatorPool[i].gameObject.SetActive(false);
-        }
+            starpowerIndicatorPool[i] = CreateSPIndicator();
 
         previousScreenSize.x = Screen.width;
         previousScreenSize.y = Screen.height;
@@ -157,6 +142,30 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
         bool update = (!ReferenceEquals(prevSong, editor.currentSong) || prevSongLength != editor.currentSong.length
              || previousScreenSize.x != Screen.width || previousScreenSize.y != Screen.height);
+
+        // Check if indicator pools need to be extended
+        
+        while (sectionIndicatorPool.Length < editor.currentSong.sections.Length)
+        {
+            SectionGuiController[] controllers = new SectionGuiController[sectionIndicatorPool.Length + POOL_EXTEND_SIZE];
+            System.Array.Copy(sectionIndicatorPool, controllers, sectionIndicatorPool.Length);
+
+            for (int i = sectionIndicatorPool.Length; i < controllers.Length; ++i)
+                controllers[i] = CreateSectionIndicator();
+
+            sectionIndicatorPool = controllers;
+        }
+        
+        while (starpowerIndicatorPool.Length < editor.currentChart.starPower.Length)
+        {
+            StarpowerGUIController[] controllers = new StarpowerGUIController[starpowerIndicatorPool.Length + POOL_EXTEND_SIZE];
+            System.Array.Copy(starpowerIndicatorPool, controllers, starpowerIndicatorPool.Length);
+
+            for (int i = starpowerIndicatorPool.Length; i < controllers.Length; ++i)
+                controllers[i] = CreateSPIndicator();
+
+            starpowerIndicatorPool = controllers;
+        }
 
         // Set the sections
         if (update || editor.currentSong.sections.Length != prevSectionLength)
@@ -223,6 +232,32 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     public void OnPointerDown(PointerEventData eventData)
     {
         moveHandle(eventData);
+    }
+
+    SectionGuiController CreateSectionIndicator()
+    {
+        GameObject indicatorObject = Instantiate(sectionIndicatorPrefab);
+        indicatorObject.transform.SetParent(sectionIndicatorParent.transform);
+        indicatorObject.transform.localScale = new Vector3(1, 1, 1);
+
+        SectionGuiController indicator = indicatorObject.GetComponent<SectionGuiController>();
+        indicator.handle = this;
+        indicatorObject.SetActive(false);
+
+        return indicator;
+    }
+
+    StarpowerGUIController CreateSPIndicator()
+    {
+        GameObject indicatorObject = Instantiate(starpowerIndicatorPrefab);
+        indicatorObject.transform.SetParent(starpowerIndicatorParent.transform);
+        indicatorObject.transform.localScale = new Vector3(1, 1, 1);
+
+        StarpowerGUIController indicator = indicatorObject.GetComponent<StarpowerGUIController>();
+        indicator.handle = this;
+        indicatorObject.SetActive(false);
+
+        return indicator;
     }
 
     void moveHandle(PointerEventData eventData)

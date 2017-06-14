@@ -20,14 +20,13 @@ public class LoadCustomResources : MonoBehaviour {
     public SustainResources sustainResources;
 
     static string skinDirectory = "Custom Resources";
-    string[] filepaths = new string[0];
 
     Dictionary<string, CustomResource> resourcesDictionary = new Dictionary<string, CustomResource>();
 
-    CustomResource[] resources = new CustomResource[] 
+    List<CustomResource> resources = new List<CustomResource>()
     {
         new CustomAudioClip("break-0"),
-        new CustomTexture("background-0", 1920, 1080),
+        //new CustomTexture("background-0", 1920, 1080),
         new CustomTexture("fretboard-0", 512, 1024),
         new CustomAudioClip("clap"),
         new CustomAudioClip("metronome"),
@@ -175,7 +174,20 @@ public class LoadCustomResources : MonoBehaviour {
 
         // Assign to the custom database
         customSkin.break0 = GetAudioClipFromLoadedResources("break-0", resourcesDictionary);
-        customSkin.background0 = GetTextureFromLoadedResources("background-0", resourcesDictionary);
+
+        int bgCount = 0;
+        Texture2D tex = null;
+        List<Texture2D> textures = new List<Texture2D>();
+        while (true)
+        {
+            tex = GetTextureFromLoadedResources("background-" + bgCount++, resourcesDictionary);
+
+            if (!tex)
+                break;
+            textures.Add(tex);
+        }
+        customSkin.backgrounds = textures.ToArray();
+
         customSkin.clap = GetAudioClipFromLoadedResources("clap", resourcesDictionary);
         customSkin.fretboard = GetTextureFromLoadedResources("fretboard-0", resourcesDictionary);
         customSkin.metronome = GetAudioClipFromLoadedResources("metronome", resourcesDictionary);
@@ -258,11 +270,29 @@ public class LoadCustomResources : MonoBehaviour {
         if (Directory.Exists(skinDirectory))
         {
             // Collect all the files
-            filepaths = GetAllFiles(skinDirectory).ToArray();
+            string[] filepaths = GetAllFiles(skinDirectory).ToArray();
+            Dictionary<string, string> filepathsDictionary = new Dictionary<string, string>();
+
+            int bgCount = 0;
+
+            foreach (string path in filepaths)
+            {
+                filepathsDictionary.Add(Path.GetFileNameWithoutExtension(path), path);
+
+               // System.Text.RegularExpressions.Regex.Match(Path.GetFileNameWithoutExtension(path), @"background-/([0-9]+)$");
+                //if ( Path.GetFileNameWithoutExtension(path).Contains("background-\d+"))
+                if (System.Text.RegularExpressions.Regex.Match(Path.GetFileNameWithoutExtension(path), @"background-[0-9]+").Success)
+                {
+                    resources.Add(new CustomTexture(Path.GetFileNameWithoutExtension(path), 1920, 1080));
+                    ++bgCount;
+                }
+            }
+
+            Debug.Log("Total backgrounds: " + bgCount);
 
             foreach (CustomResource resource in resources)
             {
-                if (resource.InitWWW(filepaths))
+                if (resource.InitWWW(filepathsDictionary))
                 {
                     resourcesLoading.Add(resource);
                     resourcesDictionary.Add(resource.name, resource);

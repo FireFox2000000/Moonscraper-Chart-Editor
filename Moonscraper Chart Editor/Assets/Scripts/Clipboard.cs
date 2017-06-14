@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Windows.Forms;
 
 public class Clipboard {
     public SongObject[] data;
@@ -15,6 +16,8 @@ public class Clipboard {
     {
         get
         {
+            //System.Windows.Forms.Clipboard.SetDataObject(data);
+            //data = System.Windows.Forms.Clipboard.GetDataObject().GetData(typeof(SongObject[])) as SongObject[];
             if (data.Length > 0)
                 return (data[0].position - _areaChartPosMin);
             else

@@ -8,8 +8,8 @@ Made using Unity 5.5.1f1.
 Updates and downloads can be found at https://www.youtube.com/playlist?list=PLxDQLXCqOSJiu9C8ruGwEhqIrOhhXn1yA
 
 Minimum System Requirements-
-CPU-
-GPU-
-DX9 (shader model 3.0) or DX11 (with feature level 9.3 capabilities)
-RAM- 0.5GB
+CPU- ???
+GPU- ???
+RAM- 0.3GB
 Operating System: Windows 7 or higher
+DX9 (shader model 3.0) or DX11 (with feature level 9.3 capabilities)

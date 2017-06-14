@@ -27,10 +27,11 @@ public class AssignCustomResources : MonoBehaviour {
                 break0.comboBreak = customSkin.break0;
             if (customSkin.clap != null)
                 clap.clap = customSkin.clap;
-            if (customSkin.background0 != null)
+
+            if (customSkin.backgrounds.Length > 0)
             {
                 foreach (Renderer bg in background)
-                    bg.sharedMaterial.mainTexture = customSkin.background0;
+                    bg.sharedMaterial.mainTexture = customSkin.backgrounds[0];
             }
             if (customSkin.fretboard != null)
                 fretboard.sharedMaterial.mainTexture = customSkin.fretboard;

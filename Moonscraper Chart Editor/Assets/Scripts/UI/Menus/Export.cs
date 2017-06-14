@@ -6,6 +6,8 @@ using System;
 using System.Threading;
 using System.IO;
 using UnityEngine.UI;
+using Un4seen.Bass.Misc;
+using Un4seen.Bass;
 
 public class Export : DisplayMenu {
     public LoadingScreenFader loadingScreen;
@@ -222,12 +224,32 @@ public class Export : DisplayMenu {
         delayInputField.text = "2.5";
     }
 
-    void ExportWAV(string srcPath, string destPath, ExportOptions exportOptions)
+    public static void ExportWAV(string srcPath, string destPath, ExportOptions exportOptions)
     {
+        Debug.Log("Exporting " + srcPath + " to " + destPath);
+        int stream = Bass.BASS_StreamCreateFile(srcPath, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT);
+
+        if (stream == 0 || Bass.BASS_ErrorGetCode() != BASSError.BASS_OK)
+            throw new Exception(Bass.BASS_ErrorGetCode().ToString());
+
+        WaveWriter ww = new WaveWriter(destPath, stream, true);
+
+        float[] data = new float[32768];
+        while (Bass.BASS_ChannelIsActive(stream) == BASSActive.BASS_ACTIVE_PLAYING)
+        {
+            // get the sample data as float values as well
+            int length = Bass.BASS_ChannelGetData(stream, data, 32768);
+            // and write the data to the wave file
+            if (length > 0)
+                ww.Write(data, length);
+        }
+
+        ww.Close();
+        Bass.BASS_StreamFree(stream);
+        /*
         const int WAV_HEADER_LENGTH = 44;
 
-        if (!File.Exists(srcPath))
-            return;
+        
 
         FileStream ifs = null;
         BinaryReader br = null;
@@ -277,6 +299,6 @@ public class Export : DisplayMenu {
             try { ofs.Close(); }
             catch { }
         }
-        
+        */
     }
 }
