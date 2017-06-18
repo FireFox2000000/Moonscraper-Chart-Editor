@@ -188,6 +188,7 @@
     <Compile Include="Assets\Scripts\SelectableClick.cs" />
     <Compile Include="Assets\Scripts\SetLineRendererPoints.cs" />
     <Compile Include="Assets\Scripts\Settings.cs" />
+    <Compile Include="Assets\Scripts\SongValidateGH3.cs" />
     <Compile Include="Assets\Scripts\SpriteGlow.cs" />
     <Compile Include="Assets\Scripts\Step.cs" />
     <Compile Include="Assets\Scripts\TapBPMCalculator.cs" />

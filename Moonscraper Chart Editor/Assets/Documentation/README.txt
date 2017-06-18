@@ -10,6 +10,7 @@ Updates and downloads can be found at https://www.youtube.com/playlist?list=PLxD
 Minimum System Requirements-
 CPU- ???
 GPU- ???
-RAM- 0.3GB
+Memory- 0.5GB
+Video memory- ???
 Operating System: Windows 7 or higher
 DX9 (shader model 3.0) or DX11 (with feature level 9.3 capabilities)

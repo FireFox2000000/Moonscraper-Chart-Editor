@@ -66,11 +66,12 @@ public class SustainController : SelectableClick {
         if (unmodifiedNotes.Count > 0 && unmodifiedNotes[0][0].sustain_length != unmodifiedNotes[0][1].sustain_length)
         {
             List<ActionHistory.Modify> actions = new List<ActionHistory.Modify>();
-
-            foreach(Note[] notes in unmodifiedNotes)
+            actions.Add(new ActionHistory.Modify(unmodifiedNotes[0][0], unmodifiedNotes[unmodifiedNotes.Count - 1][1]));
+            /*
+            foreach (Note[] notes in unmodifiedNotes)
             {
                 actions.Add(new ActionHistory.Modify(notes[0], notes[1]));
-            }
+            }*/
 
             editor.actionHistory.Insert(actions.ToArray());
         }

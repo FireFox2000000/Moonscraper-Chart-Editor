@@ -272,8 +272,8 @@ public class PlaceNote : PlaceSongObject {
         //NoteController nCon = editor.CreateNoteObject(noteToAdd);
         standardOverwriteOpen(noteToAdd);
 
-        noteRecord.AddRange(CapNoteCheck(noteToAdd));
-        noteRecord.AddRange(ForwardCap(noteToAdd));     // Do this due to pasting from the clipboard
+        noteRecord.InsertRange(0, CapNoteCheck(noteToAdd));
+        noteRecord.InsertRange(0, ForwardCap(noteToAdd));     // Do this due to pasting from the clipboard
 
         // Check if the automatic un-force will kick in
         ActionHistory.Action forceCheck = AutoForcedCheck(noteToAdd);
@@ -334,10 +334,12 @@ public class PlaceNote : PlaceSongObject {
         {
             notesToCap = new Note[] { note };
 
-            // Find the next note of the same fre type
+            // Find the next note of the same fret type or open
             next = note.next;
-            while (next != null && next.fret_type != note.fret_type)
+            while (next != null && next.fret_type != note.fret_type && next.fret_type != Note.Fret_Type.OPEN )
                 next = next.next;
+
+            // If it's an open note it won't be capped
         }
 
         if (next != null)
@@ -382,7 +384,7 @@ public class PlaceNote : PlaceSongObject {
             // Cap only the sustain of the same fret type and open notes
             foreach (Note prevNote in previousNotes)
             {
-                if (prevNote.controller != null && (prevNote.fret_type == noteToAdd.fret_type || prevNote.fret_type == Note.Fret_Type.OPEN))
+                if (prevNote.controller != null && (noteToAdd.fret_type == Note.Fret_Type.OPEN || prevNote.fret_type == noteToAdd.fret_type /*|| prevNote.fret_type == Note.Fret_Type.OPEN*/))
                 {
                     ActionHistory.Action action = prevNote.CapSustain(noteToAdd);
                     if (action != null)

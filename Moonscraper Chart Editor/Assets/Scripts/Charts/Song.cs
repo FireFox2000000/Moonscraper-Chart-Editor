@@ -225,6 +225,8 @@ public class Song {
     public Section[] sections { get; private set; }
 
     public SyncTrack[] syncTrack { get { return _syncTrack.ToArray(); } }
+    public Event[] eventsAndSections { get { return _events.ToArray(); } }
+
     /// <summary>
     /// Read only list of a song's bpm changes.
     /// </summary>

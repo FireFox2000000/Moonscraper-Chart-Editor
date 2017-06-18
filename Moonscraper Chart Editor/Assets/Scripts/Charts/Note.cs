@@ -365,7 +365,13 @@ public class Note : ChartObject
         {
             if (previous.fret_type == Note.Fret_Type.OPEN)
             {
-                if (list.Count > 0)
+                if (Globals.extendedSustainsEnabled)
+                {
+                    list.Add(previous);
+                    return list.ToArray();
+                }
+
+                else if (list.Count > 0)
                     return list.ToArray();
                 else
                     return new Note[] { previous };
@@ -477,7 +483,7 @@ public class Note : ChartObject
             }
             else
             {
-                if (next.fret_type == Note.Fret_Type.OPEN || (next.fret_type == fret_type))
+                if ((fret_type != Fret_Type.OPEN && next.fret_type == Note.Fret_Type.OPEN) || (next.fret_type == fret_type))
                     return next;
                 //else if (next.position >= note.position + note.sustain_length)      // Stop searching early
                 //return null;
@@ -502,9 +508,10 @@ public class Note : ChartObject
 
         // Cap the sustain
         Note nextFret;
-        if (fret_type == Note.Fret_Type.OPEN)
+        /*
+        if (fret_type == Fret_Type.OPEN)
             nextFret = next;
-        else
+        else*/
             nextFret = FindNextSameFretWithinSustainExtendedCheck();
 
         if (nextFret != null)

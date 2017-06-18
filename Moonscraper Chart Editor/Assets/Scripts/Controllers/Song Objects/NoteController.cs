@@ -401,6 +401,11 @@ public class NoteController : SongObjectController {
             // Position
             transform.position = new Vector3(CHART_CENTER_POS + noteToXPos(note), note.worldYPosition, 0);
 
+            if (note.fret_type == Note.Fret_Type.OPEN)
+                sustainRen.sortingOrder = -1;
+            else
+                sustainRen.sortingOrder = 0;
+
             noteObjectSelector.UpdateSelectedGameObject();
             noteObjectSelector.currentVisualsManager.UpdateVisuals();
         }
