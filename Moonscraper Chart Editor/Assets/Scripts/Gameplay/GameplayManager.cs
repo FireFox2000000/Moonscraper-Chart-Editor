@@ -5,12 +5,14 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using XInputDotNetPure;
+using Un4seen.Bass;
 
 [RequireComponent(typeof(AudioSource))]
 public class GameplayManager : MonoBehaviour {
     public AudioClip comboBreak;
 
     AudioSource audioSource;
+    int sample;
 
     const float FREESTRUM_TIME = 0.2f;
 
@@ -51,6 +53,10 @@ public class GameplayManager : MonoBehaviour {
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        audioSource.clip = comboBreak;
+
+        //byte[] comboBreakBytes = comboBreak.GetWavBytes();
+        //sample = Bass.BASS_SampleLoad(comboBreakBytes, 0, comboBreakBytes.Length, 1, BASSFlag.BASS_DEFAULT);
 
         previousStrumValue = Input.GetAxisRaw("Strum");
         previousInputMask = GetFretInputMask();
@@ -291,9 +297,9 @@ public class GameplayManager : MonoBehaviour {
             previousInputMask = inputMask;
 
             // Lost combo auditorial feedback
-            if (startNS >= 10 && noteStreak < startNS)
+            if (startNS >= 10 && noteStreak < startNS && !audioSource.isPlaying)
             {
-                audioSource.PlayOneShot(comboBreak, Globals.sfxVolume);
+                audioSource.Play();//PlayOneShot(comboBreak, Globals.sfxVolume);
             }
             
         }

@@ -8,26 +8,17 @@ using Un4seen.Bass;
 public class StrikelineAudioController : MonoBehaviour {
 
     public AudioClip clap;
-#if !BASS_AUDIO
-    static AudioClip _clap;
-    static AudioSource source; 
-#endif
     static float lastClapPos = -1;
     public static float startYPoint = -1;
     Vector3 initLocalPos;
 
-    static byte[] clapBytes;
     static int sample;
 
     void Start()
-    {   
-#if BASS_AUDIO
-        clapBytes = clap.GetWavBytes();
+    {
+        byte[] clapBytes = clap.GetWavBytes();
         sample = Bass.BASS_SampleLoad(clapBytes, 0, clapBytes.Length, 15, BASSFlag.BASS_DEFAULT);
-#else
-        source = GetComponent<AudioSource>();
-        _clap = clap;
-#endif
+
         initLocalPos = transform.localPosition;  
     }
     
@@ -45,8 +36,6 @@ public class StrikelineAudioController : MonoBehaviour {
     {
         if (worldYPos > lastClapPos && worldYPos >= startYPoint)
         {
-
-#if BASS_AUDIO
             int channel = Bass.BASS_SampleGetChannel(sample, false); // get a sample channel
             if (channel != 0)
             {
@@ -56,16 +45,12 @@ public class StrikelineAudioController : MonoBehaviour {
             }
             else
                 Debug.LogError("Clap error: " + Bass.BASS_ErrorGetCode() + ", " + sample);
-#else
-            source.PlayOneShot(_clap);
-#endif
         }
         lastClapPos = worldYPos;
     }
-#if BASS_AUDIO
+
     ~StrikelineAudioController()
     {
         Bass.BASS_SampleFree(sample);
     }
-#endif
 }
