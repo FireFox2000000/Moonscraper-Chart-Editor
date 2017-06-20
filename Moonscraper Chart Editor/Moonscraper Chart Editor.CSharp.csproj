@@ -274,7 +274,6 @@
     <None Include="Assets\Documentation\README.txt" />
     <None Include="Assets\Documentation\changelog.txt" />
     <None Include="Assets\Fonts\Roboto\Apache License.txt" />
-    <None Include="Assets\Shaders\AlphaHide.shader" />
     <None Include="Assets\Shaders\GHRenderOrder.shader" />
     <None Include="Assets\Shaders\Glass.shader" />
     <None Include="Assets\Shaders\ShinySprites.shader" />
@@ -285,6 +284,8 @@
     <None Include="Assets\Shaders\Sprites-Default.shader" />
     <None Include="Assets\Shaders\Standard ZTest.shader" />
     <None Include="Assets\Shaders\Standard.shader" />
+    <None Include="Assets\Shaders\VerticalAlphaFade.shader" />
+    <None Include="Assets\Shaders\VerticalAlphaFadeVariable.shader" />
     <None Include="Assets\XInputDotNet\MITLicense.txt" />
     <None Include="Assets\_MK\_MKGlow\_Shader\_MKBase\Cutout\MK_Cutout-Diffuse.shader" />
     <None Include="Assets\_MK\_MKGlow\_Shader\_MKBase\Cutout\MK_Cutout-DiffuseBumpSpec.shader" />
