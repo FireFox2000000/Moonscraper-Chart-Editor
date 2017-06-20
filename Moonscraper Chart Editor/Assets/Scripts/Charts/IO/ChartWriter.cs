@@ -249,7 +249,8 @@ public class ChartWriter {
                         if ((note.flags & Note.Flags.FORCED) == Note.Flags.FORCED)
                             saveString.Append(Globals.TABSPACE + tick + " = N 5 0 " + Globals.LINE_ENDING);
 
-                        if ((note.flags & Note.Flags.TAP) == Note.Flags.TAP)
+                        // Save taps line if not an open note, as open note taps cause weird artifacts under sp
+                        if (note.fret_type != Note.Fret_Type.OPEN && (note.flags & Note.Flags.TAP) == Note.Flags.TAP)
                             saveString.Append(Globals.TABSPACE + tick + " = N 6 0 " + Globals.LINE_ENDING);
                     }
                     continue;

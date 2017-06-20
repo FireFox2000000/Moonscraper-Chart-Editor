@@ -308,11 +308,11 @@ public static class MidWriter {
                     }
 
                     // Add tap sysex events
-                    if (difficulty == Song.Difficulty.Expert && (note.flags & Note.Flags.TAP) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.TAP) == 0))  // This note is a tap while the previous one isn't as we're creating a range
+                    if (difficulty == Song.Difficulty.Expert && note.fret_type != Note.Fret_Type.OPEN && (note.flags & Note.Flags.TAP) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.TAP) == 0))  // This note is a tap while the previous one isn't as we're creating a range
                     {
                         // Find the next non-tap note
                         Note nextNonTap = note;
-                        while (nextNonTap.next != null && (nextNonTap.next.flags & Note.Flags.TAP) != 0)
+                        while (nextNonTap.next != null && nextNonTap.fret_type != Note.Fret_Type.OPEN && (nextNonTap.next.flags & Note.Flags.TAP) != 0)
                             nextNonTap = nextNonTap.next;
 
                         // Tap event = 08-50-53-00-00-FF-04-01, end with 01 for On, 00 for Off

@@ -860,7 +860,7 @@ public class ChartEditor : MonoBehaviour {
 #if TIMING_DEBUG
         totalLoadTime = Time.realtimeSinceStartup;
 #endif
-        string originalMidFile = string.Empty;
+        bool mid = false;
 
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
@@ -874,7 +874,7 @@ public class ChartEditor : MonoBehaviour {
 
         System.Threading.Thread songLoadThread = new System.Threading.Thread(() =>
         {
-            bool mid = (System.IO.Path.GetExtension(currentFileName) == ".mid");
+            mid = (System.IO.Path.GetExtension(currentFileName) == ".mid");
 
             try
             {
@@ -937,14 +937,14 @@ public class ChartEditor : MonoBehaviour {
         while (currentSong.IsAudioLoading)
             yield return null;
 
-        if (originalMidFile != string.Empty)
+        if (mid)
         {
-            // Delete the temp chart
-            System.IO.File.Delete(currentFileName);
             currentFileName = string.Empty;
+            editOccurred = true;
+            Debug.Log("Loaded mid file");
         }
 
-        if (recordLastLoaded && currentFileName != string.Empty)
+        if (recordLastLoaded && currentFileName != string.Empty && !mid)
             lastLoadedFile = System.IO.Path.GetFullPath(currentFileName);
         else
             lastLoadedFile = string.Empty;
@@ -954,11 +954,6 @@ public class ChartEditor : MonoBehaviour {
 #if TIMING_DEBUG
         Debug.Log("Total load time: " + (Time.realtimeSinceStartup - totalLoadTime));
 #endif
-
-        if (originalMidFile != string.Empty)
-        {
-            editOccurred = true;
-        }
 
         // Stop loading animation
         Globals.applicationMode = Globals.ApplicationMode.Editor;
@@ -1022,7 +1017,8 @@ public class ChartEditor : MonoBehaviour {
 
     void LoadSong(Song song)
     {
-        editOccurred = false;
+        if (lastLoadedFile != string.Empty)
+            editOccurred = false;
 
         currentInstrument = Song.Instrument.Guitar;
         currentDifficulty = Song.Difficulty.Expert;
