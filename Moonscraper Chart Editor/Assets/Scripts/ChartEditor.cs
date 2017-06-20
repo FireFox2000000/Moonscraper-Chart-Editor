@@ -45,7 +45,6 @@ public class ChartEditor : MonoBehaviour {
     public UnityEngine.UI.Button play;
     public UnityEngine.UI.Button undo;
     public UnityEngine.UI.Button redo;
-    public StrikelineAudioController strikelineAudio;
     public Transform visibleStrikeline;
     public TimelineHandler timeHandler;
     public Transform camYMin;

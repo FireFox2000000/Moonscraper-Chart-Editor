@@ -137,6 +137,7 @@
     <Compile Include="Assets\Scripts\Charts\SyncTrack.cs" />
     <Compile Include="Assets\Scripts\Charts\TimeSignature.cs" />
     <Compile Include="Assets\Scripts\Clipboard.cs" />
+    <Compile Include="Assets\Scripts\Controllers\BGFadeHeightController.cs" />
     <Compile Include="Assets\Scripts\Controllers\ClipboardObjectController.cs" />
     <Compile Include="Assets\Scripts\Controllers\HighwayController.cs" />
     <Compile Include="Assets\Scripts\Controllers\HoverHighlightController.cs" />

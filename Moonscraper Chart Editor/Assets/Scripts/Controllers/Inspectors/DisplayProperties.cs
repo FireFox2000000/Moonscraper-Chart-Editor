@@ -11,6 +11,9 @@ public class DisplayProperties : MonoBehaviour {
     public Slider gameSpeedSlider;
     public Toggle clapToggle; 
     public Toggle metronomeToggle;
+    public Slider highwayLengthSlider;
+    public Transform maxHighwayLength;
+    public float minHighwayLength = 11.75f;
 
     ChartEditor editor;
 
@@ -18,6 +21,7 @@ public class DisplayProperties : MonoBehaviour {
     {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
         hyperspeedSlider.value = Globals.hyperspeed;
+        highwayLengthSlider.value = Globals.highwayLength;
 
         snappingStep.onValidateInput = Step.validateStepVal;
         snappingStep.text = Globals.step.ToString();
@@ -35,16 +39,11 @@ public class DisplayProperties : MonoBehaviour {
     {
         songNameText.text = editor.currentSong.name + " - " + editor.currentChart.name;
 
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
-        {
-            hyperspeedSlider.interactable = false;
-            gameSpeedSlider.interactable = false;
-        }
-        else
-        {
-            hyperspeedSlider.interactable = true;
-            gameSpeedSlider.interactable = true;
-        }
+        // Disable sliders during play
+        bool interactable = (Globals.applicationMode != Globals.ApplicationMode.Playing);
+        hyperspeedSlider.interactable = interactable;
+        gameSpeedSlider.interactable = interactable;
+        highwayLengthSlider.interactable = interactable;
 
         if (snappingStep.text != string.Empty)
             snappingStep.text = Globals.step.ToString();
@@ -72,6 +71,15 @@ public class DisplayProperties : MonoBehaviour {
         value = Mathf.Round(value / 5.0f) * 5;
         Globals.gameSpeed = value / 100.0f;
         gameSpeed.text = "Speed- x" + Globals.gameSpeed.ToString();
+    }
+
+    public void SetHighwayLength(float value)
+    {
+        Globals.highwayLength = value;
+
+        Vector3 pos = Vector3.zero;
+        pos.y = value * value + minHighwayLength;
+        maxHighwayLength.transform.localPosition = pos;
     }
 
     public void ToggleClap(bool value)

@@ -84,6 +84,7 @@ public class Globals : MonoBehaviour {
 
     // Settings
     public static float hyperspeed = 5.0f;
+    public static float highwayLength = 0;
     public static Step snappingStep = new Step(16);
     public static int step { get { return snappingStep.value; } set { snappingStep.value = value; } }
     public static bool lockToStrikeline = false;
@@ -145,6 +146,7 @@ public class Globals : MonoBehaviour {
             Application.targetFrameRate = fps;
 
         hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
+        highwayLength = (float)iniparse.ReadValue("Settings", "Highway Length", 0);
         audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 0);
         clapCalibrationMS = iniparse.ReadValue("Settings", "Clap calibration", 0);
         clapProperties = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
@@ -372,6 +374,7 @@ public class Globals : MonoBehaviour {
 
         iniparse.WriteValue("Settings", "Framerate", Application.targetFrameRate);
         iniparse.WriteValue("Settings", "Hyperspeed", hyperspeed);
+        iniparse.WriteValue("Settings", "Highway Length", highwayLength);
         iniparse.WriteValue("Settings", "Audio calibration", audioCalibrationMS);
         iniparse.WriteValue("Settings", "Clap calibration", clapCalibrationMS);
         iniparse.WriteValue("Settings", "Clap", (int)clapProperties);
