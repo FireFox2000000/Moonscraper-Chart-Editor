@@ -257,12 +257,14 @@ public class NoteController : SongObjectController {
             if (this.note == null)      // Was deactivated
                 return;
 
+            sustain.gameObject.SetActive(note.sustain_length != 0);
+
             // Sustain is constantly updated unless it has no length or it's length is meant to be zero but isn't
             if (!(note.sustain_length == 0 && sustain.transform.localScale.y == 0))
                 sustain.UpdateSustain();
 
             // Handle gameplay operation
-            if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+                if (Globals.applicationMode == Globals.ApplicationMode.Playing)
             {
                 if (Globals.bot && belowClapLine)
                 {

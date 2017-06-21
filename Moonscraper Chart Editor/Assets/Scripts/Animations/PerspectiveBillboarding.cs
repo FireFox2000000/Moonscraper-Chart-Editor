@@ -6,24 +6,28 @@ public class PerspectiveBillboarding : MonoBehaviour {
     const float ROTATION_FACTOR = 15;
 
     Vector3 initRotation;
+    Camera cam;
+    Transform tf;
 
 	// Use this for initialization
 	void Start () {
         initRotation = transform.rotation.eulerAngles;
+        cam = Camera.main;
+        tf = this.transform;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        float screenPosY = Camera.main.WorldToScreenPoint(transform.position).y;
+        float screenPosY = cam.WorldToScreenPoint(tf.position).y;
         float percentageofScreenHeight = screenPosY / Screen.height;
 
-        Vector3 rotation = transform.rotation.eulerAngles;  
+        float xRotation;
 
-        if (Camera.main.orthographic)
-            rotation.x = initRotation.x;
+        if (cam.orthographic)
+            xRotation = initRotation.x;
         else
-            rotation.x = initRotation.x - (percentageofScreenHeight * 2 - 1) * ROTATION_FACTOR;
+            xRotation = initRotation.x - (percentageofScreenHeight * 2 - 1) * ROTATION_FACTOR;
 
-        transform.rotation = Quaternion.Euler(new Vector3(rotation.x, 0, 0));
+        tf.rotation = Quaternion.Euler(xRotation, 0, 0);
     }
 }
