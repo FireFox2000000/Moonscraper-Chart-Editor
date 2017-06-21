@@ -236,22 +236,19 @@ public class NoteController : SongObjectController {
     {
         Note note = this.note;
         if (note != null)
-        {
-            
+        {         
             uint endPosition = note.position + note.sustain_length;
 
             // Determine if a note is outside of the view range
-            if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+            if (endPosition < editor.minPos)
             {
-                // Only need to determine if behind strikeline
-                if (endPosition < editor.minPos)
-                    gameObject.SetActive(false);
-                //else
-                   // UpdateSongObject();
+                gameObject.SetActive(false);
+                return;
             }
-            else if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+
+            if (Globals.applicationMode == Globals.ApplicationMode.Editor)
             {
-                if (endPosition < editor.minPos || note.position > editor.maxPos)
+                if (note.position > editor.maxPos)
                     gameObject.SetActive(false);
                 else
                     UpdateSongObject();         // Always update the position in case of hyperspeed changes
@@ -263,21 +260,6 @@ public class NoteController : SongObjectController {
             // Sustain is constantly updated unless it has no length or it's length is meant to be zero but isn't
             if (!(note.sustain_length == 0 && sustain.transform.localScale.y == 0))
                 sustain.UpdateSustain();
-
-            /*
-            if ((note.position >= editor.minPos && note.position < editor.maxPos) ||
-                (endPosition > editor.minPos && endPosition < editor.maxPos) ||
-                (note.position < editor.minPos && endPosition >= editor.maxPos))
-            {
-                //if (Globals.applicationMode == Globals.ApplicationMode.Editor)
-                    //UpdateSongObject();
-            }
-            else
-            {
-                gameObject.SetActive(false);
-                return;
-            }*/
-
 
             // Handle gameplay operation
             if (Globals.applicationMode == Globals.ApplicationMode.Playing)
@@ -394,8 +376,12 @@ public class NoteController : SongObjectController {
             return 0;
     }
 
+    //Note.Fret_Type prevFretType;
+   // Note.Flags prevFlags;
+
     public override void UpdateSongObject()
     {
+        Note note = this.note;
         if (note.song != null)
         {
             // Position

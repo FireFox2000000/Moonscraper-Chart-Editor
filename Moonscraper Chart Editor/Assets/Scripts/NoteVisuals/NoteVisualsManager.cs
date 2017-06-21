@@ -18,17 +18,8 @@ public class NoteVisualsManager : MonoBehaviour {
         noteRenderer = GetComponent<Renderer>();
     }
 
-    void OnEnable()
-    {
-        //if (noteRenderer)
-            //UpdateVisuals();
-    }
-
     void LateUpdate()
     {        
-        //if (Globals.applicationMode == Globals.ApplicationMode.Editor)
-            //UpdateVisuals();
-
         Animate();
     }
 

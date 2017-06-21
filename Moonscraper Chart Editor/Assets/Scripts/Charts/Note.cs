@@ -198,10 +198,7 @@ public class Note : ChartObject
     {
         get
         {
-            if ((previous != null && previous.position == position) || (next != null && next.position == position))
-                return true;
-            else
-                return false;
+            return ((previous != null && previous.position == position) || (next != null && next.position == position));
         }
     }
 

@@ -78,7 +78,7 @@ public class DisplayProperties : MonoBehaviour {
         Globals.highwayLength = value;
 
         Vector3 pos = Vector3.zero;
-        pos.y = value * value + minHighwayLength;
+        pos.y = value * 5 + minHighwayLength;
         maxHighwayLength.transform.localPosition = pos;
     }
 
