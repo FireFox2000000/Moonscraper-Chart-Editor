@@ -13,7 +13,7 @@ public class DropDownHoverActivate : MonoBehaviour
     {
         dropdown = GetComponent<Dropdown>();
     }
-
+    /*
     void Update()
     {
         if (Globals.IsInDropDown && Globals.applicationMode != Globals.ApplicationMode.Loading)
@@ -39,5 +39,5 @@ public class DropDownHoverActivate : MonoBehaviour
         {
             EventSystem.current.SetSelectedGameObject(null);   
         }
-    }
+    }*/
 }
