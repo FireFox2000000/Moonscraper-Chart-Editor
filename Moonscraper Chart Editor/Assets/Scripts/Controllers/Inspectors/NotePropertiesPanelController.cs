@@ -75,15 +75,9 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
         if (currentNote != null)
         {
-            if ((currentNote.flags & Note.Flags.TAP) == Note.Flags.TAP)
-                tapToggle.isOn = true;
-            else
-                tapToggle.isOn = false;
+            tapToggle.isOn = ((currentNote.flags & Note.Flags.TAP) == Note.Flags.TAP);
 
-            if ((currentNote.flags & Note.Flags.FORCED) == Note.Flags.FORCED)
-                forcedToggle.isOn = true;
-            else
-                forcedToggle.isOn = false;
+            forcedToggle.isOn = ((currentNote.flags & Note.Flags.FORCED) == Note.Flags.FORCED);
         }
         else
         {
@@ -91,8 +85,11 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             Debug.LogError("No note loaded into note inspector");
         }
 
+        // Disable tap note box for open notes
+        tapToggle.interactable = !(currentNote.fret_type == Note.Fret_Type.OPEN && Toolpane.currentTool != Toolpane.Tools.Note);
+
         if (!Globals.IsTyping && !Globals.modifierInputActive)
-            Controls();
+        Controls();
 
         prevNote = currentNote;
     }

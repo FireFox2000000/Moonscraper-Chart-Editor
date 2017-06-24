@@ -265,6 +265,9 @@ public class PlaceNote : PlaceSongObject {
         else
             noteToAdd = note;
 
+        if (noteToAdd.fret_type == Note.Fret_Type.OPEN)
+            noteToAdd.flags &= ~Note.Flags.TAP;
+
         editor.currentChart.Add(noteToAdd, update);
         if (noteToAdd.CannotBeForcedCheck)
             noteToAdd.flags &= ~Note.Flags.FORCED;

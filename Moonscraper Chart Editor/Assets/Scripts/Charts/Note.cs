@@ -551,7 +551,8 @@ public class Note : ChartObject
                 break;
 
             case (Note_Type.Tap):
-                flags |= Note.Flags.TAP;
+                if (fret_type != Fret_Type.OPEN)
+                    flags |= Note.Flags.TAP;
                 break;
 
             default:
