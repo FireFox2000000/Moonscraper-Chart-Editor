@@ -2,7 +2,8 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class ToolPanelController : MonoBehaviour { 
+public class ToolPanelController : MonoBehaviour {
+    ChartEditor editor;
     public Toggle viewModeToggle;
     public KeysNotePlacementModePanelController keysModePanel;
 
@@ -22,6 +23,11 @@ public class ToolPanelController : MonoBehaviour {
     Button timeSignatureSelect;
     [SerializeField]
     Button sectionSelect;
+
+    void Start()
+    {
+        editor = ChartEditor.FindCurrentEditor();
+    }
 
     // Update is called once per frame
     void Update () {
@@ -62,5 +68,37 @@ public class ToolPanelController : MonoBehaviour {
 
         else if (Input.GetKeyDown(KeyCode.P))
             sectionSelect.onClick.Invoke();
+    }
+
+    public void ToggleSongViewMode(bool globalView)
+    {
+        Globals.ViewMode originalView = Globals.viewMode;
+
+        if (globalView)
+        {
+            Globals.viewMode = Globals.ViewMode.Song;
+
+            if (Toolpane.currentTool == Toolpane.Tools.Note || Toolpane.currentTool == Toolpane.Tools.Starpower || Toolpane.currentTool == Toolpane.Tools.ChartEvent || Toolpane.currentTool == Toolpane.Tools.GroupSelect)
+            {
+                cursorSelect.onClick.Invoke();
+            }
+        }
+        else
+        {
+            Globals.viewMode = Globals.ViewMode.Chart;
+
+            if (Toolpane.currentTool == Toolpane.Tools.BPM || Toolpane.currentTool == Toolpane.Tools.Timesignature || Toolpane.currentTool == Toolpane.Tools.Section || Toolpane.currentTool == Toolpane.Tools.SongEvent)
+            {
+                cursorSelect.onClick.Invoke();
+            }
+        }
+
+        if (viewModeToggle.isOn != globalView)
+        {
+            viewModeToggle.isOn = globalView;
+        }
+
+        if (Toolpane.currentTool != Toolpane.Tools.Note)        // Allows the note panel to pop up instantly
+            editor.currentSelectedObject = null;
     }
 }

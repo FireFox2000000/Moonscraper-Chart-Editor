@@ -28,11 +28,6 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     TimeSpan customTime = new TimeSpan();
 
-    void Start()
-    {
-       // offset.onValidateInput = validateOffsetValue;
-    }
-
     protected override void OnEnable()
     {
         bool edit = ChartEditor.editOccurred;

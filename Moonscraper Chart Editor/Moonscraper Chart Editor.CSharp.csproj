@@ -222,6 +222,7 @@
     <Compile Include="Assets\Scripts\UI\KeysNotePlacementModePanelController.cs" />
     <Compile Include="Assets\Scripts\UI\LoadingScreenFader.cs" />
     <Compile Include="Assets\Scripts\UI\LoadingSpin.cs" />
+    <Compile Include="Assets\Scripts\UI\MenuBar.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\AudioCalibrationMenuScript.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\DisplayMenu.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\ErrorMessage.cs" />

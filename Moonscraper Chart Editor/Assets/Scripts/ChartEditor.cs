@@ -42,9 +42,7 @@ public class ChartEditor : MonoBehaviour {
     public GameObject ghostTimeSignature;
     public GroupMove groupMove;
     [Header("Misc.")]
-    public UnityEngine.UI.Button play;
-    public UnityEngine.UI.Button undo;
-    public UnityEngine.UI.Button redo;
+    public ToolPanelController toolPanel;
     public Transform visibleStrikeline;
     public TimelineHandler timeHandler;
     public Transform camYMin;
@@ -52,19 +50,14 @@ public class ChartEditor : MonoBehaviour {
     public Transform autoUpScroll;
     public Transform mouseYMaxLimit;
     public Transform mouseYMinLimit;
-    public SongPropertiesPanelController songPropertiesCon;
+    //public SongPropertiesPanelController songPropertiesCon; 
     public AudioSource clapSource;
-    public UnityEngine.Audio.AudioMixerGroup mixer;
     public LoadingScreenFader loadingScreen;
     public ErrorMessage errorMenu;
-    public Indicators indicators;
+    public Indicators indicators;               // Cancels hit animations upon stopping playback
     [SerializeField]
     GroupSelect groupSelect;
     public Globals globals;
-    [SerializeField]
-    Dropdown instrumentSelectDropdown;
-    [SerializeField]
-    Dropdown difficultySelectDropdown;
 
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
@@ -79,9 +72,6 @@ public class ChartEditor : MonoBehaviour {
     System.Threading.Thread autosave;
     const float AUTOSAVE_RUN_INTERVAL = 60; // Once a minute
     float autosaveTimer = 0;
-
-    Song.Instrument currentInstrument = Song.Instrument.Guitar;
-    Song.Difficulty currentDifficulty = Song.Difficulty.Expert;
 
     public MovementController movement;
     SongObjectPoolManager _songObjectPoolManager;
@@ -176,27 +166,13 @@ public class ChartEditor : MonoBehaviour {
         currentSong = new Song();
         LoadSong(currentSong);
 
-#if BASS_AUDIO
         // Bass init
         if (!Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero))
             Debug.LogError("Failed Bass.Net initialisation");
         else
             Debug.Log("Bass.Net initialised");
-#else
 
-        musicSources = new AudioSource[3];
-        for (int i = 0; i < musicSources.Length; ++i)
-        {
-            musicSources[i] = gameObject.AddComponent<AudioSource>();
-            musicSources[i].volume = 0.5f;
-            musicSources[i].outputAudioMixerGroup = mixer;
-        }
-#endif
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
-
-        // Initialise object
-        songPropertiesCon.gameObject.SetActive(true);
-        songPropertiesCon.gameObject.SetActive(false);
 
         editOccurred = false;
         SetApplicationWindowPointer();
@@ -351,17 +327,6 @@ public class ChartEditor : MonoBehaviour {
             currentPropertiesPanel.gameObject.SetActive(false);
         }
 
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
-        {
-            undo.interactable = actionHistory.canUndo;
-            redo.interactable = actionHistory.canRedo;
-        }
-        else
-        {
-            undo.interactable = false;
-            redo.interactable = false;
-        }
-
         // Set window text to represent if the current song has been saved or not
 #if !UNITY_EDITOR
         if (windowPtr != IntPtr.Zero)
@@ -505,17 +470,17 @@ public class ChartEditor : MonoBehaviour {
         LoadSong(currentSong);
 
         movement.SetPosition(0);
-        StartCoroutine(resetLag());
+        //StartCoroutine(resetLag());
 
         currentSelectedObject = null;
         editOccurred = true;
     }
-
+    /*
     IEnumerator resetLag()
     {
         yield return null;
         songPropertiesCon.gameObject.SetActive(true);
-    }
+    }*/
 
     // Wrapper function
     public void Load()
@@ -724,8 +689,6 @@ public class ChartEditor : MonoBehaviour {
         foreach (HitAnimation hitAnim in indicators.animations)
             hitAnim.StopAnim();
 
-        mixer.audioMixer.SetFloat("Pitch", 1 / (Globals.gameSpeed));
-        play.interactable = false;
         Globals.applicationMode = Globals.ApplicationMode.Playing;
         cancel = false;
 
@@ -778,7 +741,7 @@ public class ChartEditor : MonoBehaviour {
 
         startGameplayPos = null;
         cancel = true;
-        play.interactable = true;
+
         Globals.applicationMode = Globals.ApplicationMode.Editor;
 
         StopAudio();
@@ -1019,8 +982,8 @@ public class ChartEditor : MonoBehaviour {
         if (lastLoadedFile != string.Empty)
             editOccurred = false;
 
-        currentInstrument = Song.Instrument.Guitar;
-        currentDifficulty = Song.Difficulty.Expert;
+        MenuBar.currentInstrument = Song.Instrument.Guitar;
+        MenuBar.currentDifficulty = Song.Difficulty.Expert;
 
         // Load the default chart
         LoadChart(currentSong.GetChart(Song.Instrument.Guitar, Song.Difficulty.Expert));
@@ -1041,7 +1004,7 @@ public class ChartEditor : MonoBehaviour {
     }
 
     // Chart should be part of the current song
-    void LoadChart(Chart chart)
+    public void LoadChart(Chart chart)
     {
         actionHistory = new ActionHistory();
         Stop();
@@ -1049,116 +1012,6 @@ public class ChartEditor : MonoBehaviour {
         currentChart = chart;
 
         songObjectPoolManager.NewChartReset();
-    }
-
-    public void SetInstrument(string value)
-    {
-        switch (value.ToLower())
-        {
-            case ("guitar"):
-                currentInstrument = Song.Instrument.Guitar;
-                break;
-            case ("guitarcoop"):
-                currentInstrument = Song.Instrument.GuitarCoop;
-                break;
-            case ("bass"):
-                currentInstrument = Song.Instrument.Bass;
-                break;
-            case ("keys"):
-                currentInstrument = Song.Instrument.Keys;
-                break;
-            default:
-                Debug.LogError("Invalid difficulty set: " + value);
-                break;
-        }
-    }
-
-    public void SetDifficulty(string value)
-    {
-        switch (value.ToLower())
-        {
-            case ("easy"):
-                currentDifficulty = Song.Difficulty.Easy;
-                break;
-            case ("medium"):
-                currentDifficulty = Song.Difficulty.Medium;
-                break;
-            case ("hard"):
-                currentDifficulty = Song.Difficulty.Hard;
-                break;
-            case ("expert"):
-                currentDifficulty = Song.Difficulty.Expert;
-                break;
-            default:
-                Debug.LogError("Invalid difficulty set: " + value);
-                break;
-        }
-    }
-
-    public void LoadCurrentInstumentAndDifficulty()
-    {
-        LoadChart(currentSong.GetChart(currentInstrument, currentDifficulty));
-    }
-
-    // For dropdown UI
-    public void LoadExpert()
-    {
-        LoadChart(currentSong.GetChart(Song.Instrument.Guitar, Song.Difficulty.Expert));
-    }
-
-    public void LoadExpertDoubleGuitar()
-    {
-        LoadChart(currentSong.GetChart(Song.Instrument.GuitarCoop, Song.Difficulty.Expert));
-    }
-
-    public void LoadExpertDoubleBass()
-    {
-        LoadChart(currentSong.GetChart(Song.Instrument.Bass, Song.Difficulty.Expert));
-    }
-
-    public void LoadHard()
-    {
-        LoadChart(currentSong.GetChart(Song.Instrument.Guitar, Song.Difficulty.Hard));
-    }
-
-    public void LoadHardDoubleGuitar()
-    {
-        LoadChart(currentSong.GetChart(Song.Instrument.GuitarCoop, Song.Difficulty.Hard));
-    }
-
-    public void LoadHardDoubleBass()
-    {
-        LoadChart(currentSong.GetChart(Song.Instrument.Bass, Song.Difficulty.Hard));
-    }
-
-    public void LoadMedium()
-    {
-        LoadChart(currentSong.GetChart(Song.Instrument.Guitar, Song.Difficulty.Medium));
-    }
-
-    public void LoadMediumDoubleGuitar()
-    {
-        LoadChart(currentSong.GetChart(Song.Instrument.GuitarCoop, Song.Difficulty.Medium));
-    }
-
-    public void LoadMediumDoubleBass()
-    {
-        LoadChart(currentSong.GetChart(Song.Instrument.Bass, Song.Difficulty.Medium));
-    }
-
-    public void LoadEasy()
-    {
-        LoadChart(currentSong.GetChart(Song.Instrument.Guitar, Song.Difficulty.Easy));
-    }
-
-    public void LoadEasyDoubleGuitar()
-    {
-        LoadChart(currentSong.GetChart(Song.Instrument.GuitarCoop, Song.Difficulty.Easy));
-    }
-
-    public void LoadEasyDoubleBass()
-    {
-        LoadChart(currentSong.GetChart(Song.Instrument.Bass, Song.Difficulty.Easy));
     }
 
     public void EnableMenu(DisplayMenu menu)

@@ -13,23 +13,15 @@ public class Globals : MonoBehaviour {
     public static readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3" };
     public static readonly string[] validTextureExtensions = { ".jpg", ".png" };
 
-    [Header("Initialize GUI")]
-    public Toggle viewModeToggle;
-    public AudioCalibrationMenuScript audioCalibrationMenu;
-
     public const string TABSPACE = "  ";
 
     [Header("Area range")]
     public RectTransform area;
     [Header("Misc.")]
     [SerializeField]
-    Button defaultViewSwitchButton;
-    [SerializeField]
     GroupSelect groupSelect;
     [SerializeField]
     Text snapLockWarning;
-    [SerializeField]
-    Toggle mouseModeToggle;
     [SerializeField]
     GUIStyle hintMouseOverStyle;
 
@@ -94,7 +86,7 @@ public class Globals : MonoBehaviour {
     public static int audioCalibrationMS = 200;                     // Increase to start the audio sooner
     public static int clapCalibrationMS = 200;
     public static ApplicationMode applicationMode = ApplicationMode.Editor;
-    public static ViewMode viewMode { get; private set; }
+    public static ViewMode viewMode { get; set; }
     public static NotePlacementMode notePlacementMode = NotePlacementMode.LeftyFlip;
     public static bool extendedSustainsEnabled = false;
     public static bool sustainGapEnabled { get; set; }
@@ -103,6 +95,9 @@ public class Globals : MonoBehaviour {
     public static Step sustainGapStep;
     public static int sustainGap { get { return sustainGapStep.value; } set { sustainGapStep.value = value; } }
     public static bool bot = true;
+    public static int customBgSwapTime;
+
+    // Audio stuff
     static float _sfxVolume = 1;
     public static float gameSpeed = 1;
     public static float gameplayStartDelayTime = 3.0f;
@@ -120,6 +115,7 @@ public class Globals : MonoBehaviour {
         }
     }
     public static float vol_master, vol_song, vol_guitar, vol_rhythm, audio_pan;
+
 
     ChartEditor editor;
     static string workingDirectory = string.Empty;
@@ -158,7 +154,7 @@ public class Globals : MonoBehaviour {
         gameplayStartDelayTime = (float)iniparse.ReadValue("Settings", "Gameplay Start Delay", 3.0f);
         resetAfterPlay = iniparse.ReadValue("Settings", "Reset After Play", false);
         resetAfterGameplay = iniparse.ReadValue("Settings", "Reset After Gameplay", false);
-
+        customBgSwapTime = iniparse.ReadValue("Settings", "Custom Background Swap Time", 30);
         // Check that the gameplay start delay time is a multiple of 0.5 and is
         gameplayStartDelayTime = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
         gameplayStartDelayTime = (float)(System.Math.Round(gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f);
@@ -218,12 +214,7 @@ public class Globals : MonoBehaviour {
         if (!IsTyping)
             Controls();
         ModifierControls();
-        /*
-        if (System.Windows.Forms.Control.IsKeyLocked(System.Windows.Forms.Keys.Scroll) && 
-            (Toolpane.currentTool != Toolpane.Tools.Cursor && Toolpane.currentTool != Toolpane.Tools.Eraser && Toolpane.currentTool != Toolpane.Tools.GroupSelect))
-            lockToStrikeline = true;
-        else
-            lockToStrikeline = false;*/
+
         snapLockWarning.gameObject.SetActive(lockToStrikeline);
     }
 
@@ -316,55 +307,12 @@ public class Globals : MonoBehaviour {
                     editor.Stop();
             }
 
-            if (Input.GetKeyDown(KeyCode.BackQuote))
-            {
-                mouseModeToggle.isOn = !mouseModeToggle.isOn;
-            }
-
             if (Input.GetKeyDown(KeyCode.Z))
                 Export.ExportWAV(editor.currentSong.audioLocations[Song.MUSIC_STREAM_ARRAY_POS], workingDirectory + "wavtest.wav", new ExportOptions());
 
             //if (Input.GetButtonDown("Next Frame"))
             //StartCoroutine(editor.PlayAutoStop(1 / FRAMERATE));
         }
-    }
-
-    public void ToggleSongViewMode(bool globalView)
-    {
-        ViewMode originalView = viewMode;
-
-        if (globalView)
-        {
-            viewMode = ViewMode.Song;
-
-            if (Toolpane.currentTool == Toolpane.Tools.Note || Toolpane.currentTool == Toolpane.Tools.Starpower || Toolpane.currentTool == Toolpane.Tools.ChartEvent || Toolpane.currentTool == Toolpane.Tools.GroupSelect)
-            {
-                defaultViewSwitchButton.onClick.Invoke();
-            }
-        }
-        else
-        {
-            viewMode = ViewMode.Chart;
-
-            if (Toolpane.currentTool == Toolpane.Tools.BPM || Toolpane.currentTool == Toolpane.Tools.Timesignature || Toolpane.currentTool == Toolpane.Tools.Section || Toolpane.currentTool == Toolpane.Tools.SongEvent)
-            {
-                defaultViewSwitchButton.onClick.Invoke();
-            }
-        }
-
-        if (viewModeToggle.isOn != globalView)
-        {
-            viewModeToggle.isOn = globalView;         
-        }
-
-        if (Toolpane.currentTool != Toolpane.Tools.Note)        // Allows the note panel to pop up instantly
-            editor.currentSelectedObject = null;
-    }
-
-    public void ToggleMouseLockMode(bool value)
-    {    
-        lockToStrikeline = value;
-        Debug.Log("Keys mode toggled " + value);
     }
 
     public void Quit()
@@ -385,6 +333,7 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Settings", "Gameplay Start Delay", gameplayStartDelayTime);
         iniparse.WriteValue("Settings", "Reset After Play", resetAfterPlay);
         iniparse.WriteValue("Settings", "Reset After Gameplay", resetAfterGameplay);
+        iniparse.WriteValue("Settings", "Custom Background Swap Time", customBgSwapTime);
 
         // Audio levels
         iniparse.WriteValue("Audio Volume", "Master", vol_master);

@@ -4,7 +4,6 @@ using System.Collections;
 
 public class SettingsController : DisplayMenu
 {
-    public Toggle clapOnOff;
     public Toggle clapStrum;
     public Toggle clapHopo;
     public Toggle clapTap;
@@ -26,6 +25,7 @@ public class SettingsController : DisplayMenu
     public InputField sustainGapInput;
     public Dropdown gameplayStartDelayDropdown;
     public Dropdown fpsSelectDropdown;
+    public Dropdown bgSwapTimeDropdown;
 
     public StrikelineFretPlacement strikelineFretPlacement;
 
@@ -95,6 +95,31 @@ public class SettingsController : DisplayMenu
                 break;
             default:
                 fpsSelectDropdown.value = 3;
+                break;
+        }
+
+        switch (Globals.customBgSwapTime)
+        {
+            case 10:
+                bgSwapTimeDropdown.value = 0;
+                break;
+            case 30:
+                bgSwapTimeDropdown.value = 1;
+                break;
+            case 60:
+                bgSwapTimeDropdown.value = 2;
+                break;
+            case 180:
+                bgSwapTimeDropdown.value = 3;
+                break;
+            case 300:
+                bgSwapTimeDropdown.value = 4;
+                break;
+            case 600:
+                bgSwapTimeDropdown.value = 5;
+                break;
+            default:
+                bgSwapTimeDropdown.value = 0;
                 break;
         }
 
@@ -236,5 +261,32 @@ public class SettingsController : DisplayMenu
 
         Globals.sustainGap = stepVal;
         sustainGapInput.text = Globals.sustainGap.ToString();
+    }
+
+    public void SetBgSwapTime(int value)
+    {
+        switch (value)
+        {
+            case 0:
+                Globals.customBgSwapTime = 10;
+                break;
+            case 1:
+                Globals.customBgSwapTime = 30;
+                break;
+            case 2:
+                Globals.customBgSwapTime = 60;
+                break;
+            case 3:
+                Globals.customBgSwapTime = 180;
+                break;
+            case 4:
+                Globals.customBgSwapTime = 300;
+                break;
+            case 5:
+                Globals.customBgSwapTime = 600;
+                break;
+            default:
+                break;
+        }
     }
 }

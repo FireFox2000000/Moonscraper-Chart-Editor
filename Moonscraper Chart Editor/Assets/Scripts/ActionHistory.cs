@@ -69,10 +69,10 @@ public class ActionHistory
             if (setPos.GetType().IsSubclassOf(typeof(ChartObject)))
             {
                 if (Globals.viewMode == Globals.ViewMode.Song)          // Placing local object while in chart view
-                    editor.globals.ToggleSongViewMode(false);
+                    editor.toolPanel.ToggleSongViewMode(false);
             }
             else if (Globals.viewMode == Globals.ViewMode.Chart)        // Placing global object while in local view
-                editor.globals.ToggleSongViewMode(true);
+                editor.toolPanel.ToggleSongViewMode(true);
 
             Debug.Log("Undo: " + actionsUndone + " actions");
             return true;

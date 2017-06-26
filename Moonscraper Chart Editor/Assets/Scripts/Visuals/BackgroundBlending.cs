@@ -5,7 +5,6 @@ using UnityEngine;
 public class BackgroundBlending : MonoBehaviour
 {
     public float bleadSpeed;
-    public float delayBetweenBlends;
     public Skin skin;
 
     Renderer ren;
@@ -32,7 +31,7 @@ public class BackgroundBlending : MonoBehaviour
         {
             delayTimer += Time.deltaTime;
 
-            if (delayTimer > delayBetweenBlends)
+            if (delayTimer > Globals.customBgSwapTime)
             {
                 // Need to check if we need to wrap around to the start of the array.
                 int nextBackground = currentBackground + 1;
