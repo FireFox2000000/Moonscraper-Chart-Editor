@@ -13,7 +13,7 @@ Shader "Unlit/VerticalAlphaFade"
 		Tags{ "Queue" = "Transparent" }
 		Lighting Off
 		ZWrite Off
-		Blend SrcAlpha OneMinusSrcAlpha
+		Blend Zero OneMinusSrcAlpha
 		AlphaTest GEqual[_Cutoff]
 		Pass
 	{

@@ -172,6 +172,7 @@
     <None Include="Assets\Shaders\Sprites-Default.shader" />
     <None Include="Assets\Shaders\Standard ZTest.shader" />
     <None Include="Assets\Shaders\Standard.shader" />
+    <None Include="Assets\Shaders\TextureBlend.shader" />
     <None Include="Assets\Shaders\VerticalAlphaFade.shader" />
     <None Include="Assets\Shaders\VerticalAlphaFadeVariable.shader" />
     <None Include="Assets\XInputDotNet\MITLicense.txt" />

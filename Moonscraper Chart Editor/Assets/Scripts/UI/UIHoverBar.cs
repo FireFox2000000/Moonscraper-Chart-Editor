@@ -82,13 +82,15 @@ public class UIHoverBar : MonoBehaviour {
             }
 
             if (foundObject)
+            {
                 inUIBar = true;
 
-            // Set the last shown dropdown
-            Dropdown dropdown = foundObject.GetComponentInParent<Dropdown>();
-            if (dropdown)
-            {
-                lastShownDropdown = dropdown;
+                // Set the last shown dropdown
+                Dropdown dropdown = foundObject.GetComponentInParent<Dropdown>();
+                if (dropdown)
+                {
+                    lastShownDropdown = dropdown;
+                }
             }
         }
         // Properly deselect dropdown
