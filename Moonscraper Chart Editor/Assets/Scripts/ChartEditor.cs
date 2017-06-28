@@ -583,7 +583,7 @@ public class ChartEditor : MonoBehaviour {
 
         // Set position x seconds beforehand
         float time = Song.WorldYPositionToTime(strikelineYPos);
-        movement.SetTime(time);
+        movement.SetTime(time - Globals.gameplayStartDelayTime);
         //movement.transform.position = new Vector3(movement.transform.position.x, Song.TimeToWorldYPosition(time - Globals.gameplayStartDelayTime), movement.transform.position.z);
 
         Globals.bot = false;
@@ -611,6 +611,9 @@ public class ChartEditor : MonoBehaviour {
         PlayBassStream(currentSong.bassMusicStream, playPoint);
         PlayBassStream(currentSong.bassGuitarStream, playPoint);
         PlayBassStream(currentSong.bassRhythmStream, playPoint);
+
+        movement.playStartPosition = movement.transform.position.y;
+        movement.playStartTime = Time.realtimeSinceStartup;
 #endif
     }
 

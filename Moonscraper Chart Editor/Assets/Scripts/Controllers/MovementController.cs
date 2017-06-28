@@ -13,6 +13,8 @@ public abstract class MovementController : MonoBehaviour {
     public static uint? explicitChartPos = null;
 
     protected float lastUpdatedRealTime = 0;
+    public float playStartTime;
+    public float playStartPosition;
 
     // Program options
     protected float mouseScrollSensitivity = 0.2f;      // May miss snap gaps if placed too high
@@ -38,12 +40,13 @@ public abstract class MovementController : MonoBehaviour {
 
     public void PlayingMovement()
     {
-        // Auto scroll camera- Run in FixedUpdate
+        
         float speed = Globals.hyperspeed;
         Vector3 pos = transform.position;
         float deltaTime = Time.realtimeSinceStartup - lastUpdatedRealTime;      // Use this instead of Time.deltaTime to account for any lag spikes that could desync the audio
 
-        pos.y += (speed * deltaTime);
+        //pos.y += (speed * deltaTime);
+        pos.y = playStartPosition + Song.TimeToWorldYPosition((Time.realtimeSinceStartup - playStartTime) * Globals.gameSpeed);
         transform.position = pos;
         explicitChartPos = null;
 

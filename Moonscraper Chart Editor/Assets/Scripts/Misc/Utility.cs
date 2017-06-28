@@ -7,18 +7,31 @@ static class Utility {
 
     public static string timeConvertion(float time)
     {
-        System.TimeSpan levelTime = System.TimeSpan.FromSeconds(time);
+        TimeSpan levelTime = TimeSpan.FromSeconds(time);
 
         string format = string.Empty;
         if (time < 0)
             format += "-";
 
-        format += "{0:D2}:{1:D2}:{2:D2}";
+        if (levelTime.Hours > 0)
+        {
+            format += "{0}:{1:D2}:{2:D2}:{3:D2}";
 
-        return string.Format(format,
+            return string.Format(format,
+                Mathf.Abs(levelTime.Hours),
                 Mathf.Abs(levelTime.Minutes),
                 Mathf.Abs(levelTime.Seconds),
                 millisecondRounding(Mathf.Abs(levelTime.Milliseconds), 2));
+        }
+        else
+        {
+            format += "{0:D2}:{1:D2}:{2:D2}";
+
+            return string.Format(format,
+                Mathf.Abs(levelTime.Minutes),
+                Mathf.Abs(levelTime.Seconds),
+                millisecondRounding(Mathf.Abs(levelTime.Milliseconds), 2));
+        }
     }
 
     static int millisecondRounding(int value, int roundPlaces)
