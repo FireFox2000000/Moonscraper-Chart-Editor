@@ -183,6 +183,9 @@ public class TimelineMovementController : MovementController
                 editor.Stop();
         }
 
+        if (Globals.applicationMode != Globals.ApplicationMode.Playing)
+            lastUpdatedRealTime = Time.realtimeSinceStartup;
+
         prevPos = transform.position;
         prevScreenSize = new Vector2(Screen.width, Screen.height);
     }

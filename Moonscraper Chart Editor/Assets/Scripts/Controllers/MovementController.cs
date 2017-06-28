@@ -12,11 +12,23 @@ public abstract class MovementController : MonoBehaviour {
     protected bool focused = true;
     public static uint? explicitChartPos = null;
 
+    protected float lastUpdatedRealTime = 0;
+
     // Program options
     protected float mouseScrollSensitivity = 0.2f;      // May miss snap gaps if placed too high
 
     // Jump to a chart position
     public abstract void SetPosition(uint chartPosition);
+
+    public void SetTime(float time)
+    {
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+        {
+            Vector3 pos = initPos;
+            pos.y += Song.TimeToWorldYPosition(time);
+            transform.position = pos;
+        }
+    }
 
     protected void Start()
     {
@@ -29,9 +41,13 @@ public abstract class MovementController : MonoBehaviour {
         // Auto scroll camera- Run in FixedUpdate
         float speed = Globals.hyperspeed;
         Vector3 pos = transform.position;
-        pos.y += (speed * Time.deltaTime);
+        float deltaTime = Time.realtimeSinceStartup - lastUpdatedRealTime;      // Use this instead of Time.deltaTime to account for any lag spikes that could desync the audio
+
+        pos.y += (speed * deltaTime);
         transform.position = pos;
         explicitChartPos = null;
+
+        lastUpdatedRealTime = Time.realtimeSinceStartup;
     }
 
     void OnApplicationFocus(bool hasFocus)

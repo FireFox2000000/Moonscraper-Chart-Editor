@@ -583,7 +583,8 @@ public class ChartEditor : MonoBehaviour {
 
         // Set position x seconds beforehand
         float time = Song.WorldYPositionToTime(strikelineYPos);
-        movement.transform.position = new Vector3(movement.transform.position.x, Song.TimeToWorldYPosition(time - Globals.gameplayStartDelayTime), movement.transform.position.z);
+        movement.SetTime(time);
+        //movement.transform.position = new Vector3(movement.transform.position.x, Song.TimeToWorldYPosition(time - Globals.gameplayStartDelayTime), movement.transform.position.z);
 
         Globals.bot = false;
         Play();

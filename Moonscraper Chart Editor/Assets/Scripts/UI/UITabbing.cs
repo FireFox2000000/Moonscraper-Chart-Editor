@@ -13,7 +13,12 @@ public class UITabbing : MonoBehaviour {
         {
             Selectable next = defaultSelectable;
             if (EventSystem.current.currentSelectedGameObject)
-                next = EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnDown();
+            {
+                if (Globals.secondaryInputActive)
+                    next = EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnUp();
+                else
+                    next = EventSystem.current.currentSelectedGameObject.GetComponent<Selectable>().FindSelectableOnDown();
+            }
 
             if (next != null)
             {
