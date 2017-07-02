@@ -17,7 +17,7 @@ public class StrikelineAudioController : MonoBehaviour {
     void Start()
     {
         byte[] clapBytes = clap.GetWavBytes();
-        sample = Bass.BASS_SampleLoad(clapBytes, 0, clapBytes.Length, 15, BASSFlag.BASS_DEFAULT);
+        sample = Bass.BASS_SampleLoad(clapBytes, 0, clapBytes.Length, 50, BASSFlag.BASS_DEFAULT);
 
         initLocalPos = transform.localPosition;  
     }

@@ -25,7 +25,7 @@ public class Toolpane : MonoBehaviour {
     {
         if (((Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))) && !globals.InToolArea)
             mouseDownInArea = false;
-        else if (!mouseDownInArea && (!Input.GetMouseButton(0) && !Input.GetMouseButton(1)))//(Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1)))
+        else if (!mouseDownInArea && (!Input.GetMouseButton(0) && !Input.GetMouseButton(1)))
             mouseDownInArea = true;
 
         // Handle delete mode cancel
@@ -75,7 +75,7 @@ public class Toolpane : MonoBehaviour {
                 }
                 else if (currentTool != Tools.GroupSelect)
                 {
-                    currentToolObject.gameObject.SetActive(false);
+                   // currentToolObject.gameObject.SetActive(false);
                 }
             }          
         }
@@ -95,6 +95,7 @@ public class Toolpane : MonoBehaviour {
         {            
             currentTool = currentToolObject.GetTool();
             currentToolObject.gameObject.SetActive(true);
+
             currentToolObject.ToolEnable();
         }
         else

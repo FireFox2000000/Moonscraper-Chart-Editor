@@ -6,7 +6,7 @@ using System.Linq;
 public class GroupSelect : ToolObject {
     public Transform selectedArea;
 
-    SpriteRenderer ren;
+    SpriteRenderer draggingArea;
 
     bool addMode = true;
 
@@ -25,7 +25,7 @@ public class GroupSelect : ToolObject {
     {
         base.Awake();
 
-        ren = GetComponent<SpriteRenderer>();
+        draggingArea = GetComponent<SpriteRenderer>();
 
         prevSong = editor.currentSong;
         prevChart = editor.currentChart;
@@ -82,7 +82,7 @@ public class GroupSelect : ToolObject {
                 startWorld2DChartPos = objectSnappedChartPos;
 
                 Color col = Color.green;
-                col.a = ren.color.a;
+                col.a = draggingArea.color.a;
 
                 if (Globals.secondaryInputActive)
                     addMode = true;
@@ -90,7 +90,7 @@ public class GroupSelect : ToolObject {
                 {
                     addMode = false;
                     col = Color.red;
-                    col.a = ren.color.a;                    
+                    col.a = draggingArea.color.a;                    
                 }
                 else
                 {
@@ -99,7 +99,7 @@ public class GroupSelect : ToolObject {
                     area = new Clipboard.SelectionArea(new Rect(), startWorld2DChartPos, endWorld2DChartPos);
                 }
 
-                ren.color = col;
+                draggingArea.color = col;
 
                 userDraggingSelectArea = true;
             }
@@ -224,18 +224,6 @@ public class GroupSelect : ToolObject {
         return chartObjectsList.ToArray();
     }
 
-    // Moved to editor script
-    /*
-    void Delete()
-    {
-        ChartObject[] dataArray = data.ToArray();
-
-        editor.actionHistory.Insert(new ActionHistory.Delete(dataArray));
-        editor.currentChart.Remove(dataArray);
-
-        reset();
-    }*/
-
     void Copy(IEnumerable data, Clipboard.SelectionArea area)
     {
         List<ChartObject> chartObjectsCopy = new List<ChartObject>();
@@ -246,9 +234,6 @@ public class GroupSelect : ToolObject {
             chartObjectsCopy.Add(objectToAdd);
         }
 
-        /* if (startWorld2DChartPos < endWorld2DChartPos)
-             ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), area, editor.currentSong);
-         else*/
         ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), area, editor.currentSong);
     }
 

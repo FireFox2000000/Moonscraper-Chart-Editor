@@ -39,8 +39,7 @@ public abstract class MovementController : MonoBehaviour {
     }
 
     public void PlayingMovement()
-    {
-        
+    {   
         float speed = Globals.hyperspeed;
         Vector3 pos = transform.position;
         float deltaTime = Time.realtimeSinceStartup - lastUpdatedRealTime;      // Use this instead of Time.deltaTime to account for any lag spikes that could desync the audio

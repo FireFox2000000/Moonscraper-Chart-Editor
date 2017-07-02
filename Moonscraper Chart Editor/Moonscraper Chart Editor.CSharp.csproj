@@ -187,6 +187,7 @@
     <Compile Include="Assets\Scripts\SongValidateGH3.cs" />
     <Compile Include="Assets\Scripts\Step.cs" />
     <Compile Include="Assets\Scripts\TapBPMCalculator.cs" />
+    <Compile Include="Assets\Scripts\Tools\CursorSelect.cs" />
     <Compile Include="Assets\Scripts\Tools\Eraser.cs" />
     <Compile Include="Assets\Scripts\Tools\GroupSelect.cs" />
     <Compile Include="Assets\Scripts\Tools\ObjectlessTool.cs" />

@@ -83,9 +83,7 @@ public class NoteController : SongObjectController {
             else if (!editor.IsSelected(songObject))
             {
                 if (Input.GetButton("ChordSelect"))
-                {
                     editor.currentSelectedObjects = note.GetChord();
-                }
                 else
                     editor.currentSelectedObject = songObject;
             }

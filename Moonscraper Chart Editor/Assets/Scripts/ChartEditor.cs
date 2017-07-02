@@ -205,6 +205,7 @@ public class ChartEditor : MonoBehaviour {
     GameObject clickedSelectableObject;
     public void Update()
     {
+        /*
         if ((Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.GroupSelect) && Input.GetButtonDown("Delete"))
             Delete();
 
@@ -233,9 +234,12 @@ public class ChartEditor : MonoBehaviour {
                 mousePos = Input.mousePosition;
 
                 mouseDownOverUI = Mouse.IsUIUnderPointer();
+
+                if (!Mouse.currentSelectableUnderMouse)
+                    currentSelectedObject = null;
             }
 
-            if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && currentSelectedObjects.Length > 0 && clickedSelectableObject/*Mouse.GetSelectableObjectUnderMouse()*/ && !mouseDownOverUI)
+            if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && currentSelectedObjects.Length > 0 && clickedSelectableObject && !mouseDownOverUI)
             {
                 // Find anchor point
                 int anchorPoint = SongObject.NOTFOUND;
@@ -250,7 +254,6 @@ public class ChartEditor : MonoBehaviour {
                             break;
                         }
                     }
-                    //Debug.Log("Not found " + anchorPoint);
                 }
                 groupMove.SetSongObjects(currentSelectedObjects, anchorPoint, true);
             }
@@ -263,7 +266,7 @@ public class ChartEditor : MonoBehaviour {
         }
         else
             mousePos = Vector3.zero;
-
+            */
         // Update object positions that supposed to be visible into the range of the camera
         minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
         maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
@@ -696,7 +699,7 @@ public class ChartEditor : MonoBehaviour {
         Globals.applicationMode = Globals.ApplicationMode.Playing;
         cancel = false;
 
-        float playPoint = Song.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
+        float playPoint = Song.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (Globals.audioCalibrationMS / 1000.0f);
 
         if (playPoint < 0)
         {
@@ -1057,7 +1060,7 @@ public class ChartEditor : MonoBehaviour {
         AddToSelectedObjects(new SongObject[] { songObjects });
     }
 
-    public void AddToSelectedObjects(SongObject[] songObjects)
+    public void AddToSelectedObjects(System.Collections.Generic.IEnumerable<SongObject> songObjects)
     {
         var selectedObjectsList = new System.Collections.Generic.List<SongObject>(currentSelectedObjects);
 
@@ -1086,7 +1089,7 @@ public class ChartEditor : MonoBehaviour {
         RemoveFromSelectedObjects(new SongObject[] { songObjects });
     }
 
-    public void RemoveFromSelectedObjects(SongObject[] songObjects)
+    public void RemoveFromSelectedObjects(System.Collections.Generic.IEnumerable<SongObject> songObjects)
     {
         var selectedObjectsList = new System.Collections.Generic.List<SongObject>(currentSelectedObjects);
 
@@ -1115,7 +1118,7 @@ public class ChartEditor : MonoBehaviour {
             groupSelect.reset();
     }
 
-    void Copy()
+    public void Copy()
     {
         var songObjectsCopy = new SongObject[currentSelectedObjects.Length];
         float? left = null, right = null;
@@ -1173,7 +1176,7 @@ public class ChartEditor : MonoBehaviour {
         }
     }
 
-    void Cut()
+    public void Cut()
     {
         Copy();
         Delete();
