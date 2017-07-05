@@ -21,7 +21,7 @@ static class Utility {
                 Mathf.Abs(levelTime.Hours),
                 Mathf.Abs(levelTime.Minutes),
                 Mathf.Abs(levelTime.Seconds),
-                millisecondRounding(Mathf.Abs(levelTime.Milliseconds), 2));
+                Mathf.Abs((int)((time - (int)time) * 100)));
         }
         else
         {
@@ -30,7 +30,7 @@ static class Utility {
             return string.Format(format,
                 Mathf.Abs(levelTime.Minutes),
                 Mathf.Abs(levelTime.Seconds),
-                millisecondRounding(Mathf.Abs(levelTime.Milliseconds), 2));
+                Mathf.Abs((int)((time - (int)time) * 100)));
         }
     }
 

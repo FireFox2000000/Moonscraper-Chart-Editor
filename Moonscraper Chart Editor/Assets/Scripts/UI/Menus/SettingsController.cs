@@ -16,7 +16,7 @@ public class SettingsController : DisplayMenu
     public Slider musicSourceSlider;
     public Slider guitarSourceSlider;
     public Slider rhythmSourceSlider;
-    public Slider clapSourceSlider;
+    //public Slider clapSourceSlider;
     public Slider sfxSlider;
 
     public Slider masterVolumeSlider;
@@ -56,7 +56,7 @@ public class SettingsController : DisplayMenu
 
         Globals.sfxVolume = sfxSlider.value;
 
-        editor.clapSource.volume = clapSourceSlider.value;
+        //editor.clapSource.volume = clapSourceSlider.value;
 
         Globals.vol_master = masterVolumeSlider.value / 10.0f;
         AudioListener.volume = Globals.vol_master;
@@ -130,7 +130,7 @@ public class SettingsController : DisplayMenu
         rhythmSourceSlider.value = Globals.vol_rhythm;
         sfxSlider.value = Globals.sfxVolume;
 
-        clapSourceSlider.value = editor.clapSource.volume;
+        //clapSourceSlider.value = editor.clapSource.volume;
         musicPanSlider.value = Globals.audio_pan * 10.0f;
 
         if (Globals.extendedSustainsEnabled)

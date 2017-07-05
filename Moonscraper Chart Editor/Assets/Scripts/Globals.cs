@@ -168,7 +168,7 @@ public class Globals : MonoBehaviour {
         
         AudioListener.volume = vol_master;
 
-        editor.clapSource.volume = (float)iniparse.ReadValue("Audio Volume", "Clap", 1.0f);
+        //editor.clapSource.volume = (float)iniparse.ReadValue("Audio Volume", "Clap", 1.0f);
         sfxVolume = (float)iniparse.ReadValue("Audio Volume", "SFX", 1.0f);
 
         iniparse.Close();
@@ -335,7 +335,7 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Audio Volume", "Guitar Stream", vol_guitar);
         iniparse.WriteValue("Audio Volume", "Rhythm Stream", vol_rhythm);
         iniparse.WriteValue("Audio Volume", "Audio Pan", audio_pan);
-        iniparse.WriteValue("Audio Volume", "Clap", editor.clapSource.volume);
+        //iniparse.WriteValue("Audio Volume", "Clap", editor.clapSource.volume);
         iniparse.WriteValue("Audio Volume", "SFX", sfxVolume);
 
         iniparse.Close();

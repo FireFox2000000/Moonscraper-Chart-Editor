@@ -51,7 +51,7 @@ public class ChartEditor : MonoBehaviour {
     public Transform mouseYMaxLimit;
     public Transform mouseYMinLimit;
     //public SongPropertiesPanelController songPropertiesCon; 
-    public AudioSource clapSource;
+    //public AudioSource clapSource;
     public LoadingScreenFader loadingScreen;
     public ErrorMessage errorMenu;
     public Indicators indicators;               // Cancels hit animations upon stopping playback
