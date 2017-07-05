@@ -13,8 +13,10 @@ public abstract class MovementController : MonoBehaviour {
     public static uint? explicitChartPos = null;
 
     protected float lastUpdatedRealTime = 0;
-    public float playStartTime;
-    public float playStartPosition;
+    [HideInInspector]
+    public float? playStartTime;
+    [HideInInspector]
+    public float? playStartPosition;
 
     // Program options
     protected float mouseScrollSensitivity = 0.2f;      // May miss snap gaps if placed too high
@@ -42,14 +44,22 @@ public abstract class MovementController : MonoBehaviour {
     {   
         float speed = Globals.hyperspeed;
         Vector3 pos = transform.position;
-        float deltaTime = Time.realtimeSinceStartup - lastUpdatedRealTime;      // Use this instead of Time.deltaTime to account for any lag spikes that could desync the audio
+        float deltaTime = Time.deltaTime;
 
-        //pos.y += (speed * deltaTime);
-        pos.y = playStartPosition + Song.TimeToWorldYPosition((Time.realtimeSinceStartup - playStartTime) * Globals.gameSpeed);
+        if (playStartTime != null && playStartPosition != null)
+        {
+            float time = Time.time - (float)playStartTime;
+            if (time < 0)
+                time = 0;
+
+            pos.y = (float)playStartPosition + Song.TimeToWorldYPosition(time * Globals.gameSpeed);
+        }
+        else
+            pos.y += (speed * deltaTime);
         transform.position = pos;
         explicitChartPos = null;
 
-        lastUpdatedRealTime = Time.realtimeSinceStartup;
+        lastUpdatedRealTime = Time.time;
     }
 
     void OnApplicationFocus(bool hasFocus)

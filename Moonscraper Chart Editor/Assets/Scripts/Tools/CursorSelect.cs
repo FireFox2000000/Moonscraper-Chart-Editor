@@ -23,119 +23,120 @@ public class CursorSelect : ToolObject
     uint startWorld2DChartPos = 0;
     uint endWorld2DChartPos = 0;
 
-    Song prevSong;
-    Chart prevChart;
+    bool block = false;
 
     protected override void Awake()
     {
         base.Awake();
-
-        prevSong = editor.currentSong;
-        prevChart = editor.currentChart;
 
         initColor = draggingArea.color;
     }
 
     protected override void Update()
     {
-        UpdateSnappedPos();
-
-        // Delete key shortcut
-        if (Input.GetButtonDown("Delete"))
-            editor.Delete();
-
-        // Shortcuts
-        if (Globals.modifierInputActive)
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor && !block)
         {
-            if (Input.GetKeyDown(KeyCode.X))
-                editor.Cut();
-            else if (Input.GetKeyDown(KeyCode.C))
-                editor.Copy();
-        }
+            UpdateSnappedPos();
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            mousePos = Input.mousePosition;
-            mouseDownOverUI = Mouse.IsUIUnderPointer();
-            clickedSelectableObject = Mouse.currentSelectableUnderMouse;
+            // Delete key shortcut
+            if (Input.GetButtonDown("Delete"))
+                editor.Delete();
 
-            // Reset if the user is making a new selection or deselecting the old
-            if (!clickedSelectableObject && !Globals.modifierInputActive && !Globals.secondaryInputActive)
-                editor.currentSelectedObject = null;
-
-            if (Globals.viewMode == Globals.ViewMode.Chart && Mouse.world2DPosition != null && !Mouse.currentSelectableUnderMouse)
-                InitGroupSelect();
-        }
-        else if (Input.GetMouseButtonUp(0))
-            clickedSelectableObject = null;
-
-        // Dragging mouse for group select
-        if (Globals.viewMode == Globals.ViewMode.Chart && userDraggingSelectArea &&
-            Input.GetMouseButton(0) /*&& editor.currentSelectedObjects.Length == 0*/ &&
-            !Mouse.currentSelectableUnderMouse && !mouseDownOverUI)
-        {
-            if (Mouse.world2DPosition != null)
+            // Shortcuts
+            if (Globals.modifierInputActive)
             {
-                endWorld2DPos = (Vector2)Mouse.world2DPosition;
-                endWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
-
-                endWorld2DChartPos = objectSnappedChartPos;
+                if (Input.GetKeyDown(KeyCode.X))
+                    editor.Cut();
+                else if (Input.GetKeyDown(KeyCode.C))
+                    editor.Copy();
             }
 
-            UpdateSelectionAreaVisual(draggingArea.transform, initWorld2DPos, endWorld2DPos);
-        }
-
-        // Dragging mouse for group move
-        else if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && editor.currentSelectedObjects.Length > 0 && clickedSelectableObject && !mouseDownOverUI &&
-            !Globals.modifierInputActive && !Globals.secondaryInputActive)
-        {
-            // Find anchor point
-            int anchorPoint = SongObject.NOTFOUND;
-
-            if (clickedSelectableObject)
+            if (Input.GetMouseButtonDown(0))
             {
-                for (int i = 0; i < editor.currentSelectedObjects.Length; ++i)
+                mousePos = Input.mousePosition;
+                mouseDownOverUI = Mouse.IsUIUnderPointer();
+                clickedSelectableObject = Mouse.currentSelectableUnderMouse;
+
+                // Reset if the user is making a new selection or deselecting the old
+                if (!clickedSelectableObject && !Globals.modifierInputActive && !Globals.secondaryInputActive && !mouseDownOverUI)
+                    editor.currentSelectedObject = null;
+
+                if (Globals.viewMode == Globals.ViewMode.Chart && Mouse.world2DPosition != null && !Mouse.currentSelectableUnderMouse)
+                    InitGroupSelect();
+            }
+            else if (Input.GetMouseButtonUp(0))
+                clickedSelectableObject = null;
+
+            // Dragging mouse for group select
+            if (Globals.viewMode == Globals.ViewMode.Chart && userDraggingSelectArea &&
+                Input.GetMouseButton(0) /*&& editor.currentSelectedObjects.Length == 0*/ &&
+                !Mouse.currentSelectableUnderMouse && !mouseDownOverUI)
+            {
+                if (Mouse.world2DPosition != null)
                 {
-                    if (editor.currentSelectedObjects[i].controller != null && editor.currentSelectedObjects[i].controller.gameObject == clickedSelectableObject)
+                    endWorld2DPos = (Vector2)Mouse.world2DPosition;
+                    endWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
+
+                    endWorld2DChartPos = objectSnappedChartPos;
+                }
+
+                UpdateSelectionAreaVisual(draggingArea.transform, initWorld2DPos, endWorld2DPos);
+            }
+
+            // Dragging mouse for group move
+            else if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && editor.currentSelectedObjects.Length > 0 && clickedSelectableObject && !mouseDownOverUI &&
+                !Globals.modifierInputActive && !Globals.secondaryInputActive)
+            {
+                // Find anchor point
+                int anchorPoint = SongObject.NOTFOUND;
+
+                if (clickedSelectableObject)
+                {
+                    for (int i = 0; i < editor.currentSelectedObjects.Length; ++i)
                     {
-                        anchorPoint = i;
-                        break;
+                        if (editor.currentSelectedObjects[i].controller != null && editor.currentSelectedObjects[i].controller.gameObject == clickedSelectableObject)
+                        {
+                            anchorPoint = i;
+                            break;
+                        }
                     }
                 }
+                groupMove.SetSongObjects(editor.currentSelectedObjects, anchorPoint, true);
             }
-            groupMove.SetSongObjects(editor.currentSelectedObjects, anchorPoint, true);
-        }
 
-        // User has finished creating a group selection area
-        if (Input.GetMouseButtonUp(0) && userDraggingSelectArea)
-        {
-            if (startWorld2DChartPos > endWorld2DChartPos)
+            // User has finished creating a group selection area
+            if (Input.GetMouseButtonUp(0) && userDraggingSelectArea)
             {
-                if (addMode)
-                    AddToSelection(ScanArea(initWorld2DPos, endWorld2DPos, endWorld2DChartPos, startWorld2DChartPos));
+                if (startWorld2DChartPos > endWorld2DChartPos)
+                {
+                    if (addMode)
+                        AddToSelection(ScanArea(initWorld2DPos, endWorld2DPos, endWorld2DChartPos, startWorld2DChartPos));
+                    else
+                        RemoveFromSelection(ScanArea(initWorld2DPos, endWorld2DPos, endWorld2DChartPos, startWorld2DChartPos));
+                }
                 else
-                    RemoveFromSelection(ScanArea(initWorld2DPos, endWorld2DPos, endWorld2DChartPos, startWorld2DChartPos));
+                {
+                    if (addMode)
+                        AddToSelection(ScanArea(initWorld2DPos, endWorld2DPos, startWorld2DChartPos, endWorld2DChartPos));
+                    else
+                        RemoveFromSelection(ScanArea(initWorld2DPos, endWorld2DPos, startWorld2DChartPos, endWorld2DChartPos));
+                }
+                selfAreaDisable();
+                userDraggingSelectArea = false;
             }
-            else
+
+            // Check for deselection of all objects
+            if (Input.GetMouseButtonUp(0) && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer() && mousePos == Input.mousePosition && !Globals.modifierInputActive)
             {
-                if (addMode)
-                    AddToSelection(ScanArea(initWorld2DPos, endWorld2DPos, startWorld2DChartPos, endWorld2DChartPos));
-                else
-                    RemoveFromSelection(ScanArea(initWorld2DPos, endWorld2DPos, startWorld2DChartPos, endWorld2DChartPos));
+                editor.currentSelectedObject = null;
+                mousePos = Vector3.zero;
             }
-            selfAreaDisable();
-            userDraggingSelectArea = false;
         }
+        else
+            block = true;
 
-        // Check for deselection of all objects
-        if (Input.GetMouseButtonUp(0) && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer() && mousePos == Input.mousePosition && !Globals.modifierInputActive)
-        {
-            editor.currentSelectedObject = null;
-            mousePos = Vector3.zero;
-        }
-
-        prevSong = editor.currentSong;
-        prevChart = editor.currentChart;
+        if (block && Globals.applicationMode == Globals.ApplicationMode.Editor && !Input.GetMouseButton(0))
+            block = false;
     }
 
     public override void ToolDisable()

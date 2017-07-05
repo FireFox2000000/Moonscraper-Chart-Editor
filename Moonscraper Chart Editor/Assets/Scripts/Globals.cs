@@ -306,12 +306,6 @@ public class Globals : MonoBehaviour {
                 else
                     editor.Stop();
             }
-
-            //if (Input.GetKeyDown(KeyCode.Z))
-                //Export.ExportWAV(editor.currentSong.audioLocations[Song.MUSIC_STREAM_ARRAY_POS], workingDirectory + "wavtest.wav", new ExportOptions());
-
-            //if (Input.GetButtonDown("Next Frame"))
-            //StartCoroutine(editor.PlayAutoStop(1 / FRAMERATE));
         }
     }
 

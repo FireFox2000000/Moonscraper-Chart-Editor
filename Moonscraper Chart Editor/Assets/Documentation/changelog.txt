@@ -1,13 +1,17 @@
-Moonscraper post-v0.9.6 changelog- 02/06/2017
+Moonscraper post-v0.9.7 changelog- 02/07/2017
 
 NEW FEATURES
 -Added tabbing between the song properties UI
 -Added adjustable highway length
+-Can now have multiple custom backgrounds
 
 CHANGES
+-Combined the group selection tool with the cursor tool
 -Open note sustains can now extend past standard notes when extended sustains are enabled (plus other extended sustain-related bug fixes)
--Changed standard combo break sfx cause some people couldn't handle a little anime-lovin' in their life
+-Changed standard combo break sfx
 -Tap note flag is now blocked for open notes, nor does it save just in case
 
 FIXES
 -Timeline indicator pools now dynamically grow rather than being a fixed size
+-Extended sustain bug fixes
+-No longer desyncs when program encounters lag

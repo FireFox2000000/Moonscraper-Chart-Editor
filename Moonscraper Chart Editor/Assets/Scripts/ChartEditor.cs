@@ -200,73 +200,8 @@ public class ChartEditor : MonoBehaviour {
 #endif
     }
 
-    Vector3 mousePos = Vector3.zero;
-    bool mouseDownOverUI = false;
-    GameObject clickedSelectableObject;
     public void Update()
     {
-        /*
-        if ((Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.GroupSelect) && Input.GetButtonDown("Delete"))
-            Delete();
-
-        if (Globals.modifierInputActive && Toolpane.currentTool == Toolpane.Tools.Cursor)
-        {
-            if (Input.GetKeyDown(KeyCode.X))
-            {
-                Cut();
-            }
-            else if (Input.GetKeyDown(KeyCode.C))
-            {
-                Copy();
-            }
-        }
-
-        if (Input.GetMouseButtonDown(0))
-            clickedSelectableObject = Mouse.currentSelectableUnderMouse;
-        else if (Input.GetMouseButtonUp(0))
-            clickedSelectableObject = null;
-
-        // Group move/deselect
-        if (Toolpane.currentTool == Toolpane.Tools.Cursor)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                mousePos = Input.mousePosition;
-
-                mouseDownOverUI = Mouse.IsUIUnderPointer();
-
-                if (!Mouse.currentSelectableUnderMouse)
-                    currentSelectedObject = null;
-            }
-
-            if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && currentSelectedObjects.Length > 0 && clickedSelectableObject && !mouseDownOverUI)
-            {
-                // Find anchor point
-                int anchorPoint = SongObject.NOTFOUND;
-
-                if (clickedSelectableObject)
-                {
-                    for (int i = 0; i < currentSelectedObjects.Length; ++i)
-                    {
-                        if (currentSelectedObjects[i].controller != null && currentSelectedObjects[i].controller.gameObject == clickedSelectableObject)
-                        {
-                            anchorPoint = i;
-                            break;
-                        }
-                    }
-                }
-                groupMove.SetSongObjects(currentSelectedObjects, anchorPoint, true);
-            }
-
-            if (Input.GetMouseButtonUp(0) && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer() && mousePos == Input.mousePosition && !Globals.modifierInputActive)
-            {
-                currentSelectedObject = null;
-                mousePos = Vector3.zero;
-            }
-        }
-        else
-            mousePos = Vector3.zero;
-            */
         // Update object positions that supposed to be visible into the range of the camera
         minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
         maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
@@ -596,17 +531,7 @@ public class ChartEditor : MonoBehaviour {
     void PlayAudio(float playPoint)
     {
         StrikelineAudioController.startYPoint = visibleStrikeline.transform.position.y;
-#if !BASS_AUDIO
-        foreach (AudioSource source in musicSources)
-            source.time = playPoint;       // No need to add audio calibration as position is base on the strikeline position
 
-        foreach (AudioSource source in musicSources)
-        {
-            source.pitch = Globals.gameSpeed;
-            source.Play();
-        }
-
-#else
         SetBassStreamProperties(currentSong.bassMusicStream, Globals.gameSpeed, Globals.vol_song);
         SetBassStreamProperties(currentSong.bassGuitarStream, Globals.gameSpeed, Globals.vol_guitar);
         SetBassStreamProperties(currentSong.bassRhythmStream, Globals.gameSpeed, Globals.vol_rhythm);
@@ -616,8 +541,7 @@ public class ChartEditor : MonoBehaviour {
         PlayBassStream(currentSong.bassRhythmStream, playPoint);
 
         movement.playStartPosition = movement.transform.position.y;
-        movement.playStartTime = Time.realtimeSinceStartup;
-#endif
+        movement.playStartTime = Time.time;
     }
 
     void StopAudio()
@@ -636,6 +560,9 @@ public class ChartEditor : MonoBehaviour {
         if (currentSong.bassRhythmStream != 0)
             Bass.BASS_ChannelStop(currentSong.bassRhythmStream);
 #endif
+
+        movement.playStartPosition = null;
+        movement.playStartTime = null;
     }
 
     void PlayBassStream(int handle, float playPoint)

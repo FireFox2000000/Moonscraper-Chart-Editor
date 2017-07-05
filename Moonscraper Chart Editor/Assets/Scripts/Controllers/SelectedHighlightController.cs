@@ -30,6 +30,7 @@ public class SelectedHighlightController : MonoBehaviour {
                 (Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.Eraser || Toolpane.currentTool == Toolpane.Tools.GroupSelect));
 
         int pos = 0;
+
         foreach (GameObject selectedHighlight in selectedHighlightPool)
         {
             if (showHighlight && pos < viewRange.Length && viewRange[pos].controller != null && viewRange[pos].controller.gameObject.activeSelf)
