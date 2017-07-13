@@ -1,4 +1,5 @@
-﻿public class Starpower : ChartObject
+﻿[System.Serializable]
+public class Starpower : ChartObject
 {
     private readonly ID _classID = ID.Starpower;
 

@@ -1,4 +1,5 @@
-﻿public class Event : SongObject
+﻿[System.Serializable]
+public class Event : SongObject
 {
     private readonly ID _classID = ID.Event;
 

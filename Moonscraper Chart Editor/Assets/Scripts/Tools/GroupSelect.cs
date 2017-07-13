@@ -234,7 +234,7 @@ public class GroupSelect : ToolObject {
             chartObjectsCopy.Add(objectToAdd);
         }
 
-        ClipboardObjectController.clipboard = new Clipboard(chartObjectsCopy.ToArray(), area, editor.currentSong);
+        ClipboardObjectController.SetData(chartObjectsCopy.ToArray(), area, editor.currentSong);
     }
 
     void Cut()

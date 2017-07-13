@@ -36,7 +36,7 @@ public class NoteVisualsManager : MonoBehaviour {
             // Update note visuals
             if (!noteRenderer)
                 noteRenderer = GetComponent<Renderer>();
-            noteRenderer.sortingOrder = -Mathf.Abs((int)note.position);
+            noteRenderer.sortingOrder = -(int)note.position;
         }
     }
 

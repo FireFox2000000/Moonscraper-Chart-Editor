@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+[System.Serializable]
 public class Note : ChartObject 
 {
     private readonly ID _classID = ID.Note;

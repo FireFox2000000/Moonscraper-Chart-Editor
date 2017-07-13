@@ -1,4 +1,5 @@
-﻿public class TimeSignature : SyncTrack
+﻿[System.Serializable]
+public class TimeSignature : SyncTrack
 {
     private readonly ID _classID = ID.TimeSignature;
 

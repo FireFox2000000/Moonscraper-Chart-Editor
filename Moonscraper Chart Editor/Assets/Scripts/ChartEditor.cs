@@ -58,6 +58,8 @@ public class ChartEditor : MonoBehaviour {
     [SerializeField]
     GroupSelect groupSelect;
     public Globals globals;
+    [SerializeField]
+    ClipboardObjectController clipboard;
 
     public uint minPos { get; private set; }
     public uint maxPos { get; private set; }
@@ -1080,7 +1082,7 @@ public class ChartEditor : MonoBehaviour {
             area = new Clipboard.SelectionArea(bottomLeft, upperRight, songObjectsCopy[0].position, songObjectsCopy[songObjectsCopy.Length - 1].position);
         }        
 
-        ClipboardObjectController.clipboard = new Clipboard(songObjectsCopy, area, currentSong);
+        ClipboardObjectController.SetData(songObjectsCopy, area, currentSong);
     }
 
     public void Delete()

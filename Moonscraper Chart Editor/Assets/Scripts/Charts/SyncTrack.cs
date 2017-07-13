@@ -1,4 +1,5 @@
-﻿public abstract class SyncTrack : SongObject
+﻿[System.Serializable]
+public abstract class SyncTrack : SongObject
 {
     public SyncTrack(uint _position) : base(_position) {}
 

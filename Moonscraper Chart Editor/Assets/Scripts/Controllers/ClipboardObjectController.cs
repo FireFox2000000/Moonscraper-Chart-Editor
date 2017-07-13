@@ -1,7 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Windows.Forms;
+using System.Threading;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
+using System.IO;
 
 public class ClipboardObjectController : Snapable {
+    const string CLIPBOARD_FILE_LOCATION = "/MoonscraperClipboard.bin";
 
     public GroupSelect groupSelectTool;
     public Transform strikeline;
@@ -44,10 +50,57 @@ public class ClipboardObjectController : Snapable {
         }
     }
 
+    public static void SetData(SongObject[] data, Clipboard.SelectionArea area, Song song)
+    {
+        clipboard = new Clipboard();
+        clipboard.data = data;
+        clipboard.SetCollisionArea(area, song);
+        System.Windows.Forms.Clipboard.Clear();     // Clear the clipboard to mimic the real clipboard. For some reason putting custom objects on the clipboard with this dll doesn't work.
+
+        FileStream fs = new FileStream(UnityEngine.Application.persistentDataPath + CLIPBOARD_FILE_LOCATION, FileMode.Create);
+
+        BinaryFormatter formatter = new BinaryFormatter();
+        try
+        {
+            formatter.Serialize(fs, clipboard);
+        }
+        catch (SerializationException e)
+        {
+            Debug.LogError("Failed to serialize. Reason: " + e.Message);
+        }
+        finally
+        {
+            fs.Close();
+        }
+    }
+
     // Paste the clipboard data into the chart, overwriting anything else in the process
     public void Paste(uint chartLocationToPaste)
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor && clipboard.data.Length > 0)
+        if (System.Windows.Forms.Clipboard.GetDataObject().GetFormats().Length > 0)     // Something else is pasted on the clipboard instead of Moonscraper stuff.
+            return;
+
+        FileStream fs = null;
+        clipboard = null;
+        try
+        {
+            // Read clipboard data from a file instead of the actual clipboard because the actual clipboard doesn't work for whatever reason
+            fs = new FileStream(UnityEngine.Application.persistentDataPath + CLIPBOARD_FILE_LOCATION, FileMode.Open);
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            clipboard = (Clipboard)formatter.Deserialize(fs);
+        }
+        catch
+        {
+            Debug.LogError("Failed to read from clipboard file");
+        }
+        finally
+        {
+            if (fs != null)
+                fs.Close();
+        }
+
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor && clipboard != null && clipboard.data.Length > 0)
         {
             List<ActionHistory.Action> record = new List<ActionHistory.Action>();
             Rect collisionRect = clipboard.GetCollisionRect(chartLocationToPaste, editor.currentSong);

@@ -1,4 +1,5 @@
-﻿public class ChartEvent : ChartObject
+﻿[System.Serializable]
+public class ChartEvent : ChartObject
 {
     private readonly ID _classID = ID.ChartEvent;
 

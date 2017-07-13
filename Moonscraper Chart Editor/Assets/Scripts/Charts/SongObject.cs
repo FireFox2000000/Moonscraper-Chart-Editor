@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+[System.Serializable]
 public abstract class SongObject
 {
     /// <summary>
     /// The song this object is connected to.
     /// </summary>
+    [System.NonSerialized]
     public Song song;
     /// <summary>
     /// The tick position of the object
@@ -14,6 +16,7 @@ public abstract class SongObject
     /// <summary>
     /// Unity only.
     /// </summary>
+    [System.NonSerialized]
     public SongObjectController controller;
     public const int NOTFOUND = -1;
 

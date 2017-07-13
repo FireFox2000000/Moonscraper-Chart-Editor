@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
+[System.Serializable]
 public class BPM : SyncTrack
 {
     private readonly ID _classID = ID.BPM;

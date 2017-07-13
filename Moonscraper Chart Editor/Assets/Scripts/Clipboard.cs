@@ -2,12 +2,13 @@
 using System.Collections;
 using System.Windows.Forms;
 
+[System.Serializable]
 public class Clipboard {
-    public SongObject[] data;
+    public SongObject[] data = new SongObject[0];
 
-    uint _areaChartPosMin, _areaChartPosMax;
-    float xPosition;
-    float collisionAreaXSize;
+    uint _areaChartPosMin = 0, _areaChartPosMax = 0;
+    float xPosition = 0;
+    float collisionAreaXSize = 0;
 
     public uint areaChartPosMin { get { return _areaChartPosMin; } }
     public uint areaChartPosMax { get { return _areaChartPosMax; } }
@@ -38,7 +39,7 @@ public class Clipboard {
 
         return new Rect(position, size);
     }
-
+    
     public Clipboard()
     {
         data = new SongObject[0];
@@ -49,8 +50,8 @@ public class Clipboard {
         _areaChartPosMin = 0;
         _areaChartPosMax = 0;
     }
-
-    public Clipboard(SongObject[] data, SelectionArea area, Song song)
+    
+    public void SetData(SongObject[] data, SelectionArea area, Song song)
     {
         this.data = data;
         SetCollisionArea(area, song);
@@ -63,11 +64,9 @@ public class Clipboard {
 
         _areaChartPosMin = area.tickMin;
         _areaChartPosMax = area.tickMax;
-
-        //_areaChartPosMin = song.WorldYPositionToChartPosition(rect.position.y);
-        //_areaChartPosMax = song.WorldYPositionToChartPosition(rect.position.y + rect.height);
     }
 
+    [System.Serializable]
     public struct SelectionArea
     {
         public float xPos, width;

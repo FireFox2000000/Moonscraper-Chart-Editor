@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Runtime.Serialization.Formatters.Binary;
 
 static class Utility {
     public const int NOTFOUND = -1;
@@ -69,6 +70,25 @@ static class Utility {
             this.y = y;
         }
     }
+#if UNITY_EDITOR
+    // https://www.codeproject.com/Articles/8102/Saving-and-obtaining-custom-objects-to-from-Window
+    public static bool IsSerializable(object obj)
+    {
+        System.IO.MemoryStream mem = new System.IO.MemoryStream();
+        BinaryFormatter bin = new BinaryFormatter();
+        try
+        {
+            bin.Serialize(mem, obj);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Debug.Log("Your object cannot be serialized." +
+                             " The reason is: " + ex.ToString());
+            return false;
+        }
+    }
+#endif
 }
 
 public static class floatExtension

@@ -1,4 +1,5 @@
-﻿public class Section : Event
+﻿[System.Serializable]
+public class Section : Event
 {
     private readonly ID _classID = ID.Section;
 

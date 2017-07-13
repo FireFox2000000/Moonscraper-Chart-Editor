@@ -1,5 +1,7 @@
-﻿public abstract class ChartObject : SongObject
+﻿[System.Serializable]
+public abstract class ChartObject : SongObject
 {
+    [System.NonSerialized]
     public Chart chart;
 
     public ChartObject(uint position) : base(position){}

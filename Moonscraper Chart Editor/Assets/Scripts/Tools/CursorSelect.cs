@@ -43,7 +43,7 @@ public class CursorSelect : ToolObject
                 editor.Delete();
 
             // Shortcuts
-            if (Globals.modifierInputActive)
+            if (Globals.modifierInputActive && editor.currentSelectedObjects.Length > 0)
             {
                 if (Input.GetKeyDown(KeyCode.X))
                     editor.Cut();
