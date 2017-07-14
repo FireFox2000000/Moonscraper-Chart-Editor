@@ -31,7 +31,8 @@ public class GameplayManager : MonoBehaviour {
     List<NoteController> currentSustains = new List<NoteController>();
     ChartEditor editor;
 
-    float hitWindowTime = 0.17f;
+    const float BACKEND_HIT_WINDOW_TIME = 0.25f;
+    const float FRONTEND_HIT_WINDOW_TIME = 0.1f;
     float initSize;
 
     float previousStrumValue;
@@ -40,7 +41,7 @@ public class GameplayManager : MonoBehaviour {
     Note lastNoteHit = null;
     float? lastStrumTime = null;
 
-    const float SLOP_WINDOW_SIZE = 0.2f;
+    const float SLOP_WINDOW_SIZE = 0.3f;
     float slopWindowTimer = 0;
 
     bool strum = false;
@@ -94,32 +95,42 @@ public class GameplayManager : MonoBehaviour {
         {
             transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
         }
-
+        
         // Update the hit window
         foreach (NoteController note in physicsWindow.ToArray())
         {
             if (EnterWindow(note))
                 physicsWindow.Remove(note);
         }
-
-        foreach (NoteController note in notesInWindow.ToArray())
+        
+        for (int i = 0; i < notesInWindow.Count; ++i)
         {
-            if (ExitWindow(note) && !note.hit)
+            NoteController noteToTest = notesInWindow[i];
+            NoteController next = null;
+            if ((i + 1) < notesInWindow.Count)
+                next = notesInWindow[i + 1];
+
+            if (ExitWindow(noteToTest, next) && !noteToTest.hit)
             {
-                foreach (Note chordNote in note.note.GetChord())
+                foreach (Note chordNote in noteToTest.note.GetChord())
+                {
                     chordNote.controller.sustainBroken = true;
 
+                    if (noteStreak > 0)
+                        chordNote.controller.DeactivateNote();
+                }
+                
                 noteStreak = 0;
 #if MISS_DEBUG
-                Debug.Log("Missed note: " + note.note.fret_type + ", " + note.note.position);
+                Debug.Log("Missed note: " + noteToTest.note.fret_type + ", " + noteToTest.note.position);
 #endif
                 ++totalNotes;
             }
         }
-
+        
         if (slopWindowTimer > SLOP_WINDOW_SIZE)
         {
-            if (lastStrumTime == null || !(NoteInHitWindow(lastNoteHit, (float)lastStrumTime) && lastNoteHit.type != Note.Note_Type.Strum))
+            if (lastStrumTime == null || !(NoteInHitWindow(lastNoteHit, lastNoteHit.nextSeperateNote, (float)lastStrumTime) && lastNoteHit.type != Note.Note_Type.Strum))
             {
                 noteStreak = 0;
 #if MISS_DEBUG
@@ -129,7 +140,7 @@ public class GameplayManager : MonoBehaviour {
 
             lastStrumTime = null;
         }
-
+        
         if (lastStrumTime != null)
         {
             slopWindowTimer += Time.deltaTime;
@@ -192,12 +203,14 @@ public class GameplayManager : MonoBehaviour {
 
             if (nextNote != null)
             {
+                Note nextSeperate = nextNote.nextSeperateNote;
+
                 if (noteStreak > 0)
                 {
                     bool fretsCorrect = ValidateFrets(notesInWindow[0].note);
                     bool strummingCorrect = ValidateStrum(notesInWindow[0].note, canTap);
 
-                    if (fretsCorrect && (strummingCorrect || (lastStrumTime != null && NoteInHitWindow(nextNote, (float)lastStrumTime))))
+                    if (fretsCorrect && (strummingCorrect || (lastStrumTime != null && NoteInHitWindow(nextNote, nextSeperate, (float)lastStrumTime))))
                     {
                         NoteController next = null;
                         if (notesInWindow.Count > 1)
@@ -222,7 +235,7 @@ public class GameplayManager : MonoBehaviour {
                         }
                         else
                         {
-                            if (lastNoteHit != null && lastNoteHit.mask != nextNote.mask && NoteInHitWindow(nextNote, Song.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
+                            if (lastNoteHit != null && lastNoteHit.mask != nextNote.mask && NoteInHitWindow(nextNote, nextSeperate, Song.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
                                 lastStrumTime = Song.WorldYPositionToTime(editor.visibleStrikeline.position.y);
                             else
                             {
@@ -245,7 +258,7 @@ public class GameplayManager : MonoBehaviour {
             // No note in window
             else if (strum)
             {
-                if (lastNoteHit != null && lastNoteHit.type != Note.Note_Type.Strum && NoteInHitWindow(lastNoteHit, Song.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
+                if (lastNoteHit != null && lastNoteHit.type != Note.Note_Type.Strum && NoteInHitWindow(lastNoteHit, lastNoteHit.nextSeperateNote, Song.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
                 {
                     lastStrumTime = null;
                     lastNoteHit = null;
@@ -315,9 +328,12 @@ public class GameplayManager : MonoBehaviour {
         previousStrumValue = strumValue;
     }
 
-    bool NoteInHitWindow (Note note, float currentTime)
+    bool NoteInHitWindow (Note note, Note next, float currentTime)
     {
-        return Mathf.Abs(note.time - currentTime) < (hitWindowTime * Globals.gameSpeed / 2.0f);
+        return !(note.time < currentTime - BACKEND_HIT_WINDOW_TIME
+            || (next != null && next.time <= currentTime + 0.02f));
+
+        //return Mathf.Abs(note.time - currentTime) < (hitWindowTime * Globals.gameSpeed / 2.0f);
     }
 
     void reset()
@@ -443,7 +459,7 @@ public class GameplayManager : MonoBehaviour {
 
     bool EnterWindow(NoteController note)
     {
-        if (!note.hit && note.transform.position.y < editor.visibleStrikeline.position.y + (Song.TimeToWorldYPosition(hitWindowTime) / 2))
+        if (!note.hit && note.transform.position.y < editor.visibleStrikeline.position.y + Song.TimeToWorldYPosition(FRONTEND_HIT_WINDOW_TIME))
         {
             // We only want 1 note per position so that we can compare using the note mask
             foreach (NoteController insertedNCon in notesInWindow)
@@ -470,9 +486,15 @@ public class GameplayManager : MonoBehaviour {
         return false;
     }
 
-    bool ExitWindow(NoteController note)
+    bool ExitWindow(NoteController note, NoteController nextNote)
     {
-        if (note.hit || note.transform.position.y < editor.visibleStrikeline.position.y - (Song.TimeToWorldYPosition(hitWindowTime / 2)))
+        Note next = null;
+        if (nextNote != null)
+            next = nextNote.note;
+
+        if (!NoteInHitWindow(note.note, next, Song.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
+       // if (note.hit || note.transform.position.y < editor.visibleStrikeline.position.y - (Song.TimeToWorldYPosition(hitWindowTime / 2))
+       //     || (nextNote != null && nextNote.transform.position.y <= editor.visibleStrikeline.position.y + Song.TimeToWorldYPosition(0.02f)))
         {
             notesInWindow.Remove(note);
             return true;
