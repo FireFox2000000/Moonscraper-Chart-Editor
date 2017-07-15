@@ -31,8 +31,8 @@ public class GameplayManager : MonoBehaviour {
     List<NoteController> currentSustains = new List<NoteController>();
     ChartEditor editor;
 
-    const float BACKEND_HIT_WINDOW_TIME = 0.25f;
-    const float FRONTEND_HIT_WINDOW_TIME = 0.1f;
+    const float BACKEND_HIT_WINDOW_TIME = 0.2f;
+    const float FRONTEND_HIT_WINDOW_TIME = 0.116f;
     float initSize;
 
     float previousStrumValue;
@@ -329,9 +329,9 @@ public class GameplayManager : MonoBehaviour {
     }
 
     bool NoteInHitWindow (Note note, Note next, float currentTime)
-    {
+    {  
         return !(note.time < currentTime - BACKEND_HIT_WINDOW_TIME
-            || (next != null && next.time <= currentTime + 0.02f));
+            || (next != null && note.time <= currentTime - (next.time - note.time) / 2.0f));        // half the distance to the next note5
 
         //return Mathf.Abs(note.time - currentTime) < (hitWindowTime * Globals.gameSpeed / 2.0f);
     }

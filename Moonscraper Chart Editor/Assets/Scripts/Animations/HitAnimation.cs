@@ -6,7 +6,7 @@ public abstract class HitAnimation : MonoBehaviour {
     [HideInInspector]
     public bool running = false;
 
-    protected const float SPEED = 2.5f;
+    protected const float SPEED = 2.2f;
     protected const float START_ANIM_HEIGHT = 0.2f;
 
     public abstract void PlayOneShot();
