@@ -105,4 +105,9 @@ public class HoverHighlightController : MonoBehaviour {
             }
         }
     }
+
+    void OnApplicationQuit()
+    {
+        hoverHighlightRen.sharedMaterial.color = initColor;
+    }
 }

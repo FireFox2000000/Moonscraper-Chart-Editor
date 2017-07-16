@@ -62,7 +62,8 @@ public abstract class MovementController : MonoBehaviour {
 
         float newPos = pos.y;
 
-        //Debug.Log("Position difference: " + (newPos - oldPos) + ", Delta time: " + Time.deltaTime);
+        //if ((newPos - oldPos) > 0.4)
+            //Debug.Log("Position difference: " + (newPos - oldPos) + ", Delta time: " + Time.deltaTime + ", Frame: " + Time.frameCount);
 
         transform.position = pos;
         explicitChartPos = null;

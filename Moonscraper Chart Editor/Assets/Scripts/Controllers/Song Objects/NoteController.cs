@@ -315,13 +315,14 @@ public class NoteController : SongObjectController {
                         if (sustainEndPoint > editor.camYMax.position.y)
                             sustainEndPoint = editor.camYMax.position.y;
 
-                        float yPos = (sustainEndPoint + editor.visibleStrikeline.position.y) / 2 + 0.3f;        // Added offset
+                        float yPos = (sustainEndPoint + editor.visibleStrikeline.position.y) / 2;
                         float yScale = sustainEndPoint - (editor.visibleStrikeline.position.y);
+                        const float OFFSET = 0.1f;
 
                         if (yPos > editor.visibleStrikeline.position.y && yScale > 0)
                         {
-                            sustain.transform.position = new Vector3(sustain.transform.position.x, yPos, sustain.transform.position.z);
-                            sustain.transform.localScale = new Vector3(sustain.transform.localScale.x, yScale, sustain.transform.localScale.z);
+                            sustain.transform.position = new Vector3(sustain.transform.position.x, yPos + OFFSET, sustain.transform.position.z);
+                            sustain.transform.localScale = new Vector3(sustain.transform.localScale.x, yScale - (2 * OFFSET), sustain.transform.localScale.z);
                          
                             PlayIndicatorAnim();
                         }
