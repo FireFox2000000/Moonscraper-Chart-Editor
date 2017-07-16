@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Text;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class NoteVisuals2DManager : NoteVisualsManager {
@@ -16,6 +17,8 @@ public class NoteVisuals2DManager : NoteVisualsManager {
     static int lastUpdatedFrame = -1;
 
     Sprite lastUpdatedSprite = null;
+    StringBuilder animationNameString = new StringBuilder(16, 16);
+    string animationName;
 
     // Use this for initialization
     protected override void Awake()
@@ -41,6 +44,8 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                 animationDataDictionary.Add(animationData.name, animationData);
             }
         }
+
+        animationName = GarbageFreeString(animationNameString);
     }
 
     // Update is called once per frame
@@ -107,33 +112,35 @@ public class NoteVisuals2DManager : NoteVisualsManager {
             }
 
             // Determine which animation offset data to use
-            string animationName = string.Empty;
+            //string animationName = string.Empty;
+            animationNameString.Length = 0;
 
             if (specialType == Note.Special_Type.STAR_POW)
             {
-                animationName += "sp_";
+                animationNameString.Append("sp_");
             }
             else
             {
-                animationName += "reg_";
+                animationNameString.Append("reg_");
             }
 
             if (note.fret_type == Note.Fret_Type.OPEN)
             {
-                animationName = "open_" + animationName;
+                animationNameString.Insert(0, "open_");
+                //animationName = "open_" + animationName;
             }
 
             if (noteType == Note.Note_Type.Hopo)
-                animationName += "hopo";
+                animationNameString.Append("hopo");
             else if (noteType == Note.Note_Type.Strum)
-                animationName += "strum";
+                animationNameString.Append("strum");
             else
-                animationName += "tap";
+                animationNameString.Append("tap");
 
             NoteSpriteAnimationData animationData;
 
             // Search for the animation
-            if (animationDataDictionary.TryGetValue(animationName, out animationData))
+            if (animationDataDictionary.TryGetValue(animationNameString.ToString(), out animationData))
             { 
                 // Get sprite name and number
                 string spriteText = lastUpdatedSprite.name;
@@ -160,12 +167,20 @@ public class NoteVisuals2DManager : NoteVisualsManager {
 
                     Sprite newSprite;
                     if (spritesDictionary.TryGetValue(spriteName, out newSprite))
-                    {
-                        
+                    {                       
                         ren.sprite = newSprite;
                     }
                 }
             }
         }
+    }
+
+    public static string GarbageFreeString(StringBuilder sb)
+    {
+        string str = (string)sb.GetType().GetField(
+            "_str",
+            System.Reflection.BindingFlags.NonPublic |
+            System.Reflection.BindingFlags.Instance).GetValue(sb);
+        return str;
     }
 }

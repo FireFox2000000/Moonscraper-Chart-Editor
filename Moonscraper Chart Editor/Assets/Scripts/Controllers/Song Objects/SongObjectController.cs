@@ -118,7 +118,7 @@ public abstract class SongObjectController : SelectableClick {
                             max = songObject.position;
                         }
 
-                        editor.currentSelectedObjects = SongObject.GetRange(editor.currentChart.chartObjects, min, max);
+                        editor.currentSelectedObjects = SongObject.GetRangeCopy(editor.currentChart.chartObjects, min, max);
                     }
                 }
             }

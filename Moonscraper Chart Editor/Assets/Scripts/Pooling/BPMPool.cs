@@ -19,8 +19,8 @@ public class BPMPool : SongObjectPool
         controller.gameObject.SetActive(true);
     }
 
-    public void Activate(BPM[] range)
+    public void Activate(BPM[] range, int index, int length)
     {
-        base.Activate(range);
+        base.Activate(range, index, length);
     }
 }

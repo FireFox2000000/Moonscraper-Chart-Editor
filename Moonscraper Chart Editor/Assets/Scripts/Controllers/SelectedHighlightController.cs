@@ -24,16 +24,18 @@ public class SelectedHighlightController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        SongObject[] viewRange = SongObject.GetRange(editor.currentSelectedObjects, editor.minPos, editor.maxPos);
+        int index, length;
+        SongObject[] viewRange = editor.currentSelectedObjects;
+        SongObject.GetRange(viewRange, editor.minPos, editor.maxPos, out index, out length);
 
         bool showHighlight = (Globals.applicationMode != Globals.ApplicationMode.Playing &&
                 (Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.Eraser || Toolpane.currentTool == Toolpane.Tools.GroupSelect));
 
-        int pos = 0;
+        int pos = index;
 
         foreach (GameObject selectedHighlight in selectedHighlightPool)
         {
-            if (showHighlight && pos < viewRange.Length && viewRange[pos].controller != null && viewRange[pos].controller.gameObject.activeSelf)
+            if (showHighlight && pos < index + length && viewRange[pos].controller != null && viewRange[pos].controller.gameObject.activeSelf)
             {
                 selectedHighlight.transform.position = viewRange[pos].controller.transform.position;
 

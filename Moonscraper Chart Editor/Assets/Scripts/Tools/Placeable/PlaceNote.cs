@@ -235,7 +235,7 @@ public class PlaceNote : PlaceSongObject {
     {
         List<ActionHistory.Action> noteRecord = new List<ActionHistory.Action>();
 
-        Note[] notesToCheckOverwrite = SongObject.GetRange(editor.currentChart.notes, note.position, note.position);
+        Note[] notesToCheckOverwrite = SongObject.GetRangeCopy(editor.currentChart.notes, note.position, note.position);
         
         // Account for when adding an exact note as what's already in   
         if (notesToCheckOverwrite.Length > 0)

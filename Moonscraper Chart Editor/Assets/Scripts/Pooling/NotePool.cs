@@ -20,8 +20,8 @@ public class NotePool : SongObjectPool
         controller.gameObject.SetActive(true);
     }
 
-    public void Activate(Note[] range)
+    public void Activate(Note[] range, int index, int length)
     {
-        base.Activate(range);
+        base.Activate(range, index, length);
     }
 }

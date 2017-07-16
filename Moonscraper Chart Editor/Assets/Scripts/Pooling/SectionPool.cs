@@ -19,8 +19,8 @@ public class SectionPool : SongObjectPool
         controller.gameObject.SetActive(true);
     }
 
-    public void Activate(Section[] range)
+    public void Activate(Section[] range, int index, int length)
     {
-        base.Activate(range);
+        base.Activate(range, index, length);
     }
 }

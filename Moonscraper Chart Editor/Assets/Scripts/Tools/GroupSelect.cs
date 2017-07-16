@@ -212,12 +212,15 @@ public class GroupSelect : ToolObject {
         Rect areaRect = area.GetRect(editor.currentSong);
 
         List<ChartObject> chartObjectsList = new List<ChartObject>();
+        int index, length;
+        ChartObject[] chartObjects = editor.currentChart.chartObjects;
+        SongObject.GetRange(chartObjects, minLimitInclusive, maxLimitNonInclusive, out index, out length);
 
-        foreach (ChartObject chartObject in SongObject.GetRange(editor.currentChart.chartObjects, minLimitInclusive, maxLimitNonInclusive))
+        for (int i = index; i < index + length; ++i)
         {
-            if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), areaRect))
+            if (chartObjects[i].position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObjects[i]), areaRect))
             {
-                chartObjectsList.Add(chartObject);
+                chartObjectsList.Add(chartObjects[i]);
             }
         }
         

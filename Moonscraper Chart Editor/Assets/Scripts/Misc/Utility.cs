@@ -5,17 +5,30 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 static class Utility {
     public const int NOTFOUND = -1;
+    static System.Text.StringBuilder timeFormatter = new System.Text.StringBuilder(32, 32);
 
     public static string timeConvertion(float time)
     {
+        timeFormatter.Remove(0, timeFormatter.Length);
         TimeSpan levelTime = TimeSpan.FromSeconds(time);
 
         string format = string.Empty;
         if (time < 0)
             format += "-";
 
+        int hours = Mathf.Abs(levelTime.Hours),
+            minutes = Mathf.Abs(levelTime.Minutes),
+            seconds = Mathf.Abs(levelTime.Seconds),
+            milliseconds = Mathf.Abs((int)((time - (int)time) * 100));
+
         if (levelTime.Hours > 0)
         {
+            if (hours < 10)
+                timeFormatter.Append(0);
+            timeFormatter.Append(hours);
+            timeFormatter.Append(':');
+        }
+        /*
             format += "{0}:{1:D2}:{2:D2}:{3:D2}";
 
             return string.Format(format,
@@ -32,7 +45,23 @@ static class Utility {
                 Mathf.Abs(levelTime.Minutes),
                 Mathf.Abs(levelTime.Seconds),
                 Mathf.Abs((int)((time - (int)time) * 100)));
-        }
+        }*/
+
+        if (minutes < 10)
+            timeFormatter.Append(0);
+        timeFormatter.Append(minutes);
+        timeFormatter.Append(':');
+
+        if (seconds < 10)
+            timeFormatter.Append(0);
+        timeFormatter.Append(seconds);
+        timeFormatter.Append('.');
+
+        if (milliseconds < 10)
+            timeFormatter.Append(0);
+        timeFormatter.Append(milliseconds);
+
+        return timeFormatter.ToString();
     }
 
     static int millisecondRounding(int value, int roundPlaces)

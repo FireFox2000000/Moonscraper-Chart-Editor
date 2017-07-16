@@ -35,12 +35,12 @@ public abstract class SongObjectPool {
             controller.gameObject.SetActive(false);
     }
 
-    protected void Activate(SongObject[] range)
+    protected void Activate(SongObject[] range, int index, int length)
     {
         int pos = 0;
-        foreach (SongObject songObject in range)
+        for (int i = index; i < index + length; ++i)
         {
-            if (songObject.controller == null)
+            if (range[i].controller == null)
             {
                 // Find the next gameobject that is disabled/not in use
                 while (pos < pool.Length && pool[pos].gameObject.activeSelf)
@@ -52,7 +52,7 @@ public abstract class SongObjectPool {
                 }
 
                 if (pos < pool.Length && !pool[pos].gameObject.activeSelf)
-                    Assign(pool[pos], songObject);
+                    Assign(pool[pos], range[i]);
                 else
                     break;
             }

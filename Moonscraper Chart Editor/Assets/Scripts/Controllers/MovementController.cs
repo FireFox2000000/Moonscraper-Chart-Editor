@@ -46,16 +46,24 @@ public abstract class MovementController : MonoBehaviour {
         Vector3 pos = transform.position;
         float deltaTime = Time.deltaTime;
 
+        float oldPos = pos.y;
+
         if (playStartTime != null && playStartPosition != null)
         {
             float time = Time.time - (float)playStartTime;
             if (time < 0)
                 time = 0;
+            
 
             pos.y = (float)playStartPosition + Song.TimeToWorldYPosition(time * Globals.gameSpeed);
         }
         else
             pos.y += (speed * deltaTime);
+
+        float newPos = pos.y;
+
+        //Debug.Log("Position difference: " + (newPos - oldPos) + ", Delta time: " + Time.deltaTime);
+
         transform.position = pos;
         explicitChartPos = null;
 

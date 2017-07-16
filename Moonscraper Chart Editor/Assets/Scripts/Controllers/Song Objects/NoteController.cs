@@ -76,7 +76,7 @@ public class NoteController : SongObjectController {
                         max = songObject.position;
                     }
                     Debug.Log(min + ", " + max);
-                    editor.currentSelectedObjects = SongObject.GetRange(editor.currentChart.chartObjects, min, max);
+                    editor.currentSelectedObjects = SongObject.GetRangeCopy(editor.currentChart.chartObjects, min, max);
                     Debug.Log(editor.currentSelectedObjects.Length);
                 }
             }

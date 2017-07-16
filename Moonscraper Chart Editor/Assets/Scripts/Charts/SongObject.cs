@@ -518,6 +518,16 @@ public abstract class SongObject
 
         return false;
     }
+    public static T[] GetRangeCopy<T>(T[] list, uint minPos, uint maxPos) where T : SongObject
+    {
+        int index, length;
+        GetRange(list, minPos, maxPos, out index, out length);
+
+        T[] rangedList = new T[length];
+        System.Array.Copy(list, index, rangedList, 0, rangedList.Length);
+
+        return rangedList;
+    }
 
     /// <summary>
     /// Gets a collection of items between a minimum and maximum tick position range.
@@ -527,16 +537,19 @@ public abstract class SongObject
     /// <param name="minPos">The minimum range (inclusive).</param>
     /// <param name="maxPos">The maximum range (inclusive).</param>
     /// <returns>Returns all the objects found between the minimum and maximum tick positions specified.</returns>
-    public static T[] GetRange<T>(T[] list, uint minPos, uint maxPos) where T : SongObject
+    public static void GetRange<T>(T[] list, uint minPos, uint maxPos, out int index, out int length) where T : SongObject
     {
+        index = 0;
+        length = 0;
+
         if (minPos > maxPos || list.Length < 1)
-            return new T[0];
+            return;// new T[0];
 
         int minArrayPos = FindClosestPosition(minPos, list);
         int maxArrayPos = FindClosestPosition(maxPos, list);
 
         if (minArrayPos == NOTFOUND || maxArrayPos == NOTFOUND)
-            return new T[0];
+            return;// new T[0];
         else
         {
             // Find position may return an object located at a lower position than the minimum position
@@ -546,7 +559,7 @@ public abstract class SongObject
             }
 
             if (minArrayPos > list.Length - 1)
-                return new T[0];
+                return;// new T[0];
 
             // Iterate to the very first object at a greater position, as there may be multiple objects located at the same position
             while (minArrayPos - 1 >= 0 && list[minArrayPos - 1].position >= minPos)
@@ -561,7 +574,7 @@ public abstract class SongObject
             }
 
             if (maxArrayPos < 0)
-                return new T[0];
+                return;// new T[0];
 
             // Iterate to the very last object at a lesser position, as there may be multiple objects located at the same position
             while (maxArrayPos + 1 < list.Length && list[maxArrayPos + 1].position <= maxPos)
@@ -570,12 +583,14 @@ public abstract class SongObject
             }
 
             if (minArrayPos > maxArrayPos)
-                return new T[0];
+                return;// new T[0];
 
-            T[] rangedList = new T[maxArrayPos - minArrayPos + 1];
-            System.Array.Copy(list, minArrayPos, rangedList, 0, rangedList.Length);
+            //T[] rangedList = new T[maxArrayPos - minArrayPos + 1];
+            index = minArrayPos;
+            length = maxArrayPos - minArrayPos + 1;
+            //System.Array.Copy(list, minArrayPos, rangedList, 0, rangedList.Length);
 
-            return rangedList;
+            //return rangedList;
         }
     }
 

@@ -87,8 +87,12 @@ public class SongObjectPoolManager : MonoBehaviour {
             if (min_pos < gameplayPos)
                 min_pos = gameplayPos;
         }
-        
-        List<Note> rangedNotes = new List<Note>(SongObject.GetRange(notes, min_pos, editor.maxPos));
+
+        int index, length;
+        SongObject.GetRange(notes, min_pos, editor.maxPos, out index, out length);
+
+        List<Note> rangedNotes = new List<Note>(SongObject.GetRangeCopy(notes, min_pos, editor.maxPos));
+
         if (min_pos == editor.minPos)
         {
             if (rangedNotes.Count > 0)
@@ -117,12 +121,13 @@ public class SongObjectPoolManager : MonoBehaviour {
             }
         }
 
-        notePool.Activate(rangedNotes.ToArray());
+        Note[] notesToActivate = rangedNotes.ToArray();
+        notePool.Activate(notesToActivate, 0, notesToActivate.Length);
     }
 
     public void EnableSP(Starpower[] starpowers)
     {
-        List<Starpower> range = new List<Starpower>(SongObject.GetRange(starpowers, editor.minPos, editor.maxPos));
+        List<Starpower> range = new List<Starpower>(SongObject.GetRangeCopy(starpowers, editor.minPos, editor.maxPos));
 
         int arrayPos = SongObject.FindClosestPosition(editor.minPos, editor.currentChart.starPower);
         if (arrayPos != SongObject.NOTFOUND)
@@ -139,21 +144,30 @@ public class SongObjectPoolManager : MonoBehaviour {
             }
         }
 
-        spPool.Activate(range.ToArray());
+        Starpower[] spToActivate = range.ToArray();
+        spPool.Activate(spToActivate, 0, spToActivate.Length);
     }
 
     public void EnableBPM(BPM[] bpms)
     {
-        bpmPool.Activate(SongObject.GetRange(bpms, editor.minPos, editor.maxPos));
+        int index, length;
+        SongObject.GetRange(bpms, editor.minPos, editor.maxPos, out index, out length);
+
+        bpmPool.Activate(bpms, index, length);
     }
 
     public void EnableTS(TimeSignature[] timeSignatures)
     {
-        tsPool.Activate(SongObject.GetRange(timeSignatures, editor.minPos, editor.maxPos));
+        int index, length;
+        SongObject.GetRange(timeSignatures, editor.minPos, editor.maxPos, out index, out length);
+
+        tsPool.Activate(timeSignatures, index, length);
     }
 
     public void EnableSections(Section[] sections)
     {
-        sectionPool.Activate(SongObject.GetRange(sections, editor.minPos, editor.maxPos));
+        int index, length;
+        SongObject.GetRange(sections, editor.minPos, editor.maxPos, out index, out length);
+        sectionPool.Activate(sections, index, length);
     }
 }

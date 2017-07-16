@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moonscraper Chart Editor.CSharp.Plugins", "Moonscraper Chart Editor.CSharp.Plugins.csproj", "{6CEEBAE3-C1BC-9B82-0B76-6216BBAD4948}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moonscraper Chart Editor.CSharp", "Moonscraper Chart Editor.CSharp.csproj", "{92F2632B-35F1-FF57-EC01-EEACD9382B90}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moonscraper Chart Editor.CSharp.Editor", "Moonscraper Chart Editor.CSharp.Editor.csproj", "{E02B3E62-BC6F-9FE7-0C08-39B960AC6602}"
@@ -11,6 +13,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6CEEBAE3-C1BC-9B82-0B76-6216BBAD4948}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CEEBAE3-C1BC-9B82-0B76-6216BBAD4948}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CEEBAE3-C1BC-9B82-0B76-6216BBAD4948}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CEEBAE3-C1BC-9B82-0B76-6216BBAD4948}.Release|Any CPU.Build.0 = Release|Any CPU
 		{92F2632B-35F1-FF57-EC01-EEACD9382B90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{92F2632B-35F1-FF57-EC01-EEACD9382B90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92F2632B-35F1-FF57-EC01-EEACD9382B90}.Release|Any CPU.ActiveCfg = Release|Any CPU

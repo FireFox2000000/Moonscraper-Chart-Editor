@@ -266,14 +266,16 @@ public static class MidReader {
             }
 
             Chart chart = song.GetChart(instrument, difficulty);
-            Note[] notesToFlag = SongObject.GetRange(chart.notes, tick, tick + endPos);
-            foreach (Note note in notesToFlag)
+            int index, length;
+            SongObject.GetRange(chart.notes, tick, tick + endPos, out index, out length);
+
+            for (int i = index; i < index + length; ++i)
             { 
                 // if NoteNumber is odd force hopo, if even force strum
                 if (flagEvent.NoteNumber % 2 != 0)
-                    note.SetType(Note.Note_Type.Hopo);
+                    chart.notes[i].SetType(Note.Note_Type.Hopo);
                 else
-                    note.SetType(Note.Note_Type.Strum);
+                    chart.notes[i].SetType(Note.Note_Type.Strum);
             }
         }
 
@@ -319,10 +321,11 @@ public static class MidReader {
                 // Apply tap property
                 foreach (Chart chart in chartsOfInstrument)
                 {
-                    Note[] notesToFlag = SongObject.GetRange(chart.notes, tick, tick + endPos);
-                    foreach (Note note in notesToFlag)
+                    int index, length;
+                    SongObject.GetRange(chart.notes, tick, tick + endPos, out index, out length);
+                    for (int k = index; k < index + length; ++k)
                     {
-                        note.SetType(Note.Note_Type.Tap);
+                        chart.notes[k].SetType(Note.Note_Type.Tap);
                     }
                 }
             }
@@ -360,11 +363,13 @@ public static class MidReader {
                         }
                     }
                 }
-                
-                Note[] notesToConvert = SongObject.GetRange(song.GetChart(instrument, difficulty).notes, tick, tick + endPos);
-                foreach (Note note in notesToConvert)
+
+                int index, length;
+                Note[] notes = song.GetChart(instrument, difficulty).notes;
+                SongObject.GetRange(notes, tick, tick + endPos, out index, out length);
+                for (int k = index; k < index + length; ++k)
                 {
-                    note.fret_type = Note.Fret_Type.OPEN;
+                    notes[k].fret_type = Note.Fret_Type.OPEN;
                 }
             }
 

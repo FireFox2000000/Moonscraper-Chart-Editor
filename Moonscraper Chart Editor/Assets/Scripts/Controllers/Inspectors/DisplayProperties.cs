@@ -16,6 +16,8 @@ public class DisplayProperties : MonoBehaviour {
     public float minHighwayLength = 11.75f;
 
     ChartEditor editor;
+    int prevNoteCount = 0;
+    string prevSongName, prevChartName;
 
     void Start()
     {
@@ -37,7 +39,8 @@ public class DisplayProperties : MonoBehaviour {
 
     void Update()
     {
-        songNameText.text = editor.currentSong.name + " - " + editor.currentChart.name;
+        if (prevChartName != editor.currentChart.name || prevSongName != editor.currentSong.name)
+            songNameText.text = editor.currentSong.name + " - " + editor.currentChart.name;
 
         // Disable sliders during play
         bool interactable = (Globals.applicationMode != Globals.ApplicationMode.Playing);
@@ -48,7 +51,8 @@ public class DisplayProperties : MonoBehaviour {
         if (snappingStep.text != string.Empty)
             snappingStep.text = Globals.step.ToString();
 
-        noteCount.text = "Notes: " + editor.currentChart.note_count.ToString();
+        if (editor.currentChart.note_count != prevNoteCount)
+            noteCount.text = "Notes: " + editor.currentChart.note_count.ToString();
 
         // Shortcuts
         if (!Globals.modifierInputActive && !Globals.IsTyping)
@@ -59,6 +63,10 @@ public class DisplayProperties : MonoBehaviour {
             if (Input.GetButtonDown("Toggle Metronome"))
                 metronomeToggle.isOn = !metronomeToggle.isOn;
         }
+
+        prevNoteCount = editor.currentChart.note_count;
+        prevSongName = editor.currentSong.name;
+        prevChartName = editor.currentChart.name;
     }
 
     public void SetHyperspeed(float value)

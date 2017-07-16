@@ -3,13 +3,15 @@ guid: 932cfd4e3ae193644aefdce5e13b1008
 timeCreated: 1479361371
 licenseType: Free
 TrueTypeFontImporter:
-  serializedVersion: 3
-  fontSize: 16
-  forceTextureCase: -2
-  characterSpacing: 1
-  characterPadding: 0
+  serializedVersion: 4
+  fontSize: 32
+  forceTextureCase: 0
+  characterSpacing: 0
+  characterPadding: 1
   includeFontData: 1
-  fontNames: []
+  fontName: Microsoft Sans Serif
+  fontNames:
+  - Microsoft Sans Serif
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

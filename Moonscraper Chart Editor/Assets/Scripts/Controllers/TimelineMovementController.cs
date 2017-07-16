@@ -189,6 +189,18 @@ public class TimelineMovementController : MovementController
         prevPos = transform.position;
         prevScreenSize = new Vector2(Screen.width, Screen.height);
     }
+    /*
+    void FixedUpdate()
+    {
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+        {
+            PlayingMovement();
+            UpdateTimelineHandleBasedPos();
+
+            if (timeline.handlePos >= 1)
+                editor.Stop();
+        }
+    }*/
 
     IEnumerator resolutionChangePosHold()
     {

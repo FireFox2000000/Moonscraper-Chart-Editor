@@ -12,6 +12,8 @@ public class BackgroundBlending : MonoBehaviour
     int currentBackground = 0;
     bool fadeRunning = false;
 
+    float intiBlend = 0;
+
     // Use this for initialization
     void Start()
     {
@@ -68,5 +70,10 @@ public class BackgroundBlending : MonoBehaviour
         ren.sharedMaterial.mainTexture = endTex;
 
         fadeRunning = false;
+    }
+
+    void OnApplicationQuit()
+    {
+        ren.sharedMaterial.SetFloat("_Blend", 0);
     }
 }

@@ -352,7 +352,7 @@ public class Note : ChartObject
 
     public static Note[] GetPreviousOfSustains(Note startNote)
     {
-        List<Note> list = new List<Note>();
+        List<Note> list = new List<Note>(6);
 
         Note previous = startNote.previous;
 

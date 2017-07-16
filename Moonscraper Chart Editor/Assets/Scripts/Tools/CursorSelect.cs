@@ -248,9 +248,12 @@ public class CursorSelect : ToolObject
         Rect areaRect = area.GetRect(editor.currentSong);
 
         List<ChartObject> chartObjectsList = new List<ChartObject>();
+        int index, length;
+        SongObject.GetRange(editor.currentChart.chartObjects, minLimitInclusive, maxLimitNonInclusive, out index, out length);
 
-        foreach (ChartObject chartObject in SongObject.GetRange(editor.currentChart.chartObjects, minLimitInclusive, maxLimitNonInclusive))
+        for (int i = index; i < index + length; ++i)
         {
+            ChartObject chartObject = editor.currentChart.chartObjects[i];
             if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), areaRect))
                 chartObjectsList.Add(chartObject);
         }
