@@ -58,9 +58,9 @@ public class TimelineMovementController : MovementController
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.PageUp) || Input.GetKeyDown(KeyCode.PageDown))
             arrowMoveTimer = 0;
-        else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow))
+        else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.PageUp) || Input.GetKey(KeyCode.PageDown))
             arrowMoveTimer += Time.deltaTime;
         else
             arrowMoveTimer = 0;
@@ -108,7 +108,7 @@ public class TimelineMovementController : MovementController
 
                 UpdateTimelineHandleBasedPos();
             }
-            else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow))
+            else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.PageUp) || Input.GetKey(KeyCode.PageDown))
             {
                 if (Input.GetKey(KeyCode.LeftAlt) && (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)))
                 {
@@ -134,9 +134,18 @@ public class TimelineMovementController : MovementController
                         {
                             snappedPos = Snapable.ChartIncrementStep(currentPos, Globals.step, editor.currentSong.resolution);
                         }
-                        else
+                        else if (Input.GetKey(KeyCode.DownArrow))
                         {
                             snappedPos = Snapable.ChartDecrementStep(currentPos, Globals.step, editor.currentSong.resolution);
+                        }
+                        else if (Input.GetKey(KeyCode.PageUp))
+                        {
+                            snappedPos = Snapable.ChartPositionToSnappedChartPosition(currentPos + (uint)(editor.currentSong.resolution * 4), Globals.step, editor.currentSong.resolution);
+                        }
+                        // Page Down
+                        else
+                        {
+                            snappedPos = Snapable.ChartPositionToSnappedChartPosition(currentPos - (uint)(editor.currentSong.resolution * 4), Globals.step, editor.currentSong.resolution);
                         }
 
                         if (editor.currentSong.ChartPositionToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSong.length)
@@ -189,7 +198,7 @@ public class TimelineMovementController : MovementController
         prevPos = transform.position;
         prevScreenSize = new Vector2(Screen.width, Screen.height);
     }
-    /*
+    
     void FixedUpdate()
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
@@ -200,7 +209,7 @@ public class TimelineMovementController : MovementController
             if (timeline.handlePos >= 1)
                 editor.Stop();
         }
-    }*/
+    }
 
     IEnumerator resolutionChangePosHold()
     {
