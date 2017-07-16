@@ -132,6 +132,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     int prevSPLength = 0;
     float prevSongLength = 0;
     Song prevSong;
+    Resolution prevRes;
 
     void Update()
     {
@@ -141,7 +142,9 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         percentage.text = ((int)(handlePosRound * 100)).ToString() + "%";
 
         bool update = (!ReferenceEquals(prevSong, editor.currentSong) || prevSongLength != editor.currentSong.length
-             || previousScreenSize.x != Screen.width || previousScreenSize.y != Screen.height);
+             || previousScreenSize.x != Screen.width || previousScreenSize.y != Screen.height || 
+             prevRes.height != Screen.currentResolution.height ||
+             prevRes.width != Screen.currentResolution.width || prevRes.refreshRate != Screen.currentResolution.refreshRate);
 
         // Check if indicator pools need to be extended
         
@@ -170,50 +173,13 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         // Set the sections
         if (update || editor.currentSong.sections.Length != prevSectionLength)
         {
-            int i;
-            for (i = 0; i < editor.currentSong.sections.Length; ++i)
-            {
-                if (i < sectionIndicatorPool.Length && editor.currentSong.sections[i].time <= editor.currentSong.length)
-                {
-                    sectionIndicatorPool[i].section = editor.currentSong.sections[i];
-                    sectionIndicatorPool[i].gameObject.SetActive(true);
-                    sectionIndicatorPool[i].ExplicitUpdate();
-                }
-                else
-                {
-                    break;
-                }
-            }
-        
-
-            while (i < sectionIndicatorPool.Length)
-            {
-                sectionIndicatorPool[i++].gameObject.SetActive(false);
-            }
+            StartCoroutine(UpdateSectionIndicator());
         }
 
         // Set the sp
         if (update || editor.currentChart.starPower.Length != prevSPLength)
         {
-            int i;
-            for (i = 0; i < editor.currentChart.starPower.Length; ++i)
-            {
-                if (i < starpowerIndicatorPool.Length && editor.currentChart.starPower[i].time <= editor.currentSong.length)
-                {
-                    starpowerIndicatorPool[i].starpower = editor.currentChart.starPower[i];
-                    starpowerIndicatorPool[i].gameObject.SetActive(true);
-                    starpowerIndicatorPool[i].ExplicitUpdate();
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            while (i < starpowerIndicatorPool.Length)
-            {
-                starpowerIndicatorPool[i++].gameObject.SetActive(false);
-            }
+            StartCoroutine(UpdateStarpowerIndicators());
         }
 
         prevSong = editor.currentSong;
@@ -222,6 +188,60 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         prevSectionLength = editor.currentSong.sections.Length;
         previousScreenSize.x = Screen.width;
         previousScreenSize.y = Screen.height;
+        prevRes = Screen.currentResolution;
+    }
+
+    IEnumerator UpdateSectionIndicator()
+    {
+        yield return null;
+        yield return null;
+
+        int i;
+        for (i = 0; i < editor.currentSong.sections.Length; ++i)
+        {
+            if (i < sectionIndicatorPool.Length && editor.currentSong.sections[i].time <= editor.currentSong.length)
+            {
+                sectionIndicatorPool[i].section = editor.currentSong.sections[i];
+                sectionIndicatorPool[i].gameObject.SetActive(true);
+                sectionIndicatorPool[i].ExplicitUpdate();
+            }
+            else
+            {
+                break;
+            }
+        }
+
+
+        while (i < sectionIndicatorPool.Length)
+        {
+            sectionIndicatorPool[i++].gameObject.SetActive(false);
+        }
+    }
+
+    IEnumerator UpdateStarpowerIndicators()
+    {
+        yield return null;
+        yield return null;
+
+        int i;
+        for (i = 0; i < editor.currentChart.starPower.Length; ++i)
+        {
+            if (i < starpowerIndicatorPool.Length && editor.currentChart.starPower[i].time <= editor.currentSong.length)
+            {
+                starpowerIndicatorPool[i].starpower = editor.currentChart.starPower[i];
+                starpowerIndicatorPool[i].gameObject.SetActive(true);
+                starpowerIndicatorPool[i].ExplicitUpdate();
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        while (i < starpowerIndicatorPool.Length)
+        {
+            starpowerIndicatorPool[i++].gameObject.SetActive(false);
+        }
     }
 
     public void OnDrag(PointerEventData eventData)

@@ -61,7 +61,7 @@ public class CursorSelect : ToolObject
                 if (!clickedSelectableObject && !Globals.modifierInputActive && !Globals.secondaryInputActive && !mouseDownOverUI)
                     editor.currentSelectedObject = null;
 
-                if (Globals.viewMode == Globals.ViewMode.Chart && Mouse.world2DPosition != null && !Mouse.currentSelectableUnderMouse)
+                if (Globals.viewMode == Globals.ViewMode.Chart && Mouse.world2DPosition != null && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer())
                     InitGroupSelect();
             }
             else if (Input.GetMouseButtonUp(0))
@@ -149,7 +149,9 @@ public class CursorSelect : ToolObject
     {
         initWorld2DPos = (Vector2)Mouse.world2DPosition;
         initWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
+        endWorld2DPos = initWorld2DPos;
         startWorld2DChartPos = objectSnappedChartPos;
+        endWorld2DChartPos = startWorld2DChartPos;
 
         Color col = initColor;
         col.a = draggingArea.color.a;

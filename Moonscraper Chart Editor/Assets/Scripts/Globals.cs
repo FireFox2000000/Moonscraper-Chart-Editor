@@ -121,8 +121,18 @@ public class Globals : MonoBehaviour {
     static string workingDirectory = string.Empty;
     public static string realWorkingDirectory { get { return workingDirectory; } }
 
+    Resolution initRes;
+    Resolution largestRes;
+
     void Awake()
     {
+        initRes = Screen.currentResolution;
+        largestRes = Screen.resolutions[0];
+        foreach (Resolution res in Screen.resolutions)
+        {
+            if (res.width > largestRes.width)
+                largestRes = res;
+        }
         autosaveLocation = Application.persistentDataPath + "/autosave.chart";
 
         viewMode = ViewMode.Chart;
@@ -264,8 +274,30 @@ public class Globals : MonoBehaviour {
 
                 editor.currentSelectedObjects = editor.currentChart.notes;
                 editor.AddToSelectedObjects(editor.currentChart.starPower);
-            }
+            }/*
+            else if (Input.GetKeyDown(KeyCode.KeypadEnter))
+            {
+                //Screen.fullScreen = !Screen.fullScreen;
+
+                if (!Screen.fullScreen)
+                    StartCoroutine(WaitForScreenChange(true, largestRes));
+                else
+                    StartCoroutine(WaitForScreenChange(false, initRes));
+            }*/
         }
+    }
+
+    private IEnumerator WaitForScreenChange(bool fullscreen, Resolution res)
+    {
+        int width = res.width;
+        int height = res.height;
+
+        Screen.fullScreen = fullscreen;
+
+        yield return new WaitForSeconds(1);
+        //yield return null;
+        Debug.Log(res);
+        Screen.SetResolution(width, height, Screen.fullScreen);
     }
 
     void Controls()

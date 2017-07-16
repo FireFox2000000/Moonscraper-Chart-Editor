@@ -12,8 +12,6 @@ public class BackgroundBlending : MonoBehaviour
     int currentBackground = 0;
     bool fadeRunning = false;
 
-    float intiBlend = 0;
-
     // Use this for initialization
     void Start()
     {

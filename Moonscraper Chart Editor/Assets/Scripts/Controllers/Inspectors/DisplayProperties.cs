@@ -16,7 +16,7 @@ public class DisplayProperties : MonoBehaviour {
     public float minHighwayLength = 11.75f;
 
     ChartEditor editor;
-    int prevNoteCount = 0;
+    int prevNoteCount = -1;
     string prevSongName, prevChartName;
 
     void Start()

@@ -18,7 +18,6 @@ public class NoteVisuals2DManager : NoteVisualsManager {
 
     Sprite lastUpdatedSprite = null;
     StringBuilder animationNameString = new StringBuilder(16, 16);
-    string animationName;
 
     // Use this for initialization
     protected override void Awake()
@@ -44,8 +43,6 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                 animationDataDictionary.Add(animationData.name, animationData);
             }
         }
-
-        animationName = GarbageFreeString(animationNameString);
     }
 
     // Update is called once per frame
