@@ -91,8 +91,12 @@ public class NoteController : SongObjectController {
         }
 
         // Delete the object on erase tool
-        if ((Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButtonDown(0) && Globals.applicationMode == Globals.ApplicationMode.Editor) ||
-            (Input.GetMouseButtonDown(0) && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1)))
+        else if (Globals.applicationMode == Globals.ApplicationMode.Editor &&
+            (
+            (Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButtonDown(0)) ||
+            (Input.GetMouseButtonDown(0) && Input.GetMouseButton(1)) ||
+            Eraser.dragging)
+            )
         {
             if (Input.GetButton("ChordSelect"))
             {
@@ -102,7 +106,9 @@ public class NoteController : SongObjectController {
                     Debug.Log("Deleted " + note + " chord at position " + note.position + " with hold-right left-click shortcut");
 
                 Note[] chordNotes = note.GetChord();
-                editor.actionHistory.Insert(new ActionHistory.Delete(chordNotes));
+
+                Eraser.dragEraseHistory.Add(new ActionHistory.Delete(chordNotes));
+                //editor.actionHistory.Insert(new ActionHistory.Delete(chordNotes));
                 foreach (Note chordNote in chordNotes)
                 {
                     chordNote.Delete();
@@ -115,9 +121,19 @@ public class NoteController : SongObjectController {
                 else
                     Debug.Log("Deleted " + note + " at position " + note.position + " with hold-right left-click shortcut");
 
-                editor.actionHistory.Insert(new ActionHistory.Delete(note));
+                Eraser.dragEraseHistory.Add(new ActionHistory.Delete(note));
+
+                //editor.actionHistory.Insert(new ActionHistory.Delete(note));
                 note.Delete();
             }
+        }
+    }
+    
+    public override void OnSelectableMouseOver()
+    {
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor && Eraser.dragging)
+        {
+            OnSelectableMouseDown();
         }
     }
 

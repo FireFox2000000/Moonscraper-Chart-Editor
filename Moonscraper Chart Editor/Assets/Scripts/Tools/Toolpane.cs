@@ -4,6 +4,8 @@ using System.Runtime.InteropServices;
 
 public class Toolpane : MonoBehaviour {
     public static Tools currentTool = Tools.Cursor;
+    [SerializeField]
+    ToolObject initiToolObject;
     ToolObject currentToolObject;
 
     Globals globals;
@@ -16,6 +18,8 @@ public class Toolpane : MonoBehaviour {
             SetTool(currentToolObject);
 
         globals = GameObject.FindGameObjectWithTag("Globals").GetComponent<Globals>();
+
+        currentToolObject = initiToolObject;
     }
 
     bool deleteModeCancel = false;

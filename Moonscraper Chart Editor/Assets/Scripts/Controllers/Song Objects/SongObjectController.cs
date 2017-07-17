@@ -127,16 +127,30 @@ public abstract class SongObjectController : SelectableClick {
         }
 
         // Delete the object on erase tool or by holding right click and pressing left-click
-        if ((Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButtonDown(0) && Globals.applicationMode == Globals.ApplicationMode.Editor) ||
-            (Input.GetMouseButtonDown(0) && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1)))
+        else if (Globals.applicationMode == Globals.ApplicationMode.Editor && 
+            (
+            (Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButtonDown(0)) ||
+            (Input.GetMouseButtonDown(0) && Input.GetMouseButton(1)) ||
+            Eraser.dragging)
+            )
         {
             if ((songObject.classID != (int)SongObject.ID.BPM && songObject.classID != (int)SongObject.ID.TimeSignature) || songObject.position != 0)
             {
                 Debug.Log("Deleted " + songObject + " at position " + songObject.position + " with eraser tool");
-                editor.actionHistory.Insert(new ActionHistory.Delete(songObject));
+
+                Eraser.dragEraseHistory.Add(new ActionHistory.Delete(songObject));
+                //editor.actionHistory.Insert(new ActionHistory.Delete(songObject));
                 songObject.Delete();
                 editor.currentSelectedObject = null;
             }
+        }
+    }
+
+    public override void OnSelectableMouseOver()
+    {
+        if (Globals.applicationMode == Globals.ApplicationMode.Editor && Eraser.dragging)
+        {
+            OnSelectableMouseDown();
         }
     }
 

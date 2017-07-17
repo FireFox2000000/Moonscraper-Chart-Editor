@@ -70,7 +70,7 @@ public class CursorSelect : ToolObject
             // Dragging mouse for group select
             if (Globals.viewMode == Globals.ViewMode.Chart && userDraggingSelectArea &&
                 Input.GetMouseButton(0) /*&& editor.currentSelectedObjects.Length == 0*/ &&
-                !Mouse.currentSelectableUnderMouse && !mouseDownOverUI)
+                !clickedSelectableObject && !mouseDownOverUI)
             {
                 if (Mouse.world2DPosition != null)
                 {
