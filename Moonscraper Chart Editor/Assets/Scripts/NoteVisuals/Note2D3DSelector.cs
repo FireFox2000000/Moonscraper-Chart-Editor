@@ -15,7 +15,7 @@ public class Note2D3DSelector : MonoBehaviour {
             return note2D.gameObject.activeSelf ? note2D : (NoteVisualsManager)note3D;
         }
     }
-
+    /*
     void Start()
     {
         if (AssignCustomResources.noteSpritesAvaliable != null)
@@ -36,12 +36,12 @@ public class Note2D3DSelector : MonoBehaviour {
                     break;
             }
         }
-    }
+    }*/
 	
 	// Update is called once per frame
 	public void UpdateSelectedGameObject () {
-        if (!enabled)
-            return;
+       // if (!enabled)
+          //  return;
 
         Note note = nCon.note;
         Note.Note_Type noteType = NoteVisualsManager.GetTypeWithViewChange(note);
@@ -78,7 +78,7 @@ public class Note2D3DSelector : MonoBehaviour {
             }
         }
 
-        if (textureInSkin)
+        if (textureInSkin && Globals.viewMode == Globals.ViewMode.Chart)
         {
             note2D.gameObject.SetActive(true);
             note3D.gameObject.SetActive(false);

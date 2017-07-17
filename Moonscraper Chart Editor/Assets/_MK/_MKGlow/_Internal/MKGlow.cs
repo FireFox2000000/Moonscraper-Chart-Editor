@@ -23,8 +23,8 @@ namespace MKGlowSystem
             if (Application.isEditor && !Application.isPlaying)
                 return;
 
-            if (AssignCustomResources.noteSpritesAvaliable != null && AssignCustomResources.noteSpritesAvaliable == Skin.AssestsAvaliable.All)
-                enabled = false;
+            //if (AssignCustomResources.noteSpritesAvaliable != null && AssignCustomResources.noteSpritesAvaliable == Skin.AssestsAvaliable.All)
+               // enabled = false;
         }
 
         #region Get/Set

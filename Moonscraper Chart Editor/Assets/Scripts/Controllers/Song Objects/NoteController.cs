@@ -386,8 +386,12 @@ public class NoteController : SongObjectController {
         Note note = this.note;
         if (note.song != null)
         {
+            float zPos = 0;
+
+            if (Globals.viewMode == Globals.ViewMode.Song)
+                zPos = 0.2f;
             // Position
-            transform.position = new Vector3(CHART_CENTER_POS + noteToXPos(note), note.worldYPosition, 0);
+            transform.position = new Vector3(CHART_CENTER_POS + noteToXPos(note), note.worldYPosition, zPos);
 
             if (note.fret_type == Note.Fret_Type.OPEN)
                 sustainRen.sortingOrder = -1;

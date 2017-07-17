@@ -53,11 +53,22 @@ public class SongObjectPoolManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        EnableNotes(editor.currentChart.notes);
-        EnableSP(editor.currentChart.starPower);
-        EnableBPM(editor.currentSong.bpms);
-        EnableTS(editor.currentSong.timeSignatures);
-        EnableSections(editor.currentSong.sections);
+        if (editor.currentChart.notes.Length > 0)
+            EnableNotes(editor.currentChart.notes);
+
+        if (Globals.viewMode == Globals.ViewMode.Chart)
+        {
+            if (editor.currentChart.starPower.Length > 0)
+                EnableSP(editor.currentChart.starPower);
+        }
+        else
+        {
+            EnableBPM(editor.currentSong.bpms);
+            EnableTS(editor.currentSong.timeSignatures);
+
+            if (editor.currentSong.sections.Length > 0)
+                EnableSections(editor.currentSong.sections);
+        }
     }
 
     public void NewChartReset()
@@ -77,7 +88,7 @@ public class SongObjectPoolManager : MonoBehaviour {
         foreach (SongObjectController controller in controllers)
             controller.gameObject.SetActive(false);
     }
-
+  
     public void EnableNotes(Note[] notes)
     {
         uint min_pos = editor.minPos;
@@ -87,9 +98,6 @@ public class SongObjectPoolManager : MonoBehaviour {
             if (min_pos < gameplayPos)
                 min_pos = gameplayPos;
         }
-
-        int index, length;
-        SongObject.GetRange(notes, min_pos, editor.maxPos, out index, out length);
 
         List<Note> rangedNotes = new List<Note>(SongObject.GetRangeCopy(notes, min_pos, editor.maxPos));
 

@@ -228,11 +228,6 @@ public class Globals : MonoBehaviour {
         snapLockWarning.gameObject.SetActive(lockToStrikeline);
     }
 
-    void OnGUI()
-    {
-        //Debug.Log(System.Windows.Forms.Control.IsKeyLocked(System.Windows.Forms.Keys.CapsLock));
-    }
-
     public static bool modifierInputActive { get { return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand); } }
     public static bool secondaryInputActive { get { return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift); } }
 

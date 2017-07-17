@@ -14,6 +14,8 @@ public class DisplayProperties : MonoBehaviour {
     public Slider highwayLengthSlider;
     public Transform maxHighwayLength;
     public float minHighwayLength = 11.75f;
+    [SerializeField]
+    BGFadeHeightController bgFade;
 
     ChartEditor editor;
     int prevNoteCount = -1;
@@ -88,6 +90,8 @@ public class DisplayProperties : MonoBehaviour {
         Vector3 pos = Vector3.zero;
         pos.y = value * 5 + minHighwayLength;
         maxHighwayLength.transform.localPosition = pos;
+
+        bgFade.AdjustHeight();
     }
 
     public void ToggleClap(bool value)

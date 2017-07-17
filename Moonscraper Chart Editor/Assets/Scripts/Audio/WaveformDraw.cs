@@ -80,10 +80,17 @@ public class WaveformDraw : MonoBehaviour {
 
         // Turn data into world-position points to feed the line renderer
         Vector3 point = Vector3.zero;
+        float[] currentSampleData = currentSample.data;
+        float hs = Globals.hyperspeed / Globals.gameSpeed;
+
         for (int i = startPos; i < endPos; ++i)
         {
-            point.x = currentSample.data[i] * scaling;
-            point.y = Song.TimeToWorldYPosition(i * sampleRate + fullOffset);
+            point.x = currentSampleData[i] * scaling;
+
+            // Manual inlining of Song.TimeToWorldYPosition
+            float time = i * sampleRate + fullOffset;
+            point.y = time * hs;
+
             points[i - startPos] = point;
         }
 

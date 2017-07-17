@@ -61,8 +61,11 @@ public class ChartEditor : MonoBehaviour {
     [SerializeField]
     ClipboardObjectController clipboard;
 
-    public uint minPos { get; private set; }
-    public uint maxPos { get; private set; }
+    uint _minPos;
+    uint _maxPos;
+    public uint minPos { get { return _minPos; } }
+    public uint maxPos { get { return _maxPos; } }
+
 #if !BASS_AUDIO
     [HideInInspector]
     public AudioSource[] musicSources;
@@ -147,8 +150,8 @@ public class ChartEditor : MonoBehaviour {
     void Awake () {
         _songObjectPoolManager = GetComponent<SongObjectPoolManager>();
 
-        minPos = 0;
-        maxPos = 0;
+        _minPos = 0;
+        _maxPos = 0;
 
         noteInspector.gameObject.SetActive(false);
         sectionInspector.gameObject.SetActive(false);
@@ -205,8 +208,8 @@ public class ChartEditor : MonoBehaviour {
     public void Update()
     {
         // Update object positions that supposed to be visible into the range of the camera
-        minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
-        maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
+        _minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
+        _maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
 
         // Update the current properties panel     
         if ((Toolpane.currentTool == Toolpane.Tools.GroupSelect || Toolpane.currentTool == Toolpane.Tools.Cursor) && currentSelectedObjects.Length > 1)

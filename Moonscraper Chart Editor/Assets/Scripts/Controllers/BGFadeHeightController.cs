@@ -17,7 +17,7 @@ public class BGFadeHeightController : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	public void AdjustHeight () {
         Vector3 worldFadePos = objectMaxPosition.position;
         worldFadePos.y -= offset;
         float screenHeight = Camera.main.WorldToScreenPoint(worldFadePos).y;
