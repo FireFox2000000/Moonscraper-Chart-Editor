@@ -230,6 +230,7 @@
     <Compile Include="Assets\Scripts\UI\Menus\Export.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\SettingsController.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\SongPropertiesPanelController.cs" />
+    <Compile Include="Assets\Scripts\UI\PlayButton.cs" />
     <Compile Include="Assets\Scripts\UI\ReplaceToEscapedCharater.cs" />
     <Compile Include="Assets\Scripts\UI\SaveAnimController.cs" />
     <Compile Include="Assets\Scripts\UI\TapBPMCalculatorPanelController.cs" />

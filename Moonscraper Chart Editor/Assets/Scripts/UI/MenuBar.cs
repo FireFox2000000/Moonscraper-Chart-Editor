@@ -32,7 +32,7 @@ public class MenuBar : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        playButton.interactable = (Globals.applicationMode != Globals.ApplicationMode.Playing);
+        //playButton.interactable = (Globals.applicationMode != Globals.ApplicationMode.Playing);
 
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
