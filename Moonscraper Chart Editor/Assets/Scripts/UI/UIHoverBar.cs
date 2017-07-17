@@ -13,12 +13,13 @@ public class UIHoverBar : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        bool menuBarObjectUnderMouse = false;
+
         if (Globals.applicationMode != Globals.ApplicationMode.Loading && inUIBar)
         {
             // Get a list of all the objects currently under the mouse to get past the blocker
             GameObject[] currentHoveringObjects = GetObjectsUnderMouse();
 
-            bool found = false;
             // Check if mouse is hovering over an associated object
             foreach (GameObject objectUnderPointer in currentHoveringObjects)
             {
@@ -27,17 +28,17 @@ public class UIHoverBar : MonoBehaviour {
                     if ((uiElements[i] == objectUnderPointer) || objectUnderPointer.transform.parent.gameObject == uiElements[i])
                     {
                         currentElement = i;
-                        found = true;
+                        menuBarObjectUnderMouse = true;
                         break;
                     }
                 }
 
-                if (found)
+                if (menuBarObjectUnderMouse)
                     break;
             }
 
             // Exit if not in a dropdown associated with the collected gameobjects or not hovering over an associated object
-            if (!found)
+            if (!menuBarObjectUnderMouse)
                 currentElement = -1;
             else if (prevElement != currentElement)
             {
@@ -58,7 +59,7 @@ public class UIHoverBar : MonoBehaviour {
                 }
             }
         }
-        
+
         if (Input.GetMouseButtonDown(0) && !inUIBar)
         {
             GameObject[] currentHoveringObjects = GetObjectsUnderMouse();
@@ -94,7 +95,7 @@ public class UIHoverBar : MonoBehaviour {
             }
         }
         // Properly deselect dropdown
-        else if (Input.GetMouseButtonUp(0) && EventSystem.current.currentSelectedGameObject)
+        else if (Input.GetMouseButtonUp(0) && (EventSystem.current.currentSelectedGameObject || !menuBarObjectUnderMouse))
         {
             EventSystem.current.SetSelectedGameObject(null);
             inUIBar = false;
