@@ -48,6 +48,23 @@ public class Whammy : MonoBehaviour {
         }
     }
 
+    void OnDisable()
+    {
+        // Remove all whammy animation and reset
+        if (lineRenderer)
+        {
+            AnimationCurve lineCurve = lineRenderer.widthCurve;
+
+            for (int i = 0; i < lineCurve.keys.Length; ++i)
+            {
+                if (i <= 0)
+                    lineCurve.keys[i].value = 1;
+                else
+                    lineCurve.RemoveKey(i);
+            }
+        }
+    }
+
     static void ShiftAnimationKeys(AnimationCurve lineCurve, float shiftDistance)
     {
         for (int i = lineCurve.keys.Length - 1; i >= 0; --i)
