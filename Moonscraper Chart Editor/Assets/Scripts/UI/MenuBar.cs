@@ -8,8 +8,6 @@ public class MenuBar : MonoBehaviour {
 
     [Header("Disableable UI")]
     [SerializeField]
-    Button playButton;
-    [SerializeField]
     Button undoButton;
     [SerializeField]
     Button redoButton;
@@ -32,8 +30,6 @@ public class MenuBar : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        //playButton.interactable = (Globals.applicationMode != Globals.ApplicationMode.Playing);
-
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             undoButton.interactable = editor.actionHistory.canUndo;

@@ -8,9 +8,10 @@ public class UIHoverBar : MonoBehaviour {
     public GameObject[] uiElements;
     int prevElement = -1;
     int currentElement = -1;
-    Dropdown lastShownDropdown = null;
+    Selectable lastShownDropdown = null;
     bool inUIBar = false;
-	
+    bool mouseUpBlock = false;
+
 	// Update is called once per frame
 	void Update () {
         bool menuBarObjectUnderMouse = false;
@@ -43,19 +44,36 @@ public class UIHoverBar : MonoBehaviour {
             else if (prevElement != currentElement)
             {
                 Dropdown dropdown = null;
+                CustomUnityDropdown instantDropdown = null;
 
                 // Auto-switch dropdown on hover
                 if (lastShownDropdown && lastShownDropdown.gameObject != uiElements[currentElement].gameObject)
-                    lastShownDropdown.Hide();
+                {
+                    Dropdown lastDropdown = lastShownDropdown.GetComponentInParent<Dropdown>();
+                    CustomUnityDropdown lastInstantDropdown = lastShownDropdown.GetComponentInParent<CustomUnityDropdown>();
+
+                    if (lastDropdown)
+                        lastDropdown.Hide();
+
+                    if (lastInstantDropdown)
+                        lastInstantDropdown.Hide();
+                }
 
                 EventSystem.current.SetSelectedGameObject(uiElements[currentElement].gameObject);
 
                 dropdown = uiElements[currentElement].GetComponentInParent<Dropdown>();
+                instantDropdown = uiElements[currentElement].GetComponentInParent<CustomUnityDropdown>();
 
                 if (dropdown)
                 {
                     dropdown.Show();
                     lastShownDropdown = dropdown;
+                }
+
+                if (instantDropdown)
+                {
+                    instantDropdown.Show();
+                    lastShownDropdown = instantDropdown;
                 }
             }
         }
@@ -92,14 +110,27 @@ public class UIHoverBar : MonoBehaviour {
                 {
                     lastShownDropdown = dropdown;
                 }
+
+                CustomUnityDropdown instantDropdown = foundObject.GetComponentInParent<CustomUnityDropdown>();
+                if (instantDropdown)
+                {
+                    lastShownDropdown = instantDropdown;
+                }
             }
+
+            mouseUpBlock = true;
         }
         // Properly deselect dropdown
-        else if (Input.GetMouseButtonUp(0) && (EventSystem.current.currentSelectedGameObject || !menuBarObjectUnderMouse))
+        else if (Input.GetMouseButtonUp(0)/* && (EventSystem.current.currentSelectedGameObject || !menuBarObjectUnderMouse)*/)
         {
-            EventSystem.current.SetSelectedGameObject(null);
-            inUIBar = false;
-            currentElement = -1;
+            if (mouseUpBlock)
+                mouseUpBlock = false;
+            else
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+                inUIBar = false;
+                currentElement = -1;
+            }
         }
 
         //Debug.Log(inUIBar);

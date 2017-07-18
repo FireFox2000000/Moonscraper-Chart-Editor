@@ -631,7 +631,7 @@ public class ChartEditor : MonoBehaviour {
         Globals.applicationMode = Globals.ApplicationMode.Playing;
         cancel = false;
 
-        float playPoint = Song.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (Globals.audioCalibrationMS / 1000.0f);
+        float playPoint = Song.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
 
         if (playPoint < 0)
         {
