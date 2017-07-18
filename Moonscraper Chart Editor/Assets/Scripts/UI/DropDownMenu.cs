@@ -29,15 +29,20 @@ public class DropDownMenu : MonoBehaviour {
 
     public void InvokeFuction(int pos)
     {
+        StartCoroutine(selectFunction(pos));
+        /*
         if (pos < menuEvent.Length && pos >= 0)
         {
             if (menuEvent[pos] != null)
+            {
                 menuEvent[pos].Invoke();
+                
+            }
             titleText.text = title;
 
             resetDropdown();
             StartCoroutine(deselectDropdown());
-        }
+        }*/
     }
 
     IEnumerator deselectDropdown()
@@ -48,6 +53,20 @@ public class DropDownMenu : MonoBehaviour {
 
     IEnumerator selectFunction(int pos)
     {
+        if (pos < menuEvent.Length && pos >= 0)
+        {
+            if (menuEvent[pos] != null)
+            {
+                yield return null;
+                menuEvent[pos].Invoke();
+            }
+            titleText.text = title;
+
+            resetDropdown();
+            yield return StartCoroutine(deselectDropdown());
+        }
+
+        /*
         if (pos < menuEvent.Length && pos >= 0)
         {
             if (dropdown)
@@ -63,6 +82,7 @@ public class DropDownMenu : MonoBehaviour {
 
             resetDropdown();
         }
+        */
     }
 
     void resetDropdown()
