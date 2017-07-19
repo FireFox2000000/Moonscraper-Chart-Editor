@@ -429,12 +429,12 @@ namespace UnityEngine.UI
                     outside = true;
                     break;
                 }
-            }
+            }/*
             if (outside)
             {
                 RectTransformUtility.FlipLayoutOnAxis(dropdownRectTransform, 0, false, false);
                 RectTransformUtility.FlipLayoutOnAxis(dropdownRectTransform, 1, false, false);
-            }
+            }*/
 
             for (int i = 0; i < m_Items.Count; i++)
             {

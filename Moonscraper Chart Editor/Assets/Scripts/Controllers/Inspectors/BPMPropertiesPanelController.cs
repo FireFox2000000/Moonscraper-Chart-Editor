@@ -36,8 +36,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         base.Update();
         if (currentBPM != null)
         {
+            // Update inspector information
             positionText.text = "Position: " + currentBPM.position.ToString();
-            if (bpmValue.text != string.Empty && bpmValue.text[bpmValue.text.Length - 1] != '.')
+            if (bpmValue.text != string.Empty && bpmValue.text[bpmValue.text.Length - 1] != '.' && bpmValue.text[bpmValue.text.Length - 1] != '0')
                 bpmValue.text = (currentBPM.value / 1000.0f).ToString();
         }
 

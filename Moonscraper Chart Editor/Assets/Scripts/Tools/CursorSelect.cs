@@ -59,7 +59,9 @@ public class CursorSelect : ToolObject
 
                 // Reset if the user is making a new selection or deselecting the old
                 if (!clickedSelectableObject && !Globals.modifierInputActive && !Globals.secondaryInputActive && !mouseDownOverUI)
+                {
                     editor.currentSelectedObject = null;
+                }
 
                 if (Globals.viewMode == Globals.ViewMode.Chart && Mouse.world2DPosition != null && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer())
                     InitGroupSelect();

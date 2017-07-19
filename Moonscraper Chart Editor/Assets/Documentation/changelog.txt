@@ -1,17 +1,325 @@
-Moonscraper post-v0.9.7 changelog- 02/07/2017
+v0.9.8- 18/07/2017
+    NEW FEATURES
+    -Added global clipboard copy/pasting (can now copy/paste between multiple Moonscraper instances)
+    -Added page up/page down controls to scroll whole measures
+    -Note ghosts can now been seen in global view even with custom note sprites (at the cost of performance unfortunately)
 
-NEW FEATURES
--Added tabbing between the song properties UI
--Added adjustable highway length
--Can now have multiple custom backgrounds
+    CHANGES
+    -Added variable sized backend hit window to gameplay
+    -Reduced fret hit animation slightly
+    -Re-enabled eraser dragging while fixing multi-erase issues from before
+    -Replaced default background image
+    -Combined play/pause button into one and repositioned
+    -General optimisations
 
-CHANGES
--Combined the group selection tool with the cursor tool
--Open note sustains can now extend past standard notes when extended sustains are enabled (plus other extended sustain-related bug fixes)
--Changed standard combo break sfx
--Tap note flag is now blocked for open notes, nor does it save just in case
+    FIXES
+    -Fixed sustains being over-extended while being held in play mode
+    -Fixed timeline GUI resizing when maximising the window
+    -Fixed random cursor group selecting
+    -Fixed dropdown hover issues and inconsistencies in the menustrip while removing the fade animation
+    -Fixed sustain whammy not resetting in gameplay mode
 
-FIXES
--Timeline indicator pools now dynamically grow rather than being a fixed size
--Extended sustain bug fixes
--No longer desyncs when program encounters lag
+v0.9.702- 02/07/2017
+    NEW FEATURES
+    -Added tabbing between the song properties UI
+    -Added adjustable highway length
+    -Can now have multiple custom backgrounds
+
+    CHANGES
+    -Combined the group selection tool with the cursor tool
+    -Open note sustains can now extend past standard notes when extended sustains are enabled (plus other extended sustain-related bug fixes)
+    -Changed standard combo break sfx
+    -Tap note flag is now blocked for open notes, nor does it save just in case
+
+    FIXES
+    -Timeline indicator pools now dynamically grow rather than being a fixed size
+    -Extended sustain bug fixes
+    -No longer desyncs when program encounters lag
+    -Fixed broken behaviour when the strikeline position is before the 0th position in the chart (usually when starting gameplay with a gameplay delay that sets the position before the start of the chart)
+    -Removed useless clap volume slider in the settings menu.
+    -Fixed millisecond representation on the timer.
+
+v0.9.6- 10/06/2017
+    NEW FEATURES
+    -Added a lot more options to the exporter menu, including resolution changes, offsetting and difficulty copying
+
+    CHANGES
+    -Big chart saving optimisation
+    -Big midi file exporting optimisation
+
+    FIXES
+    -Fixed toggles not working with mouse clicks on the note inspector
+
+v0.9.504- 26/05/2017
+    NEW FEATURES
+    -Added midi exporting
+    -Added exporting menu
+    -Added ctrl-a shortcut to chart view
+    -Added shift-clicking mass-select in the chart view
+    -Added hint/help overlay when users hover their mouse over UI
+    -Added shortcut keys to all tools in the tool panel
+    -Added "Open with" compatibility with .chart and .mid files
+    -Added customisable denominator to time signatures
+    -Added buttons to increment and decrement bpms by 1
+    -Added keyboard controls to bpm increment and decrement controls
+    -Added autosave recovery feature (in case of crashes)
+    -Added Keys chart option (for midi reading/writing)
+
+    CHANGES
+    -Chart selection navigation now represented in seperate instrument and difficulty dropdown selections
+    -Added cleaner dropdown visuals
+    -Moved "export unforced" option into the exporter menu
+    -Removed pitch correction when speed is less than 1.0x to improve audio quality
+    -Shifted clap and metronome implementation to use the Bass.net audio system
+    -Removed SFX calibration option from Calibration menu. 
+    -Re-wrote midi importing for much faster loading
+
+    FIXES
+    -Object limit now not restrcted and dymanically grows if limit is reached
+    -Fixed sustain capping bug when moving a chord
+    -Fixed clap offset at variable speeds
+    -Note properties panel now appears immdiately upon selecting the note tool
+    -Fixed timeline indicators falling out of sync when change screen size
+
+v0.9.1- 22/04/2017
+    NEW FEATURES
+    -Added note sprites to custom resources (i.e. GH3 ZONES)
+    -Added custom sustain colours to custom resources (via Settings config file)
+    -Added seperate sfx calibration for clap and metronome
+    -Added burst mode and mode panel to note tool keyboard mode, with shortcuts on 'h' and 'b' to switch between sustain drawing and burst drawing
+    -Added ctrl-click for multi-selection/deselection to the cursor tool
+    -Added copy/cut/delete functionality to the cursor tool
+    -Added group sustain length setting (0 or max) function to selection panel
+    -Added group note fret setting function to selection panel
+    -Added toggles to control position resetting after preview and demo playing
+    -Added keyboard strumming on to the up and down keys.
+    -Added fps capping options to the menu
+
+    CHANGES
+    -Music now playing through Bass.Net audio library (the one that Osu! uses) instead of using Unity's standard. Allows for proper mp3 streaming and hopefully better audio quality.
+    -Rewrote gameplay strumming engine
+    -Changed metrnome sfx and added it to the custom resources list to be swapped out
+    -Adjusted camera angle to more closely mimic GH3
+    -Added alpha mask to background to create a fading effect at the end of the highway
+    -Disabled 2D mode
+    -Applied greyscale filter to all tool objects
+    -Objects now deselected and reselected after play
+    -Waveform position now affected by song offset
+    -UI adjustments
+
+    FIXES
+    -Fixed save threading issue on charts where audio was in the same location as the chart file
+    -Fixed random sustain creation bug when using right-mouse-hold left-click delete shortcut
+    -Fixed open note HOPO glow not showing through highlight boxes by raising the height of the model
+    -Fixed sustains sometimes not being drawn when jumping to a spot on the timeline where there are sustains are drawn but there are no notes on screen
+    -Fixed multiple save warning boxes popping up if the the program is quit multiple times
+    -Fixed set HOPO function in Selection panel not checking if notes can be forced or not
+    -Waveform drawing optimisation
+    -Added ellipsis cutoff to audio filenames
+    -Clap logic now linked to note hit animation. 
+    -Clap now cannot be used during gameplay.
+    -Fixed open note hit animation when using custom fret textures.
+    -Fixed selection panel not popping up after using group select in some cases.
+    -Fixed selection sustain maxing causing some sustain to not be capped properly.
+    -Fixed selection functions not recording that an edit has occurred for the save warning.
+    -Fixed massive memory usage issue
+    -Reworked controller code to provide more direct compatibility to Xbox 360 controllers
+
+v0.8.52- 21/03/2017
+    NEW FEATURES
+    -Added master volume control to the settings.
+    -Re-added waveform display and added dropdown to view seperate song, guitar and rhythm audio tracks. Loading asyncronously.
+    -Sustain dragging now working in keyboard mode.
+    -Added metronome (shortcut 'm').
+    -Added error screen to display errors to the user should they occur.
+    -Added current chart level being worked on next to the current song name to identify the current difficulty/instrument the user is currently working on.
+    -Added small save notification.
+
+    CHANGES
+    -Group selection panel can now appear when the cursor mode is selected.
+    -Adding a section over another section now just selects that section.
+    -Removed "g" shortcut restriction during play mode.
+    -Changed group move to only move when the user has clicked and is dragging an object that is part of a selection, removing the idea of click where there isn't a note. Allows for more accurate move snapping.
+
+    FIXES
+    -Fix with undo/redo functionality with open notes.
+    -Fixed right channel of .mp3 files not being loaded.
+    -Autoscroll now only occurs if the mouse has actually shifted position.
+    -Fixed bug when the flags of the last note of a chart wouldn't be saved.
+    -Timeline UI now scales according to resolution changes.
+    -Fixed Phase Shift/bad midi's from being deleted when loaded.
+    -Dropdown now fully deselected once an option is clicked.
+    -Fixed AudioClip memory leak
+    -Fixed eraser tool not working on everything except notes
+    -Fixed master volume not being saved between sessions
+    -Mp3s now being streamed after being converted to a temp wav file
+
+v0.8.02- 23/02/2017
+    NEW FEATURES
+    -Added group-move with the group-select and cursor tool.
+    -Can now import .mid files.
+    -Added cancel option to save warning.
+    -Added loading screens.
+    -Added whammy to gameplay mode. Idk why.
+    -Added hit animation
+    -Added basic keyboard controls for the main placement tools.
+    -Added ability to hold arrow keys to navigate the chart.
+    -Added section jumping with arrow key movement.
+    -Added lefty-flip option.
+    -Added icon.
+    -Added background panel to menus.
+    -Added help dropdown, complete with an "About", "Credits", "Contact", "FAQ" and "Manual" sections.
+    -Can now adjust snap with the left and right arrow keys alongside the q and w keys. 
+
+    CHANGES
+    -Huge system reconfiguration for optimisation to use object pooling and audio streaming. Provides near-instant load times in most cases.
+    -Multi-threaded song loading.
+    -Removed waveform visualiser.
+    -Reduced gameplay hit-window size.
+    -Copy/paste now doesn't overwrite clipboard if there isn't anything to copy.
+    -Reorganised panels.
+    -Changed panel font.
+
+    FIXES
+    -Fixed BPM value being changed when moving.
+    -Fixed sustains not being capped sometimes when placing new notes in charts that include open notes.
+    -Fixed tap and forced properties not being applied to the note tool in keyboard mode.
+
+v0.7.01- 31/01/2017
+    NEW FEATURES
+    -Added undo/redo feature to all main aspects of charting
+    -Added chart speed controls with automatic pitch-correction
+    -Added waveform visualizer to the global view
+    -Can now hold "shift" or "alt" when in the group select tool to add or remove from the current selection respectively
+    -Implemented custom resources for custom backgrounds, miss sounds etc
+    -Added fretboards (when using custom fretboards, otherwise it's just black)
+    -Added starpower indicators to the timeline (limited to 100 instances)
+    -Added shortcut on the "g" key to switch between view modes
+    -Can now click outside of menus to exit them
+    -Added double-click highlighting to all input fields
+    -Added a "Reset Aspect Ratio" option to the options drop-down to snap the window back to 16:9 
+    -Added basic arrow key chart navigation
+    -Added buttons to clear an audio file from the music/guitar/rhythm slots
+
+    CHANGES
+    -Dropdown menus now act more like traditional dropdown menus when hovering over and another dropdown is already selected
+    -Added guard to prevent note tool from placing notes when coming out of the delete mode
+    -Load time optimisation (eg. 8 Pillars of Mercy load time reduced by ~50%, most of the loading is now taken up by the audio file itself)
+    -Reduced section indicators from being infinite to 100 instances
+    -Background now scales to window size
+    -Increased minimum hyperspeed setting from a minimum of 1 to a minimum of 5
+    -When in global view mode, bpm lines drawn at 1/1 will be slightly extended
+    -When exiting from gameplay mode, timeline position will reset back to the point gameplay mode was enabled from
+
+    FIXES
+    -Fixed gameplay cutting off the first note
+    -Fixed objects were sometimes getting placed when going into menus such as the settings or calibration menu
+    -Fixed mousescroll not working until dropdown was completely selected
+    -Fixed mousescroll not working when mouse was over any UI, not just dropdowns
+    -Fixed rounding error in snapping calculations when using custom step settings
+    -Fixed crash when window unfocuses when playing.
+
+v0.6.1- 11/01/2017
+    -Fixed issue involving moving open notes or moving notes onto open notes.
+    -Can now quick-delete by holding right-click and pressing left-click over an object from the placement tools
+    -Added end cap to sp tails to prevent overlapping
+    -Added gameplay, activated by clicking the guitar symbol next to the play button (with fixed strumming engine)
+    -Added combo break SFX when a note streak above 10 breaks
+    -Added bot to play when previewing the chart the regular way
+    -Added SFX volume control
+    -Added stats that get displayed in gameplay mode
+    -Editor now shows total notes in the chart
+    -Optimised position calculation for extremely long charts
+    -Added audio calibration panel
+    -Moved settings into the options panel
+    -Added GH-style strikeline to improve visual feedback
+    -Added section tool icon (may change later)
+    -BPM tool now copies the value of the bpm before it, similar to Feedback
+    -Added section text next to timeline buttons
+
+    -Various bug fixes on group selection
+    -Fixed the application grabbing the wrong window handle if users clicked away from the window during startup
+    -Fixed pasting bug where it would delete notes just before the pasting area if they were close enough
+
+v0.5.1- 02/01/2017
+    -Fixed bug where group select tool would select objects before the start of the selection area if the collider overlapped vertically.
+    -Fixed bug where incorrect group-selection collision would sometimes occour with starpower objects
+    -Starpower tails are now capped if they overlap into another starpower
+    -Holding "alt" and mouse-scrolling now jumps between sections
+    -Added group select tool to force groups of selected notes or to copy/cut/paste chart objects (including notes and starpower)
+    -Added red arrow onto the side to represent pasting location from the group select tool
+    -Notes selected by the cursor tool or by the group select can now be directly deleted using the "delete" key
+    -Added guard to prevent forced note errors 
+    -Added custom stepping
+    -Note tool now resets when a different tool is selected
+    -Added offset editability to song properties panel
+
+    -Fixed bpm limit to 999 or 999.999
+    -Fixed bpm bug with some values involving 2-3 decimals places.
+    -Fixed song name saving bug
+    -Fixed bpm inspector not updating correctly
+    -Fixed sustain capping when moving notes with the cursor tool
+
+v0.4- 23/12/2016
+    -Implemented global view mode seperate from chart view mode to view global events (such as bpms, time signatures and sections)
+    -Added BPM tool and BPM editing functionality
+    -Added time signature tool and time signature editing functionality
+    -Added "New" option to create charts from scratch
+    -Added "Export Unforced" option to save a song in it's unforced state (N 7 0 notes will still be present in the data)
+    -Configured better window resizing (still somewhat WIP)
+    -Added 'unsaved changes' warning dialog box
+    -"Save As" dialog box now has suggested default filenames
+
+    -Added settings menu
+    -Added toggle to enable/disable extended sustain functionality
+    -Added sustain capping option
+    -Added volume controls
+
+    -Added 3D starpower note model
+    -Added 3D open note model
+    -Added tool icons (see attribution.txt for licensing information)
+
+    -Fixed multiple audio sources not saving correctly
+    -Fixed standard notes not automatically overwriting open notes
+
+v0.3.15- 12/12/2016
+    -Added basic 3D note model (big thank you to sandsky0 from the RGC Discord!)
+    -Added glow for HOPOs
+    -Added transparency for taps
+
+    -Holding shift and right-clicking now edits all the sustains of the notes connected in a chord
+    -Holding shift and left-clicking now allows the whole chord to be grabbed and moved around
+    -Upgraded Note tool to allow multi-note/chord placement (however users now have to press and hold "6" to access open note)
+    -Added transparent white highlight around objects to show what the user will click on
+    -Highlights appears over multiple objects to represent chord grabbing when pressing shift
+    -Added gold highlight around the object that is currently selected
+
+    -Asterisk now appears next to the window title to represent unsaved changes
+    -Added background image and resized panels
+    -Loading charts now gives priority to open notes if other notes are in the same position
+    -Rewrote mouse-clicking to give priority to the objects closer to the start of the chart (previously was random when colliders overlapped)
+    -Added keyboard shortcuts for the note properties panel's tap and forced toggle ("t" and "f" respectively)
+    -Added basic song properties menu for editing the title, author, etc
+    -Can now load song, guitar and rhythm music files
+    -Secondary beat lines now more accurately represent GH3's behaviour
+    -Added audio volume into configuration file
+    -Added autoscroll when the user is holding down a mouse button (for placing long strumming sections or editing sustains)
+
+    -Performance optimisation, fps improved based on how many objects are on screen (may not be noticeable because fps got tanked with all the lighting calculations now being performed with the new 3D models)
+    -Fixed material memory leak
+    -General bug fixes + slight load time optimisations
+
+v0.2- 26/11/2016
+    -Fixed compatibility with .mp3 files
+    -Added compatibility with charts that used non-standard resolutions
+    -Added GH-style 3D perspective
+    -Added starpower tool w/ editing fuctionality
+    -Added section tool w/ editing fuctionality
+    -Added access to "DoubleGuitar" charts
+    -Updated beat line sprites
+    -Updated sustain sprites
+    -Added secondary beat lines
+    -Updated "Save as" dialog box
+    -Added config file so system can save user preferences
+    -Added keyboard shortcuts for Play/Pause (spacebar), toggle clap (n), increase step (w), decrease step (q)
+    -General bug fixes

@@ -576,6 +576,7 @@ public class ChartEditor : MonoBehaviour {
         {
             Bass.BASS_ChannelSetPosition(handle, playPoint);
             Bass.BASS_ChannelPlay(handle, false);
+            //while (!(Bass.BASS_ChannelIsActive(handle) == BASSActive.BASS_ACTIVE_PLAYING));
         }
     }
 
@@ -1052,10 +1053,14 @@ public class ChartEditor : MonoBehaviour {
 
     public void Copy()
     {
+        const float DEFAULT_LEFT = -2;
+        const float DEFAULT_RIGHT = 2;
+
         var songObjectsCopy = new SongObject[currentSelectedObjects.Length];
         float? left = null, right = null;
         float position = 0;
 
+        // Scan through all the current objects to determine width of scanned area
         for (int i = 0; i < currentSelectedObjects.Length; ++i)
         {
             songObjectsCopy[i] = currentSelectedObjects[i].Clone();
@@ -1069,10 +1074,11 @@ public class ChartEditor : MonoBehaviour {
                 right = position;
         }
 
-        if (left == null)
-            left = 0;
-        if (right == null)
-            right = 0;
+        // Default collision size
+        if (left == null || left > DEFAULT_LEFT)
+            left = DEFAULT_LEFT;
+        if (right == null || right < DEFAULT_RIGHT)
+            right = DEFAULT_RIGHT;
 
         Vector2 bottomLeft = Vector2.zero;
         Vector2 upperRight = Vector2.zero;
