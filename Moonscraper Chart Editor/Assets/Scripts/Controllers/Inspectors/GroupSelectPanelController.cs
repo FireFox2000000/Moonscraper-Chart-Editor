@@ -159,28 +159,30 @@ public class GroupSelectPanelController : MonoBehaviour
     {
         List<ActionHistory.Action> actions = new List<ActionHistory.Action>();
 
-        foreach (ChartObject note in editor.currentSelectedObjects)
+        foreach (ChartObject chartObject in editor.currentSelectedObjects)
         {
-            if (note.classID == (int)SongObject.ID.Note)
+            if (chartObject.classID == (int)SongObject.ID.Note)
             {
+                Note note = chartObject as Note;
+
                 // Need to record the whole chord
                 Note unmodified = (Note)note.Clone();
-                Note[] chord = ((Note)note).GetChord();
+                Note[] chord = note.GetChord();
 
                 ActionHistory.Action[] deleteRecord = new ActionHistory.Action[chord.Length];
                 for (int i = 0; i < deleteRecord.Length; ++i)
                     deleteRecord[i] = new ActionHistory.Delete(chord[i]);
 
-                (note as Note).SetType(type);
+                note.SetType(type);
                 //SetNoteType(note as Note, type);
 
-                chord = ((Note)note).GetChord();
+                chord = note.GetChord();
 
                 ActionHistory.Action[] addRecord = new ActionHistory.Action[chord.Length];
                 for (int i = 0; i < addRecord.Length; ++i)
                     addRecord[i] = new ActionHistory.Add(chord[i]);
 
-                if (((Note)note).flags != unmodified.flags)
+                if (note.flags != unmodified.flags)
                 {
                     actions.AddRange(deleteRecord);
                     actions.AddRange(addRecord);

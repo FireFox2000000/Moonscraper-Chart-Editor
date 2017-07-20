@@ -559,5 +559,7 @@ public class Note : ChartObject
             default:
                 break;
         }
+
+        applyFlagsToChord();
     }
 }
