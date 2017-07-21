@@ -105,12 +105,29 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     public void UpdateBPMValue(string value)
     {
-        float prevValue = currentBPM.value;
+        uint prevValue = currentBPM.value;
         if (value != string.Empty && value[value.Length - 1] != '.' && currentBPM != null && float.Parse(value) != 0)
         {
-            float floatVal = float.Parse(value) * 1000;     // Store it in another variable due to weird parsing-casting bug at decimal points of 2 or so. Seems to fix it for whatever reason.
+            // Convert the float string to an int string
+            int zerosToAdd = 0;
+            if (value.Contains("."))
+            {
+                int index = value.IndexOf('.');
+                zerosToAdd = 7 - value.Length;      // string length can be a total of 7 characters; 6 digits and the "."
+                value = value.Remove(index, 1);
+            }
+            else
+            {
+                zerosToAdd = 3;     // Number of zeros after the decimal point
+            }
 
-            currentBPM.value = (uint)floatVal;
+            for (int i = 0; i < zerosToAdd; ++i)
+                value += "0";
+
+            // Actually parse the value now
+            uint parsedVal = uint.Parse(value);// * 1000;     // Store it in another variable due to weird parsing-casting bug at decimal points of 2 or so. Seems to fix it for whatever reason.
+
+            currentBPM.value = (uint)parsedVal;
             UpdateInputFieldRecord();
         }
         else if (value == ".")
