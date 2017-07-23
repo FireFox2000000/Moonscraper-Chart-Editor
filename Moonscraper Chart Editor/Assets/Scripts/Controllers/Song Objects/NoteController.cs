@@ -265,7 +265,7 @@ public class NoteController : SongObjectController {
             {
                 if (note.position > editor.maxPos)
                     gameObject.SetActive(false);
-                else
+                else if (Globals.viewMode == Globals.ViewMode.Chart)
                     UpdateSongObject();         // Always update the position in case of hyperspeed changes
             }
 

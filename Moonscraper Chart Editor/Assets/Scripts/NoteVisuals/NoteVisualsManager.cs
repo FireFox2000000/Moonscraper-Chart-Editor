@@ -28,7 +28,7 @@ public class NoteVisualsManager : MonoBehaviour {
         Note note = nCon.note;
         if (nCon.note != null)
         {
-            noteType = GetTypeWithViewChange(note);
+            noteType = note.type;
 
             // Star power?
             specialType = IsStarpower(note);

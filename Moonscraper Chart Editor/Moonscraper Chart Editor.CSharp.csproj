@@ -96,6 +96,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Fire\Fire.cs" />
+    <Compile Include="Assets\Fire\FireSyncronizer.cs" />
     <Compile Include="Assets\Scripts\ActionHistory.cs" />
     <Compile Include="Assets\Scripts\Advanced INI Parser\INIParser.cs" />
     <Compile Include="Assets\Scripts\Animations\CustomFretManager.cs" />
@@ -279,6 +281,7 @@
     <None Include="Assets\Custom Resources\Filenames.txt" />
     <None Include="Assets\Documentation\README.txt" />
     <None Include="Assets\Documentation\changelog.txt" />
+    <None Include="Assets\Fire\Fire.shader" />
     <None Include="Assets\Fonts\Roboto\Apache License.txt" />
     <None Include="Assets\Plugins\Bass Audio\Bass.Net license readme.txt" />
     <None Include="Assets\Plugins\Bass Audio\bass license readme.txt" />

@@ -1,3 +1,11 @@
+v0.9.801- 21/07/2017
+CHANGES
+-Changed default pasting width to overwrite a minimum of all 5 notes.
+
+FIXES
+-Fixed issue with typing 0's after the decimal point of bpms
+-Fixed note flags not being set to full chords in the selection tool.
+
 v0.9.8- 18/07/2017
     NEW FEATURES
     -Added global clipboard copy/pasting (can now copy/paste between multiple Moonscraper instances)
