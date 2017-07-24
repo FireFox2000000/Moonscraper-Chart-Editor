@@ -245,7 +245,7 @@ public class NoteController : SongObjectController {
     }
 
     public bool belowClapLine { get { return (transform.position.y <= editor.visibleStrikeline.position.y + (Song.TimeToWorldYPosition(Globals.audioCalibrationMS / 1000.0f) * Globals.gameSpeed)); } }
-    public bool belowStrikeLine { get { const float offset = 0.02f; return (transform.position.y <= editor.visibleStrikeline.position.y + (offset * Globals.hyperspeed / Globals.gameSpeed)); } }
+    public bool belowStrikeLine { get { float offset = Time.deltaTime; return (transform.position.y <= editor.visibleStrikeline.position.y + (offset * Globals.hyperspeed / Globals.gameSpeed)); } }
 
     protected override void UpdateCheck()
     {
@@ -279,7 +279,7 @@ public class NoteController : SongObjectController {
                 sustain.UpdateSustain();
 
             // Handle gameplay operation
-                if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+            if (Globals.applicationMode == Globals.ApplicationMode.Playing)
             {
                 if (Globals.bot && belowClapLine)
                 {
@@ -404,8 +404,6 @@ public class NoteController : SongObjectController {
         {
             float zPos = 0;
 
-            //if (Globals.viewMode == Globals.ViewMode.Song)
-                //zPos = 0.2f;
             // Position
             transform.position = new Vector3(CHART_CENTER_POS + noteToXPos(note), note.worldYPosition, zPos);
 
@@ -414,7 +412,8 @@ public class NoteController : SongObjectController {
             else
                 sustainRen.sortingOrder = 0;
 
-            //noteObjectSelector.UpdateSelectedGameObject();
+            if (noteObjectSelector.enabled)
+                noteObjectSelector.UpdateSelectedGameObject();
             noteObjectSelector.currentVisualsManager.UpdateVisuals();
         }
     }

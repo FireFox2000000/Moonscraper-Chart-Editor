@@ -121,12 +121,10 @@ public class Globals : MonoBehaviour {
     static string workingDirectory = string.Empty;
     public static string realWorkingDirectory { get { return workingDirectory; } }
 
-    Resolution initRes;
     Resolution largestRes;
 
     void Awake()
     {
-        initRes = Screen.currentResolution;
         largestRes = Screen.resolutions[0];
         foreach (Resolution res in Screen.resolutions)
         {

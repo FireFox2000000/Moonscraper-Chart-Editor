@@ -21,8 +21,9 @@ public class CameraLayering : MonoBehaviour {
             cam.cullingMask |= 1 << LayerMask.NameToLayer("ChartObject");
             cam.cullingMask &= ~(1 << LayerMask.NameToLayer("SongObject"));
 
-            if (mkGlow)
+            if (mkGlow && !(AssignCustomResources.noteSpritesAvaliable != null && AssignCustomResources.noteSpritesAvaliable == Skin.AssestsAvaliable.All))
             {
+                mkGlow.enabled = true;
                 //mkGlow.GlowLayer |= 1 << LayerMask.NameToLayer("ChartObject");
                 mkGlow.GlowLayer &= ~(1 << LayerMask.NameToLayer("SongObject"));
             }
@@ -35,8 +36,7 @@ public class CameraLayering : MonoBehaviour {
 
             if (mkGlow)
             {
-                mkGlow.GlowLayer |= 1 << LayerMask.NameToLayer("SongObject");
-                //mkGlow.GlowLayer &= ~(1 << LayerMask.NameToLayer("ChartObject"));
+                mkGlow.enabled = false;
             }
         }
     }

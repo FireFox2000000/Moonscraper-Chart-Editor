@@ -14,28 +14,36 @@ public class Fire : MonoBehaviour
 	public static float m_LastFrameTime;
 
     public static Camera cam;
+    public static Vector3 camPosition;
+    public static Matrix4x4 camlocalToWorldMatrix;
     Renderer ren;
 
     [SerializeField]
     NoteController nCon;
+
+    Transform t;
 
 	public void Start()
 	{
         ren = GetComponent<Renderer>();
 
         if (m_MatProps == null)
-            m_MatProps = new MaterialPropertyBlock();  
+            m_MatProps = new MaterialPropertyBlock();
+
+        m_MatProps.Clear();
+        m_MatProps.SetVector("_Scale", transform.localScale);
+        m_MatProps.SetFloat("_Brightness", m_Brightness);
+        m_MatProps.SetVector("_CameraLocalPos", new Vector3(0.0f, 3.9f, -19.7f));
+
+        t = transform;
     }
 
 	public void OnWillRenderObject()
 	{
         if (Globals.viewMode == Globals.ViewMode.Song)
         {
-            m_MatProps.Clear();
-            m_MatProps.SetVector("_CameraLocalPos", transform.InverseTransformPoint(cam.transform.position));
-            m_MatProps.SetMatrix("_CameraToLocal", transform.worldToLocalMatrix * cam.transform.localToWorldMatrix);
-            m_MatProps.SetVector("_Scale", transform.localScale);
-            m_MatProps.SetFloat("_Brightness", m_Brightness);
+            m_MatProps.SetVector("_CameraLocalPos", t.InverseTransformPoint(camPosition));
+            m_MatProps.SetMatrix("_CameraToLocal", t.worldToLocalMatrix * camlocalToWorldMatrix);
 
             ren.SetPropertyBlock(m_MatProps);
 
@@ -70,6 +78,5 @@ public class Fire : MonoBehaviour
             else
                 return FireSyncronizer.flameMaterials[2];
         }
-        return FireSyncronizer.flameMaterials[0];
     }
 }

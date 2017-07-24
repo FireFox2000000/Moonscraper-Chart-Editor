@@ -53,12 +53,13 @@ public abstract class MovementController : MonoBehaviour {
             float time = Time.time - (float)playStartTime;
             if (time < 0)
                 time = 0;
-            
 
             pos.y = (float)playStartPosition + Song.TimeToWorldYPosition(time * Globals.gameSpeed);
         }
         else
+        {
             pos.y += (speed * deltaTime);
+        }
 
         //float newPos = pos.y;
 

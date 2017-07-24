@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/Load Custom Resources.unity
+- path: Assets/Scenes/Main Editor.unity
   isLoaded: 1
   isActive: 1

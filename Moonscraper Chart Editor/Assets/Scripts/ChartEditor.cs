@@ -28,12 +28,6 @@ public class ChartEditor : MonoBehaviour {
     public GameObject sectionPrefab;
     public GameObject bpmPrefab;
     public GameObject tsPrefab;
-    [Header("Inspectors")]
-    public NotePropertiesPanelController noteInspector;
-    public SectionPropertiesPanelController sectionInspector;
-    public BPMPropertiesPanelController bpmInspector;
-    public TimesignaturePropertiesPanelController tsInspector;
-    public GameObject groupSelectInspector;
     [Header("Tool prefabs")]
     public GameObject ghostNote;
     public GameObject ghostStarpower;
@@ -42,16 +36,13 @@ public class ChartEditor : MonoBehaviour {
     public GameObject ghostTimeSignature;
     public GroupMove groupMove;
     [Header("Misc.")]
-    public ToolPanelController toolPanel;
+    public ToolPanelController toolPanel;       // Used to toggle view mode during undo action
     public Transform visibleStrikeline;
     public TimelineHandler timeHandler;
     public Transform camYMin;
     public Transform camYMax;
-    public Transform autoUpScroll;
     public Transform mouseYMaxLimit;
     public Transform mouseYMinLimit;
-    //public SongPropertiesPanelController songPropertiesCon; 
-    //public AudioSource clapSource;
     public LoadingScreenFader loadingScreen;
     public ErrorMessage errorMenu;
     public Indicators indicators;               // Cancels hit animations upon stopping playback
@@ -60,6 +51,8 @@ public class ChartEditor : MonoBehaviour {
     public Globals globals;
     [SerializeField]
     ClipboardObjectController clipboard;
+    [SerializeField]
+    GameplayManager gameplayManager;
 
     uint _minPos;
     uint _maxPos;
@@ -111,7 +104,6 @@ public class ChartEditor : MonoBehaviour {
     }
     public SongObject[] currentSelectedObjects = new SongObject[0];
 
-    GameObject currentPropertiesPanel = null;
     Vector3? stopResetPos = null;
 
     [DllImport("user32.dll", EntryPoint = "SetWindowText")]
@@ -152,11 +144,6 @@ public class ChartEditor : MonoBehaviour {
 
         _minPos = 0;
         _maxPos = 0;
-
-        noteInspector.gameObject.SetActive(false);
-        sectionInspector.gameObject.SetActive(false);
-        bpmInspector.gameObject.SetActive(false);
-        tsInspector.gameObject.SetActive(false);
 
         // Create grouping objects to make reading the inspector easier
         songObjectParent = new GameObject();
@@ -210,65 +197,6 @@ public class ChartEditor : MonoBehaviour {
         // Update object positions that supposed to be visible into the range of the camera
         _minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
         _maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
-
-        // Update the current properties panel     
-        if ((Toolpane.currentTool == Toolpane.Tools.GroupSelect || Toolpane.currentTool == Toolpane.Tools.Cursor) && currentSelectedObjects.Length > 1)
-        {       
-            if (!currentPropertiesPanel || currentPropertiesPanel != groupSelectInspector)
-            {
-                if (currentPropertiesPanel)
-                    currentPropertiesPanel.SetActive(false);
-                currentPropertiesPanel = groupSelectInspector;
-            }
-            if (currentPropertiesPanel && !currentPropertiesPanel.gameObject.activeSelf)
-                currentPropertiesPanel.gameObject.SetActive(true);
-        }
-
-        else if (currentSelectedObject != null)
-        {
-            GameObject previousPanel = currentPropertiesPanel;
-            
-            switch (currentSelectedObjects[0].classID)
-            {
-                case ((int)SongObject.ID.Note):
-                    noteInspector.currentNote = (Note)currentSelectedObject;
-                    currentPropertiesPanel = noteInspector.gameObject;
-                    break;
-                case ((int)SongObject.ID.Section):
-                    sectionInspector.currentSection = (Section)currentSelectedObject;
-                    currentPropertiesPanel = sectionInspector.gameObject;
-                    break;
-                case ((int)SongObject.ID.BPM):
-                    bpmInspector.currentBPM = (BPM)currentSelectedObject;
-                    currentPropertiesPanel = bpmInspector.gameObject;
-                    break;
-                case ((int)SongObject.ID.TimeSignature):
-                    tsInspector.currentTS = (TimeSignature)currentSelectedObject;
-                    currentPropertiesPanel = tsInspector.gameObject;
-                    break;
-                default:
-                    currentPropertiesPanel = null;
-                    currentSelectedObject = null;
-                    break;
-            }
-            
-            if (currentPropertiesPanel != previousPanel)
-            {
-                if (previousPanel)
-                {
-                    previousPanel.SetActive(false);
-                }
-            }
-
-            if (currentPropertiesPanel != null && !currentPropertiesPanel.gameObject.activeSelf)
-            {
-                currentPropertiesPanel.gameObject.SetActive(true);
-            }
-        }
-        else if (currentPropertiesPanel)
-        {
-            currentPropertiesPanel.gameObject.SetActive(false);
-        }
 
         // Set window text to represent if the current song has been saved or not
 #if !UNITY_EDITOR
@@ -701,6 +629,9 @@ public class ChartEditor : MonoBehaviour {
             currentSelectedObjects = selectedBeforePlay;
 
         selectedBeforePlay = new SongObject[0];
+
+        // Reset gameplay stats and window
+        gameplayManager.Reset();
 
         Globals.bot = true;
         stopResetPos = null;

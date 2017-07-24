@@ -73,11 +73,12 @@ public class GameplayManager : MonoBehaviour {
 
         uint startNS = noteStreak;
 
+        // Update the Xbox 360 state
 #if GAMEPAD
         previousGamepad = gamepad;
         gamepad = null;
 
-        for (int i = 0; i < 4; ++i)
+        for (int i = 0; i < 1; ++i)
         {
             GamePadState testState = GamePad.GetState((PlayerIndex)i);
             if (testState.IsConnected)
@@ -87,47 +88,18 @@ public class GameplayManager : MonoBehaviour {
             }
         }
 #endif
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+        // Configure collisions and choose to update the hit window or not
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
         {
             transform.localScale = new Vector3(transform.localScale.x, initSize, transform.localScale.z);
+            UpdateHitWindow();
         }
         else
         {
             transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
         }
-        
-        // Update the hit window
-        foreach (NoteController note in physicsWindow.ToArray())
-        {
-            if (EnterWindow(note))
-                physicsWindow.Remove(note);
-        }
-        
-        for (int i = 0; i < notesInWindow.Count; ++i)
-        {
-            NoteController noteToTest = notesInWindow[i];
-            NoteController next = null;
-            if ((i + 1) < notesInWindow.Count)
-                next = notesInWindow[i + 1];
 
-            if (ExitWindow(noteToTest, next) && !noteToTest.hit)
-            {
-                foreach (Note chordNote in noteToTest.note.GetChord())
-                {
-                    chordNote.controller.sustainBroken = true;
-
-                    if (noteStreak > 0)
-                        chordNote.controller.DeactivateNote();
-                }
-                
-                noteStreak = 0;
-#if MISS_DEBUG
-                Debug.Log("Missed note: " + noteToTest.note.fret_type + ", " + noteToTest.note.position);
-#endif
-                ++totalNotes;
-            }
-        }
-        
+        // Strum buffer stuff
         if (slopWindowTimer > SLOP_WINDOW_SIZE)
         {
             if (lastStrumTime == null || !(NoteInHitWindow(lastNoteHit, lastNoteHit.nextSeperateNote, (float)lastStrumTime) && lastNoteHit.type != Note.Note_Type.Strum))
@@ -166,21 +138,15 @@ public class GameplayManager : MonoBehaviour {
             else if (Input.GetButtonDown("Strum Down"))
                 strumValue = -1;
         }
-       // if (strumValue != 0)
-          //  Debug.Log(strumValue);
 #else
         strumValue = Input.GetAxisRaw("Strum");    
 #endif
 
-        // Finalise if a strum has occoured or not
+        // Finalise if a strum has occured or not
         if (strumValue != 0 && strumValue != previousStrumValue)
             strum = true;
         else
             strum = false;
-       
-        /*
-        if (Input.GetButtonDown("Strum Up") || Input.GetButtonDown("Strum Down"))
-            strum = true;*/
 
         // Gameplay
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
@@ -312,17 +278,12 @@ public class GameplayManager : MonoBehaviour {
             // Lost combo auditorial feedback
             if (startNS >= 10 && noteStreak < startNS && !audioSource.isPlaying)
             {
-                audioSource.Play();//PlayOneShot(comboBreak, Globals.sfxVolume);
-            }
-            
-        }
-        else if (Globals.applicationMode == Globals.ApplicationMode.Editor)
-        {
-            reset();
+                audioSource.Play();
+            }   
         }
         else
         {
-            reset();
+            physicsWindow.Clear();
         }
 
         previousStrumValue = strumValue;
@@ -332,11 +293,9 @@ public class GameplayManager : MonoBehaviour {
     {  
         return !(note.time < currentTime - BACKEND_HIT_WINDOW_TIME
             || (next != null && note.time <= currentTime - (next.time - note.time) / 2.0f));        // half the distance to the next note5
-
-        //return Mathf.Abs(note.time - currentTime) < (hitWindowTime * Globals.gameSpeed / 2.0f);
     }
 
-    void reset()
+    public void Reset()
     {
         noteStreakText.text = "0";
         percentHitText.text = "0%";
@@ -639,5 +598,40 @@ public class GameplayManager : MonoBehaviour {
             
 #endif
         return inputMask;
+    }
+
+    void UpdateHitWindow()
+    {
+        // Update the hit window
+        foreach (NoteController note in physicsWindow.ToArray())
+        {
+            if (EnterWindow(note))
+                physicsWindow.Remove(note);
+        }
+
+        for (int i = 0; i < notesInWindow.Count; ++i)
+        {
+            NoteController noteToTest = notesInWindow[i];
+            NoteController next = null;
+            if ((i + 1) < notesInWindow.Count)
+                next = notesInWindow[i + 1];
+
+            if (ExitWindow(noteToTest, next) && !noteToTest.hit)
+            {
+                foreach (Note chordNote in noteToTest.note.GetChord())
+                {
+                    chordNote.controller.sustainBroken = true;
+
+                    if (noteStreak > 0)
+                        chordNote.controller.DeactivateNote();
+                }
+
+                noteStreak = 0;
+#if MISS_DEBUG
+                Debug.Log("Missed note: " + noteToTest.note.fret_type + ", " + noteToTest.note.position);
+#endif
+                ++totalNotes;
+            }
+        }
     }
 }

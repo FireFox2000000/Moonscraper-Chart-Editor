@@ -37,13 +37,9 @@ public class Note2D3DSelector : MonoBehaviour {
             }
         }
     }
-	
-	// Update is called once per frame
-	public void Update () {
 
-        if (!enabled)
-            return;
-
+    public void UpdateSelectedGameObject()
+    {
         if (Globals.viewMode == Globals.ViewMode.Chart)
         {
             Texture2D textureInSkin = null;
@@ -92,10 +88,10 @@ public class Note2D3DSelector : MonoBehaviour {
                 note3D.gameObject.SetActive(true);
             }
         }
-        else
+        /*else
         {
             note2D.gameObject.SetActive(false);
             note3D.gameObject.SetActive(false);
-        }
+        }*/
     }
 }

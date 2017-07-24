@@ -64,9 +64,12 @@ public class FireSyncronizer : MonoBehaviour {
 
         if (!Fire.cam)
         {
-            Fire.cam = Camera.main;
+            Fire.cam = Camera.main;         
             Fire.cam.depthTextureMode |= DepthTextureMode.Depth;
         }
+
+        Fire.camPosition = Fire.cam.transform.position;
+        Fire.camlocalToWorldMatrix = Fire.cam.transform.localToWorldMatrix;
 
         if (Application.isPlaying)
         {

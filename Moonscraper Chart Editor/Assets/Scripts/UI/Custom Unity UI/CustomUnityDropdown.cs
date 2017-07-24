@@ -419,14 +419,14 @@ namespace UnityEngine.UI
             // but it works as inversion regardless of initial setup.
             Vector3[] corners = new Vector3[4];
             dropdownRectTransform.GetWorldCorners(corners);
-            bool outside = false;
+            //bool outside = false;
             RectTransform rootCanvasRectTransform = rootCanvas.transform as RectTransform;
             for (int i = 0; i < 4; i++)
             {
                 Vector3 corner = rootCanvasRectTransform.InverseTransformPoint(corners[i]);
                 if (!rootCanvasRectTransform.rect.Contains(corner))
                 {
-                    outside = true;
+                    //outside = true;
                     break;
                 }
             }/*

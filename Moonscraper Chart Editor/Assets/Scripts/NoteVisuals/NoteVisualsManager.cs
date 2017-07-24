@@ -23,7 +23,6 @@ public class NoteVisualsManager : MonoBehaviour {
         Animate();
     }
 
-    // Update is called once per frame
     public virtual void UpdateVisuals() {
         Note note = nCon.note;
         if (nCon.note != null)
