@@ -16,16 +16,19 @@ public class Fire : MonoBehaviour
     public static Camera cam;
     Renderer ren;
 
+    [SerializeField]
+    NoteController nCon;
+
 	public void Start()
 	{
         ren = GetComponent<Renderer>();
+
+        if (m_MatProps == null)
+            m_MatProps = new MaterialPropertyBlock();  
     }
 
 	public void OnWillRenderObject()
 	{
-		if (m_MatProps == null)
-			m_MatProps = new MaterialPropertyBlock();
-
         if (Globals.viewMode == Globals.ViewMode.Song)
         {
             m_MatProps.Clear();
@@ -36,9 +39,9 @@ public class Fire : MonoBehaviour
 
             ren.SetPropertyBlock(m_MatProps);
 
-            if (Application.isPlaying)
+            if (Application.isPlaying && nCon.note != null)
             {
-                ren.sharedMaterial = MaterialByPosition();
+                ren.sharedMaterial = FireSyncronizer.flameMaterials[(int)nCon.note.fret_type]; //MaterialByPosition();
             }
         }
 	}

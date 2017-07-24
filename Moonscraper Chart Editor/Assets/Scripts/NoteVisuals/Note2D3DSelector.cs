@@ -30,7 +30,7 @@ public class Note2D3DSelector : MonoBehaviour {
                 case (Skin.AssestsAvaliable.None):
                     note2D.gameObject.SetActive(false);
                     note3D.gameObject.SetActive(true);
-                    enabled = false;
+                    //enabled = false;
                     break;
                 default:
                     break;
@@ -39,7 +39,8 @@ public class Note2D3DSelector : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	public void UpdateSelectedGameObject () {
+	public void Update () {
+
         if (!enabled)
             return;
 
@@ -96,7 +97,5 @@ public class Note2D3DSelector : MonoBehaviour {
             note2D.gameObject.SetActive(false);
             note3D.gameObject.SetActive(false);
         }
-
-        
     }
 }

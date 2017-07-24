@@ -14,8 +14,9 @@ public class FireSyncronizer : MonoBehaviour {
 
     public Material flameMat;
     public static Material[] flameMaterials;
+    public Color orangeColor;
 
-    void Start()
+    void Awake()
     {
         if (Application.isPlaying)
         {
@@ -26,6 +27,32 @@ public class FireSyncronizer : MonoBehaviour {
 
                 if (customSkin.sustain_mats[i])
                     flameMaterials[i].color = customSkin.sustain_mats[i].color;
+                else
+                {
+                    switch (i)
+                    {
+                        case (0):
+                            flameMaterials[i].color = Color.green;
+                            break;
+                        case (1):
+                            flameMaterials[i].color = Color.red;
+                            break;
+                        case (2):
+                            flameMaterials[i].color = Color.yellow;
+                            break;
+                        case (3):
+                            flameMaterials[i].color = Color.blue;
+                            break;
+                        case (4):
+                            flameMaterials[i].color = orangeColor;
+                            break;
+                        case (5):
+                            flameMaterials[i].color = Color.magenta;
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
         }
     }

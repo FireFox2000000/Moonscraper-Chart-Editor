@@ -404,8 +404,8 @@ public class NoteController : SongObjectController {
         {
             float zPos = 0;
 
-            if (Globals.viewMode == Globals.ViewMode.Song)
-                zPos = 0.2f;
+            //if (Globals.viewMode == Globals.ViewMode.Song)
+                //zPos = 0.2f;
             // Position
             transform.position = new Vector3(CHART_CENTER_POS + noteToXPos(note), note.worldYPosition, zPos);
 
@@ -414,7 +414,7 @@ public class NoteController : SongObjectController {
             else
                 sustainRen.sortingOrder = 0;
 
-            noteObjectSelector.UpdateSelectedGameObject();
+            //noteObjectSelector.UpdateSelectedGameObject();
             noteObjectSelector.currentVisualsManager.UpdateVisuals();
         }
     }
