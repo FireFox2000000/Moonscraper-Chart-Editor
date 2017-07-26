@@ -25,11 +25,13 @@ public class Globals : MonoBehaviour {
     [SerializeField]
     GUIStyle hintMouseOverStyle;
 
+    Rect toolScreenArea;
+
     public bool InToolArea
     {
         get
         {
-            Rect toolScreenArea = area.GetScreenCorners();
+            //Rect toolScreenArea = area.GetScreenCorners();
 
             if (Input.mousePosition.x < toolScreenArea.xMin ||
                     Input.mousePosition.x > toolScreenArea.xMax ||
@@ -122,6 +124,14 @@ public class Globals : MonoBehaviour {
     public static string realWorkingDirectory { get { return workingDirectory; } }
 
     Resolution largestRes;
+    static Vector2 prevScreenSize;
+    public static bool HasScreenResized
+    {
+        get
+        {
+            return (prevScreenSize.x != Screen.width || prevScreenSize.y != Screen.height);
+        }
+    }
 
     void Awake()
     {
@@ -190,6 +200,9 @@ public class Globals : MonoBehaviour {
 
     void Start()
     {
+        toolScreenArea = area.GetScreenCorners();
+        prevScreenSize.x = Screen.width;
+        prevScreenSize.y = Screen.height;
         StartCoroutine(AutosaveCheck());
     }
 
@@ -213,7 +226,7 @@ public class Globals : MonoBehaviour {
 #endif
         }
     }
-
+    
     void Update()
     {
         IsInDropDown = _IsInDropDown;
@@ -224,6 +237,21 @@ public class Globals : MonoBehaviour {
         ModifierControls();
 
         snapLockWarning.gameObject.SetActive(lockToStrikeline);
+
+        if (HasScreenResized)
+            OnScreenResize();
+        //Debug.Log(area.GetScreenCorners());
+    }
+
+    void LateUpdate()
+    {
+        prevScreenSize.x = Screen.width;
+        prevScreenSize.y = Screen.height;
+    }
+
+    public void OnScreenResize()
+    {
+        toolScreenArea = area.GetScreenCorners();
     }
 
     public static bool modifierInputActive { get { return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand); } }

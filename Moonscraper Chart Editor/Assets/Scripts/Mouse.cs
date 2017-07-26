@@ -21,7 +21,7 @@ public class Mouse : MonoBehaviour {
     }
 
     public static bool cancel = false;
-    public static List<RaycastResult> currentRaycastFromPointer = new List<RaycastResult>();
+    public static RaycastResult? currentRaycastFromPointer;// = new List<RaycastResult>();
     public static GameObject currentSelectableUnderMouse;
 
     Vector2 initMouseDragPos = Vector2.zero;
@@ -31,20 +31,22 @@ public class Mouse : MonoBehaviour {
         currentRaycastFromPointer = RaycastFromPointer();
         currentSelectableUnderMouse = GetSelectableObjectUnderMouse();
 
-        Vector2 viewportPos = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+        Camera mainCamera = camera3D;
+
+        Vector2 viewportPos = mainCamera.ScreenToViewportPoint(Input.mousePosition);
 
         if (viewportPos.x < 0 || viewportPos.x > 1 || viewportPos.y < 0 || viewportPos.y > 1)
             world2DPosition = null;
         else
         {
             Vector3 screenPos = Input.mousePosition;
-            float maxY = Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y;
+            float maxY = mainCamera.WorldToScreenPoint(editor.mouseYMaxLimit.position).y;
 
             // Calculate world2DPosition
             if (Input.mousePosition.y > maxY)
                 screenPos.y = maxY;
 
-            Ray ray = Camera.main.ScreenPointToRay(screenPos);
+            Ray ray = mainCamera.ScreenPointToRay(screenPos);
             int layerMask = 1 << LayerMask.NameToLayer("Ignore Raycast");
             RaycastHit[] planeHit;
             planeHit = Physics.RaycastAll(ray, Mathf.Infinity, layerMask);
@@ -212,8 +214,7 @@ public class Mouse : MonoBehaviour {
                 mask = 1 << LayerMask.NameToLayer("SongObject");
 
             RaycastHit[] hits3d = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition), Mathf.Infinity, mask); //Physics.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0, mask);
-            RaycastHit2D[] hits = Physics2D.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0, mask);
-
+            
             GameObject[] hitGameObjects;
 
             if (hits3d.Length > 0)
@@ -224,27 +225,31 @@ public class Mouse : MonoBehaviour {
 
                 GameObject[] sortedObjects = raySortLowestY(hitGameObjects);
 
-                foreach(GameObject selectedObject in sortedObjects)
-                {
-                    if (selectedObject.GetComponent<SelectableClick>())
-                        return selectedObject;
-                }
-            }
-            else if (hits.Length > 0)
-            {
-                hitGameObjects = new GameObject[hits.Length];
-
-                for (int i = 0; i < hits.Length; ++i)
-                    hitGameObjects[i] = hits[i].collider.gameObject;
-
-                GameObject[] sortedObjects = raySortLowestY(hitGameObjects);
-
                 foreach (GameObject selectedObject in sortedObjects)
                 {
                     if (selectedObject.GetComponent<SelectableClick>())
                         return selectedObject;
                 }
-            }
+            }/*
+            else
+            {
+                RaycastHit2D[] hits = Physics2D.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0, mask);
+                if (hits.Length > 0)
+                {
+                    hitGameObjects = new GameObject[hits.Length];
+
+                    for (int i = 0; i < hits.Length; ++i)
+                        hitGameObjects[i] = hits[i].collider.gameObject;
+
+                    GameObject[] sortedObjects = raySortLowestY(hitGameObjects);
+
+                    foreach (GameObject selectedObject in sortedObjects)
+                    {
+                        if (selectedObject.GetComponent<SelectableClick>())
+                            return selectedObject;
+                    }
+                }
+            }*/
         }
 
         return null;
@@ -259,15 +264,15 @@ public class Mouse : MonoBehaviour {
         List<RaycastResult> raycastResults = new List<RaycastResult>();
         EventSystem.current.RaycastAll(pointer, raycastResults);*/
 
-        if (RaycastFromPointer().Count > 0)
+        if (RaycastFromPointer() != null)
             return true;
 
         return false;
     }
 
-    static List<RaycastResult> RaycastFromPointer()
+    static RaycastResult? RaycastFromPointer()
     {
-        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        //List<RaycastResult> raycastResults = new List<RaycastResult>();
 
         // Gives some kind of dictionary error when first played. Wrapping in try-catch to shut it up.
         try
@@ -279,30 +284,31 @@ public class Mouse : MonoBehaviour {
                 RaycastResult result = standaloneInputModule.GetPointerData().pointerCurrentRaycast;
 
                 if (result.gameObject != null)
-                    raycastResults.Add(standaloneInputModule.GetPointerData().pointerCurrentRaycast);
+                    return result;
             }
         }
         catch
         {
         }
 
-        return raycastResults;
+        return null;//raycastResults;
     }
 
     public static GameObject GetUIRaycastableUnderPointer()
     {
-        if (currentRaycastFromPointer.Count > 0)
-            return currentRaycastFromPointer[0].gameObject;
+        if (currentRaycastFromPointer != null)
+            return ((RaycastResult)currentRaycastFromPointer).gameObject;
 
         return null;
     }
 
     public static T GetUIUnderPointer<T>() where T : Selectable
     {
-        if (currentRaycastFromPointer.Count > 0)
+        if (currentRaycastFromPointer != null)
         {
-            foreach (RaycastResult raycastResult in currentRaycastFromPointer)
-            {
+            RaycastResult raycastResult = (RaycastResult)currentRaycastFromPointer;
+            //foreach (RaycastResult raycastResult in currentRaycastFromPointer)
+           // {
                 GameObject hoveredObj = raycastResult.gameObject;
 
                 if (hoveredObj && hoveredObj.GetComponent<T>())
@@ -313,7 +319,7 @@ public class Mouse : MonoBehaviour {
                 {
                     return hoveredObj.transform.parent.gameObject.GetComponent<T>();
                 }
-            }
+            //}
         }
 
         return null;

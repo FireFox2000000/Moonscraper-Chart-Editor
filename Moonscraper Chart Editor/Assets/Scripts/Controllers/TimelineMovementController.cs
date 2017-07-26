@@ -26,7 +26,6 @@ public class TimelineMovementController : MovementController
     new void Start () {
         base.Start();
         timeline.handlePos = 0;
-        prevScreenSize = new Vector2(Screen.width, Screen.height);
         UpdatePosBasedTimelineHandle();
     }
 
@@ -68,7 +67,7 @@ public class TimelineMovementController : MovementController
 
     Vector3 prevPos = Vector3.zero;
     Vector3 lastMouseDownPos = Vector3.zero;
-    Vector2 prevScreenSize;
+
     // Update is called once per frame
     void LateUpdate () {
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
@@ -87,7 +86,7 @@ public class TimelineMovementController : MovementController
                 scrollDelta = 0;
 
             // Position changes scroll bar value
-            if (scrollDelta != 0 || transform.position != prevPos || prevScreenSize != new Vector2(Screen.width, Screen.height))
+            if (scrollDelta != 0 || transform.position != prevPos || Globals.HasScreenResized)
             {
                 if (Input.GetKey(KeyCode.LeftAlt) && editor.currentSong.sections.Length > 0)
                 {
@@ -103,7 +102,7 @@ public class TimelineMovementController : MovementController
                 if (transform.position.y < initPos.y)
                     transform.position = initPos;
 
-                if (prevScreenSize != new Vector2(Screen.width, Screen.height))
+                if (Globals.HasScreenResized)
                     StartCoroutine(resolutionChangePosHold());
 
                 UpdateTimelineHandleBasedPos();
@@ -196,7 +195,6 @@ public class TimelineMovementController : MovementController
             lastUpdatedRealTime = Time.realtimeSinceStartup;
 
         prevPos = transform.position;
-        prevScreenSize = new Vector2(Screen.width, Screen.height);
     }
     /*
     void FixedUpdate()

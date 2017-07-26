@@ -6,15 +6,16 @@ using System.Runtime.Serialization.Formatters.Binary;
 static class Utility {
     public const int NOTFOUND = -1;
     static System.Text.StringBuilder timeFormatter = new System.Text.StringBuilder(32, 32);
+    static readonly char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
     public static string timeConvertion(float time)
     {
         timeFormatter.Remove(0, timeFormatter.Length);
         TimeSpan levelTime = TimeSpan.FromSeconds(time);
-
+/*
         string format = string.Empty;
         if (time < 0)
-            format += "-";
+            format += "-";*/
 
         int hours = Mathf.Abs(levelTime.Hours),
             minutes = Mathf.Abs(levelTime.Minutes),
@@ -23,9 +24,11 @@ static class Utility {
 
         if (levelTime.Hours > 0)
         {
+            AppendDigit(timeFormatter, hours);
+            /*
             if (hours < 10)
-                timeFormatter.Append(0);
-            timeFormatter.Append(hours);
+                timeFormatter.Append('0');
+            timeFormatter.Append(hours);*/
             timeFormatter.Append(':');
         }
         /*
@@ -47,21 +50,28 @@ static class Utility {
                 Mathf.Abs((int)((time - (int)time) * 100)));
         }*/
 
-        if (minutes < 10)
-            timeFormatter.Append(0);
-        timeFormatter.Append(minutes);
+        // Append the first digit
+        AppendDigit(timeFormatter, minutes);
         timeFormatter.Append(':');
 
-        if (seconds < 10)
-            timeFormatter.Append(0);
-        timeFormatter.Append(seconds);
+        AppendDigit(timeFormatter, seconds);
         timeFormatter.Append('.');
 
-        if (milliseconds < 10)
-            timeFormatter.Append(0);
-        timeFormatter.Append(milliseconds);
+        AppendDigit(timeFormatter, milliseconds);
 
         return timeFormatter.ToString();
+    }
+
+    static void AppendDigit(System.Text.StringBuilder timeFormatter, int digit)
+    {
+        // Append the first digit
+        int firstDigit = digit / 10;
+        if (digit < 10)
+            timeFormatter.Append('0');
+        else
+            timeFormatter.Append(numbers[firstDigit]);
+        // Append second digit
+        timeFormatter.Append(numbers[digit - firstDigit * 10]);
     }
 
     static int millisecondRounding(int value, int roundPlaces)

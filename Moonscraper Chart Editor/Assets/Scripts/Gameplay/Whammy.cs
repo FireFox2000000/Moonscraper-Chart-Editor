@@ -16,18 +16,21 @@ public class Whammy : MonoBehaviour {
     [HideInInspector]
     public bool canWhammy = false;
 
+    AnimationCurve lineCurve;
+    Keyframe[] defaultKeys;
+
     // Use this for initialization
     void Start () {
         lineRenderer = GetComponent<LineRenderer>();
         pointsController = GetComponent<SetLineRendererPoints>();
+        lineCurve = lineRenderer.widthCurve;
+        defaultKeys = new Keyframe[] { new Keyframe(0, 1) };
     }
     
 	// Update is called once per frame
 	void Update () {
         if (transform.localScale.y > 0)
         {
-            AnimationCurve lineCurve = lineRenderer.widthCurve;
-
             if (Globals.applicationMode == Globals.ApplicationMode.Playing && transform.localScale.y > 0 && canWhammy)
             {
                 pointsController.UpdateLineRendererPoints();
@@ -40,7 +43,7 @@ public class Whammy : MonoBehaviour {
             }
             else
             {
-                lineCurve.keys = new Keyframe[] { new Keyframe(0, 1) };
+                lineCurve.keys = defaultKeys;
                 pointsController.SetPositionsMinimum();
             }
 
@@ -53,15 +56,7 @@ public class Whammy : MonoBehaviour {
         // Remove all whammy animation and reset
         if (lineRenderer)
         {
-            AnimationCurve lineCurve = lineRenderer.widthCurve;
-
-            for (int i = 0; i < lineCurve.keys.Length; ++i)
-            {
-                if (i <= 0)
-                    lineCurve.keys[i].value = 1;
-                else
-                    lineCurve.RemoveKey(i);
-            }
+            lineCurve.keys = defaultKeys;
         }
     }
 
