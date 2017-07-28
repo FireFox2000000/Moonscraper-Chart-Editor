@@ -8,6 +8,7 @@ public class Settings : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+        // Used in build
 #if UNITY_EDITOR
         productName = UnityEditor.PlayerSettings.productName;
 #endif

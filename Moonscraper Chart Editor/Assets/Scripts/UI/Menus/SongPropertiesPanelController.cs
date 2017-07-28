@@ -291,7 +291,7 @@ public class SongPropertiesPanelController : DisplayMenu {
                 editor.currentSong.rhythmStream = null;
 #else
                 }
-                editor.currentSong.bassGuitarStream = 0;
+                editor.currentSong.bassRhythmStream = 0;
 #endif
                 break;
             default:
