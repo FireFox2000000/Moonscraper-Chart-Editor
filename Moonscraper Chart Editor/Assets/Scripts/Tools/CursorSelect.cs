@@ -63,14 +63,14 @@ public class CursorSelect : ToolObject
                     editor.currentSelectedObject = null;
                 }
 
-                if (Globals.viewMode == Globals.ViewMode.Chart && Mouse.world2DPosition != null && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer())
+                if (/*Globals.viewMode == Globals.ViewMode.Chart &&*/ Mouse.world2DPosition != null && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer())
                     InitGroupSelect();
             }
             else if (Input.GetMouseButtonUp(0))
                 clickedSelectableObject = null;
 
             // Dragging mouse for group select
-            if (Globals.viewMode == Globals.ViewMode.Chart && userDraggingSelectArea &&
+            if (/*Globals.viewMode == Globals.ViewMode.Chart &&*/ userDraggingSelectArea &&
                 Input.GetMouseButton(0) /*&& editor.currentSelectedObjects.Length == 0*/ &&
                 !clickedSelectableObject && !mouseDownOverUI)
             {
@@ -236,30 +236,55 @@ public class CursorSelect : ToolObject
         endWorld2DChartPos = 0;
     }
 
-    void AddToSelection(IEnumerable<ChartObject> chartObjects)
+    void AddToSelection(IEnumerable<SongObject> chartObjects)
     {
-        editor.AddToSelectedObjects((IEnumerable < SongObject > )chartObjects);
+        editor.AddToSelectedObjects((IEnumerable <SongObject>)chartObjects);
     }
 
-    void RemoveFromSelection(IEnumerable<ChartObject> chartObjects)
+    void RemoveFromSelection(IEnumerable<SongObject> chartObjects)
     {
         editor.RemoveFromSelectedObjects((IEnumerable<SongObject>)chartObjects);
     }
 
-    ChartObject[] ScanArea(Vector2 cornerA, Vector2 cornerB, uint minLimitInclusive, uint maxLimitNonInclusive)
+    SongObject[] ScanArea(Vector2 cornerA, Vector2 cornerB, uint minLimitInclusive, uint maxLimitNonInclusive)
     {
         Clipboard.SelectionArea area = new Clipboard.SelectionArea(cornerA, cornerB, minLimitInclusive, maxLimitNonInclusive);
         Rect areaRect = area.GetRect(editor.currentSong);
 
-        List<ChartObject> chartObjectsList = new List<ChartObject>();
-        int index, length;
-        SongObject.GetRange(editor.currentChart.chartObjects, minLimitInclusive, maxLimitNonInclusive, out index, out length);
-
-        for (int i = index; i < index + length; ++i)
+        List<SongObject> chartObjectsList = new List<SongObject>();
+        if (Globals.viewMode == Globals.ViewMode.Chart)
         {
-            ChartObject chartObject = editor.currentChart.chartObjects[i];
-            if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), areaRect))
-                chartObjectsList.Add(chartObject);
+            int index, length;
+            SongObject.GetRange(editor.currentChart.chartObjects, minLimitInclusive, maxLimitNonInclusive, out index, out length);
+
+            for (int i = index; i < index + length; ++i)
+            {
+                ChartObject chartObject = editor.currentChart.chartObjects[i];
+                if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), areaRect))
+                    chartObjectsList.Add(chartObject);
+            }
+        }
+        else
+        {
+            // Gather synctrack and sections
+            int index, length;
+            SongObject.GetRange(editor.currentSong.syncTrack, minLimitInclusive, maxLimitNonInclusive, out index, out length);
+
+            for (int i = index; i < index + length; ++i)
+            {
+                SongObject chartObject = editor.currentSong.syncTrack[i];
+                if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), areaRect))
+                    chartObjectsList.Add(chartObject);
+            }
+
+            SongObject.GetRange(editor.currentSong.sections, minLimitInclusive, maxLimitNonInclusive, out index, out length);
+
+            for (int i = index; i < index + length; ++i)
+            {
+                SongObject chartObject = editor.currentSong.sections[i];
+                if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), areaRect))
+                    chartObjectsList.Add(chartObject);
+            }
         }
 
         return chartObjectsList.ToArray();

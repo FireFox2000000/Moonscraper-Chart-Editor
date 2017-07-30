@@ -12,6 +12,8 @@ public class ClipboardObjectController : Snapable {
     public GroupSelect groupSelectTool;
     public Transform strikeline;
     public static Clipboard clipboard = new Clipboard();
+    [SerializeField]
+    ToolPanelController viewModeController;
     Renderer ren;
 
     uint pastePos = 0;
@@ -105,7 +107,9 @@ public class ClipboardObjectController : Snapable {
             List<ActionHistory.Action> record = new List<ActionHistory.Action>();
             Rect collisionRect = clipboard.GetCollisionRect(chartLocationToPaste, editor.currentSong);
             uint colliderChartDistance = clipboard.areaChartPosMax - clipboard.areaChartPosMin;
-            Debug.Log(collisionRect);
+
+            viewModeController.ToggleSongViewMode(!clipboard.data[0].GetType().IsSubclassOf(typeof(ChartObject)));
+
             // Overwrite any objects in the clipboard space
             if (clipboard.data[0].GetType().IsSubclassOf(typeof(ChartObject)))
             {

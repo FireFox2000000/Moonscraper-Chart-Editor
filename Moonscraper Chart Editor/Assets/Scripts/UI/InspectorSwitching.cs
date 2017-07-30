@@ -41,6 +41,11 @@ public class InspectorSwitching : MonoBehaviour {
             }
             if (currentPropertiesPanel && !currentPropertiesPanel.gameObject.activeSelf)
                 currentPropertiesPanel.gameObject.SetActive(true);
+
+            if (currentPropertiesPanel == groupSelectInspector)
+            {
+                groupSelectInspector.SetActive(Globals.viewMode == Globals.ViewMode.Chart);
+            }
         }
 
         else if (editor.currentSelectedObject != null)
