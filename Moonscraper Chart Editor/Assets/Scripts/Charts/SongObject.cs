@@ -138,6 +138,12 @@ public abstract class SongObject
         return base.GetHashCode();
     }
 
+    public static uint TickScaling(uint tick, float originalResolution, float outputResolution)
+    {
+        tick = (uint)Mathf.Round(tick * outputResolution / originalResolution);
+        return tick;
+    }
+
     /// <summary>
     /// Searches through the array and finds the array position of item most similar to the one provided.
     /// </summary>

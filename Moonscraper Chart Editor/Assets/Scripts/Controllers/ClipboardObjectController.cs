@@ -56,6 +56,7 @@ public class ClipboardObjectController : Snapable {
     {
         clipboard = new Clipboard();
         clipboard.data = data;
+        clipboard.resolution = song.resolution;
         clipboard.SetCollisionArea(area, song);
         System.Windows.Forms.Clipboard.Clear();     // Clear the clipboard to mimic the real clipboard. For some reason putting custom objects on the clipboard with this dll doesn't work.
 
@@ -106,7 +107,7 @@ public class ClipboardObjectController : Snapable {
         {
             List<ActionHistory.Action> record = new List<ActionHistory.Action>();
             Rect collisionRect = clipboard.GetCollisionRect(chartLocationToPaste, editor.currentSong);
-            uint colliderChartDistance = clipboard.areaChartPosMax - clipboard.areaChartPosMin;
+            uint colliderChartDistance = SongObject.TickScaling(clipboard.areaChartPosMax - clipboard.areaChartPosMin, clipboard.resolution, editor.currentSong.resolution);
 
             viewModeController.ToggleSongViewMode(!clipboard.data[0].GetType().IsSubclassOf(typeof(ChartObject)));
 
@@ -142,7 +143,9 @@ public class ClipboardObjectController : Snapable {
             {
                 SongObject objectToAdd = clipboardSongObject.Clone();
 
-                objectToAdd.position = chartLocationToPaste + clipboardSongObject.position - clipboard.areaChartPosMin;
+                objectToAdd.position = chartLocationToPaste + 
+                    SongObject.TickScaling(clipboardSongObject.position, clipboard.resolution, editor.currentSong.resolution) -
+                    SongObject.TickScaling(clipboard.areaChartPosMin, clipboard.resolution, editor.currentSong.resolution);
 
                 if (objectToAdd.GetType() == typeof(Note))
                 {
