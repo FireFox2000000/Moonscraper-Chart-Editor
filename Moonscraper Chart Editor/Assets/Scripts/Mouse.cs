@@ -230,9 +230,10 @@ public class Mouse : MonoBehaviour {
                     if (selectedObject.GetComponent<SelectableClick>())
                         return selectedObject;
                 }
-            }/*
+            }
             else
             {
+                // Aim to hit sustain tails
                 RaycastHit2D[] hits = Physics2D.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0, mask);
                 if (hits.Length > 0)
                 {
@@ -249,7 +250,7 @@ public class Mouse : MonoBehaviour {
                             return selectedObject;
                     }
                 }
-            }*/
+            }
         }
 
         return null;
