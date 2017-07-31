@@ -60,7 +60,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         scaledHalfHeight = halfHeight * transform.lossyScale.y;
 
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
-
+/*
         sectionIndicatorParent = new GameObject("Section Indicators");
         sectionIndicatorParent.transform.SetParent(this.transform.parent);
         sectionIndicatorParent.transform.localPosition = Vector3.zero;
@@ -97,7 +97,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
             starpowerIndicatorPool[i] = spIndicator.GetComponent<StarpowerGUIController>();
             starpowerIndicatorPool[i].handle = this;
             starpowerIndicatorPool[i].gameObject.SetActive(false);
-        }
+        }*/
     }
 
     void Start()

@@ -3,6 +3,7 @@
 // All rights reserved
 
 // OpenFileDlg.cs
+// https://msdn.microsoft.com/en-us/library/windows/desktop/ms646839(v=vs.85).aspx
 
 using System;
 using System.Text;

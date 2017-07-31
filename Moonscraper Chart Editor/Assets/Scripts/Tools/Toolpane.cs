@@ -79,7 +79,7 @@ public class Toolpane : MonoBehaviour {
                 }
                 else if (currentTool != Tools.GroupSelect)
                 {
-                   // currentToolObject.gameObject.SetActive(false);
+                    currentToolObject.gameObject.SetActive(false);
                 }
             }          
         }

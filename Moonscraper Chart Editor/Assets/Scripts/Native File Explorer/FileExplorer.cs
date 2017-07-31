@@ -1,12 +1,26 @@
 ﻿using System.Runtime.InteropServices;
 using System;
+using System.IO;
 
 public static class FileExplorer  {
 
 	public static string SaveFilePanel(string filter, string defaultFileName, string defExt)
-    {
+    {        
         string filename = string.Empty;
         defaultFileName = new string(defaultFileName.ToCharArray());
+
+        string invalidFileChars = "!@#$%^&*\"\'<>\\/:";
+        foreach (char c in invalidFileChars)
+        {
+            defaultFileName = defaultFileName.Replace(c.ToString(), "");
+        }
+        /*
+        string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+        UnityEngine.Debug.Log(invalid);
+        foreach (char c in invalid)
+        {
+            defaultFileName = defaultFileName.Replace(c.ToString(), "");
+        }*/
 
 #if UNITY_EDITOR
         filename = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", defaultFileName, defExt);
@@ -28,7 +42,7 @@ public static class FileExplorer  {
         openSaveFileDialog.initialDir = "";
         openSaveFileDialog.title = "Save as";
         openSaveFileDialog.defExt = defExt;
-        openSaveFileDialog.flags = 0x000002;        // Overwrite warning
+        openSaveFileDialog.flags = 0x000002;       // Overwrite warning
 
         if (LibWrap.GetSaveFileName(openSaveFileDialog))
             filename = openSaveFileDialog.file;
