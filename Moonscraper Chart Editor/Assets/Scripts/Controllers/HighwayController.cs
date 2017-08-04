@@ -4,11 +4,13 @@ using System.Collections;
 public class HighwayController : MonoBehaviour {
     const int POOL_SIZE = 100;
 
-    public GameObject beatLine1;
-    public GameObject beatLine2;
+    public GameObject measureBeatLine;
+    public GameObject quarterBeatLine;
+    public GameObject eigthBeatLine;
 
-    GameObject[] beatLinePool1 = new GameObject[POOL_SIZE];
-    GameObject[] beatLinePool2 = new GameObject[POOL_SIZE];
+    GameObject[] measureBeatLinePool = new GameObject[POOL_SIZE];
+    GameObject[] quarterBeatLinePool = new GameObject[POOL_SIZE];
+    GameObject[] eigthBeatLinePool = new GameObject[POOL_SIZE];
 
     GameObject beatLineParent;
 
@@ -22,19 +24,76 @@ public class HighwayController : MonoBehaviour {
 
         for (int i = 0; i < POOL_SIZE; ++i)
         {
-            beatLinePool1[i] = Instantiate(beatLine1);
-            beatLinePool1[i].transform.SetParent(beatLineParent.transform);
-            beatLinePool1[i].SetActive(false);
+            measureBeatLinePool[i] = Instantiate(measureBeatLine);
+            measureBeatLinePool[i].transform.SetParent(beatLineParent.transform);
+            measureBeatLinePool[i].SetActive(false);
 
-            beatLinePool2[i] = Instantiate(beatLine2);
-            beatLinePool2[i].transform.SetParent(beatLineParent.transform);
-            beatLinePool2[i].SetActive(false);
+            quarterBeatLinePool[i] = Instantiate(quarterBeatLine);
+            quarterBeatLinePool[i].transform.SetParent(beatLineParent.transform);
+            quarterBeatLinePool[i].SetActive(false);
+
+            eigthBeatLinePool[i] = Instantiate(eigthBeatLine);
+            eigthBeatLinePool[i].transform.SetParent(beatLineParent.transform);
+            eigthBeatLinePool[i].SetActive(false);
         }
     }
 	
 	// Update is called once per frame
 	void Update () {
-        UpdateBeatLines();
+        UpdateBeatLines2();
+    }
+    void UpdateBeatLines2()
+    {
+        // Update time signature lines SNAPPED
+        uint initSnappedLinePos = editor.currentSong.WorldPositionToSnappedChartPosition(editor.camYMin.position.y, 8);
+        uint snappedLinePos = initSnappedLinePos;
+
+        uint eigthSpacing = (uint)(editor.currentSong.resolution / 2);
+        int measurePoolPos = 0, quarterPoolPos = 0, eigthPoolPos = 0;
+
+        while (snappedLinePos < editor.maxPos)
+        {
+            // Get the previous time signature
+            TimeSignature prevTS = editor.currentSong.GetPrevTS(snappedLinePos);
+
+            if ((snappedLinePos - prevTS.position) % (editor.currentSong.resolution * prevTS.numerator) == 0)
+            {
+                SetBeatLinePosition(snappedLinePos, measureBeatLinePool, ref measurePoolPos);
+            }
+            else if (snappedLinePos % (editor.currentSong.resolution) == 0)
+            {
+                SetBeatLinePosition(snappedLinePos, quarterBeatLinePool, ref quarterPoolPos);
+            }
+            else
+            {
+                SetBeatLinePosition(snappedLinePos, eigthBeatLinePool, ref eigthPoolPos);
+            }
+
+            DisableBeatLines(measurePoolPos, measureBeatLinePool);
+            DisableBeatLines(quarterPoolPos, quarterBeatLinePool);
+            DisableBeatLines(eigthPoolPos, eigthBeatLinePool);
+
+            snappedLinePos += eigthSpacing;
+        }
+    }
+
+    void SetBeatLinePosition(uint snappedTickPos, GameObject[] beatLinePool, ref int beatLinePoolPos)
+    {
+        if (beatLinePoolPos < beatLinePool.Length)
+        {
+            beatLinePool[beatLinePoolPos].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedTickPos), 0);
+            beatLinePool[beatLinePoolPos].SetActive(true);
+            ++beatLinePoolPos;
+        }
+    }
+
+    void DisableBeatLines(int offset, GameObject[] beatLinePool)
+    {
+        // Disable any unused lines
+        while (offset < beatLinePool.Length && beatLinePool[offset].activeSelf)
+        {
+            beatLinePool[offset++].SetActive(false);
+        }
     }
 
     void UpdateBeatLines()
@@ -43,27 +102,27 @@ public class HighwayController : MonoBehaviour {
         uint initSnappedLinePos = editor.currentSong.WorldPositionToSnappedChartPosition(editor.camYMin.position.y, 4);
         uint snappedLinePos = initSnappedLinePos;
 
-        // Place main beat lines
-        int i = 0;
-        while (snappedLinePos < editor.maxPos && i < beatLinePool1.Length)
+        // Place measure beat lines
+        int i = 0;      
+        while (snappedLinePos < editor.maxPos && i < quarterBeatLinePool.Length)
         {
-            beatLinePool1[i].SetActive(true);
+            quarterBeatLinePool[i].SetActive(true);
 
             if (Globals.viewMode == Globals.ViewMode.Song && snappedLinePos % (editor.currentSong.resolution * 4) == 0)
-                beatLinePool1[i].transform.localScale = new Vector3(1.1f, beatLinePool1[i].transform.localScale.y, beatLinePool1[i].transform.localScale.z);
+                quarterBeatLinePool[i].transform.localScale = new Vector3(1.1f, quarterBeatLinePool[i].transform.localScale.y, quarterBeatLinePool[i].transform.localScale.z);  // Whole measure beat line
             else
-                beatLinePool1[i].transform.localScale = new Vector3(1, beatLinePool1[i].transform.localScale.y, beatLinePool1[i].transform.localScale.z);
+                quarterBeatLinePool[i].transform.localScale = new Vector3(1, quarterBeatLinePool[i].transform.localScale.y, quarterBeatLinePool[i].transform.localScale.z);
 
-            beatLinePool1[i].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+            quarterBeatLinePool[i].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
             snappedLinePos += (uint)(editor.currentSong.resolution);
             
             ++i;
         }
 
         // Disable any unused lines
-        while (i < beatLinePool1.Length && beatLinePool1[i].activeSelf)
+        while (i < quarterBeatLinePool.Length && quarterBeatLinePool[i].activeSelf)
         {
-            beatLinePool1[i++].SetActive(false);
+            quarterBeatLinePool[i++].SetActive(false);
         }
 
         // Place faded beat lines
@@ -75,20 +134,20 @@ public class HighwayController : MonoBehaviour {
         else
             snappedLinePos = initSnappedLinePos + offset;
 
-        while (snappedLinePos < editor.maxPos && i < beatLinePool2.Length)
+        while (snappedLinePos < editor.maxPos && i < eigthBeatLinePool.Length)
         {
-            beatLinePool2[i].SetActive(false);
-            if (editor.currentSong.GetPrevTS(snappedLinePos) < 7)     // secondary beat lines don't appear in-game if the ts is more than 6
+            eigthBeatLinePool[i].SetActive(false);
+            if (editor.currentSong.GetPrevTS(snappedLinePos).numerator < 7)     // secondary beat lines don't appear in-game if the ts is more than 6
             {
-                uint bpm = editor.currentSong.GetPrevBPM(snappedLinePos);
+                uint bpm = editor.currentSong.GetPrevBPM(snappedLinePos).value;
 
                 if (bpm < 181000)               //  secondary beat lines don't appear in-game if the bpm is greater than 181
                 {
                     if (bpm < 180000)
                     {
                         // Line for every beat
-                        beatLinePool2[i].SetActive(true);
-                        beatLinePool2[i].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+                        eigthBeatLinePool[i].SetActive(true);
+                        eigthBeatLinePool[i].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
                     }
                     else
                     {
@@ -96,8 +155,8 @@ public class HighwayController : MonoBehaviour {
                         float factor = editor.currentSong.resolution * 3;
                         if ((int)snappedLinePos - (int)offset - editor.currentSong.resolution >= 0 && (snappedLinePos - offset - editor.currentSong.resolution) % factor == 0)
                         {
-                            beatLinePool2[i].SetActive(true);
-                            beatLinePool2[i].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+                            eigthBeatLinePool[i].SetActive(true);
+                            eigthBeatLinePool[i].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
                         }
                     }
                 }
@@ -108,9 +167,9 @@ public class HighwayController : MonoBehaviour {
         }
 
         // Disable any unused lines
-        while (i < beatLinePool2.Length && beatLinePool2[i].activeSelf)
+        while (i < eigthBeatLinePool.Length && eigthBeatLinePool[i].activeSelf)
         {
-            beatLinePool2[i++].SetActive(false);
+            eigthBeatLinePool[i++].SetActive(false);
         }
     }
 }

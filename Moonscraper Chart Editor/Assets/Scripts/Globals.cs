@@ -289,12 +289,20 @@ public class Globals : MonoBehaviour {
                 if (editor.actionHistory.Redo(editor))
                     groupSelect.reset();
             }
-            else if (Input.GetKeyDown("a") && viewMode == ViewMode.Chart)
+            else if (Input.GetKeyDown("a"))
             {
                 editor.currentSelectedObject = null;
 
-                editor.currentSelectedObjects = editor.currentChart.notes;
-                editor.AddToSelectedObjects(editor.currentChart.starPower);
+                if (viewMode == ViewMode.Chart)
+                {
+                    editor.currentSelectedObjects = editor.currentChart.notes;
+                    editor.AddToSelectedObjects(editor.currentChart.starPower);
+                }
+                else
+                {
+                    editor.currentSelectedObjects = editor.currentSong.syncTrack;
+                    editor.AddToSelectedObjects(editor.currentSong.eventsAndSections);
+                }
             }/*
             else if (Input.GetKeyDown(KeyCode.KeypadEnter))
             {

@@ -14,6 +14,14 @@ public class PlaceTimesignature : PlaceSongObject {
         controller.ts = ts;
     }
 
+    protected override void Update()
+    {
+        base.Update();
+
+        UpdateSnappedPos(4);
+        songObject.position = objectSnappedChartPos;
+    }
+
     protected override void Controls()
     {
         if (!Globals.lockToStrikeline)

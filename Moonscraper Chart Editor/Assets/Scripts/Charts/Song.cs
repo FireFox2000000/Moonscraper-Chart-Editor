@@ -622,19 +622,19 @@ public class Song {
     /// </summary>
     /// <param name="position">The tick position</param>
     /// <returns>Returns the value of the bpm that was found.</returns>
-    public uint GetPrevBPM(uint position)
+    public BPM GetPrevBPM(uint position)
     {
         int closestPos = SongObject.FindClosestPosition(position, bpms);
         if (closestPos != SongObject.NOTFOUND)
         {
             // Select the smaller of the two
             if (bpms[closestPos].position <= position)
-                return bpms[closestPos].position;
+                return bpms[closestPos];
             else if (closestPos > 0)
-                return bpms[closestPos - 1].position;
+                return bpms[closestPos - 1];
         }
 
-        return bpms[0].value;
+        return bpms[0];
     }
 
     /// <summary>
@@ -642,19 +642,19 @@ public class Song {
     /// </summary>
     /// <param name="position">The tick position</param>
     /// <returns>Returns the value of the time signature that was found.</returns>
-    public uint GetPrevTS(uint position)
+    public TimeSignature GetPrevTS(uint position)
     {
         int closestPos = SongObject.FindClosestPosition(position, timeSignatures);
         if (closestPos != SongObject.NOTFOUND)
         {
             // Select the smaller of the two
             if (timeSignatures[closestPos].position <= position)
-                return timeSignatures[closestPos].position;
+                return timeSignatures[closestPos];
             else if (closestPos > 0)
-                return timeSignatures[closestPos - 1].position;
+                return timeSignatures[closestPos - 1];
         }
 
-        return timeSignatures[0].numerator;
+        return timeSignatures[0];
     }
 
     public static float WorldYPositionToTime (float worldYPosition)
