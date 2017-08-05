@@ -12,6 +12,8 @@ public class DropshadowSizing : MonoBehaviour {
     Vector2 offset = new Vector2(5, -7);
     RectTransform rectTransform;
 
+    readonly Vector2 TARGET_ASPECT_RATIO = new Vector2(16, 9);
+
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -25,10 +27,9 @@ public class DropshadowSizing : MonoBehaviour {
         rectTransform.sizeDelta = size;
 
         Vector2 position = item.position;
-
+        Vector2 offset = this.offset;// + new Vector2(size.x, size.y) / 100.0f;
+        offset *= ((float)Screen.width / Screen.height) / (TARGET_ASPECT_RATIO.x / TARGET_ASPECT_RATIO.y);
         position += offset;
-        rectTransform.position = position;
-
-        
+        rectTransform.position = position;   
     }
 }
