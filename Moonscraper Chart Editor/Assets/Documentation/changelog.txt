@@ -1,10 +1,24 @@
-v0.9.801- 21/07/2017
-CHANGES
--Changed default pasting width to overwrite a minimum of all 5 notes.
+v0.9.9
+    NEW FEATURES
+    -Added fire effect to represent notes in the global view
+    -Synctrack elements and section and now be group-selected
 
-FIXES
--Fixed issue with typing 0's after the decimal point of bpms
--Fixed note flags not being set to full chords in the selection tool.
+    CHANGES
+    -Added dropshadow to menustrip dropdowns
+    -Time signatures changes are now represented properly and react to the numerator the time signature
+    -Locked snapping of time signatures to a step value of 1/4
+
+    FIXES
+    -Fixed Bass/Rhythm audio clear button not working.
+    -Fixed incorrect clipboard pasting between charts of two different resolutions
+
+v0.9.801- 21/07/2017
+    CHANGES
+    -Changed default pasting width to overwrite a minimum of all 5 notes.
+
+    FIXES
+    -Fixed issue with typing 0's after the decimal point of bpms
+    -Fixed note flags not being set to full chords in the selection tool.
 
 v0.9.8- 18/07/2017
     NEW FEATURES
