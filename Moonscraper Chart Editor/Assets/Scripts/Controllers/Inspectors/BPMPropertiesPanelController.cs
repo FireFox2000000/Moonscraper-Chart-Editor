@@ -113,7 +113,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             if (value.Contains("."))
             {
                 int index = value.IndexOf('.');
-                zerosToAdd = 7 - value.Length;      // string length can be a total of 7 characters; 6 digits and the "."
+
+                zerosToAdd = 7 - (value.Length + (3 - index));      // string length can be a total of 7 characters; 6 digits and the "."
                 value = value.Remove(index, 1);
             }
             else
@@ -152,6 +153,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     {
         if ((addedChar == '.' && !text.Contains(".") && text.Length > 0) || (addedChar >= '0' && addedChar <= '9'))
         {
+            if ((text.Contains(".") && text.Length - text.IndexOf('.') > 3) || (addedChar != '.' && !text.Contains(".") && text.Length > 2))
+                return '\0';
+
             if (addedChar != '.')
             {
                 if (bpmValue.selectionAnchorPosition == text.Length && bpmValue.selectionFocusPosition == 0)
@@ -162,8 +166,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 else if (text.Contains(".") && text.IndexOf('.') <= 3)
                     return addedChar;
             }
-            else
-                return addedChar;
+
+             return addedChar;
         }
 
         return '\0';

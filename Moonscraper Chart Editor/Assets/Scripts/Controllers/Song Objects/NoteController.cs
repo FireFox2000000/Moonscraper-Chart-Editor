@@ -240,12 +240,20 @@ public class NoteController : SongObjectController {
             if (hitBox)
                 hitBox.size = new Vector3(1, hitBox.size.y, hitBox.size.z);
         }
-
+        
         UpdateSongObject();
+        UpdateNotePosition();
     }
 
     public bool belowClapLine { get { return (transform.position.y <= editor.visibleStrikeline.position.y + (Song.TimeToWorldYPosition(Globals.audioCalibrationMS / 1000.0f) * Globals.gameSpeed)); } }
     public bool belowStrikeLine { get { float offset = Time.deltaTime; return (transform.position.y <= editor.visibleStrikeline.position.y + (offset * Globals.hyperspeed / Globals.gameSpeed)); } }
+
+    void UpdateNotePosition()
+    {
+        float zPos = 0;
+        // Position
+        transform.position = new Vector3(CHART_CENTER_POS + noteToXPos(note), note.worldYPosition, zPos);
+    }
 
     protected override void UpdateCheck()
     {
@@ -263,6 +271,8 @@ public class NoteController : SongObjectController {
 
             if (Globals.applicationMode == Globals.ApplicationMode.Editor)
             {
+                UpdateNotePosition();
+
                 if (note.position > editor.maxPos)
                     gameObject.SetActive(false);
                 else if (Globals.viewMode == Globals.ViewMode.Chart)
@@ -403,7 +413,6 @@ public class NoteController : SongObjectController {
         if (note.song != null)
         {
             float zPos = 0;
-
             // Position
             transform.position = new Vector3(CHART_CENTER_POS + noteToXPos(note), note.worldYPosition, zPos);
 

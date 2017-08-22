@@ -1,3 +1,8 @@
+v0.9.901
+    FIXES
+    -Fixed bpm decimal place typing on smaller values
+    -Fixed some note flames not updating positions correctly
+
 v0.9.9
     NEW FEATURES
     -Added fire effect to represent notes in the global view

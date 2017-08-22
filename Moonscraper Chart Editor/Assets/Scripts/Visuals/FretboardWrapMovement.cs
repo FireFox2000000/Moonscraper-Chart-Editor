@@ -25,7 +25,7 @@ public class FretboardWrapMovement : MonoBehaviour {
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
             Vector2 offset = ren.sharedMaterial.mainTextureOffset;
-            offset.y += (transform.position.y - prevYPos) / transform.localScale.y;
+            offset.y += ((transform.position.y - prevYPos) / transform.localScale.y);
             ren.sharedMaterial.mainTextureOffset = offset;
 
             prevYPos = transform.position.y;
