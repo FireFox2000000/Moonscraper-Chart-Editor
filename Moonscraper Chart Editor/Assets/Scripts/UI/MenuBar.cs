@@ -89,6 +89,7 @@ public class MenuBar : MonoBehaviour {
     public void LoadCurrentInstumentAndDifficulty()
     {
         editor.LoadChart(editor.currentSong.GetChart(currentInstrument, currentDifficulty));
+        editor.currentSelectedObject = null;
     }
 
     public static bool previewing { get { return _previewing; } }

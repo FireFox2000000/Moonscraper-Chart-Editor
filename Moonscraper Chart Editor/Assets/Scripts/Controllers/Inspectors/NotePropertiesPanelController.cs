@@ -37,8 +37,8 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         // Prevent users from forcing notes when they shouldn't be forcable but retain the previous user-set forced property when using the note tool
         if (Globals.drumMode)
         {
-            forcedToggle.interactable = false;
-            tapToggle.interactable = false;
+            forcedToggle.gameObject.SetActive(false);
+            tapToggle.gameObject.SetActive(false);
         }
         else
         {
@@ -75,13 +75,6 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
             if (currentNote != null)
             {
-                fretText.text = "Fret: " + currentNote.fret_type.ToString();
-                positionText.text = "Position: " + currentNote.position.ToString();
-                sustainText.text = "Length: " + currentNote.sustain_length.ToString();
-            }
-
-            if (currentNote != null)
-            {
                 tapToggle.isOn = ((currentNote.flags & Note.Flags.TAP) == Note.Flags.TAP);
 
                 forcedToggle.isOn = ((currentNote.flags & Note.Flags.FORCED) == Note.Flags.FORCED);
@@ -94,6 +87,13 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
             // Disable tap note box for open notes
             tapToggle.interactable = !(currentNote.fret_type == Note.Fret_Type.OPEN && Toolpane.currentTool != Toolpane.Tools.Note);
+        }
+
+        if (currentNote != null)
+        {
+            fretText.text = "Fret: " + currentNote.fret_type.ToString();
+            positionText.text = "Position: " + currentNote.position.ToString();
+            sustainText.text = "Length: " + currentNote.sustain_length.ToString();
         }
 
         if (!Globals.IsTyping && !Globals.modifierInputActive)

@@ -938,7 +938,7 @@ public class Song {
                         GetChart(Instrument.Bass, chartDiff).Load(stringData);
                         break;
                     case ("Drums"):
-                        GetChart(Instrument.Drums, chartDiff).Load(stringData);
+                        GetChart(Instrument.Drums, chartDiff).Load(stringData, Instrument.Drums);
                         break;
                     case ("Keyboard"):
                         GetChart(Instrument.Keys, chartDiff).Load(stringData);

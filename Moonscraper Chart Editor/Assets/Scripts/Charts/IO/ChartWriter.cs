@@ -96,7 +96,7 @@ public class ChartWriter {
             {
                 string difficultySaveString = difficulty.ToString();
                 
-                string chartString = GetSaveString(song, song.GetChart(instrument, difficulty).chartObjects, exportOptions);
+                string chartString = GetSaveString(song, song.GetChart(instrument, difficulty).chartObjects, exportOptions, instrument);
 
                 if (chartString == string.Empty)
                 {
@@ -125,7 +125,7 @@ public class ChartWriter {
                                     break;
                             }
 
-                            chartString = GetSaveString(song, song.GetChart(instrument, chartDiff).chartObjects, exportOptions);
+                            chartString = GetSaveString(song, song.GetChart(instrument, chartDiff).chartObjects, exportOptions, instrument);
 
                             if (exit)
                                 break;
@@ -247,7 +247,7 @@ public class ChartWriter {
                         fret = Note.GuitarNoteToDrumNote(fret);
 
                     int fretNumber = (int)fret;
-                    if (note.fret_type == Note.Fret_Type.OPEN)
+                    if (fret == Note.Fret_Type.OPEN)
                         fretNumber = 7;                
 
                     saveString.Append(" = N " + fretNumber + " " + (uint)Mathf.Round(note.sustain_length * resolutionScaleRatio));

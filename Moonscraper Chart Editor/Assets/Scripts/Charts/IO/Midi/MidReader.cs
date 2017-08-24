@@ -201,7 +201,8 @@ public static class MidReader {
 
                 if (sus <= rbSustainFixLength)
                     sus = 0;
-
+                if (note.AbsoluteTime == 99360)
+                    Debug.Log(note.NoteNumber);
                 // Determine the fret type of the note
                 switch (note.NoteNumber)
                 {
@@ -231,6 +232,7 @@ public static class MidReader {
                     case 100: fret = Note.Fret_Type.ORANGE; break;
 
                     default:
+                        Debug.Log(note.NoteNumber);
                         continue;
                 }
 
