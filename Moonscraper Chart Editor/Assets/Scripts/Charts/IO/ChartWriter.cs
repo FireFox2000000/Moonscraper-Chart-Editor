@@ -240,24 +240,15 @@ public class ChartWriter {
 
                 case (SongObject.ID.Note):
                     Note note = songObject as Note;
-                    int fretNumber;
+                    Note.Fret_Type fret = note.fret_type;
+
+                    // Drum notes are saved differently
                     if (instrument == Song.Instrument.Drums)
-                    {
-                        // Green notes are the kick notes, therefore move open notes to the bottom and everything else up
-                        fretNumber = (int)note.fret_type + 1;
+                        fret = Note.GuitarNoteToDrumNote(fret);
 
-                        if (note.fret_type == Note.Fret_Type.OPEN)
-                            fretNumber = 0;
-                        else if (note.fret_type == Note.Fret_Type.ORANGE)
-                            fretNumber = 7;
-                    }
-                    else
-                    {
-                        fretNumber = (int)note.fret_type;
-
-                        if (note.fret_type == Note.Fret_Type.OPEN)
-                            fretNumber = 7;
-                    }
+                    int fretNumber = (int)fret;
+                    if (note.fret_type == Note.Fret_Type.OPEN)
+                        fretNumber = 7;                
 
                     saveString.Append(" = N " + fretNumber + " " + (uint)Mathf.Round(note.sustain_length * resolutionScaleRatio));
 

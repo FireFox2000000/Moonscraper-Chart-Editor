@@ -562,4 +562,24 @@ public class Note : ChartObject
 
         applyFlagsToChord();
     }
+
+    public static Note.Fret_Type GuitarNoteToDrumNote(Note.Fret_Type fret_type)
+    {
+        if (fret_type == Note.Fret_Type.OPEN)
+            return Note.Fret_Type.GREEN;
+        else if (fret_type == Note.Fret_Type.ORANGE)
+            return Note.Fret_Type.OPEN;
+        else
+            return fret_type + 1;
+    }
+
+    public static Note.Fret_Type DrumNoteToGuitarNote(Note.Fret_Type fret_type)
+    {
+        if (fret_type == Note.Fret_Type.OPEN)
+            return Note.Fret_Type.ORANGE;
+        else if (fret_type == Note.Fret_Type.GREEN)
+            return Note.Fret_Type.OPEN;
+        else
+            return fret_type - 1;
+    }
 }

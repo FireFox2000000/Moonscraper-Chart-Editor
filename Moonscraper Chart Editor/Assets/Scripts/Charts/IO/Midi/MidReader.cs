@@ -52,6 +52,9 @@ public static class MidReader {
                 case ("part keys"):
                     ReadNotes(midi.Events[i], song, Song.Instrument.Keys);
                     break;
+                case ("part drums"):
+                    ReadNotes(midi.Events[i], song, Song.Instrument.Drums);
+                    break;
                 case ("beat"):
                     //ReadTrack(midi.Events[i]);
                     break;
@@ -231,6 +234,9 @@ public static class MidReader {
                         continue;
                 }
 
+                if (instrument == Song.Instrument.Drums)
+                    fret = Note.DrumNoteToGuitarNote(fret);
+
                 // Add the note to the correct chart
                 song.GetChart(instrument, difficulty).Add(new Note(tick, fret, sus), false);             
             }
@@ -370,6 +376,9 @@ public static class MidReader {
                 for (int k = index; k < index + length; ++k)
                 {
                     notes[k].fret_type = Note.Fret_Type.OPEN;
+
+                    if (instrument == Song.Instrument.Drums)
+                        notes[k].fret_type = Note.DrumNoteToGuitarNote(notes[k].fret_type);
                 }
             }
 

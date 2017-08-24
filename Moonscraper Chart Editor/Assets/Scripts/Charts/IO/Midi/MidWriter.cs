@@ -13,6 +13,7 @@ public static class MidWriter {
     const string GUITAR_TRACK = "PART GUITAR";
     const string BASS_TRACK = "PART BASS";
     const string KEYS_TRACK = "PART KEYS";
+    const string DRUMS_TRACK = "PART DRUMS";
 
     static readonly byte[] END_OF_TRACK = new byte[] { 0, 0xFF, 0x2F, 0x00 };
 
@@ -41,6 +42,10 @@ public static class MidWriter {
         if (track_keys.Length > 0)
             track_count++;
 
+        byte[] track_drums = GetInstrumentBytes(song, Song.Instrument.Drums, exportOptions);
+        if (track_drums.Length > 0)
+            track_count++;
+
         byte[] header = GetMidiHeader(1, track_count, (short)(exportOptions.targetResolution));
 
         FileStream file = File.Open(path, FileMode.OpenOrCreate);
@@ -59,6 +64,9 @@ public static class MidWriter {
 
         if (track_keys.Length > 0)
             bw.Write(MakeTrack(track_keys, KEYS_TRACK));
+
+        if (track_drums.Length > 0)
+            bw.Write(MakeTrack(track_drums, DRUMS_TRACK));
 
         bw.Close();
         file.Close();
@@ -236,6 +244,10 @@ public static class MidWriter {
         foreach (ChartObject chartObject in chart.chartObjects)
         {
             Note note = chartObject as Note;
+            Note.Fret_Type fret_type = note.fret_type;
+            if (instrument == Song.Instrument.Drums)
+                fret_type = Note.GuitarNoteToDrumNote(fret_type);
+
             SortableBytes onEvent = null;
             SortableBytes offEvent = null;
 
@@ -262,7 +274,7 @@ public static class MidWriter {
                         continue;
                 }
 
-                switch (note.fret_type)
+                switch (fret_type)
                 {
                     case (Note.Fret_Type.OPEN):     // Open note highlighted as an SysEx event. Use green as default.
                     case (Note.Fret_Type.GREEN):

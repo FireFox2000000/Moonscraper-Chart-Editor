@@ -209,16 +209,9 @@ public class Chart  {
                             case (3):
                             case (4):
                                 // Add note to the data
-                                Note newStandardNote;
+                                Note newStandardNote = new Note(position, (Note.Fret_Type)fret_type, length);
                                 if (instrument == Song.Instrument.Drums)
-                                {
-                                    if (fret_type == 0)
-                                        newStandardNote = new Note(position, Note.Fret_Type.OPEN, length);
-                                    else
-                                        newStandardNote = new Note(position, (Note.Fret_Type)(fret_type - 1), length);
-                                }
-                                else
-                                    newStandardNote = new Note(position, (Note.Fret_Type)fret_type, length);
+                                    newStandardNote.fret_type = Note.DrumNoteToGuitarNote(newStandardNote.fret_type);
                                 Add(newStandardNote, false);
                                 break;
                             case (5):
@@ -226,11 +219,9 @@ public class Chart  {
                                 flags.Add(line);
                                 break;
                             case (7):
-                                Note newOpenNote;
+                                Note newOpenNote = new Note(position, Note.Fret_Type.OPEN, length);
                                 if (instrument == Song.Instrument.Drums)
-                                    newOpenNote = new Note(position, Note.Fret_Type.ORANGE, length);
-                                else
-                                    newOpenNote = new Note(position, Note.Fret_Type.OPEN, length);
+                                    newOpenNote.fret_type = Note.DrumNoteToGuitarNote(newOpenNote.fret_type);
                                 Add(newOpenNote, false);
                                 break;
                             default:
