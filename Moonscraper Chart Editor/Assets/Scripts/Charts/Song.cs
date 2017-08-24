@@ -315,6 +315,9 @@ public class Song {
                 case (Instrument.Keys):
                     instrumentName += "Keys - ";
                     break;
+                case (Instrument.Drums):
+                    instrumentName += "Drums - ";
+                    break;
                 default:
                     continue;
             }
@@ -821,6 +824,7 @@ public class Song {
                 //submitDataEvents(stringData);
                 submitDataGlobals(stringData);
                 break;
+                /*
             case ("[EasySingle]"):
 #if SONG_DEBUG
                 Debug.Log("Loading chart EasySingle");
@@ -892,8 +896,56 @@ public class Song {
                 Debug.Log("Loading chart ExpertDoubleBass");
 #endif
                 GetChart(Instrument.Bass, Difficulty.Expert).Load(stringData);
-                break;
+                break;*/
             default:
+                Difficulty chartDiff;
+                int instumentStringOffset = 1;
+                const string EASY = "Easy", MEDIUM = "Medium", HARD = "Hard", EXPERT = "Expert";
+
+                // Determine what difficulty
+                if (dataName.Substring(1, EASY.Length) == EASY)
+                {
+                    chartDiff = Difficulty.Easy;
+                    instumentStringOffset += EASY.Length;
+                }
+                else if (dataName.Substring(1, MEDIUM.Length) == MEDIUM)
+                {
+                    chartDiff = Difficulty.Medium;
+                    instumentStringOffset += MEDIUM.Length;
+                }
+                else if (dataName.Substring(1, HARD.Length) == HARD)
+                {
+                    chartDiff = Difficulty.Hard;
+                    instumentStringOffset += HARD.Length;
+                }
+                else if (dataName.Substring(1, EXPERT.Length) == EXPERT)
+                {
+                    chartDiff = Difficulty.Expert;
+                    instumentStringOffset += EXPERT.Length;
+                }
+                else
+                    return;
+
+                switch (dataName.Substring(instumentStringOffset, dataName.Length - instumentStringOffset - 1))
+                {
+                    case ("Single"):
+                        GetChart(Instrument.Guitar, chartDiff).Load(stringData);
+                        break;
+                    case ("DoubleGuitar"):
+                        GetChart(Instrument.GuitarCoop, chartDiff).Load(stringData);
+                        break;
+                    case ("DoubleBass"):
+                        GetChart(Instrument.Bass, chartDiff).Load(stringData);
+                        break;
+                    case ("Drums"):
+                        GetChart(Instrument.Drums, chartDiff).Load(stringData);
+                        break;
+                    case ("Keyboard"):
+                        GetChart(Instrument.Keys, chartDiff).Load(stringData);
+                        break;
+                    default:
+                        return;
+                }
                 return;
         }
     }
@@ -1380,7 +1432,7 @@ public class Song {
 
     public enum Instrument
     {
-        Guitar = 0, GuitarCoop = 1, Bass = 2, Keys = 3
+        Guitar = 0, GuitarCoop = 1, Bass = 2, Keys = 3, Drums = 4
     }
 }
 

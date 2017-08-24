@@ -64,45 +64,25 @@ public class MenuBar : MonoBehaviour {
 
     public void SetInstrument(string value)
     {
-        switch (value.ToLower())
+        try
         {
-            case ("guitar"):
-                currentInstrument = Song.Instrument.Guitar;
-                break;
-            case ("guitarcoop"):
-                currentInstrument = Song.Instrument.GuitarCoop;
-                break;
-            case ("bass"):
-                currentInstrument = Song.Instrument.Bass;
-                break;
-            case ("keys"):
-                currentInstrument = Song.Instrument.Keys;
-                break;
-            default:
-                Debug.LogError("Invalid difficulty set: " + value);
-                break;
+            currentInstrument = (Song.Instrument)System.Enum.Parse(typeof(Song.Instrument), value, true);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Invalid instrument set: " + value);
         }
     }
 
     public void SetDifficulty(string value)
     {
-        switch (value.ToLower())
+        try
         {
-            case ("easy"):
-                currentDifficulty = Song.Difficulty.Easy;
-                break;
-            case ("medium"):
-                currentDifficulty = Song.Difficulty.Medium;
-                break;
-            case ("hard"):
-                currentDifficulty = Song.Difficulty.Hard;
-                break;
-            case ("expert"):
-                currentDifficulty = Song.Difficulty.Expert;
-                break;
-            default:
-                Debug.LogError("Invalid difficulty set: " + value);
-                break;
+            currentDifficulty = (Song.Difficulty)System.Enum.Parse(typeof(Song.Difficulty), value, true);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Invalid difficulty set: " + value);
         }
     }
 

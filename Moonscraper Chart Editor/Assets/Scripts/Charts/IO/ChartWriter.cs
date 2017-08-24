@@ -82,6 +82,12 @@ public class ChartWriter {
                 case (Song.Instrument.Bass):
                     instrumentSaveString = "DoubleBass";
                     break;
+                case (Song.Instrument.Drums):
+                    instrumentSaveString = "Drums";
+                    break;
+                case (Song.Instrument.Keys):
+                    instrumentSaveString = "Keyboard";
+                    break;
                 default:
                     continue;
             }

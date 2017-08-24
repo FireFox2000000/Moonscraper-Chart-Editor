@@ -242,7 +242,7 @@ public class NoteController : SongObjectController {
         }
         
         UpdateSongObject();
-        UpdateNotePosition();
+        //UpdateNotePosition();
     }
 
     public bool belowClapLine { get { return (transform.position.y <= editor.visibleStrikeline.position.y + (Song.TimeToWorldYPosition(Globals.audioCalibrationMS / 1000.0f) * Globals.gameSpeed)); } }
@@ -271,12 +271,12 @@ public class NoteController : SongObjectController {
 
             if (Globals.applicationMode == Globals.ApplicationMode.Editor)
             {
-                UpdateNotePosition();
-
                 if (note.position > editor.maxPos)
                     gameObject.SetActive(false);
                 else if (Globals.viewMode == Globals.ViewMode.Chart)
                     UpdateSongObject();         // Always update the position in case of hyperspeed changes
+                else
+                    UpdateNotePosition();
             }
 
             if (this.note == null)      // Was deactivated
@@ -382,7 +382,7 @@ public class NoteController : SongObjectController {
         if (note.fret_type != Note.Fret_Type.OPEN)
         {
             if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
-                return -chartPos + (int)note.fret_type + 2;
+                return chartPos - (int)note.fret_type + 2;
             else
                 return chartPos + (int)note.fret_type - 2;
 
@@ -424,6 +424,8 @@ public class NoteController : SongObjectController {
             if (noteObjectSelector.enabled)
                 noteObjectSelector.UpdateSelectedGameObject();
             noteObjectSelector.currentVisualsManager.UpdateVisuals();
+
+            UpdateNotePosition();
         }
     }
 
