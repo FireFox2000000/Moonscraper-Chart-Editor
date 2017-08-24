@@ -25,7 +25,7 @@ public class NoteVisualsManager : MonoBehaviour {
 
     public virtual void UpdateVisuals() {
         Note note = nCon.note;
-        if (nCon.note != null)
+        if (note != null)
         {
             noteType = note.type;
 
@@ -36,6 +36,9 @@ public class NoteVisualsManager : MonoBehaviour {
             if (!noteRenderer)
                 noteRenderer = GetComponent<Renderer>();
             noteRenderer.sortingOrder = -(int)note.position;
+
+            if (Globals.drumMode && note.fret_type == Note.Fret_Type.OPEN)
+                noteRenderer.sortingOrder -= 1;
         }
     }
 
