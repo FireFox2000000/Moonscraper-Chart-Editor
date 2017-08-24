@@ -35,61 +35,69 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     protected override void Update()
     {
         // Prevent users from forcing notes when they shouldn't be forcable but retain the previous user-set forced property when using the note tool
-        if (Toolpane.currentTool != Toolpane.Tools.Note || (Toolpane.currentTool == Toolpane.Tools.Note && noteToolObject.activeSelf))
+        if (Globals.drumMode)
         {
-            if (currentNote.CannotBeForcedCheck && !Globals.lockToStrikeline)
+            forcedToggle.interactable = false;
+            tapToggle.interactable = false;
+        }
+        else
+        {
+            if (Toolpane.currentTool != Toolpane.Tools.Note || (Toolpane.currentTool == Toolpane.Tools.Note && noteToolObject.activeSelf))
             {
-                forcedToggle.interactable = false;
-                currentNote.flags &= ~Note.Flags.FORCED;
+                if (currentNote.CannotBeForcedCheck && !Globals.lockToStrikeline)
+                {
+                    forcedToggle.interactable = false;
+                    currentNote.flags &= ~Note.Flags.FORCED;
+                }
+                else
+                {
+                    if (!forcedToggle.interactable && Toolpane.currentTool == Toolpane.Tools.Note)
+                    {
+                        forcedToggle.isOn = prevForcedProperty;
+                        setForced();
+                    }
+                    forcedToggle.interactable = true;
+                }
             }
             else
             {
-                if (!forcedToggle.interactable && Toolpane.currentTool == Toolpane.Tools.Note)
+                if (!forcedToggle.interactable)
                 {
+                    forcedToggle.interactable = true;
                     forcedToggle.isOn = prevForcedProperty;
-                    setForced();
                 }
-                forcedToggle.interactable = true;
             }
-        }
-        else
-        {
-            if (!forcedToggle.interactable) 
+
+            if (forcedToggle.interactable)
             {
-                forcedToggle.interactable = true;
-                forcedToggle.isOn = prevForcedProperty;
+                prevForcedProperty = forcedToggle.isOn;
             }
-        }
 
-        if (forcedToggle.interactable)
-        {
-            prevForcedProperty = forcedToggle.isOn;
-        }
+            if (currentNote != null)
+            {
+                fretText.text = "Fret: " + currentNote.fret_type.ToString();
+                positionText.text = "Position: " + currentNote.position.ToString();
+                sustainText.text = "Length: " + currentNote.sustain_length.ToString();
+            }
 
-        if (currentNote != null)
-        {
-            fretText.text = "Fret: " + currentNote.fret_type.ToString();
-            positionText.text = "Position: " + currentNote.position.ToString();
-            sustainText.text = "Length: " + currentNote.sustain_length.ToString(); 
-        }
+            if (currentNote != null)
+            {
+                tapToggle.isOn = ((currentNote.flags & Note.Flags.TAP) == Note.Flags.TAP);
 
-        if (currentNote != null)
-        {
-            tapToggle.isOn = ((currentNote.flags & Note.Flags.TAP) == Note.Flags.TAP);
+                forcedToggle.isOn = ((currentNote.flags & Note.Flags.FORCED) == Note.Flags.FORCED);
+            }
+            else
+            {
+                gameObject.SetActive(false);
+                Debug.LogError("No note loaded into note inspector");
+            }
 
-            forcedToggle.isOn = ((currentNote.flags & Note.Flags.FORCED) == Note.Flags.FORCED);
+            // Disable tap note box for open notes
+            tapToggle.interactable = !(currentNote.fret_type == Note.Fret_Type.OPEN && Toolpane.currentTool != Toolpane.Tools.Note);
         }
-        else
-        {
-            gameObject.SetActive(false);
-            Debug.LogError("No note loaded into note inspector");
-        }
-
-        // Disable tap note box for open notes
-        tapToggle.interactable = !(currentNote.fret_type == Note.Fret_Type.OPEN && Toolpane.currentTool != Toolpane.Tools.Note);
 
         if (!Globals.IsTyping && !Globals.modifierInputActive)
-        Controls();
+            Controls();
 
         prevNote = currentNote;
     }

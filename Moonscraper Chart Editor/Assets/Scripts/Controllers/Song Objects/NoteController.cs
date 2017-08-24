@@ -192,6 +192,8 @@ public class NoteController : SongObjectController {
         if (note == null)
             return;
 
+        sustain.gameObject.SetActive(note.sustain_length != 0);
+
         if (!hitBox)
             hitBox = GetComponent<BoxCollider>();
         if (!sustainHitBox)
@@ -213,15 +215,18 @@ public class NoteController : SongObjectController {
             // Adjust note hitbox size        
             if (hitBox)
                 hitBox.size = new Vector3(OPEN_NOTE_COLLIDER_WIDTH, hitBox.size.y, hitBox.size.z);
-
-            Note[] chordNotes = note.GetChord();
-
-            // Check for non-open notes and delete
-            foreach (Note chordNote in chordNotes)
+            
+            if (!Globals.drumMode)
             {
-                if (chordNote.fret_type != Note.Fret_Type.OPEN)
+                Note[] chordNotes = note.GetChord();
+
+                // Check for non-open notes and delete
+                foreach (Note chordNote in chordNotes)
                 {
-                    chordNote.Delete();
+                    if (chordNote.fret_type != Note.Fret_Type.OPEN)
+                    {
+                        chordNote.Delete();
+                    }
                 }
             }
         }

@@ -248,7 +248,7 @@ public class PlaceNote : PlaceSongObject {
                     cancelAdd = true;
                     break;
                 }
-                if ((note.fret_type == Note.Fret_Type.OPEN || note.fret_type == overwriteNote.fret_type || overwriteNote.fret_type == Note.Fret_Type.OPEN) && !note.AllValuesCompare(overwriteNote))
+                if ((((note.fret_type == Note.Fret_Type.OPEN || overwriteNote.fret_type == Note.Fret_Type.OPEN) && !Globals.drumMode) || note.fret_type == overwriteNote.fret_type) && !note.AllValuesCompare(overwriteNote))
                 {
                     noteRecord.Add(new ActionHistory.Delete(overwriteNote));
                 }
@@ -291,7 +291,7 @@ public class PlaceNote : PlaceSongObject {
 
     protected static void standardOverwriteOpen(Note note)
     {
-        if (note.fret_type != Note.Fret_Type.OPEN)
+        if (note.fret_type != Note.Fret_Type.OPEN && MenuBar.currentInstrument != Song.Instrument.Drums)
         {
             Note[] chordNotes = SongObject.FindObjectsAtPosition(note.position, note.chart.notes);
 

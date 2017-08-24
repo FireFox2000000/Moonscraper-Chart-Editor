@@ -68,7 +68,7 @@ public class MenuBar : MonoBehaviour {
         {
             currentInstrument = (Song.Instrument)System.Enum.Parse(typeof(Song.Instrument), value, true);
         }
-        catch (System.Exception e)
+        catch
         {
             Debug.LogError("Invalid instrument set: " + value);
         }
@@ -80,7 +80,7 @@ public class MenuBar : MonoBehaviour {
         {
             currentDifficulty = (Song.Difficulty)System.Enum.Parse(typeof(Song.Difficulty), value, true);
         }
-        catch (System.Exception e)
+        catch
         {
             Debug.LogError("Invalid difficulty set: " + value);
         }

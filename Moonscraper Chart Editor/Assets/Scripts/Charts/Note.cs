@@ -474,14 +474,14 @@ public class Note : ChartObject
         {
             if (!Globals.extendedSustainsEnabled)
             {
-                if (next.fret_type == Note.Fret_Type.OPEN || (position < next.position))
+                if ((next.fret_type == Note.Fret_Type.OPEN || (position < next.position)) && position != next.position)
                     return next;
                 //else if (next.position >= note.position + note.sustain_length)      // Stop searching early
                 //return null;
             }
             else
             {
-                if ((fret_type != Fret_Type.OPEN && next.fret_type == Note.Fret_Type.OPEN) || (next.fret_type == fret_type))
+                if ((fret_type != Fret_Type.OPEN && next.fret_type == Note.Fret_Type.OPEN && !Globals.drumMode) || (next.fret_type == fret_type))
                     return next;
                 //else if (next.position >= note.position + note.sustain_length)      // Stop searching early
                 //return null;

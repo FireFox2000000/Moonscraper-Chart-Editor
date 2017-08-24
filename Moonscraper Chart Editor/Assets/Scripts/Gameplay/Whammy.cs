@@ -54,7 +54,7 @@ public class Whammy : MonoBehaviour {
     void OnDisable()
     {
         // Remove all whammy animation and reset
-        if (lineRenderer)
+        if (lineRenderer && lineCurve != null && defaultKeys != null)
         {
             lineCurve.keys = defaultKeys;
         }

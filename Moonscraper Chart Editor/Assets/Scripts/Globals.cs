@@ -75,7 +75,13 @@ public class Globals : MonoBehaviour {
                 return true;
         }
     }
-
+    public static bool drumMode
+    {
+        get
+        {
+            return MenuBar.currentInstrument == Song.Instrument.Drums;
+        }
+    }
     // Settings
     public static float hyperspeed = 5.0f;
     public static float highwayLength = 0;

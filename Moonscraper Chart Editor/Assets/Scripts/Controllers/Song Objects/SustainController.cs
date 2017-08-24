@@ -165,6 +165,7 @@ public class SustainController : SelectableClick {
             return;
         ChartEditor.editOccurred = true;
         Note[] chordNotes = nCon.note.GetChord();
+
         uint snappedPos = GetSnappedSustainPos();
 
         foreach (Note chordNote in chordNotes)

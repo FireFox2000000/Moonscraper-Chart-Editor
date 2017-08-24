@@ -55,7 +55,7 @@ public class NoteVisuals2DManager : NoteVisualsManager {
         Vector3 scale = new Vector3(1, 1, 1);
         if (note != null)
         {
-            if (noteType == Note.Note_Type.Strum)
+            if (noteType == Note.Note_Type.Strum || (noteType == Note.Note_Type.Hopo && Globals.drumMode))
             {
                 if (specialType == Note.Special_Type.STAR_POW)
                     ren.sprite = spriteResources.sp_strum[(int)note.fret_type];
@@ -127,12 +127,12 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                 //animationName = "open_" + animationName;
             }
 
-            if (noteType == Note.Note_Type.Hopo)
+            if (noteType == Note.Note_Type.Hopo && !Globals.drumMode)
                 animationNameString.Append("hopo");
-            else if (noteType == Note.Note_Type.Strum)
-                animationNameString.Append("strum");
-            else
+            else if (noteType == Note.Note_Type.Tap)
                 animationNameString.Append("tap");
+            else
+                animationNameString.Append("strum");
 
             NoteSpriteAnimationData animationData;
 
