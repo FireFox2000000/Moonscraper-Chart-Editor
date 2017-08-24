@@ -277,6 +277,13 @@ public static class MidWriter {
                 switch (fret_type)
                 {
                     case (Note.Fret_Type.OPEN):     // Open note highlighted as an SysEx event. Use green as default.
+                        if (instrument == Song.Instrument.Drums)
+                        {
+                            noteNumber = difficultyNumber + 5;
+                            break;
+                        }
+                        else
+                            goto case Note.Fret_Type.GREEN;
                     case (Note.Fret_Type.GREEN):
                         noteNumber = difficultyNumber + 0;
                         break;

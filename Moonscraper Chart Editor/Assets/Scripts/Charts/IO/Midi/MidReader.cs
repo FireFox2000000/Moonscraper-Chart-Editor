@@ -181,28 +181,30 @@ public static class MidReader {
                 }
 
                 // Check if we're reading a forcing event instead of a regular note
-                switch (note.NoteNumber)
+                if (instrument != Song.Instrument.Drums)
                 {
-                    case 65: 
-                    case 66:
-                    case 77:
-                    case 78:
-                    case 89:
-                    case 90:
-                    case 101:
-                    case 102:
-                        forceNotesList.Add(note);       // Store the event for later processing and continue
-                        continue;
-                    default:
-                        break;
+                    switch (note.NoteNumber)
+                    {
+                        case 65:
+                        case 66:
+                        case 77:
+                        case 78:
+                        case 89:
+                        case 90:
+                        case 101:
+                        case 102:
+                            forceNotesList.Add(note);       // Store the event for later processing and continue
+                            continue;
+                        default:
+                            break;
+                    }
                 }
-
+                
                 Note.Fret_Type fret;
 
                 if (sus <= rbSustainFixLength)
                     sus = 0;
-                if (note.AbsoluteTime == 99360)
-                    Debug.Log(note.NoteNumber);
+
                 // Determine the fret type of the note
                 switch (note.NoteNumber)
                 {
@@ -231,6 +233,17 @@ public static class MidReader {
                     case 88:
                     case 100: fret = Note.Fret_Type.ORANGE; break;
 
+                    case 65:
+                    case 77:
+                    case 89:
+                    case 101:
+                        if (instrument == Song.Instrument.Drums)
+                        {
+                            fret = Note.Fret_Type.OPEN;     // Gets converted to an orange note later on
+                            break;
+                        }
+                        else
+                            continue;
                     default:
                         Debug.Log(note.NoteNumber);
                         continue;
