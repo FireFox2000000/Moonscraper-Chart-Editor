@@ -167,12 +167,12 @@ public class Chart  {
         return success;
     }
 
-    public void Load(List<string> data)
+    public void Load(List<string> data, Song.Instrument instrument = Song.Instrument.Guitar)
     {
-        Load(data.ToArray());
+        Load(data.ToArray(), instrument);
     }
 
-    public void Load(string[] data)
+    public void Load(string[] data, Song.Instrument instrument = Song.Instrument.Guitar)
     {
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
@@ -209,7 +209,16 @@ public class Chart  {
                             case (3):
                             case (4):
                                 // Add note to the data
-                                Note newStandardNote = new Note(position, (Note.Fret_Type)fret_type, length);
+                                Note newStandardNote;
+                                if (instrument == Song.Instrument.Drums)
+                                {
+                                    if (fret_type == 0)
+                                        newStandardNote = new Note(position, Note.Fret_Type.OPEN, length);
+                                    else
+                                        newStandardNote = new Note(position, (Note.Fret_Type)(fret_type - 1), length);
+                                }
+                                else
+                                    newStandardNote = new Note(position, (Note.Fret_Type)fret_type, length);
                                 Add(newStandardNote, false);
                                 break;
                             case (5):
@@ -217,7 +226,11 @@ public class Chart  {
                                 flags.Add(line);
                                 break;
                             case (7):
-                                Note newOpenNote = new Note(position, Note.Fret_Type.OPEN, length);
+                                Note newOpenNote;
+                                if (instrument == Song.Instrument.Drums)
+                                    newOpenNote = new Note(position, Note.Fret_Type.ORANGE, length);
+                                else
+                                    newOpenNote = new Note(position, Note.Fret_Type.OPEN, length);
                                 Add(newOpenNote, false);
                                 break;
                             default:

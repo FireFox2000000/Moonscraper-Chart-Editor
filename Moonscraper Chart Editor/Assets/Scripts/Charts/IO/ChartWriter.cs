@@ -190,7 +190,7 @@ public class ChartWriter {
         return saveString;
     }
 
-    string GetSaveString<T>(Song song, T[] list, ExportOptions exportOptions) where T : SongObject
+    string GetSaveString<T>(Song song, T[] list, ExportOptions exportOptions, Song.Instrument instrument = Song.Instrument.Guitar) where T : SongObject
     {
         System.Text.StringBuilder saveString = new System.Text.StringBuilder();
 
@@ -240,10 +240,24 @@ public class ChartWriter {
 
                 case (SongObject.ID.Note):
                     Note note = songObject as Note;
-                    int fretNumber = (int)note.fret_type;
+                    int fretNumber;
+                    if (instrument == Song.Instrument.Drums)
+                    {
+                        // Green notes are the kick notes, therefore move open notes to the bottom and everything else up
+                        fretNumber = (int)note.fret_type + 1;
 
-                    if (note.fret_type == Note.Fret_Type.OPEN)
-                        fretNumber = 7;
+                        if (note.fret_type == Note.Fret_Type.OPEN)
+                            fretNumber = 0;
+                        else if (note.fret_type == Note.Fret_Type.ORANGE)
+                            fretNumber = 7;
+                    }
+                    else
+                    {
+                        fretNumber = (int)note.fret_type;
+
+                        if (note.fret_type == Note.Fret_Type.OPEN)
+                            fretNumber = 7;
+                    }
 
                     saveString.Append(" = N " + fretNumber + " " + (uint)Mathf.Round(note.sustain_length * resolutionScaleRatio));
 
