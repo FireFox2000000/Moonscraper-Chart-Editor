@@ -32,6 +32,9 @@ public class WaveformDraw : MonoBehaviour {
             case (2):
                 currentSample = editor.currentSong.rhythmSample;
                 break;
+            case (3):
+                currentSample = editor.currentSong.drumSample;
+                break;
             default:
                 currentSample = null;
                 break;

@@ -17,6 +17,7 @@ public class ChartWriter {
         string musicString = string.Empty;
         string guitarString = string.Empty;
         string rhythmString = string.Empty;
+        string drumString = string.Empty;
 
         // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
         if (song.songAudioLoaded && Path.GetDirectoryName(song.audioLocations[Song.MUSIC_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))
@@ -34,6 +35,11 @@ public class ChartWriter {
         else
             rhythmString = song.audioLocations[Song.RHYTHM_STREAM_ARRAY_POS];
 
+        if (song.drumAudioLoaded && Path.GetDirectoryName(song.audioLocations[Song.DRUM_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))
+            drumString = Path.GetFileName(song.audioLocations[Song.DRUM_STREAM_ARRAY_POS]);
+        else
+            drumString = song.audioLocations[Song.DRUM_STREAM_ARRAY_POS];
+
         string saveString = string.Empty;
 
         // Song properties
@@ -49,6 +55,9 @@ public class ChartWriter {
 
         if (song.rhythmAudioLoaded)
             saveString += Globals.TABSPACE + "RhythmStream = \"" + rhythmString + "\"" + Globals.LINE_ENDING;
+
+        if (song.drumAudioLoaded)
+            saveString += Globals.TABSPACE + "DrumStream = \"" + drumString + "\"" + Globals.LINE_ENDING;
 
         saveString += "}" + Globals.LINE_ENDING;
 

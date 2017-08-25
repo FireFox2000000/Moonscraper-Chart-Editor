@@ -122,7 +122,7 @@ public class Globals : MonoBehaviour {
                 _sfxVolume = value;
         }
     }
-    public static float vol_master, vol_song, vol_guitar, vol_rhythm, audio_pan;
+    public static float vol_master, vol_song, vol_guitar, vol_rhythm, vol_drum, audio_pan;
 
 
     ChartEditor editor;
@@ -188,6 +188,7 @@ public class Globals : MonoBehaviour {
         vol_song = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
         vol_guitar = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
         vol_rhythm = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
+        vol_drum = (float)iniparse.ReadValue("Audio Volume", "Drum Stream", 1.0f);
         audio_pan = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
         
         AudioListener.volume = vol_master;
@@ -401,6 +402,7 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Audio Volume", "Music Stream", vol_song);
         iniparse.WriteValue("Audio Volume", "Guitar Stream", vol_guitar);
         iniparse.WriteValue("Audio Volume", "Rhythm Stream", vol_rhythm);
+        iniparse.WriteValue("Audio Volume", "Drum Stream", vol_drum);
         iniparse.WriteValue("Audio Volume", "Audio Pan", audio_pan);
         //iniparse.WriteValue("Audio Volume", "Clap", editor.clapSource.volume);
         iniparse.WriteValue("Audio Volume", "SFX", sfxVolume);

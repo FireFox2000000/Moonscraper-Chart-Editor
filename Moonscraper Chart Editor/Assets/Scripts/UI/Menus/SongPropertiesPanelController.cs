@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System;
 
 public class SongPropertiesPanelController : DisplayMenu {
+    public Scrollbar verticalScroll;
 
     public InputField songName;
     public InputField artist;
@@ -21,6 +22,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     public Text musicStream;
     public Text guitarStream;
     public Text rhythmStream;
+    public Text drumStream;
 
     public LoadingScreenFader loadingScreen;
 
@@ -33,7 +35,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         bool edit = ChartEditor.editOccurred;
 
         base.OnEnable();
-
+        
         init = true;
         Song song = editor.currentSong;   
            
@@ -53,6 +55,13 @@ public class SongPropertiesPanelController : DisplayMenu {
         customTime = TimeSpan.FromSeconds(editor.currentSong.length);
 
         ChartEditor.editOccurred = edit;
+        StartCoroutine(ScrollSetDelay());
+    }
+
+    IEnumerator ScrollSetDelay()
+    {
+        yield return null;
+        verticalScroll.value = 1;
     }
 
 	void Apply()
@@ -155,6 +164,18 @@ public class SongPropertiesPanelController : DisplayMenu {
             rhythmStream.text = "No audio";
         }
 
+        if (song.drumAudioLoaded)
+        {
+            drumStream.color = Color.white;
+            drumStream.text = song.drumSongName;
+            ClipText(drumStream);
+        }
+        else
+        {
+            drumStream.color = Color.red;
+            drumStream.text = "No audio";
+        }
+
         ChartEditor.editOccurred = true;
     }
 
@@ -210,7 +231,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void ClearMusicStream()
     {
-        clearAudioStream(0);
+        clearAudioStream(Song.MUSIC_STREAM_ARRAY_POS);
     }
 
     public void LoadGuitarStream()
@@ -229,7 +250,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void ClearGuitarStream()
     {
-        clearAudioStream(1);
+        clearAudioStream(Song.GUITAR_STREAM_ARRAY_POS);
     }
 
     public void LoadRhythmStream()
@@ -248,52 +269,52 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void ClearRhythmStream()
     {
-        clearAudioStream(2);
+        clearAudioStream(Song.RHYTHM_STREAM_ARRAY_POS);
+    }
+
+    public void LoadDrumStream()
+    {
+        try
+        {
+            editor.currentSong.LoadDrumStream(GetAudioFile());
+
+            StartCoroutine(SetAudio());
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
+
+    public void ClearDrumStream()
+    {
+        clearAudioStream(Song.DRUM_STREAM_ARRAY_POS);
     }
 
     void clearAudioStream(int songAudioIndex)
     {
         switch (songAudioIndex)
         {
-            case (0):
+            case (Song.MUSIC_STREAM_ARRAY_POS):
                 editor.currentSong.musicSample.Free();
-                if (editor.currentSong.songAudioLoaded)
-                {
-#if !BASS_AUDIO
-                    Destroy(editor.currentSong.musicStream);
-                }
-                editor.currentSong.musicStream = null;
-#else
-                }
                 editor.currentSong.bassMusicStream = 0;
-#endif
                 break;
-            case (1):
+
+            case (Song.GUITAR_STREAM_ARRAY_POS):
                 editor.currentSong.guitarSample.Free();
-                if (editor.currentSong.guitarAudioLoaded)
-                {
-#if !BASS_AUDIO
-                    Destroy(editor.currentSong.guitarStream);
-                }
-                editor.currentSong.guitarStream = null;
-#else
-                }
                 editor.currentSong.bassGuitarStream = 0;
-#endif
                 break;
-            case (2):
+
+            case (Song.RHYTHM_STREAM_ARRAY_POS):
                 editor.currentSong.rhythmSample.Free();
-                if (editor.currentSong.rhythmAudioLoaded)
-                {
-#if !BASS_AUDIO
-                    Destroy(editor.currentSong.rhythmStream);
-                }
-                editor.currentSong.rhythmStream = null;
-#else
-                }
                 editor.currentSong.bassRhythmStream = 0;
-#endif
                 break;
+
+            case (Song.DRUM_STREAM_ARRAY_POS):
+                editor.currentSong.drumSample.Free();
+                editor.currentSong.bassDrumStream = 0;
+                break;
+
             default:
                 break;
         }

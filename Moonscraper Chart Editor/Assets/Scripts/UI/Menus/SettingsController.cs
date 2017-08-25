@@ -16,6 +16,7 @@ public class SettingsController : DisplayMenu
     public Slider musicSourceSlider;
     public Slider guitarSourceSlider;
     public Slider rhythmSourceSlider;
+    public Slider drumSourceSlider;
     //public Slider clapSourceSlider;
     public Slider sfxSlider;
 
@@ -53,6 +54,7 @@ public class SettingsController : DisplayMenu
         Globals.vol_song = musicSourceSlider.value;
         Globals.vol_guitar = guitarSourceSlider.value;
         Globals.vol_rhythm = rhythmSourceSlider.value;
+        Globals.vol_drum = drumSourceSlider.value;
 
         Globals.sfxVolume = sfxSlider.value;
 
@@ -128,6 +130,7 @@ public class SettingsController : DisplayMenu
         musicSourceSlider.value = Globals.vol_song;
         guitarSourceSlider.value = Globals.vol_guitar;
         rhythmSourceSlider.value = Globals.vol_rhythm;
+        drumSourceSlider.value = Globals.vol_drum;
         sfxSlider.value = Globals.sfxVolume;
 
         //clapSourceSlider.value = editor.clapSource.volume;

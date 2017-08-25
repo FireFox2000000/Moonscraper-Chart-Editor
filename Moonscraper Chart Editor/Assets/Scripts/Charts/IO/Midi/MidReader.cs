@@ -12,7 +12,8 @@ public static class MidReader {
         string directory = System.IO.Path.GetDirectoryName(path);
         song.musicSongName = directory + "\\song.ogg";
         song.guitarSongName = directory + "\\guitar.ogg";
-        song.rhythmSongName = directory + "\\bass.ogg";
+        song.rhythmSongName = directory + "\\rhythm.ogg";
+        song.drumSongName = directory + "\\drums.ogg";
 
         MidiFile midi;
 

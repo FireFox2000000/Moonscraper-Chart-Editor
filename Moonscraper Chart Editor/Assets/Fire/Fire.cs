@@ -49,7 +49,14 @@ public class Fire : MonoBehaviour
 
             if (Application.isPlaying && nCon.note != null)
             {
-                ren.sharedMaterial = FireSyncronizer.flameMaterials[(int)nCon.note.fret_type]; //MaterialByPosition();
+                int noteNumber = (int)nCon.note.fret_type;
+                if (Globals.drumMode && nCon.note.fret_type != Note.Fret_Type.OPEN)
+                {
+                    noteNumber += 1;
+                    if (noteNumber > (int)Note.Fret_Type.ORANGE)
+                        noteNumber = 0;
+                }
+                ren.sharedMaterial = FireSyncronizer.flameMaterials[noteNumber]; //MaterialByPosition();
             }
         }
 	}

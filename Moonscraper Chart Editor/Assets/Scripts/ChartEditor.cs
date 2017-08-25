@@ -468,10 +468,17 @@ public class ChartEditor : MonoBehaviour {
         SetBassStreamProperties(currentSong.bassMusicStream, Globals.gameSpeed, Globals.vol_song);
         SetBassStreamProperties(currentSong.bassGuitarStream, Globals.gameSpeed, Globals.vol_guitar);
         SetBassStreamProperties(currentSong.bassRhythmStream, Globals.gameSpeed, Globals.vol_rhythm);
+        SetBassStreamProperties(currentSong.bassDrumStream, Globals.gameSpeed, Globals.vol_drum);
 
+        foreach (int bassStream in currentSong.bassAudioStreams)
+        {
+            PlayBassStream(bassStream, playPoint);
+        }
+        /*
         PlayBassStream(currentSong.bassMusicStream, playPoint);
         PlayBassStream(currentSong.bassGuitarStream, playPoint);
         PlayBassStream(currentSong.bassRhythmStream, playPoint);
+        PlayBassStream(currentSong.bassDrumStream, playPoint);*/
 
         movement.playStartPosition = movement.transform.position.y;
         movement.playStartTime = Time.time;
@@ -484,6 +491,12 @@ public class ChartEditor : MonoBehaviour {
         foreach (AudioSource source in musicSources)
             source.Stop();
 #else
+        foreach (int bassStream in currentSong.bassAudioStreams)
+        {
+            if (bassStream != 0)
+                Bass.BASS_ChannelStop(bassStream);
+        }
+        /*
         if (currentSong.bassMusicStream != 0)
             Bass.BASS_ChannelStop(currentSong.bassMusicStream);
 
@@ -492,6 +505,9 @@ public class ChartEditor : MonoBehaviour {
 
         if (currentSong.bassRhythmStream != 0)
             Bass.BASS_ChannelStop(currentSong.bassRhythmStream);
+
+        if (currentSong.bassDrumStream != 0)
+            Bass.BASS_ChannelStop(currentSong.bassDrumStream);*/
 #endif
 
         movement.playStartPosition = null;
@@ -904,6 +920,7 @@ public class ChartEditor : MonoBehaviour {
         currentSong.musicSample.Free();
         currentSong.guitarSample.Free();
         currentSong.rhythmSample.Free();
+        currentSong.drumSample.Free();
 #if !BASS_AUDIO
         currentSong.FreeAudioClips();
 #else

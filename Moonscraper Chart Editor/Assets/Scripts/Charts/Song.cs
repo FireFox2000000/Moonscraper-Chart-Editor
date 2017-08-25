@@ -19,6 +19,7 @@ public class Song {
     public const int MUSIC_STREAM_ARRAY_POS = 0;
     public const int GUITAR_STREAM_ARRAY_POS = 1;
     public const int RHYTHM_STREAM_ARRAY_POS = 2;
+    public const int DRUM_STREAM_ARRAY_POS = 3;
 
     const int TEXT_POS_TICK = 0;
     const int TEXT_POS_EVENT_TYPE = 2;
@@ -37,13 +38,14 @@ public class Song {
     public AudioClip guitarStream { get { return audioStreams[GUITAR_STREAM_ARRAY_POS]; } set { audioStreams[GUITAR_STREAM_ARRAY_POS] = value; } }
     public AudioClip rhythmStream { get { return audioStreams[RHYTHM_STREAM_ARRAY_POS]; } set { audioStreams[RHYTHM_STREAM_ARRAY_POS] = value; } }
 #endif
-    SampleData[] audioSampleData = new SampleData[3];
+    SampleData[] audioSampleData = new SampleData[4];
     public SampleData musicSample { get { return audioSampleData[MUSIC_STREAM_ARRAY_POS]; } private set { audioSampleData[MUSIC_STREAM_ARRAY_POS] = value; } }
     public SampleData guitarSample { get { return audioSampleData[GUITAR_STREAM_ARRAY_POS]; } private set { audioSampleData[GUITAR_STREAM_ARRAY_POS] = value; } }
     public SampleData rhythmSample { get { return audioSampleData[RHYTHM_STREAM_ARRAY_POS]; } private set { audioSampleData[RHYTHM_STREAM_ARRAY_POS] = value; } }
+    public SampleData drumSample { get { return audioSampleData[DRUM_STREAM_ARRAY_POS]; } private set { audioSampleData[DRUM_STREAM_ARRAY_POS] = value; } }
 
 #if BASS_AUDIO
-    int[] bassAudioStreams = new int[3];
+    public int[] bassAudioStreams = new int[4];
     public int bassMusicStream
     {
         get
@@ -96,6 +98,25 @@ public class Song {
             }
 
             bassAudioStreams[RHYTHM_STREAM_ARRAY_POS] = value;
+        }
+    }
+    public int bassDrumStream
+    {
+        get
+        {
+            return bassAudioStreams[DRUM_STREAM_ARRAY_POS];
+        }
+        set
+        {
+            if (bassAudioStreams[DRUM_STREAM_ARRAY_POS] != 0)
+            {
+                if (Bass.BASS_StreamFree(bassAudioStreams[DRUM_STREAM_ARRAY_POS]))
+                    Debug.Log("Drum audio stream successfully freed");
+                else
+                    Debug.LogError("Error while attempting to free rhythm audio stream");
+            }
+
+            bassAudioStreams[DRUM_STREAM_ARRAY_POS] = value;
         }
     }
 #endif
@@ -157,7 +178,7 @@ public class Song {
         }
     }
 
-    public string[] audioLocations = new string[3];
+    public string[] audioLocations = new string[4];
 
     public string musicSongName { get { return Path.GetFileName(audioLocations[MUSIC_STREAM_ARRAY_POS]); }
         set {
@@ -172,6 +193,16 @@ public class Song {
         set {
             if (File.Exists(value))
                 audioLocations[RHYTHM_STREAM_ARRAY_POS] = Path.GetFullPath(value); } }
+
+    public string drumSongName
+    {
+        get { return Path.GetFileName(audioLocations[DRUM_STREAM_ARRAY_POS]); }
+        set
+        {
+            if (File.Exists(value))
+                audioLocations[DRUM_STREAM_ARRAY_POS] = Path.GetFullPath(value);
+        }
+    }
 
     public bool songAudioLoaded
     {
@@ -206,6 +237,15 @@ public class Song {
 #else
             return rhythmStream ? true : false;
 #endif
+        }
+    }
+
+    public bool drumAudioLoaded
+    {
+        get
+        {
+
+            return bassDrumStream != 0;
         }
     }
 
@@ -472,6 +512,7 @@ public class Song {
         LoadMusicStream(audioLocations[MUSIC_STREAM_ARRAY_POS]);
         LoadGuitarStream(audioLocations[GUITAR_STREAM_ARRAY_POS]);
         LoadRhythmStream(audioLocations[RHYTHM_STREAM_ARRAY_POS]);
+        LoadDrumStream(audioLocations[DRUM_STREAM_ARRAY_POS]);
 #if TIMING_DEBUG
         Debug.Log("Total audio files load time: " + (Time.realtimeSinceStartup - time));
 #endif
@@ -499,6 +540,14 @@ public class Song {
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
 
         coroutine.StartCoroutine(LoadAudio(filepath, RHYTHM_STREAM_ARRAY_POS, loadAudioObject));
+    }
+
+    public void LoadDrumStream(string filepath)
+    {
+        GameObject loadAudioObject = new GameObject("Load Drum Audio");
+        MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
+
+        coroutine.StartCoroutine(LoadAudio(filepath, DRUM_STREAM_ARRAY_POS, loadAudioObject));
     }
 
     IEnumerator LoadAudio(string filepath, int audioStreamArrayPos, GameObject coroutine)
@@ -975,6 +1024,7 @@ public class Song {
         Regex musicStreamRegex = new Regex(@"MusicStream = " + QUOTEVALIDATE);
         Regex guitarStreamRegex = new Regex(@"GuitarStream = " + QUOTEVALIDATE);
         Regex rhythmStreamRegex = new Regex(@"RhythmStream = " + QUOTEVALIDATE);
+        Regex drumStreamRegex = new Regex(@"DrumStream = " + QUOTEVALIDATE);
 
         try
         {
@@ -1068,6 +1118,8 @@ public class Song {
                 // MusicStream = "ENDLESS REBIRTH.ogg"
                 else if (musicStreamRegex.IsMatch(line))
                 {
+                    AudioLoadFromChart(MUSIC_STREAM_ARRAY_POS, line, audioDirectory);
+                    /*
                     string audioFilepath = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
 
                     // Check if it's already the full path. If not, make it relative to the chart file.
@@ -1075,10 +1127,12 @@ public class Song {
                         audioFilepath = audioDirectory + "\\" + audioFilepath;
 
                     if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions))
-                        audioLocations[MUSIC_STREAM_ARRAY_POS] = Path.GetFullPath(audioFilepath);
+                        audioLocations[MUSIC_STREAM_ARRAY_POS] = Path.GetFullPath(audioFilepath);*/
                 }
                 else if (guitarStreamRegex.IsMatch(line))
                 {
+                    AudioLoadFromChart(GUITAR_STREAM_ARRAY_POS, line, audioDirectory);
+                    /*
                     string audioFilepath = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
 
                     // Check if it's already the full path. If not, make it relative to the chart file.
@@ -1086,10 +1140,12 @@ public class Song {
                         audioFilepath = audioDirectory + "\\" + audioFilepath;
 
                     if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions))
-                        audioLocations[GUITAR_STREAM_ARRAY_POS] = Path.GetFullPath(audioFilepath);
+                        audioLocations[GUITAR_STREAM_ARRAY_POS] = Path.GetFullPath(audioFilepath);*/
                 }
                 else if (rhythmStreamRegex.IsMatch(line))
                 {
+                    AudioLoadFromChart(RHYTHM_STREAM_ARRAY_POS, line, audioDirectory);
+                    /*
                     string audioFilepath = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
 
                     // Check if it's already the full path. If not, make it relative to the chart file.
@@ -1097,7 +1153,11 @@ public class Song {
                         audioFilepath = audioDirectory + "\\" + audioFilepath;
 
                     if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions))
-                        audioLocations[RHYTHM_STREAM_ARRAY_POS] = Path.GetFullPath(audioFilepath);
+                        audioLocations[RHYTHM_STREAM_ARRAY_POS] = Path.GetFullPath(audioFilepath);*/
+                }
+                else if (drumStreamRegex.IsMatch(line))
+                {
+                    AudioLoadFromChart(DRUM_STREAM_ARRAY_POS, line, audioDirectory);
                 }
             }
 
@@ -1110,6 +1170,18 @@ public class Song {
             Debug.LogError(e.Message);
         }
         
+    }
+
+    void AudioLoadFromChart(int streamArrayPos, string line, string audioDirectory)
+    {
+        string audioFilepath = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+
+        // Check if it's already the full path. If not, make it relative to the chart file.
+        if (!File.Exists(audioFilepath))
+            audioFilepath = audioDirectory + "\\" + audioFilepath;
+
+        if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions))
+            audioLocations[streamArrayPos] = Path.GetFullPath(audioFilepath);
     }
 
     string GetPropertiesStringWithoutAudio()
