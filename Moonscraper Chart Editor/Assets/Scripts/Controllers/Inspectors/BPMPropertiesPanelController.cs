@@ -151,6 +151,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     public char validatePositiveDecimal(string text, int charIndex, char addedChar)
     {
+        int selectionLength = bpmValue.selectionAnchorPosition - bpmValue.selectionFocusPosition;
+        text = text.Remove(bpmValue.selectionFocusPosition, selectionLength);
+
         if ((addedChar == '.' && !text.Contains(".") && text.Length > 0) || (addedChar >= '0' && addedChar <= '9'))
         {
             if ((text.Contains(".") && text.Length - text.IndexOf('.') > 3) || (addedChar != '.' && !text.Contains(".") && text.Length > 2))
