@@ -112,7 +112,14 @@ public class Export : DisplayMenu {
                 //song.Save(filepath, exportOptions);
             else if (exportOptions.format == ExportOptions.Format.Midi)
             {
-                MidWriter.WriteToFile(filepath, song, exportOptions);
+                try
+                {
+                    MidWriter.WriteToFile(filepath, song, exportOptions);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError(e.Message);
+                }
             }
         });
 

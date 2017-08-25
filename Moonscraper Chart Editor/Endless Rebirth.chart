@@ -5,7 +5,7 @@
   Charter = "FireFox2000000"
   Offset = 0
   Resolution = 192
-  Player2 = "bass
+  Player2 = bass
   Difficulty = 0
   PreviewStart = 0
   PreviewEnd = 0
@@ -45,6 +45,7 @@
 }
 [ExpertSingle]
 {
+  96 = N 7 0
   768 = N 3 0
   768 = N 6 0 
   800 = N 2 0

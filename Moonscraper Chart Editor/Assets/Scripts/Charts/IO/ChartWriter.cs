@@ -247,8 +247,8 @@ public class ChartWriter {
                         fret = Note.GuitarNoteToDrumNote(fret);
 
                     int fretNumber = (int)fret;
-                    if (fret == Note.Fret_Type.OPEN)
-                        fretNumber = 7;                
+                    if (fret == Note.Fret_Type.OPEN && instrument != Song.Instrument.Drums)     // Last note is saved as 7 unless it's in the drum chart in which case it is 5
+                        fretNumber = 7;
 
                     saveString.Append(" = N " + fretNumber + " " + (uint)Mathf.Round(note.sustain_length * resolutionScaleRatio));
 

@@ -429,7 +429,7 @@ public class ChartEditor : MonoBehaviour {
     public static float? startGameplayPos = null;
     public void StartGameplay()
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing || movement.transform.position.y < movement.initPos.y)
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing || movement.transform.position.y < movement.initPos.y || Globals.drumMode)
             return;
 
         if (Globals.resetAfterGameplay)

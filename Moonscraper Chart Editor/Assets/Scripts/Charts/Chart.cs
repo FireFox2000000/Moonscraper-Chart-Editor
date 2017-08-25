@@ -215,13 +215,19 @@ public class Chart  {
                                 Add(newStandardNote, false);
                                 break;
                             case (5):
+                                if (instrument == Song.Instrument.Drums)
+                                {
+                                    Note drumNote = new Note(position, Note.Fret_Type.ORANGE, length);
+                                    Add(drumNote, false);
+                                    break;
+                                }
+                                else
+                                    goto case (6);
                             case (6):
                                 flags.Add(line);
                                 break;
                             case (7):
                                 Note newOpenNote = new Note(position, Note.Fret_Type.OPEN, length);
-                                if (instrument == Song.Instrument.Drums)
-                                    newOpenNote.fret_type = Note.DrumNoteToGuitarNote(newOpenNote.fret_type);
                                 Add(newOpenNote, false);
                                 break;
                             default:

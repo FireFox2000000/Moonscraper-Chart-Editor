@@ -5,12 +5,18 @@ using System.Collections;
 using XInputDotNetPure;
 
 public class Indicators : MonoBehaviour {
+    const int FRET_COUNT = 5;
+
     [SerializeField]
-    GameObject[] indicators = new GameObject[5];
+    GameObject[] indicators = new GameObject[FRET_COUNT];
     [SerializeField]
-    GameObject[] customIndicators = new GameObject[5];
+    GameObject[] customIndicators = new GameObject[FRET_COUNT];
+    [SerializeField]
+    Color[] defaultStikelineFretColors;
     [HideInInspector]
-    public HitAnimation[] animations = new HitAnimation[5];
+    public HitAnimation[] animations = new HitAnimation[FRET_COUNT];
+
+    SpriteRenderer[] fretRenders = new SpriteRenderer[FRET_COUNT * 2];
 
     void Start()
     {
@@ -24,10 +30,36 @@ public class Indicators : MonoBehaviour {
             else
                 animations[i] = indicators[i].GetComponent<HitAnimation>();
         }
+
+        for (int i = 0; i < indicators.Length; ++i)
+        {
+            fretRenders[i * 2] = indicators[i].GetComponent<SpriteRenderer>();
+            fretRenders[i * 2 + 1] = indicators[i].transform.parent.GetComponent<SpriteRenderer>();
+        }
     }
 
     // Update is called once per frame
     void Update () {
+        if (Globals.drumMode)
+        {
+            for (int i = 0; i < defaultStikelineFretColors.Length; ++i)
+            {
+                int color = i + 1;
+                if (color >= defaultStikelineFretColors.Length)
+                    color = 0;
+
+                fretRenders[i * 2].color = defaultStikelineFretColors[color];
+                fretRenders[i * 2 + 1].color = defaultStikelineFretColors[color];
+            }
+        }
+        else
+        {
+            for (int i = 0; i < defaultStikelineFretColors.Length; ++i)
+            {
+                fretRenders[i * 2].color = defaultStikelineFretColors[i];
+                fretRenders[i * 2 + 1].color = defaultStikelineFretColors[i];
+            }
+        }
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
         {
 #if GAMEPAD

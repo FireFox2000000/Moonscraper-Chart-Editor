@@ -19,6 +19,7 @@ public static class MidWriter {
 
     public static void WriteToFile(string path, Song song, ExportOptions exportOptions)
     {
+        Debug.Log(path);
         short track_count = 1; 
 
         byte[] track_sync = MakeTrack(GetSyncBytes(song, exportOptions), song.name);
@@ -30,7 +31,9 @@ public static class MidWriter {
 
         //byte[] track_beat = MakeTrack(GenerateBeat(end, (uint)exportOptions.targetResolution), "BEAT");
         //song.GetChart(Song.Instrument.Guitar, Song.Difficulty.Expert).Add(new ChartEvent(0, "[idle_realtime]"));
+
         byte[] track_guitar = GetInstrumentBytes(song, Song.Instrument.Guitar, exportOptions);
+
         if (track_guitar.Length > 0)
             track_count++;
 
@@ -47,7 +50,7 @@ public static class MidWriter {
             track_count++;
 
         byte[] header = GetMidiHeader(1, track_count, (short)(exportOptions.targetResolution));
-
+        
         FileStream file = File.Open(path, FileMode.OpenOrCreate);
         BinaryWriter bw = new BinaryWriter(file);
 
@@ -243,16 +246,17 @@ public static class MidWriter {
 
         foreach (ChartObject chartObject in chart.chartObjects)
         {
-            Note note = chartObject as Note;
-            Note.Fret_Type fret_type = note.fret_type;
-            if (instrument == Song.Instrument.Drums)
-                fret_type = Note.GuitarNoteToDrumNote(fret_type);
+            Note note = chartObject as Note;           
 
             SortableBytes onEvent = null;
             SortableBytes offEvent = null;
 
             if (note != null)
             {
+                Note.Fret_Type fret_type = note.fret_type;
+                if (instrument == Song.Instrument.Drums)
+                    fret_type = Note.GuitarNoteToDrumNote(fret_type);
+
                 int difficultyNumber;
                 int noteNumber;
 
@@ -273,7 +277,7 @@ public static class MidWriter {
                     default:
                         continue;
                 }
-
+ 
                 switch (fret_type)
                 {
                     case (Note.Fret_Type.OPEN):     // Open note highlighted as an SysEx event. Use green as default.
@@ -302,7 +306,7 @@ public static class MidWriter {
                     default:
                         continue;
                 }
-
+ 
                 onEvent = new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)noteNumber, VELOCITY });
                 offEvent = new SortableBytes(note.position + note.sustain_length, new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY });
 
@@ -345,8 +349,9 @@ public static class MidWriter {
                         InsertionSort(tapOffEvent);
                     }
                 }
-                
-                if (difficulty == Song.Difficulty.Expert && note.fret_type == Note.Fret_Type.OPEN && (note.previous == null || (note.previous.fret_type != Note.Fret_Type.OPEN)))
+
+                if (difficulty == Song.Difficulty.Expert && note.fret_type == Note.Fret_Type.OPEN && (note.previous == null || (note.previous.fret_type != Note.Fret_Type.OPEN))
+                    && instrument != Song.Instrument.Drums)
                 {
                     // Find the next non-open note
                     Note nextNonOpen = note;

@@ -61,6 +61,14 @@ public class NoteVisuals3DManager : NoteVisualsManager
                 const int standardColMatPos = 1;
                 const int spColMatPos = 3;
 
+                int fretNumber = (int)note.fret_type;
+                if (Globals.drumMode)
+                {
+                    fretNumber += 1;
+                    if (fretNumber > 4)
+                        fretNumber = 0;
+                }
+
                 switch (noteType)
                 {
                     case (Note.Note_Type.Hopo):
@@ -70,36 +78,36 @@ public class NoteVisuals3DManager : NoteVisualsManager
                         if (specialType == Note.Special_Type.STAR_POW)
                         {
                             materials = resources.spHopoRenderer.sharedMaterials;
-                            materials[spColMatPos] = resources.strumColors[(int)note.fret_type];
+                            materials[spColMatPos] = resources.strumColors[fretNumber];
                         }
                         else
                         {
                             materials = resources.hopoRenderer.sharedMaterials;
-                            materials[standardColMatPos] = resources.strumColors[(int)note.fret_type];
+                            materials[standardColMatPos] = resources.strumColors[fretNumber];
                         }
                         break;
                     case (Note.Note_Type.Tap):
                         if (specialType == Note.Special_Type.STAR_POW)
                         {
                             materials = resources.spTapRenderer.sharedMaterials;
-                            materials[spColMatPos] = resources.tapColors[(int)note.fret_type];
+                            materials[spColMatPos] = resources.tapColors[fretNumber];
                         }
                         else
                         {
                             materials = resources.tapRenderer.sharedMaterials;
-                            materials[standardColMatPos] = resources.tapColors[(int)note.fret_type];
+                            materials[standardColMatPos] = resources.tapColors[fretNumber];
                         }
                         break;
                     default:    // strum
                         if (specialType == Note.Special_Type.STAR_POW)
                         {
                             materials = resources.spStrumRenderer.sharedMaterials;
-                            materials[spColMatPos] = resources.strumColors[(int)note.fret_type];
+                            materials[spColMatPos] = resources.strumColors[fretNumber];
                         }
                         else
                         {
                             materials = resources.strumRenderer.sharedMaterials;
-                            materials[standardColMatPos] = resources.strumColors[(int)note.fret_type];
+                            materials[standardColMatPos] = resources.strumColors[fretNumber];
                         }
                         break;
                 }

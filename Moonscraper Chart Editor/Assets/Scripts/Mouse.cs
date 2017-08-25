@@ -188,8 +188,20 @@ public class Mouse : MonoBehaviour {
         {
             int j = i;
 
-            while ((j > 0) && (hits[j].transform.position.y < hits[j - 1].transform.position.y))
+            while ((j > 0) && (hits[j].transform.position.y <= hits[j - 1].transform.position.y))
             {
+                // Used for when comparing standard notes against open notes overlayed on top of each other when charting for drums
+                if (hits[j].transform.position.y == hits[j - 1].transform.position.y)
+                {
+                    BoxCollider hitACol = hits[j].GetComponent<BoxCollider>();
+                    BoxCollider hitBCol = hits[j - 1].GetComponent<BoxCollider>();
+
+                    if (!(hitACol && hitBCol && hitACol.size.x < hitBCol.size.x))
+                    {
+                        break; 
+                    }
+                }
+
                 int k = j - 1;
                 GameObject temp = hits[k];
                 hits[k] = hits[j];
