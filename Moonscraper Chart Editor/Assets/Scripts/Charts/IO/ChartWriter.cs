@@ -253,7 +253,7 @@ public class ChartWriter {
 
                     // Drum notes are saved differently
                     if (instrument == Song.Instrument.Drums)
-                        fret = Note.GuitarNoteToDrumNote(fret);
+                        fret = Note.SaveGuitarNoteToDrumNote(fret);
 
                     int fretNumber = (int)fret;
                     if (fret == Note.Fret_Type.OPEN && instrument != Song.Instrument.Drums)     // Last note is saved as 7 unless it's in the drum chart in which case it is 5

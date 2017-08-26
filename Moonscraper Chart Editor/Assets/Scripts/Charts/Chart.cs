@@ -211,7 +211,7 @@ public class Chart  {
                                 // Add note to the data
                                 Note newStandardNote = new Note(position, (Note.Fret_Type)fret_type, length);
                                 if (instrument == Song.Instrument.Drums)
-                                    newStandardNote.fret_type = Note.DrumNoteToGuitarNote(newStandardNote.fret_type);
+                                    newStandardNote.fret_type = Note.LoadDrumNoteToGuitarNote(newStandardNote.fret_type);
                                 Add(newStandardNote, false);
                                 break;
                             case (5):

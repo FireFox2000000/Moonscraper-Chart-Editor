@@ -251,7 +251,7 @@ public static class MidReader {
                 }
 
                 if (instrument == Song.Instrument.Drums)
-                    fret = Note.DrumNoteToGuitarNote(fret);
+                    fret = Note.LoadDrumNoteToGuitarNote(fret);
 
                 // Add the note to the correct chart
                 song.GetChart(instrument, difficulty).Add(new Note(tick, fret, sus), false);             
@@ -394,7 +394,7 @@ public static class MidReader {
                     notes[k].fret_type = Note.Fret_Type.OPEN;
 
                     if (instrument == Song.Instrument.Drums)
-                        notes[k].fret_type = Note.DrumNoteToGuitarNote(notes[k].fret_type);
+                        notes[k].fret_type = Note.LoadDrumNoteToGuitarNote(notes[k].fret_type);
                 }
             }
 

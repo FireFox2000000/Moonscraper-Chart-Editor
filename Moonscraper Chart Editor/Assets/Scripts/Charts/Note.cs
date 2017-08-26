@@ -10,6 +10,13 @@ public class Note : ChartObject
 
     public uint sustain_length;
     public Fret_Type fret_type;
+    public Drum_Fret_Type drum_fret_type
+    {
+        get
+        {
+            return (Drum_Fret_Type)fret_type;
+        }
+    }
 
     /// <summary>
     /// Properties, such as forced or taps, are stored here in a bitwise format.
@@ -56,6 +63,13 @@ public class Note : ChartObject
         // Assign to the sprite array position
         GREEN = 0, RED = 1, YELLOW = 2, BLUE = 3, ORANGE = 4, OPEN = 5
     }
+
+    public enum Drum_Fret_Type
+    {
+        // Wrapper to account for how the frets change colours between the drums and guitar tracks from the GH series
+        KICK = Fret_Type.OPEN, RED = Fret_Type.GREEN, YELLOW = Fret_Type.RED, BLUE = Fret_Type.YELLOW, ORANGE = Fret_Type.BLUE, GREEN = Fret_Type.ORANGE
+    }
+
 
     public enum Note_Type
     {
@@ -563,22 +577,22 @@ public class Note : ChartObject
         applyFlagsToChord();
     }
 
-    public static Note.Fret_Type GuitarNoteToDrumNote(Note.Fret_Type fret_type)
+    public static Fret_Type SaveGuitarNoteToDrumNote(Fret_Type fret_type)
     {
-        if (fret_type == Note.Fret_Type.OPEN)
-            return Note.Fret_Type.GREEN;
-        else if (fret_type == Note.Fret_Type.ORANGE)
-            return Note.Fret_Type.OPEN;
+        if (fret_type == Fret_Type.OPEN)
+            return Fret_Type.GREEN;
+        else if (fret_type == Fret_Type.ORANGE)
+            return Fret_Type.OPEN;
         else
             return fret_type + 1;
     }
 
-    public static Note.Fret_Type DrumNoteToGuitarNote(Note.Fret_Type fret_type)
+    public static Fret_Type LoadDrumNoteToGuitarNote(Fret_Type fret_type)
     {
-        if (fret_type == Note.Fret_Type.OPEN)
-            return Note.Fret_Type.ORANGE;
-        else if (fret_type == Note.Fret_Type.GREEN)
-            return Note.Fret_Type.OPEN;
+        if (fret_type == Fret_Type.OPEN)
+            return Fret_Type.ORANGE;
+        else if (fret_type == Fret_Type.GREEN)
+            return Fret_Type.OPEN;
         else
             return fret_type - 1;
     }
