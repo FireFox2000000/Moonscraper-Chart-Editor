@@ -1,3 +1,15 @@
+v1.0
+    NEW FEATURES
+    -Added drums charting with extra audio slot for them
+    -Re-wrote and added pdf manual in the documention
+
+    FIXES
+    -Fixed lefty-flip movement of notes
+    -Fixed bpm input field validation not taking into account highlighted text
+
+    CHANGES
+    -Added dropshadow to some text
+
 v0.9.901
     FIXES
     -Fixed bpm decimal place typing on smaller values

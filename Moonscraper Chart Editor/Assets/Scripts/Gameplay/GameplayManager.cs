@@ -10,9 +10,11 @@ using Un4seen.Bass;
 [RequireComponent(typeof(AudioSource))]
 public class GameplayManager : MonoBehaviour {
     public AudioClip comboBreak;
+    public CameraShake camShake;
 
     AudioSource audioSource;
     int sample;
+    int channel;
 
     const float FREESTRUM_TIME = 0.2f;
 
@@ -53,11 +55,12 @@ public class GameplayManager : MonoBehaviour {
 
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
-        audioSource.clip = comboBreak;
+        //audioSource = GetComponent<AudioSource>();
+        //audioSource.clip = comboBreak;
 
-        //byte[] comboBreakBytes = comboBreak.GetWavBytes();
-        //sample = Bass.BASS_SampleLoad(comboBreakBytes, 0, comboBreakBytes.Length, 1, BASSFlag.BASS_DEFAULT);
+        byte[] comboBreakBytes = comboBreak.GetWavBytes();
+        sample = Bass.BASS_SampleLoad(comboBreakBytes, 0, comboBreakBytes.Length, 1, BASSFlag.BASS_DEFAULT);
+        channel = Bass.BASS_SampleGetChannel(sample, false);
 
         previousStrumValue = Input.GetAxisRaw("Strum");
         previousInputMask = GetFretInputMask();
@@ -276,9 +279,18 @@ public class GameplayManager : MonoBehaviour {
             previousInputMask = inputMask;
 
             // Lost combo auditorial feedback
-            if (startNS >= 10 && noteStreak < startNS && !audioSource.isPlaying)
+            if (startNS >= 10 && noteStreak < startNS && 
+                    (
+                        Bass.BASS_ChannelIsActive(channel) == BASSActive.BASS_ACTIVE_STOPPED || Bass.BASS_ChannelIsActive(channel) == BASSActive.BASS_ACTIVE_PAUSED
+                    )
+                )// !audioSource.isPlaying)
             {
-                audioSource.Play();
+                Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, Globals.sfxVolume * Globals.vol_master);
+                Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, Globals.audio_pan);
+                Bass.BASS_ChannelPlay(channel, false); // play it
+                camShake.ShakeCamera();
+                //Bass.BASS_ChannelPlay(sample, false);
+                // audioSource.Play();
             }   
         }
         else
@@ -633,5 +645,10 @@ public class GameplayManager : MonoBehaviour {
                 ++totalNotes;
             }
         }
+    }
+
+    ~GameplayManager()
+    {
+        Bass.BASS_SampleFree(sample);
     }
 }

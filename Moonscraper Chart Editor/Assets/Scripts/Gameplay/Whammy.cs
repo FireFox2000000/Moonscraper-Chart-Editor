@@ -24,7 +24,8 @@ public class Whammy : MonoBehaviour {
         lineRenderer = GetComponent<LineRenderer>();
         pointsController = GetComponent<SetLineRendererPoints>();
         lineCurve = lineRenderer.widthCurve;
-        defaultKeys = new Keyframe[] { new Keyframe(0, 1) };
+
+        defaultKeys = new Keyframe[] { new Keyframe(0, 1), new Keyframe(0.9f, 1) };
     }
     
 	// Update is called once per frame
@@ -43,20 +44,25 @@ public class Whammy : MonoBehaviour {
             }
             else
             {
-                lineCurve.keys = defaultKeys;
-                pointsController.SetPositionsMinimum();
+                OnEnable();
+                //lineCurve.keys = defaultKeys;
+                //pointsController.SetPositionsMinimum();
             }
 
             lineRenderer.widthCurve = lineCurve;
         }
     }
 
-    void OnDisable()
+    void OnEnable()
     {
         // Remove all whammy animation and reset
         if (lineRenderer && lineCurve != null && defaultKeys != null)
         {
             lineCurve.keys = defaultKeys;
+            lineRenderer.widthCurve = lineCurve;
+            pointsController.SetPositionsMinimum();
+
+            currentWhammyVal = -1;
         }
     }
 

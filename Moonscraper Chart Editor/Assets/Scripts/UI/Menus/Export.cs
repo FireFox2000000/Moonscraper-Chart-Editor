@@ -30,7 +30,6 @@ public class Export : DisplayMenu {
         "\t-Audio will disconnect from file \n" +
         "\t-Starpower, taps and open note events will be defined by the expert chart if enabled \n" +
         "\t-Guitar co-op chart will not be exported, they are \".chart\" exclusive \n" +
-        "\t-Drum charts will be empty\n\n" +
 
         "Exporting to Magma (Rock Band) notes: \n" +
         "\t-Resolution must be 480 \n" +

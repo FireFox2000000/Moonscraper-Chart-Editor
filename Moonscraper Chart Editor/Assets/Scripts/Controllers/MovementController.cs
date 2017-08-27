@@ -18,6 +18,8 @@ public abstract class MovementController : MonoBehaviour {
     [HideInInspector]
     public float? playStartPosition;
 
+    Transform selfTransform;
+
     // Program options
     protected float mouseScrollSensitivity = 0.2f;      // May miss snap gaps if placed too high
 
@@ -38,6 +40,7 @@ public abstract class MovementController : MonoBehaviour {
     {
         initPos = transform.position;
         globals = GameObject.FindGameObjectWithTag("Globals").GetComponent<Globals>();
+        selfTransform = transform;
     }
 
     public void PlayingMovement()
@@ -46,7 +49,7 @@ public abstract class MovementController : MonoBehaviour {
         Vector3 pos = transform.position;
         float deltaTime = Time.deltaTime;
 
-        //float oldPos = pos.y;
+        float oldPos = pos.y;
 
         if (playStartTime != null && playStartPosition != null)
         {
@@ -61,12 +64,12 @@ public abstract class MovementController : MonoBehaviour {
             pos.y += (speed * deltaTime);
         }
 
-        //float newPos = pos.y;
+        float newPos = pos.y;
 
         //if ((newPos - oldPos) > 0.4)
         //Debug.Log("Position difference: " + (newPos - oldPos) + ", Delta time: " + Time.deltaTime + ", Frame: " + Time.frameCount);
         //Debug.Log(Time.renderedFrameCount);
-        transform.position = pos;
+        selfTransform.position = pos;
         explicitChartPos = null;
 
         lastUpdatedRealTime = Time.time;

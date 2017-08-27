@@ -214,7 +214,7 @@ public class AssignCustomResources : MonoBehaviour {
         foreach (Renderer bg in background)
             bg.sharedMaterial.mainTexture = initBGTex;
         fretboard.sharedMaterial.mainTexture = initFretboardTex;
-#endif
+
         // Reset after play
         for (int i = 0; i < customSkin.sustain_mats.Length; ++i)
         {
@@ -224,5 +224,6 @@ public class AssignCustomResources : MonoBehaviour {
                 customSkin.sustain_mats[i] = null;
             }
         }
+#endif
     }
 }

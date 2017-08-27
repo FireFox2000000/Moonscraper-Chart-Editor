@@ -117,6 +117,7 @@
     <Compile Include="Assets\Scripts\Audio\PitchShifter.cs" />
     <Compile Include="Assets\Scripts\Audio\SampleData.cs" />
     <Compile Include="Assets\Scripts\Audio\WaveformDraw.cs" />
+    <Compile Include="Assets\Scripts\CameraShake.cs" />
     <Compile Include="Assets\Scripts\ChartEditor.cs" />
     <Compile Include="Assets\Scripts\Charts\BPM.cs" />
     <Compile Include="Assets\Scripts\Charts\Chart.cs" />
