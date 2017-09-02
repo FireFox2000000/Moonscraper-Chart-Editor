@@ -5,9 +5,8 @@ public class PlaceTimesignature : PlaceSongObject {
     public TimeSignature ts { get { return (TimeSignature)songObject; } set { songObject = value; } }
     new public TimesignatureController controller { get { return (TimesignatureController)base.controller; } set { base.controller = value; } }
 
-    protected override void Awake()
+    protected override void SetSongObjectAndController()
     {
-        base.Awake();
         ts = new TimeSignature();
 
         controller = GetComponent<TimesignatureController>();

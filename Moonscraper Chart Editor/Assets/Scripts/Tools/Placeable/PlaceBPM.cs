@@ -7,9 +7,8 @@ public class PlaceBPM : PlaceSongObject {
     new public BPMController controller { get { return (BPMController)base.controller; } set { base.controller = value; } }
     protected bool setAsLastBpm = true;
 
-    protected override void Awake()
+    protected override void SetSongObjectAndController()
     {
-        base.Awake();
         bpm = new BPM();
 
         controller = GetComponent<BPMController>();

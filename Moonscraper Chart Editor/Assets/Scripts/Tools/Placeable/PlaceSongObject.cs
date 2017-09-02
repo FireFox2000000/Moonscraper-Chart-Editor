@@ -9,6 +9,8 @@ public abstract class PlaceSongObject : ToolObject {
 
     protected SongObject initObject;        // Only used for moving objects
 
+    protected abstract void SetSongObjectAndController();
+
     protected override void Awake()
     {
         renderers = GetComponentsInChildren<Renderer>();
@@ -16,6 +18,8 @@ public abstract class PlaceSongObject : ToolObject {
 
         SongObjectController controller = GetComponent<SongObjectController>();
         controller.disableCancel = false;
+
+        SetSongObjectAndController();
     }
 
     public override void ToolDisable()
@@ -73,6 +77,12 @@ public abstract class PlaceSongObject : ToolObject {
                 break;
             case ((int)SongObject.ID.TimeSignature):
                 PlaceTimesignature.AddObjectToCurrentSong((TimeSignature)songObject, editor, update);
+                break;
+            case ((int)SongObject.ID.Event):
+                PlaceEvent.AddObjectToCurrentSong((Event)songObject, editor, update);
+                break;
+            case ((int)SongObject.ID.ChartEvent):
+                PlaceChartEvent.AddObjectToCurrentChart((ChartEvent)songObject, editor, update);
                 break;
             default:
                 break;

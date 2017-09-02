@@ -12,9 +12,8 @@ public class PlaceStarpower : PlaceSongObject {
     Renderer spRen;
     Starpower overwrittenSP = null;
 
-    protected override void Awake()
+    protected override void SetSongObjectAndController()
     {
-        base.Awake();
         starpower = new Starpower(0, 0);
 
         controller = GetComponent<StarpowerController>();

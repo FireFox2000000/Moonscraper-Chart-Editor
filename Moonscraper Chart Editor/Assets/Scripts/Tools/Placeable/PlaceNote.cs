@@ -22,9 +22,8 @@ public class PlaceNote : PlaceSongObject {
         }
     }
 
-    protected override void Awake()
+    protected override void SetSongObjectAndController()
     {
-        base.Awake();
         visuals = GetComponentInChildren<NoteVisualsManager>();
         note = new Note(0, Note.Fret_Type.GREEN);
 

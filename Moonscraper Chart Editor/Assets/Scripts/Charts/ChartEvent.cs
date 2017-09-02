@@ -31,6 +31,25 @@ public class ChartEvent : ChartObject
             return base.Equals(b);
     }
 
+    protected override bool LessThan(SongObject b)
+    {
+        if (b.GetType() == typeof(ChartEvent))
+        {
+            ChartEvent realB = b as ChartEvent;
+            if (position < b.position)
+                return true;
+            else if (position == b.position)
+            {
+                if (string.Compare(eventName, realB.eventName) < 0)
+                    return true;
+            }
+
+            return false;
+        }
+        else
+            return base.LessThan(b);
+    }
+
     internal override string GetSaveString()
     {
         // 1728 = E T

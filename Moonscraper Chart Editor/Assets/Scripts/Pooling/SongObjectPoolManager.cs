@@ -15,12 +15,16 @@ public class SongObjectPoolManager : MonoBehaviour {
     BPMPool bpmPool;
     TimesignaturePool tsPool;
     SectionPool sectionPool;
+    EventPool songEventPool;
+    ChartEventPool chartEventPool;
 
     GameObject noteParent;
     GameObject starpowerParent;
     GameObject bpmParent;
     GameObject timesignatureParent;
     GameObject sectionParent;
+    GameObject songEventParent;
+    GameObject chartEventParent;
 
     // Use this for initialization
     void Awake () {
@@ -33,6 +37,8 @@ public class SongObjectPoolManager : MonoBehaviour {
         bpmParent = new GameObject("BPMs");
         timesignatureParent = new GameObject("Time Signatures");
         sectionParent = new GameObject("Sections");
+        songEventParent = new GameObject("Global Events");
+        chartEventParent = new GameObject("Chart Events");
 
         notePool = new NotePool(noteParent, editor.notePrefab, NOTE_POOL_SIZE);
         noteParent.transform.SetParent(groupMovePool.transform);
@@ -49,6 +55,11 @@ public class SongObjectPoolManager : MonoBehaviour {
         sectionPool = new SectionPool(sectionParent, editor.sectionPrefab, POOL_SIZE);
         sectionParent.transform.SetParent(groupMovePool.transform);
 
+        songEventPool = new EventPool(songEventParent, editor.songEventPrefab, POOL_SIZE);
+        songEventParent.transform.SetParent(groupMovePool.transform);
+
+        chartEventPool = new ChartEventPool(chartEventParent, editor.chartEventPrefab, POOL_SIZE);
+        chartEventParent.transform.SetParent(groupMovePool.transform);
     }
 	
 	// Update is called once per frame
@@ -60,6 +71,8 @@ public class SongObjectPoolManager : MonoBehaviour {
         {
             if (editor.currentChart.starPower.Length > 0)
                 EnableSP(editor.currentChart.starPower);
+
+            EnableChartEvents(editor.currentChart.events);
         }
         else
         {
@@ -68,6 +81,8 @@ public class SongObjectPoolManager : MonoBehaviour {
 
             if (editor.currentSong.sections.Length > 0)
                 EnableSections(editor.currentSong.sections);
+
+            EnableSongEvents(editor.currentSong.events);
         }
     }
 
@@ -80,6 +95,8 @@ public class SongObjectPoolManager : MonoBehaviour {
             bpmPool.Reset();
             tsPool.Reset();
             sectionPool.Reset();
+            songEventPool.Reset();
+            chartEventPool.Reset();
         }
     }
 
@@ -177,5 +194,19 @@ public class SongObjectPoolManager : MonoBehaviour {
         int index, length;
         SongObject.GetRange(sections, editor.minPos, editor.maxPos, out index, out length);
         sectionPool.Activate(sections, index, length);
+    }
+
+    public void EnableSongEvents(Event[] events)
+    {
+        int index, length;
+        SongObject.GetRange(events, editor.minPos, editor.maxPos, out index, out length);
+        songEventPool.Activate(events, index, length);
+    }
+
+    public void EnableChartEvents(ChartEvent[] events)
+    {
+        int index, length;
+        SongObject.GetRange(events, editor.minPos, editor.maxPos, out index, out length);
+        chartEventPool.Activate(events, index, length);
     }
 }

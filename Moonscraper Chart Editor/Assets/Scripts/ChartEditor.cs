@@ -28,12 +28,15 @@ public class ChartEditor : MonoBehaviour {
     public GameObject sectionPrefab;
     public GameObject bpmPrefab;
     public GameObject tsPrefab;
+    public GameObject songEventPrefab;
+    public GameObject chartEventPrefab;
     [Header("Tool prefabs")]
     public GameObject ghostNote;
     public GameObject ghostStarpower;
     public GameObject ghostSection;
     public GameObject ghostBPM;
     public GameObject ghostTimeSignature;
+    public GameObject ghostEvent;
     public GroupMove groupMove;
     [Header("Misc.")]
     public ToolPanelController toolPanel;       // Used to toggle view mode during undo action

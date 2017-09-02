@@ -87,7 +87,7 @@ public class ToolPanelController : MonoBehaviour {
         {
             Globals.viewMode = Globals.ViewMode.Chart;
 
-            if (Toolpane.currentTool == Toolpane.Tools.BPM || Toolpane.currentTool == Toolpane.Tools.Timesignature || Toolpane.currentTool == Toolpane.Tools.Section || Toolpane.currentTool == Toolpane.Tools.SongEvent)
+            if (Toolpane.currentTool == Toolpane.Tools.BPM || Toolpane.currentTool == Toolpane.Tools.Timesignature || Toolpane.currentTool == Toolpane.Tools.Section)
             {
                 cursorSelect.onClick.Invoke();
             }

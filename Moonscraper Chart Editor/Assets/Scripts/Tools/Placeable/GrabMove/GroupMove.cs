@@ -70,6 +70,8 @@ public class GroupMove : ToolObject
                 editor.songObjectPoolManager.EnableBPM(movingSongObjects.OfType<BPM>().ToArray());
                 editor.songObjectPoolManager.EnableTS(movingSongObjects.OfType<TimeSignature>().ToArray());
                 editor.songObjectPoolManager.EnableSections(movingSongObjects.OfType<Section>().ToArray());
+                editor.songObjectPoolManager.EnableSongEvents(movingSongObjects.OfType<Event>().ToArray());
+                editor.songObjectPoolManager.EnableChartEvents(movingSongObjects.OfType<ChartEvent>().ToArray());
             }
         }
 	}  
@@ -104,6 +106,12 @@ public class GroupMove : ToolObject
                 case (SongObject.ID.Starpower):
                     record.AddRange(PlaceStarpower.AddObjectToCurrentChart((Starpower)movingSongObjects[i], editor, false, false));       // Capping
                     break;
+                case (SongObject.ID.ChartEvent):
+                    overwriteRecord = PlaceSongObject.OverwriteActionHistory(movingSongObjects[i], editor.currentChart.events);
+                    if (record != null)
+                        record.Add(overwriteRecord);
+                    editor.currentChart.Add((ChartEvent)movingSongObjects[i], false);
+                    break;
                 case (SongObject.ID.BPM):
                     overwriteRecord = PlaceSongObject.OverwriteActionHistory(movingSongObjects[i], editor.currentSong.bpms);
                     if (record != null)
@@ -121,6 +129,12 @@ public class GroupMove : ToolObject
                     if (record != null)
                         record.Add(overwriteRecord);
                     editor.currentSong.Add((Section)movingSongObjects[i], false);
+                    break;
+                case (SongObject.ID.Event):
+                    overwriteRecord = PlaceSongObject.OverwriteActionHistory(movingSongObjects[i], editor.currentSong.events);
+                    if (record != null)
+                        record.Add(overwriteRecord);
+                    editor.currentSong.Add((Event)movingSongObjects[i], false);
                     break;
                 default:
                     break;

@@ -6,9 +6,8 @@ public class PlaceSection : PlaceSongObject {
     public Section section { get { return (Section)songObject; } set { songObject = value; } }
     new public SectionController controller { get { return (SectionController)base.controller; } set { base.controller = value; } }
 
-    protected override void Awake()
+    protected override void SetSongObjectAndController()
     {
-        base.Awake();
         section = new Section("Default", 0);
 
         controller = GetComponent<SectionController>();

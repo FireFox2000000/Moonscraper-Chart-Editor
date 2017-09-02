@@ -1,0 +1,16 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class EventToolSwitcher : ToolObject {
+    [SerializeField]
+    GameObject chartEventTool;
+    [SerializeField]
+    GameObject songEventTool;
+	// Update is called once per frame
+	new void Update () {
+        bool useChartTool = Globals.viewMode == Globals.ViewMode.Chart;
+        chartEventTool.SetActive(useChartTool);
+        songEventTool.SetActive(!useChartTool);
+    }
+}

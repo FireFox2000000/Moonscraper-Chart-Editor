@@ -1,0 +1,39 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class ChartEventController : SongObjectController
+{
+    public ChartEvent chartEvent { get { return (ChartEvent)songObject; } set { Init(value, this); } }
+    public const float position = 3.0f;
+    public Text chartEventText;
+
+    public override void UpdateSongObject()
+    {
+        if (chartEvent.chart != null)
+        {
+            ChartEvent[] events = editor.currentChart.events;
+
+            int offset = 0;
+            int index, length;
+            SongObject.GetRange(events, chartEvent.position, chartEvent.position, out index, out length);
+
+            // Determine the offset for the object
+            for (int i = index; i < index + length; ++i)
+            {
+                if (events[i].GetType() != chartEvent.GetType())
+                    continue;
+
+                if (events[i] < chartEvent)
+                {
+                    ++offset;
+                }
+            }
+
+            transform.position = new Vector3(CHART_CENTER_POS + position + offset, chartEvent.worldYPosition, 0);
+
+            chartEventText.text = chartEvent.eventName;
+        }
+    }
+}

@@ -8,6 +8,7 @@ public class PropertiesPanelController : MonoBehaviour {
     protected ChartEditor editor;
     protected SongObject currentSongObject;
     SongObject prevSongObject;
+    SongObject prevSongObjectRef;
     string prevValue = string.Empty;
 
     ActionHistory.Modify inputFieldModify = null;
@@ -19,6 +20,7 @@ public class PropertiesPanelController : MonoBehaviour {
         lastKnownDirection = ValueDirection.NONE;
         prevValue = string.Empty;
         prevSongObject = null;
+        prevSongObjectRef = null;
     }
 
     void Awake()
@@ -34,15 +36,33 @@ public class PropertiesPanelController : MonoBehaviour {
     protected virtual void Update()
     {
         if (currentSongObject == null || prevSongObject != currentSongObject)
-            resetActionRecording();
+        {
+            // Fucking awful but it works. Basically a work-around due to how you can no longer use != to compare between events because they compare the strings of their titles.
+            if (!(currentSongObject != null && prevSongObject != null && currentSongObject.GetType() == prevSongObjectRef.GetType() &&
+                (currentSongObject.GetType() == typeof(ChartEvent) || currentSongObject.GetType() == typeof(Event)) &&
+                ReferenceEquals(prevSongObjectRef, currentSongObject)))
+                resetActionRecording();
+        }
 
         prevSongObject = currentSongObject.Clone();
+        prevSongObjectRef = currentSongObject;
     }
 
     protected void UpdateInputFieldRecord()
     {
+
         if (currentSongObject == null || prevSongObject == null || prevSongObject != currentSongObject)
-            return;
+        {
+            if (!
+                (
+                    (currentSongObject.GetType() == typeof(ChartEvent) || currentSongObject.GetType() == typeof(Event)) &&
+                    currentSongObject.GetType() == prevSongObject.GetType()
+                )
+            )
+            {
+                return;
+            } 
+        }
 
         string value = GetValue(currentSongObject);
 
@@ -126,9 +146,12 @@ public class PropertiesPanelController : MonoBehaviour {
                 return (((TimeSignature)songObject).numerator * ((TimeSignature)songObject).denominator).ToString();
             case (SongObject.ID.Event):
                 return ((Event)songObject).title.ToString();
+            case (SongObject.ID.ChartEvent):
+                return ((ChartEvent)songObject).eventName.ToString();
             case (SongObject.ID.Section):
                 return ((Section)songObject).title.ToString();
             default:
+                Debug.LogError("Song object has no value");
                 return string.Empty;
         }
     }

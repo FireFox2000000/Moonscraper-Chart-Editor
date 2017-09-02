@@ -13,6 +13,8 @@ public class InspectorSwitching : MonoBehaviour {
     [SerializeField]
     TimesignaturePropertiesPanelController tsInspector;
     [SerializeField]
+    EventPropertiesPanelController eventInspector;
+    [SerializeField]
     GameObject groupSelectInspector;
 
     ChartEditor editor;
@@ -25,6 +27,7 @@ public class InspectorSwitching : MonoBehaviour {
         sectionInspector.gameObject.SetActive(false);
         bpmInspector.gameObject.SetActive(false);
         tsInspector.gameObject.SetActive(false);
+        eventInspector.gameObject.SetActive(false);
 
         editor = ChartEditor.FindCurrentEditor();
     }
@@ -69,6 +72,14 @@ public class InspectorSwitching : MonoBehaviour {
                 case ((int)SongObject.ID.TimeSignature):
                     tsInspector.currentTS = (TimeSignature)editor.currentSelectedObject;
                     currentPropertiesPanel = tsInspector.gameObject;
+                    break;
+                case ((int)SongObject.ID.Event):
+                    eventInspector.currentEvent = (Event)editor.currentSelectedObject;
+                    currentPropertiesPanel = eventInspector.gameObject;
+                    break;
+                case ((int)SongObject.ID.ChartEvent):
+                    eventInspector.currentChartEvent = (ChartEvent)editor.currentSelectedObject;
+                    currentPropertiesPanel = eventInspector.gameObject;
                     break;
                 default:
                     currentPropertiesPanel = null;

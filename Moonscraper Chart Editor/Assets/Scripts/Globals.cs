@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.IO;
 using UnityEngine.EventSystems;
 
 public class Globals : MonoBehaviour {
@@ -12,6 +13,7 @@ public class Globals : MonoBehaviour {
 
     public static readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3" };
     public static readonly string[] validTextureExtensions = { ".jpg", ".png" };
+    public static string[] commonEvents = { };
 
     public const string TABSPACE = "  ";
 
@@ -154,49 +156,9 @@ public class Globals : MonoBehaviour {
 #if !UNITY_EDITOR
         workingDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
 #endif
-        INIParser iniparse = new INIParser();
 
-        iniparse.Open(workingDirectory + "\\config.ini");
-
-        // Check for valid fps values
-        int fps = iniparse.ReadValue("Settings", "Framerate", 120);
-        if (fps != 60 && fps != 120 && fps != 240)
-            Application.targetFrameRate = -1;
-        else
-            Application.targetFrameRate = fps;
-
-        hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
-        highwayLength = (float)iniparse.ReadValue("Settings", "Highway Length", 0);
-        audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 0);
-        clapCalibrationMS = iniparse.ReadValue("Settings", "Clap calibration", 0);
-        clapProperties = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
-        extendedSustainsEnabled = iniparse.ReadValue("Settings", "Extended sustains", false);
-        clapSetting = ClapToggle.NONE;
-        sustainGapEnabled = iniparse.ReadValue("Settings", "Sustain Gap", false);
-        sustainGapStep = new Step((int)iniparse.ReadValue("Settings", "Sustain Gap Step", (int)16));
-        notePlacementMode = (NotePlacementMode)iniparse.ReadValue("Settings", "Note Placement Mode", (int)NotePlacementMode.Default);
-        gameplayStartDelayTime = (float)iniparse.ReadValue("Settings", "Gameplay Start Delay", 3.0f);
-        resetAfterPlay = iniparse.ReadValue("Settings", "Reset After Play", false);
-        resetAfterGameplay = iniparse.ReadValue("Settings", "Reset After Gameplay", false);
-        customBgSwapTime = iniparse.ReadValue("Settings", "Custom Background Swap Time", 30);
-        // Check that the gameplay start delay time is a multiple of 0.5 and is
-        gameplayStartDelayTime = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
-        gameplayStartDelayTime = (float)(System.Math.Round(gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f);
-
-        // Audio levels
-        vol_master = (float)iniparse.ReadValue("Audio Volume", "Master", 0.5f);
-        vol_song = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
-        vol_guitar = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
-        vol_rhythm = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
-        vol_drum = (float)iniparse.ReadValue("Audio Volume", "Drum Stream", 1.0f);
-        audio_pan = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
-        
-        AudioListener.volume = vol_master;
-
-        //editor.clapSource.volume = (float)iniparse.ReadValue("Audio Volume", "Clap", 1.0f);
-        sfxVolume = (float)iniparse.ReadValue("Audio Volume", "SFX", 1.0f);
-
-        iniparse.Close();
+        LoadConfigFile();
+        LoadCommonEvents();
 
         InputField[] allInputFields = Resources.FindObjectsOfTypeAll<InputField>();
         foreach (InputField inputField in allInputFields)
@@ -236,6 +198,7 @@ public class Globals : MonoBehaviour {
     
     void Update()
     {
+        //Debug.Log(SongObject.FindObjectPosition(new ChartEvent(8256, "*"), editor.currentChart.events));
         IsInDropDown = _IsInDropDown;
 
         // Disable controls while user is in an input field
@@ -247,7 +210,6 @@ public class Globals : MonoBehaviour {
 
         if (HasScreenResized)
             OnScreenResize();
-        //Debug.Log(area.GetScreenCorners());
     }
 
     void LateUpdate()
@@ -404,24 +366,18 @@ public class Globals : MonoBehaviour {
         iniparse.WriteValue("Audio Volume", "Rhythm Stream", vol_rhythm);
         iniparse.WriteValue("Audio Volume", "Drum Stream", vol_drum);
         iniparse.WriteValue("Audio Volume", "Audio Pan", audio_pan);
-        //iniparse.WriteValue("Audio Volume", "Clap", editor.clapSource.volume);
         iniparse.WriteValue("Audio Volume", "SFX", sfxVolume);
 
         iniparse.Close();
-/*
-        if (System.IO.File.Exists(Application.persistentDataPath + "\\" + Song.TEMP_MP3_TO_WAV_FILEPATH))
-        {
-            System.IO.File.Delete(Application.persistentDataPath + "\\" + Song.TEMP_MP3_TO_WAV_FILEPATH);
-        }*/
 
         // Delete autosaved chart. If chart is not deleted then that means there may have been a problem like a crash and the autosave should be reloaded the next time the program is opened. 
-        if (System.IO.File.Exists(autosaveLocation))
-            System.IO.File.Delete(autosaveLocation);
+        if (File.Exists(autosaveLocation))
+            File.Delete(autosaveLocation);
     }
 
     public static void DeselectCurrentUI()
     {
-        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     public void ClickButton(Button button)
@@ -456,5 +412,97 @@ public class Globals : MonoBehaviour {
         int width = (int)(16.0f / 9.0f * height);
 
         Screen.SetResolution(width, height, false);
+    }
+
+    void LoadConfigFile()
+    {
+        INIParser iniparse = new INIParser();
+
+        iniparse.Open(workingDirectory + "\\config.ini");
+
+        // Check for valid fps values
+        int fps = iniparse.ReadValue("Settings", "Framerate", 120);
+        if (fps != 60 && fps != 120 && fps != 240)
+            Application.targetFrameRate = -1;
+        else
+            Application.targetFrameRate = fps;
+
+        hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
+        highwayLength = (float)iniparse.ReadValue("Settings", "Highway Length", 0);
+        audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 0);
+        clapCalibrationMS = iniparse.ReadValue("Settings", "Clap calibration", 0);
+        clapProperties = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
+        extendedSustainsEnabled = iniparse.ReadValue("Settings", "Extended sustains", false);
+        clapSetting = ClapToggle.NONE;
+        sustainGapEnabled = iniparse.ReadValue("Settings", "Sustain Gap", false);
+        sustainGapStep = new Step((int)iniparse.ReadValue("Settings", "Sustain Gap Step", (int)16));
+        notePlacementMode = (NotePlacementMode)iniparse.ReadValue("Settings", "Note Placement Mode", (int)NotePlacementMode.Default);
+        gameplayStartDelayTime = (float)iniparse.ReadValue("Settings", "Gameplay Start Delay", 3.0f);
+        resetAfterPlay = iniparse.ReadValue("Settings", "Reset After Play", false);
+        resetAfterGameplay = iniparse.ReadValue("Settings", "Reset After Gameplay", false);
+        customBgSwapTime = iniparse.ReadValue("Settings", "Custom Background Swap Time", 30);
+        // Check that the gameplay start delay time is a multiple of 0.5 and is
+        gameplayStartDelayTime = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
+        gameplayStartDelayTime = (float)(System.Math.Round(gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f);
+
+        // Audio levels
+        vol_master = (float)iniparse.ReadValue("Audio Volume", "Master", 0.5f);
+        vol_song = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
+        vol_guitar = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
+        vol_rhythm = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
+        vol_drum = (float)iniparse.ReadValue("Audio Volume", "Drum Stream", 1.0f);
+        audio_pan = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
+
+        AudioListener.volume = vol_master;
+
+        //editor.clapSource.volume = (float)iniparse.ReadValue("Audio Volume", "Clap", 1.0f);
+        sfxVolume = (float)iniparse.ReadValue("Audio Volume", "SFX", 1.0f);
+
+        iniparse.Close();
+    }
+
+    void LoadCommonEvents()
+    {
+        const string FILENAME = "\\events.txt";
+        string filepath = workingDirectory + FILENAME;
+        
+        if (File.Exists(filepath))
+        {
+            Debug.Log("Loading events from " + filepath);
+
+            StreamReader ifs = null;
+            try
+            {
+                ifs = File.OpenText(filepath);
+                var events = new System.Collections.Generic.List<string>();
+                
+                while (true)
+                {
+                    string line = ifs.ReadLine();
+                    if (line == null)
+                        break;
+
+                    line.Replace('"', '\0');
+
+                    if (line != string.Empty)
+                        events.Add(line);
+                }
+
+                commonEvents = events.ToArray();
+
+                Debug.Log(events.Count + " event strings loaded");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Error: unable to load events- " + e.Message);
+            }
+
+            if (ifs != null)
+                ifs.Close();
+        }
+        else
+        {
+            Debug.Log("No events file found. Skipping loading of default events.");
+        }
     }
 }

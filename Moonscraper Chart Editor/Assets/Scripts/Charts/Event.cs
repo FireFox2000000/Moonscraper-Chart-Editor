@@ -41,6 +41,39 @@ public class Event : SongObject
             return false;
     }
 
+    protected override bool Equals(SongObject b)
+    {
+        if (b.GetType() == typeof(Event))
+        {
+            Event realB = b as Event;
+            if (position == realB.position && title == realB.title)
+                return true;
+            else
+                return false;
+        }
+        else
+            return base.Equals(b);
+    }
+
+    protected override bool LessThan(SongObject b)
+    {
+        if (b.GetType() == typeof(Event))
+        {
+            Event realB = b as Event;
+            if (position < b.position)
+                return true;
+            else if (position == b.position)
+            {
+                if (string.Compare(title, realB.title) < 0)
+                    return true;
+            }
+
+            return false;
+        }
+        else
+            return base.LessThan(b);
+    }
+
     public override void Delete(bool update = true)
     {
         base.Delete(update);
