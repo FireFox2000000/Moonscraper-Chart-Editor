@@ -155,6 +155,8 @@ public class Globals : MonoBehaviour {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
 #if !UNITY_EDITOR
         workingDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
+#else
+        workingDirectory = Application.dataPath;
 #endif
 
         LoadConfigFile();
@@ -465,7 +467,7 @@ public class Globals : MonoBehaviour {
     {
         const string FILENAME = "\\events.txt";
         string filepath = workingDirectory + FILENAME;
-        
+        Debug.Log(Path.GetFullPath(filepath));
         if (File.Exists(filepath))
         {
             Debug.Log("Loading events from " + filepath);

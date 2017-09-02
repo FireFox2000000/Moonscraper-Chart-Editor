@@ -8,6 +8,7 @@ public class EventController : SongObjectController
     public Event songEvent { get { return (Event)songObject; } set { Init(value, this); } }
     public const float position = -3.0f;
     public Text songEventText;
+    public const int OFFSET_SPACING = -1;
 
     public override void UpdateSongObject()
     {
@@ -27,11 +28,11 @@ public class EventController : SongObjectController
 
                 if (events[i] < songEvent)
                 {
-                    ++offset;
+                    offset += OFFSET_SPACING;
                 }
             }
 
-            transform.position = new Vector3(CHART_CENTER_POS + position - offset, songEvent.worldYPosition, 0);
+            transform.position = new Vector3(CHART_CENTER_POS + position + offset, songEvent.worldYPosition, 0);
 
             songEventText.text = songEvent.title;
         }

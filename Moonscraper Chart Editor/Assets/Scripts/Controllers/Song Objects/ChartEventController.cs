@@ -8,6 +8,7 @@ public class ChartEventController : SongObjectController
     public ChartEvent chartEvent { get { return (ChartEvent)songObject; } set { Init(value, this); } }
     public const float position = 3.0f;
     public Text chartEventText;
+    public const int OFFSET_SPACING = 1;
 
     public override void UpdateSongObject()
     {
@@ -27,7 +28,7 @@ public class ChartEventController : SongObjectController
 
                 if (events[i] < chartEvent)
                 {
-                    ++offset;
+                    offset += OFFSET_SPACING;
                 }
             }
 

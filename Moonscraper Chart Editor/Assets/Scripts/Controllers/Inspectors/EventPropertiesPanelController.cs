@@ -9,7 +9,9 @@ public class EventPropertiesPanelController : PropertiesPanelController
     public ChartEvent currentChartEvent { get { return currentSongObject as ChartEvent; } set { currentSongObject = value; } }
     public InputField eventName;
     [SerializeField]
-    Button EventOptionTemplate;
+    Button eventOptionTemplate;
+    [SerializeField]
+    RectTransform scrollViewContentBox;
 
     SongObject previous;
 
@@ -18,6 +20,24 @@ public class EventPropertiesPanelController : PropertiesPanelController
     void Start()
     {
         // Populate the scroll view
+        for(int i = 0; i < Globals.commonEvents.Length; ++i)
+        {
+            Button button = Instantiate(eventOptionTemplate);
+            button.transform.SetParent(scrollViewContentBox, false);
+
+            Text text = button.GetComponentInChildren<Text>();
+            text.text = Globals.commonEvents[i];
+
+            RectTransform rectTransform = button.GetComponent<RectTransform>();
+            Vector3 pos = rectTransform.localPosition;
+            pos.x = scrollViewContentBox.rect.width / 2.0f;
+            pos.y = -i * rectTransform.sizeDelta.y - rectTransform.sizeDelta.y / 2.0f;
+            rectTransform.localPosition = pos;
+
+            button.gameObject.SetActive(true);
+        }
+
+        scrollViewContentBox.sizeDelta = new Vector2(scrollViewContentBox.sizeDelta.x, Globals.commonEvents.Length * eventOptionTemplate.GetComponent<RectTransform>().sizeDelta.y);
     }
 
     protected override void Update()

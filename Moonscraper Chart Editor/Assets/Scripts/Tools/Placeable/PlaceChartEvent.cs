@@ -22,6 +22,29 @@ public class PlaceChartEvent : PlaceSongObject
         chartEvent.chart = editor.currentChart;
     }
 
+    protected new void LateUpdate()
+    {
+        // Re-do the controller's position setting
+        base.LateUpdate();
+
+        ChartEvent[] events = editor.currentChart.events;
+
+        int offset = 0;
+        int index, length;
+        SongObject.GetRange(events, chartEvent.position, chartEvent.position, out index, out length);
+
+        // Determine the offset for the object
+        for (int i = index; i < index + length; ++i)
+        {
+            if (events[i].GetType() != chartEvent.GetType())
+                continue;
+
+            offset += ChartEventController.OFFSET_SPACING;
+        }
+
+        transform.position = new Vector3(SongObjectController.CHART_CENTER_POS + ChartEventController.position + offset, chartEvent.worldYPosition, 0);
+    }
+
     protected override void AddObject()
     {
         ActionHistory.Add action;
