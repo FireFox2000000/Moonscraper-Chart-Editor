@@ -67,11 +67,11 @@ public class GroupMove : ToolObject
                 // Enable objects into the pool
                 editor.songObjectPoolManager.EnableNotes(movingSongObjects.OfType<Note>().ToArray());
                 editor.songObjectPoolManager.EnableSP(movingSongObjects.OfType<Starpower>().ToArray());
+                editor.songObjectPoolManager.EnableChartEvents(movingSongObjects.OfType<ChartEvent>().ToArray());
                 editor.songObjectPoolManager.EnableBPM(movingSongObjects.OfType<BPM>().ToArray());
                 editor.songObjectPoolManager.EnableTS(movingSongObjects.OfType<TimeSignature>().ToArray());
                 editor.songObjectPoolManager.EnableSections(movingSongObjects.OfType<Section>().ToArray());
-                editor.songObjectPoolManager.EnableSongEvents(movingSongObjects.OfType<Event>().ToArray());
-                editor.songObjectPoolManager.EnableChartEvents(movingSongObjects.OfType<ChartEvent>().ToArray());
+                editor.songObjectPoolManager.EnableSongEvents(movingSongObjects.OfType<Event>().ToArray());              
             }
         }
 	}  
@@ -199,15 +199,11 @@ public class GroupMove : ToolObject
             if (delete)
                 songObjects[i].Delete(false);
 
-            // Rebuild linked list
-            
+            // Rebuild linked list          
             if ((SongObject.ID)songObjects[i].classID == SongObject.ID.Note)
             {
                 if (lastNotePos >= 0)
                 {
-                    //((Note)originalSongObjects[i]).previous = ((Note)originalSongObjects[lastNotePos]);
-                    //((Note)originalSongObjects[lastNotePos]).next = ((Note)originalSongObjects[i]);
-
                     ((Note)movingSongObjects[i]).previous = ((Note)movingSongObjects[lastNotePos]);
                     ((Note)movingSongObjects[lastNotePos]).next = ((Note)movingSongObjects[i]);
                 }

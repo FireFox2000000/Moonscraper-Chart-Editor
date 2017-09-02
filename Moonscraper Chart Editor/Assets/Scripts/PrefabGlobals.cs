@@ -6,7 +6,7 @@ using UnityEngine;
 public class PrefabGlobals : MonoBehaviour {
     ChartEditor editor;
 
-    static Vector2 noteColliderSize, spColliderSize, bpmColliderSize, tsColliderSize, sectionColliderSize;
+    static Vector2 noteColliderSize, spColliderSize, chartEventColliderSize, bpmColliderSize, tsColliderSize, sectionColliderSize, eventColliderSize;
 
     Vector2 GetColliderSize(GameObject gameObject)
     {
@@ -38,12 +38,14 @@ public class PrefabGlobals : MonoBehaviour {
         // Collect prefab collider sizes
         noteColliderSize = GetColliderSize(editor.notePrefab);
         spColliderSize = GetColliderSize(editor.starpowerPrefab);
+        chartEventColliderSize = GetColliderSize(editor.chartEventPrefab);
         bpmColliderSize = GetColliderSize(editor.bpmPrefab);
         tsColliderSize = GetColliderSize(editor.tsPrefab);
         sectionColliderSize = GetColliderSize(editor.sectionPrefab);
+        eventColliderSize = GetColliderSize(editor.songEventPrefab);
     }
 
-    public static Rect GetCollisionRect(SongObject songObject, float posOfChart = 0)
+    public static Rect GetCollisionRect(SongObject songObject, float posOfChart = 0, float offset = 0)
     {
         Vector2 colliderSize;
         Vector2 position;
@@ -60,6 +62,10 @@ public class PrefabGlobals : MonoBehaviour {
                 colliderSize = spColliderSize;
                 position = new Vector2(StarpowerController.position, 0);
                 break;
+            case (SongObject.ID.ChartEvent):
+                colliderSize = chartEventColliderSize;
+                position = new Vector2(ChartEventController.position, 0);
+                break;
             case (SongObject.ID.BPM):
                 colliderSize = bpmColliderSize;
                 position = new Vector2(BPMController.position, 0);
@@ -72,11 +78,15 @@ public class PrefabGlobals : MonoBehaviour {
                 colliderSize = sectionColliderSize;
                 position = new Vector2(SectionController.position, 0);
                 break;
+            case (SongObject.ID.Event):
+                colliderSize = eventColliderSize;
+                position = new Vector2(EventController.position, 0);
+                break;
             default:
                 return new Rect();
         }
 
-        Vector2 min = new Vector2(position.x + posOfChart - colliderSize.x / 2, position.y - colliderSize.y / 2);
+        Vector2 min = new Vector2(position.x + posOfChart + offset - colliderSize.x / 2, position.y - colliderSize.y / 2);
         return new Rect(min, noteColliderSize);
     }
 

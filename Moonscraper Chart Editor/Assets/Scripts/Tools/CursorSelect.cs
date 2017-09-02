@@ -260,29 +260,40 @@ public class CursorSelect : ToolObject
             for (int i = index; i < index + length; ++i)
             {
                 ChartObject chartObject = editor.currentChart.chartObjects[i];
-                if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), areaRect))
+                float offset = 0;
+                if ((SongObject.ID)chartObject.classID == SongObject.ID.ChartEvent)
+                    offset = ChartEventController.GetOffset(editor, (ChartEvent)chartObject);
+
+                if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject, 0, offset), areaRect))
                     chartObjectsList.Add(chartObject);
             }
         }
         else
         {
-            // Gather synctrack and sections
+            // Gather synctrack, sections and events
             int index, length;
             SongObject.GetRange(editor.currentSong.syncTrack, minLimitInclusive, maxLimitNonInclusive, out index, out length);
 
+            // Synctrack
             for (int i = index; i < index + length; ++i)
             {
                 SongObject chartObject = editor.currentSong.syncTrack[i];
+
                 if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), areaRect))
                     chartObjectsList.Add(chartObject);
             }
 
-            SongObject.GetRange(editor.currentSong.sections, minLimitInclusive, maxLimitNonInclusive, out index, out length);
+            SongObject.GetRange(editor.currentSong.eventsAndSections, minLimitInclusive, maxLimitNonInclusive, out index, out length);
 
+            // Events and sections
             for (int i = index; i < index + length; ++i)
             {
-                SongObject chartObject = editor.currentSong.sections[i];
-                if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), areaRect))
+                SongObject chartObject = editor.currentSong.eventsAndSections[i];
+                float offset = 0;
+                if ((SongObject.ID)chartObject.classID == SongObject.ID.Event)
+                    offset = EventController.GetOffset(editor, (Event)chartObject);
+
+                if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject, 0, offset), areaRect))
                     chartObjectsList.Add(chartObject);
             }
         }

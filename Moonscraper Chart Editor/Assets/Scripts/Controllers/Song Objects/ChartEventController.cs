@@ -14,27 +14,32 @@ public class ChartEventController : SongObjectController
     {
         if (chartEvent.chart != null)
         {
-            ChartEvent[] events = editor.currentChart.events;
-
-            int offset = 0;
-            int index, length;
-            SongObject.GetRange(events, chartEvent.position, chartEvent.position, out index, out length);
-
-            // Determine the offset for the object
-            for (int i = index; i < index + length; ++i)
-            {
-                if (events[i].GetType() != chartEvent.GetType())
-                    continue;
-
-                if (events[i] < chartEvent)
-                {
-                    offset += OFFSET_SPACING;
-                }
-            }
-
-            transform.position = new Vector3(CHART_CENTER_POS + position + offset, chartEvent.worldYPosition, 0);
+            transform.position = new Vector3(CHART_CENTER_POS + position + GetOffset(editor, chartEvent), chartEvent.worldYPosition, 0);
 
             chartEventText.text = chartEvent.eventName;
         }
+    }
+
+    public static float GetOffset (ChartEditor editor, ChartEvent chartEvent)
+    {
+        ChartEvent[] events = editor.currentChart.events;
+
+        int offset = 0;
+        int index, length;
+        SongObject.GetRange(events, chartEvent.position, chartEvent.position, out index, out length);
+
+        // Determine the offset for the object
+        for (int i = index; i < index + length; ++i)
+        {
+            if (events[i].GetType() != chartEvent.GetType())
+                continue;
+
+            if (events[i] < chartEvent)
+            {
+                offset += OFFSET_SPACING;
+            }
+        }
+
+        return offset;
     }
 }
