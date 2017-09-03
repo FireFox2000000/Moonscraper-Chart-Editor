@@ -1,5 +1,9 @@
 # README #
 
+### WARNING ###
+
+This project contains licensed assets such as Un4seen's "bass", "Bass.Net" and several icons. Please view the appropriate attribution documentions and licensing information if you intend to use these resources. 
+
 ### What is this repository for? ###
 
 * Moonscraper Chart Editor
