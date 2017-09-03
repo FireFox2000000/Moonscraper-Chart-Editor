@@ -6,9 +6,7 @@ This project contains licensed assets such as Un4seen's "bass", "Bass.Net" and s
 
 ### What is this repository for? ###
 
-* Moonscraper Chart Editor
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+* Moonscraper Chart Editor, a song editor for Guitar Hero style rhythm games made in Unity 5.5.1f1
 
 ### How do I get set up? ###
 
