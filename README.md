@@ -20,4 +20,4 @@ This project contains licensed assets such as Un4seen's "bass", "Bass.Net" and s
 * Alexander "FireFox" Ong
 * Youtube- https://www.youtube.com/user/FireFox2000000
 * Discord- FireFox#8188
-* Twitter- @FireFox2000000
+* Twitter- \@FireFox2000000
