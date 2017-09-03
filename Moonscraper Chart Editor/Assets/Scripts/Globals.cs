@@ -266,8 +266,8 @@ public class Globals : MonoBehaviour {
 
                 if (viewMode == ViewMode.Chart)
                 {
-                    editor.currentSelectedObjects = editor.currentChart.notes;
-                    editor.AddToSelectedObjects(editor.currentChart.starPower);
+                    editor.currentSelectedObjects = editor.currentChart.chartObjects;
+                    //editor.AddToSelectedObjects(editor.currentChart.starPower);
                 }
                 else
                 {

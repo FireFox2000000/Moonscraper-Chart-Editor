@@ -31,7 +31,7 @@ public class Song {
     public int difficulty = 0;
     public float offset = 0, previewStart = 0, previewEnd = 0, resolution = 192;
     public string genre = "rock", mediatype = "cd";
-    public string year = string.Empty;
+    public string album = string.Empty, year = string.Empty;
 #if !BASS_AUDIO
     AudioClip[] audioStreams = new AudioClip[3];
     public AudioClip musicStream { get { return audioStreams[MUSIC_STREAM_ARRAY_POS]; } set { audioStreams[MUSIC_STREAM_ARRAY_POS] = value; } }
@@ -1020,6 +1020,7 @@ public class Song {
         Regex previewEndRegex = new Regex(@"PreviewEnd = " + FLOATSEARCH);
         Regex genreRegex = new Regex(@"Genre = " + QUOTEVALIDATE);
         Regex yearRegex = new Regex(@"Year = " + QUOTEVALIDATE);
+        Regex albumRegex = new Regex(@"Album = " + QUOTEVALIDATE);
         Regex mediaTypeRegex = new Regex(@"MediaType = " + QUOTEVALIDATE);
         Regex musicStreamRegex = new Regex(@"MusicStream = " + QUOTEVALIDATE);
         Regex guitarStreamRegex = new Regex(@"GuitarStream = " + QUOTEVALIDATE);
@@ -1046,6 +1047,12 @@ public class Song {
                 else if (charterRegex.IsMatch(line))
                 {
                     charter = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                }
+
+                // Album = "Rockman Holic"
+                else if (albumRegex.IsMatch(line))
+                {
+                    album = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
                 }
 
                 // Offset = 0
@@ -1119,41 +1126,14 @@ public class Song {
                 else if (musicStreamRegex.IsMatch(line))
                 {
                     AudioLoadFromChart(MUSIC_STREAM_ARRAY_POS, line, audioDirectory);
-                    /*
-                    string audioFilepath = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-
-                    // Check if it's already the full path. If not, make it relative to the chart file.
-                    if (!File.Exists(audioFilepath))
-                        audioFilepath = audioDirectory + "\\" + audioFilepath;
-
-                    if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions))
-                        audioLocations[MUSIC_STREAM_ARRAY_POS] = Path.GetFullPath(audioFilepath);*/
                 }
                 else if (guitarStreamRegex.IsMatch(line))
                 {
                     AudioLoadFromChart(GUITAR_STREAM_ARRAY_POS, line, audioDirectory);
-                    /*
-                    string audioFilepath = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-
-                    // Check if it's already the full path. If not, make it relative to the chart file.
-                    if (!File.Exists(audioFilepath))
-                        audioFilepath = audioDirectory + "\\" + audioFilepath;
-
-                    if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions))
-                        audioLocations[GUITAR_STREAM_ARRAY_POS] = Path.GetFullPath(audioFilepath);*/
                 }
                 else if (rhythmStreamRegex.IsMatch(line))
                 {
                     AudioLoadFromChart(RHYTHM_STREAM_ARRAY_POS, line, audioDirectory);
-                    /*
-                    string audioFilepath = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-
-                    // Check if it's already the full path. If not, make it relative to the chart file.
-                    if (!File.Exists(audioFilepath))
-                        audioFilepath = audioDirectory + "\\" + audioFilepath;
-
-                    if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions))
-                        audioLocations[RHYTHM_STREAM_ARRAY_POS] = Path.GetFullPath(audioFilepath);*/
                 }
                 else if (drumStreamRegex.IsMatch(line))
                 {
@@ -1182,36 +1162,6 @@ public class Song {
 
         if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions))
             audioLocations[streamArrayPos] = Path.GetFullPath(audioFilepath);
-    }
-
-    string GetPropertiesStringWithoutAudio()
-    {
-        string saveString = string.Empty;
-
-        // Song properties  
-        if (name != string.Empty)      
-            saveString += Globals.TABSPACE + "Name = \"" + name + "\"" + Globals.LINE_ENDING;
-        if (artist != string.Empty)
-            saveString += Globals.TABSPACE + "Artist = \"" + artist + "\"" + Globals.LINE_ENDING;
-        if (charter != string.Empty)
-            saveString += Globals.TABSPACE + "Charter = \"" + charter + "\"" + Globals.LINE_ENDING;
-        if (year != string.Empty)
-            saveString += Globals.TABSPACE + "Year = \", " + year + "\"" + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "Offset = " + offset + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "Resolution = " + resolution + Globals.LINE_ENDING;
-        if (player2 != string.Empty)
-            saveString += Globals.TABSPACE + "Player2 = " + player2.ToLower() + Globals.LINE_ENDING;       
-        saveString += Globals.TABSPACE + "Difficulty = " + difficulty + Globals.LINE_ENDING;
-        if (manualLength)
-            saveString += Globals.TABSPACE + "Length = " + _length + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "PreviewStart = " + previewStart + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "PreviewEnd = " + previewEnd + Globals.LINE_ENDING;
-        if (genre != string.Empty)
-            saveString += Globals.TABSPACE + "Genre = \"" + genre + "\"" + Globals.LINE_ENDING;
-        if (mediatype != string.Empty)
-            saveString += Globals.TABSPACE + "MediaType = \"" + mediatype + "\"" + Globals.LINE_ENDING;
-
-        return saveString;
     }
 
     void submitDataGlobals(List<string> stringData)
@@ -1345,99 +1295,6 @@ public class Song {
     public void Save(string filepath, ExportOptions exportOptions)
     {
         new ChartWriter(filepath).Write(this, exportOptions);
-        /*
-        string musicString = string.Empty;
-        string guitarString = string.Empty;
-        string rhythmString = string.Empty;
-
-        // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
-        if (songAudioLoaded && Path.GetDirectoryName(audioLocations[MUSIC_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
-            musicString = Path.GetFileName(audioLocations[MUSIC_STREAM_ARRAY_POS]);
-        else
-            musicString = audioLocations[MUSIC_STREAM_ARRAY_POS];
-
-        if (guitarAudioLoaded && Path.GetDirectoryName(audioLocations[GUITAR_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
-            guitarString = Path.GetFileName(audioLocations[GUITAR_STREAM_ARRAY_POS]);
-        else
-            guitarString = audioLocations[GUITAR_STREAM_ARRAY_POS];
-
-        if (rhythmAudioLoaded && Path.GetDirectoryName(audioLocations[RHYTHM_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(filepath).Replace("\\", "/"))
-            rhythmString = Path.GetFileName(audioLocations[RHYTHM_STREAM_ARRAY_POS]);
-        else
-            rhythmString = audioLocations[RHYTHM_STREAM_ARRAY_POS];
-
-        string saveString = string.Empty;
-
-        // Song properties
-        saveString += "[Song]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
-        saveString += GetPropertiesStringWithoutAudio();
-
-        // Song audio
-        if (songAudioLoaded)
-            saveString += Globals.TABSPACE + "MusicStream = \"" + musicString + "\"" + Globals.LINE_ENDING;
-
-        if (guitarAudioLoaded)
-            saveString += Globals.TABSPACE + "GuitarStream = \"" + guitarString + "\"" + Globals.LINE_ENDING;
-
-        if (rhythmAudioLoaded)
-            saveString += Globals.TABSPACE + "RhythmStream = \"" + rhythmString + "\"" + Globals.LINE_ENDING;
-
-        saveString += "}" + Globals.LINE_ENDING;
-
-        // SyncTrack
-        saveString += "[SyncTrack]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
-        saveString += GetSaveString(_syncTrack.ToArray());
-        saveString += "}" + Globals.LINE_ENDING;
-
-        // Events
-        saveString += "[Events]" + Globals.LINE_ENDING +"{" + Globals.LINE_ENDING;
-        saveString += GetSaveString(_events.ToArray());
-        saveString += "}" + Globals.LINE_ENDING;
-
-        // Charts      
-        var difficulties = Enum.GetValues(typeof(Difficulty));
-
-        foreach (Instrument instrument in Enum.GetValues(typeof(Instrument)))
-        {
-            string instrumentSaveString = string.Empty;
-            switch (instrument)
-            {
-                case (Instrument.Guitar):
-                    instrumentSaveString = "Single";
-                    break;
-                case (Instrument.GuitarCoop):
-                    instrumentSaveString = "DoubleGuitar";
-                    break;
-                case (Instrument.Bass):
-                    instrumentSaveString = "DoubleBass";
-                    break;
-                default:
-                    continue;
-            }
-
-            foreach (Difficulty difficulty in Enum.GetValues(typeof(Difficulty)))
-            {
-                string difficultySaveString = difficulty.ToString();
-                string chartString = GetChart(instrument, difficulty).GetChartString(exportOptions.forced);
-
-                if (chartString == string.Empty)
-                    continue;
-
-                string seperator = "[" + difficultySaveString + instrumentSaveString + "]";
-                saveString += seperator + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
-                saveString += chartString;
-                saveString += "}" + Globals.LINE_ENDING;
-            }
-        }
-       
-        try {
-            // Save to file
-            File.WriteAllText(filepath, saveString);
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e.Message);
-        }*/
     }
 
     /// <summary>

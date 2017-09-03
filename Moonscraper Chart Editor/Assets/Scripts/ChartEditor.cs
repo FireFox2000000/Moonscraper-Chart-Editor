@@ -865,6 +865,8 @@ public class ChartEditor : MonoBehaviour {
         Debug.Log("Loading song: " + System.IO.Path.GetFullPath(currentFileName));
 
         yield return StartCoroutine(_Load(currentFileName));
+
+        currentSelectedObject = null;
     }
 
     void LoadSong(Song song)

@@ -29,7 +29,8 @@ public class SelectedHighlightController : MonoBehaviour {
         SongObject.GetRange(viewRange, editor.minPos, editor.maxPos, out index, out length);
 
         bool showHighlight = (Globals.applicationMode != Globals.ApplicationMode.Playing &&
-                (Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.Eraser || Toolpane.currentTool == Toolpane.Tools.GroupSelect));
+            (Toolpane.currentTool != Toolpane.Tools.Note && Toolpane.currentTool != Toolpane.Tools.Starpower)
+                /*(Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.Eraser || Toolpane.currentTool == Toolpane.Tools.GroupSelect)*/);
 
         int pos = index;
 

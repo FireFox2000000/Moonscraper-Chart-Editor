@@ -13,6 +13,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     public InputField songName;
     public InputField artist;
     public InputField charter;
+    public InputField album;
     public InputField year;
     public InputField offset;
     public InputField difficulty;
@@ -42,6 +43,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         songName.text = song.name;
         artist.text = song.artist;
         charter.text = song.charter;
+        album.text = song.album;
         year.text = song.year;
         offset.text = song.offset.ToString();
         difficulty.text = song.difficulty.ToString();
@@ -78,6 +80,7 @@ public class SongPropertiesPanelController : DisplayMenu {
             song.name = songName.text;
             song.artist = artist.text;
             song.charter = charter.text;
+            song.album = album.text;
             song.year = year.text;
 
             try
