@@ -15,5 +15,7 @@ Run Unity and open the project folder with it
 
 ### Who do I talk to? ###
 
-* Repo owner or admin
-* Other community or team contact
+Alexander "FireFox" Ong
+Youtube- https://www.youtube.com/user/FireFox2000000
+Discord- FireFox#8188
+Twitter- @FireFox2000000
