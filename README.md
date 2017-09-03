@@ -15,7 +15,7 @@ This README would normally document whatever steps are necessary to get your app
 
 ### Who do I talk to? ###
 
-Alexander "FireFox" Ong
+* Alexander "FireFox" Ong
 * Youtube- https://www.youtube.com/user/FireFox2000000
 * Discord- FireFox#8188
 * Twitter- @FireFox2000000
