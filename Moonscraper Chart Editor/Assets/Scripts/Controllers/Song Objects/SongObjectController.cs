@@ -30,7 +30,8 @@ public abstract class SongObjectController : SelectableClick {
         }
     }
 
-    protected bool moveCheck { get { return Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1); } }
+    protected bool moveCheck { get { return Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1) 
+                && editor.currentSelectedObject != null; } }
 
     public override void OnSelectableMouseDrag()
     {
@@ -182,29 +183,4 @@ public abstract class SongObjectController : SelectableClick {
 
         return position;
     }
-    /*
-    public Rect GetAABBBoundsRect()
-    {
-        // Move this and get direct static value
-
-        if (colSize == Vector2.zero)
-            throw new System.Exception("No collision attached to object");
-
-        Vector2 min = new Vector2(transform.position.x - colSize.x / 2, transform.position.y - colSize.y / 2);
-        return new Rect(min, colSize);
-    }
-
-    public bool HorizontalCollisionCheck(Rect rectA, Rect rectB)
-    {
-        // AABB, check for any gaps
-        if (rectA.x <= rectB.x + rectB.width &&
-               rectA.x + rectA.width >= rectB.x)
-        {
-            return true;
-        }
-        else
-        { 
-            return false;
-        }
-    }*/
 }

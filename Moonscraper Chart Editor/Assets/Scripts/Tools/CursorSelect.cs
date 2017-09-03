@@ -70,9 +70,7 @@ public class CursorSelect : ToolObject
                 clickedSelectableObject = null;
 
             // Dragging mouse for group select
-            if (/*Globals.viewMode == Globals.ViewMode.Chart &&*/ userDraggingSelectArea &&
-                Input.GetMouseButton(0) /*&& editor.currentSelectedObjects.Length == 0*/ &&
-                !clickedSelectableObject && !mouseDownOverUI)
+            if (userDraggingSelectArea && Input.GetMouseButton(0) && !clickedSelectableObject && !mouseDownOverUI)
             {
                 if (Mouse.world2DPosition != null)
                 {
@@ -103,6 +101,7 @@ public class CursorSelect : ToolObject
                         }
                     }
                 }
+
                 groupMove.SetSongObjects(editor.currentSelectedObjects, anchorPoint, true);
             }
 

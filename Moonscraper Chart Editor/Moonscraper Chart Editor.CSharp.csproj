@@ -293,9 +293,9 @@
     <None Include="Assets\Custom Resources\Filenames.txt" />
     <None Include="Assets\Documentation\README.txt" />
     <None Include="Assets\Documentation\changelog.txt" />
+    <None Include="Assets\ExtraBuildFiles\events.txt" />
     <None Include="Assets\Fire\Fire.shader" />
     <None Include="Assets\Fonts\Roboto\Apache License.txt" />
-    <None Include="Assets\IncludeDuringExport\events.txt" />
     <None Include="Assets\Plugins\Bass Audio\Bass.Net license readme.txt" />
     <None Include="Assets\Plugins\Bass Audio\bass license readme.txt" />
     <None Include="Assets\Shaders\GHRenderOrder.shader" />

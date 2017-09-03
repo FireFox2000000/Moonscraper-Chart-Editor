@@ -47,6 +47,16 @@ public class BuildDocumentation  {
                 FileUtil.CopyFileOrDirectory("Assets/Documentation", path + "/Documentation");
             }
 
+            if (Directory.Exists("Assets\\ExtraBuildFiles"))
+            {
+                // Copy a file from the project folder to the build folder, alongside the built game.
+                foreach (string filepath in Directory.GetFiles("Assets\\ExtraBuildFiles"))
+                {
+                    FileUtil.CopyFileOrDirectory(filepath, path + "/" + Path.GetFileName(filepath));
+                }
+
+            }
+
             foreach (string file in Directory.GetFiles(path, "*.meta", SearchOption.AllDirectories))
             {
                 File.Delete(file);

@@ -12,8 +12,6 @@ public class ToolPanelController : MonoBehaviour {
     [SerializeField]
     Button eraserSelect;
     [SerializeField]
-    Button groupSelect;
-    [SerializeField]
     Button noteSelect;
     [SerializeField]
     Button starpowerSelect;
@@ -23,6 +21,8 @@ public class ToolPanelController : MonoBehaviour {
     Button timeSignatureSelect;
     [SerializeField]
     Button sectionSelect;
+    [SerializeField]
+    Button eventSelect;
 
     void Start()
     {
@@ -51,8 +51,8 @@ public class ToolPanelController : MonoBehaviour {
         else if (Input.GetKeyDown(KeyCode.K))
             eraserSelect.onClick.Invoke();
 
-        else if (Input.GetKeyDown(KeyCode.L))
-            groupSelect.onClick.Invoke();
+       // else if (Input.GetKeyDown(KeyCode.L))
+           // groupSelect.onClick.Invoke();
 
         else if (Input.GetKeyDown(KeyCode.Y))
             noteSelect.onClick.Invoke();
@@ -68,6 +68,9 @@ public class ToolPanelController : MonoBehaviour {
 
         else if (Input.GetKeyDown(KeyCode.P))
             sectionSelect.onClick.Invoke();
+
+        else if (Input.GetKeyDown(KeyCode.L))
+            eventSelect.onClick.Invoke();
     }
 
     public void ToggleSongViewMode(bool globalView)

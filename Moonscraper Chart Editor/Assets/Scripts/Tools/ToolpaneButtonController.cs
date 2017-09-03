@@ -5,7 +5,7 @@ using System.Collections;
 [RequireComponent(typeof(Button))]
 public class ToolpaneButtonController : MonoBehaviour {
     public Toolpane.Tools disableOnTool;
-    Button button;
+    private Button button;
 
     void Start()
     {
