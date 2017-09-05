@@ -271,6 +271,8 @@ public class PlaceNote : PlaceSongObject {
         if (noteToAdd.CannotBeForcedCheck)
             noteToAdd.flags &= ~Note.Flags.FORCED;
 
+        noteToAdd.applyFlagsToChord();
+
         //NoteController nCon = editor.CreateNoteObject(noteToAdd);
         standardOverwriteOpen(noteToAdd);
 
@@ -312,6 +314,7 @@ public class PlaceNote : PlaceSongObject {
         {           
             Note originalNext = (Note)next.Clone();
             next.flags &= ~Note.Flags.FORCED;
+            next.applyFlagsToChord();
 
             return new ActionHistory.Modify(originalNext, next);
         }
