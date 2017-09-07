@@ -1,0 +1,10 @@
+solo
+soloend
+ghl_6
+ghl_6_forced
+solo_on
+solo_off
+wail_on
+wail_off
+ow_face_on
+ow_face_off

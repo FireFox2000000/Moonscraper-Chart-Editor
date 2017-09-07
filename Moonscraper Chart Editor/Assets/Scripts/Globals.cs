@@ -13,7 +13,8 @@ public class Globals : MonoBehaviour {
 
     public static readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3" };
     public static readonly string[] validTextureExtensions = { ".jpg", ".png" };
-    public static string[] commonEvents = { };
+    public static string[] localEvents = { };
+    public static string[] globalEvents = { };
 
     public const string TABSPACE = "  ";
 
@@ -160,7 +161,9 @@ public class Globals : MonoBehaviour {
 #endif
 
         LoadConfigFile();
-        LoadCommonEvents();
+
+        localEvents = LoadCommonEvents("local_events.txt");
+        globalEvents = LoadCommonEvents("global_events.txt");
 
         InputField[] allInputFields = Resources.FindObjectsOfTypeAll<InputField>();
         foreach (InputField inputField in allInputFields)
@@ -463,10 +466,13 @@ public class Globals : MonoBehaviour {
         iniparse.Close();
     }
 
-    void LoadCommonEvents()
+    static string[] LoadCommonEvents(string filename)
     {
-        const string FILENAME = "\\events.txt";
+#if UNITY_EDITOR
+        string filepath = workingDirectory + "/ExtraBuildFiles/" + filename;
+#else
         string filepath = workingDirectory + FILENAME;
+#endif
         Debug.Log(Path.GetFullPath(filepath));
         if (File.Exists(filepath))
         {
@@ -490,9 +496,8 @@ public class Globals : MonoBehaviour {
                         events.Add(line);
                 }
 
-                commonEvents = events.ToArray();
-
                 Debug.Log(events.Count + " event strings loaded");
+                return events.ToArray();               
             }
             catch (System.Exception e)
             {
@@ -506,5 +511,7 @@ public class Globals : MonoBehaviour {
         {
             Debug.Log("No events file found. Skipping loading of default events.");
         }
+
+        return new string[0];
     }
 }

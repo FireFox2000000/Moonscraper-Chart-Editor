@@ -15,29 +15,58 @@ public class EventPropertiesPanelController : PropertiesPanelController
 
     SongObject previous;
 
+    GameObject localEventButtonParent;
+    GameObject globalEventButtonParent;
+
     bool updateInputField = true;
 
     void Start()
     {
+        localEventButtonParent = CreateEventButtonContainer("Local event buttons");
+        globalEventButtonParent = CreateEventButtonContainer("Global event buttons");
+
         // Populate the scroll view
-        for(int i = 0; i < Globals.commonEvents.Length; ++i)
-        {
-            Button button = Instantiate(eventOptionTemplate);
-            button.transform.SetParent(scrollViewContentBox, false);
+        for (int i = 0; i < Globals.localEvents.Length; ++i)
+            CreateEventButton(Globals.localEvents[i], i).transform.SetParent(localEventButtonParent.transform);
 
-            Text text = button.GetComponentInChildren<Text>();
-            text.text = Globals.commonEvents[i];
+        for (int i = 0; i < Globals.globalEvents.Length; ++i)
+            CreateEventButton(Globals.globalEvents[i], i).transform.SetParent(globalEventButtonParent.transform);
+    }
 
-            RectTransform rectTransform = button.GetComponent<RectTransform>();
-            Vector3 pos = rectTransform.localPosition;
-            pos.x = scrollViewContentBox.rect.width / 2.0f;
-            pos.y = -i * rectTransform.sizeDelta.y - rectTransform.sizeDelta.y / 2.0f;
-            rectTransform.localPosition = pos;
+    GameObject CreateEventButtonContainer(string name)
+    {
+        GameObject container = new GameObject();
+        container.name = name;
 
-            button.gameObject.SetActive(true);
-        }
+        Destroy(container.transform);
 
-        scrollViewContentBox.sizeDelta = new Vector2(scrollViewContentBox.sizeDelta.x, Globals.commonEvents.Length * eventOptionTemplate.GetComponent<RectTransform>().sizeDelta.y);
+        RectTransform rectTrans = container.AddComponent<RectTransform>();       
+
+        container.transform.SetParent(scrollViewContentBox);
+        rectTrans.anchorMin = new Vector2(0, 1);
+        rectTrans.anchorMax = new Vector2(0, 1);
+        container.transform.localPosition = Vector3.zero;
+
+        return container;
+    }
+
+    Button CreateEventButton(string eventTitle, int indexPosition)
+    {
+        Button button = Instantiate(eventOptionTemplate);
+        button.transform.SetParent(scrollViewContentBox, false);
+
+        Text text = button.GetComponentInChildren<Text>();
+        text.text = eventTitle;
+
+        RectTransform rectTransform = button.GetComponent<RectTransform>();
+        Vector3 pos = rectTransform.localPosition;
+        pos.x = scrollViewContentBox.rect.width / 2.0f;
+        pos.y = -indexPosition * rectTransform.sizeDelta.y - rectTransform.sizeDelta.y / 2.0f;
+        rectTransform.localPosition = pos;
+
+        button.gameObject.SetActive(true);
+
+        return button;
     }
 
     protected override void Update()
@@ -52,6 +81,12 @@ public class EventPropertiesPanelController : PropertiesPanelController
             previous = currentChartEvent;
         else
             previous = currentEvent;
+
+        localEventButtonParent.SetActive(Globals.viewMode == Globals.ViewMode.Chart);
+        globalEventButtonParent.SetActive(!localEventButtonParent.activeSelf);
+
+        int eventCount = (Globals.viewMode == Globals.ViewMode.Chart) ? Globals.localEvents.Length : Globals.globalEvents.Length;
+        scrollViewContentBox.sizeDelta = new Vector2(scrollViewContentBox.sizeDelta.x, eventCount * eventOptionTemplate.GetComponent<RectTransform>().sizeDelta.y);
     }
 
     protected override void OnDisable()
