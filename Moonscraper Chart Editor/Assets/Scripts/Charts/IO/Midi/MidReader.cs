@@ -40,7 +40,7 @@ public static class MidReader {
             switch (trackName.Text.ToLower())
             {
                 case ("events"):
-                    ReadSongSections(midi.Events[i], song);
+                    ReadSongGlobalEvents(midi.Events[i], song);
                     break;
                 case ("part guitar"):
                     ReadNotes(midi.Events[i], song, Song.Instrument.Guitar);
@@ -116,9 +116,9 @@ public static class MidReader {
         song.updateArrays();
     }
 
-    private static void ReadSongSections(IList<MidiEvent> track, Song song)
+    private static void ReadSongGlobalEvents(IList<MidiEvent> track, Song song)
     {
-        for (int i = 0; i < track.Count; ++i)
+        for (int i = 1; i < track.Count; ++i)
         {
             var text = track[i] as TextEvent;
 
@@ -128,6 +128,8 @@ public static class MidReader {
                     song.Add(new Section(text.Text.Substring(9, text.Text.Length - 10), (uint)text.AbsoluteTime), false);
                 else if (text.Text.Contains("[prc_"))       // No idea what this actually is
                     song.Add(new Section(text.Text.Substring(5, text.Text.Length - 6), (uint)text.AbsoluteTime), false);
+                else
+                    song.Add(new Event(text.Text, (uint)text.AbsoluteTime), false);
             }
         }
 
@@ -145,7 +147,7 @@ public static class MidReader {
         for (int i = 0; i < track.Count; i++)
         {
             var text = track[i] as TextEvent;
-            if (text != null)
+            if (text != null && i != 0)     // We don't want the first event because that is the name of the track
             {
                 var tick = (uint)text.AbsoluteTime;
                 var eventName = text.Text.Trim(new char[] { '[', ']' });

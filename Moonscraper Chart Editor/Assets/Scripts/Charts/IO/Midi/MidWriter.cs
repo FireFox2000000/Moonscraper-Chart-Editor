@@ -25,7 +25,7 @@ public static class MidWriter {
         byte[] track_sync = MakeTrack(GetSyncBytes(song, exportOptions), song.name);
 
         uint end;
-        byte[] track_events = MakeTrack(GetSectionBytes(song, exportOptions, out end), EVENTS_TRACK);
+        byte[] track_events = MakeTrack(GetEventBytes(song, exportOptions, out end), EVENTS_TRACK);
         if (track_events.Length > 0)
             track_count++;
 
@@ -112,22 +112,22 @@ public static class MidWriter {
         return syncTrackBytes.ToArray();
     }
 
-    static byte[] GetSectionBytes(Song song, ExportOptions exportOptions, out uint end)
+    static byte[] GetEventBytes(Song song, ExportOptions exportOptions, out uint end)
     {
-        List<byte> sectionBytes = new List<byte>();
+        List<byte> eventBytes = new List<byte>();
 
         const string section_id = "section ";     // "section " is rb2 and former, "prc_" is rb3
 
-        sectionBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[music_start]")));
+        eventBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[music_start]")));
 
         uint deltaTickSum = 0;
         float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
 
-        for (int i = 0; i < song.sections.Length; ++i)
+        for (int i = 0; i < song.eventsAndSections.Length; ++i)
         {
-            uint deltaTime = song.sections[i].position;
+            uint deltaTime = song.eventsAndSections[i].position;
             if (i > 0)
-                deltaTime -= song.sections[i - 1].position;
+                deltaTime -= song.eventsAndSections[i - 1].position;
 
             deltaTime = (uint)Mathf.Round(deltaTime * resolutionScaleRatio);
 
@@ -136,7 +136,10 @@ public static class MidWriter {
 
             deltaTickSum += deltaTime;
 
-            sectionBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, "[" + section_id + song.sections[i].title + "]")));
+            if (song.eventsAndSections[i] as Section != null)
+                eventBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, "[" + section_id + song.eventsAndSections[i].title + "]")));
+            else
+                eventBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, "[" + song.eventsAndSections[i].title + "]")));
         }
 
         uint music_end = song.TimeToChartPosition(song.length + exportOptions.tickOffset, song.resolution * resolutionScaleRatio, false);
@@ -149,10 +152,10 @@ public static class MidWriter {
         end = music_end;
 
         // Add music_end and end text events.
-        sectionBytes.AddRange(TimedEvent(music_end, MetaTextEvent(TEXT_EVENT, "[music_end]")));
-        sectionBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[end]")));
+        eventBytes.AddRange(TimedEvent(music_end, MetaTextEvent(TEXT_EVENT, "[music_end]")));
+        eventBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[end]")));
 
-        return sectionBytes.ToArray();
+        return eventBytes.ToArray();
     }
 
     static byte[] GetInstrumentBytes(Song song, Song.Instrument instrument, ExportOptions exportOptions)
