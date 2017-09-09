@@ -1,11 +1,17 @@
 v1.0
     NEW FEATURES
     -Added drums charting with extra audio slot for them
+    -Added seperate drums fret strikeline sprites to the custom resource list
     -Re-wrote and added pdf manual in the documention
+    -Added song.ini exports for Clone Hero
+    -Added events tool to place local and global events
+    -Added "Album" property to song properties
+    -Added logo text at startup
 
     FIXES
     -Fixed lefty-flip movement of notes
     -Fixed bpm input field validation not taking into account highlighted text
+    -Fixed single-note flag correction when placing chords one note at a time
 
     CHANGES
     -Added dropshadow to some text

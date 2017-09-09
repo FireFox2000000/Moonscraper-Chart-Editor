@@ -17,6 +17,7 @@ public class Export : DisplayMenu {
     public InputField targetResolution;
     public InputField delayInputField;
     public Toggle copyDifficultiesToggle;
+    public Toggle generateIniToggle;
 
     ExportOptions exportOptions;
     float delayTime = 0;
@@ -121,25 +122,25 @@ public class Export : DisplayMenu {
                 }
             }
         });
-
+     
         exportingThread.Start();
 
         while (exportingThread.ThreadState == ThreadState.Running)
             yield return null;
-        
-        /*
-        if (exportOptions.format == ExportOptions.Format.Chart)
-            song.Save(filepath, exportOptions.forced);
-        else if (exportOptions.format == ExportOptions.Format.Midi)
+
+        if (generateIniToggle.isOn)
         {
-            // TEMP
-            exportOptions.targetResolution = 480;
-            exportOptions.copyDownEmptyDifficulty = true;
-            exportOptions.tickOffset = Song.time_to_dis(0, 2.5f, 480, 120);
+            loadingScreen.loadingInformation.text = "Generating Song.ini";
+            Thread iniThread = new Thread(() =>
+            {
+                GenerateSongIni(Path.GetDirectoryName(filepath));
+            });
 
+            iniThread.Start();
 
-            MidWriter.WriteToFile(filepath, song, exportOptions);
-        }*/
+            while (iniThread.ThreadState == ThreadState.Running)
+                yield return null;
+        }
 
         Debug.Log("Total exporting time: " + (Time.realtimeSinceStartup - timer));
 
@@ -228,6 +229,34 @@ public class Export : DisplayMenu {
         copyDifficultiesToggle.isOn = true;
         targetResolution.text = "480";
         delayInputField.text = "2.5";
+    }
+
+    void GenerateSongIni(string path)
+    {
+        Song song = editor.currentSong;
+
+        StreamWriter ofs = File.CreateText(path + "/song.ini");
+        ofs.WriteLine("[Song]");
+        ofs.WriteLine("name = " + song.name);
+        ofs.WriteLine("artist = " + song.artist);
+        ofs.WriteLine("album = " + song.album);
+        ofs.WriteLine("genre = " + song.genre);
+        ofs.WriteLine("year = " + song.year);
+        ofs.WriteLine("song_length = " + (int)(song.length * 1000));
+        ofs.WriteLine("count = 0");
+        ofs.WriteLine("diff_band = -1");
+        ofs.WriteLine("diff_guitar = -1");
+        ofs.WriteLine("diff_bass = -1");
+        ofs.WriteLine("diff_drums = -1");
+        ofs.WriteLine("diff_keys = -1");
+        ofs.WriteLine("diff_guitarghl = -1");
+        ofs.WriteLine("diff_bassghl = -1");
+        ofs.WriteLine("preview_start_time = 0");
+        ofs.WriteLine("frets = 0");
+        ofs.WriteLine("charter = " + song.charter);
+        ofs.WriteLine("icon = 0");
+
+        ofs.Close();
     }
 
     public static void ExportWAV(string srcPath, string destPath, ExportOptions exportOptions)

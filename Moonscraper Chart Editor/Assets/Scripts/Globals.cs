@@ -471,7 +471,7 @@ public class Globals : MonoBehaviour {
 #if UNITY_EDITOR
         string filepath = workingDirectory + "/ExtraBuildFiles/" + filename;
 #else
-        string filepath = workingDirectory + FILENAME;
+        string filepath = workingDirectory + "/" + filename;
 #endif
         Debug.Log(Path.GetFullPath(filepath));
         if (File.Exists(filepath))
