@@ -9,6 +9,8 @@ public class EventPropertiesPanelController : PropertiesPanelController
     public ChartEvent currentChartEvent { get { return currentSongObject as ChartEvent; } set { currentSongObject = value; } }
     public InputField eventName;
     [SerializeField]
+    Text inspectorTitle;
+    [SerializeField]
     Button eventOptionTemplate;
     [SerializeField]
     RectTransform scrollViewContentBox;
@@ -31,6 +33,9 @@ public class EventPropertiesPanelController : PropertiesPanelController
 
         for (int i = 0; i < Globals.globalEvents.Length; ++i)
             CreateEventButton(Globals.globalEvents[i], i).transform.SetParent(globalEventButtonParent.transform);
+
+        ToolPanelController.onViewModeSwitchTriggerList.Add(new ToolPanelController.ViewModeSwitchTrigger(OnViewModeSwitch));
+        OnViewModeSwitch(Globals.viewMode);
     }
 
     GameObject CreateEventButtonContainer(string name)
@@ -163,5 +168,13 @@ public class EventPropertiesPanelController : PropertiesPanelController
             positionText.text = "Position: " + position.ToString();
             eventName.text = eventTitle;
         }
+    }
+
+    void OnViewModeSwitch(Globals.ViewMode viewMode)
+    {
+        if (viewMode == Globals.ViewMode.Chart)
+            inspectorTitle.text = "Local Event";
+        else if (viewMode == Globals.ViewMode.Song)
+            inspectorTitle.text = "Global Event";
     }
 }

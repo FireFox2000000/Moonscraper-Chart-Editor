@@ -258,6 +258,7 @@
     <Compile Include="Assets\Scripts\Visuals\BackgroundBlending.cs" />
     <Compile Include="Assets\Scripts\Visuals\BillboardingXAxis.cs" />
     <Compile Include="Assets\Scripts\Visuals\CameraLayering.cs" />
+    <Compile Include="Assets\Scripts\Visuals\DrumSustainRotation.cs" />
     <Compile Include="Assets\Scripts\Visuals\FretboardWrapMovement.cs" />
     <Compile Include="Assets\Scripts\Visuals\RendererLayerExpose.cs" />
     <Compile Include="Assets\Scripts\Visuals\SetLineRendererPoints.cs" />
