@@ -30,4 +30,10 @@ Strikeline Frets- Replace [x] with numbers 0-4 for each image
 	[x]_fret_press		image size (128, 64)
 	[x]_fret_release	image size (128, 64)
 
+    [x]_drum_fret_anim		image size (128, 64)
+	[x]_drum_fret_base		image size (128, 64)
+	[x]_drum_fret_cover		image size (128, 64)
+	[x]_drum_fret_press		image size (128, 64)
+	[x]_drum_fret_release	image size (128, 64)
+
 	fret_stem			image size (64, 16)

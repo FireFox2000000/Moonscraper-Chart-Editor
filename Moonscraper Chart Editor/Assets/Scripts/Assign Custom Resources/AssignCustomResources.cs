@@ -40,80 +40,7 @@ public class AssignCustomResources : MonoBehaviour {
 
             WriteCustomNoteTexturesToAtlus(defaultNoteSprites.fullAtlus);
             Debug.Log(noteSpritesAvaliable);
-            const int PIXELS_PER_UNIT = 125;
-            for (int i = 0; i < customFrets.Length; ++i)
-            {
-                if (i < customSkin.fret_base.Length)
-                {
-                    Sprite sprite = null;
-                    if (customSkin.fret_base[i])
-                    {
-                        sprite = Sprite.Create(customSkin.fret_base[i], new Rect(0.0f, 0.0f, customSkin.fret_base[i].width, customSkin.fret_base[i].height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
-                        customFrets[i].gameObject.SetActive(true);
-                    }
-
-                    customFrets[i].fretBase.sprite = sprite;
-                }
-
-                if (i < customSkin.fret_cover.Length)
-                {
-                    Sprite sprite = null;
-                    if (customSkin.fret_cover[i])
-                    {
-                        sprite = Sprite.Create(customSkin.fret_cover[i], new Rect(0.0f, 0.0f, customSkin.fret_cover[i].width, customSkin.fret_cover[i].height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
-                        customFrets[i].gameObject.SetActive(true);
-                    }
-
-                    customFrets[i].fretCover.sprite = sprite;
-
-                }
-
-                if (i < customSkin.fret_press.Length)
-                {
-                    Sprite sprite = null;
-                    if (customSkin.fret_press[i])
-                    {
-                        sprite = Sprite.Create(customSkin.fret_press[i], new Rect(0.0f, 0.0f, customSkin.fret_press[i].width, customSkin.fret_press[i].height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
-                        customFrets[i].gameObject.SetActive(true);
-                    }
-
-                    customFrets[i].fretPress.sprite = sprite;
-                }
-
-                if (i < customSkin.fret_release.Length)
-                {
-                    Sprite sprite = null;
-                    if (customSkin.fret_release[i])
-                    {
-                        sprite = Sprite.Create(customSkin.fret_release[i], new Rect(0.0f, 0.0f, customSkin.fret_release[i].width, customSkin.fret_release[i].height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
-                        customFrets[i].gameObject.SetActive(true);
-                    }
-
-                    customFrets[i].fretRelease.sprite = sprite;
-                }
-
-                if (i < customSkin.fret_anim.Length)
-                {
-                    Sprite sprite = null;
-                    if (customSkin.fret_anim[i])
-                    {
-                        sprite = Sprite.Create(customSkin.fret_anim[i], new Rect(0.0f, 0.0f, customSkin.fret_anim[i].width, customSkin.fret_anim[i].height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
-                        customFrets[i].gameObject.SetActive(true);
-                    }
-
-                    customFrets[i].toAnimate.sprite = sprite;
-                }             
-            }
-
-            Sprite stem = null;
-            if (customSkin.fret_stem)
-            {
-                stem = Sprite.Create(customSkin.fret_stem, new Rect(0.0f, 0.0f, customSkin.fret_stem.width, customSkin.fret_stem.height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
-                for (int i = 0; i < customFrets.Length; ++i)
-                {
-                    customFrets[i].fretStem.sprite = stem;
-                }
-            }
+            GenerateAndAssignFretSprites();
         }
         catch (System.Exception e)
         {
@@ -207,6 +134,96 @@ public class AssignCustomResources : MonoBehaviour {
         }
     }
 	
+    static Sprite MakeFretSprite(Texture2D fret)
+    {
+        const int PIXELS_PER_UNIT = 125;
+        return Sprite.Create(fret, new Rect(0.0f, 0.0f, fret.width, fret.height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
+    }
+
+    void GenerateAndAssignFretSprites()
+    {
+        const int PIXELS_PER_UNIT = 125;
+
+        for (int i = 0; i < customFrets.Length; ++i)
+        {
+            // Standard Frets
+            if (i < customSkin.fret_base.Length)
+            {
+                //Sprite sprite = null;
+                if (customSkin.fret_base[i])
+                {
+                    customFrets[i].fretBase = MakeFretSprite(customSkin.fret_base[i]);
+                    customFrets[i].gameObject.SetActive(true);
+                }
+
+                //customFrets[i].fretBaseRen.sprite = sprite;
+            }
+            
+            if (i < customSkin.fret_cover.Length)
+            {
+                if (customSkin.fret_cover[i])
+                {
+                    customFrets[i].fretCover = MakeFretSprite(customSkin.fret_cover[i]);
+                    customFrets[i].gameObject.SetActive(true);
+                }
+            }
+
+            if (i < customSkin.fret_press.Length)
+            {
+                if (customSkin.fret_press[i])
+                {
+                    customFrets[i].fretPress = MakeFretSprite(customSkin.fret_press[i]);
+                    customFrets[i].gameObject.SetActive(true);
+                }
+            }
+
+            if (i < customSkin.fret_release.Length)
+            {
+                if (customSkin.fret_release[i])
+                {
+                    customFrets[i].fretRelease = MakeFretSprite(customSkin.fret_release[i]);
+                    customFrets[i].gameObject.SetActive(true);
+                }
+            }
+
+            if (i < customSkin.fret_anim.Length)
+            {
+                if (customSkin.fret_anim[i])
+                {
+                    customFrets[i].toAnimate = MakeFretSprite(customSkin.fret_anim[i]);
+                    customFrets[i].gameObject.SetActive(true);
+                }
+            }
+
+            // Drum Frets
+            
+            if (i < customSkin.drum_fret_base.Length && customSkin.drum_fret_base[i])
+                customFrets[i].drumFretBase = MakeFretSprite(customSkin.drum_fret_base[i]);
+
+            if (i < customSkin.drum_fret_cover.Length && customSkin.drum_fret_cover[i])
+                customFrets[i].drumFretCover = MakeFretSprite(customSkin.drum_fret_cover[i]);
+
+            if (i < customSkin.drum_fret_press.Length && customSkin.drum_fret_press[i])
+                customFrets[i].drumFretPress = MakeFretSprite(customSkin.drum_fret_press[i]);
+
+            if (i < customSkin.drum_fret_release.Length && customSkin.drum_fret_release[i])
+                customFrets[i].drumFretRelease = MakeFretSprite(customSkin.drum_fret_release[i]);
+
+            if (i < customSkin.drum_fret_anim.Length && customSkin.drum_fret_anim[i])
+                customFrets[i].drumToAnimate = MakeFretSprite(customSkin.drum_fret_anim[i]);
+        }
+
+        Sprite stem = null;
+        if (customSkin.fret_stem)
+        {
+            stem = Sprite.Create(customSkin.fret_stem, new Rect(0.0f, 0.0f, customSkin.fret_stem.width, customSkin.fret_stem.height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
+            for (int i = 0; i < customFrets.Length; ++i)
+            {
+                customFrets[i].fretStemRen.sprite = stem;
+            }
+        }
+    }
+
     void OnApplicationQuit()
     {
         // This is purely for the sake of editor resetting, otherwise any custom textures used will be saved between testing

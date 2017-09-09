@@ -55,19 +55,27 @@ public class NoteVisuals2DManager : NoteVisualsManager {
         Vector3 scale = new Vector3(1, 1, 1);
         if (note != null)
         {
+            int noteArrayPos = (int)note.fret_type;
+            if (Globals.drumMode && note.fret_type != Note.Fret_Type.OPEN)
+            {
+                noteArrayPos += 1;
+                if (noteArrayPos > (int)Note.Fret_Type.ORANGE)
+                    noteArrayPos = 0;
+            }
+
             if (noteType == Note.Note_Type.Strum || (noteType == Note.Note_Type.Hopo && Globals.drumMode))
             {
                 if (specialType == Note.Special_Type.STAR_POW)
-                    ren.sprite = spriteResources.sp_strum[(int)note.fret_type];
+                    ren.sprite = spriteResources.sp_strum[noteArrayPos];
                 else
-                    ren.sprite = spriteResources.reg_strum[(int)note.fret_type];
+                    ren.sprite = spriteResources.reg_strum[noteArrayPos];
             }
             else if (noteType == Note.Note_Type.Hopo)
             {
                 if (specialType == Note.Special_Type.STAR_POW)
-                    ren.sprite = spriteResources.sp_hopo[(int)note.fret_type];
+                    ren.sprite = spriteResources.sp_hopo[noteArrayPos];
                 else
-                    ren.sprite = spriteResources.reg_hopo[(int)note.fret_type];
+                    ren.sprite = spriteResources.reg_hopo[noteArrayPos];
             }
             // Tap notes
             else
@@ -75,9 +83,9 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                 if (note.fret_type != Note.Fret_Type.OPEN)
                 {
                     if (specialType == Note.Special_Type.STAR_POW)
-                        ren.sprite = spriteResources.sp_tap[(int)note.fret_type];
+                        ren.sprite = spriteResources.sp_tap[noteArrayPos];
                     else
-                        ren.sprite = spriteResources.reg_tap[(int)note.fret_type];
+                        ren.sprite = spriteResources.reg_tap[noteArrayPos];
                 }
             }
 

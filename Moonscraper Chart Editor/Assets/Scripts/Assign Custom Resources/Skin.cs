@@ -25,6 +25,12 @@ public class Skin : ScriptableObject {
     public Texture2D[] fret_press = new Texture2D[5];
     public Texture2D[] fret_anim = new Texture2D[5];
 
+    public Texture2D[] drum_fret_base = new Texture2D[5];
+    public Texture2D[] drum_fret_cover = new Texture2D[5];
+    public Texture2D[] drum_fret_release = new Texture2D[5];
+    public Texture2D[] drum_fret_press = new Texture2D[5];
+    public Texture2D[] drum_fret_anim = new Texture2D[5];
+
     public Texture2D fret_stem;
     public Texture2D hit_flames;
 
