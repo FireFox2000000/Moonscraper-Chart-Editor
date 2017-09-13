@@ -12,6 +12,9 @@ v1.0
     -Fixed lefty-flip movement of notes
     -Fixed bpm input field validation not taking into account highlighted text
     -Fixed single-note flag correction when placing chords one note at a time
+    -Fixed not being able to move starpower independant of other objects
+    -Fixed clipboard pasting not overwriting notes at the very edge of the paste area
+    -Fixed note tool showing hopos on chords and not being able to have forced chords with it
 
     CHANGES
     -Added dropshadow to some text

@@ -222,6 +222,7 @@
     <Compile Include="Assets\Scripts\Tools\ToolObject.cs" />
     <Compile Include="Assets\Scripts\Tools\Toolpane.cs" />
     <Compile Include="Assets\Scripts\Tools\ToolpaneButtonController.cs" />
+    <Compile Include="Assets\Scripts\UI\AnchoringLimiter.cs" />
     <Compile Include="Assets\Scripts\UI\ContextSizeAutoAdjust.cs" />
     <Compile Include="Assets\Scripts\UI\Custom Unity UI\CustomUnityDropdown.cs" />
     <Compile Include="Assets\Scripts\UI\CustomStandaloneInputModule.cs" />

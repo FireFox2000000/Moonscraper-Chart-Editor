@@ -76,7 +76,7 @@ public class PlaceNoteController : ObjectlessTool {
                         else
                         {
                             // Controls sustain recording
-                            keySustainActionHistoryInsert(i);
+                            KeySustainActionHistoryInsert(i);
                         }
                     }
                 }
@@ -98,7 +98,7 @@ public class PlaceNoteController : ObjectlessTool {
         {
             if (heldNotes[i] != null)
             {
-                keySustainActionHistoryInsert(i);
+                KeySustainActionHistoryInsert(i);
             }
         }
     }
@@ -112,7 +112,7 @@ public class PlaceNoteController : ObjectlessTool {
         }
     }
 
-    void keySustainActionHistoryInsert(int i)
+    void KeySustainActionHistoryInsert(int i)
     {
         if (heldNotes[i] != null && heldInitialOverwriteActions[i] != null)
         {
@@ -151,7 +151,7 @@ public class PlaceNoteController : ObjectlessTool {
             // Add in the held note history when user lifts off the keys
             if (Input.GetKeyUp((i + 1).ToString()))
             {
-                keySustainActionHistoryInsert(i);
+                KeySustainActionHistoryInsert(i);
             }
         }
 
@@ -344,13 +344,13 @@ public class PlaceNoteController : ObjectlessTool {
             {
                 if (i == 0)     // Start
                 {
-                    activeNotes[i].controller.note.previous = null;
+                    //activeNotes[i].controller.note.previous = null;
                     activeNotes[i].controller.note.next = activeNotes[i + 1].note;
                 }
                 else if (i >= (activeNotes.Count - 1))      // End
                 {
                     activeNotes[i].controller.note.previous = activeNotes[i - 1].note;
-                    activeNotes[i].controller.note.next = null;
+                    //activeNotes[i].controller.note.next = null;
                 }
                 else
                 {
@@ -360,9 +360,13 @@ public class PlaceNoteController : ObjectlessTool {
 
                 // Visuals for some reason aren't being updated in this cycle
                 //activeNotes[i].gameObject.SendMessage("Update");
-                //activeNotes[i].visuals.UpdateVisuals();
-            }      
+                activeNotes[i].visuals.UpdateVisuals();
+            }
+
+            panel.currentNote = activeNotes[0].note;
         }
+        else
+            panel.currentNote = notes[0].note;
 
         // Update flags in the note panel
         if (editor.currentSelectedObject.GetType() == typeof(Note))

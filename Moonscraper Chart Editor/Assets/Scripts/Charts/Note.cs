@@ -340,25 +340,10 @@ public class Note : ChartObject
     {
         get
         {
-            Note seperatePrevious = previous;
-            while (seperatePrevious != null && seperatePrevious.position == position)
-                seperatePrevious = seperatePrevious.previous;
+            Note seperatePrevious = previousSeperateNote;
 
-            /*if ((previous == null) || (previous != null && !IsChord && !previous.IsChord && previous.fret_type == fret_type))*/
             if ((seperatePrevious == null) || (seperatePrevious != null && mask == seperatePrevious.mask))
                 return true;
-            /*
-            else
-            {
-                Note[] chordNotes = GetChord();
-
-                foreach (Note chordNote in chordNotes)
-                {
-                    if (chordNote.previous == null)
-                        return true;
-                }
-                return false;
-            }*/
 
             return false;
         }

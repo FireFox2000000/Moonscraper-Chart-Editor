@@ -83,7 +83,7 @@ public class InspectorSwitching : MonoBehaviour {
                     break;
                 default:
                     currentPropertiesPanel = null;
-                    editor.currentSelectedObject = null;
+                    //editor.currentSelectedObject = null;
                     break;
             }
 
