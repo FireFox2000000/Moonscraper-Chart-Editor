@@ -43,13 +43,14 @@ public class CursorSelect : ToolObject
                 editor.Delete();
 
             // Shortcuts
+            /*
             if (Globals.modifierInputActive && editor.currentSelectedObjects.Length > 0)
             {
                 if (Input.GetKeyDown(KeyCode.X))
                     editor.Cut();
                 else if (Input.GetKeyDown(KeyCode.C))
                     editor.Copy();
-            }
+            }*/
 
             if (Input.GetMouseButtonDown(0))
             {

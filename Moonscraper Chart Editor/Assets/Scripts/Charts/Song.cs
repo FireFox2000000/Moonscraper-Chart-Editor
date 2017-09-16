@@ -374,7 +374,7 @@ public class Song {
         for (int i = 0; i < audioSampleData.Length; ++i)
             audioSampleData[i] = new SampleData(string.Empty);
 
-        updateArrays();
+        UpdateCache();
     }
 
 #if BASS_AUDIO
@@ -459,7 +459,7 @@ public class Song {
         LoadAllAudioClips();
 #endif
 
-        updateArrays();
+        UpdateCache();
     }
 
     /// <summary>
@@ -760,7 +760,7 @@ public class Song {
         SongObject.Insert(syncTrackObject, _syncTrack);
 
         if (autoUpdate)
-            updateArrays();
+            UpdateCache();
 
         ChartEditor.editOccurred = true;
     }
@@ -787,7 +787,7 @@ public class Song {
         }
 
         if (autoUpdate)
-            updateArrays();
+            UpdateCache();
 
         return success;
     }
@@ -804,7 +804,7 @@ public class Song {
         SongObject.Insert(eventObject, _events);
 
         if (autoUpdate)
-            updateArrays();
+            UpdateCache();
 
         ChartEditor.editOccurred = true;
     }
@@ -827,7 +827,7 @@ public class Song {
         }
 
         if (autoUpdate)
-            updateArrays();
+            UpdateCache();
 
         return success;
     }
@@ -847,7 +847,7 @@ public class Song {
 
     public static double dis_to_bpm(uint pos_start, uint pos_end, double deltatime, double resolution)
     {
-        return (pos_end - pos_start) / resolution * 60.0f / deltatime;
+        return (pos_end - pos_start) / resolution * 60.0d / deltatime;
     }
 
     public static uint time_to_dis(float time_start, float time_end, float resolution, float bpm)
@@ -1275,19 +1275,40 @@ public class Song {
     /// <summary>
     /// Updates all read-only values and bpm assigned time values. 
     /// </summary>
-    public void updateArrays()
+    public void UpdateCache()
     {
         events = _events.ToArray();
         sections = _events.OfType<Section>().ToArray();
         bpms = _syncTrack.OfType<BPM>().ToArray();
         timeSignatures = _syncTrack.OfType<TimeSignature>().ToArray();
         updateBPMTimeValues();
+
+        // Fix up any anchors
+        for (int i = 0; i < bpms.Length; ++i)
+        {
+            if(bpms[i].anchor != null && i > 0)
+            {
+                BPM anchorBPM = bpms[i];
+                BPM bpmToAdjust = bpms[i - 1];
+
+                double deltaTime = (double)anchorBPM.anchor - bpmToAdjust.time;
+                uint newValue = (uint)Mathf.Round((float)(dis_to_bpm(bpmToAdjust.position, anchorBPM.position, deltaTime, resolution) * 1000.0d));
+                //Debug.Log(newBpmValue + ", " + deltaTime + ", " + newValue);
+                if (deltaTime > 0 && newValue > 0)
+                {
+                    if (newValue != 0)
+                        bpmToAdjust.value = newValue;
+                }
+
+                Debug.Log(anchorBPM.time + ", " + anchorBPM.anchor);
+            }
+        }
     }
 
-    public void updateAllChartArrays()
+    public void UpdateAllChartCaches()
     {
         foreach (Chart chart in charts)
-            chart.updateArrays();
+            chart.UpdateCache();
     }
 
     /// <summary>

@@ -163,8 +163,8 @@ public class ClipboardObjectController : Snapable {
                 }
                 
             }
-            editor.currentChart.updateArrays();
-            editor.currentSong.updateArrays();
+            editor.currentChart.UpdateCache();
+            editor.currentSong.UpdateCache();
             editor.actionHistory.Insert(record.ToArray());
         }
         // 0 objects in clipboard, don't bother pasting

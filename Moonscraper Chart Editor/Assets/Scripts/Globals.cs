@@ -277,7 +277,16 @@ public class Globals : MonoBehaviour {
                     editor.currentSelectedObjects = editor.currentSong.syncTrack;
                     editor.AddToSelectedObjects(editor.currentSong.eventsAndSections);
                 }
-            }/*
+            }
+            else if (editor.currentSelectedObjects.Length > 0)
+            {
+                if (Input.GetKeyDown(KeyCode.X))
+                    editor.Cut();
+                else if (Input.GetKeyDown(KeyCode.C))
+                    editor.Copy();
+            }
+            
+            /*
             else if (Input.GetKeyDown(KeyCode.KeypadEnter))
             {
                 //Screen.fullScreen = !Screen.fullScreen;

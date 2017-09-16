@@ -113,7 +113,7 @@ public static class MidReader {
             }
         }
 
-        song.updateArrays();
+        song.UpdateCache();
     }
 
     private static void ReadSongGlobalEvents(IList<MidiEvent> track, Song song)
@@ -133,7 +133,7 @@ public static class MidReader {
             }
         }
 
-        song.updateArrays();
+        song.UpdateCache();
     }
 
     private static void ReadNotes(IList<MidiEvent> track, Song song, Song.Instrument instrument)
@@ -269,7 +269,7 @@ public static class MidReader {
 
         // Update all chart arrays
         foreach (Song.Difficulty diff in System.Enum.GetValues(typeof(Song.Difficulty)))
-            song.GetChart(instrument, diff).updateArrays();
+            song.GetChart(instrument, diff).UpdateCache();
         
         // Apply forcing events
         foreach (NoteOnEvent flagEvent in forceNotesList)

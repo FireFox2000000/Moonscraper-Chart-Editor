@@ -149,8 +149,8 @@ public class GroupMove : ToolObject
             editor.actionHistory.Insert(record.ToArray());
         }
 
-        editor.currentSong.updateArrays();
-        editor.currentChart.updateArrays();
+        editor.currentSong.UpdateCache();
+        editor.currentChart.UpdateCache();
 
         Reset();
     }
@@ -222,8 +222,8 @@ public class GroupMove : ToolObject
         }
 
         Mouse.cancel = true;
-        editor.currentSong.updateArrays();
-        editor.currentChart.updateArrays();
+        editor.currentSong.UpdateCache();
+        editor.currentChart.UpdateCache();
     }
 
     public override void ToolDisable()

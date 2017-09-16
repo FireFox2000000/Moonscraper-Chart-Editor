@@ -1058,8 +1058,8 @@ public class ChartEditor : MonoBehaviour {
                 songObject.Delete(false);
             }
 
-            currentChart.updateArrays();
-            currentSong.updateArrays();
+            currentChart.UpdateCache();
+            currentSong.UpdateCache();
 
             currentSelectedObject = null;
 

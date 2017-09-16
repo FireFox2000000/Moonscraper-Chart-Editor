@@ -58,7 +58,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
         }
 
-        editor.currentSong.updateArrays();
+        editor.currentSong.UpdateCache();
 
         if (incrementalTimer > AUTO_INCREMENT_WAIT_TIME)
             autoIncrementTimer += Time.deltaTime;
@@ -123,7 +123,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     {
         base.OnDisable();
         currentBPM = null;
-        editor.currentSong.updateArrays();
+        editor.currentSong.UpdateCache();
     }
 
     public void UpdateBPMValue(string value)
@@ -289,9 +289,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             }
 
             // Adjust the bpm value before the anchor to match the anchor's set time to it's actual time
-            double bpmToAdjustTime = Song.dis_to_time(currentBPM.position, bpmToAdjust.position, currentBPM.song.resolution, newBpmValue / 1000);// (float)anchor.anchor - bpmToAdjust.time;
+            double bpmToAdjustTime = Song.dis_to_time(currentBPM.position, bpmToAdjust.position, currentBPM.song.resolution, newBpmValue / 1000.0f);// (float)anchor.anchor - bpmToAdjust.time;
             double deltaTime = (double)anchor.anchor - bpmToAdjustTime;
-            uint newValue = (uint)(Song.dis_to_bpm(bpmToAdjust.position, anchor.position, deltaTime, currentBPM.song.resolution) * 1000);
+            uint newValue = (uint)Mathf.Round((float)(Song.dis_to_bpm(bpmToAdjust.position, anchor.position, deltaTime, currentBPM.song.resolution) * 1000.0f));
             //Debug.Log(newBpmValue + ", " + deltaTime + ", " + newValue);
             if (deltaTime > 0 && newValue > 0)
             {

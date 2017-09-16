@@ -58,8 +58,8 @@ public class ActionHistory
                 --historyPoint;
             }
 
-            editor.currentChart.updateArrays();
-            editor.currentSong.updateArrays();
+            editor.currentChart.UpdateCache();
+            editor.currentSong.UpdateCache();
             if (Toolpane.currentTool != Toolpane.Tools.Note)
                 editor.currentSelectedObject = null;
 
@@ -102,8 +102,8 @@ public class ActionHistory
                 }
             }
 
-            editor.currentChart.updateArrays();
-            editor.currentSong.updateArrays();
+            editor.currentChart.UpdateCache();
+            editor.currentSong.UpdateCache();
             if (Toolpane.currentTool != Toolpane.Tools.Note)
                 editor.currentSelectedObject = null;
 

@@ -61,7 +61,7 @@ public class Chart  {
     /// <summary>
     /// Updates all read-only values and the total note count.
     /// </summary>
-    public void updateArrays()
+    public void UpdateCache()
     {
         notes = _chartObjects.OfType<Note>().ToArray();
         starPower = _chartObjects.OfType<Starpower>().ToArray();
@@ -103,7 +103,7 @@ public class Chart  {
             Add(chartObject, false);        
         }
 
-        updateArrays();
+        UpdateCache();
         ChartEditor.editOccurred = true;
     }
 
@@ -121,7 +121,7 @@ public class Chart  {
         int pos = SongObject.Insert(chartObject, _chartObjects);
 
         if (update)
-            updateArrays();
+            UpdateCache();
 
         ChartEditor.editOccurred = true;
 
@@ -139,7 +139,7 @@ public class Chart  {
             Remove(chartObject, false);
         }
 
-        updateArrays();
+        UpdateCache();
         ChartEditor.editOccurred = true;
     }
 
@@ -162,7 +162,7 @@ public class Chart  {
         }
 
         if (update)
-            updateArrays();
+            UpdateCache();
 
         return success;
     }
@@ -256,7 +256,7 @@ public class Chart  {
                     Add(new ChartEvent(position, eventName), false);
                 }
             }
-            updateArrays();
+            UpdateCache();
 
             // Load flags
             foreach (string line in flags)

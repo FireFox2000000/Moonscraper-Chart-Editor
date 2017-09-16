@@ -24,7 +24,7 @@ public class SongValidateGH3 {
                 song.Remove(song.sections[i], false);
             }
 
-            song.updateArrays();
+            song.UpdateCache();
         }
 
         SongObjectPositionFix(song, song.syncTrack);

@@ -68,7 +68,7 @@ public class GroupSelectPanelController : MonoBehaviour
             }
         }
 
-        editor.currentChart.updateArrays();
+        editor.currentChart.UpdateCache();
 
         if (actions.Count > 0)
             editor.actionHistory.Insert(actions.ToArray());
