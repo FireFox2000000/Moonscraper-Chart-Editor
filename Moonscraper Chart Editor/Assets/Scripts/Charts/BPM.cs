@@ -27,6 +27,7 @@ public class BPM : SyncTrack
     public BPM(BPM _bpm) : base(_bpm.position)
     {
         value = _bpm.value;
+        anchor = _bpm.anchor;
     }
 
     internal override string GetSaveString()

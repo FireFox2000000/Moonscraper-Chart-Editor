@@ -14,7 +14,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     const float AUTO_INCREMENT_WAIT_TIME = 0.5f;
     const float AUTO_INCREMENT_RATE = 0.08f;
 
-    uint lastAutoVal = 0;
+    uint? lastAutoVal = null;
+    BPM anchorAdjustmentOriginalValue = null;
+    BPM anchorAdjustment = null;
 
     void Start()
     {
@@ -100,12 +102,19 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 incrementalTimer = 0;
 
             // Handle key release, add in action history
-            if (Input.GetKeyUp(KeyCode.Equals) || Input.GetKeyUp(KeyCode.Minus))
+            if ((Input.GetKeyUp(KeyCode.Equals) || Input.GetKeyUp(KeyCode.Minus)) && lastAutoVal != null)
             {
                 incrementalTimer = 0;
-                editor.actionHistory.Insert(new ActionHistory.Modify(new BPM(currentSongObject.position, lastAutoVal), currentSongObject));
+                editor.actionHistory.Insert(new ActionHistory.Modify(new BPM(currentSongObject.position, (uint)lastAutoVal), currentSongObject));
+                if (anchorAdjustment != null)
+                {
+                    editor.actionHistory.Insert(new ActionHistory.Modify(anchorAdjustmentOriginalValue, anchorAdjustment));
+                    anchorAdjustment = null;
+                    anchorAdjustmentOriginalValue = null;
+                }
+
                 ChartEditor.editOccurred = true;
-                lastAutoVal = currentBPM.value;
+                lastAutoVal = null;// currentBPM.value;
             }
         }
     }
@@ -119,8 +128,11 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     public void UpdateBPMValue(string value)
     {
+        if (lastAutoVal == null)
+            lastAutoVal = currentBPM.value;
+
         uint prevValue = currentBPM.value;
-        if (value[value.Length - 1] == '.')
+        if (value.Length > 0 && value[value.Length - 1] == '.')
             value = value.Remove(value.Length - 1);
         
         if (value != string.Empty && value[value.Length - 1] != '.' && currentBPM != null && float.Parse(value) != 0)
@@ -145,9 +157,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             // Actually parse the value now
             uint parsedVal = uint.Parse(value);// * 1000;     // Store it in another variable due to weird parsing-casting bug at decimal points of 2 or so. Seems to fix it for whatever reason.
 
-            //AdjustForAnchors(parsedVal);
-            currentBPM.value = (uint)parsedVal;
-            UpdateInputFieldRecord();
+            AdjustForAnchors(parsedVal);
+            //currentBPM.value = (uint)parsedVal;
+            //UpdateInputFieldRecord();
         }
         else if (value == ".")
             bpmValue.text = string.Empty;
@@ -162,11 +174,27 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         {
             //currentBPM.value = 120000;
             AdjustForAnchors(120000);
-            UpdateInputFieldRecord();
+            //UpdateInputFieldRecord();
         }
 
         UpdateBPMInputFieldText();
         //Debug.Log(((float)currentBPM.value / 1000.0f).ToString().Length);
+
+        // Add action recording here?
+        if (lastAutoVal != null && lastAutoVal != currentBPM.value)
+        {
+            editor.actionHistory.Insert(new ActionHistory.Modify(new BPM(currentBPM.position, (uint)lastAutoVal), currentBPM));
+            if (anchorAdjustment != null)
+            {
+                editor.actionHistory.Insert(new ActionHistory.Modify(anchorAdjustmentOriginalValue, anchorAdjustment));
+                anchorAdjustment = null;
+                anchorAdjustmentOriginalValue = null;
+            }
+        }
+
+        anchorAdjustment = null;
+        anchorAdjustmentOriginalValue = null;
+        lastAutoVal = null;
     }
 
     public char validatePositiveDecimal(string text, int charIndex, char addedChar)
@@ -238,17 +266,33 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 }
             }
 
-            if (anchor == null)
+            if (anchor == null || bpmToAdjust == currentBPM)
+            {
+                currentBPM.value = newBpmValue;
                 return true;
+            }
 
-            if (bpmToAdjust == currentBPM)
-                return false;
+            // Calculate the minimum the bpm can adjust to
+            const float MIN_DT = 0.01f;
+            float bpmTime = currentBPM.time;
+            float timeBetweenFirstAndSecond = (float)anchor.anchor - MIN_DT;
+            // What bpm will result in this exact time difference?
+            uint minVal = (uint)(Mathf.Ceil((float)Song.dis_to_bpm(currentBPM.position, bpmToAdjust.position, timeBetweenFirstAndSecond, currentBPM.song.resolution)) * 1000);
+
+            if (newBpmValue < minVal)
+                newBpmValue = minVal;
+            
+            if (anchorAdjustment == null)
+            {
+                anchorAdjustment = bpmToAdjust;
+                anchorAdjustmentOriginalValue = new BPM(bpmToAdjust);
+            }
 
             // Adjust the bpm value before the anchor to match the anchor's set time to it's actual time
             double bpmToAdjustTime = Song.dis_to_time(currentBPM.position, bpmToAdjust.position, currentBPM.song.resolution, newBpmValue / 1000);// (float)anchor.anchor - bpmToAdjust.time;
             double deltaTime = (double)anchor.anchor - bpmToAdjustTime;
             uint newValue = (uint)(Song.dis_to_bpm(bpmToAdjust.position, anchor.position, deltaTime, currentBPM.song.resolution) * 1000);
-            Debug.Log(bpmToAdjustTime + ", " + anchor.anchor);
+            //Debug.Log(newBpmValue + ", " + deltaTime + ", " + newValue);
             if (deltaTime > 0 && newValue > 0)
             {
                 if (newValue != 0)
@@ -256,6 +300,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 currentBPM.value = newBpmValue;
             }
         }
+
+        currentBPM.value = newBpmValue;
 
         return true;
     }
@@ -282,10 +328,13 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     public void SetAnchor(bool anchored)
     {
+        BPM original = new BPM(currentBPM);
         if (anchored)
             currentBPM.anchor = currentBPM.time;
         else
             currentBPM.anchor = null;
+
+        editor.actionHistory.Insert(new ActionHistory.Modify(original, currentBPM));
 
         Debug.Log("Anchor toggled to: " + currentBPM.anchor);
     }
