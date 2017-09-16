@@ -218,6 +218,13 @@ public class ChartWriter {
             {
                 case (SongObject.ID.BPM):
                     BPM bpm = songObject as BPM;
+                    if (bpm.anchor != null)
+                    {
+                        saveString.Append(" = A " + (uint)((double)bpm.anchor * 1000000));
+                        saveString.Append(Globals.LINE_ENDING);
+                        saveString.Append(Globals.TABSPACE + tick);
+                    }
+
                     saveString.Append(" = B " + bpm.value);
                     break;
 

@@ -845,7 +845,7 @@ public class Song {
         return (pos_end - pos_start) / resolution * 60.0f / bpm;
     }
 
-    public static double dis_to_bpm(uint pos_start, uint pos_end, float deltatime, float resolution)
+    public static double dis_to_bpm(uint pos_start, uint pos_end, double deltatime, double resolution)
     {
         return (pos_end - pos_start) / resolution * 60.0f / deltatime;
     }
@@ -878,79 +878,6 @@ public class Song {
                 //submitDataEvents(stringData);
                 submitDataGlobals(stringData);
                 break;
-                /*
-            case ("[EasySingle]"):
-#if SONG_DEBUG
-                Debug.Log("Loading chart EasySingle");
-#endif
-                GetChart(Instrument.Guitar, Difficulty.Easy).Load(stringData);
-                break;
-            case ("[EasyDoubleGuitar]"):
-#if SONG_DEBUG
-                Debug.Log("Loading chart EasyDoubleBass");
-#endif
-                GetChart(Instrument.GuitarCoop, Difficulty.Easy).Load(stringData);
-                break;
-            case ("[EasyDoubleBass]"):
-#if SONG_DEBUG
-                Debug.Log("Loading chart EasyDoubleBass");
-#endif
-                GetChart(Instrument.Bass, Difficulty.Easy).Load(stringData);
-                break;
-            case ("[MediumSingle]"):
-#if SONG_DEBUG
-                Debug.Log("Loading chart MediumSingle");
-#endif
-                GetChart(Instrument.Guitar, Difficulty.Medium).Load(stringData);
-                break;
-            case ("[MediumDoubleGuitar]"):
-#if SONG_DEBUG
-                Debug.Log("Loading chart EasyDoubleBass");
-#endif
-                GetChart(Instrument.GuitarCoop, Difficulty.Medium).Load(stringData);
-                break;
-            case ("[MediumDoubleBass]"):
-#if SONG_DEBUG
-                Debug.Log("Loading chart MediumDoubleBass");
-#endif
-                GetChart(Instrument.Bass, Difficulty.Medium).Load(stringData);
-                break;
-            case ("[HardSingle]"):
-#if SONG_DEBUG
-                Debug.Log("Loading chart HardSingle");
-#endif
-                GetChart(Instrument.Guitar, Difficulty.Hard).Load(stringData);
-                break;
-            case ("[HardDoubleGuitar]"):
-#if SONG_DEBUG
-                Debug.Log("Loading chart EasyDoubleBass");
-#endif
-                GetChart(Instrument.GuitarCoop, Difficulty.Hard).Load(stringData);
-                break;
-            case ("[HardDoubleBass]"):
-#if SONG_DEBUG
-                Debug.Log("Loading chart HardDoubleBass");
-#endif
-                GetChart(Instrument.Bass, Difficulty.Hard).Load(stringData);
-                break;
-            case ("[ExpertSingle]"):
-#if SONG_DEBUG
-                Debug.Log("Loading chart ExpertSingle");
-#endif
-                GetChart(Instrument.Guitar, Difficulty.Expert).Load(stringData);
-                break;
-            case ("[ExpertDoubleGuitar]"):
-#if SONG_DEBUG
-                Debug.Log("Loading chart ExpertDoubleBass");
-#endif
-                GetChart(Instrument.GuitarCoop, Difficulty.Expert).Load(stringData);
-                break;
-            case ("[ExpertDoubleBass]"):
-#if SONG_DEBUG
-                Debug.Log("Loading chart ExpertDoubleBass");
-#endif
-                GetChart(Instrument.Bass, Difficulty.Expert).Load(stringData);
-                break;*/
             default:
                 Difficulty chartDiff;
                 int instumentStringOffset = 1;
@@ -1169,11 +1096,20 @@ public class Song {
             audioLocations[streamArrayPos] = Path.GetFullPath(audioFilepath);
     }
 
+    struct Anchor
+    {
+        public uint position;
+        public float anchorTime;
+    }
+
     void submitDataGlobals(List<string> stringData)
     {
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
 #endif
+        
+        List <Anchor> anchorData = new List<Anchor>();
+
         foreach (string line in stringData)
         {
             string[] stringSplit = Regex.Split(line, @"\s+");
@@ -1187,44 +1123,78 @@ public class Song {
             else
                 continue;
 
-            if (eventType == "ts")
+            switch (eventType)
             {
-                uint numerator;
-                uint denominator = 2;
+                case ("ts"):
+                    uint numerator;
+                    uint denominator = 2;
 
-                if (!uint.TryParse(stringSplit[TEXT_POS_DATA_1], out numerator))
-                    continue;
+                    if (!uint.TryParse(stringSplit[TEXT_POS_DATA_1], out numerator))
+                        continue;
 
-                if (stringSplit.Length > TEXT_POS_DATA_1 + 1 && !uint.TryParse(stringSplit[TEXT_POS_DATA_1 + 1], out denominator))
-                    continue;                   
+                    if (stringSplit.Length > TEXT_POS_DATA_1 + 1 && !uint.TryParse(stringSplit[TEXT_POS_DATA_1 + 1], out denominator))
+                        continue;
 
-                Add(new TimeSignature(position, numerator, (uint)(Mathf.Pow(2, denominator))), false);
-            }
-            else if (eventType == "b")
-            {
-                uint value;
-                if (!uint.TryParse(stringSplit[TEXT_POS_DATA_1], out value))
-                    continue;
+                    Add(new TimeSignature(position, numerator, (uint)(Mathf.Pow(2, denominator))), false);
+                    break;
+                case ("b"):
+                    uint value;
+                    if (!uint.TryParse(stringSplit[TEXT_POS_DATA_1], out value))
+                        continue;
 
-                Add(new BPM(position, value), false);
-            }
-            else if (eventType == "e")       // 0 = E "section Intro"
-            {
-                if (stringSplit.Length > TEXT_POS_DATA_1 + 1 && stringSplit[TEXT_POS_DATA_1] == "\"section")
-                {
-                    string title = string.Empty;// = stringSplit[TEXT_POS_DATA_1 + 1].Trim('"');
-                    for (int i = TEXT_POS_DATA_1 + 1; i < stringSplit.Length; ++i)
+                    Add(new BPM(position, value), false);
+                    break;
+                case ("e"):
+                    if (stringSplit.Length > TEXT_POS_DATA_1 + 1 && stringSplit[TEXT_POS_DATA_1] == "\"section")
                     {
-                        title += stringSplit[i].Trim('"');
-                        if (i < stringSplit.Length - 1)
-                            title += " ";
+                        string title = string.Empty;// = stringSplit[TEXT_POS_DATA_1 + 1].Trim('"');
+                        for (int i = TEXT_POS_DATA_1 + 1; i < stringSplit.Length; ++i)
+                        {
+                            title += stringSplit[i].Trim('"');
+                            if (i < stringSplit.Length - 1)
+                                title += " ";
+                        }
+                        Add(new Section(title, position), false);
                     }
-                    Add(new Section(title, position), false);
+                    else
+                    {
+                        string title = stringSplit[TEXT_POS_DATA_1].Trim('"');
+                        Add(new Event(title, position), false);
+                    }
+                    break;
+                case ("a"):
+                    ulong anchorValue;
+                    if (ulong.TryParse(stringSplit[TEXT_POS_DATA_1], out anchorValue))
+                    {
+                        Anchor a;
+                        a.position = position;
+                        a.anchorTime = (float)(anchorValue / 1000000.0d);
+                        anchorData.Add(a);
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            BPM[] bpms = _syncTrack.OfType<BPM>().ToArray();
+            foreach (Anchor anchor in anchorData)
+            {
+                int arrayPos = SongObject.FindClosestPosition(anchor.position, bpms);
+                if (bpms[arrayPos].position == anchor.position)
+                {
+                    bpms[arrayPos].anchor = anchor.anchorTime;
                 }
                 else
                 {
-                    string title = stringSplit[TEXT_POS_DATA_1].Trim('"');
-                    Add(new Event(title, position), false);
+                    // Create a new anchored bpm
+                    uint value;
+                    if (bpms[arrayPos].position > anchor.position)
+                        value = bpms[arrayPos - 1].value;
+                    else
+                        value = bpms[arrayPos].value;
+
+                    BPM anchoredBPM = new BPM(anchor.position, value);
+                    anchoredBPM.anchor = anchor.anchorTime;
                 }
             }
         }

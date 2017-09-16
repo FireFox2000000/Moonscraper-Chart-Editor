@@ -32,7 +32,12 @@ public class BPM : SyncTrack
     internal override string GetSaveString()
     {
         //0 = B 140000
-        return Globals.TABSPACE + position + " = B " + value + Globals.LINE_ENDING;
+        string s = string.Empty;
+        if (anchor != null)
+            s += Globals.TABSPACE + position + " = A " + (uint)(((double)anchor) * 1000000) + Globals.LINE_ENDING;
+        s += Globals.TABSPACE + position + " = B " + value + Globals.LINE_ENDING;
+
+        return s;
     }
 
     public float assignedTime = 0;

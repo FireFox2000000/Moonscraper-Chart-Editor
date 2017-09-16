@@ -160,8 +160,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     {
         if (value == string.Empty || currentBPM.value <= 0)
         {
-            currentBPM.value = 120000;
-            //AdjustForAnchors(120000);
+            //currentBPM.value = 120000;
+            AdjustForAnchors(120000);
             UpdateInputFieldRecord();
         }
 
@@ -201,18 +201,20 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     public void IncrementBPM()
     {
-        currentBPM.value += 1000;
+        //currentBPM.value += 1000;
 
-        //AdjustForAnchors(currentBPM.value + 1000);
+        AdjustForAnchors(currentBPM.value + 1000);
         UpdateBPMInputFieldText();
     }
 
     public void DecrementBPM()
     {
-        if (currentBPM.value > 1000)
-            currentBPM.value -= 1000;
+        uint newValue = currentBPM.value;
 
-        //AdjustForAnchors(newValue);
+        if (newValue > 1000)
+            newValue -= 1000;
+
+        AdjustForAnchors(newValue);
         UpdateBPMInputFieldText();
     }
 
@@ -243,12 +245,14 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 return false;
 
             // Adjust the bpm value before the anchor to match the anchor's set time to it's actual time
-            float deltaTime = (float)anchor.anchor - bpmToAdjust.time;
+            double bpmToAdjustTime = Song.dis_to_time(currentBPM.position, bpmToAdjust.position, currentBPM.song.resolution, newBpmValue / 1000);// (float)anchor.anchor - bpmToAdjust.time;
+            double deltaTime = (double)anchor.anchor - bpmToAdjustTime;
             uint newValue = (uint)(Song.dis_to_bpm(bpmToAdjust.position, anchor.position, deltaTime, currentBPM.song.resolution) * 1000);
-
-            if (deltaTime > 0)
+            Debug.Log(bpmToAdjustTime + ", " + anchor.anchor);
+            if (deltaTime > 0 && newValue > 0)
             {
-                bpmToAdjust.value = newValue;
+                if (newValue != 0)
+                    bpmToAdjust.value = newValue;
                 currentBPM.value = newBpmValue;
             }
         }
