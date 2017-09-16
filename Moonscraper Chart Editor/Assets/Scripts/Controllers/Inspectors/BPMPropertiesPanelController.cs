@@ -5,6 +5,9 @@ using System.Collections;
 public class BPMPropertiesPanelController : PropertiesPanelController {
     public BPM currentBPM { get { return (BPM)currentSongObject; } set { currentSongObject = value; } }
     public InputField bpmValue;
+    public Toggle anchorToggle;
+    public Button increment, decrement;
+    public Selectable[] AnchorAheadDisable;
 
     float incrementalTimer = 0;
     float autoIncrementTimer = 0;
@@ -21,14 +24,18 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     void OnEnable()
     {
         bool edit = ChartEditor.editOccurred;
-
-        if (currentBPM != null)
-            bpmValue.text = ((float)currentBPM.value / 1000.0f).ToString();
+        UpdateBPMInputFieldText();
 
         incrementalTimer = 0;
         autoIncrementTimer = 0;
 
         ChartEditor.editOccurred = edit;
+    }
+
+    void UpdateBPMInputFieldText()
+    {
+        if (currentBPM != null)
+            bpmValue.text = ((float)currentBPM.value / 1000.0f).ToString();
     }
 
     protected override void Update()
@@ -40,6 +47,13 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             positionText.text = "Position: " + currentBPM.position.ToString();
             if (bpmValue.text != string.Empty && bpmValue.text[bpmValue.text.Length - 1] != '.' && bpmValue.text[bpmValue.text.Length - 1] != '0')
                 bpmValue.text = (currentBPM.value / 1000.0f).ToString();
+
+            anchorToggle.isOn = currentBPM.anchor != null;
+
+            bool interactable = !IsNextBPMAnAnchor();
+            foreach (Selectable ui in AnchorAheadDisable)
+                ui.interactable = interactable;
+
         }
 
         editor.currentSong.updateArrays();
@@ -53,24 +67,24 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         {
             if (!Globals.IsTyping && !Globals.modifierInputActive)
             {
-                if (Input.GetKeyDown(KeyCode.Minus))
+                if (Input.GetKeyDown(KeyCode.Minus) && decrement.interactable)
                 {
                     lastAutoVal = currentBPM.value;
-                    DecrementBPM();
+                    decrement.onClick.Invoke();
                 }
-                else if (Input.GetKeyDown(KeyCode.Equals))
+                else if (Input.GetKeyDown(KeyCode.Equals) && increment.interactable)
                 {
                     lastAutoVal = currentBPM.value;
-                    IncrementBPM();
+                    increment.onClick.Invoke();
                 }
 
                 // Adjust to time rather than framerate
                 if (incrementalTimer > AUTO_INCREMENT_WAIT_TIME && autoIncrementTimer > AUTO_INCREMENT_RATE)
                 {
-                    if (Input.GetKey(KeyCode.Minus))
-                        DecrementBPM();
-                    else if (Input.GetKey(KeyCode.Equals))
-                        IncrementBPM();
+                    if (Input.GetKey(KeyCode.Minus) && decrement.interactable)
+                        decrement.onClick.Invoke();
+                    else if (Input.GetKey(KeyCode.Equals) && increment.interactable)
+                        increment.onClick.Invoke();
 
                     autoIncrementTimer = 0;
                 }
@@ -128,6 +142,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             // Actually parse the value now
             uint parsedVal = uint.Parse(value);// * 1000;     // Store it in another variable due to weird parsing-casting bug at decimal points of 2 or so. Seems to fix it for whatever reason.
 
+            //AdjustForAnchors(parsedVal);
             currentBPM.value = (uint)parsedVal;
             UpdateInputFieldRecord();
         }
@@ -143,16 +158,19 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         if (value == string.Empty || currentBPM.value <= 0)
         {
             currentBPM.value = 120000;
+            //AdjustForAnchors(120000);
             UpdateInputFieldRecord();
         }
 
-        bpmValue.text = ((float)currentBPM.value / 1000.0f).ToString();
+        UpdateBPMInputFieldText();
+        //Debug.Log(((float)currentBPM.value / 1000.0f).ToString().Length);
     }
 
     public char validatePositiveDecimal(string text, int charIndex, char addedChar)
     {
         int selectionLength = bpmValue.selectionAnchorPosition - bpmValue.selectionFocusPosition;
-        text = text.Remove(bpmValue.selectionFocusPosition, selectionLength);
+        if (bpmValue.selectionFocusPosition < bpmValue.text.Length)
+            text = text.Remove(bpmValue.selectionFocusPosition, selectionLength);
 
         if ((addedChar == '.' && !text.Contains(".") && text.Length > 0) || (addedChar >= '0' && addedChar <= '9'))
         {
@@ -179,11 +197,87 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     public void IncrementBPM()
     {
         currentBPM.value += 1000;
+
+        //AdjustForAnchors(currentBPM.value + 1000);
+        UpdateBPMInputFieldText();
     }
 
     public void DecrementBPM()
     {
         if (currentBPM.value > 1000)
             currentBPM.value -= 1000;
+
+        //AdjustForAnchors(newValue);
+        UpdateBPMInputFieldText();
+    }
+
+    bool AdjustForAnchors(uint newBpmValue)
+    {
+        int pos = SongObject.FindObjectPosition(currentBPM, currentBPM.song.bpms);
+        if (pos != SongObject.NOTFOUND)
+        {
+            BPM anchor = null;
+            BPM bpmToAdjust = null;
+
+            // Get the next anchor
+            for (int i = pos + 1; i < currentBPM.song.bpms.Length; ++i)
+            {
+                if (currentBPM.song.bpms[i].anchor != null)
+                {
+                    anchor = currentBPM.song.bpms[i];
+
+                    // Get the bpm before that anchor
+                    bpmToAdjust = currentBPM.song.bpms[i - 1];
+                }
+            }
+
+            if (anchor == null)
+                return true;
+
+            if (bpmToAdjust == currentBPM)
+                return false;
+
+            // Adjust the bpm value before the anchor to match the anchor's set time to it's actual time
+            float deltaTime = (float)anchor.anchor - bpmToAdjust.time;
+            uint newValue = (uint)(Song.dis_to_bpm(bpmToAdjust.position, anchor.position, deltaTime, currentBPM.song.resolution) * 1000);
+
+            if (deltaTime > 0)
+            {
+                bpmToAdjust.value = newValue;
+                currentBPM.value = newBpmValue;
+            }
+        }
+
+        return true;
+    }
+
+    BPM NextBPM()
+    {
+        int pos = SongObject.FindObjectPosition(currentBPM, currentBPM.song.bpms);
+        if (pos != SongObject.NOTFOUND && pos + 1 < currentBPM.song.bpms.Length)
+        {
+            return currentBPM.song.bpms[pos + 1];
+        }
+
+        return null;
+    }
+
+    bool IsNextBPMAnAnchor()
+    {
+        BPM next = NextBPM();
+        if (next != null && next.anchor != null)
+            return true;
+
+        return false;
+    }
+
+    public void SetAnchor(bool anchored)
+    {
+        if (anchored)
+            currentBPM.anchor = currentBPM.time;
+        else
+            currentBPM.anchor = null;
+
+        Debug.Log("Anchor toggled to: " + currentBPM.anchor);
     }
 }

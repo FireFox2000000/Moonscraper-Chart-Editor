@@ -12,6 +12,8 @@ public class BPM : SyncTrack
     /// </summary>
     public uint value;
 
+    public float? anchor = null;
+
     /// <summary>
     /// Basic constructor.
     /// </summary>

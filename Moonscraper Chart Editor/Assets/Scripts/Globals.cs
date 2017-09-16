@@ -211,7 +211,7 @@ public class Globals : MonoBehaviour {
             Controls();
         ModifierControls();
 
-        snapLockWarning.gameObject.SetActive(lockToStrikeline);
+        snapLockWarning.gameObject.SetActive((lockToStrikeline && Toolpane.currentTool != Toolpane.Tools.Cursor && Toolpane.currentTool != Toolpane.Tools.Eraser));
 
         if (HasScreenResized)
             OnScreenResize();

@@ -624,6 +624,6 @@ public abstract class SongObject
     /// </summary>
     public enum ID
     {
-        TimeSignature, BPM, Event, Section, Note, Starpower, ChartEvent
+        TimeSignature, BPM, Anchor, Event, Section, Note, Starpower, ChartEvent
     }
 }

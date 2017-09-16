@@ -14,10 +14,6 @@ public class CameraShake : MonoBehaviour
     public float shakeAmount;//The amount to shake this frame.
     public float shakeDuration;//The duration this frame.
 
-    //Readonly values...
-    float startAmount;//The initial shake amount (to determine percentage), set when ShakeCamera is called.
-    float startDuration;//The initial shake duration, set when ShakeCamera is called.
-
     bool isRunning = false; //Is the coroutine running right now?
 
     float initYPos;
@@ -38,10 +34,6 @@ public class CameraShake : MonoBehaviour
 
     public void ShakeCamera()
     {
-
-        startAmount = shakeAmount;//Set default (start) values
-        startDuration = shakeDuration;//Set default (start) values
-
         if (!isRunning) StartCoroutine(Shake());//Only call the coroutine if it isn't currently running. Otherwise, just set the variables.
     }
 

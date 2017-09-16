@@ -15,6 +15,7 @@ v1.0
     -Fixed not being able to move starpower independant of other objects
     -Fixed clipboard pasting not overwriting notes at the very edge of the paste area
     -Fixed note tool showing hopos on chords and not being able to have forced chords with it
+    -Fixed cursor group selection being affected by keys mode locking
 
     CHANGES
     -Added dropshadow to some text

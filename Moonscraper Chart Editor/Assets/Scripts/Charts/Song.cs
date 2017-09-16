@@ -845,6 +845,11 @@ public class Song {
         return (pos_end - pos_start) / resolution * 60.0f / bpm;
     }
 
+    public static double dis_to_bpm(uint pos_start, uint pos_end, float deltatime, float resolution)
+    {
+        return (pos_end - pos_start) / resolution * 60.0f / deltatime;
+    }
+
     public static uint time_to_dis(float time_start, float time_end, float resolution, float bpm)
     {
         return (uint)Mathf.Round((time_end - time_start) * bpm / 60.0f * resolution);
