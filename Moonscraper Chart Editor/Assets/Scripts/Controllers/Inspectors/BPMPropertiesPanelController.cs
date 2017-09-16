@@ -45,8 +45,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         {
             // Update inspector information
             positionText.text = "Position: " + currentBPM.position.ToString();
-            if (bpmValue.text != string.Empty && bpmValue.text[bpmValue.text.Length - 1] != '.' && bpmValue.text[bpmValue.text.Length - 1] != '0')
-                bpmValue.text = (currentBPM.value / 1000.0f).ToString();
+            if (!Globals.IsTyping)//if (bpmValue.text != string.Empty && bpmValue.text[bpmValue.text.Length - 1] != '.' && bpmValue.text[bpmValue.text.Length - 1] != '0')
+                UpdateBPMInputFieldText();
 
             anchorToggle.isOn = currentBPM.anchor != null;
 
@@ -120,6 +120,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     public void UpdateBPMValue(string value)
     {
         uint prevValue = currentBPM.value;
+        if (value[value.Length - 1] == '.')
+            value = value.Remove(value.Length - 1);
+        
         if (value != string.Empty && value[value.Length - 1] != '.' && currentBPM != null && float.Parse(value) != 0)
         {
             // Convert the float string to an int string
@@ -168,13 +171,15 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     public char validatePositiveDecimal(string text, int charIndex, char addedChar)
     {
-        int selectionLength = bpmValue.selectionAnchorPosition - bpmValue.selectionFocusPosition;
-        if (bpmValue.selectionFocusPosition < bpmValue.text.Length)
-            text = text.Remove(bpmValue.selectionFocusPosition, selectionLength);
+        int selectionLength = Mathf.Abs(bpmValue.selectionAnchorPosition - bpmValue.selectionFocusPosition);
+        int selectStart = bpmValue.selectionAnchorPosition < bpmValue.selectionFocusPosition ? bpmValue.selectionAnchorPosition : bpmValue.selectionFocusPosition;
+
+        if (selectStart < bpmValue.text.Length)
+            text = text.Remove(selectStart, selectionLength);
 
         if ((addedChar == '.' && !text.Contains(".") && text.Length > 0) || (addedChar >= '0' && addedChar <= '9'))
         {
-            if ((text.Contains(".") && text.Length - text.IndexOf('.') > 3) || (addedChar != '.' && !text.Contains(".") && text.Length > 2))
+            if ((text.Contains(".") && text.IndexOf('.') > 2 && charIndex <= text.IndexOf('.')) || (addedChar != '.' && !text.Contains(".") && text.Length > 2))
                 return '\0';
 
             if (addedChar != '.')
