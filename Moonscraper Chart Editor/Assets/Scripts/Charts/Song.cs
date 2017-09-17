@@ -1283,26 +1283,7 @@ public class Song {
         timeSignatures = _syncTrack.OfType<TimeSignature>().ToArray();
         updateBPMTimeValues();
 
-        // Fix up any anchors
-        for (int i = 0; i < bpms.Length; ++i)
-        {
-            if(bpms[i].anchor != null && i > 0)
-            {
-                BPM anchorBPM = bpms[i];
-                BPM bpmToAdjust = bpms[i - 1];
-
-                double deltaTime = (double)anchorBPM.anchor - bpmToAdjust.time;
-                uint newValue = (uint)Mathf.Round((float)(dis_to_bpm(bpmToAdjust.position, anchorBPM.position, deltaTime, resolution) * 1000.0d));
-                //Debug.Log(newBpmValue + ", " + deltaTime + ", " + newValue);
-                if (deltaTime > 0 && newValue > 0)
-                {
-                    if (newValue != 0)
-                        bpmToAdjust.value = newValue;
-                }
-
-                Debug.Log(anchorBPM.time + ", " + anchorBPM.anchor);
-            }
-        }
+        //ChartEditor.FindCurrentEditor().FixUpBPMAnchors();
     }
 
     public void UpdateAllChartCaches()

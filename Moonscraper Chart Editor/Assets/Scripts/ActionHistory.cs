@@ -22,15 +22,18 @@ public class ActionHistory
 
     public void Insert(Action[] action)
     {
-        // Clear all actions above the history point
-        actionList.RemoveRange(historyPoint + 1, actionList.Count - (historyPoint + 1));
-        timestamps.RemoveRange(historyPoint + 1, timestamps.Count - (historyPoint + 1));
+        if (action.Length > 0)
+        {
+            // Clear all actions above the history point
+            actionList.RemoveRange(historyPoint + 1, actionList.Count - (historyPoint + 1));
+            timestamps.RemoveRange(historyPoint + 1, timestamps.Count - (historyPoint + 1));
 
-        // Add the action in
-        actionList.Add(action);
-        timestamps.Add(Time.time);
+            // Add the action in
+            actionList.Add(action);
+            timestamps.Add(Time.time);
 
-        ++historyPoint;
+            ++historyPoint;
+        }
     }
 
     public void Insert(Action action)

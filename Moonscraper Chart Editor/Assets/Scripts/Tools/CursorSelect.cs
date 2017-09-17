@@ -39,8 +39,8 @@ public class CursorSelect : ToolObject
             UpdateSnappedPos();
 
             // Delete key shortcut
-            if (Input.GetButtonDown("Delete"))
-                editor.Delete();
+            //if (Input.GetButtonDown("Delete"))
+                //editor.Delete();
 
             // Shortcuts
             /*

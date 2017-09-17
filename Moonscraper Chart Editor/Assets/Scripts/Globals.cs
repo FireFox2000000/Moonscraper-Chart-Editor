@@ -248,6 +248,7 @@ public class Globals : MonoBehaviour {
                 editor.New();
             else if (Input.GetKeyDown("z") && !Input.GetMouseButton(0) && !Input.GetMouseButton(1))
             {
+                EventSystem.current.SetSelectedGameObject(null);
                 bool success;
 
                 if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
@@ -330,11 +331,13 @@ public class Globals : MonoBehaviour {
                 snappingStep.Decrement();
 
             // Generic delete key
-            if (Input.GetButtonDown("Delete") && editor.currentSelectedObject != null && Toolpane.currentTool == Toolpane.Tools.Cursor)
+            if (Input.GetButtonDown("Delete") && editor.currentSelectedObjects.Length > 0)// && Toolpane.currentTool == Toolpane.Tools.Cursor)
             {
+                editor.Delete();
+                /*
                 editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentSelectedObject));
                 editor.currentSelectedObject.Delete();
-                editor.currentSelectedObject = null;
+                editor.currentSelectedObject = null;*/
             }
 
 #if true

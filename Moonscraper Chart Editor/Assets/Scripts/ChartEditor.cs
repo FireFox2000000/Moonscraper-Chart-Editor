@@ -1061,6 +1061,8 @@ public class ChartEditor : MonoBehaviour {
             currentChart.UpdateCache();
             currentSong.UpdateCache();
 
+            actionHistory.Insert(FixUpBPMAnchors().ToArray());
+
             currentSelectedObject = null;
 
             groupSelect.reset();
@@ -1086,5 +1088,39 @@ public class ChartEditor : MonoBehaviour {
         musicSources[GUITAR_STREAM_ARRAY_POS].panStereo = Globals.audio_pan;
         musicSources[RHYTHM_STREAM_ARRAY_POS].panStereo = Globals.audio_pan;
 #endif
+    }
+
+    public System.Collections.Generic.List<ActionHistory.Action> FixUpBPMAnchors()
+    {
+        System.Collections.Generic.List<ActionHistory.Action> record = new System.Collections.Generic.List<ActionHistory.Action>();
+
+        BPM[] bpms = currentSong.bpms;
+        // Fix up any anchors
+        for (int i = 0; i < bpms.Length; ++i)
+        {
+            if (bpms[i].anchor != null && i > 0)
+            {
+                BPM anchorBPM = bpms[i];
+                BPM bpmToAdjust = bpms[i - 1];
+
+                double deltaTime = (double)anchorBPM.anchor - bpmToAdjust.time;
+                uint newValue = (uint)Mathf.Round((float)(Song.dis_to_bpm(bpmToAdjust.position, anchorBPM.position, deltaTime, currentSong.resolution) * 1000.0d));
+                //Debug.Log(newBpmValue + ", " + deltaTime + ", " + newValue);
+                if (deltaTime > 0 && newValue > 0)
+                {
+                    if (bpmToAdjust.value != newValue)
+                    {
+                        BPM original = new BPM(bpmToAdjust);
+                        bpmToAdjust.value = newValue;
+                        Debug.Log(newValue);
+                        record.Add(new ActionHistory.Modify(original, bpmToAdjust));
+                    }
+                }
+
+
+            }
+        }
+
+        return record;
     }
 }

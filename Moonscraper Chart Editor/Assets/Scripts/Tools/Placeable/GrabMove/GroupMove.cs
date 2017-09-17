@@ -8,6 +8,8 @@ public class GroupMove : ToolObject
     int anchorArrayPos = SongObject.NOTFOUND;
     SongObject[] originalSongObjects = new SongObject[0];
     SongObject[] movingSongObjects = new SongObject[0];
+
+    List<ActionHistory.Action> bpmAnchorRecord;
     
     Vector2 initMousePos = Vector2.zero;
     uint initObjectSnappedChartPos = 0;
@@ -145,8 +147,14 @@ public class GroupMove : ToolObject
 
         if (moved)
         {
-            editor.actionHistory.Insert(deleteRecord.ToArray());
+            editor.actionHistory.Insert(deleteRecord.ToArray());                // In case user removes a bpm from an anchor area
+            editor.actionHistory.Insert(bpmAnchorRecord.ToArray());
+
+            editor.currentSong.UpdateCache();
+            editor.currentChart.UpdateCache();
+
             editor.actionHistory.Insert(record.ToArray());
+            editor.actionHistory.Insert(editor.FixUpBPMAnchors().ToArray());    // In case user moves a bpm into an anchor area
         }
 
         editor.currentSong.UpdateCache();
@@ -196,7 +204,7 @@ public class GroupMove : ToolObject
             //originalSongObjects[i] = songObjects[i];
             movingSongObjects[i] = songObjects[i].Clone();
 
-            if (delete)
+            //if (delete)
                 songObjects[i].Delete(false);
 
             // Rebuild linked list          
@@ -224,6 +232,8 @@ public class GroupMove : ToolObject
         Mouse.cancel = true;
         editor.currentSong.UpdateCache();
         editor.currentChart.UpdateCache();
+
+        bpmAnchorRecord = editor.FixUpBPMAnchors();
     }
 
     public override void ToolDisable()
