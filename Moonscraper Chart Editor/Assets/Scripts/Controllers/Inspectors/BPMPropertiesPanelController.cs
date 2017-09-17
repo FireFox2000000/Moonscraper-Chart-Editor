@@ -18,6 +18,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     BPM anchorAdjustmentOriginalValue = null;
     BPM anchorAdjustment = null;
 
+    BPM prevBPM;
+
     void Start()
     {
         bpmValue.onValidateInput = validatePositiveDecimal;
@@ -126,6 +128,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
         if (!Globals.IsTyping && !Globals.modifierInputActive && !Globals.secondaryInputActive)
             Controls();
+
+        prevBPM = currentBPM;
     }
 
     protected override void OnDisable()
@@ -137,6 +141,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     public void UpdateBPMValue(string value)
     {
+        if (prevBPM != currentBPM)
+            return;
+
         if (lastAutoVal == null)
             lastAutoVal = currentBPM.value;
 
@@ -337,6 +344,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     public void SetAnchor(bool anchored)
     {
+        if (currentBPM != prevBPM)
+            return;
+
         BPM original = new BPM(currentBPM);
         if (anchored)
             currentBPM.anchor = currentBPM.time;
