@@ -291,7 +291,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             // Calculate the minimum the bpm can adjust to
             const float MIN_DT = 0.01f;
             float bpmTime = currentBPM.time;
-            float timeBetweenFirstAndSecond = (float)anchor.anchor - MIN_DT;
+            float timeBetweenFirstAndSecond = (float)anchor.anchor - MIN_DT - bpmTime;
             // What bpm will result in this exact time difference?
             uint minVal = (uint)(Mathf.Ceil((float)Song.dis_to_bpm(currentBPM.position, bpmToAdjust.position, timeBetweenFirstAndSecond, currentBPM.song.resolution)) * 1000);
 
@@ -304,8 +304,27 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 anchorAdjustmentOriginalValue = new BPM(bpmToAdjust);
             }
 
+            BPM anchorBPM = anchor;
+
+            double bpmToAdjustTime = currentBPM.time + Song.dis_to_time(currentBPM.position, bpmToAdjust.position, currentBPM.song.resolution, newBpmValue / 1000.0f);
+            //Debug.Log(bpmToAdjustTime + ", " + editor.currentSong.LiveChartPositionToTime(bpmToAdjust.position, editor.currentSong.resolution));
+            double deltaTime = (double)anchorBPM.anchor - bpmToAdjustTime;
+            uint newValue = (uint)Mathf.Round((float)(Song.dis_to_bpm(bpmToAdjust.position, anchorBPM.position, deltaTime, editor.currentSong.resolution) * 1000.0d));
+            if (deltaTime > 0 && newValue > 0)
+            {
+                if (bpmToAdjust.value != newValue)
+                {
+                    BPM original = new BPM(bpmToAdjust);
+                    bpmToAdjust.value = newValue;
+                }
+
+                if (newValue != 0)
+                    bpmToAdjust.value = newValue;
+                currentBPM.value = newBpmValue;
+            }
+            /*
             // Adjust the bpm value before the anchor to match the anchor's set time to it's actual time
-            double bpmToAdjustTime = Song.dis_to_time(currentBPM.position, bpmToAdjust.position, currentBPM.song.resolution, newBpmValue / 1000.0f);// (float)anchor.anchor - bpmToAdjust.time;
+            double bpmToAdjustTime = Song.dis_to_time(currentBPM.position, bpmToAdjust.position, currentBPM.song.resolution, newBpmValue / 1000.0f);
             double deltaTime = (double)anchor.anchor - bpmToAdjustTime;
             uint newValue = (uint)Mathf.Round((float)(Song.dis_to_bpm(bpmToAdjust.position, anchor.position, deltaTime, currentBPM.song.resolution) * 1000.0f));
             //Debug.Log(newBpmValue + ", " + deltaTime + ", " + newValue);
@@ -314,7 +333,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 if (newValue != 0)
                     bpmToAdjust.value = newValue;
                 currentBPM.value = newBpmValue;
-            }
+            }*/
         }
 
         currentBPM.value = newBpmValue;
@@ -349,7 +368,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
         BPM original = new BPM(currentBPM);
         if (anchored)
-            currentBPM.anchor = currentBPM.time;
+            currentBPM.anchor = currentBPM.song.LiveChartPositionToTime(currentBPM.position, currentBPM.song.resolution);
         else
             currentBPM.anchor = null;
 
