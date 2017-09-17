@@ -1,4 +1,7 @@
-﻿//#define TIMING_DEBUG
+﻿// Copyright (c) 2016-2017 Alexander Ong
+// See LICENSE in project root for license information.
+
+//#define TIMING_DEBUG
 
 using UnityEngine;
 using System.Collections.Generic;

@@ -1,4 +1,5 @@
-﻿// Source: http://wiki.unity3d.com/index.php?title=Texture_Mask
+﻿// Copyright (c) 2016-2017 Alexander Ong
+// See LICENSE in project root for license information.
 
 Shader "Unlit/VerticalAlphaFadeVariable"
 {

@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿// Copyright (c) 2016-2017 Alexander Ong
+// See LICENSE in project root for license information.
+
+// DEPRECATED IN FAVOUR OF GroupMove.cs
+
+using UnityEngine;
 using System.Collections;
 
 public class MoveSection : PlaceSection {

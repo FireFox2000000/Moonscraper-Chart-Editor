@@ -1,4 +1,7 @@
-﻿[System.Serializable]
+﻿// Copyright (c) 2016-2017 Alexander Ong
+// See LICENSE in project root for license information.
+
+[System.Serializable]
 public abstract class SyncTrack : SongObject
 {
     public SyncTrack(uint _position) : base(_position) {}

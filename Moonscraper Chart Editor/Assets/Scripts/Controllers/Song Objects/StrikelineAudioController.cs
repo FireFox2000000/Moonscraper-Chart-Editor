@@ -1,4 +1,7 @@
-﻿#define BASS_AUDIO
+﻿// Copyright (c) 2016-2017 Alexander Ong
+// See LICENSE in project root for license information.
+
+#define BASS_AUDIO
 
 using UnityEngine;
 using System.Collections;

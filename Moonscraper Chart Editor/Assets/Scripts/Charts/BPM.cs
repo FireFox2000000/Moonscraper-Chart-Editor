@@ -1,4 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿// Copyright (c) 2016-2017 Alexander Ong
+// See LICENSE in project root for license information.
+
+using System.Text.RegularExpressions;
 
 [System.Serializable]
 public class BPM : SyncTrack

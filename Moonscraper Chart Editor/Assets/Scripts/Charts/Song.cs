@@ -1,4 +1,7 @@
-﻿//#define SONG_DEBUG
+﻿// Copyright (c) 2016-2017 Alexander Ong
+// See LICENSE in project root for license information.
+
+//#define SONG_DEBUG
 //#define TIMING_DEBUG
 //#define LOAD_AUDIO_ASYNC
 #define BASS_AUDIO

@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿// Copyright (c) 2016-2017 Alexander Ong
+// See LICENSE in project root for license information.
+
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
@@ -270,15 +273,19 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             BPM anchor = null;
             BPM bpmToAdjust = null;
 
+            int anchorPos = 0;
+
             // Get the next anchor
             for (int i = pos + 1; i < currentBPM.song.bpms.Length; ++i)
             {
                 if (currentBPM.song.bpms[i].anchor != null)
                 {
                     anchor = currentBPM.song.bpms[i];
-
+                    anchorPos = i;
                     // Get the bpm before that anchor
                     bpmToAdjust = currentBPM.song.bpms[i - 1];
+
+                    break;
                 }
             }
 
@@ -290,10 +297,20 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
             // Calculate the minimum the bpm can adjust to
             const float MIN_DT = 0.01f;
-            float bpmTime = currentBPM.time;
-            float timeBetweenFirstAndSecond = (float)anchor.anchor - MIN_DT - bpmTime;
+
+            float bpmTime = (float)anchor.anchor - MIN_DT;
+            float resolution = currentBPM.song.resolution;
+            // Calculate the time of the 2nd bpm pretending that the adjustable one is super close to the anchor
+            for (int i = anchorPos - 1; i > pos + 1; --i)
+            {
+                // Calculate up until 2 bpms before the anchor
+                // Re-hash of the actual time calculation equation in Song.cs
+                bpmTime -= (float)Song.dis_to_time(currentBPM.song.bpms[i - 1].position, currentBPM.song.bpms[i].position, resolution, currentBPM.song.bpms[i - 1].value / 1000.0f);
+            }
+
+            float timeBetweenFirstAndSecond = bpmTime - currentBPM.time;
             // What bpm will result in this exact time difference?
-            uint minVal = (uint)(Mathf.Ceil((float)Song.dis_to_bpm(currentBPM.position, bpmToAdjust.position, timeBetweenFirstAndSecond, currentBPM.song.resolution)) * 1000);
+            uint minVal = (uint)(Mathf.Ceil((float)Song.dis_to_bpm(currentBPM.song.bpms[pos].position, currentBPM.song.bpms[pos + 1].position, timeBetweenFirstAndSecond, currentBPM.song.resolution)) * 1000);
 
             if (newBpmValue < minVal)
                 newBpmValue = minVal;
@@ -305,19 +322,15 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             }
 
             BPM anchorBPM = anchor;
-
-            double bpmToAdjustTime = currentBPM.time + Song.dis_to_time(currentBPM.position, bpmToAdjust.position, currentBPM.song.resolution, newBpmValue / 1000.0f);
+            uint oldValue = currentBPM.value;
+            currentBPM.value = newBpmValue;
+            //double bpmToAdjustTime = currentBPM.time + Song.dis_to_time(currentBPM.position, bpmToAdjust.position, editor.currentSong.resolution, newBpmValue / 1000.0f);
             //Debug.Log(bpmToAdjustTime + ", " + editor.currentSong.LiveChartPositionToTime(bpmToAdjust.position, editor.currentSong.resolution));
-            double deltaTime = (double)anchorBPM.anchor - bpmToAdjustTime;
+            double deltaTime = (double)anchorBPM.anchor - editor.currentSong.LiveChartPositionToTime(bpmToAdjust.position, editor.currentSong.resolution);
             uint newValue = (uint)Mathf.Round((float)(Song.dis_to_bpm(bpmToAdjust.position, anchorBPM.position, deltaTime, editor.currentSong.resolution) * 1000.0d));
+            currentBPM.value = oldValue;
             if (deltaTime > 0 && newValue > 0)
             {
-                if (bpmToAdjust.value != newValue)
-                {
-                    BPM original = new BPM(bpmToAdjust);
-                    bpmToAdjust.value = newValue;
-                }
-
                 if (newValue != 0)
                     bpmToAdjust.value = newValue;
                 currentBPM.value = newBpmValue;
@@ -335,8 +348,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 currentBPM.value = newBpmValue;
             }*/
         }
-
-        currentBPM.value = newBpmValue;
+        else
+            currentBPM.value = newBpmValue;
 
         return true;
     }

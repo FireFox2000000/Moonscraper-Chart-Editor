@@ -1,4 +1,7 @@
-﻿[System.Serializable]
+﻿// Copyright (c) 2016-2017 Alexander Ong
+// See LICENSE in project root for license information.
+
+[System.Serializable]
 public class Starpower : ChartObject
 {
     private readonly ID _classID = ID.Starpower;

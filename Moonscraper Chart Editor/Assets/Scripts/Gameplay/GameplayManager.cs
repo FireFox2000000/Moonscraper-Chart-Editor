@@ -1,4 +1,7 @@
-﻿#define GAMEPAD
+﻿// Copyright (c) 2016-2017 Alexander Ong
+// See LICENSE in project root for license information.
+
+#define GAMEPAD
 //#define MISS_DEBUG
 
 using UnityEngine;

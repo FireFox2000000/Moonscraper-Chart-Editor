@@ -1,4 +1,7 @@
-﻿//#define NOTE_TYPE_2D
+﻿// Copyright (c) 2016-2017 Alexander Ong
+// See LICENSE in project root for license information.
+
+//#define NOTE_TYPE_2D
 
 using UnityEngine;
 using System.Collections;

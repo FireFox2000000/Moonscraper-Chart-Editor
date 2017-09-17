@@ -1,4 +1,7 @@
-﻿//#undef UNITY_EDITOR
+﻿// Copyright (c) 2016-2017 Alexander Ong
+// See LICENSE in project root for license information.
+
+//#undef UNITY_EDITOR
 #define BASS_AUDIO
 
 using UnityEngine;
