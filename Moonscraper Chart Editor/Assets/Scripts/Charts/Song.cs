@@ -1303,13 +1303,18 @@ public class Song {
         }
     }
 
-    float LiveChartPositionToTime(uint position, float resolution)
+    public float LiveChartPositionToTime(uint position, float resolution)
     {
         double time = 0;
         BPM prevBPM = bpms[0];
 
-        foreach (BPM bpmInfo in bpms)
+        foreach (SyncTrack syncTrack in _syncTrack)
         {
+            BPM bpmInfo = syncTrack as BPM;
+
+            if (bpmInfo == null)
+                continue;
+
             if (bpmInfo.position > position)
             {
                 break;

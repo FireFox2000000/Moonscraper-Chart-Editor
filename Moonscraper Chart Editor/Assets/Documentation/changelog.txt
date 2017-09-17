@@ -7,6 +7,7 @@ v1.0
     -Added events tool to place local and global events
     -Added "Album" property to song properties
     -Added logo text at startup
+    -Added ability to anchor BPM events
 
     FIXES
     -Fixed lefty-flip movement of notes
@@ -16,9 +17,11 @@ v1.0
     -Fixed clipboard pasting not overwriting notes at the very edge of the paste area
     -Fixed note tool showing hopos on chords and not being able to have forced chords with it
     -Fixed cursor group selection being affected by keys mode locking
+    -BPM input validation fixup
 
     CHANGES
     -Added dropshadow to some text
+    -Copy/cut now works globally, not just on the cursor tool
 
 v0.9.901
     FIXES

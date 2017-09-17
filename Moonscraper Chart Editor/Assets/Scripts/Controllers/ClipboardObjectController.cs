@@ -160,12 +160,12 @@ public class ClipboardObjectController : Snapable {
                     PlaceSongObject.AddObjectToCurrentEditor(objectToAdd, editor, false);
 
                     record.Add(new ActionHistory.Add(objectToAdd));
-                }
-                
+                }               
             }
             editor.currentChart.UpdateCache();
             editor.currentSong.UpdateCache();
             editor.actionHistory.Insert(record.ToArray());
+            editor.actionHistory.Insert(editor.FixUpBPMAnchors().ToArray());
         }
         // 0 objects in clipboard, don't bother pasting
     }

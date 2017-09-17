@@ -79,5 +79,10 @@ public class PlaceBPM : PlaceSongObject {
         editor.currentSong.Add(bpmToAdd, update);
         //editor.CreateBPMObject(bpmToAdd);
         editor.currentSelectedObject = bpmToAdd;
+
+        if (bpmToAdd.anchor != null)
+        {
+            bpmToAdd.anchor = bpmToAdd.song.LiveChartPositionToTime(bpmToAdd.position, bpmToAdd.song.resolution);
+        }
     }
 }

@@ -118,7 +118,11 @@ public class GroupMove : ToolObject
                     overwriteRecord = PlaceSongObject.OverwriteActionHistory(movingSongObjects[i], editor.currentSong.bpms);
                     if (record != null)
                         record.Add(overwriteRecord);
-                    editor.currentSong.Add((BPM)movingSongObjects[i], false);
+                    BPM bpm = (BPM)movingSongObjects[i];
+                    editor.currentSong.Add(bpm, false);
+                    if (bpm.anchor != null)
+                        bpm.anchor = bpm.song.LiveChartPositionToTime(bpm.position, bpm.song.resolution);
+
                     break;
                 case (SongObject.ID.TimeSignature):
                     overwriteRecord = PlaceSongObject.OverwriteActionHistory(movingSongObjects[i], editor.currentSong.timeSignatures);

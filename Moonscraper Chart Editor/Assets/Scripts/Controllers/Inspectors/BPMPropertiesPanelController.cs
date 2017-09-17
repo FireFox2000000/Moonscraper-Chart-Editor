@@ -40,6 +40,12 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             bpmValue.text = ((float)currentBPM.value / 1000.0f).ToString();
     }
 
+    void Controls()
+    {
+        if (Input.GetKeyDown(KeyCode.A) && anchorToggle.IsInteractable())
+            anchorToggle.isOn = !anchorToggle.isOn;
+    }
+
     protected override void Update()
     {
         base.Update();
@@ -117,6 +123,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 lastAutoVal = null;// currentBPM.value;
             }
         }
+
+        if (!Globals.IsTyping && !Globals.modifierInputActive && !Globals.secondaryInputActive)
+            Controls();
     }
 
     protected override void OnDisable()
