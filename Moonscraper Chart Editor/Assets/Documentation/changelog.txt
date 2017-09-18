@@ -18,6 +18,7 @@ v1.0
     -Fixed note tool showing hopos on chords and not being able to have forced chords with it
     -Fixed cursor group selection being affected by keys mode locking
     -BPM input validation fixup
+    -Fixed sustain bug where scrolling backwards would only show the right-most sustain of a chord
 
     CHANGES
     -Added dropshadow to some text

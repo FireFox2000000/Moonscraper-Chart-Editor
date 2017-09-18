@@ -120,7 +120,7 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
 
         List<Note> rangedNotes = new List<Note>(SongObject.GetRangeCopy(notes, min_pos, editor.maxPos));
-
+        
         if (min_pos == editor.minPos)
         {
             if (rangedNotes.Count > 0)
@@ -138,7 +138,16 @@ public class SongObjectPoolManager : MonoBehaviour {
 
                 if (minArrayPos != SongObject.NOTFOUND)
                 {
-                    rangedNotes.Add(editor.currentChart.notes[minArrayPos]);
+                    while (minArrayPos > 0 && editor.currentChart.notes[minArrayPos].position == editor.currentChart.notes[minArrayPos - 1].position)
+                        --minArrayPos;
+
+                    //rangedNotes.AddRange(editor.currentChart.notes[minArrayPos].GetChord());
+
+                    foreach (Note note in editor.currentChart.notes[minArrayPos].GetChord())
+                    {
+                        if (note.position + note.sustain_length > editor.minPos)
+                            rangedNotes.Add(note);
+                    }
 
                     foreach (Note prevNote in Note.GetPreviousOfSustains(editor.currentChart.notes[minArrayPos] as Note))
                     {
