@@ -52,7 +52,7 @@ public abstract class MovementController : MonoBehaviour {
         Vector3 pos = transform.position;
         float deltaTime = Time.deltaTime;
 
-        float oldPos = pos.y;
+        //float oldPos = pos.y;
 
         if (playStartTime != null && playStartPosition != null)
         {
@@ -67,7 +67,7 @@ public abstract class MovementController : MonoBehaviour {
             pos.y += (speed * deltaTime);
         }
 
-        float newPos = pos.y;
+        //float newPos = pos.y;
 
         //if ((newPos - oldPos) > 0.4)
         //Debug.Log("Position difference: " + (newPos - oldPos) + ", Delta time: " + Time.deltaTime + ", Frame: " + Time.frameCount);
