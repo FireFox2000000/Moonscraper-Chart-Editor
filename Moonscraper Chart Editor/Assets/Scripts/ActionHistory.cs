@@ -8,7 +8,7 @@ using System;
 
 public class ActionHistory
 {
-    const float ACTION_WINDOW_TIME = 0.2f;
+    public const float ACTION_WINDOW_TIME = 0.2f;
     int historyPoint;
     List<Action[]> actionList;
     List<float> timestamps;
@@ -23,7 +23,7 @@ public class ActionHistory
         historyPoint = -1;
     }
 
-    public void Insert(Action[] action)
+    public void Insert(Action[] action, float timeStampOffset = 0)
     {
         if (action.Length > 0)
         {
@@ -33,15 +33,15 @@ public class ActionHistory
 
             // Add the action in
             actionList.Add(action);
-            timestamps.Add(Time.time);
+            timestamps.Add(Time.time + timeStampOffset);
 
             ++historyPoint;
         }
     }
 
-    public void Insert(Action action)
+    public void Insert(Action action, float timeStampOffset = 0)
     {
-        Insert(new Action[] { action });
+        Insert(new Action[] { action }, timeStampOffset);
     }
 
     public bool Undo(ChartEditor editor)

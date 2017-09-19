@@ -202,10 +202,10 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         // Add action recording here?
         if (lastAutoVal != null && lastAutoVal != currentBPM.value)
         {
-            editor.actionHistory.Insert(new ActionHistory.Modify(new BPM(currentBPM.position, (uint)lastAutoVal), currentBPM));
+            editor.actionHistory.Insert(new ActionHistory.Modify(new BPM(currentBPM.position, (uint)lastAutoVal), currentBPM), -ActionHistory.ACTION_WINDOW_TIME - 0.01f);
             if (anchorAdjustment != null)
             {
-                editor.actionHistory.Insert(new ActionHistory.Modify(anchorAdjustmentOriginalValue, anchorAdjustment));
+                editor.actionHistory.Insert(new ActionHistory.Modify(anchorAdjustmentOriginalValue, anchorAdjustment), -ActionHistory.ACTION_WINDOW_TIME - 0.01f);
                 anchorAdjustment = null;
                 anchorAdjustmentOriginalValue = null;
             }
