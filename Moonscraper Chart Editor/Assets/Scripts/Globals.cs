@@ -260,12 +260,18 @@ public class Globals : MonoBehaviour {
                     success = editor.actionHistory.Undo(editor);
 
                 if (success)
+                {
                     groupSelect.reset();
+                    TimelineHandler.externalUpdate = true;
+                }
             }
             else if (Input.GetKeyDown("y") && !Input.GetMouseButton(0) && !Input.GetMouseButton(1))
             {
                 if (editor.actionHistory.Redo(editor))
+                {
                     groupSelect.reset();
+                    TimelineHandler.externalUpdate = true;
+                }
             }
             else if (Input.GetKeyDown("a"))
             {
