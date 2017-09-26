@@ -102,14 +102,20 @@ public class NoteController : SongObjectController {
         {
             if (Input.GetButton("ChordSelect"))
             {
-                if (Toolpane.currentTool == Toolpane.Tools.Eraser)
-                    Debug.Log("Deleted " + note + " chord at position " + note.position + " with eraser tool");
-                else
-                    Debug.Log("Deleted " + note + " chord at position " + note.position + " with hold-right left-click shortcut");
-
                 Note[] chordNotes = note.GetChord();
 
-                Eraser.dragEraseHistory.Add(new ActionHistory.Delete(chordNotes));
+                if (!Input.GetMouseButton(1))
+                {
+                    Debug.Log("Deleted " + note + " chord at position " + note.position + " with eraser tool");
+                    Eraser.dragEraseHistory.Add(new ActionHistory.Delete(chordNotes));
+                }
+                else
+                {
+                    Debug.Log("Deleted " + note + " chord at position " + note.position + " with hold-right left-click shortcut");
+                    editor.actionHistory.Insert(new ActionHistory.Delete(chordNotes));
+                }
+
+                
                 //editor.actionHistory.Insert(new ActionHistory.Delete(chordNotes));
                 foreach (Note chordNote in chordNotes)
                 {
@@ -118,14 +124,17 @@ public class NoteController : SongObjectController {
             }
             else
             {
-                if (Toolpane.currentTool == Toolpane.Tools.Eraser)
+                if (!Input.GetMouseButton(1))
+                {
                     Debug.Log("Deleted " + note + " at position " + note.position + " with eraser tool");
+                    Eraser.dragEraseHistory.Add(new ActionHistory.Delete(note));
+                }
                 else
+                {
                     Debug.Log("Deleted " + note + " at position " + note.position + " with hold-right left-click shortcut");
+                    editor.actionHistory.Insert(new ActionHistory.Delete(note));
+                }
 
-                Eraser.dragEraseHistory.Add(new ActionHistory.Delete(note));
-
-                //editor.actionHistory.Insert(new ActionHistory.Delete(note));
                 note.Delete();
             }
         }
