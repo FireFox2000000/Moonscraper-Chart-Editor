@@ -107,5 +107,8 @@ public class InspectorSwitching : MonoBehaviour {
         {
             currentPropertiesPanel.gameObject.SetActive(false);
         }
+
+        if (currentPropertiesPanel && currentPropertiesPanel.gameObject.activeSelf)
+            currentPropertiesPanel.gameObject.SetActive(Globals.applicationMode != Globals.ApplicationMode.Playing);
     }
 }
