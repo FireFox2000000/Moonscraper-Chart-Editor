@@ -1,3 +1,9 @@
+v1.0.1
+    FIXES
+    -Fixed broken undo/redo recording on hold-right click-left delete shortcut
+    -Fixed timeline section indicators not updating on undo/redo
+    -Fixed global system clipboard issues when copying
+
 v1.0
     NEW FEATURES
     -Added drums charting with extra audio slot for them
