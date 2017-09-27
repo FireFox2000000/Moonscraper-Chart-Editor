@@ -61,7 +61,7 @@ public class ClipboardObjectController : Snapable {
         clipboard.data = data;
         clipboard.resolution = song.resolution;
         clipboard.SetCollisionArea(area, song);
-        System.Windows.Forms.Clipboard.Clear();     // Clear the clipboard to mimic the real clipboard. For some reason putting custom objects on the clipboard with this dll doesn't work.
+        System.Windows.Forms.Clipboard.SetDataObject("", false); ;     // Clear the clipboard to mimic the real clipboard. For some reason putting custom objects on the clipboard with this dll doesn't work.
 
         FileStream fs = new FileStream(UnityEngine.Application.persistentDataPath + CLIPBOARD_FILE_LOCATION, FileMode.Create);
 
@@ -83,7 +83,12 @@ public class ClipboardObjectController : Snapable {
     // Paste the clipboard data into the chart, overwriting anything else in the process
     public void Paste(uint chartLocationToPaste)
     {
-        if (System.Windows.Forms.Clipboard.GetDataObject().GetFormats().Length > 0)     // Something else is pasted on the clipboard instead of Moonscraper stuff.
+        if (System.Windows.Forms.Clipboard.GetDataObject().GetFormats().Length > 0 && 
+            !(
+                System.Windows.Forms.Clipboard.ContainsText(TextDataFormat.UnicodeText) && 
+                System.Windows.Forms.Clipboard.ContainsText(TextDataFormat.Text) && 
+                System.Windows.Forms.Clipboard.GetText() == "")
+            )     // Something else is pasted on the clipboard instead of Moonscraper stuff.
             return;
 
         FileStream fs = null;
