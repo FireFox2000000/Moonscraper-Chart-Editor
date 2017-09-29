@@ -648,7 +648,19 @@ public class ChartEditor : MonoBehaviour {
             movement.transform.position = (Vector3)stopResetPos;
 
         if (selectedBeforePlay.Length > 0)
-            currentSelectedObjects = selectedBeforePlay;
+        {
+            // Check if the user switched view modes while playing
+            if (Globals.viewMode == Globals.ViewMode.Chart)
+            {
+                if (selectedBeforePlay[0].GetType().IsSubclassOf(typeof(ChartObject)))
+                    currentSelectedObjects = selectedBeforePlay;
+            }
+            else
+            {
+                if (!selectedBeforePlay[0].GetType().IsSubclassOf(typeof(ChartObject)))
+                    currentSelectedObjects = selectedBeforePlay;
+            }
+        }
 
         selectedBeforePlay = new SongObject[0];
 

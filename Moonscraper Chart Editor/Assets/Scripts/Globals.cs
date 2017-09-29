@@ -218,6 +218,12 @@ public class Globals : MonoBehaviour {
 
         if (HasScreenResized)
             OnScreenResize();
+
+        // IsTyping can still be active if this isn't manually detected
+        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && IsTyping && applicationMode == ApplicationMode.Editor)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     void LateUpdate()
