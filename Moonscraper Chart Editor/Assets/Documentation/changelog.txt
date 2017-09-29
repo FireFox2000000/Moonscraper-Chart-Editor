@@ -1,9 +1,10 @@
-v1.0.1
+v1.0.01
     FIXES
     -Fixed broken undo/redo recording on hold-right click-left delete shortcut
     -Fixed timeline section indicators not updating on undo/redo
     -Fixed global system clipboard issues when copying
-    -Fixed note inspector showing up if you clicked on the note tool while already playing
+    -Fixed note inspector showing up if you clicked on the note tool while already playing  
+    -Fixed-up some outdated information in the F.A.Q.  
 
 v1.0
     NEW FEATURES
