@@ -24,10 +24,6 @@ public class Song {
     public const int RHYTHM_STREAM_ARRAY_POS = 2;
     public const int DRUM_STREAM_ARRAY_POS = 3;
 
-    const int TEXT_POS_TICK = 0;
-    const int TEXT_POS_EVENT_TYPE = 2;
-    const int TEXT_POS_DATA_1 = 3;
-
     // Song properties
     public string name = string.Empty, artist = string.Empty, charter = string.Empty;
     public string player2 = "Bass";
@@ -412,14 +408,21 @@ public class Song {
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
 #endif
-        string[] fileLines = File.ReadAllLines(filepath);
+        //string[] fileLines = File.ReadAllLines(filepath);
+        Regex headerRegex = new Regex(@"\[.+\]", RegexOptions.Compiled);
+        StreamReader sr = File.OpenText(filepath);
+        
 
         // Gather lines between {} brackets and submit data
-        for (int i = 0; i < fileLines.Length; ++i)
+        //for (int i = 0; i < fileLines.Length; ++i)
+        while (!sr.EndOfStream)
         {
-            string trimmedLine = fileLines[i].Trim();
+            //string trimmedLine = fileLines[i].Trim();
+            string trimmedLine = sr.ReadLine().Trim();
+            if (trimmedLine.Length <= 0)
+                continue;
 
-            if (new Regex(@"\[.+\]").IsMatch(trimmedLine))
+            if (trimmedLine[0] == '[' && trimmedLine[trimmedLine.Length - 1] == ']') //headerRegex.IsMatch(trimmedLine))
             {
                 dataName = trimmedLine;
             }
@@ -454,7 +457,9 @@ public class Song {
                 }
             }
         }
-        
+
+        sr.Close();
+
 #if TIMING_DEBUG
         Debug.Log("Chart file load time: " + (Time.realtimeSinceStartup - time));
         time = Time.realtimeSinceStartup;
@@ -943,24 +948,24 @@ public class Song {
         float time = Time.realtimeSinceStartup;
 #endif
 
-        Regex nameRegex = new Regex(@"Name = " + QUOTEVALIDATE);
-        Regex artistRegex = new Regex(@"Artist = " + QUOTEVALIDATE);
-        Regex charterRegex = new Regex(@"Charter = " + QUOTEVALIDATE);
-        Regex offsetRegex = new Regex(@"Offset = " + FLOATSEARCH);
-        Regex resolutionRegex = new Regex(@"Resolution = " + FLOATSEARCH);
-        Regex player2TypeRegex = new Regex(@"Player2 = \w+");
-        Regex difficultyRegex = new Regex(@"Difficulty = \d+");
-        Regex lengthRegex = new Regex(@"Length = " + FLOATSEARCH);
-        Regex previewStartRegex = new Regex(@"PreviewStart = " + FLOATSEARCH);
-        Regex previewEndRegex = new Regex(@"PreviewEnd = " + FLOATSEARCH);
-        Regex genreRegex = new Regex(@"Genre = " + QUOTEVALIDATE);
-        Regex yearRegex = new Regex(@"Year = " + QUOTEVALIDATE);
-        Regex albumRegex = new Regex(@"Album = " + QUOTEVALIDATE);
-        Regex mediaTypeRegex = new Regex(@"MediaType = " + QUOTEVALIDATE);
-        Regex musicStreamRegex = new Regex(@"MusicStream = " + QUOTEVALIDATE);
-        Regex guitarStreamRegex = new Regex(@"GuitarStream = " + QUOTEVALIDATE);
-        Regex rhythmStreamRegex = new Regex(@"RhythmStream = " + QUOTEVALIDATE);
-        Regex drumStreamRegex = new Regex(@"DrumStream = " + QUOTEVALIDATE);
+        Regex nameRegex = new Regex(@"Name = " + QUOTEVALIDATE, RegexOptions.Compiled);
+        Regex artistRegex = new Regex(@"Artist = " + QUOTEVALIDATE, RegexOptions.Compiled);
+        Regex charterRegex = new Regex(@"Charter = " + QUOTEVALIDATE, RegexOptions.Compiled);
+        Regex offsetRegex = new Regex(@"Offset = " + FLOATSEARCH, RegexOptions.Compiled);
+        Regex resolutionRegex = new Regex(@"Resolution = " + FLOATSEARCH, RegexOptions.Compiled);
+        Regex player2TypeRegex = new Regex(@"Player2 = \w+", RegexOptions.Compiled);
+        Regex difficultyRegex = new Regex(@"Difficulty = \d+", RegexOptions.Compiled);
+        Regex lengthRegex = new Regex(@"Length = " + FLOATSEARCH, RegexOptions.Compiled);
+        Regex previewStartRegex = new Regex(@"PreviewStart = " + FLOATSEARCH, RegexOptions.Compiled);
+        Regex previewEndRegex = new Regex(@"PreviewEnd = " + FLOATSEARCH, RegexOptions.Compiled);
+        Regex genreRegex = new Regex(@"Genre = " + QUOTEVALIDATE, RegexOptions.Compiled);
+        Regex yearRegex = new Regex(@"Year = " + QUOTEVALIDATE, RegexOptions.Compiled);
+        Regex albumRegex = new Regex(@"Album = " + QUOTEVALIDATE, RegexOptions.Compiled);
+        Regex mediaTypeRegex = new Regex(@"MediaType = " + QUOTEVALIDATE, RegexOptions.Compiled);
+        Regex musicStreamRegex = new Regex(@"MusicStream = " + QUOTEVALIDATE, RegexOptions.Compiled);
+        Regex guitarStreamRegex = new Regex(@"GuitarStream = " + QUOTEVALIDATE, RegexOptions.Compiled);
+        Regex rhythmStreamRegex = new Regex(@"RhythmStream = " + QUOTEVALIDATE, RegexOptions.Compiled);
+        Regex drumStreamRegex = new Regex(@"DrumStream = " + QUOTEVALIDATE, RegexOptions.Compiled);
 
         try
         {
@@ -1107,15 +1112,19 @@ public class Song {
 
     void submitDataGlobals(List<string> stringData)
     {
+        const int TEXT_POS_TICK = 0;
+        const int TEXT_POS_EVENT_TYPE = 2;
+        const int TEXT_POS_DATA_1 = 3;
+
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
 #endif
-        
+
         List <Anchor> anchorData = new List<Anchor>();
 
         foreach (string line in stringData)
         {
-            string[] stringSplit = Regex.Split(line, @"\s+");
+            string[] stringSplit = line.Split(' '); //Regex.Split(line, @"\s+");
             uint position;
             string eventType;
             if (stringSplit.Length > TEXT_POS_DATA_1 && uint.TryParse(stringSplit[TEXT_POS_TICK], out position))
@@ -1205,42 +1214,6 @@ public class Song {
         Debug.Log("Synctrack load time: " + (Time.realtimeSinceStartup - time));
 #endif
     }
-    /*
-    void submitDataEvents(List<string> stringData)
-    {
-#if TIMING_DEBUG
-        float time = Time.realtimeSinceStartup;
-#endif
-        foreach (string line in stringData)
-        {
-            string[] stringSplit = Regex.Split(line, @"\s+");
-            uint position;
-            string eventType;
-            if (stringSplit.Length > TEXT_POS_DATA_1 && uint.TryParse(stringSplit[TEXT_POS_TICK], out position))
-            {
-                eventType = stringSplit[TEXT_POS_EVENT_TYPE];
-                eventType = eventType.ToLower();
-            }
-            else
-                continue;
-
-            if (Section.regexMatch(line))       // 0 = E "section Intro"
-            {
-                // Add a section
-                string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"').Substring(8);
-                Add(new Section(title, position), false);
-            }
-            else if (Event.regexMatch(line))    // 125952 = E "end"
-            {
-                // Add an event
-                string title = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
-                Add(new Event(title, position), false);
-            }
-        }
-#if TIMING_DEBUG
-        Debug.Log("Events load time: " + (Time.realtimeSinceStartup - time));
-#endif
-    }*/
 
     string GetSaveString<T>(T[] list) where T : SongObject
     {

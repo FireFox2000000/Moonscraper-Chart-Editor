@@ -180,83 +180,95 @@ public class Chart  {
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
 #endif
+#pragma warning disable 0219
         Regex noteRegex = new Regex(@"^\s*\d+ = N \d \d+$");            // 48 = N 2 0
         Regex starPowerRegex = new Regex(@"^\s*\d+ = S 2 \d+$");        // 768 = S 2 768
         Regex noteEventRegex = new Regex(@"^\s*\d+ = E \S");            // 1728 = E T
-
+#pragma warning restore 0219
         List<string> flags = new List<string>();
 
         _chartObjects.Capacity = data.Length;
+
+        const int SPLIT_POSITION = 0;
+        const int SPLIT_EQUALITY = 1;
+        const int SPLIT_TYPE = 2;
+        const int SPLIT_VALUE = 3;
+        const int SPLIT_LENGTH = 4; 
 
         try
         {
             // Load notes, collect flags
             foreach (string line in data)
             {
-                if (noteRegex.IsMatch(line))
+                try
                 {
-                    // Split string to get note information
-                    string[] digits = Regex.Split(line.Trim(), @"\D+");
+                    string[] splitString = line.Split(' ');
+                    uint position = uint.Parse(splitString[SPLIT_POSITION]);
+                    string type = splitString[SPLIT_TYPE].ToLower();
 
-                    if (digits.Length == 3)
+                    switch (type)
                     {
-                        uint position = uint.Parse(digits[0]);
-                        int fret_type = int.Parse(digits[1]);
-                        uint length = uint.Parse(digits[2]);
+                        case ("n"):// noteRegex.IsMatch(line))
+                            // Split string to get note information
+                            string[] digits = splitString;
 
-                        switch (fret_type)
-                        {
-                            case (0):
-                            case (1):
-                            case (2):
-                            case (3):
-                            case (4):
-                                // Add note to the data
-                                Note newStandardNote = new Note(position, (Note.Fret_Type)fret_type, length);
-                                if (instrument == Song.Instrument.Drums)
-                                    newStandardNote.fret_type = Note.LoadDrumNoteToGuitarNote(newStandardNote.fret_type);
-                                Add(newStandardNote, false);
-                                break;
-                            case (5):
-                                if (instrument == Song.Instrument.Drums)
-                                {
-                                    Note drumNote = new Note(position, Note.Fret_Type.ORANGE, length);
-                                    Add(drumNote, false);
+                            int fret_type = int.Parse(digits[SPLIT_VALUE]);
+                            uint length = uint.Parse(digits[SPLIT_LENGTH]);
+
+                            switch (fret_type)
+                            {
+                                case (0):
+                                case (1):
+                                case (2):
+                                case (3):
+                                case (4):
+                                    // Add note to the data
+                                    Note newStandardNote = new Note(position, (Note.Fret_Type)fret_type, length);
+                                    if (instrument == Song.Instrument.Drums)
+                                        newStandardNote.fret_type = Note.LoadDrumNoteToGuitarNote(newStandardNote.fret_type);
+                                    Add(newStandardNote, false);
                                     break;
-                                }
-                                else
-                                    goto case (6);
-                            case (6):
-                                flags.Add(line);
-                                break;
-                            case (7):
-                                Note newOpenNote = new Note(position, Note.Fret_Type.OPEN, length);
-                                Add(newOpenNote, false);
-                                break;
-                            default:
-                                break;
-                        }
+                                case (5):
+                                    if (instrument == Song.Instrument.Drums)
+                                    {
+                                        Note drumNote = new Note(position, Note.Fret_Type.ORANGE, length);
+                                        Add(drumNote, false);
+                                        break;
+                                    }
+                                    else
+                                        goto case (6);
+                                case (6):
+                                    flags.Add(line);
+                                    break;
+                                case (7):
+                                    Note newOpenNote = new Note(position, Note.Fret_Type.OPEN, length);
+                                    Add(newOpenNote, false);
+                                    break;
+                                default:
+                                    break;
+                            }
+                            
+                            break;
+
+                        case ("s")://(starPowerRegex.IsMatch(line))
+                            length = uint.Parse(splitString[SPLIT_LENGTH]);
+
+                            Add(new Starpower(position, length), false);
+                            break;
+
+                        case ("e"): //(noteEventRegex.IsMatch(line))
+                            string[] strings = splitString;
+                            string eventName = strings[SPLIT_VALUE];
+                            Add(new ChartEvent(position, eventName), false);
+                            break;
+                        default:
+                            break;
                     }
+
                 }
-                
-                else if (starPowerRegex.IsMatch(line))
+                catch (System.Exception e)
                 {
-                    string[] digits = Regex.Split(line.Trim(), @"\D+");
-
-                    uint position = uint.Parse(digits[0]);
-                    uint length = uint.Parse(digits[2]);
-
-                    Add(new Starpower(position, length), false);
-                }
-                
-                else if (noteEventRegex.IsMatch(line))
-                {
-                    string[] strings = Regex.Split(line.Trim(), @"\s+");
-
-                    uint position = uint.Parse(strings[0]);
-                    string eventName = strings[3];
-
-                    Add(new ChartEvent(position, eventName), false);
+                    Debug.LogError("Error parsing line \"" + line + "\": " + e);
                 }
             }
             UpdateCache();
@@ -264,10 +276,10 @@ public class Chart  {
             // Load flags
             foreach (string line in flags)
             {
-                if (noteRegex.IsMatch(line))
+                try
                 {
                     // Split string to get note information
-                    string[] digits = Regex.Split(line.Trim(), @"\D+");
+                    string[] digits = line.Split(' ');
 
                     if (digits.Length == 3)
                     {
@@ -285,8 +297,12 @@ public class Chart  {
                                 break;
                             default:
                                 break;
-                        }       
+                        }
                     }
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError("Error parsing line \"" + line + "\": " + e);
                 }
             }
 #if TIMING_DEBUG
