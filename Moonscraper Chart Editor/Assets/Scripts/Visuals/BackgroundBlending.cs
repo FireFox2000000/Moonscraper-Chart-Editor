@@ -23,7 +23,7 @@ public class BackgroundBlending : MonoBehaviour
         if (skin.backgrounds.Length < 2)
         {
             enabled = false;
-            Debug.LogError("At least 2 textures must be provided for background blending to work");
+            Debug.LogWarning("At least 2 textures must be provided for background blending to work");
         }
     }
 

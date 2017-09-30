@@ -72,11 +72,12 @@ public abstract class SongObject
     
     public static bool operator ==(SongObject a, SongObject b)
     {
-        if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
+        bool aIsNull = ReferenceEquals(a, null);
+        bool bIsNull = ReferenceEquals(b, null);
+
+        if (aIsNull || bIsNull)
         {
-            if (ReferenceEquals(a, null) && ReferenceEquals(b, null))
-                return true;
-            else if (!ReferenceEquals(a, null) && !ReferenceEquals(b, null))
+            if (aIsNull == bIsNull)
                 return true;
             else
                 return false;
@@ -372,12 +373,23 @@ public abstract class SongObject
         ChartEditor.editOccurred = true;
 
         int insertionPos = NOTFOUND;
+        int count = list.Count;
 
-        if (list.Count > 0)
+        if (count > 0)
         {
-            if (list[list.Count - 1] < item)
+            if (list[count - 1] < item)
             {
-                insertionPos = list.Count;
+                insertionPos = count;
+                list.Add(item);
+            }
+            else if (list[count - 1].position == item.position)
+            {
+                // Linear search backwards
+                int pos = count - 1;
+                while (pos >= 0 && list[pos] > item)        // Find the next item less than the current one and insert into the position after that
+                    --pos;
+
+                insertionPos = pos + 1;
                 list.Insert(insertionPos, item);
             }
             else

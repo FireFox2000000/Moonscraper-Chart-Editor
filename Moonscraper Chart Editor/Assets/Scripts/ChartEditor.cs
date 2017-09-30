@@ -765,7 +765,7 @@ public class ChartEditor : MonoBehaviour {
                 Debug.LogError(e.Message);
             }
         });
-
+        songLoadThread.Priority = System.Threading.ThreadPriority.Highest;
         songLoadThread.Start();
         while (songLoadThread.ThreadState == System.Threading.ThreadState.Running)
             yield return null;
