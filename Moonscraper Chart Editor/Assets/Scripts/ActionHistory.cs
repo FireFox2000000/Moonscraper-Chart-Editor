@@ -48,7 +48,7 @@ public class ActionHistory
     {
         if (canUndo)
         {
-            ChartEditor.editOccurred = true;
+            ChartEditor.isDirty = true;
             float frame = timestamps[historyPoint];
 
             int actionsUndone = 0;
@@ -93,7 +93,7 @@ public class ActionHistory
     {
         if (canRedo)
         {
-            ChartEditor.editOccurred = true;
+            ChartEditor.isDirty = true;
             float frame = timestamps[historyPoint + 1];
             int actionsUndone = 0;
             SongObject setPos = null;

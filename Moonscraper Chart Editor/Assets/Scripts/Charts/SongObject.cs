@@ -370,7 +370,7 @@ public abstract class SongObject
     /// <returns>Returns the list position it was inserted into.</returns>
     public static int Insert<T>(T item, List<T> list) where T : SongObject
     {
-        ChartEditor.editOccurred = true;
+        ChartEditor.isDirty = true;
 
         int insertionPos = NOTFOUND;
         int count = list.Count;
@@ -382,15 +382,25 @@ public abstract class SongObject
                 insertionPos = count;
                 list.Add(item);
             }
-            else if (list[count - 1].position == item.position)
+            else if (list[count - 1].position == item.position && item.classID == list[count - 1].classID)
             {
                 // Linear search backwards
                 int pos = count - 1;
-                while (pos >= 0 && list[pos] > item)        // Find the next item less than the current one and insert into the position after that
+                while (pos >= 0 && list[pos] >= item)        // Find the next item less than the current one and insert into the position after that
                     --pos;
 
                 insertionPos = pos + 1;
-                list.Insert(insertionPos, item);
+
+                // Account for overwrite
+                if (insertionPos < count && list[insertionPos] == item && item.classID == list[insertionPos].classID)
+                {
+                    if (list[insertionPos].controller != null)
+                        list[insertionPos].controller.gameObject.SetActive(false);
+
+                    list[insertionPos] = item;
+                }
+                else
+                    list.Insert(insertionPos, item);
             }
             else
             {
@@ -516,7 +526,7 @@ public abstract class SongObject
     /// <returns>Returns whether the item was successfully removed or not (may not be removed if the objects was not found).</returns>
     public static bool Remove<T>(T item, List<T> list, bool uniqueData = true) where T : SongObject
     {
-        ChartEditor.editOccurred = true;
+        ChartEditor.isDirty = true;
         int pos = FindObjectPosition(item, list.ToArray());
 
         if (pos != NOTFOUND)

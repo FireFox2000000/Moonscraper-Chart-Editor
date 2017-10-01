@@ -198,7 +198,7 @@ public class Globals : MonoBehaviour {
             if (result == System.Windows.Forms.DialogResult.Yes)
             {
                 yield return StartCoroutine(editor._Load(autosaveLocation, false));
-                ChartEditor.editOccurred = true;
+                ChartEditor.isDirty = true;
             }
 #endif
         }

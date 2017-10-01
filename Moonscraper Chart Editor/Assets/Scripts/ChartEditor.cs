@@ -19,7 +19,7 @@ public class ChartEditor : MonoBehaviour {
         return GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
     }
 
-    public static bool editOccurred = false;
+    public static bool isDirty = false;
     const int POOL_SIZE = 100;
     public const int MUSIC_STREAM_ARRAY_POS = 0;
     public const int GUITAR_STREAM_ARRAY_POS = 1;
@@ -172,7 +172,7 @@ public class ChartEditor : MonoBehaviour {
 
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
 
-        editOccurred = false;
+        isDirty = false;
         SetApplicationWindowPointer();
 
         loadingScreen.gameObject.SetActive(true);
@@ -208,7 +208,7 @@ public class ChartEditor : MonoBehaviour {
 #if !UNITY_EDITOR
         if (windowPtr != IntPtr.Zero)
         {
-            if (editOccurred)
+            if (isDirty)
                 SetWindowText(windowPtr, originalWindowName + "*");
             else
                 SetWindowText(windowPtr, originalWindowName);
@@ -301,7 +301,7 @@ public class ChartEditor : MonoBehaviour {
     bool editCheck()
     {    
         // Check for unsaved changes
-        if (editOccurred)
+        if (isDirty)
         {
             if (quitting)
                 UnityEngine.Application.CancelQuit();
@@ -350,7 +350,7 @@ public class ChartEditor : MonoBehaviour {
         //StartCoroutine(resetLag());
 
         currentSelectedObject = null;
-        editOccurred = true;
+        isDirty = true;
     }
     /*
     IEnumerator resetLag()
@@ -427,7 +427,7 @@ public class ChartEditor : MonoBehaviour {
         {
             Debug.Log("Saving to file- " + System.IO.Path.GetFullPath(filename));
 
-            editOccurred = false;            
+            isDirty = false;            
             currentSong.SaveAsync(filename, exportOptions);
             lastLoadedFile = System.IO.Path.GetFullPath(filename);
         }
@@ -794,7 +794,7 @@ public class ChartEditor : MonoBehaviour {
 #endif
         yield return null;
         //currentSong = new Song(currentFileName);
-        editOccurred = false;
+        isDirty = false;
 
 #if TIMING_DEBUG
         Debug.Log("File load time: " + (Time.realtimeSinceStartup - totalLoadTime));
@@ -807,7 +807,7 @@ public class ChartEditor : MonoBehaviour {
         if (mid)
         {
             currentFileName = string.Empty;
-            editOccurred = true;
+            isDirty = true;
             Debug.Log("Loaded mid file");
         }
 
@@ -887,7 +887,7 @@ public class ChartEditor : MonoBehaviour {
     void LoadSong(Song song)
     {
         if (lastLoadedFile != string.Empty)
-            editOccurred = false;
+            isDirty = false;
 
         MenuBar.currentInstrument = Song.Instrument.Guitar;
         MenuBar.currentDifficulty = Song.Difficulty.Expert;

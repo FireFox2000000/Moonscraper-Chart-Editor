@@ -63,7 +63,7 @@ public class StarpowerController : SongObjectController
 
     void TailDrag()
     {
-        ChartEditor.editOccurred = true;
+        ChartEditor.isDirty = true;
         uint snappedChartPos;
 
         if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)

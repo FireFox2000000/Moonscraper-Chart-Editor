@@ -107,7 +107,7 @@ public class Chart  {
         }
 
         UpdateCache();
-        ChartEditor.editOccurred = true;
+        ChartEditor.isDirty = true;
     }
 
     /// <summary>
@@ -126,7 +126,7 @@ public class Chart  {
         if (update)
             UpdateCache();
 
-        ChartEditor.editOccurred = true;
+        ChartEditor.isDirty = true;
 
         return pos;
     }
@@ -143,7 +143,7 @@ public class Chart  {
         }
 
         UpdateCache();
-        ChartEditor.editOccurred = true;
+        ChartEditor.isDirty = true;
     }
 
     /// <summary>
@@ -161,7 +161,7 @@ public class Chart  {
         {
             chartObject.chart = null;
             chartObject.song = null;
-            ChartEditor.editOccurred = true;
+            ChartEditor.isDirty = true;
         }
 
         if (update)
@@ -180,11 +180,11 @@ public class Chart  {
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
 #endif
-#pragma warning disable 0219
+
         Regex noteRegex = new Regex(@"^\s*\d+ = N \d \d+$");            // 48 = N 2 0
         Regex starPowerRegex = new Regex(@"^\s*\d+ = S 2 \d+$");        // 768 = S 2 768
         Regex noteEventRegex = new Regex(@"^\s*\d+ = E \S");            // 1728 = E T
-#pragma warning restore 0219
+
         List<string> flags = new List<string>();
 
         _chartObjects.Capacity = data.Length;

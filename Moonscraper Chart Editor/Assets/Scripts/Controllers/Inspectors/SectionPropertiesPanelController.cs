@@ -21,12 +21,12 @@ public class SectionPropertiesPanelController : PropertiesPanelController {
 
     void OnEnable()
     {       
-        bool edit = ChartEditor.editOccurred;
+        bool edit = ChartEditor.isDirty;
 
         if (currentSection != null)
             sectionName.text = currentSection.title;
 
-        ChartEditor.editOccurred = edit;
+        ChartEditor.isDirty = edit;
     }
 
     protected override void OnDisable()
@@ -45,6 +45,6 @@ public class SectionPropertiesPanelController : PropertiesPanelController {
         }
 
         if (prevName != currentSection.title)
-            ChartEditor.editOccurred = true;
+            ChartEditor.isDirty = true;
     }
 }

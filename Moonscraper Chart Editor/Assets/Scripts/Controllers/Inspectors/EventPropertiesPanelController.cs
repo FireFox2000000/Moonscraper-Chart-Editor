@@ -121,7 +121,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
                 UpdateInputFieldRecord();
 
                 if (prevName != currentEvent.title)
-                    ChartEditor.editOccurred = true;
+                    ChartEditor.isDirty = true;
 
                 updateInputField = true;
             }
@@ -137,7 +137,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
                 UpdateInputFieldRecord();
 
                 if (prevName != currentChartEvent.eventName)
-                    ChartEditor.editOccurred = true;
+                    ChartEditor.isDirty = true;
 
                 updateInputField = true;
             }

@@ -770,7 +770,7 @@ public class Song {
         if (autoUpdate)
             UpdateCache();
 
-        ChartEditor.editOccurred = true;
+        ChartEditor.isDirty = true;
     }
 
     /// <summary>
@@ -791,7 +791,7 @@ public class Song {
         if (success)
         {
             syncTrackObject.song = null;
-            ChartEditor.editOccurred = true;
+            ChartEditor.isDirty = true;
         }
 
         if (autoUpdate)
@@ -814,7 +814,7 @@ public class Song {
         if (autoUpdate)
             UpdateCache();
 
-        ChartEditor.editOccurred = true;
+        ChartEditor.isDirty = true;
     }
 
     /// <summary>
@@ -831,7 +831,7 @@ public class Song {
         if (success)
         {
             eventObject.song = null;
-            ChartEditor.editOccurred = true;
+            ChartEditor.isDirty = true;
         }
 
         if (autoUpdate)

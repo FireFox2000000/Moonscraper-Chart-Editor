@@ -18,7 +18,7 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
 
     void OnEnable()
     {
-        bool edit = ChartEditor.editOccurred;
+        bool edit = ChartEditor.isDirty;
 
         if (currentTS != null)
         {
@@ -26,7 +26,7 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
             tsDenomValue.text = currentTS.denominator.ToString();
         }
 
-        ChartEditor.editOccurred = edit;
+        ChartEditor.isDirty = edit;
     }
 
     protected override void Update()
@@ -61,7 +61,7 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
         }
 
         if (prevValue != currentTS.numerator)
-            ChartEditor.editOccurred = true;
+            ChartEditor.isDirty = true;
     }
 
     public void UpdateTSDenom(string value)
@@ -75,7 +75,7 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
         }
 
         if (prevValue != currentTS.denominator)
-            ChartEditor.editOccurred = true;
+            ChartEditor.isDirty = true;
     }
 
     public void EndEdit(string value)

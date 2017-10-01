@@ -187,7 +187,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         {
             note.applyFlagsToChord();
 
-            ChartEditor.editOccurred = true;
+            ChartEditor.isDirty = true;
         }
     }
 

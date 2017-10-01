@@ -36,7 +36,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     protected override void OnEnable()
     {
-        bool edit = ChartEditor.editOccurred;
+        bool edit = ChartEditor.isDirty;
 
         base.OnEnable();
         
@@ -59,7 +59,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
         customTime = TimeSpan.FromSeconds(editor.currentSong.length);
 
-        ChartEditor.editOccurred = edit;
+        ChartEditor.isDirty = edit;
         StartCoroutine(ScrollSetDelay());
     }
 
@@ -112,7 +112,7 @@ public class SongPropertiesPanelController : DisplayMenu {
                 editor.currentSong.length = (float)customTime.TotalSeconds;
             }
 
-            ChartEditor.editOccurred = true;
+            ChartEditor.isDirty = true;
         }
     }
 
@@ -182,7 +182,7 @@ public class SongPropertiesPanelController : DisplayMenu {
             drumStream.text = "No audio";
         }
 
-        ChartEditor.editOccurred = true;
+        ChartEditor.isDirty = true;
     }
 
     string GetAudioFile()

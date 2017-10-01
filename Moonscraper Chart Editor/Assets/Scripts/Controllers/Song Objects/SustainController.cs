@@ -158,7 +158,7 @@ public class SustainController : SelectableClick {
         if (nCon.note.song == null || Input.GetMouseButton(0))
             return;
 
-        ChartEditor.editOccurred = true;
+        ChartEditor.isDirty = true;
         nCon.note.SetSustainByPos(GetSnappedSustainPos());
     }
 
@@ -166,7 +166,7 @@ public class SustainController : SelectableClick {
     {
         if (nCon.note.song == null || Input.GetMouseButton(0))
             return;
-        ChartEditor.editOccurred = true;
+        ChartEditor.isDirty = true;
         Note[] chordNotes = nCon.note.GetChord();
 
         uint snappedPos = GetSnappedSustainPos();

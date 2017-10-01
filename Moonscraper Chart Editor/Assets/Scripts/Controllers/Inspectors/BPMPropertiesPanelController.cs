@@ -30,13 +30,13 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     void OnEnable()
     {
-        bool edit = ChartEditor.editOccurred;
+        bool edit = ChartEditor.isDirty;
         UpdateBPMInputFieldText();
 
         incrementalTimer = 0;
         autoIncrementTimer = 0;
 
-        ChartEditor.editOccurred = edit;
+        ChartEditor.isDirty = edit;
     }
 
     void UpdateBPMInputFieldText()
@@ -106,7 +106,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 if (Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.Minus))
                 {
                     incrementalTimer += Time.deltaTime;
-                    ChartEditor.editOccurred = true;
+                    ChartEditor.isDirty = true;
                 }
             }
             else
@@ -124,7 +124,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                     anchorAdjustmentOriginalValue = null;
                 }
 
-                ChartEditor.editOccurred = true;
+                ChartEditor.isDirty = true;
                 lastAutoVal = null;// currentBPM.value;
             }
         }
@@ -184,7 +184,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             bpmValue.text = string.Empty;
 
         if (prevValue != currentBPM.value)
-            ChartEditor.editOccurred = true;
+            ChartEditor.isDirty = true;
     }
 
     public void EndEdit(string value)
@@ -248,20 +248,28 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     public void IncrementBPM()
     {
-        //currentBPM.value += 1000;
-
+        BPM original = (BPM)currentBPM.Clone();
         AdjustForAnchors(currentBPM.value + 1000);
+
+        if (Input.GetMouseButtonUp(0) && currentBPM.value != original.value)
+            editor.actionHistory.Insert(new ActionHistory.Modify(original, currentBPM));
+
         UpdateBPMInputFieldText();
     }
 
     public void DecrementBPM()
     {
+        BPM original = (BPM)currentBPM.Clone();
         uint newValue = currentBPM.value;
 
         if (newValue > 1000)
             newValue -= 1000;
 
         AdjustForAnchors(newValue);
+
+        if (Input.GetMouseButtonUp(0) && currentBPM.value != original.value)
+            editor.actionHistory.Insert(new ActionHistory.Modify(original, currentBPM));
+
         UpdateBPMInputFieldText();
     }
 
@@ -291,6 +299,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
             if (anchor == null || bpmToAdjust == currentBPM)
             {
+                if (currentBPM.value != newBpmValue)
+                    ChartEditor.isDirty = true;
+
                 currentBPM.value = newBpmValue;
                 return true;
             }
@@ -314,7 +325,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
             if (newBpmValue < minVal)
                 newBpmValue = minVal;
-            
+
             if (anchorAdjustment == null)
             {
                 anchorAdjustment = bpmToAdjust;
@@ -334,6 +345,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 if (newValue != 0)
                     bpmToAdjust.value = newValue;
                 currentBPM.value = newBpmValue;
+
+                ChartEditor.isDirty = true;
             }
             /*
             // Adjust the bpm value before the anchor to match the anchor's set time to it's actual time
@@ -349,7 +362,12 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             }*/
         }
         else
+        {
+            if (currentBPM.value != newBpmValue)
+                ChartEditor.isDirty = true;
+
             currentBPM.value = newBpmValue;
+        }
 
         return true;
     }

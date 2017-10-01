@@ -76,7 +76,7 @@ public class GroupSelectPanelController : MonoBehaviour
         if (actions.Count > 0)
             editor.actionHistory.Insert(actions.ToArray());
 
-        ChartEditor.editOccurred = true;
+        ChartEditor.isDirty = true;
     }
 
     public void SetZeroSustain()
@@ -135,7 +135,7 @@ public class GroupSelectPanelController : MonoBehaviour
         if (actions.Count > 0)
             editor.actionHistory.Insert(actions.ToArray());
 
-        ChartEditor.editOccurred = true;
+        ChartEditor.isDirty = true;
     }
 
     public void SetNatural()
@@ -196,7 +196,7 @@ public class GroupSelectPanelController : MonoBehaviour
         if (actions.Count > 0)
             editor.actionHistory.Insert(actions.ToArray());
 
-        ChartEditor.editOccurred = true;
+        ChartEditor.isDirty = true;
     }
     /*
     public static void SetNoteType(Note note, AppliedNoteType noteType)
