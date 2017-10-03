@@ -12,7 +12,19 @@ public class Note : ChartObject
     public override int classID { get { return (int)_classID; } }
 
     public uint sustain_length;
-    public Fret_Type fret_type;
+    public int rawNote;
+    public Fret_Type fret_type
+    {
+        get
+        {
+            return (Fret_Type)rawNote;
+        }
+        set
+        {
+            rawNote = (int)value;
+        }
+    }
+
     public Drum_Fret_Type drum_fret_type
     {
         get
@@ -152,7 +164,7 @@ public class Note : ChartObject
 
     public override bool AllValuesCompare<T>(T songObject)
     {
-        if (this == songObject && (songObject as Note).sustain_length == sustain_length && (songObject as Note).fret_type == fret_type && (songObject as Note).flags == flags)
+        if (this == songObject && (songObject as Note).sustain_length == sustain_length && (songObject as Note).rawNote == rawNote && (songObject as Note).flags == flags)
             return true;
         else
             return false;
@@ -176,7 +188,7 @@ public class Note : ChartObject
         if (b.GetType() == typeof(Note))
         {
             Note realB = b as Note;
-            if (position == realB.position && fret_type == realB.fret_type)
+            if (position == realB.position && rawNote == realB.rawNote)
                 return true;
             else
                 return false;
@@ -194,7 +206,7 @@ public class Note : ChartObject
                 return true;
             else if (position == b.position)
             {
-                if (fret_type < realB.fret_type)
+                if (rawNote < realB.rawNote)
                     return true;
             }
 

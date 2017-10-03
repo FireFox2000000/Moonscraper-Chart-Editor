@@ -158,6 +158,17 @@ public class ChartWriter {
             }
         }
 
+        // Unrecognised charts
+        foreach (Chart chart in song.unrecognisedCharts)
+        {
+            string chartString = GetSaveString(song, chart.chartObjects, exportOptions, Song.Instrument.Unrecognised);
+
+            string seperator = "[" + chart.name + "]";
+            saveString += seperator + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
+            saveString += chartString;
+            saveString += "}" + Globals.LINE_ENDING;
+        }
+
         try
         {
             // Save to file
@@ -261,15 +272,22 @@ public class ChartWriter {
 
                 case (SongObject.ID.Note):
                     Note note = songObject as Note;
-                    Note.Fret_Type fret = note.fret_type;
+                    int fretNumber;
 
-                    // Drum notes are saved differently
-                    if (instrument == Song.Instrument.Drums)
-                        fret = Note.SaveGuitarNoteToDrumNote(fret);
+                    if (instrument != Song.Instrument.Unrecognised)
+                    {
+                        Note.Fret_Type fret = note.fret_type;
 
-                    int fretNumber = (int)fret;
-                    if (fret == Note.Fret_Type.OPEN && instrument != Song.Instrument.Drums)     // Last note is saved as 7 unless it's in the drum chart in which case it is 5
-                        fretNumber = 7;
+                        // Drum notes are saved differently
+                        if (instrument == Song.Instrument.Drums)
+                            fret = Note.SaveGuitarNoteToDrumNote(fret);
+
+                        fretNumber = (int)fret;
+                        if (fret == Note.Fret_Type.OPEN && instrument != Song.Instrument.Drums)     // Last note is saved as 7 unless it's in the drum chart in which case it is 5
+                            fretNumber = 7;
+                    }
+                    else
+                        fretNumber = note.rawNote;
 
                     saveString.Append(" = N " + fretNumber + " " + (uint)Mathf.Round(note.sustain_length * resolutionScaleRatio));
 

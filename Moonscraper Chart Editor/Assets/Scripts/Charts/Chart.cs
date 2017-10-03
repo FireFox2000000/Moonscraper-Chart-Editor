@@ -215,37 +215,46 @@ public class Chart  {
                             int fret_type = int.Parse(digits[SPLIT_VALUE]);
                             uint length = uint.Parse(digits[SPLIT_LENGTH]);
 
-                            switch (fret_type)
+                            if (instrument != Song.Instrument.Unrecognised)
                             {
-                                case (0):
-                                case (1):
-                                case (2):
-                                case (3):
-                                case (4):
-                                    // Add note to the data
-                                    Note newStandardNote = new Note(position, (Note.Fret_Type)fret_type, length);
-                                    if (instrument == Song.Instrument.Drums)
-                                        newStandardNote.fret_type = Note.LoadDrumNoteToGuitarNote(newStandardNote.fret_type);
-                                    Add(newStandardNote, false);
-                                    break;
-                                case (5):
-                                    if (instrument == Song.Instrument.Drums)
-                                    {
-                                        Note drumNote = new Note(position, Note.Fret_Type.ORANGE, length);
-                                        Add(drumNote, false);
+                                switch (fret_type)
+                                {
+                                    case (0):
+                                    case (1):
+                                    case (2):
+                                    case (3):
+                                    case (4):
+                                        // Add note to the data
+                                        Note newStandardNote = new Note(position, (Note.Fret_Type)fret_type, length);
+                                        if (instrument == Song.Instrument.Drums)
+                                            newStandardNote.fret_type = Note.LoadDrumNoteToGuitarNote(newStandardNote.fret_type);
+                                        Add(newStandardNote, false);
                                         break;
-                                    }
-                                    else
-                                        goto case (6);
-                                case (6):
-                                    flags.Add(line);
-                                    break;
-                                case (7):
-                                    Note newOpenNote = new Note(position, Note.Fret_Type.OPEN, length);
-                                    Add(newOpenNote, false);
-                                    break;
-                                default:
-                                    break;
+                                    case (5):
+                                        if (instrument == Song.Instrument.Drums)
+                                        {
+                                            Note drumNote = new Note(position, Note.Fret_Type.ORANGE, length);
+                                            Add(drumNote, false);
+                                            break;
+                                        }
+                                        else
+                                            goto case (6);
+                                    case (6):
+                                        flags.Add(line);
+                                        break;
+                                    case (7):
+                                        Note newOpenNote = new Note(position, Note.Fret_Type.OPEN, length);
+                                        Add(newOpenNote, false);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                Note newNote = new Note(position, Note.Fret_Type.GREEN, length);
+                                newNote.rawNote = fret_type;
+                                Add(newNote, false);
                             }
                             
                             break;
@@ -281,10 +290,10 @@ public class Chart  {
                     // Split string to get note information
                     string[] digits = line.Split(' ');
 
-                    if (digits.Length == 3)
+                    if (digits.Length == 5)
                     {
-                        uint position = uint.Parse(digits[0]);
-                        int fret_type = int.Parse(digits[1]);
+                        uint position = uint.Parse(digits[SPLIT_POSITION]);
+                        int fret_type = int.Parse(digits[SPLIT_VALUE]);
 
                         Note[] notesToAddFlagTo = SongObject.FindObjectsAtPosition(position, notes);
                         switch (fret_type)

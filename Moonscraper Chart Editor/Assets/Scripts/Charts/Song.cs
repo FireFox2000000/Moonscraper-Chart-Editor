@@ -250,6 +250,7 @@ public class Song {
 
     // Charts
     Chart[] charts;
+    public List<Chart> unrecognisedCharts = new List<Chart>();
 
     List<Event> _events;
     List<SyncTrack> _syncTrack;
@@ -279,8 +280,6 @@ public class Song {
     const string QUOTEVALIDATE = @"""[^""\\]*(?:\\.[^""\\]*)*""";
     const string QUOTESEARCH = "\"([^\"]*)\"";
     const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";  
-
-    public readonly string[] instrumentTypes = { "Bass", "Rhythm" };
 
     /// <summary>
     /// Is this song currently being saved asyncronously?
@@ -329,7 +328,8 @@ public class Song {
         Add(new TimeSignature());
 
         // Chart initialisation
-        charts = new Chart[Enum.GetNames(typeof(Instrument)).Length * Enum.GetNames(typeof(Difficulty)).Length];
+        int numberOfInstruments = Enum.GetNames(typeof(Instrument)).Length - 1;     // Don't count the "Unused" instrument
+        charts = new Chart[numberOfInstruments * Enum.GetNames(typeof(Difficulty)).Length];
 
         for (int i = 0; i < charts.Length; ++i)
         {
@@ -339,6 +339,9 @@ public class Song {
         // Set the name of the chart
         foreach (Instrument instrument in Enum.GetValues(typeof(Instrument)))
         {
+            if (instrument == Instrument.Unrecognised)
+                continue;
+
             string instrumentName = string.Empty;
             switch (instrument)
             {
@@ -913,7 +916,11 @@ public class Song {
                     instumentStringOffset += EXPERT.Length;
                 }
                 else
+                {
+                    // Add to the unused chart list
+                    LoadUnrecognisedChart(dataName, stringData);
                     return;
+                }
 
                 switch (dataName.Substring(instumentStringOffset, dataName.Length - instumentStringOffset - 1))
                 {
@@ -933,10 +940,21 @@ public class Song {
                         GetChart(Instrument.Keys, chartDiff).Load(stringData);
                         break;
                     default:
+                        // Add to the unused chart list
+                        LoadUnrecognisedChart(dataName, stringData);
                         return;
                 }
                 return;
         }
+    }
+
+    void LoadUnrecognisedChart(string dataName, List<string> stringData)
+    {
+        dataName = dataName.TrimStart('[');
+        dataName = dataName.TrimEnd(']');
+        Chart unrecognisedChart = new Chart(this, dataName);
+        unrecognisedChart.Load(stringData, Instrument.Unrecognised);
+        unrecognisedCharts.Add(unrecognisedChart);
     }
 
     void submitDataSong(List<string> stringData, string audioDirectory = "")
@@ -1010,6 +1028,7 @@ public class Song {
                 // Player2 = bass
                 else if (player2TypeRegex.IsMatch(line))
                 {
+                    string[] instrumentTypes = { "Bass", "Rhythm" };
                     string split = line.Split('=')[1].Trim();
 
                     foreach (string instrument in instrumentTypes)
@@ -1319,7 +1338,7 @@ public class Song {
 
     public enum Instrument
     {
-        Guitar = 0, GuitarCoop = 1, Bass = 2, Keys = 3, Drums = 4
+        Guitar = 0, GuitarCoop = 1, Bass = 2, Keys = 3, Drums = 4, Unrecognised = 99,
     }
 }
 

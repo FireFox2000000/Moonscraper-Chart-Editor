@@ -392,7 +392,7 @@ public abstract class SongObject
                 insertionPos = pos + 1;
 
                 // Account for overwrite
-                if (insertionPos < count && list[insertionPos] == item && item.classID == list[insertionPos].classID)
+                if (insertionPos < count && list[insertionPos] == item)
                 {
                     if (list[insertionPos].controller != null)
                         list[insertionPos].controller.gameObject.SetActive(false);
