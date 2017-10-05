@@ -57,7 +57,11 @@ public class SustainController : SelectableClick {
                 }
                 else
                 {
-                    unmodifiedNotes.Add(new Note[] { (Note)nCon.note.Clone(), nCon.note });
+                    if (unmodifiedNotes.Count == 0)
+                    {
+                        unmodifiedNotes.Add(new Note[] { (Note)nCon.note.Clone(), nCon.note });
+                    }
+                    //unmodifiedNotes.Add(new Note[] { (Note)nCon.note.Clone(), nCon.note });
                     SustainDrag();
                 }
             }
@@ -69,12 +73,10 @@ public class SustainController : SelectableClick {
         if (unmodifiedNotes.Count > 0 && unmodifiedNotes[0][0].sustain_length != unmodifiedNotes[0][1].sustain_length)
         {
             List<ActionHistory.Modify> actions = new List<ActionHistory.Modify>();
-            actions.Add(new ActionHistory.Modify(unmodifiedNotes[0][0], unmodifiedNotes[unmodifiedNotes.Count - 1][1]));
-            /*
-            foreach (Note[] notes in unmodifiedNotes)
+            for (int i = 0; i < unmodifiedNotes.Count; ++i)
             {
-                actions.Add(new ActionHistory.Modify(notes[0], notes[1]));
-            }*/
+                actions.Add(new ActionHistory.Modify(unmodifiedNotes[i][0], unmodifiedNotes[i][1]));
+            }
 
             editor.actionHistory.Insert(actions.ToArray());
         }

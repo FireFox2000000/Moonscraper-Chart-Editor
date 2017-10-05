@@ -298,7 +298,8 @@ public class NoteController : SongObjectController {
             if (this.note == null)      // Was deactivated
                 return;
 
-            sustain.gameObject.SetActive(note.sustain_length != 0);
+           //if (Input.GetMouseButton(1) && !sustain.gameObject.activeSelf)
+           sustain.gameObject.SetActive(note.sustain_length != 0 || Input.GetMouseButton(1));
 
             // Sustain is constantly updated unless it has no length or it's length is meant to be zero but isn't
             if (!(note.sustain_length == 0 && sustain.transform.localScale.y == 0))
