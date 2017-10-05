@@ -7,6 +7,12 @@ v1.0.01
     -Fixed-up some outdated information in the F.A.Q.  
     -Fixed objects from wrong view being selected if user switched view mode during play
     -Fixed pressing enter not fully deselecting inputfields which can cause false detection of the user typing
+    -Loading optimisation
+    -Updated undo/redo and save warning on bpm panel
+    -Fixed undo/redo on sustain dragging
+
+    CHANGES
+    -Can now load in unrecognised charts (only from .chart files for the moment)
 
 v1.0
     NEW FEATURES
