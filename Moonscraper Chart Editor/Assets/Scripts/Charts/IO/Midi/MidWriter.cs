@@ -144,7 +144,7 @@ public static class MidWriter {
 
         const string section_id = "section ";     // "section " is rb2 and former, "prc_" is rb3
 
-        eventBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[music_start]")));
+        //eventBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[music_start]")));
 
         uint deltaTickSum = 0;
         float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
@@ -178,8 +178,8 @@ public static class MidWriter {
         end = music_end;
 
         // Add music_end and end text events.
-        eventBytes.AddRange(TimedEvent(music_end, MetaTextEvent(TEXT_EVENT, "[music_end]")));
-        eventBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[end]")));
+        //eventBytes.AddRange(TimedEvent(music_end, MetaTextEvent(TEXT_EVENT, "[music_end]")));
+        //eventBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[end]")));
 
         return eventBytes.ToArray();
     }

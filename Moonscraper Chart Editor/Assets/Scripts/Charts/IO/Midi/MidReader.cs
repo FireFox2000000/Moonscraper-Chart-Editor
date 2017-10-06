@@ -133,7 +133,7 @@ public static class MidReader {
                 else if (text.Text.Contains("[prc_"))       // No idea what this actually is
                     song.Add(new Section(text.Text.Substring(5, text.Text.Length - 6), (uint)text.AbsoluteTime), false);
                 else
-                    song.Add(new Event(text.Text, (uint)text.AbsoluteTime), false);
+                    song.Add(new Event(text.Text.Trim(new char[] { '[', ']' }), (uint)text.AbsoluteTime), false);
             }
         }
 
