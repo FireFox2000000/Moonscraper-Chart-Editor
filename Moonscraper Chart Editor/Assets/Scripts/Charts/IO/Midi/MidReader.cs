@@ -63,6 +63,7 @@ public static class MidReader {
                     //ReadTrack(midi.Events[i]);
                     break;
                 default:
+                    ReadNotes(midi.Events[i], song, Song.Instrument.Unrecognised);
                     break;
             }
         }
@@ -144,28 +145,54 @@ public static class MidReader {
         List<NoteOnEvent> forceNotesList = new List<NoteOnEvent>();
         List<SysexEvent> tapAndOpenEvents = new List<SysexEvent>();
 
+        Chart unrecognised = new Chart(song);
+
+        if (instrument == Song.Instrument.Unrecognised)
+            song.unrecognisedCharts.Add(unrecognised);
+
         int rbSustainFixLength = (int)(64 * song.resolution / Globals.STANDARD_BEAT_RESOLUTION);
 
         // Load all the notes
         for (int i = 0; i < track.Count; i++)
         {
             var text = track[i] as TextEvent;
-            if (text != null && i != 0)     // We don't want the first event because that is the name of the track
+            if (text != null)     
             {
+                if (i == 0)
+                {
+                    if (instrument == Song.Instrument.Unrecognised)
+                        unrecognised.name = text.Text;
+                    continue;           // We don't want the first event because that is the name of the track
+                }
+
                 var tick = (uint)text.AbsoluteTime;
                 var eventName = text.Text.Trim(new char[] { '[', ']' });
+                ChartEvent chartEvent = new ChartEvent(tick, eventName);
 
-                song.GetChart(instrument, Song.Difficulty.Expert).Add(new ChartEvent(tick, eventName));
+                if (instrument == Song.Instrument.Unrecognised)
+                    unrecognised.Add(chartEvent);
+                else
+                    song.GetChart(instrument, Song.Difficulty.Expert).Add(chartEvent);
                 //Debug.Log(text.Text + " " + text.AbsoluteTime);
             }
 
             var note = track[i] as NoteOnEvent;
             if (note != null && note.OffEvent != null)
             {
+                Song.Difficulty difficulty;
+
                 var tick = (uint)note.AbsoluteTime;
                 var sus = (uint)(note.OffEvent.AbsoluteTime - tick);
 
-                Song.Difficulty difficulty;
+                if (instrument == Song.Instrument.Unrecognised)
+                {
+                    int rawNote = SelectRawNoteValue(note.NoteNumber);
+                    Note newNote = new Note(tick, Note.Fret_Type.GREEN, sus);
+                    newNote.rawNote = rawNote;
+                    //difficulty = SelectRawNoteDifficulty(note.NoteNumber);
+                    unrecognised.Add(newNote);
+                    continue;
+                }
 
                 // Check if starpower event
                 if (note.NoteNumber == 116)
@@ -271,8 +298,13 @@ public static class MidReader {
         }
 
         // Update all chart arrays
-        foreach (Song.Difficulty diff in System.Enum.GetValues(typeof(Song.Difficulty)))
-            song.GetChart(instrument, diff).UpdateCache();
+        if (instrument != Song.Instrument.Unrecognised)
+        {
+            foreach (Song.Difficulty diff in System.Enum.GetValues(typeof(Song.Difficulty)))
+                song.GetChart(instrument, diff).UpdateCache();
+        }
+        else
+            unrecognised.UpdateCache();
         
         // Apply forcing events
         foreach (NoteOnEvent flagEvent in forceNotesList)
@@ -292,7 +324,12 @@ public static class MidReader {
                 continue;
             }
 
-            Chart chart = song.GetChart(instrument, difficulty);
+            Chart chart;
+            if (instrument != Song.Instrument.Unrecognised)
+                chart = song.GetChart(instrument, difficulty);
+            else
+                chart = unrecognised;
+
             int index, length;
             SongObject.GetRange(chart.notes, tick, tick + endPos, out index, out length);
 
@@ -307,12 +344,21 @@ public static class MidReader {
         }
 
         // Apply tap and open note events
-        System.Array difficultyValues = System.Enum.GetValues(typeof(Song.Difficulty));
-        Chart[] chartsOfInstrument = new Chart[difficultyValues.Length];
+        Chart[] chartsOfInstrument;
 
-        int difficultyCount = 0;
-        foreach (Song.Difficulty difficulty in difficultyValues)
-            chartsOfInstrument[difficultyCount++] = song.GetChart(instrument, difficulty);
+        if (instrument == Song.Instrument.Unrecognised)
+        {
+            chartsOfInstrument = new Chart[] { unrecognised };
+        }
+        else
+        {
+            System.Array difficultyValues = System.Enum.GetValues(typeof(Song.Difficulty));
+            chartsOfInstrument = new Chart[difficultyValues.Length];
+
+            int difficultyCount = 0;
+            foreach (Song.Difficulty difficulty in difficultyValues)
+                chartsOfInstrument[difficultyCount++] = song.GetChart(instrument, difficulty);
+        }
     
         for(int i = 0; i < tapAndOpenEvents.Count; ++i)
         {
@@ -392,7 +438,11 @@ public static class MidReader {
                 }
 
                 int index, length;
-                Note[] notes = song.GetChart(instrument, difficulty).notes;
+                Note[] notes;
+                if (instrument == Song.Instrument.Unrecognised)
+                    notes = unrecognised.notes;
+                else
+                    notes = song.GetChart(instrument, difficulty).notes;
                 SongObject.GetRange(notes, tick, tick + endPos, out index, out length);
                 for (int k = index; k < index + length; ++k)
                 {
@@ -418,5 +468,24 @@ public static class MidReader {
             return Song.Difficulty.Expert;
         else
             throw new System.ArgumentOutOfRangeException("Note number outside of note range");
+    }
+
+    static Song.Difficulty SelectRawNoteDifficulty(int noteNumber)
+    {
+        if (noteNumber >= 96)
+            return Song.Difficulty.Expert;
+        else if (noteNumber >= 84)
+            return Song.Difficulty.Hard;
+        else if (noteNumber >= 72)
+            return Song.Difficulty.Medium;
+        else
+            return Song.Difficulty.Easy;
+    }
+
+    static int SelectRawNoteValue(int noteNumber)
+    {
+        // Generally starts at 60, every 12 notes is a change is difficulty
+        //return noteNumber % 12;
+        return noteNumber;
     }
 }

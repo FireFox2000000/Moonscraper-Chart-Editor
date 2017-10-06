@@ -12,7 +12,7 @@ v1.0.01
     -Fixed undo/redo on sustain dragging
 
     CHANGES
-    -Can now load in unrecognised charts (only from .chart files for the moment)
+    -Can now load in unrecognised tracks in chart and midi files and preserve them without deleting them
 
 v1.0
     NEW FEATURES

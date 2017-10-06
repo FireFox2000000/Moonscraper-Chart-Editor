@@ -18,6 +18,16 @@ public static class MidWriter {
     const string KEYS_TRACK = "PART KEYS";
     const string DRUMS_TRACK = "PART DRUMS";
 
+    const byte ON_EVENT = 0x91;         // Note on channel 1
+    const byte OFF_EVENT = 0x81;
+    const byte VELOCITY = 0x64;         // 100
+    const byte STARPOWER_NOTE = 0x74;   // 116
+
+    const byte SYSEX_START = 0xF0;
+    const byte SYSEX_END = 0xF7;
+    const byte SYSEX_ON = 0x01;
+    const byte SYSEX_OFF = 0x00;
+
     static readonly byte[] END_OF_TRACK = new byte[] { 0, 0xFF, 0x2F, 0x00 };
 
     public static void WriteToFile(string path, Song song, ExportOptions exportOptions)
@@ -52,6 +62,13 @@ public static class MidWriter {
         if (track_drums.Length > 0)
             track_count++;
 
+        byte[][] unrecognised_tracks = new byte[song.unrecognisedCharts.Count][];
+        for (int i = 0; i < unrecognised_tracks.Length; ++i)
+        {
+            unrecognised_tracks[i] = GetUnrecognisedChartBytes(song.unrecognisedCharts[i], exportOptions);
+            track_count++;
+        }
+
         byte[] header = GetMidiHeader(1, track_count, (short)(exportOptions.targetResolution));
         
         FileStream file = File.Open(path, FileMode.OpenOrCreate);
@@ -73,6 +90,12 @@ public static class MidWriter {
 
         if (track_drums.Length > 0)
             bw.Write(MakeTrack(track_drums, DRUMS_TRACK));
+
+        for (int i = 0; i < unrecognised_tracks.Length; ++i)
+        {
+            if (unrecognised_tracks[i].Length > 0)
+                bw.Write(MakeTrack(unrecognised_tracks[i], song.unrecognisedCharts[i].name));
+        }
 
         bw.Close();
         file.Close();
@@ -178,6 +201,11 @@ public static class MidWriter {
         //SortableBytes[] sortedEvents = new SortableBytes[easyBytes.Length + mediumBytes.Length + hardBytes.Length + expertBytes.Length];//byteEvents.ToArray();
         //SortableBytes.Sort(sortedEvents);
 
+        return SortableBytesToTimedEventBytes(sortedEvents, song, exportOptions);
+    }
+
+    static byte[] SortableBytesToTimedEventBytes(SortableBytes[] sortedEvents, Song song, ExportOptions exportOptions)
+    {
         List<byte> bytes = new List<byte>();
         float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
 
@@ -187,7 +215,7 @@ public static class MidWriter {
             if (i > 0)
                 deltaTime -= sortedEvents[i - 1].position;
 
-            deltaTime = (uint)Mathf.Round(deltaTime * resolutionScaleRatio);
+            deltaTime = (uint)Mathf.Round(deltaTime* resolutionScaleRatio);
 
             if (i == 0)
                 deltaTime += exportOptions.tickOffset;
@@ -230,15 +258,6 @@ public static class MidWriter {
         }
 
         List<SortableBytes> eventList = new List<SortableBytes>();
-        const byte ON_EVENT = 0x91;         // Note on channel 1
-        const byte OFF_EVENT = 0x81;
-        const byte VELOCITY = 0x64;         // 100
-        const byte STARPOWER_NOTE = 0x74;   // 116
-
-        const byte SYSEX_START = 0xF0;
-        const byte SYSEX_END = 0xF7;
-        const byte SYSEX_ON = 0x01;
-        const byte SYSEX_OFF = 0x00;
 
         del InsertionSort = (sortableByte) =>
         {
@@ -263,58 +282,9 @@ public static class MidWriter {
                 if (instrument == Song.Instrument.Drums)
                     fret_type = Note.SaveGuitarNoteToDrumNote(fret_type);
 
-                int difficultyNumber;
-                int noteNumber;
+                int noteNumber = GetStandardNoteNumber(note, instrument, difficulty);
 
-                switch (difficulty)
-                {
-                    case (Song.Difficulty.Easy):
-                        difficultyNumber = 60;
-                        break;
-                    case (Song.Difficulty.Medium):
-                        difficultyNumber = 72;
-                        break;
-                    case (Song.Difficulty.Hard):
-                        difficultyNumber = 84;
-                        break;
-                    case (Song.Difficulty.Expert):
-                        difficultyNumber = 96;
-                        break;
-                    default:
-                        continue;
-                }
- 
-                switch (fret_type)
-                {
-                    case (Note.Fret_Type.OPEN):     // Open note highlighted as an SysEx event. Use green as default.
-                        if (instrument == Song.Instrument.Drums)
-                        {
-                            noteNumber = difficultyNumber + 5;
-                            break;
-                        }
-                        else
-                            goto case Note.Fret_Type.GREEN;
-                    case (Note.Fret_Type.GREEN):
-                        noteNumber = difficultyNumber + 0;
-                        break;
-                    case (Note.Fret_Type.RED):
-                        noteNumber = difficultyNumber + 1;
-                        break;
-                    case (Note.Fret_Type.YELLOW):
-                        noteNumber = difficultyNumber + 2;
-                        break;
-                    case (Note.Fret_Type.BLUE):
-                        noteNumber = difficultyNumber + 3;
-                        break;
-                    case (Note.Fret_Type.ORANGE):
-                        noteNumber = difficultyNumber + 4;
-                        break;
-                    default:
-                        continue;
-                }
- 
-                onEvent = new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)noteNumber, VELOCITY });
-                offEvent = new SortableBytes(note.position + note.sustain_length, new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY });
+                GetNoteNumberBytes(noteNumber, note, out onEvent, out offEvent);
 
                 if (exportOptions.forced)
                 {
@@ -323,6 +293,7 @@ public static class MidWriter {
                     {
                         // Add a note
                         int forcedNoteNumber;
+                        int difficultyNumber = LookupDifficultyNumber(difficulty);
 
                         if (note.type == Note.Note_Type.Hopo)
                             forcedNoteNumber = difficultyNumber + 5;
@@ -397,32 +368,62 @@ public static class MidWriter {
 
             Starpower sp = chartObject as Starpower;
             if (sp != null && difficulty == Song.Difficulty.Expert)     // Starpower cannot be split up between charts in a midi file
-            {
-                onEvent = new SortableBytes(sp.position, new byte[] { ON_EVENT, STARPOWER_NOTE, VELOCITY });
-                offEvent = new SortableBytes(sp.position + sp.length, new byte[] { OFF_EVENT, STARPOWER_NOTE, VELOCITY });
-            }
+                GetStarpowerBytes(sp, out onEvent, out offEvent);
 
             ChartEvent chartEvent = chartObject as ChartEvent;
             if (chartEvent != null && difficulty == Song.Difficulty.Expert)     // Text events cannot be split up in the file
-            {
-                byte[] textEvent = MetaTextEvent(TEXT_EVENT, chartEvent.eventName);
-                InsertionSort(new SortableBytes(chartEvent.position, textEvent));
-            }
+                InsertionSort(GetChartEventBytes(chartEvent));
 
             if (onEvent != null && offEvent != null)
             {
                 InsertionSort(onEvent);
-                //eventList.Add(onEvent);
 
                 if (offEvent.position == onEvent.position)
                     ++offEvent.position;
 
                 InsertionSort(offEvent);
-                //eventList.Add(offEvent);
             }
         }
 
         return eventList.ToArray();
+    }
+
+    static byte[] GetUnrecognisedChartBytes(Chart chart, ExportOptions exportOptions)
+    {
+        List<SortableBytes> eventList = new List<SortableBytes>();
+
+        foreach (ChartObject chartObject in chart.chartObjects)
+        {           
+            SortableBytes onEvent = null;
+            SortableBytes offEvent = null;
+
+            Note note = chartObject as Note;
+            if (note != null)
+                GetUnrecognisedChartNoteBytes(note, out onEvent, out offEvent);
+
+            Starpower sp = chartObject as Starpower;
+            if (sp != null)     // Starpower cannot be split up between charts in a midi file
+                GetStarpowerBytes(sp, out onEvent, out offEvent);
+
+            ChartEvent chartEvent = chartObject as ChartEvent;
+            if (chartEvent != null)     // Text events cannot be split up in the file
+            {
+                SortableBytes bytes = GetChartEventBytes(chartEvent);
+                eventList.Add(bytes);
+            }
+
+            if (onEvent != null && offEvent != null)
+            {
+                eventList.Add(onEvent);
+
+                if (offEvent.position == onEvent.position)
+                    ++offEvent.position;
+
+                eventList.Add(offEvent);
+            }
+        }
+
+        return SortableBytesToTimedEventBytes(eventList.ToArray(), chart.song, exportOptions);
     }
 
     static byte[] GetMidiHeader(short fileFormat, short trackCount, short resolution)
@@ -629,5 +630,96 @@ public static class MidWriter {
         return vlvEncodedBytesList.ToArray();
     }
 
-    
+    /* CHART EVENT BYTE DETERMINING 
+    ***********************************************************************************************/
+
+    static void GetStarpowerBytes(Starpower sp, out SortableBytes onEvent, out SortableBytes offEvent)
+    {
+        onEvent = new SortableBytes(sp.position, new byte[] { ON_EVENT, STARPOWER_NOTE, VELOCITY });
+        offEvent = new SortableBytes(sp.position + sp.length, new byte[] { OFF_EVENT, STARPOWER_NOTE, VELOCITY });
+    }
+
+    static SortableBytes GetChartEventBytes(ChartEvent chartEvent)
+    {
+        byte[] textEvent = MetaTextEvent(TEXT_EVENT, chartEvent.eventName);
+        return new SortableBytes(chartEvent.position, textEvent);
+    }
+
+    static void GetUnrecognisedChartNoteBytes(Note note, out SortableBytes onEvent, out SortableBytes offEvent)
+    {
+        GetNoteNumberBytes(note.rawNote, note, out onEvent, out offEvent);
+    }
+
+    static void GetNoteNumberBytes(int noteNumber, Note note, out SortableBytes onEvent, out SortableBytes offEvent)
+    {
+        onEvent = new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)noteNumber, VELOCITY });
+        offEvent = new SortableBytes(note.position + note.sustain_length, new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY });
+    }
+
+    static int GetStandardNoteNumber(Note note, Song.Instrument instrument, Song.Difficulty difficulty)
+    {
+        Note.Fret_Type fret_type = note.fret_type;
+        if (instrument == Song.Instrument.Drums)
+            fret_type = Note.SaveGuitarNoteToDrumNote(fret_type);
+
+        int difficultyNumber;
+        int noteNumber;
+
+        difficultyNumber = LookupDifficultyNumber(difficulty);
+
+        switch (fret_type)
+        {
+            case (Note.Fret_Type.OPEN):     // Open note highlighted as an SysEx event. Use green as default.
+                if (instrument == Song.Instrument.Drums)
+                {
+                    noteNumber = difficultyNumber + 5;
+                    break;
+                }
+                else
+                    goto case Note.Fret_Type.GREEN;
+            case (Note.Fret_Type.GREEN):
+                noteNumber = difficultyNumber + 0;
+                break;
+            case (Note.Fret_Type.RED):
+                noteNumber = difficultyNumber + 1;
+                break;
+            case (Note.Fret_Type.YELLOW):
+                noteNumber = difficultyNumber + 2;
+                break;
+            case (Note.Fret_Type.BLUE):
+                noteNumber = difficultyNumber + 3;
+                break;
+            case (Note.Fret_Type.ORANGE):
+                noteNumber = difficultyNumber + 4;
+                break;
+            default:
+                throw new System.Exception("Not a standard note");
+        }
+
+        return noteNumber;
+    }
+
+    static int LookupDifficultyNumber(Song.Difficulty difficulty)
+    {
+        int difficultyNumber;
+        switch (difficulty)
+        {
+            case (Song.Difficulty.Easy):
+                difficultyNumber = 60;
+                break;
+            case (Song.Difficulty.Medium):
+                difficultyNumber = 72;
+                break;
+            case (Song.Difficulty.Hard):
+                difficultyNumber = 84;
+                break;
+            case (Song.Difficulty.Expert):
+                difficultyNumber = 96;
+                break;
+            default:
+                throw new System.Exception("Not a standard difficulty");
+        }
+
+        return difficultyNumber;
+    }
 }
