@@ -39,6 +39,10 @@ public class Note : ChartObject
         {
             return (GHLive_Fret_Type)rawNote;
         }
+        set
+        {
+            rawNote = (int)value;
+        }
     }
 
     /// <summary>
@@ -78,7 +82,7 @@ public class Note : ChartObject
         position = note.position;
         sustain_length = note.sustain_length;
         flags = note.flags;
-        fret_type = note.fret_type;
+        rawNote = note.rawNote;
     }
 
     public enum Fret_Type
@@ -160,6 +164,7 @@ public class Note : ChartObject
         }
     }
 
+    // Deprecated
     internal override string GetSaveString()
     {
         int fretNumber = (int)fret_type;
@@ -258,7 +263,7 @@ public class Note : ChartObject
             {
                 bool prevIsChord = previous.IsChord;
                 // Need to consider whether the previous note was a chord, and if they are the same type of note
-                if (prevIsChord || (!prevIsChord && fret_type != previous.fret_type))
+                if (prevIsChord || (!prevIsChord && rawNote != previous.rawNote))
                 {
                     // Check distance from previous note 
                     int HOPODistance = (int)(65 * song.resolution / Globals.STANDARD_BEAT_RESOLUTION);
@@ -301,7 +306,7 @@ public class Note : ChartObject
             int mask = 0;
 
             foreach (Note note in chord)
-                mask |= (1 << (int)note.fret_type);
+                mask |= (1 << note.rawNote);
 
             return mask;
         }
@@ -314,7 +319,7 @@ public class Note : ChartObject
     {
         get
         {
-            if (fret_type != Fret_Type.OPEN && (flags & Flags.TAP) == Flags.TAP)
+            if (!IsOpenNote() && (flags & Flags.TAP) == Flags.TAP)
             {
                 return Note_Type.Tap;
             }
@@ -383,12 +388,12 @@ public class Note : ChartObject
 
         Note previous = startNote.previous;
 
-        const int allVisited = 31; // 0001 1111
+        int allVisited = Globals.ghLiveMode ? 63 : 31; // 0011 1111 for ghlive, 0001 1111 for standard
         int noteTypeVisited = 0;
 
         while (previous != null && noteTypeVisited < allVisited)
         {
-            if (previous.fret_type == Note.Fret_Type.OPEN)
+            if (previous.IsOpenNote())
             {
                 if (Globals.extendedSustainsEnabled)
                 {
@@ -403,6 +408,12 @@ public class Note : ChartObject
             }
             else if (previous.position < startNote.position)
             {
+                if ((noteTypeVisited & (1 << previous.rawNote)) == 0)
+                {
+                    list.Add(previous);
+                    noteTypeVisited |= 1 << previous.rawNote;
+                }
+                /*
                 switch (previous.fret_type)
                 {
                     case (Note.Fret_Type.GREEN):
@@ -442,7 +453,7 @@ public class Note : ChartObject
                         break;
                     default:
                         break;
-                }
+                }*/
             }
 
             previous = previous.previous;
@@ -501,23 +512,27 @@ public class Note : ChartObject
         {
             if (!Globals.extendedSustainsEnabled)
             {
-                if ((next.fret_type == Note.Fret_Type.OPEN || (position < next.position)) && position != next.position)
+                if ((next.IsOpenNote() || (position < next.position)) && position != next.position)
                     return next;
-                //else if (next.position >= note.position + note.sustain_length)      // Stop searching early
-                //return null;
             }
             else
             {
-                if ((fret_type != Fret_Type.OPEN && next.fret_type == Note.Fret_Type.OPEN && !Globals.drumMode) || (next.fret_type == fret_type))
+                if ((!IsOpenNote() && next.IsOpenNote() && !Globals.drumMode) || (next.rawNote == rawNote))
                     return next;
-                //else if (next.position >= note.position + note.sustain_length)      // Stop searching early
-                //return null;
             }
 
             next = next.next;
         }
 
         return null;
+    }
+
+    public bool IsOpenNote()
+    {
+        if (Globals.ghLiveMode)
+            return ghlive_fret_type == GHLive_Fret_Type.OPEN;
+        else
+            return fret_type == Fret_Type.OPEN;
     }
 
     /// <summary>
@@ -533,10 +548,6 @@ public class Note : ChartObject
 
         // Cap the sustain
         Note nextFret;
-        /*
-        if (fret_type == Fret_Type.OPEN)
-            nextFret = next;
-        else*/
             nextFret = FindNextSameFretWithinSustainExtendedCheck();
 
         if (nextFret != null)
@@ -579,7 +590,7 @@ public class Note : ChartObject
                 break;
 
             case (Note_Type.Tap):
-                if (fret_type != Fret_Type.OPEN)
+                if (!IsOpenNote())
                     flags |= Note.Flags.TAP;
                 break;
 

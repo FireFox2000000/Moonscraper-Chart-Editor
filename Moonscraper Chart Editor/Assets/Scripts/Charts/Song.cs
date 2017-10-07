@@ -412,7 +412,7 @@ public class Song {
         float time = Time.realtimeSinceStartup;
 #endif
         //string[] fileLines = File.ReadAllLines(filepath);
-        Regex headerRegex = new Regex(@"\[.+\]", RegexOptions.Compiled);
+        //Regex headerRegex = new Regex(@"\[.+\]", RegexOptions.Compiled);
         StreamReader sr = File.OpenText(filepath);
         
 

@@ -405,17 +405,9 @@ public class NoteController : SongObjectController {
         }
     }
 
-    public static bool IsOpenNote(Note note)
-    {
-        if (Globals.ghLiveMode)
-            return note.ghlive_fret_type == Note.GHLive_Fret_Type.OPEN;
-        else
-            return note.fret_type == Note.Fret_Type.OPEN;
-    }
-
     public static float GetXPos(float chartPos, Note note)
     {
-        if (!IsOpenNote(note))
+        if (!note.IsOpenNote())
         {
             if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
                 return chartPos - note.rawNote + positionToOffsetInDisplay;
@@ -429,7 +421,7 @@ public class NoteController : SongObjectController {
 
     public static float NoteToXPos(Note note)
     {
-        if (!IsOpenNote(note))
+        if (!note.IsOpenNote())
         {
             if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
                 return -note.rawNote + positionToOffsetInDisplay;
