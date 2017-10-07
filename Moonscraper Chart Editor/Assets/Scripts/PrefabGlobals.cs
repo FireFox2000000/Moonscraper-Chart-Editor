@@ -59,7 +59,7 @@ public class PrefabGlobals : MonoBehaviour {
                 colliderSize = noteColliderSize;
                 if (((Note)songObject).fret_type == Note.Fret_Type.OPEN)
                     colliderSize.x = NoteController.OPEN_NOTE_COLLIDER_WIDTH;
-                position = new Vector2(NoteController.noteToXPos((Note)songObject), 0);
+                position = new Vector2(NoteController.NoteToXPos((Note)songObject), 0);
                 break;
             case (SongObject.ID.Starpower):
                 colliderSize = spColliderSize;

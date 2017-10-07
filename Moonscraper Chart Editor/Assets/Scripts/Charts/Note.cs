@@ -33,6 +33,14 @@ public class Note : ChartObject
         }
     }
 
+    public GHLive_Fret_Type ghlive_fret_type
+    {
+        get
+        {
+            return (GHLive_Fret_Type)rawNote;
+        }
+    }
+
     /// <summary>
     /// Properties, such as forced or taps, are stored here in a bitwise format.
     /// </summary>
@@ -85,6 +93,11 @@ public class Note : ChartObject
         KICK = Fret_Type.OPEN, RED = Fret_Type.GREEN, YELLOW = Fret_Type.RED, BLUE = Fret_Type.YELLOW, ORANGE = Fret_Type.BLUE, GREEN = Fret_Type.ORANGE
     }
 
+    public enum GHLive_Fret_Type
+    {
+        // Assign to the sprite array position
+        WHITE_1 = 0, WHITE_2 = 1, WHITE_3 = 2, BLACK_1 = 3, BLACK_2 = 4, BLACK_3 = 5, OPEN = 6
+    }
 
     public enum Note_Type
     {

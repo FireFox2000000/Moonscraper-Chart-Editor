@@ -61,8 +61,8 @@ public class NoteVisuals3DManager : NoteVisualsManager
             }
             else
             {
-                const int standardColMatPos = 1;
-                const int spColMatPos = 3;
+                const int STANDARD_COLOUR_MAT_POS = 1;
+                const int SP_COLOR_MAT_POS = 3;
 
                 int fretNumber = (int)note.fret_type;
                 if (Globals.drumMode)
@@ -71,6 +71,9 @@ public class NoteVisuals3DManager : NoteVisualsManager
                     if (fretNumber > 4)
                         fretNumber = 0;
                 }
+
+                Material[] strumColorMats = resources.strumColors;
+                Material[] tapColorMats = resources.tapColors;
 
                 switch (noteType)
                 {
@@ -81,41 +84,49 @@ public class NoteVisuals3DManager : NoteVisualsManager
                         if (specialType == Note.Special_Type.STAR_POW)
                         {
                             materials = resources.spHopoRenderer.sharedMaterials;
-                            materials[spColMatPos] = resources.strumColors[fretNumber];
+                            materials[SP_COLOR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber);
                         }
                         else
                         {
                             materials = resources.hopoRenderer.sharedMaterials;
-                            materials[standardColMatPos] = resources.strumColors[fretNumber];
+                            materials[STANDARD_COLOUR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber);//resources.strumColors[fretNumber];
                         }
                         break;
                     case (Note.Note_Type.Tap):
                         if (specialType == Note.Special_Type.STAR_POW)
                         {
                             materials = resources.spTapRenderer.sharedMaterials;
-                            materials[spColMatPos] = resources.tapColors[fretNumber];
+                            materials[SP_COLOR_MAT_POS] = GetValidMaterial(tapColorMats, fretNumber); //resources.tapColors[fretNumber];
                         }
                         else
                         {
                             materials = resources.tapRenderer.sharedMaterials;
-                            materials[standardColMatPos] = resources.tapColors[fretNumber];
+                            materials[STANDARD_COLOUR_MAT_POS] = GetValidMaterial(tapColorMats, fretNumber);//resources.tapColors[fretNumber];
                         }
                         break;
                     default:    // strum
                         if (specialType == Note.Special_Type.STAR_POW)
                         {
                             materials = resources.spStrumRenderer.sharedMaterials;
-                            materials[spColMatPos] = resources.strumColors[fretNumber];
+                            materials[SP_COLOR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber);//resources.strumColors[fretNumber];
                         }
                         else
                         {
                             materials = resources.strumRenderer.sharedMaterials;
-                            materials[standardColMatPos] = resources.strumColors[fretNumber];
+                            materials[STANDARD_COLOUR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber); // resources.strumColors[fretNumber];
                         }
                         break;
                 }
             }
             noteRenderer.sharedMaterials = materials;
         }
+    }
+
+    static Material GetValidMaterial(Material[] matArray, int fretNumber)
+    {
+        if (fretNumber >= 0 && fretNumber < matArray.Length)
+            return matArray[fretNumber];
+        else
+            return null;
     }
 }

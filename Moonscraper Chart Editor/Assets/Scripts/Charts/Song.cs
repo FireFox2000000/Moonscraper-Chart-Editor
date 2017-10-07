@@ -1338,7 +1338,7 @@ public class Song {
 
     public enum Instrument
     {
-        Guitar = 0, GuitarCoop = 1, Bass = 2, Keys = 3, Drums = 4, Unrecognised = 99,
+        Guitar = 0, GuitarCoop = 1, Bass = 2, Keys = 3, Drums = 4, GHLive = 5, Unrecognised = 99,
     }
 }
 

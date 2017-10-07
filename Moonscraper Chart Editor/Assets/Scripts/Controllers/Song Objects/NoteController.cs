@@ -268,7 +268,7 @@ public class NoteController : SongObjectController {
     {
         float zPos = 0;
         // Position
-        transform.position = new Vector3(CHART_CENTER_POS + noteToXPos(note), note.worldYPosition, zPos);
+        transform.position = new Vector3(CHART_CENTER_POS + NoteToXPos(note), note.worldYPosition, zPos);
     }
 
     protected override void UpdateCheck()
@@ -394,28 +394,47 @@ public class NoteController : SongObjectController {
         }
     }
 
+    static float positionToOffsetInDisplay
+    {
+        get
+        {
+            if (Globals.ghLiveMode)
+                return 2.5f;
+            else
+                return 2;
+        }
+    }
+
+    public static bool IsOpenNote(Note note)
+    {
+        if (Globals.ghLiveMode)
+            return note.ghlive_fret_type == Note.GHLive_Fret_Type.OPEN;
+        else
+            return note.fret_type == Note.Fret_Type.OPEN;
+    }
+
     public static float GetXPos(float chartPos, Note note)
     {
-        if (note.fret_type != Note.Fret_Type.OPEN)
+        if (!IsOpenNote(note))
         {
             if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
-                return chartPos - (int)note.fret_type + 2;
+                return chartPos - note.rawNote + positionToOffsetInDisplay;
             else
-                return chartPos + (int)note.fret_type - 2;
+                return chartPos + note.rawNote - positionToOffsetInDisplay;
 
         }
         else
             return chartPos;
     }
 
-    public static float noteToXPos(Note note)
+    public static float NoteToXPos(Note note)
     {
-        if (note.fret_type != Note.Fret_Type.OPEN)
+        if (!IsOpenNote(note))
         {
             if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
-                return -(int)note.fret_type + 2;
+                return -note.rawNote + positionToOffsetInDisplay;
             else
-                return (int)note.fret_type - 2;
+                return note.rawNote - positionToOffsetInDisplay;
         }
         else
             return 0;
@@ -431,7 +450,7 @@ public class NoteController : SongObjectController {
         {
             float zPos = 0;
             // Position
-            transform.position = new Vector3(CHART_CENTER_POS + noteToXPos(note), note.worldYPosition, zPos);
+            transform.position = new Vector3(CHART_CENTER_POS + NoteToXPos(note), note.worldYPosition, zPos);
 
             if (note.fret_type == Note.Fret_Type.OPEN)
                 sustainRen.sortingOrder = -1;

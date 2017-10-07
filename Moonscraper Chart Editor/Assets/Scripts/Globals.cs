@@ -88,6 +88,13 @@ public class Globals : MonoBehaviour {
             return MenuBar.currentInstrument == Song.Instrument.Drums;
         }
     }
+    public static bool ghLiveMode
+    {
+        get
+        {
+            return MenuBar.currentInstrument == Song.Instrument.GHLive;
+        }
+    }
     // Settings
     public static float hyperspeed = 5.0f;
     public static float highwayLength = 0;

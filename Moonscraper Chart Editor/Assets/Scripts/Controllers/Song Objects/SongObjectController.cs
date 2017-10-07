@@ -175,7 +175,7 @@ public abstract class SongObjectController : SelectableClick {
                 position = StarpowerController.position;
                 break;
             case (SongObject.ID.Note):
-                position = NoteController.noteToXPos((Note)songObject);
+                position = NoteController.NoteToXPos((Note)songObject);
                 break;
             case (SongObject.ID.BPM):
                 position = BPMController.position;
