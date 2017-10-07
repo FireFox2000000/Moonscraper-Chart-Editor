@@ -33,7 +33,7 @@ public class Note2D3DSelector : MonoBehaviour {
                 case (Skin.AssestsAvaliable.None):
                     note2D.gameObject.SetActive(false);
                     note3D.gameObject.SetActive(true);
-                    //enabled = false;
+                    enabled = false;
                     break;
                 default:
                     break;

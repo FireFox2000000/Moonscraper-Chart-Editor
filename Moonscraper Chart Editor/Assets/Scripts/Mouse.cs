@@ -239,12 +239,28 @@ public class Mouse : MonoBehaviour {
                     hitGameObjects[i] = hits3d[i].collider.gameObject;
 
                 GameObject[] sortedObjects = raySortLowestY(hitGameObjects);
+                GameObject selectable = null;
 
                 foreach (GameObject selectedObject in sortedObjects)
                 {
                     if (selectedObject.GetComponent<SelectableClick>())
-                        return selectedObject;
+                    {
+                        if (selectable == null)
+                            selectable = selectedObject;
+                        else if (selectedObject.transform.position.y == selectable.transform.position.y && world2DPosition != null)
+                        {
+                            // Take the one closest to the mouse
+                            float mouseX = ((Vector2)world2DPosition).x;
+                            selectable = Mathf.Abs(selectedObject.transform.position.x - mouseX) < Mathf.Abs(selectable.transform.position.x - mouseX) ? selectedObject : selectable;
+                        }
+                        else
+                            break;
+
+                        //return selectedObject;
+                    }
                 }
+
+                return selectable;
             }
             else
             {
