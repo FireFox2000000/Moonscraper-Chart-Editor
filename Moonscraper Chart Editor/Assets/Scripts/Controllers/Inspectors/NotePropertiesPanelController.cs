@@ -89,7 +89,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             }
 
             // Disable tap note box for open notes
-            tapToggle.interactable = !(currentNote.fret_type == Note.Fret_Type.OPEN && Toolpane.currentTool != Toolpane.Tools.Note);
+            tapToggle.interactable = !(currentNote.IsOpenNote() && Toolpane.currentTool != Toolpane.Tools.Note);
         }
 
         if (currentNote != null)
