@@ -90,7 +90,12 @@ public class SustainController : SelectableClick {
         {          
             UpdateSustainLength();
 
-            if (nCon.note.rawNote < customSkin.sustain_mats.Length)
+            if (Globals.ghLiveMode)
+            {
+                sustainRen.sharedMaterial = resources.ghlSustainColours[nCon.note.rawNote];
+            }
+
+            else if (nCon.note.rawNote < customSkin.sustain_mats.Length)
             {
                 if (customSkin.sustain_mats[(int)nCon.note.fret_type])
                 {
