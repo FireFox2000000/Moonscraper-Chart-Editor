@@ -27,7 +27,11 @@ public class PlaceNoteController : ObjectlessTool {
 
     //const int MULTI_NOTE_POS = 0;
     //const int OPEN_NOTE_POS = 5;
-    const string OPEN_NOTE_KEY = "6";
+    string GetOpenNoteInputKey()
+    {
+        int key = Globals.ghLiveMode ? (int)Note.GHLive_Fret_Type.OPEN : (int)Note.Fret_Type.OPEN;
+        return (key + 1).ToString();
+    }
 
     protected override void Awake()
     {
@@ -295,7 +299,7 @@ public class PlaceNoteController : ObjectlessTool {
         List<PlaceNote> activeNotes = new List<PlaceNote>();
 
         // Select which notes to run based on keyboard input
-        if (Input.GetKeyDown(OPEN_NOTE_KEY))  // Open note takes priority
+        if (Input.GetKeyDown(GetOpenNoteInputKey()))  // Open note takes priority
         {
             if (openActive)
             {
@@ -308,7 +312,7 @@ public class PlaceNoteController : ObjectlessTool {
                 activeNotes.Add(openNote);
             }
         }
-        else if (!Input.GetKey(OPEN_NOTE_KEY) && (anyStandardKeyInput))
+        else if (!Input.GetKey(GetOpenNoteInputKey()) && (anyStandardKeyInput))
         {
             for (int i = 0; i < standardPlaceableNotes.Length; ++i)
             {

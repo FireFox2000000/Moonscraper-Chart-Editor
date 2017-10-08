@@ -21,7 +21,7 @@ public class PlaceFret : PlaceNote {
 
     protected override void UpdateFretType()
     {
-        // Don't update
+        note.rawNote = Globals.ghLiveMode ? (int)ghliveFret : (int)standardFret;
     }
 
     public override void ToolDisable()

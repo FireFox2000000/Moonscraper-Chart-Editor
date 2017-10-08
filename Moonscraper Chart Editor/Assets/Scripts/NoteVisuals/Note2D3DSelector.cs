@@ -51,31 +51,35 @@ public class Note2D3DSelector : MonoBehaviour {
             Note.Note_Type noteType = note.type;
             Note.Special_Type specialType = NoteVisualsManager.IsStarpower(note);
 
-            if (note != null)
+            int arrayPos = note.rawNote;
+            if (!Globals.ghLiveMode)
             {
-                if (noteType == Note.Note_Type.Strum)
+                if (note != null)
                 {
-                    if (specialType == Note.Special_Type.STAR_POW)
-                        textureInSkin = customSkin.sp_strum[(int)note.fret_type];
-                    else
-                        textureInSkin = customSkin.reg_strum[(int)note.fret_type];
-                }
-                else if (noteType == Note.Note_Type.Hopo)
-                {
-                    if (specialType == Note.Special_Type.STAR_POW)
-                        textureInSkin = customSkin.sp_hopo[(int)note.fret_type];
-                    else
-                        textureInSkin = customSkin.reg_hopo[(int)note.fret_type];
-                }
-                // Tap notes
-                else
-                {
-                    if (note.fret_type != Note.Fret_Type.OPEN)
+                    if (noteType == Note.Note_Type.Strum)
                     {
                         if (specialType == Note.Special_Type.STAR_POW)
-                            textureInSkin = customSkin.sp_tap[(int)note.fret_type];
+                            textureInSkin = customSkin.sp_strum[arrayPos];
                         else
-                            textureInSkin = customSkin.reg_tap[(int)note.fret_type];
+                            textureInSkin = customSkin.reg_strum[arrayPos];
+                    }
+                    else if (noteType == Note.Note_Type.Hopo)
+                    {
+                        if (specialType == Note.Special_Type.STAR_POW)
+                            textureInSkin = customSkin.sp_hopo[arrayPos];
+                        else
+                            textureInSkin = customSkin.reg_hopo[arrayPos];
+                    }
+                    // Tap notes
+                    else
+                    {
+                        if (note.fret_type != Note.Fret_Type.OPEN)
+                        {
+                            if (specialType == Note.Special_Type.STAR_POW)
+                                textureInSkin = customSkin.sp_tap[arrayPos];
+                            else
+                                textureInSkin = customSkin.reg_tap[arrayPos];
+                        }
                     }
                 }
             }

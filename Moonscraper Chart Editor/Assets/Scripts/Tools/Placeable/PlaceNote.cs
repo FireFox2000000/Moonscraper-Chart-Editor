@@ -201,7 +201,7 @@ public class PlaceNote : PlaceSongObject {
         float startPos = -2.0f;
         float endPos = 2.0f;
 
-        int max = Globals.ghLiveMode ? (int)Note.GHLive_Fret_Type.BLACK_3 : (int)Note.Fret_Type.ORANGE;
+        int max = Globals.ghLiveMode ? (int)Note.GHLive_Fret_Type.WHITE_3 : (int)Note.Fret_Type.ORANGE;
         float factor = (endPos - startPos) / (max);
 
         for (int i = 0; i < max; ++i)

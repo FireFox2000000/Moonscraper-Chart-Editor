@@ -113,7 +113,8 @@ public class Note : ChartObject
     public enum GHLive_Fret_Type
     {
         // Assign to the sprite array position
-        WHITE_1, BLACK_1, WHITE_2, BLACK_2, WHITE_3, BLACK_3, OPEN
+        //WHITE_1, BLACK_1, WHITE_2, BLACK_2, WHITE_3, BLACK_3, OPEN
+        BLACK_1,  BLACK_2, BLACK_3, WHITE_1, WHITE_2, WHITE_3, OPEN
     }
 
     public enum Note_Type

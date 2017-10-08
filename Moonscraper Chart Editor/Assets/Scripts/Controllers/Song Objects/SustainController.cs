@@ -90,12 +90,15 @@ public class SustainController : SelectableClick {
         {          
             UpdateSustainLength();
 
-            if (customSkin.sustain_mats[(int)nCon.note.fret_type])
+            if (nCon.note.rawNote < customSkin.sustain_mats.Length)
             {
-                sustainRen.sharedMaterial = customSkin.sustain_mats[(int)nCon.note.fret_type];
+                if (customSkin.sustain_mats[(int)nCon.note.fret_type])
+                {
+                    sustainRen.sharedMaterial = customSkin.sustain_mats[(int)nCon.note.fret_type];
+                }
+                else
+                    sustainRen.sharedMaterial = resources.sustainColours[(int)nCon.note.fret_type];
             }
-            else
-                sustainRen.sharedMaterial = resources.sustainColours[(int)nCon.note.fret_type];
         }
     }
 
@@ -103,7 +106,7 @@ public class SustainController : SelectableClick {
     {
         Note note = nCon.note;
         Note nextFret;
-        if (note.fret_type == Note.Fret_Type.OPEN)
+        if (note.IsOpenNote())
             nextFret = note.next;
         else
         {
@@ -203,7 +206,7 @@ public class SustainController : SelectableClick {
 
         while (next != null)
         {
-            if (next.fret_type == Note.Fret_Type.OPEN || (next.fret_type == note.fret_type && note.position + note.sustain_length > next.position))
+            if (next.IsOpenNote() || (next.rawNote == note.rawNote && note.position + note.sustain_length > next.position))
                 return next;
             else if (next.position >= note.position + note.sustain_length)      // Stop searching early
                 return null;

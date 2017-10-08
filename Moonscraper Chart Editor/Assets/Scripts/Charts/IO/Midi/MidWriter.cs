@@ -17,6 +17,7 @@ public static class MidWriter {
     const string BASS_TRACK = "PART BASS";
     const string KEYS_TRACK = "PART KEYS";
     const string DRUMS_TRACK = "PART DRUMS";
+    const string GHL_GUITAR_TRACK = "PART GHL GUITAR";
 
     const byte ON_EVENT = 0x91;         // Note on channel 1
     const byte OFF_EVENT = 0x81;
@@ -62,6 +63,10 @@ public static class MidWriter {
         if (track_drums.Length > 0)
             track_count++;
 
+        byte[] track_ghl_guitar = new byte[0];//GetInstrumentBytes(song, Song.Instrument.GHLiveGuitar, exportOptions);
+        if (track_ghl_guitar.Length > 0)
+            track_count++;
+
         byte[][] unrecognised_tracks = new byte[song.unrecognisedCharts.Count][];
         for (int i = 0; i < unrecognised_tracks.Length; ++i)
         {
@@ -90,6 +95,9 @@ public static class MidWriter {
 
         if (track_drums.Length > 0)
             bw.Write(MakeTrack(track_drums, DRUMS_TRACK));
+
+        if (track_ghl_guitar.Length > 0)
+            bw.Write(MakeTrack(track_ghl_guitar, GHL_GUITAR_TRACK));
 
         for (int i = 0; i < unrecognised_tracks.Length; ++i)
         {
@@ -691,6 +699,44 @@ public static class MidWriter {
                 break;
             case (Note.Fret_Type.ORANGE):
                 noteNumber = difficultyNumber + 4;
+                break;
+            default:
+                throw new System.Exception("Not a standard note");
+        }
+
+        return noteNumber;
+    }
+
+    static int GetGHLNoteNumber(Note note, Song.Instrument instrument, Song.Difficulty difficulty)
+    {
+        Note.GHLive_Fret_Type fret_type = note.ghlive_fret_type;
+
+        int difficultyNumber;
+        int noteNumber;
+
+        difficultyNumber = LookupDifficultyNumber(difficulty);
+
+        switch (fret_type)
+        {
+            case (Note.GHLive_Fret_Type.OPEN):     // Open note highlighted as an SysEx event. Use green as default.
+                    goto case Note.GHLive_Fret_Type.BLACK_1;
+            case (Note.GHLive_Fret_Type.WHITE_1):
+                noteNumber = difficultyNumber + 0;
+                break;
+            case (Note.GHLive_Fret_Type.WHITE_2):
+                noteNumber = difficultyNumber + 1;
+                break;
+            case (Note.GHLive_Fret_Type.WHITE_3):
+                noteNumber = difficultyNumber + 2;
+                break;
+            case (Note.GHLive_Fret_Type.BLACK_1):
+                noteNumber = difficultyNumber + 3;
+                break;
+            case (Note.GHLive_Fret_Type.BLACK_2):
+                noteNumber = difficultyNumber + 4;
+                break;
+            case (Note.GHLive_Fret_Type.BLACK_3):
+                noteNumber = difficultyNumber + 5;
                 break;
             default:
                 throw new System.Exception("Not a standard note");

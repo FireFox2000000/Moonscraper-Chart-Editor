@@ -100,6 +100,9 @@ public class ChartWriter {
                 case (Song.Instrument.Keys):
                     instrumentSaveString = "Keyboard";
                     break;
+                case (Song.Instrument.GHLiveGuitar):
+                    instrumentSaveString = "GHLGuitar";
+                    break;
                 default:
                     continue;
             }
@@ -276,6 +279,16 @@ public class ChartWriter {
 
                     if (instrument != Song.Instrument.Unrecognised)
                     {
+                        if (instrument == Song.Instrument.Drums)
+                            fretNumber = GetDrumsSaveNoteNumber(note);
+
+                        else if (instrument == Song.Instrument.GHLiveGuitar)
+                            fretNumber = GetGHLSaveNoteNumber(note);
+
+                        else
+                            fretNumber = GetStandardSaveNoteNumber(note);
+
+                        /*
                         Note.Fret_Type fret = note.fret_type;
 
                         // Drum notes are saved differently
@@ -284,7 +297,7 @@ public class ChartWriter {
 
                         fretNumber = (int)fret;
                         if (fret == Note.Fret_Type.OPEN && instrument != Song.Instrument.Drums)     // Last note is saved as 7 unless it's in the drum chart in which case it is 5
-                            fretNumber = 7;
+                            fretNumber = 7;*/
                     }
                     else
                         fretNumber = note.rawNote;
@@ -313,5 +326,76 @@ public class ChartWriter {
         }
 
         return saveString.ToString();
+    }
+
+    int GetStandardSaveNoteNumber(Note note)
+    {
+        switch (note.fret_type)
+        {
+            case (Note.Fret_Type.GREEN):
+                return 0;
+            case (Note.Fret_Type.RED):
+                return 1;
+            case (Note.Fret_Type.YELLOW):
+                return 2;
+            case (Note.Fret_Type.BLUE):
+                return 3;
+            case (Note.Fret_Type.ORANGE):
+                return 4;
+            case (Note.Fret_Type.OPEN):
+                return 7;                               // 5 and 6 are reserved for forced and taps properties
+            default: break;
+        }
+
+        return 0;
+    }
+
+    int GetDrumsSaveNoteNumber(Note note)
+    {
+        switch (note.drum_fret_type)
+        {
+            case (Note.Drum_Fret_Type.KICK):
+                return 0;
+            case (Note.Drum_Fret_Type.RED):
+                return 1;
+            case (Note.Drum_Fret_Type.YELLOW):
+                return 2;
+            case (Note.Drum_Fret_Type.BLUE):
+                return 3;
+            case (Note.Drum_Fret_Type.ORANGE):
+                return 4;
+            case (Note.Drum_Fret_Type.GREEN):
+                return 5;
+
+            default: break;
+        }
+
+        return 0;
+    }
+
+    int GetGHLSaveNoteNumber(Note note)
+    {
+        switch (note.ghlive_fret_type)
+        {
+            case (Note.GHLive_Fret_Type.WHITE_1):
+                return 0;
+            case (Note.GHLive_Fret_Type.WHITE_2):
+                return 1;
+            case (Note.GHLive_Fret_Type.WHITE_3):
+                return 2;
+            case (Note.GHLive_Fret_Type.BLACK_1):
+                return 3;
+            case (Note.GHLive_Fret_Type.BLACK_2):
+                return 4;
+
+            case (Note.GHLive_Fret_Type.OPEN):
+                return 7;
+            case (Note.GHLive_Fret_Type.BLACK_3):
+                return 8;
+
+            default: break;
+        }
+
+        return 0;
     }
 }
