@@ -8,22 +8,30 @@ using System.Collections;
 using XInputDotNetPure;
 
 public class Indicators : MonoBehaviour {
-    const int FRET_COUNT = 5;
+    const int FRET_COUNT = 6;
 
+    [SerializeField]
+    GameObject[] indicatorParents = new GameObject[FRET_COUNT];
     [SerializeField]
     GameObject[] indicators = new GameObject[FRET_COUNT];
     [SerializeField]
     GameObject[] customIndicators = new GameObject[FRET_COUNT];
     [SerializeField]
     Color[] defaultStikelineFretColors;
-    [HideInInspector]
-    public HitAnimation[] animations = new HitAnimation[FRET_COUNT];
+    [SerializeField]
+    Color[] ghlStikelineFretColors;
 
-    SpriteRenderer[] fretRenders = new SpriteRenderer[FRET_COUNT * 2];
+    [HideInInspector]
+    public HitAnimation[] animations;
+
+    SpriteRenderer[] fretRenders;
 
     void Start()
     {
-        for(int i = 0; i < animations.Length; ++i)
+        animations = new HitAnimation[FRET_COUNT];
+        fretRenders = new SpriteRenderer[FRET_COUNT * 2];
+
+        for (int i = 0; i < animations.Length; ++i)
         {
             if (customIndicators[i].activeSelf)
             {
@@ -39,30 +47,15 @@ public class Indicators : MonoBehaviour {
             fretRenders[i * 2] = indicators[i].GetComponent<SpriteRenderer>();
             fretRenders[i * 2 + 1] = indicators[i].transform.parent.GetComponent<SpriteRenderer>();
         }
+
+        UpdateStrikerColors();
+        SetStrikerPlacement();
     }
 
     // Update is called once per frame
     void Update () {
-        if (Globals.drumMode)
-        {
-            for (int i = 0; i < defaultStikelineFretColors.Length; ++i)
-            {
-                int color = i + 1;
-                if (color >= defaultStikelineFretColors.Length)
-                    color = 0;
+        //UpdateStrikerColors();
 
-                fretRenders[i * 2].color = defaultStikelineFretColors[color];
-                fretRenders[i * 2 + 1].color = defaultStikelineFretColors[color];
-            }
-        }
-        else
-        {
-            for (int i = 0; i < defaultStikelineFretColors.Length; ++i)
-            {
-                fretRenders[i * 2].color = defaultStikelineFretColors[i];
-                fretRenders[i * 2 + 1].color = defaultStikelineFretColors[i];
-            }
-        }
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
         {
 #if GAMEPAD
@@ -130,6 +123,50 @@ public class Indicators : MonoBehaviour {
                 if (!animations[i].running)
                     animations[i].Release();
             }
+        }
+    }
+
+    public void UpdateStrikerColors()
+    {
+        if (Globals.drumMode)
+        {
+            for (int i = 0; i < defaultStikelineFretColors.Length; ++i)
+            {
+                int color = i + 1;
+                if (color >= defaultStikelineFretColors.Length)
+                    color = 0;
+
+                fretRenders[i * 2].color = defaultStikelineFretColors[color];
+                fretRenders[i * 2 + 1].color = defaultStikelineFretColors[color];
+            }
+        }
+        else
+        {
+            Color[] colors = Globals.ghLiveMode ? ghlStikelineFretColors : defaultStikelineFretColors;
+            for (int i = 0; i < colors.Length; ++i)
+            {
+                fretRenders[i * 2].color = colors[i];
+                fretRenders[i * 2 + 1].color = colors[i];
+            }
+        }
+    }
+
+    public void SetStrikerPlacement()
+    {
+        int range = indicatorParents.Length;
+
+        for (int i = 0; i < range; ++i)
+        {
+            int number = i;
+            if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+            {
+                number = range - (number + 1);
+            }
+
+            float xPos = NoteController.CHART_CENTER_POS + number * NoteController.positionIncrementFactor + NoteController.noteObjectPositionStartOffset;
+            indicatorParents[i].transform.position = new Vector3(xPos, indicatorParents[i].transform.position.y, indicatorParents[i].transform.position.z);
+
+            indicatorParents[i].SetActive(xPos <= NoteController.CHART_CENTER_POS - NoteController.noteObjectPositionStartOffset);
         }
     }
 }

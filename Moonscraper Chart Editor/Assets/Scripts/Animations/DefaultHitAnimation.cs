@@ -16,13 +16,19 @@ public class DefaultHitAnimation : HitAnimation {
     string initBaseLayerName;
     int initBaseLayerPos;
 
+    bool startRan = false;
 	// Use this for initialization
 	void Start () {
-        initZPos = transform.position.z;
-        ren = GetComponent<SpriteRenderer>();
+        if (!startRan)
+        {
+            initZPos = transform.position.z;
+            ren = GetComponent<SpriteRenderer>();
 
-        initBaseLayerName = baseRen.sortingLayerName;
-        initBaseLayerPos = baseRen.sortingOrder;
+            initBaseLayerName = baseRen.sortingLayerName;
+            initBaseLayerPos = baseRen.sortingOrder;
+
+            startRan = true;
+        }
 	}
 	
 	// Update is called once per frame
@@ -58,19 +64,24 @@ public class DefaultHitAnimation : HitAnimation {
 
     void OnDisable ()
     {
-        if (ren)
-            StopAnim();
+        StopAnim();
     }
 
     public override void StopAnim()
     {
+        if (!ren)
+            Start();
+
         Vector3 position = transform.position;
         position.z = initZPos;
         transform.position = position;
 
-        ren.sortingLayerName = "Sustains";
-        baseRen.sortingLayerName = initBaseLayerName;
-        baseRen.sortingOrder = initBaseLayerPos;
+        if (ren)
+        {
+            ren.sortingLayerName = "Sustains";
+            baseRen.sortingLayerName = initBaseLayerName;
+            baseRen.sortingOrder = initBaseLayerPos;
+        }
     }
 
     public override void PlayOneShot()

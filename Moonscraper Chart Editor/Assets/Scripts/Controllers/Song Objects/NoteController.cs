@@ -12,6 +12,9 @@ public class NoteController : SongObjectController {
     public const float OPEN_NOTE_SUSTAIN_WIDTH = 4;
     public const float OPEN_NOTE_COLLIDER_WIDTH = 5;
 
+    public static float positionIncrementFactor { get { return Globals.ghLiveMode ? 0.8f : 1.0f; } }
+    public static float noteObjectPositionStartOffset = -2;
+
     public Note note { get { return (Note)songObject; } set { Init(value); } }
     public SustainController sustain;
     public GameObject noteVisuals;
@@ -396,17 +399,14 @@ public class NoteController : SongObjectController {
 
     public static float GetXPos(float chartPos, Note note)
     {
-        float factor = Globals.ghLiveMode ? 0.8f : 1.0f;
-        float positionOffset = 2;
-
         if (!note.IsOpenNote())
         {
             if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
             {
-                return chartPos - note.rawNote * factor + positionOffset;
+                return chartPos - note.rawNote * positionIncrementFactor - noteObjectPositionStartOffset;
             }
             else
-                return chartPos + note.rawNote * factor - positionOffset;
+                return chartPos + note.rawNote * positionIncrementFactor + noteObjectPositionStartOffset;
 
         }
         else
@@ -470,9 +470,10 @@ public class NoteController : SongObjectController {
 
     public void PlayIndicatorAnim()
     {
-        if (note.fret_type != Note.Fret_Type.OPEN)
+        if (!note.IsOpenNote())
         {
-            editor.indicators.animations[(int)note.fret_type].PlayOneShot();
+            if (note.rawNote < editor.indicators.animations.Length)
+                editor.indicators.animations[note.rawNote].PlayOneShot();
         }
         else
         {

@@ -23,6 +23,10 @@ public class MenuBar : MonoBehaviour {
     [SerializeField]
     GameObject[] disableDuringPreview;
 
+    [Header("Misc")]
+    [SerializeField]
+    Indicators indicatorManager;
+
     public static Song.Instrument currentInstrument = Song.Instrument.Guitar;
     public static Song.Difficulty currentDifficulty = Song.Difficulty.Expert;
 
@@ -69,12 +73,15 @@ public class MenuBar : MonoBehaviour {
     {
         try
         {
-            currentInstrument = (Song.Instrument)System.Enum.Parse(typeof(Song.Instrument), value, true);
+            currentInstrument = (Song.Instrument)System.Enum.Parse(typeof(Song.Instrument), value, true); 
         }
         catch
         {
             Debug.LogError("Invalid instrument set: " + value);
         }
+
+        indicatorManager.UpdateStrikerColors();
+        indicatorManager.SetStrikerPlacement();
     }
 
     public void SetDifficulty(string value)
