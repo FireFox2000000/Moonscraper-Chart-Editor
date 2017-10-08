@@ -30,7 +30,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
         {
             // Visuals
             // Update mesh
-            if (note.fret_type == Note.Fret_Type.OPEN)
+            if (note.IsOpenNote())// fret_type == Note.Fret_Type.OPEN)
                 meshFilter.sharedMesh = resources.openModel.sharedMesh;
             else if (specialType == Note.Special_Type.STAR_POW)
                 meshFilter.sharedMesh = resources.spModel.sharedMesh;
@@ -40,7 +40,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
             Material[] materials;
 
             // Determine materials
-            if (note.fret_type == Note.Fret_Type.OPEN)
+            if (note.IsOpenNote())
             {
                 materials = resources.openRenderer.sharedMaterials;
 
@@ -59,65 +59,15 @@ public class NoteVisuals3DManager : NoteVisualsManager
                         materials[2] = resources.openMaterials[0];
                 }
             }
+            else if (Globals.ghLiveMode)
+            {
+                materials = GetGHLiveNoteColours(note);
+            }
             else
             {
-                const int STANDARD_COLOUR_MAT_POS = 1;
-                const int SP_COLOR_MAT_POS = 3;
-
-                int fretNumber = (int)note.fret_type;
-                if (Globals.drumMode)
-                {
-                    fretNumber += 1;
-                    if (fretNumber > 4)
-                        fretNumber = 0;
-                }
-
-                Material[] strumColorMats = resources.strumColors;
-                Material[] tapColorMats = resources.tapColors;
-
-                switch (noteType)
-                {
-                    case (Note.Note_Type.Hopo):
-                        if (Globals.drumMode)
-                            goto default;
-
-                        if (specialType == Note.Special_Type.STAR_POW)
-                        {
-                            materials = resources.spHopoRenderer.sharedMaterials;
-                            materials[SP_COLOR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber);
-                        }
-                        else
-                        {
-                            materials = resources.hopoRenderer.sharedMaterials;
-                            materials[STANDARD_COLOUR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber);//resources.strumColors[fretNumber];
-                        }
-                        break;
-                    case (Note.Note_Type.Tap):
-                        if (specialType == Note.Special_Type.STAR_POW)
-                        {
-                            materials = resources.spTapRenderer.sharedMaterials;
-                            materials[SP_COLOR_MAT_POS] = GetValidMaterial(tapColorMats, fretNumber); //resources.tapColors[fretNumber];
-                        }
-                        else
-                        {
-                            materials = resources.tapRenderer.sharedMaterials;
-                            materials[STANDARD_COLOUR_MAT_POS] = GetValidMaterial(tapColorMats, fretNumber);//resources.tapColors[fretNumber];
-                        }
-                        break;
-                    default:    // strum
-                        if (specialType == Note.Special_Type.STAR_POW)
-                        {
-                            materials = resources.spStrumRenderer.sharedMaterials;
-                            materials[SP_COLOR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber);//resources.strumColors[fretNumber];
-                        }
-                        else
-                        {
-                            materials = resources.strumRenderer.sharedMaterials;
-                            materials[STANDARD_COLOUR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber); // resources.strumColors[fretNumber];
-                        }
-                        break;
-                }
+                materials = GetStandardNoteColours(note);
             }
+
             noteRenderer.sharedMaterials = materials;
         }
     }
@@ -128,5 +78,101 @@ public class NoteVisuals3DManager : NoteVisualsManager
             return matArray[fretNumber];
         else
             return null;
+    }
+
+    Material[] GetStandardNoteColours(Note note)
+    {
+        int fretNumber = (int)note.fret_type;
+        if (Globals.drumMode)
+        {
+            fretNumber += 1;
+            if (fretNumber > 4)
+                fretNumber = 0;
+        }
+
+        Material[] strumColorMats = resources.strumColors;
+        Material[] tapColorMats = resources.tapColors;
+
+        return GetMatFromNoteType(fretNumber, strumColorMats, tapColorMats);
+    }
+
+    Material[] GetGHLiveNoteColours(Note note)
+    {
+        int fretNumber;
+
+        switch (note.ghlive_fret_type)
+        {
+            case (Note.GHLive_Fret_Type.WHITE_1):
+            case (Note.GHLive_Fret_Type.WHITE_2):
+            case (Note.GHLive_Fret_Type.WHITE_3):
+                fretNumber = 1;
+                break;
+
+            case (Note.GHLive_Fret_Type.BLACK_1):
+            case (Note.GHLive_Fret_Type.BLACK_2):
+            case (Note.GHLive_Fret_Type.BLACK_3):
+            default:
+                fretNumber = 0;
+                break;
+        }
+
+        Material[] strumColorMats = resources.ghlStrumColors;
+        Material[] tapColorMats = resources.ghlTapColors;
+
+        return GetMatFromNoteType(fretNumber, strumColorMats, tapColorMats);
+    }
+
+    Material[] GetMatFromNoteType(int materialToSelectArrayPos, Material[] strumColorMats, Material[] tapColorMats)
+    {
+        Material[] materials;
+        const int STANDARD_COLOUR_MAT_POS = 1;
+        const int SP_COLOR_MAT_POS = 3;
+
+        int fretNumber = materialToSelectArrayPos;
+
+        switch (noteType)
+        {
+            case (Note.Note_Type.Hopo):
+                if (Globals.drumMode)
+                    goto default;
+
+                if (specialType == Note.Special_Type.STAR_POW)
+                {
+                    materials = resources.spHopoRenderer.sharedMaterials;
+                    materials[SP_COLOR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber);
+                }
+                else
+                {
+                    materials = resources.hopoRenderer.sharedMaterials;
+                    materials[STANDARD_COLOUR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber);
+                }
+                break;
+            case (Note.Note_Type.Tap):
+                if (specialType == Note.Special_Type.STAR_POW)
+                {
+                    materials = resources.spTapRenderer.sharedMaterials;
+                    materials[SP_COLOR_MAT_POS] = GetValidMaterial(tapColorMats, fretNumber);
+                }
+                else
+                {
+                    materials = resources.tapRenderer.sharedMaterials;
+                    materials[STANDARD_COLOUR_MAT_POS] = GetValidMaterial(tapColorMats, fretNumber);
+                }
+                break;
+            default:    // strum
+                if (specialType == Note.Special_Type.STAR_POW)
+                {
+                    materials = resources.spStrumRenderer.sharedMaterials;
+                    materials[SP_COLOR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber);
+                }
+                else
+                {
+                    materials = resources.strumRenderer.sharedMaterials;
+                    materials[STANDARD_COLOUR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber);
+                }
+                break;
+        }
+
+        return materials;
     }
 }

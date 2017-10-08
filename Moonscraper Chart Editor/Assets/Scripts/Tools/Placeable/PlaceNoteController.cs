@@ -7,7 +7,10 @@ using System.Collections.Generic;
 public class PlaceNoteController : ObjectlessTool {
     public NotePropertiesPanelController panel;
     public PlaceNote[] standardPlaceableNotes = new PlaceNote[7];        // Starts at multi-note before heading into green (1), red (2) through to open (6)
+    [HideInInspector]
     public PlaceNote[] allPlaceableNotes;
+    [HideInInspector]
+    public PlaceNote[] allKeyboardPlaceableNotes;
     public PlaceNote multiNote;
     public PlaceNote openNote;
 
@@ -23,7 +26,7 @@ public class PlaceNoteController : ObjectlessTool {
     List<ActionHistory.Action> keysBurstAddHistory = new List<ActionHistory.Action>();
 
     //const int MULTI_NOTE_POS = 0;
-    const int OPEN_NOTE_POS = 5;
+    //const int OPEN_NOTE_POS = 5;
     const string OPEN_NOTE_KEY = "6";
 
     protected override void Awake()
@@ -36,20 +39,26 @@ public class PlaceNoteController : ObjectlessTool {
             note.gameObject.SetActive(false);
         }
 
-        int numberOfNotes = standardPlaceableNotes.Length;
+        List<PlaceNote> notes = new List<PlaceNote>();
+        notes.AddRange(standardPlaceableNotes);
+        notes.Add(openNote);
+        notes.Add(multiNote);
+        allPlaceableNotes = notes.ToArray();
+
+        notes.Clear();
+        notes.AddRange(standardPlaceableNotes);
+        notes.Add(openNote);
+        allKeyboardPlaceableNotes = notes.ToArray();
+
+        int numberOfNotes = allKeyboardPlaceableNotes.Length;
         heldNotes = new Note[numberOfNotes];
         heldInitialOverwriteActions = new ActionHistory.Action[numberOfNotes][];
         inputBlock = new bool[numberOfNotes];
-
-        List<PlaceNote> notes = new List<PlaceNote>();
-        notes.AddRange(standardPlaceableNotes);
-        notes.Add(multiNote);
-        allPlaceableNotes = notes.ToArray();
     }
 
     public override void ToolEnable()
     {
-        editor.currentSelectedObject = multiNote.note;// notes[MULTI_NOTE_POS].note;
+        editor.currentSelectedObject = multiNote.note;
     }
 
     public override void ToolDisable()
@@ -149,6 +158,11 @@ public class PlaceNoteController : ObjectlessTool {
 
     void KeysControlsInit()
     {
+        foreach (PlaceNote placeableNotes in allKeyboardPlaceableNotes)
+        {
+            placeableNotes.gameObject.SetActive(true);
+        }
+
         foreach (PlaceNote placeableNotes in allPlaceableNotes)
         {
             placeableNotes.gameObject.SetActive(false);
@@ -157,7 +171,7 @@ public class PlaceNoteController : ObjectlessTool {
         // Update flags in the note panel
         if (editor.currentSelectedObject != null && editor.currentSelectedObject.GetType() == typeof(Note))
         {
-            foreach (PlaceNote note in standardPlaceableNotes)
+            foreach (PlaceNote note in allKeyboardPlaceableNotes)
             {
                 note.note.flags = ((Note)editor.currentSelectedObject).flags;
             }
@@ -185,23 +199,23 @@ public class PlaceNoteController : ObjectlessTool {
             }
         }
 
-        for (int i = 0; i < standardPlaceableNotes.Length; ++i)      // Start at 1 to ignore the multinote
+        for (int i = 0; i < allKeyboardPlaceableNotes.Length; ++i)      // Start at 1 to ignore the multinote
         {                     
             // Need to make sure the note is at it's correct tick position
             if (Input.GetKeyDown((i + 1).ToString()))
             {
                 int notePos = i;
 
-                if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip && notePos >= 0 && notePos < 5)
-                    notePos = 5 - (notePos + 1);
+                if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip && notePos >= 0 && notePos < standardPlaceableNotes.Length)
+                    notePos = standardPlaceableNotes.Length - (notePos + 1);
 
-                standardPlaceableNotes[notePos].ExplicitUpdate();
-                int pos = SongObject.FindObjectPosition(standardPlaceableNotes[notePos].note, editor.currentChart.notes);
+                allKeyboardPlaceableNotes[notePos].ExplicitUpdate();
+                int pos = SongObject.FindObjectPosition(allKeyboardPlaceableNotes[notePos].note, editor.currentChart.notes);
 
                 if (pos == SongObject.NOTFOUND)
                 {
-                    Debug.Log("Added " + standardPlaceableNotes[notePos].note.fret_type + " note at position " + standardPlaceableNotes[notePos].note.position + " using keyboard controls");
-                    heldInitialOverwriteActions[i] = PlaceNote.AddObjectToCurrentChart((Note)standardPlaceableNotes[notePos].note.Clone(), editor, out heldNotes[i]);
+                    Debug.Log("Added " + allKeyboardPlaceableNotes[notePos].note.fret_type + " note at position " + allKeyboardPlaceableNotes[notePos].note.position + " using keyboard controls");
+                    heldInitialOverwriteActions[i] = PlaceNote.AddObjectToCurrentChart((Note)allKeyboardPlaceableNotes[notePos].note.Clone(), editor, out heldNotes[i]);
                     
                     //editor.actionHistory.Insert(PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor, out heldNotes[i - 1]));
                 }
@@ -218,9 +232,9 @@ public class PlaceNoteController : ObjectlessTool {
     void KeyboardControlsBurstMode()
     {
         int keysPressed = 0;
-        for (int i = 0; i < standardPlaceableNotes.Length; ++i)
+        for (int i = 0; i < allKeyboardPlaceableNotes.Length; ++i)
         {
-            if (i + 1 >= standardPlaceableNotes.Length && keysPressed > 0)           // Prevents open notes while holding other keys
+            if (i + 1 >= allKeyboardPlaceableNotes.Length && keysPressed > 0)           // Prevents open notes while holding other keys
                 continue;
           
             if (Input.GetKey((i + 1).ToString()) && !inputBlock[i])
@@ -228,16 +242,16 @@ public class PlaceNoteController : ObjectlessTool {
                 ++keysPressed;
                 int notePos = i;
 
-                if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip && notePos >= 0 && notePos < 5)
-                    notePos = 6 - notePos;
+                if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip && notePos >= 0 && notePos < standardPlaceableNotes.Length)
+                    notePos = standardPlaceableNotes.Length - (notePos + 1);
 
-                standardPlaceableNotes[notePos].ExplicitUpdate();
+                allKeyboardPlaceableNotes[notePos].ExplicitUpdate();
 
-                int pos = SongObject.FindObjectPosition(standardPlaceableNotes[notePos].note, editor.currentChart.notes);
+                int pos = SongObject.FindObjectPosition(allKeyboardPlaceableNotes[notePos].note, editor.currentChart.notes);
 
                 if (pos == SongObject.NOTFOUND)
                 {
-                    keysBurstAddHistory.AddRange(PlaceNote.AddObjectToCurrentChart((Note)standardPlaceableNotes[notePos].note.Clone(), editor));
+                    keysBurstAddHistory.AddRange(PlaceNote.AddObjectToCurrentChart((Note)allKeyboardPlaceableNotes[notePos].note.Clone(), editor));
                 }
                 else if (Input.GetKeyDown(i.ToString()))
                 {
@@ -260,12 +274,22 @@ public class PlaceNoteController : ObjectlessTool {
     void MouseControlsBurstMode()
     {
         bool openActive = false;
-        if (standardPlaceableNotes[OPEN_NOTE_POS].gameObject.activeSelf)
+        if (openNote.gameObject.activeSelf)
             openActive = true;
 
         foreach (PlaceNote placeableNotes in allPlaceableNotes)
         {
             placeableNotes.gameObject.SetActive(false);
+        }
+
+        bool anyStandardKeyInput = false;
+        for (int i = 0; i < standardPlaceableNotes.Length; ++i)
+        {
+            if (Input.GetKey((i + 1).ToString()))
+            {
+                anyStandardKeyInput = true;
+                break;
+            }
         }
 
         List<PlaceNote> activeNotes = new List<PlaceNote>();
@@ -280,15 +304,15 @@ public class PlaceNoteController : ObjectlessTool {
             }
             else
             {
-                standardPlaceableNotes[OPEN_NOTE_POS].gameObject.SetActive(true);
-                activeNotes.Add(standardPlaceableNotes[OPEN_NOTE_POS]);
+                openNote.gameObject.SetActive(true);
+                activeNotes.Add(openNote);
             }
         }
-        else if (!Input.GetKey(OPEN_NOTE_KEY) && (Input.GetKey("1") || Input.GetKey("2") || Input.GetKey("3") || Input.GetKey("4") || Input.GetKey("5")))
+        else if (!Input.GetKey(OPEN_NOTE_KEY) && (anyStandardKeyInput))
         {
             for (int i = 0; i < standardPlaceableNotes.Length; ++i)
             {
-                int leftyPos = 5 - (i + 1);
+                int leftyPos = standardPlaceableNotes.Length - (i + 1);
 
                 if (Input.GetKey((i + 1).ToString()))
                 {
@@ -307,8 +331,8 @@ public class PlaceNoteController : ObjectlessTool {
         }
         else if (openActive)
         {
-            standardPlaceableNotes[OPEN_NOTE_POS].gameObject.SetActive(true);
-            activeNotes.Add(standardPlaceableNotes[OPEN_NOTE_POS]);
+            openNote.gameObject.SetActive(true);
+            activeNotes.Add(openNote);
         }
         else
         {
@@ -339,14 +363,15 @@ public class PlaceNoteController : ObjectlessTool {
                 }
 
                 // Visuals for some reason aren't being updated in this cycle
-                //activeNotes[i].gameObject.SendMessage("Update");
                 activeNotes[i].visuals.UpdateVisuals();
             }
 
-            panel.currentNote = activeNotes[0].note;
+            //panel.currentNote = activeNotes[0].note;
         }
         else
-            panel.currentNote = multiNote.note;
+        {
+            //panel.currentNote = multiNote.note;
+        }
 
         // Update flags in the note panel
         if (editor.currentSelectedObject.GetType() == typeof(Note))

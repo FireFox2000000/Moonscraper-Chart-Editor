@@ -28,4 +28,8 @@ public class MeshNoteResources : ScriptableObject {
     public Material spTapTemp;
 
     public Material[] openMaterials = new Material[4];
+
+    [Header("GHLive Note colours")]
+    public Material[] ghlStrumColors = new Material[2];
+    public Material[] ghlTapColors = new Material[2];
 }

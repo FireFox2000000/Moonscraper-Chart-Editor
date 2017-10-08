@@ -180,11 +180,6 @@ public class Chart  {
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
 #endif
-
-        /*Regex noteRegex = new Regex(@"^\s*\d+ = N \d \d+$");            // 48 = N 2 0
-        Regex starPowerRegex = new Regex(@"^\s*\d+ = S 2 \d+$");        // 768 = S 2 768
-        Regex noteEventRegex = new Regex(@"^\s*\d+ = E \S");            // 1728 = E T
-        */
         List<string> flags = new List<string>();
 
         _chartObjects.Capacity = data.Length;
@@ -208,64 +203,31 @@ public class Chart  {
 
                     switch (type)
                     {
-                        case ("n"):// noteRegex.IsMatch(line))
+                        case ("n"):
                             // Split string to get note information
                             string[] digits = splitString;
 
                             int fret_type = int.Parse(digits[SPLIT_VALUE]);
                             uint length = uint.Parse(digits[SPLIT_LENGTH]);
 
-                            if (instrument != Song.Instrument.Unrecognised)
+                            if (instrument == Song.Instrument.Unrecognised)
                             {
-                                switch (fret_type)
-                                {
-                                    case (0):
-                                    case (1):
-                                    case (2):
-                                    case (3):
-                                    case (4):
-                                        // Add note to the data
-                                        Note newStandardNote = new Note(position, (Note.Fret_Type)fret_type, length);
-                                        if (instrument == Song.Instrument.Drums)
-                                            newStandardNote.fret_type = Note.LoadDrumNoteToGuitarNote(newStandardNote.fret_type);
-                                        Add(newStandardNote, false);
-                                        break;
-                                    case (5):
-                                        if (instrument == Song.Instrument.Drums)
-                                        {
-                                            Note drumNote = new Note(position, Note.Fret_Type.ORANGE, length);
-                                            Add(drumNote, false);
-                                            break;
-                                        }
-                                        else
-                                            goto case (6);
-                                    case (6):
-                                        flags.Add(line);
-                                        break;
-                                    case (7):
-                                        Note newOpenNote = new Note(position, Note.Fret_Type.OPEN, length);
-                                        Add(newOpenNote, false);
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            }
-                            else
-                            {
-                                Note newNote = new Note(position, Note.Fret_Type.GREEN, length);
-                                newNote.rawNote = fret_type;
+                                Note newNote = new Note(position, fret_type, length);
                                 Add(newNote, false);
                             }
-                            
+                            else if (instrument == Song.Instrument.Drums)
+                                LoadDrumNote(position, fret_type, length);
+                            else
+                                LoadStandardNote(line, position, fret_type, length, flags);                      
                             break;
 
-                        case ("s")://(starPowerRegex.IsMatch(line))
+                        case ("s"):
                             length = uint.Parse(splitString[SPLIT_LENGTH]);
 
                             Add(new Starpower(position, length), false);
                             break;
 
-                        case ("e"): //(noteEventRegex.IsMatch(line))
+                        case ("e"):
                             string[] strings = splitString;
                             string eventName = strings[SPLIT_VALUE];
                             Add(new ChartEvent(position, eventName), false);
@@ -347,5 +309,118 @@ public class Chart  {
         }
 
         return chart;
+    }
+
+    void LoadStandardNote(string line, uint position, int noteNumber, uint length, List<string> flagsList)
+    {
+        Note.Fret_Type? noteFret = null;
+        switch (noteNumber)
+        {
+            case (0):
+                noteFret = Note.Fret_Type.GREEN;
+                break;
+            case (1):
+                noteFret = Note.Fret_Type.RED;
+                break;
+            case (2):
+                noteFret = Note.Fret_Type.YELLOW;
+                break;
+            case (3):
+                noteFret = Note.Fret_Type.BLUE;
+                break;
+            case (4):
+                noteFret = Note.Fret_Type.ORANGE;
+                break;
+            case (5):
+            case (6):
+                flagsList.Add(line);
+                break;
+            case (7):
+                noteFret = Note.Fret_Type.OPEN;
+                break;
+            default:
+                return;
+        }
+
+        if (noteFret != null)
+        {
+            Note newNote = new Note(position, (int)noteFret, length);
+            Add(newNote, false);
+        }
+    }
+
+    void LoadDrumNote(uint position, int noteNumber, uint length)
+    {
+        Note.Drum_Fret_Type? noteFret = null;
+        switch (noteNumber)
+        {
+            case (0):
+                noteFret = Note.Drum_Fret_Type.KICK;
+                break;
+            case (1):
+                noteFret = Note.Drum_Fret_Type.RED;
+                break;
+            case (2):
+                noteFret = Note.Drum_Fret_Type.YELLOW;
+                break;
+            case (3):
+                noteFret = Note.Drum_Fret_Type.BLUE;
+                break;
+            case (4):
+                noteFret = Note.Drum_Fret_Type.ORANGE;
+                break;
+            case (5):
+                noteFret = Note.Drum_Fret_Type.GREEN;
+                break;
+            default:
+                return;
+        }
+
+        if (noteFret != null)
+        {
+            Note newNote = new Note(position, (int)noteFret, length);
+            Add(newNote, false);
+        }
+    }
+
+    void LoadGHLiveNote(string line, uint position, int noteNumber, uint length, List<string> flagsList)
+    {
+        Note.GHLive_Fret_Type? noteFret = null;
+        switch (noteNumber)
+        {
+            case (0):
+                noteFret = Note.GHLive_Fret_Type.WHITE_1;
+                break;
+            case (1):
+                noteFret = Note.GHLive_Fret_Type.WHITE_2;
+                break;
+            case (2):
+                noteFret = Note.GHLive_Fret_Type.WHITE_3;
+                break;
+            case (3):
+                noteFret = Note.GHLive_Fret_Type.BLACK_1;
+                break;
+            case (4):
+                noteFret = Note.GHLive_Fret_Type.BLACK_2;
+                break;
+            case (5):
+            case (6):
+                flagsList.Add(line);
+                break;
+            case (7):
+                noteFret = Note.GHLive_Fret_Type.OPEN;
+                break;
+            case (8):
+                noteFret = Note.GHLive_Fret_Type.BLACK_3;
+                break;
+            default:
+                return;
+        }
+
+        if (noteFret != null)
+        {
+            Note newNote = new Note(position, (int)noteFret, length);
+            Add(newNote, false);
+        }
     }
 }

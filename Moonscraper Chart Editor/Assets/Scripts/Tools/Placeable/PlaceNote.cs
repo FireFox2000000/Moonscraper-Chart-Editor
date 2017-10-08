@@ -76,7 +76,7 @@ public class PlaceNote : PlaceSongObject {
         }
         else
         {
-            if (note.fret_type == Note.Fret_Type.OPEN)
+            if (note.IsOpenNote())//.fret_type == Note.Fret_Type.OPEN)
                 UpdateOpenPrevAndNext(pos);
             else
                 UpdatePrevAndNext(pos);
@@ -163,12 +163,11 @@ public class PlaceNote : PlaceSongObject {
             else if (Input.GetKey("5"))
                 note.fret_type = Note.Fret_Type.GREEN;
             //else if (Input.GetKey("6"))
-            //note.fret_type = Note.Fret_Type.OPEN;
-            else if (note.fret_type != Note.Fret_Type.OPEN && Mouse.world2DPosition != null)
+            else if (!note.IsOpenNote() && Mouse.world2DPosition != null)
             {
                 Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
                 mousePosition.x += horizontalMouseOffset;
-                note.fret_type = XPosToFretType(mousePosition.x);
+                note.rawNote = XPosToNoteNumber(mousePosition.x);
             }
         }
         else
@@ -184,21 +183,36 @@ public class PlaceNote : PlaceSongObject {
             else if (Input.GetKey("5"))
                 note.fret_type = Note.Fret_Type.ORANGE;
             //else if (Input.GetKey("6"))
-            //note.fret_type = Note.Fret_Type.OPEN;
-            else if (note.fret_type != Note.Fret_Type.OPEN && Mouse.world2DPosition != null)
+
+            else if (!note.IsOpenNote() && Mouse.world2DPosition != null)
             {
                 Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
                 mousePosition.x += horizontalMouseOffset;
-                note.fret_type = XPosToFretType(mousePosition.x);
+                note.rawNote = XPosToNoteNumber(mousePosition.x);
             }
         }
     }
 
-    public static Note.Fret_Type XPosToFretType(float xPos)
+    public static int XPosToNoteNumber(float xPos)
     {
         if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
             xPos *= -1;
 
+        float startPos = -2.0f;
+        float endPos = 2.0f;
+
+        int max = Globals.ghLiveMode ? (int)Note.GHLive_Fret_Type.BLACK_3 : (int)Note.Fret_Type.ORANGE;
+        float factor = (endPos - startPos) / (max);
+
+        for (int i = 0; i < max; ++i)
+        {
+            float currentPosCheck = startPos + i * factor + factor / 2.0f;
+            if (xPos < currentPosCheck)
+                return i;
+        }
+
+        return max;
+        /*
         if (xPos > -0.5f)
         {
             if (xPos < 0.5f)
@@ -214,7 +228,7 @@ public class PlaceNote : PlaceSongObject {
                 return Note.Fret_Type.RED;
             else
                 return Note.Fret_Type.GREEN;
-        }
+        }*/
     }
 
     public ActionHistory.Action[] AddNoteWithRecord()
@@ -250,7 +264,7 @@ public class PlaceNote : PlaceSongObject {
                     cancelAdd = true;
                     break;
                 }
-                if ((((note.fret_type == Note.Fret_Type.OPEN || overwriteNote.fret_type == Note.Fret_Type.OPEN) && !Globals.drumMode) || note.fret_type == overwriteNote.fret_type) && !note.AllValuesCompare(overwriteNote))
+                if ((((note.IsOpenNote() || overwriteNote.IsOpenNote()) && !Globals.drumMode) || note.fret_type == overwriteNote.fret_type) && !note.AllValuesCompare(overwriteNote))
                 {
                     noteRecord.Add(new ActionHistory.Delete(overwriteNote));
                 }
@@ -267,7 +281,7 @@ public class PlaceNote : PlaceSongObject {
         else
             noteToAdd = note;
 
-        if (noteToAdd.fret_type == Note.Fret_Type.OPEN)
+        if (noteToAdd.IsOpenNote())
             noteToAdd.flags &= ~Note.Flags.TAP;
 
         editor.currentChart.Add(noteToAdd, update);
@@ -295,14 +309,14 @@ public class PlaceNote : PlaceSongObject {
 
     protected static void standardOverwriteOpen(Note note)
     {
-        if (note.fret_type != Note.Fret_Type.OPEN && MenuBar.currentInstrument != Song.Instrument.Drums)
+        if (!note.IsOpenNote() && MenuBar.currentInstrument != Song.Instrument.Drums)
         {
             Note[] chordNotes = SongObject.FindObjectsAtPosition(note.position, note.chart.notes);
 
             // Check for open notes and delete
             foreach (Note chordNote in chordNotes)
             {
-                if (chordNote.fret_type == Note.Fret_Type.OPEN)
+                if (chordNote.IsOpenNote())
                 {
                     chordNote.Delete();
                 }
@@ -344,7 +358,7 @@ public class PlaceNote : PlaceSongObject {
 
             // Find the next note of the same fret type or open
             next = note.next;
-            while (next != null && next.fret_type != note.fret_type && next.fret_type != Note.Fret_Type.OPEN )
+            while (next != null && next.fret_type != note.fret_type && !next.IsOpenNote())
                 next = next.next;
 
             // If it's an open note it won't be capped
@@ -392,7 +406,7 @@ public class PlaceNote : PlaceSongObject {
             // Cap only the sustain of the same fret type and open notes
             foreach (Note prevNote in previousNotes)
             {
-                if (prevNote.controller != null && (noteToAdd.fret_type == Note.Fret_Type.OPEN || prevNote.fret_type == noteToAdd.fret_type /*|| prevNote.fret_type == Note.Fret_Type.OPEN*/))
+                if (prevNote.controller != null && (noteToAdd.IsOpenNote() || prevNote.fret_type == noteToAdd.fret_type /*|| prevNote.fret_type == Note.Fret_Type.OPEN*/))
                 {
                     ActionHistory.Action action = prevNote.CapSustain(noteToAdd);
                     if (action != null)

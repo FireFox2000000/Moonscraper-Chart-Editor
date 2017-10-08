@@ -467,7 +467,7 @@ public abstract class SongObject
             // Collect all the flags
             while (previous != null && previous.position == current.position)
             {
-                if (previous.fret_type == Note.Fret_Type.OPEN)
+                if (previous.IsOpenNote())
                     openNote = previous;
                 else
                     standardFound = true;
@@ -478,7 +478,7 @@ public abstract class SongObject
 
             while (next != null && next.position == current.position)
             {
-                if (next.fret_type == Note.Fret_Type.OPEN)
+                if (next.IsOpenNote())
                     openNote = next;
                 else
                     standardFound = true;
@@ -488,11 +488,11 @@ public abstract class SongObject
             }
 
             // Apply flags
-            if (current.fret_type != Note.Fret_Type.OPEN && openNote != null)
+            if (!current.IsOpenNote() && openNote != null)
             {
                 //openNote.controller.Delete();
             }
-            else if (current.fret_type == Note.Fret_Type.OPEN && standardFound)
+            else if (current.IsOpenNote() && standardFound)
             { }
             else
             {

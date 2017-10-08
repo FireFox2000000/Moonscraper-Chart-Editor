@@ -52,10 +52,10 @@ public class GroupMove : ToolObject
                         if ((SongObject.ID)movingSongObjects[i].classID == SongObject.ID.Note)
                         {
                             Note note = movingSongObjects[i] as Note;
-                            if (note.fret_type != Note.Fret_Type.OPEN)
+                            if (!note.IsOpenNote())
                             {
                                 float position = NoteController.GetXPos(0, originalSongObjects[i] as Note) + (mousePosition.x - initMousePos.x);      // Offset
-                                note.fret_type = PlaceNote.XPosToFretType(position);
+                                note.rawNote = PlaceNote.XPosToNoteNumber(position);
                             }
                         }
 

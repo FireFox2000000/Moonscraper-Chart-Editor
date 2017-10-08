@@ -64,6 +64,19 @@ public class Note : ChartObject
         set { base.controller = value; }
     }
 
+    public Note(uint _position,
+                int _rawNote,
+                uint _sustain = 0,
+                Flags _flags = Flags.NONE) : base(_position)
+    {
+        sustain_length = _sustain;
+        flags = _flags;
+        rawNote = _rawNote;
+
+        previous = null;
+        next = null;
+    }
+
     public Note(uint _position, 
                 Fret_Type _fret_type, 
                 uint _sustain = 0, 
@@ -100,7 +113,7 @@ public class Note : ChartObject
     public enum GHLive_Fret_Type
     {
         // Assign to the sprite array position
-        WHITE_1 = 0, WHITE_2 = 1, WHITE_3 = 2, BLACK_1 = 3, BLACK_2 = 4, BLACK_3 = 5, OPEN = 6
+        WHITE_1, BLACK_1, WHITE_2, BLACK_2, WHITE_3, BLACK_3, OPEN
     }
 
     public enum Note_Type

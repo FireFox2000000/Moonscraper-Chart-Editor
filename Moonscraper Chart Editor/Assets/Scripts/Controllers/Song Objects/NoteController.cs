@@ -210,7 +210,7 @@ public class NoteController : SongObjectController {
         if (!sustainHitBox)
             sustainHitBox = sustain.GetComponent<BoxCollider2D>();
 
-        if (note.fret_type == Note.Fret_Type.OPEN)
+        if (note.IsOpenNote())
         {
             // Apply scaling     
             if (sustainHitBox)
@@ -234,7 +234,7 @@ public class NoteController : SongObjectController {
                 // Check for non-open notes and delete
                 foreach (Note chordNote in chordNotes)
                 {
-                    if (chordNote.fret_type != Note.Fret_Type.OPEN)
+                    if (!chordNote.IsOpenNote())
                     {
                         chordNote.Delete();
                     }
@@ -394,25 +394,19 @@ public class NoteController : SongObjectController {
         }
     }
 
-    static float positionToOffsetInDisplay
-    {
-        get
-        {
-            if (Globals.ghLiveMode)
-                return 2.5f;
-            else
-                return 2;
-        }
-    }
-
     public static float GetXPos(float chartPos, Note note)
     {
+        float factor = Globals.ghLiveMode ? 0.8f : 1.0f;
+        float positionOffset = 2;
+
         if (!note.IsOpenNote())
         {
             if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
-                return chartPos - note.rawNote + positionToOffsetInDisplay;
+            {
+                return chartPos - note.rawNote * factor + positionOffset;
+            }
             else
-                return chartPos + note.rawNote - positionToOffsetInDisplay;
+                return chartPos + note.rawNote * factor - positionOffset;
 
         }
         else
@@ -421,15 +415,19 @@ public class NoteController : SongObjectController {
 
     public static float NoteToXPos(Note note)
     {
+        return GetXPos(0, note);
+        /*
         if (!note.IsOpenNote())
         {
-            if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+            if (Globals.notePlacementMode != Globals.NotePlacementMode.LeftyFlip)
+            {
                 return -note.rawNote + positionToOffsetInDisplay;
+            }
             else
                 return note.rawNote - positionToOffsetInDisplay;
         }
         else
-            return 0;
+            return 0;*/
     }
 
     //Note.Fret_Type prevFretType;
@@ -444,7 +442,7 @@ public class NoteController : SongObjectController {
             // Position
             transform.position = new Vector3(CHART_CENTER_POS + NoteToXPos(note), note.worldYPosition, zPos);
 
-            if (note.fret_type == Note.Fret_Type.OPEN)
+            if (note.IsOpenNote())
                 sustainRen.sortingOrder = -1;
             else
                 sustainRen.sortingOrder = 0;
