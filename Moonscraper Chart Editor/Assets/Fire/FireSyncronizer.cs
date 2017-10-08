@@ -20,12 +20,12 @@ public class FireSyncronizer : MonoBehaviour {
     {
         if (Application.isPlaying)
         {
-            flameMaterials = new Material[6];
+            flameMaterials = new Material[7];
             for (int i = 0; i < flameMaterials.Length; ++i)
             {
                 flameMaterials[i] = new Material(flameMat);
 
-                if (customSkin.sustain_mats[i])
+                if (i < customSkin.sustain_mats.Length && customSkin.sustain_mats[i])
                     flameMaterials[i].color = customSkin.sustain_mats[i].color;
                 else
                 {
@@ -48,6 +48,9 @@ public class FireSyncronizer : MonoBehaviour {
                             break;
                         case (5):
                             flameMaterials[i].color = Color.magenta;
+                            break;
+                        case (6):
+                            flameMaterials[i].color = Color.white;
                             break;
                         default:
                             break;

@@ -49,9 +49,10 @@ public class Fire : MonoBehaviour
 
             if (Application.isPlaying && nCon.note != null)
             {
-                int noteNumber = (int)nCon.note.fret_type;
+                int noteNumber = (int)nCon.note.rawNote;
                 if (Globals.drumMode && nCon.note.fret_type != Note.Fret_Type.OPEN)
                 {
+                    // Rotate the colours for drums
                     noteNumber += 1;
                     if (noteNumber > (int)Note.Fret_Type.ORANGE)
                         noteNumber = 0;
