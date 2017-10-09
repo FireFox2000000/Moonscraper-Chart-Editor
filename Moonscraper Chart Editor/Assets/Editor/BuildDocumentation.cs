@@ -1,6 +1,7 @@
 ﻿using UnityEditor;
 using System.Diagnostics;
 using System.IO;
+using System.Collections.Generic;
 
 public class BuildDocumentation  {
     [MenuItem("MyTools/Windows Build With Postprocess")]
@@ -22,16 +23,20 @@ public class BuildDocumentation  {
         
         if (path != string.Empty)
         {
-            string[] levels = new string[EditorBuildSettings.scenes.Length];
+            List<string> levels = new List<string>(EditorBuildSettings.scenes.Length);
 
-            for (int i = 0; i < levels.Length; ++i)
-            {             
-                levels[i] = EditorBuildSettings.scenes[i].path;
-                UnityEngine.Debug.Log(levels[i]);
+            for (int i = 0; i < EditorBuildSettings.scenes.Length; ++i)
+            {
+                EditorBuildSettingsScene scene = EditorBuildSettings.scenes[i];
+                if (scene.enabled)
+                {
+                    levels.Add(scene.path);
+                    UnityEngine.Debug.Log(scene);
+                }
             }
 
             // Build player.
-            BuildPipeline.BuildPlayer(levels, path + "/Moonscraper Chart Editor.exe", buildTarget, BuildOptions.None);
+            BuildPipeline.BuildPlayer(levels.ToArray(), path + "/Moonscraper Chart Editor.exe", buildTarget, BuildOptions.None);
 
             if (Directory.Exists("Assets/Custom Resources"))
             {

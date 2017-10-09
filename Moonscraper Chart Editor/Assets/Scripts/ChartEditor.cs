@@ -59,6 +59,8 @@ public class ChartEditor : MonoBehaviour {
     ClipboardObjectController clipboard;
     [SerializeField]
     GameplayManager gameplayManager;
+    [SerializeField]
+    MenuBar menuBar;
 
     uint _minPos;
     uint _maxPos;
@@ -162,7 +164,7 @@ public class ChartEditor : MonoBehaviour {
 
         // Create a default song
         currentSong = new Song();
-        LoadSong(currentSong);
+        LoadSong(currentSong, true);
 
         // Bass init
         if (!Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero))
@@ -887,16 +889,24 @@ public class ChartEditor : MonoBehaviour {
         currentSelectedObject = null;
     }
 
-    void LoadSong(Song song)
+    void LoadSong(Song song, bool awake = false)
     {
         if (lastLoadedFile != string.Empty)
             isDirty = false;
 
-        MenuBar.currentInstrument = Song.Instrument.Guitar;
-        MenuBar.currentDifficulty = Song.Difficulty.Expert;
+        if (awake)
+        {
+            MenuBar.currentInstrument = Song.Instrument.Guitar;
+            MenuBar.currentDifficulty = Song.Difficulty.Expert;
+        }
+        else
+        {
+            menuBar.SetInstrument("guitar");
+            menuBar.SetDifficulty("expert");
+        }
 
         // Load the default chart
-        LoadChart(currentSong.GetChart(Song.Instrument.Guitar, Song.Difficulty.Expert));
+        LoadChart(currentSong.GetChart(MenuBar.currentInstrument, MenuBar.currentDifficulty));
 #if !BASS_AUDIO
         // Reset audioSources upon successfull load
         foreach (AudioSource source in musicSources)

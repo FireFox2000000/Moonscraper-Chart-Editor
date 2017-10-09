@@ -103,6 +103,9 @@ public class ChartWriter {
                 case (Song.Instrument.GHLiveGuitar):
                     instrumentSaveString = "GHLGuitar";
                     break;
+                case (Song.Instrument.GHLiveBass):
+                    instrumentSaveString = "GHLBass";
+                    break;
                 default:
                     continue;
             }
@@ -282,22 +285,11 @@ public class ChartWriter {
                         if (instrument == Song.Instrument.Drums)
                             fretNumber = GetDrumsSaveNoteNumber(note);
 
-                        else if (instrument == Song.Instrument.GHLiveGuitar)
+                        else if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
                             fretNumber = GetGHLSaveNoteNumber(note);
 
                         else
                             fretNumber = GetStandardSaveNoteNumber(note);
-
-                        /*
-                        Note.Fret_Type fret = note.fret_type;
-
-                        // Drum notes are saved differently
-                        if (instrument == Song.Instrument.Drums)
-                            fret = Note.SaveGuitarNoteToDrumNote(fret);
-
-                        fretNumber = (int)fret;
-                        if (fret == Note.Fret_Type.OPEN && instrument != Song.Instrument.Drums)     // Last note is saved as 7 unless it's in the drum chart in which case it is 5
-                            fretNumber = 7;*/
                     }
                     else
                         fretNumber = note.rawNote;

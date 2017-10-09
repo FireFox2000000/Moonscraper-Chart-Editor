@@ -363,6 +363,9 @@ public class Song {
                 case (Instrument.GHLiveGuitar):
                     instrumentName += "GHLive Guitar - ";
                     break;
+                case (Instrument.GHLiveBass):
+                    instrumentName += "GHLive Bass - ";
+                    break;
                 default:
                     continue;
             }
@@ -945,6 +948,9 @@ public class Song {
                     case ("GHLGuitar"):
                         GetChart(Instrument.GHLiveGuitar, chartDiff).Load(stringData, Instrument.GHLiveGuitar);
                         break;
+                    case ("GHLBass"):
+                        GetChart(Instrument.GHLiveBass, chartDiff).Load(stringData, Instrument.GHLiveBass);
+                        break;
                     default:
                         // Add to the unused chart list
                         LoadUnrecognisedChart(dataName, stringData);
@@ -1344,7 +1350,7 @@ public class Song {
 
     public enum Instrument
     {
-        Guitar = 0, GuitarCoop = 1, Bass = 2, Keys = 3, Drums = 4, GHLiveGuitar = 5, Unrecognised = 99,
+        Guitar = 0, GuitarCoop = 1, Bass = 2, Keys = 3, Drums = 4, GHLiveGuitar = 5, GHLiveBass = 6, Unrecognised = 99,
     }
 }
 

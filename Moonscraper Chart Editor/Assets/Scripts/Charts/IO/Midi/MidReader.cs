@@ -59,6 +59,12 @@ public static class MidReader {
                 case ("part drums"):
                     ReadNotes(midi.Events[i], song, Song.Instrument.Drums);
                     break;
+                case ("part guitar ghl"):
+                    ReadNotes(midi.Events[i], song, Song.Instrument.GHLiveGuitar);
+                    break;
+                case ("part bass ghl"):
+                    ReadNotes(midi.Events[i], song, Song.Instrument.GHLiveBass);
+                    break;
                 case ("beat"):
                     //ReadTrack(midi.Events[i]);
                     break;
@@ -173,7 +179,6 @@ public static class MidReader {
                     unrecognised.Add(chartEvent);
                 else
                     song.GetChart(instrument, Song.Difficulty.Expert).Add(chartEvent);
-                //Debug.Log(text.Text + " " + text.AbsoluteTime);
             }
 
             var note = track[i] as NoteOnEvent;
@@ -206,7 +211,10 @@ public static class MidReader {
                 // Determine which difficulty we are manipulating
                 try
                 {
-                    difficulty = SelectNoteDifficulty(note.NoteNumber);
+                    if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
+                        difficulty = SelectGHLNoteDifficulty(note.NoteNumber);
+                    else
+                        difficulty = SelectNoteDifficulty(note.NoteNumber);
                 }
                 catch
                 {
@@ -233,57 +241,17 @@ public static class MidReader {
                     }
                 }
                 
-                Note.Fret_Type fret;
+                int fret;
 
                 if (sus <= rbSustainFixLength)
                     sus = 0;
 
-                // Determine the fret type of the note
-                switch (note.NoteNumber)
-                {
-                    case 60:
-                    case 72:
-                    case 84:
-                    case 96: fret = Note.Fret_Type.GREEN; break;
-
-                    case 61:
-                    case 73:
-                    case 85:
-                    case 97: fret = Note.Fret_Type.RED; break;
-
-                    case 62:
-                    case 74:
-                    case 86:
-                    case 98: fret = Note.Fret_Type.YELLOW; break;
-
-                    case 63:
-                    case 75:
-                    case 87:
-                    case 99: fret = Note.Fret_Type.BLUE; break;
-
-                    case 64:
-                    case 76:
-                    case 88:
-                    case 100: fret = Note.Fret_Type.ORANGE; break;
-
-                    case 65:
-                    case 77:
-                    case 89:
-                    case 101:
-                        if (instrument == Song.Instrument.Drums)
-                        {
-                            fret = Note.Fret_Type.OPEN;     // Gets converted to an orange note later on
-                            break;
-                        }
-                        else
-                            continue;
-                    default:
-                        Debug.Log(note.NoteNumber);
-                        continue;
-                }
-
                 if (instrument == Song.Instrument.Drums)
-                    fret = Note.LoadDrumNoteToGuitarNote(fret);
+                    fret = (int)GetDrumFretType(note.NoteNumber);
+                else if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
+                    fret = (int)GetGHLFretType(note.NoteNumber);
+                else
+                    fret = (int)GetStandardFretType(note.NoteNumber);
 
                 // Add the note to the correct chart
                 song.GetChart(instrument, difficulty).Add(new Note(tick, fret, sus), false);             
@@ -470,6 +438,19 @@ public static class MidReader {
             throw new System.ArgumentOutOfRangeException("Note number outside of note range");
     }
 
+    static Song.Difficulty SelectGHLNoteDifficulty(int noteNumber)
+    {
+        if (noteNumber >= 94)
+            return Song.Difficulty.Expert;
+        else if (noteNumber >= 82)
+            return Song.Difficulty.Hard;
+        else if (noteNumber >= 70)
+            return Song.Difficulty.Medium;
+        else
+            return Song.Difficulty.Easy;
+    }
+
+
     static Song.Difficulty SelectRawNoteDifficulty(int noteNumber)
     {
         if (noteNumber >= 96)
@@ -487,5 +468,87 @@ public static class MidReader {
         // Generally starts at 60, every 12 notes is a change is difficulty
         //return noteNumber % 12;
         return noteNumber;
+    }
+
+    static Note.Fret_Type GetStandardFretType(int noteNumber)
+    {
+        Note.Fret_Type fret;
+        int difficultyLessNote = noteNumber % 12;
+
+        // Determine the fret type of the note
+        switch (difficultyLessNote)
+        {
+            case 0: fret = Note.Fret_Type.GREEN; break;
+
+            case 1: fret = Note.Fret_Type.RED; break;
+
+            case 2: fret = Note.Fret_Type.YELLOW; break;
+
+            case 3: fret = Note.Fret_Type.BLUE; break;
+
+            case 4: fret = Note.Fret_Type.ORANGE; break;
+
+            // 5 is forced
+            default:
+                fret = Note.Fret_Type.GREEN; break;
+        }
+
+        return fret;
+    }
+
+    static Note.Drum_Fret_Type GetDrumFretType(int noteNumber)
+    {
+        Note.Drum_Fret_Type fret;
+        int difficultyLessNote = noteNumber % 12;
+
+        // Determine the fret type of the note
+        switch (difficultyLessNote)
+        {
+            case 0: fret = Note.Drum_Fret_Type.KICK; break;
+
+            case 1: fret = Note.Drum_Fret_Type.RED; break;
+
+            case 2: fret = Note.Drum_Fret_Type.YELLOW; break;
+
+            case 3: fret = Note.Drum_Fret_Type.BLUE; break;
+
+            case 4: fret = Note.Drum_Fret_Type.ORANGE; break;
+
+            case 5: fret = Note.Drum_Fret_Type.GREEN; break;
+
+            default:
+                fret = Note.Drum_Fret_Type.RED; break;
+        }
+
+        return fret;
+    }
+
+    static Note.GHLive_Fret_Type GetGHLFretType(int noteNumber)
+    {
+        Note.GHLive_Fret_Type fret;
+        int difficultyLessNote = (noteNumber + 2) % 12;
+
+        // Determine the fret type of the note
+        switch (difficultyLessNote)
+        {
+            case 0: fret = Note.GHLive_Fret_Type.OPEN; break;
+
+            case 1: fret = Note.GHLive_Fret_Type.WHITE_1; break;
+
+            case 2: fret = Note.GHLive_Fret_Type.WHITE_2; break;
+
+            case 3: fret = Note.GHLive_Fret_Type.WHITE_3; break;
+
+            case 4: fret = Note.GHLive_Fret_Type.BLACK_1; break;
+
+            case 5: fret = Note.GHLive_Fret_Type.BLACK_2; break;
+
+            case 6: fret = Note.GHLive_Fret_Type.BLACK_3; break;
+
+            default:
+                fret = Note.GHLive_Fret_Type.BLACK_1; break;
+        }
+
+        return fret;
     }
 }

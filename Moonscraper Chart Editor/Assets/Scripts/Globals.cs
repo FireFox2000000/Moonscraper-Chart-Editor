@@ -92,7 +92,7 @@ public class Globals : MonoBehaviour {
     {
         get
         {
-            return MenuBar.currentInstrument == Song.Instrument.GHLiveGuitar;
+            return MenuBar.currentInstrument == Song.Instrument.GHLiveGuitar || MenuBar.currentInstrument == Song.Instrument.GHLiveBass;
         }
     }
     // Settings

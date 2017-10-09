@@ -217,6 +217,8 @@ public class Chart  {
                             }
                             else if (instrument == Song.Instrument.Drums)
                                 LoadDrumNote(position, fret_type, length);
+                            else if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
+                                LoadGHLiveNote(line, position, fret_type, length, flags);
                             else
                                 LoadStandardNote(line, position, fret_type, length, flags);                      
                             break;

@@ -1,3 +1,10 @@
+v1.0.8
+    NEW FEATURES
+    -Added GHLive Guitar and Bass charting
+    
+    CHANGES
+    -Removed custom resources temporarily (will be re-enabled in v1.1)
+
 v1.0.01
     FIXES
     -Fixed broken undo/redo recording on hold-right click-left delete shortcut

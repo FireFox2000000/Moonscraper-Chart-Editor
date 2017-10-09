@@ -17,7 +17,8 @@ public static class MidWriter {
     const string BASS_TRACK = "PART BASS";
     const string KEYS_TRACK = "PART KEYS";
     const string DRUMS_TRACK = "PART DRUMS";
-    const string GHL_GUITAR_TRACK = "PART GHL GUITAR";
+    const string GHL_GUITAR_TRACK = "PART GUITAR GHL";
+    const string GHL_BASS_TRACK = "PART BASS GHL";
 
     const byte ON_EVENT = 0x91;         // Note on channel 1
     const byte OFF_EVENT = 0x81;
@@ -63,8 +64,12 @@ public static class MidWriter {
         if (track_drums.Length > 0)
             track_count++;
 
-        byte[] track_ghl_guitar = new byte[0];//GetInstrumentBytes(song, Song.Instrument.GHLiveGuitar, exportOptions);
+        byte[] track_ghl_guitar = GetInstrumentBytes(song, Song.Instrument.GHLiveGuitar, exportOptions);
         if (track_ghl_guitar.Length > 0)
+            track_count++;
+
+        byte[] track_ghl_bass = GetInstrumentBytes(song, Song.Instrument.GHLiveBass, exportOptions);
+        if (track_ghl_bass.Length > 0)
             track_count++;
 
         byte[][] unrecognised_tracks = new byte[song.unrecognisedCharts.Count][];
@@ -98,6 +103,9 @@ public static class MidWriter {
 
         if (track_ghl_guitar.Length > 0)
             bw.Write(MakeTrack(track_ghl_guitar, GHL_GUITAR_TRACK));
+
+        if (track_ghl_bass.Length > 0)
+            bw.Write(MakeTrack(track_ghl_guitar, GHL_BASS_TRACK));
 
         for (int i = 0; i < unrecognised_tracks.Length; ++i)
         {
@@ -286,11 +294,12 @@ public static class MidWriter {
 
             if (note != null)
             {
-                Note.Fret_Type fret_type = note.fret_type;
-                if (instrument == Song.Instrument.Drums)
-                    fret_type = Note.SaveGuitarNoteToDrumNote(fret_type);
+                int noteNumber;
 
-                int noteNumber = GetStandardNoteNumber(note, instrument, difficulty);
+                if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
+                    noteNumber = GetGHLNoteNumber(note, instrument, difficulty);
+                else
+                    noteNumber = GetStandardNoteNumber(note, instrument, difficulty);
 
                 GetNoteNumberBytes(noteNumber, note, out onEvent, out offEvent);
 
@@ -301,7 +310,7 @@ public static class MidWriter {
                     {
                         // Add a note
                         int forcedNoteNumber;
-                        int difficultyNumber = LookupDifficultyNumber(difficulty);
+                        int difficultyNumber = LookupStandardDifficultyNumber(difficulty);
 
                         if (note.type == Note.Note_Type.Hopo)
                             forcedNoteNumber = difficultyNumber + 5;
@@ -335,8 +344,8 @@ public static class MidWriter {
                     }
                 }
 
-                if (difficulty == Song.Difficulty.Expert && note.fret_type == Note.Fret_Type.OPEN && (note.previous == null || (note.previous.fret_type != Note.Fret_Type.OPEN))
-                    && instrument != Song.Instrument.Drums)
+                if (instrument != Song.Instrument.Drums && instrument != Song.Instrument.GHLiveGuitar && instrument != Song.Instrument.GHLiveBass &&
+                    difficulty == Song.Difficulty.Expert && note.fret_type == Note.Fret_Type.OPEN && (note.previous == null || (note.previous.fret_type != Note.Fret_Type.OPEN)))
                 {
                     // Find the next non-open note
                     Note nextNonOpen = note;
@@ -673,7 +682,7 @@ public static class MidWriter {
         int difficultyNumber;
         int noteNumber;
 
-        difficultyNumber = LookupDifficultyNumber(difficulty);
+        difficultyNumber = LookupStandardDifficultyNumber(difficulty);
 
         switch (fret_type)
         {
@@ -714,30 +723,32 @@ public static class MidWriter {
         int difficultyNumber;
         int noteNumber;
 
-        difficultyNumber = LookupDifficultyNumber(difficulty);
+        difficultyNumber = LookupGHLDifficultyNumber(difficulty);
 
         switch (fret_type)
         {
-            case (Note.GHLive_Fret_Type.OPEN):     // Open note highlighted as an SysEx event. Use green as default.
-                    goto case Note.GHLive_Fret_Type.BLACK_1;
-            case (Note.GHLive_Fret_Type.WHITE_1):
+            case (Note.GHLive_Fret_Type.OPEN):
                 noteNumber = difficultyNumber + 0;
                 break;
-            case (Note.GHLive_Fret_Type.WHITE_2):
+            case (Note.GHLive_Fret_Type.WHITE_1):
                 noteNumber = difficultyNumber + 1;
                 break;
-            case (Note.GHLive_Fret_Type.WHITE_3):
+            case (Note.GHLive_Fret_Type.WHITE_2):
                 noteNumber = difficultyNumber + 2;
                 break;
-            case (Note.GHLive_Fret_Type.BLACK_1):
+            case (Note.GHLive_Fret_Type.WHITE_3):
                 noteNumber = difficultyNumber + 3;
                 break;
-            case (Note.GHLive_Fret_Type.BLACK_2):
+            case (Note.GHLive_Fret_Type.BLACK_1):
                 noteNumber = difficultyNumber + 4;
                 break;
-            case (Note.GHLive_Fret_Type.BLACK_3):
+            case (Note.GHLive_Fret_Type.BLACK_2):
                 noteNumber = difficultyNumber + 5;
                 break;
+            case (Note.GHLive_Fret_Type.BLACK_3):
+                noteNumber = difficultyNumber + 6;
+                break;
+
             default:
                 throw new System.Exception("Not a standard note");
         }
@@ -745,7 +756,7 @@ public static class MidWriter {
         return noteNumber;
     }
 
-    static int LookupDifficultyNumber(Song.Difficulty difficulty)
+    static int LookupStandardDifficultyNumber(Song.Difficulty difficulty)
     {
         int difficultyNumber;
         switch (difficulty)
@@ -765,6 +776,13 @@ public static class MidWriter {
             default:
                 throw new System.Exception("Not a standard difficulty");
         }
+
+        return difficultyNumber;
+    }
+
+    static int LookupGHLDifficultyNumber(Song.Difficulty difficulty)
+    {
+        int difficultyNumber = LookupStandardDifficultyNumber(difficulty) - 2;
 
         return difficultyNumber;
     }

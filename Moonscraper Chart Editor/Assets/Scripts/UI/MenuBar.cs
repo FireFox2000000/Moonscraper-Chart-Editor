@@ -98,6 +98,9 @@ public class MenuBar : MonoBehaviour {
 
     public void LoadCurrentInstumentAndDifficulty()
     {
+        if (!editor)
+            editor = ChartEditor.FindCurrentEditor();
+
         editor.LoadChart(editor.currentSong.GetChart(currentInstrument, currentDifficulty));
         editor.currentSelectedObject = null;
     }
