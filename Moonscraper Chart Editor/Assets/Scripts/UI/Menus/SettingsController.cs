@@ -31,7 +31,7 @@ public class SettingsController : DisplayMenu
     public Dropdown fpsSelectDropdown;
     public Dropdown bgSwapTimeDropdown;
 
-    public StrikelineFretPlacement strikelineFretPlacement;
+    public Indicators strikelineFretPlacement;
 
     protected override void Awake()
     {
@@ -184,7 +184,7 @@ public class SettingsController : DisplayMenu
         else
             Globals.notePlacementMode = Globals.NotePlacementMode.Default;
 
-        strikelineFretPlacement.SetFretPlacement();
+        strikelineFretPlacement.SetStrikerPlacement();
     }
 
     public void SetResetAfterPlay(bool value)

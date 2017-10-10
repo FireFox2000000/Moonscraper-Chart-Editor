@@ -12,6 +12,8 @@ public class GroupSelectPanelController : MonoBehaviour
     [SerializeField]
     Dropdown fretSelectDropdown;
     [SerializeField]
+    Dropdown ghlFretSelectDropdown;
+    [SerializeField]
     Button setNoteNatural;
     [SerializeField]
     Button setNoteStrum;
@@ -27,6 +29,9 @@ public class GroupSelectPanelController : MonoBehaviour
 
     void Update()
     {
+        fretSelectDropdown.gameObject.SetActive(!Globals.ghLiveMode);
+        ghlFretSelectDropdown.gameObject.SetActive(!fretSelectDropdown.gameObject.activeSelf);
+
         if (!Globals.IsTyping && !Globals.modifierInputActive)
             Shortcuts();
     }
@@ -45,30 +50,41 @@ public class GroupSelectPanelController : MonoBehaviour
 
     public void ApplyFretDropdownSelection()
     {
-        if (fretSelectDropdown.value >= 0 && fretSelectDropdown.value < 6)
+        if (fretSelectDropdown.gameObject.activeSelf && fretSelectDropdown.value >= 0 && fretSelectDropdown.value < 6)
         {
-            SetFretType((Note.Fret_Type)fretSelectDropdown.value);
+            SetFretType(fretSelectDropdown.value);
+        }
+        else if (ghlFretSelectDropdown.gameObject.activeSelf && ghlFretSelectDropdown.value >= 0 && ghlFretSelectDropdown.value < 7)
+        {
+            SetFretType(ghlFretSelectDropdown.value);
         }
     }
 
-    public void SetFretType(Note.Fret_Type type)
+    public void SetFretType(int noteNumber)
     {
         List<ActionHistory.Action> actions = new List<ActionHistory.Action>();
+        List<ChartObject> selected = new List<ChartObject>();
 
         foreach (ChartObject chartObject in editor.currentSelectedObjects)
         {
             if (chartObject.classID == (int)SongObject.ID.Note && chartObject.song != null) // check null in case note was already deleted when overwritten by changing a note before it
-            {  
+            {
                 Note note = chartObject as Note;
-                if (note.fret_type != type)
+                if (note.rawNote != noteNumber)
                 {
                     // Delete original then re-add to let notes be overwritten, chaing a note into an open note that was already part of a chord
                     actions.Add(new ActionHistory.Delete(note));
                     note.Delete();
-                    note.fret_type = type;
-                    actions.AddRange(PlaceNote.AddObjectToCurrentChart(note, editor, false, true));
+                    note.rawNote = noteNumber;
+
+                    Note addedNote;
+                    actions.AddRange(PlaceNote.AddObjectToCurrentChart(note, editor, out addedNote, false, true));
+
+                    selected.Add(addedNote);
                 }
             }
+            else
+                selected.Add(chartObject);
         }
 
         editor.currentChart.UpdateCache();
@@ -77,6 +93,7 @@ public class GroupSelectPanelController : MonoBehaviour
             editor.actionHistory.Insert(actions.ToArray());
 
         ChartEditor.isDirty = true;
+        editor.currentSelectedObjects = selected.ToArray();
     }
 
     public void SetZeroSustain()

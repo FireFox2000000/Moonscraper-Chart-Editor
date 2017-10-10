@@ -1,3 +1,10 @@
+v1.0.81
+    FIXES
+    -Fixed copy/paste between standard and GHL tracks
+    -Fixed leftyflip fret placement in GHL tracks
+    -Fixed group selection inspector not giving options for GHL fret types
+    -Fixed group selection inspector fret forcing on keeping notes selected after applying a change
+
 v1.0.8
     NEW FEATURES
     -Added GHLive Guitar and Bass charting

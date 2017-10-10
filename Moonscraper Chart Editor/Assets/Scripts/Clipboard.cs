@@ -9,6 +9,7 @@ using System.Windows.Forms;
 public class Clipboard {
     public SongObject[] data = new SongObject[0];
     public float resolution = 192;
+    public Song.Instrument instrument = Song.Instrument.Guitar;
 
     uint _areaChartPosMin = 0, _areaChartPosMax = 0;
     float xPosition = 0;

@@ -60,6 +60,7 @@ public class ClipboardObjectController : Snapable {
         clipboard = new Clipboard();
         clipboard.data = data;
         clipboard.resolution = song.resolution;
+        clipboard.instrument = MenuBar.currentInstrument;
         clipboard.SetCollisionArea(area, song);
         System.Windows.Forms.Clipboard.SetDataObject("", false); ;     // Clear the clipboard to mimic the real clipboard. For some reason putting custom objects on the clipboard with this dll doesn't work.
 
@@ -157,7 +158,27 @@ public class ClipboardObjectController : Snapable {
 
                 if (objectToAdd.GetType() == typeof(Note))
                 {
-                    record.AddRange(PlaceNote.AddObjectToCurrentChart((Note)objectToAdd, editor, false));
+                    Note note = (Note)objectToAdd;
+
+                    if (clipboard.instrument == Song.Instrument.GHLiveGuitar || clipboard.instrument == Song.Instrument.GHLiveBass)
+                    {
+                        // Pasting from a ghl track
+                        if (!Globals.ghLiveMode)
+                        {
+                            if (note.ghlive_fret_type == Note.GHLive_Fret_Type.OPEN)
+                                note.fret_type = Note.Fret_Type.OPEN;
+                            else if (note.ghlive_fret_type == Note.GHLive_Fret_Type.WHITE_3)
+                                continue;
+                        }
+                    }
+                    else if (Globals.ghLiveMode)
+                    {
+                        // Pasting onto a ghl track
+                        if (note.fret_type == Note.Fret_Type.OPEN)
+                            note.ghlive_fret_type = Note.GHLive_Fret_Type.OPEN;
+                    }
+
+                    record.AddRange(PlaceNote.AddObjectToCurrentChart(note, editor, false));
                 }
                 else if (objectToAdd.GetType() == typeof(Starpower))
                 {
