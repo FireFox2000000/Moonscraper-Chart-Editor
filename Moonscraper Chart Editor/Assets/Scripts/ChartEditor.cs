@@ -741,8 +741,7 @@ public class ChartEditor : MonoBehaviour {
         loadingScreen.loadingInformation.text = "Loading file";
         yield return null;
 
-        // Free the audio clips
-        FreeAudio();
+        Song newSong = null;
 
         System.Threading.Thread songLoadThread = new System.Threading.Thread(() =>
         {
@@ -751,9 +750,9 @@ public class ChartEditor : MonoBehaviour {
             try
             {
                 if (mid)
-                    currentSong = MidReader.ReadMidi(currentFileName);
+                    newSong = MidReader.ReadMidi(currentFileName);
                 else
-                    currentSong = new Song(currentFileName);
+                    newSong = new Song(currentFileName);
             }
             catch (Exception e)
             {
@@ -789,16 +788,19 @@ public class ChartEditor : MonoBehaviour {
         // Load the audio clips
         loadingScreen.loadingInformation.text = "Loading audio";
         yield return null;
-        currentSong.LoadAllAudioClips();
 
-        while (currentSong.IsAudioLoading)
+        // Free the previous audio clips
+        FreeAudio();
+        newSong.LoadAllAudioClips();
+
+        while (newSong.IsAudioLoading)
             yield return null;
 
 #if TIMING_DEBUG
         Debug.Log("All audio files load time: " + (Time.realtimeSinceStartup - time));
 #endif
         yield return null;
-        //currentSong = new Song(currentFileName);
+
         isDirty = false;
 
 #if TIMING_DEBUG
@@ -806,7 +808,7 @@ public class ChartEditor : MonoBehaviour {
 #endif
 
         // Wait for audio to fully load
-        while (currentSong.IsAudioLoading)
+        while (newSong.IsAudioLoading)
             yield return null;
 
         if (mid)
@@ -820,6 +822,7 @@ public class ChartEditor : MonoBehaviour {
             lastLoadedFile = System.IO.Path.GetFullPath(currentFileName);
         else
             lastLoadedFile = string.Empty;
+        currentSong = newSong;
 
         LoadSong(currentSong);
 

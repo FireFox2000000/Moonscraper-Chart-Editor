@@ -40,5 +40,7 @@ public class StarpowerGUIController : TimelineIndicator {
 
         transform.localPosition = position;
         transform.localScale = scale;
+
+        
     }
 }

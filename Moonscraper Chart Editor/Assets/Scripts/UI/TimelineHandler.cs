@@ -97,6 +97,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     int prevSPLength = 0;
     float prevSongLength = 0;
     Song prevSong;
+    Chart prevChart;
     Resolution prevRes;
 
     public static bool externalUpdate = false;
@@ -149,6 +150,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         }
 
         prevSong = editor.currentSong;
+        prevChart = editor.currentChart;
         prevSongLength = editor.currentSong.length;
         prevSPLength = editor.currentChart.starPower.Length;
         prevSectionLength = editor.currentSong.sections.Length;
@@ -179,7 +181,6 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
             }
         }
 
-
         while (i < sectionIndicatorPool.Length)
         {
             sectionIndicatorPool[i++].gameObject.SetActive(false);
@@ -190,10 +191,10 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     {
         yield return null;
         yield return null;
-
+       
         int i;
         for (i = 0; i < editor.currentChart.starPower.Length; ++i)
-        {
+        {  
             if (i < starpowerIndicatorPool.Length && editor.currentChart.starPower[i].time <= editor.currentSong.length)
             {
                 starpowerIndicatorPool[i].starpower = editor.currentChart.starPower[i];

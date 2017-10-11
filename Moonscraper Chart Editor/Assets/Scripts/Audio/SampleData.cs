@@ -104,7 +104,7 @@ public class SampleData {
                 Debug.Log("Sample handle freed");
             }
             else
-                Debug.LogError("Error while freeing sample data handle");
+                Debug.LogError("Error while freeing sample data handle: " + Bass.BASS_ErrorGetCode());
         }
     }
 

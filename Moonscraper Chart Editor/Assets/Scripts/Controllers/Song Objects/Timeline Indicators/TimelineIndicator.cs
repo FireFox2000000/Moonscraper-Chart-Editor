@@ -23,6 +23,7 @@ public abstract class TimelineIndicator : MonoBehaviour {
     protected Vector3 GetLocalPos(uint position, Song song)
     {
         float time = song.ChartPositionToTime(position, song.resolution);
+
         float endTime = song.length;
 
         if (endTime > 0)
