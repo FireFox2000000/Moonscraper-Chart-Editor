@@ -408,6 +408,15 @@ public static class MidWriter {
     static byte[] GetUnrecognisedChartBytes(Chart chart, ExportOptions exportOptions)
     {
         List<SortableBytes> eventList = new List<SortableBytes>();
+        del InsertionSort = (sortableByte) =>
+        {
+            int index = eventList.Count - 1;
+
+            while (index >= 0 && sortableByte.position < eventList[index].position)
+                --index;
+
+            eventList.Insert(index + 1, sortableByte);
+        };
 
         foreach (ChartObject chartObject in chart.chartObjects)
         {           
@@ -426,17 +435,17 @@ public static class MidWriter {
             if (chartEvent != null)     // Text events cannot be split up in the file
             {
                 SortableBytes bytes = GetChartEventBytes(chartEvent);
-                eventList.Add(bytes);
+                InsertionSort(bytes);
             }
 
             if (onEvent != null && offEvent != null)
             {
-                eventList.Add(onEvent);
+                InsertionSort(onEvent);
 
                 if (offEvent.position == onEvent.position)
                     ++offEvent.position;
 
-                eventList.Add(offEvent);
+                InsertionSort(offEvent);
             }
         }
 
