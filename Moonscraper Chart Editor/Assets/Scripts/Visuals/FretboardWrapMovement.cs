@@ -40,12 +40,13 @@ public class FretboardWrapMovement : MonoBehaviour {
 	void FixedUpdate () {
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)  
         {
-            if (prevHyperspeed == Globals.hyperspeed * Globals.gameSpeed)
+            if ((int)(prevHyperspeed * 100) == (int)((Globals.hyperspeed * Globals.gameSpeed) * 100))
             {
                 Vector2 offset = ren.sharedMaterial.mainTextureOffset;
                 offset.y += (transform.position.y - prevYPos) / transform.localScale.y;
                 ren.sharedMaterial.mainTextureOffset = offset;
             }
+
             prevYPos = transform.position.y;
             prevHyperspeed = Globals.hyperspeed * Globals.gameSpeed;
         } 

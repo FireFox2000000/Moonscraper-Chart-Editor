@@ -116,6 +116,10 @@ public class ClipboardObjectController : Snapable {
         {
             List<ActionHistory.Action> record = new List<ActionHistory.Action>();
             Rect collisionRect = clipboard.GetCollisionRect(chartLocationToPaste, editor.currentSong);
+            if (clipboard.areaChartPosMin > clipboard.areaChartPosMax)
+            {
+                Debug.LogError("Clipboard minimum (" + clipboard.areaChartPosMin + ") is greater than clipboard the max (" + clipboard.areaChartPosMax + ")");
+            }
             uint colliderChartDistance = SongObject.TickScaling(clipboard.areaChartPosMax - clipboard.areaChartPosMin, clipboard.resolution, editor.currentSong.resolution);
 
             viewModeController.ToggleSongViewMode(!clipboard.data[0].GetType().IsSubclassOf(typeof(ChartObject)));

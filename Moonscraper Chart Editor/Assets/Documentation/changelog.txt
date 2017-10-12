@@ -1,3 +1,12 @@
+v1.0.83
+    FIXES
+    -Fixed fretboard wrapping movement not working on specific speed/hyperspeed changes. 
+
+v1.0.82
+    FIXES
+    -Fixed midi exporting resulting in invalid var int error
+    -Fixed up slight loading issues with SP timeline indicator refreshing
+
 v1.0.81
     FIXES
     -Fixed copy/paste between standard and GHL tracks
