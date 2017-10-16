@@ -1,6 +1,7 @@
 v1.0.83
     FIXES
     -Fixed fretboard wrapping movement not working on specific speed/hyperspeed changes. 
+    -Fixed White 3 note blocking the saving of taps property. 
 
 v1.0.82
     FIXES
