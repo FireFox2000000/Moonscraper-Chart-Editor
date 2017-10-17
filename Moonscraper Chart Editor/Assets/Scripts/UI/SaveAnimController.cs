@@ -21,9 +21,7 @@ public class SaveAnimController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (editor.currentSong.IsSaving)
-            fadein = true;
-        else if (alpha >= 1)
+        if (alpha >= 1)
             fadein = false;
 
         if (fadein)
@@ -35,4 +33,10 @@ public class SaveAnimController : MonoBehaviour {
 
         saveText.color = new Color(saveText.color.r, saveText.color.g, saveText.color.b, alpha); 
 	}
+
+    public void StartFade()
+    {
+        fadein = true;
+        alpha += fadeSpeed * Time.deltaTime;
+    }
 }

@@ -6,7 +6,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class InspectorSwitching : MonoBehaviour {
-
+    [SerializeField]
+    GameObject canvas;
     [SerializeField]
     NotePropertiesPanelController noteInspector;
     [SerializeField]
@@ -108,7 +109,9 @@ public class InspectorSwitching : MonoBehaviour {
             currentPropertiesPanel.gameObject.SetActive(false);
         }
 
-        if (currentPropertiesPanel && currentPropertiesPanel.gameObject.activeSelf)     
-            currentPropertiesPanel.gameObject.SetActive(Globals.applicationMode != Globals.ApplicationMode.Playing);    // Set it to false if it's not meant to be visible
+        //if (currentPropertiesPanel && currentPropertiesPanel.gameObject.activeSelf)     
+          //  currentPropertiesPanel.gameObject.SetActive(Globals.applicationMode != Globals.ApplicationMode.Playing);    // Set it to false if it's not meant to be visible
+
+        canvas.SetActive(Globals.applicationMode != Globals.ApplicationMode.Playing);
     }
 }

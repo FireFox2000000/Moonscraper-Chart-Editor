@@ -41,20 +41,6 @@ public class CursorSelect : ToolObject
         {
             UpdateSnappedPos();
 
-            // Delete key shortcut
-            //if (Input.GetButtonDown("Delete"))
-                //editor.Delete();
-
-            // Shortcuts
-            /*
-            if (Globals.modifierInputActive && editor.currentSelectedObjects.Length > 0)
-            {
-                if (Input.GetKeyDown(KeyCode.X))
-                    editor.Cut();
-                else if (Input.GetKeyDown(KeyCode.C))
-                    editor.Copy();
-            }*/
-
             if (Input.GetMouseButtonDown(0))
             {
                 mousePos = Input.mousePosition;

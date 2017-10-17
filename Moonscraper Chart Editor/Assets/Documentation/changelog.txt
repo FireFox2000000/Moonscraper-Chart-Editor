@@ -1,3 +1,7 @@
+v1.0.84
+    FIXES
+    -Found workaround that fixes note inspector not showing up when notes are highlighted in rare instances
+
 v1.0.83
     FIXES
     -Fixed fretboard wrapping movement not working on specific speed/hyperspeed changes. 

@@ -61,6 +61,8 @@ public class ChartEditor : MonoBehaviour {
     GameplayManager gameplayManager;
     [SerializeField]
     MenuBar menuBar;
+    [SerializeField]
+    SaveAnimController saveAnim;
 
     uint _minPos;
     uint _maxPos;
@@ -428,10 +430,14 @@ public class ChartEditor : MonoBehaviour {
         if (currentSong != null)
         {
             Debug.Log("Saving to file- " + System.IO.Path.GetFullPath(filename));
-
-            isDirty = false;            
+          
             currentSong.SaveAsync(filename, exportOptions);
             lastLoadedFile = System.IO.Path.GetFullPath(filename);
+
+            if (currentSong.IsSaving)
+                saveAnim.StartFade();
+
+            isDirty = false;
         }
     }
     public static float? startGameplayPos = null;
@@ -445,10 +451,10 @@ public class ChartEditor : MonoBehaviour {
 
         if (Globals.resetAfterGameplay)
             stopResetPos = movement.transform.position;
-
+        
         float strikelineYPos = visibleStrikeline.position.y - (0.01f * Globals.hyperspeed);     // Offset to prevent errors where it removes a note that is on the strikeline
         startGameplayPos = strikelineYPos;
-
+        
         // Hide everything behind the strikeline
         foreach (Note note in currentChart.notes)
         {
@@ -462,11 +468,10 @@ public class ChartEditor : MonoBehaviour {
                     break;
             }
         }
-
+        
         // Set position x seconds beforehand
         float time = Song.WorldYPositionToTime(strikelineYPos);
         movement.SetTime(time - Globals.gameplayStartDelayTime);
-        //movement.transform.position = new Vector3(movement.transform.position.x, Song.TimeToWorldYPosition(time - Globals.gameplayStartDelayTime), movement.transform.position.z);
 
         Globals.bot = false;
         Play();
