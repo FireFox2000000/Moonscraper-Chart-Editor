@@ -197,6 +197,12 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
             ChartEditor.isDirty = true;
         }
+
+        foreach (Note chordNote in note.GetChord())
+        {
+            if (chordNote.controller)
+                chordNote.controller.SetDirty();
+        }
     }
 
     Note[] CloneChord(Note note)

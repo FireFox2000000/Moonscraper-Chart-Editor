@@ -1141,19 +1141,18 @@ public class ChartEditor : MonoBehaviour {
 
                 double deltaTime = (double)anchorBPM.anchor - bpmToAdjust.time;
                 uint newValue = (uint)Mathf.Round((float)(Song.dis_to_bpm(bpmToAdjust.position, anchorBPM.position, deltaTime, currentSong.resolution) * 1000.0d));
-                //Debug.Log(newBpmValue + ", " + deltaTime + ", " + newValue);
+
                 if (deltaTime > 0 && newValue > 0)
                 {
                     if (bpmToAdjust.value != newValue)
                     {
                         BPM original = new BPM(bpmToAdjust);
                         bpmToAdjust.value = newValue;
-                        Debug.Log(newValue);
+                        anchorBPM.assignedTime = currentSong.LiveChartPositionToTime(anchorBPM.position, currentSong.resolution);
+
                         record.Add(new ActionHistory.Modify(original, bpmToAdjust));
                     }
                 }
-
-
             }
         }
 

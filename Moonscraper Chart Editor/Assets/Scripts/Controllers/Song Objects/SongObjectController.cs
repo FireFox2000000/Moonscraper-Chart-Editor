@@ -9,6 +9,7 @@ public abstract class SongObjectController : SelectableClick {
 
     protected ChartEditor editor;
     protected SongObject songObject = null;
+    protected bool isDirty = false;
     Bounds bounds;
 
     public abstract void UpdateSongObject();
@@ -82,6 +83,11 @@ public abstract class SongObjectController : SelectableClick {
 
         if (songObject != null)
             songObject.controller = controller;
+    }
+
+    public void SetDirty()
+    {
+        isDirty = true;
     }
 
     public override void OnSelectableMouseDown()
