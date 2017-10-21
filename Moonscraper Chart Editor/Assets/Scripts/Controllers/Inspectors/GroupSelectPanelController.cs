@@ -207,7 +207,18 @@ public class GroupSelectPanelController : MonoBehaviour
                     actions.AddRange(deleteRecord);
                     actions.AddRange(addRecord);
                 }
+
+                foreach (Note chordNote in note.GetChord())
+                {
+                    if (chordNote.controller)
+                    {
+                        chordNote.controller.SetDirty();
+                    }
+                }
             }
+
+            if (chartObject.controller)
+                chartObject.controller.SetDirty();
         }
 
         if (actions.Count > 0)

@@ -3,7 +3,7 @@
 
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using System.Collections.Generic;
 
 public class DisplayProperties : MonoBehaviour {
     public Text songNameText;
@@ -84,6 +84,8 @@ public class DisplayProperties : MonoBehaviour {
         value = Mathf.Round(value / 5.0f) * 5;
         Globals.gameSpeed = value / 100.0f;
         gameSpeed.text = "Speed- x" + Globals.gameSpeed.ToString();
+
+        TriggerHyperspeedChange();
     }
 
     public void SetHighwayLength(float value)
@@ -95,6 +97,8 @@ public class DisplayProperties : MonoBehaviour {
         maxHighwayLength.transform.localPosition = pos;
 
         bgFade.AdjustHeight();
+
+        TriggerHyperspeedChange();
     }
 
     public void ToggleClap(bool value)
@@ -158,5 +162,13 @@ public class DisplayProperties : MonoBehaviour {
 
         Globals.step = stepVal;
         snappingStep.text = Globals.step.ToString();
+    }
+
+    public delegate void HyperspeedChangeTrigger();
+    public static List<HyperspeedChangeTrigger> onHyperspeedChangeTriggerList = new List<HyperspeedChangeTrigger>();
+    void TriggerHyperspeedChange()
+    {
+        foreach (HyperspeedChangeTrigger function in onHyperspeedChangeTriggerList)
+            function();
     }
 }

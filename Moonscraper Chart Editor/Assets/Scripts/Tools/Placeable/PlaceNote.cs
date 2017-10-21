@@ -304,6 +304,22 @@ public class PlaceNote : PlaceSongObject {
         if (forceCheck != null)
             noteRecord.Insert(0, forceCheck);           // Insert at the start so that the modification happens at the end of the undo function, otherwise the natural force check prevents it from being forced
 
+        foreach (Note chordNote in addedNote.GetChord())
+        {
+            if (chordNote.controller)
+                chordNote.controller.SetDirty();
+        }
+
+        Note next = addedNote.nextSeperateNote;
+        if (next != null)
+        {
+            foreach (Note chordNote in next.GetChord())
+            {
+                if (chordNote.controller)
+                    chordNote.controller.SetDirty();
+            }
+        }
+
         return noteRecord.ToArray();
     }
 

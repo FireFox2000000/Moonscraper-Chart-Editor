@@ -66,6 +66,9 @@ public class GroupMove : ToolObject
                         {
                             movingSongObjects[i].position = originalSongObjects[i].position - originalSongObjects[0].position;
                         }
+
+                        if (movingSongObjects[i].controller)
+                            movingSongObjects[i].controller.SetDirty();
                     }
                 }
 

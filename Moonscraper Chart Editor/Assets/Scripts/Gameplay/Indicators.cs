@@ -50,6 +50,9 @@ public class Indicators : MonoBehaviour {
 
         UpdateStrikerColors();
         SetStrikerPlacement();
+
+        MenuBar.OnChartReloadTriggerList.Add(UpdateStrikerColors);
+        MenuBar.OnChartReloadTriggerList.Add(SetStrikerPlacement);
     }
 
     // Update is called once per frame

@@ -38,6 +38,14 @@ public abstract class SongObjectPool {
             controller.gameObject.SetActive(false);
     }
 
+    public void SetAllDirty()
+    {
+        for (int i = 0; i < pool.Length; ++i)
+        {
+            pool[i].SetDirty();
+        }
+    }
+
     protected void Activate(SongObject[] range, int index, int length)
     {
         int pos = 0;

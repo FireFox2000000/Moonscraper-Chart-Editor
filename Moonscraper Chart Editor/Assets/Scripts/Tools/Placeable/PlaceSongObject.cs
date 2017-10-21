@@ -40,6 +40,8 @@ public abstract class PlaceSongObject : ToolObject {
     {
         base.Update();
 
+        controller.SetDirty();
+
         foreach (Renderer ren in renderers)
         {
             if (Globals.lockToStrikeline)

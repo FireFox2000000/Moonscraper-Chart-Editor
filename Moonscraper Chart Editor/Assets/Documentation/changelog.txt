@@ -2,6 +2,7 @@ v1.0.84
     FIXES
     -Found workaround that fixes note inspector not showing up when notes are highlighted in rare instances
     -Fixed incorrect bpm anchor adjustment
+    -Fairly major optimisation by reducing the note visual refreshing frequency
 
 v1.0.83
     FIXES

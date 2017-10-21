@@ -290,12 +290,15 @@ public class NoteController : SongObjectController {
 
             if (Globals.applicationMode == Globals.ApplicationMode.Editor)
             {
+                if (isDirty)
+                    UpdateSongObject();
+
                 if (note.position > editor.maxPos)
                     gameObject.SetActive(false);
-                else if (Globals.viewMode == Globals.ViewMode.Chart)
-                    UpdateSongObject();         // Always update the position in case of hyperspeed changes
-                else
-                    UpdateNotePosition();
+                //else if (Globals.viewMode == Globals.ViewMode.Chart)
+                    //UpdateSongObject();         // Always update the position in case of hyperspeed changes
+               // else
+                   // UpdateNotePosition();
             }
 
             if (this.note == null)      // Was deactivated
@@ -453,6 +456,8 @@ public class NoteController : SongObjectController {
 
             UpdateNotePosition();
         }
+
+        isDirty = false;
     }
 
     public void Activate()

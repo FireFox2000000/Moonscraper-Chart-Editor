@@ -25,14 +25,19 @@ public class MenuBar : MonoBehaviour {
 
     [Header("Misc")]
     [SerializeField]
-    Indicators indicatorManager;
+    Button gameplayButton;
 
     public static Song.Instrument currentInstrument = Song.Instrument.Guitar;
     public static Song.Difficulty currentDifficulty = Song.Difficulty.Expert;
 
+    public delegate void OnChartReloadTrigger();
+    public static List<OnChartReloadTrigger> OnChartReloadTriggerList = new List<OnChartReloadTrigger>();
+
     // Use this for initialization
     void Start () {
         editor = ChartEditor.FindCurrentEditor();
+
+        OnChartReloadTriggerList.Add(GameplayEnabledCheck);
     }
 	
 	// Update is called once per frame
@@ -79,9 +84,6 @@ public class MenuBar : MonoBehaviour {
         {
             Debug.LogError("Invalid instrument set: " + value);
         }
-
-        indicatorManager.UpdateStrikerColors();
-        indicatorManager.SetStrikerPlacement();
     }
 
     public void SetDifficulty(string value)
@@ -103,6 +105,9 @@ public class MenuBar : MonoBehaviour {
 
         editor.LoadChart(editor.currentSong.GetChart(currentInstrument, currentDifficulty));
         editor.currentSelectedObject = null;
+
+        foreach (OnChartReloadTrigger function in OnChartReloadTriggerList)
+            function();
     }
 
     public static bool previewing { get { return _previewing; } }
@@ -140,5 +145,10 @@ public class MenuBar : MonoBehaviour {
             // Restore to initial position
             editor.movement.SetTime(Song.WorldYPositionToTime(initialPosition));
         }
+    }
+
+    void GameplayEnabledCheck()
+    {
+        gameplayButton.gameObject.SetActive(!(Globals.ghLiveMode || Globals.drumMode));
     }
 }

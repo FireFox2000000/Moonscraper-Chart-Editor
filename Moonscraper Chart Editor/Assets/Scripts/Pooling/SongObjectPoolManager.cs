@@ -65,6 +65,11 @@ public class SongObjectPoolManager : MonoBehaviour {
         chartEventParent.transform.SetParent(groupMovePool.transform);
     }
 	
+    void Start()
+    {
+        DisplayProperties.onHyperspeedChangeTriggerList.Add(SetAllPoolsDirty);
+    }
+
 	// Update is called once per frame
 	void Update () {
         if (editor.currentChart.notes.Length > 0)
@@ -220,5 +225,16 @@ public class SongObjectPoolManager : MonoBehaviour {
         int index, length;
         SongObject.GetRange(events, editor.minPos, editor.maxPos, out index, out length);
         chartEventPool.Activate(events, index, length);
+    }
+
+    public void SetAllPoolsDirty()
+    {
+        notePool.SetAllDirty();
+        spPool.SetAllDirty(); 
+        bpmPool.SetAllDirty(); 
+        tsPool.SetAllDirty(); 
+        sectionPool.SetAllDirty(); 
+        songEventPool.SetAllDirty(); 
+        chartEventPool.SetAllDirty(); 
     }
 }
