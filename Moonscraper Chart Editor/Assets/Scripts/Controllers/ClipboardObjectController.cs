@@ -188,7 +188,10 @@ public class ClipboardObjectController : Snapable {
                 }
                 else if (objectToAdd.GetType() == typeof(Starpower))
                 {
-                    record.AddRange(PlaceStarpower.AddObjectToCurrentChart((Starpower)objectToAdd, editor, false));
+                    Starpower sp = (Starpower)objectToAdd;
+                    sp.length = SongObject.TickScaling(sp.length, clipboard.resolution, editor.currentSong.resolution);
+
+                    record.AddRange(PlaceStarpower.AddObjectToCurrentChart(sp, editor, false));
                 }
                 else
                 {
