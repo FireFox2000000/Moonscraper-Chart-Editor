@@ -142,14 +142,17 @@ public class ClipboardObjectController : Snapable {
                 // Overwrite synctrack, leave sections alone
                 foreach (SyncTrack syncObject in editor.currentSong.syncTrack)
                 {
-                    if (syncObject.position >= chartLocationToPaste && syncObject.position < chartLocationToPaste + colliderChartDistance && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(syncObject), collisionRect))
+                    if (syncObject.position >= chartLocationToPaste && syncObject.position <= (chartLocationToPaste + colliderChartDistance) && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(syncObject), collisionRect))
                     {
                         syncObject.Delete(false);
 
                         record.Add(new ActionHistory.Delete(syncObject));
                     }
                 }
-            }     
+            }
+
+            editor.currentChart.UpdateCache();
+            editor.currentSong.UpdateCache();
 
             // Paste the new objects in
             foreach (SongObject clipboardSongObject in clipboard.data)
