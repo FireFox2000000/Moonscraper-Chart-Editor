@@ -67,7 +67,7 @@ public class SongObjectPoolManager : MonoBehaviour {
 	
     void Start()
     {
-        DisplayProperties.onHyperspeedChangeTriggerList.Add(SetAllPoolsDirty);
+        TriggerManager.onHyperspeedChangeTriggerList.Add(SetAllPoolsDirty);
     }
 
 	// Update is called once per frame

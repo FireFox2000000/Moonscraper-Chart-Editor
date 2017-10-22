@@ -264,9 +264,6 @@ public class NoteController : SongObjectController {
         //UpdateNotePosition();
     }
 
-    public bool belowClapLine { get { return (transform.position.y <= editor.visibleStrikeline.position.y + (Song.TimeToWorldYPosition(Globals.audioCalibrationMS / 1000.0f) * Globals.gameSpeed)); } }
-    public bool belowStrikeLine { get { float offset = Time.deltaTime; return (transform.position.y <= editor.visibleStrikeline.position.y + (offset * Globals.hyperspeed / Globals.gameSpeed)); } }
-
     void UpdateNotePosition()
     {
         float zPos = 0;
@@ -314,82 +311,7 @@ public class NoteController : SongObjectController {
             // Handle gameplay operation
             if (Globals.applicationMode == Globals.ApplicationMode.Playing)
             {
-                if (Globals.bot && belowClapLine)
-                {
-                    if (!hit)
-                    {
-                        bool playClap = true;
-
-                        switch (note.type)
-                        {
-                            case (Note.Note_Type.Strum):
-                                if ((Globals.clapSetting & Globals.ClapToggle.STRUM) == 0)
-                                    playClap = false;
-                                break;
-                            case (Note.Note_Type.Hopo):
-                                if ((Globals.clapSetting & Globals.ClapToggle.HOPO) == 0)
-                                    playClap = false;
-                                break;
-                            case (Note.Note_Type.Tap):
-                                if ((Globals.clapSetting & Globals.ClapToggle.TAP) == 0)
-                                    playClap = false;
-                                break;
-                            default:
-                                break;
-                        }
-
-                        if (playClap)
-                            StrikelineAudioController.Clap(transform.position.y);
-                    }
-
-                    hit = true;
-                    sustainBroken = false;
-                }
-
-                if (hit && belowStrikeLine)
-                {
-                    if (isActivated)
-                    {
-                        if (Globals.bot)
-                        {
-                            PlayIndicatorAnim();
-                        }
-                        DeactivateNote();
-                    }
-                    
-                    // Resize sustain
-                    if (!sustainBroken && note.sustain_length > 0)
-                    {
-                        float sustainEndPoint = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length);
-                        if (sustainEndPoint > editor.camYMax.position.y)
-                            sustainEndPoint = editor.camYMax.position.y;
-
-                        float yPos = (sustainEndPoint + editor.visibleStrikeline.position.y) / 2;
-                        float yScale = sustainEndPoint - (editor.visibleStrikeline.position.y);
-                        const float OFFSET = 0.1f;
-
-                        if (yPos > editor.visibleStrikeline.position.y && yScale > 0)
-                        {
-                            sustain.transform.position = new Vector3(sustain.transform.position.x, yPos + OFFSET, sustain.transform.position.z);
-                            sustain.transform.localScale = new Vector3(sustain.transform.localScale.x, yScale - (2 * OFFSET), sustain.transform.localScale.z);
-                         
-                            PlayIndicatorAnim();
-                        }
-                        else
-                            sustainBroken = true;
-                    }
-                }
-
-                if (sustainBroken)
-                    sustainRen.enabled = false;
-
-                if (whammy)
-                {
-                    if (hit && !sustainBroken && !Globals.bot)
-                        whammy.canWhammy = true;
-                    else
-                        whammy.canWhammy = false;
-                }
+                ManageGameplay();
             }
             else if(whammy)
                 whammy.canWhammy = false;
@@ -398,6 +320,102 @@ public class NoteController : SongObjectController {
         {
             gameObject.SetActive(false);
         }
+    }
+
+    void ManageGameplay()
+    {
+        Vector3 notePosition = transform.position;
+        Vector3 strikelinePosition = editor.visibleStrikeline.position;
+
+        bool belowClapLine = notePosition.y <= strikelinePosition.y + (Song.TimeToWorldYPosition(Globals.audioCalibrationMS / 1000.0f) * Globals.gameSpeed);
+        bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime * Globals.hyperspeed / Globals.gameSpeed);
+
+        if (Globals.bot && belowClapLine)
+        {
+            GameplayBotHitClap();
+        }
+
+        if (hit && belowStrikeLine)
+        {
+            if (isActivated)
+            {
+                if (Globals.bot)
+                {
+                    PlayIndicatorAnim();
+                }
+                DeactivateNote();
+            }
+
+            // Resize sustain
+            if (!sustainBroken && note.sustain_length > 0)
+            {
+                GameplaySustainHold();
+            }
+        }
+
+        if (sustainBroken)
+            sustainRen.enabled = false;
+
+        if (whammy)
+        {
+            if (hit && !sustainBroken && !Globals.bot)
+                whammy.canWhammy = true;
+            else
+                whammy.canWhammy = false;
+        }
+    }
+
+    void GameplayBotHitClap()
+    {
+        if (!hit)
+        {
+            bool playClap = true;
+
+            switch (note.type)
+            {
+                case (Note.Note_Type.Strum):
+                    if ((Globals.clapSetting & Globals.ClapToggle.STRUM) == 0)
+                        playClap = false;
+                    break;
+                case (Note.Note_Type.Hopo):
+                    if ((Globals.clapSetting & Globals.ClapToggle.HOPO) == 0)
+                        playClap = false;
+                    break;
+                case (Note.Note_Type.Tap):
+                    if ((Globals.clapSetting & Globals.ClapToggle.TAP) == 0)
+                        playClap = false;
+                    break;
+                default:
+                    break;
+            }
+
+            if (playClap)
+                StrikelineAudioController.Clap(transform.position.y);
+        }
+
+        hit = true;
+        sustainBroken = false;
+    }
+
+    void GameplaySustainHold()
+    {
+        float sustainEndPoint = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length);
+        if (sustainEndPoint > editor.camYMax.position.y)
+            sustainEndPoint = editor.camYMax.position.y;
+
+        float yPos = (sustainEndPoint + editor.visibleStrikeline.position.y) / 2;
+        float yScale = sustainEndPoint - (editor.visibleStrikeline.position.y);
+        const float OFFSET = 0.1f;
+
+        if (yPos > editor.visibleStrikeline.position.y && yScale > 0)
+        {
+            sustain.transform.position = new Vector3(sustain.transform.position.x, yPos + OFFSET, sustain.transform.position.z);
+            sustain.transform.localScale = new Vector3(sustain.transform.localScale.x, yScale - (2 * OFFSET), sustain.transform.localScale.z);
+
+            PlayIndicatorAnim();
+        }
+        else
+            sustainBroken = true;
     }
 
     public static float GetXPos(float chartPos, Note note)

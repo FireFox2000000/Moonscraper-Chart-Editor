@@ -1,34 +1,14 @@
-v1.0.84
+v1.0.91
     FIXES
-    -Found workaround that fixes note inspector not showing up when notes are highlighted in rare instances
-    -Fixed incorrect bpm anchor adjustment
-    -Fairly major optimisation by reducing the note visual refreshing frequency
+    -Fixed sustains copied from charts of different resolutions not being scaled correctly. 
 
-v1.0.83
-    FIXES
-    -Fixed fretboard wrapping movement not working on specific speed/hyperspeed changes. 
-    -Fixed White 3 note blocking the saving of taps property. 
-
-v1.0.82
-    FIXES
-    -Fixed midi exporting resulting in invalid var int error
-    -Fixed up slight loading issues with SP timeline indicator refreshing
-
-v1.0.81
-    FIXES
-    -Fixed copy/paste between standard and GHL tracks
-    -Fixed leftyflip fret placement in GHL tracks
-    -Fixed group selection inspector not giving options for GHL fret types
-    -Fixed group selection inspector fret forcing on keeping notes selected after applying a change
-
-v1.0.8
+v1.0.9
     NEW FEATURES
     -Added GHLive Guitar and Bass charting
     
     CHANGES
-    -Removed custom resources temporarily (will be re-enabled in v1.1)
+    -Can now load in unrecognised tracks in chart and midi files and preserve them without deleting them
 
-v1.0.01
     FIXES
     -Fixed broken undo/redo recording on hold-right click-left delete shortcut
     -Fixed timeline section indicators not updating on undo/redo
@@ -40,9 +20,17 @@ v1.0.01
     -Loading optimisation
     -Updated undo/redo and save warning on bpm panel
     -Fixed undo/redo on sustain dragging
-
-    CHANGES
-    -Can now load in unrecognised tracks in chart and midi files and preserve them without deleting them
+    -Fixed copy/paste between standard and GHL tracks
+    -Fixed leftyflip fret placement in GHL tracks
+    -Fixed group selection inspector not giving options for GHL fret types
+    -Fixed group selection inspector fret forcing on keeping notes selected after applying a change
+    -Fixed midi exporting resulting in invalid var int error
+    -Fixed up slight loading issues with SP timeline indicator refreshing
+    -Fixed fretboard wrapping movement not working on specific speed/hyperspeed changes. 
+    -Fixed White 3 note blocking the saving of taps property. 
+    -Found workaround that fixes note inspector not showing up when notes are highlighted in rare instances
+    -Fixed incorrect bpm anchor adjustment
+    -Fairly major optimisation by reducing the note visual refreshing frequency
 
 v1.0
     NEW FEATURES

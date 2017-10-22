@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class CustomFretManager : HitAnimation
 {
+    public bool canUse = false;
+
     public SpriteRenderer fretBaseRen;
     public SpriteRenderer fretCoverRen;
     public SpriteRenderer fretPressRen;
@@ -41,6 +43,11 @@ public class CustomFretManager : HitAnimation
     void Start()
     {
         SetStandardFrets();
+    }
+
+    void OnEnable()
+    {
+        canUse = true;
     }
 
     // Update is called once per frame

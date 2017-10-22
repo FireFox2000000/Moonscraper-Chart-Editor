@@ -14,10 +14,13 @@ public class BGFadeHeightController : MonoBehaviour {
     float offset;
     Renderer ren;
 
+    float originalHeight;
+
 	// Use this for initialization
 	void Start () {
         ren = GetComponent<Renderer>();
-	}
+        originalHeight = ren.sharedMaterial.GetFloat("_HeightPosition");
+    }
 	
 	// Update is called once per frame
 	public void AdjustHeight () {
@@ -27,4 +30,11 @@ public class BGFadeHeightController : MonoBehaviour {
 
         ren.sharedMaterial.SetFloat("_HeightPosition", screenHeight / Screen.height);
 	}
+
+#if UNITY_EDITOR
+    void OnApplicationQuit()
+    {
+        ren.sharedMaterial.SetFloat("_HeightPosition", originalHeight);
+    }
+#endif
 }

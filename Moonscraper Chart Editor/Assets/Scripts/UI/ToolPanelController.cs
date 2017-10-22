@@ -10,9 +10,6 @@ public class ToolPanelController : MonoBehaviour {
     public Toggle viewModeToggle;
     public KeysNotePlacementModePanelController keysModePanel;
 
-    public delegate void ViewModeSwitchTrigger(Globals.ViewMode viewMode);
-    public static List<ViewModeSwitchTrigger> onViewModeSwitchTriggerList = new List<ViewModeSwitchTrigger>();
-
     [SerializeField]
     Button cursorSelect;
     [SerializeField]
@@ -42,7 +39,7 @@ public class ToolPanelController : MonoBehaviour {
         eventImage = eventSelect.GetComponent<Image>();
         localEventSprite = eventImage.sprite;
 
-        onViewModeSwitchTriggerList.Add(OnViewModeSwitch);
+        TriggerManager.onViewModeSwitchTriggerList.Add(OnViewModeSwitch);
     }
 
     // Update is called once per frame
@@ -120,8 +117,7 @@ public class ToolPanelController : MonoBehaviour {
         if (Toolpane.currentTool != Toolpane.Tools.Note)        // Allows the note panel to pop up instantly
             editor.currentSelectedObject = null;
 
-        foreach (ViewModeSwitchTrigger function in onViewModeSwitchTriggerList)
-            function(Globals.viewMode);
+        TriggerManager.FireViewModeSwitchTriggers();
     }
 
     void OnViewModeSwitch(Globals.ViewMode viewMode)

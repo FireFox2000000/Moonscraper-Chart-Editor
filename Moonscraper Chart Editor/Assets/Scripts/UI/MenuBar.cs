@@ -30,14 +30,11 @@ public class MenuBar : MonoBehaviour {
     public static Song.Instrument currentInstrument = Song.Instrument.Guitar;
     public static Song.Difficulty currentDifficulty = Song.Difficulty.Expert;
 
-    public delegate void OnChartReloadTrigger();
-    public static List<OnChartReloadTrigger> OnChartReloadTriggerList = new List<OnChartReloadTrigger>();
-
     // Use this for initialization
     void Start () {
         editor = ChartEditor.FindCurrentEditor();
 
-        OnChartReloadTriggerList.Add(GameplayEnabledCheck);
+        TriggerManager.onChartReloadTriggerList.Add(GameplayEnabledCheck);
     }
 	
 	// Update is called once per frame
@@ -106,8 +103,7 @@ public class MenuBar : MonoBehaviour {
         editor.LoadChart(editor.currentSong.GetChart(currentInstrument, currentDifficulty));
         editor.currentSelectedObject = null;
 
-        foreach (OnChartReloadTrigger function in OnChartReloadTriggerList)
-            function();
+        TriggerManager.FireChartReloadTriggers();
     }
 
     public static bool previewing { get { return _previewing; } }

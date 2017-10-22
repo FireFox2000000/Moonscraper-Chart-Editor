@@ -37,7 +37,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
         for (int i = 0; i < Globals.globalEvents.Length; ++i)
             CreateEventButton(Globals.globalEvents[i], i).transform.SetParent(globalEventButtonParent.transform);
 
-        ToolPanelController.onViewModeSwitchTriggerList.Add(new ToolPanelController.ViewModeSwitchTrigger(OnViewModeSwitch));
+        TriggerManager.onViewModeSwitchTriggerList.Add(new TriggerManager.ViewModeSwitchTrigger(OnViewModeSwitch));
         OnViewModeSwitch(Globals.viewMode);
     }
 

@@ -15,7 +15,7 @@ public class Indicators : MonoBehaviour {
     [SerializeField]
     GameObject[] indicators = new GameObject[FRET_COUNT];
     [SerializeField]
-    GameObject[] customIndicators = new GameObject[FRET_COUNT];
+    CustomFretManager[] customIndicators = new CustomFretManager[FRET_COUNT];
     [SerializeField]
     Color[] defaultStikelineFretColors;
     [SerializeField]
@@ -31,16 +31,7 @@ public class Indicators : MonoBehaviour {
         animations = new HitAnimation[FRET_COUNT];
         fretRenders = new SpriteRenderer[FRET_COUNT * 2];
 
-        for (int i = 0; i < animations.Length; ++i)
-        {
-            if (customIndicators[i].activeSelf)
-            {
-                animations[i] = customIndicators[i].GetComponent<HitAnimation>();
-                indicators[i].transform.parent.gameObject.SetActive(false);
-            }
-            else
-                animations[i] = indicators[i].GetComponent<HitAnimation>();
-        }
+        SetAnimations();
 
         for (int i = 0; i < indicators.Length; ++i)
         {
@@ -51,8 +42,23 @@ public class Indicators : MonoBehaviour {
         UpdateStrikerColors();
         SetStrikerPlacement();
 
-        MenuBar.OnChartReloadTriggerList.Add(UpdateStrikerColors);
-        MenuBar.OnChartReloadTriggerList.Add(SetStrikerPlacement);
+        TriggerManager.onChartReloadTriggerList.Add(UpdateStrikerColors);
+        TriggerManager.onChartReloadTriggerList.Add(SetStrikerPlacement);
+        TriggerManager.onChartReloadTriggerList.Add(Activate2D3DSwitch);
+    }
+
+    void SetAnimations()
+    {
+        for (int i = 0; i < animations.Length; ++i)
+        {
+            if (customIndicators[i].gameObject.activeSelf)
+            {
+                animations[i] = customIndicators[i].gameObject.GetComponent<HitAnimation>();
+                indicators[i].transform.parent.gameObject.SetActive(false);
+            }
+            else
+                animations[i] = indicators[i].GetComponent<HitAnimation>();
+        }
     }
 
     // Update is called once per frame
@@ -171,5 +177,31 @@ public class Indicators : MonoBehaviour {
 
             indicatorParents[i].SetActive(xPos <= NoteController.CHART_CENTER_POS - NoteController.noteObjectPositionStartOffset);
         }
+    }
+
+    void Activate2D3DSwitch()
+    {
+        if (Globals.ghLiveMode)
+        {
+            foreach (GameObject go in indicators)
+            {
+                go.transform.parent.gameObject.SetActive(true);
+            }
+            foreach (CustomFretManager go in customIndicators)
+            {
+                go.gameObject.SetActive(false);
+            }
+        }
+        else
+        {
+            // Check if the sprites exist for 2D
+            for (int i = 0; i < FRET_COUNT; ++i)
+            {
+                customIndicators[i].gameObject.SetActive(customIndicators[i].canUse);
+                indicators[i].transform.parent.gameObject.SetActive(!customIndicators[i].canUse);
+            }
+        }
+
+        SetAnimations();
     }
 }
