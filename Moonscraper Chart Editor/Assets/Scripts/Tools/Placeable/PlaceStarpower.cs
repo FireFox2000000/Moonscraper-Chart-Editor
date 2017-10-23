@@ -121,6 +121,8 @@ public class PlaceStarpower : PlaceSongObject {
         editor.currentSelectedObject = starpowerToAdd;
 
         lastPlacedSP = starpowerToAdd;
+
+        SetNotesDirty(starpowerToAdd);
     }
 
     public static ActionHistory.Action[] AddObjectToCurrentChart(Starpower starpower, ChartEditor editor, bool update = true, bool copy = true)
@@ -142,7 +144,22 @@ public class PlaceStarpower : PlaceSongObject {
         //editor.CreateStarpowerObject(starpowerToAdd);
         editor.currentSelectedObject = starpowerToAdd;
 
+        SetNotesDirty(starpowerToAdd);
+
         return record.ToArray();
+    }
+
+    static void SetNotesDirty(Starpower sp)
+    {
+        int start, length;
+        Note[] notes = sp.chart.notes;
+        SongObject.GetRange(notes, sp.position, sp.position + sp.length, out start, out length);
+
+        for (int i = start; i < start + length; ++i)
+        {
+            if (notes[i].controller)
+                notes[i].controller.SetDirty();
+        }
     }
 
     static ActionHistory.Action[] CapPrevAndNextPreInsert(Starpower sp, Chart chart)

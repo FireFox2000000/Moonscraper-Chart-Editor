@@ -73,4 +73,10 @@ public class Starpower : ChartObject
             // else it's the only starpower or it's the last starpower 
         }
     }
+
+    public override void Delete(bool update = true)
+    {
+        ChartEditor.FindCurrentEditor().songObjectPoolManager.SetAllPoolsDirty();
+        base.Delete(update);
+    }
 }

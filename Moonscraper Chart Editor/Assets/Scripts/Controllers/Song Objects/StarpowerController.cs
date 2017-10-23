@@ -75,7 +75,22 @@ public class StarpowerController : SongObjectController
             snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(starpower.song.WorldYPositionToChartPosition(editor.mouseYMaxLimit.position.y), Globals.step, starpower.song.resolution);
         }
 
-        starpower.SetLengthByPos(snappedChartPos);   
+        uint max = starpower.length;
+
+        starpower.SetLengthByPos(snappedChartPos);
+
+        if (starpower.length > max)
+            max = starpower.length;
+
+        int start, length;
+        Note[] notes = starpower.chart.notes;
+        SongObject.GetRange(notes, starpower.position, starpower.position + max, out start, out length);
+
+        for (int i = start; i < start + length; ++i)
+        {
+            if (notes[i].controller)
+                notes[i].controller.SetDirty();
+        }
     }
     
     public override void OnSelectableMouseDrag()

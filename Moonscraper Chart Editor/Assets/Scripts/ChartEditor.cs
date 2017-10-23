@@ -13,10 +13,15 @@ using System.Windows.Forms;
 using System;
 using Un4seen.Bass;
 
-public class ChartEditor : MonoBehaviour { 
+public class ChartEditor : MonoBehaviour {
+    static ChartEditor currentEditor;
+
     public static ChartEditor FindCurrentEditor ()
     {
-        return GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        if (currentEditor)
+            return currentEditor;
+        else
+            return GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
     }
 
     public static bool isDirty = false;
@@ -63,6 +68,8 @@ public class ChartEditor : MonoBehaviour {
     MenuBar menuBar;
     [SerializeField]
     SaveAnimController saveAnim;
+    [SerializeField]
+    SongObjectPoolManager poolManager;
 
     uint _minPos;
     uint _maxPos;
@@ -150,6 +157,7 @@ public class ChartEditor : MonoBehaviour {
 
     // Use this for initialization
     void Awake () {
+        currentEditor = this;
         _songObjectPoolManager = GetComponent<SongObjectPoolManager>();
 
         _minPos = 0;

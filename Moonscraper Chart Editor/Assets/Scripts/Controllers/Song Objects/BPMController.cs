@@ -20,6 +20,7 @@ public class BPMController : SongObjectController {
     Material anchorMat;
 
     Renderer ren;
+    uint prevBPMValue = 0;
 
     void Start()
     {
@@ -42,6 +43,13 @@ public class BPMController : SongObjectController {
             else
                 ren.sharedMaterial = ogMat;
         }
+
+        if (prevBPMValue != bpm.value)
+        {
+            editor.songObjectPoolManager.SetAllPoolsDirty();
+        }
+
+        prevBPMValue = bpm.value;
     }
 
     public override void OnSelectableMouseDrag()
