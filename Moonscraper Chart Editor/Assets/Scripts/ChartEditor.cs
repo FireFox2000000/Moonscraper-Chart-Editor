@@ -937,6 +937,8 @@ public class ChartEditor : MonoBehaviour {
             SetAudioSources();
             movement.SetPosition(0);
         }
+
+        menuBar.LoadCurrentInstumentAndDifficulty();
     }
 
     // Chart should be part of the current song

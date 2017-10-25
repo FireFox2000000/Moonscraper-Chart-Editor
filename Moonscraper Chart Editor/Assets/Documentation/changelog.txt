@@ -1,7 +1,7 @@
 v1.0.91
     FIXES
     -Fixed sustains copied from charts of different resolutions not being scaled correctly. 
-    -Fixed note visuals and positions not updating upon starpower or bpm adjustments
+    -Fixed note visuals and positions not updating upon starpower or bpm adjustments and in other situations
 
 v1.0.9
     NEW FEATURES

@@ -76,7 +76,7 @@ public class PlaceNote : PlaceSongObject {
         }
         else
         {
-            if (note.IsOpenNote())//.fret_type == Note.Fret_Type.OPEN)
+            if (note.IsOpenNote())
                 UpdateOpenPrevAndNext(pos);
             else
                 UpdatePrevAndNext(pos);
@@ -422,7 +422,7 @@ public class PlaceNote : PlaceSongObject {
             // Cap only the sustain of the same fret type and open notes
             foreach (Note prevNote in previousNotes)
             {
-                if (prevNote.controller != null && (noteToAdd.IsOpenNote() || prevNote.fret_type == noteToAdd.fret_type /*|| prevNote.fret_type == Note.Fret_Type.OPEN*/))
+                if (prevNote.controller != null && (noteToAdd.IsOpenNote() || prevNote.fret_type == noteToAdd.fret_type))
                 {
                     ActionHistory.Action action = prevNote.CapSustain(noteToAdd);
                     if (action != null)
