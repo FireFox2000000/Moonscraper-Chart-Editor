@@ -77,6 +77,7 @@ public class DisplayProperties : MonoBehaviour {
     public void SetHyperspeed(float value)
     {
         Globals.hyperspeed = value;
+        TriggerManager.FireHyperspeedChangeTriggers();
     }
 
     public void SetGameSpeed(float value)

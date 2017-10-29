@@ -224,6 +224,11 @@ public class Chart  {
                             break;
 
                         case ("s"):
+                            fret_type = int.Parse(splitString[SPLIT_VALUE]);
+
+                            if (fret_type != 2)
+                                continue;
+
                             length = uint.Parse(splitString[SPLIT_LENGTH]);
 
                             Add(new Starpower(position, length), false);

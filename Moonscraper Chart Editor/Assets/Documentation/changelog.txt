@@ -1,3 +1,8 @@
+v1.0.92
+    FIXES
+    -Fixed Midi saving of tap notes
+    -Fixed chart reloading refreshing
+
 v1.0.91
     FIXES
     -Fixed sustains copied from charts of different resolutions not being scaled correctly. 
