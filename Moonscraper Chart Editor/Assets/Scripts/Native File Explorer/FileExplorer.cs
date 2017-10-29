@@ -17,13 +17,6 @@ public static class FileExplorer  {
         {
             defaultFileName = defaultFileName.Replace(c.ToString(), "");
         }
-        /*
-        string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
-        UnityEngine.Debug.Log(invalid);
-        foreach (char c in invalid)
-        {
-            defaultFileName = defaultFileName.Replace(c.ToString(), "");
-        }*/
 
 #if UNITY_EDITOR
         filename = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", defaultFileName, defExt);

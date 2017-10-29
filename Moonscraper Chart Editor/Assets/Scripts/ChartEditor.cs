@@ -97,8 +97,6 @@ public class ChartEditor : MonoBehaviour {
     GameObject songObjectParent;
     GameObject chartObjectParent;
 
-    OpenFileName saveFileDialog;
-
     public ActionHistory actionHistory;
     public SongObject currentSelectedObject
     {
@@ -131,6 +129,8 @@ public class ChartEditor : MonoBehaviour {
     public static extern System.IntPtr GetForegroundWindow();
     [DllImport("user32.dll")]
     static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
 
 #if !UNITY_EDITOR
     System.IntPtr windowPtr = IntPtr.Zero;
@@ -318,13 +318,31 @@ public class ChartEditor : MonoBehaviour {
             if (quitting)
                 UnityEngine.Application.CancelQuit();
 #if !UNITY_EDITOR
-            DialogResult result;
-            //if (windowPtr != IntPtr.Zero)
-                //result = MessageBox.Show("Want to save unsaved changes?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2, (MessageBoxOptions)0x40000);
-            //else
-            result = MessageBox.Show("Want to save unsaved changes?", "Warning", MessageBoxButtons.YesNoCancel);
+            const int YES = 6;
+            const int NO = 7;
+            const int CANCEL = 2;
+
+            int result = MessageBox(new IntPtr(), "Want to save unsaved changes?", "Warning", 3);
             if (quitting)
                 UnityEngine.Application.CancelQuit();
+
+            if (result == YES)
+            {
+                if (!_Save())
+                {
+                    quitting = false;
+                    return false;
+                }
+            }
+            else if (result == CANCEL)
+            {
+                quitting = false;
+                return false;
+            }
+
+            /*
+            DialogResult result = MessageBox.Show("Want to save unsaved changes?", "Warning", MessageBoxButtons.YesNoCancel);
+            
             if (result == DialogResult.Yes)
             {
                 if (!_Save())
@@ -337,7 +355,7 @@ public class ChartEditor : MonoBehaviour {
             {
                 quitting = false;
                 return false;
-            }
+            }*/
 #endif
 
             if (quitting)

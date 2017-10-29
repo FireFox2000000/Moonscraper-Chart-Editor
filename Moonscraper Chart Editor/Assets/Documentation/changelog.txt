@@ -1,3 +1,10 @@
+v1.0.93
+    FIXES
+    -Fixed crash upon save warning dialogue trying to popup in specific circumstances
+    -Fixed extra starpower being loaded in when they should be
+    -Fixed note positioning refreshing upon hyperspeed changes or bpm moving
+    -Increase full-updating efficiency
+
 v1.0.92
     FIXES
     -Fixed Midi saving of tap notes
