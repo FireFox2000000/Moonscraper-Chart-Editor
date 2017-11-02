@@ -67,7 +67,26 @@ public class PlaceStarpower : PlaceSongObject {
                 }
             }
             else if (lastPlacedSP != null)
+            {
+                uint prevSpLength = lastPlacedSP.length;
+
                 lastPlacedSP.SetLengthByPos(objectSnappedChartPos);
+
+                if (prevSpLength != lastPlacedSP.length)
+                {
+                    int index, length;
+                    Note[] notes = editor.currentChart.notes;
+                    uint maxLength = prevSpLength > lastPlacedSP.length ? prevSpLength : lastPlacedSP.length;
+
+                    SongObject.GetRange(notes, lastPlacedSP.position, lastPlacedSP.position + maxLength, out index, out length);
+
+                    for (int i = index; i < index + length; ++i)
+                    {
+                        if (notes[i].controller)
+                            notes[i].controller.SetDirty();
+                    }
+                }
+            }
         }
     }
 

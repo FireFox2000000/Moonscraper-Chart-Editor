@@ -42,10 +42,7 @@ public abstract class SongObjectPool {
     {
         for (int i = 0; i < pool.Length; ++i)
         {
-            if (pool[i].gameObject.activeSelf)
-                pool[i].SetDirty();
-            else
-                break;
+            pool[i].SetDirty();
         }
     }
 

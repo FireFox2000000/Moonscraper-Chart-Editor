@@ -230,12 +230,23 @@ public class SongObjectPoolManager : MonoBehaviour {
 
     public void SetAllPoolsDirty()
     {
-        notePool.SetAllDirty();
-        spPool.SetAllDirty(); 
-        bpmPool.SetAllDirty(); 
-        tsPool.SetAllDirty(); 
-        sectionPool.SetAllDirty(); 
-        songEventPool.SetAllDirty(); 
-        chartEventPool.SetAllDirty(); 
+        Song song = editor.currentSong;
+        Chart chart = editor.currentChart;
+
+        SetInViewRangeDirty(chart.chartObjects);
+        SetInViewRangeDirty(song.eventsAndSections);
+        SetInViewRangeDirty(song.syncTrack);
+    }
+
+    public void SetInViewRangeDirty(SongObject[] songObjects)
+    {
+        int index, length;
+        SongObject.GetRange(songObjects, editor.minPos, editor.maxPos, out index, out length);
+        
+        for (int i = index; i < index + length; ++i)
+        {
+            if (songObjects[i].controller)
+                songObjects[i].controller.SetDirty();
+        }
     }
 }

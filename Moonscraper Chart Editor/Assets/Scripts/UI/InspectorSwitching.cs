@@ -113,5 +113,8 @@ public class InspectorSwitching : MonoBehaviour {
           //  currentPropertiesPanel.gameObject.SetActive(Globals.applicationMode != Globals.ApplicationMode.Playing);    // Set it to false if it's not meant to be visible
 
         canvas.SetActive(Globals.applicationMode != Globals.ApplicationMode.Playing);
+
+        if (!currentPropertiesPanel)
+            canvas.SetActive(false);
     }
 }
