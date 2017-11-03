@@ -1265,8 +1265,11 @@ public class Song {
     /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
     public void SaveAsync(string filepath, ExportOptions exportOptions)
     {
-        saveThread = new System.Threading.Thread(() => Save(filepath, exportOptions));
-        saveThread.Start();
+        if (!IsSaving)
+        {
+            saveThread = new System.Threading.Thread(() => Save(filepath, exportOptions));
+            saveThread.Start();
+        }
     }
 
     /// <summary>
@@ -1276,7 +1279,16 @@ public class Song {
     /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
     public void Save(string filepath, ExportOptions exportOptions)
     {
-        new ChartWriter(filepath).Write(this, exportOptions);
+        try
+        {
+            new ChartWriter(filepath).Write(this, exportOptions);
+
+            Debug.Log("Save complete!");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Error while saving chart: " + e.Message);
+        }
     }
 
     /// <summary>

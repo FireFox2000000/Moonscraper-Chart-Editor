@@ -453,7 +453,7 @@ public class ChartEditor : MonoBehaviour {
 
     void Save (string filename, ExportOptions exportOptions)
     {
-        if (currentSong != null)
+        if (currentSong != null && !currentSong.IsSaving)
         {
             Debug.Log("Saving to file- " + System.IO.Path.GetFullPath(filename));
           
