@@ -1,3 +1,8 @@
+v1.0.95
+    FIXES
+    -Fixed save indicator immediately fading out after fading in, regardless of whether the song had finished saving or not
+    -Added blocker to prevent multiple saves running at the same time. 
+
 v1.0.94
     FIXES
     -Fixed notes not updating when placing starpower in keys mode

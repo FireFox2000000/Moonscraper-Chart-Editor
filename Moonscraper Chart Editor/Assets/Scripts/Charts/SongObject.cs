@@ -574,13 +574,13 @@ public abstract class SongObject
         length = 0;
 
         if (minPos > maxPos || list.Length < 1)
-            return;// new T[0];
+            return;
 
         int minArrayPos = FindClosestPosition(minPos, list);
         int maxArrayPos = FindClosestPosition(maxPos, list);
 
         if (minArrayPos == NOTFOUND || maxArrayPos == NOTFOUND)
-            return;// new T[0];
+            return;
         else
         {
             // Find position may return an object located at a lower position than the minimum position
@@ -590,7 +590,7 @@ public abstract class SongObject
             }
 
             if (minArrayPos > list.Length - 1)
-                return;// new T[0];
+                return;
 
             // Iterate to the very first object at a greater position, as there may be multiple objects located at the same position
             while (minArrayPos - 1 >= 0 && list[minArrayPos - 1].position >= minPos)
@@ -605,7 +605,7 @@ public abstract class SongObject
             }
 
             if (maxArrayPos < 0)
-                return;// new T[0];
+                return;
 
             // Iterate to the very last object at a lesser position, as there may be multiple objects located at the same position
             while (maxArrayPos + 1 < list.Length && list[maxArrayPos + 1].position <= maxPos)
@@ -614,7 +614,7 @@ public abstract class SongObject
             }
 
             if (minArrayPos > maxArrayPos)
-                return;// new T[0];
+                return;
 
             //T[] rangedList = new T[maxArrayPos - minArrayPos + 1];
             index = minArrayPos;

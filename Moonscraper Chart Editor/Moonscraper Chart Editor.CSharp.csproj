@@ -195,6 +195,7 @@
     <Compile Include="Assets\Scripts\SongValidateGH3.cs" />
     <Compile Include="Assets\Scripts\Step.cs" />
     <Compile Include="Assets\Scripts\TapBPMCalculator.cs" />
+    <Compile Include="Assets\Scripts\TimeSync.cs" />
     <Compile Include="Assets\Scripts\Tools\CursorSelect.cs" />
     <Compile Include="Assets\Scripts\Tools\Eraser.cs" />
     <Compile Include="Assets\Scripts\Tools\EventToolSwitcher.cs" />

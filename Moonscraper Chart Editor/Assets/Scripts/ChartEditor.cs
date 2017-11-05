@@ -562,6 +562,8 @@ public class ChartEditor : MonoBehaviour {
         {
             Bass.BASS_ChannelSetPosition(handle, playPoint);
             Bass.BASS_ChannelPlay(handle, false);
+
+            MovementController.timeSync.SongTime = playPoint;
             //while (!(Bass.BASS_ChannelIsActive(handle) == BASSActive.BASS_ACTIVE_PLAYING));
         }
     }

@@ -29,6 +29,8 @@ public abstract class MovementController : MonoBehaviour {
     // Jump to a chart position
     public abstract void SetPosition(uint chartPosition);
 
+    public static TimeSync timeSync;
+
     public void SetTime(float time)
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
@@ -41,6 +43,7 @@ public abstract class MovementController : MonoBehaviour {
 
     protected void Start()
     {
+        timeSync = new TimeSync();
         initPos = transform.position;
         globals = GameObject.FindGameObjectWithTag("Globals").GetComponent<Globals>();
         selfTransform = transform;
@@ -56,11 +59,13 @@ public abstract class MovementController : MonoBehaviour {
 
         if (playStartTime != null && playStartPosition != null)
         {
-            float time = Time.time - (float)playStartTime;
+            float time = (float)timeSync.GetTime();// Time.time - (float)playStartTime;
             if (time < 0)
                 time = 0;
 
-            pos.y = (float)playStartPosition + Song.TimeToWorldYPosition(time * Globals.gameSpeed);
+            time += Globals.audioCalibrationMS / 1000f * Globals.gameSpeed;
+
+            pos.y = /*(float)playStartPosition +*/ Song.TimeToWorldYPosition(time);
         }
         else
         {
