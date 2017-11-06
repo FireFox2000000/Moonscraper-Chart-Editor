@@ -94,6 +94,9 @@ public class ChartWriter {
                 case (Song.Instrument.Bass):
                     instrumentSaveString = "DoubleBass";
                     break;
+                case (Song.Instrument.Rhythm):
+                    instrumentSaveString = "DoubleRhythm";
+                    break;
                 case (Song.Instrument.Drums):
                     instrumentSaveString = "Drums";
                     break;

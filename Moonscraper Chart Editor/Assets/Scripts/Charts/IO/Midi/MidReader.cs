@@ -53,6 +53,9 @@ public static class MidReader {
                 case ("part bass"):
                     ReadNotes(midi.Events[i], song, Song.Instrument.Bass);
                     break;
+                case ("part rhythm"):
+                    ReadNotes(midi.Events[i], song, Song.Instrument.Rhythm);
+                    break;
                 case ("part keys"):
                     ReadNotes(midi.Events[i], song, Song.Instrument.Keys);
                     break;

@@ -354,6 +354,9 @@ public class Song {
                 case (Instrument.Bass):
                     instrumentName += "Bass - ";
                     break;
+                case (Instrument.Rhythm):
+                    instrumentName += "Rhythm - ";
+                    break;
                 case (Instrument.Keys):
                     instrumentName += "Keys - ";
                     break;
@@ -939,6 +942,9 @@ public class Song {
                     case ("DoubleBass"):
                         GetChart(Instrument.Bass, chartDiff).Load(stringData);
                         break;
+                    case ("DoubleRhythm"):
+                        GetChart(Instrument.Rhythm, chartDiff).Load(stringData);
+                        break;
                     case ("Drums"):
                         GetChart(Instrument.Drums, chartDiff).Load(stringData, Instrument.Drums);
                         break;
@@ -1362,7 +1368,7 @@ public class Song {
 
     public enum Instrument
     {
-        Guitar = 0, GuitarCoop = 1, Bass = 2, Keys = 3, Drums = 4, GHLiveGuitar = 5, GHLiveBass = 6, Unrecognised = 99,
+        Guitar = 0, GuitarCoop = 1, Bass = 2, Rhythm = 3, Keys = 4, Drums = 5, GHLiveGuitar = 6, GHLiveBass = 7, Unrecognised = 99,
     }
 }
 

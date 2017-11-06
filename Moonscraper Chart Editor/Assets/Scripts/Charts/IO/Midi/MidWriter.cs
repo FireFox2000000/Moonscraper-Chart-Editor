@@ -15,6 +15,7 @@ public static class MidWriter {
     const string EVENTS_TRACK = "EVENTS";           // Sections
     const string GUITAR_TRACK = "PART GUITAR";
     const string BASS_TRACK = "PART BASS";
+    const string RHYTHM_TRACK = "PART RHYTHM";
     const string KEYS_TRACK = "PART KEYS";
     const string DRUMS_TRACK = "PART DRUMS";
     const string GHL_GUITAR_TRACK = "PART GUITAR GHL";
@@ -56,6 +57,10 @@ public static class MidWriter {
         if (track_bass.Length > 0)
             track_count++;
 
+        byte[] track_rhythm = GetInstrumentBytes(song, Song.Instrument.Rhythm, exportOptions);
+        if (track_rhythm.Length > 0)
+            track_count++;
+
         byte[] track_keys = GetInstrumentBytes(song, Song.Instrument.Keys, exportOptions);
         if (track_keys.Length > 0)
             track_count++;
@@ -94,6 +99,9 @@ public static class MidWriter {
 
         if (track_bass.Length > 0)
             bw.Write(MakeTrack(track_bass, BASS_TRACK));
+
+        if (track_rhythm.Length > 0)
+            bw.Write(MakeTrack(track_rhythm, RHYTHM_TRACK));
 
         if (track_keys.Length > 0)
             bw.Write(MakeTrack(track_keys, KEYS_TRACK));
