@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TimeSync : MonoBehaviour
+public class TimeSync
 {
     float desyncAmount;
     float desyncLenience = .005f;

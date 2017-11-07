@@ -1,3 +1,11 @@
+v1.0.96
+    NEW FEATURES
+    -Added seperate rhythm instrument track
+    -Added seperate audio slot for bass audio
+
+    CHANGES
+    -Song length can now be determined by audio tracks other than the song audio (can load in guitar audio into the guitar audio slot by itself for example)
+
 v1.0.95
     FIXES
     -Fixed save indicator immediately fading out after fading in, regardless of whether the song had finished saving or not

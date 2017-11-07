@@ -25,6 +25,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public Text musicStream;
     public Text guitarStream;
+    public Text bassStream;
     public Text rhythmStream;
     public Text drumStream;
 
@@ -158,6 +159,18 @@ public class SongPropertiesPanelController : DisplayMenu {
             guitarStream.text = "No audio";
         }
 
+        if (song.bassAudioLoaded)
+        {
+            bassStream.color = Color.white;
+            bassStream.text = song.bassSongName;
+            ClipText(bassStream);
+        }
+        else
+        {
+            bassStream.color = Color.red;
+            bassStream.text = "No audio";
+        }
+
         if (song.rhythmAudioLoaded)
         {
             rhythmStream.color = Color.white;
@@ -259,6 +272,25 @@ public class SongPropertiesPanelController : DisplayMenu {
         clearAudioStream(Song.GUITAR_STREAM_ARRAY_POS);
     }
 
+    public void LoadBassStream()
+    {
+        try
+        {
+            editor.currentSong.LoadBassStream(GetAudioFile());
+
+            StartCoroutine(SetAudio());
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
+
+    public void ClearBassStream()
+    {
+        clearAudioStream(Song.BASS_STREAM_ARRAY_POS);
+    }
+
     public void LoadRhythmStream()
     {
         try
@@ -309,6 +341,11 @@ public class SongPropertiesPanelController : DisplayMenu {
             case (Song.GUITAR_STREAM_ARRAY_POS):
                 editor.currentSong.guitarSample.Free();
                 editor.currentSong.bassGuitarStream = 0;
+                break;
+
+            case (Song.BASS_STREAM_ARRAY_POS):
+                editor.currentSong.bassSample.Free();
+                editor.currentSong.bassBassStream = 0;
                 break;
 
             case (Song.RHYTHM_STREAM_ARRAY_POS):

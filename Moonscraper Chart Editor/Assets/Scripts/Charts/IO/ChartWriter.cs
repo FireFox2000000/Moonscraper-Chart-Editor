@@ -19,6 +19,7 @@ public class ChartWriter {
     {
         string musicString = string.Empty;
         string guitarString = string.Empty;
+        string bassString = string.Empty;
         string rhythmString = string.Empty;
         string drumString = string.Empty;
 
@@ -32,6 +33,11 @@ public class ChartWriter {
             guitarString = Path.GetFileName(song.audioLocations[Song.GUITAR_STREAM_ARRAY_POS]);
         else
             guitarString = song.audioLocations[Song.GUITAR_STREAM_ARRAY_POS];
+
+        if (song.bassAudioLoaded && Path.GetDirectoryName(song.audioLocations[Song.BASS_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))
+            bassString = Path.GetFileName(song.audioLocations[Song.BASS_STREAM_ARRAY_POS]);
+        else
+            bassString = song.audioLocations[Song.BASS_STREAM_ARRAY_POS];
 
         if (song.rhythmAudioLoaded && Path.GetDirectoryName(song.audioLocations[Song.RHYTHM_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))
             rhythmString = Path.GetFileName(song.audioLocations[Song.RHYTHM_STREAM_ARRAY_POS]);
@@ -55,6 +61,9 @@ public class ChartWriter {
 
         if (song.guitarAudioLoaded)
             saveString += Globals.TABSPACE + "GuitarStream = \"" + guitarString + "\"" + Globals.LINE_ENDING;
+
+        if (song.bassAudioLoaded)
+            saveString += Globals.TABSPACE + "BassStream = \"" + bassString + "\"" + Globals.LINE_ENDING;
 
         if (song.rhythmAudioLoaded)
             saveString += Globals.TABSPACE + "RhythmStream = \"" + rhythmString + "\"" + Globals.LINE_ENDING;
