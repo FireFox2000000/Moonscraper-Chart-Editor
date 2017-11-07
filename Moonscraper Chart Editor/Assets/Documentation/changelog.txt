@@ -1,45 +1,17 @@
-v1.0.96
-    NEW FEATURES
-    -Added seperate rhythm instrument track
-    -Added seperate audio slot for bass audio
-
-    CHANGES
-    -Song length can now be determined by audio tracks other than the song audio (can load in guitar audio into the guitar audio slot by itself for example)
-
-v1.0.95
+v1.0.97
     FIXES
-    -Fixed save indicator immediately fading out after fading in, regardless of whether the song had finished saving or not
-    -Added blocker to prevent multiple saves running at the same time. 
-
-v1.0.94
-    FIXES
-    -Fixed notes not updating when placing starpower in keys mode
-    -Fixed note inspector not showing up after placing starpower, going to the cursor tool and selecting a note
-    -Fixed notes not updating is weird places when editing starpower
-
-v1.0.93
-    FIXES
-    -Fixed crash upon save warning dialogue trying to popup in specific circumstances
-    -Fixed extra starpower being loaded in when they should be
-    -Fixed note positioning refreshing upon hyperspeed changes or bpm moving
-    -Increase full-updating efficiency
-
-v1.0.92
-    FIXES
-    -Fixed Midi saving of tap notes
-    -Fixed chart reloading refreshing
-
-v1.0.91
-    FIXES
-    -Fixed sustains copied from charts of different resolutions not being scaled correctly. 
-    -Fixed note visuals and positions not updating upon starpower or bpm adjustments and in other situations
+    -Fixed issue with exporter sometimes not working.
+    -Reverted to old movement
 
 v1.0.9
     NEW FEATURES
     -Added GHLive Guitar and Bass charting
+    -Added seperate rhythm instrument track
+    -Added seperate audio slot for bass audio
     
     CHANGES
     -Can now load in unrecognised tracks in chart and midi files and preserve them without deleting them
+    -Song length can now be determined by audio tracks other than the song audio (can load in guitar audio into the guitar audio slot by itself for example)
 
     FIXES
     -Fixed broken undo/redo recording on hold-right click-left delete shortcut
@@ -63,6 +35,11 @@ v1.0.9
     -Found workaround that fixes note inspector not showing up when notes are highlighted in rare instances
     -Fixed incorrect bpm anchor adjustment
     -Fairly major optimisation by reducing the note visual refreshing frequency
+    -Fixed sustains copied from charts of different resolutions not being scaled correctly. 
+    -Fixed crash upon save warning dialogue trying to popup in specific circumstances
+    -Fixed save indicator immediately fading out after fading in, regardless of whether the song had finished saving or not
+    -Added blocker to prevent multiple saves running at the same time. 
+    -Fixed Manual menu not showing information
 
 v1.0
     NEW FEATURES

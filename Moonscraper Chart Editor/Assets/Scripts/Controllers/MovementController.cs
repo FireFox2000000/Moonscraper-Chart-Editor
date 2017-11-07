@@ -59,13 +59,15 @@ public abstract class MovementController : MonoBehaviour {
 
         if (playStartTime != null && playStartPosition != null)
         {
-            float time = (float)timeSync.GetTime();// Time.time - (float)playStartTime;
+            float time = Time.time - (float)playStartTime; //(float)timeSync.GetTime();//
             if (time < 0)
                 time = 0;
 
-            time += Globals.audioCalibrationMS / 1000f * Globals.gameSpeed;
+            pos.y = (float)playStartPosition + Song.TimeToWorldYPosition(time * Globals.gameSpeed);
+            
+            //time -= (Globals.audioCalibrationMS / 1000f * Globals.gameSpeed + editor.currentSong.offset);
 
-            pos.y = /*(float)playStartPosition +*/ Song.TimeToWorldYPosition(time);
+            //pos.y = /*(float)playStartPosition +*/ Song.TimeToWorldYPosition(time);
         }
         else
         {

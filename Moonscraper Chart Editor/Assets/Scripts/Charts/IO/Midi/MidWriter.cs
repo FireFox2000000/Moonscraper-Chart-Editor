@@ -174,7 +174,7 @@ public static class MidWriter {
         float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
 
         for (int i = 0; i < song.eventsAndSections.Length; ++i)
-        {
+        {     
             uint deltaTime = song.eventsAndSections[i].position;
             if (i > 0)
                 deltaTime -= song.eventsAndSections[i - 1].position;
@@ -548,14 +548,13 @@ public static class MidWriter {
         if (text.Length > 255)
             throw new Exception("Text cannot be longer than 255 characters");
 
-        char[] chars = text.ToCharArray();
-        int byteLength = chars.Length;
-        
-        byte[] bytes = new byte[3 + byteLength];       // FF xx nn then whatever data
+        char[] chars = text.ToCharArray();   
 
         byte[] header_event = EndianBitConverter.Big.GetBytes((short)(0xFF00 | (short)m_event));                // FF xx
-        byte[] header_byte_length = EndianBitConverter.Big.GetBytes((sbyte)byteLength);    // nn
         byte[] header_text = System.Text.Encoding.UTF8.GetBytes(chars);            // dd
+        byte[] header_byte_length = EndianBitConverter.Big.GetBytes((sbyte)(header_text.Length));    // nn
+        
+        byte[] bytes = new byte[3 + (header_text.Length)];       // FF xx nn then whatever data
 
         int offset = 0;
         Array.Copy(header_event, 0, bytes, offset, sizeof(short));
