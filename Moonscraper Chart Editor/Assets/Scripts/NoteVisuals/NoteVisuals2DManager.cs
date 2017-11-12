@@ -58,44 +58,81 @@ public class NoteVisuals2DManager : NoteVisualsManager {
         Vector3 scale = new Vector3(1, 1, 1);
         if (note != null)
         {
-            int noteArrayPos = (int)note.fret_type;
-            if (Globals.drumMode && note.fret_type != Note.Fret_Type.OPEN)
+            if (Globals.ghLiveMode)
             {
-                noteArrayPos += 1;
-                if (noteArrayPos > (int)Note.Fret_Type.ORANGE)
-                    noteArrayPos = 0;
-            }
+                int noteArrayPos = 0;
 
-            if (noteType == Note.Note_Type.Strum || (noteType == Note.Note_Type.Hopo && Globals.drumMode))
-            {
-                if (specialType == Note.Special_Type.STAR_POW)
-                    ren.sprite = spriteResources.sp_strum[noteArrayPos];
-                else
-                    ren.sprite = spriteResources.reg_strum[noteArrayPos];
-            }
-            else if (noteType == Note.Note_Type.Hopo)
-            {
-                if (specialType == Note.Special_Type.STAR_POW)
-                    ren.sprite = spriteResources.sp_hopo[noteArrayPos];
-                else
-                    ren.sprite = spriteResources.reg_hopo[noteArrayPos];
-            }
-            // Tap notes
-            else
-            {
-                if (note.fret_type != Note.Fret_Type.OPEN)
+                if (note.ghlive_fret_type >= Note.GHLive_Fret_Type.WHITE_1 && note.ghlive_fret_type <= Note.GHLive_Fret_Type.WHITE_3)
+                    noteArrayPos = 1;
+                else if (note.IsOpenNote())
+                    noteArrayPos = 2;
+
+                if (noteType == Note.Note_Type.Strum)
                 {
                     if (specialType == Note.Special_Type.STAR_POW)
-                        ren.sprite = spriteResources.sp_tap[noteArrayPos];
+                        ren.sprite = spriteResources.sp_strum_ghl[noteArrayPos];
                     else
-                        ren.sprite = spriteResources.reg_tap[noteArrayPos];
+                        ren.sprite = spriteResources.reg_strum_ghl[noteArrayPos];
+                }
+                else if (noteType == Note.Note_Type.Hopo)
+                {
+                    if (specialType == Note.Special_Type.STAR_POW)
+                        ren.sprite = spriteResources.sp_hopo_ghl[noteArrayPos];
+                    else
+                        ren.sprite = spriteResources.reg_hopo_ghl[noteArrayPos];
+                }
+                else
+                {
+                    if (!note.IsOpenNote())
+                    {
+                        if (specialType == Note.Special_Type.STAR_POW)
+                            ren.sprite = spriteResources.sp_tap_ghl[noteArrayPos];
+                        else
+                            ren.sprite = spriteResources.reg_tap_ghl[noteArrayPos];
+                    }
                 }
             }
+            else
+            {
+                int noteArrayPos = (int)note.fret_type;
+                if (Globals.drumMode && note.fret_type != Note.Fret_Type.OPEN)
+                {
+                    noteArrayPos += 1;
+                    if (noteArrayPos > (int)Note.Fret_Type.ORANGE)
+                        noteArrayPos = 0;
+                }
 
-            if (note.fret_type == Note.Fret_Type.OPEN)
-                scale = new Vector3(1.2f, 1, 1);
-            else if (specialType == Note.Special_Type.STAR_POW)
-                scale = new Vector3(1.2f, 1.2f, 1);
+                if (noteType == Note.Note_Type.Strum || (noteType == Note.Note_Type.Hopo && Globals.drumMode))
+                {
+                    if (specialType == Note.Special_Type.STAR_POW)
+                        ren.sprite = spriteResources.sp_strum[noteArrayPos];
+                    else
+                        ren.sprite = spriteResources.reg_strum[noteArrayPos];
+                }
+                else if (noteType == Note.Note_Type.Hopo)
+                {
+                    if (specialType == Note.Special_Type.STAR_POW)
+                        ren.sprite = spriteResources.sp_hopo[noteArrayPos];
+                    else
+                        ren.sprite = spriteResources.reg_hopo[noteArrayPos];
+                }
+                // Tap notes
+                else
+                {
+                    if (note.fret_type != Note.Fret_Type.OPEN)
+                    {
+                        if (specialType == Note.Special_Type.STAR_POW)
+                            ren.sprite = spriteResources.sp_tap[noteArrayPos];
+                        else
+                            ren.sprite = spriteResources.reg_tap[noteArrayPos];
+                    }
+                }
+
+                if (note.fret_type == Note.Fret_Type.OPEN)
+                    scale = new Vector3(1.2f, 1, 1);
+                else if (specialType == Note.Special_Type.STAR_POW)
+                    scale = new Vector3(1.2f, 1.2f, 1);
+            }
         }
         lastUpdatedSprite = ren.sprite;
         transform.localScale = scale;
@@ -105,7 +142,8 @@ public class NoteVisuals2DManager : NoteVisualsManager {
     {
         base.Animate();
 
-        SpriteAnimation(nCon.note);
+        if (!Globals.ghLiveMode)
+            SpriteAnimation(nCon.note);
     }
 
     void SpriteAnimation(Note note)

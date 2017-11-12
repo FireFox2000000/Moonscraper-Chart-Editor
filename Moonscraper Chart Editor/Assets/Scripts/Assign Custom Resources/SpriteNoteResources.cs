@@ -15,4 +15,12 @@ public class SpriteNoteResources : ScriptableObject {
     public Sprite[] sp_tap = new Sprite[5];
 
     public Sprite[] sustains = new Sprite[5];
+
+    public Texture2D fullAtlusGhl;
+    public Sprite[] reg_strum_ghl = new Sprite[3];
+    public Sprite[] reg_hopo_ghl = new Sprite[3];
+    public Sprite[] reg_tap_ghl = new Sprite[2];
+    public Sprite[] sp_strum_ghl = new Sprite[3];
+    public Sprite[] sp_hopo_ghl = new Sprite[3];
+    public Sprite[] sp_tap_ghl = new Sprite[2];
 }

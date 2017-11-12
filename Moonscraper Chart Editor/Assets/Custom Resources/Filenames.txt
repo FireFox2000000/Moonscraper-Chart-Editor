@@ -37,3 +37,16 @@ Strikeline Frets- Replace [x] with numbers 0-4 for each image
 	[x]_drum_fret_release	image size (128, 64)
 
 	fret_stem			image size (64, 16)
+
+GHL Notes- Replace [x] with numbers 0-1 for each image
+    [x]_reg_strum_ghl		1 note of image size (100, 100)
+	[x]_reg_hopo_ghl		1 note of image size (100, 100)
+	[x]_reg_tap_ghl			1 note of image size (100, 100)
+	[x]_sp_strum_ghl		1 note of image size (100, 100)
+	[x]_sp_hopo_ghl			1 note of image size (100, 100)
+	[x]_sp_tap_ghl			1 note of image size (100, 100)
+
+    2_reg_strum_ghl			1 note of image size (400, 50)
+	2_reg_hopo_ghl			1 note of image size (400, 50)
+	2_sp_strum_ghl			1 note of image size (400, 50)
+	2_sp_hopo_ghl			1 note of image size (400, 50)

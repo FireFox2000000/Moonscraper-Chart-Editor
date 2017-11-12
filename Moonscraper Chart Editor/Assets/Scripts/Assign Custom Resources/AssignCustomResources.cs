@@ -42,6 +42,7 @@ public class AssignCustomResources : MonoBehaviour {
                 metronome.clap = customSkin.metronome;
 
             WriteCustomNoteTexturesToAtlus(defaultNoteSprites.fullAtlus);
+            WriteCustomGHLNoteTexturesToAtlus(defaultNoteSprites.fullAtlusGhl);
             Debug.Log(noteSpritesAvaliable);
             GenerateAndAssignFretSprites();
         }
@@ -78,6 +79,22 @@ public class AssignCustomResources : MonoBehaviour {
         Skin.AssestsAvaliable? sprites = noteSpritesAvaliable;
         SetCustomTexturesToAtlus(defaultNoteSprites.sustains, customSkin.sustains, atlusPixels, fullTextureAtlusSize);
         noteSpritesAvaliable = sprites;
+
+        atlus.SetPixels(atlusPixels);
+        atlus.Apply();
+    }
+
+    void WriteCustomGHLNoteTexturesToAtlus(Texture2D atlus)
+    {
+        Color[] atlusPixels = atlus.GetPixels();
+        Utility.IntVector2 fullTextureAtlusSize = new Utility.IntVector2(atlus.width, atlus.height);
+
+        SetCustomTexturesToAtlus(defaultNoteSprites.reg_strum_ghl, customSkin.reg_strum_ghl, atlusPixels, fullTextureAtlusSize);
+        SetCustomTexturesToAtlus(defaultNoteSprites.reg_hopo_ghl, customSkin.reg_hopo_ghl, atlusPixels, fullTextureAtlusSize);
+        SetCustomTexturesToAtlus(defaultNoteSprites.reg_tap_ghl, customSkin.reg_tap_ghl, atlusPixels, fullTextureAtlusSize);
+        SetCustomTexturesToAtlus(defaultNoteSprites.sp_strum_ghl, customSkin.sp_strum_ghl, atlusPixels, fullTextureAtlusSize);
+        SetCustomTexturesToAtlus(defaultNoteSprites.sp_hopo_ghl, customSkin.sp_hopo_ghl, atlusPixels, fullTextureAtlusSize);
+        SetCustomTexturesToAtlus(defaultNoteSprites.sp_tap_ghl, customSkin.sp_tap_ghl, atlusPixels, fullTextureAtlusSize);
 
         atlus.SetPixels(atlusPixels);
         atlus.Apply();

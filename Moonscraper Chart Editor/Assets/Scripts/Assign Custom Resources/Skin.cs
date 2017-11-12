@@ -37,6 +37,13 @@ public class Skin : ScriptableObject {
     public Texture2D fret_stem;
     public Texture2D hit_flames;
 
+    public Texture2D[] reg_strum_ghl = new Texture2D[3];
+    public Texture2D[] reg_hopo_ghl = new Texture2D[3];
+    public Texture2D[] reg_tap_ghl = new Texture2D[2];
+    public Texture2D[] sp_strum_ghl = new Texture2D[3];
+    public Texture2D[] sp_hopo_ghl = new Texture2D[3];
+    public Texture2D[] sp_tap_ghl = new Texture2D[2];
+
     public enum AssestsAvaliable
     {
         None, All, Mixed

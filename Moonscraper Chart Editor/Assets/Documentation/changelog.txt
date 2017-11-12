@@ -1,7 +1,3 @@
-v1.0.97
-    FIXES
-    -Fixed issue with exporter sometimes not working.
-    -Reverted to old movement
 
 v1.0.9
     NEW FEATURES
@@ -40,6 +36,7 @@ v1.0.9
     -Fixed save indicator immediately fading out after fading in, regardless of whether the song had finished saving or not
     -Added blocker to prevent multiple saves running at the same time. 
     -Fixed Manual menu not showing information
+    -Fixed issue with exporter sometimes not working.
 
 v1.0
     NEW FEATURES

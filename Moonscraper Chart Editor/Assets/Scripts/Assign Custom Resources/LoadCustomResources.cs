@@ -15,6 +15,9 @@ public class LoadCustomResources : MonoBehaviour {
     const int OPEN_NOTE_TEXTURE_1X1_WIDTH = 512, OPEN_NOTE_TEXTURE_1X1_HEIGHT = 64;
     const int OPEN_NOTE_TEXTURE_4X4_WIDTH = 2048, OPEN_NOTE_TEXTURE_4X4_HEIGHT = 256;
 
+    const int GHL_NOTE_TEXTURE_1X1_WIDTH = 100,         GHL_NOTE_TEXTURE_1X1_HEIGHT = 100;
+    const int GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH = 400,    GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT = 50;
+
     const int SUSTAIN_TEXTURE_WIDTH = 32, SUSTAIN_TEXTURE_HEIGHT = 32;
 
     public UnityEngine.UI.Text progressText;
@@ -33,82 +36,16 @@ public class LoadCustomResources : MonoBehaviour {
         new CustomTexture("fretboard-0", 512, 1024),
         new CustomAudioClip("clap"),
         new CustomAudioClip("metronome"),
-        /*
-        new CustomTexture("0_reg_strum", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("0_reg_hopo", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("0_reg_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
-        new CustomTexture("0_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
-        new CustomTexture("0_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
-        new CustomTexture("0_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
 
-        new CustomTexture("1_reg_strum", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("1_reg_hopo", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("1_reg_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
-        new CustomTexture("1_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
-        new CustomTexture("1_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
-        new CustomTexture("1_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
-
-        new CustomTexture("2_reg_strum", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("2_reg_hopo", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("2_reg_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
-        new CustomTexture("2_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
-        new CustomTexture("2_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
-        new CustomTexture("2_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
-
-        new CustomTexture("3_reg_strum", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("3_reg_hopo", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("3_reg_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
-        new CustomTexture("3_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
-        new CustomTexture("3_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
-        new CustomTexture("3_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
-
-        new CustomTexture("4_reg_strum", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("4_reg_hopo", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("4_reg_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
-        new CustomTexture("4_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
-        new CustomTexture("4_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
-        new CustomTexture("4_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
-        */
         new CustomTexture("5_reg_strum", OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT),
         new CustomTexture("5_reg_hopo", OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT),
         new CustomTexture("5_sp_strum", OPEN_NOTE_TEXTURE_4X4_WIDTH, OPEN_NOTE_TEXTURE_4X4_HEIGHT),
         new CustomTexture("5_sp_hopo", OPEN_NOTE_TEXTURE_4X4_WIDTH, OPEN_NOTE_TEXTURE_4X4_HEIGHT),
-        /*
-        new CustomTexture("0_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
-        new CustomTexture("1_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
-        new CustomTexture("2_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
-        new CustomTexture("3_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),
-        new CustomTexture("4_sustain", SUSTAIN_TEXTURE_WIDTH, SUSTAIN_TEXTURE_HEIGHT),*/
-        /*
-        new CustomTexture("0_fret_base", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("0_fret_cover", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("0_fret_press", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("0_fret_release", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("0_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
 
-        new CustomTexture("1_fret_base", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("1_fret_cover", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("1_fret_press", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("1_fret_release", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("1_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-
-        new CustomTexture("2_fret_base", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("2_fret_cover", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("2_fret_press", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("2_fret_release", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("2_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-
-        new CustomTexture("3_fret_base", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("3_fret_cover", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("3_fret_press", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("3_fret_release", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("3_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-
-        new CustomTexture("4_fret_base", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("4_fret_cover", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("4_fret_press", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("4_fret_release", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("4_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),*/
+        new CustomTexture("2_reg_strum_ghl", GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("2_reg_hopo_ghl", GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("2_sp_strum_ghl", GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT),
+        new CustomTexture("2_sp_hopo_ghl", GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT),
 
         new CustomTexture("fret_stem", 64, 16),
         new CustomTexture("hit_flames", 512, 1024),
@@ -137,6 +74,19 @@ public class LoadCustomResources : MonoBehaviour {
                 new CustomTexture(i + "_drum_fret_press", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
                 new CustomTexture(i + "_drum_fret_release", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
                 new CustomTexture(i + "_drum_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT)
+            }
+            );
+        }
+
+        for (int i = 0; i < 2; ++i)
+        {
+            resources.AddRange(new CustomTexture[] {
+                new CustomTexture(i + "_reg_strum_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomTexture(i + "_reg_hopo_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomTexture(i + "_reg_tap_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomTexture(i + "_sp_strum_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomTexture(i + "_sp_hopo_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomTexture(i + "_sp_tap_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
             }
             );
         }
@@ -269,6 +219,7 @@ public class LoadCustomResources : MonoBehaviour {
         customSkin.fretboard = GetTextureFromLoadedResources("fretboard-0", resourcesDictionary);
         customSkin.metronome = GetAudioClipFromLoadedResources("metronome", resourcesDictionary);
 
+        // STANDARD NOTES
         for (int i = 0; i < customSkin.reg_strum.Length; ++i)
         {
             customSkin.reg_strum[i] = GetTextureFromLoadedResources(i + "_reg_strum", resourcesDictionary);
@@ -298,12 +249,8 @@ public class LoadCustomResources : MonoBehaviour {
         {
             customSkin.sp_tap[i] = GetTextureFromLoadedResources(i + "_sp_tap", resourcesDictionary);
         }
-        /*
-        for (int i = 0; i < customSkin.sustains.Length; ++i)
-        {
-            customSkin.sustains[i] = GetTextureFromLoadedResources(i + "_sustain", resourcesDictionary);
-        }*/
 
+        // STANDARD FRETS
         for (int i = 0; i < customSkin.fret_base.Length; ++i)
         {
             customSkin.fret_base[i] = GetTextureFromLoadedResources(i + "_fret_base", resourcesDictionary);
@@ -329,6 +276,7 @@ public class LoadCustomResources : MonoBehaviour {
             customSkin.fret_anim[i] = GetTextureFromLoadedResources(i + "_fret_anim", resourcesDictionary);
         }
         
+        // DRUMS
         for (int i = 0; i < customSkin.fret_base.Length; ++i)
         {
             customSkin.drum_fret_base[i] = GetTextureFromLoadedResources(i + "_drum_fret_base", resourcesDictionary);
@@ -352,6 +300,37 @@ public class LoadCustomResources : MonoBehaviour {
         for (int i = 0; i < customSkin.fret_anim.Length; ++i)
         {
             customSkin.drum_fret_anim[i] = GetTextureFromLoadedResources(i + "_drum_fret_anim", resourcesDictionary);
+        }
+
+        // GHL LOADING
+        for (int i = 0; i < customSkin.reg_strum_ghl.Length; ++i)
+        {
+            customSkin.reg_strum_ghl[i] = GetTextureFromLoadedResources(i + "_reg_strum_ghl", resourcesDictionary);
+        }
+
+        for (int i = 0; i < customSkin.reg_hopo_ghl.Length; ++i)
+        {
+            customSkin.reg_hopo_ghl[i] = GetTextureFromLoadedResources(i + "_reg_hopo_ghl", resourcesDictionary);
+        }
+
+        for (int i = 0; i < customSkin.reg_tap_ghl.Length; ++i)
+        {
+            customSkin.reg_tap_ghl[i] = GetTextureFromLoadedResources(i + "_reg_tap_ghl", resourcesDictionary);
+        }
+
+        for (int i = 0; i < customSkin.sp_strum_ghl.Length; ++i)
+        {
+            customSkin.sp_strum_ghl[i] = GetTextureFromLoadedResources(i + "_sp_strum_ghl", resourcesDictionary);
+        }
+
+        for (int i = 0; i < customSkin.sp_hopo_ghl.Length; ++i)
+        {
+            customSkin.sp_hopo_ghl[i] = GetTextureFromLoadedResources(i + "_sp_hopo_ghl", resourcesDictionary);
+        }
+
+        for (int i = 0; i < customSkin.sp_tap_ghl.Length; ++i)
+        {
+            customSkin.sp_tap_ghl[i] = GetTextureFromLoadedResources(i + "_sp_tap_ghl", resourcesDictionary);
         }
 
         customSkin.fret_stem = GetTextureFromLoadedResources("fret_stem", resourcesDictionary);
