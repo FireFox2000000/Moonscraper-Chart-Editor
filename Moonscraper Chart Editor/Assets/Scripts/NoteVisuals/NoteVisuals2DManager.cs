@@ -55,16 +55,16 @@ public class NoteVisuals2DManager : NoteVisualsManager {
     {
         base.UpdateVisuals();
 
-        if (Globals.ghLiveMode)
-            transform.localPosition = new Vector3(0, ghlSpriteOffset, 0);
-        else
-            transform.localPosition = Vector3.zero;
-
         Note note = nCon.note;
 
         Vector3 scale = new Vector3(1, 1, 1);
         if (note != null)
         {
+            if (Globals.ghLiveMode && !note.IsOpenNote())
+                transform.localPosition = new Vector3(0, ghlSpriteOffset, 0);
+            else
+                transform.localPosition = Vector3.zero;
+
             if (Globals.ghLiveMode)
             {
                 int noteArrayPos = 0;
