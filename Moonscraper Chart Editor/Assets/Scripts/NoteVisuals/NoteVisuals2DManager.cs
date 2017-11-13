@@ -19,6 +19,8 @@ public class NoteVisuals2DManager : NoteVisualsManager {
     static int globalAnimationFrame = 0;
     static int lastUpdatedFrame = -1;
 
+    const float ghlSpriteOffset = 0.4f;
+
     Sprite lastUpdatedSprite = null;
     StringBuilder animationNameString = new StringBuilder(16, 16);
 
@@ -52,6 +54,11 @@ public class NoteVisuals2DManager : NoteVisualsManager {
     public override void UpdateVisuals()
     {
         base.UpdateVisuals();
+
+        if (Globals.ghLiveMode)
+            transform.localPosition = new Vector3(0, ghlSpriteOffset, 0);
+        else
+            transform.localPosition = Vector3.zero;
 
         Note note = nCon.note;
 
