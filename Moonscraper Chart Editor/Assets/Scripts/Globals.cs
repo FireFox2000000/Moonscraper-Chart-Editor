@@ -213,7 +213,6 @@ public class Globals : MonoBehaviour {
     
     void Update()
     {
-        //Debug.Log(SongObject.FindObjectPosition(new ChartEvent(8256, "*"), editor.currentChart.events));
         IsInDropDown = _IsInDropDown;
 
         // Disable controls while user is in an input field

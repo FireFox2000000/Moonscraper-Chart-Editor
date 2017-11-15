@@ -1,3 +1,7 @@
+v1.0.98
+    NEW FEATURES
+    -Added save error popup is a save error is detected
+    -Added custom resources support for GHL frets
 
 v1.0.9
     NEW FEATURES

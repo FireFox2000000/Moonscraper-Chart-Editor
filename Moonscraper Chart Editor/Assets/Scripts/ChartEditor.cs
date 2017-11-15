@@ -210,8 +210,22 @@ public class ChartEditor : MonoBehaviour {
 #endif
     }
 
+    public bool SaveErrorCheck()
+    {
+        bool saveError = currentSong.saveError;
+        if (currentSong.saveError)
+        {
+            errorMenu.gameObject.SetActive(true);
+            currentSong.saveError = false;
+        }
+
+        return saveError;
+    }
+
     public void Update()
     {
+        SaveErrorCheck();
+
         // Update object positions that supposed to be visible into the range of the camera
         _minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
         _maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
@@ -368,6 +382,11 @@ public class ChartEditor : MonoBehaviour {
     public void New()
     {
         if (!editCheck())
+            return;
+
+        while (currentSong.IsSaving) ;
+
+        if (SaveErrorCheck())
             return;
 
         lastLoadedFile = string.Empty;
@@ -762,6 +781,11 @@ public class ChartEditor : MonoBehaviour {
         while (currentSong.IsSaving)
             yield return null;
 
+        if (SaveErrorCheck())
+        {
+            yield break;
+        }
+
 #if TIMING_DEBUG
         totalLoadTime = Time.realtimeSinceStartup;
 #endif
@@ -873,6 +897,14 @@ public class ChartEditor : MonoBehaviour {
     {
         if (!editCheck())
             yield break;
+
+        while (currentSong.IsSaving)
+            yield return null;
+
+        if (SaveErrorCheck())
+        {
+            yield break;
+        }
 
         Song backup = currentSong;
 

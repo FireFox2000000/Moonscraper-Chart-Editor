@@ -16,6 +16,8 @@ using System;
 using Un4seen.Bass;
 
 public class Song {
+    public bool saveError = false;
+
     static int NUM_OF_DIFFICULTIES;
     static int NUM_OF_AUDIO_STREAMS = 5;
     public static bool streamAudio = true;
@@ -1358,13 +1360,15 @@ public class Song {
     {
         try
         {
+            //throw new System.Exception("Dummy error");
             new ChartWriter(filepath).Write(this, exportOptions);
 
             Debug.Log("Save complete!");
         }
         catch (System.Exception e)
         {
-            Debug.LogError("Error while saving chart: " + e.Message);
+            saveError = true;
+            ErrorMessage.errorMessage = "Error while saving chart: " + e.Message;
         }
     }
 
