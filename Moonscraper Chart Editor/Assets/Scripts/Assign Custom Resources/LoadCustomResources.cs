@@ -18,6 +18,8 @@ public class LoadCustomResources : MonoBehaviour {
     const int GHL_NOTE_TEXTURE_1X1_WIDTH = 100,         GHL_NOTE_TEXTURE_1X1_HEIGHT = 100;
     const int GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH = 400,    GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT = 50;
 
+    const int GHL_FRET_WIDTH = 100, GHL_FRET_HEIGHT = 100;
+
     const int SUSTAIN_TEXTURE_WIDTH = 32, SUSTAIN_TEXTURE_HEIGHT = 32;
 
     public UnityEngine.UI.Text progressText;
@@ -87,6 +89,15 @@ public class LoadCustomResources : MonoBehaviour {
                 new CustomTexture(i + "_sp_strum_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
                 new CustomTexture(i + "_sp_hopo_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
                 new CustomTexture(i + "_sp_tap_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
+            }
+            );
+        }
+
+        for (int i = 0; i < 6; ++i)
+        {
+            resources.AddRange(new CustomTexture[] {
+                new CustomTexture(i + "_fret_base_ghl", GHL_FRET_WIDTH, GHL_FRET_HEIGHT),
+                new CustomTexture(i + "_fret_press_ghl", GHL_FRET_WIDTH, GHL_FRET_HEIGHT),
             }
             );
         }
@@ -331,6 +342,16 @@ public class LoadCustomResources : MonoBehaviour {
         for (int i = 0; i < customSkin.sp_tap_ghl.Length; ++i)
         {
             customSkin.sp_tap_ghl[i] = GetTextureFromLoadedResources(i + "_sp_tap_ghl", resourcesDictionary);
+        }
+
+        for (int i = 0; i < customSkin.fret_base_ghl.Length; ++i)
+        {
+            customSkin.fret_base_ghl[i] = GetTextureFromLoadedResources(i + "_fret_base_ghl", resourcesDictionary);
+        }
+
+        for (int i = 0; i < customSkin.fret_press_ghl.Length; ++i)
+        {
+            customSkin.fret_press_ghl[i] = GetTextureFromLoadedResources(i + "_fret_press_ghl", resourcesDictionary);
         }
 
         customSkin.fret_stem = GetTextureFromLoadedResources("fret_stem", resourcesDictionary);

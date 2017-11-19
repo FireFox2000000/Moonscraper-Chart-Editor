@@ -44,6 +44,9 @@ public class Skin : ScriptableObject {
     public Texture2D[] sp_hopo_ghl = new Texture2D[3];
     public Texture2D[] sp_tap_ghl = new Texture2D[2];
 
+    public Texture2D[] fret_base_ghl = new Texture2D[6];
+    public Texture2D[] fret_press_ghl = new Texture2D[6];
+
     public enum AssestsAvaliable
     {
         None, All, Mixed

@@ -181,7 +181,8 @@ public class SongObjectPoolManager : MonoBehaviour {
                 --arrayPos;
             }
             // Render previous sp sustain in case of overlap into current position
-            if (arrayPos >= 0 && editor.currentChart.starPower[arrayPos].position + editor.currentChart.starPower[arrayPos].length > editor.minPos)
+            if (arrayPos >= 0 && editor.currentChart.starPower[arrayPos].position + editor.currentChart.starPower[arrayPos].length > editor.minPos &&
+                (editor.currentChart.starPower[arrayPos].position + editor.currentChart.starPower[arrayPos].length) < editor.maxPos)
             {
                 range.Add(editor.currentChart.starPower[arrayPos]);
             }

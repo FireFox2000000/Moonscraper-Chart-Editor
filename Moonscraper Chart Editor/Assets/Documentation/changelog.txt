@@ -1,14 +1,15 @@
-v1.0.98
+v1.0.99
     NEW FEATURES
-    -Added save error popup is a save error is detected
     -Added custom resources support for GHL frets
 
 v1.0.9
     NEW FEATURES
     -Added GHLive Guitar and Bass charting
+	-Added custom resources support for GHL notes
     -Added seperate rhythm instrument track
     -Added seperate audio slot for bass audio
-    
+    -Added save error popup is a save error is detected
+
     CHANGES
     -Can now load in unrecognised tracks in chart and midi files and preserve them without deleting them
     -Song length can now be determined by audio tracks other than the song audio (can load in guitar audio into the guitar audio slot by itself for example)

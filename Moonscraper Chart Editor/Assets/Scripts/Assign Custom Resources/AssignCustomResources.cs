@@ -16,6 +16,7 @@ public class AssignCustomResources : MonoBehaviour {
     public Skin customSkin;
     public SpriteNoteResources defaultNoteSprites;
     public CustomFretManager[] customFrets = new CustomFretManager[5];
+    public GHLHitAnimation[] customFretsGHL = new GHLHitAnimation[2];
 
     public static Skin.AssestsAvaliable? noteSpritesAvaliable = null;
 
@@ -240,6 +241,21 @@ public class AssignCustomResources : MonoBehaviour {
             for (int i = 0; i < customFrets.Length; ++i)
             {
                 customFrets[i].fretStemRen.sprite = stem;
+            }
+        }
+        
+        for (int i = 0; i < customFretsGHL.Length; ++i)
+        {
+            if (i < customSkin.fret_base_ghl.Length && customSkin.fret_base_ghl[i])
+            {
+                customFretsGHL[i].baseRen.sprite = MakeFretSprite(customSkin.fret_base_ghl[i]);
+                customFretsGHL[i].canUse = true;
+            }
+
+            if (i < customSkin.fret_press_ghl.Length && customSkin.fret_press_ghl[i])
+            {
+                customFretsGHL[i].pressRen.sprite = MakeFretSprite(customSkin.fret_press_ghl[i]);
+                customFretsGHL[i].canUse = true;
             }
         }
     }

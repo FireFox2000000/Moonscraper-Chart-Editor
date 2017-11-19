@@ -20,6 +20,8 @@ public class Indicators : MonoBehaviour {
     Color[] defaultStikelineFretColors;
     [SerializeField]
     Color[] ghlStikelineFretColors;
+    [SerializeField]
+    GHLHitAnimation[] ghlCustomFrets;
 
     [HideInInspector]
     public HitAnimation[] animations;
@@ -51,13 +53,26 @@ public class Indicators : MonoBehaviour {
     {
         for (int i = 0; i < animations.Length; ++i)
         {
-            if (customIndicators[i].gameObject.activeSelf)
+            if (Globals.ghLiveMode)
             {
-                animations[i] = customIndicators[i].gameObject.GetComponent<HitAnimation>();
-                indicators[i].transform.parent.gameObject.SetActive(false);
+                if (ghlCustomFrets[i].canUse)
+                {
+                    animations[i] = ghlCustomFrets[i].gameObject.GetComponent<HitAnimation>();
+                    indicators[i].transform.parent.gameObject.SetActive(false);
+                }
+                else
+                    animations[i] = indicators[i].GetComponent<HitAnimation>();
             }
             else
-                animations[i] = indicators[i].GetComponent<HitAnimation>();
+            {
+                if (customIndicators[i].gameObject.activeSelf)
+                {
+                    animations[i] = customIndicators[i].gameObject.GetComponent<HitAnimation>();
+                    indicators[i].transform.parent.gameObject.SetActive(false);
+                }
+                else
+                    animations[i] = indicators[i].GetComponent<HitAnimation>();
+            }
         }
     }
 
@@ -183,17 +198,25 @@ public class Indicators : MonoBehaviour {
     {
         if (Globals.ghLiveMode)
         {
-            foreach (GameObject go in indicators)
-            {
-                go.transform.parent.gameObject.SetActive(true);
-            }
             foreach (CustomFretManager go in customIndicators)
             {
                 go.gameObject.SetActive(false);
             }
+
+            // Check if the sprites exist for 2D
+            for (int i = 0; i < FRET_COUNT; ++i)
+            {
+                ghlCustomFrets[i].transform.parent.gameObject.SetActive(ghlCustomFrets[i].canUse);
+                indicators[i].transform.parent.gameObject.SetActive(!ghlCustomFrets[i].canUse);
+            }
         }
         else
         {
+            foreach (GHLHitAnimation go in ghlCustomFrets)
+            {
+                go.gameObject.SetActive(false);
+            }
+
             // Check if the sprites exist for 2D
             for (int i = 0; i < FRET_COUNT; ++i)
             {

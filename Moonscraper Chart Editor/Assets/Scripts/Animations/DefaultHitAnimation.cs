@@ -10,7 +10,7 @@ public class DefaultHitAnimation : HitAnimation {
     float initZPos;
     const float START_Z_POS = -START_ANIM_HEIGHT;
 
-    SpriteRenderer ren;
+    protected SpriteRenderer ren;
     public SpriteRenderer baseRen;
 
     string initBaseLayerName;
@@ -18,7 +18,7 @@ public class DefaultHitAnimation : HitAnimation {
 
     bool startRan = false;
 	// Use this for initialization
-	void Start () {
+	protected void Start () {
         if (!startRan)
         {
             initZPos = transform.position.z;
