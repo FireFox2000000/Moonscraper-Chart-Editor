@@ -5036,7 +5036,7 @@ Characters 0-9, . (dot), and - (dash / minus sign) are allowed. The dash is only
     </member>
     <member name="P:UnityEngine.UI.ScrollRect.onValueChanged">
       <summary>
-        <para>Callback executed when the scroll position of the slider is changed.</para>
+        <para>Callback executed when the position of the child changes.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.UI.ScrollRect.preferredHeight">

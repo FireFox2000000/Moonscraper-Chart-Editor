@@ -154,6 +154,8 @@ public class ClipboardObjectController : Snapable {
             editor.currentChart.UpdateCache();
             editor.currentSong.UpdateCache();
 
+            uint maxLength = editor.currentSong.TimeToChartPosition(editor.currentSong.length, editor.currentSong.resolution);
+
             // Paste the new objects in
             foreach (SongObject clipboardSongObject in clipboard.data)
             {
@@ -162,6 +164,9 @@ public class ClipboardObjectController : Snapable {
                 objectToAdd.position = chartLocationToPaste + 
                     SongObject.TickScaling(clipboardSongObject.position, clipboard.resolution, editor.currentSong.resolution) -
                     SongObject.TickScaling(clipboard.areaChartPosMin, clipboard.resolution, editor.currentSong.resolution);
+
+                if (objectToAdd.position >= maxLength)
+                    break;
 
                 if (objectToAdd.GetType() == typeof(Note))
                 {

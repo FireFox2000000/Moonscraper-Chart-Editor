@@ -1,4 +1,4 @@
-Shader "Sprites/Default"
+Shader "Sprites/Default - Old"
 {
 	Properties
 	{
