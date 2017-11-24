@@ -277,9 +277,9 @@ public class NoteController : SongObjectController {
         if (note != null)
         {         
             uint endPosition = note.position + note.sustain_length;
-
+            
             // Determine if a note is outside of the view range
-            if (endPosition < editor.minPos)
+            if (endPosition < editor.minPos || note.position > editor.maxPos)
             {
                 gameObject.SetActive(false);
                 return;
@@ -292,16 +292,11 @@ public class NoteController : SongObjectController {
 
                 if (note.position > editor.maxPos)
                     gameObject.SetActive(false);
-                //else if (Globals.viewMode == Globals.ViewMode.Chart)
-                    //UpdateSongObject();         // Always update the position in case of hyperspeed changes
-               // else
-                   // UpdateNotePosition();
             }
 
             if (this.note == null)      // Was deactivated
                 return;
 
-           //if (Input.GetMouseButton(1) && !sustain.gameObject.activeSelf)
            sustain.gameObject.SetActive(note.sustain_length != 0 || Input.GetMouseButton(1));
 
             // Sustain is constantly updated unless it has no length or it's length is meant to be zero but isn't
@@ -437,22 +432,7 @@ public class NoteController : SongObjectController {
     public static float NoteToXPos(Note note)
     {
         return GetXPos(0, note);
-        /*
-        if (!note.IsOpenNote())
-        {
-            if (Globals.notePlacementMode != Globals.NotePlacementMode.LeftyFlip)
-            {
-                return -note.rawNote + positionToOffsetInDisplay;
-            }
-            else
-                return note.rawNote - positionToOffsetInDisplay;
-        }
-        else
-            return 0;*/
     }
-
-    //Note.Fret_Type prevFretType;
-   // Note.Flags prevFlags;
 
     public override void UpdateSongObject()
     {

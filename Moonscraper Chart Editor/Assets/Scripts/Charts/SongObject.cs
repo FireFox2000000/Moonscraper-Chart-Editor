@@ -616,12 +616,11 @@ public abstract class SongObject
             if (minArrayPos > maxArrayPos)
                 return;
 
-            //T[] rangedList = new T[maxArrayPos - minArrayPos + 1];
             index = minArrayPos;
             length = maxArrayPos - minArrayPos + 1;
-            //System.Array.Copy(list, minArrayPos, rangedList, 0, rangedList.Length);
 
-            //return rangedList;
+            if (list[minArrayPos].position < minPos || list[maxArrayPos].position > maxPos)
+                length = 0;
         }
     }
 

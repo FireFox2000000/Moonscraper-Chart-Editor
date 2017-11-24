@@ -52,6 +52,7 @@ public class ChartWriter {
         string saveString = string.Empty;
 
         // Song properties
+        Debug.Log("Writing song properties");
         saveString += "[Song]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
         saveString += GetPropertiesStringWithoutAudio(song, exportOptions);
 
@@ -74,6 +75,7 @@ public class ChartWriter {
         saveString += "}" + Globals.LINE_ENDING;
 
         // SyncTrack
+        Debug.Log("Writing synctrack");
         saveString += "[SyncTrack]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
         if (exportOptions.tickOffset > 0)
         {
@@ -84,6 +86,7 @@ public class ChartWriter {
         saveString += "}" + Globals.LINE_ENDING;
 
         // Events
+        Debug.Log("Writing events");
         saveString += "[Events]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
         saveString += GetSaveString(song, song.events, exportOptions);
         saveString += "}" + Globals.LINE_ENDING;
@@ -241,92 +244,102 @@ public class ChartWriter {
 
         float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
 
-        foreach (SongObject songObject in list)
+        for (int i = 0; i < list.Length; ++i)
+        //foreach (SongObject songObject in list)
         {
-            uint tick = (uint)Mathf.Round(songObject.position * resolutionScaleRatio) + exportOptions.tickOffset;
-            saveString.Append(Globals.TABSPACE + tick);
-
-            switch ((SongObject.ID)songObject.classID)
+            SongObject songObject = list[i];
+            try
             {
-                case (SongObject.ID.BPM):
-                    BPM bpm = songObject as BPM;
-                    if (bpm.anchor != null)
-                    {
-                        saveString.Append(" = A " + (uint)((double)bpm.anchor * 1000000));
-                        saveString.Append(Globals.LINE_ENDING);
-                        saveString.Append(Globals.TABSPACE + tick);
-                    }
+                uint tick = (uint)Mathf.Round(songObject.position * resolutionScaleRatio) + exportOptions.tickOffset;
+                saveString.Append(Globals.TABSPACE + tick);
 
-                    saveString.Append(" = B " + bpm.value);
-                    break;
+                switch ((SongObject.ID)songObject.classID)
+                {
+                    case (SongObject.ID.BPM):
+                        BPM bpm = songObject as BPM;
+                        if (bpm.anchor != null)
+                        {
+                            saveString.Append(" = A " + (uint)((double)bpm.anchor * 1000000));
+                            saveString.Append(Globals.LINE_ENDING);
+                            saveString.Append(Globals.TABSPACE + tick);
+                        }
 
-                case (SongObject.ID.TimeSignature):
-                    TimeSignature ts = songObject as TimeSignature;
-                    saveString.Append(" = TS " + ts.numerator);
+                        saveString.Append(" = B " + bpm.value);
+                        break;
 
-                    if (ts.denominator != 4)
-                        saveString.Append(" " + (uint)Mathf.Log(ts.denominator, 2));
-                    break;
+                    case (SongObject.ID.TimeSignature):
+                        TimeSignature ts = songObject as TimeSignature;
+                        saveString.Append(" = TS " + ts.numerator);
 
-                case (SongObject.ID.Section):
-                    Section section = songObject as Section;
-                    saveString.Append(" = E \"section " + section.title + "\"");
-                    break;
+                        if (ts.denominator != 4)
+                            saveString.Append(" " + (uint)Mathf.Log(ts.denominator, 2));
+                        break;
 
-                case (SongObject.ID.Event):
-                    Event songEvent = songObject as Event;
-                    saveString.Append(" = E \"" + songEvent.title + "\"");
-                    break;
+                    case (SongObject.ID.Section):
+                        Section section = songObject as Section;
+                        saveString.Append(" = E \"section " + section.title + "\"");
+                        break;
 
-                case (SongObject.ID.ChartEvent):
-                    ChartEvent chartEvent = songObject as ChartEvent;
-                    saveString.Append(" = E " + chartEvent.eventName);
-                    break;
+                    case (SongObject.ID.Event):
+                        Event songEvent = songObject as Event;
+                        saveString.Append(" = E \"" + songEvent.title + "\"");
+                        break;
 
-                case (SongObject.ID.Starpower):
-                    Starpower sp = songObject as Starpower;
-                    saveString.Append(" = S 2 " + (uint)Mathf.Round(sp.length * resolutionScaleRatio));
-                    break;
+                    case (SongObject.ID.ChartEvent):
+                        ChartEvent chartEvent = songObject as ChartEvent;
+                        saveString.Append(" = E " + chartEvent.eventName);
+                        break;
 
-                case (SongObject.ID.Note):
-                    Note note = songObject as Note;
-                    int fretNumber;
+                    case (SongObject.ID.Starpower):
+                        Starpower sp = songObject as Starpower;
+                        saveString.Append(" = S 2 " + (uint)Mathf.Round(sp.length * resolutionScaleRatio));
+                        break;
 
-                    if (instrument != Song.Instrument.Unrecognised)
-                    {
-                        if (instrument == Song.Instrument.Drums)
-                            fretNumber = GetDrumsSaveNoteNumber(note);
+                    case (SongObject.ID.Note):
+                        Note note = songObject as Note;
+                        int fretNumber;
 
-                        else if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
-                            fretNumber = GetGHLSaveNoteNumber(note);
+                        if (instrument != Song.Instrument.Unrecognised)
+                        {
+                            if (instrument == Song.Instrument.Drums)
+                                fretNumber = GetDrumsSaveNoteNumber(note);
 
+                            else if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
+                                fretNumber = GetGHLSaveNoteNumber(note);
+
+                            else
+                                fretNumber = GetStandardSaveNoteNumber(note);
+                        }
                         else
-                            fretNumber = GetStandardSaveNoteNumber(note);
-                    }
-                    else
-                        fretNumber = note.rawNote;
+                            fretNumber = note.rawNote;
 
-                    saveString.Append(" = N " + fretNumber + " " + (uint)Mathf.Round(note.sustain_length * resolutionScaleRatio));
+                        saveString.Append(" = N " + fretNumber + " " + (uint)Mathf.Round(note.sustain_length * resolutionScaleRatio));
 
-                    saveString.Append(Globals.LINE_ENDING);
+                        saveString.Append(Globals.LINE_ENDING);
 
-                    // Only need to get the flags of one note of a chord
-                    if (exportOptions.forced && (note.next == null || (note.next != null && note.next.position != note.position)))
-                    {
-                        if ((note.flags & Note.Flags.FORCED) == Note.Flags.FORCED)
-                            saveString.Append(Globals.TABSPACE + tick + " = N 5 0 " + Globals.LINE_ENDING);
+                        // Only need to get the flags of one note of a chord
+                        if (exportOptions.forced && (note.next == null || (note.next != null && note.next.position != note.position)))
+                        {
+                            if ((note.flags & Note.Flags.FORCED) == Note.Flags.FORCED)
+                                saveString.Append(Globals.TABSPACE + tick + " = N 5 0 " + Globals.LINE_ENDING);
 
-                        // Save taps line if not an open note, as open note taps cause weird artifacts under sp
-                        if (!note.IsOpenNote() && (note.flags & Note.Flags.TAP) == Note.Flags.TAP)
-                            saveString.Append(Globals.TABSPACE + tick + " = N 6 0 " + Globals.LINE_ENDING);
-                    }
-                    continue;
+                            // Save taps line if not an open note, as open note taps cause weird artifacts under sp
+                            if (!note.IsOpenNote() && (note.flags & Note.Flags.TAP) == Note.Flags.TAP)
+                                saveString.Append(Globals.TABSPACE + tick + " = N 6 0 " + Globals.LINE_ENDING);
+                        }
+                        continue;
 
-                default:
-                    continue;
+                    default:
+                        continue;
+                }
+                saveString.Append(Globals.LINE_ENDING);
             }
-
-            saveString.Append(Globals.LINE_ENDING);
+            catch(System.Exception e)
+            {
+                string error = "Error with saving object #" + i + " as " + songObject + ": " + e.Message;
+                Debug.LogError(error);
+                throw new Exception(error);
+            }         
         }
 
         return saveString.ToString();

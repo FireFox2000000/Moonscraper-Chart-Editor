@@ -254,7 +254,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         if (Input.GetMouseButtonUp(0) && currentBPM.value != original.value)
             editor.actionHistory.Insert(new ActionHistory.Modify(original, currentBPM));
 
-        UpdateBPMInputFieldText();
+        UpdateBPMInputFieldText(); 
     }
 
     public void DecrementBPM()
@@ -275,6 +275,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     bool AdjustForAnchors(uint newBpmValue)
     {
+        ChartEditor.FindCurrentEditor().songObjectPoolManager.SetAllPoolsDirty();
+
         int pos = SongObject.FindObjectPosition(currentBPM, currentBPM.song.bpms);
         if (pos != SongObject.NOTFOUND)
         {
