@@ -10,7 +10,7 @@ This project contains licensed assets such as Un4seen's "bass", "Bass.Net" and s
 
 ### How do I get set up? ###
 
-* Download and install Unity 5.5.1f1
+* Download and install Unity 5.5.5f1
 * Run Unity and open the project folder with it
 
 ### Who do I talk to? ###
