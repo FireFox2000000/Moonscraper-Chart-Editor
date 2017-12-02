@@ -110,8 +110,10 @@ public class Export : DisplayMenu {
 
         Thread exportingThread = new Thread(() =>
         {
+            string errorMessageList;
+
             if (exportOptions.format == ExportOptions.Format.Chart)
-                new ChartWriter(filepath).Write(song, exportOptions);
+                new ChartWriter(filepath).Write(song, exportOptions, out errorMessageList);
                 //song.Save(filepath, exportOptions);
             else if (exportOptions.format == ExportOptions.Format.Midi)
             {

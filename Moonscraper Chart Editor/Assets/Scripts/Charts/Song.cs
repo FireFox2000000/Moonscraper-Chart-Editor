@@ -1344,11 +1344,16 @@ public class Song {
     /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
     public void SaveAsync(string filepath, ExportOptions exportOptions)
     {
+
+#if false // Debugging only
+        Save(filepath, exportOptions);
+#else
         if (!IsSaving)
         {
             saveThread = new System.Threading.Thread(() => Save(filepath, exportOptions));
             saveThread.Start();
         }
+#endif
     }
 
     /// <summary>
@@ -1358,17 +1363,23 @@ public class Song {
     /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
     public void Save(string filepath, ExportOptions exportOptions)
     {
+        string saveErrorMessage;
         try
         {
-            //throw new System.Exception("Dummy error");
-            new ChartWriter(filepath).Write(this, exportOptions);
+            new ChartWriter(filepath).Write(this, exportOptions, out saveErrorMessage);
 
             Debug.Log("Save complete!");
+
+            if (saveErrorMessage != string.Empty)
+            {
+                saveError = true;
+                ErrorMessage.errorMessage = "Error while saving .chart format: " + Globals.LINE_ENDING + saveErrorMessage;
+            }
         }
         catch (System.Exception e)
         {
             saveError = true;
-            ErrorMessage.errorMessage = "Error while saving chart: " + e.Message;
+            ErrorMessage.errorMessage = "Error while saving .chart format: " + e.Message;
         }
     }
 
