@@ -215,6 +215,7 @@ public class ChartEditor : MonoBehaviour {
         bool saveError = currentSong.saveError;
         if (currentSong.saveError)
         {
+            Debug.Log("Save error detected, opening up error menu");
             errorMenu.gameObject.SetActive(true);
             currentSong.saveError = false;
         }

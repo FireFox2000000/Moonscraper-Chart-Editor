@@ -67,6 +67,13 @@ public class Export : DisplayMenu {
         delayInputField.text = delayTime.ToString();
     }
 
+    protected override void Update()
+    {
+        base.Update();
+        if (editor.errorMenu.gameObject.activeSelf)
+            Disable();
+    }
+
     public void ExportSong()
     {
         try
@@ -107,14 +114,22 @@ public class Export : DisplayMenu {
         exportOptions.tickOffset = Song.time_to_dis(0, delayTime, exportOptions.targetResolution, 120);
 
         float timer = Time.realtimeSinceStartup;
-
+        string errorMessageList = string.Empty;
         Thread exportingThread = new Thread(() =>
         {
-            string errorMessageList;
-
             if (exportOptions.format == ExportOptions.Format.Chart)
-                new ChartWriter(filepath).Write(song, exportOptions, out errorMessageList);
-                //song.Save(filepath, exportOptions);
+            {
+                try
+                {
+                    new ChartWriter(filepath).Write(song, exportOptions, out errorMessageList);
+                    //song.Save(filepath, exportOptions);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError(e.Message);
+                    errorMessageList += e.Message;
+                }
+            }
             else if (exportOptions.format == ExportOptions.Format.Midi)
             {
                 try
@@ -124,6 +139,7 @@ public class Export : DisplayMenu {
                 catch (System.Exception e)
                 {
                     Debug.LogError(e.Message);
+                    errorMessageList += e.Message;
                 }
             }
         });
@@ -152,6 +168,13 @@ public class Export : DisplayMenu {
         // Stop loading animation
         loadingScreen.FadeOut();
         loadingScreen.loadingInformation.text = "Complete!";
+
+        if (errorMessageList != string.Empty)
+        {
+            song.saveError = true;
+            ErrorMessage.errorMessage = "Encountered the following errors while exporting: " + Globals.LINE_ENDING + errorMessageList;
+        }
+
     }
 
     public void SetForced(bool forced)

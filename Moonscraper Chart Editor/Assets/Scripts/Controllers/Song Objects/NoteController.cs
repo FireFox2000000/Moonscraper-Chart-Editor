@@ -285,14 +285,11 @@ public class NoteController : SongObjectController {
                 return;
             }
 
-            if (Globals.applicationMode == Globals.ApplicationMode.Editor)
-            {
-                if (isDirty)
-                    UpdateSongObject();
+            if (isDirty)
+                UpdateSongObject();
 
-                if (note.position > editor.maxPos)
-                    gameObject.SetActive(false);
-            }
+            if (note.position > editor.maxPos)
+                gameObject.SetActive(false);
 
             if (this.note == null)      // Was deactivated
                 return;

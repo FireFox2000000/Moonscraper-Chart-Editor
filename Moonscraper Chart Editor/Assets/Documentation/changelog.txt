@@ -1,14 +1,15 @@
-v1.0.98.1
+v1.0.98.3
     NEW FEATURES
-    -Added custom resources support for GHL frets
-
-	CHANGES
-	-Upgraded Unity from 5.5.1 to 5.5.5
+    -Added error catching to exporting
+    
+    FIXES
+    -Now preventing copy-paste from pasting past the end of the song
+    -Fixed note updating in some instances of bpm value changing
 
 v1.0.9
     NEW FEATURES
     -Added GHLive Guitar and Bass charting
-	-Added custom resources support for GHL notes
+    -Added custom resources support for GHL elements
     -Added seperate rhythm instrument track
     -Added seperate audio slot for bass audio
     -Added save error popup is a save error is detected
@@ -16,6 +17,7 @@ v1.0.9
     CHANGES
     -Can now load in unrecognised tracks in chart and midi files and preserve them without deleting them
     -Song length can now be determined by audio tracks other than the song audio (can load in guitar audio into the guitar audio slot by itself for example)
+    -Upgraded Unity from 5.5.1 to 5.5.5
 
     FIXES
     -Fixed broken undo/redo recording on hold-right click-left delete shortcut

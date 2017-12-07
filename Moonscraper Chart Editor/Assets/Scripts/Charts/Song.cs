@@ -1373,13 +1373,13 @@ public class Song {
             if (saveErrorMessage != string.Empty)
             {
                 saveError = true;
-                ErrorMessage.errorMessage = "Error while saving .chart format: " + Globals.LINE_ENDING + saveErrorMessage;
+                ErrorMessage.errorMessage = "Save completed with the following errors: " + Globals.LINE_ENDING + saveErrorMessage;
             }
         }
         catch (System.Exception e)
         {
             saveError = true;
-            ErrorMessage.errorMessage = "Error while saving .chart format: " + e.Message;
+            ErrorMessage.errorMessage = "Save FAILED: " + e.Message;
         }
     }
 

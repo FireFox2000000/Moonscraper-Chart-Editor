@@ -44,34 +44,10 @@ public class Note2D3DSelector : MonoBehaviour {
 
     public void UpdateSelectedGameObject()
     {
-        if (Globals.viewMode == Globals.ViewMode.Chart)
-        {
-            if (CheckTextureInSkin())
-                Set2D();
-            else
-                Set3D();
-            /*
-            if (Globals.ghLiveMode)
-                Set2D();
-            else
-            {
-                switch (AssignCustomResources.noteSpritesAvaliable)
-                {
-                    case (Skin.AssestsAvaliable.All):
-                        Set2D();
-                        break;
-                    case (Skin.AssestsAvaliable.None):
-                        Set3D();
-                        break;
-                    default:
-                        if (CheckTextureInSkin())
-                            Set2D();
-                        else
-                            Set3D();
-                        break;
-                }
-            }*/
-        }
+        if (CheckTextureInSkin())
+            Set2D();
+        else
+            Set3D();
     }
 
     void Set2D()
