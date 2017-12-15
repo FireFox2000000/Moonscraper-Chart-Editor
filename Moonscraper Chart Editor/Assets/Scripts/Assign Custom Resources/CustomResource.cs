@@ -123,6 +123,7 @@ public class CustomTexture : CustomResource
         //int width_0 = ddsBytes[17] * 256 + ddsBytes[16];
 
         int DDS_HEADER_SIZE = 128;
+        
         byte[] dxtBytes = new byte[ddsBytes.Length - DDS_HEADER_SIZE];
         Buffer.BlockCopy(ddsBytes, DDS_HEADER_SIZE, dxtBytes, 0, ddsBytes.Length - DDS_HEADER_SIZE);
 

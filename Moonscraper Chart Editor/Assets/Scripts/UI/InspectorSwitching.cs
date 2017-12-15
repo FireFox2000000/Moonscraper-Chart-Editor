@@ -87,9 +87,10 @@ public class InspectorSwitching : MonoBehaviour {
                     break;
                 default:
                     currentPropertiesPanel = null;
-                    //editor.currentSelectedObject = null;
                     break;
             }
+
+            Debug.Log(editor.currentSelectedObjects[0]);
 
             if (currentPropertiesPanel != previousPanel)
             {
@@ -107,6 +108,7 @@ public class InspectorSwitching : MonoBehaviour {
         else if (currentPropertiesPanel)
         {
             currentPropertiesPanel.gameObject.SetActive(false);
+            currentPropertiesPanel = null;
         }
 
         //if (currentPropertiesPanel && currentPropertiesPanel.gameObject.activeSelf)     
