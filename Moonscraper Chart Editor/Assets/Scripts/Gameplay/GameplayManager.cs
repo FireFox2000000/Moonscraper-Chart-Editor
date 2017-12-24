@@ -207,8 +207,8 @@ public class GameplayManager : MonoBehaviour {
                         }
                         else
                         {
-                            if (lastNoteHit != null && lastNoteHit.mask != nextNote.mask && NoteInHitWindow(nextNote, nextSeperate, Song.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
-                                lastStrumTime = Song.WorldYPositionToTime(editor.visibleStrikeline.position.y);
+                            if (lastNoteHit != null && lastNoteHit.mask != nextNote.mask && NoteInHitWindow(nextNote, nextSeperate, TickFunctions.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
+                                lastStrumTime = TickFunctions.WorldYPositionToTime(editor.visibleStrikeline.position.y);
                             else
                             {
                                 noteStreak = 0;
@@ -230,7 +230,7 @@ public class GameplayManager : MonoBehaviour {
             // No note in window
             else if (strum)
             {
-                if (lastNoteHit != null && lastNoteHit.type != Note.Note_Type.Strum && NoteInHitWindow(lastNoteHit, lastNoteHit.nextSeperateNote, Song.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
+                if (lastNoteHit != null && lastNoteHit.type != Note.Note_Type.Strum && NoteInHitWindow(lastNoteHit, lastNoteHit.nextSeperateNote, TickFunctions.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
                 {
                     lastStrumTime = null;
                     lastNoteHit = null;
@@ -433,7 +433,7 @@ public class GameplayManager : MonoBehaviour {
 
     bool EnterWindow(NoteController note)
     {
-        if (!note.hit && note.transform.position.y < editor.visibleStrikeline.position.y + Song.TimeToWorldYPosition(FRONTEND_HIT_WINDOW_TIME))
+        if (!note.hit && note.transform.position.y < editor.visibleStrikeline.position.y + TickFunctions.TimeToWorldYPosition(FRONTEND_HIT_WINDOW_TIME))
         {
             // We only want 1 note per position so that we can compare using the note mask
             foreach (NoteController insertedNCon in notesInWindow)
@@ -466,7 +466,7 @@ public class GameplayManager : MonoBehaviour {
         if (nextNote != null)
             next = nextNote.note;
 
-        if (!NoteInHitWindow(note.note, next, Song.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
+        if (!NoteInHitWindow(note.note, next, TickFunctions.WorldYPositionToTime(editor.visibleStrikeline.position.y)))
        // if (note.hit || note.transform.position.y < editor.visibleStrikeline.position.y - (Song.TimeToWorldYPosition(hitWindowTime / 2))
        //     || (nextNote != null && nextNote.transform.position.y <= editor.visibleStrikeline.position.y + Song.TimeToWorldYPosition(0.02f)))
         {

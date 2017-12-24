@@ -36,7 +36,7 @@ public abstract class MovementController : MonoBehaviour {
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             Vector3 pos = initPos;
-            pos.y += Song.TimeToWorldYPosition(time);
+            pos.y += TickFunctions.TimeToWorldYPosition(time);
             transform.position = pos;
         }
     }
@@ -63,7 +63,7 @@ public abstract class MovementController : MonoBehaviour {
             if (time < 0)
                 time = 0;
 
-            pos.y = (float)playStartPosition + Song.TimeToWorldYPosition(time * Globals.gameSpeed);
+            pos.y = (float)playStartPosition + TickFunctions.TimeToWorldYPosition(time * Globals.gameSpeed);
             
             //time -= (Globals.audioCalibrationMS / 1000f * Globals.gameSpeed + editor.currentSong.offset);
 

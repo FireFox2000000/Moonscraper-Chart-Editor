@@ -51,22 +51,26 @@ public class HighwayController : MonoBehaviour {
         uint initSnappedLinePos = editor.currentSong.WorldPositionToSnappedChartPosition(editor.camYMin.position.y, 8);
         uint snappedLinePos = initSnappedLinePos;
 
-        uint eigthSpacing = (uint)(editor.currentSong.resolution / 2);
         int measurePoolPos = 0, quarterPoolPos = 0, eigthPoolPos = 0;
+        const float STANDARD_TS_NUMERATOR = 4.0f;
 
         while (snappedLinePos < editor.maxPos)
         {
             // Get the previous time signature
             TimeSignature prevTS = editor.currentSong.GetPrevTS(snappedLinePos);
+            float tsRatio = STANDARD_TS_NUMERATOR / (float)prevTS.denominator;
 
-            if ((snappedLinePos - prevTS.position) % (editor.currentSong.resolution * prevTS.numerator) == 0)
+            // Bold lines
+            if ((snappedLinePos - prevTS.position) % (editor.currentSong.resolution * prevTS.numerator * tsRatio) == 0)
             {
                 SetBeatLinePosition(snappedLinePos, measureLinePool, ref measurePoolPos);
             }
-            else if (snappedLinePos % (editor.currentSong.resolution) == 0)
+            // Beat lines
+            else if (snappedLinePos % (editor.currentSong.resolution * tsRatio) == 0)
             {
                 SetBeatLinePosition(snappedLinePos, beatLinePool, ref quarterPoolPos);
             }
+            // Faded lines
             else
             {
                 SetBeatLinePosition(snappedLinePos, quarterBeatLinePool, ref eigthPoolPos);
@@ -76,7 +80,9 @@ public class HighwayController : MonoBehaviour {
             DisableBeatLines(quarterPoolPos, beatLinePool);
             DisableBeatLines(eigthPoolPos, quarterBeatLinePool);
 
-            snappedLinePos += eigthSpacing;
+            uint beatSpacing = (uint)(tsRatio * editor.currentSong.resolution / 2.0f);
+
+            snappedLinePos += beatSpacing;
         }
     }
 
@@ -99,6 +105,9 @@ public class HighwayController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Depricated
+    /// </summary>
     void UpdateBeatLines()
     {
         // Update time signature lines SNAPPED

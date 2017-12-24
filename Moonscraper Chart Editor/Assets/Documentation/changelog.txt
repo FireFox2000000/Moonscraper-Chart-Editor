@@ -1,12 +1,4 @@
-v1.0.98.3
-    NEW FEATURES
-    -Added error catching to exporting
-    
-    FIXES
-    -Now preventing copy-paste from pasting past the end of the song
-    -Fixed note updating in some instances of bpm value changing
-
-v1.0.9
+v1.1
     NEW FEATURES
     -Added GHLive Guitar and Bass charting
     -Added custom resources support for GHL elements
@@ -47,6 +39,7 @@ v1.0.9
     -Added blocker to prevent multiple saves running at the same time. 
     -Fixed Manual menu not showing information
     -Fixed issue with exporter sometimes not working.
+	-Now preventing copy-paste from pasting past the end of the song
 
 v1.0
     NEW FEATURES

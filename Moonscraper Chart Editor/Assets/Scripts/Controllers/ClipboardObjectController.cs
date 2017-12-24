@@ -120,7 +120,7 @@ public class ClipboardObjectController : Snapable {
             {
                 Debug.LogError("Clipboard minimum (" + clipboard.areaChartPosMin + ") is greater than clipboard the max (" + clipboard.areaChartPosMax + ")");
             }
-            uint colliderChartDistance = SongObject.TickScaling(clipboard.areaChartPosMax - clipboard.areaChartPosMin, clipboard.resolution, editor.currentSong.resolution);
+            uint colliderChartDistance = TickFunctions.TickScaling(clipboard.areaChartPosMax - clipboard.areaChartPosMin, clipboard.resolution, editor.currentSong.resolution);
 
             viewModeController.ToggleSongViewMode(!clipboard.data[0].GetType().IsSubclassOf(typeof(ChartObject)));
 
@@ -161,9 +161,9 @@ public class ClipboardObjectController : Snapable {
             {
                 SongObject objectToAdd = clipboardSongObject.Clone();
 
-                objectToAdd.position = chartLocationToPaste + 
-                    SongObject.TickScaling(clipboardSongObject.position, clipboard.resolution, editor.currentSong.resolution) -
-                    SongObject.TickScaling(clipboard.areaChartPosMin, clipboard.resolution, editor.currentSong.resolution);
+                objectToAdd.position = chartLocationToPaste +
+                    TickFunctions.TickScaling(clipboardSongObject.position, clipboard.resolution, editor.currentSong.resolution) -
+                    TickFunctions.TickScaling(clipboard.areaChartPosMin, clipboard.resolution, editor.currentSong.resolution);
 
                 if (objectToAdd.position >= maxLength)
                     break;
@@ -190,14 +190,14 @@ public class ClipboardObjectController : Snapable {
                             note.ghlive_fret_type = Note.GHLive_Fret_Type.OPEN;
                     }
 
-                    note.sustain_length = SongObject.TickScaling(note.sustain_length, clipboard.resolution, editor.currentSong.resolution);
+                    note.sustain_length = TickFunctions.TickScaling(note.sustain_length, clipboard.resolution, editor.currentSong.resolution);
 
                     record.AddRange(PlaceNote.AddObjectToCurrentChart(note, editor, false));
                 }
                 else if (objectToAdd.GetType() == typeof(Starpower))
                 {
                     Starpower sp = (Starpower)objectToAdd;
-                    sp.length = SongObject.TickScaling(sp.length, clipboard.resolution, editor.currentSong.resolution);
+                    sp.length = TickFunctions.TickScaling(sp.length, clipboard.resolution, editor.currentSong.resolution);
 
                     record.AddRange(PlaceStarpower.AddObjectToCurrentChart(sp, editor, false));
                 }

@@ -516,7 +516,7 @@ public class ChartEditor : MonoBehaviour {
         }
         
         // Set position x seconds beforehand
-        float time = Song.WorldYPositionToTime(strikelineYPos);
+        float time = TickFunctions.WorldYPositionToTime(strikelineYPos);
         movement.SetTime(time - Globals.gameplayStartDelayTime);
 
         Globals.bot = false;
@@ -640,7 +640,7 @@ public class ChartEditor : MonoBehaviour {
         Globals.applicationMode = Globals.ApplicationMode.Playing;
         cancel = false;
 
-        float playPoint = Song.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
+        float playPoint = TickFunctions.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
 
         if (playPoint < 0)
         {
@@ -655,7 +655,7 @@ public class ChartEditor : MonoBehaviour {
     IEnumerator delayedStartAudio(float delay)
     {
         yield return new WaitForSeconds(delay);
-        float playPoint = Song.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
+        float playPoint = TickFunctions.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
 
         if (!cancel && Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
@@ -1203,7 +1203,7 @@ public class ChartEditor : MonoBehaviour {
                 BPM bpmToAdjust = bpms[i - 1];
 
                 double deltaTime = (double)anchorBPM.anchor - bpmToAdjust.time;
-                uint newValue = (uint)Mathf.Round((float)(Song.dis_to_bpm(bpmToAdjust.position, anchorBPM.position, deltaTime, currentSong.resolution) * 1000.0d));
+                uint newValue = (uint)Mathf.Round((float)(TickFunctions.DisToBpm(bpmToAdjust.position, anchorBPM.position, deltaTime, currentSong.resolution) * 1000.0d));
 
                 if (deltaTime > 0 && newValue > 0)
                 {

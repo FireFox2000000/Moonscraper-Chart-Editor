@@ -75,8 +75,8 @@ public class WaveformDraw : MonoBehaviour {
         float fullOffset = -editor.currentSong.offset;
 
         // Determine what points of data to draw
-        int startPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMin.position.y) - fullOffset, iteration, channels, currentSample.length);
-        int endPos = timeToArrayPos(Song.WorldYPositionToTime(editor.camYMax.position.y) - fullOffset, iteration, channels, currentSample.length);
+        int startPos = timeToArrayPos(TickFunctions.WorldYPositionToTime(editor.camYMin.position.y) - fullOffset, iteration, channels, currentSample.length);
+        int endPos = timeToArrayPos(TickFunctions.WorldYPositionToTime(editor.camYMax.position.y) - fullOffset, iteration, channels, currentSample.length);
 
         Vector3[] points = new Vector3[endPos - startPos];
 #if false

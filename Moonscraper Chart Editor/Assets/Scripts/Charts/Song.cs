@@ -707,22 +707,22 @@ public class Song {
 
     public float ChartPositionToWorldYPosition(uint position)
     {
-        return TimeToWorldYPosition(ChartPositionToTime(position, resolution));
+        return TickFunctions.TimeToWorldYPosition(ChartPositionToTime(position, resolution));
     }
 
     public float ChartPositionToWorldYPosition(uint position, float resolution)
     {
-        return TimeToWorldYPosition(ChartPositionToTime(position, resolution));
+        return TickFunctions.TimeToWorldYPosition(ChartPositionToTime(position, resolution));
     }
 
     public uint WorldYPositionToChartPosition(float worldYPos)
     {
-        return TimeToChartPosition(WorldYPositionToTime(worldYPos), resolution);
+        return TimeToChartPosition(TickFunctions.WorldYPositionToTime(worldYPos), resolution);
     }
 
     public uint WorldYPositionToChartPosition(float worldYPos, float resolution)
     {
-        return TimeToChartPosition(WorldYPositionToTime(worldYPos), resolution);
+        return TimeToChartPosition(TickFunctions.WorldYPositionToTime(worldYPos), resolution);
     }
 
     /// <summary>
@@ -752,7 +752,7 @@ public class Song {
         }
 
         position = prevBPM.position;
-        position += time_to_dis(prevBPM.assignedTime, time, resolution, prevBPM.value / 1000.0f);
+        position += TickFunctions.TimeToDis(prevBPM.assignedTime, time, resolution, prevBPM.value / 1000.0f);
 
         return position;
     }
@@ -797,16 +797,6 @@ public class Song {
         return timeSignatures[0];
     }
 
-    public static float WorldYPositionToTime (float worldYPosition)
-    {
-        return worldYPosition / (Globals.hyperspeed / Globals.gameSpeed);
-    }
-
-    public static float TimeToWorldYPosition(float time)
-    {
-        return time * Globals.hyperspeed / Globals.gameSpeed;
-    }
-
     /// <summary>
     /// Converts a tick position into the time it will appear in the song.
     /// </summary>
@@ -831,7 +821,7 @@ public class Song {
 
         BPM prevBPM = bpms[previousBPMPos];
         float time = prevBPM.assignedTime;
-        time += (float)Song.dis_to_time(prevBPM.position, position, resolution, prevBPM.value / 1000.0f);
+        time += (float)TickFunctions.DisToTime(prevBPM.position, position, resolution, prevBPM.value / 1000.0f);
 
         return time;
     }
@@ -918,29 +908,6 @@ public class Song {
             UpdateCache();
 
         return success;
-    }
-
-    /// <summary>
-    /// Calculates the amount of time elapsed between 2 tick positions.
-    /// </summary>
-    /// <param name="pos_start">Initial tick position.</param>
-    /// <param name="pos_end">Final tick position.</param>
-    /// <param name="resolution">Ticks per beat, usually provided from the resolution song of a Song class.</param>
-    /// <param name="bpm">The beats per minute value. BPMs provided from a BPM object need to be divded by 1000 as it is stored as the value read from a .chart file.</param>
-    /// <returns></returns>
-    public static double dis_to_time(uint pos_start, uint pos_end, float resolution, float bpm)
-    {
-        return (pos_end - pos_start) / resolution * 60.0f / bpm;
-    }
-
-    public static double dis_to_bpm(uint pos_start, uint pos_end, double deltatime, double resolution)
-    {
-        return (pos_end - pos_start) / resolution * 60.0d / deltatime;
-    }
-
-    public static uint time_to_dis(float time_start, float time_end, float resolution, float bpm)
-    {
-        return (uint)Mathf.Round((time_end - time_start) * bpm / 60.0f * resolution);
     }
 
     void submitChartData(string dataName, List<string> stringData, string filePath = "")
@@ -1432,12 +1399,12 @@ public class Song {
             }
             else
             {
-                time += dis_to_time(prevBPM.position, bpmInfo.position, resolution, prevBPM.value / 1000.0f);
+                time += TickFunctions.DisToTime(prevBPM.position, bpmInfo.position, resolution, prevBPM.value / 1000.0f);
                 prevBPM = bpmInfo;
             }
         }
 
-        time += dis_to_time(prevBPM.position, position, resolution, prevBPM.value / 1000.0f);
+        time += TickFunctions.DisToTime(prevBPM.position, position, resolution, prevBPM.value / 1000.0f);
 
         return (float)time;
     }

@@ -139,7 +139,7 @@ public class MenuBar : MonoBehaviour {
             editor.Stop();
 
             // Restore to initial position
-            editor.movement.SetTime(Song.WorldYPositionToTime(initialPosition));
+            editor.movement.SetTime(TickFunctions.WorldYPositionToTime(initialPosition));
         }
     }
 

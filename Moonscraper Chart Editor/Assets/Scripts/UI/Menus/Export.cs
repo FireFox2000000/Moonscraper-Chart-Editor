@@ -111,7 +111,7 @@ public class Export : DisplayMenu {
         loadingScreen.loadingInformation.text = "Exporting " + exportOptions.format;
 
         Song song = editor.currentSong;
-        exportOptions.tickOffset = Song.time_to_dis(0, delayTime, exportOptions.targetResolution, 120);
+        exportOptions.tickOffset = TickFunctions.TimeToDis(0, delayTime, exportOptions.targetResolution, 120);
 
         float timer = Time.realtimeSinceStartup;
         string errorMessageList = string.Empty;

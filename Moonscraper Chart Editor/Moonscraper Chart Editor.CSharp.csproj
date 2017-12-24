@@ -136,6 +136,7 @@
     <Compile Include="Assets\Scripts\Charts\SongObject.cs" />
     <Compile Include="Assets\Scripts\Charts\Starpower.cs" />
     <Compile Include="Assets\Scripts\Charts\SyncTrack.cs" />
+    <Compile Include="Assets\Scripts\Charts\TickFunctions.cs" />
     <Compile Include="Assets\Scripts\Charts\TimeSignature.cs" />
     <Compile Include="Assets\Scripts\Clipboard.cs" />
     <Compile Include="Assets\Scripts\Controllers\BGFadeHeightController.cs" />

@@ -318,12 +318,12 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             {
                 // Calculate up until 2 bpms before the anchor
                 // Re-hash of the actual time calculation equation in Song.cs
-                bpmTime -= (float)Song.dis_to_time(currentBPM.song.bpms[i - 1].position, currentBPM.song.bpms[i].position, resolution, currentBPM.song.bpms[i - 1].value / 1000.0f);
+                bpmTime -= (float)TickFunctions.DisToTime(currentBPM.song.bpms[i - 1].position, currentBPM.song.bpms[i].position, resolution, currentBPM.song.bpms[i - 1].value / 1000.0f);
             }
 
             float timeBetweenFirstAndSecond = bpmTime - currentBPM.time;
             // What bpm will result in this exact time difference?
-            uint minVal = (uint)(Mathf.Ceil((float)Song.dis_to_bpm(currentBPM.song.bpms[pos].position, currentBPM.song.bpms[pos + 1].position, timeBetweenFirstAndSecond, currentBPM.song.resolution)) * 1000);
+            uint minVal = (uint)(Mathf.Ceil((float)TickFunctions.DisToBpm(currentBPM.song.bpms[pos].position, currentBPM.song.bpms[pos + 1].position, timeBetweenFirstAndSecond, currentBPM.song.resolution)) * 1000);
 
             if (newBpmValue < minVal)
                 newBpmValue = minVal;
@@ -340,7 +340,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             //double bpmToAdjustTime = currentBPM.time + Song.dis_to_time(currentBPM.position, bpmToAdjust.position, editor.currentSong.resolution, newBpmValue / 1000.0f);
             //Debug.Log(bpmToAdjustTime + ", " + editor.currentSong.LiveChartPositionToTime(bpmToAdjust.position, editor.currentSong.resolution));
             double deltaTime = (double)anchorBPM.anchor - editor.currentSong.LiveChartPositionToTime(bpmToAdjust.position, editor.currentSong.resolution);
-            uint newValue = (uint)Mathf.Round((float)(Song.dis_to_bpm(bpmToAdjust.position, anchorBPM.position, deltaTime, editor.currentSong.resolution) * 1000.0d));
+            uint newValue = (uint)Mathf.Round((float)(TickFunctions.DisToBpm(bpmToAdjust.position, anchorBPM.position, deltaTime, editor.currentSong.resolution) * 1000.0d));
             currentBPM.value = oldValue;
             if (deltaTime > 0 && newValue > 0)
             {

@@ -40,7 +40,7 @@ public class Metronome : MonoBehaviour {
         // Offset by audio calibration
         Vector3 pos = initLocalPos;
 #if BASS_AUDIO
-        pos.y += Song.TimeToWorldYPosition(Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
+        pos.y += TickFunctions.TimeToWorldYPosition(Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
 #else
         pos.y += Song.TimeToWorldYPosition(Globals.clapCalibrationMS / 1000.0f * Globals.gameSpeed);
 #endif

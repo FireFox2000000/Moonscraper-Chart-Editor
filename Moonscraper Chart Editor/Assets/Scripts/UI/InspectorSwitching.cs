@@ -90,8 +90,6 @@ public class InspectorSwitching : MonoBehaviour {
                     break;
             }
 
-            Debug.Log(editor.currentSelectedObjects[0]);
-
             if (currentPropertiesPanel != previousPanel)
             {
                 if (previousPanel)

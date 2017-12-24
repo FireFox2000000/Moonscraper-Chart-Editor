@@ -319,7 +319,7 @@ public class NoteController : SongObjectController {
         Vector3 notePosition = transform.position;
         Vector3 strikelinePosition = editor.visibleStrikeline.position;
 
-        bool belowClapLine = notePosition.y <= strikelinePosition.y + (Song.TimeToWorldYPosition(Globals.audioCalibrationMS / 1000.0f) * Globals.gameSpeed);
+        bool belowClapLine = notePosition.y <= strikelinePosition.y + (TickFunctions.TimeToWorldYPosition(Globals.audioCalibrationMS / 1000.0f) * Globals.gameSpeed);
         bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime * Globals.hyperspeed / Globals.gameSpeed);
 
         if (Globals.bot && belowClapLine)
