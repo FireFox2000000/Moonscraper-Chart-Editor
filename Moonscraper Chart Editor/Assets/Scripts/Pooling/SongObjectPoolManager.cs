@@ -69,6 +69,7 @@ public class SongObjectPoolManager : MonoBehaviour {
     {
         TriggerManager.onHyperspeedChangeTriggerList.Add(SetAllPoolsDirty);
         TriggerManager.onChartReloadTriggerList.Add(SetAllPoolsDirty);
+        TriggerManager.onLeftyFlipToggledTriggerList.Add(SetAllPoolsDirty);
     }
 
 	// Update is called once per frame

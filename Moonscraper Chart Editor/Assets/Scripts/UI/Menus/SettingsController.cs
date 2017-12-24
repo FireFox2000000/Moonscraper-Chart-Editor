@@ -185,6 +185,8 @@ public class SettingsController : DisplayMenu
             Globals.notePlacementMode = Globals.NotePlacementMode.Default;
 
         strikelineFretPlacement.SetStrikerPlacement();
+
+        TriggerManager.FireLeftyFlipToggledTriggers();
     }
 
     public void SetResetAfterPlay(bool value)

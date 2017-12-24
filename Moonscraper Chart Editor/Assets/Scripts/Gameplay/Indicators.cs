@@ -185,12 +185,16 @@ public class Indicators : MonoBehaviour {
             if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
             {
                 number = range - (number + 1);
+                if (!Globals.ghLiveMode)
+                    number -= 1;
             }
 
             float xPos = NoteController.CHART_CENTER_POS + number * NoteController.positionIncrementFactor + NoteController.noteObjectPositionStartOffset;
             indicatorParents[i].transform.position = new Vector3(xPos, indicatorParents[i].transform.position.y, indicatorParents[i].transform.position.z);
 
-            indicatorParents[i].SetActive(xPos <= NoteController.CHART_CENTER_POS - NoteController.noteObjectPositionStartOffset);
+            bool inHighwayRange = Mathf.Abs(xPos) <= NoteController.CHART_CENTER_POS + Mathf.Abs(NoteController.noteObjectPositionStartOffset);
+
+            indicatorParents[i].SetActive(inHighwayRange);
         }
     }
 

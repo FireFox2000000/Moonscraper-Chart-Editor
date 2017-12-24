@@ -26,4 +26,12 @@ public static class TriggerManager {
         foreach (ViewModeSwitchTrigger function in onViewModeSwitchTriggerList)
             function(Globals.viewMode);
     }
+
+    public delegate void LeftyFlipToggledTrigger();
+    public static List<LeftyFlipToggledTrigger> onLeftyFlipToggledTriggerList = new List<LeftyFlipToggledTrigger>();
+    public static void FireLeftyFlipToggledTriggers()
+    {
+        foreach (LeftyFlipToggledTrigger function in onLeftyFlipToggledTriggerList)
+            function();
+    }
 }
