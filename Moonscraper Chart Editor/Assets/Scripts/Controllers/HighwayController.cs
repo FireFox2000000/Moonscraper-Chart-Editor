@@ -61,12 +61,12 @@ public class HighwayController : MonoBehaviour {
             float tsRatio = STANDARD_TS_NUMERATOR / (float)prevTS.denominator;
 
             // Bold lines
-            if ((snappedLinePos - prevTS.position) % (editor.currentSong.resolution * prevTS.numerator * tsRatio) == 0)
+            if ((snappedLinePos - prevTS.position) % (uint)(editor.currentSong.resolution * prevTS.numerator * tsRatio) == 0)
             {
                 SetBeatLinePosition(snappedLinePos, measureLinePool, ref measurePoolPos);
             }
             // Beat lines
-            else if (snappedLinePos % (editor.currentSong.resolution * tsRatio) == 0)
+            else if (snappedLinePos % (uint)(editor.currentSong.resolution * tsRatio) == 0)
             {
                 SetBeatLinePosition(snappedLinePos, beatLinePool, ref quarterPoolPos);
             }
@@ -80,7 +80,7 @@ public class HighwayController : MonoBehaviour {
             DisableBeatLines(quarterPoolPos, beatLinePool);
             DisableBeatLines(eigthPoolPos, quarterBeatLinePool);
 
-            uint beatSpacing = (uint)(tsRatio * editor.currentSong.resolution / 2.0f);
+            uint beatSpacing = (uint)(editor.currentSong.resolution * tsRatio / 2.0f);
 
             snappedLinePos += beatSpacing;
         }

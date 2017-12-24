@@ -1,3 +1,14 @@
+v1.1.1
+	NEW FEATURES
+	-Time signature denominator now affects the placement of the beat lines to more accurately represent time signatures
+
+	CHANGES
+	-Removed the ability to custom define denominators of time signatures. Instead it is now locked to powers of 2. This is to ensure correct snapping of beat lines. 
+
+	FIXES
+	-Fixed lefty flip fret placement
+	-Fixed notes not updating when toggling the lefty flip option in the settings
+
 v1.1
     NEW FEATURES
     -Added GHLive Guitar and Bass charting

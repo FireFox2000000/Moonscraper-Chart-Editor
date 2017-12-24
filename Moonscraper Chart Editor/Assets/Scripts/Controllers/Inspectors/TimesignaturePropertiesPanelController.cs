@@ -107,4 +107,62 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
         else
             return '\0';
     }
+
+    public void IncreaseDenom()
+    {
+        float prevValue = currentTS.denominator;
+
+        // Get the next highest power of 2
+        uint pow = GetNextHigherPowOf2(currentTS.denominator);
+
+        if (prevValue != pow)
+        {
+            TimeSignature prev = (TimeSignature)currentTS.Clone();
+            currentTS.denominator = pow;
+
+            editor.actionHistory.Insert(new ActionHistory.Modify(prev, currentTS));
+
+            ChartEditor.isDirty = true;
+        }
+
+        tsDenomValue.text = currentTS.denominator.ToString();
+    }
+
+    public void DecreaseDenom()
+    {
+        float prevValue = currentTS.denominator;
+
+        // Get the next highest power of 2
+        uint pow = GetNextHigherPowOf2(currentTS.denominator);
+
+        while (pow > 1 && pow >= prevValue)
+        {
+            pow /= 2;
+        }
+
+        if (prevValue != pow)
+        {
+            TimeSignature prev = (TimeSignature)currentTS.Clone();
+            currentTS.denominator = pow;
+
+            editor.actionHistory.Insert(new ActionHistory.Modify(prev, currentTS));
+
+            ChartEditor.isDirty = true;
+        }
+
+        tsDenomValue.text = currentTS.denominator.ToString();
+    }
+
+    uint GetNextHigherPowOf2(uint startVal)
+    {
+        const uint CAP = 64;
+
+        uint pow = 1;
+        while (pow <= startVal && pow < CAP)
+        {
+            pow *= 2;
+        }
+
+        return pow;
+    }
 }
