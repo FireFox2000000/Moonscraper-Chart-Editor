@@ -115,8 +115,8 @@ public class SongObjectPoolManager : MonoBehaviour {
         foreach (SongObjectController controller in controllers)
             controller.gameObject.SetActive(false);
     }
-  
-    public void EnableNotes(Note[] notes)
+
+    Note[] CollectNotesInViewRange(Note[] notes)
     {
         uint min_pos = editor.minPos;
         if (ChartEditor.startGameplayPos != null)
@@ -127,7 +127,7 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
 
         List<Note> rangedNotes = new List<Note>(SongObject.GetRangeCopy(notes, min_pos, editor.maxPos));
-        
+
         if (min_pos == editor.minPos)
         {
             if (rangedNotes.Count > 0)
@@ -168,11 +168,16 @@ public class SongObjectPoolManager : MonoBehaviour {
             }
         }
 
-        Note[] notesToActivate = rangedNotes.ToArray();
+        return rangedNotes.ToArray();
+    }
+  
+    public void EnableNotes(Note[] notes)
+    {
+        Note[] notesToActivate = CollectNotesInViewRange(notes);
         notePool.Activate(notesToActivate, 0, notesToActivate.Length);
     }
 
-    public void EnableSP(Starpower[] starpowers)
+    Starpower[] CollectStarpowerInViewRange(Starpower[] starpowers)
     {
         List<Starpower> range = new List<Starpower>(SongObject.GetRangeCopy(starpowers, editor.minPos, editor.maxPos));
 
@@ -192,7 +197,12 @@ public class SongObjectPoolManager : MonoBehaviour {
             }
         }
 
-        Starpower[] spToActivate = range.ToArray();
+        return range.ToArray();
+    }
+
+    public void EnableSP(Starpower[] starpowers)
+    {
+        Starpower[] spToActivate = CollectStarpowerInViewRange(starpowers);
         spPool.Activate(spToActivate, 0, spToActivate.Length);
     }
 
@@ -238,7 +248,9 @@ public class SongObjectPoolManager : MonoBehaviour {
         Song song = editor.currentSong;
         Chart chart = editor.currentChart;
 
-        SetInViewRangeDirty(chart.chartObjects);
+        SetInViewRangeDirty(chart.notes);
+        SetInViewRangeDirty(chart.starPower);
+        SetInViewRangeDirty(chart.events);
         SetInViewRangeDirty(song.eventsAndSections);
         SetInViewRangeDirty(song.syncTrack);
     }
@@ -252,6 +264,28 @@ public class SongObjectPoolManager : MonoBehaviour {
         {
             if (songObjects[i].controller)
                 songObjects[i].controller.SetDirty();
+        }
+    }
+
+    public void SetInViewRangeDirty(Note[] songObjects)
+    {
+        Note[] notesInRange = CollectNotesInViewRange(songObjects);
+
+        for (int i = 0; i < notesInRange.Length; ++i)
+        {
+            if (notesInRange[i].controller)
+                notesInRange[i].controller.SetDirty();
+        }
+    }
+
+    public void SetInViewRangeDirty(Starpower[] songObjects)
+    {
+        Starpower[] inRange = CollectStarpowerInViewRange(songObjects);
+
+        for (int i = 0; i < inRange.Length; ++i)
+        {
+            if (inRange[i].controller)
+                inRange[i].controller.SetDirty();
         }
     }
 }
