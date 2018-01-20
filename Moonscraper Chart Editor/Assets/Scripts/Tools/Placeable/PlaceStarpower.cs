@@ -44,7 +44,7 @@ public class PlaceStarpower : PlaceSongObject {
                 }
                 else
                 {
-                    lastPlacedSP.SetLengthByPos(objectSnappedChartPos);
+                    UpdateLastPlacedSp();
                 }
             }
         }
@@ -68,24 +68,29 @@ public class PlaceStarpower : PlaceSongObject {
             }
             else if (lastPlacedSP != null)
             {
-                uint prevSpLength = lastPlacedSP.length;
+                UpdateLastPlacedSp();
+            }
+        }
+    }
 
-                lastPlacedSP.SetLengthByPos(objectSnappedChartPos);
+    void UpdateLastPlacedSp()
+    {
+        uint prevSpLength = lastPlacedSP.length;
 
-                if (prevSpLength != lastPlacedSP.length)
-                {
-                    int index, length;
-                    Note[] notes = editor.currentChart.notes;
-                    uint maxLength = prevSpLength > lastPlacedSP.length ? prevSpLength : lastPlacedSP.length;
+        lastPlacedSP.SetLengthByPos(objectSnappedChartPos);
 
-                    SongObject.GetRange(notes, lastPlacedSP.position, lastPlacedSP.position + maxLength, out index, out length);
+        if (prevSpLength != lastPlacedSP.length)
+        {
+            int index, length;
+            Note[] notes = editor.currentChart.notes;
+            uint maxLength = prevSpLength > lastPlacedSP.length ? prevSpLength : lastPlacedSP.length;
 
-                    for (int i = index; i < index + length; ++i)
-                    {
-                        if (notes[i].controller)
-                            notes[i].controller.SetDirty();
-                    }
-                }
+            SongObject.GetRange(notes, lastPlacedSP.position, lastPlacedSP.position + maxLength, out index, out length);
+
+            for (int i = index; i < index + length; ++i)
+            {
+                if (notes[i].controller)
+                    notes[i].controller.SetDirty();
             }
         }
     }
