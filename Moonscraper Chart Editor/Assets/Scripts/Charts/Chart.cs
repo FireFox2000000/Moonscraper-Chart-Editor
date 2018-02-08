@@ -61,6 +61,17 @@ public class Chart  {
         this.name = name;
     }
 
+    public Chart(Chart chart, Song song)
+    {
+        _song = song;
+        name = chart.name;
+
+        _chartObjects = new List<ChartObject>();
+        _chartObjects.AddRange(chart._chartObjects);
+
+        this.name = chart.name;
+    }
+
     /// <summary>
     /// Updates all read-only values and the total note count.
     /// </summary>

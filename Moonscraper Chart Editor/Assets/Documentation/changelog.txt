@@ -1,3 +1,11 @@
+v1.1.12
+	CHANGES
+	-Now making a copy of song object arrays in a copy of the song object before initiating save thread in an attempt to fix the save bug by reducing threading lock chances. 
+
+	FIXES
+	-Fixed initial SP dragging not updating notes
+	-Fixed rare instance of weird not position
+
 v1.1.1
 	NEW FEATURES
 	-Time signature denominator now affects the placement of the beat lines to more accurately represent time signatures

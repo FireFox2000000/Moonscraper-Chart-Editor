@@ -311,7 +311,7 @@ public class Song {
     Chart[] charts;
     public List<Chart> unrecognisedCharts = new List<Chart>();
 
-    List<Event> _events;
+    public List<Event> _events;
     List<SyncTrack> _syncTrack;
 
     /// <summary>
@@ -445,6 +445,40 @@ public class Song {
             audioSampleData[i] = new SampleData(string.Empty);
 
         UpdateCache();
+    }
+
+    public Song(Song song)
+    {
+        name = song.name;
+        artist = song.artist;
+        charter = song.charter;
+        player2 = song.player2;
+        difficulty = song.difficulty;
+        offset = song.offset;
+        previewStart = song.previewStart;
+        previewEnd = song.previewEnd;
+        resolution = song.resolution;
+        genre = song.genre;
+        mediatype = song.mediatype;
+        album = song.album;
+        year = song.year;
+
+        for (int i = 0; i < audioLocations.Length; ++i)
+        {
+            audioLocations[i] = song.audioLocations[i];
+        }
+
+        _events = new List<Event>();
+        _syncTrack = new List<SyncTrack>();
+
+        _events.AddRange(song._events);
+        _syncTrack.AddRange(song._syncTrack);
+
+        charts = new Chart[song.charts.Length];
+        for (int i = 0; i < charts.Length; ++i)
+        {
+            charts[i] = new Chart(song.charts[i], this);
+        }
     }
 
 #if BASS_AUDIO
@@ -1312,12 +1346,19 @@ public class Song {
     public void SaveAsync(string filepath, ExportOptions exportOptions)
     {
 
-#if false // Debugging only
-        Save(filepath, exportOptions);
+#if false
+        Song songCopy = new Song(this);
+        songCopy.Save(filepath, exportOptions);
 #else
+#if !UNITY_EDITOR
+        This is for debugging only you moron
+#endif
+
         if (!IsSaving)
         {
-            saveThread = new System.Threading.Thread(() => Save(filepath, exportOptions));
+            Song songCopy = new Song(this);
+
+            saveThread = new System.Threading.Thread(() => songCopy.Save(filepath, exportOptions));
             saveThread.Start();
         }
 #endif

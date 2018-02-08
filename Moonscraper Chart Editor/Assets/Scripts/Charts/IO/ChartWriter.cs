@@ -15,8 +15,10 @@ public class ChartWriter {
         this.path = path;
     }
 
+    delegate string GetAudioStreamSaveString(int arrayIndex);
     public void Write(Song song, ExportOptions exportOptions, out string errorList)
     {
+        song.UpdateCache();
         errorList = string.Empty;
         string saveString = string.Empty;
 
@@ -28,31 +30,22 @@ public class ChartWriter {
             string rhythmString = string.Empty;
             string drumString = string.Empty;
 
-            // Check if the audio location is the same as the filepath. If so, we only have to save the name of the file, not the full path.
-            if (song.songAudioLoaded && Path.GetDirectoryName(song.audioLocations[Song.MUSIC_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))
-                musicString = Path.GetFileName(song.audioLocations[Song.MUSIC_STREAM_ARRAY_POS]);
-            else
-                musicString = song.audioLocations[Song.MUSIC_STREAM_ARRAY_POS];
+            GetAudioStreamSaveString GetSaveAudioString = arrayIndex => {
+                string audioString;
 
-            if (song.guitarAudioLoaded && Path.GetDirectoryName(song.audioLocations[Song.GUITAR_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))
-                guitarString = Path.GetFileName(song.audioLocations[Song.GUITAR_STREAM_ARRAY_POS]);
-            else
-                guitarString = song.audioLocations[Song.GUITAR_STREAM_ARRAY_POS];
+                if (song.songAudioLoaded && Path.GetDirectoryName(song.audioLocations[arrayIndex]).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))
+                    audioString = Path.GetFileName(song.audioLocations[arrayIndex]);
+                else
+                    audioString = song.audioLocations[arrayIndex];
 
-            if (song.bassAudioLoaded && Path.GetDirectoryName(song.audioLocations[Song.BASS_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))
-                bassString = Path.GetFileName(song.audioLocations[Song.BASS_STREAM_ARRAY_POS]);
-            else
-                bassString = song.audioLocations[Song.BASS_STREAM_ARRAY_POS];
+                return audioString;
+            };
 
-            if (song.rhythmAudioLoaded && Path.GetDirectoryName(song.audioLocations[Song.RHYTHM_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))
-                rhythmString = Path.GetFileName(song.audioLocations[Song.RHYTHM_STREAM_ARRAY_POS]);
-            else
-                rhythmString = song.audioLocations[Song.RHYTHM_STREAM_ARRAY_POS];
-
-            if (song.drumAudioLoaded && Path.GetDirectoryName(song.audioLocations[Song.DRUM_STREAM_ARRAY_POS]).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))
-                drumString = Path.GetFileName(song.audioLocations[Song.DRUM_STREAM_ARRAY_POS]);
-            else
-                drumString = song.audioLocations[Song.DRUM_STREAM_ARRAY_POS];
+            musicString = GetSaveAudioString(Song.MUSIC_STREAM_ARRAY_POS);
+            guitarString = GetSaveAudioString(Song.GUITAR_STREAM_ARRAY_POS);
+            bassString = GetSaveAudioString(Song.BASS_STREAM_ARRAY_POS);
+            rhythmString = GetSaveAudioString(Song.RHYTHM_STREAM_ARRAY_POS);
+            drumString = GetSaveAudioString(Song.DRUM_STREAM_ARRAY_POS);
 
             // Song properties
             Debug.Log("Writing song properties");
@@ -60,25 +53,26 @@ public class ChartWriter {
             saveString += GetPropertiesStringWithoutAudio(song, exportOptions);
 
             // Song audio
-            if (song.songAudioLoaded)
+            if (song.songAudioLoaded || (musicString != null && musicString != string.Empty))
                 saveString += Globals.TABSPACE + "MusicStream = \"" + musicString + "\"" + Globals.LINE_ENDING;
 
-            if (song.guitarAudioLoaded)
+            if (song.guitarAudioLoaded || (guitarString != null && guitarString != string.Empty))
                 saveString += Globals.TABSPACE + "GuitarStream = \"" + guitarString + "\"" + Globals.LINE_ENDING;
 
-            if (song.bassAudioLoaded)
+            if (song.bassAudioLoaded || (bassString != null && bassString != string.Empty))
                 saveString += Globals.TABSPACE + "BassStream = \"" + bassString + "\"" + Globals.LINE_ENDING;
 
-            if (song.rhythmAudioLoaded)
+            if (song.rhythmAudioLoaded || (rhythmString != null && rhythmString != string.Empty))
                 saveString += Globals.TABSPACE + "RhythmStream = \"" + rhythmString + "\"" + Globals.LINE_ENDING;
 
-            if (song.drumAudioLoaded)
+            if (song.drumAudioLoaded || (drumString != null && drumString != string.Empty))
                 saveString += Globals.TABSPACE + "DrumStream = \"" + drumString + "\"" + Globals.LINE_ENDING;
 
             saveString += "}" + Globals.LINE_ENDING;
         }
         catch(System.Exception e)
         {
+            System.Diagnostics.Debugger.Break();
             string error = "Error with saving song properties: " + e.Message;
             Debug.LogError(error);
             errorList += error + Globals.LINE_ENDING;
@@ -101,7 +95,7 @@ public class ChartWriter {
         // Events
         Debug.Log("Writing events");
         saveString += "[Events]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
-        saveString += GetSaveString(song, song.events, exportOptions, ref errorList);
+        saveString += GetSaveString(song, song.eventsAndSections, exportOptions, ref errorList);
         saveString += "}" + Globals.LINE_ENDING;
 
         // Charts      

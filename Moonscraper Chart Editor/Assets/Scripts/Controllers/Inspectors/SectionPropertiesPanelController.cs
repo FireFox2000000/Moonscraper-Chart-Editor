@@ -6,7 +6,11 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class SectionPropertiesPanelController : PropertiesPanelController {
-    public Section currentSection { get { return (Section)currentSongObject; } set { currentSongObject = value; } }
+    public Section currentSection { get { return (Section)currentSongObject; }
+        set {
+            currentSongObject = value;
+        }
+    }
     public InputField sectionName;
 
     protected override void Update()
@@ -16,6 +20,10 @@ public class SectionPropertiesPanelController : PropertiesPanelController {
         {
             positionText.text = "Position: " + currentSection.position.ToString();
             sectionName.text = currentSection.title;
+        }
+        else
+        {
+            Debug.LogError("Null section");
         }
     }
 
