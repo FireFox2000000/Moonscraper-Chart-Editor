@@ -1349,11 +1349,11 @@ public class Song {
 #if false
         Song songCopy = new Song(this);
         songCopy.Save(filepath, exportOptions);
-#else
+
 #if !UNITY_EDITOR
         This is for debugging only you moron
 #endif
-
+#else
         if (!IsSaving)
         {
             Song songCopy = new Song(this);

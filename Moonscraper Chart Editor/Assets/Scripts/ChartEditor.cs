@@ -264,13 +264,16 @@ public class ChartEditor : MonoBehaviour {
         }
     }
 
+    private static Song autosaveSong = null;
     void Autosave()
     {
+        autosaveSong = new Song(currentSong);
+
         autosave = new System.Threading.Thread(() =>
         {
             autosaveTimer = 0;
             Debug.Log("Autosaving...");
-            currentSong.Save(Globals.autosaveLocation, currentSong.defaultExportOptions);
+            autosaveSong.Save(Globals.autosaveLocation, currentSong.defaultExportOptions);
             Debug.Log("Autosave complete!");
             autosaveTimer = 0;
         });
