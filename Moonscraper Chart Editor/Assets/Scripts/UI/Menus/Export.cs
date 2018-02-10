@@ -262,14 +262,15 @@ public class Export : DisplayMenu {
     void GenerateSongIni(string path)
     {
         Song song = editor.currentSong;
+        Metadata metaData = song.metaData;
 
         StreamWriter ofs = File.CreateText(path + "/song.ini");
         ofs.WriteLine("[Song]");
         ofs.WriteLine("name = " + song.name);
-        ofs.WriteLine("artist = " + song.artist);
-        ofs.WriteLine("album = " + song.album);
-        ofs.WriteLine("genre = " + song.genre);
-        ofs.WriteLine("year = " + song.year);
+        ofs.WriteLine("artist = " + metaData.artist);
+        ofs.WriteLine("album = " + metaData.album);
+        ofs.WriteLine("genre = " + metaData.genre);
+        ofs.WriteLine("year = " + metaData.year);
         ofs.WriteLine("song_length = " + (int)(song.length * 1000));
         ofs.WriteLine("count = 0");
         ofs.WriteLine("diff_band = -1");
@@ -281,7 +282,7 @@ public class Export : DisplayMenu {
         ofs.WriteLine("diff_bassghl = -1");
         ofs.WriteLine("preview_start_time = 0");
         ofs.WriteLine("frets = 0");
-        ofs.WriteLine("charter = " + song.charter);
+        ofs.WriteLine("charter = " + metaData.charter);
         ofs.WriteLine("icon = 0");
 
         ofs.Close();

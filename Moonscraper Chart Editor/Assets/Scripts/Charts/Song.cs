@@ -15,6 +15,38 @@ using System.Linq;
 using System;
 using Un4seen.Bass;
 
+public class Metadata
+{
+    public string name, artist, charter, player2, genre, mediatype, album, year;
+    public int difficulty;
+    public float previewStart, previewEnd;
+
+    public Metadata()
+    {
+        name = artist = charter = album = year = string.Empty;
+        player2 = "Bass";
+        difficulty = 0;
+        previewStart = previewEnd = 0;
+        genre = "rock";
+        mediatype = "cd";
+    }
+
+    public Metadata(Metadata metaData)
+    {
+        name = metaData.name;
+        artist = metaData.artist;
+        charter = metaData.charter;
+        album = metaData.artist;
+        year = metaData.year;
+        player2 = metaData.player2;
+        difficulty = metaData.difficulty;
+        previewStart = metaData.previewStart;
+        previewEnd = metaData.previewEnd;
+        genre = metaData.genre;
+        mediatype = metaData.mediatype;
+    }
+}
+
 public class Song {
     public bool saveError = false;
 
@@ -29,12 +61,20 @@ public class Song {
     public const int DRUM_STREAM_ARRAY_POS = 4;
 
     // Song properties
-    public string name = string.Empty, artist = string.Empty, charter = string.Empty;
-    public string player2 = "Bass";
-    public int difficulty = 0;
-    public float offset = 0, previewStart = 0, previewEnd = 0, resolution = 192;
-    public string genre = "rock", mediatype = "cd";
-    public string album = string.Empty, year = string.Empty;
+    public Metadata metaData = new Metadata();
+    public string name
+    {
+        get
+        {
+            return metaData.name;
+        }
+        set
+        {
+            metaData.name = value;
+        }
+    }
+    public float resolution = 192, offset = 0;
+
 #if !BASS_AUDIO
     AudioClip[] audioStreams = new AudioClip[3];
     public AudioClip musicStream { get { return audioStreams[MUSIC_STREAM_ARRAY_POS]; } set { audioStreams[MUSIC_STREAM_ARRAY_POS] = value; } }
@@ -449,19 +489,9 @@ public class Song {
 
     public Song(Song song)
     {
-        name = song.name;
-        artist = song.artist;
-        charter = song.charter;
-        player2 = song.player2;
-        difficulty = song.difficulty;
+        metaData = new Metadata(song.metaData);
         offset = song.offset;
-        previewStart = song.previewStart;
-        previewEnd = song.previewEnd;
         resolution = song.resolution;
-        genre = song.genre;
-        mediatype = song.mediatype;
-        album = song.album;
-        year = song.year;
 
         for (int i = 0; i < audioLocations.Length; ++i)
         {
@@ -1080,25 +1110,25 @@ public class Song {
                 // Name = "5000 Robots"
                 if (nameRegex.IsMatch(line))
                 {
-                    name = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                    metaData.name = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
                 }
 
                 // Artist = "TheEruptionOffer"
                 else if (artistRegex.IsMatch(line))
                 {
-                    artist = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                    metaData.artist = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
                 }
 
                 // Charter = "TheEruptionOffer"
                 else if (charterRegex.IsMatch(line))
                 {
-                    charter = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                    metaData.charter = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
                 }
 
                 // Album = "Rockman Holic"
                 else if (albumRegex.IsMatch(line))
                 {
-                    album = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                    metaData.album = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
                 }
 
                 // Offset = 0
@@ -1123,7 +1153,7 @@ public class Song {
                     {
                         if (split.Equals(instrument, System.StringComparison.InvariantCultureIgnoreCase))
                         {
-                            player2 = instrument;
+                            metaData.player2 = instrument;
                             break;
                         }
                     }
@@ -1132,7 +1162,7 @@ public class Song {
                 // Difficulty = 0
                 else if (difficultyRegex.IsMatch(line))
                 {
-                    difficulty = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
+                    metaData.difficulty = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
                 }
 
                 // Length = 300
@@ -1145,29 +1175,29 @@ public class Song {
                 // PreviewStart = 0.00
                 else if (previewStartRegex.IsMatch(line))
                 {
-                    previewStart = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+                    metaData.previewStart = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
                 }
 
                 // PreviewEnd = 0.00
                 else if (previewEndRegex.IsMatch(line))
                 {
-                    previewEnd = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+                    metaData.previewEnd = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
                 }
 
                 // Genre = "rock"
                 else if (genreRegex.IsMatch(line))
                 {
-                    genre = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                    metaData.genre = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
                 }
 
                 // MediaType = "cd"
                 else if (mediaTypeRegex.IsMatch(line))
                 {
-                    mediatype = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                    metaData.mediatype = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
                 }
 
                 else if (yearRegex.IsMatch(line))
-                    year = Regex.Replace(Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"'), @"\D", "");
+                    metaData.year = Regex.Replace(Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"'), @"\D", "");
 
                 // MusicStream = "ENDLESS REBIRTH.ogg"
                 else if (musicStreamRegex.IsMatch(line))

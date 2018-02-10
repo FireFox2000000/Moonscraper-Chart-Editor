@@ -42,17 +42,18 @@ public class SongPropertiesPanelController : DisplayMenu {
         base.OnEnable();
         
         init = true;
-        Song song = editor.currentSong;   
+        Song song = editor.currentSong;
+        Metadata metaData = song.metaData; 
            
         songName.text = song.name;
-        artist.text = song.artist;
-        charter.text = song.charter;
-        album.text = song.album;
-        year.text = song.year;
+        artist.text = metaData.artist;
+        charter.text = metaData.charter;
+        album.text = metaData.album;
+        year.text = metaData.year;
         offset.text = song.offset.ToString();
-        difficulty.text = song.difficulty.ToString();
-        genre.text = song.genre;
-        mediaType.text = song.mediatype;
+        difficulty.text = metaData.difficulty.ToString();
+        genre.text = metaData.genre;
+        mediaType.text = metaData.mediatype;
 
         // Init audio names
         setAudioTextLabels();
@@ -73,7 +74,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 	void Apply()
     {
         editor.currentSong.name = songName.text;
-        editor.currentSong.artist = artist.text;
+        editor.currentSong.metaData.artist = artist.text;
     }
 
     public void setSongProperties()
@@ -81,11 +82,13 @@ public class SongPropertiesPanelController : DisplayMenu {
         if (!init)
         {
             Song song = editor.currentSong;
+            Metadata metaData = song.metaData;
+
             song.name = songName.text;
-            song.artist = artist.text;
-            song.charter = charter.text;
-            song.album = album.text;
-            song.year = year.text;
+            metaData.artist = artist.text;
+            metaData.charter = charter.text;
+            metaData.album = album.text;
+            metaData.year = year.text;
 
             try
             {
@@ -98,15 +101,15 @@ public class SongPropertiesPanelController : DisplayMenu {
 
             try
             {
-                song.difficulty = int.Parse(difficulty.text);
+                metaData.difficulty = int.Parse(difficulty.text);
             }
             catch
             {
-                song.difficulty = 0;
+                metaData.difficulty = 0;
             }
 
-            song.genre = genre.text;
-            song.mediatype = mediaType.text;
+            metaData.genre = genre.text;
+            metaData.mediatype = mediaType.text;
 
             if (editor.currentSong.manualLength)
             {

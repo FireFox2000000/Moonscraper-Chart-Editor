@@ -214,31 +214,33 @@ public class ChartWriter {
         if (exportOptions.targetResolution <= 0)
             exportOptions.targetResolution = song.resolution;
 
+        Metadata metaData = song.metaData;
+
         // Song properties  
-        if (song.name != string.Empty)
-            saveString += Globals.TABSPACE + "Name = \"" + song.name + "\"" + Globals.LINE_ENDING;
-        if (song.artist != string.Empty)
-            saveString += Globals.TABSPACE + "Artist = \"" + song.artist + "\"" + Globals.LINE_ENDING;
-        if (song.charter != string.Empty)
-            saveString += Globals.TABSPACE + "Charter = \"" + song.charter + "\"" + Globals.LINE_ENDING;
-        if (song.album != string.Empty)
-            saveString += Globals.TABSPACE + "Album = \"" + song.album + "\"" + Globals.LINE_ENDING;
-        if (song.year != string.Empty)
-            saveString += Globals.TABSPACE + "Year = \", " + song.year + "\"" + Globals.LINE_ENDING;
+        if (metaData.name != string.Empty)
+            saveString += Globals.TABSPACE + "Name = \"" + metaData.name + "\"" + Globals.LINE_ENDING;
+        if (metaData.artist != string.Empty)
+            saveString += Globals.TABSPACE + "Artist = \"" + metaData.artist + "\"" + Globals.LINE_ENDING;
+        if (metaData.charter != string.Empty)
+            saveString += Globals.TABSPACE + "Charter = \"" + metaData.charter + "\"" + Globals.LINE_ENDING;
+        if (metaData.album != string.Empty)
+            saveString += Globals.TABSPACE + "Album = \"" + metaData.album + "\"" + Globals.LINE_ENDING;
+        if (metaData.year != string.Empty)
+            saveString += Globals.TABSPACE + "Year = \", " + metaData.year + "\"" + Globals.LINE_ENDING;
         saveString += Globals.TABSPACE + "Offset = " + song.offset + Globals.LINE_ENDING;
 
         saveString += Globals.TABSPACE + "Resolution = " + exportOptions.targetResolution + Globals.LINE_ENDING;
-        if (song.player2 != string.Empty)
-            saveString += Globals.TABSPACE + "Player2 = " + song.player2.ToLower() + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "Difficulty = " + song.difficulty + Globals.LINE_ENDING;
+        if (metaData.player2 != string.Empty)
+            saveString += Globals.TABSPACE + "Player2 = " + metaData.player2.ToLower() + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "Difficulty = " + metaData.difficulty + Globals.LINE_ENDING;
         if (song.manualLength)
             saveString += Globals.TABSPACE + "Length = " + song.length + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "PreviewStart = " + song.previewStart + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "PreviewEnd = " + song.previewEnd + Globals.LINE_ENDING;
-        if (song.genre != string.Empty)
-            saveString += Globals.TABSPACE + "Genre = \"" + song.genre + "\"" + Globals.LINE_ENDING;
-        if (song.mediatype != string.Empty)
-            saveString += Globals.TABSPACE + "MediaType = \"" + song.mediatype + "\"" + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "PreviewStart = " + metaData.previewStart + Globals.LINE_ENDING;
+        saveString += Globals.TABSPACE + "PreviewEnd = " + metaData.previewEnd + Globals.LINE_ENDING;
+        if (metaData.genre != string.Empty)
+            saveString += Globals.TABSPACE + "Genre = \"" + metaData.genre + "\"" + Globals.LINE_ENDING;
+        if (metaData.mediatype != string.Empty)
+            saveString += Globals.TABSPACE + "MediaType = \"" + metaData.mediatype + "\"" + Globals.LINE_ENDING;
 
         return saveString;
     }
