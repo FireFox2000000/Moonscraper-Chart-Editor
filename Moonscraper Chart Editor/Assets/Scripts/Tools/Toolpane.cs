@@ -53,7 +53,7 @@ public class Toolpane : MonoBehaviour {
 
         if (currentToolObject)
         {
-            if (Globals.lockToStrikeline)
+            if (GameSettings.keysModeEnabled)
                 currentToolObject.gameObject.SetActive(true);
             else
             {

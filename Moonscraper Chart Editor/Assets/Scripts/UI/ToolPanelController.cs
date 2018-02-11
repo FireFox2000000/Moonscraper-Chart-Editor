@@ -50,7 +50,7 @@ public class ToolPanelController : MonoBehaviour {
             viewModeToggle.isOn = !viewModeToggle.isOn;
         }
 
-        keysModePanel.gameObject.SetActive(Toolpane.currentTool == Toolpane.Tools.Note && Globals.lockToStrikeline);
+        keysModePanel.gameObject.SetActive(Toolpane.currentTool == Toolpane.Tools.Note && GameSettings.keysModeEnabled);
 
         if (!Globals.IsTyping && !Globals.modifierInputActive)
             Shortcuts();

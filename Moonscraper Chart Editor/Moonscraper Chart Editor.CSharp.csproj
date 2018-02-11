@@ -169,6 +169,7 @@
     <Compile Include="Assets\Scripts\Controllers\Song Objects\TimesignatureController.cs" />
     <Compile Include="Assets\Scripts\Controllers\StrikelineFretPlacement.cs" />
     <Compile Include="Assets\Scripts\Controllers\TimelineMovementController.cs" />
+    <Compile Include="Assets\Scripts\GameSettings.cs" />
     <Compile Include="Assets\Scripts\Gameplay\GameplayManager.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Indicators.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Whammy.cs" />

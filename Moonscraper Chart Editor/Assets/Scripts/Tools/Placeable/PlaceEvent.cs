@@ -49,7 +49,7 @@ public class PlaceEvent : PlaceSongObject
 
     protected override void Controls()
     {
-        if (!Globals.lockToStrikeline)
+        if (!GameSettings.keysModeEnabled)
         {
             if (Toolpane.currentTool == Toolpane.Tools.SongEvent && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
             {

@@ -108,7 +108,7 @@ public class PlaceNoteController : ObjectlessTool {
 
     // Update is called once per frame
     protected override void Update () {
-        if (!Globals.lockToStrikeline)
+        if (!GameSettings.keysModeEnabled)
         {
             BurstRecordingInsertCheck(keysBurstAddHistory);
             KeysDraggedSustainRecordingCheck();
@@ -223,7 +223,7 @@ public class PlaceNoteController : ObjectlessTool {
         }
 
         // Guard to prevent users from pressing keys while dragging out sustains
-        if (!Globals.extendedSustainsEnabled)
+        if (!GameSettings.extendedSustainsEnabled)
         {
             foreach (Note heldNote in heldNotes)
             {
@@ -351,7 +351,7 @@ public class PlaceNoteController : ObjectlessTool {
 
                 if (Input.GetKey((i + 1).ToString()))
                 {
-                    if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+                    if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
                     {
                         standardPlaceableNotes[leftyPos].gameObject.SetActive(true);
                         activeNotes.Add(standardPlaceableNotes[leftyPos]);
@@ -434,7 +434,7 @@ public class PlaceNoteController : ObjectlessTool {
 
     void LeftyFlipReflectionCheck(ref int noteNumber)
     {
-        if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip && noteNumber >= 0 && noteNumber < standardNoteLimit)
+        if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip && noteNumber >= 0 && noteNumber < standardNoteLimit)
             noteNumber = standardNoteLimit - (noteNumber + 1);
     }
 }

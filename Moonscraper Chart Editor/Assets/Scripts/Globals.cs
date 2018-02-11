@@ -95,48 +95,10 @@ public class Globals : MonoBehaviour {
             return MenuBar.currentInstrument == Song.Instrument.GHLiveGuitar || MenuBar.currentInstrument == Song.Instrument.GHLiveBass;
         }
     }
+
     // Settings
-    public static float hyperspeed = 5.0f;
-    public static float highwayLength = 0;
-    public static Step snappingStep = new Step(16);
-    public static int step { get { return snappingStep.value; } set { snappingStep.value = value; } }
-    public static bool lockToStrikeline = false;
-    public static ClapToggle clapSetting = ClapToggle.NONE;
-    public static ClapToggle clapProperties = ClapToggle.NONE;
-    public static bool metronomeActive = false;
-    public static int audioCalibrationMS = 200;                     // Increase to start the audio sooner
-    public static int clapCalibrationMS = 200;
     public static ApplicationMode applicationMode = ApplicationMode.Editor;
     public static ViewMode viewMode { get; set; }
-    public static NotePlacementMode notePlacementMode = NotePlacementMode.LeftyFlip;
-    public static bool extendedSustainsEnabled = false;
-    public static bool sustainGapEnabled { get; set; }
-    public static bool resetAfterPlay = false;
-    public static bool resetAfterGameplay = false;
-    public static Step sustainGapStep;
-    public static int sustainGap { get { return sustainGapStep.value; } set { sustainGapStep.value = value; } }
-    public static bool bot = true;
-    public static int customBgSwapTime;
-
-    // Audio stuff
-    static float _sfxVolume = 1;
-    public static float gameSpeed = 1;
-    public static float gameplayStartDelayTime = 3.0f;
-    public static float sfxVolume
-    {
-        get { return _sfxVolume; }
-        set
-        {
-            if (value < 0)
-                _sfxVolume = 0;
-            else if (value > 1)
-                _sfxVolume = 1;
-            else
-                _sfxVolume = value;
-        }
-    }
-    public static float vol_master, vol_song, vol_guitar, vol_rhythm, vol_drum, audio_pan;
-
 
     ChartEditor editor;
     static string workingDirectory = string.Empty;
@@ -220,7 +182,7 @@ public class Globals : MonoBehaviour {
             Controls();
         ModifierControls();
 
-        snapLockWarning.gameObject.SetActive((lockToStrikeline && Toolpane.currentTool != Toolpane.Tools.Cursor && Toolpane.currentTool != Toolpane.Tools.Eraser));
+        snapLockWarning.gameObject.SetActive((GameSettings.keysModeEnabled && Toolpane.currentTool != Toolpane.Tools.Cursor && Toolpane.currentTool != Toolpane.Tools.Eraser));
 
         if (HasScreenResized)
             OnScreenResize();
@@ -347,9 +309,9 @@ public class Globals : MonoBehaviour {
             }
 
             if (Input.GetButtonDown("IncreaseStep"))
-                snappingStep.Increment();
+                GameSettings.snappingStep.Increment();
             else if (Input.GetButtonDown("DecreaseStep"))
-                snappingStep.Decrement();
+                GameSettings.snappingStep.Decrement();
 
             // Generic delete key
             if (Input.GetButtonDown("Delete") && editor.currentSelectedObjects.Length > 0)// && Toolpane.currentTool == Toolpane.Tools.Cursor)
@@ -383,28 +345,28 @@ public class Globals : MonoBehaviour {
         iniparse.Open(workingDirectory + "\\config.ini");
 
         iniparse.WriteValue("Settings", "Framerate", Application.targetFrameRate);
-        iniparse.WriteValue("Settings", "Hyperspeed", hyperspeed);
-        iniparse.WriteValue("Settings", "Highway Length", highwayLength);
-        iniparse.WriteValue("Settings", "Audio calibration", audioCalibrationMS);
-        iniparse.WriteValue("Settings", "Clap calibration", clapCalibrationMS);
-        iniparse.WriteValue("Settings", "Clap", (int)clapProperties);
-        iniparse.WriteValue("Settings", "Extended sustains", extendedSustainsEnabled);
-        iniparse.WriteValue("Settings", "Sustain Gap", sustainGapEnabled);
-        iniparse.WriteValue("Settings", "Sustain Gap Step", sustainGap);
-        iniparse.WriteValue("Settings", "Note Placement Mode", (int)notePlacementMode);
-        iniparse.WriteValue("Settings", "Gameplay Start Delay", gameplayStartDelayTime);
-        iniparse.WriteValue("Settings", "Reset After Play", resetAfterPlay);
-        iniparse.WriteValue("Settings", "Reset After Gameplay", resetAfterGameplay);
-        iniparse.WriteValue("Settings", "Custom Background Swap Time", customBgSwapTime);
+        iniparse.WriteValue("Settings", "Hyperspeed", GameSettings.hyperspeed);
+        iniparse.WriteValue("Settings", "Highway Length", GameSettings.highwayLength);
+        iniparse.WriteValue("Settings", "Audio calibration", GameSettings.audioCalibrationMS);
+        iniparse.WriteValue("Settings", "Clap calibration", GameSettings.clapCalibrationMS);
+        iniparse.WriteValue("Settings", "Clap", (int)GameSettings.clapProperties);
+        iniparse.WriteValue("Settings", "Extended sustains", GameSettings.extendedSustainsEnabled);
+        iniparse.WriteValue("Settings", "Sustain Gap", GameSettings.sustainGapEnabled);
+        iniparse.WriteValue("Settings", "Sustain Gap Step", GameSettings.sustainGap);
+        iniparse.WriteValue("Settings", "Note Placement Mode", (int)GameSettings.notePlacementMode);
+        iniparse.WriteValue("Settings", "Gameplay Start Delay", GameSettings.gameplayStartDelayTime);
+        iniparse.WriteValue("Settings", "Reset After Play", GameSettings.resetAfterPlay);
+        iniparse.WriteValue("Settings", "Reset After Gameplay", GameSettings.resetAfterGameplay);
+        iniparse.WriteValue("Settings", "Custom Background Swap Time", GameSettings.customBgSwapTime);
 
         // Audio levels
-        iniparse.WriteValue("Audio Volume", "Master", vol_master);
-        iniparse.WriteValue("Audio Volume", "Music Stream", vol_song);
-        iniparse.WriteValue("Audio Volume", "Guitar Stream", vol_guitar);
-        iniparse.WriteValue("Audio Volume", "Rhythm Stream", vol_rhythm);
-        iniparse.WriteValue("Audio Volume", "Drum Stream", vol_drum);
-        iniparse.WriteValue("Audio Volume", "Audio Pan", audio_pan);
-        iniparse.WriteValue("Audio Volume", "SFX", sfxVolume);
+        iniparse.WriteValue("Audio Volume", "Master", GameSettings.vol_master);
+        iniparse.WriteValue("Audio Volume", "Music Stream", GameSettings.vol_song);
+        iniparse.WriteValue("Audio Volume", "Guitar Stream", GameSettings.vol_guitar);
+        iniparse.WriteValue("Audio Volume", "Rhythm Stream", GameSettings.vol_rhythm);
+        iniparse.WriteValue("Audio Volume", "Drum Stream", GameSettings.vol_drum);
+        iniparse.WriteValue("Audio Volume", "Audio Pan", GameSettings.audio_pan);
+        iniparse.WriteValue("Audio Volume", "SFX", GameSettings.sfxVolume);
 
         iniparse.Close();
 
@@ -423,12 +385,6 @@ public class Globals : MonoBehaviour {
         button.onClick.Invoke();
     }
 
-    [System.Flags]
-    public enum ClapToggle
-    {
-        NONE = 0, ALL = ~0, STRUM = 1, HOPO = 2, TAP = 4
-    }
-
     public enum ApplicationMode
     {
         Editor, Playing, Menu, Loading
@@ -437,11 +393,6 @@ public class Globals : MonoBehaviour {
     public enum ViewMode
     {
         Chart, Song
-    }
-
-    public enum NotePlacementMode
-    {
-        Default, LeftyFlip
     }
 
     public void ResetAspectRatio()
@@ -465,36 +416,36 @@ public class Globals : MonoBehaviour {
         else
             Application.targetFrameRate = fps;
 
-        hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
-        highwayLength = (float)iniparse.ReadValue("Settings", "Highway Length", 0);
-        audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 0);
-        clapCalibrationMS = iniparse.ReadValue("Settings", "Clap calibration", 0);
-        clapProperties = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
-        extendedSustainsEnabled = iniparse.ReadValue("Settings", "Extended sustains", false);
-        clapSetting = ClapToggle.NONE;
-        sustainGapEnabled = iniparse.ReadValue("Settings", "Sustain Gap", false);
-        sustainGapStep = new Step((int)iniparse.ReadValue("Settings", "Sustain Gap Step", (int)16));
-        notePlacementMode = (NotePlacementMode)iniparse.ReadValue("Settings", "Note Placement Mode", (int)NotePlacementMode.Default);
-        gameplayStartDelayTime = (float)iniparse.ReadValue("Settings", "Gameplay Start Delay", 3.0f);
-        resetAfterPlay = iniparse.ReadValue("Settings", "Reset After Play", false);
-        resetAfterGameplay = iniparse.ReadValue("Settings", "Reset After Gameplay", false);
-        customBgSwapTime = iniparse.ReadValue("Settings", "Custom Background Swap Time", 30);
+        GameSettings.hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
+        GameSettings.highwayLength = (float)iniparse.ReadValue("Settings", "Highway Length", 0);
+        GameSettings.audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 0);
+        GameSettings.clapCalibrationMS = iniparse.ReadValue("Settings", "Clap calibration", 0);
+        GameSettings.clapProperties = (GameSettings.ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)GameSettings.ClapToggle.ALL);
+        GameSettings.extendedSustainsEnabled = iniparse.ReadValue("Settings", "Extended sustains", false);
+        GameSettings.clapSetting = GameSettings.ClapToggle.NONE;
+        GameSettings.sustainGapEnabled = iniparse.ReadValue("Settings", "Sustain Gap", false);
+        GameSettings.sustainGapStep = new Step((int)iniparse.ReadValue("Settings", "Sustain Gap Step", (int)16));
+        GameSettings.notePlacementMode = (GameSettings.NotePlacementMode)iniparse.ReadValue("Settings", "Note Placement Mode", (int)GameSettings.NotePlacementMode.Default);
+        GameSettings.gameplayStartDelayTime = (float)iniparse.ReadValue("Settings", "Gameplay Start Delay", 3.0f);
+        GameSettings.resetAfterPlay = iniparse.ReadValue("Settings", "Reset After Play", false);
+        GameSettings.resetAfterGameplay = iniparse.ReadValue("Settings", "Reset After Gameplay", false);
+        GameSettings.customBgSwapTime = iniparse.ReadValue("Settings", "Custom Background Swap Time", 30);
         // Check that the gameplay start delay time is a multiple of 0.5 and is
-        gameplayStartDelayTime = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
-        gameplayStartDelayTime = (float)(System.Math.Round(gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f);
+        GameSettings.gameplayStartDelayTime = Mathf.Clamp(GameSettings.gameplayStartDelayTime, 0, 3.0f);
+        GameSettings.gameplayStartDelayTime = (float)(System.Math.Round(GameSettings.gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f);
 
         // Audio levels
-        vol_master = (float)iniparse.ReadValue("Audio Volume", "Master", 0.5f);
-        vol_song = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
-        vol_guitar = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
-        vol_rhythm = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
-        vol_drum = (float)iniparse.ReadValue("Audio Volume", "Drum Stream", 1.0f);
-        audio_pan = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
+        GameSettings.vol_master = (float)iniparse.ReadValue("Audio Volume", "Master", 0.5f);
+        GameSettings.vol_song = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
+        GameSettings.vol_guitar = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
+        GameSettings.vol_rhythm = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
+        GameSettings.vol_drum = (float)iniparse.ReadValue("Audio Volume", "Drum Stream", 1.0f);
+        GameSettings.audio_pan = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
 
-        AudioListener.volume = vol_master;
+        AudioListener.volume = GameSettings.vol_master;
 
         //editor.clapSource.volume = (float)iniparse.ReadValue("Audio Volume", "Clap", 1.0f);
-        sfxVolume = (float)iniparse.ReadValue("Audio Volume", "SFX", 1.0f);
+        GameSettings.sfxVolume = (float)iniparse.ReadValue("Audio Volume", "SFX", 1.0f);
 
         iniparse.Close();
     }

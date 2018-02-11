@@ -319,10 +319,10 @@ public class NoteController : SongObjectController {
         Vector3 notePosition = transform.position;
         Vector3 strikelinePosition = editor.visibleStrikeline.position;
 
-        bool belowClapLine = notePosition.y <= strikelinePosition.y + (TickFunctions.TimeToWorldYPosition(Globals.audioCalibrationMS / 1000.0f) * Globals.gameSpeed);
-        bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime * Globals.hyperspeed / Globals.gameSpeed);
+        bool belowClapLine = notePosition.y <= strikelinePosition.y + (TickFunctions.TimeToWorldYPosition(GameSettings.audioCalibrationMS / 1000.0f) * GameSettings.gameSpeed);
+        bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime * GameSettings.hyperspeed / GameSettings.gameSpeed);
 
-        if (Globals.bot && belowClapLine)
+        if (GameSettings.bot && belowClapLine)
         {
             GameplayBotHitClap();
         }
@@ -331,7 +331,7 @@ public class NoteController : SongObjectController {
         {
             if (isActivated)
             {
-                if (Globals.bot)
+                if (GameSettings.bot)
                 {
                     PlayIndicatorAnim();
                 }
@@ -350,7 +350,7 @@ public class NoteController : SongObjectController {
 
         if (whammy)
         {
-            if (hit && !sustainBroken && !Globals.bot)
+            if (hit && !sustainBroken && !GameSettings.bot)
                 whammy.canWhammy = true;
             else
                 whammy.canWhammy = false;
@@ -366,15 +366,15 @@ public class NoteController : SongObjectController {
             switch (note.type)
             {
                 case (Note.Note_Type.Strum):
-                    if ((Globals.clapSetting & Globals.ClapToggle.STRUM) == 0)
+                    if ((GameSettings.clapSetting & GameSettings.ClapToggle.STRUM) == 0)
                         playClap = false;
                     break;
                 case (Note.Note_Type.Hopo):
-                    if ((Globals.clapSetting & Globals.ClapToggle.HOPO) == 0)
+                    if ((GameSettings.clapSetting & GameSettings.ClapToggle.HOPO) == 0)
                         playClap = false;
                     break;
                 case (Note.Note_Type.Tap):
-                    if ((Globals.clapSetting & Globals.ClapToggle.TAP) == 0)
+                    if ((GameSettings.clapSetting & GameSettings.ClapToggle.TAP) == 0)
                         playClap = false;
                     break;
                 default:
@@ -414,7 +414,7 @@ public class NoteController : SongObjectController {
     {
         if (!note.IsOpenNote())
         {
-            if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+            if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
             {
                 return chartPos - note.rawNote * positionIncrementFactor - noteObjectPositionStartOffset;
             }

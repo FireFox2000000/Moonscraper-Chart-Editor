@@ -75,7 +75,7 @@ public class GameplayManager : MonoBehaviour {
 
     void Update()
     {
-        statsPanel.SetActive(Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot);
+        statsPanel.SetActive(Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot);
 
         uint startNS = noteStreak;
 
@@ -95,7 +95,7 @@ public class GameplayManager : MonoBehaviour {
         }
 #endif
         // Configure collisions and choose to update the hit window or not
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
             transform.localScale = new Vector3(transform.localScale.x, initSize, transform.localScale.z);
             UpdateHitWindow();
@@ -155,7 +155,7 @@ public class GameplayManager : MonoBehaviour {
             strum = false;
 
         // Gameplay
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
             int inputMask = GetFretInputMask();
             if (inputMask != previousInputMask)
@@ -288,8 +288,8 @@ public class GameplayManager : MonoBehaviour {
                     )
                 )// !audioSource.isPlaying)
             {
-                Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, Globals.sfxVolume * Globals.vol_master);
-                Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, Globals.audio_pan);
+                Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, GameSettings.sfxVolume * GameSettings.vol_master);
+                Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, GameSettings.audio_pan);
                 Bass.BASS_ChannelPlay(channel, false); // play it
                 camShake.ShakeCamera();
                 //Bass.BASS_ChannelPlay(sample, false);

@@ -141,20 +141,20 @@ public class TimelineMovementController : MovementController
                         // Navigate to snapped pos ahead or behind
                         if (Input.GetKey(KeyCode.UpArrow))
                         {
-                            snappedPos = Snapable.ChartIncrementStep(currentPos, Globals.step, editor.currentSong.resolution);
+                            snappedPos = Snapable.ChartIncrementStep(currentPos, GameSettings.step, editor.currentSong.resolution);
                         }
                         else if (Input.GetKey(KeyCode.DownArrow))
                         {
-                            snappedPos = Snapable.ChartDecrementStep(currentPos, Globals.step, editor.currentSong.resolution);
+                            snappedPos = Snapable.ChartDecrementStep(currentPos, GameSettings.step, editor.currentSong.resolution);
                         }
                         else if (Input.GetKey(KeyCode.PageUp))
                         {
-                            snappedPos = Snapable.ChartPositionToSnappedChartPosition(currentPos + (uint)(editor.currentSong.resolution * 4), Globals.step, editor.currentSong.resolution);
+                            snappedPos = Snapable.ChartPositionToSnappedChartPosition(currentPos + (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong.resolution);
                         }
                         // Page Down
                         else
                         {
-                            snappedPos = Snapable.ChartPositionToSnappedChartPosition(currentPos - (uint)(editor.currentSong.resolution * 4), Globals.step, editor.currentSong.resolution);
+                            snappedPos = Snapable.ChartPositionToSnappedChartPosition(currentPos - (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong.resolution);
                         }
 
                         if (editor.currentSong.ChartPositionToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSong.length)

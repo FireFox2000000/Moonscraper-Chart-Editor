@@ -40,7 +40,7 @@ public class ClipboardObjectController : Snapable {
         }
         else
         {
-            pastePos = editor.currentSong.WorldPositionToSnappedChartPosition(strikeline.position.y, Globals.step);
+            pastePos = editor.currentSong.WorldPositionToSnappedChartPosition(strikeline.position.y, GameSettings.step);
         }
 
         transform.position = new Vector3(transform.position.x, editor.currentSong.ChartPositionToWorldYPosition(pastePos), transform.position.z);

@@ -12,28 +12,28 @@ public class AudioCalibrationMenuScript : DisplayMenu {
     protected override void OnEnable()
     {
         base.OnEnable();
-        audioInput.text = Globals.audioCalibrationMS.ToString();
-        clapInput.text = Globals.clapCalibrationMS.ToString();
+        audioInput.text = GameSettings.audioCalibrationMS.ToString();
+        clapInput.text = GameSettings.clapCalibrationMS.ToString();
     }
 	
     public void audioValChanged(string val)
     {
-        valChanged(val, ref Globals.audioCalibrationMS);
+        valChanged(val, ref GameSettings.audioCalibrationMS);
     }
 
     public void audioValEndEdit(string val)
     {
-        valEndEdit(val, ref Globals.audioCalibrationMS);
+        valEndEdit(val, ref GameSettings.audioCalibrationMS);
     }
 
     public void sfxValChanged(string val)
     {
-        valChanged(val, ref Globals.clapCalibrationMS);
+        valChanged(val, ref GameSettings.clapCalibrationMS);
     }
 
     public void sfxValEndEdit(string val)
     {
-        valEndEdit(val, ref Globals.clapCalibrationMS);
+        valEndEdit(val, ref GameSettings.clapCalibrationMS);
     }
 
     void valChanged(string val, ref int calibration)

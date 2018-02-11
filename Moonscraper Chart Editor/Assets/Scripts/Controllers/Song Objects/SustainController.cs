@@ -44,7 +44,7 @@ public class SustainController : SelectableClick {
             // Update sustain
             if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
             {
-                if (!Globals.extendedSustainsEnabled || Input.GetButton("ChordSelect"))
+                if (!GameSettings.extendedSustainsEnabled || Input.GetButton("ChordSelect"))
                 {                 
                     if (unmodifiedNotes.Count == 0)
                     {
@@ -115,7 +115,7 @@ public class SustainController : SelectableClick {
             nextFret = note.next;
         else
         {
-            if (Globals.extendedSustainsEnabled)
+            if (GameSettings.extendedSustainsEnabled)
                 nextFret = FindNextSameFretWithinSustain();
             else
                 nextFret = note.nextSeperateNote;
@@ -194,11 +194,11 @@ public class SustainController : SelectableClick {
 
         if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
         {
-            snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(nCon.note.song.WorldYPositionToChartPosition(((Vector2)Mouse.world2DPosition).y), Globals.step, note.song.resolution);
+            snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(nCon.note.song.WorldYPositionToChartPosition(((Vector2)Mouse.world2DPosition).y), GameSettings.step, note.song.resolution);
         }
         else
         {
-            snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(note.song.WorldYPositionToChartPosition(editor.mouseYMaxLimit.position.y), Globals.step, note.song.resolution);
+            snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(note.song.WorldYPositionToChartPosition(editor.mouseYMaxLimit.position.y), GameSettings.step, note.song.resolution);
         }
 
         return snappedChartPos;

@@ -44,7 +44,7 @@ public abstract class PlaceSongObject : ToolObject {
 
         foreach (Renderer ren in renderers)
         {
-            if (Globals.lockToStrikeline)
+            if (GameSettings.keysModeEnabled)
                 ren.enabled = false;
             else
                 ren.enabled = true;
@@ -52,7 +52,7 @@ public abstract class PlaceSongObject : ToolObject {
 
         foreach (Transform child in transform)
         {
-            if (Globals.lockToStrikeline)
+            if (GameSettings.keysModeEnabled)
                 child.gameObject.SetActive(false);
             else
                 child.gameObject.SetActive(true);

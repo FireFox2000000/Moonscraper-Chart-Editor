@@ -80,7 +80,7 @@ public class Indicators : MonoBehaviour {
     void Update () {
         //UpdateStrikerColors();
 
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing && !Globals.bot)
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
 #if GAMEPAD
             if (GameplayManager.gamepad != null)
@@ -182,7 +182,7 @@ public class Indicators : MonoBehaviour {
         for (int i = 0; i < range; ++i)
         {
             int number = i;
-            if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+            if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
             {
                 number = range - (number + 1);
                 if (!Globals.ghLiveMode)

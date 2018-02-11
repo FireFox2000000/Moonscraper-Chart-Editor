@@ -150,7 +150,7 @@ public class PlaceNote : PlaceSongObject {
 
     protected virtual void UpdateFretType()
     {
-        if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+        if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
         {
             if (Input.GetKey("1"))
                 note.fret_type = Note.Fret_Type.ORANGE;
@@ -195,7 +195,7 @@ public class PlaceNote : PlaceSongObject {
 
     public static int XPosToNoteNumber(float xPos)
     {
-        if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+        if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
             xPos *= -1;
 
         float startPos = -2.0f;
@@ -362,7 +362,7 @@ public class PlaceNote : PlaceSongObject {
         Note next;
         next = note.nextSeperateNote;      
         
-        if (!Globals.extendedSustainsEnabled)
+        if (!GameSettings.extendedSustainsEnabled)
         {
             // Get chord  
             next = note.nextSeperateNote;
@@ -398,7 +398,7 @@ public class PlaceNote : PlaceSongObject {
         List<ActionHistory.Action> actionRecord = new List<ActionHistory.Action>();
 
         Note[] previousNotes = Note.GetPreviousOfSustains(noteToAdd);
-        if (!Globals.extendedSustainsEnabled)
+        if (!GameSettings.extendedSustainsEnabled)
         {
             // Cap all the notes
             foreach (Note prevNote in previousNotes)

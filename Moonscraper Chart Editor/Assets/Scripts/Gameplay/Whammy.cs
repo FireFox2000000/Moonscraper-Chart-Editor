@@ -39,7 +39,7 @@ public class Whammy : MonoBehaviour {
             {
                 pointsController.UpdateLineRendererPoints();
 
-                ShiftAnimationKeys(lineCurve, keyShiftSpeed * Time.deltaTime * (Globals.hyperspeed / Globals.gameSpeed) / transform.localScale.y);
+                ShiftAnimationKeys(lineCurve, keyShiftSpeed * Time.deltaTime * (GameSettings.hyperspeed / GameSettings.gameSpeed) / transform.localScale.y);
 
                 float whammyVal = (lerpedWhammyVal() + 1) * widthMultiplier;
 

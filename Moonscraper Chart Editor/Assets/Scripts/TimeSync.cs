@@ -37,7 +37,7 @@ public class TimeSync
         {
             songOffset = value;
             songTime = -1;
-            songSpeed = Globals.gameSpeed;
+            songSpeed = GameSettings.gameSpeed;
         }
     }
 
@@ -83,7 +83,7 @@ public class TimeSync
         if (isAdjusting)
             songTime += desyncAmount * Time.deltaTime;
 
-        songTime += Time.deltaTime * Globals.gameSpeed;
+        songTime += Time.deltaTime * GameSettings.gameSpeed;
         secondTimer += Time.deltaTime;
 
         return songTime + songOffset;

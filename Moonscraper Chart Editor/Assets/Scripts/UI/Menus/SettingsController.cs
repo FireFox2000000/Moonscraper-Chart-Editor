@@ -41,7 +41,7 @@ public class SettingsController : DisplayMenu
     void Start()
     {
         sustainGapInput.onValidateInput = Step.validateStepVal;
-        sustainGapInput.text = Globals.sustainGap.ToString(); 
+        sustainGapInput.text = GameSettings.sustainGap.ToString(); 
     }
 
     protected override void Update()
@@ -49,26 +49,26 @@ public class SettingsController : DisplayMenu
         base.Update();
 
         if (sustainGapInput.text != string.Empty)
-            sustainGapInput.text = Globals.sustainGap.ToString();
+            sustainGapInput.text = GameSettings.sustainGap.ToString();
 
         // Set all variables' values based on the UI
-        Globals.sustainGapEnabled = sustainGapEnabledToggle.isOn;
+        GameSettings.sustainGapEnabled = sustainGapEnabledToggle.isOn;
 
-        Globals.vol_song = musicSourceSlider.value;
-        Globals.vol_guitar = guitarSourceSlider.value;
-        Globals.vol_rhythm = rhythmSourceSlider.value;
-        Globals.vol_drum = drumSourceSlider.value;
+        GameSettings.vol_song = musicSourceSlider.value;
+        GameSettings.vol_guitar = guitarSourceSlider.value;
+        GameSettings.vol_rhythm = rhythmSourceSlider.value;
+        GameSettings.vol_drum = drumSourceSlider.value;
 
-        Globals.sfxVolume = sfxSlider.value;
+        GameSettings.sfxVolume = sfxSlider.value;
 
         //editor.clapSource.volume = clapSourceSlider.value;
 
-        Globals.vol_master = masterVolumeSlider.value / 10.0f;
-        AudioListener.volume = Globals.vol_master;
-        Globals.audio_pan = musicPanSlider.value / 10.0f;
+        GameSettings.vol_master = masterVolumeSlider.value / 10.0f;
+        AudioListener.volume = GameSettings.vol_master;
+        GameSettings.audio_pan = musicPanSlider.value / 10.0f;
 
         editor.SetVolume();
-        Globals.gameplayStartDelayTime = gameplayStartDelayDropdown.value * 0.5f;
+        GameSettings.gameplayStartDelayTime = gameplayStartDelayDropdown.value * 0.5f;
     }
 
     protected override void OnEnable()
@@ -76,13 +76,13 @@ public class SettingsController : DisplayMenu
         base.OnEnable();
 
         // Initialise GUI
-        sustainGapEnabledToggle.isOn = Globals.sustainGapEnabled;
+        sustainGapEnabledToggle.isOn = GameSettings.sustainGapEnabled;
 
-        initClapToggle(clapStrum, Globals.ClapToggle.STRUM);
-        initClapToggle(clapHopo, Globals.ClapToggle.HOPO);
-        initClapToggle(clapTap, Globals.ClapToggle.TAP);
+        initClapToggle(clapStrum, GameSettings.ClapToggle.STRUM);
+        initClapToggle(clapHopo, GameSettings.ClapToggle.HOPO);
+        initClapToggle(clapTap, GameSettings.ClapToggle.TAP);
 
-        if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+        if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
             leftyFlipToggle.isOn = true;
         else
             leftyFlipToggle.isOn = false;
@@ -103,7 +103,7 @@ public class SettingsController : DisplayMenu
                 break;
         }
 
-        switch (Globals.customBgSwapTime)
+        switch (GameSettings.customBgSwapTime)
         {
             case 10:
                 bgSwapTimeDropdown.value = 0;
@@ -129,25 +129,25 @@ public class SettingsController : DisplayMenu
         }
 
         // Set volume sliders
-        masterVolumeSlider.value = Globals.vol_master * 10.0f;
-        musicSourceSlider.value = Globals.vol_song;
-        guitarSourceSlider.value = Globals.vol_guitar;
-        rhythmSourceSlider.value = Globals.vol_rhythm;
-        drumSourceSlider.value = Globals.vol_drum;
-        sfxSlider.value = Globals.sfxVolume;
+        masterVolumeSlider.value = GameSettings.vol_master * 10.0f;
+        musicSourceSlider.value = GameSettings.vol_song;
+        guitarSourceSlider.value = GameSettings.vol_guitar;
+        rhythmSourceSlider.value = GameSettings.vol_rhythm;
+        drumSourceSlider.value = GameSettings.vol_drum;
+        sfxSlider.value = GameSettings.sfxVolume;
 
         //clapSourceSlider.value = editor.clapSource.volume;
-        musicPanSlider.value = Globals.audio_pan * 10.0f;
+        musicPanSlider.value = GameSettings.audio_pan * 10.0f;
 
-        if (Globals.extendedSustainsEnabled)
+        if (GameSettings.extendedSustainsEnabled)
             extendedSustainsToggle.isOn = true;
         else
             extendedSustainsToggle.isOn = false;
 
-        resetAfterPlay.isOn = Globals.resetAfterPlay;
-        resetAfterGameplay.isOn = Globals.resetAfterGameplay;
+        resetAfterPlay.isOn = GameSettings.resetAfterPlay;
+        resetAfterGameplay.isOn = GameSettings.resetAfterGameplay;
 
-        gameplayStartDelayDropdown.value = (int)(Globals.gameplayStartDelayTime * 2.0f);
+        gameplayStartDelayDropdown.value = (int)(GameSettings.gameplayStartDelayTime * 2.0f);
 
         editor.SetVolume();
         Update();
@@ -164,25 +164,25 @@ public class SettingsController : DisplayMenu
 
     public void SetClapStrum(bool value)
     {
-        SetClapProperties(value, Globals.ClapToggle.STRUM);
+        SetClapProperties(value, GameSettings.ClapToggle.STRUM);
     }
 
     public void SetClapHopo(bool value)
     {
-        SetClapProperties(value, Globals.ClapToggle.HOPO);
+        SetClapProperties(value, GameSettings.ClapToggle.HOPO);
     }
 
     public void SetClapTap(bool value)
     {
-        SetClapProperties(value, Globals.ClapToggle.TAP);
+        SetClapProperties(value, GameSettings.ClapToggle.TAP);
     }
 
     public void SetLeftyFlip(bool value)
     {
         if (value == true)
-            Globals.notePlacementMode = Globals.NotePlacementMode.LeftyFlip;
+            GameSettings.notePlacementMode = GameSettings.NotePlacementMode.LeftyFlip;
         else
-            Globals.notePlacementMode = Globals.NotePlacementMode.Default;
+            GameSettings.notePlacementMode = GameSettings.NotePlacementMode.Default;
 
         strikelineFretPlacement.SetStrikerPlacement();
 
@@ -191,47 +191,47 @@ public class SettingsController : DisplayMenu
 
     public void SetResetAfterPlay(bool value)
     {
-        Globals.resetAfterPlay = value;
+        GameSettings.resetAfterPlay = value;
     }
 
     public void SetResetAfterGameplay(bool value)
     {
-        Globals.resetAfterGameplay = value;
+        GameSettings.resetAfterGameplay = value;
     }
 
     public void SetExtendedSustains(bool value)
     {
-        Globals.extendedSustainsEnabled = value;
+        GameSettings.extendedSustainsEnabled = value;
     }
 
     public void IncrementSustainsGapStep()
     {
-        Globals.sustainGapStep.Increment();
+        GameSettings.sustainGapStep.Increment();
     }
 
     public void DecrementSustainsGapStep()
     {
-        Globals.sustainGapStep.Decrement();
+        GameSettings.sustainGapStep.Decrement();
     }
 
-    void initClapToggle(Toggle toggle, Globals.ClapToggle setting)
+    void initClapToggle(Toggle toggle, GameSettings.ClapToggle setting)
     {
-        if ((Globals.clapProperties & setting) != 0)
+        if ((GameSettings.clapProperties & setting) != 0)
             toggle.isOn = true;
         else
             toggle.isOn = false;  
     }
 
-    void SetClapProperties(bool value, Globals.ClapToggle setting)
+    void SetClapProperties(bool value, GameSettings.ClapToggle setting)
     {
         if (value)
-            Globals.clapProperties |= setting;
+            GameSettings.clapProperties |= setting;
         else
-            Globals.clapProperties &= ~setting;
+            GameSettings.clapProperties &= ~setting;
 
-        if (Globals.clapSetting != Globals.ClapToggle.NONE)
+        if (GameSettings.clapSetting != GameSettings.ClapToggle.NONE)
         {
-            Globals.clapSetting = Globals.clapProperties;
+            GameSettings.clapSetting = GameSettings.clapProperties;
         }
     }
 
@@ -267,8 +267,8 @@ public class SettingsController : DisplayMenu
             }
         }
 
-        Globals.sustainGap = stepVal;
-        sustainGapInput.text = Globals.sustainGap.ToString();
+        GameSettings.sustainGap = stepVal;
+        sustainGapInput.text = GameSettings.sustainGap.ToString();
     }
 
     public void SetBgSwapTime(int value)
@@ -276,22 +276,22 @@ public class SettingsController : DisplayMenu
         switch (value)
         {
             case 0:
-                Globals.customBgSwapTime = 10;
+                GameSettings.customBgSwapTime = 10;
                 break;
             case 1:
-                Globals.customBgSwapTime = 30;
+                GameSettings.customBgSwapTime = 30;
                 break;
             case 2:
-                Globals.customBgSwapTime = 60;
+                GameSettings.customBgSwapTime = 60;
                 break;
             case 3:
-                Globals.customBgSwapTime = 180;
+                GameSettings.customBgSwapTime = 180;
                 break;
             case 4:
-                Globals.customBgSwapTime = 300;
+                GameSettings.customBgSwapTime = 300;
                 break;
             case 5:
-                Globals.customBgSwapTime = 600;
+                GameSettings.customBgSwapTime = 600;
                 break;
             default:
                 break;

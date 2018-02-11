@@ -56,7 +56,18 @@ public class MenuBar : MonoBehaviour {
 
     void Controls()
     {
-        if (!Globals.modifierInputActive)
+        if (Globals.modifierInputActive)
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                ToggleExtendedSustains();
+            }
+        }
+        else if (Globals.secondaryInputActive)
+        {
+
+        }
+        else
         {
             if (Input.GetKeyDown(KeyCode.BackQuote))
             {
@@ -67,8 +78,20 @@ public class MenuBar : MonoBehaviour {
 
     public void ToggleMouseLockMode(bool value)
     {
-        Globals.lockToStrikeline = value;
+        GameSettings.keysModeEnabled = value;
         Debug.Log("Keys mode toggled " + value);
+    }
+
+    public void ToggleMouseLockMode()
+    {
+        GameSettings.keysModeEnabled = !GameSettings.keysModeEnabled;
+        Debug.Log("Keys mode toggled " + GameSettings.keysModeEnabled);
+    }
+
+    public void ToggleExtendedSustains()
+    {
+        GameSettings.extendedSustainsEnabled = !GameSettings.extendedSustainsEnabled;
+        Debug.Log("Keys mode toggled " + GameSettings.extendedSustainsEnabled);
     }
 
     public void SetInstrument(string value)

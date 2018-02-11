@@ -20,7 +20,7 @@ public class PlaceBPM : PlaceSongObject {
 
     protected override void Controls()
     {
-        if (!Globals.lockToStrikeline)
+        if (!GameSettings.keysModeEnabled)
         {
             if (Toolpane.currentTool == Toolpane.Tools.BPM && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
             {

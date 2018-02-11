@@ -27,7 +27,7 @@ public class PlaceStarpower : PlaceSongObject {
 
     protected override void Controls()
     {
-        if (!Globals.lockToStrikeline)
+        if (!GameSettings.keysModeEnabled)
         {
             if (Toolpane.currentTool == Toolpane.Tools.Starpower && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0))
             {
@@ -105,7 +105,7 @@ public class PlaceStarpower : PlaceSongObject {
             spRen.enabled = true;
         base.Update();
 
-        if ((Input.GetMouseButtonUp(0) && !Globals.lockToStrikeline) || (Globals.lockToStrikeline && Input.GetButtonUp("Add Object")))
+        if ((Input.GetMouseButtonUp(0) && !GameSettings.keysModeEnabled) || (GameSettings.keysModeEnabled && Input.GetButtonUp("Add Object")))
         {
             if (lastPlacedSP != null)
             {

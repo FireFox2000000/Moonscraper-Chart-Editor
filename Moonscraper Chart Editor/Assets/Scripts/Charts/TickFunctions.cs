@@ -30,12 +30,12 @@ public static class TickFunctions {
 
     public static float WorldYPositionToTime(float worldYPosition)
     {
-        return worldYPosition / (Globals.hyperspeed / Globals.gameSpeed);
+        return worldYPosition / (GameSettings.hyperspeed / GameSettings.gameSpeed);
     }
 
     public static float TimeToWorldYPosition(float time)
     {
-        return time * Globals.hyperspeed / Globals.gameSpeed;
+        return time * GameSettings.hyperspeed / GameSettings.gameSpeed;
     }
 
     public static uint TickScaling(uint tick, float originalResolution, float outputResolution)

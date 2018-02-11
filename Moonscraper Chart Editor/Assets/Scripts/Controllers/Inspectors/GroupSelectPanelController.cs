@@ -120,7 +120,7 @@ public class GroupSelectPanelController : MonoBehaviour
                 if (length == uint.MaxValue)
                     assignedLength = songEndTick - note.position;
 
-                if (Globals.extendedSustainsEnabled)
+                if (GameSettings.extendedSustainsEnabled)
                 {
                     Note original = (Note)note.Clone();
                     note.sustain_length = assignedLength;          

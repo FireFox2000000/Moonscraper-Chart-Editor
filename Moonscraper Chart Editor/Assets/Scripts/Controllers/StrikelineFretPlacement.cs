@@ -27,7 +27,7 @@ public class StrikelineFretPlacement : MonoBehaviour {
         for (int i = 0; i < range; ++i)
         {
             int number = i;
-            if (Globals.notePlacementMode == Globals.NotePlacementMode.LeftyFlip)
+            if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
             {
                 number = range - (number + 1);
             }

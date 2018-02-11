@@ -409,7 +409,7 @@ public class Note : ChartObject
         {
             if (previous.IsOpenNote())
             {
-                if (Globals.extendedSustainsEnabled)
+                if (GameSettings.extendedSustainsEnabled)
                 {
                     list.Add(previous);
                     return list.ToArray();
@@ -491,9 +491,9 @@ public class Note : ChartObject
             sustain_length = cap.position - position;
         }
 
-        uint gapDis = (uint)(song.resolution * 4.0f / Globals.sustainGap);
+        uint gapDis = (uint)(song.resolution * 4.0f / GameSettings.sustainGap);
 
-        if (Globals.sustainGapEnabled && sustain_length > 0 && (position + sustain_length > cap.position - gapDis))
+        if (GameSettings.sustainGapEnabled && sustain_length > 0 && (position + sustain_length > cap.position - gapDis))
         {
             if ((int)(cap.position - gapDis - position) > 0)
                 sustain_length = cap.position - gapDis - position;
@@ -524,7 +524,7 @@ public class Note : ChartObject
 
         while (next != null)
         {
-            if (!Globals.extendedSustainsEnabled)
+            if (!GameSettings.extendedSustainsEnabled)
             {
                 if ((next.IsOpenNote() || (position < next.position)) && position != next.position)
                     return next;

@@ -40,7 +40,7 @@ public class Metronome : MonoBehaviour {
         // Offset by audio calibration
         Vector3 pos = initLocalPos;
 #if BASS_AUDIO
-        pos.y += TickFunctions.TimeToWorldYPosition(Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
+        pos.y += TickFunctions.TimeToWorldYPosition(GameSettings.audioCalibrationMS / 1000.0f * GameSettings.gameSpeed);
 #else
         pos.y += Song.TimeToWorldYPosition(Globals.clapCalibrationMS / 1000.0f * Globals.gameSpeed);
 #endif
@@ -51,14 +51,14 @@ public class Metronome : MonoBehaviour {
         {
             if (currentTickPos >= nextClapPos)
             {
-                if (Globals.metronomeActive)
+                if (GameSettings.metronomeActive)
                 {
 #if BASS_AUDIO
                     int channel = Bass.BASS_SampleGetChannel(sample, false); // get a sample channel
                     if (channel != 0)
                     {
-                        Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, Globals.sfxVolume * Globals.vol_master);
-                        Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, Globals.audio_pan);
+                        Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, GameSettings.sfxVolume * GameSettings.vol_master);
+                        Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, GameSettings.audio_pan);
                         Bass.BASS_ChannelPlay(channel, false); // play it
                     }
                     else

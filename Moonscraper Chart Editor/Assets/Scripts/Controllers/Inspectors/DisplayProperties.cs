@@ -27,19 +27,19 @@ public class DisplayProperties : MonoBehaviour {
     void Start()
     {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
-        hyperspeedSlider.value = Globals.hyperspeed;
-        highwayLengthSlider.value = Globals.highwayLength;
+        hyperspeedSlider.value = GameSettings.hyperspeed;
+        highwayLengthSlider.value = GameSettings.highwayLength;
 
         snappingStep.onValidateInput = Step.validateStepVal;
-        snappingStep.text = Globals.step.ToString();
+        snappingStep.text = GameSettings.step.ToString();
 
         OnEnable();
     }
 
     void OnEnable()
     {
-        clapToggle.isOn = (Globals.clapSetting != Globals.ClapToggle.NONE);
-        metronomeToggle.isOn = Globals.metronomeActive;
+        clapToggle.isOn = (GameSettings.clapSetting != GameSettings.ClapToggle.NONE);
+        metronomeToggle.isOn = GameSettings.metronomeActive;
     }
 
     void Update()
@@ -54,7 +54,7 @@ public class DisplayProperties : MonoBehaviour {
         highwayLengthSlider.interactable = interactable;
 
         if (snappingStep.text != string.Empty)
-            snappingStep.text = Globals.step.ToString();
+            snappingStep.text = GameSettings.step.ToString();
 
         if (editor.currentChart.note_count != prevNoteCount)
             noteCount.text = "Notes: " + editor.currentChart.note_count.ToString();
@@ -76,22 +76,22 @@ public class DisplayProperties : MonoBehaviour {
 
     public void SetHyperspeed(float value)
     {
-        Globals.hyperspeed = value;
+        GameSettings.hyperspeed = value;
         TriggerManager.FireHyperspeedChangeTriggers();
     }
 
     public void SetGameSpeed(float value)
     {
         value = Mathf.Round(value / 5.0f) * 5;
-        Globals.gameSpeed = value / 100.0f;
-        gameSpeed.text = "Speed- x" + Globals.gameSpeed.ToString();
+        GameSettings.gameSpeed = value / 100.0f;
+        gameSpeed.text = "Speed- x" + GameSettings.gameSpeed.ToString();
 
         TriggerManager.FireHyperspeedChangeTriggers();
     }
 
     public void SetHighwayLength(float value)
     {
-        Globals.highwayLength = value;
+        GameSettings.highwayLength = value;
 
         Vector3 pos = Vector3.zero;
         pos.y = value * 5 + minHighwayLength;
@@ -105,28 +105,28 @@ public class DisplayProperties : MonoBehaviour {
     public void ToggleClap(bool value)
     {
         if (value)
-            Globals.clapSetting = Globals.clapProperties;
+            GameSettings.clapSetting = GameSettings.clapProperties;
         else
-            Globals.clapSetting = Globals.ClapToggle.NONE;
+            GameSettings.clapSetting = GameSettings.ClapToggle.NONE;
 
         Debug.Log("Clap toggled: " + value);
     }
 
     public void ToggleMetronome(bool value)
     {
-        Globals.metronomeActive = value;
+        GameSettings.metronomeActive = value;
 
         Debug.Log("Metronome toggled: " + value);
     }
 
     public void IncrementSnappingStep()
     {
-        Globals.snappingStep.Increment();
+        GameSettings.snappingStep.Increment();
     }
 
     public void DecrementSnappingStep()
     {
-        Globals.snappingStep.Decrement();
+        GameSettings.snappingStep.Decrement();
     }
 
     public void SetStep(string value)
@@ -161,7 +161,7 @@ public class DisplayProperties : MonoBehaviour {
             }
         }
 
-        Globals.step = stepVal;
-        snappingStep.text = Globals.step.ToString();
+        GameSettings.step = stepVal;
+        snappingStep.text = GameSettings.step.ToString();
     }
 }

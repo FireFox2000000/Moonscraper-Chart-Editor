@@ -498,10 +498,10 @@ public class ChartEditor : MonoBehaviour {
             Globals.ghLiveMode)
             return;
 
-        if (Globals.resetAfterGameplay)
+        if (GameSettings.resetAfterGameplay)
             stopResetPos = movement.transform.position;
         
-        float strikelineYPos = visibleStrikeline.position.y - (0.01f * Globals.hyperspeed);     // Offset to prevent errors where it removes a note that is on the strikeline
+        float strikelineYPos = visibleStrikeline.position.y - (0.01f * GameSettings.hyperspeed);     // Offset to prevent errors where it removes a note that is on the strikeline
         startGameplayPos = strikelineYPos;
         
         // Hide everything behind the strikeline
@@ -520,9 +520,9 @@ public class ChartEditor : MonoBehaviour {
         
         // Set position x seconds beforehand
         float time = TickFunctions.WorldYPositionToTime(strikelineYPos);
-        movement.SetTime(time - Globals.gameplayStartDelayTime);
+        movement.SetTime(time - GameSettings.gameplayStartDelayTime);
 
-        Globals.bot = false;
+        GameSettings.bot = false;
         Play();
     }
 
@@ -530,10 +530,10 @@ public class ChartEditor : MonoBehaviour {
     {
         StrikelineAudioController.startYPoint = visibleStrikeline.transform.position.y;
 
-        SetBassStreamProperties(currentSong.bassMusicStream, Globals.gameSpeed, Globals.vol_song);
-        SetBassStreamProperties(currentSong.bassGuitarStream, Globals.gameSpeed, Globals.vol_guitar);
-        SetBassStreamProperties(currentSong.bassRhythmStream, Globals.gameSpeed, Globals.vol_rhythm);
-        SetBassStreamProperties(currentSong.bassDrumStream, Globals.gameSpeed, Globals.vol_drum);
+        SetBassStreamProperties(currentSong.bassMusicStream, GameSettings.gameSpeed, GameSettings.vol_song);
+        SetBassStreamProperties(currentSong.bassGuitarStream, GameSettings.gameSpeed, GameSettings.vol_guitar);
+        SetBassStreamProperties(currentSong.bassRhythmStream, GameSettings.gameSpeed, GameSettings.vol_rhythm);
+        SetBassStreamProperties(currentSong.bassDrumStream, GameSettings.gameSpeed, GameSettings.vol_drum);
 
         foreach (int bassStream in currentSong.bassAudioStreams)
         {
@@ -600,8 +600,8 @@ public class ChartEditor : MonoBehaviour {
             Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_PITCH, 0);
             Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO, 0);
 
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_VOL, vol * Globals.vol_master);
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_PAN, Globals.audio_pan);
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_VOL, vol * GameSettings.vol_master);
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_PAN, GameSettings.audio_pan);
 
             if (speed < 1)
             {
@@ -634,7 +634,7 @@ public class ChartEditor : MonoBehaviour {
         selectedBeforePlay = currentSelectedObjects;
         currentSelectedObject = null;
 
-        if (Globals.bot && Globals.resetAfterPlay)
+        if (GameSettings.bot && GameSettings.resetAfterPlay)
             stopResetPos = movement.transform.position;
 
         foreach (HitAnimation hitAnim in indicators.animations)
@@ -643,11 +643,11 @@ public class ChartEditor : MonoBehaviour {
         Globals.applicationMode = Globals.ApplicationMode.Playing;
         cancel = false;
 
-        float playPoint = TickFunctions.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
+        float playPoint = TickFunctions.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (GameSettings.audioCalibrationMS / 1000.0f * GameSettings.gameSpeed);
 
         if (playPoint < 0)
         {
-            StartCoroutine(delayedStartAudio(-playPoint * Globals.gameSpeed));
+            StartCoroutine(delayedStartAudio(-playPoint * GameSettings.gameSpeed));
         }
         else
         {
@@ -658,7 +658,7 @@ public class ChartEditor : MonoBehaviour {
     IEnumerator delayedStartAudio(float delay)
     {
         yield return new WaitForSeconds(delay);
-        float playPoint = TickFunctions.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (Globals.audioCalibrationMS / 1000.0f * Globals.gameSpeed);
+        float playPoint = TickFunctions.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (GameSettings.audioCalibrationMS / 1000.0f * GameSettings.gameSpeed);
 
         if (!cancel && Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
@@ -728,7 +728,7 @@ public class ChartEditor : MonoBehaviour {
         // Reset gameplay stats and window
         gameplayManager.Reset();
 
-        Globals.bot = true;
+        GameSettings.bot = true;
         stopResetPos = null;
     }
 

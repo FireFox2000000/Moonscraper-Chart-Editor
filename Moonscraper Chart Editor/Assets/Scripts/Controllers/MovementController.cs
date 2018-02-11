@@ -51,7 +51,7 @@ public abstract class MovementController : MonoBehaviour {
 
     public void PlayingMovement()
     {   
-        float speed = Globals.hyperspeed;
+        float speed = GameSettings.hyperspeed;
         Vector3 pos = transform.position;
         float deltaTime = Time.deltaTime;
 
@@ -63,7 +63,7 @@ public abstract class MovementController : MonoBehaviour {
             if (time < 0)
                 time = 0;
 
-            pos.y = (float)playStartPosition + TickFunctions.TimeToWorldYPosition(time * Globals.gameSpeed);
+            pos.y = (float)playStartPosition + TickFunctions.TimeToWorldYPosition(time * GameSettings.gameSpeed);
             
             //time -= (Globals.audioCalibrationMS / 1000f * Globals.gameSpeed + editor.currentSong.offset);
 

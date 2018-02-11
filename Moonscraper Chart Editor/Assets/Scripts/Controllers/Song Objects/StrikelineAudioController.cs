@@ -28,7 +28,7 @@ public class StrikelineAudioController : MonoBehaviour {
     void Update()
     {
         Vector3 pos = initLocalPos;
-        pos.y += 0.02f * Globals.hyperspeed / Globals.gameSpeed;
+        pos.y += 0.02f * GameSettings.hyperspeed / GameSettings.gameSpeed;
         transform.localPosition = pos;
 
         if (Globals.applicationMode != Globals.ApplicationMode.Playing)
@@ -42,8 +42,8 @@ public class StrikelineAudioController : MonoBehaviour {
             int channel = Bass.BASS_SampleGetChannel(sample, false); // get a sample channel
             if (channel != 0)
             {
-                Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, Globals.sfxVolume * Globals.vol_master);
-                Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, Globals.audio_pan);
+                Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, GameSettings.sfxVolume * GameSettings.vol_master);
+                Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, GameSettings.audio_pan);
                 Bass.BASS_ChannelPlay(channel, false); // play it
             }
             else

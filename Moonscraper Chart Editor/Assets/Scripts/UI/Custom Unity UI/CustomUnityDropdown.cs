@@ -21,11 +21,14 @@ namespace UnityEngine.UI
             private RectTransform m_RectTransform;
             [SerializeField]
             private Toggle m_Toggle;
+            [SerializeField]
+            private string m_SettingsToggleKey;
 
             public Text text { get { return m_Text; } set { m_Text = value; } }
             public Image image { get { return m_Image; } set { m_Image = value; } }
             public RectTransform rectTransform { get { return m_RectTransform; } set { m_RectTransform = value; } }
             public Toggle toggle { get { return m_Toggle; } set { m_Toggle = value; } }
+            public string settingsToggleKey { get { return m_SettingsToggleKey; } set { m_SettingsToggleKey = value; } }
 
             public virtual void OnPointerEnter(PointerEventData eventData)
             {
@@ -47,9 +50,12 @@ namespace UnityEngine.UI
             private string m_Text;
             [SerializeField]
             private Sprite m_Image;
+            [SerializeField]
+            private string m_SettingsToggleKey;
 
             public string text { get { return m_Text; } set { m_Text = value; } }
             public Sprite image { get { return m_Image; } set { m_Image = value; } }
+            public string settingsToggleKey { get { return m_SettingsToggleKey; } set { m_SettingsToggleKey = value; } }
 
             public OptionData()
             {
@@ -379,8 +385,8 @@ namespace UnityEngine.UI
                     continue;
 
                 // Automatically set up a toggle state change listener
-                item.toggle.isOn = value == i;
-                item.toggle.onValueChanged.AddListener(x => OnSelectItem(item.toggle));
+                item.toggle.isOn = GameSettings.GetBoolSetting(item.settingsToggleKey); // value == i;
+                item.toggle.onValueChanged.AddListener(x => OnSelectItem(item));
 
                 // Select current option
                 if (item.toggle.isOn)
@@ -536,6 +542,10 @@ namespace UnityEngine.UI
                 item.image.sprite = data.image;
                 item.image.enabled = (item.image.sprite != null);
             }
+            if (item)
+            {
+                item.settingsToggleKey = data.settingsToggleKey;
+            }
 
             items.Add(item);
             return item;
@@ -599,10 +609,12 @@ namespace UnityEngine.UI
         }
 
         // Change the value and hide the dropdown.
-        private void OnSelectItem(Toggle toggle)
+        private void OnSelectItem(DropdownItem item)
         {
-            if (!toggle.isOn)
-                toggle.isOn = true;
+            Toggle toggle = item.toggle;
+
+            //if (!toggle.isOn)
+                //toggle.isOn = true;
 
             int selectedIndex = -1;
             Transform tr = toggle.transform;
@@ -621,7 +633,11 @@ namespace UnityEngine.UI
                 return;
 
             value = selectedIndex;
-            Hide();
+
+            if (item.settingsToggleKey == string.Empty)
+            {
+                Hide();
+            }
         }
     }
 }
