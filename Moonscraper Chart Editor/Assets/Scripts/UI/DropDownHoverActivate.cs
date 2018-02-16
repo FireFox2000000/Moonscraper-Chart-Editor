@@ -19,7 +19,7 @@ public class DropDownHoverActivate : MonoBehaviour
     
     void Update()
     {
-        if (Globals.IsInDropDown && Globals.applicationMode != Globals.ApplicationMode.Loading)
+        if (Services.IsInDropDown && Globals.applicationMode != Globals.ApplicationMode.Loading)
         {
             Dropdown dropdownUnderMouse = Mouse.GetUIUnderPointer<Dropdown>();
             Dropdown currentDropdown;

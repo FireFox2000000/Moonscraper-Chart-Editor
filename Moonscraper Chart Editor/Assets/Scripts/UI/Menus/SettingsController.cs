@@ -67,7 +67,6 @@ public class SettingsController : DisplayMenu
         AudioListener.volume = GameSettings.vol_master;
         GameSettings.audio_pan = musicPanSlider.value / 10.0f;
 
-        editor.SetVolume();
         GameSettings.gameplayStartDelayTime = gameplayStartDelayDropdown.value * 0.5f;
     }
 
@@ -149,7 +148,6 @@ public class SettingsController : DisplayMenu
 
         gameplayStartDelayDropdown.value = (int)(GameSettings.gameplayStartDelayTime * 2.0f);
 
-        editor.SetVolume();
         Update();
     }  
 

@@ -8,21 +8,17 @@ using System.IO;
 using UnityEngine.EventSystems;
 
 public class Globals : MonoBehaviour {
-    public const uint FULL_STEP = 768;
-    public static readonly float STANDARD_BEAT_RESOLUTION = 192.0f;
     public static readonly string LINE_ENDING = "\r\n";
+    public const string TABSPACE = "  ";
     public static string autosaveLocation;
-    const float FRAMERATE = 25;
+    static string workingDirectory = string.Empty;
+    public static string realWorkingDirectory { get { return workingDirectory; } }
 
     public static readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3" };
     public static readonly string[] validTextureExtensions = { ".jpg", ".png" };
     public static string[] localEvents = { };
     public static string[] globalEvents = { };
 
-    public const string TABSPACE = "  ";
-
-    [Header("Area range")]
-    public RectTransform area;
     [Header("Misc.")]
     [SerializeField]
     GroupSelect groupSelect;
@@ -31,56 +27,6 @@ public class Globals : MonoBehaviour {
     [SerializeField]
     GUIStyle hintMouseOverStyle;
 
-    Rect toolScreenArea;
-
-    public bool InToolArea
-    {
-        get
-        {
-            //Rect toolScreenArea = area.GetScreenCorners();
-
-            if (Input.mousePosition.x < toolScreenArea.xMin ||
-                    Input.mousePosition.x > toolScreenArea.xMax ||
-                    Input.mousePosition.y < toolScreenArea.yMin ||
-                    Input.mousePosition.y > toolScreenArea.yMax)
-                return false;
-            else
-                return true;
-        }
-    }
-    public static bool IsInDropDown = false;
-
-    static bool _IsInDropDown
-    {
-        get
-        {
-            //System.Collections.Generic.List<RaycastResult> result = Mouse.RaycastFromPointer();
-
-            GameObject currentUIUnderPointer = Mouse.GetUIRaycastableUnderPointer();
-            if (currentUIUnderPointer != null && (currentUIUnderPointer.GetComponentInChildren<ScrollRect>() || currentUIUnderPointer.GetComponentInParent<ScrollRect>()))
-                return true;
-
-            if ((EventSystem.current.currentSelectedGameObject == null ||
-                EventSystem.current.currentSelectedGameObject.GetComponentInParent<Dropdown>() == null) && !Mouse.GetUIUnderPointer<Dropdown>())
-            {
-                return false;
-            }
-            else
-                return true;
-        }
-    }
-
-    public static bool IsTyping
-    {
-        get
-        {
-            if (EventSystem.current.currentSelectedGameObject == null ||
-                EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() == null)
-                return false;
-            else
-                return true;
-        }
-    }
     public static bool drumMode
     {
         get
@@ -101,18 +47,9 @@ public class Globals : MonoBehaviour {
     public static ViewMode viewMode { get; set; }
 
     ChartEditor editor;
-    static string workingDirectory = string.Empty;
-    public static string realWorkingDirectory { get { return workingDirectory; } }
-
+    Services _services;
+    public Services services { get { return _services; } }
     Resolution largestRes;
-    static Vector2 prevScreenSize;
-    public static bool HasScreenResized
-    {
-        get
-        {
-            return (prevScreenSize.x != Screen.width || prevScreenSize.y != Screen.height);
-        }
-    }
 
     void Awake()
     {
@@ -126,13 +63,14 @@ public class Globals : MonoBehaviour {
 
         viewMode = ViewMode.Chart;
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        _services = GetComponent<Services>();
 #if !UNITY_EDITOR
         workingDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
 #else
         workingDirectory = Application.dataPath;
 #endif
 
-        LoadConfigFile();
+        LoadGameSettings();
 
         localEvents = LoadCommonEvents("local_events.txt");
         globalEvents = LoadCommonEvents("global_events.txt");
@@ -146,10 +84,70 @@ public class Globals : MonoBehaviour {
 
     void Start()
     {
-        toolScreenArea = area.GetScreenCorners();
-        prevScreenSize.x = Screen.width;
-        prevScreenSize.y = Screen.height;
         StartCoroutine(AutosaveCheck());
+    }
+
+    void LoadGameSettings()
+    {
+        GameSettings.Load(workingDirectory + "\\config.ini");
+
+        // Check for valid fps values
+        int fps = GameSettings.targetFramerate;
+        if (fps != 60 && fps != 120 && fps != 240)
+            Application.targetFrameRate = -1;
+        else
+            Application.targetFrameRate = fps;
+
+        AudioListener.volume = GameSettings.vol_master;
+    }
+
+    static string[] LoadCommonEvents(string filename)
+    {
+#if UNITY_EDITOR
+        string filepath = workingDirectory + "/ExtraBuildFiles/" + filename;
+#else
+        string filepath = workingDirectory + "/" + filename;
+#endif
+        Debug.Log(Path.GetFullPath(filepath));
+        if (File.Exists(filepath))
+        {
+            Debug.Log("Loading events from " + filepath);
+
+            StreamReader ifs = null;
+            try
+            {
+                ifs = File.OpenText(filepath);
+                var events = new System.Collections.Generic.List<string>();
+
+                while (true)
+                {
+                    string line = ifs.ReadLine();
+                    if (line == null)
+                        break;
+
+                    line.Replace('"', '\0');
+
+                    if (line != string.Empty)
+                        events.Add(line);
+                }
+
+                Debug.Log(events.Count + " event strings loaded");
+                return events.ToArray();
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Error: unable to load events- " + e.Message);
+            }
+
+            if (ifs != null)
+                ifs.Close();
+        }
+        else
+        {
+            Debug.Log("No events file found. Skipping loading of default events.");
+        }
+
+        return new string[0];
     }
 
     IEnumerator AutosaveCheck()
@@ -175,34 +173,18 @@ public class Globals : MonoBehaviour {
     
     void Update()
     {
-        IsInDropDown = _IsInDropDown;
-
         // Disable controls while user is in an input field
-        if (!IsTyping)
+        if (!Services.IsTyping)
             Controls();
         ModifierControls();
 
         snapLockWarning.gameObject.SetActive((GameSettings.keysModeEnabled && Toolpane.currentTool != Toolpane.Tools.Cursor && Toolpane.currentTool != Toolpane.Tools.Eraser));
 
-        if (HasScreenResized)
-            OnScreenResize();
-
         // IsTyping can still be active if this isn't manually detected
-        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && IsTyping && applicationMode == ApplicationMode.Editor)
+        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && Services.IsTyping && applicationMode == ApplicationMode.Editor)
         {
             EventSystem.current.SetSelectedGameObject(null);
         }
-    }
-
-    void LateUpdate()
-    {
-        prevScreenSize.x = Screen.width;
-        prevScreenSize.y = Screen.height;
-    }
-
-    public void OnScreenResize()
-    {
-        toolScreenArea = area.GetScreenCorners();
     }
 
     public static bool modifierInputActive { get { return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand); } }
@@ -254,7 +236,6 @@ public class Globals : MonoBehaviour {
                 if (viewMode == ViewMode.Chart)
                 {
                     editor.currentSelectedObjects = editor.currentChart.chartObjects;
-                    //editor.AddToSelectedObjects(editor.currentChart.starPower);
                 }
                 else
                 {
@@ -269,31 +250,7 @@ public class Globals : MonoBehaviour {
                 else if (Input.GetKeyDown(KeyCode.C))
                     editor.Copy();
             }
-            
-            /*
-            else if (Input.GetKeyDown(KeyCode.KeypadEnter))
-            {
-                //Screen.fullScreen = !Screen.fullScreen;
-
-                if (!Screen.fullScreen)
-                    StartCoroutine(WaitForScreenChange(true, largestRes));
-                else
-                    StartCoroutine(WaitForScreenChange(false, initRes));
-            }*/
         }
-    }
-
-    private IEnumerator WaitForScreenChange(bool fullscreen, Resolution res)
-    {
-        int width = res.width;
-        int height = res.height;
-
-        Screen.fullScreen = fullscreen;
-
-        yield return new WaitForSeconds(1);
-        //yield return null;
-        Debug.Log(res);
-        Screen.SetResolution(width, height, Screen.fullScreen);
     }
 
     void Controls()
@@ -317,10 +274,6 @@ public class Globals : MonoBehaviour {
             if (Input.GetButtonDown("Delete") && editor.currentSelectedObjects.Length > 0)// && Toolpane.currentTool == Toolpane.Tools.Cursor)
             {
                 editor.Delete();
-                /*
-                editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentSelectedObject));
-                editor.currentSelectedObject.Delete();
-                editor.currentSelectedObject = null;*/
             }
 
 #if true
@@ -341,34 +294,8 @@ public class Globals : MonoBehaviour {
 
     public void Quit()
     {
-        INIParser iniparse = new INIParser();
-        iniparse.Open(workingDirectory + "\\config.ini");
-
-        iniparse.WriteValue("Settings", "Framerate", Application.targetFrameRate);
-        iniparse.WriteValue("Settings", "Hyperspeed", GameSettings.hyperspeed);
-        iniparse.WriteValue("Settings", "Highway Length", GameSettings.highwayLength);
-        iniparse.WriteValue("Settings", "Audio calibration", GameSettings.audioCalibrationMS);
-        iniparse.WriteValue("Settings", "Clap calibration", GameSettings.clapCalibrationMS);
-        iniparse.WriteValue("Settings", "Clap", (int)GameSettings.clapProperties);
-        iniparse.WriteValue("Settings", "Extended sustains", GameSettings.extendedSustainsEnabled);
-        iniparse.WriteValue("Settings", "Sustain Gap", GameSettings.sustainGapEnabled);
-        iniparse.WriteValue("Settings", "Sustain Gap Step", GameSettings.sustainGap);
-        iniparse.WriteValue("Settings", "Note Placement Mode", (int)GameSettings.notePlacementMode);
-        iniparse.WriteValue("Settings", "Gameplay Start Delay", GameSettings.gameplayStartDelayTime);
-        iniparse.WriteValue("Settings", "Reset After Play", GameSettings.resetAfterPlay);
-        iniparse.WriteValue("Settings", "Reset After Gameplay", GameSettings.resetAfterGameplay);
-        iniparse.WriteValue("Settings", "Custom Background Swap Time", GameSettings.customBgSwapTime);
-
-        // Audio levels
-        iniparse.WriteValue("Audio Volume", "Master", GameSettings.vol_master);
-        iniparse.WriteValue("Audio Volume", "Music Stream", GameSettings.vol_song);
-        iniparse.WriteValue("Audio Volume", "Guitar Stream", GameSettings.vol_guitar);
-        iniparse.WriteValue("Audio Volume", "Rhythm Stream", GameSettings.vol_rhythm);
-        iniparse.WriteValue("Audio Volume", "Drum Stream", GameSettings.vol_drum);
-        iniparse.WriteValue("Audio Volume", "Audio Pan", GameSettings.audio_pan);
-        iniparse.WriteValue("Audio Volume", "SFX", GameSettings.sfxVolume);
-
-        iniparse.Close();
+        GameSettings.targetFramerate = Application.targetFrameRate;
+        GameSettings.Save(workingDirectory + "\\config.ini");
 
         // Delete autosaved chart. If chart is not deleted then that means there may have been a problem like a crash and the autosave should be reloaded the next time the program is opened. 
         if (File.Exists(autosaveLocation))
@@ -393,109 +320,5 @@ public class Globals : MonoBehaviour {
     public enum ViewMode
     {
         Chart, Song
-    }
-
-    public void ResetAspectRatio()
-    {
-        int height = Screen.height;
-        int width = (int)(16.0f / 9.0f * height);
-
-        Screen.SetResolution(width, height, false);
-    }
-
-    void LoadConfigFile()
-    {
-        INIParser iniparse = new INIParser();
-
-        iniparse.Open(workingDirectory + "\\config.ini");
-
-        // Check for valid fps values
-        int fps = iniparse.ReadValue("Settings", "Framerate", 120);
-        if (fps != 60 && fps != 120 && fps != 240)
-            Application.targetFrameRate = -1;
-        else
-            Application.targetFrameRate = fps;
-
-        GameSettings.hyperspeed = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
-        GameSettings.highwayLength = (float)iniparse.ReadValue("Settings", "Highway Length", 0);
-        GameSettings.audioCalibrationMS = iniparse.ReadValue("Settings", "Audio calibration", 0);
-        GameSettings.clapCalibrationMS = iniparse.ReadValue("Settings", "Clap calibration", 0);
-        GameSettings.clapProperties = (GameSettings.ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)GameSettings.ClapToggle.ALL);
-        GameSettings.extendedSustainsEnabled = iniparse.ReadValue("Settings", "Extended sustains", false);
-        GameSettings.clapSetting = GameSettings.ClapToggle.NONE;
-        GameSettings.sustainGapEnabled = iniparse.ReadValue("Settings", "Sustain Gap", false);
-        GameSettings.sustainGapStep = new Step((int)iniparse.ReadValue("Settings", "Sustain Gap Step", (int)16));
-        GameSettings.notePlacementMode = (GameSettings.NotePlacementMode)iniparse.ReadValue("Settings", "Note Placement Mode", (int)GameSettings.NotePlacementMode.Default);
-        GameSettings.gameplayStartDelayTime = (float)iniparse.ReadValue("Settings", "Gameplay Start Delay", 3.0f);
-        GameSettings.resetAfterPlay = iniparse.ReadValue("Settings", "Reset After Play", false);
-        GameSettings.resetAfterGameplay = iniparse.ReadValue("Settings", "Reset After Gameplay", false);
-        GameSettings.customBgSwapTime = iniparse.ReadValue("Settings", "Custom Background Swap Time", 30);
-        // Check that the gameplay start delay time is a multiple of 0.5 and is
-        GameSettings.gameplayStartDelayTime = Mathf.Clamp(GameSettings.gameplayStartDelayTime, 0, 3.0f);
-        GameSettings.gameplayStartDelayTime = (float)(System.Math.Round(GameSettings.gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f);
-
-        // Audio levels
-        GameSettings.vol_master = (float)iniparse.ReadValue("Audio Volume", "Master", 0.5f);
-        GameSettings.vol_song = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
-        GameSettings.vol_guitar = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
-        GameSettings.vol_rhythm = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
-        GameSettings.vol_drum = (float)iniparse.ReadValue("Audio Volume", "Drum Stream", 1.0f);
-        GameSettings.audio_pan = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
-
-        AudioListener.volume = GameSettings.vol_master;
-
-        //editor.clapSource.volume = (float)iniparse.ReadValue("Audio Volume", "Clap", 1.0f);
-        GameSettings.sfxVolume = (float)iniparse.ReadValue("Audio Volume", "SFX", 1.0f);
-
-        iniparse.Close();
-    }
-
-    static string[] LoadCommonEvents(string filename)
-    {
-#if UNITY_EDITOR
-        string filepath = workingDirectory + "/ExtraBuildFiles/" + filename;
-#else
-        string filepath = workingDirectory + "/" + filename;
-#endif
-        Debug.Log(Path.GetFullPath(filepath));
-        if (File.Exists(filepath))
-        {
-            Debug.Log("Loading events from " + filepath);
-
-            StreamReader ifs = null;
-            try
-            {
-                ifs = File.OpenText(filepath);
-                var events = new System.Collections.Generic.List<string>();
-                
-                while (true)
-                {
-                    string line = ifs.ReadLine();
-                    if (line == null)
-                        break;
-
-                    line.Replace('"', '\0');
-
-                    if (line != string.Empty)
-                        events.Add(line);
-                }
-
-                Debug.Log(events.Count + " event strings loaded");
-                return events.ToArray();               
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError("Error: unable to load events- " + e.Message);
-            }
-
-            if (ifs != null)
-                ifs.Close();
-        }
-        else
-        {
-            Debug.Log("No events file found. Skipping loading of default events.");
-        }
-
-        return new string[0];
     }
 }

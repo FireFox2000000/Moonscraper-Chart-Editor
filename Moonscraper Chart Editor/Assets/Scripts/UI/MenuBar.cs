@@ -50,7 +50,7 @@ public class MenuBar : MonoBehaviour {
             redoButton.interactable = false;
         }
 
-        if (!Globals.IsTyping)
+        if (!Services.IsTyping)
             Controls();
     }
 

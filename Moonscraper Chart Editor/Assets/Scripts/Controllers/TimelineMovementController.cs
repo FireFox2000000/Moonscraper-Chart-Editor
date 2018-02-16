@@ -42,7 +42,7 @@ public class TimelineMovementController : MovementController
         if (Input.GetMouseButtonUp(0) && Globals.applicationMode == Globals.ApplicationMode.Editor)
             cancel = false;
 
-        if (Globals.IsInDropDown)
+        if (Services.IsInDropDown)
             cancel = true;
 
         // Update timer text
@@ -92,11 +92,11 @@ public class TimelineMovementController : MovementController
                 scrollDelta = Input.mouseScrollDelta.y;
             }
 
-            if (Globals.IsInDropDown)
+            if (Services.IsInDropDown)
                 scrollDelta = 0;
 
             // Position changes scroll bar value
-            if (scrollDelta != 0 || transform.position != prevPos || Globals.HasScreenResized)
+            if (scrollDelta != 0 || transform.position != prevPos || Services.HasScreenResized)
             {
                 if (Input.GetKey(KeyCode.LeftAlt) && editor.currentSong.sections.Length > 0)
                 {
@@ -112,7 +112,7 @@ public class TimelineMovementController : MovementController
                 if (transform.position.y < initPos.y)
                     transform.position = initPos;
 
-                if (Globals.HasScreenResized)
+                if (Services.HasScreenResized)
                     StartCoroutine(resolutionChangePosHold());
 
                 UpdateTimelineHandleBasedPos();
@@ -169,7 +169,7 @@ public class TimelineMovementController : MovementController
                 UpdateTimelineHandleBasedPos();
             }
             // else check mouse range
-            else if (Toolpane.mouseDownInArea && (globals.InToolArea && (Input.GetMouseButton(0) || Input.GetMouseButton(1)) && Input.mousePosition != lastMouseDownPos))
+            else if (Toolpane.mouseDownInArea && (globals.services.InToolArea && (Input.GetMouseButton(0) || Input.GetMouseButton(1)) && Input.mousePosition != lastMouseDownPos))
             { 
                 if (!Toolpane.menuCancel && 
                     UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null && 

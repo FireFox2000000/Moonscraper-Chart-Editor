@@ -32,7 +32,7 @@ public class GroupSelectPanelController : MonoBehaviour
         fretSelectDropdown.gameObject.SetActive(!Globals.ghLiveMode);
         ghlFretSelectDropdown.gameObject.SetActive(!fretSelectDropdown.gameObject.activeSelf);
 
-        if (!Globals.IsTyping && !Globals.modifierInputActive)
+        if (!Services.IsTyping && !Globals.modifierInputActive)
             Shortcuts();
     }
 

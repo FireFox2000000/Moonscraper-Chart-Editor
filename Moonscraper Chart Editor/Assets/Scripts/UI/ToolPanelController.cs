@@ -45,14 +45,14 @@ public class ToolPanelController : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         if (Input.GetButtonDown("Toggle View") && (Globals.applicationMode == Globals.ApplicationMode.Editor || Globals.applicationMode == Globals.ApplicationMode.Playing)
-            && !Globals.IsTyping)
+            && !Services.IsTyping)
         {
             viewModeToggle.isOn = !viewModeToggle.isOn;
         }
 
         keysModePanel.gameObject.SetActive(Toolpane.currentTool == Toolpane.Tools.Note && GameSettings.keysModeEnabled);
 
-        if (!Globals.IsTyping && !Globals.modifierInputActive)
+        if (!Services.IsTyping && !Globals.modifierInputActive)
             Shortcuts();
     }
 

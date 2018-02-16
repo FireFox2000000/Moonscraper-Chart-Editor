@@ -48,6 +48,8 @@ public class Metadata
 }
 
 public class Song {
+    public static readonly float STANDARD_BEAT_RESOLUTION = 192.0f;
+    public const uint FULL_STEP = 768;
     public bool saveError = false;
 
     static int NUM_OF_DIFFICULTIES;
@@ -543,13 +545,10 @@ public class Song {
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
 #endif
-        //string[] fileLines = File.ReadAllLines(filepath);
-        //Regex headerRegex = new Regex(@"\[.+\]", RegexOptions.Compiled);
         StreamReader sr = File.OpenText(filepath);
         
 
         // Gather lines between {} brackets and submit data
-        //for (int i = 0; i < fileLines.Length; ++i)
         while (!sr.EndOfStream)
         {
             //string trimmedLine = fileLines[i].Trim();
@@ -610,8 +609,7 @@ public class Song {
     /// </summary>
     /// <param name="filepath">The path to the .chart file you want to load.</param>
     public Song(string filepath) : this()
-    {
-        
+    {    
         try
         {
             if (!File.Exists(filepath))

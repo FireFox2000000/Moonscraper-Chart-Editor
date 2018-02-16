@@ -30,7 +30,7 @@ public class Toolpane : MonoBehaviour {
 
     void Update()
     {
-        if (((Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))) && !globals.InToolArea)
+        if (((Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))) && !globals.services.InToolArea)
             mouseDownInArea = false;
         else if (!mouseDownInArea && (!Input.GetMouseButton(0) && !Input.GetMouseButton(1)))
             mouseDownInArea = true;
@@ -64,7 +64,7 @@ public class Toolpane : MonoBehaviour {
                 else if (Globals.applicationMode == Globals.ApplicationMode.Editor && (mouseDownInArea))
                 {
                     // Range check
-                    if (!globals.InToolArea && currentTool != Tools.GroupSelect)
+                    if (!globals.services.InToolArea && currentTool != Tools.GroupSelect)
                     {
                         currentToolObject.gameObject.SetActive(false);
                     }

@@ -60,7 +60,7 @@ public class DisplayProperties : MonoBehaviour {
             noteCount.text = "Notes: " + editor.currentChart.note_count.ToString();
 
         // Shortcuts
-        if (!Globals.modifierInputActive && !Globals.IsTyping)
+        if (!Globals.modifierInputActive && !Services.IsTyping)
         {
             if (Input.GetButtonDown("ToggleClap"))
                 clapToggle.isOn = !clapToggle.isOn;

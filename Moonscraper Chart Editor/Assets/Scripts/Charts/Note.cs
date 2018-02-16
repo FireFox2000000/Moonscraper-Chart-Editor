@@ -280,7 +280,7 @@ public class Note : ChartObject
                 if (prevIsChord || (!prevIsChord && rawNote != previous.rawNote))
                 {
                     // Check distance from previous note 
-                    int HOPODistance = (int)(65 * song.resolution / Globals.STANDARD_BEAT_RESOLUTION);
+                    int HOPODistance = (int)(65 * song.resolution / Song.STANDARD_BEAT_RESOLUTION);
 
                     if (position - previous.position <= HOPODistance)
                         HOPO = true;

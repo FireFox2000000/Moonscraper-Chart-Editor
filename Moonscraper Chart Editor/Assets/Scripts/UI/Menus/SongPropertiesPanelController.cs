@@ -364,8 +364,7 @@ public class SongPropertiesPanelController : DisplayMenu {
             default:
                 break;
         }
-        
-        editor.SetAudioSources();
+
         setAudioTextLabels();
     }
 
@@ -379,7 +378,6 @@ public class SongPropertiesPanelController : DisplayMenu {
         while (editor.currentSong.IsAudioLoading)
             yield return null;
 
-        editor.SetAudioSources();
         setAudioTextLabels();
         loadingScreen.FadeOut();
         Globals.applicationMode = Globals.ApplicationMode.Menu;

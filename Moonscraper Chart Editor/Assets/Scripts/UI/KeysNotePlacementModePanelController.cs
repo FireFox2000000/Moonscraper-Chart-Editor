@@ -21,7 +21,7 @@ public class KeysNotePlacementModePanelController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         // Shortcuts
-        if (!Globals.IsTyping && !Globals.modifierInputActive)
+        if (!Services.IsTyping && !Globals.modifierInputActive)
         {
             if (Input.GetKeyDown("h"))                  // hold
                 buttons[0].onClick.Invoke();

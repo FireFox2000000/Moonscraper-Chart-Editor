@@ -58,7 +58,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         {
             // Update inspector information
             positionText.text = "Position: " + currentBPM.position.ToString();
-            if (!Globals.IsTyping)//if (bpmValue.text != string.Empty && bpmValue.text[bpmValue.text.Length - 1] != '.' && bpmValue.text[bpmValue.text.Length - 1] != '0')
+            if (!Services.IsTyping)
                 UpdateBPMInputFieldText();
 
             anchorToggle.isOn = currentBPM.anchor != null;
@@ -78,7 +78,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
         if (!(Input.GetKey(KeyCode.Equals) && Input.GetKey(KeyCode.Minus)))
         {
-            if (!Globals.IsTyping && !Globals.modifierInputActive)
+            if (!Services.IsTyping && !Globals.modifierInputActive)
             {
                 if (Input.GetKeyDown(KeyCode.Minus) && decrement.interactable)
                 {
@@ -129,7 +129,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             }
         }
 
-        if (!Globals.IsTyping && !Globals.modifierInputActive && !Globals.secondaryInputActive)
+        if (!Services.IsTyping && !Globals.modifierInputActive && !Globals.secondaryInputActive)
             Controls();
 
         prevBPM = currentBPM;

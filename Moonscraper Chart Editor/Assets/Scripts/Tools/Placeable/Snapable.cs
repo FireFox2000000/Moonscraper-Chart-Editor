@@ -58,14 +58,14 @@ public abstract class Snapable : MonoBehaviour {
             objectRen.sortingOrder = 5;
         }
 
-        if (!Globals.IsTyping)
+        if (!Services.IsTyping)
             Controls();
     }
 
     public static uint ChartPositionToSnappedChartPosition(uint chartPosition, int step, float resolution)
     {
         // Snap position based on step
-        float factor = Globals.FULL_STEP / (float)step * resolution / Globals.STANDARD_BEAT_RESOLUTION;
+        float factor = Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION;
         float divisor = chartPosition / factor;
         float lowerBound = (int)divisor * factor;
         float remainder = divisor - (int)divisor;
@@ -84,7 +84,7 @@ public abstract class Snapable : MonoBehaviour {
 
         if (currentSnap <= chartPosition)
         {
-            currentSnap = ChartPositionToSnappedChartPosition(chartPosition + (uint)(Globals.FULL_STEP / (float)step * resolution / Globals.STANDARD_BEAT_RESOLUTION), step, resolution);
+            currentSnap = ChartPositionToSnappedChartPosition(chartPosition + (uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION), step, resolution);
         }
 
         return currentSnap;
@@ -96,10 +96,10 @@ public abstract class Snapable : MonoBehaviour {
 
         if (currentSnap >= chartPosition)
         {
-            if ((uint)(Globals.FULL_STEP / (float)step * resolution / Globals.STANDARD_BEAT_RESOLUTION) >= chartPosition)
+            if ((uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION) >= chartPosition)
                 currentSnap = 0;
             else
-                currentSnap = ChartPositionToSnappedChartPosition(chartPosition - (uint)(Globals.FULL_STEP / (float)step * resolution / Globals.STANDARD_BEAT_RESOLUTION), step, resolution);
+                currentSnap = ChartPositionToSnappedChartPosition(chartPosition - (uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION), step, resolution);
         }
 
         return currentSnap;

@@ -25,10 +25,6 @@ public class ChartEditor : MonoBehaviour {
     }
 
     public static bool isDirty = false;
-    const int POOL_SIZE = 100;
-    public const int MUSIC_STREAM_ARRAY_POS = 0;
-    public const int GUITAR_STREAM_ARRAY_POS = 1;
-    public const int RHYTHM_STREAM_ARRAY_POS = 2;
 
     [Header("Prefabs")]
     public GameObject notePrefab;
@@ -68,8 +64,6 @@ public class ChartEditor : MonoBehaviour {
     MenuBar menuBar;
     [SerializeField]
     SaveAnimController saveAnim;
-    [SerializeField]
-    SongObjectPoolManager poolManager;
 
     uint _minPos;
     uint _maxPos;
@@ -93,9 +87,6 @@ public class ChartEditor : MonoBehaviour {
     public SongObjectPoolManager songObjectPoolManager { get { return _songObjectPoolManager; } }
 
     string lastLoadedFile = string.Empty;
-
-    GameObject songObjectParent;
-    GameObject chartObjectParent;
 
     public ActionHistory actionHistory;
     public SongObject currentSelectedObject
@@ -163,15 +154,6 @@ public class ChartEditor : MonoBehaviour {
         _minPos = 0;
         _maxPos = 0;
 
-        // Create grouping objects to make reading the inspector easier
-        songObjectParent = new GameObject();
-        songObjectParent.name = "Song Objects";
-        songObjectParent.tag = "Song Object";
-
-        chartObjectParent = new GameObject();
-        chartObjectParent.name = "Chart Objects";
-        chartObjectParent.tag = "Chart Object";
-
         // Create a default song
         currentSong = new Song();
         LoadSong(currentSong, true);
@@ -192,8 +174,6 @@ public class ChartEditor : MonoBehaviour {
 
     IEnumerator Start()
     {
-        SetVolume();
-
         yield return null;
         yield return null;
 
@@ -990,7 +970,6 @@ public class ChartEditor : MonoBehaviour {
         if (currentSong.bassMusicStream != 0)
 #endif
         {
-            SetAudioSources();
             movement.SetPosition(0);
         }
 
@@ -1013,15 +992,6 @@ public class ChartEditor : MonoBehaviour {
         menu.gameObject.SetActive(true);
     }
 
-    public void SetAudioSources()
-    {
-#if !BASS_AUDIO
-        musicSources[MUSIC_STREAM_ARRAY_POS].clip = currentSong.musicStream;
-        musicSources[GUITAR_STREAM_ARRAY_POS].clip = currentSong.guitarStream;
-        musicSources[RHYTHM_STREAM_ARRAY_POS].clip = currentSong.rhythmStream;
-#endif
-    }
-
     public void FreeAudio()
     {
         currentSong.musicSample.Free();
@@ -1033,14 +1003,6 @@ public class ChartEditor : MonoBehaviour {
 #else
         currentSong.FreeBassAudioStreams();
 #endif
-        /*
-        foreach (AudioSource source in musicSources)
-        {
-            if (source.clip)
-                source.clip.UnloadAudioData();
-
-            Destroy(source.clip);
-        }*/
     }
 
     public void AddToSelectedObjects(SongObject songObjects)
@@ -1175,21 +1137,6 @@ public class ChartEditor : MonoBehaviour {
     {
         Copy();
         Delete();
-    }
-
-    public void SetVolume()
-    {
-#if !BASS_AUDIO
-        AudioListener.volume = Globals.vol_master;
-
-        musicSources[MUSIC_STREAM_ARRAY_POS].volume = Globals.vol_song;
-        musicSources[GUITAR_STREAM_ARRAY_POS].volume = Globals.vol_guitar;
-        musicSources[RHYTHM_STREAM_ARRAY_POS].volume = Globals.vol_rhythm;
-
-        musicSources[MUSIC_STREAM_ARRAY_POS].panStereo = Globals.audio_pan;
-        musicSources[GUITAR_STREAM_ARRAY_POS].panStereo = Globals.audio_pan;
-        musicSources[RHYTHM_STREAM_ARRAY_POS].panStereo = Globals.audio_pan;
-#endif
     }
 
     public System.Collections.Generic.List<ActionHistory.Action> FixUpBPMAnchors()

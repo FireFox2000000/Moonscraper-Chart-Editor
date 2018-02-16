@@ -97,7 +97,6 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     int prevSPLength = 0;
     float prevSongLength = 0;
     Song prevSong;
-    Chart prevChart;
     Resolution prevRes;
 
     public static bool externalUpdate = false;
@@ -150,7 +149,6 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         }
 
         prevSong = editor.currentSong;
-        prevChart = editor.currentChart;
         prevSongLength = editor.currentSong.length;
         prevSPLength = editor.currentChart.starPower.Length;
         prevSectionLength = editor.currentSong.sections.Length;

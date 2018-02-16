@@ -107,7 +107,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             sustainText.text = "Length: " + currentNote.sustain_length.ToString();
         }
 
-        if (!Globals.IsTyping && !Globals.modifierInputActive)
+        if (!Services.IsTyping && !Globals.modifierInputActive)
             Controls();
 
         prevNote = currentNote;
