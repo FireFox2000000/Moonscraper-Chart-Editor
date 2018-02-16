@@ -242,9 +242,9 @@ public class PlaceNoteController : ObjectlessTool {
                 LeftyFlipReflectionCheck(ref notePos);
 
                 keyboardPlaceableNotes[notePos].ExplicitUpdate();
-                int pos = SongObject.FindObjectPosition(keyboardPlaceableNotes[notePos].note, editor.currentChart.notes);
+                int pos = SongObjectHelper.FindObjectPosition(keyboardPlaceableNotes[notePos].note, editor.currentChart.notes);
 
-                if (pos == SongObject.NOTFOUND)
+                if (pos == SongObjectHelper.NOTFOUND)
                 {
                     Debug.Log("Added " + keyboardPlaceableNotes[notePos].note.rawNote + " note at position " + keyboardPlaceableNotes[notePos].note.position + " using keyboard controls");
                     heldInitialOverwriteActions[i] = PlaceNote.AddObjectToCurrentChart((Note)keyboardPlaceableNotes[notePos].note.Clone(), editor, out heldNotes[i]);
@@ -281,9 +281,9 @@ public class PlaceNoteController : ObjectlessTool {
 
                 keyboardPlaceableNotes[notePos].ExplicitUpdate();
 
-                int pos = SongObject.FindObjectPosition(keyboardPlaceableNotes[notePos].note, editor.currentChart.notes);
+                int pos = SongObjectHelper.FindObjectPosition(keyboardPlaceableNotes[notePos].note, editor.currentChart.notes);
 
-                if (pos == SongObject.NOTFOUND)
+                if (pos == SongObjectHelper.NOTFOUND)
                 {
                     Debug.Log("Not found");
                     keysBurstAddHistory.AddRange(PlaceNote.AddObjectToCurrentChart((Note)keyboardPlaceableNotes[notePos].note.Clone(), editor));

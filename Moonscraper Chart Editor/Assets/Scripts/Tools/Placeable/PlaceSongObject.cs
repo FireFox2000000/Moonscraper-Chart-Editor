@@ -114,8 +114,8 @@ public abstract class PlaceSongObject : ToolObject {
 
     public static ActionHistory.Action OverwriteActionHistory<T>(T overwriteCheck, T[] overWriteSearch) where T : SongObject
     {
-        int arrayPos = SongObject.FindObjectPosition(overwriteCheck, overWriteSearch);
-        if (arrayPos != SongObject.NOTFOUND)       // Found an object that matches
+        int arrayPos = SongObjectHelper.FindObjectPosition(overwriteCheck, overWriteSearch);
+        if (arrayPos != SongObjectHelper.NOTFOUND)       // Found an object that matches
         {
             if (!overwriteCheck.AllValuesCompare(overWriteSearch[arrayPos]))
                 // Object will changed, therefore record

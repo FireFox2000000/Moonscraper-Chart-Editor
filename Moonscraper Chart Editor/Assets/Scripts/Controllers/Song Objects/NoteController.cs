@@ -64,9 +64,9 @@ public class NoteController : SongObjectController {
             // Shift-clicking
             else if (Globals.secondaryInputActive)
             {
-                int pos = SongObject.FindClosestPosition(this.songObject, editor.currentSelectedObjects);
+                int pos = SongObjectHelper.FindClosestPosition(this.songObject, editor.currentSelectedObjects);
 
-                if (pos != SongObject.NOTFOUND)
+                if (pos != SongObjectHelper.NOTFOUND)
                 {
                     uint min;
                     uint max;
@@ -82,7 +82,7 @@ public class NoteController : SongObjectController {
                         max = songObject.position;
                     }
 
-                    editor.currentSelectedObjects = SongObject.GetRangeCopy(editor.currentChart.chartObjects, min, max);
+                    editor.currentSelectedObjects = SongObjectHelper.GetRangeCopy(editor.currentChart.chartObjects, min, max);
                 }
             }
             // Regular clicking

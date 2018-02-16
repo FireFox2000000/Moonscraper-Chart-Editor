@@ -217,7 +217,7 @@ public class GroupSelect : ToolObject {
         List<ChartObject> chartObjectsList = new List<ChartObject>();
         int index, length;
         ChartObject[] chartObjects = editor.currentChart.chartObjects;
-        SongObject.GetRange(chartObjects, minLimitInclusive, maxLimitNonInclusive, out index, out length);
+        SongObjectHelper.GetRange(chartObjects, minLimitInclusive, maxLimitNonInclusive, out index, out length);
 
         for (int i = index; i < index + length; ++i)
         {
@@ -256,8 +256,8 @@ public class GroupSelect : ToolObject {
         {
             if (!data.Contains(chartObject))
             {
-                int pos = SongObject.FindClosestPosition(chartObject, data.ToArray());
-                if (pos != SongObject.NOTFOUND)
+                int pos = SongObjectHelper.FindClosestPosition(chartObject, data.ToArray());
+                if (pos != SongObjectHelper.NOTFOUND)
                 {
                     if (data[pos] > chartObject)
                         data.Insert(pos, chartObject);

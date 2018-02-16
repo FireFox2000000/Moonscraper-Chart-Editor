@@ -115,7 +115,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
         if (currentEvent != null)
         {
             string prevName = currentEvent.title;
-            if (SongObject.FindObjectPosition(new Event(name, currentEvent.position), editor.currentSong.events) == SongObject.NOTFOUND)
+            if (SongObjectHelper.FindObjectPosition(new Event(name, currentEvent.position), editor.currentSong.events) == SongObjectHelper.NOTFOUND)
             {
                 currentEvent.title = name;
                 UpdateInputFieldRecord();
@@ -131,7 +131,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
         else if (currentChartEvent != null)
         {
             string prevName = currentChartEvent.eventName;
-            if (SongObject.FindObjectPosition(new ChartEvent(currentChartEvent.position, name), editor.currentChart.events) == SongObject.NOTFOUND)
+            if (SongObjectHelper.FindObjectPosition(new ChartEvent(currentChartEvent.position, name), editor.currentChart.events) == SongObjectHelper.NOTFOUND)
             {
                 currentChartEvent.eventName = name;
                 UpdateInputFieldRecord();

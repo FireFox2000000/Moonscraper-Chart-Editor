@@ -37,8 +37,8 @@ public class PlaceSection : PlaceSongObject {
         else if (Input.GetButtonDown("Add Object"))
         {
             SongObject[] searchArray = editor.currentSong.sections;
-            int pos = SongObject.FindObjectPosition(section, searchArray);
-            if (pos == SongObject.NOTFOUND)
+            int pos = SongObjectHelper.FindObjectPosition(section, searchArray);
+            if (pos == SongObjectHelper.NOTFOUND)
             {
                 editor.actionHistory.Insert(new ActionHistory.Add(section));
                 AddObject();
@@ -67,7 +67,7 @@ public class PlaceSection : PlaceSongObject {
 
     Section sectionSearch(uint pos)
     {
-        Section[] sectionsFound = SongObject.FindObjectsAtPosition(pos, editor.currentSong.sections);
+        Section[] sectionsFound = SongObjectHelper.FindObjectsAtPosition(pos, editor.currentSong.sections);
 
         if (sectionsFound.Length > 0)
             return sectionsFound[0];

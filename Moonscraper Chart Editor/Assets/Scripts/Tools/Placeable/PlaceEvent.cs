@@ -53,8 +53,8 @@ public class PlaceEvent : PlaceSongObject
         {
             if (Toolpane.currentTool == Toolpane.Tools.SongEvent && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
             {
-                int pos = SongObject.FindObjectPosition(songEvent, editor.currentSong.events);
-                if (pos == SongObject.NOTFOUND)
+                int pos = SongObjectHelper.FindObjectPosition(songEvent, editor.currentSong.events);
+                if (pos == SongObjectHelper.NOTFOUND)
                 {
                     //RecordAddActionHistory(chartEvent, editor.currentChart.events);
 
@@ -68,8 +68,8 @@ public class PlaceEvent : PlaceSongObject
         else if (Input.GetButtonDown("Add Object"))
         {
             SongObject[] searchArray = editor.currentSong.events;
-            int pos = SongObject.FindObjectPosition(songEvent, searchArray);
-            if (pos == SongObject.NOTFOUND)
+            int pos = SongObjectHelper.FindObjectPosition(songEvent, searchArray);
+            if (pos == SongObjectHelper.NOTFOUND)
             {
                 editor.actionHistory.Insert(new ActionHistory.Add(songEvent));
                 AddObject();
@@ -92,7 +92,7 @@ public class PlaceEvent : PlaceSongObject
 
         int offset = 0;
         int index, length;
-        SongObject.GetRange(events, songEvent.position, songEvent.position, out index, out length);
+        SongObjectHelper.GetRange(events, songEvent.position, songEvent.position, out index, out length);
 
         // Determine the offset for the object
         for (int i = index; i < index + length; ++i)

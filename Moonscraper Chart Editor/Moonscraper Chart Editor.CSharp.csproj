@@ -134,6 +134,7 @@
     <Compile Include="Assets\Scripts\Charts\Section.cs" />
     <Compile Include="Assets\Scripts\Charts\Song.cs" />
     <Compile Include="Assets\Scripts\Charts\SongObject.cs" />
+    <Compile Include="Assets\Scripts\Charts\SongObjectHelper.cs" />
     <Compile Include="Assets\Scripts\Charts\Starpower.cs" />
     <Compile Include="Assets\Scripts\Charts\SyncTrack.cs" />
     <Compile Include="Assets\Scripts\Charts\TickFunctions.cs" />

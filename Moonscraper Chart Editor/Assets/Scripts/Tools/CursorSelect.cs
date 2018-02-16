@@ -78,7 +78,7 @@ public class CursorSelect : ToolObject
                 !Globals.modifierInputActive && !Globals.secondaryInputActive)
             {
                 // Find anchor point
-                int anchorPoint = SongObject.NOTFOUND;
+                int anchorPoint = SongObjectHelper.NOTFOUND;
 
                 if (clickedSelectableObject)
                 {
@@ -244,7 +244,7 @@ public class CursorSelect : ToolObject
         if (Globals.viewMode == Globals.ViewMode.Chart)
         {
             int index, length;
-            SongObject.GetRange(editor.currentChart.chartObjects, minLimitInclusive, maxLimitNonInclusive, out index, out length);
+            SongObjectHelper.GetRange(editor.currentChart.chartObjects, minLimitInclusive, maxLimitNonInclusive, out index, out length);
 
             for (int i = index; i < index + length; ++i)
             {
@@ -261,7 +261,7 @@ public class CursorSelect : ToolObject
         {
             // Gather synctrack, sections and events
             int index, length;
-            SongObject.GetRange(editor.currentSong.syncTrack, minLimitInclusive, maxLimitNonInclusive, out index, out length);
+            SongObjectHelper.GetRange(editor.currentSong.syncTrack, minLimitInclusive, maxLimitNonInclusive, out index, out length);
 
             // Synctrack
             for (int i = index; i < index + length; ++i)
@@ -272,7 +272,7 @@ public class CursorSelect : ToolObject
                     chartObjectsList.Add(chartObject);
             }
 
-            SongObject.GetRange(editor.currentSong.eventsAndSections, minLimitInclusive, maxLimitNonInclusive, out index, out length);
+            SongObjectHelper.GetRange(editor.currentSong.eventsAndSections, minLimitInclusive, maxLimitNonInclusive, out index, out length);
 
             // Events and sections
             for (int i = index; i < index + length; ++i)

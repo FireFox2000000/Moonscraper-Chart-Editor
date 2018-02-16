@@ -126,7 +126,7 @@ public class SongObjectPoolManager : MonoBehaviour {
                 min_pos = gameplayPos;
         }
 
-        List<Note> rangedNotes = new List<Note>(SongObject.GetRangeCopy(notes, min_pos, editor.maxPos));
+        List<Note> rangedNotes = new List<Note>(SongObjectHelper.GetRangeCopy(notes, min_pos, editor.maxPos));
 
         if (min_pos == editor.minPos)
         {
@@ -141,9 +141,9 @@ public class SongObjectPoolManager : MonoBehaviour {
             }
             else
             {
-                int minArrayPos = SongObject.FindClosestPosition(editor.minPos, editor.currentChart.notes);
+                int minArrayPos = SongObjectHelper.FindClosestPosition(editor.minPos, editor.currentChart.notes);
 
-                if (minArrayPos != SongObject.NOTFOUND)
+                if (minArrayPos != SongObjectHelper.NOTFOUND)
                 {
                     while (minArrayPos > 0 && editor.currentChart.notes[minArrayPos].position == editor.currentChart.notes[minArrayPos - 1].position)
                         --minArrayPos;
@@ -179,10 +179,10 @@ public class SongObjectPoolManager : MonoBehaviour {
 
     Starpower[] CollectStarpowerInViewRange(Starpower[] starpowers)
     {
-        List<Starpower> range = new List<Starpower>(SongObject.GetRangeCopy(starpowers, editor.minPos, editor.maxPos));
+        List<Starpower> range = new List<Starpower>(SongObjectHelper.GetRangeCopy(starpowers, editor.minPos, editor.maxPos));
 
-        int arrayPos = SongObject.FindClosestPosition(editor.minPos, editor.currentChart.starPower);
-        if (arrayPos != SongObject.NOTFOUND)
+        int arrayPos = SongObjectHelper.FindClosestPosition(editor.minPos, editor.currentChart.starPower);
+        if (arrayPos != SongObjectHelper.NOTFOUND)
         {
             // Find the back-most position
             while (arrayPos > 0 && editor.currentChart.starPower[arrayPos].position >= editor.minPos)
@@ -209,7 +209,7 @@ public class SongObjectPoolManager : MonoBehaviour {
     public void EnableBPM(BPM[] bpms)
     {
         int index, length;
-        SongObject.GetRange(bpms, editor.minPos, editor.maxPos, out index, out length);
+        SongObjectHelper.GetRange(bpms, editor.minPos, editor.maxPos, out index, out length);
 
         bpmPool.Activate(bpms, index, length);
     }
@@ -217,7 +217,7 @@ public class SongObjectPoolManager : MonoBehaviour {
     public void EnableTS(TimeSignature[] timeSignatures)
     {
         int index, length;
-        SongObject.GetRange(timeSignatures, editor.minPos, editor.maxPos, out index, out length);
+        SongObjectHelper.GetRange(timeSignatures, editor.minPos, editor.maxPos, out index, out length);
 
         tsPool.Activate(timeSignatures, index, length);
     }
@@ -225,21 +225,21 @@ public class SongObjectPoolManager : MonoBehaviour {
     public void EnableSections(Section[] sections)
     {
         int index, length;
-        SongObject.GetRange(sections, editor.minPos, editor.maxPos, out index, out length);
+        SongObjectHelper.GetRange(sections, editor.minPos, editor.maxPos, out index, out length);
         sectionPool.Activate(sections, index, length);
     }
 
     public void EnableSongEvents(Event[] events)
     {
         int index, length;
-        SongObject.GetRange(events, editor.minPos, editor.maxPos, out index, out length);
+        SongObjectHelper.GetRange(events, editor.minPos, editor.maxPos, out index, out length);
         songEventPool.Activate(events, index, length);
     }
 
     public void EnableChartEvents(ChartEvent[] events)
     {
         int index, length;
-        SongObject.GetRange(events, editor.minPos, editor.maxPos, out index, out length);
+        SongObjectHelper.GetRange(events, editor.minPos, editor.maxPos, out index, out length);
         chartEventPool.Activate(events, index, length);
     }
 
@@ -258,7 +258,7 @@ public class SongObjectPoolManager : MonoBehaviour {
     public void SetInViewRangeDirty(SongObject[] songObjects)
     {
         int index, length;
-        SongObject.GetRange(songObjects, editor.minPos, editor.maxPos, out index, out length);
+        SongObjectHelper.GetRange(songObjects, editor.minPos, editor.maxPos, out index, out length);
         
         for (int i = index; i < index + length; ++i)
         {

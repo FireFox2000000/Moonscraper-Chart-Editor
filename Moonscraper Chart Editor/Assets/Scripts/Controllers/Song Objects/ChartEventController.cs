@@ -29,7 +29,7 @@ public class ChartEventController : SongObjectController
 
         int offset = 0;
         int index, length;
-        SongObject.GetRange(events, chartEvent.position, chartEvent.position, out index, out length);
+        SongObjectHelper.GetRange(events, chartEvent.position, chartEvent.position, out index, out length);
 
         // Determine the offset for the object
         for (int i = index; i < index + length; ++i)

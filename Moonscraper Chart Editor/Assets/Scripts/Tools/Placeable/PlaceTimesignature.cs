@@ -38,8 +38,8 @@ public class PlaceTimesignature : PlaceSongObject {
         else if (Input.GetButtonDown("Add Object"))
         {
             SongObject[] searchArray = editor.currentSong.syncTrack;
-            int pos = SongObject.FindObjectPosition(ts, searchArray);
-            if (pos == SongObject.NOTFOUND)
+            int pos = SongObjectHelper.FindObjectPosition(ts, searchArray);
+            if (pos == SongObjectHelper.NOTFOUND)
             {
                 editor.actionHistory.Insert(new ActionHistory.Add(ts));
                 AddObject();

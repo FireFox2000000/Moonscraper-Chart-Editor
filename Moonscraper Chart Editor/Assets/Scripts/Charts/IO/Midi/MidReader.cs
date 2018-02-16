@@ -302,7 +302,7 @@ public static class MidReader {
                 chart = unrecognised;
 
             int index, length;
-            SongObject.GetRange(chart.notes, tick, tick + endPos, out index, out length);
+            SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
 
             for (int i = index; i < index + length; ++i)
             { 
@@ -366,7 +366,7 @@ public static class MidReader {
                 foreach (Chart chart in chartsOfInstrument)
                 {
                     int index, length;
-                    SongObject.GetRange(chart.notes, tick, tick + endPos, out index, out length);
+                    SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
                     for (int k = index; k < index + length; ++k)
                     {
                         chart.notes[k].SetType(Note.Note_Type.Tap);
@@ -414,7 +414,7 @@ public static class MidReader {
                     notes = unrecognised.notes;
                 else
                     notes = song.GetChart(instrument, difficulty).notes;
-                SongObject.GetRange(notes, tick, tick + endPos, out index, out length);
+                SongObjectHelper.GetRange(notes, tick, tick + endPos, out index, out length);
                 for (int k = index; k < index + length; ++k)
                 {
                     notes[k].fret_type = Note.Fret_Type.OPEN;

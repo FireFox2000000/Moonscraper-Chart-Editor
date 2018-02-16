@@ -49,8 +49,8 @@ public class Starpower : ChartObject
         Starpower nextSp = null;
         if (song != null && chart != null)
         {
-            int arrayPos = FindClosestPosition(this, chart.starPower);
-            if (arrayPos == NOTFOUND)
+            int arrayPos = SongObjectHelper.FindClosestPosition(this, chart.starPower);
+            if (arrayPos == SongObjectHelper.NOTFOUND)
                 return;
 
             while (arrayPos < chart.starPower.Length - 1 && chart.starPower[arrayPos].position <= position)

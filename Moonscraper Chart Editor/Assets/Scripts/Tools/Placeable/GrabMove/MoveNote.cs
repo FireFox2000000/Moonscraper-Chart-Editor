@@ -37,8 +37,8 @@ public class MoveNote : PlaceNote {
     {
         System.Collections.Generic.List<ActionHistory.Action> noteRecord = new System.Collections.Generic.List<ActionHistory.Action>();
         noteRecord.Add(new ActionHistory.Delete(initObject));
-        int arrayPos = SongObject.FindObjectPosition(note, editor.currentChart.notes);
-        if (arrayPos != SongObject.NOTFOUND)       // Found an object that matches
+        int arrayPos = SongObjectHelper.FindObjectPosition(note, editor.currentChart.notes);
+        if (arrayPos != SongObjectHelper.NOTFOUND)       // Found an object that matches
         {
             if (!note.AllValuesCompare(editor.currentChart.notes[arrayPos]))
                 // Object will changed, therefore record

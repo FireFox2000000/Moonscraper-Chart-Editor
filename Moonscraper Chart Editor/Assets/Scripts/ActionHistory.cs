@@ -191,9 +191,9 @@ public class ActionHistory
                         arrayToSearch = editor.currentSong.syncTrack;
                 }
 
-                arrayPos = SongObject.FindObjectPosition(songObject, arrayToSearch);
+                arrayPos = SongObjectHelper.FindObjectPosition(songObject, arrayToSearch);
 
-                if (arrayPos == SongObject.NOTFOUND)
+                if (arrayPos == SongObjectHelper.NOTFOUND)
                     continue;
                 else
                     foundSongObject = arrayToSearch[arrayPos];

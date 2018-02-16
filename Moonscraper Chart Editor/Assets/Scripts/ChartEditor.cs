@@ -1018,8 +1018,8 @@ public class ChartEditor : MonoBehaviour {
         {
             if (!selectedObjectsList.Contains(songObject))
             {
-                int pos = SongObject.FindClosestPosition(songObject, selectedObjectsList.ToArray());
-                if (pos != SongObject.NOTFOUND)
+                int pos = SongObjectHelper.FindClosestPosition(songObject, selectedObjectsList.ToArray());
+                if (pos != SongObjectHelper.NOTFOUND)
                 {
                     if (selectedObjectsList[pos] > songObject)
                         selectedObjectsList.Insert(pos, songObject);
@@ -1053,7 +1053,7 @@ public class ChartEditor : MonoBehaviour {
 
     public bool IsSelected(SongObject songObject)
     {
-        return (SongObject.FindObjectPosition(songObject, currentSelectedObjects) != SongObject.NOTFOUND);
+        return (SongObjectHelper.FindObjectPosition(songObject, currentSelectedObjects) != SongObjectHelper.NOTFOUND);
     }
 
     public void UndoWrapper()

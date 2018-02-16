@@ -277,8 +277,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     {
         ChartEditor.FindCurrentEditor().songObjectPoolManager.SetAllPoolsDirty();
 
-        int pos = SongObject.FindObjectPosition(currentBPM, currentBPM.song.bpms);
-        if (pos != SongObject.NOTFOUND)
+        int pos = SongObjectHelper.FindObjectPosition(currentBPM, currentBPM.song.bpms);
+        if (pos != SongObjectHelper.NOTFOUND)
         {
             BPM anchor = null;
             BPM bpmToAdjust = null;
@@ -376,8 +376,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     BPM NextBPM()
     {
-        int pos = SongObject.FindObjectPosition(currentBPM, currentBPM.song.bpms);
-        if (pos != SongObject.NOTFOUND && pos + 1 < currentBPM.song.bpms.Length)
+        int pos = SongObjectHelper.FindObjectPosition(currentBPM, currentBPM.song.bpms);
+        if (pos != SongObjectHelper.NOTFOUND && pos + 1 < currentBPM.song.bpms.Length)
         {
             return currentBPM.song.bpms[pos + 1];
         }

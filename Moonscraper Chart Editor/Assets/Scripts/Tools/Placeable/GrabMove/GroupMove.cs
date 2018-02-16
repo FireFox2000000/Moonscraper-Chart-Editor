@@ -8,7 +8,7 @@ using System.Linq;
 
 public class GroupMove : ToolObject
 {
-    int anchorArrayPos = SongObject.NOTFOUND;
+    int anchorArrayPos = SongObjectHelper.NOTFOUND;
     SongObject[] originalSongObjects = new SongObject[0];
     SongObject[] movingSongObjects = new SongObject[0];
 
@@ -184,7 +184,7 @@ public class GroupMove : ToolObject
                 songObject.controller.gameObject.SetActive(false);
         }
         movingSongObjects = new ChartObject[0];
-        anchorArrayPos = SongObject.NOTFOUND;
+        anchorArrayPos = SongObjectHelper.NOTFOUND;
     }
 
     public void SetSongObjects(SongObject songObject)

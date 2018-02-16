@@ -67,9 +67,9 @@ public class PlaceNote : PlaceSongObject {
         base.Update();
 
         // Get previous and next note
-        int pos = SongObject.FindClosestPosition(note.position, editor.currentChart.notes);
+        int pos = SongObjectHelper.FindClosestPosition(note.position, editor.currentChart.notes);
         //Debug.Log(pos);
-        if (pos == SongObject.NOTFOUND)
+        if (pos == SongObjectHelper.NOTFOUND)
         {
             note.previous = null;
             note.next = null;
@@ -251,7 +251,7 @@ public class PlaceNote : PlaceSongObject {
     {
         List<ActionHistory.Action> noteRecord = new List<ActionHistory.Action>();
 
-        Note[] notesToCheckOverwrite = SongObject.GetRangeCopy(editor.currentChart.notes, note.position, note.position);
+        Note[] notesToCheckOverwrite = SongObjectHelper.GetRangeCopy(editor.currentChart.notes, note.position, note.position);
         
         // Account for when adding an exact note as what's already in   
         if (notesToCheckOverwrite.Length > 0)
@@ -327,7 +327,7 @@ public class PlaceNote : PlaceSongObject {
     {
         if (!note.IsOpenNote() && MenuBar.currentInstrument != Song.Instrument.Drums)
         {
-            Note[] chordNotes = SongObject.FindObjectsAtPosition(note.position, note.chart.notes);
+            Note[] chordNotes = SongObjectHelper.FindObjectsAtPosition(note.position, note.chart.notes);
 
             // Check for open notes and delete
             foreach (Note chordNote in chordNotes)

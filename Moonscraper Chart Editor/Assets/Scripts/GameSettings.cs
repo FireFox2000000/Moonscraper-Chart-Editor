@@ -110,32 +110,35 @@ public static class GameSettings
 
     public static void Save(string filepath)
     {
+        const string SECTION_NAME_SETTINGS = "Settings";
+        const string SECTION_NAME_AUDIO = "Audio Volume";
+
         INIParser iniparse = new INIParser();
         iniparse.Open(filepath);
 
-        iniparse.WriteValue("Settings", "Framerate", targetFramerate);
-        iniparse.WriteValue("Settings", "Hyperspeed", hyperspeed);
-        iniparse.WriteValue("Settings", "Highway Length", highwayLength);
-        iniparse.WriteValue("Settings", "Audio calibration", audioCalibrationMS);
-        iniparse.WriteValue("Settings", "Clap calibration", clapCalibrationMS);
-        iniparse.WriteValue("Settings", "Clap", (int)clapProperties);
-        iniparse.WriteValue("Settings", "Extended sustains", extendedSustainsEnabled);
-        iniparse.WriteValue("Settings", "Sustain Gap", sustainGapEnabled);
-        iniparse.WriteValue("Settings", "Sustain Gap Step", sustainGap);
-        iniparse.WriteValue("Settings", "Note Placement Mode", (int)notePlacementMode);
-        iniparse.WriteValue("Settings", "Gameplay Start Delay", gameplayStartDelayTime);
-        iniparse.WriteValue("Settings", "Reset After Play", resetAfterPlay);
-        iniparse.WriteValue("Settings", "Reset After Gameplay", resetAfterGameplay);
-        iniparse.WriteValue("Settings", "Custom Background Swap Time", customBgSwapTime);
+        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Framerate", targetFramerate);
+        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Hyperspeed", hyperspeed);
+        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Highway Length", highwayLength);
+        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Audio calibration", audioCalibrationMS);
+        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Clap calibration", clapCalibrationMS);
+        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Clap", (int)clapProperties);
+        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Extended sustains", extendedSustainsEnabled);
+        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Sustain Gap", sustainGapEnabled);
+        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Sustain Gap Step", sustainGap);
+        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Note Placement Mode", (int)notePlacementMode);
+        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Gameplay Start Delay", gameplayStartDelayTime);
+        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Reset After Play", resetAfterPlay);
+        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Reset After Gameplay", resetAfterGameplay);
+        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Custom Background Swap Time", customBgSwapTime);
 
         // Audio levels
-        iniparse.WriteValue("Audio Volume", "Master", vol_master);
-        iniparse.WriteValue("Audio Volume", "Music Stream", vol_song);
-        iniparse.WriteValue("Audio Volume", "Guitar Stream", vol_guitar);
-        iniparse.WriteValue("Audio Volume", "Rhythm Stream", vol_rhythm);
-        iniparse.WriteValue("Audio Volume", "Drum Stream", vol_drum);
-        iniparse.WriteValue("Audio Volume", "Audio Pan", audio_pan);
-        iniparse.WriteValue("Audio Volume", "SFX", sfxVolume);
+        iniparse.WriteValue(SECTION_NAME_AUDIO, "Master", vol_master);
+        iniparse.WriteValue(SECTION_NAME_AUDIO, "Music Stream", vol_song);
+        iniparse.WriteValue(SECTION_NAME_AUDIO, "Guitar Stream", vol_guitar);
+        iniparse.WriteValue(SECTION_NAME_AUDIO, "Rhythm Stream", vol_rhythm);
+        iniparse.WriteValue(SECTION_NAME_AUDIO, "Drum Stream", vol_drum);
+        iniparse.WriteValue(SECTION_NAME_AUDIO, "Audio Pan", audio_pan);
+        iniparse.WriteValue(SECTION_NAME_AUDIO, "SFX", sfxVolume);
 
         iniparse.Close();
     }

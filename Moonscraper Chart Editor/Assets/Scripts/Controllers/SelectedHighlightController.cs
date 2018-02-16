@@ -29,7 +29,7 @@ public class SelectedHighlightController : MonoBehaviour {
 	void Update () {
         int index, length;
         SongObject[] viewRange = editor.currentSelectedObjects;
-        SongObject.GetRange(viewRange, editor.minPos, editor.maxPos, out index, out length);
+        SongObjectHelper.GetRange(viewRange, editor.minPos, editor.maxPos, out index, out length);
 
         bool showHighlight = (Globals.applicationMode != Globals.ApplicationMode.Playing &&
             (Toolpane.currentTool != Toolpane.Tools.Note && Toolpane.currentTool != Toolpane.Tools.Starpower)

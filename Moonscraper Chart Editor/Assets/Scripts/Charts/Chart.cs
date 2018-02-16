@@ -132,7 +132,7 @@ public class Chart  {
         chartObject.chart = this;
         chartObject.song = this._song;
 
-        int pos = SongObject.Insert(chartObject, _chartObjects);
+        int pos = SongObjectHelper.Insert(chartObject, _chartObjects);
 
         if (update)
             UpdateCache();
@@ -166,7 +166,7 @@ public class Chart  {
     /// <returns>Returns whether the removal was successful or not (item may not have been found if false).</returns>
     public bool Remove(ChartObject chartObject, bool update = true)
     {
-        bool success = SongObject.Remove(chartObject, _chartObjects);
+        bool success = SongObjectHelper.Remove(chartObject, _chartObjects);
 
         if (success)
         {
@@ -275,7 +275,7 @@ public class Chart  {
                         uint position = uint.Parse(digits[SPLIT_POSITION]);
                         int fret_type = int.Parse(digits[SPLIT_VALUE]);
 
-                        Note[] notesToAddFlagTo = SongObject.FindObjectsAtPosition(position, notes);
+                        Note[] notesToAddFlagTo = SongObjectHelper.FindObjectsAtPosition(position, notes);
                         switch (fret_type)
                         {
                             case (5):

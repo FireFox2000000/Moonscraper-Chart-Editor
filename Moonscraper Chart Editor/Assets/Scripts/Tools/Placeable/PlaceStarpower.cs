@@ -34,8 +34,8 @@ public class PlaceStarpower : PlaceSongObject {
                 if (lastPlacedSP == null)
                 {
                     // Check if there's a starpower already in that position
-                    int arrayPos = SongObject.FindObjectPosition(starpower, editor.currentChart.starPower);
-                    if (arrayPos != SongObject.NOTFOUND)       // Found an object that matches
+                    int arrayPos = SongObjectHelper.FindObjectPosition(starpower, editor.currentChart.starPower);
+                    if (arrayPos != SongObjectHelper.NOTFOUND)       // Found an object that matches
                     {
                         overwrittenSP = (Starpower)editor.currentChart.starPower[arrayPos].Clone();
                     }
@@ -53,8 +53,8 @@ public class PlaceStarpower : PlaceSongObject {
             if (Input.GetButtonDown("Add Object"))
             {
                 SongObject[] searchArray = editor.currentChart.starPower;
-                int pos = SongObject.FindObjectPosition(starpower, searchArray);
-                if (pos == SongObject.NOTFOUND)
+                int pos = SongObjectHelper.FindObjectPosition(starpower, searchArray);
+                if (pos == SongObjectHelper.NOTFOUND)
                 {
                     editor.actionHistory.Insert(new ActionHistory.Add(starpower));
                     AddObject();
@@ -85,7 +85,7 @@ public class PlaceStarpower : PlaceSongObject {
             Note[] notes = editor.currentChart.notes;
             uint maxLength = prevSpLength > lastPlacedSP.length ? prevSpLength : lastPlacedSP.length;
 
-            SongObject.GetRange(notes, lastPlacedSP.position, lastPlacedSP.position + maxLength, out index, out length);
+            SongObjectHelper.GetRange(notes, lastPlacedSP.position, lastPlacedSP.position + maxLength, out index, out length);
 
             for (int i = index; i < index + length; ++i)
             {
@@ -177,7 +177,7 @@ public class PlaceStarpower : PlaceSongObject {
     {
         int start, length;
         Note[] notes = sp.chart.notes;
-        SongObject.GetRange(notes, sp.position, sp.position + sp.length, out start, out length);
+        SongObjectHelper.GetRange(notes, sp.position, sp.position + sp.length, out start, out length);
 
         for (int i = start; i < start + length; ++i)
         {
@@ -189,9 +189,9 @@ public class PlaceStarpower : PlaceSongObject {
     static ActionHistory.Action[] CapPrevAndNextPreInsert(Starpower sp, Chart chart)
     {
         List<ActionHistory.Action> record = new List<ActionHistory.Action>();
-        int arrayPos = SongObject.FindClosestPosition(sp, chart.starPower);
+        int arrayPos = SongObjectHelper.FindClosestPosition(sp, chart.starPower);
 
-        if (arrayPos != SongObject.NOTFOUND)       // Found an object that matches
+        if (arrayPos != SongObjectHelper.NOTFOUND)       // Found an object that matches
         {
             if (chart.starPower[arrayPos] < sp)
             {

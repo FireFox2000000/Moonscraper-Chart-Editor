@@ -34,7 +34,7 @@ public class PlaceChartEvent : PlaceSongObject
 
         int offset = 0;
         int index, length;
-        SongObject.GetRange(events, chartEvent.position, chartEvent.position, out index, out length);
+        SongObjectHelper.GetRange(events, chartEvent.position, chartEvent.position, out index, out length);
 
         // Determine the offset for the object
         for (int i = index; i < index + length; ++i)
@@ -83,8 +83,8 @@ public class PlaceChartEvent : PlaceSongObject
         {
             if (Toolpane.currentTool == Toolpane.Tools.SongEvent && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
             {
-                int pos = SongObject.FindObjectPosition(chartEvent, editor.currentChart.events);
-                if (pos == SongObject.NOTFOUND)
+                int pos = SongObjectHelper.FindObjectPosition(chartEvent, editor.currentChart.events);
+                if (pos == SongObjectHelper.NOTFOUND)
                 {
                     //RecordAddActionHistory(chartEvent, editor.currentChart.events);
 
@@ -98,8 +98,8 @@ public class PlaceChartEvent : PlaceSongObject
         else if (Input.GetButtonDown("Add Object"))
         {
             SongObject[] searchArray = editor.currentChart.events;
-            int pos = SongObject.FindObjectPosition(chartEvent, searchArray);
-            if (pos == SongObject.NOTFOUND)
+            int pos = SongObjectHelper.FindObjectPosition(chartEvent, searchArray);
+            if (pos == SongObjectHelper.NOTFOUND)
             {
                 editor.actionHistory.Insert(new ActionHistory.Add(chartEvent));
                 AddObject();

@@ -56,11 +56,11 @@ public class Song {
     static int NUM_OF_AUDIO_STREAMS = 5;
     public static bool streamAudio = true;
 
-    public const int MUSIC_STREAM_ARRAY_POS = 0;
-    public const int GUITAR_STREAM_ARRAY_POS = 1;
-    public const int BASS_STREAM_ARRAY_POS = 2;
-    public const int RHYTHM_STREAM_ARRAY_POS = 3;
-    public const int DRUM_STREAM_ARRAY_POS = 4;
+    public const int    MUSIC_STREAM_ARRAY_POS  = 0, 
+                        GUITAR_STREAM_ARRAY_POS = 1, 
+                        BASS_STREAM_ARRAY_POS   = 2, 
+                        RHYTHM_STREAM_ARRAY_POS = 3, 
+                        DRUM_STREAM_ARRAY_POS   = 4;
 
     // Song properties
     public Metadata metaData = new Metadata();
@@ -826,8 +826,8 @@ public class Song {
     /// <returns>Returns the value of the bpm that was found.</returns>
     public BPM GetPrevBPM(uint position)
     {
-        int closestPos = SongObject.FindClosestPosition(position, bpms);
-        if (closestPos != SongObject.NOTFOUND)
+        int closestPos = SongObjectHelper.FindClosestPosition(position, bpms);
+        if (closestPos != SongObjectHelper.NOTFOUND)
         {
             // Select the smaller of the two
             if (bpms[closestPos].position <= position)
@@ -846,8 +846,8 @@ public class Song {
     /// <returns>Returns the value of the time signature that was found.</returns>
     public TimeSignature GetPrevTS(uint position)
     {
-        int closestPos = SongObject.FindClosestPosition(position, timeSignatures);
-        if (closestPos != SongObject.NOTFOUND)
+        int closestPos = SongObjectHelper.FindClosestPosition(position, timeSignatures);
+        if (closestPos != SongObjectHelper.NOTFOUND)
         {
             // Select the smaller of the two
             if (timeSignatures[closestPos].position <= position)
@@ -877,7 +877,7 @@ public class Song {
     /// <returns>Returns the time in seconds.</returns>
     public float ChartPositionToTime(uint position, float resolution)
     {
-        int previousBPMPos = SongObject.FindClosestPosition(position, bpms);
+        int previousBPMPos = SongObjectHelper.FindClosestPosition(position, bpms);
         if (bpms[previousBPMPos].position > position)
             --previousBPMPos;
 
@@ -897,7 +897,7 @@ public class Song {
     public void Add(SyncTrack syncTrackObject, bool autoUpdate = true)
     {
         syncTrackObject.song = this;
-        SongObject.Insert(syncTrackObject, _syncTrack);
+        SongObjectHelper.Insert(syncTrackObject, _syncTrack);
 
         if (autoUpdate)
             UpdateCache();
@@ -917,7 +917,7 @@ public class Song {
 
         if (syncTrackObject.position > 0)
         {
-            success = SongObject.Remove(syncTrackObject, _syncTrack);
+            success = SongObjectHelper.Remove(syncTrackObject, _syncTrack);
         }
 
         if (success)
@@ -941,7 +941,7 @@ public class Song {
     public void Add(Event eventObject, bool autoUpdate = true)
     {
         eventObject.song = this;
-        SongObject.Insert(eventObject, _events);
+        SongObjectHelper.Insert(eventObject, _events);
 
         if (autoUpdate)
             UpdateCache();
@@ -958,7 +958,7 @@ public class Song {
     public bool Remove(Event eventObject, bool autoUpdate = true)
     {
         bool success = false;
-        success = SongObject.Remove(eventObject, _events);
+        success = SongObjectHelper.Remove(eventObject, _events);
 
         if (success)
         {
@@ -1330,7 +1330,7 @@ public class Song {
             BPM[] bpms = _syncTrack.OfType<BPM>().ToArray();
             foreach (Anchor anchor in anchorData)
             {
-                int arrayPos = SongObject.FindClosestPosition(anchor.position, bpms);
+                int arrayPos = SongObjectHelper.FindClosestPosition(anchor.position, bpms);
                 if (bpms[arrayPos].position == anchor.position)
                 {
                     bpms[arrayPos].anchor = anchor.anchorTime;
