@@ -793,7 +793,7 @@ public class ChartEditor : MonoBehaviour {
                 if (mid)
                     newSong = MidReader.ReadMidi(currentFileName);
                 else
-                    newSong = new Song(currentFileName);
+                    newSong = ChartReader.ReadChart(currentFileName);
             }
             catch (Exception e)
             {
