@@ -299,7 +299,7 @@ public class ChartEditor : MonoBehaviour {
 
             Bass.BASS_Free();
             Debug.Log("Freed Bass Audio memory");
-            while (currentSong.IsSaving) ;
+            while (currentSong.isSaving) ;
         }
         // Can't run edit check here because quitting seems to run in a seperate thread
         else
@@ -368,7 +368,7 @@ public class ChartEditor : MonoBehaviour {
         if (!editCheck())
             return;
 
-        while (currentSong.IsSaving) ;
+        while (currentSong.isSaving) ;
 
         if (SaveErrorCheck())
             return;
@@ -456,14 +456,14 @@ public class ChartEditor : MonoBehaviour {
 
     void Save (string filename, ExportOptions exportOptions)
     {
-        if (currentSong != null && !currentSong.IsSaving)
+        if (currentSong != null && !currentSong.isSaving)
         {
             Debug.Log("Saving to file- " + System.IO.Path.GetFullPath(filename));
           
             currentSong.SaveAsync(filename, exportOptions);
             lastLoadedFile = System.IO.Path.GetFullPath(filename);
 
-            if (currentSong.IsSaving)
+            if (currentSong.isSaving)
                 saveAnim.StartFade();
 
             isDirty = false;
@@ -510,10 +510,10 @@ public class ChartEditor : MonoBehaviour {
     {
         StrikelineAudioController.startYPoint = visibleStrikeline.transform.position.y;
 
-        SetBassStreamProperties(currentSong.bassMusicStream, GameSettings.gameSpeed, GameSettings.vol_song);
-        SetBassStreamProperties(currentSong.bassGuitarStream, GameSettings.gameSpeed, GameSettings.vol_guitar);
-        SetBassStreamProperties(currentSong.bassRhythmStream, GameSettings.gameSpeed, GameSettings.vol_rhythm);
-        SetBassStreamProperties(currentSong.bassDrumStream, GameSettings.gameSpeed, GameSettings.vol_drum);
+        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
+        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
+        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
+        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drum);
 
         foreach (int bassStream in currentSong.bassAudioStreams)
         {
@@ -762,7 +762,7 @@ public class ChartEditor : MonoBehaviour {
         yield return null;
 
         // Wait for saving to complete just in case
-        while (currentSong.IsSaving)
+        while (currentSong.isSaving)
             yield return null;
 
         if (SaveErrorCheck())
@@ -834,7 +834,7 @@ public class ChartEditor : MonoBehaviour {
         FreeAudio();
         newSong.LoadAllAudioClips();
 
-        while (newSong.IsAudioLoading)
+        while (newSong.isAudioLoading)
             yield return null;
 
 #if TIMING_DEBUG
@@ -849,7 +849,7 @@ public class ChartEditor : MonoBehaviour {
 #endif
 
         // Wait for audio to fully load
-        while (newSong.IsAudioLoading)
+        while (newSong.isAudioLoading)
             yield return null;
 
         if (mid)
@@ -882,7 +882,7 @@ public class ChartEditor : MonoBehaviour {
         if (!editCheck())
             yield break;
 
-        while (currentSong.IsSaving)
+        while (currentSong.isSaving)
             yield return null;
 
         if (SaveErrorCheck())
@@ -967,7 +967,7 @@ public class ChartEditor : MonoBehaviour {
         // Load audio
         if (currentSong.musicStream != null)
 #else
-        if (currentSong.bassMusicStream != 0)
+        if (currentSong.GetBassAudioStream(Song.AudioInstrument.Song) != 0)
 #endif
         {
             movement.SetPosition(0);
@@ -994,10 +994,10 @@ public class ChartEditor : MonoBehaviour {
 
     public void FreeAudio()
     {
-        currentSong.musicSample.Free();
-        currentSong.guitarSample.Free();
-        currentSong.rhythmSample.Free();
-        currentSong.drumSample.Free();
+        foreach(SampleData sampleData in currentSong.GetSampleData())
+        {
+            sampleData.Free();
+        }
 #if !BASS_AUDIO
         currentSong.FreeAudioClips();
 #else

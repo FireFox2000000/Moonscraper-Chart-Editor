@@ -125,12 +125,13 @@
     <Compile Include="Assets\Scripts\Charts\ChartEvent.cs" />
     <Compile Include="Assets\Scripts\Charts\ChartObject.cs" />
     <Compile Include="Assets\Scripts\Charts\Event.cs" />
-    <Compile Include="Assets\Scripts\Charts\IO\ChartReader.cs" />
-    <Compile Include="Assets\Scripts\Charts\IO\ChartWriter.cs" />
+    <Compile Include="Assets\Scripts\Charts\IO\Chart\ChartReader.cs" />
+    <Compile Include="Assets\Scripts\Charts\IO\Chart\ChartWriter.cs" />
     <Compile Include="Assets\Scripts\Charts\IO\ExportOptions.cs" />
     <Compile Include="Assets\Scripts\Charts\IO\Midi\ByteSort.cs" />
     <Compile Include="Assets\Scripts\Charts\IO\Midi\MidReader.cs" />
     <Compile Include="Assets\Scripts\Charts\IO\Midi\MidWriter.cs" />
+    <Compile Include="Assets\Scripts\Charts\Metadata.cs" />
     <Compile Include="Assets\Scripts\Charts\Note.cs" />
     <Compile Include="Assets\Scripts\Charts\Section.cs" />
     <Compile Include="Assets\Scripts\Charts\Song.cs" />

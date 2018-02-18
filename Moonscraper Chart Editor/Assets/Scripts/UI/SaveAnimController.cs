@@ -26,7 +26,7 @@ public class SaveAnimController : MonoBehaviour {
 
         if (fadein)
             alpha += fadeSpeed * Time.deltaTime;
-        else if (!editor.currentSong.IsSaving)
+        else if (!editor.currentSong.isSaving)
             alpha -= fadeSpeed * Time.deltaTime;
 
         alpha = Mathf.Clamp01(alpha);

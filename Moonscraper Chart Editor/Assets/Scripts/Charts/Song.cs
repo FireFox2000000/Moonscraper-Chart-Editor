@@ -15,52 +15,13 @@ using System.Linq;
 using System;
 using Un4seen.Bass;
 
-public class Metadata
-{
-    public string name, artist, charter, player2, genre, mediatype, album, year;
-    public int difficulty;
-    public float previewStart, previewEnd;
-
-    public Metadata()
-    {
-        name = artist = charter = album = year = string.Empty;
-        player2 = "Bass";
-        difficulty = 0;
-        previewStart = previewEnd = 0;
-        genre = "rock";
-        mediatype = "cd";
-    }
-
-    public Metadata(Metadata metaData)
-    {
-        name = metaData.name;
-        artist = metaData.artist;
-        charter = metaData.charter;
-        album = metaData.artist;
-        year = metaData.year;
-        player2 = metaData.player2;
-        difficulty = metaData.difficulty;
-        previewStart = metaData.previewStart;
-        previewEnd = metaData.previewEnd;
-        genre = metaData.genre;
-        mediatype = metaData.mediatype;
-    }
-}
-
 public class Song {
+    // Constants
     public static readonly float STANDARD_BEAT_RESOLUTION = 192.0f;
     public const uint FULL_STEP = 768;
     public bool saveError = false;
-
-    static int NUM_OF_DIFFICULTIES;
-    static int NUM_OF_AUDIO_STREAMS = 5;
-    public static bool streamAudio = true;
-
-    public const int    MUSIC_STREAM_ARRAY_POS  = 0, 
-                        GUITAR_STREAM_ARRAY_POS = 1, 
-                        BASS_STREAM_ARRAY_POS   = 2, 
-                        RHYTHM_STREAM_ARRAY_POS = 3, 
-                        DRUM_STREAM_ARRAY_POS   = 4;
+    static int DIFFICULTY_COUNT;
+    static int AUDIO_INSTUMENT_COUNT;
 
     // Song properties
     public Metadata metaData = new Metadata();
@@ -77,115 +38,14 @@ public class Song {
     }
     public float resolution = 192, offset = 0;
 
-#if !BASS_AUDIO
-    AudioClip[] audioStreams = new AudioClip[3];
-    public AudioClip musicStream { get { return audioStreams[MUSIC_STREAM_ARRAY_POS]; } set { audioStreams[MUSIC_STREAM_ARRAY_POS] = value; } }
-    public AudioClip guitarStream { get { return audioStreams[GUITAR_STREAM_ARRAY_POS]; } set { audioStreams[GUITAR_STREAM_ARRAY_POS] = value; } }
-    public AudioClip rhythmStream { get { return audioStreams[RHYTHM_STREAM_ARRAY_POS]; } set { audioStreams[RHYTHM_STREAM_ARRAY_POS] = value; } }
-#endif
-    SampleData[] audioSampleData = new SampleData[NUM_OF_AUDIO_STREAMS];
-    public SampleData musicSample { get { return audioSampleData[MUSIC_STREAM_ARRAY_POS]; } private set { audioSampleData[MUSIC_STREAM_ARRAY_POS] = value; } }
-    public SampleData guitarSample { get { return audioSampleData[GUITAR_STREAM_ARRAY_POS]; } private set { audioSampleData[GUITAR_STREAM_ARRAY_POS] = value; } }
-    public SampleData bassSample { get { return audioSampleData[BASS_STREAM_ARRAY_POS]; } private set { audioSampleData[BASS_STREAM_ARRAY_POS] = value; } }
-    public SampleData rhythmSample { get { return audioSampleData[RHYTHM_STREAM_ARRAY_POS]; } private set { audioSampleData[RHYTHM_STREAM_ARRAY_POS] = value; } }
-    public SampleData drumSample { get { return audioSampleData[DRUM_STREAM_ARRAY_POS]; } private set { audioSampleData[DRUM_STREAM_ARRAY_POS] = value; } }
+    // Audio
+    SampleData[] audioSampleData;
+    public int[] bassAudioStreams;
+    string[] audioLocations;
+    int audioLoads = 0;
 
-#if BASS_AUDIO
-    public int[] bassAudioStreams = new int[NUM_OF_AUDIO_STREAMS];
-    public int bassMusicStream
-    {
-        get
-        {
-            return bassAudioStreams[MUSIC_STREAM_ARRAY_POS];
-        }
-        set
-        {
-            if (bassAudioStreams[MUSIC_STREAM_ARRAY_POS] != 0)
-            {
-                if (Bass.BASS_StreamFree(bassAudioStreams[MUSIC_STREAM_ARRAY_POS]))
-                    Debug.Log("Song audio stream successfully freed");
-                else
-                    Debug.LogError("Error while attempting to free song audio stream");
-            }
-
-            bassAudioStreams[MUSIC_STREAM_ARRAY_POS] = value;
-        }
-    }
-    public int bassGuitarStream
-    {
-        get { return bassAudioStreams[GUITAR_STREAM_ARRAY_POS]; }
-        set
-        {
-            if (bassAudioStreams[GUITAR_STREAM_ARRAY_POS] != 0)
-            {
-                if (Bass.BASS_StreamFree(bassAudioStreams[GUITAR_STREAM_ARRAY_POS]))
-                    Debug.Log("Guitar audio stream successfully freed");
-                else
-                    Debug.LogError("Error while attempting to free guitar audio stream");
-            }
-
-            bassAudioStreams[GUITAR_STREAM_ARRAY_POS] = value;
-        }
-    }
-    public int bassBassStream
-    {
-        get
-        {
-            return bassAudioStreams[BASS_STREAM_ARRAY_POS];
-        }
-        set
-        {
-            if (bassAudioStreams[BASS_STREAM_ARRAY_POS] != 0)
-            {
-                if (Bass.BASS_StreamFree(bassAudioStreams[BASS_STREAM_ARRAY_POS]))
-                    Debug.Log("Rhythm audio stream successfully freed");
-                else
-                    Debug.LogError("Error while attempting to free rhythm audio stream");
-            }
-
-            bassAudioStreams[BASS_STREAM_ARRAY_POS] = value;
-        }
-    }
-    public int bassRhythmStream
-    {
-        get
-        {
-            return bassAudioStreams[RHYTHM_STREAM_ARRAY_POS];
-        }
-        set
-        {
-            if (bassAudioStreams[RHYTHM_STREAM_ARRAY_POS] != 0)
-            {
-                if (Bass.BASS_StreamFree(bassAudioStreams[RHYTHM_STREAM_ARRAY_POS]))
-                    Debug.Log("Rhythm audio stream successfully freed");
-                else
-                    Debug.LogError("Error while attempting to free rhythm audio stream");
-            }
-
-            bassAudioStreams[RHYTHM_STREAM_ARRAY_POS] = value;
-        }
-    }
-    public int bassDrumStream
-    {
-        get
-        {
-            return bassAudioStreams[DRUM_STREAM_ARRAY_POS];
-        }
-        set
-        {
-            if (bassAudioStreams[DRUM_STREAM_ARRAY_POS] != 0)
-            {
-                if (Bass.BASS_StreamFree(bassAudioStreams[DRUM_STREAM_ARRAY_POS]))
-                    Debug.Log("Drum audio stream successfully freed");
-                else
-                    Debug.LogError("Error while attempting to free rhythm audio stream");
-            }
-
-            bassAudioStreams[DRUM_STREAM_ARRAY_POS] = value;
-        }
-    }
-#endif
-
+    System.Threading.Thread saveThread;
+    
     public ExportOptions defaultExportOptions
     {
         get
@@ -211,8 +71,7 @@ public class Song {
                 return _length;
             else
             {
-#if BASS_AUDIO
-                
+                int bassMusicStream = GetBassAudioStream(AudioInstrument.Song);
                 if (bassMusicStream != 0)
                     return (float)Bass.BASS_ChannelBytes2Seconds(bassMusicStream, Bass.BASS_ChannelGetLength(bassMusicStream, BASSMode.BASS_POS_BYTES)) + offset;
                 else
@@ -228,12 +87,6 @@ public class Song {
 
                     return 300;     // 5 minutes
                 }
-#else
-                if (musicStream)
-                    return musicStream.length + offset;
-                else
-                    return 300;
-#endif  
             }
         }
         set
@@ -254,98 +107,6 @@ public class Song {
         {
             _manualLength = value;
             _length = length;
-        }
-    }
-
-    public string[] audioLocations = new string[NUM_OF_AUDIO_STREAMS];
-
-    public string musicSongName { get { return Path.GetFileName(audioLocations[MUSIC_STREAM_ARRAY_POS]); }
-        set {
-            if (File.Exists(value))
-                audioLocations[MUSIC_STREAM_ARRAY_POS] = Path.GetFullPath(value);
-        } }
-    public string guitarSongName { get { return Path.GetFileName(audioLocations[GUITAR_STREAM_ARRAY_POS]); }
-        set {
-            if (File.Exists(value))
-                audioLocations[GUITAR_STREAM_ARRAY_POS] = Path.GetFullPath(value); } }
-    public string bassSongName
-    {
-        get { return Path.GetFileName(audioLocations[BASS_STREAM_ARRAY_POS]); }
-        set
-        {
-            if (File.Exists(value))
-                audioLocations[BASS_STREAM_ARRAY_POS] = Path.GetFullPath(value);
-        }
-    }
-    public string rhythmSongName { get { return Path.GetFileName(audioLocations[RHYTHM_STREAM_ARRAY_POS]); }
-        set {
-            if (File.Exists(value))
-                audioLocations[RHYTHM_STREAM_ARRAY_POS] = Path.GetFullPath(value); } }
-
-    public string drumSongName
-    {
-        get { return Path.GetFileName(audioLocations[DRUM_STREAM_ARRAY_POS]); }
-        set
-        {
-            if (File.Exists(value))
-                audioLocations[DRUM_STREAM_ARRAY_POS] = Path.GetFullPath(value);
-        }
-    }
-
-    public bool songAudioLoaded
-    {
-        get
-        {
-#if BASS_AUDIO
-            return bassMusicStream != 0;
-#else
-            return musicStream ? true : false;
-#endif
-        }
-    }
-
-    public bool guitarAudioLoaded
-    {
-        get
-        {
-#if BASS_AUDIO
-            return bassGuitarStream != 0;
-#else
-            return guitarStream ? true : false;
-#endif
-        }
-    }
-
-    public bool bassAudioLoaded
-    {
-        get
-        {
-#if BASS_AUDIO
-            return bassBassStream != 0;
-#else
-            return bassStream ? true : false;
-#endif
-        }
-    }
-
-    public bool rhythmAudioLoaded
-    {
-        get
-        {
-#if BASS_AUDIO
-            return bassRhythmStream != 0;
-#else
-            return rhythmStream ? true : false;
-#endif
-        }
-    }
-
-    public bool drumAudioLoaded
-    {
-        get
-        {
-
-            return bassDrumStream != 0;
         }
     }
 
@@ -380,7 +141,7 @@ public class Song {
     /// <summary>
     /// Is this song currently being saved asyncronously?
     /// </summary>
-    public bool IsSaving
+    public bool isSaving
     {
         get
         {
@@ -390,7 +151,7 @@ public class Song {
                 return false;
         }
     }
-    public bool IsAudioLoading
+    public bool isAudioLoading
     {
         get
         {
@@ -401,16 +162,13 @@ public class Song {
         }
     }
 
-    System.Threading.Thread saveThread;
-
-    int audioLoads = 0;
-
     /// <summary>
     /// Default constructor for a new chart. Initialises all lists and adds locked bpm and timesignature objects.
     /// </summary>
     public Song()
     {
-        NUM_OF_DIFFICULTIES = Enum.GetValues(typeof(Difficulty)).Length;
+        AUDIO_INSTUMENT_COUNT = Enum.GetValues(typeof(AudioInstrument)).Length;
+        DIFFICULTY_COUNT = Enum.GetValues(typeof(Difficulty)).Length;
 
         _events = new List<Event>();
         _syncTrack = new List<SyncTrack>();
@@ -419,6 +177,10 @@ public class Song {
         sections = new Section[0];
         bpms = new BPM[0];
         timeSignatures = new TimeSignature[0];
+
+        audioSampleData = new SampleData[AUDIO_INSTUMENT_COUNT];
+        bassAudioStreams = new int[AUDIO_INSTUMENT_COUNT];
+        audioLocations = new string[AUDIO_INSTUMENT_COUNT];
 
         Add(new BPM());
         Add(new TimeSignature());
@@ -484,16 +246,11 @@ public class Song {
         UpdateCache();
     }
 
-    public Song(Song song)
+    public Song(Song song) : this()
     {
         metaData = new Metadata(song.metaData);
         offset = song.offset;
         resolution = song.resolution;
-
-        for (int i = 0; i < audioLocations.Length; ++i)
-        {
-            audioLocations[i] = song.audioLocations[i];
-        }
 
         _events = new List<Event>();
         _syncTrack = new List<SyncTrack>();
@@ -506,9 +263,13 @@ public class Song {
         {
             charts[i] = new Chart(song.charts[i], this);
         }
+
+        for (int i = 0; i < audioLocations.Length; ++i)
+        {
+            audioLocations[i] = song.audioLocations[i];
+        }
     }
 
-#if BASS_AUDIO
     ~Song()
     {
         FreeBassAudioStreams();
@@ -530,13 +291,12 @@ public class Song {
         foreach (SampleData sample in audioSampleData)
             sample.Free();
     }
-#endif
 
     public Chart GetChart(Instrument instrument, Difficulty difficulty)
     {
         try
         {
-            return charts[(int)instrument * NUM_OF_DIFFICULTIES + (int)difficulty];
+            return charts[(int)instrument * DIFFICULTY_COUNT + (int)difficulty];
         }
         catch (Exception e)
         {
@@ -553,11 +313,14 @@ public class Song {
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
 #endif
-        LoadMusicStream(audioLocations[MUSIC_STREAM_ARRAY_POS]);
-        LoadGuitarStream(audioLocations[GUITAR_STREAM_ARRAY_POS]);
-        LoadBassStream(audioLocations[BASS_STREAM_ARRAY_POS]);
-        LoadRhythmStream(audioLocations[RHYTHM_STREAM_ARRAY_POS]);
-        LoadDrumStream(audioLocations[DRUM_STREAM_ARRAY_POS]);
+
+        foreach (AudioInstrument audio in Enum.GetValues(typeof(AudioInstrument)))
+        {
+            GameObject loadAudioObject = new GameObject("Load Audio");
+            MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
+
+            coroutine.StartCoroutine(LoadAudio(GetAudioLocation(audio), audio, loadAudioObject));
+        }
 #if TIMING_DEBUG
         Debug.Log("Total audio files load time: " + (Time.realtimeSinceStartup - time));
 #endif
@@ -568,7 +331,7 @@ public class Song {
         GameObject loadAudioObject = new GameObject("Load Audio");
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
 
-        coroutine.StartCoroutine(LoadAudio(filepath, MUSIC_STREAM_ARRAY_POS, loadAudioObject));
+        coroutine.StartCoroutine(LoadAudio(filepath, AudioInstrument.Song, loadAudioObject));
     }
 
     public void LoadGuitarStream(string filepath)
@@ -576,7 +339,7 @@ public class Song {
         GameObject loadAudioObject = new GameObject("Load Audio");
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
 
-        coroutine.StartCoroutine(LoadAudio(filepath, GUITAR_STREAM_ARRAY_POS, loadAudioObject));
+        coroutine.StartCoroutine(LoadAudio(filepath, AudioInstrument.Guitar, loadAudioObject));
     }
 
     public void LoadBassStream(string filepath)
@@ -584,7 +347,7 @@ public class Song {
         GameObject loadAudioObject = new GameObject("Load Audio");
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
 
-        coroutine.StartCoroutine(LoadAudio(filepath, BASS_STREAM_ARRAY_POS, loadAudioObject));
+        coroutine.StartCoroutine(LoadAudio(filepath, AudioInstrument.Bass, loadAudioObject));
     }
 
     public void LoadRhythmStream(string filepath)
@@ -592,27 +355,21 @@ public class Song {
         GameObject loadAudioObject = new GameObject("Load Audio");
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
 
-        coroutine.StartCoroutine(LoadAudio(filepath, RHYTHM_STREAM_ARRAY_POS, loadAudioObject));
+        coroutine.StartCoroutine(LoadAudio(filepath, AudioInstrument.Rhythm, loadAudioObject));
     }
 
     public void LoadDrumStream(string filepath)
     {
-        GameObject loadAudioObject = new GameObject("Load Drum Audio");
+        GameObject loadAudioObject = new GameObject("Load Audio");
         MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
 
-        coroutine.StartCoroutine(LoadAudio(filepath, DRUM_STREAM_ARRAY_POS, loadAudioObject));
+        coroutine.StartCoroutine(LoadAudio(filepath, AudioInstrument.Drum, loadAudioObject));
     }
 
-    IEnumerator LoadAudio(string filepath, int audioStreamArrayPos, GameObject coroutine)
+    IEnumerator LoadAudio(string filepath, AudioInstrument audio, GameObject coroutine)
     {
-#if !BASS_AUDIO
-        if (audioStreams[audioStreamArrayPos])
-        {
-            audioStreams[audioStreamArrayPos].UnloadAudioData();
-            GameObject.Destroy(audioStreams[audioStreamArrayPos]);
-        }
-#endif
-        
+        int audioStreamArrayPos = (int)audio;
+
         if (filepath != string.Empty && File.Exists(filepath))
         {
 #if TIMING_DEBUG
@@ -629,7 +386,6 @@ public class Song {
             // Record the filepath
             audioLocations[audioStreamArrayPos] = Path.GetFullPath(filepath);
             ++audioLoads;
-#if BASS_AUDIO
                    
             System.Threading.Thread streamCreateFileThread = new System.Threading.Thread(() =>
             {
@@ -648,7 +404,6 @@ public class Song {
                 yield return null;
 
             --audioLoads;
-#endif
 #if TIMING_DEBUG
             Debug.Log("Audio load time: " + (Time.realtimeSinceStartup - time));
 #endif
@@ -657,7 +412,7 @@ public class Song {
         else
         {
             if (filepath != string.Empty)
-                Debug.LogError("Unable to locate audio file");
+                Debug.LogError("Unable to locate audio file: " + filepath);
         }
 
         GameObject.Destroy(coroutine);
@@ -891,7 +646,7 @@ public class Song {
         This is for debugging only you moron
 #endif
 #else
-        if (!IsSaving)
+        if (!isSaving)
         {
             Song songCopy = new Song(this);
 
@@ -992,14 +747,84 @@ public class Song {
         return (targetResoltion / resolution);
     }
 
+    public SampleData GetSampleData(AudioInstrument audio)
+    {
+        return audioSampleData[(int)audio];
+    }
+
+    public SampleData[] GetSampleData()
+    {
+        return audioSampleData;
+    }
+
+    public int GetBassAudioStream(AudioInstrument audio)
+    {
+        return bassAudioStreams[(int)audio];
+    }
+
+    public void SetBassAudioStream(AudioInstrument audio, int value)
+    {
+        int arrayPos = (int)audio;
+        if (bassAudioStreams[arrayPos] != 0)
+        {
+            if (Bass.BASS_StreamFree(bassAudioStreams[arrayPos]))
+                Debug.Log("Song audio stream successfully freed");
+            else
+                Debug.LogError("Error while attempting to free song audio stream");
+        }
+
+        bassAudioStreams[arrayPos] = value;
+    }
+
+    public string GetAudioName(AudioInstrument audio)
+    {
+        return Path.GetFileName(audioLocations[(int)audio]);
+    }
+
+    public string GetAudioLocation(AudioInstrument audio)
+    {
+        return audioLocations[(int)audio];
+    }
+
+    public void SetAudioLocation(AudioInstrument audio, string path)
+    {
+        if (File.Exists(path))
+            audioLocations[(int)audio] = Path.GetFullPath(path);
+    }
+
+    public bool GetAudioIsLoaded(AudioInstrument audio)
+    {
+        return GetBassAudioStream(audio) != 0;
+    }
+
     public enum Difficulty
     {
-        Expert = 0, Hard = 1, Medium = 2, Easy = 3
+        Expert = 0,
+        Hard = 1,
+        Medium = 2,
+        Easy = 3
     }
 
     public enum Instrument
     {
-        Guitar = 0, GuitarCoop = 1, Bass = 2, Rhythm = 3, Keys = 4, Drums = 5, GHLiveGuitar = 6, GHLiveBass = 7, Unrecognised = 99,
+        Guitar = 0,
+        GuitarCoop = 1,
+        Bass = 2,
+        Rhythm = 3,
+        Keys = 4,
+        Drums = 5,
+        GHLiveGuitar = 6,
+        GHLiveBass = 7,
+        Unrecognised = 99,
+    }
+
+    public enum AudioInstrument
+    {
+        Song = 0,
+        Guitar = 1,
+        Bass = 2,
+        Rhythm = 3,
+        Drum = 4
     }
 }
 

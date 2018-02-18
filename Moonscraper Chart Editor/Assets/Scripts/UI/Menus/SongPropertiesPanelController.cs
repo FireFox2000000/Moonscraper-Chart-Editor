@@ -138,10 +138,10 @@ public class SongPropertiesPanelController : DisplayMenu {
     void setAudioTextLabels()
     {
         Song song = editor.currentSong;
-        if (song.songAudioLoaded)
+        if (song.GetAudioIsLoaded(Song.AudioInstrument.Song))
         {
             musicStream.color = Color.white;
-            musicStream.text = song.musicSongName;
+            musicStream.text = song.GetAudioName(Song.AudioInstrument.Song);
             ClipText(musicStream);
         }
         else
@@ -150,10 +150,10 @@ public class SongPropertiesPanelController : DisplayMenu {
             musicStream.text = "No audio";
         }
 
-        if (song.guitarAudioLoaded)
+        if (song.GetAudioIsLoaded(Song.AudioInstrument.Guitar))
         {
             guitarStream.color = Color.white;
-            guitarStream.text = song.guitarSongName;
+            guitarStream.text = song.GetAudioName(Song.AudioInstrument.Guitar);
             ClipText(guitarStream);
         }
         else
@@ -162,10 +162,10 @@ public class SongPropertiesPanelController : DisplayMenu {
             guitarStream.text = "No audio";
         }
 
-        if (song.bassAudioLoaded)
+        if (song.GetAudioIsLoaded(Song.AudioInstrument.Bass))
         {
             bassStream.color = Color.white;
-            bassStream.text = song.bassSongName;
+            bassStream.text = song.GetAudioName(Song.AudioInstrument.Bass);
             ClipText(bassStream);
         }
         else
@@ -174,10 +174,10 @@ public class SongPropertiesPanelController : DisplayMenu {
             bassStream.text = "No audio";
         }
 
-        if (song.rhythmAudioLoaded)
+        if (song.GetAudioIsLoaded(Song.AudioInstrument.Rhythm))
         {
             rhythmStream.color = Color.white;
-            rhythmStream.text = song.rhythmSongName;
+            rhythmStream.text = song.GetAudioName(Song.AudioInstrument.Rhythm);
             ClipText(rhythmStream);
         }
         else
@@ -186,10 +186,10 @@ public class SongPropertiesPanelController : DisplayMenu {
             rhythmStream.text = "No audio";
         }
 
-        if (song.drumAudioLoaded)
+        if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum))
         {
             drumStream.color = Color.white;
-            drumStream.text = song.drumSongName;
+            drumStream.text = song.GetAudioName(Song.AudioInstrument.Drum);
             ClipText(drumStream);
         }
         else
@@ -253,7 +253,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void ClearMusicStream()
     {
-        clearAudioStream(Song.MUSIC_STREAM_ARRAY_POS);
+        clearAudioStream(Song.AudioInstrument.Song);
     }
 
     public void LoadGuitarStream()
@@ -272,7 +272,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void ClearGuitarStream()
     {
-        clearAudioStream(Song.GUITAR_STREAM_ARRAY_POS);
+        clearAudioStream(Song.AudioInstrument.Guitar);
     }
 
     public void LoadBassStream()
@@ -291,7 +291,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void ClearBassStream()
     {
-        clearAudioStream(Song.BASS_STREAM_ARRAY_POS);
+        clearAudioStream(Song.AudioInstrument.Bass);
     }
 
     public void LoadRhythmStream()
@@ -310,7 +310,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void ClearRhythmStream()
     {
-        clearAudioStream(Song.RHYTHM_STREAM_ARRAY_POS);
+        clearAudioStream(Song.AudioInstrument.Rhythm);
     }
 
     public void LoadDrumStream()
@@ -329,41 +329,13 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void ClearDrumStream()
     {
-        clearAudioStream(Song.DRUM_STREAM_ARRAY_POS);
+        clearAudioStream(Song.AudioInstrument.Drum);
     }
 
-    void clearAudioStream(int songAudioIndex)
+    void clearAudioStream(Song.AudioInstrument audio)
     {
-        switch (songAudioIndex)
-        {
-            case (Song.MUSIC_STREAM_ARRAY_POS):
-                editor.currentSong.musicSample.Free();
-                editor.currentSong.bassMusicStream = 0;
-                break;
-
-            case (Song.GUITAR_STREAM_ARRAY_POS):
-                editor.currentSong.guitarSample.Free();
-                editor.currentSong.bassGuitarStream = 0;
-                break;
-
-            case (Song.BASS_STREAM_ARRAY_POS):
-                editor.currentSong.bassSample.Free();
-                editor.currentSong.bassBassStream = 0;
-                break;
-
-            case (Song.RHYTHM_STREAM_ARRAY_POS):
-                editor.currentSong.rhythmSample.Free();
-                editor.currentSong.bassRhythmStream = 0;
-                break;
-
-            case (Song.DRUM_STREAM_ARRAY_POS):
-                editor.currentSong.drumSample.Free();
-                editor.currentSong.bassDrumStream = 0;
-                break;
-
-            default:
-                break;
-        }
+        editor.currentSong.GetSampleData(audio).Free();
+        editor.currentSong.SetBassAudioStream(audio, 0);
 
         setAudioTextLabels();
     }
@@ -375,7 +347,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         loadingScreen.loadingInformation.text = "Loading audio";
         loadingScreen.FadeIn();
 
-        while (editor.currentSong.IsAudioLoading)
+        while (editor.currentSong.isAudioLoading)
             yield return null;
 
         setAudioTextLabels();

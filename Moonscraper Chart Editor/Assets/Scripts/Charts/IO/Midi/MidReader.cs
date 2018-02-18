@@ -13,10 +13,15 @@ public static class MidReader {
     {
         Song song = new Song();
         string directory = System.IO.Path.GetDirectoryName(path);
-        song.musicSongName = directory + "\\song.ogg";
-        song.guitarSongName = directory + "\\guitar.ogg";
-        song.rhythmSongName = directory + "\\rhythm.ogg";
-        song.drumSongName = directory + "\\drums.ogg";
+
+        foreach(Song.AudioInstrument audio in Enum.GetValues(typeof(Song.AudioInstrument)))
+        {
+            string audioFilepath = directory + "\\" + audio.ToString().ToLower() + ".ogg";
+            Debug.Log(audioFilepath);
+            song.SetAudioLocation(audio, audioFilepath);
+        }
+
+        //song.SetAudioLocation(Song.AudioInstrument.Song, directory + "\\song.ogg");
 
         MidiFile midi;
 

@@ -15,7 +15,7 @@ public class ChartWriter {
         this.path = path;
     }
 
-    delegate string GetAudioStreamSaveString(int arrayIndex);
+    delegate string GetAudioStreamSaveString(Song.AudioInstrument audio);
     public void Write(Song song, ExportOptions exportOptions, out string errorList)
     {
         song.UpdateCache();
@@ -30,22 +30,24 @@ public class ChartWriter {
             string rhythmString = string.Empty;
             string drumString = string.Empty;
 
-            GetAudioStreamSaveString GetSaveAudioString = arrayIndex => {
+            GetAudioStreamSaveString GetSaveAudioString = audio => {
                 string audioString;
+                int arrayIndex = (int)audio;
+                string audioLocation = song.GetAudioLocation(audio);
 
-                if (song.songAudioLoaded && Path.GetDirectoryName(song.audioLocations[arrayIndex]).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))
-                    audioString = Path.GetFileName(song.audioLocations[arrayIndex]);
+                if (song.GetAudioIsLoaded(audio) && Path.GetDirectoryName(audioLocation).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))
+                    audioString = Path.GetFileName(audioLocation);
                 else
-                    audioString = song.audioLocations[arrayIndex];
+                    audioString = audioLocation;
 
                 return audioString;
             };
 
-            musicString = GetSaveAudioString(Song.MUSIC_STREAM_ARRAY_POS);
-            guitarString = GetSaveAudioString(Song.GUITAR_STREAM_ARRAY_POS);
-            bassString = GetSaveAudioString(Song.BASS_STREAM_ARRAY_POS);
-            rhythmString = GetSaveAudioString(Song.RHYTHM_STREAM_ARRAY_POS);
-            drumString = GetSaveAudioString(Song.DRUM_STREAM_ARRAY_POS);
+            musicString = GetSaveAudioString(Song.AudioInstrument.Song);
+            guitarString = GetSaveAudioString(Song.AudioInstrument.Guitar);
+            bassString = GetSaveAudioString(Song.AudioInstrument.Bass);
+            rhythmString = GetSaveAudioString(Song.AudioInstrument.Rhythm);
+            drumString = GetSaveAudioString(Song.AudioInstrument.Drum);
 
             // Song properties
             Debug.Log("Writing song properties");
@@ -53,19 +55,19 @@ public class ChartWriter {
             saveString += GetPropertiesStringWithoutAudio(song, exportOptions);
 
             // Song audio
-            if (song.songAudioLoaded || (musicString != null && musicString != string.Empty))
+            if (song.GetAudioIsLoaded(Song.AudioInstrument.Song) || (musicString != null && musicString != string.Empty))
                 saveString += Globals.TABSPACE + "MusicStream = \"" + musicString + "\"" + Globals.LINE_ENDING;
 
-            if (song.guitarAudioLoaded || (guitarString != null && guitarString != string.Empty))
+            if (song.GetAudioIsLoaded(Song.AudioInstrument.Guitar) || (guitarString != null && guitarString != string.Empty))
                 saveString += Globals.TABSPACE + "GuitarStream = \"" + guitarString + "\"" + Globals.LINE_ENDING;
 
-            if (song.bassAudioLoaded || (bassString != null && bassString != string.Empty))
+            if (song.GetAudioIsLoaded(Song.AudioInstrument.Bass) || (bassString != null && bassString != string.Empty))
                 saveString += Globals.TABSPACE + "BassStream = \"" + bassString + "\"" + Globals.LINE_ENDING;
 
-            if (song.rhythmAudioLoaded || (rhythmString != null && rhythmString != string.Empty))
+            if (song.GetAudioIsLoaded(Song.AudioInstrument.Rhythm) || (rhythmString != null && rhythmString != string.Empty))
                 saveString += Globals.TABSPACE + "RhythmStream = \"" + rhythmString + "\"" + Globals.LINE_ENDING;
 
-            if (song.drumAudioLoaded || (drumString != null && drumString != string.Empty))
+            if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum) || (drumString != null && drumString != string.Empty))
                 saveString += Globals.TABSPACE + "DrumStream = \"" + drumString + "\"" + Globals.LINE_ENDING;
 
             saveString += "}" + Globals.LINE_ENDING;

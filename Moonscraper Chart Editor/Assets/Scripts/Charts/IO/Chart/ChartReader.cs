@@ -332,23 +332,23 @@ public static class ChartReader
                 // MusicStream = "ENDLESS REBIRTH.ogg"
                 else if (musicStreamRegex.IsMatch(line))
                 {
-                    AudioLoadFromChart(song, Song.MUSIC_STREAM_ARRAY_POS, line, audioDirectory);
+                    AudioLoadFromChart(song, Song.AudioInstrument.Song, line, audioDirectory);
                 }
                 else if (guitarStreamRegex.IsMatch(line))
                 {
-                    AudioLoadFromChart(song, Song.GUITAR_STREAM_ARRAY_POS, line, audioDirectory);
+                    AudioLoadFromChart(song, Song.AudioInstrument.Guitar, line, audioDirectory);
                 }
                 else if (bassStreamRegex.IsMatch(line))
                 {
-                    AudioLoadFromChart(song, Song.BASS_STREAM_ARRAY_POS, line, audioDirectory);
+                    AudioLoadFromChart(song, Song.AudioInstrument.Bass, line, audioDirectory);
                 }
                 else if (rhythmStreamRegex.IsMatch(line))
                 {
-                    AudioLoadFromChart(song, Song.RHYTHM_STREAM_ARRAY_POS, line, audioDirectory);
+                    AudioLoadFromChart(song, Song.AudioInstrument.Rhythm, line, audioDirectory);
                 }
                 else if (drumStreamRegex.IsMatch(line))
                 {
-                    AudioLoadFromChart(song, Song.DRUM_STREAM_ARRAY_POS, line, audioDirectory);
+                    AudioLoadFromChart(song, Song.AudioInstrument.Drum, line, audioDirectory);
                 }
             }
 
@@ -362,7 +362,7 @@ public static class ChartReader
         }
     }
 
-    static void AudioLoadFromChart(Song song, int streamArrayPos, string line, string audioDirectory)
+    static void AudioLoadFromChart(Song song, Song.AudioInstrument streamAudio, string line, string audioDirectory)
     {
         string audioFilepath = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
 
@@ -371,7 +371,7 @@ public static class ChartReader
             audioFilepath = audioDirectory + "\\" + audioFilepath;
 
         if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions))
-            song.audioLocations[streamArrayPos] = Path.GetFullPath(audioFilepath);
+            song.SetAudioLocation(streamAudio, Path.GetFullPath(audioFilepath));
     }
 
     struct Anchor

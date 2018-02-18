@@ -24,23 +24,13 @@ public class WaveformDraw : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        switch (waveformSelect.value)
+        currentSample = null;
+        foreach (Song.AudioInstrument audio in System.Enum.GetValues(typeof(Song.AudioInstrument)))
         {
-            case (0):
-                currentSample = editor.currentSong.musicSample;
-                break;
-            case (1):
-                currentSample = editor.currentSong.guitarSample;
-                break;
-            case (2):
-                currentSample = editor.currentSong.rhythmSample;
-                break;
-            case (3):
-                currentSample = editor.currentSong.drumSample;
-                break;
-            default:
-                currentSample = null;
-                break;
+            if (waveformSelect.value == (int)audio)
+            {
+                currentSample = editor.currentSong.GetSampleData(audio);
+            }
         }
 
         waveformSelect.gameObject.SetActive(Globals.viewMode == Globals.ViewMode.Song);

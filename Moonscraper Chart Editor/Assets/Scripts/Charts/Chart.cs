@@ -11,6 +11,8 @@ using System.Linq;
 public class Chart  {
     Song _song;
     List<ChartObject> _chartObjects;
+    int _note_count;
+    public string name = string.Empty;
 
     /// <summary>
     /// Read only list of notes.
@@ -34,13 +36,10 @@ public class Chart  {
     /// </summary>
     public ChartObject[] chartObjects { get { return _chartObjects.ToArray(); } }
 
-    int _note_count;
     /// <summary>
     /// The total amount of notes in the chart, counting chord (notes sharing the same tick position) as a single note.
     /// </summary>
     public int note_count { get { return _note_count; } }
-
-    public string name = string.Empty;
 
     /// <summary>
     /// Creates a new chart object.
