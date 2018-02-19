@@ -45,13 +45,10 @@ public class ClipboardObjectController : Snapable {
 
         transform.position = new Vector3(transform.position.x, editor.currentSong.ChartPositionToWorldYPosition(pastePos), transform.position.z);
 
-        if (Globals.modifierInputActive)
+        if (ShortcutMap.GetInputDown(Shortcut.Paste))
         {
-            if (Input.GetKeyDown(KeyCode.V))
-            {
-                Paste(pastePos);
-                groupSelectTool.reset();
-            }
+            Paste(pastePos);
+            groupSelectTool.reset();
         }
     }
 

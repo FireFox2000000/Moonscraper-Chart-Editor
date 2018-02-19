@@ -60,14 +60,10 @@ public class DisplayProperties : MonoBehaviour {
             noteCount.text = "Notes: " + editor.currentChart.note_count.ToString();
 
         // Shortcuts
-        if (!Globals.modifierInputActive && !Services.IsTyping)
-        {
-            if (Input.GetButtonDown("ToggleClap"))
-                clapToggle.isOn = !clapToggle.isOn;
-
-            if (Input.GetButtonDown("Toggle Metronome"))
-                metronomeToggle.isOn = !metronomeToggle.isOn;
-        }
+        if (ShortcutMap.GetInputDown(Shortcut.ToggleClap))
+            clapToggle.isOn = !clapToggle.isOn;
+        else if (ShortcutMap.GetInputDown(Shortcut.ToggleMetronome))
+            metronomeToggle.isOn = !metronomeToggle.isOn;
 
         prevNoteCount = editor.currentChart.note_count;
         prevSongName = editor.currentSong.name;

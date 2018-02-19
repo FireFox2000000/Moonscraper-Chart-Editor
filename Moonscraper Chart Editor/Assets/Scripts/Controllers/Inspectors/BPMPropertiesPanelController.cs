@@ -47,7 +47,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     void Controls()
     {
-        if (Input.GetKeyDown(KeyCode.A) && anchorToggle.IsInteractable())
+        if (ShortcutMap.GetInputDown(Shortcut.ToggleBpmAnchor) && anchorToggle.IsInteractable())
             anchorToggle.isOn = !anchorToggle.isOn;
     }
 
@@ -76,16 +76,16 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         else
             autoIncrementTimer = 0;
 
-        if (!(Input.GetKey(KeyCode.Equals) && Input.GetKey(KeyCode.Minus)))
+        if (!(ShortcutMap.GetInput(Shortcut.BpmIncrease) && ShortcutMap.GetInput(Shortcut.BpmDecrease)))    // Can't hit both at the same time
         {
             if (!Services.IsTyping && !Globals.modifierInputActive)
             {
-                if (Input.GetKeyDown(KeyCode.Minus) && decrement.interactable)
+                if (ShortcutMap.GetInputDown(Shortcut.BpmDecrease) && decrement.interactable)
                 {
                     lastAutoVal = currentBPM.value;
                     decrement.onClick.Invoke();
                 }
-                else if (Input.GetKeyDown(KeyCode.Equals) && increment.interactable)
+                else if (ShortcutMap.GetInputDown(Shortcut.BpmIncrease) && increment.interactable)
                 {
                     lastAutoVal = currentBPM.value;
                     increment.onClick.Invoke();
@@ -94,16 +94,16 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 // Adjust to time rather than framerate
                 if (incrementalTimer > AUTO_INCREMENT_WAIT_TIME && autoIncrementTimer > AUTO_INCREMENT_RATE)
                 {
-                    if (Input.GetKey(KeyCode.Minus) && decrement.interactable)
+                    if (ShortcutMap.GetInput(Shortcut.BpmDecrease) && decrement.interactable)
                         decrement.onClick.Invoke();
-                    else if (Input.GetKey(KeyCode.Equals) && increment.interactable)
+                    else if (ShortcutMap.GetInput(Shortcut.BpmIncrease) && increment.interactable)
                         increment.onClick.Invoke();
 
                     autoIncrementTimer = 0;
                 }
 
                 // 
-                if (Input.GetKey(KeyCode.Equals) || Input.GetKey(KeyCode.Minus))
+                if (ShortcutMap.GetInput(Shortcut.BpmIncrease) || ShortcutMap.GetInput(Shortcut.BpmDecrease))
                 {
                     incrementalTimer += Time.deltaTime;
                     ChartEditor.isDirty = true;
@@ -113,7 +113,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 incrementalTimer = 0;
 
             // Handle key release, add in action history
-            if ((Input.GetKeyUp(KeyCode.Equals) || Input.GetKeyUp(KeyCode.Minus)) && lastAutoVal != null)
+            if ((ShortcutMap.GetInputUp(Shortcut.BpmIncrease) || ShortcutMap.GetInputUp(Shortcut.BpmDecrease)) && lastAutoVal != null)
             {
                 incrementalTimer = 0;
                 editor.actionHistory.Insert(new ActionHistory.Modify(new BPM(currentSongObject.position, (uint)lastAutoVal), currentSongObject));
@@ -129,8 +129,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             }
         }
 
-        if (!Services.IsTyping && !Globals.modifierInputActive && !Globals.secondaryInputActive)
-            Controls();
+        Controls();
 
         prevBPM = currentBPM;
     }

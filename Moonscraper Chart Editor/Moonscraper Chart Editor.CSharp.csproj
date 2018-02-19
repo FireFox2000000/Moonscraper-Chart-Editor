@@ -199,6 +199,7 @@
     <Compile Include="Assets\Scripts\PrefabGlobals.cs" />
     <Compile Include="Assets\Scripts\Services.cs" />
     <Compile Include="Assets\Scripts\Settings.cs" />
+    <Compile Include="Assets\Scripts\ShortcutMap.cs" />
     <Compile Include="Assets\Scripts\SongValidateGH3.cs" />
     <Compile Include="Assets\Scripts\Step.cs" />
     <Compile Include="Assets\Scripts\TapBPMCalculator.cs" />

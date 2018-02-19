@@ -44,45 +44,43 @@ public class ToolPanelController : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if (Input.GetButtonDown("Toggle View") && (Globals.applicationMode == Globals.ApplicationMode.Editor || Globals.applicationMode == Globals.ApplicationMode.Playing)
-            && !Services.IsTyping)
+        if (ShortcutMap.GetInputDown(Shortcut.ToggleViewMode) && (Globals.applicationMode == Globals.ApplicationMode.Editor || Globals.applicationMode == Globals.ApplicationMode.Playing))
         {
             viewModeToggle.isOn = !viewModeToggle.isOn;
         }
 
         keysModePanel.gameObject.SetActive(Toolpane.currentTool == Toolpane.Tools.Note && GameSettings.keysModeEnabled);
 
-        if (!Services.IsTyping && !Globals.modifierInputActive)
-            Shortcuts();
+        Shortcuts();
     }
 
     void Shortcuts()
     {
-        if (Input.GetKeyDown(KeyCode.J))
+        if (ShortcutMap.GetInputDown(Shortcut.ToolSelectCursor))
             cursorSelect.onClick.Invoke();
 
-        else if (Input.GetKeyDown(KeyCode.K))
+        else if (ShortcutMap.GetInputDown(Shortcut.ToolSelectEraser))
             eraserSelect.onClick.Invoke();
 
        // else if (Input.GetKeyDown(KeyCode.L))
            // groupSelect.onClick.Invoke();
 
-        else if (Input.GetKeyDown(KeyCode.Y))
+        else if (ShortcutMap.GetInputDown(Shortcut.ToolSelectNote))
             noteSelect.onClick.Invoke();
 
-        else if (Input.GetKeyDown(KeyCode.U))
+        else if (ShortcutMap.GetInputDown(Shortcut.ToolSelectStarpower))
             starpowerSelect.onClick.Invoke();
 
-        else if (Input.GetKeyDown(KeyCode.I))
+        else if (ShortcutMap.GetInputDown(Shortcut.ToolSelectBpm))
             bpmSelect.onClick.Invoke();
 
-        else if (Input.GetKeyDown(KeyCode.O))
+        else if (ShortcutMap.GetInputDown(Shortcut.ToolSelectTimeSignature))
             timeSignatureSelect.onClick.Invoke();
 
-        else if (Input.GetKeyDown(KeyCode.P))
+        else if (ShortcutMap.GetInputDown(Shortcut.ToolSelectSection))
             sectionSelect.onClick.Invoke();
 
-        else if (Input.GetKeyDown(KeyCode.L))
+        else if (ShortcutMap.GetInputDown(Shortcut.ToolSelectEvent))
             eventSelect.onClick.Invoke();
     }
 

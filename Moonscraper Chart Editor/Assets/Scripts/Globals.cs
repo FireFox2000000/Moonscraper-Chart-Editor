@@ -174,9 +174,7 @@ public class Globals : MonoBehaviour {
     void Update()
     {
         // Disable controls while user is in an input field
-        if (!Services.IsTyping)
-            Controls();
-        ModifierControls();
+        Shortcuts();
 
         snapLockWarning.gameObject.SetActive((GameSettings.keysModeEnabled && Toolpane.currentTool != Toolpane.Tools.Cursor && Toolpane.currentTool != Toolpane.Tools.Eraser));
 
@@ -190,92 +188,27 @@ public class Globals : MonoBehaviour {
     public static bool modifierInputActive { get { return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand); } }
     public static bool secondaryInputActive { get { return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift); } }
 
-    void ModifierControls()
+    void Shortcuts()
     {
-        if (modifierInputActive)
+        if (ShortcutMap.GetInputDown(Shortcut.PlayPause))
         {
-            if (Input.GetKeyDown("s"))
-            {
-                if (secondaryInputActive)
-                    editor.SaveAs();
-                else
-                    editor._Save();
-            }
-            else if (Input.GetKeyDown("o"))
-                editor.Load();
-            else if (Input.GetKeyDown("n"))
-                editor.New();
-            else if (Input.GetKeyDown("z") && !Input.GetMouseButton(0) && !Input.GetMouseButton(1))
-            {
-                EventSystem.current.SetSelectedGameObject(null);
-                bool success;
-
-                if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-                    success = editor.actionHistory.Redo(editor);
-                else
-                    success = editor.actionHistory.Undo(editor);
-
-                if (success)
-                {
-                    groupSelect.reset();
-                    TimelineHandler.externalUpdate = true;
-                }
-            }
-            else if (Input.GetKeyDown("y") && !Input.GetMouseButton(0) && !Input.GetMouseButton(1))
-            {
-                if (editor.actionHistory.Redo(editor))
-                {
-                    groupSelect.reset();
-                    TimelineHandler.externalUpdate = true;
-                }
-            }
-            else if (Input.GetKeyDown("a"))
-            {
-                editor.currentSelectedObject = null;
-
-                if (viewMode == ViewMode.Chart)
-                {
-                    editor.currentSelectedObjects = editor.currentChart.chartObjects;
-                }
-                else
-                {
-                    editor.currentSelectedObjects = editor.currentSong.syncTrack;
-                    editor.AddToSelectedObjects(editor.currentSong.eventsAndSections);
-                }
-            }
-            else if (editor.currentSelectedObjects.Length > 0)
-            {
-                if (Input.GetKeyDown(KeyCode.X))
-                    editor.Cut();
-                else if (Input.GetKeyDown(KeyCode.C))
-                    editor.Copy();
-            }
+            if (applicationMode == ApplicationMode.Editor)
+                editor.Play();
+            else if (applicationMode == ApplicationMode.Playing)
+                editor.Stop();
         }
-    }
 
-    void Controls()
-    {
+        else if (ShortcutMap.GetInputDown(Shortcut.StepIncrease))
+            GameSettings.snappingStep.Increment();
+
+        else if (ShortcutMap.GetInputDown(Shortcut.StepDecrease))
+            GameSettings.snappingStep.Decrement();
+
+        else if (ShortcutMap.GetInputDown(Shortcut.Delete) && editor.currentSelectedObjects.Length > 0)
+            editor.Delete();
+
         if (!modifierInputActive)
         {
-            if (Input.GetButtonDown("PlayPause"))
-            {
-                if (applicationMode == ApplicationMode.Editor)
-                    editor.Play();
-                else if (applicationMode == ApplicationMode.Playing)
-                    editor.Stop();
-            }
-
-            if (Input.GetButtonDown("IncreaseStep"))
-                GameSettings.snappingStep.Increment();
-            else if (Input.GetButtonDown("DecreaseStep"))
-                GameSettings.snappingStep.Decrement();
-
-            // Generic delete key
-            if (Input.GetButtonDown("Delete") && editor.currentSelectedObjects.Length > 0)// && Toolpane.currentTool == Toolpane.Tools.Cursor)
-            {
-                editor.Delete();
-            }
-
 #if true
             if (GameplayManager.gamepad != null && GameplayManager.previousGamepad != null &&
                 ((XInputDotNetPure.GamePadState)GameplayManager.gamepad).Buttons.Start == XInputDotNetPure.ButtonState.Pressed &&
@@ -289,6 +222,62 @@ public class Globals : MonoBehaviour {
                 else
                     editor.Stop();
             }
+        }
+
+        if (ShortcutMap.GetInputDown(Shortcut.FileSave))
+            editor._Save();
+
+        else if (ShortcutMap.GetInputDown(Shortcut.FileSaveAs))
+            editor.SaveAs();
+
+        else if (ShortcutMap.GetInputDown(Shortcut.FileLoad))
+            editor.Load();
+
+        else if (ShortcutMap.GetInputDown(Shortcut.FileNew))
+            editor.New();
+
+        else if (ShortcutMap.GetInputDown(Shortcut.SelectAll))
+        {
+            editor.currentSelectedObject = null;
+
+            if (viewMode == ViewMode.Chart)
+            {
+                editor.currentSelectedObjects = editor.currentChart.chartObjects;
+            }
+            else
+            {
+                editor.currentSelectedObjects = editor.currentSong.syncTrack;
+                editor.AddToSelectedObjects(editor.currentSong.eventsAndSections);
+            }
+        }
+
+        if (!Input.GetMouseButton(0) && !Input.GetMouseButton(1))
+        {
+            bool success = false;
+
+            if (ShortcutMap.GetInputDown(Shortcut.Undo))
+            {
+                success = editor.actionHistory.Undo(editor);
+            }
+            else if (ShortcutMap.GetInputDown(Shortcut.Redo))
+            {
+                success = editor.actionHistory.Redo(editor);
+            }
+
+            if (success)
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+                groupSelect.reset();
+                TimelineHandler.externalUpdate = true;
+            }
+        }
+
+        if (editor.currentSelectedObjects.Length > 0)
+        {
+            if (ShortcutMap.GetInputDown(Shortcut.Cut))
+                editor.Cut();
+            else if (ShortcutMap.GetInputDown(Shortcut.Copy))
+                editor.Copy();
         }
     }
 

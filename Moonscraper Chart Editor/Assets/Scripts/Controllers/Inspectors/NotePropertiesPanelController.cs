@@ -107,15 +107,14 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             sustainText.text = "Length: " + currentNote.sustain_length.ToString();
         }
 
-        if (!Services.IsTyping && !Globals.modifierInputActive)
-            Controls();
+        Controls();
 
         prevNote = currentNote;
     }
 
     void Controls()
     {
-        if (Input.GetButtonDown("ToggleTap") && tapToggle.interactable)
+        if (ShortcutMap.GetInputDown(Shortcut.ToggleNoteTap) && tapToggle.interactable)
         {
             if (tapToggle.isOn)
                 tapToggle.isOn = false;
@@ -123,7 +122,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
                 tapToggle.isOn = true;
         }
 
-        if (Input.GetButtonDown("ToggleForced") && forcedToggle.interactable)
+        if (ShortcutMap.GetInputDown(Shortcut.ToggleNoteForced) && forcedToggle.interactable)
         {
             if (forcedToggle.isOn)
                 forcedToggle.isOn = false;

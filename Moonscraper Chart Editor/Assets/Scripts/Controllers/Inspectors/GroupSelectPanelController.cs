@@ -38,13 +38,13 @@ public class GroupSelectPanelController : MonoBehaviour
 
     void Shortcuts()
     {
-        if (Input.GetKeyDown(KeyCode.X))
+        if (ShortcutMap.GetInputDown(Shortcut.NoteSetNatural))
             setNoteNatural.onClick.Invoke();
-        else if (Input.GetKeyDown(KeyCode.S))
+        else if (ShortcutMap.GetInputDown(Shortcut.NoteSetStrum))
             setNoteStrum.onClick.Invoke();
-        else if (Input.GetKeyDown(KeyCode.H))
+        else if (ShortcutMap.GetInputDown(Shortcut.NoteSetHopo))
             setNoteHopo.onClick.Invoke();
-        else if (Input.GetKeyDown(KeyCode.T))
+        else if (ShortcutMap.GetInputDown(Shortcut.NoteSetTap))
             setNoteTap.onClick.Invoke();
     }
 

@@ -56,24 +56,11 @@ public class MenuBar : MonoBehaviour {
 
     void Controls()
     {
-        if (Globals.modifierInputActive)
-        {
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                ToggleExtendedSustains();
-            }
-        }
-        else if (Globals.secondaryInputActive)
-        {
+        if (ShortcutMap.GetInputDown(Shortcut.ToggleExtendedSustains))
+            ToggleExtendedSustains();
 
-        }
-        else
-        {
-            if (Input.GetKeyDown(KeyCode.BackQuote))
-            {
-                mouseModeToggle.isOn = !mouseModeToggle.isOn;
-            }
-        }
+        else if (ShortcutMap.GetInputDown(Shortcut.ToggleMouseMode))
+            ToggleMouseLockMode();
     }
 
     public void ToggleMouseLockMode(bool value)
@@ -91,7 +78,7 @@ public class MenuBar : MonoBehaviour {
     public void ToggleExtendedSustains()
     {
         GameSettings.extendedSustainsEnabled = !GameSettings.extendedSustainsEnabled;
-        Debug.Log("Keys mode toggled " + GameSettings.extendedSustainsEnabled);
+        Debug.Log("Extended sustains toggled " + GameSettings.extendedSustainsEnabled);
     }
 
     public void SetInstrument(string value)

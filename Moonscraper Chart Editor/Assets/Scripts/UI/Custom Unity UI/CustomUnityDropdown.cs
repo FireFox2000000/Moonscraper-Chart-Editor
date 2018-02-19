@@ -13,6 +13,9 @@ namespace UnityEngine.UI
     {
         protected internal class DropdownItem : MonoBehaviour, IPointerEnterHandler, ICancelHandler
         {
+            private bool m_blockerActive = false;
+            public bool blockerActive { get { return m_blockerActive; } set { m_blockerActive = value; } }
+
             [SerializeField]
             private Text m_Text;
             [SerializeField]
@@ -385,7 +388,7 @@ namespace UnityEngine.UI
                     continue;
 
                 // Automatically set up a toggle state change listener
-                item.toggle.isOn = GameSettings.GetBoolSetting(item.settingsToggleKey); // value == i;
+                item.toggle.isOn = GameSettings.GetBoolSetting(item.settingsToggleKey);
                 item.toggle.onValueChanged.AddListener(x => OnSelectItem(item));
 
                 // Select current option
@@ -459,6 +462,21 @@ namespace UnityEngine.UI
             itemTemplate.gameObject.SetActive(false);
 
             m_Blocker = CreateBlocker(rootCanvas);
+        }
+
+        void Update()
+        {
+            foreach (DropdownItem item in m_Items)
+            {
+                if (item.settingsToggleKey != string.Empty)
+                {
+                    item.blockerActive = true;
+                    {
+                        item.toggle.isOn = GameSettings.GetBoolSetting(item.settingsToggleKey);
+                    }
+                    item.blockerActive = false;
+                }
+            }
         }
 
         protected virtual GameObject CreateBlocker(Canvas rootCanvas)
@@ -611,10 +629,10 @@ namespace UnityEngine.UI
         // Change the value and hide the dropdown.
         private void OnSelectItem(DropdownItem item)
         {
-            Toggle toggle = item.toggle;
+            if (item.blockerActive)
+                return;
 
-            //if (!toggle.isOn)
-                //toggle.isOn = true;
+            Toggle toggle = item.toggle;
 
             int selectedIndex = -1;
             Transform tr = toggle.transform;
