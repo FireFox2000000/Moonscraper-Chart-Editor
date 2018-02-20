@@ -237,6 +237,7 @@
     <Compile Include="Assets\Scripts\UI\CustomStandaloneInputModule.cs" />
     <Compile Include="Assets\Scripts\UI\DropDownHoverActivate.cs" />
     <Compile Include="Assets\Scripts\UI\DropDownMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\DropdownNotification.cs" />
     <Compile Include="Assets\Scripts\UI\DropshadowSizing.cs" />
     <Compile Include="Assets\Scripts\UI\DynamicTextScrollView.cs" />
     <Compile Include="Assets\Scripts\UI\FPSDisplay.cs" />
