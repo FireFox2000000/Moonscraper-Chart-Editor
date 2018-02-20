@@ -4,11 +4,17 @@ using UnityEngine;
 
 public enum Shortcut
 {
+    AddSongObject,
+
     BpmIncrease,
     BpmDecrease,
 
-    Copy,
-    Cut,
+    ChordSelect,
+
+    ClipboardCopy,
+    ClipboardCut,
+    ClipboardPaste,
+
     Delete, 
 
     FileLoad,
@@ -20,8 +26,7 @@ public enum Shortcut
     NoteSetStrum,
     NoteSetHopo,
     NoteSetTap,
-
-    Paste,
+    
     PlayPause,
     Redo,
 
@@ -38,6 +43,8 @@ public enum Shortcut
     ToggleNoteTap,
     ToggleViewMode, 
     
+    ToolNoteBurst,
+    ToolNoteHold,
     ToolSelectCursor,
     ToolSelectEraser,
     ToolSelectNote,
@@ -53,46 +60,51 @@ public enum Shortcut
 public static class ShortcutMap {
     static Dictionary<Shortcut, KeyCode[]> generalInputs = new Dictionary<Shortcut, KeyCode[]>
     {
-        { Shortcut.BpmIncrease ,                    new KeyCode[] { KeyCode.Equals,                     } },
-        { Shortcut.BpmDecrease ,                    new KeyCode[] { KeyCode.Minus,                      } },
+        { Shortcut.AddSongObject ,                  new KeyCode[] { KeyCode.Alpha1,                         } },
 
-        { Shortcut.StepDecrease ,                   new KeyCode[] { KeyCode.Q,      KeyCode.LeftArrow   } },
-        { Shortcut.Delete ,                         new KeyCode[] { KeyCode.Delete                      } },
-        { Shortcut.StepIncrease ,                   new KeyCode[] { KeyCode.W,      KeyCode.RightArrow  } },
-        { Shortcut.PlayPause ,                      new KeyCode[] { KeyCode.Space                       } },
+        { Shortcut.BpmIncrease ,                    new KeyCode[] { KeyCode.Equals,                         } },
+        { Shortcut.BpmDecrease ,                    new KeyCode[] { KeyCode.Minus,                          } },
 
-        { Shortcut.NoteSetNatural ,                 new KeyCode[] { KeyCode.X                           } },
-        { Shortcut.NoteSetStrum ,                   new KeyCode[] { KeyCode.S                           } },
-        { Shortcut.NoteSetHopo ,                    new KeyCode[] { KeyCode.H                           } },
-        { Shortcut.NoteSetTap ,                     new KeyCode[] { KeyCode.T                           } },
+        { Shortcut.Delete ,                         new KeyCode[] { KeyCode.Delete                          } },
+        { Shortcut.PlayPause ,                      new KeyCode[] { KeyCode.Space                           } },
 
-        { Shortcut.ToggleBpmAnchor ,                new KeyCode[] { KeyCode.A                           } },
-        { Shortcut.ToggleClap ,                     new KeyCode[] { KeyCode.N                           } },
-        { Shortcut.ToggleMetronome ,                new KeyCode[] { KeyCode.M                           } },
-        { Shortcut.ToggleMouseMode ,                new KeyCode[] { KeyCode.BackQuote                   } },
-        { Shortcut.ToggleNoteForced ,               new KeyCode[] { KeyCode.F                           } },
-        { Shortcut.ToggleNoteTap ,                  new KeyCode[] { KeyCode.T                           } },
-        { Shortcut.ToggleViewMode ,                 new KeyCode[] { KeyCode.G                           } },
+        { Shortcut.NoteSetNatural ,                 new KeyCode[] { KeyCode.X                               } },
+        { Shortcut.NoteSetStrum ,                   new KeyCode[] { KeyCode.S                               } },
+        { Shortcut.NoteSetHopo ,                    new KeyCode[] { KeyCode.H                               } },
+        { Shortcut.NoteSetTap ,                     new KeyCode[] { KeyCode.T                               } },
 
-        { Shortcut.ToolSelectCursor ,               new KeyCode[] { KeyCode.J                           } },
-        { Shortcut.ToolSelectEraser ,               new KeyCode[] { KeyCode.K                           } },
-        { Shortcut.ToolSelectNote ,                 new KeyCode[] { KeyCode.Y                           } },
-        { Shortcut.ToolSelectStarpower ,            new KeyCode[] { KeyCode.U                           } },
-        { Shortcut.ToolSelectBpm ,                  new KeyCode[] { KeyCode.I                           } },
-        { Shortcut.ToolSelectTimeSignature ,        new KeyCode[] { KeyCode.O                           } },
-        { Shortcut.ToolSelectSection ,              new KeyCode[] { KeyCode.P                           } },
-        { Shortcut.ToolSelectEvent ,                new KeyCode[] { KeyCode.L                           } },
+        { Shortcut.StepIncrease ,                   new KeyCode[] { KeyCode.W,          KeyCode.RightArrow  } },
+        { Shortcut.StepDecrease ,                   new KeyCode[] { KeyCode.Q,          KeyCode.LeftArrow   } },
+
+        { Shortcut.ToggleBpmAnchor ,                new KeyCode[] { KeyCode.A                               } },
+        { Shortcut.ToggleClap ,                     new KeyCode[] { KeyCode.N                               } },
+        { Shortcut.ToggleMetronome ,                new KeyCode[] { KeyCode.M                               } },
+        { Shortcut.ToggleMouseMode ,                new KeyCode[] { KeyCode.BackQuote                       } },
+        { Shortcut.ToggleNoteForced ,               new KeyCode[] { KeyCode.F                               } },
+        { Shortcut.ToggleNoteTap ,                  new KeyCode[] { KeyCode.T                               } },
+        { Shortcut.ToggleViewMode ,                 new KeyCode[] { KeyCode.G                               } },
+
+        { Shortcut.ToolNoteBurst ,                  new KeyCode[] { KeyCode.B                               } },
+        { Shortcut.ToolNoteHold ,                   new KeyCode[] { KeyCode.H                               } },
+        { Shortcut.ToolSelectCursor ,               new KeyCode[] { KeyCode.J                               } },
+        { Shortcut.ToolSelectEraser ,               new KeyCode[] { KeyCode.K                               } },
+        { Shortcut.ToolSelectNote ,                 new KeyCode[] { KeyCode.Y                               } },
+        { Shortcut.ToolSelectStarpower ,            new KeyCode[] { KeyCode.U                               } },
+        { Shortcut.ToolSelectBpm ,                  new KeyCode[] { KeyCode.I                               } },
+        { Shortcut.ToolSelectTimeSignature ,        new KeyCode[] { KeyCode.O                               } },
+        { Shortcut.ToolSelectSection ,              new KeyCode[] { KeyCode.P                               } },
+        { Shortcut.ToolSelectEvent ,                new KeyCode[] { KeyCode.L                               } },
     };
     static Dictionary<Shortcut, KeyCode[]> modifierInputs = new Dictionary<Shortcut, KeyCode[]>
     {
-        { Shortcut.Copy,                            new KeyCode[] { KeyCode.C } },
-        { Shortcut.Cut,                             new KeyCode[] { KeyCode.X } },
+        { Shortcut.ClipboardCopy,                   new KeyCode[] { KeyCode.C } },
+        { Shortcut.ClipboardCut,                    new KeyCode[] { KeyCode.X } },
+        { Shortcut.ClipboardPaste,                  new KeyCode[] { KeyCode.V } },
 
         { Shortcut.FileLoad,                        new KeyCode[] { KeyCode.O } },
         { Shortcut.FileNew,                         new KeyCode[] { KeyCode.N } },
         { Shortcut.FileSave,                        new KeyCode[] { KeyCode.S } },
 
-        { Shortcut.Paste,                           new KeyCode[] { KeyCode.V } },
         { Shortcut.Redo,                            new KeyCode[] { KeyCode.Y } },
         
         { Shortcut.SelectAll,                       new KeyCode[] { KeyCode.A } },
@@ -101,7 +113,7 @@ public static class ShortcutMap {
     };
     static Dictionary<Shortcut, KeyCode[]> secondaryInputs = new Dictionary<Shortcut, KeyCode[]>
     {
-
+        { Shortcut.ChordSelect ,                    new KeyCode[] { KeyCode.LeftShift,  KeyCode.RightShift, } },
     };
     static Dictionary<Shortcut, KeyCode[]> secondaryModifierInputs = new Dictionary<Shortcut, KeyCode[]>
     {

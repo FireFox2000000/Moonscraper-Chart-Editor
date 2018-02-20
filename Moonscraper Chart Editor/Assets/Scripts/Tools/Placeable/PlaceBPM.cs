@@ -29,7 +29,7 @@ public class PlaceBPM : PlaceSongObject {
                 AddObject();
             }
         }
-        else if (Input.GetButtonDown("Add Object"))
+        else if (ShortcutMap.GetInputDown(Shortcut.AddSongObject))
         {
             SongObject[] searchArray = editor.currentSong.syncTrack;
             int pos = SongObjectHelper.FindObjectPosition(bpm, searchArray);

@@ -88,7 +88,7 @@ public class NoteController : SongObjectController {
             // Regular clicking
             else if (!editor.IsSelected(songObject))
             {
-                if (Input.GetButton("ChordSelect"))
+                if (ShortcutMap.GetInput(Shortcut.ChordSelect))
                     editor.currentSelectedObjects = note.GetChord();
                 else
                     editor.currentSelectedObject = songObject;
@@ -103,7 +103,7 @@ public class NoteController : SongObjectController {
             Eraser.dragging)
             )
         {
-            if (Input.GetButton("ChordSelect"))
+            if (ShortcutMap.GetInput(Shortcut.ChordSelect))
             {
                 Note[] chordNotes = note.GetChord();
 
@@ -156,7 +156,7 @@ public class NoteController : SongObjectController {
         // Move note        
         if (moveCheck)
         {
-            if (Input.GetButton("ChordSelect"))
+            if (ShortcutMap.GetInput(Shortcut.ChordSelect))
             {
                 Note[] chordNotes = note.GetChord();
                 editor.groupMove.SetSongObjects(chordNotes, 0);

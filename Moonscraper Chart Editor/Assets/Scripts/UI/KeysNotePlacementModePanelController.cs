@@ -23,9 +23,9 @@ public class KeysNotePlacementModePanelController : MonoBehaviour {
         // Shortcuts
         if (!Services.IsTyping && !Globals.modifierInputActive)
         {
-            if (Input.GetKeyDown("h"))                  // hold
+            if (ShortcutMap.GetInputDown(Shortcut.ToolNoteHold))
                 buttons[0].onClick.Invoke();
-            else if (Input.GetKeyDown("b"))             // burst
+            else if (ShortcutMap.GetInputDown(Shortcut.ToolNoteBurst))
                 buttons[1].onClick.Invoke();
         }
     }

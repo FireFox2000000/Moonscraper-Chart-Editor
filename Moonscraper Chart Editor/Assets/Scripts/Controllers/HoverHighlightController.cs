@@ -59,7 +59,7 @@ public class HoverHighlightController : MonoBehaviour {
         {
             List<GameObject> songObjects = new List<GameObject>();
 
-            if (Input.GetButton("ChordSelect"))
+            if (ShortcutMap.GetInput(Shortcut.ChordSelect))
             {
                 // Check if we're over a note
                 NoteController nCon = songObject.GetComponent<NoteController>();

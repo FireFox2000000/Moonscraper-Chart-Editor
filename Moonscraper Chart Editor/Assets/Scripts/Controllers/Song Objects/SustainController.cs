@@ -44,7 +44,7 @@ public class SustainController : SelectableClick {
             // Update sustain
             if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
             {
-                if (!GameSettings.extendedSustainsEnabled || Input.GetButton("ChordSelect"))
+                if (!GameSettings.extendedSustainsEnabled || ShortcutMap.GetInput(Shortcut.ChordSelect))
                 {                 
                     if (unmodifiedNotes.Count == 0)
                     {

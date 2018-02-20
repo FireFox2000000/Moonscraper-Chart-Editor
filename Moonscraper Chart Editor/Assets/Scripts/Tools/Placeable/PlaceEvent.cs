@@ -65,7 +65,7 @@ public class PlaceEvent : PlaceSongObject
                     editor.currentSelectedObject = editor.currentSong.events[pos];
             }
         }
-        else if (Input.GetButtonDown("Add Object"))
+        else if (ShortcutMap.GetInputDown(Shortcut.AddSongObject))
         {
             SongObject[] searchArray = editor.currentSong.events;
             int pos = SongObjectHelper.FindObjectPosition(songEvent, searchArray);

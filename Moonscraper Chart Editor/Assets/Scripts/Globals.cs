@@ -274,9 +274,9 @@ public class Globals : MonoBehaviour {
 
         if (editor.currentSelectedObjects.Length > 0)
         {
-            if (ShortcutMap.GetInputDown(Shortcut.Cut))
+            if (ShortcutMap.GetInputDown(Shortcut.ClipboardCut))
                 editor.Cut();
-            else if (ShortcutMap.GetInputDown(Shortcut.Copy))
+            else if (ShortcutMap.GetInputDown(Shortcut.ClipboardCopy))
                 editor.Copy();
         }
     }
