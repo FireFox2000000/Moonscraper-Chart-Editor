@@ -8,6 +8,7 @@ public class Services : MonoBehaviour
 {
     [Header("Area range")]
     public RectTransform area;
+    public DropdownNotification notificationBar;
 
     Rect toolScreenArea;
     public static bool IsInDropDown = false;
@@ -76,6 +77,31 @@ public class Services : MonoBehaviour
         int width = (int)(16.0f / 9.0f * height);
 
         Screen.SetResolution(width, height, false);
+    }
+
+    public static string BoolToStrOnOff(bool val)
+    {
+        string toggleStr = val ? "ON" : "OFF";
+
+        return toggleStr;
+    }
+
+    public void ToggleMouseLockMode()
+    {
+        GameSettings.keysModeEnabled = !GameSettings.keysModeEnabled;
+        Debug.Log("Keys mode toggled " + GameSettings.keysModeEnabled);
+    }
+
+    public void ToggleExtendedSustains()
+    {
+        GameSettings.extendedSustainsEnabled = !GameSettings.extendedSustainsEnabled;
+        Debug.Log("Extended sustains toggled " + GameSettings.extendedSustainsEnabled);
+    }
+
+    public void ToggleMetronome()
+    {
+        GameSettings.metronomeActive = !GameSettings.metronomeActive;
+        Debug.Log("Metronome toggled " + GameSettings.metronomeActive);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////

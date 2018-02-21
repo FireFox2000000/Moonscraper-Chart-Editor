@@ -4,6 +4,9 @@ using UnityEngine;
 
 public static class GameSettings
 {
+    const string SECTION_NAME_SETTINGS = "Settings";
+    const string SECTION_NAME_AUDIO = "Audio Volume";
+
     [System.Flags]
     public enum ClapToggle
     {
@@ -46,7 +49,7 @@ public static class GameSettings
                 _sfxVolume = value;
         }
     }
-    public static float vol_master, vol_song, vol_guitar, vol_rhythm, vol_drum, audio_pan;
+    public static float vol_master, vol_song, vol_guitar, vol_bass, vol_rhythm, vol_drum, audio_pan;
 
     public static Step snappingStep = new Step(16);
     public static int step { get { return snappingStep.value; } set { snappingStep.value = value; } }
@@ -78,41 +81,39 @@ public static class GameSettings
         iniparse.Open(filepath);
 
         // Check for valid fps values
-        targetFramerate                 = iniparse.ReadValue("Settings", "Framerate", 120);
-        hyperspeed                      = (float)iniparse.ReadValue("Settings", "Hyperspeed", 5.0f);
-        highwayLength                   = (float)iniparse.ReadValue("Settings", "Highway Length", 0);
-        audioCalibrationMS              = iniparse.ReadValue("Settings", "Audio calibration", 0);
-        clapCalibrationMS               = iniparse.ReadValue("Settings", "Clap calibration", 0);
-        clapProperties                  = (ClapToggle)iniparse.ReadValue("Settings", "Clap", (int)ClapToggle.ALL);
-        extendedSustainsEnabled         = iniparse.ReadValue("Settings", "Extended sustains", false);
+        targetFramerate                 = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Framerate", 120);
+        hyperspeed                      = (float)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Hyperspeed", 5.0f);
+        highwayLength                   = (float)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Highway Length", 0);
+        audioCalibrationMS              = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Audio calibration", 0);
+        clapCalibrationMS               = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Clap calibration", 0);
+        clapProperties                  = (ClapToggle)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Clap", (int)ClapToggle.ALL);
+        extendedSustainsEnabled         = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Extended sustains", false);
         clapSetting                     = ClapToggle.NONE;
-        sustainGapEnabled               = iniparse.ReadValue("Settings", "Sustain Gap", false);
-        sustainGapStep                  = new Step((int)iniparse.ReadValue("Settings", "Sustain Gap Step", (int)16));
-        notePlacementMode               = (NotePlacementMode)iniparse.ReadValue("Settings", "Note Placement Mode", (int)NotePlacementMode.Default);
-        gameplayStartDelayTime          = (float)iniparse.ReadValue("Settings", "Gameplay Start Delay", 3.0f);
-        resetAfterPlay                  = iniparse.ReadValue("Settings", "Reset After Play", false);
-        resetAfterGameplay              = iniparse.ReadValue("Settings", "Reset After Gameplay", false);
-        customBgSwapTime                = iniparse.ReadValue("Settings", "Custom Background Swap Time", 30); 
+        sustainGapEnabled               = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Sustain Gap", false);
+        sustainGapStep                  = new Step((int)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Sustain Gap Step", (int)16));
+        notePlacementMode               = (NotePlacementMode)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Note Placement Mode", (int)NotePlacementMode.Default);
+        gameplayStartDelayTime          = (float)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Gameplay Start Delay", 3.0f);
+        resetAfterPlay                  = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Reset After Play", false);
+        resetAfterGameplay              = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Reset After Gameplay", false);
+        customBgSwapTime                = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Custom Background Swap Time", 30); 
         gameplayStartDelayTime          = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
         gameplayStartDelayTime          = (float)(System.Math.Round(gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f); // Check that the gameplay start delay time is a multiple of 0.5 and is
 
         // Audio levels
-        vol_master                      = (float)iniparse.ReadValue("Audio Volume", "Master", 0.5f);
-        vol_song                        = (float)iniparse.ReadValue("Audio Volume", "Music Stream", 1.0f);
-        vol_guitar                      = (float)iniparse.ReadValue("Audio Volume", "Guitar Stream", 1.0f);
-        vol_rhythm                      = (float)iniparse.ReadValue("Audio Volume", "Rhythm Stream", 1.0f);
-        vol_drum                        = (float)iniparse.ReadValue("Audio Volume", "Drum Stream", 1.0f);
-        audio_pan                       = (float)iniparse.ReadValue("Audio Volume", "Audio Pan", 0.0f);
-        sfxVolume                       = (float)iniparse.ReadValue("Audio Volume", "SFX", 1.0f);
+        vol_master                      = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Master", 0.5f);
+        vol_song                        = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Music Stream", 1.0f);
+        vol_guitar                      = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Guitar Stream", 1.0f);
+        vol_bass                        = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Bass Stream", 1.0f);
+        vol_rhythm                      = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Rhythm Stream", 1.0f);
+        vol_drum                        = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Drum Stream", 1.0f);
+        audio_pan                       = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Audio Pan", 0.0f);
+        sfxVolume                       = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "SFX", 1.0f);
 
         iniparse.Close();
     }
 
     public static void Save(string filepath)
     {
-        const string SECTION_NAME_SETTINGS = "Settings";
-        const string SECTION_NAME_AUDIO = "Audio Volume";
-
         INIParser iniparse = new INIParser();
         iniparse.Open(filepath);
 
@@ -135,6 +136,7 @@ public static class GameSettings
         iniparse.WriteValue(SECTION_NAME_AUDIO, "Master", vol_master);
         iniparse.WriteValue(SECTION_NAME_AUDIO, "Music Stream", vol_song);
         iniparse.WriteValue(SECTION_NAME_AUDIO, "Guitar Stream", vol_guitar);
+        iniparse.WriteValue(SECTION_NAME_AUDIO, "Bass Stream", vol_bass);
         iniparse.WriteValue(SECTION_NAME_AUDIO, "Rhythm Stream", vol_rhythm);
         iniparse.WriteValue(SECTION_NAME_AUDIO, "Drum Stream", vol_drum);
         iniparse.WriteValue(SECTION_NAME_AUDIO, "Audio Pan", audio_pan);

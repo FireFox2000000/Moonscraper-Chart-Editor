@@ -207,6 +207,12 @@ public class Globals : MonoBehaviour {
         else if (ShortcutMap.GetInputDown(Shortcut.Delete) && editor.currentSelectedObjects.Length > 0)
             editor.Delete();
 
+        else if (ShortcutMap.GetInputDown(Shortcut.ToggleMetronome))
+        {
+            services.ToggleMetronome();
+            services.notificationBar.PushNotification("METRONOME TOGGLED " + Services.BoolToStrOnOff(GameSettings.metronomeActive), 2, true);
+        }
+
         if (!modifierInputActive)
         {
 #if true

@@ -512,6 +512,7 @@ public class ChartEditor : MonoBehaviour {
 
         SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
         SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
+        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);
         SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
         SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drum);
 

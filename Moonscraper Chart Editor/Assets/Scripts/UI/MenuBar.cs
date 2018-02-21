@@ -57,10 +57,16 @@ public class MenuBar : MonoBehaviour {
     void Controls()
     {
         if (ShortcutMap.GetInputDown(Shortcut.ToggleExtendedSustains))
+        {
             ToggleExtendedSustains();
+            editor.globals.services.notificationBar.PushNotification("EXTENDED SUSTAINS TOGGLED " + Services.BoolToStrOnOff(GameSettings.extendedSustainsEnabled), 2, true);
+        }
 
         else if (ShortcutMap.GetInputDown(Shortcut.ToggleMouseMode))
+        {
             ToggleMouseLockMode();
+            editor.globals.services.notificationBar.PushNotification("KEYS MODE TOGGLED " + Services.BoolToStrOnOff(GameSettings.keysModeEnabled), 2, true);
+        }
     }
 
     public void ToggleMouseLockMode(bool value)
@@ -79,6 +85,12 @@ public class MenuBar : MonoBehaviour {
     {
         GameSettings.extendedSustainsEnabled = !GameSettings.extendedSustainsEnabled;
         Debug.Log("Extended sustains toggled " + GameSettings.extendedSustainsEnabled);
+    }
+
+    public void ToggleMetronome()
+    {
+        GameSettings.metronomeActive = !GameSettings.metronomeActive;
+        Debug.Log("Metronome toggled " + GameSettings.metronomeActive);
     }
 
     public void SetInstrument(string value)

@@ -7,16 +7,20 @@ public class DropdownNotification : MonoBehaviour {
     float dropdownTime = 0.5f;
     [SerializeField]
     float dropdownDistance = 1.0f;
+    [SerializeField]
+    UnityEngine.UI.Text notificationText;
 
     class NotificationData
     {
         public string message;
         public float displayTime;
+        public bool cancelable;
 
-        public NotificationData(string message, float displayTime)
+        public NotificationData(string message, float displayTime, bool cancelable)
         {
             this.message = message;
             this.displayTime = displayTime;
+            this.cancelable = cancelable;
         }
     }
 
@@ -45,7 +49,7 @@ public class DropdownNotification : MonoBehaviour {
 	void Update () {
         if (currentState == State.Open)
         {
-            if (currentNotification != null && notificationTimer > currentNotification.displayTime)
+            if (currentNotification != null && (notificationTimer > currentNotification.displayTime || (currentNotification.cancelable && notificationQueue.Count > 0)))
             {
                 Close();
             }
@@ -61,7 +65,7 @@ public class DropdownNotification : MonoBehaviour {
         if (currentState == State.Closed && notificationQueue.Count > 0)
         {
             currentNotification = PopNotification();
-            Open();
+            Open(currentNotification);
         }
         else if (currentState == State.Opening)
         {
@@ -92,8 +96,10 @@ public class DropdownNotification : MonoBehaviour {
         }
 	}
 
-    void Open()
+    void Open(NotificationData notificationData)
     {
+        notificationText.text = notificationData.message;
+
         if (currentState == State.Closed)
             currentState = State.Opening;
     }
@@ -107,9 +113,9 @@ public class DropdownNotification : MonoBehaviour {
         }
     }
 
-    public void PushNotification(string message, float displayTime)
+    public void PushNotification(string message, float displayTime = 3, bool cancelable = false)
     {
-        notificationQueue.Add(new NotificationData(message, displayTime));
+        notificationQueue.Add(new NotificationData(message, displayTime, cancelable));
     }
 
     NotificationData PopNotification()

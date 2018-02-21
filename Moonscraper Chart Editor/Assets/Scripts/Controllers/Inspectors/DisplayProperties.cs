@@ -62,8 +62,6 @@ public class DisplayProperties : MonoBehaviour {
         // Shortcuts
         if (ShortcutMap.GetInputDown(Shortcut.ToggleClap))
             clapToggle.isOn = !clapToggle.isOn;
-        else if (ShortcutMap.GetInputDown(Shortcut.ToggleMetronome))
-            metronomeToggle.isOn = !metronomeToggle.isOn;
 
         prevNoteCount = editor.currentChart.note_count;
         prevSongName = editor.currentSong.name;

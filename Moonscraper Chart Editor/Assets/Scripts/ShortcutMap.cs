@@ -78,6 +78,7 @@ public static class ShortcutMap {
 
         { Shortcut.ToggleBpmAnchor ,                new KeyCode[] { KeyCode.A                               } },
         { Shortcut.ToggleClap ,                     new KeyCode[] { KeyCode.N                               } },
+        { Shortcut.ToggleExtendedSustains,          new KeyCode[] { KeyCode.E                               } },
         { Shortcut.ToggleMetronome ,                new KeyCode[] { KeyCode.M                               } },
         { Shortcut.ToggleMouseMode ,                new KeyCode[] { KeyCode.BackQuote                       } },
         { Shortcut.ToggleNoteForced ,               new KeyCode[] { KeyCode.F                               } },
@@ -108,7 +109,6 @@ public static class ShortcutMap {
         { Shortcut.Redo,                            new KeyCode[] { KeyCode.Y } },
         
         { Shortcut.SelectAll,                       new KeyCode[] { KeyCode.A } },
-        { Shortcut.ToggleExtendedSustains,          new KeyCode[] { KeyCode.E } },
         { Shortcut.Undo,                            new KeyCode[] { KeyCode.Z } },
     };
     static Dictionary<Shortcut, KeyCode[]> secondaryInputs = new Dictionary<Shortcut, KeyCode[]>

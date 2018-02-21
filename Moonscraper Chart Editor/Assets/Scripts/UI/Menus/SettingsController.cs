@@ -18,6 +18,7 @@ public class SettingsController : DisplayMenu
 
     public Slider musicSourceSlider;
     public Slider guitarSourceSlider;
+    public Slider bassSourceSlider;
     public Slider rhythmSourceSlider;
     public Slider drumSourceSlider;
     //public Slider clapSourceSlider;
@@ -56,6 +57,7 @@ public class SettingsController : DisplayMenu
 
         GameSettings.vol_song = musicSourceSlider.value;
         GameSettings.vol_guitar = guitarSourceSlider.value;
+        GameSettings.vol_bass = bassSourceSlider.value;
         GameSettings.vol_rhythm = rhythmSourceSlider.value;
         GameSettings.vol_drum = drumSourceSlider.value;
 
@@ -131,6 +133,7 @@ public class SettingsController : DisplayMenu
         masterVolumeSlider.value = GameSettings.vol_master * 10.0f;
         musicSourceSlider.value = GameSettings.vol_song;
         guitarSourceSlider.value = GameSettings.vol_guitar;
+        bassSourceSlider.value = GameSettings.vol_bass;
         rhythmSourceSlider.value = GameSettings.vol_rhythm;
         drumSourceSlider.value = GameSettings.vol_drum;
         sfxSlider.value = GameSettings.sfxVolume;
