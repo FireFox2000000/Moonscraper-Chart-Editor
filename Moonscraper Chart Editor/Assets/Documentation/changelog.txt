@@ -1,3 +1,9 @@
+v1.1.13
+	NEW FEATURES
+	-Additional shortcuts
+	-Added "Tools" dropdown for organisation and easier accessability to more commonly used features that were previously buried
+	-Moonscraper can now in the background when not focused without losing sync. 
+
 v1.1.12
 	CHANGES
 	-Now making a copy of song object arrays in a copy of the song object before initiating save thread in an attempt to fix the save bug by reducing threading lock chances. 

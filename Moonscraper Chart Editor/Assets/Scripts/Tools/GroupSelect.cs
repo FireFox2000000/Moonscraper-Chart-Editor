@@ -158,11 +158,11 @@ public class GroupSelect : ToolObject {
             // Handle copy and cut functions
             if (data.Count > 0)
             {
-                if (ShortcutMap.GetInputDown(Shortcut.ClipboardCut))
+                if (ShortcutInput.GetInputDown(Shortcut.ClipboardCut))
                 {
                     Cut();
                 }
-                else if (ShortcutMap.GetInputDown(Shortcut.ClipboardCopy))
+                else if (ShortcutInput.GetInputDown(Shortcut.ClipboardCopy))
                 {
                     Copy(data, area);
                 }

@@ -48,9 +48,9 @@ public class PlaceStarpower : PlaceSongObject {
                 }
             }
         }
-        else if (ShortcutMap.GetInput(Shortcut.AddSongObject))
+        else if (ShortcutInput.GetInput(Shortcut.AddSongObject))
         {
-            if (ShortcutMap.GetInputDown(Shortcut.AddSongObject))
+            if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
             {
                 SongObject[] searchArray = editor.currentChart.starPower;
                 int pos = SongObjectHelper.FindObjectPosition(starpower, searchArray);

@@ -106,6 +106,8 @@ public class LoadCustomResources : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+        Application.runInBackground = true;
+
 #if !UNITY_EDITOR
         skinDirectory = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + "\\" + skinDirectory;
 #endif

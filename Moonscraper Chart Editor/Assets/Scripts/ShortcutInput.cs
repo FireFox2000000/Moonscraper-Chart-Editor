@@ -22,6 +22,11 @@ public enum Shortcut
     FileSave,
     FileSaveAs,
 
+    MoveStepPositive,
+    MoveStepNegative,
+    MoveMeasurePositive,
+    MoveMeasureNegative,
+
     NoteSetNatural,
     NoteSetStrum,
     NoteSetHopo,
@@ -31,8 +36,12 @@ public enum Shortcut
     Redo,
 
     SelectAll,
+    SelectAllSection,
     StepDecrease,
     StepIncrease,
+
+    SectionJumpPositive,
+    SectionJumpNegative,
 
     ToggleBpmAnchor,
     ToggleClap,
@@ -57,7 +66,7 @@ public enum Shortcut
     Undo,
 }
 
-public static class ShortcutMap {
+public static class ShortcutInput {
     static Dictionary<Shortcut, KeyCode[]> generalInputs = new Dictionary<Shortcut, KeyCode[]>
     {
         { Shortcut.AddSongObject ,                  new KeyCode[] { KeyCode.Alpha1,                         } },
@@ -67,6 +76,11 @@ public static class ShortcutMap {
 
         { Shortcut.Delete ,                         new KeyCode[] { KeyCode.Delete                          } },
         { Shortcut.PlayPause ,                      new KeyCode[] { KeyCode.Space                           } },
+
+        { Shortcut.MoveStepPositive ,               new KeyCode[] { KeyCode.UpArrow                         } },
+        { Shortcut.MoveStepNegative ,               new KeyCode[] { KeyCode.DownArrow                       } },
+        { Shortcut.MoveMeasurePositive ,            new KeyCode[] { KeyCode.PageUp                          } },
+        { Shortcut.MoveMeasureNegative ,            new KeyCode[] { KeyCode.PageDown                        } },
 
         { Shortcut.NoteSetNatural ,                 new KeyCode[] { KeyCode.X                               } },
         { Shortcut.NoteSetStrum ,                   new KeyCode[] { KeyCode.S                               } },
@@ -121,6 +135,12 @@ public static class ShortcutMap {
 
         { Shortcut.Redo,                            new KeyCode[] { KeyCode.Z } },      
     };
+    static Dictionary<Shortcut, KeyCode[]> alternativeInputs = new Dictionary<Shortcut, KeyCode[]>
+    {
+        { Shortcut.SectionJumpPositive ,            new KeyCode[] { KeyCode.UpArrow } },
+        { Shortcut.SectionJumpNegative ,            new KeyCode[] { KeyCode.DownArrow } },
+        { Shortcut.SelectAllSection ,               new KeyCode[] { KeyCode.A } },
+    };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -130,6 +150,7 @@ public static class ShortcutMap {
 
         bool modifierInputActive = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand);
         bool secondaryInputActive = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+        bool alternativeInputActive = Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
 
         Dictionary<Shortcut, KeyCode[]> inputDict = generalInputs;
 
@@ -144,6 +165,10 @@ public static class ShortcutMap {
         else if (secondaryInputActive)
         {
             inputDict = secondaryInputs;
+        }
+        else if (alternativeInputActive)
+        {
+            inputDict = alternativeInputs;
         }
         else if (Services.IsTyping)
         {
@@ -183,5 +208,38 @@ public static class ShortcutMap {
     public static bool GetInput(Shortcut key)
     {
         return CheckInput(key, Input.GetKey);
+    }
+
+    public static bool GetGroupInputDown(Shortcut[] keys)
+    {
+        foreach (Shortcut key in keys)
+        {
+            if (CheckInput(key, Input.GetKeyDown))
+                return true;
+        }
+
+        return false;
+    }
+
+    public static bool GetGroupInputUp(Shortcut[] keys)
+    {
+        foreach (Shortcut key in keys)
+        {
+            if (CheckInput(key, Input.GetKeyUp))
+                return true;
+        }
+
+        return false;
+    }
+
+    public static bool GetGroupInput(Shortcut[] keys)
+    {
+        foreach (Shortcut key in keys)
+        {
+            if (CheckInput(key, Input.GetKey))
+                return true;
+        }
+
+        return false;
     }
 }

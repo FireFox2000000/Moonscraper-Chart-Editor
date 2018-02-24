@@ -59,7 +59,7 @@ public abstract class MovementController : MonoBehaviour {
 
         if (playStartTime != null && playStartPosition != null)
         {
-            float time = Time.time - (float)playStartTime; //(float)timeSync.GetTime();//
+            float time = Time.realtimeSinceStartup - (float)playStartTime; //(float)timeSync.GetTime();//
             if (time < 0)
                 time = 0;
 
@@ -85,10 +85,10 @@ public abstract class MovementController : MonoBehaviour {
         lastUpdatedRealTime = Time.time;
     }
 
-    void OnApplicationFocus(bool hasFocus)
+    /*void OnApplicationFocus(bool hasFocus)
     {        
         focused = hasFocus;
-    }
+    }*/
 
     void OnGUI()
     {

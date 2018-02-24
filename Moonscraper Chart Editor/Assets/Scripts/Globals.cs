@@ -53,6 +53,8 @@ public class Globals : MonoBehaviour {
 
     void Awake()
     {
+        Application.runInBackground = true;
+
         largestRes = Screen.resolutions[0];
         foreach (Resolution res in Screen.resolutions)
         {
@@ -190,7 +192,7 @@ public class Globals : MonoBehaviour {
 
     void Shortcuts()
     {
-        if (ShortcutMap.GetInputDown(Shortcut.PlayPause))
+        if (ShortcutInput.GetInputDown(Shortcut.PlayPause))
         {
             if (applicationMode == ApplicationMode.Editor)
                 editor.Play();
@@ -198,16 +200,16 @@ public class Globals : MonoBehaviour {
                 editor.Stop();
         }
 
-        else if (ShortcutMap.GetInputDown(Shortcut.StepIncrease))
+        else if (ShortcutInput.GetInputDown(Shortcut.StepIncrease))
             GameSettings.snappingStep.Increment();
 
-        else if (ShortcutMap.GetInputDown(Shortcut.StepDecrease))
+        else if (ShortcutInput.GetInputDown(Shortcut.StepDecrease))
             GameSettings.snappingStep.Decrement();
 
-        else if (ShortcutMap.GetInputDown(Shortcut.Delete) && editor.currentSelectedObjects.Length > 0)
+        else if (ShortcutInput.GetInputDown(Shortcut.Delete) && editor.currentSelectedObjects.Length > 0)
             editor.Delete();
 
-        else if (ShortcutMap.GetInputDown(Shortcut.ToggleMetronome))
+        else if (ShortcutInput.GetInputDown(Shortcut.ToggleMetronome))
         {
             services.ToggleMetronome();
             services.notificationBar.PushNotification("METRONOME TOGGLED " + Services.BoolToStrOnOff(GameSettings.metronomeActive), 2, true);
@@ -230,42 +232,36 @@ public class Globals : MonoBehaviour {
             }
         }
 
-        if (ShortcutMap.GetInputDown(Shortcut.FileSave))
+        if (ShortcutInput.GetInputDown(Shortcut.FileSave))
             editor._Save();
 
-        else if (ShortcutMap.GetInputDown(Shortcut.FileSaveAs))
+        else if (ShortcutInput.GetInputDown(Shortcut.FileSaveAs))
             editor.SaveAs();
 
-        else if (ShortcutMap.GetInputDown(Shortcut.FileLoad))
+        else if (ShortcutInput.GetInputDown(Shortcut.FileLoad))
             editor.Load();
 
-        else if (ShortcutMap.GetInputDown(Shortcut.FileNew))
+        else if (ShortcutInput.GetInputDown(Shortcut.FileNew))
             editor.New();
 
-        else if (ShortcutMap.GetInputDown(Shortcut.SelectAll))
+        else if (ShortcutInput.GetInputDown(Shortcut.SelectAll))
         {
-            editor.currentSelectedObject = null;
-
-            if (viewMode == ViewMode.Chart)
-            {
-                editor.currentSelectedObjects = editor.currentChart.chartObjects;
-            }
-            else
-            {
-                editor.currentSelectedObjects = editor.currentSong.syncTrack;
-                editor.AddToSelectedObjects(editor.currentSong.eventsAndSections);
-            }
+            HighlightAll();
+        }
+        else if (ShortcutInput.GetInputDown(Shortcut.SelectAllSection))
+        {
+            HighlightCurrentSection();
         }
 
         if (!Input.GetMouseButton(0) && !Input.GetMouseButton(1))
         {
             bool success = false;
 
-            if (ShortcutMap.GetInputDown(Shortcut.Undo))
+            if (ShortcutInput.GetInputDown(Shortcut.Undo))
             {
                 success = editor.actionHistory.Undo(editor);
             }
-            else if (ShortcutMap.GetInputDown(Shortcut.Redo))
+            else if (ShortcutInput.GetInputDown(Shortcut.Redo))
             {
                 success = editor.actionHistory.Redo(editor);
             }
@@ -280,9 +276,9 @@ public class Globals : MonoBehaviour {
 
         if (editor.currentSelectedObjects.Length > 0)
         {
-            if (ShortcutMap.GetInputDown(Shortcut.ClipboardCut))
+            if (ShortcutInput.GetInputDown(Shortcut.ClipboardCut))
                 editor.Cut();
-            else if (ShortcutMap.GetInputDown(Shortcut.ClipboardCopy))
+            else if (ShortcutInput.GetInputDown(Shortcut.ClipboardCopy))
                 editor.Copy();
         }
     }
@@ -295,6 +291,50 @@ public class Globals : MonoBehaviour {
         // Delete autosaved chart. If chart is not deleted then that means there may have been a problem like a crash and the autosave should be reloaded the next time the program is opened. 
         if (File.Exists(autosaveLocation))
             File.Delete(autosaveLocation);
+    }
+
+    void HighlightAll()
+    {
+        editor.currentSelectedObject = null;
+
+        if (viewMode == ViewMode.Chart)
+        {
+            editor.currentSelectedObjects = editor.currentChart.chartObjects;
+        }
+        else
+        {
+            editor.currentSelectedObjects = editor.currentSong.syncTrack;
+            editor.AddToSelectedObjects(editor.currentSong.eventsAndSections);
+        }
+    }
+
+    void HighlightCurrentSection()
+    {
+        editor.currentSelectedObject = null;
+
+        // Get the previous and next section
+        uint currentPos = editor.currentTickPos;
+        Section[] sections = editor.currentSong.sections;
+        int maxSectionIndex = 0;
+        while (maxSectionIndex < sections.Length && !(sections[maxSectionIndex].position > currentPos))
+        {
+            ++maxSectionIndex;
+        }
+
+        uint rangeMax = maxSectionIndex < sections.Length ? sections[maxSectionIndex].position : uint.MaxValue;
+        uint rangeMin = (maxSectionIndex - 1) >= 0 ? sections[maxSectionIndex - 1].position : 0;
+        if (rangeMax > 0)
+            --rangeMax;
+
+        if (viewMode == ViewMode.Chart)
+        {
+            editor.currentSelectedObjects = SongObjectHelper.GetRangeCopy(editor.currentChart.chartObjects, rangeMin, rangeMax);
+        }
+        else
+        {
+            editor.currentSelectedObjects = SongObjectHelper.GetRangeCopy(editor.currentSong.syncTrack, rangeMin, rangeMax);
+            editor.AddToSelectedObjects(SongObjectHelper.GetRangeCopy(editor.currentSong.eventsAndSections, rangeMin, rangeMax));
+        }
     }
 
     public static void DeselectCurrentUI()

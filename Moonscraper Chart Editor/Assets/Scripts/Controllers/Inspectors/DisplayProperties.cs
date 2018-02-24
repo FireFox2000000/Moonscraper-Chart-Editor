@@ -60,7 +60,7 @@ public class DisplayProperties : MonoBehaviour {
             noteCount.text = "Notes: " + editor.currentChart.note_count.ToString();
 
         // Shortcuts
-        if (ShortcutMap.GetInputDown(Shortcut.ToggleClap))
+        if (ShortcutInput.GetInputDown(Shortcut.ToggleClap))
             clapToggle.isOn = !clapToggle.isOn;
 
         prevNoteCount = editor.currentChart.note_count;

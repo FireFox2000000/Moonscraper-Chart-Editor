@@ -95,7 +95,7 @@ public class PlaceChartEvent : PlaceSongObject
                     editor.currentSelectedObject = editor.currentChart.events[pos];
             }
         }
-        else if (ShortcutMap.GetInputDown(Shortcut.AddSongObject))
+        else if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
         {
             SongObject[] searchArray = editor.currentChart.events;
             int pos = SongObjectHelper.FindObjectPosition(chartEvent, searchArray);

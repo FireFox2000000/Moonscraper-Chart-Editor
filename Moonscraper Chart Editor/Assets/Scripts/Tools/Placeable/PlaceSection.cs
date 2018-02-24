@@ -34,7 +34,7 @@ public class PlaceSection : PlaceSongObject {
                     editor.currentSelectedObject = sectionSearched;
             }
         }
-        else if (ShortcutMap.GetInputDown(Shortcut.AddSongObject))
+        else if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
         {
             SongObject[] searchArray = editor.currentSong.sections;
             int pos = SongObjectHelper.FindObjectPosition(section, searchArray);

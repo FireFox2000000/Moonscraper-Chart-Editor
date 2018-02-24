@@ -109,6 +109,15 @@ public class ChartEditor : MonoBehaviour {
         }
     }
     public SongObject[] currentSelectedObjects = new SongObject[0];
+    public uint currentTickPos {
+        get
+        {
+            if (MovementController.explicitChartPos != null)
+                return (uint)MovementController.explicitChartPos;
+            else
+                return currentSong.WorldYPositionToChartPosition(visibleStrikeline.position.y);
+        }
+    }
 
     Vector3? stopResetPos = null;
 
@@ -265,7 +274,7 @@ public class ChartEditor : MonoBehaviour {
 #else
     bool wantsToQuit = false;
 #endif
-
+    /*
     void OnApplicationFocus(bool hasFocus)
     {
 #if !UNITY_EDITOR
@@ -285,7 +294,7 @@ public class ChartEditor : MonoBehaviour {
         {
             StopAudio();
         }
-    }
+    }*/
 
     static bool quitting = false;
     void OnApplicationQuit()
@@ -527,7 +536,7 @@ public class ChartEditor : MonoBehaviour {
         PlayBassStream(currentSong.bassDrumStream, playPoint);*/
 
         movement.playStartPosition = movement.transform.position.y;
-        movement.playStartTime = Time.time;
+        movement.playStartTime = Time.realtimeSinceStartup;
     }
 
     void StopAudio()

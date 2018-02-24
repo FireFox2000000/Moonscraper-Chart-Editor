@@ -56,13 +56,13 @@ public class MenuBar : MonoBehaviour {
 
     void Controls()
     {
-        if (ShortcutMap.GetInputDown(Shortcut.ToggleExtendedSustains))
+        if (ShortcutInput.GetInputDown(Shortcut.ToggleExtendedSustains))
         {
             ToggleExtendedSustains();
             editor.globals.services.notificationBar.PushNotification("EXTENDED SUSTAINS TOGGLED " + Services.BoolToStrOnOff(GameSettings.extendedSustainsEnabled), 2, true);
         }
 
-        else if (ShortcutMap.GetInputDown(Shortcut.ToggleMouseMode))
+        else if (ShortcutInput.GetInputDown(Shortcut.ToggleMouseMode))
         {
             ToggleMouseLockMode();
             editor.globals.services.notificationBar.PushNotification("KEYS MODE TOGGLED " + Services.BoolToStrOnOff(GameSettings.keysModeEnabled), 2, true);

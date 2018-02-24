@@ -114,7 +114,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
     void Controls()
     {
-        if (ShortcutMap.GetInputDown(Shortcut.ToggleNoteTap) && tapToggle.interactable)
+        if (ShortcutInput.GetInputDown(Shortcut.ToggleNoteTap) && tapToggle.interactable)
         {
             if (tapToggle.isOn)
                 tapToggle.isOn = false;
@@ -122,7 +122,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
                 tapToggle.isOn = true;
         }
 
-        if (ShortcutMap.GetInputDown(Shortcut.ToggleNoteForced) && forcedToggle.interactable)
+        if (ShortcutInput.GetInputDown(Shortcut.ToggleNoteForced) && forcedToggle.interactable)
         {
             if (forcedToggle.isOn)
                 forcedToggle.isOn = false;

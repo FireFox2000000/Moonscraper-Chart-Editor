@@ -117,53 +117,53 @@ public class TimelineMovementController : MovementController
 
                 UpdateTimelineHandleBasedPos();
             }
-            else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.PageUp) || Input.GetKey(KeyCode.PageDown))
+            else if (ShortcutInput.GetInputDown(Shortcut.SectionJumpPositive))
             {
-                if (Input.GetKey(KeyCode.LeftAlt) && (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow)))
-                {
-                    if (Input.GetKeyDown(KeyCode.UpArrow))
-                        SectionJump(1);
-                    else if (Input.GetKeyDown(KeyCode.DownArrow))
-                        SectionJump(-1);
-                }
+                SectionJump(1);
+                UpdateTimelineHandleBasedPos();
+            }
+            else if (ShortcutInput.GetInputDown(Shortcut.SectionJumpNegative))
+            {
+                SectionJump(-1);
+                UpdateTimelineHandleBasedPos();
+            }
+            else if (ShortcutInput.GetGroupInput(new Shortcut[] { Shortcut.MoveStepPositive, Shortcut.MoveStepNegative, Shortcut.MoveMeasurePositive, Shortcut.MoveMeasureNegative }))
+            {
+                // Arrow key controls
+                uint currentPos;
+                if (explicitChartPos != null)
+                    currentPos = (uint)explicitChartPos;
                 else
+                    currentPos = editor.currentTickPos;
+
+                if (arrowMoveTimer == 0 || (arrowMoveTimer > ARROW_INIT_DELAY_TIME && Time.realtimeSinceStartup > lastMoveTime + ARROW_HOLD_MOVE_ITERATION_TIME))
                 {
-                    // Arrow key controls
-                    uint currentPos;
-                    if (explicitChartPos != null)
-                        currentPos = (uint)explicitChartPos;
-                    else
-                        currentPos = editor.currentSong.WorldYPositionToChartPosition(editor.visibleStrikeline.position.y);
-
-                    if (arrowMoveTimer == 0 || (arrowMoveTimer > ARROW_INIT_DELAY_TIME && Time.realtimeSinceStartup > lastMoveTime + ARROW_HOLD_MOVE_ITERATION_TIME))
+                    uint snappedPos = currentPos;
+                    // Navigate to snapped pos ahead or behind
+                    if (ShortcutInput.GetInput(Shortcut.MoveStepPositive))
                     {
-                        uint snappedPos;
-                        // Navigate to snapped pos ahead or behind
-                        if (Input.GetKey(KeyCode.UpArrow))
-                        {
-                            snappedPos = Snapable.ChartIncrementStep(currentPos, GameSettings.step, editor.currentSong.resolution);
-                        }
-                        else if (Input.GetKey(KeyCode.DownArrow))
-                        {
-                            snappedPos = Snapable.ChartDecrementStep(currentPos, GameSettings.step, editor.currentSong.resolution);
-                        }
-                        else if (Input.GetKey(KeyCode.PageUp))
-                        {
-                            snappedPos = Snapable.ChartPositionToSnappedChartPosition(currentPos + (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong.resolution);
-                        }
-                        // Page Down
-                        else
-                        {
-                            snappedPos = Snapable.ChartPositionToSnappedChartPosition(currentPos - (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong.resolution);
-                        }
-
-                        if (editor.currentSong.ChartPositionToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSong.length)
-                        {
-                            SetPosition(snappedPos);
-                        }
-
-                        lastMoveTime = Time.realtimeSinceStartup;
+                        snappedPos = Snapable.ChartIncrementStep(currentPos, GameSettings.step, editor.currentSong.resolution);
                     }
+                    else if (ShortcutInput.GetInput(Shortcut.MoveStepNegative))
+                    {
+                        snappedPos = Snapable.ChartDecrementStep(currentPos, GameSettings.step, editor.currentSong.resolution);
+                    }
+                    else if (ShortcutInput.GetInput(Shortcut.MoveMeasurePositive))
+                    {
+                        snappedPos = Snapable.ChartPositionToSnappedChartPosition(currentPos + (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong.resolution);
+                    }
+                    // Page Down
+                    else if (ShortcutInput.GetInput(Shortcut.MoveMeasureNegative))
+                    {
+                        snappedPos = Snapable.ChartPositionToSnappedChartPosition(currentPos - (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong.resolution);
+                    }
+
+                    if (editor.currentSong.ChartPositionToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSong.length)
+                    {
+                        SetPosition(snappedPos);
+                    }
+
+                    lastMoveTime = Time.realtimeSinceStartup;
                 }
 
                 UpdateTimelineHandleBasedPos();
