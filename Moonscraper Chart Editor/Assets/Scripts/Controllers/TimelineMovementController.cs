@@ -107,7 +107,7 @@ public class TimelineMovementController : MovementController
             // Position changes scroll bar value
             if (scrollDelta != 0 || transform.position != prevPos || Services.HasScreenResized)
             {
-                if ((Input.GetKey(KeyCode.LeftAlt) | Input.GetKey(KeyCode.RightAlt)) && editor.currentSong.sections.Length > 0)
+                if (ShortcutInput.GetInput(Shortcut.SectionJumpMouseScroll) && editor.currentSong.sections.Length > 0)
                 {
                     SectionJump(scrollDelta);
                     RefreshSectionHighlight();
@@ -326,6 +326,9 @@ public class TimelineMovementController : MovementController
 
     void RefreshSectionHighlight()
     {
+        if (!ShortcutInput.GetInput(Shortcut.SelectAllSection))
+            return;
+
         int currentSectionIndex = SongObjectHelper.GetIndexOfPrevious(editor.currentSong.sections, editor.currentTickPos);
         bool changed = currentSectionIndex != sectionHighlightCurrentIndex;
 

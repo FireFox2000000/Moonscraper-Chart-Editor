@@ -42,6 +42,7 @@ public enum Shortcut
 
     SectionJumpPositive,
     SectionJumpNegative,
+    SectionJumpMouseScroll,
 
     ToggleBpmAnchor,
     ToggleClap,
@@ -132,7 +133,6 @@ public static class ShortcutInput {
     static Dictionary<Shortcut, KeyCode[]> secondaryModifierInputs = new Dictionary<Shortcut, KeyCode[]>
     {
         { Shortcut.FileSaveAs,                      new KeyCode[] { KeyCode.S } },
-
         { Shortcut.Redo,                            new KeyCode[] { KeyCode.Z } },      
     };
     static Dictionary<Shortcut, KeyCode[]> alternativeInputs = new Dictionary<Shortcut, KeyCode[]>
@@ -140,6 +140,7 @@ public static class ShortcutInput {
         { Shortcut.SectionJumpPositive ,            new KeyCode[] { KeyCode.UpArrow } },
         { Shortcut.SectionJumpNegative ,            new KeyCode[] { KeyCode.DownArrow } },
         { Shortcut.SelectAllSection ,               new KeyCode[] { KeyCode.A } },
+        { Shortcut.SectionJumpMouseScroll ,         new KeyCode[] { KeyCode.LeftAlt, KeyCode.RightAlt } },
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
