@@ -246,10 +246,12 @@ public class Globals : MonoBehaviour {
 
         else if (ShortcutInput.GetInputDown(Shortcut.SelectAll))
         {
+            services.toolpanelController.SetCursor();
             HighlightAll();
         }
         else if (ShortcutInput.GetInputDown(Shortcut.SelectAllSection))
         {
+            services.toolpanelController.SetCursor();
             HighlightCurrentSection();
         }
 
@@ -308,10 +310,31 @@ public class Globals : MonoBehaviour {
         }
     }
 
+    delegate void SongObjectSelectedManipFn(System.Collections.Generic.IEnumerable<SongObject> songObjects);
     void HighlightCurrentSection()
     {
         editor.currentSelectedObject = null;
 
+        AddHighlightCurrentSection();
+    }
+
+    public void AddHighlightCurrentSection(int sectionOffset = 0)
+    {
+        HighlightCurrentSection(editor.AddToSelectedObjects, sectionOffset);
+    }
+
+    public void RemoveHighlightCurrentSection(int sectionOffset = 0)
+    {
+        HighlightCurrentSection(editor.RemoveFromSelectedObjects, sectionOffset);
+    }
+
+    public void AddOrRemoveHighlightCurrentSection()
+    {
+        HighlightCurrentSection(editor.AddOrRemoveSelectedObjects);
+    }
+
+    void HighlightCurrentSection(SongObjectSelectedManipFn manipFn, int sectionOffset = 0)
+    {
         // Get the previous and next section
         uint currentPos = editor.currentTickPos;
         Section[] sections = editor.currentSong.sections;
@@ -321,19 +344,21 @@ public class Globals : MonoBehaviour {
             ++maxSectionIndex;
         }
 
-        uint rangeMax = maxSectionIndex < sections.Length ? sections[maxSectionIndex].position : uint.MaxValue;
+        maxSectionIndex += sectionOffset;
+
         uint rangeMin = (maxSectionIndex - 1) >= 0 ? sections[maxSectionIndex - 1].position : 0;
+        uint rangeMax = maxSectionIndex < sections.Length ? sections[maxSectionIndex].position : uint.MaxValue;
         if (rangeMax > 0)
             --rangeMax;
 
         if (viewMode == ViewMode.Chart)
         {
-            editor.currentSelectedObjects = SongObjectHelper.GetRangeCopy(editor.currentChart.chartObjects, rangeMin, rangeMax);
+            manipFn(SongObjectHelper.GetRangeCopy(editor.currentChart.chartObjects, rangeMin, rangeMax));
         }
         else
         {
-            editor.currentSelectedObjects = SongObjectHelper.GetRangeCopy(editor.currentSong.syncTrack, rangeMin, rangeMax);
-            editor.AddToSelectedObjects(SongObjectHelper.GetRangeCopy(editor.currentSong.eventsAndSections, rangeMin, rangeMax));
+            manipFn(SongObjectHelper.GetRangeCopy(editor.currentSong.syncTrack, rangeMin, rangeMax));
+            manipFn(SongObjectHelper.GetRangeCopy(editor.currentSong.eventsAndSections, rangeMin, rangeMax));
         }
     }
 

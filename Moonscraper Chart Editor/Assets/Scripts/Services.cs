@@ -9,6 +9,7 @@ public class Services : MonoBehaviour
     [Header("Area range")]
     public RectTransform area;
     public DropdownNotification notificationBar;
+    public ToolPanelController toolpanelController;
 
     Rect toolScreenArea;
     public static bool IsInDropDown = false;

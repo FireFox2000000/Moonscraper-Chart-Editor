@@ -499,4 +499,30 @@ public static class SongObjectHelper {
             songObjects[j + 1] = temp;
         }
     }
+
+    public static int GetIndexOfPrevious<T>(T[] songObjects, uint position) where T : SongObject
+    {
+        int closestPos = FindClosestPosition(position, songObjects);
+        if (closestPos != NOTFOUND)
+        {
+            // Select the smaller of the two
+            if (songObjects[closestPos].position <= position)
+                return closestPos;
+            else if (closestPos > 0)
+                return closestPos - 1;
+            else
+                return NOTFOUND;
+        }
+
+        return closestPos;
+    }
+
+    public static T GetPrevious<T>(T[] songObjects, uint position) where T : SongObject
+    {
+        int pos = GetIndexOfPrevious(songObjects, position);
+        if (pos != NOTFOUND)
+            return songObjects[pos];
+        else
+            return null;
+    }
 }

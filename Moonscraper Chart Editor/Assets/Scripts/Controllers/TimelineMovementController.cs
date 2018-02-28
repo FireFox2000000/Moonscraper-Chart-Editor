@@ -35,7 +35,10 @@ public class TimelineMovementController : MovementController
     const float ARROW_INIT_DELAY_TIME = 0.5f;
     const float ARROW_HOLD_MOVE_ITERATION_TIME = 0.1f;
     float arrowMoveTimer = 0;
-    float lastMoveTime = 0;  
+    float lastMoveTime = 0;
+    int sectionHighlightCurrentIndex = 0;
+    int sectionHighlightRealOriginIndex = 0;
+    int sectionHighlightOffset { get { return  sectionHighlightCurrentIndex - sectionHighlightRealOriginIndex; } }
 
     void Update()
     {
@@ -80,6 +83,12 @@ public class TimelineMovementController : MovementController
 
     // Update is called once per frame
     void LateUpdate () {
+        if (!ShortcutInput.GetInput(Shortcut.SelectAllSection) || editor.currentSong.sections.Length <= 0)
+        {
+            sectionHighlightRealOriginIndex = SongObjectHelper.GetIndexOfPrevious(editor.currentSong.sections, editor.currentTickPos);
+            sectionHighlightCurrentIndex = sectionHighlightRealOriginIndex;
+        }
+
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
             lastMouseDownPos = Input.mousePosition;
@@ -98,9 +107,10 @@ public class TimelineMovementController : MovementController
             // Position changes scroll bar value
             if (scrollDelta != 0 || transform.position != prevPos || Services.HasScreenResized)
             {
-                if (Input.GetKey(KeyCode.LeftAlt) && editor.currentSong.sections.Length > 0)
+                if ((Input.GetKey(KeyCode.LeftAlt) | Input.GetKey(KeyCode.RightAlt)) && editor.currentSong.sections.Length > 0)
                 {
                     SectionJump(scrollDelta);
+                    RefreshSectionHighlight();
                 }
                 else
                 {
@@ -117,15 +127,17 @@ public class TimelineMovementController : MovementController
 
                 UpdateTimelineHandleBasedPos();
             }
-            else if (ShortcutInput.GetInputDown(Shortcut.SectionJumpPositive))
+            else if (ShortcutInput.GetInputDown(Shortcut.SectionJumpPositive) && editor.currentSong.sections.Length > 0)
             {
-                SectionJump(1);
+                SectionJump(1);              
                 UpdateTimelineHandleBasedPos();
+                RefreshSectionHighlight();
             }
-            else if (ShortcutInput.GetInputDown(Shortcut.SectionJumpNegative))
+            else if (ShortcutInput.GetInputDown(Shortcut.SectionJumpNegative) && editor.currentSong.sections.Length > 0)
             {
                 SectionJump(-1);
                 UpdateTimelineHandleBasedPos();
+                RefreshSectionHighlight();
             }
             else if (ShortcutInput.GetGroupInput(new Shortcut[] { Shortcut.MoveStepPositive, Shortcut.MoveStepNegative, Shortcut.MoveMeasurePositive, Shortcut.MoveMeasureNegative }))
             {
@@ -309,6 +321,20 @@ public class TimelineMovementController : MovementController
                 SetPosition(editor.currentSong.sections[i].position);
             else
                 SetPosition(0);
+        }
+    }
+
+    void RefreshSectionHighlight()
+    {
+        int currentSectionIndex = SongObjectHelper.GetIndexOfPrevious(editor.currentSong.sections, editor.currentTickPos);
+        bool changed = currentSectionIndex != sectionHighlightCurrentIndex;
+
+        editor.currentSelectedObject = null;
+        sectionHighlightCurrentIndex = currentSectionIndex;
+
+        for (int i = 0; Mathf.Abs(i) <= Mathf.Abs(sectionHighlightOffset); i -= (int)Mathf.Sign(sectionHighlightOffset))
+        {
+            globals.AddHighlightCurrentSection(i);
         }
     }
 }

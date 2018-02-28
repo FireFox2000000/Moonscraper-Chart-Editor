@@ -13,6 +13,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     public UnityEngine.UI.Text percentage;
     public GameObject sectionIndicatorPrefab;
     public GameObject starpowerIndicatorPrefab;
+    public GameObject highlightedIndicator;
 
     const int POOL_SIZE = 100;
     const int POOL_EXTEND_SIZE = 50;
@@ -39,7 +40,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         }
         set
         {
-            handle.transform.localPosition = handlePosToLocal(value);
+            handle.transform.localPosition = HandlePosToLocal(value);
         }
     }
 
@@ -51,7 +52,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         }
         set
         {
-            handle.transform.localPosition = handlePosToLocal(value);
+            handle.transform.localPosition = HandlePosToLocal(value);
         }
     }
 
@@ -91,6 +92,8 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
         previousScreenSize.x = Screen.width;
         previousScreenSize.y = Screen.height;
+
+        RefreshHighlightIndicator();
     }
 
     int prevSectionLength = 0;
@@ -258,13 +261,13 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
             if (pos.y > transform.position.y + scaledHalfHeight)
             {
                 pos = handle.transform.localPosition;
-                pos.y = handlePosToLocal(1).y;
+                pos.y = HandlePosToLocal(1).y;
                 handle.transform.localPosition = pos;
             }
             else if (pos.y < transform.position.y - scaledHalfHeight)
             {
                 pos = handle.transform.localPosition;
-                pos.y = handlePosToLocal(0).y;
+                pos.y = HandlePosToLocal(0).y;
                 handle.transform.localPosition = pos;
             }
             else
@@ -273,7 +276,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         MovementController.explicitChartPos = null;
     }
 
-    public Vector3 handlePosToLocal(float pos)
+    public Vector3 HandlePosToLocal(float pos)
     {
         // Pos is a value between 0 and 1, 0 representing the start of the song and 1 being the end
 
@@ -290,6 +293,49 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         if (timeInSeconds < minTimeRange || timeInSeconds > maxTimeRange)
             return null;
         else
-            return handlePosToLocal((timeInSeconds - minTimeRange) / (maxTimeRange - minTimeRange));
+            return HandlePosToLocal((timeInSeconds - minTimeRange) / (maxTimeRange - minTimeRange));
+    }
+
+    public void RefreshHighlightIndicator()
+    {
+        highlightedIndicator.SetActive(false);
+        if (!editor)
+            return;
+
+        if (editor.currentSelectedObjects.Length > 0)
+        {
+            uint highlightRangeMin = uint.MaxValue, highlightRangeMax = 0;
+
+            foreach (SongObject so in editor.currentSelectedObjects)
+            {
+                if (so.position < highlightRangeMin)
+                    highlightRangeMin = so.position;
+
+                if (so.position > highlightRangeMax)
+                    highlightRangeMax = so.position;
+            }
+
+            float minTime = editor.currentSong.ChartPositionToTime(highlightRangeMin, editor.currentSong.resolution);
+            float maxTime = editor.currentSong.ChartPositionToTime(highlightRangeMax, editor.currentSong.resolution);
+
+            float endTime = editor.currentSong.length;
+
+            Vector3 minPos = Vector3.zero, maxPos = Vector3.zero;
+
+            if (endTime > 0)
+            {
+                minPos = HandlePosToLocal(minTime / endTime);
+                maxPos = HandlePosToLocal(maxTime / endTime);
+            }
+
+            float size = (maxPos - minPos).y;
+            Vector3 position = minPos;
+            position.y += size / 2;
+
+            highlightedIndicator.transform.localPosition = position;
+            highlightedIndicator.transform.localScale = new Vector3(highlightedIndicator.transform.localScale.x, size, highlightedIndicator.transform.localScale.z);
+
+            highlightedIndicator.SetActive(true);
+        }
     }
 }

@@ -477,6 +477,8 @@ public class Song {
         return position;
     }
 
+
+
     /// <summary>
     /// Finds the value of the first bpm that appears before or on the specified tick position.
     /// </summary>
@@ -484,17 +486,7 @@ public class Song {
     /// <returns>Returns the value of the bpm that was found.</returns>
     public BPM GetPrevBPM(uint position)
     {
-        int closestPos = SongObjectHelper.FindClosestPosition(position, bpms);
-        if (closestPos != SongObjectHelper.NOTFOUND)
-        {
-            // Select the smaller of the two
-            if (bpms[closestPos].position <= position)
-                return bpms[closestPos];
-            else if (closestPos > 0)
-                return bpms[closestPos - 1];
-        }
-
-        return bpms[0];
+        return SongObjectHelper.GetPrevious(bpms, position);
     }
 
     /// <summary>
@@ -504,17 +496,12 @@ public class Song {
     /// <returns>Returns the value of the time signature that was found.</returns>
     public TimeSignature GetPrevTS(uint position)
     {
-        int closestPos = SongObjectHelper.FindClosestPosition(position, timeSignatures);
-        if (closestPos != SongObjectHelper.NOTFOUND)
-        {
-            // Select the smaller of the two
-            if (timeSignatures[closestPos].position <= position)
-                return timeSignatures[closestPos];
-            else if (closestPos > 0)
-                return timeSignatures[closestPos - 1];
-        }
+        return SongObjectHelper.GetPrevious(timeSignatures, position);
+    }
 
-        return timeSignatures[0];
+    public Section GetPrevSection(uint position)
+    {
+        return SongObjectHelper.GetPrevious(sections, position);
     }
 
     /// <summary>

@@ -27,7 +27,7 @@ public abstract class TimelineIndicator : MonoBehaviour {
         float endTime = song.length;
 
         if (endTime > 0)
-            return handle.handlePosToLocal(time / endTime);
+            return handle.HandlePosToLocal(time / endTime);
         else
             return Vector3.zero;
     }

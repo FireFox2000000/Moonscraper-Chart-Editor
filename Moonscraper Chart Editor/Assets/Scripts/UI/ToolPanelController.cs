@@ -57,13 +57,13 @@ public class ToolPanelController : MonoBehaviour {
     void Shortcuts()
     {
         if (ShortcutInput.GetInputDown(Shortcut.ToolSelectCursor))
-            cursorSelect.onClick.Invoke();
+            SetCursor();
 
         else if (ShortcutInput.GetInputDown(Shortcut.ToolSelectEraser))
             eraserSelect.onClick.Invoke();
 
-       // else if (Input.GetKeyDown(KeyCode.L))
-           // groupSelect.onClick.Invoke();
+        // else if (Input.GetKeyDown(KeyCode.L))
+        // groupSelect.onClick.Invoke();
 
         else if (ShortcutInput.GetInputDown(Shortcut.ToolSelectNote))
             noteSelect.onClick.Invoke();
@@ -124,5 +124,10 @@ public class ToolPanelController : MonoBehaviour {
             eventImage.sprite = localEventSprite;
         else if (viewMode == Globals.ViewMode.Song)
                 eventImage.sprite = globalEventSprite;
+    }
+
+    public void SetCursor()
+    {
+        cursorSelect.onClick.Invoke();
     }
 }

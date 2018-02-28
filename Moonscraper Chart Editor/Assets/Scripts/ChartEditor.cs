@@ -106,9 +106,26 @@ public class ChartEditor : MonoBehaviour {
             }
             else
                 currentSelectedObjects = new SongObject[] { value };
+
+            timeHandler.RefreshHighlightIndicator();
         }
     }
-    public SongObject[] currentSelectedObjects = new SongObject[0];
+
+
+    SongObject[] m_currentSelectedObjects = new SongObject[0];
+    public SongObject[] currentSelectedObjects
+    {
+        get
+        {
+            return m_currentSelectedObjects;
+        }
+        set
+        {
+            m_currentSelectedObjects = value;
+            timeHandler.RefreshHighlightIndicator();
+        }
+    }
+
     public uint currentTickPos {
         get
         {
@@ -1059,6 +1076,23 @@ public class ChartEditor : MonoBehaviour {
         }
 
         currentSelectedObjects = selectedObjectsList.ToArray();
+    }
+
+    public void AddOrRemoveSelectedObjects(System.Collections.Generic.IEnumerable<SongObject> songObjects)
+    {
+        var selectedObjectsList = new System.Collections.Generic.List<SongObject>(currentSelectedObjects);
+
+        foreach (SongObject songObject in songObjects)
+        {
+            if (!selectedObjectsList.Contains(songObject))
+            {
+                AddToSelectedObjects(songObject);
+            }
+            else
+            {
+                RemoveFromSelectedObjects(songObject);
+            }
+        }
     }
 
     public bool IsSelected(SongObject songObject)
