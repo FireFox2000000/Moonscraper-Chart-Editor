@@ -260,6 +260,7 @@
     <Compile Include="Assets\Scripts\UI\SaveAnimController.cs" />
     <Compile Include="Assets\Scripts\UI\SetEventName.cs" />
     <Compile Include="Assets\Scripts\UI\TapBPMCalculatorPanelController.cs" />
+    <Compile Include="Assets\Scripts\UI\TextAssetToUIText.cs" />
     <Compile Include="Assets\Scripts\UI\TextTruncExt.cs" />
     <Compile Include="Assets\Scripts\UI\TimelineHandler.cs" />
     <Compile Include="Assets\Scripts\UI\ToolPanelController.cs" />
@@ -326,6 +327,9 @@
     <None Include="Assets\Shaders\VerticalAlphaFade.shader" />
     <None Include="Assets\Shaders\VerticalAlphaFadeVariable.shader" />
     <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\MotionBlur.shader" />
+    <None Include="Assets\TextAssets\Shortcut Menu\ShortcutMenuHeadings.txt" />
+    <None Include="Assets\TextAssets\Shortcut Menu\ShortcutMenuKeys.txt" />
+    <None Include="Assets\TextAssets\Shortcut Menu\ShortcutMenuValues.txt" />
     <None Include="Assets\XInputDotNet\MITLicense.txt" />
     <None Include="Assets\_MK\_MKGlow\_Shader\_MKBase\Cutout\MK_Cutout-Diffuse.shader" />
     <None Include="Assets\_MK\_MKGlow\_Shader\_MKBase\Cutout\MK_Cutout-DiffuseBumpSpec.shader" />

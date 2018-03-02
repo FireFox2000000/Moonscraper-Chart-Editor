@@ -921,35 +921,7 @@ public class ChartEditor : MonoBehaviour {
 
         try
         {
-#if UNITY_EDITOR
-            currentFileName = UnityEditor.EditorUtility.OpenFilePanel("Load Chart", "", "chart,mid");
-            if (currentFileName == string.Empty)
-                yield break;
-#else
-            OpenFileName openChartFileDialog = new OpenFileName();
-
-            openChartFileDialog.structSize = Marshal.SizeOf(openChartFileDialog);
-            openChartFileDialog.filter = "Chart files (*.chart, *.mid)\0*.chart;*.mid";
-            openChartFileDialog.file = new String(new char[256]);
-            openChartFileDialog.maxFile = openChartFileDialog.file.Length;
-
-            openChartFileDialog.fileTitle = new String(new char[64]);
-            openChartFileDialog.maxFileTitle = openChartFileDialog.fileTitle.Length;
-
-            openChartFileDialog.initialDir = "";
-            openChartFileDialog.title = "Open file";
-            openChartFileDialog.defExt = "chart";
-
-            if (LibWrap.GetOpenFileName(openChartFileDialog))
-            {
-                currentFileName = openChartFileDialog.file;
-            }
-            else
-            {
-                throw new System.Exception("Could not open file");
-            }        
-#endif
-
+            currentFileName = FileExplorer.OpenFilePanel("Chart files (*.chart, *.mid)\0*.chart;*.mid", "chart,mid");
         }
         catch (System.Exception e)
         {

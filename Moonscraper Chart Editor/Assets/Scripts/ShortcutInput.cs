@@ -4,6 +4,9 @@ using UnityEngine;
 
 public enum Shortcut
 {
+    ActionHistoryRedo,
+    ActionHistoryUndo,
+
     AddSongObject,
 
     BpmIncrease,
@@ -33,7 +36,6 @@ public enum Shortcut
     NoteSetTap,
     
     PlayPause,
-    Redo,
 
     SelectAll,
     SelectAllSection,
@@ -63,8 +65,6 @@ public enum Shortcut
     ToolSelectTimeSignature,
     ToolSelectSection,
     ToolSelectEvent,
-
-    Undo,
 }
 
 public static class ShortcutInput {
@@ -121,10 +121,10 @@ public static class ShortcutInput {
         { Shortcut.FileNew,                         new KeyCode[] { KeyCode.N } },
         { Shortcut.FileSave,                        new KeyCode[] { KeyCode.S } },
 
-        { Shortcut.Redo,                            new KeyCode[] { KeyCode.Y } },
-        
+        { Shortcut.ActionHistoryRedo,               new KeyCode[] { KeyCode.Y } },
+        { Shortcut.ActionHistoryUndo,               new KeyCode[] { KeyCode.Z } },
+
         { Shortcut.SelectAll,                       new KeyCode[] { KeyCode.A } },
-        { Shortcut.Undo,                            new KeyCode[] { KeyCode.Z } },
     };
     static Dictionary<Shortcut, KeyCode[]> secondaryInputs = new Dictionary<Shortcut, KeyCode[]>
     {
@@ -133,7 +133,7 @@ public static class ShortcutInput {
     static Dictionary<Shortcut, KeyCode[]> secondaryModifierInputs = new Dictionary<Shortcut, KeyCode[]>
     {
         { Shortcut.FileSaveAs,                      new KeyCode[] { KeyCode.S } },
-        { Shortcut.Redo,                            new KeyCode[] { KeyCode.Z } },      
+        { Shortcut.ActionHistoryRedo,               new KeyCode[] { KeyCode.Z } },      
     };
     static Dictionary<Shortcut, KeyCode[]> alternativeInputs = new Dictionary<Shortcut, KeyCode[]>
     {

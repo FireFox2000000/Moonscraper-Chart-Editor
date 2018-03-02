@@ -1,0 +1,29 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+[ExecuteInEditMode]
+[RequireComponent(typeof(Text))]
+public class TextAssetToUIText : MonoBehaviour {
+    [SerializeField]
+    TextAsset textAsset;
+
+    Text textUI;
+    // Use this for initialization
+    void Start () {
+        if (!textUI)
+            textUI = GetComponent<Text>();
+
+        if (textAsset)
+            textUI.text = textAsset.text;
+        else
+            textUI.text = "";
+    }
+
+    void Update()
+    {
+        if (Application.isEditor)
+            Start();
+    }
+}

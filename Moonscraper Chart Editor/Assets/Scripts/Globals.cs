@@ -259,11 +259,11 @@ public class Globals : MonoBehaviour {
         {
             bool success = false;
 
-            if (ShortcutInput.GetInputDown(Shortcut.Undo))
+            if (ShortcutInput.GetInputDown(Shortcut.ActionHistoryUndo))
             {
                 success = editor.actionHistory.Undo(editor);
             }
-            else if (ShortcutInput.GetInputDown(Shortcut.Redo))
+            else if (ShortcutInput.GetInputDown(Shortcut.ActionHistoryRedo))
             {
                 success = editor.actionHistory.Redo(editor);
             }

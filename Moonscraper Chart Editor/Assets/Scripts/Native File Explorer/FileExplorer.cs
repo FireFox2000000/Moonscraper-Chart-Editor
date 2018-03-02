@@ -6,8 +6,49 @@ using System;
 using System.IO;
 
 public static class FileExplorer  {
+    [Flags]
+    enum OFN_Flags
+    {
+        OverwritePrompt = 0x000002,
+    }
 
-	public static string SaveFilePanel(string filter, string defaultFileName, string defExt)
+    public static string OpenFilePanel(string filter, string defExt)
+    {
+        string filename = string.Empty;
+
+#if UNITY_EDITOR
+        filename = UnityEditor.EditorUtility.OpenFilePanel("Open file", "", defExt);
+        if (filename == string.Empty)
+            throw new Exception("Could not open file");
+#else
+        OpenFileName openChartFileDialog = new OpenFileName();
+
+        openChartFileDialog.structSize = Marshal.SizeOf(openChartFileDialog);
+        openChartFileDialog.filter = filter;
+        openChartFileDialog.file = new String(new char[256]);
+        openChartFileDialog.maxFile = openChartFileDialog.file.Length;
+
+        openChartFileDialog.fileTitle = new String(new char[64]);
+        openChartFileDialog.maxFileTitle = openChartFileDialog.fileTitle.Length;
+
+        openChartFileDialog.initialDir = "";
+        openChartFileDialog.title = "Open file";
+        openChartFileDialog.defExt = defExt;
+
+        if (LibWrap.GetOpenFileName(openChartFileDialog))
+        {
+            filename = openChartFileDialog.file;
+        }
+        else
+        {
+            throw new System.Exception("Could not open file");
+        }
+#endif
+
+        return filename;
+    }
+
+    public static string SaveFilePanel(string filter, string defaultFileName, string defExt)
     {        
         string filename = string.Empty;
         defaultFileName = new string(defaultFileName.ToCharArray());
@@ -38,7 +79,7 @@ public static class FileExplorer  {
         openSaveFileDialog.initialDir = "";
         openSaveFileDialog.title = "Save as";
         openSaveFileDialog.defExt = defExt;
-        openSaveFileDialog.flags = 0x000002;       // Overwrite warning
+        openSaveFileDialog.flags = (int)OFN_Flags.OverwritePrompt;
 
         if (LibWrap.GetSaveFileName(openSaveFileDialog))
             filename = openSaveFileDialog.file;
