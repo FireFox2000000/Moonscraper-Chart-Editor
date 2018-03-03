@@ -219,14 +219,6 @@ namespace UnityEngine.UI
 
             OptionData data = options[Mathf.Clamp(m_Value, 0, options.Count - 1)];
 
-            if (m_CaptionText)
-            {
-                if (data != null && data.text != null)
-                    m_CaptionText.text = data.text;
-                else
-                    m_CaptionText.text = "";
-            }
-
             if (m_CaptionImage)
             {
                 if (data != null)
