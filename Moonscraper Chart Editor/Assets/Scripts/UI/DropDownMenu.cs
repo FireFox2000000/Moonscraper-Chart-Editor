@@ -23,6 +23,8 @@ public class DropDownMenu : MonoBehaviour {
         instantDropdown = GetComponent<CustomUnityDropdown>();
 
         resetDropdown();
+
+        titleText.text = title;
     }
 
     public void InvokeFuction(int pos)

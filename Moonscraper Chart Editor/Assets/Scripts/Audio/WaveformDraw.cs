@@ -20,24 +20,27 @@ public class WaveformDraw : MonoBehaviour {
 	void Start () {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
         lineRen = GetComponent<LineRenderer>();
-	}
+        lineRen.sortingLayerName = "Highway";
+    }
 	
 	// Update is called once per frame
 	void Update () {
         currentSample = null;
         foreach (Song.AudioInstrument audio in System.Enum.GetValues(typeof(Song.AudioInstrument)))
         {
-            if (waveformSelect.value == (int)audio)
+            if (waveformSelect.value == ((int)audio + 1))
             {
                 currentSample = editor.currentSong.GetSampleData(audio);
             }
         }
 
+        bool displayWaveform = waveformSelect.value > 0 && Globals.viewMode == Globals.ViewMode.Song;
         waveformSelect.gameObject.SetActive(Globals.viewMode == Globals.ViewMode.Song);
-        loadingText.gameObject.SetActive(Globals.viewMode == Globals.ViewMode.Song && currentSample.IsLoading);
+
+        loadingText.gameObject.SetActive(displayWaveform && currentSample.IsLoading);
 
         // Choose whether to display the waveform or not
-        if (Globals.viewMode == Globals.ViewMode.Song && currentSample != null && currentSample.data.Length > 0)
+        if (displayWaveform && currentSample != null && currentSample.data.Length > 0)
         {
             UpdateWaveformPointsFullData();
 
