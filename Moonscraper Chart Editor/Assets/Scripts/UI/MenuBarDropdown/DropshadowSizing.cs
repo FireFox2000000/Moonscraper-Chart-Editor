@@ -10,6 +10,8 @@ public class DropshadowSizing : MonoBehaviour {
     [SerializeField]
     CustomUnityDropdown dropdown;
     [SerializeField]
+    Dropdown standardDropdown;
+    [SerializeField]
     RectTransform item;
     [SerializeField]
     Vector2 offset = new Vector2(5, -7);
@@ -26,11 +28,16 @@ public class DropshadowSizing : MonoBehaviour {
 	void Update () {
         Vector2 size = rectTransform.sizeDelta;
         size.x = item.rect.width;
-        size.y = item.rect.height * dropdown.options.Count;
+        if (dropdown)
+            size.y = item.rect.height * dropdown.options.Count;
+        else if (standardDropdown)
+            size.y = item.rect.height * standardDropdown.options.Count;
+        else
+            size.y = 1;
         rectTransform.sizeDelta = size;
 
         Vector2 position = item.position;
-        Vector2 offset = this.offset;// + new Vector2(size.x, size.y) / 100.0f;
+        Vector2 offset = this.offset;
         offset *= ((float)Screen.width / Screen.height) / (TARGET_ASPECT_RATIO.x / TARGET_ASPECT_RATIO.y);
         position += offset;
         rectTransform.position = position;   

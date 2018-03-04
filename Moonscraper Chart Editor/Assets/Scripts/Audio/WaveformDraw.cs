@@ -34,8 +34,8 @@ public class WaveformDraw : MonoBehaviour {
             }
         }
 
-        bool displayWaveform = waveformSelect.value > 0 && Globals.viewMode == Globals.ViewMode.Song;
-        waveformSelect.gameObject.SetActive(Globals.viewMode == Globals.ViewMode.Song);
+        bool displayWaveform = waveformSelect.value > 0;// && Globals.viewMode == Globals.ViewMode.Song;
+        //waveformSelect.gameObject.SetActive(Globals.viewMode == Globals.ViewMode.Song);
 
         loadingText.gameObject.SetActive(displayWaveform && currentSample.IsLoading);
 

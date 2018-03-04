@@ -1,3 +1,9 @@
+v1.1.14
+	NEW FEATURES
+	-Added Alt-A shortcut for section highlighting. Can also hold this shortcut while scrolling to highlight multiple sections. 
+	-Added highlight range display over the timeline ui indicated by the yellow box that appears. 
+	-Waveform display now works in both local and global song views. 
+
 v1.1.13
 	NEW FEATURES
 	-Additional shortcuts

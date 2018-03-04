@@ -233,12 +233,8 @@
     <Compile Include="Assets\Scripts\Tools\ToolpaneButtonController.cs" />
     <Compile Include="Assets\Scripts\TriggerManager.cs" />
     <Compile Include="Assets\Scripts\UI\ContextSizeAutoAdjust.cs" />
-    <Compile Include="Assets\Scripts\UI\Custom Unity UI\CustomUnityDropdown.cs" />
     <Compile Include="Assets\Scripts\UI\CustomStandaloneInputModule.cs" />
-    <Compile Include="Assets\Scripts\UI\DropDownHoverActivate.cs" />
-    <Compile Include="Assets\Scripts\UI\DropDownMenu.cs" />
     <Compile Include="Assets\Scripts\UI\DropdownNotification.cs" />
-    <Compile Include="Assets\Scripts\UI\DropshadowSizing.cs" />
     <Compile Include="Assets\Scripts\UI\DynamicTextScrollView.cs" />
     <Compile Include="Assets\Scripts\UI\FPSDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\HintMouseOver.cs" />
@@ -249,6 +245,10 @@
     <Compile Include="Assets\Scripts\UI\LoadingScreenFader.cs" />
     <Compile Include="Assets\Scripts\UI\LoadingSpin.cs" />
     <Compile Include="Assets\Scripts\UI\MenuBar.cs" />
+    <Compile Include="Assets\Scripts\UI\MenuBarDropdown\Custom Unity UI\CustomUnityDropdown.cs" />
+    <Compile Include="Assets\Scripts\UI\MenuBarDropdown\DropDownHoverActivate.cs" />
+    <Compile Include="Assets\Scripts\UI\MenuBarDropdown\DropDownMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\MenuBarDropdown\DropshadowSizing.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\AudioCalibrationMenuScript.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\DisplayMenu.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\ErrorMessage.cs" />
@@ -264,6 +264,7 @@
     <Compile Include="Assets\Scripts\UI\TextTruncExt.cs" />
     <Compile Include="Assets\Scripts\UI\TimelineHandler.cs" />
     <Compile Include="Assets\Scripts\UI\ToolPanelController.cs" />
+    <Compile Include="Assets\Scripts\UI\UIHelperFunctions.cs" />
     <Compile Include="Assets\Scripts\UI\UIHoverBar.cs" />
     <Compile Include="Assets\Scripts\UI\UITabbing.cs" />
     <Compile Include="Assets\Scripts\Visuals\BGScaling.cs" />
