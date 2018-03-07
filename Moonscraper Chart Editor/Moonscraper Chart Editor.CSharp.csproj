@@ -126,6 +126,7 @@
     <Compile Include="Assets\Scripts\Charts\ChartObject.cs" />
     <Compile Include="Assets\Scripts\Charts\Event.cs" />
     <Compile Include="Assets\Scripts\Charts\IO\Chart\ChartReader.cs" />
+    <Compile Include="Assets\Scripts\Charts\IO\Chart\ChartReaderV2.cs" />
     <Compile Include="Assets\Scripts\Charts\IO\Chart\ChartWriter.cs" />
     <Compile Include="Assets\Scripts\Charts\IO\ExportOptions.cs" />
     <Compile Include="Assets\Scripts\Charts\IO\Midi\ByteSort.cs" />

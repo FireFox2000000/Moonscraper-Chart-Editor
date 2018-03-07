@@ -16,11 +16,28 @@ public class WaveformDraw : MonoBehaviour {
     public Dropdown waveformSelect;
     public Text loadingText;
 
-	// Use this for initialization
-	void Start () {
+    int chartViewWaveformSelectionIndex = 0;
+    int songViewWaveformSelectionIndex = 1;
+
+    // Use this for initialization
+    void Start () {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
         lineRen = GetComponent<LineRenderer>();
         lineRen.sortingLayerName = "Highway";
+
+        TriggerManager.onViewModeSwitchTriggerList.Add(OnViewModeSwitch);
+    }
+
+    void OnViewModeSwitch(Globals.ViewMode viewMode)
+    {
+        int newIndex = 0;
+
+        if (viewMode == Globals.ViewMode.Chart)
+            newIndex = chartViewWaveformSelectionIndex;
+        else if (viewMode == Globals.ViewMode.Song)
+            newIndex = songViewWaveformSelectionIndex;
+
+        waveformSelect.value = newIndex;
     }
 	
 	// Update is called once per frame
@@ -33,6 +50,11 @@ public class WaveformDraw : MonoBehaviour {
                 currentSample = editor.currentSong.GetSampleData(audio);
             }
         }
+
+        if (Globals.viewMode == Globals.ViewMode.Chart)
+            chartViewWaveformSelectionIndex = waveformSelect.value;
+        else if (Globals.viewMode == Globals.ViewMode.Song)
+            songViewWaveformSelectionIndex = waveformSelect.value;
 
         bool displayWaveform = waveformSelect.value > 0;// && Globals.viewMode == Globals.ViewMode.Song;
         //waveformSelect.gameObject.SetActive(Globals.viewMode == Globals.ViewMode.Song);

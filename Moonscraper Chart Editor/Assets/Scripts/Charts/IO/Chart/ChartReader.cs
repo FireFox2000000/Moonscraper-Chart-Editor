@@ -12,6 +12,24 @@ public static class ChartReader
     const string QUOTESEARCH = "\"([^\"]*)\"";
     const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";
 
+    struct Anchor
+    {
+        public uint position;
+        public float anchorTime;
+    }
+
+    struct NoteFlag
+    {
+        public uint position;
+        public Note.Flags flag;
+
+        public NoteFlag(uint position, Note.Flags flag)
+        {
+            this.position = position;
+            this.flag = flag;
+        }
+    }
+
     public static Song ReadChart(string filepath)
     {
         try
@@ -374,12 +392,6 @@ public static class ChartReader
             song.SetAudioLocation(streamAudio, Path.GetFullPath(audioFilepath));
     }
 
-    struct Anchor
-    {
-        public uint position;
-        public float anchorTime;
-    }
-
     static void SubmitDataGlobals(Song song, List<string> stringData)
     {
         const int TEXT_POS_TICK = 0;
@@ -500,7 +512,7 @@ public static class ChartReader
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
 #endif
-        List<string> flags = new List<string>();
+        List<NoteFlag> flags = new List<NoteFlag>();
 
         chart.SetCapacity(data.Length);
 
@@ -538,9 +550,9 @@ public static class ChartReader
                             else if (instrument == Song.Instrument.Drums)
                                 LoadDrumNote(chart, position, fret_type, length);
                             else if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
-                                LoadGHLiveNote(chart, line, position, fret_type, length, flags);
+                                LoadGHLiveNote(chart, position, fret_type, length, flags);
                             else
-                                LoadStandardNote(chart, line, position, fret_type, length, flags);
+                                LoadStandardNote(chart, position, fret_type, length, flags);
                             break;
 
                         case ("s"):
@@ -572,36 +584,11 @@ public static class ChartReader
             chart.UpdateCache();
 
             // Load flags
-            foreach (string line in flags)
+            foreach (NoteFlag flag in flags)
             {
-                try
-                {
-                    // Split string to get note information
-                    string[] digits = line.Split(' ');
-
-                    if (digits.Length == 5)
-                    {
-                        uint position = uint.Parse(digits[SPLIT_POSITION]);
-                        int fret_type = int.Parse(digits[SPLIT_VALUE]);
-
-                        Note[] notesToAddFlagTo = SongObjectHelper.FindObjectsAtPosition(position, chart.notes);
-                        switch (fret_type)
-                        {
-                            case (5):
-                                Note.groupAddFlags(notesToAddFlagTo, Note.Flags.FORCED);
-                                break;
-                            case (6):
-                                Note.groupAddFlags(notesToAddFlagTo, Note.Flags.TAP);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                }
-                catch (System.Exception e)
-                {
-                    Debug.LogError("Error parsing line \"" + line + "\": " + e);
-                }
+                Note[] notesToAddFlagTo = SongObjectHelper.FindObjectsAtPosition(flag.position, chart.notes);
+                if (notesToAddFlagTo.Length > 0)
+                    Note.groupAddFlags(notesToAddFlagTo, flag.flag);
             }
 #if TIMING_DEBUG
             Debug.Log("Chart load time: " + (Time.realtimeSinceStartup - time));
@@ -615,7 +602,7 @@ public static class ChartReader
         }
     }
 
-    static void LoadStandardNote(Chart chart, string line, uint position, int noteNumber, uint length, List<string> flagsList)
+    static void LoadStandardNote(Chart chart, uint position, int noteNumber, uint length, List<NoteFlag> flagsList)
     {
         Note.Fret_Type? noteFret = null;
         switch (noteNumber)
@@ -636,8 +623,12 @@ public static class ChartReader
                 noteFret = Note.Fret_Type.ORANGE;
                 break;
             case (5):
+                NoteFlag forcedFlag = new NoteFlag(position, Note.Flags.FORCED);
+                flagsList.Add(forcedFlag);
+                break;
             case (6):
-                flagsList.Add(line);
+                NoteFlag tapFlag = new NoteFlag(position, Note.Flags.TAP);
+                flagsList.Add(tapFlag);
                 break;
             case (7):
                 noteFret = Note.Fret_Type.OPEN;
@@ -687,7 +678,7 @@ public static class ChartReader
         }
     }
 
-    static void LoadGHLiveNote(Chart chart, string line, uint position, int noteNumber, uint length, List<string> flagsList)
+    static void LoadGHLiveNote(Chart chart, uint position, int noteNumber, uint length, List<NoteFlag> flagsList)
     {
         Note.GHLive_Fret_Type? noteFret = null;
         switch (noteNumber)
@@ -708,8 +699,10 @@ public static class ChartReader
                 noteFret = Note.GHLive_Fret_Type.BLACK_2;
                 break;
             case (5):
+                flagsList.Add(new NoteFlag(position, Note.Flags.FORCED));
+                break;
             case (6):
-                flagsList.Add(line);
+                flagsList.Add(new NoteFlag(position, Note.Flags.TAP));
                 break;
             case (7):
                 noteFret = Note.GHLive_Fret_Type.OPEN;
