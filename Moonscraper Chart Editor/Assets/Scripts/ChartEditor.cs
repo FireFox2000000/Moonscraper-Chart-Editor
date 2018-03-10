@@ -291,13 +291,14 @@ public class ChartEditor : MonoBehaviour {
 #else
     bool wantsToQuit = false;
 #endif
-    /*
+    
     void OnApplicationFocus(bool hasFocus)
     {
 #if !UNITY_EDITOR
         if (hasFocus && windowPtr == IntPtr.Zero)
             SetApplicationWindowPointer();
 #endif
+        /*
         if (hasFocus)
             Time.timeScale = 1;
         else
@@ -310,8 +311,8 @@ public class ChartEditor : MonoBehaviour {
         else
         {
             StopAudio();
-        }
-    }*/
+        }*/
+    }
 
     static bool quitting = false;
     void OnApplicationQuit()
