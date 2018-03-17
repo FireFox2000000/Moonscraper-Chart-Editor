@@ -1,3 +1,11 @@
+v1.1.15
+	NEW FEATURES
+	-Can freely scale a bpm to a position by right-click and dragging a bpm using the cursor tool
+	-Added an Unlabeled Shortcuts menu under the "Help" dropdown
+
+	CHANGES
+	-Remember waveform selection for each view mode
+
 v1.1.14
 	NEW FEATURES
 	-Added Alt-A shortcut for section highlighting. Can also hold this shortcut while scrolling to highlight multiple sections. 

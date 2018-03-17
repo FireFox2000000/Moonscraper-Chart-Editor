@@ -1,39 +1,27 @@
-Hidden Shortcuts-
+General-
+	Ctrl + C							| Copy
+	Ctrl + V							| Paste
+	Ctrl + X							| Cut
+	Ctrl A								| Select All
+	Ctrl Alt A							| Select Section
+	Hold Right Click  + Left Click		| Delete Object
+	Arrow Key Up / Down					| Move By Step
+	PageUp / PageDown					| Move By Measure 
+	Alt + Mouse Scroll					| Move By Section (Mouse)
+	Alt + Arrow Key Up / Down			| Move By Section (Keyboard)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Toolpanel-
-
-
-
-
-
-
-
-   
-
-Navigation-
-
-
-
-
+Cursor Tool
+	Left Click and Drag					| Group selection
+	Del									| Delete Selection
+	Ctrl + Left Click					| Add individual object to selection
+	Shift + Left Click 					| Add range of objects to selection
+	Shift + Left Click and Drag			| Add to current selection
+	Alt + Left Click and Drag			| Remove from current selection
+	Shift + Left Click (Note) 			| Select Chord
+	Right Click and Drag (BPM)			| Scale previous BPM value to cursor position		
+	
+Note Tool
+	1-5									| Select Notes	   
+	6									| Toggle Open Note
+	1-6 (GHL Chart)						| Select Notes
+	7 (GHL Chart)						| Toggle Open Note

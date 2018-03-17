@@ -120,8 +120,6 @@
     <None Include="Assets\Shaders\VerticalAlphaFadeVariable.shader" />
     <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\MotionBlur.shader" />
     <None Include="Assets\TextAssets\Shortcut Menu\ShortcutMenuHeadings.txt" />
-    <None Include="Assets\TextAssets\Shortcut Menu\ShortcutMenuKeys.txt" />
-    <None Include="Assets\TextAssets\Shortcut Menu\ShortcutMenuValues.txt" />
     <None Include="Assets\XInputDotNet\MITLicense.txt" />
     <None Include="Assets\_MK\_MKGlow\_Shader\_MKBase\Cutout\MK_Cutout-Diffuse.shader" />
     <None Include="Assets\_MK\_MKGlow\_Shader\_MKBase\Cutout\MK_Cutout-DiffuseBumpSpec.shader" />
