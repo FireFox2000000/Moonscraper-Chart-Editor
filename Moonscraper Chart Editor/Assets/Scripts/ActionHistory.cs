@@ -66,6 +66,7 @@ public class ActionHistory
 
             editor.currentChart.UpdateCache();
             editor.currentSong.UpdateCache();
+            editor.FixUpBPMAnchors();
             if (Toolpane.currentTool != Toolpane.Tools.Note)
                 editor.currentSelectedObject = null;
 
@@ -110,6 +111,7 @@ public class ActionHistory
 
             editor.currentChart.UpdateCache();
             editor.currentSong.UpdateCache();
+            editor.FixUpBPMAnchors();
             if (Toolpane.currentTool != Toolpane.Tools.Note)
                 editor.currentSelectedObject = null;
 

@@ -33,21 +33,29 @@ public abstract class Snapable : MonoBehaviour {
         UpdateSnappedPos(GameSettings.step);
     }
 
-    protected void UpdateSnappedPos(int step)
+    public static uint GetSnappedPos(ChartEditor editor, int step)
     {
-        if (GameSettings.keysModeEnabled && Toolpane.currentTool != Toolpane.Tools.Cursor)
-            objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedChartPosition(editor.visibleStrikeline.position.y, step);
-        // Read in mouse world position
-        else if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
+        if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
         {
             Vector2 mousePos = (Vector2)Mouse.world2DPosition;
             float ypos = mousePos.y;
-
-            objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedChartPosition(ypos, step);
+            return editor.currentSong.WorldPositionToSnappedChartPosition(ypos, step);
         }
         else
         {
-            objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedChartPosition(editor.mouseYMaxLimit.position.y, step);
+            return editor.currentSong.WorldPositionToSnappedChartPosition(editor.mouseYMaxLimit.position.y, step);
+        }
+    }
+
+    protected void UpdateSnappedPos(int step)
+    {
+        if (GameSettings.keysModeEnabled && Toolpane.currentTool != Toolpane.Tools.Cursor)
+        {
+            objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedChartPosition(editor.visibleStrikeline.position.y, step);
+        }
+        else
+        {
+            objectSnappedChartPos = GetSnappedPos(editor, step);
         }
     }
 

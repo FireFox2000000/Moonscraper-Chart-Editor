@@ -517,11 +517,56 @@ public static class SongObjectHelper {
         return closestPos;
     }
 
+    public static int GetIndexOfNext<T>(T[] songObjects, uint position) where T : SongObject
+    {
+        int closestPos = FindClosestPosition(position, songObjects);
+        if (closestPos != NOTFOUND)
+        {
+            // Select the larger of the two
+            if (songObjects[closestPos].position >= position)
+                return closestPos;
+            else if (closestPos < songObjects.Length - 1)
+                return closestPos + 1;
+            else
+                return NOTFOUND;
+        }
+
+        return closestPos;
+    }
+
     public static T GetPrevious<T>(T[] songObjects, uint position) where T : SongObject
     {
         int pos = GetIndexOfPrevious(songObjects, position);
         if (pos != NOTFOUND)
             return songObjects[pos];
+        else
+            return null;
+    }
+
+    public static T GetPreviousNonInclusive<T>(T[] songObjects, uint position) where T : SongObject
+    {
+        int pos = GetIndexOfPrevious(songObjects, position);
+        if (pos != NOTFOUND)
+        {
+            if (songObjects[pos].position == position && pos > 0)
+                --pos;
+
+            return songObjects[pos];
+        }
+        else
+            return null;
+    }
+
+    public static T GetNextNonInclusive<T>(T[] songObjects, uint position) where T : SongObject
+    {
+        int pos = GetIndexOfNext(songObjects, position);
+        if (pos != NOTFOUND)
+        {
+            if (songObjects[pos].position == position && pos < songObjects.Length - 1)
+                ++pos;
+
+            return songObjects[pos];
+        }
         else
             return null;
     }
