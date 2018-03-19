@@ -187,11 +187,12 @@ public class Song {
 
         // Chart initialisation
         int numberOfInstruments = Enum.GetNames(typeof(Instrument)).Length - 1;     // Don't count the "Unused" instrument
-        charts = new Chart[numberOfInstruments * Enum.GetNames(typeof(Difficulty)).Length];
+        charts = new Chart[numberOfInstruments * DIFFICULTY_COUNT];
 
         for (int i = 0; i < charts.Length; ++i)
         {
-            charts[i] = new Chart(this);
+            Instrument instrument = (Instrument)(i / DIFFICULTY_COUNT);
+            charts[i] = new Chart(this, instrument);
         }
 
         // Set the name of the chart
@@ -782,6 +783,31 @@ public class Song {
     public bool GetAudioIsLoaded(AudioInstrument audio)
     {
         return GetBassAudioStream(audio) != 0;
+    }
+
+    public static Chart.GameMode InstumentToChartGameMode(Instrument instrument)
+    {
+        switch (instrument)
+        {
+            case (Instrument.Guitar):
+            case (Instrument.GuitarCoop):
+            case (Instrument.Bass):
+            case (Instrument.Rhythm):
+            case (Instrument.Keys):
+                return Chart.GameMode.Guitar;
+
+            case (Instrument.Drums):
+                return Chart.GameMode.Drums;
+
+            case (Instrument.GHLiveGuitar):
+            case (Instrument.GHLiveBass):
+                return Chart.GameMode.GHLGuitar;
+
+            default:
+                break;
+        }
+
+        return Chart.GameMode.Unrecognised;
     }
 
     public enum Difficulty

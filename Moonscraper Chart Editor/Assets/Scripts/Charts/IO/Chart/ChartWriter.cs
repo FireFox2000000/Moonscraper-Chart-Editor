@@ -32,7 +32,6 @@ public class ChartWriter {
 
             GetAudioStreamSaveString GetSaveAudioString = audio => {
                 string audioString;
-                int arrayIndex = (int)audio;
                 string audioLocation = song.GetAudioLocation(audio);
 
                 if (song.GetAudioIsLoaded(audio) && Path.GetDirectoryName(audioLocation).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))

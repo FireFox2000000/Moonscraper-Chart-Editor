@@ -159,7 +159,7 @@ public static class MidReader {
         List<NoteOnEvent> forceNotesList = new List<NoteOnEvent>();
         List<SysexEvent> tapAndOpenEvents = new List<SysexEvent>();
 
-        Chart unrecognised = new Chart(song);
+        Chart unrecognised = new Chart(song, Song.Instrument.Unrecognised);
 
         if (instrument == Song.Instrument.Unrecognised)
             song.unrecognisedCharts.Add(unrecognised);

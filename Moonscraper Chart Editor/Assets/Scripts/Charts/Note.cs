@@ -531,7 +531,7 @@ public class Note : ChartObject
             }
             else
             {
-                if ((!IsOpenNote() && next.IsOpenNote() && !Globals.drumMode) || (next.rawNote == rawNote))
+                if ((!IsOpenNote() && next.IsOpenNote() && !(chart.gameMode == Chart.GameMode.Drums)) || (next.rawNote == rawNote))
                     return next;
             }
 
@@ -543,7 +543,7 @@ public class Note : ChartObject
 
     public bool IsOpenNote()
     {
-        if (Globals.ghLiveMode)
+        if (chart.gameMode == Chart.GameMode.GHLGuitar)
             return ghlive_fret_type == GHLive_Fret_Type.OPEN;
         else
             return fret_type == Fret_Type.OPEN;

@@ -215,7 +215,7 @@ public static class ChartReader
     {
         dataName = dataName.TrimStart('[');
         dataName = dataName.TrimEnd(']');
-        Chart unrecognisedChart = new Chart(song, dataName);
+        Chart unrecognisedChart = new Chart(song, Song.Instrument.Unrecognised, dataName);
         LoadChart(unrecognisedChart, stringData, Song.Instrument.Unrecognised);
         song.unrecognisedCharts.Add(unrecognisedChart);
     }

@@ -12,6 +12,7 @@ public class Chart  {
     Song _song;
     List<ChartObject> _chartObjects;
     int _note_count;
+    GameMode _gameMode;
     public string name = string.Empty;
 
     /// <summary>
@@ -30,6 +31,10 @@ public class Chart  {
     /// The song this chart is connected to.
     /// </summary>
     public Song song { get { return _song; } }
+    /// <summary>
+    /// The game mode the chart is designed for
+    /// </summary>
+    public GameMode gameMode { get { return _gameMode; } }
 
     /// <summary>
     /// Read only list containing all chart notes, starpower and events.
@@ -46,10 +51,11 @@ public class Chart  {
     /// </summary>
     /// <param name="song">The song to associate this chart with.</param>
     /// <param name="name">The name of the chart (easy single, expert double guitar, etc.</param>
-    public Chart (Song song, string name = "")
+    public Chart (Song song, GameMode gameMode, string name = "")
     {
         _song = song;
         _chartObjects = new List<ChartObject>();
+        _gameMode = gameMode;
 
         notes = new Note[0];
         starPower = new Starpower[0];
@@ -60,10 +66,15 @@ public class Chart  {
         this.name = name;
     }
 
+    public Chart(Song song, Song.Instrument instrument, string name = "") : this(song, Song.InstumentToChartGameMode(instrument), name)
+    {
+    }
+
     public Chart(Chart chart, Song song)
     {
         _song = song;
         name = chart.name;
+        _gameMode = chart.gameMode;
 
         _chartObjects = new List<ChartObject>();
         _chartObjects.AddRange(chart._chartObjects);
@@ -189,5 +200,14 @@ public class Chart  {
             UpdateCache();
 
         return success;
+    }
+
+    public enum GameMode
+    {
+        Guitar,
+        Drums,
+        GHLGuitar,
+
+        Unrecognised,
     }
 }
