@@ -281,43 +281,6 @@ public static class MidReader {
         }
         else
             unrecognised.UpdateCache();
-        
-        // Apply forcing events
-        foreach (NoteOnEvent flagEvent in forceNotesList)
-        {
-            uint tick = (uint)flagEvent.AbsoluteTime;
-            uint endPos = (uint)(flagEvent.OffEvent.AbsoluteTime - tick);
-
-            Song.Difficulty difficulty;
-
-            // Determine which difficulty we are manipulating
-            try
-            {
-                difficulty = SelectNoteDifficulty(flagEvent.NoteNumber);
-            }
-            catch
-            {
-                continue;
-            }
-
-            Chart chart;
-            if (instrument != Song.Instrument.Unrecognised)
-                chart = song.GetChart(instrument, difficulty);
-            else
-                chart = unrecognised;
-
-            int index, length;
-            SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
-
-            for (int i = index; i < index + length; ++i)
-            { 
-                // if NoteNumber is odd force hopo, if even force strum
-                if (flagEvent.NoteNumber % 2 != 0)
-                    chart.notes[i].SetType(Note.Note_Type.Hopo);
-                else
-                    chart.notes[i].SetType(Note.Note_Type.Strum);
-            }
-        }
 
         // Apply tap and open note events
         Chart[] chartsOfInstrument;
@@ -428,7 +391,43 @@ public static class MidReader {
                         notes[k].fret_type = Note.LoadDrumNoteToGuitarNote(notes[k].fret_type);
                 }
             }
+        }
 
+        // Apply forcing events
+        foreach (NoteOnEvent flagEvent in forceNotesList)
+        {
+            uint tick = (uint)flagEvent.AbsoluteTime;
+            uint endPos = (uint)(flagEvent.OffEvent.AbsoluteTime - tick);
+
+            Song.Difficulty difficulty;
+
+            // Determine which difficulty we are manipulating
+            try
+            {
+                difficulty = SelectNoteDifficulty(flagEvent.NoteNumber);
+            }
+            catch
+            {
+                continue;
+            }
+
+            Chart chart;
+            if (instrument != Song.Instrument.Unrecognised)
+                chart = song.GetChart(instrument, difficulty);
+            else
+                chart = unrecognised;
+
+            int index, length;
+            SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
+
+            for (int i = index; i < index + length; ++i)
+            {
+                // if NoteNumber is odd force hopo, if even force strum
+                if (flagEvent.NoteNumber % 2 != 0)
+                    chart.notes[i].SetType(Note.Note_Type.Hopo);
+                else
+                    chart.notes[i].SetType(Note.Note_Type.Strum);
+            }
         }
     }
 
