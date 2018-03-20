@@ -422,6 +422,9 @@ public static class MidReader {
 
             for (int i = index; i < index + length; ++i)
             {
+                if ((chart.notes[i].flags & Note.Flags.TAP) != 0)
+                    continue;
+
                 // if NoteNumber is odd force hopo, if even force strum
                 if (flagEvent.NoteNumber % 2 != 0)
                     chart.notes[i].SetType(Note.Note_Type.Hopo);

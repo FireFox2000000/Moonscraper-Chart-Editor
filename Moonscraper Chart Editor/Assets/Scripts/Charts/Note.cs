@@ -402,7 +402,7 @@ public class Note : ChartObject
 
         Note previous = startNote.previous;
 
-        int allVisited = Globals.ghLiveMode ? 63 : 31; // 0011 1111 for ghlive, 0001 1111 for standard
+        int allVisited = startNote.chart.gameMode == Chart.GameMode.GHLGuitar ? 63 : 31; // 0011 1111 for ghlive, 0001 1111 for standard
         int noteTypeVisited = 0;
 
         while (previous != null && noteTypeVisited < allVisited)
