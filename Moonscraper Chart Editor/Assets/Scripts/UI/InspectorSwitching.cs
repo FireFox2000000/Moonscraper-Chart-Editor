@@ -35,9 +35,9 @@ public class InspectorSwitching : MonoBehaviour {
 
         editor = ChartEditor.FindCurrentEditor();
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update() {
         if ((Toolpane.currentTool == Toolpane.Tools.GroupSelect || Toolpane.currentTool == Toolpane.Tools.Cursor) && editor.currentSelectedObjects.Length > 1)
         {
             if (!currentPropertiesPanel || currentPropertiesPanel != groupSelectInspector)
@@ -109,12 +109,13 @@ public class InspectorSwitching : MonoBehaviour {
             currentPropertiesPanel = null;
         }
 
-        //if (currentPropertiesPanel && currentPropertiesPanel.gameObject.activeSelf)     
-          //  currentPropertiesPanel.gameObject.SetActive(Globals.applicationMode != Globals.ApplicationMode.Playing);    // Set it to false if it's not meant to be visible
-
-        canvas.SetActive(Globals.applicationMode != Globals.ApplicationMode.Playing);
-
         if (!currentPropertiesPanel)
             canvas.SetActive(false);
+        else
+        {
+            bool applicationModeNotPlaying = Globals.applicationMode != Globals.ApplicationMode.Playing;
+            if (canvas.activeSelf != applicationModeNotPlaying)
+                canvas.SetActive(applicationModeNotPlaying);
+        }    
     }
 }
