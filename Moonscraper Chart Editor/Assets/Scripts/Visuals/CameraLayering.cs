@@ -14,11 +14,15 @@ public class CameraLayering : MonoBehaviour {
 	void Start () {
         cam = GetComponent<Camera>();
         mkGlow = GetComponent<MKGlowSystem.MKGlow>();
+
+        TriggerManager.onViewModeSwitchTriggerList.Add(UpdateCullingMask);
+
+        UpdateCullingMask(Globals.viewMode);
     }
-	
-	// Update is called once per frame
-	void Update () {
-        if (Globals.viewMode == Globals.ViewMode.Chart)
+
+    void UpdateCullingMask(Globals.ViewMode viewMode)
+    {
+        if (viewMode == Globals.ViewMode.Chart)
         {
             // Configure camera to ignore song
             cam.cullingMask |= 1 << LayerMask.NameToLayer("ChartObject");
