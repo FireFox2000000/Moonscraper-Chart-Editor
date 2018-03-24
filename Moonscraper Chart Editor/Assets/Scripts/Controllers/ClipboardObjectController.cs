@@ -25,15 +25,11 @@ public class ClipboardObjectController : Snapable {
     {
         base.Awake();
         ren = GetComponent<Renderer>();
+        TriggerManager.onApplicationModeChangedTriggerList.Add(OnApplicationModeChanged);
     }
 
     new void LateUpdate()
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
-            ren.enabled = true;
-        else
-            ren.enabled = false;
-
         if (Mouse.world2DPosition != null && Input.mousePosition.y < Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y)
         {
             pastePos = objectSnappedChartPos;
@@ -50,6 +46,12 @@ public class ClipboardObjectController : Snapable {
             Paste(pastePos);
             groupSelectTool.reset();
         }
+    }
+
+    void OnApplicationModeChanged(Globals.ApplicationMode applicationMode)
+    {
+        // Can only paste in editor mode
+        gameObject.SetActive(applicationMode == Globals.ApplicationMode.Editor);
     }
 
     public static void SetData(SongObject[] data, Clipboard.SelectionArea area, Song song)

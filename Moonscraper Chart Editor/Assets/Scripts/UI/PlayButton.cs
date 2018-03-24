@@ -20,14 +20,9 @@ public class PlayButton : MonoBehaviour {
     {
         editor = ChartEditor.FindCurrentEditor();
         buttonImage = GetComponent<Image>();
-    }
 
-    void Update()
-    {
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
-            buttonImage.sprite = pauseSprite;
-        else
-            buttonImage.sprite = playSprite;
+        TriggerManager.onApplicationModeChangedTriggerList.Add(UpdatePlayPauseSprite);
+        UpdatePlayPauseSprite(Globals.applicationMode);
     }
 
 	public void PlayPause()
@@ -36,5 +31,13 @@ public class PlayButton : MonoBehaviour {
             editor.Play();
         else
             editor.Stop();
+    }
+
+    void UpdatePlayPauseSprite(Globals.ApplicationMode applicationMode)
+    {
+        if (applicationMode == Globals.ApplicationMode.Playing)
+            buttonImage.sprite = pauseSprite;
+        else
+            buttonImage.sprite = playSprite;
     }
 }

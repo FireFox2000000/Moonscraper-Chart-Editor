@@ -43,7 +43,19 @@ public class Globals : MonoBehaviour {
     }
 
     // Settings
-    public static ApplicationMode applicationMode = ApplicationMode.Editor;
+    static ApplicationMode _applicationMode = ApplicationMode.Editor;
+    public static ApplicationMode applicationMode
+    {
+        get
+        {
+            return _applicationMode;
+        }
+        set
+        {
+            _applicationMode = value;
+            TriggerManager.FireApplicationModeChangedTriggers();
+        }
+    }
     public static ViewMode viewMode { get; set; }
 
     ChartEditor editor;

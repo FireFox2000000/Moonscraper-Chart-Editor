@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2016-2017 Alexander Ong
 // See LICENSE in project root for license information.
 
+#define APPLICATION_MOONSCRAPER     // Moonscraper doesn't use chart.gameMode because notes might not have charts associated with them, copy-pasting for instance and storing undo-redo
+
 using System;
 using System.Collections.Generic;
 
@@ -133,6 +135,23 @@ public class Note : ChartObject
         NONE = 0,
         FORCED = 1,
         TAP = 2
+    }
+
+    private Chart.GameMode gameMode
+    {
+        get
+        {
+            if (chart != null)
+                return chart.gameMode;
+            else
+            {
+#if APPLICATION_MOONSCRAPER
+                return ChartEditor.FindCurrentEditor().currentChart.gameMode;
+#else
+                return Chart.GameMode.Unrecognised;
+#endif
+            }
+        }
     }
 
     public bool forced
@@ -402,7 +421,7 @@ public class Note : ChartObject
 
         Note previous = startNote.previous;
 
-        int allVisited = startNote.chart.gameMode == Chart.GameMode.GHLGuitar ? 63 : 31; // 0011 1111 for ghlive, 0001 1111 for standard
+        int allVisited = startNote.gameMode == Chart.GameMode.GHLGuitar ? 63 : 31; // 0011 1111 for ghlive, 0001 1111 for standard
         int noteTypeVisited = 0;
 
         while (previous != null && noteTypeVisited < allVisited)
@@ -531,7 +550,7 @@ public class Note : ChartObject
             }
             else
             {
-                if ((!IsOpenNote() && next.IsOpenNote() && !(chart.gameMode == Chart.GameMode.Drums)) || (next.rawNote == rawNote))
+                if ((!IsOpenNote() && next.IsOpenNote() && !(gameMode == Chart.GameMode.Drums)) || (next.rawNote == rawNote))
                     return next;
             }
 
@@ -543,7 +562,7 @@ public class Note : ChartObject
 
     public bool IsOpenNote()
     {
-        if (chart.gameMode == Chart.GameMode.GHLGuitar)
+        if (gameMode == Chart.GameMode.GHLGuitar)
             return ghlive_fret_type == GHLive_Fret_Type.OPEN;
         else
             return fret_type == Fret_Type.OPEN;

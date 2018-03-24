@@ -34,4 +34,12 @@ public static class TriggerManager {
         foreach (LeftyFlipToggledTrigger function in onLeftyFlipToggledTriggerList)
             function();
     }
+
+    public delegate void ApplicationModeChangedTrigger(Globals.ApplicationMode applicationMode);
+    public static List<ApplicationModeChangedTrigger> onApplicationModeChangedTriggerList = new List<ApplicationModeChangedTrigger>();
+    public static void FireApplicationModeChangedTriggers()
+    {
+        foreach (ApplicationModeChangedTrigger function in onApplicationModeChangedTriggerList)
+            function(Globals.applicationMode);
+    }
 }

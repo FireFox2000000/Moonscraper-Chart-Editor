@@ -1,3 +1,8 @@
+v1.1.16
+	FIXES
+	-Fixed Midi reading bug that would mess up open note forcing in specific scenarios
+	-Saved ~1ms of cpu optimisation due to dumb UI logic
+
 v1.1.15
 	NEW FEATURES
 	-Can freely scale a bpm to a position by right-click and dragging a bpm using the cursor tool
