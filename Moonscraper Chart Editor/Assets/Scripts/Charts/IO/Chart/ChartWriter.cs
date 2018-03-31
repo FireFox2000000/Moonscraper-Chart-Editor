@@ -34,7 +34,7 @@ public class ChartWriter {
                 string audioString;
                 string audioLocation = song.GetAudioLocation(audio);
 
-                if (song.GetAudioIsLoaded(audio) && Path.GetDirectoryName(audioLocation).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))
+                if (audioLocation != string.Empty && Path.GetDirectoryName(audioLocation).Replace("\\", "/") == Path.GetDirectoryName(path).Replace("\\", "/"))
                     audioString = Path.GetFileName(audioLocation);
                 else
                     audioString = audioLocation;

@@ -267,7 +267,8 @@ public class Song {
 
         for (int i = 0; i < audioLocations.Length; ++i)
         {
-            audioLocations[i] = song.audioLocations[i];
+            if (song.GetAudioIsLoaded((AudioInstrument)i))
+                audioLocations[i] = song.audioLocations[i];
         }
     }
 

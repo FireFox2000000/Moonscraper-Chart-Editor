@@ -7,16 +7,17 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B2ADA136-0BA8-9013-FFA1-B366F3E2E0A8}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <AssemblyName>Assembly-CSharp.dll</AssemblyName>
+    <AssemblyName>Assembly-CSharp</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
     <CompilerResponseFile></CompilerResponseFile>
+    <UnityProjectGenerator>VSTU</UnityProjectGenerator>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
-    <UnityVersion>5.5.1f1</UnityVersion>
+    <UnityVersion>5.5.5f1</UnityVersion>
     <RootNamespace></RootNamespace>
     <LangVersion>4</LangVersion>
   </PropertyGroup>
@@ -27,7 +28,7 @@
     <IntermediateOutputPath>Temp\UnityVS_obj\Debug\</IntermediateOutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DefineConstants>DEBUG;TRACE;UNITY_5_3_OR_NEWER;UNITY_5_4_OR_NEWER;UNITY_5_5_OR_NEWER;UNITY_5_5_1;UNITY_5_5;UNITY_5;UNITY_64;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_DUCK_TYPING;ENABLE_GENERICS;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_UNET;ENABLE_LZMA;ENABLE_UNITYEVENTS;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES_COLLAB;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;INCLUDE_PUBNUB;ENABLE_PLAYMODE_TESTS_RUNNER;ENABLE_SCRIPTING_NEW_CSHARP_COMPILER;UNITY_STANDALONE_WIN;UNITY_STANDALONE;ENABLE_SUBSTANCE;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_UNITYWEBREQUEST;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_CRASH_REPORTING;ENABLE_EVENT_QUEUE;ENABLE_CLUSTERINPUT;ENABLE_VIDEO;ENABLE_VR;ENABLE_WEBSOCKET_HOST;ENABLE_MONO;ENABLE_PROFILER;DEBUG;TRACE;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE;ENABLE_VSTU</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;UNITY_5_3_OR_NEWER;UNITY_5_4_OR_NEWER;UNITY_5_5_OR_NEWER;UNITY_5_5_5;UNITY_5_5;UNITY_5;UNITY_64;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_DUCK_TYPING;ENABLE_GENERICS;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_UNET;ENABLE_LZMA;ENABLE_UNITYEVENTS;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES_COLLAB;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;INCLUDE_PUBNUB;ENABLE_PLAYMODE_TESTS_RUNNER;ENABLE_SCRIPTING_NEW_CSHARP_COMPILER;UNITY_STANDALONE_WIN;UNITY_STANDALONE;ENABLE_SUBSTANCE;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_UNITYWEBREQUEST;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_CRASH_REPORTING;ENABLE_EVENT_QUEUE;ENABLE_CLUSTERINPUT;ENABLE_VIDEO;ENABLE_VR;ENABLE_WEBSOCKET_HOST;ENABLE_MONO;DEVELOPMENT_BUILD;ENABLE_PROFILER;DEBUG;TRACE;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE;ENABLE_VSTU</DefineConstants>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -37,7 +38,7 @@
     <IntermediateOutputPath>Temp\UnityVS_obj\Release\</IntermediateOutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DefineConstants>TRACE;UNITY_5_3_OR_NEWER;UNITY_5_4_OR_NEWER;UNITY_5_5_OR_NEWER;UNITY_5_5_1;UNITY_5_5;UNITY_5;UNITY_64;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_DUCK_TYPING;ENABLE_GENERICS;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_UNET;ENABLE_LZMA;ENABLE_UNITYEVENTS;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES_COLLAB;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;INCLUDE_PUBNUB;ENABLE_PLAYMODE_TESTS_RUNNER;ENABLE_SCRIPTING_NEW_CSHARP_COMPILER;UNITY_STANDALONE_WIN;UNITY_STANDALONE;ENABLE_SUBSTANCE;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_UNITYWEBREQUEST;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_CRASH_REPORTING;ENABLE_EVENT_QUEUE;ENABLE_CLUSTERINPUT;ENABLE_VIDEO;ENABLE_VR;ENABLE_WEBSOCKET_HOST;ENABLE_MONO;ENABLE_PROFILER;DEBUG;TRACE;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE;ENABLE_VSTU</DefineConstants>
+    <DefineConstants>TRACE;UNITY_5_3_OR_NEWER;UNITY_5_4_OR_NEWER;UNITY_5_5_OR_NEWER;UNITY_5_5_5;UNITY_5_5;UNITY_5;UNITY_64;ENABLE_AUDIO;ENABLE_CACHING;ENABLE_CLOTH;ENABLE_DUCK_TYPING;ENABLE_GENERICS;ENABLE_MICROPHONE;ENABLE_MULTIPLE_DISPLAYS;ENABLE_PHYSICS;ENABLE_SPRITERENDERER_FLIPPING;ENABLE_SPRITES;ENABLE_TERRAIN;ENABLE_RAKNET;ENABLE_UNET;ENABLE_LZMA;ENABLE_UNITYEVENTS;ENABLE_WEBCAM;ENABLE_WWW;ENABLE_CLOUD_SERVICES_COLLAB;ENABLE_CLOUD_SERVICES_ADS;ENABLE_CLOUD_HUB;ENABLE_CLOUD_PROJECT_ID;ENABLE_CLOUD_SERVICES_UNET;ENABLE_CLOUD_SERVICES_BUILD;ENABLE_CLOUD_LICENSE;ENABLE_EDITOR_METRICS;ENABLE_EDITOR_METRICS_CACHING;INCLUDE_DYNAMIC_GI;INCLUDE_GI;PLATFORM_SUPPORTS_MONO;RENDER_SOFTWARE_CURSOR;INCLUDE_PUBNUB;ENABLE_PLAYMODE_TESTS_RUNNER;ENABLE_SCRIPTING_NEW_CSHARP_COMPILER;UNITY_STANDALONE_WIN;UNITY_STANDALONE;ENABLE_SUBSTANCE;ENABLE_RUNTIME_GI;ENABLE_MOVIES;ENABLE_NETWORK;ENABLE_CRUNCH_TEXTURE_COMPRESSION;ENABLE_UNITYWEBREQUEST;ENABLE_CLOUD_SERVICES;ENABLE_CLOUD_SERVICES_ANALYTICS;ENABLE_CLOUD_SERVICES_PURCHASING;ENABLE_CLOUD_SERVICES_CRASH_REPORTING;ENABLE_EVENT_QUEUE;ENABLE_CLUSTERINPUT;ENABLE_VIDEO;ENABLE_VR;ENABLE_WEBSOCKET_HOST;ENABLE_MONO;DEVELOPMENT_BUILD;ENABLE_PROFILER;DEBUG;TRACE;UNITY_ASSERTIONS;UNITY_EDITOR;UNITY_EDITOR_64;UNITY_EDITOR_WIN;UNITY_TEAM_LICENSE;ENABLE_VSTU</DefineConstants>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
@@ -125,17 +126,22 @@
     <Compile Include="Assets\Scripts\Charts\ChartEvent.cs" />
     <Compile Include="Assets\Scripts\Charts\ChartObject.cs" />
     <Compile Include="Assets\Scripts\Charts\Event.cs" />
-    <Compile Include="Assets\Scripts\Charts\IO\ChartWriter.cs" />
+    <Compile Include="Assets\Scripts\Charts\IO\Chart\ChartReader.cs" />
+    <Compile Include="Assets\Scripts\Charts\IO\Chart\ChartReaderV2.cs" />
+    <Compile Include="Assets\Scripts\Charts\IO\Chart\ChartWriter.cs" />
     <Compile Include="Assets\Scripts\Charts\IO\ExportOptions.cs" />
     <Compile Include="Assets\Scripts\Charts\IO\Midi\ByteSort.cs" />
     <Compile Include="Assets\Scripts\Charts\IO\Midi\MidReader.cs" />
     <Compile Include="Assets\Scripts\Charts\IO\Midi\MidWriter.cs" />
+    <Compile Include="Assets\Scripts\Charts\Metadata.cs" />
     <Compile Include="Assets\Scripts\Charts\Note.cs" />
     <Compile Include="Assets\Scripts\Charts\Section.cs" />
     <Compile Include="Assets\Scripts\Charts\Song.cs" />
     <Compile Include="Assets\Scripts\Charts\SongObject.cs" />
+    <Compile Include="Assets\Scripts\Charts\SongObjectHelper.cs" />
     <Compile Include="Assets\Scripts\Charts\Starpower.cs" />
     <Compile Include="Assets\Scripts\Charts\SyncTrack.cs" />
+    <Compile Include="Assets\Scripts\Charts\TickFunctions.cs" />
     <Compile Include="Assets\Scripts\Charts\TimeSignature.cs" />
     <Compile Include="Assets\Scripts\Clipboard.cs" />
     <Compile Include="Assets\Scripts\Controllers\BGFadeHeightController.cs" />
@@ -168,6 +174,7 @@
     <Compile Include="Assets\Scripts\Controllers\Song Objects\TimesignatureController.cs" />
     <Compile Include="Assets\Scripts\Controllers\StrikelineFretPlacement.cs" />
     <Compile Include="Assets\Scripts\Controllers\TimelineMovementController.cs" />
+    <Compile Include="Assets\Scripts\GameSettings.cs" />
     <Compile Include="Assets\Scripts\Gameplay\GameplayManager.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Indicators.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Whammy.cs" />
@@ -192,7 +199,9 @@
     <Compile Include="Assets\Scripts\Pooling\StarpowerPool.cs" />
     <Compile Include="Assets\Scripts\Pooling\TimesignaturePool.cs" />
     <Compile Include="Assets\Scripts\PrefabGlobals.cs" />
+    <Compile Include="Assets\Scripts\Services.cs" />
     <Compile Include="Assets\Scripts\Settings.cs" />
+    <Compile Include="Assets\Scripts\ShortcutInput.cs" />
     <Compile Include="Assets\Scripts\SongValidateGH3.cs" />
     <Compile Include="Assets\Scripts\Step.cs" />
     <Compile Include="Assets\Scripts\TapBPMCalculator.cs" />
@@ -226,11 +235,8 @@
     <Compile Include="Assets\Scripts\Tools\ToolpaneButtonController.cs" />
     <Compile Include="Assets\Scripts\TriggerManager.cs" />
     <Compile Include="Assets\Scripts\UI\ContextSizeAutoAdjust.cs" />
-    <Compile Include="Assets\Scripts\UI\Custom Unity UI\CustomUnityDropdown.cs" />
     <Compile Include="Assets\Scripts\UI\CustomStandaloneInputModule.cs" />
-    <Compile Include="Assets\Scripts\UI\DropDownHoverActivate.cs" />
-    <Compile Include="Assets\Scripts\UI\DropDownMenu.cs" />
-    <Compile Include="Assets\Scripts\UI\DropshadowSizing.cs" />
+    <Compile Include="Assets\Scripts\UI\DropdownNotification.cs" />
     <Compile Include="Assets\Scripts\UI\DynamicTextScrollView.cs" />
     <Compile Include="Assets\Scripts\UI\FPSDisplay.cs" />
     <Compile Include="Assets\Scripts\UI\HintMouseOver.cs" />
@@ -241,6 +247,10 @@
     <Compile Include="Assets\Scripts\UI\LoadingScreenFader.cs" />
     <Compile Include="Assets\Scripts\UI\LoadingSpin.cs" />
     <Compile Include="Assets\Scripts\UI\MenuBar.cs" />
+    <Compile Include="Assets\Scripts\UI\MenuBarDropdown\Custom Unity UI\CustomUnityDropdown.cs" />
+    <Compile Include="Assets\Scripts\UI\MenuBarDropdown\DropDownHoverActivate.cs" />
+    <Compile Include="Assets\Scripts\UI\MenuBarDropdown\DropDownMenu.cs" />
+    <Compile Include="Assets\Scripts\UI\MenuBarDropdown\DropshadowSizing.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\AudioCalibrationMenuScript.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\DisplayMenu.cs" />
     <Compile Include="Assets\Scripts\UI\Menus\ErrorMessage.cs" />
@@ -251,10 +261,13 @@
     <Compile Include="Assets\Scripts\UI\ReplaceToEscapedCharater.cs" />
     <Compile Include="Assets\Scripts\UI\SaveAnimController.cs" />
     <Compile Include="Assets\Scripts\UI\SetEventName.cs" />
+    <Compile Include="Assets\Scripts\UI\ShortcutFormatting.cs" />
     <Compile Include="Assets\Scripts\UI\TapBPMCalculatorPanelController.cs" />
+    <Compile Include="Assets\Scripts\UI\TextAssetToUIText.cs" />
     <Compile Include="Assets\Scripts\UI\TextTruncExt.cs" />
     <Compile Include="Assets\Scripts\UI\TimelineHandler.cs" />
     <Compile Include="Assets\Scripts\UI\ToolPanelController.cs" />
+    <Compile Include="Assets\Scripts\UI\UIHelperFunctions.cs" />
     <Compile Include="Assets\Scripts\UI\UIHoverBar.cs" />
     <Compile Include="Assets\Scripts\UI\UITabbing.cs" />
     <Compile Include="Assets\Scripts\Visuals\BGScaling.cs" />
@@ -308,6 +321,7 @@
     <None Include="Assets\Shaders\Glass.shader" />
     <None Include="Assets\Shaders\ShinySprites.shader" />
     <None Include="Assets\Shaders\Silhouetted Outline.shader" />
+    <None Include="Assets\Shaders\SpriteBillboarding.shader" />
     <None Include="Assets\Shaders\SpriteGlow.shader" />
     <None Include="Assets\Shaders\SpriteGrayscale.shader" />
     <None Include="Assets\Shaders\Sprites-Default-HDR.shader" />
@@ -318,6 +332,7 @@
     <None Include="Assets\Shaders\VerticalAlphaFade.shader" />
     <None Include="Assets\Shaders\VerticalAlphaFadeVariable.shader" />
     <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\MotionBlur.shader" />
+    <None Include="Assets\TextAssets\Shortcut Menu\ShortcutMenuHeadings.txt" />
     <None Include="Assets\XInputDotNet\MITLicense.txt" />
     <None Include="Assets\_MK\_MKGlow\_Shader\_MKBase\Cutout\MK_Cutout-Diffuse.shader" />
     <None Include="Assets\_MK\_MKGlow\_Shader\_MKBase\Cutout\MK_Cutout-DiffuseBumpSpec.shader" />
