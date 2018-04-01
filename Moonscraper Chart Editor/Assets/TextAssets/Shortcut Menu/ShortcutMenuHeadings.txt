@@ -18,7 +18,7 @@ Cursor Tool
 	Shift + Left Click and Drag			| Add to current selection
 	Alt + Left Click and Drag			| Remove from current selection
 	Shift + Left Click (Note) 			| Select Chord
-	Right Click and Drag (BPM)			| Scale previous BPM value to cursor position		
+	Ctrl + Right Click and Drag (BPM)	| Scale previous BPM value to cursor position		
 	
 Note Tool
 	1-5									| Select Notes	   

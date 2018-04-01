@@ -5,31 +5,22 @@ v1.1.16
 
 v1.1.15
 	NEW FEATURES
-	-Can freely scale a bpm to a position by right-click and dragging a bpm using the cursor tool
+	-Can freely scale a bpm to a position by ctrl right-click and dragging a bpm using the cursor tool
 	-Added an Unlabeled Shortcuts menu under the "Help" dropdown
-
-	CHANGES
-	-Remember waveform selection for each view mode
-
-v1.1.14
-	NEW FEATURES
 	-Added Alt-A shortcut for section highlighting. Can also hold this shortcut while scrolling to highlight multiple sections. 
 	-Added highlight range display over the timeline ui indicated by the yellow box that appears. 
 	-Waveform display now works in both local and global song views. 
-
-v1.1.13
-	NEW FEATURES
 	-Additional shortcuts
 	-Added "Tools" dropdown for organisation and easier accessability to more commonly used features that were previously buried
-	-Moonscraper can now in the background when not focused without losing sync. 
+	-Moonscraper can now in the background when not focused without losing sync.
 
-v1.1.12
 	CHANGES
+	-Remember waveform selection for each view mode
 	-Now making a copy of song object arrays in a copy of the song object before initiating save thread in an attempt to fix the save bug by reducing threading lock chances. 
 
 	FIXES
 	-Fixed initial SP dragging not updating notes
-	-Fixed rare instance of weird not position
+	-Fixed rare instance of weird note position
 
 v1.1.1
 	NEW FEATURES

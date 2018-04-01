@@ -145,13 +145,17 @@ public static class ShortcutInput {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    public static bool modifierInput { get { return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand); } }
+    public static bool secondaryInput { get { return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift); } }
+    public static bool alternativeInput { get { return Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt); } }
+
     static bool TryGetKeyCodes(Shortcut key, out KeyCode[] keyCode)
     {
         keyCode = new KeyCode[0];
 
-        bool modifierInputActive = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand);
-        bool secondaryInputActive = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
-        bool alternativeInputActive = Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
+        bool modifierInputActive = modifierInput;
+        bool secondaryInputActive = secondaryInput;
+        bool alternativeInputActive = alternativeInput;
 
         Dictionary<Shortcut, KeyCode[]> inputDict = generalInputs;
 

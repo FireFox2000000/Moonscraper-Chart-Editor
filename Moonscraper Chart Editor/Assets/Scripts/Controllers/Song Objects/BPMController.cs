@@ -62,7 +62,7 @@ public class BPMController : SongObjectController {
             base.OnSelectableMouseDrag();
         }
 
-        if (Input.GetMouseButton(1))
+        if (draggingInitialBpm != null && ShortcutInput.modifierInput && Input.GetMouseButton(1))
         {     
             BPM previousBpm = SongObjectHelper.GetPreviousNonInclusive(bpm.song.bpms, bpm.position);
             if (previousBpm != null && previousBpm.anchor == null)
@@ -99,7 +99,7 @@ public class BPMController : SongObjectController {
     {
         base.OnSelectableMouseDown();
 
-        if (Input.GetMouseButtonDown(1))
+        if (ShortcutInput.modifierInput && Input.GetMouseButtonDown(1))
         {
             BPM previousBpm = SongObjectHelper.GetPreviousNonInclusive(bpm.song.bpms, bpm.position);
             if (previousBpm != null && previousBpm.anchor == null)
@@ -111,7 +111,7 @@ public class BPMController : SongObjectController {
     {
         base.OnSelectableMouseUp();
 
-        if (Input.GetMouseButtonUp(1))
+        if (draggingInitialBpm != null && Input.GetMouseButtonUp(1))
         {
             BPM previousBpm = SongObjectHelper.GetPreviousNonInclusive(bpm.song.bpms, bpm.position);
             if (draggingInitialBpm != null && previousBpm.value != draggingInitialBpm.value)
