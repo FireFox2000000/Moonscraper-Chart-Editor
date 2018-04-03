@@ -20,7 +20,7 @@ public class Metadata
         name = metaData.name;
         artist = metaData.artist;
         charter = metaData.charter;
-        album = metaData.artist;
+        album = metaData.album;
         year = metaData.year;
         player2 = metaData.player2;
         difficulty = metaData.difficulty;
