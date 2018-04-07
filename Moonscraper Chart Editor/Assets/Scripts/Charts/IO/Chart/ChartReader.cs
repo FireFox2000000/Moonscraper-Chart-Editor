@@ -468,28 +468,28 @@ public static class ChartReader
                     break;
                 default:
                     break;
-            }
+            } 
+        }
 
-            BPM[] bpms = song.syncTrack.OfType<BPM>().ToArray();        // BPMs are currently uncached
-            foreach (Anchor anchor in anchorData)
+        BPM[] bpms = song.syncTrack.OfType<BPM>().ToArray();        // BPMs are currently uncached
+        foreach (Anchor anchor in anchorData)
+        {
+            int arrayPos = SongObjectHelper.FindClosestPosition(anchor.position, bpms);
+            if (bpms[arrayPos].position == anchor.position)
             {
-                int arrayPos = SongObjectHelper.FindClosestPosition(anchor.position, bpms);
-                if (bpms[arrayPos].position == anchor.position)
-                {
-                    bpms[arrayPos].anchor = anchor.anchorTime;
-                }
+                bpms[arrayPos].anchor = anchor.anchorTime;
+            }
+            else
+            {
+                // Create a new anchored bpm
+                uint value;
+                if (bpms[arrayPos].position > anchor.position)
+                    value = bpms[arrayPos - 1].value;
                 else
-                {
-                    // Create a new anchored bpm
-                    uint value;
-                    if (bpms[arrayPos].position > anchor.position)
-                        value = bpms[arrayPos - 1].value;
-                    else
-                        value = bpms[arrayPos].value;
+                    value = bpms[arrayPos].value;
 
-                    BPM anchoredBPM = new BPM(anchor.position, value);
-                    anchoredBPM.anchor = anchor.anchorTime;
-                }
+                BPM anchoredBPM = new BPM(anchor.position, value);
+                anchoredBPM.anchor = anchor.anchorTime;
             }
         }
 #if TIMING_DEBUG
