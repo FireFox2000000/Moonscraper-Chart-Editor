@@ -1,26 +1,23 @@
-v1.1.16
-	FIXES
-	-Fixed Midi reading bug that would mess up open note forcing in specific scenarios
-	-Saved ~1ms of cpu optimisation due to dumb UI logic
-
-v1.1.15
+v1.2
 	NEW FEATURES
-	-Can freely scale a bpm to a position by ctrl right-click and dragging a bpm using the cursor tool
-	-Added an Unlabeled Shortcuts menu under the "Help" dropdown
+	-Waveform display now works in both local and global song views. 
 	-Added Alt-A shortcut for section highlighting. Can also hold this shortcut while scrolling to highlight multiple sections. 
 	-Added highlight range display over the timeline ui indicated by the yellow box that appears. 
-	-Waveform display now works in both local and global song views. 
+	-Can freely scale a bpm to a position by ctrl right-click and dragging a bpm using the cursor tool
+	-Added an Unlabeled Shortcuts menu under the "Help" dropdown
 	-Additional shortcuts
+	-Added dropdown notification for specific shortcut activation
+
+	CHANGES
 	-Added "Tools" dropdown for organisation and easier accessability to more commonly used features that were previously buried
 	-Moonscraper can now in the background when not focused without losing sync.
 
-	CHANGES
-	-Remember waveform selection for each view mode
-	-Now making a copy of song object arrays in a copy of the song object before initiating save thread in an attempt to fix the save bug by reducing threading lock chances. 
-
 	FIXES
+	-Save bug fixed (probably)
 	-Fixed initial SP dragging not updating notes
 	-Fixed rare instance of weird note position
+	-Fixed Midi reading bug that would mess up open note forcing in specific scenarios
+	-Fixed long sustains sometimes disappearing in gameplay mode
 
 v1.1.1
 	NEW FEATURES
