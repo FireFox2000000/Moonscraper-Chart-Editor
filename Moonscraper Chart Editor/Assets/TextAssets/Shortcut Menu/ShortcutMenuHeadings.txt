@@ -3,7 +3,7 @@ General-
 	Ctrl + V							| Paste
 	Ctrl + X							| Cut
 	Ctrl A								| Select All
-	Ctrl Alt A							| Select Section
+	Alt A								| Select Section
 	Hold Right Click  + Left Click		| Delete Object
 	Arrow Key Up / Down					| Move By Step
 	PageUp / PageDown					| Move By Measure 
