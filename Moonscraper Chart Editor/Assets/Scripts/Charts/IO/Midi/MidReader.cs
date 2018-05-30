@@ -53,6 +53,9 @@ public static class MidReader {
                 case ("part guitar"):
                     ReadNotes(midi.Events[i], song, Song.Instrument.Guitar);
                     break;
+                case ("part guitar coop"):
+                    ReadNotes(midi.Events[i], song, Song.Instrument.GuitarCoop);
+                    break;
                 case ("t1 gems"):   // GH1 midi file related
                     break;
                 case ("part bass"):

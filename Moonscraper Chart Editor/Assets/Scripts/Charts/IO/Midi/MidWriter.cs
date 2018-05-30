@@ -14,6 +14,7 @@ public static class MidWriter {
     const byte TEXT_EVENT = 0x01;
     const string EVENTS_TRACK = "EVENTS";           // Sections
     const string GUITAR_TRACK = "PART GUITAR";
+    const string GUITAR_COOP_TRACK = "PART GUITAR COOP";
     const string BASS_TRACK = "PART BASS";
     const string RHYTHM_TRACK = "PART RHYTHM";
     const string KEYS_TRACK = "PART KEYS";
@@ -49,8 +50,11 @@ public static class MidWriter {
         //song.GetChart(Song.Instrument.Guitar, Song.Difficulty.Expert).Add(new ChartEvent(0, "[idle_realtime]"));
 
         byte[] track_guitar = GetInstrumentBytes(song, Song.Instrument.Guitar, exportOptions);
-
         if (track_guitar.Length > 0)
+            track_count++;
+
+        byte[] track_guitar_coop = GetInstrumentBytes(song, Song.Instrument.GuitarCoop, exportOptions);
+        if (track_guitar_coop.Length > 0)
             track_count++;
 
         byte[] track_bass = GetInstrumentBytes(song, Song.Instrument.Bass, exportOptions);
@@ -96,6 +100,9 @@ public static class MidWriter {
 
         if (track_guitar.Length > 0)
             bw.Write(MakeTrack(track_guitar, GUITAR_TRACK));
+
+        if (track_guitar_coop.Length > 0)
+            bw.Write(MakeTrack(track_guitar_coop, GUITAR_COOP_TRACK));
 
         if (track_bass.Length > 0)
             bw.Write(MakeTrack(track_bass, BASS_TRACK));
