@@ -9,6 +9,26 @@ using NAudio.Midi;
 
 public static class MidReader {
 
+    const string c_eventsStr = "events";
+
+    static readonly Dictionary<string, Song.Instrument> c_trackNameToInstrumentMap = new Dictionary<string, Song.Instrument>()
+    {
+        { "part guitar",        Song.Instrument.Guitar },
+        { "part guitar coop",   Song.Instrument.GuitarCoop },
+        { "part bass",          Song.Instrument.Bass },
+        { "part rhythm",        Song.Instrument.Rhythm },
+        { "part keys",          Song.Instrument.Keys },
+        { "part drums",         Song.Instrument.Drums },
+        { "part guitar ghl",    Song.Instrument.GHLiveGuitar },
+        { "part bass ghl",      Song.Instrument.GHLiveBass },
+    };
+
+    static readonly Dictionary<string, bool> c_trackExcludesMap = new Dictionary<string, bool>()
+    {
+        { "t1 gems",    true },
+        { "beat",       true }
+    };
+
     public static Song ReadMidi(string path)
     {
         Song song = new Song();
@@ -45,43 +65,21 @@ public static class MidReader {
             if (trackName == null)
                 continue;
             Debug.Log(trackName.Text);
-            switch (trackName.Text.ToLower())
+
+            string trackNameKey = trackName.Text.ToLower();
+            if (trackNameKey == c_eventsStr)
             {
-                case ("events"):
-                    ReadSongGlobalEvents(midi.Events[i], song);
-                    break;
-                case ("part guitar"):
-                    ReadNotes(midi.Events[i], song, Song.Instrument.Guitar);
-                    break;
-                case ("part guitar coop"):
-                    ReadNotes(midi.Events[i], song, Song.Instrument.GuitarCoop);
-                    break;
-                case ("t1 gems"):   // GH1 midi file related
-                    break;
-                case ("part bass"):
-                    ReadNotes(midi.Events[i], song, Song.Instrument.Bass);
-                    break;
-                case ("part rhythm"):
-                    ReadNotes(midi.Events[i], song, Song.Instrument.Rhythm);
-                    break;
-                case ("part keys"):
-                    ReadNotes(midi.Events[i], song, Song.Instrument.Keys);
-                    break;
-                case ("part drums"):
-                    ReadNotes(midi.Events[i], song, Song.Instrument.Drums);
-                    break;
-                case ("part guitar ghl"):
-                    ReadNotes(midi.Events[i], song, Song.Instrument.GHLiveGuitar);
-                    break;
-                case ("part bass ghl"):
-                    ReadNotes(midi.Events[i], song, Song.Instrument.GHLiveBass);
-                    break;
-                case ("beat"):
-                    //ReadTrack(midi.Events[i]);
-                    break;
-                default:
-                    ReadNotes(midi.Events[i], song, Song.Instrument.Unrecognised);
-                    break;
+                ReadSongGlobalEvents(midi.Events[i], song);
+            }
+            else if (!c_trackExcludesMap.ContainsKey(trackNameKey))
+            {
+                Song.Instrument instrument;
+                if (!c_trackNameToInstrumentMap.TryGetValue(trackNameKey, out instrument))
+                {
+                    instrument = Song.Instrument.Unrecognised;
+                }
+
+                ReadNotes(midi.Events[i], song, instrument);
             }
         }
 

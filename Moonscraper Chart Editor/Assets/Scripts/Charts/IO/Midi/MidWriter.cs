@@ -34,6 +34,18 @@ public static class MidWriter {
 
     static readonly byte[] END_OF_TRACK = new byte[] { 0, 0xFF, 0x2F, 0x00 };
 
+    static readonly Dictionary<Song.Instrument, string> c_instrumentToTrackNameDict = new Dictionary<Song.Instrument, string>()
+    {
+        { Song.Instrument.Guitar,           GUITAR_TRACK },
+        { Song.Instrument.GuitarCoop,       GUITAR_COOP_TRACK },
+        { Song.Instrument.Bass,             BASS_TRACK },
+        { Song.Instrument.Rhythm,           RHYTHM_TRACK },
+        { Song.Instrument.Keys,             KEYS_TRACK },
+        { Song.Instrument.Drums,            DRUMS_TRACK },
+        { Song.Instrument.GHLiveGuitar,     GHL_GUITAR_TRACK },
+        { Song.Instrument.GHLiveBass,       GHL_BASS_TRACK },
+    };
+
     public static void WriteToFile(string path, Song song, ExportOptions exportOptions)
     {
         Debug.Log(path);
@@ -49,37 +61,18 @@ public static class MidWriter {
         //byte[] track_beat = MakeTrack(GenerateBeat(end, (uint)exportOptions.targetResolution), "BEAT");
         //song.GetChart(Song.Instrument.Guitar, Song.Difficulty.Expert).Add(new ChartEvent(0, "[idle_realtime]"));
 
-        byte[] track_guitar = GetInstrumentBytes(song, Song.Instrument.Guitar, exportOptions);
-        if (track_guitar.Length > 0)
-            track_count++;
-
-        byte[] track_guitar_coop = GetInstrumentBytes(song, Song.Instrument.GuitarCoop, exportOptions);
-        if (track_guitar_coop.Length > 0)
-            track_count++;
-
-        byte[] track_bass = GetInstrumentBytes(song, Song.Instrument.Bass, exportOptions);
-        if (track_bass.Length > 0)
-            track_count++;
-
-        byte[] track_rhythm = GetInstrumentBytes(song, Song.Instrument.Rhythm, exportOptions);
-        if (track_rhythm.Length > 0)
-            track_count++;
-
-        byte[] track_keys = GetInstrumentBytes(song, Song.Instrument.Keys, exportOptions);
-        if (track_keys.Length > 0)
-            track_count++;
-
-        byte[] track_drums = GetInstrumentBytes(song, Song.Instrument.Drums, exportOptions);
-        if (track_drums.Length > 0)
-            track_count++;
-
-        byte[] track_ghl_guitar = GetInstrumentBytes(song, Song.Instrument.GHLiveGuitar, exportOptions);
-        if (track_ghl_guitar.Length > 0)
-            track_count++;
-
-        byte[] track_ghl_bass = GetInstrumentBytes(song, Song.Instrument.GHLiveBass, exportOptions);
-        if (track_ghl_bass.Length > 0)
-            track_count++;
+        List<byte[]> allTracks = new List<byte[]>();
+        List<string> allTrackNames = new List<string>();
+        foreach (KeyValuePair<Song.Instrument, string> entry in c_instrumentToTrackNameDict)
+        {
+            byte[] bytes = GetInstrumentBytes(song, entry.Key, exportOptions);
+            if (bytes.Length > 0)
+            {
+                allTracks.Add(bytes);
+                allTrackNames.Add(entry.Value);
+                track_count++;
+            }
+        }
 
         byte[][] unrecognised_tracks = new byte[song.unrecognisedCharts.Count][];
         for (int i = 0; i < unrecognised_tracks.Length; ++i)
@@ -98,29 +91,10 @@ public static class MidWriter {
         //bw.Write(track_beat);
         bw.Write(track_events);
 
-        if (track_guitar.Length > 0)
-            bw.Write(MakeTrack(track_guitar, GUITAR_TRACK));
-
-        if (track_guitar_coop.Length > 0)
-            bw.Write(MakeTrack(track_guitar_coop, GUITAR_COOP_TRACK));
-
-        if (track_bass.Length > 0)
-            bw.Write(MakeTrack(track_bass, BASS_TRACK));
-
-        if (track_rhythm.Length > 0)
-            bw.Write(MakeTrack(track_rhythm, RHYTHM_TRACK));
-
-        if (track_keys.Length > 0)
-            bw.Write(MakeTrack(track_keys, KEYS_TRACK));
-
-        if (track_drums.Length > 0)
-            bw.Write(MakeTrack(track_drums, DRUMS_TRACK));
-
-        if (track_ghl_guitar.Length > 0)
-            bw.Write(MakeTrack(track_ghl_guitar, GHL_GUITAR_TRACK));
-
-        if (track_ghl_bass.Length > 0)
-            bw.Write(MakeTrack(track_ghl_guitar, GHL_BASS_TRACK));
+        for (int i = 0; i < allTracks.Count; ++i)
+        {
+            bw.Write(MakeTrack(allTracks[i], allTrackNames[i]));
+        }
 
         for (int i = 0; i < unrecognised_tracks.Length; ++i)
         {
