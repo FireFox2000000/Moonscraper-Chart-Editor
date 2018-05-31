@@ -349,12 +349,7 @@ public class NoteController : SongObjectController {
             sustainRen.enabled = false;
 
         if (whammy)
-        {
-            if (hit && !sustainBroken && !GameSettings.bot)
-                whammy.canWhammy = true;
-            else
-                whammy.canWhammy = false;
-        }
+            whammy.canWhammy = hit && !sustainBroken && !GameSettings.bot;
     }
 
     void GameplayBotHitClap()

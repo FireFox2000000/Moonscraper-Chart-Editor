@@ -32,7 +32,7 @@ public class MenuBar : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        editor = ChartEditor.FindCurrentEditor();
+        editor = ChartEditor.GetInstance();
 
         TriggerManager.onChartReloadTriggerList.Add(GameplayEnabledCheck);
     }
@@ -120,7 +120,7 @@ public class MenuBar : MonoBehaviour {
     public void LoadCurrentInstumentAndDifficulty()
     {
         if (!editor)
-            editor = ChartEditor.FindCurrentEditor();
+            editor = ChartEditor.GetInstance();
 
         editor.LoadChart(editor.currentSong.GetChart(currentInstrument, currentDifficulty));
         editor.currentSelectedObject = null;

@@ -24,7 +24,7 @@ public class GroupSelectPanelController : MonoBehaviour
 
     // Use this for initialization
     void Start () {
-        editor = ChartEditor.FindCurrentEditor();
+        editor = ChartEditor.GetInstance();
 	}
 
     void Update()

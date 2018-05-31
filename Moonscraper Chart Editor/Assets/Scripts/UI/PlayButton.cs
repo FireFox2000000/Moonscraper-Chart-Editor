@@ -18,7 +18,7 @@ public class PlayButton : MonoBehaviour {
 
     void Start()
     {
-        editor = ChartEditor.FindCurrentEditor();
+        editor = ChartEditor.GetInstance();
         buttonImage = GetComponent<Image>();
 
         TriggerManager.onApplicationModeChangedTriggerList.Add(UpdatePlayPauseSprite);

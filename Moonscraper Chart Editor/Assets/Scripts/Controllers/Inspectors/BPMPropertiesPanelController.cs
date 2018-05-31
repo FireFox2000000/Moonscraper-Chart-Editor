@@ -274,7 +274,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     bool AdjustForAnchors(uint newBpmValue)
     {
-        ChartEditor.FindCurrentEditor().songObjectPoolManager.SetAllPoolsDirty();
+        ChartEditor.GetInstance().songObjectPoolManager.SetAllPoolsDirty();
 
         int pos = SongObjectHelper.FindObjectPosition(currentBPM, currentBPM.song.bpms);
         if (pos != SongObjectHelper.NOTFOUND)

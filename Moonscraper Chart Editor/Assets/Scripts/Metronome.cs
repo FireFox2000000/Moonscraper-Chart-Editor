@@ -23,7 +23,7 @@ public class Metronome : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        editor = ChartEditor.FindCurrentEditor();      
+        editor = ChartEditor.GetInstance();      
         initLocalPos = transform.localPosition;
 
 #if BASS_AUDIO

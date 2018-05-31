@@ -146,7 +146,7 @@ public class Note : ChartObject
             else
             {
 #if APPLICATION_MOONSCRAPER
-                return ChartEditor.FindCurrentEditor().currentChart.gameMode;
+                return ChartEditor.GetInstance().currentChart.gameMode;
 #else
                 return Chart.GameMode.Unrecognised;
 #endif

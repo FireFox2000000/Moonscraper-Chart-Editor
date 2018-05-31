@@ -59,7 +59,7 @@ public class TimeSync
         {
             if (Globals.applicationMode == Globals.ApplicationMode.Playing)
             {
-                int audioStream = ChartEditor.FindCurrentEditor().currentSong.bassAudioStreams[0];
+                int audioStream = ChartEditor.GetInstance().currentSong.bassAudioStreams[0];
                 long bytePos = Un4seen.Bass.Bass.BASS_ChannelGetPosition(audioStream);
                 double elapsedtime = Un4seen.Bass.Bass.BASS_ChannelBytes2Seconds(audioStream, bytePos);
 

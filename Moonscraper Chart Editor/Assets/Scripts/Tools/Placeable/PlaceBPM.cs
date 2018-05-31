@@ -88,6 +88,6 @@ public class PlaceBPM : PlaceSongObject {
             bpmToAdd.anchor = bpmToAdd.song.LiveChartPositionToTime(bpmToAdd.position, bpmToAdd.song.resolution);
         }
 
-        ChartEditor.FindCurrentEditor().songObjectPoolManager.SetAllPoolsDirty();
+        ChartEditor.GetInstance().songObjectPoolManager.SetAllPoolsDirty();
     }
 }

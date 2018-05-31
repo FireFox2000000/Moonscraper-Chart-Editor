@@ -31,14 +31,14 @@ public class Globals : MonoBehaviour {
     {
         get
         {
-            return ChartEditor.FindCurrentEditor().currentChart.gameMode == Chart.GameMode.Drums;
+            return ChartEditor.GetInstance().currentChart.gameMode == Chart.GameMode.Drums;
         }
     }
     public static bool ghLiveMode
     {
         get
         {
-            return ChartEditor.FindCurrentEditor().currentChart.gameMode == Chart.GameMode.GHLGuitar;
+            return ChartEditor.GetInstance().currentChart.gameMode == Chart.GameMode.GHLGuitar;
         }
     }
 

@@ -17,7 +17,7 @@ public abstract class SongObjectController : SelectableClick {
 
     protected void Awake()
     {
-        editor = ChartEditor.FindCurrentEditor();
+        editor = ChartEditor.GetInstance();
     }
 
     protected virtual void OnEnable()

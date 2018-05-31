@@ -176,7 +176,12 @@
     <Compile Include="Assets\Scripts\Controllers\TimelineMovementController.cs" />
     <Compile Include="Assets\Scripts\GameSettings.cs" />
     <Compile Include="Assets\Scripts\Gameplay\GameplayManager.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\GuitarNoteHitKnowledge.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\HitWindowManager.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Indicators.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Rules\GameplayInputFunctions.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Rules\GuitarNoteHitAndMissDetect.cs" />
+    <Compile Include="Assets\Scripts\Gameplay\Rules\HitWindow.cs" />
     <Compile Include="Assets\Scripts\Gameplay\Whammy.cs" />
     <Compile Include="Assets\Scripts\Globals.cs" />
     <Compile Include="Assets\Scripts\Metronome.cs" />

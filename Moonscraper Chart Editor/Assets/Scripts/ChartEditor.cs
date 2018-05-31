@@ -16,7 +16,7 @@ using Un4seen.Bass;
 public class ChartEditor : MonoBehaviour {
     static ChartEditor currentEditor;
 
-    public static ChartEditor FindCurrentEditor ()
+    public static ChartEditor GetInstance ()
     {
         if (currentEditor)
             return currentEditor;

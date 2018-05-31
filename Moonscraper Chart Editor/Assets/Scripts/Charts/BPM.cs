@@ -66,7 +66,7 @@ public class BPM : SyncTrack
 
     public override void Delete(bool update = true)
     {
-        ChartEditor.FindCurrentEditor().songObjectPoolManager.SetAllPoolsDirty();
+        ChartEditor.GetInstance().songObjectPoolManager.SetAllPoolsDirty();
         base.Delete(update);
     }
 }
