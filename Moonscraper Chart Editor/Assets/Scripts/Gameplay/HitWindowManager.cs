@@ -54,6 +54,7 @@ public class HitWindowManager : MonoBehaviour {
         // Exit window
         {
             var notesRemoved = hitWindow.DetectExit(time);
+
             int missCount = 0;
             foreach (var noteKnowledge in notesRemoved)
             {
@@ -78,7 +79,7 @@ public class HitWindowManager : MonoBehaviour {
 
     public void Reset()
     {
-        hitWindow.noteKnowledge.Clear();
+        hitWindow.noteKnowledgeQueue.Clear();
         physicsWindow.Clear();
     }
 }

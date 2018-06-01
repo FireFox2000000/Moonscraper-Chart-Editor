@@ -8,7 +8,7 @@ public class HitWindow {
 
     private List<GuitarNoteHitKnowledge> m_noteQueue;
 
-    public List<GuitarNoteHitKnowledge> noteKnowledge
+    public List<GuitarNoteHitKnowledge> noteKnowledgeQueue
     {
         get
         {
@@ -20,10 +20,11 @@ public class HitWindow {
     {
         get
         {
-            for (int i = noteKnowledge.Count - 1; i >= 0; ++i)
+            // New notes inserted at the end
+            for (int i = 0; i < noteKnowledgeQueue.Count; ++i)
             {
-                if (!noteKnowledge[i].hasBeenHit)
-                    return noteKnowledge[i];
+                if (!noteKnowledgeQueue[i].hasBeenHit)
+                    return noteKnowledgeQueue[i];
             }
             return null;
         }
@@ -47,7 +48,7 @@ public class HitWindow {
                 return false;
         }
 
-        m_noteQueue.Insert(0, new GuitarNoteHitKnowledge(note));
+        m_noteQueue.Add(new GuitarNoteHitKnowledge(note));
 
         return true;
     }
@@ -107,6 +108,7 @@ public class HitWindow {
         return Get(note, time) != null;
     }
 
+    // Must have a note to test. Next note is optional.
     public bool IsWithinTimeWindow(Note note, Note nextNote, float time)
     {
         return !(note.time < time - backendTime                                                         // Out of window range

@@ -14,7 +14,7 @@ public class GuitarNoteHitAndMissDetect {
     const float c_fretAndStrumSlopBuffer = 0.3f;
 
     public delegate void HitNoteFactory(float time, GuitarNoteHitKnowledge noteHitKnowledge);
-    public delegate void MissNoteFactory(float time, MissSubType missSubType);
+    public delegate void MissNoteFactory(float time, MissSubType missSubType, GuitarNoteHitKnowledge noteHitKnowledge);
 
     HitNoteFactory m_hitNoteFactory;
     MissNoteFactory m_missNoteFactory;
@@ -49,6 +49,12 @@ public class GuitarNoteHitAndMissDetect {
         // What note is the player trying to hit next?
         GuitarNoteHitKnowledge nextNoteToHit = hitWindow.oldestUnhitNote;
 
+        // Check if it's valid to query the last hit note
+        if (noteStreak <= 0 || lastNoteHit == null || !hitWindow.IsWithinTimeWindow(lastNoteHit.note, nextNoteToHit != null ? nextNoteToHit.note : null, time))
+        {
+            lastNoteHit = null;
+        }
+
         UpdateNoteKnowledge(time, hitWindow, inputMask, strum, noteStreak, nextNoteToHit);
 
         if (nextNoteToHit != null)
@@ -68,8 +74,7 @@ public class GuitarNoteHitAndMissDetect {
         else if (strum)
         {
             // Are we strumming late for a hopo/tap?
-            // Todo, need to confirm with strum counter
-            if (lastNoteHit != null && lastNoteHit.note.type != Note.Note_Type.Strum && hitWindow.IsWithinTimeWindow(lastNoteHit.note, lastNoteHit.note.nextSeperateNote, time))
+            if (lastNoteHit != null && lastNoteHit.note.type != Note.Note_Type.Strum && lastNoteHit.strumCounter <= 1)
             {
                 lastNoteHit = null;
             }
@@ -87,6 +92,9 @@ public class GuitarNoteHitAndMissDetect {
     {
         if (nextNoteToHit != null)
         {
+            if (nextNoteToHit.strumCounter > 1)
+                nextNoteToHit.strumCounter = 1;     // Make this still valid to hit because it's still in the hit window for a reason
+
             // Fill out note knowledge
             if (GameplayInputFunctions.ValidateFrets(nextNoteToHit.note, inputMask, noteStreak))
                 nextNoteToHit.fretValidationTime = time;
@@ -99,7 +107,12 @@ public class GuitarNoteHitAndMissDetect {
                 nextNoteToHit.lastestStrumInvalidationTime = time;
 
             if (strummed)
-                ++nextNoteToHit.strumCounter;
+            {
+                if (lastNoteHit != null && lastNoteHit.strumCounter <= 0)// lastNoteHit.note.type != Note.Note_Type.Strum)
+                    ++lastNoteHit.strumCounter;
+                else
+                    ++nextNoteToHit.strumCounter;
+            }
         }
     }
 
@@ -114,10 +127,10 @@ public class GuitarNoteHitAndMissDetect {
         {
             HitNote(time, nextNoteToHit);
         }
-        else if (nextNoteToHit.strumValidated && Mathf.Abs(time - nextNoteToHit.strumValidationTime) > c_fretAndStrumSlopBuffer)
+        else if (nextNoteToHit.strumValidated && Mathf.Abs(time - nextNoteToHit.strumValidationTime) > c_fretAndStrumSlopBuffer && nextNoteToHit.strumCounter > 0)
         {
             MissNote(time, MissSubType.Overstrum);
-            Debug.Log("Missed note due to strum expiring on a note");
+            Debug.Log("Missed note due to strum expiration");
 
             nextNoteToHit.strumValidationTime = GuitarNoteHitKnowledge.NULL_TIME;
         }
@@ -125,18 +138,18 @@ public class GuitarNoteHitAndMissDetect {
 
     void RecoveryDetect(float time, HitWindow hitWindow, GamePadState? gamepad, bool strummed, uint noteStreak)
     {
-        var noteKnowledge = hitWindow.noteKnowledge;
+        var noteKnowledgeList = hitWindow.noteKnowledgeQueue;
 
         // Search to see if user is hitting a note ahead
         List<GuitarNoteHitKnowledge> validatedNotes = new List<GuitarNoteHitKnowledge>();
-        foreach (GuitarNoteHitKnowledge note in noteKnowledge)
+        foreach (GuitarNoteHitKnowledge noteKnowledge in noteKnowledgeList)
         {
             // Collect all notes the user is possibly hitting
             if (
-                    GameplayInputFunctions.ValidateFrets(note.note, GameplayInputFunctions.GetFretInputMask(gamepad), noteStreak)
-                    && GameplayInputFunctions.ValidateStrum(note.note, canTap, strummed, noteStreak)
+                    GameplayInputFunctions.ValidateFrets(noteKnowledge.note, GameplayInputFunctions.GetFretInputMask(gamepad), noteStreak)
+                    && GameplayInputFunctions.ValidateStrum(noteKnowledge.note, canTap, strummed, noteStreak)
                 )
-                validatedNotes.Add(note);
+                validatedNotes.Add(noteKnowledge);
         }
 
         if (validatedNotes.Count > 0)
@@ -164,37 +177,25 @@ public class GuitarNoteHitAndMissDetect {
                 }
             }
 
-            int index = noteKnowledge.IndexOf(selectedNote);
-            GuitarNoteHitKnowledge note = noteKnowledge[index];
-            GuitarNoteHitKnowledge next = null;
-            if (index < noteKnowledge.Count - 1)
-                next = noteKnowledge[index + 1];
-
-            int notesMissed = index;
+            int index = noteKnowledgeList.IndexOf(selectedNote);
+            GuitarNoteHitKnowledge note = noteKnowledgeList[index];
 
             // Recovery missed notes
-            Debug.Log("Notestreak recovery. Notes skipped = " + notesMissed);
-            for (int missedCounter = 0; missedCounter < notesMissed - 1; ++missedCounter)
+            if (index > 0)
+                Debug.Log("Missed notes when performing recovery. Notes skipped = " + index);
+
+            for (int missedCounter = 0; missedCounter < index; ++missedCounter)
             {
-                MissNote(time, MissSubType.NoteMiss);
+                MissNote(time, MissSubType.NoteMiss, noteKnowledgeList[missedCounter]);
+                noteKnowledgeList[missedCounter].hasBeenHit = true;
             }
 
             HitNote(time, note);
-
-            // Remove all previous notes
-            GuitarNoteHitKnowledge[] nConArray = noteKnowledge.ToArray();
-            for (int j = notesMissed - 1; j >= 0; --j)
-            {
-                noteKnowledge[j].shouldExitWindow = true;
-            }
         }
-        else
+        else if (strummed)
         {
-            // Will not reach here if user hit a note
-            if (strummed)
-            {
-                Debug.Log("Missed due to strumming when there were no notes to strum during recovery");
-            }
+            MissNote(time, MissSubType.Overstrum);
+            Debug.Log("Missed due to strumming when there were no notes to strum during recovery");
         }
     }
 
@@ -205,8 +206,8 @@ public class GuitarNoteHitAndMissDetect {
         lastNoteHit = noteHitKnowledge;
     }
 
-    void MissNote(float time, MissSubType missSubType)
+    void MissNote(float time, MissSubType missSubType, GuitarNoteHitKnowledge noteHitKnowledge = null)
     {
-        m_missNoteFactory(time, missSubType);
+        m_missNoteFactory(time, missSubType, noteHitKnowledge);
     }
 }

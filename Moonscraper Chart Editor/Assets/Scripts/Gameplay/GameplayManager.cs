@@ -92,9 +92,10 @@ public class GameplayManager : MonoBehaviour {
             transform.localScale = new Vector3(transform.localScale.x, initSize, transform.localScale.z);
             for (int i = 0; i < hitWindowManager.UpdateHitWindow(noteStreak); ++i)
             {
-                MissNote(currentTime, GuitarNoteHitAndMissDetect.MissSubType.NoteMiss);
                 if (noteStreak > 0)
                     Debug.Log("Missed due to note falling out of window");
+
+                MissNote(currentTime, GuitarNoteHitAndMissDetect.MissSubType.NoteMiss, null);            
             }
         }
         else
@@ -111,7 +112,6 @@ public class GameplayManager : MonoBehaviour {
 
             UpdateSustainBreaking();
             UpdateUIStats();
-            UpdateMissFeedback(startNS);
         }
         else
         {
@@ -158,13 +158,9 @@ public class GameplayManager : MonoBehaviour {
         totalHitText.text = notesHit.ToString() + " / " + totalNotes.ToString();
     }
 
-    void UpdateMissFeedback(uint frameStartNS)
+    void KickMissFeedback()
     {
-        if (frameStartNS >= 10 && noteStreak < frameStartNS &&
-                    (
-                        Bass.BASS_ChannelIsActive(channel) == BASSActive.BASS_ACTIVE_STOPPED || Bass.BASS_ChannelIsActive(channel) == BASSActive.BASS_ACTIVE_PAUSED
-                    )
-                )
+        if (Bass.BASS_ChannelIsActive(channel) == BASSActive.BASS_ACTIVE_STOPPED || Bass.BASS_ChannelIsActive(channel) == BASSActive.BASS_ACTIVE_PAUSED)
         {
             Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, GameSettings.sfxVolume * GameSettings.vol_master);
             Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, GameSettings.audio_pan);
@@ -211,12 +207,22 @@ public class GameplayManager : MonoBehaviour {
             currentSustains.Add(note.controller);
     }
 
-    void MissNote(float time, GuitarNoteHitAndMissDetect.MissSubType missSubType)
+    void MissNote(float time, GuitarNoteHitAndMissDetect.MissSubType missSubType, GuitarNoteHitKnowledge noteHitKnowledge)
     {
+        if (noteStreak > 10)
+        {
+            KickMissFeedback();
+        }
+
         noteStreak = 0;
 
         if (missSubType == GuitarNoteHitAndMissDetect.MissSubType.NoteMiss)
             ++totalNotes;
+
+        if (noteHitKnowledge != null)
+        {
+            noteHitKnowledge.shouldExitWindow = true;
+        }
     }
 
     ~GameplayManager()
