@@ -37,10 +37,7 @@ public class GameplayManager : MonoBehaviour {
     float initSize;
     bool initialised = false;
 
-#if GAMEPAD
-    public static GamePadState? gamepad;
-    public static GamePadState? previousGamepad;
-#endif
+    public static GuitarInput guitarInput = new GuitarInput();
 
     HitWindow<GuitarNoteHitKnowledge> hitWindow
     {
@@ -69,32 +66,13 @@ public class GameplayManager : MonoBehaviour {
 
         statsPanel.SetActive(Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot);
 
-        // Update the Xbox 360 state
-#if GAMEPAD
-        previousGamepad = gamepad;
-        gamepad = null;
+        guitarInput.Update();
 
-        for (int i = 0; i < 1; ++i)
-        {
-            GamePadState testState = GamePad.GetState((PlayerIndex)i);
-            if (testState.IsConnected)
-            {
-                gamepad = testState;
-                break;
-            }
-        }
-#endif
         // Configure collisions and choose to update the hit window or not
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
             transform.localScale = new Vector3(transform.localScale.x, initSize, transform.localScale.z);
-            for (int i = 0; i < hitWindowManager.UpdateHitWindow(noteStreak); ++i)
-            {
-                if (noteStreak > 0)
-                    Debug.Log("Missed due to note falling out of window");
-
-                MissNote(currentTime, GuitarNoteHitAndMissDetect.MissSubType.NoteMiss, null);            
-            }
+            
         }
         else
         {
@@ -104,11 +82,26 @@ public class GameplayManager : MonoBehaviour {
         // Gameplay
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
-            uint startNS = noteStreak;
+            if (editor.currentChart.gameMode == Chart.GameMode.Guitar)
+            {
+                // Guitar gamemode rulestate
+                for (int i = 0; i < hitWindowManager.UpdateHitWindow(noteStreak); ++i)
+                {
+                    if (noteStreak > 0)
+                        Debug.Log("Missed due to note falling out of window");
 
-            hitAndMissNoteDetect.Update(currentTime, hitWindow, gamepad, noteStreak);
+                    MissNote(currentTime, GuitarNoteHitAndMissDetect.MissSubType.NoteMiss, null);
+                }
 
-            UpdateSustainBreaking();
+                hitAndMissNoteDetect.Update(currentTime, hitWindow, guitarInput, noteStreak);
+
+                UpdateSustainBreaking();
+            }
+            else
+            {
+                Debug.LogError("Gameplay currently does not support this gamemode.");
+            }
+
             UpdateUIStats();
         }
         else
@@ -119,7 +112,7 @@ public class GameplayManager : MonoBehaviour {
 
     void UpdateSustainBreaking()
     {
-        int inputMask = GameplayInputFunctions.GetFretInputMask(gamepad);
+        int inputMask = guitarInput.GetFretInputMask();
 
         foreach (NoteController note in currentSustains.ToArray())
         {

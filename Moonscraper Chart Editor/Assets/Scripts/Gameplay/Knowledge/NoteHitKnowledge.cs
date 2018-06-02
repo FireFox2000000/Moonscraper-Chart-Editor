@@ -6,11 +6,8 @@ public class NoteHitKnowledge {
     public bool hasBeenHit;
     public bool shouldExitWindow;
 
-    public NoteHitKnowledge()
+    public NoteHitKnowledge() : this(null)
     {
-        this.note = null;
-        hasBeenHit = false;
-        shouldExitWindow = false;
     }
 
     public NoteHitKnowledge(Note note)

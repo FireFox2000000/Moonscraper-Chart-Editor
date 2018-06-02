@@ -92,12 +92,12 @@ public class Whammy : MonoBehaviour {
     float lerpedWhammyVal()
     {
         float rawVal = -1;
-#if GAMEPAD
-        if (GameplayManager.gamepad != null)
-            rawVal = ((GamePadState)GameplayManager.gamepad).ThumbSticks.Right.X;
-#else
-        rawVal = Input.GetAxisRaw("Whammy");
-#endif
+
+        if (GameplayManager.guitarInput.connected)
+        {
+            rawVal = GameplayManager.guitarInput.GetWhammyInput();
+        }
+
         if (!canWhammy)
             currentWhammyVal = -1;
         else

@@ -20,14 +20,12 @@ public class GuitarNoteHitAndMissDetect {
     MissNoteFactory m_missNoteFactory;
 
     int previousInputMask;
-    float previousStrumValue;
     bool canTap;
     GuitarNoteHitKnowledge lastNoteHit = null;
 
     public void Reset()
     {
         previousInputMask = 0;
-        previousStrumValue = 0;
         canTap = true;
         lastNoteHit = null;
     }
@@ -38,11 +36,11 @@ public class GuitarNoteHitAndMissDetect {
         m_missNoteFactory = missNoteFactory;
     }
 	
-	public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, GamePadState? gamepad, uint noteStreak)
+	public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, GuitarInput guitarInput, uint noteStreak)
     {
         // Capture input
-        bool strum = GameplayInputFunctions.GetStrumInput(gamepad, previousStrumValue, out previousStrumValue);
-        int inputMask = GameplayInputFunctions.GetFretInputMask(gamepad);
+        bool strum = guitarInput.GetStrumInput();
+        int inputMask = guitarInput.GetFretInputMask();
         if (inputMask != previousInputMask)
             canTap = true;
 
@@ -57,11 +55,11 @@ public class GuitarNoteHitAndMissDetect {
 
             if (noteStreak > 0)
             {
-                PreserveStreakDetect(time, hitWindow, gamepad, strum, noteStreak, nextNoteToHit, inputMask);
+                PreserveStreakDetect(time, hitWindow, strum, noteStreak, nextNoteToHit, inputMask);
             }
             else
             {
-                RecoveryDetect(time, hitWindow, gamepad, strum, noteStreak);
+                RecoveryDetect(time, hitWindow, inputMask, strum, noteStreak);
             }
         }
         // No note in window
@@ -107,7 +105,7 @@ public class GuitarNoteHitAndMissDetect {
         }
     }
 
-    void PreserveStreakDetect(float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, GamePadState? gamepad, bool strummed, uint noteStreak, GuitarNoteHitKnowledge nextNoteToHit, int inputMask)
+    void PreserveStreakDetect(float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, bool strummed, uint noteStreak, GuitarNoteHitKnowledge nextNoteToHit, int inputMask)
     {
         if (nextNoteToHit.strumCounter > 1)
         {
@@ -127,7 +125,7 @@ public class GuitarNoteHitAndMissDetect {
         }
     }
 
-    void RecoveryDetect(float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, GamePadState? gamepad, bool strummed, uint noteStreak)
+    void RecoveryDetect(float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, int fretInputMask, bool strummed, uint noteStreak)
     {
         var noteKnowledgeList = hitWindow.noteKnowledgeQueue;
 
@@ -137,7 +135,7 @@ public class GuitarNoteHitAndMissDetect {
         {
             // Collect all notes the user is possibly hitting
             if (
-                    GameplayInputFunctions.ValidateFrets(noteKnowledge.note, GameplayInputFunctions.GetFretInputMask(gamepad), noteStreak)
+                    GameplayInputFunctions.ValidateFrets(noteKnowledge.note, fretInputMask, noteStreak)
                     && GameplayInputFunctions.ValidateStrum(noteKnowledge.note, canTap, strummed, noteStreak)
                 )
                 validatedNotes.Add(noteKnowledge);

@@ -229,13 +229,7 @@ public class Globals : MonoBehaviour {
 
         if (!modifierInputActive)
         {
-#if true
-            if (GameplayManager.gamepad != null && GameplayManager.previousGamepad != null &&
-                ((XInputDotNetPure.GamePadState)GameplayManager.gamepad).Buttons.Start == XInputDotNetPure.ButtonState.Pressed &&
-                ((XInputDotNetPure.GamePadState)GameplayManager.previousGamepad).Buttons.Start == XInputDotNetPure.ButtonState.Released)
-#else
-            if (Input.GetButtonDown("Start Gameplay"))
-#endif
+            if (GameplayManager.guitarInput.GetButtonPressed(GamepadInput.Button.Start))
             {
                 if (applicationMode != ApplicationMode.Playing)
                     editor.StartGameplay();

@@ -83,31 +83,31 @@ public class Indicators : MonoBehaviour {
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
 #if GAMEPAD
-            if (GameplayManager.gamepad != null)
+            if (true) // GameplayManager.gamepad != null)
             {
-                GamePadState gamepad = (GamePadState)GameplayManager.gamepad;
-
-                if (gamepad.Buttons.A == ButtonState.Pressed)
+                GuitarInput guitarInput = GameplayManager.guitarInput;
+                
+                if (guitarInput.GetFretInput(Note.Fret_Type.GREEN))
                     animations[0].Press();
                 else
                     animations[0].Release();
 
-                if (gamepad.Buttons.B == ButtonState.Pressed)
+                if (guitarInput.GetFretInput(Note.Fret_Type.RED))
                     animations[1].Press();
                 else
                     animations[1].Release();
 
-                if (gamepad.Buttons.Y == ButtonState.Pressed)
+                if (guitarInput.GetFretInput(Note.Fret_Type.YELLOW))
                     animations[2].Press();
                 else
                     animations[2].Release();
 
-                if (gamepad.Buttons.X == ButtonState.Pressed)
+                if (guitarInput.GetFretInput(Note.Fret_Type.BLUE))
                     animations[3].Press();
                 else
                     animations[3].Release();
 
-                if (gamepad.Buttons.LeftShoulder == ButtonState.Pressed)
+                if (guitarInput.GetFretInput(Note.Fret_Type.ORANGE))
                     animations[4].Press();
                 else
                     animations[4].Release();
