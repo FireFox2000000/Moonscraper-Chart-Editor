@@ -31,6 +31,9 @@ public class Mouse : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+            return;
+
         currentRaycastFromPointer = RaycastFromPointer();
         currentSelectableUnderMouse = GetSelectableObjectUnderMouse();
 
