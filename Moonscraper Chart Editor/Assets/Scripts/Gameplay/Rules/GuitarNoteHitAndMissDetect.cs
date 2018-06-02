@@ -49,12 +49,6 @@ public class GuitarNoteHitAndMissDetect {
         // What note is the player trying to hit next?
         GuitarNoteHitKnowledge nextNoteToHit = hitWindow.oldestUnhitNote;
 
-        // Check if it's valid to query the last hit note
-        if (noteStreak <= 0 || lastNoteHit == null || !hitWindow.IsWithinTimeWindow(lastNoteHit.note, nextNoteToHit != null ? nextNoteToHit.note : null, time))
-        {
-            lastNoteHit = null;
-        }
-
         UpdateNoteKnowledge(time, hitWindow, inputMask, strum, noteStreak, nextNoteToHit);
 
         if (nextNoteToHit != null)
@@ -81,6 +75,12 @@ public class GuitarNoteHitAndMissDetect {
 
     void UpdateNoteKnowledge(float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, int inputMask, bool strummed, uint noteStreak, GuitarNoteHitKnowledge nextNoteToHit)
     {
+        // Check if it's valid to query the last hit note
+        if (noteStreak <= 0 || lastNoteHit == null || !hitWindow.IsWithinTimeWindow(lastNoteHit.note, nextNoteToHit != null ? nextNoteToHit.note : null, time))
+        {
+            lastNoteHit = null;
+        }
+
         if (nextNoteToHit != null)
         {
             if (nextNoteToHit.strumCounter > 1)
