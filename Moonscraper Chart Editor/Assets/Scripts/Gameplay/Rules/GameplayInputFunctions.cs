@@ -1,8 +1,25 @@
 ﻿
 public static class GameplayInputFunctions  {
-
-    public static bool ValidateFrets(Note note, int inputMask, uint noteStreak)
+    public static int BitshiftToIgnoreLowerUnusedFrets(int bitmaskToShift, out int shiftCount)
     {
+        shiftCount = 0;
+
+        if (bitmaskToShift == 0)
+            return 0;
+
+        while ((bitmaskToShift & 1) != 1)
+        {
+            bitmaskToShift >>= 1;
+            ++shiftCount;
+        }
+
+        return bitmaskToShift;
+    }
+
+    public static bool ValidateFrets(Note note, int inputMask, uint noteStreak, int extendedSustainsMask = 0)
+    {
+        inputMask &= ~(extendedSustainsMask & ~note.mask);
+
         if (inputMask == 0)
         {
             return note.fret_type == Note.Fret_Type.OPEN;
@@ -21,18 +38,10 @@ public static class GameplayInputFunctions  {
                 else
                 {
                     // Bit-shift to the right to compensate for anchor logic
-                    int shiftedNoteMask = note.mask;
                     int shiftCount = 0;
-
-                    while ((shiftedNoteMask & 1) != 1)
-                    {
-                        shiftedNoteMask >>= 1;
-                        ++shiftCount;
-                    }
-
-                    int shiftedInputMask = inputMask;
-
-                    shiftedInputMask >>= shiftCount;
+                    int shiftedNoteMask = BitshiftToIgnoreLowerUnusedFrets(note.mask, out shiftCount);
+                    
+                    int shiftedInputMask = inputMask >> shiftCount;
 
                     return shiftedInputMask == shiftedNoteMask;
                 }

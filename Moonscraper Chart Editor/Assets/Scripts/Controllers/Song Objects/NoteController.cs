@@ -36,10 +36,7 @@ public class NoteController : SongObjectController {
     {
         get
         {
-            if (noteVisuals.gameObject.activeSelf)
-                return true;
-            else
-                return false;
+            return noteVisuals.gameObject.activeSelf;
         }
     }
     new void Awake()

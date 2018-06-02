@@ -31,7 +31,7 @@ public class GameplayManager : MonoBehaviour {
     uint notesHit = 0;
     uint totalNotes = 0;
 
-    List<NoteController> currentSustains = new List<NoteController>();
+    
 
     ChartEditor editor;
     float initSize;
@@ -44,7 +44,10 @@ public class GameplayManager : MonoBehaviour {
         get { return hitWindowManager.hitWindow; }
     }
 
+    // Rules
     GuitarNoteHitAndMissDetect hitAndMissNoteDetect;
+    GuitarSustainBreakDetect sustainBreakDetect;
+    GuitarSustainHitKnowledge guitarSustainHitKnowledge;
 
     void Start()
     {
@@ -56,6 +59,8 @@ public class GameplayManager : MonoBehaviour {
         initSize = transform.localScale.y;
         transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
         hitAndMissNoteDetect = new GuitarNoteHitAndMissDetect(HitNote, MissNote);
+        sustainBreakDetect = new GuitarSustainBreakDetect(SustainBreak);
+        guitarSustainHitKnowledge = new GuitarSustainHitKnowledge();
 
         initialised = true;
     }
@@ -93,9 +98,10 @@ public class GameplayManager : MonoBehaviour {
                     MissNote(currentTime, GuitarNoteHitAndMissDetect.MissSubType.NoteMiss, null);
                 }
 
-                hitAndMissNoteDetect.Update(currentTime, hitWindow, guitarInput, noteStreak);
+                guitarSustainHitKnowledge.Update(currentTime);
 
-                UpdateSustainBreaking();
+                hitAndMissNoteDetect.Update(currentTime, hitWindow, guitarInput, noteStreak, guitarSustainHitKnowledge);       
+                sustainBreakDetect.Update(currentTime, guitarSustainHitKnowledge, guitarInput, noteStreak);
             }
             else
             {
@@ -107,34 +113,6 @@ public class GameplayManager : MonoBehaviour {
         else
         {
             Reset();
-        }
-    }
-
-    void UpdateSustainBreaking()
-    {
-        int inputMask = guitarInput.GetFretInputMask();
-
-        foreach (NoteController note in currentSustains.ToArray())
-        {
-            if (!note.gameObject.activeSelf || note.note == null)
-            {
-                currentSustains.Remove(note);
-                continue;
-            }
-            if (!note.isActivated &&
-                (
-                    noteStreak == 0
-                    ||
-                    (
-                        !note.note.IsChord && !GameplayInputFunctions.ValidateFrets(note.note, inputMask, noteStreak))
-                        || (note.note.IsChord && note.note.mask != inputMask)
-                    )
-                )
-            {
-                foreach (Note chordNote in note.note.GetChord())
-                    chordNote.controller.sustainBroken = true;
-                currentSustains.Remove(note);
-            }
         }
     }
 
@@ -173,6 +151,8 @@ public class GameplayManager : MonoBehaviour {
         {
             hitWindowManager.Reset();
             hitAndMissNoteDetect.Reset();
+            sustainBreakDetect.Reset();
+            guitarSustainHitKnowledge.Reset();
         }
     }
 
@@ -195,7 +175,7 @@ public class GameplayManager : MonoBehaviour {
         }
 
         if (note.sustain_length > 0 && note.controller)
-            currentSustains.Add(note.controller);
+            guitarSustainHitKnowledge.Add(note);
     }
 
     void MissNote(float time, GuitarNoteHitAndMissDetect.MissSubType missSubType, GuitarNoteHitKnowledge noteHitKnowledge)
@@ -214,6 +194,17 @@ public class GameplayManager : MonoBehaviour {
         {
             noteHitKnowledge.hasBeenHit = true; // Don't want to count this as a miss twice when it gets removed from the window
             noteHitKnowledge.shouldExitWindow = true;
+        }
+    }
+
+    void SustainBreak(float time, Note note)
+    {
+        foreach (Note chordNote in note.GetChord())
+        {
+            if (chordNote.controller)
+                chordNote.controller.sustainBroken = true;
+            else
+                Debug.LogError("Trying to break the sustain of a note without a controller");
         }
     }
 

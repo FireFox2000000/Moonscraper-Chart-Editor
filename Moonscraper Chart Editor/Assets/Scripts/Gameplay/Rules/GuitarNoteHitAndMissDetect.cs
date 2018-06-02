@@ -36,7 +36,7 @@ public class GuitarNoteHitAndMissDetect {
         m_missNoteFactory = missNoteFactory;
     }
 	
-	public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, GuitarInput guitarInput, uint noteStreak)
+	public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, GuitarInput guitarInput, uint noteStreak, GuitarSustainHitKnowledge sustainKnowledge)
     {
         // Capture input
         bool strum = guitarInput.GetStrumInput();
@@ -47,7 +47,7 @@ public class GuitarNoteHitAndMissDetect {
         // What note is the player trying to hit next?
         GuitarNoteHitKnowledge nextNoteToHit = hitWindow.oldestUnhitNote;
 
-        UpdateNoteKnowledge(time, hitWindow, inputMask, strum, noteStreak, nextNoteToHit);
+        UpdateNoteKnowledge(time, hitWindow, inputMask, strum, noteStreak, nextNoteToHit, sustainKnowledge);
 
         if (nextNoteToHit != null)
         {
@@ -71,7 +71,7 @@ public class GuitarNoteHitAndMissDetect {
         previousInputMask = inputMask;
     }
 
-    void UpdateNoteKnowledge(float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, int inputMask, bool strummed, uint noteStreak, GuitarNoteHitKnowledge nextNoteToHit)
+    void UpdateNoteKnowledge(float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, int inputMask, bool strummed, uint noteStreak, GuitarNoteHitKnowledge nextNoteToHit, GuitarSustainHitKnowledge sustainKnowledge)
     {
         // Check if it's valid to query the last hit note
         if (noteStreak <= 0 || lastNoteHit == null || !hitWindow.IsWithinTimeWindow(lastNoteHit.note, nextNoteToHit != null ? nextNoteToHit.note : null, time))
@@ -85,7 +85,7 @@ public class GuitarNoteHitAndMissDetect {
                 nextNoteToHit.strumCounter = 1;     // Make this still valid to hit because it's still in the hit window for a reason
 
             // Fill out note knowledge
-            if (GameplayInputFunctions.ValidateFrets(nextNoteToHit.note, inputMask, noteStreak))
+            if (GameplayInputFunctions.ValidateFrets(nextNoteToHit.note, inputMask, noteStreak, sustainKnowledge.extendedSustainsMask))
                 nextNoteToHit.fretValidationTime = time;
             else
                 nextNoteToHit.lastestFretInvalidationTime = time;

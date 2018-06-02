@@ -634,6 +634,26 @@ public class Note : ChartObject
         applyFlagsToChord();
     }
 
+    public int ExpensiveGetExtendedSustainMask()
+    {
+        int mask = 0;
+
+        if (sustain_length > 0 && chart != null)
+        {
+            int index, length;
+            Note[] notes = chart.notes;
+            SongObjectHelper.GetRange(notes, position, position + sustain_length - 1, out index, out length);
+
+            for (int i = index; i < index + length; ++i)
+            {
+                Note note = notes[i];
+                mask |= note.mask;
+            }
+        }
+
+        return mask;
+    }
+
     public static Fret_Type SaveGuitarNoteToDrumNote(Fret_Type fret_type)
     {
         if (fret_type == Fret_Type.OPEN)
