@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HitWindow {
+public class HitWindow<TNoteHitKnowledge> where TNoteHitKnowledge : NoteHitKnowledge
+{
     float frontendTime;
     float backendTime;
 
-    private List<GuitarNoteHitKnowledge> m_noteQueue;
+    private List<TNoteHitKnowledge> m_noteQueue;
 
-    public List<GuitarNoteHitKnowledge> noteKnowledgeQueue
+    public List<TNoteHitKnowledge> noteKnowledgeQueue
     {
         get
         {
@@ -16,7 +17,7 @@ public class HitWindow {
         }
     }
 
-    public GuitarNoteHitKnowledge oldestUnhitNote
+    public TNoteHitKnowledge oldestUnhitNote
     {
         get
         {
@@ -32,7 +33,7 @@ public class HitWindow {
 
     public HitWindow(float frontendTime, float backendTime)
     {
-        m_noteQueue = new List<GuitarNoteHitKnowledge>();
+        m_noteQueue = new List<TNoteHitKnowledge>();
         this.frontendTime = frontendTime;
         this.backendTime = backendTime;
     }
@@ -42,24 +43,25 @@ public class HitWindow {
         if (note.time > time + frontendTime)
             return false;
 
-        foreach (GuitarNoteHitKnowledge noteHitData in m_noteQueue)
+        foreach (TNoteHitKnowledge noteHitData in m_noteQueue)
         {
             if (note.position == noteHitData.note.position)
                 return false;
         }
 
-        m_noteQueue.Add(new GuitarNoteHitKnowledge(note));
+        TNoteHitKnowledge newNoteKnowledge = System.Activator.CreateInstance(typeof(TNoteHitKnowledge), note) as TNoteHitKnowledge;
+        m_noteQueue.Add(newNoteKnowledge);
 
         return true;
     }
 
-    public List<GuitarNoteHitKnowledge> DetectExit(float time)
+    public List<TNoteHitKnowledge> DetectExit(float time)
     {
-        List<GuitarNoteHitKnowledge> elementsRemoved = new List<GuitarNoteHitKnowledge>();
+        List<TNoteHitKnowledge> elementsRemoved = new List<TNoteHitKnowledge>();
 
         for (int i = m_noteQueue.Count - 1; i >= 0; --i)
         {
-            GuitarNoteHitKnowledge noteKnowledge = m_noteQueue[i];
+            TNoteHitKnowledge noteKnowledge = m_noteQueue[i];
             Note note = noteKnowledge.note;
             Note nextNote = GetNextNote(i);
 
@@ -79,7 +81,7 @@ public class HitWindow {
     {
         for (int i = 0; i < m_noteQueue.Count; ++i)
         {
-            GuitarNoteHitKnowledge noteHitData = m_noteQueue[i];
+            TNoteHitKnowledge noteHitData = m_noteQueue[i];
             if (note == noteHitData.note)
                 return i;
         }
@@ -87,13 +89,13 @@ public class HitWindow {
         return -1;
     }
 
-    public GuitarNoteHitKnowledge Get(Note note, float time)
+    public TNoteHitKnowledge Get(Note note, float time)
     {
         int index = GetPosition(note);
 
         if (index >= 0)
         {
-            GuitarNoteHitKnowledge noteData = m_noteQueue[index];
+            TNoteHitKnowledge noteData = m_noteQueue[index];
             Note nextNote = GetNextNote(index);
 
             if (IsWithinTimeWindow(note, nextNote, time))

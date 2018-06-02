@@ -20,8 +20,6 @@ public class GameplayManager : MonoBehaviour {
     int sample;
     int channel;
 
-    const float FREESTRUM_TIME = 0.2f;
-
     public GameObject statsPanel;
     public UnityEngine.UI.Text noteStreakText;
     public UnityEngine.UI.Text percentHitText;
@@ -44,7 +42,7 @@ public class GameplayManager : MonoBehaviour {
     public static GamePadState? previousGamepad;
 #endif
 
-    HitWindow hitWindow
+    HitWindow<GuitarNoteHitKnowledge> hitWindow
     {
         get { return hitWindowManager.hitWindow; }
     }
@@ -221,6 +219,7 @@ public class GameplayManager : MonoBehaviour {
 
         if (noteHitKnowledge != null)
         {
+            noteHitKnowledge.hasBeenHit = true; // Don't want to count this as a miss twice when it gets removed from the window
             noteHitKnowledge.shouldExitWindow = true;
         }
     }

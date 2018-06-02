@@ -8,7 +8,7 @@ public class HitWindowManager : MonoBehaviour {
     const float FRONTEND_HIT_WINDOW_TIME = 0.116f;
 
     [HideInInspector]
-    public HitWindow hitWindow = new HitWindow(FRONTEND_HIT_WINDOW_TIME, BACKEND_HIT_WINDOW_TIME);
+    public HitWindow<GuitarNoteHitKnowledge> hitWindow = new HitWindow<GuitarNoteHitKnowledge>(FRONTEND_HIT_WINDOW_TIME, BACKEND_HIT_WINDOW_TIME);
     List<NoteController> physicsWindow = new List<NoteController>();
 
     void OnTriggerEnter2D(Collider2D col)
@@ -37,7 +37,7 @@ public class HitWindowManager : MonoBehaviour {
         }
     }
 
-    // Returns true if hit notes have been exited at the notestreak should be reset
+    // Returns a count for how many notes were removed that didn't have "hasBeenHit" set
     public int UpdateHitWindow(uint noteStreak)
     {
         float time = TickFunctions.WorldYPositionToTime(ChartEditor.GetInstance().visibleStrikeline.position.y);
