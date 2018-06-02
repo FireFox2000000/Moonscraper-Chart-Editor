@@ -179,6 +179,8 @@ public class GuitarNoteHitAndMissDetect {
             }
 
             HitNote(time, note);
+            if (strummed)
+                ++note.strumCounter;
         }
         else if (strummed)
         {
