@@ -79,7 +79,7 @@ public class GuitarNoteHitAndMissDetect {
             lastNoteHit = null;
         }
 
-        if (nextNoteToHit != null)
+        if (nextNoteToHit != null && noteStreak > 0)    // None of this knowledge should be used for recovery
         {
             if (nextNoteToHit.strumCounter > 1)
                 nextNoteToHit.strumCounter = 1;     // Make this still valid to hit because it's still in the hit window for a reason
@@ -179,6 +179,10 @@ public class GuitarNoteHitAndMissDetect {
             }
 
             HitNote(time, note);
+
+            // We fill out our own knowledge
+            note.fretValidationTime = time;
+            note.strumValidationTime = time;
             if (strummed)
                 ++note.strumCounter;
         }
