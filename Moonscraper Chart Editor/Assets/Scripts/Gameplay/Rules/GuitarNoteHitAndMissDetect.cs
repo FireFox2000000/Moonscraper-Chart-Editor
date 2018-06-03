@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using XInputDotNetPure;
+using GuitarInput;
 
 public class GuitarNoteHitAndMissDetect {
 
@@ -36,7 +36,7 @@ public class GuitarNoteHitAndMissDetect {
         m_missNoteFactory = missNoteFactory;
     }
 	
-	public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, GuitarInput guitarInput, uint noteStreak, GuitarSustainHitKnowledge sustainKnowledge)
+	public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, GamepadInput guitarInput, uint noteStreak, GuitarSustainHitKnowledge sustainKnowledge)
     {
         // Capture input
         bool strum = guitarInput.GetStrumInput();

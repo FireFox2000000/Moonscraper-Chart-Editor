@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using GuitarInput;
 
 public class GuitarSustainBreakDetect {
 
@@ -17,7 +18,7 @@ public class GuitarSustainBreakDetect {
     {
     }
 
-    public void Update(float time, GuitarSustainHitKnowledge sustainKnowledge, GuitarInput guitarInput, uint noteStreak)
+    public void Update(float time, GuitarSustainHitKnowledge sustainKnowledge, GamepadInput guitarInput, uint noteStreak)
     {
         var currentSustains = sustainKnowledge.currentSustains;
 

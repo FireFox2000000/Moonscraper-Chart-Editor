@@ -4,8 +4,7 @@
 #define GAMEPAD
 
 using UnityEngine;
-using System.Collections;
-using XInputDotNetPure;
+using GuitarInput;
 
 public class Indicators : MonoBehaviour {
     const int FRET_COUNT = 6;
@@ -85,7 +84,7 @@ public class Indicators : MonoBehaviour {
 #if GAMEPAD
             if (true) // GameplayManager.gamepad != null)
             {
-                GuitarInput guitarInput = GameplayManager.guitarInput;
+                GamepadInput guitarInput = GameplayManager.mainGamepad;
                 
                 if (guitarInput.GetFretInput(Note.Fret_Type.GREEN))
                     animations[0].Press();

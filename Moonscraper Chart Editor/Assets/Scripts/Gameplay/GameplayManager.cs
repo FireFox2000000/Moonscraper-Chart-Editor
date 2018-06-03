@@ -1,13 +1,9 @@
 ﻿// Copyright (c) 2016-2017 Alexander Ong
 // See LICENSE in project root for license information.
 
-#define GAMEPAD
-#define MISS_DEBUG
-
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using XInputDotNetPure;
 using Un4seen.Bass;
 
 [RequireComponent(typeof(AudioSource))]
@@ -31,13 +27,11 @@ public class GameplayManager : MonoBehaviour {
     uint notesHit = 0;
     uint totalNotes = 0;
 
-    
-
     ChartEditor editor;
     float initSize;
     bool initialised = false;
 
-    public static GuitarInput guitarInput = new GuitarInput();
+    public static GamepadInput mainGamepad = new GamepadInput();
 
     HitWindow<GuitarNoteHitKnowledge> hitWindow
     {
@@ -71,7 +65,7 @@ public class GameplayManager : MonoBehaviour {
 
         statsPanel.SetActive(Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot);
 
-        guitarInput.Update();
+        mainGamepad.Update();
 
         // Configure collisions and choose to update the hit window or not
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
@@ -100,8 +94,8 @@ public class GameplayManager : MonoBehaviour {
 
                 guitarSustainHitKnowledge.Update(currentTime);
 
-                hitAndMissNoteDetect.Update(currentTime, hitWindow, guitarInput, noteStreak, guitarSustainHitKnowledge);       
-                sustainBreakDetect.Update(currentTime, guitarSustainHitKnowledge, guitarInput, noteStreak);
+                hitAndMissNoteDetect.Update(currentTime, hitWindow, mainGamepad, noteStreak, guitarSustainHitKnowledge);       
+                sustainBreakDetect.Update(currentTime, guitarSustainHitKnowledge, mainGamepad, noteStreak);
             }
             else
             {
