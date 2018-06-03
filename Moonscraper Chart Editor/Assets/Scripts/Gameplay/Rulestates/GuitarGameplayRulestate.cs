@@ -2,40 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GuitarGameplayRulestate {
-
-    public struct NoteStats
-    {
-        public uint noteStreak;
-        public uint notesHit;
-        public uint totalNotes;
-
-        public void Reset()
-        {
-            noteStreak = 0;
-            notesHit = 0;
-            totalNotes = 0;
-        }
-    }
+public class GuitarGameplayRulestate : BaseGameplayRulestate {
 
     GuitarNoteHitAndMissDetect hitAndMissNoteDetect;
     GuitarSustainBreakDetect sustainBreakDetect;
     GuitarSustainHitKnowledge guitarSustainHitKnowledge;
 
-    public NoteStats stats;
-
-    public delegate void MissFeedback();
-    MissFeedback missFeedbackFn;
-
-
-    public GuitarGameplayRulestate(MissFeedback missFeedbackFn)
+    public GuitarGameplayRulestate(MissFeedback missFeedbackFn) : base(missFeedbackFn)
     {
-        this.missFeedbackFn = missFeedbackFn;
-
         hitAndMissNoteDetect = new GuitarNoteHitAndMissDetect(HitNote, MissNote);
         sustainBreakDetect = new GuitarSustainBreakDetect(SustainBreak);
         guitarSustainHitKnowledge = new GuitarSustainHitKnowledge();
-        stats.Reset();
     }
 
     // Update is called once per frame

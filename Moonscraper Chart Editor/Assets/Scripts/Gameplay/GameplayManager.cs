@@ -74,13 +74,12 @@ public class GameplayManager : MonoBehaviour {
             if (editor.currentChart.gameMode == Chart.GameMode.Guitar)
             {
                 guitarGameplayRulestate.Update(currentTime, hitWindow, mainGamepad);
+                UpdateUIStats(guitarGameplayRulestate);
             }
             else
             {
                 Debug.LogError("Gameplay currently does not support this gamemode.");
             }
-
-            UpdateUIStats();
         }
         else
         {
@@ -88,9 +87,9 @@ public class GameplayManager : MonoBehaviour {
         }
     }
 
-    void UpdateUIStats()
+    void UpdateUIStats(BaseGameplayRulestate currentRulestate)
     {
-        GuitarGameplayRulestate.NoteStats stats = guitarGameplayRulestate.stats;
+        BaseGameplayRulestate.NoteStats stats = currentRulestate.stats;
         uint noteStreak = stats.noteStreak;
         uint totalNotes = stats.noteStreak;
         uint notesHit = stats.notesHit;
