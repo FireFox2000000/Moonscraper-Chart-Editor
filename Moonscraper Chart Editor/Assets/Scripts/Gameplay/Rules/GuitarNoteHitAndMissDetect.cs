@@ -11,8 +11,6 @@ public class GuitarNoteHitAndMissDetect {
         Overstrum,
     }
 
-    const float SLOP_BUFFER_TIME = 0.3f;
-
     public delegate void HitNoteFactory(float time, GuitarNoteHitKnowledge noteHitKnowledge);
     public delegate void MissNoteFactory(float time, MissSubType missSubType, GuitarNoteHitKnowledge noteHitKnowledge);
 
@@ -112,11 +110,11 @@ public class GuitarNoteHitAndMissDetect {
             MissNote(time, MissSubType.Overstrum);
             Debug.Log("Missed note due to double strumming on a single note");
         }
-        else if (nextNoteToHit.fretsValidated && nextNoteToHit.strumValidated && Mathf.Abs(nextNoteToHit.fretValidationTime - nextNoteToHit.strumValidationTime) <= SLOP_BUFFER_TIME)
+        else if (nextNoteToHit.fretsValidated && nextNoteToHit.strumValidated && Mathf.Abs(nextNoteToHit.fretValidationTime - nextNoteToHit.strumValidationTime) <= GuitarGameplayConfig.slopBufferTime)
         {
             HitNote(time, nextNoteToHit);
         }
-        else if (nextNoteToHit.strumValidated && Mathf.Abs(time - nextNoteToHit.strumValidationTime) > SLOP_BUFFER_TIME && nextNoteToHit.strumCounter > 0)
+        else if (nextNoteToHit.strumValidated && Mathf.Abs(time - nextNoteToHit.strumValidationTime) > GuitarGameplayConfig.slopBufferTime && nextNoteToHit.strumCounter > 0)
         {
             MissNote(time, MissSubType.Overstrum);
             Debug.Log("Missed note due to strum expiration");

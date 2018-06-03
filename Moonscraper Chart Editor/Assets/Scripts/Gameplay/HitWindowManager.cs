@@ -4,11 +4,8 @@ using UnityEngine;
 
 public class HitWindowManager : MonoBehaviour {
 
-    const float BACKEND_HIT_WINDOW_TIME = 0.2f;
-    const float FRONTEND_HIT_WINDOW_TIME = 0.116f;
-
     [HideInInspector]
-    public HitWindow<GuitarNoteHitKnowledge> hitWindow = new HitWindow<GuitarNoteHitKnowledge>(FRONTEND_HIT_WINDOW_TIME, BACKEND_HIT_WINDOW_TIME);
+    public HitWindow<GuitarNoteHitKnowledge> hitWindow = new HitWindow<GuitarNoteHitKnowledge>(GuitarGameplayConfig.frontendHitWindowTime, GuitarGameplayConfig.backendHitWindowTime);
     List<NoteController> physicsWindow = new List<NoteController>();
 
     void OnTriggerEnter2D(Collider2D col)
