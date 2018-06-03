@@ -1,8 +1,6 @@
 ﻿// Copyright (c) 2016-2017 Alexander Ong
 // See LICENSE in project root for license information.
 
-#define GAMEPAD
-
 using UnityEngine;
 using GuitarInput;
 
@@ -77,67 +75,35 @@ public class Indicators : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        //UpdateStrikerColors();
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
-#if GAMEPAD
-            if (true) // GameplayManager.gamepad != null)
-            {
-                GamepadInput guitarInput = GameplayManager.mainGamepad;
+            GamepadInput guitarInput = GameplayManager.mainGamepad;
                 
-                if (guitarInput.GetFretInput(Note.Fret_Type.GREEN))
-                    animations[0].Press();
-                else
-                    animations[0].Release();
-
-                if (guitarInput.GetFretInput(Note.Fret_Type.RED))
-                    animations[1].Press();
-                else
-                    animations[1].Release();
-
-                if (guitarInput.GetFretInput(Note.Fret_Type.YELLOW))
-                    animations[2].Press();
-                else
-                    animations[2].Release();
-
-                if (guitarInput.GetFretInput(Note.Fret_Type.BLUE))
-                    animations[3].Press();
-                else
-                    animations[3].Release();
-
-                if (guitarInput.GetFretInput(Note.Fret_Type.ORANGE))
-                    animations[4].Press();
-                else
-                    animations[4].Release();
-            }
+            if (guitarInput.GetFretInputControllerOrKeyboard(Note.Fret_Type.GREEN))
+                animations[0].Press();
             else
-            {
-                // Keyboard controls
-                for (int i = 0; i < 5; ++i)
-                {
-                    if (Input.GetKey((i + 1).ToString()))
-                    {
-                        animations[i].Press();
-                    }
-                    else if (!animations[i].running)
-                        animations[i].Release();
-                }
-            }
-#else
+                animations[0].Release();
 
-            for (int i = 0; i < 5; ++i)
-            {
-                if (Input.GetButton("Fret" + i))
-                {
-                    //indicators[i].SetActive(true);
-                    animations[i].Press();
-                }
-                else if (!animations[i].running)
-                    animations[i].Release();
-                //indicators[i].SetActive(false);
-            }
-#endif
+            if (guitarInput.GetFretInputControllerOrKeyboard(Note.Fret_Type.RED))
+                animations[1].Press();
+            else
+                animations[1].Release();
+
+            if (guitarInput.GetFretInputControllerOrKeyboard(Note.Fret_Type.YELLOW))
+                animations[2].Press();
+            else
+                animations[2].Release();
+
+            if (guitarInput.GetFretInputControllerOrKeyboard(Note.Fret_Type.BLUE))
+                animations[3].Press();
+            else
+                animations[3].Release();
+
+            if (guitarInput.GetFretInputControllerOrKeyboard(Note.Fret_Type.ORANGE))
+                animations[4].Press();
+            else
+                animations[4].Release();
         }
         else
         {

@@ -39,8 +39,8 @@ public class GuitarNoteHitAndMissDetect {
 	public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, GamepadInput guitarInput, uint noteStreak, GuitarSustainHitKnowledge sustainKnowledge)
     {
         // Capture input
-        bool strum = guitarInput.GetStrumInput();
-        int inputMask = guitarInput.GetFretInputMask();
+        bool strum = guitarInput.GetStrumInputControllerOrKeyboard();
+        int inputMask = guitarInput.GetFretInputMaskControllerOrKeyboard();
         if (inputMask != previousInputMask)
             canTap = true;
 
