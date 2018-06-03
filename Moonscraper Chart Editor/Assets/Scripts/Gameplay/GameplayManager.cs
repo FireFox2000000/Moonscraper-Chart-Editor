@@ -67,7 +67,7 @@ public class GameplayManager : MonoBehaviour {
 
     void Update()
     {
-        float currentTime = TickFunctions.WorldYPositionToTime(editor.visibleStrikeline.position.y);
+        float currentTime = editor.currentVisibleTime;
 
         statsPanel.SetActive(Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot);
 

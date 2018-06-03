@@ -172,6 +172,22 @@ public class ChartEditor : MonoBehaviour {
 #endif
     }
 
+    public float currentVisibleTime
+    {
+        get
+        {
+            return TickFunctions.WorldYPositionToTime(visibleStrikeline.transform.position.y);
+        }
+    }
+
+    public float currentAudioTime
+    {
+        get
+        {
+            return currentVisibleTime + currentSong.offset + (GameSettings.audioCalibrationMS / 1000.0f * GameSettings.gameSpeed);
+        }
+    }
+
     // Use this for initialization
     void Awake () {
         currentEditor = this;
@@ -651,7 +667,7 @@ public class ChartEditor : MonoBehaviour {
         Globals.applicationMode = Globals.ApplicationMode.Playing;
         cancel = false;
 
-        float playPoint = TickFunctions.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (GameSettings.audioCalibrationMS / 1000.0f * GameSettings.gameSpeed);
+        float playPoint = currentAudioTime;
 
         if (playPoint < 0)
         {
@@ -666,7 +682,7 @@ public class ChartEditor : MonoBehaviour {
     IEnumerator delayedStartAudio(float delay)
     {
         yield return new WaitForSeconds(delay);
-        float playPoint = TickFunctions.WorldYPositionToTime(visibleStrikeline.transform.position.y) + currentSong.offset + (GameSettings.audioCalibrationMS / 1000.0f * GameSettings.gameSpeed);
+        float playPoint = currentAudioTime;
 
         if (!cancel && Globals.applicationMode == Globals.ApplicationMode.Playing)
         {

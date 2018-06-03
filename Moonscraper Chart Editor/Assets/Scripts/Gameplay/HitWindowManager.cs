@@ -40,7 +40,7 @@ public class HitWindowManager : MonoBehaviour {
     // Returns a count for how many notes were removed that didn't have "hasBeenHit" set
     public int UpdateHitWindow(uint noteStreak)
     {
-        float time = TickFunctions.WorldYPositionToTime(ChartEditor.GetInstance().visibleStrikeline.position.y);
+        float time = ChartEditor.GetInstance().currentVisibleTime;
 
         // Enter window
         foreach (NoteController note in physicsWindow.ToArray())
