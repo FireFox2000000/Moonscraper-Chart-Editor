@@ -1,3 +1,15 @@
+v1.2.1
+	NEW FEATURES
+	-Save now save and load guitar coop tracks in midis
+	-Can now hit extended sustains in gameplay mode
+
+	CHANGES
+	-Completely re-wrote guitar gameplay rules to make it much easier to understand and thus find bugs. Probably cleaned up bugs at the same time.
+
+	FIXES
+	-Fixed weird undo/redo bug with starpower
+	-Fixed shortcut typo
+
 v1.2
 	NEW FEATURES
 	-Waveform display now works in both local and global song views. 
