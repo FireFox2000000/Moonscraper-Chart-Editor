@@ -37,8 +37,7 @@ public class HitWindowManager : MonoBehaviour {
         }
     }
 
-    // Returns a count for how many notes were removed that didn't have "hasBeenHit" set
-    public int UpdateHitWindow(uint noteStreak)
+    void Update()
     {
         float time = ChartEditor.GetInstance().currentVisibleTime;
 
@@ -49,31 +48,6 @@ public class HitWindowManager : MonoBehaviour {
             {
                 physicsWindow.Remove(note);
             }
-        }
-
-        // Exit window
-        {
-            var notesRemoved = hitWindow.DetectExit(time);
-
-            int missCount = 0;
-            foreach (var noteKnowledge in notesRemoved)
-            {
-                // Miss, exited window
-                if (!noteKnowledge.hasBeenHit)
-                {
-                    foreach (Note chordNote in noteKnowledge.note.GetChord())
-                    {
-                        chordNote.controller.sustainBroken = true;
-
-                        if (noteStreak > 0)
-                            chordNote.controller.DeactivateNote();
-                    }
-
-                    ++missCount;
-                }
-            }
-
-            return missCount;
         }
     }
 

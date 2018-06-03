@@ -38,8 +38,6 @@ namespace GuitarInput
         {
             int inputMask = 0;
 
-            var fretEnums = System.Enum.GetValues(typeof(Note.Fret_Type));
-
             foreach (Note.Fret_Type fret in System.Enum.GetValues(typeof(Note.Fret_Type)))
             {
                 if (gamepad.GetFretInput(fret))
