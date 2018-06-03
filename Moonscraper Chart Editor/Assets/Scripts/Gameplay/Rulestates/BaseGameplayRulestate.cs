@@ -27,4 +27,9 @@ public class BaseGameplayRulestate {
         this.missFeedbackFn = missFeedbackFn;
         stats.Reset();
     }
+
+    public virtual void Reset()
+    {
+        stats.Reset();
+    }
 }
