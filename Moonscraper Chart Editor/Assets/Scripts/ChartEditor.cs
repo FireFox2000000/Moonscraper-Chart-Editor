@@ -517,7 +517,6 @@ public class ChartEditor : MonoBehaviour {
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Playing || 
             movement.transform.position.y < movement.initPos.y || 
-            Globals.drumMode ||
             Globals.ghLiveMode)
             return;
 

@@ -4,27 +4,27 @@ namespace DrumsInput
 {
     public static class GamepadInputExtension
     {
-        public static bool GetHitInput(this GamepadInput gamepad, Note.Drum_Fret_Type drumFret)
+        public static bool GetPadPressedInput(this GamepadInput gamepad, Note.Drum_Fret_Type drumFret)
         {
             switch (drumFret)
             {
                 case (Note.Drum_Fret_Type.RED):
-                    return gamepad.GetButton(GamepadInput.Button.B);
+                    return gamepad.GetButtonPressed(GamepadInput.Button.B);
 
                 case (Note.Drum_Fret_Type.YELLOW):
-                    return gamepad.GetButton(GamepadInput.Button.Y);
+                    return gamepad.GetButtonPressed(GamepadInput.Button.Y);
 
                 case (Note.Drum_Fret_Type.BLUE):
-                    return gamepad.GetButton(GamepadInput.Button.X);
+                    return gamepad.GetButtonPressed(GamepadInput.Button.X);
 
                 case (Note.Drum_Fret_Type.ORANGE):
-                    return gamepad.GetButton(GamepadInput.Button.LB);
+                    return gamepad.GetButtonPressed(GamepadInput.Button.LB);
 
                 case (Note.Drum_Fret_Type.GREEN):
-                    return gamepad.GetButton(GamepadInput.Button.A);
+                    return gamepad.GetButtonPressed(GamepadInput.Button.A);
 
                 case (Note.Drum_Fret_Type.KICK):
-                    return gamepad.GetButton(GamepadInput.Button.RB);
+                    return gamepad.GetButtonPressed(GamepadInput.Button.RB);
 
                 default:
                     Debug.LogError("Unhandled note type for drum input: " + drumFret);
@@ -32,31 +32,44 @@ namespace DrumsInput
             }
 
             return false;
+        }
+
+        public static int GetPadPressedInputMask(this GamepadInput gamepad)
+        {
+            int inputMask = 0;
+
+            foreach (Note.Drum_Fret_Type pad in System.Enum.GetValues(typeof(Note.Drum_Fret_Type)))
+            {
+                if (gamepad.GetPadPressedInput(pad))
+                    inputMask |= 1 << (int)pad;
+            }
+
+            return inputMask;
         }
 
         /******************************** Keyboard Alts ********************************************/
 
-        public static bool GetHitInputKeyboard(Note.Drum_Fret_Type drumFret)
+        public static bool GetPadPressedInputKeyboard(Note.Drum_Fret_Type drumFret)
         {
             switch (drumFret)
             {
                 case (Note.Drum_Fret_Type.RED):
-                    return Input.GetKey(KeyCode.Alpha1);
+                    return Input.GetKeyDown(KeyCode.Alpha1);
 
                 case (Note.Drum_Fret_Type.YELLOW):
-                    return Input.GetKey(KeyCode.Alpha2);
+                    return Input.GetKeyDown(KeyCode.Alpha2);
 
                 case (Note.Drum_Fret_Type.BLUE):
-                    return Input.GetKey(KeyCode.Alpha3);
+                    return Input.GetKeyDown(KeyCode.Alpha3);
 
                 case (Note.Drum_Fret_Type.ORANGE):
-                    return Input.GetKey(KeyCode.Alpha4);
+                    return Input.GetKeyDown(KeyCode.Alpha4);
 
                 case (Note.Drum_Fret_Type.GREEN):
-                    return Input.GetKey(KeyCode.Alpha5);
+                    return Input.GetKeyDown(KeyCode.Alpha5);
 
                 case (Note.Drum_Fret_Type.KICK):
-                    return Input.GetKey(KeyCode.Alpha0);
+                    return Input.GetKeyDown(KeyCode.Alpha0);
 
                 default:
                     Debug.LogError("Unhandled note type for drum input: " + drumFret);
@@ -66,9 +79,30 @@ namespace DrumsInput
             return false;
         }
 
-        public static bool GetHitInputControllerOrKeyboard(this GamepadInput gamepad, Note.Drum_Fret_Type drumFret)
+        public static bool GetPadInputControllerOrKeyboard(this GamepadInput gamepad, Note.Drum_Fret_Type drumFret)
         {
-            return GetHitInput(gamepad, drumFret) || GetHitInputKeyboard(drumFret);
+            return GetPadPressedInput(gamepad, drumFret) || GetPadPressedInputKeyboard(drumFret);
+        }
+
+        public static int GetPadPressedInputMaskKeyboard()
+        {
+            int inputMask = 0;
+
+            foreach (Note.Drum_Fret_Type pad in System.Enum.GetValues(typeof(Note.Drum_Fret_Type)))
+            {
+                if (GetPadPressedInputKeyboard(pad))
+                {
+                    inputMask |= 1 << (int)pad;
+                }
+            }
+
+            return inputMask;
+        }
+
+        public static int GetPadPressedInputMaskControllerOrKeyboard(this GamepadInput gamepad)
+        {
+            int gamepadMask = GetPadPressedInputMask(gamepad);
+            return gamepadMask != 0 ? gamepadMask : GetPadPressedInputMaskKeyboard();
         }
     }
 }

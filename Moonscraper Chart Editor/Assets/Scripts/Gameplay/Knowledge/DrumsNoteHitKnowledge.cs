@@ -11,6 +11,11 @@ public class DrumsNoteHitKnowledge : NoteHitKnowledge  {
         }
     }
 
+    public float GetHitTime(Note.Drum_Fret_Type noteType)
+    {
+        return drumHitTimes[(int)noteType];
+    }
+
     public void SetHitTime(Note.Drum_Fret_Type noteType, float time)
     {
         drumHitTimes[(int)noteType] = time;

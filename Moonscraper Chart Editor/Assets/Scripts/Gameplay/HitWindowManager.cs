@@ -5,7 +5,10 @@ using UnityEngine;
 public class HitWindowManager : MonoBehaviour {
 
     [HideInInspector]
-    public HitWindow<GuitarNoteHitKnowledge> hitWindow = new HitWindow<GuitarNoteHitKnowledge>(GuitarGameplayConfig.frontendHitWindowTime, GuitarGameplayConfig.backendHitWindowTime);
+    public HitWindow<GuitarNoteHitKnowledge> guitarHitWindow = new HitWindow<GuitarNoteHitKnowledge>(GuitarGameplayConfig.frontendHitWindowTime, GuitarGameplayConfig.backendHitWindowTime);
+    [HideInInspector]
+    public HitWindow<DrumsNoteHitKnowledge> drumsHitWindow = new HitWindow<DrumsNoteHitKnowledge>(GuitarGameplayConfig.frontendHitWindowTime, GuitarGameplayConfig.backendHitWindowTime);
+
     List<NoteController> physicsWindow = new List<NoteController>();
 
     void OnTriggerEnter2D(Collider2D col)
@@ -41,16 +44,30 @@ public class HitWindowManager : MonoBehaviour {
         // Enter window
         foreach (NoteController note in physicsWindow.ToArray())
         {
-            if (hitWindow.DetectEnter(note.note, time))
+            ChartEditor editor = ChartEditor.GetInstance();
+            Chart.GameMode gameMode = editor.currentChart.gameMode;
+
+            if (gameMode == Chart.GameMode.Guitar)
             {
-                physicsWindow.Remove(note);
+                if (guitarHitWindow.DetectEnter(note.note, time))
+                {
+                    physicsWindow.Remove(note);
+                }
+            }
+            else if (gameMode == Chart.GameMode.Drums)
+            {
+                if (drumsHitWindow.DetectEnter(note.note, time))
+                {
+                    physicsWindow.Remove(note);
+                }
             }
         }
     }
 
     public void Reset()
     {
-        hitWindow.noteKnowledgeQueue.Clear();
+        guitarHitWindow.noteKnowledgeQueue.Clear();
+        drumsHitWindow.noteKnowledgeQueue.Clear();
         physicsWindow.Clear();
     }
 }

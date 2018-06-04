@@ -167,6 +167,6 @@ public class MenuBar : MonoBehaviour {
 
     void GameplayEnabledCheck()
     {
-        gameplayButton.gameObject.SetActive(!(Globals.ghLiveMode || Globals.drumMode));
+        gameplayButton.gameObject.SetActive(!(Globals.ghLiveMode));
     }
 }
