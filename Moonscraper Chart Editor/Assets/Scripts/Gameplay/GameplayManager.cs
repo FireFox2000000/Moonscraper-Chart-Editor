@@ -10,7 +10,7 @@ using Un4seen.Bass;
 public class GameplayManager : MonoBehaviour {
     public AudioClip comboBreak;
     public CameraShake camShake;
-    public HitWindowManager hitWindowManager;
+    public HitWindowFeeder hitWindowFeeder;
 
     AudioSource audioSource;
     int sample;
@@ -70,12 +70,12 @@ public class GameplayManager : MonoBehaviour {
         {
             if (editor.currentChart.gameMode == Chart.GameMode.Guitar)
             {
-                guitarGameplayRulestate.Update(currentTime, hitWindowManager.guitarHitWindow, mainGamepad);
+                guitarGameplayRulestate.Update(currentTime, hitWindowFeeder.guitarHitWindow, mainGamepad);
                 UpdateUIStats(guitarGameplayRulestate);
             }
             else if (editor.currentChart.gameMode == Chart.GameMode.Drums)
             {
-                drumsGameplayRulestate.Update(currentTime, hitWindowManager.drumsHitWindow, mainGamepad);
+                drumsGameplayRulestate.Update(currentTime, hitWindowFeeder.drumsHitWindow, mainGamepad);
                 UpdateUIStats(drumsGameplayRulestate);
             }
             else
@@ -124,7 +124,7 @@ public class GameplayManager : MonoBehaviour {
 
         if (initialised)
         {
-            hitWindowManager.Reset();
+            hitWindowFeeder.Reset();
             guitarGameplayRulestate.Reset();
             drumsGameplayRulestate.Reset();
         }
