@@ -25,7 +25,7 @@ public class ClipboardObjectController : Snapable {
     {
         base.Awake();
         ren = GetComponent<Renderer>();
-        TriggerManager.onApplicationModeChangedTriggerList.Add(OnApplicationModeChanged);
+        EventsManager.onApplicationModeChangedEventList.Add(OnApplicationModeChanged);
     }
 
     new void LateUpdate()

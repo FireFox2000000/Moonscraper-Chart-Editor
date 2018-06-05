@@ -39,7 +39,7 @@ public class ToolPanelController : MonoBehaviour {
         eventImage = eventSelect.GetComponent<Image>();
         localEventSprite = eventImage.sprite;
 
-        TriggerManager.onViewModeSwitchTriggerList.Add(OnViewModeSwitch);
+        EventsManager.onViewModeSwitchEventList.Add(OnViewModeSwitch);
     }
 
     // Update is called once per frame
@@ -115,7 +115,7 @@ public class ToolPanelController : MonoBehaviour {
         if (Toolpane.currentTool != Toolpane.Tools.Note)        // Allows the note panel to pop up instantly
             editor.currentSelectedObject = null;
 
-        TriggerManager.FireViewModeSwitchTriggers();
+        EventsManager.FireViewModeSwitchEvent();
     }
 
     void OnViewModeSwitch(Globals.ViewMode viewMode)

@@ -45,8 +45,8 @@ public class GameplayManager : MonoBehaviour {
         initialised = true;
         statsPanel.SetActive(false);
 
-        TriggerManager.onApplicationModeChangedTriggerList.Add(OnApplicationModeChanged);
-        TriggerManager.onChartReloadTriggerList.Add(OnChartReloaded);
+        EventsManager.onApplicationModeChangedEventList.Add(OnApplicationModeChanged);
+        EventsManager.onChartReloadEventList.Add(OnChartReloaded);
     }
 
     void Update()

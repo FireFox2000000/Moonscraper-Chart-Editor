@@ -25,7 +25,7 @@ public class WaveformDraw : MonoBehaviour {
         lineRen = GetComponent<LineRenderer>();
         lineRen.sortingLayerName = "Highway";
 
-        TriggerManager.onViewModeSwitchTriggerList.Add(OnViewModeSwitch);
+        EventsManager.onViewModeSwitchEventList.Add(OnViewModeSwitch);
     }
 
     void OnViewModeSwitch(Globals.ViewMode viewMode)

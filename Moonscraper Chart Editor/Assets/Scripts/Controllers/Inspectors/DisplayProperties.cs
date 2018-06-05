@@ -71,7 +71,7 @@ public class DisplayProperties : MonoBehaviour {
     public void SetHyperspeed(float value)
     {
         GameSettings.hyperspeed = value;
-        TriggerManager.FireHyperspeedChangeTriggers();
+        EventsManager.FireHyperspeedChangeEvent();
     }
 
     public void SetGameSpeed(float value)
@@ -80,7 +80,7 @@ public class DisplayProperties : MonoBehaviour {
         GameSettings.gameSpeed = value / 100.0f;
         gameSpeed.text = "Speed- x" + GameSettings.gameSpeed.ToString();
 
-        TriggerManager.FireHyperspeedChangeTriggers();
+        EventsManager.FireHyperspeedChangeEvent();
     }
 
     public void SetHighwayLength(float value)
@@ -93,7 +93,7 @@ public class DisplayProperties : MonoBehaviour {
 
         bgFade.AdjustHeight();
 
-        TriggerManager.FireHyperspeedChangeTriggers();
+        EventsManager.FireHyperspeedChangeEvent();
     }
 
     public void ToggleClap(bool value)

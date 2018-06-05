@@ -15,7 +15,7 @@ public class CameraLayering : MonoBehaviour {
         cam = GetComponent<Camera>();
         mkGlow = GetComponent<MKGlowSystem.MKGlow>();
 
-        TriggerManager.onViewModeSwitchTriggerList.Add(UpdateCullingMask);
+        EventsManager.onViewModeSwitchEventList.Add(UpdateCullingMask);
 
         UpdateCullingMask(Globals.viewMode);
     }

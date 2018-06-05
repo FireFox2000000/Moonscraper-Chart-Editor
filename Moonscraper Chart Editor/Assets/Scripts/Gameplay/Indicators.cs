@@ -41,9 +41,9 @@ public class Indicators : MonoBehaviour {
         UpdateStrikerColors();
         SetStrikerPlacement();
 
-        TriggerManager.onChartReloadTriggerList.Add(UpdateStrikerColors);
-        TriggerManager.onChartReloadTriggerList.Add(SetStrikerPlacement);
-        TriggerManager.onChartReloadTriggerList.Add(Activate2D3DSwitch);
+        EventsManager.onChartReloadEventList.Add(UpdateStrikerColors);
+        EventsManager.onChartReloadEventList.Add(SetStrikerPlacement);
+        EventsManager.onChartReloadEventList.Add(Activate2D3DSwitch);
     }
 
     void SetAnimations()

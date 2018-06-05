@@ -53,7 +53,7 @@ public class Globals : MonoBehaviour {
         set
         {
             _applicationMode = value;
-            TriggerManager.FireApplicationModeChangedTriggers();
+            EventsManager.FireApplicationModeChangedEvent();
         }
     }
     public static ViewMode viewMode { get; set; }

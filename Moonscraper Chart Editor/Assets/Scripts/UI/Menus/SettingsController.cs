@@ -187,7 +187,7 @@ public class SettingsController : DisplayMenu
 
         strikelineFretPlacement.SetStrikerPlacement();
 
-        TriggerManager.FireLeftyFlipToggledTriggers();
+        EventsManager.FireLeftyFlipToggledEvent();
     }
 
     public void SetResetAfterPlay(bool value)

@@ -34,7 +34,7 @@ public class MenuBar : MonoBehaviour {
     void Start () {
         editor = ChartEditor.GetInstance();
 
-        TriggerManager.onChartReloadTriggerList.Add(GameplayEnabledCheck);
+        EventsManager.onChartReloadEventList.Add(GameplayEnabledCheck);
     }
 	
 	// Update is called once per frame
@@ -125,7 +125,7 @@ public class MenuBar : MonoBehaviour {
         editor.LoadChart(editor.currentSong.GetChart(currentInstrument, currentDifficulty));
         editor.currentSelectedObject = null;
 
-        TriggerManager.FireChartReloadTriggers();
+        EventsManager.FireChartReloadedEvent();
     }
 
     public static bool previewing { get { return _previewing; } }
