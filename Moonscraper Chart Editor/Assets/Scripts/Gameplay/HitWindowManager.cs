@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TimingConfig;
 
 public class HitWindowManager : MonoBehaviour {
 
     [HideInInspector]
-    public HitWindow<GuitarNoteHitKnowledge> guitarHitWindow = new HitWindow<GuitarNoteHitKnowledge>(GuitarGameplayConfig.frontendHitWindowTime, GuitarGameplayConfig.backendHitWindowTime);
+    public HitWindow<GuitarNoteHitKnowledge> guitarHitWindow = new HitWindow<GuitarNoteHitKnowledge>(GuitarTiming.frontendHitWindowTime, GuitarTiming.backendHitWindowTime);
     [HideInInspector]
-    public HitWindow<DrumsNoteHitKnowledge> drumsHitWindow = new HitWindow<DrumsNoteHitKnowledge>(GuitarGameplayConfig.frontendHitWindowTime, GuitarGameplayConfig.backendHitWindowTime);
+    public HitWindow<DrumsNoteHitKnowledge> drumsHitWindow = new HitWindow<DrumsNoteHitKnowledge>(DrumsTiming.frontendHitWindowTime, DrumsTiming.backendHitWindowTime);
 
     List<NoteController> physicsWindow = new List<NoteController>();
 

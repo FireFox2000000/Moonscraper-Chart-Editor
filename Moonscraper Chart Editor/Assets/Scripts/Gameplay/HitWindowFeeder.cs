@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TimingConfig;
 
 public class HitWindowFeeder : MonoBehaviour {
 
     [HideInInspector]
-    public HitWindow<GuitarNoteHitKnowledge> hitWindow = new HitWindow<GuitarNoteHitKnowledge>(GuitarGameplayConfig.frontendHitWindowTime, GuitarGameplayConfig.backendHitWindowTime);
+    public HitWindow<GuitarNoteHitKnowledge> hitWindow = new HitWindow<GuitarNoteHitKnowledge>(GuitarTiming.frontendHitWindowTime, GuitarTiming.backendHitWindowTime);
     List<NoteController> physicsWindow = new List<NoteController>();
 
     void OnTriggerEnter2D(Collider2D col)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using GuitarInput;
+using TimingConfig;
 
 public class GuitarNoteHitAndMissDetect {
 
@@ -110,11 +111,11 @@ public class GuitarNoteHitAndMissDetect {
             MissNote(time, MissSubType.Overstrum);
             Debug.Log("Missed note due to double strumming on a single note");
         }
-        else if (nextNoteToHit.fretsValidated && nextNoteToHit.strumValidated && Mathf.Abs(nextNoteToHit.fretValidationTime - nextNoteToHit.strumValidationTime) <= GuitarGameplayConfig.slopBufferTime)
+        else if (nextNoteToHit.fretsValidated && nextNoteToHit.strumValidated && Mathf.Abs(nextNoteToHit.fretValidationTime - nextNoteToHit.strumValidationTime) <= GuitarTiming.slopBufferTime)
         {
             HitNote(time, nextNoteToHit);
         }
-        else if (nextNoteToHit.strumValidated && Mathf.Abs(time - nextNoteToHit.strumValidationTime) > GuitarGameplayConfig.slopBufferTime && nextNoteToHit.strumCounter > 0)
+        else if (nextNoteToHit.strumValidated && Mathf.Abs(time - nextNoteToHit.strumValidationTime) > GuitarTiming.slopBufferTime && nextNoteToHit.strumCounter > 0)
         {
             MissNote(time, MissSubType.Overstrum);
             Debug.Log("Missed note due to strum expiration");

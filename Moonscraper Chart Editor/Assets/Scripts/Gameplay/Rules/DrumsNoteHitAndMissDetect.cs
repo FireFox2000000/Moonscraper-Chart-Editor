@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DrumsInput;
+using TimingConfig;
 
 public class DrumsNoteHitAndMissDetect {
     public enum MissSubType
@@ -9,8 +10,6 @@ public class DrumsNoteHitAndMissDetect {
         NoteMiss,
         Overhit,
     }
-
-    float slopTime = 0.116f;
 
     public delegate void HitNoteFactory(float time, DrumsNoteHitKnowledge noteHitKnowledge);
     public delegate void MissNoteFactory(float time, MissSubType missSubType, DrumsNoteHitKnowledge noteHitKnowledge);
@@ -88,13 +87,13 @@ public class DrumsNoteHitAndMissDetect {
 
                 float totalSlop = max - min;
 
-                if (min != float.MaxValue && time - min > slopTime)
+                if (min != float.MaxValue && time - min > DrumsTiming.slopBufferTime)
                 {
                     // Technically an underhit
                     Debug.Log("Missed due to underhit");
                     MissNote(time, MissSubType.Overhit);
                 }
-                else if (totalHitsMask == noteMask && totalSlop < slopTime)
+                else if (totalHitsMask == noteMask && totalSlop < DrumsTiming.slopBufferTime)
                     HitNote(time, nextNoteToHit);
             }
         }
