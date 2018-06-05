@@ -32,4 +32,71 @@ public class BaseGameplayRulestate {
     {
         stats.Reset();
     }
+
+
+    protected int UpdateWindowExit<TNoteHitKnowledge>(float time, HitWindow<TNoteHitKnowledge> hitWindow) where TNoteHitKnowledge : NoteHitKnowledge
+    {
+        uint noteStreak = stats.noteStreak;
+        int missCount = 0;
+
+        {
+            var notesRemoved = hitWindow.DetectExit(time);
+
+            foreach (var noteKnowledge in notesRemoved)
+            {
+                // Miss, exited window
+                if (!noteKnowledge.hasBeenHit)
+                {
+                    foreach (Note chordNote in noteKnowledge.note.GetChord())
+                    {
+                        chordNote.controller.sustainBroken = true;
+
+                        if (noteStreak > 0)
+                            chordNote.controller.DeactivateNote();
+                    }
+
+                    ++missCount;
+                }
+            }
+        }
+
+        return missCount;
+    }
+
+    protected void HitNote<TNoteHitKnowledge>(float time, TNoteHitKnowledge noteHitKnowledge) where TNoteHitKnowledge : NoteHitKnowledge
+    {
+        // Force the note out of the window
+        noteHitKnowledge.hasBeenHit = true;
+        noteHitKnowledge.shouldExitWindow = true;
+
+        ++stats.noteStreak;
+        ++stats.notesHit;
+        ++stats.totalNotes;
+
+        Note note = noteHitKnowledge.note;
+        foreach (Note chordNote in note.GetChord())
+        {
+            chordNote.controller.hit = true;
+            chordNote.controller.PlayIndicatorAnim();
+        }
+    }
+
+    protected void MissNote<TNoteHitKnowledge>(float time, bool hasMissedActualNote, TNoteHitKnowledge noteHitKnowledge) where TNoteHitKnowledge : NoteHitKnowledge
+    {
+        if (stats.noteStreak > 10)
+        {
+            missFeedbackFn();
+        }
+
+        stats.noteStreak = 0;
+
+        if (hasMissedActualNote)
+            ++stats.totalNotes;
+
+        if (noteHitKnowledge != null)
+        {
+            noteHitKnowledge.hasBeenHit = true; // Don't want to count this as a miss twice when it gets removed from the window
+            noteHitKnowledge.shouldExitWindow = true;
+        }
+    }
 }

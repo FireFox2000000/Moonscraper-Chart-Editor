@@ -27,12 +27,8 @@ public class GameplayManager : MonoBehaviour {
 
     public static GamepadInput mainGamepad = new GamepadInput();
 
-    HitWindow<GuitarNoteHitKnowledge> hitWindow
-    {
-        get { return hitWindowManager.hitWindow; }
-    }
-
     GuitarGameplayRulestate guitarGameplayRulestate;
+    DrumsGameplayRulestate drumsGameplayRulestate;
 
     void Start()
     {
@@ -45,6 +41,7 @@ public class GameplayManager : MonoBehaviour {
         transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
 
         guitarGameplayRulestate = new GuitarGameplayRulestate(KickMissFeedback);
+        drumsGameplayRulestate = new DrumsGameplayRulestate(KickMissFeedback);
 
         initialised = true;
     }
@@ -73,8 +70,13 @@ public class GameplayManager : MonoBehaviour {
         {
             if (editor.currentChart.gameMode == Chart.GameMode.Guitar)
             {
-                guitarGameplayRulestate.Update(currentTime, hitWindow, mainGamepad);
+                guitarGameplayRulestate.Update(currentTime, hitWindowManager.guitarHitWindow, mainGamepad);
                 UpdateUIStats(guitarGameplayRulestate);
+            }
+            else if (editor.currentChart.gameMode == Chart.GameMode.Drums)
+            {
+                drumsGameplayRulestate.Update(currentTime, hitWindowManager.drumsHitWindow, mainGamepad);
+                UpdateUIStats(drumsGameplayRulestate);
             }
             else
             {
@@ -91,7 +93,7 @@ public class GameplayManager : MonoBehaviour {
     {
         BaseGameplayRulestate.NoteStats stats = currentRulestate.stats;
         uint noteStreak = stats.noteStreak;
-        uint totalNotes = stats.noteStreak;
+        uint totalNotes = stats.totalNotes;
         uint notesHit = stats.notesHit;
 
         noteStreakText.text = noteStreak.ToString();
@@ -124,6 +126,7 @@ public class GameplayManager : MonoBehaviour {
         {
             hitWindowManager.Reset();
             guitarGameplayRulestate.Reset();
+            drumsGameplayRulestate.Reset();
         }
     }
 
