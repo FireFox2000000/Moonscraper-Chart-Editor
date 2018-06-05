@@ -28,8 +28,8 @@ public class GuitarGameplayRulestate : BaseGameplayRulestate {
             MissNote(time, GuitarNoteHitAndMissDetect.MissSubType.NoteMiss, null);
         }
 
-        sustainBreakDetect.Update(time, guitarSustainHitKnowledge, guitarInput, noteStreak);
         guitarSustainHitKnowledge.Update(time);
+        sustainBreakDetect.Update(time, guitarSustainHitKnowledge, guitarInput, noteStreak);     
         hitAndMissNoteDetect.Update(time, hitWindow, guitarInput, noteStreak, guitarSustainHitKnowledge);        
     }
 

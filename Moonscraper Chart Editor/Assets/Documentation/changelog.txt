@@ -1,14 +1,18 @@
 v1.2.1
 	NEW FEATURES
 	-Save now save and load guitar coop tracks in midis
-	-Can now hit extended sustains in gameplay mode
-
-	CHANGES
 	-Completely re-wrote guitar gameplay rules to make it much easier to understand and thus find bugs. Probably cleaned up bugs at the same time.
+	-Can now hit extended sustains in gameplay mode
+	-Added drums gameplay mode
 
 	FIXES
 	-Fixed weird undo/redo bug with starpower
 	-Fixed shortcut typo
+
+	POTENTIAL ISSUES
+	-Ctrl-C no longer clears actual windows clipboard in order to test stability
+	-Controller input for drums may not be configured properly
+	-Hit window for drums is currently exactly the same as guitar. Looking for feedback on timings.
 
 v1.2
 	NEW FEATURES
