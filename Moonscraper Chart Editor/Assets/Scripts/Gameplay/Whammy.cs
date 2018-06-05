@@ -38,7 +38,7 @@ public class Whammy : MonoBehaviour {
 
                 ShiftAnimationKeys(lineCurve, keyShiftSpeed * Time.deltaTime * (GameSettings.hyperspeed / GameSettings.gameSpeed) / transform.localScale.y);
 
-                float whammyVal = (lerpedWhammyVal() + 1) * widthMultiplier;
+                float whammyVal = (lerpedWhammyVal(ChartEditor.GetInstance().inputManager.mainGamepad) + 1) * widthMultiplier;
 
                 lineCurve.AddKey(new Keyframe(0, whammyVal + 1));
             }
@@ -89,13 +89,13 @@ public class Whammy : MonoBehaviour {
     }
 
     float currentWhammyVal = -1;
-    float lerpedWhammyVal()
+    float lerpedWhammyVal(GamepadInput gamepad)
     {
         float rawVal = -1;
 
-        if (GameplayManager.mainGamepad.connected)
+        if (gamepad.connected)
         {
-            rawVal = GameplayManager.mainGamepad.GetWhammyInput();
+            rawVal = gamepad.GetWhammyInput();
         }
 
         if (!canWhammy)

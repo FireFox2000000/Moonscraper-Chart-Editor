@@ -78,7 +78,7 @@ public class Indicators : MonoBehaviour {
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
-            GamepadInput guitarInput = GameplayManager.mainGamepad;
+            GamepadInput guitarInput = ChartEditor.GetInstance().inputManager.mainGamepad;
                 
             if (guitarInput.GetFretInputControllerOrKeyboard(Note.GuitarFret.GREEN))
                 animations[0].Press();

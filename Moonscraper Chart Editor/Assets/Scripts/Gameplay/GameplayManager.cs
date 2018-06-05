@@ -25,8 +25,6 @@ public class GameplayManager : MonoBehaviour {
     float initSize;
     bool initialised = false;
 
-    public static GamepadInput mainGamepad = new GamepadInput();
-
     GuitarGameplayRulestate guitarGameplayRulestate;
     DrumsGameplayRulestate drumsGameplayRulestate;
 
@@ -53,8 +51,6 @@ public class GameplayManager : MonoBehaviour {
 
         statsPanel.SetActive(Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot);
 
-        mainGamepad.Update();
-
         // Configure collisions and choose to update the hit window or not
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
@@ -66,17 +62,19 @@ public class GameplayManager : MonoBehaviour {
             transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
         }
 
+        GamepadInput gamepad = editor.inputManager.mainGamepad;
+
         // Gameplay
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
             if (editor.currentChart.gameMode == Chart.GameMode.Guitar)
             {
-                guitarGameplayRulestate.Update(currentTime, hitWindowFeeder.guitarHitWindow, mainGamepad);
+                guitarGameplayRulestate.Update(currentTime, hitWindowFeeder.guitarHitWindow, gamepad);
                 UpdateUIStats(guitarGameplayRulestate);
             }
             else if (editor.currentChart.gameMode == Chart.GameMode.Drums)
             {
-                drumsGameplayRulestate.Update(currentTime, hitWindowFeeder.drumsHitWindow, mainGamepad);
+                drumsGameplayRulestate.Update(currentTime, hitWindowFeeder.drumsHitWindow, gamepad);
                 UpdateUIStats(drumsGameplayRulestate);
             }
             else

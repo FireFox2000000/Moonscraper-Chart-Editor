@@ -229,7 +229,7 @@ public class Globals : MonoBehaviour {
 
         if (!modifierInputActive)
         {
-            if (GameplayManager.mainGamepad.GetButtonPressed(GamepadInput.Button.Start))
+            if (editor.inputManager.mainGamepad.GetButtonPressed(GamepadInput.Button.Start))
             {
                 if (applicationMode != ApplicationMode.Playing)
                     editor.StartGameplay();

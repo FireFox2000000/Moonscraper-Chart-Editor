@@ -70,6 +70,9 @@ public class ChartEditor : MonoBehaviour {
     public uint minPos { get { return _minPos; } }
     public uint maxPos { get { return _maxPos; } }
 
+    [HideInInspector]
+    public InputManager inputManager;
+
 #if !BASS_AUDIO
     [HideInInspector]
     public AudioSource[] musicSources;
@@ -212,6 +215,9 @@ public class ChartEditor : MonoBehaviour {
         SetApplicationWindowPointer();
 
         loadingScreen.gameObject.SetActive(true);
+
+        inputManager = gameObject.AddComponent<InputManager>();
+        gameObject.AddComponent<UITabbing>();
     }
 
     IEnumerator Start()
