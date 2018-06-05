@@ -30,7 +30,11 @@ public class GuitarSustainBreakDetect {
 
         foreach (GuitarSustainHitKnowledge.SustainKnowledge sustain in currentSustains.ToArray())     // Take a copy so we can remove as we go
         {
-            if (extendedSustainsMask != 0)
+            if (noteStreak == 0)
+            {
+                BreakSustain(time, sustain);
+            }
+            else if (extendedSustainsMask != 0)
             {
                 int shiftedInputMask = inputMask >> shiftCount;
 

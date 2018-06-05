@@ -28,9 +28,9 @@ public class GuitarGameplayRulestate : BaseGameplayRulestate {
             MissNote(time, GuitarNoteHitAndMissDetect.MissSubType.NoteMiss, null);
         }
 
-        guitarSustainHitKnowledge.Update(time);
-        hitAndMissNoteDetect.Update(time, hitWindow, guitarInput, noteStreak, guitarSustainHitKnowledge);
         sustainBreakDetect.Update(time, guitarSustainHitKnowledge, guitarInput, noteStreak);
+        guitarSustainHitKnowledge.Update(time);
+        hitAndMissNoteDetect.Update(time, hitWindow, guitarInput, noteStreak, guitarSustainHitKnowledge);        
     }
 
     public override void Reset()
