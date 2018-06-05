@@ -10,8 +10,8 @@ using Un4seen.Bass;
 public class GameplayManager : MonoBehaviour {
     public AudioClip comboBreak;
     public CameraShake camShake;
-    public HitWindowFeeder hitWindowFeeder;
 
+    HitWindowFeeder hitWindowFeeder;
     AudioSource audioSource;
     int sample;
     int channel;
@@ -40,6 +40,7 @@ public class GameplayManager : MonoBehaviour {
         initSize = transform.localScale.y;
         transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
 
+        hitWindowFeeder = gameObject.AddComponent<HitWindowFeeder>();
         guitarGameplayRulestate = new GuitarGameplayRulestate(KickMissFeedback);
         drumsGameplayRulestate = new DrumsGameplayRulestate(KickMissFeedback);
 
