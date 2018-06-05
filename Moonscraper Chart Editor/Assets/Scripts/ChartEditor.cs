@@ -754,9 +754,6 @@ public class ChartEditor : MonoBehaviour {
 
         selectedBeforePlay = new SongObject[0];
 
-        // Reset gameplay stats and window
-        gameplayManager.Reset();
-
         GameSettings.bot = true;
         stopResetPos = null;
     }

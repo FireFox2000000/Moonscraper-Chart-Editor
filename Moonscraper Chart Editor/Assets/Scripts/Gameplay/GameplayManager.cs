@@ -43,30 +43,30 @@ public class GameplayManager : MonoBehaviour {
         drumsGameplayRulestate = new DrumsGameplayRulestate(KickMissFeedback);
 
         initialised = true;
+        statsPanel.SetActive(false);
+
+        TriggerManager.onApplicationModeChangedTriggerList.Add(OnApplicationModeChanged);
+        TriggerManager.onChartReloadTriggerList.Add(OnChartReloaded);
     }
 
     void Update()
     {
-        float currentTime = editor.currentVisibleTime;
-
-        statsPanel.SetActive(Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot);
-
         // Configure collisions and choose to update the hit window or not
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
             transform.localScale = new Vector3(transform.localScale.x, initSize, transform.localScale.z);
-            
         }
         else
         {
             transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
         }
 
-        GamepadInput gamepad = editor.inputManager.mainGamepad;
-
         // Gameplay
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
+            float currentTime = editor.currentVisibleTime;
+            GamepadInput gamepad = editor.inputManager.mainGamepad;
+
             if (editor.currentChart.gameMode == Chart.GameMode.Guitar)
             {
                 guitarGameplayRulestate.Update(currentTime, hitWindowFeeder.guitarHitWindow, gamepad);
@@ -81,10 +81,6 @@ public class GameplayManager : MonoBehaviour {
             {
                 Debug.LogError("Gameplay currently does not support this gamemode.");
             }
-        }
-        else
-        {
-            Reset();
         }
     }
 
@@ -115,7 +111,7 @@ public class GameplayManager : MonoBehaviour {
         }
     }
 
-    public void Reset()
+    void Reset()
     {
         noteStreakText.text = "0";
         percentHitText.text = "0%";
@@ -127,6 +123,17 @@ public class GameplayManager : MonoBehaviour {
             guitarGameplayRulestate.Reset();
             drumsGameplayRulestate.Reset();
         }
+    }
+
+    void OnApplicationModeChanged(Globals.ApplicationMode applicationMode)
+    {
+        Reset();
+        statsPanel.SetActive(Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot);
+    }
+
+    void OnChartReloaded()
+    {
+        Reset();
     }
 
     ~GameplayManager()
