@@ -323,7 +323,7 @@ public class ChartWriter {
                         else
                             fretNumber = note.rawNote;
 
-                        saveString.Append(" = N " + fretNumber + " " + (uint)Mathf.Round(note.sustain_length * resolutionScaleRatio));
+                        saveString.Append(" = N " + fretNumber + " " + (uint)Mathf.Round(note.length * resolutionScaleRatio));
 
                         saveString.Append(Globals.LINE_ENDING);
 
@@ -359,19 +359,19 @@ public class ChartWriter {
 
     int GetStandardSaveNoteNumber(Note note)
     {
-        switch (note.fret_type)
+        switch (note.guitarFret)
         {
-            case (Note.Fret_Type.GREEN):
+            case (Note.GuitarFret.GREEN):
                 return 0;
-            case (Note.Fret_Type.RED):
+            case (Note.GuitarFret.RED):
                 return 1;
-            case (Note.Fret_Type.YELLOW):
+            case (Note.GuitarFret.YELLOW):
                 return 2;
-            case (Note.Fret_Type.BLUE):
+            case (Note.GuitarFret.BLUE):
                 return 3;
-            case (Note.Fret_Type.ORANGE):
+            case (Note.GuitarFret.ORANGE):
                 return 4;
-            case (Note.Fret_Type.OPEN):
+            case (Note.GuitarFret.OPEN):
                 return 7;                               // 5 and 6 are reserved for forced and taps properties
             default: break;
         }
@@ -381,19 +381,19 @@ public class ChartWriter {
 
     int GetDrumsSaveNoteNumber(Note note)
     {
-        switch (note.drum_fret_type)
+        switch (note.drumPad)
         {
-            case (Note.Drum_Fret_Type.KICK):
+            case (Note.DrumPad.KICK):
                 return 0;
-            case (Note.Drum_Fret_Type.RED):
+            case (Note.DrumPad.RED):
                 return 1;
-            case (Note.Drum_Fret_Type.YELLOW):
+            case (Note.DrumPad.YELLOW):
                 return 2;
-            case (Note.Drum_Fret_Type.BLUE):
+            case (Note.DrumPad.BLUE):
                 return 3;
-            case (Note.Drum_Fret_Type.ORANGE):
+            case (Note.DrumPad.ORANGE):
                 return 4;
-            case (Note.Drum_Fret_Type.GREEN):
+            case (Note.DrumPad.GREEN):
                 return 5;
 
             default: break;
@@ -404,22 +404,22 @@ public class ChartWriter {
 
     int GetGHLSaveNoteNumber(Note note)
     {
-        switch (note.ghlive_fret_type)
+        switch (note.ghliveGuitarFret)
         {
-            case (Note.GHLive_Fret_Type.WHITE_1):
+            case (Note.GHLiveGuitarFret.WHITE_1):
                 return 0;
-            case (Note.GHLive_Fret_Type.WHITE_2):
+            case (Note.GHLiveGuitarFret.WHITE_2):
                 return 1;
-            case (Note.GHLive_Fret_Type.WHITE_3):
+            case (Note.GHLiveGuitarFret.WHITE_3):
                 return 2;
-            case (Note.GHLive_Fret_Type.BLACK_1):
+            case (Note.GHLiveGuitarFret.BLACK_1):
                 return 3;
-            case (Note.GHLive_Fret_Type.BLACK_2):
+            case (Note.GHLiveGuitarFret.BLACK_2):
                 return 4;
 
-            case (Note.GHLive_Fret_Type.OPEN):
+            case (Note.GHLiveGuitarFret.OPEN):
                 return 7;
-            case (Note.GHLive_Fret_Type.BLACK_3):
+            case (Note.GHLiveGuitarFret.BLACK_3):
                 return 8;
 
             default: break;

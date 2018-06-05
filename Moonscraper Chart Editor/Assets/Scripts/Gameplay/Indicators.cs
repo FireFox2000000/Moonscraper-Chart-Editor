@@ -80,27 +80,27 @@ public class Indicators : MonoBehaviour {
         {
             GamepadInput guitarInput = GameplayManager.mainGamepad;
                 
-            if (guitarInput.GetFretInputControllerOrKeyboard(Note.Fret_Type.GREEN))
+            if (guitarInput.GetFretInputControllerOrKeyboard(Note.GuitarFret.GREEN))
                 animations[0].Press();
             else
                 animations[0].Release();
 
-            if (guitarInput.GetFretInputControllerOrKeyboard(Note.Fret_Type.RED))
+            if (guitarInput.GetFretInputControllerOrKeyboard(Note.GuitarFret.RED))
                 animations[1].Press();
             else
                 animations[1].Release();
 
-            if (guitarInput.GetFretInputControllerOrKeyboard(Note.Fret_Type.YELLOW))
+            if (guitarInput.GetFretInputControllerOrKeyboard(Note.GuitarFret.YELLOW))
                 animations[2].Press();
             else
                 animations[2].Release();
 
-            if (guitarInput.GetFretInputControllerOrKeyboard(Note.Fret_Type.BLUE))
+            if (guitarInput.GetFretInputControllerOrKeyboard(Note.GuitarFret.BLUE))
                 animations[3].Press();
             else
                 animations[3].Release();
 
-            if (guitarInput.GetFretInputControllerOrKeyboard(Note.Fret_Type.ORANGE))
+            if (guitarInput.GetFretInputControllerOrKeyboard(Note.GuitarFret.ORANGE))
                 animations[4].Press();
             else
                 animations[4].Release();

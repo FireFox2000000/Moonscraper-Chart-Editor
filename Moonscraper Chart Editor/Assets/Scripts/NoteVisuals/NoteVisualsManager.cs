@@ -10,9 +10,9 @@ public class NoteVisualsManager : MonoBehaviour {
     protected Renderer noteRenderer;
 
     [HideInInspector]
-    public Note.Note_Type noteType = Note.Note_Type.Strum;
+    public Note.NoteType noteType = Note.NoteType.Strum;
     [HideInInspector]
-    public Note.Special_Type specialType = Note.Special_Type.NONE;
+    public Note.SpecialType specialType = Note.SpecialType.NONE;
 
     Note prevNote;
 
@@ -40,14 +40,14 @@ public class NoteVisualsManager : MonoBehaviour {
                 noteRenderer = GetComponent<Renderer>();
             noteRenderer.sortingOrder = -(int)note.position;
 
-            if (Globals.drumMode && note.fret_type == Note.Fret_Type.OPEN)
+            if (Globals.drumMode && note.guitarFret == Note.GuitarFret.OPEN)
                 noteRenderer.sortingOrder -= 1;
         }
     }
 
     protected virtual void Animate() {}
 
-    public static Note.Note_Type GetTypeWithViewChange(Note note)
+    public static Note.NoteType GetTypeWithViewChange(Note note)
     {
         if (Globals.viewMode == Globals.ViewMode.Chart)
         {
@@ -56,19 +56,19 @@ public class NoteVisualsManager : MonoBehaviour {
         else
         {
             // Do this simply because the HOPO glow by itself looks pretty cool
-            return Note.Note_Type.Hopo;
+            return Note.NoteType.Hopo;
         }
     }
 
-    public static Note.Special_Type IsStarpower(Note note)
+    public static Note.SpecialType IsStarpower(Note note)
     {
-        Note.Special_Type specialType = Note.Special_Type.NONE;
+        Note.SpecialType specialType = Note.SpecialType.NONE;
  
         foreach (Starpower sp in note.chart.starPower)
         {
             if (sp.position == note.position || (sp.position <= note.position && sp.position + sp.length > note.position))
             {
-                specialType = Note.Special_Type.STAR_POW;
+                specialType = Note.SpecialType.STAR_POW;
             }
             else if (sp.position > note.position)
                 break;

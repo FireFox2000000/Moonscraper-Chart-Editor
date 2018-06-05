@@ -67,22 +67,22 @@ public class Note2D3DSelector : MonoBehaviour {
         Texture2D textureInSkin = null;
 
         Note note = nCon.note;
-        Note.Note_Type noteType = note.type;
-        Note.Special_Type specialType = NoteVisualsManager.IsStarpower(note);
+        Note.NoteType noteType = note.type;
+        Note.SpecialType specialType = NoteVisualsManager.IsStarpower(note);
 
         int arrayPos = GetSpriteArrayPos(note);
         if (Globals.ghLiveMode)
         {
-            if (noteType == Note.Note_Type.Strum)
+            if (noteType == Note.NoteType.Strum)
             {
-                if (specialType == Note.Special_Type.STAR_POW)
+                if (specialType == Note.SpecialType.STAR_POW)
                     textureInSkin = customSkin.sp_strum_ghl[arrayPos];
                 else
                     textureInSkin = customSkin.reg_strum_ghl[arrayPos];
             }
-            else if (noteType == Note.Note_Type.Hopo)
+            else if (noteType == Note.NoteType.Hopo)
             {
-                if (specialType == Note.Special_Type.STAR_POW)
+                if (specialType == Note.SpecialType.STAR_POW)
                     textureInSkin = customSkin.sp_hopo_ghl[arrayPos];
                 else
                     textureInSkin = customSkin.reg_hopo_ghl[arrayPos];
@@ -92,7 +92,7 @@ public class Note2D3DSelector : MonoBehaviour {
             {
                 if (!note.IsOpenNote())
                 {
-                    if (specialType == Note.Special_Type.STAR_POW)
+                    if (specialType == Note.SpecialType.STAR_POW)
                         textureInSkin = customSkin.sp_tap_ghl[arrayPos];
                     else
                         textureInSkin = customSkin.reg_tap_ghl[arrayPos];
@@ -101,16 +101,16 @@ public class Note2D3DSelector : MonoBehaviour {
         }
         else
         {
-            if (noteType == Note.Note_Type.Strum)
+            if (noteType == Note.NoteType.Strum)
             {
-                if (specialType == Note.Special_Type.STAR_POW)
+                if (specialType == Note.SpecialType.STAR_POW)
                     textureInSkin = customSkin.sp_strum[arrayPos];
                 else
                     textureInSkin = customSkin.reg_strum[arrayPos];
             }
-            else if (noteType == Note.Note_Type.Hopo)
+            else if (noteType == Note.NoteType.Hopo)
             {
-                if (specialType == Note.Special_Type.STAR_POW)
+                if (specialType == Note.SpecialType.STAR_POW)
                     textureInSkin = customSkin.sp_hopo[arrayPos];
                 else
                     textureInSkin = customSkin.reg_hopo[arrayPos];
@@ -118,9 +118,9 @@ public class Note2D3DSelector : MonoBehaviour {
             // Tap notes
             else
             {
-                if (note.fret_type != Note.Fret_Type.OPEN)
+                if (note.guitarFret != Note.GuitarFret.OPEN)
                 {
-                    if (specialType == Note.Special_Type.STAR_POW)
+                    if (specialType == Note.SpecialType.STAR_POW)
                         textureInSkin = customSkin.sp_tap[arrayPos];
                     else
                         textureInSkin = customSkin.reg_tap[arrayPos];
@@ -140,7 +140,7 @@ public class Note2D3DSelector : MonoBehaviour {
         {
             arrayPos = 0;
 
-            if (note.ghlive_fret_type >= Note.GHLive_Fret_Type.WHITE_1 && note.ghlive_fret_type <= Note.GHLive_Fret_Type.WHITE_3)
+            if (note.ghliveGuitarFret >= Note.GHLiveGuitarFret.WHITE_1 && note.ghliveGuitarFret <= Note.GHLiveGuitarFret.WHITE_3)
                 arrayPos = 1;
             else if (note.IsOpenNote())
                 arrayPos = 2;

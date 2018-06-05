@@ -96,15 +96,15 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         {
             string noteTypeString = string.Empty;
             if (Globals.drumMode)
-                noteTypeString = currentNote.drum_fret_type.ToString();
+                noteTypeString = currentNote.drumPad.ToString();
             else if (Globals.ghLiveMode)
-                noteTypeString = currentNote.ghlive_fret_type.ToString();
+                noteTypeString = currentNote.ghliveGuitarFret.ToString();
             else
-                noteTypeString = currentNote.fret_type.ToString();
+                noteTypeString = currentNote.guitarFret.ToString();
 
             fretText.text = "Fret: " + noteTypeString;
             positionText.text = "Position: " + currentNote.position.ToString();
-            sustainText.text = "Length: " + currentNote.sustain_length.ToString();
+            sustainText.text = "Length: " + currentNote.length.ToString();
         }
 
         Controls();

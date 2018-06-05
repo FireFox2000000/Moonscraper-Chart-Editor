@@ -301,7 +301,7 @@ public static class MidWriter {
                         int forcedNoteNumber;
                         int difficultyNumber = LookupStandardDifficultyNumber(difficulty);
 
-                        if (note.type == Note.Note_Type.Hopo)
+                        if (note.type == Note.NoteType.Hopo)
                             forcedNoteNumber = difficultyNumber + 5;
                         else
                             forcedNoteNumber = difficultyNumber + 6;
@@ -313,7 +313,7 @@ public static class MidWriter {
                         InsertionSort(forceOffEvent);
                     }
 
-                    int openNote = ghlTrack ? (int)Note.GHLive_Fret_Type.OPEN : (int)Note.Fret_Type.OPEN;
+                    int openNote = ghlTrack ? (int)Note.GHLiveGuitarFret.OPEN : (int)Note.GuitarFret.OPEN;
                     // Add tap sysex events
                     if (difficulty == Song.Difficulty.Expert && note.rawNote != openNote && (note.flags & Note.Flags.TAP) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.TAP) == 0))  // This note is a tap while the previous one isn't as we're creating a range
                     {
@@ -335,11 +335,11 @@ public static class MidWriter {
                 }
 
                 if (instrument != Song.Instrument.Drums && instrument != Song.Instrument.GHLiveGuitar && instrument != Song.Instrument.GHLiveBass &&
-                    difficulty == Song.Difficulty.Expert && note.fret_type == Note.Fret_Type.OPEN && (note.previous == null || (note.previous.fret_type != Note.Fret_Type.OPEN)))
+                    difficulty == Song.Difficulty.Expert && note.guitarFret == Note.GuitarFret.OPEN && (note.previous == null || (note.previous.guitarFret != Note.GuitarFret.OPEN)))
                 {
                     // Find the next non-open note
                     Note nextNonOpen = note;
-                    while (nextNonOpen.next != null && nextNonOpen.next.fret_type == Note.Fret_Type.OPEN)
+                    while (nextNonOpen.next != null && nextNonOpen.next.guitarFret == Note.GuitarFret.OPEN)
                         nextNonOpen = nextNonOpen.next;
 
                     byte diff;
@@ -668,12 +668,12 @@ public static class MidWriter {
     static void GetNoteNumberBytes(int noteNumber, Note note, out SortableBytes onEvent, out SortableBytes offEvent)
     {
         onEvent = new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)noteNumber, VELOCITY });
-        offEvent = new SortableBytes(note.position + note.sustain_length, new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY });
+        offEvent = new SortableBytes(note.position + note.length, new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY });
     }
 
     static int GetStandardNoteNumber(Note note, Song.Instrument instrument, Song.Difficulty difficulty)
     {
-        Note.Fret_Type fret_type = note.fret_type;
+        Note.GuitarFret fret_type = note.guitarFret;
         if (instrument == Song.Instrument.Drums)
             fret_type = Note.SaveGuitarNoteToDrumNote(fret_type);
 
@@ -684,27 +684,27 @@ public static class MidWriter {
 
         switch (fret_type)
         {
-            case (Note.Fret_Type.OPEN):     // Open note highlighted as an SysEx event. Use green as default.
+            case (Note.GuitarFret.OPEN):     // Open note highlighted as an SysEx event. Use green as default.
                 if (instrument == Song.Instrument.Drums)
                 {
                     noteNumber = difficultyNumber + 5;
                     break;
                 }
                 else
-                    goto case Note.Fret_Type.GREEN;
-            case (Note.Fret_Type.GREEN):
+                    goto case Note.GuitarFret.GREEN;
+            case (Note.GuitarFret.GREEN):
                 noteNumber = difficultyNumber + 0;
                 break;
-            case (Note.Fret_Type.RED):
+            case (Note.GuitarFret.RED):
                 noteNumber = difficultyNumber + 1;
                 break;
-            case (Note.Fret_Type.YELLOW):
+            case (Note.GuitarFret.YELLOW):
                 noteNumber = difficultyNumber + 2;
                 break;
-            case (Note.Fret_Type.BLUE):
+            case (Note.GuitarFret.BLUE):
                 noteNumber = difficultyNumber + 3;
                 break;
-            case (Note.Fret_Type.ORANGE):
+            case (Note.GuitarFret.ORANGE):
                 noteNumber = difficultyNumber + 4;
                 break;
             default:
@@ -716,7 +716,7 @@ public static class MidWriter {
 
     static int GetGHLNoteNumber(Note note, Song.Instrument instrument, Song.Difficulty difficulty)
     {
-        Note.GHLive_Fret_Type fret_type = note.ghlive_fret_type;
+        Note.GHLiveGuitarFret fret_type = note.ghliveGuitarFret;
 
         int difficultyNumber;
         int noteNumber;
@@ -725,25 +725,25 @@ public static class MidWriter {
 
         switch (fret_type)
         {
-            case (Note.GHLive_Fret_Type.OPEN):
+            case (Note.GHLiveGuitarFret.OPEN):
                 noteNumber = difficultyNumber + 0;
                 break;
-            case (Note.GHLive_Fret_Type.WHITE_1):
+            case (Note.GHLiveGuitarFret.WHITE_1):
                 noteNumber = difficultyNumber + 1;
                 break;
-            case (Note.GHLive_Fret_Type.WHITE_2):
+            case (Note.GHLiveGuitarFret.WHITE_2):
                 noteNumber = difficultyNumber + 2;
                 break;
-            case (Note.GHLive_Fret_Type.WHITE_3):
+            case (Note.GHLiveGuitarFret.WHITE_3):
                 noteNumber = difficultyNumber + 3;
                 break;
-            case (Note.GHLive_Fret_Type.BLACK_1):
+            case (Note.GHLiveGuitarFret.BLACK_1):
                 noteNumber = difficultyNumber + 4;
                 break;
-            case (Note.GHLive_Fret_Type.BLACK_2):
+            case (Note.GHLiveGuitarFret.BLACK_2):
                 noteNumber = difficultyNumber + 5;
                 break;
-            case (Note.GHLive_Fret_Type.BLACK_3):
+            case (Note.GHLiveGuitarFret.BLACK_3):
                 noteNumber = difficultyNumber + 6;
                 break;
 

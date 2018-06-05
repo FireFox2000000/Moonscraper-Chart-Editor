@@ -13,13 +13,13 @@ public class Note : ChartObject
 
     public override int classID { get { return (int)_classID; } }
 
-    public uint sustain_length;
+    public uint length;
     public int rawNote;
-    public Fret_Type fret_type
+    public GuitarFret guitarFret
     {
         get
         {
-            return (Fret_Type)rawNote;
+            return (GuitarFret)rawNote;
         }
         set
         {
@@ -27,19 +27,19 @@ public class Note : ChartObject
         }
     }
 
-    public Drum_Fret_Type drum_fret_type
+    public DrumPad drumPad
     {
         get
         {
-            return (Drum_Fret_Type)fret_type;
+            return (DrumPad)guitarFret;
         }
     }
 
-    public GHLive_Fret_Type ghlive_fret_type
+    public GHLiveGuitarFret ghliveGuitarFret
     {
         get
         {
-            return (GHLive_Fret_Type)rawNote;
+            return (GHLiveGuitarFret)rawNote;
         }
         set
         {
@@ -71,7 +71,7 @@ public class Note : ChartObject
                 uint _sustain = 0,
                 Flags _flags = Flags.NONE) : base(_position)
     {
-        sustain_length = _sustain;
+        length = _sustain;
         flags = _flags;
         rawNote = _rawNote;
 
@@ -80,13 +80,13 @@ public class Note : ChartObject
     }
 
     public Note(uint _position, 
-                Fret_Type _fret_type, 
+                GuitarFret _fret_type, 
                 uint _sustain = 0, 
                 Flags _flags = Flags.NONE) : base(_position)
     {
-        sustain_length = _sustain;
+        length = _sustain;
         flags = _flags;
-        fret_type = _fret_type;
+        guitarFret = _fret_type;
 
         previous = null;
         next = null;
@@ -95,36 +95,36 @@ public class Note : ChartObject
     public Note (Note note) : base(note.position)
     {
         position = note.position;
-        sustain_length = note.sustain_length;
+        length = note.length;
         flags = note.flags;
         rawNote = note.rawNote;
     }
 
-    public enum Fret_Type
+    public enum GuitarFret
     {
         // Assign to the sprite array position
         GREEN = 0, RED = 1, YELLOW = 2, BLUE = 3, ORANGE = 4, OPEN = 5
     }
 
-    public enum Drum_Fret_Type
+    public enum DrumPad
     {
         // Wrapper to account for how the frets change colours between the drums and guitar tracks from the GH series
-        KICK = Fret_Type.OPEN, RED = Fret_Type.GREEN, YELLOW = Fret_Type.RED, BLUE = Fret_Type.YELLOW, ORANGE = Fret_Type.BLUE, GREEN = Fret_Type.ORANGE
+        KICK = GuitarFret.OPEN, RED = GuitarFret.GREEN, YELLOW = GuitarFret.RED, BLUE = GuitarFret.YELLOW, ORANGE = GuitarFret.BLUE, GREEN = GuitarFret.ORANGE
     }
 
-    public enum GHLive_Fret_Type
+    public enum GHLiveGuitarFret
     {
         // Assign to the sprite array position
         //WHITE_1, BLACK_1, WHITE_2, BLACK_2, WHITE_3, BLACK_3, OPEN
         BLACK_1,  BLACK_2, BLACK_3, WHITE_1, WHITE_2, WHITE_3, OPEN
     }
 
-    public enum Note_Type
+    public enum NoteType
     {
         Natural, Strum, Hopo, Tap
     }
 
-    public enum Special_Type
+    public enum SpecialType
     {
         NONE, STAR_POW, BATTLE
     }
@@ -200,12 +200,12 @@ public class Note : ChartObject
     // Deprecated
     internal override string GetSaveString()
     {
-        int fretNumber = (int)fret_type;
+        int fretNumber = (int)guitarFret;
 
-        if (fret_type == Fret_Type.OPEN)
+        if (guitarFret == GuitarFret.OPEN)
             fretNumber = 7;
 
-        return Globals.TABSPACE + position + " = N " + fretNumber + " " + sustain_length + Globals.LINE_ENDING;          // 48 = N 2 0
+        return Globals.TABSPACE + position + " = N " + fretNumber + " " + length + Globals.LINE_ENDING;          // 48 = N 2 0
     }
 
     public override SongObject Clone()
@@ -215,7 +215,7 @@ public class Note : ChartObject
 
     public override bool AllValuesCompare<T>(T songObject)
     {
-        if (this == songObject && (songObject as Note).sustain_length == sustain_length && (songObject as Note).rawNote == rawNote && (songObject as Note).flags == flags)
+        if (this == songObject && (songObject as Note).length == length && (songObject as Note).rawNote == rawNote && (songObject as Note).flags == flags)
             return true;
         else
             return false;
@@ -348,20 +348,20 @@ public class Note : ChartObject
     /// <summary>
     /// Live calculation of what Note_Type this note would currently be. 
     /// </summary>
-    public Note_Type type
+    public NoteType type
     {
         get
         {
             if (!IsOpenNote() && (flags & Flags.TAP) == Flags.TAP)
             {
-                return Note_Type.Tap;
+                return NoteType.Tap;
             }
             else
             {
                 if (IsHopo)
-                    return Note_Type.Hopo;
+                    return NoteType.Hopo;
                 else
-                    return Note_Type.Strum;
+                    return NoteType.Strum;
             }
         }
     }
@@ -446,47 +446,6 @@ public class Note : ChartObject
                     list.Add(previous);
                     noteTypeVisited |= 1 << previous.rawNote;
                 }
-                /*
-                switch (previous.fret_type)
-                {
-                    case (Note.Fret_Type.GREEN):
-                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.GREEN)) == 0)
-                        {
-                            list.Add(previous);
-                            noteTypeVisited |= 1 << (int)Note.Fret_Type.GREEN;
-                        }
-                        break;
-                    case (Note.Fret_Type.RED):
-                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.RED)) == 0)
-                        {
-                            list.Add(previous);
-                            noteTypeVisited |= 1 << (int)Note.Fret_Type.RED;
-                        }
-                        break;
-                    case (Note.Fret_Type.YELLOW):
-                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.YELLOW)) == 0)
-                        {
-                            list.Add(previous);
-                            noteTypeVisited |= 1 << (int)Note.Fret_Type.YELLOW;
-                        }
-                        break;
-                    case (Note.Fret_Type.BLUE):
-                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.BLUE)) == 0)
-                        {
-                            list.Add(previous);
-                            noteTypeVisited |= 1 << (int)Note.Fret_Type.BLUE;
-                        }
-                        break;
-                    case (Note.Fret_Type.ORANGE):
-                        if ((noteTypeVisited & (1 << (int)Note.Fret_Type.ORANGE)) == 0)
-                        {
-                            list.Add(previous);
-                            noteTypeVisited |= 1 << (int)Note.Fret_Type.ORANGE;
-                        }
-                        break;
-                    default:
-                        break;
-                }*/
             }
 
             previous = previous.previous;
@@ -504,23 +463,23 @@ public class Note : ChartObject
 
         // Cap sustain length
         if (cap.position <= position)
-            sustain_length = 0;
-        else if (position + sustain_length > cap.position)        // Sustain extends beyond cap note 
+            length = 0;
+        else if (position + length > cap.position)        // Sustain extends beyond cap note 
         {
-            sustain_length = cap.position - position;
+            length = cap.position - position;
         }
 
         uint gapDis = (uint)(song.resolution * 4.0f / GameSettings.sustainGap);
 
-        if (GameSettings.sustainGapEnabled && sustain_length > 0 && (position + sustain_length > cap.position - gapDis))
+        if (GameSettings.sustainGapEnabled && length > 0 && (position + length > cap.position - gapDis))
         {
             if ((int)(cap.position - gapDis - position) > 0)
-                sustain_length = cap.position - gapDis - position;
+                length = cap.position - gapDis - position;
             else
-                sustain_length = 0;
+                length = 0;
         }
 
-        if (originalNote.sustain_length != sustain_length)
+        if (originalNote.length != length)
             return new ActionHistory.Modify(originalNote, this);
         else
             return null;
@@ -563,9 +522,9 @@ public class Note : ChartObject
     public bool IsOpenNote()
     {
         if (gameMode == Chart.GameMode.GHLGuitar)
-            return ghlive_fret_type == GHLive_Fret_Type.OPEN;
+            return ghliveGuitarFret == GHLiveGuitarFret.OPEN;
         else
-            return fret_type == Fret_Type.OPEN;
+            return guitarFret == GuitarFret.OPEN;
     }
 
     /// <summary>
@@ -575,9 +534,9 @@ public class Note : ChartObject
     public void SetSustainByPos(uint pos)
     {
         if (pos > position)
-            sustain_length = pos - position;
+            length = pos - position;
         else
-            sustain_length = 0;
+            length = 0;
 
         // Cap the sustain
         Note nextFret;
@@ -589,12 +548,12 @@ public class Note : ChartObject
         }
     }
 
-    public void SetType(Note_Type type)
+    public void SetType(NoteType type)
     {
         flags = Flags.NONE;
         switch (type)
         {
-            case (Note_Type.Strum):
+            case (NoteType.Strum):
                 if (IsChord)
                     flags &= ~Note.Flags.FORCED;
                 else
@@ -607,7 +566,7 @@ public class Note : ChartObject
 
                 break;
 
-            case (Note_Type.Hopo):
+            case (NoteType.Hopo):
                 if (!CannotBeForcedCheck)
                 {
                     if (IsChord)
@@ -622,7 +581,7 @@ public class Note : ChartObject
                 }
                 break;
 
-            case (Note_Type.Tap):
+            case (NoteType.Tap):
                 if (!IsOpenNote())
                     flags |= Note.Flags.TAP;
                 break;
@@ -638,11 +597,11 @@ public class Note : ChartObject
     {
         int mask = 0;
 
-        if (sustain_length > 0 && chart != null)
+        if (length > 0 && chart != null)
         {
             int index, length;
             Note[] notes = chart.notes;
-            SongObjectHelper.GetRange(notes, position, position + sustain_length - 1, out index, out length);
+            SongObjectHelper.GetRange(notes, position, position + this.length - 1, out index, out length);
 
             for (int i = index; i < index + length; ++i)
             {
@@ -654,22 +613,22 @@ public class Note : ChartObject
         return mask;
     }
 
-    public static Fret_Type SaveGuitarNoteToDrumNote(Fret_Type fret_type)
+    public static GuitarFret SaveGuitarNoteToDrumNote(GuitarFret fret_type)
     {
-        if (fret_type == Fret_Type.OPEN)
-            return Fret_Type.GREEN;
-        else if (fret_type == Fret_Type.ORANGE)
-            return Fret_Type.OPEN;
+        if (fret_type == GuitarFret.OPEN)
+            return GuitarFret.GREEN;
+        else if (fret_type == GuitarFret.ORANGE)
+            return GuitarFret.OPEN;
         else
             return fret_type + 1;
     }
 
-    public static Fret_Type LoadDrumNoteToGuitarNote(Fret_Type fret_type)
+    public static GuitarFret LoadDrumNoteToGuitarNote(GuitarFret fret_type)
     {
-        if (fret_type == Fret_Type.OPEN)
-            return Fret_Type.ORANGE;
-        else if (fret_type == Fret_Type.GREEN)
-            return Fret_Type.OPEN;
+        if (fret_type == GuitarFret.OPEN)
+            return GuitarFret.ORANGE;
+        else if (fret_type == GuitarFret.GREEN)
+            return GuitarFret.OPEN;
         else
             return fret_type - 1;
     }

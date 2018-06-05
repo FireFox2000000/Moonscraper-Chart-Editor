@@ -69,21 +69,21 @@ public class NoteVisuals2DManager : NoteVisualsManager {
             {
                 int noteArrayPos = 0;
 
-                if (note.ghlive_fret_type >= Note.GHLive_Fret_Type.WHITE_1 && note.ghlive_fret_type <= Note.GHLive_Fret_Type.WHITE_3)
+                if (note.ghliveGuitarFret >= Note.GHLiveGuitarFret.WHITE_1 && note.ghliveGuitarFret <= Note.GHLiveGuitarFret.WHITE_3)
                     noteArrayPos = 1;
                 else if (note.IsOpenNote())
                     noteArrayPos = 2;
 
-                if (noteType == Note.Note_Type.Strum)
+                if (noteType == Note.NoteType.Strum)
                 {
-                    if (specialType == Note.Special_Type.STAR_POW)
+                    if (specialType == Note.SpecialType.STAR_POW)
                         ren.sprite = spriteResources.sp_strum_ghl[noteArrayPos];
                     else
                         ren.sprite = spriteResources.reg_strum_ghl[noteArrayPos];
                 }
-                else if (noteType == Note.Note_Type.Hopo)
+                else if (noteType == Note.NoteType.Hopo)
                 {
-                    if (specialType == Note.Special_Type.STAR_POW)
+                    if (specialType == Note.SpecialType.STAR_POW)
                         ren.sprite = spriteResources.sp_hopo_ghl[noteArrayPos];
                     else
                         ren.sprite = spriteResources.reg_hopo_ghl[noteArrayPos];
@@ -92,7 +92,7 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                 {
                     if (!note.IsOpenNote())
                     {
-                        if (specialType == Note.Special_Type.STAR_POW)
+                        if (specialType == Note.SpecialType.STAR_POW)
                             ren.sprite = spriteResources.sp_tap_ghl[noteArrayPos];
                         else
                             ren.sprite = spriteResources.reg_tap_ghl[noteArrayPos];
@@ -101,24 +101,24 @@ public class NoteVisuals2DManager : NoteVisualsManager {
             }
             else
             {
-                int noteArrayPos = (int)note.fret_type;
-                if (Globals.drumMode && note.fret_type != Note.Fret_Type.OPEN)
+                int noteArrayPos = (int)note.guitarFret;
+                if (Globals.drumMode && note.guitarFret != Note.GuitarFret.OPEN)
                 {
                     noteArrayPos += 1;
-                    if (noteArrayPos > (int)Note.Fret_Type.ORANGE)
+                    if (noteArrayPos > (int)Note.GuitarFret.ORANGE)
                         noteArrayPos = 0;
                 }
 
-                if (noteType == Note.Note_Type.Strum || (noteType == Note.Note_Type.Hopo && Globals.drumMode))
+                if (noteType == Note.NoteType.Strum || (noteType == Note.NoteType.Hopo && Globals.drumMode))
                 {
-                    if (specialType == Note.Special_Type.STAR_POW)
+                    if (specialType == Note.SpecialType.STAR_POW)
                         ren.sprite = spriteResources.sp_strum[noteArrayPos];
                     else
                         ren.sprite = spriteResources.reg_strum[noteArrayPos];
                 }
-                else if (noteType == Note.Note_Type.Hopo)
+                else if (noteType == Note.NoteType.Hopo)
                 {
-                    if (specialType == Note.Special_Type.STAR_POW)
+                    if (specialType == Note.SpecialType.STAR_POW)
                         ren.sprite = spriteResources.sp_hopo[noteArrayPos];
                     else
                         ren.sprite = spriteResources.reg_hopo[noteArrayPos];
@@ -126,18 +126,18 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                 // Tap notes
                 else
                 {
-                    if (note.fret_type != Note.Fret_Type.OPEN)
+                    if (note.guitarFret != Note.GuitarFret.OPEN)
                     {
-                        if (specialType == Note.Special_Type.STAR_POW)
+                        if (specialType == Note.SpecialType.STAR_POW)
                             ren.sprite = spriteResources.sp_tap[noteArrayPos];
                         else
                             ren.sprite = spriteResources.reg_tap[noteArrayPos];
                     }
                 }
 
-                if (note.fret_type == Note.Fret_Type.OPEN)
+                if (note.guitarFret == Note.GuitarFret.OPEN)
                     scale = new Vector3(1.2f, 1, 1);
-                else if (specialType == Note.Special_Type.STAR_POW)
+                else if (specialType == Note.SpecialType.STAR_POW)
                     scale = new Vector3(1.2f, 1.2f, 1);
             }
         }
@@ -168,7 +168,7 @@ public class NoteVisuals2DManager : NoteVisualsManager {
             //string animationName = string.Empty;
             animationNameString.Length = 0;
 
-            if (specialType == Note.Special_Type.STAR_POW)
+            if (specialType == Note.SpecialType.STAR_POW)
             {
                 animationNameString.Append("sp_");
             }
@@ -177,15 +177,15 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                 animationNameString.Append("reg_");
             }
 
-            if (note.fret_type == Note.Fret_Type.OPEN)
+            if (note.guitarFret == Note.GuitarFret.OPEN)
             {
                 animationNameString.Insert(0, "open_");
                 //animationName = "open_" + animationName;
             }
 
-            if (noteType == Note.Note_Type.Hopo && !Globals.drumMode)
+            if (noteType == Note.NoteType.Hopo && !Globals.drumMode)
                 animationNameString.Append("hopo");
-            else if (noteType == Note.Note_Type.Tap)
+            else if (noteType == Note.NoteType.Tap)
                 animationNameString.Append("tap");
             else
                 animationNameString.Append("strum");

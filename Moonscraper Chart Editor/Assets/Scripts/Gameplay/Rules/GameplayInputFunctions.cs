@@ -22,7 +22,7 @@ public static class GameplayInputFunctions  {
 
         if (inputMask == 0)
         {
-            return note.fret_type == Note.Fret_Type.OPEN;
+            return note.guitarFret == Note.GuitarFret.OPEN;
         }
         else
         {
@@ -30,7 +30,7 @@ public static class GameplayInputFunctions  {
             if (note.IsChord)
             {
                 // Regular chords
-                if (noteStreak == 0 || note.type == Note.Note_Type.Strum)
+                if (noteStreak == 0 || note.type == Note.NoteType.Strum)
                 {
                     return inputMask == note.mask;
                 }
@@ -49,7 +49,7 @@ public static class GameplayInputFunctions  {
             // Single notes
             else
             {
-                int singleNoteInput = inputMask >> (int)note.fret_type;     // Anchor logic
+                int singleNoteInput = inputMask >> (int)note.guitarFret;     // Anchor logic
                 return singleNoteInput == 1;
             }
         }
@@ -59,10 +59,10 @@ public static class GameplayInputFunctions  {
     {
         switch (note.type)
         {
-            case (Note.Note_Type.Tap):
+            case (Note.NoteType.Tap):
                 return canTap || strummed;
 
-            case (Note.Note_Type.Hopo):
+            case (Note.NoteType.Hopo):
                 return noteStreak > 0 || strummed;
 
             default:    // Strum

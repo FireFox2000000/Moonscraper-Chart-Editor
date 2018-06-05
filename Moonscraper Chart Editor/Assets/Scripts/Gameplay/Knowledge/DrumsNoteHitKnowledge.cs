@@ -1,7 +1,7 @@
 ﻿
 public class DrumsNoteHitKnowledge : NoteHitKnowledge  {
 
-    float[] drumHitTimes = new float[System.Enum.GetNames(typeof(Note.Drum_Fret_Type)).Length];
+    float[] drumHitTimes = new float[System.Enum.GetNames(typeof(Note.DrumPad)).Length];
 
     public DrumsNoteHitKnowledge(Note note) : base(note)
     {
@@ -11,12 +11,12 @@ public class DrumsNoteHitKnowledge : NoteHitKnowledge  {
         }
     }
 
-    public float GetHitTime(Note.Drum_Fret_Type noteType)
+    public float GetHitTime(Note.DrumPad noteType)
     {
         return drumHitTimes[(int)noteType];
     }
 
-    public void SetHitTime(Note.Drum_Fret_Type noteType, float time)
+    public void SetHitTime(Note.DrumPad noteType, float time)
     {
         drumHitTimes[(int)noteType] = time;
     }

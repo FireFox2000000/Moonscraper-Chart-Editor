@@ -70,7 +70,7 @@ public class SustainController : SelectableClick {
 
     public override void OnSelectableMouseUp()
     {
-        if (unmodifiedNotes.Count > 0 && unmodifiedNotes[0][0].sustain_length != unmodifiedNotes[0][1].sustain_length)
+        if (unmodifiedNotes.Count > 0 && unmodifiedNotes[0][0].length != unmodifiedNotes[0][1].length)
         {
             List<ActionHistory.Modify> actions = new List<ActionHistory.Modify>();
             for (int i = 0; i < unmodifiedNotes.Count; ++i)
@@ -97,12 +97,12 @@ public class SustainController : SelectableClick {
 
             else if (nCon.note.rawNote < customSkin.sustain_mats.Length)
             {
-                if (customSkin.sustain_mats[(int)nCon.note.fret_type])
+                if (customSkin.sustain_mats[(int)nCon.note.guitarFret])
                 {
-                    sustainRen.sharedMaterial = customSkin.sustain_mats[(int)nCon.note.fret_type];
+                    sustainRen.sharedMaterial = customSkin.sustain_mats[(int)nCon.note.guitarFret];
                 }
                 else
-                    sustainRen.sharedMaterial = resources.sustainColours[(int)nCon.note.fret_type];
+                    sustainRen.sharedMaterial = resources.sustainColours[(int)nCon.note.guitarFret];
             }
         }
     }
@@ -123,8 +123,8 @@ public class SustainController : SelectableClick {
 
         if (nextFret != null)
         {
-            if (nextFret.position < note.position + note.sustain_length)
-                note.sustain_length = nextFret.position - note.position;
+            if (nextFret.position < note.position + note.length)
+                note.length = nextFret.position - note.position;
         }
     }
 
@@ -132,10 +132,10 @@ public class SustainController : SelectableClick {
     {
         Note note = nCon.note;
 
-        if (note.sustain_length != 0)
+        if (note.length != 0)
         {
             float lowerPos = note.worldYPosition;
-            float higherPos = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length);
+            float higherPos = note.song.ChartPositionToWorldYPosition(note.position + note.length);
 
             if (higherPos > editor.camYMax.position.y)
                 higherPos = editor.camYMax.position.y;
@@ -211,9 +211,9 @@ public class SustainController : SelectableClick {
 
         while (next != null)
         {
-            if (next.IsOpenNote() || (next.rawNote == note.rawNote && note.position + note.sustain_length > next.position))
+            if (next.IsOpenNote() || (next.rawNote == note.rawNote && note.position + note.length > next.position))
                 return next;
-            else if (next.position >= note.position + note.sustain_length)      // Stop searching early
+            else if (next.position >= note.position + note.length)      // Stop searching early
                 return null;
 
             next = next.next;

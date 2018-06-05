@@ -4,26 +4,26 @@ namespace DrumsInput
 {
     public static class GamepadInputExtension
     {
-        public static bool GetPadPressedInput(this GamepadInput gamepad, Note.Drum_Fret_Type drumFret)
+        public static bool GetPadPressedInput(this GamepadInput gamepad, Note.DrumPad drumFret)
         {
             switch (drumFret)
             {
-                case (Note.Drum_Fret_Type.RED):
+                case (Note.DrumPad.RED):
                     return gamepad.GetButtonPressed(GamepadInput.Button.B);
 
-                case (Note.Drum_Fret_Type.YELLOW):
+                case (Note.DrumPad.YELLOW):
                     return gamepad.GetButtonPressed(GamepadInput.Button.Y);
 
-                case (Note.Drum_Fret_Type.BLUE):
+                case (Note.DrumPad.BLUE):
                     return gamepad.GetButtonPressed(GamepadInput.Button.X);
 
-                case (Note.Drum_Fret_Type.ORANGE):
+                case (Note.DrumPad.ORANGE):
                     return gamepad.GetButtonPressed(GamepadInput.Button.LB);
 
-                case (Note.Drum_Fret_Type.GREEN):
+                case (Note.DrumPad.GREEN):
                     return gamepad.GetButtonPressed(GamepadInput.Button.A);
 
-                case (Note.Drum_Fret_Type.KICK):
+                case (Note.DrumPad.KICK):
                     return gamepad.GetButtonPressed(GamepadInput.Button.RB);
 
                 default:
@@ -38,7 +38,7 @@ namespace DrumsInput
         {
             int inputMask = 0;
 
-            foreach (Note.Drum_Fret_Type pad in System.Enum.GetValues(typeof(Note.Drum_Fret_Type)))
+            foreach (Note.DrumPad pad in System.Enum.GetValues(typeof(Note.DrumPad)))
             {
                 if (gamepad.GetPadPressedInput(pad))
                     inputMask |= 1 << (int)pad;
@@ -49,26 +49,26 @@ namespace DrumsInput
 
         /******************************** Keyboard Alts ********************************************/
 
-        public static bool GetPadPressedInputKeyboard(Note.Drum_Fret_Type drumFret)
+        public static bool GetPadPressedInputKeyboard(Note.DrumPad drumFret)
         {
             switch (drumFret)
             {
-                case (Note.Drum_Fret_Type.RED):
+                case (Note.DrumPad.RED):
                     return Input.GetKeyDown(KeyCode.Alpha1);
 
-                case (Note.Drum_Fret_Type.YELLOW):
+                case (Note.DrumPad.YELLOW):
                     return Input.GetKeyDown(KeyCode.Alpha2);
 
-                case (Note.Drum_Fret_Type.BLUE):
+                case (Note.DrumPad.BLUE):
                     return Input.GetKeyDown(KeyCode.Alpha3);
 
-                case (Note.Drum_Fret_Type.ORANGE):
+                case (Note.DrumPad.ORANGE):
                     return Input.GetKeyDown(KeyCode.Alpha4);
 
-                case (Note.Drum_Fret_Type.GREEN):
+                case (Note.DrumPad.GREEN):
                     return Input.GetKeyDown(KeyCode.Alpha5);
 
-                case (Note.Drum_Fret_Type.KICK):
+                case (Note.DrumPad.KICK):
                     return Input.GetKeyDown(KeyCode.Alpha0);
 
                 default:
@@ -79,7 +79,7 @@ namespace DrumsInput
             return false;
         }
 
-        public static bool GetPadInputControllerOrKeyboard(this GamepadInput gamepad, Note.Drum_Fret_Type drumFret)
+        public static bool GetPadInputControllerOrKeyboard(this GamepadInput gamepad, Note.DrumPad drumFret)
         {
             return GetPadPressedInput(gamepad, drumFret) || GetPadPressedInputKeyboard(drumFret);
         }
@@ -88,7 +88,7 @@ namespace DrumsInput
         {
             int inputMask = 0;
 
-            foreach (Note.Drum_Fret_Type pad in System.Enum.GetValues(typeof(Note.Drum_Fret_Type)))
+            foreach (Note.DrumPad pad in System.Enum.GetValues(typeof(Note.DrumPad)))
             {
                 if (GetPadPressedInputKeyboard(pad))
                 {

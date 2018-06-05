@@ -7,16 +7,16 @@ using System.Collections;
 // Resticts so that only one fret tye can be placed down
 public class PlaceFret : PlaceNote {
     [SerializeField]
-    Note.Fret_Type standardFret;
+    Note.GuitarFret standardFret;
 
     [SerializeField]
-    Note.GHLive_Fret_Type ghliveFret;
+    Note.GHLiveGuitarFret ghliveFret;
 
     protected override void Awake()
     {
         base.Awake();
 
-        note.fret_type = standardFret;
+        note.guitarFret = standardFret;
     }
 
     protected override void UpdateFretType()

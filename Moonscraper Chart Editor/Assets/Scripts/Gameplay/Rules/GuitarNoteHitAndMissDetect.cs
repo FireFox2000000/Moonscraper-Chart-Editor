@@ -197,7 +197,7 @@ public class GuitarNoteHitAndMissDetect {
         if (strummed)
         {
             // Are we strumming late for a hopo/tap?
-            if (lastNoteHit != null && lastNoteHit.note.type != Note.Note_Type.Strum && lastNoteHit.strumCounter <= 1)
+            if (lastNoteHit != null && lastNoteHit.note.type != Note.NoteType.Strum && lastNoteHit.strumCounter <= 1)
             {
                 lastNoteHit = null;
             }

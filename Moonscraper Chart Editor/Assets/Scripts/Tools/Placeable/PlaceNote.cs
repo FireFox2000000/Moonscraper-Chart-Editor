@@ -28,7 +28,7 @@ public class PlaceNote : PlaceSongObject {
     protected override void SetSongObjectAndController()
     {
         visuals = GetComponentInChildren<NoteVisualsManager>();
-        note = new Note(0, Note.Fret_Type.GREEN);
+        note = new Note(0, Note.GuitarFret.GREEN);
 
         controller = GetComponent<NoteController>();
         controller.note = note;
@@ -153,15 +153,15 @@ public class PlaceNote : PlaceSongObject {
         if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
         {
             if (Input.GetKey("1"))
-                note.fret_type = Note.Fret_Type.ORANGE;
+                note.guitarFret = Note.GuitarFret.ORANGE;
             else if (Input.GetKey("2"))
-                note.fret_type = Note.Fret_Type.BLUE;
+                note.guitarFret = Note.GuitarFret.BLUE;
             else if (Input.GetKey("3"))
-                note.fret_type = Note.Fret_Type.YELLOW;
+                note.guitarFret = Note.GuitarFret.YELLOW;
             else if (Input.GetKey("4"))
-                note.fret_type = Note.Fret_Type.RED;
+                note.guitarFret = Note.GuitarFret.RED;
             else if (Input.GetKey("5"))
-                note.fret_type = Note.Fret_Type.GREEN;
+                note.guitarFret = Note.GuitarFret.GREEN;
             //else if (Input.GetKey("6"))
             else if (!note.IsOpenNote() && Mouse.world2DPosition != null)
             {
@@ -173,15 +173,15 @@ public class PlaceNote : PlaceSongObject {
         else
         {
             if (Input.GetKey("1"))
-                note.fret_type = Note.Fret_Type.GREEN;
+                note.guitarFret = Note.GuitarFret.GREEN;
             else if (Input.GetKey("2"))
-                note.fret_type = Note.Fret_Type.RED;
+                note.guitarFret = Note.GuitarFret.RED;
             else if (Input.GetKey("3"))
-                note.fret_type = Note.Fret_Type.YELLOW;
+                note.guitarFret = Note.GuitarFret.YELLOW;
             else if (Input.GetKey("4"))
-                note.fret_type = Note.Fret_Type.BLUE;
+                note.guitarFret = Note.GuitarFret.BLUE;
             else if (Input.GetKey("5"))
-                note.fret_type = Note.Fret_Type.ORANGE;
+                note.guitarFret = Note.GuitarFret.ORANGE;
             //else if (Input.GetKey("6"))
 
             else if (!note.IsOpenNote() && Mouse.world2DPosition != null)
@@ -201,7 +201,7 @@ public class PlaceNote : PlaceSongObject {
         float startPos = -2.0f;
         float endPos = 2.0f;
 
-        int max = Globals.ghLiveMode ? (int)Note.GHLive_Fret_Type.WHITE_3 : (int)Note.Fret_Type.ORANGE;
+        int max = Globals.ghLiveMode ? (int)Note.GHLiveGuitarFret.WHITE_3 : (int)Note.GuitarFret.ORANGE;
         float factor = (endPos - startPos) / (max);
 
         for (int i = 0; i < max; ++i)
@@ -264,7 +264,7 @@ public class PlaceNote : PlaceSongObject {
                     cancelAdd = true;
                     break;
                 }
-                if ((((note.IsOpenNote() || overwriteNote.IsOpenNote()) && !Globals.drumMode) || note.fret_type == overwriteNote.fret_type) && !note.AllValuesCompare(overwriteNote))
+                if ((((note.IsOpenNote() || overwriteNote.IsOpenNote()) && !Globals.drumMode) || note.guitarFret == overwriteNote.guitarFret) && !note.AllValuesCompare(overwriteNote))
                 {
                     noteRecord.Add(new ActionHistory.Delete(overwriteNote));
                 }
@@ -374,7 +374,7 @@ public class PlaceNote : PlaceSongObject {
 
             // Find the next note of the same fret type or open
             next = note.next;
-            while (next != null && next.fret_type != note.fret_type && !next.IsOpenNote())
+            while (next != null && next.guitarFret != note.guitarFret && !next.IsOpenNote())
                 next = next.next;
 
             // If it's an open note it won't be capped
@@ -414,7 +414,7 @@ public class PlaceNote : PlaceSongObject {
             foreach(Note chordNote in noteToAdd.GetChord())
             {
                 if (chordNote.controller != null)
-                    chordNote.controller.note.sustain_length = noteToAdd.sustain_length; 
+                    chordNote.controller.note.length = noteToAdd.length; 
             }
         }
         else
@@ -422,7 +422,7 @@ public class PlaceNote : PlaceSongObject {
             // Cap only the sustain of the same fret type and open notes
             foreach (Note prevNote in previousNotes)
             {
-                if (prevNote.controller != null && (noteToAdd.IsOpenNote() || prevNote.fret_type == noteToAdd.fret_type))
+                if (prevNote.controller != null && (noteToAdd.IsOpenNote() || prevNote.guitarFret == noteToAdd.guitarFret))
                 {
                     ActionHistory.Action action = prevNote.CapSustain(noteToAdd);
                     if (action != null)

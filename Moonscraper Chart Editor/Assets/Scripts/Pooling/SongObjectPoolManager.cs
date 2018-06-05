@@ -135,7 +135,7 @@ public class SongObjectPoolManager : MonoBehaviour {
                 // Find the last known note of each fret type to find any sustains that might overlap into the camera view
                 foreach (Note prevNote in Note.GetPreviousOfSustains(rangedNotes[0] as Note))
                 {
-                    if (prevNote.position + prevNote.sustain_length > editor.minPos)
+                    if (prevNote.position + prevNote.length > editor.minPos)
                         rangedNotes.Add(prevNote);
                 }
             }
@@ -150,18 +150,18 @@ public class SongObjectPoolManager : MonoBehaviour {
 
                     Note minNote = editor.currentChart.notes[minArrayPos];
 
-                    if (minNote.position + minNote.sustain_length > editor.minPos && minNote.position < editor.maxPos)
+                    if (minNote.position + minNote.length > editor.minPos && minNote.position < editor.maxPos)
                     {
                         foreach (Note note in minNote.GetChord())
                         {
-                            if (note.position + note.sustain_length > editor.minPos)
+                            if (note.position + note.length > editor.minPos)
                                 rangedNotes.Add(note);
                         }
                     }
 
                     foreach (Note prevNote in Note.GetPreviousOfSustains(minNote))
                     {
-                        if (prevNote.position + prevNote.sustain_length > editor.minPos)
+                        if (prevNote.position + prevNote.length > editor.minPos)
                             rangedNotes.Add(prevNote);
                     }
                 }

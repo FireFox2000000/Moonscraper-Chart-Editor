@@ -46,7 +46,7 @@ public class GuitarGameplayRulestate : BaseGameplayRulestate {
         base.HitNote(time, noteHitKnowledge);
 
         Note note = noteHitKnowledge.note;
-        if (note.sustain_length > 0 && note.controller)
+        if (note.length > 0 && note.controller)
             guitarSustainHitKnowledge.Add(note);
     }
 

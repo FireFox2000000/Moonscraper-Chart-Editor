@@ -123,10 +123,10 @@ public class GroupSelectPanelController : MonoBehaviour
                 if (GameSettings.extendedSustainsEnabled)
                 {
                     Note original = (Note)note.Clone();
-                    note.sustain_length = assignedLength;          
+                    note.length = assignedLength;          
                     note.CapSustain(note.FindNextSameFretWithinSustainExtendedCheck());
 
-                    if (original.sustain_length != note.sustain_length)
+                    if (original.length != note.length)
                         actions.Add(new ActionHistory.Modify(original, note));
                 }
                 else
@@ -139,10 +139,10 @@ public class GroupSelectPanelController : MonoBehaviour
                     for (int i = 0; i < chordNotes.Length; ++i)
                     {
                         chordNotesCopy[i] = (Note)chordNotes[i].Clone();
-                        chordNotes[i].sustain_length = assignedLength;
+                        chordNotes[i].length = assignedLength;
                         chordNotes[i].CapSustain(capNote);
 
-                        if (chordNotesCopy[i].sustain_length != chordNotes[i].sustain_length)
+                        if (chordNotesCopy[i].length != chordNotes[i].length)
                             actions.Add(new ActionHistory.Modify(chordNotesCopy[i], chordNotes[i]));
                     }
                 }
@@ -157,25 +157,25 @@ public class GroupSelectPanelController : MonoBehaviour
 
     public void SetNatural()
     {
-        SetNoteType(Note.Note_Type.Natural);
+        SetNoteType(Note.NoteType.Natural);
     }
 
     public void SetStrum()
     {
-        SetNoteType(Note.Note_Type.Strum);
+        SetNoteType(Note.NoteType.Strum);
     }
 
     public void SetHopo()
     {
-        SetNoteType(Note.Note_Type.Hopo);
+        SetNoteType(Note.NoteType.Hopo);
     }
 
     public void SetTap()
     {
-        SetNoteType(Note.Note_Type.Tap);
+        SetNoteType(Note.NoteType.Tap);
     }
 
-    public void SetNoteType(Note.Note_Type type)
+    public void SetNoteType(Note.NoteType type)
     {
         List<ActionHistory.Action> actions = new List<ActionHistory.Action>();
 

@@ -44,7 +44,7 @@ public class DrumsNoteHitAndMissDetect {
             }
             else
             {
-                foreach (Note.Drum_Fret_Type drumPad in System.Enum.GetValues(typeof(Note.Drum_Fret_Type)))
+                foreach (Note.DrumPad drumPad in System.Enum.GetValues(typeof(Note.DrumPad)))
                 {
                     bool hitPad = drumsInput.GetPadInputControllerOrKeyboard(drumPad);
                     if (hitPad)
@@ -63,7 +63,7 @@ public class DrumsNoteHitAndMissDetect {
                 Debug.Log("Missed due to bad input");
                 MissNote(time, MissSubType.Overhit);
 
-                foreach (Note.Drum_Fret_Type drumPad in System.Enum.GetValues(typeof(Note.Drum_Fret_Type)))
+                foreach (Note.DrumPad drumPad in System.Enum.GetValues(typeof(Note.DrumPad)))
                 {
                     nextNoteToHit.SetHitTime(drumPad, NoteHitKnowledge.NULL_TIME);
                 }
@@ -73,7 +73,7 @@ public class DrumsNoteHitAndMissDetect {
                 float min = float.MaxValue, max = float.MinValue;
                 int totalHitsMask = 0;
 
-                foreach (Note.Drum_Fret_Type drumPad in System.Enum.GetValues(typeof(Note.Drum_Fret_Type)))
+                foreach (Note.DrumPad drumPad in System.Enum.GetValues(typeof(Note.DrumPad)))
                 {
                     if (nextNoteToHit.GetHitTime(drumPad) != NoteHitKnowledge.NULL_TIME)
                     {

@@ -203,7 +203,7 @@ public class NoteController : SongObjectController {
         if (note == null)
             return;
 
-        sustain.gameObject.SetActive(note.sustain_length != 0);
+        sustain.gameObject.SetActive(note.length != 0);
 
         if (!hitBox)
             hitBox = GetComponent<BoxCollider>();
@@ -273,7 +273,7 @@ public class NoteController : SongObjectController {
         Note note = this.note;
         if (note != null)
         {         
-            uint endPosition = note.position + note.sustain_length;
+            uint endPosition = note.position + note.length;
             
             // Determine if a note is outside of the view range
             if (endPosition < editor.minPos || note.position > editor.maxPos)
@@ -291,10 +291,10 @@ public class NoteController : SongObjectController {
             if (this.note == null)      // Was deactivated
                 return;
 
-           sustain.gameObject.SetActive(note.sustain_length != 0 || Input.GetMouseButton(1));
+           sustain.gameObject.SetActive(note.length != 0 || Input.GetMouseButton(1));
 
             // Sustain is constantly updated unless it has no length or it's length is meant to be zero but isn't
-            if (!(note.sustain_length == 0 && sustain.transform.localScale.y == 0))
+            if (!(note.length == 0 && sustain.transform.localScale.y == 0))
                 sustain.UpdateSustain();
 
             // Handle gameplay operation
@@ -336,7 +336,7 @@ public class NoteController : SongObjectController {
             }
 
             // Resize sustain
-            if (!sustainBroken && note.sustain_length > 0)
+            if (!sustainBroken && note.length > 0)
             {
                 GameplaySustainHold();
             }
@@ -357,15 +357,15 @@ public class NoteController : SongObjectController {
 
             switch (note.type)
             {
-                case (Note.Note_Type.Strum):
+                case (Note.NoteType.Strum):
                     if ((GameSettings.clapSetting & GameSettings.ClapToggle.STRUM) == 0)
                         playClap = false;
                     break;
-                case (Note.Note_Type.Hopo):
+                case (Note.NoteType.Hopo):
                     if ((GameSettings.clapSetting & GameSettings.ClapToggle.HOPO) == 0)
                         playClap = false;
                     break;
-                case (Note.Note_Type.Tap):
+                case (Note.NoteType.Tap):
                     if ((GameSettings.clapSetting & GameSettings.ClapToggle.TAP) == 0)
                         playClap = false;
                     break;
@@ -383,7 +383,7 @@ public class NoteController : SongObjectController {
 
     void GameplaySustainHold()
     {
-        float sustainEndPoint = note.song.ChartPositionToWorldYPosition(note.position + note.sustain_length);
+        float sustainEndPoint = note.song.ChartPositionToWorldYPosition(note.position + note.length);
         if (sustainEndPoint > editor.camYMax.position.y)
             sustainEndPoint = editor.camYMax.position.y;
 

@@ -4,26 +4,26 @@ namespace GuitarInput
 {
     public static class GamepadInputExtension
     {
-        public static bool GetFretInput(this GamepadInput gamepad, Note.Fret_Type fret)
+        public static bool GetFretInput(this GamepadInput gamepad, Note.GuitarFret fret)
         {
             switch (fret)
             {
-                case (Note.Fret_Type.GREEN):
+                case (Note.GuitarFret.GREEN):
                     return gamepad.GetButton(GamepadInput.Button.A);
 
-                case (Note.Fret_Type.RED):
+                case (Note.GuitarFret.RED):
                     return gamepad.GetButton(GamepadInput.Button.B);
 
-                case (Note.Fret_Type.YELLOW):
+                case (Note.GuitarFret.YELLOW):
                     return gamepad.GetButton(GamepadInput.Button.Y);
 
-                case (Note.Fret_Type.BLUE):
+                case (Note.GuitarFret.BLUE):
                     return gamepad.GetButton(GamepadInput.Button.X);
 
-                case (Note.Fret_Type.ORANGE):
+                case (Note.GuitarFret.ORANGE):
                     return gamepad.GetButton(GamepadInput.Button.LB);
 
-                case (Note.Fret_Type.OPEN):
+                case (Note.GuitarFret.OPEN):
                     return false;
 
                 default:
@@ -38,7 +38,7 @@ namespace GuitarInput
         {
             int inputMask = 0;
 
-            foreach (Note.Fret_Type fret in System.Enum.GetValues(typeof(Note.Fret_Type)))
+            foreach (Note.GuitarFret fret in System.Enum.GetValues(typeof(Note.GuitarFret)))
             {
                 if (gamepad.GetFretInput(fret))
                     inputMask |= 1 << (int)fret;
@@ -59,26 +59,26 @@ namespace GuitarInput
 
         /******************************** Keyboard Alts ********************************************/
 
-        public static bool GetFretInputKeyboard(Note.Fret_Type fret)
+        public static bool GetFretInputKeyboard(Note.GuitarFret fret)
         {
             switch (fret)
             {
-                case (Note.Fret_Type.GREEN):
+                case (Note.GuitarFret.GREEN):
                     return Input.GetKey(KeyCode.Alpha1);
 
-                case (Note.Fret_Type.RED):
+                case (Note.GuitarFret.RED):
                     return Input.GetKey(KeyCode.Alpha2);
 
-                case (Note.Fret_Type.YELLOW):
+                case (Note.GuitarFret.YELLOW):
                     return Input.GetKey(KeyCode.Alpha3);
 
-                case (Note.Fret_Type.BLUE):
+                case (Note.GuitarFret.BLUE):
                     return Input.GetKey(KeyCode.Alpha4);
 
-                case (Note.Fret_Type.ORANGE):
+                case (Note.GuitarFret.ORANGE):
                     return Input.GetKey(KeyCode.Alpha5);
 
-                case (Note.Fret_Type.OPEN):
+                case (Note.GuitarFret.OPEN):
                     return false;
 
                 default:
@@ -89,7 +89,7 @@ namespace GuitarInput
             return false;
         }
 
-        public static bool GetFretInputControllerOrKeyboard(this GamepadInput gamepad, Note.Fret_Type fret)
+        public static bool GetFretInputControllerOrKeyboard(this GamepadInput gamepad, Note.GuitarFret fret)
         {
             return GetFretInput(gamepad, fret) || GetFretInputKeyboard(fret);
         }
@@ -98,7 +98,7 @@ namespace GuitarInput
         {
             int inputMask = 0;
 
-            foreach (Note.Fret_Type fret in System.Enum.GetValues(typeof(Note.Fret_Type)))
+            foreach (Note.GuitarFret fret in System.Enum.GetValues(typeof(Note.GuitarFret)))
             {
                 if (GetFretInputKeyboard(fret))
                     inputMask |= 1 << (int)fret;

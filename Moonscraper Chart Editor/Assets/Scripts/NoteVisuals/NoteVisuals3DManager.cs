@@ -32,7 +32,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
             // Update mesh
             if (note.IsOpenNote())// fret_type == Note.Fret_Type.OPEN)
                 meshFilter.sharedMesh = resources.openModel.sharedMesh;
-            else if (specialType == Note.Special_Type.STAR_POW)
+            else if (specialType == Note.SpecialType.STAR_POW)
                 meshFilter.sharedMesh = resources.spModel.sharedMesh;
             else
                 meshFilter.sharedMesh = resources.standardModel.sharedMesh;
@@ -44,16 +44,16 @@ public class NoteVisuals3DManager : NoteVisualsManager
             {
                 materials = resources.openRenderer.sharedMaterials;
 
-                if (specialType == Note.Special_Type.STAR_POW)
+                if (specialType == Note.SpecialType.STAR_POW)
                 {
-                    if (noteType == Note.Note_Type.Hopo && !Globals.drumMode)
+                    if (noteType == Note.NoteType.Hopo && !Globals.drumMode)
                         materials[2] = resources.openMaterials[3];
                     else
                         materials[2] = resources.openMaterials[2];
                 }
                 else
                 {
-                    if (noteType == Note.Note_Type.Hopo && !Globals.drumMode)
+                    if (noteType == Note.NoteType.Hopo && !Globals.drumMode)
                         materials[2] = resources.openMaterials[1];
                     else
                         materials[2] = resources.openMaterials[0];
@@ -82,7 +82,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
 
     Material[] GetStandardNoteColours(Note note)
     {
-        int fretNumber = (int)note.fret_type;
+        int fretNumber = (int)note.guitarFret;
         if (Globals.drumMode)
         {
             fretNumber += 1;
@@ -100,17 +100,17 @@ public class NoteVisuals3DManager : NoteVisualsManager
     {
         int fretNumber;
 
-        switch (note.ghlive_fret_type)
+        switch (note.ghliveGuitarFret)
         {
-            case (Note.GHLive_Fret_Type.WHITE_1):
-            case (Note.GHLive_Fret_Type.WHITE_2):
-            case (Note.GHLive_Fret_Type.WHITE_3):
+            case (Note.GHLiveGuitarFret.WHITE_1):
+            case (Note.GHLiveGuitarFret.WHITE_2):
+            case (Note.GHLiveGuitarFret.WHITE_3):
                 fretNumber = 1;
                 break;
 
-            case (Note.GHLive_Fret_Type.BLACK_1):
-            case (Note.GHLive_Fret_Type.BLACK_2):
-            case (Note.GHLive_Fret_Type.BLACK_3):
+            case (Note.GHLiveGuitarFret.BLACK_1):
+            case (Note.GHLiveGuitarFret.BLACK_2):
+            case (Note.GHLiveGuitarFret.BLACK_3):
             default:
                 fretNumber = 0;
                 break;
@@ -132,11 +132,11 @@ public class NoteVisuals3DManager : NoteVisualsManager
 
         switch (noteType)
         {
-            case (Note.Note_Type.Hopo):
+            case (Note.NoteType.Hopo):
                 if (Globals.drumMode)
                     goto default;
 
-                if (specialType == Note.Special_Type.STAR_POW)
+                if (specialType == Note.SpecialType.STAR_POW)
                 {
                     materials = resources.spHopoRenderer.sharedMaterials;
                     materials[SP_COLOR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber);
@@ -147,8 +147,8 @@ public class NoteVisuals3DManager : NoteVisualsManager
                     materials[STANDARD_COLOUR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber);
                 }
                 break;
-            case (Note.Note_Type.Tap):
-                if (specialType == Note.Special_Type.STAR_POW)
+            case (Note.NoteType.Tap):
+                if (specialType == Note.SpecialType.STAR_POW)
                 {
                     materials = resources.spTapRenderer.sharedMaterials;
                     materials[SP_COLOR_MAT_POS] = GetValidMaterial(tapColorMats, fretNumber);
@@ -160,7 +160,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
                 }
                 break;
             default:    // strum
-                if (specialType == Note.Special_Type.STAR_POW)
+                if (specialType == Note.SpecialType.STAR_POW)
                 {
                     materials = resources.spStrumRenderer.sharedMaterials;
                     materials[SP_COLOR_MAT_POS] = GetValidMaterial(strumColorMats, fretNumber);
