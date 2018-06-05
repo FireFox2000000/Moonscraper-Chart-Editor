@@ -69,7 +69,7 @@ public class Note : ChartObject
     public Note(uint _position,
                 int _rawNote,
                 uint _sustain = 0,
-                Flags _flags = Flags.NONE) : base(_position)
+                Flags _flags = Flags.None) : base(_position)
     {
         length = _sustain;
         flags = _flags;
@@ -82,7 +82,7 @@ public class Note : ChartObject
     public Note(uint _position, 
                 GuitarFret _fret_type, 
                 uint _sustain = 0, 
-                Flags _flags = Flags.NONE) : base(_position)
+                Flags _flags = Flags.None) : base(_position)
     {
         length = _sustain;
         flags = _flags;
@@ -103,38 +103,59 @@ public class Note : ChartObject
     public enum GuitarFret
     {
         // Assign to the sprite array position
-        GREEN = 0, RED = 1, YELLOW = 2, BLUE = 3, ORANGE = 4, OPEN = 5
+        Green = 0,
+        Red = 1,
+        Yellow = 2,
+        Blue = 3,
+        Orange = 4,
+        Open = 5
     }
 
     public enum DrumPad
     {
         // Wrapper to account for how the frets change colours between the drums and guitar tracks from the GH series
-        KICK = GuitarFret.OPEN, RED = GuitarFret.GREEN, YELLOW = GuitarFret.RED, BLUE = GuitarFret.YELLOW, ORANGE = GuitarFret.BLUE, GREEN = GuitarFret.ORANGE
+        Kick = GuitarFret.Open,
+        Red = GuitarFret.Green,
+        Yellow = GuitarFret.Red,
+        Blue = GuitarFret.Yellow,
+        Orange = GuitarFret.Blue,
+        Green = GuitarFret.Orange
     }
 
     public enum GHLiveGuitarFret
     {
         // Assign to the sprite array position
         //WHITE_1, BLACK_1, WHITE_2, BLACK_2, WHITE_3, BLACK_3, OPEN
-        BLACK_1,  BLACK_2, BLACK_3, WHITE_1, WHITE_2, WHITE_3, OPEN
+        Black1,
+        Black2,
+        Black3,
+        White1,
+        White2,
+        White3,
+        Open
     }
 
     public enum NoteType
     {
-        Natural, Strum, Hopo, Tap
+        Natural,
+        Strum,
+        Hopo,
+        Tap
     }
 
     public enum SpecialType
     {
-        NONE, STAR_POW, BATTLE
+        None,
+        StarPower,
+        Battle
     }
 
     [Flags]
     public enum Flags
     {
-        NONE = 0,
-        FORCED = 1,
-        TAP = 2
+        None = 0,
+        Forced = 1,
+        Tap = 2
     }
 
     private Chart.GameMode gameMode
@@ -158,14 +179,14 @@ public class Note : ChartObject
     {
         get
         {
-            return (flags & Flags.FORCED) == Flags.FORCED;
+            return (flags & Flags.Forced) == Flags.Forced;
         }
         set
         {
             if (value)
-                flags = flags | Flags.FORCED;
+                flags = flags | Flags.Forced;
             else
-                flags = flags & ~Flags.FORCED;
+                flags = flags & ~Flags.Forced;
         }
     }
 
@@ -202,7 +223,7 @@ public class Note : ChartObject
     {
         int fretNumber = (int)guitarFret;
 
-        if (guitarFret == GuitarFret.OPEN)
+        if (guitarFret == GuitarFret.Open)
             fretNumber = 7;
 
         return Globals.TABSPACE + position + " = N " + fretNumber + " " + length + Globals.LINE_ENDING;          // 48 = N 2 0
@@ -225,10 +246,10 @@ public class Note : ChartObject
     {
         string saveString = string.Empty;
 
-        if ((flags & Flags.FORCED) == Flags.FORCED)
+        if ((flags & Flags.Forced) == Flags.Forced)
             saveString += Globals.TABSPACE + position + " = N 5 0 " + Globals.LINE_ENDING;
 
-        if ((flags & Flags.TAP) == Flags.TAP)
+        if ((flags & Flags.Tap) == Flags.Tap)
             saveString += Globals.TABSPACE + position + " = N 6 0 " + Globals.LINE_ENDING;
 
         return saveString;
@@ -352,7 +373,7 @@ public class Note : ChartObject
     {
         get
         {
-            if (!IsOpenNote() && (flags & Flags.TAP) == Flags.TAP)
+            if (!IsOpenNote() && (flags & Flags.Tap) == Flags.Tap)
             {
                 return NoteType.Tap;
             }
@@ -522,9 +543,9 @@ public class Note : ChartObject
     public bool IsOpenNote()
     {
         if (gameMode == Chart.GameMode.GHLGuitar)
-            return ghliveGuitarFret == GHLiveGuitarFret.OPEN;
+            return ghliveGuitarFret == GHLiveGuitarFret.Open;
         else
-            return guitarFret == GuitarFret.OPEN;
+            return guitarFret == GuitarFret.Open;
     }
 
     /// <summary>
@@ -550,18 +571,18 @@ public class Note : ChartObject
 
     public void SetType(NoteType type)
     {
-        flags = Flags.NONE;
+        flags = Flags.None;
         switch (type)
         {
             case (NoteType.Strum):
                 if (IsChord)
-                    flags &= ~Note.Flags.FORCED;
+                    flags &= ~Note.Flags.Forced;
                 else
                 {
                     if (IsNaturalHopo)
-                        flags |= Note.Flags.FORCED;
+                        flags |= Note.Flags.Forced;
                     else
-                        flags &= ~Note.Flags.FORCED;
+                        flags &= ~Note.Flags.Forced;
                 }
 
                 break;
@@ -570,20 +591,20 @@ public class Note : ChartObject
                 if (!CannotBeForcedCheck)
                 {
                     if (IsChord)
-                        flags |= Note.Flags.FORCED;
+                        flags |= Note.Flags.Forced;
                     else
                     {
                         if (!IsNaturalHopo)
-                            flags |= Note.Flags.FORCED;
+                            flags |= Note.Flags.Forced;
                         else
-                            flags &= ~Note.Flags.FORCED;
+                            flags &= ~Note.Flags.Forced;
                     }
                 }
                 break;
 
             case (NoteType.Tap):
                 if (!IsOpenNote())
-                    flags |= Note.Flags.TAP;
+                    flags |= Note.Flags.Tap;
                 break;
 
             default:
@@ -615,20 +636,20 @@ public class Note : ChartObject
 
     public static GuitarFret SaveGuitarNoteToDrumNote(GuitarFret fret_type)
     {
-        if (fret_type == GuitarFret.OPEN)
-            return GuitarFret.GREEN;
-        else if (fret_type == GuitarFret.ORANGE)
-            return GuitarFret.OPEN;
+        if (fret_type == GuitarFret.Open)
+            return GuitarFret.Green;
+        else if (fret_type == GuitarFret.Orange)
+            return GuitarFret.Open;
         else
             return fret_type + 1;
     }
 
     public static GuitarFret LoadDrumNoteToGuitarNote(GuitarFret fret_type)
     {
-        if (fret_type == GuitarFret.OPEN)
-            return GuitarFret.ORANGE;
-        else if (fret_type == GuitarFret.GREEN)
-            return GuitarFret.OPEN;
+        if (fret_type == GuitarFret.Open)
+            return GuitarFret.Orange;
+        else if (fret_type == GuitarFret.Green)
+            return GuitarFret.Open;
         else
             return fret_type - 1;
     }

@@ -201,7 +201,7 @@ public static class MidReader {
                 if (instrument == Song.Instrument.Unrecognised)
                 {
                     int rawNote = SelectRawNoteValue(note.NoteNumber);
-                    Note newNote = new Note(tick, Note.GuitarFret.GREEN, sus);
+                    Note newNote = new Note(tick, Note.GuitarFret.Green, sus);
                     newNote.rawNote = rawNote;
                     //difficulty = SelectRawNoteDifficulty(note.NoteNumber);
                     unrecognised.Add(newNote);
@@ -386,7 +386,7 @@ public static class MidReader {
                 SongObjectHelper.GetRange(notes, tick, tick + endPos, out index, out length);
                 for (int k = index; k < index + length; ++k)
                 {
-                    notes[k].guitarFret = Note.GuitarFret.OPEN;
+                    notes[k].guitarFret = Note.GuitarFret.Open;
 
                     if (instrument == Song.Instrument.Drums)
                         notes[k].guitarFret = Note.LoadDrumNoteToGuitarNote(notes[k].guitarFret);
@@ -423,7 +423,7 @@ public static class MidReader {
 
             for (int i = index; i < index + length; ++i)
             {
-                if ((chart.notes[i].flags & Note.Flags.TAP) != 0)
+                if ((chart.notes[i].flags & Note.Flags.Tap) != 0)
                     continue;
 
                 // if NoteNumber is odd force hopo, if even force strum
@@ -489,19 +489,19 @@ public static class MidReader {
         // Determine the fret type of the note
         switch (difficultyLessNote)
         {
-            case 0: fret = Note.GuitarFret.GREEN; break;
+            case 0: fret = Note.GuitarFret.Green; break;
 
-            case 1: fret = Note.GuitarFret.RED; break;
+            case 1: fret = Note.GuitarFret.Red; break;
 
-            case 2: fret = Note.GuitarFret.YELLOW; break;
+            case 2: fret = Note.GuitarFret.Yellow; break;
 
-            case 3: fret = Note.GuitarFret.BLUE; break;
+            case 3: fret = Note.GuitarFret.Blue; break;
 
-            case 4: fret = Note.GuitarFret.ORANGE; break;
+            case 4: fret = Note.GuitarFret.Orange; break;
 
             // 5 is forced
             default:
-                fret = Note.GuitarFret.GREEN; break;
+                fret = Note.GuitarFret.Green; break;
         }
 
         return fret;
@@ -515,20 +515,20 @@ public static class MidReader {
         // Determine the fret type of the note
         switch (difficultyLessNote)
         {
-            case 0: fret = Note.DrumPad.KICK; break;
+            case 0: fret = Note.DrumPad.Kick; break;
 
-            case 1: fret = Note.DrumPad.RED; break;
+            case 1: fret = Note.DrumPad.Red; break;
 
-            case 2: fret = Note.DrumPad.YELLOW; break;
+            case 2: fret = Note.DrumPad.Yellow; break;
 
-            case 3: fret = Note.DrumPad.BLUE; break;
+            case 3: fret = Note.DrumPad.Blue; break;
 
-            case 4: fret = Note.DrumPad.ORANGE; break;
+            case 4: fret = Note.DrumPad.Orange; break;
 
-            case 5: fret = Note.DrumPad.GREEN; break;
+            case 5: fret = Note.DrumPad.Green; break;
 
             default:
-                fret = Note.DrumPad.RED; break;
+                fret = Note.DrumPad.Red; break;
         }
 
         return fret;
@@ -542,22 +542,22 @@ public static class MidReader {
         // Determine the fret type of the note
         switch (difficultyLessNote)
         {
-            case 0: fret = Note.GHLiveGuitarFret.OPEN; break;
+            case 0: fret = Note.GHLiveGuitarFret.Open; break;
 
-            case 1: fret = Note.GHLiveGuitarFret.WHITE_1; break;
+            case 1: fret = Note.GHLiveGuitarFret.White1; break;
 
-            case 2: fret = Note.GHLiveGuitarFret.WHITE_2; break;
+            case 2: fret = Note.GHLiveGuitarFret.White2; break;
 
-            case 3: fret = Note.GHLiveGuitarFret.WHITE_3; break;
+            case 3: fret = Note.GHLiveGuitarFret.White3; break;
 
-            case 4: fret = Note.GHLiveGuitarFret.BLACK_1; break;
+            case 4: fret = Note.GHLiveGuitarFret.Black1; break;
 
-            case 5: fret = Note.GHLiveGuitarFret.BLACK_2; break;
+            case 5: fret = Note.GHLiveGuitarFret.Black2; break;
 
-            case 6: fret = Note.GHLiveGuitarFret.BLACK_3; break;
+            case 6: fret = Note.GHLiveGuitarFret.Black3; break;
 
             default:
-                fret = Note.GHLiveGuitarFret.BLACK_1; break;
+                fret = Note.GHLiveGuitarFret.Black1; break;
         }
 
         return fret;

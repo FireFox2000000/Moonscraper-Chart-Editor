@@ -8,22 +8,22 @@ namespace GuitarInput
         {
             switch (fret)
             {
-                case (Note.GuitarFret.GREEN):
+                case (Note.GuitarFret.Green):
                     return gamepad.GetButton(GamepadInput.Button.A);
 
-                case (Note.GuitarFret.RED):
+                case (Note.GuitarFret.Red):
                     return gamepad.GetButton(GamepadInput.Button.B);
 
-                case (Note.GuitarFret.YELLOW):
+                case (Note.GuitarFret.Yellow):
                     return gamepad.GetButton(GamepadInput.Button.Y);
 
-                case (Note.GuitarFret.BLUE):
+                case (Note.GuitarFret.Blue):
                     return gamepad.GetButton(GamepadInput.Button.X);
 
-                case (Note.GuitarFret.ORANGE):
+                case (Note.GuitarFret.Orange):
                     return gamepad.GetButton(GamepadInput.Button.LB);
 
-                case (Note.GuitarFret.OPEN):
+                case (Note.GuitarFret.Open):
                     return false;
 
                 default:
@@ -63,22 +63,22 @@ namespace GuitarInput
         {
             switch (fret)
             {
-                case (Note.GuitarFret.GREEN):
+                case (Note.GuitarFret.Green):
                     return Input.GetKey(KeyCode.Alpha1);
 
-                case (Note.GuitarFret.RED):
+                case (Note.GuitarFret.Red):
                     return Input.GetKey(KeyCode.Alpha2);
 
-                case (Note.GuitarFret.YELLOW):
+                case (Note.GuitarFret.Yellow):
                     return Input.GetKey(KeyCode.Alpha3);
 
-                case (Note.GuitarFret.BLUE):
+                case (Note.GuitarFret.Blue):
                     return Input.GetKey(KeyCode.Alpha4);
 
-                case (Note.GuitarFret.ORANGE):
+                case (Note.GuitarFret.Orange):
                     return Input.GetKey(KeyCode.Alpha5);
 
-                case (Note.GuitarFret.OPEN):
+                case (Note.GuitarFret.Open):
                     return false;
 
                 default:

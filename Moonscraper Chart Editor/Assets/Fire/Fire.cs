@@ -50,11 +50,11 @@ public class Fire : MonoBehaviour
             if (Application.isPlaying && nCon.note != null)
             {
                 int noteNumber = (int)nCon.note.rawNote;
-                if (Globals.drumMode && nCon.note.guitarFret != Note.GuitarFret.OPEN)
+                if (Globals.drumMode && nCon.note.guitarFret != Note.GuitarFret.Open)
                 {
                     // Rotate the colours for drums
                     noteNumber += 1;
-                    if (noteNumber > (int)Note.GuitarFret.ORANGE)
+                    if (noteNumber > (int)Note.GuitarFret.Orange)
                         noteNumber = 0;
                 }
                 ren.sharedMaterial = FireSyncronizer.flameMaterials[noteNumber]; //MaterialByPosition();

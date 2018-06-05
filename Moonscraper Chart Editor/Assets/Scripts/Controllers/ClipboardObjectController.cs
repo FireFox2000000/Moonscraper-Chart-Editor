@@ -183,17 +183,17 @@ public class ClipboardObjectController : Snapable {
                         // Pasting from a ghl track
                         if (!Globals.ghLiveMode)
                         {
-                            if (note.ghliveGuitarFret == Note.GHLiveGuitarFret.OPEN)
-                                note.guitarFret = Note.GuitarFret.OPEN;
-                            else if (note.ghliveGuitarFret == Note.GHLiveGuitarFret.WHITE_3)
+                            if (note.ghliveGuitarFret == Note.GHLiveGuitarFret.Open)
+                                note.guitarFret = Note.GuitarFret.Open;
+                            else if (note.ghliveGuitarFret == Note.GHLiveGuitarFret.White3)
                                 continue;
                         }
                     }
                     else if (Globals.ghLiveMode)
                     {
                         // Pasting onto a ghl track
-                        if (note.guitarFret == Note.GuitarFret.OPEN)
-                            note.ghliveGuitarFret = Note.GHLiveGuitarFret.OPEN;
+                        if (note.guitarFret == Note.GuitarFret.Open)
+                            note.ghliveGuitarFret = Note.GHLiveGuitarFret.Open;
                     }
 
                     note.length = TickFunctions.TickScaling(note.length, clipboard.resolution, editor.currentSong.resolution);

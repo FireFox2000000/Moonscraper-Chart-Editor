@@ -330,11 +330,11 @@ public class ChartWriter {
                         // Only need to get the flags of one note of a chord
                         if (exportOptions.forced && (note.next == null || (note.next != null && note.next.position != note.position)))
                         {
-                            if ((note.flags & Note.Flags.FORCED) == Note.Flags.FORCED)
+                            if ((note.flags & Note.Flags.Forced) == Note.Flags.Forced)
                                 saveString.Append(Globals.TABSPACE + tick + " = N 5 0 " + Globals.LINE_ENDING);
 
                             // Save taps line if not an open note, as open note taps cause weird artifacts under sp
-                            if (!note.IsOpenNote() && (note.flags & Note.Flags.TAP) == Note.Flags.TAP)
+                            if (!note.IsOpenNote() && (note.flags & Note.Flags.Tap) == Note.Flags.Tap)
                                 saveString.Append(Globals.TABSPACE + tick + " = N 6 0 " + Globals.LINE_ENDING);
                         }
                         continue;
@@ -361,17 +361,17 @@ public class ChartWriter {
     {
         switch (note.guitarFret)
         {
-            case (Note.GuitarFret.GREEN):
+            case (Note.GuitarFret.Green):
                 return 0;
-            case (Note.GuitarFret.RED):
+            case (Note.GuitarFret.Red):
                 return 1;
-            case (Note.GuitarFret.YELLOW):
+            case (Note.GuitarFret.Yellow):
                 return 2;
-            case (Note.GuitarFret.BLUE):
+            case (Note.GuitarFret.Blue):
                 return 3;
-            case (Note.GuitarFret.ORANGE):
+            case (Note.GuitarFret.Orange):
                 return 4;
-            case (Note.GuitarFret.OPEN):
+            case (Note.GuitarFret.Open):
                 return 7;                               // 5 and 6 are reserved for forced and taps properties
             default: break;
         }
@@ -383,17 +383,17 @@ public class ChartWriter {
     {
         switch (note.drumPad)
         {
-            case (Note.DrumPad.KICK):
+            case (Note.DrumPad.Kick):
                 return 0;
-            case (Note.DrumPad.RED):
+            case (Note.DrumPad.Red):
                 return 1;
-            case (Note.DrumPad.YELLOW):
+            case (Note.DrumPad.Yellow):
                 return 2;
-            case (Note.DrumPad.BLUE):
+            case (Note.DrumPad.Blue):
                 return 3;
-            case (Note.DrumPad.ORANGE):
+            case (Note.DrumPad.Orange):
                 return 4;
-            case (Note.DrumPad.GREEN):
+            case (Note.DrumPad.Green):
                 return 5;
 
             default: break;
@@ -406,20 +406,20 @@ public class ChartWriter {
     {
         switch (note.ghliveGuitarFret)
         {
-            case (Note.GHLiveGuitarFret.WHITE_1):
+            case (Note.GHLiveGuitarFret.White1):
                 return 0;
-            case (Note.GHLiveGuitarFret.WHITE_2):
+            case (Note.GHLiveGuitarFret.White2):
                 return 1;
-            case (Note.GHLiveGuitarFret.WHITE_3):
+            case (Note.GHLiveGuitarFret.White3):
                 return 2;
-            case (Note.GHLiveGuitarFret.BLACK_1):
+            case (Note.GHLiveGuitarFret.Black1):
                 return 3;
-            case (Note.GHLiveGuitarFret.BLACK_2):
+            case (Note.GHLiveGuitarFret.Black2):
                 return 4;
 
-            case (Note.GHLiveGuitarFret.OPEN):
+            case (Note.GHLiveGuitarFret.Open):
                 return 7;
-            case (Note.GHLiveGuitarFret.BLACK_3):
+            case (Note.GHLiveGuitarFret.Black3):
                 return 8;
 
             default: break;

@@ -12,7 +12,7 @@ public class NoteVisualsManager : MonoBehaviour {
     [HideInInspector]
     public Note.NoteType noteType = Note.NoteType.Strum;
     [HideInInspector]
-    public Note.SpecialType specialType = Note.SpecialType.NONE;
+    public Note.SpecialType specialType = Note.SpecialType.None;
 
     Note prevNote;
 
@@ -40,7 +40,7 @@ public class NoteVisualsManager : MonoBehaviour {
                 noteRenderer = GetComponent<Renderer>();
             noteRenderer.sortingOrder = -(int)note.position;
 
-            if (Globals.drumMode && note.guitarFret == Note.GuitarFret.OPEN)
+            if (Globals.drumMode && note.guitarFret == Note.GuitarFret.Open)
                 noteRenderer.sortingOrder -= 1;
         }
     }
@@ -62,13 +62,13 @@ public class NoteVisualsManager : MonoBehaviour {
 
     public static Note.SpecialType IsStarpower(Note note)
     {
-        Note.SpecialType specialType = Note.SpecialType.NONE;
+        Note.SpecialType specialType = Note.SpecialType.None;
  
         foreach (Starpower sp in note.chart.starPower)
         {
             if (sp.position == note.position || (sp.position <= note.position && sp.position + sp.length > note.position))
             {
-                specialType = Note.SpecialType.STAR_POW;
+                specialType = Note.SpecialType.StarPower;
             }
             else if (sp.position > note.position)
                 break;

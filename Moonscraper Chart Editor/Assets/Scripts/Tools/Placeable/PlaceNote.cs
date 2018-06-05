@@ -28,7 +28,7 @@ public class PlaceNote : PlaceSongObject {
     protected override void SetSongObjectAndController()
     {
         visuals = GetComponentInChildren<NoteVisualsManager>();
-        note = new Note(0, Note.GuitarFret.GREEN);
+        note = new Note(0, Note.GuitarFret.Green);
 
         controller = GetComponent<NoteController>();
         controller.note = note;
@@ -153,15 +153,15 @@ public class PlaceNote : PlaceSongObject {
         if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
         {
             if (Input.GetKey("1"))
-                note.guitarFret = Note.GuitarFret.ORANGE;
+                note.guitarFret = Note.GuitarFret.Orange;
             else if (Input.GetKey("2"))
-                note.guitarFret = Note.GuitarFret.BLUE;
+                note.guitarFret = Note.GuitarFret.Blue;
             else if (Input.GetKey("3"))
-                note.guitarFret = Note.GuitarFret.YELLOW;
+                note.guitarFret = Note.GuitarFret.Yellow;
             else if (Input.GetKey("4"))
-                note.guitarFret = Note.GuitarFret.RED;
+                note.guitarFret = Note.GuitarFret.Red;
             else if (Input.GetKey("5"))
-                note.guitarFret = Note.GuitarFret.GREEN;
+                note.guitarFret = Note.GuitarFret.Green;
             //else if (Input.GetKey("6"))
             else if (!note.IsOpenNote() && Mouse.world2DPosition != null)
             {
@@ -173,15 +173,15 @@ public class PlaceNote : PlaceSongObject {
         else
         {
             if (Input.GetKey("1"))
-                note.guitarFret = Note.GuitarFret.GREEN;
+                note.guitarFret = Note.GuitarFret.Green;
             else if (Input.GetKey("2"))
-                note.guitarFret = Note.GuitarFret.RED;
+                note.guitarFret = Note.GuitarFret.Red;
             else if (Input.GetKey("3"))
-                note.guitarFret = Note.GuitarFret.YELLOW;
+                note.guitarFret = Note.GuitarFret.Yellow;
             else if (Input.GetKey("4"))
-                note.guitarFret = Note.GuitarFret.BLUE;
+                note.guitarFret = Note.GuitarFret.Blue;
             else if (Input.GetKey("5"))
-                note.guitarFret = Note.GuitarFret.ORANGE;
+                note.guitarFret = Note.GuitarFret.Orange;
             //else if (Input.GetKey("6"))
 
             else if (!note.IsOpenNote() && Mouse.world2DPosition != null)
@@ -201,7 +201,7 @@ public class PlaceNote : PlaceSongObject {
         float startPos = -2.0f;
         float endPos = 2.0f;
 
-        int max = Globals.ghLiveMode ? (int)Note.GHLiveGuitarFret.WHITE_3 : (int)Note.GuitarFret.ORANGE;
+        int max = Globals.ghLiveMode ? (int)Note.GHLiveGuitarFret.White3 : (int)Note.GuitarFret.Orange;
         float factor = (endPos - startPos) / (max);
 
         for (int i = 0; i < max; ++i)
@@ -282,11 +282,11 @@ public class PlaceNote : PlaceSongObject {
             noteToAdd = note;
 
         if (noteToAdd.IsOpenNote())
-            noteToAdd.flags &= ~Note.Flags.TAP;
+            noteToAdd.flags &= ~Note.Flags.Tap;
 
         editor.currentChart.Add(noteToAdd, update);
         if (noteToAdd.CannotBeForcedCheck)
-            noteToAdd.flags &= ~Note.Flags.FORCED;
+            noteToAdd.flags &= ~Note.Flags.Forced;
 
         noteToAdd.applyFlagsToChord();
 
@@ -343,10 +343,10 @@ public class PlaceNote : PlaceSongObject {
     protected static ActionHistory.Action AutoForcedCheck(Note note)
     {
         Note next = note.nextSeperateNote;
-        if (next != null && (next.flags & Note.Flags.FORCED) == Note.Flags.FORCED && next.CannotBeForcedCheck)
+        if (next != null && (next.flags & Note.Flags.Forced) == Note.Flags.Forced && next.CannotBeForcedCheck)
         {           
             Note originalNext = (Note)next.Clone();
-            next.flags &= ~Note.Flags.FORCED;
+            next.flags &= ~Note.Flags.Forced;
             next.applyFlagsToChord();
 
             return new ActionHistory.Modify(originalNext, next);

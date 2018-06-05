@@ -32,7 +32,7 @@ public class PlaceNoteController : ObjectlessTool {
 
     //const int MULTI_NOTE_POS = 0;
     //const int OPEN_NOTE_POS = 5;
-    int standardNoteLimit { get { return (Globals.ghLiveMode ? (int)Note.GHLiveGuitarFret.OPEN : (int)Note.GuitarFret.OPEN); } }
+    int standardNoteLimit { get { return (Globals.ghLiveMode ? (int)Note.GHLiveGuitarFret.Open : (int)Note.GuitarFret.Open); } }
     string GetOpenNoteInputKey()
     {
         int key = standardNoteLimit;
@@ -71,7 +71,7 @@ public class PlaceNoteController : ObjectlessTool {
         }
 
         {
-            for (int i = 0; i < (int)Note.GuitarFret.OPEN; ++i)
+            for (int i = 0; i < (int)Note.GuitarFret.Open; ++i)
                 notes.Add(standardPlaceableNotes[i]);
             notes.Add(openNote);
             standardKeyboardPlaceableNotes = notes.ToArray();
@@ -79,7 +79,7 @@ public class PlaceNoteController : ObjectlessTool {
         }
 
         {
-            for (int i = 0; i < (int)Note.GHLiveGuitarFret.OPEN; ++i)
+            for (int i = 0; i < (int)Note.GHLiveGuitarFret.Open; ++i)
                 notes.Add(standardPlaceableNotes[i]);
             notes.Add(openNote);
             ghlKeyboardPlaceableNotes = notes.ToArray();

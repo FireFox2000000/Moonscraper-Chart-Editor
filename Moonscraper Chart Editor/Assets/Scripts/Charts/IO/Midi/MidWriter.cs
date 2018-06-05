@@ -295,7 +295,7 @@ public static class MidWriter {
                 if (exportOptions.forced)
                 {
                     // Forced notes               
-                    if ((note.flags & Note.Flags.FORCED) != 0 && (note.previous == null || (note.previous.position != note.position)))     // Don't overlap on chords
+                    if ((note.flags & Note.Flags.Forced) != 0 && (note.previous == null || (note.previous.position != note.position)))     // Don't overlap on chords
                     {
                         // Add a note
                         int forcedNoteNumber;
@@ -313,13 +313,13 @@ public static class MidWriter {
                         InsertionSort(forceOffEvent);
                     }
 
-                    int openNote = ghlTrack ? (int)Note.GHLiveGuitarFret.OPEN : (int)Note.GuitarFret.OPEN;
+                    int openNote = ghlTrack ? (int)Note.GHLiveGuitarFret.Open : (int)Note.GuitarFret.Open;
                     // Add tap sysex events
-                    if (difficulty == Song.Difficulty.Expert && note.rawNote != openNote && (note.flags & Note.Flags.TAP) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.TAP) == 0))  // This note is a tap while the previous one isn't as we're creating a range
+                    if (difficulty == Song.Difficulty.Expert && note.rawNote != openNote && (note.flags & Note.Flags.Tap) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.Tap) == 0))  // This note is a tap while the previous one isn't as we're creating a range
                     {
                         // Find the next non-tap note
                         Note nextNonTap = note;
-                        while (nextNonTap.next != null && nextNonTap.rawNote != openNote && (nextNonTap.next.flags & Note.Flags.TAP) != 0)
+                        while (nextNonTap.next != null && nextNonTap.rawNote != openNote && (nextNonTap.next.flags & Note.Flags.Tap) != 0)
                             nextNonTap = nextNonTap.next;
 
                         // Tap event = 08-50-53-00-00-FF-04-01, end with 01 for On, 00 for Off
@@ -335,11 +335,11 @@ public static class MidWriter {
                 }
 
                 if (instrument != Song.Instrument.Drums && instrument != Song.Instrument.GHLiveGuitar && instrument != Song.Instrument.GHLiveBass &&
-                    difficulty == Song.Difficulty.Expert && note.guitarFret == Note.GuitarFret.OPEN && (note.previous == null || (note.previous.guitarFret != Note.GuitarFret.OPEN)))
+                    difficulty == Song.Difficulty.Expert && note.guitarFret == Note.GuitarFret.Open && (note.previous == null || (note.previous.guitarFret != Note.GuitarFret.Open)))
                 {
                     // Find the next non-open note
                     Note nextNonOpen = note;
-                    while (nextNonOpen.next != null && nextNonOpen.next.guitarFret == Note.GuitarFret.OPEN)
+                    while (nextNonOpen.next != null && nextNonOpen.next.guitarFret == Note.GuitarFret.Open)
                         nextNonOpen = nextNonOpen.next;
 
                     byte diff;
@@ -684,27 +684,27 @@ public static class MidWriter {
 
         switch (fret_type)
         {
-            case (Note.GuitarFret.OPEN):     // Open note highlighted as an SysEx event. Use green as default.
+            case (Note.GuitarFret.Open):     // Open note highlighted as an SysEx event. Use green as default.
                 if (instrument == Song.Instrument.Drums)
                 {
                     noteNumber = difficultyNumber + 5;
                     break;
                 }
                 else
-                    goto case Note.GuitarFret.GREEN;
-            case (Note.GuitarFret.GREEN):
+                    goto case Note.GuitarFret.Green;
+            case (Note.GuitarFret.Green):
                 noteNumber = difficultyNumber + 0;
                 break;
-            case (Note.GuitarFret.RED):
+            case (Note.GuitarFret.Red):
                 noteNumber = difficultyNumber + 1;
                 break;
-            case (Note.GuitarFret.YELLOW):
+            case (Note.GuitarFret.Yellow):
                 noteNumber = difficultyNumber + 2;
                 break;
-            case (Note.GuitarFret.BLUE):
+            case (Note.GuitarFret.Blue):
                 noteNumber = difficultyNumber + 3;
                 break;
-            case (Note.GuitarFret.ORANGE):
+            case (Note.GuitarFret.Orange):
                 noteNumber = difficultyNumber + 4;
                 break;
             default:
@@ -725,25 +725,25 @@ public static class MidWriter {
 
         switch (fret_type)
         {
-            case (Note.GHLiveGuitarFret.OPEN):
+            case (Note.GHLiveGuitarFret.Open):
                 noteNumber = difficultyNumber + 0;
                 break;
-            case (Note.GHLiveGuitarFret.WHITE_1):
+            case (Note.GHLiveGuitarFret.White1):
                 noteNumber = difficultyNumber + 1;
                 break;
-            case (Note.GHLiveGuitarFret.WHITE_2):
+            case (Note.GHLiveGuitarFret.White2):
                 noteNumber = difficultyNumber + 2;
                 break;
-            case (Note.GHLiveGuitarFret.WHITE_3):
+            case (Note.GHLiveGuitarFret.White3):
                 noteNumber = difficultyNumber + 3;
                 break;
-            case (Note.GHLiveGuitarFret.BLACK_1):
+            case (Note.GHLiveGuitarFret.Black1):
                 noteNumber = difficultyNumber + 4;
                 break;
-            case (Note.GHLiveGuitarFret.BLACK_2):
+            case (Note.GHLiveGuitarFret.Black2):
                 noteNumber = difficultyNumber + 5;
                 break;
-            case (Note.GHLiveGuitarFret.BLACK_3):
+            case (Note.GHLiveGuitarFret.Black3):
                 noteNumber = difficultyNumber + 6;
                 break;
 

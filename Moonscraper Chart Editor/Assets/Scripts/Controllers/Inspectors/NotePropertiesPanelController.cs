@@ -22,12 +22,12 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
     void OnEnable()
     {
-        if ((currentNote.flags & Note.Flags.TAP) == Note.Flags.TAP)
+        if ((currentNote.flags & Note.Flags.Tap) == Note.Flags.Tap)
             tapToggle.isOn = true;
         else
             tapToggle.isOn = false;
 
-        if ((currentNote.flags & Note.Flags.FORCED) == Note.Flags.FORCED)
+        if ((currentNote.flags & Note.Flags.Forced) == Note.Flags.Forced)
             forcedToggle.isOn = true;
         else
             forcedToggle.isOn = false;
@@ -50,7 +50,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
                 if (currentNote.CannotBeForcedCheck && !GameSettings.keysModeEnabled)
                 {
                     forcedToggle.interactable = false;
-                    currentNote.flags &= ~Note.Flags.FORCED;
+                    currentNote.flags &= ~Note.Flags.Forced;
                 }
                 else
                 {
@@ -78,9 +78,9 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
             if (currentNote != null)
             {
-                tapToggle.isOn = ((currentNote.flags & Note.Flags.TAP) == Note.Flags.TAP);
+                tapToggle.isOn = ((currentNote.flags & Note.Flags.Tap) == Note.Flags.Tap);
 
-                forcedToggle.isOn = ((currentNote.flags & Note.Flags.FORCED) == Note.Flags.FORCED);
+                forcedToggle.isOn = ((currentNote.flags & Note.Flags.Forced) == Note.Flags.Forced);
             }
             else
             {
@@ -147,9 +147,9 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             if (currentNote != null)
             {
                 if (tapToggle.isOn)
-                    currentNote.flags = currentNote.flags | Note.Flags.TAP;
+                    currentNote.flags = currentNote.flags | Note.Flags.Tap;
                 else
-                    currentNote.flags = currentNote.flags & ~Note.Flags.TAP;
+                    currentNote.flags = currentNote.flags & ~Note.Flags.Tap;
             }
 
             setFlags(currentNote);          
@@ -173,9 +173,9 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         if (currentNote != null)
         {
             if (forcedToggle.isOn)
-                currentNote.flags = currentNote.flags | Note.Flags.FORCED;
+                currentNote.flags = currentNote.flags | Note.Flags.Forced;
             else
-                currentNote.flags = currentNote.flags & ~Note.Flags.FORCED;
+                currentNote.flags = currentNote.flags & ~Note.Flags.Forced;
         }
 
         setFlags(currentNote);

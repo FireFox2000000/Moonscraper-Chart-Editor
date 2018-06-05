@@ -8,22 +8,22 @@ namespace DrumsInput
         {
             switch (drumFret)
             {
-                case (Note.DrumPad.RED):
+                case (Note.DrumPad.Red):
                     return gamepad.GetButtonPressed(GamepadInput.Button.B);
 
-                case (Note.DrumPad.YELLOW):
+                case (Note.DrumPad.Yellow):
                     return gamepad.GetButtonPressed(GamepadInput.Button.Y);
 
-                case (Note.DrumPad.BLUE):
+                case (Note.DrumPad.Blue):
                     return gamepad.GetButtonPressed(GamepadInput.Button.X);
 
-                case (Note.DrumPad.ORANGE):
+                case (Note.DrumPad.Orange):
                     return gamepad.GetButtonPressed(GamepadInput.Button.LB);
 
-                case (Note.DrumPad.GREEN):
+                case (Note.DrumPad.Green):
                     return gamepad.GetButtonPressed(GamepadInput.Button.A);
 
-                case (Note.DrumPad.KICK):
+                case (Note.DrumPad.Kick):
                     return gamepad.GetButtonPressed(GamepadInput.Button.RB);
 
                 default:
@@ -53,22 +53,22 @@ namespace DrumsInput
         {
             switch (drumFret)
             {
-                case (Note.DrumPad.RED):
+                case (Note.DrumPad.Red):
                     return Input.GetKeyDown(KeyCode.Alpha1);
 
-                case (Note.DrumPad.YELLOW):
+                case (Note.DrumPad.Yellow):
                     return Input.GetKeyDown(KeyCode.Alpha2);
 
-                case (Note.DrumPad.BLUE):
+                case (Note.DrumPad.Blue):
                     return Input.GetKeyDown(KeyCode.Alpha3);
 
-                case (Note.DrumPad.ORANGE):
+                case (Note.DrumPad.Orange):
                     return Input.GetKeyDown(KeyCode.Alpha4);
 
-                case (Note.DrumPad.GREEN):
+                case (Note.DrumPad.Green):
                     return Input.GetKeyDown(KeyCode.Alpha5);
 
-                case (Note.DrumPad.KICK):
+                case (Note.DrumPad.Kick):
                     return Input.GetKeyDown(KeyCode.Alpha0);
 
                 default:

@@ -608,30 +608,30 @@ public static class ChartReader
         switch (noteNumber)
         {
             case (0):
-                noteFret = Note.GuitarFret.GREEN;
+                noteFret = Note.GuitarFret.Green;
                 break;
             case (1):
-                noteFret = Note.GuitarFret.RED;
+                noteFret = Note.GuitarFret.Red;
                 break;
             case (2):
-                noteFret = Note.GuitarFret.YELLOW;
+                noteFret = Note.GuitarFret.Yellow;
                 break;
             case (3):
-                noteFret = Note.GuitarFret.BLUE;
+                noteFret = Note.GuitarFret.Blue;
                 break;
             case (4):
-                noteFret = Note.GuitarFret.ORANGE;
+                noteFret = Note.GuitarFret.Orange;
                 break;
             case (5):
-                NoteFlag forcedFlag = new NoteFlag(position, Note.Flags.FORCED);
+                NoteFlag forcedFlag = new NoteFlag(position, Note.Flags.Forced);
                 flagsList.Add(forcedFlag);
                 break;
             case (6):
-                NoteFlag tapFlag = new NoteFlag(position, Note.Flags.TAP);
+                NoteFlag tapFlag = new NoteFlag(position, Note.Flags.Tap);
                 flagsList.Add(tapFlag);
                 break;
             case (7):
-                noteFret = Note.GuitarFret.OPEN;
+                noteFret = Note.GuitarFret.Open;
                 break;
             default:
                 return;
@@ -650,22 +650,22 @@ public static class ChartReader
         switch (noteNumber)
         {
             case (0):
-                noteFret = Note.DrumPad.KICK;
+                noteFret = Note.DrumPad.Kick;
                 break;
             case (1):
-                noteFret = Note.DrumPad.RED;
+                noteFret = Note.DrumPad.Red;
                 break;
             case (2):
-                noteFret = Note.DrumPad.YELLOW;
+                noteFret = Note.DrumPad.Yellow;
                 break;
             case (3):
-                noteFret = Note.DrumPad.BLUE;
+                noteFret = Note.DrumPad.Blue;
                 break;
             case (4):
-                noteFret = Note.DrumPad.ORANGE;
+                noteFret = Note.DrumPad.Orange;
                 break;
             case (5):
-                noteFret = Note.DrumPad.GREEN;
+                noteFret = Note.DrumPad.Green;
                 break;
             default:
                 return;
@@ -684,31 +684,31 @@ public static class ChartReader
         switch (noteNumber)
         {
             case (0):
-                noteFret = Note.GHLiveGuitarFret.WHITE_1;
+                noteFret = Note.GHLiveGuitarFret.White1;
                 break;
             case (1):
-                noteFret = Note.GHLiveGuitarFret.WHITE_2;
+                noteFret = Note.GHLiveGuitarFret.White2;
                 break;
             case (2):
-                noteFret = Note.GHLiveGuitarFret.WHITE_3;
+                noteFret = Note.GHLiveGuitarFret.White3;
                 break;
             case (3):
-                noteFret = Note.GHLiveGuitarFret.BLACK_1;
+                noteFret = Note.GHLiveGuitarFret.Black1;
                 break;
             case (4):
-                noteFret = Note.GHLiveGuitarFret.BLACK_2;
+                noteFret = Note.GHLiveGuitarFret.Black2;
                 break;
             case (5):
-                flagsList.Add(new NoteFlag(position, Note.Flags.FORCED));
+                flagsList.Add(new NoteFlag(position, Note.Flags.Forced));
                 break;
             case (6):
-                flagsList.Add(new NoteFlag(position, Note.Flags.TAP));
+                flagsList.Add(new NoteFlag(position, Note.Flags.Tap));
                 break;
             case (7):
-                noteFret = Note.GHLiveGuitarFret.OPEN;
+                noteFret = Note.GHLiveGuitarFret.Open;
                 break;
             case (8):
-                noteFret = Note.GHLiveGuitarFret.BLACK_3;
+                noteFret = Note.GHLiveGuitarFret.Black3;
                 break;
             default:
                 return;

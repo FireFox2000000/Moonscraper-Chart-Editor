@@ -22,7 +22,7 @@ public static class GameplayInputFunctions  {
 
         if (inputMask == 0)
         {
-            return note.guitarFret == Note.GuitarFret.OPEN;
+            return note.guitarFret == Note.GuitarFret.Open;
         }
         else
         {
