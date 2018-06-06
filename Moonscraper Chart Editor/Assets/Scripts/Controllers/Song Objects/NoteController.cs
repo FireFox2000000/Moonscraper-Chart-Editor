@@ -486,7 +486,7 @@ public class NoteController : SongObjectController {
 
     static Note GetPreviousOfOpen(uint openNotePos, Note previousNote)
     {
-        if (previousNote == null || previousNote.position != openNotePos || (!previousNote.IsChord && previousNote.position != openNotePos))
+        if (previousNote == null || previousNote.position != openNotePos || (!previousNote.isChord && previousNote.position != openNotePos))
             return previousNote;
         else
             return GetPreviousOfOpen(openNotePos, previousNote.previous);
@@ -494,7 +494,7 @@ public class NoteController : SongObjectController {
 
     static Note GetNextOfOpen(uint openNotePos, Note nextNote)
     {
-        if (nextNote == null || nextNote.position != openNotePos || (!nextNote.IsChord && nextNote.position != openNotePos))
+        if (nextNote == null || nextNote.position != openNotePos || (!nextNote.isChord && nextNote.position != openNotePos))
             return nextNote;
         else
             return GetNextOfOpen(openNotePos, nextNote.next);

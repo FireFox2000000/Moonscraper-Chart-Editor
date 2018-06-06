@@ -27,7 +27,7 @@ public static class GameplayInputFunctions  {
         else
         {
             // Chords
-            if (note.IsChord)
+            if (note.isChord)
             {
                 // Regular chords
                 if (noteStreak == 0 || note.type == Note.NoteType.Strum)

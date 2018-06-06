@@ -176,11 +176,11 @@ public static class NoteFunctions {
         switch (type)
         {
             case (Note.NoteType.Strum):
-                if (note.IsChord)
+                if (note.isChord)
                     note.flags &= ~Note.Flags.Forced;
                 else
                 {
-                    if (note.IsNaturalHopo)
+                    if (note.isNaturalHopo)
                         note.flags |= Note.Flags.Forced;
                     else
                         note.flags &= ~Note.Flags.Forced;
@@ -191,11 +191,11 @@ public static class NoteFunctions {
             case (Note.NoteType.Hopo):
                 if (!note.cannotBeForced)
                 {
-                    if (note.IsChord)
+                    if (note.isChord)
                         note.flags |= Note.Flags.Forced;
                     else
                     {
-                        if (!note.IsNaturalHopo)
+                        if (!note.isNaturalHopo)
                             note.flags |= Note.Flags.Forced;
                         else
                             note.flags &= ~Note.Flags.Forced;

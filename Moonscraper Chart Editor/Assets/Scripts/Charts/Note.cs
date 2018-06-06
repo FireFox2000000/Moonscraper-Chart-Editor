@@ -264,7 +264,7 @@ public class Note : ChartObject
             return base.LessThan(b);
     }
 
-    public bool IsChord
+    public bool isChord
     {
         get
         {
@@ -275,15 +275,15 @@ public class Note : ChartObject
     /// <summary>
     /// Ignores the note's forced flag when determining whether it would be a hopo or not
     /// </summary>
-    public bool IsNaturalHopo
+    public bool isNaturalHopo
     {
         get
         {
             bool HOPO = false;
 
-            if (!IsChord && previous != null)
+            if (!isChord && previous != null)
             {
-                bool prevIsChord = previous.IsChord;
+                bool prevIsChord = previous.isChord;
                 // Need to consider whether the previous note was a chord, and if they are the same type of note
                 if (prevIsChord || (!prevIsChord && rawNote != previous.rawNote))
                 {
@@ -302,11 +302,11 @@ public class Note : ChartObject
     /// <summary>
     /// Would this note be a hopo or not? (Ignores whether the note's tap flag is set or not.)
     /// </summary>
-    bool IsHopo
+    bool isHopo
     {
         get
         {
-            bool HOPO = IsNaturalHopo;
+            bool HOPO = isNaturalHopo;
 
             // Check if forced
             if (forced)
@@ -347,7 +347,7 @@ public class Note : ChartObject
             }
             else
             {
-                if (IsHopo)
+                if (isHopo)
                     return NoteType.Hopo;
                 else
                     return NoteType.Strum;
