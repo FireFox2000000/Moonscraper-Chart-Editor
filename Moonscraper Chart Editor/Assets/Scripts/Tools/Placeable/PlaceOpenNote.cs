@@ -10,17 +10,17 @@ public class PlaceOpenNote : PlaceNote {
     {
         if (editor.currentChart.notes[closestNoteArrayPos] < note)
         {
-            Note previous = GetPreviousOfOpen(note.position, editor.currentChart.notes[closestNoteArrayPos]);
+            Note previous = GetPreviousOfOpen(note.tick, editor.currentChart.notes[closestNoteArrayPos]);
 
             note.previous = previous;
-            note.next = GetNextOfOpen(note.position, previous.next);
+            note.next = GetNextOfOpen(note.tick, previous.next);
         }
         else if (editor.currentChart.notes[closestNoteArrayPos] > note)
         {
-            Note next = GetNextOfOpen(note.position, editor.currentChart.notes[closestNoteArrayPos]);
+            Note next = GetNextOfOpen(note.tick, editor.currentChart.notes[closestNoteArrayPos]);
 
             note.next = next;
-            note.previous = GetPreviousOfOpen(note.position, next.previous);
+            note.previous = GetPreviousOfOpen(note.tick, next.previous);
         }
         else
         {
@@ -32,7 +32,7 @@ public class PlaceOpenNote : PlaceNote {
 
     Note GetPreviousOfOpen(uint openNotePos, Note previousNote)
     {
-        if (previousNote == null || previousNote.position != openNotePos || (!previousNote.isChord && previousNote.position != openNotePos))
+        if (previousNote == null || previousNote.tick != openNotePos || (!previousNote.isChord && previousNote.tick != openNotePos))
             return previousNote;
         else
             return GetPreviousOfOpen(openNotePos, previousNote.previous);
@@ -40,7 +40,7 @@ public class PlaceOpenNote : PlaceNote {
 
     Note GetNextOfOpen(uint openNotePos, Note nextNote)
     {
-        if (nextNote == null || nextNote.position != openNotePos || (!nextNote.isChord && nextNote.position != openNotePos))
+        if (nextNote == null || nextNote.tick != openNotePos || (!nextNote.isChord && nextNote.tick != openNotePos))
             return nextNote;
         else
             return GetNextOfOpen(openNotePos, nextNote.next);

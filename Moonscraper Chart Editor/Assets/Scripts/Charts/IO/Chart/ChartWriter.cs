@@ -260,7 +260,7 @@ public class ChartWriter {
             SongObject songObject = list[i];
             try
             {
-                uint tick = (uint)Mathf.Round(songObject.position * resolutionScaleRatio) + exportOptions.tickOffset;
+                uint tick = (uint)Mathf.Round(songObject.tick * resolutionScaleRatio) + exportOptions.tickOffset;
                 saveString.Append(Globals.TABSPACE + tick);
 
                 switch ((SongObject.ID)songObject.classID)
@@ -328,7 +328,7 @@ public class ChartWriter {
                         saveString.Append(Globals.LINE_ENDING);
 
                         // Only need to get the flags of one note of a chord
-                        if (exportOptions.forced && (note.next == null || (note.next != null && note.next.position != note.position)))
+                        if (exportOptions.forced && (note.next == null || (note.next != null && note.next.tick != note.tick)))
                         {
                             if ((note.flags & Note.Flags.Forced) == Note.Flags.Forced)
                                 saveString.Append(Globals.TABSPACE + tick + " = N 5 0 " + Globals.LINE_ENDING);

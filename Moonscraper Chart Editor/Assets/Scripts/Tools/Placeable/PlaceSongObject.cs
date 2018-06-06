@@ -59,7 +59,7 @@ public abstract class PlaceSongObject : ToolObject {
         }
 
         songObject.song = editor.currentSong;
-        songObject.position = objectSnappedChartPos;
+        songObject.tick = objectSnappedChartPos;
     }
 
     protected abstract void AddObject();

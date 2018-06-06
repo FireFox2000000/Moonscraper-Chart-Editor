@@ -40,6 +40,6 @@ public class SectionGuiController : TimelineIndicator
     public void JumpToPos()
     {
         editor.Stop();
-        movement.SetPosition(section.position); 
+        movement.SetPosition(section.tick); 
     }
 }

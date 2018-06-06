@@ -46,7 +46,7 @@ public class Metronome : MonoBehaviour {
 #endif
         transform.localPosition = pos;
 
-        uint currentTickPos = editor.currentSong.WorldYPositionToChartPosition(transform.position.y);
+        uint currentTickPos = editor.currentSong.WorldYPositionToTick(transform.position.y);
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
             if (currentTickPos >= nextClapPos)

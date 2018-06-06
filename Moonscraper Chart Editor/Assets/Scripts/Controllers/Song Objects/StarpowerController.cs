@@ -22,11 +22,11 @@ public class StarpowerController : SongObjectController
     {
         if (starpower != null)
         {
-            uint endPosition = starpower.position + starpower.length;
+            uint endPosition = starpower.tick + starpower.length;
 
-            if ((starpower.position >= editor.minPos && starpower.position < editor.maxPos) ||
+            if ((starpower.tick >= editor.minPos && starpower.tick < editor.maxPos) ||
                     (endPosition > editor.minPos && endPosition < editor.maxPos) ||
-                    (starpower.position < editor.minPos && endPosition >= editor.maxPos))
+                    (starpower.tick < editor.minPos && endPosition >= editor.maxPos))
             {
                 if (Globals.applicationMode == Globals.ApplicationMode.Editor)
                     UpdateSongObject();
@@ -50,7 +50,7 @@ public class StarpowerController : SongObjectController
 
     public void UpdateTailLength()
     {
-        float length = starpower.song.ChartPositionToWorldYPosition(starpower.position + starpower.length) - starpower.worldYPosition;
+        float length = starpower.song.TickToWorldYPosition(starpower.tick + starpower.length) - starpower.worldYPosition;
 
         Vector3 scale = tail.transform.localScale;
         scale.y = length;
@@ -68,11 +68,11 @@ public class StarpowerController : SongObjectController
 
         if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
         {
-            snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(starpower.song.WorldYPositionToChartPosition(((Vector2)Mouse.world2DPosition).y), GameSettings.step, starpower.song.resolution);           
+            snappedChartPos = Snapable.TickToSnappedTick(starpower.song.WorldYPositionToTick(((Vector2)Mouse.world2DPosition).y), GameSettings.step, starpower.song.resolution);           
         }
         else
         {
-            snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(starpower.song.WorldYPositionToChartPosition(editor.mouseYMaxLimit.position.y), GameSettings.step, starpower.song.resolution);
+            snappedChartPos = Snapable.TickToSnappedTick(starpower.song.WorldYPositionToTick(editor.mouseYMaxLimit.position.y), GameSettings.step, starpower.song.resolution);
         }
 
         uint max = starpower.length;
@@ -84,7 +84,7 @@ public class StarpowerController : SongObjectController
 
         int start, length;
         Note[] notes = starpower.chart.notes;
-        SongObjectHelper.GetRange(notes, starpower.position, starpower.position + max, out start, out length);
+        SongObjectHelper.GetRange(notes, starpower.tick, starpower.tick + max, out start, out length);
 
         for (int i = start; i < start + length; ++i)
         {

@@ -17,7 +17,7 @@ public class TimeSignature : SyncTrack
         denominator = _denominator;
     }
 
-    public TimeSignature(TimeSignature ts) : base(ts.position)
+    public TimeSignature(TimeSignature ts) : base(ts.tick)
     {
         numerator = ts.numerator;
         denominator = ts.denominator;
@@ -26,7 +26,7 @@ public class TimeSignature : SyncTrack
     internal override string GetSaveString()
     {
         //0 = TS 4 4
-        string saveString = Globals.TABSPACE + position + " = TS " + numerator;
+        string saveString = Globals.TABSPACE + tick + " = TS " + numerator;
 
         if (denominator != 4)
             saveString +=  " " + (uint)UnityEngine.Mathf.Log(denominator, 2) + Globals.LINE_ENDING;

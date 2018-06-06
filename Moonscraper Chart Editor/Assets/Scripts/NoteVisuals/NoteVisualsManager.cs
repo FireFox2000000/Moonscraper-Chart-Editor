@@ -38,7 +38,7 @@ public class NoteVisualsManager : MonoBehaviour {
             // Update note visuals
             if (!noteRenderer)
                 noteRenderer = GetComponent<Renderer>();
-            noteRenderer.sortingOrder = -(int)note.position;
+            noteRenderer.sortingOrder = -(int)note.tick;
 
             if (Globals.drumMode && note.guitarFret == Note.GuitarFret.Open)
                 noteRenderer.sortingOrder -= 1;
@@ -66,11 +66,11 @@ public class NoteVisualsManager : MonoBehaviour {
  
         foreach (Starpower sp in note.chart.starPower)
         {
-            if (sp.position == note.position || (sp.position <= note.position && sp.position + sp.length > note.position))
+            if (sp.tick == note.tick || (sp.tick <= note.tick && sp.tick + sp.length > note.tick))
             {
                 specialType = Note.SpecialType.StarPower;
             }
-            else if (sp.position > note.position)
+            else if (sp.tick > note.tick)
                 break;
         }
 

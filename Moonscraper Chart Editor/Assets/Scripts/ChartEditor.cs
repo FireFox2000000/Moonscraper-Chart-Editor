@@ -135,7 +135,7 @@ public class ChartEditor : MonoBehaviour {
             if (MovementController.explicitChartPos != null)
                 return (uint)MovementController.explicitChartPos;
             else
-                return currentSong.WorldYPositionToChartPosition(visibleStrikeline.position.y);
+                return currentSong.WorldYPositionToTick(visibleStrikeline.position.y);
         }
     }
 
@@ -256,8 +256,8 @@ public class ChartEditor : MonoBehaviour {
         SaveErrorCheck();
 
         // Update object positions that supposed to be visible into the range of the camera
-        _minPos = currentSong.WorldYPositionToChartPosition(camYMin.position.y);
-        _maxPos = currentSong.WorldYPositionToChartPosition(camYMax.position.y);
+        _minPos = currentSong.WorldYPositionToTick(camYMin.position.y);
+        _maxPos = currentSong.WorldYPositionToTick(camYMax.position.y);
 
         // Set window text to represent if the current song has been saved or not
 #if !UNITY_EDITOR
@@ -1138,9 +1138,9 @@ public class ChartEditor : MonoBehaviour {
 
         if (currentSelectedObjects.Length > 0)
         {
-            bottomLeft = new Vector2((float)left, currentSong.ChartPositionToWorldYPosition(songObjectsCopy[0].position));
-            upperRight = new Vector2((float)right, currentSong.ChartPositionToWorldYPosition(songObjectsCopy[songObjectsCopy.Length - 1].position));
-            area = new Clipboard.SelectionArea(bottomLeft, upperRight, songObjectsCopy[0].position, songObjectsCopy[songObjectsCopy.Length - 1].position);
+            bottomLeft = new Vector2((float)left, currentSong.TickToWorldYPosition(songObjectsCopy[0].tick));
+            upperRight = new Vector2((float)right, currentSong.TickToWorldYPosition(songObjectsCopy[songObjectsCopy.Length - 1].tick));
+            area = new Clipboard.SelectionArea(bottomLeft, upperRight, songObjectsCopy[0].tick, songObjectsCopy[songObjectsCopy.Length - 1].tick);
         }        
 
         ClipboardObjectController.SetData(songObjectsCopy, area, currentSong);
@@ -1188,7 +1188,7 @@ public class ChartEditor : MonoBehaviour {
                 BPM bpmToAdjust = bpms[i - 1];
 
                 double deltaTime = (double)anchorBPM.anchor - bpmToAdjust.time;
-                uint newValue = (uint)Mathf.Round((float)(TickFunctions.DisToBpm(bpmToAdjust.position, anchorBPM.position, deltaTime, currentSong.resolution) * 1000.0d));
+                uint newValue = (uint)Mathf.Round((float)(TickFunctions.DisToBpm(bpmToAdjust.tick, anchorBPM.tick, deltaTime, currentSong.resolution) * 1000.0d));
 
                 if (deltaTime > 0 && newValue > 0)
                 {
@@ -1196,7 +1196,7 @@ public class ChartEditor : MonoBehaviour {
                     {
                         BPM original = new BPM(bpmToAdjust);
                         bpmToAdjust.value = newValue;
-                        anchorBPM.assignedTime = currentSong.LiveChartPositionToTime(anchorBPM.position, currentSong.resolution);
+                        anchorBPM.assignedTime = currentSong.LiveTickToTime(anchorBPM.tick, currentSong.resolution);
 
                         record.Add(new ActionHistory.Modify(original, bpmToAdjust));
                     }

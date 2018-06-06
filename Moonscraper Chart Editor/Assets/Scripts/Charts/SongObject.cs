@@ -15,7 +15,7 @@ public abstract class SongObject
     /// <summary>
     /// The tick position of the object
     /// </summary>
-    public uint position;
+    public uint tick;
     /// <summary>
     /// Unity only.
     /// </summary>
@@ -24,9 +24,9 @@ public abstract class SongObject
 
     public abstract int classID { get; }
 
-    public SongObject (uint _position)
+    public SongObject (uint _tick)
     {
-        position = _position;
+        tick = _tick;
     }
     
     public float worldYPosition
@@ -37,7 +37,7 @@ public abstract class SongObject
             {
                 Debug.Log("null");
             }
-            return song.ChartPositionToWorldYPosition(position);
+            return song.TickToWorldYPosition(tick);
         }
     }
 
@@ -48,7 +48,7 @@ public abstract class SongObject
     {
         get
         {
-            return song.ChartPositionToTime(position, song.resolution);
+            return song.TickToTime(tick, song.resolution);
         }
     }
 
@@ -87,7 +87,7 @@ public abstract class SongObject
 
     protected virtual bool Equals(SongObject b)
     {
-        if (position == b.position && classID == b.classID)
+        if (tick == b.tick && classID == b.classID)
             return true;
         else
             return false;
@@ -100,9 +100,9 @@ public abstract class SongObject
 
     protected virtual bool LessThan(SongObject b)
     {
-        if (position < b.position)
+        if (tick < b.tick)
             return true;
-        else if (position == b.position && classID < b.classID)
+        else if (tick == b.tick && classID < b.classID)
             return true;
         else
             return false;

@@ -122,9 +122,9 @@ public static class MidWriter {
         // Loop through all synctrack events
         for (int i = 0; i < song.syncTrack.Length; ++i)
         {
-            uint deltaTime = song.syncTrack[i].position;
+            uint deltaTime = song.syncTrack[i].tick;
             if (i > 0)
-                deltaTime -= song.syncTrack[i - 1].position;
+                deltaTime -= song.syncTrack[i - 1].tick;
 
             deltaTime = (uint)Mathf.Round(deltaTime * resolutionScaleRatio);
 
@@ -156,9 +156,9 @@ public static class MidWriter {
 
         for (int i = 0; i < song.eventsAndSections.Length; ++i)
         {     
-            uint deltaTime = song.eventsAndSections[i].position;
+            uint deltaTime = song.eventsAndSections[i].tick;
             if (i > 0)
-                deltaTime -= song.eventsAndSections[i - 1].position;
+                deltaTime -= song.eventsAndSections[i - 1].tick;
 
             deltaTime = (uint)Mathf.Round(deltaTime * resolutionScaleRatio);
 
@@ -173,7 +173,7 @@ public static class MidWriter {
                 eventBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, "[" + song.eventsAndSections[i].title + "]")));
         }
 
-        uint music_end = song.TimeToChartPosition(song.length + exportOptions.tickOffset, song.resolution * resolutionScaleRatio, false);
+        uint music_end = song.TimeToTick(song.length + exportOptions.tickOffset, song.resolution * resolutionScaleRatio, false);
 
         if (music_end > deltaTickSum)
             music_end -= deltaTickSum;
@@ -216,9 +216,9 @@ public static class MidWriter {
 
         for (int i = 0; i < sortedEvents.Length; ++i)
         {
-            uint deltaTime = sortedEvents[i].position;
+            uint deltaTime = sortedEvents[i].tick;
             if (i > 0)
-                deltaTime -= sortedEvents[i - 1].position;
+                deltaTime -= sortedEvents[i - 1].tick;
 
             deltaTime = (uint)Mathf.Round(deltaTime* resolutionScaleRatio);
 
@@ -268,7 +268,7 @@ public static class MidWriter {
         {
             int index = eventList.Count - 1;
 
-            while (index >= 0 && sortableByte.position < eventList[index].position)
+            while (index >= 0 && sortableByte.tick < eventList[index].tick)
                 --index;
 
             eventList.Insert(index + 1, sortableByte);
@@ -295,7 +295,7 @@ public static class MidWriter {
                 if (exportOptions.forced)
                 {
                     // Forced notes               
-                    if ((note.flags & Note.Flags.Forced) != 0 && (note.previous == null || (note.previous.position != note.position)))     // Don't overlap on chords
+                    if ((note.flags & Note.Flags.Forced) != 0 && (note.previous == null || (note.previous.tick != note.tick)))     // Don't overlap on chords
                     {
                         // Add a note
                         int forcedNoteNumber;
@@ -306,8 +306,8 @@ public static class MidWriter {
                         else
                             forcedNoteNumber = difficultyNumber + 6;
 
-                        SortableBytes forceOnEvent = new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)forcedNoteNumber, VELOCITY });
-                        SortableBytes forceOffEvent = new SortableBytes(note.position + 1, new byte[] { OFF_EVENT, (byte)forcedNoteNumber, VELOCITY });
+                        SortableBytes forceOnEvent = new SortableBytes(note.tick, new byte[] { ON_EVENT, (byte)forcedNoteNumber, VELOCITY });
+                        SortableBytes forceOffEvent = new SortableBytes(note.tick + 1, new byte[] { OFF_EVENT, (byte)forcedNoteNumber, VELOCITY });
 
                         InsertionSort(forceOnEvent);
                         InsertionSort(forceOffEvent);
@@ -326,8 +326,8 @@ public static class MidWriter {
                         byte[] tapOnEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_ON, SYSEX_END };
                         byte[] tapOffEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_OFF, SYSEX_END };
 
-                        SortableBytes tapOnEvent = new SortableBytes(note.position, tapOnEventBytes);
-                        SortableBytes tapOffEvent = new SortableBytes(nextNonTap.position + 1, tapOffEventBytes);
+                        SortableBytes tapOnEvent = new SortableBytes(note.tick, tapOnEventBytes);
+                        SortableBytes tapOffEvent = new SortableBytes(nextNonTap.tick + 1, tapOffEventBytes);
 
                         InsertionSort(tapOnEvent);
                         InsertionSort(tapOffEvent);
@@ -365,8 +365,8 @@ public static class MidWriter {
                     byte[] openOnEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, diff, 0x01, SYSEX_ON, SYSEX_END };
                     byte[] openOffEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, diff, 0x01, SYSEX_OFF, SYSEX_END };
 
-                    SortableBytes openOnEvent = new SortableBytes(note.position, openOnEventBytes);
-                    SortableBytes openOffEvent = new SortableBytes(nextNonOpen.position + 1, openOffEventBytes);
+                    SortableBytes openOnEvent = new SortableBytes(note.tick, openOnEventBytes);
+                    SortableBytes openOffEvent = new SortableBytes(nextNonOpen.tick + 1, openOffEventBytes);
 
                     InsertionSort(openOnEvent);
                     InsertionSort(openOffEvent);
@@ -385,8 +385,8 @@ public static class MidWriter {
             {
                 InsertionSort(onEvent);
 
-                if (offEvent.position == onEvent.position)
-                    ++offEvent.position;
+                if (offEvent.tick == onEvent.tick)
+                    ++offEvent.tick;
 
                 InsertionSort(offEvent);
             }
@@ -402,7 +402,7 @@ public static class MidWriter {
         {
             int index = eventList.Count - 1;
 
-            while (index >= 0 && sortableByte.position < eventList[index].position)
+            while (index >= 0 && sortableByte.tick < eventList[index].tick)
                 --index;
 
             eventList.Insert(index + 1, sortableByte);
@@ -432,8 +432,8 @@ public static class MidWriter {
             {
                 InsertionSort(onEvent);
 
-                if (offEvent.position == onEvent.position)
-                    ++offEvent.position;
+                if (offEvent.tick == onEvent.tick)
+                    ++offEvent.tick;
 
                 InsertionSort(offEvent);
             }
@@ -650,14 +650,14 @@ public static class MidWriter {
 
     static void GetStarpowerBytes(Starpower sp, out SortableBytes onEvent, out SortableBytes offEvent)
     {
-        onEvent = new SortableBytes(sp.position, new byte[] { ON_EVENT, STARPOWER_NOTE, VELOCITY });
-        offEvent = new SortableBytes(sp.position + sp.length, new byte[] { OFF_EVENT, STARPOWER_NOTE, VELOCITY });
+        onEvent = new SortableBytes(sp.tick, new byte[] { ON_EVENT, STARPOWER_NOTE, VELOCITY });
+        offEvent = new SortableBytes(sp.tick + sp.length, new byte[] { OFF_EVENT, STARPOWER_NOTE, VELOCITY });
     }
 
     static SortableBytes GetChartEventBytes(ChartEvent chartEvent)
     {
         byte[] textEvent = MetaTextEvent(TEXT_EVENT, chartEvent.eventName);
-        return new SortableBytes(chartEvent.position, textEvent);
+        return new SortableBytes(chartEvent.tick, textEvent);
     }
 
     static void GetUnrecognisedChartNoteBytes(Note note, out SortableBytes onEvent, out SortableBytes offEvent)
@@ -667,8 +667,8 @@ public static class MidWriter {
 
     static void GetNoteNumberBytes(int noteNumber, Note note, out SortableBytes onEvent, out SortableBytes offEvent)
     {
-        onEvent = new SortableBytes(note.position, new byte[] { ON_EVENT, (byte)noteNumber, VELOCITY });
-        offEvent = new SortableBytes(note.position + note.length, new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY });
+        onEvent = new SortableBytes(note.tick, new byte[] { ON_EVENT, (byte)noteNumber, VELOCITY });
+        offEvent = new SortableBytes(note.tick + note.length, new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY });
     }
 
     static int GetStandardNoteNumber(Note note, Song.Instrument instrument, Song.Difficulty difficulty)

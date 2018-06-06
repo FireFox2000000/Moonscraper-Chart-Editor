@@ -45,14 +45,14 @@ public class HitWindow<TNoteHitKnowledge> where TNoteHitKnowledge : NoteHitKnowl
 
         foreach (TNoteHitKnowledge noteHitData in m_noteQueue)
         {
-            if (note.position == noteHitData.note.position)
+            if (note.tick == noteHitData.note.tick)
                 return false;
         }
 
         TNoteHitKnowledge newNoteKnowledge = System.Activator.CreateInstance(typeof(TNoteHitKnowledge), note) as TNoteHitKnowledge;
         m_noteQueue.Add(newNoteKnowledge);
 
-        if (m_noteQueue.Count > 1 && m_noteQueue[m_noteQueue.Count - 1].note.position <= m_noteQueue[m_noteQueue.Count - 2].note.position)
+        if (m_noteQueue.Count > 1 && m_noteQueue[m_noteQueue.Count - 1].note.tick <= m_noteQueue[m_noteQueue.Count - 2].note.tick)
         {
             Debug.LogError("Notes inserted into hit window in the wrong order");
         }

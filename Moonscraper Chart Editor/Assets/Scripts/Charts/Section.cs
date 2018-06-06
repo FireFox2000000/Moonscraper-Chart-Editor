@@ -10,11 +10,11 @@ public class Section : Event
 
     public Section(string _title, uint _position) : base(_title, _position) { }
 
-    public Section(Section section) : base(section.title, section.position) { }
+    public Section(Section section) : base(section.title, section.tick) { }
 
     internal override string GetSaveString()
     {
-        return Globals.TABSPACE + position + " = E \"section " + title + "\"" + Globals.LINE_ENDING;
+        return Globals.TABSPACE + tick + " = E \"section " + title + "\"" + Globals.LINE_ENDING;
     }
 
     new public static bool regexMatch(string line)

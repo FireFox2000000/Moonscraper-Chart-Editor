@@ -21,7 +21,7 @@ public class PlaceTimesignature : PlaceSongObject {
         base.Update();
 
         UpdateSnappedPos(4);
-        songObject.position = objectSnappedChartPos;
+        songObject.tick = objectSnappedChartPos;
     }
 
     protected override void Controls()
@@ -44,7 +44,7 @@ public class PlaceTimesignature : PlaceSongObject {
                 editor.actionHistory.Insert(new ActionHistory.Add(ts));
                 AddObject();
             }
-            else if (searchArray[pos].position != 0)
+            else if (searchArray[pos].tick != 0)
             {
                 editor.actionHistory.Insert(new ActionHistory.Delete(searchArray[pos]));
                 searchArray[pos].Delete();

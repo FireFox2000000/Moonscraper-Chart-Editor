@@ -81,7 +81,7 @@ public class GroupSelect : ToolObject {
             if (Input.GetMouseButtonDown(0) && Mouse.world2DPosition != null)
             {
                 initWorld2DPos = (Vector2)Mouse.world2DPosition;
-                initWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
+                initWorld2DPos.y = editor.currentSong.TickToWorldYPosition(objectSnappedChartPos);
                 startWorld2DChartPos = objectSnappedChartPos;
 
                 Color col = Color.green;
@@ -110,7 +110,7 @@ public class GroupSelect : ToolObject {
             if (Input.GetMouseButton(0) && Mouse.world2DPosition != null)
             {
                 endWorld2DPos = (Vector2)Mouse.world2DPosition;
-                endWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
+                endWorld2DPos.y = editor.currentSong.TickToWorldYPosition(objectSnappedChartPos);
 
                 endWorld2DChartPos = objectSnappedChartPos;
             }
@@ -199,8 +199,8 @@ public class GroupSelect : ToolObject {
 
     void UpdateSelectionAreaVisual(Transform areaTransform, Clipboard.SelectionArea area)
     {
-        float minTickWorldPos = editor.currentSong.ChartPositionToWorldYPosition(area.tickMin);
-        float maxTickWorldPos = editor.currentSong.ChartPositionToWorldYPosition(area.tickMax);
+        float minTickWorldPos = editor.currentSong.TickToWorldYPosition(area.tickMin);
+        float maxTickWorldPos = editor.currentSong.TickToWorldYPosition(area.tickMax);
 
         Vector3 scale = new Vector3(area.width, maxTickWorldPos - minTickWorldPos, areaTransform.localScale.z);
         Vector3 position = new Vector3(area.xPos + (area.width / 2), (minTickWorldPos + maxTickWorldPos) / 2, areaTransform.position.z);
@@ -221,7 +221,7 @@ public class GroupSelect : ToolObject {
 
         for (int i = index; i < index + length; ++i)
         {
-            if (chartObjects[i].position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObjects[i]), areaRect))
+            if (chartObjects[i].tick < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObjects[i]), areaRect))
             {
                 chartObjectsList.Add(chartObjects[i]);
             }

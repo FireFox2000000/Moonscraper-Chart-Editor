@@ -139,9 +139,9 @@ public class Note : ChartObject
         next = null;
     }
 
-    public Note (Note note) : base(note.position)
+    public Note (Note note) : base(note.tick)
     {
-        position = note.position;
+        tick = note.tick;
         length = note.length;
         flags = note.flags;
         rawNote = note.rawNote;
@@ -198,7 +198,7 @@ public class Note : ChartObject
         get
         {
             Note nextNote = next;
-            while (nextNote != null && nextNote.position == position)
+            while (nextNote != null && nextNote.tick == tick)
                 nextNote = nextNote.next;
             return nextNote;
         }
@@ -212,7 +212,7 @@ public class Note : ChartObject
         get
         {
             Note previousNote = previous;
-            while (previousNote != null && previousNote.position == position)
+            while (previousNote != null && previousNote.tick == tick)
                 previousNote = previousNote.previous;
             return previousNote;
         }
@@ -236,7 +236,7 @@ public class Note : ChartObject
         if (b.GetType() == typeof(Note))
         {
             Note realB = b as Note;
-            if (position == realB.position && rawNote == realB.rawNote)
+            if (tick == realB.tick && rawNote == realB.rawNote)
                 return true;
             else
                 return false;
@@ -250,9 +250,9 @@ public class Note : ChartObject
         if (b.GetType() == typeof(Note))
         {
             Note realB = b as Note;
-            if (position < b.position)
+            if (tick < b.tick)
                 return true;
-            else if (position == b.position)
+            else if (tick == b.tick)
             {
                 if (rawNote < realB.rawNote)
                     return true;
@@ -268,7 +268,7 @@ public class Note : ChartObject
     {
         get
         {
-            return ((previous != null && previous.position == position) || (next != null && next.position == position));
+            return ((previous != null && previous.tick == tick) || (next != null && next.tick == tick));
         }
     }
 
@@ -290,7 +290,7 @@ public class Note : ChartObject
                     // Check distance from previous note 
                     int HOPODistance = (int)(65 * song.resolution / Song.STANDARD_BEAT_RESOLUTION);
 
-                    if (position - previous.position <= HOPODistance)
+                    if (tick - previous.tick <= HOPODistance)
                         HOPO = true;
                 }
             }
@@ -387,7 +387,7 @@ public class Note : ChartObject
         if (guitarFret == GuitarFret.Open)
             fretNumber = 7;
 
-        return Globals.TABSPACE + position + " = N " + fretNumber + " " + length + Globals.LINE_ENDING;          // 48 = N 2 0
+        return Globals.TABSPACE + tick + " = N " + fretNumber + " " + length + Globals.LINE_ENDING;          // 48 = N 2 0
     }
 
     public string GetFlagsSaveString()
@@ -395,10 +395,10 @@ public class Note : ChartObject
         string saveString = string.Empty;
 
         if ((flags & Flags.Forced) == Flags.Forced)
-            saveString += Globals.TABSPACE + position + " = N 5 0 " + Globals.LINE_ENDING;
+            saveString += Globals.TABSPACE + tick + " = N 5 0 " + Globals.LINE_ENDING;
 
         if ((flags & Flags.Tap) == Flags.Tap)
-            saveString += Globals.TABSPACE + position + " = N 6 0 " + Globals.LINE_ENDING;
+            saveString += Globals.TABSPACE + tick + " = N 6 0 " + Globals.LINE_ENDING;
 
         return saveString;
     }

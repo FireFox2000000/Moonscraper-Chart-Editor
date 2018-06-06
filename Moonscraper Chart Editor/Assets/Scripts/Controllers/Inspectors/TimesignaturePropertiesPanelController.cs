@@ -34,7 +34,7 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
         base.Update();
         if (currentTS != null)
         {
-            positionText.text = "Position: " + currentTS.position.ToString();
+            positionText.text = "Position: " + currentTS.tick.ToString();
 
             if (tsValue.text != string.Empty)
                 tsValue.text = currentTS.numerator.ToString();

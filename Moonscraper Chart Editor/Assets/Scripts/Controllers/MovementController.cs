@@ -27,7 +27,7 @@ public abstract class MovementController : MonoBehaviour {
     protected float mouseScrollSensitivity = 0.2f;      // May miss snap gaps if placed too high
 
     // Jump to a chart position
-    public abstract void SetPosition(uint chartPosition);
+    public abstract void SetPosition(uint tick);
 
     public static TimeSync timeSync;
 

@@ -38,7 +38,7 @@ public class PlaceBPM : PlaceSongObject {
                 editor.actionHistory.Insert(new ActionHistory.Add(bpm));
                 AddObject();
             }
-            else if (searchArray[pos].position != 0)
+            else if (searchArray[pos].tick != 0)
             {
                 editor.actionHistory.Insert(new ActionHistory.Delete(searchArray[pos]));
                 searchArray[pos].Delete();
@@ -54,9 +54,9 @@ public class PlaceBPM : PlaceSongObject {
         if (setAsLastBpm)
         {
             // Set BPM value to the last bpm in the chart from the current position
-            int lastBpmArrayPos = SongObjectHelper.FindClosestPosition(bpm.position, editor.currentSong.bpms);
+            int lastBpmArrayPos = SongObjectHelper.FindClosestPosition(bpm.tick, editor.currentSong.bpms);
 
-            if (editor.currentSong.bpms[lastBpmArrayPos].position > bpm.position)
+            if (editor.currentSong.bpms[lastBpmArrayPos].tick > bpm.tick)
                 --lastBpmArrayPos;
 
             if (lastBpmArrayPos != SongObjectHelper.NOTFOUND && lastBpmArrayPos >= 0)
@@ -85,7 +85,7 @@ public class PlaceBPM : PlaceSongObject {
 
         if (bpmToAdd.anchor != null)
         {
-            bpmToAdd.anchor = bpmToAdd.song.LiveChartPositionToTime(bpmToAdd.position, bpmToAdd.song.resolution);
+            bpmToAdd.anchor = bpmToAdd.song.LiveTickToTime(bpmToAdd.tick, bpmToAdd.song.resolution);
         }
 
         ChartEditor.GetInstance().songObjectPoolManager.SetAllPoolsDirty();

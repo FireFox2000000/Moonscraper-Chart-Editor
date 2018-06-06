@@ -19,7 +19,7 @@ public class HitWindowFeeder : MonoBehaviour {
             // We only want 1 note per position so that we can compare using the note mask
             foreach (NoteController insertedNCon in physicsWindow)
             {
-                if (nCon.note.position == insertedNCon.note.position)
+                if (nCon.note.tick == insertedNCon.note.tick)
                     return;
             }
 

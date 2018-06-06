@@ -24,7 +24,7 @@ public class TimesignatureController : SongObjectController {
     public override void OnSelectableMouseDrag()
     {
         // Move note
-        if (ts.position != 0)
+        if (ts.tick != 0)
         {
             base.OnSelectableMouseDrag();
         }

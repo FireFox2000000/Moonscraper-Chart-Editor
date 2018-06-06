@@ -65,7 +65,7 @@ public class CursorSelect : ToolObject
                 if (Mouse.world2DPosition != null)
                 {
                     endWorld2DPos = (Vector2)Mouse.world2DPosition;
-                    endWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
+                    endWorld2DPos.y = editor.currentSong.TickToWorldYPosition(objectSnappedChartPos);
 
                     endWorld2DChartPos = objectSnappedChartPos;
                 }
@@ -139,7 +139,7 @@ public class CursorSelect : ToolObject
     void InitGroupSelect()
     {
         initWorld2DPos = (Vector2)Mouse.world2DPosition;
-        initWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
+        initWorld2DPos.y = editor.currentSong.TickToWorldYPosition(objectSnappedChartPos);
         endWorld2DPos = initWorld2DPos;
         startWorld2DChartPos = objectSnappedChartPos;
         endWorld2DChartPos = startWorld2DChartPos;
@@ -168,7 +168,7 @@ public class CursorSelect : ToolObject
     void UpdateGroupSelectSize()
     {
         endWorld2DPos = (Vector2)Mouse.world2DPosition;
-        endWorld2DPos.y = editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos);
+        endWorld2DPos.y = editor.currentSong.TickToWorldYPosition(objectSnappedChartPos);
 
         endWorld2DChartPos = objectSnappedChartPos;
     }
@@ -253,7 +253,7 @@ public class CursorSelect : ToolObject
                 if ((SongObject.ID)chartObject.classID == SongObject.ID.ChartEvent)
                     offset = ChartEventController.GetOffset(editor, (ChartEvent)chartObject);
 
-                if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject, 0, offset), areaRect))
+                if (chartObject.tick < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject, 0, offset), areaRect))
                     chartObjectsList.Add(chartObject);
             }
         }
@@ -268,7 +268,7 @@ public class CursorSelect : ToolObject
             {
                 SongObject chartObject = editor.currentSong.syncTrack[i];
 
-                if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), areaRect))
+                if (chartObject.tick < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), areaRect))
                     chartObjectsList.Add(chartObject);
             }
 
@@ -282,7 +282,7 @@ public class CursorSelect : ToolObject
                 if ((SongObject.ID)chartObject.classID == SongObject.ID.Event)
                     offset = EventController.GetOffset(editor, (Event)chartObject);
 
-                if (chartObject.position < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject, 0, offset), areaRect))
+                if (chartObject.tick < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject, 0, offset), areaRect))
                     chartObjectsList.Add(chartObject);
             }
         }

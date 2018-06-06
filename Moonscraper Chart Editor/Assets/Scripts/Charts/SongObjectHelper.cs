@@ -68,13 +68,13 @@ public static class SongObjectHelper {
             midPoint = (lowerBound + upperBound) / 2;
             index = midPoint;
 
-            if (objects[midPoint].position == position)
+            if (objects[midPoint].tick == position)
             {
                 break;
             }
             else
             {
-                if (objects[midPoint].position < position)
+                if (objects[midPoint].tick < position)
                 {
                     // data is in upper half
                     lowerBound = midPoint + 1;
@@ -102,16 +102,16 @@ public static class SongObjectHelper {
     {
         int index = FindClosestPosition(position, objects);
 
-        if (index != NOTFOUND && objects[index].position == position)
+        if (index != NOTFOUND && objects[index].tick == position)
         {
             int lowRange = index, highRange = index;
 
-            while (lowRange > 0 && objects[index].position == objects[lowRange - 1].position)
+            while (lowRange > 0 && objects[index].tick == objects[lowRange - 1].tick)
             {
                 --lowRange;
             }
 
-            while (highRange < objects.Length - 1 && objects[index].position == objects[highRange + 1].position)
+            while (highRange < objects.Length - 1 && objects[index].tick == objects[highRange + 1].tick)
             {
                 ++highRange;
             }
@@ -151,7 +151,7 @@ public static class SongObjectHelper {
     {
         int pos = FindClosestPosition(position, objects);
 
-        if (pos != NOTFOUND && objects[pos].position != position)
+        if (pos != NOTFOUND && objects[pos].tick != position)
         {
             pos = NOTFOUND;
         }
@@ -239,7 +239,7 @@ public static class SongObjectHelper {
                 insertionPos = count;
                 list.Add(item);
             }
-            else if (list[count - 1].position == item.position && item.classID == list[count - 1].classID)
+            else if (list[count - 1].tick == item.tick && item.classID == list[count - 1].classID)
             {
                 // Linear search backwards
                 int pos = count - 1;
@@ -322,7 +322,7 @@ public static class SongObjectHelper {
             bool standardFound = false;
 
             // Collect all the flags
-            while (previous != null && previous.position == current.position)
+            while (previous != null && previous.tick == current.tick)
             {
                 if (previous.IsOpenNote())
                     openNote = previous;
@@ -333,7 +333,7 @@ public static class SongObjectHelper {
                 previous = previous.previous;
             }
 
-            while (next != null && next.position == current.position)
+            while (next != null && next.tick == current.tick)
             {
                 if (next.IsOpenNote())
                     openNote = next;
@@ -357,13 +357,13 @@ public static class SongObjectHelper {
 
                 previous = current.previous;
                 next = current.next;
-                while (previous != null && previous.position == current.position)
+                while (previous != null && previous.tick == current.tick)
                 {
                     previous.flags = flags;
                     previous = previous.previous;
                 }
 
-                while (next != null && next.position == current.position)
+                while (next != null && next.tick == current.tick)
                 {
                     next.flags = flags;
                     next = next.next;
@@ -441,7 +441,7 @@ public static class SongObjectHelper {
         else
         {
             // Find position may return an object located at a lower position than the minimum position
-            while (minArrayPos < list.Length && list[minArrayPos].position < minPos)
+            while (minArrayPos < list.Length && list[minArrayPos].tick < minPos)
             {
                 ++minArrayPos;
             }
@@ -450,13 +450,13 @@ public static class SongObjectHelper {
                 return;
 
             // Iterate to the very first object at a greater position, as there may be multiple objects located at the same position
-            while (minArrayPos - 1 >= 0 && list[minArrayPos - 1].position >= minPos)
+            while (minArrayPos - 1 >= 0 && list[minArrayPos - 1].tick >= minPos)
             {
                 --minArrayPos;
             }
 
             // Find position may return an object locationed at a greater position than the maximum position
-            while (maxArrayPos >= 0 && list[maxArrayPos].position > maxPos)
+            while (maxArrayPos >= 0 && list[maxArrayPos].tick > maxPos)
             {
                 --maxArrayPos;
             }
@@ -465,7 +465,7 @@ public static class SongObjectHelper {
                 return;
 
             // Iterate to the very last object at a lesser position, as there may be multiple objects located at the same position
-            while (maxArrayPos + 1 < list.Length && list[maxArrayPos + 1].position <= maxPos)
+            while (maxArrayPos + 1 < list.Length && list[maxArrayPos + 1].tick <= maxPos)
             {
                 ++maxArrayPos;
             }
@@ -476,7 +476,7 @@ public static class SongObjectHelper {
             index = minArrayPos;
             length = maxArrayPos - minArrayPos + 1;
 
-            if (list[minArrayPos].position < minPos || list[maxArrayPos].position > maxPos)
+            if (list[minArrayPos].tick < minPos || list[maxArrayPos].tick > maxPos)
                 length = 0;
         }
     }
@@ -506,7 +506,7 @@ public static class SongObjectHelper {
         if (closestPos != NOTFOUND)
         {
             // Select the smaller of the two
-            if (songObjects[closestPos].position <= position)
+            if (songObjects[closestPos].tick <= position)
                 return closestPos;
             else if (closestPos > 0)
                 return closestPos - 1;
@@ -523,7 +523,7 @@ public static class SongObjectHelper {
         if (closestPos != NOTFOUND)
         {
             // Select the larger of the two
-            if (songObjects[closestPos].position >= position)
+            if (songObjects[closestPos].tick >= position)
                 return closestPos;
             else if (closestPos < songObjects.Length - 1)
                 return closestPos + 1;
@@ -548,7 +548,7 @@ public static class SongObjectHelper {
         int pos = GetIndexOfPrevious(songObjects, position);
         if (pos != NOTFOUND)
         {
-            if (songObjects[pos].position == position && pos > 0)
+            if (songObjects[pos].tick == position && pos > 0)
                 --pos;
 
             return songObjects[pos];
@@ -562,7 +562,7 @@ public static class SongObjectHelper {
         int pos = GetIndexOfNext(songObjects, position);
         if (pos != NOTFOUND)
         {
-            if (songObjects[pos].position == position && pos < songObjects.Length - 1)
+            if (songObjects[pos].tick == position && pos < songObjects.Length - 1)
                 ++pos;
 
             return songObjects[pos];

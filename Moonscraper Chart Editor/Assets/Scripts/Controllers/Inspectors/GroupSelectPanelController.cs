@@ -109,7 +109,7 @@ public class GroupSelectPanelController : MonoBehaviour
     void SetSustain(uint length)
     {
         List<ActionHistory.Action> actions = new List<ActionHistory.Action>();
-        uint songEndTick = editor.currentSong.TimeToChartPosition(editor.currentSong.length, editor.currentSong.resolution);
+        uint songEndTick = editor.currentSong.TimeToTick(editor.currentSong.length, editor.currentSong.resolution);
 
         foreach (ChartObject chartObject in editor.currentSelectedObjects)
         {
@@ -118,7 +118,7 @@ public class GroupSelectPanelController : MonoBehaviour
                 Note note = chartObject as Note;
                 uint assignedLength = length;
                 if (length == uint.MaxValue)
-                    assignedLength = songEndTick - note.position;
+                    assignedLength = songEndTick - note.tick;
 
                 if (GameSettings.extendedSustainsEnabled)
                 {

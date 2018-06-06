@@ -25,7 +25,7 @@ public class Clipboard {
             //System.Windows.Forms.Clipboard.SetDataObject(data);
             //data = System.Windows.Forms.Clipboard.GetDataObject().GetData(typeof(SongObject[])) as SongObject[];
             if (data.Length > 0)
-                return (data[0].position - _areaChartPosMin);
+                return (data[0].tick - _areaChartPosMin);
             else
                 return 0;
         }
@@ -35,8 +35,8 @@ public class Clipboard {
     {
         Vector2 size;
 
-        float minWorldPos = song.ChartPositionToWorldYPosition(chartPosInit);
-        float maxWorldPos = song.ChartPositionToWorldYPosition(_areaChartPosMax - _areaChartPosMin + chartPosInit);
+        float minWorldPos = song.TickToWorldYPosition(chartPosInit);
+        float maxWorldPos = song.TickToWorldYPosition(_areaChartPosMax - _areaChartPosMin + chartPosInit);
 
         size = new Vector2(collisionAreaXSize, maxWorldPos - minWorldPos);
 
@@ -106,8 +106,8 @@ public class Clipboard {
             Vector2 position;
             Vector2 size;
 
-            float yMin = song.ChartPositionToWorldYPosition(tickMin);
-            float yMax = song.ChartPositionToWorldYPosition(tickMax);
+            float yMin = song.TickToWorldYPosition(tickMin);
+            float yMax = song.TickToWorldYPosition(tickMax);
             size.x = width;
             size.y = yMax - yMin;
 

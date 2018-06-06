@@ -7,18 +7,18 @@ using UnityEngine;
 
 public class SortableBytes
 {
-    public uint position;
+    public uint tick;
     public byte[] bytes;
 
     public SortableBytes()
     {
-        position = 0;
+        tick = 0;
         bytes = new byte[0];
     }
 
-    public SortableBytes(uint position, byte[] bytes)
+    public SortableBytes(uint tick, byte[] bytes)
     {
-        this.position = position;
+        this.tick = tick;
         this.bytes = bytes;
     }
 
@@ -41,7 +41,7 @@ public class SortableBytes
             else if (j >= b.Length)
                 selected = a[i++];
             else
-                selected = a[i].position < b[j].position ? a[i++] : b[j++];
+                selected = a[i].tick < b[j].tick ? a[i++] : b[j++];
 
             merged[k] = selected;
         }
@@ -76,7 +76,7 @@ public class SortableBytes
 
         while ((left <= eol) && (mid <= right))
         {
-            if (bytes[left].position <= bytes[mid].position)
+            if (bytes[left].tick <= bytes[mid].tick)
                 temp[pos++] = bytes[left++];
             else
                 temp[pos++] = bytes[mid++];

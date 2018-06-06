@@ -58,7 +58,7 @@ public abstract class SongObjectController : SelectableClick {
 
     protected virtual void UpdateCheck()
     {
-        if (songObject != null && songObject.position >= editor.minPos && songObject.position < editor.maxPos)
+        if (songObject != null && songObject.tick >= editor.minPos && songObject.tick < editor.maxPos)
         {
             if (Globals.applicationMode == Globals.ApplicationMode.Editor)
                 UpdateSongObject();
@@ -118,15 +118,15 @@ public abstract class SongObjectController : SelectableClick {
                         uint min;
                         uint max;
 
-                        if (editor.currentSelectedObjects[pos].position > songObject.position)
+                        if (editor.currentSelectedObjects[pos].tick > songObject.tick)
                         {
-                            max = editor.currentSelectedObjects[pos].position;
-                            min = songObject.position;
+                            max = editor.currentSelectedObjects[pos].tick;
+                            min = songObject.tick;
                         }
                         else
                         {
-                            min = editor.currentSelectedObjects[pos].position;
-                            max = songObject.position;
+                            min = editor.currentSelectedObjects[pos].tick;
+                            max = songObject.tick;
                         }
 
                         editor.currentSelectedObjects = SongObjectHelper.GetRangeCopy(editor.currentChart.chartObjects, min, max);
@@ -145,16 +145,16 @@ public abstract class SongObjectController : SelectableClick {
             Eraser.dragging)
             )
         {
-            if ((songObject.classID != (int)SongObject.ID.BPM && songObject.classID != (int)SongObject.ID.TimeSignature) || songObject.position != 0)
+            if ((songObject.classID != (int)SongObject.ID.BPM && songObject.classID != (int)SongObject.ID.TimeSignature) || songObject.tick != 0)
             {
                 if (!Input.GetMouseButton(1))
                 {
-                    Debug.Log("Deleted " + songObject + " at position " + songObject.position + " with eraser tool");
+                    Debug.Log("Deleted " + songObject + " at position " + songObject.tick + " with eraser tool");
                     Eraser.dragEraseHistory.Add(new ActionHistory.Delete(songObject));
                 }
                 else
                 {
-                    Debug.Log("Deleted " + songObject + " at position " + songObject.position + " with hold-right left-click shortcut");
+                    Debug.Log("Deleted " + songObject + " at position " + songObject.tick + " with hold-right left-click shortcut");
                     editor.actionHistory.Insert(new ActionHistory.Delete(songObject));
                 }
                 songObject.Delete();

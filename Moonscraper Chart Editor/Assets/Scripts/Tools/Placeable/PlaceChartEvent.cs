@@ -34,7 +34,7 @@ public class PlaceChartEvent : PlaceSongObject
 
         int offset = 0;
         int index, length;
-        SongObjectHelper.GetRange(events, chartEvent.position, chartEvent.position, out index, out length);
+        SongObjectHelper.GetRange(events, chartEvent.tick, chartEvent.tick, out index, out length);
 
         // Determine the offset for the object
         for (int i = index; i < index + length; ++i)

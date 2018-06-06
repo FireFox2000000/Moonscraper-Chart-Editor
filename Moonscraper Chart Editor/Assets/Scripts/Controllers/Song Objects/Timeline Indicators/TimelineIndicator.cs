@@ -22,7 +22,7 @@ public abstract class TimelineIndicator : MonoBehaviour {
 
     protected Vector3 GetLocalPos(uint position, Song song)
     {
-        float time = song.ChartPositionToTime(position, song.resolution);
+        float time = song.TickToTime(position, song.resolution);
 
         float endTime = song.length;
 
@@ -35,6 +35,6 @@ public abstract class TimelineIndicator : MonoBehaviour {
     public virtual void ExplicitUpdate()
     {
         if (songObject != null && songObject.song != null)
-            transform.localPosition = GetLocalPos(songObject.position, songObject.song);
+            transform.localPosition = GetLocalPos(songObject.tick, songObject.song);
     }
 }

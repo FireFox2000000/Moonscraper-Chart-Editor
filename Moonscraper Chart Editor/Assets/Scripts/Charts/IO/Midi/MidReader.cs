@@ -56,7 +56,7 @@ public static class MidReader {
 
         song.resolution = (short)midi.DeltaTicksPerQuarterNote;
 
-        // Read all bpm data in first. This will also allow song.TimeToChartPosition to function properly.
+        // Read all bpm data in first. This will also allow song.TimeToTick to function properly.
         ReadSync(midi.Events[0], song);
 
         for (int i = 1; i < midi.Tracks; ++i)

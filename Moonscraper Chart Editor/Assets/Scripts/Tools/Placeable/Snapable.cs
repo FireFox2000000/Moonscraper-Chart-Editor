@@ -21,7 +21,7 @@ public abstract class Snapable : MonoBehaviour {
     {
         UpdateSnappedPos();
 
-        transform.position = new Vector3(transform.position.x, editor.currentSong.ChartPositionToWorldYPosition(objectSnappedChartPos), transform.position.z);
+        transform.position = new Vector3(transform.position.x, editor.currentSong.TickToWorldYPosition(objectSnappedChartPos), transform.position.z);
     }
 
     protected virtual void Controls()
@@ -39,11 +39,11 @@ public abstract class Snapable : MonoBehaviour {
         {
             Vector2 mousePos = (Vector2)Mouse.world2DPosition;
             float ypos = mousePos.y;
-            return editor.currentSong.WorldPositionToSnappedChartPosition(ypos, step);
+            return editor.currentSong.WorldPositionToSnappedTick(ypos, step);
         }
         else
         {
-            return editor.currentSong.WorldPositionToSnappedChartPosition(editor.mouseYMaxLimit.position.y, step);
+            return editor.currentSong.WorldPositionToSnappedTick(editor.mouseYMaxLimit.position.y, step);
         }
     }
 
@@ -51,7 +51,7 @@ public abstract class Snapable : MonoBehaviour {
     {
         if (GameSettings.keysModeEnabled && Toolpane.currentTool != Toolpane.Tools.Cursor)
         {
-            objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedChartPosition(editor.visibleStrikeline.position.y, step);
+            objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedTick(editor.visibleStrikeline.position.y, step);
         }
         else
         {
@@ -70,44 +70,44 @@ public abstract class Snapable : MonoBehaviour {
             Controls();
     }
 
-    public static uint ChartPositionToSnappedChartPosition(uint chartPosition, int step, float resolution)
+    public static uint TickToSnappedTick(uint tick, int step, float resolution)
     {
         // Snap position based on step
         float factor = Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION;
-        float divisor = chartPosition / factor;
+        float divisor = tick / factor;
         float lowerBound = (int)divisor * factor;
         float remainder = divisor - (int)divisor;
 
         if (remainder > 0.5f)
-            chartPosition = (uint)Mathf.Round(lowerBound + factor);
+            tick = (uint)Mathf.Round(lowerBound + factor);
         else
-            chartPosition = (uint)Mathf.Round(lowerBound);
+            tick = (uint)Mathf.Round(lowerBound);
 
-        return chartPosition;
+        return tick;
     }
 
-    public static uint ChartIncrementStep(uint chartPosition, int step, float resolution)
+    public static uint ChartIncrementStep(uint tick, int step, float resolution)
     {
-        uint currentSnap = ChartPositionToSnappedChartPosition(chartPosition, step, resolution);
+        uint currentSnap = TickToSnappedTick(tick, step, resolution);
 
-        if (currentSnap <= chartPosition)
+        if (currentSnap <= tick)
         {
-            currentSnap = ChartPositionToSnappedChartPosition(chartPosition + (uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION), step, resolution);
+            currentSnap = TickToSnappedTick(tick + (uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION), step, resolution);
         }
 
         return currentSnap;
     }
 
-    public static uint ChartDecrementStep(uint chartPosition, int step, float resolution)
+    public static uint ChartDecrementStep(uint tick, int step, float resolution)
     {
-        uint currentSnap = ChartPositionToSnappedChartPosition(chartPosition, step, resolution);
+        uint currentSnap = TickToSnappedTick(tick, step, resolution);
 
-        if (currentSnap >= chartPosition)
+        if (currentSnap >= tick)
         {
-            if ((uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION) >= chartPosition)
+            if ((uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION) >= tick)
                 currentSnap = 0;
             else
-                currentSnap = ChartPositionToSnappedChartPosition(chartPosition - (uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION), step, resolution);
+                currentSnap = TickToSnappedTick(tick - (uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION), step, resolution);
         }
 
         return currentSnap;

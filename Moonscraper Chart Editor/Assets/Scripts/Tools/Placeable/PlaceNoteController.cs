@@ -246,7 +246,7 @@ public class PlaceNoteController : ObjectlessTool {
 
                 if (pos == SongObjectHelper.NOTFOUND)
                 {
-                    Debug.Log("Added " + keyboardPlaceableNotes[notePos].note.rawNote + " note at position " + keyboardPlaceableNotes[notePos].note.position + " using keyboard controls");
+                    Debug.Log("Added " + keyboardPlaceableNotes[notePos].note.rawNote + " note at position " + keyboardPlaceableNotes[notePos].note.tick + " using keyboard controls");
                     heldInitialOverwriteActions[i] = PlaceNote.AddObjectToCurrentChart((Note)keyboardPlaceableNotes[notePos].note.Clone(), editor, out heldNotes[i]);
                     
                     //editor.actionHistory.Insert(PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor, out heldNotes[i - 1]));
@@ -254,7 +254,7 @@ public class PlaceNoteController : ObjectlessTool {
                 else
                 {
                     editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentChart.notes[pos]));
-                    Debug.Log("Removed " + editor.currentChart.notes[pos].rawNote + " note at position " + editor.currentChart.notes[pos].position + " using keyboard controls");
+                    Debug.Log("Removed " + editor.currentChart.notes[pos].rawNote + " note at position " + editor.currentChart.notes[pos].tick + " using keyboard controls");
                     editor.currentChart.notes[pos].Delete();
                 }
             }
@@ -291,7 +291,7 @@ public class PlaceNoteController : ObjectlessTool {
                 else if (Input.GetKeyDown(i.ToString()))
                 {
                     editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentChart.notes[pos]));
-                    Debug.Log("Removed " + editor.currentChart.notes[pos].rawNote + " note at position " + editor.currentChart.notes[pos].position + " using keyboard controls");
+                    Debug.Log("Removed " + editor.currentChart.notes[pos].rawNote + " note at position " + editor.currentChart.notes[pos].tick + " using keyboard controls");
                     editor.currentChart.notes[pos].Delete();
                     inputBlock[i] = true;
                 }

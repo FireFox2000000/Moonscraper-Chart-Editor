@@ -308,15 +308,15 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
             foreach (SongObject so in editor.currentSelectedObjects)
             {
-                if (so.position < highlightRangeMin)
-                    highlightRangeMin = so.position;
+                if (so.tick < highlightRangeMin)
+                    highlightRangeMin = so.tick;
 
-                if (so.position > highlightRangeMax)
-                    highlightRangeMax = so.position;
+                if (so.tick > highlightRangeMax)
+                    highlightRangeMax = so.tick;
             }
 
-            float minTime = editor.currentSong.ChartPositionToTime(highlightRangeMin, editor.currentSong.resolution);
-            float maxTime = editor.currentSong.ChartPositionToTime(highlightRangeMax, editor.currentSong.resolution);
+            float minTime = editor.currentSong.TickToTime(highlightRangeMin, editor.currentSong.resolution);
+            float maxTime = editor.currentSong.TickToTime(highlightRangeMax, editor.currentSong.resolution);
 
             float endTime = editor.currentSong.length;
 

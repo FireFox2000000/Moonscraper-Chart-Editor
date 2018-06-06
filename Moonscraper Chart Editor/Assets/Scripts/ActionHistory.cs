@@ -70,8 +70,8 @@ public class ActionHistory
             if (Toolpane.currentTool != Toolpane.Tools.Note)
                 editor.currentSelectedObject = null;
 
-            if (setPos.position < editor.currentSong.WorldYPositionToChartPosition(editor.visibleStrikeline.position.y) || setPos.position > editor.maxPos)
-                editor.movement.SetPosition(setPos.position);
+            if (setPos.tick < editor.currentSong.WorldYPositionToTick(editor.visibleStrikeline.position.y) || setPos.tick > editor.maxPos)
+                editor.movement.SetPosition(setPos.tick);
 
             if (setPos.GetType().IsSubclassOf(typeof(ChartObject)))
             {
@@ -115,8 +115,8 @@ public class ActionHistory
             if (Toolpane.currentTool != Toolpane.Tools.Note)
                 editor.currentSelectedObject = null;
 
-            if (setPos.position < editor.currentSong.WorldYPositionToChartPosition(editor.visibleStrikeline.position.y) || setPos.position > editor.maxPos)
-                editor.movement.SetPosition(setPos.position);
+            if (setPos.tick < editor.currentSong.WorldYPositionToTick(editor.visibleStrikeline.position.y) || setPos.tick > editor.maxPos)
+                editor.movement.SetPosition(setPos.tick);
 
             Debug.Log("Redo: " + actionsUndone + " actions");
             return true;

@@ -103,7 +103,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
                 noteTypeString = currentNote.guitarFret.ToString();
 
             fretText.text = "Fret: " + noteTypeString;
-            positionText.text = "Position: " + currentNote.position.ToString();
+            positionText.text = "Position: " + currentNote.tick.ToString();
             sustainText.text = "Length: " + currentNote.length.ToString();
         }
 

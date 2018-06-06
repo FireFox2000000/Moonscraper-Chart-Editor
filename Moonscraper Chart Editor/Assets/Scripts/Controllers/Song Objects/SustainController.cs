@@ -123,8 +123,8 @@ public class SustainController : SelectableClick {
 
         if (nextFret != null)
         {
-            if (nextFret.position < note.position + note.length)
-                note.length = nextFret.position - note.position;
+            if (nextFret.tick < note.tick + note.length)
+                note.length = nextFret.tick - note.tick;
         }
     }
 
@@ -135,7 +135,7 @@ public class SustainController : SelectableClick {
         if (note.length != 0)
         {
             float lowerPos = note.worldYPosition;
-            float higherPos = note.song.ChartPositionToWorldYPosition(note.position + note.length);
+            float higherPos = note.song.TickToWorldYPosition(note.tick + note.length);
 
             if (higherPos > editor.camYMax.position.y)
                 higherPos = editor.camYMax.position.y;
@@ -194,11 +194,11 @@ public class SustainController : SelectableClick {
 
         if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
         {
-            snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(nCon.note.song.WorldYPositionToChartPosition(((Vector2)Mouse.world2DPosition).y), GameSettings.step, note.song.resolution);
+            snappedChartPos = Snapable.TickToSnappedTick(nCon.note.song.WorldYPositionToTick(((Vector2)Mouse.world2DPosition).y), GameSettings.step, note.song.resolution);
         }
         else
         {
-            snappedChartPos = Snapable.ChartPositionToSnappedChartPosition(note.song.WorldYPositionToChartPosition(editor.mouseYMaxLimit.position.y), GameSettings.step, note.song.resolution);
+            snappedChartPos = Snapable.TickToSnappedTick(note.song.WorldYPositionToTick(editor.mouseYMaxLimit.position.y), GameSettings.step, note.song.resolution);
         }
 
         return snappedChartPos;
@@ -211,9 +211,9 @@ public class SustainController : SelectableClick {
 
         while (next != null)
         {
-            if (next.IsOpenNote() || (next.rawNote == note.rawNote && note.position + note.length > next.position))
+            if (next.IsOpenNote() || (next.rawNote == note.rawNote && note.tick + note.length > next.tick))
                 return next;
-            else if (next.position >= note.position + note.length)      // Stop searching early
+            else if (next.tick >= note.tick + note.length)      // Stop searching early
                 return null;
 
             next = next.next;

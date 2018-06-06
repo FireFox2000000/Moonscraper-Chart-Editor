@@ -85,7 +85,7 @@ public class PlaceStarpower : PlaceSongObject {
             Note[] notes = editor.currentChart.notes;
             uint maxLength = prevSpLength > lastPlacedSP.length ? prevSpLength : lastPlacedSP.length;
 
-            SongObjectHelper.GetRange(notes, lastPlacedSP.position, lastPlacedSP.position + maxLength, out index, out length);
+            SongObjectHelper.GetRange(notes, lastPlacedSP.tick, lastPlacedSP.tick + maxLength, out index, out length);
 
             for (int i = index; i < index + length; ++i)
             {
@@ -177,7 +177,7 @@ public class PlaceStarpower : PlaceSongObject {
     {
         int start, length;
         Note[] notes = sp.chart.notes;
-        SongObjectHelper.GetRange(notes, sp.position, sp.position + sp.length, out start, out length);
+        SongObjectHelper.GetRange(notes, sp.tick, sp.tick + sp.length, out start, out length);
 
         for (int i = start; i < start + length; ++i)
         {
@@ -198,29 +198,29 @@ public class PlaceStarpower : PlaceSongObject {
                 ++arrayPos;
             }
            
-            if (arrayPos > 0 && chart.starPower[arrayPos - 1].position < sp.position)
+            if (arrayPos > 0 && chart.starPower[arrayPos - 1].tick < sp.tick)
             {
                 
                 Starpower prevSp = chart.starPower[arrayPos - 1];
                 // Cap previous sp
-                if (prevSp.position + prevSp.length > sp.position)
+                if (prevSp.tick + prevSp.length > sp.tick)
                 {
                     Starpower originalPrev = (Starpower)prevSp.Clone();
                     
-                    prevSp.length = sp.position - prevSp.position;
+                    prevSp.length = sp.tick - prevSp.tick;
                     record.Add(new ActionHistory.Modify(originalPrev, prevSp));
                 }
             }
 
-            if (arrayPos < chart.starPower.Length && chart.starPower[arrayPos].position > sp.position)
+            if (arrayPos < chart.starPower.Length && chart.starPower[arrayPos].tick > sp.tick)
             {       
                 Starpower nextSp = chart.starPower[arrayPos];
 
                 // Cap self
-                if (sp.position + sp.length > nextSp.position)
+                if (sp.tick + sp.length > nextSp.tick)
                 {
                     Starpower originalNext = (Starpower)nextSp.Clone();
-                    sp.length = nextSp.position - sp.position;
+                    sp.length = nextSp.tick - sp.tick;
                     record.Add(new ActionHistory.Modify(originalNext, nextSp));
                 }
             }

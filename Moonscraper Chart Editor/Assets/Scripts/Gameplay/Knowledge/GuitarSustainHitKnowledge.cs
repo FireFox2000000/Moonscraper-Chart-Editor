@@ -43,7 +43,7 @@ public class GuitarSustainHitKnowledge {
             Note note = sustain.note;
             Song song = note.song;
 
-            if (song.ChartPositionToTime(note.position + note.length, song.resolution) < time)
+            if (song.TickToTime(note.tick + note.length, song.resolution) < time)
                 currentSustains.Remove(sustain);
         }
     }

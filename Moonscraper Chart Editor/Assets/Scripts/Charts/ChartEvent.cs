@@ -10,7 +10,7 @@ public class ChartEvent : ChartObject
 
     public string eventName;
 
-    public ChartEvent(ChartEvent chartEvent) : base(chartEvent.position)
+    public ChartEvent(ChartEvent chartEvent) : base(chartEvent.tick)
     {
         eventName = chartEvent.eventName;
     }
@@ -25,7 +25,7 @@ public class ChartEvent : ChartObject
         if (b.GetType() == typeof(ChartEvent))
         {
             ChartEvent realB = b as ChartEvent;
-            if (position == realB.position && eventName == realB.eventName)
+            if (tick == realB.tick && eventName == realB.eventName)
                 return true;
             else
                 return false;
@@ -39,9 +39,9 @@ public class ChartEvent : ChartObject
         if (b.GetType() == typeof(ChartEvent))
         {
             ChartEvent realB = b as ChartEvent;
-            if (position < b.position)
+            if (tick < b.tick)
                 return true;
-            else if (position == b.position)
+            else if (tick == b.tick)
             {
                 if (string.Compare(eventName, realB.eventName) < 0)
                     return true;
@@ -56,7 +56,7 @@ public class ChartEvent : ChartObject
     internal override string GetSaveString()
     {
         // 1728 = E T
-        return Globals.TABSPACE + position + " = E " + eventName + Globals.LINE_ENDING;
+        return Globals.TABSPACE + tick + " = E " + eventName + Globals.LINE_ENDING;
     }
 
     public override SongObject Clone()

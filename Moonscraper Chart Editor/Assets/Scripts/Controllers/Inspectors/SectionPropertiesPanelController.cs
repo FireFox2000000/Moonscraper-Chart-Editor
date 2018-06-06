@@ -18,7 +18,7 @@ public class SectionPropertiesPanelController : PropertiesPanelController {
         base.Update();
         if (currentSection != null)
         {
-            positionText.text = "Position: " + currentSection.position.ToString();
+            positionText.text = "Position: " + currentSection.tick.ToString();
             sectionName.text = currentSection.title;
         }
         else

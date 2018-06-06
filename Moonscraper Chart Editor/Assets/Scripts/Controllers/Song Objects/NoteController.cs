@@ -68,15 +68,15 @@ public class NoteController : SongObjectController {
                     uint min;
                     uint max;
 
-                    if (editor.currentSelectedObjects[pos].position > songObject.position)
+                    if (editor.currentSelectedObjects[pos].tick > songObject.tick)
                     {
-                        max = editor.currentSelectedObjects[pos].position;
-                        min = songObject.position;
+                        max = editor.currentSelectedObjects[pos].tick;
+                        min = songObject.tick;
                     }
                     else
                     {
-                        min = editor.currentSelectedObjects[pos].position;
-                        max = songObject.position;
+                        min = editor.currentSelectedObjects[pos].tick;
+                        max = songObject.tick;
                     }
 
                     editor.currentSelectedObjects = SongObjectHelper.GetRangeCopy(editor.currentChart.chartObjects, min, max);
@@ -106,12 +106,12 @@ public class NoteController : SongObjectController {
 
                 if (!Input.GetMouseButton(1))
                 {
-                    Debug.Log("Deleted " + note + " chord at position " + note.position + " with eraser tool");
+                    Debug.Log("Deleted " + note + " chord at position " + note.tick + " with eraser tool");
                     Eraser.dragEraseHistory.Add(new ActionHistory.Delete(chordNotes));
                 }
                 else
                 {
-                    Debug.Log("Deleted " + note + " chord at position " + note.position + " with hold-right left-click shortcut");
+                    Debug.Log("Deleted " + note + " chord at position " + note.tick + " with hold-right left-click shortcut");
                     editor.actionHistory.Insert(new ActionHistory.Delete(chordNotes));
                 }
 
@@ -126,12 +126,12 @@ public class NoteController : SongObjectController {
             {
                 if (!Input.GetMouseButton(1))
                 {
-                    Debug.Log("Deleted " + note + " at position " + note.position + " with eraser tool");
+                    Debug.Log("Deleted " + note + " at position " + note.tick + " with eraser tool");
                     Eraser.dragEraseHistory.Add(new ActionHistory.Delete(note));
                 }
                 else
                 {
-                    Debug.Log("Deleted " + note + " at position " + note.position + " with hold-right left-click shortcut");
+                    Debug.Log("Deleted " + note + " at position " + note.tick + " with hold-right left-click shortcut");
                     editor.actionHistory.Insert(new ActionHistory.Delete(note));
                 }
 
@@ -273,10 +273,10 @@ public class NoteController : SongObjectController {
         Note note = this.note;
         if (note != null)
         {         
-            uint endPosition = note.position + note.length;
+            uint endPosition = note.tick + note.length;
             
             // Determine if a note is outside of the view range
-            if (endPosition < editor.minPos || note.position > editor.maxPos)
+            if (endPosition < editor.minPos || note.tick > editor.maxPos)
             {
                 gameObject.SetActive(false);
                 return;
@@ -285,7 +285,7 @@ public class NoteController : SongObjectController {
             if (isDirty)
                 UpdateSongObject();
 
-            if (note.position > editor.maxPos)
+            if (note.tick > editor.maxPos)
                 gameObject.SetActive(false);
 
             if (this.note == null)      // Was deactivated
@@ -383,7 +383,7 @@ public class NoteController : SongObjectController {
 
     void GameplaySustainHold()
     {
-        float sustainEndPoint = note.song.ChartPositionToWorldYPosition(note.position + note.length);
+        float sustainEndPoint = note.song.TickToWorldYPosition(note.tick + note.length);
         if (sustainEndPoint > editor.camYMax.position.y)
             sustainEndPoint = editor.camYMax.position.y;
 
@@ -486,7 +486,7 @@ public class NoteController : SongObjectController {
 
     static Note GetPreviousOfOpen(uint openNotePos, Note previousNote)
     {
-        if (previousNote == null || previousNote.position != openNotePos || (!previousNote.isChord && previousNote.position != openNotePos))
+        if (previousNote == null || previousNote.tick != openNotePos || (!previousNote.isChord && previousNote.tick != openNotePos))
             return previousNote;
         else
             return GetPreviousOfOpen(openNotePos, previousNote.previous);
@@ -494,7 +494,7 @@ public class NoteController : SongObjectController {
 
     static Note GetNextOfOpen(uint openNotePos, Note nextNote)
     {
-        if (nextNote == null || nextNote.position != openNotePos || (!nextNote.isChord && nextNote.position != openNotePos))
+        if (nextNote == null || nextNote.tick != openNotePos || (!nextNote.isChord && nextNote.tick != openNotePos))
             return nextNote;
         else
             return GetNextOfOpen(openNotePos, nextNote.next);

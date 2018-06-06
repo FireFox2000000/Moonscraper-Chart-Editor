@@ -57,14 +57,14 @@ public class BPMController : SongObjectController {
     public override void OnSelectableMouseDrag()
     {
         // Move object
-        if (bpm.position != 0)
+        if (bpm.tick != 0)
         {
             base.OnSelectableMouseDrag();
         }
 
         if (draggingInitialBpm != null && ShortcutInput.modifierInput && Input.GetMouseButton(1))
         {     
-            BPM previousBpm = SongObjectHelper.GetPreviousNonInclusive(bpm.song.bpms, bpm.position);
+            BPM previousBpm = SongObjectHelper.GetPreviousNonInclusive(bpm.song.bpms, bpm.tick);
             if (previousBpm != null && previousBpm.anchor == null)
             {
                 float desiredWorldPos;
@@ -77,13 +77,13 @@ public class BPMController : SongObjectController {
                 if (desiredTime < previousBpm.time)
                     desiredTime = previousBpm.time;
 
-                BPM nextBpm = SongObjectHelper.GetNextNonInclusive(bpm.song.bpms, bpm.position);
+                BPM nextBpm = SongObjectHelper.GetNextNonInclusive(bpm.song.bpms, bpm.tick);
                 if (nextBpm != null && nextBpm.anchor != null && desiredTime >= nextBpm.time)
                 {
                     desiredTime = nextBpm.time - 0.01f;
                 }
 
-                uint newBpmValue = (uint)(Mathf.Ceil((float)TickFunctions.DisToBpm(previousBpm.position, bpm.position, desiredTime - previousBpm.time, bpm.song.resolution)) * 1000);
+                uint newBpmValue = (uint)(Mathf.Ceil((float)TickFunctions.DisToBpm(previousBpm.tick, bpm.tick, desiredTime - previousBpm.time, bpm.song.resolution)) * 1000);
                 if (newBpmValue > 0)
                     previousBpm.value = newBpmValue;
 
@@ -101,7 +101,7 @@ public class BPMController : SongObjectController {
 
         if (ShortcutInput.modifierInput && Input.GetMouseButtonDown(1))
         {
-            BPM previousBpm = SongObjectHelper.GetPreviousNonInclusive(bpm.song.bpms, bpm.position);
+            BPM previousBpm = SongObjectHelper.GetPreviousNonInclusive(bpm.song.bpms, bpm.tick);
             if (previousBpm != null && previousBpm.anchor == null)
                 draggingInitialBpm = (BPM)previousBpm.Clone();
         }
@@ -113,7 +113,7 @@ public class BPMController : SongObjectController {
 
         if (draggingInitialBpm != null && Input.GetMouseButtonUp(1))
         {
-            BPM previousBpm = SongObjectHelper.GetPreviousNonInclusive(bpm.song.bpms, bpm.position);
+            BPM previousBpm = SongObjectHelper.GetPreviousNonInclusive(bpm.song.bpms, bpm.tick);
             if (draggingInitialBpm != null && previousBpm.value != draggingInitialBpm.value)
                 editor.actionHistory.Insert(new ActionHistory.Modify(draggingInitialBpm, previousBpm));
 

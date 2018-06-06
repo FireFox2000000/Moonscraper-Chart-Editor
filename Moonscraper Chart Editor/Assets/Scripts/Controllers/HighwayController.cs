@@ -48,7 +48,7 @@ public class HighwayController : MonoBehaviour {
     void UpdateBeatLines2()
     {
         // Update time signature lines SNAPPED
-        uint initSnappedLinePos = editor.currentSong.WorldPositionToSnappedChartPosition(editor.camYMin.position.y, 8);
+        uint initSnappedLinePos = editor.currentSong.WorldPositionToSnappedTick(editor.camYMin.position.y, 8);
         uint snappedLinePos = initSnappedLinePos;
 
         int measurePoolPos = 0, quarterPoolPos = 0, eigthPoolPos = 0;
@@ -61,7 +61,7 @@ public class HighwayController : MonoBehaviour {
             float tsRatio = STANDARD_TS_NUMERATOR / (float)prevTS.denominator;
 
             // Bold lines
-            if ((snappedLinePos - prevTS.position) % (uint)(editor.currentSong.resolution * prevTS.numerator * tsRatio) == 0)
+            if ((snappedLinePos - prevTS.tick) % (uint)(editor.currentSong.resolution * prevTS.numerator * tsRatio) == 0)
             {
                 SetBeatLinePosition(snappedLinePos, measureLinePool, ref measurePoolPos);
             }
@@ -90,7 +90,7 @@ public class HighwayController : MonoBehaviour {
     {
         if (beatLinePoolPos < beatLinePool.Length)
         {
-            beatLinePool[beatLinePoolPos].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedTickPos), 0);
+            beatLinePool[beatLinePoolPos].transform.position = new Vector3(0, editor.currentSong.TickToWorldYPosition(snappedTickPos), 0);
             beatLinePool[beatLinePoolPos].SetActive(true);
             ++beatLinePoolPos;
         }
@@ -111,7 +111,7 @@ public class HighwayController : MonoBehaviour {
     void UpdateBeatLines()
     {
         // Update time signature lines SNAPPED
-        uint initSnappedLinePos = editor.currentSong.WorldPositionToSnappedChartPosition(editor.camYMin.position.y, 4);
+        uint initSnappedLinePos = editor.currentSong.WorldPositionToSnappedTick(editor.camYMin.position.y, 4);
         uint snappedLinePos = initSnappedLinePos;
 
         // Place measure beat lines
@@ -125,7 +125,7 @@ public class HighwayController : MonoBehaviour {
             else
                 beatLinePool[i].transform.localScale = new Vector3(1, beatLinePool[i].transform.localScale.y, beatLinePool[i].transform.localScale.z);
 
-            beatLinePool[i].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+            beatLinePool[i].transform.position = new Vector3(0, editor.currentSong.TickToWorldYPosition(snappedLinePos), 0);
             snappedLinePos += (uint)(editor.currentSong.resolution);
             
             ++i;
@@ -159,7 +159,7 @@ public class HighwayController : MonoBehaviour {
                     {
                         // Line for every beat
                         quarterBeatLinePool[i].SetActive(true);
-                        quarterBeatLinePool[i].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+                        quarterBeatLinePool[i].transform.position = new Vector3(0, editor.currentSong.TickToWorldYPosition(snappedLinePos), 0);
                     }
                     else
                     {
@@ -168,7 +168,7 @@ public class HighwayController : MonoBehaviour {
                         if ((int)snappedLinePos - (int)offset - editor.currentSong.resolution >= 0 && (snappedLinePos - offset - editor.currentSong.resolution) % factor == 0)
                         {
                             quarterBeatLinePool[i].SetActive(true);
-                            quarterBeatLinePool[i].transform.position = new Vector3(0, editor.currentSong.ChartPositionToWorldYPosition(snappedLinePos), 0);
+                            quarterBeatLinePool[i].transform.position = new Vector3(0, editor.currentSong.TickToWorldYPosition(snappedLinePos), 0);
                         }
                     }
                 }

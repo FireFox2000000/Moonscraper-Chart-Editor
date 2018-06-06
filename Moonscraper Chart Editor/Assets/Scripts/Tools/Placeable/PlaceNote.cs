@@ -67,7 +67,7 @@ public class PlaceNote : PlaceSongObject {
         base.Update();
 
         // Get previous and next note
-        int pos = SongObjectHelper.FindClosestPosition(note.position, editor.currentChart.notes);
+        int pos = SongObjectHelper.FindClosestPosition(note.tick, editor.currentChart.notes);
         //Debug.Log(pos);
         if (pos == SongObjectHelper.NOTFOUND)
         {
@@ -109,20 +109,20 @@ public class PlaceNote : PlaceSongObject {
     {
         if (editor.currentChart.notes[closestNoteArrayPos] < note)
         {
-            Note previous = GetPreviousOfOpen(note.position, editor.currentChart.notes[closestNoteArrayPos]);
+            Note previous = GetPreviousOfOpen(note.tick, editor.currentChart.notes[closestNoteArrayPos]);
 
             note.previous = previous;
             if (previous != null)
-                note.next = GetNextOfOpen(note.position, previous.next);
+                note.next = GetNextOfOpen(note.tick, previous.next);
             else
-                note.next = GetNextOfOpen(note.position, editor.currentChart.notes[closestNoteArrayPos]);
+                note.next = GetNextOfOpen(note.tick, editor.currentChart.notes[closestNoteArrayPos]);
         }
         else if (editor.currentChart.notes[closestNoteArrayPos] > note)
         {
-            Note next = GetNextOfOpen(note.position, editor.currentChart.notes[closestNoteArrayPos]);
+            Note next = GetNextOfOpen(note.tick, editor.currentChart.notes[closestNoteArrayPos]);
 
             note.next = next;
-            note.previous = GetPreviousOfOpen(note.position, next.previous);
+            note.previous = GetPreviousOfOpen(note.tick, next.previous);
         }
         else
         {
@@ -134,7 +134,7 @@ public class PlaceNote : PlaceSongObject {
 
     Note GetPreviousOfOpen(uint openNotePos, Note previousNote)
     {
-        if (previousNote == null || previousNote.position != openNotePos || (!previousNote.isChord && previousNote.position != openNotePos))
+        if (previousNote == null || previousNote.tick != openNotePos || (!previousNote.isChord && previousNote.tick != openNotePos))
             return previousNote;
         else
             return GetPreviousOfOpen(openNotePos, previousNote.previous);
@@ -142,7 +142,7 @@ public class PlaceNote : PlaceSongObject {
 
     Note GetNextOfOpen(uint openNotePos, Note nextNote)
     {
-        if (nextNote == null || nextNote.position != openNotePos || (!nextNote.isChord && nextNote.position != openNotePos))
+        if (nextNote == null || nextNote.tick != openNotePos || (!nextNote.isChord && nextNote.tick != openNotePos))
             return nextNote;
         else
             return GetNextOfOpen(openNotePos, nextNote.next);
@@ -251,7 +251,7 @@ public class PlaceNote : PlaceSongObject {
     {
         List<ActionHistory.Action> noteRecord = new List<ActionHistory.Action>();
 
-        Note[] notesToCheckOverwrite = SongObjectHelper.GetRangeCopy(editor.currentChart.notes, note.position, note.position);
+        Note[] notesToCheckOverwrite = SongObjectHelper.GetRangeCopy(editor.currentChart.notes, note.tick, note.tick);
         
         // Account for when adding an exact note as what's already in   
         if (notesToCheckOverwrite.Length > 0)
@@ -327,7 +327,7 @@ public class PlaceNote : PlaceSongObject {
     {
         if (!note.IsOpenNote() && MenuBar.currentInstrument != Song.Instrument.Drums)
         {
-            Note[] chordNotes = SongObjectHelper.FindObjectsAtPosition(note.position, note.chart.notes);
+            Note[] chordNotes = SongObjectHelper.FindObjectsAtPosition(note.tick, note.chart.notes);
 
             // Check for open notes and delete
             foreach (Note chordNote in chordNotes)

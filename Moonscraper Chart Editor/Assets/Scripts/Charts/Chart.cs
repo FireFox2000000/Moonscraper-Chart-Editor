@@ -100,13 +100,13 @@ public class Chart  {
         {
             int count = 1;
 
-            uint previousPos = notes[0].position;
+            uint previousPos = notes[0].tick;
             for (int i = 1; i < notes.Length; ++i)
             {
-                if (notes[i].position > previousPos)
+                if (notes[i].tick > previousPos)
                 {
                     ++count;
-                    previousPos = notes[i].position;
+                    previousPos = notes[i].tick;
                 }
             }
 

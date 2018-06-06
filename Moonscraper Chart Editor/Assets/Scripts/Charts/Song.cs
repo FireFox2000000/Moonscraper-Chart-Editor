@@ -420,31 +420,31 @@ public class Song {
         GameObject.Destroy(coroutine);
     }
 
-    public uint WorldPositionToSnappedChartPosition(float worldYPos, int step)
+    public uint WorldPositionToSnappedTick(float worldYPos, int step)
     {
-        uint chartPos = WorldYPositionToChartPosition(worldYPos);
+        uint chartPos = WorldYPositionToTick(worldYPos);
 
-        return Snapable.ChartPositionToSnappedChartPosition(chartPos, step, resolution);
+        return Snapable.TickToSnappedTick(chartPos, step, resolution);
     }
 
-    public float ChartPositionToWorldYPosition(uint position)
+    public float TickToWorldYPosition(uint position)
     {
-        return TickFunctions.TimeToWorldYPosition(ChartPositionToTime(position, resolution));
+        return TickFunctions.TimeToWorldYPosition(TickToTime(position, resolution));
     }
 
-    public float ChartPositionToWorldYPosition(uint position, float resolution)
+    public float TickToWorldYPosition(uint position, float resolution)
     {
-        return TickFunctions.TimeToWorldYPosition(ChartPositionToTime(position, resolution));
+        return TickFunctions.TimeToWorldYPosition(TickToTime(position, resolution));
     }
 
-    public uint WorldYPositionToChartPosition(float worldYPos)
+    public uint WorldYPositionToTick(float worldYPos)
     {
-        return TimeToChartPosition(TickFunctions.WorldYPositionToTime(worldYPos), resolution);
+        return TimeToTick(TickFunctions.WorldYPositionToTime(worldYPos), resolution);
     }
 
-    public uint WorldYPositionToChartPosition(float worldYPos, float resolution)
+    public uint WorldYPositionToTick(float worldYPos, float resolution)
     {
-        return TimeToChartPosition(TickFunctions.WorldYPositionToTime(worldYPos), resolution);
+        return TimeToTick(TickFunctions.WorldYPositionToTime(worldYPos), resolution);
     }
 
     /// <summary>
@@ -453,7 +453,7 @@ public class Song {
     /// <param name="time">The time (in seconds) to convert.</param>
     /// <param name="resolution">Ticks per beat, usually provided from the resolution song of a Song class.</param>
     /// <returns>Returns the calculated tick position.</returns>
-    public uint TimeToChartPosition(float time, float resolution, bool capByLength = true)
+    public uint TimeToTick(float time, float resolution, bool capByLength = true)
     {
         if (time < 0)
             time = 0;
@@ -473,7 +473,7 @@ public class Song {
                 prevBPM = bpmInfo;
         }
 
-        position = prevBPM.position;
+        position = prevBPM.tick;
         position += TickFunctions.TimeToDis(prevBPM.assignedTime, time, resolution, prevBPM.value / 1000.0f);
 
         return position;
@@ -511,9 +511,9 @@ public class Song {
     /// </summary>
     /// <param name="position">Tick position.</param>
     /// <returns>Returns the time in seconds.</returns>
-    public float ChartPositionToTime(uint position)
+    public float TickToTime(uint position)
     {
-        return ChartPositionToTime(position, this.resolution);
+        return TickToTime(position, this.resolution);
     }
 
     /// <summary>
@@ -522,15 +522,15 @@ public class Song {
     /// <param name="position">Tick position.</param>
     /// <param name="resolution">Ticks per beat, usually provided from the resolution song of a Song class.</param>
     /// <returns>Returns the time in seconds.</returns>
-    public float ChartPositionToTime(uint position, float resolution)
+    public float TickToTime(uint position, float resolution)
     {
         int previousBPMPos = SongObjectHelper.FindClosestPosition(position, bpms);
-        if (bpms[previousBPMPos].position > position)
+        if (bpms[previousBPMPos].tick > position)
             --previousBPMPos;
 
         BPM prevBPM = bpms[previousBPMPos];
         float time = prevBPM.assignedTime;
-        time += (float)TickFunctions.DisToTime(prevBPM.position, position, resolution, prevBPM.value / 1000.0f);
+        time += (float)TickFunctions.DisToTime(prevBPM.tick, position, resolution, prevBPM.value / 1000.0f);
 
         return time;
     }
@@ -562,7 +562,7 @@ public class Song {
     {
         bool success = false;
 
-        if (syncTrackObject.position > 0)
+        if (syncTrackObject.tick > 0)
         {
             success = SongObjectHelper.Remove(syncTrackObject, _syncTrack);
         }
@@ -699,11 +699,11 @@ public class Song {
     {
         foreach (BPM bpm in bpms)
         {
-            bpm.assignedTime = LiveChartPositionToTime(bpm.position, resolution);
+            bpm.assignedTime = LiveTickToTime(bpm.tick, resolution);
         }
     }
 
-    public float LiveChartPositionToTime(uint position, float resolution)
+    public float LiveTickToTime(uint position, float resolution)
     {
         double time = 0;
         BPM prevBPM = bpms[0];
@@ -715,18 +715,18 @@ public class Song {
             if (bpmInfo == null)
                 continue;
 
-            if (bpmInfo.position > position)
+            if (bpmInfo.tick > position)
             {
                 break;
             }
             else
             {
-                time += TickFunctions.DisToTime(prevBPM.position, bpmInfo.position, resolution, prevBPM.value / 1000.0f);
+                time += TickFunctions.DisToTime(prevBPM.tick, bpmInfo.tick, resolution, prevBPM.value / 1000.0f);
                 prevBPM = bpmInfo;
             }
         }
 
-        time += TickFunctions.DisToTime(prevBPM.position, position, resolution, prevBPM.value / 1000.0f);
+        time += TickFunctions.DisToTime(prevBPM.tick, position, resolution, prevBPM.value / 1000.0f);
 
         return (float)time;
     }

@@ -35,12 +35,12 @@ public class GroupMove : ToolObject
                     Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
                     int chartPosOffset = (int)(objectSnappedChartPos - initObjectSnappedChartPos);
                     if (anchorArrayPos >= 0)
-                        chartPosOffset = (int)(objectSnappedChartPos - originalSongObjects[anchorArrayPos].position);
+                        chartPosOffset = (int)(objectSnappedChartPos - originalSongObjects[anchorArrayPos].tick);
                     //Debug.Log(anchorArrayPos);
                     bool hitStartOfChart = false;
 
                     // Guard for chart limit, if the offset was negative, yet the position becomes greater
-                    if (movingSongObjects.Length > 0 && chartPosOffset < 0 && (uint)((int)originalSongObjects[0].position + chartPosOffset) > originalSongObjects[0].position)
+                    if (movingSongObjects.Length > 0 && chartPosOffset < 0 && (uint)((int)originalSongObjects[0].tick + chartPosOffset) > originalSongObjects[0].tick)
                     {
                         hitStartOfChart = true;
                     }
@@ -61,10 +61,10 @@ public class GroupMove : ToolObject
 
                         // Alter chart position
                         if (!hitStartOfChart)
-                            movingSongObjects[i].position = (uint)((int)originalSongObjects[i].position + chartPosOffset);
+                            movingSongObjects[i].tick = (uint)((int)originalSongObjects[i].tick + chartPosOffset);
                         else
                         {
-                            movingSongObjects[i].position = originalSongObjects[i].position - originalSongObjects[0].position;
+                            movingSongObjects[i].tick = originalSongObjects[i].tick - originalSongObjects[0].tick;
                         }
 
                         if (movingSongObjects[i].controller)
@@ -127,7 +127,7 @@ public class GroupMove : ToolObject
                     BPM bpm = (BPM)movingSongObjects[i];
                     editor.currentSong.Add(bpm, false);
                     if (bpm.anchor != null)
-                        bpm.anchor = bpm.song.LiveChartPositionToTime(bpm.position, bpm.song.resolution);
+                        bpm.anchor = bpm.song.LiveTickToTime(bpm.tick, bpm.song.resolution);
 
                     ChartEditor.GetInstance().songObjectPoolManager.SetAllPoolsDirty();
                     break;

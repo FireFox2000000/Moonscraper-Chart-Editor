@@ -25,7 +25,7 @@ public class StarpowerGUIController : TimelineIndicator {
         base.ExplicitUpdate();
 
         // Change scale to represent starpower length
-        Vector3 spLengthLocalPos = GetLocalPos(starpower.position + starpower.length, starpower.song);
+        Vector3 spLengthLocalPos = GetLocalPos(starpower.tick + starpower.length, starpower.song);
         float size = spLengthLocalPos.y - transform.localPosition.y;
 
         Vector3 scale = transform.localScale;

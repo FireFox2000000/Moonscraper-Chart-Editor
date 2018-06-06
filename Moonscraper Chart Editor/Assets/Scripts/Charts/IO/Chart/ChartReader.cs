@@ -14,18 +14,18 @@ public static class ChartReader
 
     struct Anchor
     {
-        public uint position;
+        public uint tick;
         public float anchorTime;
     }
 
     struct NoteFlag
     {
-        public uint position;
+        public uint tick;
         public Note.Flags flag;
 
-        public NoteFlag(uint position, Note.Flags flag)
+        public NoteFlag(uint tick, Note.Flags flag)
         {
-            this.position = position;
+            this.tick = tick;
             this.flag = flag;
         }
     }
@@ -407,9 +407,9 @@ public static class ChartReader
         foreach (string line in stringData)
         {
             string[] stringSplit = line.Split(' ');
-            uint position;
+            uint tick;
             string eventType;
-            if (stringSplit.Length > TEXT_POS_DATA_1 && uint.TryParse(stringSplit[TEXT_POS_TICK], out position))
+            if (stringSplit.Length > TEXT_POS_DATA_1 && uint.TryParse(stringSplit[TEXT_POS_TICK], out tick))
             {
                 eventType = stringSplit[TEXT_POS_EVENT_TYPE];
                 eventType = eventType.ToLower();
@@ -429,14 +429,14 @@ public static class ChartReader
                     if (stringSplit.Length > TEXT_POS_DATA_1 + 1 && !uint.TryParse(stringSplit[TEXT_POS_DATA_1 + 1], out denominator))
                         continue;
 
-                    song.Add(new TimeSignature(position, numerator, (uint)(Mathf.Pow(2, denominator))), false);
+                    song.Add(new TimeSignature(tick, numerator, (uint)(Mathf.Pow(2, denominator))), false);
                     break;
                 case ("b"):
                     uint value;
                     if (!uint.TryParse(stringSplit[TEXT_POS_DATA_1], out value))
                         continue;
 
-                    song.Add(new BPM(position, value), false);
+                    song.Add(new BPM(tick, value), false);
                     break;
                 case ("e"):
                     if (stringSplit.Length > TEXT_POS_DATA_1 + 1 && stringSplit[TEXT_POS_DATA_1] == "\"section")
@@ -448,12 +448,12 @@ public static class ChartReader
                             if (i < stringSplit.Length - 1)
                                 title += " ";
                         }
-                        song.Add(new Section(title, position), false);
+                        song.Add(new Section(title, tick), false);
                     }
                     else
                     {
                         string title = stringSplit[TEXT_POS_DATA_1].Trim('"');
-                        song.Add(new Event(title, position), false);
+                        song.Add(new Event(title, tick), false);
                     }
                     break;
                 case ("a"):
@@ -461,7 +461,7 @@ public static class ChartReader
                     if (ulong.TryParse(stringSplit[TEXT_POS_DATA_1], out anchorValue))
                     {
                         Anchor a;
-                        a.position = position;
+                        a.tick = tick;
                         a.anchorTime = (float)(anchorValue / 1000000.0d);
                         anchorData.Add(a);
                     }
@@ -474,8 +474,8 @@ public static class ChartReader
         BPM[] bpms = song.syncTrack.OfType<BPM>().ToArray();        // BPMs are currently uncached
         foreach (Anchor anchor in anchorData)
         {
-            int arrayPos = SongObjectHelper.FindClosestPosition(anchor.position, bpms);
-            if (bpms[arrayPos].position == anchor.position)
+            int arrayPos = SongObjectHelper.FindClosestPosition(anchor.tick, bpms);
+            if (bpms[arrayPos].tick == anchor.tick)
             {
                 bpms[arrayPos].anchor = anchor.anchorTime;
             }
@@ -483,12 +483,12 @@ public static class ChartReader
             {
                 // Create a new anchored bpm
                 uint value;
-                if (bpms[arrayPos].position > anchor.position)
+                if (bpms[arrayPos].tick > anchor.tick)
                     value = bpms[arrayPos - 1].value;
                 else
                     value = bpms[arrayPos].value;
 
-                BPM anchoredBPM = new BPM(anchor.position, value);
+                BPM anchoredBPM = new BPM(anchor.tick, value);
                 anchoredBPM.anchor = anchor.anchorTime;
             }
         }
@@ -530,7 +530,7 @@ public static class ChartReader
                 try
                 {
                     string[] splitString = line.Split(' ');
-                    uint position = uint.Parse(splitString[SPLIT_POSITION]);
+                    uint tick = uint.Parse(splitString[SPLIT_POSITION]);
                     string type = splitString[SPLIT_TYPE].ToLower();
 
                     switch (type)
@@ -544,15 +544,15 @@ public static class ChartReader
 
                             if (instrument == Song.Instrument.Unrecognised)
                             {
-                                Note newNote = new Note(position, fret_type, length);
+                                Note newNote = new Note(tick, fret_type, length);
                                 chart.Add(newNote, false);
                             }
                             else if (instrument == Song.Instrument.Drums)
-                                LoadDrumNote(chart, position, fret_type, length);
+                                LoadDrumNote(chart, tick, fret_type, length);
                             else if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
-                                LoadGHLiveNote(chart, position, fret_type, length, flags);
+                                LoadGHLiveNote(chart, tick, fret_type, length, flags);
                             else
-                                LoadStandardNote(chart, position, fret_type, length, flags);
+                                LoadStandardNote(chart, tick, fret_type, length, flags);
                             break;
 
                         case ("s"):
@@ -563,13 +563,13 @@ public static class ChartReader
 
                             length = uint.Parse(splitString[SPLIT_LENGTH]);
 
-                            chart.Add(new Starpower(position, length), false);
+                            chart.Add(new Starpower(tick, length), false);
                             break;
 
                         case ("e"):
                             string[] strings = splitString;
                             string eventName = strings[SPLIT_VALUE];
-                            chart.Add(new ChartEvent(position, eventName), false);
+                            chart.Add(new ChartEvent(tick, eventName), false);
                             break;
                         default:
                             break;
@@ -586,7 +586,7 @@ public static class ChartReader
             // Load flags
             foreach (NoteFlag flag in flags)
             {
-                Note[] notesToAddFlagTo = SongObjectHelper.FindObjectsAtPosition(flag.position, chart.notes);
+                Note[] notesToAddFlagTo = SongObjectHelper.FindObjectsAtPosition(flag.tick, chart.notes);
                 if (notesToAddFlagTo.Length > 0)
                     NoteFunctions.groupAddFlags(notesToAddFlagTo, flag.flag);
             }
@@ -602,7 +602,7 @@ public static class ChartReader
         }
     }
 
-    static void LoadStandardNote(Chart chart, uint position, int noteNumber, uint length, List<NoteFlag> flagsList)
+    static void LoadStandardNote(Chart chart, uint tick, int noteNumber, uint length, List<NoteFlag> flagsList)
     {
         Note.GuitarFret? noteFret = null;
         switch (noteNumber)
@@ -623,11 +623,11 @@ public static class ChartReader
                 noteFret = Note.GuitarFret.Orange;
                 break;
             case (5):
-                NoteFlag forcedFlag = new NoteFlag(position, Note.Flags.Forced);
+                NoteFlag forcedFlag = new NoteFlag(tick, Note.Flags.Forced);
                 flagsList.Add(forcedFlag);
                 break;
             case (6):
-                NoteFlag tapFlag = new NoteFlag(position, Note.Flags.Tap);
+                NoteFlag tapFlag = new NoteFlag(tick, Note.Flags.Tap);
                 flagsList.Add(tapFlag);
                 break;
             case (7):
@@ -639,12 +639,12 @@ public static class ChartReader
 
         if (noteFret != null)
         {
-            Note newNote = new Note(position, (int)noteFret, length);
+            Note newNote = new Note(tick, (int)noteFret, length);
             chart.Add(newNote, false);
         }
     }
 
-    static void LoadDrumNote(Chart chart, uint position, int noteNumber, uint length)
+    static void LoadDrumNote(Chart chart, uint tick, int noteNumber, uint length)
     {
         Note.DrumPad? noteFret = null;
         switch (noteNumber)
@@ -673,12 +673,12 @@ public static class ChartReader
 
         if (noteFret != null)
         {
-            Note newNote = new Note(position, (int)noteFret, length);
+            Note newNote = new Note(tick, (int)noteFret, length);
             chart.Add(newNote, false);
         }
     }
 
-    static void LoadGHLiveNote(Chart chart, uint position, int noteNumber, uint length, List<NoteFlag> flagsList)
+    static void LoadGHLiveNote(Chart chart, uint tick, int noteNumber, uint length, List<NoteFlag> flagsList)
     {
         Note.GHLiveGuitarFret? noteFret = null;
         switch (noteNumber)
@@ -699,10 +699,10 @@ public static class ChartReader
                 noteFret = Note.GHLiveGuitarFret.Black2;
                 break;
             case (5):
-                flagsList.Add(new NoteFlag(position, Note.Flags.Forced));
+                flagsList.Add(new NoteFlag(tick, Note.Flags.Forced));
                 break;
             case (6):
-                flagsList.Add(new NoteFlag(position, Note.Flags.Tap));
+                flagsList.Add(new NoteFlag(tick, Note.Flags.Tap));
                 break;
             case (7):
                 noteFret = Note.GHLiveGuitarFret.Open;
@@ -716,7 +716,7 @@ public static class ChartReader
 
         if (noteFret != null)
         {
-            Note newNote = new Note(position, (int)noteFret, length);
+            Note newNote = new Note(tick, (int)noteFret, length);
             chart.Add(newNote, false);
         }
     }

@@ -13,15 +13,15 @@ public class TimelineMovementController : MovementController
 
     const float autoscrollSpeed = 10.0f;
 
-    public override void SetPosition(uint chartPosition)
+    public override void SetPosition(uint tick)
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             Vector3 pos = initPos;
-            pos.y += editor.currentSong.ChartPositionToWorldYPosition(chartPosition);
+            pos.y += editor.currentSong.TickToWorldYPosition(tick);
             transform.position = pos;
 
-            explicitChartPos = chartPosition;
+            explicitChartPos = tick;
         }
     }
 
@@ -162,15 +162,15 @@ public class TimelineMovementController : MovementController
                     }
                     else if (ShortcutInput.GetInput(Shortcut.MoveMeasurePositive))
                     {
-                        snappedPos = Snapable.ChartPositionToSnappedChartPosition(currentPos + (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong.resolution);
+                        snappedPos = Snapable.TickToSnappedTick(currentPos + (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong.resolution);
                     }
                     // Page Down
                     else if (ShortcutInput.GetInput(Shortcut.MoveMeasureNegative))
                     {
-                        snappedPos = Snapable.ChartPositionToSnappedChartPosition(currentPos - (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong.resolution);
+                        snappedPos = Snapable.TickToSnappedTick(currentPos - (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong.resolution);
                     }
 
-                    if (editor.currentSong.ChartPositionToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSong.length)
+                    if (editor.currentSong.TickToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSong.length)
                     {
                         SetPosition(snappedPos);
                     }
@@ -306,9 +306,9 @@ public class TimelineMovementController : MovementController
         {
             // Found section ahead
             if (i < editor.currentSong.sections.Length && Mathf.Round(editor.currentSong.sections[i].worldYPosition) > position)
-                SetPosition(editor.currentSong.sections[i].position);
+                SetPosition(editor.currentSong.sections[i].tick);
             else
-                SetPosition(editor.currentSong.TimeToChartPosition(editor.currentSong.length, editor.currentSong.resolution));       // Jump to the end of the song
+                SetPosition(editor.currentSong.TimeToTick(editor.currentSong.length, editor.currentSong.resolution));       // Jump to the end of the song
 
         }
         // Jump backwards
@@ -318,7 +318,7 @@ public class TimelineMovementController : MovementController
                 --i;
 
             if (i >= 0)
-                SetPosition(editor.currentSong.sections[i].position);
+                SetPosition(editor.currentSong.sections[i].tick);
             else
                 SetPosition(0);
         }

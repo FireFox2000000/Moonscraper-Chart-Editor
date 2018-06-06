@@ -42,7 +42,7 @@ public class SongValidateGH3 {
         {
             if (songObjects[i].time > song.length)
             {
-                errors += songObjects[i].ToString() + " at position " + songObjects[i].position.ToString() + " is beyond the length of the song. " + Globals.LINE_ENDING;
+                errors += songObjects[i].ToString() + " at position " + songObjects[i].tick.ToString() + " is beyond the length of the song. " + Globals.LINE_ENDING;
 
                 if (songObjects[i].GetType().IsSubclassOf(typeof(SyncTrack)))
                     song.Remove(songObjects[i] as SyncTrack);
@@ -62,7 +62,7 @@ public class SongValidateGH3 {
 
         for (int i = chartObjects.Length; i >= 0; --i)
         {
-            errors += chartObjects[i].ToString() + " at position " + chartObjects[i].position.ToString() + " is beyond the length of the song. " + Globals.LINE_ENDING;
+            errors += chartObjects[i].ToString() + " at position " + chartObjects[i].tick.ToString() + " is beyond the length of the song. " + Globals.LINE_ENDING;
 
             if (chartObjects[i].time > chart.song.length)
                 chart.Remove(chartObjects[i]);

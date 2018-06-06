@@ -92,7 +92,7 @@ public class PlaceEvent : PlaceSongObject
 
         int offset = 0;
         int index, length;
-        SongObjectHelper.GetRange(events, songEvent.position, songEvent.position, out index, out length);
+        SongObjectHelper.GetRange(events, songEvent.tick, songEvent.tick, out index, out length);
 
         // Determine the offset for the object
         for (int i = index; i < index + length; ++i)

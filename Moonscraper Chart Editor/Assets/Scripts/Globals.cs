@@ -345,15 +345,15 @@ public class Globals : MonoBehaviour {
         uint currentPos = editor.currentTickPos;
         Section[] sections = editor.currentSong.sections;
         int maxSectionIndex = 0;
-        while (maxSectionIndex < sections.Length && !(sections[maxSectionIndex].position > currentPos))
+        while (maxSectionIndex < sections.Length && !(sections[maxSectionIndex].tick > currentPos))
         {
             ++maxSectionIndex;
         }
 
         maxSectionIndex += sectionOffset;
 
-        uint rangeMin = (maxSectionIndex - 1) >= 0 ? sections[maxSectionIndex - 1].position : 0;
-        uint rangeMax = maxSectionIndex < sections.Length ? sections[maxSectionIndex].position : uint.MaxValue;
+        uint rangeMin = (maxSectionIndex - 1) >= 0 ? sections[maxSectionIndex - 1].tick : 0;
+        uint rangeMax = maxSectionIndex < sections.Length ? sections[maxSectionIndex].tick : uint.MaxValue;
         if (rangeMax > 0)
             --rangeMax;
 

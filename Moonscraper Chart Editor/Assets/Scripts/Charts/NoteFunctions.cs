@@ -22,14 +22,14 @@ public static class NoteFunctions {
         chord.Add(note);
 
         Note previous = note.previous;
-        while (previous != null && previous.position == note.position)
+        while (previous != null && previous.tick == note.tick)
         {
             chord.Add(previous);
             previous = previous.previous;
         }
 
         Note next = note.next;
-        while (next != null && next.position == note.position)
+        while (next != null && next.tick == note.tick)
         {
             chord.Add(next);
             next = next.next;
@@ -72,7 +72,7 @@ public static class NoteFunctions {
                 else
                     return new Note[] { previous };
             }
-            else if (previous.position < startNote.position)
+            else if (previous.tick < startNote.tick)
             {
                 if ((noteTypeVisited & (1 << previous.rawNote)) == 0)
                 {
@@ -95,19 +95,19 @@ public static class NoteFunctions {
         Note originalNote = (Note)note.Clone();
 
         // Cap sustain length
-        if (cap.position <= note.position)
+        if (cap.tick <= note.tick)
             note.length = 0;
-        else if (note.position + note.length > cap.position)        // Sustain extends beyond cap note 
+        else if (note.tick + note.length > cap.tick)        // Sustain extends beyond cap note 
         {
-            note.length = cap.position - note.position;
+            note.length = cap.tick - note.tick;
         }
 
         uint gapDis = (uint)(note.song.resolution * 4.0f / GameSettings.sustainGap);
 
-        if (GameSettings.sustainGapEnabled && note.length > 0 && (note.position + note.length > cap.position - gapDis))
+        if (GameSettings.sustainGapEnabled && note.length > 0 && (note.tick + note.length > cap.tick - gapDis))
         {
-            if ((int)(cap.position - gapDis - note.position) > 0)
-                note.length = cap.position - gapDis - note.position;
+            if ((int)(cap.tick - gapDis - note.tick) > 0)
+                note.length = cap.tick - gapDis - note.tick;
             else
                 note.length = 0;
         }
@@ -126,7 +126,7 @@ public static class NoteFunctions {
         {
             if (!GameSettings.extendedSustainsEnabled)
             {
-                if ((next.IsOpenNote() || (note.position < next.position)) && note.position != next.position)
+                if ((next.IsOpenNote() || (note.tick < next.tick)) && note.tick != next.tick)
                     return next;
             }
             else
@@ -155,8 +155,8 @@ public static class NoteFunctions {
     /// <param name="pos">The end-point for the sustain.</param>
     public static void SetSustainByPos(this Note note, uint pos)
     {
-        if (pos > note.position)
-            note.length = pos - note.position;
+        if (pos > note.tick)
+            note.length = pos - note.tick;
         else
             note.length = 0;
 
@@ -223,7 +223,7 @@ public static class NoteFunctions {
         {
             int index, length;
             Note[] notes = note.chart.notes;
-            SongObjectHelper.GetRange(notes, note.position, note.position + note.length - 1, out index, out length);
+            SongObjectHelper.GetRange(notes, note.tick, note.tick + note.length - 1, out index, out length);
 
             for (int i = index; i < index + length; ++i)
             {

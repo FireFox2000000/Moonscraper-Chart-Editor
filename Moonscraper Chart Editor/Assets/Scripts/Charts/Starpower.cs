@@ -15,7 +15,7 @@ public class Starpower : ChartObject
         length = _length;
     }
 
-    public Starpower(Starpower _starpower) : base(_starpower.position)
+    public Starpower(Starpower _starpower) : base(_starpower.tick)
     {
         length = _starpower.length;
     }
@@ -23,7 +23,7 @@ public class Starpower : ChartObject
     internal override string GetSaveString()
     {
         // 768 = S 2 768
-        return Globals.TABSPACE + position + " = S 2 " + length + Globals.LINE_ENDING;
+        return Globals.TABSPACE + tick + " = S 2 " + length + Globals.LINE_ENDING;
     }
 
     public override SongObject Clone()
@@ -41,8 +41,8 @@ public class Starpower : ChartObject
 
     public void SetLengthByPos(uint pos)
     {
-        if (pos > position)
-            length = pos - position;
+        if (pos > tick)
+            length = pos - tick;
         else
             length = 0;
 
@@ -53,22 +53,22 @@ public class Starpower : ChartObject
             if (arrayPos == SongObjectHelper.NOTFOUND)
                 return;
 
-            while (arrayPos < chart.starPower.Length - 1 && chart.starPower[arrayPos].position <= position)
+            while (arrayPos < chart.starPower.Length - 1 && chart.starPower[arrayPos].tick <= tick)
             {
                 ++arrayPos;
             }
 
-            if (chart.starPower[arrayPos].position > position)
+            if (chart.starPower[arrayPos].tick > tick)
                 nextSp = chart.starPower[arrayPos];
 
             if (nextSp != null)
             {
                 // Cap sustain length
-                if (nextSp.position < position)
+                if (nextSp.tick < tick)
                     length = 0;
-                else if (position + length > nextSp.position)
+                else if (tick + length > nextSp.tick)
                     // Cap sustain
-                    length = nextSp.position - position;
+                    length = nextSp.tick - tick;
             }
             // else it's the only starpower or it's the last starpower 
         }

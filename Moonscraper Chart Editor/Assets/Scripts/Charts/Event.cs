@@ -15,15 +15,15 @@ public class Event : SongObject
         title = _title;
     }
 
-    public Event(Event songEvent) : base(songEvent.position)
+    public Event(Event songEvent) : base(songEvent.tick)
     {
-        position = songEvent.position;
+        tick = songEvent.tick;
         title = songEvent.title;
     }
 
     internal override string GetSaveString()
     {
-        return Globals.TABSPACE + position + " = E \"" + title + "\"" + Globals.LINE_ENDING;
+        return Globals.TABSPACE + tick + " = E \"" + title + "\"" + Globals.LINE_ENDING;
     }
 
     public static bool regexMatch(string line)
@@ -49,7 +49,7 @@ public class Event : SongObject
         if (b.GetType() == typeof(Event))
         {
             Event realB = b as Event;
-            if (position == realB.position && title == realB.title)
+            if (tick == realB.tick && title == realB.title)
                 return true;
             else
                 return false;
@@ -63,9 +63,9 @@ public class Event : SongObject
         if (b.GetType() == typeof(Event))
         {
             Event realB = b as Event;
-            if (position < b.position)
+            if (tick < b.tick)
                 return true;
-            else if (position == b.position)
+            else if (tick == b.tick)
             {
                 if (string.Compare(title, realB.title) < 0)
                     return true;

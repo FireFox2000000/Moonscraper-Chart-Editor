@@ -121,7 +121,7 @@ public class SongObjectPoolManager : MonoBehaviour {
         uint min_pos = editor.minPos;
         if (ChartEditor.startGameplayPos != null)
         {
-            uint gameplayPos = editor.currentSong.WorldYPositionToChartPosition((float)ChartEditor.startGameplayPos, editor.currentSong.resolution);
+            uint gameplayPos = editor.currentSong.WorldYPositionToTick((float)ChartEditor.startGameplayPos, editor.currentSong.resolution);
             if (min_pos < gameplayPos)
                 min_pos = gameplayPos;
         }
@@ -135,7 +135,7 @@ public class SongObjectPoolManager : MonoBehaviour {
                 // Find the last known note of each fret type to find any sustains that might overlap into the camera view
                 foreach (Note prevNote in NoteFunctions.GetPreviousOfSustains(rangedNotes[0] as Note))
                 {
-                    if (prevNote.position + prevNote.length > editor.minPos)
+                    if (prevNote.tick + prevNote.length > editor.minPos)
                         rangedNotes.Add(prevNote);
                 }
             }
@@ -145,23 +145,23 @@ public class SongObjectPoolManager : MonoBehaviour {
 
                 if (minArrayPos != SongObjectHelper.NOTFOUND)
                 {
-                    while (minArrayPos > 0 && editor.currentChart.notes[minArrayPos].position == editor.currentChart.notes[minArrayPos - 1].position)
+                    while (minArrayPos > 0 && editor.currentChart.notes[minArrayPos].tick == editor.currentChart.notes[minArrayPos - 1].tick)
                         --minArrayPos;
 
                     Note minNote = editor.currentChart.notes[minArrayPos];
 
-                    if (minNote.position + minNote.length > editor.minPos && minNote.position < editor.maxPos)
+                    if (minNote.tick + minNote.length > editor.minPos && minNote.tick < editor.maxPos)
                     {
                         foreach (Note note in minNote.GetChord())
                         {
-                            if (note.position + note.length > editor.minPos)
+                            if (note.tick + note.length > editor.minPos)
                                 rangedNotes.Add(note);
                         }
                     }
 
                     foreach (Note prevNote in NoteFunctions.GetPreviousOfSustains(minNote))
                     {
-                        if (prevNote.position + prevNote.length > editor.minPos)
+                        if (prevNote.tick + prevNote.length > editor.minPos)
                             rangedNotes.Add(prevNote);
                     }
                 }
@@ -185,13 +185,13 @@ public class SongObjectPoolManager : MonoBehaviour {
         if (arrayPos != SongObjectHelper.NOTFOUND)
         {
             // Find the back-most position
-            while (arrayPos > 0 && editor.currentChart.starPower[arrayPos].position >= editor.minPos)
+            while (arrayPos > 0 && editor.currentChart.starPower[arrayPos].tick >= editor.minPos)
             {
                 --arrayPos;
             }
             // Render previous sp sustain in case of overlap into current position
-            if (arrayPos >= 0 && editor.currentChart.starPower[arrayPos].position + editor.currentChart.starPower[arrayPos].length > editor.minPos &&
-                (editor.currentChart.starPower[arrayPos].position + editor.currentChart.starPower[arrayPos].length) < editor.maxPos)
+            if (arrayPos >= 0 && editor.currentChart.starPower[arrayPos].tick + editor.currentChart.starPower[arrayPos].length > editor.minPos &&
+                (editor.currentChart.starPower[arrayPos].tick + editor.currentChart.starPower[arrayPos].length) < editor.maxPos)
             {
                 range.Add(editor.currentChart.starPower[arrayPos]);
             }

@@ -27,7 +27,7 @@ public class BPM : SyncTrack
         value = _value;
     }
 
-    public BPM(BPM _bpm) : base(_bpm.position)
+    public BPM(BPM _bpm) : base(_bpm.tick)
     {
         value = _bpm.value;
         anchor = _bpm.anchor;
@@ -38,8 +38,8 @@ public class BPM : SyncTrack
         //0 = B 140000
         string s = string.Empty;
         if (anchor != null)
-            s += Globals.TABSPACE + position + " = A " + (uint)(((double)anchor) * 1000000) + Globals.LINE_ENDING;
-        s += Globals.TABSPACE + position + " = B " + value + Globals.LINE_ENDING;
+            s += Globals.TABSPACE + tick + " = A " + (uint)(((double)anchor) * 1000000) + Globals.LINE_ENDING;
+        s += Globals.TABSPACE + tick + " = B " + value + Globals.LINE_ENDING;
 
         return s;
     }
