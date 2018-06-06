@@ -17,6 +17,8 @@ public class DefaultHitAnimation : HitAnimation {
     int initBaseLayerPos;
 
     bool startRan = false;
+    bool isPressed = false;
+
 	// Use this for initialization
 	protected void Start () {
         if (!startRan)
@@ -59,7 +61,9 @@ public class DefaultHitAnimation : HitAnimation {
             running = false;
         }
 
-        transform.position = position;        
+        transform.position = position;
+        if (!(isPressed || running))
+            gameObject.SetActive(false);
     }
 
     void OnDisable ()
@@ -90,16 +94,17 @@ public class DefaultHitAnimation : HitAnimation {
         Vector3 position = transform.position;
         position.z = START_Z_POS;
         transform.position = position;
-        running = true;      
+        running = true;
     }
 
     public override void Press()
     {
         gameObject.SetActive(true);
+        isPressed = true;
     }
 
     public override void Release()
     {
-        gameObject.SetActive(false);
+        isPressed = false;
     }
 }
