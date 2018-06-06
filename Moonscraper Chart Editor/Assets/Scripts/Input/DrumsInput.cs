@@ -18,13 +18,13 @@ namespace DrumsInput
                     return gamepad.GetButtonPressed(GamepadInput.Button.X);
 
                 case (Note.DrumPad.Orange):
-                    return gamepad.GetButtonPressed(GamepadInput.Button.LB);
+                    return gamepad.GetButtonPressed(GamepadInput.Button.RB);
 
                 case (Note.DrumPad.Green):
-                    return gamepad.GetButtonPressed(GamepadInput.Button.A);
+                    return gamepad.GetButtonPressed(GamepadInput.Button.LB);
 
                 case (Note.DrumPad.Kick):
-                    return gamepad.GetButtonPressed(GamepadInput.Button.RB);
+                    return gamepad.GetButtonPressed(GamepadInput.Button.A);
 
                 default:
                     Debug.LogError("Unhandled note type for drum input: " + drumFret);
