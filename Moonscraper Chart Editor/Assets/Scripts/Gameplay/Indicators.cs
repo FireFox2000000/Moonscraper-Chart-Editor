@@ -3,6 +3,7 @@
 
 using UnityEngine;
 using GuitarInput;
+using DrumsInput;
 
 public class Indicators : MonoBehaviour {
     const int FRET_COUNT = 6;
@@ -24,6 +25,16 @@ public class Indicators : MonoBehaviour {
     public HitAnimation[] animations;
 
     SpriteRenderer[] fretRenders;
+
+    readonly System.Collections.Generic.Dictionary<Note.GuitarFret, bool> bannedFretInputs = new System.Collections.Generic.Dictionary<Note.GuitarFret, bool>()
+    {
+        {   Note.GuitarFret.Open, true },
+    };
+
+    readonly System.Collections.Generic.Dictionary<Note.DrumPad, bool> bannedDrumPadInputs = new System.Collections.Generic.Dictionary<Note.DrumPad, bool>()
+    {
+        {   Note.DrumPad.Kick, true },
+    };
 
     void Start()
     {
@@ -78,32 +89,36 @@ public class Indicators : MonoBehaviour {
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
-            GamepadInput guitarInput = ChartEditor.GetInstance().inputManager.mainGamepad;
-                
-            if (guitarInput.GetFretInputControllerOrKeyboard(Note.GuitarFret.Green))
-                animations[0].Press();
-            else
-                animations[0].Release();
+            GamepadInput input = ChartEditor.GetInstance().inputManager.mainGamepad;
+            Chart.GameMode gameMode = ChartEditor.GetInstance().currentChart.gameMode;
 
-            if (guitarInput.GetFretInputControllerOrKeyboard(Note.GuitarFret.Red))
-                animations[1].Press();
-            else
-                animations[1].Release();
+            if (gameMode == Chart.GameMode.Drums)
+            {
+                foreach (Note.DrumPad drumPad in System.Enum.GetValues(typeof(Note.DrumPad)))
+                {
+                    if (bannedDrumPadInputs.ContainsKey(drumPad))
+                        continue;
 
-            if (guitarInput.GetFretInputControllerOrKeyboard(Note.GuitarFret.Yellow))
-                animations[2].Press();
+                    if (input.GetPadInputControllerOrKeyboard(drumPad))
+                        animations[(int)drumPad].Press();
+                    else
+                        animations[(int)drumPad].Release();
+                }
+            }
             else
-                animations[2].Release();
+            {
+                foreach (Note.GuitarFret fret in System.Enum.GetValues(typeof(Note.GuitarFret)))
+                {
+                    if (bannedFretInputs.ContainsKey(fret))
+                        continue;
 
-            if (guitarInput.GetFretInputControllerOrKeyboard(Note.GuitarFret.Blue))
-                animations[3].Press();
-            else
-                animations[3].Release();
+                    if (input.GetFretInputControllerOrKeyboard(fret))
+                        animations[(int)fret].Press();
+                    else
+                        animations[(int)fret].Release();
 
-            if (guitarInput.GetFretInputControllerOrKeyboard(Note.GuitarFret.Orange))
-                animations[4].Press();
-            else
-                animations[4].Release();
+                }
+            }
         }
         else
         {
