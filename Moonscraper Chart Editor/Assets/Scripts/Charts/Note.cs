@@ -9,6 +9,53 @@ using System.Collections.Generic;
 [System.Serializable]
 public class Note : ChartObject 
 {
+    public enum DrumPad
+    {
+        // Wrapper to account for how the frets change colours between the drums and guitar tracks from the GH series
+        Kick = GuitarFret.Open,
+        Red = GuitarFret.Green,
+        Yellow = GuitarFret.Red,
+        Blue = GuitarFret.Yellow,
+        Orange = GuitarFret.Blue,
+        Green = GuitarFret.Orange
+    }
+
+    public enum GHLiveGuitarFret
+    {
+        // Assign to the sprite array position
+        //WHITE_1, BLACK_1, WHITE_2, BLACK_2, WHITE_3, BLACK_3, OPEN
+        Black1,
+        Black2,
+        Black3,
+        White1,
+        White2,
+        White3,
+        Open
+    }
+
+    public enum NoteType
+    {
+        Natural,
+        Strum,
+        Hopo,
+        Tap
+    }
+
+    public enum SpecialType
+    {
+        None,
+        StarPower,
+        Battle
+    }
+
+    [Flags]
+    public enum Flags
+    {
+        None = 0,
+        Forced = 1,
+        Tap = 2
+    }
+
     private readonly ID _classID = ID.Note;
 
     public override int classID { get { return (int)_classID; } }
@@ -111,54 +158,7 @@ public class Note : ChartObject
         Open = 5
     }
 
-    public enum DrumPad
-    {
-        // Wrapper to account for how the frets change colours between the drums and guitar tracks from the GH series
-        Kick = GuitarFret.Open,
-        Red = GuitarFret.Green,
-        Yellow = GuitarFret.Red,
-        Blue = GuitarFret.Yellow,
-        Orange = GuitarFret.Blue,
-        Green = GuitarFret.Orange
-    }
-
-    public enum GHLiveGuitarFret
-    {
-        // Assign to the sprite array position
-        //WHITE_1, BLACK_1, WHITE_2, BLACK_2, WHITE_3, BLACK_3, OPEN
-        Black1,
-        Black2,
-        Black3,
-        White1,
-        White2,
-        White3,
-        Open
-    }
-
-    public enum NoteType
-    {
-        Natural,
-        Strum,
-        Hopo,
-        Tap
-    }
-
-    public enum SpecialType
-    {
-        None,
-        StarPower,
-        Battle
-    }
-
-    [Flags]
-    public enum Flags
-    {
-        None = 0,
-        Forced = 1,
-        Tap = 2
-    }
-
-    private Chart.GameMode gameMode
+    public Chart.GameMode gameMode
     {
         get
         {
@@ -218,17 +218,6 @@ public class Note : ChartObject
         }
     }
 
-    // Deprecated
-    internal override string GetSaveString()
-    {
-        int fretNumber = (int)guitarFret;
-
-        if (guitarFret == GuitarFret.Open)
-            fretNumber = 7;
-
-        return Globals.TABSPACE + position + " = N " + fretNumber + " " + length + Globals.LINE_ENDING;          // 48 = N 2 0
-    }
-
     public override SongObject Clone()
     {
         return new Note(this);
@@ -240,19 +229,6 @@ public class Note : ChartObject
             return true;
         else
             return false;
-    }
-
-    public string GetFlagsSaveString()
-    {
-        string saveString = string.Empty;
-
-        if ((flags & Flags.Forced) == Flags.Forced)
-            saveString += Globals.TABSPACE + position + " = N 5 0 " + Globals.LINE_ENDING;
-
-        if ((flags & Flags.Tap) == Flags.Tap)
-            saveString += Globals.TABSPACE + position + " = N 6 0 " + Globals.LINE_ENDING;
-
-        return saveString;
     }
     
     protected override bool Equals(SongObject b)
@@ -286,14 +262,6 @@ public class Note : ChartObject
         }
         else
             return base.LessThan(b);
-    }
-    
-    public static void groupAddFlags (Note[] notes, Flags flag)
-    {
-        for (int i = 0; i < notes.Length; ++i)
-        {
-            notes[i].flags = notes[i].flags | flag;
-        }
     }
 
     public bool IsChord
@@ -356,7 +324,7 @@ public class Note : ChartObject
     {
         get
         {
-            Note[] chord = GetChord();
+            Note[] chord = this.GetChord();
             int mask = 0;
 
             foreach (Note note in chord)
@@ -373,7 +341,7 @@ public class Note : ChartObject
     {
         get
         {
-            if (!IsOpenNote() && (flags & Flags.Tap) == Flags.Tap)
+            if (!this.IsOpenNote() && (flags & Flags.Tap) == Flags.Tap)
             {
                 return NoteType.Tap;
             }
@@ -387,43 +355,7 @@ public class Note : ChartObject
         }
     }
 
-    /// <summary>
-    /// Gets all the notes (including this one) that share the same tick position as this one.
-    /// </summary>
-    /// <returns>Returns an array of all the notes currently sharing the same tick position as this note.</returns>
-    public Note[] GetChord()
-    {
-        List<Note> chord = new List<Note>();
-        chord.Add(this);
-
-        Note previous = this.previous;
-        while (previous != null && previous.position == this.position)
-        {
-            chord.Add(previous);
-            previous = previous.previous;
-        }
-
-        Note next = this.next;
-        while (next != null && next.position == this.position)
-        {
-            chord.Add(next);
-            next = next.next;
-        }
-
-        return chord.ToArray();
-    }
-
-    public void applyFlagsToChord()
-    {
-        Note[] chordNotes = GetChord();
-
-        foreach (Note chordNote in chordNotes)
-        {
-            chordNote.flags = flags;
-        }
-    }
-
-    public bool CannotBeForcedCheck
+    public bool cannotBeForced
     {
         get
         {
@@ -434,76 +366,6 @@ public class Note : ChartObject
 
             return false;
         }
-    }
-
-    public static Note[] GetPreviousOfSustains(Note startNote)
-    {
-        List<Note> list = new List<Note>(6);
-
-        Note previous = startNote.previous;
-
-        int allVisited = startNote.gameMode == Chart.GameMode.GHLGuitar ? 63 : 31; // 0011 1111 for ghlive, 0001 1111 for standard
-        int noteTypeVisited = 0;
-
-        while (previous != null && noteTypeVisited < allVisited)
-        {
-            if (previous.IsOpenNote())
-            {
-                if (GameSettings.extendedSustainsEnabled)
-                {
-                    list.Add(previous);
-                    return list.ToArray();
-                }
-
-                else if (list.Count > 0)
-                    return list.ToArray();
-                else
-                    return new Note[] { previous };
-            }
-            else if (previous.position < startNote.position)
-            {
-                if ((noteTypeVisited & (1 << previous.rawNote)) == 0)
-                {
-                    list.Add(previous);
-                    noteTypeVisited |= 1 << previous.rawNote;
-                }
-            }
-
-            previous = previous.previous;
-        }
-
-        return list.ToArray();
-    }
-
-    public ActionHistory.Modify CapSustain(Note cap)
-    {
-        if (cap == null)
-            return null;
-
-        Note originalNote = (Note)this.Clone();
-
-        // Cap sustain length
-        if (cap.position <= position)
-            length = 0;
-        else if (position + length > cap.position)        // Sustain extends beyond cap note 
-        {
-            length = cap.position - position;
-        }
-
-        uint gapDis = (uint)(song.resolution * 4.0f / GameSettings.sustainGap);
-
-        if (GameSettings.sustainGapEnabled && length > 0 && (position + length > cap.position - gapDis))
-        {
-            if ((int)(cap.position - gapDis - position) > 0)
-                length = cap.position - gapDis - position;
-            else
-                length = 0;
-        }
-
-        if (originalNote.length != length)
-            return new ActionHistory.Modify(originalNote, this);
-        else
-            return null;
     }
 
     public override void Delete(bool update = true)
@@ -517,140 +379,27 @@ public class Note : ChartObject
             next.controller.UpdateSongObject();
     }
 
-    public Note FindNextSameFretWithinSustainExtendedCheck()
+    // Deprecated
+    internal override string GetSaveString()
     {
-        Note next = this.next;
+        int fretNumber = (int)guitarFret;
 
-        while (next != null)
-        {
-            if (!GameSettings.extendedSustainsEnabled)
-            {
-                if ((next.IsOpenNote() || (position < next.position)) && position != next.position)
-                    return next;
-            }
-            else
-            {
-                if ((!IsOpenNote() && next.IsOpenNote() && !(gameMode == Chart.GameMode.Drums)) || (next.rawNote == rawNote))
-                    return next;
-            }
+        if (guitarFret == GuitarFret.Open)
+            fretNumber = 7;
 
-            next = next.next;
-        }
-
-        return null;
+        return Globals.TABSPACE + position + " = N " + fretNumber + " " + length + Globals.LINE_ENDING;          // 48 = N 2 0
     }
 
-    public bool IsOpenNote()
+    public string GetFlagsSaveString()
     {
-        if (gameMode == Chart.GameMode.GHLGuitar)
-            return ghliveGuitarFret == GHLiveGuitarFret.Open;
-        else
-            return guitarFret == GuitarFret.Open;
-    }
+        string saveString = string.Empty;
 
-    /// <summary>
-    /// Calculates and sets the sustain length based the tick position it should end at. Will be a length of 0 if the note position is greater than the specified position.
-    /// </summary>
-    /// <param name="pos">The end-point for the sustain.</param>
-    public void SetSustainByPos(uint pos)
-    {
-        if (pos > position)
-            length = pos - position;
-        else
-            length = 0;
+        if ((flags & Flags.Forced) == Flags.Forced)
+            saveString += Globals.TABSPACE + position + " = N 5 0 " + Globals.LINE_ENDING;
 
-        // Cap the sustain
-        Note nextFret;
-            nextFret = FindNextSameFretWithinSustainExtendedCheck();
+        if ((flags & Flags.Tap) == Flags.Tap)
+            saveString += Globals.TABSPACE + position + " = N 6 0 " + Globals.LINE_ENDING;
 
-        if (nextFret != null)
-        {
-            CapSustain(nextFret);
-        }
-    }
-
-    public void SetType(NoteType type)
-    {
-        flags = Flags.None;
-        switch (type)
-        {
-            case (NoteType.Strum):
-                if (IsChord)
-                    flags &= ~Note.Flags.Forced;
-                else
-                {
-                    if (IsNaturalHopo)
-                        flags |= Note.Flags.Forced;
-                    else
-                        flags &= ~Note.Flags.Forced;
-                }
-
-                break;
-
-            case (NoteType.Hopo):
-                if (!CannotBeForcedCheck)
-                {
-                    if (IsChord)
-                        flags |= Note.Flags.Forced;
-                    else
-                    {
-                        if (!IsNaturalHopo)
-                            flags |= Note.Flags.Forced;
-                        else
-                            flags &= ~Note.Flags.Forced;
-                    }
-                }
-                break;
-
-            case (NoteType.Tap):
-                if (!IsOpenNote())
-                    flags |= Note.Flags.Tap;
-                break;
-
-            default:
-                break;
-        }
-
-        applyFlagsToChord();
-    }
-
-    public int ExpensiveGetExtendedSustainMask()
-    {
-        int mask = 0;
-
-        if (length > 0 && chart != null)
-        {
-            int index, length;
-            Note[] notes = chart.notes;
-            SongObjectHelper.GetRange(notes, position, position + this.length - 1, out index, out length);
-
-            for (int i = index; i < index + length; ++i)
-            {
-                Note note = notes[i];
-                mask |= note.mask;
-            }
-        }
-
-        return mask;
-    }
-
-    public static GuitarFret SaveGuitarNoteToDrumNote(GuitarFret fret_type)
-    {
-        if (fret_type == GuitarFret.Open)
-            return GuitarFret.Green;
-        else if (fret_type == GuitarFret.Orange)
-            return GuitarFret.Open;
-        else
-            return fret_type + 1;
-    }
-
-    public static GuitarFret LoadDrumNoteToGuitarNote(GuitarFret fret_type)
-    {
-        if (fret_type == GuitarFret.Open)
-            return GuitarFret.Orange;
-        else if (fret_type == GuitarFret.Green)
-            return GuitarFret.Open;
-        else
-            return fret_type - 1;
+        return saveString;
     }
 }

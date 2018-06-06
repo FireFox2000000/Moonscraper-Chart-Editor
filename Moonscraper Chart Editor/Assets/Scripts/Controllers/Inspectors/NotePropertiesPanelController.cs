@@ -47,7 +47,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         {
             if (Toolpane.currentTool != Toolpane.Tools.Note || (Toolpane.currentTool == Toolpane.Tools.Note && noteToolObject.activeSelf))
             {
-                if (currentNote.CannotBeForcedCheck && !GameSettings.keysModeEnabled)
+                if (currentNote.cannotBeForced && !GameSettings.keysModeEnabled)
                 {
                     forcedToggle.interactable = false;
                     currentNote.flags &= ~Note.Flags.Forced;
@@ -192,7 +192,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     {
         if (Toolpane.currentTool != Toolpane.Tools.Note)
         {
-            note.applyFlagsToChord();
+            note.ApplyFlagsToChord();
 
             ChartEditor.isDirty = true;
         }

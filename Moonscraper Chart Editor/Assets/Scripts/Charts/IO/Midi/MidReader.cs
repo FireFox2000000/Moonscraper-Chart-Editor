@@ -389,7 +389,7 @@ public static class MidReader {
                     notes[k].guitarFret = Note.GuitarFret.Open;
 
                     if (instrument == Song.Instrument.Drums)
-                        notes[k].guitarFret = Note.LoadDrumNoteToGuitarNote(notes[k].guitarFret);
+                        notes[k].guitarFret = NoteFunctions.LoadDrumNoteToGuitarNote(notes[k].guitarFret);
                 }
             }
         }

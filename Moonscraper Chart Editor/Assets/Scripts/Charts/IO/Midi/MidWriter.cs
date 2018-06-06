@@ -675,7 +675,7 @@ public static class MidWriter {
     {
         Note.GuitarFret fret_type = note.guitarFret;
         if (instrument == Song.Instrument.Drums)
-            fret_type = Note.SaveGuitarNoteToDrumNote(fret_type);
+            fret_type = NoteFunctions.SaveGuitarNoteToDrumNote(fret_type);
 
         int difficultyNumber;
         int noteNumber;

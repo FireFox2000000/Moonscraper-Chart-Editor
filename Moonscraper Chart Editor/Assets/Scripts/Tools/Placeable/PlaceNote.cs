@@ -285,10 +285,10 @@ public class PlaceNote : PlaceSongObject {
             noteToAdd.flags &= ~Note.Flags.Tap;
 
         editor.currentChart.Add(noteToAdd, update);
-        if (noteToAdd.CannotBeForcedCheck)
+        if (noteToAdd.cannotBeForced)
             noteToAdd.flags &= ~Note.Flags.Forced;
 
-        noteToAdd.applyFlagsToChord();
+        noteToAdd.ApplyFlagsToChord();
 
         //NoteController nCon = editor.CreateNoteObject(noteToAdd);
         standardOverwriteOpen(noteToAdd);
@@ -343,11 +343,11 @@ public class PlaceNote : PlaceSongObject {
     protected static ActionHistory.Action AutoForcedCheck(Note note)
     {
         Note next = note.nextSeperateNote;
-        if (next != null && (next.flags & Note.Flags.Forced) == Note.Flags.Forced && next.CannotBeForcedCheck)
+        if (next != null && (next.flags & Note.Flags.Forced) == Note.Flags.Forced && next.cannotBeForced)
         {           
             Note originalNext = (Note)next.Clone();
             next.flags &= ~Note.Flags.Forced;
-            next.applyFlagsToChord();
+            next.ApplyFlagsToChord();
 
             return new ActionHistory.Modify(originalNext, next);
         }
@@ -397,7 +397,7 @@ public class PlaceNote : PlaceSongObject {
     {
         List<ActionHistory.Action> actionRecord = new List<ActionHistory.Action>();
 
-        Note[] previousNotes = Note.GetPreviousOfSustains(noteToAdd);
+        Note[] previousNotes = NoteFunctions.GetPreviousOfSustains(noteToAdd);
         if (!GameSettings.extendedSustainsEnabled)
         {
             // Cap all the notes

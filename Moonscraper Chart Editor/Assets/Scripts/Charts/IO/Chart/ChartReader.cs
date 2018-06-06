@@ -588,7 +588,7 @@ public static class ChartReader
             {
                 Note[] notesToAddFlagTo = SongObjectHelper.FindObjectsAtPosition(flag.position, chart.notes);
                 if (notesToAddFlagTo.Length > 0)
-                    Note.groupAddFlags(notesToAddFlagTo, flag.flag);
+                    NoteFunctions.groupAddFlags(notesToAddFlagTo, flag.flag);
             }
 #if TIMING_DEBUG
             Debug.Log("Chart load time: " + (Time.realtimeSinceStartup - time));
