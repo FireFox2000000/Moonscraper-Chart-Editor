@@ -1,3 +1,9 @@
+v1.2.11
+	FIXES
+	-Hopefully fix drums input mapping
+	-Fixed drums indicator animations
+	-Fixed hit animations ending too soon.
+
 v1.2.1
 	NEW FEATURES
 	-Save now save and load guitar coop tracks in midis
