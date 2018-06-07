@@ -132,7 +132,9 @@ public class Indicators : MonoBehaviour {
 
     public void UpdateStrikerColors()
     {
-        if (Globals.drumMode)
+        Chart.GameMode gameMode = ChartEditor.GetInstance().currentGameMode;
+
+        if (gameMode == Chart.GameMode.Drums)
         {
             for (int i = 0; i < defaultStikelineFretColors.Length; ++i)
             {
@@ -146,7 +148,7 @@ public class Indicators : MonoBehaviour {
         }
         else
         {
-            Color[] colors = Globals.ghLiveMode ? ghlStikelineFretColors : defaultStikelineFretColors;
+            Color[] colors = gameMode == Chart.GameMode.GHLGuitar ? ghlStikelineFretColors : defaultStikelineFretColors;
             for (int i = 0; i < colors.Length; ++i)
             {
                 fretRenders[i * 2].color = colors[i];

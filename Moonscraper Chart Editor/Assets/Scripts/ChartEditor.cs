@@ -79,6 +79,7 @@ public class ChartEditor : MonoBehaviour {
 #endif
     public Song currentSong { get; private set; }
     public Chart currentChart { get; private set; }
+    public Chart.GameMode currentGameMode { get { return currentChart.gameMode; } }
     string currentFileName = string.Empty;
 
     System.Threading.Thread autosave;
