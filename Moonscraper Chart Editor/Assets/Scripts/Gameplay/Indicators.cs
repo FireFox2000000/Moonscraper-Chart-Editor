@@ -9,15 +9,20 @@ public class Indicators : MonoBehaviour {
     const int FRET_COUNT = 6;
 
     [SerializeField]
+    Color[] fretPalette;
+
+    [SerializeField]
     GameObject[] indicatorParents = new GameObject[FRET_COUNT];
     [SerializeField]
     GameObject[] indicators = new GameObject[FRET_COUNT];
     [SerializeField]
     CustomFretManager[] customIndicators = new CustomFretManager[FRET_COUNT];
     [SerializeField]
-    Color[] defaultStikelineFretColors;
+    int[] guitarFretPaletteMap;
     [SerializeField]
-    Color[] ghlStikelineFretColors;
+    int[] drumFretPaletteMap;
+    [SerializeField]
+    int[] ghlguitarFretPaletteMap;
     [SerializeField]
     GHLHitAnimation[] ghlCustomFrets;
 
@@ -134,26 +139,24 @@ public class Indicators : MonoBehaviour {
     {
         Chart.GameMode gameMode = ChartEditor.GetInstance().currentGameMode;
 
-        if (gameMode == Chart.GameMode.Drums)
+        int[] paletteMap;
+        switch (gameMode)
         {
-            for (int i = 0; i < defaultStikelineFretColors.Length; ++i)
-            {
-                int color = i + 1;
-                if (color >= defaultStikelineFretColors.Length)
-                    color = 0;
-
-                fretRenders[i * 2].color = defaultStikelineFretColors[color];
-                fretRenders[i * 2 + 1].color = defaultStikelineFretColors[color];
-            }
+            case (Chart.GameMode.Drums):
+                paletteMap = drumFretPaletteMap;
+                break;
+            case (Chart.GameMode.GHLGuitar):
+                paletteMap = ghlguitarFretPaletteMap;
+                break;
+            default:
+                paletteMap = guitarFretPaletteMap;
+                break;
         }
-        else
+
+        for (int i = 0; i < paletteMap.Length; ++i)
         {
-            Color[] colors = gameMode == Chart.GameMode.GHLGuitar ? ghlStikelineFretColors : defaultStikelineFretColors;
-            for (int i = 0; i < colors.Length; ++i)
-            {
-                fretRenders[i * 2].color = colors[i];
-                fretRenders[i * 2 + 1].color = colors[i];
-            }
+            fretRenders[i * 2].color = fretPalette[paletteMap[i]];
+            fretRenders[i * 2 + 1].color = fretPalette[paletteMap[i]];
         }
     }
 
