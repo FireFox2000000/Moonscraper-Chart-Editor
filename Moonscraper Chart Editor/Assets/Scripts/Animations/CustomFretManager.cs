@@ -38,11 +38,12 @@ public class CustomFretManager : HitAnimation
 
     public Sprite drumToAnimate = null;
 
-    bool prevDrumMode = false;
 
     void Start()
     {
         SetStandardFrets();
+
+        EventsManager.onChartReloadEventList.Add(SetFrets);
     }
 
     void OnEnable()
@@ -60,16 +61,14 @@ public class CustomFretManager : HitAnimation
                 StopAnim();
             }
         }
+    }
 
-        if (Globals.drumMode != prevDrumMode)
-        {
-            if (Globals.drumMode)
-                SetDrumFrets();
-            else
-                SetStandardFrets();
-        }
-
-        prevDrumMode = Globals.drumMode;
+    void SetFrets()
+    {
+        if (Globals.drumMode)
+            SetDrumFrets();
+        else
+            SetStandardFrets();
     }
 
     void SetStandardFrets()

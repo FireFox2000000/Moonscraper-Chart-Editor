@@ -4,6 +4,7 @@
 using UnityEngine;
 using GuitarInput;
 using DrumsInput;
+using System.Collections.Generic;
 
 public class Indicators : MonoBehaviour {
     const int FRET_COUNT = 6;
@@ -31,20 +32,29 @@ public class Indicators : MonoBehaviour {
 
     SpriteRenderer[] fretRenders;
 
-    readonly System.Collections.Generic.Dictionary<Note.GuitarFret, bool> bannedFretInputs = new System.Collections.Generic.Dictionary<Note.GuitarFret, bool>()
+    readonly Dictionary<Note.GuitarFret, bool> bannedFretInputs = new Dictionary<Note.GuitarFret, bool>()
     {
         {   Note.GuitarFret.Open, true },
     };
 
-    readonly System.Collections.Generic.Dictionary<Note.DrumPad, bool> bannedDrumPadInputs = new System.Collections.Generic.Dictionary<Note.DrumPad, bool>()
+    readonly Dictionary<Note.DrumPad, bool> bannedDrumPadInputs = new Dictionary<Note.DrumPad, bool>()
     {
         {   Note.DrumPad.Kick, true },
     };
+
+    Dictionary<Chart.GameMode, int[]> paletteMaps;
 
     void Start()
     {
         animations = new HitAnimation[FRET_COUNT];
         fretRenders = new SpriteRenderer[FRET_COUNT * 2];
+
+        paletteMaps = new Dictionary<Chart.GameMode, int[]>()
+        {
+            { Chart.GameMode.Guitar, guitarFretPaletteMap },
+            { Chart.GameMode.Drums, drumFretPaletteMap },
+            { Chart.GameMode.GHLGuitar, ghlguitarFretPaletteMap },
+        };
 
         SetAnimations();
 
@@ -140,23 +150,18 @@ public class Indicators : MonoBehaviour {
         Chart.GameMode gameMode = ChartEditor.GetInstance().currentGameMode;
 
         int[] paletteMap;
-        switch (gameMode)
-        {
-            case (Chart.GameMode.Drums):
-                paletteMap = drumFretPaletteMap;
-                break;
-            case (Chart.GameMode.GHLGuitar):
-                paletteMap = ghlguitarFretPaletteMap;
-                break;
-            default:
-                paletteMap = guitarFretPaletteMap;
-                break;
-        }
 
-        for (int i = 0; i < paletteMap.Length; ++i)
+        if (paletteMaps.TryGetValue(gameMode, out paletteMap))
         {
-            fretRenders[i * 2].color = fretPalette[paletteMap[i]];
-            fretRenders[i * 2 + 1].color = fretPalette[paletteMap[i]];
+            for (int i = 0; i < paletteMap.Length; ++i)
+            {
+                fretRenders[i * 2].color = fretPalette[paletteMap[i]];
+                fretRenders[i * 2 + 1].color = fretPalette[paletteMap[i]];
+            }
+        }
+        else
+        {
+            Debug.LogError("Unhandled game mode");
         }
     }
 
