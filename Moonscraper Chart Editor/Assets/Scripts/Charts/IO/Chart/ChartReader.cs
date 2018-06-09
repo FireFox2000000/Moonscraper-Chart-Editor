@@ -439,22 +439,28 @@ public static class ChartReader
                     song.Add(new BPM(tick, value), false);
                     break;
                 case ("e"):
+                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                    int startIndex = TEXT_POS_DATA_1;
+                    bool isSection = false;
+
                     if (stringSplit.Length > TEXT_POS_DATA_1 + 1 && stringSplit[TEXT_POS_DATA_1] == "\"section")
                     {
-                        string title = string.Empty;// = stringSplit[TEXT_POS_DATA_1 + 1].Trim('"');
-                        for (int i = TEXT_POS_DATA_1 + 1; i < stringSplit.Length; ++i)
-                        {
-                            title += stringSplit[i].Trim('"');
-                            if (i < stringSplit.Length - 1)
-                                title += " ";
-                        }
-                        song.Add(new Section(title, tick), false);
+                        startIndex = TEXT_POS_DATA_1 + 1;
+                        isSection = true;
                     }
-                    else
+
+                    for (int i = startIndex; i < stringSplit.Length; ++i)
                     {
-                        string title = stringSplit[TEXT_POS_DATA_1].Trim('"');
-                        song.Add(new Event(title, tick), false);
+                        sb.Append(stringSplit[i].Trim('"'));
+                        if (i < stringSplit.Length - 1)
+                            sb.Append(" ");
                     }
+
+                    if (isSection)
+                        song.Add(new Section(sb.ToString(), tick), false);
+                    else
+                        song.Add(new Event(sb.ToString(), tick), false);
+
                     break;
                 case ("a"):
                     ulong anchorValue;
