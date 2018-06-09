@@ -20,6 +20,7 @@ public class DynamicTextScrollView : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, text.preferredHeight);
+        if (text)
+            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, text.preferredHeight);
 	}
 }
