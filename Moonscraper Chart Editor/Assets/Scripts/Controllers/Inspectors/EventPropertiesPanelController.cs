@@ -10,13 +10,15 @@ public class EventPropertiesPanelController : PropertiesPanelController
 {
     public Event currentEvent { get { return currentSongObject as Event; } set { currentSongObject = value; } }
     public ChartEvent currentChartEvent { get { return currentSongObject as ChartEvent; } set { currentSongObject = value; } }
-    public InputField eventName;
+    public Text eventName;
     [SerializeField]
     Text inspectorTitle;
     [SerializeField]
     Button eventOptionTemplate;
     [SerializeField]
     RectTransform scrollViewContentBox;
+    [SerializeField]
+    CustomEventMenu customEventMenu;
 
     SongObject previous;
 
@@ -179,5 +181,13 @@ public class EventPropertiesPanelController : PropertiesPanelController
             inspectorTitle.text = "Local Event";
         else if (viewMode == Globals.ViewMode.Song)
             inspectorTitle.text = "Global Event";
+    }
+
+    public void ActivateCustomEventMenu()
+    {
+        if (currentChartEvent != null)
+            customEventMenu.StartEdit(currentChartEvent);
+        else
+            customEventMenu.StartEdit(currentEvent);
     }
 }
