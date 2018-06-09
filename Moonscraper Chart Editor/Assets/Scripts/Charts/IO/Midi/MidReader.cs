@@ -13,14 +13,14 @@ public static class MidReader {
 
     static readonly Dictionary<string, Song.Instrument> c_trackNameToInstrumentMap = new Dictionary<string, Song.Instrument>()
     {
-        { "part guitar",        Song.Instrument.Guitar },
-        { "part guitar coop",   Song.Instrument.GuitarCoop },
-        { "part bass",          Song.Instrument.Bass },
-        { "part rhythm",        Song.Instrument.Rhythm },
-        { "part keys",          Song.Instrument.Keys },
-        { "part drums",         Song.Instrument.Drums },
-        { "part guitar ghl",    Song.Instrument.GHLiveGuitar },
-        { "part bass ghl",      Song.Instrument.GHLiveBass },
+        { MidIOHelper.GUITAR_TRACK,        Song.Instrument.Guitar },
+        { MidIOHelper.GUITAR_COOP_TRACK,   Song.Instrument.GuitarCoop },
+        { MidIOHelper.BASS_TRACK,          Song.Instrument.Bass },
+        { MidIOHelper.RHYTHM_TRACK,        Song.Instrument.Rhythm },
+        { MidIOHelper.KEYS_TRACK,          Song.Instrument.Keys },
+        { MidIOHelper.DRUMS_TRACK,         Song.Instrument.Drums },
+        { MidIOHelper.GHL_GUITAR_TRACK,    Song.Instrument.GHLiveGuitar },
+        { MidIOHelper.GHL_BASS_TRACK,      Song.Instrument.GHLiveBass },
     };
 
     static readonly Dictionary<string, bool> c_trackExcludesMap = new Dictionary<string, bool>()
@@ -66,8 +66,8 @@ public static class MidReader {
                 continue;
             Debug.Log(trackName.Text);
 
-            string trackNameKey = trackName.Text.ToLower();
-            if (trackNameKey == c_eventsStr)
+            string trackNameKey = trackName.Text.ToUpper();
+            if (trackNameKey == MidIOHelper.EVENTS_TRACK)
             {
                 ReadSongGlobalEvents(midi.Events[i], song);
             }
@@ -161,6 +161,7 @@ public static class MidReader {
         List<SysexEvent> tapAndOpenEvents = new List<SysexEvent>();
 
         Chart unrecognised = new Chart(song, Song.Instrument.Unrecognised);
+        Chart.GameMode gameMode = Song.InstumentToChartGameMode(instrument);
 
         if (instrument == Song.Instrument.Unrecognised)
             song.unrecognisedCharts.Add(unrecognised);
@@ -220,7 +221,7 @@ public static class MidReader {
                 // Determine which difficulty we are manipulating
                 try
                 {
-                    if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
+                    if (gameMode == Chart.GameMode.GHLGuitar)
                         difficulty = SelectGHLNoteDifficulty(note.NoteNumber);
                     else
                         difficulty = SelectNoteDifficulty(note.NoteNumber);
@@ -231,7 +232,7 @@ public static class MidReader {
                 }
 
                 // Check if we're reading a forcing event instead of a regular note
-                if (instrument != Song.Instrument.Drums)
+                if (gameMode != Chart.GameMode.Drums)
                 {
                     switch (note.NoteNumber)
                     {
@@ -255,9 +256,9 @@ public static class MidReader {
                 if (sus <= rbSustainFixLength)
                     sus = 0;
 
-                if (instrument == Song.Instrument.Drums)
+                if (gameMode == Chart.GameMode.Drums)
                     fret = (int)GetDrumFretType(note.NoteNumber);
-                else if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
+                else if (gameMode == Chart.GameMode.GHLGuitar)
                     fret = (int)GetGHLFretType(note.NoteNumber);
                 else
                     fret = (int)GetStandardFretType(note.NoteNumber);
@@ -388,7 +389,7 @@ public static class MidReader {
                 {
                     notes[k].guitarFret = Note.GuitarFret.Open;
 
-                    if (instrument == Song.Instrument.Drums)
+                    if (gameMode == Chart.GameMode.Drums)
                         notes[k].guitarFret = NoteFunctions.LoadDrumNoteToGuitarNote(notes[k].guitarFret);
                 }
             }

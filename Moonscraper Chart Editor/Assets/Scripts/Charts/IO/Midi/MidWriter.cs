@@ -12,15 +12,6 @@ using NAudio.Midi;
 public static class MidWriter {   
     const byte TRACK_NAME_EVENT = 0x03;
     const byte TEXT_EVENT = 0x01;
-    const string EVENTS_TRACK = "EVENTS";           // Sections
-    const string GUITAR_TRACK = "PART GUITAR";
-    const string GUITAR_COOP_TRACK = "PART GUITAR COOP";
-    const string BASS_TRACK = "PART BASS";
-    const string RHYTHM_TRACK = "PART RHYTHM";
-    const string KEYS_TRACK = "PART KEYS";
-    const string DRUMS_TRACK = "PART DRUMS";
-    const string GHL_GUITAR_TRACK = "PART GUITAR GHL";
-    const string GHL_BASS_TRACK = "PART BASS GHL";
 
     const byte ON_EVENT = 0x91;         // Note on channel 1
     const byte OFF_EVENT = 0x81;
@@ -36,14 +27,66 @@ public static class MidWriter {
 
     static readonly Dictionary<Song.Instrument, string> c_instrumentToTrackNameDict = new Dictionary<Song.Instrument, string>()
     {
-        { Song.Instrument.Guitar,           GUITAR_TRACK },
-        { Song.Instrument.GuitarCoop,       GUITAR_COOP_TRACK },
-        { Song.Instrument.Bass,             BASS_TRACK },
-        { Song.Instrument.Rhythm,           RHYTHM_TRACK },
-        { Song.Instrument.Keys,             KEYS_TRACK },
-        { Song.Instrument.Drums,            DRUMS_TRACK },
-        { Song.Instrument.GHLiveGuitar,     GHL_GUITAR_TRACK },
-        { Song.Instrument.GHLiveBass,       GHL_BASS_TRACK },
+        { Song.Instrument.Guitar,           MidIOHelper.GUITAR_TRACK },
+        { Song.Instrument.GuitarCoop,       MidIOHelper.GUITAR_COOP_TRACK },
+        { Song.Instrument.Bass,             MidIOHelper.BASS_TRACK },
+        { Song.Instrument.Rhythm,           MidIOHelper.RHYTHM_TRACK },
+        { Song.Instrument.Keys,             MidIOHelper.KEYS_TRACK },
+        { Song.Instrument.Drums,            MidIOHelper.DRUMS_TRACK },
+        { Song.Instrument.GHLiveGuitar,     MidIOHelper.GHL_GUITAR_TRACK },
+        { Song.Instrument.GHLiveBass,       MidIOHelper.GHL_BASS_TRACK },
+    };
+
+    static readonly Dictionary<Song.Difficulty, int> c_difficultyToMidiNoteWriteDict = new Dictionary<Song.Difficulty, int>()
+    {
+        { Song.Difficulty.Easy,             60 },
+        { Song.Difficulty.Medium,           72 },
+        { Song.Difficulty.Hard,             84 },
+        { Song.Difficulty.Expert,           96 },
+    };
+
+    static readonly Dictionary<int, int> c_guitarNoteMidiWriteOffsets = new Dictionary<int, int>()
+    {
+        { (int)Note.GuitarFret.Open,     0},     // Gets replaced by an sysex event
+        { (int)Note.GuitarFret.Green,    0},
+        { (int)Note.GuitarFret.Red,      1},
+        { (int)Note.GuitarFret.Yellow,   2},
+        { (int)Note.GuitarFret.Blue,     3},
+        { (int)Note.GuitarFret.Orange,   4},     
+    };
+
+    static readonly Dictionary<int, int> c_drumNoteMidiWriteOffsets = new Dictionary<int, int>()
+    {
+        { (int)Note.DrumPad.Kick,     0},
+        { (int)Note.DrumPad.Red,      1},
+        { (int)Note.DrumPad.Yellow,   2},
+        { (int)Note.DrumPad.Blue,     3},
+        { (int)Note.DrumPad.Orange,   4},
+        { (int)Note.DrumPad.Green,    5},       
+    };
+
+    static readonly Dictionary<int, int> c_ghlNoteMidiWriteOffsets = new Dictionary<int, int>()
+    {
+        { (int)Note.GHLiveGuitarFret.Open,   -2},
+        { (int)Note.GHLiveGuitarFret.White1, -1},
+        { (int)Note.GHLiveGuitarFret.White2, 0},
+        { (int)Note.GHLiveGuitarFret.White3, 1},
+        { (int)Note.GHLiveGuitarFret.Black1, 2},
+        { (int)Note.GHLiveGuitarFret.Black2, 3},
+        { (int)Note.GHLiveGuitarFret.Black3, 4},
+    };
+
+    static readonly Dictionary<Chart.GameMode, Dictionary<int, int>> c_gameModeNoteWriteOffsetDictLookup = new Dictionary<Chart.GameMode, Dictionary<int, int>>()
+    {
+        { Chart.GameMode.Guitar,    c_guitarNoteMidiWriteOffsets },
+        { Chart.GameMode.Drums,     c_drumNoteMidiWriteOffsets },
+        { Chart.GameMode.GHLGuitar, c_ghlNoteMidiWriteOffsets },
+    };
+
+    static readonly Dictionary<Note.NoteType, int> c_forcingMidiWriteOffsets = new Dictionary<Note.NoteType, int>()
+    {
+        { Note.NoteType.Hopo, 5 },
+        { Note.NoteType.Strum, 6 },
     };
 
     public static void WriteToFile(string path, Song song, ExportOptions exportOptions)
@@ -54,7 +97,7 @@ public static class MidWriter {
         byte[] track_sync = MakeTrack(GetSyncBytes(song, exportOptions), song.name);
 
         uint end;
-        byte[] track_events = MakeTrack(GetEventBytes(song, exportOptions, out end), EVENTS_TRACK);
+        byte[] track_events = MakeTrack(GetEventBytes(song, exportOptions, out end), MidIOHelper.EVENTS_TRACK);
         if (track_events.Length > 0)
             track_count++;
 
@@ -283,12 +326,7 @@ public static class MidWriter {
 
             if (note != null)
             {
-                int noteNumber;
-                bool ghlTrack = (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass);
-                if (ghlTrack)
-                    noteNumber = GetGHLNoteNumber(note, instrument, difficulty);
-                else
-                    noteNumber = GetStandardNoteNumber(note, instrument, difficulty);
+                int noteNumber = GetMidiNoteNumber(note, chart.gameMode, difficulty);
 
                 GetNoteNumberBytes(noteNumber, note, out onEvent, out offEvent);
 
@@ -298,13 +336,16 @@ public static class MidWriter {
                     if ((note.flags & Note.Flags.Forced) != 0 && (note.previous == null || (note.previous.tick != note.tick)))     // Don't overlap on chords
                     {
                         // Add a note
-                        int forcedNoteNumber;
-                        int difficultyNumber = LookupStandardDifficultyNumber(difficulty);
+                        int difficultyNumber;
+                        int forcingOffset;
 
-                        if (note.type == Note.NoteType.Hopo)
-                            forcedNoteNumber = difficultyNumber + 5;
-                        else
-                            forcedNoteNumber = difficultyNumber + 6;
+                        if (!c_difficultyToMidiNoteWriteDict.TryGetValue(difficulty, out difficultyNumber))
+                            throw new Exception("Unhandled difficulty");
+
+                        if (!c_forcingMidiWriteOffsets.TryGetValue(note.type, out forcingOffset))
+                            throw new Exception("Unhandled note type found when trying to writing forcing flag");
+
+                        int forcedNoteNumber = difficultyNumber + forcingOffset;
 
                         SortableBytes forceOnEvent = new SortableBytes(note.tick, new byte[] { ON_EVENT, (byte)forcedNoteNumber, VELOCITY });
                         SortableBytes forceOffEvent = new SortableBytes(note.tick + 1, new byte[] { OFF_EVENT, (byte)forcedNoteNumber, VELOCITY });
@@ -313,7 +354,7 @@ public static class MidWriter {
                         InsertionSort(forceOffEvent);
                     }
 
-                    int openNote = ghlTrack ? (int)Note.GHLiveGuitarFret.Open : (int)Note.GuitarFret.Open;
+                    int openNote = chart.gameMode == Chart.GameMode.GHLGuitar ? (int)Note.GHLiveGuitarFret.Open : (int)Note.GuitarFret.Open;
                     // Add tap sysex events
                     if (difficulty == Song.Difficulty.Expert && note.rawNote != openNote && (note.flags & Note.Flags.Tap) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.Tap) == 0))  // This note is a tap while the previous one isn't as we're creating a range
                     {
@@ -671,117 +712,21 @@ public static class MidWriter {
         offEvent = new SortableBytes(note.tick + note.length, new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY });
     }
 
-    static int GetStandardNoteNumber(Note note, Song.Instrument instrument, Song.Difficulty difficulty)
+    static int GetMidiNoteNumber(Note note, Chart.GameMode gameMode, Song.Difficulty difficulty)
     {
-        Note.GuitarFret fret_type = note.guitarFret;
-        if (instrument == Song.Instrument.Drums)
-            fret_type = NoteFunctions.SaveGuitarNoteToDrumNote(fret_type);
-
+        Dictionary<int, int> noteToMidiOffsetDict;
         int difficultyNumber;
-        int noteNumber;
+        int offset;
 
-        difficultyNumber = LookupStandardDifficultyNumber(difficulty);
+        if (!c_gameModeNoteWriteOffsetDictLookup.TryGetValue(gameMode, out noteToMidiOffsetDict))
+            throw new System.Exception("Unhandled game mode, unable to get offset dictionary");
 
-        switch (fret_type)
-        {
-            case (Note.GuitarFret.Open):     // Open note highlighted as an SysEx event. Use green as default.
-                if (instrument == Song.Instrument.Drums)
-                {
-                    noteNumber = difficultyNumber + 5;
-                    break;
-                }
-                else
-                    goto case Note.GuitarFret.Green;
-            case (Note.GuitarFret.Green):
-                noteNumber = difficultyNumber + 0;
-                break;
-            case (Note.GuitarFret.Red):
-                noteNumber = difficultyNumber + 1;
-                break;
-            case (Note.GuitarFret.Yellow):
-                noteNumber = difficultyNumber + 2;
-                break;
-            case (Note.GuitarFret.Blue):
-                noteNumber = difficultyNumber + 3;
-                break;
-            case (Note.GuitarFret.Orange):
-                noteNumber = difficultyNumber + 4;
-                break;
-            default:
-                throw new System.Exception("Not a standard note");
-        }
+        if (!noteToMidiOffsetDict.TryGetValue(note.rawNote, out offset))
+            throw new System.Exception("Unhandled note, unable to get offset");
 
-        return noteNumber;
-    }
+        if (!c_difficultyToMidiNoteWriteDict.TryGetValue(difficulty, out difficultyNumber))
+            throw new System.Exception("Unhandled difficulty");
 
-    static int GetGHLNoteNumber(Note note, Song.Instrument instrument, Song.Difficulty difficulty)
-    {
-        Note.GHLiveGuitarFret fret_type = note.ghliveGuitarFret;
-
-        int difficultyNumber;
-        int noteNumber;
-
-        difficultyNumber = LookupGHLDifficultyNumber(difficulty);
-
-        switch (fret_type)
-        {
-            case (Note.GHLiveGuitarFret.Open):
-                noteNumber = difficultyNumber + 0;
-                break;
-            case (Note.GHLiveGuitarFret.White1):
-                noteNumber = difficultyNumber + 1;
-                break;
-            case (Note.GHLiveGuitarFret.White2):
-                noteNumber = difficultyNumber + 2;
-                break;
-            case (Note.GHLiveGuitarFret.White3):
-                noteNumber = difficultyNumber + 3;
-                break;
-            case (Note.GHLiveGuitarFret.Black1):
-                noteNumber = difficultyNumber + 4;
-                break;
-            case (Note.GHLiveGuitarFret.Black2):
-                noteNumber = difficultyNumber + 5;
-                break;
-            case (Note.GHLiveGuitarFret.Black3):
-                noteNumber = difficultyNumber + 6;
-                break;
-
-            default:
-                throw new System.Exception("Not a standard note");
-        }
-
-        return noteNumber;
-    }
-
-    static int LookupStandardDifficultyNumber(Song.Difficulty difficulty)
-    {
-        int difficultyNumber;
-        switch (difficulty)
-        {
-            case (Song.Difficulty.Easy):
-                difficultyNumber = 60;
-                break;
-            case (Song.Difficulty.Medium):
-                difficultyNumber = 72;
-                break;
-            case (Song.Difficulty.Hard):
-                difficultyNumber = 84;
-                break;
-            case (Song.Difficulty.Expert):
-                difficultyNumber = 96;
-                break;
-            default:
-                throw new System.Exception("Not a standard difficulty");
-        }
-
-        return difficultyNumber;
-    }
-
-    static int LookupGHLDifficultyNumber(Song.Difficulty difficulty)
-    {
-        int difficultyNumber = LookupStandardDifficultyNumber(difficulty) - 2;
-
-        return difficultyNumber;
+        return difficultyNumber + offset;
     }
 }
