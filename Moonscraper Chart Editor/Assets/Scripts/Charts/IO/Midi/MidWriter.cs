@@ -279,6 +279,7 @@ public static class MidWriter {
     static SortableBytes[] GetChartSortableBytes(Song song, Song.Instrument instrument, Song.Difficulty difficulty, ExportOptions exportOptions)
     {
         Chart chart = song.GetChart(instrument, difficulty);
+        Chart.GameMode gameMode = chart.gameMode;
 
         if (exportOptions.copyDownEmptyDifficulty)
         {
@@ -326,7 +327,7 @@ public static class MidWriter {
 
             if (note != null)
             {
-                int noteNumber = GetMidiNoteNumber(note, chart.gameMode, difficulty);
+                int noteNumber = GetMidiNoteNumber(note, gameMode, difficulty);
 
                 GetNoteNumberBytes(noteNumber, note, out onEvent, out offEvent);
 
@@ -354,7 +355,7 @@ public static class MidWriter {
                         InsertionSort(forceOffEvent);
                     }
 
-                    int openNote = chart.gameMode == Chart.GameMode.GHLGuitar ? (int)Note.GHLiveGuitarFret.Open : (int)Note.GuitarFret.Open;
+                    int openNote = gameMode == Chart.GameMode.GHLGuitar ? (int)Note.GHLiveGuitarFret.Open : (int)Note.GuitarFret.Open;
                     // Add tap sysex events
                     if (difficulty == Song.Difficulty.Expert && note.rawNote != openNote && (note.flags & Note.Flags.Tap) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.Tap) == 0))  // This note is a tap while the previous one isn't as we're creating a range
                     {
@@ -375,7 +376,7 @@ public static class MidWriter {
                     }
                 }
 
-                if (instrument != Song.Instrument.Drums && instrument != Song.Instrument.GHLiveGuitar && instrument != Song.Instrument.GHLiveBass &&
+                if (gameMode != Chart.GameMode.Drums && gameMode != Chart.GameMode.GHLGuitar &&
                     difficulty == Song.Difficulty.Expert && note.guitarFret == Note.GuitarFret.Open && (note.previous == null || (note.previous.guitarFret != Note.GuitarFret.Open)))
                 {
                     // Find the next non-open note
@@ -625,9 +626,9 @@ public static class MidWriter {
 
     static byte[] GenerateBeat(uint end, uint resolution)
     {
-        const byte ON_EVENT = 0x97;         // Note on channel 7
-        const byte OFF_EVENT = 0x87;
-        const int VELOCITY = 100;
+        const byte BEAT_ON_EVENT = 0x97;         // Note on channel 7
+        const byte BEAT_OFF_EVENT = 0x87;
+        const int BEAT_VELOCITY = 100;
         const int MEASURE_NOTE = 12;
         const int BEAT_NOTE = 13;
 
@@ -638,8 +639,8 @@ public static class MidWriter {
 
         List<byte> beatBytes = new List<byte>();
         // Add inital beats
-        byte[] onEvent = new byte[] { ON_EVENT, (byte)MEASURE_NOTE, VELOCITY };
-        byte[] offEvent = new byte[] { OFF_EVENT, (byte)MEASURE_NOTE, VELOCITY };
+        byte[] onEvent = new byte[] { BEAT_ON_EVENT, (byte)MEASURE_NOTE, BEAT_VELOCITY };
+        byte[] offEvent = new byte[] { BEAT_OFF_EVENT, (byte)MEASURE_NOTE, BEAT_VELOCITY };
 
         beatBytes.AddRange(TimedEvent(0, onEvent));
         beatBytes.AddRange(TimedEvent(length, offEvent));
@@ -654,8 +655,8 @@ public static class MidWriter {
             if (tick % measure == 0)
                 noteNumber = MEASURE_NOTE;
 
-            onEvent = new byte[] { ON_EVENT, (byte)noteNumber, VELOCITY };
-            offEvent = new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY };
+            onEvent = new byte[] { BEAT_ON_EVENT, (byte)noteNumber, BEAT_VELOCITY };
+            offEvent = new byte[] { BEAT_OFF_EVENT, (byte)noteNumber, BEAT_VELOCITY };
 
             beatBytes.AddRange(TimedEvent(resolution - length, onEvent));
             beatBytes.AddRange(TimedEvent(length, offEvent));
