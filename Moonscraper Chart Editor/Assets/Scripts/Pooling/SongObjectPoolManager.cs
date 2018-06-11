@@ -168,6 +168,14 @@ public class SongObjectPoolManager : MonoBehaviour {
             }
         }
 
+        // Make sure the notes are within the allowable lanes
+        for (int i = rangedNotes.Count - 1; i >= 0; --i)
+        {
+            Note note = rangedNotes[i];
+            if (!note.IsOpenNote() && ((1 << note.rawNote) & editor.laneInfo.laneMask) == 0)
+                rangedNotes.RemoveAt(i);
+        }
+
         return rangedNotes.ToArray();
     }
   

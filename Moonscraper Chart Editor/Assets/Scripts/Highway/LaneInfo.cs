@@ -57,7 +57,7 @@ public class LaneInfo : MonoBehaviour {
         set
         {
             m_laneCount = value;
-            EventsManager.FireLanesChangedEvent(m_laneCount);
+            EventsManager.FireLanesChangedEvent(laneCount);
         }
     }
 
