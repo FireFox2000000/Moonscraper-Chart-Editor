@@ -62,8 +62,7 @@ public class ChartEditor : MonoBehaviour {
     GameplayManager gameplayManager;
     [SerializeField]
     MenuBar menuBar;
-    [SerializeField]
-    SaveAnimController saveAnim;
+    public LaneInfo laneInfo;
 
     uint _minPos;
     uint _maxPos;
@@ -86,7 +85,9 @@ public class ChartEditor : MonoBehaviour {
     const float AUTOSAVE_RUN_INTERVAL = 60; // Once a minute
     float autosaveTimer = 0;
 
+    [HideInInspector]
     public MovementController movement;
+
     SongObjectPoolManager _songObjectPoolManager;
     public SongObjectPoolManager songObjectPoolManager { get { return _songObjectPoolManager; } }
 
@@ -514,7 +515,7 @@ public class ChartEditor : MonoBehaviour {
             lastLoadedFile = System.IO.Path.GetFullPath(filename);
 
             if (currentSong.isSaving)
-                saveAnim.StartFade();
+                EventsManager.FireSaveEvent();
 
             isDirty = false;
         }

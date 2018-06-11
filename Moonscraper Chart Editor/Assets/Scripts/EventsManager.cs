@@ -42,4 +42,20 @@ public static class EventsManager {
         foreach (ApplicationModeChangedEvent function in onApplicationModeChangedEventList)
             function(Globals.applicationMode);
     }
+
+    public delegate void LanesChangedEvent(int laneCount);
+    public static List<LanesChangedEvent> onLanesChangedEventList = new List<LanesChangedEvent>();
+    public static void FireLanesChangedEvent(int laneCount)
+    {
+        foreach (LanesChangedEvent function in onLanesChangedEventList)
+            function(laneCount);
+    }
+
+    public delegate void SaveEvent();
+    public static List<SaveEvent> onSaveEventList = new List<SaveEvent>();
+    public static void FireSaveEvent()
+    {
+        foreach (SaveEvent function in onSaveEventList)
+            function();
+    }
 }

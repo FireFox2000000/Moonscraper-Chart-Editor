@@ -184,9 +184,7 @@ public class SettingsController : DisplayMenu
             GameSettings.notePlacementMode = GameSettings.NotePlacementMode.LeftyFlip;
         else
             GameSettings.notePlacementMode = GameSettings.NotePlacementMode.Default;
-
-        strikelineFretPlacement.SetStrikerPlacement();
-
+        
         EventsManager.FireLeftyFlipToggledEvent();
     }
 

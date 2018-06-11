@@ -10,22 +10,16 @@ public class Indicators : MonoBehaviour {
     const int FRET_COUNT = 6;
 
     [SerializeField]
-    Color[] fretPalette;
-
-    [SerializeField]
     GameObject[] indicatorParents = new GameObject[FRET_COUNT];
     [SerializeField]
     GameObject[] indicators = new GameObject[FRET_COUNT];
     [SerializeField]
     CustomFretManager[] customIndicators = new CustomFretManager[FRET_COUNT];
     [SerializeField]
-    int[] guitarFretPaletteMap;
-    [SerializeField]
-    int[] drumFretPaletteMap;
-    [SerializeField]
-    int[] ghlguitarFretPaletteMap;
-    [SerializeField]
     GHLHitAnimation[] ghlCustomFrets;
+
+    [SerializeField]
+    LaneInfo laneInfo;
 
     [HideInInspector]
     public HitAnimation[] animations;
@@ -49,13 +43,6 @@ public class Indicators : MonoBehaviour {
         animations = new HitAnimation[FRET_COUNT];
         fretRenders = new SpriteRenderer[FRET_COUNT * 2];
 
-        paletteMaps = new Dictionary<Chart.GameMode, int[]>()
-        {
-            { Chart.GameMode.Guitar, guitarFretPaletteMap },
-            { Chart.GameMode.Drums, drumFretPaletteMap },
-            { Chart.GameMode.GHLGuitar, ghlguitarFretPaletteMap },
-        };
-
         SetAnimations();
 
         for (int i = 0; i < indicators.Length; ++i)
@@ -64,12 +51,12 @@ public class Indicators : MonoBehaviour {
             fretRenders[i * 2 + 1] = indicators[i].transform.parent.GetComponent<SpriteRenderer>();
         }
 
-        UpdateStrikerColors();
-        SetStrikerPlacement();
+        UpdateStrikerColors(laneInfo.laneCount);
+        SetStrikerPlacement(laneInfo.laneCount);
 
-        EventsManager.onChartReloadEventList.Add(UpdateStrikerColors);
-        EventsManager.onChartReloadEventList.Add(SetStrikerPlacement);
-        EventsManager.onChartReloadEventList.Add(Activate2D3DSwitch);
+        EventsManager.onLanesChangedEventList.Add(UpdateStrikerColors);
+        EventsManager.onLanesChangedEventList.Add(SetStrikerPlacement);
+        EventsManager.onLanesChangedEventList.Add(Activate2D3DSwitch);
     }
 
     void SetAnimations()
@@ -145,50 +132,38 @@ public class Indicators : MonoBehaviour {
         }
     }
 
-    public void UpdateStrikerColors()
+    public void UpdateStrikerColors(int laneCount)
     {
         Chart.GameMode gameMode = ChartEditor.GetInstance().currentGameMode;
 
-        int[] paletteMap;
+        Color[] colours = laneInfo.laneColours;
 
-        if (paletteMaps.TryGetValue(gameMode, out paletteMap))
+        for (int i = 0; i < colours.Length; ++i)
         {
-            for (int i = 0; i < paletteMap.Length; ++i)
-            {
-                fretRenders[i * 2].color = fretPalette[paletteMap[i]];
-                fretRenders[i * 2 + 1].color = fretPalette[paletteMap[i]];
-            }
-        }
-        else
-        {
-            Debug.LogError("Unhandled game mode");
+            fretRenders[i * 2].color = colours[i];
+            fretRenders[i * 2 + 1].color = colours[i];
         }
     }
 
-    public void SetStrikerPlacement()
+    public void SetStrikerPlacement(int laneCount)
     {
         int range = indicatorParents.Length;
+        bool lefyFlip = GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip;
+        float chartCenterPos = NoteController.CHART_CENTER_POS;
 
         for (int i = 0; i < range; ++i)
         {
-            int number = i;
-            if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
+            if (i < laneCount)
             {
-                number = range - (number + 1);
-                if (!Globals.ghLiveMode)
-                    number -= 1;
+                float xPos = chartCenterPos + laneInfo.GetLanePosition(i, lefyFlip);
+                indicatorParents[i].transform.position = new Vector3(xPos, indicatorParents[i].transform.position.y, indicatorParents[i].transform.position.z);
             }
 
-            float xPos = NoteController.CHART_CENTER_POS + number * NoteController.positionIncrementFactor + NoteController.noteObjectPositionStartOffset;
-            indicatorParents[i].transform.position = new Vector3(xPos, indicatorParents[i].transform.position.y, indicatorParents[i].transform.position.z);
-
-            bool inHighwayRange = Mathf.Abs(xPos) <= NoteController.CHART_CENTER_POS + Mathf.Abs(NoteController.noteObjectPositionStartOffset);
-
-            indicatorParents[i].SetActive(inHighwayRange);
+            indicatorParents[i].SetActive(i < laneCount);
         }
     }
 
-    void Activate2D3DSwitch()
+    void Activate2D3DSwitch(int laneCount)
     {
         if (Globals.ghLiveMode)
         {

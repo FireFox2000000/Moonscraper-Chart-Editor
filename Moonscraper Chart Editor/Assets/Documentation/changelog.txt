@@ -1,8 +1,12 @@
-v1.2.11
+v1.2.2
+	CHANGES
+	-Expanded custom events into a dedicated menu to accomadate larger text events.
+
 	FIXES
-	-Hopefully fix drums input mapping
+	-Fix drums input mapping
 	-Fixed drums indicator animations
-	-Fixed hit animations ending too soon.
+	-Fixed hit animations ending too soon
+	-Fixed events only reading singles words
 
 v1.2.1
 	NEW FEATURES

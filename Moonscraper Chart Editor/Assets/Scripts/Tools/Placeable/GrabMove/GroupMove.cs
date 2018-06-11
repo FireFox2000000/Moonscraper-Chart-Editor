@@ -55,7 +55,7 @@ public class GroupMove : ToolObject
                             if (!note.IsOpenNote())
                             {
                                 float position = NoteController.GetXPos(0, originalSongObjects[i] as Note) + (mousePosition.x - initMousePos.x);      // Offset
-                                note.rawNote = PlaceNote.XPosToNoteNumber(position);
+                                note.rawNote = PlaceNote.XPosToNoteNumber(position, editor.laneInfo);
                             }
                         }
 

@@ -150,58 +150,23 @@ public class PlaceNote : PlaceSongObject {
 
     protected virtual void UpdateFretType()
     {
-        if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
+        if (!note.IsOpenNote() && Mouse.world2DPosition != null)
         {
-            if (Input.GetKey("1"))
-                note.guitarFret = Note.GuitarFret.Orange;
-            else if (Input.GetKey("2"))
-                note.guitarFret = Note.GuitarFret.Blue;
-            else if (Input.GetKey("3"))
-                note.guitarFret = Note.GuitarFret.Yellow;
-            else if (Input.GetKey("4"))
-                note.guitarFret = Note.GuitarFret.Red;
-            else if (Input.GetKey("5"))
-                note.guitarFret = Note.GuitarFret.Green;
-            //else if (Input.GetKey("6"))
-            else if (!note.IsOpenNote() && Mouse.world2DPosition != null)
-            {
-                Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
-                mousePosition.x += horizontalMouseOffset;
-                note.rawNote = XPosToNoteNumber(mousePosition.x);
-            }
-        }
-        else
-        {
-            if (Input.GetKey("1"))
-                note.guitarFret = Note.GuitarFret.Green;
-            else if (Input.GetKey("2"))
-                note.guitarFret = Note.GuitarFret.Red;
-            else if (Input.GetKey("3"))
-                note.guitarFret = Note.GuitarFret.Yellow;
-            else if (Input.GetKey("4"))
-                note.guitarFret = Note.GuitarFret.Blue;
-            else if (Input.GetKey("5"))
-                note.guitarFret = Note.GuitarFret.Orange;
-            //else if (Input.GetKey("6"))
-
-            else if (!note.IsOpenNote() && Mouse.world2DPosition != null)
-            {
-                Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
-                mousePosition.x += horizontalMouseOffset;
-                note.rawNote = XPosToNoteNumber(mousePosition.x);
-            }
+            Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
+            mousePosition.x += horizontalMouseOffset;
+            note.rawNote = XPosToNoteNumber(mousePosition.x, editor.laneInfo);
         }
     }
 
-    public static int XPosToNoteNumber(float xPos)
+    public static int XPosToNoteNumber(float xPos, LaneInfo laneInfo)
     {
         if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
             xPos *= -1;
 
-        float startPos = -2.0f;
-        float endPos = 2.0f;
+        float startPos = LaneInfo.positionRangeMin;
+        float endPos = LaneInfo.positionRangeMax;
 
-        int max = Globals.ghLiveMode ? (int)Note.GHLiveGuitarFret.White3 : (int)Note.GuitarFret.Orange;
+        int max = laneInfo.laneCount - 1;
         float factor = (endPos - startPos) / (max);
 
         for (int i = 0; i < max; ++i)
@@ -212,23 +177,6 @@ public class PlaceNote : PlaceSongObject {
         }
 
         return max;
-        /*
-        if (xPos > -0.5f)
-        {
-            if (xPos < 0.5f)
-                return Note.Fret_Type.YELLOW;
-            else if (xPos < 1.5f)
-                return Note.Fret_Type.BLUE;
-            else
-                return Note.Fret_Type.ORANGE;
-        }
-        else
-        {
-            if (xPos > -1.5f)
-                return Note.Fret_Type.RED;
-            else
-                return Note.Fret_Type.GREEN;
-        }*/
     }
 
     public ActionHistory.Action[] AddNoteWithRecord()

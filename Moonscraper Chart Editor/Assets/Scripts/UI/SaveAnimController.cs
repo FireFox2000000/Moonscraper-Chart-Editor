@@ -17,6 +17,8 @@ public class SaveAnimController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         editor = ChartEditor.GetInstance();
+
+        EventsManager.onSaveEventList.Add(StartFade);
 	}
 	
 	// Update is called once per frame
