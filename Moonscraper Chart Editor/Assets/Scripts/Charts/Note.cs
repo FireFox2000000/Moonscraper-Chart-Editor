@@ -9,21 +9,31 @@ using System.Collections.Generic;
 [System.Serializable]
 public class Note : ChartObject 
 {
+    public enum GuitarFret
+    {
+        // Assign to the sprite array position
+        Green = 0,
+        Red = 1,
+        Yellow = 2,
+        Blue = 3,
+        Orange = 4,
+        Open = 5
+    }
+
     public enum DrumPad
     {
-        // Wrapper to account for how the frets change colours between the drums and guitar tracks from the GH series
-        Kick = GuitarFret.Open,
+        // Wrapper to account for how the frets change colours between the drums and guitar tracks from the GH series  
         Red = GuitarFret.Green,
         Yellow = GuitarFret.Red,
         Blue = GuitarFret.Yellow,
         Orange = GuitarFret.Blue,
-        Green = GuitarFret.Orange
+        Green = GuitarFret.Orange,
+        Kick = GuitarFret.Open,
     }
 
     public enum GHLiveGuitarFret
     {
         // Assign to the sprite array position
-        //WHITE_1, BLACK_1, WHITE_2, BLACK_2, WHITE_3, BLACK_3, OPEN
         Black1,
         Black2,
         Black3,
@@ -145,17 +155,6 @@ public class Note : ChartObject
         length = note.length;
         flags = note.flags;
         rawNote = note.rawNote;
-    }
-
-    public enum GuitarFret
-    {
-        // Assign to the sprite array position
-        Green = 0,
-        Red = 1,
-        Yellow = 2,
-        Blue = 3,
-        Orange = 4,
-        Open = 5
     }
 
     public Chart.GameMode gameMode
