@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class NoteVisualsManager : MonoBehaviour {
     public NoteController nCon;
+    [SerializeField]
+    protected bool isTool = false;
     protected Renderer noteRenderer;
 
     [HideInInspector]

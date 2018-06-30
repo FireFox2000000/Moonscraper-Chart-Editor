@@ -44,32 +44,83 @@ public class NoteVisuals3DManager : NoteVisualsManager
             {
                 materials = resources.openRenderer.sharedMaterials;
 
+                int colourIndex = 0;
+
                 if (specialType == Note.SpecialType.StarPower)
                 {
                     if (noteType == Note.NoteType.Hopo && !Globals.drumMode)
-                        materials[2] = resources.openMaterials[3];
+                        colourIndex = 3;
                     else
-                        materials[2] = resources.openMaterials[2];
+                        colourIndex = 2;
                 }
                 else
                 {
                     if (noteType == Note.NoteType.Hopo && !Globals.drumMode)
-                        materials[2] = resources.openMaterials[1];
+                        colourIndex = 1;
                     else
-                        materials[2] = resources.openMaterials[0];
+                        colourIndex = isTool ? 4 : 0;
                 }
-            }
-            else if (Globals.ghLiveMode)
-            {
-                materials = GetGHLiveNoteColours(note);
+
+                materials[2] = resources.openMaterials[colourIndex];
             }
             else
             {
-                materials = GetStandardNoteColours(note);
+                ChartEditor editor = ChartEditor.GetInstance();
+                Chart.GameMode gameMode = editor.currentGameMode;
+                LaneInfo laneInfo = editor.laneInfo;
+
+                Material colorMat;
+
+                if (isTool)
+                {
+                    if (noteType == Note.NoteType.Tap)
+                        colorMat = resources.GetToolTapMaterial(gameMode, laneInfo, note.rawNote);
+                    else
+                        colorMat = resources.GetToolStrumMaterial(gameMode, laneInfo, note.rawNote);
+                }
+                else
+                {
+                    if (noteType == Note.NoteType.Tap)
+                        colorMat = resources.GetTapMaterial(gameMode, laneInfo, note.rawNote);
+                    else
+                        colorMat = resources.GetStrumMaterial(gameMode, laneInfo, note.rawNote);
+                }
+
+                materials = GetMaterials(colorMat);
             }
 
             noteRenderer.sharedMaterials = materials;
         }
+    }
+
+    Material[] GetMaterials(Material colorMat)
+    {
+        Material[] materials;
+        const int STANDARD_COLOUR_MAT_POS = 1;
+        const int SP_COLOR_MAT_POS = 3;
+
+        bool isStarpower = specialType == Note.SpecialType.StarPower;
+
+        int colorMatIndex = isStarpower ? SP_COLOR_MAT_POS : STANDARD_COLOUR_MAT_POS;
+
+        switch (noteType)
+        {
+            case (Note.NoteType.Hopo):
+                materials = isStarpower ? resources.spHopoRenderer.sharedMaterials : resources.hopoRenderer.sharedMaterials;
+                break;
+
+            case (Note.NoteType.Tap):
+                materials = isStarpower ? resources.spTapRenderer.sharedMaterials : resources.tapRenderer.sharedMaterials;
+                break;
+
+            default:
+                materials = isStarpower ? resources.spStrumRenderer.sharedMaterials : resources.strumRenderer.sharedMaterials;
+                break;
+        }
+
+        materials[colorMatIndex] = colorMat;
+
+        return materials;
     }
 
     static Material GetValidMaterial(Material[] matArray, int fretNumber)
