@@ -1,3 +1,15 @@
+v1.2.3
+	CHANGES
+	-Brought back inputfield for custom events. Moved expanded events menu into it's own button on the top-right of the inputfield.
+	-Made beat lines more visible and reduced potential for flickerly beat lines.
+	-Added dedicated lyrics events to the gliobal_events.txt
+
+	FIXES
+	-Fixed forced and tap toggles from disappearing after switching from a drums chart
+
+	POTENTIAL ISSUES
+	-Current WIP in re-working lane system for 4-lane drums. Should be stable as all that is hidden away.
+
 v1.2.2
 	CHANGES
 	-Expanded custom events into a dedicated menu to accomadate larger text events.
