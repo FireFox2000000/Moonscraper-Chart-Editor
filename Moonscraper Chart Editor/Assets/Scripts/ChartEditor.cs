@@ -63,6 +63,8 @@ public class ChartEditor : MonoBehaviour {
     [SerializeField]
     MenuBar menuBar;
     public LaneInfo laneInfo;
+    [SerializeField]
+    TextAsset versionNumber;
 
     uint _minPos;
     uint _maxPos;
@@ -195,6 +197,8 @@ public class ChartEditor : MonoBehaviour {
 
     // Use this for initialization
     void Awake () {
+        Debug.Log("Initialising " + versionNumber.text);
+        
         currentEditor = this;
         _songObjectPoolManager = GetComponent<SongObjectPoolManager>();
 
