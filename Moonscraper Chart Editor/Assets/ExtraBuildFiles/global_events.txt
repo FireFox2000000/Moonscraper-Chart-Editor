@@ -1,3 +1,6 @@
+phrase_start
+phrase_end
+lyric 
 idle
 play
 half_tempo
