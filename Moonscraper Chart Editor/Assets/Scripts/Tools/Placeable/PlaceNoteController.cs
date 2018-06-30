@@ -176,11 +176,12 @@ public class PlaceNoteController : ObjectlessTool {
     void KeyboardControlsSustainMode(LaneInfo laneInfo)
     {
         int laneCount = laneInfo.laneCount;
+        bool isTyping = Services.IsTyping;
 
         for (int i = 0; i < heldNotes.Length; ++i)
         {
             // Add in the held note history when user lifts off the keys
-            if (Input.GetKeyUp((i + 1).ToString()))
+            if (isTyping || Input.GetKeyUp((i + 1).ToString()))
             {
                 KeySustainActionHistoryInsert(i);
             }
@@ -195,6 +196,9 @@ public class PlaceNoteController : ObjectlessTool {
                     return;
             }
         }
+
+        if (isTyping)
+            return;
 
         for (int i = 0; i < laneCount + 1; ++i)      // Start at 1 to ignore the multinote
         {                     
@@ -234,6 +238,9 @@ public class PlaceNoteController : ObjectlessTool {
     {
         int keysPressed = 0;
         int laneCount = laneInfo.laneCount;
+        bool isTyping = Services.IsTyping;
+        if (isTyping)
+            return;
 
         for (int i = 0; i < laneCount + 1; ++i)
         {
