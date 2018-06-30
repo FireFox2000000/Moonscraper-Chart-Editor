@@ -20,19 +20,8 @@ public class MeshNoteResources : ScriptableObject {
     public Renderer spHopoRenderer;
     public Renderer spTapRenderer;
 
-    [Header("Note colours")]
-    public Material[] strumColors = new Material[6];
-    public Material[] tapColors = new Material[5];
-
-    public Material spTemp;
-    public Material spTapTemp;
-
     [Header("Open note")]
     public Material[] openMaterials = new Material[5];
-
-    [Header("GHLive Note colours")]
-    public Material[] ghlStrumColors = new Material[2];
-    public Material[] ghlTapColors = new Material[2];
 
     [Header("Strum config")]
     public Material[] strumColorPalette = new Material[9];
