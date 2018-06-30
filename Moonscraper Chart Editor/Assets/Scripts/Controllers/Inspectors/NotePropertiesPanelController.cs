@@ -38,12 +38,11 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     protected override void Update()
     {
         // Prevent users from forcing notes when they shouldn't be forcable but retain the previous user-set forced property when using the note tool
-        if (Globals.drumMode)
-        {
-            forcedToggle.gameObject.SetActive(false);
-            tapToggle.gameObject.SetActive(false);
-        }
-        else
+        bool drumsMode = Globals.drumMode;
+        forcedToggle.gameObject.SetActive(!drumsMode);
+        tapToggle.gameObject.SetActive(!drumsMode);
+
+        if (!drumsMode)
         {
             if (Toolpane.currentTool != Toolpane.Tools.Note || (Toolpane.currentTool == Toolpane.Tools.Note && noteToolObject.activeSelf))
             {
