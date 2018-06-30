@@ -19,6 +19,8 @@ public class EventPropertiesPanelController : PropertiesPanelController
     RectTransform scrollViewContentBox;
     [SerializeField]
     CustomEventMenu customEventMenu;
+    [SerializeField]
+    InputField eventNameInputField;
 
     SongObject previous;
 
@@ -168,10 +170,11 @@ public class EventPropertiesPanelController : PropertiesPanelController
         else
             return;
 
-        if (updateInputField)
+        //if (updateInputField)
         {
             positionText.text = "Position: " + position.ToString();
             eventName.text = eventTitle;
+            eventNameInputField.text = eventTitle;
         }
     }
 

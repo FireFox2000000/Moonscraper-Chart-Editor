@@ -13,14 +13,10 @@ public class CustomEventMenu : MonoBehaviour {
     InputField eventInputField;
 
     SongObject originalEvent;
+    string eventStr = string.Empty;
 
     // Use this for initialization
     void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
 		
 	}
 
@@ -57,15 +53,22 @@ public class CustomEventMenu : MonoBehaviour {
 
         currentEventToCustomise = null;
         originalEvent = null;
+        eventStr = string.Empty;
     }
 
     public void EndInputEdit(string name)
     {
+        if (eventStr != string.Empty)
+            name = eventStr;
+
         UpdateEvent(name);
     }
 
     public void ChangedInputEdit(string name)
     {
+        if (!Input.GetKeyDown(KeyCode.Escape))
+            eventStr = name;
+
         UpdateEvent(name);
     }
 
