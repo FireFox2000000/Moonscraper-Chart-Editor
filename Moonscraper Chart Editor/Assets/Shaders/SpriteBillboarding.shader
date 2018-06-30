@@ -1,4 +1,6 @@
-﻿Shader "Custom/SpriteBillboarding"
+﻿//https://en.wikibooks.org/wiki/Cg_Programming/Unity/Billboards
+
+Shader "Custom/SpriteBillboarding"
 {
 	Properties
 	{
@@ -6,7 +8,16 @@
 	}
 	SubShader
 	{
-        Tags{ "Queue" = "Transparent" }
+		Tags
+		{
+			"Queue" = "Transparent"
+			"SortingLayer" = "Resources_Sprites"
+			"IgnoreProjector" = "True"
+			"RenderType" = "Transparent"
+			"PreviewType" = "Plane"
+			"CanUseSpriteAtlas" = "True"
+			"DisableBatching" = "True"
+		}
         Lighting Off
         ZWrite Off
         Blend SrcAlpha OneMinusSrcAlpha
@@ -20,36 +31,34 @@
 			
 			#include "UnityCG.cginc"
 
-			struct appdata
-			{
+			struct vertexInput {
 				float4 vertex : POSITION;
-				float2 uv : TEXCOORD0;
+				float4 tex : TEXCOORD0;
 			};
-
-			struct v2f
-			{
-				float2 uv : TEXCOORD0;
-				float4 vertex : SV_POSITION;
+			struct vertexOutput {
+				float4 pos : SV_POSITION;
+				float4 tex : TEXCOORD0;
 			};
 
 			sampler2D _MainTex;
 			
-			v2f vert (appdata v)
+			vertexOutput vert(vertexInput input)
 			{
-                v2f o;
-                o.vertex = mul(UNITY_MATRIX_P,
-                    mul(UNITY_MATRIX_MV, float4(0.0, 0.0, 0.0, 1.0))
-                    + float4(v.vertex.x, v.vertex.y, 0.0, 0.0));
+				vertexOutput output;
 
-                o.uv = v.uv;
-                return o;
+				output.pos = mul(UNITY_MATRIX_P,
+					mul(UNITY_MATRIX_MV, float4(0.0, 0.0, 0.0, 1.0))
+					+ float4(input.vertex.x, input.vertex.y, 0.0, 0.0)
+					* float4(1.0, 1.0, 1.0, 1.0));
+
+				output.tex = input.tex;
+
+				return output;
 			}
 			
-			fixed4 frag (v2f i) : SV_Target
+			float4 frag(vertexOutput input) : COLOR
 			{
-				// sample the texture
-				fixed4 col = tex2D(_MainTex, i.uv);
-				return col;
+				return tex2D(_MainTex, float2(input.tex.xy));
 			}
 			ENDCG
 		}
