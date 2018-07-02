@@ -15,6 +15,7 @@ public class DrumsGameplayRulestate : BaseGameplayRulestate {
     {
         uint noteStreak = stats.noteStreak;
         int missCount = UpdateWindowExit(time, hitWindow);
+        LaneInfo laneInfo = ChartEditor.GetInstance().laneInfo;
 
         for (int i = 0; i < missCount; ++i)
         {
@@ -24,7 +25,7 @@ public class DrumsGameplayRulestate : BaseGameplayRulestate {
             MissNote(time, DrumsNoteHitAndMissDetect.MissSubType.NoteMiss, null);
         }
 
-        hitAndMissNoteDetect.Update(time, hitWindow, drumsInput, stats.noteStreak);
+        hitAndMissNoteDetect.Update(time, hitWindow, drumsInput, stats.noteStreak, laneInfo);
     }
 
     public override void Reset()

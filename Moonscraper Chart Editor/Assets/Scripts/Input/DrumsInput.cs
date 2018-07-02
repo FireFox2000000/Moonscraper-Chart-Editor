@@ -1,11 +1,30 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 namespace DrumsInput
 {
     public static class GamepadInputExtension
     {
-        public static bool GetPadPressedInput(this GamepadInput gamepad, Note.DrumPad drumFret)
+        static readonly Dictionary<int, Dictionary<Note.DrumPad, GamepadInput.Button>> laneCountGamepadOverridesDict = new Dictionary<int, Dictionary<Note.DrumPad, GamepadInput.Button>>()
         {
+            {
+                4, new Dictionary<Note.DrumPad, GamepadInput.Button>()
+                {
+                    { Note.DrumPad.Orange, GamepadInput.Button.A }
+                }
+            }
+        };
+
+        public static bool GetPadPressedInput(this GamepadInput gamepad, Note.DrumPad drumFret, LaneInfo laneInfo)
+        {
+            Dictionary<Note.DrumPad, GamepadInput.Button> inputOverrideDict;
+            GamepadInput.Button overrideInput;
+
+            if (laneCountGamepadOverridesDict.TryGetValue(laneInfo.laneCount, out inputOverrideDict) && inputOverrideDict.TryGetValue(drumFret, out overrideInput))
+            {
+                return gamepad.GetButtonPressed(overrideInput);
+            }
+
             switch (drumFret)
             {
                 case (Note.DrumPad.Red):
@@ -34,13 +53,13 @@ namespace DrumsInput
             return false;
         }
 
-        public static int GetPadPressedInputMask(this GamepadInput gamepad)
+        public static int GetPadPressedInputMask(this GamepadInput gamepad, LaneInfo laneInfo)
         {
             int inputMask = 0;
 
             foreach (Note.DrumPad pad in System.Enum.GetValues(typeof(Note.DrumPad)))
             {
-                if (gamepad.GetPadPressedInput(pad))
+                if (gamepad.GetPadPressedInput(pad, laneInfo))
                     inputMask |= 1 << (int)pad;
             }
 
@@ -49,7 +68,7 @@ namespace DrumsInput
 
         /******************************** Keyboard Alts ********************************************/
 
-        public static bool GetPadPressedInputKeyboard(Note.DrumPad drumFret)
+        public static bool GetPadPressedInputKeyboard(Note.DrumPad drumFret, LaneInfo laneInfo)
         {
             switch (drumFret)
             {
@@ -79,18 +98,18 @@ namespace DrumsInput
             return false;
         }
 
-        public static bool GetPadInputControllerOrKeyboard(this GamepadInput gamepad, Note.DrumPad drumFret)
+        public static bool GetPadInputControllerOrKeyboard(this GamepadInput gamepad, Note.DrumPad drumFret, LaneInfo laneInfo)
         {
-            return GetPadPressedInput(gamepad, drumFret) || GetPadPressedInputKeyboard(drumFret);
+            return GetPadPressedInput(gamepad, drumFret, laneInfo) || GetPadPressedInputKeyboard(drumFret, laneInfo);
         }
 
-        public static int GetPadPressedInputMaskKeyboard()
+        public static int GetPadPressedInputMaskKeyboard(LaneInfo laneInfo)
         {
             int inputMask = 0;
 
             foreach (Note.DrumPad pad in System.Enum.GetValues(typeof(Note.DrumPad)))
             {
-                if (GetPadPressedInputKeyboard(pad))
+                if (GetPadPressedInputKeyboard(pad, laneInfo))
                 {
                     inputMask |= 1 << (int)pad;
                 }
@@ -99,10 +118,10 @@ namespace DrumsInput
             return inputMask;
         }
 
-        public static int GetPadPressedInputMaskControllerOrKeyboard(this GamepadInput gamepad)
+        public static int GetPadPressedInputMaskControllerOrKeyboard(this GamepadInput gamepad, LaneInfo laneInfo)
         {
-            int gamepadMask = GetPadPressedInputMask(gamepad);
-            return gamepadMask != 0 ? gamepadMask : GetPadPressedInputMaskKeyboard();
+            int gamepadMask = GetPadPressedInputMask(gamepad, laneInfo);
+            return gamepadMask != 0 ? gamepadMask : GetPadPressedInputMaskKeyboard(laneInfo);
         }
     }
 }

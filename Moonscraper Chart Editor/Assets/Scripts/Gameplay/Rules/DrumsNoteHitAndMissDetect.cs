@@ -27,14 +27,31 @@ public class DrumsNoteHitAndMissDetect {
         m_missNoteFactory = missNoteFactory;
     }
 
-    public void Update(float time, HitWindow<DrumsNoteHitKnowledge> hitWindow, GamepadInput drumsInput, uint noteStreak)
+    public void Update(float time, HitWindow<DrumsNoteHitKnowledge> hitWindow, GamepadInput drumsInput, uint noteStreak, LaneInfo laneInfo)
     {
         DrumsNoteHitKnowledge nextNoteToHit = hitWindow.oldestUnhitNote;
-        int inputMask = drumsInput.GetPadPressedInputMaskControllerOrKeyboard();
+        int inputMask = drumsInput.GetPadPressedInputMaskControllerOrKeyboard(laneInfo);
 
         if (nextNoteToHit != null)
         {
             int noteMask = nextNoteToHit.note.mask;
+            int laneMask = laneInfo.laneMask;
+
+            // Cull notes from the notemask by lanes that are being used
+            foreach (Note.DrumPad pad in System.Enum.GetValues(typeof(Note.DrumPad)))
+            {
+                if (pad == Note.DrumPad.Kick)
+                    continue;
+
+                int padBitInput = (int)pad;
+                int padMask = 1 << padBitInput;
+
+                bool includeLane = (padMask & laneMask) != 0;
+                if (!includeLane)
+                {
+                    noteMask &= ~padMask;
+                }
+            }
 
             bool badHit = false;
 
@@ -46,7 +63,7 @@ public class DrumsNoteHitAndMissDetect {
             {
                 foreach (Note.DrumPad drumPad in System.Enum.GetValues(typeof(Note.DrumPad)))
                 {
-                    bool hitPad = drumsInput.GetPadInputControllerOrKeyboard(drumPad);
+                    bool hitPad = drumsInput.GetPadInputControllerOrKeyboard(drumPad, laneInfo);
                     if (hitPad)
                     {
                         if (nextNoteToHit.GetHitTime(drumPad) == NoteHitKnowledge.NULL_TIME)

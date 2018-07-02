@@ -91,8 +91,10 @@ public class Indicators : MonoBehaviour {
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
-            GamepadInput input = ChartEditor.GetInstance().inputManager.mainGamepad;
-            Chart.GameMode gameMode = ChartEditor.GetInstance().currentChart.gameMode;
+            ChartEditor editor = ChartEditor.GetInstance();
+            GamepadInput input = editor.inputManager.mainGamepad;
+            Chart.GameMode gameMode = editor.currentChart.gameMode;
+            LaneInfo laneInfo = editor.laneInfo;
 
             if (gameMode == Chart.GameMode.Drums)
             {
@@ -101,7 +103,7 @@ public class Indicators : MonoBehaviour {
                     if (bannedDrumPadInputs.ContainsKey(drumPad))
                         continue;
 
-                    if (input.GetPadInputControllerOrKeyboard(drumPad))
+                    if (input.GetPadInputControllerOrKeyboard(drumPad, laneInfo))
                         animations[(int)drumPad].Press();
                     else
                         animations[(int)drumPad].Release();
