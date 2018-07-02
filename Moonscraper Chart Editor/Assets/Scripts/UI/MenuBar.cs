@@ -30,6 +30,8 @@ public class MenuBar : MonoBehaviour {
     public static Song.Instrument currentInstrument = Song.Instrument.Guitar;
     public static Song.Difficulty currentDifficulty = Song.Difficulty.Expert;
 
+    int desiredLaneCount = 0;
+
     // Use this for initialization
     void Start () {
         editor = ChartEditor.GetInstance();
@@ -103,6 +105,8 @@ public class MenuBar : MonoBehaviour {
         {
             Debug.LogError("Invalid instrument set: " + value);
         }
+
+        desiredLaneCount = 0;
     }
 
     public void SetDifficulty(string value)
@@ -117,6 +121,11 @@ public class MenuBar : MonoBehaviour {
         }
     }
 
+    public void SetLaneCount(int value)
+    {
+        desiredLaneCount = value;
+    }
+
     public void LoadCurrentInstumentAndDifficulty()
     {
         if (!editor)
@@ -126,6 +135,9 @@ public class MenuBar : MonoBehaviour {
         editor.currentSelectedObject = null;
 
         EventsManager.FireChartReloadedEvent();
+
+        if (desiredLaneCount > 0)
+            editor.laneInfo.laneCount = desiredLaneCount;
     }
 
     public static bool previewing { get { return _previewing; } }
