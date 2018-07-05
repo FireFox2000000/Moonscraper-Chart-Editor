@@ -5,24 +5,30 @@ namespace DrumsInput
 {
     public static class GamepadInputExtension
     {
-        static readonly Dictionary<int, Dictionary<Note.DrumPad, GamepadInput.Button>> laneCountGamepadOverridesDict = new Dictionary<int, Dictionary<Note.DrumPad, GamepadInput.Button>>()
+        static readonly Dictionary<int, Dictionary<Note.DrumPad, GamepadInput.Button?>> laneCountGamepadOverridesDict = new Dictionary<int, Dictionary<Note.DrumPad, GamepadInput.Button?>>()
         {
             {
-                4, new Dictionary<Note.DrumPad, GamepadInput.Button>()
+                4, new Dictionary<Note.DrumPad, GamepadInput.Button?>()
                 {
-                    { Note.DrumPad.Orange, GamepadInput.Button.A }
+                    { Note.DrumPad.Orange, GamepadInput.Button.A },
+                    { Note.DrumPad.Green, null }
                 }
             }
         };
 
         public static bool GetPadPressedInput(this GamepadInput gamepad, Note.DrumPad drumFret, LaneInfo laneInfo)
         {
-            Dictionary<Note.DrumPad, GamepadInput.Button> inputOverrideDict;
-            GamepadInput.Button overrideInput;
+            Dictionary<Note.DrumPad, GamepadInput.Button?> inputOverrideDict;
+            GamepadInput.Button? overrideInput;
 
             if (laneCountGamepadOverridesDict.TryGetValue(laneInfo.laneCount, out inputOverrideDict) && inputOverrideDict.TryGetValue(drumFret, out overrideInput))
             {
-                return gamepad.GetButtonPressed(overrideInput);
+                bool inputFound = false;
+
+                if (overrideInput != null)
+                    inputFound = gamepad.GetButtonPressed((GamepadInput.Button)overrideInput);
+
+                return inputFound;
             }
 
             switch (drumFret)
