@@ -1,3 +1,13 @@
+v1.2.4
+	NEW FEATURES
+	-Added 4-lane drums
+
+	CHANGES
+	-Reduced non-measure beat lines to 2 pixels tall
+
+	FIXES
+	-Fixed keys mode inputs being recognised when typing in a text box
+
 v1.2.3
 	CHANGES
 	-Brought back inputfield for custom events. Moved expanded events menu into it's own button on the top-right of the inputfield.
