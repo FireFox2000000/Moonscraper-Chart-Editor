@@ -16,28 +16,17 @@ public class CustomFretManager : HitAnimation
     public SpriteRenderer toAnimateRen;
     public SpriteRenderer fretStemRen;
 
+    [HideInInspector] public Sprite fretBase = null;
+    [HideInInspector] public Sprite fretCover = null;
+    [HideInInspector] public Sprite fretPress = null;
+    [HideInInspector] public Sprite fretRelease = null;
+    [HideInInspector] public Sprite toAnimate = null;
 
-    public Sprite fretBase = null;
-
-    public Sprite fretCover = null;
-
-    public Sprite fretPress = null;
-
-    public Sprite fretRelease = null;
-
-    public Sprite toAnimate = null;
-
-
-    public Sprite drumFretBase = null;
-
-    public Sprite drumFretCover = null;
-
-    public Sprite drumFretPress = null;
-
-    public Sprite drumFretRelease = null;
-
-    public Sprite drumToAnimate = null;
-
+    [HideInInspector] public Sprite drumFretBase = null;
+    [HideInInspector] public Sprite drumFretCover = null;
+    [HideInInspector] public Sprite drumFretPress = null;
+    [HideInInspector] public Sprite drumFretRelease = null;
+    [HideInInspector] public Sprite drumToAnimate = null;
 
     void Start()
     {
