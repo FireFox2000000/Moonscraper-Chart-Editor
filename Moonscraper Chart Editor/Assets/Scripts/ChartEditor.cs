@@ -175,7 +175,7 @@ public class ChartEditor : MonoBehaviour {
             Debug.LogError("Couldn't find window handle");  
         }
         else
-            originalWindowName = buffer.ToString();
+            originalWindowName = versionNumber.text;//buffer.ToString();
 #endif
     }
 
