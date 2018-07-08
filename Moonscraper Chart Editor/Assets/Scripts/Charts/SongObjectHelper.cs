@@ -90,15 +90,25 @@ public static class SongObjectHelper {
         return index;
     }
 
-    /// <summary>
-    /// Searches through the array to collect all the items found at the specified position.
-    /// </summary>
-    /// <typeparam name="T">Only objects that extend from the SongObject class.</typeparam>
-    /// <param name="position">The tick position of the items.</param>
-    /// <param name="objects">The list you want to search through.</param>
-    /// <returns>Returns an array of items located at the specified tick position. 
-    /// Returns an empty array if no items are at that exact tick position. </returns>
-    public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T : SongObject
+    public static int FindClosestPositionRoundedDown<T>(uint tick, T[] objects) where T : SongObject
+    {
+        int index = FindClosestPosition(tick, objects);
+
+        if (index > 0 && objects[index].tick > tick)
+            --index;
+
+        return index;
+    }
+
+/// <summary>
+/// Searches through the array to collect all the items found at the specified position.
+/// </summary>
+/// <typeparam name="T">Only objects that extend from the SongObject class.</typeparam>
+/// <param name="position">The tick position of the items.</param>
+/// <param name="objects">The list you want to search through.</param>
+/// <returns>Returns an array of items located at the specified tick position. 
+/// Returns an empty array if no items are at that exact tick position. </returns>
+public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T : SongObject
     {
         int index = FindClosestPosition(position, objects);
 

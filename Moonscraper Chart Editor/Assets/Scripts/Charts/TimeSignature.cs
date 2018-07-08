@@ -11,6 +11,9 @@ public class TimeSignature : SyncTrack
     public uint numerator;
     public uint denominator;
 
+    public uint quarterNotesPerMeasure { get { return numerator; } }
+    public uint beatsPerMeasure { get { return denominator; } }
+
     public TimeSignature(uint _position = 0, uint _numerator = 4, uint _denominator = 4) : base(_position)
     {
         numerator = _numerator;

@@ -43,8 +43,68 @@ public class HighwayController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        UpdateBeatLines2();
+        UpdateBeatLines3();
     }
+
+    // Calculate the beat lines directly from the time signature positions themselves
+    void UpdateBeatLines3()
+    {
+        int measurePoolPos = 0, beatPoolPos = 0, quarterPoolPos = 0;
+        const float RESOLUTIONS_PER_MEASURE = 4.0f;
+
+        Song song = editor.currentSong;
+        uint startRange = song.WorldPositionToSnappedTick(editor.camYMin.position.y, 8);
+        uint endRange = editor.maxPos;
+        TimeSignature[] timeSignatures = editor.currentSong.timeSignatures;
+
+        int startIndex = SongObjectHelper.FindClosestPositionRoundedDown(startRange, timeSignatures);  // Start at the first measure       
+
+        for (int tsIndex = startIndex; tsIndex < timeSignatures.Length && timeSignatures[tsIndex].tick <= endRange; ++tsIndex)
+        {
+            TimeSignature ts = timeSignatures[tsIndex];
+            uint initialTick = ts.tick;
+            float currentTick = initialTick;
+            uint nextTSTick = tsIndex + 1 < timeSignatures.Length ? timeSignatures[tsIndex + 1].tick : endRange;
+            float measure = song.resolution * RESOLUTIONS_PER_MEASURE * (RESOLUTIONS_PER_MEASURE / ts.beatsPerMeasure);
+
+            int beatCount = 0;
+            int measureCount = 0;
+
+            while (currentTick < nextTSTick && currentTick <= endRange)
+            {
+                if (currentTick >= startRange && currentTick <= endRange)
+                    SetBeatLinePosition((uint)Mathf.Round(currentTick), measureLinePool, ref measurePoolPos);
+
+                for (int j = 0; j < ts.quarterNotesPerMeasure; ++j)
+                {
+                    uint position = (uint)(currentTick + j * Mathf.Round(measure / ts.quarterNotesPerMeasure));
+
+                    if (j > 0 && position >= startRange && position < nextTSTick && position <= endRange)
+                        SetBeatLinePosition(position, beatLinePool, ref beatPoolPos);
+
+                    // Place faded quarter lines inbetween beat lines. Technically called eigths? I dunno this terminology. >_<
+                    {
+                        uint nextPosition = (uint)(currentTick + (j + 1) * Mathf.Round(measure / ts.quarterNotesPerMeasure));
+                        uint tickDelta = nextPosition - position;
+                        uint newPosition = position + tickDelta / 2;
+
+                        if (newPosition >= startRange && position < nextTSTick && newPosition <= endRange)
+                            SetBeatLinePosition(newPosition, quarterBeatLinePool, ref quarterPoolPos);
+                    }
+
+                    ++beatCount;
+                }
+
+                ++measureCount;
+                currentTick = initialTick + measure * measureCount;
+            }
+        }
+
+        DisableBeatLines(measurePoolPos, measureLinePool);
+        DisableBeatLines(beatPoolPos, beatLinePool);
+        DisableBeatLines(quarterPoolPos, quarterBeatLinePool);
+    }
+
     void UpdateBeatLines2()
     {
         // Update time signature lines SNAPPED
