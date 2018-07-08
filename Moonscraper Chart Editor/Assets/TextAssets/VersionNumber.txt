@@ -1,1 +1,1 @@
-Moonscraper v1.2.4
+Moonscraper Chart Editor v1.2.5

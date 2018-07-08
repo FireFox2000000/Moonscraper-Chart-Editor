@@ -1,3 +1,10 @@
+v1.2.5
+	CHANGES
+	-Changes beat line/time signature rendering algorithm
+
+	FIXES
+	-Fix copy paste with events only-copy erasing bpms.
+
 v1.2.4
 	NEW FEATURES
 	-Added 4-lane drums
