@@ -1133,9 +1133,9 @@ public class ChartEditor : MonoBehaviour {
         }
 
         // Default collision size
-        if (left == null || left > DEFAULT_LEFT)
+        if (left == null)// || left > DEFAULT_LEFT)
             left = DEFAULT_LEFT;
-        if (right == null || right < DEFAULT_RIGHT)
+        if (right == null)// || right < DEFAULT_RIGHT)
             right = DEFAULT_RIGHT;
 
         Vector2 bottomLeft = Vector2.zero;
