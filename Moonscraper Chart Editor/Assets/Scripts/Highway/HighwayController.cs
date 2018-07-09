@@ -56,47 +56,40 @@ public class HighwayController : MonoBehaviour {
         uint startRange = song.WorldPositionToSnappedTick(editor.camYMin.position.y, 8);
         uint endRange = editor.maxPos;
         TimeSignature[] timeSignatures = editor.currentSong.timeSignatures;
+        uint standardMeasureLengthTicks = (uint)(RESOLUTIONS_PER_MEASURE * song.resolution);
 
-        int startIndex = SongObjectHelper.FindClosestPositionRoundedDown(startRange, timeSignatures);  // Start at the first measure       
+        int startIndex = SongObjectHelper.FindClosestPositionRoundedDown(startRange, timeSignatures);   
 
         for (int tsIndex = startIndex; tsIndex < timeSignatures.Length && timeSignatures[tsIndex].tick <= endRange; ++tsIndex)
         {
             TimeSignature ts = timeSignatures[tsIndex];
-            uint initialTick = ts.tick;
-            float currentTick = initialTick;
+            uint nextTick = ts.tick;
             uint nextTSTick = tsIndex + 1 < timeSignatures.Length ? timeSignatures[tsIndex + 1].tick : endRange;
-            float measure = song.resolution * RESOLUTIONS_PER_MEASURE * (RESOLUTIONS_PER_MEASURE / ts.beatsPerMeasure);
+            float beatDeltaTick = standardMeasureLengthTicks / ts.beatsPerMeasure;
 
-            int beatCount = 0;
-            int measureCount = 0;
+            uint startDeltaFromTSTick = startRange > ts.tick ? (startRange - ts.tick) : 0;
+            int quarterLineIndex = (int)Mathf.Round((float)(startDeltaFromTSTick * ts.quarterNotesPerMeasure) / standardMeasureLengthTicks);    // Jump to the next reasonable line index rather than looping until we get there
 
-            while (currentTick < nextTSTick && currentTick <= endRange)
+            while (nextTick < nextTSTick && nextTick <= endRange)
             {
-                if (currentTick >= startRange && currentTick <= endRange)
-                    SetBeatLinePosition((uint)Mathf.Round(currentTick), measureLinePool, ref measurePoolPos);
+                uint currentTick = nextTick;
+                bool tickIsMeasure = quarterLineIndex % ts.quarterNotesPerMeasure == 0;
 
-                for (int j = 0; j < ts.quarterNotesPerMeasure; ++j)
+                if (currentTick >= startRange && currentTick < nextTSTick && currentTick <= endRange)
                 {
-                    uint position = (uint)(currentTick + j * Mathf.Round(measure / ts.quarterNotesPerMeasure));
-
-                    if (j > 0 && position >= startRange && position < nextTSTick && position <= endRange)
-                        SetBeatLinePosition(position, beatLinePool, ref beatPoolPos);
-
-                    // Place faded quarter lines inbetween beat lines. Technically called eigths? I dunno this terminology. >_<
-                    {
-                        uint nextPosition = (uint)(currentTick + (j + 1) * Mathf.Round(measure / ts.quarterNotesPerMeasure));
-                        uint tickDelta = nextPosition - position;
-                        uint newPosition = position + tickDelta / 2;
-
-                        if (newPosition >= startRange && position < nextTSTick && newPosition <= endRange)
-                            SetBeatLinePosition(newPosition, quarterBeatLinePool, ref quarterPoolPos);
-                    }
-
-                    ++beatCount;
+                    if (tickIsMeasure)
+                        SetBeatLinePosition(currentTick, measureLinePool, ref measurePoolPos);
+                    else
+                        SetBeatLinePosition(currentTick, beatLinePool, ref beatPoolPos);
                 }
 
-                ++measureCount;
-                currentTick = initialTick + measure * measureCount;
+                nextTick = ts.tick + (uint)Mathf.Round(beatDeltaTick * (++quarterLineIndex));
+
+                uint tickDelta = nextTick - currentTick;
+                uint newPosition = currentTick + tickDelta / 2;
+
+                if (newPosition >= startRange && newPosition < nextTSTick && newPosition <= endRange)
+                    SetBeatLinePosition(newPosition, quarterBeatLinePool, ref quarterPoolPos);
             }
         }
 
