@@ -1,3 +1,8 @@
+v1.2.51
+	FIXES
+	-Fixed up beat line rendering properly this time.
+	-Removed native breakpoint that may have caused a crash.
+
 v1.2.5
 	CHANGES
 	-Changes beat line/time signature rendering algorithm
