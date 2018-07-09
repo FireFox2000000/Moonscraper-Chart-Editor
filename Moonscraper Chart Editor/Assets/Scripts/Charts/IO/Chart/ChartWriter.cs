@@ -72,13 +72,16 @@ public class ChartWriter {
             saveString += "}" + Globals.LINE_ENDING;
         }
         catch(System.Exception e)
-        {
-            System.Diagnostics.Debugger.Break();
+        {           
             string error = "Error with saving song properties: " + e.Message;
             Debug.LogError(error);
             errorList += error + Globals.LINE_ENDING;
 
             saveString = string.Empty;  // Clear all the song properties because we don't want braces left open, which will screw up the loading of the chart
+
+#if UNITY_EDITOR
+            System.Diagnostics.Debugger.Break();
+#endif
         }
 
         // SyncTrack
