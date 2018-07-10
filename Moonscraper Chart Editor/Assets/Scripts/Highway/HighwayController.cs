@@ -68,7 +68,9 @@ public class HighwayController : MonoBehaviour {
             float beatDeltaTick = standardMeasureLengthTicks / ts.beatsPerMeasure;
 
             uint startDeltaFromTSTick = startRange > ts.tick ? (startRange - ts.tick) : 0;
-            int quarterLineIndex = (int)Mathf.Round((float)(startDeltaFromTSTick * ts.quarterNotesPerMeasure) / standardMeasureLengthTicks);    // Jump to the next reasonable line index rather than looping until we get there
+            int quarterLineIndex = (int)Mathf.Round((float)(startDeltaFromTSTick) / song.resolution);    // Jump to the next reasonable line index rather than looping until we get there
+            if (quarterLineIndex > 0)
+                --quarterLineIndex;
 
             while (nextTick < nextTSTick && nextTick <= endRange)
             {
