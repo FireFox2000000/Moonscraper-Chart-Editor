@@ -1,3 +1,7 @@
+v1.2.52
+	FIXES
+	-Fixed up beat lines disappearing further away from the start of the chart. 
+
 v1.2.51
 	FIXES
 	-Fixed up beat line rendering properly this time.
