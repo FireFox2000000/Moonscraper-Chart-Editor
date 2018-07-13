@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 647951f3538a2d642bcf0c096b0ea1b9
-timeCreated: 1483751952
+guid: ec7c45b0a34acde4d9468eb1b25351d9
+timeCreated: 1485578600
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName: {}
@@ -86,7 +86,7 @@ TextureImporter:
     serializedVersion: 2
     sprites: []
     outline: []
-  spritePackingTag: UI
+  spritePackingTag: Top Bar UI
   userData: 
   assetBundleName: 
   assetBundleVariant: 
