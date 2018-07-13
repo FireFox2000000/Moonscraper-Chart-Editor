@@ -43,6 +43,7 @@ public class DropdownNotification : MonoBehaviour {
 	void Start () {
         rectTransform = GetComponent<RectTransform>();
         originalPosition = rectTransform.localPosition.y;
+        gameObject.SetActive(false);
     }
 	
 	// Update is called once per frame
@@ -90,6 +91,10 @@ public class DropdownNotification : MonoBehaviour {
             {
                 position.y = originalPosition;
                 currentState = State.Closed;
+
+                // Disable
+                if (notificationQueue.Count <= 0)
+                    gameObject.SetActive(false);
             }
 
             rectTransform.localPosition = position;
@@ -116,6 +121,7 @@ public class DropdownNotification : MonoBehaviour {
     public void PushNotification(string message, float displayTime = 3, bool cancelable = false)
     {
         notificationQueue.Add(new NotificationData(message, displayTime, cancelable));
+        gameObject.SetActive(true);
     }
 
     NotificationData PopNotification()
