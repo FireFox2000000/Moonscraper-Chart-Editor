@@ -51,9 +51,9 @@ public static class ChartReader
             }
 
         }
-        catch
+        catch (System.Exception e)
         {
-            throw new Exception("Could not open file");
+            throw new Exception("Could not open file: " + e.Message);
         }
     }
 
