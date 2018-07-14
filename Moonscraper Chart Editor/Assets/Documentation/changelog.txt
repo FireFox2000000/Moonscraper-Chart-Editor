@@ -1,10 +1,15 @@
-v1.2.53
-	FIXES
-	-Fixed up beat lines disappearing when ts denominator is less than 4
+v1.2.6
+	NEW FEATURES
+	-Metronome clicks now based on time signature to match beat lines
 
-v1.2.52
+	CHANGES
+	-UI draw call optimisation
+	-Re-allow free snapping time signatures. Hopefully idiots stay away from this. 
+	-Changed default clap sound
+
 	FIXES
-	-Fixed up beat lines disappearing further away from the start of the chart. 
+	-Add full caught error message to on-screen output when loading charts
+	-Fixed substring parsing error when reading unrecognised tracks from .chart files
 
 v1.2.5
 	NEW FEATURES
