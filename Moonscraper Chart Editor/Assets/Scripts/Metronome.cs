@@ -47,6 +47,7 @@ public class Metronome : MonoBehaviour {
         transform.localPosition = pos;
 
         uint currentTickPos = editor.currentSong.WorldYPositionToTick(transform.position.y);
+
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
             if (currentTickPos >= nextClapPos)
@@ -67,19 +68,32 @@ public class Metronome : MonoBehaviour {
                     clapSource.PlayOneShot(clap);
 #endif
                 }
-
-                nextClapPos += (uint)editor.currentSong.resolution;
             }
         }
-        else
-        {
-            // Calculate the starting clap pos
-            if (currentTickPos % editor.currentSong.resolution > 0 ? true : false)
-                nextClapPos = (currentTickPos / (uint)editor.currentSong.resolution + 1) * (uint)editor.currentSong.resolution;
-            else
-                nextClapPos = (currentTickPos / (uint)editor.currentSong.resolution) * (uint)editor.currentSong.resolution;
-        }
-	}
+
+        nextClapPos = CalculateNextBeatTickPosition(currentTickPos);
+    }
+
+    uint CalculateNextBeatTickPosition(uint currentTickPosition)
+    {
+        Song song = editor.currentSong;
+        TimeSignature[] timeSignatures = editor.currentSong.timeSignatures;
+        uint standardMeasureLengthTicks = (uint)(Song.RESOLUTIONS_PER_MEASURE * song.resolution);
+
+        int lastTsIndex = SongObjectHelper.FindClosestPositionRoundedDown(currentTickPosition, timeSignatures);
+        TimeSignature currentTimeSignature = timeSignatures[lastTsIndex];
+        TimeSignature nextTimeSignature = lastTsIndex + 1 < timeSignatures.Length ? timeSignatures[lastTsIndex + 1] : null;
+        uint tickOrigin = currentTimeSignature.tick;
+        float beatDeltaTick = standardMeasureLengthTicks / currentTimeSignature.beatsPerMeasure;
+
+        if (nextTimeSignature != null && currentTickPosition + beatDeltaTick >= nextTimeSignature.tick)
+            return nextTimeSignature.tick;
+
+        uint deltaTick = currentTickPosition - tickOrigin;
+        uint remainder = (uint)Mathf.Round(deltaTick % beatDeltaTick);
+
+        return tickOrigin + deltaTick - remainder + (uint)Mathf.Round(beatDeltaTick);
+    }
 
 #if BASS_AUDIO
     ~Metronome()

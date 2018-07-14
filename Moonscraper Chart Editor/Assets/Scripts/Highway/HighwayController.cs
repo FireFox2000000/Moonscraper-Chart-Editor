@@ -50,13 +50,12 @@ public class HighwayController : MonoBehaviour {
     void UpdateBeatLines3()
     {
         int measurePoolPos = 0, beatPoolPos = 0, quarterPoolPos = 0;
-        const float RESOLUTIONS_PER_MEASURE = 4.0f;
 
         Song song = editor.currentSong;
         uint startRange = song.WorldPositionToSnappedTick(editor.camYMin.position.y, 8);
         uint endRange = editor.maxPos;
         TimeSignature[] timeSignatures = editor.currentSong.timeSignatures;
-        uint standardMeasureLengthTicks = (uint)(RESOLUTIONS_PER_MEASURE * song.resolution);
+        uint standardMeasureLengthTicks = (uint)(Song.RESOLUTIONS_PER_MEASURE * song.resolution);
 
         int startIndex = SongObjectHelper.FindClosestPositionRoundedDown(startRange, timeSignatures);   
 

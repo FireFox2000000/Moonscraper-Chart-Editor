@@ -19,6 +19,7 @@ public class Song {
     // Constants
     public static readonly float STANDARD_BEAT_RESOLUTION = 192.0f;
     public const uint FULL_STEP = 768;
+    public const float RESOLUTIONS_PER_MEASURE = 4.0f;
     public bool saveError = false;
     static int DIFFICULTY_COUNT;
     static int AUDIO_INSTUMENT_COUNT;
