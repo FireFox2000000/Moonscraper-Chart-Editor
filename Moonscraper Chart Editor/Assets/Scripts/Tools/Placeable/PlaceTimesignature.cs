@@ -20,7 +20,7 @@ public class PlaceTimesignature : PlaceSongObject {
     {
         base.Update();
 
-        UpdateSnappedPos(4);
+        //UpdateSnappedPos(4);
         songObject.tick = objectSnappedChartPos;
     }
 
