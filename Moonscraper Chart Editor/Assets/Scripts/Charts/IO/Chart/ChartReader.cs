@@ -149,22 +149,22 @@ public static class ChartReader
                 const string EASY = "Easy", MEDIUM = "Medium", HARD = "Hard", EXPERT = "Expert";
 
                 // Determine what difficulty
-                if (dataName.Substring(1, EASY.Length) == EASY)
+                if (Regex.IsMatch(dataName, string.Format(@"\[{0}.", EASY)))
                 {
                     chartDiff = Song.Difficulty.Easy;
                     instumentStringOffset += EASY.Length;
                 }
-                else if (dataName.Substring(1, MEDIUM.Length) == MEDIUM)
+                else if (Regex.IsMatch(dataName, string.Format(@"\[{0}.", MEDIUM)))
                 {
                     chartDiff = Song.Difficulty.Medium;
                     instumentStringOffset += MEDIUM.Length;
                 }
-                else if (dataName.Substring(1, HARD.Length) == HARD)
+                else if (Regex.IsMatch(dataName, string.Format(@"\[{0}.", HARD)))
                 {
                     chartDiff = Song.Difficulty.Hard;
                     instumentStringOffset += HARD.Length;
                 }
-                else if (dataName.Substring(1, EXPERT.Length) == EXPERT)
+                else if (Regex.IsMatch(dataName, string.Format(@"\[{0}.", EXPERT)))
                 {
                     chartDiff = Song.Difficulty.Expert;
                     instumentStringOffset += EXPERT.Length;
