@@ -1118,9 +1118,14 @@ public class ChartEditor : MonoBehaviour {
         float? left = null, right = null;
         float position = 0;
 
+        bool containsNotes = false;
+
         // Scan through all the current objects to determine width of scanned area
         for (int i = 0; i < currentSelectedObjects.Length; ++i)
         {
+            if (!containsNotes && currentSelectedObjects[i].GetType() == typeof(Note))
+                containsNotes = true;
+
             songObjectsCopy[i] = currentSelectedObjects[i].Clone();
 
             position = SongObjectController.GetXPos(currentSelectedObjects[i]);
@@ -1133,9 +1138,17 @@ public class ChartEditor : MonoBehaviour {
         }
 
         // Default collision size
-        if (left == null)// || left > DEFAULT_LEFT)
+        if (containsNotes)
+        {
+            if (left > DEFAULT_LEFT)
+                left = DEFAULT_LEFT;
+            if (right < DEFAULT_RIGHT)
+                right = DEFAULT_RIGHT;
+        }
+
+        if (left == null)
             left = DEFAULT_LEFT;
-        if (right == null)// || right < DEFAULT_RIGHT)
+        if (right == null)
             right = DEFAULT_RIGHT;
 
         Vector2 bottomLeft = Vector2.zero;
