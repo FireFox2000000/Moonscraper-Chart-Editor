@@ -1,3 +1,8 @@
+v1.2.61
+	FIXES
+	-Fixed copy/paste not copying over notes properly
+	-Fixed exporter crashes/threading errors
+
 v1.2.6
 	NEW FEATURES
 	-Metronome clicks now based on time signature to match beat lines
