@@ -96,9 +96,10 @@ public class Export : DisplayMenu {
 
             StartCoroutine(_ExportSong(saveLocation));
         }
-        catch
+        catch (System.Exception e)
         {
-            // User probably canceled
+            // User probably canceled\
+            Debug.LogError("Error when exporting (user may have canceled): " + e.Message);
         }
     }
 
@@ -109,7 +110,7 @@ public class Export : DisplayMenu {
         loadingScreen.FadeIn();
         loadingScreen.loadingInformation.text = "Exporting " + exportOptions.format;
 
-        Song song = editor.currentSong;
+        Song song = new Song(editor.currentSong);
         exportOptions.tickOffset = TickFunctions.TimeToDis(0, delayTime, exportOptions.targetResolution, 120);
 
         float timer = Time.realtimeSinceStartup;
@@ -170,10 +171,9 @@ public class Export : DisplayMenu {
 
         if (errorMessageList != string.Empty)
         {
-            song.saveError = true;
+            editor.currentSong.saveError = true;
             ErrorMessage.errorMessage = "Encountered the following errors while exporting: " + Globals.LINE_ENDING + errorMessageList;
         }
-
     }
 
     public void SetForced(bool forced)
