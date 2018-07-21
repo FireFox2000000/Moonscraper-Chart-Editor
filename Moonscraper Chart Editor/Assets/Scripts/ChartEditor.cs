@@ -287,7 +287,7 @@ public class ChartEditor : MonoBehaviour {
 
         if (quitting)
         {
-            if (editCheck())
+            if (EditCheck())
             {
                 wantsToQuit = true;
                 UnityEngine.Application.Quit();
@@ -328,8 +328,11 @@ public class ChartEditor : MonoBehaviour {
     static bool quitting = false;
     void OnApplicationQuit()
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Loading)
+        Debug.Log("NativeMessageBox ref count = " + NativeMessageBox.m_messageBoxesRefCount);
+        Debug.Log("FileExplorer ref count = " + FileExplorer.m_filePanelsRefCount);
+        if (NativeMessageBox.messageBoxActive || FileExplorer.filePanelActive)
         {
+            // Doesn't actually work, Quit event gets bufferred and fires after the dialog box closes, even if quit was hit when the box was up. 
             Application.CancelQuit();
             return;
         }
@@ -352,7 +355,7 @@ public class ChartEditor : MonoBehaviour {
         }
     }
 
-    bool editCheck()
+    bool EditCheck()
     {    
         // Check for unsaved changes
         if (isDirty)
@@ -389,7 +392,7 @@ public class ChartEditor : MonoBehaviour {
 
     public void New()
     {
-        if (!editCheck())
+        if (!EditCheck())
             return;
 
         while (currentSong.isSaving) ;
@@ -873,7 +876,7 @@ public class ChartEditor : MonoBehaviour {
 
     IEnumerator _Load()
     {
-        if (!editCheck())
+        if (!EditCheck())
             yield break;
 
         while (currentSong.isSaving)

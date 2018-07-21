@@ -12,14 +12,24 @@ public static class FileExplorer  {
         OverwritePrompt = 0x000002,
     }
 
+    public static volatile int m_filePanelsRefCount = 0;
+    public static bool filePanelActive { get { return m_filePanelsRefCount > 0; } }
+
     public static string OpenFilePanel(string filter, string defExt)
     {
+        ++m_filePanelsRefCount;
+        UnityEngine.Debug.Log("Incrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
+
         string filename = string.Empty;
 
 #if UNITY_EDITOR
         filename = UnityEditor.EditorUtility.OpenFilePanel("Open file", "", defExt);
         if (filename == string.Empty)
+        {
+            --m_filePanelsRefCount;
+            UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
             throw new Exception("Could not open file");
+        }
 #else
         OpenFileName openChartFileDialog = new OpenFileName();
 
@@ -41,15 +51,23 @@ public static class FileExplorer  {
         }
         else
         {
+            --m_filePanelsRefCount;
+            UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
             throw new System.Exception("Could not open file");
         }
 #endif
+
+        --m_filePanelsRefCount;
+        UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
 
         return filename;
     }
 
     public static string SaveFilePanel(string filter, string defaultFileName, string defExt)
-    {        
+    {
+        ++m_filePanelsRefCount;
+        UnityEngine.Debug.Log("Incrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
+
         string filename = string.Empty;
         defaultFileName = new string(defaultFileName.ToCharArray());
 
@@ -62,7 +80,11 @@ public static class FileExplorer  {
 #if UNITY_EDITOR
         filename = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", defaultFileName, defExt);
         if (filename == string.Empty)
+        {
+            --m_filePanelsRefCount;
+            UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
             throw new Exception("Could not open file");
+        }
 #else
         OpenFileName openSaveFileDialog = new OpenFileName();
 
@@ -82,10 +104,19 @@ public static class FileExplorer  {
         openSaveFileDialog.flags = (int)OFN_Flags.OverwritePrompt;
 
         if (LibWrap.GetSaveFileName(openSaveFileDialog))
+        {
             filename = openSaveFileDialog.file;
+        }
         else
+        {
+            --m_filePanelsRefCount;
+            UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
             throw new System.Exception("Could not open file");
+        }
 #endif
+        --m_filePanelsRefCount;
+        UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
+
         return filename;
     }
 }

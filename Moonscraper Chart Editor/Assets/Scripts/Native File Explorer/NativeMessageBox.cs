@@ -5,6 +5,9 @@ public static class NativeMessageBox {
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
 
+    public static volatile int m_messageBoxesRefCount = 0;
+    public static bool messageBoxActive { get { return m_messageBoxesRefCount > 0; } }
+
     public enum Type
     {
         OK = 0,
@@ -29,8 +32,14 @@ public static class NativeMessageBox {
 
     public static Result Show(string text, string caption, Type messageBoxType)
     {
+        ++m_messageBoxesRefCount;
+        UnityEngine.Debug.Log("Incrementing NativeMessageBox ref count, new value: " + m_messageBoxesRefCount);
+
         IntPtr messagePtr = new IntPtr();
         int result = MessageBox(messagePtr, text.ToString(), caption.ToString(), (uint)messageBoxType);
+
+        --m_messageBoxesRefCount;
+        UnityEngine.Debug.Log("Decrementing NativeMessageBox ref count, new value: " + m_messageBoxesRefCount);
 
         return (Result)result;
     }
