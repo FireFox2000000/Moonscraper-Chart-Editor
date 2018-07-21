@@ -273,7 +273,7 @@ public class ChartEditor : MonoBehaviour {
         }
 #endif
 
-        if (autosave == null || autosave.ThreadState != System.Threading.ThreadState.Running)
+        if (Globals.applicationMode != Globals.ApplicationMode.Loading && (autosave == null || autosave.ThreadState != System.Threading.ThreadState.Running))
         {
             autosaveTimer += Time.deltaTime;
 
