@@ -764,42 +764,6 @@ public class ChartEditor : MonoBehaviour {
         stopResetPos = null;
     }
 
-    string ImportMidToTempChart(string filepath)
-    {
-        if (System.IO.File.Exists(filepath) && System.IO.Path.GetExtension(filepath) == ".mid")
-        {
-            try
-            {
-                const string tempFileName = "moonscraperMid2Chart.temp.chart";
-
-                string file = System.IO.Path.GetDirectoryName(filepath) + "\\" + tempFileName;
-
-                mid2chart.Program.readOpenNotes = true;
-                mid2chart.Program.dontWriteDummy = true;
-                mid2chart.Program.skipPause = true;
-            
-                mid2chart.Song midSong = mid2chart.MidReader.ReadMidi(filepath, false);
-            
-                mid2chart.ChartWriter.WriteChart(midSong, file, false);
-
-                if (System.IO.File.Exists(file))
-                    return file;
-
-                /*
-                mid2chart.Program.Run(new string[] { filepath, "-p", "-m", "-k" });
-                if (System.IO.File.Exists(file + ".chart"))
-                    return file + ".chart";*/
-            }
-            catch (Exception e)
-            {
-                ErrorMessage.errorMessage = "Failed to convert mid file: " + e.Message;
-                Debug.LogError("Failed to convert mid file: " + e.Message);
-            }
-        }
-
-        return string.Empty;
-    }
-
     public IEnumerator _Load(string currentFileName, bool recordLastLoaded = true)
     {
         bool error = false;
