@@ -323,25 +323,17 @@ public class ChartEditor : MonoBehaviour {
         if (hasFocus && windowPtr == IntPtr.Zero)
             SetApplicationWindowPointer();
 #endif
-        /*
-        if (hasFocus)
-            Time.timeScale = 1;
-        else
-        {
-            Time.timeScale = 0;
-        }
-
-        if (hasFocus && Globals.applicationMode == Globals.ApplicationMode.Playing)
-            Play();
-        else
-        {
-            StopAudio();
-        }*/
     }
 
     static bool quitting = false;
     void OnApplicationQuit()
     {
+        if (Globals.applicationMode == Globals.ApplicationMode.Loading)
+        {
+            Application.CancelQuit();
+            return;
+        }
+
         quitting = true;
 
         if (wantsToQuit)
@@ -356,7 +348,7 @@ public class ChartEditor : MonoBehaviour {
         // Can't run edit check here because quitting seems to run in a seperate thread
         else
         {
-            UnityEngine.Application.CancelQuit();
+            Application.CancelQuit();
         }
     }
 
@@ -776,6 +768,7 @@ public class ChartEditor : MonoBehaviour {
         yield return null;
 
         Song newSong = null;
+        MidReader.CallbackState midiCallbackState = MidReader.CallbackState.None;
 
         System.Threading.Thread songLoadThread = new System.Threading.Thread(() =>
         {
@@ -784,7 +777,7 @@ public class ChartEditor : MonoBehaviour {
             try
             {
                 if (mid)
-                    newSong = MidReader.ReadMidi(currentFileName);
+                    newSong = MidReader.ReadMidi(currentFileName, ref midiCallbackState);
                 else
                     newSong = ChartReader.ReadChart(currentFileName);
             }
@@ -803,10 +796,18 @@ public class ChartEditor : MonoBehaviour {
                 Debug.LogError(e.Message);
             }
         });
+
         songLoadThread.Priority = System.Threading.ThreadPriority.Highest;
         songLoadThread.Start();
+
         while (songLoadThread.ThreadState == System.Threading.ThreadState.Running)
+        {
+            while (midiCallbackState == MidReader.CallbackState.WaitingForExternalInformation)
+            {
+                // Halt thread until message box is complete
+            }
             yield return null;
+        }
 
         if (error)
         {

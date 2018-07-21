@@ -9,7 +9,11 @@ using NAudio.Midi;
 
 public static class MidReader {
 
-    const string c_eventsStr = "events";
+    public enum CallbackState
+    {
+        None,
+        WaitingForExternalInformation,
+    }
 
     static readonly Dictionary<string, Song.Instrument> c_trackNameToInstrumentMap = new Dictionary<string, Song.Instrument>()
     {
@@ -29,7 +33,7 @@ public static class MidReader {
         { "beat",       true }
     };
 
-    public static Song ReadMidi(string path)
+    public static Song ReadMidi(string path, ref CallbackState callBackState)
     {
         Song song = new Song();
         string directory = System.IO.Path.GetDirectoryName(path);
@@ -73,13 +77,31 @@ public static class MidReader {
             }
             else if (!c_trackExcludesMap.ContainsKey(trackNameKey))
             {
-                Song.Instrument instrument;
-                if (!c_trackNameToInstrumentMap.TryGetValue(trackNameKey, out instrument))
-                {
-                    instrument = Song.Instrument.Unrecognised;
-                }
+                bool importTrackAsVocalsEvents = trackNameKey == MidIOHelper.VOCALS_TRACK;
 
-                ReadNotes(midi.Events[i], song, instrument);
+#if !UNITY_EDITOR
+                if (importTrackAsVocalsEvents)
+                {
+                    callBackState = CallbackState.WaitingForExternalInformation;
+                    NativeMessageBox.Result result = NativeMessageBox.Show("A vocals track was found in the file. Would you like to import the text events as global lyrics events?", "Vocals Track Found", NativeMessageBox.Type.YesNo);
+                    callBackState = CallbackState.None;
+                    importTrackAsVocalsEvents = result == NativeMessageBox.Result.Yes;
+                }
+#endif
+                if (importTrackAsVocalsEvents)
+                {
+                    ReadTextEventsIntoGlobalEventsAsLyrics(midi.Events[i], song);
+                }
+                else
+                {
+                    Song.Instrument instrument;
+                    if (!c_trackNameToInstrumentMap.TryGetValue(trackNameKey, out instrument))
+                    {
+                        instrument = Song.Instrument.Unrecognised;
+                    }
+
+                    ReadNotes(midi.Events[i], song, instrument);
+                }
             }
         }
 
@@ -149,6 +171,22 @@ public static class MidReader {
                     song.Add(new Section(text.Text.Substring(5, text.Text.Length - 6), (uint)text.AbsoluteTime), false);
                 else
                     song.Add(new Event(text.Text.Trim(new char[] { '[', ']' }), (uint)text.AbsoluteTime), false);
+            }
+        }
+
+        song.UpdateCache();
+    }
+
+    private static void ReadTextEventsIntoGlobalEventsAsLyrics(IList<MidiEvent> track, Song song)
+    {
+        for (int i = 1; i < track.Count; ++i)
+        {
+            var text = track[i] as TextEvent;
+
+            if (text != null)
+            {
+                string lyricEvent = "lyric " + text.Text.Trim(new char[] { '[', ']' });
+                song.Add(new Event(lyricEvent, (uint)text.AbsoluteTime), false);
             }
         }
 
