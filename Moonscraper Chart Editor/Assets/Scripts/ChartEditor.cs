@@ -9,7 +9,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using System;
 using Un4seen.Bass;
 
@@ -153,8 +152,6 @@ public class ChartEditor : MonoBehaviour {
     public static extern System.IntPtr GetForegroundWindow();
     [DllImport("user32.dll")]
     static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
 
 #if !UNITY_EDITOR
     System.IntPtr windowPtr = IntPtr.Zero;
@@ -371,15 +368,12 @@ public class ChartEditor : MonoBehaviour {
             if (quitting)
                 UnityEngine.Application.CancelQuit();
 #if !UNITY_EDITOR
-            const int YES = 6;
-            const int NO = 7;
-            const int CANCEL = 2;
 
-            int result = MessageBox(new IntPtr(), "Want to save unsaved changes?", "Warning", 3);
+            NativeMessageBox.Result result = NativeMessageBox.Show("Want to save unsaved changes?", "Warning", NativeMessageBox.Type.YesNoCancel);
             if (quitting)
                 UnityEngine.Application.CancelQuit();
 
-            if (result == YES)
+            if (result == NativeMessageBox.Result.Yes)
             {
                 if (!_Save())
                 {
@@ -387,28 +381,11 @@ public class ChartEditor : MonoBehaviour {
                     return false;
                 }
             }
-            else if (result == CANCEL)
+            else if (result == NativeMessageBox.Result.Cancel)
             {
                 quitting = false;
                 return false;
             }
-
-            /*
-            DialogResult result = MessageBox.Show("Want to save unsaved changes?", "Warning", MessageBoxButtons.YesNoCancel);
-            
-            if (result == DialogResult.Yes)
-            {
-                if (!_Save())
-                {
-                    quitting = false;
-                    return false;
-                }
-            }
-            else if (result == DialogResult.Cancel)
-            {
-                quitting = false;
-                return false;
-            }*/
 #endif
 
             if (quitting)

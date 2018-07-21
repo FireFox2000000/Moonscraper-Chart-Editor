@@ -171,12 +171,12 @@ public class Globals : MonoBehaviour {
         if (System.IO.File.Exists(autosaveLocation))
         {
 #if !UNITY_EDITOR
-            System.Windows.Forms.DialogResult result;
+            string autosaveText = "An autosave was detected indicating that the program did not corretly shut down during the last session. \nWould you like to reload the autosave?";
+            string autosaveCaption = "Warning";
 
-            result = System.Windows.Forms.MessageBox.Show("An autosave was detected indicating that the program did not corretly shut down during the last session. \nWould you like to reload the autosave?", 
-                "Warning", System.Windows.Forms.MessageBoxButtons.YesNo);
+            NativeMessageBox.Result result = NativeMessageBox.Show(autosaveText, autosaveCaption, NativeMessageBox.Type.YesNo);
 
-            if (result == System.Windows.Forms.DialogResult.Yes)
+            if (result == NativeMessageBox.Result.Yes)
             {
                 yield return StartCoroutine(editor._Load(autosaveLocation, false));
                 ChartEditor.isDirty = true;
