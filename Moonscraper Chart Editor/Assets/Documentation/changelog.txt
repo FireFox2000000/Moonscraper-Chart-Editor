@@ -1,3 +1,7 @@
+v1.2.62
+	NEW FEATURES
+	-Allow optional importing of lyrics from midi files if it has a vocals track
+
 v1.2.61
 	FIXES
 	-Fixed copy/paste not copying over notes properly
