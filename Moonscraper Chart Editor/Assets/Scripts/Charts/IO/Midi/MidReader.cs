@@ -183,9 +183,9 @@ public static class MidReader {
         {
             var text = track[i] as TextEvent;
 
-            if (text != null)
-            {
-                string lyricEvent = "lyric " + text.Text.Trim(new char[] { '[', ']' });
+            if (text != null && text.Text[0] != '[')
+            {           
+                string lyricEvent = "lyric " + text.Text;
                 song.Add(new Event(lyricEvent, (uint)text.AbsoluteTime), false);
             }
         }
