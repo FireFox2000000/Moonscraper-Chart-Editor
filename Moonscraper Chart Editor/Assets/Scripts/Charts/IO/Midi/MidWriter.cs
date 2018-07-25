@@ -334,7 +334,7 @@ public static class MidWriter {
                 if (exportOptions.forced)
                 {
                     // Forced notes               
-                    if ((note.flags & Note.Flags.Forced) != 0 && (note.previous == null || (note.previous.tick != note.tick)))     // Don't overlap on chords
+                    if ((note.flags & Note.Flags.Forced) != 0 && note.type != Note.NoteType.Tap && (note.previous == null || (note.previous.tick != note.tick)))     // Don't overlap on chords
                     {
                         // Add a note
                         int difficultyNumber;
@@ -344,7 +344,7 @@ public static class MidWriter {
                             throw new Exception("Unhandled difficulty");
 
                         if (!c_forcingMidiWriteOffsets.TryGetValue(note.type, out forcingOffset))
-                            throw new Exception("Unhandled note type found when trying to writing forcing flag");
+                            throw new Exception("Unhandled note type found when trying to write forcing flag");
 
                         int forcedNoteNumber = difficultyNumber + forcingOffset;
 
