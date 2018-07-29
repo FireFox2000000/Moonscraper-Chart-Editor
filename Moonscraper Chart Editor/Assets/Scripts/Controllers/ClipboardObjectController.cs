@@ -65,11 +65,12 @@ public class ClipboardObjectController : Snapable {
 
         try
         {
-            FileStream fs = new FileStream(UnityEngine.Application.persistentDataPath + CLIPBOARD_FILE_LOCATION, FileMode.Create);
-
-            BinaryFormatter formatter = new BinaryFormatter();
+            FileStream fs = null;
+            
             try
             {
+                fs = new FileStream(UnityEngine.Application.persistentDataPath + CLIPBOARD_FILE_LOCATION, FileMode.Create);
+                BinaryFormatter formatter = new BinaryFormatter();
                 formatter.Serialize(fs, clipboard);
             }
             catch (SerializationException e)
@@ -78,7 +79,10 @@ public class ClipboardObjectController : Snapable {
             }
             finally
             {
-                fs.Close();
+                if (fs != null)
+                    fs.Close();
+                else
+                    Debug.LogError("Filestream when writing clipboard data failed to initialise");
             }
         }
         catch (System.Exception e)
@@ -111,11 +115,14 @@ public class ClipboardObjectController : Snapable {
         catch
         {
             Debug.LogError("Failed to read from clipboard file");
+            clipboard = null;
         }
         finally
         {
             if (fs != null)
                 fs.Close();
+            else
+                Debug.LogError("Filestream when reading clipboard data failed to initialise");
         }
 
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && clipboard != null && clipboard.data.Length > 0)
