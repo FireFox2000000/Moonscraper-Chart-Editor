@@ -1,39 +1,26 @@
-v1.2.62
-	NEW FEATURES
-	-Allow optional importing of lyrics from midi files if it has a vocals track
-
-v1.2.61
+v1.2.7
 	FIXES
-	-Fixed copy/paste not copying over notes properly
-	-Fixed exporter crashes/threading errors
+	-Fixed importing of lyrics also including command blacks being read as lyrics
+	-Fixed shortcut input not being able to right-ctrl as an alternate to left-ctrl
 
 v1.2.6
 	NEW FEATURES
-	-Metronome clicks now based on time signature to match beat lines
-
-	CHANGES
-	-UI draw call optimisation
-	-Re-allow free snapping time signatures. Hopefully idiots stay away from this. 
-	-Changed default clap sound
-
-	FIXES
-	-Add full caught error message to on-screen output when loading charts
-	-Fixed substring parsing error when reading unrecognised tracks from .chart files
-
-v1.2.5
-	NEW FEATURES
 	-Save now save and load guitar coop tracks in midis
 	-Completely re-wrote guitar gameplay rules to make it much easier to understand and thus find bugs. Probably cleaned up bugs at the same time.
-	-Can now hit extended sustains in gameplay mode
+	-Can now hit extended sustains in gameplay mode (may be different from CH's rules)
 	-Added drums gameplay mode
-	-Expanded custom events into a dedicated menu to accomadate larger text events.
-	-Fixed forced and tap toggles from disappearing after switching from a drums chart
+	-Added expandable custom events into a dedicated menu to accomadate larger text events.
 	-Added 4-lane drums
+	-Metronome clicks now based on time signature to match beat lines
+	-Allow optional importing of lyrics from midi files if it has a vocals track
 
 	CHANGES
 	-Made beat lines more visible and reduced potential for flickerly beat lines.
 	-Added dedicated lyrics events to the global_events.txt
 	-Changed beat line/time signature rendering algorithm
+	-UI draw call optimisation
+	-Re-allow free snapping time signatures. Hopefully idiots stay away from this. 
+	-Changed default clap sound
 
 	FIXES
 	-Fixed weird undo/redo bug with starpower
@@ -42,6 +29,11 @@ v1.2.5
 	-Fixed events only reading single words
 	-Fixed keys mode inputs being recognised when typing in a text box
 	-Fix copy paste with events only-copy erasing bpms.
+	-Fixed forced and tap toggles from disappearing after switching from a drums chart
+	-Add full caught error message to on-screen output when loading charts
+	-Fixed substring parsing error when reading unrecognised tracks from .chart files
+	-Fixed copy/paste not copying over notes properly
+	-Maybe fixed exporter crashes/threading errors
 
 v1.2
 	NEW FEATURES
