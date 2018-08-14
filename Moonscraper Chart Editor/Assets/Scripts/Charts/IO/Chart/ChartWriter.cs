@@ -7,7 +7,8 @@ using System.IO;
 using System;
 using UnityEngine;
 
-public class ChartWriter {
+public class ChartWriter
+{
     string path;
 
     public ChartWriter(string path)
@@ -71,10 +72,9 @@ public class ChartWriter {
 
             saveString += "}" + Globals.LINE_ENDING;
         }
-        catch(System.Exception e)
-        {           
-            string error = "Error with saving song properties: " + e.Message;
-            Debug.LogError(error);
+        catch (System.Exception e)
+        {
+            string error = Logger.LogException(e, "Error with saving song properties");
             errorList += error + Globals.LINE_ENDING;
 
             saveString = string.Empty;  // Clear all the song properties because we don't want braces left open, which will screw up the loading of the chart
@@ -139,19 +139,19 @@ public class ChartWriter {
             foreach (Song.Difficulty difficulty in Enum.GetValues(typeof(Song.Difficulty)))
             {
                 string difficultySaveString = difficulty.ToString();
-                
+
                 string chartString = GetSaveString(song, song.GetChart(instrument, difficulty).chartObjects, exportOptions, ref errorList, instrument);
 
                 if (chartString == string.Empty)
                 {
-                    
+
                     if (exportOptions.copyDownEmptyDifficulty)
                     {
                         Song.Difficulty chartDiff = difficulty;
                         bool exit = false;
                         while (chartString == string.Empty)
                         {
-                            
+
                             switch (chartDiff)
                             {
                                 case (Song.Difficulty.Easy):
@@ -208,9 +208,25 @@ public class ChartWriter {
         }
         catch (Exception e)
         {
-            Debug.LogError(e.Message);
+            Logger.LogException(e, "Error when writing text to file");
         }
     }
+
+    static readonly string c_metaDataSaveFormat = string.Format("{0}{{0}} = \"{{{{0}}}}\"{1}", Globals.TABSPACE, Globals.LINE_ENDING);
+    static readonly string c_nameFormat = string.Format(c_metaDataSaveFormat, "Name");
+    static readonly string c_artistFormat = string.Format(c_metaDataSaveFormat, "Artist");
+    static readonly string c_charterFormat = string.Format(c_metaDataSaveFormat, "Charter");
+    static readonly string c_albumFormat = string.Format(c_metaDataSaveFormat, "Album");
+    static readonly string c_yearFormat = string.Format("{0}{1} = \", {{0}}\"{2}", Globals.TABSPACE, "Year", Globals.LINE_ENDING);
+    static readonly string c_offsetFormat = string.Format(c_metaDataSaveFormat, "Offset");
+    static readonly string c_resolutionFormat = string.Format(c_metaDataSaveFormat, "Resolution");
+    static readonly string c_player2Format = string.Format(c_metaDataSaveFormat, "Player2");
+    static readonly string c_difficultyFormat = string.Format(c_metaDataSaveFormat, "Difficulty");
+    static readonly string c_lengthFormat = string.Format(c_metaDataSaveFormat, "Length");
+    static readonly string c_previewStartFormat = string.Format(c_metaDataSaveFormat, "PreviewStart");
+    static readonly string c_previewEndFormat = string.Format(c_metaDataSaveFormat, "PreviewEnd");
+    static readonly string c_genreFormat = string.Format(c_metaDataSaveFormat, "Genre");
+    static readonly string c_mediaTypeFormat = string.Format(c_metaDataSaveFormat, "MediaType");
 
     string GetPropertiesStringWithoutAudio(Song song, ExportOptions exportOptions)
     {
@@ -222,29 +238,29 @@ public class ChartWriter {
 
         // Song properties  
         if (metaData.name != string.Empty)
-            saveString += Globals.TABSPACE + "Name = \"" + metaData.name + "\"" + Globals.LINE_ENDING;
+            saveString += string.Format(c_nameFormat, metaData.name);
         if (metaData.artist != string.Empty)
-            saveString += Globals.TABSPACE + "Artist = \"" + metaData.artist + "\"" + Globals.LINE_ENDING;
+            saveString += string.Format(c_artistFormat, metaData.artist);
         if (metaData.charter != string.Empty)
-            saveString += Globals.TABSPACE + "Charter = \"" + metaData.charter + "\"" + Globals.LINE_ENDING;
+            saveString += string.Format(c_charterFormat, metaData.charter);
         if (metaData.album != string.Empty)
-            saveString += Globals.TABSPACE + "Album = \"" + metaData.album + "\"" + Globals.LINE_ENDING;
+            saveString += string.Format(c_albumFormat, metaData.album);
         if (metaData.year != string.Empty)
-            saveString += Globals.TABSPACE + "Year = \", " + metaData.year + "\"" + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "Offset = " + song.offset + Globals.LINE_ENDING;
+            saveString += string.Format(c_yearFormat, metaData.year);
+        saveString += string.Format(c_offsetFormat, song.offset);
 
-        saveString += Globals.TABSPACE + "Resolution = " + exportOptions.targetResolution + Globals.LINE_ENDING;
+        saveString += string.Format(c_resolutionFormat, exportOptions.targetResolution);
         if (metaData.player2 != string.Empty)
-            saveString += Globals.TABSPACE + "Player2 = " + metaData.player2.ToLower() + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "Difficulty = " + metaData.difficulty + Globals.LINE_ENDING;
+            saveString += string.Format(c_player2Format, metaData.player2.ToLower());
+        saveString += string.Format(c_difficultyFormat, metaData.difficulty);
         if (song.manualLength)
-            saveString += Globals.TABSPACE + "Length = " + song.length + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "PreviewStart = " + metaData.previewStart + Globals.LINE_ENDING;
-        saveString += Globals.TABSPACE + "PreviewEnd = " + metaData.previewEnd + Globals.LINE_ENDING;
+            saveString += string.Format(c_lengthFormat, song.length);
+        saveString += string.Format(c_previewStartFormat, metaData.previewStart);
+        saveString += string.Format(c_previewEndFormat, metaData.previewEnd);
         if (metaData.genre != string.Empty)
-            saveString += Globals.TABSPACE + "Genre = \"" + metaData.genre + "\"" + Globals.LINE_ENDING;
+            saveString += string.Format(c_genreFormat, metaData.genre);
         if (metaData.mediatype != string.Empty)
-            saveString += Globals.TABSPACE + "MediaType = \"" + metaData.mediatype + "\"" + Globals.LINE_ENDING;
+            saveString += string.Format(c_mediaTypeFormat, metaData.mediatype);
 
         return saveString;
     }
@@ -349,12 +365,11 @@ public class ChartWriter {
 
                 //throw new System.Exception("Test error count: " + i);
             }
-            catch(System.Exception e)
+            catch (System.Exception e)
             {
-                string error = "Error with saving object #" + i + " as " + songObject + ": " + e.Message;
-                Debug.LogError(error);
+                string error = Logger.LogException(e, "Error with saving object #" + i + " as " + songObject);
                 out_errorList += error + Globals.LINE_ENDING;
-            }         
+            }
         }
 
         return saveString.ToString();
