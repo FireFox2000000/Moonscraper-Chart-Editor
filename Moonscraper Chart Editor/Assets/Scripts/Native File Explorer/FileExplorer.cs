@@ -12,6 +12,24 @@ public static class FileExplorer  {
         OverwritePrompt = 0x000002,
     }
 
+    public class FileExplorerExitException : Exception
+    {
+        public FileExplorerExitException()
+        {
+        }
+
+        public FileExplorerExitException(string message)
+            : base(message)
+        {
+        }
+
+        public FileExplorerExitException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+    }
+
+
     public static volatile int m_filePanelsRefCount = 0;
     public static bool filePanelActive { get { return m_filePanelsRefCount > 0; } }
 
@@ -28,21 +46,30 @@ public static class FileExplorer  {
         {
             --m_filePanelsRefCount;
             UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
-            throw new Exception("Could not open file");
+            throw new FileExplorerExitException("Could not open file");
         }
 #else
+        UnityEngine.Debug.Log("Native file explorer: Preparing to create OpenFileName dialog");
         OpenFileName openChartFileDialog = new OpenFileName();
 
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set struct size");
         openChartFileDialog.structSize = Marshal.SizeOf(openChartFileDialog);
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set filter");
         openChartFileDialog.filter = filter;
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set file array");
         openChartFileDialog.file = new String(new char[256]);
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set max file length");
         openChartFileDialog.maxFile = openChartFileDialog.file.Length;
-
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set file title size");
         openChartFileDialog.fileTitle = new String(new char[64]);
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set max file title length");
         openChartFileDialog.maxFileTitle = openChartFileDialog.fileTitle.Length;
 
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set initial directory");
         openChartFileDialog.initialDir = "";
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set title");
         openChartFileDialog.title = "Open file";
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set defExt");
         openChartFileDialog.defExt = defExt;
 
         if (LibWrap.GetOpenFileName(openChartFileDialog))
@@ -53,7 +80,7 @@ public static class FileExplorer  {
         {
             --m_filePanelsRefCount;
             UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
-            throw new System.Exception("Could not open file");
+            throw new FileExplorerExitException("Could not open file");
         }
 #endif
 
@@ -83,24 +110,36 @@ public static class FileExplorer  {
         {
             --m_filePanelsRefCount;
             UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
-            throw new Exception("Could not open file");
+            throw new FileExplorerExitException("Could not open file");
         }
 #else
+        UnityEngine.Debug.Log("Native file explorer: Preparing to create OpenFileName save dialog");
         OpenFileName openSaveFileDialog = new OpenFileName();
 
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set struct size");
         openSaveFileDialog.structSize = Marshal.SizeOf(openSaveFileDialog);
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set filter");
         openSaveFileDialog.filter = filter;
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set file array");
         openSaveFileDialog.file = new String(new char[256]);
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set max file");
         openSaveFileDialog.maxFile = openSaveFileDialog.file.Length;
 
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set file title array");
         openSaveFileDialog.fileTitle = new String(new char[64]);
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set max file title");
         openSaveFileDialog.maxFileTitle = openSaveFileDialog.fileTitle.Length;
 
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set file");
         openSaveFileDialog.file = defaultFileName;
 
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set initial directory");
         openSaveFileDialog.initialDir = "";
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set title");
         openSaveFileDialog.title = "Save as";
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set defExt");
         openSaveFileDialog.defExt = defExt;
+        UnityEngine.Debug.Log("Native file explorer: Preparing to set flags");
         openSaveFileDialog.flags = (int)OFN_Flags.OverwritePrompt;
 
         if (LibWrap.GetSaveFileName(openSaveFileDialog))
@@ -111,7 +150,7 @@ public static class FileExplorer  {
         {
             --m_filePanelsRefCount;
             UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
-            throw new System.Exception("Could not open file");
+            throw new FileExplorerExitException("Could not open file");
         }
 #endif
         --m_filePanelsRefCount;

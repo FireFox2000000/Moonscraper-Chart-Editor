@@ -376,7 +376,7 @@ public static class ChartReader
         }
         catch (System.Exception e)
         {
-            Debug.LogError(e.Message);
+            Logger.LogException(e, "Error when reading chart metadata");
         }
     }
 
@@ -584,7 +584,7 @@ public static class ChartReader
                 }
                 catch (System.Exception e)
                 {
-                    Debug.LogError("Error parsing line \"" + line + "\": " + e);
+                    Logger.LogException(e, "Error parsing chart reader line \"" + line);
                 }
             }
             chart.UpdateCache();
@@ -603,7 +603,7 @@ public static class ChartReader
         catch (System.Exception e)
         {
             // Bad load, most likely a parsing error
-            Debug.LogError(e.Message);
+            Logger.LogException(e, "Error parsing chart reader chart data");
             chart.Clear();
         }
     }

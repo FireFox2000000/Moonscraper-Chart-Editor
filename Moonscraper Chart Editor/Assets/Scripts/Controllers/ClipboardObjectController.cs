@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 using System.IO;
 
 public class ClipboardObjectController : Snapable {
-    const string CLIPBOARD_FILE_LOCATION = "/MoonscraperClipboard.bin";
+    static string CLIPBOARD_FILE_LOCATION;
 
     public GroupSelect groupSelectTool;
     public Transform strikeline;
@@ -26,6 +26,7 @@ public class ClipboardObjectController : Snapable {
         base.Awake();
         ren = GetComponent<Renderer>();
         EventsManager.onApplicationModeChangedEventList.Add(OnApplicationModeChanged);
+        CLIPBOARD_FILE_LOCATION = UnityEngine.Application.persistentDataPath + "/MoonscraperClipboard.bin";
     }
 
     new void LateUpdate()
@@ -69,13 +70,17 @@ public class ClipboardObjectController : Snapable {
             
             try
             {
-                fs = new FileStream(UnityEngine.Application.persistentDataPath + CLIPBOARD_FILE_LOCATION, FileMode.Create);
+                fs = new FileStream(CLIPBOARD_FILE_LOCATION, FileMode.Create, FileAccess.ReadWrite);
                 BinaryFormatter formatter = new BinaryFormatter();
                 formatter.Serialize(fs, clipboard);
             }
             catch (SerializationException e)
             {
-                Debug.LogError("Failed to serialize. Reason: " + e.Message);
+                Logger.LogException(e, "Failed to serialize");
+            }
+            catch (System.Exception e)
+            {
+                Logger.LogException(e, "Failed to serialize in general");
             }
             finally
             {
@@ -87,7 +92,7 @@ public class ClipboardObjectController : Snapable {
         }
         catch (System.Exception e)
         {
-            Debug.LogError("Failed to copy data: " + e.Message);
+            Logger.LogException(e, "Failed to copy data");
         }
     }
 
@@ -107,14 +112,14 @@ public class ClipboardObjectController : Snapable {
         try
         {
             // Read clipboard data from a file instead of the actual clipboard because the actual clipboard doesn't work for whatever reason
-            fs = new FileStream(UnityEngine.Application.persistentDataPath + CLIPBOARD_FILE_LOCATION, FileMode.Open);
+            fs = new FileStream(CLIPBOARD_FILE_LOCATION, FileMode.Open);
             BinaryFormatter formatter = new BinaryFormatter();
 
             clipboard = (Clipboard)formatter.Deserialize(fs);
         }
-        catch
+        catch (System.Exception e)
         {
-            Debug.LogError("Failed to read from clipboard file");
+            Logger.LogException(e, "Failed to read from clipboard file");
             clipboard = null;
         }
         finally

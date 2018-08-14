@@ -330,7 +330,7 @@ public class ChartEditor : MonoBehaviour {
     {
         Debug.Log("NativeMessageBox ref count = " + NativeMessageBox.m_messageBoxesRefCount);
         Debug.Log("FileExplorer ref count = " + FileExplorer.m_filePanelsRefCount);
-        if (NativeMessageBox.messageBoxActive || FileExplorer.filePanelActive)
+        if (false)//NativeMessageBox.messageBoxActive || FileExplorer.filePanelActive)
         {
             // Doesn't actually work, Quit event gets bufferred and fires after the dialog box closes, even if quit was hit when the box was up. 
             Application.CancelQuit();
@@ -789,14 +789,11 @@ public class ChartEditor : MonoBehaviour {
                 currentSong = backup;
 
                 if (mid)
-                    ErrorMessage.errorMessage = "Failed to open mid file: " + e.Message;
+                    ErrorMessage.errorMessage = Logger.LogException(e, "Failed to open mid file");
                 else
-                    ErrorMessage.errorMessage = "Failed to open chart file: " + e.Message;
+                    ErrorMessage.errorMessage = Logger.LogException(e, "Failed to open chart file");
 
                 error = true;
-
-                // Immediate exit
-                Debug.LogError(e.Message);
             }
         });
 
@@ -893,11 +890,19 @@ public class ChartEditor : MonoBehaviour {
         {
             currentFileName = FileExplorer.OpenFilePanel("Chart files (*.chart, *.mid)\0*.chart;*.mid", "chart,mid");
         }
-        catch (System.Exception e)
+        catch (FileExplorer.FileExplorerExitException e)
         {
             // Most likely closed the window explorer, just ignore for now.
             currentSong = backup;
-            Debug.LogError(e.Message);
+            Debug.Log(e.Message);
+
+            // Immediate exit
+            yield break;
+        }
+        catch (System.Exception e)
+        {        
+            currentSong = backup;
+            Logger.LogException(e, "Error when getting file to open");
 
             // Immediate exit
             yield break;

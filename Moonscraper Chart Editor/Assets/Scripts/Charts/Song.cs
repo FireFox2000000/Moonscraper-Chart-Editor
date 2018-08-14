@@ -669,7 +669,7 @@ public class Song {
         catch (System.Exception e)
         {
             saveError = true;
-            ErrorMessage.errorMessage = "Save FAILED: " + e.Message;
+            ErrorMessage.errorMessage = Logger.LogException(e, "Save failed!");
         }
     }
 

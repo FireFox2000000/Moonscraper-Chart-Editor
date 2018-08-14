@@ -96,10 +96,14 @@ public class Export : DisplayMenu {
 
             StartCoroutine(_ExportSong(saveLocation));
         }
+        catch (FileExplorer.FileExplorerExitException e)
+        {
+            Debug.Log(e.Message);
+        }
         catch (System.Exception e)
         {
-            // User probably canceled\
-            Debug.LogError("Error when exporting (user may have canceled): " + e.Message);
+            // User probably canceled
+            Logger.LogException(e, "Error when exporting");
         }
     }
 
@@ -126,7 +130,7 @@ public class Export : DisplayMenu {
                 }
                 catch (System.Exception e)
                 {
-                    Debug.LogError(e.Message);
+                    Logger.LogException(e, "Error when exporting chart");
                     errorMessageList += e.Message;
                 }
             }
@@ -138,7 +142,7 @@ public class Export : DisplayMenu {
                 }
                 catch (System.Exception e)
                 {
-                    Debug.LogError(e.Message);
+                    Logger.LogException(e, "Error when exporting midi");
                     errorMessageList += e.Message;
                 }
             }
