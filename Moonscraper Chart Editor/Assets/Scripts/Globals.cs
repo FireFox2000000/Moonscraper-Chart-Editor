@@ -78,8 +78,9 @@ public class Globals : MonoBehaviour {
         viewMode = ViewMode.Chart;
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
         _services = GetComponent<Services>();
+
 #if !UNITY_EDITOR
-        workingDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
+        workingDirectory = Directory.GetCurrentDirectory();
 #else
         workingDirectory = Application.dataPath;
 #endif
