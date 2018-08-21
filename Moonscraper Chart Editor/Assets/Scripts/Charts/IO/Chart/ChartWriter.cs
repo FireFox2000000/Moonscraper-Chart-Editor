@@ -16,6 +16,14 @@ public class ChartWriter
         this.path = path;
     }
 
+    static readonly string s_chartSectionHeaderFormat = "[{0}]" + Globals.LINE_ENDING + "{{" + Globals.LINE_ENDING;
+    static readonly string s_chartSectionFooter = "}" + Globals.LINE_ENDING;
+    static readonly string s_chartHeaderSong = string.Format(s_chartSectionHeaderFormat, "Song");
+    static readonly string s_chartHeaderSyncTrack = string.Format(s_chartSectionHeaderFormat, "SyncTrack");
+    static readonly string s_chartHeaderEvents = string.Format(s_chartSectionHeaderFormat, "Events");
+    static readonly string s_chartHeaderTrackFormat = "[{0}{1}]" + Globals.LINE_ENDING + "{{" + Globals.LINE_ENDING;
+    static readonly string s_audioStreamFormat = Globals.TABSPACE + "{0} = \"{1}\"" + Globals.LINE_ENDING;
+
     delegate string GetAudioStreamSaveString(Song.AudioInstrument audio);
     public void Write(Song song, ExportOptions exportOptions, out string errorList)
     {
@@ -51,26 +59,26 @@ public class ChartWriter
 
             // Song properties
             Debug.Log("Writing song properties");
-            saveString += "[Song]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
+            saveString += s_chartHeaderSong;
             saveString += GetPropertiesStringWithoutAudio(song, exportOptions);
 
             // Song audio
             if (song.GetAudioIsLoaded(Song.AudioInstrument.Song) || (musicString != null && musicString != string.Empty))
-                saveString += Globals.TABSPACE + "MusicStream = \"" + musicString + "\"" + Globals.LINE_ENDING;
+                saveString += string.Format(s_audioStreamFormat, "MusicStream", musicString);
 
             if (song.GetAudioIsLoaded(Song.AudioInstrument.Guitar) || (guitarString != null && guitarString != string.Empty))
-                saveString += Globals.TABSPACE + "GuitarStream = \"" + guitarString + "\"" + Globals.LINE_ENDING;
+                saveString += string.Format(s_audioStreamFormat, "GuitarStream", guitarString);
 
             if (song.GetAudioIsLoaded(Song.AudioInstrument.Bass) || (bassString != null && bassString != string.Empty))
-                saveString += Globals.TABSPACE + "BassStream = \"" + bassString + "\"" + Globals.LINE_ENDING;
+                saveString += string.Format(s_audioStreamFormat, "BassStream", bassString);
 
             if (song.GetAudioIsLoaded(Song.AudioInstrument.Rhythm) || (rhythmString != null && rhythmString != string.Empty))
-                saveString += Globals.TABSPACE + "RhythmStream = \"" + rhythmString + "\"" + Globals.LINE_ENDING;
+                saveString += string.Format(s_audioStreamFormat, "RhythmStream", rhythmString);
 
             if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum) || (drumString != null && drumString != string.Empty))
-                saveString += Globals.TABSPACE + "DrumStream = \"" + drumString + "\"" + Globals.LINE_ENDING;
+                saveString += string.Format(s_audioStreamFormat, "DrumStream", drumString);
 
-            saveString += "}" + Globals.LINE_ENDING;
+            saveString += s_chartSectionFooter;
         }
         catch (System.Exception e)
         {
@@ -86,7 +94,7 @@ public class ChartWriter
 
         // SyncTrack
         Debug.Log("Writing synctrack");
-        saveString += "[SyncTrack]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
+        saveString += s_chartHeaderSyncTrack;
         if (exportOptions.tickOffset > 0)
         {
             saveString += new BPM().GetSaveString();
@@ -94,13 +102,13 @@ public class ChartWriter
         }
 
         saveString += GetSaveString(song, song.syncTrack, exportOptions, ref errorList);
-        saveString += "}" + Globals.LINE_ENDING;
+        saveString += s_chartSectionFooter;
 
         // Events
         Debug.Log("Writing events");
-        saveString += "[Events]" + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
+        saveString += s_chartHeaderEvents;
         saveString += GetSaveString(song, song.eventsAndSections, exportOptions, ref errorList);
-        saveString += "}" + Globals.LINE_ENDING;
+        saveString += s_chartSectionFooter;
 
         // Charts      
         foreach (Song.Instrument instrument in Enum.GetValues(typeof(Song.Instrument)))
@@ -183,10 +191,9 @@ public class ChartWriter
 
                 }
 
-                string seperator = "[" + difficultySaveString + instrumentSaveString + "]";
-                saveString += seperator + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
+                saveString += string.Format(s_chartHeaderTrackFormat, difficultySaveString, instrumentSaveString);
                 saveString += chartString;
-                saveString += "}" + Globals.LINE_ENDING;
+                saveString += s_chartSectionFooter;
             }
         }
 
@@ -195,10 +202,9 @@ public class ChartWriter
         {
             string chartString = GetSaveString(song, chart.chartObjects, exportOptions, ref errorList, Song.Instrument.Unrecognised);
 
-            string seperator = "[" + chart.name + "]";
-            saveString += seperator + Globals.LINE_ENDING + "{" + Globals.LINE_ENDING;
+            saveString += string.Format(s_chartSectionHeaderFormat, chart.name);
             saveString += chartString;
-            saveString += "}" + Globals.LINE_ENDING;
+            saveString += s_chartSectionFooter;
         }
 
         try
@@ -213,18 +219,19 @@ public class ChartWriter
     }
 
     static readonly string c_metaDataSaveFormat = string.Format("{0}{{0}} = \"{{{{0}}}}\"{1}", Globals.TABSPACE, Globals.LINE_ENDING);
+    static readonly string c_metaDataSaveFormatNoQuote = string.Format("{0}{{0}} = {{{{0}}}}{1}", Globals.TABSPACE, Globals.LINE_ENDING);
     static readonly string c_nameFormat = string.Format(c_metaDataSaveFormat, "Name");
     static readonly string c_artistFormat = string.Format(c_metaDataSaveFormat, "Artist");
     static readonly string c_charterFormat = string.Format(c_metaDataSaveFormat, "Charter");
     static readonly string c_albumFormat = string.Format(c_metaDataSaveFormat, "Album");
     static readonly string c_yearFormat = string.Format("{0}{1} = \", {{0}}\"{2}", Globals.TABSPACE, "Year", Globals.LINE_ENDING);
-    static readonly string c_offsetFormat = string.Format(c_metaDataSaveFormat, "Offset");
-    static readonly string c_resolutionFormat = string.Format(c_metaDataSaveFormat, "Resolution");
-    static readonly string c_player2Format = string.Format(c_metaDataSaveFormat, "Player2");
-    static readonly string c_difficultyFormat = string.Format(c_metaDataSaveFormat, "Difficulty");
-    static readonly string c_lengthFormat = string.Format(c_metaDataSaveFormat, "Length");
-    static readonly string c_previewStartFormat = string.Format(c_metaDataSaveFormat, "PreviewStart");
-    static readonly string c_previewEndFormat = string.Format(c_metaDataSaveFormat, "PreviewEnd");
+    static readonly string c_offsetFormat = string.Format(c_metaDataSaveFormatNoQuote, "Offset");
+    static readonly string c_resolutionFormat = string.Format(c_metaDataSaveFormatNoQuote, "Resolution");
+    static readonly string c_player2Format = string.Format(c_metaDataSaveFormatNoQuote, "Player2");
+    static readonly string c_difficultyFormat = string.Format(c_metaDataSaveFormatNoQuote, "Difficulty");
+    static readonly string c_lengthFormat = string.Format(c_metaDataSaveFormatNoQuote, "Length");
+    static readonly string c_previewStartFormat = string.Format(c_metaDataSaveFormatNoQuote, "PreviewStart");
+    static readonly string c_previewEndFormat = string.Format(c_metaDataSaveFormatNoQuote, "PreviewEnd");
     static readonly string c_genreFormat = string.Format(c_metaDataSaveFormat, "Genre");
     static readonly string c_mediaTypeFormat = string.Format(c_metaDataSaveFormat, "MediaType");
 
@@ -265,16 +272,24 @@ public class ChartWriter
         return saveString;
     }
 
+    static readonly string s_anchorFormat = string.Format(" = A {{0}}{0}{1}{{1}}", Globals.LINE_ENDING, Globals.TABSPACE);
+    static readonly string s_bpmFormat = " = B {0}";
+    static readonly string s_tsFormat = " = TS {0}";
+    static readonly string s_tsDenomFormat = " = TS {0} {1}";
+    static readonly string s_sectionFormat = " = E \"section {0}\"";
+    static readonly string s_eventFormat = " = E \"{0}\"";
+    static readonly string s_chartEventFormat = " = E {0}";
+    static readonly string s_starpowerFormat = " = S 2 {0}";
+    static readonly string s_noteFormat = " = N {0} {1}" + Globals.LINE_ENDING;
+    static readonly string s_forcedNoteFormat = Globals.TABSPACE + "{0}" + " = N 5 0 " + Globals.LINE_ENDING;
+    static readonly string s_tapNoteFormat = Globals.TABSPACE + "{0}" + " = N 6 0 " + Globals.LINE_ENDING;
     string GetSaveString<T>(Song song, T[] list, ExportOptions exportOptions, ref string out_errorList, Song.Instrument instrument = Song.Instrument.Guitar) where T : SongObject
     {
         System.Text.StringBuilder saveString = new System.Text.StringBuilder();
 
-        //string saveString = string.Empty;
-
         float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
 
         for (int i = 0; i < list.Length; ++i)
-        //foreach (SongObject songObject in list)
         {
             SongObject songObject = list[i];
             try
@@ -288,40 +303,43 @@ public class ChartWriter
                         BPM bpm = songObject as BPM;
                         if (bpm.anchor != null)
                         {
-                            saveString.Append(" = A " + (uint)((double)bpm.anchor * 1000000));
-                            saveString.Append(Globals.LINE_ENDING);
-                            saveString.Append(Globals.TABSPACE + tick);
+                            uint anchorValue = (uint)((double)bpm.anchor * 1000000);
+                            saveString.AppendFormat(s_anchorFormat, anchorValue, tick);
                         }
 
-                        saveString.Append(" = B " + bpm.value);
+                        saveString.AppendFormat(s_bpmFormat, bpm.value);
                         break;
 
                     case (SongObject.ID.TimeSignature):
                         TimeSignature ts = songObject as TimeSignature;
-                        saveString.Append(" = TS " + ts.numerator);
 
-                        if (ts.denominator != 4)
-                            saveString.Append(" " + (uint)Mathf.Log(ts.denominator, 2));
+                        if (ts.denominator == 4)
+                            saveString.AppendFormat(s_tsFormat, ts.numerator);
+                        else
+                        {
+                            uint denominatorSaveVal = (uint)Mathf.Log(ts.denominator, 2);
+                            saveString.AppendFormat(s_tsDenomFormat, ts.numerator, denominatorSaveVal);
+                        }
                         break;
 
                     case (SongObject.ID.Section):
                         Section section = songObject as Section;
-                        saveString.Append(" = E \"section " + section.title + "\"");
+                        saveString.AppendFormat(s_sectionFormat, section.title);
                         break;
 
                     case (SongObject.ID.Event):
                         Event songEvent = songObject as Event;
-                        saveString.Append(" = E \"" + songEvent.title + "\"");
+                        saveString.AppendFormat(s_eventFormat, songEvent.title);
                         break;
 
                     case (SongObject.ID.ChartEvent):
                         ChartEvent chartEvent = songObject as ChartEvent;
-                        saveString.Append(" = E " + chartEvent.eventName);
+                        saveString.AppendFormat(s_chartEventFormat, chartEvent.eventName);
                         break;
 
                     case (SongObject.ID.Starpower):
                         Starpower sp = songObject as Starpower;
-                        saveString.Append(" = S 2 " + (uint)Mathf.Round(sp.length * resolutionScaleRatio));
+                        saveString.AppendFormat(s_starpowerFormat, (uint)Mathf.Round(sp.length * resolutionScaleRatio));
                         break;
 
                     case (SongObject.ID.Note):
@@ -342,19 +360,21 @@ public class ChartWriter
                         else
                             fretNumber = note.rawNote;
 
-                        saveString.Append(" = N " + fretNumber + " " + (uint)Mathf.Round(note.length * resolutionScaleRatio));
-
-                        saveString.Append(Globals.LINE_ENDING);
+                        saveString.AppendFormat(s_noteFormat, fretNumber, (uint)Mathf.Round(note.length * resolutionScaleRatio));
 
                         // Only need to get the flags of one note of a chord
                         if (exportOptions.forced && (note.next == null || (note.next != null && note.next.tick != note.tick)))
                         {
                             if ((note.flags & Note.Flags.Forced) == Note.Flags.Forced)
-                                saveString.Append(Globals.TABSPACE + tick + " = N 5 0 " + Globals.LINE_ENDING);
+                            {
+                                saveString.AppendFormat(s_forcedNoteFormat, tick);
+                            }
 
                             // Save taps line if not an open note, as open note taps cause weird artifacts under sp
                             if (!note.IsOpenNote() && (note.flags & Note.Flags.Tap) == Note.Flags.Tap)
-                                saveString.Append(Globals.TABSPACE + tick + " = N 6 0 " + Globals.LINE_ENDING);
+                            {
+                                saveString.AppendFormat(s_tapNoteFormat, tick);
+                            }
                         }
                         continue;
 
