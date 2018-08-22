@@ -20,29 +20,27 @@ public static class NoteFunctions {
     {
         List<Note> chord = new List<Note>();
         chord.Add(note);
-
+    
         Note previous = note.previous;
         while (previous != null && previous.tick == note.tick)
         {
             chord.Add(previous);
             previous = previous.previous;
         }
-
+    
         Note next = note.next;
         while (next != null && next.tick == note.tick)
         {
             chord.Add(next);
             next = next.next;
         }
-
+    
         return chord.ToArray();
     }
 
     public static void ApplyFlagsToChord(this Note note)
     {
-        Note[] chordNotes = note.GetChord();
-
-        foreach (Note chordNote in chordNotes)
+        foreach (Note chordNote in note.chord)
         {
             chordNote.flags = note.flags;
         }

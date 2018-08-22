@@ -226,10 +226,8 @@ public class NoteController : SongObjectController {
             
             if (!Globals.drumMode)
             {
-                Note[] chordNotes = note.GetChord();
-
                 // Check for non-open notes and delete
-                foreach (Note chordNote in chordNotes)
+                foreach (Note chordNote in note.chord)
                 {
                     if (!chordNote.IsOpenNote())
                     {

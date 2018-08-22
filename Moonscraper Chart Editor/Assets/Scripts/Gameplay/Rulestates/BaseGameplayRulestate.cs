@@ -47,7 +47,7 @@ public class BaseGameplayRulestate {
                 // Miss, exited window
                 if (!noteKnowledge.hasBeenHit)
                 {
-                    foreach (Note chordNote in noteKnowledge.note.GetChord())
+                    foreach (Note chordNote in noteKnowledge.note.chord)
                     {
                         chordNote.controller.sustainBroken = true;
 
@@ -74,7 +74,7 @@ public class BaseGameplayRulestate {
         ++stats.totalNotes;
 
         Note note = noteHitKnowledge.note;
-        foreach (Note chordNote in note.GetChord())
+        foreach (Note chordNote in note.chord)
         {
             chordNote.controller.hit = true;
             chordNote.controller.PlayIndicatorAnim();

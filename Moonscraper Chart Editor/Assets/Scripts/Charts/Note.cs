@@ -4,6 +4,7 @@
 #define APPLICATION_MOONSCRAPER     // Moonscraper doesn't use chart.gameMode because notes might not have charts associated with them, copy-pasting for instance and storing undo-redo
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 [System.Serializable]
@@ -117,6 +118,8 @@ public class Note : ChartObject
     /// The next note in the linked-list.
     /// </summary>
     public Note next;
+
+    public Chord chord { get { return new Chord(this); } }
 
     new public NoteController controller {
         get { return (NoteController)base.controller; }
@@ -323,10 +326,10 @@ public class Note : ChartObject
     {
         get
         {
-            Note[] chord = this.GetChord();
+            //Note[] chord = this.GetChord();
             int mask = 0;
 
-            foreach (Note note in chord)
+            foreach (Note note in this.chord)
                 mask |= (1 << note.rawNote);
 
             return mask;
@@ -401,4 +404,37 @@ public class Note : ChartObject
 
         return saveString;
     }
+
+    public class Chord : IEnumerable<Note>
+    {
+        Note startNote;
+        public Chord(Note note) : base()
+        {
+            startNote = note;
+
+            while (startNote.previous != null && startNote.previous.tick == note.tick)
+            {
+                startNote = startNote.previous;
+            }
+        }
+
+        public IEnumerator<Note> GetEnumerator()
+        {
+            Note note = startNote;
+
+            yield return note;
+
+            while (note.next != null && note.tick == note.next.tick)
+            {
+                note = note.next;
+                yield return note;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
 }
+

@@ -97,7 +97,7 @@ public class PlaceNoteController : ObjectlessTool {
                     {
                         if (heldNotes[i].song != null)
                         {
-                            foreach (Note chordNote in heldNotes[i].GetChord())
+                            foreach (Note chordNote in heldNotes[i].chord)
                                 chordNote.SetSustainByPos(objectSnappedChartPos);
                         }
                         else

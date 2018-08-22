@@ -208,7 +208,7 @@ public class GroupSelectPanelController : MonoBehaviour
                     actions.AddRange(addRecord);
                 }
 
-                foreach (Note chordNote in note.GetChord())
+                foreach (Note chordNote in note.chord)
                 {
                     if (chordNote.controller)
                     {

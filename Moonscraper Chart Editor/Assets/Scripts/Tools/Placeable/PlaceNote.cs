@@ -252,7 +252,7 @@ public class PlaceNote : PlaceSongObject {
         if (forceCheck != null)
             noteRecord.Insert(0, forceCheck);           // Insert at the start so that the modification happens at the end of the undo function, otherwise the natural force check prevents it from being forced
 
-        foreach (Note chordNote in addedNote.GetChord())
+        foreach (Note chordNote in addedNote.chord)
         {
             if (chordNote.controller)
                 chordNote.controller.SetDirty();
@@ -261,7 +261,7 @@ public class PlaceNote : PlaceSongObject {
         Note next = addedNote.nextSeperateNote;
         if (next != null)
         {
-            foreach (Note chordNote in next.GetChord())
+            foreach (Note chordNote in next.chord)
             {
                 if (chordNote.controller)
                     chordNote.controller.SetDirty();
@@ -306,7 +306,6 @@ public class PlaceNote : PlaceSongObject {
     protected static ActionHistory.Action[] ForwardCap(Note note)
     {
         List<ActionHistory.Action> actionRecord = new List<ActionHistory.Action>();
-        Note[] notesToCap;
         Note next;
         next = note.nextSeperateNote;      
         
@@ -314,29 +313,34 @@ public class PlaceNote : PlaceSongObject {
         {
             // Get chord  
             next = note.nextSeperateNote;
-            notesToCap = note.GetChord();          
+
+            if (next != null)
+            {
+                foreach (Note noteToCap in note.chord)
+                {
+                    ActionHistory.Action action = noteToCap.CapSustain(next);
+                    if (action != null)
+                        actionRecord.Add(action);
+                }
+            }
         }
         else
         {
-            notesToCap = new Note[] { note };
-
             // Find the next note of the same fret type or open
             next = note.next;
             while (next != null && next.guitarFret != note.guitarFret && !next.IsOpenNote())
                 next = next.next;
 
             // If it's an open note it won't be capped
-        }
 
-        if (next != null)
-        {
-            foreach (Note noteToCap in notesToCap)
+            if (next != null)
             {
-                ActionHistory.Action action = noteToCap.CapSustain(next);
+                ActionHistory.Action action = note.CapSustain(next);
                 if (action != null)
                     actionRecord.Add(action);
             }
         }
+
 
         return actionRecord.ToArray();
     }
@@ -359,7 +363,7 @@ public class PlaceNote : PlaceSongObject {
                 }
             }
 
-            foreach(Note chordNote in noteToAdd.GetChord())
+            foreach(Note chordNote in noteToAdd.chord)
             {
                 if (chordNote.controller != null)
                     chordNote.controller.note.length = noteToAdd.length; 

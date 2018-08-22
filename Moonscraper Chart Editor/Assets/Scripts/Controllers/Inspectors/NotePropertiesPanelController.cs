@@ -140,7 +140,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         if (currentNote == prevNote)
         {
             System.Collections.Generic.List<ActionHistory.Action> record = new System.Collections.Generic.List<ActionHistory.Action>();
-            foreach (Note chordNote in currentNote.GetChord())
+            foreach (Note chordNote in currentNote.chord)
                 record.Add(new ActionHistory.Delete(chordNote));
 
             if (currentNote != null)
@@ -153,7 +153,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
             setFlags(currentNote);          
 
-            foreach (Note chordNote in currentNote.GetChord())
+            foreach (Note chordNote in currentNote.chord)
                 record.Add(new ActionHistory.Add(chordNote));
 
             if (Toolpane.currentTool == Toolpane.Tools.Cursor)
@@ -166,7 +166,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         //if (currentNote == prevNote)
         //{
         System.Collections.Generic.List<ActionHistory.Action> record = new System.Collections.Generic.List<ActionHistory.Action>();
-        foreach (Note chordNote in currentNote.GetChord())
+        foreach (Note chordNote in currentNote.chord)
             record.Add(new ActionHistory.Delete(chordNote));
 
         if (currentNote != null)
@@ -179,7 +179,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
         setFlags(currentNote);
 
-        foreach (Note chordNote in currentNote.GetChord())
+        foreach (Note chordNote in currentNote.chord)
             record.Add(new ActionHistory.Add(chordNote));
 
         if (currentNote == prevNote && Toolpane.currentTool == Toolpane.Tools.Cursor)
@@ -196,22 +196,10 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             ChartEditor.isDirty = true;
         }
 
-        foreach (Note chordNote in note.GetChord())
+        foreach (Note chordNote in note.chord)
         {
             if (chordNote.controller)
                 chordNote.controller.SetDirty();
         }
-    }
-
-    Note[] CloneChord(Note note)
-    {
-        Note[] chord = note.GetChord();
-        Note[] original = new Note[chord.Length];
-        for (int i = 0; i < chord.Length; ++i)
-        {
-            original[i] = (Note)chord[i].Clone();
-        }
-
-        return original;
     }
 }

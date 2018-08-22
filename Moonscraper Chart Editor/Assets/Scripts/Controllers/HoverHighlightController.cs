@@ -65,8 +65,7 @@ public class HoverHighlightController : MonoBehaviour {
                 NoteController nCon = songObject.GetComponent<NoteController>();
                 if (nCon)
                 {
-                    Note[] notes = nCon.note.GetChord();
-                    foreach (Note note in notes)
+                    foreach (Note note in nCon.note.chord)
                         songObjects.Add(note.controller.gameObject);
                 }
                 else
@@ -74,8 +73,7 @@ public class HoverHighlightController : MonoBehaviour {
                     SustainController sCon = songObject.GetComponent<SustainController>();
                     if (sCon)
                     {
-                        Note[] notes = sCon.nCon.note.GetChord();
-                        foreach (Note note in notes)
+                        foreach (Note note in sCon.nCon.note.chord)
                             songObjects.Add(note.controller.sustain.gameObject);
                     }
                 }

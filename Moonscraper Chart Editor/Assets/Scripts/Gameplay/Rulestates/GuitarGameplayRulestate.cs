@@ -56,7 +56,7 @@ public class GuitarGameplayRulestate : BaseGameplayRulestate {
 
     void SustainBreak(float time, Note note)
     {
-        foreach (Note chordNote in note.GetChord())
+        foreach (Note chordNote in note.chord)
         {
             if (chordNote.controller)
                 chordNote.controller.sustainBroken = true;

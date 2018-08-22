@@ -152,7 +152,7 @@ public class SongObjectPoolManager : MonoBehaviour {
 
                     if (minNote.tick + minNote.length > editor.minPos && minNote.tick < editor.maxPos)
                     {
-                        foreach (Note note in minNote.GetChord())
+                        foreach (Note note in minNote.chord)
                         {
                             if (note.tick + note.length > editor.minPos)
                                 rangedNotes.Add(note);

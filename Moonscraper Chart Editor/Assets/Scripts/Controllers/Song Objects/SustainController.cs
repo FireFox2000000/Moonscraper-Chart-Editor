@@ -48,7 +48,7 @@ public class SustainController : SelectableClick {
                 {                 
                     if (unmodifiedNotes.Count == 0)
                     {
-                        foreach (Note chordNote in nCon.note.GetChord())
+                        foreach (Note chordNote in nCon.note.chord)
                         {
                             unmodifiedNotes.Add(new Note[] { (Note)chordNote.Clone(), chordNote });
                         }
@@ -177,11 +177,10 @@ public class SustainController : SelectableClick {
         if (nCon.note.song == null || Input.GetMouseButton(0))
             return;
         ChartEditor.isDirty = true;
-        Note[] chordNotes = nCon.note.GetChord();
 
         uint snappedPos = GetSnappedSustainPos();
 
-        foreach (Note chordNote in chordNotes)
+        foreach (Note chordNote in nCon.note.chord)
         {
             chordNote.SetSustainByPos(snappedPos);
         }
