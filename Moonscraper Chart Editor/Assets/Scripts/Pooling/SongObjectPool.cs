@@ -46,7 +46,31 @@ public abstract class SongObjectPool {
         }
     }
 
-    protected void Activate(SongObject[] range, int index, int length)
+    public void Activate<T>(List<T> range, int index, int length) where T : SongObject
+    {
+        int pos = 0;
+        for (int i = index; i < index + length; ++i)
+        {
+            if (range[i].controller == null)
+            {
+                // Find the next gameobject that is disabled/not in use
+                while (pos < pool.Length && pool[pos].gameObject.activeSelf)
+                {
+                    ++pos;
+
+                    if (pos >= pool.Length)
+                        ExtendPool(ref pool, prefab, POOL_EXTEND_SIZE, parent);
+                }
+
+                if (pos < pool.Length && !pool[pos].gameObject.activeSelf)
+                    Assign(pool[pos], range[i]);
+                else
+                    break;
+            }
+        }
+    }
+
+    public void Activate<T>(T[] range, int index, int length) where T : SongObject
     {
         int pos = 0;
         for (int i = index; i < index + length; ++i)

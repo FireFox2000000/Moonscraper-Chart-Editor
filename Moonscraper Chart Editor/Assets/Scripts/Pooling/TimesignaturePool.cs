@@ -21,9 +21,4 @@ public class TimesignaturePool : SongObjectPool
         controller.ts = (TimeSignature)songObject;
         controller.gameObject.SetActive(true);
     }
-
-    public void Activate(TimeSignature[] range, int index, int length)
-    {
-        base.Activate(range, index, length);
-    }
 }

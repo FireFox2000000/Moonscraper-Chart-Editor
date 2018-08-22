@@ -29,6 +29,9 @@ public class SongObjectPoolManager : MonoBehaviour {
     GameObject songEventParent;
     GameObject chartEventParent;
 
+    List<Note> collectedNotesInRange = new List<Note>();
+    List<Starpower> collectedStarpowerInRange = new List<Starpower>();
+
     // Use this for initialization
     void Awake () {
         editor = GetComponent<ChartEditor>();
@@ -116,7 +119,7 @@ public class SongObjectPoolManager : MonoBehaviour {
             controller.gameObject.SetActive(false);
     }
 
-    Note[] CollectNotesInViewRange(Note[] notes)
+    void CollectNotesInViewRange(Note[] notes)
     {
         uint min_pos = editor.minPos;
         if (ChartEditor.startGameplayPos != null)
@@ -126,17 +129,18 @@ public class SongObjectPoolManager : MonoBehaviour {
                 min_pos = gameplayPos;
         }
 
-        List<Note> rangedNotes = new List<Note>(SongObjectHelper.GetRangeCopy(notes, min_pos, editor.maxPos));
+        collectedNotesInRange.Clear();
+        collectedNotesInRange.AddRange(SongObjectHelper.GetRangeCopy(notes, min_pos, editor.maxPos));
 
         if (min_pos == editor.minPos)
         {
-            if (rangedNotes.Count > 0)
+            if (collectedNotesInRange.Count > 0)
             {
                 // Find the last known note of each fret type to find any sustains that might overlap into the camera view
-                foreach (Note prevNote in NoteFunctions.GetPreviousOfSustains(rangedNotes[0] as Note))
+                foreach (Note prevNote in NoteFunctions.GetPreviousOfSustains(collectedNotesInRange[0] as Note))
                 {
                     if (prevNote.tick + prevNote.length > editor.minPos)
-                        rangedNotes.Add(prevNote);
+                        collectedNotesInRange.Add(prevNote);
                 }
             }
             else
@@ -155,39 +159,38 @@ public class SongObjectPoolManager : MonoBehaviour {
                         foreach (Note note in minNote.chord)
                         {
                             if (note.tick + note.length > editor.minPos)
-                                rangedNotes.Add(note);
+                                collectedNotesInRange.Add(note);
                         }
                     }
 
                     foreach (Note prevNote in NoteFunctions.GetPreviousOfSustains(minNote))
                     {
                         if (prevNote.tick + prevNote.length > editor.minPos)
-                            rangedNotes.Add(prevNote);
+                            collectedNotesInRange.Add(prevNote);
                     }
                 }
             }
         }
 
         // Make sure the notes are within the allowable lanes
-        for (int i = rangedNotes.Count - 1; i >= 0; --i)
+        for (int i = collectedNotesInRange.Count - 1; i >= 0; --i)
         {
-            Note note = rangedNotes[i];
+            Note note = collectedNotesInRange[i];
             if (!note.IsOpenNote() && ((1 << note.rawNote) & editor.laneInfo.laneMask) == 0)
-                rangedNotes.RemoveAt(i);
+                collectedNotesInRange.RemoveAt(i);
         }
-
-        return rangedNotes.ToArray();
     }
   
     public void EnableNotes(Note[] notes)
     {
-        Note[] notesToActivate = CollectNotesInViewRange(notes);
-        notePool.Activate(notesToActivate, 0, notesToActivate.Length);
+        CollectNotesInViewRange(notes);
+        notePool.Activate(collectedNotesInRange, 0, collectedNotesInRange.Count);
     }
 
-    Starpower[] CollectStarpowerInViewRange(Starpower[] starpowers)
+    void CollectStarpowerInViewRange(Starpower[] starpowers)
     {
-        List<Starpower> range = new List<Starpower>(SongObjectHelper.GetRangeCopy(starpowers, editor.minPos, editor.maxPos));
+        collectedStarpowerInRange.Clear();
+        collectedStarpowerInRange.AddRange(SongObjectHelper.GetRangeCopy(starpowers, editor.minPos, editor.maxPos));
 
         int arrayPos = SongObjectHelper.FindClosestPosition(editor.minPos, editor.currentChart.starPower);
         if (arrayPos != SongObjectHelper.NOTFOUND)
@@ -201,17 +204,15 @@ public class SongObjectPoolManager : MonoBehaviour {
             if (arrayPos >= 0 && editor.currentChart.starPower[arrayPos].tick + editor.currentChart.starPower[arrayPos].length > editor.minPos &&
                 (editor.currentChart.starPower[arrayPos].tick + editor.currentChart.starPower[arrayPos].length) < editor.maxPos)
             {
-                range.Add(editor.currentChart.starPower[arrayPos]);
+                collectedStarpowerInRange.Add(editor.currentChart.starPower[arrayPos]);
             }
         }
-
-        return range.ToArray();
     }
 
     public void EnableSP(Starpower[] starpowers)
     {
-        Starpower[] spToActivate = CollectStarpowerInViewRange(starpowers);
-        spPool.Activate(spToActivate, 0, spToActivate.Length);
+        CollectStarpowerInViewRange(starpowers);
+        spPool.Activate(collectedStarpowerInRange, 0, collectedStarpowerInRange.Count);
     }
 
     public void EnableBPM(BPM[] bpms)
@@ -277,23 +278,23 @@ public class SongObjectPoolManager : MonoBehaviour {
 
     public void SetInViewRangeDirty(Note[] songObjects)
     {
-        Note[] notesInRange = CollectNotesInViewRange(songObjects);
+        CollectNotesInViewRange(songObjects);
 
-        for (int i = 0; i < notesInRange.Length; ++i)
+        for (int i = 0; i < collectedNotesInRange.Count; ++i)
         {
-            if (notesInRange[i].controller)
-                notesInRange[i].controller.SetDirty();
+            if (collectedNotesInRange[i].controller)
+                collectedNotesInRange[i].controller.SetDirty();
         }
     }
 
     public void SetInViewRangeDirty(Starpower[] songObjects)
     {
-        Starpower[] inRange = CollectStarpowerInViewRange(songObjects);
+        CollectStarpowerInViewRange(songObjects);
 
-        for (int i = 0; i < inRange.Length; ++i)
+        for (int i = 0; i < collectedStarpowerInRange.Count; ++i)
         {
-            if (inRange[i].controller)
-                inRange[i].controller.SetDirty();
+            if (collectedStarpowerInRange[i].controller)
+                collectedStarpowerInRange[i].controller.SetDirty();
         }
     }
 }

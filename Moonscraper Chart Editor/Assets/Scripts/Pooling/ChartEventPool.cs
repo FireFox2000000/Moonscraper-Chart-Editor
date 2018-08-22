@@ -21,9 +21,4 @@ public class ChartEventPool : SongObjectPool
         controller.chartEvent = (ChartEvent)songObject;
         controller.gameObject.SetActive(true);
     }
-
-    public void Activate(ChartEvent[] range, int index, int length)
-    {
-        base.Activate(range, index, length);
-    }
 }

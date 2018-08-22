@@ -21,9 +21,4 @@ public class StarpowerPool : SongObjectPool
         controller.starpower = (Starpower)songObject;
         controller.gameObject.SetActive(true);
     }
-
-    public void Activate(Starpower[] range, int index, int length)
-    {
-        base.Activate(range, index, length);
-    }
 }

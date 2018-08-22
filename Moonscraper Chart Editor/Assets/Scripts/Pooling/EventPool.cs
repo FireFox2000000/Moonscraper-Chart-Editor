@@ -21,9 +21,4 @@ public class EventPool : SongObjectPool
         controller.songEvent = (Event)songObject;
         controller.gameObject.SetActive(true);
     }
-
-    public void Activate(Event[] range, int index, int length)
-    {
-        base.Activate(range, index, length);
-    }
 }

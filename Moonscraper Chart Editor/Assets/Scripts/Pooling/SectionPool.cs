@@ -21,9 +21,4 @@ public class SectionPool : SongObjectPool
         controller.section = (Section)songObject;
         controller.gameObject.SetActive(true);
     }
-
-    public void Activate(Section[] range, int index, int length)
-    {
-        base.Activate(range, index, length);
-    }
 }
