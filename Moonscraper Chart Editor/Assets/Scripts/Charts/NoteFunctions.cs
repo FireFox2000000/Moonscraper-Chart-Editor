@@ -46,9 +46,9 @@ public static class NoteFunctions {
         }
     }
 
-    public static Note[] GetPreviousOfSustains(Note startNote)
+    public static void GetPreviousOfSustains(List<Note> list, Note startNote)
     {
-        List<Note> list = new List<Note>(6);
+        list.Clear();
 
         Note previous = startNote.previous;
 
@@ -62,13 +62,16 @@ public static class NoteFunctions {
                 if (GameSettings.extendedSustainsEnabled)
                 {
                     list.Add(previous);
-                    return list.ToArray();
+                    return;
                 }
 
                 else if (list.Count > 0)
-                    return list.ToArray();
+                    return;
                 else
-                    return new Note[] { previous };
+                {
+                    list.Clear();
+                    list.Add(previous);
+                }
             }
             else if (previous.tick < startNote.tick)
             {
@@ -81,6 +84,13 @@ public static class NoteFunctions {
 
             previous = previous.previous;
         }
+    }
+
+    public static Note[] GetPreviousOfSustains(Note startNote)
+    {
+        List<Note> list = new List<Note>(6);
+
+        GetPreviousOfSustains(list, startNote);
 
         return list.ToArray();
     }

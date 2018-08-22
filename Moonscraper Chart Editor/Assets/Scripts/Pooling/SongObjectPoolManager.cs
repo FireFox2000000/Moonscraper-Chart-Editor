@@ -31,6 +31,7 @@ public class SongObjectPoolManager : MonoBehaviour {
 
     List<Note> collectedNotesInRange = new List<Note>();
     List<Starpower> collectedStarpowerInRange = new List<Starpower>();
+    List<Note> prevSustainCache = new List<Note>();
 
     // Use this for initialization
     void Awake () {
@@ -130,14 +131,20 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
 
         collectedNotesInRange.Clear();
-        collectedNotesInRange.AddRange(SongObjectHelper.GetRangeCopy(notes, min_pos, editor.maxPos));
+        int index, length;
+        SongObjectHelper.GetRange(notes, min_pos, editor.maxPos, out index, out length);
+        for (int i = index; i < index + length; ++i)
+        {
+            collectedNotesInRange.Add(notes[i]);
+        }
 
         if (min_pos == editor.minPos)
         {
             if (collectedNotesInRange.Count > 0)
             {
+                NoteFunctions.GetPreviousOfSustains(prevSustainCache, collectedNotesInRange[0]);
                 // Find the last known note of each fret type to find any sustains that might overlap into the camera view
-                foreach (Note prevNote in NoteFunctions.GetPreviousOfSustains(collectedNotesInRange[0] as Note))
+                foreach (Note prevNote in prevSustainCache)
                 {
                     if (prevNote.tick + prevNote.length > editor.minPos)
                         collectedNotesInRange.Add(prevNote);
@@ -163,7 +170,8 @@ public class SongObjectPoolManager : MonoBehaviour {
                         }
                     }
 
-                    foreach (Note prevNote in NoteFunctions.GetPreviousOfSustains(minNote))
+                    NoteFunctions.GetPreviousOfSustains(prevSustainCache, minNote);
+                    foreach (Note prevNote in prevSustainCache)
                     {
                         if (prevNote.tick + prevNote.length > editor.minPos)
                             collectedNotesInRange.Add(prevNote);
@@ -190,7 +198,12 @@ public class SongObjectPoolManager : MonoBehaviour {
     void CollectStarpowerInViewRange(Starpower[] starpowers)
     {
         collectedStarpowerInRange.Clear();
-        collectedStarpowerInRange.AddRange(SongObjectHelper.GetRangeCopy(starpowers, editor.minPos, editor.maxPos));
+        int index, length;
+        SongObjectHelper.GetRange(starpowers, editor.minPos, editor.maxPos, out index, out length);
+        for (int i = index; i < index + length; ++i)
+        {
+            collectedStarpowerInRange.Add(starpowers[i]);
+        }
 
         int arrayPos = SongObjectHelper.FindClosestPosition(editor.minPos, editor.currentChart.starPower);
         if (arrayPos != SongObjectHelper.NOTFOUND)
