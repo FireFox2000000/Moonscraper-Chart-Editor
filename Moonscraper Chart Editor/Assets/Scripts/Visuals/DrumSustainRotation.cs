@@ -12,7 +12,6 @@ public class DrumSustainRotation : MonoBehaviour {
 
     Color[] sustainColors;
 
-    bool prevDrumMode = false;
 	// Use this for initialization
 	void Start () {
         sustainColors = new Color[STANDARD_FRETS];
@@ -21,27 +20,24 @@ public class DrumSustainRotation : MonoBehaviour {
         {
             sustainColors[i] = defaultSustainResources.sustainColours[i].GetColor("_Color");
         }
+
+        EventsManager.onLanesChangedEventList.Add(OnLanesChangedEvent);
     }
 	
 	// Update is called once per frame
-	void Update () {
-        if (Globals.drumMode != prevDrumMode)
+	void OnLanesChangedEvent (int laneCount) {
+        if (Globals.drumMode)
         {
-            if (Globals.drumMode)
-            {
-                defaultSustainResources.sustainColours[STANDARD_FRETS - 1].SetColor("_Color", sustainColors[0]);
+            defaultSustainResources.sustainColours[STANDARD_FRETS - 1].SetColor("_Color", sustainColors[0]);
 
-                for (int i = 1; i < STANDARD_FRETS; ++i)
-                    defaultSustainResources.sustainColours[i - 1].SetColor("_Color", sustainColors[i]);
-            }
-            else
-            {
-                for (int i = 0; i < STANDARD_FRETS; ++i)
-                    defaultSustainResources.sustainColours[i].SetColor("_Color", sustainColors[i]);
-            }
+            for (int i = 1; i < STANDARD_FRETS; ++i)
+                defaultSustainResources.sustainColours[i - 1].SetColor("_Color", sustainColors[i]);
         }
-
-        prevDrumMode = Globals.drumMode;
+        else
+        {
+            for (int i = 0; i < STANDARD_FRETS; ++i)
+                defaultSustainResources.sustainColours[i].SetColor("_Color", sustainColors[i]);
+        }
     }
 #if UNITY_EDITOR
     void OnApplicationQuit()
