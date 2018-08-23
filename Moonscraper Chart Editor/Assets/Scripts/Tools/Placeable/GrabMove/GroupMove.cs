@@ -9,8 +9,8 @@ using System.Linq;
 public class GroupMove : ToolObject
 {
     int anchorArrayPos = SongObjectHelper.NOTFOUND;
-    SongObject[] originalSongObjects = new SongObject[0];
-    SongObject[] movingSongObjects = new SongObject[0];
+    List<SongObject> originalSongObjects = new List<SongObject>();
+    List<SongObject> movingSongObjects = new List<SongObject>();
 
     List<ActionHistory.Action> bpmAnchorRecord;
     
@@ -22,7 +22,7 @@ public class GroupMove : ToolObject
         if (Globals.applicationMode != Globals.ApplicationMode.Editor)
             return;
 
-        if (movingSongObjects.Length > 0)
+        if (movingSongObjects.Count > 0)
         {
             if (Input.GetMouseButtonUp(0))
                 AddSongObjects();
@@ -40,13 +40,13 @@ public class GroupMove : ToolObject
                     bool hitStartOfChart = false;
 
                     // Guard for chart limit, if the offset was negative, yet the position becomes greater
-                    if (movingSongObjects.Length > 0 && chartPosOffset < 0 && (uint)((int)originalSongObjects[0].tick + chartPosOffset) > originalSongObjects[0].tick)
+                    if (movingSongObjects.Count > 0 && chartPosOffset < 0 && (uint)((int)originalSongObjects[0].tick + chartPosOffset) > originalSongObjects[0].tick)
                     {
                         hitStartOfChart = true;
                     }
 
                     // Update the new positions of all the notes that have been moved
-                    for (int i = 0; i < movingSongObjects.Length; ++i)
+                    for (int i = 0; i < movingSongObjects.Count; ++i)
                     {
                         // Alter X position
                         if ((SongObject.ID)movingSongObjects[i].classID == SongObject.ID.Note)
@@ -96,7 +96,7 @@ public class GroupMove : ToolObject
 
         bool moved = false;
 
-        for (int i = 0; i < movingSongObjects.Length; ++i)
+        for (int i = 0; i < movingSongObjects.Count; ++i)
         {
             ActionHistory.Action overwriteRecord;
 
@@ -154,7 +154,7 @@ public class GroupMove : ToolObject
             }     
         }
 
-        editor.currentSelectedObjects = movingSongObjects;
+        editor.currentSelectedObjects = movingSongObjects.ToArray();
 
         if (moved)
         {
@@ -176,14 +176,14 @@ public class GroupMove : ToolObject
 
     void Reset()
     {
-        originalSongObjects = new ChartObject[0];
+        originalSongObjects.Clear();
 
         foreach (SongObject songObject in movingSongObjects)
         {
             if (songObject.controller)
                 songObject.controller.gameObject.SetActive(false);
         }
-        movingSongObjects = new ChartObject[0];
+        movingSongObjects.Clear();
         anchorArrayPos = SongObjectHelper.NOTFOUND;
     }
 
@@ -204,8 +204,10 @@ public class GroupMove : ToolObject
 
         this.anchorArrayPos = anchorArrayPos;
 
-        originalSongObjects = songObjects;
-        movingSongObjects = new SongObject[songObjects.Length];
+        originalSongObjects.Clear();
+        movingSongObjects.Clear();
+
+        originalSongObjects.AddRange(songObjects);
 
         initObjectSnappedChartPos = objectSnappedChartPos;
 
@@ -213,7 +215,7 @@ public class GroupMove : ToolObject
         for (int i = 0; i < songObjects.Length; ++i)
         {
             //originalSongObjects[i] = songObjects[i];
-            movingSongObjects[i] = songObjects[i].Clone();
+            movingSongObjects.Add(songObjects[i].Clone());
 
             //if (delete)
                 songObjects[i].Delete(false);
