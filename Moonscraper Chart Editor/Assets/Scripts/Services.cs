@@ -14,6 +14,7 @@ public class Services : MonoBehaviour
     Rect toolScreenArea;
     public static bool IsInDropDown = false;
     static Vector2 prevScreenSize;
+    public static bool IsTyping = false;
 
     public static bool HasScreenResized
     {
@@ -60,7 +61,7 @@ public class Services : MonoBehaviour
         }
     }
 
-    public static bool IsTyping
+    static bool _IsTyping
     {
         get
         {
@@ -119,6 +120,7 @@ public class Services : MonoBehaviour
     void Update()
     {
         IsInDropDown = _IsInDropDown;
+        IsTyping = _IsTyping;
 
         if (HasScreenResized)
             OnScreenResize();
