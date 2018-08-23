@@ -39,15 +39,16 @@ public class WaveformDraw : MonoBehaviour {
 
         waveformSelect.value = newIndex;
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    readonly int audioInstrumentEnumCount = System.Enum.GetValues(typeof(Song.AudioInstrument)).Length;
+    // Update is called once per frame
+    void Update () {
         currentSample = null;
-        foreach (Song.AudioInstrument audio in System.Enum.GetValues(typeof(Song.AudioInstrument)))
+        for (int audioIndex = 0; audioIndex < audioInstrumentEnumCount; ++audioIndex)
         {
-            if (waveformSelect.value == ((int)audio + 1))
+            if (waveformSelect.value == (audioIndex + 1))
             {
-                currentSample = editor.currentSong.GetSampleData(audio);
+                currentSample = editor.currentSong.GetSampleData((Song.AudioInstrument)audioIndex);
             }
         }
 
