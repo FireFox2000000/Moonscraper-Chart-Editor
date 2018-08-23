@@ -58,4 +58,12 @@ public static class EventsManager {
         foreach (SaveEvent function in onSaveEventList)
             function();
     }
+
+    public delegate void ToolChangedEvent();
+    public static List<ToolChangedEvent> onToolChangedEventList = new List<ToolChangedEvent>();
+    public static void FireToolChangedEvent()
+    {
+        foreach (ToolChangedEvent function in onToolChangedEventList)
+            function();
+    }
 }

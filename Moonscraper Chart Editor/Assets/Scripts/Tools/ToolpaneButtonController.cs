@@ -12,13 +12,15 @@ public class ToolpaneButtonController : MonoBehaviour {
 
     void Start()
     {
+        EventsManager.onToolChangedEventList.Add(OnToolChangedEvent);
+
         button = GetComponent<Button>();
         if (Toolpane.currentTool == disableOnTool)
             Press();
     }
 
 	// Update is called once per frame
-	void Update () {
+	void OnToolChangedEvent () {
         if (Toolpane.currentTool != disableOnTool)
         {
             button.interactable = true;
@@ -31,5 +33,7 @@ public class ToolpaneButtonController : MonoBehaviour {
     {
         button.interactable = false;
         enabled = true;
+
+        EventsManager.FireToolChangedEvent();
     }
 }
