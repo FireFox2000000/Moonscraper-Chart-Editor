@@ -45,8 +45,9 @@ public class HitWindowFeeder : MonoBehaviour {
         Chart.GameMode gameMode = editor.currentChart.gameMode;
 
         // Enter window
-        foreach (NoteController note in physicsWindow.ToArray())
+        for (int i = physicsWindow.Count - 1; i >= 0; --i)
         {
+            NoteController note = physicsWindow[i];
             if (gameMode == Chart.GameMode.Guitar)
             {
                 if (guitarHitWindow.DetectEnter(note.note, time))
