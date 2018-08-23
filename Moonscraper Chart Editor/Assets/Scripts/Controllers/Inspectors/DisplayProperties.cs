@@ -53,9 +53,6 @@ public class DisplayProperties : MonoBehaviour {
         gameSpeedSlider.interactable = interactable;
         highwayLengthSlider.interactable = interactable;
 
-        if (snappingStep.text != string.Empty)
-            snappingStep.text = GameSettings.step.ToString();
-
         if (editor.currentChart.note_count != prevNoteCount)
             noteCount.text = "Notes: " + editor.currentChart.note_count.ToString();
 
@@ -116,11 +113,13 @@ public class DisplayProperties : MonoBehaviour {
     public void IncrementSnappingStep()
     {
         GameSettings.snappingStep.Increment();
+        snappingStep.text = GameSettings.step.ToString();
     }
 
     public void DecrementSnappingStep()
     {
         GameSettings.snappingStep.Decrement();
+        snappingStep.text = GameSettings.step.ToString();
     }
 
     public void SetStep(string value)
