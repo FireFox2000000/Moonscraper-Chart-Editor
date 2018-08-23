@@ -20,12 +20,14 @@ public class Whammy : MonoBehaviour {
     public bool canWhammy = false;
 
     AnimationCurve lineCurve;
-    
+    Globals.ApplicationMode previousApplicationMode;
+
     // Use this for initialization
     void Start () {
         lineRenderer = GetComponent<LineRenderer>();
         pointsController = GetComponent<SetLineRendererPoints>();
         lineCurve = lineRenderer.widthCurve;
+        previousApplicationMode = Globals.applicationMode;
     }
     
 	// Update is called once per frame
@@ -42,7 +44,7 @@ public class Whammy : MonoBehaviour {
 
                 lineCurve.AddKey(new Keyframe(0, whammyVal + 1));
             }
-            else
+            else if (previousApplicationMode != Globals.applicationMode)
             {
                 OnEnable();
             }
