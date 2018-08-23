@@ -12,6 +12,7 @@ public class TimelineMovementController : MovementController
     public UnityEngine.UI.Text timePosition;
 
     const float autoscrollSpeed = 10.0f;
+    readonly Shortcut[] arrowKeyShortcutGroup = new Shortcut[] { Shortcut.MoveStepPositive, Shortcut.MoveStepNegative, Shortcut.MoveMeasurePositive, Shortcut.MoveMeasureNegative };
 
     public override void SetPosition(uint tick)
     {
@@ -80,6 +81,7 @@ public class TimelineMovementController : MovementController
 
     Vector3 prevPos = Vector3.zero;
     Vector3 lastMouseDownPos = Vector3.zero;
+    Vector3 mouseScrollMovePosition = Vector3.zero;
 
     // Update is called once per frame
     void LateUpdate () {
@@ -115,7 +117,10 @@ public class TimelineMovementController : MovementController
                 else
                 {
                     // Mouse scroll movement
-                    transform.position = new Vector3(transform.position.x, transform.position.y + (scrollDelta * mouseScrollSensitivity), transform.position.z);
+                    mouseScrollMovePosition.x = transform.position.x;
+                    mouseScrollMovePosition.y = transform.position.y + (scrollDelta * mouseScrollSensitivity);
+                    mouseScrollMovePosition.z = transform.position.z;
+                    transform.position = mouseScrollMovePosition;
                     explicitChartPos = null;
                 }
 
@@ -139,7 +144,7 @@ public class TimelineMovementController : MovementController
                 UpdateTimelineHandleBasedPos();
                 RefreshSectionHighlight();
             }
-            else if (ShortcutInput.GetGroupInput(new Shortcut[] { Shortcut.MoveStepPositive, Shortcut.MoveStepNegative, Shortcut.MoveMeasurePositive, Shortcut.MoveMeasureNegative }))
+            else if (ShortcutInput.GetGroupInput(arrowKeyShortcutGroup))
             {
                 // Arrow key controls
                 uint currentPos;
