@@ -17,6 +17,7 @@ public class Mouse : MonoBehaviour {
     GameObject selectedGameObject;
 	
     public static Vector2? world2DPosition = null;
+    RaycastHit[] screenToPointHits = new RaycastHit[1];
 
     void Start()
     {
@@ -54,11 +55,8 @@ public class Mouse : MonoBehaviour {
 
             Ray ray = mainCamera.ScreenPointToRay(screenPos);
             int layerMask = 1 << LayerMask.NameToLayer("Ignore Raycast");
-            RaycastHit[] planeHit;
-            planeHit = Physics.RaycastAll(ray, Mathf.Infinity, layerMask);
-
-            if (planeHit.Length > 0)
-                world2DPosition = planeHit[0].point;
+            if (Physics.RaycastNonAlloc(ray, screenToPointHits, Mathf.Infinity, layerMask) > 0)
+                world2DPosition = screenToPointHits[0].point;
             else
                 world2DPosition = null;
         }
