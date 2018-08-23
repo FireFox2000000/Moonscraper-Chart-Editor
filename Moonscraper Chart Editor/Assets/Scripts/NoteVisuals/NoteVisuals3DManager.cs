@@ -10,11 +10,25 @@ public class NoteVisuals3DManager : NoteVisualsManager
     MeshFilter meshFilter;
     public MeshNoteResources resources;
 
+    Material[] resourceSharedMatsStrum;
+    Material[] resourceSharedMatsSpStrum;
+    Material[] resourceSharedMatsHopo;
+    Material[] resourceSharedMatsSpHopo;
+    Material[] resourceSharedMatsTap;
+    Material[] resourceSharedMatsSpTap;
+
     // Use this for initialization
     protected override void Awake ()
     {
         base.Awake();
         meshFilter = GetComponent<MeshFilter>();
+
+        resourceSharedMatsStrum = resources.strumRenderer.sharedMaterials;
+        resourceSharedMatsSpStrum = resources.spStrumRenderer.sharedMaterials;
+        resourceSharedMatsHopo = resources.hopoRenderer.sharedMaterials;
+        resourceSharedMatsSpHopo = resources.spHopoRenderer.sharedMaterials;
+        resourceSharedMatsTap = resources.tapRenderer.sharedMaterials;
+        resourceSharedMatsSpTap = resources.spTapRenderer.sharedMaterials;
     }
 
     // Update is called once per frame
@@ -109,15 +123,15 @@ public class NoteVisuals3DManager : NoteVisualsManager
         switch (visualNoteType)
         {
             case (Note.NoteType.Hopo):
-                materials = isStarpower ? resources.spHopoRenderer.sharedMaterials : resources.hopoRenderer.sharedMaterials;
+                materials = isStarpower ? resourceSharedMatsSpHopo : resourceSharedMatsHopo;
                 break;
 
             case (Note.NoteType.Tap):
-                materials = isStarpower ? resources.spTapRenderer.sharedMaterials : resources.tapRenderer.sharedMaterials;
+                materials = isStarpower ? resourceSharedMatsSpTap : resourceSharedMatsTap;
                 break;
 
             default:
-                materials = isStarpower ? resources.spStrumRenderer.sharedMaterials : resources.strumRenderer.sharedMaterials;
+                materials = isStarpower ? resourceSharedMatsSpStrum : resourceSharedMatsStrum;
                 break;
         }
 
