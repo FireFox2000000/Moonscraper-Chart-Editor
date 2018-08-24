@@ -120,7 +120,7 @@ public class SongObjectPoolManager : MonoBehaviour {
             controller.gameObject.SetActive(false);
     }
 
-    void CollectNotesInViewRange(Note[] notes)
+    void CollectNotesInViewRange(IList<Note> notes)
     {
         uint min_pos = editor.minPos;
         if (ChartEditor.startGameplayPos != null)
@@ -189,13 +189,13 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
     }
   
-    public void EnableNotes(Note[] notes)
+    public void EnableNotes(IList<Note> notes)
     {
         CollectNotesInViewRange(notes);
         notePool.Activate(collectedNotesInRange, 0, collectedNotesInRange.Count);
     }
 
-    void CollectStarpowerInViewRange(Starpower[] starpowers)
+    void CollectStarpowerInViewRange(IList<Starpower> starpowers)
     {
         collectedStarpowerInRange.Clear();
         int index, length;
@@ -222,13 +222,13 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
     }
 
-    public void EnableSP(Starpower[] starpowers)
+    public void EnableSP(IList<Starpower> starpowers)
     {
         CollectStarpowerInViewRange(starpowers);
         spPool.Activate(collectedStarpowerInRange, 0, collectedStarpowerInRange.Count);
     }
 
-    public void EnableBPM(BPM[] bpms)
+    public void EnableBPM(IList<BPM> bpms)
     {
         int index, length;
         SongObjectHelper.GetRange(bpms, editor.minPos, editor.maxPos, out index, out length);
@@ -236,7 +236,7 @@ public class SongObjectPoolManager : MonoBehaviour {
         bpmPool.Activate(bpms, index, length);
     }
 
-    public void EnableTS(TimeSignature[] timeSignatures)
+    public void EnableTS(IList<TimeSignature> timeSignatures)
     {
         int index, length;
         SongObjectHelper.GetRange(timeSignatures, editor.minPos, editor.maxPos, out index, out length);
@@ -244,21 +244,21 @@ public class SongObjectPoolManager : MonoBehaviour {
         tsPool.Activate(timeSignatures, index, length);
     }
 
-    public void EnableSections(Section[] sections)
+    public void EnableSections(IList<Section> sections)
     {
         int index, length;
         SongObjectHelper.GetRange(sections, editor.minPos, editor.maxPos, out index, out length);
         sectionPool.Activate(sections, index, length);
     }
 
-    public void EnableSongEvents(Event[] events)
+    public void EnableSongEvents(IList<Event> events)
     {
         int index, length;
         SongObjectHelper.GetRange(events, editor.minPos, editor.maxPos, out index, out length);
         songEventPool.Activate(events, index, length);
     }
 
-    public void EnableChartEvents(ChartEvent[] events)
+    public void EnableChartEvents(IList<ChartEvent> events)
     {
         int index, length;
         SongObjectHelper.GetRange(events, editor.minPos, editor.maxPos, out index, out length);
@@ -270,14 +270,14 @@ public class SongObjectPoolManager : MonoBehaviour {
         Song song = editor.currentSong;
         Chart chart = editor.currentChart;
 
-        SetInViewRangeDirty(chart.notes);
-        SetInViewRangeDirty(chart.starPower);
+        SetInViewRangeDirty((IList<Note>)chart.notes);
+        SetInViewRangeDirty((IList<Starpower>)chart.starPower);
         SetInViewRangeDirty(chart.events);
         SetInViewRangeDirty(song.eventsAndSections);
         SetInViewRangeDirty(song.syncTrack);
     }
 
-    public void SetInViewRangeDirty(SongObject[] songObjects)
+    public void SetInViewRangeDirty(IList<SongObject> songObjects)
     {
         int index, length;
         SongObjectHelper.GetRange(songObjects, editor.minPos, editor.maxPos, out index, out length);
@@ -289,7 +289,7 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
     }
 
-    public void SetInViewRangeDirty(Note[] songObjects)
+    public void SetInViewRangeDirty(IList<Note> songObjects)
     {
         CollectNotesInViewRange(songObjects);
 
@@ -300,7 +300,7 @@ public class SongObjectPoolManager : MonoBehaviour {
         }
     }
 
-    public void SetInViewRangeDirty(Starpower[] songObjects)
+    public void SetInViewRangeDirty(IList<Starpower> songObjects)
     {
         CollectStarpowerInViewRange(songObjects);
 

@@ -13,10 +13,10 @@ public static class SongObjectHelper {
     /// <param name="objects">The items you want to search through.</param>
     /// <returns>Returns the array position of the object most similar to the search item provided in the 'objects' parameter. 
     /// Returns SongObjectHelper.NOTFOUND if there are no objects provided. </returns>
-    public static int FindClosestPosition<T>(T searchItem, T[] objects) where T : SongObject
+    public static int FindClosestPosition<T>(T searchItem, IList<T> objects) where T : SongObject
     {
         int lowerBound = 0;
-        int upperBound = objects.Length - 1;
+        int upperBound = objects.Count - 1;
         int index = NOTFOUND;
 
         int midPoint = NOTFOUND;
@@ -55,10 +55,10 @@ public static class SongObjectHelper {
     /// <param name="objects">The items you want to search through.</param>
     /// <returns>Returns the array position of the closest object located at the specified tick position. 
     /// Returns SongObjectHelper.NOTFOUND if there are no objects provided. </returns>
-    public static int FindClosestPosition<T>(uint position, T[] objects) where T : SongObject
+    public static int FindClosestPosition<T>(uint position, IList<T> objects) where T : SongObject
     {
         int lowerBound = 0;
-        int upperBound = objects.Length - 1;
+        int upperBound = objects.Count - 1;
         int index = NOTFOUND;
 
         int midPoint = NOTFOUND;
@@ -90,7 +90,7 @@ public static class SongObjectHelper {
         return index;
     }
 
-    public static int FindClosestPositionRoundedDown<T>(uint tick, T[] objects) where T : SongObject
+    public static int FindClosestPositionRoundedDown<T>(uint tick, IList<T> objects) where T : SongObject
     {
         int index = FindClosestPosition(tick, objects);
 
@@ -145,7 +145,7 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
     /// <param name="objects">The items you want to search through.</param>
     /// <returns>Returns the array position that the search item was found at within the objects array. 
     /// Returns SongObjectHelper.NOTFOUND if the item does not exist in the objects array. </returns>
-    public static int FindObjectPosition<T>(T searchItem, T[] objects) where T : SongObject
+    public static int FindObjectPosition<T>(T searchItem, IList<T> objects) where T : SongObject
     {
         int pos = FindClosestPosition(searchItem, objects);
 
@@ -157,7 +157,7 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
         return pos;
     }
 
-    public static int FindObjectPosition<T>(uint position, T[] objects) where T : SongObject
+    public static int FindObjectPosition<T>(uint position, IList<T> objects) where T : SongObject
     {
         int pos = FindClosestPosition(position, objects);
 
@@ -169,7 +169,7 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
         return pos;
     }
 
-    static int FindPreviousPosition<T>(System.Type type, int startPosition, List<T> list) where T : SongObject
+    static int FindPreviousPosition<T>(System.Type type, int startPosition, IList<T> list) where T : SongObject
     {
         // Linear search
         if (startPosition < 0 || startPosition > list.Count - 1)
@@ -189,7 +189,7 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
         }
     }
 
-    static T FindPreviousOfType<T>(System.Type type, int startPosition, List<T> list) where T : SongObject
+    static T FindPreviousOfType<T>(System.Type type, int startPosition, IList<T> list) where T : SongObject
     {
         int pos = FindPreviousPosition(type, startPosition, list);
 
@@ -199,7 +199,7 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
             return list[pos];
     }
 
-    static int FindNextPosition<T>(System.Type type, int startPosition, List<T> list) where T : SongObject
+    static int FindNextPosition<T>(System.Type type, int startPosition, IList<T> list) where T : SongObject
     {
         // Linear search
         if (startPosition < 0 || startPosition > list.Count - 1)
@@ -219,7 +219,7 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
         }
     }
 
-    static T FindNextOfType<T>(System.Type type, int startPosition, List<T> list) where T : SongObject
+    static T FindNextOfType<T>(System.Type type, int startPosition, IList<T> list) where T : SongObject
     {
         int pos = FindNextPosition(type, startPosition, list);
         if (pos == NOTFOUND)
@@ -235,7 +235,7 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
     /// <param name="item">The item to be inserted.</param>
     /// <param name="list">The list in which the item will be inserted.</param>
     /// <returns>Returns the list position it was inserted into.</returns>
-    public static int Insert<T>(T item, List<T> list) where T : SongObject
+    public static int Insert<T>(T item, IList<T> list) where T : SongObject
     {
         ChartEditor.isDirty = true;
 
@@ -271,7 +271,7 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
             }
             else
             {
-                insertionPos = FindClosestPosition(item, list.ToArray());
+                insertionPos = FindClosestPosition(item, list);
 
                 if (insertionPos != NOTFOUND)
                 {
@@ -391,10 +391,10 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
     /// <param name="item">The item to be remove.</param>
     /// <param name="list">The list in which the item will be removed from.</param>
     /// <returns>Returns whether the item was successfully removed or not (may not be removed if the objects was not found).</returns>
-    public static bool Remove<T>(T item, List<T> list, bool uniqueData = true) where T : SongObject
+    public static bool Remove<T>(T item, IList<T> list, bool uniqueData = true) where T : SongObject
     {
         ChartEditor.isDirty = true;
-        int pos = FindObjectPosition(item, list.ToArray());
+        int pos = FindObjectPosition(item, list);
 
         if (pos != NOTFOUND)
         {
@@ -435,12 +435,12 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
     /// <param name="minPos">The minimum range (inclusive).</param>
     /// <param name="maxPos">The maximum range (inclusive).</param>
     /// <returns>Returns all the objects found between the minimum and maximum tick positions specified.</returns>
-    public static void GetRange<T>(T[] list, uint minPos, uint maxPos, out int index, out int length) where T : SongObject
+    public static void GetRange<T>(IList<T> list, uint minPos, uint maxPos, out int index, out int length) where T : SongObject
     {
         index = 0;
         length = 0;
 
-        if (minPos > maxPos || list.Length < 1)
+        if (minPos > maxPos || list.Count < 1)
             return;
 
         int minArrayPos = FindClosestPosition(minPos, list);
@@ -451,12 +451,12 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
         else
         {
             // Find position may return an object located at a lower position than the minimum position
-            while (minArrayPos < list.Length && list[minArrayPos].tick < minPos)
+            while (minArrayPos < list.Count && list[minArrayPos].tick < minPos)
             {
                 ++minArrayPos;
             }
 
-            if (minArrayPos > list.Length - 1)
+            if (minArrayPos > list.Count - 1)
                 return;
 
             // Iterate to the very first object at a greater position, as there may be multiple objects located at the same position
@@ -475,7 +475,7 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
                 return;
 
             // Iterate to the very last object at a lesser position, as there may be multiple objects located at the same position
-            while (maxArrayPos + 1 < list.Length && list[maxArrayPos + 1].tick <= maxPos)
+            while (maxArrayPos + 1 < list.Count && list[maxArrayPos + 1].tick <= maxPos)
             {
                 ++maxArrayPos;
             }
@@ -510,7 +510,7 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
         }
     }
 
-    public static int GetIndexOfPrevious<T>(T[] songObjects, uint position) where T : SongObject
+    public static int GetIndexOfPrevious<T>(IList<T> songObjects, uint position) where T : SongObject
     {
         int closestPos = FindClosestPosition(position, songObjects);
         if (closestPos != NOTFOUND)
@@ -527,7 +527,7 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
         return closestPos;
     }
 
-    public static int GetIndexOfNext<T>(T[] songObjects, uint position) where T : SongObject
+    public static int GetIndexOfNext<T>(IList<T> songObjects, uint position) where T : SongObject
     {
         int closestPos = FindClosestPosition(position, songObjects);
         if (closestPos != NOTFOUND)
@@ -535,7 +535,7 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
             // Select the larger of the two
             if (songObjects[closestPos].tick >= position)
                 return closestPos;
-            else if (closestPos < songObjects.Length - 1)
+            else if (closestPos < songObjects.Count - 1)
                 return closestPos + 1;
             else
                 return NOTFOUND;
@@ -544,7 +544,7 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
         return closestPos;
     }
 
-    public static T GetPrevious<T>(T[] songObjects, uint position) where T : SongObject
+    public static T GetPrevious<T>(IList<T> songObjects, uint position) where T : SongObject
     {
         int pos = GetIndexOfPrevious(songObjects, position);
         if (pos != NOTFOUND)
@@ -553,7 +553,7 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
             return null;
     }
 
-    public static T GetPreviousNonInclusive<T>(T[] songObjects, uint position) where T : SongObject
+    public static T GetPreviousNonInclusive<T>(IList<T> songObjects, uint position) where T : SongObject
     {
         int pos = GetIndexOfPrevious(songObjects, position);
         if (pos != NOTFOUND)
@@ -567,12 +567,12 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
             return null;
     }
 
-    public static T GetNextNonInclusive<T>(T[] songObjects, uint position) where T : SongObject
+    public static T GetNextNonInclusive<T>(IList<T> songObjects, uint position) where T : SongObject
     {
         int pos = GetIndexOfNext(songObjects, position);
         if (pos != NOTFOUND)
         {
-            if (songObjects[pos].tick == position && pos < songObjects.Length - 1)
+            if (songObjects[pos].tick == position && pos < songObjects.Count - 1)
                 ++pos;
 
             return songObjects[pos];
