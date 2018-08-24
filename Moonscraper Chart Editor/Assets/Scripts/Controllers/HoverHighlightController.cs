@@ -13,8 +13,10 @@ public class HoverHighlightController : MonoBehaviour {
     Renderer hoverHighlightRen;
     Color initColor;
 
-	// Use this for initialization
-	void Start () {
+    List<GameObject> songObjects = new List<GameObject>();
+
+    // Use this for initialization
+    void Start () {
         hoverHighlightParent = new GameObject("Hover Highlights");
 
         hoverHighlightRen = hoverHighlight.GetComponent<Renderer>();
@@ -57,7 +59,7 @@ public class HoverHighlightController : MonoBehaviour {
 
         if (showHighlight)
         {
-            List<GameObject> songObjects = new List<GameObject>();
+            songObjects.Clear();
 
             if (ShortcutInput.GetInput(Shortcut.ChordSelect))
             {
