@@ -12,6 +12,14 @@ public class GroupMove : ToolObject
     List<SongObject> originalSongObjects = new List<SongObject>();
     List<SongObject> movingSongObjects = new List<SongObject>();
 
+    List<Note> notesToEnable = new List<Note>();
+    List<Starpower> starpowerToEnable = new List<Starpower>();
+    List<ChartEvent> chartEventsToEnable = new List<ChartEvent>();
+    List<BPM> bpmsToEnable = new List<BPM>();
+    List<TimeSignature> timeSignaturesToEnable = new List<TimeSignature>();
+    List<Section> sectionsToEnable = new List<Section>();
+    List<Event> eventsToEnable = new List<Event>();
+
     List<ActionHistory.Action> bpmAnchorRecord;
     
     Vector2 initMousePos = Vector2.zero;
@@ -73,13 +81,13 @@ public class GroupMove : ToolObject
                 }
 
                 // Enable objects into the pool
-                editor.songObjectPoolManager.EnableNotes(movingSongObjects.OfType<Note>().ToArray());
-                editor.songObjectPoolManager.EnableSP(movingSongObjects.OfType<Starpower>().ToArray());
-                editor.songObjectPoolManager.EnableChartEvents(movingSongObjects.OfType<ChartEvent>().ToArray());
-                editor.songObjectPoolManager.EnableBPM(movingSongObjects.OfType<BPM>().ToArray());
-                editor.songObjectPoolManager.EnableTS(movingSongObjects.OfType<TimeSignature>().ToArray());
-                editor.songObjectPoolManager.EnableSections(movingSongObjects.OfType<Section>().ToArray());
-                editor.songObjectPoolManager.EnableSongEvents(movingSongObjects.OfType<Event>().ToArray());              
+                editor.songObjectPoolManager.EnableNotes(notesToEnable);
+                editor.songObjectPoolManager.EnableSP(starpowerToEnable);
+                editor.songObjectPoolManager.EnableChartEvents(chartEventsToEnable);
+                editor.songObjectPoolManager.EnableBPM(bpmsToEnable);
+                editor.songObjectPoolManager.EnableTS(timeSignaturesToEnable);
+                editor.songObjectPoolManager.EnableSections(sectionsToEnable);
+                editor.songObjectPoolManager.EnableSongEvents(eventsToEnable);              
             }
         }
 	}  
@@ -185,6 +193,14 @@ public class GroupMove : ToolObject
         }
         movingSongObjects.Clear();
         anchorArrayPos = SongObjectHelper.NOTFOUND;
+
+        notesToEnable.Clear();
+        starpowerToEnable.Clear();
+        chartEventsToEnable.Clear();
+        bpmsToEnable.Clear();
+        timeSignaturesToEnable.Clear();
+        sectionsToEnable.Clear();
+        eventsToEnable.Clear();
     }
 
     public void SetSongObjects(SongObject songObject)
@@ -247,6 +263,14 @@ public class GroupMove : ToolObject
         editor.currentChart.UpdateCache();
 
         bpmAnchorRecord = editor.FixUpBPMAnchors();
+
+        notesToEnable.AddRange(movingSongObjects.OfType<Note>());
+        starpowerToEnable.AddRange(movingSongObjects.OfType<Starpower>());
+        chartEventsToEnable.AddRange(movingSongObjects.OfType<ChartEvent>());
+        bpmsToEnable.AddRange(movingSongObjects.OfType<BPM>());
+        timeSignaturesToEnable.AddRange(movingSongObjects.OfType<TimeSignature>().ToArray());
+        sectionsToEnable.AddRange(movingSongObjects.OfType<Section>().ToArray());
+        eventsToEnable.AddRange(movingSongObjects.OfType<Event>().ToArray());
     }
 
     public override void ToolDisable()
