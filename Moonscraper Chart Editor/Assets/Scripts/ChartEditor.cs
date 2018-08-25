@@ -93,6 +93,7 @@ public class ChartEditor : MonoBehaviour {
     public SongObjectPoolManager songObjectPoolManager { get { return _songObjectPoolManager; } }
 
     string lastLoadedFile = string.Empty;
+    WindowHandleManager windowHandleManager;
 
     public ActionHistory actionHistory;
     public SongObject currentSelectedObject
@@ -143,38 +144,8 @@ public class ChartEditor : MonoBehaviour {
     }
 
     Vector3? stopResetPos = null;
-
-    [DllImport("user32.dll", EntryPoint = "SetWindowText")]
-    public static extern bool SetWindowText(System.IntPtr hwnd, System.String lpString);
-    [DllImport("user32.dll", EntryPoint = "FindWindow")]
-    public static extern System.IntPtr FindWindow(System.String className, System.String windowName);
-    [DllImport("user32.dll")]
-    public static extern System.IntPtr GetForegroundWindow();
-    [DllImport("user32.dll")]
-    static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
-
-#if !UNITY_EDITOR
-    System.IntPtr windowPtr = IntPtr.Zero;
-    string originalWindowName;
-#endif
-
-    void SetApplicationWindowPointer()
-    {
-#if !UNITY_EDITOR
-        const int nChars = 256;
-        System.Text.StringBuilder buffer = new System.Text.StringBuilder(nChars);
-        windowPtr = GetForegroundWindow();
-        GetWindowText(windowPtr, buffer, nChars);
-        if (buffer.ToString() != GetComponent<Settings>().productName)
-        {
-            windowPtr = IntPtr.Zero;
-            buffer.Length = 0;
-            Debug.LogError("Couldn't find window handle");  
-        }
-        else
-            originalWindowName = versionNumber.text;//buffer.ToString();
-#endif
-    }
+    public delegate void OnClickEventFn();
+    public System.Collections.Generic.List<OnClickEventFn> onClickEventFnList = new System.Collections.Generic.List<OnClickEventFn>();
 
     public float currentVisibleTime
     {
@@ -215,12 +186,13 @@ public class ChartEditor : MonoBehaviour {
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
 
         isDirty = false;
-        SetApplicationWindowPointer();
 
         loadingScreen.gameObject.SetActive(true);
 
         inputManager = gameObject.AddComponent<InputManager>();
         gameObject.AddComponent<UITabbing>();
+
+        windowHandleManager = new WindowHandleManager(versionNumber.text, GetComponent<Settings>().productName);
     }
 
     IEnumerator Start()
@@ -256,6 +228,12 @@ public class ChartEditor : MonoBehaviour {
 
     public void Update()
     {
+        foreach(var onClickFunction in onClickEventFnList)
+        {
+            onClickFunction();
+        }
+        onClickEventFnList.Clear();
+
         SaveErrorCheck();
 
         // Update object positions that supposed to be visible into the range of the camera
@@ -263,15 +241,7 @@ public class ChartEditor : MonoBehaviour {
         _maxPos = currentSong.WorldYPositionToTick(camYMax.position.y);
 
         // Set window text to represent if the current song has been saved or not
-#if !UNITY_EDITOR
-        if (windowPtr != IntPtr.Zero)
-        {
-            if (isDirty)
-                SetWindowText(windowPtr, originalWindowName + "*");
-            else
-                SetWindowText(windowPtr, originalWindowName);
-        }
-#endif
+        windowHandleManager.UpdateDirtyNotification(isDirty);
 
         if (Globals.applicationMode != Globals.ApplicationMode.Loading && (autosave == null || autosave.ThreadState != System.Threading.ThreadState.Running))
         {
@@ -319,10 +289,7 @@ public class ChartEditor : MonoBehaviour {
     
     void OnApplicationFocus(bool hasFocus)
     {
-#if !UNITY_EDITOR
-        if (hasFocus && windowPtr == IntPtr.Zero)
-            SetApplicationWindowPointer();
-#endif
+        windowHandleManager.OnApplicationFocus(hasFocus);
     }
 
     static bool quitting = false;
@@ -422,6 +389,11 @@ public class ChartEditor : MonoBehaviour {
     // Wrapper function
     public void Load()
     {
+        onClickEventFnList.Add(LoadQueued);
+    }
+
+    void LoadQueued()
+    {
         Stop();
         autosaveTimer = 0;
         if (System.IO.File.Exists(Globals.autosaveLocation))
@@ -437,7 +409,12 @@ public class ChartEditor : MonoBehaviour {
 
     public void SaveAs(bool forced = true)
     {
-        _SaveAs(forced);
+        onClickEventFnList.Add(SaveAsQueued);
+    }
+
+    void SaveAsQueued()
+    {
+        _SaveAs(true);
     }
 
     public bool _Save()
@@ -992,7 +969,7 @@ public class ChartEditor : MonoBehaviour {
         {
             if (!selectedObjectsList.Contains(songObject))
             {
-                int pos = SongObjectHelper.FindClosestPosition(songObject, selectedObjectsList.ToArray());
+                int pos = SongObjectHelper.FindClosestPosition(songObject, selectedObjectsList);
                 if (pos != SongObjectHelper.NOTFOUND)
                 {
                     if (selectedObjectsList[pos] > songObject)

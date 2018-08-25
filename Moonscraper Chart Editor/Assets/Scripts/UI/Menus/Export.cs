@@ -75,6 +75,11 @@ public class Export : DisplayMenu {
 
     public void ExportSong()
     {
+        editor.onClickEventFnList.Add(_ExportSong);
+    }
+
+    void _ExportSong()
+    {
         try
         {
             string saveLocation;
