@@ -6,16 +6,37 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Stores all collider information for group select collision detection
-public class PrefabGlobals : MonoBehaviour {
-    ChartEditor editor;
-
+public class PrefabGlobals {
+    static bool hasBeenInitialised = false;
     static Vector2 noteColliderSize, spColliderSize, chartEventColliderSize, bpmColliderSize, tsColliderSize, sectionColliderSize, eventColliderSize;
 
-    Vector2 GetColliderSize(GameObject gameObject)
+    static void Init()
+    {
+        ChartEditor editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+
+        // Collect prefab collider sizes
+        noteColliderSize = GetColliderSize(editor.notePrefab);
+        spColliderSize = GetColliderSize(editor.starpowerPrefab);
+        chartEventColliderSize = GetColliderSize(editor.chartEventPrefab);
+        bpmColliderSize = GetColliderSize(editor.bpmPrefab);
+        tsColliderSize = GetColliderSize(editor.tsPrefab);
+        sectionColliderSize = GetColliderSize(editor.sectionPrefab);
+        eventColliderSize = GetColliderSize(editor.songEventPrefab);
+
+        hasBeenInitialised = true;
+    }
+
+    static void TryInit()
+    {
+        if (!hasBeenInitialised)
+            Init();
+    }
+
+    static Vector2 GetColliderSize(GameObject gameObject)
     {
         Vector2 size;
 
-        GameObject copy = Instantiate(gameObject);
+        GameObject copy = GameObject.Instantiate(gameObject);
         copy.SetActive(true);
         Collider col3d = copy.GetComponent<Collider>();
         Collider2D col2d = copy.GetComponent<Collider2D>();
@@ -30,26 +51,14 @@ public class PrefabGlobals : MonoBehaviour {
         else
             size = Vector2.zero;
 
-        Destroy(copy);
+        GameObject.Destroy(copy);
         return size;
-    }
-
-    // Use this for initialization
-    void Awake () {
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
-
-        // Collect prefab collider sizes
-        noteColliderSize = GetColliderSize(editor.notePrefab);
-        spColliderSize = GetColliderSize(editor.starpowerPrefab);
-        chartEventColliderSize = GetColliderSize(editor.chartEventPrefab);
-        bpmColliderSize = GetColliderSize(editor.bpmPrefab);
-        tsColliderSize = GetColliderSize(editor.tsPrefab);
-        sectionColliderSize = GetColliderSize(editor.sectionPrefab);
-        eventColliderSize = GetColliderSize(editor.songEventPrefab);
     }
 
     public static Rect GetCollisionRect(SongObject songObject, float posOfChart = 0, float offset = 0)
     {
+        TryInit();
+
         Vector2 colliderSize;
         Vector2 position;
 
@@ -95,6 +104,8 @@ public class PrefabGlobals : MonoBehaviour {
 
     public static bool HorizontalCollisionCheck(Rect rectA, Rect rectB)
     {
+        TryInit();
+
         if (rectA.width == 0 || rectB.width == 0)
             return false;
 
