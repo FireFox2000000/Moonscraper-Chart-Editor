@@ -7,11 +7,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class UITabbing : MonoBehaviour {
+public class UITabbing : UpdateableService {
     public static Selectable defaultSelectable = null;
 	
 	// Update is called once per frame
-	void Update () {
+	public override void OnServiceUpdate() {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             Selectable next = defaultSelectable;

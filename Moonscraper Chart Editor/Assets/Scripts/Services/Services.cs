@@ -4,10 +4,22 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+public abstract class UpdateableService : MonoBehaviour
+{
+    public abstract void OnServiceUpdate();
+
+    protected virtual void Start()
+    {
+        ChartEditor.GetInstance().globals.services.RegisterUpdateableService(this);
+    }
+}
+
 public class Services : MonoBehaviour
 {
     [Header("Area range")]
     public RectTransform area;
+
+    [Header("UI Services")]
     public DropdownNotification notificationBar;
     public ToolPanelController toolpanelController;
 
@@ -15,6 +27,8 @@ public class Services : MonoBehaviour
     public static bool IsInDropDown = false;
     static Vector2 prevScreenSize;
     public static bool IsTyping = false;
+
+    List<UpdateableService> updateableServices = new List<UpdateableService>();
 
     public static bool HasScreenResized
     {
@@ -116,6 +130,11 @@ public class Services : MonoBehaviour
         prevScreenSize.y = Screen.height;
     }
 
+    public void RegisterUpdateableService(UpdateableService service)
+    {
+        updateableServices.Add(service);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -124,6 +143,11 @@ public class Services : MonoBehaviour
 
         if (HasScreenResized)
             OnScreenResize();
+
+        foreach(UpdateableService service in updateableServices)
+        {
+            service.OnServiceUpdate();
+        }
     }
 
     void LateUpdate()

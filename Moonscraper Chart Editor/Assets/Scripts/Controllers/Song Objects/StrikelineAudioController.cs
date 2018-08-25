@@ -24,19 +24,12 @@ public class StrikelineAudioController : MonoBehaviour {
 
         initLocalPos = transform.localPosition;  
     }
-    
-    void Update()
-    {
-        Vector3 pos = initLocalPos;
-        pos.y += 0.02f * GameSettings.hyperspeed / GameSettings.gameSpeed;
-        transform.localPosition = pos;
-
-        if (Globals.applicationMode != Globals.ApplicationMode.Playing)
-            lastClapPos = -1;
-    }
 
     public static void Clap(float worldYPos)
     {
+        if (Globals.applicationMode != Globals.ApplicationMode.Playing)
+            lastClapPos = -1;
+
         if (worldYPos > lastClapPos && worldYPos >= startYPoint)
         {
             int channel = Bass.BASS_SampleGetChannel(sample, false); // get a sample channel

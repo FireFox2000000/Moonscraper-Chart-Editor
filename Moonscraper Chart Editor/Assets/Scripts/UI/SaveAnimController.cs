@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SaveAnimController : MonoBehaviour {
+public class SaveAnimController : UpdateableService {
     public Text saveText;
     ChartEditor editor;
 
@@ -15,14 +15,14 @@ public class SaveAnimController : MonoBehaviour {
     public float fadeSpeed = 5;
 
 	// Use this for initialization
-	void Start () {
+	protected override void Start () {
+        base.Start();
         editor = ChartEditor.GetInstance();
-
         EventsManager.onSaveEventList.Add(StartFade);
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	public override void OnServiceUpdate() {
         if (alpha >= 1)
             fadein = false;
 

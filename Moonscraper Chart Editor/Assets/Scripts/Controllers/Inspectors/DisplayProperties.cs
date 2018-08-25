@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class DisplayProperties : MonoBehaviour {
+public class DisplayProperties : UpdateableService
+{
     public Text songNameText;
     public Slider hyperspeedSlider;
     public InputField snappingStep;
@@ -22,9 +23,8 @@ public class DisplayProperties : MonoBehaviour {
 
     ChartEditor editor;
     int prevNoteCount = -1;
-    string prevSongName, prevChartName;
 
-    void Start()
+    protected override void Start()
     {
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
         hyperspeedSlider.value = GameSettings.hyperspeed;
@@ -34,6 +34,13 @@ public class DisplayProperties : MonoBehaviour {
         snappingStep.text = GameSettings.step.ToString();
 
         OnEnable();
+
+        EventsManager.onChartReloadEventList.Add(OnChartReload);
+        EventsManager.onApplicationModeChangedEventList.Add(OnApplicationModeChanged);
+
+        OnChartReload();
+
+        base.Start();
     }
 
     void OnEnable()
@@ -42,17 +49,8 @@ public class DisplayProperties : MonoBehaviour {
         metronomeToggle.isOn = GameSettings.metronomeActive;
     }
 
-    void Update()
+    public override void OnServiceUpdate()
     {
-        if (prevChartName != editor.currentChart.name || prevSongName != editor.currentSong.name)
-            songNameText.text = editor.currentSong.name + " - " + editor.currentChart.name;
-
-        // Disable sliders during play
-        bool interactable = (Globals.applicationMode != Globals.ApplicationMode.Playing);
-        hyperspeedSlider.interactable = interactable;
-        gameSpeedSlider.interactable = interactable;
-        highwayLengthSlider.interactable = interactable;
-
         if (editor.currentChart.note_count != prevNoteCount)
             noteCount.text = "Notes: " + editor.currentChart.note_count.ToString();
 
@@ -61,8 +59,19 @@ public class DisplayProperties : MonoBehaviour {
             clapToggle.isOn = !clapToggle.isOn;
 
         prevNoteCount = editor.currentChart.note_count;
-        prevSongName = editor.currentSong.name;
-        prevChartName = editor.currentChart.name;
+    }
+
+    void OnChartReload()
+    {
+        songNameText.text = editor.currentSong.name + " - " + editor.currentChart.name;
+    }
+
+    void OnApplicationModeChanged(Globals.ApplicationMode applicationMode)
+    {
+        bool interactable = (applicationMode != Globals.ApplicationMode.Playing);
+        hyperspeedSlider.interactable = interactable;
+        gameSpeedSlider.interactable = interactable;
+        highwayLengthSlider.interactable = interactable;
     }
 
     public void SetHyperspeed(float value)

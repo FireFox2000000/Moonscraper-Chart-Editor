@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UIHoverBar : MonoBehaviour {
+public class UIHoverBar : UpdateableService {
     public GameObject[] uiElements;
     int prevElement = -1;
     int currentElement = -1;
@@ -15,8 +15,13 @@ public class UIHoverBar : MonoBehaviour {
     bool inUIBar = false;
     bool mouseUpBlock = false;
 
-	// Update is called once per frame
-	void Update () {
+    private void Start()
+    {
+        ChartEditor.GetInstance().globals.services.RegisterUpdateableService(this);
+    }
+
+    // Update is called once per frame
+    public override void OnServiceUpdate() {
         bool menuBarObjectUnderMouse = false;
 
         if (Globals.applicationMode != Globals.ApplicationMode.Loading && inUIBar)

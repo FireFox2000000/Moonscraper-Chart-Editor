@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Un4seen.Bass;
 
-public class Metronome : MonoBehaviour {
+public class Metronome : UpdateableService {
     ChartEditor editor;
 #if !BASS_AUDIO
     AudioSource clapSource;
@@ -22,7 +22,7 @@ public class Metronome : MonoBehaviour {
     uint nextClapPos = 0;
 
     // Use this for initialization
-    void Start () {
+    protected override void Start () {
         editor = ChartEditor.GetInstance();      
         initLocalPos = transform.localPosition;
 
@@ -32,11 +32,13 @@ public class Metronome : MonoBehaviour {
 #else
         clapSource = gameObject.AddComponent<AudioSource>();
 #endif
+
+        base.Start();
     }
 
     // Update is called once per frame
-    void Update () {
-
+    public override void OnServiceUpdate()
+    {
         // Offset by audio calibration
         Vector3 pos = initLocalPos;
 #if BASS_AUDIO

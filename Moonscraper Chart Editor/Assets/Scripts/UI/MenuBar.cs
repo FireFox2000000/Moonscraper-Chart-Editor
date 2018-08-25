@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MenuBar : MonoBehaviour {
+public class MenuBar : UpdateableService {
     ChartEditor editor;
 
     [Header("Disableable UI")]
@@ -33,14 +33,17 @@ public class MenuBar : MonoBehaviour {
     int desiredLaneCount = 0;
 
     // Use this for initialization
-    void Start () {
+    protected override void Start () {
         editor = ChartEditor.GetInstance();
 
         EventsManager.onChartReloadEventList.Add(GameplayEnabledCheck);
+
+        base.Start();
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    public override void OnServiceUpdate()
+    {
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             undoButton.interactable = editor.actionHistory.canUndo;
