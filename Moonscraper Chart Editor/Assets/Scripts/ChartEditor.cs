@@ -357,6 +357,12 @@ public class ChartEditor : MonoBehaviour {
         return true;
     }
 
+    public void EnableMenu(DisplayMenu menu)
+    {
+        menu.gameObject.SetActive(true);
+    }
+
+    #region Chart Loading/Saving
     public void New()
     {
         if (!EditCheck())
@@ -472,245 +478,6 @@ public class ChartEditor : MonoBehaviour {
 
             isDirty = false;
         }
-    }
-    public static float? startGameplayPos = null;
-    public void StartGameplay()
-    {
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing || 
-            movement.transform.position.y < movement.initPos.y || 
-            Globals.ghLiveMode)
-            return;
-
-        if (GameSettings.resetAfterGameplay)
-            stopResetPos = movement.transform.position;
-        
-        float strikelineYPos = visibleStrikeline.position.y - (0.01f * GameSettings.hyperspeed);     // Offset to prevent errors where it removes a note that is on the strikeline
-        startGameplayPos = strikelineYPos;
-        
-        // Hide everything behind the strikeline
-        foreach (Note note in currentChart.notes)
-        {
-            if (note.controller)
-            {
-                if (note.worldYPosition < strikelineYPos)
-                {
-                    note.controller.HideFullNote();
-                }
-                else
-                    break;
-            }
-        }
-        
-        // Set position x seconds beforehand
-        float time = TickFunctions.WorldYPositionToTime(strikelineYPos);
-        movement.SetTime(time - GameSettings.gameplayStartDelayTime);
-
-        GameSettings.bot = false;
-        Play();
-    }
-
-    void PlayAudio(float playPoint)
-    {
-        StrikelineAudioController.startYPoint = visibleStrikeline.transform.position.y;
-
-        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
-        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
-        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);
-        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
-        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drum);
-
-        foreach (int bassStream in currentSong.bassAudioStreams)
-        {
-            PlayBassStream(bassStream, playPoint);
-        }
-        /*
-        PlayBassStream(currentSong.bassMusicStream, playPoint);
-        PlayBassStream(currentSong.bassGuitarStream, playPoint);
-        PlayBassStream(currentSong.bassRhythmStream, playPoint);
-        PlayBassStream(currentSong.bassDrumStream, playPoint);*/
-
-        movement.playStartPosition = movement.transform.position.y;
-        movement.playStartTime = Time.realtimeSinceStartup;
-    }
-
-    void StopAudio()
-    {
-#if !BASS_AUDIO
-        // Stop the audio from continuing to play
-        foreach (AudioSource source in musicSources)
-            source.Stop();
-#else
-        foreach (int bassStream in currentSong.bassAudioStreams)
-        {
-            if (bassStream != 0)
-                Bass.BASS_ChannelStop(bassStream);
-        }
-        /*
-        if (currentSong.bassMusicStream != 0)
-            Bass.BASS_ChannelStop(currentSong.bassMusicStream);
-
-        if (currentSong.bassGuitarStream != 0)
-            Bass.BASS_ChannelStop(currentSong.bassGuitarStream);
-
-        if (currentSong.bassRhythmStream != 0)
-            Bass.BASS_ChannelStop(currentSong.bassRhythmStream);
-
-        if (currentSong.bassDrumStream != 0)
-            Bass.BASS_ChannelStop(currentSong.bassDrumStream);*/
-#endif
-
-        movement.playStartPosition = null;
-        movement.playStartTime = null;
-    }
-
-    void PlayBassStream(int handle, float playPoint)
-    {
-        if (handle != 0)
-        {
-            Bass.BASS_ChannelSetPosition(handle, playPoint);
-            Bass.BASS_ChannelPlay(handle, false);
-
-            MovementController.timeSync.SongTime = playPoint;
-            //while (!(Bass.BASS_ChannelIsActive(handle) == BASSActive.BASS_ACTIVE_PLAYING));
-        }
-    }
-
-    void SetBassStreamProperties(int handle, float speed, float vol)
-    {
-        if (handle != 0)
-        {
-            // Reset
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_FREQ, 0);
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_PITCH, 0);
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO, 0);
-
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_VOL, vol * GameSettings.vol_master);
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_PAN, GameSettings.audio_pan);
-
-            if (speed < 1)
-            {
-                float originalFreq = 0;
-
-                Bass.BASS_ChannelGetAttribute(handle, BASSAttribute.BASS_ATTRIB_FREQ, ref originalFreq);
-
-                float freq = originalFreq * speed;
-                if (freq < 100)
-                    freq = 100;
-                else if (freq > 100000)
-                    freq = 100000;
-                Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_FREQ, freq);
-#if false
-                // Pitch shifting equation
-                Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_PITCH, Mathf.Log(1.0f / speed, Mathf.Pow(2, 1.0f / 12.0f)));
-#endif
-            }
-            else
-            {
-                Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO, speed * 100 - 100);
-            }
-        }
-    }
-
-    bool cancel;
-    SongObject[] selectedBeforePlay = new SongObject[0];
-    public void Play()
-    {
-        selectedBeforePlay = currentSelectedObjects;
-        currentSelectedObject = null;
-
-        if (GameSettings.bot && GameSettings.resetAfterPlay)
-            stopResetPos = movement.transform.position;
-
-        foreach (HitAnimation hitAnim in indicators.animations)
-            hitAnim.StopAnim();
-
-        Globals.applicationMode = Globals.ApplicationMode.Playing;
-        cancel = false;
-
-        float playPoint = currentAudioTime;
-
-        if (playPoint < 0)
-        {
-            StartCoroutine(delayedStartAudio(-playPoint * GameSettings.gameSpeed));
-        }
-        else
-        {
-            PlayAudio(playPoint);
-        } 
-    }
-
-    IEnumerator delayedStartAudio(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        float playPoint = currentAudioTime;
-
-        if (!cancel && Globals.applicationMode == Globals.ApplicationMode.Playing)
-        {
-            if (playPoint >= 0)
-            {
-                PlayAudio(playPoint);
-            }
-            else
-            {
-                StartCoroutine(delayedStartAudio(-playPoint));
-            }
-        }
-    }
-
-    public IEnumerator PlayAutoStop(float playTime)
-    {
-        Debug.Log(playTime);
-        Play();
-        yield return new WaitForSeconds(playTime);
-        Stop();
-    }
-
-    public void Stop()
-    {
-        if (indicators && indicators.animations != null)
-            foreach (HitAnimation hitAnim in indicators.animations)
-            {
-                if (hitAnim)
-                    hitAnim.StopAnim();
-            }
-
-        startGameplayPos = null;
-        cancel = true;
-
-        Globals.applicationMode = Globals.ApplicationMode.Editor;
-
-        StopAudio();
-
-        if (currentChart != null)
-        {
-            foreach (Note note in currentChart.notes)
-            {
-                if (note.controller)
-                    note.controller.Activate();
-            }
-        }
-        if (stopResetPos != null)
-            movement.transform.position = (Vector3)stopResetPos;
-
-        if (selectedBeforePlay.Length > 0)
-        {
-            // Check if the user switched view modes while playing
-            if (Globals.viewMode == Globals.ViewMode.Chart)
-            {
-                if (selectedBeforePlay[0].GetType().IsSubclassOf(typeof(ChartObject)))
-                    currentSelectedObjects = selectedBeforePlay;
-            }
-            else
-            {
-                if (!selectedBeforePlay[0].GetType().IsSubclassOf(typeof(ChartObject)))
-                    currentSelectedObjects = selectedBeforePlay;
-            }
-        }
-
-        selectedBeforePlay = new SongObject[0];
-
-        GameSettings.bot = true;
-        stopResetPos = null;
     }
 
     public IEnumerator _Load(string currentFileName, bool recordLastLoaded = true)
@@ -877,7 +644,7 @@ public class ChartEditor : MonoBehaviour {
             yield break;
         }
         catch (System.Exception e)
-        {        
+        {
             currentSong = backup;
             Logger.LogException(e, "Error when getting file to open");
 
@@ -938,14 +705,114 @@ public class ChartEditor : MonoBehaviour {
         songObjectPoolManager.NewChartReset();
     }
 
-    public void EnableMenu(DisplayMenu menu)
+    #endregion
+
+    #region Audio Functions
+    void PlayAudio(float playPoint)
     {
-        menu.gameObject.SetActive(true);
+        StrikelineAudioController.startYPoint = visibleStrikeline.transform.position.y;
+
+        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
+        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
+        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);
+        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
+        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drum);
+
+        foreach (int bassStream in currentSong.bassAudioStreams)
+        {
+            PlayBassStream(bassStream, playPoint);
+        }
+        /*
+        PlayBassStream(currentSong.bassMusicStream, playPoint);
+        PlayBassStream(currentSong.bassGuitarStream, playPoint);
+        PlayBassStream(currentSong.bassRhythmStream, playPoint);
+        PlayBassStream(currentSong.bassDrumStream, playPoint);*/
+
+        movement.playStartPosition = movement.transform.position.y;
+        movement.playStartTime = Time.realtimeSinceStartup;
+    }
+
+    void StopAudio()
+    {
+#if !BASS_AUDIO
+        // Stop the audio from continuing to play
+        foreach (AudioSource source in musicSources)
+            source.Stop();
+#else
+        foreach (int bassStream in currentSong.bassAudioStreams)
+        {
+            if (bassStream != 0)
+                Bass.BASS_ChannelStop(bassStream);
+        }
+        /*
+        if (currentSong.bassMusicStream != 0)
+            Bass.BASS_ChannelStop(currentSong.bassMusicStream);
+
+        if (currentSong.bassGuitarStream != 0)
+            Bass.BASS_ChannelStop(currentSong.bassGuitarStream);
+
+        if (currentSong.bassRhythmStream != 0)
+            Bass.BASS_ChannelStop(currentSong.bassRhythmStream);
+
+        if (currentSong.bassDrumStream != 0)
+            Bass.BASS_ChannelStop(currentSong.bassDrumStream);*/
+#endif
+
+        movement.playStartPosition = null;
+        movement.playStartTime = null;
+    }
+
+    void PlayBassStream(int handle, float playPoint)
+    {
+        if (handle != 0)
+        {
+            Bass.BASS_ChannelSetPosition(handle, playPoint);
+            Bass.BASS_ChannelPlay(handle, false);
+
+            MovementController.timeSync.SongTime = playPoint;
+            //while (!(Bass.BASS_ChannelIsActive(handle) == BASSActive.BASS_ACTIVE_PLAYING));
+        }
+    }
+
+    void SetBassStreamProperties(int handle, float speed, float vol)
+    {
+        if (handle != 0)
+        {
+            // Reset
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_FREQ, 0);
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_PITCH, 0);
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO, 0);
+
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_VOL, vol * GameSettings.vol_master);
+            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_PAN, GameSettings.audio_pan);
+
+            if (speed < 1)
+            {
+                float originalFreq = 0;
+
+                Bass.BASS_ChannelGetAttribute(handle, BASSAttribute.BASS_ATTRIB_FREQ, ref originalFreq);
+
+                float freq = originalFreq * speed;
+                if (freq < 100)
+                    freq = 100;
+                else if (freq > 100000)
+                    freq = 100000;
+                Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_FREQ, freq);
+#if false
+                // Pitch shifting equation
+                Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_PITCH, Mathf.Log(1.0f / speed, Mathf.Pow(2, 1.0f / 12.0f)));
+#endif
+            }
+            else
+            {
+                Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO, speed * 100 - 100);
+            }
+        }
     }
 
     public void FreeAudio()
     {
-        foreach(SampleData sampleData in currentSong.GetSampleData())
+        foreach (SampleData sampleData in currentSong.GetSampleData())
         {
             sampleData.Free();
         }
@@ -955,6 +822,150 @@ public class ChartEditor : MonoBehaviour {
         currentSong.FreeBassAudioStreams();
 #endif
     }
+
+    #endregion
+
+    #region Pause/Play Functions
+    public static float? startGameplayPos = null;
+    public void StartGameplay()
+    {
+        if (Globals.applicationMode == Globals.ApplicationMode.Playing ||
+            movement.transform.position.y < movement.initPos.y ||
+            Globals.ghLiveMode)
+            return;
+
+        if (GameSettings.resetAfterGameplay)
+            stopResetPos = movement.transform.position;
+
+        float strikelineYPos = visibleStrikeline.position.y - (0.01f * GameSettings.hyperspeed);     // Offset to prevent errors where it removes a note that is on the strikeline
+        startGameplayPos = strikelineYPos;
+
+        // Hide everything behind the strikeline
+        foreach (Note note in currentChart.notes)
+        {
+            if (note.controller)
+            {
+                if (note.worldYPosition < strikelineYPos)
+                {
+                    note.controller.HideFullNote();
+                }
+                else
+                    break;
+            }
+        }
+
+        // Set position x seconds beforehand
+        float time = TickFunctions.WorldYPositionToTime(strikelineYPos);
+        movement.SetTime(time - GameSettings.gameplayStartDelayTime);
+
+        GameSettings.bot = false;
+        Play();
+    }
+
+    bool cancel;
+    SongObject[] selectedBeforePlay = new SongObject[0];
+    public void Play()
+    {
+        selectedBeforePlay = currentSelectedObjects;
+        currentSelectedObject = null;
+
+        if (GameSettings.bot && GameSettings.resetAfterPlay)
+            stopResetPos = movement.transform.position;
+
+        foreach (HitAnimation hitAnim in indicators.animations)
+            hitAnim.StopAnim();
+
+        Globals.applicationMode = Globals.ApplicationMode.Playing;
+        cancel = false;
+
+        float playPoint = currentAudioTime;
+
+        if (playPoint < 0)
+        {
+            StartCoroutine(delayedStartAudio(-playPoint * GameSettings.gameSpeed));
+        }
+        else
+        {
+            PlayAudio(playPoint);
+        } 
+    }
+
+    IEnumerator delayedStartAudio(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        float playPoint = currentAudioTime;
+
+        if (!cancel && Globals.applicationMode == Globals.ApplicationMode.Playing)
+        {
+            if (playPoint >= 0)
+            {
+                PlayAudio(playPoint);
+            }
+            else
+            {
+                StartCoroutine(delayedStartAudio(-playPoint));
+            }
+        }
+    }
+
+    public IEnumerator PlayAutoStop(float playTime)
+    {
+        Debug.Log(playTime);
+        Play();
+        yield return new WaitForSeconds(playTime);
+        Stop();
+    }
+
+    public void Stop()
+    {
+        if (indicators && indicators.animations != null)
+            foreach (HitAnimation hitAnim in indicators.animations)
+            {
+                if (hitAnim)
+                    hitAnim.StopAnim();
+            }
+
+        startGameplayPos = null;
+        cancel = true;
+
+        Globals.applicationMode = Globals.ApplicationMode.Editor;
+
+        StopAudio();
+
+        if (currentChart != null)
+        {
+            foreach (Note note in currentChart.notes)
+            {
+                if (note.controller)
+                    note.controller.Activate();
+            }
+        }
+        if (stopResetPos != null)
+            movement.transform.position = (Vector3)stopResetPos;
+
+        if (selectedBeforePlay.Length > 0)
+        {
+            // Check if the user switched view modes while playing
+            if (Globals.viewMode == Globals.ViewMode.Chart)
+            {
+                if (selectedBeforePlay[0].GetType().IsSubclassOf(typeof(ChartObject)))
+                    currentSelectedObjects = selectedBeforePlay;
+            }
+            else
+            {
+                if (!selectedBeforePlay[0].GetType().IsSubclassOf(typeof(ChartObject)))
+                    currentSelectedObjects = selectedBeforePlay;
+            }
+        }
+
+        selectedBeforePlay = new SongObject[0];
+
+        GameSettings.bot = true;
+        stopResetPos = null;
+    }
+    #endregion
+
+    #region Selected Objects Management Functions
 
     public void AddToSelectedObjects(SongObject songObjects)
     {
@@ -1023,7 +1034,9 @@ public class ChartEditor : MonoBehaviour {
     {
         return (SongObjectHelper.FindObjectPosition(songObject, currentSelectedObjects) != SongObjectHelper.NOTFOUND);
     }
+    #endregion
 
+    #region Undo/Redo/Cut/Copy/Paste etc...
     public void UndoWrapper()
     {
         if (actionHistory.Undo(this))
@@ -1119,6 +1132,8 @@ public class ChartEditor : MonoBehaviour {
         Copy();
         Delete();
     }
+
+    #endregion
 
     public System.Collections.Generic.List<ActionHistory.Action> FixUpBPMAnchors()
     {
