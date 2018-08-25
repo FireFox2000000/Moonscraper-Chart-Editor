@@ -51,7 +51,7 @@ public abstract class SongObjectPool {
         int pos = 0;
         for (int i = index; i < index + length; ++i)
         {
-            if (range[i].controller == null)
+            if (range[i].controller == null)        // Check if the object is already attached to something, else we can skip it
             {
                 // Find the next gameobject that is disabled/not in use
                 while (pos < pool.Length && pool[pos].gameObject.activeSelf)
