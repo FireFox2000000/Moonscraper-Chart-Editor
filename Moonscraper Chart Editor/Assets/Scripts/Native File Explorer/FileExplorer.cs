@@ -87,7 +87,7 @@ public static class FileExplorer  {
         --m_filePanelsRefCount;
         UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
 
-        return filename;
+        return new string(filename.ToCharArray());
     }
 
     public static string SaveFilePanel(string filter, string defaultFileName, string defExt)
@@ -156,6 +156,6 @@ public static class FileExplorer  {
         --m_filePanelsRefCount;
         UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
 
-        return filename;
+        return new string(filename.ToCharArray());
     }
 }
