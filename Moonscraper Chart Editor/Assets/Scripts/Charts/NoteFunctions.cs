@@ -4,9 +4,9 @@ using UnityEngine;
 
 public static class NoteFunctions {
 
-    public static void groupAddFlags(Note[] notes, Note.Flags flag)
+    public static void GroupAddFlags(IList<Note> notes, Note.Flags flag, int index, int length)
     {
-        for (int i = 0; i < notes.Length; ++i)
+        for (int i = index; i < index + length; ++i)
         {
             notes[i].flags = notes[i].flags | flag;
         }

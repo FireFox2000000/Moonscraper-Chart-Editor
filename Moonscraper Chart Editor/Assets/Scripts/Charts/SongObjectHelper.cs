@@ -108,9 +108,11 @@ public static class SongObjectHelper {
 /// <param name="objects">The list you want to search through.</param>
 /// <returns>Returns an array of items located at the specified tick position. 
 /// Returns an empty array if no items are at that exact tick position. </returns>
-public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T : SongObject
+public static void FindObjectsAtPosition<T>(uint position, IList<T> objects, out int startIndex, out int length) where T : SongObject
     {
         int index = FindClosestPosition(position, objects);
+        startIndex = 0;
+        length = 0;
 
         if (index != NOTFOUND && objects[index].tick == position)
         {
@@ -121,20 +123,19 @@ public static T[] FindObjectsAtPosition<T>(uint position, T[] objects) where T :
                 --lowRange;
             }
 
-            while (highRange < objects.Length - 1 && objects[index].tick == objects[highRange + 1].tick)
+            while (highRange < objects.Count - 1 && objects[index].tick == objects[highRange + 1].tick)
             {
                 ++highRange;
             }
 
-            int length = highRange - lowRange + 1;
+            length = highRange - lowRange + 1;
+            startIndex = lowRange;
 
-            T[] objectSelection = new T[length];
-            System.Array.Copy(objects, lowRange, objectSelection, 0, length);
-
-            return objectSelection;
+            //T[] objectSelection = new T[length];
+            //System.Array.Copy(objects, lowRange, objectSelection, 0, length);
+            //
+            //return objectSelection;
         }
-        else
-            return new T[0];
     }
 
     /// <summary>

@@ -275,11 +275,14 @@ public class PlaceNote : PlaceSongObject {
     {
         if (!note.IsOpenNote() && MenuBar.currentInstrument != Song.Instrument.Drums)
         {
-            Note[] chordNotes = SongObjectHelper.FindObjectsAtPosition(note.tick, note.chart.notes);
+            int index, length;
+            SongObjectHelper.FindObjectsAtPosition(note.tick, note.chart.notes, out index, out length);
 
             // Check for open notes and delete
-            foreach (Note chordNote in chordNotes)
+            for (int i = index; i < index + length; ++i)
+            //foreach (Note chordNote in chordNotes)
             {
+                Note chordNote = note.chart.notes[i];
                 if (chordNote.IsOpenNote())
                 {
                     chordNote.Delete();

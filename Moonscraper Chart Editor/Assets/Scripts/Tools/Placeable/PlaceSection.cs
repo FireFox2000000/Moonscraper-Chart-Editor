@@ -67,10 +67,11 @@ public class PlaceSection : PlaceSongObject {
 
     Section sectionSearch(uint pos)
     {
-        Section[] sectionsFound = SongObjectHelper.FindObjectsAtPosition(pos, editor.currentSong.sections);
+        int index, length;
+        SongObjectHelper.FindObjectsAtPosition(pos, editor.currentSong.sections, out index, out length);
 
-        if (sectionsFound.Length > 0)
-            return sectionsFound[0];
+        if (length > 0)
+            return editor.currentSong.sections[index];
         else
             return null;
     }

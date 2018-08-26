@@ -592,9 +592,10 @@ public static class ChartReader
             // Load flags
             foreach (NoteFlag flag in flags)
             {
-                Note[] notesToAddFlagTo = SongObjectHelper.FindObjectsAtPosition(flag.tick, chart.notes);
-                if (notesToAddFlagTo.Length > 0)
-                    NoteFunctions.groupAddFlags(notesToAddFlagTo, flag.flag);
+                int index, length;
+                SongObjectHelper.FindObjectsAtPosition(flag.tick, chart.notes, out index, out length);
+                if (length > 0)
+                    NoteFunctions.GroupAddFlags(chart.notes, flag.flag, index, length);
             }
 #if TIMING_DEBUG
             Debug.Log("Chart load time: " + (Time.realtimeSinceStartup - time));
