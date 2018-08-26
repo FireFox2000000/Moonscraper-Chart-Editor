@@ -3,6 +3,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public abstract class PlaceSongObject : ToolObject {
     protected SongObject songObject;
@@ -105,14 +106,14 @@ public abstract class PlaceSongObject : ToolObject {
         }
     }
 
-    protected void RecordAddActionHistory<T>(T overwriteCheck, T[] overWriteSearch) where T : SongObject
+    protected void RecordAddActionHistory<T>(T overwriteCheck, IList<T> overWriteSearch) where T : SongObject
     {
         ActionHistory.Action record = OverwriteActionHistory(overwriteCheck, overWriteSearch);
         if (record != null)
             editor.actionHistory.Insert(record);
     }
 
-    public static ActionHistory.Action OverwriteActionHistory<T>(T overwriteCheck, T[] overWriteSearch) where T : SongObject
+    public static ActionHistory.Action OverwriteActionHistory<T>(T overwriteCheck, IList<T> overWriteSearch) where T : SongObject
     {
         int arrayPos = SongObjectHelper.FindObjectPosition(overwriteCheck, overWriteSearch);
         if (arrayPos != SongObjectHelper.NOTFOUND)       // Found an object that matches
