@@ -184,9 +184,9 @@ public class Mouse : MonoBehaviour {
         return lowestHit;
     }
 
-    static GameObject[] raySortLowestY(GameObject[] hits)
+    static void RaySortLowestY(IList<GameObject> hits)
     {
-        int length = hits.Length;
+        int length = hits.Count;
 
         for (int i = 1; i < length; i++)
         {
@@ -214,10 +214,11 @@ public class Mouse : MonoBehaviour {
                 j--;
             }
         }
-
-        return hits;
     }
 
+    static List<GameObject> hitGameObjects = new List<GameObject>();
+    static RaycastHit[] hitGameObjects3d = new RaycastHit[5];
+    static RaycastHit2D[] hitGameObjects2d = new RaycastHit2D[5];
     static GameObject GetSelectableObjectUnderMouse()
     {
         if (world2DPosition != null)
@@ -229,20 +230,19 @@ public class Mouse : MonoBehaviour {
             else
                 mask = 1 << LayerMask.NameToLayer("SongObject");
 
-            RaycastHit[] hits3d = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition), Mathf.Infinity, mask);
-            
-            GameObject[] hitGameObjects;
+            //RaycastHit[] hits3d = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition), Mathf.Infinity, mask);
+            int hitCount = Physics.RaycastNonAlloc(Camera.main.ScreenPointToRay(Input.mousePosition), hitGameObjects3d, Mathf.Infinity, mask);
 
-            if (hits3d.Length > 0)
+            hitGameObjects.Clear();
+            if (hitCount > 0)
             {
-                hitGameObjects = new GameObject[hits3d.Length];
-                for (int i = 0; i < hits3d.Length; ++i)
-                    hitGameObjects[i] = hits3d[i].collider.gameObject;
+                for (int i = 0; i < hitCount; ++i)
+                    hitGameObjects.Add(hitGameObjects3d[i].collider.gameObject);
 
-                GameObject[] sortedObjects = raySortLowestY(hitGameObjects);
+                RaySortLowestY(hitGameObjects);
                 GameObject selectable = null;
 
-                foreach (GameObject selectedObject in sortedObjects)
+                foreach (GameObject selectedObject in hitGameObjects)
                 {
                     if (selectedObject.GetComponent<SelectableClick>())
                     {
@@ -266,17 +266,16 @@ public class Mouse : MonoBehaviour {
             else
             {
                 // Aim to hit sustain tails
-                RaycastHit2D[] hits = Physics2D.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0, mask);
-                if (hits.Length > 0)
+                //RaycastHit2D[] hits = Physics2D.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0, mask);
+                int hitCount2d = Physics2D.RaycastNonAlloc((Vector2)world2DPosition, Vector2.zero, hitGameObjects2d, 0, mask);
+                if (hitCount2d > 0)
                 {
-                    hitGameObjects = new GameObject[hits.Length];
+                    for (int i = 0; i < hitCount2d; ++i)
+                        hitGameObjects.Add(hitGameObjects2d[i].collider.gameObject);
 
-                    for (int i = 0; i < hits.Length; ++i)
-                        hitGameObjects[i] = hits[i].collider.gameObject;
+                    RaySortLowestY(hitGameObjects);
 
-                    GameObject[] sortedObjects = raySortLowestY(hitGameObjects);
-
-                    foreach (GameObject selectedObject in sortedObjects)
+                    foreach (GameObject selectedObject in hitGameObjects)
                     {
                         if (selectedObject.GetComponent<SelectableClick>())
                             return selectedObject;
