@@ -9,11 +9,11 @@ public class Settings : MonoBehaviour {
     [HideInInspector]
     public string productName;
 
-	// Update is called once per frame
-	void Update () {
-        // Used in build
 #if UNITY_EDITOR
+    // Update is called once per frame
+    void Update () {
+        // Used in build
         productName = UnityEditor.PlayerSettings.productName;
-#endif
     }
+#endif
 }
