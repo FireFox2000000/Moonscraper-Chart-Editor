@@ -30,7 +30,7 @@ public class PlaceChartEvent : PlaceSongObject
         // Re-do the controller's position setting
         base.LateUpdate();
 
-        ChartEvent[] events = editor.currentChart.events;
+        var events = editor.currentChart.events;
 
         int offset = 0;
         int index, length;
@@ -97,7 +97,7 @@ public class PlaceChartEvent : PlaceSongObject
         }
         else if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
         {
-            SongObject[] searchArray = editor.currentChart.events;
+            var searchArray = editor.currentChart.events;
             int pos = SongObjectHelper.FindObjectPosition(chartEvent, searchArray);
             if (pos == SongObjectHelper.NOTFOUND)
             {

@@ -25,7 +25,7 @@ public class ChartEventController : SongObjectController
 
     public static float GetOffset (ChartEditor editor, ChartEvent chartEvent)
     {
-        ChartEvent[] events = editor.currentChart.events;
+        var events = editor.currentChart.events;
 
         int offset = 0;
         int index, length;

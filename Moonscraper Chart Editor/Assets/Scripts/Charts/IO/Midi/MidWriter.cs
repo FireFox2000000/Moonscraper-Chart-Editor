@@ -284,7 +284,7 @@ public static class MidWriter {
         if (exportOptions.copyDownEmptyDifficulty)
         {
             Song.Difficulty chartDiff = difficulty;
-            while (chart.notes.Length <= 0)
+            while (chart.notes.Count <= 0)
             {
                 switch (chartDiff)
                 {

@@ -199,14 +199,17 @@ public class PlaceNote : PlaceSongObject {
     {
         List<ActionHistory.Action> noteRecord = new List<ActionHistory.Action>();
 
-        Note[] notesToCheckOverwrite = SongObjectHelper.GetRangeCopy(editor.currentChart.notes, note.tick, note.tick);
+        int index, length;
+        SongObjectHelper.GetRange(editor.currentChart.notes, note.tick, note.tick, out index, out length);
         
         // Account for when adding an exact note as what's already in   
-        if (notesToCheckOverwrite.Length > 0)
+        if (length > 0)
         {
             bool cancelAdd = false;
-            foreach (Note overwriteNote in notesToCheckOverwrite)
-            {              
+            for (int i = index; i < index + length; ++i)
+            {
+                Note overwriteNote = editor.currentChart.notes[i];
+                
                 if (note.AllValuesCompare(overwriteNote))
                 {
                     cancelAdd = true;

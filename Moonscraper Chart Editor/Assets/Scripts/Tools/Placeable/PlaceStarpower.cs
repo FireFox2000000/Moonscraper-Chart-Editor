@@ -52,7 +52,7 @@ public class PlaceStarpower : PlaceSongObject {
         {
             if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
             {
-                SongObject[] searchArray = editor.currentChart.starPower;
+                var searchArray = editor.currentChart.starPower;
                 int pos = SongObjectHelper.FindObjectPosition(starpower, searchArray);
                 if (pos == SongObjectHelper.NOTFOUND)
                 {
@@ -82,7 +82,7 @@ public class PlaceStarpower : PlaceSongObject {
         if (prevSpLength != lastPlacedSP.length)
         {
             int index, length;
-            Note[] notes = editor.currentChart.notes;
+            var notes = editor.currentChart.notes;
             uint maxLength = prevSpLength > lastPlacedSP.length ? prevSpLength : lastPlacedSP.length;
 
             SongObjectHelper.GetRange(notes, lastPlacedSP.tick, lastPlacedSP.tick + maxLength, out index, out length);
@@ -176,7 +176,7 @@ public class PlaceStarpower : PlaceSongObject {
     static void SetNotesDirty(Starpower sp)
     {
         int start, length;
-        Note[] notes = sp.chart.notes;
+        var notes = sp.chart.notes;
         SongObjectHelper.GetRange(notes, sp.tick, sp.tick + sp.length, out start, out length);
 
         for (int i = start; i < start + length; ++i)
@@ -212,7 +212,7 @@ public class PlaceStarpower : PlaceSongObject {
                 }
             }
 
-            if (arrayPos < chart.starPower.Length && chart.starPower[arrayPos].tick > sp.tick)
+            if (arrayPos < chart.starPower.Count && chart.starPower[arrayPos].tick > sp.tick)
             {       
                 Starpower nextSp = chart.starPower[arrayPos];
 

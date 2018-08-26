@@ -230,7 +230,7 @@ public static class NoteFunctions {
         if (note.length > 0 && note.chart != null)
         {
             int index, length;
-            Note[] notes = note.chart.notes;
+            var notes = note.chart.notes;
             SongObjectHelper.GetRange(notes, note.tick, note.tick + note.length - 1, out index, out length);
 
             for (int i = index; i < index + length; ++i)

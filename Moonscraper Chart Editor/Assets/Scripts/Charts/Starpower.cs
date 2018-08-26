@@ -53,7 +53,7 @@ public class Starpower : ChartObject
             if (arrayPos == SongObjectHelper.NOTFOUND)
                 return;
 
-            while (arrayPos < chart.starPower.Length - 1 && chart.starPower[arrayPos].tick <= tick)
+            while (arrayPos < chart.starPower.Count - 1 && chart.starPower[arrayPos].tick <= tick)
             {
                 ++arrayPos;
             }

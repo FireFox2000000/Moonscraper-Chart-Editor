@@ -20,9 +20,9 @@ public class SongValidateGH3 {
     void FixSong(Song song)
     {
         // GH3 will crash if there are more than 100 sections
-        if (song.sections.Length > 100)
+        if (song.sections.Count > 100)
         {
-            for (int i = 100; i < song.sections.Length; ++i)
+            for (int i = 100; i < song.sections.Count; ++i)
             {
                 song.Remove(song.sections[i], false);
             }

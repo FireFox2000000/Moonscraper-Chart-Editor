@@ -285,7 +285,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             int anchorPos = 0;
 
             // Get the next anchor
-            for (int i = pos + 1; i < currentBPM.song.bpms.Length; ++i)
+            for (int i = pos + 1; i < currentBPM.song.bpms.Count; ++i)
             {
                 if (currentBPM.song.bpms[i].anchor != null)
                 {
@@ -363,7 +363,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     BPM NextBPM()
     {
         int pos = SongObjectHelper.FindObjectPosition(currentBPM, currentBPM.song.bpms);
-        if (pos != SongObjectHelper.NOTFOUND && pos + 1 < currentBPM.song.bpms.Length)
+        if (pos != SongObjectHelper.NOTFOUND && pos + 1 < currentBPM.song.bpms.Count)
         {
             return currentBPM.song.bpms[pos + 1];
         }

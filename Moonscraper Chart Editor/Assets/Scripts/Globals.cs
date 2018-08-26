@@ -344,9 +344,9 @@ public class Globals : MonoBehaviour {
     {
         // Get the previous and next section
         uint currentPos = editor.currentTickPos;
-        Section[] sections = editor.currentSong.sections;
+        var sections = editor.currentSong.sections;
         int maxSectionIndex = 0;
-        while (maxSectionIndex < sections.Length && !(sections[maxSectionIndex].tick > currentPos))
+        while (maxSectionIndex < sections.Count && !(sections[maxSectionIndex].tick > currentPos))
         {
             ++maxSectionIndex;
         }
@@ -354,7 +354,7 @@ public class Globals : MonoBehaviour {
         maxSectionIndex += sectionOffset;
 
         uint rangeMin = (maxSectionIndex - 1) >= 0 ? sections[maxSectionIndex - 1].tick : 0;
-        uint rangeMax = maxSectionIndex < sections.Length ? sections[maxSectionIndex].tick : uint.MaxValue;
+        uint rangeMax = maxSectionIndex < sections.Count ? sections[maxSectionIndex].tick : uint.MaxValue;
         if (rangeMax > 0)
             --rangeMax;
 

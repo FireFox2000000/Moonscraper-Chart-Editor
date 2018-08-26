@@ -117,7 +117,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
         // Check if indicator pools need to be extended
         
-        while (sectionIndicatorPool.Length < editor.currentSong.sections.Length)
+        while (sectionIndicatorPool.Length < editor.currentSong.sections.Count)
         {
             SectionGuiController[] controllers = new SectionGuiController[sectionIndicatorPool.Length + POOL_EXTEND_SIZE];
             System.Array.Copy(sectionIndicatorPool, controllers, sectionIndicatorPool.Length);
@@ -128,7 +128,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
             sectionIndicatorPool = controllers;
         }
         
-        while (starpowerIndicatorPool.Length < editor.currentChart.starPower.Length)
+        while (starpowerIndicatorPool.Length < editor.currentChart.starPower.Count)
         {
             StarpowerGUIController[] controllers = new StarpowerGUIController[starpowerIndicatorPool.Length + POOL_EXTEND_SIZE];
             System.Array.Copy(starpowerIndicatorPool, controllers, starpowerIndicatorPool.Length);
@@ -140,21 +140,21 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         }
 
         // Set the sections
-        if (update || editor.currentSong.sections.Length != prevSectionLength || externalUpdate)
+        if (update || editor.currentSong.sections.Count != prevSectionLength || externalUpdate)
         {
             StartCoroutine(UpdateSectionIndicator());
         }
 
         // Set the sp
-        if (update || editor.currentChart.starPower.Length != prevSPLength || externalUpdate)
+        if (update || editor.currentChart.starPower.Count != prevSPLength || externalUpdate)
         {
             StartCoroutine(UpdateStarpowerIndicators());
         }
 
         prevSong = editor.currentSong;
         prevSongLength = editor.currentSong.length;
-        prevSPLength = editor.currentChart.starPower.Length;
-        prevSectionLength = editor.currentSong.sections.Length;
+        prevSPLength = editor.currentChart.starPower.Count;
+        prevSectionLength = editor.currentSong.sections.Count;
         previousScreenSize.x = Screen.width;
         previousScreenSize.y = Screen.height;
         prevRes = Screen.currentResolution;
@@ -168,7 +168,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         yield return null;
 
         int i;
-        for (i = 0; i < editor.currentSong.sections.Length; ++i)
+        for (i = 0; i < editor.currentSong.sections.Count; ++i)
         {
             if (i < sectionIndicatorPool.Length && editor.currentSong.sections[i].time <= editor.currentSong.length)
             {
@@ -194,7 +194,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         yield return null;
        
         int i;
-        for (i = 0; i < editor.currentChart.starPower.Length; ++i)
+        for (i = 0; i < editor.currentChart.starPower.Count; ++i)
         {  
             if (i < starpowerIndicatorPool.Length && editor.currentChart.starPower[i].time <= editor.currentSong.length)
             {

@@ -166,6 +166,17 @@ public class ActionHistory
         }
     }
 
+    static void TryDeleteSongObject<T>(T songObject, IList<T> arrayToSearch) where T : SongObject
+    {
+        int arrayPos = SongObjectHelper.FindObjectPosition(songObject, arrayToSearch);
+
+        if (arrayPos != SongObjectHelper.NOTFOUND)
+        {
+            T foundSongObject = arrayToSearch[arrayPos];
+            foundSongObject.Delete(false);
+        }
+    }
+
     public class Delete : Action
     {
         public Delete(SongObject[] songObjects) : base(songObjects) { }
@@ -175,32 +186,22 @@ public class ActionHistory
         {
             foreach (SongObject songObject in songObjects)
             {
-                SongObject foundSongObject;
-                SongObject[] arrayToSearch;
-                int arrayPos;
-
                 // Find each item
                 if (songObject.GetType().IsSubclassOf(typeof(ChartObject)) || songObject.GetType() == typeof(ChartObject))
                 {
-                    arrayToSearch = editor.currentChart.chartObjects;
+                    TryDeleteSongObject(songObject, editor.currentChart.chartObjects);
                 }
                 else
                 {
                     if (songObject.GetType().IsSubclassOf(typeof(Event)) || songObject.GetType() == typeof(Event))
-                        arrayToSearch = editor.currentSong.events;
-
+                    {
+                        TryDeleteSongObject((Event)songObject, editor.currentSong.events);
+                    }
                     else
-                        arrayToSearch = editor.currentSong.syncTrack;
+                    {
+                        TryDeleteSongObject(songObject, editor.currentSong.syncTrack);
+                    }
                 }
-
-                arrayPos = SongObjectHelper.FindObjectPosition(songObject, arrayToSearch);
-
-                if (arrayPos == SongObjectHelper.NOTFOUND)
-                    continue;
-                else
-                    foundSongObject = arrayToSearch[arrayPos];
-
-                foundSongObject.Delete(false);
             }
 
             return songObjects[0];

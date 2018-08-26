@@ -123,13 +123,13 @@ public class GroupMove : ToolObject
                     record.AddRange(PlaceStarpower.AddObjectToCurrentChart((Starpower)movingSongObjects[i], editor, false, false));       // Capping
                     break;
                 case (SongObject.ID.ChartEvent):
-                    overwriteRecord = PlaceSongObject.OverwriteActionHistory(movingSongObjects[i], editor.currentChart.events);
+                    overwriteRecord = PlaceSongObject.OverwriteActionHistory((ChartEvent)movingSongObjects[i], editor.currentChart.events);
                     if (record != null)
                         record.Add(overwriteRecord);
                     editor.currentChart.Add((ChartEvent)movingSongObjects[i], false);
                     break;
                 case (SongObject.ID.BPM):
-                    overwriteRecord = PlaceSongObject.OverwriteActionHistory(movingSongObjects[i], editor.currentSong.bpms);
+                    overwriteRecord = PlaceSongObject.OverwriteActionHistory((BPM)movingSongObjects[i], editor.currentSong.bpms);
                     if (record != null)
                         record.Add(overwriteRecord);
                     BPM bpm = (BPM)movingSongObjects[i];
@@ -140,19 +140,19 @@ public class GroupMove : ToolObject
                     ChartEditor.GetInstance().songObjectPoolManager.SetAllPoolsDirty();
                     break;
                 case (SongObject.ID.TimeSignature):
-                    overwriteRecord = PlaceSongObject.OverwriteActionHistory(movingSongObjects[i], editor.currentSong.timeSignatures);
+                    overwriteRecord = PlaceSongObject.OverwriteActionHistory((TimeSignature)movingSongObjects[i], editor.currentSong.timeSignatures);
                     if (record != null)
                         record.Add(overwriteRecord);
                     editor.currentSong.Add((TimeSignature)movingSongObjects[i], false);
                     break;
                 case (SongObject.ID.Section):
-                    overwriteRecord = PlaceSongObject.OverwriteActionHistory(movingSongObjects[i], editor.currentSong.sections);
+                    overwriteRecord = PlaceSongObject.OverwriteActionHistory((Section)movingSongObjects[i], editor.currentSong.sections);
                     if (record != null)
                         record.Add(overwriteRecord);
                     editor.currentSong.Add((Section)movingSongObjects[i], false);
                     break;
                 case (SongObject.ID.Event):
-                    overwriteRecord = PlaceSongObject.OverwriteActionHistory(movingSongObjects[i], editor.currentSong.events);
+                    overwriteRecord = PlaceSongObject.OverwriteActionHistory((Event)movingSongObjects[i], editor.currentSong.events);
                     if (record != null)
                         record.Add(overwriteRecord);
                     editor.currentSong.Add((Event)movingSongObjects[i], false);

@@ -83,7 +83,7 @@ public class StarpowerController : SongObjectController
             max = starpower.length;
 
         int start, length;
-        Note[] notes = starpower.chart.notes;
+        var notes = starpower.chart.notes;
         SongObjectHelper.GetRange(notes, starpower.tick, starpower.tick + max, out start, out length);
 
         for (int i = start; i < start + length; ++i)

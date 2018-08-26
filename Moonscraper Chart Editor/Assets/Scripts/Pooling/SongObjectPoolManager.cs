@@ -78,12 +78,12 @@ public class SongObjectPoolManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        if (editor.currentChart.notes.Length > 0)
+        if (editor.currentChart.notes.Count > 0)
             EnableNotes(editor.currentChart.notes);
 
         if (Globals.viewMode == Globals.ViewMode.Chart)
         {
-            if (editor.currentChart.starPower.Length > 0)
+            if (editor.currentChart.starPower.Count > 0)
                 EnableSP(editor.currentChart.starPower);
 
             EnableChartEvents(editor.currentChart.events);
@@ -93,7 +93,7 @@ public class SongObjectPoolManager : MonoBehaviour {
             EnableBPM(editor.currentSong.bpms);
             EnableTS(editor.currentSong.timeSignatures);
 
-            if (editor.currentSong.sections.Length > 0)
+            if (editor.currentSong.sections.Count > 0)
                 EnableSections(editor.currentSong.sections);
 
             EnableSongEvents(editor.currentSong.events);
@@ -270,14 +270,14 @@ public class SongObjectPoolManager : MonoBehaviour {
         Song song = editor.currentSong;
         Chart chart = editor.currentChart;
 
-        SetInViewRangeDirty((IList<Note>)chart.notes);
-        SetInViewRangeDirty((IList<Starpower>)chart.starPower);
+        SetInViewRangeDirty(chart.notes);
+        SetInViewRangeDirty(chart.starPower);
         SetInViewRangeDirty(chart.events);
         SetInViewRangeDirty(song.eventsAndSections);
         SetInViewRangeDirty(song.syncTrack);
     }
 
-    public void SetInViewRangeDirty(IList<SongObject> songObjects)
+    public void SetInViewRangeDirty<T>(IList<T> songObjects) where T : SongObject
     {
         int index, length;
         SongObjectHelper.GetRange(songObjects, editor.minPos, editor.maxPos, out index, out length);

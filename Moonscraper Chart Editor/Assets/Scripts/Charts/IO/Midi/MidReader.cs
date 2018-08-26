@@ -417,7 +417,7 @@ public static class MidReader {
                 }
 
                 int index, length;
-                Note[] notes;
+                SongObjectCache<Note> notes;
                 if (instrument == Song.Instrument.Unrecognised)
                     notes = unrecognised.notes;
                 else

@@ -67,7 +67,7 @@ public class PlaceEvent : PlaceSongObject
         }
         else if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
         {
-            SongObject[] searchArray = editor.currentSong.events;
+            var searchArray = editor.currentSong.events;
             int pos = SongObjectHelper.FindObjectPosition(songEvent, searchArray);
             if (pos == SongObjectHelper.NOTFOUND)
             {
@@ -88,7 +88,7 @@ public class PlaceEvent : PlaceSongObject
         base.LateUpdate();
 
         // Re-do the controller's position setting
-        Event[] events = editor.currentSong.events;
+        var events = editor.currentSong.events;
 
         int offset = 0;
         int index, length;

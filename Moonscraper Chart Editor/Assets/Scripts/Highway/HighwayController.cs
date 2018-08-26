@@ -54,16 +54,16 @@ public class HighwayController : MonoBehaviour {
         Song song = editor.currentSong;
         uint startRange = song.WorldPositionToSnappedTick(editor.camYMin.position.y, 8);
         uint endRange = editor.maxPos;
-        TimeSignature[] timeSignatures = editor.currentSong.timeSignatures;
+        var timeSignatures = editor.currentSong.timeSignatures;
         uint standardMeasureLengthTicks = (uint)(Song.RESOLUTIONS_PER_MEASURE * song.resolution);
 
         int startIndex = SongObjectHelper.FindClosestPositionRoundedDown(startRange, timeSignatures);   
 
-        for (int tsIndex = startIndex; tsIndex < timeSignatures.Length && timeSignatures[tsIndex].tick <= endRange; ++tsIndex)
+        for (int tsIndex = startIndex; tsIndex < timeSignatures.Count && timeSignatures[tsIndex].tick <= endRange; ++tsIndex)
         {
             TimeSignature ts = timeSignatures[tsIndex];
             uint nextTick = ts.tick;
-            uint nextTSTick = tsIndex + 1 < timeSignatures.Length ? timeSignatures[tsIndex + 1].tick : endRange;
+            uint nextTSTick = tsIndex + 1 < timeSignatures.Count ? timeSignatures[tsIndex + 1].tick : endRange;
             float beatDeltaTick = standardMeasureLengthTicks / ts.beatsPerMeasure;
 
             uint startDeltaFromTSTick = startRange > ts.tick ? (startRange - ts.tick) : 0;

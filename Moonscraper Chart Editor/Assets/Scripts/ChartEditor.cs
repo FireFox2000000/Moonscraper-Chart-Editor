@@ -1139,9 +1139,9 @@ public class ChartEditor : MonoBehaviour {
     {
         System.Collections.Generic.List<ActionHistory.Action> record = new System.Collections.Generic.List<ActionHistory.Action>();
 
-        BPM[] bpms = currentSong.bpms;
+        var bpms = currentSong.bpms;
         // Fix up any anchors
-        for (int i = 0; i < bpms.Length; ++i)
+        for (int i = 0; i < bpms.Count; ++i)
         {
             if (bpms[i].anchor != null && i > 0)
             {

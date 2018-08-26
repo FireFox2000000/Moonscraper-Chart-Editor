@@ -18,15 +18,15 @@ public class Chart  {
     /// <summary>
     /// Read only list of notes.
     /// </summary>
-    public Note[] notes { get; private set; }
+    public SongObjectCache<Note> notes { get; private set; }
     /// <summary>
     /// Read only list of starpower.
     /// </summary>
-    public Starpower[] starPower { get; private set; }
+    public SongObjectCache<Starpower> starPower { get; private set; }
     /// <summary>
     /// Read only list of local events.
     /// </summary>
-    public ChartEvent[] events { get; private set; }
+    public SongObjectCache<ChartEvent> events { get; private set; }
     /// <summary>
     /// The song this chart is connected to.
     /// </summary>
@@ -57,9 +57,9 @@ public class Chart  {
         _chartObjects = new List<ChartObject>();
         _gameMode = gameMode;
 
-        notes = new Note[0];
-        starPower = new Starpower[0];
-        events = new ChartEvent[0];
+        notes = new SongObjectCache<Note>();// new Note[0];
+        starPower = new SongObjectCache<Starpower>();// new Starpower[0];
+        events = new SongObjectCache<ChartEvent>(); // new ChartEvent[0];
 
         _note_count = 0;
 
@@ -87,21 +87,25 @@ public class Chart  {
     /// </summary>
     public void UpdateCache()
     {
-        notes = _chartObjects.OfType<Note>().ToArray();
-        starPower = _chartObjects.OfType<Starpower>().ToArray();
-        events = _chartObjects.OfType<ChartEvent>().ToArray();
+        Song.UpdateCacheList(notes, _chartObjects);
+        Song.UpdateCacheList(starPower, _chartObjects);
+        Song.UpdateCacheList(events, _chartObjects);
+
+        //notes = _chartObjects.OfType<Note>().ToArray();
+        //starPower = _chartObjects.OfType<Starpower>().ToArray();
+        //events = _chartObjects.OfType<ChartEvent>().ToArray();
 
         _note_count = GetNoteCount();
     }
 
     int GetNoteCount()
     {
-        if (notes.Length > 0)
+        if (notes.Count > 0)
         {
             int count = 1;
 
             uint previousPos = notes[0].tick;
-            for (int i = 1; i < notes.Length; ++i)
+            for (int i = 1; i < notes.Count; ++i)
             {
                 if (notes[i].tick > previousPos)
                 {

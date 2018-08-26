@@ -85,7 +85,7 @@ public class TimelineMovementController : MovementController
 
     // Update is called once per frame
     void LateUpdate () {
-        if (!ShortcutInput.GetInput(Shortcut.SelectAllSection) || editor.currentSong.sections.Length <= 0)
+        if (!ShortcutInput.GetInput(Shortcut.SelectAllSection) || editor.currentSong.sections.Count <= 0)
         {
             sectionHighlightRealOriginIndex = SongObjectHelper.GetIndexOfPrevious(editor.currentSong.sections, editor.currentTickPos);
             sectionHighlightCurrentIndex = sectionHighlightRealOriginIndex;
@@ -109,7 +109,7 @@ public class TimelineMovementController : MovementController
             // Position changes scroll bar value
             if (scrollDelta != 0 || transform.position != prevPos || Services.HasScreenResized)
             {
-                if (ShortcutInput.GetInput(Shortcut.SectionJumpMouseScroll) && editor.currentSong.sections.Length > 0)
+                if (ShortcutInput.GetInput(Shortcut.SectionJumpMouseScroll) && editor.currentSong.sections.Count > 0)
                 {
                     SectionJump(scrollDelta);
                     RefreshSectionHighlight();
@@ -132,13 +132,13 @@ public class TimelineMovementController : MovementController
 
                 UpdateTimelineHandleBasedPos();
             }
-            else if (ShortcutInput.GetInputDown(Shortcut.SectionJumpPositive) && editor.currentSong.sections.Length > 0)
+            else if (ShortcutInput.GetInputDown(Shortcut.SectionJumpPositive) && editor.currentSong.sections.Count > 0)
             {
                 SectionJump(1);              
                 UpdateTimelineHandleBasedPos();
                 RefreshSectionHighlight();
             }
-            else if (ShortcutInput.GetInputDown(Shortcut.SectionJumpNegative) && editor.currentSong.sections.Length > 0)
+            else if (ShortcutInput.GetInputDown(Shortcut.SectionJumpNegative) && editor.currentSong.sections.Count > 0)
             {
                 SectionJump(-1);
                 UpdateTimelineHandleBasedPos();
@@ -301,7 +301,7 @@ public class TimelineMovementController : MovementController
         float position = Mathf.Round(strikeLine.position.y);
 
         int i = 0;
-        while (i < editor.currentSong.sections.Length && Mathf.Round(editor.currentSong.sections[i].worldYPosition) <= position)
+        while (i < editor.currentSong.sections.Count && Mathf.Round(editor.currentSong.sections[i].worldYPosition) <= position)
         {
             ++i;
         }
@@ -310,7 +310,7 @@ public class TimelineMovementController : MovementController
         if (direction > 0)
         {
             // Found section ahead
-            if (i < editor.currentSong.sections.Length && Mathf.Round(editor.currentSong.sections[i].worldYPosition) > position)
+            if (i < editor.currentSong.sections.Count && Mathf.Round(editor.currentSong.sections[i].worldYPosition) > position)
                 SetPosition(editor.currentSong.sections[i].tick);
             else
                 SetPosition(editor.currentSong.TimeToTick(editor.currentSong.length, editor.currentSong.resolution));       // Jump to the end of the song
@@ -319,7 +319,7 @@ public class TimelineMovementController : MovementController
         // Jump backwards
         else
         {
-            while (i > editor.currentSong.sections.Length - 1 || (i >= 0 && Mathf.Round(editor.currentSong.sections[i].worldYPosition) >= position))
+            while (i > editor.currentSong.sections.Count - 1 || (i >= 0 && Mathf.Round(editor.currentSong.sections[i].worldYPosition) >= position))
                 --i;
 
             if (i >= 0)

@@ -36,7 +36,7 @@ public class PlaceSection : PlaceSongObject {
         }
         else if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
         {
-            SongObject[] searchArray = editor.currentSong.sections;
+            var searchArray = editor.currentSong.sections;
             int pos = SongObjectHelper.FindObjectPosition(section, searchArray);
             if (pos == SongObjectHelper.NOTFOUND)
             {

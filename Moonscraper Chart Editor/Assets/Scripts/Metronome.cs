@@ -79,12 +79,12 @@ public class Metronome : UpdateableService {
     uint CalculateNextBeatTickPosition(uint currentTickPosition)
     {
         Song song = editor.currentSong;
-        TimeSignature[] timeSignatures = editor.currentSong.timeSignatures;
+        var timeSignatures = editor.currentSong.timeSignatures;
         uint standardMeasureLengthTicks = (uint)(Song.RESOLUTIONS_PER_MEASURE * song.resolution);
 
         int lastTsIndex = SongObjectHelper.FindClosestPositionRoundedDown(currentTickPosition, timeSignatures);
         TimeSignature currentTimeSignature = timeSignatures[lastTsIndex];
-        TimeSignature nextTimeSignature = lastTsIndex + 1 < timeSignatures.Length ? timeSignatures[lastTsIndex + 1] : null;
+        TimeSignature nextTimeSignature = lastTsIndex + 1 < timeSignatures.Count ? timeSignatures[lastTsIndex + 1] : null;
         uint tickOrigin = currentTimeSignature.tick;
         float beatDeltaTick = standardMeasureLengthTicks / currentTimeSignature.beatsPerMeasure;
 
