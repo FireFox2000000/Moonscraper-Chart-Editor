@@ -229,7 +229,7 @@ public class Mouse : MonoBehaviour {
             else
                 mask = 1 << LayerMask.NameToLayer("SongObject");
 
-            RaycastHit[] hits3d = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition), Mathf.Infinity, mask); //Physics.RaycastAll((Vector2)world2DPosition, Vector2.zero, 0, mask);
+            RaycastHit[] hits3d = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition), Mathf.Infinity, mask);
             
             GameObject[] hitGameObjects;
 
@@ -290,13 +290,6 @@ public class Mouse : MonoBehaviour {
 
     public static bool IsUIUnderPointer()
     {
-        /*
-        PointerEventData pointer = new PointerEventData(EventSystem.current);
-        pointer.position = Input.mousePosition;
-
-        List<RaycastResult> raycastResults = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(pointer, raycastResults);*/
-
         if (RaycastFromPointer() != null)
             return true;
 
@@ -324,7 +317,7 @@ public class Mouse : MonoBehaviour {
         {
         }
 
-        return null;//raycastResults;
+        return null;
     }
 
     public static GameObject GetUIRaycastableUnderPointer()
@@ -340,19 +333,16 @@ public class Mouse : MonoBehaviour {
         if (currentRaycastFromPointer != null)
         {
             RaycastResult raycastResult = (RaycastResult)currentRaycastFromPointer;
-            //foreach (RaycastResult raycastResult in currentRaycastFromPointer)
-           // {
-                GameObject hoveredObj = raycastResult.gameObject;
+            GameObject hoveredObj = raycastResult.gameObject;
 
-                if (hoveredObj && hoveredObj.GetComponent<T>())
-                {
-                    return hoveredObj.GetComponent<T>();
-                }
-                else if (hoveredObj && hoveredObj.transform.parent.gameObject.GetComponent<T>())
-                {
-                    return hoveredObj.transform.parent.gameObject.GetComponent<T>();
-                }
-            //}
+            if (hoveredObj && hoveredObj.GetComponent<T>())
+            {
+                return hoveredObj.GetComponent<T>();
+            }
+            else if (hoveredObj && hoveredObj.transform.parent.gameObject.GetComponent<T>())
+            {
+                return hoveredObj.transform.parent.gameObject.GetComponent<T>();
+            }
         }
 
         return null;
