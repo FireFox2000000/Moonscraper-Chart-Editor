@@ -23,6 +23,7 @@ public class DisplayProperties : UpdateableService
 
     ChartEditor editor;
     int prevNoteCount = -1;
+    int prevSnappingStep = 16;
 
     protected override void Start()
     {
@@ -31,7 +32,7 @@ public class DisplayProperties : UpdateableService
         highwayLengthSlider.value = GameSettings.highwayLength;
 
         snappingStep.onValidateInput = Step.validateStepVal;
-        snappingStep.text = GameSettings.step.ToString();
+        UpdateSnappingStepText();
 
         OnEnable();
 
@@ -53,6 +54,9 @@ public class DisplayProperties : UpdateableService
     {
         if (editor.currentChart.note_count != prevNoteCount)
             noteCount.text = "Notes: " + editor.currentChart.note_count.ToString();
+
+        if (GameSettings.step != prevSnappingStep)
+            UpdateSnappingStepText();
 
         // Shortcuts
         if (ShortcutInput.GetInputDown(Shortcut.ToggleClap))
@@ -122,13 +126,19 @@ public class DisplayProperties : UpdateableService
     public void IncrementSnappingStep()
     {
         GameSettings.snappingStep.Increment();
-        snappingStep.text = GameSettings.step.ToString();
+        UpdateSnappingStepText();
     }
 
     public void DecrementSnappingStep()
     {
         GameSettings.snappingStep.Decrement();
+        UpdateSnappingStepText();
+    }
+
+    void UpdateSnappingStepText()
+    {
         snappingStep.text = GameSettings.step.ToString();
+        prevSnappingStep = GameSettings.step;
     }
 
     public void SetStep(string value)
@@ -164,6 +174,6 @@ public class DisplayProperties : UpdateableService
         }
 
         GameSettings.step = stepVal;
-        snappingStep.text = GameSettings.step.ToString();
+        UpdateSnappingStepText();
     }
 }
