@@ -210,7 +210,7 @@ public class ChartWriter
         try
         {
             // Save to file
-            File.WriteAllText(path, saveString);
+            File.WriteAllText(path, saveString, System.Text.Encoding.UTF8);
         }
         catch (Exception e)
         {
