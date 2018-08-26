@@ -121,11 +121,11 @@ public class Song {
     /// <summary>
     /// Read only list of song events.
     /// </summary>
-    public Event[] events { get; private set; }
+    public SongObjectCache<Event> events { get; private set; }
     /// <summary>
     /// Read only list of song sections.
     /// </summary>
-    public Section[] sections { get; private set; }
+    public SongObjectCache<Section> sections { get; private set; }
 
     public SyncTrack[] syncTrack { get { return _syncTrack.ToArray(); } }
     public Event[] eventsAndSections { get { return _events.ToArray(); } }
@@ -133,11 +133,11 @@ public class Song {
     /// <summary>
     /// Read only list of a song's bpm changes.
     /// </summary>
-    public BPM[] bpms { get; private set; }
+    public SongObjectCache<BPM> bpms { get; private set; }
     /// <summary>
     /// Read only list of a song's time signature changes.
     /// </summary>
-    public TimeSignature[] timeSignatures { get; private set; }
+    public SongObjectCache<TimeSignature> timeSignatures { get; private set; }
 
     /// <summary>
     /// Is this song currently being saved asyncronously?
@@ -174,10 +174,10 @@ public class Song {
         _events = new List<Event>();
         _syncTrack = new List<SyncTrack>();
 
-        events = new Event[0];
-        sections = new Section[0];
-        bpms = new BPM[0];
-        timeSignatures = new TimeSignature[0];
+        events = new SongObjectCache<Event>();// new Event[0];
+        sections = new SongObjectCache<Section>();// new Section[0];
+        bpms = new SongObjectCache<BPM>();// new BPM[0];
+        timeSignatures = new SongObjectCache<TimeSignature>();// new TimeSignature[0];
 
         audioSampleData = new SampleData[AUDIO_INSTUMENT_COUNT];
         bassAudioStreams = new int[AUDIO_INSTUMENT_COUNT];
@@ -673,15 +673,29 @@ public class Song {
         }
     }
 
+    public static void UpdateCacheList<T, U>(SongObjectCache<T> cache, List<U> objectsToCache)
+        where U : SongObject
+        where T : U    
+    {
+        var cacheObjectList = cache.EditCache();
+        cacheObjectList.Clear();
+        cacheObjectList.AddRange(objectsToCache.OfType<T>());
+    }
+
     /// <summary>
     /// Updates all read-only values and bpm assigned time values. 
     /// </summary>
     public void UpdateCache()
     {
-        events = _events.ToArray();
-        sections = _events.OfType<Section>().ToArray();
-        bpms = _syncTrack.OfType<BPM>().ToArray();
-        timeSignatures = _syncTrack.OfType<TimeSignature>().ToArray();
+        UpdateCacheList(sections, _events);
+        UpdateCacheList(events, _events);
+        UpdateCacheList(bpms, _syncTrack);
+        UpdateCacheList(timeSignatures, _syncTrack);
+
+        //events = _events.ToArray();
+        //sections = _events.OfType<Section>().ToArray();
+        //bpms = _syncTrack.OfType<BPM>().ToArray();
+        //timeSignatures = _syncTrack.OfType<TimeSignature>().ToArray();
         UpdateBPMTimeValues();
 
         //ChartEditor.FindCurrentEditor().FixUpBPMAnchors();
@@ -840,6 +854,78 @@ public class Song {
         Bass = 2,
         Rhythm = 3,
         Drum = 4
+    }
+}
+
+public class SongObjectCache<T> : IList<T>, IEnumerable<T> where T : SongObject
+{
+    List<T> cache = new List<T>();
+
+    public T this[int index] { get { return cache[index]; } set { cache[index] = value; } }
+
+    public int Count
+    {
+        get { return cache.Count; }
+    }
+
+    public bool IsReadOnly
+    {
+        get { return true; }
+    }
+
+    public void Add(T item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Clear()
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool Contains(T item)
+    {
+        return cache.Contains(item);
+    }
+
+    public void CopyTo(T[] array, int arrayIndex)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerator<T> GetEnumerator()
+    {
+        return cache.GetEnumerator();
+    }
+
+    public int IndexOf(T item)
+    {
+        return cache.IndexOf(item);
+    }
+
+    public void Insert(int index, T item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool Remove(T item)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RemoveAt(int index)
+    {
+        throw new NotImplementedException();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return cache.GetEnumerator();
+    }
+
+    public List<T> EditCache()
+    {
+        return cache;
     }
 }
 
