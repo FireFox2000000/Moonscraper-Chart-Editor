@@ -13,13 +13,75 @@ public class FireSyncronizer : MonoBehaviour {
     public Skin customSkin;
 
     public Material flameMat;
-    public static Material[] flameMaterials;
+    public static Material[] flameMaterials = new Material[7];  // Max used
     public Color orangeColor;
+
+    Dictionary<Chart.GameMode, Dictionary<int, Color>> gameModeColourDict;
+    Dictionary<Chart.GameMode, Dictionary<int, Dictionary<int, Color>>> gameModeColourDictLaneOverride;
 
     void Awake()
     {
         if (Application.isPlaying)
         {
+            gameModeColourDict = new Dictionary<Chart.GameMode, Dictionary<int, Color>>()
+            {
+                {
+                    Chart.GameMode.Guitar, new Dictionary<int, Color>()
+                    {
+                        { (int)Note.GuitarFret.Green, Color.green },
+                        { (int)Note.GuitarFret.Red, Color.red },
+                        { (int)Note.GuitarFret.Yellow, Color.yellow },
+                        { (int)Note.GuitarFret.Blue, Color.blue },
+                        { (int)Note.GuitarFret.Orange, orangeColor },
+                        { (int)Note.GuitarFret.Open, Color.magenta },
+                    }
+                },
+                {
+                    Chart.GameMode.Drums, new Dictionary<int, Color>()
+                    {  
+                        { (int)Note.DrumPad.Red, Color.red },
+                        { (int)Note.DrumPad.Yellow, Color.yellow },
+                        { (int)Note.DrumPad.Blue, Color.blue },
+                        { (int)Note.DrumPad.Orange, orangeColor },
+                        { (int)Note.DrumPad.Green, Color.green },
+                        { (int)Note.DrumPad.Kick, Color.magenta },
+                    }
+                },
+                {
+                    Chart.GameMode.GHLGuitar, new Dictionary<int, Color>()
+                    {
+                        { (int)Note.GHLiveGuitarFret.Black1, Color.gray },
+                        { (int)Note.GHLiveGuitarFret.Black2, Color.gray },
+                        { (int)Note.GHLiveGuitarFret.Black3, Color.gray },
+                        { (int)Note.GHLiveGuitarFret.White1, Color.white },
+                        { (int)Note.GHLiveGuitarFret.White2, Color.white  },
+                        { (int)Note.GHLiveGuitarFret.White3, Color.white },
+                        { (int)Note.GHLiveGuitarFret.Open, Color.magenta },
+                    }
+                },
+            };
+
+            gameModeColourDictLaneOverride = new Dictionary<Chart.GameMode, Dictionary<int, Dictionary<int, Color>>>()
+            {
+                {
+                    Chart.GameMode.Drums, new Dictionary<int, Dictionary<int, Color>>()
+                    {
+                        {
+                            4, new Dictionary<int, Color>()
+                            {
+                                { (int)Note.DrumPad.Red, Color.red },
+                                { (int)Note.DrumPad.Yellow, Color.yellow },
+                                { (int)Note.DrumPad.Blue, Color.blue },
+                                { (int)Note.DrumPad.Orange, Color.green },
+                                { (int)Note.DrumPad.Green, Color.green },
+                                { (int)Note.DrumPad.Kick, Color.magenta },
+                            }
+                        }
+                    }
+                },
+            };
+
+
             flameMaterials = new Material[7];
             for (int i = 0; i < flameMaterials.Length; ++i)
             {
@@ -58,6 +120,43 @@ public class FireSyncronizer : MonoBehaviour {
                 }
             }
         }
+
+        EventsManager.onLanesChangedEventList.Add(OnLanesChanged);
+    }
+
+    void SetMaterialColours(Chart.GameMode gameMode, int laneCount)
+    {
+        Dictionary<int, Color> colorDict = GetColorDict(gameMode, laneCount);
+
+        foreach(var keyValue in colorDict)
+        {
+            flameMaterials[keyValue.Key].color = keyValue.Value;
+        }
+    }
+
+    void OnLanesChanged(int laneCount)
+    {
+        ChartEditor editor = ChartEditor.GetInstance();
+        SetMaterialColours(editor.currentGameMode, laneCount);
+    }
+
+    Dictionary<int, Color> GetColorDict(Chart.GameMode gameMode, int laneCount)
+    {
+        Dictionary<int, Color> colorDict;
+        Dictionary<int, Dictionary<int, Color>> laneOverrideDict;
+        if (gameModeColourDictLaneOverride.TryGetValue(gameMode, out laneOverrideDict))
+        {
+            
+            if (laneOverrideDict.TryGetValue(laneCount, out colorDict))
+            {
+                return colorDict;
+            }
+        }
+
+        if (gameModeColourDict.TryGetValue(gameMode, out colorDict))
+            return colorDict;
+
+        return null;        // Shouldn't ever be here
     }
 	
 	// Update is called once per frame
