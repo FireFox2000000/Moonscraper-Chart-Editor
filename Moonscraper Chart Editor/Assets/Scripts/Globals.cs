@@ -80,7 +80,7 @@ public class Globals : MonoBehaviour {
         _services = GetComponent<Services>();
 
 #if !UNITY_EDITOR
-        workingDirectory = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
+        workingDirectory = DirectoryHelper.GetMainDirectory();
 #else
         workingDirectory = Application.dataPath;
 #endif
