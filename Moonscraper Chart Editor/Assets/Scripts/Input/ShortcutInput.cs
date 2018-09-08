@@ -210,14 +210,17 @@ public static class ShortcutInput {
     delegate bool InputFn(KeyCode keyCode);
     static bool CheckInput(Shortcut key, InputFn InputFn)
     {
-        List<KeyCode> keyCodes;
-
-        if (TryGetKeyCodes(key, out keyCodes))
+        if (ChartEditor.hasFocus)
         {
-            foreach (KeyCode keyCode in keyCodes)
+            List<KeyCode> keyCodes;
+
+            if (TryGetKeyCodes(key, out keyCodes))
             {
-                if (InputFn(keyCode))
-                    return true;
+                foreach (KeyCode keyCode in keyCodes)
+                {
+                    if (InputFn(keyCode))
+                        return true;
+                }
             }
         }
 

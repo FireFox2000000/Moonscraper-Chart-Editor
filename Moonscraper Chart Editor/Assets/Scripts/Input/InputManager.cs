@@ -8,6 +8,6 @@ public class InputManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        mainGamepad.Update();
+        mainGamepad.Update(ChartEditor.hasFocus);
     }
 }

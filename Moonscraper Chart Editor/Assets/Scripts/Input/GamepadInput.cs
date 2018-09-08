@@ -42,29 +42,32 @@ public class GamepadInput {
         m_padIndex = padIndex;
     }
 
-    public void Update()
+    public void Update(bool hasFocus)
     {
         m_previousGamepadStateMaybe = m_currentGamepadStateMaybe;
         m_currentGamepadStateMaybe = null;
 
-        if (m_padIndex != null)
+        if (hasFocus)
         {
-            GamePadState testState = GamePad.GetState((PlayerIndex)m_padIndex);
-            if (testState.IsConnected)
+            if (m_padIndex != null)
             {
-                m_currentGamepadStateMaybe = testState;
-            }
-        }
-        // Get any input
-        else
-        {
-            for (int i = 0; i < 1; ++i)
-            {
-                GamePadState testState = GamePad.GetState((PlayerIndex)i);
+                GamePadState testState = GamePad.GetState((PlayerIndex)m_padIndex);
                 if (testState.IsConnected)
                 {
                     m_currentGamepadStateMaybe = testState;
-                    break;
+                }
+            }
+            // Get any input
+            else
+            {
+                for (int i = 0; i < 1; ++i)
+                {
+                    GamePadState testState = GamePad.GetState((PlayerIndex)i);
+                    if (testState.IsConnected)
+                    {
+                        m_currentGamepadStateMaybe = testState;
+                        break;
+                    }
                 }
             }
         }

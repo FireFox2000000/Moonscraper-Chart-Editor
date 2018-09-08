@@ -94,6 +94,7 @@ public class ChartEditor : MonoBehaviour {
 
     string lastLoadedFile = string.Empty;
     WindowHandleManager windowHandleManager;
+    public static bool hasFocus { get; private set; }
 
     public ActionHistory actionHistory;
     public SongObject currentSelectedObject
@@ -290,6 +291,7 @@ public class ChartEditor : MonoBehaviour {
     void OnApplicationFocus(bool hasFocus)
     {
         windowHandleManager.OnApplicationFocus(hasFocus);
+        ChartEditor.hasFocus = hasFocus;
     }
 
     static bool quitting = false;
