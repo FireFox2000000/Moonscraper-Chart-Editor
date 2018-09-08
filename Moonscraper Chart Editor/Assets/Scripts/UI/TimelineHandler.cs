@@ -94,6 +94,8 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         previousScreenSize.y = Screen.height;
 
         RefreshHighlightIndicator();
+
+        EventsManager.onChartReloadEventList.Add(QueueExternalUpdate);
     }
 
     int prevSectionLength = 0;
@@ -160,6 +162,11 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         prevRes = Screen.currentResolution;
 
         externalUpdate = false;
+    }
+
+    void QueueExternalUpdate()
+    {
+        externalUpdate = true;
     }
 
     IEnumerator UpdateSectionIndicator()
