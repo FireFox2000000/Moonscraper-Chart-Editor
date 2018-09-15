@@ -407,20 +407,20 @@ public class Note : ChartObject
 
     public class Chord : IEnumerable<Note>
     {
-        Note startNote;
+        Note baseNote;
         public Chord(Note note) : base()
         {
-            startNote = note;
-
-            while (startNote.previous != null && startNote.previous.tick == note.tick)
-            {
-                startNote = startNote.previous;
-            }
+            baseNote = note;
         }
 
         public IEnumerator<Note> GetEnumerator()
         {
-            Note note = startNote;
+            Note note = baseNote;
+
+            while (note.previous != null && note.previous.tick == note.tick)
+            {
+                note = note.previous;
+            }
 
             yield return note;
 
