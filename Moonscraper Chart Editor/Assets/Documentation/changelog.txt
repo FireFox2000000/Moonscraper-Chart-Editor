@@ -1,3 +1,7 @@
+v1.2.74
+	-Flames now correct colours in GHL and 4-lane drums mode
+	-Removed external library that may or may not have been causing crashes. Made unnessacary now anyway.
+
 v1.2.7
 	FIXES
 	-Fixed importing of lyrics also including command blacks being read as lyrics
@@ -21,6 +25,9 @@ v1.2.6
 	-UI draw call optimisation
 	-Re-allow free snapping time signatures. Hopefully idiots stay away from this. 
 	-Changed default clap sound
+	-Song data lookup cache now way faster and generates way less garbage allocation. 
+	-Lots of garbage optimisation
+	-Maybe fixed string corruption that was breaking the exporter menu
 
 	FIXES
 	-Fixed weird undo/redo bug with starpower
