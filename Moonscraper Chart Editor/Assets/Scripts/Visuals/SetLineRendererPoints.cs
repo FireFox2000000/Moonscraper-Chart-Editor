@@ -40,12 +40,12 @@ public class SetLineRendererPoints : MonoBehaviour {
 
     void SetPoints (int totalIterations)
     {
-        lineRen.numPositions = totalIterations + 1;
+        lineRen.positionCount = totalIterations + 1;
 
         float offset = (MAX - MIN) / (float)totalIterations;
 
         Vector3 pos = Vector3.zero;
-        Vector3[] positions = new Vector3[lineRen.numPositions];
+        Vector3[] positions = new Vector3[lineRen.positionCount];
 
         for (int i = 0; i < totalIterations; ++i)
         {

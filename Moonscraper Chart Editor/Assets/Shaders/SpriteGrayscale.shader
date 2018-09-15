@@ -1,4 +1,6 @@
-﻿// https://forum.unity3d.com/threads/sprite-shader-with-greyscale.222693/
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// https://forum.unity3d.com/threads/sprite-shader-with-greyscale.222693/
 
 Shader "Sprites/GrayScale"
 {
@@ -54,7 +56,7 @@ Shader "Sprites/GrayScale"
 	v2f vert(appdata_t IN)
 	{
 		v2f OUT;
-		OUT.vertex = mul(UNITY_MATRIX_MVP, IN.vertex);
+		OUT.vertex = UnityObjectToClipPos(IN.vertex);
 		OUT.texcoord = IN.texcoord;
 		OUT.color = IN.color * _Color;
 #ifdef PIXELSNAP_ON

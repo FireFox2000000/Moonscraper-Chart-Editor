@@ -1,4 +1,6 @@
-﻿Shader "MK/MKGlow/Cutout/SoftEdgeUnlit" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "MK/MKGlow/Cutout/SoftEdgeUnlit" {
 Properties {
 	_Color ("Main Color", Color) = (1, 1, 1, 1)
 	_MainTex ("Base (RGB) Alpha (A)", 2D) = "white" {}
@@ -51,7 +53,7 @@ SubShader {
 			v2f vert (appdata_t v)
 			{
 				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.color = v.color;
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 				return o;
@@ -105,7 +107,7 @@ SubShader {
 			v2f vert (appdata_t v)
 			{
 				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.color = v.color;
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 				return o;

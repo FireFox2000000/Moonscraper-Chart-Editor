@@ -1,11 +1,15 @@
-v1.2.74
-	-Flames now correct colours in GHL and 4-lane drums mode
-	-Removed external library that may or may not have been causing crashes. Made unnessacary now anyway.
+v1.2.8
+	-Updated engine to Unity 5.6.6
+	-Fixed song name display text not updating when editing song properties
+	-Fixed starpower indicators not always updating when switching instrument/difficulty
+	-Now blocking input when window isn't in focus
 
 v1.2.7
 	FIXES
 	-Fixed importing of lyrics also including command blacks being read as lyrics
 	-Fixed shortcut input not being able to right-ctrl as an alternate to left-ctrl
+	-Flames now correct colours in GHL and 4-lane drums mode
+	-Removed external library that may or may not have been causing crashes. Made unnessacary now anyway.
 
 v1.2.6
 	NEW FEATURES

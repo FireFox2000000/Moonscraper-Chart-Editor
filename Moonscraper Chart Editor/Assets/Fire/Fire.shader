@@ -1,4 +1,6 @@
-﻿// Shader found at- https://github.com/robertcupisz/fire
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Shader found at- https://github.com/robertcupisz/fire
 
 Shader "Fire" {
 Properties
@@ -50,7 +52,7 @@ float4x4 _CameraToLocal;
 v2f vert (float4 vertex : POSITION)
 {
 	v2f o;
-	o.pos = mul(UNITY_MATRIX_MVP, vertex);
+	o.pos = UnityObjectToClipPos(vertex);
 	o.localPos = vertex.xyz / _Scale.xyz;
 
 #if _DEPTH_AWARE_ON

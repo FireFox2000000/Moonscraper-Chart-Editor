@@ -1,4 +1,6 @@
-﻿Shader "Hidden/MKGlowRender"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Hidden/MKGlowRender"
 {
 	SubShader 
 	{
@@ -38,7 +40,7 @@
 			Output vert (Input i)
 			{
 				Output o;
-				o.pos = mul (UNITY_MATRIX_MVP, i.vertex);
+				o.pos = UnityObjectToClipPos (i.vertex);
 				o.uv = i.texcoord;
 				return o;
 			}
@@ -79,7 +81,7 @@
 			Output vert (Input i)
 			{
 				Output o;
-				o.pos = mul (UNITY_MATRIX_MVP, i.vertex);
+				o.pos = UnityObjectToClipPos (i.vertex);
 				o.uv = i.texcoord;
 				return o;
 			}
@@ -121,7 +123,7 @@
 			Output vert (Input i)
 			{
 				Output o;
-				o.pos = mul (UNITY_MATRIX_MVP, i.vertex);
+				o.pos = UnityObjectToClipPos (i.vertex);
 				o.uv = i.texcoord;
 				return o;
 			}
@@ -167,7 +169,7 @@
 			Output vert (Input i)
 			{
 				Output o;
-				o.pos = mul (UNITY_MATRIX_MVP, i.vertex);
+				o.pos = UnityObjectToClipPos (i.vertex);
 				o.uv = i.texcoord;
 				return o;
 			}

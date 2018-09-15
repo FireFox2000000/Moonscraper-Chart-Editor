@@ -1,4 +1,6 @@
-﻿Shader "Hidden/MKGlowBlurVHP"
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Hidden/MKGlowBlurVHP"
 {
 	Properties{_Color ("", Color) = (1,1,1,1)}
 
@@ -41,7 +43,7 @@
 			{
 				Output o;
 
-				o.pos = mul(UNITY_MATRIX_MVP, i.vertex);
+				o.pos = UnityObjectToClipPos(i.vertex);
 				o.uv = i.texcoord;
 				o.off = _MainTex_TexelSize.x * _Shift;
 				return o;
@@ -97,7 +99,7 @@
 			{
 				Output o;
 
-				o.pos = mul(UNITY_MATRIX_MVP, i.vertex);
+				o.pos = UnityObjectToClipPos(i.vertex);
 				o.uv = i.texcoord;
 				o.off = _MainTex_TexelSize.y * _Shift;
 				return o;

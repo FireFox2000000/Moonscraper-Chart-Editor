@@ -15,11 +15,6 @@ public class UIHoverBar : UpdateableService {
     bool inUIBar = false;
     bool mouseUpBlock = false;
 
-    private void Start()
-    {
-        ChartEditor.GetInstance().globals.services.RegisterUpdateableService(this);
-    }
-
     // Update is called once per frame
     public override void OnServiceUpdate() {
         bool menuBarObjectUnderMouse = false;

@@ -72,7 +72,7 @@ public class WaveformDraw : MonoBehaviour {
         }
         else
         {
-            lineRen.numPositions = 0;
+            lineRen.positionCount = 0;
             lineRen.enabled = false;
         }
     }
@@ -116,7 +116,7 @@ public class WaveformDraw : MonoBehaviour {
             points[i - startPos] = point;
         }
 
-        lineRen.numPositions = points.Length;
+        lineRen.positionCount = points.Length;
         lineRen.SetPositions(points);
     }
 
