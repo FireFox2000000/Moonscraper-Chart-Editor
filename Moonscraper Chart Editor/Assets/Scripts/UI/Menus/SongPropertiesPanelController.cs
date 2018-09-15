@@ -84,7 +84,12 @@ public class SongPropertiesPanelController : DisplayMenu {
             Song song = editor.currentSong;
             Metadata metaData = song.metaData;
 
-            song.name = songName.text;
+            if (!song.name.Equals(songName.text))
+            {
+                song.name = songName.text;
+                ChartEditor.GetInstance().uiServices.editorPanels.displayProperties.UpdateSongNameText();
+            }
+
             metaData.artist = artist.text;
             metaData.charter = charter.text;
             metaData.album = album.text;

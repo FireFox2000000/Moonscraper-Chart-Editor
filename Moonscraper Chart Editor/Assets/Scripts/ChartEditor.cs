@@ -164,6 +164,9 @@ public class ChartEditor : MonoBehaviour {
         }
     }
 
+    public Services services { get { return globals.services; } }
+    public UIServices uiServices { get { return services.uiServices; } }
+
     // Use this for initialization
     void Awake () {
         Debug.Log("Initialising " + versionNumber.text);

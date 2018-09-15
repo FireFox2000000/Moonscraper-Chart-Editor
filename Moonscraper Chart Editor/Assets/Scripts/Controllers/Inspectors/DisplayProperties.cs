@@ -67,6 +67,11 @@ public class DisplayProperties : UpdateableService
 
     void OnChartReload()
     {
+        UpdateSongNameText();
+    }
+
+    public void UpdateSongNameText()
+    {
         songNameText.text = editor.currentSong.name + " - " + editor.currentChart.name;
     }
 

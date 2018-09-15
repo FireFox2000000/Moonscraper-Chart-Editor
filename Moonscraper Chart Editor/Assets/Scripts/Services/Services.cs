@@ -22,6 +22,7 @@ public class Services : MonoBehaviour
     [Header("UI Services")]
     public DropdownNotification notificationBar;
     public ToolPanelController toolpanelController;
+    public UIServices uiServices;
 
     Rect toolScreenArea;
     public static bool IsInDropDown = false;
