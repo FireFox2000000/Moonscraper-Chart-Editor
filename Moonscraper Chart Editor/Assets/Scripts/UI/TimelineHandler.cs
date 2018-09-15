@@ -223,12 +223,12 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
     public void OnDrag(PointerEventData eventData)
     {
-        moveHandle(eventData);
+        MoveHandle(eventData);
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        moveHandle(eventData);
+        MoveHandle(eventData);
     }
 
     SectionGuiController CreateSectionIndicator()
@@ -257,13 +257,13 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         return indicator;
     }
 
-    void moveHandle(PointerEventData eventData)
+    void MoveHandle(PointerEventData eventData)
     {
         movement.editor.Stop();
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
             Vector3 pos = handle.transform.position;
-            pos.y = eventData.position.y;
+            pos.y = editor.uiServices.uiCamera.ScreenToWorldPoint(eventData.position).y;        
 
             if (pos.y > transform.position.y + scaledHalfHeight)
             {
