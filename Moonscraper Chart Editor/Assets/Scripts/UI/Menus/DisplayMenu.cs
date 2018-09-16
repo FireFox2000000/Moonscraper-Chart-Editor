@@ -20,7 +20,7 @@ public class DisplayMenu : MonoBehaviour {
     {
         MovementController.cancel = true;
 
-        if (Input.GetButtonDown("CloseMenu") || (Input.GetMouseButtonDown(0) && !RectTransformUtility.RectangleContainsScreenPoint(mouseArea, Input.mousePosition)))
+        if (Input.GetButtonDown("CloseMenu") || (Input.GetMouseButtonDown(0) && !RectTransformUtility.RectangleContainsScreenPoint(mouseArea, editor.uiServices.GetUIMousePosition())))
             Disable();
     }
 

@@ -43,8 +43,7 @@ public class Services : MonoBehaviour
     {
         get
         {
-            Camera uiCamera = uiServices.uiCamera;
-            Vector2 mousePosition = uiCamera.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 mousePosition = uiServices.GetUIMousePosition();
 
             if (mousePosition.x < toolScreenArea.xMin ||
                     mousePosition.x > toolScreenArea.xMax ||

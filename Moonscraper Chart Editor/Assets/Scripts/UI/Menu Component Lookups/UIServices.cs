@@ -14,4 +14,9 @@ public class UIServices : MonoBehaviour {
 
         Debug.Assert(editorPanels, "Unable to locate Editor Panels script");
     }
+
+    public Vector2 GetUIMousePosition()
+    {
+        return uiCamera.ScreenToWorldPoint(Input.mousePosition);
+    }
 }
