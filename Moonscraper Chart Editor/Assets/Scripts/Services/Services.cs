@@ -43,10 +43,13 @@ public class Services : MonoBehaviour
     {
         get
         {
-            if (Input.mousePosition.x < toolScreenArea.xMin ||
-                    Input.mousePosition.x > toolScreenArea.xMax ||
-                    Input.mousePosition.y < toolScreenArea.yMin ||
-                    Input.mousePosition.y > toolScreenArea.yMax)
+            Camera uiCamera = uiServices.uiCamera;
+            Vector2 mousePosition = uiCamera.ScreenToWorldPoint(Input.mousePosition);
+
+            if (mousePosition.x < toolScreenArea.xMin ||
+                    mousePosition.x > toolScreenArea.xMax ||
+                    mousePosition.y < toolScreenArea.yMin ||
+                    mousePosition.y > toolScreenArea.yMax)
                 return false;
             else
                 return true;
