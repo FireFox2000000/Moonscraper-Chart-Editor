@@ -10,7 +10,7 @@ Shader "Custom/SpriteBillboarding"
 	{
 		Tags
 		{
-			"Queue" = "Transparent"
+			"Queue" = "Geometry"
 			"SortingLayer" = "Resources_Sprites"
 			"IgnoreProjector" = "True"
 			"RenderType" = "Transparent"
