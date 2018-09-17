@@ -17,7 +17,11 @@ Shader "Unlit/VerticalAlphaFadeVariable"
 
 	SubShader
 	{
-		Tags{ "Queue" = "Transparent" }
+		Tags
+		{ 
+			"Queue" = "Geometry" 
+			"RenderType" = "Geometry" 
+		}
 		Lighting Off
 		ZWrite Off
 		Blend SrcAlpha OneMinusSrcAlpha
@@ -65,17 +69,10 @@ Shader "Unlit/VerticalAlphaFadeVariable"
                 // Apply blending
                 main_col = lerp(main_col, secondary_col, _Blend);
 		
-				if (i.uv.y < _HeightPosition - _Spread / 2.0f)
-					main_col.a = 0;
-				else if (i.uv.y > _HeightPosition + _Spread / 2.0f)
-					main_col.a = 1;
-				else
-				{
-					// Fade alpha
-					float spread_min = _HeightPosition - _Spread / 2.0f;
-					float pix_pos = i.uv.y;
-					main_col.a = (pix_pos - spread_min) / _Spread;
-				}
+				// Fade alpha
+				float spread_min = _HeightPosition - _Spread / 2.0f;
+				float pix_pos = i.uv.y;
+				main_col.a = (pix_pos - spread_min) / _Spread;
 
 				return main_col;
 			}

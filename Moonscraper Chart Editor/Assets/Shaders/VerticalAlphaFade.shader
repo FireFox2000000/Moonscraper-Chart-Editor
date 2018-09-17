@@ -10,7 +10,11 @@ Shader "Unlit/VerticalAlphaFade"
 	}
 		SubShader
 	{
-		Tags{ "Queue" = "Transparent" }
+		Tags
+		{ 
+			"Queue" = "Geometry" 
+			"RenderType" = "Geometry" 
+		}
 		Lighting Off
 		ZWrite Off
 		Blend Zero OneMinusSrcAlpha
