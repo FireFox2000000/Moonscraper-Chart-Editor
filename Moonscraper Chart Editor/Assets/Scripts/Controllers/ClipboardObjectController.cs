@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 using System.IO;
 
 public class ClipboardObjectController : Snapable {
-    static string CLIPBOARD_FILE_LOCATION;
+    public static string CLIPBOARD_FILE_LOCATION { get; private set; }
 
     public GroupSelect groupSelectTool;
     public Transform strikeline;
