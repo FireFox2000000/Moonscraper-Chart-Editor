@@ -21,9 +21,12 @@ Shader "Unlit/VerticalAlphaFadeVariable"
 		{ 
 			"Queue" = "Geometry" 
 			"RenderType" = "Geometry" 
+			"IgnoreProjector" = "True"
 		}
 		Lighting Off
 		ZWrite Off
+		Cull Off
+		ZTest[unity_GUIZTestMode]
 		Blend SrcAlpha OneMinusSrcAlpha
 		AlphaTest GEqual[_Cutoff]
 
