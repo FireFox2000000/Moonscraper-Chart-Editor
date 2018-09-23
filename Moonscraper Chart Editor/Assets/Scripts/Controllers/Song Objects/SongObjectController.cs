@@ -129,7 +129,14 @@ public abstract class SongObjectController : SelectableClick {
                             max = songObject.tick;
                         }
 
-                        editor.currentSelectedObjects = SongObjectHelper.GetRangeCopy(editor.currentChart.chartObjects, min, max);
+                        var chartObjects = editor.currentChart.chartObjects;
+                        int index, length;
+                        SongObjectHelper.GetRange(chartObjects, min, max, out index, out length);
+                        editor.currentSelectedObjects.Clear();
+                        for (int i = index; i < index + length; ++i)
+                        {
+                            editor.currentSelectedObjects.Add(chartObjects[i]);
+                        }
                     }
                 }
             }

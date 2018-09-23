@@ -74,7 +74,7 @@ public class CursorSelect : ToolObject
             }
 
             // Dragging mouse for group move
-            else if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && editor.currentSelectedObjects.Length > 0 && clickedSelectableObject && !mouseDownOverUI &&
+            else if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && editor.currentSelectedObjects.Count > 0 && clickedSelectableObject && !mouseDownOverUI &&
                 !Globals.modifierInputActive && !Globals.secondaryInputActive)
             {
                 // Find anchor point
@@ -82,7 +82,7 @@ public class CursorSelect : ToolObject
 
                 if (clickedSelectableObject)
                 {
-                    for (int i = 0; i < editor.currentSelectedObjects.Length; ++i)
+                    for (int i = 0; i < editor.currentSelectedObjects.Count; ++i)
                     {
                         if (editor.currentSelectedObjects[i].controller != null && editor.currentSelectedObjects[i].controller.gameObject == clickedSelectableObject)
                         {

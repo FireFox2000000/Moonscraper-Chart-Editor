@@ -162,7 +162,7 @@ public class GroupMove : ToolObject
             }     
         }
 
-        editor.currentSelectedObjects = movingSongObjects.ToArray();
+        editor.currentSelectedObjects = movingSongObjects;
 
         if (moved)
         {
@@ -208,14 +208,13 @@ public class GroupMove : ToolObject
         SetSongObjects(new SongObject[] { songObject }, 0);
     }
 
-    public void SetSongObjects(SongObject[] songObjects, int anchorArrayPos, bool delete = false)
+    public void SetSongObjects(IList<SongObject> songObjects, int anchorArrayPos, bool delete = false)
     {
         if (Mouse.world2DPosition != null)
             initMousePos = (Vector2)Mouse.world2DPosition;
         else
             initMousePos = Vector2.zero;
 
-        editor.currentSelectedObject = null;
         Reset();
 
         this.anchorArrayPos = anchorArrayPos;
@@ -228,7 +227,7 @@ public class GroupMove : ToolObject
         initObjectSnappedChartPos = objectSnappedChartPos;
 
         int lastNotePos = -1;
-        for (int i = 0; i < songObjects.Length; ++i)
+        for (int i = 0; i < songObjects.Count; ++i)
         {
             //originalSongObjects[i] = songObjects[i];
             movingSongObjects.Add(songObjects[i].Clone());
@@ -271,6 +270,8 @@ public class GroupMove : ToolObject
         timeSignaturesToEnable.AddRange(movingSongObjects.OfType<TimeSignature>().ToArray());
         sectionsToEnable.AddRange(movingSongObjects.OfType<Section>().ToArray());
         eventsToEnable.AddRange(movingSongObjects.OfType<Event>().ToArray());
+
+        editor.currentSelectedObject = null;
     }
 
     public override void ToolDisable()

@@ -219,7 +219,7 @@ public class Globals : MonoBehaviour {
         else if (ShortcutInput.GetInputDown(Shortcut.StepDecrease))
             GameSettings.snappingStep.Decrement();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.Delete) && editor.currentSelectedObjects.Length > 0)
+        else if (ShortcutInput.GetInputDown(Shortcut.Delete) && editor.currentSelectedObjects.Count > 0)
             editor.Delete();
 
         else if (ShortcutInput.GetInputDown(Shortcut.ToggleMetronome))
@@ -283,7 +283,7 @@ public class Globals : MonoBehaviour {
             }
         }
 
-        if (editor.currentSelectedObjects.Length > 0)
+        if (editor.currentSelectedObjects.Count > 0)
         {
             if (ShortcutInput.GetInputDown(Shortcut.ClipboardCut))
                 editor.Cut();

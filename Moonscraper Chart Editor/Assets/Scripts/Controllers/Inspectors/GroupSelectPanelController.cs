@@ -90,10 +90,10 @@ public class GroupSelectPanelController : MonoBehaviour
         editor.currentChart.UpdateCache();
 
         if (actions.Count > 0)
-            editor.actionHistory.Insert(actions.ToArray());
+            editor.actionHistory.Insert(actions);
 
         ChartEditor.isDirty = true;
-        editor.currentSelectedObjects = selected.ToArray();
+        editor.SetCurrentSelectedObjects(selected);
     }
 
     public void SetZeroSustain()

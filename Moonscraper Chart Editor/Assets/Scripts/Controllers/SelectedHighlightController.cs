@@ -2,7 +2,7 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class SelectedHighlightController : MonoBehaviour {
     public GameObject selectedHighlight;
@@ -28,7 +28,7 @@ public class SelectedHighlightController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         int index, length;
-        SongObject[] viewRange = editor.currentSelectedObjects;
+        IList<SongObject> viewRange = editor.currentSelectedObjects;
         SongObjectHelper.GetRange(viewRange, editor.minPos, editor.maxPos, out index, out length);
 
         bool showHighlight = (Globals.applicationMode != Globals.ApplicationMode.Playing &&

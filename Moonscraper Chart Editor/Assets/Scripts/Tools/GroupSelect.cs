@@ -39,7 +39,7 @@ public class GroupSelect : ToolObject {
 
     public override void ToolDisable()
     {
-        editor.currentSelectedObjects = data.ToArray();
+        editor.SetCurrentSelectedObjects(data);
 
         reset();
         selectedArea.gameObject.SetActive(false);
@@ -172,7 +172,7 @@ public class GroupSelect : ToolObject {
         prevSong = editor.currentSong;
         prevChart = editor.currentChart;
 
-        editor.currentSelectedObjects = data.ToArray();
+        editor.SetCurrentSelectedObjects(data);
     }
 
     void UpdateSelectionAreaVisual(Transform areaTransform, Vector2 initWorld2DPos, Vector2 endWorld2DPos)

@@ -38,7 +38,7 @@ public class InspectorSwitching : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if ((Toolpane.currentTool == Toolpane.Tools.GroupSelect || Toolpane.currentTool == Toolpane.Tools.Cursor) && editor.currentSelectedObjects.Length > 1)
+        if ((Toolpane.currentTool == Toolpane.Tools.GroupSelect || Toolpane.currentTool == Toolpane.Tools.Cursor) && editor.currentSelectedObjects.Count > 1)
         {
             if (!currentPropertiesPanel || currentPropertiesPanel != groupSelectInspector)
             {

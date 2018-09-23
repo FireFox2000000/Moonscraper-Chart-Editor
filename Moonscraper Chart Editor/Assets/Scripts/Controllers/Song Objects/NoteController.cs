@@ -76,14 +76,21 @@ public class NoteController : SongObjectController {
                         max = songObject.tick;
                     }
 
-                    editor.currentSelectedObjects = SongObjectHelper.GetRangeCopy(editor.currentChart.chartObjects, min, max);
+                    var chartObjects = editor.currentChart.chartObjects;
+                    int index, length;
+                    SongObjectHelper.GetRange(chartObjects, min, max, out index, out length);
+                    editor.currentSelectedObjects.Clear();
+                    for (int i = index; i < index + length; ++i)
+                    {
+                        editor.currentSelectedObjects.Add(chartObjects[i]);
+                    }
                 }
             }
             // Regular clicking
             else if (!editor.IsSelected(songObject))
             {
                 if (ShortcutInput.GetInput(Shortcut.ChordSelect))
-                    editor.currentSelectedObjects = note.GetChord();
+                    editor.SetCurrentSelectedObjects(note.chord);
                 else
                     editor.currentSelectedObject = songObject;
             }

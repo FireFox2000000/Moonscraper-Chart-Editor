@@ -322,7 +322,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         if (!editor)
             return;
 
-        if (editor.currentSelectedObjects.Length > 0)
+        if (editor.currentSelectedObjects.Count > 0)
         {
             uint highlightRangeMin = uint.MaxValue, highlightRangeMax = 0;
 

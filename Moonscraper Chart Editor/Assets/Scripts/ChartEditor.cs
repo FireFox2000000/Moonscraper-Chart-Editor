@@ -8,6 +8,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
 using Un4seen.Bass;
@@ -101,27 +102,26 @@ public class ChartEditor : MonoBehaviour {
     {
         get
         {
-            if (currentSelectedObjects.Length == 1)
+            if (currentSelectedObjects.Count == 1)
                 return currentSelectedObjects[0];
             else
                 return null;
         }
         set
         {
-            if (value == null)
+            currentSelectedObjects.Clear();
+            if (value != null)
             {
-                currentSelectedObjects = new SongObject[0];
+                currentSelectedObjects.Add(value);
             }
-            else
-                currentSelectedObjects = new SongObject[] { value };
 
             timeHandler.RefreshHighlightIndicator();
         }
     }
 
 
-    SongObject[] m_currentSelectedObjects = new SongObject[0];
-    public SongObject[] currentSelectedObjects
+    List<SongObject> m_currentSelectedObjects = new List<SongObject>();
+    public IList<SongObject> currentSelectedObjects
     {
         get
         {
@@ -129,9 +129,15 @@ public class ChartEditor : MonoBehaviour {
         }
         set
         {
-            m_currentSelectedObjects = value;
+            SetCurrentSelectedObjects(value);
             timeHandler.RefreshHighlightIndicator();
         }
+    }
+
+    public void SetCurrentSelectedObjects<T>(IEnumerable<T> list) where T : SongObject
+    {
+        m_currentSelectedObjects.Clear();
+        m_currentSelectedObjects.AddRange((IEnumerable<SongObject>)list);
     }
 
     public uint currentTickPos {
@@ -867,7 +873,7 @@ public class ChartEditor : MonoBehaviour {
     }
 
     bool cancel;
-    SongObject[] selectedBeforePlay = new SongObject[0];
+    IList<SongObject> selectedBeforePlay = new List<SongObject>();
     public void Play()
     {
         selectedBeforePlay = currentSelectedObjects;
@@ -947,7 +953,7 @@ public class ChartEditor : MonoBehaviour {
         if (stopResetPos != null)
             movement.transform.position = (Vector3)stopResetPos;
 
-        if (selectedBeforePlay.Length > 0)
+        if (selectedBeforePlay.Count > 0)
         {
             // Check if the user switched view modes while playing
             if (Globals.viewMode == Globals.ViewMode.Chart)
@@ -997,7 +1003,7 @@ public class ChartEditor : MonoBehaviour {
             }
         }
 
-        currentSelectedObjects = selectedObjectsList.ToArray();
+        currentSelectedObjects = selectedObjectsList;
     }
 
     public void RemoveFromSelectedObjects(SongObject songObjects)
@@ -1014,7 +1020,7 @@ public class ChartEditor : MonoBehaviour {
             selectedObjectsList.Remove(songObject);
         }
 
-        currentSelectedObjects = selectedObjectsList.ToArray();
+        currentSelectedObjects = selectedObjectsList;
     }
 
     public void AddOrRemoveSelectedObjects(System.Collections.Generic.IEnumerable<SongObject> songObjects)
@@ -1058,14 +1064,14 @@ public class ChartEditor : MonoBehaviour {
         const float DEFAULT_LEFT = -2;
         const float DEFAULT_RIGHT = 2;
 
-        var songObjectsCopy = new SongObject[currentSelectedObjects.Length];
+        var songObjectsCopy = new SongObject[currentSelectedObjects.Count];
         float? left = null, right = null;
         float position = 0;
 
         bool containsNotes = false;
 
         // Scan through all the current objects to determine width of scanned area
-        for (int i = 0; i < currentSelectedObjects.Length; ++i)
+        for (int i = 0; i < currentSelectedObjects.Count; ++i)
         {
             if (!containsNotes && currentSelectedObjects[i].GetType() == typeof(Note))
                 containsNotes = true;
@@ -1099,7 +1105,7 @@ public class ChartEditor : MonoBehaviour {
         Vector2 upperRight = Vector2.zero;
         var area = new Clipboard.SelectionArea();
 
-        if (currentSelectedObjects.Length > 0)
+        if (currentSelectedObjects.Count > 0)
         {
             bottomLeft = new Vector2((float)left, currentSong.TickToWorldYPosition(songObjectsCopy[0].tick));
             upperRight = new Vector2((float)right, currentSong.TickToWorldYPosition(songObjectsCopy[songObjectsCopy.Length - 1].tick));
@@ -1111,7 +1117,7 @@ public class ChartEditor : MonoBehaviour {
 
     public void Delete()
     {
-        if (currentSelectedObjects.Length > 0)
+        if (currentSelectedObjects.Count > 0)
         {
             actionHistory.Insert(new ActionHistory.Delete(currentSelectedObjects));
 
