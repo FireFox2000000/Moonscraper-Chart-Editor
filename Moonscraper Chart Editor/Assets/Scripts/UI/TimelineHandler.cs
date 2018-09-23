@@ -30,6 +30,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
     ChartEditor editor;
     Vector2 previousScreenSize = Vector2.zero;
+    int previousPercentageValue = 0;
 
     // Value between 0 and 1
     public float handlePosRound
@@ -96,6 +97,8 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         RefreshHighlightIndicator();
 
         EventsManager.onChartReloadEventList.Add(QueueExternalUpdate);
+
+        UpdatePercentageText(0);
     }
 
     int prevSectionLength = 0;
@@ -110,7 +113,11 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         halfHeight = rectTransform.rect.height / 2.0f;
         scaledHalfHeight = halfHeight * transform.lossyScale.y;
 
-        percentage.text = ((int)(handlePosRound * 100)).ToString() + "%";
+        int newPercentageValue = (int)(handlePosRound * 100);
+        if (previousPercentageValue != newPercentageValue)
+        {
+            UpdatePercentageText(newPercentageValue);
+        }
 
         bool update = (!ReferenceEquals(prevSong, editor.currentSong) || prevSongLength != editor.currentSong.length
              || previousScreenSize.x != Screen.width || previousScreenSize.y != Screen.height || 
@@ -162,6 +169,12 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         prevRes = Screen.currentResolution;
 
         externalUpdate = false;
+    }
+
+    void UpdatePercentageText(int newValue)
+    {
+        percentage.text = newValue.ToString() + "%";
+        previousPercentageValue = newValue;
     }
 
     void QueueExternalUpdate()

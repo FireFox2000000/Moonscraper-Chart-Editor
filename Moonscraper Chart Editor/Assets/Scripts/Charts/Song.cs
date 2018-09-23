@@ -466,8 +466,9 @@ public class Song {
         BPM prevBPM = bpms[0];
 
         // Search for the last bpm
-        foreach (BPM bpmInfo in bpms)
+        for (int i = 0; i < bpms.Count; ++i)
         {
+            BPM bpmInfo = bpms[i];
             if (bpmInfo.assignedTime >= time)
                 break;
             else
@@ -875,12 +876,12 @@ public class SongObjectCache<T> : IList<T>, IEnumerable<T> where T : SongObject
 
     public void Add(T item)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     public void Clear()
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     public bool Contains(T item)
@@ -905,17 +906,17 @@ public class SongObjectCache<T> : IList<T>, IEnumerable<T> where T : SongObject
 
     public void Insert(int index, T item)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     public bool Remove(T item)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     public void RemoveAt(int index)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
@@ -926,6 +927,11 @@ public class SongObjectCache<T> : IList<T>, IEnumerable<T> where T : SongObject
     public List<T> EditCache()
     {
         return cache;
+    }
+
+    public T[] ToArray()
+    {
+        return cache.ToArray();
     }
 }
 
