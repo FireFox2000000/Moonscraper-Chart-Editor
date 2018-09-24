@@ -98,7 +98,7 @@ public static class FileExplorer  {
         string filename = string.Empty;
         defaultFileName = new string(defaultFileName.ToCharArray());
 
-        string invalidFileChars = "!@#$%^&*\"\'<>\\/:|";
+        string invalidFileChars = "!@#$%^&*\"\'<>\\/:|?";
         foreach (char c in invalidFileChars)
         {
             defaultFileName = defaultFileName.Replace(c.ToString(), "");
