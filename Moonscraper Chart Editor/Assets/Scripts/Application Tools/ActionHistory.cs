@@ -10,7 +10,7 @@ public class ActionHistory
 {
     public const float ACTION_WINDOW_TIME = 0.2f;
     int historyPoint;
-    List<IList<Action>> actionList;
+    List<Action[]> actionList;
     List<float> timestamps;
 
     public bool canUndo { get { return historyPoint >= 0; } }
@@ -18,14 +18,14 @@ public class ActionHistory
 
     public ActionHistory()
     {
-        actionList = new List<IList<Action>>();
+        actionList = new List<Action[]>();
         timestamps = new List<float>();
         historyPoint = -1;
     }
 
-    public void Insert(IList<Action> action, float timeStampOffset = 0)
+    public void Insert(Action[] action, float timeStampOffset = 0)
     {
-        if (action.Count > 0)
+        if (action.Length > 0)
         {
             // Clear all actions above the history point
             actionList.RemoveRange(historyPoint + 1, actionList.Count - (historyPoint + 1));
@@ -55,7 +55,7 @@ public class ActionHistory
             SongObject setPos = null;
             while (historyPoint >= 0 && Mathf.Abs(timestamps[historyPoint] - frame) < ACTION_WINDOW_TIME)
             {
-                for (int i = actionList[historyPoint].Count - 1; i >= 0; --i)
+                for (int i = actionList[historyPoint].Length - 1; i >= 0; --i)
                 {
                     setPos = actionList[historyPoint][i].Revoke(editor);
                     ++actionsUndone;
@@ -102,7 +102,7 @@ public class ActionHistory
             while (historyPoint + 1 < actionList.Count && Mathf.Abs(timestamps[historyPoint + 1] - frame) < ACTION_WINDOW_TIME)
             {
                 ++historyPoint;
-                for (int i = 0; i < actionList[historyPoint].Count; ++i)
+                for (int i = 0; i < actionList[historyPoint].Length; ++i)
                 {
                     setPos = actionList[historyPoint][i].Invoke(editor);
                     ++actionsUndone;
@@ -129,7 +129,7 @@ public class ActionHistory
 
     public abstract class Action
     {
-        protected IList<SongObject> songObjects;
+        protected SongObject[] songObjects;
 
         protected Action(IList<SongObject> _songObjects)
         {
@@ -141,6 +141,10 @@ public class ActionHistory
             }
         }
 
+        protected Action(SongObject _songObject) : this(new SongObject[] { _songObject })
+        {
+        }
+
         public abstract SongObject Revoke(ChartEditor editor);
         public abstract SongObject Invoke(ChartEditor editor);
     }
@@ -148,7 +152,7 @@ public class ActionHistory
     public class Add : Action
     {
         public Add(IList<SongObject> songObjects) : base(songObjects) { }
-        public Add(SongObject songObjects) : base(new SongObject[] { songObjects }) { }
+        public Add(SongObject songObject) : base(songObject) { }
 
         public override SongObject Invoke(ChartEditor editor)
         {
@@ -180,7 +184,7 @@ public class ActionHistory
     public class Delete : Action
     {
         public Delete(IList<SongObject> songObjects) : base(songObjects) { }
-        public Delete(SongObject songObjects) : base(new SongObject[] { songObjects }) { }
+        public Delete(SongObject songObject) : base(songObject) { }
 
         public override SongObject Invoke(ChartEditor editor)
         {
