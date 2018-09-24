@@ -80,6 +80,7 @@ public static class FileExplorer  {
         {
             --m_filePanelsRefCount;
             UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
+            UnityEngine.Debug.Log("Extend Error Code: " + (CommonDialogBox.ErrorCodes)CommonDialogBox.CommDlgExtendedError());
             throw new FileExplorerExitException("Could not open file");
         }
 #endif
@@ -150,6 +151,7 @@ public static class FileExplorer  {
         {
             --m_filePanelsRefCount;
             UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
+            UnityEngine.Debug.Log("Extend Error Code: " + (CommonDialogBox.ErrorCodes)CommonDialogBox.CommDlgExtendedError());
             throw new FileExplorerExitException("Could not open file");
         }
 #endif
