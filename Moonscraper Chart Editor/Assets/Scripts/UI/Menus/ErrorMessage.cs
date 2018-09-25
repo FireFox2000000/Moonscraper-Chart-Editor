@@ -7,11 +7,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class ErrorMessage : DisplayMenu {
-    public static string errorMessage = "No error";
+    public string errorMessage = "No error";
     public Text errorText;
-	
-	// Update is called once per frame
-	protected override void Update () {
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
         errorText.text = errorMessage;
-	}
+    }
 }

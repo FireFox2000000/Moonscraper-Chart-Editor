@@ -51,7 +51,8 @@ public class ChartEditor : MonoBehaviour {
     public Transform mouseYMaxLimit;
     public Transform mouseYMinLimit;
     public LoadingScreenFader loadingScreen;
-    public ErrorMessage errorMenu;
+    [SerializeField]
+    ErrorMessage errorMenu;
     public Indicators indicators;               // Cancels hit animations upon stopping playback
     [SerializeField]
     GroupSelect groupSelect;
@@ -95,6 +96,7 @@ public class ChartEditor : MonoBehaviour {
 
     string lastLoadedFile = string.Empty;
     WindowHandleManager windowHandleManager;
+    public ErrorManager errorManager;
     public static bool hasFocus { get { return Application.isFocused; } }
 
     public ActionHistory actionHistory;
@@ -223,19 +225,6 @@ public class ChartEditor : MonoBehaviour {
 #endif
     }
 
-    public bool SaveErrorCheck()
-    {
-        bool saveError = currentSong.saveError;
-        if (currentSong.saveError)
-        {
-            Debug.Log("Save error detected, opening up error menu");
-            errorMenu.gameObject.SetActive(true);
-            currentSong.saveError = false;
-        }
-
-        return saveError;
-    }
-
     public void Update()
     {
         foreach(var onClickFunction in onClickEventFnList)
@@ -243,8 +232,6 @@ public class ChartEditor : MonoBehaviour {
             onClickFunction();
         }
         onClickEventFnList.Clear();
-
-        SaveErrorCheck();
 
         // Update object positions that supposed to be visible into the range of the camera
         _minPos = currentSong.WorldYPositionToTick(camYMin.position.y);
@@ -378,9 +365,9 @@ public class ChartEditor : MonoBehaviour {
         if (!EditCheck())
             return;
 
-        while (currentSong.isSaving) ;
+        while (currentSong.isSaving);
 
-        if (SaveErrorCheck())
+        if (errorManager.HasErrorToDisplay())
             return;
 
         lastLoadedFile = string.Empty;
@@ -507,7 +494,7 @@ public class ChartEditor : MonoBehaviour {
         while (currentSong.isSaving)
             yield return null;
 
-        if (SaveErrorCheck())
+        if (errorManager.HasErrorToDisplay())
         {
             yield break;
         }
@@ -543,9 +530,9 @@ public class ChartEditor : MonoBehaviour {
                 currentSong = backup;
 
                 if (mid)
-                    ErrorMessage.errorMessage = Logger.LogException(e, "Failed to open mid file");
+                    errorManager.QueueErrorMessage(Logger.LogException(e, "Failed to open mid file"));
                 else
-                    ErrorMessage.errorMessage = Logger.LogException(e, "Failed to open chart file");
+                    errorManager.QueueErrorMessage(Logger.LogException(e, "Failed to open chart file"));
 
                 error = true;
             }
@@ -633,7 +620,7 @@ public class ChartEditor : MonoBehaviour {
         while (currentSong.isSaving)
             yield return null;
 
-        if (SaveErrorCheck())
+        if (errorManager.HasErrorToDisplay())
         {
             yield break;
         }

@@ -20,7 +20,6 @@ public class Song {
     public static readonly float STANDARD_BEAT_RESOLUTION = 192.0f;
     public const uint FULL_STEP = 768;
     public const float RESOLUTIONS_PER_MEASURE = 4.0f;
-    public bool saveError = false;
     static int DIFFICULTY_COUNT;
     static int AUDIO_INSTUMENT_COUNT;
 
@@ -663,14 +662,12 @@ public class Song {
 
             if (saveErrorMessage != string.Empty)
             {
-                saveError = true;
-                ErrorMessage.errorMessage = "Save completed with the following errors: " + Globals.LINE_ENDING + saveErrorMessage;
+                ChartEditor.GetInstance().errorManager.QueueErrorMessage("Save completed with the following errors: " + Globals.LINE_ENDING + saveErrorMessage);
             }
         }
         catch (System.Exception e)
         {
-            saveError = true;
-            ErrorMessage.errorMessage = Logger.LogException(e, "Save failed!");
+            ChartEditor.GetInstance().errorManager.QueueErrorMessage(Logger.LogException(e, "Save failed!"));
         }
     }
 

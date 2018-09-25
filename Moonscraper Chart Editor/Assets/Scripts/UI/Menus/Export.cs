@@ -66,13 +66,6 @@ public class Export : DisplayMenu {
         delayInputField.text = delayTime.ToString();
     }
 
-    protected override void Update()
-    {
-        base.Update();
-        if (editor.errorMenu.gameObject.activeSelf)
-            Disable();
-    }
-
     public void ExportSong()
     {
         editor.onClickEventFnList.Add(_ExportSong);
@@ -180,8 +173,7 @@ public class Export : DisplayMenu {
 
         if (errorMessageList != string.Empty)
         {
-            editor.currentSong.saveError = true;
-            ErrorMessage.errorMessage = "Encountered the following errors while exporting: " + Globals.LINE_ENDING + errorMessageList;
+            ChartEditor.GetInstance().errorManager.QueueErrorMessage("Encountered the following errors while exporting: " + Globals.LINE_ENDING + errorMessageList);
         }
     }
 
