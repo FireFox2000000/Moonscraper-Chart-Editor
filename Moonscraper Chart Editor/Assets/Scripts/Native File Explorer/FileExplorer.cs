@@ -80,7 +80,11 @@ public static class FileExplorer  {
         {
             --m_filePanelsRefCount;
             UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
-            UnityEngine.Debug.Log("Extend Error Code: " + (CommonDialogBox.ErrorCodes)CommonDialogBox.CommDlgExtendedError());
+
+            CommonDialogBox.ErrorCodes errorCode = (CommonDialogBox.ErrorCodes)CommonDialogBox.CommDlgExtendedError();
+            if (errorCode != CommonDialogBox.ErrorCodes.None)
+                ChartEditor.GetInstance().errorManager.QueueErrorMessage("Error occured when bringing up the Open File file explorer. \nError Code: " + errorCode);
+
             throw new FileExplorerExitException("Could not open file");
         }
 #endif
@@ -151,7 +155,11 @@ public static class FileExplorer  {
         {
             --m_filePanelsRefCount;
             UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
-            UnityEngine.Debug.Log("Extend Error Code: " + (CommonDialogBox.ErrorCodes)CommonDialogBox.CommDlgExtendedError());
+
+            CommonDialogBox.ErrorCodes errorCode = (CommonDialogBox.ErrorCodes)CommonDialogBox.CommDlgExtendedError();
+            if (errorCode != CommonDialogBox.ErrorCodes.None)
+                ChartEditor.GetInstance().errorManager.QueueErrorMessage("Error occured when bringing up the Save As file explorer. \nError Code: " + errorCode);
+
             throw new FileExplorerExitException("Could not open file");
         }
 #endif
