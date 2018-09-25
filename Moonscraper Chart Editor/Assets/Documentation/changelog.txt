@@ -1,3 +1,11 @@
+1.2.82
+	-Fixed mouse-over hints rendering in the wrong position after engine update
+	-Fixed note rendering weirdness caused by engine update
+	-Update illegal filename character list
+	-Display error menu when save as/open file file explorers fail to open up
+	-Allocation optimisation
+	-Overdraw optimisation
+
 v1.2.8
 	-Updated engine to Unity 5.6.6
 	-Fixed song name display text not updating when editing song properties
