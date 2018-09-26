@@ -32,7 +32,8 @@ public class BPMController : SongObjectController {
     protected override void OnEnable()
     {
         base.OnEnable();
-        UpdateBpmDisplay();
+        if (bpm != null)
+            UpdateBpmDisplay();
     }
 
     public override void UpdateSongObject()
