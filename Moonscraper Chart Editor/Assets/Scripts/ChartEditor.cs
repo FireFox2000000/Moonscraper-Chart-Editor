@@ -859,10 +859,11 @@ public class ChartEditor : MonoBehaviour {
     }
 
     bool cancel;
-    IList<SongObject> selectedBeforePlay = new List<SongObject>();
+    List<SongObject> selectedBeforePlay = new List<SongObject>();
     public void Play()
     {
-        selectedBeforePlay = currentSelectedObjects;
+        selectedBeforePlay.Clear();
+        selectedBeforePlay.AddRange(currentSelectedObjects);
         currentSelectedObject = null;
 
         if (GameSettings.bot && GameSettings.resetAfterPlay)
@@ -954,7 +955,7 @@ public class ChartEditor : MonoBehaviour {
             }
         }
 
-        selectedBeforePlay = new SongObject[0];
+        selectedBeforePlay.Clear();
 
         GameSettings.bot = true;
         stopResetPos = null;
