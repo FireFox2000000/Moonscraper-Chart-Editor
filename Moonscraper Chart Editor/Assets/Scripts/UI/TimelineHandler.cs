@@ -28,7 +28,6 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     float halfHeight;
     float scaledHalfHeight;
 
-    ChartEditor editor;
     Vector2 previousScreenSize = Vector2.zero;
     int previousPercentageValue = 0;
 
@@ -81,8 +80,6 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         starpowerIndicatorParent.transform.localScale = new Vector3(1, 1, 1);
         starpowerIndicatorParent.transform.SetSiblingIndex(1);
 
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
-
         // Create section pool
         for (int i = 0; i < sectionIndicatorPool.Length; ++i)
             sectionIndicatorPool[i] = CreateSectionIndicator();
@@ -110,6 +107,8 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     public static bool externalUpdate = false;
     void Update()
     {
+        ChartEditor editor = ChartEditor.GetInstance();
+
         halfHeight = rectTransform.rect.height / 2.0f;
         scaledHalfHeight = halfHeight * transform.lossyScale.y;
 
@@ -187,6 +186,8 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         yield return null;
         yield return null;
 
+        ChartEditor editor = ChartEditor.GetInstance();
+
         int i;
         for (i = 0; i < editor.currentSong.sections.Count; ++i)
         {
@@ -212,7 +213,9 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     {
         yield return null;
         yield return null;
-       
+
+        ChartEditor editor = ChartEditor.GetInstance();
+
         int i;
         for (i = 0; i < editor.currentChart.starPower.Count; ++i)
         {  
@@ -272,6 +275,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
     void MoveHandle(PointerEventData eventData)
     {
+        ChartEditor editor = ChartEditor.GetInstance();
         movement.editor.Stop();
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
@@ -318,9 +322,8 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
     public void RefreshHighlightIndicator()
     {
-        highlightedIndicator.SetActive(false);
-        if (!editor)
-            return;
+        bool highlightIndicatorActive = false;
+        ChartEditor editor = ChartEditor.GetInstance();
 
         if (editor.currentSelectedObjects.Count > 0)
         {
@@ -355,7 +358,9 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
             highlightedIndicator.transform.localPosition = position;
             highlightedIndicator.transform.localScale = new Vector3(highlightedIndicator.transform.localScale.x, size, highlightedIndicator.transform.localScale.z);
 
-            highlightedIndicator.SetActive(true);
+            highlightIndicatorActive = true;
         }
+
+        highlightedIndicator.SetActive(highlightIndicatorActive);
     }
 }
