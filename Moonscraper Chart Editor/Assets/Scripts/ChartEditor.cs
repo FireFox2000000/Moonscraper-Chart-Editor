@@ -51,8 +51,6 @@ public class ChartEditor : MonoBehaviour {
     public Transform mouseYMaxLimit;
     public Transform mouseYMinLimit;
     public LoadingScreenFader loadingScreen;
-    [SerializeField]
-    ErrorMessage errorMenu;
     public Indicators indicators;               // Cancels hit animations upon stopping playback
     [SerializeField]
     GroupSelect groupSelect;
@@ -96,7 +94,8 @@ public class ChartEditor : MonoBehaviour {
 
     string lastLoadedFile = string.Empty;
     WindowHandleManager windowHandleManager;
-    public ErrorManager errorManager;
+    [HideInInspector]
+    public ErrorManager errorManager { get; private set; }
     public static bool hasFocus { get { return Application.isFocused; } }
 
     public ActionHistory actionHistory;
@@ -205,6 +204,7 @@ public class ChartEditor : MonoBehaviour {
         gameObject.AddComponent<UITabbing>();
 
         windowHandleManager = new WindowHandleManager(versionNumber.text, GetComponent<Settings>().productName);
+        errorManager = gameObject.AddComponent<ErrorManager>();
     }
 
     IEnumerator Start()
@@ -553,7 +553,6 @@ public class ChartEditor : MonoBehaviour {
         if (error)
         {
             loadingScreen.FadeOut();
-            errorMenu.gameObject.SetActive(true);
             yield break;
         }
 

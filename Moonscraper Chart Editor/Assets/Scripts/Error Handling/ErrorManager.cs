@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ErrorManager : MonoBehaviour {
-    [SerializeField]
     ErrorMessage errorMenu;
     string queuedErrorMessage = string.Empty;
-	
-	// Update is called once per frame
-	void Update () {
+
+    private void Start()
+    {
+        errorMenu = ChartEditor.GetInstance().uiServices.gameObject.GetComponentInChildren<ErrorMessage>(true);
+        Debug.Assert(errorMenu, "Unable to find error menu component");
+    }
+
+    // Update is called once per frame
+    void Update () {
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && HasErrorToDisplay())
             DisplayErrorMenu();
     }
