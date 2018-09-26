@@ -24,6 +24,8 @@ public abstract class PlaceSongObject : ToolObject {
         controller.disableCancel = false;
 
         SetSongObjectAndController();
+
+        EventsManager.onKeyboardModeToggledEvent.Add(OnKeysModeToggled);
     }
 
     public override void ToolDisable()
@@ -34,6 +36,7 @@ public abstract class PlaceSongObject : ToolObject {
     protected virtual void OnEnable()
     {
         Update();
+        OnKeysModeToggled(GameSettings.keysModeEnabled);
     }
 
     // Update is called once per frame
@@ -42,22 +45,6 @@ public abstract class PlaceSongObject : ToolObject {
         base.Update();
 
         controller.SetDirty();
-
-        foreach (Renderer ren in renderers)
-        {
-            if (GameSettings.keysModeEnabled)
-                ren.enabled = false;
-            else
-                ren.enabled = true;
-        }
-
-        foreach (Transform child in transform)
-        {
-            if (GameSettings.keysModeEnabled)
-                child.gameObject.SetActive(false);
-            else
-                child.gameObject.SetActive(true);
-        }
 
         songObject.song = editor.currentSong;
         songObject.tick = objectSnappedChartPos;
@@ -127,6 +114,19 @@ public abstract class PlaceSongObject : ToolObject {
         else
         {
             return new ActionHistory.Add(overwriteCheck);
+        }
+    }
+
+    void OnKeysModeToggled(bool keysModeEnabled)
+    {
+        foreach (Renderer ren in renderers)
+        {
+            ren.enabled = !GameSettings.keysModeEnabled;
+        }
+
+        foreach (Transform child in transform)
+        {
+            child.gameObject.SetActive(!GameSettings.keysModeEnabled);
         }
     }
 }

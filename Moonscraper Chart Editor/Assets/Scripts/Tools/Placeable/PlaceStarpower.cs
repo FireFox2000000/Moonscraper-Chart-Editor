@@ -99,10 +99,9 @@ public class PlaceStarpower : PlaceSongObject {
     protected override void Update()
     {
         starpower.chart = editor.currentChart;
-        if (lastPlacedSP != null)
-            spRen.enabled = false;
-        else
-            spRen.enabled = true;
+        if (!GameSettings.keysModeEnabled)
+            spRen.enabled = lastPlacedSP == null;
+
         base.Update();
 
         if ((Input.GetMouseButtonUp(0) && !GameSettings.keysModeEnabled) || (GameSettings.keysModeEnabled && Input.GetButtonUp("Add Object")))

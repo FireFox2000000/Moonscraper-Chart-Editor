@@ -76,13 +76,13 @@ public class MenuBar : UpdateableService {
 
     public void ToggleMouseLockMode(bool value)
     {
-        GameSettings.keysModeEnabled = value;
+        editor.services.SetKeysMode(value);
         Debug.Log("Keys mode toggled " + value);
     }
 
     public void ToggleMouseLockMode()
     {
-        GameSettings.keysModeEnabled = !GameSettings.keysModeEnabled;
+        editor.services.SetKeysMode(!GameSettings.keysModeEnabled);
         Debug.Log("Keys mode toggled " + GameSettings.keysModeEnabled);
     }
 

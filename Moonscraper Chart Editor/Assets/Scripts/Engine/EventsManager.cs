@@ -66,4 +66,12 @@ public static class EventsManager {
         foreach (ToolChangedEvent function in onToolChangedEventList)
             function();
     }
+
+    public delegate void KeyboardModeToggledEvent(bool keyboardModeEnabled);
+    public static List<KeyboardModeToggledEvent> onKeyboardModeToggledEvent = new List<KeyboardModeToggledEvent>();
+    public static void FireKeyboardModeToggledEvent(bool keyboardModeEnabled)
+    {
+        foreach (KeyboardModeToggledEvent function in onKeyboardModeToggledEvent)
+            function(keyboardModeEnabled);
+    }
 }

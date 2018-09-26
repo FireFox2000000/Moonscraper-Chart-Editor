@@ -107,7 +107,7 @@ public class Services : MonoBehaviour
 
     public void ToggleMouseLockMode()
     {
-        GameSettings.keysModeEnabled = !GameSettings.keysModeEnabled;
+        SetKeysMode(!GameSettings.keysModeEnabled);
         Debug.Log("Keys mode toggled " + GameSettings.keysModeEnabled);
     }
 
@@ -121,6 +121,12 @@ public class Services : MonoBehaviour
     {
         GameSettings.metronomeActive = !GameSettings.metronomeActive;
         Debug.Log("Metronome toggled " + GameSettings.metronomeActive);
+    }
+
+    public void SetKeysMode(bool enabled)
+    {
+        GameSettings.keysModeEnabled = enabled;
+        EventsManager.FireKeyboardModeToggledEvent(GameSettings.keysModeEnabled);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////
