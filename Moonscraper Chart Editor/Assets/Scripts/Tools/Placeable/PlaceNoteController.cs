@@ -27,8 +27,22 @@ public class PlaceNoteController : ObjectlessTool {
     string GetOpenNoteInputKey(int laneCount)
     {
         int key = laneCount;
-        return (key + 1).ToString();
+        return NumToStringLUT[(key + 1)];
     }
+
+    readonly string[] NumToStringLUT = new string[]
+    {
+        0.ToString(),
+        1.ToString(),
+        2.ToString(),
+        3.ToString(),
+        4.ToString(),
+        5.ToString(),
+        6.ToString(),
+        7.ToString(),
+        8.ToString(),
+        9.ToString(),
+    };
 
     protected override void Awake()
     {
@@ -181,7 +195,7 @@ public class PlaceNoteController : ObjectlessTool {
         for (int i = 0; i < heldNotes.Length; ++i)
         {
             // Add in the held note history when user lifts off the keys
-            if (isTyping || Input.GetKeyUp((i + 1).ToString()))
+            if (isTyping || Input.GetKeyUp(NumToStringLUT[(i + 1)]))
             {
                 KeySustainActionHistoryInsert(i);
             }
@@ -203,7 +217,7 @@ public class PlaceNoteController : ObjectlessTool {
         for (int i = 0; i < laneCount + 1; ++i)      // Start at 1 to ignore the multinote
         {                     
             // Need to make sure the note is at it's correct tick position
-            if (Input.GetKeyDown((i + 1).ToString()))
+            if (Input.GetKeyDown(NumToStringLUT[(i + 1)]))
             {
                 int notePos = i;
 
@@ -249,7 +263,7 @@ public class PlaceNoteController : ObjectlessTool {
                 continue;
 
             int inputOnKeyboard = index + 1;
-            if (Input.GetKey(inputOnKeyboard.ToString()) && !inputBlock[index])
+            if (Input.GetKey(NumToStringLUT[inputOnKeyboard]) && !inputBlock[index])
             {
                 ++keysPressed;
                 int notePos = index;
@@ -269,7 +283,7 @@ public class PlaceNoteController : ObjectlessTool {
                     Debug.Log("Not found");
                     keysBurstAddHistory.AddRange(PlaceNote.AddObjectToCurrentChart((Note)allPlaceableNotes[notePos].note.Clone(), editor));
                 }
-                else if (Input.GetKeyDown(inputOnKeyboard.ToString()))
+                else if (Input.GetKeyDown(NumToStringLUT[inputOnKeyboard]))
                 {
                     editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentChart.notes[pos]));
                     Debug.Log("Removed " + editor.currentChart.notes[pos].rawNote + " note at position " + editor.currentChart.notes[pos].tick + " using keyboard controls");
@@ -277,7 +291,7 @@ public class PlaceNoteController : ObjectlessTool {
                     inputBlock[index] = true;
                 }
             }
-            else if (!Input.GetKey((index + 1).ToString()))
+            else if (!Input.GetKey(NumToStringLUT[(index + 1)]))
             {
                 inputBlock[index] = false;
             }
@@ -287,8 +301,10 @@ public class PlaceNoteController : ObjectlessTool {
             BurstRecordingInsertCheck(keysBurstAddHistory);
     }
 
+    List<PlaceNote> activeNotes = new List<PlaceNote>();
     void MouseControlsBurstMode(LaneInfo laneInfo)
     {
+        activeNotes.Clear();
         bool openActive = false;
         if (openNote.gameObject.activeSelf)
             openActive = true;
@@ -303,14 +319,12 @@ public class PlaceNoteController : ObjectlessTool {
         bool anyStandardKeyInput = false;
         for (int i = 0; i < maxLanes; ++i)
         {
-            if (Input.GetKey((i + 1).ToString()))
+            if (Input.GetKey(NumToStringLUT[(i + 1)]))
             {
                 anyStandardKeyInput = true;
                 break;
             }
         }
-
-        List<PlaceNote> activeNotes = new List<PlaceNote>();
 
         // Select which notes to run based on keyboard input
         if (Input.GetKeyDown(GetOpenNoteInputKey(maxLanes)))  // Open note takes priority
@@ -332,7 +346,7 @@ public class PlaceNoteController : ObjectlessTool {
             {
                 int leftyPos = maxLanes - (i + 1);
 
-                if (Input.GetKey((i + 1).ToString()))
+                if (Input.GetKey(NumToStringLUT[(i + 1)]))
                 {
                     if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
                     {

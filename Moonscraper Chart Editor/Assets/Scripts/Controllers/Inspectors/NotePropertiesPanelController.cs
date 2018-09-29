@@ -17,6 +17,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     public GameObject noteToolObject;
 
     Note prevNote = null;
+    Note prevClonedNote = new Note(0, 0);
 
     bool prevForcedProperty = false;
 
@@ -91,7 +92,15 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             tapToggle.interactable = !(currentNote.IsOpenNote() && Toolpane.currentTool != Toolpane.Tools.Note);
         }
 
-        if (currentNote != null)
+        UpdateNoteStringsInfo();
+        Controls();
+
+        prevNote = currentNote;
+    }
+
+    void UpdateNoteStringsInfo()
+    {
+        if (currentNote != null && prevClonedNote != currentNote)
         {
             string noteTypeString = string.Empty;
             if (Globals.drumMode)
@@ -104,11 +113,9 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             fretText.text = "Fret: " + noteTypeString;
             positionText.text = "Position: " + currentNote.tick.ToString();
             sustainText.text = "Length: " + currentNote.length.ToString();
+
+            prevClonedNote.CopyFrom(currentNote);
         }
-
-        Controls();
-
-        prevNote = currentNote;
     }
 
     void Controls()

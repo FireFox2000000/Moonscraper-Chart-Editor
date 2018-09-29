@@ -160,6 +160,14 @@ public class Note : ChartObject
         rawNote = note.rawNote;
     }
 
+    public void CopyFrom(Note note)
+    {
+        tick = note.tick;
+        length = note.length;
+        flags = note.flags;
+        rawNote = note.rawNote;
+    }
+
     public Chart.GameMode gameMode
     {
         get
