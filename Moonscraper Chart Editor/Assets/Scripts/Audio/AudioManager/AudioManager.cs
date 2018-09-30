@@ -25,6 +25,11 @@ public static class AudioManager {
 
     public static void Dispose()
     {
+        if (liveAudioStreams.Count > 0)
+        {
+            UnityEngine.Debug.LogWarning("Disposing of audio manager but there are still " + liveAudioStreams.Count + " streams remaining. Remaining streams will be cleaned up by the audio manager.");
+        }
+
         // Free any remaining streams 
         for (int i = liveAudioStreams.Count - 1; i >= 0; --i)
         {
