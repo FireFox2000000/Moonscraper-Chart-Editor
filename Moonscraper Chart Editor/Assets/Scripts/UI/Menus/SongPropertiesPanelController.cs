@@ -209,36 +209,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     string GetAudioFile()
     {
         string audioFilepath = string.Empty;
-
-#if UNITY_EDITOR
-        audioFilepath = UnityEditor.EditorUtility.OpenFilePanel("Select Audio", "", "mp3,ogg,wav");
-#else
-            OpenFileName openAudioDialog = new OpenFileName();
-            openAudioDialog = new OpenFileName();
-
-            openAudioDialog.structSize = Marshal.SizeOf(openAudioDialog);
-
-            openAudioDialog.file = new String(new char[256]);
-            openAudioDialog.maxFile = openAudioDialog.file.Length;
-
-            openAudioDialog.fileTitle = new String(new char[64]);
-            openAudioDialog.maxFileTitle = openAudioDialog.fileTitle.Length;
-
-            openAudioDialog.initialDir = "";
-            openAudioDialog.title = "Open file";
-            openAudioDialog.defExt = "txt";
-
-            openAudioDialog.filter = "Audio files (*.ogg,*.mp3,*.wav)\0*.mp3;*.ogg;*.wav";
-
-            if (LibWrap.GetOpenFileName(openAudioDialog))
-            {
-                audioFilepath = openAudioDialog.file;
-            
-            }
-            else
-                throw new System.Exception("Could not open file");
-#endif
-
+        audioFilepath = FileExplorer.OpenFilePanel("Audio files (*.ogg,*.mp3,*.wav)\0*.mp3;*.ogg;*.wav", "mp3,ogg,wav");
         return audioFilepath;
     }
 

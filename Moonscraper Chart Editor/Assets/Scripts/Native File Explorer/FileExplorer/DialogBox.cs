@@ -76,12 +76,3 @@ public class OpenFileName
     public int reservedInt = 0;
     public int flagsEx = 0;
 }
-
-public class LibWrap
-{
-    //BOOL GetOpenFileName(LPOPENFILENAME lpofn);
-    [DllImport("comdlg32.dll", CharSet = CharSet.Auto)]
-    public static extern bool GetOpenFileName([In, Out] OpenFileName ofn);
-    [DllImport("comdlg32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern bool GetSaveFileName([In, Out] OpenFileName ofn);
-}

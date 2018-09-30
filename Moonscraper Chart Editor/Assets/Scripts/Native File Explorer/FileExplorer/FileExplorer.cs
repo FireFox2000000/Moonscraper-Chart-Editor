@@ -72,7 +72,7 @@ public static class FileExplorer  {
         UnityEngine.Debug.Log("Native file explorer: Preparing to set defExt");
         openChartFileDialog.defExt = defExt;
 
-        if (LibWrap.GetOpenFileName(openChartFileDialog))
+        if (CommDlgBindings.GetOpenFileName(openChartFileDialog))
         {
             filename = openChartFileDialog.file;
         }
@@ -81,7 +81,7 @@ public static class FileExplorer  {
             --m_filePanelsRefCount;
             UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
 
-            CommonDialogBox.ErrorCodes errorCode = (CommonDialogBox.ErrorCodes)CommonDialogBox.CommDlgExtendedError();
+            CommonDialogBox.ErrorCodes errorCode = CommonDialogBox.GetErrorCode();
             if (errorCode != CommonDialogBox.ErrorCodes.None)
                 ChartEditor.GetInstance().errorManager.QueueErrorMessage("Error occured when bringing up the Open File file explorer. \nError Code: " + errorCode);
 
@@ -147,7 +147,7 @@ public static class FileExplorer  {
         UnityEngine.Debug.Log("Native file explorer: Preparing to set flags");
         openSaveFileDialog.flags = (int)OFN_Flags.OverwritePrompt;
 
-        if (LibWrap.GetSaveFileName(openSaveFileDialog))
+        if (CommDlgBindings.GetSaveFileName(openSaveFileDialog))
         {
             filename = openSaveFileDialog.file;
         }
@@ -156,7 +156,7 @@ public static class FileExplorer  {
             --m_filePanelsRefCount;
             UnityEngine.Debug.Log("Decrementing FileExplorer ref count, new value: " + m_filePanelsRefCount);
 
-            CommonDialogBox.ErrorCodes errorCode = (CommonDialogBox.ErrorCodes)CommonDialogBox.CommDlgExtendedError();
+            CommonDialogBox.ErrorCodes errorCode = CommonDialogBox.GetErrorCode();
             if (errorCode != CommonDialogBox.ErrorCodes.None)
                 ChartEditor.GetInstance().errorManager.QueueErrorMessage("Error occured when bringing up the Save As file explorer. \nError Code: " + errorCode);
 

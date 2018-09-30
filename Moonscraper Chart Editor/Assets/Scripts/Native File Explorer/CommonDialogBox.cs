@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-public class CommonDialogBox {
-    [DllImport("comdlg32.dll", SetLastError = true, ExactSpelling = true, CharSet = System.Runtime.InteropServices.CharSet.Auto)]
-    public static extern int CommDlgExtendedError();
-
+public static class CommonDialogBox {
     public enum ErrorCodes
     {
         None = 0x00,
@@ -29,5 +26,10 @@ public class CommonDialogBox {
         FNERR_BUFFERTOOSMALL    = 0x3003,
         FNERR_INVALIDFILENAME   = 0x3002,
         FNERR_SUBCLASSFAILURE   = 0x3001,
+    }
+
+    public static ErrorCodes GetErrorCode()
+    {
+        return (ErrorCodes)CommDlgBindings.CommDlgExtendedError();
     }
 }
