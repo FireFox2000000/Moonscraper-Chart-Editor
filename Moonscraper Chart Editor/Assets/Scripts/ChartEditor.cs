@@ -2,7 +2,6 @@
 // See LICENSE in project root for license information.
 
 #define TIMING_DEBUG
-#define BASS_AUDIO
 //#undef UNITY_EDITOR
 
 using UnityEngine;
@@ -11,7 +10,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
-using Un4seen.Bass;
 
 public class ChartEditor : MonoBehaviour {
     static ChartEditor currentEditor;
@@ -73,10 +71,6 @@ public class ChartEditor : MonoBehaviour {
     [HideInInspector]
     public InputManager inputManager;
 
-#if !BASS_AUDIO
-    [HideInInspector]
-    public AudioSource[] musicSources;
-#endif
     public Song currentSong { get; private set; }
     public Chart currentChart { get; private set; }
     public Chart.GameMode currentGameMode { get { return currentChart.gameMode; } }
@@ -189,10 +183,7 @@ public class ChartEditor : MonoBehaviour {
         LoadSong(currentSong, true);
 
         // Bass init
-        if (!Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero))
-            Debug.LogError("Failed Bass.Net initialisation");
-        else
-            Debug.Log("Bass.Net initialised");
+        AudioManager.Init();
 
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
 
@@ -262,7 +253,7 @@ public class ChartEditor : MonoBehaviour {
         }
     }
 
-    private static Song autosaveSong = null;
+    private Song autosaveSong = null;
     void Autosave()
     {
         autosaveSong = new Song(currentSong);
@@ -307,9 +298,8 @@ public class ChartEditor : MonoBehaviour {
         {
             globals.Quit();
             FreeAudio();
+            AudioManager.Dispose();
 
-            Bass.BASS_Free();
-            Debug.Log("Freed Bass Audio memory");
             while (currentSong.isSaving) ;
         }
         // Can't run edit check here because quitting seems to run in a seperate thread
@@ -673,16 +663,8 @@ public class ChartEditor : MonoBehaviour {
 
         // Load the default chart
         LoadChart(currentSong.GetChart(MenuBar.currentInstrument, MenuBar.currentDifficulty));
-#if !BASS_AUDIO
-        // Reset audioSources upon successfull load
-        foreach (AudioSource source in musicSources)
-            source.clip = null;
 
-        // Load audio
-        if (currentSong.musicStream != null)
-#else
-        if (currentSong.GetBassAudioStream(Song.AudioInstrument.Song) != 0)
-#endif
+        if (AudioManager.StreamIsValid(currentSong.GetAudioStream(Song.AudioInstrument.Song)))
         {
             movement.SetPosition(0);
         }
@@ -708,13 +690,13 @@ public class ChartEditor : MonoBehaviour {
     {
         StrikelineAudioController.startYPoint = visibleStrikeline.transform.position.y;
 
-        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
-        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
-        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);
-        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
-        SetBassStreamProperties(currentSong.GetBassAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drum);
+        SetBassStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
+        SetBassStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
+        SetBassStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);
+        SetBassStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
+        SetBassStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drum);
 
-        foreach (int bassStream in currentSong.bassAudioStreams)
+        foreach (var bassStream in currentSong.bassAudioStreams)
         {
             PlayBassStream(bassStream, playPoint);
         }
@@ -730,70 +712,48 @@ public class ChartEditor : MonoBehaviour {
 
     void StopAudio()
     {
-#if !BASS_AUDIO
-        // Stop the audio from continuing to play
-        foreach (AudioSource source in musicSources)
-            source.Stop();
-#else
-        foreach (int bassStream in currentSong.bassAudioStreams)
+        foreach (var bassStream in currentSong.bassAudioStreams)
         {
-            if (bassStream != 0)
-                Bass.BASS_ChannelStop(bassStream);
+            if (AudioManager.StreamIsValid(bassStream))
+                AudioManager.Stop(bassStream);
         }
-        /*
-        if (currentSong.bassMusicStream != 0)
-            Bass.BASS_ChannelStop(currentSong.bassMusicStream);
-
-        if (currentSong.bassGuitarStream != 0)
-            Bass.BASS_ChannelStop(currentSong.bassGuitarStream);
-
-        if (currentSong.bassRhythmStream != 0)
-            Bass.BASS_ChannelStop(currentSong.bassRhythmStream);
-
-        if (currentSong.bassDrumStream != 0)
-            Bass.BASS_ChannelStop(currentSong.bassDrumStream);*/
-#endif
 
         movement.playStartPosition = null;
         movement.playStartTime = null;
     }
 
-    void PlayBassStream(int handle, float playPoint)
+    void PlayBassStream(AudioStream audioStream, float playPoint)
     {
-        if (handle != 0)
+        if (audioStream != null && audioStream.isValid)
         {
-            Bass.BASS_ChannelSetPosition(handle, playPoint);
-            Bass.BASS_ChannelPlay(handle, false);
-
+            AudioManager.Play(audioStream, playPoint);
             MovementController.timeSync.SongTime = playPoint;
-            //while (!(Bass.BASS_ChannelIsActive(handle) == BASSActive.BASS_ACTIVE_PLAYING));
         }
     }
 
-    void SetBassStreamProperties(int handle, float speed, float vol)
+    void SetBassStreamProperties(TempoStream stream, float speed, float vol)
     {
-        if (handle != 0)
+        if (AudioManager.StreamIsValid(stream))
         {
             // Reset
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_FREQ, 0);
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_PITCH, 0);
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO, 0);
+            stream.frequency = 0;
+            stream.tempoPitch = 0;
+            stream.tempo = 0;
 
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_VOL, vol * GameSettings.vol_master);
-            Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_PAN, GameSettings.audio_pan);
+            stream.volume = vol * GameSettings.vol_master;
+            stream.pan = GameSettings.audio_pan;
 
             if (speed < 1)
             {
-                float originalFreq = 0;
-
-                Bass.BASS_ChannelGetAttribute(handle, BASSAttribute.BASS_ATTRIB_FREQ, ref originalFreq);
+                float originalFreq = stream.frequency;
 
                 float freq = originalFreq * speed;
                 if (freq < 100)
                     freq = 100;
                 else if (freq > 100000)
                     freq = 100000;
-                Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_FREQ, freq);
+
+                stream.frequency = freq;
 #if false
                 // Pitch shifting equation
                 Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_PITCH, Mathf.Log(1.0f / speed, Mathf.Pow(2, 1.0f / 12.0f)));
@@ -801,22 +761,14 @@ public class ChartEditor : MonoBehaviour {
             }
             else
             {
-                Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO, speed * 100 - 100);
+                stream.tempo = speed * 100 - 100;
             }
         }
     }
 
     public void FreeAudio()
     {
-        foreach (SampleData sampleData in currentSong.GetSampleData())
-        {
-            sampleData.Free();
-        }
-#if !BASS_AUDIO
-        currentSong.FreeAudioClips();
-#else
         currentSong.FreeBassAudioStreams();
-#endif
     }
 
     #endregion

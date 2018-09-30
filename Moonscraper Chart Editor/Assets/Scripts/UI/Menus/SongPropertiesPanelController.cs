@@ -2,7 +2,6 @@
 // See LICENSE in project root for license information.
 
 //#undef UNITY_EDITOR
-#define BASS_AUDIO
 
 using UnityEngine;
 using UnityEngine.UI;
@@ -229,7 +228,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void ClearMusicStream()
     {
-        clearAudioStream(Song.AudioInstrument.Song);
+        ClearAudioStream(Song.AudioInstrument.Song);
     }
 
     public void LoadGuitarStream()
@@ -248,7 +247,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void ClearGuitarStream()
     {
-        clearAudioStream(Song.AudioInstrument.Guitar);
+        ClearAudioStream(Song.AudioInstrument.Guitar);
     }
 
     public void LoadBassStream()
@@ -267,7 +266,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void ClearBassStream()
     {
-        clearAudioStream(Song.AudioInstrument.Bass);
+        ClearAudioStream(Song.AudioInstrument.Bass);
     }
 
     public void LoadRhythmStream()
@@ -286,7 +285,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void ClearRhythmStream()
     {
-        clearAudioStream(Song.AudioInstrument.Rhythm);
+        ClearAudioStream(Song.AudioInstrument.Rhythm);
     }
 
     public void LoadDrumStream()
@@ -305,13 +304,13 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void ClearDrumStream()
     {
-        clearAudioStream(Song.AudioInstrument.Drum);
+        ClearAudioStream(Song.AudioInstrument.Drum);
     }
 
-    void clearAudioStream(Song.AudioInstrument audio)
+    void ClearAudioStream(Song.AudioInstrument audio)
     {
-        editor.currentSong.GetSampleData(audio).Free();
-        editor.currentSong.SetBassAudioStream(audio, 0);
+        editor.currentSong.GetSampleData(audio).Dispose();
+        editor.currentSong.SetBassAudioStream(audio, null);
 
         setAudioTextLabels();
     }

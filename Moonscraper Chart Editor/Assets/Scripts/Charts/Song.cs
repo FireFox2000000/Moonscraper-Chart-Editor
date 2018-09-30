@@ -40,7 +40,7 @@ public class Song {
 
     // Audio
     SampleData[] audioSampleData;
-    public int[] bassAudioStreams;
+    public TempoStream[] bassAudioStreams;
     string[] audioLocations;
     int audioLoads = 0;
 
@@ -71,16 +71,16 @@ public class Song {
                 return _length;
             else
             {
-                int bassMusicStream = GetBassAudioStream(AudioInstrument.Song);
-                if (bassMusicStream != 0)
-                    return (float)Bass.BASS_ChannelBytes2Seconds(bassMusicStream, Bass.BASS_ChannelGetLength(bassMusicStream, BASSMode.BASS_POS_BYTES)) + offset;
+                var bassMusicStream = GetAudioStream(AudioInstrument.Song);
+                if (AudioManager.StreamIsValid(bassMusicStream))
+                    return bassMusicStream.ChannelLengthInSeconds() + offset;
                 else
                 {
-                    foreach (int stream in bassAudioStreams)
+                    foreach (var stream in bassAudioStreams)
                     {
-                        if (stream != 0)
+                        if (AudioManager.StreamIsValid(stream))
                         {
-                            float length = (float)Bass.BASS_ChannelBytes2Seconds(stream, Bass.BASS_ChannelGetLength(stream, BASSMode.BASS_POS_BYTES)) + offset;
+                            float length = stream.ChannelLengthInSeconds() + offset;
                             return length;
                         }
                     }
@@ -179,7 +179,7 @@ public class Song {
         timeSignatures = new SongObjectCache<TimeSignature>();// new TimeSignature[0];
 
         audioSampleData = new SampleData[AUDIO_INSTUMENT_COUNT];
-        bassAudioStreams = new int[AUDIO_INSTUMENT_COUNT];
+        bassAudioStreams = new TempoStream[AUDIO_INSTUMENT_COUNT];
         audioLocations = new string[AUDIO_INSTUMENT_COUNT];
 
         Add(new BPM());
@@ -275,23 +275,19 @@ public class Song {
     ~Song()
     {
         FreeBassAudioStreams();
+        Debug.Log("Song freed");
     }
 
     public void FreeBassAudioStreams()
     {
-        for (int i = 0; i < bassAudioStreams.Length; ++i)
+        foreach(var stream in bassAudioStreams)
         {
-            if (bassAudioStreams[i] != 0)
-            {
-                if (!Bass.BASS_StreamFree(bassAudioStreams[i]))
-                    Debug.LogError("Error while freeing audio stream " + bassAudioStreams[i]);
-                else
-                    bassAudioStreams[i] = 0;
-            }
+            if (stream != null)
+                stream.Dispose();
         }
 
         foreach (SampleData sample in audioSampleData)
-            sample.Free();
+            sample.Dispose();
     }
 
     public Chart GetChart(Instrument instrument, Difficulty difficulty)
@@ -392,12 +388,13 @@ public class Song {
             System.Threading.Thread streamCreateFileThread = new System.Threading.Thread(() =>
             {
                 // Load Bass Audio Streams   
-                audioSampleData[audioStreamArrayPos].Free();
+                audioSampleData[audioStreamArrayPos].Dispose();
                 audioSampleData[audioStreamArrayPos] = new SampleData(filepath);
                 audioSampleData[audioStreamArrayPos].ReadAudioFile();
 
-                bassAudioStreams[audioStreamArrayPos] = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_ASYNCFILE | BASSFlag.BASS_STREAM_PRESCAN);
-                bassAudioStreams[audioStreamArrayPos] = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_TempoCreate(bassAudioStreams[audioStreamArrayPos], BASSFlag.BASS_FX_FREESOURCE);
+                if (bassAudioStreams[audioStreamArrayPos] != null)
+                    bassAudioStreams[audioStreamArrayPos].Dispose();
+                bassAudioStreams[audioStreamArrayPos] = AudioManager.LoadTempoStream(filepath);
             });
 
             streamCreateFileThread.Start();
@@ -759,23 +756,19 @@ public class Song {
         return audioSampleData;
     }
 
-    public int GetBassAudioStream(AudioInstrument audio)
+    public TempoStream GetAudioStream(AudioInstrument audio)
     {
         return bassAudioStreams[(int)audio];
     }
 
-    public void SetBassAudioStream(AudioInstrument audio, int value)
+    public void SetBassAudioStream(AudioInstrument audio, TempoStream stream)
     {
         int arrayPos = (int)audio;
-        if (bassAudioStreams[arrayPos] != 0)
-        {
-            if (Bass.BASS_StreamFree(bassAudioStreams[arrayPos]))
-                Debug.Log("Song audio stream successfully freed");
-            else
-                Debug.LogError("Error while attempting to free song audio stream");
-        }
 
-        bassAudioStreams[arrayPos] = value;
+        if (bassAudioStreams[arrayPos] != null)
+            bassAudioStreams[arrayPos].Dispose();
+
+        bassAudioStreams[arrayPos] = stream;
     }
 
     public string GetAudioName(AudioInstrument audio)
@@ -796,7 +789,8 @@ public class Song {
 
     public bool GetAudioIsLoaded(AudioInstrument audio)
     {
-        return GetBassAudioStream(audio) != 0;
+        TempoStream stream = GetAudioStream(audio);
+        return AudioManager.StreamIsValid(stream);
     }
 
     public static Chart.GameMode InstumentToChartGameMode(Instrument instrument)
