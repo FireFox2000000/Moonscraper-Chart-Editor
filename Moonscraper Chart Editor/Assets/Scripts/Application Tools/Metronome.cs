@@ -1,23 +1,16 @@
 ﻿// Copyright (c) 2016-2017 Alexander Ong
 // See LICENSE in project root for license information.
 
-#define BASS_AUDIO
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Un4seen.Bass;
 
 public class Metronome : UpdateableService {
     ChartEditor editor;
-#if !BASS_AUDIO
-    AudioSource clapSource;
-#endif
     Vector3 initLocalPos;
 
     public AudioClip clap;
-    static byte[] clapBytes;
-    static int sample;
+    OneShotSampleStream sampleStream;
 
     uint nextClapPos = 0;
 
@@ -26,12 +19,7 @@ public class Metronome : UpdateableService {
         editor = ChartEditor.GetInstance();      
         initLocalPos = transform.localPosition;
 
-#if BASS_AUDIO
-        clapBytes = clap.GetWavBytes();
-        sample = Bass.BASS_SampleLoad(clapBytes, 0, clapBytes.Length, 15, BASSFlag.BASS_DEFAULT);
-#else
-        clapSource = gameObject.AddComponent<AudioSource>();
-#endif
+        sampleStream = AudioManager.LoadSampleStream(clap, 15);
 
         base.Start();
     }
@@ -41,11 +29,7 @@ public class Metronome : UpdateableService {
     {
         // Offset by audio calibration
         Vector3 pos = initLocalPos;
-#if BASS_AUDIO
         pos.y += TickFunctions.TimeToWorldYPosition(GameSettings.audioCalibrationMS / 1000.0f * GameSettings.gameSpeed);
-#else
-        pos.y += Song.TimeToWorldYPosition(Globals.clapCalibrationMS / 1000.0f * Globals.gameSpeed);
-#endif
         transform.localPosition = pos;
 
         uint currentTickPos = editor.currentSong.WorldYPositionToTick(transform.position.y);
@@ -56,19 +40,9 @@ public class Metronome : UpdateableService {
             {
                 if (GameSettings.metronomeActive)
                 {
-#if BASS_AUDIO
-                    int channel = Bass.BASS_SampleGetChannel(sample, false); // get a sample channel
-                    if (channel != 0)
-                    {
-                        Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, GameSettings.sfxVolume * GameSettings.vol_master);
-                        Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, GameSettings.audio_pan);
-                        Bass.BASS_ChannelPlay(channel, false); // play it
-                    }
-                    else
-                        Debug.LogError("Clap error: " + Bass.BASS_ErrorGetCode() + ", " + sample);
-#else
-                    clapSource.PlayOneShot(clap);
-#endif
+                    sampleStream.volume = GameSettings.sfxVolume * GameSettings.vol_master;
+                    sampleStream.pan = GameSettings.audio_pan;
+                    sampleStream.Play();
                 }
             }
         }
@@ -96,11 +70,4 @@ public class Metronome : UpdateableService {
 
         return tickOrigin + deltaTick - remainder + (uint)Mathf.Round(beatDeltaTick);
     }
-
-#if BASS_AUDIO
-    ~Metronome()
-    {
-        Bass.BASS_SampleFree(sample);
-    }
-#endif
 }

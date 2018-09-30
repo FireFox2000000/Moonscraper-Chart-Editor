@@ -1,6 +1,4 @@
-﻿#define BASS_AUDIO
-
-#if BASS_AUDIO
+﻿#if BASS_AUDIO
 using Un4seen.Bass;
 #endif
 

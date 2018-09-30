@@ -715,7 +715,7 @@ public class ChartEditor : MonoBehaviour {
         foreach (var bassStream in currentSong.bassAudioStreams)
         {
             if (AudioManager.StreamIsValid(bassStream))
-                AudioManager.Stop(bassStream);
+                bassStream.Stop();
         }
 
         movement.playStartPosition = null;
@@ -726,7 +726,7 @@ public class ChartEditor : MonoBehaviour {
     {
         if (audioStream != null && audioStream.isValid)
         {
-            AudioManager.Play(audioStream, playPoint);
+            audioStream.Play(playPoint);
             MovementController.timeSync.SongTime = playPoint;
         }
     }
@@ -768,7 +768,7 @@ public class ChartEditor : MonoBehaviour {
 
     public void FreeAudio()
     {
-        currentSong.FreeBassAudioStreams();
+        currentSong.FreeAudioStreams();
     }
 
     #endregion

@@ -1,5 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿#if BASS_AUDIO
+using Un4seen.Bass;
+#endif
+
 using UnityEngine;
 
 public class AudioStream
@@ -7,13 +9,13 @@ public class AudioStream
     public int audioHandle { get; private set; }
     bool isDisposed { get { return audioHandle == 0; } }
 
-    public float volume
+    public virtual float volume
     {
         get { return AudioManager.GetAttribute(this, AudioAttributes.Volume); }
         set { AudioManager.SetAttribute(this, AudioAttributes.Volume, value); }
     }
 
-    public float pan
+    public virtual float pan
     {
         get { return AudioManager.GetAttribute(this, AudioAttributes.Pan); }
         set { AudioManager.SetAttribute(this, AudioAttributes.Pan, value); }
@@ -24,17 +26,10 @@ public class AudioStream
         audioHandle = handle;
     }
 
-    ~AudioStream()
-    {
-        Debug.Assert(isDisposed, "Audio streams must be explicity disposed");
-    }
-
     public void Dispose()
     {
         if (!isDisposed)
         {
-            Debug.Assert(!AudioManager.disposed, "Should have been disposed before the audio manager's disposal");
-
             if (AudioManager.FreeAudioStream(this))
             {
                 audioHandle = 0;
@@ -46,5 +41,44 @@ public class AudioStream
     public bool isValid
     {
         get { return !isDisposed; }
+    }
+
+    public virtual bool Play(float playPoint, bool restart = false)
+    {
+        Bass.BASS_ChannelSetPosition(audioHandle, playPoint);
+        Bass.BASS_ChannelPlay(audioHandle, restart);
+        return true;
+    }
+
+    public virtual void Stop()
+    {
+        Bass.BASS_ChannelStop(audioHandle);
+    }
+
+    public long ChannelLengthInBytes()
+    {
+        return Bass.BASS_ChannelGetLength(audioHandle, BASSMode.BASS_POS_BYTES);
+    }
+
+    public float ChannelLengthInSeconds()
+    {
+        return (float)Bass.BASS_ChannelBytes2Seconds(audioHandle, ChannelLengthInBytes());
+    }
+
+    public long ChannelSecondsToBytes(double position)
+    {
+        return Bass.BASS_ChannelSeconds2Bytes(audioHandle, position);
+    }
+
+    public float CurrentPositionInSeconds()
+    {
+        long bytePos = Bass.BASS_ChannelGetPosition(audioHandle);
+        double elapsedtime = Bass.BASS_ChannelBytes2Seconds(audioHandle, bytePos);
+        return (float)elapsedtime;
+    }
+
+    public bool GetChannelLevels(ref float[] levels, float length)
+    {
+        return Bass.BASS_ChannelGetLevel(audioHandle, levels, length, BASSLevel.BASS_LEVEL_STEREO);
     }
 }

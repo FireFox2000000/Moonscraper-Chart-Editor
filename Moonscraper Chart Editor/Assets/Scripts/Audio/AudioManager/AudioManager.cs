@@ -1,6 +1,4 @@
-﻿#define BASS_AUDIO
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 #if BASS_AUDIO
@@ -8,14 +6,13 @@ using Un4seen.Bass;
 #endif
 
 public static class AudioManager {
-    public static bool disposed { get; private set; }
-    static int streamRefCount = 0;
+    public static bool isDisposed { get; private set; }
+    static List<AudioStream> liveAudioStreams = new List<AudioStream>();
 
     #region Memory
     public static bool Init()
     {
-        disposed = false;
-        UnityEngine.Debug.Log("Audio Manager ref count: " + streamRefCount);
+        isDisposed = false;
 
         bool success = Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
         if (!success)
@@ -28,26 +25,45 @@ public static class AudioManager {
 
     public static void Dispose()
     {
+        // Free any remaining streams 
+        for (int i = liveAudioStreams.Count - 1; i >= 0; --i)
+        {
+            FreeAudioStream(liveAudioStreams[i]);
+        }
+
+        UnityEngine.Debug.Assert(liveAudioStreams.Count == 0, "Failed to free " + liveAudioStreams.Count + " remaining audio streams");
+
         Bass.BASS_Free();
         UnityEngine.Debug.Log("Freed Bass Audio memory");
-        disposed = true;
-
-        UnityEngine.Debug.Log("Audio Manager ref count: " + streamRefCount);
+        isDisposed = true;
     }
 
     public static bool FreeAudioStream(AudioStream stream)
     {
         bool success = false;
 
+        if (isDisposed)
+        {
+            UnityEngine.Debug.LogError("Trying to free a stream when Bass has not been initialised");
+            return false;
+        }
+
         if (StreamIsValid(stream))
         {
-            success = Bass.BASS_StreamFree(stream.audioHandle);
+            if (stream.GetType() == typeof(OneShotSampleStream))
+                success = Bass.BASS_SampleFree(stream.audioHandle);
+            else
+                success = Bass.BASS_StreamFree(stream.audioHandle);
+
             if (!success)
-                UnityEngine.Debug.LogError("Error while freeing audio stream " + stream.audioHandle);
+                UnityEngine.Debug.LogError("Error while freeing audio stream " + stream.audioHandle + ", Error Code " + Bass.BASS_ErrorGetCode());
             else
             {
                 UnityEngine.Debug.Log("Successfully freed audio stream");
-                --streamRefCount;
+                if (!liveAudioStreams.Remove(stream))
+                {
+                    UnityEngine.Debug.LogError("Freed a stream, however it wasn't tracked by the audio manager?");
+                }
             }
         }
         else
@@ -58,9 +74,18 @@ public static class AudioManager {
         return success;
     }
 
-    #endregion
+#endregion
 
-    #region IO
+#region IO
+
+    public static AudioStream LoadStream(string filepath)
+    {
+        int audioStreamHandle = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE);
+
+        var newStream = new AudioStream(audioStreamHandle);
+        liveAudioStreams.Add(newStream);
+        return newStream;
+    }
 
     public static TempoStream LoadTempoStream(string filepath)
     {
@@ -68,33 +93,29 @@ public static class AudioManager {
         audioStreamHandle = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_TempoCreate(audioStreamHandle, BASSFlag.BASS_FX_FREESOURCE);
      
         var newStream = new TempoStream(audioStreamHandle);
-        ++streamRefCount;
+        liveAudioStreams.Add(newStream);
         return newStream;
     }
 
-    public static AudioStream LoadStream(string filepath)
+    public static OneShotSampleStream LoadSampleStream(UnityEngine.AudioClip clip, int maxSimultaneousPlaybacks)
     {
-        int audioStreamHandle = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE);
+        var newStream = LoadSampleStream(clip.GetWavBytes(), maxSimultaneousPlaybacks);
 
-        var newStream = new AudioStream(audioStreamHandle);
-        ++streamRefCount;
         return newStream;
     }
 
-    #endregion
-
-    public static void Play(AudioStream audioStream, float playPoint)
+    public static OneShotSampleStream LoadSampleStream(byte[] streamBytes, int maxSimultaneousPlaybacks)
     {
-        Bass.BASS_ChannelSetPosition(audioStream.audioHandle, playPoint);
-        Bass.BASS_ChannelPlay(audioStream.audioHandle, false);
+        int audioStreamHandle = Bass.BASS_SampleLoad(streamBytes, 0, streamBytes.Length, maxSimultaneousPlaybacks, BASSFlag.BASS_DEFAULT);
+
+        var newStream = new OneShotSampleStream(audioStreamHandle, maxSimultaneousPlaybacks);
+        liveAudioStreams.Add(newStream);
+        return newStream;
     }
 
-    public static void Stop(AudioStream audioStream)
-    {
-        Bass.BASS_ChannelStop(audioStream.audioHandle);
-    }
+#endregion
 
-    #region Attributes
+#region Attributes
 
     public static float GetAttribute(AudioStream audioStream, AudioAttributes attribute)
     {
@@ -120,45 +141,14 @@ public static class AudioManager {
         Bass.BASS_ChannelSetAttribute(audioStream.audioHandle, BASSAttribute.BASS_ATTRIB_FREQ, value);
     }
 
-    #endregion
+#endregion
 
-    #region Helper Functions
+#region Helper Functions
 
     public static bool StreamIsValid(AudioStream audioStream)
     {
         return audioStream != null && audioStream.isValid;
     }
 
-    #endregion
-}
-
-// Written as extensions so we can keep BASS.NET references in as few files as possible
-public static class AudioStreamExtensions
-{
-    public static long ChannelLengthInBytes(this AudioStream audioStream)
-    {
-        return Bass.BASS_ChannelGetLength(audioStream.audioHandle, BASSMode.BASS_POS_BYTES);
-    }
-
-    public static float ChannelLengthInSeconds(this AudioStream audioStream)
-    {
-        return (float)Bass.BASS_ChannelBytes2Seconds(audioStream.audioHandle, ChannelLengthInBytes(audioStream));
-    }
-
-    public static long ChannelSecondsToBytes(this AudioStream audioStream, double position)
-    {
-        return Bass.BASS_ChannelSeconds2Bytes(audioStream.audioHandle, position);
-    }
-
-    public static float CurrentPositionInSeconds(this AudioStream audioStream)
-    {
-        long bytePos = Bass.BASS_ChannelGetPosition(audioStream.audioHandle);
-        double elapsedtime = Bass.BASS_ChannelBytes2Seconds(audioStream.audioHandle, bytePos);
-        return (float)elapsedtime;
-    }
-
-    public static bool GetChannelLevels(this AudioStream audioStream, ref float[] levels, float length)
-    {
-        return Bass.BASS_ChannelGetLevel(audioStream.audioHandle, levels, length, BASSLevel.BASS_LEVEL_STEREO);
-    }
+#endregion
 }

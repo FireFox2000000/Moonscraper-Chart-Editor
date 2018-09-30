@@ -4,7 +4,6 @@
 //#define SONG_DEBUG
 //#define TIMING_DEBUG
 //#define LOAD_AUDIO_ASYNC
-#define BASS_AUDIO
 
 using UnityEngine;
 using System.IO;
@@ -13,7 +12,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System;
-using Un4seen.Bass;
 
 public class Song {
     // Constants
@@ -274,11 +272,10 @@ public class Song {
 
     ~Song()
     {
-        FreeBassAudioStreams();
-        Debug.Log("Song freed");
+        FreeAudioStreams();
     }
 
-    public void FreeBassAudioStreams()
+    public void FreeAudioStreams()
     {
         foreach(var stream in bassAudioStreams)
         {

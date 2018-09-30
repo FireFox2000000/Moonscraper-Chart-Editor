@@ -376,7 +376,7 @@ public class NoteController : SongObjectController {
             }
 
             if (playClap)
-                StrikelineAudioController.Clap(transform.position.y);
+                editor.services.strikelineAudio.Clap(transform.position.y);
         }
 
         hit = true;

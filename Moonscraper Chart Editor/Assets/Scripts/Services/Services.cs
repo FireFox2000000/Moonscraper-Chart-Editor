@@ -24,6 +24,9 @@ public class Services : MonoBehaviour
     public ToolPanelController toolpanelController;
     public UIServices uiServices;
 
+    [Header("Audio Services")]
+    public StrikelineAudioController strikelineAudio;
+
     Rect toolScreenArea;
     public static bool IsInDropDown = false;
     static Vector2 prevScreenSize;

@@ -4,7 +4,6 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using Un4seen.Bass;
 
 [RequireComponent(typeof(AudioSource))]
 public class GameplayManager : MonoBehaviour {
@@ -13,8 +12,7 @@ public class GameplayManager : MonoBehaviour {
 
     HitWindowFeeder hitWindowFeeder;
     AudioSource audioSource;
-    int sample;
-    int channel;
+    OneShotSampleStream sample;
 
     public GameObject statsPanel;
     public UnityEngine.UI.Text noteStreakText;
@@ -30,9 +28,9 @@ public class GameplayManager : MonoBehaviour {
 
     void Start()
     {
-        byte[] comboBreakBytes = comboBreak.GetWavBytes();
-        sample = Bass.BASS_SampleLoad(comboBreakBytes, 0, comboBreakBytes.Length, 1, BASSFlag.BASS_DEFAULT);
-        channel = Bass.BASS_SampleGetChannel(sample, false);
+        sample = AudioManager.LoadSampleStream(comboBreak, 1);
+        sample.onlyPlayIfStopped = true;
+
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
 
         initSize = transform.localScale.y;
@@ -101,12 +99,9 @@ public class GameplayManager : MonoBehaviour {
     }
 
     void KickMissFeedback()
-    {
-        if (Bass.BASS_ChannelIsActive(channel) == BASSActive.BASS_ACTIVE_STOPPED || Bass.BASS_ChannelIsActive(channel) == BASSActive.BASS_ACTIVE_PAUSED)
+    {       
+        if (sample.Play())
         {
-            Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, GameSettings.sfxVolume * GameSettings.vol_master);
-            Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, GameSettings.audio_pan);
-            Bass.BASS_ChannelPlay(channel, false); // play it
             camShake.ShakeCamera();
         }
     }
@@ -134,10 +129,5 @@ public class GameplayManager : MonoBehaviour {
     void OnChartReloaded()
     {
         Reset();
-    }
-
-    ~GameplayManager()
-    {
-        Bass.BASS_SampleFree(sample);
     }
 }
