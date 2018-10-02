@@ -81,7 +81,7 @@ public static class AudioManager {
 
 #endregion
 
-#region IO
+#region Stream Loading
 
     public static AudioStream LoadStream(string filepath)
     {
@@ -125,25 +125,25 @@ public static class AudioManager {
     public static float GetAttribute(AudioStream audioStream, AudioAttributes attribute)
     {
         float value = 0;
-        Bass.BASS_ChannelGetAttribute(audioStream.audioHandle, BASSAttribute.BASS_ATTRIB_FREQ, ref value);
+        Bass.BASS_ChannelGetAttribute(audioStream.audioHandle, (BASSAttribute)attribute, ref value);
         return value;
     }
 
     public static void SetAttribute(AudioStream audioStream, AudioAttributes attribute, float value)
     {
-        Bass.BASS_ChannelSetAttribute(audioStream.audioHandle, BASSAttribute.BASS_ATTRIB_FREQ, value);
+        Bass.BASS_ChannelSetAttribute(audioStream.audioHandle, (BASSAttribute)attribute, value);
     }
 
     public static float GetAttribute(TempoStream audioStream, TempoAudioAttributes attribute)
     {
         float value = 0;
-        Bass.BASS_ChannelGetAttribute(audioStream.audioHandle, BASSAttribute.BASS_ATTRIB_FREQ, ref value);
+        Bass.BASS_ChannelGetAttribute(audioStream.audioHandle, (BASSAttribute)attribute, ref value);
         return value;
     }
 
     public static void SetAttribute(TempoStream audioStream, TempoAudioAttributes attribute, float value)
     {
-        Bass.BASS_ChannelSetAttribute(audioStream.audioHandle, BASSAttribute.BASS_ATTRIB_FREQ, value);
+        Bass.BASS_ChannelSetAttribute(audioStream.audioHandle, (BASSAttribute)attribute, value);
     }
 
 #endregion
@@ -156,4 +156,5 @@ public static class AudioManager {
     }
 
 #endregion
+
 }
