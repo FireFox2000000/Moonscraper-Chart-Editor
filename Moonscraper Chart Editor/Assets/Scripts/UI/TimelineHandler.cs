@@ -107,7 +107,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     public static bool externalUpdate = false;
     void Update()
     {
-        ChartEditor editor = ChartEditor.GetInstance();
+        ChartEditor editor = ChartEditor.Instance;
 
         halfHeight = rectTransform.rect.height / 2.0f;
         scaledHalfHeight = halfHeight * transform.lossyScale.y;
@@ -186,7 +186,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         yield return null;
         yield return null;
 
-        ChartEditor editor = ChartEditor.GetInstance();
+        ChartEditor editor = ChartEditor.Instance;
 
         int i;
         for (i = 0; i < editor.currentSong.sections.Count; ++i)
@@ -214,7 +214,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         yield return null;
         yield return null;
 
-        ChartEditor editor = ChartEditor.GetInstance();
+        ChartEditor editor = ChartEditor.Instance;
 
         int i;
         for (i = 0; i < editor.currentChart.starPower.Count; ++i)
@@ -275,7 +275,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
     void MoveHandle(PointerEventData eventData)
     {
-        ChartEditor editor = ChartEditor.GetInstance();
+        ChartEditor editor = ChartEditor.Instance;
         movement.editor.Stop();
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
@@ -323,7 +323,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     public void RefreshHighlightIndicator()
     {
         bool highlightIndicatorActive = false;
-        ChartEditor editor = ChartEditor.GetInstance();
+        ChartEditor editor = ChartEditor.Instance;
 
         if (editor.currentSelectedObjects.Count > 0)
         {

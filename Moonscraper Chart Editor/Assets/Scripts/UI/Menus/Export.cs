@@ -173,7 +173,7 @@ public class Export : DisplayMenu {
 
         if (errorMessageList != string.Empty)
         {
-            ChartEditor.GetInstance().errorManager.QueueErrorMessage("Encountered the following errors while exporting: " + Globals.LINE_ENDING + errorMessageList);
+            ChartEditor.Instance.errorManager.QueueErrorMessage("Encountered the following errors while exporting: " + Globals.LINE_ENDING + errorMessageList);
         }
     }
 

@@ -11,16 +11,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
 
-public class ChartEditor : MonoBehaviour {
-    static ChartEditor currentEditor;
-
-    public static ChartEditor GetInstance ()
-    {
-        if (currentEditor)
-            return currentEditor;
-        else
-            return GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
-    }
+public class ChartEditor : UnitySingleton<ChartEditor> {
+    protected override bool WantDontDestroyOnLoad { get { return false; } }
 
     public static bool isDirty = false;
 
@@ -171,8 +163,7 @@ public class ChartEditor : MonoBehaviour {
     // Use this for initialization
     void Awake () {
         Debug.Log("Initialising " + versionNumber.text);
-        
-        currentEditor = this;
+
         _songObjectPoolManager = GetComponent<SongObjectPoolManager>();
 
         _minPos = 0;

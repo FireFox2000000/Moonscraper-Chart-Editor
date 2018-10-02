@@ -137,7 +137,7 @@ public class GroupMove : ToolObject
                     if (bpm.anchor != null)
                         bpm.anchor = bpm.song.LiveTickToTime(bpm.tick, bpm.song.resolution);
 
-                    ChartEditor.GetInstance().songObjectPoolManager.SetAllPoolsDirty();
+                    ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
                     break;
                 case (SongObject.ID.TimeSignature):
                     overwriteRecord = PlaceSongObject.OverwriteActionHistory((TimeSignature)movingSongObjects[i], editor.currentSong.timeSignatures);

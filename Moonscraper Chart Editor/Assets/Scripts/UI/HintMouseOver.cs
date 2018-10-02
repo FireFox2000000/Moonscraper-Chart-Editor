@@ -94,7 +94,7 @@ public class HintMouseOver : MonoBehaviour {
         if (active && alpha > 0)
         {
             Vector2 scaledOffset = new Vector2(offset.x * transform.lossyScale.x, offset.y * transform.lossyScale.y);
-            Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(ChartEditor.GetInstance().uiServices.uiCamera, ((Vector2)transform.position + scaledOffset));
+            Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(ChartEditor.Instance.uiServices.uiCamera, ((Vector2)transform.position + scaledOffset));
             screenPos.y = Screen.height - screenPos.y;      // Alter for GUI label position
 
             // Apply matrix transformations

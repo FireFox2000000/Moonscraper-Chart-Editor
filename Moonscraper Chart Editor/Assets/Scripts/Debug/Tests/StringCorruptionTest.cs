@@ -14,7 +14,7 @@ public class StringCorruptionTest : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        editor = ChartEditor.GetInstance(); 
+        editor = ChartEditor.Instance; 
     }
 
     void StartTest()

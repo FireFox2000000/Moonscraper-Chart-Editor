@@ -34,7 +34,7 @@ public class ToolPanelController : MonoBehaviour {
 
     void Start()
     {
-        editor = ChartEditor.GetInstance();
+        editor = ChartEditor.Instance;
 
         eventImage = eventSelect.GetComponent<Image>();
         localEventSprite = eventImage.sprite;

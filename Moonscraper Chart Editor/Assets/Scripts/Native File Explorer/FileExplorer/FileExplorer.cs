@@ -83,7 +83,7 @@ public static class FileExplorer  {
 
             CommonDialogBox.ErrorCodes errorCode = CommonDialogBox.GetErrorCode();
             if (errorCode != CommonDialogBox.ErrorCodes.None)
-                ChartEditor.GetInstance().errorManager.QueueErrorMessage("Error occured when bringing up the Open File file explorer. \nError Code: " + errorCode);
+                ChartEditor.Instance.errorManager.QueueErrorMessage("Error occured when bringing up the Open File file explorer. \nError Code: " + errorCode);
 
             throw new FileExplorerExitException("Could not open file");
         }
@@ -158,7 +158,7 @@ public static class FileExplorer  {
 
             CommonDialogBox.ErrorCodes errorCode = CommonDialogBox.GetErrorCode();
             if (errorCode != CommonDialogBox.ErrorCodes.None)
-                ChartEditor.GetInstance().errorManager.QueueErrorMessage("Error occured when bringing up the Save As file explorer. \nError Code: " + errorCode);
+                ChartEditor.Instance.errorManager.QueueErrorMessage("Error occured when bringing up the Save As file explorer. \nError Code: " + errorCode);
 
             throw new FileExplorerExitException("Could not open file");
         }

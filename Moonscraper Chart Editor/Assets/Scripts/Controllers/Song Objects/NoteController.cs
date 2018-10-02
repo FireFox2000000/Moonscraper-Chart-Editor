@@ -410,7 +410,7 @@ public class NoteController : SongObjectController {
         {
             bool leftyFlip = GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip;
 
-            return chartPos + ChartEditor.GetInstance().laneInfo.GetLanePosition(note.rawNote, leftyFlip);
+            return chartPos + ChartEditor.Instance.laneInfo.GetLanePosition(note.rawNote, leftyFlip);
         }
         else
             return chartPos;

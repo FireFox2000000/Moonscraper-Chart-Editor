@@ -34,7 +34,7 @@ public class MenuBar : UpdateableService {
 
     // Use this for initialization
     protected override void Start () {
-        editor = ChartEditor.GetInstance();
+        editor = ChartEditor.Instance;
 
         EventsManager.onChartReloadEventList.Add(GameplayEnabledCheck);
 
@@ -132,7 +132,7 @@ public class MenuBar : UpdateableService {
     public void LoadCurrentInstumentAndDifficulty()
     {
         if (!editor)
-            editor = ChartEditor.GetInstance();
+            editor = ChartEditor.Instance;
 
         editor.LoadChart(editor.currentSong.GetChart(currentInstrument, currentDifficulty));
         editor.currentSelectedObject = null;

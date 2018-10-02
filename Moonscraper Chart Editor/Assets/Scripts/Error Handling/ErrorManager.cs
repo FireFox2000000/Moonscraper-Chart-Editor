@@ -8,7 +8,7 @@ public class ErrorManager : MonoBehaviour {
 
     private void Start()
     {
-        errorMenu = ChartEditor.GetInstance().uiServices.gameObject.GetComponentInChildren<ErrorMessage>(true);
+        errorMenu = ChartEditor.Instance.uiServices.gameObject.GetComponentInChildren<ErrorMessage>(true);
         Debug.Assert(errorMenu, "Unable to find error menu component");
     }
 

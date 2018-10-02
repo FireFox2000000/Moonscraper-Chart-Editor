@@ -144,7 +144,7 @@ public class GuitarNoteHitAndMissDetect {
         {
             // Recovery algorithm
             // Select the note closest to the strikeline
-            float aimYPos = ChartEditor.GetInstance().visibleStrikeline.transform.position.y + 0.25f;  // Added offset from the note controller
+            float aimYPos = ChartEditor.Instance.visibleStrikeline.transform.position.y + 0.25f;  // Added offset from the note controller
 
             GuitarNoteHitKnowledge selectedNote = validatedNotes[0];
 

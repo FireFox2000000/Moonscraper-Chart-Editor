@@ -10,7 +10,7 @@ public abstract class UpdateableService : MonoBehaviour
 
     protected virtual void Start()
     {
-        ChartEditor.GetInstance().globals.services.RegisterUpdateableService(this);
+        ChartEditor.Instance.globals.services.RegisterUpdateableService(this);
     }
 }
 

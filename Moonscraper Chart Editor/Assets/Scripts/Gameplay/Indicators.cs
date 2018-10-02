@@ -91,7 +91,7 @@ public class Indicators : MonoBehaviour {
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
         {
-            ChartEditor editor = ChartEditor.GetInstance();
+            ChartEditor editor = ChartEditor.Instance;
             GamepadInput input = editor.inputManager.mainGamepad;
             Chart.GameMode gameMode = editor.currentChart.gameMode;
             LaneInfo laneInfo = editor.laneInfo;
@@ -136,7 +136,7 @@ public class Indicators : MonoBehaviour {
 
     public void UpdateStrikerColors(int laneCount)
     {
-        Chart.GameMode gameMode = ChartEditor.GetInstance().currentGameMode;
+        Chart.GameMode gameMode = ChartEditor.Instance.currentGameMode;
 
         Color[] colours = laneInfo.laneColours;
 

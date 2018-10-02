@@ -40,7 +40,7 @@ public class Whammy : MonoBehaviour {
 
                 ShiftAnimationKeys(lineCurve, keyShiftSpeed * Time.deltaTime * (GameSettings.hyperspeed / GameSettings.gameSpeed) / transform.localScale.y);
 
-                float whammyVal = (lerpedWhammyVal(ChartEditor.GetInstance().inputManager.mainGamepad) + 1) * widthMultiplier;
+                float whammyVal = (lerpedWhammyVal(ChartEditor.Instance.inputManager.mainGamepad) + 1) * widthMultiplier;
 
                 lineCurve.AddKey(new Keyframe(0, whammyVal + 1));
             }

@@ -77,6 +77,6 @@ public class Starpower : ChartObject
     public override void Delete(bool update = true)
     {
         base.Delete(update);
-        ChartEditor.GetInstance().songObjectPoolManager.SetAllPoolsDirty();
+        ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
     }
 }

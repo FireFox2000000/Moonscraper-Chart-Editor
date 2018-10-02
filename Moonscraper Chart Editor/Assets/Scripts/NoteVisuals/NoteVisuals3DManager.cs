@@ -53,7 +53,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
 
             Material[] materials;
 
-            ChartEditor editor = ChartEditor.GetInstance();
+            ChartEditor editor = ChartEditor.Instance;
             Chart.GameMode gameMode = editor.currentGameMode;
             Note.NoteType visualNoteType = noteType;
             if (gameMode == Chart.GameMode.Drums)

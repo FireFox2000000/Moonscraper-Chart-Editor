@@ -656,12 +656,12 @@ public class Song {
 
             if (saveErrorMessage != string.Empty)
             {
-                ChartEditor.GetInstance().errorManager.QueueErrorMessage("Save completed with the following errors: " + Globals.LINE_ENDING + saveErrorMessage);
+                ChartEditor.Instance.errorManager.QueueErrorMessage("Save completed with the following errors: " + Globals.LINE_ENDING + saveErrorMessage);
             }
         }
         catch (System.Exception e)
         {
-            ChartEditor.GetInstance().errorManager.QueueErrorMessage(Logger.LogException(e, "Save failed!"));
+            ChartEditor.Instance.errorManager.QueueErrorMessage(Logger.LogException(e, "Save failed!"));
         }
     }
 

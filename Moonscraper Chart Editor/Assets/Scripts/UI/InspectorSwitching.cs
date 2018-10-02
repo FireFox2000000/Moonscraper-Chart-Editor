@@ -33,7 +33,7 @@ public class InspectorSwitching : MonoBehaviour {
         tsInspector.gameObject.SetActive(false);
         eventInspector.gameObject.SetActive(false);
 
-        editor = ChartEditor.GetInstance();
+        editor = ChartEditor.Instance;
     }
 
     // Update is called once per frame

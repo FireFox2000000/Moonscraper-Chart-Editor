@@ -39,9 +39,9 @@ public class HitWindowFeeder : MonoBehaviour {
 
     void Update()
     {
-        float time = ChartEditor.GetInstance().currentVisibleTime;
+        float time = ChartEditor.Instance.currentVisibleTime;
 
-        ChartEditor editor = ChartEditor.GetInstance();
+        ChartEditor editor = ChartEditor.Instance;
         Chart.GameMode gameMode = editor.currentChart.gameMode;
 
         // Enter window

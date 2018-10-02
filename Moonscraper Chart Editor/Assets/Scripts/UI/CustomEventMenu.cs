@@ -48,7 +48,7 @@ public class CustomEventMenu : MonoBehaviour {
               ? new ActionHistory.Modify(originalEvent as ChartEvent, currentChartEvent)
               : new ActionHistory.Modify(originalEvent as Event, currentEvent);
 
-            ChartEditor.GetInstance().actionHistory.Insert(actionHistory);
+            ChartEditor.Instance.actionHistory.Insert(actionHistory);
         }
 
         currentEventToCustomise = null;

@@ -15,7 +15,7 @@ public class DrumsGameplayRulestate : BaseGameplayRulestate {
     {
         uint noteStreak = stats.noteStreak;
         int missCount = UpdateWindowExit(time, hitWindow);
-        LaneInfo laneInfo = ChartEditor.GetInstance().laneInfo;
+        LaneInfo laneInfo = ChartEditor.Instance.laneInfo;
 
         for (int i = 0; i < missCount; ++i)
         {

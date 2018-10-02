@@ -75,7 +75,7 @@ public class LaneInfo : MonoBehaviour {
         {
             Color[] colours = new Color[laneCount];
             int[] paletteMap;
-            Chart.GameMode gameMode = ChartEditor.GetInstance().currentGameMode;
+            Chart.GameMode gameMode = ChartEditor.Instance.currentGameMode;
 
             if (!standardGamemodePaletteMap.TryGetValue(gameMode, out paletteMap))
                 throw new System.Exception("Unable to find standard palette for current game mode");
@@ -101,7 +101,7 @@ public class LaneInfo : MonoBehaviour {
     void OnLanesUpdated()
     {
         int newLaneCount;
-        if (standardGamemodeToLaneCountMap.TryGetValue(ChartEditor.GetInstance().currentGameMode, out newLaneCount))
+        if (standardGamemodeToLaneCountMap.TryGetValue(ChartEditor.Instance.currentGameMode, out newLaneCount))
             laneCount = newLaneCount;
     }
 

@@ -16,7 +16,7 @@ public class Metronome : UpdateableService {
 
     // Use this for initialization
     protected override void Start () {
-        editor = ChartEditor.GetInstance();      
+        editor = ChartEditor.Instance;      
         initLocalPos = transform.localPosition;
 
         sampleStream = AudioManager.LoadSampleStream(clap, 15);

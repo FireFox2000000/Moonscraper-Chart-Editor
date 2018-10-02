@@ -136,7 +136,7 @@ public class FireSyncronizer : MonoBehaviour {
 
     void OnLanesChanged(int laneCount)
     {
-        ChartEditor editor = ChartEditor.GetInstance();
+        ChartEditor editor = ChartEditor.Instance;
         SetMaterialColours(editor.currentGameMode, laneCount);
     }
 

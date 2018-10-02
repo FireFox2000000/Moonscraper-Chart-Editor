@@ -17,7 +17,7 @@ public class SaveAnimController : UpdateableService {
 	// Use this for initialization
 	protected override void Start () {
         base.Start();
-        editor = ChartEditor.GetInstance();
+        editor = ChartEditor.Instance;
         EventsManager.onSaveEventList.Add(StartFade);
 	}
 	
