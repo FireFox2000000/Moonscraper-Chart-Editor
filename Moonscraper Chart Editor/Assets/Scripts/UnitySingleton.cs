@@ -7,11 +7,6 @@ public class UnitySingleton<T> : MonoBehaviour where T : UnitySingleton<T>
     static T instance;
     protected virtual bool WantDontDestroyOnLoad { get { return true; } }
 
-    protected virtual void Awake()
-    {
-        DontDestroyOnLoad(this.gameObject);
-    }
-
     public static T Instance
     {
         get
