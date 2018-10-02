@@ -108,7 +108,9 @@ public class LoadCustomResources : MonoBehaviour {
     {
         Application.runInBackground = true;
 
-#if !UNITY_EDITOR
+#if UNITY_EDITOR
+        skinDirectory = Directory.GetParent(Application.dataPath) + "\\" + skinDirectory;
+#else
         skinDirectory = DirectoryHelper.GetMainDirectory() + "\\" + skinDirectory;
 #endif
         if (Directory.Exists(skinDirectory))
