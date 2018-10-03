@@ -38,27 +38,12 @@ public class Skin {
     public Texture2D[] sustains = new Texture2D[5];
     public Material[] sustain_mats = new Material[6];
 
-    public Texture2D[] fret_base = new Texture2D[5];
-    public Texture2D[] fret_cover = new Texture2D[5];
-    public Texture2D[] fret_release = new Texture2D[5];
-    public Texture2D[] fret_press = new Texture2D[5];
-    public Texture2D[] fret_anim = new Texture2D[5];
-
-    public Texture2D[] drum_fret_base = new Texture2D[5];
-    public Texture2D[] drum_fret_cover = new Texture2D[5];
-    public Texture2D[] drum_fret_release = new Texture2D[5];
-    public Texture2D[] drum_fret_press = new Texture2D[5];
-    public Texture2D[] drum_fret_anim = new Texture2D[5];
-
     public Texture2D[] reg_strum_ghl = new Texture2D[3];
     public Texture2D[] reg_hopo_ghl = new Texture2D[3];
     public Texture2D[] reg_tap_ghl = new Texture2D[2];
     public Texture2D[] sp_strum_ghl = new Texture2D[3];
     public Texture2D[] sp_hopo_ghl = new Texture2D[3];
     public Texture2D[] sp_tap_ghl = new Texture2D[2];
-
-    public Texture2D[] fret_base_ghl = new Texture2D[6];
-    public Texture2D[] fret_press_ghl = new Texture2D[6];
 
     public enum AssestsAvaliable
     {

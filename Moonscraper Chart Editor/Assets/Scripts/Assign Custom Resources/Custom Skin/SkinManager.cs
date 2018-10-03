@@ -14,6 +14,21 @@ public static class SkinKeys
 
     public const string fretStem = "fret_stem";
     public const string hitFlames = "hit_flames";
+
+    public const string xFretBase = "_fret_base";
+    public const string xFretCover = "_fret_cover";
+    public const string xFretPress = "_fret_press";
+    public const string xFretRelease = "_fret_release";
+    public const string xFretAnim = "_fret_anim";
+
+    public const string xDrumFretBase = "_drum_fret_base";
+    public const string xDrumFretCover = "_drum_fret_cover";
+    public const string xDrumFretPress = "_drum_fret_press";
+    public const string xDrumFretRelease = "_drum_fret_release";
+    public const string xDrumFretAnim = "_drum_fret_anim";
+
+    public const string xFretBaseGhl = "_fret_base_ghl";
+    public const string xFretPressGhl = "_fret_press_ghl";
 }
 
 public class SkinManager : UnitySingleton<SkinManager> {

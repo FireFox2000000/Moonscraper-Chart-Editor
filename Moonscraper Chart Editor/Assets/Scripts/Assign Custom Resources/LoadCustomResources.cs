@@ -63,17 +63,17 @@ public class LoadCustomResources : MonoBehaviour {
                 new CustomTexture(i + "_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
                 new CustomTexture(i + "_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
 
-                new CustomTexture(i + "_fret_base", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_fret_cover", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_fret_press", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_fret_release", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomTexture(i + SkinKeys.xFretBase, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomTexture(i + SkinKeys.xFretCover, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomTexture(i + SkinKeys.xFretPress, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomTexture(i + SkinKeys.xFretRelease, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomTexture(i + SkinKeys.xFretAnim, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
 
-                new CustomTexture(i + "_drum_fret_base", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_drum_fret_cover", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_drum_fret_press", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_drum_fret_release", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_drum_fret_anim", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT)
+                new CustomTexture(i + SkinKeys.xDrumFretBase, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomTexture(i + SkinKeys.xDrumFretCover, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomTexture(i + SkinKeys.xDrumFretPress, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomTexture(i + SkinKeys.xDrumFretRelease, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomTexture(i + SkinKeys.xDrumFretAnim, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT)
             }
             );
         }
@@ -94,8 +94,8 @@ public class LoadCustomResources : MonoBehaviour {
         for (int i = 0; i < 6; ++i)
         {
             resources.AddRange(new CustomTexture[] {
-                new CustomTexture(i + "_fret_base_ghl", GHL_FRET_WIDTH, GHL_FRET_HEIGHT),
-                new CustomTexture(i + "_fret_press_ghl", GHL_FRET_WIDTH, GHL_FRET_HEIGHT),
+                new CustomTexture(i + SkinKeys.xFretBaseGhl, GHL_FRET_WIDTH, GHL_FRET_HEIGHT),
+                new CustomTexture(i + SkinKeys.xFretPressGhl, GHL_FRET_WIDTH, GHL_FRET_HEIGHT),
             }
             );
         }
@@ -253,58 +253,6 @@ public class LoadCustomResources : MonoBehaviour {
             skin.sp_tap[i] = GetTextureFromLoadedResources(i + "_sp_tap", resourcesDictionary);
         }
 
-        // STANDARD FRETS
-        for (int i = 0; i < skin.fret_base.Length; ++i)
-        {
-            skin.fret_base[i] = GetTextureFromLoadedResources(i + "_fret_base", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.fret_cover.Length; ++i)
-        {
-            skin.fret_cover[i] = GetTextureFromLoadedResources(i + "_fret_cover", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.fret_press.Length; ++i)
-        {
-            skin.fret_press[i] = GetTextureFromLoadedResources(i + "_fret_press", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.fret_release.Length; ++i)
-        {
-            skin.fret_release[i] = GetTextureFromLoadedResources(i + "_fret_release", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.fret_anim.Length; ++i)
-        {
-            skin.fret_anim[i] = GetTextureFromLoadedResources(i + "_fret_anim", resourcesDictionary);
-        }
-        
-        // DRUMS
-        for (int i = 0; i < skin.fret_base.Length; ++i)
-        {
-            skin.drum_fret_base[i] = GetTextureFromLoadedResources(i + "_drum_fret_base", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.fret_cover.Length; ++i)
-        {
-            skin.drum_fret_cover[i] = GetTextureFromLoadedResources(i + "_drum_fret_cover", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.fret_press.Length; ++i)
-        {
-            skin.drum_fret_press[i] = GetTextureFromLoadedResources(i + "_drum_fret_press", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.fret_release.Length; ++i)
-        {
-            skin.drum_fret_release[i] = GetTextureFromLoadedResources(i + "_drum_fret_release", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.fret_anim.Length; ++i)
-        {
-            skin.drum_fret_anim[i] = GetTextureFromLoadedResources(i + "_drum_fret_anim", resourcesDictionary);
-        }
-
         // GHL LOADING
         for (int i = 0; i < skin.reg_strum_ghl.Length; ++i)
         {
@@ -334,16 +282,6 @@ public class LoadCustomResources : MonoBehaviour {
         for (int i = 0; i < skin.sp_tap_ghl.Length; ++i)
         {
             skin.sp_tap_ghl[i] = GetTextureFromLoadedResources(i + "_sp_tap_ghl", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.fret_base_ghl.Length; ++i)
-        {
-            skin.fret_base_ghl[i] = GetTextureFromLoadedResources(i + "_fret_base_ghl", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.fret_press_ghl.Length; ++i)
-        {
-            skin.fret_press_ghl[i] = GetTextureFromLoadedResources(i + "_fret_press_ghl", resourcesDictionary);
         }
 
         SkinManager.Instance.currentSkin = skin;

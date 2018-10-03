@@ -149,70 +149,62 @@ public class AssignCustomResources : MonoBehaviour {
         for (int i = 0; i < customFrets.Length; ++i)
         {
             // Standard Frets
-            if (i < customSkin.fret_base.Length)
+            Texture2D texture = SkinManager.Instance.GetSkinItem<Texture2D>(i + SkinKeys.xFretBase, null);
+            //Sprite sprite = null;
+            if (texture)
             {
-                //Sprite sprite = null;
-                if (customSkin.fret_base[i])
-                {
-                    customFrets[i].fretBase = MakeFretSprite(customSkin.fret_base[i]);
-                    customFrets[i].gameObject.SetActive(true);
-                }
-
-                //customFrets[i].fretBaseRen.sprite = sprite;
-            }
-            
-            if (i < customSkin.fret_cover.Length)
-            {
-                if (customSkin.fret_cover[i])
-                {
-                    customFrets[i].fretCover = MakeFretSprite(customSkin.fret_cover[i]);
-                    customFrets[i].gameObject.SetActive(true);
-                }
+                customFrets[i].fretBase = MakeFretSprite(texture);
+                customFrets[i].gameObject.SetActive(true);
             }
 
-            if (i < customSkin.fret_press.Length)
+            texture = SkinManager.Instance.GetSkinItem<Texture2D>(i + SkinKeys.xFretCover, null);
+            if (texture)
             {
-                if (customSkin.fret_press[i])
-                {
-                    customFrets[i].fretPress = MakeFretSprite(customSkin.fret_press[i]);
-                    customFrets[i].gameObject.SetActive(true);
-                }
+                customFrets[i].fretCover = MakeFretSprite(texture);
+                customFrets[i].gameObject.SetActive(true);
             }
 
-            if (i < customSkin.fret_release.Length)
+            texture = SkinManager.Instance.GetSkinItem<Texture2D>(i + SkinKeys.xFretPress, null);
+            if (texture)
             {
-                if (customSkin.fret_release[i])
-                {
-                    customFrets[i].fretRelease = MakeFretSprite(customSkin.fret_release[i]);
-                    customFrets[i].gameObject.SetActive(true);
-                }
+                customFrets[i].fretPress = MakeFretSprite(texture);
+                customFrets[i].gameObject.SetActive(true);
             }
 
-            if (i < customSkin.fret_anim.Length)
+            texture = SkinManager.Instance.GetSkinItem<Texture2D>(i + SkinKeys.xFretRelease, null);
+            if (texture)
             {
-                if (customSkin.fret_anim[i])
-                {
-                    customFrets[i].toAnimate = MakeFretSprite(customSkin.fret_anim[i]);
-                    customFrets[i].gameObject.SetActive(true);
-                }
+                customFrets[i].fretRelease = MakeFretSprite(texture);
+                customFrets[i].gameObject.SetActive(true);
             }
 
-            // Drum Frets
-            
-            if (i < customSkin.drum_fret_base.Length && customSkin.drum_fret_base[i])
-                customFrets[i].drumFretBase = MakeFretSprite(customSkin.drum_fret_base[i]);
+            texture = SkinManager.Instance.GetSkinItem<Texture2D>(i + SkinKeys.xFretAnim, null);
+            if (texture)
+            {
+                customFrets[i].toAnimate = MakeFretSprite(texture);
+                customFrets[i].gameObject.SetActive(true);
+            }
 
-            if (i < customSkin.drum_fret_cover.Length && customSkin.drum_fret_cover[i])
-                customFrets[i].drumFretCover = MakeFretSprite(customSkin.drum_fret_cover[i]);
+            // Drum Frets         
+            texture = SkinManager.Instance.GetSkinItem<Texture2D>(i + SkinKeys.xDrumFretBase, null);
+            if (texture)
+                customFrets[i].drumFretBase = MakeFretSprite(texture);
 
-            if (i < customSkin.drum_fret_press.Length && customSkin.drum_fret_press[i])
-                customFrets[i].drumFretPress = MakeFretSprite(customSkin.drum_fret_press[i]);
+            texture = SkinManager.Instance.GetSkinItem<Texture2D>(i + SkinKeys.xDrumFretCover, null);
+            if (texture)
+                customFrets[i].drumFretCover = MakeFretSprite(texture);
 
-            if (i < customSkin.drum_fret_release.Length && customSkin.drum_fret_release[i])
-                customFrets[i].drumFretRelease = MakeFretSprite(customSkin.drum_fret_release[i]);
+            texture = SkinManager.Instance.GetSkinItem<Texture2D>(i + SkinKeys.xDrumFretPress, null);
+            if (texture)
+                customFrets[i].drumFretPress = MakeFretSprite(texture);
 
-            if (i < customSkin.drum_fret_anim.Length && customSkin.drum_fret_anim[i])
-                customFrets[i].drumToAnimate = MakeFretSprite(customSkin.drum_fret_anim[i]);
+            texture = SkinManager.Instance.GetSkinItem<Texture2D>(i + SkinKeys.xDrumFretRelease, null);
+            if (texture)
+                customFrets[i].drumFretRelease = MakeFretSprite(texture);
+
+            texture = SkinManager.Instance.GetSkinItem<Texture2D>(i + SkinKeys.xDrumFretAnim, null);
+            if (texture)
+                customFrets[i].drumToAnimate = MakeFretSprite(texture);
         }
 
         Sprite stem = null;
@@ -228,15 +220,17 @@ public class AssignCustomResources : MonoBehaviour {
         
         for (int i = 0; i < customFretsGHL.Length; ++i)
         {
-            if (i < customSkin.fret_base_ghl.Length && customSkin.fret_base_ghl[i])
+            Texture2D texture = SkinManager.Instance.GetSkinItem<Texture2D>(i + SkinKeys.xFretBaseGhl, null);
+            if (texture)
             {
-                customFretsGHL[i].baseRen.sprite = MakeFretSprite(customSkin.fret_base_ghl[i]);
+                customFretsGHL[i].baseRen.sprite = MakeFretSprite(texture);
                 customFretsGHL[i].canUse = true;
             }
 
-            if (i < customSkin.fret_press_ghl.Length && customSkin.fret_press_ghl[i])
+            texture = SkinManager.Instance.GetSkinItem<Texture2D>(i + SkinKeys.xFretPressGhl, null);
+            if (texture)
             {
-                customFretsGHL[i].pressRen.sprite = MakeFretSprite(customSkin.fret_press_ghl[i]);
+                customFretsGHL[i].pressRen.sprite = MakeFretSprite(texture);
                 customFretsGHL[i].canUse = true;
             }
         }
