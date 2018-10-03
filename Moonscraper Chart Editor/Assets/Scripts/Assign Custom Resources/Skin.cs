@@ -50,9 +50,6 @@ public class Skin {
     public Texture2D[] drum_fret_press = new Texture2D[5];
     public Texture2D[] drum_fret_anim = new Texture2D[5];
 
-    public Texture2D fret_stem;
-    public Texture2D hit_flames;
-
     public Texture2D[] reg_strum_ghl = new Texture2D[3];
     public Texture2D[] reg_hopo_ghl = new Texture2D[3];
     public Texture2D[] reg_tap_ghl = new Texture2D[2];

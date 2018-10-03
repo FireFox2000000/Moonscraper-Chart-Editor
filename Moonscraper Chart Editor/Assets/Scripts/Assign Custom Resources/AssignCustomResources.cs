@@ -216,9 +216,10 @@ public class AssignCustomResources : MonoBehaviour {
         }
 
         Sprite stem = null;
-        if (customSkin.fret_stem)
+        Texture2D fretStem = customSkin.GetSkinItem<Texture2D>(SkinKeys.fretStem, null);
+        if (fretStem)
         {
-            stem = Sprite.Create(customSkin.fret_stem, new Rect(0.0f, 0.0f, customSkin.fret_stem.width, customSkin.fret_stem.height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
+            stem = Sprite.Create(fretStem, new Rect(0.0f, 0.0f, fretStem.width, fretStem.height), new Vector2(0.5f, 0.5f), PIXELS_PER_UNIT);
             for (int i = 0; i < customFrets.Length; ++i)
             {
                 customFrets[i].fretStemRen.sprite = stem;

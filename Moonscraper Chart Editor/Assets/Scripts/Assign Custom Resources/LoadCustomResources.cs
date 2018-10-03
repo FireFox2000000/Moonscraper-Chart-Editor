@@ -346,9 +346,6 @@ public class LoadCustomResources : MonoBehaviour {
             skin.fret_press_ghl[i] = GetTextureFromLoadedResources(i + "_fret_press_ghl", resourcesDictionary);
         }
 
-        skin.fret_stem = GetTextureFromLoadedResources("fret_stem", resourcesDictionary);
-        skin.hit_flames = GetTextureFromLoadedResources("hit_flames", resourcesDictionary);
-
         SkinManager.Instance.currentSkin = skin;
 
         // Load editor

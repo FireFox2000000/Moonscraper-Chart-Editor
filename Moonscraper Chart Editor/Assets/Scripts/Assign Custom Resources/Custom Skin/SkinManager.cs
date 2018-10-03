@@ -11,6 +11,9 @@ public static class SkinKeys
 
     public const string fretboard = "fretboard-0";
     public const string backgroundX = "background-";
+
+    public const string fretStem = "fret_stem";
+    public const string hitFlames = "hit_flames";
 }
 
 public class SkinManager : UnitySingleton<SkinManager> {
