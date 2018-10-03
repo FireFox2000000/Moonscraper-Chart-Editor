@@ -4,13 +4,13 @@ using System.IO;
 using System.Collections.Generic;
 
 public class BuildDocumentation  {
-    [MenuItem("MyTools/Windows Build With Postprocess")]
+    [MenuItem("Build Processes/Windows Build With Postprocess")]
     public static void BuildGame()
     {
         buildSpecificPlayer(BuildTarget.StandaloneWindows);
     }
 
-    [MenuItem("MyTools/Windows 64 Build With Postprocess")]
+    [MenuItem("Build Processes/Windows 64 Build With Postprocess")]
     public static void BuildGame64()
     {
         buildSpecificPlayer(BuildTarget.StandaloneWindows64);
