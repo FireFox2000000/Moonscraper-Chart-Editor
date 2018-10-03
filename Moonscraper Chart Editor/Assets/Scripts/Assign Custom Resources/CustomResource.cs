@@ -8,14 +8,13 @@ using System.IO;
 
 public abstract class CustomResource
 {
-    protected string _name;
-    public string name { get { return _name; } }
-    public WWW www;
+    public string name { get; private set; }
+    public WWW www { get; private set; }
     protected readonly string[] validExtentions;
 
     protected CustomResource(string name, string[] validExtentions)
     {
-        this._name = name;
+        this.name = name;
         this.validExtentions = validExtentions;
     }
 
@@ -23,7 +22,7 @@ public abstract class CustomResource
     {
         string file = string.Empty;
 
-        if (!(files.TryGetValue(_name, out file) && Utility.validateExtension(file, validExtentions)))
+        if (!(files.TryGetValue(name, out file) && Utility.validateExtension(file, validExtentions)))
             return false;
 
         if (file != string.Empty)
@@ -36,6 +35,7 @@ public abstract class CustomResource
     }
 
     public abstract void AssignResource();
+    public abstract UnityEngine.Object GetObject();
 }
 
 public class CustomAudioClip : CustomResource
@@ -50,6 +50,15 @@ public class CustomAudioClip : CustomResource
         {
             audio = www.GetAudioClip(false, false);
         }
+        else
+        {
+            Debug.LogError("Trying to assign a custom resource when it hasn't finished loading");
+        }
+    }
+
+    public override UnityEngine.Object GetObject()
+    {
+        return audio;
     }
 }
 
@@ -86,7 +95,7 @@ public class CustomTexture : CustomResource
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError("DXT5 Error: " + e.Message);
+                        Debug.LogWarning("DXT5 read failed. Will try DTX1. Error: " + e.Message);
 
                         try
                         {
@@ -107,6 +116,15 @@ public class CustomTexture : CustomResource
             texture = new Texture2D(width, height, texFormat, false);
             www.LoadImageIntoTexture(texture);
         }
+        else
+        {
+            Debug.LogError("Trying to assign a custom resource when it hasn't finished loading");
+        }
+    }
+
+    public override UnityEngine.Object GetObject()
+    {
+        return texture;
     }
 
     // Method from http://answers.unity3d.com/questions/555984/can-you-load-dds-textures-during-runtime.html#answer-707772

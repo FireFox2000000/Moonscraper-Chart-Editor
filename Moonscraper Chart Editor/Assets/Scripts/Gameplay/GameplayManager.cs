@@ -28,8 +28,7 @@ public class GameplayManager : MonoBehaviour {
 
     void Start()
     {
-        sample = AudioManager.LoadSampleStream(comboBreak, 1);
-        sample.onlyPlayIfStopped = true;
+        LoadSoundClip();
 
         editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
 
@@ -45,6 +44,16 @@ public class GameplayManager : MonoBehaviour {
 
         EventsManager.onApplicationModeChangedEventList.Add(OnApplicationModeChanged);
         EventsManager.onChartReloadEventList.Add(OnChartReloaded);
+    }
+
+    void LoadSoundClip()
+    {
+        if (sample != null)
+            sample.Dispose();
+
+        AudioClip currentClap = SkinManager.Instance.GetSkinItem(SkinKeys.break0, comboBreak);
+        sample = AudioManager.LoadSampleStream(currentClap, 1);
+        sample.onlyPlayIfStopped = true;
     }
 
     void Update()

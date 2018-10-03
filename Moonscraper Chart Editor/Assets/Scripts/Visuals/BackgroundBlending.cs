@@ -8,23 +8,52 @@ using UnityEngine;
 public class BackgroundBlending : MonoBehaviour
 {
     public float bleadSpeed;
-    public Skin skin;
 
     Renderer ren;
     float delayTimer = 0;
     int currentBackground = 0;
     bool fadeRunning = false;
 
+    Texture2D[] backgrounds;
+    Texture initBGTex;
+
     // Use this for initialization
     void Start()
     {
         ren = GetComponent<Renderer>();
 
-        if (skin.backgrounds.Length < 2)
+        initBGTex = ren.sharedMaterial.mainTexture;
+        LoadBackgrounds();
+    }
+
+    void LoadBackgrounds()
+    {
+        backgrounds = GetAllBackgrounds();
+
+        if (backgrounds.Length < 2)
         {
             enabled = false;
             Debug.LogWarning("At least 2 textures must be provided for background blending to work");
         }
+        else
+        {
+            ren.sharedMaterial.mainTexture = backgrounds[0];
+        }
+    }
+
+    Texture2D[] GetAllBackgrounds()
+    {
+        List<Texture2D> customBackgrounds = new List<Texture2D>();
+        int index = 0;
+        while (true)
+        {
+            Texture2D tex = SkinManager.Instance.GetSkinItem<Texture2D>(SkinKeys.backgroundX + index++, null);
+            if (!tex)
+                break;
+            customBackgrounds.Add(tex);
+        }
+
+        return customBackgrounds.ToArray();
     }
 
     // Update is called once per frame
@@ -38,10 +67,10 @@ public class BackgroundBlending : MonoBehaviour
             {
                 // Need to check if we need to wrap around to the start of the array.
                 int nextBackground = currentBackground + 1;
-                if (nextBackground >= skin.backgrounds.Length)
+                if (nextBackground >= backgrounds.Length)
                     nextBackground = 0;
 
-                StartCoroutine(Fade(skin.backgrounds[currentBackground], skin.backgrounds[nextBackground]));
+                StartCoroutine(Fade(backgrounds[currentBackground], backgrounds[nextBackground]));
                 currentBackground = nextBackground;
 
                 delayTimer = 0;
@@ -76,5 +105,10 @@ public class BackgroundBlending : MonoBehaviour
     void OnApplicationQuit()
     {
         ren.sharedMaterial.SetFloat("_Blend", 0);
+
+        // This is purely for the sake of editor resetting, otherwise any custom textures used will be saved between testing
+#if UNITY_EDITOR
+        ren.sharedMaterial.mainTexture = initBGTex;
+#endif
     }
 }

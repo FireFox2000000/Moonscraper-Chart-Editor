@@ -5,13 +5,8 @@ using UnityEngine;
 using System.Collections;
 
 public class AssignCustomResources : MonoBehaviour {
-    public GameplayManager break0;
-    public StrikelineAudioController clap;
-    public Renderer[] background = new Renderer[2];
     public Renderer fretboard;
-    public Metronome metronome;
 
-    Texture initBGTex;
     Texture initFretboardTex;
     public Skin customSkin;
     public SpriteNoteResources defaultNoteSprites;
@@ -22,25 +17,11 @@ public class AssignCustomResources : MonoBehaviour {
 
     // Use this for initialization
     void Awake () {
-        initBGTex = background[0].sharedMaterial.mainTexture;
         initFretboardTex = fretboard.sharedMaterial.mainTexture;
 
         try
         {
-            if (customSkin.break0 != null)
-                break0.comboBreak = customSkin.break0;
-            if (customSkin.clap != null)
-                clap.clap = customSkin.clap;
-
-            if (customSkin.backgrounds.Length > 0)
-            {
-                foreach (Renderer bg in background)
-                    bg.sharedMaterial.mainTexture = customSkin.backgrounds[0];
-            }
-            if (customSkin.fretboard != null)
-                fretboard.sharedMaterial.mainTexture = customSkin.fretboard;
-            if (customSkin.metronome != null)
-                metronome.clap = customSkin.metronome;
+            fretboard.sharedMaterial.mainTexture = SkinManager.Instance.GetSkinItem(SkinKeys.fretboard, initFretboardTex);
 
             WriteCustomNoteTexturesToAtlus(defaultNoteSprites.fullAtlus);
             WriteCustomGHLNoteTexturesToAtlus(defaultNoteSprites.fullAtlusGhl);
@@ -53,7 +34,7 @@ public class AssignCustomResources : MonoBehaviour {
         }
     }
 
-    void setSpriteTextures(Sprite[] sprites, Texture2D[] customTextures)
+    void SetSpriteTextures(Sprite[] sprites, Texture2D[] customTextures)
     {
         for (int i = 0; i < customTextures.Length; ++i)
         {
@@ -264,8 +245,6 @@ public class AssignCustomResources : MonoBehaviour {
     {
         // This is purely for the sake of editor resetting, otherwise any custom textures used will be saved between testing
 #if UNITY_EDITOR
-        foreach (Renderer bg in background)
-            bg.sharedMaterial.mainTexture = initBGTex;
         fretboard.sharedMaterial.mainTexture = initFretboardTex;
 
         // Reset after play

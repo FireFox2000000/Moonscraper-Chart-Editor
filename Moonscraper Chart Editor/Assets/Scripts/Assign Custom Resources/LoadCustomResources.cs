@@ -33,11 +33,10 @@ public class LoadCustomResources : MonoBehaviour {
 
     List<CustomResource> resources = new List<CustomResource>()
     {
-        new CustomAudioClip("break-0"),
-        //new CustomTexture("background-0", 1920, 1080),
-        new CustomTexture("fretboard-0", 512, 1024),
-        new CustomAudioClip("clap"),
-        new CustomAudioClip("metronome"),
+        new CustomAudioClip(SkinKeys.break0),
+        new CustomTexture(SkinKeys.fretboard, 512, 1024),
+        new CustomAudioClip(SkinKeys.clap),
+        new CustomAudioClip(SkinKeys.metronome),
 
         new CustomTexture("5_reg_strum", OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT),
         new CustomTexture("5_reg_hopo", OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT),
@@ -214,25 +213,13 @@ public class LoadCustomResources : MonoBehaviour {
         // Fade
         yield return fader.fadeOut(1.0f);
 
-        // Assign to the custom database
-        customSkin.break0 = GetAudioClipFromLoadedResources("break-0", resourcesDictionary);
-
-        int bgCount = 0;
-        Texture2D tex = null;
-        List<Texture2D> textures = new List<Texture2D>();
-        while (true)
+        foreach (var skinItem in resourcesDictionary)
         {
-            tex = GetTextureFromLoadedResources("background-" + bgCount++, resourcesDictionary);
+            skinItem.Value.AssignResource();
 
-            if (!tex)
-                break;
-            textures.Add(tex);
+            // Add all loaded custom assets into the skin manager. Probably move this whole loading function into there later?
+            SkinManager.Instance.AddSkinItem(skinItem.Key, skinItem.Value.GetObject());
         }
-        customSkin.backgrounds = textures.ToArray();
-
-        customSkin.clap = GetAudioClipFromLoadedResources("clap", resourcesDictionary);
-        customSkin.fretboard = GetTextureFromLoadedResources("fretboard-0", resourcesDictionary);
-        customSkin.metronome = GetAudioClipFromLoadedResources("metronome", resourcesDictionary);
 
         // STANDARD NOTES
         for (int i = 0; i < customSkin.reg_strum.Length; ++i)

@@ -19,9 +19,18 @@ public class Metronome : UpdateableService {
         editor = ChartEditor.Instance;      
         initLocalPos = transform.localPosition;
 
-        sampleStream = AudioManager.LoadSampleStream(clap, 15);
+        LoadSoundClip();
 
         base.Start();
+    }
+
+    void LoadSoundClip()
+    {
+        if (sampleStream != null)
+            sampleStream.Dispose();
+
+        AudioClip currentClap = SkinManager.Instance.GetSkinItem(SkinKeys.metronome, clap);
+        sampleStream = AudioManager.LoadSampleStream(currentClap, 15);
     }
 
     // Update is called once per frame

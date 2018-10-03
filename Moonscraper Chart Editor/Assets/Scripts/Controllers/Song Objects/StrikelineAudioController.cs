@@ -16,8 +16,17 @@ public class StrikelineAudioController : MonoBehaviour {
 
     void Start()
     {
-        sample = AudioManager.LoadSampleStream(clap, 50);
+        LoadSoundClip();
         initLocalPos = transform.localPosition;  
+    }
+
+    void LoadSoundClip()
+    {
+        if (sample != null)
+            sample.Dispose();
+
+        AudioClip currentClap = SkinManager.Instance.GetSkinItem(SkinKeys.clap, clap);
+        sample = AudioManager.LoadSampleStream(currentClap, 50);
     }
 
     void Update()
