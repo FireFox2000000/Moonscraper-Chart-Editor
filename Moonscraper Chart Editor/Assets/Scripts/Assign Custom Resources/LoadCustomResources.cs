@@ -212,143 +212,144 @@ public class LoadCustomResources : MonoBehaviour {
     {
         // Fade
         yield return fader.fadeOut(1.0f);
+        Skin skin = new Skin();
 
         foreach (var skinItem in resourcesDictionary)
         {
             skinItem.Value.AssignResource();
 
             // Add all loaded custom assets into the skin manager. Probably move this whole loading function into there later?
-            SkinManager.Instance.AddSkinItem(skinItem.Key, skinItem.Value.GetObject());
-        }
-
-        Skin customSkin = SkinManager.Instance.currentSkin;
+            skin.AddSkinItem(skinItem.Key, skinItem.Value.GetObject());  
+        }      
 
         // STANDARD NOTES
-        for (int i = 0; i < customSkin.reg_strum.Length; ++i)
+        for (int i = 0; i < skin.reg_strum.Length; ++i)
         {
-            customSkin.reg_strum[i] = GetTextureFromLoadedResources(i + "_reg_strum", resourcesDictionary);
+            skin.reg_strum[i] = GetTextureFromLoadedResources(i + "_reg_strum", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.reg_hopo.Length; ++i)
+        for (int i = 0; i < skin.reg_hopo.Length; ++i)
         {
-            customSkin.reg_hopo[i] = GetTextureFromLoadedResources(i + "_reg_hopo", resourcesDictionary);
+            skin.reg_hopo[i] = GetTextureFromLoadedResources(i + "_reg_hopo", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.reg_tap.Length; ++i)
+        for (int i = 0; i < skin.reg_tap.Length; ++i)
         {
-            customSkin.reg_tap[i] = GetTextureFromLoadedResources(i + "_reg_tap", resourcesDictionary);
+            skin.reg_tap[i] = GetTextureFromLoadedResources(i + "_reg_tap", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.sp_strum.Length; ++i)
+        for (int i = 0; i < skin.sp_strum.Length; ++i)
         {
-            customSkin.sp_strum[i] = GetTextureFromLoadedResources(i + "_sp_strum", resourcesDictionary);
+            skin.sp_strum[i] = GetTextureFromLoadedResources(i + "_sp_strum", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.sp_hopo.Length; ++i)
+        for (int i = 0; i < skin.sp_hopo.Length; ++i)
         {
-            customSkin.sp_hopo[i] = GetTextureFromLoadedResources(i + "_sp_hopo", resourcesDictionary);
+            skin.sp_hopo[i] = GetTextureFromLoadedResources(i + "_sp_hopo", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.sp_tap.Length; ++i)
+        for (int i = 0; i < skin.sp_tap.Length; ++i)
         {
-            customSkin.sp_tap[i] = GetTextureFromLoadedResources(i + "_sp_tap", resourcesDictionary);
+            skin.sp_tap[i] = GetTextureFromLoadedResources(i + "_sp_tap", resourcesDictionary);
         }
 
         // STANDARD FRETS
-        for (int i = 0; i < customSkin.fret_base.Length; ++i)
+        for (int i = 0; i < skin.fret_base.Length; ++i)
         {
-            customSkin.fret_base[i] = GetTextureFromLoadedResources(i + "_fret_base", resourcesDictionary);
+            skin.fret_base[i] = GetTextureFromLoadedResources(i + "_fret_base", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.fret_cover.Length; ++i)
+        for (int i = 0; i < skin.fret_cover.Length; ++i)
         {
-            customSkin.fret_cover[i] = GetTextureFromLoadedResources(i + "_fret_cover", resourcesDictionary);
+            skin.fret_cover[i] = GetTextureFromLoadedResources(i + "_fret_cover", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.fret_press.Length; ++i)
+        for (int i = 0; i < skin.fret_press.Length; ++i)
         {
-            customSkin.fret_press[i] = GetTextureFromLoadedResources(i + "_fret_press", resourcesDictionary);
+            skin.fret_press[i] = GetTextureFromLoadedResources(i + "_fret_press", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.fret_release.Length; ++i)
+        for (int i = 0; i < skin.fret_release.Length; ++i)
         {
-            customSkin.fret_release[i] = GetTextureFromLoadedResources(i + "_fret_release", resourcesDictionary);
+            skin.fret_release[i] = GetTextureFromLoadedResources(i + "_fret_release", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.fret_anim.Length; ++i)
+        for (int i = 0; i < skin.fret_anim.Length; ++i)
         {
-            customSkin.fret_anim[i] = GetTextureFromLoadedResources(i + "_fret_anim", resourcesDictionary);
+            skin.fret_anim[i] = GetTextureFromLoadedResources(i + "_fret_anim", resourcesDictionary);
         }
         
         // DRUMS
-        for (int i = 0; i < customSkin.fret_base.Length; ++i)
+        for (int i = 0; i < skin.fret_base.Length; ++i)
         {
-            customSkin.drum_fret_base[i] = GetTextureFromLoadedResources(i + "_drum_fret_base", resourcesDictionary);
+            skin.drum_fret_base[i] = GetTextureFromLoadedResources(i + "_drum_fret_base", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.fret_cover.Length; ++i)
+        for (int i = 0; i < skin.fret_cover.Length; ++i)
         {
-            customSkin.drum_fret_cover[i] = GetTextureFromLoadedResources(i + "_drum_fret_cover", resourcesDictionary);
+            skin.drum_fret_cover[i] = GetTextureFromLoadedResources(i + "_drum_fret_cover", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.fret_press.Length; ++i)
+        for (int i = 0; i < skin.fret_press.Length; ++i)
         {
-            customSkin.drum_fret_press[i] = GetTextureFromLoadedResources(i + "_drum_fret_press", resourcesDictionary);
+            skin.drum_fret_press[i] = GetTextureFromLoadedResources(i + "_drum_fret_press", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.fret_release.Length; ++i)
+        for (int i = 0; i < skin.fret_release.Length; ++i)
         {
-            customSkin.drum_fret_release[i] = GetTextureFromLoadedResources(i + "_drum_fret_release", resourcesDictionary);
+            skin.drum_fret_release[i] = GetTextureFromLoadedResources(i + "_drum_fret_release", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.fret_anim.Length; ++i)
+        for (int i = 0; i < skin.fret_anim.Length; ++i)
         {
-            customSkin.drum_fret_anim[i] = GetTextureFromLoadedResources(i + "_drum_fret_anim", resourcesDictionary);
+            skin.drum_fret_anim[i] = GetTextureFromLoadedResources(i + "_drum_fret_anim", resourcesDictionary);
         }
 
         // GHL LOADING
-        for (int i = 0; i < customSkin.reg_strum_ghl.Length; ++i)
+        for (int i = 0; i < skin.reg_strum_ghl.Length; ++i)
         {
-            customSkin.reg_strum_ghl[i] = GetTextureFromLoadedResources(i + "_reg_strum_ghl", resourcesDictionary);
+            skin.reg_strum_ghl[i] = GetTextureFromLoadedResources(i + "_reg_strum_ghl", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.reg_hopo_ghl.Length; ++i)
+        for (int i = 0; i < skin.reg_hopo_ghl.Length; ++i)
         {
-            customSkin.reg_hopo_ghl[i] = GetTextureFromLoadedResources(i + "_reg_hopo_ghl", resourcesDictionary);
+            skin.reg_hopo_ghl[i] = GetTextureFromLoadedResources(i + "_reg_hopo_ghl", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.reg_tap_ghl.Length; ++i)
+        for (int i = 0; i < skin.reg_tap_ghl.Length; ++i)
         {
-            customSkin.reg_tap_ghl[i] = GetTextureFromLoadedResources(i + "_reg_tap_ghl", resourcesDictionary);
+            skin.reg_tap_ghl[i] = GetTextureFromLoadedResources(i + "_reg_tap_ghl", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.sp_strum_ghl.Length; ++i)
+        for (int i = 0; i < skin.sp_strum_ghl.Length; ++i)
         {
-            customSkin.sp_strum_ghl[i] = GetTextureFromLoadedResources(i + "_sp_strum_ghl", resourcesDictionary);
+            skin.sp_strum_ghl[i] = GetTextureFromLoadedResources(i + "_sp_strum_ghl", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.sp_hopo_ghl.Length; ++i)
+        for (int i = 0; i < skin.sp_hopo_ghl.Length; ++i)
         {
-            customSkin.sp_hopo_ghl[i] = GetTextureFromLoadedResources(i + "_sp_hopo_ghl", resourcesDictionary);
+            skin.sp_hopo_ghl[i] = GetTextureFromLoadedResources(i + "_sp_hopo_ghl", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.sp_tap_ghl.Length; ++i)
+        for (int i = 0; i < skin.sp_tap_ghl.Length; ++i)
         {
-            customSkin.sp_tap_ghl[i] = GetTextureFromLoadedResources(i + "_sp_tap_ghl", resourcesDictionary);
+            skin.sp_tap_ghl[i] = GetTextureFromLoadedResources(i + "_sp_tap_ghl", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.fret_base_ghl.Length; ++i)
+        for (int i = 0; i < skin.fret_base_ghl.Length; ++i)
         {
-            customSkin.fret_base_ghl[i] = GetTextureFromLoadedResources(i + "_fret_base_ghl", resourcesDictionary);
+            skin.fret_base_ghl[i] = GetTextureFromLoadedResources(i + "_fret_base_ghl", resourcesDictionary);
         }
 
-        for (int i = 0; i < customSkin.fret_press_ghl.Length; ++i)
+        for (int i = 0; i < skin.fret_press_ghl.Length; ++i)
         {
-            customSkin.fret_press_ghl[i] = GetTextureFromLoadedResources(i + "_fret_press_ghl", resourcesDictionary);
+            skin.fret_press_ghl[i] = GetTextureFromLoadedResources(i + "_fret_press_ghl", resourcesDictionary);
         }
 
-        customSkin.fret_stem = GetTextureFromLoadedResources("fret_stem", resourcesDictionary);
-        customSkin.hit_flames = GetTextureFromLoadedResources("hit_flames", resourcesDictionary);
+        skin.fret_stem = GetTextureFromLoadedResources("fret_stem", resourcesDictionary);
+        skin.hit_flames = GetTextureFromLoadedResources("hit_flames", resourcesDictionary);
+
+        SkinManager.Instance.currentSkin = skin;
 
         // Load editor
         int buildIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;

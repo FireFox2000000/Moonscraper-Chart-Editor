@@ -15,17 +15,12 @@ public static class SkinKeys
 
 public class SkinManager : UnitySingleton<SkinManager> {
     Skin m_currentSkin = new Skin();
-    public Skin currentSkin { get { return m_currentSkin; } }
+    public Skin currentSkin { get { return m_currentSkin; } set { m_currentSkin = value; } }
     public Skin.AssestsAvaliable? noteSpritesAvaliable = null;
 
     public T GetSkinItem<T>(string key, T defaultItem) where T : UnityEngine.Object
     {
         return m_currentSkin.GetSkinItem(key, defaultItem);
-    }
-
-    public void AddSkinItem<T>(string key, T skinItem) where T : UnityEngine.Object
-    {
-        m_currentSkin.AddSkinItem(key, skinItem);
     }
 
     public void ApplySkin()
