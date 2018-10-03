@@ -24,7 +24,6 @@ public class LoadCustomResources : MonoBehaviour {
 
     public UnityEngine.UI.Text progressText;
     public ImageFade fader;
-    public Skin customSkin;
     public SustainResources sustainResources;
 
     static string skinDirectory = "Custom Resources";
@@ -156,6 +155,7 @@ public class LoadCustomResources : MonoBehaviour {
 
     void LoadSettingsConfig()
     {
+        Skin customSkin = SkinManager.Instance.currentSkin;
         if (Directory.Exists(skinDirectory))
         {
             // Load in all settings
@@ -220,6 +220,8 @@ public class LoadCustomResources : MonoBehaviour {
             // Add all loaded custom assets into the skin manager. Probably move this whole loading function into there later?
             SkinManager.Instance.AddSkinItem(skinItem.Key, skinItem.Value.GetObject());
         }
+
+        Skin customSkin = SkinManager.Instance.currentSkin;
 
         // STANDARD NOTES
         for (int i = 0; i < customSkin.reg_strum.Length; ++i)

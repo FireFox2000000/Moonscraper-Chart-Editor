@@ -8,12 +8,9 @@ public class AssignCustomResources : MonoBehaviour {
     public Renderer fretboard;
 
     Texture initFretboardTex;
-    public Skin customSkin;
     public SpriteNoteResources defaultNoteSprites;
     public CustomFretManager[] customFrets = new CustomFretManager[5];
     public GHLHitAnimation[] customFretsGHL = new GHLHitAnimation[2];
-
-    public static Skin.AssestsAvaliable? noteSpritesAvaliable = null;
 
     // Use this for initialization
     void Awake () {
@@ -25,7 +22,7 @@ public class AssignCustomResources : MonoBehaviour {
 
             WriteCustomNoteTexturesToAtlus(defaultNoteSprites.fullAtlus);
             WriteCustomGHLNoteTexturesToAtlus(defaultNoteSprites.fullAtlusGhl);
-            Debug.Log(noteSpritesAvaliable);
+            Debug.Log(SkinManager.Instance.noteSpritesAvaliable);
             GenerateAndAssignFretSprites();
         }
         catch (System.Exception e)
@@ -48,6 +45,7 @@ public class AssignCustomResources : MonoBehaviour {
 
     void WriteCustomNoteTexturesToAtlus(Texture2D atlus)
     {
+        Skin customSkin = SkinManager.Instance.currentSkin;
         Color[] atlusPixels = atlus.GetPixels();
         Utility.IntVector2 fullTextureAtlusSize = new Utility.IntVector2(atlus.width, atlus.height);
 
@@ -58,9 +56,9 @@ public class AssignCustomResources : MonoBehaviour {
         SetCustomTexturesToAtlus(defaultNoteSprites.sp_hopo, customSkin.sp_hopo, atlusPixels, fullTextureAtlusSize);
         SetCustomTexturesToAtlus(defaultNoteSprites.sp_tap, customSkin.sp_tap, atlusPixels, fullTextureAtlusSize);
 
-        Skin.AssestsAvaliable? sprites = noteSpritesAvaliable;
+        Skin.AssestsAvaliable? sprites = SkinManager.Instance.noteSpritesAvaliable;
         SetCustomTexturesToAtlus(defaultNoteSprites.sustains, customSkin.sustains, atlusPixels, fullTextureAtlusSize);
-        noteSpritesAvaliable = sprites;
+        SkinManager.Instance.noteSpritesAvaliable = sprites;
 
         atlus.SetPixels(atlusPixels);
         atlus.Apply();
@@ -68,6 +66,7 @@ public class AssignCustomResources : MonoBehaviour {
 
     void WriteCustomGHLNoteTexturesToAtlus(Texture2D atlus)
     {
+        Skin customSkin = SkinManager.Instance.currentSkin;
         Color[] atlusPixels = atlus.GetPixels();
         Utility.IntVector2 fullTextureAtlusSize = new Utility.IntVector2(atlus.width, atlus.height);
 
@@ -91,10 +90,10 @@ public class AssignCustomResources : MonoBehaviour {
         {
             if (customTextures[i] && spritesLocation[i])
             {
-                if (noteSpritesAvaliable == null)
-                    noteSpritesAvaliable = Skin.AssestsAvaliable.All;
-                else if (noteSpritesAvaliable == Skin.AssestsAvaliable.None)
-                    noteSpritesAvaliable = Skin.AssestsAvaliable.Mixed;
+                if (SkinManager.Instance.noteSpritesAvaliable == null)
+                    SkinManager.Instance.noteSpritesAvaliable = Skin.AssestsAvaliable.All;
+                else if (SkinManager.Instance.noteSpritesAvaliable == Skin.AssestsAvaliable.None)
+                    SkinManager.Instance.noteSpritesAvaliable = Skin.AssestsAvaliable.Mixed;
 
                 try
                 {
@@ -111,10 +110,10 @@ public class AssignCustomResources : MonoBehaviour {
             }
             else if (!customTextures[i])
             {
-                if (noteSpritesAvaliable == null)
-                    noteSpritesAvaliable = Skin.AssestsAvaliable.None;
-                else if (noteSpritesAvaliable == Skin.AssestsAvaliable.All)
-                    noteSpritesAvaliable = Skin.AssestsAvaliable.Mixed;
+                if (SkinManager.Instance.noteSpritesAvaliable == null)
+                    SkinManager.Instance.noteSpritesAvaliable = Skin.AssestsAvaliable.None;
+                else if (SkinManager.Instance.noteSpritesAvaliable == Skin.AssestsAvaliable.All)
+                    SkinManager.Instance.noteSpritesAvaliable = Skin.AssestsAvaliable.Mixed;
             }
         }
     }
@@ -145,6 +144,7 @@ public class AssignCustomResources : MonoBehaviour {
     void GenerateAndAssignFretSprites()
     {
         const int PIXELS_PER_UNIT = 125;
+        Skin customSkin = SkinManager.Instance.currentSkin;
 
         for (int i = 0; i < customFrets.Length; ++i)
         {
@@ -243,6 +243,8 @@ public class AssignCustomResources : MonoBehaviour {
 
     void OnApplicationQuit()
     {
+        Skin customSkin = SkinManager.Instance.currentSkin;
+
         // This is purely for the sake of editor resetting, otherwise any custom textures used will be saved between testing
 #if UNITY_EDITOR
         fretboard.sharedMaterial.mainTexture = initFretboardTex;

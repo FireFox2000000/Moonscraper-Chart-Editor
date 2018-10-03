@@ -5,7 +5,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Skin : ScriptableObject {
+public class Skin {
+    Dictionary<string, UnityEngine.Object> m_skinObjects = new Dictionary<string, UnityEngine.Object>();
+
+    public T GetSkinItem<T>(string key, T defaultItem) where T : UnityEngine.Object
+    {
+        T skinItem = null;
+
+        UnityEngine.Object outObject;
+        if (m_skinObjects.TryGetValue(key, out outObject))
+            skinItem = outObject as T;
+
+        if (!skinItem)
+            skinItem = defaultItem;
+
+        return skinItem;
+    }
+
+    public void AddSkinItem<T>(string key, T skinItem) where T : UnityEngine.Object
+    {
+        if (skinItem)
+            m_skinObjects.Add(key, skinItem);
+    }
+
     public Texture2D[] reg_strum = new Texture2D[6];
     public Texture2D[] reg_hopo = new Texture2D[6];
     public Texture2D[] reg_tap = new Texture2D[5];

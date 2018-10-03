@@ -14,33 +14,9 @@ public static class SkinKeys
 }
 
 public class SkinManager : UnitySingleton<SkinManager> {
-    class Skin
-    {
-        Dictionary<string, UnityEngine.Object> m_skinObjects = new Dictionary<string, UnityEngine.Object>();
-        // Todo, sustain materials etc
-
-        public T GetSkinItem<T>(string key, T defaultItem) where T : UnityEngine.Object
-        {
-            T skinItem = null;
-
-            UnityEngine.Object outObject;
-            if (m_skinObjects.TryGetValue(key, out outObject))
-                skinItem = outObject as T;
-
-            if (!skinItem)
-                skinItem = defaultItem;
-
-            return skinItem;
-        }
-
-        public void AddSkinItem<T>(string key, T skinItem) where T : UnityEngine.Object
-        {
-            if (skinItem)
-                m_skinObjects.Add(key, skinItem);
-        }
-    }
-
     Skin m_currentSkin = new Skin();
+    public Skin currentSkin { get { return m_currentSkin; } }
+    public Skin.AssestsAvaliable? noteSpritesAvaliable = null;
 
     public T GetSkinItem<T>(string key, T defaultItem) where T : UnityEngine.Object
     {

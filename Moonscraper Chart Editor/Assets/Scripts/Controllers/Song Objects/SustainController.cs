@@ -8,7 +8,6 @@ using System.Collections.Generic;
 public class SustainController : SelectableClick {
     public NoteController nCon;
     public SustainResources resources;
-    public Skin customSkin;
 
     ChartEditor editor;
 
@@ -89,6 +88,7 @@ public class SustainController : SelectableClick {
         if (sustainRen)
         {          
             UpdateSustainLength();
+            Skin customSkin = SkinManager.Instance.currentSkin;
 
             if (Globals.ghLiveMode)
             {

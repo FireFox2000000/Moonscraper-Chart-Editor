@@ -10,7 +10,6 @@ public class FireSyncronizer : MonoBehaviour {
     public float m_Speed = 1.0f;
     static MaterialPropertyBlock m_MatProps;
     public float m_StartTime = 0.0f;
-    public Skin customSkin;
 
     public Material flameMat;
     public static Material[] flameMaterials = new Material[7];  // Max used
@@ -86,6 +85,8 @@ public class FireSyncronizer : MonoBehaviour {
             for (int i = 0; i < flameMaterials.Length; ++i)
             {
                 flameMaterials[i] = new Material(flameMat);
+
+                Skin customSkin = SkinManager.Instance.currentSkin;
 
                 if (i < customSkin.sustain_mats.Length && customSkin.sustain_mats[i])
                     flameMaterials[i].color = customSkin.sustain_mats[i].color;

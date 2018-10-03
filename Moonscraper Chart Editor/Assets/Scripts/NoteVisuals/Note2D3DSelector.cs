@@ -9,7 +9,6 @@ public class Note2D3DSelector : MonoBehaviour {
     public NoteController nCon;
     public NoteVisuals2DManager note2D;
     public NoteVisuals3DManager note3D;
-    public Skin customSkin;
 
     public NoteVisualsManager currentVisualsManager
     {
@@ -21,24 +20,6 @@ public class Note2D3DSelector : MonoBehaviour {
     
     void Start()
     {
-        /*
-        if (AssignCustomResources.noteSpritesAvaliable != null)
-        {
-            switch (AssignCustomResources.noteSpritesAvaliable)
-            {
-                //case (Skin.AssestsAvaliable.All):
-                    //Set2D();
-                    //enabled = false;
-                    //break;
-                case (Skin.AssestsAvaliable.None):
-                    Set3D();
-                    //enabled = false;
-                    break;
-                default:
-                    break;
-            }
-        }*/
-
         UpdateSelectedGameObject();
     }
 
@@ -65,6 +46,7 @@ public class Note2D3DSelector : MonoBehaviour {
     bool CheckTextureInSkin()
     {
         Texture2D textureInSkin = null;
+        Skin customSkin = SkinManager.Instance.currentSkin;
 
         Note note = nCon.note;
         Note.NoteType noteType = note.type;

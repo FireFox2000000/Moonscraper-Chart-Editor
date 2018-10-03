@@ -23,7 +23,7 @@ namespace MKGlowSystem
             if (Application.isEditor && !Application.isPlaying)
                 return;
 
-            if (AssignCustomResources.noteSpritesAvaliable != null && AssignCustomResources.noteSpritesAvaliable == Skin.AssestsAvaliable.All)
+            if (SkinManager.Instance.noteSpritesAvaliable != null && SkinManager.Instance.noteSpritesAvaliable == Skin.AssestsAvaliable.All)
                 enabled = false;
         }
 

@@ -28,7 +28,7 @@ public class CameraLayering : MonoBehaviour {
             cam.cullingMask |= 1 << LayerMask.NameToLayer("ChartObject");
             cam.cullingMask &= ~(1 << LayerMask.NameToLayer("SongObject"));
 
-            if (mkGlow && !(AssignCustomResources.noteSpritesAvaliable != null && AssignCustomResources.noteSpritesAvaliable == Skin.AssestsAvaliable.All))
+            if (mkGlow && !(SkinManager.Instance.noteSpritesAvaliable != null && SkinManager.Instance.noteSpritesAvaliable == Skin.AssestsAvaliable.All))
             {
                 mkGlow.enabled = true;
                 //mkGlow.GlowLayer |= 1 << LayerMask.NameToLayer("ChartObject");
