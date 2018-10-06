@@ -5,9 +5,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using MiscUtil.IO;
 using MiscUtil.Conversion;
-using NAudio.Midi;
 
 public static class MidWriter {   
     const byte TRACK_NAME_EVENT = 0x03;
