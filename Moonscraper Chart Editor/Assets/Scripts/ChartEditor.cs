@@ -116,8 +116,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         }
         set
         {
-            SetCurrentSelectedObjects(value);
-            timeHandler.RefreshHighlightIndicator();
+            SetCurrentSelectedObjects(value);            
         }
     }
 
@@ -125,6 +124,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     {
         m_currentSelectedObjects.Clear();
         m_currentSelectedObjects.AddRange((IEnumerable<SongObject>)list);
+        timeHandler.RefreshHighlightIndicator();
     }
 
     public uint currentTickPos {
