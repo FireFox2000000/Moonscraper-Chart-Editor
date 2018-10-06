@@ -309,7 +309,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
                 UnityEngine.Application.CancelQuit();
 #if !UNITY_EDITOR
 
-            NativeMessageBox.Result result = NativeMessageBox.Show("Want to save unsaved changes?", "Warning", NativeMessageBox.Type.YesNoCancel);
+            NativeMessageBox.Result result = NativeMessageBox.Show("Do you want to save unsaved changes?", "Warning", NativeMessageBox.Type.YesNoCancel);
             if (quitting)
                 UnityEngine.Application.CancelQuit();
 
