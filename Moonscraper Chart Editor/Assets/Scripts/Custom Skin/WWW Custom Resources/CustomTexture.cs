@@ -1,66 +1,6 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
-// See LICENSE in project root for license information.
-
-using UnityEngine;
-using System.Collections.Generic;
-using System;
+﻿using System;
 using System.IO;
-
-public abstract class CustomResource
-{
-    public string name { get; private set; }
-    public WWW www { get; private set; }
-    protected readonly string[] validExtentions;
-
-    protected CustomResource(string name, string[] validExtentions)
-    {
-        this.name = name;
-        this.validExtentions = validExtentions;
-    }
-
-    public bool InitWWW(Dictionary<string, string> files)
-    {
-        string file = string.Empty;
-
-        if (!(files.TryGetValue(name, out file) && Utility.validateExtension(file, validExtentions)))
-            return false;
-
-        if (file != string.Empty)
-        {
-            www = new WWW("file://" + file);
-            return true;
-        }
-        else
-            return false;
-    }
-
-    public abstract void AssignResource();
-    public abstract UnityEngine.Object GetObject();
-}
-
-public class CustomAudioClip : CustomResource
-{
-    AudioClip audio;
-
-    public CustomAudioClip(string name) : base(name, new string[] { ".ogg", ".wav" }) { }
-
-    public override void AssignResource()
-    {
-        if (www.isDone)
-        {
-            audio = www.GetAudioClip(false, false);
-        }
-        else
-        {
-            Debug.LogError("Trying to assign a custom resource when it hasn't finished loading");
-        }
-    }
-
-    public override UnityEngine.Object GetObject()
-    {
-        return audio;
-    }
-}
+using UnityEngine;
 
 public class CustomTexture : CustomResource
 {
@@ -106,7 +46,7 @@ public class CustomTexture : CustomResource
                         {
                             Debug.LogError("DXT1 Error: " + e1.Message);
                             texture = null;
-                        } 
+                        }
                     }
                     return;
                 default:
@@ -141,7 +81,7 @@ public class CustomTexture : CustomResource
         //int width_0 = ddsBytes[17] * 256 + ddsBytes[16];
 
         int DDS_HEADER_SIZE = 128;
-        
+
         byte[] dxtBytes = new byte[ddsBytes.Length - DDS_HEADER_SIZE];
         Buffer.BlockCopy(ddsBytes, DDS_HEADER_SIZE, dxtBytes, 0, ddsBytes.Length - DDS_HEADER_SIZE);
 
@@ -152,30 +92,5 @@ public class CustomTexture : CustomResource
         texture = texture.VerticalFlip();    // dds files load in upsidedown for some reason
 
         return (texture);
-    }
-}
-
-public class CustomSprite : CustomTexture
-{
-    Sprite sprite;
-    int _pixelsPerUnit;
-
-    public CustomSprite(string name, int width, int height, int pixelsPerUnit) : base(name, width, height)
-    {
-        _pixelsPerUnit = pixelsPerUnit;
-    }
-
-    public override void AssignResource()
-    {
-        base.AssignResource();
-        if (texture)
-        {
-            sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), _pixelsPerUnit);
-        }
-    }
-
-    public override UnityEngine.Object GetObject()
-    {
-        return sprite;
     }
 }
