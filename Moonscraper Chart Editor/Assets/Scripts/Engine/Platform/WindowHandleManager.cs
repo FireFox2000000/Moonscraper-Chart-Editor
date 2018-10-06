@@ -12,7 +12,7 @@ public class WindowHandleManager {
     static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
 
 #if !UNITY_EDITOR
-    System.IntPtr windowPtr = IntPtr.Zero;
+    public System.IntPtr windowPtr { get; private set; }
     string originalWindowName;
     string productName;
     bool isDirty = false;
@@ -21,6 +21,7 @@ public class WindowHandleManager {
     public WindowHandleManager(string originalWindowName, string productName)
     {
 #if !UNITY_EDITOR
+        windowPtr = IntPtr.Zero;
         this.originalWindowName = originalWindowName;
         this.productName = productName;
 

@@ -54,6 +54,9 @@ public static class FileExplorer  {
 
         UnityEngine.Debug.Log("Native file explorer: Preparing to set struct size");
         openChartFileDialog.structSize = Marshal.SizeOf(openChartFileDialog);
+
+        openChartFileDialog.dlgOwner = ChartEditor.Instance.windowHandleManager.windowPtr;
+
         UnityEngine.Debug.Log("Native file explorer: Preparing to set filter");
         openChartFileDialog.filter = filter;
         UnityEngine.Debug.Log("Native file explorer: Preparing to set file array");
@@ -123,6 +126,9 @@ public static class FileExplorer  {
 
         UnityEngine.Debug.Log("Native file explorer: Preparing to set struct size");
         openSaveFileDialog.structSize = Marshal.SizeOf(openSaveFileDialog);
+
+        openSaveFileDialog.dlgOwner = ChartEditor.Instance.windowHandleManager.windowPtr;
+
         UnityEngine.Debug.Log("Native file explorer: Preparing to set filter");
         openSaveFileDialog.filter = filter;
         UnityEngine.Debug.Log("Native file explorer: Preparing to set file array");

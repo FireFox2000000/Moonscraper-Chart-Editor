@@ -79,7 +79,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public SongObjectPoolManager songObjectPoolManager { get { return _songObjectPoolManager; } }
 
     string lastLoadedFile = string.Empty;
-    WindowHandleManager windowHandleManager;
+    public WindowHandleManager windowHandleManager { get; private set; }
     [HideInInspector]
     public ErrorManager errorManager { get; private set; }
     public static bool hasFocus { get { return Application.isFocused; } }
