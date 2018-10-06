@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
 using System.IO;
-using NAudio;
-using NAudio.Wave;
 
 public class SampleData {
     bool stop = false;
