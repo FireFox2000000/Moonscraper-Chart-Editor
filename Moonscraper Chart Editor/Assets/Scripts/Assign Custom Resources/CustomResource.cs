@@ -40,7 +40,7 @@ public abstract class CustomResource
 
 public class CustomAudioClip : CustomResource
 {
-    public AudioClip audio;
+    AudioClip audio;
 
     public CustomAudioClip(string name) : base(name, new string[] { ".ogg", ".wav" }) { }
 
@@ -64,7 +64,7 @@ public class CustomAudioClip : CustomResource
 
 public class CustomTexture : CustomResource
 {
-    public Texture2D texture;
+    protected Texture2D texture;
     int width, height;
 
     public CustomTexture(string name, int width, int height) : base(name, new string[] { ".png", ".jpg", ".dds" })
@@ -152,5 +152,30 @@ public class CustomTexture : CustomResource
         texture = texture.VerticalFlip();    // dds files load in upsidedown for some reason
 
         return (texture);
+    }
+}
+
+public class CustomSprite : CustomTexture
+{
+    Sprite sprite;
+    int _pixelsPerUnit;
+
+    public CustomSprite(string name, int width, int height, int pixelsPerUnit) : base(name, width, height)
+    {
+        _pixelsPerUnit = pixelsPerUnit;
+    }
+
+    public override void AssignResource()
+    {
+        base.AssignResource();
+        if (texture)
+        {
+            sprite = Sprite.Create(texture, new Rect(0.0f, 0.0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), _pixelsPerUnit);
+        }
+    }
+
+    public override UnityEngine.Object GetObject()
+    {
+        return sprite;
     }
 }

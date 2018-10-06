@@ -8,6 +8,8 @@ using System.IO;
 using System;
 
 public class LoadCustomResources : MonoBehaviour {
+    const int FRET_PIXELS_PER_UNIT = 125;
+
     const int NOTE_TEXTURE_1X1_WIDTH = 128, NOTE_TEXTURE_1X1_HEIGHT = 64;
     const int NOTE_TEXTURE_4X2_WIDTH = 256, NOTE_TEXTURE_4X2_HEIGHT = 256;
     const int NOTE_TEXTURE_4X4_WIDTH = 512, NOTE_TEXTURE_4X4_HEIGHT = 256;
@@ -47,8 +49,8 @@ public class LoadCustomResources : MonoBehaviour {
         new CustomTexture("2_sp_strum_ghl", GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT),
         new CustomTexture("2_sp_hopo_ghl", GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT),
 
-        new CustomTexture("fret_stem", 64, 16),
-        new CustomTexture("hit_flames", 512, 1024),
+        new CustomSprite(SkinKeys.fretStem, 64, 16, FRET_PIXELS_PER_UNIT),
+        new CustomTexture(SkinKeys.hitFlames, 512, 1024),
     };
 
     void AddCustomNoteTextureIntoResources()
@@ -63,17 +65,17 @@ public class LoadCustomResources : MonoBehaviour {
                 new CustomTexture(i + "_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
                 new CustomTexture(i + "_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
 
-                new CustomTexture(i + SkinKeys.xFretBase, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + SkinKeys.xFretCover, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + SkinKeys.xFretPress, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + SkinKeys.xFretRelease, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + SkinKeys.xFretAnim, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+                new CustomSprite(i + SkinKeys.xFretBase, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
+                new CustomSprite(i + SkinKeys.xFretCover, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
+                new CustomSprite(i + SkinKeys.xFretPress, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
+                new CustomSprite(i + SkinKeys.xFretRelease, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
+                new CustomSprite(i + SkinKeys.xFretAnim, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
 
-                new CustomTexture(i + SkinKeys.xDrumFretBase, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + SkinKeys.xDrumFretCover, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + SkinKeys.xDrumFretPress, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + SkinKeys.xDrumFretRelease, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + SkinKeys.xDrumFretAnim, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT)
+                new CustomSprite(i + SkinKeys.xDrumFretBase, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
+                new CustomSprite(i + SkinKeys.xDrumFretCover, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
+                new CustomSprite(i + SkinKeys.xDrumFretPress, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
+                new CustomSprite(i + SkinKeys.xDrumFretRelease, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
+                new CustomSprite(i + SkinKeys.xDrumFretAnim, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT)
             }
             );
         }
@@ -94,8 +96,8 @@ public class LoadCustomResources : MonoBehaviour {
         for (int i = 0; i < 6; ++i)
         {
             resources.AddRange(new CustomTexture[] {
-                new CustomTexture(i + SkinKeys.xFretBaseGhl, GHL_FRET_WIDTH, GHL_FRET_HEIGHT),
-                new CustomTexture(i + SkinKeys.xFretPressGhl, GHL_FRET_WIDTH, GHL_FRET_HEIGHT),
+                new CustomSprite(i + SkinKeys.xFretBaseGhl, GHL_FRET_WIDTH, GHL_FRET_HEIGHT, FRET_PIXELS_PER_UNIT),
+                new CustomSprite(i + SkinKeys.xFretPressGhl, GHL_FRET_WIDTH, GHL_FRET_HEIGHT, FRET_PIXELS_PER_UNIT),
             }
             );
         }
@@ -351,7 +353,7 @@ public class LoadCustomResources : MonoBehaviour {
         try
         {
             resource.AssignResource();
-            return ((CustomTexture)resource).texture;
+            return resource.GetObject() as Texture2D;
         }
         catch
         {
@@ -366,7 +368,7 @@ public class LoadCustomResources : MonoBehaviour {
         try
         {
             resource.AssignResource();
-            return ((CustomAudioClip)resource).audio;
+            return resource.GetObject() as AudioClip;
         }
         catch
         {
