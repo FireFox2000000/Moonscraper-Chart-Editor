@@ -233,15 +233,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         }
         else
             autosaveTimer = 0;
-
-        if (quitting)
-        {
-            if (EditCheck())
-            {
-                wantsToQuit = true;
-                UnityEngine.Application.Quit();
-            }
-        }
     }
 
     private Song autosaveSong = null;
@@ -261,31 +252,24 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         autosave.Start();
     }
 #if UNITY_EDITOR
-    bool wantsToQuit = true;        // Won't be save checking if in editor
+    bool allowedToQuit = true;        // Won't be save checking if in editor
 #else
-    bool wantsToQuit = false;
+    bool allowedToQuit = false;
 #endif
-    
+
     void OnApplicationFocus(bool hasFocus)
     {
         windowHandleManager.OnApplicationFocus(hasFocus);
     }
 
-    static bool quitting = false;
     void OnApplicationQuit()
     {
         Debug.Log("NativeMessageBox ref count = " + NativeMessageBox.m_messageBoxesRefCount);
         Debug.Log("FileExplorer ref count = " + FileExplorer.m_filePanelsRefCount);
-        if (false)//NativeMessageBox.messageBoxActive || FileExplorer.filePanelActive)
-        {
-            // Doesn't actually work, Quit event gets bufferred and fires after the dialog box closes, even if quit was hit when the box was up. 
-            Application.CancelQuit();
-            return;
-        }
 
-        quitting = true;
+        StartCoroutine(CheckForUnsavedChangesQuit());
 
-        if (wantsToQuit)
+        if (allowedToQuit)
         {
             globals.Quit();
             FreeAudio();
@@ -300,36 +284,35 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         }
     }
 
+    IEnumerator CheckForUnsavedChangesQuit()
+    {
+        yield return null;
+
+        if (EditCheck())
+        {
+            allowedToQuit = true;
+            Application.Quit();
+        }       
+    }
+
     bool EditCheck()
     {    
         // Check for unsaved changes
         if (isDirty)
         {
-            if (quitting)
-                UnityEngine.Application.CancelQuit();
-#if !UNITY_EDITOR
-
             NativeMessageBox.Result result = NativeMessageBox.Show("Do you want to save unsaved changes?", "Warning", NativeMessageBox.Type.YesNoCancel);
-            if (quitting)
-                UnityEngine.Application.CancelQuit();
 
             if (result == NativeMessageBox.Result.Yes)
             {
                 if (!_Save())
                 {
-                    quitting = false;
                     return false;
                 }
             }
             else if (result == NativeMessageBox.Result.Cancel)
             {
-                quitting = false;
                 return false;
             }
-#endif
-
-            if (quitting)
-                UnityEngine.Application.Quit();
         }
 
         return true;
