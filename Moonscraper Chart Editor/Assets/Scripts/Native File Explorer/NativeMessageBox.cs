@@ -29,15 +29,19 @@ public static class NativeMessageBox {
 
     public static Result Show(string text, string caption, Type messageBoxType)
     {
+#if !UNITY_EDITOR
         ++m_messageBoxesRefCount;
         UnityEngine.Debug.Log("Incrementing NativeMessageBox ref count, new value: " + m_messageBoxesRefCount);
 
-        IntPtr messagePtr = new IntPtr();
+        IntPtr messagePtr = ChartEditor.Instance.windowHandleManager.windowPtr;
         int result = CommDlgBindings.MessageBox(messagePtr, text.ToString(), caption.ToString(), (uint)messageBoxType);
 
         --m_messageBoxesRefCount;
         UnityEngine.Debug.Log("Decrementing NativeMessageBox ref count, new value: " + m_messageBoxesRefCount);
 
         return (Result)result;
+#else
+        throw new NotSupportedException();  // Todo
+#endif
     }
 }
