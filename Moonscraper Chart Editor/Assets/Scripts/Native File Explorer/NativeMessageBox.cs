@@ -7,12 +7,12 @@ public static class NativeMessageBox {
 
     public enum Type
     {
-        OK = 0,
-        OKCancel = 1,
-        AbortRetryIgnore = 2,
+        //OK = 0,
+        //OKCancel = 1,
+        //AbortRetryIgnore = 2,
         YesNoCancel = 3,
         YesNo = 4,
-        RetryCancel = 5,
+        //RetryCancel = 5,
     }
 
     public enum Result
@@ -41,7 +41,29 @@ public static class NativeMessageBox {
 
         return (Result)result;
 #else
-        throw new NotSupportedException();  // Todo
+        switch (messageBoxType)
+        {
+            case Type.YesNo:
+                return UnityEditor.EditorUtility.DisplayDialog(caption, text, "Yes", "No") ? Result.Yes : Result.No;
+
+            case Type.YesNoCancel:
+                {
+                    int result = UnityEditor.EditorUtility.DisplayDialogComplex(caption, text, "Yes", "No", "Cancel");
+                    switch (result)
+                    {
+                        case 0: return Result.Yes;
+                        case 1: return Result.No;
+                        case 2: return Result.Cancel;
+
+                        default: break;
+                    }
+                }
+
+                break;
+            default: break;
+        }
+
+        throw new NotSupportedException();
 #endif
     }
 }
