@@ -22,6 +22,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     BPM anchorAdjustment = null;
 
     BPM prevBPM;
+    BPM prevClonedBPM = new BPM();
 
     void Start()
     {
@@ -56,8 +57,17 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         base.Update();
         if (currentBPM != null)
         {
-            // Update inspector information
-            positionText.text = "Position: " + currentBPM.tick.ToString();
+            if (currentBPM.value != prevClonedBPM.value)
+            {
+                editor.currentSong.UpdateCache();    
+            }
+
+            if (currentBPM.tick != prevClonedBPM.tick)
+            {
+                // Update inspector information
+                positionText.text = "Position: " + currentBPM.tick.ToString();
+            }
+
             if (!Services.IsTyping)
                 UpdateBPMInputFieldText();
 
@@ -66,10 +76,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             bool interactable = !IsNextBPMAnAnchor();
             foreach (Selectable ui in AnchorAheadDisable)
                 ui.interactable = interactable;
-
         }
 
-        editor.currentSong.UpdateCache();
+        prevClonedBPM.CopyFrom(currentBPM);
 
         if (incrementalTimer > AUTO_INCREMENT_WAIT_TIME)
             autoIncrementTimer += Time.deltaTime;

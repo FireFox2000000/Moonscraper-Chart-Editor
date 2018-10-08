@@ -69,4 +69,10 @@ public class BPM : SyncTrack
         ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
         base.Delete(update);
     }
+
+    public void CopyFrom(BPM bpm)
+    {
+        tick = bpm.tick;
+        value = bpm.value;
+    }
 }
