@@ -1,3 +1,11 @@
+1.2.84
+	-Fixed lag when tempo objects were selected
+	-Cleaned up audio management system
+	-Partial clean up of custom resources system
+	-Windows file explorer and popup boxes now locks out the main window properly (in most cases)
+	-Removed dependancy on MiscUtil library. Embedding only the source that's nessacary now.
+	-Fixed timeline highlights not working properly from v1.2.83 Experimental build
+
 1.2.82
 	-Fixed mouse-over hints rendering in the wrong position after engine update
 	-Fixed note rendering weirdness caused by engine update
