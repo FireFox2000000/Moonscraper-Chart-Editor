@@ -37,6 +37,6 @@ static class CommDlgBindings_Windows
     [DllImport(c_comDlgDll, SetLastError = true, ExactSpelling = true, CharSet = CharSet.Auto)]
     public static extern int CommDlgExtendedError();
 
-    [DllImport(c_user32Dll, SetLastError = true, CharSet = CharSet.Unicode)]
+    [DllImport(c_user32Dll, SetLastError = true)]
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
 }

@@ -83,7 +83,7 @@ public static class MidReader {
                 if (importTrackAsVocalsEvents)
                 {
                     callBackState = CallbackState.WaitingForExternalInformation;
-                    NativeMessageBox.Result result = NativeMessageBox.Show("A vocals track was found in the file. Would you like to import the text events as global lyrics events?", "Vocals Track Found", NativeMessageBox.Type.YesNo);
+                    NativeMessageBox.Result result = NativeMessageBox.Show("A vocals track was found in the file. Would you like to import the text events as global lyrics events?", "Vocals Track Found", NativeMessageBox.Type.YesNo, false);
                     callBackState = CallbackState.None;
                     importTrackAsVocalsEvents = result == NativeMessageBox.Result.Yes;
                 }

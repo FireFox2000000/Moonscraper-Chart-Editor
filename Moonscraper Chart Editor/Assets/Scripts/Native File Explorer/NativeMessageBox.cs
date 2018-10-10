@@ -27,13 +27,13 @@ public static class NativeMessageBox {
         No = 7,
     }
 
-    public static Result Show(string text, string caption, Type messageBoxType)
+    public static Result Show(string text, string caption, Type messageBoxType, bool useWindowHandle = true)
     {
 #if !UNITY_EDITOR
         ++m_messageBoxesRefCount;
         UnityEngine.Debug.Log("Incrementing NativeMessageBox ref count, new value: " + m_messageBoxesRefCount);
 
-        IntPtr messagePtr = ChartEditor.Instance.windowHandleManager.windowPtr;
+        IntPtr messagePtr = useWindowHandle ? ChartEditor.Instance.windowHandleManager.windowPtr : IntPtr.Zero;
         int result = CommDlgBindings.MessageBox(messagePtr, text.ToString(), caption.ToString(), (uint)messageBoxType);
 
         --m_messageBoxesRefCount;
