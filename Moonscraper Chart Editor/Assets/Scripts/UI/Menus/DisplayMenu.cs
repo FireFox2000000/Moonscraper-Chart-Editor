@@ -52,15 +52,12 @@ public class DisplayMenu : MonoBehaviour {
     protected virtual void OnDisable()
     { 
         Globals.applicationMode = Globals.ApplicationMode.Editor;
-
-        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
     }
 
     public void Disable()
     {
-        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
-        gameObject.SetActive(false);
         UITabbing.defaultSelectable = null;
+        gameObject.SetActive(false);       
     }
 
 }
