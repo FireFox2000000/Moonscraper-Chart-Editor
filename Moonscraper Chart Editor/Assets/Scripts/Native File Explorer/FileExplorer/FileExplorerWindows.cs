@@ -14,8 +14,17 @@ public class FileExplorerWindows : IFileExplorer
         OverwritePrompt = 0x000002,
     }
 
-    [DllImport("user32.dll")]
+    const string c_comDlgDll = "comdlg32.dll";
+    const string c_user32Dll = "user32.dll";
+
+    [DllImport(c_user32Dll)]
     private static extern IntPtr GetActiveWindow();
+
+    [DllImport(c_comDlgDll, SetLastError = true, CharSet = CharSet.Auto)]
+    public static extern bool GetOpenFileName([In, Out] OpenFileName ofn);
+
+    [DllImport(c_comDlgDll, SetLastError = true, CharSet = CharSet.Auto)]
+    public static extern bool GetSaveFileName([In, Out] OpenFileName ofn);
 
     public bool OpenFilePanel(string filter, string defExt, out string resultPath)
     {
@@ -34,7 +43,7 @@ public class FileExplorerWindows : IFileExplorer
         openChartFileDialog.title = "Open file";
         openChartFileDialog.defExt = defExt;
 
-        if (CommDlgBindings.GetOpenFileName(openChartFileDialog))
+        if (GetOpenFileName(openChartFileDialog))
         {
             resultPath = openChartFileDialog.file;
             return true;
@@ -74,7 +83,7 @@ public class FileExplorerWindows : IFileExplorer
         openSaveFileDialog.defExt = defExt;
         openSaveFileDialog.flags = (int)OFN_Flags.OverwritePrompt;
 
-        if (CommDlgBindings.GetSaveFileName(openSaveFileDialog))
+        if (GetSaveFileName(openSaveFileDialog))
         {
             resultPath = openSaveFileDialog.file;
             return true;
@@ -88,6 +97,81 @@ public class FileExplorerWindows : IFileExplorer
             resultPath = string.Empty;
             return false;
         }
+    }
+
+    // Copyright
+    // Microsoft Corporation
+    // All rights reserved
+
+    // OpenFileDlg.cs
+    // https://msdn.microsoft.com/en-us/library/windows/desktop/ms646839(v=vs.85).aspx
+
+    /*
+    typedef struct tagOFN { 
+      DWORD         lStructSize; 
+      HWND          hwndOwner; 
+      HINSTANCE     hInstance; 
+      LPCTSTR       lpstrFilter; 
+      LPTSTR        lpstrCustomFilter; 
+      DWORD         nMaxCustFilter; 
+      DWORD         nFilterIndex; 
+      LPTSTR        lpstrFile; 
+      DWORD         nMaxFile; 
+      LPTSTR        lpstrFileTitle; 
+      DWORD         nMaxFileTitle; 
+      LPCTSTR       lpstrInitialDir; 
+      LPCTSTR       lpstrTitle; 
+      DWORD         Flags; 
+      WORD          nFileOffset; 
+      WORD          nFileExtension; 
+      LPCTSTR       lpstrDefExt; 
+      LPARAM        lCustData; 
+      LPOFNHOOKPROC lpfnHook; 
+      LPCTSTR       lpTemplateName; 
+    #if (_WIN32_WINNT >= 0x0500)
+      void *        pvReserved;
+      DWORD         dwReserved;
+      DWORD         FlagsEx;
+    #endif // (_WIN32_WINNT >= 0x0500)
+    } OPENFILENAME, *LPOPENFILENAME; 
+    */
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+    public class OpenFileName
+    {
+        public int structSize = 0;
+        public IntPtr dlgOwner = IntPtr.Zero;
+        public IntPtr instance = IntPtr.Zero;
+
+        public String filter = null;
+        public String customFilter = null;
+        public int maxCustFilter = 0;
+        public int filterIndex = 0;
+
+        public String file = null;
+        public int maxFile = 0;
+
+        public String fileTitle = null;
+        public int maxFileTitle = 0;
+
+        public String initialDir = null;
+
+        public String title = null;
+
+        public int flags = 0;
+        public short fileOffset = 0;
+        public short fileExtension = 0;
+
+        public String defExt = null;
+
+        public IntPtr custData = IntPtr.Zero;
+        public IntPtr hook = IntPtr.Zero;
+
+        public String templateName = null;
+
+        public IntPtr reservedPtr = IntPtr.Zero;
+        public int reservedInt = 0;
+        public int flagsEx = 0;
     }
 }
 
