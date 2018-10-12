@@ -227,13 +227,4 @@ public class NoteVisuals2DManager : NoteVisualsManager {
             }
         }
     }
-
-    public static string GarbageFreeString(StringBuilder sb)
-    {
-        string str = (string)sb.GetType().GetField(
-            "_str",
-            System.Reflection.BindingFlags.NonPublic |
-            System.Reflection.BindingFlags.Instance).GetValue(sb);
-        return str;
-    }
 }
