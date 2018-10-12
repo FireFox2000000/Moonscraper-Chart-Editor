@@ -73,36 +73,27 @@ public class Export : DisplayMenu {
 
     void _ExportSong()
     {
-        try
+        string saveLocation;
+        string defaultFileName = new string(editor.currentSong.name.ToCharArray());
+        if (!exportOptions.forced)
+            defaultFileName += "(UNFORCED)";
+
+        bool aquiredFilePath = false;
+
+        // Open up file explorer and get save location
+        if (exportOptions.format == ExportOptions.Format.Chart)
         {
-            string saveLocation;
-            string defaultFileName = new string(editor.currentSong.name.ToCharArray());
-            if (!exportOptions.forced)
-                defaultFileName += "(UNFORCED)";
+            aquiredFilePath = FileExplorer.SaveFilePanel("Chart files (*.chart)\0*.chart", defaultFileName, "chart", out saveLocation);
+        }
+        else if (exportOptions.format == ExportOptions.Format.Midi)
+        {
+            aquiredFilePath = FileExplorer.SaveFilePanel("Midi files (*.mid)\0*.mid", defaultFileName, "mid", out saveLocation);
+        }
+        else
+            throw new Exception("Invalid file extension");
 
-            // Open up file explorer and get save location
-            if (exportOptions.format == ExportOptions.Format.Chart)
-            {
-                saveLocation = FileExplorer.SaveFilePanel("Chart files (*.chart)\0*.chart", defaultFileName, "chart");
-            }
-            else if (exportOptions.format == ExportOptions.Format.Midi)
-            {
-                saveLocation = FileExplorer.SaveFilePanel("Midi files (*.mid)\0*.mid", defaultFileName, "mid");
-            }
-            else
-                throw new Exception("Invalid file extension");
-
+        if (aquiredFilePath)
             StartCoroutine(_ExportSong(saveLocation));
-        }
-        catch (FileExplorer.FileExplorerExitException e)
-        {
-            Debug.Log(e.Message);
-        }
-        catch (System.Exception e)
-        {
-            // User probably canceled
-            Logger.LogException(e, "Error when exporting");
-        }
     }
 
     public IEnumerator _ExportSong(string filepath)

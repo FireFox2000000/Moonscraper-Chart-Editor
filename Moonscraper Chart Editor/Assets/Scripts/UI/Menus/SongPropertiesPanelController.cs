@@ -208,22 +208,19 @@ public class SongPropertiesPanelController : DisplayMenu {
     string GetAudioFile()
     {
         string audioFilepath = string.Empty;
-        audioFilepath = FileExplorer.OpenFilePanel("Audio files (*.ogg,*.mp3,*.wav)\0*.mp3;*.ogg;*.wav", "mp3,ogg,wav");
+        FileExplorer.OpenFilePanel("Audio files (*.ogg,*.mp3,*.wav)\0*.mp3;*.ogg;*.wav", "mp3,ogg,wav", out audioFilepath);
         return audioFilepath;
     }
 
     public void LoadMusicStream()
     {
-        try
+        string path = GetAudioFile();
+        if (!string.IsNullOrEmpty(path))
         {
-            editor.currentSong.LoadMusicStream(GetAudioFile());
+            editor.currentSong.LoadMusicStream(path);
 
             StartCoroutine(SetAudio());
-        }
-        catch
-        {
-            Debug.LogError("Could not open audio");
-        }        
+        }     
     }
 
     public void ClearMusicStream()

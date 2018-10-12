@@ -265,7 +265,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     void OnApplicationQuit()
     {
         Debug.Log("NativeMessageBox ref count = " + NativeMessageBox.m_messageBoxesRefCount);
-        Debug.Log("FileExplorer ref count = " + FileExplorer.m_filePanelsRefCount);
 
         StartCoroutine(CheckForUnsavedChangesQuit());
 
@@ -397,32 +396,28 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
     public bool _SaveAs(bool forced = true)
     {
-        try {
-            string defaultFileName;
+        string defaultFileName;
 
-            if (lastLoadedFile != string.Empty)
-                defaultFileName = System.IO.Path.GetFileNameWithoutExtension(lastLoadedFile);
-            else
-                defaultFileName = new String(currentSong.name.ToCharArray());
+        if (lastLoadedFile != string.Empty)
+            defaultFileName = System.IO.Path.GetFileNameWithoutExtension(lastLoadedFile);
+        else
+            defaultFileName = new String(currentSong.name.ToCharArray());
 
-            if (!forced)
-                defaultFileName += "(UNFORCED)";
+        if (!forced)
+            defaultFileName += "(UNFORCED)";
 
-            string fileName = FileExplorer.SaveFilePanel("Chart files (*.chart)\0*.chart", defaultFileName, "chart");
-
+        string fileName;
+        if (FileExplorer.SaveFilePanel("Chart files (*.chart)\0*.chart", defaultFileName, "chart", out fileName))
+        {
             ExportOptions exportOptions = currentSong.defaultExportOptions;
             exportOptions.forced = forced;
 
             Save(fileName, exportOptions);
+            return true;
+        }
 
-            return true;          
-        }
-        catch (System.Exception e)
-        {
-            // User probably just canceled
-            Debug.LogError(e.Message);
-            return false;
-        }
+        // User canceled
+        return false;
     }
 
     void Save (string filename, ExportOptions exportOptions)
@@ -590,23 +585,9 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
         Song backup = currentSong;
 
-        try
-        {
-            currentFileName = FileExplorer.OpenFilePanel("Chart files (*.chart, *.mid)\0*.chart;*.mid", "chart,mid");
-        }
-        catch (FileExplorer.FileExplorerExitException e)
-        {
-            // Most likely closed the window explorer, just ignore for now.
-            currentSong = backup;
-            Debug.Log(e.Message);
-
-            // Immediate exit
-            yield break;
-        }
-        catch (System.Exception e)
+        if (!FileExplorer.OpenFilePanel("Chart files (*.chart, *.mid)\0*.chart;*.mid", "chart,mid", out currentFileName))
         {
             currentSong = backup;
-            Logger.LogException(e, "Error when getting file to open");
 
             // Immediate exit
             yield break;
