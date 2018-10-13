@@ -4,6 +4,7 @@
 //#define SONG_DEBUG
 //#define TIMING_DEBUG
 //#define LOAD_AUDIO_ASYNC
+#define HACK_FIX_PLUGIN_BUG
 
 using UnityEngine;
 using System.IO;
@@ -12,6 +13,10 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System;
+
+#if HACK_FIX_PLUGIN_BUG
+using Un4seen.Bass;
+#endif
 
 public class Song {
     // Constants
@@ -391,7 +396,14 @@ public class Song {
 
                 if (bassAudioStreams[audioStreamArrayPos] != null)
                     bassAudioStreams[audioStreamArrayPos].Dispose();
+#if HACK_FIX_PLUGIN_BUG
+                int audioStreamHandle = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_ASYNCFILE | BASSFlag.BASS_STREAM_PRESCAN);
+                audioStreamHandle = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_TempoCreate(audioStreamHandle, BASSFlag.BASS_FX_FREESOURCE);
+                bassAudioStreams[audioStreamArrayPos] = new TempoStream(audioStreamHandle);
+                AudioManager.RegisterStream(bassAudioStreams[audioStreamArrayPos]);
+#else
                 bassAudioStreams[audioStreamArrayPos] = AudioManager.LoadTempoStream(filepath);
+#endif                
             });
 
             streamCreateFileThread.Start();

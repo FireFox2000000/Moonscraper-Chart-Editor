@@ -118,6 +118,11 @@ public static class AudioManager {
         return newStream;
     }
 
+    public static void RegisterStream(AudioStream stream)
+    {
+        liveAudioStreams.Add(stream);
+    }
+
 #endregion
 
 #region Attributes
