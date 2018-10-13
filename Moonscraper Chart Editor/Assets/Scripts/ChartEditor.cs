@@ -264,8 +264,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
     void OnApplicationQuit()
     {
-        Debug.Log("NativeMessageBox ref count = " + NativeMessageBox.m_messageBoxesRefCount);
-
         StartCoroutine(CheckForUnsavedChangesQuit());
 
         if (allowedToQuit)
