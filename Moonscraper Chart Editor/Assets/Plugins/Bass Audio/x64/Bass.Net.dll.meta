@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 1ff6c59691841d94297b27bdbfa9eefa
-timeCreated: 1492307689
+guid: 372a089bb6431a54cb3bc76d366640f0
+timeCreated: 1539388158
 licenseType: Free
 PluginImporter:
   serializedVersion: 2
@@ -34,37 +34,17 @@ PluginImporter:
           OS: AnyOS
     data:
       first:
-        Android: Android
-      second:
-        enabled: 1
-        settings:
-          CPU: ARMv7
-    data:
-      first:
         Any: 
       second:
         enabled: 1
-        settings:
-          Exclude Android: 0
-          Exclude Editor: 0
-          Exclude Linux: 1
-          Exclude Linux64: 1
-          Exclude LinuxUniversal: 1
-          Exclude OSXIntel: 1
-          Exclude OSXIntel64: 1
-          Exclude OSXUniversal: 1
-          Exclude Win: 1
-          Exclude Win64: 0
-          Exclude iOS: 0
+        settings: {}
     data:
       first:
         Editor: Editor
       second:
         enabled: 1
         settings:
-          CPU: AnyCPU
           DefaultValueInitialized: true
-          OS: AnyOS
     data:
       first:
         Facebook: Win
@@ -76,7 +56,7 @@ PluginImporter:
       first:
         Facebook: Win64
       second:
-        enabled: 1
+        enabled: 0
         settings:
           CPU: AnyCPU
     data:
@@ -142,14 +122,6 @@ PluginImporter:
         enabled: 0
         settings:
           CPU: AnyCPU
-    data:
-      first:
-        iPhone: iOS
-      second:
-        enabled: 1
-        settings:
-          CompileFlags: 
-          FrameworkDependencies: 
   userData: 
   assetBundleName: 
   assetBundleVariant: 

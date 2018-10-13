@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 8c792b7e9235f6b4680d2a9e6318692f
-timeCreated: 1534150329
+guid: a19ab2d5f5d4a9c47b159408ac47f031
+timeCreated: 1539388287
 licenseType: Free
 PluginImporter:
   serializedVersion: 2
@@ -37,25 +37,14 @@ PluginImporter:
         Any: 
       second:
         enabled: 1
-        settings:
-          Exclude Editor: 0
-          Exclude Linux: 0
-          Exclude Linux64: 0
-          Exclude LinuxUniversal: 0
-          Exclude OSXIntel: 0
-          Exclude OSXIntel64: 0
-          Exclude OSXUniversal: 0
-          Exclude Win: 1
-          Exclude Win64: 0
+        settings: {}
     data:
       first:
         Editor: Editor
       second:
         enabled: 1
         settings:
-          CPU: AnyCPU
           DefaultValueInitialized: true
-          OS: AnyOS
     data:
       first:
         Facebook: Win
@@ -67,7 +56,7 @@ PluginImporter:
       first:
         Facebook: Win64
       second:
-        enabled: 1
+        enabled: 0
         settings:
           CPU: AnyCPU
     data:
