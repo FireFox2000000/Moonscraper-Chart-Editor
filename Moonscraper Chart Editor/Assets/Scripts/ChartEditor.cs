@@ -85,6 +85,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public static bool hasFocus { get { return Application.isFocused; } }
 
     public ActionHistory actionHistory;
+    public CommandStack commandStack;
     public SongObject currentSelectedObject
     {
         get
@@ -640,6 +641,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public void LoadChart(Chart chart)
     {
         actionHistory = new ActionHistory();
+        commandStack = new CommandStack();
         Stop();
 
         currentChart = chart;
@@ -952,14 +954,25 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     #region Undo/Redo/Cut/Copy/Paste etc...
     public void UndoWrapper()
     {
-        if (actionHistory.Undo(this))
+        if (!commandStack.isAtStart)
+        {
+            commandStack.Pop();
             groupSelect.reset();
+        }
+        //if (actionHistory.Undo(this))
+        //    groupSelect.reset();
     }
 
     public void RedoWrapper()
     {
-        if (actionHistory.Redo(this))
+        if (!commandStack.isAtEnd)
+        {
+            commandStack.Push();
             groupSelect.reset();
+        }
+
+        //if (actionHistory.Redo(this))
+        //    groupSelect.reset();
     }
 
     public void Copy()
@@ -1022,17 +1035,27 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     {
         if (currentSelectedObjects.Count > 0)
         {
-            actionHistory.Insert(new ActionHistory.Delete(currentSelectedObjects));
-
-            foreach (SongObject songObject in currentSelectedObjects)
+            SongEditCommand[] commands = new SongEditCommand[]
             {
-                songObject.Delete(false);
-            }
+                new SongEditDelete(currentSelectedObjects),
 
-            currentChart.UpdateCache();
-            currentSong.UpdateCache();
+            };
 
-            actionHistory.Insert(FixUpBPMAnchors().ToArray());
+            // Todo, BPM anchor correction
+            BatchedSongEditCommand commandBatch = new BatchedSongEditCommand(commands);
+            commandStack.Push(commandBatch);
+
+            //actionHistory.Insert(new ActionHistory.Delete(currentSelectedObjects));
+            //
+            //foreach (SongObject songObject in currentSelectedObjects)
+            //{
+            //    songObject.Delete(false);
+            //}
+            //
+            //currentChart.UpdateCache();
+            //currentSong.UpdateCache();
+            //
+            //actionHistory.Insert(FixUpBPMAnchors().ToArray());
 
             currentSelectedObject = null;
 

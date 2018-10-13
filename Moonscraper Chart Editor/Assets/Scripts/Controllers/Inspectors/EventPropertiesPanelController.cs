@@ -137,19 +137,24 @@ public class EventPropertiesPanelController : PropertiesPanelController
             string prevName = currentChartEvent.eventName;
             if (SongObjectHelper.FindObjectPosition(new ChartEvent(currentChartEvent.tick, name), editor.currentChart.events) == SongObjectHelper.NOTFOUND)
             {
-                currentChartEvent.eventName = name;
-                UpdateInputFieldRecord();
+                bool tentativeRecord, lockedRecord;
+                ShouldRecordInputField(name, currentChartEvent.eventName, out tentativeRecord, out lockedRecord);
 
-                if (prevName != currentChartEvent.eventName)
-                    ChartEditor.isDirty = true;
+                if (!lockedRecord)
+                {
+                    editor.commandStack.Pop();
+                }
 
-                updateInputField = true;
+                if (tentativeRecord || lockedRecord)
+                {
+                    ChartEvent newChartEvent = new ChartEvent(currentChartEvent.tick, name);
+                    editor.commandStack.Push(new SongEditModify<ChartEvent>(currentChartEvent, newChartEvent));
+                    int insertionIndex = SongObjectHelper.FindObjectPosition(newChartEvent, editor.currentChart.events);
+                    Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Chart event failed to be inserted?");
+                    editor.currentSelectedObject = editor.currentChart.chartObjects[insertionIndex];
+                }
             }
-            else
-                updateInputField = false;
         }
-
-        UpdateInfoDisplay();
     }
 
     void UpdateInfoDisplay()

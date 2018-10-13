@@ -21,29 +21,29 @@ public class SongEditAdd : SongEditCommand
 
     public override void Invoke()
     {
-        ApplyAction(songObjects);
+        ApplyAction(songObjects, overwrittenSongObjects);
         PostExecuteUpdate();
     }
 
     public override void Revoke()
     {
         SongEditDelete.ApplyAction(songObjects);
-        ApplyAction(overwrittenSongObjects);
+        ApplyAction(overwrittenSongObjects, null);
 
         overwrittenSongObjects.Clear();
 
         PostExecuteUpdate();
     }
 
-    public static void ApplyAction(IList<SongObject> songObjects)
+    public static void ApplyAction(IList<SongObject> songObjects, IList<SongObject> overwriteList)
     {
         foreach (SongObject songObject in songObjects)
         {
-            ApplyAction(songObject);
+            ApplyAction(songObject, overwriteList);
         }
     }
 
-    public static void ApplyAction(SongObject songObject)
+    public static void ApplyAction(SongObject songObject, IList<SongObject> overwriteList)
     {
         // Todo, replace this, the functions contained within are horrible, especially for notes. 
         // Need to handle overwriting somehow?
@@ -59,23 +59,23 @@ public class SongEditAdd : SongEditCommand
                 break;
 
             case ((int)SongObject.ID.ChartEvent):
-                AddChartEvent((ChartEvent)songObject);
+                AddChartEvent((ChartEvent)songObject, overwriteList);
                 break;
 
             case ((int)SongObject.ID.BPM):
-                AddBPM((BPM)songObject);
+                AddBPM((BPM)songObject, overwriteList);
                 break;
 
             case ((int)SongObject.ID.Section):
-                AddSection((Section)songObject);
+                AddSection((Section)songObject, overwriteList);
                 break;
 
             case ((int)SongObject.ID.TimeSignature):
-                AddTimeSignature((TimeSignature)songObject);
+                AddTimeSignature((TimeSignature)songObject, overwriteList);
                 break;
 
             case ((int)SongObject.ID.Event):
-                AddEvent((Event)songObject);
+                AddEvent((Event)songObject, overwriteList);
                 break;
 
             default:
@@ -86,21 +86,39 @@ public class SongEditAdd : SongEditCommand
 
     #region Object specific add functions
 
-    static void AddChartEvent(ChartEvent chartEvent)
+    static void TryRecordOverwrite<T>(T songObject, IList<T> searchObjects, IList<SongObject> overwrittenObjects) where T : SongObject
     {
+        if (overwrittenObjects == null)
+            return;
+
         ChartEditor editor = ChartEditor.Instance;
+        int overwriteIndex = SongObjectHelper.FindObjectPosition(songObject.tick, editor.currentChart.chartObjects);
+
+        if (overwriteIndex != SongObjectHelper.NOTFOUND)
+        {
+            overwrittenObjects.Add(editor.currentChart.chartObjects[overwriteIndex].Clone());
+        }
+    }
+
+    static void AddChartEvent(ChartEvent chartEvent, IList<SongObject> overwrittenList)
+    {      
+        ChartEditor editor = ChartEditor.Instance;
+        TryRecordOverwrite(chartEvent, editor.currentChart.chartObjects, overwrittenList);
+
         ChartEvent eventToAdd = new ChartEvent(chartEvent);
 
         editor.currentChart.Add(eventToAdd, false);
-        editor.currentSelectedObject = eventToAdd;
+        Debug.Log("Added new chart event");
     }
 
-    static void AddBPM(BPM bpm)
+    static void AddBPM(BPM bpm, IList<SongObject> overwrittenList)
     {
         ChartEditor editor = ChartEditor.Instance;
+        TryRecordOverwrite(bpm, editor.currentSong.bpms, overwrittenList);
+
         BPM bpmToAdd = new BPM(bpm);
         editor.currentSong.Add(bpmToAdd, false);
-        editor.currentSelectedObject = bpmToAdd;
+        Debug.Log("Added new bpm");
 
         if (bpmToAdd.anchor != null)
         {
@@ -110,31 +128,36 @@ public class SongEditAdd : SongEditCommand
         ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
     }
 
-    static void AddTimeSignature(TimeSignature timeSignature)
+    static void AddTimeSignature(TimeSignature timeSignature, IList<SongObject> overwrittenList)
     {
         ChartEditor editor = ChartEditor.Instance;
+        TryRecordOverwrite(timeSignature, editor.currentSong.timeSignatures, overwrittenList);
+
         TimeSignature tsToAdd = new TimeSignature(timeSignature);
         editor.currentSong.Add(tsToAdd, false);
-
-        editor.currentSelectedObject = tsToAdd;
+        Debug.Log("Added new timesignature");
     }
 
-    static void AddEvent(Event songEvent)
+    static void AddEvent(Event songEvent, IList<SongObject> overwrittenList)
     {
         ChartEditor editor = ChartEditor.Instance;
+        TryRecordOverwrite(songEvent, editor.currentSong.events, overwrittenList);
+
         Event eventToAdd = new Event(songEvent);
         editor.currentSong.Add(eventToAdd, false);
 
-        editor.currentSelectedObject = eventToAdd;
+        Debug.Log("Added new song event");
     }
 
-    static void AddSection(Section section)
+    static void AddSection(Section section, IList<SongObject> overwrittenList)
     {
         ChartEditor editor = ChartEditor.Instance;
+        TryRecordOverwrite(section, editor.currentSong.sections, overwrittenList);
+
         Section sectionToAdd = new Section(section);
         editor.currentSong.Add(sectionToAdd, false);
 
-        editor.currentSelectedObject = sectionToAdd;
+        Debug.Log("Added new section");
     }
 
     #endregion

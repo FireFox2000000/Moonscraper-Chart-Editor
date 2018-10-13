@@ -16,14 +16,16 @@ public class PropertiesPanelController : MonoBehaviour {
 
     ActionHistory.Modify inputFieldModify = null;
     ValueDirection lastKnownDirection = ValueDirection.NONE;
+    bool commandRecordingInProcess = false;
 
-    void resetActionRecording()
+    void ResetActionRecording()
     {
         inputFieldModify = null;
         lastKnownDirection = ValueDirection.NONE;
         prevValue = string.Empty;
         prevSongObject = null;
         prevSongObjectRef = null;
+        commandRecordingInProcess = false;
     }
 
     void Awake()
@@ -33,7 +35,7 @@ public class PropertiesPanelController : MonoBehaviour {
 
     protected virtual void OnDisable()
     {
-        resetActionRecording();
+        ResetActionRecording();
     }
 
     protected virtual void Update()
@@ -44,7 +46,7 @@ public class PropertiesPanelController : MonoBehaviour {
             if (!(currentSongObject != null && prevSongObject != null && currentSongObject.GetType() == prevSongObjectRef.GetType() &&
                 (currentSongObject.GetType() == typeof(ChartEvent) || currentSongObject.GetType() == typeof(Event)) &&
                 ReferenceEquals(prevSongObjectRef, currentSongObject)))
-                resetActionRecording();
+                ResetActionRecording();
         }
 
         prevSongObject = currentSongObject.Clone();
@@ -134,6 +136,79 @@ public class PropertiesPanelController : MonoBehaviour {
         }
 
         prevValue = value;
+    }
+
+    protected void ShouldRecordInputField(string newLabel, string oldLabel, out bool tentativeRecord, out bool lockedRecord)
+    {
+        tentativeRecord = false;
+        lockedRecord = false;
+
+        if (currentSongObject == null || prevSongObject == null || prevSongObject != currentSongObject)
+        {
+            if (!
+                (
+                    (currentSongObject.GetType() == typeof(ChartEvent) || currentSongObject.GetType() == typeof(Event)) &&
+                    currentSongObject.GetType() == prevSongObject.GetType()
+                )
+            )
+            {
+                return;
+            }
+        }
+
+        string value = newLabel;
+
+        if (value.Equals(oldLabel))
+            return;
+
+        // Check if there's a record already in
+        if (!commandRecordingInProcess || lastKnownDirection == ValueDirection.NONE)
+        {
+            if (value.Length < oldLabel.Length)
+                lastKnownDirection = ValueDirection.DOWN;
+            else if (value.Length > oldLabel.Length)
+                lastKnownDirection = ValueDirection.UP;
+            else
+                lastKnownDirection = ValueDirection.NONE;
+
+            lockedRecord = !commandRecordingInProcess;
+            tentativeRecord = true;
+            commandRecordingInProcess = true;            
+        }
+        // Else check if a new record needs to overwrite this current one or if this one needs to be edited
+        else if (commandRecordingInProcess)
+        {
+            if (value.Length < oldLabel.Length)
+            {
+                if (lastKnownDirection == ValueDirection.DOWN)
+                {
+                    tentativeRecord = true;
+                }
+                else
+                {
+                    lockedRecord = true;
+                }
+
+                lastKnownDirection = ValueDirection.DOWN;
+            }
+            else if (value.Length > oldLabel.Length)
+            {
+                if (lastKnownDirection == ValueDirection.UP)
+                {
+                    tentativeRecord = true;
+                }
+                else
+                {
+                    lockedRecord = true;
+                }
+
+                lastKnownDirection = ValueDirection.UP;
+            }
+            else
+            {
+                lockedRecord = true;
+            }
+        }
     }
 
     static string GetValue(SongObject songObject)

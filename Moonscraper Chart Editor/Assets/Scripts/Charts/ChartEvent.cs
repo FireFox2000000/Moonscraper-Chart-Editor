@@ -20,6 +20,12 @@ public class ChartEvent : ChartObject
         eventName = _eventName;
     }
 
+    public void CopyFrom(ChartEvent chartEvent)
+    {
+        tick = chartEvent.tick;
+        eventName = chartEvent.eventName;
+    }
+
     protected override bool Equals(SongObject b)
     {
         if (b.GetType() == typeof(ChartEvent))

@@ -5,19 +5,17 @@ using UnityEngine;
 public class CommandStack {
     List<ICommand> commands = new List<ICommand>();
     int currentStackIndex = -1;
-    ICommand currentTentativeCommand = null;
+    public bool isAtStart { get { return currentStackIndex < 0; } }
+    public bool isAtEnd { get { return currentStackIndex >= commands.Count - 1; } }
+
+    public void Push()
+    {
+        if (!isAtEnd)
+            commands[++currentStackIndex].Invoke();
+    }
 
     public void Push(ICommand command)
     {
-        if (currentTentativeCommand != null)
-        {
-            // Tentative is in effect, add it to the stack without invoking it
-            ++currentStackIndex;
-            commands.RemoveRange(currentStackIndex, commands.Count - currentStackIndex);
-            commands.Add(currentTentativeCommand);
-            currentTentativeCommand = null;
-        }
-
         ++currentStackIndex;
         commands.RemoveRange(currentStackIndex, commands.Count - currentStackIndex);
         command.Invoke();
@@ -26,24 +24,7 @@ public class CommandStack {
 
     public void Pop()
     {
-        if (currentTentativeCommand != null)
-        {
-            // Act like this is on top of the stack
-            currentTentativeCommand.Revoke();
-            commands.Add(currentTentativeCommand);
-            currentTentativeCommand = null;
-        }
-        else
+        if (!isAtStart)
             commands[currentStackIndex--].Revoke();
-    }
-
-    // Pushing tentative consecutively will revoke the previous tentative before invoking this new tentative
-    public void PushTentative(ICommand command)
-    {
-        if (currentTentativeCommand != null)
-            currentTentativeCommand.Revoke();
-
-        currentTentativeCommand = command;
-        currentTentativeCommand.Invoke();
     }
 }

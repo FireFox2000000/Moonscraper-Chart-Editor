@@ -60,7 +60,11 @@ public class SongEditDelete : SongEditCommand
 
     public override void Revoke()
     {
-        SongEditAdd.ApplyAction(songObjects);
+        List<SongObject> overwriteList = new List<SongObject>();
+
+        SongEditAdd.ApplyAction(songObjects, overwriteList);
+        Debug.Assert(overwriteList.Count <= 0, "SongEditDelete overwrote an object. Should be adding an object that was deleted.");
+
         PostExecuteUpdate();
     }
 }

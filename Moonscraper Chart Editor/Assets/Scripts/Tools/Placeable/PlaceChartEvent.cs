@@ -50,23 +50,11 @@ public class PlaceChartEvent : PlaceSongObject
 
     protected override void AddObject()
     {
-        ActionHistory.Add action;
-        string debugMessage = string.Empty;
-       
-        // Add chart event
-        ChartEvent chartEvent = new ChartEvent(this.chartEvent);
-        editor.currentChart.Add(chartEvent);
+        editor.commandStack.Push(new SongEditAdd(new ChartEvent(this.chartEvent)));
 
-        action = new ActionHistory.Add(chartEvent);
-
-        debugMessage = "Added Chart Event \"";
-
-        debugMessage += chartEvent.eventName + "\"";
-
-        Debug.Log(debugMessage);
-
-        editor.actionHistory.Insert(action);
-        editor.currentSelectedObject = chartEvent;
+        int insertionIndex = SongObjectHelper.FindObjectPosition(chartEvent, editor.currentChart.chartObjects);
+        Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Chart event failed to be inserted?");
+        editor.currentSelectedObject = editor.currentChart.chartObjects[insertionIndex];
     }
 
     public static void AddObjectToCurrentChart(ChartEvent chartEvent, ChartEditor editor, bool update = true)

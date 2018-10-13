@@ -47,9 +47,11 @@ public abstract class SongEditCommand : ICommand {
         if (Toolpane.currentTool != Toolpane.Tools.Note)
             editor.currentSelectedObject = null;
 
-        Debug.Assert(songObjects.Count > 0, "No song objects were provided in a song edit command");
-
-        uint jumpToPos = songObjects[0].tick;       // Jump to the lowest tick, maybe search through if nessacary?
-        editor.movement.SetPosition(jumpToPos);
+        //Debug.Assert(songObjects.Count > 0, "No song objects were provided in a song edit command");
+        //if (songObjects.Count > 0)
+        //{
+        //    uint jumpToPos = songObjects[0].tick;       // Jump to the lowest tick, maybe search through if nessacary?
+        //    editor.movement.SetPosition(jumpToPos);
+        //}
     }
 }
