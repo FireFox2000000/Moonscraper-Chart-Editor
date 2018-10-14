@@ -57,14 +57,6 @@ public class PlaceChartEvent : PlaceSongObject
         editor.currentSelectedObject = editor.currentChart.chartObjects[insertionIndex];
     }
 
-    public static void AddObjectToCurrentChart(ChartEvent chartEvent, ChartEditor editor, bool update = true)
-    {
-        ChartEvent eventToAdd = new ChartEvent(chartEvent);
-
-        editor.currentChart.Add(eventToAdd, update);
-        editor.currentSelectedObject = eventToAdd;
-    }
-
     protected override void Controls()
     {
         if (!GameSettings.keysModeEnabled)

@@ -71,13 +71,14 @@ public abstract class PlaceSongObject : ToolObject {
             case ((int)SongObject.ID.TimeSignature):
                 PlaceTimesignature.AddObjectToCurrentSong((TimeSignature)songObject, editor, update);
                 break;
-            case ((int)SongObject.ID.Event):
-                PlaceEvent.AddObjectToCurrentSong((Event)songObject, editor, update);
-                break;
-            case ((int)SongObject.ID.ChartEvent):
-                PlaceChartEvent.AddObjectToCurrentChart((ChartEvent)songObject, editor, update);
-                break;
+            //case ((int)SongObject.ID.Event):
+            //    PlaceEvent.AddObjectToCurrentSong((Event)songObject, editor, update);
+            //    break;
+            //case ((int)SongObject.ID.ChartEvent):
+            //    PlaceChartEvent.AddObjectToCurrentChart((ChartEvent)songObject, editor, update);
+            //    break;
             default:
+                Debug.LogError("Object not supported to be added to a song via this method");
                 break;
         }
     }

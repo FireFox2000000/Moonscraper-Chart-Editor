@@ -28,14 +28,6 @@ public class PlaceEvent : PlaceSongObject
         editor.currentSelectedObject = editor.currentSong.events[insertionIndex];
     }
 
-    public static void AddObjectToCurrentSong(Event songEvent, ChartEditor editor, bool update = true)
-    {
-        Event eventToAdd = new Event(songEvent);
-        editor.currentSong.Add(eventToAdd, update);
-   
-        editor.currentSelectedObject = eventToAdd;
-    }
-
     protected override void Controls()
     {
         if (!GameSettings.keysModeEnabled)
