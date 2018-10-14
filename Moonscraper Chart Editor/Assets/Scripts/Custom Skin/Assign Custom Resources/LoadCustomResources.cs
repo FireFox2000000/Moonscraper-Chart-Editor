@@ -113,6 +113,9 @@ public class LoadCustomResources : MonoBehaviour {
 #else
         skinDirectory = DirectoryHelper.GetMainDirectory() + "\\" + skinDirectory;
 #endif
+
+        Debug.Log("Loading skin from directory " + skinDirectory);
+
         if (Directory.Exists(skinDirectory))
         {
             AddCustomNoteTextureIntoResources();
