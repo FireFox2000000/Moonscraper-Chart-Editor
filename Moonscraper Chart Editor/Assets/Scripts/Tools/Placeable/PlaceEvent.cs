@@ -21,22 +21,11 @@ public class PlaceEvent : PlaceSongObject
 
     protected override void AddObject()
     {
-        ActionHistory.Add action;
-        string debugMessage = string.Empty;
+        editor.commandStack.Push(new SongEditAdd(new Event(this.songEvent)));
 
-        // Add song event
-        Event globalEvent = new Event(songEvent);
-        editor.currentSong.Add(globalEvent);
-
-        action = new ActionHistory.Add(globalEvent);
-
-        debugMessage = "Added Song Event \"";
-
-        debugMessage += globalEvent.title + "\"";
-        Debug.Log(debugMessage);
-
-        editor.actionHistory.Insert(action);
-        editor.currentSelectedObject = globalEvent;
+        int insertionIndex = SongObjectHelper.FindObjectPosition(songEvent, editor.currentSong.events);
+        Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
+        editor.currentSelectedObject = editor.currentSong.events[insertionIndex];
     }
 
     public static void AddObjectToCurrentSong(Event songEvent, ChartEditor editor, bool update = true)

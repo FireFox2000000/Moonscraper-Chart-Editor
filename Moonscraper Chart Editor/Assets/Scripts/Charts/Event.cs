@@ -17,6 +17,11 @@ public class Event : SongObject
 
     public Event(Event songEvent) : base(songEvent.tick)
     {
+        CopyFrom(songEvent);
+    }
+
+    public void CopyFrom(Event songEvent)
+    {
         tick = songEvent.tick;
         title = songEvent.title;
     }

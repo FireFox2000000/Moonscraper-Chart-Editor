@@ -44,6 +44,10 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
                 (objectToCopyInto as BPM).CopyFrom((objectToCopyFrom as BPM));
                 break;
 
+            case SongObject.ID.Event:
+                (objectToCopyInto as Event).CopyFrom((objectToCopyFrom as Event));
+                break;
+
             default:
                 Debug.LogError("Object to modify not supported.");
                 break;
