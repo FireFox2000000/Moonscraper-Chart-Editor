@@ -79,11 +79,7 @@ public class NoteController : SongObjectController {
                     var chartObjects = editor.currentChart.chartObjects;
                     int index, length;
                     SongObjectHelper.GetRange(chartObjects, min, max, out index, out length);
-                    editor.currentSelectedObjects.Clear();
-                    for (int i = index; i < index + length; ++i)
-                    {
-                        editor.currentSelectedObjects.Add(chartObjects[i]);
-                    }
+                    editor.SetCurrentSelectedObjects(chartObjects, index, length);
                 }
             }
             // Regular clicking

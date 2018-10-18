@@ -127,6 +127,16 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         timeHandler.RefreshHighlightIndicator();
     }
 
+    public void SetCurrentSelectedObjects<T>(IList<T> list, int index, int length) where T : SongObject
+    {
+        m_currentSelectedObjects.Clear();
+        for (int i = index; i < index + length; ++i)
+        {
+            m_currentSelectedObjects.Add(list[i]);
+        }
+        timeHandler.RefreshHighlightIndicator();
+    }
+
     public uint currentTickPos {
         get
         {
