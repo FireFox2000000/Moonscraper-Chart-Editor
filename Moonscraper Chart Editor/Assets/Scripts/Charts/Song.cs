@@ -386,14 +386,14 @@ public class Song {
             // Record the filepath
             audioLocations[audioStreamArrayPos] = Path.GetFullPath(filepath);
             ++audioLoads;
-                   
+
+            // Load sample data from waveform. This creates a thread on it's own.
+            audioSampleData[audioStreamArrayPos].Dispose();
+            audioSampleData[audioStreamArrayPos] = new SampleData(filepath);
+
             System.Threading.Thread streamCreateFileThread = new System.Threading.Thread(() =>
             {
-                // Load Bass Audio Streams   
-                audioSampleData[audioStreamArrayPos].Dispose();
-                audioSampleData[audioStreamArrayPos] = new SampleData(filepath);
-                audioSampleData[audioStreamArrayPos].ReadAudioFile();
-
+                // Load Audio Streams   
                 if (bassAudioStreams[audioStreamArrayPos] != null)
                     bassAudioStreams[audioStreamArrayPos].Dispose();
 #if HACK_FIX_PLUGIN_BUG
