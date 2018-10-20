@@ -74,7 +74,8 @@ public class SampleData {
     public void Dispose()
     {
         stop = true;
-        _data = new float[0];
+        while (IsLoading) ;
+
         if (audioStream != null)
             audioStream.Dispose();
     }
