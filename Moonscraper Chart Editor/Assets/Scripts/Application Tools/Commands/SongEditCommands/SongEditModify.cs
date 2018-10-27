@@ -48,6 +48,10 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
                 (objectToCopyInto as Event).CopyFrom((objectToCopyFrom as Event));
                 break;
 
+            case SongObject.ID.Section:
+                (objectToCopyInto as Section).CopyFrom((objectToCopyFrom as Section));
+                break;
+
             default:
                 Debug.LogError("Object to modify not supported.");
                 break;

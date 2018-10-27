@@ -26,8 +26,6 @@ public class PlaceSection : PlaceSongObject {
                 Section sectionSearched = sectionSearch(section.tick);
                 if (sectionSearched == null)
                 {
-                    RecordAddActionHistory(section, editor.currentSong.sections);
-
                     AddObject();
                 }
                 else
@@ -40,13 +38,11 @@ public class PlaceSection : PlaceSongObject {
             int pos = SongObjectHelper.FindObjectPosition(section, searchArray);
             if (pos == SongObjectHelper.NOTFOUND)
             {
-                editor.actionHistory.Insert(new ActionHistory.Add(section));
                 AddObject();
             }
             else
             {
-                editor.actionHistory.Insert(new ActionHistory.Delete(searchArray[pos]));
-                searchArray[pos].Delete();
+                editor.commandStack.Push(new SongEditDelete(searchArray[pos]));
                 editor.currentSelectedObject = null;
             }
         } 
@@ -54,15 +50,11 @@ public class PlaceSection : PlaceSongObject {
 
     protected override void AddObject()
     {
-        AddObjectToCurrentSong(section, editor);
-    }
+        editor.commandStack.Push(new SongEditAdd(new Section(this.section)));
 
-    public static void AddObjectToCurrentSong(Section section, ChartEditor editor, bool update = true)
-    {
-        Section sectionToAdd = new Section(section);
-        editor.currentSong.Add(sectionToAdd, update);
-        //editor.CreateSectionObject(sectionToAdd);
-        editor.currentSelectedObject = sectionToAdd;
+        int insertionIndex = SongObjectHelper.FindObjectPosition(section, editor.currentSong.sections);
+        Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
+        editor.currentSelectedObject = editor.currentSong.sections[insertionIndex];
     }
 
     Section sectionSearch(uint pos)

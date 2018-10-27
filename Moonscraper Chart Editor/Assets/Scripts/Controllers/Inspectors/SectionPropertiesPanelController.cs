@@ -45,14 +45,21 @@ public class SectionPropertiesPanelController : PropertiesPanelController {
 
     public void UpdateSectionName (string name)
     {
-        string prevName = currentSection.title;
-        if (currentSection != null)
+        bool tentativeRecord, lockedRecord;
+        ShouldRecordInputField(name, currentSection.title, out tentativeRecord, out lockedRecord);
+
+        if (!lockedRecord)
         {
-            currentSection.title = name;
-            UpdateInputFieldRecord();
+            editor.commandStack.Pop();
         }
 
-        if (prevName != currentSection.title)
-            ChartEditor.isDirty = true;
+        if (tentativeRecord || lockedRecord)
+        {
+            Section newSection = new Section(name, currentSection.tick);
+            editor.commandStack.Push(new SongEditModify<Section>(currentSection, newSection));
+            int insertionIndex = SongObjectHelper.FindObjectPosition(newSection, editor.currentSong.sections);
+            Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
+            editor.currentSelectedObject = editor.currentSong.sections[insertionIndex];
+        }
     }
 }
