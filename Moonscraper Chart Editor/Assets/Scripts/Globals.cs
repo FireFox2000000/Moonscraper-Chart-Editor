@@ -172,7 +172,7 @@ public class Globals : MonoBehaviour {
         if (System.IO.File.Exists(autosaveLocation))
         {
 #if !UNITY_EDITOR
-            string autosaveText = "An autosave was detected indicating that the program did not corretly shut down during the last session. \nWould you like to reload the autosave?";
+            string autosaveText = "An autosave was detected indicating that the program did not correctly shut down during the last session. \nWould you like to reload the autosave?";
             string autosaveCaption = "Warning";
 
             NativeMessageBox.Result result = NativeMessageBox.Show(autosaveText, autosaveCaption, NativeMessageBox.Type.YesNo);
