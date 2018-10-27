@@ -5,6 +5,9 @@
 [Bb]uilds/
 Assets/AssetStoreTools*
 
+# Moonscraper specific
+Moonscraper Chart Editor/Assets/config.ini
+
 # Visual Studio cache directory
 .vs/
 
