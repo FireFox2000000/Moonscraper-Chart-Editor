@@ -94,57 +94,23 @@ public class NoteController : SongObjectController {
 
         // Delete the object on erase tool
         else if (Globals.applicationMode == Globals.ApplicationMode.Editor &&
-            (
-            (Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButtonDown(0)) ||
-            (Input.GetMouseButtonDown(0) && Input.GetMouseButton(1)) ||
-            Eraser.dragging)
-            )
+            Input.GetMouseButtonDown(0) && Input.GetMouseButton(1))
         {
             if (ShortcutInput.GetInput(Shortcut.ChordSelect))
             {
                 Note[] chordNotes = note.GetChord();
-
-                if (!Input.GetMouseButton(1))
-                {
-                    Debug.Log("Deleted " + note + " chord at position " + note.tick + " with eraser tool");
-                    Eraser.dragEraseHistory.Add(new ActionHistory.Delete(chordNotes));
-                }
-                else
+                if (Input.GetMouseButton(1))
                 {
                     Debug.Log("Deleted " + note + " chord at position " + note.tick + " with hold-right left-click shortcut");
-                    editor.actionHistory.Insert(new ActionHistory.Delete(chordNotes));
-                }
-
-                
-                //editor.actionHistory.Insert(new ActionHistory.Delete(chordNotes));
-                foreach (Note chordNote in chordNotes)
-                {
-                    chordNote.Delete();
+                    editor.commandStack.Push(new SongEditDelete(chordNotes));
+                    
                 }
             }
-            else
+            else if (Input.GetMouseButton(1))
             {
-                if (!Input.GetMouseButton(1))
-                {
-                    Debug.Log("Deleted " + note + " at position " + note.tick + " with eraser tool");
-                    Eraser.dragEraseHistory.Add(new ActionHistory.Delete(note));
-                }
-                else
-                {
-                    Debug.Log("Deleted " + note + " at position " + note.tick + " with hold-right left-click shortcut");
-                    editor.actionHistory.Insert(new ActionHistory.Delete(note));
-                }
-
-                note.Delete();
+                Debug.Log("Deleted " + note + " at position " + note.tick + " with hold-right left-click shortcut");
+                editor.commandStack.Push(new SongEditDelete(note));
             }
-        }
-    }
-    
-    public override void OnSelectableMouseOver()
-    {
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor && Eraser.dragging)
-        {
-            OnSelectableMouseDown();
         }
     }
 

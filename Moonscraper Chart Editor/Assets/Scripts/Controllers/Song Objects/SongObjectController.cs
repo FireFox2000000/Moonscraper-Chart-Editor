@@ -37,6 +37,11 @@ public abstract class SongObjectController : SelectableClick {
     protected bool moveCheck { get { return Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1) 
                 && editor.currentSelectedObject != null; } }
 
+    public SongObject GetSongObject()
+    {
+        return songObject;
+    }
+
     public override void OnSelectableMouseDrag()
     {
         // Move note
@@ -146,35 +151,18 @@ public abstract class SongObjectController : SelectableClick {
 
         // Delete the object on erase tool or by holding right click and pressing left-click
         else if (Globals.applicationMode == Globals.ApplicationMode.Editor && 
-            (
-            (Toolpane.currentTool == Toolpane.Tools.Eraser && Input.GetMouseButtonDown(0)) ||
-            (Input.GetMouseButtonDown(0) && Input.GetMouseButton(1)) ||
-            Eraser.dragging)
+            Input.GetMouseButtonDown(0) && Input.GetMouseButton(1)
             )
         {
             if ((songObject.classID != (int)SongObject.ID.BPM && songObject.classID != (int)SongObject.ID.TimeSignature) || songObject.tick != 0)
             {
-                if (!Input.GetMouseButton(1))
-                {
-                    Debug.Log("Deleted " + songObject + " at position " + songObject.tick + " with eraser tool");
-                    Eraser.dragEraseHistory.Add(new ActionHistory.Delete(songObject));
-                }
-                else
+                if (Input.GetMouseButton(1))
                 {
                     Debug.Log("Deleted " + songObject + " at position " + songObject.tick + " with hold-right left-click shortcut");
-                    editor.actionHistory.Insert(new ActionHistory.Delete(songObject));
+                    editor.commandStack.Push(new SongEditDelete(songObject));
                 }
-                songObject.Delete();
                 editor.currentSelectedObject = null;
             }
-        }
-    }
-
-    public override void OnSelectableMouseOver()
-    {
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor && Eraser.dragging)
-        {
-            OnSelectableMouseDown();
         }
     }
 

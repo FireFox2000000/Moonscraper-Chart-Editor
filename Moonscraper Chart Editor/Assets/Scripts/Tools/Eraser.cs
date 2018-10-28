@@ -6,11 +6,7 @@ using System.Collections.Generic;
 
 public class Eraser : ToolObject {
 
-    static bool _dragging = false;
-    public static bool dragging { get { return _dragging; } }
-    Vector3 mouseDownPos;
-
-    public static List<ActionHistory.Action> dragEraseHistory = new List<ActionHistory.Action>();
+    public static List<SongObject> dragEraseHistory = new List<SongObject>();
 
     public override void ToolEnable()
     {
@@ -20,11 +16,9 @@ public class Eraser : ToolObject {
     public override void ToolDisable()
     {
         base.ToolDisable();
-        _dragging = false;
 
         if (dragEraseHistory.Count > 0)
         {
-            editor.actionHistory.Insert(dragEraseHistory.ToArray());
             dragEraseHistory.Clear();
         }
     }
@@ -33,19 +27,45 @@ public class Eraser : ToolObject {
     {
         base.Update();
 
-        _dragging = false;
-        if (Input.GetMouseButtonDown(0))
-            mouseDownPos = Input.mousePosition;
-
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButton(0))
         {
-            if (dragEraseHistory.Count > 0)
+            GameObject currentMouseHover = Mouse.currentSelectableUnderMouse;
+            if (currentMouseHover)
             {
-                editor.actionHistory.Insert(dragEraseHistory.ToArray());
-                dragEraseHistory.Clear();
+                SongObjectController soController = currentMouseHover.GetComponent<SongObjectController>();
+                if (soController && soController.GetSongObject() != null)       // Dunno why song object would ever be null, but may as well be safe
+                {
+                    SongObject songObject = soController.GetSongObject();
+                    // #Todo- ShortcutInput.GetInput(Shortcut.ChordSelect)
+                    if (ShortcutInput.GetInput(Shortcut.ChordSelect) && songObject.classID == (int)SongObject.ID.Note)
+                    {
+                        foreach (Note note in ((Note)songObject).chord)
+                        {
+                            dragEraseHistory.Add(note);
+                        }
+                    }
+                    else
+                    {
+                        // #Todo- Make sure to exclude time signatures and bpms that are at tick 0
+                        dragEraseHistory.Add(songObject);                       
+                    }
+
+                    ExecuteCurrentDeletes();
+                }
             }
         }
 
-        _dragging = (Input.GetMouseButton(0) && Input.mousePosition != mouseDownPos);   
+        if (Input.GetMouseButtonUp(0))
+        {
+            dragEraseHistory.Clear();
+        }   
+    }
+
+    void ExecuteCurrentDeletes()
+    {
+        if (dragEraseHistory.Count > 1)
+            editor.commandStack.Pop();
+
+        editor.commandStack.Push(new SongEditDelete(dragEraseHistory));
     }
 }
