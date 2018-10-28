@@ -174,6 +174,8 @@ public class ClipboardObjectController : Snapable {
 
             uint maxLength = editor.currentSong.TimeToTick(editor.currentSong.length, editor.currentSong.resolution);
 
+            List<SongObject> newObjectsToAddIn = new List<SongObject>();
+
             // Paste the new objects in
             foreach (SongObject clipboardSongObject in clipboard.data)
             {
@@ -209,26 +211,17 @@ public class ClipboardObjectController : Snapable {
                     }
 
                     note.length = TickFunctions.TickScaling(note.length, clipboard.resolution, editor.currentSong.resolution);
-
-                    record.AddRange(PlaceNote.AddObjectToCurrentChart(note, editor, false));
                 }
                 else if (objectToAdd.GetType() == typeof(Starpower))
                 {
                     Starpower sp = (Starpower)objectToAdd;
                     sp.length = TickFunctions.TickScaling(sp.length, clipboard.resolution, editor.currentSong.resolution);
-
-                    record.AddRange(PlaceStarpower.AddObjectToCurrentChart(sp, editor, false));
                 }
-                else
-                {
-                    PlaceSongObject.AddObjectToCurrentEditor(objectToAdd, editor, false);
 
-                    record.Add(new ActionHistory.Add(objectToAdd));
-                }               
+                newObjectsToAddIn.Add(objectToAdd);
             }
-            editor.currentChart.UpdateCache();
-            editor.currentSong.UpdateCache();
-            editor.actionHistory.Insert(record.ToArray());
+
+            editor.commandStack.Push(new SongEditAdd(newObjectsToAddIn));
             editor.actionHistory.Insert(editor.FixUpBPMAnchors().ToArray());
         }
         // 0 objects in clipboard, don't bother pasting

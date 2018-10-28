@@ -101,13 +101,24 @@ public static class NoteFunctions {
             return null;
 
         Note originalNote = (Note)note.Clone();
+        note.length = GetCappedLength(note, cap);
+
+        if (originalNote.length != note.length)
+            return new ActionHistory.Modify(originalNote, note);
+        else
+            return null;
+    }
+
+    public static uint GetCappedLength(this Note note, Note cap)
+    {
+        uint noteLength = note.length;
 
         // Cap sustain length
         if (cap.tick <= note.tick)
-            note.length = 0;
+            noteLength = 0;
         else if (note.tick + note.length > cap.tick)        // Sustain extends beyond cap note 
         {
-            note.length = cap.tick - note.tick;
+            noteLength = cap.tick - note.tick;
         }
 
         uint gapDis = (uint)(note.song.resolution * 4.0f / GameSettings.sustainGap);
@@ -115,15 +126,10 @@ public static class NoteFunctions {
         if (GameSettings.sustainGapEnabled && note.length > 0 && (note.tick + note.length > cap.tick - gapDis))
         {
             if ((int)(cap.tick - gapDis - note.tick) > 0)
-                note.length = cap.tick - gapDis - note.tick;
-            else
-                note.length = 0;
+                noteLength = cap.tick - gapDis - note.tick;
         }
 
-        if (originalNote.length != note.length)
-            return new ActionHistory.Modify(originalNote, note);
-        else
-            return null;
+        return noteLength;
     }
 
     public static Note FindNextSameFretWithinSustainExtendedCheck(this Note note)

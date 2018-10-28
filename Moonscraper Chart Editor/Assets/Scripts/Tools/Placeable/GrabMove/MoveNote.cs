@@ -2,7 +2,7 @@
 // See LICENSE in project root for license information.
 
 // DEPRECATED IN FAVOUR OF GroupMove.cs
-
+/*
 using UnityEngine;
 using System.Collections;
 
@@ -68,3 +68,4 @@ public class MoveNote : PlaceNote {
             editor.actionHistory.Insert(noteRecord.ToArray());
     }
 }
+*/

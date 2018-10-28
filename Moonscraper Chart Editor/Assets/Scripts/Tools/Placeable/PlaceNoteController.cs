@@ -234,8 +234,9 @@ public class PlaceNoteController : ObjectlessTool {
                 if (pos == SongObjectHelper.NOTFOUND)
                 {
                     Debug.Log("Added " + allPlaceableNotes[notePos].note.rawNote + " note at position " + allPlaceableNotes[notePos].note.tick + " using keyboard controls");
-                    heldInitialOverwriteActions[i] = PlaceNote.AddObjectToCurrentChart((Note)allPlaceableNotes[notePos].note.Clone(), editor, out heldNotes[i]);
-                    
+                    // #TODO
+                    //heldInitialOverwriteActions[i] = PlaceNote.AddObjectToCurrentChart((Note)allPlaceableNotes[notePos].note.Clone(), editor, out heldNotes[i]);
+
                     //editor.actionHistory.Insert(PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor, out heldNotes[i - 1]));
                 }
                 else
@@ -281,7 +282,8 @@ public class PlaceNoteController : ObjectlessTool {
                 if (pos == SongObjectHelper.NOTFOUND)
                 {
                     Debug.Log("Not found");
-                    keysBurstAddHistory.AddRange(PlaceNote.AddObjectToCurrentChart((Note)allPlaceableNotes[notePos].note.Clone(), editor));
+                    // #TODO
+                    //keysBurstAddHistory.AddRange(PlaceNote.AddObjectToCurrentChart((Note)allPlaceableNotes[notePos].note.Clone(), editor));
                 }
                 else if (Input.GetKeyDown(NumToStringLUT[inputOnKeyboard]))
                 {
@@ -414,7 +416,8 @@ public class PlaceNoteController : ObjectlessTool {
             foreach (PlaceNote placeNote in activeNotes)
             {
                 // Find if there's already note in that position. If the notes match exactly, add it to the list, but if it's the same, don't bother.
-                mouseBurstAddHistory.AddRange(placeNote.AddNoteWithRecord());
+// #TODO
+                //mouseBurstAddHistory.AddRange(placeNote.AddNoteWithRecord());
             }
         }
         else

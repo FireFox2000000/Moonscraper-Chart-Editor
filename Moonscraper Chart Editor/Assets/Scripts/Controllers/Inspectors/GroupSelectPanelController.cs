@@ -65,6 +65,8 @@ public class GroupSelectPanelController : MonoBehaviour
         List<ActionHistory.Action> actions = new List<ActionHistory.Action>();
         List<ChartObject> selected = new List<ChartObject>();
 
+        List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
+        
         foreach (ChartObject chartObject in editor.currentSelectedObjects)
         {
             if (chartObject.classID == (int)SongObject.ID.Note && chartObject.song != null) // check null in case note was already deleted when overwritten by changing a note before it
@@ -72,28 +74,35 @@ public class GroupSelectPanelController : MonoBehaviour
                 Note note = chartObject as Note;
                 if (note.rawNote != noteNumber)
                 {
-                    // Delete original then re-add to let notes be overwritten, chaing a note into an open note that was already part of a chord
-                    actions.Add(new ActionHistory.Delete(note));
-                    note.Delete();
-                    note.rawNote = noteNumber;
+                    Note newNote = new Note(note);
+                    newNote.rawNote = noteNumber;
 
-                    Note addedNote;
-                    actions.AddRange(PlaceNote.AddObjectToCurrentChart(note, editor, out addedNote, false, true));
-
-                    selected.Add(addedNote);
+                    songEditCommands.Add(new SongEditModify<Note>(note, newNote));
+                    selected.Add(newNote);
                 }
             }
             else
                 selected.Add(chartObject);
         }
 
-        editor.currentChart.UpdateCache();
-
-        if (actions.Count > 0)
-            editor.actionHistory.Insert(actions.ToArray());
+        editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
 
         ChartEditor.isDirty = true;
-        editor.SetCurrentSelectedObjects(selected);
+
+        List<ChartObject> actuallySelected = new List<ChartObject>();
+        foreach (ChartObject chartObject in selected)
+        {
+            if (chartObject.classID == (int)SongObject.ID.Note && chartObject.song != null) // check null in case note was already deleted when overwritten by changing a note before it
+            {
+                Note note = chartObject as Note;
+                int insertionIndex = SongObjectHelper.FindObjectPosition(note, editor.currentChart.notes);
+                Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
+                actuallySelected.Add(editor.currentChart.notes[insertionIndex]);
+            }
+            else
+                actuallySelected.Add(chartObject);
+        }
+        editor.SetCurrentSelectedObjects(actuallySelected);
     }
 
     public void SetZeroSustain()

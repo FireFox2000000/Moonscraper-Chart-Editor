@@ -143,25 +143,6 @@ public class NoteController : SongObjectController {
         sustain.OnSelectableMouseUp();
     }
 
-    MoveNote createPlaceNote(NoteController nCon)
-    {
-        // Pass note data to a ghost note
-        GameObject moveNote = Instantiate(editor.ghostNote);
-
-        moveNote.name = "Moving note";
-        Destroy(moveNote.GetComponent<PlaceNote>());
-        MoveNote moveNoteController = moveNote.AddComponent<MoveNote>();
-
-        moveNoteController.Init(nCon.note);
-        moveNote.SetActive(true);
-        moveNoteController.horizontalMouseOffset = nCon.gameObject.transform.position.x - snapToNearestHorizontalNotePos(((Vector2)Mouse.world2DPosition).x);
-
-        // Delete note
-        nCon.note.Delete();
-
-        return moveNoteController;
-    }
-
     void Init(Note note)
     {
         base.Init(note, this);

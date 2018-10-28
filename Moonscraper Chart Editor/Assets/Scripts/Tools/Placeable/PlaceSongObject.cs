@@ -56,9 +56,9 @@ public abstract class PlaceSongObject : ToolObject {
     {
         switch (songObject.classID)
         {
-            case ((int)SongObject.ID.Note):
-                PlaceNote.AddObjectToCurrentChart((Note)songObject, editor, update);
-                break;
+            //case ((int)SongObject.ID.Note):
+            //    PlaceNote.AddObjectToCurrentChart((Note)songObject, editor, update);
+            //    break;
             case ((int)SongObject.ID.Starpower):
                 PlaceStarpower.AddObjectToCurrentChart((Starpower)songObject, editor, update);
                 break;
