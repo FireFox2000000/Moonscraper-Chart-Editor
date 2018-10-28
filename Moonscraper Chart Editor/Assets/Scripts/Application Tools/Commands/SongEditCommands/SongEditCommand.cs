@@ -47,6 +47,8 @@ public abstract class SongEditCommand : ICommand {
         if (Toolpane.currentTool != Toolpane.Tools.Note)
             editor.currentSelectedObject = null;
 
+        ChartEditor.isDirty = true;
+
         //Debug.Assert(songObjects.Count > 0, "No song objects were provided in a song edit command");
         //if (songObjects.Count > 0)
         //{
