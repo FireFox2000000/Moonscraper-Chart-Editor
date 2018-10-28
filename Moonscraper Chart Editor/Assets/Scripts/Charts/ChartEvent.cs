@@ -8,7 +8,7 @@ public class ChartEvent : ChartObject
 
     public override int classID { get { return (int)_classID; } }
 
-    public string eventName;
+    public string eventName { get; private set; }
 
     public ChartEvent(ChartEvent chartEvent) : base(chartEvent.tick)
     {

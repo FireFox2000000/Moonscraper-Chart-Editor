@@ -8,7 +8,7 @@ public class Event : SongObject
 
     public override int classID { get { return (int)_classID; } }
 
-    public string title = "";
+    public string title { get; private set; }
 
     public Event(string _title, uint _position) : base(_position)
     {
