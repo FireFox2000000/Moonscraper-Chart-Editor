@@ -43,9 +43,8 @@ public class Eraser : ToolObject {
                             dragEraseHistory.Add(note);
                         }
                     }
-                    else
+                    else if((songObject.classID != (int)SongObject.ID.BPM && songObject.classID != (int)SongObject.ID.TimeSignature) || songObject.tick != 0)
                     {
-                        // #Todo- Make sure to exclude time signatures and bpms that are at tick 0
                         dragEraseHistory.Add(songObject);                       
                     }
 
