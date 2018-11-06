@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 public class FileExplorerWindows : IFileExplorer
 {
@@ -26,7 +27,17 @@ public class FileExplorerWindows : IFileExplorer
     [DllImport(c_comDlgDll, SetLastError = true, CharSet = CharSet.Auto)]
     public static extern bool GetSaveFileName([In, Out] OpenFileName ofn);
 
-    public bool OpenFilePanel(string filter, string defExt, out string resultPath)
+    public bool OpenFilePanel(ExtensionFilter filter, string defExt, out string resultPath)
+    {
+        return OpenFilePanel(ParseExtentionFilter(filter), defExt, out resultPath);
+    }
+
+    public bool SaveFilePanel(ExtensionFilter filter, string defaultFileName, string defExt, out string resultPath)
+    {
+        return SaveFilePanel(ParseExtentionFilter(filter), defaultFileName, defExt, out resultPath);
+    }
+
+    bool OpenFilePanel(string filter, string defExt, out string resultPath)
     {
         OpenFileName openChartFileDialog = new OpenFileName();
 
@@ -45,7 +56,7 @@ public class FileExplorerWindows : IFileExplorer
 
         if (GetOpenFileName(openChartFileDialog))
         {
-            resultPath = openChartFileDialog.file;
+            resultPath = new string(openChartFileDialog.file.ToCharArray());
             return true;
         }
         else
@@ -59,7 +70,7 @@ public class FileExplorerWindows : IFileExplorer
         }
     }
 
-    public bool SaveFilePanel(string filter, string defaultFileName, string defExt, out string resultPath)
+    bool SaveFilePanel(string filter, string defaultFileName, string defExt, out string resultPath)
     {
         defaultFileName = FileExplorer.StripIllegalChars(defaultFileName);
 
@@ -85,7 +96,7 @@ public class FileExplorerWindows : IFileExplorer
 
         if (GetSaveFileName(openSaveFileDialog))
         {
-            resultPath = openSaveFileDialog.file;
+            resultPath = new string(openSaveFileDialog.file.ToCharArray());
             return true;
         }
         else
@@ -97,6 +108,36 @@ public class FileExplorerWindows : IFileExplorer
             resultPath = string.Empty;
             return false;
         }
+    }
+
+    static string ParseExtentionFilter(ExtensionFilter exFilter)
+    {
+        // "Chart files (*.chart, *.mid)\0*.chart;*.mid"
+        StringBuilder sb = new StringBuilder();
+        sb.Append(exFilter.name);
+        sb.Append(" (");
+
+        for (int i = 0; i < exFilter.extensions.Length; ++i)
+        {
+            sb.Append("*.");
+            sb.Append(exFilter.extensions[i]);
+
+            if(i < exFilter.extensions.Length - 1)
+                sb.Append(", ");
+        }
+
+        sb.Append(")\0");
+
+        for (int i = 0; i < exFilter.extensions.Length; ++i)
+        {
+            sb.Append("*.");
+            sb.Append(exFilter.extensions[i]);
+
+            if (i < exFilter.extensions.Length - 1)
+                sb.Append(";");
+        }
+
+        return sb.ToString();
     }
 
     // Copyright

@@ -415,7 +415,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
             defaultFileName += "(UNFORCED)";
 
         string fileName;
-        if (FileExplorer.SaveFilePanel("Chart files (*.chart)\0*.chart", defaultFileName, "chart", out fileName))
+        if (FileExplorer.SaveFilePanel(new ExtensionFilter("Chart files", "chart"), defaultFileName, "chart", out fileName))
         {
             ExportOptions exportOptions = currentSong.defaultExportOptions;
             exportOptions.forced = forced;
@@ -593,7 +593,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
         Song backup = currentSong;
 
-        if (!FileExplorer.OpenFilePanel("Chart files (*.chart, *.mid)\0*.chart;*.mid", "chart,mid", out currentFileName))
+        if (!FileExplorer.OpenFilePanel(new ExtensionFilter("Chart files", "chart", "mid"), "chart,mid", out currentFileName))
         {
             currentSong = backup;
 

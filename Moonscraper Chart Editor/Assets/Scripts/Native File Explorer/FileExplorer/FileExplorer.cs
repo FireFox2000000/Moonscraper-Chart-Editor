@@ -18,12 +18,12 @@ public static class FileExplorer  {
 #endif
     }
 
-    public static bool OpenFilePanel(string filter, string defExt, out string resultPath)
+    public static bool OpenFilePanel(ExtensionFilter filter, string defExt, out string resultPath)
     {
         return m_platformWrapper.OpenFilePanel(filter, defExt, out resultPath);
     }
 
-    public static bool SaveFilePanel(string filter, string defaultFileName, string defExt, out string resultPath)
+    public static bool SaveFilePanel(ExtensionFilter filter, string defaultFileName, string defExt, out string resultPath)
     {
         return m_platformWrapper.SaveFilePanel(filter, defaultFileName, defExt, out resultPath);
     }

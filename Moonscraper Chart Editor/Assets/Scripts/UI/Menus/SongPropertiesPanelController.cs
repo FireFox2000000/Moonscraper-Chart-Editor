@@ -34,6 +34,8 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     TimeSpan customTime = new TimeSpan();
 
+    readonly ExtensionFilter audioExFilter = new ExtensionFilter("Audio files", "ogg", "mp3", "wav");
+
     protected override void OnEnable()
     {
         bool edit = ChartEditor.isDirty;
@@ -208,7 +210,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     string GetAudioFile()
     {
         string audioFilepath = string.Empty;
-        FileExplorer.OpenFilePanel("Audio files (*.ogg,*.mp3,*.wav)\0*.mp3;*.ogg;*.wav", "mp3,ogg,wav", out audioFilepath);
+        FileExplorer.OpenFilePanel(audioExFilter, "mp3,ogg,wav", out audioFilepath);
         return audioFilepath;
     }
 

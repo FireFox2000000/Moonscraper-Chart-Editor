@@ -83,11 +83,11 @@ public class Export : DisplayMenu {
         // Open up file explorer and get save location
         if (exportOptions.format == ExportOptions.Format.Chart)
         {
-            aquiredFilePath = FileExplorer.SaveFilePanel("Chart files (*.chart)\0*.chart", defaultFileName, "chart", out saveLocation);
+            aquiredFilePath = FileExplorer.SaveFilePanel(new ExtensionFilter("Chart files", "chart"), defaultFileName, "chart", out saveLocation);
         }
         else if (exportOptions.format == ExportOptions.Format.Midi)
         {
-            aquiredFilePath = FileExplorer.SaveFilePanel("Midi files (*.mid)\0*.mid", defaultFileName, "mid", out saveLocation);
+            aquiredFilePath = FileExplorer.SaveFilePanel(new ExtensionFilter("Midi files", "mid"), defaultFileName, "mid", out saveLocation);
         }
         else
             throw new Exception("Invalid file extension");

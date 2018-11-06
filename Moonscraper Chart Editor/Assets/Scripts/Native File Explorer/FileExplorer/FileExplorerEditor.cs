@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class FileExplorerEditor : IFileExplorer {
 
-    public bool OpenFilePanel(string filter, string defExt, out string resultPath)
+    public bool OpenFilePanel(ExtensionFilter filter, string defExt, out string resultPath)
     {
         resultPath = string.Empty;
         resultPath = UnityEditor.EditorUtility.OpenFilePanel("Open file", "", defExt);
@@ -14,7 +14,7 @@ public class FileExplorerEditor : IFileExplorer {
         return !string.IsNullOrEmpty(resultPath);
     }
 
-    public bool SaveFilePanel(string filter, string defaultFileName, string defExt, out string resultPath)
+    public bool SaveFilePanel(ExtensionFilter filter, string defaultFileName, string defExt, out string resultPath)
     {
         resultPath = string.Empty;
 
