@@ -306,14 +306,11 @@ public class SongEditAdd : SongEditCommand
             // Cap all the notes
             foreach (Note prevNote in previousNotes)
             {
-                if (prevNote.controller != null)
+                uint newLength = prevNote.GetCappedLength(noteToAdd);
+                if (prevNote.length != newLength)
                 {
-                    uint newLength = prevNote.GetCappedLength(noteToAdd);
-                    if (prevNote.length != newLength)
-                    {
-                        Note newNote = new Note(prevNote.tick, prevNote.rawNote, newLength, prevNote.flags);
-                        AddOrReplaceNote(chart, prevNote, newNote, overwrittenList, replacementNotes);
-                    }
+                    Note newNote = new Note(prevNote.tick, prevNote.rawNote, newLength, prevNote.flags);
+                    AddOrReplaceNote(chart, prevNote, newNote, overwrittenList, replacementNotes);
                 }
             }
 
@@ -332,7 +329,7 @@ public class SongEditAdd : SongEditCommand
             // Cap only the sustain of the same fret type and open notes
             foreach (Note prevNote in previousNotes)
             {
-                if (prevNote.controller != null && (noteToAdd.IsOpenNote() || prevNote.guitarFret == noteToAdd.guitarFret))
+                if (noteToAdd.IsOpenNote() || prevNote.guitarFret == noteToAdd.guitarFret)
                 {
                     uint newLength = prevNote.GetCappedLength(noteToAdd);
                     if (prevNote.length != newLength)
