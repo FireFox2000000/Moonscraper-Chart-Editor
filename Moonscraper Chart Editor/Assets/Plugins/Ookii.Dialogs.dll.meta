@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: f478057b6cb33ed458a16b564a7bece4
-timeCreated: 1479381432
+guid: a06e6bca2f91ce14e84ee88406d14832
+timeCreated: 1541663582
 licenseType: Free
 PluginImporter:
   serializedVersion: 2
@@ -37,39 +37,28 @@ PluginImporter:
         Any: 
       second:
         enabled: 1
-        settings:
-          Exclude Editor: 1
-          Exclude Linux: 1
-          Exclude Linux64: 1
-          Exclude LinuxUniversal: 1
-          Exclude OSXIntel: 1
-          Exclude OSXIntel64: 1
-          Exclude OSXUniversal: 1
-          Exclude Win: 1
-          Exclude Win64: 1
+        settings: {}
     data:
       first:
         Editor: Editor
       second:
         enabled: 1
         settings:
-          CPU: AnyCPU
           DefaultValueInitialized: true
-          OS: AnyOS
     data:
       first:
         Facebook: Win
       second:
         enabled: 0
         settings:
-          CPU: None
+          CPU: AnyCPU
     data:
       first:
         Facebook: Win64
       second:
         enabled: 0
         settings:
-          CPU: None
+          CPU: AnyCPU
     data:
       first:
         Standalone: Linux
@@ -118,14 +107,14 @@ PluginImporter:
       second:
         enabled: 1
         settings:
-          CPU: None
+          CPU: AnyCPU
     data:
       first:
         Standalone: Win64
       second:
         enabled: 1
         settings:
-          CPU: None
+          CPU: AnyCPU
     data:
       first:
         Windows Store Apps: WindowsStoreApps
