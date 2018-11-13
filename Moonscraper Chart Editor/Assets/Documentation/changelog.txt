@@ -1,3 +1,8 @@
+1.2.85
+	-Fixed timeline highlight not showing up when shift-click highlighting objects
+	-Thread safety cleanup on audio sample loading. 
+	-Fixed export menu scroll view not scaling to fix current resolution properly. 
+
 1.2.84
 	-Fixed lag when tempo objects were selected
 	-Cleaned up audio management system
