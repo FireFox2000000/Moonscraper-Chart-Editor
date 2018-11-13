@@ -14,7 +14,7 @@ public class PlaceNoteController : ObjectlessTool {
     public PlaceNote openNote;
 
     // Mouse mode burst mode
-    List<ActionHistory.Action> mouseBurstAddHistory = new List<ActionHistory.Action>();
+    List<SongObject> currentlyAddingNotes = new List<SongObject>();
 
     // Keyboard mode sustain dragging
     Note[] heldNotes;
@@ -68,6 +68,7 @@ public class PlaceNoteController : ObjectlessTool {
 
     public override void ToolEnable()
     {
+        ResetNoteAdding();
         editor.currentSelectedObject = multiNote.note;
     }
 
@@ -81,8 +82,14 @@ public class PlaceNoteController : ObjectlessTool {
         }
 
         BurstRecordingInsertCheck(keysBurstAddHistory);
-        BurstRecordingInsertCheck(mouseBurstAddHistory);
         KeysDraggedSustainRecordingCheck();
+
+        ResetNoteAdding();
+    }
+
+    void ResetNoteAdding()
+    {
+        currentlyAddingNotes.Clear();
     }
 
     // Update is called once per frame
@@ -93,11 +100,13 @@ public class PlaceNoteController : ObjectlessTool {
         {
             BurstRecordingInsertCheck(keysBurstAddHistory);
             KeysDraggedSustainRecordingCheck();
+
+            if (Input.GetMouseButtonUp(0))
+                ResetNoteAdding();
             MouseControlsBurstMode(laneInfo);
         }
         else
         {
-            BurstRecordingInsertCheck(mouseBurstAddHistory);
             UpdateSnappedPos();
             KeysControlsInit();
 
@@ -410,19 +419,34 @@ public class PlaceNoteController : ObjectlessTool {
             }
         }
 
+        bool wantCommandPop = currentlyAddingNotes.Count > 0;
+        int currentNoteCount = currentlyAddingNotes.Count;
+
         // Place the notes down manually then determine action history
         if (PlaceNote.addNoteCheck)
         {
             foreach (PlaceNote placeNote in activeNotes)
             {
                 // Find if there's already note in that position. If the notes match exactly, add it to the list, but if it's the same, don't bother.
-// #TODO
-                //mouseBurstAddHistory.AddRange(placeNote.AddNoteWithRecord());
+                bool isNewNote = true;
+                foreach(Note note in currentlyAddingNotes)
+                {
+                    if (note.AllValuesCompare(placeNote.note))
+                    {
+                        isNewNote = false;
+                    }
+                }
+                if (isNewNote)
+                    currentlyAddingNotes.Add(placeNote.note.CloneAs<Note>());
             }
         }
-        else
+
+        if (currentlyAddingNotes.Count > 0 && currentlyAddingNotes.Count != currentNoteCount)
         {
-            BurstRecordingInsertCheck(mouseBurstAddHistory);
+            if (wantCommandPop)
+                editor.commandStack.Pop();
+
+            editor.commandStack.Push(new SongEditAdd(currentlyAddingNotes));
         }
     }
 

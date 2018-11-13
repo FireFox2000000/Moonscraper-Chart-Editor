@@ -28,7 +28,7 @@ public class SongEditAdd : SongEditCommand
     public override void Revoke()
     {
         SongEditDelete.ApplyAction(songObjects);
-        ApplyAction(overwrittenSongObjects, null);
+        ApplyAction(overwrittenSongObjects, new List<SongObject>());
 
         overwrittenSongObjects.Clear();
 
@@ -116,6 +116,7 @@ public class SongEditAdd : SongEditCommand
                 Note overwriteNote = chart.notes[i];
                 if ((((note.IsOpenNote() || overwriteNote.IsOpenNote()) && !Globals.drumMode) || note.guitarFret == overwriteNote.guitarFret))
                 {
+                    overwriteNote.Delete();
                     overwrittenList.Add(overwriteNote);
                 }
             }

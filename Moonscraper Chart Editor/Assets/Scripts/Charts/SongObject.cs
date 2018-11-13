@@ -67,6 +67,14 @@ public abstract class SongObject
         }
     }
     public abstract SongObject Clone();
+
+    public T CloneAs<T>() where T : SongObject
+    {
+        T clone = this.Clone() as T;
+        Debug.Assert(clone != null, "Clone As casting type was incorrect");
+        return clone;
+    }
+
     public abstract bool AllValuesCompare<T>(T songObject) where T : SongObject;
     
     public static bool operator ==(SongObject a, SongObject b)
