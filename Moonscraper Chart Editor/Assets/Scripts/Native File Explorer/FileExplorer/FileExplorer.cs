@@ -14,7 +14,7 @@ public static class FileExplorer  {
 #if UNITY_EDITOR
         m_platformWrapper = new FileExplorerEditor();
 #elif UNITY_STANDALONE_WIN
-        m_platformWrapper = new FileExplorerWindows();
+        m_platformWrapper = new FileExplorerWindows_gkngkc();
 #endif
     }
 
