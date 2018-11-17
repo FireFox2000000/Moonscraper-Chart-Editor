@@ -238,8 +238,6 @@ public static void FindObjectsAtPosition<T>(uint position, IList<T> objects, out
     /// <returns>Returns the list position it was inserted into.</returns>
     public static int Insert<T>(T item, IList<T> list) where T : SongObject
     {
-        ChartEditor.isDirty = true;
-
         int insertionPos = NOTFOUND;
         int count = list.Count;
 

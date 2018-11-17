@@ -545,7 +545,8 @@ public class Song {
         if (autoUpdate)
             UpdateCache();
 
-        ChartEditor.isDirty = true;
+        if (this == ChartEditor.Instance.currentSong)
+            ChartEditor.isDirty = true;
     }
 
     /// <summary>
@@ -589,7 +590,8 @@ public class Song {
         if (autoUpdate)
             UpdateCache();
 
-        ChartEditor.isDirty = true;
+        if (this == ChartEditor.Instance.currentSong)
+            ChartEditor.isDirty = true;
     }
 
     /// <summary>

@@ -162,7 +162,8 @@ public class Chart  {
         if (update)
             UpdateCache();
 
-        ChartEditor.isDirty = true;
+        if (this.song == ChartEditor.Instance.currentSong)
+            ChartEditor.isDirty = true;
 
         return pos;
     }

@@ -146,6 +146,8 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     {
         if (currentNote == prevNote)
         {
+            var originalFlags = currentNote.flags;
+
             System.Collections.Generic.List<ActionHistory.Action> record = new System.Collections.Generic.List<ActionHistory.Action>();
             foreach (Note chordNote in currentNote.chord)
                 record.Add(new ActionHistory.Delete(chordNote));
@@ -158,7 +160,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
                     currentNote.flags = currentNote.flags & ~Note.Flags.Tap;
             }
 
-            setFlags(currentNote);          
+            setFlags(currentNote, originalFlags);          
 
             foreach (Note chordNote in currentNote.chord)
                 record.Add(new ActionHistory.Add(chordNote));
@@ -170,6 +172,8 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
     public void setForced()
     {
+        var originalFlags = currentNote.flags;
+
         //if (currentNote == prevNote)
         //{
         System.Collections.Generic.List<ActionHistory.Action> record = new System.Collections.Generic.List<ActionHistory.Action>();
@@ -184,7 +188,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
                 currentNote.flags = currentNote.flags & ~Note.Flags.Forced;
         }
 
-        setFlags(currentNote);
+        setFlags(currentNote, originalFlags);
 
         foreach (Note chordNote in currentNote.chord)
             record.Add(new ActionHistory.Add(chordNote));
@@ -194,8 +198,11 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         //}
     }
 
-    void setFlags(Note note)
+    void setFlags(Note note, Note.Flags originalFlags)
     {
+        if (note.flags == originalFlags)
+            return;
+
         if (Toolpane.currentTool != Toolpane.Tools.Note)
         {
             note.ApplyFlagsToChord();
