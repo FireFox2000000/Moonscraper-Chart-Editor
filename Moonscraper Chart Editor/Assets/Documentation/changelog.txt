@@ -1,38 +1,25 @@
-1.2.85
+1.2.9
+	CHANGES
+	-Allocation optimisation
+	-Overdraw optimisation
+	-Display error menu when save as/open file file explorers fail to open up
+	-Windows file explorer and popup boxes now locks out the main window properly (in most cases)
+	-Removed dependancy on MiscUtil library. Embedding only the source that's nessacary now.
+	
+	FIXES
+	-Replaced Windows open file and save as explorer window api to fix memory corruption issue
 	-Fixed timeline highlight not showing up when shift-click highlighting objects
 	-Thread safety cleanup on audio sample loading. 
 	-Fixed export menu scroll view not scaling to fix current resolution properly. 
-
-1.2.84
 	-Fixed lag when tempo objects were selected
 	-Cleaned up audio management system
 	-Partial clean up of custom resources system
-	-Windows file explorer and popup boxes now locks out the main window properly (in most cases)
-	-Removed dependancy on MiscUtil library. Embedding only the source that's nessacary now.
-	-Fixed timeline highlights not working properly from v1.2.83 Experimental build
-
-1.2.82
 	-Fixed mouse-over hints rendering in the wrong position after engine update
 	-Fixed note rendering weirdness caused by engine update
 	-Update illegal filename character list
-	-Display error menu when save as/open file file explorers fail to open up
-	-Allocation optimisation
-	-Overdraw optimisation
+	-Fixed some instances where the application would think edits have been made when they actually hadn't.
 
 v1.2.8
-	-Updated engine to Unity 5.6.6
-	-Fixed song name display text not updating when editing song properties
-	-Fixed starpower indicators not always updating when switching instrument/difficulty
-	-Now blocking input when window isn't in focus
-
-v1.2.7
-	FIXES
-	-Fixed importing of lyrics also including command blacks being read as lyrics
-	-Fixed shortcut input not being able to right-ctrl as an alternate to left-ctrl
-	-Flames now correct colours in GHL and 4-lane drums mode
-	-Removed external library that may or may not have been causing crashes. Made unnessacary now anyway.
-
-v1.2.6
 	NEW FEATURES
 	-Save now save and load guitar coop tracks in midis
 	-Completely re-wrote guitar gameplay rules to make it much easier to understand and thus find bugs. Probably cleaned up bugs at the same time.
@@ -44,6 +31,7 @@ v1.2.6
 	-Allow optional importing of lyrics from midi files if it has a vocals track
 
 	CHANGES
+	-Updated engine to Unity 5.6.6
 	-Made beat lines more visible and reduced potential for flickerly beat lines.
 	-Added dedicated lyrics events to the global_events.txt
 	-Changed beat line/time signature rendering algorithm
@@ -65,7 +53,11 @@ v1.2.6
 	-Add full caught error message to on-screen output when loading charts
 	-Fixed substring parsing error when reading unrecognised tracks from .chart files
 	-Fixed copy/paste not copying over notes properly
-	-Maybe fixed exporter crashes/threading errors
+	-Fixed importing of lyrics also including command blocks being read as lyrics
+	-Fixed shortcut input not being able to right-ctrl as an alternate to left-ctrl
+	-Flames now correct colours in GHL and 4-lane drums mode
+	-Fixed starpower indicators not always updating when switching instrument/difficulty
+	-Now blocking input when window isn't in focus
 
 v1.2
 	NEW FEATURES
