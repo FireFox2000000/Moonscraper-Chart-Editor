@@ -35,7 +35,8 @@ public class BackgroundBlending : MonoBehaviour
             enabled = false;
             Debug.LogWarning("At least 2 textures must be provided for background blending to work");
         }
-        else
+        
+        if (backgrounds.Length > 0)
         {
             ren.sharedMaterial.mainTexture = backgrounds[0];
         }
