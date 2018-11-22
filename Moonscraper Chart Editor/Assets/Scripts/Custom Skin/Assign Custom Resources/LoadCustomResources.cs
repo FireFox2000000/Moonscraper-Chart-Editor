@@ -149,8 +149,6 @@ public class LoadCustomResources : MonoBehaviour {
                     resourcesDictionary.Add(resource.name, resource);
                 }
             }
-
-            LoadSettingsConfig();
         }
         else
             Debug.LogError("Custom Resources not found");
@@ -158,9 +156,8 @@ public class LoadCustomResources : MonoBehaviour {
 
     List<CustomResource> resourcesLoading = new List<CustomResource>();
 
-    void LoadSettingsConfig()
+    void LoadSettingsConfig(Skin customSkin)
     {
-        Skin customSkin = SkinManager.Instance.currentSkin;
         if (Directory.Exists(skinDirectory))
         {
             // Load in all settings
@@ -218,6 +215,7 @@ public class LoadCustomResources : MonoBehaviour {
         // Fade
         yield return fader.fadeOut(1.0f);
         Skin skin = new Skin();
+        LoadSettingsConfig(skin);
 
         foreach (var skinItem in resourcesDictionary)
         {
