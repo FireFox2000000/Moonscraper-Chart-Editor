@@ -1,3 +1,11 @@
+1.2.92
+	FIXES
+	-Revert back to audio loading workaround to get audio loading consistently. 
+
+1.2.91
+	FIXES
+	-Fixed custom backgrounds and custom sustain colours from loading
+
 1.2.9
 	CHANGES
 	-Allocation optimisation
