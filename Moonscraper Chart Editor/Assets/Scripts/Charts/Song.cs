@@ -65,7 +65,8 @@ public class Song {
         }
     }
 
-    float _length = 300;
+    const float c_defaultLength = 300;     // 5 minutes
+    float _length = c_defaultLength;
     public float length
     {
         get
@@ -76,7 +77,14 @@ public class Song {
             {
                 var bassMusicStream = GetAudioStream(AudioInstrument.Song);
                 if (AudioManager.StreamIsValid(bassMusicStream))
-                    return bassMusicStream.ChannelLengthInSeconds() + offset;
+                {
+                    float length = bassMusicStream.ChannelLengthInSeconds() + offset;
+
+                    if (length <= 0)
+                        return c_defaultLength;
+
+                    return length;
+                }
                 else
                 {
                     foreach (var stream in bassAudioStreams)
@@ -84,11 +92,14 @@ public class Song {
                         if (AudioManager.StreamIsValid(stream))
                         {
                             float length = stream.ChannelLengthInSeconds() + offset;
+                            if (length <= 0)
+                                continue;
+
                             return length;
                         }
                     }
 
-                    return 300;     // 5 minutes
+                    return c_defaultLength;
                 }
             }
         }
