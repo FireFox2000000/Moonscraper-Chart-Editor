@@ -397,25 +397,19 @@ public class Song {
             audioSampleData[audioStreamArrayPos].Dispose();
             audioSampleData[audioStreamArrayPos] = new SampleData(filepath);
 
-            System.Threading.Thread streamCreateFileThread = new System.Threading.Thread(() =>
-            {
-                // Load Audio Streams   
-                if (bassAudioStreams[audioStreamArrayPos] != null)
-                    bassAudioStreams[audioStreamArrayPos].Dispose();
+            // Load Audio Streams   
+            if (bassAudioStreams[audioStreamArrayPos] != null)
+                bassAudioStreams[audioStreamArrayPos].Dispose();
 
-                bassAudioStreams[audioStreamArrayPos] = AudioManager.LoadTempoStream(filepath);         
-            });
-
-            streamCreateFileThread.Start();
-
-            while (streamCreateFileThread.ThreadState == System.Threading.ThreadState.Running)
-                yield return null;
+            bassAudioStreams[audioStreamArrayPos] = AudioManager.LoadTempoStream(filepath);         
 
             --audioLoads;
 #if TIMING_DEBUG
             Debug.Log("Audio load time: " + (Time.realtimeSinceStartup - time));
 #endif
-            Debug.Log("Finished loading audio");       
+            Debug.Log("Finished loading audio");
+
+            yield return null;
         }
         else
         {
