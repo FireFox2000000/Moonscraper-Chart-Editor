@@ -322,10 +322,7 @@ public class Song {
 
         foreach (AudioInstrument audio in Enum.GetValues(typeof(AudioInstrument)))
         {
-            GameObject loadAudioObject = new GameObject("Load Audio");
-            MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
-
-            coroutine.StartCoroutine(LoadAudio(GetAudioLocation(audio), audio, loadAudioObject));
+            LoadAudio(GetAudioLocation(audio), audio);
         }
 #if TIMING_DEBUG
         Debug.Log("Total audio files load time: " + (Time.realtimeSinceStartup - time));
@@ -334,45 +331,30 @@ public class Song {
 
     public void LoadMusicStream(string filepath)
     {
-        GameObject loadAudioObject = new GameObject("Load Audio");
-        MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
-
-        coroutine.StartCoroutine(LoadAudio(filepath, AudioInstrument.Song, loadAudioObject));
+        LoadAudio(filepath, AudioInstrument.Song);
     }
 
     public void LoadGuitarStream(string filepath)
     {
-        GameObject loadAudioObject = new GameObject("Load Audio");
-        MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
-
-        coroutine.StartCoroutine(LoadAudio(filepath, AudioInstrument.Guitar, loadAudioObject));
+        LoadAudio(filepath, AudioInstrument.Guitar);
     }
 
     public void LoadBassStream(string filepath)
     {
-        GameObject loadAudioObject = new GameObject("Load Audio");
-        MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
-
-        coroutine.StartCoroutine(LoadAudio(filepath, AudioInstrument.Bass, loadAudioObject));
+        LoadAudio(filepath, AudioInstrument.Bass);
     }
 
     public void LoadRhythmStream(string filepath)
     {
-        GameObject loadAudioObject = new GameObject("Load Audio");
-        MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
-
-        coroutine.StartCoroutine(LoadAudio(filepath, AudioInstrument.Rhythm, loadAudioObject));
+        LoadAudio(filepath, AudioInstrument.Rhythm);
     }
 
     public void LoadDrumStream(string filepath)
     {
-        GameObject loadAudioObject = new GameObject("Load Audio");
-        MonoWrapper coroutine = loadAudioObject.AddComponent<MonoWrapper>();
-
-        coroutine.StartCoroutine(LoadAudio(filepath, AudioInstrument.Drum, loadAudioObject));
+        LoadAudio(filepath, AudioInstrument.Drum);
     }
 
-    IEnumerator LoadAudio(string filepath, AudioInstrument audio, GameObject coroutine)
+    void LoadAudio(string filepath, AudioInstrument audio)
     {
         int audioStreamArrayPos = (int)audio;
 
@@ -408,16 +390,12 @@ public class Song {
             Debug.Log("Audio load time: " + (Time.realtimeSinceStartup - time));
 #endif
             Debug.Log("Finished loading audio");
-
-            yield return null;
         }
         else
         {
             if (filepath != string.Empty)
                 Debug.LogError("Unable to locate audio file: " + filepath);
         }
-
-        GameObject.Destroy(coroutine);
     }
 
     public uint WorldPositionToSnappedTick(float worldYPos, int step)
