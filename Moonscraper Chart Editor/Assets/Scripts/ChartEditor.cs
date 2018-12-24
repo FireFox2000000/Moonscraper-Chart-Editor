@@ -278,6 +278,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
         if (allowedToQuit)
         {
+            EventsManager.ClearAll();
             globals.Quit();
             FreeAudio();
             AudioManager.Dispose();

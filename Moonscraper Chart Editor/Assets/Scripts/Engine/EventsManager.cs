@@ -3,6 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public static class EventsManager {
+    public static void ClearAll()
+    {
+        onChartReloadEventList.Clear();
+        onHyperspeedChangeEventList.Clear();
+        onViewModeSwitchEventList.Clear();
+        onLeftyFlipToggledEventList.Clear();
+        onApplicationModeChangedEventList.Clear();
+        onLanesChangedEventList.Clear();
+        onSaveEventList.Clear();
+        onToolChangedEventList.Clear();
+        onKeyboardModeToggledEvent.Clear();
+    }
+
     public delegate void ChartReloadedEvent();
     public static List<ChartReloadedEvent> onChartReloadEventList = new List<ChartReloadedEvent>();
     public static void FireChartReloadedEvent()
