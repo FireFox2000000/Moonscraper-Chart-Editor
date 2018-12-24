@@ -1,9 +1,17 @@
-﻿using UnityEditor;
+﻿#define HACKY_PLUGIN_FIX
+
+using UnityEditor;
 using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
 
 public class BuildDocumentation  {
+    const string applicationName = "Moonscraper Chart Editor";
+    static readonly string[] copyToMonoFiles = new string[]
+    {
+        "bass_fx.dll"
+    };
+
     [MenuItem("Build Processes/Windows Build With Postprocess")]
     public static void BuildGame()
     {
@@ -36,7 +44,10 @@ public class BuildDocumentation  {
             }
 
             // Build player.
-            BuildPipeline.BuildPlayer(levels.ToArray(), path + "/Moonscraper Chart Editor.exe", buildTarget, BuildOptions.None);
+            string report = BuildPipeline.BuildPlayer(levels.ToArray(), path + "/" + applicationName + ".exe", buildTarget, BuildOptions.None);
+
+            if (!string.IsNullOrEmpty(report))
+                return;
 
             if (Directory.Exists("Assets/Custom Resources"))
             {
@@ -66,6 +77,18 @@ public class BuildDocumentation  {
             {
                 File.Delete(file);
             }
+
+#if HACKY_PLUGIN_FIX
+            string dataPath = path + "/" + applicationName + "_Data/";
+            foreach (string file in copyToMonoFiles)
+            {
+                string pluginPath = dataPath + "Plugins/" + file;
+                if (File.Exists(pluginPath))
+                {
+                    File.Copy(pluginPath, dataPath + "Mono/" + file);
+                }
+            }
+#endif
         }
         else
         {
