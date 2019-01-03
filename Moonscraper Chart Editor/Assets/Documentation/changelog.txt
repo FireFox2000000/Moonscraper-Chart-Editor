@@ -1,33 +1,4 @@
-1.2.92
-	FIXES
-	-Revert back to audio loading workaround to get audio loading consistently. 
-
-1.2.91
-	FIXES
-	-Fixed custom backgrounds and custom sustain colours from loading
-
-1.2.9
-	CHANGES
-	-Allocation optimisation
-	-Overdraw optimisation
-	-Display error menu when save as/open file file explorers fail to open up
-	-Windows file explorer and popup boxes now locks out the main window properly (in most cases)
-	-Removed dependancy on MiscUtil library. Embedding only the source that's nessacary now.
-	
-	FIXES
-	-Replaced Windows open file and save as explorer window api to fix memory corruption issue
-	-Fixed timeline highlight not showing up when shift-click highlighting objects
-	-Thread safety cleanup on audio sample loading. 
-	-Fixed export menu scroll view not scaling to fix current resolution properly. 
-	-Fixed lag when tempo objects were selected
-	-Cleaned up audio management system
-	-Partial clean up of custom resources system
-	-Fixed mouse-over hints rendering in the wrong position after engine update
-	-Fixed note rendering weirdness caused by engine update
-	-Update illegal filename character list
-	-Fixed some instances where the application would think edits have been made when they actually hadn't.
-
-v1.2.8
+1.3
 	NEW FEATURES
 	-Save now save and load guitar coop tracks in midis
 	-Completely re-wrote guitar gameplay rules to make it much easier to understand and thus find bugs. Probably cleaned up bugs at the same time.
@@ -47,8 +18,13 @@ v1.2.8
 	-Re-allow free snapping time signatures. Hopefully idiots stay away from this. 
 	-Changed default clap sound
 	-Song data lookup cache now way faster and generates way less garbage allocation. 
+	-Allocation optimisation
 	-Lots of garbage optimisation
 	-Maybe fixed string corruption that was breaking the exporter menu
+	-Overdraw optimisation
+	-Display error menu when save as/open file file explorers fail to open up
+	-Windows file explorer and popup boxes now locks out the main window properly (in most cases)
+	-Removed dependancy on MiscUtil library. Embedding only the source that's nessacary now.
 
 	FIXES
 	-Fixed weird undo/redo bug with starpower
@@ -64,8 +40,18 @@ v1.2.8
 	-Fixed importing of lyrics also including command blocks being read as lyrics
 	-Fixed shortcut input not being able to right-ctrl as an alternate to left-ctrl
 	-Flames now correct colours in GHL and 4-lane drums mode
+	-Workaround fixed audio sometimes not loading because Unity doesn't know how to load it's dlls.
+	-Now loading audio synchronously and removed loading screen when loading audio since audio loads fast enough that it's pretty pointless. 
+	-Updated all bass audio dlls to their latest versions.
 	-Fixed starpower indicators not always updating when switching instrument/difficulty
+	-Fixed mouse-over hints rendering in the wrong position after engine update
+	-Fixed note rendering weirdness caused by engine update
+	-Update illegal filename character list
+	-Fixed some instances where the application would think edits have been made when they actually hadn't.
 	-Now blocking input when window isn't in focus
+	-Partial clean up of custom resources system
+	-Cleaned up audio management system
+	-Replaced Windows open file and save as explorer window api to fix memory corruption issue
 
 v1.2
 	NEW FEATURES
