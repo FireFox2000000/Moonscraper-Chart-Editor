@@ -44,9 +44,9 @@ public class BuildDocumentation  {
             }
 
             // Build player.
-            string report = BuildPipeline.BuildPlayer(levels.ToArray(), path + "/" + applicationName + ".exe", buildTarget, BuildOptions.None);
+            var report = BuildPipeline.BuildPlayer(levels.ToArray(), path + "/" + applicationName + ".exe", buildTarget, BuildOptions.None);
 
-            if (!string.IsNullOrEmpty(report))
+            if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
                 return;
 
             if (Directory.Exists("Assets/Custom Resources"))
