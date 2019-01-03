@@ -80,12 +80,18 @@ public class BuildDocumentation  {
 
 #if HACKY_PLUGIN_FIX
             string dataPath = path + "/" + applicationName + "_Data/";
+            string destFolder = dataPath + "Mono/";
+
+            if (copyToMonoFiles.Length > 0)
+                Directory.CreateDirectory(destFolder);  // Make sure this exists
+
             foreach (string file in copyToMonoFiles)
             {
                 string pluginPath = dataPath + "Plugins/" + file;
                 if (File.Exists(pluginPath))
                 {
-                    File.Copy(pluginPath, dataPath + "Mono/" + file);
+                    string dest = destFolder + file;                
+                    File.Copy(pluginPath, dest);
                 }
             }
 #endif
