@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Metronome : UpdateableService {
+public class Metronome : MonoBehaviour {
     ChartEditor editor;
     Vector3 initLocalPos;
 
@@ -15,13 +15,11 @@ public class Metronome : UpdateableService {
     uint nextClapPos = 0;
 
     // Use this for initialization
-    protected override void Start () {
+    protected void Start () {
         editor = ChartEditor.Instance;      
         initLocalPos = transform.localPosition;
 
         LoadSoundClip();
-
-        base.Start();
     }
 
     void LoadSoundClip()
@@ -34,7 +32,7 @@ public class Metronome : UpdateableService {
     }
 
     // Update is called once per frame
-    public override void OnServiceUpdate()
+    public void Update()
     {
         // Offset by audio calibration
         Vector3 pos = initLocalPos;
