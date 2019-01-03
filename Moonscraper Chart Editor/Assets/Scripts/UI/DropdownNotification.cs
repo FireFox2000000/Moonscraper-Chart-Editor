@@ -38,6 +38,7 @@ public class DropdownNotification : MonoBehaviour {
     float notificationTimer = 0;
     float originalPosition;
     RectTransform rectTransform;
+    float defaultAspectRatio = 16.0f / 9.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -62,7 +63,11 @@ public class DropdownNotification : MonoBehaviour {
             notificationTimer = 0;
         }
 
-        float transitionDistance = dropdownDistance / dropdownTime * Time.deltaTime;
+        var currentResolution = Screen.currentResolution;
+        float currentAspectRatio = currentResolution.width / currentResolution.height;
+        float scaledDropDistance = dropdownDistance * defaultAspectRatio / currentAspectRatio;
+
+        float transitionDistance = scaledDropDistance / dropdownTime * Time.deltaTime;
         if (currentState == State.Closed && notificationQueue.Count > 0)
         {
             currentNotification = PopNotification();
