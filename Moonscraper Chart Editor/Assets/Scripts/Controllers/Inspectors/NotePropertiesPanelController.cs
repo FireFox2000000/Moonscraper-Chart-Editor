@@ -104,7 +104,9 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         {
             string noteTypeString = string.Empty;
             if (Globals.drumMode)
-                noteTypeString = currentNote.drumPad.ToString();
+            {
+                noteTypeString = currentNote.GetDrumString(editor.laneInfo);
+            }
             else if (Globals.ghLiveMode)
                 noteTypeString = currentNote.ghliveGuitarFret.ToString();
             else

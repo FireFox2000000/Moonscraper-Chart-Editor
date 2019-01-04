@@ -105,6 +105,14 @@ public class Note : ChartObject
         }
     }
 
+    public string GetDrumString(LaneInfo laneInfo)
+    {
+        if (laneInfo.laneCount < 5 && drumPad == DrumPad.Orange)
+            return DrumPad.Green.ToString();
+        else
+            return drumPad.ToString();
+    }
+
     /// <summary>
     /// Properties, such as forced or taps, are stored here in a bitwise format.
     /// </summary>
