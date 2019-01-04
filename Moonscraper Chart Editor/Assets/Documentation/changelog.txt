@@ -1,3 +1,9 @@
+1.3.01
+	FIXES
+	-Fixed metronome being slightly desynced
+	-Fixed dropdown notification not aligned to aspect ratios correctly.
+	-Fixed note text displaying "Orange" when it should say "Green" for 4 lane.
+
 1.3
 	NEW FEATURES
 	-Save now save and load guitar coop tracks in midis
