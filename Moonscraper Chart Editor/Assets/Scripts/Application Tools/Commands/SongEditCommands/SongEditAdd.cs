@@ -118,6 +118,7 @@ public class SongEditAdd : SongEditCommand
                 {
                     overwriteNote.Delete();
                     overwrittenList.Add(overwriteNote);
+                    break;
                 }
             }
         }
