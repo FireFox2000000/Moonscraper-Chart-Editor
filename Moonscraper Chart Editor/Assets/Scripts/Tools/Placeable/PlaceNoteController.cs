@@ -18,11 +18,20 @@ public class PlaceNoteController : ObjectlessTool {
 
     // Keyboard mode sustain dragging
     Note[] heldNotes;
-    ActionHistory.Action[][] heldInitialOverwriteActions;
 
     // Keyboard mode burst mode
     bool[] inputBlock;        // Prevents controls from ocilating between placing and removing notes
-    List<ActionHistory.Action> keysBurstAddHistory = new List<ActionHistory.Action>();
+
+    delegate void NotePlacementUpdate();
+
+    NotePlacementUpdate CurrentNotePlacementUpdate;
+    enum KeysPlacementMode
+    {
+        None,
+        Adding,
+        Deleting,
+    }
+    KeysPlacementMode currentPlacementMode = KeysPlacementMode.None;
 
     string GetOpenNoteInputKey(int laneCount)
     {
@@ -47,6 +56,9 @@ public class PlaceNoteController : ObjectlessTool {
     protected override void Awake()
     {
         base.Awake();
+
+        CurrentNotePlacementUpdate = UpdateMouseBurstMode;
+
         // Initialise the notes
         foreach (PlaceNote note in standardPlaceableNotes)
         {
@@ -61,15 +73,19 @@ public class PlaceNoteController : ObjectlessTool {
         }
 
         int totalNotes = allPlaceableNotes.Count;
-        heldInitialOverwriteActions = new ActionHistory.Action[totalNotes][];
         heldNotes = new Note[totalNotes];
         inputBlock = new bool[totalNotes];
+
+        EventsManager.onToolChangedEventList.Add(OnModeSwitch);
+        EventsManager.onKeyboardModeToggledEvent.Add(OnKeysModeChanged);
+        EventsManager.onNotePlacementModeChangedEvent.Add(OnModeSwitch);
     }
 
     public override void ToolEnable()
     {
         ResetNoteAdding();
         editor.currentSelectedObject = multiNote.note;
+        OnModeSwitch();
     }
 
     public override void ToolDisable()
@@ -81,7 +97,6 @@ public class PlaceNoteController : ObjectlessTool {
             placeableNotes.gameObject.SetActive(false);
         }
 
-        BurstRecordingInsertCheck(keysBurstAddHistory);
         KeysDraggedSustainRecordingCheck();
 
         ResetNoteAdding();
@@ -90,56 +105,129 @@ public class PlaceNoteController : ObjectlessTool {
     void ResetNoteAdding()
     {
         currentlyAddingNotes.Clear();
+        currentPlacementMode = KeysPlacementMode.None;
     }
 
     // Update is called once per frame
     protected override void Update () {
-        LaneInfo laneInfo = editor.laneInfo;
+        CurrentNotePlacementUpdate();
+    }
 
-        if (!GameSettings.keysModeEnabled)
+    void OnKeysModeChanged(bool keyboardModeEnabled)
+    {
+        OnModeSwitch();
+    }
+
+    void OnModeSwitch()
+    {
+        KeysDraggedSustainRecordingCheck();
+        ResetNoteAdding();
+
+        KeysControlsInit();
+
+        if (GameSettings.keysModeEnabled)
         {
-            BurstRecordingInsertCheck(keysBurstAddHistory);
-            KeysDraggedSustainRecordingCheck();
-
-            if (Input.GetMouseButtonUp(0))
-                ResetNoteAdding();
-            MouseControlsBurstMode(laneInfo);
+            if (KeysNotePlacementModePanelController.currentPlacementMode == KeysNotePlacementModePanelController.PlacementMode.Sustain)
+                CurrentNotePlacementUpdate = UpdateKeysSustainMode;
+            else
+                CurrentNotePlacementUpdate = UpdateKeysBurstMode;
         }
         else
         {
-            UpdateSnappedPos();
-            KeysControlsInit();
+            CurrentNotePlacementUpdate = UpdateMouseBurstMode;
+        }
+    }
 
-            if (KeysNotePlacementModePanelController.currentPlacementMode == KeysNotePlacementModePanelController.PlacementMode.Sustain)
+    void UpdateMouseBurstMode()
+    {
+        LaneInfo laneInfo = editor.laneInfo;
+
+        KeysDraggedSustainRecordingCheck();
+
+        if (Input.GetMouseButtonUp(0))
+            ResetNoteAdding();
+        MouseControlsBurstMode(laneInfo);
+    }
+
+    void UpdateKeysBurstMode()
+    {
+        LaneInfo laneInfo = editor.laneInfo;
+        UpdateSnappedPos();
+        KeysDraggedSustainRecordingCheck();
+
+        bool wantCommandPop = currentlyAddingNotes.Count > 0;
+        int currentNoteCount = currentlyAddingNotes.Count;
+        bool refreshActions = false;
+
+        FillNotesKeyboardControlsBurstMode(laneInfo);
+
+        refreshActions |= currentlyAddingNotes.Count != currentNoteCount;
+
+        if (currentlyAddingNotes.Count > 0 && refreshActions)
+        {
+            if (wantCommandPop)
+                editor.commandStack.Pop();
+
+            if (currentPlacementMode == KeysPlacementMode.Adding)
             {
-                BurstRecordingInsertCheck(keysBurstAddHistory);
-
-                for (int i = 0; i < heldNotes.Length; ++i)
-                {
-                    if (heldNotes[i] != null)
-                    {
-                        if (heldNotes[i].song != null)
-                        {
-                            foreach (Note chordNote in heldNotes[i].chord)
-                                chordNote.SetSustainByPos(objectSnappedChartPos);
-                        }
-                        else
-                        {
-                            // Controls sustain recording
-                            KeySustainActionHistoryInsert(i);
-                        }
-                    }
-                }
-
-                KeyboardControlsSustainMode(laneInfo);
+                editor.commandStack.Push(new SongEditAdd(currentlyAddingNotes));
             }
-            else
+            else if (currentPlacementMode == KeysPlacementMode.Deleting)
             {
-                KeysDraggedSustainRecordingCheck();
-
-                KeyboardControlsBurstMode(laneInfo);
+                editor.commandStack.Push(new SongEditDelete(currentlyAddingNotes));
             }
         }
+
+        if (!HasKeysInput(laneInfo))
+            ResetNoteAdding();
+    }
+
+    void UpdateKeysSustainMode()
+    {
+        LaneInfo laneInfo = editor.laneInfo;
+        UpdateSnappedPos();
+        bool wantCommandPop = currentlyAddingNotes.Count > 0;
+        int currentNoteCount = currentlyAddingNotes.Count;
+        bool refreshActions = false;
+
+        FillNotesKeyboardControlsSustainMode(laneInfo);
+
+        // Update sustain lengths of notes that are already in
+        for (int i = 0; i < heldNotes.Length; ++i)
+        {
+            if (heldNotes[i] != null)  // Check if already inserted and no longer being held
+            {
+                foreach (Note chordNote in heldNotes[i].chord)
+                {
+                    if (chordNote.tick + chordNote.length < objectSnappedChartPos || (objectSnappedChartPos < chordNote.tick + chordNote.length && chordNote.length > 0))
+                    {
+                        chordNote.SetSustainByPos(objectSnappedChartPos);
+                        Debug.Assert(chordNote.tick + chordNote.length == objectSnappedChartPos, "Sustain was set to an incorrect length");
+                        refreshActions = true;
+                    }
+                }
+            }
+        }
+
+        refreshActions |= currentlyAddingNotes.Count != currentNoteCount;
+
+        if (currentlyAddingNotes.Count > 0 && refreshActions)
+        {
+            if (wantCommandPop)
+                editor.commandStack.Pop();
+
+            if (currentPlacementMode == KeysPlacementMode.Adding)
+            {
+                editor.commandStack.Push(new SongEditAdd(currentlyAddingNotes));
+            }
+            else if (currentPlacementMode == KeysPlacementMode.Deleting)
+            {
+                editor.commandStack.Push(new SongEditDelete(currentlyAddingNotes));
+            }
+        }
+
+        if (!HasKeysInput(laneInfo))
+            ResetNoteAdding();
     }
 
     void KeysDraggedSustainRecordingCheck()
@@ -153,32 +241,15 @@ public class PlaceNoteController : ObjectlessTool {
         }
     }
 
-    void BurstRecordingInsertCheck(List<ActionHistory.Action> burstHistory)
-    {
-        if (burstHistory.Count > 0)
-        {
-            editor.actionHistory.Insert(burstHistory.ToArray());
-            burstHistory.Clear();
-        }
-    }
-
     void KeySustainActionHistoryInsert(int i)
     {
-        if (heldNotes[i] != null && heldInitialOverwriteActions[i] != null)
-        {
-            editor.actionHistory.Insert(heldInitialOverwriteActions[i]);
-            
-            Note initialNote = new Note(heldNotes[i]);
-            initialNote.length = 0;
-            editor.actionHistory.Insert(new ActionHistory.Modify(initialNote, heldNotes[i]));
-        }
-
         heldNotes[i] = null;
-        heldInitialOverwriteActions[i] = null;
     }
 
     void KeysControlsInit()
     {
+        currentPlacementMode = KeysPlacementMode.None;
+
         // Make sure the notes have been initialised
         foreach (PlaceNote placeableNotes in allPlaceableNotes)
         {
@@ -196,14 +267,14 @@ public class PlaceNoteController : ObjectlessTool {
         }
     }
 
-    void KeyboardControlsSustainMode(LaneInfo laneInfo)
+    void FillNotesKeyboardControlsSustainMode(LaneInfo laneInfo)
     {
         int laneCount = laneInfo.laneCount;
         bool isTyping = Services.IsTyping;
 
+        // Tell the system to stop updating the sustain length
         for (int i = 0; i < heldNotes.Length; ++i)
         {
-            // Add in the held note history when user lifts off the keys
             if (isTyping || Input.GetKeyUp(NumToStringLUT[(i + 1)]))
             {
                 KeySustainActionHistoryInsert(i);
@@ -223,6 +294,11 @@ public class PlaceNoteController : ObjectlessTool {
         if (isTyping)
             return;
 
+        bool openNotesBanned, nonOpenNotesBanned;
+        CheckBannedInputsForSustainHolds(out openNotesBanned, out nonOpenNotesBanned);
+        if (nonOpenNotesBanned)
+            return;
+
         for (int i = 0; i < laneCount + 1; ++i)      // Start at 1 to ignore the multinote
         {                     
             // Need to make sure the note is at it's correct tick position
@@ -232,6 +308,9 @@ public class PlaceNoteController : ObjectlessTool {
 
                 if (Input.GetKeyDown(GetOpenNoteInputKey(laneCount)))
                 {
+                    if (openNotesBanned)     // Ban conflicting inputs as the command stack REALLY doesn't like this.
+                        continue;
+
                     notePos = allPlaceableNotes.IndexOf(openNote);
                 }
 
@@ -240,25 +319,28 @@ public class PlaceNoteController : ObjectlessTool {
                 allPlaceableNotes[notePos].ExplicitUpdate();
                 int pos = SongObjectHelper.FindObjectPosition(allPlaceableNotes[notePos].note, editor.currentChart.notes);
 
-                if (pos == SongObjectHelper.NOTFOUND)
+                if (currentPlacementMode == KeysPlacementMode.None)
                 {
-                    Debug.Log("Added " + allPlaceableNotes[notePos].note.rawNote + " note at position " + allPlaceableNotes[notePos].note.tick + " using keyboard controls");
-                    // #TODO
-                    //heldInitialOverwriteActions[i] = PlaceNote.AddObjectToCurrentChart((Note)allPlaceableNotes[notePos].note.Clone(), editor, out heldNotes[i]);
-
-                    //editor.actionHistory.Insert(PlaceNote.AddObjectToCurrentChart((Note)notes[notePos].note.Clone(), editor, out heldNotes[i - 1]));
+                    currentPlacementMode = pos == SongObjectHelper.NOTFOUND ? KeysPlacementMode.Adding : KeysPlacementMode.Deleting;
                 }
-                else
+
+                if (currentPlacementMode == KeysPlacementMode.Adding && pos == SongObjectHelper.NOTFOUND)
                 {
-                    editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentChart.notes[pos]));
+                    heldNotes[i] = allPlaceableNotes[notePos].note.CloneAs<Note>();
+                    heldNotes[i].length = 0;
+                    currentlyAddingNotes.Add(heldNotes[i]);
+                    Debug.Log("Added " + allPlaceableNotes[notePos].note.rawNote + " note at position " + allPlaceableNotes[notePos].note.tick + " using keyboard controls");
+                }
+                else if (currentPlacementMode == KeysPlacementMode.Deleting)
+                {
+                    currentlyAddingNotes.Add(editor.currentChart.notes[pos]);
                     Debug.Log("Removed " + editor.currentChart.notes[pos].rawNote + " note at position " + editor.currentChart.notes[pos].tick + " using keyboard controls");
-                    editor.currentChart.notes[pos].Delete();
                 }
             }
         }
     }
 
-    void KeyboardControlsBurstMode(LaneInfo laneInfo)
+    void FillNotesKeyboardControlsBurstMode(LaneInfo laneInfo)
     {
         int keysPressed = 0;
         int laneCount = laneInfo.laneCount;
@@ -269,7 +351,9 @@ public class PlaceNoteController : ObjectlessTool {
         for (int i = 0; i < laneCount + 1; ++i)
         {
             int index = i;
-            if (index + 1 >= laneCount && keysPressed > 0)           // Prevents open notes while holding other keys
+
+            bool isOpenInput = index >= laneCount;
+            if (isOpenInput && keysPressed > 0)           // Prevents open notes while holding other keys
                 continue;
 
             int inputOnKeyboard = index + 1;
@@ -278,7 +362,7 @@ public class PlaceNoteController : ObjectlessTool {
                 ++keysPressed;
                 int notePos = index;
 
-                if (Input.GetKey(GetOpenNoteInputKey(laneCount)))
+                if (isOpenInput)
                 {
                     notePos = allPlaceableNotes.IndexOf(openNote);
                 }
@@ -288,17 +372,20 @@ public class PlaceNoteController : ObjectlessTool {
                 allPlaceableNotes[notePos].ExplicitUpdate();
                 int pos = SongObjectHelper.FindObjectPosition(allPlaceableNotes[notePos].note, editor.currentChart.notes);
 
-                if (pos == SongObjectHelper.NOTFOUND)
+                if (currentPlacementMode == KeysPlacementMode.None)
                 {
-                    Debug.Log("Not found");
-                    // #TODO
-                    //keysBurstAddHistory.AddRange(PlaceNote.AddObjectToCurrentChart((Note)allPlaceableNotes[notePos].note.Clone(), editor));
+                    currentPlacementMode = pos == SongObjectHelper.NOTFOUND ? KeysPlacementMode.Adding : KeysPlacementMode.Deleting;
                 }
-                else if (Input.GetKeyDown(NumToStringLUT[inputOnKeyboard]))
+
+                if (currentPlacementMode == KeysPlacementMode.Adding && pos == SongObjectHelper.NOTFOUND)
                 {
-                    editor.actionHistory.Insert(new ActionHistory.Delete(editor.currentChart.notes[pos]));
+                    Debug.Log("Adding note");
+                    currentlyAddingNotes.Add(allPlaceableNotes[notePos].note.Clone());
+                }
+                else if (Input.GetKeyDown(NumToStringLUT[inputOnKeyboard]) && currentPlacementMode == KeysPlacementMode.Deleting)
+                {
                     Debug.Log("Removed " + editor.currentChart.notes[pos].rawNote + " note at position " + editor.currentChart.notes[pos].tick + " using keyboard controls");
-                    editor.currentChart.notes[pos].Delete();
+                    currentlyAddingNotes.Add(editor.currentChart.notes[pos]);
                     inputBlock[index] = true;
                 }
             }
@@ -307,9 +394,6 @@ public class PlaceNoteController : ObjectlessTool {
                 inputBlock[index] = false;
             }
         }
-
-        if (keysPressed == 0)
-            BurstRecordingInsertCheck(keysBurstAddHistory);
     }
 
     List<PlaceNote> activeNotes = new List<PlaceNote>();
@@ -454,5 +538,42 @@ public class PlaceNoteController : ObjectlessTool {
     {
         if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip && noteNumber >= 0 && noteNumber < laneCount)
             noteNumber = laneCount - (noteNumber + 1);
+    }
+
+    bool HasKeysInput(LaneInfo laneInfo)
+    {
+        int laneCount = laneInfo.laneCount;
+        for (int i = 0; i < laneCount + 1; ++i)      // Start at 1 to ignore the multinote
+        {
+            // Need to make sure the note is at it's correct tick position
+            if (Input.GetKey(NumToStringLUT[(i + 1)]))
+                return true;
+        }
+
+        return false;
+    }
+
+    void CheckBannedInputsForSustainHolds(out bool openNotesBanned, out bool nonOpenNotesBanned)
+    {
+        openNotesBanned = false;
+        nonOpenNotesBanned = false;
+
+        bool isHoldingNotes = false;
+        foreach (var note in heldNotes)
+        {
+            isHoldingNotes |= note != null;
+            if (isHoldingNotes && note.IsOpenNote())
+            {
+                // Ban conflicting inputs as the command stack REALLY doesn't like this.
+                nonOpenNotesBanned = true;
+                return;
+            }
+
+            if (isHoldingNotes)
+            {
+                openNotesBanned = true;
+                break;
+            }
+        }
     }
 }

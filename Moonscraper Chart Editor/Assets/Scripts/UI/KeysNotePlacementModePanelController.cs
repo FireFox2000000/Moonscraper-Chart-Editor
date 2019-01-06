@@ -41,11 +41,13 @@ public class KeysNotePlacementModePanelController : MonoBehaviour {
     public void SetSustainMode()
     {
         currentPlacementMode = PlacementMode.Sustain;
+        EventsManager.FireNotePlacementModeChangedEvent();
     }
 
     public void SetBurstMode()
     {
         currentPlacementMode = PlacementMode.Burst;
+        EventsManager.FireNotePlacementModeChangedEvent();
     }
 
     public enum PlacementMode

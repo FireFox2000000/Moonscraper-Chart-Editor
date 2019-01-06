@@ -14,6 +14,7 @@ public static class EventsManager {
         onSaveEventList.Clear();
         onToolChangedEventList.Clear();
         onKeyboardModeToggledEvent.Clear();
+        onNotePlacementModeChangedEvent.Clear();
     }
 
     public delegate void ChartReloadedEvent();
@@ -86,5 +87,13 @@ public static class EventsManager {
     {
         foreach (KeyboardModeToggledEvent function in onKeyboardModeToggledEvent)
             function(keyboardModeEnabled);
+    }
+
+    public delegate void NotePlacementModeChangedEvent();
+    public static List<NotePlacementModeChangedEvent> onNotePlacementModeChangedEvent = new List<NotePlacementModeChangedEvent>();
+    public static void FireNotePlacementModeChangedEvent()
+    {
+        foreach (NotePlacementModeChangedEvent function in onNotePlacementModeChangedEvent)
+            function();
     }
 }
