@@ -95,21 +95,19 @@ public static class NoteFunctions {
         return list.ToArray();
     }
 
-    public static ActionHistory.Modify CapSustain(this Note note, Note cap)
+    public static void CapSustain(this Note note, Note cap, Song song)
     {
         if (cap == null)
-            return null;
+        {
+            Debug.LogError("Cap sustain was not provided a note to cap with");
+            return;
+        }
 
         Note originalNote = (Note)note.Clone();
-        note.length = GetCappedLength(note, cap);
-
-        if (originalNote.length != note.length)
-            return new ActionHistory.Modify(originalNote, note);
-        else
-            return null;
+        note.length = GetCappedLength(note, cap, song);
     }
 
-    public static uint GetCappedLength(this Note note, Note cap)
+    public static uint GetCappedLength(this Note note, Note cap, Song song)
     {
         uint noteLength = note.length;
 
@@ -121,7 +119,7 @@ public static class NoteFunctions {
             noteLength = cap.tick - note.tick;
         }
 
-        uint gapDis = (uint)(note.song.resolution * 4.0f / GameSettings.sustainGap);
+        uint gapDis = (uint)(song.resolution * 4.0f / GameSettings.sustainGap);
 
         if (GameSettings.sustainGapEnabled && note.length > 0 && (note.tick + note.length > cap.tick - gapDis))
         {
@@ -167,20 +165,24 @@ public static class NoteFunctions {
     /// Calculates and sets the sustain length based the tick position it should end at. Will be a length of 0 if the note position is greater than the specified position.
     /// </summary>
     /// <param name="pos">The end-point for the sustain.</param>
-    public static void SetSustainByPos(this Note note, uint pos)
+    public static void SetSustainByPos(this Note note, uint pos, Song song)
     {
         if (pos > note.tick)
             note.length = pos - note.tick;
         else
             note.length = 0;
 
-        // Cap the sustain
+        CapSustain(note, song);
+    }
+
+    public static void CapSustain(this Note note, Song song)
+    {
         Note nextFret;
         nextFret = note.FindNextSameFretWithinSustainExtendedCheck();
 
         if (nextFret != null)
         {
-            note.CapSustain(nextFret);
+            note.CapSustain(nextFret, song);
         }
     }
 

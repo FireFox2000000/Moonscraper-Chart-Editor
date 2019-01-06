@@ -201,7 +201,7 @@ public class PlaceNoteController : ObjectlessTool {
                 {
                     if (chordNote.tick + chordNote.length < objectSnappedChartPos || (objectSnappedChartPos < chordNote.tick + chordNote.length && chordNote.length > 0))
                     {
-                        chordNote.SetSustainByPos(objectSnappedChartPos);
+                        chordNote.SetSustainByPos(objectSnappedChartPos, editor.currentSong);
                         Debug.Assert(chordNote.tick + chordNote.length == objectSnappedChartPos, "Sustain was set to an incorrect length");
                         refreshActions = true;
                     }

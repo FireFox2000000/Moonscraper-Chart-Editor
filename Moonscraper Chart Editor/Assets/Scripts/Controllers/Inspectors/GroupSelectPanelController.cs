@@ -133,7 +133,7 @@ public class GroupSelectPanelController : MonoBehaviour
                 {
                     Note original = (Note)note.Clone();
                     note.length = assignedLength;          
-                    note.CapSustain(note.FindNextSameFretWithinSustainExtendedCheck());
+                    note.CapSustain(note.FindNextSameFretWithinSustainExtendedCheck(), note.song);
 
                     if (original.length != note.length)
                         actions.Add(new ActionHistory.Modify(original, note));
@@ -149,7 +149,7 @@ public class GroupSelectPanelController : MonoBehaviour
                     {
                         chordNotesCopy[i] = (Note)chordNotes[i].Clone();
                         chordNotes[i].length = assignedLength;
-                        chordNotes[i].CapSustain(capNote);
+                        chordNotes[i].CapSustain(capNote, chordNotes[i].song);
 
                         if (chordNotesCopy[i].length != chordNotes[i].length)
                             actions.Add(new ActionHistory.Modify(chordNotesCopy[i], chordNotes[i]));

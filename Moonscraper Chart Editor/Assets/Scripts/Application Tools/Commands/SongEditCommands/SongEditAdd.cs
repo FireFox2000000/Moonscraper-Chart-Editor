@@ -104,6 +104,7 @@ public class SongEditAdd : SongEditCommand
     {
         ChartEditor editor = ChartEditor.Instance;
         Chart chart = editor.currentChart;
+        Song song = editor.currentSong;
 
         int index, length;
         SongObjectHelper.GetRange(chart.notes, note.tick, note.tick, out index, out length);
@@ -144,8 +145,8 @@ public class SongEditAdd : SongEditCommand
             }
         } 
 
-        CapNoteCheck(chart, noteToAdd, overwrittenList, replacementNotes);
-        ForwardCap(chart, noteToAdd, overwrittenList, replacementNotes);
+        CapNoteCheck(chart, noteToAdd, overwrittenList, replacementNotes, song);
+        ForwardCap(chart, noteToAdd, overwrittenList, replacementNotes, song);
         AutoForcedCheck(chart, noteToAdd, overwrittenList, replacementNotes);
 
         foreach (Note chordNote in noteToAdd.chord)
@@ -255,7 +256,7 @@ public class SongEditAdd : SongEditCommand
         }
     }
 
-    protected static void ForwardCap(Chart chart, Note note, IList<SongObject> overwrittenList, IList<Note> replacementNotes)
+    protected static void ForwardCap(Chart chart, Note note, IList<SongObject> overwrittenList, IList<Note> replacementNotes, Song song)
     {
         Note next;
         next = note.nextSeperateNote;
@@ -269,7 +270,7 @@ public class SongEditAdd : SongEditCommand
             {
                 foreach (Note noteToCap in note.chord)
                 {
-                    uint newLength = noteToCap.GetCappedLength(next);
+                    uint newLength = noteToCap.GetCappedLength(next, song);
                     if (noteToCap.length != newLength)
                     {
                         Note newNote = new Note(noteToCap.tick, noteToCap.rawNote, newLength, noteToCap.flags);
@@ -289,7 +290,7 @@ public class SongEditAdd : SongEditCommand
 
             if (next != null)
             {
-                uint newLength = note.GetCappedLength(next);
+                uint newLength = note.GetCappedLength(next, song);
                 if (note.length != newLength)
                 {
                     Note newNote = new Note(note.tick, note.rawNote, newLength, note.flags);
@@ -299,7 +300,7 @@ public class SongEditAdd : SongEditCommand
         }
     }
 
-    static void CapNoteCheck(Chart chart, Note noteToAdd, IList<SongObject> overwrittenList, IList<Note> replacementNotes)
+    static void CapNoteCheck(Chart chart, Note noteToAdd, IList<SongObject> overwrittenList, IList<Note> replacementNotes, Song song)
     {
         Note[] previousNotes = NoteFunctions.GetPreviousOfSustains(noteToAdd);
         if (!GameSettings.extendedSustainsEnabled)
@@ -307,7 +308,7 @@ public class SongEditAdd : SongEditCommand
             // Cap all the notes
             foreach (Note prevNote in previousNotes)
             {
-                uint newLength = prevNote.GetCappedLength(noteToAdd);
+                uint newLength = prevNote.GetCappedLength(noteToAdd, song);
                 if (prevNote.length != newLength)
                 {
                     Note newNote = new Note(prevNote.tick, prevNote.rawNote, newLength, prevNote.flags);
@@ -332,7 +333,7 @@ public class SongEditAdd : SongEditCommand
             {
                 if (noteToAdd.IsOpenNote() || prevNote.guitarFret == noteToAdd.guitarFret)
                 {
-                    uint newLength = prevNote.GetCappedLength(noteToAdd);
+                    uint newLength = prevNote.GetCappedLength(noteToAdd, song);
                     if (prevNote.length != newLength)
                     {
                         overwrittenList.Add(prevNote);

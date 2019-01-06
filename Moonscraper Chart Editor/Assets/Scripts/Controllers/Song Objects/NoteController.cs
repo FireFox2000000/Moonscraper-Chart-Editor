@@ -92,7 +92,7 @@ public class NoteController : SongObjectController {
             }
         }
 
-        // Delete the object on erase tool
+        // Delete the object on left and right click shortcut
         else if (Globals.applicationMode == Globals.ApplicationMode.Editor &&
             Input.GetMouseButtonDown(0) && Input.GetMouseButton(1))
         {
@@ -111,6 +111,10 @@ public class NoteController : SongObjectController {
                 Debug.Log("Deleted " + note + " at position " + note.tick + " with hold-right left-click shortcut");
                 editor.commandStack.Push(new SongEditDelete(note));
             }
+        }
+        else
+        {
+            sustain.OnSelectableMouseDown();
         }
     }
 

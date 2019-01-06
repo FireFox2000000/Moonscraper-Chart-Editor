@@ -13,7 +13,8 @@ public class SustainController : SelectableClick {
 
     LineRenderer sustainRen;
 
-    List<Note[]> unmodifiedNotes = new List<Note[]>();
+    static List<Note> originalDraggedNotes = new List<Note>();
+    static List<SongEditCommand> sustainDragCommands = new List<SongEditCommand>();
 
     public void Awake()
     {
@@ -31,7 +32,22 @@ public class SustainController : SelectableClick {
         {
             if (Input.GetMouseButton(1))
             {
-                OnSelectableMouseDrag();
+                originalDraggedNotes.Clear();
+                sustainDragCommands.Clear();
+
+                if (!GameSettings.extendedSustainsEnabled || ShortcutInput.GetInput(Shortcut.ChordSelect))
+                {
+                    foreach (Note chordNote in nCon.note.chord)
+                    {
+                        originalDraggedNotes.Add(chordNote.CloneAs<Note>());
+                    }
+                }
+                else
+                    originalDraggedNotes.Add(nCon.note.CloneAs<Note>());
+
+                GenerateSustainDragCommands();
+                if (sustainDragCommands.Count > 0)
+                    editor.commandStack.Push(new BatchedSongEditCommand(sustainDragCommands));
             }
         }
     }
@@ -43,25 +59,11 @@ public class SustainController : SelectableClick {
             // Update sustain
             if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
             {
-                if (!GameSettings.extendedSustainsEnabled || ShortcutInput.GetInput(Shortcut.ChordSelect))
-                {                 
-                    if (unmodifiedNotes.Count == 0)
-                    {
-                        foreach (Note chordNote in nCon.note.chord)
-                        {
-                            unmodifiedNotes.Add(new Note[] { (Note)chordNote.Clone(), chordNote });
-                        }
-                    }
-                    ChordSustainDrag();
-                }
-                else
+                GenerateSustainDragCommands();
+                if (sustainDragCommands.Count > 0)
                 {
-                    if (unmodifiedNotes.Count == 0)
-                    {
-                        unmodifiedNotes.Add(new Note[] { (Note)nCon.note.Clone(), nCon.note });
-                    }
-                    //unmodifiedNotes.Add(new Note[] { (Note)nCon.note.Clone(), nCon.note });
-                    SustainDrag();
+                    editor.commandStack.Pop();
+                    editor.commandStack.Push(new BatchedSongEditCommand(sustainDragCommands));
                 }
             }
         }
@@ -69,18 +71,6 @@ public class SustainController : SelectableClick {
 
     public override void OnSelectableMouseUp()
     {
-        if (unmodifiedNotes.Count > 0 && unmodifiedNotes[0][0].length != unmodifiedNotes[0][1].length)
-        {
-            List<ActionHistory.Modify> actions = new List<ActionHistory.Modify>();
-            for (int i = 0; i < unmodifiedNotes.Count; ++i)
-            {
-                actions.Add(new ActionHistory.Modify(unmodifiedNotes[i][0], unmodifiedNotes[i][1]));
-            }
-
-            editor.actionHistory.Insert(actions.ToArray());
-        }
-
-        unmodifiedNotes.Clear();
     }
 
     public void UpdateSustain()
@@ -163,26 +153,31 @@ public class SustainController : SelectableClick {
         }
     }
 
-    void SustainDrag()
+    void GenerateSustainDragCommands()
     {
         if (nCon.note.song == null || Input.GetMouseButton(0))
             return;
-
-        ChartEditor.isDirty = true;
-        nCon.note.SetSustainByPos(GetSnappedSustainPos());
-    }
-
-    void ChordSustainDrag()
-    {
-        if (nCon.note.song == null || Input.GetMouseButton(0))
-            return;
-        ChartEditor.isDirty = true;
 
         uint snappedPos = GetSnappedSustainPos();
+        sustainDragCommands.Clear();
 
-        foreach (Note chordNote in nCon.note.chord)
+        Song song = editor.currentSong;
+
+        foreach (Note note in originalDraggedNotes)
         {
-            chordNote.SetSustainByPos(snappedPos);
+            int pos = SongObjectHelper.FindObjectPosition(note, editor.currentChart.notes);
+
+            Debug.Assert(pos != SongObjectHelper.NOTFOUND, "Was not able to find note reference in chart");
+            
+            Note newNote = new Note(note);
+
+            Note referenceNote = editor.currentChart.notes[pos];
+            Note capNote = referenceNote.FindNextSameFretWithinSustainExtendedCheck();
+            newNote.SetSustainByPos(snappedPos, song);
+            if (capNote != null)
+                newNote.CapSustain(capNote, song);
+
+            sustainDragCommands.Add(new SongEditModify<Note>(note, newNote));
         }
     }
 
