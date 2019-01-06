@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class SongEditDelete : SongEditCommand
 {
-    public SongEditDelete(IList<SongObject> songObjects) : base(songObjects) { }
-    public SongEditDelete(SongObject songObject) : base(songObject) { }
+    public SongEditDelete(IList<SongObject> songObjects) : base(songObjects) { SnapshotGameSettings(); }
+    public SongEditDelete(SongObject songObject) : base(songObject) { SnapshotGameSettings(); }
+    bool extendedSustainsEnabled;
 
     public static void ApplyAction(IList<SongObject> songObjects)
     {
@@ -62,9 +63,14 @@ public class SongEditDelete : SongEditCommand
     {
         List<SongObject> overwriteList = new List<SongObject>();
 
-        SongEditAdd.ApplyAction(songObjects, overwriteList);
+        SongEditAdd.ApplyAction(songObjects, overwriteList, extendedSustainsEnabled);
         Debug.Assert(overwriteList.Count <= 0, "SongEditDelete overwrote an object. Should be adding an object that was deleted.");
 
         PostExecuteUpdate();
+    }
+
+    void SnapshotGameSettings()
+    {
+        extendedSustainsEnabled = GameSettings.extendedSustainsEnabled;
     }
 }

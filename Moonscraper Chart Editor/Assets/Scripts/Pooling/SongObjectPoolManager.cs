@@ -122,6 +122,8 @@ public class SongObjectPoolManager : MonoBehaviour {
 
     void CollectNotesInViewRange(IList<Note> notes)
     {
+        bool extendedSustainsEnabled = GameSettings.extendedSustainsEnabled;
+
         uint min_pos = editor.minPos;
         if (ChartEditor.startGameplayPos != null)
         {
@@ -142,7 +144,7 @@ public class SongObjectPoolManager : MonoBehaviour {
         {
             if (collectedNotesInRange.Count > 0)
             {
-                NoteFunctions.GetPreviousOfSustains(prevSustainCache, collectedNotesInRange[0]);
+                NoteFunctions.GetPreviousOfSustains(prevSustainCache, collectedNotesInRange[0], extendedSustainsEnabled);
                 // Find the last known note of each fret type to find any sustains that might overlap into the camera view
                 foreach (Note prevNote in prevSustainCache)
                 {
@@ -170,7 +172,7 @@ public class SongObjectPoolManager : MonoBehaviour {
                         }
                     }
 
-                    NoteFunctions.GetPreviousOfSustains(prevSustainCache, minNote);
+                    NoteFunctions.GetPreviousOfSustains(prevSustainCache, minNote, extendedSustainsEnabled);
                     foreach (Note prevNote in prevSustainCache)
                     {
                         if (prevNote.tick + prevNote.length > editor.minPos)

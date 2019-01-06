@@ -5,10 +5,12 @@ using UnityEngine;
 public class SongEditAdd : SongEditCommand
 {
     List<SongObject> overwrittenSongObjects = new List<SongObject>();       // Todo properly
+    bool extendedSustainsEnabled;
 
     public SongEditAdd(IList<SongObject> songObjects) : base(songObjects)
     {
-        foreach(SongObject songObject in songObjects)
+        SnapshotGameSettings();
+        foreach (SongObject songObject in songObjects)
         {
             Debug.Assert(songObject.song == null, "Must add a new song object!");
         }
@@ -16,34 +18,35 @@ public class SongEditAdd : SongEditCommand
 
     public SongEditAdd(SongObject songObject) : base(songObject)
     {
+        SnapshotGameSettings();
         Debug.Assert(songObject.song == null, "Must add a new song object!");
     }
 
     public override void Invoke()
     {
-        ApplyAction(songObjects, overwrittenSongObjects);
+        ApplyAction(songObjects, overwrittenSongObjects, extendedSustainsEnabled);
         PostExecuteUpdate();
     }
 
     public override void Revoke()
     {
         SongEditDelete.ApplyAction(songObjects);
-        ApplyAction(overwrittenSongObjects, new List<SongObject>());
+        ApplyAction(overwrittenSongObjects, new List<SongObject>(), extendedSustainsEnabled, true);
 
         overwrittenSongObjects.Clear();
 
         PostExecuteUpdate();
     }
 
-    public static void ApplyAction(IList<SongObject> songObjects, IList<SongObject> overwriteList)
+    public static void ApplyAction(IList<SongObject> songObjects, IList<SongObject> overwriteList, bool extendedSustainsEnabled, bool ignoreSustainCapCheck = false)
     {
         foreach (SongObject songObject in songObjects)
         {
-            ApplyAction(songObject, overwriteList);
+            ApplyAction(songObject, overwriteList, extendedSustainsEnabled, ignoreSustainCapCheck);
         }
     }
 
-    public static void ApplyAction(SongObject songObject, IList<SongObject> overwriteList)
+    public static void ApplyAction(SongObject songObject, IList<SongObject> overwriteList, bool extendedSustainsEnabled, bool ignoreSustainCapCheck = false)
     {
         // Todo, replace this, the functions contained within are horrible, especially for notes. 
         // Need to handle overwriting somehow?
@@ -51,7 +54,7 @@ public class SongEditAdd : SongEditCommand
         switch (songObject.classID)
         {
             case ((int)SongObject.ID.Note):
-                AddNote((Note)songObject, overwriteList);
+                AddNote((Note)songObject, overwriteList, extendedSustainsEnabled, ignoreSustainCapCheck);
                 break;
 
             case ((int)SongObject.ID.Starpower):
@@ -84,6 +87,11 @@ public class SongEditAdd : SongEditCommand
         }
     }
 
+    void SnapshotGameSettings()
+    {
+        extendedSustainsEnabled = GameSettings.extendedSustainsEnabled;
+    }
+
     #region Object specific add functions
 
     static void TryRecordOverwrite<T>(T songObject, IList<T> searchObjects, IList<SongObject> overwrittenObjects) where T : SongObject
@@ -100,7 +108,7 @@ public class SongEditAdd : SongEditCommand
         }
     }
 
-    static void AddNote(Note note, IList<SongObject> overwrittenList)
+    static void AddNote(Note note, IList<SongObject> overwrittenList, bool extendedSustainsEnabled, bool ignoreSustainCapCheck = false)
     {
         ChartEditor editor = ChartEditor.Instance;
         Chart chart = editor.currentChart;
@@ -143,10 +151,13 @@ public class SongEditAdd : SongEditCommand
                 Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, note.flags);
                 AddOrReplaceNote(chart, chordNote, newChordNote, overwrittenList, replacementNotes);
             }
-        } 
+        }
 
-        CapNoteCheck(chart, noteToAdd, overwrittenList, replacementNotes, song);
-        ForwardCap(chart, noteToAdd, overwrittenList, replacementNotes, song);
+        if (!ignoreSustainCapCheck)
+        {
+            CapNoteCheck(chart, noteToAdd, overwrittenList, replacementNotes, song, extendedSustainsEnabled);
+            ForwardCap(chart, noteToAdd, overwrittenList, replacementNotes, song);
+        }
         AutoForcedCheck(chart, noteToAdd, overwrittenList, replacementNotes);
 
         foreach (Note chordNote in noteToAdd.chord)
@@ -300,9 +311,9 @@ public class SongEditAdd : SongEditCommand
         }
     }
 
-    static void CapNoteCheck(Chart chart, Note noteToAdd, IList<SongObject> overwrittenList, IList<Note> replacementNotes, Song song)
+    static void CapNoteCheck(Chart chart, Note noteToAdd, IList<SongObject> overwrittenList, IList<Note> replacementNotes, Song song, bool extendedSustainsEnabled)
     {
-        Note[] previousNotes = NoteFunctions.GetPreviousOfSustains(noteToAdd);
+        Note[] previousNotes = NoteFunctions.GetPreviousOfSustains(noteToAdd, extendedSustainsEnabled);
         if (!GameSettings.extendedSustainsEnabled)
         {
             // Cap all the notes

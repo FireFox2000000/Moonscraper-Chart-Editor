@@ -133,7 +133,7 @@ public class GroupSelectPanelController : MonoBehaviour
                 {
                     Note original = (Note)note.Clone();
                     note.length = assignedLength;          
-                    note.CapSustain(note.FindNextSameFretWithinSustainExtendedCheck(), note.song);
+                    note.CapSustain(note.FindNextSameFretWithinSustainExtendedCheck(GameSettings.extendedSustainsEnabled), note.song);
 
                     if (original.length != note.length)
                         actions.Add(new ActionHistory.Modify(original, note));

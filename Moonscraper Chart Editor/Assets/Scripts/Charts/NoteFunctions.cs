@@ -46,7 +46,7 @@ public static class NoteFunctions {
         }
     }
 
-    public static void GetPreviousOfSustains(List<Note> list, Note startNote)
+    public static void GetPreviousOfSustains(List<Note> list, Note startNote, bool extendedSustainsEnabled)
     {
         list.Clear();
 
@@ -59,7 +59,7 @@ public static class NoteFunctions {
         {
             if (previous.IsOpenNote())
             {
-                if (GameSettings.extendedSustainsEnabled)
+                if (extendedSustainsEnabled)
                 {
                     list.Add(previous);
                     return;
@@ -86,11 +86,11 @@ public static class NoteFunctions {
         }
     }
 
-    public static Note[] GetPreviousOfSustains(Note startNote)
+    public static Note[] GetPreviousOfSustains(Note startNote, bool extendedSustainsEnabled)
     {
         List<Note> list = new List<Note>(6);
 
-        GetPreviousOfSustains(list, startNote);
+        GetPreviousOfSustains(list, startNote, extendedSustainsEnabled);
 
         return list.ToArray();
     }
@@ -130,13 +130,13 @@ public static class NoteFunctions {
         return noteLength;
     }
 
-    public static Note FindNextSameFretWithinSustainExtendedCheck(this Note note)
+    public static Note FindNextSameFretWithinSustainExtendedCheck(this Note note, bool extendedSustainsEnabled)
     {
         Note next = note.next;
 
         while (next != null)
         {
-            if (!GameSettings.extendedSustainsEnabled)
+            if (!extendedSustainsEnabled)
             {
                 if ((next.IsOpenNote() || (note.tick < next.tick)) && note.tick != next.tick)
                     return next;
@@ -165,20 +165,20 @@ public static class NoteFunctions {
     /// Calculates and sets the sustain length based the tick position it should end at. Will be a length of 0 if the note position is greater than the specified position.
     /// </summary>
     /// <param name="pos">The end-point for the sustain.</param>
-    public static void SetSustainByPos(this Note note, uint pos, Song song)
+    public static void SetSustainByPos(this Note note, uint pos, Song song, bool extendedSustainsEnabled)
     {
         if (pos > note.tick)
             note.length = pos - note.tick;
         else
             note.length = 0;
 
-        CapSustain(note, song);
+        CapSustain(note, song, extendedSustainsEnabled);
     }
 
-    public static void CapSustain(this Note note, Song song)
+    public static void CapSustain(this Note note, Song song, bool extendedSustainsEnabled)
     {
         Note nextFret;
-        nextFret = note.FindNextSameFretWithinSustainExtendedCheck();
+        nextFret = note.FindNextSameFretWithinSustainExtendedCheck(extendedSustainsEnabled);
 
         if (nextFret != null)
         {

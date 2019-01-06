@@ -162,6 +162,7 @@ public class SustainController : SelectableClick {
         sustainDragCommands.Clear();
 
         Song song = editor.currentSong;
+        bool extendedSustainsEnabled = GameSettings.extendedSustainsEnabled;
 
         foreach (Note note in originalDraggedNotes)
         {
@@ -172,8 +173,8 @@ public class SustainController : SelectableClick {
             Note newNote = new Note(note);
 
             Note referenceNote = editor.currentChart.notes[pos];
-            Note capNote = referenceNote.FindNextSameFretWithinSustainExtendedCheck();
-            newNote.SetSustainByPos(snappedPos, song);
+            Note capNote = referenceNote.FindNextSameFretWithinSustainExtendedCheck(extendedSustainsEnabled);
+            newNote.SetSustainByPos(snappedPos, song, extendedSustainsEnabled);
             if (capNote != null)
                 newNote.CapSustain(capNote, song);
 
