@@ -216,7 +216,7 @@ public class GroupSelect : ToolObject {
 
         List<ChartObject> chartObjectsList = new List<ChartObject>();
         int index, length;
-        ChartObject[] chartObjects = editor.currentChart.chartObjects;
+        var chartObjects = editor.currentChart.chartObjects;
         SongObjectHelper.GetRange(chartObjects, minLimitInclusive, maxLimitNonInclusive, out index, out length);
 
         for (int i = index; i < index + length; ++i)

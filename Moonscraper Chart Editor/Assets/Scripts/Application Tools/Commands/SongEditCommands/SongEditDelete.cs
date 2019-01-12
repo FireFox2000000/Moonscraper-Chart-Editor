@@ -23,7 +23,7 @@ public class SongEditDelete : SongEditCommand
         // Find each item
         if (songObject.GetType().IsSubclassOf(typeof(ChartObject)) || songObject.GetType() == typeof(ChartObject))
         {
-            TryDeleteSongObject(songObject, editor.currentChart.chartObjects);
+            TryDeleteSongObject((ChartObject)songObject, editor.currentChart.chartObjects);
         }
         else
         {
@@ -64,7 +64,7 @@ public class SongEditDelete : SongEditCommand
         List<SongObject> overwriteList = new List<SongObject>();
 
         SongEditAdd.ApplyAction(songObjects, overwriteList, extendedSustainsEnabled);
-        Debug.Assert(overwriteList.Count <= 0, "SongEditDelete overwrote an object. Should be adding an object that was deleted.");
+        Debug.Assert(overwriteList.Count <= 0, "SongEditDelete revoke overwrote an object. Should be adding an object that was deleted.");
 
         PostExecuteUpdate();
     }

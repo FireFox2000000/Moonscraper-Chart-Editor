@@ -39,7 +39,7 @@ public class Chart  {
     /// <summary>
     /// Read only list containing all chart notes, starpower and events.
     /// </summary>
-    public ChartObject[] chartObjects { get { return _chartObjects.ToArray(); } }
+    public ReadOnlyList<ChartObject> chartObjects;
 
     /// <summary>
     /// The total amount of notes in the chart, counting chord (notes sharing the same tick position) as a single note.
@@ -55,6 +55,7 @@ public class Chart  {
     {
         _song = song;
         _chartObjects = new List<ChartObject>();
+        chartObjects = new ReadOnlyList<ChartObject>(_chartObjects);
         _gameMode = gameMode;
 
         notes = new SongObjectCache<Note>();// new Note[0];
@@ -78,6 +79,8 @@ public class Chart  {
 
         _chartObjects = new List<ChartObject>();
         _chartObjects.AddRange(chart._chartObjects);
+
+        chartObjects = new ReadOnlyList<ChartObject>(_chartObjects);
 
         this.name = chart.name;
     }

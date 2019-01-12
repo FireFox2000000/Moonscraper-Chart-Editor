@@ -318,7 +318,7 @@ public class Globals : MonoBehaviour {
 
         if (viewMode == ViewMode.Chart)
         {
-            editor.currentSelectedObjects = editor.currentChart.chartObjects;
+            editor.currentSelectedObjects = editor.currentChart.chartObjects.ToArray();
         }
         else
         {
@@ -370,7 +370,7 @@ public class Globals : MonoBehaviour {
 
         if (viewMode == ViewMode.Chart)
         {
-            manipFn(SongObjectHelper.GetRangeCopy(editor.currentChart.chartObjects, rangeMin, rangeMax));
+            manipFn(SongObjectHelper.GetRangeCopy(editor.currentChart.chartObjects.ToArray(), rangeMin, rangeMax));
         }
         else
         {

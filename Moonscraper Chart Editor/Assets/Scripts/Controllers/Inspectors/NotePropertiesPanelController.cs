@@ -3,7 +3,7 @@
 
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using System.Collections.Generic;
 
 public class NotePropertiesPanelController : PropertiesPanelController {
     public Note currentNote { get { return (Note)currentSongObject; } set { currentSongObject = value; } }
@@ -148,74 +148,77 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     {
         if (currentNote == prevNote)
         {
-            var originalFlags = currentNote.flags;
-
-            System.Collections.Generic.List<ActionHistory.Action> record = new System.Collections.Generic.List<ActionHistory.Action>();
-            foreach (Note chordNote in currentNote.chord)
-                record.Add(new ActionHistory.Delete(chordNote));
+            var newFlags = currentNote.flags;
 
             if (currentNote != null)
             {
                 if (tapToggle.isOn)
-                    currentNote.flags = currentNote.flags | Note.Flags.Tap;
+                    newFlags |= Note.Flags.Tap;
                 else
-                    currentNote.flags = currentNote.flags & ~Note.Flags.Tap;
+                    newFlags &= ~Note.Flags.Tap;
             }
 
-            setFlags(currentNote, originalFlags);          
-
-            foreach (Note chordNote in currentNote.chord)
-                record.Add(new ActionHistory.Add(chordNote));
-
-            if (Toolpane.currentTool == Toolpane.Tools.Cursor)
-                editor.actionHistory.Insert(record.ToArray());
+            SetNewFlags(currentNote, newFlags);
         }
     }
 
     public void setForced()
     {
-        var originalFlags = currentNote.flags;
-
-        //if (currentNote == prevNote)
-        //{
-        System.Collections.Generic.List<ActionHistory.Action> record = new System.Collections.Generic.List<ActionHistory.Action>();
-        foreach (Note chordNote in currentNote.chord)
-            record.Add(new ActionHistory.Delete(chordNote));
-
-        if (currentNote != null)
+        if (currentNote == prevNote)
         {
-            if (forcedToggle.isOn)
-                currentNote.flags = currentNote.flags | Note.Flags.Forced;
-            else
-                currentNote.flags = currentNote.flags & ~Note.Flags.Forced;
+            var newFlags = currentNote.flags;
+
+            if (currentNote != null)
+            {
+                if (forcedToggle.isOn)
+                    newFlags |= Note.Flags.Forced;
+                else
+                    newFlags &= ~Note.Flags.Forced;
+            }
+
+            SetNewFlags(currentNote, newFlags);
         }
-
-        setFlags(currentNote, originalFlags);
-
-        foreach (Note chordNote in currentNote.chord)
-            record.Add(new ActionHistory.Add(chordNote));
-
-        if (currentNote == prevNote && Toolpane.currentTool == Toolpane.Tools.Cursor)
-            editor.actionHistory.Insert(record.ToArray());
-        //}
     }
 
-    void setFlags(Note note, Note.Flags originalFlags)
+    static List<SongObject> currentNotes = new List<SongObject>();
+    static List<SongObject> newNotes = new List<SongObject>();
+    void SetNewFlags(Note note, Note.Flags newFlags)
     {
-        if (note.flags == originalFlags)
+        if (note.flags == newFlags)
             return;
 
-        if (Toolpane.currentTool != Toolpane.Tools.Note)
+        if (Toolpane.currentTool == Toolpane.Tools.Cursor)
         {
-            note.ApplyFlagsToChord();
+            currentNotes.Clear();
+            newNotes.Clear();
 
-            ChartEditor.isDirty = true;
+            foreach (Note chordNote in note.chord)
+            {
+                currentNotes.Add(chordNote);
+                newNotes.Add(new Note(chordNote.tick, chordNote.rawNote, chordNote.length, newFlags));
+            }
+
+            SongEditCommand[] commands = new SongEditCommand[] 
+            {
+                new SongEditDelete(currentNotes),
+                new SongEditAdd(newNotes)
+            };
+
+            editor.commandStack.Push(new BatchedSongEditCommand(commands));
+
+            currentNotes.Clear();
+            newNotes.Clear();
         }
-
-        foreach (Note chordNote in note.chord)
+        else
         {
-            if (chordNote.controller)
-                chordNote.controller.SetDirty();
+            // Updating note tool parameters and visuals
+            note.flags = newFlags;
+            note.ApplyFlagsToChord();
+            foreach (Note chordNote in note.chord)
+            {
+                if (chordNote.controller)
+                    chordNote.controller.SetDirty();
+            }
         }
     }
 }

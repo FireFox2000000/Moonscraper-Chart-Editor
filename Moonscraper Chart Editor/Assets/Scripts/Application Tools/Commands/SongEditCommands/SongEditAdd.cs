@@ -38,15 +38,15 @@ public class SongEditAdd : SongEditCommand
         PostExecuteUpdate();
     }
 
-    public static void ApplyAction(IList<SongObject> songObjects, IList<SongObject> overwriteList, bool extendedSustainsEnabled, bool ignoreSustainCapCheck = false)
+    public static void ApplyAction(IList<SongObject> songObjects, IList<SongObject> overwriteList, bool extendedSustainsEnabled, bool ignoreCorrections = false)
     {
         foreach (SongObject songObject in songObjects)
         {
-            ApplyAction(songObject, overwriteList, extendedSustainsEnabled, ignoreSustainCapCheck);
+            ApplyAction(songObject, overwriteList, extendedSustainsEnabled, ignoreCorrections);
         }
     }
 
-    public static void ApplyAction(SongObject songObject, IList<SongObject> overwriteList, bool extendedSustainsEnabled, bool ignoreSustainCapCheck = false)
+    public static void ApplyAction(SongObject songObject, IList<SongObject> overwriteList, bool extendedSustainsEnabled, bool ignoreCorrections = false)
     {
         // Todo, replace this, the functions contained within are horrible, especially for notes. 
         // Need to handle overwriting somehow?
@@ -54,7 +54,7 @@ public class SongEditAdd : SongEditCommand
         switch (songObject.classID)
         {
             case ((int)SongObject.ID.Note):
-                AddNote((Note)songObject, overwriteList, extendedSustainsEnabled, ignoreSustainCapCheck);
+                AddNote((Note)songObject, overwriteList, extendedSustainsEnabled, ignoreCorrections);
                 break;
 
             case ((int)SongObject.ID.Starpower):
@@ -108,22 +108,22 @@ public class SongEditAdd : SongEditCommand
         }
     }
 
-    static void AddNote(Note note, IList<SongObject> overwrittenList, bool extendedSustainsEnabled, bool ignoreSustainCapCheck = false)
+    static void AddNote(Note note, IList<SongObject> overwrittenList, bool extendedSustainsEnabled, bool ignoreCorrections = false)
     {
         ChartEditor editor = ChartEditor.Instance;
         Chart chart = editor.currentChart;
         Song song = editor.currentSong;
 
         int index, length;
-        SongObjectHelper.GetRange(chart.notes, note.tick, note.tick, out index, out length);
+        SongObjectHelper.GetRange(chart.chartObjects, note.tick, note.tick, out index, out length);
 
         // Account for when adding an exact note as what's already in   
         if (length > 0)
         {
             for (int i = index; i < index + length; ++i)
             {
-                Note overwriteNote = chart.notes[i];
-                if ((((note.IsOpenNote() || overwriteNote.IsOpenNote()) && !Globals.drumMode) || note.guitarFret == overwriteNote.guitarFret))
+                Note overwriteNote = chart.chartObjects[i] as Note;
+                if (overwriteNote != null && (((note.IsOpenNote() || overwriteNote.IsOpenNote()) && !Globals.drumMode) || note.guitarFret == overwriteNote.guitarFret))
                 {
                     overwriteNote.Delete();
                     overwrittenList.Add(overwriteNote);
@@ -142,19 +142,19 @@ public class SongEditAdd : SongEditCommand
 
         List<Note> replacementNotes = new List<Note>();
 
-        // Apply flags to chord
-        foreach (Note chordNote in note.chord)
+        if (!ignoreCorrections)
         {
-            // Overwrite note flags
-            if (chordNote.flags != note.flags)
-            {  
-                Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, note.flags);
-                AddOrReplaceNote(chart, chordNote, newChordNote, overwrittenList, replacementNotes);
+            // Apply flags to chord
+            foreach (Note chordNote in note.chord)
+            {
+                // Overwrite note flags
+                if (chordNote.flags != note.flags)
+                {  
+                    Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, note.flags);
+                    AddOrReplaceNote(chart, chordNote, newChordNote, overwrittenList, replacementNotes);
+                }
             }
-        }
 
-        if (!ignoreSustainCapCheck)
-        {
             CapNoteCheck(chart, noteToAdd, overwrittenList, replacementNotes, song, extendedSustainsEnabled);
             ForwardCap(chart, noteToAdd, overwrittenList, replacementNotes, song);
         }

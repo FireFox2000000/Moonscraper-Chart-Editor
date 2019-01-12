@@ -909,6 +909,82 @@ public class SongObjectCache<T> : IList<T>, IEnumerable<T> where T : SongObject
     }
 }
 
+public class ReadOnlyList<T> : IList<T>, IEnumerable<T>
+{
+    List<T> _realListHandle;
+    public ReadOnlyList(List<T> realListHandle)
+    {
+        _realListHandle = realListHandle;
+    }
+
+    public T this[int index] { get { return _realListHandle[index]; } set { _realListHandle[index] = value; } }
+
+    public int Count
+    {
+        get { return _realListHandle.Count; }
+    }
+
+    public bool IsReadOnly
+    {
+        get { return true; }
+    }
+
+    public void Add(T item)
+    {
+        throw new NotSupportedException();
+    }
+
+    public void Clear()
+    {
+        throw new NotSupportedException();
+    }
+
+    public bool Contains(T item)
+    {
+        return _realListHandle.Contains(item);
+    }
+
+    public void CopyTo(T[] array, int arrayIndex)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerator<T> GetEnumerator()
+    {
+        return _realListHandle.GetEnumerator();
+    }
+
+    public int IndexOf(T item)
+    {
+        return _realListHandle.IndexOf(item);
+    }
+
+    public void Insert(int index, T item)
+    {
+        throw new NotSupportedException();
+    }
+
+    public bool Remove(T item)
+    {
+        throw new NotSupportedException();
+    }
+
+    public void RemoveAt(int index)
+    {
+        throw new NotSupportedException();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return _realListHandle.GetEnumerator();
+    }
+
+    public T[] ToArray()
+    {
+        return _realListHandle.ToArray();
+    }
+}
+
 /// <summary>
 /// Allows coroutines to be run by dynamically creating a MonoBehaviour derived instance by creating it with this class.
 /// </summary>

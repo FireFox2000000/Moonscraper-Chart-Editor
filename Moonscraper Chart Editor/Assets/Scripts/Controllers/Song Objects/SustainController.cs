@@ -97,27 +97,6 @@ public class SustainController : SelectableClick {
         }
     }
 
-    public void ForwardCap()
-    {
-        Note note = nCon.note;
-        Note nextFret;
-        if (note.IsOpenNote())
-            nextFret = note.next;
-        else
-        {
-            if (GameSettings.extendedSustainsEnabled)
-                nextFret = FindNextSameFretWithinSustain();
-            else
-                nextFret = note.nextSeperateNote;
-        }
-
-        if (nextFret != null)
-        {
-            if (nextFret.tick < note.tick + note.length)
-                note.length = nextFret.tick - note.tick;
-        }
-    }
-
     public void UpdateSustainLength()
     {
         Note note = nCon.note;

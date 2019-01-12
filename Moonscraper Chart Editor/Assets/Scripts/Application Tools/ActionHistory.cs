@@ -193,7 +193,7 @@ public class ActionHistory
                 // Find each item
                 if (songObject.GetType().IsSubclassOf(typeof(ChartObject)) || songObject.GetType() == typeof(ChartObject))
                 {
-                    TryDeleteSongObject(songObject, editor.currentChart.chartObjects);
+                    TryDeleteSongObject((ChartObject)songObject, editor.currentChart.chartObjects);
                 }
                 else
                 {

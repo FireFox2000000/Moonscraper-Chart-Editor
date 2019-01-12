@@ -240,8 +240,7 @@ public static class MidReader {
                 if (instrument == Song.Instrument.Unrecognised)
                 {
                     int rawNote = SelectRawNoteValue(note.NoteNumber);
-                    Note newNote = new Note(tick, Note.GuitarFret.Green, sus);
-                    newNote.rawNote = rawNote;
+                    Note newNote = new Note(tick, rawNote, sus);
                     //difficulty = SelectRawNoteDifficulty(note.NoteNumber);
                     unrecognised.Add(newNote);
                     continue;

@@ -28,9 +28,9 @@ public class BatchedSongEditCommand : SongEditCommand
 
     public override void Revoke()
     {
-        foreach (ICommand command in commands)
+        for (int i = commands.Count - 1; i >= 0; --i)
         {
-            command.Revoke();
+            commands[i].Revoke();
         }
 
         PostExecuteUpdate();

@@ -283,13 +283,13 @@ public class ChartWriter
     static readonly string s_noteFormat = " = N {0} {1}" + Globals.LINE_ENDING;
     static readonly string s_forcedNoteFormat = Globals.TABSPACE + "{0}" + " = N 5 0 " + Globals.LINE_ENDING;
     static readonly string s_tapNoteFormat = Globals.TABSPACE + "{0}" + " = N 6 0 " + Globals.LINE_ENDING;
-    string GetSaveString<T>(Song song, T[] list, ExportOptions exportOptions, ref string out_errorList, Song.Instrument instrument = Song.Instrument.Guitar) where T : SongObject
+    string GetSaveString<T>(Song song, IList<T> list, ExportOptions exportOptions, ref string out_errorList, Song.Instrument instrument = Song.Instrument.Guitar) where T : SongObject
     {
         System.Text.StringBuilder saveString = new System.Text.StringBuilder();
 
         float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
 
-        for (int i = 0; i < list.Length; ++i)
+        for (int i = 0; i < list.Count; ++i)
         {
             SongObject songObject = list[i];
             try
