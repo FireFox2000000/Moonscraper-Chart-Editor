@@ -5,6 +5,8 @@ using UnityEngine;
 public abstract class SongEditCommand : ICommand {
 
     protected List<SongObject> songObjects = new List<SongObject>();
+    protected List<SongObject> validatedSongObjects = new List<SongObject>();
+    protected bool hasValidatedSongObjects = false;
     public bool postExecuteEnabled = true;
 
     void AddClone(SongObject songObject)

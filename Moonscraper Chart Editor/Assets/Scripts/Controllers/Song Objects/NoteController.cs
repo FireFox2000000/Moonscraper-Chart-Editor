@@ -177,18 +177,6 @@ public class NoteController : SongObjectController {
             // Adjust note hitbox size        
             if (hitBox)
                 hitBox.size = new Vector3(OPEN_NOTE_COLLIDER_WIDTH, hitBox.size.y, hitBox.size.z);
-            
-            if (!Globals.drumMode)
-            {
-                // Check for non-open notes and delete
-                foreach (Note chordNote in note.chord)
-                {
-                    if (!chordNote.IsOpenNote())
-                    {
-                        chordNote.Delete();
-                    }
-                }
-            }
         }
         else
         {
