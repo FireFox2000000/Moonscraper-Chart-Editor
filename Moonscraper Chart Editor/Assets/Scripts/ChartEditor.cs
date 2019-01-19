@@ -964,8 +964,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
             commandStack.Pop();
             groupSelect.reset();
         }
-        //if (actionHistory.Undo(this))
-        //    groupSelect.reset();
     }
 
     public void RedoWrapper()
@@ -975,9 +973,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
             commandStack.Push();
             groupSelect.reset();
         }
-
-        //if (actionHistory.Redo(this))
-        //    groupSelect.reset();
     }
 
     public void Copy()

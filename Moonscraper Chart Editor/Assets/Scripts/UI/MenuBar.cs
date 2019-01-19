@@ -46,8 +46,8 @@ public class MenuBar : UpdateableService {
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
-            undoButton.interactable = editor.actionHistory.canUndo;
-            redoButton.interactable = editor.actionHistory.canRedo;
+            undoButton.interactable = !editor.commandStack.isAtStart;
+            redoButton.interactable = !editor.commandStack.isAtEnd;
         }
         else
         {
