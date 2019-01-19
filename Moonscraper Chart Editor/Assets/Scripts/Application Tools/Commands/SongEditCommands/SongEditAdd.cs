@@ -71,9 +71,10 @@ public class SongEditAdd : SongEditCommand
 
     public static void ApplyAction(IList<SongObject> songObjects, IList<SongObject> overwriteList, bool extendedSustainsEnabled)
     {
+        List<SongObject> dummy = new List<SongObject>();
         foreach (SongObject songObject in songObjects)
         {
-            ApplyAction(songObject, overwriteList, extendedSustainsEnabled);
+            ApplyAction(songObject, overwriteList, extendedSustainsEnabled, dummy);
         }
     }
 
@@ -81,18 +82,18 @@ public class SongEditAdd : SongEditCommand
     {
         foreach (SongObject songObject in songObjects)
         {
-            validatedSongObjects.Add(ApplyAction(songObject, overwrittenSongObjects, extendedSustainsEnabled));
+            ApplyAction(songObject, overwrittenSongObjects, extendedSustainsEnabled, validatedSongObjects);
         }
     }
 
-    static SongObject ApplyAction(SongObject songObject, IList<SongObject> overwriteList, bool extendedSustainsEnabled)
+    static void ApplyAction(SongObject songObject, IList<SongObject> overwriteList, bool extendedSustainsEnabled, List<SongObject> validatedNotes)
     {
         SongObject validatedSo = null;
 
         switch (songObject.classID)
         {
             case ((int)SongObject.ID.Note):
-                validatedSo = AddNote((Note)songObject, overwriteList, extendedSustainsEnabled);
+                AddNote((Note)songObject, overwriteList, extendedSustainsEnabled, validatedNotes);
                 break;
 
             case ((int)SongObject.ID.Starpower):
@@ -124,7 +125,8 @@ public class SongEditAdd : SongEditCommand
                 break;
         }
 
-        return validatedSo;
+        if (validatedSo != null)
+            validatedNotes.Add(validatedSo);
     }
 
     public static void ApplyPostValidatedAction(SongObject songObject)
@@ -186,7 +188,7 @@ public class SongEditAdd : SongEditCommand
         }
     }
 
-    static Note AddNote(Note note, IList<SongObject> overwrittenList, bool extendedSustainsEnabled)
+    static void AddNote(Note note, IList<SongObject> overwrittenList, bool extendedSustainsEnabled, List<SongObject> validatedNotes)
     {
         ChartEditor editor = ChartEditor.Instance;
         Chart chart = editor.currentChart;
@@ -212,48 +214,58 @@ public class SongEditAdd : SongEditCommand
         }
 
         Note noteToAdd = new Note(note);
-        if (noteToAdd.IsOpenNote())
-            noteToAdd.flags &= ~Note.Flags.Tap;
-
-        chart.Add(noteToAdd, false);
-        if (noteToAdd.cannotBeForced)
-            noteToAdd.flags &= ~Note.Flags.Forced;
-
         List<Note> replacementNotes = new List<Note>();
 
-        // Apply flags to chord
-        foreach (Note chordNote in note.chord)
+        // Apply post-insert note corrections
         {
-            // Overwrite note flags
-            if (chordNote.flags != note.flags)
-            {  
-                Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, note.flags);
-                AddOrReplaceNote(chart, chordNote, newChordNote, overwrittenList, replacementNotes);
+            if (noteToAdd.IsOpenNote())
+                noteToAdd.flags &= ~Note.Flags.Tap;
+
+            chart.Add(noteToAdd, false);
+            if (noteToAdd.cannotBeForced)
+                noteToAdd.flags &= ~Note.Flags.Forced;
+
+            // Apply flags to chord
+            foreach (Note chordNote in noteToAdd.chord)
+            {
+                // Overwrite note flags
+                if (chordNote.flags != noteToAdd.flags)
+                {
+                    Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, note.flags);
+                    AddOrReplaceNote(chart, chordNote, newChordNote, overwrittenList, replacementNotes);
+                }
             }
+
+            CapNoteCheck(chart, noteToAdd, overwrittenList, replacementNotes, song, extendedSustainsEnabled);
+            ForwardCap(chart, noteToAdd, overwrittenList, replacementNotes, song);
+
+            AutoForcedCheck(chart, noteToAdd, overwrittenList, replacementNotes);
         }
 
-        CapNoteCheck(chart, noteToAdd, overwrittenList, replacementNotes, song, extendedSustainsEnabled);
-        ForwardCap(chart, noteToAdd, overwrittenList, replacementNotes, song);
-        
-        AutoForcedCheck(chart, noteToAdd, overwrittenList, replacementNotes);
-
-        foreach (Note chordNote in noteToAdd.chord)
+        // Queue visual refresh
         {
-            if (chordNote.controller)
-                chordNote.controller.SetDirty();
-        }
-
-        Note next = noteToAdd.nextSeperateNote;
-        if (next != null)
-        {
-            foreach (Note chordNote in next.chord)
+            foreach (Note chordNote in noteToAdd.chord)
             {
                 if (chordNote.controller)
                     chordNote.controller.SetDirty();
             }
+
+            Note next = noteToAdd.nextSeperateNote;
+            if (next != null)
+            {
+                foreach (Note chordNote in next.chord)
+                {
+                    if (chordNote.controller)
+                        chordNote.controller.SetDirty();
+                }
+            }
         }
 
-        return noteToAdd;
+        validatedNotes.Add(noteToAdd);
+        foreach(Note rNote in replacementNotes)
+        {
+            validatedNotes.Add(rNote);
+        }
     }
 
     static ChartEvent AddChartEvent(ChartEvent chartEvent, IList<SongObject> overwrittenList)

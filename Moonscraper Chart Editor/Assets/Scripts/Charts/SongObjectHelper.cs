@@ -322,62 +322,62 @@ public static void FindObjectsAtPosition<T>(uint position, IList<T> objects, out
                 next.previous = current;
 
             // Update flags depending on open notes
-            Note.Flags flags = current.flags;
-            previous = current.previous;
-            next = current.next;
-
-            Note openNote = null;
-            //bool openFound = false;
-            bool standardFound = false;
-
-            // Collect all the flags
-            while (previous != null && previous.tick == current.tick)
-            {
-                if (previous.IsOpenNote())
-                    openNote = previous;
-                else
-                    standardFound = true;
-
-                flags |= previous.flags;
-                previous = previous.previous;
-            }
-
-            while (next != null && next.tick == current.tick)
-            {
-                if (next.IsOpenNote())
-                    openNote = next;
-                else
-                    standardFound = true;
-
-                flags |= next.flags;
-                next = next.next;
-            }
-
-            // Apply flags
-            if (!current.IsOpenNote() && openNote != null)
-            {
-                //openNote.controller.Delete();
-            }
-            else if (current.IsOpenNote() && standardFound)
-            { }
-            else
-            {
-                current.flags = flags;
-
-                previous = current.previous;
-                next = current.next;
-                while (previous != null && previous.tick == current.tick)
-                {
-                    previous.flags = flags;
-                    previous = previous.previous;
-                }
-
-                while (next != null && next.tick == current.tick)
-                {
-                    next.flags = flags;
-                    next = next.next;
-                }
-            }
+            //Note.Flags flags = current.flags;
+            //previous = current.previous;
+            //next = current.next;
+            //
+            //Note openNote = null;
+            ////bool openFound = false;
+            //bool standardFound = false;
+            //
+            //// Collect all the flags
+            //while (previous != null && previous.tick == current.tick)
+            //{
+            //    if (previous.IsOpenNote())
+            //        openNote = previous;
+            //    else
+            //        standardFound = true;
+            //
+            //    flags |= previous.flags;
+            //    previous = previous.previous;
+            //}
+            //
+            //while (next != null && next.tick == current.tick)
+            //{
+            //    if (next.IsOpenNote())
+            //        openNote = next;
+            //    else
+            //        standardFound = true;
+            //
+            //    flags |= next.flags;
+            //    next = next.next;
+            //}
+            //
+            //// Apply flags
+            //if (!current.IsOpenNote() && openNote != null)
+            //{
+            //    //openNote.controller.Delete();
+            //}
+            //else if (current.IsOpenNote() && standardFound)
+            //{ }
+            //else
+            //{
+            //    current.flags = flags;
+            //
+            //    previous = current.previous;
+            //    next = current.next;
+            //    while (previous != null && previous.tick == current.tick)
+            //    {
+            //        previous.flags = flags;
+            //        previous = previous.previous;
+            //    }
+            //
+            //    while (next != null && next.tick == current.tick)
+            //    {
+            //        next.flags = flags;
+            //        next = next.next;
+            //    }
+            //}
         }
 
         return insertionPos;
