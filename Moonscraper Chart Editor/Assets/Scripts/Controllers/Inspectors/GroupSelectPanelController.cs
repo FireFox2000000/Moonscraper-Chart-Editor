@@ -62,7 +62,6 @@ public class GroupSelectPanelController : MonoBehaviour
 
     public void SetFretType(int noteNumber)
     {
-        List<ActionHistory.Action> actions = new List<ActionHistory.Action>();
         List<ChartObject> selected = new List<ChartObject>();
 
         List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
@@ -86,8 +85,6 @@ public class GroupSelectPanelController : MonoBehaviour
         }
 
         editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
-
-        ChartEditor.isDirty = true;
 
         List<ChartObject> actuallySelected = new List<ChartObject>();
         foreach (ChartObject chartObject in selected)
@@ -117,8 +114,9 @@ public class GroupSelectPanelController : MonoBehaviour
 
     void SetSustain(uint length)
     {
-        List<ActionHistory.Action> actions = new List<ActionHistory.Action>();
         uint songEndTick = editor.currentSong.TimeToTick(editor.currentSong.length, editor.currentSong.resolution);
+
+        List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
 
         foreach (ChartObject chartObject in editor.currentSelectedObjects)
         {
@@ -129,39 +127,12 @@ public class GroupSelectPanelController : MonoBehaviour
                 if (length == uint.MaxValue)
                     assignedLength = songEndTick - note.tick;
 
-                if (GameSettings.extendedSustainsEnabled)
-                {
-                    Note original = (Note)note.Clone();
-                    note.length = assignedLength;          
-                    note.CapSustain(note.FindNextSameFretWithinSustainExtendedCheck(GameSettings.extendedSustainsEnabled), note.song);
-
-                    if (original.length != note.length)
-                        actions.Add(new ActionHistory.Modify(original, note));
-                }
-                else
-                {
-                    // Needs to handle chords
-                    Note[] chordNotes = note.GetChord();
-                    Note[] chordNotesCopy = new Note[chordNotes.Length];
-                    Note capNote = note.nextSeperateNote;
-
-                    for (int i = 0; i < chordNotes.Length; ++i)
-                    {
-                        chordNotesCopy[i] = (Note)chordNotes[i].Clone();
-                        chordNotes[i].length = assignedLength;
-                        chordNotes[i].CapSustain(capNote, chordNotes[i].song);
-
-                        if (chordNotesCopy[i].length != chordNotes[i].length)
-                            actions.Add(new ActionHistory.Modify(chordNotesCopy[i], chordNotes[i]));
-                    }
-                }
+                songEditCommands.Add(new SongEditModify<Note>(note, new Note(note.tick, note.rawNote, assignedLength, note.flags)));
             }
         }
 
-        if (actions.Count > 0)
-            editor.actionHistory.Insert(actions.ToArray());
-
-        ChartEditor.isDirty = true;
+        if (songEditCommands.Count > 0)
+            editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
     }
 
     public void SetNatural()

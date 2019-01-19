@@ -94,7 +94,7 @@ public class SongEditAdd : SongEditCommand
                 break;
 
             case ((int)SongObject.ID.Starpower):
-                throw new System.NotImplementedException();
+                validatedSo = AddStarpower((Starpower)songObject, overwriteList);
                 break;
 
             case ((int)SongObject.ID.ChartEvent):
@@ -186,28 +186,10 @@ public class SongEditAdd : SongEditCommand
         Chart chart = editor.currentChart;
         Song song = editor.currentSong;
 
-        int index, length;
-        SongObjectHelper.GetRange(chart.chartObjects, note.tick, note.tick, out index, out length);
-
-        // Account for when adding an exact note as what's already in   
-        if (length > 0)
-        {
-            for (int i = index + length - 1; i >= index; --i)
-            {
-                Note overwriteNote = chart.chartObjects[i] as Note;
-                bool sameFret = note.guitarFret == overwriteNote.guitarFret;
-                bool isOverwritableOpenNote = (note.IsOpenNote() || overwriteNote.IsOpenNote()) && !Globals.drumMode;
-                if (overwriteNote != null && (isOverwritableOpenNote || sameFret))
-                {
-                    overwriteNote.Delete(false);
-                    overwrittenList.Add(overwriteNote);
-                }
-            }
-        }
-
         Note noteToAdd = new Note(note);
-        chart.Add(noteToAdd, false);
 
+        NoteFunctions.PerformPreChartInsertCorrections(noteToAdd, chart, validatedNotes, overwrittenList, extendedSustainsEnabled);
+        chart.Add(noteToAdd, false);
         NoteFunctions.PerformPostChartInsertCorrections(noteToAdd, validatedNotes, overwrittenList, extendedSustainsEnabled);
         
         // Queue visual refresh
@@ -229,7 +211,21 @@ public class SongEditAdd : SongEditCommand
             }
         }
 
-        validatedNotes.Add(noteToAdd);
+        if (!validatedNotes.Contains(noteToAdd))
+            validatedNotes.Add(noteToAdd);
+    }
+
+    static Starpower AddStarpower(Starpower sp, IList<SongObject> overwrittenList)
+    {
+        ChartEditor editor = ChartEditor.Instance;
+        TryRecordOverwrite(sp, editor.currentChart.chartObjects, overwrittenList);
+
+        Starpower spToAdd = new Starpower(sp);
+
+        editor.currentChart.Add(spToAdd, false);
+        Debug.Log("Added new starpower");
+
+        return spToAdd;
     }
 
     static ChartEvent AddChartEvent(ChartEvent chartEvent, IList<SongObject> overwrittenList)

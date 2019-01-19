@@ -270,6 +270,28 @@ public static class NoteFunctions {
             return fret_type - 1;
     }
 
+    public static void PerformPreChartInsertCorrections(Note note, Chart chart, IList<SongObject> newNotesAdded, IList<SongObject> oldNotesRemoved, bool extendedSustainsEnabled)
+    {
+        int index, length;
+        SongObjectHelper.GetRange(chart.chartObjects, note.tick, note.tick, out index, out length);
+
+        // Account for when adding an exact note as what's already in   
+        if (length > 0)
+        {
+            for (int i = index + length - 1; i >= index; --i)
+            {
+                Note overwriteNote = chart.chartObjects[i] as Note;
+                bool sameFret = note.guitarFret == overwriteNote.guitarFret;
+                bool isOverwritableOpenNote = (note.IsOpenNote() || overwriteNote.IsOpenNote()) && !Globals.drumMode;
+                if (overwriteNote != null && (isOverwritableOpenNote || sameFret))
+                {
+                    overwriteNote.Delete(false);
+                    oldNotesRemoved.Add(overwriteNote);
+                }
+            }
+        }
+    }
+
     public static void PerformPostChartInsertCorrections(Note note, IList<SongObject> newNotesAdded, IList<SongObject> oldNotesRemoved, bool extendedSustainsEnabled)
     {
         Debug.Assert(note.chart != null, "Note has not been inserted into a chart");
@@ -346,8 +368,15 @@ public static class NoteFunctions {
                     uint newLength = noteToCap.GetCappedLength(next, song);
                     if (noteToCap.length != newLength)
                     {
-                        Note newNote = new Note(noteToCap.tick, noteToCap.rawNote, newLength, noteToCap.flags);
-                        AddOrReplaceNote(chart, noteToCap, newNote, overwrittenList, replacementNotes);
+                        if (note == noteToCap)
+                        {
+                            note.length = newLength;
+                        }
+                        else
+                        {
+                            Note newNote = new Note(noteToCap.tick, noteToCap.rawNote, newLength, noteToCap.flags);
+                            AddOrReplaceNote(chart, noteToCap, newNote, overwrittenList, replacementNotes);
+                        }
                     }
                 }
             }
@@ -394,8 +423,15 @@ public static class NoteFunctions {
                 uint newLength = noteToAdd.length;
                 if (chordNote.length != newLength)
                 {
-                    Note newNote = new Note(chordNote.tick, chordNote.rawNote, newLength, chordNote.flags);
-                    AddOrReplaceNote(chart, chordNote, newNote, overwrittenList, replacementNotes);
+                    if (noteToAdd == chordNote)
+                    {
+                        noteToAdd.length = newLength;
+                    }
+                    else
+                    {
+                        Note newNote = new Note(chordNote.tick, chordNote.rawNote, newLength, chordNote.flags);
+                        AddOrReplaceNote(chart, chordNote, newNote, overwrittenList, replacementNotes);
+                    }
                 }
             }
         }
