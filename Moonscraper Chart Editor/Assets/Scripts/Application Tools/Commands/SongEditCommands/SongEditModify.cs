@@ -5,7 +5,13 @@ using UnityEngine;
 public class SongEditModify<T> : SongEditCommand where T : SongObject
 {
     T before { get { return songObjects[0] as T; } }
-    T after { get { return songObjects[1] as T; } }
+    T after { get { return songObjects[1] as T; } set { songObjects[1] = value; } }
+
+    List<SongObject> deletedObjects = new List<SongObject>();
+    List<SongObject> addedObjects = new List<SongObject>();
+    List<SongObject> dummyOverwriteList = new List<SongObject>();
+
+    bool extendedSustainsEnabled;
 
     public SongEditModify(T before, T after) 
     {
@@ -19,13 +25,61 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
     public override void Invoke()
     {
         CloneInto(FindObjectToModify(before), after);
+
+        SongObject so = FindObjectToModify(after);
+        if (!hasValidatedSongObjects)
+        {
+            Note note = so as Note;
+            if (note != null)
+            {
+                NoteFunctions.PerformPostChartInsertCorrections(note, addedObjects, deletedObjects, extendedSustainsEnabled);
+            }
+
+            after = so.CloneAs<T>();
+        }
+        else
+        {
+            SongEditDelete.ApplyAction(deletedObjects);
+            SongEditAdd.ApplyAction(addedObjects, dummyOverwriteList, extendedSustainsEnabled);
+
+            Debug.Assert(dummyOverwriteList.Count <= 0, "SongEditModify revoke overwrote an object. Should be adding an object that was deleted.");
+            dummyOverwriteList.Clear();
+        }
+
+        if (so.controller)
+        {
+            so.controller.SetDirty();
+        }
+
         PostExecuteUpdate();
+
+        hasValidatedSongObjects = true;
     }
 
     public override void Revoke()
     {
         CloneInto(FindObjectToModify(after), before);
+
+        Debug.Assert(hasValidatedSongObjects, "Trying to revoke add modify which has not made it's initial validation pass!");
+
+        SongEditDelete.ApplyAction(addedObjects);
+        SongEditAdd.ApplyAction(deletedObjects, dummyOverwriteList, extendedSustainsEnabled);
+
+        Debug.Assert(dummyOverwriteList.Count <= 0, "SongEditModify revoke overwrote an object. Should be adding an object that was deleted.");
+        dummyOverwriteList.Clear();
+
+        SongObject so = FindObjectToModify(before);
+        if (so.controller)
+        {
+            so.controller.SetDirty();
+        }
+
         PostExecuteUpdate();
+    }
+
+    void SnapshotGameSettings()
+    {
+        extendedSustainsEnabled = GameSettings.extendedSustainsEnabled;
     }
 
     void CloneInto(SongObject objectToCopyInto, SongObject objectToCopyFrom)

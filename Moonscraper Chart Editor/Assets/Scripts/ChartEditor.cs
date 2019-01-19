@@ -124,7 +124,12 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public void SetCurrentSelectedObjects<T>(IEnumerable<T> list) where T : SongObject
     {
         m_currentSelectedObjects.Clear();
-        m_currentSelectedObjects.AddRange((IEnumerable<SongObject>)list);
+
+        foreach(T so in list)
+        {
+            m_currentSelectedObjects.Add(so);
+        }
+
         timeHandler.RefreshHighlightIndicator();
     }
 

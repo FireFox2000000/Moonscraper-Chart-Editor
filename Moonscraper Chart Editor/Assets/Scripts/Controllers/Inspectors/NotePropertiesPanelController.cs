@@ -180,8 +180,6 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         }
     }
 
-    static List<SongObject> currentNotes = new List<SongObject>();
-    static List<SongObject> newNotes = new List<SongObject>();
     void SetNewFlags(Note note, Note.Flags newFlags)
     {
         if (note.flags == newFlags)
@@ -189,25 +187,8 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
         if (Toolpane.currentTool == Toolpane.Tools.Cursor)
         {
-            currentNotes.Clear();
-            newNotes.Clear();
-
-            foreach (Note chordNote in note.chord)
-            {
-                currentNotes.Add(chordNote);
-                newNotes.Add(new Note(chordNote.tick, chordNote.rawNote, chordNote.length, newFlags));
-            }
-
-            SongEditCommand[] commands = new SongEditCommand[] 
-            {
-                new SongEditDelete(currentNotes),
-                new SongEditAdd(newNotes)
-            };
-
-            editor.commandStack.Push(new BatchedSongEditCommand(commands));
-
-            currentNotes.Clear();
-            newNotes.Clear();
+            SongEditModify<Note> command = new SongEditModify<Note>(note, new Note(note.tick, note.rawNote, note.length, newFlags));
+            editor.commandStack.Push(command);
         }
         else
         {

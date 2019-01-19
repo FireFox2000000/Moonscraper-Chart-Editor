@@ -269,4 +269,174 @@ public static class NoteFunctions {
         else
             return fret_type - 1;
     }
+
+    public static void PerformPostChartInsertCorrections(Note note, IList<SongObject> newNotesAdded, IList<SongObject> oldNotesRemoved, bool extendedSustainsEnabled)
+    {
+        Debug.Assert(note.chart != null, "Note has not been inserted into a chart");
+        Debug.Assert(note.song != null, "Note has not been inserted into a song");
+
+        Chart chart = note.chart;
+        Song song = note.song;
+
+        if (note.IsOpenNote())
+            note.flags &= ~Note.Flags.Tap;
+
+        if (note.cannotBeForced)
+            note.flags &= ~Note.Flags.Forced;
+
+        // Apply flags to chord
+        foreach (Note chordNote in note.chord)
+        {
+            // Overwrite note flags
+            if (chordNote.flags != note.flags)
+            {
+                Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, note.flags);
+                AddOrReplaceNote(chart, chordNote, newChordNote, oldNotesRemoved, newNotesAdded);
+            }
+        }
+
+        CapNoteCheck(chart, note, oldNotesRemoved, newNotesAdded, song, extendedSustainsEnabled);
+        ForwardCap(chart, note, oldNotesRemoved, newNotesAdded, song);
+
+        AutoForcedCheck(chart, note, oldNotesRemoved, newNotesAdded);
+    }
+
+    #region Note Insertion Helper Functions
+
+    static Note FindReplacementNote(Note originalNote, IList<SongObject> replacementNotes)
+    {
+        foreach (Note replacementNote in replacementNotes)
+        {
+            if (replacementNote != null && originalNote.tick == replacementNote.tick && originalNote.rawNote == replacementNote.rawNote)
+                return replacementNote;
+        }
+
+        return null;
+    }
+
+    static void AddOrReplaceNote(Chart chart, Note note, Note newNote, IList<SongObject> overwrittenList, IList<SongObject> replacementNotes)
+    {
+        Note replacementNote = FindReplacementNote(note, replacementNotes);
+        if (replacementNote == null)
+        {
+            overwrittenList.Add(note);
+            replacementNotes.Add(newNote);
+            chart.Add(newNote);
+        }
+        else
+        {
+            replacementNote.CopyFrom(newNote);
+        }
+    }
+
+    static void ForwardCap(Chart chart, Note note, IList<SongObject> overwrittenList, IList<SongObject> replacementNotes, Song song)
+    {
+        Note next;
+        next = note.nextSeperateNote;
+
+        if (!GameSettings.extendedSustainsEnabled)
+        {
+            // Get chord  
+            next = note.nextSeperateNote;
+
+            if (next != null)
+            {
+                foreach (Note noteToCap in note.chord)
+                {
+                    uint newLength = noteToCap.GetCappedLength(next, song);
+                    if (noteToCap.length != newLength)
+                    {
+                        Note newNote = new Note(noteToCap.tick, noteToCap.rawNote, newLength, noteToCap.flags);
+                        AddOrReplaceNote(chart, noteToCap, newNote, overwrittenList, replacementNotes);
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Find the next note of the same fret type or open
+            next = note.next;
+            while (next != null && next.guitarFret != note.guitarFret && !next.IsOpenNote())
+                next = next.next;
+
+            // If it's an open note it won't be capped
+
+            if (next != null)
+            {
+                uint newLength = note.GetCappedLength(next, song);
+                if (note.length != newLength)
+                {
+                    Note newNote = new Note(note.tick, note.rawNote, newLength, note.flags);
+                    AddOrReplaceNote(chart, note, newNote, overwrittenList, replacementNotes);
+                }
+            }
+        }
+    }
+
+    static void CapNoteCheck(Chart chart, Note noteToAdd, IList<SongObject> overwrittenList, IList<SongObject> replacementNotes, Song song, bool extendedSustainsEnabled)
+    {
+        Note[] previousNotes = NoteFunctions.GetPreviousOfSustains(noteToAdd, extendedSustainsEnabled);
+        if (!GameSettings.extendedSustainsEnabled)
+        {
+            // Cap all the notes
+            foreach (Note prevNote in previousNotes)
+            {
+                uint newLength = prevNote.GetCappedLength(noteToAdd, song);
+                if (prevNote.length != newLength)
+                {
+                    Note newNote = new Note(prevNote.tick, prevNote.rawNote, newLength, prevNote.flags);
+                    AddOrReplaceNote(chart, prevNote, newNote, overwrittenList, replacementNotes);
+                }
+            }
+
+            foreach (Note chordNote in noteToAdd.chord)
+            {
+                uint newLength = noteToAdd.length;
+                if (chordNote.length != newLength)
+                {
+                    Note newNote = new Note(chordNote.tick, chordNote.rawNote, newLength, chordNote.flags);
+                    AddOrReplaceNote(chart, chordNote, newNote, overwrittenList, replacementNotes);
+                }
+            }
+        }
+        else
+        {
+            // Cap only the sustain of the same fret type and open notes
+            foreach (Note prevNote in previousNotes)
+            {
+                if (noteToAdd.IsOpenNote() || prevNote.guitarFret == noteToAdd.guitarFret)
+                {
+                    uint newLength = prevNote.GetCappedLength(noteToAdd, song);
+                    if (prevNote.length != newLength)
+                    {
+                        overwrittenList.Add(prevNote);
+                        chart.Add(new Note(prevNote.tick, prevNote.rawNote, newLength, prevNote.flags));
+                    }
+                }
+            }
+        }
+    }
+
+    static void AutoForcedCheck(Chart chart, Note note, IList<SongObject> overwrittenNotes, IList<SongObject> replacementNotes)
+    {
+        Note next = note.nextSeperateNote;
+        if (next != null && (next.flags & Note.Flags.Forced) == Note.Flags.Forced && next.cannotBeForced)
+        {
+            Note.Flags flags = next.flags;
+            flags &= ~Note.Flags.Forced;
+
+            // Apply flags to chord
+            foreach (Note chordNote in next.chord)
+            {
+                // Overwrite note flags
+                if (chordNote.flags != flags)
+                {
+                    Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, note.flags);
+                    AddOrReplaceNote(chart, chordNote, newChordNote, overwrittenNotes, replacementNotes);
+                }
+            }
+        }
+    }
+
+    #endregion
 }
