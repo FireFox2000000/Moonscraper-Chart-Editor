@@ -76,7 +76,7 @@ public class GroupSelectPanelController : MonoBehaviour
                     Note newNote = new Note(note);
                     newNote.rawNote = noteNumber;
 
-                    songEditCommands.Add(new SongEditModify<Note>(note, newNote));
+                    songEditCommands.Add(new SongEditModify(note, newNote));
                     selected.Add(newNote);
                 }
             }
@@ -127,7 +127,7 @@ public class GroupSelectPanelController : MonoBehaviour
                 if (length == uint.MaxValue)
                     assignedLength = songEndTick - note.tick;
 
-                songEditCommands.Add(new SongEditModify<Note>(note, new Note(note.tick, note.rawNote, assignedLength, note.flags)));
+                songEditCommands.Add(new SongEditModify(note, new Note(note.tick, note.rawNote, assignedLength, note.flags)));
             }
         }
 
@@ -157,102 +157,21 @@ public class GroupSelectPanelController : MonoBehaviour
 
     public void SetNoteType(Note.NoteType type)
     {
-        List<ActionHistory.Action> actions = new List<ActionHistory.Action>();
+        // NOT WORKING, TODO
+        List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
 
         foreach (ChartObject chartObject in editor.currentSelectedObjects)
         {
             if (chartObject.classID == (int)SongObject.ID.Note)
             {
                 Note note = chartObject as Note;
-
-                // Need to record the whole chord
-                Note unmodified = (Note)note.Clone();
-                Note[] chord = note.GetChord();
-
-                ActionHistory.Action[] deleteRecord = new ActionHistory.Action[chord.Length];
-                for (int i = 0; i < deleteRecord.Length; ++i)
-                    deleteRecord[i] = new ActionHistory.Delete(chord[i]);
-
-                note.SetType(type);
-                //SetNoteType(note as Note, type);
-
-                chord = note.GetChord();
-
-                ActionHistory.Action[] addRecord = new ActionHistory.Action[chord.Length];
-                for (int i = 0; i < addRecord.Length; ++i)
-                    addRecord[i] = new ActionHistory.Add(chord[i]);
-
-                if (note.flags != unmodified.flags)
-                {
-                    actions.AddRange(deleteRecord);
-                    actions.AddRange(addRecord);
-                }
-
-                foreach (Note chordNote in note.chord)
-                {
-                    if (chordNote.controller)
-                    {
-                        chordNote.controller.SetDirty();
-                    }
-                }
+                Note newNote = new Note(note);
+                newNote.SetType(type);
+                songEditCommands.Add(new SongEditModify<Note>(note, newNote));
             }
-
-            if (chartObject.controller)
-                chartObject.controller.SetDirty();
         }
 
-        if (actions.Count > 0)
-            editor.actionHistory.Insert(actions.ToArray());
-
-        ChartEditor.isDirty = true;
+        if (songEditCommands.Count > 0)
+            editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
     }
-    /*
-    public static void SetNoteType(Note note, AppliedNoteType noteType)
-    {
-        note.flags = Note.Flags.NONE;
-        switch (noteType)
-        {
-            case (AppliedNoteType.Strum):
-                if (note.IsChord)
-                    note.flags &= ~Note.Flags.FORCED;
-                else
-                {
-                    if (note.IsNaturalHopo)
-                        note.flags |= Note.Flags.FORCED;
-                    else
-                        note.flags &= ~Note.Flags.FORCED;
-                }
-
-                break;
-
-            case (AppliedNoteType.Hopo):
-                if (!note.CannotBeForcedCheck)
-                {
-                    if (note.IsChord)
-                        note.flags |= Note.Flags.FORCED;
-                    else
-                    {
-                        if (!note.IsNaturalHopo)
-                            note.flags |= Note.Flags.FORCED;
-                        else
-                            note.flags &= ~Note.Flags.FORCED;
-                    }
-                }
-                break;
-
-            case (AppliedNoteType.Tap):
-                note.flags |= Note.Flags.TAP;
-                break;
-
-            default:
-                break;
-        }
-
-        note.applyFlagsToChord();
-    }
-
-    public enum AppliedNoteType
-    {
-        Natural, Strum, Hopo, Tap
-    }*/
 }

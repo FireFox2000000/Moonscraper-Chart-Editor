@@ -187,7 +187,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
         if (Toolpane.currentTool == Toolpane.Tools.Cursor)
         {
-            SongEditModify<Note> command = new SongEditModify<Note>(note, new Note(note.tick, note.rawNote, note.length, newFlags));
+            SongEditModify command = new SongEditModify(note, new Note(note.tick, note.rawNote, note.length, newFlags));
             editor.commandStack.Push(command);
         }
         else

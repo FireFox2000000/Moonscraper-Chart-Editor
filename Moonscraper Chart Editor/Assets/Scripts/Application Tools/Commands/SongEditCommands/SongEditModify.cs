@@ -2,16 +2,71 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SongEditModify<T> : SongEditAdd where T : SongObject
+public class SongEditModify<T> : SongEditCommand where T : SongObject
 {
-    public SongEditModify(T before, T after) : base(after)
+    T before { get { return songObjects[0] as T; } }
+    T after { get { return songObjects[1] as T; } }
+
+    public SongEditModify(T before, T after)
     {
         Debug.Assert(after.song == null, "Must add a new song object!");
         Debug.Assert(before.tick == after.tick, "Song object is being moved rather than modified!");
-        Debug.Assert(FindObjectToModify(before) != null, "Unable to find a song object to modify!");
+
+        songObjects.Add(before.Clone());
+        songObjects.Add(after);             // After should be a new object, take ownership to save allocation
+
+        if (typeof(T) == typeof(Note))
+        {
+            Note beforeNote = before as Note;
+            Note afterNote = after as Note;
+            Debug.Assert(beforeNote.rawNote == afterNote.rawNote, "Note modifying is not supported by SongEditModify<T>(T, T). Use SongEditModify(Note, Note) instead.");
+            Debug.Assert(beforeNote.flags == afterNote.flags, "Note flag modifying is not supported by SongEditModify<T>(T, T). Use SongEditModify(Note, Note) instead.");
+        }
     }
 
-    SongObject FindObjectToModify(SongObject so)
+    public override void Invoke()
+    {
+        CloneInto(FindObjectToModify(before), after);
+        PostExecuteUpdate();
+    }
+
+    public override void Revoke()
+    {
+        CloneInto(FindObjectToModify(after), before);
+        PostExecuteUpdate();
+    }
+
+    void CloneInto(SongObject objectToCopyInto, SongObject objectToCopyFrom)
+    {
+        switch ((SongObject.ID)objectToCopyInto.classID)
+        {
+            case SongObject.ID.Note:
+                (objectToCopyInto as Note).CopyFrom((objectToCopyFrom as Note));
+                break;
+
+            case SongObject.ID.ChartEvent:
+                (objectToCopyInto as ChartEvent).CopyFrom((objectToCopyFrom as ChartEvent));
+                break;
+
+            case SongObject.ID.BPM:
+                (objectToCopyInto as BPM).CopyFrom((objectToCopyFrom as BPM));
+                break;
+
+            case SongObject.ID.Event:
+                (objectToCopyInto as Event).CopyFrom((objectToCopyFrom as Event));
+                break;
+
+            case SongObject.ID.Section:
+                (objectToCopyInto as Section).CopyFrom((objectToCopyFrom as Section));
+                break;
+
+            default:
+                Debug.LogError("Object to modify not supported.");
+                break;
+        }
+    }
+
+    public static SongObject FindObjectToModify(SongObject so)
     {
         ChartEditor editor = ChartEditor.Instance;
         Song song = editor.currentSong;
@@ -23,7 +78,7 @@ public class SongEditModify<T> : SongEditAdd where T : SongObject
         {
             case SongObject.ID.Note:
                 index = SongObjectHelper.FindObjectPosition(so as Note, chart.notes);
-                if(index == SongObjectHelper.NOTFOUND)
+                if (index == SongObjectHelper.NOTFOUND)
                 {
                     return null;
                 }
@@ -83,5 +138,15 @@ public class SongEditModify<T> : SongEditAdd where T : SongObject
         }
 
         return so;
+    }
+}
+
+public class SongEditModify : SongEditAdd
+{
+    public SongEditModify(Note before, Note after) : base(after)
+    {
+        Debug.Assert(after.song == null, "Must add a new song object!");
+        Debug.Assert(before.tick == after.tick, "Song object is being moved rather than modified!");
+        Debug.Assert(SongEditModify<SongObject>.FindObjectToModify(before) != null, "Unable to find a song object to modify!");
     }
 }
