@@ -39,19 +39,20 @@ public class Starpower : ChartObject
             return false;
     }
 
-    public void SetLengthByPos(uint pos)
+    public uint GetCappedLengthForPos(uint pos)
     {
+        uint newLength = length;
         if (pos > tick)
-            length = pos - tick;
+            newLength = pos - tick;
         else
-            length = 0;
+            newLength = 0;
 
         Starpower nextSp = null;
         if (song != null && chart != null)
         {
             int arrayPos = SongObjectHelper.FindClosestPosition(this, chart.starPower);
             if (arrayPos == SongObjectHelper.NOTFOUND)
-                return;
+                return newLength;
 
             while (arrayPos < chart.starPower.Count - 1 && chart.starPower[arrayPos].tick <= tick)
             {
@@ -65,18 +66,31 @@ public class Starpower : ChartObject
             {
                 // Cap sustain length
                 if (nextSp.tick < tick)
-                    length = 0;
+                    newLength = 0;
                 else if (tick + length > nextSp.tick)
                     // Cap sustain
-                    length = nextSp.tick - tick;
+                    newLength = nextSp.tick - tick;
             }
             // else it's the only starpower or it's the last starpower 
         }
+
+        return newLength;
+    }
+
+    public void SetLengthByPos(uint pos)
+    {
+        length = GetCappedLengthForPos(pos);
     }
 
     public override void Delete(bool update = true)
     {
         base.Delete(update);
         ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
+    }
+
+    public void CopyFrom(Starpower sp)
+    {
+        tick = sp.tick;
+        length = sp.length;
     }
 }

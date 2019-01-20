@@ -83,18 +83,18 @@ public class SongEditAdd : SongEditCommand
         }
     }
 
-    static void ApplyAction(SongObject songObject, IList<SongObject> overwriteList, bool extendedSustainsEnabled, List<SongObject> validatedNotes)
+    static void ApplyAction(SongObject songObject, IList<SongObject> overwriteList, bool extendedSustainsEnabled, List<SongObject> validatedObjects)
     {
         SongObject validatedSo = null;
 
         switch (songObject.classID)
         {
             case ((int)SongObject.ID.Note):
-                AddNote((Note)songObject, overwriteList, extendedSustainsEnabled, validatedNotes);
+                AddNote((Note)songObject, overwriteList, extendedSustainsEnabled, validatedObjects);
                 break;
 
             case ((int)SongObject.ID.Starpower):
-                validatedSo = AddStarpower((Starpower)songObject, overwriteList);
+                validatedSo = AddStarpower((Starpower)songObject, overwriteList, validatedObjects);
                 break;
 
             case ((int)SongObject.ID.ChartEvent):
@@ -123,7 +123,7 @@ public class SongEditAdd : SongEditCommand
         }
 
         if (validatedSo != null)
-            validatedNotes.Add(validatedSo);
+            validatedObjects.Add(validatedSo);
     }
 
     public static void ApplyPostValidatedAction(SongObject songObject)
@@ -215,15 +215,18 @@ public class SongEditAdd : SongEditCommand
             validatedNotes.Add(noteToAdd);
     }
 
-    static Starpower AddStarpower(Starpower sp, IList<SongObject> overwrittenList)
+    static Starpower AddStarpower(Starpower sp, IList<SongObject> overwrittenList, IList<SongObject> validatedList)
     {
         ChartEditor editor = ChartEditor.Instance;
         TryRecordOverwrite(sp, editor.currentChart.chartObjects, overwrittenList);
 
-        Starpower spToAdd = new Starpower(sp);
+        CapPrevAndNextPreInsert(sp, editor.currentChart, overwrittenList, validatedList);
 
+        Starpower spToAdd = new Starpower(sp);
         editor.currentChart.Add(spToAdd, false);
         Debug.Log("Added new starpower");
+
+        SetNotesDirty(spToAdd, editor.currentChart.notes);
 
         return spToAdd;
     }
@@ -296,6 +299,63 @@ public class SongEditAdd : SongEditCommand
         Debug.Log("Added new section");
 
         return sectionToAdd;
+    }
+
+    #endregion
+
+    #region Starpower Helper Functions
+
+    static void SetNotesDirty(Starpower sp, IList<Note> notes)
+    {
+        int start, length;
+        SongObjectHelper.GetRange(notes, sp.tick, sp.tick + sp.length, out start, out length);
+
+        for (int i = start; i < start + length; ++i)
+        {
+            if (notes[i].controller)
+                notes[i].controller.SetDirty();
+        }
+    }
+
+    static void CapPrevAndNextPreInsert(Starpower sp, Chart chart, IList<SongObject> overwrittenList, IList<SongObject> validatedList)
+    {
+        int arrayPos = SongObjectHelper.FindClosestPosition(sp, chart.starPower);
+
+        if (arrayPos != SongObjectHelper.NOTFOUND)       // Found an object that matches
+        {
+            if (chart.starPower[arrayPos] < sp)
+            {
+                ++arrayPos;
+            }
+
+            if (arrayPos > 0 && chart.starPower[arrayPos - 1].tick < sp.tick)
+            {
+
+                Starpower prevSp = chart.starPower[arrayPos - 1];
+                // Cap previous sp
+                if (prevSp.tick + prevSp.length > sp.tick)
+                {
+                    prevSp.Delete();
+                    overwrittenList.Add(prevSp.Clone());
+
+                    uint newLength = sp.tick - prevSp.tick;
+                    Starpower newSp = new Starpower(prevSp.tick, newLength);
+                    chart.Add(newSp);
+                    validatedList.Add(newSp);
+                }
+            }
+
+            if (arrayPos < chart.starPower.Count && chart.starPower[arrayPos].tick > sp.tick)
+            {
+                Starpower nextSp = chart.starPower[arrayPos];
+
+                // Cap self
+                if (sp.tick + sp.length > nextSp.tick)
+                {
+                    sp.length = nextSp.tick - sp.tick;
+                }
+            }
+        }
     }
 
     #endregion

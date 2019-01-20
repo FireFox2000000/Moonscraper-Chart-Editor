@@ -31,7 +31,7 @@ public class MoveStarpower : PlaceStarpower {
         editor.actionHistory.Insert(new ActionHistory.Action[] { new ActionHistory.Delete(initObject), new ActionHistory.Add(starpowerToAdd) });*/
         List<ActionHistory.Action> record = new List<ActionHistory.Action>();
         record.Add(new ActionHistory.Delete(initObject));
-        record.AddRange(AddObjectToCurrentChart(starpower, editor));
+        //record.AddRange(AddObjectToCurrentChart(starpower, editor));
 
         if (!initObject.AllValuesCompare(starpower))
             editor.actionHistory.Insert(record.ToArray());

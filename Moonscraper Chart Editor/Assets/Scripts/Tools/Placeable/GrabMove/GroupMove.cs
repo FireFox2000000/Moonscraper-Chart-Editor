@@ -121,7 +121,7 @@ public class GroupMove : ToolObject
                     //record.AddRange(PlaceNote.AddObjectToCurrentChart((Note)movingSongObjects[i], editor, false, false));     // Capping
                     break;
                 case (SongObject.ID.Starpower):
-                    record.AddRange(PlaceStarpower.AddObjectToCurrentChart((Starpower)movingSongObjects[i], editor, false, false));       // Capping
+                    //record.AddRange(PlaceStarpower.AddObjectToCurrentChart((Starpower)movingSongObjects[i], editor, false, false));       // Capping
                     break;
                 case (SongObject.ID.ChartEvent):
                     overwriteRecord = PlaceSongObject.OverwriteActionHistory((ChartEvent)movingSongObjects[i], editor.currentChart.events);

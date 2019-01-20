@@ -11,9 +11,7 @@ public class PlaceStarpower : PlaceSongObject {
     new public StarpowerController controller { get { return (StarpowerController)base.controller; } set { base.controller = value; } }
 
     Starpower lastPlacedSP = null;
-    List<ActionHistory.Action> record;
     Renderer spRen;
-    Starpower overwrittenSP = null;
 
     protected override void SetSongObjectAndController()
     {
@@ -22,7 +20,6 @@ public class PlaceStarpower : PlaceSongObject {
         controller = GetComponent<StarpowerController>();
         controller.starpower = starpower;
         spRen = GetComponent<Renderer>();
-        record = new List<ActionHistory.Action>();
     }
 
     protected override void Controls()
@@ -33,13 +30,6 @@ public class PlaceStarpower : PlaceSongObject {
             {
                 if (lastPlacedSP == null)
                 {
-                    // Check if there's a starpower already in that position
-                    int arrayPos = SongObjectHelper.FindObjectPosition(starpower, editor.currentChart.starPower);
-                    if (arrayPos != SongObjectHelper.NOTFOUND)       // Found an object that matches
-                    {
-                        overwrittenSP = (Starpower)editor.currentChart.starPower[arrayPos].Clone();
-                    }
-
                     AddObject();
                 }
                 else
@@ -77,21 +67,12 @@ public class PlaceStarpower : PlaceSongObject {
     {
         uint prevSpLength = lastPlacedSP.length;
 
-        lastPlacedSP.SetLengthByPos(objectSnappedChartPos);
+        uint newLength = lastPlacedSP.GetCappedLengthForPos(objectSnappedChartPos);
 
-        if (prevSpLength != lastPlacedSP.length)
+        if (prevSpLength != newLength)
         {
-            int index, length;
-            var notes = editor.currentChart.notes;
-            uint maxLength = prevSpLength > lastPlacedSP.length ? prevSpLength : lastPlacedSP.length;
-
-            SongObjectHelper.GetRange(notes, lastPlacedSP.tick, lastPlacedSP.tick + maxLength, out index, out length);
-
-            for (int i = index; i < index + length; ++i)
-            {
-                if (notes[i].controller)
-                    notes[i].controller.SetDirty();
-            }
+            editor.commandStack.Pop();
+            editor.commandStack.Push(new SongEditAdd(new Starpower(lastPlacedSP.tick, newLength)));
         }
     }
 
@@ -106,25 +87,8 @@ public class PlaceStarpower : PlaceSongObject {
 
         if ((Input.GetMouseButtonUp(0) && !GameSettings.keysModeEnabled) || (GameSettings.keysModeEnabled && Input.GetButtonUp("Add Object")))
         {
-            if (lastPlacedSP != null)
-            {
-                // Make a record of the last SP
-                if (overwrittenSP == null)
-                    record.Add(new ActionHistory.Add(lastPlacedSP));
-                else if (!overwrittenSP.AllValuesCompare(lastPlacedSP))
-                    record.Add(new ActionHistory.Modify(overwrittenSP, lastPlacedSP));
-            }
-
-            if (record.Count > 0)
-            {
-                //Debug.Log(record.Count);
-                editor.actionHistory.Insert(record.ToArray());
-            }
-
             // Reset
             lastPlacedSP = null;
-            overwrittenSP = null;
-            record.Clear();
         } 
     }
 
@@ -137,94 +101,10 @@ public class PlaceStarpower : PlaceSongObject {
 
     protected override void AddObject()
     {
-        Starpower starpowerToAdd = new Starpower(starpower);
-        record.AddRange(CapPrevAndNextPreInsert(starpowerToAdd, editor.currentChart));
-        editor.currentChart.Add(starpowerToAdd);
-        //editor.CreateStarpowerObject(starpowerToAdd);
-        editor.currentSelectedObject = starpowerToAdd;
+        editor.commandStack.Push(new SongEditAdd(new Starpower(starpower)));
 
-        lastPlacedSP = starpowerToAdd;
-
-        SetNotesDirty(starpowerToAdd);
-    }
-
-    public static ActionHistory.Action[] AddObjectToCurrentChart(Starpower starpower, ChartEditor editor, bool update = true, bool copy = true)
-    {
-        List<ActionHistory.Action> record = new List<ActionHistory.Action>();
-
-        Starpower starpowerToAdd;
-        if (copy)
-            starpowerToAdd = new Starpower(starpower);
-        else
-            starpowerToAdd = starpower;
-
-        record.AddRange(CapPrevAndNextPreInsert(starpowerToAdd, editor.currentChart));
-        ActionHistory.Action overwriteRecord = OverwriteActionHistory(starpowerToAdd, editor.currentChart.starPower);
-        if (overwriteRecord != null)
-            record.Add(overwriteRecord);
-
-        editor.currentChart.Add(starpowerToAdd, update);
-        //editor.CreateStarpowerObject(starpowerToAdd);
-        editor.currentSelectedObject = starpowerToAdd;
-
-        SetNotesDirty(starpowerToAdd);
-
-        return record.ToArray();
-    }
-
-    static void SetNotesDirty(Starpower sp)
-    {
-        int start, length;
-        var notes = sp.chart.notes;
-        SongObjectHelper.GetRange(notes, sp.tick, sp.tick + sp.length, out start, out length);
-
-        for (int i = start; i < start + length; ++i)
-        {
-            if (notes[i].controller)
-                notes[i].controller.SetDirty();
-        }
-    }
-
-    static ActionHistory.Action[] CapPrevAndNextPreInsert(Starpower sp, Chart chart)
-    {
-        List<ActionHistory.Action> record = new List<ActionHistory.Action>();
-        int arrayPos = SongObjectHelper.FindClosestPosition(sp, chart.starPower);
-
-        if (arrayPos != SongObjectHelper.NOTFOUND)       // Found an object that matches
-        {
-            if (chart.starPower[arrayPos] < sp)
-            {
-                ++arrayPos;
-            }
-           
-            if (arrayPos > 0 && chart.starPower[arrayPos - 1].tick < sp.tick)
-            {
-                
-                Starpower prevSp = chart.starPower[arrayPos - 1];
-                // Cap previous sp
-                if (prevSp.tick + prevSp.length > sp.tick)
-                {
-                    Starpower originalPrev = (Starpower)prevSp.Clone();
-                    
-                    prevSp.length = sp.tick - prevSp.tick;
-                    record.Add(new ActionHistory.Modify(originalPrev, prevSp));
-                }
-            }
-
-            if (arrayPos < chart.starPower.Count && chart.starPower[arrayPos].tick > sp.tick)
-            {       
-                Starpower nextSp = chart.starPower[arrayPos];
-
-                // Cap self
-                if (sp.tick + sp.length > nextSp.tick)
-                {
-                    Starpower originalNext = (Starpower)nextSp.Clone();
-                    sp.length = nextSp.tick - sp.tick;
-                    record.Add(new ActionHistory.Modify(originalNext, nextSp));
-                }
-            }
-        }
-
-        return record.ToArray();
+        int insertionIndex = SongObjectHelper.FindObjectPosition(starpower, editor.currentChart.starPower);
+        Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
+        lastPlacedSP = editor.currentChart.starPower[insertionIndex];
     }
 }
