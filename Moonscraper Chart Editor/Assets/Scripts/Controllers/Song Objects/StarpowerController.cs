@@ -12,6 +12,7 @@ public class StarpowerController : SongObjectController
     public const float position = -3.0f;
     
     Starpower unmodifiedSP = null;
+    bool wantPop = false;
 
     new void Awake()
     {
@@ -63,7 +64,6 @@ public class StarpowerController : SongObjectController
 
     void TailDrag()
     {
-        ChartEditor.isDirty = true;
         uint snappedChartPos;
 
         if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
@@ -75,32 +75,26 @@ public class StarpowerController : SongObjectController
             snappedChartPos = Snapable.TickToSnappedTick(starpower.song.WorldYPositionToTick(editor.mouseYMaxLimit.position.y), GameSettings.step, starpower.song.resolution);
         }
 
-        uint max = starpower.length;
-
-        starpower.SetLengthByPos(snappedChartPos);
-
-        if (starpower.length > max)
-            max = starpower.length;
-
-        int start, length;
-        var notes = starpower.chart.notes;
-        SongObjectHelper.GetRange(notes, starpower.tick, starpower.tick + max, out start, out length);
-
-        for (int i = start; i < start + length; ++i)
+        uint newLength = starpower.GetCappedLengthForPos(snappedChartPos);
+        if (newLength != starpower.length)
         {
-            if (notes[i].controller)
-                notes[i].controller.SetDirty();
+            if (wantPop)
+                editor.commandStack.Pop();
+
+            editor.commandStack.Push(new SongEditModify<Starpower>(starpower, new Starpower(starpower.tick, newLength)));
+
+            wantPop = true;
         }
     }
     
     public override void OnSelectableMouseDrag()
     {
         // Move note
-        if (!dragCheck())
+        if (!DragCheck())
             base.OnSelectableMouseDrag();
     }
 
-    public bool dragCheck()
+    public bool DragCheck()
     {
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
         {
@@ -116,11 +110,6 @@ public class StarpowerController : SongObjectController
 
     public override void OnSelectableMouseUp()
     {
-        if (unmodifiedSP != null && unmodifiedSP.length != starpower.length)
-        {
-            editor.actionHistory.Insert(new ActionHistory.Modify(unmodifiedSP, starpower));
-        }
-
-        unmodifiedSP = null;
+        wantPop = false;
     }
 }

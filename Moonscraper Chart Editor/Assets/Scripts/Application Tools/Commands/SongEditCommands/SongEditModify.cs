@@ -37,6 +37,8 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
 
     void CloneInto(SongObject objectToCopyInto, SongObject objectToCopyFrom)
     {
+        Chart chart = ChartEditor.Instance.currentChart;
+
         switch ((SongObject.ID)objectToCopyInto.classID)
         {
             case SongObject.ID.Note:
@@ -45,6 +47,7 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
 
             case SongObject.ID.Starpower:
                 (objectToCopyInto as Starpower).CopyFrom((objectToCopyFrom as Starpower));
+                SongEditAdd.SetNotesDirty(objectToCopyInto as Starpower, chart.notes);
                 break;
 
             case SongObject.ID.ChartEvent:

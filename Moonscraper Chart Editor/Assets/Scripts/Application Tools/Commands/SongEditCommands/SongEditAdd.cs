@@ -305,7 +305,7 @@ public class SongEditAdd : SongEditCommand
 
     #region Starpower Helper Functions
 
-    static void SetNotesDirty(Starpower sp, IList<Note> notes)
+    public static void SetNotesDirty(Starpower sp, IList<Note> notes)
     {
         int start, length;
         SongObjectHelper.GetRange(notes, sp.tick, sp.tick + sp.length, out start, out length);

@@ -22,7 +22,7 @@ public class StarpowerTailController : SelectableClick {
     public override void OnSelectableMouseDrag()
     {
         // Update sustain
-        spCon.dragCheck();
+        spCon.DragCheck();
     }
 
     public override void OnSelectableMouseUp()
