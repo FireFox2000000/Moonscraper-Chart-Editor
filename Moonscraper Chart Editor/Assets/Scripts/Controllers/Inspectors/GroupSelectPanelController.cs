@@ -157,7 +157,6 @@ public class GroupSelectPanelController : MonoBehaviour
 
     public void SetNoteType(Note.NoteType type)
     {
-        // NOT WORKING, TODO
         List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
 
         foreach (ChartObject chartObject in editor.currentSelectedObjects)
@@ -166,7 +165,7 @@ public class GroupSelectPanelController : MonoBehaviour
             {
                 Note note = chartObject as Note;
                 Note newNote = new Note(note);
-                newNote.SetType(type);
+                newNote.flags = note.GetFlagsToSetType(type);
                 songEditCommands.Add(new SongEditModify<Note>(note, newNote));
             }
         }

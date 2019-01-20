@@ -188,18 +188,25 @@ public static class NoteFunctions {
 
     public static void SetType(this Note note, Note.NoteType type)
     {
-        note.flags = Note.Flags.None;
+        note.flags = note.GetFlagsToSetType(type);
+
+        note.ApplyFlagsToChord();
+    }
+
+    public static Note.Flags GetFlagsToSetType(this Note note, Note.NoteType type)
+    {
+        Note.Flags flags = Note.Flags.None;
         switch (type)
         {
             case (Note.NoteType.Strum):
                 if (note.isChord)
-                    note.flags &= ~Note.Flags.Forced;
+                    flags &= ~Note.Flags.Forced;
                 else
                 {
                     if (note.isNaturalHopo)
-                        note.flags |= Note.Flags.Forced;
+                        flags |= Note.Flags.Forced;
                     else
-                        note.flags &= ~Note.Flags.Forced;
+                        flags &= ~Note.Flags.Forced;
                 }
 
                 break;
@@ -208,27 +215,27 @@ public static class NoteFunctions {
                 if (!note.cannotBeForced)
                 {
                     if (note.isChord)
-                        note.flags |= Note.Flags.Forced;
+                        flags |= Note.Flags.Forced;
                     else
                     {
                         if (!note.isNaturalHopo)
-                            note.flags |= Note.Flags.Forced;
+                            flags |= Note.Flags.Forced;
                         else
-                            note.flags &= ~Note.Flags.Forced;
+                            flags &= ~Note.Flags.Forced;
                     }
                 }
                 break;
 
             case (Note.NoteType.Tap):
                 if (!note.IsOpenNote())
-                    note.flags |= Note.Flags.Tap;
+                    flags |= Note.Flags.Tap;
                 break;
 
             default:
                 break;
         }
 
-        note.ApplyFlagsToChord();
+        return flags;
     }
 
     public static int ExpensiveGetExtendedSustainMask(this Note note)

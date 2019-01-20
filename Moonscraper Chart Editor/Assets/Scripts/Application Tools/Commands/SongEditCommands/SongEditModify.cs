@@ -20,7 +20,6 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
             Note beforeNote = before as Note;
             Note afterNote = after as Note;
             Debug.Assert(beforeNote.rawNote == afterNote.rawNote, "Note modifying is not supported by SongEditModify<T>(T, T). Use SongEditModify(Note, Note) instead.");
-            Debug.Assert(beforeNote.flags == afterNote.flags, "Note flag modifying is not supported by SongEditModify<T>(T, T). Use SongEditModify(Note, Note) instead.");
         }
     }
 
@@ -64,6 +63,9 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
                 Debug.LogError("Object to modify not supported.");
                 break;
         }
+
+        if (objectToCopyInto.controller)
+            objectToCopyInto.controller.SetDirty();
     }
 
     public static SongObject FindObjectToModify(SongObject so)
