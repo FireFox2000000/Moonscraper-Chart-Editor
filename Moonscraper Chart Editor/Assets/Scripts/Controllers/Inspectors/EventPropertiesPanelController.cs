@@ -158,7 +158,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
                     editor.commandStack.Push(new SongEditModify<ChartEvent>(currentChartEvent, newChartEvent));
                     int insertionIndex = SongObjectHelper.FindObjectPosition(newChartEvent, editor.currentChart.events);
                     Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Chart event failed to be inserted?");
-                    editor.currentSelectedObject = editor.currentChart.chartObjects[insertionIndex];
+                    editor.currentSelectedObject = editor.currentChart.events[insertionIndex];
                 }
             }
         }
