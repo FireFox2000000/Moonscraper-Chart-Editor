@@ -288,9 +288,12 @@ public static class NoteFunctions {
             for (int i = index + length - 1; i >= index; --i)
             {
                 Note overwriteNote = chart.chartObjects[i] as Note;
+                if (overwriteNote == null)
+                    continue;
+
                 bool sameFret = note.guitarFret == overwriteNote.guitarFret;
                 bool isOverwritableOpenNote = (note.IsOpenNote() || overwriteNote.IsOpenNote()) && !Globals.drumMode;
-                if (overwriteNote != null && (isOverwritableOpenNote || sameFret))
+                if (isOverwritableOpenNote || sameFret)
                 {
                     overwriteNote.Delete(false);
                     oldNotesRemoved.Add(overwriteNote);
