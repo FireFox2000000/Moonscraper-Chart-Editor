@@ -76,7 +76,7 @@ public class GroupSelectPanelController : MonoBehaviour
                     Note newNote = new Note(note);
                     newNote.rawNote = noteNumber;
 
-                    songEditCommands.Add(new SongEditModify(note, newNote));
+                    songEditCommands.Add(new SongEditModifyValidated(note, newNote));
                     selected.Add(newNote);
                 }
             }
@@ -127,7 +127,7 @@ public class GroupSelectPanelController : MonoBehaviour
                 if (length == uint.MaxValue)
                     assignedLength = songEndTick - note.tick;
 
-                songEditCommands.Add(new SongEditModify(note, new Note(note.tick, note.rawNote, assignedLength, note.flags)));
+                songEditCommands.Add(new SongEditModifyValidated(note, new Note(note.tick, note.rawNote, assignedLength, note.flags)));
             }
         }
 

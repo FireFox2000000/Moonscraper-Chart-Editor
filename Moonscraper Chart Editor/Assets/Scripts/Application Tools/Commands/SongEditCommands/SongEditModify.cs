@@ -150,9 +150,9 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
     }
 }
 
-public class SongEditModify : SongEditAdd
+public class SongEditModifyValidated : SongEditAdd
 {
-    public SongEditModify(Note before, Note after) : base(after)
+    public SongEditModifyValidated(Note before, Note after) : base(after)
     {
         Debug.Assert(after.song == null, "Must add a new song object!");
         Debug.Assert(before.tick == after.tick, "Song object is being moved rather than modified!");
