@@ -182,10 +182,7 @@ public class PlaceNote : PlaceSongObject {
     protected override void AddObject()
     {
         editor.commandStack.Push(new SongEditAdd(this.note));
-
-        int insertionIndex = SongObjectHelper.FindObjectPosition(note, editor.currentChart.notes);
-        Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
-        editor.currentSelectedObject = editor.currentChart.notes[insertionIndex];
+        editor.SelectSongObject(note, editor.currentChart.notes);
     }
 
     protected static void standardOverwriteOpen(Note note)

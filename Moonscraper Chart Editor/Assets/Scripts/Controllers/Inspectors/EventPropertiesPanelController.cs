@@ -133,9 +133,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
                 {
                     Event newEvent = new Event(name, currentEvent.tick);
                     editor.commandStack.Push(new SongEditModify<Event>(currentEvent, newEvent));
-                    int insertionIndex = SongObjectHelper.FindObjectPosition(newEvent, editor.currentSong.events);
-                    Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
-                    editor.currentSelectedObject = editor.currentSong.events[insertionIndex];
+                    editor.SelectSongObject(newEvent, editor.currentSong.events);
                 }
             }
         }
@@ -156,9 +154,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
                 {
                     ChartEvent newChartEvent = new ChartEvent(currentChartEvent.tick, name);
                     editor.commandStack.Push(new SongEditModify<ChartEvent>(currentChartEvent, newChartEvent));
-                    int insertionIndex = SongObjectHelper.FindObjectPosition(newChartEvent, editor.currentChart.events);
-                    Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Chart event failed to be inserted?");
-                    editor.currentSelectedObject = editor.currentChart.events[insertionIndex];
+                    editor.SelectSongObject(newChartEvent, editor.currentChart.events);
                 }
             }
         }

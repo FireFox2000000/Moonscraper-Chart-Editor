@@ -57,9 +57,7 @@ public class SectionPropertiesPanelController : PropertiesPanelController {
         {
             Section newSection = new Section(name, currentSection.tick);
             editor.commandStack.Push(new SongEditModify<Section>(currentSection, newSection));
-            int insertionIndex = SongObjectHelper.FindObjectPosition(newSection, editor.currentSong.sections);
-            Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
-            editor.currentSelectedObject = editor.currentSong.sections[insertionIndex];
+            editor.SelectSongObject(newSection, editor.currentSong.sections);
         }
     }
 }

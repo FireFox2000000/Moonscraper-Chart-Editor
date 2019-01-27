@@ -51,10 +51,7 @@ public class PlaceSection : PlaceSongObject {
     protected override void AddObject()
     {
         editor.commandStack.Push(new SongEditAdd(new Section(this.section)));
-
-        int insertionIndex = SongObjectHelper.FindObjectPosition(section, editor.currentSong.sections);
-        Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
-        editor.currentSelectedObject = editor.currentSong.sections[insertionIndex];
+        editor.SelectSongObject(section, editor.currentSong.sections);
     }
 
     Section sectionSearch(uint pos)

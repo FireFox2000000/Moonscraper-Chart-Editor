@@ -22,10 +22,7 @@ public class PlaceEvent : PlaceSongObject
     protected override void AddObject()
     {
         editor.commandStack.Push(new SongEditAdd(new Event(this.songEvent)));
-
-        int insertionIndex = SongObjectHelper.FindObjectPosition(songEvent, editor.currentSong.events);
-        Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
-        editor.currentSelectedObject = editor.currentSong.events[insertionIndex];
+        editor.SelectSongObject(songEvent, editor.currentSong.events);
     }
 
     protected override void Controls()
