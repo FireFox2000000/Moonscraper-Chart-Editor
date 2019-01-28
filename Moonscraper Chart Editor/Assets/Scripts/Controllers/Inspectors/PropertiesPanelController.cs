@@ -58,12 +58,9 @@ public class PropertiesPanelController : MonoBehaviour {
 
         if (currentSongObject == null || prevSongObject == null || prevSongObject != currentSongObject)
         {
-            if (!
-                (
-                    (currentSongObject.GetType() == typeof(ChartEvent) || currentSongObject.GetType() == typeof(Event)) &&
-                    currentSongObject.GetType() == prevSongObject.GetType()
-                )
-            )
+            bool eventType = currentSongObject.GetType() == typeof(ChartEvent) || currentSongObject.GetType() == typeof(Event);
+            bool sameType = prevSongObject != null && currentSongObject.GetType() == prevSongObject.GetType();
+            if (!(eventType && sameType))
             {
                 return;
             } 
@@ -145,12 +142,9 @@ public class PropertiesPanelController : MonoBehaviour {
 
         if (currentSongObject == null || prevSongObject == null || prevSongObject != currentSongObject)
         {
-            if (!
-                (
-                    (currentSongObject.GetType() == typeof(ChartEvent) || currentSongObject.GetType() == typeof(Event)) &&
-                    currentSongObject.GetType() == prevSongObject.GetType()
-                )
-            )
+            bool eventType = currentSongObject.GetType() == typeof(ChartEvent) || currentSongObject.GetType() == typeof(Event);
+            bool sameType = prevSongObject != null && currentSongObject.GetType() == prevSongObject.GetType();
+            if (!(eventType && sameType))
             {
                 return;
             }

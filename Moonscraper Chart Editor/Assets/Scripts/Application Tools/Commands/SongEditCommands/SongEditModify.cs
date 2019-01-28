@@ -58,6 +58,10 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
                 (objectToCopyInto as BPM).CopyFrom((objectToCopyFrom as BPM));
                 break;
 
+            case SongObject.ID.TimeSignature:
+                (objectToCopyInto as TimeSignature).CopyFrom((objectToCopyFrom as TimeSignature));
+                break;
+
             case SongObject.ID.Event:
                 (objectToCopyInto as Event).CopyFrom((objectToCopyFrom as Event));
                 break;

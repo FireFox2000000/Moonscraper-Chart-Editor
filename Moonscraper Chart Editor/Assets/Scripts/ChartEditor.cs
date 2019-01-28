@@ -955,11 +955,12 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         return (SongObjectHelper.FindObjectPosition(songObject, currentSelectedObjects) != SongObjectHelper.NOTFOUND);
     }
 
-    public void SelectSongObject<T>(T songObject, IList<T> arrToSearch) where T : SongObject
+    public T SelectSongObject<T>(T songObject, IList<T> arrToSearch) where T : SongObject
     {
         int insertionIndex = SongObjectHelper.FindObjectPosition(songObject, arrToSearch);
         Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Failed to find songObject to highlight");
         currentSelectedObject = arrToSearch[insertionIndex];
+        return currentSelectedObject as T;
     }
 
     #endregion

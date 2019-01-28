@@ -56,4 +56,11 @@ public class TimeSignature : SyncTrack
         else
             return false;
     }
+
+    public void CopyFrom(TimeSignature ts)
+    {
+        tick = ts.tick;
+        numerator = ts.numerator;
+        denominator = ts.denominator;
+    }
 }

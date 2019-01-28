@@ -22,6 +22,7 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
 
         if (currentTS != null)
         {
+            positionText.text = "Position: " + currentTS.tick.ToString();
             tsValue.text = currentTS.numerator.ToString();
             tsDenomValue.text = currentTS.denominator.ToString();
         }
@@ -53,51 +54,41 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
     public void UpdateTSValue(string value)
     {
         float prevValue = currentTS.numerator;
+        uint numerator = 0;
+        bool isValid = uint.TryParse(value, out numerator);
+        isValid &= numerator > 0;
 
-        if (value != string.Empty && currentTS != null)
+        if (currentTS != null && isValid)
         {
-            currentTS.numerator = uint.Parse(value);
-            UpdateInputFieldRecord();
-        }
+            bool tentativeRecord, lockedRecord;
+            ShouldRecordInputField(value, currentTS.numerator.ToString(), out tentativeRecord, out lockedRecord);
 
-        if (prevValue != currentTS.numerator)
-            ChartEditor.isDirty = true;
+            if (!lockedRecord && tentativeRecord)
+            {
+                editor.commandStack.Pop();
+            }
+
+            if (tentativeRecord || lockedRecord)
+            {
+                TimeSignature newTs = new TimeSignature(currentTS.tick, numerator, currentTS.denominator);
+                var command = new SongEditModify<TimeSignature>(currentTS, newTs);
+                editor.commandStack.Push(command);
+                editor.SelectSongObject(newTs, editor.currentSong.syncTrack);
+            }
+        }
     }
 
     public void UpdateTSDenom(string value)
     {
-        float prevValue = currentTS.denominator;
-
-        if (value != string.Empty && currentTS != null)
-        {
-            currentTS.denominator = uint.Parse(value);
-            UpdateInputFieldRecord();
-        }
-
-        if (prevValue != currentTS.denominator)
-            ChartEditor.isDirty = true;
     }
 
     public void EndEdit(string value)
     {
-        if (value == string.Empty || currentTS.numerator < 1)
-        {
-            currentTS.numerator = 4;
-            UpdateInputFieldRecord();
-        }
-
         tsValue.text = currentTS.numerator.ToString();
     }
 
     public void EndEditDenom(string value)
     {
-        if (value == string.Empty || currentTS.denominator < 1)
-        {
-            currentTS.denominator = 4;
-            UpdateInputFieldRecord();
-        }
-
-        tsDenomValue.text = currentTS.denominator.ToString();
     }
 
     public char validatePositiveInteger(string text, int charIndex, char addedChar)
@@ -117,15 +108,12 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
 
         if (prevValue != pow)
         {
-            TimeSignature prev = (TimeSignature)currentTS.Clone();
-            currentTS.denominator = pow;
-
-            editor.actionHistory.Insert(new ActionHistory.Modify(prev, currentTS));
-
-            ChartEditor.isDirty = true;
+            TimeSignature newTs = new TimeSignature(currentTS.tick, currentTS.numerator, pow);
+            var command = new SongEditModify<TimeSignature>(currentTS, newTs);
+            editor.commandStack.Push(command);
+            var selected = editor.SelectSongObject(newTs, editor.currentSong.timeSignatures);
+            tsDenomValue.text = selected.denominator.ToString();
         }
-
-        tsDenomValue.text = currentTS.denominator.ToString();
     }
 
     public void DecreaseDenom()
@@ -142,15 +130,12 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
 
         if (prevValue != pow)
         {
-            TimeSignature prev = (TimeSignature)currentTS.Clone();
-            currentTS.denominator = pow;
-
-            editor.actionHistory.Insert(new ActionHistory.Modify(prev, currentTS));
-
-            ChartEditor.isDirty = true;
+            TimeSignature newTs = new TimeSignature(currentTS.tick, currentTS.numerator, pow);
+            var command = new SongEditModify<TimeSignature>(currentTS, newTs);
+            editor.commandStack.Push(command);
+            var selected = editor.SelectSongObject(newTs, editor.currentSong.timeSignatures);
+            tsDenomValue.text = selected.denominator.ToString();
         }
-
-        tsDenomValue.text = currentTS.denominator.ToString();
     }
 
     uint GetNextHigherPowOf2(uint startVal)

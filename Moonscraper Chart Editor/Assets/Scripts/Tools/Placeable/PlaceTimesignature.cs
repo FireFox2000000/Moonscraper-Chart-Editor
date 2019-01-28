@@ -30,8 +30,6 @@ public class PlaceTimesignature : PlaceSongObject {
         {
             if (Toolpane.currentTool == Toolpane.Tools.Timesignature && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
             {
-                RecordAddActionHistory(ts, editor.currentSong.timeSignatures);
-
                 AddObject();
             }
         }
@@ -41,13 +39,11 @@ public class PlaceTimesignature : PlaceSongObject {
             int pos = SongObjectHelper.FindObjectPosition(ts, searchArray);
             if (pos == SongObjectHelper.NOTFOUND)
             {
-                editor.actionHistory.Insert(new ActionHistory.Add(ts));
                 AddObject();
             }
             else if (searchArray[pos].tick != 0)
             {
-                editor.actionHistory.Insert(new ActionHistory.Delete(searchArray[pos]));
-                searchArray[pos].Delete();
+                editor.commandStack.Push(new SongEditDelete(searchArray[pos]));
                 editor.currentSelectedObject = null;
             }
         }
@@ -60,10 +56,7 @@ public class PlaceTimesignature : PlaceSongObject {
 
     public static void AddObjectToCurrentSong(TimeSignature ts, ChartEditor editor, bool update = true)
     {
-        TimeSignature tsToAdd = new TimeSignature(ts);
-        editor.currentSong.Add(tsToAdd, update);
-
-        // Only show the panel once the object has been placed down
-        editor.currentSelectedObject = tsToAdd;
+        editor.commandStack.Push(new SongEditAdd(ts));
+        editor.SelectSongObject(ts, editor.currentSong.syncTrack);
     }
 }
