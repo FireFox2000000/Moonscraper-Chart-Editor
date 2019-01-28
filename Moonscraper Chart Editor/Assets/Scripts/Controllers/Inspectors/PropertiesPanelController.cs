@@ -14,13 +14,11 @@ public class PropertiesPanelController : MonoBehaviour {
     SongObject prevSongObjectRef;
     string prevValue = string.Empty;
 
-    ActionHistory.Modify inputFieldModify = null;
     ValueDirection lastKnownDirection = ValueDirection.NONE;
     bool commandRecordingInProcess = false;
 
     void ResetActionRecording()
     {
-        inputFieldModify = null;
         lastKnownDirection = ValueDirection.NONE;
         prevValue = string.Empty;
         prevSongObject = null;
@@ -51,88 +49,6 @@ public class PropertiesPanelController : MonoBehaviour {
 
         prevSongObject = currentSongObject.Clone();
         prevSongObjectRef = currentSongObject;
-    }
-
-    protected void UpdateInputFieldRecord()
-    {
-
-        if (currentSongObject == null || prevSongObject == null || prevSongObject != currentSongObject)
-        {
-            bool eventType = currentSongObject.GetType() == typeof(ChartEvent) || currentSongObject.GetType() == typeof(Event);
-            bool sameType = prevSongObject != null && currentSongObject.GetType() == prevSongObject.GetType();
-            if (!(eventType && sameType))
-            {
-                return;
-            } 
-        }
-
-        string value = GetValue(currentSongObject);
-
-        if (value == prevValue || value == GetValue(prevSongObject))
-            return;
-
-        // Check if there's a record already in
-        if (inputFieldModify == null || lastKnownDirection == ValueDirection.NONE)
-        {
-            // Add a new record
-            inputFieldModify = new ActionHistory.Modify(prevSongObject, currentSongObject);
-            // Add to action history
-            editor.actionHistory.Insert(inputFieldModify);
-
-            if (GetValue(currentSongObject).Length < GetValue(prevSongObject).Length)
-                lastKnownDirection = ValueDirection.DOWN;
-            else if (GetValue(currentSongObject).Length > GetValue(prevSongObject).Length)
-                lastKnownDirection = ValueDirection.UP;
-            else
-                lastKnownDirection = ValueDirection.NONE;
-        }
-        // Else check if a new record needs to overwrite this current one or if this one needs to be edited
-        else if (inputFieldModify != null)
-        {
-            if (value.Length < prevValue.Length)
-            {
-                if (lastKnownDirection == ValueDirection.DOWN)
-                {
-                    // Edit action
-                    inputFieldModify.after = currentSongObject.Clone();
-                }
-                else
-                {
-                    // New action
-                    inputFieldModify = new ActionHistory.Modify(prevSongObject, currentSongObject);
-                    // Add to action history
-                    editor.actionHistory.Insert(inputFieldModify);
-                }
-
-                lastKnownDirection = ValueDirection.DOWN;
-            }
-            else if (value.Length > prevValue.Length)
-            {
-                if (lastKnownDirection == ValueDirection.UP)
-                {
-                    // Edit action
-                    inputFieldModify.after = currentSongObject.Clone();
-                }
-                else
-                {
-                    // New action
-                    inputFieldModify = new ActionHistory.Modify(prevSongObject, currentSongObject);
-                    // Add to action history
-                    editor.actionHistory.Insert(inputFieldModify);
-                }
-
-                lastKnownDirection = ValueDirection.UP;
-            }
-            else
-            {
-                // Add a new record
-                inputFieldModify = new ActionHistory.Modify(prevSongObject, currentSongObject);
-                // Add to action history
-                editor.actionHistory.Insert(inputFieldModify);
-            }
-        }
-
-        prevValue = value;
     }
 
     protected void ShouldRecordInputField(string newLabel, string oldLabel, out bool tentativeRecord, out bool lockedRecord)

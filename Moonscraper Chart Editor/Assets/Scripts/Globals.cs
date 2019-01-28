@@ -273,7 +273,6 @@ public class Globals : MonoBehaviour {
                     editor.commandStack.Pop();
                     success = true;
                 }
-                //success = editor.actionHistory.Undo(editor);
             }
             else if (ShortcutInput.GetInputDown(Shortcut.ActionHistoryRedo))
             {
@@ -282,7 +281,6 @@ public class Globals : MonoBehaviour {
                     editor.commandStack.Push();
                     success = true;
                 }
-                //success = editor.actionHistory.Redo(editor);
             }
 
             if (success)

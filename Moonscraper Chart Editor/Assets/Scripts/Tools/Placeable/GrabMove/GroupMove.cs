@@ -116,6 +116,7 @@ public class GroupMove : ToolObject
             
             switch ((SongObject.ID)movingSongObjects[i].classID)
             {
+                /*
                 case (SongObject.ID.Note):
                     // #TODO
                     //record.AddRange(PlaceNote.AddObjectToCurrentChart((Note)movingSongObjects[i], editor, false, false));     // Capping
@@ -157,7 +158,7 @@ public class GroupMove : ToolObject
                     if (record != null)
                         record.Add(overwriteRecord);
                     editor.currentSong.Add((Event)movingSongObjects[i], false);
-                    break;
+                    break;*/
                 default:
                     break;
             }     

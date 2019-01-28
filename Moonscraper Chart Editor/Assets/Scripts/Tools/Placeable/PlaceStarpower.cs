@@ -46,14 +46,11 @@ public class PlaceStarpower : PlaceSongObject {
                 int pos = SongObjectHelper.FindObjectPosition(starpower, searchArray);
                 if (pos == SongObjectHelper.NOTFOUND)
                 {
-                    editor.actionHistory.Insert(new ActionHistory.Add(starpower));
                     AddObject();
                 }
                 else
                 {
-                    editor.actionHistory.Insert(new ActionHistory.Delete(searchArray[pos]));
-                    searchArray[pos].Delete();
-                    editor.currentSelectedObject = null;
+                    editor.commandStack.Push(new SongEditDelete(searchArray[pos]));
                 }
             }
             else if (lastPlacedSP != null)

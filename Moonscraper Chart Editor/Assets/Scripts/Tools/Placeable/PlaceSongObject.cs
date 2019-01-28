@@ -73,30 +73,6 @@ public abstract class PlaceSongObject : ToolObject {
         }
     }
 
-    protected void RecordAddActionHistory<T>(T overwriteCheck, IList<T> overWriteSearch) where T : SongObject
-    {
-        ActionHistory.Action record = OverwriteActionHistory(overwriteCheck, overWriteSearch);
-        if (record != null)
-            editor.actionHistory.Insert(record);
-    }
-
-    public static ActionHistory.Action OverwriteActionHistory<T>(T overwriteCheck, IList<T> overWriteSearch) where T : SongObject
-    {
-        int arrayPos = SongObjectHelper.FindObjectPosition(overwriteCheck, overWriteSearch);
-        if (arrayPos != SongObjectHelper.NOTFOUND)       // Found an object that matches
-        {
-            if (!overwriteCheck.AllValuesCompare(overWriteSearch[arrayPos]))
-                // Object will changed, therefore record
-                return new ActionHistory.Modify(overWriteSearch[arrayPos], overwriteCheck);
-            else
-                return null;
-        }
-        else
-        {
-            return new ActionHistory.Add(overwriteCheck);
-        }
-    }
-
     void OnKeysModeToggled(bool keysModeEnabled)
     {
         foreach (Renderer ren in renderers)
