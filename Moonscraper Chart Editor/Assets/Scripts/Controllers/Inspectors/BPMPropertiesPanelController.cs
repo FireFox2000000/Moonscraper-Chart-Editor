@@ -304,7 +304,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
             if (anchor == null || bpmToAdjust == currentBPM)
             {
-                commands.Add(new SongEditModify<BPM>(currentBPM, new BPM(currentBPM.tick, desiredBpmValue)));
+                commands.Add(new SongEditModify<BPM>(currentBPM, new BPM(currentBPM.tick, desiredBpmValue, currentBPM.anchor)));
                 return new BatchedSongEditCommand(commands);
             }
 
@@ -342,7 +342,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             {
                 if (newValue != 0)
                 {
-                    commands.Add(new SongEditModify<BPM>(bpmToAdjust, new BPM(bpmToAdjust.tick, newValue)));
+                    commands.Add(new SongEditModify<BPM>(bpmToAdjust, new BPM(bpmToAdjust.tick, newValue, bpmToAdjust.anchor)));
                 }
 
                 finalValue = desiredBpmValue;
@@ -354,7 +354,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         if (desiredBpmValue == currentBPM.value)
             return null;
 
-        commands.Add(new SongEditModify<BPM>(currentBPM, new BPM(currentBPM.tick, desiredBpmValue)));
+        commands.Add(new SongEditModify<BPM>(currentBPM, new BPM(currentBPM.tick, desiredBpmValue, currentBPM.anchor)));
         return new BatchedSongEditCommand(commands);
     }
 

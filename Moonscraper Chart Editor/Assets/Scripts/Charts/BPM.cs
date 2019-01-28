@@ -29,9 +29,10 @@ public class BPM : SyncTrack
     /// </summary>
     /// <param name="_position">Tick position.</param>
     /// <param name="_value">Stored as the bpm value * 1000 to limit it to 3 decimal places. For example, a bpm of 120.075 would be stored as 120075.</param>
-    public BPM(uint _position = 0, uint _value = 120000) : base(_position)
+    public BPM(uint _position = 0, uint _value = 120000, float? _anchor = null) : base(_position)
     {
         value = _value;
+        anchor = _anchor;
     }
 
     public BPM(BPM _bpm) : base(_bpm.tick)
