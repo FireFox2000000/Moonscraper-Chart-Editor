@@ -51,12 +51,7 @@ public class PlaceTimesignature : PlaceSongObject {
 
     protected override void AddObject()
     {
-        AddObjectToCurrentSong(ts.CloneAs<TimeSignature>(), editor);
-    }
-
-    public static void AddObjectToCurrentSong(TimeSignature ts, ChartEditor editor, bool update = true)
-    {
-        editor.commandStack.Push(new SongEditAdd(ts));
+        editor.commandStack.Push(new SongEditAdd(new TimeSignature(ts)));
         editor.SelectSongObject(ts, editor.currentSong.syncTrack);
     }
 }

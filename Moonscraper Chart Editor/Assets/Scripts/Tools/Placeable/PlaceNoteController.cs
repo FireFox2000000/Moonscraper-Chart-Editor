@@ -237,12 +237,12 @@ public class PlaceNoteController : ObjectlessTool {
         {
             if (heldNotes[i] != null)
             {
-                KeySustainActionHistoryInsert(i);
+                ClearHeldNotes(i);
             }
         }
     }
 
-    void KeySustainActionHistoryInsert(int i)
+    void ClearHeldNotes(int i)
     {
         heldNotes[i] = null;
     }
@@ -278,7 +278,7 @@ public class PlaceNoteController : ObjectlessTool {
         {
             if (isTyping || Input.GetKeyUp(NumToStringLUT[(i + 1)]))
             {
-                KeySustainActionHistoryInsert(i);
+                ClearHeldNotes(i);
             }
         }
 
