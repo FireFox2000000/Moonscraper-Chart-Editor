@@ -24,8 +24,6 @@ public class PlaceBPM : PlaceSongObject {
         {
             if (Toolpane.currentTool == Toolpane.Tools.BPM && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
             {
-                RecordAddActionHistory(bpm, editor.currentSong.bpms);
-
                 AddObject();
             }
         }
@@ -35,13 +33,11 @@ public class PlaceBPM : PlaceSongObject {
             int pos = SongObjectHelper.FindObjectPosition(bpm, searchArray);
             if (pos == SongObjectHelper.NOTFOUND)
             {
-                editor.actionHistory.Insert(new ActionHistory.Add(bpm));
                 AddObject();
             }
             else if (searchArray[pos].tick != 0)
             {
-                editor.actionHistory.Insert(new ActionHistory.Delete(searchArray[pos]));
-                searchArray[pos].Delete();
+                editor.commandStack.Push(new SongEditDelete(searchArray[pos]));
                 editor.currentSelectedObject = null;
             }
         }
@@ -69,25 +65,11 @@ public class PlaceBPM : PlaceSongObject {
     protected override void AddObject()
     {
         AddObjectToCurrentSong(bpm, editor);
-        /*
-        BPM bpmToAdd = new BPM(bpm);
-        editor.currentSong.Add(bpmToAdd);
-        editor.CreateBPMObject(bpmToAdd);
-        editor.currentSelectedObject = bpmToAdd;*/
     }
 
     public static void AddObjectToCurrentSong(BPM bpm, ChartEditor editor, bool update = true)
     {
-        BPM bpmToAdd = new BPM(bpm);
-        editor.currentSong.Add(bpmToAdd, update);
-        //editor.CreateBPMObject(bpmToAdd);
-        editor.currentSelectedObject = bpmToAdd;
-
-        if (bpmToAdd.anchor != null)
-        {
-            bpmToAdd.anchor = bpmToAdd.song.LiveTickToTime(bpmToAdd.tick, bpmToAdd.song.resolution);
-        }
-
-        ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
+        editor.commandStack.Push(new SongEditAdd(bpm));
+        editor.SelectSongObject(bpm, editor.currentSong.syncTrack);
     }
 }
