@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BPMPropertiesPanelController : PropertiesPanelController {
     public BPM currentBPM { get { return (BPM)currentSongObject; } set { currentSongObject = value; } }
@@ -20,12 +21,12 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     const float AUTO_INCREMENT_WAIT_TIME = 0.5f;
     const float AUTO_INCREMENT_RATE = 0.08f;
 
-    uint? lastAutoVal = null;
-    BPM anchorAdjustmentOriginalValue = null;
-    BPM anchorAdjustment = null;
-
     BPM prevBPM;
     BPM prevClonedBPM = new BPM();
+
+    const uint c_minBpmValue = 1000;
+    const uint c_incrementRate = 1000;
+    const uint c_decrementRate = 1000;
 
     void Start()
     {
@@ -47,11 +48,53 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     void UpdateBPMInputFieldText()
     {
         if (currentBPM != null)
-            bpmValue.text = ((float)currentBPM.value / 1000.0f).ToString();
+            bpmValue.text = (currentBPM.displayValue).ToString();
     }
 
     void Controls()
     {
+        if (!(ShortcutInput.GetInput(Shortcut.BpmIncrease) && ShortcutInput.GetInput(Shortcut.BpmDecrease)))    // Can't hit both at the same time
+        {
+            if (!Services.IsTyping && !Globals.modifierInputActive)
+            {
+                if (ShortcutInput.GetInputDown(Shortcut.BpmDecrease) && decrement.interactable)
+                {
+                    uint newValue = GetValueForDecrement();
+                    SetBpmValue(newValue);
+                }
+                else if (ShortcutInput.GetInputDown(Shortcut.BpmIncrease) && increment.interactable)
+                {
+                    uint newValue = GetValueForIncrement();
+                    SetBpmValue(newValue);
+                }
+
+                // Adjust to time rather than framerate
+                if (incrementalTimer > AUTO_INCREMENT_WAIT_TIME && autoIncrementTimer > AUTO_INCREMENT_RATE)
+                {
+                    if (ShortcutInput.GetInput(Shortcut.BpmDecrease) && decrement.interactable)
+                    {
+                        uint newValue = GetValueForDecrement();
+                        SetBpmValue(newValue, true);
+                    }
+                    else if (ShortcutInput.GetInput(Shortcut.BpmIncrease) && increment.interactable)
+                    {
+                        uint newValue = GetValueForIncrement();
+                        SetBpmValue(newValue, true);
+                    }
+
+                    autoIncrementTimer = 0;
+                }
+
+                // 
+                if (ShortcutInput.GetInput(Shortcut.BpmIncrease) || ShortcutInput.GetInput(Shortcut.BpmDecrease))
+                {
+                    incrementalTimer += Time.deltaTime;
+                }
+            }
+            else
+                incrementalTimer = 0;
+        }
+
         if (ShortcutInput.GetInputDown(Shortcut.ToggleBpmAnchor) && anchorToggle.IsInteractable())
             anchorToggle.isOn = !anchorToggle.isOn;
     }
@@ -89,59 +132,6 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         else
             autoIncrementTimer = 0;
 
-        if (!(ShortcutInput.GetInput(Shortcut.BpmIncrease) && ShortcutInput.GetInput(Shortcut.BpmDecrease)))    // Can't hit both at the same time
-        {
-            if (!Services.IsTyping && !Globals.modifierInputActive)
-            {
-                if (ShortcutInput.GetInputDown(Shortcut.BpmDecrease) && decrement.interactable)
-                {
-                    lastAutoVal = currentBPM.value;
-                    decrement.onClick.Invoke();
-                }
-                else if (ShortcutInput.GetInputDown(Shortcut.BpmIncrease) && increment.interactable)
-                {
-                    lastAutoVal = currentBPM.value;
-                    increment.onClick.Invoke();
-                }
-
-                // Adjust to time rather than framerate
-                if (incrementalTimer > AUTO_INCREMENT_WAIT_TIME && autoIncrementTimer > AUTO_INCREMENT_RATE)
-                {
-                    if (ShortcutInput.GetInput(Shortcut.BpmDecrease) && decrement.interactable)
-                        decrement.onClick.Invoke();
-                    else if (ShortcutInput.GetInput(Shortcut.BpmIncrease) && increment.interactable)
-                        increment.onClick.Invoke();
-
-                    autoIncrementTimer = 0;
-                }
-
-                // 
-                if (ShortcutInput.GetInput(Shortcut.BpmIncrease) || ShortcutInput.GetInput(Shortcut.BpmDecrease))
-                {
-                    incrementalTimer += Time.deltaTime;
-                    ChartEditor.isDirty = true;
-                }
-            }
-            else
-                incrementalTimer = 0;
-
-            // Handle key release, add in action history
-            if ((ShortcutInput.GetInputUp(Shortcut.BpmIncrease) || ShortcutInput.GetInputUp(Shortcut.BpmDecrease)) && lastAutoVal != null)
-            {
-                incrementalTimer = 0;
-                editor.actionHistory.Insert(new ActionHistory.Modify(new BPM(currentSongObject.tick, (uint)lastAutoVal), currentSongObject));
-                if (anchorAdjustment != null)
-                {
-                    editor.actionHistory.Insert(new ActionHistory.Modify(anchorAdjustmentOriginalValue, anchorAdjustment));
-                    anchorAdjustment = null;
-                    anchorAdjustmentOriginalValue = null;
-                }
-
-                ChartEditor.isDirty = true;
-                lastAutoVal = null;// currentBPM.value;
-            }
-        }
-
         Controls();
 
         prevBPM = currentBPM;
@@ -159,8 +149,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         if (prevBPM != currentBPM)
             return;
 
-        if (lastAutoVal == null)
-            lastAutoVal = currentBPM.value;
+        bool tentativeRecord, lockedRecord;
+        ShouldRecordInputField(value, currentBPM.displayValue.ToString(), out tentativeRecord, out lockedRecord);
 
         uint prevValue = currentBPM.value;
         if (value.Length > 0 && value[value.Length - 1] == c_decimal)
@@ -188,44 +178,25 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             // Actually parse the value now
             uint parsedVal = uint.Parse(value);// * 1000;     // Store it in another variable due to weird parsing-casting bug at decimal points of 2 or so. Seems to fix it for whatever reason.
 
-            AdjustForAnchors(parsedVal);
-            //currentBPM.value = (uint)parsedVal;
-            //UpdateInputFieldRecord();
+            bool pop = !lockedRecord && tentativeRecord;
+
+            if (tentativeRecord || lockedRecord)
+            {
+                SetBpmValue(parsedVal, pop);
+            }
         }
         else if (value == c_decimalStr)
             bpmValue.text = string.Empty;
-
-        if (prevValue != currentBPM.value)
-            ChartEditor.isDirty = true;
     }
 
     public void EndEdit(string value)
     {
         if (value == string.Empty || currentBPM.value <= 0)
         {
-            //currentBPM.value = 120000;
-            AdjustForAnchors(120000);
-            //UpdateInputFieldRecord();
+            SetBpmValue(120000);
         }
 
         UpdateBPMInputFieldText();
-        //Debug.Log(((float)currentBPM.value / 1000.0f).ToString().Length);
-
-        // Add action recording here?
-        if (lastAutoVal != null && lastAutoVal != currentBPM.value)
-        {
-            editor.actionHistory.Insert(new ActionHistory.Modify(new BPM(currentBPM.tick, (uint)lastAutoVal), currentBPM), -ActionHistory.ACTION_WINDOW_TIME - 0.01f);
-            if (anchorAdjustment != null)
-            {
-                editor.actionHistory.Insert(new ActionHistory.Modify(anchorAdjustmentOriginalValue, anchorAdjustment), -ActionHistory.ACTION_WINDOW_TIME - 0.01f);
-                anchorAdjustment = null;
-                anchorAdjustmentOriginalValue = null;
-            }
-        }
-
-        anchorAdjustment = null;
-        anchorAdjustmentOriginalValue = null;
-        lastAutoVal = null;
     }
 
     public char validatePositiveDecimal(string text, int charIndex, char addedChar)
@@ -260,34 +231,54 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     public void IncrementBPM()
     {
-        BPM original = (BPM)currentBPM.Clone();
-        AdjustForAnchors(currentBPM.value + 1000);
-
-        if (Input.GetMouseButtonUp(0) && currentBPM.value != original.value)
-            editor.actionHistory.Insert(new ActionHistory.Modify(original, currentBPM));
-
-        UpdateBPMInputFieldText(); 
+        uint newValue = GetValueForIncrement();
+        SetBpmValue(newValue);
     }
 
     public void DecrementBPM()
     {
-        BPM original = (BPM)currentBPM.Clone();
+        uint newValue = GetValueForDecrement();
+
+        SetBpmValue(newValue);
+    }
+
+    uint GetValueForIncrement()
+    {
+        return currentBPM.value + c_incrementRate;
+    }
+
+    uint GetValueForDecrement()
+    {
         uint newValue = currentBPM.value;
 
-        if (newValue > 1000)
-            newValue -= 1000;
+        if (newValue > c_minBpmValue)
+            newValue -= c_decrementRate;
 
-        AdjustForAnchors(newValue);
+        return newValue;
+    }
 
-        if (Input.GetMouseButtonUp(0) && currentBPM.value != original.value)
-            editor.actionHistory.Insert(new ActionHistory.Modify(original, currentBPM));
+    void SetBpmValue(uint newValue, bool popCommands = false)
+    {
+        if (popCommands)
+            editor.commandStack.Pop();
+
+        var command = GenerateCommandsAdjustedForAnchors(currentBPM, newValue);
+
+        if (command != null)
+        {
+            editor.commandStack.Push(command);
+            int newBpmPos = SongObjectHelper.FindObjectPosition(currentBPM.tick, editor.currentSong.bpms);
+            editor.SelectSongObject(editor.currentSong.bpms[newBpmPos], editor.currentSong.bpms);
+        }
+        else
+            editor.commandStack.Push();     // Popped at the start, need to redo push as pop wasn't replaced
 
         UpdateBPMInputFieldText();
     }
 
-    bool AdjustForAnchors(uint newBpmValue)
+    static ICommand GenerateCommandsAdjustedForAnchors(BPM currentBPM, uint desiredBpmValue)
     {
-        ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
+        List<SongEditCommand> commands = new List<SongEditCommand>();
 
         int pos = SongObjectHelper.FindObjectPosition(currentBPM, currentBPM.song.bpms);
         if (pos != SongObjectHelper.NOTFOUND)
@@ -313,11 +304,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
             if (anchor == null || bpmToAdjust == currentBPM)
             {
-                if (currentBPM.value != newBpmValue)
-                    ChartEditor.isDirty = true;
-
-                currentBPM.value = newBpmValue;
-                return true;
+                commands.Add(new SongEditModify<BPM>(currentBPM, new BPM(currentBPM.tick, desiredBpmValue)));
+                return new BatchedSongEditCommand(commands);
             }
 
             // Calculate the minimum the bpm can adjust to
@@ -337,40 +325,37 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             // What bpm will result in this exact time difference?
             uint minVal = (uint)(Mathf.Ceil((float)TickFunctions.DisToBpm(currentBPM.song.bpms[pos].tick, currentBPM.song.bpms[pos + 1].tick, timeBetweenFirstAndSecond, currentBPM.song.resolution)) * 1000);
 
-            if (newBpmValue < minVal)
-                newBpmValue = minVal;
-
-            if (anchorAdjustment == null)
-            {
-                anchorAdjustment = bpmToAdjust;
-                anchorAdjustmentOriginalValue = new BPM(bpmToAdjust);
-            }
+            if (desiredBpmValue < minVal)
+                desiredBpmValue = minVal;
 
             BPM anchorBPM = anchor;
             uint oldValue = currentBPM.value;
-            currentBPM.value = newBpmValue;
 
+            ChartEditor editor = ChartEditor.Instance;
+            currentBPM.value = desiredBpmValue; // Very much cheating, better to not do this
             double deltaTime = (double)anchorBPM.anchor - editor.currentSong.LiveTickToTime(bpmToAdjust.tick, editor.currentSong.resolution);
             uint newValue = (uint)Mathf.Round((float)(TickFunctions.DisToBpm(bpmToAdjust.tick, anchorBPM.tick, deltaTime, editor.currentSong.resolution) * 1000.0d));
             currentBPM.value = oldValue;
+
+            uint finalValue = oldValue;
             if (deltaTime > 0 && newValue > 0)
             {
                 if (newValue != 0)
-                    bpmToAdjust.value = newValue;
-                currentBPM.value = newBpmValue;
+                {
+                    commands.Add(new SongEditModify<BPM>(bpmToAdjust, new BPM(bpmToAdjust.tick, newValue)));
+                }
 
-                ChartEditor.isDirty = true;
+                finalValue = desiredBpmValue;
             }
-        }
-        else
-        {
-            if (currentBPM.value != newBpmValue)
-                ChartEditor.isDirty = true;
 
-            currentBPM.value = newBpmValue;
+            desiredBpmValue = finalValue;
         }
 
-        return true;
+        if (desiredBpmValue == currentBPM.value)
+            return null;
+
+        commands.Add(new SongEditModify<BPM>(currentBPM, new BPM(currentBPM.tick, desiredBpmValue)));
+        return new BatchedSongEditCommand(commands);
     }
 
     BPM NextBPM()
@@ -398,14 +383,15 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         if (currentBPM != prevBPM)
             return;
 
-        BPM original = new BPM(currentBPM);
+        BPM newBpm = new BPM(currentBPM);
         if (anchored)
-            currentBPM.anchor = currentBPM.song.LiveTickToTime(currentBPM.tick, currentBPM.song.resolution);
+            newBpm.anchor = currentBPM.song.LiveTickToTime(currentBPM.tick, currentBPM.song.resolution);
         else
-            currentBPM.anchor = null;
+            newBpm.anchor = null;
 
-        editor.actionHistory.Insert(new ActionHistory.Modify(original, currentBPM));
+        editor.commandStack.Push(new SongEditModify<BPM>(currentBPM, newBpm));
+        editor.SelectSongObject(newBpm, editor.currentSong.syncTrack);
 
-        Debug.Log("Anchor toggled to: " + currentBPM.anchor);
+        Debug.Log("Anchor toggled to: " + newBpm.anchor);
     }
 }

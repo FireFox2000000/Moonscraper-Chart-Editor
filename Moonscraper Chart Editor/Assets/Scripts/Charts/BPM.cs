@@ -14,6 +14,13 @@ public class BPM : SyncTrack
     /// Stored as the bpm value * 1000. For example, a bpm of 120.075 would be stored as 120075.
     /// </summary>
     public uint value;
+    public float displayValue
+    {
+        get
+        {
+            return (float)value / 1000.0f;
+        }
+    }
 
     public float? anchor = null;
 
@@ -74,5 +81,6 @@ public class BPM : SyncTrack
     {
         tick = bpm.tick;
         value = bpm.value;
+        anchor = bpm.anchor;
     }
 }
