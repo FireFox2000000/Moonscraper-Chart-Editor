@@ -1054,16 +1054,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
             BatchedSongEditCommand commandBatch = new BatchedSongEditCommand(commands);
             commandStack.Push(commandBatch);
 
-            //actionHistory.Insert(new ActionHistory.Delete(currentSelectedObjects));
-            //
-            //foreach (SongObject songObject in currentSelectedObjects)
-            //{
-            //    songObject.Delete(false);
-            //}
-            //
-            //currentChart.UpdateCache();
-            //currentSong.UpdateCache();
-            //
             //actionHistory.Insert(FixUpBPMAnchors().ToArray());
 
             currentSelectedObject = null;

@@ -132,7 +132,8 @@ public class ClipboardObjectController : Snapable {
 
         if (Globals.applicationMode == Globals.ApplicationMode.Editor && clipboard != null && clipboard.data.Length > 0)
         {
-            List<ActionHistory.Action> record = new List<ActionHistory.Action>();
+            List<SongEditCommand> commands = new List<SongEditCommand>();
+
             Rect collisionRect = clipboard.GetCollisionRect(chartLocationToPaste, editor.currentSong);
             if (clipboard.areaChartPosMin > clipboard.areaChartPosMax)
             {
@@ -149,9 +150,7 @@ public class ClipboardObjectController : Snapable {
                 {
                     if (chartObject.tick >= chartLocationToPaste && chartObject.tick <= (chartLocationToPaste + colliderChartDistance) && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), collisionRect))
                     {
-                        chartObject.Delete(false);
-
-                        record.Add(new ActionHistory.Delete(chartObject));
+                        commands.Add(new SongEditDelete(chartObject));
                     }
                 }
             }
@@ -162,9 +161,7 @@ public class ClipboardObjectController : Snapable {
                 {
                     if (syncObject.tick >= chartLocationToPaste && syncObject.tick <= (chartLocationToPaste + colliderChartDistance) && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(syncObject), collisionRect))
                     {
-                        syncObject.Delete(false);
-
-                        record.Add(new ActionHistory.Delete(syncObject));
+                        commands.Add(new SongEditDelete(syncObject));
                     }
                 }
             }
@@ -221,8 +218,16 @@ public class ClipboardObjectController : Snapable {
                 newObjectsToAddIn.Add(objectToAdd);
             }
 
-            editor.commandStack.Push(new SongEditAdd(newObjectsToAddIn));
-            editor.actionHistory.Insert(editor.FixUpBPMAnchors().ToArray());
+            if (newObjectsToAddIn.Count > 0)
+            {
+                commands.Add(new SongEditAdd(newObjectsToAddIn));
+            }
+
+            if (commands.Count > 0)
+            {
+                BatchedSongEditCommand batchedCommands = new BatchedSongEditCommand(commands);
+                editor.commandStack.Push(batchedCommands);
+            }
         }
         // 0 objects in clipboard, don't bother pasting
     }
