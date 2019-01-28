@@ -64,7 +64,7 @@ public class PlaceBPM : PlaceSongObject {
 
     protected override void AddObject()
     {
-        AddObjectToCurrentSong(bpm, editor);
+        AddObjectToCurrentSong(bpm.CloneAs<BPM>(), editor);
     }
 
     public static void AddObjectToCurrentSong(BPM bpm, ChartEditor editor, bool update = true)
