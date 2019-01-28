@@ -34,8 +34,6 @@ public class PlaceEvent : PlaceSongObject
                 int pos = SongObjectHelper.FindObjectPosition(songEvent, editor.currentSong.events);
                 if (pos == SongObjectHelper.NOTFOUND)
                 {
-                    //RecordAddActionHistory(chartEvent, editor.currentChart.events);
-
                     AddObject();
                 }
                 // Link to the event already in
@@ -49,13 +47,11 @@ public class PlaceEvent : PlaceSongObject
             int pos = SongObjectHelper.FindObjectPosition(songEvent, searchArray);
             if (pos == SongObjectHelper.NOTFOUND)
             {
-                editor.actionHistory.Insert(new ActionHistory.Add(songEvent));
                 AddObject();
             }
             else
             {
-                editor.actionHistory.Insert(new ActionHistory.Delete(searchArray[pos]));
-                searchArray[pos].Delete();
+                editor.commandStack.Push(new SongEditDelete(searchArray[pos]));
                 editor.currentSelectedObject = null;
             }
         }
