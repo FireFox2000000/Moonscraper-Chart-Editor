@@ -42,15 +42,6 @@ public class CustomEventMenu : MonoBehaviour {
 
     void OnDisable()
     {
-        if (currentEventToCustomise != originalEvent)
-        {
-            ActionHistory.Modify actionHistory = currentChartEvent != null
-              ? new ActionHistory.Modify(originalEvent as ChartEvent, currentChartEvent)
-              : new ActionHistory.Modify(originalEvent as Event, currentEvent);
-
-            ChartEditor.Instance.actionHistory.Insert(actionHistory);
-        }
-
         currentEventToCustomise = null;
         originalEvent = null;
         eventStr = string.Empty;
@@ -80,9 +71,6 @@ public class CustomEventMenu : MonoBehaviour {
             editor.commandStack.Push(new SongEditModify<ChartEvent>(currentChartEvent, newChartEvent));
             int insertionIndex = SongObjectHelper.FindObjectPosition(newChartEvent, editor.currentChart.events);
             Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Chart event failed to be inserted?");
-            ChartObject newSo = editor.currentChart.chartObjects[insertionIndex];
-            if (newSo.controller)
-                newSo.controller.SetDirty();
         }
         else if (currentEvent != null)
         {
@@ -90,15 +78,10 @@ public class CustomEventMenu : MonoBehaviour {
             editor.commandStack.Push(new SongEditModify<Event>(currentEvent, newEvent));
             int insertionIndex = SongObjectHelper.FindObjectPosition(newEvent, editor.currentSong.events);
             Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
-            SongObject newSo = editor.currentSong.events[insertionIndex];
-            if (newSo.controller)
-                newSo.controller.SetDirty();
         }
         else
         {
             Debug.LogError("Trying to update event when object is not recognised as an event");
         }
-
-        ChartEditor.isDirty = true;
     }
 }
