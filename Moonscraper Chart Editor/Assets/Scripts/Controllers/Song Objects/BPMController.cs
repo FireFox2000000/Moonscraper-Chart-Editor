@@ -21,6 +21,7 @@ public class BPMController : SongObjectController {
 
     Renderer ren;
     uint prevBPMValue = 0;
+    bool hasPushed = false;
 
     BPM draggingInitialBpm = null;
 
@@ -32,6 +33,8 @@ public class BPMController : SongObjectController {
     protected override void OnEnable()
     {
         base.OnEnable();
+
+        hasPushed = false;
         if (bpm != null)
             UpdateBpmDisplay();
     }
@@ -96,12 +99,13 @@ public class BPMController : SongObjectController {
 
                 uint newBpmValue = (uint)(Mathf.Ceil((float)TickFunctions.DisToBpm(previousBpm.tick, bpm.tick, desiredTime - previousBpm.time, bpm.song.resolution)) * 1000);
                 if (newBpmValue > 0)
-                    previousBpm.value = newBpmValue;
+                {
+                    if (hasPushed)
+                        editor.commandStack.Pop();
 
-                editor.songObjectPoolManager.SetAllPoolsDirty();
-                ChartEditor.isDirty = true;
-                editor.currentSong.UpdateCache();
-                editor.FixUpBPMAnchors();
+                    editor.commandStack.Push(new SongEditModify<BPM>(previousBpm, new BPM(previousBpm.tick, newBpmValue, previousBpm.anchor)));
+                    hasPushed = true;
+                }
             }
         }
     }
@@ -112,6 +116,9 @@ public class BPMController : SongObjectController {
 
         if (ShortcutInput.modifierInput && Input.GetMouseButtonDown(1))
         {
+            hasPushed = false;
+
+            // This is to allow dragging to be used while the BPM placement tool is active
             BPM previousBpm = SongObjectHelper.GetPreviousNonInclusive(bpm.song.bpms, bpm.tick);
             if (previousBpm != null && previousBpm.anchor == null)
                 draggingInitialBpm = (BPM)previousBpm.Clone();
@@ -124,11 +131,9 @@ public class BPMController : SongObjectController {
 
         if (draggingInitialBpm != null && Input.GetMouseButtonUp(1))
         {
-            BPM previousBpm = SongObjectHelper.GetPreviousNonInclusive(bpm.song.bpms, bpm.tick);
-            if (draggingInitialBpm != null && previousBpm.value != draggingInitialBpm.value)
-                editor.actionHistory.Insert(new ActionHistory.Modify(draggingInitialBpm, previousBpm));
-
             draggingInitialBpm = null;
         }
+
+        hasPushed = false;
     }
 }
