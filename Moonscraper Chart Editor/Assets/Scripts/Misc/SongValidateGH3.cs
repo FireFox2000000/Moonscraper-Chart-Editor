@@ -34,11 +34,11 @@ public class SongValidateGH3 {
         SongObjectPositionFix(song, song.eventsAndSections);
     }
 
-    string SongObjectPositionFix<T>(Song song, T[] songObjects) where T : SongObject
+    string SongObjectPositionFix<T>(Song song, IList<T> songObjects) where T : SongObject
     {
         string errors = string.Empty;
 
-        for (int i = songObjects.Length; i >= 0; --i)
+        for (int i = songObjects.Count; i >= 0; --i)
         {
             if (songObjects[i].time > song.length)
             {

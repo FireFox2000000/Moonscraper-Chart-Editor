@@ -320,8 +320,8 @@ public class Globals : MonoBehaviour {
         }
         else
         {
-            editor.currentSelectedObjects = editor.currentSong.syncTrack;
-            editor.AddToSelectedObjects(editor.currentSong.eventsAndSections);
+            editor.currentSelectedObjects = editor.currentSong.syncTrack.ToArray();
+            editor.AddToSelectedObjects(editor.currentSong.eventsAndSections.ToArray());
         }
     }
 
@@ -372,8 +372,8 @@ public class Globals : MonoBehaviour {
         }
         else
         {
-            manipFn(SongObjectHelper.GetRangeCopy(editor.currentSong.syncTrack, rangeMin, rangeMax));
-            manipFn(SongObjectHelper.GetRangeCopy(editor.currentSong.eventsAndSections, rangeMin, rangeMax));
+            manipFn(SongObjectHelper.GetRangeCopy(editor.currentSong.syncTrack.ToArray(), rangeMin, rangeMax));
+            manipFn(SongObjectHelper.GetRangeCopy(editor.currentSong.eventsAndSections.ToArray(), rangeMin, rangeMax));
         }
     }
 

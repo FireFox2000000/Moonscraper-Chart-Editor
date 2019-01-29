@@ -203,7 +203,7 @@ public class ActionHistory
                     }
                     else
                     {
-                        TryDeleteSongObject(songObject, editor.currentSong.syncTrack);
+                        TryDeleteSongObject((SyncTrack)songObject, editor.currentSong.syncTrack);
                     }
                 }
             }

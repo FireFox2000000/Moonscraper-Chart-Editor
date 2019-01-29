@@ -135,8 +135,8 @@ public class Song {
     /// </summary>
     public SongObjectCache<Section> sections { get; private set; }
 
-    public SyncTrack[] syncTrack { get { return _syncTrack.ToArray(); } }
-    public Event[] eventsAndSections { get { return _events.ToArray(); } }
+    public ReadOnlyList<SyncTrack> syncTrack;
+    public ReadOnlyList<Event> eventsAndSections;
 
     /// <summary>
     /// Read only list of a song's bpm changes.
@@ -182,10 +182,13 @@ public class Song {
         _events = new List<Event>();
         _syncTrack = new List<SyncTrack>();
 
-        events = new SongObjectCache<Event>();// new Event[0];
-        sections = new SongObjectCache<Section>();// new Section[0];
-        bpms = new SongObjectCache<BPM>();// new BPM[0];
-        timeSignatures = new SongObjectCache<TimeSignature>();// new TimeSignature[0];
+        eventsAndSections = new ReadOnlyList<Event>(_events);
+        syncTrack = new ReadOnlyList<SyncTrack>(_syncTrack);
+
+        events = new SongObjectCache<Event>();
+        sections = new SongObjectCache<Section>();
+        bpms = new SongObjectCache<BPM>();
+        timeSignatures = new SongObjectCache<TimeSignature>();
 
         audioSampleData = new SampleData[AUDIO_INSTUMENT_COUNT];
         bassAudioStreams = new TempoStream[AUDIO_INSTUMENT_COUNT];

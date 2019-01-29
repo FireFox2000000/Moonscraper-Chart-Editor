@@ -2,7 +2,7 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 using System;
 
 public class PlaceBPM : PlaceSongObject {
@@ -29,7 +29,7 @@ public class PlaceBPM : PlaceSongObject {
         }
         else if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
         {
-            SongObject[] searchArray = editor.currentSong.syncTrack;
+            IList<SyncTrack> searchArray = editor.currentSong.syncTrack;
             int pos = SongObjectHelper.FindObjectPosition(bpm, searchArray);
             if (pos == SongObjectHelper.NOTFOUND)
             {

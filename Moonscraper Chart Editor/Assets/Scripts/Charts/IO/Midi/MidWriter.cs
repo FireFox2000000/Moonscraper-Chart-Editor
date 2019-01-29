@@ -161,7 +161,7 @@ public static class MidWriter {
         float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
 
         // Loop through all synctrack events
-        for (int i = 0; i < song.syncTrack.Length; ++i)
+        for (int i = 0; i < song.syncTrack.Count; ++i)
         {
             uint deltaTime = song.syncTrack[i].tick;
             if (i > 0)
@@ -195,7 +195,7 @@ public static class MidWriter {
         uint deltaTickSum = 0;
         float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
 
-        for (int i = 0; i < song.eventsAndSections.Length; ++i)
+        for (int i = 0; i < song.eventsAndSections.Count; ++i)
         {     
             uint deltaTime = song.eventsAndSections[i].tick;
             if (i > 0)

@@ -2,7 +2,7 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class PlaceTimesignature : PlaceSongObject {
     public TimeSignature ts { get { return (TimeSignature)songObject; } set { songObject = value; } }
@@ -35,7 +35,7 @@ public class PlaceTimesignature : PlaceSongObject {
         }
         else if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
         {
-            SongObject[] searchArray = editor.currentSong.syncTrack;
+            IList<SyncTrack> searchArray = editor.currentSong.syncTrack;
             int pos = SongObjectHelper.FindObjectPosition(ts, searchArray);
             if (pos == SongObjectHelper.NOTFOUND)
             {
