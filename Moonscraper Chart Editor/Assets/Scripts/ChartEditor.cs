@@ -84,7 +84,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public ErrorManager errorManager { get; private set; }
     public static bool hasFocus { get { return Application.isFocused; } }
 
-    public ActionHistory actionHistory;
     public CommandStack commandStack;
     public SongObject currentSelectedObject
     {
@@ -645,7 +644,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     // Chart should be part of the current song
     public void LoadChart(Chart chart)
     {
-        actionHistory = new ActionHistory();
         commandStack = new CommandStack();
         Stop();
 
@@ -1107,10 +1105,8 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
     #endregion
 
-    public System.Collections.Generic.List<ActionHistory.Action> FixUpBPMAnchors()
+    public void FixUpBPMAnchors()
     {
-        System.Collections.Generic.List<ActionHistory.Action> record = new System.Collections.Generic.List<ActionHistory.Action>();
-
         var bpms = currentSong.bpms;
         // Fix up any anchors
         for (int i = 0; i < bpms.Count; ++i)
@@ -1131,12 +1127,10 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
                         bpmToAdjust.value = newValue;
                         anchorBPM.assignedTime = currentSong.LiveTickToTime(anchorBPM.tick, currentSong.resolution);
 
-                        record.Add(new ActionHistory.Modify(original, bpmToAdjust));
+                        //record.Add(new ActionHistory.Modify(original, bpmToAdjust));
                     }
                 }
             }
         }
-
-        return record;
     }
 }
