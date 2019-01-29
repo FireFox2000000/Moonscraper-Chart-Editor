@@ -69,15 +69,14 @@ public class CustomEventMenu : MonoBehaviour {
         {
             ChartEvent newChartEvent = new ChartEvent(currentChartEvent.tick, name);
             editor.commandStack.Push(new SongEditModify<ChartEvent>(currentChartEvent, newChartEvent));
-            int insertionIndex = SongObjectHelper.FindObjectPosition(newChartEvent, editor.currentChart.events);
-            Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Chart event failed to be inserted?");
+            editor.SelectSongObject(newChartEvent, editor.currentChart.events);
+
         }
         else if (currentEvent != null)
         {
             Event newEvent = new Event(name, currentEvent.tick);
             editor.commandStack.Push(new SongEditModify<Event>(currentEvent, newEvent));
-            int insertionIndex = SongObjectHelper.FindObjectPosition(newEvent, editor.currentSong.events);
-            Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
+            editor.SelectSongObject(newEvent, editor.currentSong.events);
         }
         else
         {
