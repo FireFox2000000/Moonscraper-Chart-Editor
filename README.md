@@ -1,5 +1,7 @@
 ### THIS IS NOT THE APPLICATION PROGRAM, THESE ARE THE SOURCE FILES. ###
-### If you are looking download Moonscraper Chart Editor please visit the GOOGLE DRIVE link in the description of the Youtube trailer video. ###
+### If you are looking download Moonscraper Chart Editor please download from ###
+https://github.com/FireFox2000000/Moonscraper-Chart-Editor-Latest-Official-Release 
+### Or visit the GOOGLE DRIVE link in the description of the Youtube trailer video. ###
 
 # README #
 
