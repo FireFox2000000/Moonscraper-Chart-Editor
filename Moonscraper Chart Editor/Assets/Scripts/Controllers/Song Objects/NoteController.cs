@@ -126,7 +126,7 @@ public class NoteController : SongObjectController {
             if (ShortcutInput.GetInput(Shortcut.ChordSelect))
             {
                 Note[] chordNotes = note.GetChord();
-                editor.groupMove.SetSongObjects(chordNotes, 0);
+                editor.groupMove.StartMoveAction(chordNotes, 0);
 
                 foreach (Note chordNote in chordNotes)
                     chordNote.Delete();

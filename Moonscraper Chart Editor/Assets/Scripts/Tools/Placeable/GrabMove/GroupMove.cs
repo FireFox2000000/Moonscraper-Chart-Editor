@@ -20,8 +20,9 @@ public class GroupMove : ToolObject
     List<Section> sectionsToEnable = new List<Section>();
     List<Event> eventsToEnable = new List<Event>();
 
-    List<ActionHistory.Action> bpmAnchorRecord;
-    
+    List<SongEditCommand> initialDeleteCommands = new List<SongEditCommand>();
+    List<SongEditCommand> fullMovementCommands = new List<SongEditCommand>();
+
     Vector2 initMousePos = Vector2.zero;
     uint initObjectSnappedChartPos = 0;
 
@@ -33,7 +34,7 @@ public class GroupMove : ToolObject
         if (movingSongObjects.Count > 0)
         {
             if (Input.GetMouseButtonUp(0))
-                AddSongObjects();
+                CompleteMoveAction();
             else
             {
                 UpdateSnappedPos();
@@ -92,94 +93,18 @@ public class GroupMove : ToolObject
         }
 	}  
 
-    public void AddSongObjects()
+    public void CompleteMoveAction()
     {
-        List<ActionHistory.Action> record = new List<ActionHistory.Action>();
-        List<ActionHistory.Action> deleteRecord = new List<ActionHistory.Action>();
-
-        // Need to remember to undo/redo. This current will only work once object pools are implemented.
-        // Check to see what the current offset is to decide how to record
-        // Will also need to check for overwrites
-        // All relative to the original notes
-
-        bool moved = false;
-
         for (int i = 0; i < movingSongObjects.Count; ++i)
         {
-            ActionHistory.Action overwriteRecord;
-
-            if (movingSongObjects[i] != originalSongObjects[i])
-            {
-                moved = true;
-                deleteRecord.Add(new ActionHistory.Delete(originalSongObjects[i]));
-            }
-            
-            switch ((SongObject.ID)movingSongObjects[i].classID)
-            {
-                /*
-                case (SongObject.ID.Note):
-                    // #TODO
-                    //record.AddRange(PlaceNote.AddObjectToCurrentChart((Note)movingSongObjects[i], editor, false, false));     // Capping
-                    break;
-                case (SongObject.ID.Starpower):
-                    //record.AddRange(PlaceStarpower.AddObjectToCurrentChart((Starpower)movingSongObjects[i], editor, false, false));       // Capping
-                    break;
-                case (SongObject.ID.ChartEvent):
-                    overwriteRecord = PlaceSongObject.OverwriteActionHistory((ChartEvent)movingSongObjects[i], editor.currentChart.events);
-                    if (record != null)
-                        record.Add(overwriteRecord);
-                    editor.currentChart.Add((ChartEvent)movingSongObjects[i], false);
-                    break;
-                case (SongObject.ID.BPM):
-                    overwriteRecord = PlaceSongObject.OverwriteActionHistory((BPM)movingSongObjects[i], editor.currentSong.bpms);
-                    if (record != null)
-                        record.Add(overwriteRecord);
-                    BPM bpm = (BPM)movingSongObjects[i];
-                    editor.currentSong.Add(bpm, false);
-                    if (bpm.anchor != null)
-                        bpm.anchor = bpm.song.LiveTickToTime(bpm.tick, bpm.song.resolution);
-
-                    ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
-                    break;
-                case (SongObject.ID.TimeSignature):
-                    overwriteRecord = PlaceSongObject.OverwriteActionHistory((TimeSignature)movingSongObjects[i], editor.currentSong.timeSignatures);
-                    if (record != null)
-                        record.Add(overwriteRecord);
-                    editor.currentSong.Add((TimeSignature)movingSongObjects[i], false);
-                    break;
-                case (SongObject.ID.Section):
-                    overwriteRecord = PlaceSongObject.OverwriteActionHistory((Section)movingSongObjects[i], editor.currentSong.sections);
-                    if (record != null)
-                        record.Add(overwriteRecord);
-                    editor.currentSong.Add((Section)movingSongObjects[i], false);
-                    break;
-                case (SongObject.ID.Event):
-                    overwriteRecord = PlaceSongObject.OverwriteActionHistory((Event)movingSongObjects[i], editor.currentSong.events);
-                    if (record != null)
-                        record.Add(overwriteRecord);
-                    editor.currentSong.Add((Event)movingSongObjects[i], false);
-                    break;*/
-                default:
-                    break;
-            }     
+            fullMovementCommands.Add(new SongEditAdd(movingSongObjects[i].Clone()));
         }
 
-        editor.currentSelectedObjects = movingSongObjects;
+        BatchedSongEditCommand moveCommands = new BatchedSongEditCommand(fullMovementCommands);
+        editor.commandStack.Pop();
+        editor.commandStack.Push(moveCommands);
 
-        if (moved)
-        {
-            editor.actionHistory.Insert(deleteRecord.ToArray());                // In case user removes a bpm from an anchor area
-            editor.actionHistory.Insert(bpmAnchorRecord.ToArray());
-
-            editor.currentSong.UpdateCache();
-            editor.currentChart.UpdateCache();
-
-            editor.actionHistory.Insert(record.ToArray());
-            editor.actionHistory.Insert(editor.FixUpBPMAnchors().ToArray());    // In case user moves a bpm into an anchor area
-        }
-
-        editor.currentSong.UpdateCache();
-        editor.currentChart.UpdateCache();
+        editor.FindAndSelectSongObjects(movingSongObjects);
 
         Reset();
     }
@@ -203,14 +128,17 @@ public class GroupMove : ToolObject
         timeSignaturesToEnable.Clear();
         sectionsToEnable.Clear();
         eventsToEnable.Clear();
+
+        initialDeleteCommands.Clear();
+        fullMovementCommands.Clear();
     }
 
-    public void SetSongObjects(SongObject songObject)
+    public void StartMoveAction(SongObject songObject)
     {
-        SetSongObjects(new SongObject[] { songObject }, 0);
+        StartMoveAction(new SongObject[] { songObject }, 0);
     }
 
-    public void SetSongObjects(IList<SongObject> songObjects, int anchorArrayPos, bool delete = false)
+    public void StartMoveAction(IList<SongObject> songObjects, int anchorArrayPos, bool delete = false)
     {
         if (Mouse.world2DPosition != null)
             initMousePos = (Vector2)Mouse.world2DPosition;
@@ -231,11 +159,10 @@ public class GroupMove : ToolObject
         int lastNotePos = -1;
         for (int i = 0; i < songObjects.Count; ++i)
         {
-            //originalSongObjects[i] = songObjects[i];
             movingSongObjects.Add(songObjects[i].Clone());
 
-            //if (delete)
-                songObjects[i].Delete(false);
+            initialDeleteCommands.Add(new SongEditDelete(songObjects[i]));
+            fullMovementCommands.Add(new SongEditDelete(songObjects[i]));
 
             // Rebuild linked list          
             if ((SongObject.ID)songObjects[i].classID == SongObject.ID.Note)
@@ -260,10 +187,9 @@ public class GroupMove : ToolObject
         }
 
         Mouse.cancel = true;
-        editor.currentSong.UpdateCache();
-        editor.currentChart.UpdateCache();
 
-        bpmAnchorRecord = editor.FixUpBPMAnchors();
+        BatchedSongEditCommand batchedCommands = new BatchedSongEditCommand(initialDeleteCommands);
+        editor.commandStack.Push(batchedCommands);
 
         notesToEnable.AddRange(movingSongObjects.OfType<Note>());
         starpowerToEnable.AddRange(movingSongObjects.OfType<Starpower>());

@@ -92,7 +92,7 @@ public class CursorSelect : ToolObject
                     }
                 }
 
-                groupMove.SetSongObjects(editor.currentSelectedObjects, anchorPoint, true);
+                groupMove.StartMoveAction(editor.currentSelectedObjects, anchorPoint, true);
             }
 
             // User has finished creating a group selection area

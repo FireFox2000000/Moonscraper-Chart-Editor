@@ -963,6 +963,46 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         return currentSelectedObject as T;
     }
 
+    List<SongObject> foundSongObjects = new List<SongObject>();
+    public void FindAndSelectSongObjects(IList<SongObject> songObjects)
+    {
+        Song song = currentSong;
+        Chart chart = currentChart;
+        foundSongObjects.Clear();
+
+        foreach (SongObject so in songObjects)
+        {
+            ChartObject chartObject = so as ChartObject;
+            SyncTrack syncTrack = so as SyncTrack;
+            Event eventObject = so as Event;
+            if (chartObject != null)
+            {
+                int insertionIndex = SongObjectHelper.FindObjectPosition(chartObject, chart.chartObjects);
+                Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Failed to find chart object to highlight");
+                foundSongObjects.Add(chart.chartObjects[insertionIndex]);
+            }
+            else if (syncTrack != null)
+            {
+                int insertionIndex = SongObjectHelper.FindObjectPosition(syncTrack, song.syncTrack);
+                Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Failed to find synctrack to highlight");
+                foundSongObjects.Add(song.syncTrack[insertionIndex]);
+            }
+            else if (eventObject != null)
+            {
+                int insertionIndex = SongObjectHelper.FindObjectPosition(eventObject, song.eventsAndSections);
+                Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Failed to find event to highlight");
+                foundSongObjects.Add(song.eventsAndSections[insertionIndex]);
+            }
+            else
+            {
+                Debug.LogError("Unable to handle object " + so.ToString());
+            }
+        }
+
+        currentSelectedObjects = foundSongObjects;
+        foundSongObjects.Clear();
+    }
+
     #endregion
 
     #region Undo/Redo/Cut/Copy/Paste etc...
@@ -1050,11 +1090,8 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
             };
 
-            // Todo, BPM anchor correction
             BatchedSongEditCommand commandBatch = new BatchedSongEditCommand(commands);
             commandStack.Push(commandBatch);
-
-            //actionHistory.Insert(FixUpBPMAnchors().ToArray());
 
             currentSelectedObject = null;
 
