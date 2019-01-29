@@ -22,6 +22,9 @@ public abstract class Snapable : MonoBehaviour {
         UpdateSnappedPos();
 
         transform.position = new Vector3(transform.position.x, editor.currentSong.TickToWorldYPosition(objectSnappedChartPos), transform.position.z);
+
+        if (!Services.IsTyping)
+            Controls();
     }
 
     protected virtual void Controls()
@@ -65,9 +68,6 @@ public abstract class Snapable : MonoBehaviour {
         {
             objectRen.sortingOrder = 5;
         }
-
-        if (!Services.IsTyping)
-            Controls();
     }
 
     public static uint TickToSnappedTick(uint tick, int step, float resolution)
