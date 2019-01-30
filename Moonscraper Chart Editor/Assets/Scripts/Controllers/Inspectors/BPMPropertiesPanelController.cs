@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2016-2017 Alexander Ong
 // See LICENSE in project root for license information.
-
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
@@ -11,6 +11,9 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     public Toggle anchorToggle;
     public Button increment, decrement;
     public Selectable[] AnchorAheadDisable;
+
+    const char c_decimal = '.';
+    string c_decimalStr = c_decimal.ToString();
 
     float incrementalTimer = 0;
     float autoIncrementTimer = 0;
@@ -159,16 +162,16 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             lastAutoVal = currentBPM.value;
 
         uint prevValue = currentBPM.value;
-        if (value.Length > 0 && value[value.Length - 1] == '.')
+        if (value.Length > 0 && value[value.Length - 1] == c_decimal)
             value = value.Remove(value.Length - 1);
         
-        if (value != string.Empty && value[value.Length - 1] != '.' && currentBPM != null && float.Parse(value) != 0)
+        if (value != string.Empty && value[value.Length - 1] != c_decimal && currentBPM != null && float.Parse(value) != 0)
         {
             // Convert the float string to an int string
             int zerosToAdd = 0;
-            if (value.Contains("."))
+            if (value.Contains(c_decimal))
             {
-                int index = value.IndexOf('.');
+                int index = value.IndexOf(c_decimal);
 
                 zerosToAdd = 7 - (value.Length + (3 - index));      // string length can be a total of 7 characters; 6 digits and the "."
                 value = value.Remove(index, 1);
@@ -188,7 +191,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             //currentBPM.value = (uint)parsedVal;
             //UpdateInputFieldRecord();
         }
-        else if (value == ".")
+        else if (value == c_decimalStr)
             bpmValue.text = string.Empty;
 
         if (prevValue != currentBPM.value)
@@ -232,19 +235,19 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         if (selectStart < bpmValue.text.Length)
             text = text.Remove(selectStart, selectionLength);
 
-        if ((addedChar == '.' && !text.Contains(".") && text.Length > 0) || (addedChar >= '0' && addedChar <= '9'))
+        if ((addedChar == c_decimal && !text.Contains(c_decimal) && text.Length > 0) || (addedChar >= '0' && addedChar <= '9'))
         {
-            if ((text.Contains(".") && text.IndexOf('.') > 2 && charIndex <= text.IndexOf('.')) || (addedChar != '.' && !text.Contains(".") && text.Length > 2))
+            if ((text.Contains(c_decimal) && text.IndexOf(c_decimal) > 2 && charIndex <= text.IndexOf(c_decimal)) || (addedChar != c_decimal && !text.Contains(c_decimal) && text.Length > 2))
                 return '\0';
 
-            if (addedChar != '.')
+            if (addedChar != c_decimal)
             {
                 if (bpmValue.selectionAnchorPosition == text.Length && bpmValue.selectionFocusPosition == 0)
                     return addedChar;
 
-                if (!text.Contains(".") && text.Length < 3)         // Adding a number, no decimal point
+                if (!text.Contains(c_decimal) && text.Length < 3)         // Adding a number, no decimal point
                     return addedChar;
-                else if (text.Contains(".") && text.IndexOf('.') <= 3)
+                else if (text.Contains(c_decimal) && text.IndexOf(c_decimal) <= 3)
                     return addedChar;
             }
 
