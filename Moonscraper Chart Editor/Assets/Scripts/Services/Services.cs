@@ -132,6 +132,18 @@ public class Services : MonoBehaviour
         EventsManager.FireKeyboardModeToggledEvent(GameSettings.keysModeEnabled);
     }
 
+    public bool CanUndo()
+    {
+        ChartEditor editor = ChartEditor.Instance;
+        return !editor.commandStack.isAtStart && !editor.groupMove.movementInProgress;
+    }
+
+    public bool CanRedo()
+    {
+        ChartEditor editor = ChartEditor.Instance;
+        return !editor.commandStack.isAtEnd && !editor.groupMove.movementInProgress;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////
 
     // Use this for initialization

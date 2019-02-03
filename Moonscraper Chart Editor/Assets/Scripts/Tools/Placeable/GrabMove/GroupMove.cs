@@ -26,6 +26,14 @@ public class GroupMove : ToolObject
     Vector2 initMousePos = Vector2.zero;
     uint initObjectSnappedChartPos = 0;
 
+    public bool movementInProgress
+    {
+        get
+        {
+            return movingSongObjects.Count > 0;
+        }
+    }
+
     // Update is called once per frame  
     protected override void Update () {
         if (Globals.applicationMode != Globals.ApplicationMode.Editor)

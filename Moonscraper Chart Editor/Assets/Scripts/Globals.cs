@@ -268,7 +268,7 @@ public class Globals : MonoBehaviour {
 
             if (ShortcutInput.GetInputDown(Shortcut.ActionHistoryUndo))
             {
-                if (!editor.commandStack.isAtStart)
+                if (!editor.commandStack.isAtStart && editor.services.CanUndo())
                 {
                     editor.commandStack.Pop();
                     success = true;
@@ -276,7 +276,7 @@ public class Globals : MonoBehaviour {
             }
             else if (ShortcutInput.GetInputDown(Shortcut.ActionHistoryRedo))
             {
-                if (!editor.commandStack.isAtEnd)
+                if (!editor.commandStack.isAtEnd && editor.services.CanRedo())
                 {
                     editor.commandStack.Push();
                     success = true;
