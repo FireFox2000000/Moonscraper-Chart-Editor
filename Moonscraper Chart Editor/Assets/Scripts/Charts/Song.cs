@@ -673,13 +673,7 @@ public class Song {
         UpdateCacheList(bpms, _syncTrack);
         UpdateCacheList(timeSignatures, _syncTrack);
 
-        //events = _events.ToArray();
-        //sections = _events.OfType<Section>().ToArray();
-        //bpms = _syncTrack.OfType<BPM>().ToArray();
-        //timeSignatures = _syncTrack.OfType<TimeSignature>().ToArray();
         UpdateBPMTimeValues();
-
-        //ChartEditor.FindCurrentEditor().FixUpBPMAnchors();
     }
 
     public void UpdateAllChartCaches()
