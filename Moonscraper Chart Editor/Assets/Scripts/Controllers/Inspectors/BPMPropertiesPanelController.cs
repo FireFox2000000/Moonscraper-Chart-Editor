@@ -12,8 +12,8 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     public Button increment, decrement;
     public Selectable[] AnchorAheadDisable;
 
-    const char c_decimal = '.';
-    string c_decimalStr = c_decimal.ToString();
+    char c_decimal = LocalesManager.decimalSeperator;
+    string c_decimalStr;
 
     float incrementalTimer = 0;
     float autoIncrementTimer = 0;
@@ -29,6 +29,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     void Start()
     {
+        c_decimalStr = c_decimal.ToString();
         bpmValue.onValidateInput = validatePositiveDecimal;
     }
 

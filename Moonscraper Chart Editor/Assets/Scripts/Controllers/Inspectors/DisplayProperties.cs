@@ -31,6 +31,8 @@ public class DisplayProperties : UpdateableService
         hyperspeedSlider.value = GameSettings.hyperspeed;
         highwayLengthSlider.value = GameSettings.highwayLength;
 
+        UpdateGameSpeedText();
+
         snappingStep.onValidateInput = Step.validateStepVal;
         UpdateSnappingStepText();
 
@@ -93,9 +95,14 @@ public class DisplayProperties : UpdateableService
     {
         value = Mathf.Round(value / 5.0f) * 5;
         GameSettings.gameSpeed = value / 100.0f;
-        gameSpeed.text = "Speed- x" + GameSettings.gameSpeed.ToString();
+        UpdateGameSpeedText();
 
         EventsManager.FireHyperspeedChangeEvent();
+    }
+
+    void UpdateGameSpeedText()
+    {
+        gameSpeed.text = string.Format("Speed- x{0:0.00}", GameSettings.gameSpeed);
     }
 
     public void SetHighwayLength(float value)
