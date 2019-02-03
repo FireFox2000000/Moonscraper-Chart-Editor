@@ -270,7 +270,7 @@ public class Globals : MonoBehaviour {
             {
                 if (!editor.commandStack.isAtStart && editor.services.CanUndo())
                 {
-                    editor.commandStack.Pop();
+                    editor.UndoWrapper();
                     success = true;
                 }
             }
@@ -278,7 +278,7 @@ public class Globals : MonoBehaviour {
             {
                 if (!editor.commandStack.isAtEnd && editor.services.CanRedo())
                 {
-                    editor.commandStack.Push();
+                    editor.RedoWrapper();
                     success = true;
                 }
             }

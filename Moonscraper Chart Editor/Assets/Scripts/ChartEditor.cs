@@ -85,6 +85,15 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public static bool hasFocus { get { return Application.isFocused; } }
 
     public CommandStack commandStack;
+
+    struct UndoRedoSnapInfo
+    {
+        public uint tick;
+        public Globals.ViewMode viewMode;
+    }
+
+    UndoRedoSnapInfo? undoRedoSnapInfo = null;
+
     public SongObject currentSelectedObject
     {
         get
@@ -1004,12 +1013,44 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     #endregion
 
     #region Undo/Redo/Cut/Copy/Paste etc...
+
+    public void FillUndoRedoSnapInfo(uint tick, Globals.ViewMode viewMode)
+    {
+        UndoRedoSnapInfo newUndoRedoSnapInfo;
+        newUndoRedoSnapInfo.tick = tick;
+        newUndoRedoSnapInfo.viewMode = viewMode;
+
+        undoRedoSnapInfo = newUndoRedoSnapInfo;
+    }
+
+    void ApplyUndoRedoSnapInfo()
+    {
+        if (undoRedoSnapInfo.HasValue)
+        {
+            UndoRedoSnapInfo info = undoRedoSnapInfo.Value;
+            Globals.ViewMode viewMode = info.viewMode;
+            uint snapTick = info.tick;
+
+            if (Globals.viewMode != viewMode)
+            {
+                toolPanel.ToggleSongViewMode(viewMode == Globals.ViewMode.Song);
+            }
+
+            movement.SetPosition(snapTick);
+        }
+    }
+
     public void UndoWrapper()
     {
         if (!commandStack.isAtStart)
         {
+            undoRedoSnapInfo = null;
+
             commandStack.Pop();
             groupSelect.reset();
+
+            ApplyUndoRedoSnapInfo();
+            undoRedoSnapInfo = null;
         }
     }
 
@@ -1017,8 +1058,13 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     {
         if (!commandStack.isAtEnd)
         {
+            undoRedoSnapInfo = null;
+
             commandStack.Push();
             groupSelect.reset();
+
+            ApplyUndoRedoSnapInfo();
+            undoRedoSnapInfo = null;
         }
     }
 

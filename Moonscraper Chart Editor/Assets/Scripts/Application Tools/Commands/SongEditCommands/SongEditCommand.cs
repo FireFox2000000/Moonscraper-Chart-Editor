@@ -51,11 +51,20 @@ public abstract class SongEditCommand : ICommand {
 
         ChartEditor.isDirty = true;
 
-        //Debug.Assert(songObjects.Count > 0, "No song objects were provided in a song edit command");
-        //if (songObjects.Count > 0)
-        //{
-        //    uint jumpToPos = songObjects[0].tick;       // Jump to the lowest tick, maybe search through if nessacary?
-        //    editor.movement.SetPosition(jumpToPos);
-        //}
+        var soList = validatedSongObjects.Count > 0 ? validatedSongObjects : songObjects;
+        SongObject lowestTickSo = null;
+
+        foreach (SongObject songObject in soList)
+        {
+            if (lowestTickSo  == null || songObject.tick < lowestTickSo.tick)
+                lowestTickSo = songObject;
+        }
+
+        if (lowestTickSo != null)
+        {
+            uint jumpToPos = lowestTickSo.tick;
+            Globals.ViewMode viewMode = lowestTickSo.GetType().IsSubclassOf(typeof(ChartObject)) ? Globals.ViewMode.Chart : Globals.ViewMode.Song;
+            editor.FillUndoRedoSnapInfo(jumpToPos, viewMode);
+        }
     }
 }
