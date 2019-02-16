@@ -9,6 +9,9 @@ public abstract class SongEditCommand : ICommand {
     protected bool hasValidatedSongObjects = false;
     public bool postExecuteEnabled = true;
 
+    private List<SongEditModify<BPM>> bpmAnchorFixup = new List<SongEditModify<BPM>>();
+    bool bpmAnchorFixupCommandsGenerated = false;
+
     void AddClone(SongObject songObject)
     {
         songObjects.Add(songObject.Clone());
@@ -32,20 +35,52 @@ public abstract class SongEditCommand : ICommand {
         AddClone(songObject);
     }
 
-    public abstract void Invoke();
+    public void Invoke()
+    {
+        InvokeSongEditCommand();
+        PostExecuteUpdate(true);
+    }
 
-    public abstract void Revoke();
+    public void Revoke()
+    {
+        RevokeSongEditCommand();
+        PostExecuteUpdate(false);
+    }
 
-    protected void PostExecuteUpdate()
+    public abstract void InvokeSongEditCommand();
+
+    public abstract void RevokeSongEditCommand();
+
+    void PostExecuteUpdate(bool isInvoke)
     {
         if (!postExecuteEnabled)
             return;
 
         ChartEditor editor = ChartEditor.Instance;
 
+        if (!bpmAnchorFixupCommandsGenerated)
+        {
+            GenerateFixUpBPMAnchorCommands();
+        }
+
+        if (isInvoke)
+        {
+            foreach (ICommand command in bpmAnchorFixup)
+            {
+                command.Invoke();
+            }
+        }
+        else
+        {
+            foreach (ICommand command in bpmAnchorFixup)
+            {
+                command.Revoke();
+            }
+        }
+
         editor.currentChart.UpdateCache();
         editor.currentSong.UpdateCache();
-        editor.FixUpBPMAnchors();
+
         if (Toolpane.currentTool != Toolpane.Tools.Note)
             editor.currentSelectedObject = null;
 
@@ -66,5 +101,55 @@ public abstract class SongEditCommand : ICommand {
             Globals.ViewMode viewMode = lowestTickSo.GetType().IsSubclassOf(typeof(ChartObject)) ? Globals.ViewMode.Chart : Globals.ViewMode.Song;
             editor.FillUndoRedoSnapInfo(jumpToPos, viewMode);
         }
+    }
+
+    static List<BPM> tempAnchorFixupBPMs = new List<BPM>();
+    static List<SyncTrack> tempAnchorFixupSynctrack = new List<SyncTrack>();
+    void GenerateFixUpBPMAnchorCommands()
+    {
+        if (bpmAnchorFixup.Count > 0)
+            return;
+
+        Song song = ChartEditor.Instance.currentSong;
+        var bpms = song.bpms;
+
+        tempAnchorFixupBPMs.Clear();
+        tempAnchorFixupSynctrack.Clear();
+        foreach (BPM bpm in bpms)
+        {
+            BPM clone = bpm.CloneAs<BPM>();
+            tempAnchorFixupBPMs.Add(clone);
+            tempAnchorFixupSynctrack.Add(clone);
+        }
+        
+        // Fix up any anchors
+        for (int i = 0; i < tempAnchorFixupBPMs.Count; ++i)
+        {
+            if (tempAnchorFixupBPMs[i].anchor != null && i > 0)
+            {
+                BPM anchorBPM = tempAnchorFixupBPMs[i];
+                BPM bpmToAdjust = tempAnchorFixupBPMs[i - 1];
+
+                double deltaTime = (double)anchorBPM.anchor - Song.LiveTickToTime(bpmToAdjust.tick, song.resolution, tempAnchorFixupBPMs[0], tempAnchorFixupSynctrack);
+                uint newValue = (uint)Mathf.Round((float)(TickFunctions.DisToBpm(bpmToAdjust.tick, anchorBPM.tick, deltaTime, song.resolution) * 1000.0d));
+
+                if (deltaTime > 0 && newValue > 0)
+                {
+                    if (bpmToAdjust.value != newValue)
+                    {
+                        BPM original = bpmToAdjust.CloneAs<BPM>();
+                        bpmToAdjust.value = newValue;
+
+                        SongEditModify<BPM> command = new SongEditModify<BPM>(original, bpmToAdjust);
+                        command.postExecuteEnabled = false;
+                        bpmAnchorFixup.Add(command);
+                    }
+                }
+            }
+        }
+
+        bpmAnchorFixupCommandsGenerated = true;
+        tempAnchorFixupBPMs.Clear();
+        tempAnchorFixupSynctrack.Clear();
     }
 }

@@ -19,7 +19,7 @@ public class SongEditAdd : SongEditCommand
         Debug.Assert(songObject.song == null, "Must add a new song object!");
     }
 
-    public override void Invoke()
+    public override void InvokeSongEditCommand()
     {
         if (hasValidatedSongObjects)
         {
@@ -44,16 +44,12 @@ public class SongEditAdd : SongEditCommand
 
             hasValidatedSongObjects = true;
         }
-
-        PostExecuteUpdate();
     }
 
-    public override void Revoke()
+    public override void RevokeSongEditCommand()
     {
         Debug.Assert(hasValidatedSongObjects, "Trying to revoke add action which has not made it's initial validation pass!");
         ApplyPostValidatedAction(overwrittenSongObjects, validatedSongObjects);
-
-        PostExecuteUpdate();
     }
 
     void ApplyPostValidatedAction(IList<SongObject> songObjectsToAdd, IList<SongObject> songObjectsToDelete)

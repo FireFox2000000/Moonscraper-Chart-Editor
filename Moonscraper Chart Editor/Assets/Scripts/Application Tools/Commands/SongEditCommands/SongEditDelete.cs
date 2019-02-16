@@ -53,20 +53,18 @@ public class SongEditDelete : SongEditCommand
         }
     }
 
-    public override void Invoke()
+    public override void InvokeSongEditCommand()
     {
         ApplyAction(songObjects);
-        PostExecuteUpdate();
     }
 
-    public override void Revoke()
+    public override void RevokeSongEditCommand()
     {
         List<SongObject> overwriteList = new List<SongObject>();
 
         SongEditAdd.ApplyAction(songObjects, overwriteList, extendedSustainsEnabled);
         Debug.Assert(overwriteList.Count <= 0, "SongEditDelete revoke overwrote an object. Should be adding an object that was deleted.");
 
-        PostExecuteUpdate();
     }
 
     void SnapshotGameSettings()

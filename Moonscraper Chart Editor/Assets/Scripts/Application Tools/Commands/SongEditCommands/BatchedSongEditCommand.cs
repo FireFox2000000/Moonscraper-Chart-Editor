@@ -16,23 +16,19 @@ public class BatchedSongEditCommand : SongEditCommand
         }
     }
 
-    public override void Invoke()
+    public override void InvokeSongEditCommand()
     {
         foreach (ICommand command in commands)
         {
             command.Invoke();
         }
-
-        PostExecuteUpdate();
     }
 
-    public override void Revoke()
+    public override void RevokeSongEditCommand()
     {
         for (int i = commands.Count - 1; i >= 0; --i)
         {
             commands[i].Revoke();
         }
-
-        PostExecuteUpdate();
     }
 }

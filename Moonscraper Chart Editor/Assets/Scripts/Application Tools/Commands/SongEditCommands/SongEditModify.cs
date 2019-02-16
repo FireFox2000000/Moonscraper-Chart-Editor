@@ -23,16 +23,14 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
         }
     }
 
-    public override void Invoke()
+    public override void InvokeSongEditCommand()
     {
         CloneInto(FindObjectToModify(before), after);
-        PostExecuteUpdate();
     }
 
-    public override void Revoke()
+    public override void RevokeSongEditCommand()
     {
         CloneInto(FindObjectToModify(after), before);
-        PostExecuteUpdate();
     }
 
     void CloneInto(SongObject objectToCopyInto, SongObject objectToCopyFrom)

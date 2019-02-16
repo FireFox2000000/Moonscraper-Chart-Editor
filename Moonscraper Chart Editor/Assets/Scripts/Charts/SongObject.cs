@@ -48,6 +48,7 @@ public abstract class SongObject
     {
         get
         {
+            Debug.Assert(song != null);
             return song.TickToTime(tick, song.resolution);
         }
     }

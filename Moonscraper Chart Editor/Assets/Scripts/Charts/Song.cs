@@ -695,10 +695,15 @@ public class Song {
 
     public float LiveTickToTime(uint position, float resolution)
     {
-        double time = 0;
-        BPM prevBPM = bpms[0];
+        return LiveTickToTime(position, resolution, bpms[0], _syncTrack);
+    }
 
-        foreach (SyncTrack syncTrack in _syncTrack)
+    public static float LiveTickToTime(uint position, float resolution, BPM initialBpm, IList<SyncTrack> synctrack)
+    {
+        double time = 0;
+        BPM prevBPM = initialBpm;
+
+        foreach (SyncTrack syncTrack in synctrack)
         {
             BPM bpmInfo = syncTrack as BPM;
 

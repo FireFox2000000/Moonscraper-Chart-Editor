@@ -115,7 +115,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 positionText.text = "Position: " + currentBPM.tick.ToString();
             }
 
-            if (!Services.IsTyping)
+            if (!Services.IsTyping || currentBPM != prevBPM)
                 UpdateBPMInputFieldText();
 
             anchorToggle.isOn = currentBPM.anchor != null;
@@ -273,7 +273,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         else
             editor.commandStack.Push();     // Popped at the start, need to redo push as pop wasn't replaced
 
-        UpdateBPMInputFieldText();
+        //UpdateBPMInputFieldText();
     }
 
     static ICommand GenerateCommandsAdjustedForAnchors(BPM currentBPM, uint desiredBpmValue)

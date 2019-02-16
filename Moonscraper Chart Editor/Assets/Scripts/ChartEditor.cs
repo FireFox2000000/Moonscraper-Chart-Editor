@@ -1150,33 +1150,4 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     }
 
     #endregion
-
-    public void FixUpBPMAnchors()
-    {
-        var bpms = currentSong.bpms;
-        // Fix up any anchors
-        for (int i = 0; i < bpms.Count; ++i)
-        {
-            if (bpms[i].anchor != null && i > 0)
-            {
-                BPM anchorBPM = bpms[i];
-                BPM bpmToAdjust = bpms[i - 1];
-
-                double deltaTime = (double)anchorBPM.anchor - bpmToAdjust.time;
-                uint newValue = (uint)Mathf.Round((float)(TickFunctions.DisToBpm(bpmToAdjust.tick, anchorBPM.tick, deltaTime, currentSong.resolution) * 1000.0d));
-
-                if (deltaTime > 0 && newValue > 0)
-                {
-                    if (bpmToAdjust.value != newValue)
-                    {
-                        BPM original = new BPM(bpmToAdjust);
-                        bpmToAdjust.value = newValue;
-                        anchorBPM.assignedTime = currentSong.LiveTickToTime(anchorBPM.tick, currentSong.resolution);
-
-                        //record.Add(new ActionHistory.Modify(original, bpmToAdjust));
-                    }
-                }
-            }
-        }
-    }
 }
