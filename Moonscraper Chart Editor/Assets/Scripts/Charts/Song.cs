@@ -265,8 +265,8 @@ public class Song {
         offset = song.offset;
         resolution = song.resolution;
 
-        _events = new List<Event>();
-        _syncTrack = new List<SyncTrack>();
+        _events.Clear();
+        _syncTrack.Clear();
 
         _events.AddRange(song._events);
         _syncTrack.AddRange(song._syncTrack);
