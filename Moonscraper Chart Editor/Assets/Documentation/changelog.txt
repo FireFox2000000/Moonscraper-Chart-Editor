@@ -4,6 +4,7 @@
 	
 	FIXES
 	-Implemented culture checking to determine whether to use '.' or ',' as the decimal seperator on Unity 2018 builds. 
+	-Fixed defaulting to fullscreen on Unity 2018 builds. 
 
 1.3.01
 	FIXES
