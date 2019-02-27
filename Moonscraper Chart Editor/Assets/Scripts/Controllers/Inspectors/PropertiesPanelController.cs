@@ -14,6 +14,8 @@ public class PropertiesPanelController : MonoBehaviour {
     SongObject prevSongObjectRef;
     string prevValue = string.Empty;
 
+    protected bool newSongObject { get { return currentSongObject != prevSongObjectRef; } }
+
     ValueDirection lastKnownDirection = ValueDirection.NONE;
     bool commandRecordingInProcess = false;
 

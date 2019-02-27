@@ -45,6 +45,9 @@ public class SectionPropertiesPanelController : PropertiesPanelController {
 
     public void UpdateSectionName (string name)
     {
+        if (newSongObject)
+            return;
+
         bool tentativeRecord, lockedRecord;
         ShouldRecordInputField(name, currentSection.title, out tentativeRecord, out lockedRecord);
 
