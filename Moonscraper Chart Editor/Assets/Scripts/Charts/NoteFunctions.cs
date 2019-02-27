@@ -143,7 +143,11 @@ public static class NoteFunctions {
             }
             else
             {
-                if ((!note.IsOpenNote() && next.IsOpenNote() && !(note.gameMode == Chart.GameMode.Drums)) || (next.rawNote == note.rawNote))
+                bool nextNoteSame = next.rawNote == note.rawNote;
+                bool drumsMode = note.gameMode == Chart.GameMode.Drums;
+                bool blockedByOpenNote = next.IsOpenNote() && !drumsMode;
+                bool openNoteAndCapped = note.IsOpenNote() && !drumsMode;
+                if (openNoteAndCapped || blockedByOpenNote || nextNoteSame)
                     return next;
             }
 
