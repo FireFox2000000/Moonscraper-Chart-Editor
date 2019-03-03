@@ -1,3 +1,12 @@
+1.3.03
+	CHANGES
+	-Removed some slight delay from default clap sfx
+
+	FIXES
+	-Fixed sections reappearing when deleting a section and then clicking on a new one with a different name.
+	-Fixed extended sustain logic on open notes.
+	-Fixed events and synctrack not being saved from previous test build
+
 1.3.02
 	CHANGES
 	-Implemented new undo/redo system. Should now be accurate 100% of the time. If it isn't it'll probably explode. 
