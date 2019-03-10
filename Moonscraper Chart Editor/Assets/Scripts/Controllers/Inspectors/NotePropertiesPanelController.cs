@@ -194,12 +194,6 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         {
             // Updating note tool parameters and visuals
             note.flags = newFlags;
-            note.ApplyFlagsToChord();
-            foreach (Note chordNote in note.chord)
-            {
-                if (chordNote.controller)
-                    chordNote.controller.SetDirty();
-            }
         }
     }
 }

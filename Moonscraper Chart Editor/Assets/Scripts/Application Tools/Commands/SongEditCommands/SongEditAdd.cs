@@ -54,7 +54,7 @@ public class SongEditAdd : SongEditCommand
 
     void ApplyPostValidatedAction(IList<SongObject> songObjectsToAdd, IList<SongObject> songObjectsToDelete)
     {
-        SongEditDelete.ApplyAction(songObjectsToDelete);
+        SongEditDelete.ApplyAction(songObjectsToDelete, null);  // Overwrite can be null for special case with song edit add, as corrections can mess SEA up
 
         foreach (SongObject songObject in songObjectsToAdd)
         {
@@ -127,6 +127,29 @@ public class SongEditAdd : SongEditCommand
         switch (songObject.classID)
         {
             case ((int)SongObject.ID.Note):
+                {
+                    Note note = songObject as Note;
+                    ChartEditor editor = ChartEditor.Instance;
+                    Chart chart = editor.currentChart;
+                    chart.Add(note);
+
+                    foreach (Note chordNote in note.chord)
+                    {
+                        if (chordNote.controller)
+                            chordNote.controller.SetDirty();
+                    }
+
+                    Note next = note.nextSeperateNote;
+                    if (next != null)
+                    {
+                        foreach(Note chordNote in next.chord)
+                        {
+                            if (chordNote.controller)
+                                chordNote.controller.SetDirty();
+                        }
+                    }
+                }
+                break;
             case ((int)SongObject.ID.Starpower):
             case ((int)SongObject.ID.ChartEvent):
                 {

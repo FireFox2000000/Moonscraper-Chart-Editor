@@ -110,6 +110,15 @@ public class PlaceNoteController : ObjectlessTool {
 
     // Update is called once per frame
     protected override void Update () {
+        // Update flags in the note panel
+        if (editor.currentSelectedObject != null && editor.currentSelectedObject.GetType() == typeof(Note))
+        {
+            foreach (PlaceNote note in allPlaceableNotes)
+            {
+                note.note.flags = ((Note)editor.currentSelectedObject).flags;
+            }
+        }
+
         CurrentNotePlacementUpdate();
     }
 
@@ -256,15 +265,6 @@ public class PlaceNoteController : ObjectlessTool {
         {
             placeableNotes.gameObject.SetActive(true);
             placeableNotes.gameObject.SetActive(false);
-        }
-
-        // Update flags in the note panel
-        if (editor.currentSelectedObject != null && editor.currentSelectedObject.GetType() == typeof(Note))
-        {
-            foreach (PlaceNote note in allPlaceableNotes)
-            {
-                note.note.flags = ((Note)editor.currentSelectedObject).flags;
-            }
         }
     }
 
