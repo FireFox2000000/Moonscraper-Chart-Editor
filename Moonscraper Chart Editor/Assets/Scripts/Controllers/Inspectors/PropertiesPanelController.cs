@@ -48,7 +48,10 @@ public class PropertiesPanelController : MonoBehaviour {
                 ReferenceEquals(prevSongObjectRef, currentSongObject)))
                 ResetActionRecording();
         }
+    }
 
+    private void LateUpdate()
+    {
         prevSongObject = currentSongObject.Clone();
         prevSongObjectRef = currentSongObject;
     }
