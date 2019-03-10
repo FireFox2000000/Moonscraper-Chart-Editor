@@ -407,11 +407,6 @@ public class PlaceNoteController : ObjectlessTool {
 
         int maxLanes = laneInfo.laneCount;
 
-        foreach (PlaceNote placeableNotes in allPlaceableNotes)
-        {
-            placeableNotes.gameObject.SetActive(false);
-        }
-
         bool anyStandardKeyInput = false;
         for (int i = 0; i < maxLanes; ++i)
         {
@@ -467,6 +462,12 @@ public class PlaceNoteController : ObjectlessTool {
             // Multi-note
             multiNote.gameObject.SetActive(true);
             activeNotes.Add(multiNote);
+        }
+
+        foreach (PlaceNote placeableNotes in allPlaceableNotes)
+        {
+            if (!activeNotes.Contains(placeableNotes))
+                placeableNotes.gameObject.SetActive(false);
         }
 
         // Update prev and next if chord
