@@ -62,7 +62,7 @@ public abstract class Snapable : MonoBehaviour {
         }
     }
 
-    protected void LateUpdate()
+    protected virtual void LateUpdate()
     {
         if (objectRen)
         {
