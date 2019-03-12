@@ -44,8 +44,9 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
                 break;
 
             case SongObject.ID.Starpower:
-                (objectToCopyInto as Starpower).CopyFrom((objectToCopyFrom as Starpower));
-                SongEditAdd.SetNotesDirty(objectToCopyInto as Starpower, chart.notes);
+                SongEditAdd.SetNotesDirty(objectToCopyInto as Starpower, chart.chartObjects);
+                SongEditAdd.SetNotesDirty(objectToCopyFrom as Starpower, chart.chartObjects);
+                (objectToCopyInto as Starpower).CopyFrom((objectToCopyFrom as Starpower));                            
                 break;
 
             case SongObject.ID.ChartEvent:

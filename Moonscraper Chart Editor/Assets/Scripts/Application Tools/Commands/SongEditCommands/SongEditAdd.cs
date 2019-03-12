@@ -199,6 +199,21 @@ public class SongEditAdd : SongEditCommand
         }
     }
 
+    static void TryRecordOverwrite(Starpower songObject, IList<ChartObject> searchObjects, IList<SongObject> overwrittenObjects)
+    {
+        if (overwrittenObjects == null)
+            return;
+
+        ChartEditor editor = ChartEditor.Instance;
+        int overwriteIndex = SongObjectHelper.FindObjectPosition(songObject.tick, searchObjects);
+
+        if (overwriteIndex != SongObjectHelper.NOTFOUND)
+        {
+            overwrittenObjects.Add(searchObjects[overwriteIndex].Clone());
+            SetNotesDirty(songObject, searchObjects);
+        }
+    }
+
     static void AddNote(Note note, IList<SongObject> overwrittenList, bool extendedSustainsEnabled, List<SongObject> validatedNotes)
     {
         ChartEditor editor = ChartEditor.Instance;
@@ -245,7 +260,7 @@ public class SongEditAdd : SongEditCommand
         editor.currentChart.Add(spToAdd, false);
         Debug.Log("Added new starpower");
 
-        SetNotesDirty(spToAdd, editor.currentChart.notes);
+        SetNotesDirty(spToAdd, editor.currentChart.chartObjects);
 
         return spToAdd;
     }
@@ -324,14 +339,14 @@ public class SongEditAdd : SongEditCommand
 
     #region Starpower Helper Functions
 
-    public static void SetNotesDirty(Starpower sp, IList<Note> notes)
+    public static void SetNotesDirty(Starpower sp, IList<ChartObject> notes)
     {
         int start, length;
         SongObjectHelper.GetRange(notes, sp.tick, sp.tick + sp.length, out start, out length);
 
         for (int i = start; i < start + length; ++i)
         {
-            if (notes[i].controller)
+            if (notes[i].classID == (int)SongObject.ID.Note && notes[i].controller)
                 notes[i].controller.SetDirty();
         }
     }
