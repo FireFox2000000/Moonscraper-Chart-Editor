@@ -1,3 +1,9 @@
+1.3.05
+	FIXES
+	-Fixed some screen capture software not picking up audio from Moonscraper. 
+	-Fixed broken note tool strum/hopo being borken from the last build
+	-Fixed starpower modifications not refreshing the visual of the notes properly.
+
 1.3.04
 	FIXES
 	-Fixed note model perspective updating strangely for the note tool.
