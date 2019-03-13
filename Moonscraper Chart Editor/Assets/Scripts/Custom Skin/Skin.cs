@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class Skin {
     Dictionary<string, UnityEngine.Object> m_skinObjects = new Dictionary<string, UnityEngine.Object>();
+    Dictionary<string, string> m_filepaths = new Dictionary<string, string>();
 
     public T GetSkinItem<T>(string key, T defaultItem) where T : UnityEngine.Object
     {
@@ -22,10 +23,20 @@ public class Skin {
         return skinItem;
     }
 
-    public void AddSkinItem<T>(string key, T skinItem) where T : UnityEngine.Object
+    public string GetSkinItemFilepath(string key)
+    {
+        string path = string.Empty;
+        m_filepaths.TryGetValue(key, out path);
+        return path;
+    }
+
+    public void AddSkinItem<T>(string key, string filepath, T skinItem) where T : UnityEngine.Object
     {
         if (skinItem)
+        {
+            m_filepaths.Add(key, filepath);
             m_skinObjects.Add(key, skinItem);
+        }
     }
 
     public Texture2D[] reg_strum = new Texture2D[6];

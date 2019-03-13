@@ -41,6 +41,11 @@ public class SkinManager : UnitySingleton<SkinManager> {
         return m_currentSkin.GetSkinItem(key, defaultItem);
     }
 
+    public string GetSkinItemFilepath(string key)
+    {
+        return m_currentSkin.GetSkinItemFilepath(key);
+    }
+
     public void ApplySkin()
     {
         // Todo, find all objects that can switch skins and send events to those to update/refresh

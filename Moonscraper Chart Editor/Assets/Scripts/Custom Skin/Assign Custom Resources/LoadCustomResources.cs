@@ -222,7 +222,7 @@ public class LoadCustomResources : MonoBehaviour {
             skinItem.Value.AssignResource();
 
             // Add all loaded custom assets into the skin manager. Probably move this whole loading function into there later?
-            skin.AddSkinItem(skinItem.Key, skinItem.Value.GetObject());  
+            skin.AddSkinItem(skinItem.Key, skinItem.Value.filepath, skinItem.Value.GetObject());  
         }      
 
         // STANDARD NOTES

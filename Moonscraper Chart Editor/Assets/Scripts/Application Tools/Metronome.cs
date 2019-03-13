@@ -9,10 +9,10 @@ public class Metronome : MonoBehaviour {
     ChartEditor editor;
     Vector3 initLocalPos;
 
-    public AudioClip clap;
     OneShotSampleStream sampleStream;
 
     uint nextClapPos = 0;
+    readonly string defaultPath = System.IO.Path.Combine(Application.streamingAssetsPath, "SFX/metronome.wav");
 
     // Use this for initialization
     protected void Start () {
@@ -27,8 +27,9 @@ public class Metronome : MonoBehaviour {
         if (sampleStream != null)
             sampleStream.Dispose();
 
-        AudioClip currentClap = SkinManager.Instance.GetSkinItem(SkinKeys.metronome, clap);
-        sampleStream = AudioManager.LoadSampleStream(currentClap, 15);
+        string customPath = SkinManager.Instance.GetSkinItemFilepath(SkinKeys.metronome);
+        string currentSFX = string.IsNullOrEmpty(customPath) ? defaultPath : customPath;
+        sampleStream = AudioManager.LoadSampleStream(currentSFX, 15);
     }
 
     // Update is called once per frame

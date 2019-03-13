@@ -102,6 +102,17 @@ public static class AudioManager {
         return newStream;
     }
 
+    public static OneShotSampleStream LoadSampleStream(string filepath, int maxSimultaneousPlaybacks)
+    {
+        UnityEngine.Debug.Assert(System.IO.File.Exists(filepath), "Filepath " + filepath + " does not exist");
+
+        int audioStreamHandle = Bass.BASS_SampleLoad(filepath, 0, 0, maxSimultaneousPlaybacks, BASSFlag.BASS_DEFAULT);
+
+        var newStream = new OneShotSampleStream(audioStreamHandle, maxSimultaneousPlaybacks);
+        liveAudioStreams.Add(newStream);
+        return newStream;
+    }
+
     public static OneShotSampleStream LoadSampleStream(UnityEngine.AudioClip clip, int maxSimultaneousPlaybacks)
     {
         var newStream = LoadSampleStream(clip.GetWavBytes(), maxSimultaneousPlaybacks);

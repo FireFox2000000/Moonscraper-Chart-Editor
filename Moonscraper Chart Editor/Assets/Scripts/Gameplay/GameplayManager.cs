@@ -7,7 +7,6 @@ using System.Collections.Generic;
 
 [RequireComponent(typeof(AudioSource))]
 public class GameplayManager : MonoBehaviour {
-    public AudioClip comboBreak;
     public CameraShake camShake;
 
     HitWindowFeeder hitWindowFeeder;
@@ -25,6 +24,8 @@ public class GameplayManager : MonoBehaviour {
 
     GuitarGameplayRulestate guitarGameplayRulestate;
     DrumsGameplayRulestate drumsGameplayRulestate;
+
+    readonly string defaultPath = System.IO.Path.Combine(Application.streamingAssetsPath, "SFX/combobreak.wav");
 
     void Start()
     {
@@ -51,8 +52,9 @@ public class GameplayManager : MonoBehaviour {
         if (sample != null)
             sample.Dispose();
 
-        AudioClip currentClap = SkinManager.Instance.GetSkinItem(SkinKeys.break0, comboBreak);
-        sample = AudioManager.LoadSampleStream(currentClap, 1);
+        string customPath = SkinManager.Instance.GetSkinItemFilepath(SkinKeys.break0);
+        string currentSFX = string.IsNullOrEmpty(customPath) ? defaultPath : customPath;
+        sample = AudioManager.LoadSampleStream(currentSFX, 1);
         sample.onlyPlayIfStopped = true;
     }
 

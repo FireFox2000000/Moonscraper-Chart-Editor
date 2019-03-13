@@ -7,10 +7,10 @@ using System.Collections;
 [RequireComponent(typeof(AudioSource))]
 public class StrikelineAudioController : MonoBehaviour {
 
-    public AudioClip clap;
     static float lastClapPos = -1;
     public static float startYPoint = -1;
     Vector3 initLocalPos;
+    readonly string defaultPath = System.IO.Path.Combine(Application.streamingAssetsPath, "SFX/clap.wav");
 
     OneShotSampleStream sample;
 
@@ -25,8 +25,9 @@ public class StrikelineAudioController : MonoBehaviour {
         if (sample != null)
             sample.Dispose();
 
-        AudioClip currentClap = SkinManager.Instance.GetSkinItem(SkinKeys.clap, clap);
-        sample = AudioManager.LoadSampleStream(currentClap, 50);
+        string customPath = SkinManager.Instance.GetSkinItemFilepath(SkinKeys.clap);
+        string currentSFX = string.IsNullOrEmpty(customPath) ? defaultPath : customPath;
+        sample = AudioManager.LoadSampleStream(currentSFX, 50);
     }
 
     void Update()

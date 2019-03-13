@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public abstract class CustomResource
 {
     public string name { get; private set; }
+    public string filepath { get; private set; }
     public WWW www { get; private set; }
     protected readonly string[] validExtentions;
 
@@ -16,7 +17,7 @@ public abstract class CustomResource
         this.validExtentions = validExtentions;
     }
 
-    public bool InitWWW(Dictionary<string, string> files)
+    public virtual bool InitWWW(Dictionary<string, string> files)
     {
         string file = string.Empty;
 
@@ -25,6 +26,7 @@ public abstract class CustomResource
 
         if (file != string.Empty)
         {
+            filepath = file;
             www = new WWW("file://" + file);
             return true;
         }
