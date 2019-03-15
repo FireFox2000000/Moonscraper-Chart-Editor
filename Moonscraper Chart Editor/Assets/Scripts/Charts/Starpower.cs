@@ -67,7 +67,7 @@ public class Starpower : ChartObject
                 // Cap sustain length
                 if (nextSp.tick < tick)
                     newLength = 0;
-                else if (tick + length > nextSp.tick)
+                else if (pos > nextSp.tick)
                     // Cap sustain
                     newLength = nextSp.tick - tick;
             }
