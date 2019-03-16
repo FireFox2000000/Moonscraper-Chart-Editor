@@ -1,3 +1,15 @@
+1.3.06
+	FIXES
+	-Fixed starpower length not being capped by other starpower
+	-Fixed tools hiding themselves when holding left click and then pressing right click
+	-Fixed empty undo-redo commands being pushed to the stack when right-clicking on a sustain.
+	-Disabled the ability to play the chart when moving objects
+	-Allow events and chartevents to be overwriteable by cliboard pasting.
+	-Fixed system bug where the lookup for overwrites would return the wrong data if on the same tick.
+	-Fixed starpower duplication glitch.
+	-Fixed note tool forced property not displaying correctly in some cases.
+	-Fixed notes not being updated by bpm changes when the bpm being changed was offscreen. 
+
 1.3.05
 	FIXES
 	-Fixed some screen capture software not picking up audio from Moonscraper. 
