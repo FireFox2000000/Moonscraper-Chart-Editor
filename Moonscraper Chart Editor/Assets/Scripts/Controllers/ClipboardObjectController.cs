@@ -143,84 +143,92 @@ public class ClipboardObjectController : Snapable {
 
             viewModeController.ToggleSongViewMode(!clipboard.data[0].GetType().IsSubclassOf(typeof(ChartObject)));
 
-            // Overwrite any objects in the clipboard space
-            if (clipboard.data[0].GetType().IsSubclassOf(typeof(ChartObject)))
             {
-                foreach (ChartObject chartObject in editor.currentChart.chartObjects)
+                List<SongObject> newObjectsToDelete = new List<SongObject>();
+
+                // Overwrite any objects in the clipboard space
+                if (clipboard.data[0].GetType().IsSubclassOf(typeof(ChartObject)))
                 {
-                    if (chartObject.tick >= chartLocationToPaste && chartObject.tick <= (chartLocationToPaste + colliderChartDistance) && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), collisionRect))
+                    foreach (ChartObject chartObject in editor.currentChart.chartObjects)
                     {
-                        commands.Add(new SongEditDelete(chartObject));
-                    }
-                }
-            }
-            else
-            {
-                // Overwrite synctrack, leave sections alone
-                foreach (SyncTrack syncObject in editor.currentSong.syncTrack)
-                {
-                    if (syncObject.tick >= chartLocationToPaste && syncObject.tick <= (chartLocationToPaste + colliderChartDistance) && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(syncObject), collisionRect))
-                    {
-                        commands.Add(new SongEditDelete(syncObject));
-                    }
-                }
-            }
-
-            editor.currentChart.UpdateCache();
-            editor.currentSong.UpdateCache();
-
-            uint maxLength = editor.currentSong.TimeToTick(editor.currentSong.length, editor.currentSong.resolution);
-
-            List<SongObject> newObjectsToAddIn = new List<SongObject>();
-
-            // Paste the new objects in
-            foreach (SongObject clipboardSongObject in clipboard.data)
-            {
-                SongObject objectToAdd = clipboardSongObject.Clone();
-
-                objectToAdd.tick = chartLocationToPaste +
-                    TickFunctions.TickScaling(clipboardSongObject.tick, clipboard.resolution, editor.currentSong.resolution) -
-                    TickFunctions.TickScaling(clipboard.areaChartPosMin, clipboard.resolution, editor.currentSong.resolution);
-
-                if (objectToAdd.tick >= maxLength)
-                    break;
-
-                if (objectToAdd.GetType() == typeof(Note))
-                {
-                    Note note = (Note)objectToAdd;
-
-                    if (clipboard.instrument == Song.Instrument.GHLiveGuitar || clipboard.instrument == Song.Instrument.GHLiveBass)
-                    {
-                        // Pasting from a ghl track
-                        if (!Globals.ghLiveMode)
+                        if (chartObject.tick >= chartLocationToPaste && chartObject.tick <= (chartLocationToPaste + colliderChartDistance) && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject), collisionRect))
                         {
-                            if (note.ghliveGuitarFret == Note.GHLiveGuitarFret.Open)
-                                note.guitarFret = Note.GuitarFret.Open;
-                            else if (note.ghliveGuitarFret == Note.GHLiveGuitarFret.White3)
-                                continue;
+                            newObjectsToDelete.Add(chartObject);
                         }
                     }
-                    else if (Globals.ghLiveMode)
-                    {
-                        // Pasting onto a ghl track
-                        if (note.guitarFret == Note.GuitarFret.Open)
-                            note.ghliveGuitarFret = Note.GHLiveGuitarFret.Open;
-                    }
-
-                    note.length = TickFunctions.TickScaling(note.length, clipboard.resolution, editor.currentSong.resolution);
                 }
-                else if (objectToAdd.GetType() == typeof(Starpower))
+                else
                 {
-                    Starpower sp = (Starpower)objectToAdd;
-                    sp.length = TickFunctions.TickScaling(sp.length, clipboard.resolution, editor.currentSong.resolution);
+                    // Overwrite synctrack, leave sections alone
+                    foreach (SyncTrack syncObject in editor.currentSong.syncTrack)
+                    {
+                        if (syncObject.tick >= chartLocationToPaste && syncObject.tick <= (chartLocationToPaste + colliderChartDistance) && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(syncObject), collisionRect))
+                        {
+                            newObjectsToDelete.Add(syncObject);
+                        }
+                    }
                 }
 
-                newObjectsToAddIn.Add(objectToAdd);
+                if (newObjectsToDelete.Count > 0)
+                {
+                    commands.Add(new SongEditDelete(newObjectsToDelete));
+                }
             }
 
-            if (newObjectsToAddIn.Count > 0)
             {
-                commands.Add(new SongEditAdd(newObjectsToAddIn));
+                uint maxLength = editor.currentSong.TimeToTick(editor.currentSong.length, editor.currentSong.resolution);
+
+                List<SongObject> newObjectsToAddIn = new List<SongObject>();
+
+                // Paste the new objects in
+                foreach (SongObject clipboardSongObject in clipboard.data)
+                {
+                    SongObject objectToAdd = clipboardSongObject.Clone();
+
+                    objectToAdd.tick = chartLocationToPaste +
+                        TickFunctions.TickScaling(clipboardSongObject.tick, clipboard.resolution, editor.currentSong.resolution) -
+                        TickFunctions.TickScaling(clipboard.areaChartPosMin, clipboard.resolution, editor.currentSong.resolution);
+
+                    if (objectToAdd.tick >= maxLength)
+                        break;
+
+                    if (objectToAdd.GetType() == typeof(Note))
+                    {
+                        Note note = (Note)objectToAdd;
+
+                        if (clipboard.instrument == Song.Instrument.GHLiveGuitar || clipboard.instrument == Song.Instrument.GHLiveBass)
+                        {
+                            // Pasting from a ghl track
+                            if (!Globals.ghLiveMode)
+                            {
+                                if (note.ghliveGuitarFret == Note.GHLiveGuitarFret.Open)
+                                    note.guitarFret = Note.GuitarFret.Open;
+                                else if (note.ghliveGuitarFret == Note.GHLiveGuitarFret.White3)
+                                    continue;
+                            }
+                        }
+                        else if (Globals.ghLiveMode)
+                        {
+                            // Pasting onto a ghl track
+                            if (note.guitarFret == Note.GuitarFret.Open)
+                                note.ghliveGuitarFret = Note.GHLiveGuitarFret.Open;
+                        }
+
+                        note.length = TickFunctions.TickScaling(note.length, clipboard.resolution, editor.currentSong.resolution);
+                    }
+                    else if (objectToAdd.GetType() == typeof(Starpower))
+                    {
+                        Starpower sp = (Starpower)objectToAdd;
+                        sp.length = TickFunctions.TickScaling(sp.length, clipboard.resolution, editor.currentSong.resolution);
+                    }
+
+                    newObjectsToAddIn.Add(objectToAdd);
+                }
+
+                if (newObjectsToAddIn.Count > 0)
+                {
+                    commands.Add(new SongEditAdd(newObjectsToAddIn));
+                }
             }
 
             if (commands.Count > 0)
