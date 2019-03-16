@@ -273,7 +273,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         else
             editor.commandStack.Push();     // Popped at the start, need to redo push as pop wasn't replaced
 
-        //UpdateBPMInputFieldText();
+        editor.songObjectPoolManager.SetAllPoolsDirty();
     }
 
     static ICommand GenerateCommandsAdjustedForAnchors(BPM currentBPM, uint desiredBpmValue)
