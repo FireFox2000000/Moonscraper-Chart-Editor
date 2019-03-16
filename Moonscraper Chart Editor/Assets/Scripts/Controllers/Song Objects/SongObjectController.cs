@@ -184,6 +184,9 @@ public abstract class SongObjectController : SelectableClick {
             case (SongObject.ID.Note):
                 position = NoteController.NoteToXPos((Note)songObject);
                 break;
+            case (SongObject.ID.ChartEvent):
+                position = ChartEventController.position;
+                break;
             case (SongObject.ID.BPM):
                 position = BPMController.position;
                 break;
@@ -192,6 +195,9 @@ public abstract class SongObjectController : SelectableClick {
                 break;
             case (SongObject.ID.Section):
                 position = SectionController.position;
+                break;
+            case (SongObject.ID.Event):
+                position = EventController.position;
                 break;
             default:
                 position = 0;
