@@ -92,7 +92,7 @@ public class ToolPanelController : MonoBehaviour {
         {
             Globals.viewMode = Globals.ViewMode.Song;
 
-            if (Toolpane.currentTool == Toolpane.Tools.Note || Toolpane.currentTool == Toolpane.Tools.Starpower || Toolpane.currentTool == Toolpane.Tools.ChartEvent || Toolpane.currentTool == Toolpane.Tools.GroupSelect)
+            if (Toolpane.currentTool == Toolpane.Tools.Note || Toolpane.currentTool == Toolpane.Tools.Starpower || Toolpane.currentTool == Toolpane.Tools.ChartEvent)
             {
                 cursorSelect.onClick.Invoke();
             }

@@ -51,40 +51,42 @@ public class Toolpane : MonoBehaviour {
             menuCancel = true;
         }
 
+        // Update current tool object's visibility/activeness
         if (currentToolObject)
         {
+            bool toolIsActive = currentToolObject.gameObject.activeSelf;
+
             if (GameSettings.keysModeEnabled)
-                currentToolObject.gameObject.SetActive(true);
+                toolIsActive = true;
             else
             {
-                if ((deleteModeCancel && currentTool != Tools.GroupSelect) || ((menuCancel || Mouse.IsUIUnderPointer()) && currentTool != Tools.GroupSelect))
+                bool blockedByUI = menuCancel || Mouse.IsUIUnderPointer();
+                if (deleteModeCancel || blockedByUI)
                 {
-                    currentToolObject.gameObject.SetActive(false);
+                    toolIsActive = false;
                 }
-                else if (Globals.applicationMode == Globals.ApplicationMode.Editor && (mouseDownInArea))
+                else if (Globals.applicationMode == Globals.ApplicationMode.Editor && mouseDownInArea)
                 {
                     // Range check
-                    if (!globals.services.InToolArea && currentTool != Tools.GroupSelect)
+                    if (!globals.services.InToolArea)
                     {
-                        currentToolObject.gameObject.SetActive(false);
+                        toolIsActive = false;
                     }
                     else
                     {
-                        currentToolObject.gameObject.SetActive(true);
+                        toolIsActive = true;
 
-                        if (Input.GetMouseButton(1))
+                        if (!Input.GetMouseButton(0) && Input.GetMouseButton(1))    // Hide the tool object when right-click hold left-click deleting
                         {
-                            currentToolObject.gameObject.SetActive(false);
+                            toolIsActive = false;
                         }
                         else if (!Input.GetMouseButton(1))
-                            currentToolObject.gameObject.SetActive(true);
+                            toolIsActive = true;
                     }
                 }
-                else if (currentTool != Tools.GroupSelect)
-                {
-                    currentToolObject.gameObject.SetActive(false);
-                }
-            }          
+            }
+
+            currentToolObject.gameObject.SetActive(toolIsActive);
         }
     }
 
@@ -111,6 +113,6 @@ public class Toolpane : MonoBehaviour {
 
     public enum Tools
     {
-        Cursor, Eraser, Note, Starpower, ChartEvent, BPM, Timesignature, Section, SongEvent, GroupSelect
+        Cursor, Eraser, Note, Starpower, ChartEvent, BPM, Timesignature, Section, SongEvent
     }
 }

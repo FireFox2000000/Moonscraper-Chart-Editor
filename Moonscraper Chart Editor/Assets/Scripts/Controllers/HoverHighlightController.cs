@@ -41,7 +41,7 @@ public class HoverHighlightController : MonoBehaviour {
 
         bool showHighlight = (Globals.applicationMode == Globals.ApplicationMode.Editor && !Input.GetMouseButton(0) && songObject != null
             && ((Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.Eraser) ||
-            (Input.GetMouseButton(1) && (Toolpane.currentTool != Toolpane.Tools.Cursor || Toolpane.currentTool != Toolpane.Tools.Eraser || Toolpane.currentTool != Toolpane.Tools.GroupSelect))));
+            (Input.GetMouseButton(1) && (Toolpane.currentTool != Toolpane.Tools.Cursor || Toolpane.currentTool != Toolpane.Tools.Eraser))));
 
         if (!showHighlight)
             return;

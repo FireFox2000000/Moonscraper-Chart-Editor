@@ -34,8 +34,14 @@ public abstract class SongObjectController : SelectableClick {
         }
     }
 
-    protected bool moveCheck { get { return Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1) 
-                && editor.currentSelectedObject != null; } }
+    protected bool moveCheck
+    {
+        get
+        {
+            return Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1) 
+                && editor.currentSelectedObject != null;
+        }
+    }
 
     public SongObject GetSongObject()
     {
