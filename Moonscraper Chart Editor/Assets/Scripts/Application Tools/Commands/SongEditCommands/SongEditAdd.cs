@@ -353,36 +353,68 @@ public class SongEditAdd : SongEditCommand
 
     static void CapPrevAndNextPreInsert(Starpower sp, Chart chart, IList<SongObject> overwrittenList, IList<SongObject> validatedList)
     {
-        int arrayPos = SongObjectHelper.FindClosestPosition(sp, chart.starPower);
+        int arrayPos = SongObjectHelper.FindClosestPosition(sp, chart.chartObjects);
 
         if (arrayPos != SongObjectHelper.NOTFOUND)       // Found an object that matches
         {
-            if (chart.starPower[arrayPos] < sp)
+            Starpower previousSp = null;
+            Starpower nextSp = null;
+
+            bool currentArrayPosIsStarpower = chart.chartObjects[arrayPos] as Starpower == null;
+
+            // Find the previous starpower
             {
-                ++arrayPos;
+                int previousSpIndex = currentArrayPosIsStarpower ? arrayPos - 1 : arrayPos;
+                while (previousSpIndex >= 0 && chart.chartObjects[previousSpIndex].tick < sp.tick)
+                {
+                    Starpower maybeSp = chart.chartObjects[previousSpIndex] as Starpower;
+                    if (maybeSp == null)
+                    {
+                        --previousSpIndex;
+                    }
+                    else
+                    {
+                        previousSp = maybeSp;
+                        break;
+                    }
+                }
             }
 
-            if (arrayPos > 0 && chart.starPower[arrayPos - 1].tick < sp.tick)
+            // Find the next starpower
             {
-
-                Starpower prevSp = chart.starPower[arrayPos - 1];
-                // Cap previous sp
-                if (prevSp.tick + prevSp.length > sp.tick)
+                int nextSpIndex = currentArrayPosIsStarpower ? arrayPos + 1 : arrayPos;
+                while (nextSpIndex < chart.chartObjects.Count && chart.chartObjects[nextSpIndex].tick > sp.tick)
                 {
-                    prevSp.Delete();
-                    overwrittenList.Add(prevSp.Clone());
+                    Starpower maybeSp = chart.chartObjects[nextSpIndex] as Starpower;
+                    if (maybeSp == null)
+                    {
+                        ++nextSpIndex;
+                    }
+                    else
+                    {
+                        nextSp = maybeSp;
+                        break;
+                    }
+                }
+            }
 
-                    uint newLength = sp.tick - prevSp.tick;
-                    Starpower newSp = new Starpower(prevSp.tick, newLength);
+            if (previousSp != null)
+            {
+                // Cap previous sp
+                if (previousSp.tick + previousSp.length > sp.tick)
+                {
+                    previousSp.Delete();
+                    overwrittenList.Add(previousSp.Clone());
+
+                    uint newLength = sp.tick - previousSp.tick;
+                    Starpower newSp = new Starpower(previousSp.tick, newLength);
                     chart.Add(newSp);
                     validatedList.Add(newSp);
                 }
             }
 
-            if (arrayPos < chart.starPower.Count && chart.starPower[arrayPos].tick > sp.tick)
+            if (nextSp != null)
             {
-                Starpower nextSp = chart.starPower[arrayPos];
-
                 // Cap self
                 if (sp.tick + sp.length > nextSp.tick)
                 {
