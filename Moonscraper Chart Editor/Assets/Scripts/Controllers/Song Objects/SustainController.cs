@@ -15,6 +15,7 @@ public class SustainController : SelectableClick {
 
     static List<Note> originalDraggedNotes = new List<Note>();
     static List<SongEditCommand> sustainDragCommands = new List<SongEditCommand>();
+    static int commandPushCount = 0;
 
     public void Awake()
     {
@@ -34,6 +35,7 @@ public class SustainController : SelectableClick {
             {
                 originalDraggedNotes.Clear();
                 sustainDragCommands.Clear();
+                commandPushCount = 0;
 
                 if (!GameSettings.extendedSustainsEnabled || ShortcutInput.GetInput(Shortcut.ChordSelect))
                 {
@@ -47,7 +49,10 @@ public class SustainController : SelectableClick {
 
                 GenerateSustainDragCommands();
                 if (sustainDragCommands.Count > 0)
+                {
                     editor.commandStack.Push(new BatchedSongEditCommand(sustainDragCommands));
+                    ++commandPushCount;
+                }
             }
         }
     }
@@ -62,8 +67,14 @@ public class SustainController : SelectableClick {
                 GenerateSustainDragCommands();
                 if (sustainDragCommands.Count > 0)
                 {
-                    editor.commandStack.Pop();
+                    if (commandPushCount > 0)
+                    {
+                        editor.commandStack.Pop();
+                        --commandPushCount;
+                    }
+
                     editor.commandStack.Push(new BatchedSongEditCommand(sustainDragCommands));
+                    ++commandPushCount;
                 }
             }
         }
@@ -142,6 +153,7 @@ public class SustainController : SelectableClick {
 
         Song song = editor.currentSong;
         bool extendedSustainsEnabled = GameSettings.extendedSustainsEnabled;
+        bool commandsActuallyChangeData = false;
 
         foreach (Note note in originalDraggedNotes)
         {
@@ -157,8 +169,12 @@ public class SustainController : SelectableClick {
             if (capNote != null)
                 newNote.CapSustain(capNote, song);
 
+            commandsActuallyChangeData |= note.length != newNote.length;
             sustainDragCommands.Add(new SongEditModify<Note>(note, newNote));
         }
+
+        if (!commandsActuallyChangeData)
+            sustainDragCommands.Clear();
     }
 
     uint GetSnappedSustainPos()
