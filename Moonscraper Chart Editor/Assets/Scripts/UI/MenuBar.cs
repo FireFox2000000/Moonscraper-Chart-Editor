@@ -25,6 +25,8 @@ public class MenuBar : UpdateableService {
 
     [Header("Misc")]
     [SerializeField]
+    Button playButton;
+    [SerializeField]
     Button gameplayButton;
 
     public static Song.Instrument currentInstrument = Song.Instrument.Guitar;
@@ -36,7 +38,7 @@ public class MenuBar : UpdateableService {
     protected override void Start () {
         editor = ChartEditor.Instance;
 
-        EventsManager.onChartReloadEventList.Add(GameplayEnabledCheck);
+        EventsManager.onChartReloadEventList.Add(PlayEnabledCheck);
 
         base.Start();
     }
@@ -54,6 +56,8 @@ public class MenuBar : UpdateableService {
             undoButton.interactable = false;
             redoButton.interactable = false;
         }
+
+        PlayEnabledCheck();
 
         if (!Services.IsTyping)
             Controls();
@@ -180,8 +184,9 @@ public class MenuBar : UpdateableService {
         }
     }
 
-    void GameplayEnabledCheck()
+    void PlayEnabledCheck()
     {
-        gameplayButton.gameObject.SetActive(!(Globals.ghLiveMode));
+        playButton.interactable = editor.services.CanPlay();
+        gameplayButton.interactable = !Globals.ghLiveMode && editor.services.CanPlay();
     }
 }

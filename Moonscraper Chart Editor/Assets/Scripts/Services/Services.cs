@@ -144,6 +144,11 @@ public class Services : MonoBehaviour
         return !editor.commandStack.isAtEnd && !editor.groupMove.movementInProgress;
     }
 
+    public bool CanPlay()
+    {
+        return !ChartEditor.Instance.groupMove.movementInProgress;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////
 
     // Use this for initialization

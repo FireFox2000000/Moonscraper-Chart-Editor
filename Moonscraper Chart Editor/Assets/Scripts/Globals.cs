@@ -207,7 +207,7 @@ public class Globals : MonoBehaviour {
     {
         if (ShortcutInput.GetInputDown(Shortcut.PlayPause))
         {
-            if (applicationMode == ApplicationMode.Editor)
+            if (applicationMode == ApplicationMode.Editor && services.CanPlay())
                 editor.Play();
             else if (applicationMode == ApplicationMode.Playing)
                 editor.Stop();
