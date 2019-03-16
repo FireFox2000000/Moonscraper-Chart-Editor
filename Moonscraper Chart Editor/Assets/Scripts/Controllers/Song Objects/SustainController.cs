@@ -76,6 +76,12 @@ public class SustainController : SelectableClick {
                     editor.commandStack.Push(new BatchedSongEditCommand(sustainDragCommands));
                     ++commandPushCount;
                 }
+                else if (commandPushCount > 0)
+                {
+                    editor.commandStack.Pop();
+                    editor.commandStack.ResetTail();
+                    --commandPushCount;
+                }
             }
         }
     }
@@ -174,7 +180,9 @@ public class SustainController : SelectableClick {
         }
 
         if (!commandsActuallyChangeData)
+        {
             sustainDragCommands.Clear();
+        }
     }
 
     uint GetSnappedSustainPos()

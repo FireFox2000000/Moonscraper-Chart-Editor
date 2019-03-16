@@ -16,8 +16,8 @@ public class CommandStack {
 
     public void Push(ICommand command)
     {
-        ++currentStackIndex;
-        commands.RemoveRange(currentStackIndex, commands.Count - currentStackIndex);
+        ResetTail();
+        ++currentStackIndex;   
         command.Invoke();
         commands.Add(command);
     }
@@ -26,5 +26,10 @@ public class CommandStack {
     {
         if (!isAtStart)
             commands[currentStackIndex--].Revoke();
+    }
+
+    public void ResetTail()
+    {
+        commands.RemoveRange(currentStackIndex + 1, commands.Count - (currentStackIndex + 1));
     }
 }
