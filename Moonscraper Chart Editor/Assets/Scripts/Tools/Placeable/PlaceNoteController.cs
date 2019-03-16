@@ -122,37 +122,6 @@ public class PlaceNoteController : ObjectlessTool {
         CurrentNotePlacementUpdate();
     }
 
-    protected override void LateUpdate()
-    {
-        base.LateUpdate();
-
-        // Update prev and next if chord
-        if (activeNotes.Count > 1)
-        {
-            for (int i = 0; i < activeNotes.Count; ++i)
-            {
-                if (i == 0)     // Start
-                {
-                    //activeNotes[i].controller.note.previous = null;
-                    activeNotes[i].controller.note.next = activeNotes[i + 1].note;
-                }
-                else if (i >= (activeNotes.Count - 1))      // End
-                {
-                    activeNotes[i].controller.note.previous = activeNotes[i - 1].note;
-                    //activeNotes[i].controller.note.next = null;
-                }
-                else
-                {
-                    activeNotes[i].controller.note.previous = activeNotes[i - 1].note;
-                    activeNotes[i].controller.note.next = activeNotes[i + 1].note;
-                }
-
-                // Visuals for some reason aren't being updated in this cycle
-                activeNotes[i].visuals.UpdateVisuals();
-            }
-        }
-    }
-
     void OnKeysModeChanged(bool keyboardModeEnabled)
     {
         OnModeSwitch();
@@ -502,6 +471,39 @@ public class PlaceNoteController : ObjectlessTool {
                 placeableNotes.gameObject.SetActive(false);
             }
         }
+
+        // Update prev and next
+        foreach(PlaceNote placeNote in activeNotes)
+        {
+            placeNote.UpdatePrevAndNext();
+        }
+
+        if (activeNotes.Count > 1)
+        {
+            for (int i = 0; i < activeNotes.Count; ++i)
+            {
+                Note note = activeNotes[i].controller.note;
+                
+                if (i == 0)     // Start
+                {
+                    note.next = activeNotes[i + 1].note;
+                }
+                else if (i >= (activeNotes.Count - 1))      // End
+                {
+                    note.previous = activeNotes[i - 1].note;
+                }
+                else
+                {
+                    note.previous = activeNotes[i - 1].note;
+                    note.next = activeNotes[i + 1].note;
+                }
+
+                // Visuals for some reason aren't being updated in this cycle
+                activeNotes[i].visuals.UpdateVisuals();
+            }
+        }
+
+        editor.currentSelectedObject = activeNotes[0].note;
 
         // Update flags in the note panel
         if (editor.currentSelectedObject.GetType() == typeof(Note))

@@ -45,8 +45,6 @@ public class PlaceNote : PlaceSongObject {
 
     protected override void OnEnable()
     {
-        editor.currentSelectedObject = note;
-        
         Update();
     }
 
@@ -66,6 +64,11 @@ public class PlaceNote : PlaceSongObject {
         note.chart = editor.currentChart;
         base.Update();
 
+        UpdateFretType();
+    }
+
+    public void UpdatePrevAndNext()
+    {
         // Get previous and next note
         int pos = SongObjectHelper.FindClosestPosition(note.tick, editor.currentChart.notes);
         //Debug.Log(pos);
@@ -79,13 +82,11 @@ public class PlaceNote : PlaceSongObject {
             if (note.IsOpenNote())
                 UpdateOpenPrevAndNext(pos);
             else
-                UpdatePrevAndNext(pos);
+                UpdateStandardPrevAndNext(pos);
         }
-
-        UpdateFretType();
     }
 
-    void UpdatePrevAndNext(int closestNoteArrayPos)
+    void UpdateStandardPrevAndNext(int closestNoteArrayPos)
     {
         if (editor.currentChart.notes[closestNoteArrayPos] < note)
         {
