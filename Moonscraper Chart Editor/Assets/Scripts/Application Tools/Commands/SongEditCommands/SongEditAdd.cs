@@ -191,7 +191,7 @@ public class SongEditAdd : SongEditCommand
             return;
 
         ChartEditor editor = ChartEditor.Instance;
-        int overwriteIndex = SongObjectHelper.FindObjectPosition(songObject.tick, searchObjects);
+        int overwriteIndex = SongObjectHelper.FindObjectPosition(songObject, searchObjects);
 
         if (overwriteIndex != SongObjectHelper.NOTFOUND)
         {
@@ -205,7 +205,7 @@ public class SongEditAdd : SongEditCommand
             return;
 
         ChartEditor editor = ChartEditor.Instance;
-        int overwriteIndex = SongObjectHelper.FindObjectPosition(songObject.tick, searchObjects);
+        int overwriteIndex = SongObjectHelper.FindObjectPosition(songObject, searchObjects);
 
         if (overwriteIndex != SongObjectHelper.NOTFOUND)
         {
