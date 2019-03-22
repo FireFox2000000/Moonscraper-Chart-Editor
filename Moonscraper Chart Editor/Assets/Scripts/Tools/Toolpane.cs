@@ -84,6 +84,10 @@ public class Toolpane : MonoBehaviour {
                             toolIsActive = true;
                     }
                 }
+                else
+                {
+                    toolIsActive = false;
+                }
             }
 
             currentToolObject.gameObject.SetActive(toolIsActive);
