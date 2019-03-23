@@ -334,8 +334,15 @@ public class PlaceNoteController : ObjectlessTool {
                 }
                 else if (currentPlacementMode == KeysPlacementMode.Deleting)
                 {
-                    currentlyAddingNotes.Add(editor.currentChart.notes[pos]);
-                    Debug.Log("Removed " + editor.currentChart.notes[pos].rawNote + " note at position " + editor.currentChart.notes[pos].tick + " using keyboard controls");
+                    if (pos == SongObjectHelper.NOTFOUND)
+                    {
+                        Debug.Assert(false, "Could not find note " + allPlaceableNotes[notePos].note.guitarFret + " at tick " + allPlaceableNotes[notePos].note.tick + " to delete");
+                    }
+                    else
+                    { 
+                        currentlyAddingNotes.Add(editor.currentChart.notes[pos]);
+                        Debug.Log("Removed " + editor.currentChart.notes[pos].rawNote + " note at position " + editor.currentChart.notes[pos].tick + " using keyboard controls");
+                    }
                 }
             }
         }
