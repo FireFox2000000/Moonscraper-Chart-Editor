@@ -187,8 +187,10 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
         if (Toolpane.currentTool == Toolpane.Tools.Cursor)
         {
-            SongEditModifyValidated command = new SongEditModifyValidated(note, new Note(note.tick, note.rawNote, note.length, newFlags));
+            Note newNote = new Note(note.tick, note.rawNote, note.length, newFlags);
+            SongEditModifyValidated command = new SongEditModifyValidated(note, newNote);
             editor.commandStack.Push(command);
+            editor.SelectSongObject(newNote, editor.currentChart.notes);
         }
         else
         {
