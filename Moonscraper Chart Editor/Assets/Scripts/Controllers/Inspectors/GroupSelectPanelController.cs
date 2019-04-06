@@ -158,6 +158,7 @@ public class GroupSelectPanelController : MonoBehaviour
     public void SetNoteType(Note.NoteType type)
     {
         List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
+        List<ChartObject> objectsToSelect = new List<ChartObject>();
 
         foreach (ChartObject chartObject in editor.currentSelectedObjects)
         {
@@ -167,10 +168,28 @@ public class GroupSelectPanelController : MonoBehaviour
                 Note newNote = new Note(note);
                 newNote.flags = note.GetFlagsToSetType(type);
                 songEditCommands.Add(new SongEditModify<Note>(note, newNote));
+                objectsToSelect.Add(newNote);
             }
         }
 
         if (songEditCommands.Count > 0)
+        {
             editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
+
+            List<ChartObject> actuallySelected = new List<ChartObject>();
+            foreach (ChartObject chartObject in objectsToSelect)
+            {
+                if (chartObject.classID == (int)SongObject.ID.Note && chartObject.song != null) // check null in case note was already deleted when overwritten by changing a note before it
+                {
+                    Note note = chartObject as Note;
+                    int insertionIndex = SongObjectHelper.FindObjectPosition(note, editor.currentChart.notes);
+                    Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
+                    actuallySelected.Add(editor.currentChart.notes[insertionIndex]);
+                }
+                else
+                    actuallySelected.Add(chartObject);
+            }
+            editor.SetCurrentSelectedObjects(actuallySelected);
+        }
     }
 }
