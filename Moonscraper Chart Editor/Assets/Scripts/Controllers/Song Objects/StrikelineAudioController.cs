@@ -7,8 +7,7 @@ using System.Collections;
 [RequireComponent(typeof(AudioSource))]
 public class StrikelineAudioController : MonoBehaviour {
 
-    static float lastClapPos = -1;
-    public static float startYPoint = -1;
+    public float startYPoint = -1;
     Vector3 initLocalPos;
     readonly string defaultPath = System.IO.Path.Combine(Application.streamingAssetsPath, "SFX/clap.wav");
 
@@ -35,22 +34,15 @@ public class StrikelineAudioController : MonoBehaviour {
         Vector3 pos = initLocalPos;
         pos.y += 0.02f * GameSettings.hyperspeed / GameSettings.gameSpeed;
         transform.localPosition = pos;
-
-        if (Globals.applicationMode != Globals.ApplicationMode.Playing)
-            lastClapPos = -1;
     }
 
     public void Clap(float worldYPos)
     {
-        if (Globals.applicationMode != Globals.ApplicationMode.Playing)
-            lastClapPos = -1;
-
-        if (worldYPos > lastClapPos && worldYPos >= startYPoint)
+        if (worldYPos >= startYPoint)       // Make sure this can't fire off in a cluster at the start. Results weird audio volumes otherwise. 
         {
             sample.volume = GameSettings.sfxVolume * GameSettings.vol_master;
             sample.pan = GameSettings.audio_pan;
             sample.Play();
         }
-        lastClapPos = worldYPos;
     }
 }
