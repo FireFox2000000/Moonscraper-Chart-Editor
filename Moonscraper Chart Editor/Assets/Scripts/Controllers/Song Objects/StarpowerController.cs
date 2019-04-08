@@ -19,6 +19,12 @@ public class StarpowerController : SongObjectController
         base.Awake();
     }
 
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        Reset();
+    }
+
     protected override void UpdateCheck()
     {
         if (starpower != null)
@@ -86,7 +92,13 @@ public class StarpowerController : SongObjectController
             wantPop = true;
         }
     }
-    
+
+    public override void OnSelectableMouseDown()
+    {
+        Reset();
+        base.OnSelectableMouseDown();
+    }
+
     public override void OnSelectableMouseDrag()
     {
         // Move note
@@ -110,6 +122,12 @@ public class StarpowerController : SongObjectController
 
     public override void OnSelectableMouseUp()
     {
+        Reset();
+    }
+
+    public void Reset()
+    {
+        unmodifiedSP = null;
         wantPop = false;
     }
 }

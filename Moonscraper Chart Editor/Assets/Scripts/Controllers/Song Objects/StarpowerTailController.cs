@@ -15,8 +15,11 @@ public class StarpowerTailController : SelectableClick {
 
     public override void OnSelectableMouseDown()
     {
-        if (Input.GetMouseButton(1))
+        if (!Input.GetMouseButtonDown(0) && Input.GetMouseButton(1))
+        {
+            spCon.Reset();
             OnSelectableMouseDrag();
+        }
     }
 
     public override void OnSelectableMouseDrag()
