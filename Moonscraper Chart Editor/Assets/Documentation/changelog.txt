@@ -1,3 +1,9 @@
+1.3.08
+	FIXES
+	-Fixed changing properties of a note deselecting the note
+	-Attempted fix at starpower deleting itself
+	-Fixed slight delay on clap
+
 1.3.07
 	FIXES
 	-Fixed note tool disappearing
