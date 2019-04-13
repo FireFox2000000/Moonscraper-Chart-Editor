@@ -16,7 +16,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     char c_decimal = LocalesManager.decimalSeperator;
     string c_decimalStr;
 
-    float incrementalTimer = 0;
+    float incrementInputHoldTime = 0;
     float autoIncrementTimer = 0;
     const float AUTO_INCREMENT_WAIT_TIME = 0.5f;
     const float AUTO_INCREMENT_RATE = 0.08f;
@@ -39,7 +39,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         bool edit = ChartEditor.isDirty;
         UpdateBPMInputFieldText();
 
-        incrementalTimer = 0;
+        incrementInputHoldTime = 0;
         autoIncrementTimer = 0;
 
         ChartEditor.isDirty = edit;
@@ -69,7 +69,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 }
 
                 // Adjust to time rather than framerate
-                if (incrementalTimer > AUTO_INCREMENT_WAIT_TIME && autoIncrementTimer > AUTO_INCREMENT_RATE)
+                if (incrementInputHoldTime > AUTO_INCREMENT_WAIT_TIME && autoIncrementTimer > AUTO_INCREMENT_RATE)
                 {
                     if (ShortcutInput.GetInput(Shortcut.BpmDecrease) && decrement.interactable)
                     {
@@ -88,11 +88,13 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 // 
                 if (ShortcutInput.GetInput(Shortcut.BpmIncrease) || ShortcutInput.GetInput(Shortcut.BpmDecrease))
                 {
-                    incrementalTimer += Time.deltaTime;
+                    incrementInputHoldTime += Time.deltaTime;
                 }
+                else
+                    incrementInputHoldTime = 0;
             }
             else
-                incrementalTimer = 0;
+                incrementInputHoldTime = 0;
         }
 
         if (ShortcutInput.GetInputDown(Shortcut.ToggleBpmAnchor) && anchorToggle.IsInteractable())
@@ -127,7 +129,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
         prevClonedBPM.CopyFrom(currentBPM);
 
-        if (incrementalTimer > AUTO_INCREMENT_WAIT_TIME)
+        if (incrementInputHoldTime > AUTO_INCREMENT_WAIT_TIME)
             autoIncrementTimer += Time.deltaTime;
         else
             autoIncrementTimer = 0;
