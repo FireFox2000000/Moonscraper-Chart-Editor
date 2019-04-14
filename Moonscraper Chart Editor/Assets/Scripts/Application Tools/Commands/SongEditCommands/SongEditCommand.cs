@@ -5,9 +5,9 @@ using UnityEngine;
 public abstract class SongEditCommand : ICommand {
 
     protected List<SongObject> songObjects = new List<SongObject>();
-    protected List<SongObject> validatedSongObjects = new List<SongObject>();
-    protected bool hasValidatedSongObjects = false;
+    protected bool extendedSustainsEnabled;
     public bool postExecuteEnabled = true;
+    protected List<BaseAction> subActions = new List<BaseAction>();
 
     private List<SongEditModify<BPM>> bpmAnchorFixup = new List<SongEditModify<BPM>>();
     bool bpmAnchorFixupCommandsGenerated = false;
@@ -86,10 +86,9 @@ public abstract class SongEditCommand : ICommand {
 
         ChartEditor.isDirty = true;
 
-        var soList = validatedSongObjects.Count > 0 ? validatedSongObjects : songObjects;
         SongObject lowestTickSo = null;
-
-        foreach (SongObject songObject in soList)
+        
+        foreach (SongObject songObject in songObjects)
         {
             if (lowestTickSo  == null || songObject.tick < lowestTickSo.tick)
                 lowestTickSo = songObject;
@@ -101,6 +100,29 @@ public abstract class SongEditCommand : ICommand {
             Globals.ViewMode viewMode = lowestTickSo.GetType().IsSubclassOf(typeof(ChartObject)) ? Globals.ViewMode.Chart : Globals.ViewMode.Song;
             editor.FillUndoRedoSnapInfo(jumpToPos, viewMode);
         }
+    }
+
+    protected void InvokeSubActions()
+    {
+        foreach (BaseAction action in subActions)
+        {
+            action.Invoke();
+        }
+    }
+
+    protected void RevokeSubActions()
+    {
+        for (int i = subActions.Count - 1; i >= 0; --i)
+        {
+            BaseAction action = subActions[i];
+            action.Revoke();
+        }
+    }
+
+    public static void AddAndInvokeSubAction(BaseAction action, IList<BaseAction> subActions)
+    {
+        action.Invoke();
+        subActions.Add(action);
     }
 
     static List<BPM> tempAnchorFixupBPMs = new List<BPM>();
@@ -151,5 +173,10 @@ public abstract class SongEditCommand : ICommand {
         bpmAnchorFixupCommandsGenerated = true;
         tempAnchorFixupBPMs.Clear();
         tempAnchorFixupSynctrack.Clear();
+    }
+
+    protected void SnapshotGameSettings()
+    {
+        extendedSustainsEnabled = GameSettings.extendedSustainsEnabled;
     }
 }

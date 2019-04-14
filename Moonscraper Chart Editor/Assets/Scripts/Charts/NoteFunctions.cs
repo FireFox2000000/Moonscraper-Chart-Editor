@@ -281,7 +281,7 @@ public static class NoteFunctions {
             return fret_type - 1;
     }
 
-    public static void PerformPreChartInsertCorrections(Note note, Chart chart, IList<SongObject> newNotesAdded, IList<SongObject> oldNotesRemoved, bool extendedSustainsEnabled)
+    public static void PerformPreChartInsertCorrections(Note note, Chart chart, IList<BaseAction> subActions, bool extendedSustainsEnabled)
     {
         int index, length;
         SongObjectHelper.GetRange(chart.chartObjects, note.tick, note.tick, out index, out length);
@@ -299,14 +299,13 @@ public static class NoteFunctions {
                 bool isOverwritableOpenNote = (note.IsOpenNote() || overwriteNote.IsOpenNote()) && !Globals.drumMode;
                 if (isOverwritableOpenNote || sameFret)
                 {
-                    overwriteNote.Delete(false);
-                    oldNotesRemoved.Add(overwriteNote);
+                    SongEditCommand.AddAndInvokeSubAction(new DeleteAction(overwriteNote), subActions);
                 }
             }
         }
     }
 
-    public static void PerformPostChartInsertCorrections(Note note, IList<SongObject> newNotesAdded, IList<SongObject> oldNotesRemoved, bool extendedSustainsEnabled)
+    public static void PerformPostChartInsertCorrections(Note note, IList<BaseAction> subActions, bool extendedSustainsEnabled)
     {
         Debug.Assert(note.chart != null, "Note has not been inserted into a chart");
         Debug.Assert(note.song != null, "Note has not been inserted into a song");
@@ -314,11 +313,20 @@ public static class NoteFunctions {
         Chart chart = note.chart;
         Song song = note.song;
 
+        Note.Flags flags = note.flags;
+
         if (note.IsOpenNote())
-            note.flags &= ~Note.Flags.Tap;
+            flags &= ~Note.Flags.Tap;
 
         if (note.cannotBeForced)
-            note.flags &= ~Note.Flags.Forced;
+            flags &= ~Note.Flags.Forced;
+
+        if (flags != note.flags)
+        {
+            Note newNote = new Note(note.tick, note.rawNote, note.length, flags);
+            SongEditCommand.AddAndInvokeSubAction(new DeleteAction(note), subActions);
+            SongEditCommand.AddAndInvokeSubAction(new AddAction(newNote), subActions);
+        }
 
         // Apply flags to chord
         foreach (Note chordNote in note.chord)
@@ -327,14 +335,16 @@ public static class NoteFunctions {
             if (chordNote.flags != note.flags)
             {
                 Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, note.flags);
-                AddOrReplaceNote(chart, chordNote, newChordNote, oldNotesRemoved, newNotesAdded);
+
+                SongEditCommand.AddAndInvokeSubAction(new DeleteAction(chordNote), subActions);
+                SongEditCommand.AddAndInvokeSubAction(new AddAction(newChordNote), subActions);
             }
         }
 
-        CapNoteCheck(chart, note, oldNotesRemoved, newNotesAdded, song, extendedSustainsEnabled);
-        ForwardCap(chart, note, oldNotesRemoved, newNotesAdded, song);
+        CapNoteCheck(chart, note, subActions, song, extendedSustainsEnabled);
+        ForwardCap(chart, note, subActions, song);
 
-        AutoForcedCheck(chart, note, oldNotesRemoved, newNotesAdded);
+        AutoForcedCheck(chart, note, subActions);
     }
 
     #region Note Insertion Helper Functions
@@ -365,7 +375,7 @@ public static class NoteFunctions {
         }
     }
 
-    static void ForwardCap(Chart chart, Note note, IList<SongObject> overwrittenList, IList<SongObject> replacementNotes, Song song)
+    static void ForwardCap(Chart chart, Note note, IList<BaseAction> subActions, Song song)
     {
         Note next;
         next = note.nextSeperateNote;
@@ -382,15 +392,10 @@ public static class NoteFunctions {
                     uint newLength = noteToCap.GetCappedLength(next, song);
                     if (noteToCap.length != newLength)
                     {
-                        if (note == noteToCap)
-                        {
-                            note.length = newLength;
-                        }
-                        else
-                        {
-                            Note newNote = new Note(noteToCap.tick, noteToCap.rawNote, newLength, noteToCap.flags);
-                            AddOrReplaceNote(chart, noteToCap, newNote, overwrittenList, replacementNotes);
-                        }
+                        Note newNote = new Note(noteToCap.tick, noteToCap.rawNote, newLength, noteToCap.flags);
+
+                        SongEditCommand.AddAndInvokeSubAction(new DeleteAction(noteToCap), subActions);
+                        SongEditCommand.AddAndInvokeSubAction(new AddAction(newNote), subActions);
                     }
                 }
             }
@@ -410,13 +415,15 @@ public static class NoteFunctions {
                 if (note.length != newLength)
                 {
                     Note newNote = new Note(note.tick, note.rawNote, newLength, note.flags);
-                    AddOrReplaceNote(chart, note, newNote, overwrittenList, replacementNotes);
+
+                    SongEditCommand.AddAndInvokeSubAction(new DeleteAction(note), subActions);
+                    SongEditCommand.AddAndInvokeSubAction(new AddAction(newNote), subActions);
                 }
             }
         }
     }
 
-    static void CapNoteCheck(Chart chart, Note noteToAdd, IList<SongObject> overwrittenList, IList<SongObject> replacementNotes, Song song, bool extendedSustainsEnabled)
+    static void CapNoteCheck(Chart chart, Note noteToAdd, IList<BaseAction> subActions, Song song, bool extendedSustainsEnabled)
     {
         Note[] previousNotes = NoteFunctions.GetPreviousOfSustains(noteToAdd, extendedSustainsEnabled);
         if (!GameSettings.extendedSustainsEnabled)
@@ -428,7 +435,8 @@ public static class NoteFunctions {
                 if (prevNote.length != newLength)
                 {
                     Note newNote = new Note(prevNote.tick, prevNote.rawNote, newLength, prevNote.flags);
-                    AddOrReplaceNote(chart, prevNote, newNote, overwrittenList, replacementNotes);
+                    SongEditCommand.AddAndInvokeSubAction(new DeleteAction(prevNote), subActions);
+                    SongEditCommand.AddAndInvokeSubAction(new AddAction(newNote), subActions);
                 }
             }
 
@@ -437,15 +445,9 @@ public static class NoteFunctions {
                 uint newLength = noteToAdd.length;
                 if (chordNote.length != newLength)
                 {
-                    if (noteToAdd == chordNote)
-                    {
-                        noteToAdd.length = newLength;
-                    }
-                    else
-                    {
-                        Note newNote = new Note(chordNote.tick, chordNote.rawNote, newLength, chordNote.flags);
-                        AddOrReplaceNote(chart, chordNote, newNote, overwrittenList, replacementNotes);
-                    }
+                    Note newNote = new Note(chordNote.tick, chordNote.rawNote, newLength, chordNote.flags);
+                    SongEditCommand.AddAndInvokeSubAction(new DeleteAction(chordNote), subActions);
+                    SongEditCommand.AddAndInvokeSubAction(new AddAction(newNote), subActions);
                 }
             }
         }
@@ -459,15 +461,16 @@ public static class NoteFunctions {
                     uint newLength = prevNote.GetCappedLength(noteToAdd, song);
                     if (prevNote.length != newLength)
                     {
-                        overwrittenList.Add(prevNote);
-                        chart.Add(new Note(prevNote.tick, prevNote.rawNote, newLength, prevNote.flags));
+                        Note newNote = new Note(prevNote.tick, prevNote.rawNote, newLength, prevNote.flags);
+                        SongEditCommand.AddAndInvokeSubAction(new DeleteAction(prevNote), subActions);
+                        SongEditCommand.AddAndInvokeSubAction(new AddAction(newNote), subActions);
                     }
                 }
             }
         }
     }
 
-    static void AutoForcedCheck(Chart chart, Note note, IList<SongObject> overwrittenNotes, IList<SongObject> replacementNotes)
+    static void AutoForcedCheck(Chart chart, Note note, IList<BaseAction> subActions)
     {
         Note next = note.nextSeperateNote;
         if (next != null && (next.flags & Note.Flags.Forced) == Note.Flags.Forced && next.cannotBeForced)
@@ -482,7 +485,8 @@ public static class NoteFunctions {
                 if (chordNote.flags != flags)
                 {
                     Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, note.flags);
-                    AddOrReplaceNote(chart, chordNote, newChordNote, overwrittenNotes, replacementNotes);
+                    SongEditCommand.AddAndInvokeSubAction(new DeleteAction(chordNote), subActions);
+                    SongEditCommand.AddAndInvokeSubAction(new AddAction(newChordNote), subActions);
                 }
             }
         }

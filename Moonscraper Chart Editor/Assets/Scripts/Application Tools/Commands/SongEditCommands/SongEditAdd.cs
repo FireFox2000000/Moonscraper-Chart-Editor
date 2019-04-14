@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class SongEditAdd : SongEditCommand
 {
-    List<SongObject> overwrittenSongObjects = new List<SongObject>();
-
     public SongEditAdd(IList<SongObject> songObjects) : base(songObjects)
     {
         foreach (SongObject songObject in songObjects)
@@ -21,96 +19,59 @@ public class SongEditAdd : SongEditCommand
 
     public override void InvokeSongEditCommand()
     {
-        if (hasValidatedSongObjects)
+        if (subActions.Count <= 0)
         {
-            ApplyPostValidatedAction(validatedSongObjects, overwrittenSongObjects);
+            AddAndInvokeSubActions(songObjects, subActions, GameSettings.extendedSustainsEnabled);
         }
         else
         {
-            ApplyActionAndFillValidation(GameSettings.extendedSustainsEnabled);
-            songObjects.Clear();
-            for (int i = validatedSongObjects.Count - 1; i >= 0; --i)
-            {
-                SongObject so = validatedSongObjects[i];
-                if (so.song == null)    
-                {
-                    // Song object was probably removed during the initial add process, thus was never added at all
-                    validatedSongObjects.RemoveAt(i);
-                    overwrittenSongObjects.Remove(so);
-                }
-                else
-                    validatedSongObjects[i] = so.Clone();
-            }
-
-            hasValidatedSongObjects = true;
+            InvokeSubActions();
         }
     }
 
     public override void RevokeSongEditCommand()
     {
-        Debug.Assert(hasValidatedSongObjects, "Trying to revoke add action which has not made it's initial validation pass!");
-        ApplyPostValidatedAction(overwrittenSongObjects, validatedSongObjects);
+        RevokeSubActions();
     }
 
-    void ApplyPostValidatedAction(IList<SongObject> songObjectsToAdd, IList<SongObject> songObjectsToDelete)
-    {
-        SongEditDelete.ApplyAction(songObjectsToDelete, null);  // Overwrite can be null for special case with song edit add, as corrections can mess SEA up
-
-        foreach (SongObject songObject in songObjectsToAdd)
-        {
-            ApplyPostValidatedAction(songObject);
-        }
-    }
-
-    public static void ApplyAction(IList<SongObject> songObjects, IList<SongObject> overwriteList, bool extendedSustainsEnabled)
-    {
-        List<SongObject> dummy = new List<SongObject>();
-        foreach (SongObject songObject in songObjects)
-        {
-            ApplyAction(songObject, overwriteList, extendedSustainsEnabled, dummy);
-        }
-    }
-
-    void ApplyActionAndFillValidation(bool extendedSustainsEnabled)
+    public static void AddAndInvokeSubActions(IList<SongObject> songObjects, IList<BaseAction> subActions, bool extendedSustainsEnabled)
     {
         foreach (SongObject songObject in songObjects)
         {
-            ApplyAction(songObject, overwrittenSongObjects, extendedSustainsEnabled, validatedSongObjects);
+            AddAndInvokeSubActions(songObject, subActions, extendedSustainsEnabled);
         }
     }
 
-    static void ApplyAction(SongObject songObject, IList<SongObject> overwriteList, bool extendedSustainsEnabled, List<SongObject> validatedObjects)
+    static void AddAndInvokeSubActions(SongObject songObject, IList<BaseAction> subActions, bool extendedSustainsEnabled)
     {
-        SongObject validatedSo = null;
-
         switch (songObject.classID)
         {
             case ((int)SongObject.ID.Note):
-                AddNote((Note)songObject, overwriteList, extendedSustainsEnabled, validatedObjects);
+                AddNote((Note)songObject, subActions, extendedSustainsEnabled);
                 break;
 
             case ((int)SongObject.ID.Starpower):
-                validatedSo = AddStarpower((Starpower)songObject, overwriteList, validatedObjects);
+                AddStarpower((Starpower)songObject, subActions);
                 break;
 
             case ((int)SongObject.ID.ChartEvent):
-                validatedSo = AddChartEvent((ChartEvent)songObject, overwriteList);
+                AddChartEvent((ChartEvent)songObject, subActions);
                 break;
 
             case ((int)SongObject.ID.BPM):
-                validatedSo = AddBPM((BPM)songObject, overwriteList);
+                AddBPM((BPM)songObject, subActions);
                 break;
 
             case ((int)SongObject.ID.Section):
-                validatedSo = AddSection((Section)songObject, overwriteList);
+                AddSection((Section)songObject, subActions);
                 break;
 
             case ((int)SongObject.ID.TimeSignature):
-                validatedSo = AddTimeSignature((TimeSignature)songObject, overwriteList);
+                AddTimeSignature((TimeSignature)songObject, subActions);
                 break;
 
             case ((int)SongObject.ID.Event):
-                validatedSo = AddEvent((Event)songObject, overwriteList);
+                AddEvent((Event)songObject, subActions);
                 break;
 
             default:
@@ -118,76 +79,13 @@ public class SongEditAdd : SongEditCommand
                 break;
         }
 
-        if (validatedSo != null)
-            validatedObjects.Add(validatedSo);
-    }
-
-    public static void ApplyPostValidatedAction(SongObject songObject)
-    {
-        switch (songObject.classID)
-        {
-            case ((int)SongObject.ID.Note):
-                {
-                    Note note = songObject as Note;
-                    ChartEditor editor = ChartEditor.Instance;
-                    Chart chart = editor.currentChart;
-                    chart.Add(note);
-
-                    foreach (Note chordNote in note.chord)
-                    {
-                        if (chordNote.controller)
-                            chordNote.controller.SetDirty();
-                    }
-
-                    Note next = note.nextSeperateNote;
-                    if (next != null)
-                    {
-                        foreach(Note chordNote in next.chord)
-                        {
-                            if (chordNote.controller)
-                                chordNote.controller.SetDirty();
-                        }
-                    }
-                }
-                break;
-            case ((int)SongObject.ID.Starpower):
-            case ((int)SongObject.ID.ChartEvent):
-                {
-                    ChartEditor editor = ChartEditor.Instance;
-                    Chart chart = editor.currentChart;
-                    chart.Add(songObject as ChartObject);
-                }
-                break;
-
-            case ((int)SongObject.ID.BPM):
-            case ((int)SongObject.ID.TimeSignature):
-                {
-                    ChartEditor editor = ChartEditor.Instance;
-                    Song song = editor.currentSong;
-                    song.Add(songObject as SyncTrack);
-                }
-                break;
-
-            case ((int)SongObject.ID.Section):          
-            case ((int)SongObject.ID.Event):
-                {
-                    ChartEditor editor = ChartEditor.Instance;
-                    Song song = editor.currentSong;
-                    song.Add(songObject as Event);
-                }
-                break;
-
-            default:
-                Debug.LogError("Unhandled songobject!");
-                break;
-        }
     }
 
     #region Object specific add functions
 
-    static void TryRecordOverwrite<T>(T songObject, IList<T> searchObjects, IList<SongObject> overwrittenObjects) where T : SongObject
+    static void TryRecordOverwrite<T>(T songObject, IList<T> searchObjects, IList<BaseAction> subActions) where T : SongObject
     {
-        if (overwrittenObjects == null)
+        if (subActions == null)
             return;
 
         ChartEditor editor = ChartEditor.Instance;
@@ -195,13 +93,13 @@ public class SongEditAdd : SongEditCommand
 
         if (overwriteIndex != SongObjectHelper.NOTFOUND)
         {
-            overwrittenObjects.Add(searchObjects[overwriteIndex].Clone());
+            AddAndInvokeSubAction(new DeleteAction(searchObjects[overwriteIndex]), subActions);
         }
     }
 
-    static void TryRecordOverwrite(Starpower songObject, IList<ChartObject> searchObjects, IList<SongObject> overwrittenObjects)
+    static void TryRecordOverwrite(Starpower songObject, IList<ChartObject> searchObjects, IList<BaseAction> subActions)
     {
-        if (overwrittenObjects == null)
+        if (subActions == null)
             return;
 
         ChartEditor editor = ChartEditor.Instance;
@@ -209,130 +107,106 @@ public class SongEditAdd : SongEditCommand
 
         if (overwriteIndex != SongObjectHelper.NOTFOUND)
         {
-            overwrittenObjects.Add(searchObjects[overwriteIndex].Clone());
+            AddAndInvokeSubAction(new DeleteAction(searchObjects[overwriteIndex]), subActions);
             SetNotesDirty(songObject, searchObjects);
         }
     }
 
-    static void AddNote(Note note, IList<SongObject> overwrittenList, bool extendedSustainsEnabled, List<SongObject> validatedNotes)
+    static void AddNote(Note note, IList<BaseAction> subActions, bool extendedSustainsEnabled)
     {
         ChartEditor editor = ChartEditor.Instance;
         Chart chart = editor.currentChart;
         Song song = editor.currentSong;
 
-        Note noteToAdd = new Note(note);
+        NoteFunctions.PerformPreChartInsertCorrections(note, chart, subActions, extendedSustainsEnabled);
+        AddAndInvokeSubAction(new AddAction(note), subActions);
 
-        NoteFunctions.PerformPreChartInsertCorrections(noteToAdd, chart, validatedNotes, overwrittenList, extendedSustainsEnabled);
-        chart.Add(noteToAdd, false);
-        NoteFunctions.PerformPostChartInsertCorrections(noteToAdd, validatedNotes, overwrittenList, extendedSustainsEnabled);
-        
-        // Queue visual refresh
+        int arrayPos = SongObjectHelper.FindObjectPosition(note, chart.chartObjects);
+        if (arrayPos != SongObjectHelper.NOTFOUND)
         {
-            foreach (Note chordNote in noteToAdd.chord)
-            {
-                if (chordNote.controller)
-                    chordNote.controller.SetDirty();
-            }
-
-            Note next = noteToAdd.nextSeperateNote;
-            if (next != null)
-            {
-                foreach (Note chordNote in next.chord)
-                {
-                    if (chordNote.controller)
-                        chordNote.controller.SetDirty();
-                }
-            }
+            Note justAdded = chart.chartObjects[arrayPos] as Note;
+            if (justAdded == null)
+                Debug.LogError("Object just added was not a note");
+            else
+                NoteFunctions.PerformPostChartInsertCorrections(justAdded, subActions, extendedSustainsEnabled);
         }
-
-        if (!validatedNotes.Contains(noteToAdd))
-            validatedNotes.Add(noteToAdd);
+        else
+        {
+            Debug.LogError("Unable to find note that was just added");
+        }
     }
 
-    static Starpower AddStarpower(Starpower sp, IList<SongObject> overwrittenList, IList<SongObject> validatedList)
+    static void AddStarpower(Starpower sp, IList<BaseAction> subActions)
     {
         ChartEditor editor = ChartEditor.Instance;
-        TryRecordOverwrite(sp, editor.currentChart.chartObjects, overwrittenList);
+        TryRecordOverwrite(sp, editor.currentChart.chartObjects, subActions);
 
-        CapPrevAndNextPreInsert(sp, editor.currentChart, overwrittenList, validatedList);
+        CapPrevAndNextPreInsert(sp, editor.currentChart, subActions);
 
-        Starpower spToAdd = new Starpower(sp);
-        editor.currentChart.Add(spToAdd, false);
-        Debug.Log("Added new starpower");
-
-        SetNotesDirty(spToAdd, editor.currentChart.chartObjects);
-
-        return spToAdd;
+        AddAndInvokeSubAction(new AddAction(sp), subActions);
     }
 
-    static ChartEvent AddChartEvent(ChartEvent chartEvent, IList<SongObject> overwrittenList)
+    static void AddChartEvent(ChartEvent chartEvent, IList<BaseAction> subActions)
     {      
         ChartEditor editor = ChartEditor.Instance;
-        TryRecordOverwrite(chartEvent, editor.currentChart.chartObjects, overwrittenList);
+        TryRecordOverwrite(chartEvent, editor.currentChart.chartObjects, subActions);
 
-        ChartEvent eventToAdd = new ChartEvent(chartEvent);
-
-        editor.currentChart.Add(eventToAdd, false);
-        Debug.Log("Added new chart event");
-
-        return eventToAdd;
+        AddAndInvokeSubAction(new AddAction(chartEvent), subActions);
     }
 
-    static BPM AddBPM(BPM bpm, IList<SongObject> overwrittenList)
+    static void AddBPM(BPM bpm, IList<BaseAction> subActions)
     {
         ChartEditor editor = ChartEditor.Instance;
-        TryRecordOverwrite(bpm, editor.currentSong.bpms, overwrittenList);
+        Song song = editor.currentSong;
+        TryRecordOverwrite(bpm, editor.currentSong.bpms, subActions);
 
-        BPM bpmToAdd = new BPM(bpm);
-        editor.currentSong.Add(bpmToAdd, false);
-        Debug.Log("Added new bpm");
-
-        if (bpmToAdd.anchor != null)
+        AddAndInvokeSubAction(new AddAction(bpm), subActions);
+        if (bpm.anchor != null)
         {
-            bpmToAdd.anchor = bpmToAdd.song.LiveTickToTime(bpmToAdd.tick, bpmToAdd.song.resolution);
+            int arrayPos = SongObjectHelper.FindObjectPosition(bpm, song.syncTrack);
+            if (arrayPos != SongObjectHelper.NOTFOUND)
+            {
+                BPM justAdded = song.syncTrack[arrayPos] as BPM;
+                if (justAdded == null)
+                    Debug.LogError("Object just added was not a bpm");
+                else
+                {
+                    float anchorValue = justAdded.song.LiveTickToTime(justAdded.tick, justAdded.song.resolution);
+                    BPM newBpm = new BPM(bpm.tick, bpm.value, anchorValue);
+
+                    AddAndInvokeSubAction(new DeleteAction(justAdded), subActions);
+                    AddAndInvokeSubAction(new AddAction(newBpm), subActions);
+                }
+            }
+            else
+            {
+                Debug.LogError("Unable to find bpm that was just added");
+            }
         }
-
-        ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
-
-        return bpmToAdd;
     }
 
-    static TimeSignature AddTimeSignature(TimeSignature timeSignature, IList<SongObject> overwrittenList)
+    static void AddTimeSignature(TimeSignature timeSignature, IList<BaseAction> subActions)
     {
         ChartEditor editor = ChartEditor.Instance;
-        TryRecordOverwrite(timeSignature, editor.currentSong.timeSignatures, overwrittenList);
+        TryRecordOverwrite(timeSignature, editor.currentSong.timeSignatures, subActions);
 
-        TimeSignature tsToAdd = new TimeSignature(timeSignature);
-        editor.currentSong.Add(tsToAdd, false);
-        Debug.Log("Added new timesignature");
-
-        return tsToAdd;
+        AddAndInvokeSubAction(new AddAction(timeSignature), subActions);
     }
 
-    static Event AddEvent(Event songEvent, IList<SongObject> overwrittenList)
+    static void AddEvent(Event songEvent, IList<BaseAction> subActions)
     {
         ChartEditor editor = ChartEditor.Instance;
-        TryRecordOverwrite(songEvent, editor.currentSong.events, overwrittenList);
+        TryRecordOverwrite(songEvent, editor.currentSong.events, subActions);
 
-        Event eventToAdd = new Event(songEvent);
-        editor.currentSong.Add(eventToAdd, false);
-
-        Debug.Log("Added new song event");
-
-        return eventToAdd;
+        AddAndInvokeSubAction(new AddAction(songEvent), subActions);
     }
 
-    static Section AddSection(Section section, IList<SongObject> overwrittenList)
+    static void AddSection(Section section, IList<BaseAction> subActions)
     {
         ChartEditor editor = ChartEditor.Instance;
-        TryRecordOverwrite(section, editor.currentSong.sections, overwrittenList);
+        TryRecordOverwrite(section, editor.currentSong.sections, subActions);
 
-        Section sectionToAdd = new Section(section);
-        editor.currentSong.Add(sectionToAdd, false);
-
-        Debug.Log("Added new section");
-
-        return sectionToAdd;
+        AddAndInvokeSubAction(new AddAction(section), subActions);
     }
 
     #endregion
@@ -351,7 +225,7 @@ public class SongEditAdd : SongEditCommand
         }
     }
 
-    static void CapPrevAndNextPreInsert(Starpower sp, Chart chart, IList<SongObject> overwrittenList, IList<SongObject> validatedList)
+    static void CapPrevAndNextPreInsert(Starpower sp, Chart chart, IList<BaseAction> subActions)
     {
         int arrayPos = SongObjectHelper.FindClosestPosition(sp, chart.chartObjects);
 
@@ -403,13 +277,11 @@ public class SongEditAdd : SongEditCommand
                 // Cap previous sp
                 if (previousSp.tick + previousSp.length > sp.tick)
                 {
-                    previousSp.Delete();
-                    overwrittenList.Add(previousSp.Clone());
-
                     uint newLength = sp.tick - previousSp.tick;
                     Starpower newSp = new Starpower(previousSp.tick, newLength);
-                    chart.Add(newSp);
-                    validatedList.Add(newSp);
+
+                    AddAndInvokeSubAction(new DeleteAction(previousSp), subActions);
+                    AddAndInvokeSubAction(new AddAction(newSp), subActions);
                 }
             }
 
