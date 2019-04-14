@@ -6,11 +6,25 @@ using UnityEngine;
 
 public abstract class BaseAction
 {
-    protected SongObject songObject;
+    public enum TypeTag
+    {
+        None,
+        DeleteForcedCorrection,
+    }
+
+    public SongObject songObject { get; private set; }
+    public TypeTag typeTag { get; private set; }
 
     protected BaseAction(SongObject so)
     {
         songObject = so.Clone();        // Clone to preserve the state it was added in
+        typeTag = TypeTag.None;
+    }
+
+    protected BaseAction(SongObject so, TypeTag tag)
+    {
+        songObject = so.Clone();        // Clone to preserve the state it was added in
+        typeTag = tag;
     }
 
     public abstract void Invoke();
@@ -20,6 +34,7 @@ public abstract class BaseAction
 public class AddAction : BaseAction
 {
     public AddAction(SongObject so) : base(so) {}
+    public AddAction(SongObject so, TypeTag tag) : base(so, tag) { }
 
     public override void Invoke()
     {
@@ -94,6 +109,7 @@ public class AddAction : BaseAction
 public class DeleteAction : BaseAction
 {
     public DeleteAction(SongObject so) : base(so) { }
+    public DeleteAction(SongObject so, TypeTag tag) : base(so, tag) { }
 
     public override void Invoke()
     {

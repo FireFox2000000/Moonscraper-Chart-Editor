@@ -6,15 +6,10 @@ public class SongEditAdd : SongEditCommand
 {
     public SongEditAdd(IList<SongObject> songObjects) : base(songObjects)
     {
-        foreach (SongObject songObject in songObjects)
-        {
-            Debug.Assert(songObject.song == null, "Must add a new song object!");
-        }
     }
 
     public SongEditAdd(SongObject songObject) : base(songObject)
     {
-        Debug.Assert(songObject.song == null, "Must add a new song object!");
     }
 
     public override void InvokeSongEditCommand()

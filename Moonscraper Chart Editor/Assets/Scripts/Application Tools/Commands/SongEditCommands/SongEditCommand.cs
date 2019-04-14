@@ -7,7 +7,7 @@ public abstract class SongEditCommand : ICommand {
     protected List<SongObject> songObjects = new List<SongObject>();
     protected bool extendedSustainsEnabled;
     public bool postExecuteEnabled = true;
-    protected List<BaseAction> subActions = new List<BaseAction>();
+    public List<BaseAction> subActions = new List<BaseAction>();
 
     private List<SongEditModify<BPM>> bpmAnchorFixup = new List<SongEditModify<BPM>>();
     bool bpmAnchorFixupCommandsGenerated = false;

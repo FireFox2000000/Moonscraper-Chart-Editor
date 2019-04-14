@@ -20,8 +20,7 @@ public class GroupMove : ToolObject
     List<Section> sectionsToEnable = new List<Section>();
     List<Event> eventsToEnable = new List<Event>();
 
-    List<SongEditCommand> initialDeleteCommands = new List<SongEditCommand>();
-    List<SongEditCommand> fullMovementCommands = new List<SongEditCommand>();
+    SongEditDelete initialDeleteCommands;
 
     Vector2 initMousePos = Vector2.zero;
     uint initObjectSnappedChartPos = 0;
@@ -103,14 +102,11 @@ public class GroupMove : ToolObject
 
     public void CompleteMoveAction()
     {
-        for (int i = 0; i < movingSongObjects.Count; ++i)
-        {
-            fullMovementCommands.Add(new SongEditAdd(movingSongObjects[i].Clone()));
-        }
+        SongEditAdd addAction = new SongEditAdd(movingSongObjects);
+        SongEditMove moveAction = new SongEditMove(initialDeleteCommands, addAction);
 
-        BatchedSongEditCommand moveCommands = new BatchedSongEditCommand(fullMovementCommands);
         editor.commandStack.Pop();
-        editor.commandStack.Push(moveCommands);
+        editor.commandStack.Push(moveAction);
 
         editor.FindAndSelectSongObjects(movingSongObjects);
 
@@ -137,8 +133,7 @@ public class GroupMove : ToolObject
         sectionsToEnable.Clear();
         eventsToEnable.Clear();
 
-        initialDeleteCommands.Clear();
-        fullMovementCommands.Clear();
+        initialDeleteCommands = null;
     }
 
     public void StartMoveAction(SongObject songObject)
@@ -165,12 +160,10 @@ public class GroupMove : ToolObject
         initObjectSnappedChartPos = objectSnappedChartPos;
 
         int lastNotePos = -1;
+        initialDeleteCommands = new SongEditDelete(songObjects);
         for (int i = 0; i < songObjects.Count; ++i)
         {
             movingSongObjects.Add(songObjects[i].Clone());
-
-            initialDeleteCommands.Add(new SongEditDelete(songObjects[i]));
-            fullMovementCommands.Add(new SongEditDelete(songObjects[i]));
 
             // Rebuild linked list          
             if ((SongObject.ID)songObjects[i].classID == SongObject.ID.Note)
@@ -196,8 +189,7 @@ public class GroupMove : ToolObject
 
         Mouse.cancel = true;
 
-        BatchedSongEditCommand batchedCommands = new BatchedSongEditCommand(initialDeleteCommands);
-        editor.commandStack.Push(batchedCommands);
+        editor.commandStack.Push(initialDeleteCommands);
 
         notesToEnable.AddRange(movingSongObjects.OfType<Note>());
         starpowerToEnable.AddRange(movingSongObjects.OfType<Starpower>());

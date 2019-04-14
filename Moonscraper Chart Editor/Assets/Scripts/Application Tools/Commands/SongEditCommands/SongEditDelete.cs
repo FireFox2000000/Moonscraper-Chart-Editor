@@ -75,7 +75,7 @@ public class SongEditDelete : SongEditCommand
                     Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, flags);
 
                     AddAndInvokeSubAction(new DeleteAction(chordNote), subActions);
-                    AddAndInvokeSubAction(new AddAction(newChordNote), subActions);
+                    AddAndInvokeSubAction(new AddAction(newChordNote, BaseAction.TypeTag.DeleteForcedCorrection), subActions);
                 }
             }
         }
