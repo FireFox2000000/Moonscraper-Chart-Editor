@@ -20,6 +20,7 @@ public class GroupMove : ToolObject
     List<Section> sectionsToEnable = new List<Section>();
     List<Event> eventsToEnable = new List<Event>();
 
+    List<SongEditCommand> fullCommands = new List<SongEditCommand>();
     SongEditDelete initialDeleteCommands;
 
     Vector2 initMousePos = Vector2.zero;
@@ -103,7 +104,9 @@ public class GroupMove : ToolObject
     public void CompleteMoveAction()
     {
         SongEditAdd addAction = new SongEditAdd(movingSongObjects);
-        SongEditMove moveAction = new SongEditMove(initialDeleteCommands, addAction);
+        fullCommands.Add(addAction);
+
+        BatchedSongEditCommand moveAction = new BatchedSongEditCommand(fullCommands);
 
         editor.commandStack.Pop();
         editor.commandStack.Push(moveAction);
@@ -134,6 +137,7 @@ public class GroupMove : ToolObject
         eventsToEnable.Clear();
 
         initialDeleteCommands = null;
+        fullCommands.Clear();
     }
 
     public void StartMoveAction(SongObject songObject)
@@ -161,6 +165,9 @@ public class GroupMove : ToolObject
 
         int lastNotePos = -1;
         initialDeleteCommands = new SongEditDelete(songObjects);
+        fullCommands.Clear();
+        fullCommands.Add(new SongEditDelete(songObjects));
+
         for (int i = 0; i < songObjects.Count; ++i)
         {
             movingSongObjects.Add(songObjects[i].Clone());
