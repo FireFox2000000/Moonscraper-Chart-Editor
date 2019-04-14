@@ -1,3 +1,9 @@
+1.3.09
+	FIXES
+	-Fixed '+' and "-" input for BPM incrementing too fast from a single input. Input timer wasn't being reset for the hold input. 
+	-Command actions now implement sub-actions to better handle undo redo from potential desyncs. 
+	-Fixed issues with note unforcing themselves upon some actions involving deletions. 
+
 1.3.08
 	FIXES
 	-Fixed changing properties of a note deselecting the note
