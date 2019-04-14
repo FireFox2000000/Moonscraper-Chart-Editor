@@ -12,8 +12,8 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
         Debug.Assert(after.song == null, "Must add a new song object!");
         Debug.Assert(before.tick == after.tick, "Song object is being moved rather than modified!");
 
-        subActions.Add(new DeleteAction(before));
-        subActions.Add(new AddAction(after));
+        songObjects.Add(before.Clone());
+        songObjects.Add(after);
 
         if (typeof(T) == typeof(Note))
         {
@@ -25,12 +25,57 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
 
     public override void InvokeSongEditCommand()
     {
-        InvokeSubActions();
+        CloneInto(FindObjectToModify(before), after);
     }
 
     public override void RevokeSongEditCommand()
     {
-        RevokeSubActions();
+        CloneInto(FindObjectToModify(after), before);
+    }
+
+    void CloneInto(SongObject objectToCopyInto, SongObject objectToCopyFrom)
+    {
+        Chart chart = ChartEditor.Instance.currentChart;
+
+        switch ((SongObject.ID)objectToCopyInto.classID)
+        {
+            case SongObject.ID.Note:
+                (objectToCopyInto as Note).CopyFrom((objectToCopyFrom as Note));
+                break;
+
+            case SongObject.ID.Starpower:
+                SongEditAdd.SetNotesDirty(objectToCopyInto as Starpower, chart.chartObjects);
+                SongEditAdd.SetNotesDirty(objectToCopyFrom as Starpower, chart.chartObjects);
+                (objectToCopyInto as Starpower).CopyFrom((objectToCopyFrom as Starpower));
+                break;
+
+            case SongObject.ID.ChartEvent:
+                (objectToCopyInto as ChartEvent).CopyFrom((objectToCopyFrom as ChartEvent));
+                break;
+
+            case SongObject.ID.BPM:
+                (objectToCopyInto as BPM).CopyFrom((objectToCopyFrom as BPM));
+                break;
+
+            case SongObject.ID.TimeSignature:
+                (objectToCopyInto as TimeSignature).CopyFrom((objectToCopyFrom as TimeSignature));
+                break;
+
+            case SongObject.ID.Event:
+                (objectToCopyInto as Event).CopyFrom((objectToCopyFrom as Event));
+                break;
+
+            case SongObject.ID.Section:
+                (objectToCopyInto as Section).CopyFrom((objectToCopyFrom as Section));
+                break;
+
+            default:
+                Debug.LogError("Object to modify not supported.");
+                break;
+        }
+
+        if (objectToCopyInto.controller)
+            objectToCopyInto.controller.SetDirty();
     }
 
     public static SongObject FindObjectToModify(SongObject so)
