@@ -5,10 +5,10 @@ using UnityEngine;
 using System.Collections;
 
 public abstract class TimelineIndicator : MonoBehaviour {
-    protected SongObject songObject;
     protected ChartEditor editor;
     [HideInInspector]
     public TimelineHandler handle;
+    public int index = int.MaxValue;
 
     protected Vector2 previousScreenSize = Vector2.zero;
 
@@ -32,9 +32,5 @@ public abstract class TimelineIndicator : MonoBehaviour {
             return Vector3.zero;
     }
 
-    public virtual void ExplicitUpdate()
-    {
-        if (songObject != null && songObject.song != null)
-            transform.localPosition = GetLocalPos(songObject.tick, songObject.song);
-    }
+    public abstract void ExplicitUpdate();
 }

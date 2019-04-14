@@ -7,7 +7,18 @@ using System.Collections;
 
 public class SectionGuiController : TimelineIndicator
 {
-    public Section section { get { return (Section)songObject; } set { songObject = value; } }
+    public Section section
+    {
+        get
+        {
+            ChartEditor editor = ChartEditor.Instance;
+            Song song = editor.currentSong;
+            if (index < song.sections.Count)
+                return song.sections[index];
+            else
+                return null;
+        }
+    }
     MovementController movement;
     UnityEngine.UI.Text timelineText;
     string prevName = string.Empty;
@@ -22,19 +33,24 @@ public class SectionGuiController : TimelineIndicator
 
     void LateUpdate()
     {
-        if ((songObject != null && songObject.song != null && prevName != section.title))
+        if (section != null)
         {
-            ExplicitUpdate();
-        }
+            if (section.song != null && prevName != section.title)
+            {
+                ExplicitUpdate();
+            }
 
-        prevName = section.title;
+            prevName = section.title;
+        }
     }
 
     public override void ExplicitUpdate()
     {
-        base.ExplicitUpdate();
         if (section != null)
+        {
+            transform.localPosition = GetLocalPos(section.tick, section.song);
             timelineText.text = section.title;
+        }
     }
 
     public void JumpToPos()

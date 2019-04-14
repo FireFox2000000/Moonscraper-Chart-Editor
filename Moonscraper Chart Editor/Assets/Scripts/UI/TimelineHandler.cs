@@ -82,11 +82,13 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
         // Create section pool
         for (int i = 0; i < sectionIndicatorPool.Length; ++i)
-            sectionIndicatorPool[i] = CreateSectionIndicator();
+            sectionIndicatorPool[i] = CreateSectionIndicator(i);
 
         // Create starpower pool
         for (int i = 0; i < starpowerIndicatorPool.Length; ++i)
-            starpowerIndicatorPool[i] = CreateSPIndicator();
+        {
+            starpowerIndicatorPool[i] = CreateSPIndicator(i);
+        }
 
         previousScreenSize.x = Screen.width;
         previousScreenSize.y = Screen.height;
@@ -131,7 +133,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
             System.Array.Copy(sectionIndicatorPool, controllers, sectionIndicatorPool.Length);
 
             for (int i = sectionIndicatorPool.Length; i < controllers.Length; ++i)
-                controllers[i] = CreateSectionIndicator();
+                controllers[i] = CreateSectionIndicator(i);
 
             sectionIndicatorPool = controllers;
         }
@@ -142,7 +144,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
             System.Array.Copy(starpowerIndicatorPool, controllers, starpowerIndicatorPool.Length);
 
             for (int i = starpowerIndicatorPool.Length; i < controllers.Length; ++i)
-                controllers[i] = CreateSPIndicator();
+                controllers[i] = CreateSPIndicator(i);
 
             starpowerIndicatorPool = controllers;
         }
@@ -193,7 +195,6 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         {
             if (i < sectionIndicatorPool.Length && editor.currentSong.sections[i].time <= editor.currentSong.length)
             {
-                sectionIndicatorPool[i].section = editor.currentSong.sections[i];
                 sectionIndicatorPool[i].gameObject.SetActive(true);
                 sectionIndicatorPool[i].ExplicitUpdate();
             }
@@ -221,7 +222,6 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         {  
             if (i < starpowerIndicatorPool.Length && editor.currentChart.starPower[i].time <= editor.currentSong.length)
             {
-                starpowerIndicatorPool[i].starpower = editor.currentChart.starPower[i];
                 starpowerIndicatorPool[i].gameObject.SetActive(true);
                 starpowerIndicatorPool[i].ExplicitUpdate();
             }
@@ -247,7 +247,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         MoveHandle(eventData);
     }
 
-    SectionGuiController CreateSectionIndicator()
+    SectionGuiController CreateSectionIndicator(int index)
     {
         GameObject indicatorObject = Instantiate(sectionIndicatorPrefab);
         indicatorObject.transform.SetParent(sectionIndicatorParent.transform);
@@ -256,11 +256,12 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         SectionGuiController indicator = indicatorObject.GetComponent<SectionGuiController>();
         indicator.handle = this;
         indicatorObject.SetActive(false);
+        indicator.index = index;
 
         return indicator;
     }
 
-    StarpowerGUIController CreateSPIndicator()
+    StarpowerGUIController CreateSPIndicator(int index)
     {
         GameObject indicatorObject = Instantiate(starpowerIndicatorPrefab);
         indicatorObject.transform.SetParent(starpowerIndicatorParent.transform);
@@ -269,6 +270,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         StarpowerGUIController indicator = indicatorObject.GetComponent<StarpowerGUIController>();
         indicator.handle = this;
         indicatorObject.SetActive(false);
+        indicator.index = index;
 
         return indicator;
     }

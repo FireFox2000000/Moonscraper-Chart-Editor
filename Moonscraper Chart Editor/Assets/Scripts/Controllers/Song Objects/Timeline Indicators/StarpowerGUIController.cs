@@ -5,24 +5,37 @@ using UnityEngine;
 using System.Collections;
 
 public class StarpowerGUIController : TimelineIndicator {
-    public Starpower starpower { get { return (Starpower)songObject; } set { songObject = value; } }
+    public Starpower starpower {
+        get
+        {
+            ChartEditor editor = ChartEditor.Instance;
+            Chart chart = editor.currentChart;
+            if (index < chart.starPower.Count)
+                return chart.starPower[index];
+            else
+                return null;
+        }
+    }
     const float MIN_SIZE = 0.2f;
 
     uint prevLength = 0;
 
     void LateUpdate()
-    {        
-        if ((songObject != null && songObject.song != null && prevLength != starpower.length))
+    {
+        if (starpower != null)
         {
-            ExplicitUpdate();
-        }
+            if (starpower.song != null && prevLength != starpower.length)
+            {
+                ExplicitUpdate();
+            }
 
-        prevLength = starpower.length;
+            prevLength = starpower.length;
+        }
     }
 
     public override void ExplicitUpdate()
     {
-        base.ExplicitUpdate();
+        transform.localPosition = GetLocalPos(starpower.tick, starpower.song);
 
         // Change scale to represent starpower length
         Vector3 spLengthLocalPos = GetLocalPos(starpower.tick + starpower.length, starpower.song);
@@ -40,7 +53,5 @@ public class StarpowerGUIController : TimelineIndicator {
 
         transform.localPosition = position;
         transform.localScale = scale;
-
-        
     }
 }
