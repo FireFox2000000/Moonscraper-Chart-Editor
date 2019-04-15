@@ -104,7 +104,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
     protected override void Update()
     {
         base.Update();
-        if (currentBPM != null)
+        if (currentBPM != null && currentBPM.song != null)
         {
             if (currentBPM.value != prevClonedBPM.value)
             {
