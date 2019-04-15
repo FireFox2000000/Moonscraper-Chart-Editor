@@ -82,6 +82,9 @@ public class Toolpane : MonoBehaviour {
                         }
                         else if (!Input.GetMouseButton(1))
                             toolIsActive = true;
+
+                        if (currentTool == Tools.BPM && ShortcutInput.modifierInput)    // Hide when ctrl-dragging bpm
+                            toolIsActive = false;
                     }
                 }
                 else
