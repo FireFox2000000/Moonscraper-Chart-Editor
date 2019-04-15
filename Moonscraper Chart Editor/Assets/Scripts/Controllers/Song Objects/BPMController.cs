@@ -97,7 +97,8 @@ public class BPMController : SongObjectController {
                     desiredTime = nextBpm.time - 0.01f;
                 }
 
-                uint newBpmValue = (uint)(Mathf.Ceil((float)TickFunctions.DisToBpm(previousBpm.tick, bpm.tick, desiredTime - previousBpm.time, bpm.song.resolution)) * 1000);
+                double disToBpm = TickFunctions.DisToBpm(previousBpm.tick, bpm.tick, desiredTime - previousBpm.time, bpm.song.resolution);
+                uint newBpmValue = (uint)Mathf.Ceil((float)disToBpm * 1000.0f);
                 if (newBpmValue > 0)
                 {
                     if (hasPushed)
