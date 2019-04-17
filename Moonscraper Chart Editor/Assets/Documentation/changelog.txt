@@ -1,3 +1,10 @@
+1.3.0A
+	FIXES
+	-Fixed broken starpower ui indicators from previous
+	-Various null reference fixes related to bpm adding tool
+	-Bpm ctrl-dragging now adjusts previous bpm to 3 decimal places instead of the nearest whole. 
+	-Re-allow open notes to extend past regular notes with extended sustains enabled. 
+
 1.3.09
 	FIXES
 	-Fixed '+' and "-" input for BPM incrementing too fast from a single input. Input timer wasn't being reset for the hold input. 
