@@ -79,6 +79,7 @@ public class PlaceNoteController : ObjectlessTool {
         EventsManager.onToolChangedEventList.Add(OnModeSwitch);
         EventsManager.onKeyboardModeToggledEvent.Add(OnKeysModeChanged);
         EventsManager.onNotePlacementModeChangedEvent.Add(OnModeSwitch);
+        EventsManager.onApplicationModeChangedEventList.Add(OnApplicationModeSwitch);
     }
 
     public override void ToolEnable()
@@ -145,6 +146,11 @@ public class PlaceNoteController : ObjectlessTool {
         {
             CurrentNotePlacementUpdate = UpdateMouseBurstMode;
         }
+    }
+
+    void OnApplicationModeSwitch(Globals.ApplicationMode applicationMode)
+    {
+        OnModeSwitch();
     }
 
     void UpdateMouseBurstMode()
