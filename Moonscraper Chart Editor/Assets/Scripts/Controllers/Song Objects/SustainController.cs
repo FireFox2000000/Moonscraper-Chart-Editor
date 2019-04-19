@@ -47,7 +47,7 @@ public class SustainController : SelectableClick {
                 else
                     originalDraggedNotes.Add(nCon.note.CloneAs<Note>());
 
-                GenerateSustainDragCommands();
+                GenerateSustainDragCommands(false);
                 if (sustainDragCommands.Count > 0)
                 {
                     editor.commandStack.Push(new BatchedSongEditCommand(sustainDragCommands));
@@ -64,7 +64,7 @@ public class SustainController : SelectableClick {
             // Update sustain
             if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
             {
-                GenerateSustainDragCommands();
+                GenerateSustainDragCommands(false);
                 if (sustainDragCommands.Count > 0)
                 {
                     if (commandPushCount > 0)
@@ -76,18 +76,22 @@ public class SustainController : SelectableClick {
                     editor.commandStack.Push(new BatchedSongEditCommand(sustainDragCommands));
                     ++commandPushCount;
                 }
-                else if (commandPushCount > 0)
-                {
-                    editor.commandStack.Pop();
-                    editor.commandStack.ResetTail();
-                    --commandPushCount;
-                }
             }
         }
     }
 
     public override void OnSelectableMouseUp()
-    {
+    {      
+        GenerateSustainDragCommands(true);
+        if (commandPushCount > 0 && sustainDragCommands.Count <= 0)
+        {
+            // No overall change. Pop action that doesn't actually do anything.
+            editor.commandStack.Pop();
+            editor.commandStack.ResetTail();
+            --commandPushCount;
+
+            Debug.Assert(commandPushCount == 0);
+        }
     }
 
     public void UpdateSustain()
@@ -149,7 +153,7 @@ public class SustainController : SelectableClick {
         }
     }
 
-    void GenerateSustainDragCommands()
+    void GenerateSustainDragCommands(bool compareWithOriginal)
     {
         if (nCon.note.song == null || Input.GetMouseButton(0))
             return;
@@ -175,7 +179,8 @@ public class SustainController : SelectableClick {
             if (capNote != null)
                 newNote.CapSustain(capNote, song);
 
-            commandsActuallyChangeData |= note.length != newNote.length;
+            Note lengthComparisionNote = compareWithOriginal ? note : referenceNote;
+            commandsActuallyChangeData |= lengthComparisionNote.length != newNote.length;
             sustainDragCommands.Add(new SongEditModify<Note>(note, newNote));
         }
 
