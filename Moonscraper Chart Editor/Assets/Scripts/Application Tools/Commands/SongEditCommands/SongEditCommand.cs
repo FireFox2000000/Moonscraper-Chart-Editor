@@ -86,20 +86,43 @@ public abstract class SongEditCommand : ICommand {
 
         ChartEditor.isDirty = true;
 
+        UndoRedoJumpInfo jumpInfo = GetUndoRedoJumpInfo();
+
+        if (jumpInfo.IsValid)
+        {
+            editor.FillUndoRedoSnapInfo(jumpInfo.jumpToPos.Value, jumpInfo.viewMode);
+        }
+    }
+
+    protected struct UndoRedoJumpInfo
+    {
+        public bool IsValid { get { return jumpToPos.HasValue; } }
+        public uint? jumpToPos;
+        public Globals.ViewMode viewMode;
+    }
+
+    protected virtual UndoRedoJumpInfo GetUndoRedoJumpInfo()
+    {
         SongObject lowestTickSo = null;
-        
+        UndoRedoJumpInfo info = new UndoRedoJumpInfo();
+
         foreach (SongObject songObject in songObjects)
         {
-            if (lowestTickSo  == null || songObject.tick < lowestTickSo.tick)
+            if (lowestTickSo == null || songObject.tick < lowestTickSo.tick)
                 lowestTickSo = songObject;
         }
 
         if (lowestTickSo != null)
         {
-            uint jumpToPos = lowestTickSo.tick;
-            Globals.ViewMode viewMode = lowestTickSo.GetType().IsSubclassOf(typeof(ChartObject)) ? Globals.ViewMode.Chart : Globals.ViewMode.Song;
-            editor.FillUndoRedoSnapInfo(jumpToPos, viewMode);
+            info.jumpToPos = lowestTickSo.tick;
+            info.viewMode = lowestTickSo.GetType().IsSubclassOf(typeof(ChartObject)) ? Globals.ViewMode.Chart : Globals.ViewMode.Song;
         }
+        else
+        {
+            info.jumpToPos = null;
+        }
+
+        return info;
     }
 
     protected void InvokeSubActions()

@@ -83,4 +83,32 @@ public class BatchedSongEditCommand : SongEditCommand
             commands[i].Revoke();
         }
     }
+
+    protected override UndoRedoJumpInfo GetUndoRedoJumpInfo()
+    {
+        SongObject lowestTickSo = null;
+        UndoRedoJumpInfo info = new UndoRedoJumpInfo();
+
+        foreach (SongEditCommand command in commands)
+        {
+            foreach(BaseAction action in command.subActions)
+            {
+                SongObject so = action.songObject;
+                if (lowestTickSo == null || so.tick < lowestTickSo.tick)
+                    lowestTickSo = so;
+            }           
+        }
+
+        if (lowestTickSo != null)
+        {
+            info.jumpToPos = lowestTickSo.tick;
+            info.viewMode = lowestTickSo.GetType().IsSubclassOf(typeof(ChartObject)) ? Globals.ViewMode.Chart : Globals.ViewMode.Song;
+        }
+        else
+        {
+            info.jumpToPos = null;
+        }
+
+        return info;
+    }
 }
