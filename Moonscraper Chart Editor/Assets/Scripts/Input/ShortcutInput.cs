@@ -208,12 +208,15 @@ public static class ShortcutInput {
     }
 
     delegate bool InputFn(KeyCode keyCode);
+    static InputFn inputDownFn = Input.GetKeyDown;
+    static InputFn inputUpFn = Input.GetKeyUp;
+    static InputFn inputGet = Input.GetKey;
+
     static bool CheckInput(Shortcut key, InputFn InputFn)
     {
         if (ChartEditor.hasFocus)
         {
             List<KeyCode> keyCodes;
-
             if (TryGetKeyCodes(key, out keyCodes))
             {
                 foreach (KeyCode keyCode in keyCodes)
@@ -226,27 +229,27 @@ public static class ShortcutInput {
 
         return false;
     }
-
+    
     public static bool GetInputDown(Shortcut key)
-    {
-        return CheckInput(key, Input.GetKeyDown);
+    {      
+        return CheckInput(key, inputDownFn);
     }
 
     public static bool GetInputUp(Shortcut key)
     {
-        return CheckInput(key, Input.GetKeyUp);
+        return CheckInput(key, inputUpFn);
     }
 
     public static bool GetInput(Shortcut key)
     {
-        return CheckInput(key, Input.GetKey);
+        return CheckInput(key, inputGet);
     }
 
     public static bool GetGroupInputDown(Shortcut[] keys)
     {
         foreach (Shortcut key in keys)
         {
-            if (CheckInput(key, Input.GetKeyDown))
+            if (CheckInput(key, inputDownFn))
                 return true;
         }
 
@@ -257,7 +260,7 @@ public static class ShortcutInput {
     {
         foreach (Shortcut key in keys)
         {
-            if (CheckInput(key, Input.GetKeyUp))
+            if (CheckInput(key, inputUpFn))
                 return true;
         }
 
@@ -268,7 +271,7 @@ public static class ShortcutInput {
     {
         foreach (Shortcut key in keys)
         {
-            if (CheckInput(key, Input.GetKey))
+            if (CheckInput(key, inputGet))
                 return true;
         }
 
