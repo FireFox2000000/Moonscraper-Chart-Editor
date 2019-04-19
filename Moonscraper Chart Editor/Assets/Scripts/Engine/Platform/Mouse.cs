@@ -32,8 +32,13 @@ public class Mouse : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+        if (Globals.applicationMode != Globals.ApplicationMode.Editor)
+        {
+            if (selectedGameObject)
+                SendOnSelectableMouseUp();
+
             return;
+        }
 
         currentRaycastFromPointer = RaycastFromPointer();
         currentSelectableUnderMouse = GetSelectableObjectUnderMouse();
@@ -113,18 +118,7 @@ public class Mouse : MonoBehaviour {
         // OnSelectableMouseUp
         if ((Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1)) && world2DPosition != null)
         {
-            if (selectedGameObject)
-            {
-                SelectableClick[] monos = selectedGameObject.GetComponents<SelectableClick>();
-                foreach (SelectableClick mono in monos)
-                {
-                    mono.OnSelectableMouseUp();
-                }
-            }
-
-            dragging = false;
-
-            selectedGameObject = null;
+            SendOnSelectableMouseUp();
         }
 
         if (cancel || (selectedGameObject && !selectedGameObject.activeSelf))
@@ -132,6 +126,22 @@ public class Mouse : MonoBehaviour {
             selectedGameObject = null;
             cancel = false;
         }
+    }
+
+    void SendOnSelectableMouseUp()
+    {
+        if (selectedGameObject)
+        {
+            SelectableClick[] monos = selectedGameObject.GetComponents<SelectableClick>();
+            foreach (SelectableClick mono in monos)
+            {
+                mono.OnSelectableMouseUp();
+            }
+        }
+
+        dragging = false;
+
+        selectedGameObject = null;
     }
 
     public void SwitchCamera()
