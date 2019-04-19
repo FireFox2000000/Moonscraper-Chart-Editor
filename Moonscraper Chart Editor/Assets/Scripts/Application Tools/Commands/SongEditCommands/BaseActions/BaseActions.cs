@@ -101,8 +101,6 @@ public class AddAction : BaseAction
                 song.Add(songObject as SyncTrack, false);
                 break;
         }
-
-        Debug.Log("Added new " + (SongObject.ID)songObject.classID);
     }
 }
 
@@ -150,8 +148,6 @@ public class DeleteAction : BaseAction
         {
             T foundSongObject = arrayToSearch[arrayPos];
             foundSongObject.Delete(false);
-
-            Debug.Log("Removed " + (SongObject.ID)songObject.classID);
         }
         else
         {
