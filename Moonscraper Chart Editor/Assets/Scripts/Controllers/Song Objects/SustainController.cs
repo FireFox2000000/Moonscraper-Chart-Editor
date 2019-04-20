@@ -82,20 +82,21 @@ public class SustainController : SelectableClick {
 
     public override void OnSelectableMouseUp()
     {      
-        GenerateSustainDragCommands(true);
-        if (commandPushCount > 0 && sustainDragCommands.Count <= 0)
+        if (commandPushCount > 0)
         {
-            // No overall change. Pop action that doesn't actually do anything.
-            editor.commandStack.Pop();
-            editor.commandStack.ResetTail();
-            --commandPushCount;
-        }
-        else
-        {
-            commandPushCount = 0;
-        }
+            GenerateSustainDragCommands(true);
+            if (sustainDragCommands.Count <= 0)
+            {
+                // No overall change. Pop action that doesn't actually do anything.
+                editor.commandStack.Pop();
+                editor.commandStack.ResetTail();
+                
+            }
 
-        Debug.Assert(commandPushCount == 0);
+            --commandPushCount;
+
+            Debug.Assert(commandPushCount == 0);
+        }     
     }
 
     public void UpdateSustain()
