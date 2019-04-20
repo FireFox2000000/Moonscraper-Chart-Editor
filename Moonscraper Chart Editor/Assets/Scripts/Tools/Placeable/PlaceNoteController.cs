@@ -16,6 +16,9 @@ public class PlaceNoteController : ObjectlessTool {
     // Mouse mode burst mode
     List<SongObject> currentlyAddingNotes = new List<SongObject>();
 
+    // Keys sustain mode
+    List<SongEditCommand> keyControlsCommands = new List<SongEditCommand>();
+
     // Keyboard mode sustain dragging
     Note[] heldNotes;
 
@@ -107,6 +110,7 @@ public class PlaceNoteController : ObjectlessTool {
     {
         currentlyAddingNotes.Clear();
         currentPlacementMode = KeysPlacementMode.None;
+        keyControlsCommands.Clear();
     }
 
     // Update is called once per frame
@@ -201,8 +205,8 @@ public class PlaceNoteController : ObjectlessTool {
     {
         LaneInfo laneInfo = editor.laneInfo;
         UpdateSnappedPos();
-        bool wantCommandPop = currentlyAddingNotes.Count > 0;
-        int currentNoteCount = currentlyAddingNotes.Count;
+        bool wantCommandPop = keyControlsCommands.Count > 0;
+        int currentCommandCount = keyControlsCommands.Count;
         bool refreshActions = false;
 
         FillNotesKeyboardControlsSustainMode(laneInfo);
@@ -217,7 +221,13 @@ public class PlaceNoteController : ObjectlessTool {
                 {
                     if (chordNote.tick + chordNote.length < objectSnappedChartPos || (objectSnappedChartPos < chordNote.tick + chordNote.length && chordNote.length > 0))
                     {
+                        int pos = SongObjectHelper.FindObjectPosition(chordNote, editor.currentChart.chartObjects);
+                        Debug.Assert(pos != SongObjectHelper.NOTFOUND);
+
+                        Note oldNote = editor.currentChart.chartObjects[pos] as Note;
                         chordNote.SetSustainByPos(objectSnappedChartPos, editor.currentSong, extendedSustainsEnabled);
+                        keyControlsCommands.Add(new SongEditModifyValidated(oldNote, chordNote));
+
                         Debug.Assert(chordNote.tick + chordNote.length == objectSnappedChartPos, "Sustain was set to an incorrect length");
                         refreshActions = true;
                     }
@@ -225,21 +235,14 @@ public class PlaceNoteController : ObjectlessTool {
             }
         }
 
-        refreshActions |= currentlyAddingNotes.Count != currentNoteCount;
+        refreshActions |= keyControlsCommands.Count != currentCommandCount;
 
-        if (currentlyAddingNotes.Count > 0 && refreshActions)
+        if (keyControlsCommands.Count > 0 && refreshActions)
         {
             if (wantCommandPop)
                 editor.commandStack.Pop();
 
-            if (currentPlacementMode == KeysPlacementMode.Adding)
-            {
-                editor.commandStack.Push(new SongEditAdd(currentlyAddingNotes));
-            }
-            else if (currentPlacementMode == KeysPlacementMode.Deleting)
-            {
-                editor.commandStack.Push(new SongEditDelete(currentlyAddingNotes));
-            }
+            editor.commandStack.Push(new BatchedSongEditCommand(keyControlsCommands));
         }
 
         if (!HasKeysInput(laneInfo))
@@ -288,16 +291,6 @@ public class PlaceNoteController : ObjectlessTool {
             }
         }
 
-        // Guard to prevent users from pressing keys while dragging out sustains
-        if (!GameSettings.extendedSustainsEnabled)
-        {
-            foreach (Note heldNote in heldNotes)
-            {
-                if (heldNote != null && heldNote.length > 0)
-                    return;
-            }
-        }
-
         if (isTyping)
             return;
 
@@ -324,31 +317,20 @@ public class PlaceNoteController : ObjectlessTool {
                 LeftyFlipReflectionCheck(ref notePos, laneCount);
 
                 allPlaceableNotes[notePos].ExplicitUpdate();
-                int pos = SongObjectHelper.FindObjectPosition(allPlaceableNotes[notePos].note, editor.currentChart.notes);
+                int pos = SongObjectHelper.FindObjectPosition(allPlaceableNotes[notePos].note, editor.currentChart.chartObjects);
 
-                if (currentPlacementMode == KeysPlacementMode.None)
+                if (pos == SongObjectHelper.NOTFOUND)
                 {
-                    currentPlacementMode = pos == SongObjectHelper.NOTFOUND ? KeysPlacementMode.Adding : KeysPlacementMode.Deleting;
-                }
+                    Note newNote = allPlaceableNotes[notePos].note.CloneAs<Note>();            
+                    newNote.length = 0;
 
-                if (currentPlacementMode == KeysPlacementMode.Adding && pos == SongObjectHelper.NOTFOUND)
-                {
-                    heldNotes[i] = allPlaceableNotes[notePos].note.CloneAs<Note>();
-                    heldNotes[i].length = 0;
-                    currentlyAddingNotes.Add(heldNotes[i]);
-                    Debug.Log("Added " + allPlaceableNotes[notePos].note.rawNote + " note at position " + allPlaceableNotes[notePos].note.tick + " using keyboard controls");
+                    keyControlsCommands.Add(new SongEditAdd(newNote));
+                    heldNotes[i] = newNote;
                 }
-                else if (currentPlacementMode == KeysPlacementMode.Deleting)
+                else
                 {
-                    if (pos == SongObjectHelper.NOTFOUND)
-                    {
-                        Debug.Assert(false, "Could not find note " + allPlaceableNotes[notePos].note.guitarFret + " at tick " + allPlaceableNotes[notePos].note.tick + " to delete");
-                    }
-                    else
-                    { 
-                        currentlyAddingNotes.Add(editor.currentChart.notes[pos]);
-                        Debug.Log("Removed " + editor.currentChart.notes[pos].rawNote + " note at position " + editor.currentChart.notes[pos].tick + " using keyboard controls");
-                    }
+                    Note note = editor.currentChart.chartObjects[pos] as Note;
+                    keyControlsCommands.Add(new SongEditDelete(note));
                 }
             }
         }
