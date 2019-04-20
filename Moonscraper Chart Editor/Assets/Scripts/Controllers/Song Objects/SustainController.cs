@@ -89,9 +89,13 @@ public class SustainController : SelectableClick {
             editor.commandStack.Pop();
             editor.commandStack.ResetTail();
             --commandPushCount;
-
-            Debug.Assert(commandPushCount == 0);
         }
+        else
+        {
+            commandPushCount = 0;
+        }
+
+        Debug.Assert(commandPushCount == 0);
     }
 
     public void UpdateSustain()
