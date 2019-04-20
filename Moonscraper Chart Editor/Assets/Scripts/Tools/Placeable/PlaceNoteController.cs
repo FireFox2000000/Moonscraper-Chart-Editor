@@ -154,7 +154,8 @@ public class PlaceNoteController : ObjectlessTool {
 
     void OnApplicationModeSwitch(Globals.ApplicationMode applicationMode)
     {
-        OnModeSwitch();
+        KeysDraggedSustainRecordingCheck();
+        ResetNoteAdding();
     }
 
     void UpdateMouseBurstMode()
