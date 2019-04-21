@@ -13,4 +13,6 @@ public static class MidIOHelper {
     public const string GHL_GUITAR_TRACK = "PART GUITAR GHL";
     public const string GHL_BASS_TRACK = "PART BASS GHL";
     public const string VOCALS_TRACK = "PART VOCALS";
+
+    public const string LYRIC_EVENT_PREFIX = "lyric ";
 }

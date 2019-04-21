@@ -95,12 +95,12 @@ public static class MidWriter {
         byte[] track_sync = MakeTrack(GetSyncBytes(song, exportOptions), song.name);
 
         uint end;
-        byte[] track_events = MakeTrack(GetEventBytes(song, exportOptions, out end), MidIOHelper.EVENTS_TRACK);
+        byte[] track_events = MakeTrack(GetEventBytes(song, exportOptions, null, new List<string>() { MidIOHelper.LYRIC_EVENT_PREFIX }, true, out end), MidIOHelper.EVENTS_TRACK);
         if (track_events.Length > 0)
             track_count++;
 
         //byte[] track_beat = MakeTrack(GenerateBeat(end, (uint)exportOptions.targetResolution), "BEAT");
-        //song.GetChart(Song.Instrument.Guitar, Song.Difficulty.Expert).Add(new ChartEvent(0, "[idle_realtime]"));
+        //song.GetChart(Song.Instrument.Guitar, Song.Difficulty.Expert).Add(new ChartEvent(0, "[idle_realtime]")); 
 
         List<byte[]> allTracks = new List<byte[]>();
         List<string> allTrackNames = new List<string>();
@@ -109,10 +109,22 @@ public static class MidWriter {
             byte[] bytes = GetInstrumentBytes(song, entry.Key, exportOptions);
             if (bytes.Length > 0)
             {
+                Debug.LogFormat("Saving {0} track", entry.Key.ToString());
                 allTracks.Add(bytes);
                 allTrackNames.Add(entry.Value);
                 track_count++;
             }
+        }
+
+        byte[] lyric_events = GetEventBytes(song, exportOptions, new List<string>() { MidIOHelper.LYRIC_EVENT_PREFIX }, null, false, out end);
+        if (lyric_events.Length > 0)
+        {
+            // Make a vocals track
+            Debug.Log("Lyrics events found. Saving Vocals track.");
+            byte[] bytes = lyric_events;
+            allTracks.Add(bytes);
+            allTrackNames.Add(MidIOHelper.VOCALS_TRACK);
+            track_count++;
         }
 
         byte[][] unrecognised_tracks = new byte[song.unrecognisedCharts.Count][];
@@ -184,34 +196,84 @@ public static class MidWriter {
         return syncTrackBytes.ToArray();
     }
 
-    static byte[] GetEventBytes(Song song, ExportOptions exportOptions, out uint end)
+    static byte[] GetEventBytes(Song song, ExportOptions exportOptions, List<string> allowedEventPrefixMaybe, List<string> ignoreEventPrefixMaybe, bool containInSquareBrackets, out uint end)
     {
-        List<byte> eventBytes = new List<byte>();
-
         const string section_id = "section ";     // "section " is rb2 and former, "prc_" is rb3
+        List<byte> eventBytes = new List<byte>();
 
         //eventBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[music_start]")));
 
         uint deltaTickSum = 0;
         float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
 
+        uint previousEventTick = 0;
+        int eventCount = 0;
         for (int i = 0; i < song.eventsAndSections.Count; ++i)
-        {     
+        {
+            Event currentEvent = song.eventsAndSections[i];
+            string currentEventTitle = currentEvent.title;
+            bool allowedEvent = false;
+            string metaTextEventStr = currentEvent.title;
+
+            if (allowedEventPrefixMaybe != null && allowedEventPrefixMaybe.Count > 0)
+            {
+                foreach (string prefix in allowedEventPrefixMaybe)
+                {
+                    if (string.Compare(currentEventTitle, 0, prefix, 0, prefix.Length) == 0)
+                    {
+                        metaTextEventStr = currentEventTitle.Substring(prefix.Length, currentEventTitle.Length - prefix.Length);
+                        allowedEvent = true;
+                        break;
+                    }
+                }
+            }
+            else if (ignoreEventPrefixMaybe != null && ignoreEventPrefixMaybe.Count > 0)
+            {
+                allowedEvent = true;
+
+                foreach (string prefix in ignoreEventPrefixMaybe)
+                {
+                    if (string.Compare(currentEventTitle, 0, prefix, 0, prefix.Length) == 0)
+                    {
+                        allowedEvent = false;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                allowedEvent = true;
+            }
+
+            if (!allowedEvent)
+                continue;
+
+            if (currentEvent as Section != null)
+            {
+                string prefix = section_id;
+                metaTextEventStr = prefix + currentEventTitle;
+            }
+
+            if (containInSquareBrackets)
+            {
+                metaTextEventStr = "[" + metaTextEventStr + "]";
+            }
+
             uint deltaTime = song.eventsAndSections[i].tick;
-            if (i > 0)
-                deltaTime -= song.eventsAndSections[i - 1].tick;
+            if (eventCount > 0)
+                deltaTime -= previousEventTick;
 
             deltaTime = (uint)Mathf.Round(deltaTime * resolutionScaleRatio);
 
-            if (i == 0)
+            if (eventCount == 0)
                 deltaTime += exportOptions.tickOffset;
 
             deltaTickSum += deltaTime;
 
-            if (song.eventsAndSections[i] as Section != null)
-                eventBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, "[" + section_id + song.eventsAndSections[i].title + "]")));
-            else
-                eventBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, "[" + song.eventsAndSections[i].title + "]")));
+            eventBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, metaTextEventStr)));
+
+            previousEventTick = currentEvent.tick;
+            ++eventCount;
         }
 
         uint music_end = song.TimeToTick(song.length + exportOptions.tickOffset, song.resolution * resolutionScaleRatio, false);
@@ -273,7 +335,16 @@ public static class MidWriter {
         return bytes.ToArray();
     }
 
-    delegate void del(SortableBytes sortableByte);
+    static void InsertionSort(IList<SortableBytes> eventList, SortableBytes sortableByte)
+    {
+        int index = eventList.Count - 1;
+
+        while (index >= 0 && sortableByte.tick<eventList[index].tick)
+            --index;
+
+        eventList.Insert(index + 1, sortableByte);
+    }
+
     static SortableBytes[] GetChartSortableBytes(Song song, Song.Instrument instrument, Song.Difficulty difficulty, ExportOptions exportOptions)
     {
         Chart chart = song.GetChart(instrument, difficulty);
@@ -305,16 +376,6 @@ public static class MidWriter {
         }
 
         List<SortableBytes> eventList = new List<SortableBytes>();
-
-        del InsertionSort = (sortableByte) =>
-        {
-            int index = eventList.Count - 1;
-
-            while (index >= 0 && sortableByte.tick < eventList[index].tick)
-                --index;
-
-            eventList.Insert(index + 1, sortableByte);
-        };
 
         foreach (ChartObject chartObject in chart.chartObjects)
         {
@@ -349,8 +410,8 @@ public static class MidWriter {
                         SortableBytes forceOnEvent = new SortableBytes(note.tick, new byte[] { ON_EVENT, (byte)forcedNoteNumber, VELOCITY });
                         SortableBytes forceOffEvent = new SortableBytes(note.tick + 1, new byte[] { OFF_EVENT, (byte)forcedNoteNumber, VELOCITY });
 
-                        InsertionSort(forceOnEvent);
-                        InsertionSort(forceOffEvent);
+                        InsertionSort(eventList, forceOnEvent);
+                        InsertionSort(eventList, forceOffEvent);
                     }
 
                     int openNote = gameMode == Chart.GameMode.GHLGuitar ? (int)Note.GHLiveGuitarFret.Open : (int)Note.GuitarFret.Open;
@@ -369,8 +430,8 @@ public static class MidWriter {
                         SortableBytes tapOnEvent = new SortableBytes(note.tick, tapOnEventBytes);
                         SortableBytes tapOffEvent = new SortableBytes(nextNonTap.tick + 1, tapOffEventBytes);
 
-                        InsertionSort(tapOnEvent);
-                        InsertionSort(tapOffEvent);
+                        InsertionSort(eventList, tapOnEvent);
+                        InsertionSort(eventList, tapOffEvent);
                     }
                 }
 
@@ -408,8 +469,8 @@ public static class MidWriter {
                     SortableBytes openOnEvent = new SortableBytes(note.tick, openOnEventBytes);
                     SortableBytes openOffEvent = new SortableBytes(nextNonOpen.tick + 1, openOffEventBytes);
 
-                    InsertionSort(openOnEvent);
-                    InsertionSort(openOffEvent);
+                    InsertionSort(eventList, openOnEvent);
+                    InsertionSort(eventList, openOffEvent);
                 }
             }
 
@@ -419,16 +480,18 @@ public static class MidWriter {
 
             ChartEvent chartEvent = chartObject as ChartEvent;
             if (chartEvent != null && difficulty == Song.Difficulty.Expert)     // Text events cannot be split up in the file
-                InsertionSort(GetChartEventBytes(chartEvent));
+            {
+                InsertionSort(eventList, GetChartEventBytes(chartEvent));
+            }
 
             if (onEvent != null && offEvent != null)
             {
-                InsertionSort(onEvent);
+                InsertionSort(eventList, onEvent);
 
                 if (offEvent.tick == onEvent.tick)
                     ++offEvent.tick;
 
-                InsertionSort(offEvent);
+                InsertionSort(eventList, offEvent);
             }
         }
 
@@ -438,15 +501,6 @@ public static class MidWriter {
     static byte[] GetUnrecognisedChartBytes(Chart chart, ExportOptions exportOptions)
     {
         List<SortableBytes> eventList = new List<SortableBytes>();
-        del InsertionSort = (sortableByte) =>
-        {
-            int index = eventList.Count - 1;
-
-            while (index >= 0 && sortableByte.tick < eventList[index].tick)
-                --index;
-
-            eventList.Insert(index + 1, sortableByte);
-        };
 
         foreach (ChartObject chartObject in chart.chartObjects)
         {           
@@ -465,17 +519,17 @@ public static class MidWriter {
             if (chartEvent != null)     // Text events cannot be split up in the file
             {
                 SortableBytes bytes = GetChartEventBytes(chartEvent);
-                InsertionSort(bytes);
+                InsertionSort(eventList, bytes);
             }
 
             if (onEvent != null && offEvent != null)
             {
-                InsertionSort(onEvent);
+                InsertionSort(eventList, onEvent);
 
                 if (offEvent.tick == onEvent.tick)
                     ++offEvent.tick;
 
-                InsertionSort(offEvent);
+                InsertionSort(eventList, offEvent);
             }
         }
 

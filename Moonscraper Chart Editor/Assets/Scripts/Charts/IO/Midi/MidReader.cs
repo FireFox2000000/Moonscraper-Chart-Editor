@@ -68,7 +68,7 @@ public static class MidReader {
             var trackName = midi.Events[i][0] as TextEvent;
             if (trackName == null)
                 continue;
-            Debug.Log(trackName.Text);
+            Debug.Log("Found midi track " + trackName.Text);
 
             string trackNameKey = trackName.Text.ToUpper();
             if (trackNameKey == MidIOHelper.EVENTS_TRACK)
@@ -90,6 +90,7 @@ public static class MidReader {
 #endif
                 if (importTrackAsVocalsEvents)
                 {
+                    Debug.Log("Loading lyrics from Vocals track");
                     ReadTextEventsIntoGlobalEventsAsLyrics(midi.Events[i], song);
                 }
                 else
@@ -100,6 +101,7 @@ public static class MidReader {
                         instrument = Song.Instrument.Unrecognised;
                     }
 
+                    Debug.LogFormat("Loading midi track {0}", instrument);
                     ReadNotes(midi.Events[i], song, instrument);
                 }
             }
@@ -185,7 +187,7 @@ public static class MidReader {
 
             if (text != null && text.Text.Length > 0 && text.Text[0] != '[')
             {           
-                string lyricEvent = "lyric " + text.Text;
+                string lyricEvent = MidIOHelper.LYRIC_EVENT_PREFIX + text.Text;
                 song.Add(new Event(lyricEvent, (uint)text.AbsoluteTime), false);
             }
         }
