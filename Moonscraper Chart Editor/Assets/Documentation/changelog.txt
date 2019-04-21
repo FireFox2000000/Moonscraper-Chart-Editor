@@ -1,3 +1,11 @@
+1.3.0B
+	FIXES
+	-Fixed issues with holding note tool and sustain dragging when play/pausing
+	-Fixed chords clapping multiple times
+	-Fixed undo-redo sometimes not jumping to action position
+	-Re-enabled flexibility in addiing and deleting notes in keys mode
+	-Now putting lyrics events back into the vocals track when exporting midi files
+
 1.3.0A
 	FIXES
 	-Fixed broken starpower ui indicators from previous
