@@ -16,6 +16,8 @@ public class SustainController : SelectableClick {
     static List<Note> originalDraggedNotes = new List<Note>();
     static List<SongEditCommand> sustainDragCommands = new List<SongEditCommand>();
     static int commandPushCount = 0;
+    static uint? initialDraggingSnappedPos = null;  // If this is null then we have moved the mouse cursor the minimum amount to allow sustains to be dragged. 
+                                                    // This lets us right-click delete individual notes from chords without resetting the sustains of the rest of the chord. 
 
     public void Awake()
     {
@@ -33,6 +35,8 @@ public class SustainController : SelectableClick {
         {
             if (Input.GetMouseButton(1))
             {
+                initialDraggingSnappedPos = GetSnappedSustainPos();
+
                 originalDraggedNotes.Clear();
                 sustainDragCommands.Clear();
                 commandPushCount = 0;
@@ -59,6 +63,9 @@ public class SustainController : SelectableClick {
 
     public override void OnSelectableMouseDrag()
     {
+        if (initialDraggingSnappedPos.HasValue && initialDraggingSnappedPos != GetSnappedSustainPos())
+            initialDraggingSnappedPos = null;
+
         if (nCon.note != null && nCon.note.song != null)
         {
             // Update sustain
@@ -160,7 +167,7 @@ public class SustainController : SelectableClick {
 
     void GenerateSustainDragCommands(bool compareWithOriginal)
     {
-        if (nCon.note.song == null || Input.GetMouseButton(0))
+        if (nCon.note.song == null || Input.GetMouseButton(0) || initialDraggingSnappedPos.HasValue)
             return;
 
         uint snappedPos = GetSnappedSustainPos();
