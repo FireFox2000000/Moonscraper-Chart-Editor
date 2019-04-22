@@ -24,7 +24,7 @@ public abstract class MovementController : MonoBehaviour {
     Transform selfTransform;
 
     // Program options
-    protected float mouseScrollSensitivity = 0.2f;      // May miss snap gaps if placed too high
+    protected float c_mouseScrollSensitivity = 0.2f;      // May miss snap gaps if placed too high
 
     // Jump to a chart position
     public abstract void SetPosition(uint tick);

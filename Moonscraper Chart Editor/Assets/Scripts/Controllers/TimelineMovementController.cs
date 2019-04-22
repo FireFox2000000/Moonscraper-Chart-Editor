@@ -10,7 +10,13 @@ public class TimelineMovementController : MovementController
     public TimelineHandler timeline;
     public Transform strikeLine;
     public UnityEngine.UI.Text timePosition;
+    [SerializeField]
+    Texture2D dragCursorPositive;
+    [SerializeField]
+    Texture2D dragCursorNegative;
 
+    Vector2? middleClickDownScreenPos = null;
+    const float c_middleClickMouseDragSensitivity = 10.0f;
     const float autoscrollSpeed = 10.0f;
     readonly Shortcut[] arrowKeyShortcutGroup = new Shortcut[] { Shortcut.MoveStepPositive, Shortcut.MoveStepNegative, Shortcut.MoveMeasurePositive, Shortcut.MoveMeasureNegative };
 
@@ -43,6 +49,16 @@ public class TimelineMovementController : MovementController
 
     void Update()
     {
+        if (Input.GetMouseButtonDown(2))
+        {
+            middleClickDownScreenPos = Input.mousePosition;
+        }
+        else if (!Input.GetMouseButton(2) && middleClickDownScreenPos.HasValue)
+        {
+            middleClickDownScreenPos = null;
+            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        }
+
         if (Input.GetMouseButtonUp(0) && Globals.applicationMode == Globals.ApplicationMode.Editor)
             cancel = false;
 
@@ -98,9 +114,21 @@ public class TimelineMovementController : MovementController
 
         if (Globals.applicationMode == Globals.ApplicationMode.Editor)
         {
+            Vector2 middleClickDragPercentageDelta = GetMiddleClickDragPercentageDelta();
+
             if (scrollDelta == 0 && focused)
             {
                 scrollDelta = Input.mouseScrollDelta.y;
+            }
+
+            if (middleClickDragPercentageDelta != Vector2.zero)
+            {
+                float sign = Mathf.Sign(middleClickDragPercentageDelta.y);
+
+                Texture2D cursorTexture = sign >= 0 ? dragCursorPositive : dragCursorNegative;
+                Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.ForceSoftware);
+
+                scrollDelta = middleClickDragPercentageDelta.y * c_middleClickMouseDragSensitivity;
             }
 
             if (Services.IsInDropDown)
@@ -118,7 +146,7 @@ public class TimelineMovementController : MovementController
                 {
                     // Mouse scroll movement
                     mouseScrollMovePosition.x = transform.position.x;
-                    mouseScrollMovePosition.y = transform.position.y + (scrollDelta * mouseScrollSensitivity);
+                    mouseScrollMovePosition.y = transform.position.y + (scrollDelta * c_mouseScrollSensitivity);
                     mouseScrollMovePosition.z = transform.position.z;
                     transform.position = mouseScrollMovePosition;
                     explicitChartPos = null;
@@ -344,5 +372,35 @@ public class TimelineMovementController : MovementController
         {
             globals.AddHighlightCurrentSection(i);
         }
+    }
+
+    Vector2 GetMiddleClickDragPixelDelta()
+    {
+        if (middleClickDownScreenPos.HasValue)
+        {
+            Vector2 clickPos = middleClickDownScreenPos.Value;
+            Vector2 currentScreenPos = Input.mousePosition;
+
+            float xDelta = currentScreenPos.x - clickPos.x;
+            float yDelta = currentScreenPos.y - clickPos.y;
+
+            return new Vector2(xDelta, yDelta);
+        }
+        else
+        {
+            return Vector2.zero;
+        }
+    }
+
+    Vector2 GetMiddleClickDragPercentageDelta()
+    {
+        Vector2 pixelDelta = GetMiddleClickDragPixelDelta();
+        float screenWidth = Screen.width;
+        float screenHeight = Screen.height;
+
+        float xDelta = pixelDelta.x / screenWidth;
+        float yDelta = pixelDelta.y / screenHeight;
+
+        return new Vector2(xDelta, yDelta);
     }
 }
