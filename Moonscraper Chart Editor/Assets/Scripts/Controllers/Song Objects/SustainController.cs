@@ -35,7 +35,13 @@ public class SustainController : SelectableClick {
         {
             if (Input.GetMouseButton(1))
             {
-                initialDraggingSnappedPos = GetSnappedSustainPos();
+                {
+                    uint snappedSustainPos = GetSnappedSustainPos();
+                    if (snappedSustainPos == nCon.note.tick)        // Only assigned if we're clicking on the note itself, otherwise we can modify the sustain instantly. 
+                    {
+                        initialDraggingSnappedPos = snappedSustainPos;
+                    }
+                }
 
                 originalDraggedNotes.Clear();
                 sustainDragCommands.Clear();
