@@ -1036,7 +1036,8 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
                 toolPanel.ToggleSongViewMode(viewMode == Globals.ViewMode.Song);
             }
 
-            movement.SetPosition(snapTick);
+            if (snapTick < minPos || snapTick > maxPos)
+                movement.SetPosition(snapTick);
         }
     }
 
