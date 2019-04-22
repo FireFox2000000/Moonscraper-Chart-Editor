@@ -35,6 +35,11 @@ public abstract class SongEditCommand : ICommand {
         AddClone(songObject);
     }
 
+    public List<SongObject> GetSongObjects()
+    {
+        return songObjects;
+    }
+
     public void Invoke()
     {
         InvokeSongEditCommand();

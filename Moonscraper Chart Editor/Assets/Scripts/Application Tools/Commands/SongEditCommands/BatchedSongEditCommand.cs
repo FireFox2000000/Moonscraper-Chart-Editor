@@ -91,12 +91,23 @@ public class BatchedSongEditCommand : SongEditCommand
 
         foreach (SongEditCommand command in commands)
         {
-            foreach(BaseAction action in command.subActions)
+            if (command.subActions.Count > 0)
             {
-                SongObject so = action.songObject;
-                if (lowestTickSo == null || so.tick < lowestTickSo.tick)
-                    lowestTickSo = so;
-            }           
+                foreach(BaseAction action in command.subActions)
+                {
+                    SongObject so = action.songObject;
+                    if (lowestTickSo == null || so.tick < lowestTickSo.tick)
+                        lowestTickSo = so;
+                }
+            }
+            else
+            {
+                foreach (SongObject so in command.GetSongObjects())
+                {
+                    if (lowestTickSo == null || so.tick < lowestTickSo.tick)
+                        lowestTickSo = so;
+                }
+            }
         }
 
         if (lowestTickSo != null)
