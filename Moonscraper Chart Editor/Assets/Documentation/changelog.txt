@@ -1,4 +1,10 @@
 1.3.0B
+	NEW FEATURES
+	-Added functionality to scroll using middle click and drag. 
+
+	CHANGES
+	-Only snap to undo-redo position if it's not in current view.
+
 	FIXES
 	-Fixed issues with holding note tool and sustain dragging when play/pausing
 	-Fixed chords clapping multiple times
