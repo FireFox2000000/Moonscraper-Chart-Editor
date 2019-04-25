@@ -100,7 +100,10 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
     void UpdateNoteStringsInfo()
     {
-        if (currentNote != null && prevClonedNote != currentNote)
+        bool hasCurrentNote = currentNote != null;
+        bool hasPreviousNote = prevClonedNote != null;
+        bool valuesAreTheSame = hasCurrentNote && hasPreviousNote && prevClonedNote.AllValuesCompare(currentNote);
+        if (currentNote != null && (prevClonedNote != currentNote || !valuesAreTheSame))
         {
             string noteTypeString = string.Empty;
             if (Globals.drumMode)
@@ -190,7 +193,6 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             Note newNote = new Note(note.tick, note.rawNote, note.length, newFlags);
             SongEditModifyValidated command = new SongEditModifyValidated(note, newNote);
             editor.commandStack.Push(command);
-            editor.SelectSongObject(newNote, editor.currentChart.notes);
         }
         else
         {

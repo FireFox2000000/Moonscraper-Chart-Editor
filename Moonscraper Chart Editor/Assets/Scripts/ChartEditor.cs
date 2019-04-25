@@ -971,7 +971,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     }
 
     List<SongObject> foundSongObjects = new List<SongObject>();
-    public void FindAndSelectSongObjects(IList<SongObject> songObjects)
+    public void TryFindAndSelectSongObjects(IList<SongObject> songObjects)
     {
         Song song = currentSong;
         Chart chart = currentChart;
@@ -985,20 +985,38 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
             if (chartObject != null)
             {
                 int insertionIndex = SongObjectHelper.FindObjectPosition(chartObject, chart.chartObjects);
-                Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Failed to find chart object to highlight");
-                foundSongObjects.Add(chart.chartObjects[insertionIndex]);
+                if (insertionIndex != SongObjectHelper.NOTFOUND)
+                {
+                    foundSongObjects.Add(chart.chartObjects[insertionIndex]);
+                }
+                else
+                {
+                    Debug.LogWarning("Failed to find chart object to highlight");
+                }
             }
             else if (syncTrack != null)
             {
                 int insertionIndex = SongObjectHelper.FindObjectPosition(syncTrack, song.syncTrack);
-                Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Failed to find synctrack to highlight");
-                foundSongObjects.Add(song.syncTrack[insertionIndex]);
+                if (insertionIndex != SongObjectHelper.NOTFOUND)
+                {
+                    foundSongObjects.Add(song.syncTrack[insertionIndex]);
+                }
+                else
+                {
+                    Debug.LogWarning("Failed to find synctrack to highlight");
+                }
             }
             else if (eventObject != null)
             {
                 int insertionIndex = SongObjectHelper.FindObjectPosition(eventObject, song.eventsAndSections);
-                Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Failed to find event to highlight");
-                foundSongObjects.Add(song.eventsAndSections[insertionIndex]);
+                if (insertionIndex != SongObjectHelper.NOTFOUND)
+                {
+                    foundSongObjects.Add(song.eventsAndSections[insertionIndex]);
+                }
+                else
+                {
+                    Debug.LogWarning("Failed to find event to highlight");
+                }
             }
             else
             {

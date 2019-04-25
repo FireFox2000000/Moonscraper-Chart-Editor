@@ -12,6 +12,7 @@ public class BatchedSongEditCommand : SongEditCommand
 
         foreach (SongEditCommand command in commands)
         {
+            command.preExecuteEnabled = false;
             command.postExecuteEnabled = false;
         }
     }

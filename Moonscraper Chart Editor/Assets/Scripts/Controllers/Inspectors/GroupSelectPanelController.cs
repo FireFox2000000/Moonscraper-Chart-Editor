@@ -85,21 +85,6 @@ public class GroupSelectPanelController : MonoBehaviour
         }
 
         editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
-
-        List<ChartObject> actuallySelected = new List<ChartObject>();
-        foreach (ChartObject chartObject in selected)
-        {
-            if (chartObject.classID == (int)SongObject.ID.Note && chartObject.song != null) // check null in case note was already deleted when overwritten by changing a note before it
-            {
-                Note note = chartObject as Note;
-                int insertionIndex = SongObjectHelper.FindObjectPosition(note, editor.currentChart.notes);
-                Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
-                actuallySelected.Add(editor.currentChart.notes[insertionIndex]);
-            }
-            else
-                actuallySelected.Add(chartObject);
-        }
-        editor.SetCurrentSelectedObjects(actuallySelected);
     }
 
     public void SetZeroSustain()
@@ -175,21 +160,6 @@ public class GroupSelectPanelController : MonoBehaviour
         if (songEditCommands.Count > 0)
         {
             editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
-
-            List<ChartObject> actuallySelected = new List<ChartObject>();
-            foreach (ChartObject chartObject in objectsToSelect)
-            {
-                if (chartObject.classID == (int)SongObject.ID.Note && chartObject.song != null) // check null in case note was already deleted when overwritten by changing a note before it
-                {
-                    Note note = chartObject as Note;
-                    int insertionIndex = SongObjectHelper.FindObjectPosition(note, editor.currentChart.notes);
-                    Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Song event failed to be inserted?");
-                    actuallySelected.Add(editor.currentChart.notes[insertionIndex]);
-                }
-                else
-                    actuallySelected.Add(chartObject);
-            }
-            editor.SetCurrentSelectedObjects(actuallySelected);
         }
     }
 }

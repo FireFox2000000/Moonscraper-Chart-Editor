@@ -6,11 +6,13 @@ public abstract class SongEditCommand : ICommand {
 
     protected List<SongObject> songObjects = new List<SongObject>();
     protected bool extendedSustainsEnabled;
+    public bool preExecuteEnabled = true;
     public bool postExecuteEnabled = true;
     public List<BaseAction> subActions = new List<BaseAction>();
 
     private List<SongEditModify<BPM>> bpmAnchorFixup = new List<SongEditModify<BPM>>();
     bool bpmAnchorFixupCommandsGenerated = false;
+    private List<SongObject> selectedSongObjects = new List<SongObject>();
 
     void AddClone(SongObject songObject)
     {
@@ -42,12 +44,14 @@ public abstract class SongEditCommand : ICommand {
 
     public void Invoke()
     {
+        PreExecuteUpdate();
         InvokeSongEditCommand();
         PostExecuteUpdate(true);
     }
 
     public void Revoke()
     {
+        PreExecuteUpdate();
         RevokeSongEditCommand();
         PostExecuteUpdate(false);
     }
@@ -55,6 +59,18 @@ public abstract class SongEditCommand : ICommand {
     public abstract void InvokeSongEditCommand();
 
     public abstract void RevokeSongEditCommand();
+
+    void PreExecuteUpdate()
+    {
+        if (!preExecuteEnabled)
+            return;
+
+        selectedSongObjects.Clear();
+        foreach (SongObject so in ChartEditor.Instance.currentSelectedObjects)
+        {
+            selectedSongObjects.Add(so.Clone());
+        }
+    }
 
     void PostExecuteUpdate(bool isInvoke)
     {
@@ -97,6 +113,9 @@ public abstract class SongEditCommand : ICommand {
         {
             editor.FillUndoRedoSnapInfo(jumpInfo.jumpToPos.Value, jumpInfo.viewMode);
         }
+
+        editor.TryFindAndSelectSongObjects(selectedSongObjects);
+        selectedSongObjects.Clear();
     }
 
     protected struct UndoRedoJumpInfo

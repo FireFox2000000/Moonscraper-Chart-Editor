@@ -111,7 +111,7 @@ public class GroupMove : ToolObject
         editor.commandStack.Pop();
         editor.commandStack.Push(moveAction);
 
-        editor.FindAndSelectSongObjects(movingSongObjects);
+        editor.TryFindAndSelectSongObjects(movingSongObjects);
 
         Reset();
     }
