@@ -19,7 +19,18 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     Note prevNote = null;
     Note prevClonedNote = new Note(0, 0);
 
+    bool queueToolChange = false;
     bool prevForcedProperty = false;
+
+    private void Start()
+    {
+        EventsManager.onToolChangedEventList.Add(OnToolChanged);
+    }
+
+    void OnToolChanged()
+    {
+        queueToolChange = true;
+    }
 
     void OnEnable()
     {
@@ -33,7 +44,11 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         else
             forcedToggle.isOn = false;
 
-        prevForcedProperty = forcedToggle.isOn;
+        if (Toolpane.currentTool != Toolpane.Tools.Note || queueToolChange)
+        {
+            prevForcedProperty = forcedToggle.isOn;
+            queueToolChange = false;
+        }
     }
 
     protected override void Update()
