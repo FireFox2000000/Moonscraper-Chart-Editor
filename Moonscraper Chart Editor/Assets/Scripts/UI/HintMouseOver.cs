@@ -109,6 +109,7 @@ public class HintMouseOver : MonoBehaviour {
 
             // Calculate the size of the textbox
             Vector2 size = style.CalcSize(new GUIContent(message));
+            size.x += 1;        // Some weird Unity 2018 thing is cutting text off by a single pixel. Thanks Unity. 
             if (size.x > MAX_TEXTBOX_WIDTH)
             {
                 size.x = MAX_TEXTBOX_WIDTH;
