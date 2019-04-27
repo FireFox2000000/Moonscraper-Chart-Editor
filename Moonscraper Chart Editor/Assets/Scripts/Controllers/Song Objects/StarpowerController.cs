@@ -41,7 +41,7 @@ public class StarpowerController : SongObjectController
                 }
                 else if (Globals.applicationMode == Globals.ApplicationMode.Playing)
                 {
-                    if (isBelowClapLine)
+                    if (canBotClap)
                         TryClap();
                 }
             }

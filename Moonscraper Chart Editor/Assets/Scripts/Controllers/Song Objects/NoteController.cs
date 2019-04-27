@@ -255,7 +255,7 @@ public class NoteController : SongObjectController {
 
         bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime * GameSettings.hyperspeed / GameSettings.gameSpeed);
 
-        if (GameSettings.bot && isBelowClapLine)
+        if (canBotClap)
         {
             GameplayBotHitClap();
         }

@@ -27,6 +27,14 @@ public abstract class SongObjectController : SelectableClick {
         }
     }
 
+    public bool canBotClap
+    {
+        get
+        {
+            return GameSettings.bot && isBelowClapLine;
+        }
+    }
+
     protected void Awake()
     {
         editor = ChartEditor.Instance;
@@ -89,7 +97,7 @@ public abstract class SongObjectController : SelectableClick {
             }
             else if (Globals.applicationMode == Globals.ApplicationMode.Playing)
             {
-                if (isBelowClapLine)
+                if (canBotClap)
                     TryClap();
             }
         }
