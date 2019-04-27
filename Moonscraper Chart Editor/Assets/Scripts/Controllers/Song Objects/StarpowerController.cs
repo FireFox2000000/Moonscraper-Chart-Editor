@@ -36,7 +36,14 @@ public class StarpowerController : SongObjectController
                     (starpower.tick < editor.minPos && endPosition >= editor.maxPos))
             {
                 if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+                {
                     UpdateSongObject();
+                }
+                else if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+                {
+                    if (isBelowClapLine)
+                        TryClap();
+                }
             }
             else
                 gameObject.SetActive(false);

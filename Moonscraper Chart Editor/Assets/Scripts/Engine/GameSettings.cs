@@ -10,7 +10,19 @@ public static class GameSettings
     [System.Flags]
     public enum ClapToggle
     {
-        NONE = 0, ALL = ~0, STRUM = 1, HOPO = 2, TAP = 4
+        NONE = 0,
+        
+        STRUM           = 1 << 0,
+        HOPO            = 1 << 1,
+        TAP             = 1 << 2,
+
+        STARPOWER       = 1 << 3,
+        CHARTEVENT      = 1 << 4,
+
+        BPM             = 1 << 5,
+        TS              = 1 << 6,
+        EVENT           = 1 << 7,
+        SECTION         = 1 << 8,
     }
 
     public enum NotePlacementMode
@@ -77,6 +89,8 @@ public static class GameSettings
 
     public static void Load(string filepath)
     {
+        int c_defaultClapVal = (int)(ClapToggle.STRUM | ClapToggle.HOPO | ClapToggle.TAP);
+
         INIParser iniparse = new INIParser();
         iniparse.Open(filepath);
 
@@ -86,7 +100,7 @@ public static class GameSettings
         highwayLength                   = (float)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Highway Length", 0);
         audioCalibrationMS              = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Audio calibration", 0);
         clapCalibrationMS               = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Clap calibration", 0);
-        clapProperties                  = (ClapToggle)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Clap", (int)ClapToggle.ALL);
+        clapProperties                  = (ClapToggle)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Clap", c_defaultClapVal);
         extendedSustainsEnabled         = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Extended sustains", false);
         clapSetting                     = ClapToggle.NONE;
         sustainGapEnabled               = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Sustain Gap", false);
@@ -110,6 +124,12 @@ public static class GameSettings
         sfxVolume                       = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "SFX", 1.0f);
 
         iniparse.Close();
+
+        // Need to fix old config values
+        if ((int)clapProperties > (((int)ClapToggle.SECTION << 1) - 1))
+        {
+            clapProperties = (ClapToggle)c_defaultClapVal;
+        }
     }
 
     public static void Save(string filepath)

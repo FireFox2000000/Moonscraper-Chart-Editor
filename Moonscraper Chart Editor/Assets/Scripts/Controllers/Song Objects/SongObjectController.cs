@@ -15,6 +15,18 @@ public abstract class SongObjectController : SelectableClick {
     public abstract void UpdateSongObject();
     public bool disableCancel = true;
 
+    public bool isBelowClapLine
+    {
+        get
+        {
+            Vector3 objPosition = transform.position;
+            Vector3 strikelinePosition = editor.visibleStrikeline.position;
+
+            bool belowClapLine = objPosition.y <= strikelinePosition.y + (TickFunctions.TimeToWorldYPosition(GameSettings.audioCalibrationMS / 1000.0f) * GameSettings.gameSpeed);
+            return belowClapLine;
+        }
+    }
+
     protected void Awake()
     {
         editor = ChartEditor.Instance;
@@ -72,7 +84,14 @@ public abstract class SongObjectController : SelectableClick {
         if (songObject != null && songObject.tick >= editor.minPos && songObject.tick < editor.maxPos)
         {
             if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+            {
                 UpdateSongObject();
+            }
+            else if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+            {
+                if (isBelowClapLine)
+                    TryClap();
+            }
         }
         else if (songObject != null)
             gameObject.SetActive(false);
@@ -170,6 +189,59 @@ public abstract class SongObjectController : SelectableClick {
                 editor.currentSelectedObject = null;
             }
         }
+    }
+
+    protected bool CanClapObjectForSettings()
+    {
+        bool playClap = false;
+
+        if (songObject != null)
+        {
+            SongObject.ID id = (SongObject.ID)songObject.classID;
+            GameSettings.ClapToggle toggleValue;
+
+            if (SongObjectHelper.songObjectIdToClapOption.TryGetValue(id, out toggleValue))
+            {
+                if ((GameSettings.clapSetting & toggleValue) != 0)
+                    playClap = true;
+            }
+            else if (id == SongObject.ID.Note)
+            {
+                Note note = songObject as Note;
+
+                switch (note.type)
+                {
+                    case Note.NoteType.Strum:
+                        playClap = (GameSettings.clapSetting & GameSettings.ClapToggle.STRUM) != 0;
+                        break;
+
+                    case Note.NoteType.Hopo:
+                        playClap = (GameSettings.clapSetting & GameSettings.ClapToggle.HOPO) != 0;
+                        break;
+
+                    case Note.NoteType.Tap:
+                        playClap = (GameSettings.clapSetting & GameSettings.ClapToggle.TAP) != 0;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                Debug.LogErrorFormat("Class id {0} has not been associated with a clap toggle", id);
+            }
+        }
+
+        return playClap;
+    }
+
+    protected void TryClap()
+    {
+        bool playClap = CanClapObjectForSettings();
+
+        if (playClap)
+            editor.services.strikelineAudio.Clap(transform.position.y);
     }
 
     public static float GetXPos (SongObject songObject)

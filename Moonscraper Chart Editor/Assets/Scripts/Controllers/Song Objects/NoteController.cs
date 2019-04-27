@@ -253,10 +253,9 @@ public class NoteController : SongObjectController {
         Vector3 notePosition = transform.position;
         Vector3 strikelinePosition = editor.visibleStrikeline.position;
 
-        bool belowClapLine = notePosition.y <= strikelinePosition.y + (TickFunctions.TimeToWorldYPosition(GameSettings.audioCalibrationMS / 1000.0f) * GameSettings.gameSpeed);
         bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime * GameSettings.hyperspeed / GameSettings.gameSpeed);
 
-        if (GameSettings.bot && belowClapLine)
+        if (GameSettings.bot && isBelowClapLine)
         {
             GameplayBotHitClap();
         }
@@ -290,28 +289,7 @@ public class NoteController : SongObjectController {
     {
         if (!hit)
         {
-            bool playClap = true;
-
-            switch (note.type)
-            {
-                case (Note.NoteType.Strum):
-                    if ((GameSettings.clapSetting & GameSettings.ClapToggle.STRUM) == 0)
-                        playClap = false;
-                    break;
-                case (Note.NoteType.Hopo):
-                    if ((GameSettings.clapSetting & GameSettings.ClapToggle.HOPO) == 0)
-                        playClap = false;
-                    break;
-                case (Note.NoteType.Tap):
-                    if ((GameSettings.clapSetting & GameSettings.ClapToggle.TAP) == 0)
-                        playClap = false;
-                    break;
-                default:
-                    break;
-            }
-
-            if (playClap)
-                editor.services.strikelineAudio.Clap(transform.position.y);
+            TryClap();
         }
 
         hit = true;

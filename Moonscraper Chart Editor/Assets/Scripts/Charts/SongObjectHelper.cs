@@ -5,6 +5,17 @@ using UnityEngine;
 public static class SongObjectHelper {
     public const int NOTFOUND = -1;
 
+    public static readonly Dictionary<SongObject.ID, GameSettings.ClapToggle> songObjectIdToClapOption = new Dictionary<SongObject.ID, GameSettings.ClapToggle>()
+    {
+        // Notes are subdivided and are not applicable here
+        { SongObject.ID.Starpower,      GameSettings.ClapToggle.STARPOWER },
+        { SongObject.ID.ChartEvent,     GameSettings.ClapToggle.CHARTEVENT },
+        { SongObject.ID.BPM,            GameSettings.ClapToggle.BPM },
+        { SongObject.ID.TimeSignature,  GameSettings.ClapToggle.TS },
+        { SongObject.ID.Event,          GameSettings.ClapToggle.EVENT },
+        { SongObject.ID.Section,        GameSettings.ClapToggle.SECTION },
+    };
+
     /// <summary>
     /// Searches through the array and finds the array position of item most similar to the one provided.
     /// </summary>
