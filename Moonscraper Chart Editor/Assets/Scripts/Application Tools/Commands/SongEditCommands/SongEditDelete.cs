@@ -24,7 +24,7 @@ public class SongEditDelete : SongEditCommand
         RevokeSubActions();
     }
 
-    public static void AddAndInvokeSubActions(IList<SongObject> songObjects, IList<BaseAction> subActions)
+    public void AddAndInvokeSubActions(IList<SongObject> songObjects, IList<BaseAction> subActions)
     {
         foreach (SongObject songObject in songObjects)
         {
@@ -32,7 +32,7 @@ public class SongEditDelete : SongEditCommand
         }
     }
 
-    public static void AddAndInvokeSubActions(SongObject songObject, IList<BaseAction> subActions)
+    public void AddAndInvokeSubActions(SongObject songObject, IList<BaseAction> subActions)
     {
         Note note = songObject as Note;
         Note next = null;
@@ -59,7 +59,7 @@ public class SongEditDelete : SongEditCommand
         }
     }
 
-    public static void GeneratePostDeleteSubActions(Note nextSeperateNoteFromDeleted, IList<BaseAction> subActions)
+    public void GeneratePostDeleteSubActions(Note nextSeperateNoteFromDeleted, IList<BaseAction> subActions)
     {
         if (subActions != null && nextSeperateNoteFromDeleted != null)    // Overwrite can be null for special case with song edit add, as corrections can mess SEA up
         {
@@ -72,6 +72,20 @@ public class SongEditDelete : SongEditCommand
             {
                 if (flags != chordNote.flags)
                 {
+                    bool willBeDeleted = false;
+                    foreach (SongObject so in songObjects)
+                    {
+                        Note note = so as Note;
+                        if (note != null && note.tick == chordNote.tick && note.rawNote == chordNote.rawNote)
+                        {
+                            willBeDeleted = true;
+                            break;
+                        }
+                    }
+
+                    if (willBeDeleted)      // If we continue it may false flag BatchedSongEditCommand to fixed forced flag on a note that shouldn't be corrected
+                        continue;
+
                     Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, flags);
 
                     AddAndInvokeSubAction(new DeleteAction(chordNote), subActions);
