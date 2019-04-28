@@ -203,14 +203,14 @@ public abstract class SongObjectController : SelectableClick {
     {
         bool playClap = false;
 
-        if (songObject != null)
+        if (songObject != null && GameSettings.clapEnabled)
         {
             SongObject.ID id = (SongObject.ID)songObject.classID;
             GameSettings.ClapToggle toggleValue;
 
             if (SongObjectHelper.songObjectIdToClapOption.TryGetValue(id, out toggleValue))
             {
-                if ((GameSettings.clapSetting & toggleValue) != 0)
+                if ((GameSettings.clapProperties & toggleValue) != 0)
                     playClap = true;
             }
             else if (id == SongObject.ID.Note)
@@ -220,15 +220,15 @@ public abstract class SongObjectController : SelectableClick {
                 switch (note.type)
                 {
                     case Note.NoteType.Strum:
-                        playClap = (GameSettings.clapSetting & GameSettings.ClapToggle.STRUM) != 0;
+                        playClap = (GameSettings.clapProperties & GameSettings.ClapToggle.STRUM) != 0;
                         break;
 
                     case Note.NoteType.Hopo:
-                        playClap = (GameSettings.clapSetting & GameSettings.ClapToggle.HOPO) != 0;
+                        playClap = (GameSettings.clapProperties & GameSettings.ClapToggle.HOPO) != 0;
                         break;
 
                     case Note.NoteType.Tap:
-                        playClap = (GameSettings.clapSetting & GameSettings.ClapToggle.TAP) != 0;
+                        playClap = (GameSettings.clapProperties & GameSettings.ClapToggle.TAP) != 0;
                         break;
 
                     default:

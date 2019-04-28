@@ -48,7 +48,7 @@ public class DisplayProperties : UpdateableService
 
     void OnEnable()
     {
-        clapToggle.isOn = (GameSettings.clapSetting != GameSettings.ClapToggle.NONE);
+        clapToggle.isOn = GameSettings.clapEnabled;
         metronomeToggle.isOn = GameSettings.metronomeActive;
     }
 
@@ -120,10 +120,7 @@ public class DisplayProperties : UpdateableService
 
     public void ToggleClap(bool value)
     {
-        if (value)
-            GameSettings.clapSetting = GameSettings.clapProperties;
-        else
-            GameSettings.clapSetting = GameSettings.ClapToggle.NONE;
+        GameSettings.clapEnabled = value;
 
         Debug.Log("Clap toggled: " + value);
     }

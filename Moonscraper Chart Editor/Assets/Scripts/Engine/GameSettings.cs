@@ -68,7 +68,7 @@ public static class GameSettings
     public static Step sustainGapStep;
     public static int sustainGap { get { return sustainGapStep.value; } set { sustainGapStep.value = value; } }
 
-    public static ClapToggle clapSetting = ClapToggle.NONE;
+    public static bool clapEnabled = false;
     public static ClapToggle clapProperties = ClapToggle.NONE;
     public static NotePlacementMode notePlacementMode = NotePlacementMode.LeftyFlip;
 
@@ -102,7 +102,7 @@ public static class GameSettings
         clapCalibrationMS               = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Clap calibration", 0);
         clapProperties                  = (ClapToggle)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Clap", c_defaultClapVal);
         extendedSustainsEnabled         = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Extended sustains", false);
-        clapSetting                     = ClapToggle.NONE;
+        clapEnabled                     = false;
         sustainGapEnabled               = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Sustain Gap", false);
         sustainGapStep                  = new Step((int)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Sustain Gap Step", (int)16));
         notePlacementMode               = (NotePlacementMode)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Note Placement Mode", (int)NotePlacementMode.Default);

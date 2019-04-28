@@ -40,11 +40,6 @@ public class ClapSettingsMenu : DisplayMenu
             GameSettings.clapProperties |= setting;
         else
             GameSettings.clapProperties &= ~setting;
-
-        if (GameSettings.clapSetting != GameSettings.ClapToggle.NONE)
-        {
-            GameSettings.clapSetting = GameSettings.clapProperties;
-        }
     }
 
     public void ApplyCurrentToggleProperties()
