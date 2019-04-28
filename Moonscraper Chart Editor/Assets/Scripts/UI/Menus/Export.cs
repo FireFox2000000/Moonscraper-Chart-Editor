@@ -129,6 +129,16 @@ public class Export : DisplayMenu {
         if (FileExplorer.OpenFolderPanel(out saveDirectory))
         {
             Song song = editor.currentSong;
+
+            saveDirectory = saveDirectory.Replace('\\', '/');
+
+            if (!saveDirectory.EndsWith("/"))
+            {
+                saveDirectory += '/';
+            }
+
+            saveDirectory += song.name + "/";
+
             StartCoroutine(ExportCHPackage(saveDirectory, song, exportOptions));
         }
     }
