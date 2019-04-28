@@ -32,6 +32,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System;
 using Ookii.Dialogs;
+using System.IO;
 
 public class FileExplorerWindows_gkngkc : IFileExplorer
 {
@@ -80,7 +81,18 @@ public class FileExplorerWindows_gkngkc : IFileExplorer
         fd.AddExtension = true;
 
         var res = fd.ShowDialog(new WindowWrapper(GetActiveWindow()));
-        var filename = res == DialogResult.OK ? fd.FileName : "";
+        var filename = res == DialogResult.OK ? fd.FileName : string.Empty;
+        fd.Dispose();
+        resultPath = filename;
+
+        return !string.IsNullOrEmpty(resultPath);
+    }
+
+    public bool OpenFolderPanel(out string resultPath)
+    {
+        var fd = new VistaFolderBrowserDialog();
+        var res = fd.ShowDialog(new WindowWrapper(GetActiveWindow()));
+        var filename = res == DialogResult.OK ? fd.SelectedPath : string.Empty;
         fd.Dispose();
         resultPath = filename;
 
@@ -112,6 +124,20 @@ public class FileExplorerWindows_gkngkc : IFileExplorer
 
         filterString = filterString.Remove(filterString.Length - 1);
         return filterString;
+    }
+
+    private static string GetDirectoryPath(string directory)
+    {
+        var directoryPath = Path.GetFullPath(directory);
+        if (!directoryPath.EndsWith("\\"))
+        {
+            directoryPath += "\\";
+        }
+        if (Path.GetPathRoot(directoryPath) == directoryPath)
+        {
+            return directory;
+        }
+        return Path.GetDirectoryName(directoryPath) + Path.DirectorySeparatorChar;
     }
 }
 

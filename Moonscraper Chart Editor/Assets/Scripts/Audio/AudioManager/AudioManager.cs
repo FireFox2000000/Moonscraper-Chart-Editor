@@ -3,11 +3,13 @@ using System.Collections.Generic;
 
 #if BASS_AUDIO
 using Un4seen.Bass;
+using Un4seen.Bass.Misc;
 #endif
 
 public static class AudioManager {
     public static bool isDisposed { get; private set; }
     static List<AudioStream> liveAudioStreams = new List<AudioStream>();
+    static string encoderDirectory = string.Empty;
 
     #region Memory
     public static bool Init()
@@ -19,6 +21,16 @@ public static class AudioManager {
             UnityEngine.Debug.LogError("Failed Bass.Net initialisation");
         else
             UnityEngine.Debug.Log("Bass.Net initialised");
+
+        encoderDirectory = Globals.realWorkingDirectory +
+#if UNITY_EDITOR
+        "/StreamingAssets/";
+#elif UNITY_STANDALONE_WIN
+        "/Moonscraper Chart Editor_Data/StreamingAssets/";
+#else
+        // Not supported/todo
+#endif
+        UnityEngine.Debug.Assert(System.IO.File.Exists(encoderDirectory + "oggenc2.exe"));
 
         return success;
     }
@@ -77,6 +89,31 @@ public static class AudioManager {
         }
 
         return success;
+    }
+
+    public static void ConvertToOgg(string sourcePath, string destPath)
+    {
+        const string EXTENTION = ".ogg";
+        UnityEngine.Debug.Assert(destPath.EndsWith(EXTENTION));
+
+        if (sourcePath.EndsWith(EXTENTION))
+        {
+            // Re-encoding is slow as hell, speed this up
+            System.IO.File.Copy(sourcePath, destPath);
+        }
+        else
+        {
+            string inputFile = sourcePath;
+            string outputFile = destPath;
+
+            EncoderOGG encoder = new EncoderOGG(0);
+            encoder.EncoderDirectory = encoderDirectory;
+
+            if (!BaseEncoder.EncodeFile(inputFile, outputFile, encoder, null, true, false))
+            {
+                UnityEngine.Debug.LogErrorFormat("Unable to encode ogg file from {0} to {1}. Error {2}", sourcePath, destPath, Bass.BASS_ErrorGetCode().ToString());
+            }
+        }
     }
 
 #endregion

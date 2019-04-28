@@ -23,6 +23,14 @@ public class FileExplorerEditor : IFileExplorer {
 
         return !string.IsNullOrEmpty(resultPath);
     }
+
+    public bool OpenFolderPanel(out string resultPath)
+    {
+        resultPath = string.Empty;
+        resultPath = UnityEditor.EditorUtility.OpenFolderPanel("Open folder", "", "");
+
+        return !string.IsNullOrEmpty(resultPath);
+    }
 }
 
 #endif

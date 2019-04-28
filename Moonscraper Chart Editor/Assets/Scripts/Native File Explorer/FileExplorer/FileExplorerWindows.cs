@@ -140,6 +140,11 @@ public class FileExplorerWindows : IFileExplorer
         return sb.ToString();
     }
 
+    public bool OpenFolderPanel(out string resultPath)
+    {
+        throw new NotImplementedException();
+    }
+
     // Copyright
     // Microsoft Corporation
     // All rights reserved

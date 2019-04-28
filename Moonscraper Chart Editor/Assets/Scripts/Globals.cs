@@ -84,6 +84,8 @@ public class Globals : MonoBehaviour {
 #else
         workingDirectory = Application.dataPath;
 #endif
+        // Bass init
+        AudioManager.Init();
 
         LoadGameSettings();
 

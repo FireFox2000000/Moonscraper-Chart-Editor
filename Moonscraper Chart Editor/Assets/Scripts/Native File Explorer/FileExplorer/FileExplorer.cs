@@ -28,6 +28,11 @@ public static class FileExplorer  {
         return m_platformWrapper.SaveFilePanel(filter, defaultFileName, defExt, out resultPath);
     }
 
+    public static bool OpenFolderPanel(out string resultPath)
+    {
+        return m_platformWrapper.OpenFolderPanel(out resultPath);
+    }
+
     public static string StripIllegalChars(string filename)
     {
         const string invalidFileChars = "!@#$%^&*\"\'<>\\/:|?";

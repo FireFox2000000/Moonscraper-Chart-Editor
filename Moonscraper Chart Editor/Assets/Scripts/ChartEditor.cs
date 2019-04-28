@@ -197,9 +197,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         currentSong = new Song();
         LoadSong(currentSong, true);
 
-        // Bass init
-        AudioManager.Init();
-
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
 
         isDirty = false;

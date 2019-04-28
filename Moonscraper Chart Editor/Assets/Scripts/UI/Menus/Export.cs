@@ -16,11 +16,13 @@ public class Export : DisplayMenu {
     public LoadingScreenFader loadingScreen;
     public Text exportingInfo;
     public Dropdown fileTypeDropdown;
+    public Toggle chPackageToggle;
     public Toggle forcedToggle;
     public InputField targetResolution;
     public InputField delayInputField;
     public Toggle copyDifficultiesToggle;
     public Toggle generateIniToggle;
+    public Button magmaButton;
 
     ExportOptions exportOptions;
     float delayTime = 0;
@@ -29,6 +31,8 @@ public class Export : DisplayMenu {
     const string FILE_EXT_MIDI = ".mid";
 
     string chartInfoText = "Exports into the .chart format.";
+    string chPackageText = "Will export and organise all chart and audio files into the selected folder to be compatible with Clone Hero's naming structure.\n" +
+        "This will also automatically re-encode audio into the .ogg format as needed.";
     string midInfoText = "Exports into the .mid format. \n\n" +
         "Warning: \n" +
         "\t-Audio will disconnect from file \n" +
@@ -64,11 +68,34 @@ public class Export : DisplayMenu {
 
         delayTime = 0;
         delayInputField.text = delayTime.ToString();
+
+        chPackageToggle.isOn = false;
+    }
+
+    public void OnChPackageToggle(bool enabled)
+    {
+        if (enabled)
+        {
+            generateIniToggle.isOn = enabled;
+            fileTypeDropdown.value = 0;
+        }
+
+        generateIniToggle.interactable = !enabled;        
+        fileTypeDropdown.interactable = !enabled;
+        magmaButton.interactable = !enabled;
+        exportingInfo.text = chPackageToggle.isOn ? chPackageText : chartInfoText;
     }
 
     public void ExportSong()
     {
-        editor.onClickEventFnList.Add(_ExportSong);
+        if (chPackageToggle.isOn)
+        {
+            ExportCHPackage();
+        }
+        else
+        {
+            _ExportSong();
+        }
     }
 
     void _ExportSong()
@@ -94,6 +121,16 @@ public class Export : DisplayMenu {
 
         if (aquiredFilePath)
             StartCoroutine(_ExportSong(saveLocation));
+    }
+
+    public void ExportCHPackage()
+    {
+        string saveDirectory;
+        if (FileExplorer.OpenFolderPanel(out saveDirectory))
+        {
+            Song song = editor.currentSong;
+            StartCoroutine(ExportCHPackage(saveDirectory, song, exportOptions));
+        }
     }
 
     public IEnumerator _ExportSong(string filepath)
@@ -147,7 +184,7 @@ public class Export : DisplayMenu {
             loadingScreen.loadingInformation.text = "Generating Song.ini";
             Thread iniThread = new Thread(() =>
             {
-                GenerateSongIni(Path.GetDirectoryName(filepath));
+                GenerateSongIni(Path.GetDirectoryName(filepath), song);
             });
 
             iniThread.Start();
@@ -195,7 +232,7 @@ public class Export : DisplayMenu {
     void setAsChartFile()
     {
         exportOptions.format = ExportOptions.Format.Chart;
-        exportingInfo.text = chartInfoText;
+        exportingInfo.text = chPackageToggle.isOn ? chPackageText : chartInfoText;
     }
 
     void setAsMidFile()
@@ -250,9 +287,8 @@ public class Export : DisplayMenu {
         delayInputField.text = "2.5";
     }
 
-    void GenerateSongIni(string path)
+    static void GenerateSongIni(string path, Song song)
     {
-        Song song = editor.currentSong;
         Metadata metaData = song.metaData;
 
         StreamWriter ofs = File.CreateText(path + "/song.ini");
@@ -355,5 +391,132 @@ public class Export : DisplayMenu {
             catch { }
         }
         */
+    }
+
+    static readonly Dictionary<Song.AudioInstrument, string> audioInstrumentToCHNameMap = new Dictionary<Song.AudioInstrument, string>()
+    {
+        { Song.AudioInstrument.Song, "song" },
+        { Song.AudioInstrument.Guitar, "guitar" },
+        { Song.AudioInstrument.Bass, "bass" },
+        { Song.AudioInstrument.Rhythm, "rhythm" },
+        { Song.AudioInstrument.Drum, "drums" },
+    };
+
+    static string GetCHOggFilename(Song.AudioInstrument audio)
+    {
+        const string audioFormat = ".ogg";
+
+        string newAudioName = string.Empty;
+        if (audioInstrumentToCHNameMap.TryGetValue(audio, out newAudioName))
+        {
+            newAudioName += audioFormat;
+        }
+        else
+        {
+            Debug.LogErrorFormat("Audio instrument {0} not set up in ch name dict. Skipping.", audio.ToString());
+        }
+
+        return newAudioName;
+    }
+
+    IEnumerator ExportCHPackage(string destFolderPath, Song song, ExportOptions exportOptions)
+    {
+        Song newSong = new Song(song);
+        
+        Globals.applicationMode = Globals.ApplicationMode.Loading;
+        loadingScreen.FadeIn();    
+
+        float timer = Time.realtimeSinceStartup;
+        string errorMessageList = string.Empty;
+
+        destFolderPath = destFolderPath.Replace('\\', '/');
+
+        if (!destFolderPath.EndsWith("/"))
+        {
+            destFolderPath += '/';
+        }
+
+        if (!Directory.Exists(destFolderPath))
+        {
+            Directory.CreateDirectory(destFolderPath);
+        }
+
+        loadingScreen.loadingInformation.text = "Re-encoding audio to .ogg format";
+        Thread audioEncodingThread = new Thread(() =>
+        {
+            ExportSongAudioOgg(destFolderPath, newSong);
+        });
+
+        audioEncodingThread.Start();
+
+        while (audioEncodingThread.ThreadState == ThreadState.Running)
+            yield return null;
+
+        loadingScreen.loadingInformation.text = "Exporting chart";
+        Thread exportingThread = new Thread(() =>
+        {
+            string chartOutputFile = destFolderPath + "notes.chart";
+
+            // Set audio location after audio files have already been created as set won't won't if the files don't exist
+            foreach (Song.AudioInstrument audio in Enum.GetValues(typeof(Song.AudioInstrument)))
+            {
+                if (song.GetAudioLocation(audio) != string.Empty)
+                {
+                    string audioFilename = GetCHOggFilename(audio);
+                    string audioPath = destFolderPath + audioFilename;
+                    newSong.SetAudioLocation(audio, audioPath);
+                }
+            }
+
+            new ChartWriter(chartOutputFile).Write(newSong, exportOptions, out errorMessageList);
+            GenerateSongIni(destFolderPath, newSong);
+        });
+
+        exportingThread.Start();
+
+        while (exportingThread.ThreadState == ThreadState.Running)
+            yield return null;
+
+        Debug.Log("Total exporting time: " + (Time.realtimeSinceStartup - timer));
+
+        // Stop loading animation
+        loadingScreen.FadeOut();
+        loadingScreen.loadingInformation.text = "Complete!";
+
+        if (errorMessageList != string.Empty)
+        {
+            ChartEditor.Instance.errorManager.QueueErrorMessage("Encountered the following errors while exporting: " + Globals.LINE_ENDING + errorMessageList);
+        }
+    }
+
+    static void ExportSongAudioOgg(string destFolderPath, Song song)
+    {
+        foreach (Song.AudioInstrument audio in Enum.GetValues(typeof(Song.AudioInstrument)))
+        {
+            string audioLocation = song.GetAudioLocation(audio);
+            if (audioLocation == string.Empty)
+                continue;
+
+            if (!File.Exists(audioLocation))
+            {
+                Debug.LogErrorFormat("Unable to find audio file in location {0}", audioLocation);
+                continue;
+            }
+            {
+                string newAudioName = GetCHOggFilename(audio);
+
+                if (!string.IsNullOrEmpty(newAudioName))
+                {
+                    string outputFile = destFolderPath + newAudioName;
+
+                    Debug.LogFormat("Converting ogg from {0} to {1}", audioLocation, outputFile);
+                    AudioManager.ConvertToOgg(audioLocation, outputFile);
+                }
+                else
+                {
+                    Debug.LogErrorFormat("Audio instrument {0} not set up in ch name dict. Skipping.", audio.ToString());
+                }
+            }
+        }
     }
 }
