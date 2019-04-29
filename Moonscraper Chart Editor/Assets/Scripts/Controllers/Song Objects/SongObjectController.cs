@@ -20,9 +20,9 @@ public abstract class SongObjectController : SelectableClick {
         get
         {
             Vector3 objPosition = transform.position;
-            Vector3 strikelinePosition = editor.visibleStrikeline.position;
 
-            bool belowClapLine = objPosition.y <= strikelinePosition.y + (TickFunctions.TimeToWorldYPosition(GameSettings.audioCalibrationMS / 1000.0f) * GameSettings.gameSpeed);
+            float audioStrikelinePos = editor.services.auditorialStrikelinePos;
+            bool belowClapLine = objPosition.y <= audioStrikelinePos;
             return belowClapLine;
         }
     }

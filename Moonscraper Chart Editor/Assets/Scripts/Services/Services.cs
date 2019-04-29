@@ -33,6 +33,7 @@ public class Services : MonoBehaviour
     public static bool IsTyping = false;
 
     List<UpdateableService> updateableServices = new List<UpdateableService>();
+    static readonly float HACKY_AUDIO_DELAY_FIX_OFFSET = 0.1f;
 
     public static bool HasScreenResized
     {
@@ -147,6 +148,24 @@ public class Services : MonoBehaviour
     public bool CanPlay()
     {
         return !ChartEditor.Instance.groupMove.movementInProgress;
+    }
+
+    public float worldCalibrationOffset
+    {
+        get
+        {
+            return TickFunctions.TimeToWorldYPosition(GameSettings.audioCalibrationMS / 1000.0f) * GameSettings.gameSpeed;
+        }
+    }
+
+    public float auditorialStrikelinePos
+    {
+        get
+        {
+            ChartEditor editor = ChartEditor.Instance;
+            Vector3 strikelinePos = editor.visibleStrikeline.position;
+            return strikelinePos.y + editor.services.worldCalibrationOffset + HACKY_AUDIO_DELAY_FIX_OFFSET;
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////

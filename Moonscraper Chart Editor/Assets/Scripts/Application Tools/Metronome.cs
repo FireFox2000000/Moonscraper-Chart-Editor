@@ -7,7 +7,6 @@ using UnityEngine;
 
 public class Metronome : MonoBehaviour {
     ChartEditor editor;
-    Vector3 initLocalPos;
 
     OneShotSampleStream sampleStream;
 
@@ -17,7 +16,6 @@ public class Metronome : MonoBehaviour {
     // Use this for initialization
     protected void Start () {
         editor = ChartEditor.Instance;      
-        initLocalPos = transform.localPosition;
 
         LoadSoundClip();
     }
@@ -36,11 +34,8 @@ public class Metronome : MonoBehaviour {
     public void Update()
     {
         // Offset by audio calibration
-        Vector3 pos = initLocalPos;
-        pos.y += TickFunctions.TimeToWorldYPosition(GameSettings.audioCalibrationMS / 1000.0f * GameSettings.gameSpeed);
-        transform.localPosition = pos;
-
-        uint currentTickPos = editor.currentSong.WorldYPositionToTick(transform.position.y);
+        float audioStrikelinePos = editor.services.auditorialStrikelinePos;
+        uint currentTickPos = editor.currentSong.WorldYPositionToTick(audioStrikelinePos);
 
         if (Globals.applicationMode == Globals.ApplicationMode.Playing)
         {
