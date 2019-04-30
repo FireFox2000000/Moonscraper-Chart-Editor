@@ -27,6 +27,9 @@ public class Services : MonoBehaviour
     [Header("Audio Services")]
     public StrikelineAudioController strikelineAudio;
 
+    [HideInInspector]
+    public LoadingTasksManager loadingTasksManager { get; private set; }
+
     Rect toolScreenArea;
     public static bool IsInDropDown = false;
     static Vector2 prevScreenSize;
@@ -176,6 +179,8 @@ public class Services : MonoBehaviour
         toolScreenArea = area.GetScreenCorners();
         prevScreenSize.x = Screen.width;
         prevScreenSize.y = Screen.height;
+
+        loadingTasksManager = GetComponent<LoadingTasksManager>();
     }
 
     public void RegisterUpdateableService(UpdateableService service)

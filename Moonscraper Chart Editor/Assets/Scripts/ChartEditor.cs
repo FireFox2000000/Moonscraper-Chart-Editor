@@ -40,7 +40,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public Transform camYMax;
     public Transform mouseYMaxLimit;
     public Transform mouseYMinLimit;
-    public LoadingScreenFader loadingScreen;
     public Indicators indicators;               // Cancels hit animations upon stopping playback
     [SerializeField]
     GroupSelect groupSelect;
@@ -200,8 +199,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
 
         isDirty = false;
-
-        loadingScreen.gameObject.SetActive(true);
 
         inputManager = gameObject.AddComponent<InputManager>();
         gameObject.AddComponent<UITabbing>();
@@ -458,112 +455,81 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
     public IEnumerator _Load(string currentFileName, bool recordLastLoaded = true)
     {
+        LoadingTasksManager tasksManager = services.loadingTasksManager;
+
         bool error = false;
         Song backup = currentSong;
 #if TIMING_DEBUG
-        float totalLoadTime = 0;
-#endif
-
-        // Start loading animation
-        Globals.applicationMode = Globals.ApplicationMode.Loading;
-        loadingScreen.FadeIn();
-        yield return null;
-
-        // Wait for saving to complete just in case
-        while (currentSong.isSaving)
-            yield return null;
-
-        if (errorManager.HasErrorToDisplay())
-        {
-            yield break;
-        }
-
-#if TIMING_DEBUG
-        totalLoadTime = Time.realtimeSinceStartup;
+        float totalLoadTime = Time.realtimeSinceStartup;
 #endif
         bool mid = false;
-
-#if TIMING_DEBUG
-        float time = Time.realtimeSinceStartup;
-#endif
-        // Load the actual file
-        loadingScreen.loadingInformation.text = "Loading file";
-        yield return null;
 
         Song newSong = null;
         MidReader.CallbackState midiCallbackState = MidReader.CallbackState.None;
 
-        System.Threading.Thread songLoadThread = new System.Threading.Thread(() =>
+        List<LoadingTask> tasks = new List<LoadingTask>()
         {
-            mid = (System.IO.Path.GetExtension(currentFileName) == ".mid");
-
-            try
+            new LoadingTask("Loading file", () =>
             {
-                if (mid)
-                    newSong = MidReader.ReadMidi(currentFileName, ref midiCallbackState);
-                else
-                    newSong = ChartReader.ReadChart(currentFileName);
-            }
-            catch (Exception e)
+                // Wait for saving to complete just in case
+                while (currentSong.isSaving){ }
+
+                if (errorManager.HasErrorToDisplay())
+                {
+                    error = true;
+                    return;
+                }
+
+                mid = System.IO.Path.GetExtension(currentFileName) == ".mid";
+
+                try
+                {
+                    if (mid)
+                        newSong = MidReader.ReadMidi(currentFileName, ref midiCallbackState);
+                    else
+                        newSong = ChartReader.ReadChart(currentFileName);
+                }
+                catch (Exception e)
+                {
+                    currentSong = backup;
+
+                    if (mid)
+                        errorManager.QueueErrorMessage(Logger.LogException(e, "Failed to open mid file"));
+                    else
+                        errorManager.QueueErrorMessage(Logger.LogException(e, "Failed to open chart file"));
+
+                    error = true;
+                }
+            }),
+
+            new LoadingTask("Loading audio", () =>
             {
-                currentSong = backup;
+                if (error)
+                    return;
 
-                if (mid)
-                    errorManager.QueueErrorMessage(Logger.LogException(e, "Failed to open mid file"));
-                else
-                    errorManager.QueueErrorMessage(Logger.LogException(e, "Failed to open chart file"));
+                // Free the previous audio clips
+                FreeAudio();
 
-                error = true;
-            }
-        });
+                newSong.LoadAllAudioClips();
+            }),
+        };
 
-        songLoadThread.Priority = System.Threading.ThreadPriority.Highest;
-        songLoadThread.Start();
+        tasksManager.KickTasks(tasks);
 
-        while (songLoadThread.ThreadState == System.Threading.ThreadState.Running)
+        while (tasksManager.isRunningTask)
         {
             while (midiCallbackState == MidReader.CallbackState.WaitingForExternalInformation)
             {
-                // Halt thread until message box is complete
+                // Halt main thread until message box is complete
             }
             yield return null;
         }
 
+        // Tasks have finished
         if (error)
-        {
-            loadingScreen.FadeOut();
-            yield break;
-        }
-
-#if TIMING_DEBUG
-        Debug.Log("Chart file load time: " + (Time.realtimeSinceStartup - time));
-        time = Time.realtimeSinceStartup;
-#endif
-        // Load the audio clips
-        loadingScreen.loadingInformation.text = "Loading audio";
-        yield return null;
-
-        // Free the previous audio clips
-        FreeAudio();
-        newSong.LoadAllAudioClips();
-
-        while (newSong.isAudioLoading)
-            yield return null;
-
-#if TIMING_DEBUG
-        Debug.Log("All audio files load time: " + (Time.realtimeSinceStartup - time));
-#endif
-        yield return null;
+            yield break;    // Immediate exit
 
         isDirty = false;
-
-#if TIMING_DEBUG
-        Debug.Log("File load time: " + (Time.realtimeSinceStartup - totalLoadTime));
-#endif
-
-        // Wait for audio to fully load
-        while (newSong.isAudioLoading)
-            yield return null;
 
         if (mid)
         {
@@ -583,11 +549,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 #if TIMING_DEBUG
         Debug.Log("Total load time: " + (Time.realtimeSinceStartup - totalLoadTime));
 #endif
-
-        // Stop loading animation
-        Globals.applicationMode = Globals.ApplicationMode.Editor;
-        loadingScreen.FadeOut();
-        loadingScreen.loadingInformation.text = "Complete!";
     }
 
     IEnumerator _Load()

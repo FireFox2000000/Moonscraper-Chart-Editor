@@ -6,6 +6,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
 
@@ -27,8 +28,6 @@ public class SongPropertiesPanelController : DisplayMenu {
     public Text bassStream;
     public Text rhythmStream;
     public Text drumStream;
-
-    public LoadingScreenFader loadingScreen;
 
     bool init = false;
 
@@ -316,16 +315,21 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     IEnumerator SetAudio()
     {
-        Globals.applicationMode = Globals.ApplicationMode.Loading;
+        LoadingTasksManager tasksManager = editor.services.loadingTasksManager;
 
-        loadingScreen.loadingInformation.text = "Loading audio";
-        loadingScreen.FadeIn();
+        List<LoadingTask> tasks = new List<LoadingTask>()
+        {
+            new LoadingTask("Loading audio", () =>
+            {
+                while (editor.currentSong.isAudioLoading) ;
+            })
+        };
 
-        while (editor.currentSong.isAudioLoading)
+        tasksManager.KickTasks(tasks);
+
+        while (tasksManager.isRunningTask)
             yield return null;
 
         setAudioTextLabels();
-        loadingScreen.FadeOut();
-        Globals.applicationMode = Globals.ApplicationMode.Menu;
     }
 }

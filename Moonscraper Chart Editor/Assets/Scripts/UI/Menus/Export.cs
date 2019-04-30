@@ -6,14 +6,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using System;
-using System.Threading;
 using System.IO;
 using UnityEngine.UI;
 using Un4seen.Bass.Misc;
 using Un4seen.Bass;
 
 public class Export : DisplayMenu {
-    public LoadingScreenFader loadingScreen;
     public Text exportingInfo;
     public Dropdown fileTypeDropdown;
     public Toggle chPackageToggle;
@@ -145,69 +143,60 @@ public class Export : DisplayMenu {
 
     public IEnumerator _ExportSong(string filepath)
     {
-        // Start saving
-        Globals.applicationMode = Globals.ApplicationMode.Loading;
-        loadingScreen.FadeIn();
-        loadingScreen.loadingInformation.text = "Exporting " + exportOptions.format;
+        LoadingTasksManager tasksManager = editor.services.loadingTasksManager;
 
         Song song = new Song(editor.currentSong);
         exportOptions.tickOffset = TickFunctions.TimeToDis(0, delayTime, exportOptions.targetResolution, 120);
 
         float timer = Time.realtimeSinceStartup;
         string errorMessageList = string.Empty;
-        Thread exportingThread = new Thread(() =>
-        {
-            if (exportOptions.format == ExportOptions.Format.Chart)
-            {
-                try
-                {
-                    new ChartWriter(filepath).Write(song, exportOptions, out errorMessageList);
-                    //song.Save(filepath, exportOptions);
-                }
-                catch (System.Exception e)
-                {
-                    Logger.LogException(e, "Error when exporting chart");
-                    errorMessageList += e.Message;
-                }
-            }
-            else if (exportOptions.format == ExportOptions.Format.Midi)
-            {
-                try
-                {
-                    MidWriter.WriteToFile(filepath, song, exportOptions);
-                }
-                catch (System.Exception e)
-                {
-                    Logger.LogException(e, "Error when exporting midi");
-                    errorMessageList += e.Message;
-                }
-            }
-        });
-     
-        exportingThread.Start();
 
-        while (exportingThread.ThreadState == ThreadState.Running)
-            yield return null;
+        List<LoadingTask> tasks = new List<LoadingTask>()
+        {
+            new LoadingTask("Exporting " + exportOptions.format, () =>
+            {
+                if (exportOptions.format == ExportOptions.Format.Chart)
+                {
+                    try
+                    {
+                        new ChartWriter(filepath).Write(song, exportOptions, out errorMessageList);
+                        //song.Save(filepath, exportOptions);
+                    }
+                    catch (System.Exception e)
+                    {
+                        Logger.LogException(e, "Error when exporting chart");
+                        errorMessageList += e.Message;
+                    }
+                }
+                else if (exportOptions.format == ExportOptions.Format.Midi)
+                {
+                    try
+                    {
+                        MidWriter.WriteToFile(filepath, song, exportOptions);
+                    }
+                    catch (System.Exception e)
+                    {
+                        Logger.LogException(e, "Error when exporting midi");
+                        errorMessageList += e.Message;
+                    }
+                }
+            })
+        };
 
         if (generateIniToggle.isOn)
         {
-            loadingScreen.loadingInformation.text = "Generating Song.ini";
-            Thread iniThread = new Thread(() =>
+            tasks.Add(new LoadingTask("Generating Song.ini", () =>
             {
                 GenerateSongIni(Path.GetDirectoryName(filepath), song);
-            });
-
-            iniThread.Start();
-
-            while (iniThread.ThreadState == ThreadState.Running)
-                yield return null;
+            }));
         }
 
-        Debug.Log("Total exporting time: " + (Time.realtimeSinceStartup - timer));
+        tasksManager.KickTasks(tasks);
 
-        // Stop loading animation
-        loadingScreen.FadeOut();
-        loadingScreen.loadingInformation.text = "Complete!";
+        while (tasksManager.isRunningTask)
+            yield return null;
+
+        Debug.Log("Total exporting time: " + (Time.realtimeSinceStartup - timer));
 
         if (errorMessageList != string.Empty)
         {
@@ -432,9 +421,7 @@ public class Export : DisplayMenu {
     IEnumerator ExportCHPackage(string destFolderPath, Song song, ExportOptions exportOptions)
     {
         Song newSong = new Song(song);
-        
-        Globals.applicationMode = Globals.ApplicationMode.Loading;
-        loadingScreen.FadeIn();    
+        LoadingTasksManager tasksManager = editor.services.loadingTasksManager;
 
         float timer = Time.realtimeSinceStartup;
         string errorMessageList = string.Empty;
@@ -451,47 +438,39 @@ public class Export : DisplayMenu {
             Directory.CreateDirectory(destFolderPath);
         }
 
-        loadingScreen.loadingInformation.text = "Re-encoding audio to .ogg format";
-        Thread audioEncodingThread = new Thread(() =>
+        List<LoadingTask> tasks = new List<LoadingTask>()
         {
-            ExportSongAudioOgg(destFolderPath, newSong);
-        });
-
-        audioEncodingThread.Start();
-
-        while (audioEncodingThread.ThreadState == ThreadState.Running)
-            yield return null;
-
-        loadingScreen.loadingInformation.text = "Exporting chart";
-        Thread exportingThread = new Thread(() =>
-        {
-            string chartOutputFile = destFolderPath + "notes.chart";
-
-            // Set audio location after audio files have already been created as set won't won't if the files don't exist
-            foreach (Song.AudioInstrument audio in Enum.GetValues(typeof(Song.AudioInstrument)))
+            new LoadingTask("Re-encoding audio to .ogg format", () =>
             {
-                if (song.GetAudioLocation(audio) != string.Empty)
+                ExportSongAudioOgg(destFolderPath, newSong);
+            }),
+
+            new LoadingTask("Exporting chart", () =>
+            {
+                string chartOutputFile = destFolderPath + "notes.chart";
+
+                // Set audio location after audio files have already been created as set won't won't if the files don't exist
+                foreach (Song.AudioInstrument audio in Enum.GetValues(typeof(Song.AudioInstrument)))
                 {
-                    string audioFilename = GetCHOggFilename(audio);
-                    string audioPath = destFolderPath + audioFilename;
-                    newSong.SetAudioLocation(audio, audioPath);
+                    if (song.GetAudioLocation(audio) != string.Empty)
+                    {
+                        string audioFilename = GetCHOggFilename(audio);
+                        string audioPath = destFolderPath + audioFilename;
+                        newSong.SetAudioLocation(audio, audioPath);
+                    }
                 }
-            }
 
-            new ChartWriter(chartOutputFile).Write(newSong, exportOptions, out errorMessageList);
-            GenerateSongIni(destFolderPath, newSong);
-        });
+                new ChartWriter(chartOutputFile).Write(newSong, exportOptions, out errorMessageList);
+                GenerateSongIni(destFolderPath, newSong);
+            }),
+        };
 
-        exportingThread.Start();
+        tasksManager.KickTasks(tasks);
 
-        while (exportingThread.ThreadState == ThreadState.Running)
+        while (tasksManager.isRunningTask)
             yield return null;
 
         Debug.Log("Total exporting time: " + (Time.realtimeSinceStartup - timer));
-
-        // Stop loading animation
-        loadingScreen.FadeOut();
-        loadingScreen.loadingInformation.text = "Complete!";
 
         if (errorMessageList != string.Empty)
         {
