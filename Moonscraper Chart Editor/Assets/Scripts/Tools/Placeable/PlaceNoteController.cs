@@ -469,45 +469,15 @@ public class PlaceNoteController : ObjectlessTool {
         }
 
         // Update prev and next
-        foreach(PlaceNote placeNote in activeNotes)
-        {
-            placeNote.UpdatePrevAndNext();
-        }
+        UpdateNoteLinkedListRefs(activeNotes);
 
-        if (activeNotes.Count > 1)
-        {
-            for (int i = 0; i < activeNotes.Count; ++i)
-            {
-                Note note = activeNotes[i].controller.note;
-                
-                if (i == 0)     // Start
-                {
-                    note.next = activeNotes[i + 1].note;
-                }
-                else if (i >= (activeNotes.Count - 1))      // End
-                {
-                    note.previous = activeNotes[i - 1].note;
-                }
-                else
-                {
-                    note.previous = activeNotes[i - 1].note;
-                    note.next = activeNotes[i + 1].note;
-                }
-
-                // Visuals for some reason aren't being updated in this cycle
-                activeNotes[i].visuals.UpdateVisuals();
-            }
-        }
-
-        editor.currentSelectedObject = activeNotes[0].note;
+        Note primaryActiveNote = activeNotes[0].note;
+        editor.currentSelectedObject = primaryActiveNote;
 
         // Update flags in the note panel
-        if (editor.currentSelectedObject.GetType() == typeof(Note))
+        foreach (PlaceNote note in standardPlaceableNotes)
         {
-            foreach (PlaceNote note in standardPlaceableNotes)
-            {
-                note.note.flags = ((Note)editor.currentSelectedObject).flags;
-            }
+            note.note.flags = primaryActiveNote.flags;
         }
 
         bool wantCommandPop = currentlyAddingNotes.Count > 0;
@@ -538,6 +508,45 @@ public class PlaceNoteController : ObjectlessTool {
                 editor.commandStack.Pop();
 
             editor.commandStack.Push(new SongEditAdd(currentlyAddingNotes));
+
+            // Hackfix, re-update linked-list bindings so that it doesn't screw with the note properties panel
+            // Otherwise previous note references on note tool and in-chart can get screwed up. No idea how the in-chart ones get affected which scares me. 
+            UpdateNoteLinkedListRefs(activeNotes);  
+
+            editor.currentSelectedObject = primaryActiveNote;
+        }
+    }
+
+    static void UpdateNoteLinkedListRefs(IList<PlaceNote> notes)
+    {
+        foreach (PlaceNote placeNote in notes)
+        {
+            placeNote.UpdatePrevAndNext();
+        }
+
+        if (notes.Count > 1)
+        {
+            for (int i = 0; i < notes.Count; ++i)
+            {
+                Note note = notes[i].controller.note;
+
+                if (i == 0)     // Start
+                {
+                    note.next = notes[i + 1].note;
+                }
+                else if (i >= (notes.Count - 1))      // End
+                {
+                    note.previous = notes[i - 1].note;
+                }
+                else
+                {
+                    note.previous = notes[i - 1].note;
+                    note.next = notes[i + 1].note;
+                }
+
+                // Visuals for some reason aren't being updated in this cycle
+                notes[i].visuals.UpdateVisuals();
+            }
         }
     }
 

@@ -34,15 +34,8 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
     void OnEnable()
     {
-        if ((currentNote.flags & Note.Flags.Tap) == Note.Flags.Tap)
-            tapToggle.isOn = true;
-        else
-            tapToggle.isOn = false;
-
-        if ((currentNote.flags & Note.Flags.Forced) == Note.Flags.Forced)
-            forcedToggle.isOn = true;
-        else
-            forcedToggle.isOn = false;
+        tapToggle.isOn = (currentNote.flags & Note.Flags.Tap) == Note.Flags.Tap;
+        forcedToggle.isOn = (currentNote.flags & Note.Flags.Forced) == Note.Flags.Forced;
 
         if (Toolpane.currentTool != Toolpane.Tools.Note || queueToolChange)
         {
