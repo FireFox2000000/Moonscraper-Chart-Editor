@@ -5,7 +5,6 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public class PlaceNoteController : ObjectlessTool {
-    public NotePropertiesPanelController panel;
     public PlaceNote[] standardPlaceableNotes = new PlaceNote[7];        // Starts at multi-note before heading into green (1), red (2) through to open (6)
 
     List<PlaceNote> allPlaceableNotes = new List<PlaceNote>();
@@ -19,15 +18,20 @@ public class PlaceNoteController : ObjectlessTool {
     // Keys sustain mode
     List<SongEditCommand> keyControlsCommands = new List<SongEditCommand>();
 
+    [HideInInspector]
+    public Note.Flags desiredFlags;
+    public bool forcedInteractable { get; private set; }
+    public bool tapInteractable { get; private set; }
+
     // Keyboard mode sustain dragging
     Note[] heldNotes;
 
     // Keyboard mode burst mode
     bool[] inputBlock;        // Prevents controls from ocilating between placing and removing notes
 
-    delegate void NotePlacementUpdate();
+    public delegate void NotePlacementUpdate();
 
-    NotePlacementUpdate CurrentNotePlacementUpdate;
+    public NotePlacementUpdate CurrentNotePlacementUpdate;
     enum KeysPlacementMode
     {
         None,
@@ -59,6 +63,10 @@ public class PlaceNoteController : ObjectlessTool {
     protected override void Awake()
     {
         base.Awake();
+
+        desiredFlags = Note.Flags.None;
+        forcedInteractable = true;
+        tapInteractable = true;
 
         CurrentNotePlacementUpdate = UpdateMouseBurstMode;
 
@@ -115,16 +123,12 @@ public class PlaceNoteController : ObjectlessTool {
 
     // Update is called once per frame
     protected override void Update () {
-        // Update flags in the note panel
-        if (editor.currentSelectedObject != null && editor.currentSelectedObject.GetType() == typeof(Note))
-        {
-            foreach (PlaceNote note in allPlaceableNotes)
-            {
-                note.note.flags = ((Note)editor.currentSelectedObject).flags;
-            }
-        }
-
+        // Needs to be in a specific order from NotePropertiesPanelController        
         CurrentNotePlacementUpdate();
+        SetAllFlags(GetDisplayFlags());
+
+        if (editor.currentSelectedObject == null)
+            editor.currentSelectedObject = multiNote.note;
     }
 
     void OnKeysModeChanged(bool keyboardModeEnabled)
@@ -156,6 +160,14 @@ public class PlaceNoteController : ObjectlessTool {
     {
         KeysDraggedSustainRecordingCheck();
         ResetNoteAdding();
+    }
+
+    public void SetAllFlags(Note.Flags flags)
+    {
+        foreach (PlaceNote note in allPlaceableNotes)
+        {
+            note.note.flags = flags;
+        }
     }
 
     void UpdateMouseBurstMode()
@@ -480,6 +492,8 @@ public class PlaceNoteController : ObjectlessTool {
             note.note.flags = primaryActiveNote.flags;
         }
 
+        UpdateFlagsInteractable(primaryActiveNote);
+
         bool wantCommandPop = currentlyAddingNotes.Count > 0;
         int currentNoteCount = currentlyAddingNotes.Count;
 
@@ -591,5 +605,37 @@ public class PlaceNoteController : ObjectlessTool {
                 break;
             }
         }
+    }
+
+    void UpdateFlagsInteractable(Note note)
+    {
+        // Prevent users from forcing notes when they shouldn't be forcable but retain the previous user-set forced property when using the note tool
+        bool drumsMode = Globals.drumMode;
+
+        if (!drumsMode)
+        {
+            forcedInteractable = !(note.cannotBeForced && !GameSettings.keysModeEnabled);
+
+            // Disable tap note box for open notes
+            tapInteractable = !note.IsOpenNote();
+        }
+    }
+
+    public Note.Flags GetDisplayFlags()
+    {
+        Note.Flags flags = Note.Flags.None;
+
+        flags = desiredFlags;
+
+        if (!forcedInteractable && gameObject.activeSelf)
+        {
+            flags &= ~Note.Flags.Forced;
+        }
+
+        if (!tapInteractable && gameObject.activeSelf)
+        {
+            flags &= ~Note.Flags.Tap;
+        }
+        return flags;
     }
 }

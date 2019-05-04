@@ -15,90 +15,32 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     public Toggle forcedToggle;
 
     public GameObject noteToolObject;
+    PlaceNoteController noteToolController;
 
     Note prevNote = null;
     Note prevClonedNote = new Note(0, 0);
 
-    bool queueToolChange = false;
-    bool prevForcedProperty = false;
+    bool toggleBlockingActive = false;
 
     private void Start()
     {
+        noteToolController = noteToolObject.GetComponent<PlaceNoteController>();
         EventsManager.onToolChangedEventList.Add(OnToolChanged);
     }
 
     void OnToolChanged()
     {
-        queueToolChange = true;
     }
 
     void OnEnable()
     {
-        tapToggle.isOn = (currentNote.flags & Note.Flags.Tap) == Note.Flags.Tap;
-        forcedToggle.isOn = (currentNote.flags & Note.Flags.Forced) == Note.Flags.Forced;
-
-        if (Toolpane.currentTool != Toolpane.Tools.Note || queueToolChange)
-        {
-            prevForcedProperty = forcedToggle.isOn;
-            queueToolChange = false;
-        }
+        //UpdateTogglesDisplay();
     }
 
     protected override void Update()
     {
-        // Prevent users from forcing notes when they shouldn't be forcable but retain the previous user-set forced property when using the note tool
-        bool drumsMode = Globals.drumMode;
-        forcedToggle.gameObject.SetActive(!drumsMode);
-        tapToggle.gameObject.SetActive(!drumsMode);
-
-        if (!drumsMode)
-        {
-            if (Toolpane.currentTool != Toolpane.Tools.Note || (Toolpane.currentTool == Toolpane.Tools.Note && noteToolObject.activeSelf))
-            {
-                if (currentNote.cannotBeForced && !GameSettings.keysModeEnabled)
-                {
-                    forcedToggle.interactable = false;
-                    currentNote.flags &= ~Note.Flags.Forced;
-                }
-                else
-                {
-                    if (!forcedToggle.interactable && Toolpane.currentTool == Toolpane.Tools.Note)
-                    {
-                        forcedToggle.isOn = prevForcedProperty;
-                        setForced();
-                    }
-                    forcedToggle.interactable = true;
-                }
-            }
-            else
-            {
-                if (!forcedToggle.interactable)
-                {
-                    forcedToggle.interactable = true;
-                    forcedToggle.isOn = prevForcedProperty;
-                }
-            }
-
-            if (forcedToggle.interactable)
-            {
-                prevForcedProperty = forcedToggle.isOn;
-            }
-
-            if (currentNote != null)
-            {
-                tapToggle.isOn = ((currentNote.flags & Note.Flags.Tap) == Note.Flags.Tap);
-
-                forcedToggle.isOn = ((currentNote.flags & Note.Flags.Forced) == Note.Flags.Forced);
-            }
-            else
-            {
-                gameObject.SetActive(false);
-                Debug.LogError("No note loaded into note inspector");
-            }
-
-            // Disable tap note box for open notes
-            tapToggle.interactable = !(currentNote.IsOpenNote() && Toolpane.currentTool != Toolpane.Tools.Note);
-        }
+        UpdateTogglesInteractable();
+        UpdateTogglesDisplay();
 
         UpdateNoteStringsInfo();
         Controls();
@@ -131,6 +73,69 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         }
     }
 
+    public Note.Flags GetDisplayFlags()
+    {
+        Note.Flags flags = Note.Flags.None;
+        bool inNoteTool = Toolpane.currentTool == Toolpane.Tools.Note;
+
+        if (inNoteTool)
+        {
+            flags = noteToolController.GetDisplayFlags();
+        }
+        else if (currentNote != null)
+        {
+            flags = currentNote.flags;
+        }
+
+        return flags;
+    }
+
+    void UpdateTogglesDisplay()
+    {
+        toggleBlockingActive = true;
+
+        Note.Flags flags = GetDisplayFlags();
+        bool inNoteTool = Toolpane.currentTool == Toolpane.Tools.Note;
+
+        if (!inNoteTool && currentNote == null)
+        {
+            gameObject.SetActive(false);
+            Debug.LogError("No note loaded into note inspector");
+        }
+
+        forcedToggle.isOn = (flags & Note.Flags.Forced) != 0;
+        tapToggle.isOn = (flags & Note.Flags.Tap) != 0;
+
+        toggleBlockingActive = false;
+    }
+
+    void UpdateTogglesInteractable()
+    {
+        // Prevent users from forcing notes when they shouldn't be forcable but retain the previous user-set forced property when using the note tool
+        bool drumsMode = Globals.drumMode;
+        forcedToggle.gameObject.SetActive(!drumsMode);
+        tapToggle.gameObject.SetActive(!drumsMode);
+
+        if (!drumsMode)
+        {
+            if (Toolpane.currentTool == Toolpane.Tools.Note && noteToolObject.activeSelf)
+            {
+                forcedToggle.interactable = noteToolController.forcedInteractable;
+                tapToggle.interactable = noteToolController.tapInteractable;
+            }
+            else if (Toolpane.currentTool != Toolpane.Tools.Note)
+            {
+                forcedToggle.interactable = !(currentNote.cannotBeForced && !GameSettings.keysModeEnabled);
+                tapToggle.interactable = !currentNote.IsOpenNote();
+            }
+            else
+            {
+                forcedToggle.interactable = true;
+                tapToggle.interactable = true;
+            }
+        }
+    }
+
     void Controls()
     {
         if (ShortcutInput.GetInputDown(Shortcut.ToggleNoteTap) && tapToggle.interactable)
@@ -157,6 +162,27 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 	
     public void setTap()
     {
+        if (toggleBlockingActive)
+            return;
+
+        if (Toolpane.currentTool == Toolpane.Tools.Note)
+        {
+            SetTapNoteTool();
+        }
+        else
+        {
+            SetTapNote();
+        }
+    }
+
+    void SetTapNoteTool()
+    {
+        if (tapToggle.interactable)
+            SetNoteToolFlag(ref noteToolController.desiredFlags, tapToggle, Note.Flags.Tap);
+    }
+
+    void SetTapNote()
+    {
         if (currentNote == prevNote)
         {
             var newFlags = currentNote.flags;
@@ -173,7 +199,30 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         }
     }
 
+    void SetNoteToolFlag(ref Note.Flags flags, Toggle uiToggle, Note.Flags flagsToToggle)
+    {
+        if ((flags & flagsToToggle) == 0)
+            flags |= flagsToToggle;
+        else
+            flags &= ~flagsToToggle;
+    }
+
     public void setForced()
+    {
+        if (toggleBlockingActive)
+            return;
+
+        if (Toolpane.currentTool == Toolpane.Tools.Note)
+        {
+            SetForcedNoteTool();
+        }
+        else
+        {
+            SetForcedNote();
+        }
+    }
+
+    void SetForcedNote()
     {
         if (currentNote == prevNote)
         {
@@ -191,6 +240,12 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         }
     }
 
+    void SetForcedNoteTool()
+    {
+        if (forcedToggle.interactable)
+            SetNoteToolFlag(ref noteToolController.desiredFlags, forcedToggle, Note.Flags.Forced);
+    }
+
     void SetNewFlags(Note note, Note.Flags newFlags)
     {
         if (note.flags == newFlags)
@@ -205,7 +260,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         else
         {
             // Updating note tool parameters and visuals
-            note.flags = newFlags;
+            noteToolController.desiredFlags = newFlags;
         }
     }
 }
