@@ -483,7 +483,7 @@ public static class NoteFunctions {
                 // Overwrite note flags
                 if (chordNote.flags != flags)
                 {
-                    Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, note.flags);
+                    Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, flags);
                     SongEditCommand.AddAndInvokeSubAction(new DeleteAction(chordNote), subActions);
                     SongEditCommand.AddAndInvokeSubAction(new AddAction(newChordNote), subActions);
                 }
