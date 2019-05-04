@@ -145,7 +145,7 @@ public class Export : DisplayMenu {
     {
         LoadingTasksManager tasksManager = editor.services.loadingTasksManager;
 
-        Song song = new Song(editor.currentSong);
+        Song song = editor.currentSong;// new Song(editor.currentSong);
         exportOptions.tickOffset = TickFunctions.TimeToDis(0, delayTime, exportOptions.targetResolution, 120);
 
         float timer = Time.realtimeSinceStartup;
@@ -420,7 +420,7 @@ public class Export : DisplayMenu {
 
     IEnumerator ExportCHPackage(string destFolderPath, Song song, ExportOptions exportOptions)
     {
-        Song newSong = new Song(song);
+        Song newSong = song;//new Song(song);
         LoadingTasksManager tasksManager = editor.services.loadingTasksManager;
 
         float timer = Time.realtimeSinceStartup;
