@@ -76,7 +76,8 @@ public class GroupSelectPanelController : MonoBehaviour
                     Note newNote = new Note(note);
                     newNote.rawNote = noteNumber;
 
-                    songEditCommands.Add(new SongEditModifyValidated(note, newNote));
+                    songEditCommands.Add(new SongEditDelete(note));
+                    songEditCommands.Add(new SongEditAdd(newNote));
                     selected.Add(newNote);
                 }
             }
