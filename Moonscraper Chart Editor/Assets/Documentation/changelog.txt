@@ -1,3 +1,10 @@
+1.3.0E
+	FIXES
+	-Block clipboard pasting when typing
+	-Fixed notes not being automatically forced when they need to be after adding notes
+	-Fixed song length not exporting in to ini properly. 
+	-Fixed/refactored note tool flag consistency.
+
 1.3.0D
 	NEW FEATURES
 	-Added "Clone Hero Package" option to the exporter. This option will create a folder that contains a full Clone Hero compatible version of the chart and audio. 
