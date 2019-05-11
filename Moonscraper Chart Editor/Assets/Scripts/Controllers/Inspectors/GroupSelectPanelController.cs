@@ -62,7 +62,7 @@ public class GroupSelectPanelController : MonoBehaviour
 
     public void SetFretType(int noteNumber)
     {
-        List<ChartObject> selected = new List<ChartObject>();
+        List<SongObject> selected = new List<SongObject>();
 
         List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
         
@@ -86,6 +86,7 @@ public class GroupSelectPanelController : MonoBehaviour
         }
 
         editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
+        editor.TryFindAndSelectSongObjects(selected);
     }
 
     public void SetZeroSustain()
