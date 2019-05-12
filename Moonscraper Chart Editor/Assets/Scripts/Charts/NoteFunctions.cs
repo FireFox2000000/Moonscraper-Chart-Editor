@@ -123,8 +123,14 @@ public static class NoteFunctions {
 
         if (GameSettings.sustainGapEnabled && note.length > 0 && (note.tick + note.length > cap.tick - gapDis))
         {
-            if ((int)(cap.tick - gapDis - note.tick) > 0)
-                noteLength = cap.tick - gapDis - note.tick;
+            if (cap.tick > (gapDis + note.tick))
+            {
+                noteLength = cap.tick - (gapDis + note.tick);
+            }
+            else
+            {
+                noteLength = 0;
+            }
         }
 
         return noteLength;
