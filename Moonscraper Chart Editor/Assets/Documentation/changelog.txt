@@ -13,7 +13,7 @@
 
 	FIXES
 	-Various stability fixes from the new engine upgrade
-	-Undo/redo how 100% consistent. This involved a full re-write of the internal actions processing system. 
+	-Undo/redo now 100% consistent. This involved a full re-write of the internal actions processing system. 
 	-Fixed note text displaying "Orange" when it should say "Green" for 4 lane.
 	-Fixed some screen capture software not picking up audio from Moonscraper. 
 	-Disabled the ability to play the chart when moving objects
