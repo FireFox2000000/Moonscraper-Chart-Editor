@@ -14,6 +14,7 @@ public abstract class SongObjectController : SelectableClick {
 
     public abstract void UpdateSongObject();
     public bool disableCancel = true;
+    private bool isTool = false;
 
     public bool isBelowClapLine
     {
@@ -31,13 +32,14 @@ public abstract class SongObjectController : SelectableClick {
     {
         get
         {
-            return GameSettings.bot && isBelowClapLine;
+            return !isTool && GameSettings.bot && isBelowClapLine;
         }
     }
 
     protected void Awake()
     {
         editor = ChartEditor.Instance;
+        isTool = GetComponent<ToolObject>();
     }
 
     protected virtual void OnEnable()
