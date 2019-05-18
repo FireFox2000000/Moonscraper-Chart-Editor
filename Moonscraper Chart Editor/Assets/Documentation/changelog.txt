@@ -1,118 +1,29 @@
-1.3.0F
-	FIXES
-	-Fixed group select fret type setting only adding notes instead of fully changing them.
-	-Fixed sustain cap setting not working when placing notes at or within the sustain gap size.
-
-1.3.0E
-	FIXES
-	-Block clipboard pasting when typing
-	-Fixed notes not being automatically forced when they need to be after adding notes
-	-Fixed song length not exporting in to ini properly. 
-	-Fixed/refactored note tool flag consistency.
-
-1.3.0D
+1.3.1
 	NEW FEATURES
 	-Added "Clone Hero Package" option to the exporter. This option will create a folder that contains a full Clone Hero compatible version of the chart and audio. 
-
-	FIXES
-	-Fixed slight clap and metronome delay (with a hard-coded offset as the cause of the remaining delay is still unknown).
-	-Fixed bug where mouse burst would sometimes reforce notes that can no longer be forced.
-
-1.3.0C
-	NEW FEATURES
+	-Added functionality to scroll using middle click and drag. 
 	-All objects can now clap. Added seperate clap settings menu.
 
-	FIXES
-	-Fixed pasting from clipboard sometimes added forced flags that shouldn't be corrected.
-	-Fixed note tool 'forced' property sometimes not being preserved properly.
-	-Fixed final character of mouse over hints sometimes getting cut off.
-	-Properly restore what objects were selected between actions.
-
-1.3.0B
-	NEW FEATURES
-	-Added functionality to scroll using middle click and drag. 
-
 	CHANGES
+	-Upgraded game engine to Unity 2018
+	-Implemented culture checking to determine whether to use '.' or ',' as the decimal seperator 
+	-Removed some slight delay from default clap sfx
 	-Only snap to undo-redo position if it's not in current view.
-
-	FIXES
-	-Fixed issues with holding note tool and sustain dragging when play/pausing
-	-Fixed chords clapping multiple times
-	-Fixed undo-redo sometimes not jumping to action position
-	-Re-enabled flexibility in addiing and deleting notes in keys mode
 	-Now putting lyrics events back into the vocals track when exporting midi files
 
-1.3.0A
 	FIXES
-	-Fixed broken starpower ui indicators from previous
-	-Various null reference fixes related to bpm adding tool
-	-Bpm ctrl-dragging now adjusts previous bpm to 3 decimal places instead of the nearest whole. 
-	-Re-allow open notes to extend past regular notes with extended sustains enabled. 
-
-1.3.09
-	FIXES
-	-Fixed '+' and "-" input for BPM incrementing too fast from a single input. Input timer wasn't being reset for the hold input. 
-	-Command actions now implement sub-actions to better handle undo redo from potential desyncs. 
-	-Fixed issues with note unforcing themselves upon some actions involving deletions. 
-
-1.3.08
-	FIXES
-	-Fixed changing properties of a note deselecting the note
-	-Attempted fix at starpower deleting itself
-	-Fixed slight delay on clap
-
-1.3.07
-	FIXES
-	-Fixed note tool disappearing
-	-Guard against exceptions when removing notes in a spam-like fashoin in keys mode
-
-1.3.06
-	FIXES
-	-Fixed starpower length not being capped by other starpower
-	-Fixed tools hiding themselves when holding left click and then pressing right click
-	-Fixed empty undo-redo commands being pushed to the stack when right-clicking on a sustain.
-	-Disabled the ability to play the chart when moving objects
-	-Allow events and chartevents to be overwriteable by cliboard pasting.
-	-Fixed system bug where the lookup for overwrites would return the wrong data if on the same tick.
-	-Fixed starpower duplication glitch.
-	-Fixed note tool forced property not displaying correctly in some cases.
-	-Fixed notes not being updated by bpm changes when the bpm being changed was offscreen. 
-
-1.3.05
-	FIXES
-	-Fixed some screen capture software not picking up audio from Moonscraper. 
-	-Fixed broken note tool strum/hopo being borken from the last build
-	-Fixed starpower modifications not refreshing the visual of the notes properly.
-
-1.3.04
-	FIXES
-	-Fixed note model perspective updating strangely for the note tool.
-	-Fixed section names resetting when clicking on a new section.
-	-Fixed keys placement not respecting inspector flags for the note tool.
-	-Fixed forcing errors in undo-redo for  notes at the start of a chart. 
-
-1.3.03
-	CHANGES
-	-Removed some slight delay from default clap sfx
-
-	FIXES
-	-Fixed sections reappearing when deleting a section and then clicking on a new one with a different name.
-	-Fixed extended sustain logic on open notes.
-	-Fixed events and synctrack not being saved from previous test build
-
-1.3.02
-	CHANGES
-	-Implemented new undo/redo system. Should now be accurate 100% of the time. If it isn't it'll probably explode. 
-	
-	FIXES
-	-Implemented culture checking to determine whether to use '.' or ',' as the decimal seperator on Unity 2018 builds. 
-	-Fixed defaulting to fullscreen on Unity 2018 builds. 
-
-1.3.01
-	FIXES
-	-Fixed metronome being slightly desynced
-	-Fixed dropdown notification not aligned to aspect ratios correctly.
+	-Various stability fixes from the new engine upgrade
+	-Undo/redo how 100% consistent. This involved a full re-write of the internal actions processing system. 
 	-Fixed note text displaying "Orange" when it should say "Green" for 4 lane.
+	-Fixed some screen capture software not picking up audio from Moonscraper. 
+	-Disabled the ability to play the chart when moving objects
+	-Allow events and chartevents to be overwriteable by clipboard pasting.
+	-Fixed tools hiding themselves when holding left click and then pressing right click
+	-Bpm ctrl-dragging now adjusts previous bpm to 3 decimal places instead of the nearest whole.
+	-Fixed issues with holding note tool and sustain dragging when play/pausing
+	-Fixed note tool 'forced' property sometimes not being preserved properly.
+	-Block clipboard pasting when typing
+	-Fixed sustain cap setting not working when placing notes at or within the sustain gap size.
 
 1.3
 	NEW FEATURES
