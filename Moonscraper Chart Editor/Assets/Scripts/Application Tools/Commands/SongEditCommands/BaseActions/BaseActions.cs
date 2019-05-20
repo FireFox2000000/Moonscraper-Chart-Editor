@@ -136,6 +136,8 @@ public class DeleteAction : BaseAction
             else
             {
                 TryDeleteSongObject((SyncTrack)songObject, editor.currentSong.syncTrack);
+                if (songObject.classID == (int)SongObject.ID.BPM)
+                    ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
             }
         }
     }

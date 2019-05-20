@@ -72,12 +72,6 @@ public class BPM : SyncTrack
             return false;
     }
 
-    public override void Delete(bool update = true)
-    {
-        ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
-        base.Delete(update);
-    }
-
     public void CopyFrom(BPM bpm)
     {
         tick = bpm.tick;
