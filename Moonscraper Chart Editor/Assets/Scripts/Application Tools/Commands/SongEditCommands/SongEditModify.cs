@@ -55,6 +55,7 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
 
             case SongObject.ID.BPM:
                 (objectToCopyInto as BPM).CopyFrom((objectToCopyFrom as BPM));
+                ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
                 break;
 
             case SongObject.ID.TimeSignature:
