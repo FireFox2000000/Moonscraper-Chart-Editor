@@ -95,7 +95,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
         RefreshHighlightIndicator();
 
-        EventsManager.onChartReloadEventList.Add(QueueExternalUpdate);
+        EventsManager.onChartReloadEventList.Add(ForceFullRepaint);
 
         UpdatePercentageText(0);
     }
@@ -106,7 +106,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     Song prevSong;
     Resolution prevRes;
 
-    public static bool externalUpdate = false;
+    public static bool forceFullRepaint = false;
     void Update()
     {
         ChartEditor editor = ChartEditor.Instance;
@@ -150,13 +150,13 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         }
 
         // Set the sections
-        if (update || editor.currentSong.sections.Count != prevSectionLength || externalUpdate)
+        if (update || editor.currentSong.sections.Count != prevSectionLength || forceFullRepaint)
         {
             StartCoroutine(UpdateSectionIndicator());
         }
 
         // Set the sp
-        if (update || editor.currentChart.starPower.Count != prevSPLength || externalUpdate)
+        if (update || editor.currentChart.starPower.Count != prevSPLength || forceFullRepaint)
         {
             StartCoroutine(UpdateStarpowerIndicators());
         }
@@ -169,7 +169,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         previousScreenSize.y = Screen.height;
         prevRes = Screen.currentResolution;
 
-        externalUpdate = false;
+        forceFullRepaint = false;
     }
 
     void UpdatePercentageText(int newValue)
@@ -178,9 +178,14 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         previousPercentageValue = newValue;
     }
 
-    void QueueExternalUpdate()
+    void ForceFullRepaint()
     {
-        externalUpdate = true;
+        forceFullRepaint = true;
+    }
+
+    public static void Repaint()
+    {
+        forceFullRepaint = true;
     }
 
     IEnumerator UpdateSectionIndicator()

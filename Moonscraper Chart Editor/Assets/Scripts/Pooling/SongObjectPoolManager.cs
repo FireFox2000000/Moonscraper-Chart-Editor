@@ -277,6 +277,8 @@ public class SongObjectPoolManager : MonoBehaviour {
         SetInViewRangeDirty(chart.events);
         SetInViewRangeDirty(song.eventsAndSections);
         SetInViewRangeDirty(song.syncTrack);
+
+        TimelineHandler.Repaint();
     }
 
     public void SetInViewRangeDirty<T>(IList<T> songObjects) where T : SongObject

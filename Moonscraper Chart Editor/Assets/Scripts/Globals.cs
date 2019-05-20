@@ -289,7 +289,7 @@ public class Globals : MonoBehaviour {
             {
                 EventSystem.current.SetSelectedGameObject(null);
                 groupSelect.reset();
-                TimelineHandler.externalUpdate = true;
+                TimelineHandler.Repaint();
             }
         }
 
