@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+// Copyright (c) 2016-2017 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -215,11 +215,11 @@ public class SustainController : SelectableClick {
 
         if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
         {
-            snappedChartPos = Snapable.TickToSnappedTick(nCon.note.song.WorldYPositionToTick(((Vector2)Mouse.world2DPosition).y), GameSettings.step, note.song.resolution);
+            snappedChartPos = Snapable.TickToSnappedTick(nCon.note.song.WorldYPositionToTick(((Vector2)Mouse.world2DPosition).y), GameSettings.step, note.song.resolution, note.song);
         }
         else
         {
-            snappedChartPos = Snapable.TickToSnappedTick(note.song.WorldYPositionToTick(editor.mouseYMaxLimit.position.y), GameSettings.step, note.song.resolution);
+            snappedChartPos = Snapable.TickToSnappedTick(note.song.WorldYPositionToTick(editor.mouseYMaxLimit.position.y), GameSettings.step, note.song.resolution, note.song);
         }
 
         return snappedChartPos;

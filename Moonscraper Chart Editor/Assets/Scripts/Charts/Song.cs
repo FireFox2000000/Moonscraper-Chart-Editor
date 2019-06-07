@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+// Copyright (c) 2016-2017 Alexander Ong
 // See LICENSE in project root for license information.
 
 //#define SONG_DEBUG
@@ -405,7 +405,7 @@ public class Song {
     {
         uint chartPos = WorldYPositionToTick(worldYPos);
 
-        return Snapable.TickToSnappedTick(chartPos, step, resolution);
+        return Snapable.TickToSnappedTick(chartPos, step, resolution, this);
     }
 
     public float TickToWorldYPosition(uint position)
