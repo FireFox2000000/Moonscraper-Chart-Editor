@@ -70,44 +70,77 @@ public abstract class Snapable : MonoBehaviour {
         }
     }
 
-    public static uint TickToSnappedTick(uint tick, int step, float resolution)
+    public static uint TickToSnappedTick(uint tick, int step, Song song)
     {
-        // Snap position based on step
-        float factor = Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION;
-        float divisor = tick / factor;
-        float lowerBound = (int)divisor * factor;
-        float remainder = divisor - (int)divisor;
+        float resolution = song.resolution;
 
-        if (remainder > 0.5f)
-            tick = (uint)Mathf.Round(lowerBound + factor);
+        var timeSignatures = song.timeSignatures;
+        int tsIndex = SongObjectHelper.FindClosestPositionRoundedDown(tick, timeSignatures);
+        TimeSignature ts = timeSignatures[tsIndex];
+        uint? endRange = tsIndex < (timeSignatures.Count - 1) ? (uint?)timeSignatures[tsIndex + 1].tick : null;
+
+        TimeSignature.MeasureInfo measureInfo = ts.GetMeasureInfo();
+        TimeSignature.BeatInfo measureLineInfo = measureInfo.measureLine;
+        TimeSignature.BeatInfo beatLineInfo = measureInfo.beatLine;
+        
+        uint tickOffsetFromTs = tick - ts.tick;
+        int measuresFromTsToSnap = (int)((float)tickOffsetFromTs / measureLineInfo.tickGap);
+        uint lastMeasureTick = ts.tick + (uint)(measuresFromTsToSnap * measureLineInfo.tickGap);
+
+        float realBeatStep = step / 4.0f;
+        float tickGap = beatLineInfo.tickGap / realBeatStep;
+        uint tickOffsetFromLastMeasure = tick - lastMeasureTick;
+        int beatsFromLastMeasureToSnap = Mathf.RoundToInt((float)tickOffsetFromLastMeasure / tickGap);
+
+        uint snappedTick = lastMeasureTick + (uint)(beatsFromLastMeasureToSnap * tickGap);
+        if (endRange.HasValue)
+        {
+            return snappedTick < endRange.Value ? snappedTick : endRange.Value;
+        }
         else
-            tick = (uint)Mathf.Round(lowerBound);
+        {
+            return snappedTick;
+        }
 
-        return tick;
+        // Old algorithm
+        // Snap position based on step
+        //float factor = Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION;
+        //float divisor = tick / factor;
+        //float lowerBound = (int)divisor * factor;
+        //float remainder = divisor - (int)divisor;
+        //
+        //if (remainder > 0.5f)
+        //    tick = (uint)Mathf.Round(lowerBound + factor);
+        //else
+        //    tick = (uint)Mathf.Round(lowerBound);
+        //
+        //return tick;
     }
 
-    public static uint ChartIncrementStep(uint tick, int step, float resolution)
+    public static uint ChartIncrementStep(uint tick, int step, Song song)
     {
-        uint currentSnap = TickToSnappedTick(tick, step, resolution);
+        float resolution = song.resolution;
+        uint currentSnap = TickToSnappedTick(tick, step, song);
 
         if (currentSnap <= tick)
         {
-            currentSnap = TickToSnappedTick(tick + (uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION), step, resolution);
+            currentSnap = TickToSnappedTick(tick + (uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION), step, song);
         }
 
         return currentSnap;
     }
 
-    public static uint ChartDecrementStep(uint tick, int step, float resolution)
+    public static uint ChartDecrementStep(uint tick, int step, Song song)
     {
-        uint currentSnap = TickToSnappedTick(tick, step, resolution);
+        float resolution = song.resolution;
+        uint currentSnap = TickToSnappedTick(tick, step, song);
 
         if (currentSnap >= tick)
         {
             if ((uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION) >= tick)
                 currentSnap = 0;
             else
-                currentSnap = TickToSnappedTick(tick - (uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION), step, resolution);
+                currentSnap = TickToSnappedTick(tick - (uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION), step, song);
         }
 
         return currentSnap;

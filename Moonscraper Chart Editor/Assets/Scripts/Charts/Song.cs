@@ -34,7 +34,8 @@ public class Song {
             metaData.name = value;
         }
     }
-    public float resolution = 192, offset = 0;
+    public float resolution = 192;
+    public float offset = 0;
 
     // Audio
     SampleData[] audioSampleData;
@@ -405,7 +406,7 @@ public class Song {
     {
         uint chartPos = WorldYPositionToTick(worldYPos);
 
-        return Snapable.TickToSnappedTick(chartPos, step, resolution);
+        return Snapable.TickToSnappedTick(chartPos, step, this);
     }
 
     public float TickToWorldYPosition(uint position)
@@ -728,7 +729,7 @@ public class Song {
 
     public float ResolutionScaleRatio (float targetResoltion)
     {
-        return (targetResoltion / resolution);
+        return (targetResoltion / (float)resolution);
     }
 
     public SampleData GetSampleData(AudioInstrument audio)

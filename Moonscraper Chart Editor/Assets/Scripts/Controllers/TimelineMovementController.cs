@@ -187,20 +187,20 @@ public class TimelineMovementController : MovementController
                     // Navigate to snapped pos ahead or behind
                     if (ShortcutInput.GetInput(Shortcut.MoveStepPositive))
                     {
-                        snappedPos = Snapable.ChartIncrementStep(currentPos, GameSettings.step, editor.currentSong.resolution);
+                        snappedPos = Snapable.ChartIncrementStep(currentPos, GameSettings.step, editor.currentSong);
                     }
                     else if (ShortcutInput.GetInput(Shortcut.MoveStepNegative))
                     {
-                        snappedPos = Snapable.ChartDecrementStep(currentPos, GameSettings.step, editor.currentSong.resolution);
+                        snappedPos = Snapable.ChartDecrementStep(currentPos, GameSettings.step, editor.currentSong);
                     }
                     else if (ShortcutInput.GetInput(Shortcut.MoveMeasurePositive))
                     {
-                        snappedPos = Snapable.TickToSnappedTick(currentPos + (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong.resolution);
+                        snappedPos = Snapable.TickToSnappedTick(currentPos + (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong);
                     }
                     // Page Down
                     else if (ShortcutInput.GetInput(Shortcut.MoveMeasureNegative))
                     {
-                        snappedPos = Snapable.TickToSnappedTick(currentPos - (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong.resolution);
+                        snappedPos = Snapable.TickToSnappedTick(currentPos - (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong);
                     }
 
                     if (editor.currentSong.TickToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSong.length)

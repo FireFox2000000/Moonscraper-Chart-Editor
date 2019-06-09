@@ -43,7 +43,83 @@ public class HighwayController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        UpdateBeatLines3();
+        UpdateBeatLines4();
+    }
+
+    void UpdateBeatLines4()
+    {
+        int measurePoolPos = 0, beatPoolPos = 0, quarterPoolPos = 0;
+        Song song = editor.currentSong;
+        uint startRange = song.WorldPositionToSnappedTick(editor.camYMin.position.y, 8);
+        uint endRange = editor.maxPos;
+        var timeSignatures = editor.currentSong.timeSignatures;
+        int startIndex = SongObjectHelper.FindClosestPositionRoundedDown(startRange, timeSignatures);
+        for (int tsIndex = startIndex; tsIndex < timeSignatures.Count && timeSignatures[tsIndex].tick <= endRange; ++tsIndex)
+        {
+            TimeSignature ts = timeSignatures[tsIndex];
+            
+            uint nextTSTick = tsIndex + 1 < timeSignatures.Count ? timeSignatures[tsIndex + 1].tick : endRange;
+
+            TimeSignature.MeasureInfo measureInfo = ts.GetMeasureInfo();
+
+            // Render measure lines
+            {
+                TimeSignature.BeatInfo beatInfo = measureInfo.measureLine;
+                uint currentTick = ts.tick + beatInfo.tickOffset;
+                int repetitions = 0;
+                while (currentTick < nextTSTick && currentTick <= endRange)
+                {
+                    SetBeatLinePosition(currentTick, measureLinePool, ref measurePoolPos);
+                    currentTick += beatInfo.tickGap;
+
+                    if (++repetitions >= beatInfo.repetitions)
+                    {
+                        currentTick += beatInfo.repetitionCycleOffset;
+                        repetitions -= beatInfo.repetitions;
+                    }
+                }
+            }
+
+            // Render beat lines
+            {
+                TimeSignature.BeatInfo beatInfo = measureInfo.beatLine;
+                uint currentTick = ts.tick + beatInfo.tickOffset;
+                int repetitions = 0;
+                while (currentTick < nextTSTick && currentTick <= endRange)
+                {
+                    SetBeatLinePosition(currentTick, beatLinePool, ref beatPoolPos);
+                    currentTick += beatInfo.tickGap;
+
+                    if (++repetitions >= beatInfo.repetitions)
+                    {
+                        currentTick += beatInfo.repetitionCycleOffset;
+                        repetitions -= beatInfo.repetitions;
+                    }
+                }
+            }
+
+            // Render quarter lines   
+            {
+                TimeSignature.BeatInfo beatInfo = measureInfo.quarterBeatLine;
+                uint currentTick = ts.tick + beatInfo.tickOffset;
+                int repetitions = 0;
+                while (currentTick < nextTSTick && currentTick <= endRange)
+                {
+                    SetBeatLinePosition(currentTick, quarterBeatLinePool, ref quarterPoolPos);
+                    currentTick += beatInfo.tickGap;
+
+                    if (++repetitions >= beatInfo.repetitions)
+                    {
+                        currentTick += beatInfo.repetitionCycleOffset;
+                        repetitions -= beatInfo.repetitions;
+                    }
+                }
+            }
+        }
+
+        DisableBeatLines(measurePoolPos, measureLinePool);
+        DisableBeatLines(beatPoolPos, beatLinePool);
+        DisableBeatLines(quarterPoolPos, quarterBeatLinePool);
     }
 
     // Calculate the beat lines directly from the time signature positions themselves
