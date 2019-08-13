@@ -5,6 +5,8 @@ using UnityEngine;
 using System.Collections;
 
 public abstract class MovementController : MonoBehaviour {
+    const float DESYNCLENIENCE = .05f / 1000.0f;
+
     public static bool cancel = false;
     public ChartEditor editor;
     protected Globals globals;
@@ -22,6 +24,7 @@ public abstract class MovementController : MonoBehaviour {
     public float? playStartPosition;
 
     Transform selfTransform;
+    System.Array audioInstrumentEnumVals = System.Enum.GetValues(typeof(Song.AudioInstrument));
 
     // Program options
     protected float c_mouseScrollSensitivity = 0.2f;      // May miss snap gaps if placed too high
@@ -55,40 +58,49 @@ public abstract class MovementController : MonoBehaviour {
         Vector3 pos = transform.position;
         float deltaTime = Time.deltaTime;
 
-        //float oldPos = pos.y;
-
-        if (playStartTime != null && playStartPosition != null)
         {
-            float time = Time.realtimeSinceStartup - (float)playStartTime; //(float)timeSync.GetTime();//
-            if (time < 0)
-                time = 0;
+            float timeBeforeMovement = TickFunctions.WorldYPositionToTime(pos.y);
+            float timeAfterMovement = timeBeforeMovement + deltaTime;
 
-            pos.y = (float)playStartPosition + TickFunctions.TimeToWorldYPosition(time * GameSettings.gameSpeed);
-            
-            //time -= (Globals.audioCalibrationMS / 1000f * Globals.gameSpeed + editor.currentSong.offset);
+            // Make sure we're staying in sync with the audio
+            {
+                Song currentSong = editor.currentSong;
+                float visibleAudioTime = editor.currentAudioTime;
 
-            //pos.y = /*(float)playStartPosition +*/ Song.TimeToWorldYPosition(time);
+                AudioStream stream = null;
+
+                foreach (Song.AudioInstrument audio in audioInstrumentEnumVals)
+                {
+                    if (AudioManager.StreamIsValid(currentSong.GetAudioStream(audio)))
+                    {
+                        stream = currentSong.GetAudioStream(audio);
+                        break;
+                    }
+                }
+                if (AudioManager.StreamIsValid(stream))
+                {
+                    float audioTimePosition = stream.CurrentPositionInSeconds();
+                    float desyncAmount = audioTimePosition - timeAfterMovement;
+                    Debug.Log(desyncAmount);
+                    Debug.Log(audioTimePosition + ", " + timeAfterMovement);
+                    if (Mathf.Abs(desyncAmount) > DESYNCLENIENCE)
+                        timeAfterMovement += desyncAmount;
+                }
+            }
+
+            float maxChangeInTimeAllowed = Application.targetFrameRate > 0 ? 2.0f / Application.targetFrameRate : 1.0f / 120.0f;
+
+            float totalChangeInTime = timeAfterMovement - timeBeforeMovement;
+
+            float newTimePosition = TickFunctions.TimeToWorldYPosition(timeBeforeMovement + totalChangeInTime);
+            pos.y = newTimePosition;
         }
-        else
-        {
-            pos.y += (speed * deltaTime);
-        }
 
-        //float newPos = pos.y;
-
-        //if ((newPos - oldPos) > 0.4)
-        //Debug.Log("Position difference: " + (newPos - oldPos) + ", Delta time: " + Time.deltaTime + ", Frame: " + Time.frameCount);
-        //Debug.Log(Time.renderedFrameCount);
         selfTransform.position = pos;
         explicitChartPos = null;
 
         lastUpdatedRealTime = Time.time;
     }
-
-    /*void OnApplicationFocus(bool hasFocus)
-    {        
-        focused = hasFocus;
-    }*/
 
     void OnGUI()
     {
