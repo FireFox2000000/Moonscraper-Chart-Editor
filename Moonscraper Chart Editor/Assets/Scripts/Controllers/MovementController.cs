@@ -81,8 +81,7 @@ public abstract class MovementController : MonoBehaviour {
                 {
                     float audioTimePosition = stream.CurrentPositionInSeconds();
                     float desyncAmount = audioTimePosition - timeAfterMovement;
-                    Debug.Log(desyncAmount);
-                    Debug.Log(audioTimePosition + ", " + timeAfterMovement);
+
                     if (Mathf.Abs(desyncAmount) > DESYNCLENIENCE)
                         timeAfterMovement += desyncAmount;
                 }
