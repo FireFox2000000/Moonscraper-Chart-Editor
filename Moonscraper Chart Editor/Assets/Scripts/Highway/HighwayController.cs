@@ -63,7 +63,7 @@ public class HighwayController : MonoBehaviour {
 
             TimeSignature.MeasureInfo measureInfo = ts.GetMeasureInfo();
 
-            System.Func<TimeSignature.BeatInfo, GameObject[], int, int> renderBeatLines = (beatInfo, lineObjectPool, poolPosStart) =>
+            System.Func<TimeSignature.BeatInfo, GameObject[], int, int> RenderBeatLines = (beatInfo, lineObjectPool, poolPosStart) =>
             {
                 int poolPos = poolPosStart;
                 uint currentTick = ts.tick + beatInfo.tickOffset;
@@ -90,9 +90,9 @@ public class HighwayController : MonoBehaviour {
                 return poolPos;
             };
 
-            measurePoolPos += renderBeatLines(measureInfo.measureLine, measureLinePool, measurePoolPos);
-            beatPoolPos += renderBeatLines(measureInfo.beatLine, beatLinePool, beatPoolPos);
-            quarterPoolPos += renderBeatLines(measureInfo.quarterBeatLine, quarterBeatLinePool, quarterPoolPos);          
+            measurePoolPos += RenderBeatLines(measureInfo.measureLine, measureLinePool, measurePoolPos);
+            beatPoolPos += RenderBeatLines(measureInfo.beatLine, beatLinePool, beatPoolPos);
+            quarterPoolPos += RenderBeatLines(measureInfo.quarterBeatLine, quarterBeatLinePool, quarterPoolPos);          
         }
 
         DisableBeatLines(measurePoolPos, measureLinePool);
