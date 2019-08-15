@@ -49,6 +49,7 @@ public class HighwayController : MonoBehaviour {
     void UpdateBeatLines4()
     {
         int measurePoolPos = 0, beatPoolPos = 0, quarterPoolPos = 0;
+
         Song song = editor.currentSong;
         uint startRange = song.WorldPositionToSnappedTick(editor.camYMin.position.y, 8);
         uint endRange = editor.maxPos;
@@ -57,19 +58,26 @@ public class HighwayController : MonoBehaviour {
         for (int tsIndex = startIndex; tsIndex < timeSignatures.Count && timeSignatures[tsIndex].tick <= endRange; ++tsIndex)
         {
             TimeSignature ts = timeSignatures[tsIndex];
-            
+
             uint nextTSTick = tsIndex + 1 < timeSignatures.Count ? timeSignatures[tsIndex + 1].tick : endRange;
 
             TimeSignature.MeasureInfo measureInfo = ts.GetMeasureInfo();
 
-            // Render measure lines
+            System.Func<TimeSignature.BeatInfo, GameObject[], int, int> renderBeatLines = (beatInfo, lineObjectPool, poolPosStart) =>
             {
-                TimeSignature.BeatInfo beatInfo = measureInfo.measureLine;
+                int poolPos = poolPosStart;
                 uint currentTick = ts.tick + beatInfo.tickOffset;
                 int repetitions = 0;
+
+                uint fullCycleLength = beatInfo.tickGap * (uint)beatInfo.repetitions + beatInfo.repetitionCycleOffset;
+                uint distanceFromStartRange = startRange >= currentTick ? startRange - currentTick : 0;
+                currentTick += fullCycleLength * (distanceFromStartRange / fullCycleLength);    // Skip closer to where our viewport currently is, wastes cpu cycles otherwise
+
                 while (currentTick < nextTSTick && currentTick <= endRange)
                 {
-                    SetBeatLinePosition(currentTick, measureLinePool, ref measurePoolPos);
+                    if (currentTick >= startRange)
+                        SetBeatLinePosition(currentTick, lineObjectPool, ref poolPos);
+
                     currentTick += beatInfo.tickGap;
 
                     if (++repetitions >= beatInfo.repetitions)
@@ -78,43 +86,13 @@ public class HighwayController : MonoBehaviour {
                         repetitions -= beatInfo.repetitions;
                     }
                 }
-            }
 
-            // Render beat lines
-            {
-                TimeSignature.BeatInfo beatInfo = measureInfo.beatLine;
-                uint currentTick = ts.tick + beatInfo.tickOffset;
-                int repetitions = 0;
-                while (currentTick < nextTSTick && currentTick <= endRange)
-                {
-                    SetBeatLinePosition(currentTick, beatLinePool, ref beatPoolPos);
-                    currentTick += beatInfo.tickGap;
+                return poolPos;
+            };
 
-                    if (++repetitions >= beatInfo.repetitions)
-                    {
-                        currentTick += beatInfo.repetitionCycleOffset;
-                        repetitions -= beatInfo.repetitions;
-                    }
-                }
-            }
-
-            // Render quarter lines   
-            {
-                TimeSignature.BeatInfo beatInfo = measureInfo.quarterBeatLine;
-                uint currentTick = ts.tick + beatInfo.tickOffset;
-                int repetitions = 0;
-                while (currentTick < nextTSTick && currentTick <= endRange)
-                {
-                    SetBeatLinePosition(currentTick, quarterBeatLinePool, ref quarterPoolPos);
-                    currentTick += beatInfo.tickGap;
-
-                    if (++repetitions >= beatInfo.repetitions)
-                    {
-                        currentTick += beatInfo.repetitionCycleOffset;
-                        repetitions -= beatInfo.repetitions;
-                    }
-                }
-            }
+            measurePoolPos += renderBeatLines(measureInfo.measureLine, measureLinePool, measurePoolPos);
+            beatPoolPos += renderBeatLines(measureInfo.beatLine, beatLinePool, beatPoolPos);
+            quarterPoolPos += renderBeatLines(measureInfo.quarterBeatLine, quarterBeatLinePool, quarterPoolPos);          
         }
 
         DisableBeatLines(measurePoolPos, measureLinePool);
