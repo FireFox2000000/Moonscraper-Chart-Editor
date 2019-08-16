@@ -67,10 +67,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public Chart.GameMode currentGameMode { get { return currentChart.gameMode; } }
     string currentFileName = string.Empty;
 
-    System.Threading.Thread autosave;
-    const float AUTOSAVE_RUN_INTERVAL = 60; // Once a minute
-    float autosaveTimer = 0;
-
     [HideInInspector]
     public MovementController movement;
 
@@ -84,6 +80,20 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public static bool hasFocus { get { return Application.isFocused; } }
 
     public CommandStack commandStack;
+    public StateMachine applicationStateMachine = new StateMachine();
+    SystemManagerState editorState = new SystemManagerState();
+    SystemManagerState playingState = new SystemManagerState();
+    SystemManagerState menuState = new SystemManagerState();
+    SystemManagerState loadingState = new SystemManagerState();
+
+    [Flags]
+    public enum State
+    {
+        Editor      = 0,
+        Playing     = 1 << 0,
+        Menu        = 1 << 1,
+        Loading     = 1 << 2,
+    }
 
     struct UndoRedoSnapInfo
     {
@@ -92,64 +102,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     }
 
     UndoRedoSnapInfo? undoRedoSnapInfo = null;
-
-    public SongObject currentSelectedObject
-    {
-        get
-        {
-            if (currentSelectedObjects.Count == 1)
-                return currentSelectedObjects[0];
-            else
-                return null;
-        }
-        set
-        {
-            currentSelectedObjects.Clear();
-            if (value != null)
-            {
-                currentSelectedObjects.Add(value);
-            }
-
-            timeHandler.RefreshHighlightIndicator();
-        }
-    }
-
-
-    List<SongObject> m_currentSelectedObjects = new List<SongObject>();
-    public IList<SongObject> currentSelectedObjects
-    {
-        get
-        {
-            return m_currentSelectedObjects;
-        }
-        set
-        {
-            SetCurrentSelectedObjects(value);            
-        }
-    }
-
-    public void SetCurrentSelectedObjects<T>(IEnumerable<T> list) where T : SongObject
-    {
-        m_currentSelectedObjects.Clear();
-
-        foreach(T so in list)
-        {
-            m_currentSelectedObjects.Add(so);
-        }
-
-        timeHandler.RefreshHighlightIndicator();
-    }
-
-    public void SetCurrentSelectedObjects<T>(IList<T> list, int index, int length) where T : SongObject
-    {
-        m_currentSelectedObjects.Clear();
-        for (int i = index; i < index + length; ++i)
-        {
-            m_currentSelectedObjects.Add(list[i]);
-        }
-        timeHandler.RefreshHighlightIndicator();
-    }
-
     public uint currentTickPos {
         get
         {
@@ -205,6 +157,8 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
         windowHandleManager = new WindowHandleManager(versionNumber.text, GetComponent<Settings>().productName);
         errorManager = gameObject.AddComponent<ErrorManager>();
+
+        RegisterSystems();
     }
 
     IEnumerator Start()
@@ -223,6 +177,8 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
             }
         }
 #endif
+
+        ChangeState(State.Editor);
     }
 
     public void Update()
@@ -240,35 +196,9 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         // Set window text to represent if the current song has been saved or not
         windowHandleManager.UpdateDirtyNotification(isDirty);
 
-        if (Globals.applicationMode != Globals.ApplicationMode.Loading && (autosave == null || autosave.ThreadState != System.Threading.ThreadState.Running))
-        {
-            autosaveTimer += Time.deltaTime;
-
-            if (autosaveTimer > AUTOSAVE_RUN_INTERVAL)
-            {
-                Autosave();
-            }
-        }
-        else
-            autosaveTimer = 0;
+        applicationStateMachine.Update();
     }
 
-    private Song autosaveSong = null;
-    void Autosave()
-    {
-        autosaveSong = new Song(currentSong);
-
-        autosave = new System.Threading.Thread(() =>
-        {
-            autosaveTimer = 0;
-            Debug.Log("Autosaving...");
-            autosaveSong.Save(Globals.autosaveLocation, currentSong.defaultExportOptions);
-            Debug.Log("Autosave complete!");
-            autosaveTimer = 0;
-        });
-
-        autosave.Start();
-    }
 #if UNITY_EDITOR
     bool allowedToQuit = true;        // Won't be save checking if in editor
 #else
@@ -339,6 +269,47 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         menu.gameObject.SetActive(true);
     }
 
+    void RegisterSystems()
+    {
+        RegisterSystemStateSystem(State.Editor, new AutoSaveSystem());
+    }
+
+    #region State Control
+
+    SystemManagerState GetStateForEnum(State state)
+    {
+        switch (state)
+        {
+            case State.Editor: return editorState;
+            case State.Playing: return playingState;
+            case State.Menu: return menuState;
+            case State.Loading: return loadingState;
+            default: break;
+        }
+
+        return null;
+    }
+
+    public void ChangeState(State state)
+    {
+        applicationStateMachine.currentState = GetStateForEnum(state);
+    }
+
+    public void RegisterSystemStateSystem(State state, SystemManagerState.System system)
+    {
+        SystemManagerState systemState = GetStateForEnum(state);
+        if (systemState != null)
+        {
+            systemState.AddSystem(system);
+        }
+        else
+        {
+            Debug.LogError("Unable to register system for state provided.");
+        }
+    }
+
+    #endregion
+
     #region Chart Loading/Saving
     public void New()
     {
@@ -378,7 +349,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     void LoadQueued()
     {
         Stop();
-        autosaveTimer = 0;
+
         if (System.IO.File.Exists(Globals.autosaveLocation))
             System.IO.File.Delete(Globals.autosaveLocation);
 
@@ -1124,6 +1095,67 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     {
         Copy();
         Delete();
+    }
+
+    #endregion
+
+    #region Selected object management
+
+    public SongObject currentSelectedObject
+    {
+        get
+        {
+            if (currentSelectedObjects.Count == 1)
+                return currentSelectedObjects[0];
+            else
+                return null;
+        }
+        set
+        {
+            currentSelectedObjects.Clear();
+            if (value != null)
+            {
+                currentSelectedObjects.Add(value);
+            }
+
+            timeHandler.RefreshHighlightIndicator();
+        }
+    }
+
+
+    List<SongObject> m_currentSelectedObjects = new List<SongObject>();
+    public IList<SongObject> currentSelectedObjects
+    {
+        get
+        {
+            return m_currentSelectedObjects;
+        }
+        set
+        {
+            SetCurrentSelectedObjects(value);
+        }
+    }
+
+    public void SetCurrentSelectedObjects<T>(IEnumerable<T> list) where T : SongObject
+    {
+        m_currentSelectedObjects.Clear();
+
+        foreach (T so in list)
+        {
+            m_currentSelectedObjects.Add(so);
+        }
+
+        timeHandler.RefreshHighlightIndicator();
+    }
+
+    public void SetCurrentSelectedObjects<T>(IList<T> list, int index, int length) where T : SongObject
+    {
+        m_currentSelectedObjects.Clear();
+        for (int i = index; i < index + length; ++i)
+        {
+            m_currentSelectedObjects.Add(list[i]);
+        }
+        timeHandler.RefreshHighlightIndicator();
     }
 
     #endregion
