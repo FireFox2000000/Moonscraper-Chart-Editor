@@ -21,7 +21,7 @@ public class Mouse : MonoBehaviour {
 
     void Start()
     {
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        editor = ChartEditor.Instance;
     }
 
     public static bool cancel = false;

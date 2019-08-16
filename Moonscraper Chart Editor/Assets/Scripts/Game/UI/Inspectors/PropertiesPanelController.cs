@@ -30,7 +30,7 @@ public class PropertiesPanelController : MonoBehaviour {
 
     void Awake()
     {
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        editor = ChartEditor.Instance;
     }
 
     protected virtual void OnDisable()

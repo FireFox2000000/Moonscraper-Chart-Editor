@@ -76,7 +76,7 @@ public class Globals : MonoBehaviour {
         autosaveLocation = Application.persistentDataPath + "/autosave.chart";
 
         viewMode = ViewMode.Chart;
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        editor = ChartEditor.Instance;
         _services = GetComponent<Services>();
 
 #if !UNITY_EDITOR

@@ -27,7 +27,7 @@ public class DisplayProperties : UpdateableService
 
     protected override void Start()
     {
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        editor = ChartEditor.Instance;
         hyperspeedSlider.value = GameSettings.hyperspeed;
         highwayLengthSlider.value = GameSettings.highwayLength;
 

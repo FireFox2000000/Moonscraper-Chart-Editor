@@ -21,7 +21,7 @@ public class HighwayController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        editor = ChartEditor.Instance;
 
         beatLineParent = new GameObject("Beat Lines");
 

@@ -12,7 +12,7 @@ public class PrefabGlobals {
 
     static void Init()
     {
-        ChartEditor editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        ChartEditor editor = ChartEditor.Instance;
 
         // Collect prefab collider sizes
         noteColliderSize = GetColliderSize(editor.notePrefab);

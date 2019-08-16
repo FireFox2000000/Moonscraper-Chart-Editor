@@ -12,7 +12,7 @@ public abstract class Snapable : MonoBehaviour {
 
     protected virtual void Awake()
     {
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        editor = ChartEditor.Instance;
         objectRen = GetComponent<Renderer>();
     }
 	

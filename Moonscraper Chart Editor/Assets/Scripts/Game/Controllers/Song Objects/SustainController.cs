@@ -21,7 +21,7 @@ public class SustainController : SelectableClick {
 
     public void Awake()
     {
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        editor = ChartEditor.Instance;
 
         sustainRen = GetComponent<LineRenderer>();
 

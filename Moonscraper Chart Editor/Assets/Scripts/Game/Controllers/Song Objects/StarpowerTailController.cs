@@ -10,7 +10,7 @@ public class StarpowerTailController : SelectableClick {
 
     void Awake()
     {
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        editor = ChartEditor.Instance;
     }
 
     public override void OnSelectableMouseDown()

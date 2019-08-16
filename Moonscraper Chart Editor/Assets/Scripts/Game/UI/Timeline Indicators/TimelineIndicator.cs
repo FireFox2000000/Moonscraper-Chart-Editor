@@ -14,7 +14,7 @@ public abstract class TimelineIndicator : MonoBehaviour {
 
     protected virtual void Awake()
     {
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        editor = ChartEditor.Instance;
 
         previousScreenSize.x = Screen.width;
         previousScreenSize.y = Screen.height;

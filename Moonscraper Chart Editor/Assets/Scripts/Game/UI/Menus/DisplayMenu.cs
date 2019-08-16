@@ -13,7 +13,7 @@ public class DisplayMenu : MonoBehaviour {
 
     protected virtual void Awake()
     {
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        editor = ChartEditor.Instance;
     }
 
     protected virtual void Update()

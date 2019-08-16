@@ -31,7 +31,7 @@ public class GameplayManager : MonoBehaviour {
     {
         LoadSoundClip();
 
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        editor = ChartEditor.Instance;
 
         initSize = transform.localScale.y;
         transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);

@@ -21,7 +21,8 @@ public class WaveformDraw : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        editor = ChartEditor.Instance;
+
         lineRen = GetComponent<LineRenderer>();
         lineRen.sortingLayerName = "Highway";
 

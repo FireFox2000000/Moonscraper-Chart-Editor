@@ -5,13 +5,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(ChartEditor))]
 public class SongObjectPoolManager : MonoBehaviour {
+    ChartEditor editor;
 
     const int NOTE_POOL_SIZE = 200;
     const int POOL_SIZE = 50;
-
-    ChartEditor editor;
 
     NotePool notePool;
     StarpowerPool spPool;
@@ -35,7 +33,7 @@ public class SongObjectPoolManager : MonoBehaviour {
 
     // Use this for initialization
     void Awake () {
-        editor = GetComponent<ChartEditor>();
+        editor = ChartEditor.Instance;
 
         GameObject groupMovePool = new GameObject("Main Song Object Pool");
 

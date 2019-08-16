@@ -13,7 +13,7 @@ public class SelectedHighlightController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        editor = GameObject.FindGameObjectWithTag("Editor").GetComponent<ChartEditor>();
+        editor = ChartEditor.Instance;
         selectedHighlight.SetActive(false);
 
         selectedHighlightPoolParent = new GameObject("Selected Highlight Pool");
