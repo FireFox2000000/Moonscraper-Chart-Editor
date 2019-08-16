@@ -80,20 +80,20 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public static bool hasFocus { get { return Application.isFocused; } }
 
     public CommandStack commandStack;
+
+    public enum State
+    {
+        Editor,
+        Playing,
+        Menu,
+        Loading,
+    }
     public StateMachine applicationStateMachine = new StateMachine();
     SystemManagerState editorState = new SystemManagerState();
     SystemManagerState playingState = new SystemManagerState();
     SystemManagerState menuState = new SystemManagerState();
     SystemManagerState loadingState = new SystemManagerState();
-
-    [Flags]
-    public enum State
-    {
-        Editor      = 0,
-        Playing     = 1 << 0,
-        Menu        = 1 << 1,
-        Loading     = 1 << 2,
-    }
+    public State currentState { get; private set; }
 
     struct UndoRedoSnapInfo
     {
@@ -159,6 +159,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         errorManager = gameObject.AddComponent<ErrorManager>();
 
         RegisterSystems();
+        ChangeState(State.Editor);
     }
 
     IEnumerator Start()
@@ -176,9 +177,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
                 break;
             }
         }
-#endif
-
-        ChangeState(State.Editor);
+#endif  
     }
 
     public void Update()
@@ -292,7 +291,16 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
     public void ChangeState(State state)
     {
-        applicationStateMachine.currentState = GetStateForEnum(state);
+        var newState = GetStateForEnum(state);
+        if (newState != null)
+        {
+            applicationStateMachine.currentState = GetStateForEnum(state);
+            currentState = state;
+        }
+        else
+        {
+            Debug.LogError("Unable to change to state " + state.ToString() + ". State either not handled or is a null state, which is not valid for Moonscraper.");
+        }
     }
 
     public void RegisterSystemStateSystem(State state, SystemManagerState.System system)
