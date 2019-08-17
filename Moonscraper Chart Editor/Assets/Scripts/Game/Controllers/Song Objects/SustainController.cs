@@ -75,7 +75,7 @@ public class SustainController : SelectableClick {
         if (nCon.note != null && nCon.note.song != null)
         {
             // Update sustain
-            if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
+            if (editor.currentState == ChartEditor.State.Editor && Input.GetMouseButton(1))
             {
                 GenerateSustainDragCommands(false);
                 if (sustainDragCommands.Count > 0)

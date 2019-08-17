@@ -43,7 +43,7 @@ public class GameplayManager : MonoBehaviour {
         initialised = true;
         statsPanel.SetActive(false);
 
-        EventsManager.onApplicationModeChangedEventList.Add(OnApplicationModeChanged);
+        EventsManager.onEditorStateChangedEventList.Add(OnApplicationModeChanged);
         EventsManager.onChartReloadEventList.Add(OnChartReloaded);
     }
 
@@ -61,7 +61,7 @@ public class GameplayManager : MonoBehaviour {
     void Update()
     {
         // Configure collisions and choose to update the hit window or not
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
+        if (editor.currentState == ChartEditor.State.Playing && !GameSettings.bot)
         {
             transform.localScale = new Vector3(transform.localScale.x, initSize, transform.localScale.z);
         }
@@ -71,7 +71,7 @@ public class GameplayManager : MonoBehaviour {
         }
 
         // Gameplay
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
+        if (editor.currentState == ChartEditor.State.Playing && !GameSettings.bot)
         {
             float currentTime = editor.currentVisibleTime;
             GamepadInput gamepad = editor.inputManager.mainGamepad;
@@ -131,10 +131,10 @@ public class GameplayManager : MonoBehaviour {
         }
     }
 
-    void OnApplicationModeChanged(Globals.ApplicationMode applicationMode)
+    void OnApplicationModeChanged(ChartEditor.State editorState)
     {
         Reset();
-        statsPanel.SetActive(Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot);
+        statsPanel.SetActive(editorState == ChartEditor.State.Playing && !GameSettings.bot);
     }
 
     void OnChartReloaded()

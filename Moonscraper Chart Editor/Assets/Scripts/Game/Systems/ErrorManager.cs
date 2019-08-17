@@ -14,7 +14,7 @@ public class ErrorManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor && HasErrorToDisplay())
+        if (ChartEditor.Instance.currentState == ChartEditor.State.Editor && HasErrorToDisplay())
             DisplayErrorMenu();
     }
 

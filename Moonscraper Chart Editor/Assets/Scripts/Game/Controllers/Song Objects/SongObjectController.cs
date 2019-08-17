@@ -60,7 +60,7 @@ public abstract class SongObjectController : SelectableClick {
     {
         get
         {
-            return Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1) 
+            return Toolpane.currentTool == Toolpane.Tools.Cursor && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1) 
                 && editor.currentSelectedObject != null;
         }
     }
@@ -93,11 +93,11 @@ public abstract class SongObjectController : SelectableClick {
     {
         if (songObject != null && songObject.tick >= editor.minPos && songObject.tick < editor.maxPos)
         {
-            if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+            if (editor.currentState == ChartEditor.State.Editor)
             {
                 UpdateSongObject();
             }
-            else if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+            else if (editor.currentState == ChartEditor.State.Playing)
             {
                 if (canBotClap)
                     TryClap();
@@ -132,7 +132,7 @@ public abstract class SongObjectController : SelectableClick {
 
     public override void OnSelectableMouseDown()
     {
-        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
+        if (Toolpane.currentTool == Toolpane.Tools.Cursor && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
         {
             // Shift-clicking
             // Find the closest object already selected
@@ -185,7 +185,7 @@ public abstract class SongObjectController : SelectableClick {
         }
 
         // Delete the object on erase tool or by holding right click and pressing left-click
-        else if (Globals.applicationMode == Globals.ApplicationMode.Editor && 
+        else if (editor.currentState == ChartEditor.State.Editor && 
             Input.GetMouseButtonDown(0) && Input.GetMouseButton(1)
             )
         {

@@ -36,7 +36,7 @@ public class StrikelineAudioController : MonoBehaviour {
         pos.y += 0.02f * GameSettings.hyperspeed / GameSettings.gameSpeed;
         transform.localPosition = pos;
 
-        if (Globals.applicationMode != Globals.ApplicationMode.Playing)
+        if (ChartEditor.Instance.currentState != ChartEditor.State.Playing)
             lastClapPos = -1;
     }
 

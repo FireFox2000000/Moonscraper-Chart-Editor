@@ -87,11 +87,12 @@ public class Indicators : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update ()
+    {
+        ChartEditor editor = ChartEditor.Instance;
 
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing && !GameSettings.bot)
+        if (editor.currentState == ChartEditor.State.Playing && !GameSettings.bot)
         {
-            ChartEditor editor = ChartEditor.Instance;
             GamepadInput input = editor.inputManager.mainGamepad;
             Chart.GameMode gameMode = editor.currentChart.gameMode;
             LaneInfo laneInfo = editor.laneInfo;

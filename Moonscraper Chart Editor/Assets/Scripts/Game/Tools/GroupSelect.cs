@@ -73,7 +73,7 @@ public class GroupSelect : ToolObject {
     {
         if (prevChart != editor.currentChart || prevSong != editor.currentSong)
             reset();
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+        if (editor.currentState == ChartEditor.State.Editor)
         {
             UpdateSnappedPos();
 

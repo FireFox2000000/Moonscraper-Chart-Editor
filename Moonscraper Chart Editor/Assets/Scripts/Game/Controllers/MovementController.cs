@@ -36,7 +36,7 @@ public abstract class MovementController : MonoBehaviour {
 
     public void SetTime(float time)
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+        if (ChartEditor.Instance.currentState == ChartEditor.State.Editor)
         {
             Vector3 pos = initPos;
             pos.y += TickFunctions.TimeToWorldYPosition(time);

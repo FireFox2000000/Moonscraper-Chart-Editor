@@ -45,7 +45,7 @@ public class NoteController : SongObjectController {
 
     public override void OnSelectableMouseDown()
     {
-        if (Toolpane.currentTool == Toolpane.Tools.Cursor && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
+        if (Toolpane.currentTool == Toolpane.Tools.Cursor && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
         {
             // Ctrl-clicking
             if (Globals.modifierInputActive)
@@ -93,7 +93,7 @@ public class NoteController : SongObjectController {
         }
 
         // Delete the object on left and right click shortcut
-        else if (Globals.applicationMode == Globals.ApplicationMode.Editor &&
+        else if (editor.currentState == ChartEditor.State.Editor &&
             Input.GetMouseButtonDown(0) && Input.GetMouseButton(1))
         {
             if (ShortcutInput.GetInput(Shortcut.ChordSelect))
@@ -235,7 +235,7 @@ public class NoteController : SongObjectController {
                 sustain.UpdateSustain();
 
             // Handle gameplay operation
-            if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+            if (editor.currentState == ChartEditor.State.Playing)
             {
                 ManageGameplay();
             }

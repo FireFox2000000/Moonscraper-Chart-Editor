@@ -37,7 +37,7 @@ public class CursorSelect : ToolObject
 
     protected override void Update()
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor && !block)
+        if (editor.currentState == ChartEditor.State.Editor && !block)
         {
             UpdateSnappedPos();
 
@@ -126,7 +126,7 @@ public class CursorSelect : ToolObject
         else
             block = true;
 
-        if (block && Globals.applicationMode == Globals.ApplicationMode.Editor && !Input.GetMouseButton(0))
+        if (block && editor.currentState == ChartEditor.State.Editor && !Input.GetMouseButton(0))
             block = false;
     }
 

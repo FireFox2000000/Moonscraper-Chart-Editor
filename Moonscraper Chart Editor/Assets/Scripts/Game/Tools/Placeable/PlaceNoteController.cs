@@ -90,7 +90,7 @@ public class PlaceNoteController : ObjectlessTool {
         EventsManager.onToolChangedEventList.Add(OnModeSwitch);
         EventsManager.onKeyboardModeToggledEvent.Add(OnKeysModeChanged);
         EventsManager.onNotePlacementModeChangedEvent.Add(OnModeSwitch);
-        EventsManager.onApplicationModeChangedEventList.Add(OnApplicationModeSwitch);
+        EventsManager.onEditorStateChangedEventList.Add(OnApplicationModeSwitch);
     }
 
     public override void ToolEnable()
@@ -156,7 +156,7 @@ public class PlaceNoteController : ObjectlessTool {
         }
     }
 
-    void OnApplicationModeSwitch(Globals.ApplicationMode applicationMode)
+    void OnApplicationModeSwitch(ChartEditor.State editorState)
     {
         KeysDraggedSustainRecordingCheck();
         ResetNoteAdding();

@@ -35,11 +35,12 @@ public class StarpowerController : SongObjectController
                     (endPosition > editor.minPos && endPosition < editor.maxPos) ||
                     (starpower.tick < editor.minPos && endPosition >= editor.maxPos))
             {
-                if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+                ChartEditor.State currentState = editor.currentState;
+                if (currentState == ChartEditor.State.Editor)
                 {
                     UpdateSongObject();
                 }
-                else if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+                else if (currentState == ChartEditor.State.Playing)
                 {
                     if (canBotClap)
                         TryClap();
@@ -115,7 +116,7 @@ public class StarpowerController : SongObjectController
 
     public bool DragCheck()
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButton(1))
+        if (editor.currentState == ChartEditor.State.Editor && Input.GetMouseButton(1))
         {
             if (unmodifiedSP == null)
                 unmodifiedSP = (Starpower)starpower.Clone();

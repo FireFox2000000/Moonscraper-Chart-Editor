@@ -46,7 +46,7 @@ public class Toolpane : MonoBehaviour {
         // Handle exiting out of a menu cancel
         if (Input.GetMouseButtonUp(0))
             menuCancel = false;
-        else if (Globals.applicationMode != Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+        else if (ChartEditor.Instance.currentState != ChartEditor.State.Editor && Input.GetMouseButtonDown(0))
         {
             menuCancel = true;
         }
@@ -65,7 +65,7 @@ public class Toolpane : MonoBehaviour {
                 {
                     toolIsActive = false;
                 }
-                else if (Globals.applicationMode == Globals.ApplicationMode.Editor && mouseDownInArea)
+                else if (ChartEditor.Instance.currentState == ChartEditor.State.Editor && mouseDownInArea)
                 {
                     // Range check
                     if (!globals.services.InToolArea)

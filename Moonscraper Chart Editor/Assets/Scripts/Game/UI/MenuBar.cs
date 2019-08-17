@@ -46,7 +46,7 @@ public class MenuBar : UpdateableService {
     // Update is called once per frame
     public override void OnServiceUpdate()
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+        if (editor.currentState == ChartEditor.State.Editor)
         {
             undoButton.interactable = editor.services.CanUndo();
             redoButton.interactable = editor.services.CanRedo();

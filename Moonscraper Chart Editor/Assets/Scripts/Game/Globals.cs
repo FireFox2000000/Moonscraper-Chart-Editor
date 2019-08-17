@@ -42,20 +42,6 @@ public class Globals : MonoBehaviour {
         }
     }
 
-    // Settings
-    static ApplicationMode _applicationMode = ApplicationMode.Editor;
-    public static ApplicationMode applicationMode
-    {
-        get
-        {
-            return _applicationMode;
-        }
-        set
-        {
-            _applicationMode = value;
-            EventsManager.FireApplicationModeChangedEvent();
-        }
-    }
     public static ViewMode viewMode { get; set; }
 
     ChartEditor editor;
@@ -196,7 +182,7 @@ public class Globals : MonoBehaviour {
         snapLockWarning.gameObject.SetActive((GameSettings.keysModeEnabled && Toolpane.currentTool != Toolpane.Tools.Cursor && Toolpane.currentTool != Toolpane.Tools.Eraser));
 
         // IsTyping can still be active if this isn't manually detected
-        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && Services.IsTyping && applicationMode == ApplicationMode.Editor)
+        if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && Services.IsTyping && editor.currentState == ChartEditor.State.Editor)
         {
             EventSystem.current.SetSelectedGameObject(null);
         }
@@ -209,9 +195,9 @@ public class Globals : MonoBehaviour {
     {
         if (ShortcutInput.GetInputDown(Shortcut.PlayPause))
         {
-            if (applicationMode == ApplicationMode.Editor && services.CanPlay())
+            if (editor.currentState == ChartEditor.State.Editor && services.CanPlay())
                 editor.Play();
-            else if (applicationMode == ApplicationMode.Playing)
+            else if (editor.currentState == ChartEditor.State.Playing)
                 editor.Stop();
         }
 
@@ -234,7 +220,7 @@ public class Globals : MonoBehaviour {
         {
             if (editor.inputManager.mainGamepad.GetButtonPressed(GamepadInput.Button.Start))
             {
-                if (applicationMode != ApplicationMode.Playing)
+                if (editor.currentState != ChartEditor.State.Playing)
                     editor.StartGameplay();
                 else
                     editor.Stop();
@@ -387,11 +373,6 @@ public class Globals : MonoBehaviour {
     public void ClickButton(Button button)
     {
         button.onClick.Invoke();
-    }
-
-    public enum ApplicationMode
-    {
-        Editor, Playing, Menu, Loading
     }
 
     public enum ViewMode

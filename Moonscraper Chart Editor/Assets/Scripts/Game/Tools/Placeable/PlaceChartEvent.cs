@@ -58,7 +58,7 @@ public class PlaceChartEvent : PlaceSongObject
     {
         if (!GameSettings.keysModeEnabled)
         {
-            if (Toolpane.currentTool == Toolpane.Tools.SongEvent && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+            if (Toolpane.currentTool == Toolpane.Tools.SongEvent && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButtonDown(0))
             {
                 int pos = SongObjectHelper.FindObjectPosition(chartEvent, editor.currentChart.events);
                 if (pos == SongObjectHelper.NOTFOUND)

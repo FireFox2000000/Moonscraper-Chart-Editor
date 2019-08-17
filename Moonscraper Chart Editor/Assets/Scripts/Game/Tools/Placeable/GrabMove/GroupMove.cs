@@ -36,7 +36,7 @@ public class GroupMove : ToolObject
 
     // Update is called once per frame  
     protected override void Update () {
-        if (Globals.applicationMode != Globals.ApplicationMode.Editor)
+        if (editor.currentState != ChartEditor.State.Editor)
             return;
 
         if (movingSongObjects.Count > 0)

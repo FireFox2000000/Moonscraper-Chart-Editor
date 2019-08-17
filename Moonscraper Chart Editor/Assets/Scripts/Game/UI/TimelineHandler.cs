@@ -284,7 +284,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     {
         ChartEditor editor = ChartEditor.Instance;
         movement.editor.Stop();
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+        if (editor.currentState == ChartEditor.State.Editor)
         {
             Vector3 pos = handle.transform.position;
             pos.y = editor.uiServices.uiCamera.ScreenToWorldPoint(eventData.position).y;        

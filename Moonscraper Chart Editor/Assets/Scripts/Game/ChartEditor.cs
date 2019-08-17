@@ -296,6 +296,8 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         {
             applicationStateMachine.currentState = GetStateForEnum(state);
             currentState = state;
+
+            EventsManager.FireEditorStateChangedEvent();
         }
         else
         {
@@ -692,7 +694,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public static float? startGameplayPos = null;
     public void StartGameplay()
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing ||
+        if (currentState == State.Playing ||
             movement.transform.position.y < movement.initPos.y ||
             Globals.ghLiveMode)
             return;
@@ -739,7 +741,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         foreach (HitAnimation hitAnim in indicators.animations)
             hitAnim.StopAnim();
 
-        Globals.applicationMode = Globals.ApplicationMode.Playing;
+        ChangeState(State.Playing);
         cancel = false;
 
         float playPoint = currentAudioTime;
@@ -759,7 +761,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         yield return new WaitForSeconds(delay);
         float playPoint = currentAudioTime;
 
-        if (!cancel && Globals.applicationMode == Globals.ApplicationMode.Playing)
+        if (!cancel && currentState == State.Playing)
         {
             if (playPoint >= 0)
             {
@@ -792,7 +794,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         startGameplayPos = null;
         cancel = true;
 
-        Globals.applicationMode = Globals.ApplicationMode.Editor;
+        ChangeState(State.Editor);
 
         StopAudio();
 

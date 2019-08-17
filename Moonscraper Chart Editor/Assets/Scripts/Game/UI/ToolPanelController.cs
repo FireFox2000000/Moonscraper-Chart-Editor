@@ -44,7 +44,7 @@ public class ToolPanelController : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if (ShortcutInput.GetInputDown(Shortcut.ToggleViewMode) && (Globals.applicationMode == Globals.ApplicationMode.Editor || Globals.applicationMode == Globals.ApplicationMode.Playing))
+        if (ShortcutInput.GetInputDown(Shortcut.ToggleViewMode) && (editor.currentState == ChartEditor.State.Editor || editor.currentState == ChartEditor.State.Playing))
         {
             viewModeToggle.isOn = !viewModeToggle.isOn;
         }

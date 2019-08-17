@@ -21,7 +21,7 @@ public class PlaceSection : PlaceSongObject {
     {
         if (!GameSettings.keysModeEnabled)
         {
-            if (Toolpane.currentTool == Toolpane.Tools.Section && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+            if (Toolpane.currentTool == Toolpane.Tools.Section && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButtonDown(0))
             {
                 Section sectionSearched = sectionSearch(section.tick);
                 if (sectionSearched == null)

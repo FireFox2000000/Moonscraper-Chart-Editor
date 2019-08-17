@@ -20,21 +20,21 @@ public class Whammy : MonoBehaviour {
     public bool canWhammy = false;
 
     AnimationCurve lineCurve;
-    Globals.ApplicationMode previousApplicationMode;
+    ChartEditor.State previousApplicationMode;
 
     // Use this for initialization
     void Start () {
         lineRenderer = GetComponent<LineRenderer>();
         pointsController = GetComponent<SetLineRendererPoints>();
         lineCurve = lineRenderer.widthCurve;
-        previousApplicationMode = Globals.applicationMode;
+        previousApplicationMode = ChartEditor.Instance.currentState;
     }
     
 	// Update is called once per frame
 	void Update () {
         if (transform.localScale.y > 0)
         {
-            if (Globals.applicationMode == Globals.ApplicationMode.Playing && transform.localScale.y > 0 && canWhammy)
+            if (ChartEditor.Instance.currentState == ChartEditor.State.Playing && transform.localScale.y > 0 && canWhammy)
             {
                 pointsController.UpdateLineRendererPoints();
 
@@ -44,7 +44,7 @@ public class Whammy : MonoBehaviour {
 
                 lineCurve.AddKey(new Keyframe(0, whammyVal + 1));
             }
-            else if (previousApplicationMode != Globals.applicationMode)
+            else if (previousApplicationMode != ChartEditor.Instance.currentState)
             {
                 OnEnable();
             }

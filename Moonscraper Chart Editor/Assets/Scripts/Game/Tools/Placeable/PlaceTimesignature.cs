@@ -28,7 +28,7 @@ public class PlaceTimesignature : PlaceSongObject {
     {
         if (!GameSettings.keysModeEnabled)
         {
-            if (Toolpane.currentTool == Toolpane.Tools.Timesignature && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+            if (Toolpane.currentTool == Toolpane.Tools.Timesignature && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButtonDown(0))
             {
                 AddObject();
             }

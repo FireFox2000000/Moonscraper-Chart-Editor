@@ -55,7 +55,7 @@ public class DefaultHitAnimation : HitAnimation {
 
         position.z += SPEED * Time.deltaTime;
 
-        if (position.z > initZPos || Globals.applicationMode != Globals.ApplicationMode.Playing)
+        if (position.z > initZPos || ChartEditor.Instance.currentState != ChartEditor.State.Playing)
         {
             position.z = initZPos;
             running = false;

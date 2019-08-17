@@ -113,7 +113,7 @@ public class InspectorSwitching : MonoBehaviour {
             canvas.SetActive(false);
         else
         {
-            bool applicationModeNotPlaying = Globals.applicationMode != Globals.ApplicationMode.Playing;
+            bool applicationModeNotPlaying = editor.currentState != ChartEditor.State.Playing;
             if (canvas.activeSelf != applicationModeNotPlaying)
                 canvas.SetActive(applicationModeNotPlaying);
         }    

@@ -39,7 +39,7 @@ public class DisplayProperties : UpdateableService
         OnEnable();
 
         EventsManager.onChartReloadEventList.Add(OnChartReload);
-        EventsManager.onApplicationModeChangedEventList.Add(OnApplicationModeChanged);
+        EventsManager.onEditorStateChangedEventList.Add(OnApplicationModeChanged);
 
         OnChartReload();
 
@@ -77,9 +77,9 @@ public class DisplayProperties : UpdateableService
         songNameText.text = editor.currentSong.name + " - " + editor.currentChart.name;
     }
 
-    void OnApplicationModeChanged(Globals.ApplicationMode applicationMode)
+    void OnApplicationModeChanged(ChartEditor.State editorState)
     {
-        bool interactable = (applicationMode != Globals.ApplicationMode.Playing);
+        bool interactable = (editorState != ChartEditor.State.Playing);
         hyperspeedSlider.interactable = interactable;
         gameSpeedSlider.interactable = interactable;
         highwayLengthSlider.interactable = interactable;

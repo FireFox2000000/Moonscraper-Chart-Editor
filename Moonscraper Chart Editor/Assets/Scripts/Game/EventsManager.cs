@@ -9,7 +9,7 @@ public static class EventsManager {
         onHyperspeedChangeEventList.Clear();
         onViewModeSwitchEventList.Clear();
         onLeftyFlipToggledEventList.Clear();
-        onApplicationModeChangedEventList.Clear();
+        onEditorStateChangedEventList.Clear();
         onLanesChangedEventList.Clear();
         onSaveEventList.Clear();
         onToolChangedEventList.Clear();
@@ -49,12 +49,12 @@ public static class EventsManager {
             function();
     }
 
-    public delegate void ApplicationModeChangedEvent(Globals.ApplicationMode applicationMode);
-    public static List<ApplicationModeChangedEvent> onApplicationModeChangedEventList = new List<ApplicationModeChangedEvent>();
-    public static void FireApplicationModeChangedEvent()
+    public delegate void EditorStateChangedEvent(ChartEditor.State editorState);
+    public static List<EditorStateChangedEvent> onEditorStateChangedEventList = new List<EditorStateChangedEvent>();
+    public static void FireEditorStateChangedEvent()
     {
-        foreach (ApplicationModeChangedEvent function in onApplicationModeChangedEventList)
-            function(Globals.applicationMode);
+        foreach (EditorStateChangedEvent function in onEditorStateChangedEventList)
+            function(ChartEditor.Instance.currentState);
     }
 
     public delegate void LanesChangedEvent(int laneCount);

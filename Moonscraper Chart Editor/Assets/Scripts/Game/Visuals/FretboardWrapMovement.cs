@@ -25,7 +25,7 @@ public class FretboardWrapMovement : MonoBehaviour {
 
     void LateUpdate()
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+        if (ChartEditor.Instance.currentState == ChartEditor.State.Playing)
         {
             Vector2 offset = ren.sharedMaterial.mainTextureOffset;
             offset.y += ((transform.position.y - prevYPos) / transform.localScale.y);
@@ -38,7 +38,7 @@ public class FretboardWrapMovement : MonoBehaviour {
     
 	// Update is called once per frame
 	void FixedUpdate () {
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor)  
+        if (ChartEditor.Instance.currentState == ChartEditor.State.Editor)  
         {
             if ((int)(prevHyperspeed * 100) == (int)((GameSettings.hyperspeed * GameSettings.gameSpeed) * 100))
             {

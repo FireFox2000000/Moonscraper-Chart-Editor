@@ -21,7 +21,7 @@ public class DebugSongSync : MonoBehaviour
     void LateUpdate()
     {
         ChartEditor editor = ChartEditor.Instance;
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing && tick)
+        if (editor.currentState == ChartEditor.State.Playing && tick)
         {
             Song currentSong = editor.currentSong;
             visibleAudioTime = editor.currentAudioTime;
@@ -53,7 +53,7 @@ public class DebugSongSync : MonoBehaviour
 
     void OnGUI()
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+        if (ChartEditor.Instance.currentState == ChartEditor.State.Playing)
         {
             int w = Screen.width, h = Screen.height;
 

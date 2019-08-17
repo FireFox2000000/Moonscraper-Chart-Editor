@@ -21,21 +21,21 @@ public class PlayButton : MonoBehaviour {
         editor = ChartEditor.Instance;
         buttonImage = GetComponent<Image>();
 
-        EventsManager.onApplicationModeChangedEventList.Add(UpdatePlayPauseSprite);
-        UpdatePlayPauseSprite(Globals.applicationMode);
+        EventsManager.onEditorStateChangedEventList.Add(UpdatePlayPauseSprite);
+        UpdatePlayPauseSprite(editor.currentState);
     }
 
 	public void PlayPause()
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+        if (editor.currentState == ChartEditor.State.Editor)
             editor.Play();
         else
             editor.Stop();
     }
 
-    void UpdatePlayPauseSprite(Globals.ApplicationMode applicationMode)
+    void UpdatePlayPauseSprite(ChartEditor.State editorState)
     {
-        if (applicationMode == Globals.ApplicationMode.Playing)
+        if (editorState == ChartEditor.State.Playing)
             buttonImage.sprite = pauseSprite;
         else
             buttonImage.sprite = playSprite;

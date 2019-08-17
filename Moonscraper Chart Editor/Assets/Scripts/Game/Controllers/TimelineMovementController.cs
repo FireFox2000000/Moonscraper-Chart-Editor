@@ -22,7 +22,7 @@ public class TimelineMovementController : MovementController
 
     public override void SetPosition(uint tick)
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+        if (editor.currentState == ChartEditor.State.Editor)
         {
             Vector3 pos = initPos;
             pos.y += editor.currentSong.TickToWorldYPosition(tick);
@@ -59,7 +59,7 @@ public class TimelineMovementController : MovementController
             Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
 
-        if (Input.GetMouseButtonUp(0) && Globals.applicationMode == Globals.ApplicationMode.Editor)
+        if (Input.GetMouseButtonUp(0) && editor.currentState == ChartEditor.State.Editor)
             cancel = false;
 
         if (Services.IsInDropDown)
@@ -112,7 +112,7 @@ public class TimelineMovementController : MovementController
             lastMouseDownPos = Input.mousePosition;
         }
 
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+        if (editor.currentState == ChartEditor.State.Editor)
         {
             Vector2 middleClickDragPercentageDelta = GetMiddleClickDragPercentageDelta();
 
@@ -235,7 +235,7 @@ public class TimelineMovementController : MovementController
                 UpdatePosBasedTimelineHandle();
             }
         }
-        else if(Globals.applicationMode == Globals.ApplicationMode.Playing)
+        else if(editor.currentState == ChartEditor.State.Playing)
         {
             PlayingMovement();
 
@@ -246,7 +246,7 @@ public class TimelineMovementController : MovementController
                 editor.Stop();
         }
 
-        if (Globals.applicationMode != Globals.ApplicationMode.Playing)
+        if (editor.currentState != ChartEditor.State.Playing)
             lastUpdatedRealTime = Time.realtimeSinceStartup;
 
         prevPos = transform.position;
@@ -254,7 +254,7 @@ public class TimelineMovementController : MovementController
     /*
     void FixedUpdate()
     {
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+        if (Globals.applicationMode == ChartEditor.State.Playing)
         {
             PlayingMovement();
             UpdateTimelineHandleBasedPos();
@@ -276,7 +276,7 @@ public class TimelineMovementController : MovementController
         if (editor.currentChart != null)
         {
             // Front cap
-            if (Globals.applicationMode == Globals.ApplicationMode.Editor)
+            if (editor.currentState == ChartEditor.State.Editor)
             {
                 if (transform.position.y < initPos.y)
                     transform.position = initPos;
@@ -292,7 +292,7 @@ public class TimelineMovementController : MovementController
 
             float currentDistance = transform.position.y - initPos.y;
 
-            //if (Globals.applicationMode != Globals.ApplicationMode.Playing)
+            //if (Globals.applicationMode != ChartEditor.State.Playing)
             //{
                 if (totalDistance > 0)
                     timeline.handlePos = currentDistance / totalDistance;

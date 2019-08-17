@@ -29,7 +29,7 @@ public class PlaceEvent : PlaceSongObject
     {
         if (!GameSettings.keysModeEnabled)
         {
-            if (Toolpane.currentTool == Toolpane.Tools.SongEvent && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+            if (Toolpane.currentTool == Toolpane.Tools.SongEvent && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButtonDown(0))
             {
                 int pos = SongObjectHelper.FindObjectPosition(songEvent, editor.currentSong.events);
                 if (pos == SongObjectHelper.NOTFOUND)

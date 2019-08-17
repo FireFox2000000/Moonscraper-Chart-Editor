@@ -20,7 +20,7 @@ public class DisplayMenu : MonoBehaviour {
     {
         MovementController.cancel = true;
 
-        bool exitInput = Input.GetButtonDown("CloseMenu") && Globals.applicationMode != Globals.ApplicationMode.Loading;
+        bool exitInput = Input.GetButtonDown("CloseMenu") && editor.currentState != ChartEditor.State.Loading;
         if (
             exitInput ||
             (Input.GetMouseButtonDown(0) && !RectTransformUtility.RectangleContainsScreenPoint(mouseArea, editor.uiServices.GetUIMousePosition())) ||
@@ -32,7 +32,7 @@ public class DisplayMenu : MonoBehaviour {
     protected virtual void OnEnable()
     {
         editor.Stop();
-        Globals.applicationMode = Globals.ApplicationMode.Menu;
+        editor.ChangeState(ChartEditor.State.Menu);
         UITabbing.defaultSelectable = defaultSelectable;
 
         StartCoroutine(SetUIDelayed());
@@ -51,8 +51,8 @@ public class DisplayMenu : MonoBehaviour {
     }
 
     protected virtual void OnDisable()
-    { 
-        Globals.applicationMode = Globals.ApplicationMode.Editor;
+    {
+        editor.ChangeState(ChartEditor.State.Editor);
     }
 
     public void Disable()

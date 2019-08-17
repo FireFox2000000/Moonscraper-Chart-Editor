@@ -25,7 +25,7 @@ public class ClipboardObjectController : Snapable {
     {
         base.Awake();
         ren = GetComponent<Renderer>();
-        EventsManager.onApplicationModeChangedEventList.Add(OnApplicationModeChanged);
+        EventsManager.onEditorStateChangedEventList.Add(OnApplicationModeChanged);
         CLIPBOARD_FILE_LOCATION = UnityEngine.Application.persistentDataPath + "/MoonscraperClipboard.bin";
     }
 
@@ -49,10 +49,10 @@ public class ClipboardObjectController : Snapable {
         }
     }
 
-    void OnApplicationModeChanged(Globals.ApplicationMode applicationMode)
+    void OnApplicationModeChanged(ChartEditor.State editorState)
     {
         // Can only paste in editor mode
-        gameObject.SetActive(applicationMode == Globals.ApplicationMode.Editor);
+        gameObject.SetActive(editorState == ChartEditor.State.Editor);
     }
 
     public static void SetData(SongObject[] data, Clipboard.SelectionArea area, Song song)
@@ -130,7 +130,7 @@ public class ClipboardObjectController : Snapable {
                 Debug.LogError("Filestream when reading clipboard data failed to initialise");
         }
 
-        if (Globals.applicationMode == Globals.ApplicationMode.Editor && clipboard != null && clipboard.data.Length > 0)
+        if (editor.currentState == ChartEditor.State.Editor && clipboard != null && clipboard.data.Length > 0)
         {
             List<SongEditCommand> commands = new List<SongEditCommand>();
 

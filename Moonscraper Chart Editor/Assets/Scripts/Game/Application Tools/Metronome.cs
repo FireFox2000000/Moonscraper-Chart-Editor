@@ -37,7 +37,7 @@ public class Metronome : MonoBehaviour {
         float audioStrikelinePos = editor.services.auditorialStrikelinePos;
         uint currentTickPos = editor.currentSong.WorldYPositionToTick(audioStrikelinePos);
 
-        if (Globals.applicationMode == Globals.ApplicationMode.Playing)
+        if (editor.currentState == ChartEditor.State.Playing)
         {
             if (currentTickPos >= nextClapPos)
             {

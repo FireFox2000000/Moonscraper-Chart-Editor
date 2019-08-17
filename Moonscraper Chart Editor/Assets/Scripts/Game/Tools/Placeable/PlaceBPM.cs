@@ -22,7 +22,7 @@ public class PlaceBPM : PlaceSongObject {
     {
         if (!GameSettings.keysModeEnabled)
         {
-            if (Toolpane.currentTool == Toolpane.Tools.BPM && Globals.applicationMode == Globals.ApplicationMode.Editor && Input.GetMouseButtonDown(0))
+            if (Toolpane.currentTool == Toolpane.Tools.BPM && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButtonDown(0))
             {
                 AddObject();
             }

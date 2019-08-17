@@ -39,7 +39,7 @@ public class HoverHighlightController : MonoBehaviour {
             highlight.SetActive(false);
         }
 
-        bool showHighlight = (Globals.applicationMode == Globals.ApplicationMode.Editor && !Input.GetMouseButton(0) && songObject != null
+        bool showHighlight = (ChartEditor.Instance.currentState == ChartEditor.State.Editor && !Input.GetMouseButton(0) && songObject != null
             && ((Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.Eraser) ||
             (Input.GetMouseButton(1) && (Toolpane.currentTool != Toolpane.Tools.Cursor || Toolpane.currentTool != Toolpane.Tools.Eraser))));
 

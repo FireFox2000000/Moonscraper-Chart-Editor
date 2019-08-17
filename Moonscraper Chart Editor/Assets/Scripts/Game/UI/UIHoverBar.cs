@@ -19,7 +19,7 @@ public class UIHoverBar : UpdateableService {
     public override void OnServiceUpdate() {
         bool menuBarObjectUnderMouse = false;
 
-        if (Globals.applicationMode != Globals.ApplicationMode.Loading && inUIBar)
+        if (ChartEditor.Instance.currentState != ChartEditor.State.Loading && inUIBar)
         {
             // Get a list of all the objects currently under the mouse to get past the blocker
             GameObject[] currentHoveringObjects = GetObjectsUnderMouse();
