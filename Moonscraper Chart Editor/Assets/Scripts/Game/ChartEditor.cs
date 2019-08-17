@@ -11,26 +11,13 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
 
+[RequireComponent(typeof(ChartEditorAssets))]
 public class ChartEditor : UnitySingleton<ChartEditor> {
     protected override bool WantDontDestroyOnLoad { get { return false; } }
 
     public static bool isDirty = false;
 
-    [Header("Prefabs")]
-    public GameObject notePrefab;
-    public GameObject starpowerPrefab;
-    public GameObject sectionPrefab;
-    public GameObject bpmPrefab;
-    public GameObject tsPrefab;
-    public GameObject songEventPrefab;
-    public GameObject chartEventPrefab;
     [Header("Tool prefabs")]
-    public GameObject ghostNote;
-    public GameObject ghostStarpower;
-    public GameObject ghostSection;
-    public GameObject ghostBPM;
-    public GameObject ghostTimeSignature;
-    public GameObject ghostEvent;
     public GroupMove groupMove;
     [Header("Misc.")]
     public ToolPanelController toolPanel;       // Used to toggle view mode during undo action
@@ -69,6 +56,8 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
     [HideInInspector]
     public MovementController movement;
+    [HideInInspector]
+    public ChartEditorAssets assets;
 
     SongObjectPoolManager _songObjectPoolManager;
     public SongObjectPoolManager songObjectPoolManager { get { return _songObjectPoolManager; } }
@@ -138,15 +127,13 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     // Use this for initialization
     void Awake () {
         Debug.Log("Initialising " + versionNumber.text);
-
-        _songObjectPoolManager = GetComponent<SongObjectPoolManager>();
+        assets = GetComponent<ChartEditorAssets>();
 
         _minPos = 0;
         _maxPos = 0;
 
-        // Create a default song
-        currentSong = new Song();
-        LoadSong(currentSong, true);
+        RegisterSystems();
+        ChangeState(State.Editor);
 
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
 
@@ -158,8 +145,9 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         windowHandleManager = new WindowHandleManager(versionNumber.text, GetComponent<Settings>().productName);
         errorManager = gameObject.AddComponent<ErrorManager>();
 
-        RegisterSystems();
-        ChangeState(State.Editor);
+        // Create a default song
+        currentSong = new Song();
+        LoadSong(currentSong, true);
     }
 
     IEnumerator Start()
@@ -270,7 +258,15 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
     void RegisterSystems()
     {
+        _songObjectPoolManager = new SongObjectPoolManager();
+        DrawBeatLines drawBeatLinesSystem = new DrawBeatLines();
+
         RegisterSystemStateSystem(State.Editor, new AutoSaveSystem());
+        RegisterSystemStateSystem(State.Editor, _songObjectPoolManager);
+        RegisterSystemStateSystem(State.Editor, drawBeatLinesSystem);
+
+        RegisterSystemStateSystem(State.Playing, _songObjectPoolManager);
+        RegisterSystemStateSystem(State.Playing, drawBeatLinesSystem);
     }
 
     #region State Control

@@ -4,12 +4,9 @@
 using UnityEngine;
 using System.Collections;
 
-public class HighwayController : MonoBehaviour {
+public class DrawBeatLines : SystemManagerState.System
+{
     const int POOL_SIZE = 100;
-
-    public GameObject measureLine;
-    public GameObject beatLine;
-    public GameObject quarterBeatLine;
 
     GameObject[] measureLinePool = new GameObject[POOL_SIZE];
     GameObject[] beatLinePool = new GameObject[POOL_SIZE];
@@ -19,30 +16,33 @@ public class HighwayController : MonoBehaviour {
 
     ChartEditor editor;
 
-    // Use this for initialization
-    void Start () {
+    public DrawBeatLines() {
         editor = ChartEditor.Instance;
 
         beatLineParent = new GameObject("Beat Lines");
 
+        GameObject measureLinePrefab = editor.assets.measureLine;
+        GameObject beatLinePrefab = editor.assets.beatLine;
+        GameObject quarterBeatLinePrefab = editor.assets.quarterBeatLine;
+
         for (int i = 0; i < POOL_SIZE; ++i)
         {
-            measureLinePool[i] = Instantiate(measureLine);
+            measureLinePool[i] = Object.Instantiate(measureLinePrefab);
             measureLinePool[i].transform.SetParent(beatLineParent.transform);
             measureLinePool[i].SetActive(false);
 
-            beatLinePool[i] = Instantiate(beatLine);
+            beatLinePool[i] = Object.Instantiate(beatLinePrefab);
             beatLinePool[i].transform.SetParent(beatLineParent.transform);
             beatLinePool[i].SetActive(false);
 
-            quarterBeatLinePool[i] = Instantiate(quarterBeatLine);
+            quarterBeatLinePool[i] = Object.Instantiate(quarterBeatLinePrefab);
             quarterBeatLinePool[i].transform.SetParent(beatLineParent.transform);
             quarterBeatLinePool[i].SetActive(false);
         }
     }
 	
 	// Update is called once per frame
-	void Update () {
+	public override void Update () {
         UpdateBeatLines4();
     }
 

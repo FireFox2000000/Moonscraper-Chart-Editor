@@ -15,13 +15,13 @@ public class PrefabGlobals {
         ChartEditor editor = ChartEditor.Instance;
 
         // Collect prefab collider sizes
-        noteColliderSize = GetColliderSize(editor.notePrefab);
-        spColliderSize = GetColliderSize(editor.starpowerPrefab);
-        chartEventColliderSize = GetColliderSize(editor.chartEventPrefab);
-        bpmColliderSize = GetColliderSize(editor.bpmPrefab);
-        tsColliderSize = GetColliderSize(editor.tsPrefab);
-        sectionColliderSize = GetColliderSize(editor.sectionPrefab);
-        eventColliderSize = GetColliderSize(editor.songEventPrefab);
+        noteColliderSize = GetColliderSize(editor.assets.notePrefab);
+        spColliderSize = GetColliderSize(editor.assets.starpowerPrefab);
+        chartEventColliderSize = GetColliderSize(editor.assets.chartEventPrefab);
+        bpmColliderSize = GetColliderSize(editor.assets.bpmPrefab);
+        tsColliderSize = GetColliderSize(editor.assets.tsPrefab);
+        sectionColliderSize = GetColliderSize(editor.assets.sectionPrefab);
+        eventColliderSize = GetColliderSize(editor.assets.songEventPrefab);
 
         hasBeenInitialised = true;
     }

@@ -5,7 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SongObjectPoolManager : MonoBehaviour {
+public class SongObjectPoolManager : SystemManagerState.System
+{
     ChartEditor editor;
 
     const int NOTE_POOL_SIZE = 200;
@@ -32,7 +33,8 @@ public class SongObjectPoolManager : MonoBehaviour {
     List<Note> prevSustainCache = new List<Note>();
 
     // Use this for initialization
-    void Awake () {
+    public SongObjectPoolManager()
+    {
         editor = ChartEditor.Instance;
 
         GameObject groupMovePool = new GameObject("Main Song Object Pool");
@@ -45,37 +47,35 @@ public class SongObjectPoolManager : MonoBehaviour {
         songEventParent = new GameObject("Global Events");
         chartEventParent = new GameObject("Chart Events");
 
-        notePool = new NotePool(noteParent, editor.notePrefab, NOTE_POOL_SIZE);
+        notePool = new NotePool(noteParent, editor.assets.notePrefab, NOTE_POOL_SIZE);
         noteParent.transform.SetParent(groupMovePool.transform);
 
-        spPool = new StarpowerPool(starpowerParent, editor.starpowerPrefab, POOL_SIZE);
+        spPool = new StarpowerPool(starpowerParent, editor.assets.starpowerPrefab, POOL_SIZE);
         starpowerParent.transform.SetParent(groupMovePool.transform);
 
-        bpmPool = new BPMPool(bpmParent, editor.bpmPrefab, POOL_SIZE);
+        bpmPool = new BPMPool(bpmParent, editor.assets.bpmPrefab, POOL_SIZE);
         bpmParent.transform.SetParent(groupMovePool.transform);
 
-        tsPool = new TimesignaturePool(timesignatureParent, editor.tsPrefab, POOL_SIZE);
+        tsPool = new TimesignaturePool(timesignatureParent, editor.assets.tsPrefab, POOL_SIZE);
         timesignatureParent.transform.SetParent(groupMovePool.transform);
 
-        sectionPool = new SectionPool(sectionParent, editor.sectionPrefab, POOL_SIZE);
+        sectionPool = new SectionPool(sectionParent, editor.assets.sectionPrefab, POOL_SIZE);
         sectionParent.transform.SetParent(groupMovePool.transform);
 
-        songEventPool = new EventPool(songEventParent, editor.songEventPrefab, POOL_SIZE);
+        songEventPool = new EventPool(songEventParent, editor.assets.songEventPrefab, POOL_SIZE);
         songEventParent.transform.SetParent(groupMovePool.transform);
 
-        chartEventPool = new ChartEventPool(chartEventParent, editor.chartEventPrefab, POOL_SIZE);
+        chartEventPool = new ChartEventPool(chartEventParent, editor.assets.chartEventPrefab, POOL_SIZE);
         chartEventParent.transform.SetParent(groupMovePool.transform);
-    }
-	
-    void Start()
-    {
+
         EventsManager.onHyperspeedChangeEventList.Add(SetAllPoolsDirty);
         EventsManager.onChartReloadEventList.Add(SetAllPoolsDirty);
         EventsManager.onLeftyFlipToggledEventList.Add(SetAllPoolsDirty);
     }
 
-	// Update is called once per frame
-	void Update () {
+    // Update is called once per frame
+    public override void Update ()
+    {
         if (editor.currentChart.notes.Count > 0)
             EnableNotes(editor.currentChart.notes);
 
@@ -100,7 +100,7 @@ public class SongObjectPoolManager : MonoBehaviour {
 
     public void NewChartReset()
     {
-        if (enabled && notePool != null)
+        if (notePool != null)
         {
             notePool.Reset();
             spPool.Reset();
