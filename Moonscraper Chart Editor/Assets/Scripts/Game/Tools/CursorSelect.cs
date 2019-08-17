@@ -50,7 +50,7 @@ public class CursorSelect : ToolObject
                 // Reset if the user is making a new selection or deselecting the old
                 if (!clickedSelectableObject && !Globals.modifierInputActive && !Globals.secondaryInputActive && !mouseDownOverUI)
                 {
-                    editor.currentSelectedObject = null;
+                    editor.selectedObjectsManager.currentSelectedObject = null;
                 }
 
                 if (/*Globals.viewMode == Globals.ViewMode.Chart &&*/ Mouse.world2DPosition != null && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer())
@@ -74,7 +74,7 @@ public class CursorSelect : ToolObject
             }
 
             // Dragging mouse for group move
-            else if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && editor.currentSelectedObjects.Count > 0 && clickedSelectableObject && !mouseDownOverUI &&
+            else if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && editor.selectedObjectsManager.currentSelectedObjects.Count > 0 && clickedSelectableObject && !mouseDownOverUI &&
                 !Globals.modifierInputActive && !Globals.secondaryInputActive)
             {
                 // Find anchor point
@@ -82,9 +82,9 @@ public class CursorSelect : ToolObject
 
                 if (clickedSelectableObject)
                 {
-                    for (int i = 0; i < editor.currentSelectedObjects.Count; ++i)
+                    for (int i = 0; i < editor.selectedObjectsManager.currentSelectedObjects.Count; ++i)
                     {
-                        if (editor.currentSelectedObjects[i].controller != null && editor.currentSelectedObjects[i].controller.gameObject == clickedSelectableObject)
+                        if (editor.selectedObjectsManager.currentSelectedObjects[i].controller != null && editor.selectedObjectsManager.currentSelectedObjects[i].controller.gameObject == clickedSelectableObject)
                         {
                             anchorPoint = i;
                             break;
@@ -92,7 +92,7 @@ public class CursorSelect : ToolObject
                     }
                 }
 
-                groupMove.StartMoveAction(editor.currentSelectedObjects, anchorPoint, true);
+                groupMove.StartMoveAction(editor.selectedObjectsManager.currentSelectedObjects, anchorPoint, true);
             }
 
             // User has finished creating a group selection area
@@ -119,7 +119,7 @@ public class CursorSelect : ToolObject
             // Check for deselection of all objects
             if (Input.GetMouseButtonUp(0) && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer() && mousePos == Input.mousePosition && !Globals.modifierInputActive)
             {
-                editor.currentSelectedObject = null;
+                editor.selectedObjectsManager.currentSelectedObject = null;
                 mousePos = Vector3.zero;
             }
         }
@@ -227,12 +227,12 @@ public class CursorSelect : ToolObject
 
     void AddToSelection(IEnumerable<SongObject> chartObjects)
     {
-        editor.AddToSelectedObjects((IEnumerable <SongObject>)chartObjects);
+        editor.selectedObjectsManager.AddToSelectedObjects((IEnumerable <SongObject>)chartObjects);
     }
 
     void RemoveFromSelection(IEnumerable<SongObject> chartObjects)
     {
-        editor.RemoveFromSelectedObjects((IEnumerable<SongObject>)chartObjects);
+        editor.selectedObjectsManager.RemoveFromSelectedObjects((IEnumerable<SongObject>)chartObjects);
     }
 
     SongObject[] ScanArea(Vector2 cornerA, Vector2 cornerB, uint minLimitInclusive, uint maxLimitNonInclusive)

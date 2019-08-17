@@ -38,7 +38,7 @@ public class InspectorSwitching : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if ((Toolpane.currentTool == Toolpane.Tools.Cursor) && editor.currentSelectedObjects.Count > 1)
+        if ((Toolpane.currentTool == Toolpane.Tools.Cursor) && editor.selectedObjectsManager.currentSelectedObjects.Count > 1)
         {
             if (!currentPropertiesPanel || currentPropertiesPanel != groupSelectInspector)
             {
@@ -55,34 +55,34 @@ public class InspectorSwitching : MonoBehaviour {
             }
         }
 
-        else if (editor.currentSelectedObject != null)
+        else if (editor.selectedObjectsManager.currentSelectedObject != null)
         {
             GameObject previousPanel = currentPropertiesPanel;
 
-            switch (editor.currentSelectedObjects[0].classID)
+            switch (editor.selectedObjectsManager.currentSelectedObjects[0].classID)
             {
                 case ((int)SongObject.ID.Note):
-                    noteInspector.currentNote = (Note)editor.currentSelectedObject;
+                    noteInspector.currentNote = (Note)editor.selectedObjectsManager.currentSelectedObject;
                     currentPropertiesPanel = noteInspector.gameObject;
                     break;
                 case ((int)SongObject.ID.Section):
-                    sectionInspector.currentSection = (Section)editor.currentSelectedObject;
+                    sectionInspector.currentSection = (Section)editor.selectedObjectsManager.currentSelectedObject;
                     currentPropertiesPanel = sectionInspector.gameObject;
                     break;
                 case ((int)SongObject.ID.BPM):
-                    bpmInspector.currentBPM = (BPM)editor.currentSelectedObject;
+                    bpmInspector.currentBPM = (BPM)editor.selectedObjectsManager.currentSelectedObject;
                     currentPropertiesPanel = bpmInspector.gameObject;
                     break;
                 case ((int)SongObject.ID.TimeSignature):
-                    tsInspector.currentTS = (TimeSignature)editor.currentSelectedObject;
+                    tsInspector.currentTS = (TimeSignature)editor.selectedObjectsManager.currentSelectedObject;
                     currentPropertiesPanel = tsInspector.gameObject;
                     break;
                 case ((int)SongObject.ID.Event):
-                    eventInspector.currentEvent = (Event)editor.currentSelectedObject;
+                    eventInspector.currentEvent = (Event)editor.selectedObjectsManager.currentSelectedObject;
                     currentPropertiesPanel = eventInspector.gameObject;
                     break;
                 case ((int)SongObject.ID.ChartEvent):
-                    eventInspector.currentChartEvent = (ChartEvent)editor.currentSelectedObject;
+                    eventInspector.currentChartEvent = (ChartEvent)editor.selectedObjectsManager.currentSelectedObject;
                     currentPropertiesPanel = eventInspector.gameObject;
                     break;
                 default:

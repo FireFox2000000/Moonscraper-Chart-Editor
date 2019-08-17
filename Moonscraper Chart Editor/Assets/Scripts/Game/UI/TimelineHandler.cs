@@ -332,11 +332,11 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         bool highlightIndicatorActive = false;
         ChartEditor editor = ChartEditor.Instance;
 
-        if (editor.currentSelectedObjects.Count > 0)
+        if (editor.selectedObjectsManager.currentSelectedObjects.Count > 0)
         {
             uint highlightRangeMin = uint.MaxValue, highlightRangeMax = 0;
 
-            foreach (SongObject so in editor.currentSelectedObjects)
+            foreach (SongObject so in editor.selectedObjectsManager.currentSelectedObjects)
             {
                 if (so.tick < highlightRangeMin)
                     highlightRangeMin = so.tick;

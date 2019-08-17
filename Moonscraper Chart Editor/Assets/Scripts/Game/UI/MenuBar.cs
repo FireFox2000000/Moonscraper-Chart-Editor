@@ -139,7 +139,7 @@ public class MenuBar : UpdateableService {
             editor = ChartEditor.Instance;
 
         editor.LoadChart(editor.currentSong.GetChart(currentInstrument, currentDifficulty));
-        editor.currentSelectedObject = null;
+        editor.selectedObjectsManager.currentSelectedObject = null;
 
         EventsManager.FireChartReloadedEvent();
 

@@ -44,7 +44,7 @@ public class PlaceTimesignature : PlaceSongObject {
             else if (searchArray[pos].tick != 0)
             {
                 editor.commandStack.Push(new SongEditDelete(searchArray[pos]));
-                editor.currentSelectedObject = null;
+                editor.selectedObjectsManager.currentSelectedObject = null;
             }
         }
     }
@@ -52,6 +52,6 @@ public class PlaceTimesignature : PlaceSongObject {
     protected override void AddObject()
     {
         editor.commandStack.Push(new SongEditAdd(new TimeSignature(ts)));
-        editor.SelectSongObject(ts, editor.currentSong.syncTrack);
+        editor.selectedObjectsManager.SelectSongObject(ts, editor.currentSong.syncTrack);
     }
 }

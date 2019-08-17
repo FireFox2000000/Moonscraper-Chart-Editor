@@ -30,7 +30,7 @@ public abstract class PlaceSongObject : ToolObject {
 
     public override void ToolDisable()
     {
-        editor.currentSelectedObject = null;
+        editor.selectedObjectsManager.currentSelectedObject = null;
     }
 
     protected virtual void OnEnable()

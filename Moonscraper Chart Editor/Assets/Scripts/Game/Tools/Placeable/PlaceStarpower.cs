@@ -91,7 +91,7 @@ public class PlaceStarpower : PlaceSongObject {
 
     protected override void OnEnable()
     {
-        editor.currentSelectedObject = starpower;
+        editor.selectedObjectsManager.currentSelectedObject = starpower;
 
         base.OnEnable();
     }

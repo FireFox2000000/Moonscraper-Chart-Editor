@@ -47,48 +47,50 @@ public class NoteController : SongObjectController {
     {
         if (Toolpane.currentTool == Toolpane.Tools.Cursor && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
         {
+            var selectedObjectsManager = editor.selectedObjectsManager;
+
             // Ctrl-clicking
             if (Globals.modifierInputActive)
             {
-                if (editor.IsSelected(songObject))
-                    editor.RemoveFromSelectedObjects(songObject);
+                if (selectedObjectsManager.IsSelected(songObject))
+                    selectedObjectsManager.RemoveFromSelectedObjects(songObject);
                 else
-                    editor.AddToSelectedObjects(songObject);
+                    selectedObjectsManager.AddToSelectedObjects(songObject);
             }
             // Shift-clicking
             else if (Globals.secondaryInputActive)
             {
-                int pos = SongObjectHelper.FindClosestPosition(this.songObject, editor.currentSelectedObjects);
+                int pos = SongObjectHelper.FindClosestPosition(this.songObject, editor.selectedObjectsManager.currentSelectedObjects);
 
                 if (pos != SongObjectHelper.NOTFOUND)
                 {
                     uint min;
                     uint max;
 
-                    if (editor.currentSelectedObjects[pos].tick > songObject.tick)
+                    if (editor.selectedObjectsManager.currentSelectedObjects[pos].tick > songObject.tick)
                     {
-                        max = editor.currentSelectedObjects[pos].tick;
+                        max = editor.selectedObjectsManager.currentSelectedObjects[pos].tick;
                         min = songObject.tick;
                     }
                     else
                     {
-                        min = editor.currentSelectedObjects[pos].tick;
+                        min = editor.selectedObjectsManager.currentSelectedObjects[pos].tick;
                         max = songObject.tick;
                     }
 
                     var chartObjects = editor.currentChart.chartObjects;
                     int index, length;
                     SongObjectHelper.GetRange(chartObjects, min, max, out index, out length);
-                    editor.SetCurrentSelectedObjects(chartObjects, index, length);
+                    selectedObjectsManager.SetCurrentSelectedObjects(chartObjects, index, length);
                 }
             }
             // Regular clicking
-            else if (!editor.IsSelected(songObject))
+            else if (!selectedObjectsManager.IsSelected(songObject))
             {
                 if (ShortcutInput.GetInput(Shortcut.ChordSelect))
-                    editor.SetCurrentSelectedObjects(note.chord);
+                    selectedObjectsManager.SetCurrentSelectedObjects(note.chord);
                 else
-                    editor.currentSelectedObject = songObject;
+                    selectedObjectsManager.currentSelectedObject = songObject;
             }
         }
 

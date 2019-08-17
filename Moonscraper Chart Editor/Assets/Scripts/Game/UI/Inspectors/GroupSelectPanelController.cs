@@ -66,7 +66,7 @@ public class GroupSelectPanelController : MonoBehaviour
 
         List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
         
-        foreach (ChartObject chartObject in editor.currentSelectedObjects)
+        foreach (ChartObject chartObject in editor.selectedObjectsManager.currentSelectedObjects)
         {
             if (chartObject.classID == (int)SongObject.ID.Note && chartObject.song != null) // check null in case note was already deleted when overwritten by changing a note before it
             {
@@ -86,7 +86,7 @@ public class GroupSelectPanelController : MonoBehaviour
         }
 
         editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
-        editor.TryFindAndSelectSongObjects(selected);
+        editor.selectedObjectsManager.TryFindAndSelectSongObjects(selected);
     }
 
     public void SetZeroSustain()
@@ -105,7 +105,7 @@ public class GroupSelectPanelController : MonoBehaviour
 
         List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
 
-        foreach (ChartObject chartObject in editor.currentSelectedObjects)
+        foreach (ChartObject chartObject in editor.selectedObjectsManager.currentSelectedObjects)
         {
             if (chartObject.classID == (int)SongObject.ID.Note)
             {
@@ -147,7 +147,7 @@ public class GroupSelectPanelController : MonoBehaviour
         List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
         List<ChartObject> objectsToSelect = new List<ChartObject>();
 
-        foreach (ChartObject chartObject in editor.currentSelectedObjects)
+        foreach (ChartObject chartObject in editor.selectedObjectsManager.currentSelectedObjects)
         {
             if (chartObject.classID == (int)SongObject.ID.Note)
             {

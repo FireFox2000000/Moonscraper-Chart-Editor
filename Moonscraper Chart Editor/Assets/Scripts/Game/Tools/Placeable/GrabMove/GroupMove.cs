@@ -111,7 +111,7 @@ public class GroupMove : ToolObject
         editor.commandStack.Pop();
         editor.commandStack.Push(moveAction);
 
-        editor.TryFindAndSelectSongObjects(movingSongObjects);
+        editor.selectedObjectsManager.TryFindAndSelectSongObjects(movingSongObjects);
 
         Reset();
     }
@@ -206,7 +206,7 @@ public class GroupMove : ToolObject
         sectionsToEnable.AddRange(movingSongObjects.OfType<Section>().ToArray());
         eventsToEnable.AddRange(movingSongObjects.OfType<Event>().ToArray());
 
-        editor.currentSelectedObject = null;
+        editor.selectedObjectsManager.currentSelectedObject = null;
     }
 
     public override void ToolDisable()

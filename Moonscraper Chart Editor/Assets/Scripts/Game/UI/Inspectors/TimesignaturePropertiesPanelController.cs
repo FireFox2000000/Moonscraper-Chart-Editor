@@ -73,7 +73,7 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
                 TimeSignature newTs = new TimeSignature(currentTS.tick, numerator, currentTS.denominator);
                 var command = new SongEditModify<TimeSignature>(currentTS, newTs);
                 editor.commandStack.Push(command);
-                editor.SelectSongObject(newTs, editor.currentSong.syncTrack);
+                editor.selectedObjectsManager.SelectSongObject(newTs, editor.currentSong.syncTrack);
             }
         }
     }
@@ -111,7 +111,7 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
             TimeSignature newTs = new TimeSignature(currentTS.tick, currentTS.numerator, pow);
             var command = new SongEditModify<TimeSignature>(currentTS, newTs);
             editor.commandStack.Push(command);
-            var selected = editor.SelectSongObject(newTs, editor.currentSong.timeSignatures);
+            var selected = editor.selectedObjectsManager.SelectSongObject(newTs, editor.currentSong.timeSignatures);
             tsDenomValue.text = selected.denominator.ToString();
         }
     }
@@ -133,7 +133,7 @@ public class TimesignaturePropertiesPanelController : PropertiesPanelController 
             TimeSignature newTs = new TimeSignature(currentTS.tick, currentTS.numerator, pow);
             var command = new SongEditModify<TimeSignature>(currentTS, newTs);
             editor.commandStack.Push(command);
-            var selected = editor.SelectSongObject(newTs, editor.currentSong.timeSignatures);
+            var selected = editor.selectedObjectsManager.SelectSongObject(newTs, editor.currentSong.timeSignatures);
             tsDenomValue.text = selected.denominator.ToString();
         }
     }

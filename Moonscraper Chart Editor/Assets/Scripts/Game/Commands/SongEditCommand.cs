@@ -66,7 +66,7 @@ public abstract class SongEditCommand : ICommand {
             return;
 
         selectedSongObjects.Clear();
-        foreach (SongObject so in ChartEditor.Instance.currentSelectedObjects)
+        foreach (SongObject so in ChartEditor.Instance.selectedObjectsManager.currentSelectedObjects)
         {
             selectedSongObjects.Add(so.Clone());
         }
@@ -103,7 +103,7 @@ public abstract class SongEditCommand : ICommand {
         editor.currentSong.UpdateCache();
 
         if (Toolpane.currentTool != Toolpane.Tools.Note)
-            editor.currentSelectedObject = null;
+            editor.selectedObjectsManager.currentSelectedObject = null;
 
         ChartEditor.isDirty = true;
 
@@ -114,7 +114,7 @@ public abstract class SongEditCommand : ICommand {
             editor.FillUndoRedoSnapInfo(jumpInfo.jumpToPos.Value, jumpInfo.viewMode);
         }
 
-        editor.TryFindAndSelectSongObjects(selectedSongObjects);
+        editor.selectedObjectsManager.TryFindAndSelectSongObjects(selectedSongObjects);
         selectedSongObjects.Clear();
     }
 

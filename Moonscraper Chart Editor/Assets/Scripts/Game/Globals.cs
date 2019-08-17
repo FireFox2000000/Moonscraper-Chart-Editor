@@ -207,7 +207,7 @@ public class Globals : MonoBehaviour {
         else if (ShortcutInput.GetInputDown(Shortcut.StepDecrease))
             GameSettings.snappingStep.Decrement();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.Delete) && editor.currentSelectedObjects.Count > 0)
+        else if (ShortcutInput.GetInputDown(Shortcut.Delete) && editor.selectedObjectsManager.currentSelectedObjects.Count > 0)
             editor.Delete();
 
         else if (ShortcutInput.GetInputDown(Shortcut.ToggleMetronome))
@@ -242,12 +242,12 @@ public class Globals : MonoBehaviour {
         else if (ShortcutInput.GetInputDown(Shortcut.SelectAll))
         {
             services.toolpanelController.SetCursor();
-            HighlightAll();
+            editor.selectedObjectsManager.SelectAllInView(viewMode);
         }
         else if (ShortcutInput.GetInputDown(Shortcut.SelectAllSection))
         {
             services.toolpanelController.SetCursor();
-            HighlightCurrentSection();
+            editor.selectedObjectsManager.HighlightCurrentSection(viewMode);
         }
 
         if (!Input.GetMouseButton(0) && !Input.GetMouseButton(1))
@@ -279,7 +279,7 @@ public class Globals : MonoBehaviour {
             }
         }
 
-        if (editor.currentSelectedObjects.Count > 0)
+        if (editor.selectedObjectsManager.currentSelectedObjects.Count > 0)
         {
             if (ShortcutInput.GetInputDown(Shortcut.ClipboardCut))
                 editor.Cut();
@@ -296,73 +296,6 @@ public class Globals : MonoBehaviour {
         // Delete autosaved chart. If chart is not deleted then that means there may have been a problem like a crash and the autosave should be reloaded the next time the program is opened. 
         if (File.Exists(autosaveLocation))
             File.Delete(autosaveLocation);
-    }
-
-    void HighlightAll()
-    {
-        editor.currentSelectedObject = null;
-
-        if (viewMode == ViewMode.Chart)
-        {
-            editor.currentSelectedObjects = editor.currentChart.chartObjects.ToArray();
-        }
-        else
-        {
-            editor.currentSelectedObjects = editor.currentSong.syncTrack.ToArray();
-            editor.AddToSelectedObjects(editor.currentSong.eventsAndSections.ToArray());
-        }
-    }
-
-    delegate void SongObjectSelectedManipFn(System.Collections.Generic.IEnumerable<SongObject> songObjects);
-    void HighlightCurrentSection()
-    {
-        editor.currentSelectedObject = null;
-
-        AddHighlightCurrentSection();
-    }
-
-    public void AddHighlightCurrentSection(int sectionOffset = 0)
-    {
-        HighlightCurrentSection(editor.AddToSelectedObjects, sectionOffset);
-    }
-
-    public void RemoveHighlightCurrentSection(int sectionOffset = 0)
-    {
-        HighlightCurrentSection(editor.RemoveFromSelectedObjects, sectionOffset);
-    }
-
-    public void AddOrRemoveHighlightCurrentSection()
-    {
-        HighlightCurrentSection(editor.AddOrRemoveSelectedObjects);
-    }
-
-    void HighlightCurrentSection(SongObjectSelectedManipFn manipFn, int sectionOffset = 0)
-    {
-        // Get the previous and next section
-        uint currentPos = editor.currentTickPos;
-        var sections = editor.currentSong.sections;
-        int maxSectionIndex = 0;
-        while (maxSectionIndex < sections.Count && !(sections[maxSectionIndex].tick > currentPos))
-        {
-            ++maxSectionIndex;
-        }
-
-        maxSectionIndex += sectionOffset;
-
-        uint rangeMin = (maxSectionIndex - 1) >= 0 ? sections[maxSectionIndex - 1].tick : 0;
-        uint rangeMax = maxSectionIndex < sections.Count ? sections[maxSectionIndex].tick : uint.MaxValue;
-        if (rangeMax > 0)
-            --rangeMax;
-
-        if (viewMode == ViewMode.Chart)
-        {
-            manipFn(SongObjectHelper.GetRangeCopy(editor.currentChart.chartObjects.ToArray(), rangeMin, rangeMax));
-        }
-        else
-        {
-            manipFn(SongObjectHelper.GetRangeCopy(editor.currentSong.syncTrack.ToArray(), rangeMin, rangeMax));
-            manipFn(SongObjectHelper.GetRangeCopy(editor.currentSong.eventsAndSections.ToArray(), rangeMin, rangeMax));
-        }
     }
 
     public static void DeselectCurrentUI()

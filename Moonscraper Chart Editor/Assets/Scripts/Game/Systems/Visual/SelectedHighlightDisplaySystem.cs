@@ -31,7 +31,7 @@ public class SelectedHighlightDisplaySystem : SystemManagerState.System
 	// Update is called once per frame
 	public override void Update () {
         int index, length;
-        IList<SongObject> viewRange = editor.currentSelectedObjects;
+        IList<SongObject> viewRange = editor.selectedObjectsManager.currentSelectedObjects;
         SongObjectHelper.GetRange(viewRange, editor.minPos, editor.maxPos, out index, out length);
 
         bool validTool = Toolpane.currentTool != Toolpane.Tools.Note && Toolpane.currentTool != Toolpane.Tools.Starpower;

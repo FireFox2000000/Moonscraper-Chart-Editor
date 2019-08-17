@@ -61,7 +61,7 @@ public abstract class SongObjectController : SelectableClick {
         get
         {
             return Toolpane.currentTool == Toolpane.Tools.Cursor && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1) 
-                && editor.currentSelectedObject != null;
+                && editor.selectedObjectsManager.currentSelectedObject != null;
         }
     }
 
@@ -137,51 +137,53 @@ public abstract class SongObjectController : SelectableClick {
             // Shift-clicking
             // Find the closest object already selected
             // Select all objects in range of that found and the clicked object
-            
+
+            var selectedObjectsManager = editor.selectedObjectsManager;
+
             if (Globals.viewMode == Globals.ViewMode.Chart && (Globals.modifierInputActive || Globals.secondaryInputActive))
             {
                 // Ctrl-clicking
                 if (Globals.modifierInputActive)
                 {
-                    if (editor.IsSelected(songObject))
-                        editor.RemoveFromSelectedObjects(songObject);
+                    if (selectedObjectsManager.IsSelected(songObject))
+                        selectedObjectsManager.RemoveFromSelectedObjects(songObject);
                     else
-                        editor.AddToSelectedObjects(songObject);
+                        selectedObjectsManager.AddToSelectedObjects(songObject);
                 }
                 // Shift-clicking
                 else
                 {
-                    int pos = SongObjectHelper.FindClosestPosition(this.songObject, editor.currentSelectedObjects);
+                    int pos = SongObjectHelper.FindClosestPosition(this.songObject, editor.selectedObjectsManager.currentSelectedObjects);
 
                     if (pos != SongObjectHelper.NOTFOUND)
                     {
                         uint min;
                         uint max;
 
-                        if (editor.currentSelectedObjects[pos].tick > songObject.tick)
+                        if (editor.selectedObjectsManager.currentSelectedObjects[pos].tick > songObject.tick)
                         {
-                            max = editor.currentSelectedObjects[pos].tick;
+                            max = editor.selectedObjectsManager.currentSelectedObjects[pos].tick;
                             min = songObject.tick;
                         }
                         else
                         {
-                            min = editor.currentSelectedObjects[pos].tick;
+                            min = editor.selectedObjectsManager.currentSelectedObjects[pos].tick;
                             max = songObject.tick;
                         }
 
                         var chartObjects = editor.currentChart.chartObjects;
                         int index, length;
                         SongObjectHelper.GetRange(chartObjects, min, max, out index, out length);
-                        editor.currentSelectedObjects.Clear();
+                        editor.selectedObjectsManager.currentSelectedObjects.Clear();
                         for (int i = index; i < index + length; ++i)
                         {
-                            editor.currentSelectedObjects.Add(chartObjects[i]);
+                            editor.selectedObjectsManager.currentSelectedObjects.Add(chartObjects[i]);
                         }
                     }
                 }
             }
-            else if (!editor.IsSelected(songObject))
-                editor.currentSelectedObject = songObject;
+            else if (!selectedObjectsManager.IsSelected(songObject))
+                selectedObjectsManager.currentSelectedObject = songObject;
         }
 
         // Delete the object on erase tool or by holding right click and pressing left-click
@@ -196,7 +198,7 @@ public abstract class SongObjectController : SelectableClick {
                     Debug.Log("Deleted " + songObject + " at position " + songObject.tick + " with hold-right left-click shortcut");
                     editor.commandStack.Push(new SongEditDelete(songObject));
                 }
-                editor.currentSelectedObject = null;
+                editor.selectedObjectsManager.currentSelectedObject = null;
             }
         }
     }

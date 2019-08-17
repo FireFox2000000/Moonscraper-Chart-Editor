@@ -270,7 +270,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         {
             editor.commandStack.Push(command);
             int newBpmPos = SongObjectHelper.FindObjectPosition(currentBPM.tick, editor.currentSong.bpms);
-            editor.SelectSongObject(editor.currentSong.bpms[newBpmPos], editor.currentSong.bpms);
+            editor.selectedObjectsManager.SelectSongObject(editor.currentSong.bpms[newBpmPos], editor.currentSong.bpms);
         }
         else
             editor.commandStack.Push();     // Popped at the start, need to redo push as pop wasn't replaced
@@ -392,7 +392,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             newBpm.anchor = null;
 
         editor.commandStack.Push(new SongEditModify<BPM>(currentBPM, newBpm));
-        editor.SelectSongObject(newBpm, editor.currentSong.syncTrack);
+        editor.selectedObjectsManager.SelectSongObject(newBpm, editor.currentSong.syncTrack);
 
         Debug.Log("Anchor toggled to: " + newBpm.anchor);
     }

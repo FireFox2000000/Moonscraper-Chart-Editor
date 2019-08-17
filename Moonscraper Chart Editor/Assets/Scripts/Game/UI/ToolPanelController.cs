@@ -113,7 +113,7 @@ public class ToolPanelController : MonoBehaviour {
         }
 
         if (Toolpane.currentTool != Toolpane.Tools.Note)        // Allows the note panel to pop up instantly
-            editor.currentSelectedObject = null;
+            editor.selectedObjectsManager.currentSelectedObject = null;
 
         EventsManager.FireViewModeSwitchEvent();
     }

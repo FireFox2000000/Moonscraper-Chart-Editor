@@ -183,7 +183,7 @@ public class PlaceNote : PlaceSongObject {
     protected override void AddObject()
     {
         editor.commandStack.Push(new SongEditAdd(this.note));
-        editor.SelectSongObject(note, editor.currentChart.notes);
+        editor.selectedObjectsManager.SelectSongObject(note, editor.currentChart.notes);
     }
 
     protected static void standardOverwriteOpen(Note note)

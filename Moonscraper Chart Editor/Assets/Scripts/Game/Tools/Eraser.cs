@@ -10,7 +10,7 @@ public class Eraser : ToolObject {
 
     public override void ToolEnable()
     {
-        editor.currentSelectedObject = null;
+        editor.selectedObjectsManager.currentSelectedObject = null;
     }
 
     public override void ToolDisable()

@@ -68,6 +68,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public ErrorManager errorManager { get; private set; }
     public static bool hasFocus { get { return Application.isFocused; } }
 
+    public SelectedObjectsManager selectedObjectsManager;
     public CommandStack commandStack;
 
     public enum State
@@ -128,6 +129,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     void Awake () {
         Debug.Log("Initialising " + versionNumber.text);
         assets = GetComponent<ChartEditorAssets>();
+        selectedObjectsManager = new SelectedObjectsManager(this);
 
         _minPos = 0;
         _maxPos = 0;
@@ -340,7 +342,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         movement.SetPosition(0);
         //StartCoroutine(resetLag());
 
-        currentSelectedObject = null;
+        selectedObjectsManager.currentSelectedObject = null;
         isDirty = true;
     }
     /*
@@ -559,7 +561,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
         yield return StartCoroutine(_Load(currentFileName));
 
-        currentSelectedObject = null;
+        selectedObjectsManager.currentSelectedObject = null;
     }
 
     void LoadSong(Song song, bool awake = false)
@@ -732,8 +734,8 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public void Play()
     {
         selectedBeforePlay.Clear();
-        selectedBeforePlay.AddRange(currentSelectedObjects);
-        currentSelectedObject = null;
+        selectedBeforePlay.AddRange(selectedObjectsManager.currentSelectedObjects);
+        selectedObjectsManager.currentSelectedObject = null;
 
         if (GameSettings.bot && GameSettings.resetAfterPlay)
             stopResetPos = movement.transform.position;
@@ -815,12 +817,12 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
             if (Globals.viewMode == Globals.ViewMode.Chart)
             {
                 if (selectedBeforePlay[0].GetType().IsSubclassOf(typeof(ChartObject)))
-                    currentSelectedObjects = selectedBeforePlay;
+                    selectedObjectsManager.currentSelectedObjects = selectedBeforePlay;
             }
             else
             {
                 if (!selectedBeforePlay[0].GetType().IsSubclassOf(typeof(ChartObject)))
-                    currentSelectedObjects = selectedBeforePlay;
+                    selectedObjectsManager.currentSelectedObjects = selectedBeforePlay;
             }
         }
 
@@ -829,144 +831,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         GameSettings.bot = true;
         stopResetPos = null;
     }
-    #endregion
-
-    #region Selected Objects Management Functions
-
-    public void AddToSelectedObjects(SongObject songObjects)
-    {
-        AddToSelectedObjects(new SongObject[] { songObjects });
-    }
-
-    public void AddToSelectedObjects(System.Collections.Generic.IEnumerable<SongObject> songObjects)
-    {
-        var selectedObjectsList = new System.Collections.Generic.List<SongObject>(currentSelectedObjects);
-
-        foreach (SongObject songObject in songObjects)
-        {
-            if (!selectedObjectsList.Contains(songObject))
-            {
-                int pos = SongObjectHelper.FindClosestPosition(songObject, selectedObjectsList);
-                if (pos != SongObjectHelper.NOTFOUND)
-                {
-                    if (selectedObjectsList[pos] > songObject)
-                        selectedObjectsList.Insert(pos, songObject);
-                    else
-                        selectedObjectsList.Insert(pos + 1, songObject);
-                }
-                else
-                    selectedObjectsList.Add(songObject);
-            }
-        }
-
-        currentSelectedObjects = selectedObjectsList;
-    }
-
-    public void RemoveFromSelectedObjects(SongObject songObjects)
-    {
-        RemoveFromSelectedObjects(new SongObject[] { songObjects });
-    }
-
-    public void RemoveFromSelectedObjects(System.Collections.Generic.IEnumerable<SongObject> songObjects)
-    {
-        var selectedObjectsList = new System.Collections.Generic.List<SongObject>(currentSelectedObjects);
-
-        foreach (SongObject songObject in songObjects)
-        {
-            selectedObjectsList.Remove(songObject);
-        }
-
-        currentSelectedObjects = selectedObjectsList;
-    }
-
-    public void AddOrRemoveSelectedObjects(System.Collections.Generic.IEnumerable<SongObject> songObjects)
-    {
-        var selectedObjectsList = new System.Collections.Generic.List<SongObject>(currentSelectedObjects);
-
-        foreach (SongObject songObject in songObjects)
-        {
-            if (!selectedObjectsList.Contains(songObject))
-            {
-                AddToSelectedObjects(songObject);
-            }
-            else
-            {
-                RemoveFromSelectedObjects(songObject);
-            }
-        }
-    }
-
-    public bool IsSelected(SongObject songObject)
-    {
-        return (SongObjectHelper.FindObjectPosition(songObject, currentSelectedObjects) != SongObjectHelper.NOTFOUND);
-    }
-
-    public T SelectSongObject<T>(T songObject, IList<T> arrToSearch) where T : SongObject
-    {
-        int insertionIndex = SongObjectHelper.FindObjectPosition(songObject, arrToSearch);
-        Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Failed to find songObject to highlight");
-        currentSelectedObject = arrToSearch[insertionIndex];
-        return currentSelectedObject as T;
-    }
-
-    List<SongObject> foundSongObjects = new List<SongObject>();
-    public void TryFindAndSelectSongObjects(IList<SongObject> songObjects)
-    {
-        Song song = currentSong;
-        Chart chart = currentChart;
-        foundSongObjects.Clear();
-
-        foreach (SongObject so in songObjects)
-        {
-            ChartObject chartObject = so as ChartObject;
-            SyncTrack syncTrack = so as SyncTrack;
-            Event eventObject = so as Event;
-            if (chartObject != null)
-            {
-                int insertionIndex = SongObjectHelper.FindObjectPosition(chartObject, chart.chartObjects);
-                if (insertionIndex != SongObjectHelper.NOTFOUND)
-                {
-                    foundSongObjects.Add(chart.chartObjects[insertionIndex]);
-                }
-                else
-                {
-                    Debug.LogWarning("Failed to find chart object to highlight");
-                }
-            }
-            else if (syncTrack != null)
-            {
-                int insertionIndex = SongObjectHelper.FindObjectPosition(syncTrack, song.syncTrack);
-                if (insertionIndex != SongObjectHelper.NOTFOUND)
-                {
-                    foundSongObjects.Add(song.syncTrack[insertionIndex]);
-                }
-                else
-                {
-                    Debug.LogWarning("Failed to find synctrack to highlight");
-                }
-            }
-            else if (eventObject != null)
-            {
-                int insertionIndex = SongObjectHelper.FindObjectPosition(eventObject, song.eventsAndSections);
-                if (insertionIndex != SongObjectHelper.NOTFOUND)
-                {
-                    foundSongObjects.Add(song.eventsAndSections[insertionIndex]);
-                }
-                else
-                {
-                    Debug.LogWarning("Failed to find event to highlight");
-                }
-            }
-            else
-            {
-                Debug.LogError("Unable to handle object " + so.ToString());
-            }
-        }
-
-        currentSelectedObjects = foundSongObjects;
-        foundSongObjects.Clear();
-    }
-
     #endregion
 
     #region Undo/Redo/Cut/Copy/Paste etc...
@@ -1031,21 +895,21 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         const float DEFAULT_LEFT = -2;
         const float DEFAULT_RIGHT = 2;
 
-        var songObjectsCopy = new SongObject[currentSelectedObjects.Count];
+        var songObjectsCopy = new SongObject[selectedObjectsManager.currentSelectedObjects.Count];
         float? left = null, right = null;
         float position = 0;
 
         bool containsNotes = false;
 
         // Scan through all the current objects to determine width of scanned area
-        for (int i = 0; i < currentSelectedObjects.Count; ++i)
+        for (int i = 0; i < selectedObjectsManager.currentSelectedObjects.Count; ++i)
         {
-            if (!containsNotes && currentSelectedObjects[i].GetType() == typeof(Note))
+            if (!containsNotes && selectedObjectsManager.currentSelectedObjects[i].GetType() == typeof(Note))
                 containsNotes = true;
 
-            songObjectsCopy[i] = currentSelectedObjects[i].Clone();
+            songObjectsCopy[i] = selectedObjectsManager.currentSelectedObjects[i].Clone();
 
-            position = SongObjectController.GetXPos(currentSelectedObjects[i]);
+            position = SongObjectController.GetXPos(selectedObjectsManager.currentSelectedObjects[i]);
 
             if (left == null || position < left)
                 left = position;
@@ -1072,7 +936,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         Vector2 upperRight = Vector2.zero;
         var area = new Clipboard.SelectionArea();
 
-        if (currentSelectedObjects.Count > 0)
+        if (selectedObjectsManager.currentSelectedObjects.Count > 0)
         {
             bottomLeft = new Vector2((float)left, currentSong.TickToWorldYPosition(songObjectsCopy[0].tick));
             upperRight = new Vector2((float)right, currentSong.TickToWorldYPosition(songObjectsCopy[songObjectsCopy.Length - 1].tick));
@@ -1084,18 +948,18 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
     public void Delete()
     {
-        if (currentSelectedObjects.Count > 0)
+        if (selectedObjectsManager.currentSelectedObjects.Count > 0)
         {
             SongEditCommand[] commands = new SongEditCommand[]
             {
-                new SongEditDelete(currentSelectedObjects),
+                new SongEditDelete(selectedObjectsManager.currentSelectedObjects),
 
             };
 
             BatchedSongEditCommand commandBatch = new BatchedSongEditCommand(commands);
             commandStack.Push(commandBatch);
 
-            currentSelectedObject = null;
+            selectedObjectsManager.currentSelectedObject = null;
 
             groupSelect.reset();
         }
@@ -1105,67 +969,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     {
         Copy();
         Delete();
-    }
-
-    #endregion
-
-    #region Selected object management
-
-    public SongObject currentSelectedObject
-    {
-        get
-        {
-            if (currentSelectedObjects.Count == 1)
-                return currentSelectedObjects[0];
-            else
-                return null;
-        }
-        set
-        {
-            currentSelectedObjects.Clear();
-            if (value != null)
-            {
-                currentSelectedObjects.Add(value);
-            }
-
-            timeHandler.RefreshHighlightIndicator();
-        }
-    }
-
-
-    List<SongObject> m_currentSelectedObjects = new List<SongObject>();
-    public IList<SongObject> currentSelectedObjects
-    {
-        get
-        {
-            return m_currentSelectedObjects;
-        }
-        set
-        {
-            SetCurrentSelectedObjects(value);
-        }
-    }
-
-    public void SetCurrentSelectedObjects<T>(IEnumerable<T> list) where T : SongObject
-    {
-        m_currentSelectedObjects.Clear();
-
-        foreach (T so in list)
-        {
-            m_currentSelectedObjects.Add(so);
-        }
-
-        timeHandler.RefreshHighlightIndicator();
-    }
-
-    public void SetCurrentSelectedObjects<T>(IList<T> list, int index, int length) where T : SongObject
-    {
-        m_currentSelectedObjects.Clear();
-        for (int i = index; i < index + length; ++i)
-        {
-            m_currentSelectedObjects.Add(list[i]);
-        }
-        timeHandler.RefreshHighlightIndicator();
     }
 
     #endregion

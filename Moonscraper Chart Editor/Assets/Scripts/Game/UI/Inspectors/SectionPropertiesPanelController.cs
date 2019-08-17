@@ -60,7 +60,7 @@ public class SectionPropertiesPanelController : PropertiesPanelController {
         {
             Section newSection = new Section(name, currentSection.tick);
             editor.commandStack.Push(new SongEditModify<Section>(currentSection, newSection));
-            editor.SelectSongObject(newSection, editor.currentSong.sections);
+            editor.selectedObjectsManager.SelectSongObject(newSection, editor.currentSong.sections);
         }
     }
 }

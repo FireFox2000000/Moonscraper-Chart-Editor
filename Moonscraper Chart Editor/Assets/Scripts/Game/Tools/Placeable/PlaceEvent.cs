@@ -22,7 +22,7 @@ public class PlaceEvent : PlaceSongObject
     protected override void AddObject()
     {
         editor.commandStack.Push(new SongEditAdd(new Event(this.songEvent)));
-        editor.SelectSongObject(songEvent, editor.currentSong.events);
+        editor.selectedObjectsManager.SelectSongObject(songEvent, editor.currentSong.events);
     }
 
     protected override void Controls()
@@ -38,7 +38,7 @@ public class PlaceEvent : PlaceSongObject
                 }
                 // Link to the event already in
                 else
-                    editor.currentSelectedObject = editor.currentSong.events[pos];
+                    editor.selectedObjectsManager.currentSelectedObject = editor.currentSong.events[pos];
             }
         }
         else if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
@@ -52,7 +52,7 @@ public class PlaceEvent : PlaceSongObject
             else
             {
                 editor.commandStack.Push(new SongEditDelete(searchArray[pos]));
-                editor.currentSelectedObject = null;
+                editor.selectedObjectsManager.currentSelectedObject = null;
             }
         }
     }

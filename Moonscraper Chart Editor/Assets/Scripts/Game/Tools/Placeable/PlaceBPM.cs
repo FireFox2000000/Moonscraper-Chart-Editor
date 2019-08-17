@@ -38,7 +38,7 @@ public class PlaceBPM : PlaceSongObject {
             else if (searchArray[pos].tick != 0)
             {
                 editor.commandStack.Push(new SongEditDelete(searchArray[pos]));
-                editor.currentSelectedObject = null;
+                editor.selectedObjectsManager.currentSelectedObject = null;
             }
         }
     }
@@ -65,6 +65,6 @@ public class PlaceBPM : PlaceSongObject {
     protected override void AddObject()
     {
         editor.commandStack.Push(new SongEditAdd(new BPM(bpm)));
-        editor.SelectSongObject(bpm, editor.currentSong.syncTrack);
+        editor.selectedObjectsManager.SelectSongObject(bpm, editor.currentSong.syncTrack);
     }
 }

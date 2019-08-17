@@ -96,13 +96,13 @@ public class PlaceNoteController : ObjectlessTool {
     public override void ToolEnable()
     {
         ResetNoteAdding();
-        editor.currentSelectedObject = multiNote.note;
+        editor.selectedObjectsManager.currentSelectedObject = multiNote.note;
         OnModeSwitch();
     }
 
     public override void ToolDisable()
     {
-        editor.currentSelectedObject = null;
+        editor.selectedObjectsManager.currentSelectedObject = null;
 
         foreach (PlaceNote placeableNotes in allPlaceableNotes)
         {
@@ -127,8 +127,8 @@ public class PlaceNoteController : ObjectlessTool {
         CurrentNotePlacementUpdate();
         SetAllFlags(GetDisplayFlags());
 
-        if (editor.currentSelectedObject == null)
-            editor.currentSelectedObject = multiNote.note;
+        if (editor.selectedObjectsManager.currentSelectedObject == null)
+            editor.selectedObjectsManager.currentSelectedObject = multiNote.note;
     }
 
     void OnKeysModeChanged(bool keyboardModeEnabled)
@@ -484,7 +484,7 @@ public class PlaceNoteController : ObjectlessTool {
         UpdateNoteLinkedListRefs(activeNotes);
 
         Note primaryActiveNote = activeNotes[0].note;
-        editor.currentSelectedObject = primaryActiveNote;
+        editor.selectedObjectsManager.currentSelectedObject = primaryActiveNote;
 
         // Update flags in the note panel
         foreach (PlaceNote note in standardPlaceableNotes)
@@ -527,7 +527,7 @@ public class PlaceNoteController : ObjectlessTool {
             // Otherwise previous note references on note tool and in-chart can get screwed up. No idea how the in-chart ones get affected which scares me. 
             UpdateNoteLinkedListRefs(activeNotes);  
 
-            editor.currentSelectedObject = primaryActiveNote;
+            editor.selectedObjectsManager.currentSelectedObject = primaryActiveNote;
         }
     }
 

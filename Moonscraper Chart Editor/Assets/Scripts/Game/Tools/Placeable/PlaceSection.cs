@@ -29,7 +29,7 @@ public class PlaceSection : PlaceSongObject {
                     AddObject();
                 }
                 else
-                    editor.currentSelectedObject = sectionSearched;
+                    editor.selectedObjectsManager.currentSelectedObject = sectionSearched;
             }
         }
         else if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
@@ -43,7 +43,7 @@ public class PlaceSection : PlaceSongObject {
             else
             {
                 editor.commandStack.Push(new SongEditDelete(searchArray[pos]));
-                editor.currentSelectedObject = null;
+                editor.selectedObjectsManager.currentSelectedObject = null;
             }
         } 
     }
@@ -51,7 +51,7 @@ public class PlaceSection : PlaceSongObject {
     protected override void AddObject()
     {
         editor.commandStack.Push(new SongEditAdd(new Section(this.section)));
-        editor.SelectSongObject(section, editor.currentSong.sections);
+        editor.selectedObjectsManager.SelectSongObject(section, editor.currentSong.sections);
     }
 
     Section sectionSearch(uint pos)

@@ -365,12 +365,12 @@ public class TimelineMovementController : MovementController
         int currentSectionIndex = SongObjectHelper.GetIndexOfPrevious(editor.currentSong.sections, editor.currentTickPos);
         bool changed = currentSectionIndex != sectionHighlightCurrentIndex;
 
-        editor.currentSelectedObject = null;
+        editor.selectedObjectsManager.currentSelectedObject = null;
         sectionHighlightCurrentIndex = currentSectionIndex;
 
         for (int i = 0; Mathf.Abs(i) <= Mathf.Abs(sectionHighlightOffset); i -= (int)Mathf.Sign(sectionHighlightOffset))
         {
-            globals.AddHighlightCurrentSection(i);
+            editor.selectedObjectsManager.AddHighlightCurrentSection(Globals.viewMode, i);
         }
     }
 

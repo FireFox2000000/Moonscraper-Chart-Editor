@@ -51,7 +51,7 @@ public class PlaceChartEvent : PlaceSongObject
     protected override void AddObject()
     {
         editor.commandStack.Push(new SongEditAdd(new ChartEvent(this.chartEvent)));
-        editor.SelectSongObject(chartEvent, editor.currentChart.chartObjects);
+        editor.selectedObjectsManager.SelectSongObject(chartEvent, editor.currentChart.chartObjects);
     }
 
     protected override void Controls()
@@ -67,7 +67,7 @@ public class PlaceChartEvent : PlaceSongObject
                 }
                 // Link to the event already in
                 else
-                    editor.currentSelectedObject = editor.currentChart.events[pos];
+                    editor.selectedObjectsManager.currentSelectedObject = editor.currentChart.events[pos];
             }
         }
         else if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
@@ -81,7 +81,7 @@ public class PlaceChartEvent : PlaceSongObject
             else
             {
                 editor.commandStack.Push(new SongEditDelete(searchArray[pos]));
-                editor.currentSelectedObject = null;
+                editor.selectedObjectsManager.currentSelectedObject = null;
             }
         }
     }
