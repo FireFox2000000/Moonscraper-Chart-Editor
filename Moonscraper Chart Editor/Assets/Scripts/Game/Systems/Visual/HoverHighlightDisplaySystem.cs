@@ -4,7 +4,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class HoverHighlightController : SystemManagerState.System
+public class HoverHighlightDisplaySystem : SystemManagerState.System
 {
     GameObject[] highlights = new GameObject[5];
     GameObject hoverHighlightParent;
@@ -15,7 +15,7 @@ public class HoverHighlightController : SystemManagerState.System
     List<GameObject> songObjects = new List<GameObject>();
 
     // Use this for initialization
-    public HoverHighlightController(ChartEditorAssets assets) {
+    public HoverHighlightDisplaySystem(ChartEditorAssets assets) {
         hoverHighlightParent = new GameObject("Hover Highlights");
 
         GameObject hoverHighlight = assets.hoverHighlight;

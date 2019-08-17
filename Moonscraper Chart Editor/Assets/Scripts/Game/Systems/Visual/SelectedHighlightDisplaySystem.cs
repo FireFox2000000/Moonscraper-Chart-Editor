@@ -4,7 +4,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class SelectedHighlightController : SystemManagerState.System
+public class SelectedHighlightDisplaySystem : SystemManagerState.System
 {
     ChartEditor editor;
 
@@ -12,7 +12,7 @@ public class SelectedHighlightController : SystemManagerState.System
     GameObject selectedHighlightPoolParent;
 
     // Use this for initialization
-    public SelectedHighlightController()
+    public SelectedHighlightDisplaySystem()
     {
         editor = ChartEditor.Instance;
 
