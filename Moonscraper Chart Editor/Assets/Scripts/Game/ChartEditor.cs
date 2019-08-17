@@ -267,6 +267,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         RegisterSystemStateSystem(State.Editor, _songObjectPoolManager);
         RegisterSystemStateSystem(State.Editor, drawBeatLinesSystem);
         RegisterSystemStateSystem(State.Editor, new HoverHighlightController(assets));
+        RegisterSystemStateSystem(State.Editor, new SelectedHighlightController());
 
         RegisterSystemStateSystem(State.Playing, _songObjectPoolManager);
         RegisterSystemStateSystem(State.Playing, drawBeatLinesSystem);

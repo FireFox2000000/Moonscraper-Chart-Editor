@@ -18,6 +18,7 @@ public class ChartEditorAssets : MonoBehaviour
     public GameObject beatLine;
     public GameObject quarterBeatLine;
 
-    [Header("Misc")]
+    [Header("Object Highlight Prefabs")]
     public GameObject hoverHighlight;
+    public GameObject selectedHighlight;
 }
