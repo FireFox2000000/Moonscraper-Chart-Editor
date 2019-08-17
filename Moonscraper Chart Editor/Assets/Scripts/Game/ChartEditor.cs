@@ -209,6 +209,8 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
             AudioManager.Dispose();
 
             while (currentSong.isSaving) ;
+
+            applicationStateMachine.currentState = null; // Force call exit on current state;
         }
         // Can't run edit check here because quitting seems to run in a seperate thread
         else
@@ -264,6 +266,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         RegisterSystemStateSystem(State.Editor, new AutoSaveSystem());
         RegisterSystemStateSystem(State.Editor, _songObjectPoolManager);
         RegisterSystemStateSystem(State.Editor, drawBeatLinesSystem);
+        RegisterSystemStateSystem(State.Editor, new HoverHighlightController(assets));
 
         RegisterSystemStateSystem(State.Playing, _songObjectPoolManager);
         RegisterSystemStateSystem(State.Playing, drawBeatLinesSystem);

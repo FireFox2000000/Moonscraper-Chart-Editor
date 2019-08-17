@@ -4,9 +4,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class HoverHighlightController : MonoBehaviour {
-    public GameObject hoverHighlight;
-
+public class HoverHighlightController : SystemManagerState.System
+{
     GameObject[] highlights = new GameObject[5];
     GameObject hoverHighlightParent;
 
@@ -16,22 +15,24 @@ public class HoverHighlightController : MonoBehaviour {
     List<GameObject> songObjects = new List<GameObject>();
 
     // Use this for initialization
-    void Start () {
+    public HoverHighlightController(ChartEditorAssets assets) {
         hoverHighlightParent = new GameObject("Hover Highlights");
 
+        GameObject hoverHighlight = assets.hoverHighlight;
         hoverHighlightRen = hoverHighlight.GetComponent<Renderer>();
         initColor = hoverHighlightRen.sharedMaterial.color;
 
         for (int i = 0; i < highlights.Length; ++i)
         {
-            highlights[i] = Instantiate(hoverHighlight);
+            highlights[i] = Object.Instantiate(hoverHighlight);
             highlights[i].transform.SetParent(hoverHighlightParent.transform);
             highlights[i].SetActive(false);
         }
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	public override void Update ()
+    {
         // Show a preview if the user will click on an object
         GameObject songObject = Mouse.currentSelectableUnderMouse;
         foreach (GameObject highlight in highlights)
@@ -39,9 +40,9 @@ public class HoverHighlightController : MonoBehaviour {
             highlight.SetActive(false);
         }
 
-        bool showHighlight = (ChartEditor.Instance.currentState == ChartEditor.State.Editor && !Input.GetMouseButton(0) && songObject != null
-            && ((Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.Eraser) ||
-            (Input.GetMouseButton(1) && (Toolpane.currentTool != Toolpane.Tools.Cursor || Toolpane.currentTool != Toolpane.Tools.Eraser))));
+        bool validTool = Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.Eraser;
+        bool previewDelete = Input.GetMouseButton(1) && (Toolpane.currentTool != Toolpane.Tools.Cursor || Toolpane.currentTool != Toolpane.Tools.Eraser);
+        bool showHighlight = !Input.GetMouseButton(0) && songObject != null && (validTool || previewDelete);
 
         if (!showHighlight)
             return;
@@ -85,6 +86,7 @@ public class HoverHighlightController : MonoBehaviour {
                 songObjects.Add(songObject);
             }
 
+            // Activate, position and scale highlights
             for (int i = 0; i < songObjects.Count; ++i)
             {
                 if (i < highlights.Length)
@@ -109,8 +111,13 @@ public class HoverHighlightController : MonoBehaviour {
         }
     }
 
-    void OnApplicationQuit()
+    public override void Exit()
     {
         hoverHighlightRen.sharedMaterial.color = initColor;
+
+        foreach (GameObject highlight in highlights)
+        {
+            highlight.SetActive(false);
+        }
     }
 }

@@ -17,4 +17,7 @@ public class ChartEditorAssets : MonoBehaviour
     public GameObject measureLine;
     public GameObject beatLine;
     public GameObject quarterBeatLine;
+
+    [Header("Misc")]
+    public GameObject hoverHighlight;
 }
