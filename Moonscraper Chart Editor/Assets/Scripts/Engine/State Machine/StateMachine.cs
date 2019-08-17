@@ -40,3 +40,32 @@ public class StateMachine
             currentState.Update();
     }
 }
+
+public class StateMachine<Params>
+{
+    public interface IState
+    {
+        void Enter(Params parameters);
+        void Update(Params parameters);
+        void Exit(Params parameters);
+    }
+
+    public IState currentState { get; private set; }
+
+    void ChangeState(IState state, Params parameters)
+    {
+        if (currentState != null)
+            currentState.Exit(parameters);
+
+        currentState = state;
+
+        if (currentState != null)
+            currentState.Enter(parameters);
+    }
+
+    public void Update(Params parameters)
+    {
+        if (currentState != null)
+            currentState.Update(parameters);
+    }
+}
