@@ -35,6 +35,11 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     readonly ExtensionFilter audioExFilter = new ExtensionFilter("Audio files", "ogg", "mp3", "wav");
 
+    private void Start()
+    {
+        offset.onValidateInput = LocalesManager.ValidateDecimalInput;
+    }
+
     protected override void OnEnable()
     {
         bool edit = ChartEditor.isDirty;
