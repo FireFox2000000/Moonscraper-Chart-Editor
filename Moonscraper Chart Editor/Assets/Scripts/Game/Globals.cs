@@ -197,17 +197,6 @@ public class Globals : MonoBehaviour {
             services.notificationBar.PushNotification("METRONOME TOGGLED " + Services.BoolToStrOnOff(GameSettings.metronomeActive), 2, true);
         }
 
-        if (!modifierInputActive)
-        {
-            if (editor.inputManager.mainGamepad.GetButtonPressed(GamepadInput.Button.Start))
-            {
-                if (editor.currentState != ChartEditor.State.Playing)
-                    editor.StartGameplay();
-                else
-                    editor.Stop();
-            }
-        }
-
         if (ShortcutInput.GetInputDown(Shortcut.FileSave))
             editor._Save();
 

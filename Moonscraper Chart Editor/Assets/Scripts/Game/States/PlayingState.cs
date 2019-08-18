@@ -55,7 +55,7 @@ public class PlayingState : SystemManagerState
             }
         }
 
-        if (ShortcutInput.GetInputDown(Shortcut.PlayPause))
+        if (ShortcutInput.GetInputDown(Shortcut.PlayPause) || editor.inputManager.mainGamepad.GetButtonPressed(GamepadInput.Button.Start))
         {
             editor.Stop();
         }

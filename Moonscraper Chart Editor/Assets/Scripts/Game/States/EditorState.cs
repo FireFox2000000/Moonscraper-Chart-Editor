@@ -13,9 +13,18 @@ public class EditorState : SystemManagerState
         Services services = editor.services;
         Globals.ViewMode viewMode = Globals.viewMode;
 
-        if (ShortcutInput.GetInputDown(Shortcut.PlayPause) && services.CanPlay())
+        if (services.CanPlay())
         {
-            editor.Play();
+            if (ShortcutInput.GetInputDown(Shortcut.PlayPause))
+            {
+                editor.Play();
+                return;
+            }
+            else if (editor.inputManager.mainGamepad.GetButtonPressed(GamepadInput.Button.Start))
+            {
+                editor.StartGameplay();
+                return;
+            }
         }
 
         else if (ShortcutInput.GetInputDown(Shortcut.StepIncrease))
