@@ -13,6 +13,9 @@ public class EditorState : SystemManagerState
         Services services = editor.services;
         Globals.ViewMode viewMode = Globals.viewMode;
 
+        if (editor.groupMove.movementInProgress)
+            return;
+
         if (services.CanPlay())
         {
             if (ShortcutInput.GetInputDown(Shortcut.PlayPause))
