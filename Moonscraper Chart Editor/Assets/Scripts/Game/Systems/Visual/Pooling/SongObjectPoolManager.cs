@@ -32,6 +32,8 @@ public class SongObjectPoolManager : SystemManagerState.System
     List<Starpower> collectedStarpowerInRange = new List<Starpower>();
     List<Note> prevSustainCache = new List<Note>();
 
+    public float? noteVisibilityRangeYPosOverride;
+
     // Use this for initialization
     public SongObjectPoolManager()
     {
@@ -123,9 +125,9 @@ public class SongObjectPoolManager : SystemManagerState.System
         bool extendedSustainsEnabled = GameSettings.extendedSustainsEnabled;
 
         uint min_pos = editor.minPos;
-        if (ChartEditor.startGameplayPos != null)
+        if (noteVisibilityRangeYPosOverride.HasValue)
         {
-            uint gameplayPos = editor.currentSong.WorldYPositionToTick((float)ChartEditor.startGameplayPos, editor.currentSong.resolution);
+            uint gameplayPos = editor.currentSong.WorldYPositionToTick(noteVisibilityRangeYPosOverride.Value, editor.currentSong.resolution);
             if (min_pos < gameplayPos)
                 min_pos = gameplayPos;
         }

@@ -19,24 +19,29 @@ public class SystemManagerState : StateMachine.IState
         registeredSystems.Add(system);
     }
 
+    public void AddSystems(IList<System> systems)
+    {
+        registeredSystems.AddRange(systems);
+    }
+
     public void RemoveSystem(System system)
     {
         registeredSystems.Remove(system);
     }
 
-    public void Enter()
+    public virtual void Enter()
     {
         foreach (System system in registeredSystems)
             system.Enter();
     }
 
-    public void Exit()
+    public virtual void Exit()
     {
         foreach (System system in registeredSystems)
             system.Exit();
     }
 
-    public void Update()
+    public virtual void Update()
     {
         foreach (System system in registeredSystems)
             system.Update();

@@ -34,7 +34,7 @@ public class LoadingTasksManager : MonoBehaviour
     {
         isRunningTask = true;
 
-        ChartEditor.Instance.ChangeState(ChartEditor.State.Loading);
+        ChartEditor.Instance.ChangeStateToLoading();
         loadingScreen.FadeIn();
 
         for (int i = 0; i < tasks.Count; ++i)

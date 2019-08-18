@@ -32,7 +32,7 @@ public class DisplayMenu : MonoBehaviour {
     protected virtual void OnEnable()
     {
         editor.Stop();
-        editor.ChangeState(ChartEditor.State.Menu);
+        editor.ChangeStateToMenu();
         UITabbing.defaultSelectable = defaultSelectable;
 
         StartCoroutine(SetUIDelayed());
@@ -52,7 +52,7 @@ public class DisplayMenu : MonoBehaviour {
 
     protected virtual void OnDisable()
     {
-        editor.ChangeState(ChartEditor.State.Editor);
+        editor.ChangeStateToEditor();
     }
 
     public void Disable()

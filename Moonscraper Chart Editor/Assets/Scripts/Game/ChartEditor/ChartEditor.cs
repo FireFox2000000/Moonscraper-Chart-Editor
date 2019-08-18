@@ -27,9 +27,8 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public Transform camYMax;
     public Transform mouseYMaxLimit;
     public Transform mouseYMinLimit;
-    public Indicators indicators;               // Cancels hit animations upon stopping playback
-    [SerializeField]
-    GroupSelect groupSelect;
+    public Indicators indicators;               // Cancels hit animations upon stopping playback   
+    public GroupSelect groupSelect;
     public Globals globals;
     [SerializeField]
     ClipboardObjectController clipboard;
@@ -79,11 +78,11 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         Loading,
     }
     public StateMachine applicationStateMachine = new StateMachine();
-    SystemManagerState editorState = new SystemManagerState();
-    SystemManagerState playingState = new SystemManagerState();
     SystemManagerState menuState = new SystemManagerState();
     SystemManagerState loadingState = new SystemManagerState();
     public State currentState { get; private set; }
+
+    Dictionary<State, List<SystemManagerState.System>> persistentSystemsForStates = new Dictionary<State, List<SystemManagerState.System>>();
 
     struct UndoRedoSnapInfo
     {
@@ -102,7 +101,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         }
     }
 
-    Vector3? stopResetPos = null;
     public delegate void OnClickEventFn();
     public System.Collections.Generic.List<OnClickEventFn> onClickEventFnList = new System.Collections.Generic.List<OnClickEventFn>();
 
@@ -114,11 +112,19 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         }
     }
 
+    public float currentAudioOffset
+    {
+        get
+        {
+            return currentSong.offset + (GameSettings.audioCalibrationMS / 1000.0f * GameSettings.gameSpeed);
+        }
+    }
+
     public float currentAudioTime
     {
         get
         {
-            return currentVisibleTime + currentSong.offset + (GameSettings.audioCalibrationMS / 1000.0f * GameSettings.gameSpeed);
+            return currentVisibleTime + currentAudioOffset;
         }
     }
 
@@ -265,38 +271,70 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         _songObjectPoolManager = new SongObjectPoolManager();
         DrawBeatLines drawBeatLinesSystem = new DrawBeatLines();
 
-        RegisterSystemStateSystem(State.Editor, new AutoSaveSystem());
-        RegisterSystemStateSystem(State.Editor, _songObjectPoolManager);
-        RegisterSystemStateSystem(State.Editor, drawBeatLinesSystem);
-        RegisterSystemStateSystem(State.Editor, new HoverHighlightDisplaySystem(assets));
-        RegisterSystemStateSystem(State.Editor, new SelectedHighlightDisplaySystem());
+        RegisterPersistentSystem(State.Editor, new AutoSaveSystem());
+        RegisterPersistentSystem(State.Editor, _songObjectPoolManager);
+        RegisterPersistentSystem(State.Editor, drawBeatLinesSystem);
+        RegisterPersistentSystem(State.Editor, new HoverHighlightDisplaySystem(assets));
+        RegisterPersistentSystem(State.Editor, new SelectedHighlightDisplaySystem());
 
-        RegisterSystemStateSystem(State.Playing, _songObjectPoolManager);
-        RegisterSystemStateSystem(State.Playing, drawBeatLinesSystem);
+        RegisterPersistentSystem(State.Playing, _songObjectPoolManager);
+        RegisterPersistentSystem(State.Playing, drawBeatLinesSystem);
     }
 
     #region State Control
 
     SystemManagerState GetStateForEnum(State state)
     {
+        SystemManagerState newState = null;
         switch (state)
         {
-            case State.Editor: return editorState;
-            case State.Playing: return playingState;
+            case State.Editor: newState = new EditorState(); break;
+            case State.Playing: Debug.LogError("Attempting to change state to a default Playing State. This is not allowed."); return null; // call from Play function in this editor instead
             case State.Menu: return menuState;
             case State.Loading: return loadingState;
             default: break;
         }
 
-        return null;
+        PopulatePersistentSystemsForNewState(state, newState);
+
+        return newState;
     }
 
-    public void ChangeState(State state)
+    void PopulatePersistentSystemsForNewState(State state, SystemManagerState newState)
+    {
+        List<SystemManagerState.System> persistentSystems;
+        if (persistentSystemsForStates.TryGetValue(state, out persistentSystems))
+            newState.AddSystems(persistentSystemsForStates[state]);
+    }
+
+    public void ChangeStateToEditor()
+    {
+        ChangeState(State.Editor);
+    }
+
+    public void ChangeStateToMenu()
+    {
+        ChangeState(State.Menu);
+    }
+
+    public void ChangeStateToLoading()
+    {
+        ChangeState(State.Loading);
+    }
+
+    // Playing state must be called internally
+
+    void ChangeState(State state)
     {
         var newState = GetStateForEnum(state);
+        ChangeState(state, newState);
+    }
+
+    void ChangeState(State state, StateMachine.IState newState)
+    {
         if (newState != null)
         {
-            applicationStateMachine.currentState = GetStateForEnum(state);
+            applicationStateMachine.currentState = newState;
             currentState = state;
 
             EventsManager.FireEditorStateChangedEvent();
@@ -307,17 +345,15 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         }
     }
 
-    public void RegisterSystemStateSystem(State state, SystemManagerState.System system)
+    public void RegisterPersistentSystem(State state, SystemManagerState.System system)
     {
-        SystemManagerState systemState = GetStateForEnum(state);
-        if (systemState != null)
+        List<SystemManagerState.System> persistentSystems;
+        if (!persistentSystemsForStates.TryGetValue(state, out persistentSystems))
         {
-            systemState.AddSystem(system);
+            persistentSystems = new List<SystemManagerState.System>();
+            persistentSystemsForStates.Add(state, persistentSystems);
         }
-        else
-        {
-            Debug.LogError("Unable to register system for state provided.");
-        }
+        persistentSystems.Add(system);
     }
 
     #endregion
@@ -605,52 +641,40 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     #endregion
 
     #region Audio Functions
-    void PlayAudio(float playPoint)
+    public void PlayAudio(float playPoint)
     {
         services.strikelineAudio.startYPoint = visibleStrikeline.transform.position.y;
 
-        SetBassStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
-        SetBassStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
-        SetBassStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);
-        SetBassStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
-        SetBassStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drum);
+        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
+        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
+        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);
+        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
+        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drum);
 
         foreach (var bassStream in currentSong.bassAudioStreams)
         {
-            PlayBassStream(bassStream, playPoint);
+            PlayStream(bassStream, playPoint);
         }
-        /*
-        PlayBassStream(currentSong.bassMusicStream, playPoint);
-        PlayBassStream(currentSong.bassGuitarStream, playPoint);
-        PlayBassStream(currentSong.bassRhythmStream, playPoint);
-        PlayBassStream(currentSong.bassDrumStream, playPoint);*/
-
-        movement.playStartPosition = movement.transform.position.y;
-        movement.playStartTime = Time.realtimeSinceStartup;
     }
 
-    void StopAudio()
+   public void StopAudio()
     {
         foreach (var bassStream in currentSong.bassAudioStreams)
         {
             if (AudioManager.StreamIsValid(bassStream))
                 bassStream.Stop();
         }
-
-        movement.playStartPosition = null;
-        movement.playStartTime = null;
     }
 
-    void PlayBassStream(AudioStream audioStream, float playPoint)
+    void PlayStream(AudioStream audioStream, float playPoint)
     {
         if (audioStream != null && audioStream.isValid)
         {
             audioStream.Play(playPoint);
-            MovementController.timeSync.SongTime = playPoint;
         }
     }
 
-    void SetBassStreamProperties(TempoStream stream, float speed, float vol)
+    void SetStreamProperties(TempoStream stream, float speed, float vol)
     {
         if (AudioManager.StreamIsValid(stream))
         {
@@ -693,7 +717,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     #endregion
 
     #region Pause/Play Functions
-    public static float? startGameplayPos = null;
     public void StartGameplay()
     {
         if (currentState == State.Playing ||
@@ -701,11 +724,19 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
             Globals.ghLiveMode)
             return;
 
-        if (GameSettings.resetAfterGameplay)
-            stopResetPos = movement.transform.position;
+        float strikelineYPos = visibleStrikeline.position.y;
+        float? stopResetTime = null;
 
-        float strikelineYPos = visibleStrikeline.position.y - (0.01f * GameSettings.hyperspeed);     // Offset to prevent errors where it removes a note that is on the strikeline
-        startGameplayPos = strikelineYPos;
+        songObjectPoolManager.noteVisibilityRangeYPosOverride = strikelineYPos;
+
+        if (GameSettings.resetAfterGameplay)
+            stopResetTime = currentVisibleTime;
+
+        // Set position x seconds beforehand
+        float startTime = TickFunctions.WorldYPositionToTime(strikelineYPos) - GameSettings.gameplayStartDelayTime - (0.01f * GameSettings.hyperspeed); // Offset to prevent errors where it removes a note that is on the strikeline
+        movement.SetTime(startTime);
+
+        GameSettings.bot = false;
 
         // Hide everything behind the strikeline
         foreach (Note note in currentChart.notes)
@@ -721,59 +752,29 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
             }
         }
 
-        // Set position x seconds beforehand
-        float time = TickFunctions.WorldYPositionToTime(strikelineYPos);
-        movement.SetTime(time - GameSettings.gameplayStartDelayTime);
+        foreach (HitAnimation hitAnim in indicators.animations)
+            hitAnim.StopAnim();
 
-        GameSettings.bot = false;
-        Play();
+        SystemManagerState playingState = new PlayingState(startTime, stopResetTime);
+        PopulatePersistentSystemsForNewState(State.Playing, playingState);
+        ChangeState(State.Playing, playingState);
     }
 
-    bool cancel;
-    List<SongObject> selectedBeforePlay = new List<SongObject>();
     public void Play()
     {
-        selectedBeforePlay.Clear();
-        selectedBeforePlay.AddRange(selectedObjectsManager.currentSelectedObjects);
-        selectedObjectsManager.currentSelectedObject = null;
+        float? stopResetTime = null;
 
         if (GameSettings.bot && GameSettings.resetAfterPlay)
-            stopResetPos = movement.transform.position;
+        {
+            stopResetTime = currentVisibleTime;
+        }
 
         foreach (HitAnimation hitAnim in indicators.animations)
             hitAnim.StopAnim();
 
-        ChangeState(State.Playing);
-        cancel = false;
-
-        float playPoint = currentAudioTime;
-
-        if (playPoint < 0)
-        {
-            StartCoroutine(delayedStartAudio(-playPoint * GameSettings.gameSpeed));
-        }
-        else
-        {
-            PlayAudio(playPoint);
-        } 
-    }
-
-    IEnumerator delayedStartAudio(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        float playPoint = currentAudioTime;
-
-        if (!cancel && currentState == State.Playing)
-        {
-            if (playPoint >= 0)
-            {
-                PlayAudio(playPoint);
-            }
-            else
-            {
-                StartCoroutine(delayedStartAudio(-playPoint));
-            }
-        }
+        SystemManagerState playingState = new PlayingState(currentVisibleTime, stopResetTime);
+        PopulatePersistentSystemsForNewState(State.Playing, playingState);
+        ChangeState(State.Playing, playingState);
     }
 
     public IEnumerator PlayAutoStop(float playTime)
@@ -787,18 +788,15 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     public void Stop()
     {
         if (indicators && indicators.animations != null)
+        {
             foreach (HitAnimation hitAnim in indicators.animations)
             {
                 if (hitAnim)
                     hitAnim.StopAnim();
             }
-
-        startGameplayPos = null;
-        cancel = true;
+        }
 
         ChangeState(State.Editor);
-
-        StopAudio();
 
         if (currentChart != null)
         {
@@ -808,28 +806,9 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
                     note.controller.Activate();
             }
         }
-        if (stopResetPos != null)
-            movement.transform.position = (Vector3)stopResetPos;
-
-        if (selectedBeforePlay.Count > 0)
-        {
-            // Check if the user switched view modes while playing
-            if (Globals.viewMode == Globals.ViewMode.Chart)
-            {
-                if (selectedBeforePlay[0].GetType().IsSubclassOf(typeof(ChartObject)))
-                    selectedObjectsManager.currentSelectedObjects = selectedBeforePlay;
-            }
-            else
-            {
-                if (!selectedBeforePlay[0].GetType().IsSubclassOf(typeof(ChartObject)))
-                    selectedObjectsManager.currentSelectedObjects = selectedBeforePlay;
-            }
-        }
-
-        selectedBeforePlay.Clear();
 
         GameSettings.bot = true;
-        stopResetPos = null;
+        songObjectPoolManager.noteVisibilityRangeYPosOverride = null;
     }
     #endregion
 

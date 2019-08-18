@@ -18,10 +18,6 @@ public abstract class MovementController : MonoBehaviour {
     public static uint? explicitChartPos = null;
 
     protected float lastUpdatedRealTime = 0;
-    [HideInInspector]
-    public float? playStartTime;
-    [HideInInspector]
-    public float? playStartPosition;
 
     Transform selfTransform;
     System.Array audioInstrumentEnumVals = System.Enum.GetValues(typeof(Song.AudioInstrument));
@@ -32,11 +28,9 @@ public abstract class MovementController : MonoBehaviour {
     // Jump to a chart position
     public abstract void SetPosition(uint tick);
 
-    public static TimeSync timeSync;
-
     public void SetTime(float time)
     {
-        if (ChartEditor.Instance.currentState == ChartEditor.State.Editor)
+        //if (ChartEditor.Instance.currentState == ChartEditor.State.Editor)
         {
             Vector3 pos = initPos;
             pos.y += TickFunctions.TimeToWorldYPosition(time);
@@ -46,7 +40,6 @@ public abstract class MovementController : MonoBehaviour {
 
     protected void Start()
     {
-        timeSync = new TimeSync();
         initPos = transform.position;
         globals = GameObject.FindGameObjectWithTag("Globals").GetComponent<Globals>();
         selfTransform = transform;
@@ -57,9 +50,10 @@ public abstract class MovementController : MonoBehaviour {
         float speed = GameSettings.hyperspeed;
         Vector3 pos = transform.position;
         float deltaTime = Time.deltaTime;
+        float positionOffset = initPos.y;
 
         {
-            float timeBeforeMovement = TickFunctions.WorldYPositionToTime(pos.y);
+            float timeBeforeMovement = TickFunctions.WorldYPositionToTime(pos.y - positionOffset);
             float timeAfterMovement = timeBeforeMovement + deltaTime;
 
             // Make sure we're staying in sync with the audio
@@ -77,9 +71,9 @@ public abstract class MovementController : MonoBehaviour {
                         break;
                     }
                 }
-                if (AudioManager.StreamIsValid(stream))
+                if (AudioManager.StreamIsValid(stream) && stream.IsPlaying())
                 {
-                    float audioTimePosition = stream.CurrentPositionInSeconds();
+                    float audioTimePosition = stream.CurrentPositionInSeconds() - editor.currentAudioOffset;
                     float desyncAmount = audioTimePosition - timeAfterMovement;
 
                     if (Mathf.Abs(desyncAmount) > DESYNCLENIENCE)
@@ -92,7 +86,7 @@ public abstract class MovementController : MonoBehaviour {
             float totalChangeInTime = timeAfterMovement - timeBeforeMovement;
 
             float newTimePosition = TickFunctions.TimeToWorldYPosition(timeBeforeMovement + totalChangeInTime);
-            pos.y = newTimePosition;
+            pos.y = newTimePosition + positionOffset;
         }
 
         selfTransform.position = pos;

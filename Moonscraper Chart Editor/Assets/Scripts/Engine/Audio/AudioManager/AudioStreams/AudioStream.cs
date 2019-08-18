@@ -81,4 +81,9 @@ public class AudioStream
     {
         return Bass.BASS_ChannelGetLevel(audioHandle, levels, length, BASSLevel.BASS_LEVEL_STEREO);
     }
+
+    public bool IsPlaying()
+    {
+        return isValid && Bass.BASS_ChannelIsActive(audioHandle) == BASSActive.BASS_ACTIVE_PLAYING;
+    }
 }
