@@ -152,7 +152,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
             return;
 
         bool tentativeRecord, lockedRecord;
-        ShouldRecordInputField(value, currentBPM.displayValue.ToString(), out tentativeRecord, out lockedRecord);
+        ShouldRecordInputField(value, currentBPM.displayValue.ToString(), out tentativeRecord, out lockedRecord, true);
 
         uint prevValue = currentBPM.value;
         if (value.Length > 0 && value[value.Length - 1] == c_decimal)

@@ -56,10 +56,13 @@ public class PropertiesPanelController : MonoBehaviour {
         prevSongObjectRef = currentSongObject;
     }
 
-    protected void ShouldRecordInputField(string newLabel, string oldLabel, out bool tentativeRecord, out bool lockedRecord)
+    protected void ShouldRecordInputField(string newLabel, string oldLabel, out bool tentativeRecord, out bool lockedRecord, bool ignoreEmptyLabels = false)
     {
         tentativeRecord = false;
         lockedRecord = false;
+
+        if (ignoreEmptyLabels && string.IsNullOrEmpty(newLabel))
+            return;
 
         if (currentSongObject == null || prevSongObject == null || prevSongObject != currentSongObject)
         {
