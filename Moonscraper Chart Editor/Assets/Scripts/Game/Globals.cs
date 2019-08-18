@@ -90,7 +90,7 @@ public class Globals : MonoBehaviour {
 
     void LoadGameSettings()
     {
-        GameSettings.Load(workingDirectory + "\\config.ini");
+        GameSettings.Load(GetConfigPath());
 
         // Check for valid fps values
         int fps = GameSettings.targetFramerate;
@@ -213,11 +213,16 @@ public class Globals : MonoBehaviour {
     public void Quit()
     {
         GameSettings.targetFramerate = Application.targetFrameRate;
-        GameSettings.Save(workingDirectory + "\\config.ini");
+        GameSettings.Save(GetConfigPath());
 
         // Delete autosaved chart. If chart is not deleted then that means there may have been a problem like a crash and the autosave should be reloaded the next time the program is opened. 
         if (File.Exists(autosaveLocation))
             File.Delete(autosaveLocation);
+    }
+
+    string GetConfigPath()
+    {
+        return Application.persistentDataPath + "/config.ini";
     }
 
     public static void DeselectCurrentUI()
