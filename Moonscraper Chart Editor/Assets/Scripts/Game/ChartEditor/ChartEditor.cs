@@ -191,6 +191,11 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         // Set window text to represent if the current song has been saved or not
         windowHandleManager.UpdateDirtyNotification(isDirty);
 
+        //applicationStateMachine.Update();
+    }
+
+    private void LateUpdate()
+    {
         applicationStateMachine.Update();
     }
 

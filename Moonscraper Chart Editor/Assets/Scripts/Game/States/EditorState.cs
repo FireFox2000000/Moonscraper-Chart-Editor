@@ -7,8 +7,6 @@ public class EditorState : SystemManagerState
 {
     public override void Update()
     {
-        base.Update();
-
         ChartEditor editor = ChartEditor.Instance;
         Services services = editor.services;
         Globals.ViewMode viewMode = Globals.viewMode;
@@ -86,5 +84,7 @@ public class EditorState : SystemManagerState
             else if (ShortcutInput.GetInputDown(Shortcut.ClipboardCopy))
                 editor.Copy();
         }
+
+        base.Update();
     }
 }
