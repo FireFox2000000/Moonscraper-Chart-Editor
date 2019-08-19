@@ -28,7 +28,7 @@ public class EditorState : SystemManagerState
             }
         }
 
-        else if (ShortcutInput.GetInputDown(Shortcut.StepIncrease))
+        if (ShortcutInput.GetInputDown(Shortcut.StepIncrease))
             GameSettings.snappingStep.Increment();
 
         else if (ShortcutInput.GetInputDown(Shortcut.StepDecrease))
