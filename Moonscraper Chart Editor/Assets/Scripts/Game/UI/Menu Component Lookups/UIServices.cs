@@ -5,12 +5,21 @@ using UnityEngine;
 public class UIServices : MonoBehaviour {
 
     public EditorPanels editorPanels { get; private set; }
-    public Camera uiCamera { get; private set; }
+    Camera _uiCamera;
+    public Camera uiCamera
+    {
+        get
+        {
+            if (_uiCamera == null)
+                _uiCamera = GetComponent<Canvas>().worldCamera;
+
+            return _uiCamera;
+        }
+    }
 
 	// Use this for initialization
 	void Start () {
         editorPanels = GetComponentInChildren<EditorPanels>();
-        uiCamera = GetComponent<Canvas>().worldCamera;
 
         Debug.Assert(editorPanels, "Unable to locate Editor Panels script");
     }

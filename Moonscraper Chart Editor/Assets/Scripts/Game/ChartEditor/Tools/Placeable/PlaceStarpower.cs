@@ -26,7 +26,7 @@ public class PlaceStarpower : PlaceSongObject {
     {
         if (!GameSettings.keysModeEnabled)
         {
-            if (Toolpane.currentTool == Toolpane.Tools.Starpower && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButton(0))
+            if (Input.GetMouseButton(0))
             {
                 if (lastPlacedSP == null)
                 {

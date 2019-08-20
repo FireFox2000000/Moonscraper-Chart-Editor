@@ -6,11 +6,11 @@ using System.Collections;
 
 public abstract class ToolObject : Snapable {
     [SerializeField]
-    Toolpane.Tools tool;
+    EditorObjectToolManager.ToolID toolId;
 
-    public Toolpane.Tools GetTool()
+    public EditorObjectToolManager.ToolID GetTool()
     {
-        return tool;
+        return toolId;
     }
 
     public virtual void ToolDisable()

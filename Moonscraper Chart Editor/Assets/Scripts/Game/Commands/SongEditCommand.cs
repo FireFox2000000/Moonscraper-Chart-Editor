@@ -102,7 +102,7 @@ public abstract class SongEditCommand : ICommand {
         editor.currentChart.UpdateCache();
         editor.currentSong.UpdateCache();
 
-        if (Toolpane.currentTool != Toolpane.Tools.Note)
+        if (editor.toolManager.currentToolId != EditorObjectToolManager.ToolID.Note)
             editor.selectedObjectsManager.currentSelectedObject = null;
 
         ChartEditor.isDirty = true;

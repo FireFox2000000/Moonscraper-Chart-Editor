@@ -45,7 +45,7 @@ public class NoteController : SongObjectController {
 
     public override void OnSelectableMouseDown()
     {
-        if (Toolpane.currentTool == Toolpane.Tools.Cursor && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
+        if (editor.toolManager.currentToolId == EditorObjectToolManager.ToolID.Cursor && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
         {
             var selectedObjectsManager = editor.selectedObjectsManager;
 

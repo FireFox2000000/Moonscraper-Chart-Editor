@@ -15,8 +15,6 @@ public class ClipboardObjectController : Snapable {
     public GroupSelect groupSelectTool;
     public Transform strikeline;
     public static Clipboard clipboard = new Clipboard();
-    [SerializeField]
-    ToolPanelController viewModeController;
     Renderer ren;
 
     uint pastePos = 0;
@@ -141,7 +139,7 @@ public class ClipboardObjectController : Snapable {
             }
             uint colliderChartDistance = TickFunctions.TickScaling(clipboard.areaChartPosMax - clipboard.areaChartPosMin, clipboard.resolution, editor.currentSong.resolution);
 
-            viewModeController.ToggleSongViewMode(!clipboard.data[0].GetType().IsSubclassOf(typeof(ChartObject)));
+            editor.globals.ToggleSongViewMode(!clipboard.data[0].GetType().IsSubclassOf(typeof(ChartObject)));
 
             {
                 List<SongObject> newObjectsToDelete = new List<SongObject>();

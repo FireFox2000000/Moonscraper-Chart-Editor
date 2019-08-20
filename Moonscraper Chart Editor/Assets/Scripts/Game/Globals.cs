@@ -44,7 +44,16 @@ public class Globals : MonoBehaviour {
 
     ChartEditor editor;
     Services _services;
-    public Services services { get { return _services; } }
+    public Services services
+    {
+        get
+        {
+            if (_services == null)
+                _services = GetComponent<Services>();
+
+            return _services;
+        }
+    }
     Resolution largestRes;
 
     void Awake()
@@ -61,7 +70,6 @@ public class Globals : MonoBehaviour {
 
         viewMode = ViewMode.Chart;
         editor = ChartEditor.Instance;
-        _services = GetComponent<Services>();
 
 #if !UNITY_EDITOR
         workingDirectory = DirectoryHelper.GetMainDirectory();
@@ -177,7 +185,8 @@ public class Globals : MonoBehaviour {
         // Disable controls while user is in an input field
         Shortcuts();
 
-        snapLockWarning.gameObject.SetActive((GameSettings.keysModeEnabled && Toolpane.currentTool != Toolpane.Tools.Cursor && Toolpane.currentTool != Toolpane.Tools.Eraser));
+        var currentTool = editor.toolManager.currentToolId;
+        snapLockWarning.gameObject.SetActive(GameSettings.keysModeEnabled && currentTool != EditorObjectToolManager.ToolID.Cursor && currentTool != EditorObjectToolManager.ToolID.Eraser);
 
         // IsTyping can still be active if this isn't manually detected
         if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && Services.IsTyping && editor.currentState == ChartEditor.State.Editor)
@@ -238,5 +247,25 @@ public class Globals : MonoBehaviour {
     public enum ViewMode
     {
         Chart, Song
+    }
+
+    public void ToggleSongViewMode(bool globalView)
+    {
+        ViewMode originalView = viewMode;
+
+        if (globalView)
+        {
+            viewMode = ViewMode.Song;
+        }
+        else
+        {
+            viewMode = ViewMode.Chart;
+        }
+
+        ChartEditor editor = ChartEditor.Instance;
+        if (editor.toolManager.currentToolId != EditorObjectToolManager.ToolID.Note)        // Allows the note panel to pop up instantly
+            editor.selectedObjectsManager.currentSelectedObject = null;
+
+        EventsManager.FireViewModeSwitchEvent();
     }
 }

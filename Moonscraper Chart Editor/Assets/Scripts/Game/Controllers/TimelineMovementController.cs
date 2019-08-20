@@ -214,13 +214,12 @@ public class TimelineMovementController : MovementController
                 UpdateTimelineHandleBasedPos();
             }
             // else check mouse range
-            else if (Toolpane.mouseDownInArea && (globals.services.InToolArea && (Input.GetMouseButton(0) || Input.GetMouseButton(1)) && Input.mousePosition != lastMouseDownPos))
+            else if (globals.services.InToolArea && (Input.GetMouseButton(0) || Input.GetMouseButton(1)) && Input.mousePosition != lastMouseDownPos)
             { 
-                if (!Toolpane.menuCancel && 
-                    UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null && 
+                if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == null && 
                     Input.mousePosition.y > Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y)
                 {
-                    // Autoscroll
+                    // Autoscroll, dragging out notes/sustains etc
                     transform.position = new Vector3(transform.position.x, transform.position.y + autoscrollSpeed * Time.deltaTime, transform.position.z);
                     UpdateTimelineHandleBasedPos();
                 }

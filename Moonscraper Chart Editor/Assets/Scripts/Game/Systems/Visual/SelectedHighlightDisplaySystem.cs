@@ -34,7 +34,8 @@ public class SelectedHighlightDisplaySystem : SystemManagerState.System
         IList<SongObject> viewRange = editor.selectedObjectsManager.currentSelectedObjects;
         SongObjectHelper.GetRange(viewRange, editor.minPos, editor.maxPos, out index, out length);
 
-        bool validTool = Toolpane.currentTool != Toolpane.Tools.Note && Toolpane.currentTool != Toolpane.Tools.Starpower;
+        var currentTool = ChartEditor.Instance.toolManager.currentToolId;
+        bool validTool = currentTool != EditorObjectToolManager.ToolID.Note && currentTool != EditorObjectToolManager.ToolID.Starpower;
         bool showHighlight = editor.currentState != ChartEditor.State.Playing && validTool;
 
         int pos = index;

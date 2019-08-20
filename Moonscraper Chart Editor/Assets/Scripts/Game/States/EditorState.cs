@@ -39,12 +39,12 @@ public class EditorState : SystemManagerState
 
         else if (ShortcutInput.GetInputDown(Shortcut.SelectAll))
         {
-            services.toolpanelController.SetCursor();
+            editor.toolManager.ChangeTool(EditorObjectToolManager.ToolID.Cursor);
             editor.selectedObjectsManager.SelectAllInView(viewMode);
         }
         else if (ShortcutInput.GetInputDown(Shortcut.SelectAllSection))
         {
-            services.toolpanelController.SetCursor();
+            editor.toolManager.ChangeTool(EditorObjectToolManager.ToolID.Cursor);
             editor.selectedObjectsManager.HighlightCurrentSection(viewMode);
         }
 

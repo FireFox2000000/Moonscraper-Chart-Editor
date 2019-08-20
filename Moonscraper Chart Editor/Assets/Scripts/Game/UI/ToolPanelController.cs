@@ -49,7 +49,7 @@ public class ToolPanelController : MonoBehaviour {
             viewModeToggle.isOn = !viewModeToggle.isOn;
         }
 
-        keysModePanel.gameObject.SetActive(Toolpane.currentTool == Toolpane.Tools.Note && GameSettings.keysModeEnabled);
+        keysModePanel.gameObject.SetActive(editor.toolManager.currentToolId == EditorObjectToolManager.ToolID.Note && GameSettings.keysModeEnabled);
 
         Shortcuts();
     }
@@ -57,7 +57,7 @@ public class ToolPanelController : MonoBehaviour {
     void Shortcuts()
     {
         if (ShortcutInput.GetInputDown(Shortcut.ToolSelectCursor))
-            SetCursor();
+            cursorSelect.onClick.Invoke();
 
         else if (ShortcutInput.GetInputDown(Shortcut.ToolSelectEraser))
             eraserSelect.onClick.Invoke();
@@ -86,36 +86,10 @@ public class ToolPanelController : MonoBehaviour {
 
     public void ToggleSongViewMode(bool globalView)
     {
-        Globals.ViewMode originalView = Globals.viewMode;
+        bool globalViewActive = Globals.viewMode == Globals.ViewMode.Song;
 
-        if (globalView)
-        {
-            Globals.viewMode = Globals.ViewMode.Song;
-
-            if (Toolpane.currentTool == Toolpane.Tools.Note || Toolpane.currentTool == Toolpane.Tools.Starpower || Toolpane.currentTool == Toolpane.Tools.ChartEvent)
-            {
-                cursorSelect.onClick.Invoke();
-            }
-        }
-        else
-        {
-            Globals.viewMode = Globals.ViewMode.Chart;
-
-            if (Toolpane.currentTool == Toolpane.Tools.BPM || Toolpane.currentTool == Toolpane.Tools.Timesignature || Toolpane.currentTool == Toolpane.Tools.Section)
-            {
-                cursorSelect.onClick.Invoke();
-            }
-        }
-
-        if (viewModeToggle.isOn != globalView)
-        {
-            viewModeToggle.isOn = globalView;
-        }
-
-        if (Toolpane.currentTool != Toolpane.Tools.Note)        // Allows the note panel to pop up instantly
-            editor.selectedObjectsManager.currentSelectedObject = null;
-
-        EventsManager.FireViewModeSwitchEvent();
+        if (globalViewActive != globalView)
+            ChartEditor.Instance.globals.ToggleSongViewMode(globalView);
     }
 
     void OnViewModeSwitch(Globals.ViewMode viewMode)
@@ -123,11 +97,12 @@ public class ToolPanelController : MonoBehaviour {
         if (viewMode == Globals.ViewMode.Chart)
             eventImage.sprite = localEventSprite;
         else if (viewMode == Globals.ViewMode.Song)
-                eventImage.sprite = globalEventSprite;
-    }
+            eventImage.sprite = globalEventSprite;
 
-    public void SetCursor()
-    {
-        cursorSelect.onClick.Invoke();
+        bool globalView = viewMode == Globals.ViewMode.Song;
+        if (viewModeToggle.isOn != globalView)  // Setting this when it's the same will just call the onclick events again
+        {
+            viewModeToggle.isOn = globalView;
+        }
     }
 }

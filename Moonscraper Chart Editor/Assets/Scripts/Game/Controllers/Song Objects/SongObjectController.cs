@@ -60,7 +60,7 @@ public abstract class SongObjectController : SelectableClick {
     {
         get
         {
-            return Toolpane.currentTool == Toolpane.Tools.Cursor && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1) 
+            return editor.toolManager.currentToolId == EditorObjectToolManager.ToolID.Cursor && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButton(0) && !Input.GetMouseButton(1) 
                 && editor.selectedObjectsManager.currentSelectedObject != null;
         }
     }
@@ -132,7 +132,7 @@ public abstract class SongObjectController : SelectableClick {
 
     public override void OnSelectableMouseDown()
     {
-        if (Toolpane.currentTool == Toolpane.Tools.Cursor && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
+        if (editor.toolManager.currentToolId == EditorObjectToolManager.ToolID.Cursor && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
         {
             // Shift-clicking
             // Find the closest object already selected

@@ -7,7 +7,7 @@ using System.Collections;
 
 [RequireComponent(typeof(Button))]
 public class ToolpaneButtonController : MonoBehaviour {
-    public Toolpane.Tools disableOnTool;
+    public EditorObjectToolManager.ToolID toolId;
     private Button button;
 
     void Start()
@@ -15,25 +15,26 @@ public class ToolpaneButtonController : MonoBehaviour {
         EventsManager.onToolChangedEventList.Add(OnToolChangedEvent);
 
         button = GetComponent<Button>();
-        if (Toolpane.currentTool == disableOnTool)
+        if (ChartEditor.Instance.toolManager.currentToolId == toolId)
+        {
             Press();
+
+            // We're not registered to the event in time when this is first fired. Make sure our icon is correct on startup.
+            OnToolChangedEvent();
+        }
     }
 
 	// Update is called once per frame
 	void OnToolChangedEvent () {
-        if (Toolpane.currentTool != disableOnTool)
-        {
-            button.interactable = true;
-            enabled = false;
-        }
+        bool isMyTool = ChartEditor.Instance.toolManager.currentToolId == toolId;
+
+        button.interactable = !isMyTool;
+        enabled = isMyTool;
 	}
 
     // if the tool is this one, enable the script, else disable
     public void Press()
     {
-        button.interactable = false;
-        enabled = true;
-
-        EventsManager.FireToolChangedEvent();
+        ChartEditor.Instance.toolManager.ChangeTool(toolId);
     }
 }

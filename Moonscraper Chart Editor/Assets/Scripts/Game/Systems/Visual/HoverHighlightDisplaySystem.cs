@@ -40,8 +40,9 @@ public class HoverHighlightDisplaySystem : SystemManagerState.System
             highlight.SetActive(false);
         }
 
-        bool validTool = Toolpane.currentTool == Toolpane.Tools.Cursor || Toolpane.currentTool == Toolpane.Tools.Eraser;
-        bool previewDelete = Input.GetMouseButton(1) && (Toolpane.currentTool != Toolpane.Tools.Cursor || Toolpane.currentTool != Toolpane.Tools.Eraser);
+        var currentTool = ChartEditor.Instance.toolManager.currentToolId;
+        bool validTool = currentTool == EditorObjectToolManager.ToolID.Cursor || currentTool == EditorObjectToolManager.ToolID.Eraser;
+        bool previewDelete = Input.GetMouseButton(1) && (currentTool != EditorObjectToolManager.ToolID.Cursor || currentTool != EditorObjectToolManager.ToolID.Eraser);
         bool showHighlight = !Input.GetMouseButton(0) && songObject != null && (validTool || previewDelete);
 
         if (!showHighlight)

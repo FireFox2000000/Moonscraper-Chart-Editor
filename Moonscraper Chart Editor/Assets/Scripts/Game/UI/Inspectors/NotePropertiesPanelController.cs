@@ -73,10 +73,15 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         }
     }
 
+    bool IsInNoteTool()
+    {
+        return editor.toolManager.currentToolId == EditorObjectToolManager.ToolID.None;
+    }
+
     public Note.Flags GetDisplayFlags()
     {
         Note.Flags flags = Note.Flags.None;
-        bool inNoteTool = Toolpane.currentTool == Toolpane.Tools.Note;
+        bool inNoteTool = IsInNoteTool();
 
         if (inNoteTool)
         {
@@ -95,7 +100,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         toggleBlockingActive = true;
 
         Note.Flags flags = GetDisplayFlags();
-        bool inNoteTool = Toolpane.currentTool == Toolpane.Tools.Note;
+        bool inNoteTool = IsInNoteTool();
 
         if (!inNoteTool && currentNote == null)
         {
@@ -118,12 +123,12 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
         if (!drumsMode)
         {
-            if (Toolpane.currentTool == Toolpane.Tools.Note && noteToolObject.activeSelf)
+            if (IsInNoteTool() && noteToolObject.activeSelf)
             {
                 forcedToggle.interactable = noteToolController.forcedInteractable;
                 tapToggle.interactable = noteToolController.tapInteractable;
             }
-            else if (Toolpane.currentTool != Toolpane.Tools.Note)
+            else if (!IsInNoteTool())
             {
                 forcedToggle.interactable = !(currentNote.cannotBeForced && !GameSettings.keysModeEnabled);
                 tapToggle.interactable = !currentNote.IsOpenNote();
@@ -165,7 +170,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         if (toggleBlockingActive)
             return;
 
-        if (Toolpane.currentTool == Toolpane.Tools.Note)
+        if (IsInNoteTool())
         {
             SetTapNoteTool();
         }
@@ -212,7 +217,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         if (toggleBlockingActive)
             return;
 
-        if (Toolpane.currentTool == Toolpane.Tools.Note)
+        if (IsInNoteTool())
         {
             SetForcedNoteTool();
         }
@@ -251,7 +256,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         if (note.flags == newFlags)
             return;
 
-        if (Toolpane.currentTool == Toolpane.Tools.Cursor)
+        if (editor.toolManager.currentToolId == EditorObjectToolManager.ToolID.Cursor)
         {
             Note newNote = new Note(note.tick, note.rawNote, note.length, newFlags);
             SongEditModifyValidated command = new SongEditModifyValidated(note, newNote);

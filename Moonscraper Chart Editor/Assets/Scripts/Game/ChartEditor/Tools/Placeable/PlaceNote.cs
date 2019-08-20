@@ -21,7 +21,7 @@ public class PlaceNote : PlaceSongObject {
     {
         get
         {
-            return (Toolpane.currentTool == Toolpane.Tools.Note && ChartEditor.Instance.currentState == ChartEditor.State.Editor && Input.GetMouseButton(0));
+            return Input.GetMouseButton(0);
         }
     }
 

@@ -21,7 +21,6 @@ public class Services : MonoBehaviour
 
     [Header("UI Services")]
     public DropdownNotification notificationBar;
-    public ToolPanelController toolpanelController;
     public UIServices uiServices;
 
     [Header("Audio Services")]

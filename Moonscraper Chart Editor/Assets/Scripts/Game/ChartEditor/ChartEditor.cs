@@ -16,11 +16,11 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     protected override bool WantDontDestroyOnLoad { get { return false; } }
 
     public static bool isDirty = false;
+    public EditorObjectToolManager toolManager;
 
     [Header("Tool prefabs")]
     public GroupMove groupMove;
     [Header("Misc.")]
-    public ToolPanelController toolPanel;       // Used to toggle view mode during undo action
     public Transform visibleStrikeline;
     public TimelineHandler timeHandler;
     public Transform camYMin;
@@ -152,6 +152,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
         windowHandleManager = new WindowHandleManager(versionNumber.text, GetComponent<Settings>().productName);
         errorManager = gameObject.AddComponent<ErrorManager>();
+        toolManager.Init();
 
         // Create a default song
         currentSong = new Song();
@@ -838,7 +839,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
             if (Globals.viewMode != viewMode)
             {
-                toolPanel.ToggleSongViewMode(viewMode == Globals.ViewMode.Song);
+                globals.ToggleSongViewMode(viewMode == Globals.ViewMode.Song);
             }
 
             if (snapTick < minPos || snapTick > maxPos)
