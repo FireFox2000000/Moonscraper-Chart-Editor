@@ -112,22 +112,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         }
     }
 
-    public float currentAudioOffset
-    {
-        get
-        {
-            return currentSong.offset + (GameSettings.audioCalibrationMS / 1000.0f * GameSettings.gameSpeed);
-        }
-    }
-
-    public float currentAudioTime
-    {
-        get
-        {
-            return currentVisibleTime + currentAudioOffset;
-        }
-    }
-
     public Services services { get { return globals.services; } }
     public UIServices uiServices { get { return services.uiServices; } }
 

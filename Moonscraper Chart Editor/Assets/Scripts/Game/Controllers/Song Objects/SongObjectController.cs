@@ -22,7 +22,7 @@ public abstract class SongObjectController : SelectableClick {
         {
             Vector3 objPosition = transform.position;
 
-            float audioStrikelinePos = editor.services.auditorialStrikelinePos;
+            float audioStrikelinePos = editor.services.sfxCalibratedStrikelinePos;
             bool belowClapLine = objPosition.y <= audioStrikelinePos;
             return belowClapLine;
         }

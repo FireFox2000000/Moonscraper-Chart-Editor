@@ -34,7 +34,7 @@ public class Metronome : MonoBehaviour {
     public void Update()
     {
         // Offset by audio calibration
-        float audioStrikelinePos = editor.services.auditorialStrikelinePos;
+        float audioStrikelinePos = editor.services.sfxCalibratedStrikelinePos;
         uint currentTickPos = editor.currentSong.WorldYPositionToTick(audioStrikelinePos);
 
         if (editor.currentState == ChartEditor.State.Playing)

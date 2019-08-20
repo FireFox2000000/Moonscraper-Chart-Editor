@@ -59,7 +59,7 @@ public abstract class MovementController : MonoBehaviour {
             // Make sure we're staying in sync with the audio
             {
                 Song currentSong = editor.currentSong;
-                float visibleAudioTime = editor.currentAudioTime;
+                float visibleAudioTime = editor.services.currentAudioTime;
 
                 AudioStream stream = null;
 
@@ -73,7 +73,7 @@ public abstract class MovementController : MonoBehaviour {
                 }
                 if (AudioManager.StreamIsValid(stream) && stream.IsPlaying())
                 {
-                    float audioTimePosition = stream.CurrentPositionInSeconds() - editor.currentAudioOffset;
+                    float audioTimePosition = stream.CurrentPositionInSeconds() - editor.services.totalSongAudioOffset;
                     float desyncAmount = audioTimePosition - timeAfterMovement;
 
                     if (Mathf.Abs(desyncAmount) > DESYNCLENIENCE)

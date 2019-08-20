@@ -27,7 +27,7 @@ public class PlayingState : SystemManagerState
         editor.selectedObjectsManager.currentSelectedObject = null;
 
         float playPoint = playFromTime;
-        float audioPlayPoint = playPoint + editor.currentAudioOffset;
+        float audioPlayPoint = playPoint + editor.services.totalSongAudioOffset;
 
         editor.movement.SetTime(playPoint);
 
@@ -46,8 +46,8 @@ public class PlayingState : SystemManagerState
 
         if (!audioStarted)
         {
-            float audioPlayPoint = playFromTime + editor.currentAudioOffset;
-            float currentTime = editor.currentAudioTime;
+            float audioPlayPoint = playFromTime + editor.services.totalSongAudioOffset;
+            float currentTime = editor.services.currentAudioTime;
             if (currentTime >= audioPlayPoint && currentTime > 0)
             {
                 editor.PlayAudio(currentTime);

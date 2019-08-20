@@ -151,21 +151,38 @@ public class Services : MonoBehaviour
         return !ChartEditor.Instance.groupMove.movementInProgress;
     }
 
-    public float worldCalibrationOffset
+    public float songAudioCalibrationTimeOffset
     {
         get
         {
-            return TickFunctions.TimeToWorldYPosition(GameSettings.audioCalibrationMS / 1000.0f) * GameSettings.gameSpeed;
+            return GameSettings.audioCalibrationMS / 1000.0f * GameSettings.gameSpeed;
         }
     }
 
-    public float auditorialStrikelinePos
+    public float totalSongAudioOffset
+    {
+        get
+        {
+            return ChartEditor.Instance.currentSong.offset + songAudioCalibrationTimeOffset;
+        }
+    }
+
+    public float currentAudioTime
+    {
+        get
+        {
+            return ChartEditor.Instance.currentVisibleTime + totalSongAudioOffset;
+        }
+    }
+
+    public float sfxCalibratedStrikelinePos
     {
         get
         {
             ChartEditor editor = ChartEditor.Instance;
             Vector3 strikelinePos = editor.visibleStrikeline.position;
-            return strikelinePos.y + editor.services.worldCalibrationOffset;
+            float posCalibrationOffset = TickFunctions.TimeToWorldYPosition(GameSettings.audioCalibrationMS / 1000.0f) * GameSettings.gameSpeed;
+            return strikelinePos.y + posCalibrationOffset;
         }
     }
 
