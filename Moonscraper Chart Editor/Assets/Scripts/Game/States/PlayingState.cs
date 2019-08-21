@@ -14,6 +14,8 @@ public class PlayingState : SystemManagerState
     {
         this.playFromTime = playFromTime;
         this.resetBackToTimeOnStop = resetBackToTimeOnStop;
+
+        AddSystem(new MetronomePlaybackSystem(playFromTime));
     }
 
     public override void Enter()

@@ -21,6 +21,8 @@ public class Song {
     static int DIFFICULTY_COUNT;
     static int AUDIO_INSTUMENT_COUNT;
 
+    static System.Array audioInstrumentEnumVals = System.Enum.GetValues(typeof(Song.AudioInstrument));
+
     // Song properties
     public Metadata metaData = new Metadata();
     public string name
@@ -61,6 +63,27 @@ public class Song {
         }
     }
 
+    public AudioStream mainSongAudio
+    {
+        get
+        {
+            if (AudioManager.StreamIsValid(GetAudioStream(AudioInstrument.Song)))
+            {
+                return GetAudioStream(AudioInstrument.Song);
+            }
+
+            foreach (AudioInstrument audio in audioInstrumentEnumVals)
+            {
+                if (AudioManager.StreamIsValid(GetAudioStream(audio)))
+                {
+                    return GetAudioStream(audio);
+                }
+            }
+
+            return null;
+        }
+    }
+
     const float c_defaultLength = 300;     // 5 minutes
     float _length = c_defaultLength;
     public float length
@@ -71,30 +94,19 @@ public class Song {
                 return _length;
             else
             {
-                var bassMusicStream = GetAudioStream(AudioInstrument.Song);
-                if (AudioManager.StreamIsValid(bassMusicStream))
+                AudioStream mainStream = mainSongAudio;
+
+                if (mainStream != null)
                 {
-                    float length = bassMusicStream.ChannelLengthInSeconds() + offset;
+                    float length = mainStream.ChannelLengthInSeconds() + offset;
 
                     if (length <= 0)
                         return c_defaultLength;
-
-                    return length;
+                    else
+                        return length;
                 }
                 else
                 {
-                    foreach (var stream in bassAudioStreams)
-                    {
-                        if (AudioManager.StreamIsValid(stream))
-                        {
-                            float length = stream.ChannelLengthInSeconds() + offset;
-                            if (length <= 0)
-                                continue;
-
-                            return length;
-                        }
-                    }
-
                     return c_defaultLength;
                 }
             }

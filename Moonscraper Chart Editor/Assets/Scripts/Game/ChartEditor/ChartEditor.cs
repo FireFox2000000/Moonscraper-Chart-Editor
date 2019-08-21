@@ -84,6 +84,13 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
     Dictionary<State, List<SystemManagerState.System>> persistentSystemsForStates = new Dictionary<State, List<SystemManagerState.System>>();
 
+    static readonly Dictionary<string, LoadedStreamStore.StreamConfig> soundMapConfig = new Dictionary<string, LoadedStreamStore.StreamConfig>(){
+            { SkinKeys.metronome,   new LoadedStreamStore.StreamConfig(System.IO.Path.Combine(Application.streamingAssetsPath, "SFX/metronome.wav")) },
+            { SkinKeys.clap,        new LoadedStreamStore.StreamConfig(System.IO.Path.Combine(Application.streamingAssetsPath, "SFX/clap.wav")) },
+            { SkinKeys.break0,      new LoadedStreamStore.StreamConfig(System.IO.Path.Combine(Application.streamingAssetsPath, "SFX/combobreak.wav")) },
+        };
+    public LoadedStreamStore sfxAudioStreams { get; private set; }
+
     struct UndoRedoSnapInfo
     {
         public uint tick;
@@ -120,6 +127,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         Debug.Log("Initialising " + versionNumber.text);
         assets = GetComponent<ChartEditorAssets>();
         selectedObjectsManager = new SelectedObjectsManager(this);
+        sfxAudioStreams = new LoadedStreamStore(soundMapConfig);
 
         _minPos = 0;
         _maxPos = 0;
@@ -145,6 +153,8 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
     IEnumerator Start()
     {
+        sfxAudioStreams.LoadSounds(SkinManager.Instance.currentSkin);
+
         yield return null;
         yield return null;
 
@@ -204,6 +214,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
             EventsManager.ClearAll();
             globals.Quit();
             FreeAudio();
+            sfxAudioStreams.DisposeSounds();
             AudioManager.Dispose();
 
             while (currentSong.isSaving) ;
