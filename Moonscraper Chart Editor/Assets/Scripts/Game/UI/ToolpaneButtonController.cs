@@ -12,7 +12,7 @@ public class ToolpaneButtonController : MonoBehaviour {
 
     void Start()
     {
-        EventsManager.onToolChangedEventList.Add(OnToolChangedEvent);
+        ChartEditor.Instance.events.toolChangedEvent.Register(OnToolChangedEvent);
 
         button = GetComponent<Button>();
         if (ChartEditor.Instance.toolManager.currentToolId == toolId)

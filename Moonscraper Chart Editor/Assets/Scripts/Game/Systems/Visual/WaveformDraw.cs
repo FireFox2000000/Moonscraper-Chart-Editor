@@ -26,10 +26,10 @@ public class WaveformDraw : MonoBehaviour {
         lineRen = GetComponent<LineRenderer>();
         lineRen.sortingLayerName = "Highway";
 
-        EventsManager.onViewModeSwitchEventList.Add(OnViewModeSwitch);
+        editor.events.viewModeSwitchEvent.Register(OnViewModeSwitch);
     }
 
-    void OnViewModeSwitch(Globals.ViewMode viewMode)
+    void OnViewModeSwitch(in Globals.ViewMode viewMode)
     {
         int newIndex = 0;
 

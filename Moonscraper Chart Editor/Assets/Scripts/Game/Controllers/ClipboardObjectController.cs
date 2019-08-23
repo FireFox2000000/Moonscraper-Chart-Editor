@@ -23,7 +23,7 @@ public class ClipboardObjectController : Snapable {
     {
         base.Awake();
         ren = GetComponent<Renderer>();
-        EventsManager.onEditorStateChangedEventList.Add(OnApplicationModeChanged);
+        editor.events.editorStateChangedEvent.Register(OnApplicationModeChanged);
         CLIPBOARD_FILE_LOCATION = UnityEngine.Application.persistentDataPath + "/MoonscraperClipboard.bin";
     }
 
@@ -47,7 +47,7 @@ public class ClipboardObjectController : Snapable {
         }
     }
 
-    void OnApplicationModeChanged(ChartEditor.State editorState)
+    void OnApplicationModeChanged(in ChartEditor.State editorState)
     {
         // Can only paste in editor mode
         gameObject.SetActive(editorState == ChartEditor.State.Editor);

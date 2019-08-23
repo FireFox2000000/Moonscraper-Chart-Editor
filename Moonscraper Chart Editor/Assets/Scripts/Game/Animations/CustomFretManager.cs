@@ -32,7 +32,7 @@ public class CustomFretManager : HitAnimation
     {
         SetStandardFrets();
 
-        EventsManager.onChartReloadEventList.Add(SetFrets);
+        ChartEditor.Instance.events.chartReloadedEvent.Register(SetFrets);
     }
 
     void OnEnable()

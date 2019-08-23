@@ -38,8 +38,8 @@ public class DisplayProperties : UpdateableService
 
         OnEnable();
 
-        EventsManager.onChartReloadEventList.Add(OnChartReload);
-        EventsManager.onEditorStateChangedEventList.Add(OnApplicationModeChanged);
+        editor.events.chartReloadedEvent.Register(OnChartReload);
+        editor.events.editorStateChangedEvent.Register(OnApplicationModeChanged);
 
         OnChartReload();
 
@@ -77,7 +77,7 @@ public class DisplayProperties : UpdateableService
         songNameText.text = editor.currentSong.name + " - " + editor.currentChart.name;
     }
 
-    void OnApplicationModeChanged(ChartEditor.State editorState)
+    void OnApplicationModeChanged(in ChartEditor.State editorState)
     {
         bool interactable = (editorState != ChartEditor.State.Playing);
         hyperspeedSlider.interactable = interactable;
@@ -88,7 +88,7 @@ public class DisplayProperties : UpdateableService
     public void SetHyperspeed(float value)
     {
         GameSettings.hyperspeed = value;
-        EventsManager.FireHyperspeedChangeEvent();
+        editor.events.hyperspeedChangeEvent.Fire();
     }
 
     public void SetGameSpeed(float value)
@@ -97,7 +97,7 @@ public class DisplayProperties : UpdateableService
         GameSettings.gameSpeed = value / 100.0f;
         UpdateGameSpeedText();
 
-        EventsManager.FireHyperspeedChangeEvent();
+        editor.events.hyperspeedChangeEvent.Fire();
     }
 
     void UpdateGameSpeedText()
@@ -115,7 +115,7 @@ public class DisplayProperties : UpdateableService
 
         bgFade.AdjustHeight();
 
-        EventsManager.FireHyperspeedChangeEvent();
+        editor.events.hyperspeedChangeEvent.Fire();
     }
 
     public void ToggleClap(bool value)

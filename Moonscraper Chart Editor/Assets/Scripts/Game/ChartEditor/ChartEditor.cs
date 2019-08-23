@@ -90,6 +90,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
             { SkinKeys.break0,      new LoadedStreamStore.StreamConfig(System.IO.Path.Combine(Application.streamingAssetsPath, "SFX/combobreak.wav")) },
         };
     public LoadedStreamStore sfxAudioStreams { get; private set; }
+    public ChartEditorEvents events = new ChartEditorEvents();
 
     struct UndoRedoSnapInfo
     {
@@ -211,7 +212,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
         if (allowedToQuit)
         {
-            EventsManager.ClearAll();
             globals.Quit();
             FreeAudio();
             sfxAudioStreams.DisposeSounds();
@@ -338,7 +338,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
             applicationStateMachine.currentState = newState;
             currentState = state;
 
-            EventsManager.FireEditorStateChangedEvent();
+            events.editorStateChangedEvent.Fire(currentState);
         }
         else
         {
@@ -467,7 +467,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
             lastLoadedFile = System.IO.Path.GetFullPath(filename);
 
             if (currentSong.isSaving)
-                EventsManager.FireSaveEvent();
+                events.saveEvent.Fire();
 
             isDirty = false;
         }

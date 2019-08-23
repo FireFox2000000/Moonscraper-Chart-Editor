@@ -21,11 +21,11 @@ public class DrumSustainRotation : MonoBehaviour {
             sustainColors[i] = defaultSustainResources.sustainColours[i].GetColor("_Color");
         }
 
-        EventsManager.onLanesChangedEventList.Add(OnLanesChangedEvent);
+        ChartEditor.Instance.events.lanesChangedEvent.Register(OnLanesChangedEvent);
     }
 	
 	// Update is called once per frame
-	void OnLanesChangedEvent (int laneCount) {
+	void OnLanesChangedEvent (in int laneCount) {
         if (Globals.drumMode)
         {
             defaultSustainResources.sustainColours[STANDARD_FRETS - 1].SetColor("_Color", sustainColors[0]);

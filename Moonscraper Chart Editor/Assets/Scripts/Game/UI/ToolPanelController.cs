@@ -39,7 +39,7 @@ public class ToolPanelController : MonoBehaviour {
         eventImage = eventSelect.GetComponent<Image>();
         localEventSprite = eventImage.sprite;
 
-        EventsManager.onViewModeSwitchEventList.Add(OnViewModeSwitch);
+        editor.events.viewModeSwitchEvent.Register(OnViewModeSwitch);
     }
 
     // Update is called once per frame
@@ -92,7 +92,7 @@ public class ToolPanelController : MonoBehaviour {
             ChartEditor.Instance.globals.ToggleSongViewMode(globalView);
     }
 
-    void OnViewModeSwitch(Globals.ViewMode viewMode)
+    void OnViewModeSwitch(in Globals.ViewMode viewMode)
     {
         if (viewMode == Globals.ViewMode.Chart)
             eventImage.sprite = localEventSprite;

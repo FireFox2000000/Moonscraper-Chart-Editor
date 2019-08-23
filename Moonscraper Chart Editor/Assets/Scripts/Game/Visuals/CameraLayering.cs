@@ -15,12 +15,12 @@ public class CameraLayering : MonoBehaviour {
         cam = GetComponent<Camera>();
         mkGlow = GetComponent<MKGlowSystem.MKGlow>();
 
-        EventsManager.onViewModeSwitchEventList.Add(UpdateCullingMask);
+        ChartEditor.Instance.events.viewModeSwitchEvent.Register(UpdateCullingMask);
 
         UpdateCullingMask(Globals.viewMode);
     }
 
-    void UpdateCullingMask(Globals.ViewMode viewMode)
+    void UpdateCullingMask(in Globals.ViewMode viewMode)
     {
         if (viewMode == Globals.ViewMode.Chart)
         {

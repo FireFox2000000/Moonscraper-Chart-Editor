@@ -76,12 +76,12 @@ public class EditorObjectToolManager : System.Object
     {
         isToolActive = false;
 
-        EventsManager.onViewModeSwitchEventList.Add(OnViewModeSwitch);
+        ChartEditor.Instance.events.viewModeSwitchEvent.Register(OnViewModeSwitch);
         ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Editor, new ToolActiveListener());
         ChangeTool(DEFAULT_TOOL);
     }
 
-    void OnViewModeSwitch(Globals.ViewMode viewMode)
+    void OnViewModeSwitch(in Globals.ViewMode viewMode)
     {
         ToolConfig toolConfig = GetToolConfigForId(currentToolId);
 
@@ -126,7 +126,7 @@ public class EditorObjectToolManager : System.Object
             }
         }
 
-        EventsManager.FireToolChangedEvent();
+        ChartEditor.Instance.events.toolChangedEvent.Fire();
     }
 
     void SetToolActive(bool isActive)

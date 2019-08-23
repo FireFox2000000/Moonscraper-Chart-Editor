@@ -70,9 +70,9 @@ public class SongObjectPoolManager : SystemManagerState.System
         chartEventPool = new ChartEventPool(chartEventParent, editor.assets.chartEventPrefab, POOL_SIZE);
         chartEventParent.transform.SetParent(groupMovePool.transform);
 
-        EventsManager.onHyperspeedChangeEventList.Add(SetAllPoolsDirty);
-        EventsManager.onChartReloadEventList.Add(SetAllPoolsDirty);
-        EventsManager.onLeftyFlipToggledEventList.Add(SetAllPoolsDirty);
+        editor.events.hyperspeedChangeEvent.Register(SetAllPoolsDirty);
+        editor.events.chartReloadedEvent.Register(SetAllPoolsDirty);
+        editor.events.leftyFlipToggledEvent.Register(SetAllPoolsDirty);
     }
 
     // Update is called once per frame

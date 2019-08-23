@@ -131,7 +131,7 @@ public class Services : MonoBehaviour
     public void SetKeysMode(bool enabled)
     {
         GameSettings.keysModeEnabled = enabled;
-        EventsManager.FireKeyboardModeToggledEvent(GameSettings.keysModeEnabled);
+        ChartEditor.Instance.events.keyboardModeToggledEvent.Fire(GameSettings.keysModeEnabled);
     }
 
     public bool CanUndo()

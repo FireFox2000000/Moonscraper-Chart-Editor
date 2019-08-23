@@ -44,8 +44,8 @@ public class LaneInfo : MonoBehaviour {
             }
         };
 
-        EventsManager.onLeftyFlipToggledEventList.Add(OnLanesUpdated);
-        EventsManager.onChartReloadEventList.Add(OnLanesUpdated);
+        ChartEditor.Instance.events.leftyFlipToggledEvent.Register(OnLanesUpdated);
+        ChartEditor.Instance.events.chartReloadedEvent.Register(OnLanesUpdated);
     }
 
     public int laneCount
@@ -57,7 +57,7 @@ public class LaneInfo : MonoBehaviour {
         set
         {
             m_laneCount = value;
-            EventsManager.FireLanesChangedEvent(laneCount);
+            ChartEditor.Instance.events.lanesChangedEvent.Fire(laneCount);
         }
     }
 

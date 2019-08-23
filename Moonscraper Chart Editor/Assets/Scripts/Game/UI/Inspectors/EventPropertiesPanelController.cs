@@ -41,7 +41,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
         for (int i = 0; i < Globals.globalEvents.Length; ++i)
             CreateEventButton(Globals.globalEvents[i], i).transform.SetParent(globalEventButtonParent.transform);
 
-        EventsManager.onViewModeSwitchEventList.Add(new EventsManager.ViewModeSwitchEvent(OnViewModeSwitch));
+        editor.events.viewModeSwitchEvent.Register(OnViewModeSwitch);
         OnViewModeSwitch(Globals.viewMode);
     }
 
@@ -186,7 +186,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
         }
     }
 
-    void OnViewModeSwitch(Globals.ViewMode viewMode)
+    void OnViewModeSwitch(in Globals.ViewMode viewMode)
     {
         if (viewMode == Globals.ViewMode.Chart)
             inspectorTitle.text = "Local Event";

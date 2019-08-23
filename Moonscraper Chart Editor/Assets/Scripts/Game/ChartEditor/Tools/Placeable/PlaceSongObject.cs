@@ -25,7 +25,7 @@ public abstract class PlaceSongObject : ToolObject {
 
         SetSongObjectAndController();
 
-        EventsManager.onKeyboardModeToggledEvent.Add(OnKeysModeToggled);
+        editor.events.keyboardModeToggledEvent.Register(OnKeysModeToggled);
     }
 
     public override void ToolDisable()
@@ -73,7 +73,7 @@ public abstract class PlaceSongObject : ToolObject {
         }
     }
 
-    void OnKeysModeToggled(bool keysModeEnabled)
+    void OnKeysModeToggled(in bool keysModeEnabled)
     {
         foreach (Renderer ren in renderers)
         {

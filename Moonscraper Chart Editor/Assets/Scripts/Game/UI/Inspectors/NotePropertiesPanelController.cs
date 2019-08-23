@@ -25,7 +25,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     private void Start()
     {
         noteToolController = noteToolObject.GetComponent<PlaceNoteController>();
-        EventsManager.onToolChangedEventList.Add(OnToolChanged);
+        editor.events.toolChangedEvent.Register(OnToolChanged);
     }
 
     void OnToolChanged()

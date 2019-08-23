@@ -43,8 +43,8 @@ public class GameplayManager : MonoBehaviour {
         initialised = true;
         statsPanel.SetActive(false);
 
-        EventsManager.onEditorStateChangedEventList.Add(OnApplicationModeChanged);
-        EventsManager.onChartReloadEventList.Add(OnChartReloaded);
+        editor.events.editorStateChangedEvent.Register(OnApplicationModeChanged);
+        editor.events.chartReloadedEvent.Register(OnChartReloaded);
     }
 
     void LoadSoundClip()
@@ -131,7 +131,7 @@ public class GameplayManager : MonoBehaviour {
         }
     }
 
-    void OnApplicationModeChanged(ChartEditor.State editorState)
+    void OnApplicationModeChanged(in ChartEditor.State editorState)
     {
         Reset();
         statsPanel.SetActive(editorState == ChartEditor.State.Playing && !GameSettings.bot);

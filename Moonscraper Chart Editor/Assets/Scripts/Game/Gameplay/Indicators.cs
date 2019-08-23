@@ -54,9 +54,9 @@ public class Indicators : MonoBehaviour {
         UpdateStrikerColors(laneInfo.laneCount);
         SetStrikerPlacement(laneInfo.laneCount);
 
-        EventsManager.onLanesChangedEventList.Add(UpdateStrikerColors);
-        EventsManager.onLanesChangedEventList.Add(SetStrikerPlacement);
-        EventsManager.onLanesChangedEventList.Add(Activate2D3DSwitch);
+        ChartEditor.Instance.events.lanesChangedEvent.Register(UpdateStrikerColors);
+        ChartEditor.Instance.events.lanesChangedEvent.Register(SetStrikerPlacement);
+        ChartEditor.Instance.events.lanesChangedEvent.Register(Activate2D3DSwitch);
     }
 
     void SetAnimations()
@@ -135,7 +135,7 @@ public class Indicators : MonoBehaviour {
         }
     }
 
-    public void UpdateStrikerColors(int laneCount)
+    public void UpdateStrikerColors(in int laneCount)
     {
         Chart.GameMode gameMode = ChartEditor.Instance.currentGameMode;
 
@@ -148,7 +148,7 @@ public class Indicators : MonoBehaviour {
         }
     }
 
-    public void SetStrikerPlacement(int laneCount)
+    public void SetStrikerPlacement(in int laneCount)
     {
         int range = indicatorParents.Length;
         bool lefyFlip = GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip;
@@ -166,7 +166,7 @@ public class Indicators : MonoBehaviour {
         }
     }
 
-    void Activate2D3DSwitch(int laneCount)
+    void Activate2D3DSwitch(in int laneCount)
     {
         if (Globals.ghLiveMode)
         {

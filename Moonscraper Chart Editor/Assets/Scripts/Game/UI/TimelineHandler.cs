@@ -95,7 +95,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 
         RefreshHighlightIndicator();
 
-        EventsManager.onChartReloadEventList.Add(ForceFullRepaint);
+        ChartEditor.Instance.events.chartReloadedEvent.Register(ForceFullRepaint);
 
         UpdatePercentageText(0);
     }

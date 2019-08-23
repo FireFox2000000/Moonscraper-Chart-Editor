@@ -266,6 +266,6 @@ public class Globals : MonoBehaviour {
         if (editor.toolManager.currentToolId != EditorObjectToolManager.ToolID.Note)        // Allows the note panel to pop up instantly
             editor.selectedObjectsManager.currentSelectedObject = null;
 
-        EventsManager.FireViewModeSwitchEvent();
+        editor.events.viewModeSwitchEvent.Fire(viewMode);
     }
 }

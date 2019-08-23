@@ -18,7 +18,7 @@ public class SaveAnimController : UpdateableService {
 	protected override void Start () {
         base.Start();
         editor = ChartEditor.Instance;
-        EventsManager.onSaveEventList.Add(StartFade);
+        editor.events.saveEvent.Register(StartFade);
 	}
 	
 	// Update is called once per frame

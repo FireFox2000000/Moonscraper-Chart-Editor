@@ -87,10 +87,10 @@ public class PlaceNoteController : ObjectlessTool {
         heldNotes = new Note[totalNotes];
         inputBlock = new bool[totalNotes];
 
-        EventsManager.onToolChangedEventList.Add(OnModeSwitch);
-        EventsManager.onKeyboardModeToggledEvent.Add(OnKeysModeChanged);
-        EventsManager.onNotePlacementModeChangedEvent.Add(OnModeSwitch);
-        EventsManager.onEditorStateChangedEventList.Add(OnApplicationModeSwitch);
+        editor.events.toolChangedEvent.Register(OnModeSwitch);
+        editor.events.keyboardModeToggledEvent.Register(OnKeysModeChanged);
+        editor.events.notePlacementModeChangedEvent.Register(OnModeSwitch);
+        editor.events.editorStateChangedEvent.Register(OnApplicationModeSwitch);
     }
 
     public override void ToolEnable()
@@ -131,7 +131,7 @@ public class PlaceNoteController : ObjectlessTool {
             editor.selectedObjectsManager.currentSelectedObject = multiNote.note;
     }
 
-    void OnKeysModeChanged(bool keyboardModeEnabled)
+    void OnKeysModeChanged(in bool keyboardModeEnabled)
     {
         OnModeSwitch();
     }
@@ -156,7 +156,7 @@ public class PlaceNoteController : ObjectlessTool {
         }
     }
 
-    void OnApplicationModeSwitch(ChartEditor.State editorState)
+    void OnApplicationModeSwitch(in ChartEditor.State editorState)
     {
         KeysDraggedSustainRecordingCheck();
         ResetNoteAdding();

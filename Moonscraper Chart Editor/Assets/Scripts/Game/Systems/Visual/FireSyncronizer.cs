@@ -122,7 +122,7 @@ public class FireSyncronizer : MonoBehaviour {
             }
         }
 
-        EventsManager.onLanesChangedEventList.Add(OnLanesChanged);
+        ChartEditor.Instance.events.lanesChangedEvent.Register(OnLanesChanged);
     }
 
     void SetMaterialColours(Chart.GameMode gameMode, int laneCount)
@@ -135,7 +135,7 @@ public class FireSyncronizer : MonoBehaviour {
         }
     }
 
-    void OnLanesChanged(int laneCount)
+    void OnLanesChanged(in int laneCount)
     {
         ChartEditor editor = ChartEditor.Instance;
         SetMaterialColours(editor.currentGameMode, laneCount);

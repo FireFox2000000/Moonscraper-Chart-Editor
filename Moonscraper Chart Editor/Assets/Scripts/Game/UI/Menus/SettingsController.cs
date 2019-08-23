@@ -185,7 +185,7 @@ public class SettingsController : DisplayMenu
         else
             GameSettings.notePlacementMode = GameSettings.NotePlacementMode.Default;
         
-        EventsManager.FireLeftyFlipToggledEvent();
+        editor.events.leftyFlipToggledEvent.Fire();
     }
 
     public void SetResetAfterPlay(bool value)

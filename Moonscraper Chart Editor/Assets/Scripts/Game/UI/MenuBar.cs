@@ -38,7 +38,7 @@ public class MenuBar : UpdateableService {
     protected override void Start () {
         editor = ChartEditor.Instance;
 
-        EventsManager.onChartReloadEventList.Add(PlayEnabledCheck);
+        editor.events.chartReloadedEvent.Register(PlayEnabledCheck);
 
         base.Start();
     }
@@ -141,7 +141,7 @@ public class MenuBar : UpdateableService {
         editor.LoadChart(editor.currentSong.GetChart(currentInstrument, currentDifficulty));
         editor.selectedObjectsManager.currentSelectedObject = null;
 
-        EventsManager.FireChartReloadedEvent();
+        editor.events.chartReloadedEvent.Fire();
 
         if (desiredLaneCount > 0)
             editor.laneInfo.laneCount = desiredLaneCount;
