@@ -25,13 +25,11 @@ public class GameplayManager : MonoBehaviour {
     GuitarGameplayRulestate guitarGameplayRulestate;
     DrumsGameplayRulestate drumsGameplayRulestate;
 
-    readonly string defaultPath = System.IO.Path.Combine(Application.streamingAssetsPath, "SFX/combobreak.wav");
-
     void Start()
     {
-        LoadSoundClip();
-
         editor = ChartEditor.Instance;
+
+        LoadSoundClip();
 
         initSize = transform.localScale.y;
         transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
@@ -52,9 +50,8 @@ public class GameplayManager : MonoBehaviour {
         if (sample != null)
             sample.Dispose();
 
-        string customPath = SkinManager.Instance.GetSkinItemFilepath(SkinKeys.break0);
-        string currentSFX = string.IsNullOrEmpty(customPath) ? defaultPath : customPath;
-        sample = AudioManager.LoadSampleStream(currentSFX, 1);
+        sample = editor.sfxAudioStreams.GetSample(SkinKeys.break0);
+        Debug.Assert(sample != null);   // todo, get this when entering playing state
         sample.onlyPlayIfStopped = true;
     }
 
