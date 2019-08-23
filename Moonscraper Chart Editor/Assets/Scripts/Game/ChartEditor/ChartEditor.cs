@@ -652,9 +652,20 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
         SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drum);
 
+        AudioStream primaryStream = null;
         foreach (var bassStream in currentSong.bassAudioStreams)
         {
-            PlayStream(bassStream, playPoint);
+            if (primaryStream != null)
+            {
+                playPoint = primaryStream.CurrentPositionInSeconds();
+            }
+
+            Debug.Log("Playing stream at " + playPoint);
+
+            if (PlayStream(bassStream, playPoint) && primaryStream == null)
+            {
+                primaryStream = bassStream;
+            }
         }
     }
 
@@ -667,12 +678,15 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         }
     }
 
-    void PlayStream(AudioStream audioStream, float playPoint)
+    bool PlayStream(AudioStream audioStream, float playPoint)
     {
         if (audioStream != null && audioStream.isValid)
         {
             audioStream.Play(playPoint);
+            return true;
         }
+
+        return false;
     }
 
     void SetStreamProperties(TempoStream stream, float speed, float vol)
