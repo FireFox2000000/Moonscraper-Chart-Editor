@@ -23,9 +23,6 @@ public class Services : MonoBehaviour
     public DropdownNotification notificationBar;
     public UIServices uiServices;
 
-    [Header("Audio Services")]
-    public StrikelineAudioController strikelineAudio;
-
     [HideInInspector]
     public LoadingTasksManager loadingTasksManager { get; private set; }
 

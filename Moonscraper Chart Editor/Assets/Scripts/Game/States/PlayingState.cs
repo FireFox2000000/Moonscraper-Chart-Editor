@@ -16,6 +16,7 @@ public class PlayingState : SystemManagerState
         this.resetBackToTimeOnStop = resetBackToTimeOnStop;
 
         AddSystem(new MetronomePlaybackSystem(playFromTime));
+        AddSystem(new ClapPlaybackSystem(playFromTime));
     }
 
     public override void Enter()

@@ -40,11 +40,6 @@ public class StarpowerController : SongObjectController
                 {
                     UpdateSongObject();
                 }
-                else if (currentState == ChartEditor.State.Playing)
-                {
-                    if (canBotClap)
-                        TryClap();
-                }
             }
             else
                 gameObject.SetActive(false);

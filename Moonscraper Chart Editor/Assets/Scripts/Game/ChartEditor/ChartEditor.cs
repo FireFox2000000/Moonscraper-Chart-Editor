@@ -644,8 +644,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     #region Audio Functions
     public void PlayAudio(float playPoint)
     {
-        services.strikelineAudio.startYPoint = visibleStrikeline.transform.position.y;
-
         SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
         SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
         SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);

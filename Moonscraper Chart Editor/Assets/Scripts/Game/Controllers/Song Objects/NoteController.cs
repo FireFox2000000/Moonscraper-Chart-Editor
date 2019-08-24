@@ -257,9 +257,9 @@ public class NoteController : SongObjectController {
 
         bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime * GameSettings.hyperspeed / GameSettings.gameSpeed);
 
-        if (canBotClap)
+        if (GameSettings.bot && belowStrikeLine)
         {
-            GameplayBotHitClap();
+            GameplayBotHit();
         }
 
         if (hit && belowStrikeLine)
@@ -287,13 +287,8 @@ public class NoteController : SongObjectController {
             whammy.canWhammy = hit && !sustainBroken && !GameSettings.bot;
     }
 
-    void GameplayBotHitClap()
+    void GameplayBotHit()
     {
-        if (!hit)
-        {
-            TryClap();
-        }
-
         hit = true;
         sustainBroken = false;
     }

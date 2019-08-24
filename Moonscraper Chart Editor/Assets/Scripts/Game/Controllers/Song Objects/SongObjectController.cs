@@ -16,26 +16,6 @@ public abstract class SongObjectController : SelectableClick {
     public bool disableCancel = true;
     private bool isTool = false;
 
-    public bool isBelowClapLine
-    {
-        get
-        {
-            Vector3 objPosition = transform.position;
-
-            float audioStrikelinePos = editor.services.sfxCalibratedStrikelinePos;
-            bool belowClapLine = objPosition.y <= audioStrikelinePos;
-            return belowClapLine;
-        }
-    }
-
-    public bool canBotClap
-    {
-        get
-        {
-            return !isTool && GameSettings.bot && isBelowClapLine;
-        }
-    }
-
     protected void Awake()
     {
         editor = ChartEditor.Instance;
@@ -96,11 +76,6 @@ public abstract class SongObjectController : SelectableClick {
             if (editor.currentState == ChartEditor.State.Editor)
             {
                 UpdateSongObject();
-            }
-            else if (editor.currentState == ChartEditor.State.Playing)
-            {
-                if (canBotClap)
-                    TryClap();
             }
         }
         else if (songObject != null)
@@ -201,59 +176,6 @@ public abstract class SongObjectController : SelectableClick {
                 editor.selectedObjectsManager.currentSelectedObject = null;
             }
         }
-    }
-
-    protected bool CanClapObjectForSettings()
-    {
-        bool playClap = false;
-
-        if (songObject != null && GameSettings.clapEnabled)
-        {
-            SongObject.ID id = (SongObject.ID)songObject.classID;
-            GameSettings.ClapToggle toggleValue;
-
-            if (SongObjectHelper.songObjectIdToClapOption.TryGetValue(id, out toggleValue))
-            {
-                if ((GameSettings.clapProperties & toggleValue) != 0)
-                    playClap = true;
-            }
-            else if (id == SongObject.ID.Note)
-            {
-                Note note = songObject as Note;
-
-                switch (note.type)
-                {
-                    case Note.NoteType.Strum:
-                        playClap = (GameSettings.clapProperties & GameSettings.ClapToggle.STRUM) != 0;
-                        break;
-
-                    case Note.NoteType.Hopo:
-                        playClap = (GameSettings.clapProperties & GameSettings.ClapToggle.HOPO) != 0;
-                        break;
-
-                    case Note.NoteType.Tap:
-                        playClap = (GameSettings.clapProperties & GameSettings.ClapToggle.TAP) != 0;
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-            else
-            {
-                Debug.LogErrorFormat("Class id {0} has not been associated with a clap toggle", id);
-            }
-        }
-
-        return playClap;
-    }
-
-    protected void TryClap()
-    {
-        bool playClap = CanClapObjectForSettings();
-
-        if (playClap)
-            editor.services.strikelineAudio.Clap(transform.position.y);
     }
 
     public static float GetXPos (SongObject songObject)
