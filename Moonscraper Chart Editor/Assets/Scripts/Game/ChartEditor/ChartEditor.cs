@@ -660,9 +660,11 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
                 playPoint = primaryStream.CurrentPositionInSeconds();
             }
 
-            Debug.Log("Playing stream at " + playPoint);
-
-            if (PlayStream(bassStream, playPoint) && primaryStream == null)
+            if (primaryStream != null)
+            {
+                PlayStream(bassStream, primaryStream);
+            }
+            else if (PlayStream(bassStream, playPoint))
             {
                 primaryStream = bassStream;
             }
@@ -683,6 +685,21 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         if (audioStream != null && audioStream.isValid)
         {
             audioStream.Play(playPoint);
+            Debug.Log("Playing stream at " + playPoint);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool PlayStream(AudioStream audioStream, AudioStream syncStream)
+    {
+        if (audioStream != null && audioStream.isValid)
+        {
+            audioStream.Play(syncStream.CurrentPositionInSeconds());
+            Debug.Log("Playing stream at " + syncStream.CurrentPositionInSeconds());
+
             return true;
         }
 
