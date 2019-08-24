@@ -63,41 +63,41 @@ public class DrawBeatLines : SystemManagerState.System
 
             TimeSignature.MeasureInfo measureInfo = ts.GetMeasureInfo();
 
-            System.Func<TimeSignature.BeatInfo, GameObject[], int, int> RenderBeatLines = (beatInfo, lineObjectPool, poolPosStart) =>
-            {
-                int poolPos = poolPosStart;
-                uint currentTick = ts.tick + beatInfo.tickOffset;
-                int repetitions = 0;
-
-                uint fullCycleLength = beatInfo.tickGap * (uint)beatInfo.repetitions + beatInfo.repetitionCycleOffset;
-                uint distanceFromStartRange = startRange >= currentTick ? startRange - currentTick : 0;
-                currentTick += fullCycleLength * (distanceFromStartRange / fullCycleLength);    // Skip closer to where our viewport currently is, wastes cpu cycles otherwise
-
-                while (currentTick < nextTSTick && currentTick <= endRange)
-                {
-                    if (currentTick >= startRange)
-                        SetBeatLinePosition(currentTick, lineObjectPool, ref poolPos);
-
-                    currentTick += beatInfo.tickGap;
-
-                    if (++repetitions >= beatInfo.repetitions)
-                    {
-                        currentTick += beatInfo.repetitionCycleOffset;
-                        repetitions -= beatInfo.repetitions;
-                    }
-                }
-
-                return poolPos;
-            };
-
-            measurePoolPos += RenderBeatLines(measureInfo.measureLine, measureLinePool, measurePoolPos);
-            beatPoolPos += RenderBeatLines(measureInfo.beatLine, beatLinePool, beatPoolPos);
-            quarterPoolPos += RenderBeatLines(measureInfo.quarterBeatLine, quarterBeatLinePool, quarterPoolPos);          
+            measurePoolPos += RenderBeatLines(ts, measureInfo.measureLine, measureLinePool, measurePoolPos, startRange, endRange, nextTSTick);
+            beatPoolPos += RenderBeatLines(ts, measureInfo.beatLine, beatLinePool, beatPoolPos, startRange, endRange, nextTSTick);
+            quarterPoolPos += RenderBeatLines(ts, measureInfo.quarterBeatLine, quarterBeatLinePool, quarterPoolPos, startRange, endRange, nextTSTick);          
         }
 
         DisableBeatLines(measurePoolPos, measureLinePool);
         DisableBeatLines(beatPoolPos, beatLinePool);
         DisableBeatLines(quarterPoolPos, quarterBeatLinePool);
+    }
+
+    int RenderBeatLines(TimeSignature ts, TimeSignature.BeatInfo beatInfo, GameObject[] lineObjectPool, int poolPosStart, uint startRange, uint endRange, uint nextTSTick)
+    {
+        int poolPos = poolPosStart;
+        uint currentTick = ts.tick + beatInfo.tickOffset;
+        int repetitions = 0;
+
+        uint fullCycleLength = beatInfo.tickGap * (uint)beatInfo.repetitions + beatInfo.repetitionCycleOffset;
+        uint distanceFromStartRange = startRange >= currentTick ? startRange - currentTick : 0;
+        currentTick += fullCycleLength * (distanceFromStartRange / fullCycleLength);    // Skip closer to where our viewport currently is, wastes cpu cycles otherwise
+
+        while (currentTick < nextTSTick && currentTick <= endRange)
+        {
+            if (currentTick >= startRange)
+                SetBeatLinePosition(currentTick, lineObjectPool, ref poolPos);
+
+            currentTick += beatInfo.tickGap;
+
+            if (++repetitions >= beatInfo.repetitions)
+            {
+                currentTick += beatInfo.repetitionCycleOffset;
+                repetitions -= beatInfo.repetitions;
+            }
+        }
+
+        return poolPos;
     }
 
     // Calculate the beat lines directly from the time signature positions themselves

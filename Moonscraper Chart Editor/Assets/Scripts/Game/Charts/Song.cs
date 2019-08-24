@@ -72,8 +72,9 @@ public class Song {
                 return GetAudioStream(AudioInstrument.Song);
             }
 
-            foreach (AudioInstrument audio in audioInstrumentEnumVals)
+            for (int i = 0; i < audioInstrumentEnumVals.Length; ++i)
             {
+                AudioInstrument audio = (AudioInstrument)i;
                 if (AudioManager.StreamIsValid(GetAudioStream(audio)))
                 {
                     return GetAudioStream(audio);
@@ -839,6 +840,7 @@ public class Song {
 
     public enum AudioInstrument
     {
+        // Keep these in numerical order, there are a few places we're looping over these by casting to avoid GC allocs
         Song = 0,
         Guitar = 1,
         Bass = 2,

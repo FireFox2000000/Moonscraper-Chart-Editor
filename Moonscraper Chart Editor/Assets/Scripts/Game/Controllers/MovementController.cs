@@ -63,14 +63,16 @@ public abstract class MovementController : MonoBehaviour {
 
                 AudioStream stream = null;
 
-                foreach (Song.AudioInstrument audio in audioInstrumentEnumVals)
+                for (int i = 0; i < audioInstrumentEnumVals.Length; ++i)
                 {
+                    Song.AudioInstrument audio = (Song.AudioInstrument)i;
                     if (AudioManager.StreamIsValid(currentSong.GetAudioStream(audio)))
                     {
                         stream = currentSong.GetAudioStream(audio);
                         break;
                     }
                 }
+
                 if (AudioManager.StreamIsValid(stream) && stream.IsPlaying())
                 {
                     float audioTimePosition = stream.CurrentPositionInSeconds() - editor.services.totalSongAudioOffset;
