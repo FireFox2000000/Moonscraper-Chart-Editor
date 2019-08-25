@@ -1,3 +1,12 @@
+1.3.1.3
+	NEW FEATURES
+	-Added sfx offset option to calibration menu.
+
+	FIXES
+	-Fixed shortcuts that were broken in previous
+	-SFX triggers now synced to actual audio instead of game position. 
+	-Fixed some song streams starting playback slightly out of sync the more stems we tried to play simultaneously.
+
 1.3.1.2
 	CHANGES
 	-config.ini no longer generated in the application directory. Stored in the same directory as the autosave. (Users\[user]\AppData\LocalLow\FireFox Dev\Moonscraper Chart Editor)
