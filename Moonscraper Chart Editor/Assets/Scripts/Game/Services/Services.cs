@@ -183,6 +183,29 @@ public class Services : MonoBehaviour
         }
     }
 
+    public float sfxAudioTime
+    {
+        get
+        {
+            ChartEditor editor = ChartEditor.Instance;
+            Song currentSong = editor.currentSong;
+            AudioStream mainAudio = currentSong.mainSongAudio;
+
+            float currentAudioTime = 0;
+            if (mainAudio != null)
+            {
+                currentAudioTime = mainAudio.CurrentPositionInSeconds();
+            }
+            else
+            {
+                float audioStrikelinePos = editor.services.sfxCalibratedStrikelinePos;
+                currentAudioTime = TickFunctions.WorldYPositionToTime(audioStrikelinePos);
+            }
+
+            return currentAudioTime + GameSettings.clapCalibrationMS / 1000.0f;
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////
 
     // Use this for initialization

@@ -59,7 +59,6 @@ public abstract class MovementController : MonoBehaviour {
             // Make sure we're staying in sync with the audio
             {
                 Song currentSong = editor.currentSong;
-                float visibleAudioTime = editor.services.currentAudioTime;
 
                 AudioStream stream = null;
 
