@@ -29,7 +29,7 @@ public class ClipboardObjectController : Snapable {
 
     new void LateUpdate()
     {
-        if (Mouse.world2DPosition != null && Input.mousePosition.y < Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y)
+        if (editor.services.mouseMonitorSystem.world2DPosition != null && Input.mousePosition.y < Camera.main.WorldToScreenPoint(editor.mouseYMaxLimit.position).y)
         {
             pastePos = objectSnappedChartPos;
         }

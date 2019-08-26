@@ -38,9 +38,9 @@ public abstract class Snapable : MonoBehaviour {
 
     public static uint GetSnappedPos(ChartEditor editor, int step)
     {
-        if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
+        if (editor.services.mouseMonitorSystem.world2DPosition != null && ((Vector2)editor.services.mouseMonitorSystem.world2DPosition).y < editor.mouseYMaxLimit.position.y)
         {
-            Vector2 mousePos = (Vector2)Mouse.world2DPosition;
+            Vector2 mousePos = (Vector2)editor.services.mouseMonitorSystem.world2DPosition;
             float ypos = mousePos.y;
             return editor.currentSong.WorldPositionToSnappedTick(ypos, step);
         }

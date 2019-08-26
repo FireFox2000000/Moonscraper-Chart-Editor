@@ -19,9 +19,12 @@ public class DropDownHoverActivate : MonoBehaviour
     
     void Update()
     {
-        if (Services.IsInDropDown && ChartEditor.Instance.currentState != ChartEditor.State.Loading)
+        ChartEditor editor = ChartEditor.Instance;
+        var mouseMonitor = editor.services.mouseMonitorSystem;
+
+        if (Services.IsInDropDown && editor.currentState != ChartEditor.State.Loading)
         {
-            Dropdown dropdownUnderMouse = Mouse.GetUIUnderPointer<Dropdown>();
+            Dropdown dropdownUnderMouse = mouseMonitor.GetUIUnderPointer<Dropdown>();
             Dropdown currentDropdown;
             if (EventSystem.current.currentSelectedGameObject == null)
                 currentDropdown = null;
@@ -38,7 +41,7 @@ public class DropDownHoverActivate : MonoBehaviour
         }
         
         // Properly deselect dropdown
-        if (Input.GetMouseButtonUp(0) && EventSystem.current.currentSelectedGameObject && EventSystem.current.currentSelectedGameObject.GetComponentInParent<Dropdown>() == dropdown && !Mouse.GetUIUnderPointer<Dropdown>())
+        if (Input.GetMouseButtonUp(0) && EventSystem.current.currentSelectedGameObject && EventSystem.current.currentSelectedGameObject.GetComponentInParent<Dropdown>() == dropdown && !mouseMonitor.GetUIUnderPointer<Dropdown>())
         {
             EventSystem.current.SetSelectedGameObject(null);   
         }

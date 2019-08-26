@@ -134,7 +134,6 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         _maxPos = 0;
 
         RegisterSystems();
-        ChangeState(State.Editor);
 
         movement = GameObject.FindGameObjectWithTag("Movement").GetComponent<MovementController>();
 
@@ -146,15 +145,17 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         windowHandleManager = new WindowHandleManager(versionNumber.text, GetComponent<Settings>().productName);
         errorManager = gameObject.AddComponent<ErrorManager>();
         toolManager.Init();
-
-        // Create a default song
-        currentSong = new Song();
-        LoadSong(currentSong, true);
     }
 
     IEnumerator Start()
     {
         sfxAudioStreams.LoadSounds(SkinManager.Instance.currentSkin);
+
+        ChangeState(State.Editor);
+
+        // Create a default song
+        currentSong = new Song();
+        LoadSong(currentSong, true);
 
         yield return null;
         yield return null;
@@ -185,9 +186,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         _maxPos = currentSong.WorldYPositionToTick(camYMax.position.y);
 
         // Set window text to represent if the current song has been saved or not
-        windowHandleManager.UpdateDirtyNotification(isDirty);
-
-        //applicationStateMachine.Update();
+        windowHandleManager.UpdateDirtyNotification(isDirty); 
     }
 
     private void LateUpdate()

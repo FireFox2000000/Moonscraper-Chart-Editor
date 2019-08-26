@@ -37,15 +37,16 @@ public class CursorSelect : ToolObject
 
     protected override void Update()
     {
-        if (editor.currentState == ChartEditor.State.Editor && !block)
+        if (!block)
         {
             UpdateSnappedPos();
+            MouseMonitor mouseMonitor = editor.services.mouseMonitorSystem;
 
             if (Input.GetMouseButtonDown(0))
             {
                 mousePos = Input.mousePosition;
-                mouseDownOverUI = Mouse.IsUIUnderPointer();
-                clickedSelectableObject = Mouse.currentSelectableUnderMouse;
+                mouseDownOverUI = MouseMonitor.IsUIUnderPointer();
+                clickedSelectableObject = mouseMonitor.currentSelectableUnderMouse;
 
                 // Reset if the user is making a new selection or deselecting the old
                 if (!clickedSelectableObject && !Globals.modifierInputActive && !Globals.secondaryInputActive && !mouseDownOverUI)
@@ -53,7 +54,7 @@ public class CursorSelect : ToolObject
                     editor.selectedObjectsManager.currentSelectedObject = null;
                 }
 
-                if (/*Globals.viewMode == Globals.ViewMode.Chart &&*/ Mouse.world2DPosition != null && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer())
+                if (editor.services.mouseMonitorSystem.world2DPosition != null && !mouseMonitor.currentSelectableUnderMouse && !MouseMonitor.IsUIUnderPointer())
                     InitGroupSelect();
             }
             else if (Input.GetMouseButtonUp(0))
@@ -62,9 +63,9 @@ public class CursorSelect : ToolObject
             // Dragging mouse for group select
             if (userDraggingSelectArea && Input.GetMouseButton(0) && !clickedSelectableObject && !mouseDownOverUI)
             {
-                if (Mouse.world2DPosition != null)
+                if (editor.services.mouseMonitorSystem.world2DPosition != null)
                 {
-                    endWorld2DPos = (Vector2)Mouse.world2DPosition;
+                    endWorld2DPos = (Vector2)editor.services.mouseMonitorSystem.world2DPosition;
                     endWorld2DPos.y = editor.currentSong.TickToWorldYPosition(objectSnappedChartPos);
 
                     endWorld2DChartPos = objectSnappedChartPos;
@@ -117,7 +118,7 @@ public class CursorSelect : ToolObject
             }
 
             // Check for deselection of all objects
-            if (Input.GetMouseButtonUp(0) && !Mouse.currentSelectableUnderMouse && !Mouse.IsUIUnderPointer() && mousePos == Input.mousePosition && !Globals.modifierInputActive)
+            if (Input.GetMouseButtonUp(0) && !mouseMonitor.currentSelectableUnderMouse && !MouseMonitor.IsUIUnderPointer() && mousePos == Input.mousePosition && !Globals.modifierInputActive)
             {
                 editor.selectedObjectsManager.currentSelectedObject = null;
                 mousePos = Vector3.zero;
@@ -126,7 +127,7 @@ public class CursorSelect : ToolObject
         else
             block = true;
 
-        if (block && editor.currentState == ChartEditor.State.Editor && !Input.GetMouseButton(0))
+        if (block && !Input.GetMouseButton(0))
             block = false;
     }
 
@@ -138,7 +139,7 @@ public class CursorSelect : ToolObject
     // Resets all the group selection properties
     void InitGroupSelect()
     {
-        initWorld2DPos = (Vector2)Mouse.world2DPosition;
+        initWorld2DPos = (Vector2)editor.services.mouseMonitorSystem.world2DPosition;
         initWorld2DPos.y = editor.currentSong.TickToWorldYPosition(objectSnappedChartPos);
         endWorld2DPos = initWorld2DPos;
         startWorld2DChartPos = objectSnappedChartPos;
@@ -167,7 +168,7 @@ public class CursorSelect : ToolObject
 
     void UpdateGroupSelectSize()
     {
-        endWorld2DPos = (Vector2)Mouse.world2DPosition;
+        endWorld2DPos = (Vector2)editor.services.mouseMonitorSystem.world2DPosition;
         endWorld2DPos.y = editor.currentSong.TickToWorldYPosition(objectSnappedChartPos);
 
         endWorld2DChartPos = objectSnappedChartPos;

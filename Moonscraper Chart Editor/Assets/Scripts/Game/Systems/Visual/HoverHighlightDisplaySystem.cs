@@ -33,14 +33,16 @@ public class HoverHighlightDisplaySystem : SystemManagerState.System
 	// Update is called once per frame
 	public override void Update ()
     {
+        ChartEditor editor = ChartEditor.Instance;
+
         // Show a preview if the user will click on an object
-        GameObject songObject = Mouse.currentSelectableUnderMouse;
+        GameObject songObject = editor.services.mouseMonitorSystem.currentSelectableUnderMouse;
         foreach (GameObject highlight in highlights)
         {
             highlight.SetActive(false);
         }
 
-        var currentTool = ChartEditor.Instance.toolManager.currentToolId;
+        var currentTool = editor.toolManager.currentToolId;
         bool validTool = currentTool == EditorObjectToolManager.ToolID.Cursor || currentTool == EditorObjectToolManager.ToolID.Eraser;
         bool previewDelete = Input.GetMouseButton(1) && (currentTool != EditorObjectToolManager.ToolID.Cursor || currentTool != EditorObjectToolManager.ToolID.Eraser);
         bool showHighlight = !Input.GetMouseButton(0) && songObject != null && (validTool || previewDelete);

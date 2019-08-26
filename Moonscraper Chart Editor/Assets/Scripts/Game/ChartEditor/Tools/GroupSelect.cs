@@ -78,9 +78,9 @@ public class GroupSelect : ToolObject {
             UpdateSnappedPos();
 
             // Update the corner positions
-            if (Input.GetMouseButtonDown(0) && Mouse.world2DPosition != null)
+            if (Input.GetMouseButtonDown(0) && editor.services.mouseMonitorSystem.world2DPosition != null)
             {
-                initWorld2DPos = (Vector2)Mouse.world2DPosition;
+                initWorld2DPos = (Vector2)editor.services.mouseMonitorSystem.world2DPosition;
                 initWorld2DPos.y = editor.currentSong.TickToWorldYPosition(objectSnappedChartPos);
                 startWorld2DChartPos = objectSnappedChartPos;
 
@@ -107,9 +107,9 @@ public class GroupSelect : ToolObject {
                 userDraggingSelectArea = true;
             }
 
-            if (Input.GetMouseButton(0) && Mouse.world2DPosition != null)
+            if (Input.GetMouseButton(0) && editor.services.mouseMonitorSystem.world2DPosition != null)
             {
-                endWorld2DPos = (Vector2)Mouse.world2DPosition;
+                endWorld2DPos = (Vector2)editor.services.mouseMonitorSystem.world2DPosition;
                 endWorld2DPos.y = editor.currentSong.TickToWorldYPosition(objectSnappedChartPos);
 
                 endWorld2DChartPos = objectSnappedChartPos;

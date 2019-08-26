@@ -82,8 +82,8 @@ public class BPMController : SongObjectController {
             if (previousBpm != null && previousBpm.anchor == null)
             {
                 float desiredWorldPos;
-                if (Mouse.world2DPosition != null && ((Vector2)Mouse.world2DPosition).y < editor.mouseYMaxLimit.position.y)
-                    desiredWorldPos = ((Vector2)Mouse.world2DPosition).y;
+                if (editor.services.mouseMonitorSystem.world2DPosition != null && ((Vector2)editor.services.mouseMonitorSystem.world2DPosition).y < editor.mouseYMaxLimit.position.y)
+                    desiredWorldPos = ((Vector2)editor.services.mouseMonitorSystem.world2DPosition).y;
                 else
                     desiredWorldPos = editor.mouseYMaxLimit.position.y;
 

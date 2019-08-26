@@ -29,7 +29,7 @@ public class Eraser : ToolObject {
 
         if (Input.GetMouseButton(0))
         {
-            GameObject currentMouseHover = Mouse.currentSelectableUnderMouse;
+            GameObject currentMouseHover = editor.services.mouseMonitorSystem.currentSelectableUnderMouse;
             if (currentMouseHover)
             {
                 SongObjectController soController = currentMouseHover.GetComponent<SongObjectController>();

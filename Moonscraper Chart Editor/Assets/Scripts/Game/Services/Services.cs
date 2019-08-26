@@ -31,6 +31,7 @@ public class Services : MonoBehaviour
     static Vector2 prevScreenSize;
     public static bool IsTyping = false;
 
+    public MouseMonitor mouseMonitorSystem { get; private set; }
     List<UpdateableService> updateableServices = new List<UpdateableService>();
 
     public static bool HasScreenResized
@@ -66,12 +67,13 @@ public class Services : MonoBehaviour
     {
         get
         {
-            GameObject currentUIUnderPointer = Mouse.GetUIRaycastableUnderPointer();
+            MouseMonitor mouseMonitorSystem = ChartEditor.Instance.services.mouseMonitorSystem;
+            GameObject currentUIUnderPointer = mouseMonitorSystem.GetUIRaycastableUnderPointer();
             if (currentUIUnderPointer != null && (currentUIUnderPointer.GetComponentInChildren<ScrollRect>() || currentUIUnderPointer.GetComponentInParent<ScrollRect>()))
                 return true;
 
             if ((EventSystem.current.currentSelectedGameObject == null ||
-                EventSystem.current.currentSelectedGameObject.GetComponentInParent<Dropdown>() == null) && !Mouse.GetUIUnderPointer<Dropdown>())
+                EventSystem.current.currentSelectedGameObject.GetComponentInParent<Dropdown>() == null) && !mouseMonitorSystem.GetUIUnderPointer<Dropdown>())
             {
                 return false;
             }
@@ -207,6 +209,14 @@ public class Services : MonoBehaviour
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////
+    
+    private void Awake()
+    {
+        loadingTasksManager = GetComponent<LoadingTasksManager>();
+
+        mouseMonitorSystem = new MouseMonitor();
+        ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Editor, mouseMonitorSystem);
+    }
 
     // Use this for initialization
     void Start()
@@ -214,8 +224,6 @@ public class Services : MonoBehaviour
         toolScreenArea = area.GetScreenCorners();
         prevScreenSize.x = Screen.width;
         prevScreenSize.y = Screen.height;
-
-        loadingTasksManager = GetComponent<LoadingTasksManager>();
     }
 
     public void RegisterUpdateableService(UpdateableService service)

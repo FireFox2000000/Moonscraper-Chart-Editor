@@ -7,48 +7,40 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using System.Collections;
 
-public class Mouse : MonoBehaviour {
-    [Header("Viewing modes")]
-    public Camera camera2D;
-    public Camera camera3D;
-
+public class MouseMonitor : SystemManagerState.System
+{
     bool dragging;
     ChartEditor editor;
     GameObject selectedGameObject;
-	
-    public static Vector2? world2DPosition = null;
+    Camera mainCamera;
+
     RaycastHit[] screenToPointHits = new RaycastHit[1];
-
-    void Start()
-    {
-        editor = ChartEditor.Instance;
-    }
-
-    public static bool cancel = false;
-    public static RaycastResult? currentRaycastFromPointer;// = new List<RaycastResult>();
-    public static GameObject currentSelectableUnderMouse;
-
+    RaycastResult? currentRaycastFromPointer;
     Vector2 initMouseDragPos = Vector2.zero;
 
-	// Update is called once per frame
-	void Update () {
-        if (editor.currentState != ChartEditor.State.Editor)
-        {
-            if (selectedGameObject)
-                SendOnSelectableMouseUp();
+    public static bool cancel = false;
+    public Vector2? world2DPosition { get; private set; }
+    public GameObject currentSelectableUnderMouse { get; private set; }
 
-            return;
-        }
+    public override void Enter()
+    {
+        editor = ChartEditor.Instance;
+        mainCamera = Camera.main;
+        world2DPosition = null;
+    }
 
+    // Update is called once per frame
+    public override void Update ()
+    {
         currentRaycastFromPointer = RaycastFromPointer();
         currentSelectableUnderMouse = GetSelectableObjectUnderMouse();
-
-        Camera mainCamera = camera3D;
 
         Vector2 viewportPos = mainCamera.ScreenToViewportPoint(Input.mousePosition);
 
         if (viewportPos.x < 0 || viewportPos.x > 1 || viewportPos.y < 0 || viewportPos.y > 1)
+        {
             world2DPosition = null;
+        }
         else
         {
             Vector3 screenPos = Input.mousePosition;
@@ -61,9 +53,13 @@ public class Mouse : MonoBehaviour {
             Ray ray = mainCamera.ScreenPointToRay(screenPos);
             int layerMask = 1 << LayerMask.NameToLayer("Ignore Raycast");
             if (Physics.RaycastNonAlloc(ray, screenToPointHits, Mathf.Infinity, layerMask) > 0)
+            {
                 world2DPosition = screenToPointHits[0].point;
+            }
             else
+            {
                 world2DPosition = null;
+            }
         }
 
         if (cancel || (selectedGameObject && !selectedGameObject.activeSelf))
@@ -128,6 +124,12 @@ public class Mouse : MonoBehaviour {
         }
     }
 
+    public override void Exit()
+    {
+        if (selectedGameObject)
+            SendOnSelectableMouseUp();
+    }
+
     void SendOnSelectableMouseUp()
     {
         if (selectedGameObject)
@@ -142,30 +144,6 @@ public class Mouse : MonoBehaviour {
         dragging = false;
 
         selectedGameObject = null;
-    }
-
-    public void SwitchCamera()
-    {
-        if (camera2D.gameObject.activeSelf)
-        {
-            Set3DCamera();
-        }
-        else
-        {
-            Set2DCamera();
-        }
-    }
-
-    public void Set3DCamera()
-    {
-        camera2D.gameObject.SetActive(false);
-        camera3D.gameObject.SetActive(true);
-    }
-
-    public void Set2DCamera()
-    {
-        camera3D.gameObject.SetActive(false);
-        camera2D.gameObject.SetActive(true);
     }
 
     static RaycastHit2D lowestY(RaycastHit2D[] hits)
@@ -226,10 +204,10 @@ public class Mouse : MonoBehaviour {
         }
     }
 
-    static List<GameObject> hitGameObjects = new List<GameObject>();
-    static RaycastHit[] hitGameObjects3d = new RaycastHit[5];
-    static RaycastHit2D[] hitGameObjects2d = new RaycastHit2D[5];
-    static GameObject GetSelectableObjectUnderMouse()
+    List<GameObject> hitGameObjects = new List<GameObject>();
+    RaycastHit[] hitGameObjects3d = new RaycastHit[5];
+    RaycastHit2D[] hitGameObjects2d = new RaycastHit2D[5];
+    GameObject GetSelectableObjectUnderMouse()
     {
         if (world2DPosition != null)
         {
@@ -297,6 +275,36 @@ public class Mouse : MonoBehaviour {
         return null;
     }
 
+    public GameObject GetUIRaycastableUnderPointer()
+    {
+        if (currentRaycastFromPointer != null)
+            return ((RaycastResult)currentRaycastFromPointer).gameObject;
+
+        return null;
+    }
+
+    public T GetUIUnderPointer<T>() where T : Selectable
+    {
+        if (currentRaycastFromPointer != null)
+        {
+            RaycastResult raycastResult = (RaycastResult)currentRaycastFromPointer;
+            GameObject hoveredObj = raycastResult.gameObject;
+
+            if (hoveredObj && hoveredObj.GetComponent<T>())
+            {
+                return hoveredObj.GetComponent<T>();
+            }
+            else if (hoveredObj && hoveredObj.transform.parent.gameObject.GetComponent<T>())
+            {
+                return hoveredObj.transform.parent.gameObject.GetComponent<T>();
+            }
+        }
+
+        return null;
+    }
+
+    ///// Helper functions related to the mouse ///////
+
     public static bool IsUIUnderPointer()
     {
         if (RaycastFromPointer() != null)
@@ -307,8 +315,6 @@ public class Mouse : MonoBehaviour {
 
     static RaycastResult? RaycastFromPointer()
     {
-        //List<RaycastResult> raycastResults = new List<RaycastResult>();
-
         // Gives some kind of dictionary error when first played. Wrapping in try-catch to shut it up.
         try
         {
@@ -328,37 +334,4 @@ public class Mouse : MonoBehaviour {
 
         return null;
     }
-
-    public static GameObject GetUIRaycastableUnderPointer()
-    {
-        if (currentRaycastFromPointer != null)
-            return ((RaycastResult)currentRaycastFromPointer).gameObject;
-
-        return null;
-    }
-
-    public static T GetUIUnderPointer<T>() where T : Selectable
-    {
-        if (currentRaycastFromPointer != null)
-        {
-            RaycastResult raycastResult = (RaycastResult)currentRaycastFromPointer;
-            GameObject hoveredObj = raycastResult.gameObject;
-
-            if (hoveredObj && hoveredObj.GetComponent<T>())
-            {
-                return hoveredObj.GetComponent<T>();
-            }
-            else if (hoveredObj && hoveredObj.transform.parent.gameObject.GetComponent<T>())
-            {
-                return hoveredObj.transform.parent.gameObject.GetComponent<T>();
-            }
-        }
-
-        return null;
-    }
-}
-
-public class Draggable : MonoBehaviour
-{
-    public virtual void OnRightMouseDrag() { }
 }

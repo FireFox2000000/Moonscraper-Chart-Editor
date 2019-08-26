@@ -47,9 +47,10 @@ public class GroupMove : ToolObject
             {
                 UpdateSnappedPos();
 
-                if (Mouse.world2DPosition != null)
+                //Debug.Log("Group move: " + editor.services.mouseMonitorSystem.world2DPosition);
+                if (editor.services.mouseMonitorSystem.world2DPosition != null)
                 {
-                    Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
+                    Vector2 mousePosition = (Vector2)editor.services.mouseMonitorSystem.world2DPosition;
                     int chartPosOffset = (int)(objectSnappedChartPos - initObjectSnappedChartPos);
                     if (anchorArrayPos >= 0)
                         chartPosOffset = (int)(objectSnappedChartPos - originalSongObjects[anchorArrayPos].tick);
@@ -147,8 +148,8 @@ public class GroupMove : ToolObject
 
     public void StartMoveAction(IList<SongObject> songObjects, int anchorArrayPos, bool delete = false)
     {
-        if (Mouse.world2DPosition != null)
-            initMousePos = (Vector2)Mouse.world2DPosition;
+        if (editor.services.mouseMonitorSystem.world2DPosition != null)
+            initMousePos = (Vector2)editor.services.mouseMonitorSystem.world2DPosition;
         else
             initMousePos = Vector2.zero;
 
@@ -194,7 +195,7 @@ public class GroupMove : ToolObject
             }
         }
 
-        Mouse.cancel = true;
+        MouseMonitor.cancel = true;
 
         editor.commandStack.Push(initialDeleteCommands);
 

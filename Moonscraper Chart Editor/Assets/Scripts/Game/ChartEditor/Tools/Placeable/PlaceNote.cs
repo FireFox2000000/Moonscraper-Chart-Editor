@@ -151,9 +151,9 @@ public class PlaceNote : PlaceSongObject {
 
     protected virtual void UpdateFretType()
     {
-        if (!note.IsOpenNote() && Mouse.world2DPosition != null)
+        if (!note.IsOpenNote() && editor.services.mouseMonitorSystem.world2DPosition != null)
         {
-            Vector2 mousePosition = (Vector2)Mouse.world2DPosition;
+            Vector2 mousePosition = (Vector2)editor.services.mouseMonitorSystem.world2DPosition;
             mousePosition.x += horizontalMouseOffset;
             note.rawNote = XPosToNoteNumber(mousePosition.x, editor.laneInfo);
         }
