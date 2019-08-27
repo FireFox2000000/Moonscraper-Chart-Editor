@@ -160,7 +160,7 @@ public class EditorObjectToolManager : System.Object
             if (waitForMouseRelease)
                 waitForMouseRelease = Input.GetMouseButton(0);
 
-            bool deleteMode = currentlyInDeleteMode || (wasInDeleteMode && !Input.GetMouseButton(0)); // Handle case where we've just done a delete and we're releasing right click first instead of left click
+            bool deleteMode = currentlyInDeleteMode || (wasInDeleteMode && Input.GetMouseButton(0)); // Handle case where we've just done a delete and we're releasing right click first instead of left click
             wasInDeleteMode = deleteMode;
 
             if (keysModeActive)
@@ -176,6 +176,7 @@ public class EditorObjectToolManager : System.Object
 
         public override void SystemEnter()
         {
+            wasInDeleteMode = false;
             waitForMouseRelease = Input.GetMouseButton(0);
             ChartEditor.Instance.toolManager.SetToolActive(false);  // Cannot be active for the first frame, specifically when clicking to exit a menu
         }
