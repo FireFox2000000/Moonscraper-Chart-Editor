@@ -34,4 +34,12 @@ public class UnitySingleton<T> : MonoBehaviour where T : UnitySingleton<T>
         go.name = "[Singleton] " + typeof(T).ToString();
         return instance;
     }
+
+    private void OnDestroy()
+    {
+        if (!WantDontDestroyOnLoad)
+        {
+            instance = null;
+        }
+    }
 }
