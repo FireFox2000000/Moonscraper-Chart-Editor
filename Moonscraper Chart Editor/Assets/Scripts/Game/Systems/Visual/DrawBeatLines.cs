@@ -97,7 +97,7 @@ public class DrawBeatLines : SystemManagerState.System
             }
         }
 
-        return poolPos;
+        return poolPos - poolPosStart;
     }
 
     // Calculate the beat lines directly from the time signature positions themselves
