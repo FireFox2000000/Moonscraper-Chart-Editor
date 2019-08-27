@@ -42,7 +42,7 @@ public class DrawBeatLines : SystemManagerState.System
     }
 	
 	// Update is called once per frame
-	public override void Update () {
+	public override void SystemUpdate () {
         UpdateBeatLines4();
     }
 

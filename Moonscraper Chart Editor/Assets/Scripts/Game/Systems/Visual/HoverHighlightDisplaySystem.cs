@@ -31,7 +31,7 @@ public class HoverHighlightDisplaySystem : SystemManagerState.System
 	}
 	
 	// Update is called once per frame
-	public override void Update ()
+	public override void SystemUpdate ()
     {
         ChartEditor editor = ChartEditor.Instance;
 
@@ -114,7 +114,7 @@ public class HoverHighlightDisplaySystem : SystemManagerState.System
         }
     }
 
-    public override void Exit()
+    public override void SystemExit()
     {
         hoverHighlightRen.sharedMaterial.color = initColor;
 

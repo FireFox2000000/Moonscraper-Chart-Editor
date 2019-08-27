@@ -23,7 +23,7 @@ public class ClapPlaybackSystem : SystemManagerState.System
         this.playFromTime = playFromTime;
     }
 
-    public override void Enter()
+    public override void SystemEnter()
     {
         sampleStream = ChartEditor.Instance.sfxAudioStreams.GetSample(SkinKeys.clap);
         Debug.Assert(sampleStream != null && sampleStream.isValid);
@@ -44,7 +44,7 @@ public class ClapPlaybackSystem : SystemManagerState.System
         eventsTracker = new SongObjectTracker<Event>(ChartEditor.Instance.currentSong.events, currentTick);
     }
 
-    public override void Update()
+    public override void SystemUpdate()
     {
         ChartEditor editor = ChartEditor.Instance;
         Song currentSong = editor.currentSong;

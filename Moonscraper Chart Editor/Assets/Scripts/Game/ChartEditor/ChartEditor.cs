@@ -82,7 +82,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     SystemManagerState loadingState = new SystemManagerState();
     public State currentState { get; private set; }
 
-    Dictionary<State, List<SystemManagerState.System>> persistentSystemsForStates = new Dictionary<State, List<SystemManagerState.System>>();
+    Dictionary<State, List<SystemManagerState.ISystem>> persistentSystemsForStates = new Dictionary<State, List<SystemManagerState.ISystem>>();
 
     static readonly Dictionary<string, LoadedStreamStore.StreamConfig> soundMapConfig = new Dictionary<string, LoadedStreamStore.StreamConfig>(){
             { SkinKeys.metronome,   new LoadedStreamStore.StreamConfig(System.IO.Path.Combine(Application.streamingAssetsPath, "SFX/metronome.wav")) },
@@ -186,11 +186,8 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         _maxPos = currentSong.WorldYPositionToTick(camYMax.position.y);
 
         // Set window text to represent if the current song has been saved or not
-        windowHandleManager.UpdateDirtyNotification(isDirty); 
-    }
+        windowHandleManager.UpdateDirtyNotification(isDirty);
 
-    private void LateUpdate()
-    {
         applicationStateMachine.Update();
     }
 
@@ -268,7 +265,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
     void RegisterSystems()
     {
-        _songObjectPoolManager = new SongObjectPoolManager();
+        _songObjectPoolManager = gameObject.AddComponent<SongObjectPoolManager>();
         DrawBeatLines drawBeatLinesSystem = new DrawBeatLines();
 
         RegisterPersistentSystem(State.Editor, new AutoSaveSystem());
@@ -302,7 +299,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
 
     void PopulatePersistentSystemsForNewState(State state, SystemManagerState newState)
     {
-        List<SystemManagerState.System> persistentSystems;
+        List<SystemManagerState.ISystem> persistentSystems;
         if (persistentSystemsForStates.TryGetValue(state, out persistentSystems))
             newState.AddSystems(persistentSystemsForStates[state]);
     }
@@ -345,12 +342,12 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         }
     }
 
-    public void RegisterPersistentSystem(State state, SystemManagerState.System system)
+    public void RegisterPersistentSystem(State state, SystemManagerState.ISystem system)
     {
-        List<SystemManagerState.System> persistentSystems;
+        List<SystemManagerState.ISystem> persistentSystems;
         if (!persistentSystemsForStates.TryGetValue(state, out persistentSystems))
         {
-            persistentSystems = new List<SystemManagerState.System>();
+            persistentSystems = new List<SystemManagerState.ISystem>();
             persistentSystemsForStates.Add(state, persistentSystems);
         }
         persistentSystems.Add(system);

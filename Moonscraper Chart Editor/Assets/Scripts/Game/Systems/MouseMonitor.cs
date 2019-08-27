@@ -22,7 +22,7 @@ public class MouseMonitor : SystemManagerState.System
     public Vector2? world2DPosition { get; private set; }
     public GameObject currentSelectableUnderMouse { get; private set; }
 
-    public override void Enter()
+    public override void SystemEnter()
     {
         editor = ChartEditor.Instance;
         mainCamera = Camera.main;
@@ -30,7 +30,7 @@ public class MouseMonitor : SystemManagerState.System
     }
 
     // Update is called once per frame
-    public override void Update ()
+    public override void SystemUpdate ()
     {
         currentRaycastFromPointer = RaycastFromPointer();
         currentSelectableUnderMouse = GetSelectableObjectUnderMouse();
@@ -124,7 +124,7 @@ public class MouseMonitor : SystemManagerState.System
         }
     }
 
-    public override void Exit()
+    public override void SystemExit()
     {
         if (selectedGameObject)
             SendOnSelectableMouseUp();

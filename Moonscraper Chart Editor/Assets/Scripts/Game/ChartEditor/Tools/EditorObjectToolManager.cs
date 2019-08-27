@@ -174,13 +174,13 @@ public class EditorObjectToolManager : System.Object
             return false;
         }
 
-        public override void Enter()
+        public override void SystemEnter()
         {
             waitForMouseRelease = Input.GetMouseButton(0);
             ChartEditor.Instance.toolManager.SetToolActive(false);  // Cannot be active for the first frame, specifically when clicking to exit a menu
         }
 
-        public override void Update()
+        public override void SystemUpdate()
         {
             ChartEditor editor = ChartEditor.Instance;
             
@@ -188,7 +188,7 @@ public class EditorObjectToolManager : System.Object
             ChartEditor.Instance.toolManager.SetToolActive(isActive);
         }
 
-        public override void Exit()
+        public override void SystemExit()
         {
             ChartEditor.Instance.toolManager.SetToolActive(false);
         }

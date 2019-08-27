@@ -9,7 +9,7 @@ public class AutoSaveSystem : SystemManagerState.System
     Song autosaveSong = null;
     System.Threading.Thread autosave;
 
-    public override void Update()
+    public override void SystemUpdate()
     {
         if (autosave == null || autosave.ThreadState != System.Threading.ThreadState.Running)
         {

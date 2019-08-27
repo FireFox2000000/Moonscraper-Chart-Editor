@@ -5,45 +5,78 @@ using System.Collections.Generic;
 public class SystemManagerState : StateMachine.IState
 {
     // A system that recieves heartbeats if the current state is the one it's registered in
-    public abstract class System
+    public interface ISystem
     {
-        public virtual void Enter() { }
-        public virtual void Update() { }
-        public virtual void Exit() { }
+        void SystemEnter();
+        void SystemUpdate();
+        void SystemExit();
     }
 
-    List<System> registeredSystems = new List<System>();
+    // Standard system class, updates when the state machine updates
+    public abstract class System : ISystem
+    {
+        public virtual void SystemEnter() { }
+        public virtual void SystemUpdate() { }
+        public virtual void SystemExit() { }
+    }
 
-    public void AddSystem(System system)
+    // A system that has the properties of a UnityEngine MonoBehaviour for finer update timing control (Update, LateUpdate, script execution order etc)
+    public class MonoBehaviourSystem : UnityEngine.MonoBehaviour, ISystem
+    {
+        public void SystemEnter()
+        {
+            enabled = true;
+        }
+
+        public void SystemExit()
+        {
+            enabled = false;
+        }
+
+        public void SystemUpdate() {}
+    }
+
+    List<ISystem> registeredSystems = new List<ISystem>();
+    bool hasEntered = false;
+
+    public void AddSystem(ISystem system)
     {
         registeredSystems.Add(system);
+
+        if (hasEntered)
+            system.SystemEnter();
     }
 
-    public void AddSystems(IList<System> systems)
+    public void AddSystems(IList<ISystem> systems)
     {
-        registeredSystems.AddRange(systems);
+        foreach (ISystem system in systems)
+            AddSystem(system);
     }
 
-    public void RemoveSystem(System system)
+    public void RemoveSystem(ISystem system)
     {
         registeredSystems.Remove(system);
     }
 
     public virtual void Enter()
     {
-        foreach (System system in registeredSystems)
-            system.Enter();
+        hasEntered = true;
+
+        foreach (ISystem system in registeredSystems)
+            system.SystemEnter();
     }
 
     public virtual void Exit()
     {
-        foreach (System system in registeredSystems)
-            system.Exit();
+        foreach (ISystem system in registeredSystems)
+            system.SystemExit();
+
+        hasEntered = false;
     }
 
     public virtual void Update()
     {
-        foreach (System system in registeredSystems)
-            system.Update();
+        foreach (ISystem system in registeredSystems)
+            system.SystemUpdate();
     }
 }

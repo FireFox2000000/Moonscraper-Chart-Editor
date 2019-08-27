@@ -29,7 +29,7 @@ public class SelectedHighlightDisplaySystem : SystemManagerState.System
     }
 	
 	// Update is called once per frame
-	public override void Update () {
+	public override void SystemUpdate () {
         int index, length;
         IList<SongObject> viewRange = editor.selectedObjectsManager.currentSelectedObjects;
         SongObjectHelper.GetRange(viewRange, editor.minPos, editor.maxPos, out index, out length);
@@ -73,7 +73,7 @@ public class SelectedHighlightDisplaySystem : SystemManagerState.System
         }
     }
 
-    public override void Exit()
+    public override void SystemExit()
     {
         foreach (GameObject selectedHighlight in selectedHighlightPool)
         {

@@ -19,13 +19,13 @@ public class MetronomePlaybackSystem : SystemManagerState.System
         nextClapPos = CalculateNextBeatTickPosition(currentTickPos);
     }
 
-    public override void Enter()
+    public override void SystemEnter()
     {
         sampleStream = ChartEditor.Instance.sfxAudioStreams.GetSample(SkinKeys.metronome);
         Debug.Assert(sampleStream != null);
     }
 
-    public override void Update()
+    public override void SystemUpdate()
     {
         ChartEditor editor = ChartEditor.Instance;
         Song currentSong = editor.currentSong;
@@ -46,7 +46,7 @@ public class MetronomePlaybackSystem : SystemManagerState.System
         }
     }
 
-    public override void Exit()
+    public override void SystemExit()
     {
         sampleStream = null;
     }

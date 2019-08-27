@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SongObjectPoolManager : SystemManagerState.System
+public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
 {
     ChartEditor editor;
 
@@ -35,7 +35,7 @@ public class SongObjectPoolManager : SystemManagerState.System
     public float? noteVisibilityRangeYPosOverride;
 
     // Use this for initialization
-    public SongObjectPoolManager()
+    void Awake()
     {
         editor = ChartEditor.Instance;
 
@@ -76,7 +76,7 @@ public class SongObjectPoolManager : SystemManagerState.System
     }
 
     // Update is called once per frame
-    public override void Update ()
+    void LateUpdate ()
     {
         if (editor.currentChart.notes.Count > 0)
             EnableNotes(editor.currentChart.notes);
