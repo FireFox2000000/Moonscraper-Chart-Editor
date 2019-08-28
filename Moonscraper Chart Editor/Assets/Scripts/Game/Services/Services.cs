@@ -194,7 +194,7 @@ public class Services : MonoBehaviour
             AudioStream mainAudio = currentSong.mainSongAudio;
 
             float currentAudioTime = 0;
-            if (mainAudio != null)
+            if (mainAudio != null && mainAudio.IsPlaying())
             {
                 currentAudioTime = mainAudio.CurrentPositionInSeconds();
             }

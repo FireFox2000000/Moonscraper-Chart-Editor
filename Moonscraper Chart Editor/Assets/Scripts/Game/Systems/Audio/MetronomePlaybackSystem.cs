@@ -7,22 +7,25 @@ public class MetronomePlaybackSystem : SystemManagerState.System
     OneShotSampleStream sampleStream;
     uint nextClapPos = 0;
 
-    public MetronomePlaybackSystem(float playFromTime)
+    public MetronomePlaybackSystem()
     {
-        ChartEditor editor = ChartEditor.Instance;
-        Song currentSong = editor.currentSong;
-
-        uint currentTickPos = editor.currentSong.TimeToTick(playFromTime, editor.currentSong.resolution);
-        if (currentTickPos > 0)
-            --currentTickPos;
-
-        nextClapPos = CalculateNextBeatTickPosition(currentTickPos);
     }
 
     public override void SystemEnter()
     {
-        sampleStream = ChartEditor.Instance.sfxAudioStreams.GetSample(SkinKeys.metronome);
+        ChartEditor editor = ChartEditor.Instance;
+
+        sampleStream = editor.sfxAudioStreams.GetSample(SkinKeys.metronome);
         Debug.Assert(sampleStream != null);
+
+        float currentAudioTime = editor.services.sfxAudioTime;
+        Song currentSong = editor.currentSong;
+
+        uint currentTickPos = editor.currentSong.TimeToTick(currentAudioTime, editor.currentSong.resolution);
+        if (currentTickPos > 0)
+            --currentTickPos;
+
+        nextClapPos = CalculateNextBeatTickPosition(currentTickPos);
     }
 
     public override void SystemUpdate()

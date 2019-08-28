@@ -15,14 +15,12 @@ public class PlayingState : SystemManagerState
         this.playFromTime = playFromTime;
         this.resetBackToTimeOnStop = resetBackToTimeOnStop;
 
-        AddSystem(new MetronomePlaybackSystem(playFromTime));
+        AddSystem(new MetronomePlaybackSystem());
         AddSystem(new ClapPlaybackSystem(playFromTime));
     }
 
     public override void Enter()
     {
-        base.Enter();
-
         ChartEditor editor = ChartEditor.Instance;
 
         selectedBeforePlay.Clear();
@@ -39,6 +37,8 @@ public class PlayingState : SystemManagerState
             editor.PlayAudio(audioPlayPoint);
             audioStarted = true;
         }
+
+        base.Enter();
     }
 
     public override void Update()
