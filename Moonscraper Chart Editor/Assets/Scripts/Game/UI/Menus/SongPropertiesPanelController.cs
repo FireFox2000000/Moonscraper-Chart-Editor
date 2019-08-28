@@ -92,7 +92,8 @@ public class SongPropertiesPanelController : DisplayMenu {
             if (!song.name.Equals(songName.text))
             {
                 song.name = songName.text;
-                ChartEditor.Instance.uiServices.editorPanels.displayProperties.UpdateSongNameText();
+                editor.uiServices.editorPanels.displayProperties.UpdateSongNameText();
+                editor.RepaintWindowText();
             }
 
             metaData.artist = artist.text;

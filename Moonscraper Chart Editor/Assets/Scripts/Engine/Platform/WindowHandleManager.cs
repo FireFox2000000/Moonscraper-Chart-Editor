@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿//#undef UNITY_EDITOR
+
+using System.Runtime.InteropServices;
 using System;
 
 public class WindowHandleManager {
@@ -12,21 +14,22 @@ public class WindowHandleManager {
     static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder text, int count);
 
     public System.IntPtr windowPtr { get; private set; }
-#if !UNITY_EDITOR
+    string productName; // Cross checking the window handle
+
     string originalWindowName;
-    string productName;
+    string extraApplicationStateInfo;
+
     bool isDirty = false;
-#endif
 
     public WindowHandleManager(string originalWindowName, string productName)
     {
-        windowPtr = IntPtr.Zero;
 #if !UNITY_EDITOR
+        windowPtr = IntPtr.Zero;
+#endif
         this.originalWindowName = originalWindowName;
         this.productName = productName;
 
         SetApplicationWindowPointer();
-#endif
     }
 
     void SetApplicationWindowPointer()
@@ -43,23 +46,26 @@ public class WindowHandleManager {
             UnityEngine.Debug.LogError("Couldn't find window handle");
         }
         else if (windowPtr != IntPtr.Zero)
-            SetWindowText(windowPtr, originalWindowName);
+        {
+            RepaintWindowText(false);
+        }
 #endif
     }
 
     public void UpdateDirtyNotification(bool isDirty)
     {
-#if !UNITY_EDITOR
-        if (windowPtr != IntPtr.Zero && this.isDirty != isDirty)
+        if (this.isDirty != isDirty)
         {
-            if (isDirty)
-                SetWindowText(windowPtr, originalWindowName + "*");
-            else
-                SetWindowText(windowPtr, originalWindowName);
+            RepaintWindowText(isDirty);
         }
 
         this.isDirty = isDirty;
-#endif
+    }
+
+    public void SetExtraApplicationStateInfoStr(string info)
+    {
+        extraApplicationStateInfo = info;
+        RepaintWindowText(this.isDirty);
     }
 
     public void OnApplicationFocus(bool hasFocus)
@@ -67,6 +73,22 @@ public class WindowHandleManager {
 #if !UNITY_EDITOR
         if (hasFocus && windowPtr == IntPtr.Zero)
             SetApplicationWindowPointer();
+#endif
+    }
+
+    void RepaintWindowText(bool isDirty)
+    {
+        string dirtySymbol = isDirty ? "*" : "";
+        string windowName = originalWindowName + " ~ " + extraApplicationStateInfo + dirtySymbol;
+
+        UnityEngine.Debug.Log("RepaintWindowText - " + windowName);
+
+#if !UNITY_EDITOR
+
+        if (windowPtr != IntPtr.Zero)
+        {
+            SetWindowText(windowPtr, windowName);
+        }
 #endif
     }
 }

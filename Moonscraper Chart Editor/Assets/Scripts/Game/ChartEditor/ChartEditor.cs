@@ -145,6 +145,8 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         windowHandleManager = new WindowHandleManager(versionNumber.text, GetComponent<Settings>().productName);
         errorManager = gameObject.AddComponent<ErrorManager>();
         toolManager.Init();
+
+        events.chartReloadedEvent.Register(OnChartReloaded);
     }
 
     IEnumerator Start()
@@ -354,6 +356,33 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
     }
 
     #endregion
+
+    void OnChartReloaded()
+    {
+        RepaintWindowText();
+    }
+
+    public void RepaintWindowText()
+    {
+        const int SONGNAME_MAX_CHAR = 35;
+        string songName = currentSong.name;
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        sb.Append(currentSong.name);
+        if (sb.Length > SONGNAME_MAX_CHAR)
+        {
+            const string Ellipsis = "...";
+            sb.Remove(sb.Length - Ellipsis.Length, Ellipsis.Length);
+            sb.Append(Ellipsis);
+        }
+
+        if (sb.Length > 0)
+        {
+            sb.Append(" - ");
+        }
+
+        sb.Append(currentChart.name);
+        windowHandleManager.SetExtraApplicationStateInfoStr(sb.ToString());
+    }
 
     #region Chart Loading/Saving
     public void New()
