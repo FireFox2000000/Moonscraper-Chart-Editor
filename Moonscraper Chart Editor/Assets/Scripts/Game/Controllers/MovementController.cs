@@ -54,7 +54,7 @@ public abstract class MovementController : MonoBehaviour {
 
         {
             float timeBeforeMovement = TickFunctions.WorldYPositionToTime(pos.y - positionOffset);
-            float timeAfterMovement = timeBeforeMovement + deltaTime;
+            float timeAfterMovement = timeBeforeMovement + deltaTime * GameSettings.gameSpeed;
 
             // Make sure we're staying in sync with the audio
             {
