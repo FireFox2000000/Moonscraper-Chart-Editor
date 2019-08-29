@@ -149,7 +149,23 @@ public class DeleteAction : BaseAction
         if (arrayPos != SongObjectHelper.NOTFOUND)
         {
             T foundSongObject = arrayToSearch[arrayPos];
+
+            Note next = null;
+            if ((SongObject.ID)foundSongObject.classID == SongObject.ID.Note)
+            {
+                next = (foundSongObject as Note).nextSeperateNote;
+            }
+
             foundSongObject.Delete(false);
+
+            if (next != null)
+            {
+                foreach (Note chordNote in next.chord)
+                {
+                    if (chordNote.controller)
+                        chordNote.controller.SetDirty();
+                }
+            }
         }
         else
         {
