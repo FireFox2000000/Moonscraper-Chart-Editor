@@ -13,6 +13,12 @@ public class EditorState : SystemManagerState
         Services services = editor.services;
         Globals.ViewMode viewMode = Globals.viewMode;
 
+        if (ShortcutInput.GetInputDown(Shortcut.StepIncrease))
+            GameSettings.snappingStep.Increment();
+
+        else if (ShortcutInput.GetInputDown(Shortcut.StepDecrease))
+            GameSettings.snappingStep.Decrement();
+
         if (editor.groupMove.movementInProgress)
             return;
 
@@ -29,12 +35,6 @@ public class EditorState : SystemManagerState
                 return;
             }
         }
-
-        if (ShortcutInput.GetInputDown(Shortcut.StepIncrease))
-            GameSettings.snappingStep.Increment();
-
-        else if (ShortcutInput.GetInputDown(Shortcut.StepDecrease))
-            GameSettings.snappingStep.Decrement();
 
         else if (ShortcutInput.GetInputDown(Shortcut.Delete) && editor.selectedObjectsManager.currentSelectedObjects.Count > 0)
             editor.Delete();
