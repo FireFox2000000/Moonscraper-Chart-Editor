@@ -1,3 +1,16 @@
+1.3.1.4
+	CHANGES
+	-Removed song name text UI. Display song name + chart name in window text instead.
+	
+	FIXES
+	-Fixed a bunch of process not running when moving objects
+	-Fixed beat line drawing skipping over some beat lines, resulting in litter lines in some cases.
+	-Fixed mouse dragging with right-click causing a lockout of the current tool.
+	-Fixed metronome and clap sfx starting playback way too late in some cases.
+	-Fixed song speed setting not working when no audio was loaded.
+	-Fixed some notes being visually incorrect when undoing or redoing that results in a delete action.
+	-Allow step adjustment shortcuts to be detected when moving a note.
+
 1.3.1.3
 	NEW FEATURES
 	-Added sfx offset option to calibration menu.
