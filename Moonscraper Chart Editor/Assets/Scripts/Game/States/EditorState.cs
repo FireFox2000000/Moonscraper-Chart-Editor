@@ -36,7 +36,7 @@ public class EditorState : SystemManagerState
             }
         }
 
-        else if (ShortcutInput.GetInputDown(Shortcut.Delete) && editor.selectedObjectsManager.currentSelectedObjects.Count > 0)
+        if (ShortcutInput.GetInputDown(Shortcut.Delete) && editor.selectedObjectsManager.currentSelectedObjects.Count > 0)
             editor.Delete();
 
         else if (ShortcutInput.GetInputDown(Shortcut.SelectAll))
