@@ -99,9 +99,6 @@ public class EditorObjectToolManager : System.Object
     {
         ToolConfig newTool = GetToolConfigForId(toolId);
 
-        if (toolId == currentToolId)
-            return;
-
         if (currentTool != null)
         {
             currentTool.toolObject.ToolDisable();
