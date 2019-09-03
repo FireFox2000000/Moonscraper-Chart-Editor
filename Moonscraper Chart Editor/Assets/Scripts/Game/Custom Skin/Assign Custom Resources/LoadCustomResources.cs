@@ -194,7 +194,18 @@ public class LoadCustomResources : MonoBehaviour {
                 //iniparse.WriteValue("Sustain Colors", i.ToString(), customSkin.sustain_colors[i].GetHex());
             }
 
-            iniparse.Close();
+            try
+            {
+                iniparse.Close();
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                Debug.LogError("Unable to write to settings inifile stage 1. " + e.Message);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Encountered unknown exception trying to close settings.ini stage 1. " + e.Message);
+            }
 
             iniparse.Open(skinDirectory + "\\settings.ini");
 
@@ -206,7 +217,18 @@ public class LoadCustomResources : MonoBehaviour {
                     iniparse.WriteValue("Sustain Colors", i.ToString(), "#00000000");
             }
 
-            iniparse.Close();
+            try
+            {
+                iniparse.Close();
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                Debug.LogError("Unable to write to settings inifile stage 2. " + e.Message);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Encountered unknown exception trying to close settings.ini stage 2. " + e.Message);
+            }
         }
     }
 
