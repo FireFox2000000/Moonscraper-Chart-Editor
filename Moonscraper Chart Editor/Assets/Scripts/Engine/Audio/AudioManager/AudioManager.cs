@@ -12,15 +12,50 @@ public static class AudioManager {
     static string encoderDirectory = string.Empty;
 
     #region Memory
-    public static bool Init()
+    public static bool Init(out string errString)
     {
+        errString = string.Empty;
         isDisposed = false;
 
+        Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_DEV_DEFAULT, 1);
         bool success = Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
         if (!success)
-            UnityEngine.Debug.LogError("Failed Bass.Net initialisation");
+        {
+            BASSError errorCode = Bass.BASS_ErrorGetCode();
+
+            if (errorCode != BASSError.BASS_ERROR_ALREADY)
+            {
+                //UnityEngine.Debug.Log("Unable to initialise Bass.Net on default device. Trying other devices.");
+                //
+                //BASS_DEVICEINFO info = new BASS_DEVICEINFO();
+                //for (int i = 0; Bass.BASS_GetDeviceInfo(i, info); ++i)
+                //{
+                //    if (info.IsEnabled && Bass.BASS_Init(i + 1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero))
+                //    {
+                //        UnityEngine.Debug.Log("Initialising Bass.Net on device " + i);
+                //        success = true;
+                //        break;
+                //    }
+                //}
+                //
+                //if (!success)
+                {
+                    errString = "Failed Bass.Net initialisation. Error code " + errorCode;
+                    UnityEngine.Debug.LogError(errString);
+                }
+            }
+            else
+            {
+                UnityEngine.Debug.Log("Bass.Net already initialised on current device.");
+            }
+        }
         else
+        {
             UnityEngine.Debug.Log("Bass.Net initialised");
+        }
+
+        int bassFxVersion = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_GetVersion();  // Call this and load bass_fx plugin immediately
+        UnityEngine.Debug.Log("Bass FX version = " + bassFxVersion);
 
         encoderDirectory = Globals.realWorkingDirectory +
 #if UNITY_EDITOR

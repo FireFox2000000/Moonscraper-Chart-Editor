@@ -77,7 +77,11 @@ public class Globals : MonoBehaviour {
         workingDirectory = Application.dataPath;
 #endif
         // Bass init
-        AudioManager.Init();
+        string audioInitErr = string.Empty;
+        if (!AudioManager.Init(out audioInitErr))
+        {
+            editor.errorManager.QueueErrorMessage(audioInitErr);
+        }
 
         LoadGameSettings();
 
