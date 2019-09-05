@@ -4,7 +4,7 @@ using System;
 
 public class NativeMessageBoxEditor : INativeMessageBox
 {
-    public NativeMessageBox.Result Show(string text, string caption, NativeMessageBox.Type messageBoxType, bool useWindowHandle = true)
+    public NativeMessageBox.Result Show(string text, string caption, NativeMessageBox.Type messageBoxType, NativeWindow childWindow)
     {
         switch (messageBoxType)
         {

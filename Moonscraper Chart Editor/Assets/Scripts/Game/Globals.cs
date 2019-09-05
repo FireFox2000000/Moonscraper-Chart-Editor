@@ -169,7 +169,7 @@ public class Globals : MonoBehaviour {
             string autosaveText = "An autosave was detected indicating that the program did not correctly shut down during the last session. \nWould you like to reload the autosave?";
             string autosaveCaption = "Warning";
 
-            NativeMessageBox.Result result = NativeMessageBox.Show(autosaveText, autosaveCaption, NativeMessageBox.Type.YesNo);
+            NativeMessageBox.Result result = NativeMessageBox.Show(autosaveText, autosaveCaption, NativeMessageBox.Type.YesNo, editor.windowHandleManager.nativeWindow);
 
             if (result == NativeMessageBox.Result.Yes)
             {

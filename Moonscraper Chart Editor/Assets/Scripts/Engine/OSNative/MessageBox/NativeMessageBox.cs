@@ -36,8 +36,8 @@ public static class NativeMessageBox {
 #endif
     }
 
-    public static Result Show(string text, string caption, Type messageBoxType, bool useWindowHandle = true)
+    public static Result Show(string text, string caption, Type messageBoxType, NativeWindow childWindow)
     {
-        return m_platformWrapper.Show(text, caption, messageBoxType, useWindowHandle);
+        return m_platformWrapper.Show(text, caption, messageBoxType, childWindow);
     }
 }

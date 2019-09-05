@@ -242,7 +242,7 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         // Check for unsaved changes
         if (isDirty)
         {
-            NativeMessageBox.Result result = NativeMessageBox.Show("Do you want to save unsaved changes?", "Warning", NativeMessageBox.Type.YesNoCancel);
+            NativeMessageBox.Result result = NativeMessageBox.Show("Do you want to save unsaved changes?", "Warning", NativeMessageBox.Type.YesNoCancel, windowHandleManager.nativeWindow);
 
             if (result == NativeMessageBox.Result.Yes)
             {
