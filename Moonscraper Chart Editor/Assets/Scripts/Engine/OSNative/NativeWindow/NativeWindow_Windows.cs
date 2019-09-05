@@ -21,7 +21,7 @@ public class NativeWindow_Windows : INativeWindow
         windowPtr = IntPtr.Zero;
     }
 
-    public bool IsValid()
+    public bool IsConnectedToWindow()
     {
         return windowPtr != IntPtr.Zero;
     }
@@ -50,7 +50,7 @@ public class NativeWindow_Windows : INativeWindow
 
     public void SetWindowTitle(string title)
     {
-        if (IsValid())
+        if (IsConnectedToWindow())
         {
             SetWindowText(windowPtr, title);
         }

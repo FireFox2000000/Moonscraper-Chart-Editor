@@ -50,7 +50,7 @@ public class WindowHandleManager {
 
     public void OnApplicationFocus(bool hasFocus)
     {
-        if (hasFocus && !nativeWindow.IsValid())
+        if (hasFocus && !nativeWindow.IsConnectedToWindow())
             SetApplicationWindowPointer();
     }
 

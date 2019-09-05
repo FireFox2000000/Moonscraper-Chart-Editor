@@ -2,7 +2,7 @@
 
 public class NativeWindow_Editor : INativeWindow
 {
-    public bool IsValid()
+    public bool IsConnectedToWindow()
     {
         return false;
     }

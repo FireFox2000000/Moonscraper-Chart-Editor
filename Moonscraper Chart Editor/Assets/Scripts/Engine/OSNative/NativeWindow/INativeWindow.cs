@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface INativeWindow
 {
-    bool IsValid();
+    bool IsConnectedToWindow();
     bool SetApplicationWindowPointerByName(string desiredWindowName);
     void SetWindowTitle(string title);
 }

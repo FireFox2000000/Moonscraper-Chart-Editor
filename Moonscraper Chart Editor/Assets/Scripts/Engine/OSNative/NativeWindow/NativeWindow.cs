@@ -15,9 +15,9 @@ public class NativeWindow
 #endif
     }
 
-    public bool IsValid()
+    public bool IsConnectedToWindow()
     {
-        return m_platformWrapper.IsValid();
+        return m_platformWrapper.IsConnectedToWindow();
     }
 
     public bool SetApplicationWindowPointerByName(string desiredWindowName)
