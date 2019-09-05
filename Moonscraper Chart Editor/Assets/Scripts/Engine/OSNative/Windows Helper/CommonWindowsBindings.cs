@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY_STANDALONE_WIN
+
+using System;
 using System.Runtime.InteropServices;
 
 public static class CommonWindowsBindings
@@ -12,3 +14,5 @@ public static class CommonWindowsBindings
     [DllImport(c_comDlgDll, SetLastError = true, ExactSpelling = true, CharSet = CharSet.Auto)]
     public static extern int CommDlgExtendedError();
 }
+
+#endif

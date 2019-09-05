@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if UNITY_STANDALONE_WIN
+
+using System;
 using System.Runtime.InteropServices;
 
 public static class CommonDialogBox {
@@ -33,3 +35,5 @@ public static class CommonDialogBox {
         return (ErrorCodes)CommonWindowsBindings.CommDlgExtendedError();
     }
 }
+
+#endif
