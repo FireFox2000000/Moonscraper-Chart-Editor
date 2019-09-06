@@ -58,6 +58,12 @@ public class PlayingState : SystemManagerState
             }
         }
 
+        if (ShortcutInput.GetInputDown(Shortcut.StepIncrease))
+            GameSettings.snappingStep.Increment();
+
+        else if (ShortcutInput.GetInputDown(Shortcut.StepDecrease))
+            GameSettings.snappingStep.Decrement();
+
         if (ShortcutInput.GetInputDown(Shortcut.PlayPause) || editor.inputManager.mainGamepad.GetButtonPressed(GamepadInput.Button.Start))
         {
             editor.Stop();
