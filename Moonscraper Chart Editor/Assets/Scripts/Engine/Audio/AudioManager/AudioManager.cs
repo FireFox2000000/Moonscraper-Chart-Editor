@@ -18,27 +18,18 @@ public static class AudioManager {
         isDisposed = false;
 
         Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_DEV_DEFAULT, 1);
-        bool success = Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero);
+        Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATETHREADS, 1);
+        bool success = Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero);
         if (!success)
         {
             BASSError errorCode = Bass.BASS_ErrorGetCode();
 
             if (errorCode != BASSError.BASS_ERROR_ALREADY)
             {
-                //UnityEngine.Debug.Log("Unable to initialise Bass.Net on default device. Trying other devices.");
-                //
-                //BASS_DEVICEINFO info = new BASS_DEVICEINFO();
-                //for (int i = 0; Bass.BASS_GetDeviceInfo(i, info); ++i)
-                //{
-                //    if (info.IsEnabled && Bass.BASS_Init(i + 1, 44100, BASSInit.BASS_DEVICE_DEFAULT, IntPtr.Zero))
-                //    {
-                //        UnityEngine.Debug.Log("Initialising Bass.Net on device " + i);
-                //        success = true;
-                //        break;
-                //    }
-                //}
-                //
-                //if (!success)
+                UnityEngine.Debug.Log("Unable to initialise Bass.Net on default device. Will attempt to initialise with Direct Sound option enabled.");
+                success = Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY | BASSInit.BASS_DEVICE_DSOUND, IntPtr.Zero);
+
+                if (!success)
                 {
                     errString = "Failed Bass.Net initialisation. Error code " + errorCode;
                     UnityEngine.Debug.LogError(errString);
