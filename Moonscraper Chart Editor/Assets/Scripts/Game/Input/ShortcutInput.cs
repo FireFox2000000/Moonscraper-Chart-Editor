@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MSE.Input;
 
 public enum Shortcut
 {
@@ -67,102 +68,140 @@ public enum Shortcut
     ToolSelectEvent,
 }
 
-public static class ShortcutInput {
-
-    class ShortcutLUT
+public static class ShortcutInput
+{
+    static Dictionary<Shortcut, bool> inputIsNotRebindable = new Dictionary<Shortcut, bool>()
     {
-        List<KeyCode>[] keyCodes;
+        { Shortcut.ActionHistoryRedo, true },
+        { Shortcut.ActionHistoryUndo, true },
+        { Shortcut.ChordSelect, true },
+        { Shortcut.ClipboardCopy, true },
+        { Shortcut.ClipboardCut, true },
+        { Shortcut.ClipboardPaste, true },
+        { Shortcut.Delete, true },
+        { Shortcut.FileLoad, true },
+        { Shortcut.FileNew, true },
+        { Shortcut.FileSave, true },
+        { Shortcut.FileSaveAs, true },
+        { Shortcut.PlayPause, true },
+        { Shortcut.SectionJumpMouseScroll, true },
+    };
+
+    public class ShortcutLUT
+    {
+        InputAction[] actionConfigs;
 
         public ShortcutLUT()
         {
-            keyCodes = new List<KeyCode>[System.Enum.GetValues(typeof(Shortcut)).Length];
+            actionConfigs = new InputAction[System.Enum.GetValues(typeof(Shortcut)).Length];
+
+            for (int i = 0; i < actionConfigs.Length; ++i)
+            {
+                bool notRebindable;
+                if (!inputIsNotRebindable.TryGetValue((Shortcut)i, out notRebindable))
+                {
+                    notRebindable = false;
+                }
+
+                actionConfigs[i] = new InputAction(!notRebindable);
+            }
         }
 
-        public void Insert(Shortcut key, List<KeyCode> entry)
+        public void Insert(Shortcut key, InputAction entry)
         {
-            keyCodes[(int)key] = entry;
+            actionConfigs[(int)key] = entry;
         }
 
-        public List<KeyCode> GetKeyCodes(Shortcut key)
+        public InputAction GetActionConfig(Shortcut key)
         {
-            return keyCodes[(int)key];
+            return actionConfigs[(int)key];
         }
     }
 
-    static ShortcutLUT generalInputs;
-    static ShortcutLUT modifierInputs;
-    static ShortcutLUT secondaryInputs;
-    static ShortcutLUT secondaryModifierInputs;
-    static ShortcutLUT alternativeInputs;
+    public static ShortcutLUT allInputs { get; private set; }
+
     static ShortcutInput()
-    {     
+    {
+        allInputs = new ShortcutLUT();
+
+        LoadDefaultControls();
+    }
+
+    static void LoadDefaultControls()
+    {
         {
-            generalInputs = new ShortcutLUT();
-            generalInputs.Insert(Shortcut.AddSongObject,                   new List<KeyCode> { KeyCode.Alpha1, });
-            generalInputs.Insert(Shortcut.BpmIncrease,                     new List<KeyCode> { KeyCode.Equals, });
-            generalInputs.Insert(Shortcut.BpmDecrease,                     new List<KeyCode> { KeyCode.Minus, });
-            generalInputs.Insert(Shortcut.Delete ,                         new List<KeyCode> { KeyCode.Delete });
-            generalInputs.Insert(Shortcut.PlayPause ,                      new List<KeyCode> { KeyCode.Space });
-            generalInputs.Insert(Shortcut.MoveStepPositive ,               new List<KeyCode> { KeyCode.UpArrow });
-            generalInputs.Insert(Shortcut.MoveStepNegative ,               new List<KeyCode> { KeyCode.DownArrow } );
-            generalInputs.Insert(Shortcut.MoveMeasurePositive ,            new List<KeyCode> { KeyCode.PageUp } );
-            generalInputs.Insert(Shortcut.MoveMeasureNegative ,            new List<KeyCode> { KeyCode.PageDown } );
-            generalInputs.Insert(Shortcut.NoteSetNatural ,                 new List<KeyCode> { KeyCode.X } );
-            generalInputs.Insert(Shortcut.NoteSetStrum ,                   new List<KeyCode> { KeyCode.S } );
-            generalInputs.Insert(Shortcut.NoteSetHopo ,                    new List<KeyCode> { KeyCode.H } );
-            generalInputs.Insert(Shortcut.NoteSetTap ,                     new List<KeyCode> { KeyCode.T } );
-            generalInputs.Insert(Shortcut.StepIncrease ,                   new List<KeyCode> { KeyCode.W, KeyCode.RightArrow } );
-            generalInputs.Insert(Shortcut.StepDecrease ,                   new List<KeyCode> { KeyCode.Q, KeyCode.LeftArrow } );
-            generalInputs.Insert(Shortcut.ToggleBpmAnchor ,                new List<KeyCode> { KeyCode.A } );
-            generalInputs.Insert(Shortcut.ToggleClap ,                     new List<KeyCode> { KeyCode.N } );
-            generalInputs.Insert(Shortcut.ToggleExtendedSustains,          new List<KeyCode> { KeyCode.E } );
-            generalInputs.Insert(Shortcut.ToggleMetronome ,                new List<KeyCode> { KeyCode.M } );
-            generalInputs.Insert(Shortcut.ToggleMouseMode ,                new List<KeyCode> { KeyCode.BackQuote } );
-            generalInputs.Insert(Shortcut.ToggleNoteForced ,               new List<KeyCode> { KeyCode.F } );
-            generalInputs.Insert(Shortcut.ToggleNoteTap ,                  new List<KeyCode> { KeyCode.T } );
-            generalInputs.Insert(Shortcut.ToggleViewMode ,                 new List<KeyCode> { KeyCode.G } );
-            generalInputs.Insert(Shortcut.ToolNoteBurst ,                  new List<KeyCode> { KeyCode.B } );
-            generalInputs.Insert(Shortcut.ToolNoteHold ,                   new List<KeyCode> { KeyCode.H } );
-            generalInputs.Insert(Shortcut.ToolSelectCursor ,               new List<KeyCode> { KeyCode.J } );
-            generalInputs.Insert(Shortcut.ToolSelectEraser ,               new List<KeyCode> { KeyCode.K } );
-            generalInputs.Insert(Shortcut.ToolSelectNote ,                 new List<KeyCode> { KeyCode.Y } );
-            generalInputs.Insert(Shortcut.ToolSelectStarpower ,            new List<KeyCode> { KeyCode.U } );
-            generalInputs.Insert(Shortcut.ToolSelectBpm ,                  new List<KeyCode> { KeyCode.I } );
-            generalInputs.Insert(Shortcut.ToolSelectTimeSignature ,        new List<KeyCode> { KeyCode.O } );
-            generalInputs.Insert(Shortcut.ToolSelectSection ,              new List<KeyCode> { KeyCode.P } );
-            generalInputs.Insert(Shortcut.ToolSelectEvent ,                new List<KeyCode> { KeyCode.L } );
+            allInputs.GetActionConfig(Shortcut.AddSongObject).kbMaps[0] = new KeyboardMap() { KeyCode.Alpha1 };
+            allInputs.GetActionConfig(Shortcut.BpmIncrease).kbMaps[0] = new KeyboardMap() { KeyCode.Equals, };
+            allInputs.GetActionConfig(Shortcut.BpmDecrease).kbMaps[0] = new KeyboardMap() { KeyCode.Minus, };
+            allInputs.GetActionConfig(Shortcut.Delete).kbMaps[0] = new KeyboardMap() { KeyCode.Delete };
+            allInputs.GetActionConfig(Shortcut.PlayPause).kbMaps[0] = new KeyboardMap() { KeyCode.Space };
+            allInputs.GetActionConfig(Shortcut.MoveStepPositive).kbMaps[0] = new KeyboardMap() { KeyCode.UpArrow };
+            allInputs.GetActionConfig(Shortcut.MoveStepNegative).kbMaps[0] = new KeyboardMap() { KeyCode.DownArrow };
+            allInputs.GetActionConfig(Shortcut.MoveMeasurePositive).kbMaps[0] = new KeyboardMap() { KeyCode.PageUp };
+            allInputs.GetActionConfig(Shortcut.MoveMeasureNegative).kbMaps[0] = new KeyboardMap() { KeyCode.PageDown };
+            allInputs.GetActionConfig(Shortcut.NoteSetNatural).kbMaps[0] = new KeyboardMap() { KeyCode.X };
+            allInputs.GetActionConfig(Shortcut.NoteSetStrum).kbMaps[0] = new KeyboardMap() { KeyCode.S };
+            allInputs.GetActionConfig(Shortcut.NoteSetHopo).kbMaps[0] = new KeyboardMap() { KeyCode.H };
+            allInputs.GetActionConfig(Shortcut.NoteSetTap).kbMaps[0] = new KeyboardMap() { KeyCode.T };
+            allInputs.GetActionConfig(Shortcut.StepIncrease).kbMaps[0] = new KeyboardMap() { KeyCode.W };
+            allInputs.GetActionConfig(Shortcut.StepIncrease).kbMaps[1] = new KeyboardMap() { KeyCode.RightArrow };
+            allInputs.GetActionConfig(Shortcut.StepDecrease).kbMaps[0] = new KeyboardMap() { KeyCode.Q };
+            allInputs.GetActionConfig(Shortcut.StepDecrease).kbMaps[1] = new KeyboardMap() { KeyCode.LeftArrow };
+            allInputs.GetActionConfig(Shortcut.ToggleBpmAnchor).kbMaps[0] = new KeyboardMap() { KeyCode.A };
+            allInputs.GetActionConfig(Shortcut.ToggleClap).kbMaps[0] = new KeyboardMap() { KeyCode.N };
+            allInputs.GetActionConfig(Shortcut.ToggleExtendedSustains).kbMaps[0] = new KeyboardMap() { KeyCode.E };
+            allInputs.GetActionConfig(Shortcut.ToggleMetronome).kbMaps[0] = new KeyboardMap() { KeyCode.M };
+            allInputs.GetActionConfig(Shortcut.ToggleMouseMode).kbMaps[0] = new KeyboardMap() { KeyCode.BackQuote };
+            allInputs.GetActionConfig(Shortcut.ToggleNoteForced).kbMaps[0] = new KeyboardMap() { KeyCode.F };
+            allInputs.GetActionConfig(Shortcut.ToggleNoteTap).kbMaps[0] = new KeyboardMap() { KeyCode.T };
+            allInputs.GetActionConfig(Shortcut.ToggleViewMode).kbMaps[0] = new KeyboardMap() { KeyCode.G };
+            allInputs.GetActionConfig(Shortcut.ToolNoteBurst).kbMaps[0] = new KeyboardMap() { KeyCode.B };
+            allInputs.GetActionConfig(Shortcut.ToolNoteHold).kbMaps[0] = new KeyboardMap() { KeyCode.H };
+            allInputs.GetActionConfig(Shortcut.ToolSelectCursor).kbMaps[0] = new KeyboardMap() { KeyCode.J };
+            allInputs.GetActionConfig(Shortcut.ToolSelectEraser).kbMaps[0] = new KeyboardMap() { KeyCode.K };
+            allInputs.GetActionConfig(Shortcut.ToolSelectNote).kbMaps[0] = new KeyboardMap() { KeyCode.Y };
+            allInputs.GetActionConfig(Shortcut.ToolSelectStarpower).kbMaps[0] = new KeyboardMap() { KeyCode.U };
+            allInputs.GetActionConfig(Shortcut.ToolSelectBpm).kbMaps[0] = new KeyboardMap() { KeyCode.I };
+            allInputs.GetActionConfig(Shortcut.ToolSelectTimeSignature).kbMaps[0] = new KeyboardMap() { KeyCode.O };
+            allInputs.GetActionConfig(Shortcut.ToolSelectSection).kbMaps[0] = new KeyboardMap() { KeyCode.P };
+            allInputs.GetActionConfig(Shortcut.ToolSelectEvent).kbMaps[0] = new KeyboardMap() { KeyCode.L };
         }
 
         {
-            modifierInputs = new ShortcutLUT();
-            modifierInputs.Insert(Shortcut.ClipboardCopy,                   new List<KeyCode> { KeyCode.C } );
-            modifierInputs.Insert(Shortcut.ClipboardCut,                    new List<KeyCode> { KeyCode.X } );
-            modifierInputs.Insert(Shortcut.ClipboardPaste,                  new List<KeyCode> { KeyCode.V } );
-            modifierInputs.Insert(Shortcut.FileLoad,                        new List<KeyCode> { KeyCode.O } );
-            modifierInputs.Insert(Shortcut.FileNew,                         new List<KeyCode> { KeyCode.N } );
-            modifierInputs.Insert(Shortcut.FileSave,                        new List<KeyCode> { KeyCode.S } );
-            modifierInputs.Insert(Shortcut.ActionHistoryRedo,               new List<KeyCode> { KeyCode.Y } );
-            modifierInputs.Insert(Shortcut.ActionHistoryUndo,               new List<KeyCode> { KeyCode.Z } );
-            modifierInputs.Insert(Shortcut.SelectAll,                       new List<KeyCode> { KeyCode.A });
+            KeyboardMap.ModifierKeys modiInput = KeyboardMap.ModifierKeys.Ctrl;
+            allInputs.GetActionConfig(Shortcut.ClipboardCopy).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.C };
+            allInputs.GetActionConfig(Shortcut.ClipboardCut).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.X };
+            allInputs.GetActionConfig(Shortcut.ClipboardPaste).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.V };
+            allInputs.GetActionConfig(Shortcut.FileLoad).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.O };
+            allInputs.GetActionConfig(Shortcut.FileNew).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.N };
+            allInputs.GetActionConfig(Shortcut.FileSave).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.S };
+            allInputs.GetActionConfig(Shortcut.ActionHistoryRedo).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.Y };
+            allInputs.GetActionConfig(Shortcut.ActionHistoryUndo).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.Z };
+            allInputs.GetActionConfig(Shortcut.SelectAll).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.A };
         }
 
         {
-            secondaryInputs = new ShortcutLUT();
-            secondaryInputs.Insert(Shortcut.ChordSelect, new List<KeyCode> { KeyCode.LeftShift, KeyCode.RightShift, });
+            KeyboardMap.ModifierKeys modiInput = KeyboardMap.ModifierKeys.Shift;
+
+            allInputs.GetActionConfig(Shortcut.ChordSelect).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.LeftShift };
+            allInputs.GetActionConfig(Shortcut.ChordSelect).kbMaps[1] = new KeyboardMap(modiInput) { KeyCode.RightShift };
         }
 
         {
-            secondaryModifierInputs = new ShortcutLUT();
-            secondaryModifierInputs.Insert(Shortcut.FileSaveAs,                      new List<KeyCode> { KeyCode.S });
-            secondaryModifierInputs.Insert(Shortcut.ActionHistoryRedo,               new List<KeyCode> { KeyCode.Z });
+            KeyboardMap.ModifierKeys modiInput = KeyboardMap.ModifierKeys.Ctrl | KeyboardMap.ModifierKeys.Shift;
+
+            allInputs.GetActionConfig(Shortcut.FileSaveAs).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.S };
+            allInputs.GetActionConfig(Shortcut.ActionHistoryRedo).kbMaps[1] = new KeyboardMap(modiInput) { KeyCode.Z };
         }
 
         {
-            alternativeInputs = new ShortcutLUT();
-            alternativeInputs.Insert(Shortcut.SectionJumpPositive, new List<KeyCode> { KeyCode.UpArrow });
-            alternativeInputs.Insert(Shortcut.SectionJumpNegative, new List<KeyCode> { KeyCode.DownArrow });
-            alternativeInputs.Insert(Shortcut.SelectAllSection, new List<KeyCode> { KeyCode.A });
-            alternativeInputs.Insert(Shortcut.SectionJumpMouseScroll, new List<KeyCode> { KeyCode.LeftAlt, KeyCode.RightAlt });
+            KeyboardMap.ModifierKeys modiInput = KeyboardMap.ModifierKeys.Alt;
+
+            allInputs.GetActionConfig(Shortcut.SectionJumpPositive).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.UpArrow };
+            allInputs.GetActionConfig(Shortcut.SectionJumpNegative).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.DownArrow };
+            allInputs.GetActionConfig(Shortcut.SelectAllSection).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.A };
+            allInputs.GetActionConfig(Shortcut.SectionJumpMouseScroll).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.LeftAlt };
+            allInputs.GetActionConfig(Shortcut.SectionJumpMouseScroll).kbMaps[1] = new KeyboardMap(modiInput) { KeyCode.RightAlt };
         }
     }
 
@@ -172,84 +211,41 @@ public static class ShortcutInput {
     public static bool secondaryInput { get { return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift); } }
     public static bool alternativeInput { get { return Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt); } }
 
-    static bool TryGetKeyCodes(Shortcut key, out List<KeyCode> keyCode)
-    {
-        keyCode = null;
-
-        bool modifierInputActive = modifierInput;
-        bool secondaryInputActive = secondaryInput;
-        bool alternativeInputActive = alternativeInput;
-
-        ShortcutLUT inputDict = generalInputs;
-
-        if (modifierInputActive && secondaryInputActive)
-        {
-            inputDict = secondaryModifierInputs;
-        }
-        else if (modifierInputActive)
-        {
-            inputDict = modifierInputs;
-        }
-        else if (secondaryInputActive)
-        {
-            inputDict = secondaryInputs;
-        }
-        else if (alternativeInputActive)
-        {
-            inputDict = alternativeInputs;
-        }
-        else if (Services.IsTyping)
-        {
-            return false;
-        }
-
-        keyCode = inputDict.GetKeyCodes(key);
-        return keyCode != null;
-    }
-
-    delegate bool InputFn(KeyCode keyCode);
-    static InputFn inputDownFn = Input.GetKeyDown;
-    static InputFn inputUpFn = Input.GetKeyUp;
-    static InputFn inputGet = Input.GetKey;
-
-    static bool CheckInput(Shortcut key, InputFn InputFn)
+    public static bool GetInputDown(Shortcut key)
     {
         if (ChartEditor.hasFocus)
         {
-            List<KeyCode> keyCodes;
-            if (TryGetKeyCodes(key, out keyCodes))
-            {
-                foreach (KeyCode keyCode in keyCodes)
-                {
-                    if (InputFn(keyCode))
-                        return true;
-                }
-            }
+            return allInputs.GetActionConfig(key).GetInputDown();
         }
 
         return false;
     }
-    
-    public static bool GetInputDown(Shortcut key)
-    {      
-        return CheckInput(key, inputDownFn);
-    }
 
     public static bool GetInputUp(Shortcut key)
     {
-        return CheckInput(key, inputUpFn);
+        if (ChartEditor.hasFocus)
+        {
+            return allInputs.GetActionConfig(key).GetInputUp();
+        }
+
+        return false;
     }
 
     public static bool GetInput(Shortcut key)
     {
-        return CheckInput(key, inputGet);
+        if (ChartEditor.hasFocus)
+        {
+            return allInputs.GetActionConfig(key).GetInput();
+        }
+
+        return false;
     }
 
     public static bool GetGroupInputDown(Shortcut[] keys)
     {
         foreach (Shortcut key in keys)
         {
-            if (CheckInput(key, inputDownFn))
+            if (GetInputDown(key))
                 return true;
         }
 
@@ -260,7 +256,7 @@ public static class ShortcutInput {
     {
         foreach (Shortcut key in keys)
         {
-            if (CheckInput(key, inputUpFn))
+            if (GetInputUp(key))
                 return true;
         }
 
@@ -271,7 +267,7 @@ public static class ShortcutInput {
     {
         foreach (Shortcut key in keys)
         {
-            if (CheckInput(key, inputGet))
+            if (GetInput(key))
                 return true;
         }
 
