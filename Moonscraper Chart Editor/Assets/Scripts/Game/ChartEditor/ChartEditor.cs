@@ -368,20 +368,24 @@ public class ChartEditor : UnitySingleton<ChartEditor> {
         string songName = currentSong.name;
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         sb.Append(currentSong.name);
+        if (sb.Length <= 0)
+        {
+            sb.Append("Untitled");
+        }
+
         if (sb.Length > SONGNAME_MAX_CHAR)
         {
             const string Ellipsis = "...";
-            sb.Remove(sb.Length - Ellipsis.Length, Ellipsis.Length);
+            int charsToRemove = sb.Length - SONGNAME_MAX_CHAR + Ellipsis.Length;
+            sb.Remove(sb.Length - charsToRemove, charsToRemove);
             sb.Append(Ellipsis);
         }
 
-        if (sb.Length > 0)
-        {
-            sb.Append(" - ");
-        }
+        windowHandleManager.SetProjectNameStr(sb.ToString()); 
 
+        sb.Clear();
         sb.Append(currentChart.name);
-        windowHandleManager.SetExtraApplicationStateInfoStr(sb.ToString());
+        windowHandleManager.SetProjectStateStr(sb.ToString());
     }
 
     #region Chart Loading/Saving

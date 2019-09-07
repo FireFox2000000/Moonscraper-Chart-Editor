@@ -6,9 +6,11 @@ public class WindowHandleManager {
     string productName; // Cross checking the window handle
 
     string originalWindowName;
-    string extraApplicationStateInfo;
+    string projectName;
+    string projectState;
 
     bool isDirty = false;
+    System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
     public WindowHandleManager(string originalWindowName, string productName)
     {
@@ -42,9 +44,15 @@ public class WindowHandleManager {
         this.isDirty = isDirty;
     }
 
-    public void SetExtraApplicationStateInfoStr(string info)
+    public void SetProjectNameStr(string info)
     {
-        extraApplicationStateInfo = info;
+        projectName = info;
+        RepaintWindowText(this.isDirty);
+    }
+
+    public void SetProjectStateStr(string info)
+    {
+        projectState = info;
         RepaintWindowText(this.isDirty);
     }
 
@@ -56,11 +64,13 @@ public class WindowHandleManager {
 
     void RepaintWindowText(bool isDirty)
     {
-        string dirtySymbol = isDirty ? "*" : "";
-        string windowName = originalWindowName + " ~ " + extraApplicationStateInfo + dirtySymbol;
+        string dirtySymbol = isDirty ? " *" : "";
+        sb.Clear();
 
-        UnityEngine.Debug.Log("RepaintWindowText - " + windowName);
+        sb.AppendFormat("{0}{1} - {2} - {3}", projectName, dirtySymbol, projectState, originalWindowName);
 
+        string windowName = sb.ToString();
         nativeWindow.SetWindowTitle(windowName);
+        UnityEngine.Debug.Log("RepaintWindowText - " + windowName);
     }
 }
