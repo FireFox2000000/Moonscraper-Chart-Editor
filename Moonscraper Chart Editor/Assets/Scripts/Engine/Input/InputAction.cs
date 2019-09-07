@@ -3,10 +3,12 @@ namespace MSE
 {
     namespace Input
     {
+        [System.Serializable]
         public class InputAction
         {
             public const int kMaxKeyboardMaps = 2;
 
+            [System.NonSerialized]      // We set this ourselves
             public bool rebindable;
             public KeyboardMap[] kbMaps = new KeyboardMap[kMaxKeyboardMaps];
 

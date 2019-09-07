@@ -92,7 +92,7 @@ public class Globals : MonoBehaviour {
         foreach (InputField inputField in allInputFields)
             inputField.gameObject.AddComponent<InputFieldDoubleClick>();
 
-        HintMouseOver.style = hintMouseOverStyle;
+        HintMouseOver.style = hintMouseOverStyle; 
     }
 
     void Start()
@@ -102,7 +102,7 @@ public class Globals : MonoBehaviour {
 
     void LoadGameSettings()
     {
-        GameSettings.Load(GetConfigPath());
+        GameSettings.Load(GetConfigPath(), GetInputBindingsPath());
 
         // Check for valid fps values
         int fps = GameSettings.targetFramerate;
@@ -226,7 +226,7 @@ public class Globals : MonoBehaviour {
     public void Quit()
     {
         GameSettings.targetFramerate = Application.targetFrameRate;
-        GameSettings.Save(GetConfigPath());
+        GameSettings.Save(GetConfigPath(), GetInputBindingsPath());
 
         // Delete autosaved chart. If chart is not deleted then that means there may have been a problem like a crash and the autosave should be reloaded the next time the program is opened. 
         if (File.Exists(autosaveLocation))
@@ -236,6 +236,11 @@ public class Globals : MonoBehaviour {
     string GetConfigPath()
     {
         return Application.persistentDataPath + "/config.ini";
+    }
+
+    string GetInputBindingsPath()
+    {
+        return Application.persistentDataPath + "/controls.json";
     }
 
     public static void DeselectCurrentUI()

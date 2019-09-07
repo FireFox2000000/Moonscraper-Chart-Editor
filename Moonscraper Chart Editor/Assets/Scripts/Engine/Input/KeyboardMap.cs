@@ -7,6 +7,7 @@ namespace MSE
 {
     namespace Input
     {
+        [Serializable]
         public class KeyboardMap : IInputMap, IEnumerable<KeyCode>
         {
             [Flags]
@@ -26,7 +27,9 @@ namespace MSE
             static InputFn inputGetFn = UnityEngine.Input.GetKey;
             static System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
+            [SerializeField]
             ModifierKeys modifiers = ModifierKeys.None;
+            [SerializeField]
             List<KeyCode> keys = new List<KeyCode>();
 
             public KeyboardMap(ModifierKeys modifiers = ModifierKeys.None)

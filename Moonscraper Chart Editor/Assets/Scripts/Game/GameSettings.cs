@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using MSE.Input;
 
 public static class GameSettings
 {
@@ -72,6 +74,8 @@ public static class GameSettings
     public static ClapToggle clapProperties = ClapToggle.NONE;
     public static NotePlacementMode notePlacementMode = NotePlacementMode.LeftyFlip;
 
+    public static ShortcutInput.ShortcutActionContainer controls = new ShortcutInput.ShortcutActionContainer();
+
     public static bool GetBoolSetting(string identifier)
     {
         switch (identifier)
@@ -87,82 +91,218 @@ public static class GameSettings
         }
     }
 
-    public static void Load(string filepath)
+    static GameSettings()
     {
-        int c_defaultClapVal = (int)(ClapToggle.STRUM | ClapToggle.HOPO | ClapToggle.TAP);
+        LoadDefaultControls(controls);
+    }
 
+    public static void Load(string configFilepath, string controllerBindingsFilepath)
+    {
         INIParser iniparse = new INIParser();
-        iniparse.Open(filepath);
 
-        // Check for valid fps values
-        targetFramerate                 = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Framerate", 120);
-        hyperspeed                      = (float)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Hyperspeed", 5.0f);
-        highwayLength                   = (float)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Highway Length", 0);
-        audioCalibrationMS              = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Audio calibration", 0);
-        clapCalibrationMS               = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Clap calibration", 0);
-        clapProperties                  = (ClapToggle)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Clap", c_defaultClapVal);
-        extendedSustainsEnabled         = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Extended sustains", false);
-        clapEnabled                     = false;
-        sustainGapEnabled               = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Sustain Gap", false);
-        sustainGapStep                  = new Step((int)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Sustain Gap Step", (int)16));
-        notePlacementMode               = (NotePlacementMode)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Note Placement Mode", (int)NotePlacementMode.Default);
-        gameplayStartDelayTime          = (float)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Gameplay Start Delay", 3.0f);
-        resetAfterPlay                  = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Reset After Play", false);
-        resetAfterGameplay              = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Reset After Gameplay", false);
-        customBgSwapTime                = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Custom Background Swap Time", 30); 
-        gameplayStartDelayTime          = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
-        gameplayStartDelayTime          = (float)(System.Math.Round(gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f); // Check that the gameplay start delay time is a multiple of 0.5 and is
-
-        // Audio levels
-        vol_master                      = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Master", 0.5f);
-        vol_song                        = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Music Stream", 1.0f);
-        vol_guitar                      = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Guitar Stream", 1.0f);
-        vol_bass                        = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Bass Stream", 1.0f);
-        vol_rhythm                      = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Rhythm Stream", 1.0f);
-        vol_drum                        = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Drum Stream", 1.0f);
-        audio_pan                       = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Audio Pan", 0.0f);
-        sfxVolume                       = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "SFX", 1.0f);
-
-        iniparse.Close();
-
-        // Need to fix old config values
-        if ((int)clapProperties > (((int)ClapToggle.SECTION << 1) - 1))
+        try
         {
-            clapProperties = (ClapToggle)c_defaultClapVal;
+            Debug.Log("Loading game settings");
+
+            int c_defaultClapVal = (int)(ClapToggle.STRUM | ClapToggle.HOPO | ClapToggle.TAP);
+         
+            iniparse.Open(configFilepath);
+
+            // Check for valid fps values
+            targetFramerate = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Framerate", 120);
+            hyperspeed = (float)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Hyperspeed", 5.0f);
+            highwayLength = (float)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Highway Length", 0);
+            audioCalibrationMS = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Audio calibration", 0);
+            clapCalibrationMS = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Clap calibration", 0);
+            clapProperties = (ClapToggle)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Clap", c_defaultClapVal);
+            extendedSustainsEnabled = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Extended sustains", false);
+            clapEnabled = false;
+            sustainGapEnabled = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Sustain Gap", false);
+            sustainGapStep = new Step((int)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Sustain Gap Step", (int)16));
+            notePlacementMode = (NotePlacementMode)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Note Placement Mode", (int)NotePlacementMode.Default);
+            gameplayStartDelayTime = (float)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Gameplay Start Delay", 3.0f);
+            resetAfterPlay = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Reset After Play", false);
+            resetAfterGameplay = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Reset After Gameplay", false);
+            customBgSwapTime = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Custom Background Swap Time", 30);
+            gameplayStartDelayTime = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
+            gameplayStartDelayTime = (float)(System.Math.Round(gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f); // Check that the gameplay start delay time is a multiple of 0.5 and is
+
+            // Audio levels
+            vol_master = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Master", 0.5f);
+            vol_song = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Music Stream", 1.0f);
+            vol_guitar = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Guitar Stream", 1.0f);
+            vol_bass = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Bass Stream", 1.0f);
+            vol_rhythm = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Rhythm Stream", 1.0f);
+            vol_drum = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Drum Stream", 1.0f);
+            audio_pan = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Audio Pan", 0.0f);
+            sfxVolume = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "SFX", 1.0f);
+
+            // Need to fix old config values
+            if ((int)clapProperties > (((int)ClapToggle.SECTION << 1) - 1))
+            {
+                clapProperties = (ClapToggle)c_defaultClapVal;
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Error encountered when trying to load game settings. " + e.Message);
+        }
+        finally
+        {
+            iniparse.Close();
+        }
+
+        try
+        {
+            if (File.Exists(controllerBindingsFilepath))
+            {
+                Debug.Log("Loading input settings");
+                string controlsJson = File.ReadAllText(controllerBindingsFilepath);
+                controls = JsonUtility.FromJson<ShortcutInput.ShortcutActionContainer>(controlsJson);
+                controls.LoadFromSaveData();
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Unable to load saved controls. " + e.Message);
         }
     }
 
-    public static void Save(string filepath)
+    public static void Save(string configFilepath, string controllerBindingsFilepath)
     {
         INIParser iniparse = new INIParser();
-        iniparse.Open(filepath);
 
-        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Framerate", targetFramerate);
-        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Hyperspeed", hyperspeed);
-        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Highway Length", highwayLength);
-        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Audio calibration", audioCalibrationMS);
-        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Clap calibration", clapCalibrationMS);
-        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Clap", (int)clapProperties);
-        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Extended sustains", extendedSustainsEnabled);
-        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Sustain Gap", sustainGapEnabled);
-        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Sustain Gap Step", sustainGap);
-        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Note Placement Mode", (int)notePlacementMode);
-        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Gameplay Start Delay", gameplayStartDelayTime);
-        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Reset After Play", resetAfterPlay);
-        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Reset After Gameplay", resetAfterGameplay);
-        iniparse.WriteValue(SECTION_NAME_SETTINGS, "Custom Background Swap Time", customBgSwapTime);
+        try
+        {
+            Debug.Log("Saving game settings");
 
-        // Audio levels
-        iniparse.WriteValue(SECTION_NAME_AUDIO, "Master", vol_master);
-        iniparse.WriteValue(SECTION_NAME_AUDIO, "Music Stream", vol_song);
-        iniparse.WriteValue(SECTION_NAME_AUDIO, "Guitar Stream", vol_guitar);
-        iniparse.WriteValue(SECTION_NAME_AUDIO, "Bass Stream", vol_bass);
-        iniparse.WriteValue(SECTION_NAME_AUDIO, "Rhythm Stream", vol_rhythm);
-        iniparse.WriteValue(SECTION_NAME_AUDIO, "Drum Stream", vol_drum);
-        iniparse.WriteValue(SECTION_NAME_AUDIO, "Audio Pan", audio_pan);
-        iniparse.WriteValue(SECTION_NAME_AUDIO, "SFX", sfxVolume);
+            iniparse.Open(configFilepath);
 
-        iniparse.Close();
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Framerate", targetFramerate);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Hyperspeed", hyperspeed);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Highway Length", highwayLength);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Audio calibration", audioCalibrationMS);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Clap calibration", clapCalibrationMS);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Clap", (int)clapProperties);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Extended sustains", extendedSustainsEnabled);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Sustain Gap", sustainGapEnabled);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Sustain Gap Step", sustainGap);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Note Placement Mode", (int)notePlacementMode);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Gameplay Start Delay", gameplayStartDelayTime);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Reset After Play", resetAfterPlay);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Reset After Gameplay", resetAfterGameplay);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Custom Background Swap Time", customBgSwapTime);
+
+            // Audio levels
+            iniparse.WriteValue(SECTION_NAME_AUDIO, "Master", vol_master);
+            iniparse.WriteValue(SECTION_NAME_AUDIO, "Music Stream", vol_song);
+            iniparse.WriteValue(SECTION_NAME_AUDIO, "Guitar Stream", vol_guitar);
+            iniparse.WriteValue(SECTION_NAME_AUDIO, "Bass Stream", vol_bass);
+            iniparse.WriteValue(SECTION_NAME_AUDIO, "Rhythm Stream", vol_rhythm);
+            iniparse.WriteValue(SECTION_NAME_AUDIO, "Drum Stream", vol_drum);
+            iniparse.WriteValue(SECTION_NAME_AUDIO, "Audio Pan", audio_pan);
+            iniparse.WriteValue(SECTION_NAME_AUDIO, "SFX", sfxVolume);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Error encountered when trying to save game settings. " + e.Message);
+        }
+        finally
+        {
+            iniparse.Close();
+        }
+
+        controls.UpdateSaveData();
+        var controlsJson = JsonUtility.ToJson(controls, true);
+        try
+        {
+            Debug.Log("Saving input settings");
+
+            // Save to file
+            File.WriteAllText(controllerBindingsFilepath, controlsJson, System.Text.Encoding.UTF8);
+        }
+        catch (System.Exception e)
+        {
+            Logger.LogException(e, "Error encountered while saving control bindings. " + e.Message);
+        }
+    }
+
+    static void LoadDefaultControls(ShortcutInput.ShortcutActionContainer inputList)
+    {
+        {
+            inputList.GetActionConfig(Shortcut.AddSongObject).kbMaps[0] = new KeyboardMap() { KeyCode.Alpha1 };
+            inputList.GetActionConfig(Shortcut.BpmIncrease).kbMaps[0] = new KeyboardMap() { KeyCode.Equals, };
+            inputList.GetActionConfig(Shortcut.BpmDecrease).kbMaps[0] = new KeyboardMap() { KeyCode.Minus, };
+            inputList.GetActionConfig(Shortcut.Delete).kbMaps[0] = new KeyboardMap() { KeyCode.Delete };
+            inputList.GetActionConfig(Shortcut.PlayPause).kbMaps[0] = new KeyboardMap() { KeyCode.Space };
+            inputList.GetActionConfig(Shortcut.MoveStepPositive).kbMaps[0] = new KeyboardMap() { KeyCode.UpArrow };
+            inputList.GetActionConfig(Shortcut.MoveStepNegative).kbMaps[0] = new KeyboardMap() { KeyCode.DownArrow };
+            inputList.GetActionConfig(Shortcut.MoveMeasurePositive).kbMaps[0] = new KeyboardMap() { KeyCode.PageUp };
+            inputList.GetActionConfig(Shortcut.MoveMeasureNegative).kbMaps[0] = new KeyboardMap() { KeyCode.PageDown };
+            inputList.GetActionConfig(Shortcut.NoteSetNatural).kbMaps[0] = new KeyboardMap() { KeyCode.X };
+            inputList.GetActionConfig(Shortcut.NoteSetStrum).kbMaps[0] = new KeyboardMap() { KeyCode.S };
+            inputList.GetActionConfig(Shortcut.NoteSetHopo).kbMaps[0] = new KeyboardMap() { KeyCode.H };
+            inputList.GetActionConfig(Shortcut.NoteSetTap).kbMaps[0] = new KeyboardMap() { KeyCode.T };
+            inputList.GetActionConfig(Shortcut.StepIncrease).kbMaps[0] = new KeyboardMap() { KeyCode.W };
+            inputList.GetActionConfig(Shortcut.StepIncrease).kbMaps[1] = new KeyboardMap() { KeyCode.RightArrow };
+            inputList.GetActionConfig(Shortcut.StepDecrease).kbMaps[0] = new KeyboardMap() { KeyCode.Q };
+            inputList.GetActionConfig(Shortcut.StepDecrease).kbMaps[1] = new KeyboardMap() { KeyCode.LeftArrow };
+            inputList.GetActionConfig(Shortcut.ToggleBpmAnchor).kbMaps[0] = new KeyboardMap() { KeyCode.A };
+            inputList.GetActionConfig(Shortcut.ToggleClap).kbMaps[0] = new KeyboardMap() { KeyCode.N };
+            inputList.GetActionConfig(Shortcut.ToggleExtendedSustains).kbMaps[0] = new KeyboardMap() { KeyCode.E };
+            inputList.GetActionConfig(Shortcut.ToggleMetronome).kbMaps[0] = new KeyboardMap() { KeyCode.M };
+            inputList.GetActionConfig(Shortcut.ToggleMouseMode).kbMaps[0] = new KeyboardMap() { KeyCode.BackQuote };
+            inputList.GetActionConfig(Shortcut.ToggleNoteForced).kbMaps[0] = new KeyboardMap() { KeyCode.F };
+            inputList.GetActionConfig(Shortcut.ToggleNoteTap).kbMaps[0] = new KeyboardMap() { KeyCode.T };
+            inputList.GetActionConfig(Shortcut.ToggleViewMode).kbMaps[0] = new KeyboardMap() { KeyCode.G };
+            inputList.GetActionConfig(Shortcut.ToolNoteBurst).kbMaps[0] = new KeyboardMap() { KeyCode.B };
+            inputList.GetActionConfig(Shortcut.ToolNoteHold).kbMaps[0] = new KeyboardMap() { KeyCode.H };
+            inputList.GetActionConfig(Shortcut.ToolSelectCursor).kbMaps[0] = new KeyboardMap() { KeyCode.J };
+            inputList.GetActionConfig(Shortcut.ToolSelectEraser).kbMaps[0] = new KeyboardMap() { KeyCode.K };
+            inputList.GetActionConfig(Shortcut.ToolSelectNote).kbMaps[0] = new KeyboardMap() { KeyCode.Y };
+            inputList.GetActionConfig(Shortcut.ToolSelectStarpower).kbMaps[0] = new KeyboardMap() { KeyCode.U };
+            inputList.GetActionConfig(Shortcut.ToolSelectBpm).kbMaps[0] = new KeyboardMap() { KeyCode.I };
+            inputList.GetActionConfig(Shortcut.ToolSelectTimeSignature).kbMaps[0] = new KeyboardMap() { KeyCode.O };
+            inputList.GetActionConfig(Shortcut.ToolSelectSection).kbMaps[0] = new KeyboardMap() { KeyCode.P };
+            inputList.GetActionConfig(Shortcut.ToolSelectEvent).kbMaps[0] = new KeyboardMap() { KeyCode.L };
+        }
+
+        {
+            KeyboardMap.ModifierKeys modiInput = KeyboardMap.ModifierKeys.Ctrl;
+            inputList.GetActionConfig(Shortcut.ClipboardCopy).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.C };
+            inputList.GetActionConfig(Shortcut.ClipboardCut).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.X };
+            inputList.GetActionConfig(Shortcut.ClipboardPaste).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.V };
+            inputList.GetActionConfig(Shortcut.FileLoad).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.O };
+            inputList.GetActionConfig(Shortcut.FileNew).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.N };
+            inputList.GetActionConfig(Shortcut.FileSave).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.S };
+            inputList.GetActionConfig(Shortcut.ActionHistoryRedo).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.Y };
+            inputList.GetActionConfig(Shortcut.ActionHistoryUndo).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.Z };
+            inputList.GetActionConfig(Shortcut.SelectAll).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.A };
+        }
+
+        {
+            KeyboardMap.ModifierKeys modiInput = KeyboardMap.ModifierKeys.Shift;
+
+            inputList.GetActionConfig(Shortcut.ChordSelect).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.LeftShift };
+            inputList.GetActionConfig(Shortcut.ChordSelect).kbMaps[1] = new KeyboardMap(modiInput) { KeyCode.RightShift };
+        }
+
+        {
+            KeyboardMap.ModifierKeys modiInput = KeyboardMap.ModifierKeys.Ctrl | KeyboardMap.ModifierKeys.Shift;
+
+            inputList.GetActionConfig(Shortcut.FileSaveAs).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.S };
+            inputList.GetActionConfig(Shortcut.ActionHistoryRedo).kbMaps[1] = new KeyboardMap(modiInput) { KeyCode.Z };
+        }
+
+        {
+            KeyboardMap.ModifierKeys modiInput = KeyboardMap.ModifierKeys.Alt;
+
+            inputList.GetActionConfig(Shortcut.SectionJumpPositive).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.UpArrow };
+            inputList.GetActionConfig(Shortcut.SectionJumpNegative).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.DownArrow };
+            inputList.GetActionConfig(Shortcut.SelectAllSection).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.A };
+            inputList.GetActionConfig(Shortcut.SectionJumpMouseScroll).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.LeftAlt };
+            inputList.GetActionConfig(Shortcut.SectionJumpMouseScroll).kbMaps[1] = new KeyboardMap(modiInput) { KeyCode.RightAlt };
+        }
     }
 }
 
