@@ -227,7 +227,7 @@ public static class GameSettings
         }
     }
 
-    static void LoadDefaultControls(ShortcutInput.ShortcutActionContainer inputList)
+    public static void LoadDefaultControls(ShortcutInput.ShortcutActionContainer inputList)
     {
         {
             inputList.GetActionConfig(Shortcut.AddSongObject).kbMaps[0] = new KeyboardMap() { KeyCode.Alpha1 };

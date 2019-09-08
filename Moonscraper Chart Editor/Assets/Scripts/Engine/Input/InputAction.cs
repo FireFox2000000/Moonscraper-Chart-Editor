@@ -6,15 +6,30 @@ namespace MSE
         [System.Serializable]
         public class InputAction
         {
+            public enum Device
+            {
+                Keyboard,
+                //Gamepad,
+            }
+
+            public struct Properties
+            {
+                public bool rebindable;
+                public bool hiddenInLists;
+            }
+
             public const int kMaxKeyboardMaps = 2;
 
             [System.NonSerialized]      // We set this ourselves
-            public bool rebindable;
+            public Properties properties;
+            public string displayName { get; private set; }
+
             public KeyboardMap[] kbMaps = new KeyboardMap[kMaxKeyboardMaps];
 
-            public InputAction(bool rebindable = true)
+            public InputAction(string displayName, Properties properties)
             {
-                this.rebindable = rebindable;
+                this.displayName = displayName;
+                this.properties = properties;
             }
 
             public bool HasConflict(IInputMap map)
@@ -74,6 +89,15 @@ namespace MSE
                 }
 
                 return false;
+            }
+
+            public IInputMap[] GetMapsForDevice(Device device)
+            {
+                switch (device)
+                {
+                    case Device.Keyboard: return kbMaps;
+                    default: return null;
+                }
             }
         }
     }

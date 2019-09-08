@@ -70,25 +70,27 @@ public enum Shortcut
 
 public static class ShortcutInput
 {
-    static Dictionary<Shortcut, bool> inputIsNotRebindable = new Dictionary<Shortcut, bool>()
+    static readonly InputAction.Properties kDefaultProperties = new InputAction.Properties { rebindable = true, hiddenInLists = false };
+
+    static readonly Dictionary<Shortcut, InputAction.Properties> inputExplicitProperties = new Dictionary<Shortcut, InputAction.Properties>()
     {
-        { Shortcut.ActionHistoryRedo, true },
-        { Shortcut.ActionHistoryUndo, true },
-        { Shortcut.ChordSelect, true },
-        { Shortcut.ClipboardCopy, true },
-        { Shortcut.ClipboardCut, true },
-        { Shortcut.ClipboardPaste, true },
-        { Shortcut.Delete, true },
-        { Shortcut.FileLoad, true },
-        { Shortcut.FileNew, true },
-        { Shortcut.FileSave, true },
-        { Shortcut.FileSaveAs, true },
-        { Shortcut.PlayPause, true },
-        { Shortcut.SectionJumpMouseScroll, true },
+        { Shortcut.ActionHistoryRedo, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
+        { Shortcut.ActionHistoryUndo, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
+        { Shortcut.ChordSelect, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
+        { Shortcut.ClipboardCopy, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
+        { Shortcut.ClipboardCut, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
+        { Shortcut.ClipboardPaste, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
+        { Shortcut.Delete, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
+        { Shortcut.FileLoad, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
+        { Shortcut.FileNew, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
+        { Shortcut.FileSave, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
+        { Shortcut.FileSaveAs, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
+        { Shortcut.PlayPause, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
+        { Shortcut.SectionJumpMouseScroll, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
     };
 
     [System.Serializable]
-    public class ShortcutActionContainer
+    public class ShortcutActionContainer : IEnumerable<InputAction>
     {
         [System.Serializable]
         struct InputSaveData
@@ -101,19 +103,21 @@ public static class ShortcutInput
         List<InputSaveData> saveData = new List<InputSaveData>();    // Safer save data format, to handle cases where the Shortcut enum list may get updated or values are shifted around
         InputAction[] actionConfigCleanLookup;
 
+
         public ShortcutActionContainer()
         {
             actionConfigCleanLookup = new InputAction[System.Enum.GetValues(typeof(Shortcut)).Length];
 
             for (int i = 0; i < actionConfigCleanLookup.Length; ++i)
             {
-                bool notRebindable;
-                if (!inputIsNotRebindable.TryGetValue((Shortcut)i, out notRebindable))
+                Shortcut scEnum = (Shortcut)i;
+                InputAction.Properties properties;
+                if (!inputExplicitProperties.TryGetValue(scEnum, out properties))
                 {
-                    notRebindable = false;
+                    properties = kDefaultProperties;
                 }
 
-                actionConfigCleanLookup[i] = new InputAction(!notRebindable);
+                actionConfigCleanLookup[i] = new InputAction(scEnum.ToString(), properties);
             }
         }
 
@@ -134,15 +138,8 @@ public static class ShortcutInput
                 Shortcut enumVal;
                 if (System.Enum.TryParse(keyVal.action, out enumVal))
                 {
-                    actionConfigCleanLookup[(int)enumVal] = keyVal.input;
-
-                    bool notRebindable;
-                    if (!inputIsNotRebindable.TryGetValue(enumVal, out notRebindable))
-                    {
-                        notRebindable = false;
-                    }
-
-                    actionConfigCleanLookup[(int)enumVal].rebindable = !notRebindable;
+                    actionConfigCleanLookup[(int)enumVal].kbMaps = keyVal.input.kbMaps;
+                    // Add more maps as needed
                 }
                 else
                 {
@@ -158,13 +155,13 @@ public static class ShortcutInput
             {
                 Shortcut sc = (Shortcut)i;
 
-                bool notRebindable;
-                if (!inputIsNotRebindable.TryGetValue(sc, out notRebindable))
+                InputAction.Properties properties;
+                if (!inputExplicitProperties.TryGetValue(sc, out properties))
                 {
-                    notRebindable = false;
+                    properties = kDefaultProperties;
                 }
 
-                if (notRebindable)
+                if (!properties.rebindable)
                     continue;
 
                 var newItem = new InputSaveData();
@@ -174,6 +171,19 @@ public static class ShortcutInput
                 saveData.Add(newItem);
 
             }
+        }
+
+        public IEnumerator<InputAction> GetEnumerator()
+        {
+            foreach (var val in actionConfigCleanLookup)
+            {
+                yield return val;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 
