@@ -268,7 +268,7 @@ public static class GameSettings
         }
 
         {
-            KeyboardMap.ModifierKeys modiInput = KeyboardMap.ModifierKeys.Ctrl;
+            KeyboardDevice.ModifierKeys modiInput = KeyboardDevice.ModifierKeys.Ctrl;
             inputList.GetActionConfig(Shortcut.ClipboardCopy).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.C };
             inputList.GetActionConfig(Shortcut.ClipboardCut).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.X };
             inputList.GetActionConfig(Shortcut.ClipboardPaste).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.V };
@@ -281,21 +281,21 @@ public static class GameSettings
         }
 
         {
-            KeyboardMap.ModifierKeys modiInput = KeyboardMap.ModifierKeys.Shift;
+            KeyboardDevice.ModifierKeys modiInput = KeyboardDevice.ModifierKeys.Shift;
 
             inputList.GetActionConfig(Shortcut.ChordSelect).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.LeftShift };
             inputList.GetActionConfig(Shortcut.ChordSelect).kbMaps[1] = new KeyboardMap(modiInput) { KeyCode.RightShift };
         }
 
         {
-            KeyboardMap.ModifierKeys modiInput = KeyboardMap.ModifierKeys.Ctrl | KeyboardMap.ModifierKeys.Shift;
+            KeyboardDevice.ModifierKeys modiInput = KeyboardDevice.ModifierKeys.Ctrl | KeyboardDevice.ModifierKeys.Shift;
 
             inputList.GetActionConfig(Shortcut.FileSaveAs).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.S };
             inputList.GetActionConfig(Shortcut.ActionHistoryRedo).kbMaps[1] = new KeyboardMap(modiInput) { KeyCode.Z };
         }
 
         {
-            KeyboardMap.ModifierKeys modiInput = KeyboardMap.ModifierKeys.Alt;
+            KeyboardDevice.ModifierKeys modiInput = KeyboardDevice.ModifierKeys.Alt;
 
             inputList.GetActionConfig(Shortcut.SectionJumpPositive).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.UpArrow };
             inputList.GetActionConfig(Shortcut.SectionJumpNegative).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.DownArrow };

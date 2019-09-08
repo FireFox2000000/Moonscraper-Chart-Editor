@@ -76,7 +76,7 @@ public static class ShortcutInput
     {
         { Shortcut.ActionHistoryRedo, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
         { Shortcut.ActionHistoryUndo, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
-        { Shortcut.ChordSelect, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
+        { Shortcut.ChordSelect, new InputAction.Properties {rebindable = false, hiddenInLists = true } },
         { Shortcut.ClipboardCopy, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
         { Shortcut.ClipboardCut, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
         { Shortcut.ClipboardPaste, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
@@ -86,8 +86,10 @@ public static class ShortcutInput
         { Shortcut.FileSave, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
         { Shortcut.FileSaveAs, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
         { Shortcut.PlayPause, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
-        { Shortcut.SectionJumpMouseScroll, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
+        { Shortcut.SectionJumpMouseScroll, new InputAction.Properties {rebindable = false, hiddenInLists = true } },
     };
+
+    static List<IInputDevice> devices = new List<IInputDevice>() { new KeyboardDevice() };
 
     [System.Serializable]
     public class ShortcutActionContainer : IEnumerable<InputAction>
@@ -199,7 +201,7 @@ public static class ShortcutInput
     {
         if (ChartEditor.hasFocus)
         {
-            return primaryInputs.GetActionConfig(key).GetInputDown();
+            return primaryInputs.GetActionConfig(key).GetInputDown(devices);
         }
 
         return false;
@@ -209,7 +211,7 @@ public static class ShortcutInput
     {
         if (ChartEditor.hasFocus)
         {
-            return primaryInputs.GetActionConfig(key).GetInputUp();
+            return primaryInputs.GetActionConfig(key).GetInputUp(devices);
         }
 
         return false;
@@ -219,7 +221,7 @@ public static class ShortcutInput
     {
         if (ChartEditor.hasFocus)
         {
-            return primaryInputs.GetActionConfig(key).GetInput();
+            return primaryInputs.GetActionConfig(key).GetInput(devices);
         }
 
         return false;

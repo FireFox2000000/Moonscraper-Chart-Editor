@@ -1,4 +1,6 @@
-﻿
+﻿using System.Collections;
+using System.Collections.Generic;
+
 namespace MSE
 {
     namespace Input
@@ -6,12 +8,6 @@ namespace MSE
         [System.Serializable]
         public class InputAction
         {
-            public enum Device
-            {
-                Keyboard,
-                //Gamepad,
-            }
-
             public struct Properties
             {
                 public bool rebindable;
@@ -46,56 +42,89 @@ namespace MSE
                 return false;
             }
 
-            public bool GetInputDown()
+            public bool GetInputDown(IList<IInputDevice> devices)
             {
-                for (int i = 0; i < kbMaps.Length; ++i)
+                for (int i = 0; i < devices.Count; ++i)
                 {
-                    KeyboardMap map = kbMaps[i];
-                    if (map != null)
+                    IInputDevice device = devices[i];
+                    if (device.Type == DeviceType.Keyboard)
                     {
-                        if (KeyboardMap.GetInputDown(map))
-                            return true;
+                        KeyboardDevice keyboardDevice = (KeyboardDevice)device;
+
+                        for (int mapIndex = 0; mapIndex < kbMaps.Length; ++mapIndex)
+                        {
+                            KeyboardMap map = kbMaps[mapIndex];
+                            if (map != null)
+                            {
+                                if (keyboardDevice.GetInputDown(map))
+                                    return true;
+                            }
+                        }
+
+                        return false;
                     }
                 }
 
                 return false;
             }
 
-            public bool GetInputUp()
+            public bool GetInputUp(IList<IInputDevice> devices)
             {
-                for (int i = 0; i < kbMaps.Length; ++i)
+                for (int i = 0; i < devices.Count; ++i)
                 {
-                    KeyboardMap map = kbMaps[i];
-                    if (map != null)
+                    IInputDevice device = devices[i];
+                    if (device.Type == DeviceType.Keyboard)
                     {
-                        if (KeyboardMap.GetInputUp(map))
-                            return true;
+                        KeyboardDevice keyboardDevice = (KeyboardDevice)device;
+
+                        for (int mapIndex = 0; mapIndex < kbMaps.Length; ++mapIndex)
+                        {
+                            KeyboardMap map = kbMaps[mapIndex];
+                            if (map != null)
+                            {
+                                if (keyboardDevice.GetInputUp(map))
+                                    return true;
+                            }
+                        }
+
+                        return false;
                     }
                 }
 
                 return false;
             }
 
-            public bool GetInput()
+            public bool GetInput(IList<IInputDevice> devices)
             {
-                for (int i = 0; i < kbMaps.Length; ++i)
+                for (int i = 0; i < devices.Count; ++i)
                 {
-                    KeyboardMap map = kbMaps[i];
-                    if (map != null)
+                    IInputDevice device = devices[i];
+                    if (device.Type == DeviceType.Keyboard)
                     {
-                        if (KeyboardMap.GetInput(map))
-                            return true;
+                        KeyboardDevice keyboardDevice = (KeyboardDevice)device;
+
+                        for (int mapIndex = 0; mapIndex < kbMaps.Length; ++mapIndex)
+                        {
+                            KeyboardMap map = kbMaps[mapIndex];
+                            if (map != null)
+                            {
+                                if (keyboardDevice.GetInput(map))
+                                    return true;
+                            }
+                        }
+
+                        return false;
                     }
                 }
 
                 return false;
             }
 
-            public IInputMap[] GetMapsForDevice(Device device)
+            public IInputMap[] GetMapsForDevice(DeviceType device)
             {
                 switch (device)
                 {
-                    case Device.Keyboard: return kbMaps;
+                    case DeviceType.Keyboard: return kbMaps;
                     default: return null;
                 }
             }

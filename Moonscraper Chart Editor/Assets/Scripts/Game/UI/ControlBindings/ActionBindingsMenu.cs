@@ -49,7 +49,7 @@ public class ActionBindingsMenu : MonoBehaviour
             }
         }
 
-        public void SetupFromAction(InputAction inputAction, InputAction.Device device)
+        public void SetupFromAction(InputAction inputAction, MSE.Input.DeviceType device)
         {
             // populate strings and callback fns
             actionNameText.text = inputAction.displayName;
@@ -87,7 +87,7 @@ public class ActionBindingsMenu : MonoBehaviour
 
     List<ActionUIRow> rowPool = new List<ActionUIRow>();
     GameObject menu;
-    InputAction.Device lastKnownDisplayDevice = InputAction.Device.Keyboard;
+    MSE.Input.DeviceType lastKnownDisplayDevice = MSE.Input.DeviceType.Keyboard;
     IEnumerable<InputAction> loadedActions;
 
     // Start is called before the first frame update
@@ -100,10 +100,10 @@ public class ActionBindingsMenu : MonoBehaviour
         GameSettings.LoadDefaultControls(actions);
 
         LoadActions(actions);
-        SetDevice(InputAction.Device.Keyboard);
+        SetDevice(MSE.Input.DeviceType.Keyboard);
     }
 
-    public void SetDevice(InputAction.Device device)
+    public void SetDevice(MSE.Input.DeviceType device)
     {
         lastKnownDisplayDevice = device;
         PopulateFrom(loadedActions);
@@ -191,3 +191,48 @@ public class ActionBindingsMenu : MonoBehaviour
             content.sizeDelta = new Vector2(content.sizeDelta.x, -position.y);
     }
 }
+
+public class RebindButtonSubstate
+{
+    IEnumerable<InputAction> allActions;
+    InputAction actionToRebind;
+    IInputDevice device;
+
+    public RebindButtonSubstate(InputAction actionToRebind, IEnumerable<InputAction> allActions, IInputDevice device)
+    {
+        this.actionToRebind = actionToRebind;
+        this.allActions = allActions;
+        this.device = device;
+    }
+
+    void Update()
+    {
+        IInputMap currentInput = device.GetCurrentInput();
+
+        if (currentInput != null)
+        {
+            bool hasConflict = false;
+            foreach(InputAction inputAction in allActions)
+            {
+                if (inputAction == actionToRebind)
+                    continue;
+
+                if (inputAction.HasConflict(currentInput))
+                {
+                    hasConflict = true;
+                    break;
+                }
+            }
+
+            if (hasConflict)
+            {
+                // Scrap action and inform user of conflict
+            }
+            else
+            {
+                // Do rebind and exit
+            }
+        }
+    }
+}
+
