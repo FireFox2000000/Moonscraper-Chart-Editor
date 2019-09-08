@@ -115,10 +115,16 @@ namespace MSE
                 return false;
             }
 
-            static bool CheckModifierInputIsActive(ModifierKeys modifiers)
+            static bool ctrlKeyBeingPressed { get { return UnityEngine.Input.GetKey(KeyCode.LeftControl) || UnityEngine.Input.GetKey(KeyCode.RightControl); } }
+            static bool shiftKeyBeingPressed { get { return UnityEngine.Input.GetKey(KeyCode.LeftShift) || UnityEngine.Input.GetKey(KeyCode.RightShift); } }
+            static bool atlKeyBeingPressed { get { return UnityEngine.Input.GetKey(KeyCode.LeftAlt) || UnityEngine.Input.GetKey(KeyCode.RightAlt); } }
+
+            static bool CheckDesiredModifierKeysActive(ModifierKeys modifiers)
             {
                 if (modifiers == ModifierKeys.None)
-                    return true;
+                {
+                    return !ctrlKeyBeingPressed && !shiftKeyBeingPressed && !atlKeyBeingPressed;
+                }
 
                 for (int i = 1; i < keyEnums.Length; ++i)
                 {
@@ -131,15 +137,15 @@ namespace MSE
                         switch (modifierEnum)
                         {
                             case ModifierKeys.Ctrl:
-                                modifierInputActive = UnityEngine.Input.GetKey(KeyCode.LeftControl) || UnityEngine.Input.GetKey(KeyCode.RightControl);
+                                modifierInputActive = ctrlKeyBeingPressed;
                                 break;
 
                             case ModifierKeys.Shift:
-                                modifierInputActive = UnityEngine.Input.GetKey(KeyCode.LeftShift) || UnityEngine.Input.GetKey(KeyCode.RightShift);
+                                modifierInputActive = shiftKeyBeingPressed;
                                 break;
 
                             case ModifierKeys.Alt:
-                                modifierInputActive = UnityEngine.Input.GetKey(KeyCode.LeftAlt) || UnityEngine.Input.GetKey(KeyCode.RightAlt);
+                                modifierInputActive = atlKeyBeingPressed;
                                 break;
 
                             default:
@@ -157,7 +163,7 @@ namespace MSE
 
             public static bool GetInputDown(KeyboardMap map)
             {
-                if (!CheckModifierInputIsActive(map.modifiers) || map.keys.Count <= 0)
+                if (!CheckDesiredModifierKeysActive(map.modifiers) || map.keys.Count <= 0)
                     return false;
 
                 // Look for at least 1 key that is coming down. The rest just need to be pressed
@@ -180,7 +186,7 @@ namespace MSE
 
             public static bool GetInputUp(KeyboardMap map)
             {
-                if (!CheckModifierInputIsActive(map.modifiers) || map.keys.Count <= 0)
+                if (!CheckDesiredModifierKeysActive(map.modifiers) || map.keys.Count <= 0)
                     return false;
 
                 // Look for at least 1 key that is coming up. The rest just need to be pressed
@@ -203,7 +209,7 @@ namespace MSE
 
             public static bool GetInput(KeyboardMap map)
             {
-                if (!CheckModifierInputIsActive(map.modifiers) || map.keys.Count <= 0)
+                if (!CheckDesiredModifierKeysActive(map.modifiers) || map.keys.Count <= 0)
                     return false;
 
                 foreach (KeyCode keyCode in map.keys)
