@@ -56,9 +56,12 @@ public class NoteController : SongObjectController {
                     selectedObjectsManager.RemoveFromSelectedObjects(songObject);
                 else
                     selectedObjectsManager.AddToSelectedObjects(songObject);
+
+                return;
             }
+
             // Shift-clicking
-            else if (Globals.secondaryInputActive)
+            if (Globals.secondaryInputActive)
             {
                 int pos = SongObjectHelper.FindClosestPosition(this.songObject, editor.selectedObjectsManager.currentSelectedObjects);
 
@@ -82,15 +85,20 @@ public class NoteController : SongObjectController {
                     int index, length;
                     SongObjectHelper.GetRange(chartObjects, min, max, out index, out length);
                     selectedObjectsManager.SetCurrentSelectedObjects(chartObjects, index, length);
+
+                    return;
                 }
             }
+
             // Regular clicking
-            else if (!selectedObjectsManager.IsSelected(songObject))
+            if (!selectedObjectsManager.IsSelected(songObject))
             {
                 if (ShortcutInput.GetInput(Shortcut.ChordSelect))
                     selectedObjectsManager.SetCurrentSelectedObjects(note.chord);
                 else
                     selectedObjectsManager.currentSelectedObject = songObject;
+
+                return;
             }
         }
 
