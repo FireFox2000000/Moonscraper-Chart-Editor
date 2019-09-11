@@ -154,7 +154,7 @@ public class GroupSelectPanelController : MonoBehaviour
                 Note note = chartObject as Note;
                 Note newNote = new Note(note);
                 newNote.flags = note.GetFlagsToSetType(type);
-                songEditCommands.Add(new SongEditModify<Note>(note, newNote));
+                songEditCommands.Add(new SongEditModifyValidated(note, newNote));
                 objectsToSelect.Add(newNote);
             }
         }
