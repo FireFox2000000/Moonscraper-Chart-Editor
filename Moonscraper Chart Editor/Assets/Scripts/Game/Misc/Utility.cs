@@ -14,55 +14,16 @@ static class Utility {
     public static string timeConvertion(float time)
     {
         timeFormatter.Remove(0, timeFormatter.Length);
-        TimeSpan levelTime = TimeSpan.FromSeconds(time);
-/*
-        string format = string.Empty;
-        if (time < 0)
-            format += "-";*/
+        TimeSpan timeSpan = TimeSpan.FromSeconds(time);
 
-        int hours = Mathf.Abs(levelTime.Hours),
-            minutes = Mathf.Abs(levelTime.Minutes),
-            seconds = Mathf.Abs(levelTime.Seconds),
-            milliseconds = Mathf.Abs((int)((time - (int)time) * 100));
-
-        if (levelTime.Hours > 0)
+        if (timeSpan.Hours > 0)
         {
-            AppendDigit(timeFormatter, hours);
-            /*
-            if (hours < 10)
-                timeFormatter.Append('0');
-            timeFormatter.Append(hours);*/
-            timeFormatter.Append(':');
-        }
-        /*
-            format += "{0}:{1:D2}:{2:D2}:{3:D2}";
-
-            return string.Format(format,
-                Mathf.Abs(levelTime.Hours),
-                Mathf.Abs(levelTime.Minutes),
-                Mathf.Abs(levelTime.Seconds),
-                Mathf.Abs((int)((time - (int)time) * 100)));
+            return String.Format(@"{0:hh\:mm\:ss\.ff}", timeSpan);
         }
         else
         {
-            format += "{0:D2}:{1:D2}:{2:D2}";
-
-            return string.Format(format,
-                Mathf.Abs(levelTime.Minutes),
-                Mathf.Abs(levelTime.Seconds),
-                Mathf.Abs((int)((time - (int)time) * 100)));
-        }*/
-
-        // Append the first digit
-        AppendDigit(timeFormatter, minutes);
-        timeFormatter.Append(':');
-
-        AppendDigit(timeFormatter, seconds);
-        timeFormatter.Append('.');
-
-        AppendDigit(timeFormatter, milliseconds);
-
-        return timeFormatter.ToString();
+            return String.Format(@"{0:mm\:ss\.ff}", timeSpan);
+        }
     }
 
     static void AppendDigit(System.Text.StringBuilder timeFormatter, int digit)
