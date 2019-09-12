@@ -113,7 +113,7 @@ public class CursorSelect : ToolObject
                     else
                         RemoveFromSelection(ScanArea(initWorld2DPos, endWorld2DPos, startWorld2DChartPos, endWorld2DChartPos));
                 }
-                selfAreaDisable();
+                SelfAreaDisable();
                 userDraggingSelectArea = false;
             }
 
@@ -134,6 +134,12 @@ public class CursorSelect : ToolObject
     public override void ToolDisable()
     {
         mousePos = Vector3.zero;
+        SelfAreaDisable();
+    }
+
+    private void OnDisable()
+    {
+        draggingArea.transform.localScale = new Vector3(0, 0, draggingArea.transform.localScale.z);
     }
 
     // Resets all the group selection properties
@@ -191,7 +197,7 @@ public class CursorSelect : ToolObject
                 RemoveFromSelection(ScanArea(initWorld2DPos, endWorld2DPos, startWorld2DChartPos, endWorld2DChartPos));
         }
 
-        selfAreaDisable();
+        SelfAreaDisable();
         userDraggingSelectArea = false;
     }
 
@@ -217,7 +223,7 @@ public class CursorSelect : ToolObject
         areaTransform.position = pos;
     }
 
-    void selfAreaDisable()
+    void SelfAreaDisable()
     {
         draggingArea.transform.localScale = new Vector3(0, 0, draggingArea.transform.localScale.z);
         initWorld2DPos = Vector2.zero;

@@ -77,7 +77,7 @@ public class EditorObjectToolManager : System.Object
         isToolActive = false;
 
         ChartEditor.Instance.events.viewModeSwitchEvent.Register(OnViewModeSwitch);
-        ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Editor, new ToolActiveListener());
+        ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Editor, new ToolActiveListener(this));
         ChangeTool(DEFAULT_TOOL);
     }
 
@@ -145,6 +145,12 @@ public class EditorObjectToolManager : System.Object
     {
         bool wasInDeleteMode = false;
         bool waitForMouseRelease = false;
+        EditorObjectToolManager toolManager;
+
+        public ToolActiveListener(EditorObjectToolManager toolManager)
+        {
+            this.toolManager = toolManager;
+        }
 
         bool ShouldToolBeActive(Services services, ToolID currentToolId)
         {
@@ -175,20 +181,20 @@ public class EditorObjectToolManager : System.Object
         {
             wasInDeleteMode = false;
             waitForMouseRelease = Input.GetMouseButton(0);
-            ChartEditor.Instance.toolManager.SetToolActive(false);  // Cannot be active for the first frame, specifically when clicking to exit a menu
+            toolManager.SetToolActive(false);  // Cannot be active for the first frame, specifically when clicking to exit a menu
         }
 
         public override void SystemUpdate()
         {
             ChartEditor editor = ChartEditor.Instance;
             
-            bool isActive = ShouldToolBeActive(editor.services, editor.toolManager.currentToolId);
-            ChartEditor.Instance.toolManager.SetToolActive(isActive);
+            bool isActive = ShouldToolBeActive(editor.services, toolManager.currentToolId);
+            toolManager.SetToolActive(isActive);
         }
 
         public override void SystemExit()
         {
-            ChartEditor.Instance.toolManager.SetToolActive(false);
+            toolManager.SetToolActive(false);
         }
     }
 }
