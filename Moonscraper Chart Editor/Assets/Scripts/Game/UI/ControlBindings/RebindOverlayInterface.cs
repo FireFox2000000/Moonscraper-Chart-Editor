@@ -12,7 +12,7 @@ public class RebindOverlayInterface : MonoBehaviour
 
     [SerializeField]
     Text conflictNotificationText;
-    const string conflictFormatStr = "Cannot remap to {0} as it is already is use by {1}";
+    const string conflictFormatStr = "Cannot remap to {0} as it is already in use by {1}";
 
     private void OnEnable()
     {
