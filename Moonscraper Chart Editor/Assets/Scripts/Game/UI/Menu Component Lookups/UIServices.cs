@@ -5,6 +5,7 @@ using UnityEngine;
 public class UIServices : MonoBehaviour {
 
     public EditorPanels editorPanels { get; private set; }
+    bool _popupBlockerEnabled = false;
     Camera _uiCamera;
     public Camera uiCamera
     {
@@ -27,5 +28,18 @@ public class UIServices : MonoBehaviour {
     public Vector2 GetUIMousePosition()
     {
         return uiCamera.ScreenToWorldPoint(Input.mousePosition);
+    }
+
+    public bool popupBlockerEnabled
+    {
+        get
+        {
+            return _popupBlockerEnabled || ChartEditor.Instance.currentState == ChartEditor.State.Loading;
+        }
+    }
+
+    public void SetPopupBlockingEnabled(bool enabled)
+    {
+        _popupBlockerEnabled = enabled;
     }
 }

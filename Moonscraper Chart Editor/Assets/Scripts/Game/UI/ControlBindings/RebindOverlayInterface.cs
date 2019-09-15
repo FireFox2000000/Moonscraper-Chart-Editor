@@ -46,6 +46,8 @@ public class RebindOverlayInterface : MonoBehaviour
 
     public void Open(InputAction actionToRebind, IInputMap mapToRebind, IEnumerable<InputAction> allActions, IInputDevice device)
     {
+        ChartEditor.Instance.uiServices.SetPopupBlockingEnabled(true);
+
         rebinder = new InputRebinder(actionToRebind, mapToRebind, allActions, device);
         gameObject.SetActive(true);
     }
@@ -60,6 +62,8 @@ public class RebindOverlayInterface : MonoBehaviour
         rebinder = null;
         gameObject.SetActive(false);
         rebindCompleteEvent.Fire();
+
+        ChartEditor.Instance.uiServices.SetPopupBlockingEnabled(false);
     }
 
     void OnDisable()
