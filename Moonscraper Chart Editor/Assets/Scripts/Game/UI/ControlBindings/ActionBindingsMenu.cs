@@ -143,6 +143,12 @@ public class ActionBindingsMenu : MonoBehaviour
             row.SetActive(true);
         }
 
+        for (int i = index; i < rowPool.Count; ++i)
+        {
+            ActionUIRow row = rowPool[i];
+            row.SetActive(false);
+        }
+
         UpdateRowLayout();
     }
 
