@@ -91,12 +91,12 @@ namespace MSE
                 return null;
             }
 
-            bool IsModifierKey(KeyCode key)
+            public static bool IsModifierKey(KeyCode key)
             {
                 return ToModifierKey(key) != ModifierKeys.None;
             }
 
-            ModifierKeys ToModifierKey(KeyCode key)
+            public static ModifierKeys ToModifierKey(KeyCode key)
             {
                 switch (key)
                 {

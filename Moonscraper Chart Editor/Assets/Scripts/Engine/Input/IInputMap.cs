@@ -12,6 +12,7 @@ namespace MSE
             bool IsEmpty { get; }
             IInputMap Clone();
             bool SetFrom(IInputMap that);
+            void SetEmpty();
         }
     }
 }

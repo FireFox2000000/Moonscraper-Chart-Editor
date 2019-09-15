@@ -15,6 +15,7 @@ namespace MSE
             public InputRebinder(InputAction actionToRebind, IInputMap mapToRebind, IEnumerable<InputAction> allActions, IInputDevice device)
             {
                 mapCopy = mapToRebind.Clone();
+                mapToRebind.SetEmpty();
 
                 this.actionToRebind = actionToRebind;
                 this.mapToRebind = mapToRebind;

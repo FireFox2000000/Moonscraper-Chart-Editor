@@ -60,20 +60,31 @@ namespace MSE
             public bool HasConflict(IInputMap other)
             {
                 KeyboardMap otherKbMap = other as KeyboardMap;
-                if (otherKbMap == null)
+                if (otherKbMap == null || otherKbMap.IsEmpty)
                     return false;
 
-                if (modifiers != otherKbMap.modifiers && modifiers != KeyboardDevice.ModifierKeys.None && otherKbMap.modifiers != KeyboardDevice.ModifierKeys.None)
+                KeyboardDevice.ModifierKeys manualModifierKeysPressed = KeyboardDevice.ModifierKeys.None;
+                foreach (KeyCode otherKeyCode in otherKbMap.keys)
+                {
+                    manualModifierKeysPressed |= KeyboardDevice.ToModifierKey(otherKeyCode);
+                }
+
+                if (keys.Count <= 0 && modifiers == manualModifierKeysPressed && modifiers != KeyboardDevice.ModifierKeys.None)
+                    return true;
+
+                if (modifiers != otherKbMap.modifiers)
                     return false;
 
                 foreach (KeyCode keyCode in keys)
                 {
                     foreach (KeyCode otherKeyCode in otherKbMap.keys)
                     {
-                        if (keyCode == otherKeyCode)
+                        bool modifierKeyConflict = (KeyboardDevice.ToModifierKey(keyCode) & otherKbMap.modifiers) != 0;
+
+                        if (modifierKeyConflict || keyCode == otherKeyCode)
                             return true;
                     }
-                }
+                }  
 
                 return false;
             }
@@ -120,6 +131,12 @@ namespace MSE
                 keys.AddRange(kbCast.keys);
 
                 return true;
+            }
+
+            public void SetEmpty()
+            {
+                modifiers = KeyboardDevice.ModifierKeys.None;
+                keys.Clear();
             }
         }
     }

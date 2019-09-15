@@ -93,7 +93,7 @@ public static class ShortcutInput
     {
         { Shortcut.ActionHistoryRedo,       new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
         { Shortcut.ActionHistoryUndo,       new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
-        { Shortcut.ChordSelect,             new InputAction.Properties {rebindable = false, hiddenInLists = true, category = Category.Global } },
+        { Shortcut.ChordSelect,             new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
         { Shortcut.ClipboardCopy,           new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
         { Shortcut.ClipboardCut,            new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
         { Shortcut.ClipboardPaste,          new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },

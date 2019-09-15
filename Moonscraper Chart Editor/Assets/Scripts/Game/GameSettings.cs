@@ -283,8 +283,7 @@ public static class GameSettings
         {
             KeyboardDevice.ModifierKeys modiInput = KeyboardDevice.ModifierKeys.Shift;
 
-            inputList.GetActionConfig(Shortcut.ChordSelect).kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.LeftShift };
-            inputList.GetActionConfig(Shortcut.ChordSelect).kbMaps[1] = new KeyboardMap(modiInput) { KeyCode.RightShift };
+            inputList.GetActionConfig(Shortcut.ChordSelect).kbMaps[0] = new KeyboardMap(modiInput) { };
         }
 
         {
