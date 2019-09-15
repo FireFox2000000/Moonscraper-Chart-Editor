@@ -52,7 +52,7 @@ public class RebindOverlayInterface : MonoBehaviour
 
     void Close(bool rebindSuccess)
     {
-        if (!rebindSuccess)
+        if (!rebindSuccess && rebinder != null)
         {
             rebinder.RevertMapBeingRebound();
         }
@@ -68,5 +68,10 @@ public class RebindOverlayInterface : MonoBehaviour
         {
             Close(false);
         }
+    }
+
+    public void ClearInput()
+    {
+        Close(true);
     }
 }
