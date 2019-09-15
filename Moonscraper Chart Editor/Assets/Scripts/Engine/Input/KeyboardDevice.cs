@@ -43,6 +43,9 @@ namespace MSE
 
                 foreach (KeyCode kCode in allKeyCodes)
                 {
+                    if ((int)kCode >= (int)KeyCode.Menu)
+                        break;
+
                     bool isModifierKey = IsModifierKey(kCode);
                     if (UnityEngine.Input.GetKey(kCode))
                     {
