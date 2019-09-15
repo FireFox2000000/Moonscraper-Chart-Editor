@@ -158,8 +158,7 @@ public static class GameSettings
             {
                 Debug.Log("Loading input settings");
                 string controlsJson = File.ReadAllText(controllerBindingsFilepath);
-                controls = JsonUtility.FromJson<ShortcutInput.ShortcutActionContainer>(controlsJson);
-                controls.LoadFromSaveData();
+                controls.LoadFromSaveData(JsonUtility.FromJson<ShortcutInput.ShortcutActionContainer>(controlsJson));
             }
         }
         catch (System.Exception e)
@@ -273,6 +272,8 @@ public static class GameSettings
             inputList.GetActionConfig(Shortcut.ToolNoteLane5).kbMaps[0] = new KeyboardMap() { KeyCode.Alpha5 };
             inputList.GetActionConfig(Shortcut.ToolNoteLane6).kbMaps[0] = new KeyboardMap() { KeyCode.Alpha6 };
             inputList.GetActionConfig(Shortcut.ToolNoteLaneOpen).kbMaps[0] = new KeyboardMap() { KeyCode.Alpha0 };
+
+            inputList.GetActionConfig(Shortcut.CloseMenu).kbMaps[0] = new KeyboardMap() { KeyCode.Escape };
         }
 
         {

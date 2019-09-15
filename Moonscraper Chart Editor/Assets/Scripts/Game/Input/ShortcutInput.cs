@@ -75,6 +75,8 @@ public enum Shortcut
     ToolNoteLane5,
     ToolNoteLane6,
     ToolNoteLaneOpen,
+
+    CloseMenu,
 }
 
 public static class ShortcutInput
@@ -129,6 +131,8 @@ public static class ShortcutInput
         { Shortcut.ToolNoteLane5,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = Category.ToolNote } },
         { Shortcut.ToolNoteLane6,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = Category.ToolNote } },
         { Shortcut.ToolNoteLaneOpen,    new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = Category.ToolNote } },
+
+        { Shortcut.CloseMenu,           new InputAction.Properties {rebindable = false, hiddenInLists = true, category = kCategoryDefault } },
     };
 
     public static List<IInputDevice> devices = new List<IInputDevice>() { new KeyboardDevice() };
@@ -175,9 +179,10 @@ public static class ShortcutInput
             return actionConfigCleanLookup[(int)key];
         }
 
-        public void LoadFromSaveData()
+        public void LoadFromSaveData(ShortcutActionContainer that)
         {
-            foreach(var keyVal in saveData)
+            saveData = that.saveData;
+            foreach (var keyVal in saveData)
             {
                 Shortcut enumVal;
                 if (System.Enum.TryParse(keyVal.action, out enumVal))
