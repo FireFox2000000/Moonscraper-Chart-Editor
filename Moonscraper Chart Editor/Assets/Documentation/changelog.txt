@@ -1,6 +1,6 @@
 1.3.2
 	NEW FEATURES
-	-Added the ability to rebind some controls under Options->Controls. More are likely to be added in case some have been missed.
+	-Added the ability to rebind some controls under Options->Controls. More to be added (i.e. gameplay/gamepad controls)
 
 	CHANGES
 	-Open note toggle key for note tool now shifted onto the '0' key instead of being dynamic.
