@@ -69,7 +69,7 @@ namespace MSE
                         for (int mapIndex = 0; mapIndex < kbMaps.Length; ++mapIndex)
                         {
                             KeyboardMap map = kbMaps[mapIndex];
-                            if (map != null)
+                            if (map != null && !map.IsEmpty)
                             {
                                 if (keyboardDevice.GetInputDown(map))
                                     return true;

@@ -107,8 +107,7 @@ public class ActionBindingsMenu : MonoBehaviour
         lastKnownDisplayDevice = ShortcutInput.devices[0];
         rebindInterface.rebindCompleteEvent.Register(OnRebindComplete);
 
-        // For testing
-        actions = new ShortcutInput.ShortcutActionContainer();
+        actions = GameSettings.controls;
         GameSettings.LoadDefaultControls(actions);
 
         LoadActions(actions);
