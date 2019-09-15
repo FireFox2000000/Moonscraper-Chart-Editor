@@ -87,9 +87,9 @@ public class TimelineMovementController : MovementController
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.PageUp) || Input.GetKeyDown(KeyCode.PageDown))
+        if (ShortcutInput.GetGroupInputDown(arrowKeyShortcutGroup))
             arrowMoveTimer = 0;
-        else if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.PageUp) || Input.GetKey(KeyCode.PageDown))
+        else if (ShortcutInput.GetGroupInput(arrowKeyShortcutGroup))
             arrowMoveTimer += Time.deltaTime;
         else
             arrowMoveTimer = 0;
