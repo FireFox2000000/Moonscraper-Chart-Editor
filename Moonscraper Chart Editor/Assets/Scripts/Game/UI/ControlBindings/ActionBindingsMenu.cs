@@ -108,7 +108,6 @@ public class ActionBindingsMenu : MonoBehaviour
         rebindInterface.rebindCompleteEvent.Register(OnRebindComplete);
 
         actions = GameSettings.controls;
-        GameSettings.LoadDefaultControls(actions);
 
         LoadActions(actions);
         SetDevice(ShortcutInput.devices[0]);

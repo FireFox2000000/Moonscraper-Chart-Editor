@@ -40,25 +40,25 @@ public class PlaceNoteController : ObjectlessTool {
     }
     KeysPlacementMode currentPlacementMode = KeysPlacementMode.None;
 
-    string GetOpenNoteInputKey(int laneCount)
+    readonly Shortcut[] NumToLaneActionLUT = new Shortcut[]
     {
-        int key = laneCount;
-        return NumToStringLUT[(key + 1)];
-    }
-
-    readonly string[] NumToStringLUT = new string[]
-    {
-        0.ToString(),
-        1.ToString(),
-        2.ToString(),
-        3.ToString(),
-        4.ToString(),
-        5.ToString(),
-        6.ToString(),
-        7.ToString(),
-        8.ToString(),
-        9.ToString(),
+        Shortcut.ToolNoteLane1,
+        Shortcut.ToolNoteLane2,
+        Shortcut.ToolNoteLane3,
+        Shortcut.ToolNoteLane4,
+        Shortcut.ToolNoteLane5,
+        Shortcut.ToolNoteLane6,
     };
+
+    Shortcut GetInputForNoteIndex(int index, int laneCount)
+    {
+        if (index >= laneCount)
+        {
+            return Shortcut.ToolNoteLaneOpen;
+        }
+
+        return NumToLaneActionLUT[index];
+    }
 
     protected override void Awake()
     {
@@ -298,7 +298,7 @@ public class PlaceNoteController : ObjectlessTool {
         // Tell the system to stop updating the sustain length
         for (int i = 0; i < heldNotes.Length; ++i)
         {
-            if (isTyping || Input.GetKeyUp(NumToStringLUT[(i + 1)]))
+            if (isTyping || ShortcutInput.GetInputUp(GetInputForNoteIndex(i, laneCount)))
             {
                 ClearHeldNotes(i);
             }
@@ -315,11 +315,11 @@ public class PlaceNoteController : ObjectlessTool {
         for (int i = 0; i < laneCount + 1; ++i)      // Start at 1 to ignore the multinote
         {                     
             // Need to make sure the note is at it's correct tick position
-            if (Input.GetKeyDown(NumToStringLUT[(i + 1)]))
+            if (ShortcutInput.GetInputDown(GetInputForNoteIndex(i, laneCount)))
             {
                 int notePos = i;
 
-                if (Input.GetKeyDown(GetOpenNoteInputKey(laneCount)))
+                if (ShortcutInput.GetInputDown(Shortcut.ToolNoteLaneOpen))
                 {
                     if (openNotesBanned)     // Ban conflicting inputs as the command stack REALLY doesn't like this.
                         continue;
@@ -365,8 +365,8 @@ public class PlaceNoteController : ObjectlessTool {
             if (isOpenInput && keysPressed > 0)           // Prevents open notes while holding other keys
                 continue;
 
-            int inputOnKeyboard = index + 1;
-            if (Input.GetKey(NumToStringLUT[inputOnKeyboard]) && !inputBlock[index])
+            int inputOnKeyboard = index;
+            if (ShortcutInput.GetInput(GetInputForNoteIndex(inputOnKeyboard, laneCount)) && !inputBlock[index])
             {
                 ++keysPressed;
                 int notePos = index;
@@ -391,14 +391,14 @@ public class PlaceNoteController : ObjectlessTool {
                     Debug.Log("Adding note");
                     currentlyAddingNotes.Add(allPlaceableNotes[notePos].note.Clone());
                 }
-                else if (Input.GetKeyDown(NumToStringLUT[inputOnKeyboard]) && currentPlacementMode == KeysPlacementMode.Deleting)
+                else if (ShortcutInput.GetInputDown(GetInputForNoteIndex(inputOnKeyboard, laneCount)) && currentPlacementMode == KeysPlacementMode.Deleting)
                 {
                     Debug.Log("Removed " + editor.currentChart.notes[pos].rawNote + " note at position " + editor.currentChart.notes[pos].tick + " using keyboard controls");
                     currentlyAddingNotes.Add(editor.currentChart.notes[pos]);
                     inputBlock[index] = true;
                 }
             }
-            else if (!Input.GetKey(NumToStringLUT[(index + 1)]))
+            else if (!ShortcutInput.GetInput(GetInputForNoteIndex(i, laneCount)))
             {
                 inputBlock[index] = false;
             }
@@ -418,7 +418,7 @@ public class PlaceNoteController : ObjectlessTool {
         bool anyStandardKeyInput = false;
         for (int i = 0; i < maxLanes; ++i)
         {
-            if (Input.GetKey(NumToStringLUT[(i + 1)]))
+            if (ShortcutInput.GetInput(NumToLaneActionLUT[i]))
             {
                 anyStandardKeyInput = true;
                 break;
@@ -426,7 +426,7 @@ public class PlaceNoteController : ObjectlessTool {
         }
 
         // Select which notes to run based on keyboard input
-        if (Input.GetKeyDown(GetOpenNoteInputKey(maxLanes)))  // Open note takes priority
+        if (ShortcutInput.GetInputDown(Shortcut.ToolNoteLaneOpen))  // Open note takes priority
         {
             if (openActive)
             {
@@ -439,13 +439,13 @@ public class PlaceNoteController : ObjectlessTool {
                 activeNotes.Add(openNote);
             }
         }
-        else if (!Input.GetKey(GetOpenNoteInputKey(maxLanes)) && (anyStandardKeyInput))
+        else if (!ShortcutInput.GetInput(Shortcut.ToolNoteLaneOpen) && (anyStandardKeyInput))
         {
             for (int i = 0; i < maxLanes; ++i)
             {
                 int leftyPos = maxLanes - (i + 1);
 
-                if (Input.GetKey(NumToStringLUT[(i + 1)]))
+                if (ShortcutInput.GetInput(NumToLaneActionLUT[i]))
                 {
                     if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
                     {
@@ -576,7 +576,7 @@ public class PlaceNoteController : ObjectlessTool {
         for (int i = 0; i < laneCount + 1; ++i)      // Start at 1 to ignore the multinote
         {
             // Need to make sure the note is at it's correct tick position
-            if (Input.GetKey(NumToStringLUT[(i + 1)]))
+            if (ShortcutInput.GetInput(GetInputForNoteIndex(i, laneCount)))
                 return true;
         }
 

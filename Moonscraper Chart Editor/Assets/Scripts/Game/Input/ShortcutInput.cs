@@ -67,6 +67,14 @@ public enum Shortcut
     ToolSelectTimeSignature,
     ToolSelectSection,
     ToolSelectEvent,
+
+    ToolNoteLane1,
+    ToolNoteLane2,
+    ToolNoteLane3,
+    ToolNoteLane4,
+    ToolNoteLane5,
+    ToolNoteLane6,
+    ToolNoteLaneOpen,
 }
 
 public static class ShortcutInput
@@ -74,36 +82,53 @@ public static class ShortcutInput
     public static class Category
     {
         // static int to make int conversion way easier. The lack of implicit enum->int conversion is annoying as hell.
-        public static readonly int Global = 0;
-        public static readonly int KeyboardMode = 1;
-        public static readonly int ToolNoteCursor = 2;
-        public static readonly int ToolNoteKeyboard = 3;
+        public const int Global = 0;
+        public const int KeyboardMode = 1;
+        public const int ToolNote = 2;
 
-        public static InteractionMatrix interactionMatrix = new InteractionMatrix(4);
+        public static InteractionMatrix interactionMatrix = new InteractionMatrix(3);
 
         static Category()
         {
             interactionMatrix.SetInteractableAll(Global);
+
+            interactionMatrix.SetInteractable(KeyboardMode, KeyboardMode);
+
+            interactionMatrix.SetInteractable(ToolNote, ToolNote);
         }
     }
 
-    static readonly InputAction.Properties kDefaultProperties = new InputAction.Properties { rebindable = true, hiddenInLists = false, category = Category.Global };
+    const bool kRebindableDefault = true;
+    const bool kHiddenInListsDefault = false;
+    const int kCategoryDefault = Category.Global;
+
+    static readonly InputAction.Properties kDefaultProperties = new InputAction.Properties { rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault };
 
     static readonly Dictionary<Shortcut, InputAction.Properties> inputExplicitProperties = new Dictionary<Shortcut, InputAction.Properties>()
     {
-        { Shortcut.ActionHistoryRedo,       new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
-        { Shortcut.ActionHistoryUndo,       new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
-        { Shortcut.ChordSelect,             new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
-        { Shortcut.ClipboardCopy,           new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
-        { Shortcut.ClipboardCut,            new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
-        { Shortcut.ClipboardPaste,          new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
-        { Shortcut.Delete,                  new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
-        { Shortcut.FileLoad,                new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
-        { Shortcut.FileNew,                 new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
-        { Shortcut.FileSave,                new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
-        { Shortcut.FileSaveAs,              new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
-        { Shortcut.PlayPause,               new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
-        { Shortcut.SectionJumpMouseScroll,  new InputAction.Properties {rebindable = false, hiddenInLists = true, category = Category.Global } },
+        { Shortcut.ActionHistoryRedo,       new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { Shortcut.ActionHistoryUndo,       new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { Shortcut.ChordSelect,             new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { Shortcut.ClipboardCopy,           new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { Shortcut.ClipboardCut,            new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { Shortcut.ClipboardPaste,          new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { Shortcut.Delete,                  new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { Shortcut.FileLoad,                new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { Shortcut.FileNew,                 new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { Shortcut.FileSave,                new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { Shortcut.FileSaveAs,              new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { Shortcut.PlayPause,               new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { Shortcut.SectionJumpMouseScroll,  new InputAction.Properties {rebindable = false, hiddenInLists = true, category = kCategoryDefault } },
+
+        { Shortcut.AddSongObject,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = Category.KeyboardMode } },
+
+        { Shortcut.ToolNoteLane1,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = Category.ToolNote } },
+        { Shortcut.ToolNoteLane2,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = Category.ToolNote } },
+        { Shortcut.ToolNoteLane3,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = Category.ToolNote } },
+        { Shortcut.ToolNoteLane4,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = Category.ToolNote } },
+        { Shortcut.ToolNoteLane5,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = Category.ToolNote } },
+        { Shortcut.ToolNoteLane6,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = Category.ToolNote } },
+        { Shortcut.ToolNoteLaneOpen,    new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = Category.ToolNote } },
     };
 
     public static List<IInputDevice> devices = new List<IInputDevice>() { new KeyboardDevice() };

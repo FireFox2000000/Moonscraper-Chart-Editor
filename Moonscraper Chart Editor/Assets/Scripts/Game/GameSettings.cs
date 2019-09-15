@@ -265,6 +265,14 @@ public static class GameSettings
             inputList.GetActionConfig(Shortcut.ToolSelectTimeSignature).kbMaps[0] = new KeyboardMap() { KeyCode.O };
             inputList.GetActionConfig(Shortcut.ToolSelectSection).kbMaps[0] = new KeyboardMap() { KeyCode.P };
             inputList.GetActionConfig(Shortcut.ToolSelectEvent).kbMaps[0] = new KeyboardMap() { KeyCode.L };
+
+            inputList.GetActionConfig(Shortcut.ToolNoteLane1).kbMaps[0] = new KeyboardMap() { KeyCode.Alpha1 };
+            inputList.GetActionConfig(Shortcut.ToolNoteLane2).kbMaps[0] = new KeyboardMap() { KeyCode.Alpha2 };
+            inputList.GetActionConfig(Shortcut.ToolNoteLane3).kbMaps[0] = new KeyboardMap() { KeyCode.Alpha3 };
+            inputList.GetActionConfig(Shortcut.ToolNoteLane4).kbMaps[0] = new KeyboardMap() { KeyCode.Alpha4 };
+            inputList.GetActionConfig(Shortcut.ToolNoteLane5).kbMaps[0] = new KeyboardMap() { KeyCode.Alpha5 };
+            inputList.GetActionConfig(Shortcut.ToolNoteLane6).kbMaps[0] = new KeyboardMap() { KeyCode.Alpha6 };
+            inputList.GetActionConfig(Shortcut.ToolNoteLaneOpen).kbMaps[0] = new KeyboardMap() { KeyCode.Alpha0 };
         }
 
         {
