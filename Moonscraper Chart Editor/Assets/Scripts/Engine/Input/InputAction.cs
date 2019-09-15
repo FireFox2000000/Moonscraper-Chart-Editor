@@ -12,6 +12,7 @@ namespace MSE
             {
                 public bool rebindable;
                 public bool hiddenInLists;
+                public int category;
             }
 
             public const int kMaxKeyboardMaps = 2;
@@ -26,6 +27,11 @@ namespace MSE
             {
                 this.displayName = displayName;
                 this.properties = properties;
+
+                for (int i = 0; i < kbMaps.Length; ++i)
+                {
+                    kbMaps[i] = new KeyboardMap();
+                }
             }
 
             public bool HasConflict(IInputMap map)
@@ -40,6 +46,15 @@ namespace MSE
                 }
 
                 return false;
+            }
+
+            public IInputMap[] GetMapsForDevice(DeviceType device)
+            {
+                switch (device)
+                {
+                    case DeviceType.Keyboard: return kbMaps;
+                    default: return null;
+                }
             }
 
             public bool GetInputDown(IList<IInputDevice> devices)
@@ -118,15 +133,6 @@ namespace MSE
                 }
 
                 return false;
-            }
-
-            public IInputMap[] GetMapsForDevice(DeviceType device)
-            {
-                switch (device)
-                {
-                    case DeviceType.Keyboard: return kbMaps;
-                    default: return null;
-                }
             }
         }
     }

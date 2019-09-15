@@ -78,6 +78,14 @@ namespace MSE
                 return false;
             }
 
+            public bool IsEmpty
+            {
+                get
+                {
+                    return modifiers == KeyboardDevice.ModifierKeys.None && keys.Count <= 0;
+                }
+            }
+
             public IEnumerator<KeyCode> GetEnumerator()
             {
                 return ((IEnumerable<KeyCode>)keys).GetEnumerator();
@@ -86,6 +94,32 @@ namespace MSE
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return ((IEnumerable<KeyCode>)keys).GetEnumerator();
+            }
+
+            public IInputMap Clone()
+            {
+                KeyboardMap clone = new KeyboardMap();
+
+                clone.modifiers = modifiers;
+                clone.keys.AddRange(keys);
+
+                return clone;
+            }
+
+            public bool SetFrom(IInputMap that)
+            {
+                KeyboardMap kbCast = that as KeyboardMap;
+                if (kbCast == null)
+                {
+                    Debug.LogError("Type incompatibility when trying to call SetFrom on a keyboard input map");
+                    return false;
+                }
+
+                modifiers = kbCast.modifiers;
+                keys.Clear();
+                keys.AddRange(kbCast.keys);
+
+                return true;
             }
         }
     }

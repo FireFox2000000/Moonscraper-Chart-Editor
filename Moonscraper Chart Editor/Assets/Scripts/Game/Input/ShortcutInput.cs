@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MSE;
 using MSE.Input;
 
 public enum Shortcut
@@ -70,26 +71,42 @@ public enum Shortcut
 
 public static class ShortcutInput
 {
-    static readonly InputAction.Properties kDefaultProperties = new InputAction.Properties { rebindable = true, hiddenInLists = false };
+    public static class Category
+    {
+        // static int to make int conversion way easier. The lack of implicit enum->int conversion is annoying as hell.
+        public static readonly int Global = 0;
+        public static readonly int KeyboardMode = 1;
+        public static readonly int ToolNoteCursor = 2;
+        public static readonly int ToolNoteKeyboard = 3;
+
+        public static InteractionMatrix interactionMatrix = new InteractionMatrix(4);
+
+        static Category()
+        {
+            interactionMatrix.SetInteractableAll(Global);
+        }
+    }
+
+    static readonly InputAction.Properties kDefaultProperties = new InputAction.Properties { rebindable = true, hiddenInLists = false, category = Category.Global };
 
     static readonly Dictionary<Shortcut, InputAction.Properties> inputExplicitProperties = new Dictionary<Shortcut, InputAction.Properties>()
     {
-        { Shortcut.ActionHistoryRedo, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
-        { Shortcut.ActionHistoryUndo, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
-        { Shortcut.ChordSelect, new InputAction.Properties {rebindable = false, hiddenInLists = true } },
-        { Shortcut.ClipboardCopy, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
-        { Shortcut.ClipboardCut, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
-        { Shortcut.ClipboardPaste, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
-        { Shortcut.Delete, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
-        { Shortcut.FileLoad, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
-        { Shortcut.FileNew, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
-        { Shortcut.FileSave, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
-        { Shortcut.FileSaveAs, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
-        { Shortcut.PlayPause, new InputAction.Properties {rebindable = false, hiddenInLists = false } },
-        { Shortcut.SectionJumpMouseScroll, new InputAction.Properties {rebindable = false, hiddenInLists = true } },
+        { Shortcut.ActionHistoryRedo,       new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
+        { Shortcut.ActionHistoryUndo,       new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
+        { Shortcut.ChordSelect,             new InputAction.Properties {rebindable = false, hiddenInLists = true, category = Category.Global } },
+        { Shortcut.ClipboardCopy,           new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
+        { Shortcut.ClipboardCut,            new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
+        { Shortcut.ClipboardPaste,          new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
+        { Shortcut.Delete,                  new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
+        { Shortcut.FileLoad,                new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
+        { Shortcut.FileNew,                 new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
+        { Shortcut.FileSave,                new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
+        { Shortcut.FileSaveAs,              new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
+        { Shortcut.PlayPause,               new InputAction.Properties {rebindable = false, hiddenInLists = false, category = Category.Global } },
+        { Shortcut.SectionJumpMouseScroll,  new InputAction.Properties {rebindable = false, hiddenInLists = true, category = Category.Global } },
     };
 
-    static List<IInputDevice> devices = new List<IInputDevice>() { new KeyboardDevice() };
+    public static List<IInputDevice> devices = new List<IInputDevice>() { new KeyboardDevice() };
 
     [System.Serializable]
     public class ShortcutActionContainer : IEnumerable<InputAction>

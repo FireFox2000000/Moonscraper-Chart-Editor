@@ -9,6 +9,9 @@ namespace MSE
         {
             string GetInputStr();
             bool HasConflict(IInputMap other);
+            bool IsEmpty { get; }
+            IInputMap Clone();
+            bool SetFrom(IInputMap that);
         }
     }
 }

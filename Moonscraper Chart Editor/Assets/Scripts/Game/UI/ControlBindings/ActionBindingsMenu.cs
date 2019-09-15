@@ -12,6 +12,8 @@ public class ActionBindingsMenu : MonoBehaviour
     Text actionNamePrefab;
     [SerializeField]
     Button actionInputPrefab;
+    [SerializeField]
+    RebindOverlayInterface rebindInterface;
 
     [SerializeField]
     float rowHeight = 50;
@@ -32,6 +34,8 @@ public class ActionBindingsMenu : MonoBehaviour
         public Text actionNameText;
         public Button[] actionInputButtons = new Button[kMaxInputButtons];
 
+        public delegate void ButtonClickCallback(IInputMap inputMapToRebind, InputAction inputAction, IEnumerable<InputAction> allActions, IInputDevice device);
+
         public void SetActive(bool active)
         {
             actionNameText.gameObject.SetActive(active);
@@ -49,12 +53,12 @@ public class ActionBindingsMenu : MonoBehaviour
             }
         }
 
-        public void SetupFromAction(InputAction inputAction, MSE.Input.DeviceType device)
+        public void SetupFromAction(InputAction inputAction, IEnumerable<InputAction> allActions, IInputDevice device, ButtonClickCallback callbackFn)
         {
             // populate strings and callback fns
             actionNameText.text = inputAction.displayName;
 
-            var maps = inputAction.GetMapsForDevice(device);
+            var maps = inputAction.GetMapsForDevice(device.Type);
 
             if (maps != null)
             {
@@ -66,7 +70,9 @@ public class ActionBindingsMenu : MonoBehaviour
                     var buttonText = button.GetComponentInChildren<Text>();
 
                     Debug.Assert(buttonText);
-                    if (map != null)
+                    Debug.Assert(map != null);
+
+                    if (map != null && !map.IsEmpty)
                     {
                         buttonText.text = map.GetInputStr();
                     }
@@ -76,6 +82,8 @@ public class ActionBindingsMenu : MonoBehaviour
                     }
 
                     button.interactable = inputAction.properties.rebindable;
+                    button.onClick.RemoveAllListeners();
+                    button.onClick.AddListener(delegate { callbackFn(map, inputAction, allActions, device); });
                 }
             }
             else
@@ -87,23 +95,27 @@ public class ActionBindingsMenu : MonoBehaviour
 
     List<ActionUIRow> rowPool = new List<ActionUIRow>();
     GameObject menu;
-    MSE.Input.DeviceType lastKnownDisplayDevice = MSE.Input.DeviceType.Keyboard;
+    IInputDevice lastKnownDisplayDevice;
     IEnumerable<InputAction> loadedActions;
+
+    ShortcutInput.ShortcutActionContainer actions;
 
     // Start is called before the first frame update
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
+        lastKnownDisplayDevice = ShortcutInput.devices[0];
+        rebindInterface.rebindCompleteEvent.Register(OnRebindComplete);
 
         // For testing
-        ShortcutInput.ShortcutActionContainer actions = new ShortcutInput.ShortcutActionContainer();
+        actions = new ShortcutInput.ShortcutActionContainer();
         GameSettings.LoadDefaultControls(actions);
 
         LoadActions(actions);
-        SetDevice(MSE.Input.DeviceType.Keyboard);
+        SetDevice(ShortcutInput.devices[0]);
     }
 
-    public void SetDevice(MSE.Input.DeviceType device)
+    public void SetDevice(IInputDevice device)
     {
         lastKnownDisplayDevice = device;
         PopulateFrom(loadedActions);
@@ -127,7 +139,7 @@ public class ActionBindingsMenu : MonoBehaviour
                 ExtendActionRowPool(20);
 
             ActionUIRow row = rowPool[index++];
-            row.SetupFromAction(inputAction, lastKnownDisplayDevice);
+            row.SetupFromAction(inputAction, actionEnumerator, lastKnownDisplayDevice, InvokeRebindState);
             row.SetActive(true);
         }
 
@@ -190,49 +202,14 @@ public class ActionBindingsMenu : MonoBehaviour
         if (content)
             content.sizeDelta = new Vector2(content.sizeDelta.x, -position.y);
     }
-}
 
-public class RebindButtonSubstate
-{
-    IEnumerable<InputAction> allActions;
-    InputAction actionToRebind;
-    IInputDevice device;
-
-    public RebindButtonSubstate(InputAction actionToRebind, IEnumerable<InputAction> allActions, IInputDevice device)
+    void InvokeRebindState(IInputMap inputMapToRebind, InputAction inputAction, IEnumerable<InputAction> allActions, IInputDevice device)
     {
-        this.actionToRebind = actionToRebind;
-        this.allActions = allActions;
-        this.device = device;
+        rebindInterface.Open(inputAction, inputMapToRebind, allActions, device);
     }
 
-    void Update()
+    void OnRebindComplete()
     {
-        IInputMap currentInput = device.GetCurrentInput();
-
-        if (currentInput != null)
-        {
-            bool hasConflict = false;
-            foreach(InputAction inputAction in allActions)
-            {
-                if (inputAction == actionToRebind)
-                    continue;
-
-                if (inputAction.HasConflict(currentInput))
-                {
-                    hasConflict = true;
-                    break;
-                }
-            }
-
-            if (hasConflict)
-            {
-                // Scrap action and inform user of conflict
-            }
-            else
-            {
-                // Do rebind and exit
-            }
-        }
+        PopulateFrom(actions);
     }
 }
-
