@@ -308,8 +308,7 @@ public static class GameSettings
             inputList.GetActionConfig(Shortcut.SectionJumpPositive).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.UpArrow };
             inputList.GetActionConfig(Shortcut.SectionJumpNegative).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.DownArrow };
             inputList.GetActionConfig(Shortcut.SelectAllSection).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.A };
-            inputList.GetActionConfig(Shortcut.SectionJumpMouseScroll).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.LeftAlt };
-            inputList.GetActionConfig(Shortcut.SectionJumpMouseScroll).inputMaps.kbMaps[1] = new KeyboardMap(modiInput) { KeyCode.RightAlt };
+            inputList.GetActionConfig(Shortcut.SectionJumpMouseScroll).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { };
         }
     }
 }

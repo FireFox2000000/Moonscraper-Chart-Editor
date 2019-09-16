@@ -133,7 +133,10 @@ namespace MSE
 
             public bool GetInputDown(KeyboardMap map)
             {
-                if (!CheckDesiredModifierKeysActive(map.modifiers) || map.keys.Count <= 0)
+                if (!CheckDesiredModifierKeysActive(map.modifiers))
+                    return false;
+
+                if (map.modifiers == ModifierKeys.None && map.keys.Count <= 0)
                     return false;
 
                 // Look for at least 1 key that is coming down. The rest just need to be pressed
@@ -156,7 +159,10 @@ namespace MSE
 
             public bool GetInputUp(KeyboardMap map)
             {
-                if (!CheckDesiredModifierKeysActive(map.modifiers) || map.keys.Count <= 0)
+                if (!CheckDesiredModifierKeysActive(map.modifiers))
+                    return false;
+
+                if (map.modifiers == ModifierKeys.None && map.keys.Count <= 0)
                     return false;
 
                 // Look for at least 1 key that is coming up. The rest just need to be pressed
@@ -179,7 +185,10 @@ namespace MSE
 
             public bool GetInput(KeyboardMap map)
             {
-                if (!CheckDesiredModifierKeysActive(map.modifiers) || map.keys.Count <= 0)
+                if (!CheckDesiredModifierKeysActive(map.modifiers))
+                    return false;
+
+                if (map.modifiers == ModifierKeys.None && map.keys.Count <= 0)
                     return false;
 
                 foreach (KeyCode keyCode in map.keys)
