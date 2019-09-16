@@ -236,7 +236,7 @@ public static class ShortcutInput
 
     public static bool GetInputDown(Shortcut key)
     {
-        if (ChartEditor.hasFocus)
+        if (ChartEditor.hasFocus && !Services.IsTyping)
         {
             return primaryInputs.GetActionConfig(key).GetInputDown(devices);
         }
@@ -246,7 +246,7 @@ public static class ShortcutInput
 
     public static bool GetInputUp(Shortcut key)
     {
-        if (ChartEditor.hasFocus)
+        if (ChartEditor.hasFocus && !Services.IsTyping)
         {
             return primaryInputs.GetActionConfig(key).GetInputUp(devices);
         }
@@ -256,7 +256,7 @@ public static class ShortcutInput
 
     public static bool GetInput(Shortcut key)
     {
-        if (ChartEditor.hasFocus)
+        if (ChartEditor.hasFocus && !Services.IsTyping)
         {
             return primaryInputs.GetActionConfig(key).GetInput(devices);
         }
