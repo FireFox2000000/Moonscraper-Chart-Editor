@@ -5,7 +5,6 @@ namespace MSE
 {
     namespace Input
     {
-        [System.Serializable]
         public class InputAction
         {
             public struct Properties
@@ -17,28 +16,53 @@ namespace MSE
 
             public const int kMaxKeyboardMaps = 2;
 
-            [System.NonSerialized]      // We set this ourselves
-            public Properties properties;
-            public string displayName { get; private set; }
+            [System.Serializable]
+            public class Maps
+            {
+                public KeyboardMap[] kbMaps = new KeyboardMap[kMaxKeyboardMaps];
 
-            public KeyboardMap[] kbMaps = new KeyboardMap[kMaxKeyboardMaps];
+                public Maps()
+                {
+                    for (int i = 0; i < kbMaps.Length; ++i)
+                    {
+                        kbMaps[i] = new KeyboardMap();
+                    }
+                }
+            }
+
+            [System.Serializable]
+            public class SaveData
+            {
+                public string action;
+                public Maps input;
+            }
+
+            public Properties properties;
+            public Maps inputMaps = new Maps();
+            public string displayName { get; private set; }
 
             public InputAction(string displayName, Properties properties)
             {
                 this.displayName = displayName;
                 this.properties = properties;
+            }
 
-                for (int i = 0; i < kbMaps.Length; ++i)
-                {
-                    kbMaps[i] = new KeyboardMap();
-                }
+            public void LoadFrom(SaveData saveData)
+            {
+                inputMaps = saveData.input;
+            }
+
+            public void SaveTo(string actionName, SaveData saveData)
+            {
+                saveData.action = actionName;
+                saveData.input = inputMaps;
             }
 
             public bool HasConflict(IInputMap map)
             {
-                for (int i = 0; i < kbMaps.Length; ++i)
+                for (int i = 0; i < inputMaps.kbMaps.Length; ++i)
                 {
-                    KeyboardMap kbMap = kbMaps[i];
+                    KeyboardMap kbMap = inputMaps.kbMaps[i];
                     if(kbMap.HasConflict(map))
                     {
                         return true;
@@ -52,7 +76,7 @@ namespace MSE
             {
                 switch (device)
                 {
-                    case DeviceType.Keyboard: return kbMaps;
+                    case DeviceType.Keyboard: return inputMaps.kbMaps;
                     default: return null;
                 }
             }
@@ -66,9 +90,9 @@ namespace MSE
                     {
                         KeyboardDevice keyboardDevice = (KeyboardDevice)device;
 
-                        for (int mapIndex = 0; mapIndex < kbMaps.Length; ++mapIndex)
+                        for (int mapIndex = 0; mapIndex < inputMaps.kbMaps.Length; ++mapIndex)
                         {
-                            KeyboardMap map = kbMaps[mapIndex];
+                            KeyboardMap map = inputMaps.kbMaps[mapIndex];
                             if (map != null && !map.IsEmpty)
                             {
                                 if (keyboardDevice.GetInputDown(map))
@@ -92,9 +116,9 @@ namespace MSE
                     {
                         KeyboardDevice keyboardDevice = (KeyboardDevice)device;
 
-                        for (int mapIndex = 0; mapIndex < kbMaps.Length; ++mapIndex)
+                        for (int mapIndex = 0; mapIndex < inputMaps.kbMaps.Length; ++mapIndex)
                         {
-                            KeyboardMap map = kbMaps[mapIndex];
+                            KeyboardMap map = inputMaps.kbMaps[mapIndex];
                             if (map != null)
                             {
                                 if (keyboardDevice.GetInputUp(map))
@@ -118,9 +142,9 @@ namespace MSE
                     {
                         KeyboardDevice keyboardDevice = (KeyboardDevice)device;
 
-                        for (int mapIndex = 0; mapIndex < kbMaps.Length; ++mapIndex)
+                        for (int mapIndex = 0; mapIndex < inputMaps.kbMaps.Length; ++mapIndex)
                         {
-                            KeyboardMap map = kbMaps[mapIndex];
+                            KeyboardMap map = inputMaps.kbMaps[mapIndex];
                             if (map != null)
                             {
                                 if (keyboardDevice.GetInput(map))
