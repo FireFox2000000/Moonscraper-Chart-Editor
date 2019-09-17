@@ -12,9 +12,9 @@ using System.Runtime.InteropServices;
 using System;
 
 [RequireComponent(typeof(ChartEditorAssets))]
-public class ChartEditor : UnitySingleton<ChartEditor> {
-    protected override bool WantDontDestroyOnLoad { get { return false; } }
-
+[UnitySingleton(UnitySingletonAttribute.Type.ExistsInScene, true)]
+public class ChartEditor : UnitySingleton<ChartEditor>
+{
     public static bool isDirty = false;
     public EditorObjectToolManager toolManager;
 

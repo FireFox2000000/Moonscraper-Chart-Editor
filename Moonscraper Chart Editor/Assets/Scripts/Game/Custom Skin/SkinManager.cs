@@ -31,7 +31,9 @@ public static class SkinKeys
     public const string xFretPressGhl = "_fret_press_ghl";
 }
 
-public class SkinManager : UnitySingleton<SkinManager> {
+[UnitySingleton(UnitySingletonAttribute.Type.CreateOnNewGameObject, false)]
+public class SkinManager : UnitySingleton<SkinManager>
+{
     Skin m_currentSkin = new Skin();
     public Skin currentSkin { get { return m_currentSkin; } set { m_currentSkin = value; } }
     public Skin.AssestsAvaliable? noteSpritesAvaliable = null;
