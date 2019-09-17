@@ -207,39 +207,38 @@ namespace MSE
                     return !ctrlKeyBeingPressed && !shiftKeyBeingPressed && !atlKeyBeingPressed;
                 }
 
+                ModifierKeys currentModiKeys = ModifierKeys.None;
+
                 for (int i = 1; i < keyEnums.Length; ++i)
                 {
                     ModifierKeys modifierEnum = keyEnums[i];
 
-                    if ((modifiers & modifierEnum) != 0)
+                    bool modifierInputActive = false;
+
+                    switch (modifierEnum)
                     {
-                        bool modifierInputActive = false;
+                        case ModifierKeys.Ctrl:
+                            modifierInputActive = ctrlKeyBeingPressed;
+                            break;
 
-                        switch (modifierEnum)
-                        {
-                            case ModifierKeys.Ctrl:
-                                modifierInputActive = ctrlKeyBeingPressed;
-                                break;
+                        case ModifierKeys.Shift:
+                            modifierInputActive = shiftKeyBeingPressed;
+                            break;
 
-                            case ModifierKeys.Shift:
-                                modifierInputActive = shiftKeyBeingPressed;
-                                break;
+                        case ModifierKeys.Alt:
+                            modifierInputActive = atlKeyBeingPressed;
+                            break;
 
-                            case ModifierKeys.Alt:
-                                modifierInputActive = atlKeyBeingPressed;
-                                break;
-
-                            default:
-                                Debug.LogError("No inputs defined for modifier " + modifierEnum);
-                                break;
-                        }
-
-                        if (!modifierInputActive)
-                            return false;
+                        default:
+                            Debug.LogError("No inputs defined for modifier " + modifierEnum);
+                            break;
                     }
+
+                    if (modifierInputActive)
+                        currentModiKeys |= modifierEnum;
                 }
 
-                return true;
+                return currentModiKeys == modifiers;
             }
         }
     }
