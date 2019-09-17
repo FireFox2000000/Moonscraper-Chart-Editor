@@ -7,8 +7,8 @@ using MSE.Input;
 public class RebindOverlayInterface : MonoBehaviour
 {
     InputRebinder rebinder;
-    public EventHandler.Event rebindCompleteEvent = new EventHandler.Event();
-    public EventHandler.Event<InputAction> inputConflictEvent = new EventHandler.Event<InputAction>();
+    public MSE.Event rebindCompleteEvent = new MSE.Event();
+    public MSE.Event<InputAction> inputConflictEvent = new MSE.Event<InputAction>();
 
     [SerializeField]
     Text conflictNotificationText;

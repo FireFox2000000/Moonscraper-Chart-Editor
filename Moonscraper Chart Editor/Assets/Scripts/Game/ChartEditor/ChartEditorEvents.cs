@@ -1,30 +1,30 @@
 ﻿
 public class ChartEditorEvents
 {
-    public EventHandler.Event chartReloadedEvent { get; private set; }
-    public EventHandler.Event hyperspeedChangeEvent { get; private set; }
-    public EventHandler.Event leftyFlipToggledEvent { get; private set; }
-    public EventHandler.Event saveEvent { get; private set; }
-    public EventHandler.Event toolChangedEvent { get; private set; }
-    public EventHandler.Event notePlacementModeChangedEvent { get; private set; }
+    public MSE.Event chartReloadedEvent { get; private set; }
+    public MSE.Event hyperspeedChangeEvent { get; private set; }
+    public MSE.Event leftyFlipToggledEvent { get; private set; }
+    public MSE.Event saveEvent { get; private set; }
+    public MSE.Event toolChangedEvent { get; private set; }
+    public MSE.Event notePlacementModeChangedEvent { get; private set; }
 
-    public EventHandler.Event<int> lanesChangedEvent { get; private set; }
-    public EventHandler.Event<bool> keyboardModeToggledEvent { get; private set; }
-    public EventHandler.Event<Globals.ViewMode> viewModeSwitchEvent { get; private set; }
-    public EventHandler.Event<ChartEditor.State> editorStateChangedEvent { get; private set; }
+    public MSE.Event<int> lanesChangedEvent { get; private set; }
+    public MSE.Event<bool> keyboardModeToggledEvent { get; private set; }
+    public MSE.Event<Globals.ViewMode> viewModeSwitchEvent { get; private set; }
+    public MSE.Event<ChartEditor.State> editorStateChangedEvent { get; private set; }
 
     public ChartEditorEvents()
     {
-        chartReloadedEvent = new EventHandler.Event();
-        hyperspeedChangeEvent = new EventHandler.Event();
-        leftyFlipToggledEvent = new EventHandler.Event();
-        saveEvent = new EventHandler.Event();
-        toolChangedEvent = new EventHandler.Event();
-        notePlacementModeChangedEvent = new EventHandler.Event();
+        chartReloadedEvent = new MSE.Event();
+        hyperspeedChangeEvent = new MSE.Event();
+        leftyFlipToggledEvent = new MSE.Event();
+        saveEvent = new MSE.Event();
+        toolChangedEvent = new MSE.Event();
+        notePlacementModeChangedEvent = new MSE.Event();
 
-        lanesChangedEvent = new EventHandler.Event<int>();
-        keyboardModeToggledEvent = new EventHandler.Event<bool>();
-        viewModeSwitchEvent = new EventHandler.Event<Globals.ViewMode>();
-        editorStateChangedEvent = new EventHandler.Event<ChartEditor.State>();
+        lanesChangedEvent = new MSE.Event<int>();
+        keyboardModeToggledEvent = new MSE.Event<bool>();
+        viewModeSwitchEvent = new MSE.Event<Globals.ViewMode>();
+        editorStateChangedEvent = new MSE.Event<ChartEditor.State>();
     }
 }

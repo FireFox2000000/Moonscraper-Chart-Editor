@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace EventHandler
+namespace MSE
 {
     public class Event
     {
