@@ -56,7 +56,7 @@ public class ActionBindingsMenu : MonoBehaviour
         public void SetupFromAction(InputAction inputAction, IEnumerable<InputAction> allActions, IInputDevice device, ButtonClickCallback callbackFn)
         {
             // populate strings and callback fns
-            actionNameText.text = inputAction.displayName;
+            actionNameText.text = inputAction.properties.displayName;
 
             var maps = inputAction.GetMapsForDevice(device.Type);
 

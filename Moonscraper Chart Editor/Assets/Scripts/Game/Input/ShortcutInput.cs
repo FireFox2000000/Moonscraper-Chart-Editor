@@ -142,13 +142,13 @@ public static class ShortcutInput
     {
         [SerializeField]
         List<InputAction.SaveData> saveData = new List<InputAction.SaveData>();    // Safer save data format, to handle cases where the Shortcut enum list may get updated or values are shifted around
-        InputAction[] actionConfigCleanLookup;
+        EnumLookupTable<Shortcut, InputAction> actionConfigCleanLookup;
 
         public ShortcutActionContainer()
         {
-            actionConfigCleanLookup = new InputAction[System.Enum.GetValues(typeof(Shortcut)).Length];
+            actionConfigCleanLookup = new EnumLookupTable<Shortcut, InputAction>();
 
-            for (int i = 0; i < actionConfigCleanLookup.Length; ++i)
+            for (int i = 0; i < actionConfigCleanLookup.Count; ++i)
             {
                 Shortcut scEnum = (Shortcut)i;
                 InputAction.Properties properties;
@@ -157,18 +157,23 @@ public static class ShortcutInput
                     properties = kDefaultProperties;
                 }
 
-                actionConfigCleanLookup[i] = new InputAction(scEnum.ToString(), properties);
+                if (string.IsNullOrEmpty(properties.displayName))
+                {
+                    properties.displayName = scEnum.ToString();
+                }
+
+                actionConfigCleanLookup[scEnum] = new InputAction(properties);
             }
         }
 
         public void Insert(Shortcut key, InputAction entry)
         {
-            actionConfigCleanLookup[(int)key] = entry;
+            actionConfigCleanLookup[key] = entry;
         }
 
         public InputAction GetActionConfig(Shortcut key)
         {
-            return actionConfigCleanLookup[(int)key];
+            return actionConfigCleanLookup[key];
         }
 
         public void LoadFromSaveData(ShortcutActionContainer that)
@@ -179,7 +184,7 @@ public static class ShortcutInput
                 Shortcut enumVal;
                 if (System.Enum.TryParse(data.action, out enumVal))
                 {
-                    actionConfigCleanLookup[(int)enumVal].LoadFrom(data);
+                    actionConfigCleanLookup[enumVal].LoadFrom(data);
                     // Add more maps as needed
                 }
                 else
@@ -192,7 +197,7 @@ public static class ShortcutInput
         public void UpdateSaveData()
         {
             saveData.Clear();
-            for (int i = 0; i < actionConfigCleanLookup.Length; ++i)
+            for (int i = 0; i < actionConfigCleanLookup.Count; ++i)
             {
                 Shortcut sc = (Shortcut)i;
 
@@ -206,7 +211,7 @@ public static class ShortcutInput
                     continue;
 
                 var newItem = new InputAction.SaveData();
-                actionConfigCleanLookup[i].SaveTo(sc.ToString(), newItem);
+                actionConfigCleanLookup[sc].SaveTo(sc.ToString(), newItem);
 
                 saveData.Add(newItem);
             }

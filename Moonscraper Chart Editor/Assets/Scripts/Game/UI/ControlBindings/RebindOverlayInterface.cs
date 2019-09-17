@@ -38,7 +38,7 @@ public class RebindOverlayInterface : MonoBehaviour
             else if (conflict != null)
             {
                 inputConflictEvent.Fire(conflict);
-                conflictNotificationText.text = string.Format(conflictFormatStr, attemptedInput.GetInputStr(), conflict.displayName);
+                conflictNotificationText.text = string.Format(conflictFormatStr, attemptedInput.GetInputStr(), conflict.properties.displayName);
                 conflictNotificationText.enabled = true;
             }
         }

@@ -9,6 +9,7 @@ namespace MSE
         {
             public struct Properties
             {
+                public string displayName;
                 public bool rebindable;
                 public bool hiddenInLists;
                 public int category;
@@ -39,11 +40,9 @@ namespace MSE
 
             public Properties properties;
             public Maps inputMaps = new Maps();
-            public string displayName { get; private set; }
 
-            public InputAction(string displayName, Properties properties)
+            public InputAction(Properties properties)
             {
-                this.displayName = displayName;
                 this.properties = properties;
             }
 
