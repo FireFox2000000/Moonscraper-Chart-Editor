@@ -11,6 +11,7 @@ public static class EnumX<EnumType> where EnumType : Enum
         return CastTo<int>.From(t);
     }
 
+    // https://stackoverflow.com/questions/1189144/c-sharp-non-boxing-conversion-of-generic-enum-to-int
     static class CastTo<T>
     {
         /// <summary>
