@@ -111,7 +111,7 @@ public class ChartWriter
         saveString += s_chartSectionFooter;
 
         // Charts      
-        foreach (Song.Instrument instrument in Enum.GetValues(typeof(Song.Instrument)))
+        foreach (Song.Instrument instrument in EnumX<Song.Instrument>.Values)
         {
             string instrumentSaveString = string.Empty;
             switch (instrument)
@@ -144,7 +144,7 @@ public class ChartWriter
                     continue;
             }
 
-            foreach (Song.Difficulty difficulty in Enum.GetValues(typeof(Song.Difficulty)))
+            foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
             {
                 string difficultySaveString = difficulty.ToString();
 

@@ -38,7 +38,7 @@ public class DrumsNoteHitAndMissDetect {
             int laneMask = laneInfo.laneMask;
 
             // Cull notes from the notemask by lanes that are being used
-            foreach (Note.DrumPad pad in System.Enum.GetValues(typeof(Note.DrumPad)))
+            foreach (Note.DrumPad pad in EnumX<Note.DrumPad>.Values)
             {
                 if (pad == Note.DrumPad.Kick)
                     continue;
@@ -61,7 +61,7 @@ public class DrumsNoteHitAndMissDetect {
             }
             else
             {
-                foreach (Note.DrumPad drumPad in System.Enum.GetValues(typeof(Note.DrumPad)))
+                foreach (Note.DrumPad drumPad in EnumX<Note.DrumPad>.Values)
                 {
                     bool hitPad = drumsInput.GetPadInputControllerOrKeyboard(drumPad, laneInfo);
                     if (hitPad)
@@ -80,7 +80,7 @@ public class DrumsNoteHitAndMissDetect {
                 Debug.Log("Missed due to bad input");
                 MissNote(time, MissSubType.Overhit);
 
-                foreach (Note.DrumPad drumPad in System.Enum.GetValues(typeof(Note.DrumPad)))
+                foreach (Note.DrumPad drumPad in EnumX<Note.DrumPad>.Values)
                 {
                     nextNoteToHit.SetHitTime(drumPad, NoteHitKnowledge.NULL_TIME);
                 }
@@ -90,7 +90,7 @@ public class DrumsNoteHitAndMissDetect {
                 float min = float.MaxValue, max = float.MinValue;
                 int totalHitsMask = 0;
 
-                foreach (Note.DrumPad drumPad in System.Enum.GetValues(typeof(Note.DrumPad)))
+                foreach (Note.DrumPad drumPad in EnumX<Note.DrumPad>.Values)
                 {
                     if (nextNoteToHit.GetHitTime(drumPad) != NoteHitKnowledge.NULL_TIME)
                     {

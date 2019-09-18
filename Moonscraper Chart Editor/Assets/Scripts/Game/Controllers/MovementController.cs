@@ -20,7 +20,6 @@ public abstract class MovementController : MonoBehaviour {
     protected float lastUpdatedRealTime = 0;
 
     Transform selfTransform;
-    System.Array audioInstrumentEnumVals = System.Enum.GetValues(typeof(Song.AudioInstrument));
 
     // Program options
     protected float c_mouseScrollSensitivity = 0.2f;      // May miss snap gaps if placed too high
@@ -62,7 +61,7 @@ public abstract class MovementController : MonoBehaviour {
 
                 AudioStream stream = null;
 
-                for (int i = 0; i < audioInstrumentEnumVals.Length; ++i)
+                for (int i = 0; i < EnumX<Song.AudioInstrument>.Count; ++i)
                 {
                     Song.AudioInstrument audio = (Song.AudioInstrument)i;
                     if (AudioManager.StreamIsValid(currentSong.GetAudioStream(audio)))

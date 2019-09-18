@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 public class EnumLookupTable<EnumType, Value> : IList<Value> where EnumType : Enum
 {
-    Value[] table = new Value[Enum.GetValues(typeof(EnumType)).Length];
+    Value[] table = new Value[EnumX<EnumType>.Count];
 
     public Value this[int index] { get => table[index]; set => table[index] = value; }
-    public Value this[EnumType index] { get => table[Convert.ToInt32(index)]; set => table[Convert.ToInt32(index)] = value; }
+    public Value this[EnumType index] { get => table[EnumX<EnumType>.ToInt(index)]; set => table[EnumX<EnumType>.ToInt(index)] = value; }
 
     public int Count => table.Length;
 

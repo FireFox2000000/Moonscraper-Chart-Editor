@@ -63,7 +63,7 @@ namespace DrumsInput
         {
             int inputMask = 0;
 
-            foreach (Note.DrumPad pad in System.Enum.GetValues(typeof(Note.DrumPad)))
+            foreach (Note.DrumPad pad in EnumX<Note.DrumPad>.Values)
             {
                 if (gamepad.GetPadPressedInput(pad, laneInfo))
                     inputMask |= 1 << (int)pad;
@@ -113,7 +113,7 @@ namespace DrumsInput
         {
             int inputMask = 0;
 
-            foreach (Note.DrumPad pad in System.Enum.GetValues(typeof(Note.DrumPad)))
+            foreach (Note.DrumPad pad in EnumX<Note.DrumPad>.Values)
             {
                 if (GetPadPressedInputKeyboard(pad, laneInfo))
                 {

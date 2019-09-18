@@ -31,9 +31,9 @@ namespace MSE
 
                 if (modifiers != KeyboardDevice.ModifierKeys.None)
                 {
-                    for (int i = 1; i < KeyboardDevice.keyEnums.Length; ++i)
+                    for (int i = 1; i < EnumX<KeyboardDevice.ModifierKeys>.Count; ++i)
                     {
-                        KeyboardDevice.ModifierKeys modifierEnum = KeyboardDevice.keyEnums[i];
+                        KeyboardDevice.ModifierKeys modifierEnum = EnumX<KeyboardDevice.ModifierKeys>.Values[i];
 
                         if ((modifiers & modifierEnum) != 0)
                         {

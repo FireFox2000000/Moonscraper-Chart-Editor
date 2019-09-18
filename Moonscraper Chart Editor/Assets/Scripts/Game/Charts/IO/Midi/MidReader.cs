@@ -38,7 +38,7 @@ public static class MidReader {
         Song song = new Song();
         string directory = System.IO.Path.GetDirectoryName(path);
 
-        foreach(Song.AudioInstrument audio in Enum.GetValues(typeof(Song.AudioInstrument)))
+        foreach(Song.AudioInstrument audio in EnumX<Song.AudioInstrument>.Values)
         {
             string audioFilepath = directory + "\\" + audio.ToString().ToLower() + ".ogg";
             Debug.Log(audioFilepath);
@@ -251,7 +251,7 @@ public static class MidReader {
                 // Check if starpower event
                 if (note.NoteNumber == 116)
                 {                
-                    foreach (Song.Difficulty diff in System.Enum.GetValues(typeof(Song.Difficulty)))
+                    foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
                         song.GetChart(instrument, diff).Add(new Starpower(tick, sus), false);
 
                     continue;
@@ -317,7 +317,7 @@ public static class MidReader {
         // Update all chart arrays
         if (instrument != Song.Instrument.Unrecognised)
         {
-            foreach (Song.Difficulty diff in System.Enum.GetValues(typeof(Song.Difficulty)))
+            foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
                 song.GetChart(instrument, diff).UpdateCache();
         }
         else
@@ -332,11 +332,10 @@ public static class MidReader {
         }
         else
         {
-            System.Array difficultyValues = System.Enum.GetValues(typeof(Song.Difficulty));
-            chartsOfInstrument = new Chart[difficultyValues.Length];
+            chartsOfInstrument = new Chart[EnumX<Song.Difficulty>.Count];
 
             int difficultyCount = 0;
-            foreach (Song.Difficulty difficulty in difficultyValues)
+            foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
                 chartsOfInstrument[difficultyCount++] = song.GetChart(instrument, difficulty);
         }
     

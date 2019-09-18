@@ -450,7 +450,7 @@ public class Export : DisplayMenu {
                 string chartOutputFile = destFolderPath + "notes.chart";
 
                 // Set audio location after audio files have already been created as set won't won't if the files don't exist
-                foreach (Song.AudioInstrument audio in Enum.GetValues(typeof(Song.AudioInstrument)))
+                foreach (Song.AudioInstrument audio in EnumX<Song.AudioInstrument>.Values)
                 {
                     if (song.GetAudioLocation(audio) != string.Empty)
                     {
@@ -480,7 +480,7 @@ public class Export : DisplayMenu {
 
     static void ExportSongAudioOgg(string destFolderPath, Song song)
     {
-        foreach (Song.AudioInstrument audio in Enum.GetValues(typeof(Song.AudioInstrument)))
+        foreach (Song.AudioInstrument audio in EnumX<Song.AudioInstrument>.Values)
         {
             string audioLocation = song.GetAudioLocation(audio);
             if (audioLocation == string.Empty)

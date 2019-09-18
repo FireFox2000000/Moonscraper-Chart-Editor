@@ -38,7 +38,7 @@ namespace GuitarInput
         {
             int inputMask = 0;
 
-            foreach (Note.GuitarFret fret in System.Enum.GetValues(typeof(Note.GuitarFret)))
+            foreach (Note.GuitarFret fret in EnumX<Note.GuitarFret>.Values)
             {
                 if (gamepad.GetFretInput(fret))
                     inputMask |= 1 << (int)fret;
@@ -98,7 +98,7 @@ namespace GuitarInput
         {
             int inputMask = 0;
 
-            foreach (Note.GuitarFret fret in System.Enum.GetValues(typeof(Note.GuitarFret)))
+            foreach (Note.GuitarFret fret in EnumX<Note.GuitarFret>.Values)
             {
                 if (GetFretInputKeyboard(fret))
                     inputMask |= 1 << (int)fret;

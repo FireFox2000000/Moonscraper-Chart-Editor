@@ -41,11 +41,10 @@ public class WaveformDraw : MonoBehaviour {
         waveformSelect.value = newIndex;
     }
 
-    readonly int audioInstrumentEnumCount = System.Enum.GetValues(typeof(Song.AudioInstrument)).Length;
     // Update is called once per frame
     void Update () {
         currentSample = null;
-        for (int audioIndex = 0; audioIndex < audioInstrumentEnumCount; ++audioIndex)
+        for (int audioIndex = 0; audioIndex < EnumX<Song.AudioInstrument>.Count; ++audioIndex)
         {
             if (waveformSelect.value == (audioIndex + 1))
             {
@@ -78,6 +77,7 @@ public class WaveformDraw : MonoBehaviour {
         }
     }
 
+    Vector3[] points = new Vector3[0];
     void UpdateWaveformPointsFullData()
     {
         if (currentSample.dataLength <= 0 || currentSample == null)
@@ -95,7 +95,9 @@ public class WaveformDraw : MonoBehaviour {
         int startPos = TimeToArrayPos(TickFunctions.WorldYPositionToTime(editor.camYMin.position.y) - fullOffset, iteration, channels, currentSample.length);
         int endPos = TimeToArrayPos(TickFunctions.WorldYPositionToTime(editor.camYMax.position.y) - fullOffset, iteration, channels, currentSample.length);
 
-        Vector3[] points = new Vector3[endPos - startPos];
+        int pointLength = endPos - startPos;
+        if (pointLength > points.Length)
+            points = new Vector3[pointLength];
 #if false
         if (currentSample.clip > 0)
             scaling = (MAX_SCALE / currentSample.clip);
@@ -104,6 +106,7 @@ public class WaveformDraw : MonoBehaviour {
         // Turn data into world-position points to feed the line renderer
         Vector3 point = Vector3.zero;
         float hs = GameSettings.hyperspeed / GameSettings.gameSpeed;
+        float y = 0;
 
         for (int i = startPos; i < endPos; ++i)
         {
@@ -112,8 +115,15 @@ public class WaveformDraw : MonoBehaviour {
             // Manual inlining of Song.TimeToWorldYPosition
             float time = i * sampleRate + fullOffset;
             point.y = time * hs;
-
+            y = point.y;
             points[i - startPos] = point;
+        }
+
+        // Place all the unused points at the end position to prevent weird lines being drawn from the rest of them
+        for (int i = pointLength; i < points.Length; ++i)
+        {
+            points[i].x = 0;
+            points[i].y = y;
         }
 
         lineRen.positionCount = points.Length;

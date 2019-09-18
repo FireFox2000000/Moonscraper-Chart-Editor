@@ -17,9 +17,7 @@ namespace MSE
                 Shift = 1 << 2,
                 Alt = 1 << 3,
             }
-            public static ModifierKeys[] keyEnums = (ModifierKeys[])Enum.GetValues(typeof(ModifierKeys));
 
-            static readonly System.Array allKeyCodes = System.Enum.GetValues(typeof(KeyCode));
             delegate bool InputFn(KeyCode keyCode);
             static InputFn inputDownFn = UnityEngine.Input.GetKeyDown;
             static InputFn inputUpFn = UnityEngine.Input.GetKeyUp;
@@ -41,7 +39,7 @@ namespace MSE
                 ModifierKeys modifiersActive = ModifierKeys.None;
                 bool containsNonModifierKey = false;
 
-                foreach (KeyCode kCode in allKeyCodes)
+                foreach (KeyCode kCode in EnumX<KeyCode>.Values)
                 {
                     if ((int)kCode >= (int)KeyCode.Menu)
                         break;
@@ -209,9 +207,9 @@ namespace MSE
 
                 ModifierKeys currentModiKeys = ModifierKeys.None;
 
-                for (int i = 1; i < keyEnums.Length; ++i)
+                for (int i = 1; i < EnumX<ModifierKeys>.Count; ++i)
                 {
-                    ModifierKeys modifierEnum = keyEnums[i];
+                    ModifierKeys modifierEnum = EnumX<ModifierKeys>.Values[i];
 
                     bool modifierInputActive = false;
 

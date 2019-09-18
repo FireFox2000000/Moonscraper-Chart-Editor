@@ -21,8 +21,6 @@ public class Song {
     static int DIFFICULTY_COUNT;
     static int AUDIO_INSTUMENT_COUNT;
 
-    static System.Array audioInstrumentEnumVals = System.Enum.GetValues(typeof(Song.AudioInstrument));
-
     // Song properties
     public Metadata metaData = new Metadata();
     public string name
@@ -72,7 +70,7 @@ public class Song {
                 return GetAudioStream(AudioInstrument.Song);
             }
 
-            for (int i = 0; i < audioInstrumentEnumVals.Length; ++i)
+            for (int i = 0; i < EnumX<AudioInstrument>.Count; ++i)
             {
                 AudioInstrument audio = (AudioInstrument)i;
                 if (AudioManager.StreamIsValid(GetAudioStream(audio)))
@@ -190,8 +188,8 @@ public class Song {
     /// </summary>
     public Song()
     {
-        AUDIO_INSTUMENT_COUNT = Enum.GetValues(typeof(AudioInstrument)).Length;
-        DIFFICULTY_COUNT = Enum.GetValues(typeof(Difficulty)).Length;
+        AUDIO_INSTUMENT_COUNT = EnumX<AudioInstrument>.Count;
+        DIFFICULTY_COUNT = EnumX<Difficulty>.Count;
 
         _events = new List<Event>();
         _syncTrack = new List<SyncTrack>();
@@ -212,7 +210,7 @@ public class Song {
         Add(new TimeSignature());
 
         // Chart initialisation
-        int numberOfInstruments = Enum.GetNames(typeof(Instrument)).Length - 1;     // Don't count the "Unused" instrument
+        int numberOfInstruments = EnumX<Instrument>.Count - 1;     // Don't count the "Unused" instrument
         charts = new Chart[numberOfInstruments * DIFFICULTY_COUNT];
 
         for (int i = 0; i < charts.Length; ++i)
@@ -222,7 +220,7 @@ public class Song {
         }
 
         // Set the name of the chart
-        foreach (Instrument instrument in Enum.GetValues(typeof(Instrument)))
+        foreach (Instrument instrument in EnumX<Instrument>.Values)
         {
             if (instrument == Instrument.Unrecognised)
                 continue;
@@ -258,7 +256,7 @@ public class Song {
                     continue;
             }
 
-            foreach (Difficulty difficulty in Enum.GetValues(typeof(Difficulty)))
+            foreach (Difficulty difficulty in EnumX<Difficulty>.Values)
             {
                 GetChart(instrument, difficulty).name = instrumentName + difficulty.ToString();
             }
@@ -337,7 +335,7 @@ public class Song {
         float time = Time.realtimeSinceStartup;
 #endif
 
-        foreach (AudioInstrument audio in Enum.GetValues(typeof(AudioInstrument)))
+        foreach (AudioInstrument audio in EnumX<AudioInstrument>.Values)
         {
             LoadAudio(GetAudioLocation(audio), audio);
         }

@@ -228,6 +228,11 @@ public static class GameSettings
 
     public static void LoadDefaultControls(ShortcutInput.ShortcutActionContainer inputList)
     {
+        SetDefaultKeysControls(inputList);
+    }
+
+    public static void SetDefaultKeysControls(ShortcutInput.ShortcutActionContainer inputList)
+    {
         {
             inputList.GetActionConfig(Shortcut.AddSongObject).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Alpha1 };
             inputList.GetActionConfig(Shortcut.BpmIncrease).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Equals, };

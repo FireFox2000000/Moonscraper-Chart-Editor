@@ -99,7 +99,7 @@ public class Indicators : MonoBehaviour {
 
             if (gameMode == Chart.GameMode.Drums)
             {
-                foreach (Note.DrumPad drumPad in System.Enum.GetValues(typeof(Note.DrumPad)))
+                foreach (Note.DrumPad drumPad in EnumX<Note.DrumPad>.Values)
                 {
                     if (bannedDrumPadInputs.ContainsKey(drumPad))
                         continue;
@@ -112,7 +112,7 @@ public class Indicators : MonoBehaviour {
             }
             else
             {
-                foreach (Note.GuitarFret fret in System.Enum.GetValues(typeof(Note.GuitarFret)))
+                foreach (Note.GuitarFret fret in EnumX<Note.GuitarFret>.Values)
                 {
                     if (bannedFretInputs.ContainsKey(fret))
                         continue;

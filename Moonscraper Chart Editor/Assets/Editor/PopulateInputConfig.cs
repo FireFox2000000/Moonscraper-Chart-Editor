@@ -37,7 +37,7 @@ public class PopulateInputConfig : Editor
     {
         ShortcutInput.ShortcutActionContainer controls = new ShortcutInput.ShortcutActionContainer();
 
-        ShortcutInputConfig[] shortcutInputs = new ShortcutInputConfig[Enum.GetValues(typeof(Shortcut)).Length];
+        ShortcutInputConfig[] shortcutInputs = new ShortcutInputConfig[EnumX<Shortcut>.Count];
 
         for (int i = 0; i < shortcutInputs.Length; ++i)
         {
