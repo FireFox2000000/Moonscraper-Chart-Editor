@@ -29,7 +29,7 @@ public class EditorState : SystemManagerState
                 editor.Play();
                 return;
             }
-            else if (editor.inputManager.mainGamepad.GetButtonPressed(GamepadInput.Button.Start))
+            else if (InputManager.Instance.mainGamepad.GetButtonPressed(GamepadInput.Button.Start))
             {
                 editor.StartGameplay();
                 return;

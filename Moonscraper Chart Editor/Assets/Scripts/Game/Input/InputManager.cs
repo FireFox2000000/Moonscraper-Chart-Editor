@@ -1,13 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MSE.Input;
 
-public class InputManager : MonoBehaviour {
+[UnitySingleton(UnitySingletonAttribute.Type.LoadedFromResources, false, "Prefabs/InputManager")]
+public class InputManager : UnitySingleton<InputManager>
+{
+    public InputConfig inputPropertiesConfig;
 
     public GamepadInput mainGamepad = new GamepadInput();
-	
-	// Update is called once per frame
-	void Update () {
+    public List<IInputDevice> devices = new List<IInputDevice>() { new KeyboardDevice() };
+
+    // Update is called once per frame
+    void Update () {
         mainGamepad.Update(ChartEditor.hasFocus);
     }
 }

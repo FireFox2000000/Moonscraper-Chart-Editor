@@ -93,7 +93,7 @@ public class Indicators : MonoBehaviour {
 
         if (editor.currentState == ChartEditor.State.Playing && !GameSettings.bot)
         {
-            GamepadInput input = editor.inputManager.mainGamepad;
+            GamepadInput input = InputManager.Instance.mainGamepad;
             Chart.GameMode gameMode = editor.currentChart.gameMode;
             LaneInfo laneInfo = editor.laneInfo;
 

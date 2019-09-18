@@ -45,9 +45,6 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public uint minPos { get { return _minPos; } }
     public uint maxPos { get { return _maxPos; } }
 
-    [HideInInspector]
-    public InputManager inputManager;
-
     public Song currentSong { get; private set; }
     public Chart currentChart { get; private set; }
     public Chart.GameMode currentGameMode { get { return currentChart.gameMode; } }
@@ -139,7 +136,6 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         isDirty = false;
 
-        inputManager = gameObject.AddComponent<InputManager>();
         gameObject.AddComponent<UITabbing>();
 
         windowHandleManager = new WindowHandleManager(versionNumber.text, GetComponent<Settings>().productName);

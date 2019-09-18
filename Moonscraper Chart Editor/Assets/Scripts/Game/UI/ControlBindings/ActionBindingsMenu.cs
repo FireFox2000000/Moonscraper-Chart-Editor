@@ -104,13 +104,13 @@ public class ActionBindingsMenu : MonoBehaviour
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
-        lastKnownDisplayDevice = ShortcutInput.devices[0];
+        lastKnownDisplayDevice = InputManager.Instance.devices[0];
         rebindInterface.rebindCompleteEvent.Register(OnRebindComplete);
 
         actions = GameSettings.controls;
 
         LoadActions(actions);
-        SetDevice(ShortcutInput.devices[0]);
+        SetDevice(InputManager.Instance.devices[0]);
     }
 
     public void SetDevice(IInputDevice device)

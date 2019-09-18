@@ -74,10 +74,11 @@ public class PopulateInputConfig : Editor
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    const bool kRebindableDefault = true;
-    const bool kHiddenInListsDefault = false;
-    const ShortcutInput.Category.CategoryType kCategoryDefault = ShortcutInput.Category.CategoryType.Global;
-    static readonly InputConfig.Properties kDefaultProperties = new InputConfig.Properties { rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault };
+    static readonly InputConfig.Properties kDefaultProperties = InputConfig.kDefaultProperties;
+    static readonly bool kRebindableDefault = kDefaultProperties.rebindable;
+    static readonly bool kHiddenInListsDefault = kDefaultProperties.hiddenInLists;
+    static readonly ShortcutInput.Category.CategoryType kCategoryDefault = kDefaultProperties.category;
+    
 
     static readonly Dictionary<Shortcut, InputConfig.Properties> inputExplicitProperties = new Dictionary<Shortcut, InputConfig.Properties>()
     {

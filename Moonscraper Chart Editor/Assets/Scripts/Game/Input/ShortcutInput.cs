@@ -109,38 +109,6 @@ public static class ShortcutInput
 
     static readonly InputAction.Properties kDefaultProperties = new InputAction.Properties { rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault };
 
-    static readonly Dictionary<Shortcut, InputAction.Properties> inputExplicitProperties = new Dictionary<Shortcut, InputAction.Properties>()
-    {
-        { Shortcut.ActionHistoryRedo,       new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.ActionHistoryUndo,       new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.ChordSelect,             new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.ClipboardCopy,           new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.ClipboardCut,            new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.ClipboardPaste,          new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.Delete,                  new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.FileLoad,                new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.FileNew,                 new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.FileSave,                new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.FileSaveAs,              new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.PlayPause,               new InputAction.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.SectionJumpMouseScroll,  new InputAction.Properties {rebindable = false, hiddenInLists = true, category = kCategoryDefault } },
-
-        { Shortcut.AddSongObject,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = (int)Category.CategoryType.KeyboardMode } },
-
-        { Shortcut.ToolNoteLane1,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = (int)Category.CategoryType.ToolNote } },
-        { Shortcut.ToolNoteLane2,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = (int)Category.CategoryType.ToolNote } },
-        { Shortcut.ToolNoteLane3,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = (int)Category.CategoryType.ToolNote } },
-        { Shortcut.ToolNoteLane4,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = (int)Category.CategoryType.ToolNote } },
-        { Shortcut.ToolNoteLane5,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = (int)Category.CategoryType.ToolNote } },
-        { Shortcut.ToolNoteLane6,       new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = (int)Category.CategoryType.ToolNote } },
-        { Shortcut.ToolNoteLaneOpen,    new InputAction.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = (int)Category.CategoryType.ToolNote } },
-
-        { Shortcut.CloseMenu,           new InputAction.Properties {rebindable = false, hiddenInLists = true, category = kCategoryDefault } },
-    };
-
-    public static List<IInputDevice> devices = new List<IInputDevice>() { new KeyboardDevice() };
-
-    [System.Serializable]
     public class ShortcutActionContainer : IEnumerable<InputAction>
     {
         [SerializeField]
@@ -149,13 +117,15 @@ public static class ShortcutInput
 
         public ShortcutActionContainer()
         {
+            InputManager inputManager = InputManager.Instance;
+
             actionConfigCleanLookup = new EnumLookupTable<Shortcut, InputAction>();
 
             for (int i = 0; i < actionConfigCleanLookup.Count; ++i)
             {
                 Shortcut scEnum = (Shortcut)i;
                 InputAction.Properties properties;
-                if (!inputExplicitProperties.TryGetValue(scEnum, out properties))
+                if (!inputManager.inputPropertiesConfig.TryGetPropertiesConfig(scEnum, out properties))
                 {
                     properties = kDefaultProperties;
                 }
@@ -204,13 +174,7 @@ public static class ShortcutInput
             {
                 Shortcut sc = (Shortcut)i;
 
-                InputAction.Properties properties;
-                if (!inputExplicitProperties.TryGetValue(sc, out properties))
-                {
-                    properties = kDefaultProperties;
-                }
-
-                if (!properties.rebindable)
+                if (!actionConfigCleanLookup[sc].properties.rebindable)
                     continue;
 
                 var newItem = new InputAction.SaveData();
@@ -234,7 +198,7 @@ public static class ShortcutInput
         }
     }
 
-    static ShortcutActionContainer primaryInputs { get { return GameSettings.controls; } }
+    static ShortcutActionContainer primaryInputs { get { return GameSettings.controls; } } 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -246,7 +210,7 @@ public static class ShortcutInput
     {
         if (ChartEditor.hasFocus && !Services.IsTyping)
         {
-            return primaryInputs.GetActionConfig(key).GetInputDown(devices);
+            return primaryInputs.GetActionConfig(key).GetInputDown(InputManager.Instance.devices);
         }
 
         return false;
@@ -256,7 +220,7 @@ public static class ShortcutInput
     {
         if (ChartEditor.hasFocus && !Services.IsTyping)
         {
-            return primaryInputs.GetActionConfig(key).GetInputUp(devices);
+            return primaryInputs.GetActionConfig(key).GetInputUp(InputManager.Instance.devices);
         }
 
         return false;
@@ -266,7 +230,7 @@ public static class ShortcutInput
     {
         if (ChartEditor.hasFocus && !Services.IsTyping)
         {
-            return primaryInputs.GetActionConfig(key).GetInput(devices);
+            return primaryInputs.GetActionConfig(key).GetInput(InputManager.Instance.devices);
         }
 
         return false;

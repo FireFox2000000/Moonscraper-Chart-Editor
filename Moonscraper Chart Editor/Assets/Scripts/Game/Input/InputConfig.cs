@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class InputConfig : ScriptableObject
 {
+    // Default values
+    const bool kRebindableDefault = true;
+    const bool kHiddenInListsDefault = false;
+    const ShortcutInput.Category.CategoryType kCategoryDefault = ShortcutInput.Category.CategoryType.Global;
+    public static readonly InputConfig.Properties kDefaultProperties = new InputConfig.Properties { rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault };
+
     [System.Serializable]
     public struct Properties
     {
@@ -24,6 +30,21 @@ public class InputConfig : ScriptableObject
     }
 
     public ShortcutInputConfig[] shortcutInputs;
+
+    public bool TryGetPropertiesConfig(Shortcut shortcut, out MSE.Input.InputAction.Properties properties)
+    {
+        foreach (ShortcutInputConfig config in shortcutInputs)
+        {
+            if (config.shortcut == shortcut)
+            {
+                properties = config.properties.ToMSEInputProperties();
+                return true;
+            }
+        }
+
+        properties = kDefaultProperties.ToMSEInputProperties();
+        return false;
+    }
 }
 
 [System.Serializable]
