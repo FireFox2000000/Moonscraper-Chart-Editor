@@ -92,6 +92,11 @@ namespace MSE
                 return null;
             }
 
+            public string GetDeviceName()
+            {
+                return "Keyboard";
+            }
+
             public static bool IsModifierKey(KeyCode key)
             {
                 return ToModifierKey(key) != ModifierKeys.None;

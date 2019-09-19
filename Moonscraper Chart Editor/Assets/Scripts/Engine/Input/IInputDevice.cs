@@ -17,6 +17,7 @@ namespace MSE
             bool Connected { get; }
             DeviceType Type { get; }
             IInputMap GetCurrentInput();
+            string GetDeviceName();
         }
     }
 }
