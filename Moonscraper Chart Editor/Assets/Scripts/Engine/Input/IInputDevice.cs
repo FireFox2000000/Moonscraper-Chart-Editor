@@ -9,7 +9,7 @@ namespace MSE
         public enum DeviceType
         {
             Keyboard,
-            //Gamepad,
+            Gamepad,
         }
 
         public interface IInputDevice
