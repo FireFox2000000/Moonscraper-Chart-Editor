@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SDL2;
 
 namespace MSE
 {
@@ -8,14 +10,64 @@ namespace MSE
     {
         public class GamepadDevice : IInputDevice
         {
-            int? m_padIndex;
+            public IntPtr sdlHandle { get; private set; }
+            GamepadState[] statesDoubleBuffer = new GamepadState[2];
+            int gamepadStateCurrentBufferIndex = 0;
 
-            public GamepadDevice(int? padIndex = null)
+            string deviceName;
+
+            public enum Button
             {
-                m_padIndex = padIndex;
+                A,
+                B,
+                X,
+                Y,
+                LB,
+                RB,
+                R3,
+                L3,
+
+                Start,
+                Select,
+
+                DPadUp,
+                DPadDown,
+                DPadLeft,
+                DPadRight,
             }
 
-            public bool Connected => throw new System.NotImplementedException();
+            public enum Axis
+            {
+                LeftStickX,
+                LeftStickY,
+
+                RightStickX,
+                RightStickY,
+            }
+            
+
+            public GamepadDevice(IntPtr sdlHandle)
+            {
+                this.sdlHandle = sdlHandle;
+
+                deviceName = SDL.SDL_GameControllerName(sdlHandle);
+
+                statesDoubleBuffer[0] = new GamepadState() { buttonsDown = new EnumLookupTable<Button, bool>(), axisValues = new EnumLookupTable<Axis, float>() };
+                statesDoubleBuffer[1] = new GamepadState() { buttonsDown = new EnumLookupTable<Button, bool>(), axisValues = new EnumLookupTable<Axis, float>() };
+            }
+
+            ~GamepadDevice()
+            {
+                sdlHandle = IntPtr.Zero;
+            }
+
+            public void Update()
+            {
+                FlipGamepadStateBuffer();
+                GetState(ref GetCurrentGamepadState());
+            }
+
+            public bool Connected { get { return sdlHandle == IntPtr.Zero; } }
 
             public DeviceType Type => DeviceType.Gamepad;
 
@@ -26,7 +78,115 @@ namespace MSE
 
             public string GetDeviceName()
             {
-                throw new System.NotImplementedException();
+                return deviceName;
+            }
+
+            public bool GetButton(Button button)
+            {
+                return GetButton(button, GetCurrentGamepadState());
+            }
+
+            public bool GetButtonPressed(Button button)
+            {
+                return GetButton(button) && !GetButton(button, GetPreviousGamepadState());
+            }
+
+            public bool GetButtonReleased(Button button)
+            {
+                return !GetButton(button) && GetButton(button, GetPreviousGamepadState());
+            }
+
+            void FlipGamepadStateBuffer()
+            {
+                ++gamepadStateCurrentBufferIndex;
+                if (gamepadStateCurrentBufferIndex > 1)
+                    gamepadStateCurrentBufferIndex = 0;
+            }
+
+            ref GamepadState GetCurrentGamepadState()
+            {
+                return ref statesDoubleBuffer[gamepadStateCurrentBufferIndex];
+            }
+
+            ref GamepadState GetPreviousGamepadState()
+            {
+                int previousBufferIndex = gamepadStateCurrentBufferIndex + 1;
+                if (previousBufferIndex > 1)
+                    previousBufferIndex = 0;
+
+                return ref statesDoubleBuffer[previousBufferIndex];
+            }
+
+            struct GamepadState
+            {
+                public EnumLookupTable<Button, bool> buttonsDown;
+                public EnumLookupTable<Axis, float> axisValues;
+            }
+
+            bool GetButton(Button button, in GamepadState state)
+            {
+                return state.buttonsDown[button];
+            }
+
+            void GetState(ref GamepadState gamepadState)
+            {
+                foreach(Button button in EnumX<Button>.Values)
+                {
+                    SDL.SDL_GameControllerButton sdlButton = GetSDLButtonForButton(button);
+                    gamepadState.buttonsDown[button] = SDL.SDL_GameControllerGetButton(sdlHandle, sdlButton) != 0;
+                }
+
+                foreach (Axis axis in EnumX<Axis>.Values)
+                {
+                    SDL.SDL_GameControllerAxis sdlAxis = GetSDLAxisForAxis(axis);
+                    short axisValue = SDL.SDL_GameControllerGetAxis(sdlHandle, sdlAxis);
+                    gamepadState.axisValues[axis] = (float)axisValue / short.MaxValue;
+
+                    // Todo, deadzones
+                }
+            }
+
+            SDL.SDL_GameControllerButton GetSDLButtonForButton(Button button)
+            {
+                switch (button)
+                {
+                    case Button.A: return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_A;
+                    case Button.B: return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_B;
+                    case Button.X: return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_X;
+                    case Button.Y: return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_Y;
+                    case Button.LB: return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_LEFTSHOULDER;
+                    case Button.RB: return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_RIGHTSHOULDER;
+
+                    case Button.R3: return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_RIGHTSTICK;
+                    case Button.L3: return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_LEFTSTICK;
+
+                    case Button.Start: return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_START;
+                    case Button.Select: return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_BACK;
+
+                    case Button.DPadUp: return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_UP;
+                    case Button.DPadDown: return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_DOWN;
+                    case Button.DPadLeft: return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_LEFT;
+                    case Button.DPadRight: return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_RIGHT;
+
+                    default: break;
+                }
+
+                return SDL.SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_INVALID;
+            }
+
+            SDL.SDL_GameControllerAxis GetSDLAxisForAxis(Axis axis)
+            {
+                switch (axis)
+                {
+                    case Axis.LeftStickX: return SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTX;
+                    case Axis.LeftStickY: return SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTY;
+                    case Axis.RightStickX: return SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_RIGHTX;
+                    case Axis.RightStickY: return SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_RIGHTY;
+
+                    default: break;
+                }
+
+                return SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_INVALID;
             }
         }
     }
