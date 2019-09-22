@@ -40,8 +40,8 @@ public static class GameSettings
     public static bool resetAfterGameplay = false;
     public static bool bot = true;
 
-    public static int audioCalibrationMS = 200;                     // Increase to start the audio sooner
-    public static int clapCalibrationMS = 200;
+    public static int audioCalibrationMS = 0;                     // Increase to start the audio sooner
+    public static int clapCalibrationMS = 0;
     public static int customBgSwapTime;
     public static int targetFramerate = -1;
 
@@ -71,8 +71,10 @@ public static class GameSettings
     public static int sustainGap { get { return sustainGapStep.value; } set { sustainGapStep.value = value; } }
 
     public static bool clapEnabled = false;
-    public static ClapToggle clapProperties = ClapToggle.NONE;
-    public static NotePlacementMode notePlacementMode = NotePlacementMode.LeftyFlip;
+
+    const int c_defaultClapVal = (int)(ClapToggle.STRUM | ClapToggle.HOPO | ClapToggle.TAP);
+    public static ClapToggle clapProperties = (ClapToggle)c_defaultClapVal;
+    public static NotePlacementMode notePlacementMode = NotePlacementMode.Default;
 
     public static ShortcutInput.ShortcutActionContainer controls = new ShortcutInput.ShortcutActionContainer();
 
@@ -103,8 +105,6 @@ public static class GameSettings
         try
         {
             Debug.Log("Loading game settings");
-
-            int c_defaultClapVal = (int)(ClapToggle.STRUM | ClapToggle.HOPO | ClapToggle.TAP);
          
             iniparse.Open(configFilepath);
 
