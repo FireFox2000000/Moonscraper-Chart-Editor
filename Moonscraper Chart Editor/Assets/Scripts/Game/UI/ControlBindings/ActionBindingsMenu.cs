@@ -212,7 +212,7 @@ public class ActionBindingsMenu : MonoBehaviour
         rebindInterface.Open(inputAction, inputMapToRebind, allActions, device);
     }
 
-    void OnRebindComplete()
+    public void OnRebindComplete()
     {
         PopulateFrom(actions);
     }
