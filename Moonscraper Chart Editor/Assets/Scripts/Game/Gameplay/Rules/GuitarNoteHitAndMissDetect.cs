@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using GuitarInput;
 using TimingConfig;
 
 public class GuitarNoteHitAndMissDetect {
@@ -35,11 +34,11 @@ public class GuitarNoteHitAndMissDetect {
         m_missNoteFactory = missNoteFactory;
     }
 	
-	public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, GamepadInput guitarInput, uint noteStreak, GuitarSustainHitKnowledge sustainKnowledge)
+	public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, MSE.Input.GamepadDevice guitarInput, uint noteStreak, GuitarSustainHitKnowledge sustainKnowledge)
     {
         // Capture input
-        bool strum = guitarInput.GetStrumInputControllerOrKeyboard();
-        int inputMask = guitarInput.GetFretInputMaskControllerOrKeyboard();
+        bool strum = GuitarInput.GetStrumInputControllerOrKeyboard(guitarInput);
+        int inputMask = GuitarInput.GetFretInputMaskControllerOrKeyboard(guitarInput);
         if (inputMask != previousInputMask)
             canTap = true;
 

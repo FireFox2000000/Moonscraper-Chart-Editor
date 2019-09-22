@@ -11,7 +11,7 @@ public class DrumsGameplayRulestate : BaseGameplayRulestate {
         hitAndMissNoteDetect = new DrumsNoteHitAndMissDetect(HitNote, MissNote);
     }
 
-    public void Update(float time, HitWindow<DrumsNoteHitKnowledge> hitWindow, GamepadInput drumsInput)
+    public void Update(float time, HitWindow<DrumsNoteHitKnowledge> hitWindow, MSE.Input.GamepadDevice drumsInput)
     {
         uint noteStreak = stats.noteStreak;
         int missCount = UpdateWindowExit(time, hitWindow);

@@ -24,12 +24,14 @@ public class EditorState : SystemManagerState
 
         if (services.CanPlay())
         {
+            var gamepad = InputManager.Instance.mainGamepad;
+
             if (ShortcutInput.GetInputDown(Shortcut.PlayPause))
             {
                 editor.Play();
                 return;
             }
-            else if (InputManager.Instance.mainGamepad.GetButtonPressed(GamepadInput.Button.Start))
+            else if (gamepad != null && gamepad.GetButtonPressed(MSE.Input.GamepadDevice.Button.Start))
             {
                 editor.StartGameplay();
                 return;

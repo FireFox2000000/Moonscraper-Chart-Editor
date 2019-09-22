@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DrumsInput;
 using TimingConfig;
 
 public class DrumsNoteHitAndMissDetect {
@@ -27,10 +26,10 @@ public class DrumsNoteHitAndMissDetect {
         m_missNoteFactory = missNoteFactory;
     }
 
-    public void Update(float time, HitWindow<DrumsNoteHitKnowledge> hitWindow, GamepadInput drumsInput, uint noteStreak, LaneInfo laneInfo)
+    public void Update(float time, HitWindow<DrumsNoteHitKnowledge> hitWindow, MSE.Input.GamepadDevice drumsInput, uint noteStreak, LaneInfo laneInfo)
     {
         DrumsNoteHitKnowledge nextNoteToHit = hitWindow.oldestUnhitNote;
-        int inputMask = drumsInput.GetPadPressedInputMaskControllerOrKeyboard(laneInfo);
+        int inputMask = DrumsInput.GetPadPressedInputMaskControllerOrKeyboard(drumsInput, laneInfo);
 
         if (nextNoteToHit != null)
         {
@@ -63,7 +62,7 @@ public class DrumsNoteHitAndMissDetect {
             {
                 foreach (Note.DrumPad drumPad in EnumX<Note.DrumPad>.Values)
                 {
-                    bool hitPad = drumsInput.GetPadInputControllerOrKeyboard(drumPad, laneInfo);
+                    bool hitPad = DrumsInput.GetPadInputControllerOrKeyboard(drumsInput, drumPad, laneInfo);
                     if (hitPad)
                     {
                         if (nextNoteToHit.GetHitTime(drumPad) == NoteHitKnowledge.NULL_TIME)

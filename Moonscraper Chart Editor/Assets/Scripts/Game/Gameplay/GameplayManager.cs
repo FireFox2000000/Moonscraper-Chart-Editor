@@ -71,7 +71,7 @@ public class GameplayManager : MonoBehaviour {
         if (editor.currentState == ChartEditor.State.Playing && !GameSettings.bot)
         {
             float currentTime = editor.currentVisibleTime;
-            GamepadInput gamepad = InputManager.Instance.mainGamepad;
+            var gamepad = InputManager.Instance.mainGamepad;
 
             if (editor.currentChart.gameMode == Chart.GameMode.Guitar)
             {

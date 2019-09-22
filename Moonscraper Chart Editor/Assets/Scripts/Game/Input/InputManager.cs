@@ -11,7 +11,24 @@ public class InputManager : UnitySingleton<InputManager>
 {
     public InputConfig inputPropertiesConfig;
 
-    public GamepadInput mainGamepad = new GamepadInput();
+    public GamepadDevice mainGamepad
+    {
+        get
+        {
+            GamepadDevice device = null;
+
+            foreach (GamepadDevice controller in controllers)
+            {
+                if (controller.Connected)
+                {
+                    device = controller;
+                    break;
+                }
+            }
+
+            return device;
+        }
+    }
     public List<IInputDevice> devices = new List<IInputDevice>() { new KeyboardDevice() };
 
     public List<GamepadDevice> controllers = new List<GamepadDevice>();
@@ -32,7 +49,7 @@ public class InputManager : UnitySingleton<InputManager>
 
     // Update is called once per frame
     void Update () {
-        mainGamepad.Update(ChartEditor.hasFocus);
+        //mainGamepad.Update(ChartEditor.hasFocus);
 
         SDL.SDL_Event sdlEvent;
         while (SDL.SDL_PollEvent(out sdlEvent) > 0)
@@ -59,7 +76,7 @@ public class InputManager : UnitySingleton<InputManager>
 
         foreach(GamepadDevice gamepad in controllers)
         {
-            gamepad.Update();
+            gamepad.Update(ChartEditor.hasFocus);
         }
     }
 
@@ -70,7 +87,10 @@ public class InputManager : UnitySingleton<InputManager>
         {
             Debug.Log("Added controller device " + index);
             SDL.SDL_GameControllerOpen(index);
-            controllers.Insert(index, new GamepadDevice(gameController));
+
+            GamepadDevice gamepad = new GamepadDevice(gameController);
+            controllers.Insert(index, gamepad);
+            devices.Add(gamepad);
         }
         else
         {
@@ -91,8 +111,11 @@ public class InputManager : UnitySingleton<InputManager>
             if (controllers[i].sdlHandle == removedController)
             {
                 SDL.SDL_GameControllerClose(removedController);
+
+                Debug.Assert(devices.Remove(controllers[i]));
                 controllers.RemoveAt(i);
-                break;
+                
+                return;
             }
         }
 

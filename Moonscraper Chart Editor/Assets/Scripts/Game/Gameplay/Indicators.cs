@@ -2,8 +2,6 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using GuitarInput;
-using DrumsInput;
 using System.Collections.Generic;
 
 public class Indicators : MonoBehaviour {
@@ -93,7 +91,7 @@ public class Indicators : MonoBehaviour {
 
         if (editor.currentState == ChartEditor.State.Playing && !GameSettings.bot)
         {
-            GamepadInput input = InputManager.Instance.mainGamepad;
+            var input = InputManager.Instance.mainGamepad;
             Chart.GameMode gameMode = editor.currentChart.gameMode;
             LaneInfo laneInfo = editor.laneInfo;
 
@@ -104,7 +102,7 @@ public class Indicators : MonoBehaviour {
                     if (bannedDrumPadInputs.ContainsKey(drumPad))
                         continue;
 
-                    if (input.GetPadInputControllerOrKeyboard(drumPad, laneInfo))
+                    if (input != null && DrumsInput.GetPadInputControllerOrKeyboard(input, drumPad, laneInfo))
                         animations[(int)drumPad].Press();
                     else
                         animations[(int)drumPad].Release();
@@ -117,7 +115,7 @@ public class Indicators : MonoBehaviour {
                     if (bannedFretInputs.ContainsKey(fret))
                         continue;
 
-                    if (input.GetFretInputControllerOrKeyboard(fret))
+                    if (input != null && GuitarInput.GetFretInputControllerOrKeyboard(input, fret))
                         animations[(int)fret].Press();
                     else
                         animations[(int)fret].Release();

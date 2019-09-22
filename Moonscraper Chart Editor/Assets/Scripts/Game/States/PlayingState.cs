@@ -64,7 +64,9 @@ public class PlayingState : SystemManagerState
         else if (ShortcutInput.GetInputDown(Shortcut.StepDecrease))
             GameSettings.snappingStep.Decrement();
 
-        if (ShortcutInput.GetInputDown(Shortcut.PlayPause) || InputManager.Instance.mainGamepad.GetButtonPressed(GamepadInput.Button.Start))
+        var gamepad = InputManager.Instance.mainGamepad;
+
+        if (ShortcutInput.GetInputDown(Shortcut.PlayPause) || (gamepad != null && gamepad.GetButtonPressed(MSE.Input.GamepadDevice.Button.Start)))
         {
             editor.Stop();
         }

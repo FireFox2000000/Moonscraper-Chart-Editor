@@ -6,7 +6,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using GuitarInput;
 
 [RequireComponent(typeof(LineRenderer))]
 public class Whammy : MonoBehaviour {
@@ -91,13 +90,13 @@ public class Whammy : MonoBehaviour {
     }
 
     float currentWhammyVal = -1;
-    float lerpedWhammyVal(GamepadInput gamepad)
+    float lerpedWhammyVal(MSE.Input.GamepadDevice gamepad)
     {
         float rawVal = -1;
 
-        if (gamepad.connected)
+        if (gamepad != null && gamepad.Connected)
         {
-            rawVal = gamepad.GetWhammyInput();
+            rawVal = GuitarInput.GetWhammyInput(gamepad);
         }
 
         if (!canWhammy)

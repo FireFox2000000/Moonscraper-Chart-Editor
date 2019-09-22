@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using GuitarInput;
 
 public class GuitarSustainBreakDetect {
 
@@ -18,11 +17,11 @@ public class GuitarSustainBreakDetect {
     {
     }
 
-    public void Update(float time, GuitarSustainHitKnowledge sustainKnowledge, GamepadInput guitarInput, uint noteStreak)
+    public void Update(float time, GuitarSustainHitKnowledge sustainKnowledge, MSE.Input.GamepadDevice guitarInput, uint noteStreak)
     {
         var currentSustains = sustainKnowledge.currentSustains;
 
-        int inputMask = guitarInput.GetFretInputMaskControllerOrKeyboard();
+        int inputMask = GuitarInput.GetFretInputMaskControllerOrKeyboard(guitarInput);
         int extendedSustainsMask = sustainKnowledge.extendedSustainsMask;
 
         int shiftCount;

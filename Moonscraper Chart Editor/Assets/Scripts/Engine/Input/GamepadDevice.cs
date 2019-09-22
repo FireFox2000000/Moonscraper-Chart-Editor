@@ -44,7 +44,8 @@ namespace MSE
                 RightStickX,
                 RightStickY,
             }
-            
+
+            static GamepadState EmptyState = new GamepadState() { buttonsDown = new EnumLookupTable<Button, bool>(), axisValues = new EnumLookupTable<Axis, float>() };
 
             public GamepadDevice(IntPtr sdlHandle)
             {
@@ -61,13 +62,18 @@ namespace MSE
                 sdlHandle = IntPtr.Zero;
             }
 
-            public void Update()
+
+            public void Update(bool hasFocus)
             {
                 FlipGamepadStateBuffer();
-                GetState(ref GetCurrentGamepadState());
+
+                if (hasFocus)
+                {
+                    GetState(ref GetCurrentGamepadState());
+                }
             }
 
-            public bool Connected { get { return sdlHandle == IntPtr.Zero; } }
+            public bool Connected { get { return sdlHandle != IntPtr.Zero; } }
 
             public DeviceType Type => DeviceType.Gamepad;
 
@@ -94,6 +100,13 @@ namespace MSE
             public bool GetButtonReleased(Button button)
             {
                 return !GetButton(button) && GetButton(button, GetPreviousGamepadState());
+            }
+
+            public float GetAxis(Axis axis)
+            {
+                var gamePadState = GetCurrentGamepadState();
+
+                return gamePadState.axisValues[axis];
             }
 
             void FlipGamepadStateBuffer()

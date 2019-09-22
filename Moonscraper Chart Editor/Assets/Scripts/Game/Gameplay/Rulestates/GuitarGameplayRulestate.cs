@@ -16,7 +16,7 @@ public class GuitarGameplayRulestate : BaseGameplayRulestate {
     }
 
     // Update is called once per frame
-    public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, GamepadInput guitarInput) {
+    public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, MSE.Input.GamepadDevice guitarInput) {
         int missCount = UpdateWindowExit(time, hitWindow);
 
         for (int i = 0; i < missCount; ++i)
