@@ -233,6 +233,16 @@ public static class GameSettings
 
     public static void SetDefaultKeysControls(ShortcutInput.ShortcutActionContainer inputList)
     {
+        // Reset all maps to a blank state
+        foreach(Shortcut sc in EnumX<Shortcut>.Values)
+        {
+            var inputMaps = inputList.GetActionConfig(Shortcut.AddSongObject).inputMaps;
+            for (int i = 0; i < inputMaps.kbMaps.Length; ++i)
+            {
+                inputMaps.kbMaps[i] = new KeyboardMap();
+            }
+        }
+
         {
             inputList.GetActionConfig(Shortcut.AddSongObject).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Alpha1 };
             inputList.GetActionConfig(Shortcut.BpmIncrease).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Equals, };
