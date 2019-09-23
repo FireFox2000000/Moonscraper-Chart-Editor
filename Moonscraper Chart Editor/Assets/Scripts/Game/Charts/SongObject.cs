@@ -96,10 +96,7 @@ public abstract class SongObject
 
     protected virtual bool Equals(SongObject b)
     {
-        if (tick == b.tick && classID == b.classID)
-            return true;
-        else
-            return false;
+        return tick == b.tick && classID == b.classID;
     }
 
     public static bool operator !=(SongObject a, SongObject b)

@@ -51,16 +51,13 @@ public class Event : SongObject
 
     protected override bool Equals(SongObject b)
     {
-        if (b.GetType() == typeof(Event))
+        if (base.Equals(b))
         {
             Event realB = b as Event;
-            if (tick == realB.tick && title == realB.title)
-                return true;
-            else
-                return false;
+            return realB != null && tick == realB.tick && title == realB.title;
         }
-        else
-            return base.Equals(b);
+
+        return false;
     }
 
     protected override bool LessThan(SongObject b)
