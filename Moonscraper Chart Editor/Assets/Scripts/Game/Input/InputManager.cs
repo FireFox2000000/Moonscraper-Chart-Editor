@@ -110,6 +110,7 @@ public class InputManager : UnitySingleton<InputManager>
         {
             if (controllers[i].sdlHandle == removedController)
             {
+                controllers[i].Disconnect();
                 SDL.SDL_GameControllerClose(removedController);
 
                 Debug.Assert(devices.Remove(controllers[i]));

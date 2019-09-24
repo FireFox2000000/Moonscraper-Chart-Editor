@@ -113,6 +113,11 @@ namespace MSE
                 return !GetButton(button) && GetButton(button, GetPreviousGamepadState());
             }
 
+            public void Disconnect()
+            {
+                sdlHandle = IntPtr.Zero;
+            }
+
             public float GetAxis(Axis axis)
             {
                 var gamePadState = GetCurrentGamepadState();
