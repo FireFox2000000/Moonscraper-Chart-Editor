@@ -60,11 +60,22 @@ public class ActionBindingsMenu : MonoBehaviour
 
             var maps = inputAction.GetMapsForDevice(device.Type);
 
-            if (maps != null)
+            if (maps != null && maps.Count > 0)
             {
-                for (int i = 0; i < maps.Length && i < actionInputButtons.Length; ++i)
+                for (int i = 0; i < actionInputButtons.Length; ++i)
                 {
-                    var map = maps[i];
+                    IInputMap map;
+                    if (i >= maps.Count)
+                    {
+                        var clone = maps[0].Clone();
+                        clone.SetEmpty();
+                        inputAction.Add(clone);
+                        map = clone;
+                    }
+                    else
+                    {
+                        map = maps[i];
+                    } 
                    
                     var button = actionInputButtons[i];
                     var buttonText = button.GetComponentInChildren<Text>();
@@ -98,7 +109,7 @@ public class ActionBindingsMenu : MonoBehaviour
     IInputDevice lastKnownDisplayDevice;
     IEnumerable<InputAction> loadedActions;
 
-    ShortcutInput.ShortcutActionContainer actions;
+    IInputActionContainer actions;
 
     // Start is called before the first frame update
     void Start()

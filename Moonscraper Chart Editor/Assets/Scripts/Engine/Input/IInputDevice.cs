@@ -18,6 +18,10 @@ namespace MSE
             DeviceType Type { get; }
             IInputMap GetCurrentInput();
             string GetDeviceName();
+
+            bool GetInputDown(IInputMap map);
+            bool GetInputUp(IInputMap map);
+            bool GetInput(IInputMap map);
         }
     }
 }

@@ -97,6 +97,8 @@ namespace MSE
                 }
             }
 
+            public DeviceType CompatibleDevice => DeviceType.Keyboard;
+
             public IEnumerator<KeyCode> GetEnumerator()
             {
                 return ((IEnumerable<KeyCode>)keys).GetEnumerator();

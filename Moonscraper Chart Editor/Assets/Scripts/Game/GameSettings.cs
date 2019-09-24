@@ -77,6 +77,7 @@ public static class GameSettings
     public static NotePlacementMode notePlacementMode = NotePlacementMode.Default;
 
     public static ShortcutInput.ShortcutActionContainer controls = new ShortcutInput.ShortcutActionContainer();
+    public static GameplayInput.GameplayActionContainer gameplayControls = new GameplayInput.GameplayActionContainer();
 
     public static bool GetBoolSetting(string identifier)
     {
@@ -95,7 +96,7 @@ public static class GameSettings
 
     static GameSettings()
     {
-        LoadDefaultControls(controls);
+        LoadDefaultControls();
     }
 
     public static void Load(string configFilepath, string controllerBindingsFilepath)
@@ -226,104 +227,158 @@ public static class GameSettings
         }
     }
 
-    public static void LoadDefaultControls(ShortcutInput.ShortcutActionContainer inputList)
+    static void LoadDefaultControls()
     {
-        SetDefaultKeysControls(inputList);
+        SetDefaultKeysControls(controls);
+        SetDefaultGameplayControls(gameplayControls);
     }
 
     public static void SetDefaultKeysControls(ShortcutInput.ShortcutActionContainer inputList)
     {
         // Reset all maps to a blank state
-        foreach(Shortcut sc in EnumX<Shortcut>.Values)
+        foreach (Shortcut sc in EnumX<Shortcut>.Values)
         {
-            var inputMaps = inputList.GetActionConfig(Shortcut.AddSongObject).inputMaps;
-            for (int i = 0; i < inputMaps.kbMaps.Length; ++i)
-            {
-                inputMaps.kbMaps[i] = new KeyboardMap();
-            }
+            inputList.GetActionConfig(sc).RemoveMapsForDevice(MSE.Input.DeviceType.Keyboard);
         }
 
         {
-            inputList.GetActionConfig(Shortcut.AddSongObject).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Alpha1 };
-            inputList.GetActionConfig(Shortcut.BpmIncrease).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Equals, };
-            inputList.GetActionConfig(Shortcut.BpmDecrease).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Minus, };
-            inputList.GetActionConfig(Shortcut.Delete).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Delete };
-            inputList.GetActionConfig(Shortcut.PlayPause).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Space };
-            inputList.GetActionConfig(Shortcut.MoveStepPositive).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.UpArrow };
-            inputList.GetActionConfig(Shortcut.MoveStepNegative).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.DownArrow };
-            inputList.GetActionConfig(Shortcut.MoveMeasurePositive).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.PageUp };
-            inputList.GetActionConfig(Shortcut.MoveMeasureNegative).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.PageDown };
-            inputList.GetActionConfig(Shortcut.NoteSetNatural).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.X };
-            inputList.GetActionConfig(Shortcut.NoteSetStrum).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.S };
-            inputList.GetActionConfig(Shortcut.NoteSetHopo).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.H };
-            inputList.GetActionConfig(Shortcut.NoteSetTap).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.T };
-            inputList.GetActionConfig(Shortcut.StepIncrease).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.W };
-            inputList.GetActionConfig(Shortcut.StepIncrease).inputMaps.kbMaps[1] = new KeyboardMap() { KeyCode.RightArrow };
-            inputList.GetActionConfig(Shortcut.StepDecrease).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Q };
-            inputList.GetActionConfig(Shortcut.StepDecrease).inputMaps.kbMaps[1] = new KeyboardMap() { KeyCode.LeftArrow };
-            inputList.GetActionConfig(Shortcut.ToggleBpmAnchor).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.A };
-            inputList.GetActionConfig(Shortcut.ToggleClap).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.N };
-            inputList.GetActionConfig(Shortcut.ToggleExtendedSustains).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.E };
-            inputList.GetActionConfig(Shortcut.ToggleMetronome).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.M };
-            inputList.GetActionConfig(Shortcut.ToggleMouseMode).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.BackQuote };
-            inputList.GetActionConfig(Shortcut.ToggleNoteForced).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.F };
-            inputList.GetActionConfig(Shortcut.ToggleNoteTap).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.T };
-            inputList.GetActionConfig(Shortcut.ToggleViewMode).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.G };
-            inputList.GetActionConfig(Shortcut.ToolNoteBurst).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.B };
-            inputList.GetActionConfig(Shortcut.ToolNoteHold).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.H };
-            inputList.GetActionConfig(Shortcut.ToolSelectCursor).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.J };
-            inputList.GetActionConfig(Shortcut.ToolSelectEraser).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.K };
-            inputList.GetActionConfig(Shortcut.ToolSelectNote).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Y };
-            inputList.GetActionConfig(Shortcut.ToolSelectStarpower).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.U };
-            inputList.GetActionConfig(Shortcut.ToolSelectBpm).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.I };
-            inputList.GetActionConfig(Shortcut.ToolSelectTimeSignature).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.O };
-            inputList.GetActionConfig(Shortcut.ToolSelectSection).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.P };
-            inputList.GetActionConfig(Shortcut.ToolSelectEvent).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.L };
+            inputList.GetActionConfig(Shortcut.AddSongObject).Add(new KeyboardMap() { KeyCode.Alpha1 });
+            inputList.GetActionConfig(Shortcut.BpmIncrease).Add(new KeyboardMap() { KeyCode.Equals, });
+            inputList.GetActionConfig(Shortcut.BpmDecrease).Add(new KeyboardMap() { KeyCode.Minus, });
+            inputList.GetActionConfig(Shortcut.Delete).Add(new KeyboardMap() { KeyCode.Delete });
+            inputList.GetActionConfig(Shortcut.PlayPause).Add(new KeyboardMap() { KeyCode.Space });
+            inputList.GetActionConfig(Shortcut.MoveStepPositive).Add(new KeyboardMap() { KeyCode.UpArrow });
+            inputList.GetActionConfig(Shortcut.MoveStepNegative).Add(new KeyboardMap() { KeyCode.DownArrow });
+            inputList.GetActionConfig(Shortcut.MoveMeasurePositive).Add(new KeyboardMap() { KeyCode.PageUp });
+            inputList.GetActionConfig(Shortcut.MoveMeasureNegative).Add(new KeyboardMap() { KeyCode.PageDown });
+            inputList.GetActionConfig(Shortcut.NoteSetNatural).Add(new KeyboardMap() { KeyCode.X });
+            inputList.GetActionConfig(Shortcut.NoteSetStrum).Add(new KeyboardMap() { KeyCode.S });
+            inputList.GetActionConfig(Shortcut.NoteSetHopo).Add(new KeyboardMap() { KeyCode.H });
+            inputList.GetActionConfig(Shortcut.NoteSetTap).Add(new KeyboardMap() { KeyCode.T });
+            inputList.GetActionConfig(Shortcut.StepIncrease).Add(new KeyboardMap() { KeyCode.W });
+            inputList.GetActionConfig(Shortcut.StepIncrease).Add(new KeyboardMap() { KeyCode.RightArrow });
+            inputList.GetActionConfig(Shortcut.StepDecrease).Add(new KeyboardMap() { KeyCode.Q });
+            inputList.GetActionConfig(Shortcut.StepDecrease).Add(new KeyboardMap() { KeyCode.LeftArrow });
+            inputList.GetActionConfig(Shortcut.ToggleBpmAnchor).Add(new KeyboardMap() { KeyCode.A });
+            inputList.GetActionConfig(Shortcut.ToggleClap).Add(new KeyboardMap() { KeyCode.N });
+            inputList.GetActionConfig(Shortcut.ToggleExtendedSustains).Add(new KeyboardMap() { KeyCode.E });
+            inputList.GetActionConfig(Shortcut.ToggleMetronome).Add(new KeyboardMap() { KeyCode.M });
+            inputList.GetActionConfig(Shortcut.ToggleMouseMode).Add(new KeyboardMap() { KeyCode.BackQuote });
+            inputList.GetActionConfig(Shortcut.ToggleNoteForced).Add(new KeyboardMap() { KeyCode.F });
+            inputList.GetActionConfig(Shortcut.ToggleNoteTap).Add(new KeyboardMap() { KeyCode.T });
+            inputList.GetActionConfig(Shortcut.ToggleViewMode).Add(new KeyboardMap() { KeyCode.G });
+            inputList.GetActionConfig(Shortcut.ToolNoteBurst).Add(new KeyboardMap() { KeyCode.B });
+            inputList.GetActionConfig(Shortcut.ToolNoteHold).Add(new KeyboardMap() { KeyCode.H });
+            inputList.GetActionConfig(Shortcut.ToolSelectCursor).Add(new KeyboardMap() { KeyCode.J });
+            inputList.GetActionConfig(Shortcut.ToolSelectEraser).Add(new KeyboardMap() { KeyCode.K });
+            inputList.GetActionConfig(Shortcut.ToolSelectNote).Add(new KeyboardMap() { KeyCode.Y });
+            inputList.GetActionConfig(Shortcut.ToolSelectStarpower).Add(new KeyboardMap() { KeyCode.U });
+            inputList.GetActionConfig(Shortcut.ToolSelectBpm).Add(new KeyboardMap() { KeyCode.I });
+            inputList.GetActionConfig(Shortcut.ToolSelectTimeSignature).Add(new KeyboardMap() { KeyCode.O });
+            inputList.GetActionConfig(Shortcut.ToolSelectSection).Add(new KeyboardMap() { KeyCode.P });
+            inputList.GetActionConfig(Shortcut.ToolSelectEvent).Add(new KeyboardMap() { KeyCode.L });
 
-            inputList.GetActionConfig(Shortcut.ToolNoteLane1).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Alpha1 };
-            inputList.GetActionConfig(Shortcut.ToolNoteLane2).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Alpha2 };
-            inputList.GetActionConfig(Shortcut.ToolNoteLane3).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Alpha3 };
-            inputList.GetActionConfig(Shortcut.ToolNoteLane4).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Alpha4 };
-            inputList.GetActionConfig(Shortcut.ToolNoteLane5).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Alpha5 };
-            inputList.GetActionConfig(Shortcut.ToolNoteLane6).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Alpha6 };
-            inputList.GetActionConfig(Shortcut.ToolNoteLaneOpen).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Alpha0 };
+            inputList.GetActionConfig(Shortcut.ToolNoteLane1).Add(new KeyboardMap() { KeyCode.Alpha1 });
+            inputList.GetActionConfig(Shortcut.ToolNoteLane2).Add(new KeyboardMap() { KeyCode.Alpha2 });
+            inputList.GetActionConfig(Shortcut.ToolNoteLane3).Add(new KeyboardMap() { KeyCode.Alpha3 });
+            inputList.GetActionConfig(Shortcut.ToolNoteLane4).Add(new KeyboardMap() { KeyCode.Alpha4 });
+            inputList.GetActionConfig(Shortcut.ToolNoteLane5).Add(new KeyboardMap() { KeyCode.Alpha5 });
+            inputList.GetActionConfig(Shortcut.ToolNoteLane6).Add(new KeyboardMap() { KeyCode.Alpha6 });
+            inputList.GetActionConfig(Shortcut.ToolNoteLaneOpen).Add(new KeyboardMap() { KeyCode.Alpha0 });
 
-            inputList.GetActionConfig(Shortcut.CloseMenu).inputMaps.kbMaps[0] = new KeyboardMap() { KeyCode.Escape };
+            inputList.GetActionConfig(Shortcut.CloseMenu).Add(new KeyboardMap() { KeyCode.Escape });
         }
 
         {
             KeyboardDevice.ModifierKeys modiInput = KeyboardDevice.ModifierKeys.Ctrl;
-            inputList.GetActionConfig(Shortcut.ClipboardCopy).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.C };
-            inputList.GetActionConfig(Shortcut.ClipboardCut).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.X };
-            inputList.GetActionConfig(Shortcut.ClipboardPaste).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.V };
-            inputList.GetActionConfig(Shortcut.FileLoad).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.O };
-            inputList.GetActionConfig(Shortcut.FileNew).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.N };
-            inputList.GetActionConfig(Shortcut.FileSave).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.S };
-            inputList.GetActionConfig(Shortcut.ActionHistoryRedo).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.Y };
-            inputList.GetActionConfig(Shortcut.ActionHistoryUndo).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.Z };
-            inputList.GetActionConfig(Shortcut.SelectAll).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.A };
+            inputList.GetActionConfig(Shortcut.ClipboardCopy).Add(new KeyboardMap(modiInput) { KeyCode.C });
+            inputList.GetActionConfig(Shortcut.ClipboardCut).Add(new KeyboardMap(modiInput) { KeyCode.X });
+            inputList.GetActionConfig(Shortcut.ClipboardPaste).Add(new KeyboardMap(modiInput) { KeyCode.V });
+            inputList.GetActionConfig(Shortcut.FileLoad).Add(new KeyboardMap(modiInput) { KeyCode.O });
+            inputList.GetActionConfig(Shortcut.FileNew).Add(new KeyboardMap(modiInput) { KeyCode.N });
+            inputList.GetActionConfig(Shortcut.FileSave).Add(new KeyboardMap(modiInput) { KeyCode.S });
+            inputList.GetActionConfig(Shortcut.ActionHistoryRedo).Add(new KeyboardMap(modiInput) { KeyCode.Y });
+            inputList.GetActionConfig(Shortcut.ActionHistoryUndo).Add(new KeyboardMap(modiInput) { KeyCode.Z });
+            inputList.GetActionConfig(Shortcut.SelectAll).Add(new KeyboardMap(modiInput) { KeyCode.A });
         }
 
         {
             KeyboardDevice.ModifierKeys modiInput = KeyboardDevice.ModifierKeys.Shift;
 
-            inputList.GetActionConfig(Shortcut.ChordSelect).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { };
+            inputList.GetActionConfig(Shortcut.ChordSelect).Add(new KeyboardMap(modiInput) { });
         }
 
         {
             KeyboardDevice.ModifierKeys modiInput = KeyboardDevice.ModifierKeys.Ctrl | KeyboardDevice.ModifierKeys.Shift;
 
-            inputList.GetActionConfig(Shortcut.FileSaveAs).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.S };
-            inputList.GetActionConfig(Shortcut.ActionHistoryRedo).inputMaps.kbMaps[1] = new KeyboardMap(modiInput) { KeyCode.Z };
+            inputList.GetActionConfig(Shortcut.FileSaveAs).Add(new KeyboardMap(modiInput) { KeyCode.S });
+            inputList.GetActionConfig(Shortcut.ActionHistoryRedo).Add(new KeyboardMap(modiInput) { KeyCode.Z });
         }
 
         {
             KeyboardDevice.ModifierKeys modiInput = KeyboardDevice.ModifierKeys.Alt;
 
-            inputList.GetActionConfig(Shortcut.SectionJumpPositive).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.UpArrow };
-            inputList.GetActionConfig(Shortcut.SectionJumpNegative).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.DownArrow };
-            inputList.GetActionConfig(Shortcut.SelectAllSection).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { KeyCode.A };
-            inputList.GetActionConfig(Shortcut.SectionJumpMouseScroll).inputMaps.kbMaps[0] = new KeyboardMap(modiInput) { };
+            inputList.GetActionConfig(Shortcut.SectionJumpPositive).Add(new KeyboardMap(modiInput) { KeyCode.UpArrow });
+            inputList.GetActionConfig(Shortcut.SectionJumpNegative).Add(new KeyboardMap(modiInput) { KeyCode.DownArrow });
+            inputList.GetActionConfig(Shortcut.SelectAllSection).Add(new KeyboardMap(modiInput) { KeyCode.A });
+            inputList.GetActionConfig(Shortcut.SectionJumpMouseScroll).Add(new KeyboardMap(modiInput) { });
+        }
+    }
+
+    public static void SetDefaultGameplayControls(GameplayInput.GameplayActionContainer inputList)
+    {
+        SetDefaultGameplayControlsPad(inputList);
+        SetDefaultGameplayControlsKeys(inputList);
+    }
+
+    public static void SetDefaultGameplayControlsPad(GameplayInput.GameplayActionContainer inputList)
+    {
+        // Reset all maps to a blank state
+        foreach (GameplayAction sc in EnumX<GameplayAction>.Values)
+        {
+            inputList.GetActionConfig(sc).RemoveMapsForDevice(MSE.Input.DeviceType.Gamepad);
+        }
+
+        inputList.GetActionConfig(GameplayAction.GuitarStrumUp).Add(new GamepadButtonMap() { GamepadDevice.Button.DPadUp });
+        inputList.GetActionConfig(GameplayAction.GuitarStrumDown).Add(new GamepadButtonMap() { GamepadDevice.Button.DPadDown });
+
+        inputList.GetActionConfig(GameplayAction.GuitarFretGreen).Add(new GamepadButtonMap() { GamepadDevice.Button.A });
+        inputList.GetActionConfig(GameplayAction.GuitarFretRed).Add(new GamepadButtonMap() { GamepadDevice.Button.B });
+        inputList.GetActionConfig(GameplayAction.GuitarFretYellow).Add(new GamepadButtonMap() { GamepadDevice.Button.Y });
+        inputList.GetActionConfig(GameplayAction.GuitarFretBlue).Add(new GamepadButtonMap() { GamepadDevice.Button.X });
+        inputList.GetActionConfig(GameplayAction.GuitarFretOrange).Add(new GamepadButtonMap() { GamepadDevice.Button.LB });
+
+        inputList.GetActionConfig(GameplayAction.DrumPadRed).Add(new GamepadButtonMap() { GamepadDevice.Button.B });
+        inputList.GetActionConfig(GameplayAction.DrumPadYellow).Add(new GamepadButtonMap() { GamepadDevice.Button.Y });
+        inputList.GetActionConfig(GameplayAction.DrumPadBlue).Add(new GamepadButtonMap() { GamepadDevice.Button.X });
+        inputList.GetActionConfig(GameplayAction.DrumPadOrange).Add(new GamepadButtonMap() { GamepadDevice.Button.RB });
+        inputList.GetActionConfig(GameplayAction.DrumPadGreen).Add(new GamepadButtonMap() { GamepadDevice.Button.A });
+        inputList.GetActionConfig(GameplayAction.DrumPadKick).Add(new GamepadButtonMap() { GamepadDevice.Button.LB });
+    }
+
+    public static void SetDefaultGameplayControlsKeys(GameplayInput.GameplayActionContainer inputList)
+    {
+        foreach (GameplayAction sc in EnumX<GameplayAction>.Values)
+        {
+            inputList.GetActionConfig(sc).RemoveMapsForDevice(MSE.Input.DeviceType.Keyboard);
+        }
+
+        {
+            inputList.GetActionConfig(GameplayAction.GuitarStrumUp).Add(new KeyboardMap() { KeyCode.UpArrow });
+            inputList.GetActionConfig(GameplayAction.GuitarStrumDown).Add(new KeyboardMap() { KeyCode.DownArrow });
+
+            inputList.GetActionConfig(GameplayAction.GuitarFretGreen).Add(new KeyboardMap() { KeyCode.Alpha1 });
+            inputList.GetActionConfig(GameplayAction.GuitarFretRed).Add(new KeyboardMap() { KeyCode.Alpha2 });
+            inputList.GetActionConfig(GameplayAction.GuitarFretYellow).Add(new KeyboardMap() { KeyCode.Alpha3 });
+            inputList.GetActionConfig(GameplayAction.GuitarFretBlue).Add(new KeyboardMap() { KeyCode.Alpha4 });
+            inputList.GetActionConfig(GameplayAction.GuitarFretOrange).Add(new KeyboardMap() { KeyCode.Alpha5 });
+
+            inputList.GetActionConfig(GameplayAction.DrumPadRed).Add(new KeyboardMap() { KeyCode.Alpha1 });
+            inputList.GetActionConfig(GameplayAction.DrumPadYellow).Add(new KeyboardMap() { KeyCode.Alpha2 });
+            inputList.GetActionConfig(GameplayAction.DrumPadBlue).Add(new KeyboardMap() { KeyCode.Alpha3 });
+            inputList.GetActionConfig(GameplayAction.DrumPadOrange).Add(new KeyboardMap() { KeyCode.Alpha4 });
+            inputList.GetActionConfig(GameplayAction.DrumPadGreen).Add(new KeyboardMap() { KeyCode.Alpha5 });
+            inputList.GetActionConfig(GameplayAction.DrumPadKick).Add(new KeyboardMap() { KeyCode.Alpha0 });
         }
     }
 }

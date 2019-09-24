@@ -43,6 +43,9 @@ namespace MSE
 
                 RightStickX,
                 RightStickY,
+
+                LT,
+                RT,
             }
 
             static GamepadState EmptyState = new GamepadState() { buttonsDown = new EnumLookupTable<Button, bool>(), axisValues = new EnumLookupTable<Axis, float>() };
@@ -79,7 +82,15 @@ namespace MSE
 
             public IInputMap GetCurrentInput()
             {
-                throw new System.NotImplementedException();
+                foreach (Button button in EnumX<Button>.Values)
+                {
+                    if (GetButton(button))
+                    {
+                        return new GamepadButtonMap() { button };
+                    }
+                }
+
+                return null;
             }
 
             public string GetDeviceName()
@@ -195,11 +206,70 @@ namespace MSE
                     case Axis.LeftStickY: return SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTY;
                     case Axis.RightStickX: return SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_RIGHTX;
                     case Axis.RightStickY: return SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_RIGHTY;
+                    case Axis.LT: return SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_TRIGGERLEFT;
+                    case Axis.RT: return SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_TRIGGERRIGHT;
 
                     default: break;
                 }
 
                 return SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_INVALID;
+            }
+
+            public bool GetInputDown(IInputMap inputMap)
+            {
+                GamepadButtonMap map = inputMap as GamepadButtonMap;
+                if (map != null)
+                {
+                    foreach (var button in map.buttons)
+                    {
+                        if (!GetButtonPressed(button))
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+
+                return false;
+            }
+
+            public bool GetInputUp(IInputMap inputMap)
+            {
+                GamepadButtonMap map = inputMap as GamepadButtonMap;
+                if (map != null)
+                {
+                    foreach (var button in map.buttons)
+                    {
+                        if (!GetButtonReleased(button))
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+
+                return false;
+            }
+
+            public bool GetInput(IInputMap inputMap)
+            {
+                GamepadButtonMap map = inputMap as GamepadButtonMap;
+                if (map != null)
+                {
+                    foreach (var button in map.buttons)
+                    {
+                        if (!GetButton(button))
+                        {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+
+                return false;
             }
         }
     }

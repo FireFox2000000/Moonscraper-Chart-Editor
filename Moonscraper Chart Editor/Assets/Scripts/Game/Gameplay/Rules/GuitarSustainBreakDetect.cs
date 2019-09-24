@@ -21,7 +21,7 @@ public class GuitarSustainBreakDetect {
     {
         var currentSustains = sustainKnowledge.currentSustains;
 
-        int inputMask = GuitarInput.GetFretInputMaskControllerOrKeyboard(guitarInput);
+        int inputMask = GuitarInput.GetFretInputMask(guitarInput);
         int extendedSustainsMask = sustainKnowledge.extendedSustainsMask;
 
         int shiftCount;

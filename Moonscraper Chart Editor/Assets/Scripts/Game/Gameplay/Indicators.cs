@@ -102,7 +102,7 @@ public class Indicators : MonoBehaviour {
                     if (bannedDrumPadInputs.ContainsKey(drumPad))
                         continue;
 
-                    if (input != null && DrumsInput.GetPadInputControllerOrKeyboard(input, drumPad, laneInfo))
+                    if (input != null && DrumsInput.GetPadPressedInput(input, drumPad, laneInfo))
                         animations[(int)drumPad].Press();
                     else
                         animations[(int)drumPad].Release();
@@ -115,7 +115,7 @@ public class Indicators : MonoBehaviour {
                     if (bannedFretInputs.ContainsKey(fret))
                         continue;
 
-                    if (input != null && GuitarInput.GetFretInputControllerOrKeyboard(input, fret))
+                    if (input != null && GuitarInput.GetFretInput(input, fret))
                         animations[(int)fret].Press();
                     else
                         animations[(int)fret].Release();

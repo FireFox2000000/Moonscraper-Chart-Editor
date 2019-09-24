@@ -18,16 +18,38 @@ namespace MSE
             public const int kMaxKeyboardMaps = 2;
 
             [System.Serializable]
-            public class Maps
+            public class Maps : IEnumerable<IInputMap>
             {
-                public KeyboardMap[] kbMaps = new KeyboardMap[kMaxKeyboardMaps];
+                public List<KeyboardMap> kbMaps = new List<KeyboardMap>();
+                public List<GamepadButtonMap> gpButtonMaps = new List<GamepadButtonMap>();
 
-                public Maps()
+                public IEnumerator<IInputMap> GetEnumerator()
                 {
-                    for (int i = 0; i < kbMaps.Length; ++i)
+                    foreach (var map in kbMaps)
                     {
-                        kbMaps[i] = new KeyboardMap();
+                        yield return map;
                     }
+
+                    foreach (var map in gpButtonMaps)
+                    {
+                        yield return map;
+                    }
+                }
+
+                IEnumerator IEnumerable.GetEnumerator()
+                {
+                    return GetEnumerator();
+                }
+
+                public void Add(IInputMap map)
+                {
+                    KeyboardMap kbMap = map as KeyboardMap;
+                    if (kbMap != null)
+                        kbMaps.Add(kbMap);
+
+                    GamepadButtonMap gpButtonMap = map as GamepadButtonMap;
+                    if (gpButtonMap != null)
+                        gpButtonMaps.Add(gpButtonMap);
                 }
             }
 
@@ -39,7 +61,7 @@ namespace MSE
             }
 
             public Properties properties;
-            public Maps inputMaps = new Maps();
+            Maps inputMaps = new Maps();
 
             public InputAction(Properties properties)
             {
@@ -51,6 +73,11 @@ namespace MSE
                 inputMaps = saveData.input;
             }
 
+            public void Add(IInputMap map)
+            {
+                inputMaps.Add(map);
+            }
+
             public void SaveTo(string actionName, SaveData saveData)
             {
                 saveData.action = actionName;
@@ -59,10 +86,9 @@ namespace MSE
 
             public bool HasConflict(IInputMap map)
             {
-                for (int i = 0; i < inputMaps.kbMaps.Length; ++i)
+                foreach(var inputMap in inputMaps)
                 {
-                    KeyboardMap kbMap = inputMaps.kbMaps[i];
-                    if(kbMap.HasConflict(map))
+                    if(inputMap.HasConflict(map))
                     {
                         return true;
                     }
@@ -71,12 +97,31 @@ namespace MSE
                 return false;
             }
 
-            public IInputMap[] GetMapsForDevice(DeviceType device)
+            public List<IInputMap> GetMapsForDevice(DeviceType device)
             {
-                switch (device)
+                List<IInputMap> deviceMaps = new List<IInputMap>();
+
+                foreach (IInputMap map in inputMaps)
                 {
-                    case DeviceType.Keyboard: return inputMaps.kbMaps;
-                    default: return null;
+                    if (map.CompatibleDevice == device)
+                        deviceMaps.Add(map);
+                }
+
+                return deviceMaps;
+            }
+
+            public void RemoveMapsForDevice(DeviceType device)
+            {
+                for (int i = inputMaps.kbMaps.Count - 1; i >= 0; --i)
+                {
+                    if (inputMaps.kbMaps[i].CompatibleDevice == device)
+                        inputMaps.kbMaps.RemoveAt(i);
+                }
+
+                for (int i = inputMaps.gpButtonMaps.Count - 1; i >= 0; --i)
+                {
+                    if (inputMaps.gpButtonMaps[i].CompatibleDevice == device)
+                        inputMaps.gpButtonMaps.RemoveAt(i);
                 }
             }
 
@@ -85,21 +130,14 @@ namespace MSE
                 for (int i = 0; i < devices.Count; ++i)
                 {
                     IInputDevice device = devices[i];
-                    if (device.Type == DeviceType.Keyboard)
+
+                    foreach (var map in inputMaps)
                     {
-                        KeyboardDevice keyboardDevice = (KeyboardDevice)device;
-
-                        for (int mapIndex = 0; mapIndex < inputMaps.kbMaps.Length; ++mapIndex)
+                        if (map != null && !map.IsEmpty)
                         {
-                            KeyboardMap map = inputMaps.kbMaps[mapIndex];
-                            if (map != null && !map.IsEmpty)
-                            {
-                                if (keyboardDevice.GetInputDown(map))
-                                    return true;
-                            }
+                            if (device.GetInputDown(map))
+                                return true;
                         }
-
-                        return false;
                     }
                 }
 
@@ -111,21 +149,14 @@ namespace MSE
                 for (int i = 0; i < devices.Count; ++i)
                 {
                     IInputDevice device = devices[i];
-                    if (device.Type == DeviceType.Keyboard)
+
+                    foreach (var map in inputMaps)
                     {
-                        KeyboardDevice keyboardDevice = (KeyboardDevice)device;
-
-                        for (int mapIndex = 0; mapIndex < inputMaps.kbMaps.Length; ++mapIndex)
+                        if (map != null && !map.IsEmpty)
                         {
-                            KeyboardMap map = inputMaps.kbMaps[mapIndex];
-                            if (map != null)
-                            {
-                                if (keyboardDevice.GetInputUp(map))
-                                    return true;
-                            }
+                            if (device.GetInputUp(map))
+                                return true;
                         }
-
-                        return false;
                     }
                 }
 
@@ -137,21 +168,14 @@ namespace MSE
                 for (int i = 0; i < devices.Count; ++i)
                 {
                     IInputDevice device = devices[i];
-                    if (device.Type == DeviceType.Keyboard)
+
+                    foreach (var map in inputMaps)
                     {
-                        KeyboardDevice keyboardDevice = (KeyboardDevice)device;
-
-                        for (int mapIndex = 0; mapIndex < inputMaps.kbMaps.Length; ++mapIndex)
+                        if (map != null && !map.IsEmpty)
                         {
-                            KeyboardMap map = inputMaps.kbMaps[mapIndex];
-                            if (map != null)
-                            {
-                                if (keyboardDevice.GetInput(map))
-                                    return true;
-                            }
+                            if (device.GetInput(map))
+                                return true;
                         }
-
-                        return false;
                     }
                 }
 

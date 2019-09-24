@@ -109,17 +109,11 @@ public static class ShortcutInput
 
     static readonly InputAction.Properties kDefaultProperties = new InputAction.Properties { rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault };
 
-    public class ShortcutActionContainer : IEnumerable<InputAction>
+    public class ShortcutActionContainer : InputActionContainer<Shortcut>
     {
-        [SerializeField]
-        List<InputAction.SaveData> saveData = new List<InputAction.SaveData>();    // Safer save data format, to handle cases where the Shortcut enum list may get updated or values are shifted around
-        EnumLookupTable<Shortcut, InputAction> actionConfigCleanLookup;
-
-        public ShortcutActionContainer()
+        public ShortcutActionContainer()  : base(new EnumLookupTable<Shortcut, InputAction>())
         {
             InputManager inputManager = InputManager.Instance;
-
-            actionConfigCleanLookup = new EnumLookupTable<Shortcut, InputAction>();
 
             for (int i = 0; i < actionConfigCleanLookup.Count; ++i)
             {
@@ -138,73 +132,11 @@ public static class ShortcutInput
                 actionConfigCleanLookup[scEnum] = new InputAction(properties);
             }
         }
-
-        public void Insert(Shortcut key, InputAction entry)
-        {
-            actionConfigCleanLookup[key] = entry;
-        }
-
-        public InputAction GetActionConfig(Shortcut key)
-        {
-            return actionConfigCleanLookup[key];
-        }
-
-        public void LoadFromSaveData(ShortcutActionContainer that)
-        {
-            saveData = that.saveData;
-            foreach (var data in saveData)
-            {
-                Shortcut enumVal;
-                if (System.Enum.TryParse(data.action, out enumVal))
-                {
-                    actionConfigCleanLookup[enumVal].LoadFrom(data);
-                    // Add more maps as needed
-                }
-                else
-                {
-                    Debug.LogError("Unable to parse " + data.action + " as an input action");
-                }
-            }
-        }
-
-        public void UpdateSaveData()
-        {
-            saveData.Clear();
-            for (int i = 0; i < actionConfigCleanLookup.Count; ++i)
-            {
-                Shortcut sc = (Shortcut)i;
-
-                if (!actionConfigCleanLookup[sc].properties.rebindable)
-                    continue;
-
-                var newItem = new InputAction.SaveData();
-                actionConfigCleanLookup[sc].SaveTo(sc.ToString(), newItem);
-
-                saveData.Add(newItem);
-            }
-        }
-
-        public IEnumerator<InputAction> GetEnumerator()
-        {
-            foreach (var val in actionConfigCleanLookup)
-            {
-                yield return val;
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
     }
 
     static ShortcutActionContainer primaryInputs { get { return GameSettings.controls; } } 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    public static bool modifierInput { get { return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl); } }
-    public static bool secondaryInput { get { return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift); } }
-    public static bool alternativeInput { get { return Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt); } }
 
     public static bool GetInputDown(Shortcut key)
     {

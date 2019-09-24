@@ -22,9 +22,9 @@ namespace MSE
             static InputFn inputDownFn = UnityEngine.Input.GetKeyDown;
             static InputFn inputUpFn = UnityEngine.Input.GetKeyUp;
             static InputFn inputGetFn = UnityEngine.Input.GetKey;
-            static bool ctrlKeyBeingPressed { get { return UnityEngine.Input.GetKey(KeyCode.LeftControl) || UnityEngine.Input.GetKey(KeyCode.RightControl); } }
-            static bool shiftKeyBeingPressed { get { return UnityEngine.Input.GetKey(KeyCode.LeftShift) || UnityEngine.Input.GetKey(KeyCode.RightShift); } }
-            static bool atlKeyBeingPressed { get { return UnityEngine.Input.GetKey(KeyCode.LeftAlt) || UnityEngine.Input.GetKey(KeyCode.RightAlt); } }
+            public static bool ctrlKeyBeingPressed { get { return UnityEngine.Input.GetKey(KeyCode.LeftControl) || UnityEngine.Input.GetKey(KeyCode.RightControl); } }
+            public static bool shiftKeyBeingPressed { get { return UnityEngine.Input.GetKey(KeyCode.LeftShift) || UnityEngine.Input.GetKey(KeyCode.RightShift); } }
+            public static bool atlKeyBeingPressed { get { return UnityEngine.Input.GetKey(KeyCode.LeftAlt) || UnityEngine.Input.GetKey(KeyCode.RightAlt); } }
 
             public bool Connected { get { return true; } }
             public DeviceType Type { get { return DeviceType.Keyboard; } }
@@ -134,8 +134,12 @@ namespace MSE
                 return false;
             }
 
-            public bool GetInputDown(KeyboardMap map)
+            public bool GetInputDown(IInputMap inputMap)
             {
+                KeyboardMap map = inputMap as KeyboardMap;
+                if (map == null)
+                    return false;
+
                 if (!CheckDesiredModifierKeysActive(map.modifiers))
                     return false;
 
@@ -160,8 +164,12 @@ namespace MSE
                 return hasInputDir;
             }
 
-            public bool GetInputUp(KeyboardMap map)
+            public bool GetInputUp(IInputMap inputMap)
             {
+                KeyboardMap map = inputMap as KeyboardMap;
+                if (map == null)
+                    return false;
+
                 if (!CheckDesiredModifierKeysActive(map.modifiers))
                     return false;
 
@@ -186,8 +194,12 @@ namespace MSE
                 return hasInputDir;
             }
 
-            public bool GetInput(KeyboardMap map)
+            public bool GetInput(IInputMap inputMap)
             {
+                KeyboardMap map = inputMap as KeyboardMap;
+                if (map == null)
+                    return false;
+
                 if (!CheckDesiredModifierKeysActive(map.modifiers))
                     return false;
 
