@@ -325,6 +325,21 @@ public static class GameSettings
         }
     }
 
+    public static void SetDefaultEditorControlsPad(ShortcutInput.ShortcutActionContainer inputList)
+    {
+        // Reset all maps to a blank state
+        foreach (Shortcut sc in EnumX<Shortcut>.Values)
+        {
+            inputList.GetActionConfig(sc).RemoveMapsForDevice(MSE.Input.DeviceType.Gamepad);
+        }
+
+        // Reset all maps to a blank state
+        foreach (Shortcut sc in EnumX<Shortcut>.Values)
+        {
+            inputList.GetActionConfig(sc).Add(new GamepadButtonMap());  // Add empty maps
+        }
+    }
+
     public static void SetDefaultGameplayControls(GameplayInput.GameplayActionContainer inputList)
     {
         SetDefaultGameplayControlsPad(inputList);

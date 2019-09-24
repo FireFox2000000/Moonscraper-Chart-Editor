@@ -59,10 +59,10 @@ public class GameplayInput
             {
                 GameplayAction scEnum = (GameplayAction)i;
                 InputAction.Properties properties = kDefaultProperties;
-                //if (!inputManager.inputPropertiesConfig.TryGetPropertiesConfig(scEnum, out properties))
-                //{
-                //    properties = kDefaultProperties;
-                //}
+                if (!inputManager.inputPropertiesConfig.TryGetPropertiesConfig(scEnum, out properties))
+                {
+                    properties = kDefaultProperties;
+                }
 
                 if (string.IsNullOrEmpty(properties.displayName))
                 {
