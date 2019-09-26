@@ -128,7 +128,7 @@ public class EditorObjectToolManager : System.Object
 
     void SetToolActive(bool isActive)
     {
-        if (isActive == isToolActive)
+        if (isActive == isToolActive && (currentTool == null || currentTool.toolObject.gameObject.activeSelf == isActive))
             return;
 
         isToolActive = isActive;
