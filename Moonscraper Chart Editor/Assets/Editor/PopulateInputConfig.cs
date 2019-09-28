@@ -77,22 +77,23 @@ public class PopulateInputConfig : Editor
     static readonly InputConfig.Properties kDefaultProperties = InputConfig.kDefaultProperties;
     static readonly bool kRebindableDefault = kDefaultProperties.rebindable;
     static readonly bool kHiddenInListsDefault = kDefaultProperties.hiddenInLists;
-    static readonly MSChartEditorInput.Category.CategoryType kCategoryDefault = kDefaultProperties.category;    
+    static readonly MSChartEditorInput.Category.CategoryType kCategoryDefault = kDefaultProperties.category;
+    static readonly MSChartEditorInput.Category.CategoryType kGlobal = MSChartEditorInput.Category.CategoryType.Global;
 
     static readonly Dictionary<MSChartEditorInputActions, InputConfig.Properties> inputExplicitProperties = new Dictionary<MSChartEditorInputActions, InputConfig.Properties>()
     {
-        { MSChartEditorInputActions.ActionHistoryRedo,       new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { MSChartEditorInputActions.ActionHistoryUndo,       new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { MSChartEditorInputActions.ActionHistoryRedo,       new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kGlobal } },
+        { MSChartEditorInputActions.ActionHistoryUndo,       new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kGlobal } },
         { MSChartEditorInputActions.ChordSelect,             new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { MSChartEditorInputActions.ClipboardCopy,           new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { MSChartEditorInputActions.ClipboardCut,            new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { MSChartEditorInputActions.ClipboardPaste,          new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { MSChartEditorInputActions.Delete,                  new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { MSChartEditorInputActions.FileLoad,                new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { MSChartEditorInputActions.FileNew,                 new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { MSChartEditorInputActions.FileSave,                new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { MSChartEditorInputActions.FileSaveAs,              new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { MSChartEditorInputActions.PlayPause,               new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { MSChartEditorInputActions.ClipboardCopy,           new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kGlobal } },
+        { MSChartEditorInputActions.ClipboardCut,            new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kGlobal } },
+        { MSChartEditorInputActions.ClipboardPaste,          new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kGlobal } },
+        { MSChartEditorInputActions.Delete,                  new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kGlobal } },
+        { MSChartEditorInputActions.FileLoad,                new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kGlobal } },
+        { MSChartEditorInputActions.FileNew,                 new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kGlobal } },
+        { MSChartEditorInputActions.FileSave,                new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kGlobal } },
+        { MSChartEditorInputActions.FileSaveAs,              new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kGlobal } },
+        { MSChartEditorInputActions.PlayPause,               new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kGlobal } },
         { MSChartEditorInputActions.SectionJumpMouseScroll,  new InputConfig.Properties {rebindable = false, hiddenInLists = true, category = kCategoryDefault } },
 
         { MSChartEditorInputActions.AddSongObject,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.EditorKeyboardMode } },
@@ -105,7 +106,7 @@ public class PopulateInputConfig : Editor
         { MSChartEditorInputActions.ToolNoteLane6,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.EditorToolNote } },
         { MSChartEditorInputActions.ToolNoteLaneOpen,    new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.EditorToolNote } },
 
-        { MSChartEditorInputActions.CloseMenu,           new InputConfig.Properties {rebindable = false, hiddenInLists = true, category = kCategoryDefault } },
+        { MSChartEditorInputActions.CloseMenu,           new InputConfig.Properties {rebindable = false, hiddenInLists = true, category = kGlobal } },
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

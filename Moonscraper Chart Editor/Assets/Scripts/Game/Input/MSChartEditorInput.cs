@@ -104,6 +104,7 @@ public static class MSChartEditorInput
         // static int to make int conversion way easier. The lack of implicit enum->int conversion is annoying as hell.
         public enum CategoryType
         {
+            Global,
             Editor,
             EditorKeyboardMode,
             EditorToolNote,
@@ -122,13 +123,18 @@ public static class MSChartEditorInput
 
         static Category()
         {
-            interactionMatrix.SetInteractableAll((int)CategoryType.Editor);
+            interactionMatrix.SetInteractableAll((int)CategoryType.Global);
 
-            interactionMatrix.SetInteractable((int)CategoryType.EditorKeyboardMode, (int)CategoryType.EditorKeyboardMode);
-            interactionMatrix.SetInteractable((int)CategoryType.EditorToolNote, (int)CategoryType.EditorToolNote);
+            // Set editor interactions
+            foreach(var value in EnumX<CategoryType>.Values)
+            {
+                // Every category interacts with itself
+                interactionMatrix.SetInteractable((int)value, (int)value);
 
-            interactionMatrix.SetInteractable((int)CategoryType.GameplayGuitar, (int)CategoryType.GameplayGuitar);
-            interactionMatrix.SetInteractable((int)CategoryType.GameplayDrums, (int)CategoryType.GameplayDrums);
+                // All editor inputs conflict with Top-Level editor categories
+                if (((1 << (int)value) & kEditorCategoryMask) != 0)
+                    interactionMatrix.SetInteractable((int)value, (int)CategoryType.Editor);
+            }
         }
     }
 
