@@ -143,7 +143,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
     void Controls()
     {
-        if (ShortcutInput.GetInputDown(Shortcut.ToggleNoteTap) && tapToggle.interactable)
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteTap) && tapToggle.interactable)
         {
             if (tapToggle.isOn)
                 tapToggle.isOn = false;
@@ -151,7 +151,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
                 tapToggle.isOn = true;
         }
 
-        if (ShortcutInput.GetInputDown(Shortcut.ToggleNoteForced) && forcedToggle.interactable)
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteForced) && forcedToggle.interactable)
         {
             if (forcedToggle.isOn)
                 forcedToggle.isOn = false;

@@ -18,7 +18,7 @@ public class TimelineMovementController : MovementController
     Vector2? middleClickDownScreenPos = null;
     const float c_middleClickMouseDragSensitivity = 10.0f;
     const float autoscrollSpeed = 10.0f;
-    readonly Shortcut[] arrowKeyShortcutGroup = new Shortcut[] { Shortcut.MoveStepPositive, Shortcut.MoveStepNegative, Shortcut.MoveMeasurePositive, Shortcut.MoveMeasureNegative };
+    readonly MSChartEditorInputActions[] arrowKeyShortcutGroup = new MSChartEditorInputActions[] { MSChartEditorInputActions.MoveStepPositive, MSChartEditorInputActions.MoveStepNegative, MSChartEditorInputActions.MoveMeasurePositive, MSChartEditorInputActions.MoveMeasureNegative };
 
     public override void SetPosition(uint tick)
     {
@@ -87,9 +87,9 @@ public class TimelineMovementController : MovementController
             }
         }
 
-        if (ShortcutInput.GetGroupInputDown(arrowKeyShortcutGroup))
+        if (MSChartEditorInput.GetGroupInputDown(arrowKeyShortcutGroup))
             arrowMoveTimer = 0;
-        else if (ShortcutInput.GetGroupInput(arrowKeyShortcutGroup))
+        else if (MSChartEditorInput.GetGroupInput(arrowKeyShortcutGroup))
             arrowMoveTimer += Time.deltaTime;
         else
             arrowMoveTimer = 0;
@@ -101,7 +101,7 @@ public class TimelineMovementController : MovementController
 
     // Update is called once per frame
     void LateUpdate () {
-        if (!ShortcutInput.GetInput(Shortcut.SelectAllSection) || editor.currentSong.sections.Count <= 0)
+        if (!MSChartEditorInput.GetInput(MSChartEditorInputActions.SelectAllSection) || editor.currentSong.sections.Count <= 0)
         {
             sectionHighlightRealOriginIndex = SongObjectHelper.GetIndexOfPrevious(editor.currentSong.sections, editor.currentTickPos);
             sectionHighlightCurrentIndex = sectionHighlightRealOriginIndex;
@@ -137,7 +137,7 @@ public class TimelineMovementController : MovementController
             // Position changes scroll bar value
             if (scrollDelta != 0 || transform.position != prevPos || Services.HasScreenResized)
             {
-                if (ShortcutInput.GetInput(Shortcut.SectionJumpMouseScroll) && editor.currentSong.sections.Count > 0)
+                if (MSChartEditorInput.GetInput(MSChartEditorInputActions.SectionJumpMouseScroll) && editor.currentSong.sections.Count > 0)
                 {
                     SectionJump(scrollDelta);
                     RefreshSectionHighlight();
@@ -160,19 +160,19 @@ public class TimelineMovementController : MovementController
 
                 UpdateTimelineHandleBasedPos();
             }
-            else if (ShortcutInput.GetInputDown(Shortcut.SectionJumpPositive) && editor.currentSong.sections.Count > 0)
+            else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.SectionJumpPositive) && editor.currentSong.sections.Count > 0)
             {
                 SectionJump(1);              
                 UpdateTimelineHandleBasedPos();
                 RefreshSectionHighlight();
             }
-            else if (ShortcutInput.GetInputDown(Shortcut.SectionJumpNegative) && editor.currentSong.sections.Count > 0)
+            else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.SectionJumpNegative) && editor.currentSong.sections.Count > 0)
             {
                 SectionJump(-1);
                 UpdateTimelineHandleBasedPos();
                 RefreshSectionHighlight();
             }
-            else if (ShortcutInput.GetGroupInput(arrowKeyShortcutGroup))
+            else if (MSChartEditorInput.GetGroupInput(arrowKeyShortcutGroup))
             {
                 // Arrow key controls
                 uint currentPos;
@@ -185,20 +185,20 @@ public class TimelineMovementController : MovementController
                 {
                     uint snappedPos = currentPos;
                     // Navigate to snapped pos ahead or behind
-                    if (ShortcutInput.GetInput(Shortcut.MoveStepPositive))
+                    if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveStepPositive))
                     {
                         snappedPos = Snapable.ChartIncrementStep(currentPos, GameSettings.step, editor.currentSong);
                     }
-                    else if (ShortcutInput.GetInput(Shortcut.MoveStepNegative))
+                    else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveStepNegative))
                     {
                         snappedPos = Snapable.ChartDecrementStep(currentPos, GameSettings.step, editor.currentSong);
                     }
-                    else if (ShortcutInput.GetInput(Shortcut.MoveMeasurePositive))
+                    else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveMeasurePositive))
                     {
                         snappedPos = Snapable.TickToSnappedTick(currentPos + (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong);
                     }
                     // Page Down
-                    else if (ShortcutInput.GetInput(Shortcut.MoveMeasureNegative))
+                    else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveMeasureNegative))
                     {
                         snappedPos = Snapable.TickToSnappedTick(currentPos - (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong);
                     }
@@ -358,7 +358,7 @@ public class TimelineMovementController : MovementController
 
     void RefreshSectionHighlight()
     {
-        if (!ShortcutInput.GetInput(Shortcut.SelectAllSection))
+        if (!MSChartEditorInput.GetInput(MSChartEditorInputActions.SelectAllSection))
             return;
 
         int currentSectionIndex = SongObjectHelper.GetIndexOfPrevious(editor.currentSong.sections, editor.currentTickPos);

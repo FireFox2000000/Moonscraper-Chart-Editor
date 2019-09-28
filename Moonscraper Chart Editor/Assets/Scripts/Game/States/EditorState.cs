@@ -13,10 +13,10 @@ public class EditorState : SystemManagerState
         Services services = editor.services;
         Globals.ViewMode viewMode = Globals.viewMode;
 
-        if (ShortcutInput.GetInputDown(Shortcut.StepIncrease))
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.StepIncrease))
             GameSettings.snappingStep.Increment();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.StepDecrease))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.StepDecrease))
             GameSettings.snappingStep.Decrement();
 
         if (editor.groupMove.movementInProgress)
@@ -26,7 +26,7 @@ public class EditorState : SystemManagerState
         {
             var gamepad = InputManager.Instance.mainGamepad;
 
-            if (ShortcutInput.GetInputDown(Shortcut.PlayPause))
+            if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.PlayPause))
             {
                 editor.Play();
                 return;
@@ -38,15 +38,15 @@ public class EditorState : SystemManagerState
             }
         }
 
-        if (ShortcutInput.GetInputDown(Shortcut.Delete) && editor.selectedObjectsManager.currentSelectedObjects.Count > 0)
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.Delete) && editor.selectedObjectsManager.currentSelectedObjects.Count > 0)
             editor.Delete();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.SelectAll))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.SelectAll))
         {
             editor.toolManager.ChangeTool(EditorObjectToolManager.ToolID.Cursor);
             editor.selectedObjectsManager.SelectAllInView(viewMode);
         }
-        else if (ShortcutInput.GetInputDown(Shortcut.SelectAllSection))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.SelectAllSection))
         {
             editor.toolManager.ChangeTool(EditorObjectToolManager.ToolID.Cursor);
             editor.selectedObjectsManager.HighlightCurrentSection(viewMode);
@@ -56,7 +56,7 @@ public class EditorState : SystemManagerState
         {
             bool success = false;
 
-            if (ShortcutInput.GetInputDown(Shortcut.ActionHistoryUndo))
+            if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ActionHistoryUndo))
             {
                 if (!editor.commandStack.isAtStart && editor.services.CanUndo())
                 {
@@ -64,7 +64,7 @@ public class EditorState : SystemManagerState
                     success = true;
                 }
             }
-            else if (ShortcutInput.GetInputDown(Shortcut.ActionHistoryRedo))
+            else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ActionHistoryRedo))
             {
                 if (!editor.commandStack.isAtEnd && editor.services.CanRedo())
                 {
@@ -83,9 +83,9 @@ public class EditorState : SystemManagerState
 
         if (editor.selectedObjectsManager.currentSelectedObjects.Count > 0)
         {
-            if (ShortcutInput.GetInputDown(Shortcut.ClipboardCut))
+            if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ClipboardCut))
                 editor.Cut();
-            else if (ShortcutInput.GetInputDown(Shortcut.ClipboardCopy))
+            else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ClipboardCopy))
                 editor.Copy();
         }
     }

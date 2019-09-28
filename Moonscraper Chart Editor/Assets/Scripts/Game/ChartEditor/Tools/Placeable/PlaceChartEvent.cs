@@ -70,7 +70,7 @@ public class PlaceChartEvent : PlaceSongObject
                     editor.selectedObjectsManager.currentSelectedObject = editor.currentChart.events[pos];
             }
         }
-        else if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.AddSongObject))
         {
             var searchArray = editor.currentChart.events;
             int pos = SongObjectHelper.FindObjectPosition(chartEvent, searchArray);

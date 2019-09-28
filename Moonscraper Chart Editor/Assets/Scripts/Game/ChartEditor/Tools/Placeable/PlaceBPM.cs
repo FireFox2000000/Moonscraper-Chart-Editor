@@ -27,7 +27,7 @@ public class PlaceBPM : PlaceSongObject {
                 AddObject();
             }
         }
-        else if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.AddSongObject))
         {
             IList<SyncTrack> searchArray = editor.currentSong.syncTrack;
             int pos = SongObjectHelper.FindObjectPosition(bpm, searchArray);

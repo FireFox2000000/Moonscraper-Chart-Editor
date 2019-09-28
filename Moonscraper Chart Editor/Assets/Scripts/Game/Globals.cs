@@ -204,22 +204,22 @@ public class Globals : MonoBehaviour {
 
     void Shortcuts()
     {
-        if (ShortcutInput.GetInputDown(Shortcut.ToggleMetronome))
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleMetronome))
         {
             services.ToggleMetronome();
             services.notificationBar.PushNotification("METRONOME TOGGLED " + Services.BoolToStrOnOff(GameSettings.metronomeActive), 2, true);
         }
 
-        if (ShortcutInput.GetInputDown(Shortcut.FileSave))
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.FileSave))
             editor._Save();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.FileSaveAs))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.FileSaveAs))
             editor.SaveAs();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.FileLoad))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.FileLoad))
             editor.Load();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.FileNew))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.FileNew))
             editor.New();
     }
 

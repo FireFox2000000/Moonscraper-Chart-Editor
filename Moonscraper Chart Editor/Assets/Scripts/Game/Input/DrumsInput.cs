@@ -4,12 +4,12 @@ using MSE.Input;
 
 public static class DrumsInput
 {
-    static readonly Dictionary<int, Dictionary<Note.DrumPad, Shortcut?>> laneCountGamepadOverridesDict = new Dictionary<int, Dictionary<Note.DrumPad, Shortcut?>>()
+    static readonly Dictionary<int, Dictionary<Note.DrumPad, MSChartEditorInputActions?>> laneCountGamepadOverridesDict = new Dictionary<int, Dictionary<Note.DrumPad, MSChartEditorInputActions?>>()
     {
         {
-            4, new Dictionary<Note.DrumPad, Shortcut?>()
+            4, new Dictionary<Note.DrumPad, MSChartEditorInputActions?>()
             {
-                { Note.DrumPad.Orange, Shortcut.DrumPadGreen },
+                { Note.DrumPad.Orange, MSChartEditorInputActions.DrumPadGreen },
                 { Note.DrumPad.Green, null }
             }
         }
@@ -20,15 +20,15 @@ public static class DrumsInput
         if (gamepad == null || !gamepad.Connected)
             return false;
 
-        Dictionary<Note.DrumPad, Shortcut?> inputOverrideDict;
-        Shortcut? overrideInput;
+        Dictionary<Note.DrumPad, MSChartEditorInputActions?> inputOverrideDict;
+        MSChartEditorInputActions? overrideInput;
 
         if (laneCountGamepadOverridesDict.TryGetValue(laneInfo.laneCount, out inputOverrideDict) && inputOverrideDict.TryGetValue(drumFret, out overrideInput))
         {
             bool inputFound = false;
 
             if (overrideInput != null)
-                inputFound = ShortcutInput.GetInputDown((Shortcut)overrideInput);
+                inputFound = MSChartEditorInput.GetInputDown((MSChartEditorInputActions)overrideInput);
 
             return inputFound;
         }
@@ -36,22 +36,22 @@ public static class DrumsInput
         switch (drumFret)
         {
             case Note.DrumPad.Red:
-                return ShortcutInput.GetInputDown(Shortcut.DrumPadRed);
+                return MSChartEditorInput.GetInputDown(MSChartEditorInputActions.DrumPadRed);
 
             case Note.DrumPad.Yellow:
-                return ShortcutInput.GetInputDown(Shortcut.DrumPadYellow);
+                return MSChartEditorInput.GetInputDown(MSChartEditorInputActions.DrumPadYellow);
 
             case Note.DrumPad.Blue:
-                return ShortcutInput.GetInputDown(Shortcut.DrumPadBlue);
+                return MSChartEditorInput.GetInputDown(MSChartEditorInputActions.DrumPadBlue);
 
             case Note.DrumPad.Orange:
-                return ShortcutInput.GetInputDown(Shortcut.DrumPadOrange);
+                return MSChartEditorInput.GetInputDown(MSChartEditorInputActions.DrumPadOrange);
 
             case Note.DrumPad.Green:
-                return ShortcutInput.GetInputDown(Shortcut.DrumPadGreen);
+                return MSChartEditorInput.GetInputDown(MSChartEditorInputActions.DrumPadGreen);
 
             case Note.DrumPad.Kick:
-                return ShortcutInput.GetInputDown(Shortcut.DrumPadKick);
+                return MSChartEditorInput.GetInputDown(MSChartEditorInputActions.DrumPadKick);
 
             default:
                 Debug.LogError("Unhandled note type for drum input: " + drumFret);

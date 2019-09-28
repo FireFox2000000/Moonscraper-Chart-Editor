@@ -38,13 +38,13 @@ public class GroupSelectPanelController : MonoBehaviour
 
     void Shortcuts()
     {
-        if (ShortcutInput.GetInputDown(Shortcut.NoteSetNatural))
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetNatural))
             setNoteNatural.onClick.Invoke();
-        else if (ShortcutInput.GetInputDown(Shortcut.NoteSetStrum))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetStrum))
             setNoteStrum.onClick.Invoke();
-        else if (ShortcutInput.GetInputDown(Shortcut.NoteSetHopo))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetHopo))
             setNoteHopo.onClick.Invoke();
-        else if (ShortcutInput.GetInputDown(Shortcut.NoteSetTap))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetTap))
             setNoteTap.onClick.Invoke();
     }
 

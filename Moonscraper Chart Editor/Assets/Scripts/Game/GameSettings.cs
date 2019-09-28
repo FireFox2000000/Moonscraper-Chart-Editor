@@ -76,7 +76,7 @@ public static class GameSettings
     public static ClapToggle clapProperties = (ClapToggle)c_defaultClapVal;
     public static NotePlacementMode notePlacementMode = NotePlacementMode.Default;
 
-    public static ShortcutInput.ShortcutActionContainer controls = new ShortcutInput.ShortcutActionContainer();
+    public static MSChartEditorInput.MSChartEditorActionContainer controls = new MSChartEditorInput.MSChartEditorActionContainer();
 
     public static bool GetBoolSetting(string identifier)
     {
@@ -158,7 +158,7 @@ public static class GameSettings
             {
                 Debug.Log("Loading input settings");
                 string controlsJson = File.ReadAllText(controllerBindingsFilepath);
-                controls.LoadFromSaveData(JsonUtility.FromJson<ShortcutInput.ShortcutActionContainer>(controlsJson));
+                controls.LoadFromSaveData(JsonUtility.FromJson<MSChartEditorInput.MSChartEditorActionContainer>(controlsJson));
             }
         }
         catch (System.Exception e)
@@ -232,107 +232,107 @@ public static class GameSettings
         SetDefaultGameplayControls(controls);
     }
 
-    public static void SetDefaultKeysControls(ShortcutInput.ShortcutActionContainer inputList)
+    public static void SetDefaultKeysControls(MSChartEditorInput.MSChartEditorActionContainer inputList)
     {
         // Reset all maps to a blank state
-        foreach (Shortcut sc in EnumX<Shortcut>.Values)
+        foreach (MSChartEditorInputActions sc in EnumX<MSChartEditorInputActions>.Values)
         {
             var config = inputList.GetActionConfig(sc);
-            if (((1 << config.properties.category) & ShortcutInput.Category.kEditorCategoryMask) != 0)
+            if (((1 << config.properties.category) & MSChartEditorInput.Category.kEditorCategoryMask) != 0)
                 config.RemoveMapsForDevice(MSE.Input.DeviceType.Keyboard);
         }
 
         {
-            inputList.GetActionConfig(Shortcut.AddSongObject).Add(new KeyboardMap() { KeyCode.Alpha1 });
-            inputList.GetActionConfig(Shortcut.BpmIncrease).Add(new KeyboardMap() { KeyCode.Equals, });
-            inputList.GetActionConfig(Shortcut.BpmDecrease).Add(new KeyboardMap() { KeyCode.Minus, });
-            inputList.GetActionConfig(Shortcut.Delete).Add(new KeyboardMap() { KeyCode.Delete });
-            inputList.GetActionConfig(Shortcut.PlayPause).Add(new KeyboardMap() { KeyCode.Space });
-            inputList.GetActionConfig(Shortcut.MoveStepPositive).Add(new KeyboardMap() { KeyCode.UpArrow });
-            inputList.GetActionConfig(Shortcut.MoveStepNegative).Add(new KeyboardMap() { KeyCode.DownArrow });
-            inputList.GetActionConfig(Shortcut.MoveMeasurePositive).Add(new KeyboardMap() { KeyCode.PageUp });
-            inputList.GetActionConfig(Shortcut.MoveMeasureNegative).Add(new KeyboardMap() { KeyCode.PageDown });
-            inputList.GetActionConfig(Shortcut.NoteSetNatural).Add(new KeyboardMap() { KeyCode.X });
-            inputList.GetActionConfig(Shortcut.NoteSetStrum).Add(new KeyboardMap() { KeyCode.S });
-            inputList.GetActionConfig(Shortcut.NoteSetHopo).Add(new KeyboardMap() { KeyCode.H });
-            inputList.GetActionConfig(Shortcut.NoteSetTap).Add(new KeyboardMap() { KeyCode.T });
-            inputList.GetActionConfig(Shortcut.StepIncrease).Add(new KeyboardMap() { KeyCode.W });
-            inputList.GetActionConfig(Shortcut.StepIncrease).Add(new KeyboardMap() { KeyCode.RightArrow });
-            inputList.GetActionConfig(Shortcut.StepDecrease).Add(new KeyboardMap() { KeyCode.Q });
-            inputList.GetActionConfig(Shortcut.StepDecrease).Add(new KeyboardMap() { KeyCode.LeftArrow });
-            inputList.GetActionConfig(Shortcut.ToggleBpmAnchor).Add(new KeyboardMap() { KeyCode.A });
-            inputList.GetActionConfig(Shortcut.ToggleClap).Add(new KeyboardMap() { KeyCode.N });
-            inputList.GetActionConfig(Shortcut.ToggleExtendedSustains).Add(new KeyboardMap() { KeyCode.E });
-            inputList.GetActionConfig(Shortcut.ToggleMetronome).Add(new KeyboardMap() { KeyCode.M });
-            inputList.GetActionConfig(Shortcut.ToggleMouseMode).Add(new KeyboardMap() { KeyCode.BackQuote });
-            inputList.GetActionConfig(Shortcut.ToggleNoteForced).Add(new KeyboardMap() { KeyCode.F });
-            inputList.GetActionConfig(Shortcut.ToggleNoteTap).Add(new KeyboardMap() { KeyCode.T });
-            inputList.GetActionConfig(Shortcut.ToggleViewMode).Add(new KeyboardMap() { KeyCode.G });
-            inputList.GetActionConfig(Shortcut.ToolNoteBurst).Add(new KeyboardMap() { KeyCode.B });
-            inputList.GetActionConfig(Shortcut.ToolNoteHold).Add(new KeyboardMap() { KeyCode.H });
-            inputList.GetActionConfig(Shortcut.ToolSelectCursor).Add(new KeyboardMap() { KeyCode.J });
-            inputList.GetActionConfig(Shortcut.ToolSelectEraser).Add(new KeyboardMap() { KeyCode.K });
-            inputList.GetActionConfig(Shortcut.ToolSelectNote).Add(new KeyboardMap() { KeyCode.Y });
-            inputList.GetActionConfig(Shortcut.ToolSelectStarpower).Add(new KeyboardMap() { KeyCode.U });
-            inputList.GetActionConfig(Shortcut.ToolSelectBpm).Add(new KeyboardMap() { KeyCode.I });
-            inputList.GetActionConfig(Shortcut.ToolSelectTimeSignature).Add(new KeyboardMap() { KeyCode.O });
-            inputList.GetActionConfig(Shortcut.ToolSelectSection).Add(new KeyboardMap() { KeyCode.P });
-            inputList.GetActionConfig(Shortcut.ToolSelectEvent).Add(new KeyboardMap() { KeyCode.L });
+            inputList.GetActionConfig(MSChartEditorInputActions.AddSongObject).Add(new KeyboardMap() { KeyCode.Alpha1 });
+            inputList.GetActionConfig(MSChartEditorInputActions.BpmIncrease).Add(new KeyboardMap() { KeyCode.Equals, });
+            inputList.GetActionConfig(MSChartEditorInputActions.BpmDecrease).Add(new KeyboardMap() { KeyCode.Minus, });
+            inputList.GetActionConfig(MSChartEditorInputActions.Delete).Add(new KeyboardMap() { KeyCode.Delete });
+            inputList.GetActionConfig(MSChartEditorInputActions.PlayPause).Add(new KeyboardMap() { KeyCode.Space });
+            inputList.GetActionConfig(MSChartEditorInputActions.MoveStepPositive).Add(new KeyboardMap() { KeyCode.UpArrow });
+            inputList.GetActionConfig(MSChartEditorInputActions.MoveStepNegative).Add(new KeyboardMap() { KeyCode.DownArrow });
+            inputList.GetActionConfig(MSChartEditorInputActions.MoveMeasurePositive).Add(new KeyboardMap() { KeyCode.PageUp });
+            inputList.GetActionConfig(MSChartEditorInputActions.MoveMeasureNegative).Add(new KeyboardMap() { KeyCode.PageDown });
+            inputList.GetActionConfig(MSChartEditorInputActions.NoteSetNatural).Add(new KeyboardMap() { KeyCode.X });
+            inputList.GetActionConfig(MSChartEditorInputActions.NoteSetStrum).Add(new KeyboardMap() { KeyCode.S });
+            inputList.GetActionConfig(MSChartEditorInputActions.NoteSetHopo).Add(new KeyboardMap() { KeyCode.H });
+            inputList.GetActionConfig(MSChartEditorInputActions.NoteSetTap).Add(new KeyboardMap() { KeyCode.T });
+            inputList.GetActionConfig(MSChartEditorInputActions.StepIncrease).Add(new KeyboardMap() { KeyCode.W });
+            inputList.GetActionConfig(MSChartEditorInputActions.StepIncrease).Add(new KeyboardMap() { KeyCode.RightArrow });
+            inputList.GetActionConfig(MSChartEditorInputActions.StepDecrease).Add(new KeyboardMap() { KeyCode.Q });
+            inputList.GetActionConfig(MSChartEditorInputActions.StepDecrease).Add(new KeyboardMap() { KeyCode.LeftArrow });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToggleBpmAnchor).Add(new KeyboardMap() { KeyCode.A });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToggleClap).Add(new KeyboardMap() { KeyCode.N });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToggleExtendedSustains).Add(new KeyboardMap() { KeyCode.E });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToggleMetronome).Add(new KeyboardMap() { KeyCode.M });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToggleMouseMode).Add(new KeyboardMap() { KeyCode.BackQuote });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToggleNoteForced).Add(new KeyboardMap() { KeyCode.F });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToggleNoteTap).Add(new KeyboardMap() { KeyCode.T });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToggleViewMode).Add(new KeyboardMap() { KeyCode.G });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolNoteBurst).Add(new KeyboardMap() { KeyCode.B });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolNoteHold).Add(new KeyboardMap() { KeyCode.H });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolSelectCursor).Add(new KeyboardMap() { KeyCode.J });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolSelectEraser).Add(new KeyboardMap() { KeyCode.K });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolSelectNote).Add(new KeyboardMap() { KeyCode.Y });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolSelectStarpower).Add(new KeyboardMap() { KeyCode.U });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolSelectBpm).Add(new KeyboardMap() { KeyCode.I });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolSelectTimeSignature).Add(new KeyboardMap() { KeyCode.O });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolSelectSection).Add(new KeyboardMap() { KeyCode.P });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolSelectEvent).Add(new KeyboardMap() { KeyCode.L });
 
-            inputList.GetActionConfig(Shortcut.ToolNoteLane1).Add(new KeyboardMap() { KeyCode.Alpha1 });
-            inputList.GetActionConfig(Shortcut.ToolNoteLane2).Add(new KeyboardMap() { KeyCode.Alpha2 });
-            inputList.GetActionConfig(Shortcut.ToolNoteLane3).Add(new KeyboardMap() { KeyCode.Alpha3 });
-            inputList.GetActionConfig(Shortcut.ToolNoteLane4).Add(new KeyboardMap() { KeyCode.Alpha4 });
-            inputList.GetActionConfig(Shortcut.ToolNoteLane5).Add(new KeyboardMap() { KeyCode.Alpha5 });
-            inputList.GetActionConfig(Shortcut.ToolNoteLane6).Add(new KeyboardMap() { KeyCode.Alpha6 });
-            inputList.GetActionConfig(Shortcut.ToolNoteLaneOpen).Add(new KeyboardMap() { KeyCode.Alpha0 });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolNoteLane1).Add(new KeyboardMap() { KeyCode.Alpha1 });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolNoteLane2).Add(new KeyboardMap() { KeyCode.Alpha2 });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolNoteLane3).Add(new KeyboardMap() { KeyCode.Alpha3 });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolNoteLane4).Add(new KeyboardMap() { KeyCode.Alpha4 });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolNoteLane5).Add(new KeyboardMap() { KeyCode.Alpha5 });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolNoteLane6).Add(new KeyboardMap() { KeyCode.Alpha6 });
+            inputList.GetActionConfig(MSChartEditorInputActions.ToolNoteLaneOpen).Add(new KeyboardMap() { KeyCode.Alpha0 });
 
-            inputList.GetActionConfig(Shortcut.CloseMenu).Add(new KeyboardMap() { KeyCode.Escape });
+            inputList.GetActionConfig(MSChartEditorInputActions.CloseMenu).Add(new KeyboardMap() { KeyCode.Escape });
         }
 
         {
             KeyboardDevice.ModifierKeys modiInput = KeyboardDevice.ModifierKeys.Ctrl;
-            inputList.GetActionConfig(Shortcut.ClipboardCopy).Add(new KeyboardMap(modiInput) { KeyCode.C });
-            inputList.GetActionConfig(Shortcut.ClipboardCut).Add(new KeyboardMap(modiInput) { KeyCode.X });
-            inputList.GetActionConfig(Shortcut.ClipboardPaste).Add(new KeyboardMap(modiInput) { KeyCode.V });
-            inputList.GetActionConfig(Shortcut.FileLoad).Add(new KeyboardMap(modiInput) { KeyCode.O });
-            inputList.GetActionConfig(Shortcut.FileNew).Add(new KeyboardMap(modiInput) { KeyCode.N });
-            inputList.GetActionConfig(Shortcut.FileSave).Add(new KeyboardMap(modiInput) { KeyCode.S });
-            inputList.GetActionConfig(Shortcut.ActionHistoryRedo).Add(new KeyboardMap(modiInput) { KeyCode.Y });
-            inputList.GetActionConfig(Shortcut.ActionHistoryUndo).Add(new KeyboardMap(modiInput) { KeyCode.Z });
-            inputList.GetActionConfig(Shortcut.SelectAll).Add(new KeyboardMap(modiInput) { KeyCode.A });
+            inputList.GetActionConfig(MSChartEditorInputActions.ClipboardCopy).Add(new KeyboardMap(modiInput) { KeyCode.C });
+            inputList.GetActionConfig(MSChartEditorInputActions.ClipboardCut).Add(new KeyboardMap(modiInput) { KeyCode.X });
+            inputList.GetActionConfig(MSChartEditorInputActions.ClipboardPaste).Add(new KeyboardMap(modiInput) { KeyCode.V });
+            inputList.GetActionConfig(MSChartEditorInputActions.FileLoad).Add(new KeyboardMap(modiInput) { KeyCode.O });
+            inputList.GetActionConfig(MSChartEditorInputActions.FileNew).Add(new KeyboardMap(modiInput) { KeyCode.N });
+            inputList.GetActionConfig(MSChartEditorInputActions.FileSave).Add(new KeyboardMap(modiInput) { KeyCode.S });
+            inputList.GetActionConfig(MSChartEditorInputActions.ActionHistoryRedo).Add(new KeyboardMap(modiInput) { KeyCode.Y });
+            inputList.GetActionConfig(MSChartEditorInputActions.ActionHistoryUndo).Add(new KeyboardMap(modiInput) { KeyCode.Z });
+            inputList.GetActionConfig(MSChartEditorInputActions.SelectAll).Add(new KeyboardMap(modiInput) { KeyCode.A });
         }
 
         {
             KeyboardDevice.ModifierKeys modiInput = KeyboardDevice.ModifierKeys.Shift;
 
-            inputList.GetActionConfig(Shortcut.ChordSelect).Add(new KeyboardMap(modiInput) { });
+            inputList.GetActionConfig(MSChartEditorInputActions.ChordSelect).Add(new KeyboardMap(modiInput) { });
         }
 
         {
             KeyboardDevice.ModifierKeys modiInput = KeyboardDevice.ModifierKeys.Ctrl | KeyboardDevice.ModifierKeys.Shift;
 
-            inputList.GetActionConfig(Shortcut.FileSaveAs).Add(new KeyboardMap(modiInput) { KeyCode.S });
-            inputList.GetActionConfig(Shortcut.ActionHistoryRedo).Add(new KeyboardMap(modiInput) { KeyCode.Z });
+            inputList.GetActionConfig(MSChartEditorInputActions.FileSaveAs).Add(new KeyboardMap(modiInput) { KeyCode.S });
+            inputList.GetActionConfig(MSChartEditorInputActions.ActionHistoryRedo).Add(new KeyboardMap(modiInput) { KeyCode.Z });
         }
 
         {
             KeyboardDevice.ModifierKeys modiInput = KeyboardDevice.ModifierKeys.Alt;
 
-            inputList.GetActionConfig(Shortcut.SectionJumpPositive).Add(new KeyboardMap(modiInput) { KeyCode.UpArrow });
-            inputList.GetActionConfig(Shortcut.SectionJumpNegative).Add(new KeyboardMap(modiInput) { KeyCode.DownArrow });
-            inputList.GetActionConfig(Shortcut.SelectAllSection).Add(new KeyboardMap(modiInput) { KeyCode.A });
-            inputList.GetActionConfig(Shortcut.SectionJumpMouseScroll).Add(new KeyboardMap(modiInput) { });
+            inputList.GetActionConfig(MSChartEditorInputActions.SectionJumpPositive).Add(new KeyboardMap(modiInput) { KeyCode.UpArrow });
+            inputList.GetActionConfig(MSChartEditorInputActions.SectionJumpNegative).Add(new KeyboardMap(modiInput) { KeyCode.DownArrow });
+            inputList.GetActionConfig(MSChartEditorInputActions.SelectAllSection).Add(new KeyboardMap(modiInput) { KeyCode.A });
+            inputList.GetActionConfig(MSChartEditorInputActions.SectionJumpMouseScroll).Add(new KeyboardMap(modiInput) { });
         }
     }
 
-    public static void SetDefaultEditorControlsPad(ShortcutInput.ShortcutActionContainer inputList)
+    public static void SetDefaultEditorControlsPad(MSChartEditorInput.MSChartEditorActionContainer inputList)
     {
         // Reset all maps to a blank state
-        foreach (Shortcut sc in EnumX<Shortcut>.Values)
+        foreach (MSChartEditorInputActions sc in EnumX<MSChartEditorInputActions>.Values)
         {
             var config = inputList.GetActionConfig(sc);
-            if (((1 << config.properties.category) & ShortcutInput.Category.kEditorCategoryMask) != 0)
+            if (((1 << config.properties.category) & MSChartEditorInput.Category.kEditorCategoryMask) != 0)
             {
                 config.RemoveMapsForDevice(MSE.Input.DeviceType.Gamepad);
                 config.Add(new GamepadButtonMap());  // Add empty maps
@@ -340,64 +340,64 @@ public static class GameSettings
         }
     }
 
-    public static void SetDefaultGameplayControls(ShortcutInput.ShortcutActionContainer inputList)
+    public static void SetDefaultGameplayControls(MSChartEditorInput.MSChartEditorActionContainer inputList)
     {
         SetDefaultGameplayControlsPad(inputList);
         SetDefaultGameplayControlsKeys(inputList);
     }
 
-    public static void SetDefaultGameplayControlsPad(ShortcutInput.ShortcutActionContainer inputList)
+    public static void SetDefaultGameplayControlsPad(MSChartEditorInput.MSChartEditorActionContainer inputList)
     {
         // Reset all maps to a blank state
-        foreach (Shortcut sc in EnumX<Shortcut>.Values)
+        foreach (MSChartEditorInputActions sc in EnumX<MSChartEditorInputActions>.Values)
         {
             var config = inputList.GetActionConfig(sc);
-            if (((1 << config.properties.category) & ShortcutInput.Category.kGameplayCategoryMask) != 0)
+            if (((1 << config.properties.category) & MSChartEditorInput.Category.kGameplayCategoryMask) != 0)
                 config.RemoveMapsForDevice(MSE.Input.DeviceType.Gamepad);
         }
 
-        inputList.GetActionConfig(Shortcut.GuitarStrumUp).Add(new GamepadButtonMap() { GamepadDevice.Button.DPadUp });
-        inputList.GetActionConfig(Shortcut.GuitarStrumDown).Add(new GamepadButtonMap() { GamepadDevice.Button.DPadDown });
+        inputList.GetActionConfig(MSChartEditorInputActions.GuitarStrumUp).Add(new GamepadButtonMap() { GamepadDevice.Button.DPadUp });
+        inputList.GetActionConfig(MSChartEditorInputActions.GuitarStrumDown).Add(new GamepadButtonMap() { GamepadDevice.Button.DPadDown });
 
-        inputList.GetActionConfig(Shortcut.GuitarFretGreen).Add(new GamepadButtonMap() { GamepadDevice.Button.A });
-        inputList.GetActionConfig(Shortcut.GuitarFretRed).Add(new GamepadButtonMap() { GamepadDevice.Button.B });
-        inputList.GetActionConfig(Shortcut.GuitarFretYellow).Add(new GamepadButtonMap() { GamepadDevice.Button.Y });
-        inputList.GetActionConfig(Shortcut.GuitarFretBlue).Add(new GamepadButtonMap() { GamepadDevice.Button.X });
-        inputList.GetActionConfig(Shortcut.GuitarFretOrange).Add(new GamepadButtonMap() { GamepadDevice.Button.LB });
+        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretGreen).Add(new GamepadButtonMap() { GamepadDevice.Button.A });
+        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretRed).Add(new GamepadButtonMap() { GamepadDevice.Button.B });
+        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretYellow).Add(new GamepadButtonMap() { GamepadDevice.Button.Y });
+        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretBlue).Add(new GamepadButtonMap() { GamepadDevice.Button.X });
+        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretOrange).Add(new GamepadButtonMap() { GamepadDevice.Button.LB });
 
-        inputList.GetActionConfig(Shortcut.DrumPadRed).Add(new GamepadButtonMap() { GamepadDevice.Button.B });
-        inputList.GetActionConfig(Shortcut.DrumPadYellow).Add(new GamepadButtonMap() { GamepadDevice.Button.Y });
-        inputList.GetActionConfig(Shortcut.DrumPadBlue).Add(new GamepadButtonMap() { GamepadDevice.Button.X });
-        inputList.GetActionConfig(Shortcut.DrumPadOrange).Add(new GamepadButtonMap() { GamepadDevice.Button.RB });
-        inputList.GetActionConfig(Shortcut.DrumPadGreen).Add(new GamepadButtonMap() { GamepadDevice.Button.A });
-        inputList.GetActionConfig(Shortcut.DrumPadKick).Add(new GamepadButtonMap() { GamepadDevice.Button.LB });
+        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadRed).Add(new GamepadButtonMap() { GamepadDevice.Button.B });
+        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadYellow).Add(new GamepadButtonMap() { GamepadDevice.Button.Y });
+        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadBlue).Add(new GamepadButtonMap() { GamepadDevice.Button.X });
+        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadOrange).Add(new GamepadButtonMap() { GamepadDevice.Button.RB });
+        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadGreen).Add(new GamepadButtonMap() { GamepadDevice.Button.A });
+        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadKick).Add(new GamepadButtonMap() { GamepadDevice.Button.LB });
     }
 
-    public static void SetDefaultGameplayControlsKeys(ShortcutInput.ShortcutActionContainer inputList)
+    public static void SetDefaultGameplayControlsKeys(MSChartEditorInput.MSChartEditorActionContainer inputList)
     {
-        foreach (Shortcut sc in EnumX<Shortcut>.Values)
+        foreach (MSChartEditorInputActions sc in EnumX<MSChartEditorInputActions>.Values)
         {
             var config = inputList.GetActionConfig(sc);
-            if (((1 << config.properties.category) & ShortcutInput.Category.kGameplayCategoryMask) != 0)
+            if (((1 << config.properties.category) & MSChartEditorInput.Category.kGameplayCategoryMask) != 0)
                 config.RemoveMapsForDevice(MSE.Input.DeviceType.Keyboard);
         }
 
         {
-            inputList.GetActionConfig(Shortcut.GuitarStrumUp).Add(new KeyboardMap() { KeyCode.UpArrow });
-            inputList.GetActionConfig(Shortcut.GuitarStrumDown).Add(new KeyboardMap() { KeyCode.DownArrow });
+            inputList.GetActionConfig(MSChartEditorInputActions.GuitarStrumUp).Add(new KeyboardMap() { KeyCode.UpArrow });
+            inputList.GetActionConfig(MSChartEditorInputActions.GuitarStrumDown).Add(new KeyboardMap() { KeyCode.DownArrow });
 
-            inputList.GetActionConfig(Shortcut.GuitarFretGreen).Add(new KeyboardMap() { KeyCode.Alpha1 });
-            inputList.GetActionConfig(Shortcut.GuitarFretRed).Add(new KeyboardMap() { KeyCode.Alpha2 });
-            inputList.GetActionConfig(Shortcut.GuitarFretYellow).Add(new KeyboardMap() { KeyCode.Alpha3 });
-            inputList.GetActionConfig(Shortcut.GuitarFretBlue).Add(new KeyboardMap() { KeyCode.Alpha4 });
-            inputList.GetActionConfig(Shortcut.GuitarFretOrange).Add(new KeyboardMap() { KeyCode.Alpha5 });
+            inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretGreen).Add(new KeyboardMap() { KeyCode.Alpha1 });
+            inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretRed).Add(new KeyboardMap() { KeyCode.Alpha2 });
+            inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretYellow).Add(new KeyboardMap() { KeyCode.Alpha3 });
+            inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretBlue).Add(new KeyboardMap() { KeyCode.Alpha4 });
+            inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretOrange).Add(new KeyboardMap() { KeyCode.Alpha5 });
 
-            inputList.GetActionConfig(Shortcut.DrumPadRed).Add(new KeyboardMap() { KeyCode.Alpha1 });
-            inputList.GetActionConfig(Shortcut.DrumPadYellow).Add(new KeyboardMap() { KeyCode.Alpha2 });
-            inputList.GetActionConfig(Shortcut.DrumPadBlue).Add(new KeyboardMap() { KeyCode.Alpha3 });
-            inputList.GetActionConfig(Shortcut.DrumPadOrange).Add(new KeyboardMap() { KeyCode.Alpha4 });
-            inputList.GetActionConfig(Shortcut.DrumPadGreen).Add(new KeyboardMap() { KeyCode.Alpha5 });
-            inputList.GetActionConfig(Shortcut.DrumPadKick).Add(new KeyboardMap() { KeyCode.Alpha0 });
+            inputList.GetActionConfig(MSChartEditorInputActions.DrumPadRed).Add(new KeyboardMap() { KeyCode.Alpha1 });
+            inputList.GetActionConfig(MSChartEditorInputActions.DrumPadYellow).Add(new KeyboardMap() { KeyCode.Alpha2 });
+            inputList.GetActionConfig(MSChartEditorInputActions.DrumPadBlue).Add(new KeyboardMap() { KeyCode.Alpha3 });
+            inputList.GetActionConfig(MSChartEditorInputActions.DrumPadOrange).Add(new KeyboardMap() { KeyCode.Alpha4 });
+            inputList.GetActionConfig(MSChartEditorInputActions.DrumPadGreen).Add(new KeyboardMap() { KeyCode.Alpha5 });
+            inputList.GetActionConfig(MSChartEditorInputActions.DrumPadKick).Add(new KeyboardMap() { KeyCode.Alpha0 });
         }
     }
 }

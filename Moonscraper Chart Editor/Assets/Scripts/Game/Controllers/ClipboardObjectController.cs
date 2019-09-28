@@ -40,7 +40,7 @@ public class ClipboardObjectController : Snapable {
 
         transform.position = new Vector3(transform.position.x, editor.currentSong.TickToWorldYPosition(pastePos), transform.position.z);
 
-        if (!Services.IsTyping && ShortcutInput.GetInputDown(Shortcut.ClipboardPaste))
+        if (!Services.IsTyping && MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ClipboardPaste))
         {
             Paste(pastePos);
             groupSelectTool.reset();

@@ -32,7 +32,7 @@ public class PlaceSection : PlaceSongObject {
                     editor.selectedObjectsManager.currentSelectedObject = sectionSearched;
             }
         }
-        else if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.AddSongObject))
         {
             var searchArray = editor.currentSong.sections;
             int pos = SongObjectHelper.FindObjectPosition(section, searchArray);

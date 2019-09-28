@@ -93,7 +93,7 @@ public class NoteController : SongObjectController {
             // Regular clicking
             if (!selectedObjectsManager.IsSelected(songObject))
             {
-                if (ShortcutInput.GetInput(Shortcut.ChordSelect))
+                if (MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect))
                     selectedObjectsManager.SetCurrentSelectedObjects(note.chord);
                 else
                     selectedObjectsManager.currentSelectedObject = songObject;
@@ -106,7 +106,7 @@ public class NoteController : SongObjectController {
         else if (editor.currentState == ChartEditor.State.Editor &&
             Input.GetMouseButtonDown(0) && Input.GetMouseButton(1))
         {
-            if (ShortcutInput.GetInput(Shortcut.ChordSelect))
+            if (MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect))
             {
                 Note[] chordNotes = note.GetChord();
                 if (Input.GetMouseButton(1))
@@ -133,7 +133,7 @@ public class NoteController : SongObjectController {
         // Move note        
         if (moveCheck)
         {
-            if (ShortcutInput.GetInput(Shortcut.ChordSelect))
+            if (MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect))
             {
                 Note[] chordNotes = note.GetChord();
                 editor.groupMove.StartMoveAction(chordNotes, 0);

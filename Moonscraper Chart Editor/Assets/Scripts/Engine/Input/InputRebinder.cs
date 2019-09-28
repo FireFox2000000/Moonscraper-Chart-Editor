@@ -34,7 +34,7 @@ namespace MSE
                 {
                     foreach (InputAction inputAction in allActions)
                     {
-                        if (ShortcutInput.Category.interactionMatrix.TestInteractable(inputAction.properties.category, actionToRebind.properties.category) && inputAction.HasConflict(currentInput))
+                        if (MSChartEditorInput.Category.interactionMatrix.TestInteractable(inputAction.properties.category, actionToRebind.properties.category) && inputAction.HasConflict(currentInput))
                         {
                             conflict = inputAction;
                             return false;

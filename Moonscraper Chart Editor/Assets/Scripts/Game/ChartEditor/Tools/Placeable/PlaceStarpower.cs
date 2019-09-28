@@ -38,9 +38,9 @@ public class PlaceStarpower : PlaceSongObject {
                 }
             }
         }
-        else if (ShortcutInput.GetInput(Shortcut.AddSongObject))
+        else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.AddSongObject))
         {
-            if (ShortcutInput.GetInputDown(Shortcut.AddSongObject))
+            if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.AddSongObject))
             {
                 var searchArray = editor.currentChart.starPower;
                 int pos = SongObjectHelper.FindObjectPosition(starpower, searchArray);

@@ -44,7 +44,7 @@ public class ToolPanelController : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        if (ShortcutInput.GetInputDown(Shortcut.ToggleViewMode) && (editor.currentState == ChartEditor.State.Editor || editor.currentState == ChartEditor.State.Playing))
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleViewMode) && (editor.currentState == ChartEditor.State.Editor || editor.currentState == ChartEditor.State.Playing))
         {
             viewModeToggle.isOn = !viewModeToggle.isOn;
         }
@@ -56,31 +56,31 @@ public class ToolPanelController : MonoBehaviour {
 
     void Shortcuts()
     {
-        if (ShortcutInput.GetInputDown(Shortcut.ToolSelectCursor))
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToolSelectCursor))
             cursorSelect.onClick.Invoke();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.ToolSelectEraser))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToolSelectEraser))
             eraserSelect.onClick.Invoke();
 
         // else if (Input.GetKeyDown(KeyCode.L))
         // groupSelect.onClick.Invoke();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.ToolSelectNote))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToolSelectNote))
             noteSelect.onClick.Invoke();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.ToolSelectStarpower))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToolSelectStarpower))
             starpowerSelect.onClick.Invoke();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.ToolSelectBpm))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToolSelectBpm))
             bpmSelect.onClick.Invoke();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.ToolSelectTimeSignature))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToolSelectTimeSignature))
             timeSignatureSelect.onClick.Invoke();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.ToolSelectSection))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToolSelectSection))
             sectionSelect.onClick.Invoke();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.ToolSelectEvent))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToolSelectEvent))
             eventSelect.onClick.Invoke();
     }
 

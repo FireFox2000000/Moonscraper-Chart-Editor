@@ -8,19 +8,19 @@ public static class GuitarInput
         switch (fret)
         {
             case Note.GuitarFret.Green:
-                return ShortcutInput.GetInput(Shortcut.GuitarFretGreen);
+                return MSChartEditorInput.GetInput(MSChartEditorInputActions.GuitarFretGreen);
 
             case Note.GuitarFret.Red:
-                return ShortcutInput.GetInput(Shortcut.GuitarFretRed);
+                return MSChartEditorInput.GetInput(MSChartEditorInputActions.GuitarFretRed);
 
             case Note.GuitarFret.Yellow:
-                return ShortcutInput.GetInput(Shortcut.GuitarFretYellow);
+                return MSChartEditorInput.GetInput(MSChartEditorInputActions.GuitarFretYellow);
 
             case Note.GuitarFret.Blue:
-                return ShortcutInput.GetInput(Shortcut.GuitarFretBlue);
+                return MSChartEditorInput.GetInput(MSChartEditorInputActions.GuitarFretBlue);
 
             case Note.GuitarFret.Orange:
-                return ShortcutInput.GetInput(Shortcut.GuitarFretOrange);
+                return MSChartEditorInput.GetInput(MSChartEditorInputActions.GuitarFretOrange);
 
             case Note.GuitarFret.Open:
                 return false;
@@ -48,7 +48,7 @@ public static class GuitarInput
 
     public static bool GetStrumInput(GamepadDevice gamepad)
     {
-        return ShortcutInput.GetInputDown(Shortcut.GuitarStrumDown) || ShortcutInput.GetInputDown(Shortcut.GuitarStrumUp);
+        return MSChartEditorInput.GetInputDown(MSChartEditorInputActions.GuitarStrumDown) || MSChartEditorInput.GetInputDown(MSChartEditorInputActions.GuitarStrumUp);
     }
 
     public static float GetWhammyInput(GamepadDevice gamepad)

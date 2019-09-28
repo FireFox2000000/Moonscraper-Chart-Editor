@@ -61,7 +61,7 @@ public class DisplayProperties : UpdateableService
             UpdateSnappingStepText();
 
         // Shortcuts
-        if (ShortcutInput.GetInputDown(Shortcut.ToggleClap))
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleClap))
             clapToggle.isOn = !clapToggle.isOn;
 
         prevNoteCount = editor.currentChart.note_count;

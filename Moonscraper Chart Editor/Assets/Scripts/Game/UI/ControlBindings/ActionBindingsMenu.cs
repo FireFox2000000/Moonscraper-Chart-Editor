@@ -120,7 +120,7 @@ public class ActionBindingsMenu : MonoBehaviour
         rebindInterface.rebindCompleteEvent.Register(OnRebindComplete);
 
         actions = GameSettings.controls;
-        categoryDisplayMask = ShortcutInput.Category.kEditorCategoryMask;
+        categoryDisplayMask = MSChartEditorInput.Category.kEditorCategoryMask;
 
         LoadActions(actions, categoryDisplayMask);
         SetDevice(InputManager.Instance.devices[0]);

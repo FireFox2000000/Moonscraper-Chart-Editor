@@ -4,7 +4,7 @@ using UnityEngine;
 using MSE;
 using MSE.Input;
 
-public enum Shortcut
+public enum MSChartEditorInputActions
 {
     ActionHistoryRedo,
     ActionHistoryUndo,
@@ -97,7 +97,7 @@ public enum Shortcut
     DrumPadKick,
 }
 
-public static class ShortcutInput
+public static class MSChartEditorInput
 {
     public static class Category
     {
@@ -138,15 +138,15 @@ public static class ShortcutInput
 
     static readonly InputAction.Properties kDefaultProperties = new InputAction.Properties { rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault };
 
-    public class ShortcutActionContainer : InputActionContainer<Shortcut>
+    public class MSChartEditorActionContainer : InputActionContainer<MSChartEditorInputActions>
     {
-        public ShortcutActionContainer()  : base(new EnumLookupTable<Shortcut, InputAction>())
+        public MSChartEditorActionContainer()  : base(new EnumLookupTable<MSChartEditorInputActions, InputAction>())
         {
             InputManager inputManager = InputManager.Instance;
 
             for (int i = 0; i < actionConfigCleanLookup.Count; ++i)
             {
-                Shortcut scEnum = (Shortcut)i;
+                MSChartEditorInputActions scEnum = (MSChartEditorInputActions)i;
                 InputAction.Properties properties;
                 if (!inputManager.inputPropertiesConfig.TryGetPropertiesConfig(scEnum, out properties))
                 {
@@ -163,11 +163,11 @@ public static class ShortcutInput
         }
     }
 
-    static ShortcutActionContainer primaryInputs { get { return GameSettings.controls; } } 
+    static MSChartEditorActionContainer primaryInputs { get { return GameSettings.controls; } } 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static bool GetInputDown(Shortcut key)
+    public static bool GetInputDown(MSChartEditorInputActions key)
     {
         if (ChartEditor.hasFocus && !Services.IsTyping)
         {
@@ -177,7 +177,7 @@ public static class ShortcutInput
         return false;
     }
 
-    public static bool GetInputUp(Shortcut key)
+    public static bool GetInputUp(MSChartEditorInputActions key)
     {
         if (ChartEditor.hasFocus && !Services.IsTyping)
         {
@@ -187,7 +187,7 @@ public static class ShortcutInput
         return false;
     }
 
-    public static bool GetInput(Shortcut key)
+    public static bool GetInput(MSChartEditorInputActions key)
     {
         if (ChartEditor.hasFocus && !Services.IsTyping)
         {
@@ -197,9 +197,9 @@ public static class ShortcutInput
         return false;
     }
 
-    public static bool GetGroupInputDown(Shortcut[] keys)
+    public static bool GetGroupInputDown(MSChartEditorInputActions[] keys)
     {
-        foreach (Shortcut key in keys)
+        foreach (MSChartEditorInputActions key in keys)
         {
             if (GetInputDown(key))
                 return true;
@@ -208,9 +208,9 @@ public static class ShortcutInput
         return false;
     }
 
-    public static bool GetGroupInputUp(Shortcut[] keys)
+    public static bool GetGroupInputUp(MSChartEditorInputActions[] keys)
     {
-        foreach (Shortcut key in keys)
+        foreach (MSChartEditorInputActions key in keys)
         {
             if (GetInputUp(key))
                 return true;
@@ -219,9 +219,9 @@ public static class ShortcutInput
         return false;
     }
 
-    public static bool GetGroupInput(Shortcut[] keys)
+    public static bool GetGroupInput(MSChartEditorInputActions[] keys)
     {
-        foreach (Shortcut key in keys)
+        foreach (MSChartEditorInputActions key in keys)
         {
             if (GetInput(key))
                 return true;

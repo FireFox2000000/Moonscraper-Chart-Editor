@@ -40,21 +40,21 @@ public class PlaceNoteController : ObjectlessTool {
     }
     KeysPlacementMode currentPlacementMode = KeysPlacementMode.None;
 
-    readonly Shortcut[] NumToLaneActionLUT = new Shortcut[]
+    readonly MSChartEditorInputActions[] NumToLaneActionLUT = new MSChartEditorInputActions[]
     {
-        Shortcut.ToolNoteLane1,
-        Shortcut.ToolNoteLane2,
-        Shortcut.ToolNoteLane3,
-        Shortcut.ToolNoteLane4,
-        Shortcut.ToolNoteLane5,
-        Shortcut.ToolNoteLane6,
+        MSChartEditorInputActions.ToolNoteLane1,
+        MSChartEditorInputActions.ToolNoteLane2,
+        MSChartEditorInputActions.ToolNoteLane3,
+        MSChartEditorInputActions.ToolNoteLane4,
+        MSChartEditorInputActions.ToolNoteLane5,
+        MSChartEditorInputActions.ToolNoteLane6,
     };
 
-    Shortcut GetInputForNoteIndex(int index, int laneCount)
+    MSChartEditorInputActions GetInputForNoteIndex(int index, int laneCount)
     {
         if (index >= laneCount)
         {
-            return Shortcut.ToolNoteLaneOpen;
+            return MSChartEditorInputActions.ToolNoteLaneOpen;
         }
 
         return NumToLaneActionLUT[index];
@@ -298,7 +298,7 @@ public class PlaceNoteController : ObjectlessTool {
         // Tell the system to stop updating the sustain length
         for (int i = 0; i < heldNotes.Length; ++i)
         {
-            if (isTyping || ShortcutInput.GetInputUp(GetInputForNoteIndex(i, laneCount)))
+            if (isTyping || MSChartEditorInput.GetInputUp(GetInputForNoteIndex(i, laneCount)))
             {
                 ClearHeldNotes(i);
             }
@@ -315,11 +315,11 @@ public class PlaceNoteController : ObjectlessTool {
         for (int i = 0; i < laneCount + 1; ++i)      // Start at 1 to ignore the multinote
         {                     
             // Need to make sure the note is at it's correct tick position
-            if (ShortcutInput.GetInputDown(GetInputForNoteIndex(i, laneCount)))
+            if (MSChartEditorInput.GetInputDown(GetInputForNoteIndex(i, laneCount)))
             {
                 int notePos = i;
 
-                if (ShortcutInput.GetInputDown(Shortcut.ToolNoteLaneOpen))
+                if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToolNoteLaneOpen))
                 {
                     if (openNotesBanned)     // Ban conflicting inputs as the command stack REALLY doesn't like this.
                         continue;
@@ -366,7 +366,7 @@ public class PlaceNoteController : ObjectlessTool {
                 continue;
 
             int inputOnKeyboard = index;
-            if (ShortcutInput.GetInput(GetInputForNoteIndex(inputOnKeyboard, laneCount)) && !inputBlock[index])
+            if (MSChartEditorInput.GetInput(GetInputForNoteIndex(inputOnKeyboard, laneCount)) && !inputBlock[index])
             {
                 ++keysPressed;
                 int notePos = index;
@@ -391,14 +391,14 @@ public class PlaceNoteController : ObjectlessTool {
                     Debug.Log("Adding note");
                     currentlyAddingNotes.Add(allPlaceableNotes[notePos].note.Clone());
                 }
-                else if (ShortcutInput.GetInputDown(GetInputForNoteIndex(inputOnKeyboard, laneCount)) && currentPlacementMode == KeysPlacementMode.Deleting)
+                else if (MSChartEditorInput.GetInputDown(GetInputForNoteIndex(inputOnKeyboard, laneCount)) && currentPlacementMode == KeysPlacementMode.Deleting)
                 {
                     Debug.Log("Removed " + editor.currentChart.notes[pos].rawNote + " note at position " + editor.currentChart.notes[pos].tick + " using keyboard controls");
                     currentlyAddingNotes.Add(editor.currentChart.notes[pos]);
                     inputBlock[index] = true;
                 }
             }
-            else if (!ShortcutInput.GetInput(GetInputForNoteIndex(i, laneCount)))
+            else if (!MSChartEditorInput.GetInput(GetInputForNoteIndex(i, laneCount)))
             {
                 inputBlock[index] = false;
             }
@@ -418,7 +418,7 @@ public class PlaceNoteController : ObjectlessTool {
         bool anyStandardKeyInput = false;
         for (int i = 0; i < maxLanes; ++i)
         {
-            if (ShortcutInput.GetInput(NumToLaneActionLUT[i]))
+            if (MSChartEditorInput.GetInput(NumToLaneActionLUT[i]))
             {
                 anyStandardKeyInput = true;
                 break;
@@ -426,7 +426,7 @@ public class PlaceNoteController : ObjectlessTool {
         }
 
         // Select which notes to run based on keyboard input
-        if (ShortcutInput.GetInputDown(Shortcut.ToolNoteLaneOpen))  // Open note takes priority
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToolNoteLaneOpen))  // Open note takes priority
         {
             if (openActive)
             {
@@ -439,13 +439,13 @@ public class PlaceNoteController : ObjectlessTool {
                 activeNotes.Add(openNote);
             }
         }
-        else if (!ShortcutInput.GetInput(Shortcut.ToolNoteLaneOpen) && (anyStandardKeyInput))
+        else if (!MSChartEditorInput.GetInput(MSChartEditorInputActions.ToolNoteLaneOpen) && (anyStandardKeyInput))
         {
             for (int i = 0; i < maxLanes; ++i)
             {
                 int leftyPos = maxLanes - (i + 1);
 
-                if (ShortcutInput.GetInput(NumToLaneActionLUT[i]))
+                if (MSChartEditorInput.GetInput(NumToLaneActionLUT[i]))
                 {
                     if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
                     {
@@ -576,7 +576,7 @@ public class PlaceNoteController : ObjectlessTool {
         for (int i = 0; i < laneCount + 1; ++i)      // Start at 1 to ignore the multinote
         {
             // Need to make sure the note is at it's correct tick position
-            if (ShortcutInput.GetInput(GetInputForNoteIndex(i, laneCount)))
+            if (MSChartEditorInput.GetInput(GetInputForNoteIndex(i, laneCount)))
                 return true;
         }
 

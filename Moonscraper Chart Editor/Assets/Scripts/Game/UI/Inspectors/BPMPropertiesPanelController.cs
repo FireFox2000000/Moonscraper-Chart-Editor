@@ -53,16 +53,16 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
     void Controls()
     {
-        if (!(ShortcutInput.GetInput(Shortcut.BpmIncrease) && ShortcutInput.GetInput(Shortcut.BpmDecrease)))    // Can't hit both at the same time
+        if (!(MSChartEditorInput.GetInput(MSChartEditorInputActions.BpmIncrease) && MSChartEditorInput.GetInput(MSChartEditorInputActions.BpmDecrease)))    // Can't hit both at the same time
         {
             if (!Services.IsTyping && !Globals.modifierInputActive)
             {
-                if (ShortcutInput.GetInputDown(Shortcut.BpmDecrease) && decrement.interactable)
+                if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.BpmDecrease) && decrement.interactable)
                 {
                     uint newValue = GetValueForDecrement();
                     SetBpmValue(newValue);
                 }
-                else if (ShortcutInput.GetInputDown(Shortcut.BpmIncrease) && increment.interactable)
+                else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.BpmIncrease) && increment.interactable)
                 {
                     uint newValue = GetValueForIncrement();
                     SetBpmValue(newValue);
@@ -71,12 +71,12 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 // Adjust to time rather than framerate
                 if (incrementInputHoldTime > AUTO_INCREMENT_WAIT_TIME && autoIncrementTimer > AUTO_INCREMENT_RATE)
                 {
-                    if (ShortcutInput.GetInput(Shortcut.BpmDecrease) && decrement.interactable)
+                    if (MSChartEditorInput.GetInput(MSChartEditorInputActions.BpmDecrease) && decrement.interactable)
                     {
                         uint newValue = GetValueForDecrement();
                         SetBpmValue(newValue, true);
                     }
-                    else if (ShortcutInput.GetInput(Shortcut.BpmIncrease) && increment.interactable)
+                    else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.BpmIncrease) && increment.interactable)
                     {
                         uint newValue = GetValueForIncrement();
                         SetBpmValue(newValue, true);
@@ -86,7 +86,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 }
 
                 // 
-                if (ShortcutInput.GetInput(Shortcut.BpmIncrease) || ShortcutInput.GetInput(Shortcut.BpmDecrease))
+                if (MSChartEditorInput.GetInput(MSChartEditorInputActions.BpmIncrease) || MSChartEditorInput.GetInput(MSChartEditorInputActions.BpmDecrease))
                 {
                     incrementInputHoldTime += Time.deltaTime;
                 }
@@ -97,7 +97,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
                 incrementInputHoldTime = 0;
         }
 
-        if (ShortcutInput.GetInputDown(Shortcut.ToggleBpmAnchor) && anchorToggle.IsInteractable())
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleBpmAnchor) && anchorToggle.IsInteractable())
             anchorToggle.isOn = !anchorToggle.isOn;
     }
 

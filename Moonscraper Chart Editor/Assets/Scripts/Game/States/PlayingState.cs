@@ -58,15 +58,15 @@ public class PlayingState : SystemManagerState
             }
         }
 
-        if (ShortcutInput.GetInputDown(Shortcut.StepIncrease))
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.StepIncrease))
             GameSettings.snappingStep.Increment();
 
-        else if (ShortcutInput.GetInputDown(Shortcut.StepDecrease))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.StepDecrease))
             GameSettings.snappingStep.Decrement();
 
         var gamepad = InputManager.Instance.mainGamepad;
 
-        if (ShortcutInput.GetInputDown(Shortcut.PlayPause) || (gamepad != null && gamepad.GetButtonPressed(MSE.Input.GamepadDevice.Button.Start)))
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.PlayPause) || (gamepad != null && gamepad.GetButtonPressed(MSE.Input.GamepadDevice.Button.Start)))
         {
             editor.Stop();
         }

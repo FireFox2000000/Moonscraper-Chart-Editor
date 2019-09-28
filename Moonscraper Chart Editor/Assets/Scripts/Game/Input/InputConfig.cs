@@ -7,7 +7,7 @@ public class InputConfig : ScriptableObject
     // Default values
     const bool kRebindableDefault = true;
     const bool kHiddenInListsDefault = false;
-    const ShortcutInput.Category.CategoryType kCategoryDefault = ShortcutInput.Category.CategoryType.Editor;
+    const MSChartEditorInput.Category.CategoryType kCategoryDefault = MSChartEditorInput.Category.CategoryType.Editor;
     public static readonly InputConfig.Properties kDefaultProperties = new InputConfig.Properties { rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault };
 
     [System.Serializable]
@@ -16,7 +16,7 @@ public class InputConfig : ScriptableObject
         public string displayName;
         public bool rebindable;
         public bool hiddenInLists;
-        public ShortcutInput.Category.CategoryType category;
+        public MSChartEditorInput.Category.CategoryType category;
 
         public MSE.Input.InputAction.Properties ToMSEInputProperties()
         {
@@ -31,7 +31,7 @@ public class InputConfig : ScriptableObject
 
     public ShortcutInputConfig[] shortcutInputs;
 
-    public bool TryGetPropertiesConfig(Shortcut shortcut, out MSE.Input.InputAction.Properties properties)
+    public bool TryGetPropertiesConfig(MSChartEditorInputActions shortcut, out MSE.Input.InputAction.Properties properties)
     {
         foreach (ShortcutInputConfig config in shortcutInputs)
         {
@@ -50,6 +50,6 @@ public class InputConfig : ScriptableObject
 [System.Serializable]
 public class ShortcutInputConfig
 {
-    public Shortcut shortcut;
+    public MSChartEditorInputActions shortcut;
     public InputConfig.Properties properties;
 }

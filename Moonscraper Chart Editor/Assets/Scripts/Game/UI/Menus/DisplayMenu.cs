@@ -20,7 +20,7 @@ public class DisplayMenu : MonoBehaviour {
     {
         MovementController.cancel = true;
 
-        bool exitInput = ShortcutInput.GetInputDown(Shortcut.CloseMenu) && !editor.uiServices.popupBlockerEnabled;
+        bool exitInput = MSChartEditorInput.GetInputDown(MSChartEditorInputActions.CloseMenu) && !editor.uiServices.popupBlockerEnabled;
         if (
             exitInput ||
             (Input.GetMouseButtonDown(0) && !RectTransformUtility.RectangleContainsScreenPoint(mouseArea, editor.uiServices.GetUIMousePosition())) ||

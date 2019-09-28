@@ -36,7 +36,7 @@ public class Eraser : ToolObject {
                 if (soController && soController.GetSongObject() != null)       // Dunno why song object would ever be null, but may as well be safe
                 {
                     SongObject songObject = soController.GetSongObject();
-                    if (ShortcutInput.GetInput(Shortcut.ChordSelect) && songObject.classID == (int)SongObject.ID.Note)
+                    if (MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect) && songObject.classID == (int)SongObject.ID.Note)
                     {
                         foreach (Note note in ((Note)songObject).chord)
                         {

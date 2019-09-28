@@ -65,13 +65,13 @@ public class MenuBar : UpdateableService {
 
     void Controls()
     {
-        if (ShortcutInput.GetInputDown(Shortcut.ToggleExtendedSustains))
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleExtendedSustains))
         {
             ToggleExtendedSustains();
             editor.globals.services.notificationBar.PushNotification("EXTENDED SUSTAINS TOGGLED " + Services.BoolToStrOnOff(GameSettings.extendedSustainsEnabled), 2, true);
         }
 
-        else if (ShortcutInput.GetInputDown(Shortcut.ToggleMouseMode))
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleMouseMode))
         {
             ToggleMouseLockMode();
             editor.globals.services.notificationBar.PushNotification("KEYS MODE TOGGLED " + Services.BoolToStrOnOff(GameSettings.keysModeEnabled), 2, true);

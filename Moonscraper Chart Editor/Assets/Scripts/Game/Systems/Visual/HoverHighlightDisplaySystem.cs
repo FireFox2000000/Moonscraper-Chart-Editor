@@ -65,7 +65,7 @@ public class HoverHighlightDisplaySystem : SystemManagerState.System
         {
             songObjects.Clear();
 
-            if (ShortcutInput.GetInput(Shortcut.ChordSelect))
+            if (MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect))
             {
                 // Check if we're over a note
                 NoteController nCon = songObject.GetComponent<NoteController>();

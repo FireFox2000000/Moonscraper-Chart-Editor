@@ -47,7 +47,7 @@ public class SustainController : SelectableClick {
                 sustainDragCommands.Clear();
                 commandPushCount = 0;
 
-                if (!GameSettings.extendedSustainsEnabled || ShortcutInput.GetInput(Shortcut.ChordSelect))
+                if (!GameSettings.extendedSustainsEnabled || MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect))
                 {
                     foreach (Note chordNote in nCon.note.chord)
                     {

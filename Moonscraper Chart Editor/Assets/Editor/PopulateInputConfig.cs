@@ -35,13 +35,13 @@ public class PopulateInputConfig : Editor
 
     void RepopulateInput(InputConfig inputConfigDatabase, bool preserveDisplayNames = false)
     {
-        ShortcutInput.ShortcutActionContainer controls = new ShortcutInput.ShortcutActionContainer();
+        MSChartEditorInput.MSChartEditorActionContainer controls = new MSChartEditorInput.MSChartEditorActionContainer();
 
-        ShortcutInputConfig[] shortcutInputs = new ShortcutInputConfig[EnumX<Shortcut>.Count];
+        ShortcutInputConfig[] shortcutInputs = new ShortcutInputConfig[EnumX<MSChartEditorInputActions>.Count];
 
         for (int i = 0; i < shortcutInputs.Length; ++i)
         {
-            Shortcut scEnum = (Shortcut)i;
+            MSChartEditorInputActions scEnum = (MSChartEditorInputActions)i;
 
             InputConfig.Properties properties;
             if (!inputExplicitProperties.TryGetValue(scEnum, out properties))
@@ -77,51 +77,51 @@ public class PopulateInputConfig : Editor
     static readonly InputConfig.Properties kDefaultProperties = InputConfig.kDefaultProperties;
     static readonly bool kRebindableDefault = kDefaultProperties.rebindable;
     static readonly bool kHiddenInListsDefault = kDefaultProperties.hiddenInLists;
-    static readonly ShortcutInput.Category.CategoryType kCategoryDefault = kDefaultProperties.category;    
+    static readonly MSChartEditorInput.Category.CategoryType kCategoryDefault = kDefaultProperties.category;    
 
-    static readonly Dictionary<Shortcut, InputConfig.Properties> inputExplicitProperties = new Dictionary<Shortcut, InputConfig.Properties>()
+    static readonly Dictionary<MSChartEditorInputActions, InputConfig.Properties> inputExplicitProperties = new Dictionary<MSChartEditorInputActions, InputConfig.Properties>()
     {
-        { Shortcut.ActionHistoryRedo,       new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.ActionHistoryUndo,       new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.ChordSelect,             new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.ClipboardCopy,           new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.ClipboardCut,            new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.ClipboardPaste,          new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.Delete,                  new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.FileLoad,                new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.FileNew,                 new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.FileSave,                new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.FileSaveAs,              new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.PlayPause,               new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
-        { Shortcut.SectionJumpMouseScroll,  new InputConfig.Properties {rebindable = false, hiddenInLists = true, category = kCategoryDefault } },
+        { MSChartEditorInputActions.ActionHistoryRedo,       new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { MSChartEditorInputActions.ActionHistoryUndo,       new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { MSChartEditorInputActions.ChordSelect,             new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { MSChartEditorInputActions.ClipboardCopy,           new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { MSChartEditorInputActions.ClipboardCut,            new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { MSChartEditorInputActions.ClipboardPaste,          new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { MSChartEditorInputActions.Delete,                  new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { MSChartEditorInputActions.FileLoad,                new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { MSChartEditorInputActions.FileNew,                 new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { MSChartEditorInputActions.FileSave,                new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { MSChartEditorInputActions.FileSaveAs,              new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { MSChartEditorInputActions.PlayPause,               new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
+        { MSChartEditorInputActions.SectionJumpMouseScroll,  new InputConfig.Properties {rebindable = false, hiddenInLists = true, category = kCategoryDefault } },
 
-        { Shortcut.AddSongObject,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorKeyboardMode } },
+        { MSChartEditorInputActions.AddSongObject,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.EditorKeyboardMode } },
 
-        { Shortcut.ToolNoteLane1,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorToolNote } },
-        { Shortcut.ToolNoteLane2,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorToolNote } },
-        { Shortcut.ToolNoteLane3,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorToolNote } },
-        { Shortcut.ToolNoteLane4,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorToolNote } },
-        { Shortcut.ToolNoteLane5,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorToolNote } },
-        { Shortcut.ToolNoteLane6,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorToolNote } },
-        { Shortcut.ToolNoteLaneOpen,    new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorToolNote } },
+        { MSChartEditorInputActions.ToolNoteLane1,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.EditorToolNote } },
+        { MSChartEditorInputActions.ToolNoteLane2,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.EditorToolNote } },
+        { MSChartEditorInputActions.ToolNoteLane3,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.EditorToolNote } },
+        { MSChartEditorInputActions.ToolNoteLane4,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.EditorToolNote } },
+        { MSChartEditorInputActions.ToolNoteLane5,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.EditorToolNote } },
+        { MSChartEditorInputActions.ToolNoteLane6,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.EditorToolNote } },
+        { MSChartEditorInputActions.ToolNoteLaneOpen,    new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.EditorToolNote } },
 
-        { Shortcut.CloseMenu,           new InputConfig.Properties {rebindable = false, hiddenInLists = true, category = kCategoryDefault } },
+        { MSChartEditorInputActions.CloseMenu,           new InputConfig.Properties {rebindable = false, hiddenInLists = true, category = kCategoryDefault } },
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        { Shortcut.GuitarStrumUp, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayGuitar } },
-        { Shortcut.GuitarStrumDown, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayGuitar } },
-        { Shortcut.GuitarFretGreen, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayGuitar } },
-        { Shortcut.GuitarFretRed, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayGuitar } },
-        { Shortcut.GuitarFretYellow, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayGuitar } },
-        { Shortcut.GuitarFretBlue, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayGuitar } },
-        { Shortcut.GuitarFretOrange, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayGuitar } },
+        { MSChartEditorInputActions.GuitarStrumUp, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.GameplayGuitar } },
+        { MSChartEditorInputActions.GuitarStrumDown, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.GameplayGuitar } },
+        { MSChartEditorInputActions.GuitarFretGreen, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.GameplayGuitar } },
+        { MSChartEditorInputActions.GuitarFretRed, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.GameplayGuitar } },
+        { MSChartEditorInputActions.GuitarFretYellow, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.GameplayGuitar } },
+        { MSChartEditorInputActions.GuitarFretBlue, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.GameplayGuitar } },
+        { MSChartEditorInputActions.GuitarFretOrange, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.GameplayGuitar } },
 
-        { Shortcut.DrumPadRed, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayDrums } },
-        { Shortcut.DrumPadYellow, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayDrums } },
-        { Shortcut.DrumPadBlue, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayDrums } },
-        { Shortcut.DrumPadOrange, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayDrums } },
-        { Shortcut.DrumPadGreen, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayDrums } },
-        { Shortcut.DrumPadKick, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayDrums } },
+        { MSChartEditorInputActions.DrumPadRed, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.GameplayDrums } },
+        { MSChartEditorInputActions.DrumPadYellow, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.GameplayDrums } },
+        { MSChartEditorInputActions.DrumPadBlue, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.GameplayDrums } },
+        { MSChartEditorInputActions.DrumPadOrange, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.GameplayDrums } },
+        { MSChartEditorInputActions.DrumPadGreen, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.GameplayDrums } },
+        { MSChartEditorInputActions.DrumPadKick, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = MSChartEditorInput.Category.CategoryType.GameplayDrums } },
     };
 }
