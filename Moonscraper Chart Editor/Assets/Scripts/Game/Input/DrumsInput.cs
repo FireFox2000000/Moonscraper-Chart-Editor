@@ -4,12 +4,12 @@ using MSE.Input;
 
 public static class DrumsInput
 {
-    static readonly Dictionary<int, Dictionary<Note.DrumPad, GameplayAction?>> laneCountGamepadOverridesDict = new Dictionary<int, Dictionary<Note.DrumPad, GameplayAction?>>()
+    static readonly Dictionary<int, Dictionary<Note.DrumPad, Shortcut?>> laneCountGamepadOverridesDict = new Dictionary<int, Dictionary<Note.DrumPad, Shortcut?>>()
     {
         {
-            4, new Dictionary<Note.DrumPad, GameplayAction?>()
+            4, new Dictionary<Note.DrumPad, Shortcut?>()
             {
-                { Note.DrumPad.Orange, GameplayAction.DrumPadGreen },
+                { Note.DrumPad.Orange, Shortcut.DrumPadGreen },
                 { Note.DrumPad.Green, null }
             }
         }
@@ -20,15 +20,15 @@ public static class DrumsInput
         if (gamepad == null || !gamepad.Connected)
             return false;
 
-        Dictionary<Note.DrumPad, GameplayAction?> inputOverrideDict;
-        GameplayAction? overrideInput;
+        Dictionary<Note.DrumPad, Shortcut?> inputOverrideDict;
+        Shortcut? overrideInput;
 
         if (laneCountGamepadOverridesDict.TryGetValue(laneInfo.laneCount, out inputOverrideDict) && inputOverrideDict.TryGetValue(drumFret, out overrideInput))
         {
             bool inputFound = false;
 
             if (overrideInput != null)
-                inputFound = GameplayInput.GetInputDown((GameplayAction)overrideInput);
+                inputFound = ShortcutInput.GetInputDown((Shortcut)overrideInput);
 
             return inputFound;
         }
@@ -36,22 +36,22 @@ public static class DrumsInput
         switch (drumFret)
         {
             case Note.DrumPad.Red:
-                return GameplayInput.GetInputDown(GameplayAction.DrumPadRed);
+                return ShortcutInput.GetInputDown(Shortcut.DrumPadRed);
 
             case Note.DrumPad.Yellow:
-                return GameplayInput.GetInputDown(GameplayAction.DrumPadYellow);
+                return ShortcutInput.GetInputDown(Shortcut.DrumPadYellow);
 
             case Note.DrumPad.Blue:
-                return GameplayInput.GetInputDown(GameplayAction.DrumPadBlue);
+                return ShortcutInput.GetInputDown(Shortcut.DrumPadBlue);
 
             case Note.DrumPad.Orange:
-                return GameplayInput.GetInputDown(GameplayAction.DrumPadOrange);
+                return ShortcutInput.GetInputDown(Shortcut.DrumPadOrange);
 
             case Note.DrumPad.Green:
-                return GameplayInput.GetInputDown(GameplayAction.DrumPadGreen);
+                return ShortcutInput.GetInputDown(Shortcut.DrumPadGreen);
 
             case Note.DrumPad.Kick:
-                return GameplayInput.GetInputDown(GameplayAction.DrumPadKick);
+                return ShortcutInput.GetInputDown(Shortcut.DrumPadKick);
 
             default:
                 Debug.LogError("Unhandled note type for drum input: " + drumFret);

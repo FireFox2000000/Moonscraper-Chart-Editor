@@ -77,6 +77,24 @@ public enum Shortcut
     ToolNoteLaneOpen,
 
     CloseMenu,
+
+    // Guitar Actions
+    GuitarStrumUp,
+    GuitarStrumDown,
+
+    GuitarFretGreen,
+    GuitarFretRed,
+    GuitarFretYellow,
+    GuitarFretBlue,
+    GuitarFretOrange,
+
+    // Drum Actions
+    DrumPadRed,
+    DrumPadYellow,
+    DrumPadBlue,
+    DrumPadOrange,
+    DrumPadGreen,
+    DrumPadKick,
 }
 
 public static class ShortcutInput
@@ -86,26 +104,37 @@ public static class ShortcutInput
         // static int to make int conversion way easier. The lack of implicit enum->int conversion is annoying as hell.
         public enum CategoryType
         {
-            Global,
-            KeyboardMode,
-            ToolNote,
+            Editor,
+            EditorKeyboardMode,
+            EditorToolNote,
+
+            GameplayGuitar,
+            GameplayDrums,
         }
 
-        public static InteractionMatrix interactionMatrix = new InteractionMatrix(3);
+        public static InteractionMatrix interactionMatrix = new InteractionMatrix(EnumX<CategoryType>.Count);
+        public static readonly int kEditorCategoryMask 
+            = (1 << (int)CategoryType.Editor)
+            | (1 << (int)CategoryType.EditorKeyboardMode)
+            | (1 << (int)CategoryType.EditorToolNote)
+            ;
+        public static readonly int kGameplayCategoryMask = (1 << (int)CategoryType.GameplayGuitar) | (1 << (int)CategoryType.GameplayDrums);
 
         static Category()
         {
-            interactionMatrix.SetInteractableAll((int)CategoryType.Global);
+            interactionMatrix.SetInteractableAll((int)CategoryType.Editor);
 
-            interactionMatrix.SetInteractable((int)CategoryType.KeyboardMode, (int)CategoryType.KeyboardMode);
+            interactionMatrix.SetInteractable((int)CategoryType.EditorKeyboardMode, (int)CategoryType.EditorKeyboardMode);
+            interactionMatrix.SetInteractable((int)CategoryType.EditorToolNote, (int)CategoryType.EditorToolNote);
 
-            interactionMatrix.SetInteractable((int)CategoryType.ToolNote, (int)CategoryType.ToolNote);
+            interactionMatrix.SetInteractable((int)CategoryType.GameplayGuitar, (int)CategoryType.GameplayGuitar);
+            interactionMatrix.SetInteractable((int)CategoryType.GameplayDrums, (int)CategoryType.GameplayDrums);
         }
     }
 
     const bool kRebindableDefault = true;
     const bool kHiddenInListsDefault = false;
-    const int kCategoryDefault = (int)Category.CategoryType.Global;
+    const int kCategoryDefault = (int)Category.CategoryType.Editor;
 
     static readonly InputAction.Properties kDefaultProperties = new InputAction.Properties { rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault };
 

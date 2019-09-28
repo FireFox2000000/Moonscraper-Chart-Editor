@@ -6,7 +6,7 @@
 
         public InteractionMatrix(int size)
         {
-            UnityEngine.Debug.Assert(size <= sizeof(int));
+            UnityEngine.Debug.Assert(size <= sizeof(int) * 8);
             collisionMask = new int[size];
         }
 

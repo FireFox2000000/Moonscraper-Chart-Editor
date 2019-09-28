@@ -110,6 +110,7 @@ public class ActionBindingsMenu : MonoBehaviour
     IEnumerable<InputAction> loadedActions;
 
     IInputActionContainer actions;
+    int categoryDisplayMask = ~0;
 
     // Start is called before the first frame update
     void Start()
@@ -119,29 +120,34 @@ public class ActionBindingsMenu : MonoBehaviour
         rebindInterface.rebindCompleteEvent.Register(OnRebindComplete);
 
         actions = GameSettings.controls;
+        categoryDisplayMask = ShortcutInput.Category.kEditorCategoryMask;
 
-        LoadActions(actions);
+        LoadActions(actions, categoryDisplayMask);
         SetDevice(InputManager.Instance.devices[0]);
     }
 
     public void SetDevice(IInputDevice device)
     {
         lastKnownDisplayDevice = device;
-        PopulateFrom(loadedActions);
+        PopulateFrom(loadedActions, categoryDisplayMask);
     }
 
-    public void LoadActions(IEnumerable<InputAction> actionEnumerator)
+    public void LoadActions(IEnumerable<InputAction> actionEnumerator, int categoryDisplayMask)
     {
         loadedActions = actionEnumerator;
-        PopulateFrom(loadedActions);
+        PopulateFrom(loadedActions, categoryDisplayMask);
     }
 
-    void PopulateFrom(IEnumerable<InputAction> actionEnumerator)
+    void PopulateFrom(IEnumerable<InputAction> actionEnumerator, int categoryDisplayMask)
     {
         int index = 0;
         foreach(var inputAction in actionEnumerator)
         {
             if (inputAction.properties.hiddenInLists)
+                continue;
+
+            // Not displaying these actions at the moment.
+            if (((1 << inputAction.properties.category) & categoryDisplayMask) == 0)
                 continue;
 
             if (index >= rowPool.Count)
@@ -225,6 +231,6 @@ public class ActionBindingsMenu : MonoBehaviour
 
     public void OnRebindComplete()
     {
-        PopulateFrom(actions);
+        PopulateFrom(actions, categoryDisplayMask);
     }
 }

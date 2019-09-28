@@ -77,7 +77,6 @@ public static class GameSettings
     public static NotePlacementMode notePlacementMode = NotePlacementMode.Default;
 
     public static ShortcutInput.ShortcutActionContainer controls = new ShortcutInput.ShortcutActionContainer();
-    public static GameplayInput.GameplayActionContainer gameplayControls = new GameplayInput.GameplayActionContainer();
 
     public static bool GetBoolSetting(string identifier)
     {
@@ -230,7 +229,7 @@ public static class GameSettings
     static void LoadDefaultControls()
     {
         SetDefaultKeysControls(controls);
-        SetDefaultGameplayControls(gameplayControls);
+        SetDefaultGameplayControls(controls);
     }
 
     public static void SetDefaultKeysControls(ShortcutInput.ShortcutActionContainer inputList)
@@ -238,7 +237,9 @@ public static class GameSettings
         // Reset all maps to a blank state
         foreach (Shortcut sc in EnumX<Shortcut>.Values)
         {
-            inputList.GetActionConfig(sc).RemoveMapsForDevice(MSE.Input.DeviceType.Keyboard);
+            var config = inputList.GetActionConfig(sc);
+            if (((1 << config.properties.category) & ShortcutInput.Category.kEditorCategoryMask) != 0)
+                config.RemoveMapsForDevice(MSE.Input.DeviceType.Keyboard);
         }
 
         {
@@ -330,70 +331,73 @@ public static class GameSettings
         // Reset all maps to a blank state
         foreach (Shortcut sc in EnumX<Shortcut>.Values)
         {
-            inputList.GetActionConfig(sc).RemoveMapsForDevice(MSE.Input.DeviceType.Gamepad);
-        }
-
-        // Reset all maps to a blank state
-        foreach (Shortcut sc in EnumX<Shortcut>.Values)
-        {
-            inputList.GetActionConfig(sc).Add(new GamepadButtonMap());  // Add empty maps
+            var config = inputList.GetActionConfig(sc);
+            if (((1 << config.properties.category) & ShortcutInput.Category.kEditorCategoryMask) != 0)
+            {
+                config.RemoveMapsForDevice(MSE.Input.DeviceType.Gamepad);
+                config.Add(new GamepadButtonMap());  // Add empty maps
+            }
         }
     }
 
-    public static void SetDefaultGameplayControls(GameplayInput.GameplayActionContainer inputList)
+    public static void SetDefaultGameplayControls(ShortcutInput.ShortcutActionContainer inputList)
     {
         SetDefaultGameplayControlsPad(inputList);
         SetDefaultGameplayControlsKeys(inputList);
     }
 
-    public static void SetDefaultGameplayControlsPad(GameplayInput.GameplayActionContainer inputList)
+    public static void SetDefaultGameplayControlsPad(ShortcutInput.ShortcutActionContainer inputList)
     {
         // Reset all maps to a blank state
-        foreach (GameplayAction sc in EnumX<GameplayAction>.Values)
+        foreach (Shortcut sc in EnumX<Shortcut>.Values)
         {
-            inputList.GetActionConfig(sc).RemoveMapsForDevice(MSE.Input.DeviceType.Gamepad);
+            var config = inputList.GetActionConfig(sc);
+            if (((1 << config.properties.category) & ShortcutInput.Category.kGameplayCategoryMask) != 0)
+                config.RemoveMapsForDevice(MSE.Input.DeviceType.Gamepad);
         }
 
-        inputList.GetActionConfig(GameplayAction.GuitarStrumUp).Add(new GamepadButtonMap() { GamepadDevice.Button.DPadUp });
-        inputList.GetActionConfig(GameplayAction.GuitarStrumDown).Add(new GamepadButtonMap() { GamepadDevice.Button.DPadDown });
+        inputList.GetActionConfig(Shortcut.GuitarStrumUp).Add(new GamepadButtonMap() { GamepadDevice.Button.DPadUp });
+        inputList.GetActionConfig(Shortcut.GuitarStrumDown).Add(new GamepadButtonMap() { GamepadDevice.Button.DPadDown });
 
-        inputList.GetActionConfig(GameplayAction.GuitarFretGreen).Add(new GamepadButtonMap() { GamepadDevice.Button.A });
-        inputList.GetActionConfig(GameplayAction.GuitarFretRed).Add(new GamepadButtonMap() { GamepadDevice.Button.B });
-        inputList.GetActionConfig(GameplayAction.GuitarFretYellow).Add(new GamepadButtonMap() { GamepadDevice.Button.Y });
-        inputList.GetActionConfig(GameplayAction.GuitarFretBlue).Add(new GamepadButtonMap() { GamepadDevice.Button.X });
-        inputList.GetActionConfig(GameplayAction.GuitarFretOrange).Add(new GamepadButtonMap() { GamepadDevice.Button.LB });
+        inputList.GetActionConfig(Shortcut.GuitarFretGreen).Add(new GamepadButtonMap() { GamepadDevice.Button.A });
+        inputList.GetActionConfig(Shortcut.GuitarFretRed).Add(new GamepadButtonMap() { GamepadDevice.Button.B });
+        inputList.GetActionConfig(Shortcut.GuitarFretYellow).Add(new GamepadButtonMap() { GamepadDevice.Button.Y });
+        inputList.GetActionConfig(Shortcut.GuitarFretBlue).Add(new GamepadButtonMap() { GamepadDevice.Button.X });
+        inputList.GetActionConfig(Shortcut.GuitarFretOrange).Add(new GamepadButtonMap() { GamepadDevice.Button.LB });
 
-        inputList.GetActionConfig(GameplayAction.DrumPadRed).Add(new GamepadButtonMap() { GamepadDevice.Button.B });
-        inputList.GetActionConfig(GameplayAction.DrumPadYellow).Add(new GamepadButtonMap() { GamepadDevice.Button.Y });
-        inputList.GetActionConfig(GameplayAction.DrumPadBlue).Add(new GamepadButtonMap() { GamepadDevice.Button.X });
-        inputList.GetActionConfig(GameplayAction.DrumPadOrange).Add(new GamepadButtonMap() { GamepadDevice.Button.RB });
-        inputList.GetActionConfig(GameplayAction.DrumPadGreen).Add(new GamepadButtonMap() { GamepadDevice.Button.A });
-        inputList.GetActionConfig(GameplayAction.DrumPadKick).Add(new GamepadButtonMap() { GamepadDevice.Button.LB });
+        inputList.GetActionConfig(Shortcut.DrumPadRed).Add(new GamepadButtonMap() { GamepadDevice.Button.B });
+        inputList.GetActionConfig(Shortcut.DrumPadYellow).Add(new GamepadButtonMap() { GamepadDevice.Button.Y });
+        inputList.GetActionConfig(Shortcut.DrumPadBlue).Add(new GamepadButtonMap() { GamepadDevice.Button.X });
+        inputList.GetActionConfig(Shortcut.DrumPadOrange).Add(new GamepadButtonMap() { GamepadDevice.Button.RB });
+        inputList.GetActionConfig(Shortcut.DrumPadGreen).Add(new GamepadButtonMap() { GamepadDevice.Button.A });
+        inputList.GetActionConfig(Shortcut.DrumPadKick).Add(new GamepadButtonMap() { GamepadDevice.Button.LB });
     }
 
-    public static void SetDefaultGameplayControlsKeys(GameplayInput.GameplayActionContainer inputList)
+    public static void SetDefaultGameplayControlsKeys(ShortcutInput.ShortcutActionContainer inputList)
     {
-        foreach (GameplayAction sc in EnumX<GameplayAction>.Values)
+        foreach (Shortcut sc in EnumX<Shortcut>.Values)
         {
-            inputList.GetActionConfig(sc).RemoveMapsForDevice(MSE.Input.DeviceType.Keyboard);
+            var config = inputList.GetActionConfig(sc);
+            if (((1 << config.properties.category) & ShortcutInput.Category.kGameplayCategoryMask) != 0)
+                config.RemoveMapsForDevice(MSE.Input.DeviceType.Keyboard);
         }
 
         {
-            inputList.GetActionConfig(GameplayAction.GuitarStrumUp).Add(new KeyboardMap() { KeyCode.UpArrow });
-            inputList.GetActionConfig(GameplayAction.GuitarStrumDown).Add(new KeyboardMap() { KeyCode.DownArrow });
+            inputList.GetActionConfig(Shortcut.GuitarStrumUp).Add(new KeyboardMap() { KeyCode.UpArrow });
+            inputList.GetActionConfig(Shortcut.GuitarStrumDown).Add(new KeyboardMap() { KeyCode.DownArrow });
 
-            inputList.GetActionConfig(GameplayAction.GuitarFretGreen).Add(new KeyboardMap() { KeyCode.Alpha1 });
-            inputList.GetActionConfig(GameplayAction.GuitarFretRed).Add(new KeyboardMap() { KeyCode.Alpha2 });
-            inputList.GetActionConfig(GameplayAction.GuitarFretYellow).Add(new KeyboardMap() { KeyCode.Alpha3 });
-            inputList.GetActionConfig(GameplayAction.GuitarFretBlue).Add(new KeyboardMap() { KeyCode.Alpha4 });
-            inputList.GetActionConfig(GameplayAction.GuitarFretOrange).Add(new KeyboardMap() { KeyCode.Alpha5 });
+            inputList.GetActionConfig(Shortcut.GuitarFretGreen).Add(new KeyboardMap() { KeyCode.Alpha1 });
+            inputList.GetActionConfig(Shortcut.GuitarFretRed).Add(new KeyboardMap() { KeyCode.Alpha2 });
+            inputList.GetActionConfig(Shortcut.GuitarFretYellow).Add(new KeyboardMap() { KeyCode.Alpha3 });
+            inputList.GetActionConfig(Shortcut.GuitarFretBlue).Add(new KeyboardMap() { KeyCode.Alpha4 });
+            inputList.GetActionConfig(Shortcut.GuitarFretOrange).Add(new KeyboardMap() { KeyCode.Alpha5 });
 
-            inputList.GetActionConfig(GameplayAction.DrumPadRed).Add(new KeyboardMap() { KeyCode.Alpha1 });
-            inputList.GetActionConfig(GameplayAction.DrumPadYellow).Add(new KeyboardMap() { KeyCode.Alpha2 });
-            inputList.GetActionConfig(GameplayAction.DrumPadBlue).Add(new KeyboardMap() { KeyCode.Alpha3 });
-            inputList.GetActionConfig(GameplayAction.DrumPadOrange).Add(new KeyboardMap() { KeyCode.Alpha4 });
-            inputList.GetActionConfig(GameplayAction.DrumPadGreen).Add(new KeyboardMap() { KeyCode.Alpha5 });
-            inputList.GetActionConfig(GameplayAction.DrumPadKick).Add(new KeyboardMap() { KeyCode.Alpha0 });
+            inputList.GetActionConfig(Shortcut.DrumPadRed).Add(new KeyboardMap() { KeyCode.Alpha1 });
+            inputList.GetActionConfig(Shortcut.DrumPadYellow).Add(new KeyboardMap() { KeyCode.Alpha2 });
+            inputList.GetActionConfig(Shortcut.DrumPadBlue).Add(new KeyboardMap() { KeyCode.Alpha3 });
+            inputList.GetActionConfig(Shortcut.DrumPadOrange).Add(new KeyboardMap() { KeyCode.Alpha4 });
+            inputList.GetActionConfig(Shortcut.DrumPadGreen).Add(new KeyboardMap() { KeyCode.Alpha5 });
+            inputList.GetActionConfig(Shortcut.DrumPadKick).Add(new KeyboardMap() { KeyCode.Alpha0 });
         }
     }
 }

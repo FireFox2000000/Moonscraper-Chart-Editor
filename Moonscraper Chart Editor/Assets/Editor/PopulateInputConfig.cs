@@ -24,26 +24,16 @@ public class PopulateInputConfig : Editor
           
         if (GUILayout.Button("Build Shortcut Input From Scratch"))
         {
-            RepopulateShortcuts(inputConfigDatabase);
+            RepopulateInput(inputConfigDatabase);
         }
 
         if (GUILayout.Button("Build Shortcut Input Keep Names"))
         {
-            RepopulateShortcuts(inputConfigDatabase, true);
-        }
-
-        if (GUILayout.Button("Build Gameplay Input From Scratch"))
-        {
-            RepopulateGameplayActions(inputConfigDatabase);
-        }
-
-        if (GUILayout.Button("Build Gameplay Input Keep Names"))
-        {
-            RepopulateGameplayActions(inputConfigDatabase, true);
+            RepopulateInput(inputConfigDatabase, true);
         }
     }
 
-    void RepopulateShortcuts(InputConfig inputConfigDatabase, bool preserveDisplayNames = false)
+    void RepopulateInput(InputConfig inputConfigDatabase, bool preserveDisplayNames = false)
     {
         ShortcutInput.ShortcutActionContainer controls = new ShortcutInput.ShortcutActionContainer();
 
@@ -71,7 +61,7 @@ public class PopulateInputConfig : Editor
             config.shortcut = scEnum;
             config.properties = properties;
 
-            if (preserveDisplayNames)
+            if (preserveDisplayNames && i < inputConfigDatabase.shortcutInputs.Length)
             {
                 config.properties.displayName = inputConfigDatabase.shortcutInputs[i].properties.displayName;
             }
@@ -80,45 +70,6 @@ public class PopulateInputConfig : Editor
         }
 
         inputConfigDatabase.shortcutInputs = shortcutInputs;
-    }
-
-    void RepopulateGameplayActions(InputConfig inputConfigDatabase, bool preserveDisplayNames = false)
-    {
-        var controls = new GameplayInput.GameplayActionContainer();
-
-        GameplayActionConfig[] inputs = new GameplayActionConfig[EnumX<GameplayAction>.Count];
-
-        for (int i = 0; i < inputs.Length; ++i)
-        {
-            GameplayAction scEnum = (GameplayAction)i;
-
-            InputConfig.GameplayProperties properties;
-            if (!gameplayInputExplicitProperties.TryGetValue(scEnum, out properties))
-            {
-                properties = kGameplayDefaultProperties;
-            }
-
-            if (string.IsNullOrEmpty(properties.displayName))
-            {
-                properties.displayName = scEnum.ToString();
-            }
-
-            GameplayActionConfig config = new GameplayActionConfig();
-            var defaultConfig = controls.GetActionConfig(scEnum);
-            var defaultProperties = defaultConfig.properties;
-
-            config.action = scEnum;
-            config.properties = properties;
-
-            if (preserveDisplayNames)
-            {
-                config.properties.displayName = inputConfigDatabase.gameplayInputs[i].properties.displayName;
-            }
-
-            inputs[i] = config;
-        }
-
-        inputConfigDatabase.gameplayInputs = inputs;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -144,33 +95,33 @@ public class PopulateInputConfig : Editor
         { Shortcut.PlayPause,               new InputConfig.Properties {rebindable = false, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault } },
         { Shortcut.SectionJumpMouseScroll,  new InputConfig.Properties {rebindable = false, hiddenInLists = true, category = kCategoryDefault } },
 
-        { Shortcut.AddSongObject,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.KeyboardMode } },
+        { Shortcut.AddSongObject,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorKeyboardMode } },
 
-        { Shortcut.ToolNoteLane1,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.ToolNote } },
-        { Shortcut.ToolNoteLane2,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.ToolNote } },
-        { Shortcut.ToolNoteLane3,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.ToolNote } },
-        { Shortcut.ToolNoteLane4,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.ToolNote } },
-        { Shortcut.ToolNoteLane5,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.ToolNote } },
-        { Shortcut.ToolNoteLane6,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.ToolNote } },
-        { Shortcut.ToolNoteLaneOpen,    new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.ToolNote } },
+        { Shortcut.ToolNoteLane1,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorToolNote } },
+        { Shortcut.ToolNoteLane2,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorToolNote } },
+        { Shortcut.ToolNoteLane3,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorToolNote } },
+        { Shortcut.ToolNoteLane4,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorToolNote } },
+        { Shortcut.ToolNoteLane5,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorToolNote } },
+        { Shortcut.ToolNoteLane6,       new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorToolNote } },
+        { Shortcut.ToolNoteLaneOpen,    new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.EditorToolNote } },
 
         { Shortcut.CloseMenu,           new InputConfig.Properties {rebindable = false, hiddenInLists = true, category = kCategoryDefault } },
-    };
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    static readonly InputConfig.GameplayProperties kGameplayDefaultProperties = InputConfig.kGameplayDefaultProperties;
-    static readonly bool kGameplayRebindableDefault = kDefaultProperties.rebindable;
-    static readonly bool kGameplayHiddenInListsDefault = kDefaultProperties.hiddenInLists;
-    static readonly GameplayInput.Category.CategoryType kGameplayCategoryDefault = kGameplayDefaultProperties.category;
+        { Shortcut.GuitarStrumUp, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayGuitar } },
+        { Shortcut.GuitarStrumDown, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayGuitar } },
+        { Shortcut.GuitarFretGreen, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayGuitar } },
+        { Shortcut.GuitarFretRed, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayGuitar } },
+        { Shortcut.GuitarFretYellow, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayGuitar } },
+        { Shortcut.GuitarFretBlue, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayGuitar } },
+        { Shortcut.GuitarFretOrange, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayGuitar } },
 
-    static readonly Dictionary<GameplayAction, InputConfig.GameplayProperties> gameplayInputExplicitProperties = new Dictionary<GameplayAction, InputConfig.GameplayProperties>()
-    {
-        { GameplayAction.DrumPadRed, new InputConfig.GameplayProperties {rebindable = kGameplayRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = GameplayInput.Category.CategoryType.Drums } },
-        { GameplayAction.DrumPadYellow, new InputConfig.GameplayProperties {rebindable = kGameplayRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = GameplayInput.Category.CategoryType.Drums } },
-        { GameplayAction.DrumPadBlue, new InputConfig.GameplayProperties {rebindable = kGameplayRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = GameplayInput.Category.CategoryType.Drums } },
-        { GameplayAction.DrumPadOrange, new InputConfig.GameplayProperties {rebindable = kGameplayRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = GameplayInput.Category.CategoryType.Drums } },
-        { GameplayAction.DrumPadGreen, new InputConfig.GameplayProperties {rebindable = kGameplayRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = GameplayInput.Category.CategoryType.Drums } },
-        { GameplayAction.DrumPadKick, new InputConfig.GameplayProperties {rebindable = kGameplayRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = GameplayInput.Category.CategoryType.Drums } },
+        { Shortcut.DrumPadRed, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayDrums } },
+        { Shortcut.DrumPadYellow, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayDrums } },
+        { Shortcut.DrumPadBlue, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayDrums } },
+        { Shortcut.DrumPadOrange, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayDrums } },
+        { Shortcut.DrumPadGreen, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayDrums } },
+        { Shortcut.DrumPadKick, new InputConfig.Properties {rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = ShortcutInput.Category.CategoryType.GameplayDrums } },
     };
 }
