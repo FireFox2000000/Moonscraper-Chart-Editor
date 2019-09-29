@@ -1,3 +1,11 @@
+1.3.2.2
+	NEW FEATURES
+	-Added support to rebind gameplay controls and gamepad controls
+
+	FIXES
+	-Fixed false-positive equality bug between events and sections when they have the same text
+	-Fixed tools sometimes disappearing towards the end of a chart that has lots of BPM changes. Some flickering may still occur. 
+
 1.3.2.1
 	NEW FEATURES
 	-Added input support for non-Xbox 360 controllers.
