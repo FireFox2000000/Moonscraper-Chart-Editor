@@ -8,17 +8,25 @@ namespace MSE
     namespace Input
     {
         [Serializable]
-        public class GamepadButtonMap : IInputMap, IEnumerable<GamepadDevice.Button>
+        public class GamepadButtonMap : IInputMap, IEnumerable
         {
+            [Serializable]
+            public struct AxisConfig
+            {
+                public GamepadDevice.Axis axis;
+                public GamepadDevice.AxisDir dir;
+            }
+
             static System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
             public List<GamepadDevice.Button> buttons = new List<GamepadDevice.Button>();
+            public List<AxisConfig> axes = new List<AxisConfig>();
 
             public bool IsEmpty
             {
                 get
                 {
-                    return buttons.Count <= 0;
+                    return buttons.Count <= 0 && axes.Count <= 0;
                 }
             }
 
@@ -27,11 +35,17 @@ namespace MSE
                 buttons.Add(key);
             }
 
+            public void Add(GamepadDevice.Axis axis, GamepadDevice.AxisDir dir)
+            {
+                axes.Add(new AxisConfig() { axis = axis, dir = dir });
+            }
+
             public IInputMap Clone()
             {
                 GamepadButtonMap clone = new GamepadButtonMap();
 
                 clone.buttons.AddRange(buttons);
+                clone.axes.AddRange(axes);
 
                 return clone;
             }
@@ -46,6 +60,14 @@ namespace MSE
                         sb.Append(" + ");
 
                     sb.Append(key);
+                }
+
+                foreach (var axis in axes)
+                {
+                    if (sb.Length > 0)
+                        sb.Append(" + ");
+
+                    sb.Append(axis.axis.ToString());
                 }
 
                 return sb.ToString();
@@ -66,12 +88,22 @@ namespace MSE
                     }
                 }
 
+                foreach (var axis in axes)
+                {
+                    foreach (var otherAxis in otherGpMap.axes)
+                    {
+                        if (axis.axis == otherAxis.axis && (axis.dir == otherAxis.dir || axis.dir == GamepadDevice.AxisDir.Any || otherAxis.dir == GamepadDevice.AxisDir.Any))
+                            return true;
+                    }
+                }
+
                 return false;
             }
 
             public void SetEmpty()
             {
                 buttons.Clear();
+                axes.Clear();
             }
 
             public bool SetFrom(IInputMap that)
@@ -83,22 +115,31 @@ namespace MSE
                     return false;
                 }
 
-                buttons.Clear();
+                SetEmpty();
                 buttons.AddRange(gpCast.buttons);
+                axes.AddRange(gpCast.axes);
 
                 return true;
             }
 
             public DeviceType CompatibleDevice => DeviceType.Gamepad;
 
-            public IEnumerator<GamepadDevice.Button> GetEnumerator()
-            {
-                return ((IEnumerable<GamepadDevice.Button>)buttons).GetEnumerator();
-            }
-
+            //public IEnumerator<GamepadDevice.Button> GetEnumerator()
+            //{
+            //    return ((IEnumerable<GamepadDevice.Button>)buttons).GetEnumerator();
+            //}
+            
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return buttons.GetEnumerator();
+                foreach (var button in buttons)
+                {
+                    yield return button;
+                }
+
+                foreach (var axis in axes)
+                {
+                    yield return axis;
+                }
             }
         }
     }

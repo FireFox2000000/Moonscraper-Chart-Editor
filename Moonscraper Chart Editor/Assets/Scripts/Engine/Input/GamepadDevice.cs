@@ -48,6 +48,13 @@ namespace MSE
                 RT,
             }
 
+            public enum AxisDir
+            {
+                Any,
+                Positive,
+                Negative,
+            }
+
             static GamepadState EmptyState = new GamepadState() { buttonsDown = new EnumLookupTable<Button, bool>(), axisValues = new EnumLookupTable<Axis, float>() };
 
             public GamepadDevice(IntPtr sdlHandle)
@@ -90,6 +97,16 @@ namespace MSE
                     }
                 }
 
+                foreach (Axis axis in EnumX<Axis>.Values)
+                {
+                    float axisVal = GetAxis(axis);
+                    if (Mathf.Abs(axisVal) > 0)
+                    {
+                        AxisDir dir = axisVal > 0 ? AxisDir.Positive : AxisDir.Negative;
+                        return new GamepadButtonMap() { { axis, dir } };
+                    }
+                }
+
                 return null;
             }
 
@@ -121,6 +138,13 @@ namespace MSE
             public float GetAxis(Axis axis)
             {
                 var gamePadState = GetCurrentGamepadState();
+
+                return gamePadState.axisValues[axis];
+            }
+
+            float GetPreviousAxis(Axis axis)
+            {
+                var gamePadState = GetPreviousGamepadState();
 
                 return gamePadState.axisValues[axis];
             }
@@ -169,9 +193,16 @@ namespace MSE
                 {
                     SDL.SDL_GameControllerAxis sdlAxis = GetSDLAxisForAxis(axis);
                     short axisValue = SDL.SDL_GameControllerGetAxis(sdlHandle, sdlAxis);
-                    gamepadState.axisValues[axis] = (float)axisValue / short.MaxValue;
+                    float rawValue = (float)axisValue / short.MaxValue;
 
-                    // Todo, deadzones
+                    // Deadzones
+                    const float axisDeadzoneThreshold = 0.2f;
+                    if (Mathf.Abs(rawValue) < axisDeadzoneThreshold)
+                    {
+                        rawValue = 0;
+                    }
+
+                    gamepadState.axisValues[axis] = rawValue;
                 }
             }
 
@@ -233,6 +264,23 @@ namespace MSE
                         }
                     }
 
+                    foreach (var axis in map.axes)
+                    {
+                        if (GetPreviousAxis(axis.axis) == 0)
+                        {
+                            float axisVal = GetAxis(axis.axis);
+
+                            if (axisVal == 0 || (axis.dir == AxisDir.Positive && axisVal < 0) || (axis.dir == AxisDir.Negative && axisVal > 0))
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+
                     return true;
                 }
 
@@ -252,6 +300,23 @@ namespace MSE
                         }
                     }
 
+                    foreach (var axis in map.axes)
+                    {
+                        if (GetAxis(axis.axis) == 0)
+                        {
+                            float axisVal = GetPreviousAxis(axis.axis);
+
+                            if (axisVal == 0 || (axis.dir == AxisDir.Positive && axisVal < 0) || (axis.dir == AxisDir.Negative && axisVal > 0))
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+
                     return true;
                 }
 
@@ -266,6 +331,16 @@ namespace MSE
                     foreach (var button in map.buttons)
                     {
                         if (!GetButton(button))
+                        {
+                            return false;
+                        }
+                    }
+
+                    foreach (var axis in map.axes)
+                    {
+                        float axisVal = GetAxis(axis.axis);
+
+                        if (axisVal == 0 || (axis.dir == AxisDir.Positive && axisVal < 0) || (axis.dir == AxisDir.Negative && axisVal > 0))
                         {
                             return false;
                         }
