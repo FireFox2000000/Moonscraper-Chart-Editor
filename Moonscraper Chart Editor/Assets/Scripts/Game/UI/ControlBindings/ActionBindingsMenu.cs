@@ -106,35 +106,42 @@ public class ActionBindingsMenu : MonoBehaviour
 
     List<ActionUIRow> rowPool = new List<ActionUIRow>();
     GameObject menu;
+
     IInputDevice lastKnownDisplayDevice;
     IEnumerable<InputAction> loadedActions;
-
-    IInputActionContainer actions;
     int categoryDisplayMask = ~0;
 
+    bool initialised = false;
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        rectTransform = GetComponent<RectTransform>();
-        lastKnownDisplayDevice = InputManager.Instance.devices[0];
-        rebindInterface.rebindCompleteEvent.Register(OnRebindComplete);
-
-        actions = GameSettings.controls;
-        categoryDisplayMask = MSChartEditorInput.Category.kEditorCategoryMask;
-
-        LoadActions(actions, categoryDisplayMask);
-        SetDevice(InputManager.Instance.devices[0]);
+        if (!initialised)
+            Setup(InputManager.Instance.devices[0], GameSettings.controls, MSChartEditorInput.Category.kEditorCategoryMask);
     }
 
-    public void SetDevice(IInputDevice device)
+    void Init()
     {
+        if (!initialised)
+        {
+            rectTransform = GetComponent<RectTransform>();
+            rebindInterface.rebindCompleteEvent.Register(OnRebindComplete);
+        }
+        initialised = true;
+    }
+
+    public void Setup(IInputDevice device, IEnumerable<InputAction> actionEnumerator, int categoryDisplayMask)
+    {
+        Init();
+
         lastKnownDisplayDevice = device;
-        PopulateFrom(loadedActions, categoryDisplayMask);
+        LoadActions(actionEnumerator, categoryDisplayMask);
     }
 
     public void LoadActions(IEnumerable<InputAction> actionEnumerator, int categoryDisplayMask)
     {
         loadedActions = actionEnumerator;
+        this.categoryDisplayMask = categoryDisplayMask;
         PopulateFrom(loadedActions, categoryDisplayMask);
     }
 
@@ -231,6 +238,6 @@ public class ActionBindingsMenu : MonoBehaviour
 
     public void OnRebindComplete()
     {
-        PopulateFrom(actions, categoryDisplayMask);
+        PopulateFrom(loadedActions, categoryDisplayMask);
     }
 }

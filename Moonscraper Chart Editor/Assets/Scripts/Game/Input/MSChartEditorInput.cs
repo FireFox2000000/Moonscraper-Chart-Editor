@@ -118,6 +118,7 @@ public static class MSChartEditorInput
             = (1 << (int)CategoryType.Editor)
             | (1 << (int)CategoryType.EditorKeyboardMode)
             | (1 << (int)CategoryType.EditorToolNote)
+            | (1 << (int)CategoryType.Global)
             ;
         public static readonly int kGameplayCategoryMask = (1 << (int)CategoryType.GameplayGuitar) | (1 << (int)CategoryType.GameplayDrums);
 

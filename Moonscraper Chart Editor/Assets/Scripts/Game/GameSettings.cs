@@ -228,8 +228,14 @@ public static class GameSettings
 
     static void LoadDefaultControls()
     {
-        SetDefaultKeysControls(controls);
+        SetDefaultEditorControls(controls);
         SetDefaultGameplayControls(controls);
+    }
+
+    public static void SetDefaultEditorControls(MSChartEditorInput.MSChartEditorActionContainer inputList)
+    {
+        SetDefaultKeysControls(inputList);
+        SetDefaultEditorControlsPad(inputList);
     }
 
     public static void SetDefaultKeysControls(MSChartEditorInput.MSChartEditorActionContainer inputList)

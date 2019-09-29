@@ -10,6 +10,7 @@ using System;
 public class InputManager : UnitySingleton<InputManager>
 {
     public InputConfig inputPropertiesConfig;
+    public MSE.Event<IInputDevice> disconnectEvent = new MSE.Event<IInputDevice>();
 
     public GamepadDevice mainGamepad
     {
@@ -110,12 +111,15 @@ public class InputManager : UnitySingleton<InputManager>
         {
             if (controllers[i].sdlHandle == removedController)
             {
+                IInputDevice device = controllers[i];
+
                 controllers[i].Disconnect();
                 SDL.SDL_GameControllerClose(removedController);
 
                 Debug.Assert(devices.Remove(controllers[i]));
                 controllers.RemoveAt(i);
-                
+                disconnectEvent.Fire(device);
+
                 return;
             }
         }
