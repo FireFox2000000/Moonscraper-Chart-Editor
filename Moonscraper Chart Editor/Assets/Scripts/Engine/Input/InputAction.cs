@@ -70,7 +70,12 @@ namespace MSE
 
             public void LoadFrom(SaveData saveData)
             {
-                inputMaps = saveData.input;
+                // Handle previous versions of save data that didn't have gamepad maps
+                if (saveData.input.kbMaps != null && saveData.input.kbMaps.Count > 0)
+                    inputMaps.kbMaps = saveData.input.kbMaps;
+
+                if (saveData.input.gpButtonMaps != null && saveData.input.gpButtonMaps.Count > 0)
+                    inputMaps.gpButtonMaps = saveData.input.gpButtonMaps;
             }
 
             public void Add(IInputMap map)
