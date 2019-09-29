@@ -64,9 +64,7 @@ public class PlayingState : SystemManagerState
         else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.StepDecrease))
             GameSettings.snappingStep.Decrement();
 
-        var gamepad = InputManager.Instance.mainGamepad;
-
-        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.PlayPause) || (gamepad != null && gamepad.GetButtonPressed(MSE.Input.GamepadDevice.Button.Start)))
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.PlayPause) || MSChartEditorInput.GetInputDown(MSChartEditorInputActions.StartGameplay))
         {
             editor.Stop();
         }

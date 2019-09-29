@@ -97,6 +97,7 @@ public enum MSChartEditorInputActions
     DrumPadKick,
 
     Whammy,
+    StartGameplay,
 }
 
 public static class MSChartEditorInput

@@ -50,8 +50,6 @@ public class InputManager : UnitySingleton<InputManager>
 
     // Update is called once per frame
     void Update () {
-        //mainGamepad.Update(ChartEditor.hasFocus);
-
         SDL.SDL_Event sdlEvent;
         while (SDL.SDL_PollEvent(out sdlEvent) > 0)
         {

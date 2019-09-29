@@ -294,6 +294,7 @@ public static class GameSettings
             inputList.GetActionConfig(MSChartEditorInputActions.ToolNoteLaneOpen).Add(new KeyboardMap() { KeyCode.Alpha0 });
 
             inputList.GetActionConfig(MSChartEditorInputActions.CloseMenu).Add(new KeyboardMap() { KeyCode.Escape });
+            inputList.GetActionConfig(MSChartEditorInputActions.StartGameplay).Add(new KeyboardMap());
         }
 
         {
@@ -341,7 +342,17 @@ public static class GameSettings
             if (((1 << config.properties.category) & MSChartEditorInput.Category.kEditorCategoryMask) != 0)
             {
                 config.RemoveMapsForDevice(MSE.Input.DeviceType.Gamepad);
-                config.Add(new GamepadMap());  // Add empty maps
+
+                switch (sc)
+                {
+                    case MSChartEditorInputActions.StartGameplay:
+                        config.Add(new GamepadMap() { GamepadDevice.Button.Start });
+                        break;
+
+                    default:
+                        config.Add(new GamepadMap());  // Add empty maps
+                        break;
+                }
             }
         }
     }

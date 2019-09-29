@@ -24,14 +24,12 @@ public class EditorState : SystemManagerState
 
         if (services.CanPlay())
         {
-            var gamepad = InputManager.Instance.mainGamepad;
-
             if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.PlayPause))
             {
                 editor.Play();
                 return;
             }
-            else if (gamepad != null && gamepad.GetButtonPressed(MSE.Input.GamepadDevice.Button.Start))
+            else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.StartGameplay))
             {
                 editor.StartGameplay();
                 return;
