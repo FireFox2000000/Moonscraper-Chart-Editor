@@ -14,6 +14,8 @@ public class RebindOverlayInterface : MonoBehaviour
     Text conflictNotificationText;
     const string conflictFormatStr = "Cannot remap to {0} as it is already in use by {1}";
 
+    IInputDevice device;
+
     private void OnEnable()
     {
         conflictNotificationText.enabled = false;
@@ -31,7 +33,7 @@ public class RebindOverlayInterface : MonoBehaviour
 
             InputAction conflict;
             IInputMap attemptedInput;
-            if (rebinder.TryMap(out conflict, out attemptedInput))
+            if (!device.Connected || rebinder.TryMap(out conflict, out attemptedInput))
             {
                 Close(true);
             }
@@ -49,12 +51,14 @@ public class RebindOverlayInterface : MonoBehaviour
         if (ChartEditor.Instance)
             ChartEditor.Instance.uiServices.SetPopupBlockingEnabled(true);
 
+        this.device = device;
         rebinder = new InputRebinder(actionToRebind, mapToRebind, allActions, device);
         gameObject.SetActive(true);
     }
 
     void Close(bool rebindSuccess)
     {
+        this.device = null;
         if (!rebindSuccess && rebinder != null)
         {
             rebinder.RevertMapBeingRebound();
