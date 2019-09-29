@@ -93,7 +93,7 @@ namespace MSE
                 {
                     if (GetButton(button))
                     {
-                        return new GamepadButtonMap() { button };
+                        return new GamepadMap() { button };
                     }
                 }
 
@@ -103,7 +103,7 @@ namespace MSE
                     if (Mathf.Abs(axisVal) > 0)
                     {
                         AxisDir dir = axisVal > 0 ? AxisDir.Positive : AxisDir.Negative;
-                        return new GamepadButtonMap() { { axis, dir } };
+                        return new GamepadMap() { { axis, dir } };
                     }
                 }
 
@@ -253,7 +253,7 @@ namespace MSE
 
             public bool GetInputDown(IInputMap inputMap)
             {
-                GamepadButtonMap map = inputMap as GamepadButtonMap;
+                GamepadMap map = inputMap as GamepadMap;
                 if (map != null)
                 {
                     foreach (var button in map.buttons)
@@ -289,7 +289,7 @@ namespace MSE
 
             public bool GetInputUp(IInputMap inputMap)
             {
-                GamepadButtonMap map = inputMap as GamepadButtonMap;
+                GamepadMap map = inputMap as GamepadMap;
                 if (map != null)
                 {
                     foreach (var button in map.buttons)
@@ -325,7 +325,7 @@ namespace MSE
 
             public bool GetInput(IInputMap inputMap)
             {
-                GamepadButtonMap map = inputMap as GamepadButtonMap;
+                GamepadMap map = inputMap as GamepadMap;
                 if (map != null)
                 {
                     foreach (var button in map.buttons)

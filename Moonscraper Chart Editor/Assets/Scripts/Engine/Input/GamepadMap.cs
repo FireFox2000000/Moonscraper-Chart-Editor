@@ -8,7 +8,7 @@ namespace MSE
     namespace Input
     {
         [Serializable]
-        public class GamepadButtonMap : IInputMap, IEnumerable
+        public class GamepadMap : IInputMap, IEnumerable
         {
             [Serializable]
             public struct AxisConfig
@@ -42,7 +42,7 @@ namespace MSE
 
             public IInputMap Clone()
             {
-                GamepadButtonMap clone = new GamepadButtonMap();
+                GamepadMap clone = new GamepadMap();
 
                 clone.buttons.AddRange(buttons);
                 clone.axes.AddRange(axes);
@@ -75,7 +75,7 @@ namespace MSE
 
             public bool HasConflict(IInputMap other)
             {
-                GamepadButtonMap otherGpMap = other as GamepadButtonMap;
+                GamepadMap otherGpMap = other as GamepadMap;
                 if (otherGpMap == null || otherGpMap.IsEmpty)
                     return false;
 
@@ -108,7 +108,7 @@ namespace MSE
 
             public bool SetFrom(IInputMap that)
             {
-                GamepadButtonMap gpCast = that as GamepadButtonMap;
+                GamepadMap gpCast = that as GamepadMap;
                 if (gpCast == null)
                 {
                     Debug.LogError("Type incompatibility when trying to call SetFrom on a keyboard input map");

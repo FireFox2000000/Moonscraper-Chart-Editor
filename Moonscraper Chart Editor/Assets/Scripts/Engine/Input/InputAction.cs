@@ -21,7 +21,7 @@ namespace MSE
             public class Maps : IEnumerable<IInputMap>
             {
                 public List<KeyboardMap> kbMaps = new List<KeyboardMap>();
-                public List<GamepadButtonMap> gpButtonMaps = new List<GamepadButtonMap>();
+                public List<GamepadMap> gpButtonMaps = new List<GamepadMap>();
 
                 public IEnumerator<IInputMap> GetEnumerator()
                 {
@@ -47,7 +47,7 @@ namespace MSE
                     if (kbMap != null)
                         kbMaps.Add(kbMap);
 
-                    GamepadButtonMap gpButtonMap = map as GamepadButtonMap;
+                    GamepadMap gpButtonMap = map as GamepadMap;
                     if (gpButtonMap != null)
                         gpButtonMaps.Add(gpButtonMap);
                 }

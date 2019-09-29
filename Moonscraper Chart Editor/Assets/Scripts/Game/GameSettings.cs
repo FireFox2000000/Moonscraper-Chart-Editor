@@ -341,7 +341,7 @@ public static class GameSettings
             if (((1 << config.properties.category) & MSChartEditorInput.Category.kEditorCategoryMask) != 0)
             {
                 config.RemoveMapsForDevice(MSE.Input.DeviceType.Gamepad);
-                config.Add(new GamepadButtonMap());  // Add empty maps
+                config.Add(new GamepadMap());  // Add empty maps
             }
         }
     }
@@ -362,21 +362,21 @@ public static class GameSettings
                 config.RemoveMapsForDevice(MSE.Input.DeviceType.Gamepad);
         }
 
-        inputList.GetActionConfig(MSChartEditorInputActions.GuitarStrumUp).Add(new GamepadButtonMap() { GamepadDevice.Button.DPadUp });
-        inputList.GetActionConfig(MSChartEditorInputActions.GuitarStrumDown).Add(new GamepadButtonMap() { GamepadDevice.Button.DPadDown });
+        inputList.GetActionConfig(MSChartEditorInputActions.GuitarStrumUp).Add(new GamepadMap() { GamepadDevice.Button.DPadUp });
+        inputList.GetActionConfig(MSChartEditorInputActions.GuitarStrumDown).Add(new GamepadMap() { GamepadDevice.Button.DPadDown });
 
-        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretGreen).Add(new GamepadButtonMap() { GamepadDevice.Button.A });
-        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretRed).Add(new GamepadButtonMap() { GamepadDevice.Button.B });
-        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretYellow).Add(new GamepadButtonMap() { GamepadDevice.Button.Y });
-        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretBlue).Add(new GamepadButtonMap() { GamepadDevice.Button.X });
-        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretOrange).Add(new GamepadButtonMap() { GamepadDevice.Button.LB });
+        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretGreen).Add(new GamepadMap() { GamepadDevice.Button.A });
+        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretRed).Add(new GamepadMap() { GamepadDevice.Button.B });
+        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretYellow).Add(new GamepadMap() { GamepadDevice.Button.Y });
+        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretBlue).Add(new GamepadMap() { GamepadDevice.Button.X });
+        inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretOrange).Add(new GamepadMap() { GamepadDevice.Button.LB });
 
-        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadRed).Add(new GamepadButtonMap() { GamepadDevice.Button.B });
-        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadYellow).Add(new GamepadButtonMap() { GamepadDevice.Button.Y });
-        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadBlue).Add(new GamepadButtonMap() { GamepadDevice.Button.X });
-        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadOrange).Add(new GamepadButtonMap() { GamepadDevice.Button.RB });
-        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadGreen).Add(new GamepadButtonMap() { GamepadDevice.Button.A });
-        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadKick).Add(new GamepadButtonMap() { GamepadDevice.Button.LB });
+        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadRed).Add(new GamepadMap() { GamepadDevice.Button.B });
+        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadYellow).Add(new GamepadMap() { GamepadDevice.Button.Y });
+        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadBlue).Add(new GamepadMap() { GamepadDevice.Button.X });
+        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadOrange).Add(new GamepadMap() { GamepadDevice.Button.RB });
+        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadGreen).Add(new GamepadMap() { GamepadDevice.Button.A });
+        inputList.GetActionConfig(MSChartEditorInputActions.DrumPadKick).Add(new GamepadMap() { GamepadDevice.Button.LB });
     }
 
     public static void SetDefaultGameplayControlsKeys(MSChartEditorInput.MSChartEditorActionContainer inputList)
