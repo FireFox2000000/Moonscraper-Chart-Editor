@@ -3,7 +3,9 @@ using MSE.Input;
 
 public static class GuitarInput
 {
-    public static bool GetFretInput(GamepadDevice gamepad, Note.GuitarFret fret)
+    public const float kNoWhammy = -1.0f;
+
+    public static bool GetFretInput(Note.GuitarFret fret)
     {
         switch (fret)
         {
@@ -33,29 +35,27 @@ public static class GuitarInput
         return false;
     }
 
-    public static int GetFretInputMask(GamepadDevice gamepad)
+    public static int GetFretInputMask()
     {
         int inputMask = 0;
 
         foreach (Note.GuitarFret fret in EnumX<Note.GuitarFret>.Values)
         {
-            if (GetFretInput(gamepad, fret))
+            if (GetFretInput(fret))
                 inputMask |= 1 << (int)fret;
         }
 
         return inputMask;
     }
 
-    public static bool GetStrumInput(GamepadDevice gamepad)
+    public static bool GetStrumInput()
     {
         return MSChartEditorInput.GetInputDown(MSChartEditorInputActions.GuitarStrumDown) || MSChartEditorInput.GetInputDown(MSChartEditorInputActions.GuitarStrumUp);
     }
 
-    public static float GetWhammyInput(GamepadDevice gamepad)
+    public static float GetWhammyInput()
     {
-        if (gamepad == null || !gamepad.Connected)
-            return 0;
-
-        return gamepad.GetAxis(GamepadDevice.Axis.RightStickX);
+        float? whammyValue = MSChartEditorInput.GetAxisMaybe(MSChartEditorInputActions.Whammy);
+        return whammyValue.HasValue ? whammyValue.Value : kNoWhammy;
     }
 }

@@ -370,6 +370,7 @@ public static class GameSettings
         inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretYellow).Add(new GamepadMap() { GamepadDevice.Button.Y });
         inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretBlue).Add(new GamepadMap() { GamepadDevice.Button.X });
         inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretOrange).Add(new GamepadMap() { GamepadDevice.Button.LB });
+        inputList.GetActionConfig(MSChartEditorInputActions.Whammy).Add(new GamepadMap() { { GamepadDevice.Axis.RightStickX, GamepadDevice.AxisDir.Any }, });
 
         inputList.GetActionConfig(MSChartEditorInputActions.DrumPadRed).Add(new GamepadMap() { GamepadDevice.Button.B });
         inputList.GetActionConfig(MSChartEditorInputActions.DrumPadYellow).Add(new GamepadMap() { GamepadDevice.Button.Y });
@@ -397,6 +398,7 @@ public static class GameSettings
             inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretYellow).Add(new KeyboardMap() { KeyCode.Alpha3 });
             inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretBlue).Add(new KeyboardMap() { KeyCode.Alpha4 });
             inputList.GetActionConfig(MSChartEditorInputActions.GuitarFretOrange).Add(new KeyboardMap() { KeyCode.Alpha5 });
+            inputList.GetActionConfig(MSChartEditorInputActions.Whammy).Add(new KeyboardMap());
 
             inputList.GetActionConfig(MSChartEditorInputActions.DrumPadRed).Add(new KeyboardMap() { KeyCode.Alpha1 });
             inputList.GetActionConfig(MSChartEditorInputActions.DrumPadYellow).Add(new KeyboardMap() { KeyCode.Alpha2 });

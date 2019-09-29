@@ -16,12 +16,13 @@ namespace MSE
         {
             bool Connected { get; }
             DeviceType Type { get; }
-            IInputMap GetCurrentInput();
+            IInputMap GetCurrentInput(InputAction.Properties properties);
             string GetDeviceName();
 
             bool GetInputDown(IInputMap map);
             bool GetInputUp(IInputMap map);
             bool GetInput(IInputMap map);
+            float? GetAxis(IInputMap map);
         }
     }
 }

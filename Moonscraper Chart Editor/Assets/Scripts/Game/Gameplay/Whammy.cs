@@ -39,7 +39,7 @@ public class Whammy : MonoBehaviour {
 
                 ShiftAnimationKeys(lineCurve, keyShiftSpeed * Time.deltaTime * (GameSettings.hyperspeed / GameSettings.gameSpeed) / transform.localScale.y);
 
-                float whammyVal = (lerpedWhammyVal(InputManager.Instance.mainGamepad) + 1) * widthMultiplier;
+                float whammyVal = (lerpedWhammyVal() + 1) * widthMultiplier;
 
                 lineCurve.AddKey(new Keyframe(0, whammyVal + 1));
             }
@@ -63,7 +63,7 @@ public class Whammy : MonoBehaviour {
             lineRenderer.widthCurve = lineCurve;
             pointsController.SetPositionsMinimum();
 
-            currentWhammyVal = -1;
+            currentWhammyVal = GuitarInput.kNoWhammy;
         }
     }
 
@@ -89,18 +89,14 @@ public class Whammy : MonoBehaviour {
         lineRenderer.widthMultiplier = lineWidth;
     }
 
-    float currentWhammyVal = -1;
-    float lerpedWhammyVal(MSE.Input.GamepadDevice gamepad)
+    float currentWhammyVal = GuitarInput.kNoWhammy;
+    float lerpedWhammyVal()
     {
-        float rawVal = -1;
-
-        if (gamepad != null && gamepad.Connected)
-        {
-            rawVal = GuitarInput.GetWhammyInput(gamepad);
-        }
+        float rawVal = GuitarInput.kNoWhammy;
+        rawVal = GuitarInput.GetWhammyInput();
 
         if (!canWhammy)
-            currentWhammyVal = -1;
+            currentWhammyVal = GuitarInput.kNoWhammy;
         else
         {
             if (rawVal > currentWhammyVal)

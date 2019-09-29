@@ -16,7 +16,7 @@ public class GuitarGameplayRulestate : BaseGameplayRulestate {
     }
 
     // Update is called once per frame
-    public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, MSE.Input.GamepadDevice guitarInput) {
+    public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow) {
         int missCount = UpdateWindowExit(time, hitWindow);
 
         for (int i = 0; i < missCount; ++i)
@@ -28,8 +28,8 @@ public class GuitarGameplayRulestate : BaseGameplayRulestate {
         }
 
         guitarSustainHitKnowledge.Update(time);
-        sustainBreakDetect.Update(time, guitarSustainHitKnowledge, guitarInput, stats.noteStreak);     
-        hitAndMissNoteDetect.Update(time, hitWindow, guitarInput, stats.noteStreak, guitarSustainHitKnowledge);        
+        sustainBreakDetect.Update(time, guitarSustainHitKnowledge, stats.noteStreak);     
+        hitAndMissNoteDetect.Update(time, hitWindow, stats.noteStreak, guitarSustainHitKnowledge);        
     }
 
     public override void Reset()

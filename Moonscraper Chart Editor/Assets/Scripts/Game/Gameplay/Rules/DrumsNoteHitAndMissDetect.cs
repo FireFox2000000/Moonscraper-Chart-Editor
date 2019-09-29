@@ -26,10 +26,10 @@ public class DrumsNoteHitAndMissDetect {
         m_missNoteFactory = missNoteFactory;
     }
 
-    public void Update(float time, HitWindow<DrumsNoteHitKnowledge> hitWindow, MSE.Input.GamepadDevice drumsInput, uint noteStreak, LaneInfo laneInfo)
+    public void Update(float time, HitWindow<DrumsNoteHitKnowledge> hitWindow, uint noteStreak, LaneInfo laneInfo)
     {
         DrumsNoteHitKnowledge nextNoteToHit = hitWindow.oldestUnhitNote;
-        int inputMask = DrumsInput.GetPadPressedInputMask(drumsInput, laneInfo);
+        int inputMask = DrumsInput.GetPadPressedInputMask(laneInfo);
 
         if (nextNoteToHit != null)
         {
@@ -62,7 +62,7 @@ public class DrumsNoteHitAndMissDetect {
             {
                 foreach (Note.DrumPad drumPad in EnumX<Note.DrumPad>.Values)
                 {
-                    bool hitPad = DrumsInput.GetPadPressedInput(drumsInput, drumPad, laneInfo);
+                    bool hitPad = DrumsInput.GetPadPressedInput(drumPad, laneInfo);
                     if (hitPad)
                     {
                         if (nextNoteToHit.GetHitTime(drumPad) == NoteHitKnowledge.NULL_TIME)

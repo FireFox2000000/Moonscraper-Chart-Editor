@@ -71,16 +71,15 @@ public class GameplayManager : MonoBehaviour {
         if (editor.currentState == ChartEditor.State.Playing && !GameSettings.bot)
         {
             float currentTime = editor.currentVisibleTime;
-            var gamepad = InputManager.Instance.mainGamepad;
 
             if (editor.currentChart.gameMode == Chart.GameMode.Guitar)
             {
-                guitarGameplayRulestate.Update(currentTime, hitWindowFeeder.guitarHitWindow, gamepad);
+                guitarGameplayRulestate.Update(currentTime, hitWindowFeeder.guitarHitWindow);
                 UpdateUIStats(guitarGameplayRulestate);
             }
             else if (editor.currentChart.gameMode == Chart.GameMode.Drums)
             {
-                drumsGameplayRulestate.Update(currentTime, hitWindowFeeder.drumsHitWindow, gamepad);
+                drumsGameplayRulestate.Update(currentTime, hitWindowFeeder.drumsHitWindow);
                 UpdateUIStats(drumsGameplayRulestate);
             }
             else

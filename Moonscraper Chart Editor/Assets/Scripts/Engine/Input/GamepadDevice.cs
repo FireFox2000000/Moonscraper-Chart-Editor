@@ -10,6 +10,11 @@ namespace MSE
     {
         public class GamepadDevice : IInputDevice
         {
+            // Sensitivity settings
+            const float kAxisDeadzoneThreshold = 0.2f;
+            const float kRebindIntendedInputThreshold = 0.5f;
+            const float kRebindIntendedDeltaInputThreshold = 0.1f;
+
             public IntPtr sdlHandle { get; private set; }
             GamepadState[] statesDoubleBuffer = new GamepadState[2];
             int gamepadStateCurrentBufferIndex = 0;
@@ -87,7 +92,7 @@ namespace MSE
 
             public DeviceType Type => DeviceType.Gamepad;
 
-            public IInputMap GetCurrentInput()
+            public IInputMap GetCurrentInput(InputAction.Properties properties)
             {
                 foreach (Button button in EnumX<Button>.Values)
                 {
@@ -100,9 +105,13 @@ namespace MSE
                 foreach (Axis axis in EnumX<Axis>.Values)
                 {
                     float axisVal = GetAxis(axis);
-                    if (Mathf.Abs(axisVal) > 0)
+                    float previousAxisVal = GetPreviousAxis(axis);
+
+                    if (Mathf.Abs(axisVal - previousAxisVal) > kRebindIntendedDeltaInputThreshold && Mathf.Abs(axisVal) > kRebindIntendedInputThreshold)
                     {
-                        AxisDir dir = axisVal > 0 ? AxisDir.Positive : AxisDir.Negative;
+                        AxisDir dir = properties.anyDirectionAxis ? AxisDir.Any : 
+                            (axisVal > 0 ? AxisDir.Positive : AxisDir.Negative);
+
                         return new GamepadMap() { { axis, dir } };
                     }
                 }
@@ -196,8 +205,7 @@ namespace MSE
                     float rawValue = (float)axisValue / short.MaxValue;
 
                     // Deadzones
-                    const float axisDeadzoneThreshold = 0.2f;
-                    if (Mathf.Abs(rawValue) < axisDeadzoneThreshold)
+                    if (Mathf.Abs(rawValue) < kAxisDeadzoneThreshold)
                     {
                         rawValue = 0;
                     }
@@ -350,6 +358,33 @@ namespace MSE
                 }
 
                 return false;
+            }
+
+            public float? GetAxis(IInputMap inputMap)
+            {
+                GamepadMap map = inputMap as GamepadMap;
+                if (map != null)
+                {
+                    foreach (var axis in map.axes)
+                    {
+                        // We have an axis, use it
+                        float axisVal = GetAxis(axis.axis);
+                        return axisVal;
+                    }
+
+                    foreach (var button in map.buttons)
+                    {
+                        if (!GetButton(button))
+                        {
+                            return 0;
+                        }
+                    }
+
+
+                    return map.buttons.Count > 0 ? (float?)1 : null;
+                }
+
+                return null;
             }
         }
     }

@@ -7,8 +7,9 @@ public class InputConfig : ScriptableObject
     // Default values
     const bool kRebindableDefault = true;
     const bool kHiddenInListsDefault = false;
+    const bool kAnyDirectionAxisDefault = false;
     const MSChartEditorInput.Category.CategoryType kCategoryDefault = MSChartEditorInput.Category.CategoryType.Editor;
-    public static readonly InputConfig.Properties kDefaultProperties = new InputConfig.Properties { rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault };
+    public static readonly InputConfig.Properties kDefaultProperties = new InputConfig.Properties { rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault, anyDirectionAxis = kAnyDirectionAxisDefault };
 
     [System.Serializable]
     public struct Properties
@@ -16,6 +17,7 @@ public class InputConfig : ScriptableObject
         public string displayName;
         public bool rebindable;
         public bool hiddenInLists;
+        public bool anyDirectionAxis;
         public MSChartEditorInput.Category.CategoryType category;
 
         public MSE.Input.InputAction.Properties ToMSEInputProperties()
@@ -25,6 +27,7 @@ public class InputConfig : ScriptableObject
                 rebindable = this.rebindable,
                 hiddenInLists = this.hiddenInLists,
                 category = (int)this.category,
+                anyDirectionAxis = this.anyDirectionAxis,
             };
         }
     }

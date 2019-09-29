@@ -11,7 +11,7 @@ public class DrumsGameplayRulestate : BaseGameplayRulestate {
         hitAndMissNoteDetect = new DrumsNoteHitAndMissDetect(HitNote, MissNote);
     }
 
-    public void Update(float time, HitWindow<DrumsNoteHitKnowledge> hitWindow, MSE.Input.GamepadDevice drumsInput)
+    public void Update(float time, HitWindow<DrumsNoteHitKnowledge> hitWindow)
     {
         uint noteStreak = stats.noteStreak;
         int missCount = UpdateWindowExit(time, hitWindow);
@@ -25,7 +25,7 @@ public class DrumsGameplayRulestate : BaseGameplayRulestate {
             MissNote(time, DrumsNoteHitAndMissDetect.MissSubType.NoteMiss, null);
         }
 
-        hitAndMissNoteDetect.Update(time, hitWindow, drumsInput, stats.noteStreak, laneInfo);
+        hitAndMissNoteDetect.Update(time, hitWindow, stats.noteStreak, laneInfo);
     }
 
     public override void Reset()

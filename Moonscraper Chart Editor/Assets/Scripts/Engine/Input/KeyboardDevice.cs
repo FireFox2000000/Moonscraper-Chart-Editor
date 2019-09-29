@@ -31,7 +31,7 @@ namespace MSE
 
             static List<KeyCode> currentKeys = new List<KeyCode>();
             static List<KeyCode> releasedModifierKeys = new List<KeyCode>();
-            public IInputMap GetCurrentInput()
+            public IInputMap GetCurrentInput(InputAction.Properties properties)
             {
                 currentKeys.Clear();
                 releasedModifierKeys.Clear();
@@ -213,6 +213,15 @@ namespace MSE
                 }
 
                 return true;
+            }
+
+            public float? GetAxis(IInputMap inputMap)
+            {
+                KeyboardMap map = inputMap as KeyboardMap;
+                if (map == null)
+                    return null;
+
+                return GetInput(inputMap) ? (float?)1.0f : null;
             }
 
             bool CheckDesiredModifierKeysActive(ModifierKeys modifiers)

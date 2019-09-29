@@ -15,11 +15,8 @@ public static class DrumsInput
         }
     };
 
-    public static bool GetPadPressedInput(GamepadDevice gamepad, Note.DrumPad drumFret, LaneInfo laneInfo)
+    public static bool GetPadPressedInput(Note.DrumPad drumFret, LaneInfo laneInfo)
     {
-        if (gamepad == null || !gamepad.Connected)
-            return false;
-
         Dictionary<Note.DrumPad, MSChartEditorInputActions?> inputOverrideDict;
         MSChartEditorInputActions? overrideInput;
 
@@ -61,13 +58,13 @@ public static class DrumsInput
         return false;
     }
 
-    public static int GetPadPressedInputMask(GamepadDevice gamepad, LaneInfo laneInfo)
+    public static int GetPadPressedInputMask(LaneInfo laneInfo)
     {
         int inputMask = 0;
 
         foreach (Note.DrumPad pad in EnumX<Note.DrumPad>.Values)
         {
-            if (GetPadPressedInput(gamepad, pad, laneInfo))
+            if (GetPadPressedInput(pad, laneInfo))
                 inputMask |= 1 << (int)pad;
         }
 

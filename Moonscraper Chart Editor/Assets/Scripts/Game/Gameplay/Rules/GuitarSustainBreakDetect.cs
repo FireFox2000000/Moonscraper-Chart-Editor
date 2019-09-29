@@ -17,11 +17,11 @@ public class GuitarSustainBreakDetect {
     {
     }
 
-    public void Update(float time, GuitarSustainHitKnowledge sustainKnowledge, MSE.Input.GamepadDevice guitarInput, uint noteStreak)
+    public void Update(float time, GuitarSustainHitKnowledge sustainKnowledge, uint noteStreak)
     {
         var currentSustains = sustainKnowledge.currentSustains;
 
-        int inputMask = GuitarInput.GetFretInputMask(guitarInput);
+        int inputMask = GuitarInput.GetFretInputMask();
         int extendedSustainsMask = sustainKnowledge.extendedSustainsMask;
 
         int shiftCount;

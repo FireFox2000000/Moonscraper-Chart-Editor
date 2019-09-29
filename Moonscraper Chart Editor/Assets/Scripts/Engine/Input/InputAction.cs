@@ -13,9 +13,8 @@ namespace MSE
                 public bool rebindable;
                 public bool hiddenInLists;
                 public int category;
+                public bool anyDirectionAxis;
             }
-
-            public const int kMaxKeyboardMaps = 2;
 
             [System.Serializable]
             public class Maps : IEnumerable<IInputMap>
@@ -185,6 +184,34 @@ namespace MSE
                 }
 
                 return false;
+            }
+
+            public float GetAxis(IList<IInputDevice> devices)
+            {
+                float? value = GetAxisMaybe(devices);
+                return value.HasValue ? value.Value : 0;
+            }
+
+            public float? GetAxisMaybe(IList<IInputDevice> devices)
+            {
+                for (int i = 0; i < devices.Count; ++i)
+                {
+                    IInputDevice device = devices[i];
+
+                    foreach (var map in inputMaps)
+                    {
+                        if (map != null && !map.IsEmpty)
+                        {
+                            var value = device.GetAxis(map);
+                            if (value.HasValue)
+                            {
+                                return value.Value;
+                            }
+                        }
+                    }
+                }
+
+                return null;
             }
         }
     }

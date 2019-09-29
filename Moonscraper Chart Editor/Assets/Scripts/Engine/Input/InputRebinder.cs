@@ -27,7 +27,7 @@ namespace MSE
             {
                 conflict = null;
 
-                IInputMap currentInput = device.GetCurrentInput();
+                IInputMap currentInput = device.GetCurrentInput(actionToRebind.properties);
                 attemptedInput = currentInput;
 
                 if (currentInput != null)

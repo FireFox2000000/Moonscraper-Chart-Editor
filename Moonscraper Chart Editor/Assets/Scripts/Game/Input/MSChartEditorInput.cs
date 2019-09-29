@@ -95,6 +95,8 @@ public enum MSChartEditorInputActions
     DrumPadOrange,
     DrumPadGreen,
     DrumPadKick,
+
+    Whammy,
 }
 
 public static class MSChartEditorInput
@@ -202,6 +204,22 @@ public static class MSChartEditorInput
         }
 
         return false;
+    }
+
+    public static float GetAxis(MSChartEditorInputActions key)
+    {
+        float? value = GetAxisMaybe(key);
+        return value.HasValue ? value.Value : 0;
+    }
+
+    public static float? GetAxisMaybe(MSChartEditorInputActions key)
+    {
+        if (ChartEditor.hasFocus && !Services.IsTyping)
+        {
+            return primaryInputs.GetActionConfig(key).GetAxisMaybe(InputManager.Instance.devices);
+        }
+
+        return null;
     }
 
     public static bool GetGroupInputDown(MSChartEditorInputActions[] keys)

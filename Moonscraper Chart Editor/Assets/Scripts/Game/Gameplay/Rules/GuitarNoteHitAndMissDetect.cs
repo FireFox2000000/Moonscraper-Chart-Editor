@@ -34,11 +34,11 @@ public class GuitarNoteHitAndMissDetect {
         m_missNoteFactory = missNoteFactory;
     }
 	
-	public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, MSE.Input.GamepadDevice guitarInput, uint noteStreak, GuitarSustainHitKnowledge sustainKnowledge)
+	public void Update (float time, HitWindow<GuitarNoteHitKnowledge> hitWindow, uint noteStreak, GuitarSustainHitKnowledge sustainKnowledge)
     {
         // Capture input
-        bool strum = GuitarInput.GetStrumInput(guitarInput);
-        int inputMask = GuitarInput.GetFretInputMask(guitarInput);
+        bool strum = GuitarInput.GetStrumInput();
+        int inputMask = GuitarInput.GetFretInputMask();
         if (inputMask != previousInputMask)
             canTap = true;
 
