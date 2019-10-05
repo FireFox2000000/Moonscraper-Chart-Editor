@@ -71,10 +71,22 @@ namespace MSE
             {
                 // Handle previous versions of save data that didn't have gamepad maps
                 if (saveData.input.kbMaps != null && saveData.input.kbMaps.Count > 0)
-                    inputMaps.kbMaps = saveData.input.kbMaps;
+                {
+                    inputMaps.kbMaps.Clear();
+                    foreach(var map in saveData.input.kbMaps)
+                    {
+                        inputMaps.kbMaps.Add(map.Clone() as KeyboardMap);
+                    }
+                }
 
                 if (saveData.input.gpButtonMaps != null && saveData.input.gpButtonMaps.Count > 0)
-                    inputMaps.gpButtonMaps = saveData.input.gpButtonMaps;
+                {
+                    inputMaps.gpButtonMaps.Clear();
+                    foreach (var map in saveData.input.gpButtonMaps)
+                    {
+                        inputMaps.gpButtonMaps.Add(map.Clone() as GamepadMap);
+                    }
+                }
             }
 
             public void Add(IInputMap map)

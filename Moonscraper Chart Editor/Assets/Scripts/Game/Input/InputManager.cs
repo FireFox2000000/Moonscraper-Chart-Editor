@@ -10,6 +10,23 @@ using System;
 public class InputManager : UnitySingleton<InputManager>
 {
     public InputConfig inputPropertiesConfig;
+    [SerializeField]
+    TextAsset defaultControlsJson;
+    [HideInInspector]
+    MSChartEditorInput.MSChartEditorActionContainer _defaultControls;
+    public MSChartEditorInput.MSChartEditorActionContainer defaultControls
+    {
+        get
+        {
+            if (_defaultControls == null)
+            {
+                _defaultControls = JsonUtility.FromJson<MSChartEditorInput.MSChartEditorActionContainer>(defaultControlsJson.text);
+                _defaultControls.LoadFromSaveData(_defaultControls);
+            }
+
+            return _defaultControls;
+        }
+    }
     public MSE.Event<IInputDevice> disconnectEvent = new MSE.Event<IInputDevice>();
 
     public GamepadDevice mainGamepad

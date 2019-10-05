@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 public class ControlsMenuInterface : MonoBehaviour
 {
     [SerializeField]
@@ -12,8 +16,16 @@ public class ControlsMenuInterface : MonoBehaviour
     [SerializeField]
     Text deviceText;
 
+    [Header("Default Controls Editor")]
+    [SerializeField]
+    bool isDefaultControlsEditor = false;
+    [SerializeField]
+    TextAsset defaultControlsFile;
+
     int actionCategoryIndex = 0;
     int deviceIndex = 0;
+
+    MSChartEditorInput.MSChartEditorActionContainer actionsToEdit = null;
 
     enum ActionCategory
     {
@@ -24,6 +36,23 @@ public class ControlsMenuInterface : MonoBehaviour
     private void Start()
     {
         InputManager.Instance.disconnectEvent.Register(OnDeviceDisconnect);
+
+        SetActionsToEdit();
+    }
+
+    void SetActionsToEdit()
+    {
+        if (actionsToEdit == null)
+        {
+            if (isDefaultControlsEditor)
+            {
+                actionsToEdit = JsonUtility.FromJson<MSChartEditorInput.MSChartEditorActionContainer>(defaultControlsFile.text);
+            }
+            else
+            {
+                actionsToEdit = GameSettings.controls;
+            }
+        }
     }
 
     void OnDeviceDisconnect(in MSE.Input.IInputDevice device)
@@ -34,58 +63,18 @@ public class ControlsMenuInterface : MonoBehaviour
 
     private void OnEnable()
     {
+        SetActionsToEdit();
         RefreshActionBindingsMenu();
     }
 
     public void SetDefaultControls()
     {
-        SetDefaultControls(GetCurrentInputDevice().Type, GetCurrentActionCategory());
+        SetDefaultControls(GetCurrentInputDevice().Type, GetCurrentActionCategoryMask());
     }
 
-    void SetDefaultControls(MSE.Input.DeviceType device, ActionCategory category)
+    void SetDefaultControls(MSE.Input.DeviceType device, int categoryMask)
     {
-        switch (device)
-        {
-            case MSE.Input.DeviceType.Keyboard:
-                {
-                    switch (category)
-                    {
-                        case ActionCategory.Editor:
-                            GameSettings.SetDefaultKeysControls(GameSettings.controls);
-                            break;
-
-                        case ActionCategory.Gameplay:
-                            GameSettings.SetDefaultGameplayControlsKeys(GameSettings.controls);
-                            break;
-
-                        default:
-                            Debug.LogError("Unhandled category " + category.ToString());
-                            break;
-                    }
-                    break;
-                }
-            case MSE.Input.DeviceType.Gamepad:
-                {
-                    switch (category)
-                    {
-                        case ActionCategory.Editor:
-                            GameSettings.SetDefaultEditorControlsPad(GameSettings.controls);
-                            break;
-
-                        case ActionCategory.Gameplay:
-                            GameSettings.SetDefaultGameplayControlsPad(GameSettings.controls);
-                            break;
-
-                        default:
-                            Debug.LogError("Unhandled category " + category.ToString());
-                            break;
-                    }
-                    break;
-                }
-            default:
-                Debug.LogError("Unhandled device type " + device.ToString());
-                break;
-        }
+        MSE.Input.InputRebinder.SetToDefault(actionsToEdit, InputManager.Instance.defaultControls, categoryMask, device);
 
         actionBindingsMenu.OnRebindComplete();
     }
@@ -173,6 +162,16 @@ public class ControlsMenuInterface : MonoBehaviour
     {
         actionCategoryText.text = GetCurrentActionCategoryName();
         deviceText.text = GetCurrentInputDevice().GetDeviceName();
-        actionBindingsMenu.Setup(GetCurrentInputDevice(), GameSettings.controls, GetCurrentActionCategoryMask());
+        actionBindingsMenu.Setup(GetCurrentInputDevice(), actionsToEdit, GetCurrentActionCategoryMask());
+    }
+
+    public void SaveActionsToDefaultControlsFile()
+    {
+#if UNITY_EDITOR
+        actionsToEdit.UpdateSaveData(true);
+
+        string filepath = AssetDatabase.GetAssetPath(defaultControlsFile);
+        System.IO.File.WriteAllText(filepath, JsonUtility.ToJson(actionsToEdit, true));
+#endif
     }
 }

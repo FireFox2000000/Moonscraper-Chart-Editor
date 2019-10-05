@@ -1,0 +1,1612 @@
+{
+    "saveData": [
+        {
+            "action": "ActionHistoryRedo",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 2,
+                        "keys": [
+                            121
+                        ]
+                    },
+                    {
+                        "modifiers": 6,
+                        "keys": [
+                            122
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ActionHistoryUndo",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 2,
+                        "keys": [
+                            122
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "AddSongObject",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            49
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "BpmIncrease",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            61
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "BpmDecrease",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            45
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ChordSelect",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 4,
+                        "keys": []
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ClipboardCopy",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 2,
+                        "keys": [
+                            99
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ClipboardCut",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 2,
+                        "keys": [
+                            120
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ClipboardPaste",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 2,
+                        "keys": [
+                            118
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "Delete",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            127
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "FileLoad",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 2,
+                        "keys": [
+                            111
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "FileNew",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 2,
+                        "keys": [
+                            110
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "FileSave",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 2,
+                        "keys": [
+                            115
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "FileSaveAs",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 6,
+                        "keys": [
+                            115
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "MoveStepPositive",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            273
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "MoveStepNegative",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            274
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "MoveMeasurePositive",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            280
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "MoveMeasureNegative",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            281
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "NoteSetNatural",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            120
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "NoteSetStrum",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            115
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "NoteSetHopo",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            104
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "NoteSetTap",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            116
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "PlayPause",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            32
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "SelectAll",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 2,
+                        "keys": [
+                            97
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "SelectAllSection",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 8,
+                        "keys": [
+                            97
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "StepDecrease",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            113
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            276
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "StepIncrease",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            119
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            275
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "SectionJumpPositive",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 8,
+                        "keys": [
+                            273
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "SectionJumpNegative",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 8,
+                        "keys": [
+                            274
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "SectionJumpMouseScroll",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 8,
+                        "keys": []
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToggleBpmAnchor",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            97
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToggleClap",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            110
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToggleExtendedSustains",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            101
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToggleMetronome",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            109
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToggleMouseMode",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            96
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToggleNoteForced",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            102
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToggleNoteTap",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            116
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToggleViewMode",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            103
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolNoteBurst",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            98
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolNoteHold",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            104
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolSelectCursor",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            106
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolSelectEraser",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            107
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolSelectNote",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            121
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolSelectStarpower",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            117
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolSelectBpm",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            105
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolSelectTimeSignature",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            111
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolSelectSection",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            112
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolSelectEvent",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            108
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolNoteLane1",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            49
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolNoteLane2",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            50
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolNoteLane3",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            51
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolNoteLane4",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            52
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolNoteLane5",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            53
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolNoteLane6",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            54
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "ToolNoteLaneOpen",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            48
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "CloseMenu",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            27
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "GuitarStrumUp",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            273
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            10
+                        ],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "GuitarStrumDown",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            274
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            11
+                        ],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "GuitarFretGreen",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            49
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            0
+                        ],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "GuitarFretRed",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            50
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            1
+                        ],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "GuitarFretYellow",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            51
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            3
+                        ],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "GuitarFretBlue",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            52
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            2
+                        ],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "GuitarFretOrange",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            53
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            4
+                        ],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "DrumPadRed",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            49
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            1
+                        ],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "DrumPadYellow",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            50
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            3
+                        ],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "DrumPadBlue",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            51
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            2
+                        ],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "DrumPadOrange",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            52
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            5
+                        ],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "DrumPadGreen",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            53
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            0
+                        ],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "DrumPadKick",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            48
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            4
+                        ],
+                        "axes": []
+                    }
+                ]
+            }
+        },
+        {
+            "action": "Whammy",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": [
+                            {
+                                "axis": 2,
+                                "dir": 0
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "action": "StartGameplay",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            8
+                        ],
+                        "axes": []
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -20,7 +20,7 @@ namespace MSE
                 this.actionToRebind = actionToRebind;
                 this.mapToRebind = mapToRebind;
                 this.allActions = allActions;
-                this.device = device;            
+                this.device = device;
             }
 
             public bool TryMap(out InputAction conflict, out IInputMap attemptedInput)
@@ -52,6 +52,33 @@ namespace MSE
             public void RevertMapBeingRebound()
             {
                 mapToRebind.SetFrom(mapCopy);
+            }
+
+            public static void SetToDefault<TEnum>(
+                InputActionContainer<TEnum> actions, 
+                InputActionContainer<TEnum> defaultActions, 
+                int categoryMask, 
+                DeviceType deviceType
+                ) where TEnum : System.Enum
+            {
+                foreach (TEnum actionEnum in EnumX<TEnum>.Values)
+                {
+                    InputAction action = actions.GetActionConfig(actionEnum);
+
+                    if (((1 << actions.GetActionConfig(actionEnum).properties.category) & categoryMask) == 0)
+                    {
+                        continue;
+                    }
+
+                    InputAction defaultAction = defaultActions.GetActionConfig(actionEnum);
+                    action.RemoveMapsForDevice(deviceType);
+
+                    var defaultMaps = defaultAction.GetMapsForDevice(deviceType);
+                    foreach (var map in defaultMaps)
+                    {
+                        action.Add(map.Clone());
+                    }
+                }
             }
         }
     }

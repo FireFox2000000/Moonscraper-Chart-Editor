@@ -7,6 +7,8 @@ using MSE.Input;
 public class ActionBindingsMenu : MonoBehaviour
 {
     [SerializeField]
+    bool disablePropertyRestrictions = false;
+    [SerializeField]
     RectTransform content;
     [SerializeField]
     Text actionNamePrefab;
@@ -53,7 +55,7 @@ public class ActionBindingsMenu : MonoBehaviour
             }
         }
 
-        public void SetupFromAction(InputAction inputAction, IEnumerable<InputAction> allActions, IInputDevice device, ButtonClickCallback callbackFn)
+        public void SetupFromAction(InputAction inputAction, IEnumerable<InputAction> allActions, IInputDevice device, ButtonClickCallback callbackFn, bool disablePropertyRestrictions)
         {
             // populate strings and callback fns
             actionNameText.text = inputAction.properties.displayName;
@@ -92,7 +94,7 @@ public class ActionBindingsMenu : MonoBehaviour
                         buttonText.text = kNoInputStr;
                     }
 
-                    button.interactable = inputAction.properties.rebindable;
+                    button.interactable = inputAction.properties.rebindable || disablePropertyRestrictions;
                     button.onClick.RemoveAllListeners();
                     button.onClick.AddListener(delegate { callbackFn(map, inputAction, allActions, device); });
                 }
@@ -150,7 +152,7 @@ public class ActionBindingsMenu : MonoBehaviour
         int index = 0;
         foreach(var inputAction in actionEnumerator)
         {
-            if (inputAction.properties.hiddenInLists)
+            if (inputAction.properties.hiddenInLists && !disablePropertyRestrictions)
                 continue;
 
             // Not displaying these actions at the moment.
@@ -161,7 +163,7 @@ public class ActionBindingsMenu : MonoBehaviour
                 ExtendActionRowPool(20);
 
             ActionUIRow row = rowPool[index++];
-            row.SetupFromAction(inputAction, actionEnumerator, lastKnownDisplayDevice, InvokeRebindState);
+            row.SetupFromAction(inputAction, actionEnumerator, lastKnownDisplayDevice, InvokeRebindState, disablePropertyRestrictions);
             row.SetActive(true);
         }
 

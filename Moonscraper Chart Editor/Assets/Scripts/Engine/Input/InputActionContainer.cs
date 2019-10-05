@@ -49,14 +49,14 @@ namespace MSE
                 }
             }
 
-            public void UpdateSaveData()
+            public void UpdateSaveData(bool saveRebindable = false)
             {
                 saveData.Clear();
                 for (int i = 0; i < actionConfigCleanLookup.Count; ++i)
                 {
                     TEnum enumVal = EnumX<TEnum>.FromInt(i);
 
-                    if (!actionConfigCleanLookup[enumVal].properties.rebindable)
+                    if (!actionConfigCleanLookup[enumVal].properties.rebindable && !saveRebindable)
                         continue;
 
                     var newItem = new InputAction.SaveData();
