@@ -58,7 +58,7 @@ namespace MSE
                         gpButtonMaps.Add(gpButtonMap);
 
                     JoystickMap jsButtonMap = map as JoystickMap;
-                    if (jsMaps != null)
+                    if (jsButtonMap != null)
                         jsMaps.Add(jsButtonMap);
                 }
             }

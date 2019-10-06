@@ -106,7 +106,7 @@ public class InputManager : UnitySingleton<InputManager>
             Debug.Log("Added controller device " + index);
 
             GamepadDevice gamepad = new GamepadDevice(gameController);
-            controllers.Insert(index, gamepad);
+            controllers.Add(gamepad);
             devices.Add(gamepad);
         }
         else
@@ -123,7 +123,7 @@ public class InputManager : UnitySingleton<InputManager>
             Debug.Log("Added joystick device " + index);
 
             JoystickDevice gamepad = new JoystickDevice(joystick);
-            joysticks.Insert(index, gamepad);
+            joysticks.Add(gamepad);
             devices.Add(gamepad);
         }
         else
