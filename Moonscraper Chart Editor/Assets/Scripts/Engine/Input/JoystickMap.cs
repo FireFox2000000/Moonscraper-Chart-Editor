@@ -38,16 +38,17 @@ namespace MSE
                 public JoystickDevice.HatPosition position;
             }
 
-            public readonly JoystickDevice.JoystickType joystickType = JoystickDevice.JoystickType.Unknown;
+            [SerializeField]
+            string deviceId;
 
             public List<ButtonConfig> buttons = new List<ButtonConfig>();
             public List<AxisConfig> axes = new List<AxisConfig>();
             public List<BallConfig> balls = new List<BallConfig>();    // ???
             public List<HatConfig> hats = new List<HatConfig>();
 
-            public JoystickMap(JoystickDevice.JoystickType type)
+            public JoystickMap(string deviceId)
             {
-                joystickType = type;
+                this.deviceId = deviceId;
             }
 
             public void Add(ButtonConfig button)
@@ -84,7 +85,7 @@ namespace MSE
 
             public IInputMap Clone()
             {
-                JoystickMap clone = new JoystickMap(joystickType);
+                JoystickMap clone = new JoystickMap(deviceId);
 
                 clone.buttons.AddRange(buttons);
                 clone.axes.AddRange(axes);
@@ -232,7 +233,7 @@ namespace MSE
                 if (device.Type == DeviceType.Joystick)
                 {
                     var jsDevice = device as JoystickDevice;
-                    return jsDevice.joystickType == joystickType;
+                    return jsDevice.deviceId == deviceId;
                 }
 
                 return false;

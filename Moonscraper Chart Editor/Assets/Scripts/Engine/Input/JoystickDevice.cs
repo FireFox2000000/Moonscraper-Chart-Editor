@@ -17,6 +17,7 @@ namespace MSE
 
             public IntPtr sdlHandle { get; private set; }
             readonly string deviceName;
+            public readonly string deviceId;
             public readonly JoystickType joystickType = JoystickType.Unknown;
             JoystickState[] statesDoubleBuffer = new JoystickState[2];
             int stateCurrentBufferIndex = 0;
@@ -73,7 +74,8 @@ namespace MSE
                 this.sdlHandle = sdlHandle;
 
                 joystickType = (JoystickType)SDL.SDL_JoystickGetType(sdlHandle);
-                deviceName = string.Format("{0}, ({1})", SDL.SDL_JoystickName(sdlHandle), joystickType.ToString());
+                deviceId = SDL.SDL_JoystickName(sdlHandle);
+                deviceName = string.Format("{0} ({1})", deviceId, joystickType.ToString());
 
                 totalButtons = SDL.SDL_JoystickNumButtons(sdlHandle);
                 totalAxis = SDL.SDL_JoystickNumAxes(sdlHandle);
@@ -209,7 +211,7 @@ namespace MSE
                 {
                     if (GetButton(i))
                     {
-                        return new JoystickMap(joystickType) { new JoystickMap.ButtonConfig() { buttonIndex = i } };
+                        return new JoystickMap(deviceId) { new JoystickMap.ButtonConfig() { buttonIndex = i } };
                     }
                 }
 
@@ -223,7 +225,7 @@ namespace MSE
                         AxisDir dir = properties.anyDirectionAxis ? AxisDir.Any :
                             (axisVal > 0 ? AxisDir.Positive : AxisDir.Negative);
 
-                        return new JoystickMap(joystickType) { { i, dir } };
+                        return new JoystickMap(deviceId) { { i, dir } };
                     }
                 }
 
@@ -237,7 +239,7 @@ namespace MSE
             public bool GetInput(IInputMap inputMap)
             {
                 JoystickMap map = inputMap as JoystickMap;
-                if (map != null && map.joystickType == joystickType)
+                if (map != null && map.IsCompatibleWithDevice(this))
                 {
                     foreach (var button in map.buttons)
                     {
@@ -278,7 +280,7 @@ namespace MSE
             public bool GetInputDown(IInputMap inputMap)
             {
                 JoystickMap map = inputMap as JoystickMap;
-                if (map != null && map.joystickType == joystickType)
+                if (map != null && map.IsCompatibleWithDevice(this))
                 {
                     foreach (var button in map.buttons)
                     {
@@ -326,7 +328,7 @@ namespace MSE
             public bool GetInputUp(IInputMap inputMap)
             {
                 JoystickMap map = inputMap as JoystickMap;
-                if (map != null && map.joystickType == joystickType)
+                if (map != null && map.IsCompatibleWithDevice(this))
                 {
                     foreach (var button in map.buttons)
                     {
@@ -374,7 +376,7 @@ namespace MSE
             public float? GetAxis(IInputMap inputMap)
             {
                 JoystickMap map = inputMap as JoystickMap;
-                if (map != null && map.joystickType == joystickType)
+                if (map != null && map.IsCompatibleWithDevice(this))
                 {
                     foreach (var axis in map.axes)
                     {
@@ -403,7 +405,7 @@ namespace MSE
 
             public IInputMap MakeDefaultMap()
             {
-                return new JoystickMap(joystickType);
+                return new JoystickMap(deviceId);
             }
         }
     }
