@@ -1,3 +1,10 @@
+1.3.2.3
+	NEW FEATURES
+	-Added support for joystick/non-gamepad recognised input devices (i.e. raphnet adapter hopefully)
+
+	FIXES
+	-No longer scaling object snapping based on time signature denominator.
+
 1.3.2.2
 	NEW FEATURES
 	-Added support to rebind gameplay controls and gamepad controls
