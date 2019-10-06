@@ -88,7 +88,7 @@ public abstract class Snapable : MonoBehaviour {
         uint lastMeasureTick = ts.tick + (uint)(measuresFromTsToSnap * measureLineInfo.tickGap);
 
         float realBeatStep = step / 4.0f;
-        float tickGap = beatLineInfo.tickGap / realBeatStep;
+        float tickGap = beatLineInfo.tickGap / realBeatStep * ts.denominator / 4.0f;
         uint tickOffsetFromLastMeasure = tick - lastMeasureTick;
         int beatsFromLastMeasureToSnap = Mathf.RoundToInt((float)tickOffsetFromLastMeasure / tickGap);
 
