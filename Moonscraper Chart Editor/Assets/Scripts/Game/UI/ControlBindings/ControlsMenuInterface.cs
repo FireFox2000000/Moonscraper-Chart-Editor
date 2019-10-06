@@ -69,10 +69,10 @@ public class ControlsMenuInterface : MonoBehaviour
 
     public void SetDefaultControls()
     {
-        SetDefaultControls(GetCurrentInputDevice().Type, GetCurrentActionCategoryMask());
+        SetDefaultControls(GetCurrentInputDevice(), GetCurrentActionCategoryMask());
     }
 
-    void SetDefaultControls(MSE.Input.DeviceType device, int categoryMask)
+    void SetDefaultControls(MSE.Input.IInputDevice device, int categoryMask)
     {
         MSE.Input.InputRebinder.SetToDefault(actionsToEdit, InputManager.Instance.defaultControls, categoryMask, device);
 

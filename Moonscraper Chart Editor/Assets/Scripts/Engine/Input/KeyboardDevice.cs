@@ -264,6 +264,11 @@ namespace MSE
 
                 return currentModiKeys == modifiers;
             }
+
+            public IInputMap MakeDefaultMap()
+            {
+                return new KeyboardMap();
+            }
         }
     }
 }

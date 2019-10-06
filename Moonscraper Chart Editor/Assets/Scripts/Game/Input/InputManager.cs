@@ -29,31 +29,14 @@ public class InputManager : UnitySingleton<InputManager>
     }
     public MSE.Event<IInputDevice> disconnectEvent = new MSE.Event<IInputDevice>();
 
-    public GamepadDevice mainGamepad
-    {
-        get
-        {
-            GamepadDevice device = null;
-
-            foreach (GamepadDevice controller in controllers)
-            {
-                if (controller.Connected)
-                {
-                    device = controller;
-                    break;
-                }
-            }
-
-            return device;
-        }
-    }
     public List<IInputDevice> devices = new List<IInputDevice>() { new KeyboardDevice() };
 
     public List<GamepadDevice> controllers = new List<GamepadDevice>();
+    public List<JoystickDevice> joysticks = new List<JoystickDevice>();
 
     private void Start()
     {
-        if (SDL.SDL_Init(SDL.SDL_INIT_GAMECONTROLLER) < 0)
+        if (SDL.SDL_Init(SDL.SDL_INIT_GAMECONTROLLER | SDL.SDL_INIT_JOYSTICK) < 0)
         {
             Debug.LogError("SDL could not initialise! SDL Error: " + SDL.SDL_GetError());
         }
@@ -72,17 +55,31 @@ public class InputManager : UnitySingleton<InputManager>
         {
             switch (sdlEvent.type)
             {
-                case SDL.SDL_EventType.SDL_CONTROLLERDEVICEADDED:
+                case SDL.SDL_EventType.SDL_JOYDEVICEADDED:
                     {
                         int index = sdlEvent.jdevice.which;
-                        OnControllerConnect(index);
+                        if (SDL.SDL_IsGameController(sdlEvent.jdevice.which) == SDL.SDL_bool.SDL_TRUE)
+                        {
+                            OnControllerConnect(index);
+                        }
+                        else
+                        {
+                            OnJoystickConnect(index);
+                        }
                         break;
                     }
-
-                case SDL.SDL_EventType.SDL_CONTROLLERDEVICEREMOVED:
+                case SDL.SDL_EventType.SDL_JOYDEVICEREMOVED:
                     {
-                        int id = sdlEvent.jdevice.which;
-                        OnControllerDisconnect(id);
+                        IntPtr removedController = SDL.SDL_GameControllerFromInstanceID(sdlEvent.jdevice.which);
+
+                        if (removedController != IntPtr.Zero)
+                        {
+                            OnControllerDisconnect(sdlEvent.jdevice.which);
+                        }
+                        else
+                        {
+                            OnJoystickDisconnect(sdlEvent.jdevice.which);
+                        }
                         break;
                     }
 
@@ -94,6 +91,11 @@ public class InputManager : UnitySingleton<InputManager>
         {
             gamepad.Update(ChartEditor.hasFocus);
         }
+
+        foreach (JoystickDevice joystick in joysticks)
+        {
+            joystick.Update(ChartEditor.hasFocus);
+        }
     }
 
     void OnControllerConnect(int index)
@@ -102,7 +104,6 @@ public class InputManager : UnitySingleton<InputManager>
         if (gameController != IntPtr.Zero)
         {
             Debug.Log("Added controller device " + index);
-            SDL.SDL_GameControllerOpen(index);
 
             GamepadDevice gamepad = new GamepadDevice(gameController);
             controllers.Insert(index, gamepad);
@@ -111,6 +112,23 @@ public class InputManager : UnitySingleton<InputManager>
         else
         {
             Debug.LogError("Failed to get SDL Game Controller address " + index + ". " + SDL.SDL_GetError());
+        }
+    }
+
+    void OnJoystickConnect(int index)
+    {
+        IntPtr joystick = SDL.SDL_JoystickOpen(index);
+        if (joystick != IntPtr.Zero)
+        {
+            Debug.Log("Added joystick device " + index);
+
+            JoystickDevice gamepad = new JoystickDevice(joystick);
+            joysticks.Insert(index, gamepad);
+            devices.Add(gamepad);
+        }
+        else
+        {
+            Debug.LogError("Failed to get SDL Joystick address " + index + ". " + SDL.SDL_GetError());
         }
     }
 
@@ -140,6 +158,34 @@ public class InputManager : UnitySingleton<InputManager>
         }
 
         Debug.Assert(false, "Unable to find controller " + instanceId + " to remove");
+    }
+
+    void OnJoystickDisconnect(int instanceId)
+    {
+        Debug.Log("Removed joystick device " + instanceId);
+
+        IntPtr removedController = SDL.SDL_JoystickFromInstanceID(instanceId);
+
+        Debug.Assert(removedController != IntPtr.Zero);
+
+        for (int i = 0; i < joysticks.Count; ++i)
+        {
+            if (joysticks[i].sdlHandle == removedController)
+            {
+                IInputDevice device = joysticks[i];
+
+                joysticks[i].Disconnect();
+                SDL.SDL_JoystickClose(removedController);
+
+                Debug.Assert(devices.Remove(joysticks[i]));
+                joysticks.RemoveAt(i);
+                disconnectEvent.Fire(device);
+
+                return;
+            }
+        }
+
+        Debug.Assert(false, "Unable to find joystick " + instanceId + " to remove");
     }
 
     private void OnApplicationQuit()

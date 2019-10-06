@@ -13,7 +13,7 @@ namespace MSE
             IInputMap Clone();
             bool SetFrom(IInputMap that);
             void SetEmpty();
-            DeviceType CompatibleDevice { get; }
+            bool IsCompatibleWithDevice(IInputDevice device);
         }
     }
 }

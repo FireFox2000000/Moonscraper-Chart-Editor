@@ -10,6 +10,7 @@ namespace MSE
         {
             Keyboard,
             Gamepad,
+            Joystick,
         }
 
         public interface IInputDevice
@@ -17,6 +18,7 @@ namespace MSE
             bool Connected { get; }
             DeviceType Type { get; }
             IInputMap GetCurrentInput(InputAction.Properties properties);
+            IInputMap MakeDefaultMap();
             string GetDeviceName();
 
             bool GetInputDown(IInputMap map);

@@ -97,8 +97,6 @@ namespace MSE
                 }
             }
 
-            public DeviceType CompatibleDevice => DeviceType.Keyboard;
-
             public IEnumerator<KeyCode> GetEnumerator()
             {
                 return ((IEnumerable<KeyCode>)keys).GetEnumerator();
@@ -139,6 +137,11 @@ namespace MSE
             {
                 modifiers = KeyboardDevice.ModifierKeys.None;
                 keys.Clear();
+            }
+
+            public bool IsCompatibleWithDevice(IInputDevice device)
+            {
+                return device.Type == DeviceType.Keyboard;
             }
         }
     }

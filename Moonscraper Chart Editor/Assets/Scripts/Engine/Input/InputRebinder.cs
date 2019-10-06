@@ -57,8 +57,8 @@ namespace MSE
             public static void SetToDefault<TEnum>(
                 InputActionContainer<TEnum> actions, 
                 InputActionContainer<TEnum> defaultActions, 
-                int categoryMask, 
-                DeviceType deviceType
+                int categoryMask,
+                IInputDevice device
                 ) where TEnum : System.Enum
             {
                 foreach (TEnum actionEnum in EnumX<TEnum>.Values)
@@ -71,9 +71,9 @@ namespace MSE
                     }
 
                     InputAction defaultAction = defaultActions.GetActionConfig(actionEnum);
-                    action.RemoveMapsForDevice(deviceType);
+                    action.RemoveMapsForDevice(device);
 
-                    var defaultMaps = defaultAction.GetMapsForDevice(deviceType);
+                    var defaultMaps = defaultAction.GetMapsForDevice(device);
                     foreach (var map in defaultMaps)
                     {
                         action.Add(map.Clone());

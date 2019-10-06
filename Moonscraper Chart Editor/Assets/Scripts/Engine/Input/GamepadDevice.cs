@@ -386,6 +386,11 @@ namespace MSE
 
                 return null;
             }
+
+            public IInputMap MakeDefaultMap()
+            {
+                return new GamepadMap();
+            }
         }
     }
 }

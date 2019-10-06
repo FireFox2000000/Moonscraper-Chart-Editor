@@ -111,7 +111,7 @@ namespace MSE
                 GamepadMap gpCast = that as GamepadMap;
                 if (gpCast == null)
                 {
-                    Debug.LogError("Type incompatibility when trying to call SetFrom on a keyboard input map");
+                    Debug.LogError("Type incompatibility when trying to call SetFrom on a gamepad input map");
                     return false;
                 }
 
@@ -121,8 +121,6 @@ namespace MSE
 
                 return true;
             }
-
-            public DeviceType CompatibleDevice => DeviceType.Gamepad;
 
             //public IEnumerator<GamepadDevice.Button> GetEnumerator()
             //{
@@ -140,6 +138,11 @@ namespace MSE
                 {
                     yield return axis;
                 }
+            }
+
+            public bool IsCompatibleWithDevice(IInputDevice device)
+            {
+                return device.Type == DeviceType.Gamepad;
             }
         }
     }

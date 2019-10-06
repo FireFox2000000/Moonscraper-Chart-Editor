@@ -19,8 +19,10 @@ namespace MSE
             [System.Serializable]
             public class Maps : IEnumerable<IInputMap>
             {
+                // NO POINTERS/INTERFACES, not serializable otherwise!
                 public List<KeyboardMap> kbMaps = new List<KeyboardMap>();
                 public List<GamepadMap> gpButtonMaps = new List<GamepadMap>();
+                public List<JoystickMap> jsMaps = new List<JoystickMap>();
 
                 public IEnumerator<IInputMap> GetEnumerator()
                 {
@@ -30,6 +32,11 @@ namespace MSE
                     }
 
                     foreach (var map in gpButtonMaps)
+                    {
+                        yield return map;
+                    }
+
+                    foreach (var map in jsMaps)
                     {
                         yield return map;
                     }
@@ -49,6 +56,10 @@ namespace MSE
                     GamepadMap gpButtonMap = map as GamepadMap;
                     if (gpButtonMap != null)
                         gpButtonMaps.Add(gpButtonMap);
+
+                    JoystickMap jsButtonMap = map as JoystickMap;
+                    if (jsMaps != null)
+                        jsMaps.Add(jsButtonMap);
                 }
             }
 
@@ -87,6 +98,15 @@ namespace MSE
                         inputMaps.gpButtonMaps.Add(map.Clone() as GamepadMap);
                     }
                 }
+
+                if (saveData.input.jsMaps != null && saveData.input.jsMaps.Count > 0)
+                {
+                    inputMaps.jsMaps.Clear();
+                    foreach (var map in saveData.input.jsMaps)
+                    {
+                        inputMaps.jsMaps.Add(map.Clone() as JoystickMap);
+                    }
+                }
             }
 
             public void Add(IInputMap map)
@@ -113,31 +133,47 @@ namespace MSE
                 return false;
             }
 
-            public List<IInputMap> GetMapsForDevice(DeviceType device)
+            public List<IInputMap> GetMapsForDevice(IInputDevice device)
             {
                 List<IInputMap> deviceMaps = new List<IInputMap>();
 
                 foreach (IInputMap map in inputMaps)
                 {
-                    if (map.CompatibleDevice == device)
+                    if (map.IsCompatibleWithDevice(device))
                         deviceMaps.Add(map);
+                }
+
+                if (deviceMaps.Count <= 0)
+                {
+                    // Make some defaults
+                    IInputMap newMap = device.MakeDefaultMap();
+                    inputMaps.Add(newMap);
+                    deviceMaps.Add(newMap);
                 }
 
                 return deviceMaps;
             }
 
-            public void RemoveMapsForDevice(DeviceType device)
+            public void RemoveMapsForDevice(IInputDevice device)
             {
                 for (int i = inputMaps.kbMaps.Count - 1; i >= 0; --i)
                 {
-                    if (inputMaps.kbMaps[i].CompatibleDevice == device)
+                    if (inputMaps.kbMaps[i].IsCompatibleWithDevice(device))
                         inputMaps.kbMaps.RemoveAt(i);
                 }
 
                 for (int i = inputMaps.gpButtonMaps.Count - 1; i >= 0; --i)
                 {
-                    if (inputMaps.gpButtonMaps[i].CompatibleDevice == device)
+                    if (inputMaps.gpButtonMaps[i].IsCompatibleWithDevice(device))
                         inputMaps.gpButtonMaps.RemoveAt(i);
+                }
+
+                for (int i = inputMaps.jsMaps.Count - 1; i >= 0; --i)
+                {
+                    if (inputMaps.jsMaps[i].IsCompatibleWithDevice(device))
+                    {
+                        inputMaps.jsMaps.RemoveAt(i);
+                    }
                 }
             }
 
