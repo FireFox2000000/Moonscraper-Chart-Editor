@@ -16,6 +16,7 @@ public class HintMouseOver : MonoBehaviour {
     const float nativeHeight = 1080.0f;
 
     public string message;
+    string localisedMessage;
     public static GUIStyle style;
     public Vector2 offset;
 
@@ -29,7 +30,7 @@ public class HintMouseOver : MonoBehaviour {
 
     void Start()
     {
-        message = message.Replace("\\n", "\n");
+        OnLocalise();
 
         // Generate event triggers for when script is placed on UI
         var trigger = gameObject.AddComponent<EventTrigger>();
@@ -108,12 +109,12 @@ public class HintMouseOver : MonoBehaviour {
             GUI.color = new Color(GUI.color.r, GUI.color.g, GUI.color.b, alpha);
 
             // Calculate the size of the textbox
-            Vector2 size = style.CalcSize(new GUIContent(message));
+            Vector2 size = style.CalcSize(new GUIContent(localisedMessage));
             size.x += 1;        // Some weird Unity 2018 thing is cutting text off by a single pixel. Thanks Unity. 
             if (size.x > MAX_TEXTBOX_WIDTH)
             {
                 size.x = MAX_TEXTBOX_WIDTH;
-                size.y = style.CalcHeight(new GUIContent(message), MAX_TEXTBOX_WIDTH);
+                size.y = style.CalcHeight(new GUIContent(localisedMessage), MAX_TEXTBOX_WIDTH);
             }
 
             // Check if the box is going to appear offscreen and fix
@@ -129,7 +130,7 @@ public class HintMouseOver : MonoBehaviour {
             if (screenPos.y + size.y * ry > Screen.height)
                 screenPos.y = Screen.height - size.y * ry;
 
-            GUI.Label(new Rect(screenPos.x / rx, screenPos.y / ry, size.x, size.y), message, style);
+            GUI.Label(new Rect(screenPos.x / rx, screenPos.y / ry, size.x, size.y), localisedMessage, style);
         }
     }
 
@@ -185,5 +186,10 @@ public class HintMouseOver : MonoBehaviour {
         alpha = 0;
         active = false;
         enabled = false;
+    }
+
+    void OnLocalise()
+    {
+        localisedMessage = Localiser.Instance.Localise(message);
     }
 }

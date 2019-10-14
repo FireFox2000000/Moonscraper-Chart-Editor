@@ -261,6 +261,17 @@ namespace MSE
 
                 return null;
             }
+
+            public IInputMap GetFirstActiveInputMap()
+            {
+                foreach(IInputMap map in inputMaps)
+                {
+                    if (!map.IsEmpty)
+                        return map;
+                }
+
+                return null;
+            }
         }
     }
 }

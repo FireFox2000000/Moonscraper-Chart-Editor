@@ -84,6 +84,7 @@ public class Globals : MonoBehaviour {
         }
 
         LoadGameSettings();
+        Localiser.LocaliseScene();
 
         localEvents = LoadCommonEvents("local_events.txt");
         globalEvents = LoadCommonEvents("global_events.txt");

@@ -70,6 +70,8 @@ public class RebindOverlayInterface : MonoBehaviour
 
         if (ChartEditor.Instance)
             ChartEditor.Instance.uiServices.SetPopupBlockingEnabled(false);
+
+        Localiser.LocaliseScene();
     }
 
     void OnDisable()
