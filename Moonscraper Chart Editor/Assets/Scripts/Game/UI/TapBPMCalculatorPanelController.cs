@@ -33,11 +33,11 @@ public class TapBPMCalculatorPanelController : MonoBehaviour {
 
     public void Disable()
     {
-        gameObject.SetActive(false);
+        ChartEditor.Instance.interactionMethodManager.ChangeInteraction(EditorInteractionManager.InteractionType.HighwayObjectEdit);
     }
 
     public void Enable()
     {
-        gameObject.SetActive(!gameObject.activeSelf);
+        ChartEditor.Instance.interactionMethodManager.ChangeInteraction(EditorInteractionManager.InteractionType.BpmCalculator);
     }
 }

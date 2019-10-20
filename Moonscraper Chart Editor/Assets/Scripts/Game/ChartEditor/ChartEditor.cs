@@ -17,6 +17,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 {
     public static bool isDirty = false;
     public EditorObjectToolManager toolManager;
+    public EditorInteractionManager interactionMethodManager;
 
     [Header("Tool prefabs")]
     public GroupMove groupMove;
@@ -141,6 +142,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         windowHandleManager = new WindowHandleManager(versionNumber.text, GetComponent<Settings>().productName);
         errorManager = gameObject.AddComponent<ErrorManager>();
         toolManager.Init();
+        interactionMethodManager.Init();
 
         events.chartReloadedEvent.Register(OnChartReloaded);
     }
@@ -349,6 +351,11 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             persistentSystemsForStates.Add(state, persistentSystems);
         }
         persistentSystems.Add(system);
+    }
+
+    public void ChangeInteractionMethod(EditorInteractionManager.InteractionType type)
+    {
+        interactionMethodManager.ChangeInteraction(type);
     }
 
     #endregion
@@ -641,6 +648,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             menuBar.SetInstrument("guitar");
             menuBar.SetDifficulty("expert");
         }
+
+        interactionMethodManager.ChangeInteraction(EditorInteractionManager.InteractionType.HighwayObjectEdit);
 
         // Load the default chart
         LoadChart(currentSong.GetChart(MenuBar.currentInstrument, MenuBar.currentDifficulty));

@@ -14,6 +14,10 @@ public class DisplayMenu : MonoBehaviour {
     protected virtual void Awake()
     {
         editor = ChartEditor.Instance;
+        if (!editor)
+        {
+            enabled = false;
+        }
     }
 
     protected virtual void Update()
@@ -52,7 +56,8 @@ public class DisplayMenu : MonoBehaviour {
 
     protected virtual void OnDisable()
     {
-        editor.ChangeStateToEditor();
+        if (editor)
+            editor.ChangeStateToEditor();
     }
 
     public void Disable()

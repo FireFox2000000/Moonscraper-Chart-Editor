@@ -12,6 +12,7 @@ public class ChartEditorEvents
     public MSE.Event<bool> keyboardModeToggledEvent { get; private set; }
     public MSE.Event<Globals.ViewMode> viewModeSwitchEvent { get; private set; }
     public MSE.Event<ChartEditor.State> editorStateChangedEvent { get; private set; }
+    public MSE.Event<EditorInteractionManager.InteractionType> editorInteractionTypeChangedEvent { get; private set; }
 
     public ChartEditorEvents()
     {
@@ -26,5 +27,6 @@ public class ChartEditorEvents
         keyboardModeToggledEvent = new MSE.Event<bool>();
         viewModeSwitchEvent = new MSE.Event<Globals.ViewMode>();
         editorStateChangedEvent = new MSE.Event<ChartEditor.State>();
+        editorInteractionTypeChangedEvent = new MSE.Event<EditorInteractionManager.InteractionType>();
     }
 }
