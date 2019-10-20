@@ -1,35 +1,11 @@
-1.3.2.3
+1.3.3
 	NEW FEATURES
-	-Added support for joystick/non-gamepad recognised input devices (i.e. raphnet adapter hopefully)
-
-	FIXES
-	-No longer scaling object snapping based on time signature denominator.
-
-1.3.2.2
-	NEW FEATURES
-	-Added support to rebind gameplay controls and gamepad controls
-
-	FIXES
-	-Fixed false-positive equality bug between events and sections when they have the same text
-	-Fixed tools sometimes disappearing towards the end of a chart that has lots of BPM changes. Some flickering may still occur. 
-
-1.3.2.1
-	NEW FEATURES
-	-Added input support for non-Xbox 360 controllers.
-	-Added "Set Defaults" button in controls menu
-
-	FIXES
-	-Fixed hitting shift to select chord input being broken.
-	-Fixed shortcuts being run while typing in a text box.
-	-Fixed up ctrl + shift inputs not registering. Block inputs if the modifier keys currently pressed down aren't exactly the modifier keys wanted.
-	-Memory optimisations
-
-	Notes
-	-Non-Xbox 360 controllers may be mapped incorrectly. This will be fixed once Gamepad input rebinding is added to the controls menu.
+	-Added lyrics editor (Tools->Lyrics Editor). Basic karaoke-style functionality, will probably have issues. Also needs visual cleanup and shortcut keys.
+	-UI input hints and shortcut listings in drop downs now dynamically change string to represent the current controls.
 
 1.3.2
 	NEW FEATURES
-	-Added the ability to rebind some controls under Options->Controls. More to be added (i.e. gameplay/gamepad controls)
+	-Added the ability to rebind some controls under Options->Controls. Includes keyboard, gamepad, and joystick rebinding 
 	-Added sfx offset option to calibration menu.
 
 	CHANGES
@@ -53,6 +29,10 @@
 	-Fixed some notes being visually incorrect when undoing or redoing that results in a delete action.
 	-Fixed application failing to load when application is placed under a write-protected directory
 	-Fixed audio failing to initialise on audio hardware that doesn't support wasapi. Default to Direct Sound if initialisation fails the first time.
+	-Fixed false-positive equality bug between events and sections when they have the same text
+	-Fixed tools sometimes disappearing towards the end of a chart that has lots of BPM changes. Some flickering may still occur. 
+	-No longer scaling object snapping based on time signature denominator.
+	-Fixed hitting shift to select chord input being broken.
 
 	NOTES
 	-New controls menu does not have proper action names and are currently using the internal action names. These will be updated to be more readable.
