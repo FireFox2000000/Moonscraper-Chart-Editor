@@ -45,6 +45,7 @@ public class EditorObjectToolManager : System.Object
     ToolConfig currentTool = null;
     public bool isToolActive { get; private set; }
     const ToolID DEFAULT_TOOL = ToolID.Cursor;
+    ToolID interactionTypeSavedTool = ToolID.Cursor;
 
     public ToolID currentToolId
     {
@@ -77,6 +78,7 @@ public class EditorObjectToolManager : System.Object
         isToolActive = false;
 
         ChartEditor.Instance.events.viewModeSwitchEvent.Register(OnViewModeSwitch);
+        ChartEditor.Instance.events.editorInteractionTypeChangedEvent.Register(OnEditorInteractionTypeChanged);
         ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Editor, new ToolActiveListener(this));
         ChangeTool(DEFAULT_TOOL);
     }
@@ -92,6 +94,19 @@ public class EditorObjectToolManager : System.Object
             {
                 ChangeTool(DEFAULT_TOOL);
             }
+        }
+    }
+
+    void OnEditorInteractionTypeChanged(in EditorInteractionManager.InteractionType interactionType)
+    {
+        if (interactionType == EditorInteractionManager.InteractionType.HighwayObjectEdit)
+        {
+            ChangeTool(interactionTypeSavedTool);
+        }
+        else
+        {
+            interactionTypeSavedTool = currentToolId;
+            ChangeTool(ToolID.None);
         }
     }
 
@@ -154,6 +169,9 @@ public class EditorObjectToolManager : System.Object
 
         bool ShouldToolBeActive(Services services, ToolID currentToolId)
         {
+            if (currentToolId == ToolID.None)
+                return false;
+
             bool mouseInToolArea = services.InToolArea;
             bool blockedByUI = MouseMonitor.IsUIUnderPointer();
             bool keysModeActive = GameSettings.keysModeEnabled;
