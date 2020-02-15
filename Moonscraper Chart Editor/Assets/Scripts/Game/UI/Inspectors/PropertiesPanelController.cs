@@ -44,7 +44,6 @@ public class PropertiesPanelController : MonoBehaviour {
         {
             // Fucking awful but it works. Basically a work-around due to how you can no longer use != to compare between events because they compare the strings of their titles.
             if (!(currentSongObject != null && prevSongObject != null && currentSongObject.GetType() == prevSongObjectRef.GetType() &&
-                (currentSongObject.GetType() == typeof(ChartEvent) || currentSongObject.GetType() == typeof(Event)) &&
                 ReferenceEquals(prevSongObjectRef, currentSongObject)))
                 ResetActionRecording();
         }
@@ -66,9 +65,8 @@ public class PropertiesPanelController : MonoBehaviour {
 
         if (currentSongObject == null || prevSongObject == null || prevSongObject != currentSongObject)
         {
-            bool eventType = currentSongObject.GetType() == typeof(ChartEvent) || currentSongObject.GetType() == typeof(Event);
             bool sameType = prevSongObject != null && currentSongObject.GetType() == prevSongObject.GetType();
-            if (!(eventType && sameType))
+            if (!sameType)
             {
                 return;
             }
