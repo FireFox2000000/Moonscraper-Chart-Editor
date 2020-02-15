@@ -1,3 +1,12 @@
+1.3.3.1
+	CHANGES
+	-Hide lyrics editor from tools dropdown, needs revisiting. Allow some tools to operate in play mode if safe to do so.
+
+	FIXES
+	-Fixed up mis-anchored UI on non 16:9 aspect ratios
+	-Fixed section inputs breaking when multiple characters keys were pressed in the same frame. 
+	-Further event equality fix to stop global events randomly undoing and disappearing.
+
 1.3.3
 	NEW FEATURES
 	-Added lyrics editor (Tools->Lyrics Editor). Basic karaoke-style functionality, will probably have issues. Also needs visual cleanup and shortcut keys.
