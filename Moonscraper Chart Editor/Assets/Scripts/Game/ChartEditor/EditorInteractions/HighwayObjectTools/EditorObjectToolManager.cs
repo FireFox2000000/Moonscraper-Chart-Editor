@@ -79,7 +79,10 @@ public class EditorObjectToolManager : System.Object
 
         ChartEditor.Instance.events.viewModeSwitchEvent.Register(OnViewModeSwitch);
         ChartEditor.Instance.events.editorInteractionTypeChangedEvent.Register(OnEditorInteractionTypeChanged);
-        ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Editor, new ToolActiveListener(this));
+
+        ToolActiveListener toolActiveListener = new ToolActiveListener(this);
+        ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Editor, toolActiveListener);
+        ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Playing, toolActiveListener);
         ChangeTool(DEFAULT_TOOL);
     }
 
@@ -169,6 +172,27 @@ public class EditorObjectToolManager : System.Object
 
         bool ShouldToolBeActive(Services services, ToolID currentToolId)
         {
+            switch (currentToolId)
+            {
+                case ToolID.None:
+                    return false;
+
+                // Play mode specific, disable specific tools here
+                case ToolID.Cursor:
+                case ToolID.Eraser:
+                case ToolID.Note:
+                case ToolID.Starpower:
+                case ToolID.BPM:        // No bpm changes allowed, will mess up notes
+                    {
+                        if (ChartEditor.Instance.currentState == ChartEditor.State.Playing)
+                            return false;
+                        else
+                            break;
+                    }
+
+                default:
+                    break;
+            }
             if (currentToolId == ToolID.None)
                 return false;
 
