@@ -1,27 +1,15 @@
-1.3.3.1
-	CHANGES
-	-Hide lyrics editor from tools dropdown, needs revisiting. Allow some tools to operate in play mode if safe to do so.
-
-	FIXES
-	-Fixed up mis-anchored UI on non 16:9 aspect ratios
-	-Fixed section inputs breaking when multiple characters keys were pressed in the same frame. 
-	-Further event equality fix to stop global events randomly undoing and disappearing.
-
-1.3.3
-	NEW FEATURES
-	-Added lyrics editor (Tools->Lyrics Editor). Basic karaoke-style functionality, will probably have issues. Also needs visual cleanup and shortcut keys.
-	-UI input hints and shortcut listings in drop downs now dynamically change string to represent the current controls.
-
-1.3.2
+1.3.3.2
 	NEW FEATURES
 	-Added the ability to rebind some controls under Options->Controls. Includes keyboard, gamepad, and joystick rebinding 
 	-Added sfx offset option to calibration menu.
+	-UI input hints and shortcut listings in drop downs now dynamically change string to represent the current controls.
 
 	CHANGES
 	-Open note toggle key for note tool now shifted onto the '0' key instead of being dynamic.
 	-config.ini no longer generated in the application directory. Stored in the same directory as the autosave. (Users\[user]\AppData\LocalLow\FireFox Dev\Moonscraper Chart Editor)
 		This allows user settings to be preserved between different versions of Moonscraper from this version onwards.
 	-Removed song name text UI. Display song name + chart name in window text instead.
+	-Allow some tools to operate in play mode if safe to do so.
 
 	FIXES
 	-Fixed shift-clicking on notes to select the whole chord.
@@ -42,10 +30,8 @@
 	-Fixed tools sometimes disappearing towards the end of a chart that has lots of BPM changes. Some flickering may still occur. 
 	-No longer scaling object snapping based on time signature denominator.
 	-Fixed hitting shift to select chord input being broken.
-
-	NOTES
-	-New controls menu does not have proper action names and are currently using the internal action names. These will be updated to be more readable.
-	-Tooltips that list controls will still be showing the default control inputs. This will be updated too.
+	-Fixed section inputs breaking when multiple characters keys were pressed in the same frame. 
+	-Further event equality fix to stop global events randomly undoing and disappearing.
 
 1.3.1.1
 	FIXES
