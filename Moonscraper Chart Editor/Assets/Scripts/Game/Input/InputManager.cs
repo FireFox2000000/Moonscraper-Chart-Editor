@@ -108,6 +108,9 @@ public class InputManager : UnitySingleton<InputManager>
             GamepadDevice gamepad = new GamepadDevice(gameController);
             controllers.Add(gamepad);
             devices.Add(gamepad);
+
+            Debug.Log("Controller count = " + controllers.Count);
+            Debug.Log("Device count = " + devices.Count);
         }
         else
         {
@@ -125,6 +128,9 @@ public class InputManager : UnitySingleton<InputManager>
             JoystickDevice gamepad = new JoystickDevice(joystick);
             joysticks.Add(gamepad);
             devices.Add(gamepad);
+
+            Debug.Log("Joystick count = " + joysticks.Count);
+            Debug.Log("Device count = " + devices.Count);
         }
         else
         {
@@ -149,9 +155,13 @@ public class InputManager : UnitySingleton<InputManager>
                 controllers[i].Disconnect();
                 SDL.SDL_GameControllerClose(removedController);
 
-                Debug.Assert(devices.Remove(controllers[i]));
+                bool deviceRemoved = devices.Remove(controllers[i]);
+                Debug.Assert(deviceRemoved);
                 controllers.RemoveAt(i);
                 disconnectEvent.Fire(device);
+
+                Debug.Log("Controller count = " + controllers.Count);
+                Debug.Log("Device count = " + devices.Count);
 
                 return;
             }
@@ -177,9 +187,13 @@ public class InputManager : UnitySingleton<InputManager>
                 joysticks[i].Disconnect();
                 SDL.SDL_JoystickClose(removedController);
 
-                Debug.Assert(devices.Remove(joysticks[i]));
+                bool deviceRemoved = devices.Remove(joysticks[i]);
+                Debug.Assert(deviceRemoved);
                 joysticks.RemoveAt(i);
                 disconnectEvent.Fire(device);
+
+                Debug.Log("Joystick count = " + joysticks.Count);
+                Debug.Log("Device count = " + devices.Count);
 
                 return;
             }
