@@ -51,7 +51,7 @@ public class ActionBindingsMenu : MonoBehaviour
         {
             get
             {
-                return actionNameText.IsActive();
+                return actionNameText.gameObject.activeSelf;
             }
         }
 
