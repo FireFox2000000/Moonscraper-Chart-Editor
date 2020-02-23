@@ -37,8 +37,6 @@ public class Localiser : UnitySingleton<Localiser>
             string inputActionString = input.Substring(subStringStart, subStringEnd);
             int nextIndexOffset = endInputindex + c_inputEndFlag.Length - c_inputStartFlag.Length;
 
-            UnityEngine.Debug.Log(inputActionString);
-
             MSChartEditorInputActions result;
 
             if (System.Enum.TryParse(inputActionString, out result))
