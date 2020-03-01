@@ -35,8 +35,6 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     ClipboardObjectController clipboard;
     [SerializeField]
     GameplayManager gameplayManager;
-    [SerializeField]
-    MenuBar menuBar;
     public LaneInfo laneInfo;
     [SerializeField]
     TextAsset versionNumber;
@@ -638,6 +636,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (lastLoadedFile != string.Empty)
             isDirty = false;
 
+        MenuBar menuBar = uiServices.menuBar;
+
         if (awake)
         {
             MenuBar.currentInstrument = Song.Instrument.Guitar;
@@ -645,6 +645,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         }
         else
         {
+            
             menuBar.SetInstrument("guitar");
             menuBar.SetDifficulty("expert");
         }

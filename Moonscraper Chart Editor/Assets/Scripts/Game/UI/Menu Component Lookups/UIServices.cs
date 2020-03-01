@@ -5,6 +5,21 @@ using UnityEngine;
 public class UIServices : MonoBehaviour {
 
     public EditorPanels editorPanels { get; private set; }
+
+    MenuBar m_menuBar = null;
+    public MenuBar menuBar
+    {
+        get
+        {
+            if (!m_menuBar)
+            {
+                m_menuBar = GetComponentInChildren<MenuBar>();
+            }
+
+            return m_menuBar;
+        }
+    }
+
     bool _popupBlockerEnabled = false;
     Camera _uiCamera;
     public Camera uiCamera
