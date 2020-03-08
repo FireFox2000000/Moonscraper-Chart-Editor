@@ -63,8 +63,13 @@ public class Note : ChartObject
     public enum Flags
     {
         None = 0,
-        Forced = 1,
-        Tap = 2
+
+        // Guitar
+        Forced = 1 << 0,
+        Tap = 1 << 1,
+
+        // RB Pro Drums
+        ProDrums_Cymbal = 1 << 6,
     }
 
     private readonly ID _classID = ID.Note;

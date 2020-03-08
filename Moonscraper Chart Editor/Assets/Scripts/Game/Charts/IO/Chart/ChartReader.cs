@@ -8,10 +8,6 @@ using System.Linq;
 
 public static class ChartReader
 {
-    const string QUOTEVALIDATE = @"""[^""\\]*(?:\\.[^""\\]*)*""";
-    const string QUOTESEARCH = "\"([^\"]*)\"";
-    const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";
-
     struct Anchor
     {
         public uint tick;
@@ -127,86 +123,60 @@ public static class ChartReader
     {
         switch (dataName)
         {
-            case ("[Song]"):
+            case ChartIOHelper.c_dataBlockSong:
 #if SONG_DEBUG
                 Debug.Log("Loading chart properties");
 #endif
                 SubmitDataSong(song, stringData, new FileInfo(filePath).Directory.FullName);
                 break;
-            case ("[SyncTrack]"):
+            case ChartIOHelper.c_dataBlockSyncTrack:
 #if SONG_DEBUG
                 Debug.Log("Loading sync data");
 #endif
-            case ("[Events]"):
+            case ChartIOHelper.c_dataBlockEvents:
 #if SONG_DEBUG
                 Debug.Log("Loading events data");
 #endif
                 SubmitDataGlobals(song, stringData);
                 break;
             default:
-                Song.Difficulty chartDiff;
-                int instumentStringOffset = 1;
-                const string EASY = "Easy", MEDIUM = "Medium", HARD = "Hard", EXPERT = "Expert";
-
                 // Determine what difficulty
-                if (Regex.IsMatch(dataName, string.Format(@"\[{0}.", EASY)))
+                foreach (var kvPair in ChartIOHelper.c_trackNameToTrackDifficultyLookup)
                 {
-                    chartDiff = Song.Difficulty.Easy;
-                    instumentStringOffset += EASY.Length;
+                    if (Regex.IsMatch(dataName, string.Format(@"\[{0}.", kvPair.Key)))
+                    {
+                        Song.Difficulty chartDiff = kvPair.Value;
+                        int instumentStringOffset = 1 + kvPair.Key.Length;
+
+                        string instrumentKey = dataName.Substring(instumentStringOffset, dataName.Length - instumentStringOffset - 1);
+                        Song.Instrument instrument;
+                        if (ChartIOHelper.c_instrumentStrToEnumLookup.TryGetValue(instrumentKey, out instrument))
+                        {
+                            Song.Instrument instrumentParsingType;
+                            if (!ChartIOHelper.c_instrumentParsingTypeLookup.TryGetValue(instrument, out instrumentParsingType))
+                            {
+                                instrumentParsingType = Song.Instrument.Guitar;
+                            }
+
+                            LoadChart(song.GetChart(instrument, chartDiff), stringData, instrumentParsingType);
+                        }
+                        else
+                        {
+                            LoadUnrecognisedChart(song, dataName, stringData);
+                        }
+
+                        goto OnChartLoaded;
+                    }
                 }
-                else if (Regex.IsMatch(dataName, string.Format(@"\[{0}.", MEDIUM)))
-                {
-                    chartDiff = Song.Difficulty.Medium;
-                    instumentStringOffset += MEDIUM.Length;
-                }
-                else if (Regex.IsMatch(dataName, string.Format(@"\[{0}.", HARD)))
-                {
-                    chartDiff = Song.Difficulty.Hard;
-                    instumentStringOffset += HARD.Length;
-                }
-                else if (Regex.IsMatch(dataName, string.Format(@"\[{0}.", EXPERT)))
-                {
-                    chartDiff = Song.Difficulty.Expert;
-                    instumentStringOffset += EXPERT.Length;
-                }
-                else
+
                 {
                     // Add to the unused chart list
                     LoadUnrecognisedChart(song, dataName, stringData);
-                    return;
+                    goto OnChartLoaded;
                 }
 
-                switch (dataName.Substring(instumentStringOffset, dataName.Length - instumentStringOffset - 1))
-                {
-                    case ("Single"):
-                        LoadChart(song.GetChart(Song.Instrument.Guitar, chartDiff), stringData);
-                        break;
-                    case ("DoubleGuitar"):
-                        LoadChart(song.GetChart(Song.Instrument.GuitarCoop, chartDiff), stringData);
-                        break;
-                    case ("DoubleBass"):
-                        LoadChart(song.GetChart(Song.Instrument.Bass, chartDiff), stringData);
-                        break;
-                    case ("DoubleRhythm"):
-                        LoadChart(song.GetChart(Song.Instrument.Rhythm, chartDiff), stringData);
-                        break;
-                    case ("Drums"):
-                        LoadChart(song.GetChart(Song.Instrument.Drums, chartDiff), stringData, Song.Instrument.Drums);
-                        break;
-                    case ("Keyboard"):
-                        LoadChart(song.GetChart(Song.Instrument.Keys, chartDiff), stringData);
-                        break;
-                    case ("GHLGuitar"):
-                        LoadChart(song.GetChart(Song.Instrument.GHLiveGuitar, chartDiff), stringData, Song.Instrument.GHLiveGuitar);
-                        break;
-                    case ("GHLBass"):
-                        LoadChart(song.GetChart(Song.Instrument.GHLiveBass, chartDiff), stringData, Song.Instrument.GHLiveBass);
-                        break;
-                    default:
-                        // Add to the unused chart list
-                        LoadUnrecognisedChart(song, dataName, stringData);
-                        return;
-                }
+            // Easy break out of loop
+            OnChartLoaded:          
                 return;
         }
     }
@@ -229,26 +199,6 @@ public static class ChartReader
         float time = Time.realtimeSinceStartup;
 #endif
 
-        Regex nameRegex = new Regex(@"Name = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        Regex artistRegex = new Regex(@"Artist = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        Regex charterRegex = new Regex(@"Charter = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        Regex offsetRegex = new Regex(@"Offset = " + FLOATSEARCH, RegexOptions.Compiled);
-        Regex resolutionRegex = new Regex(@"Resolution = " + FLOATSEARCH, RegexOptions.Compiled);
-        Regex player2TypeRegex = new Regex(@"Player2 = \w+", RegexOptions.Compiled);
-        Regex difficultyRegex = new Regex(@"Difficulty = \d+", RegexOptions.Compiled);
-        Regex lengthRegex = new Regex(@"Length = " + FLOATSEARCH, RegexOptions.Compiled);
-        Regex previewStartRegex = new Regex(@"PreviewStart = " + FLOATSEARCH, RegexOptions.Compiled);
-        Regex previewEndRegex = new Regex(@"PreviewEnd = " + FLOATSEARCH, RegexOptions.Compiled);
-        Regex genreRegex = new Regex(@"Genre = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        Regex yearRegex = new Regex(@"Year = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        Regex albumRegex = new Regex(@"Album = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        Regex mediaTypeRegex = new Regex(@"MediaType = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        Regex musicStreamRegex = new Regex(@"MusicStream = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        Regex guitarStreamRegex = new Regex(@"GuitarStream = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        Regex bassStreamRegex = new Regex(@"BassStream = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        Regex rhythmStreamRegex = new Regex(@"RhythmStream = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        Regex drumStreamRegex = new Regex(@"DrumStream = " + QUOTEVALIDATE, RegexOptions.Compiled);
-
         Metadata metaData = song.metaData;
 
         try
@@ -256,43 +206,43 @@ public static class ChartReader
             foreach (string line in stringData)
             {
                 // Name = "5000 Robots"
-                if (nameRegex.IsMatch(line))
+                if (ChartIOHelper.MetaData.nameRegex.IsMatch(line))
                 {
-                    metaData.name = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                    metaData.name = ChartIOHelper.MetaData.ParseAsString(line);
                 }
 
                 // Artist = "TheEruptionOffer"
-                else if (artistRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.artistRegex.IsMatch(line))
                 {
-                    metaData.artist = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                    metaData.artist = ChartIOHelper.MetaData.ParseAsString(line);
                 }
 
                 // Charter = "TheEruptionOffer"
-                else if (charterRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.charterRegex.IsMatch(line))
                 {
-                    metaData.charter = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                    metaData.charter = ChartIOHelper.MetaData.ParseAsString(line);
                 }
 
                 // Album = "Rockman Holic"
-                else if (albumRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.albumRegex.IsMatch(line))
                 {
-                    metaData.album = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                    metaData.album = ChartIOHelper.MetaData.ParseAsString(line);
                 }
 
                 // Offset = 0
-                else if (offsetRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.offsetRegex.IsMatch(line))
                 {
-                    song.offset = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+                    song.offset = ChartIOHelper.MetaData.ParseAsFloat(line);
                 }
 
                 // Resolution = 192
-                else if (resolutionRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.resolutionRegex.IsMatch(line))
                 {
-                    song.resolution = short.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+                    song.resolution = ChartIOHelper.MetaData.ParseAsShort(line);
                 }
 
                 // Player2 = bass
-                else if (player2TypeRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.player2TypeRegex.IsMatch(line))
                 {
                     string[] instrumentTypes = { "Bass", "Rhythm" };
                     string split = line.Split('=')[1].Trim();
@@ -308,63 +258,63 @@ public static class ChartReader
                 }
 
                 // Difficulty = 0
-                else if (difficultyRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.difficultyRegex.IsMatch(line))
                 {
                     metaData.difficulty = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
                 }
 
                 // Length = 300
-                else if (lengthRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.lengthRegex.IsMatch(line))
                 {
                     song.manualLength = true;
-                    song.length = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+                    song.length = ChartIOHelper.MetaData.ParseAsFloat(line);
                 }
 
                 // PreviewStart = 0.00
-                else if (previewStartRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.previewStartRegex.IsMatch(line))
                 {
-                    metaData.previewStart = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+                    metaData.previewStart = ChartIOHelper.MetaData.ParseAsFloat(line);
                 }
 
                 // PreviewEnd = 0.00
-                else if (previewEndRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.previewEndRegex.IsMatch(line))
                 {
-                    metaData.previewEnd = float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+                    metaData.previewEnd = ChartIOHelper.MetaData.ParseAsFloat(line);
                 }
 
                 // Genre = "rock"
-                else if (genreRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.genreRegex.IsMatch(line))
                 {
-                    metaData.genre = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                    metaData.genre = ChartIOHelper.MetaData.ParseAsString(line);
                 }
 
                 // MediaType = "cd"
-                else if (mediaTypeRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.mediaTypeRegex.IsMatch(line))
                 {
-                    metaData.mediatype = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+                    metaData.mediatype = ChartIOHelper.MetaData.ParseAsString(line);
                 }
 
-                else if (yearRegex.IsMatch(line))
-                    metaData.year = Regex.Replace(Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"'), @"\D", "");
+                else if (ChartIOHelper.MetaData.yearRegex.IsMatch(line))
+                    metaData.year = Regex.Replace(ChartIOHelper.MetaData.ParseAsString(line), @"\D", "");
 
                 // MusicStream = "ENDLESS REBIRTH.ogg"
-                else if (musicStreamRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.musicStreamRegex.IsMatch(line))
                 {
                     AudioLoadFromChart(song, Song.AudioInstrument.Song, line, audioDirectory);
                 }
-                else if (guitarStreamRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.guitarStreamRegex.IsMatch(line))
                 {
                     AudioLoadFromChart(song, Song.AudioInstrument.Guitar, line, audioDirectory);
                 }
-                else if (bassStreamRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.bassStreamRegex.IsMatch(line))
                 {
                     AudioLoadFromChart(song, Song.AudioInstrument.Bass, line, audioDirectory);
                 }
-                else if (rhythmStreamRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.rhythmStreamRegex.IsMatch(line))
                 {
                     AudioLoadFromChart(song, Song.AudioInstrument.Rhythm, line, audioDirectory);
                 }
-                else if (drumStreamRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.drumStreamRegex.IsMatch(line))
                 {
                     AudioLoadFromChart(song, Song.AudioInstrument.Drum, line, audioDirectory);
                 }
@@ -382,7 +332,7 @@ public static class ChartReader
 
     static void AudioLoadFromChart(Song song, Song.AudioInstrument streamAudio, string line, string audioDirectory)
     {
-        string audioFilepath = Regex.Matches(line, QUOTESEARCH)[0].ToString().Trim('"');
+        string audioFilepath = ChartIOHelper.MetaData.ParseAsString(line);
 
         // Check if it's already the full path. If not, make it relative to the chart file.
         if (!File.Exists(audioFilepath))
@@ -554,7 +504,7 @@ public static class ChartReader
                                 chart.Add(newNote, false);
                             }
                             else if (instrument == Song.Instrument.Drums)
-                                LoadDrumNote(chart, tick, fret_type, length);
+                                LoadDrumNote(chart, tick, fret_type, length, flags);
                             else if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
                                 LoadGHLiveNote(chart, tick, fret_type, length, flags);
                             else
@@ -609,122 +559,54 @@ public static class ChartReader
         }
     }
 
-    static void LoadStandardNote(Chart chart, uint tick, int noteNumber, uint length, List<NoteFlag> flagsList)
+    static void LoadNote(Chart chart, uint tick, int noteNumber, uint length, List<NoteFlag> flagsList
+        , Dictionary<int, int> chartFileNoteToRawNoteLookup
+        , Dictionary<int, Note.Flags> chartFileNoteToFlagLookup
+        , Dictionary<int, Note.Flags> rawNoteDefaultFlagsLookup
+    )
     {
-        Note.GuitarFret? noteFret = null;
-        switch (noteNumber)
+        Debug.Assert(chartFileNoteToRawNoteLookup != null, "Must provide a note lookup dictionary");
+        // Load chart file note to a raw note
         {
-            case (0):
-                noteFret = Note.GuitarFret.Green;
-                break;
-            case (1):
-                noteFret = Note.GuitarFret.Red;
-                break;
-            case (2):
-                noteFret = Note.GuitarFret.Yellow;
-                break;
-            case (3):
-                noteFret = Note.GuitarFret.Blue;
-                break;
-            case (4):
-                noteFret = Note.GuitarFret.Orange;
-                break;
-            case (5):
-                NoteFlag forcedFlag = new NoteFlag(tick, Note.Flags.Forced);
-                flagsList.Add(forcedFlag);
-                break;
-            case (6):
-                NoteFlag tapFlag = new NoteFlag(tick, Note.Flags.Tap);
-                flagsList.Add(tapFlag);
-                break;
-            case (7):
-                noteFret = Note.GuitarFret.Open;
-                break;
-            default:
-                return;
+            int noteFret;
+            if (chartFileNoteToRawNoteLookup.TryGetValue(noteNumber, out noteFret))
+            {
+                // Optional. Load any default flags that come with notes. Useful for automatically attaching cymbal flags for pro drums
+                Note.Flags flags;
+                if (rawNoteDefaultFlagsLookup == null || !rawNoteDefaultFlagsLookup.TryGetValue(noteFret, out flags))
+                {
+                    flags = Note.Flags.None;
+                }
+
+                Note newNote = new Note(tick, noteFret, length);
+                chart.Add(newNote, false);
+            }
         }
 
-        if (noteFret != null)
+        // Optional. Load any flags that are parsed on a seperate tick
+        if (chartFileNoteToFlagLookup != null)
         {
-            Note newNote = new Note(tick, (int)noteFret, length);
-            chart.Add(newNote, false);
+            Note.Flags flags;
+            if (chartFileNoteToFlagLookup.TryGetValue(noteNumber, out flags))
+            {
+                NoteFlag parsedFlag = new NoteFlag(tick, flags);
+                flagsList.Add(parsedFlag);
+            }
         }
     }
 
-    static void LoadDrumNote(Chart chart, uint tick, int noteNumber, uint length)
+    static void LoadStandardNote(Chart chart, uint tick, int noteNumber, uint length, List<NoteFlag> flagsList)
     {
-        Note.DrumPad? noteFret = null;
-        switch (noteNumber)
-        {
-            case (0):
-                noteFret = Note.DrumPad.Kick;
-                break;
-            case (1):
-                noteFret = Note.DrumPad.Red;
-                break;
-            case (2):
-                noteFret = Note.DrumPad.Yellow;
-                break;
-            case (3):
-                noteFret = Note.DrumPad.Blue;
-                break;
-            case (4):
-                noteFret = Note.DrumPad.Orange;
-                break;
-            case (5):
-                noteFret = Note.DrumPad.Green;
-                break;
-            default:
-                return;
-        }
+        LoadNote(chart, tick, noteNumber, length, flagsList, ChartIOHelper.c_guitarNoteNumLookup, ChartIOHelper.c_guitarFlagNumLookup, null);
+    }
 
-        if (noteFret != null)
-        {
-            Note newNote = new Note(tick, (int)noteFret, length);
-            chart.Add(newNote, false);
-        }
+    static void LoadDrumNote(Chart chart, uint tick, int noteNumber, uint length, List<NoteFlag> flagsList)
+    {
+        LoadNote(chart, tick, noteNumber, length, flagsList, ChartIOHelper.c_drumNoteNumLookup, null, ChartIOHelper.c_drumNoteDefaultFlagsLookup);
     }
 
     static void LoadGHLiveNote(Chart chart, uint tick, int noteNumber, uint length, List<NoteFlag> flagsList)
     {
-        Note.GHLiveGuitarFret? noteFret = null;
-        switch (noteNumber)
-        {
-            case (0):
-                noteFret = Note.GHLiveGuitarFret.White1;
-                break;
-            case (1):
-                noteFret = Note.GHLiveGuitarFret.White2;
-                break;
-            case (2):
-                noteFret = Note.GHLiveGuitarFret.White3;
-                break;
-            case (3):
-                noteFret = Note.GHLiveGuitarFret.Black1;
-                break;
-            case (4):
-                noteFret = Note.GHLiveGuitarFret.Black2;
-                break;
-            case (5):
-                flagsList.Add(new NoteFlag(tick, Note.Flags.Forced));
-                break;
-            case (6):
-                flagsList.Add(new NoteFlag(tick, Note.Flags.Tap));
-                break;
-            case (7):
-                noteFret = Note.GHLiveGuitarFret.Open;
-                break;
-            case (8):
-                noteFret = Note.GHLiveGuitarFret.Black3;
-                break;
-            default:
-                return;
-        }
-
-        if (noteFret != null)
-        {
-            Note newNote = new Note(tick, (int)noteFret, length);
-            chart.Add(newNote, false);
-        }
+        LoadNote(chart, tick, noteNumber, length, flagsList, ChartIOHelper.c_ghlNoteNumLookup, ChartIOHelper.c_ghlFlagNumLookup, null);
     }
 }
