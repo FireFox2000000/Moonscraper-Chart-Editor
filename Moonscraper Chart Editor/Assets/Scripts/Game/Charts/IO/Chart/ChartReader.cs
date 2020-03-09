@@ -206,43 +206,43 @@ public static class ChartReader
             foreach (string line in stringData)
             {
                 // Name = "5000 Robots"
-                if (ChartIOHelper.MetaData.nameRegex.IsMatch(line))
+                if (ChartIOHelper.MetaData.name.regex.IsMatch(line))
                 {
                     metaData.name = ChartIOHelper.MetaData.ParseAsString(line);
                 }
 
                 // Artist = "TheEruptionOffer"
-                else if (ChartIOHelper.MetaData.artistRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.artist.regex.IsMatch(line))
                 {
                     metaData.artist = ChartIOHelper.MetaData.ParseAsString(line);
                 }
 
                 // Charter = "TheEruptionOffer"
-                else if (ChartIOHelper.MetaData.charterRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.charter.regex.IsMatch(line))
                 {
                     metaData.charter = ChartIOHelper.MetaData.ParseAsString(line);
                 }
 
                 // Album = "Rockman Holic"
-                else if (ChartIOHelper.MetaData.albumRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.album.regex.IsMatch(line))
                 {
                     metaData.album = ChartIOHelper.MetaData.ParseAsString(line);
                 }
 
                 // Offset = 0
-                else if (ChartIOHelper.MetaData.offsetRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.offset.regex.IsMatch(line))
                 {
                     song.offset = ChartIOHelper.MetaData.ParseAsFloat(line);
                 }
 
                 // Resolution = 192
-                else if (ChartIOHelper.MetaData.resolutionRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.resolution.regex.IsMatch(line))
                 {
                     song.resolution = ChartIOHelper.MetaData.ParseAsShort(line);
                 }
 
                 // Player2 = bass
-                else if (ChartIOHelper.MetaData.player2TypeRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.player2.regex.IsMatch(line))
                 {
                     string[] instrumentTypes = { "Bass", "Rhythm" };
                     string split = line.Split('=')[1].Trim();
@@ -258,63 +258,63 @@ public static class ChartReader
                 }
 
                 // Difficulty = 0
-                else if (ChartIOHelper.MetaData.difficultyRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.difficulty.regex.IsMatch(line))
                 {
                     metaData.difficulty = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
                 }
 
                 // Length = 300
-                else if (ChartIOHelper.MetaData.lengthRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.length.regex.IsMatch(line))
                 {
                     song.manualLength = true;
                     song.length = ChartIOHelper.MetaData.ParseAsFloat(line);
                 }
 
                 // PreviewStart = 0.00
-                else if (ChartIOHelper.MetaData.previewStartRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.previewStart.regex.IsMatch(line))
                 {
                     metaData.previewStart = ChartIOHelper.MetaData.ParseAsFloat(line);
                 }
 
                 // PreviewEnd = 0.00
-                else if (ChartIOHelper.MetaData.previewEndRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.previewEnd.regex.IsMatch(line))
                 {
                     metaData.previewEnd = ChartIOHelper.MetaData.ParseAsFloat(line);
                 }
 
                 // Genre = "rock"
-                else if (ChartIOHelper.MetaData.genreRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.genre.regex.IsMatch(line))
                 {
                     metaData.genre = ChartIOHelper.MetaData.ParseAsString(line);
                 }
 
                 // MediaType = "cd"
-                else if (ChartIOHelper.MetaData.mediaTypeRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.mediaType.regex.IsMatch(line))
                 {
                     metaData.mediatype = ChartIOHelper.MetaData.ParseAsString(line);
                 }
 
-                else if (ChartIOHelper.MetaData.yearRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.year.regex.IsMatch(line))
                     metaData.year = Regex.Replace(ChartIOHelper.MetaData.ParseAsString(line), @"\D", "");
 
                 // MusicStream = "ENDLESS REBIRTH.ogg"
-                else if (ChartIOHelper.MetaData.musicStreamRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.musicStream.regex.IsMatch(line))
                 {
                     AudioLoadFromChart(song, Song.AudioInstrument.Song, line, audioDirectory);
                 }
-                else if (ChartIOHelper.MetaData.guitarStreamRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.guitarStream.regex.IsMatch(line))
                 {
                     AudioLoadFromChart(song, Song.AudioInstrument.Guitar, line, audioDirectory);
                 }
-                else if (ChartIOHelper.MetaData.bassStreamRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.bassStream.regex.IsMatch(line))
                 {
                     AudioLoadFromChart(song, Song.AudioInstrument.Bass, line, audioDirectory);
                 }
-                else if (ChartIOHelper.MetaData.rhythmStreamRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.rhythmStream.regex.IsMatch(line))
                 {
                     AudioLoadFromChart(song, Song.AudioInstrument.Rhythm, line, audioDirectory);
                 }
-                else if (ChartIOHelper.MetaData.drumStreamRegex.IsMatch(line))
+                else if (ChartIOHelper.MetaData.drumStream.regex.IsMatch(line))
                 {
                     AudioLoadFromChart(song, Song.AudioInstrument.Drum, line, audioDirectory);
                 }

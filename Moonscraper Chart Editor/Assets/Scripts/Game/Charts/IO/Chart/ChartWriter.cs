@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using UnityEngine;
+using System.Linq;
+using System.Text;
 
 public class ChartWriter
 {
@@ -22,9 +24,38 @@ public class ChartWriter
     static readonly string s_chartHeaderSyncTrack = string.Format(s_chartSectionHeaderFormat, "SyncTrack");
     static readonly string s_chartHeaderEvents = string.Format(s_chartSectionHeaderFormat, "Events");
     static readonly string s_chartHeaderTrackFormat = "[{0}{1}]" + Globals.LINE_ENDING + "{{" + Globals.LINE_ENDING;
-    static readonly string s_audioStreamFormat = Globals.TABSPACE + "{0} = \"{1}\"" + Globals.LINE_ENDING;
 
-    delegate string GetAudioStreamSaveString(Song.AudioInstrument audio);
+    // Bi-directional dict lookups
+    static readonly Dictionary<Song.Instrument, string> c_instrumentToStrLookup = ChartIOHelper.c_instrumentStrToEnumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+    static readonly Dictionary<Song.Difficulty, string> c_difficultyToTrackNameLookup = ChartIOHelper.c_trackNameToTrackDifficultyLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+
+    static readonly Dictionary<int, int> c_guitarNoteToSaveNumberLookup = ChartIOHelper.c_guitarNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+    static readonly Dictionary<int, int> c_drumNoteToSaveNumberLookup = ChartIOHelper.c_drumNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+    static readonly Dictionary<int, int> c_ghlNoteToSaveNumberLookup = ChartIOHelper.c_ghlNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+    static readonly Dictionary<Note.Flags, int> c_guitarFlagToNumLookup = ChartIOHelper.c_guitarFlagNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+
+    delegate void WriteAudioStreamSaveString(Song.AudioInstrument audio, string saveFormat);
+
+    // Link the method with which we should write our objects out with
+    struct SongObjectWriteParameters
+    {
+        public uint scaledTick;
+        public float resolutionScaleRatio;
+        public Song.Instrument instrument;
+        public ExportOptions exportOptions;
+    }
+    delegate void AppendSongObjectData(SongObject so, in SongObjectWriteParameters writeParameters, StringBuilder output);
+    static readonly Dictionary<SongObject.ID, AppendSongObjectData> c_songObjectWriteFnLookup = new Dictionary<SongObject.ID, AppendSongObjectData>()
+    {
+        { SongObject.ID.BPM, AppendBpmData },
+        { SongObject.ID.TimeSignature, AppendTsData },
+        { SongObject.ID.Event, AppendEventData },
+        { SongObject.ID.Section, AppendSectionData },
+        { SongObject.ID.Starpower, AppendStarpowerData },
+        { SongObject.ID.ChartEvent, AppendChartEventData },
+        { SongObject.ID.Note, AppendNoteData },
+    };
+
     public void Write(Song song, ExportOptions exportOptions, out string errorList)
     {
         song.UpdateCache();
@@ -33,13 +64,12 @@ public class ChartWriter
 
         try
         {
-            string musicString = string.Empty;
-            string guitarString = string.Empty;
-            string bassString = string.Empty;
-            string rhythmString = string.Empty;
-            string drumString = string.Empty;
+            // Song properties
+            Debug.Log("Writing song properties");
+            saveString += s_chartHeaderSong;
+            saveString += GetPropertiesStringWithoutAudio(song, exportOptions);
 
-            GetAudioStreamSaveString GetSaveAudioString = audio => {
+            WriteAudioStreamSaveString WriteSaveAudioString = (audio, saveFormat) => {
                 string audioString;
                 string audioLocation = song.GetAudioLocation(audio);
 
@@ -48,36 +78,17 @@ public class ChartWriter
                 else
                     audioString = audioLocation;
 
-                return audioString;
+                if (song.GetAudioIsLoaded(audio) || (audioString != null && audioString != string.Empty))
+                    saveString += string.Format(saveFormat, audioString);
             };
 
-            musicString = GetSaveAudioString(Song.AudioInstrument.Song);
-            guitarString = GetSaveAudioString(Song.AudioInstrument.Guitar);
-            bassString = GetSaveAudioString(Song.AudioInstrument.Bass);
-            rhythmString = GetSaveAudioString(Song.AudioInstrument.Rhythm);
-            drumString = GetSaveAudioString(Song.AudioInstrument.Drum);
-
-            // Song properties
-            Debug.Log("Writing song properties");
-            saveString += s_chartHeaderSong;
-            saveString += GetPropertiesStringWithoutAudio(song, exportOptions);
-
             // Song audio
-            if (song.GetAudioIsLoaded(Song.AudioInstrument.Song) || (musicString != null && musicString != string.Empty))
-                saveString += string.Format(s_audioStreamFormat, "MusicStream", musicString);
-
-            if (song.GetAudioIsLoaded(Song.AudioInstrument.Guitar) || (guitarString != null && guitarString != string.Empty))
-                saveString += string.Format(s_audioStreamFormat, "GuitarStream", guitarString);
-
-            if (song.GetAudioIsLoaded(Song.AudioInstrument.Bass) || (bassString != null && bassString != string.Empty))
-                saveString += string.Format(s_audioStreamFormat, "BassStream", bassString);
-
-            if (song.GetAudioIsLoaded(Song.AudioInstrument.Rhythm) || (rhythmString != null && rhythmString != string.Empty))
-                saveString += string.Format(s_audioStreamFormat, "RhythmStream", rhythmString);
-
-            if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum) || (drumString != null && drumString != string.Empty))
-                saveString += string.Format(s_audioStreamFormat, "DrumStream", drumString);
-
+            WriteSaveAudioString(Song.AudioInstrument.Song, ChartIOHelper.MetaData.musicStream.saveFormat);
+            WriteSaveAudioString(Song.AudioInstrument.Guitar, ChartIOHelper.MetaData.guitarStream.saveFormat);
+            WriteSaveAudioString(Song.AudioInstrument.Bass, ChartIOHelper.MetaData.bassStream.saveFormat);
+            WriteSaveAudioString(Song.AudioInstrument.Rhythm, ChartIOHelper.MetaData.rhythmStream.saveFormat);
+            WriteSaveAudioString(Song.AudioInstrument.Drum, ChartIOHelper.MetaData.drumStream.saveFormat);
+       
             saveString += s_chartSectionFooter;
         }
         catch (System.Exception e)
@@ -93,73 +104,59 @@ public class ChartWriter
         }
 
         // SyncTrack
-        Debug.Log("Writing synctrack");
-        saveString += s_chartHeaderSyncTrack;
-        if (exportOptions.tickOffset > 0)
         {
-            saveString += new BPM().GetSaveString();
-            saveString += new TimeSignature().GetSaveString();
+            Debug.Log("Writing synctrack");
+            saveString += s_chartHeaderSyncTrack;
+            if (exportOptions.tickOffset > 0)
+            {
+                List<SongObject> defaultsList = new List<SongObject>()
+                {
+                    new BPM(), new TimeSignature()
+                };
+
+                saveString += GetSaveString(song, defaultsList, exportOptions, ref errorList);
+            }
+
+            saveString += GetSaveString(song, song.syncTrack, exportOptions, ref errorList);
+            saveString += s_chartSectionFooter;
         }
 
-        saveString += GetSaveString(song, song.syncTrack, exportOptions, ref errorList);
-        saveString += s_chartSectionFooter;
-
         // Events
-        Debug.Log("Writing events");
-        saveString += s_chartHeaderEvents;
-        saveString += GetSaveString(song, song.eventsAndSections, exportOptions, ref errorList);
-        saveString += s_chartSectionFooter;
+        {
+            Debug.Log("Writing events");
+            saveString += s_chartHeaderEvents;
+            saveString += GetSaveString(song, song.eventsAndSections, exportOptions, ref errorList);
+            saveString += s_chartSectionFooter;
+        }
 
         // Charts      
         foreach (Song.Instrument instrument in EnumX<Song.Instrument>.Values)
         {
             string instrumentSaveString = string.Empty;
-            switch (instrument)
+            if (!c_instrumentToStrLookup.TryGetValue(instrument, out instrumentSaveString))
             {
-                case (Song.Instrument.Guitar):
-                    instrumentSaveString = "Single";
-                    break;
-                case (Song.Instrument.GuitarCoop):
-                    instrumentSaveString = "DoubleGuitar";
-                    break;
-                case (Song.Instrument.Bass):
-                    instrumentSaveString = "DoubleBass";
-                    break;
-                case (Song.Instrument.Rhythm):
-                    instrumentSaveString = "DoubleRhythm";
-                    break;
-                case (Song.Instrument.Drums):
-                    instrumentSaveString = "Drums";
-                    break;
-                case (Song.Instrument.Keys):
-                    instrumentSaveString = "Keyboard";
-                    break;
-                case (Song.Instrument.GHLiveGuitar):
-                    instrumentSaveString = "GHLGuitar";
-                    break;
-                case (Song.Instrument.GHLiveBass):
-                    instrumentSaveString = "GHLBass";
-                    break;
-                default:
-                    continue;
+                continue;
             }
 
             foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
             {
                 string difficultySaveString = difficulty.ToString();
+                if (!c_difficultyToTrackNameLookup.TryGetValue(difficulty, out difficultySaveString))
+                {
+                    Debug.Assert(false, "Unable to find string for difficulty " + difficulty.ToString());
+                    continue;
+                }
 
                 string chartString = GetSaveString(song, song.GetChart(instrument, difficulty).chartObjects, exportOptions, ref errorList, instrument);
 
                 if (chartString == string.Empty)
                 {
-
                     if (exportOptions.copyDownEmptyDifficulty)
                     {
                         Song.Difficulty chartDiff = difficulty;
                         bool exit = false;
                         while (chartString == string.Empty)
                         {
-
                             switch (chartDiff)
                             {
                                 case (Song.Difficulty.Easy):
@@ -218,23 +215,6 @@ public class ChartWriter
         }
     }
 
-    static readonly string c_metaDataSaveFormat = string.Format("{0}{{0}} = \"{{{{0}}}}\"{1}", Globals.TABSPACE, Globals.LINE_ENDING);
-    static readonly string c_metaDataSaveFormatNoQuote = string.Format("{0}{{0}} = {{{{0}}}}{1}", Globals.TABSPACE, Globals.LINE_ENDING);
-    static readonly string c_nameFormat = string.Format(c_metaDataSaveFormat, "Name");
-    static readonly string c_artistFormat = string.Format(c_metaDataSaveFormat, "Artist");
-    static readonly string c_charterFormat = string.Format(c_metaDataSaveFormat, "Charter");
-    static readonly string c_albumFormat = string.Format(c_metaDataSaveFormat, "Album");
-    static readonly string c_yearFormat = string.Format("{0}{1} = \", {{0}}\"{2}", Globals.TABSPACE, "Year", Globals.LINE_ENDING);
-    static readonly string c_offsetFormat = string.Format(c_metaDataSaveFormatNoQuote, "Offset");
-    static readonly string c_resolutionFormat = string.Format(c_metaDataSaveFormatNoQuote, "Resolution");
-    static readonly string c_player2Format = string.Format(c_metaDataSaveFormatNoQuote, "Player2");
-    static readonly string c_difficultyFormat = string.Format(c_metaDataSaveFormatNoQuote, "Difficulty");
-    static readonly string c_lengthFormat = string.Format(c_metaDataSaveFormatNoQuote, "Length");
-    static readonly string c_previewStartFormat = string.Format(c_metaDataSaveFormatNoQuote, "PreviewStart");
-    static readonly string c_previewEndFormat = string.Format(c_metaDataSaveFormatNoQuote, "PreviewEnd");
-    static readonly string c_genreFormat = string.Format(c_metaDataSaveFormat, "Genre");
-    static readonly string c_mediaTypeFormat = string.Format(c_metaDataSaveFormat, "MediaType");
-
     string GetPropertiesStringWithoutAudio(Song song, ExportOptions exportOptions)
     {
         string saveString = string.Empty;
@@ -245,49 +225,43 @@ public class ChartWriter
 
         // Song properties  
         if (metaData.name != string.Empty)
-            saveString += string.Format(c_nameFormat, metaData.name);
+            saveString += string.Format(ChartIOHelper.MetaData.name.saveFormat, metaData.name);
         if (metaData.artist != string.Empty)
-            saveString += string.Format(c_artistFormat, metaData.artist);
+            saveString += string.Format(ChartIOHelper.MetaData.artist.saveFormat, metaData.artist);
         if (metaData.charter != string.Empty)
-            saveString += string.Format(c_charterFormat, metaData.charter);
+            saveString += string.Format(ChartIOHelper.MetaData.charter.saveFormat, metaData.charter);
         if (metaData.album != string.Empty)
-            saveString += string.Format(c_albumFormat, metaData.album);
+            saveString += string.Format(ChartIOHelper.MetaData.album.saveFormat, metaData.album);
         if (metaData.year != string.Empty)
-            saveString += string.Format(c_yearFormat, metaData.year);
-        saveString += string.Format(c_offsetFormat, song.offset);
+            saveString += string.Format(ChartIOHelper.MetaData.year.saveFormat, metaData.year);
+        saveString += string.Format(ChartIOHelper.MetaData.offset.saveFormat, song.offset);
 
-        saveString += string.Format(c_resolutionFormat, exportOptions.targetResolution);
+        saveString += string.Format(ChartIOHelper.MetaData.resolution.saveFormat, exportOptions.targetResolution);
         if (metaData.player2 != string.Empty)
-            saveString += string.Format(c_player2Format, metaData.player2.ToLower());
-        saveString += string.Format(c_difficultyFormat, metaData.difficulty);
+            saveString += string.Format(ChartIOHelper.MetaData.player2.saveFormat, metaData.player2.ToLower());
+        saveString += string.Format(ChartIOHelper.MetaData.difficulty.saveFormat, metaData.difficulty);
         if (song.manualLength)
-            saveString += string.Format(c_lengthFormat, song.length);
-        saveString += string.Format(c_previewStartFormat, metaData.previewStart);
-        saveString += string.Format(c_previewEndFormat, metaData.previewEnd);
+            saveString += string.Format(ChartIOHelper.MetaData.length.saveFormat, song.length);
+        saveString += string.Format(ChartIOHelper.MetaData.previewStart.saveFormat, metaData.previewStart);
+        saveString += string.Format(ChartIOHelper.MetaData.previewEnd.saveFormat, metaData.previewEnd);
         if (metaData.genre != string.Empty)
-            saveString += string.Format(c_genreFormat, metaData.genre);
+            saveString += string.Format(ChartIOHelper.MetaData.genre.saveFormat, metaData.genre);
         if (metaData.mediatype != string.Empty)
-            saveString += string.Format(c_mediaTypeFormat, metaData.mediatype);
+            saveString += string.Format(ChartIOHelper.MetaData.mediaType.saveFormat, metaData.mediatype);
 
         return saveString;
     }
 
-    static readonly string s_anchorFormat = string.Format(" = A {{0}}{0}{1}{{1}}", Globals.LINE_ENDING, Globals.TABSPACE);
-    static readonly string s_bpmFormat = " = B {0}";
-    static readonly string s_tsFormat = " = TS {0}";
-    static readonly string s_tsDenomFormat = " = TS {0} {1}";
-    static readonly string s_sectionFormat = " = E \"section {0}\"";
-    static readonly string s_eventFormat = " = E \"{0}\"";
-    static readonly string s_chartEventFormat = " = E {0}";
-    static readonly string s_starpowerFormat = " = S 2 {0}";
-    static readonly string s_noteFormat = " = N {0} {1}" + Globals.LINE_ENDING;
-    static readonly string s_forcedNoteFormat = Globals.TABSPACE + "{0}" + " = N 5 0 " + Globals.LINE_ENDING;
-    static readonly string s_tapNoteFormat = Globals.TABSPACE + "{0}" + " = N 6 0 " + Globals.LINE_ENDING;
     string GetSaveString<T>(Song song, IList<T> list, ExportOptions exportOptions, ref string out_errorList, Song.Instrument instrument = Song.Instrument.Guitar) where T : SongObject
     {
         System.Text.StringBuilder saveString = new System.Text.StringBuilder();
 
         float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
+
+        SongObjectWriteParameters writeParameters = new SongObjectWriteParameters();
+        writeParameters.resolutionScaleRatio = resolutionScaleRatio;
+        writeParameters.instrument = instrument;
+        writeParameters.exportOptions = exportOptions;
 
         for (int i = 0; i < list.Count; ++i)
         {
@@ -297,93 +271,19 @@ public class ChartWriter
                 uint tick = (uint)Mathf.Round(songObject.tick * resolutionScaleRatio) + exportOptions.tickOffset;
                 saveString.Append(Globals.TABSPACE + tick);
 
-                switch ((SongObject.ID)songObject.classID)
+                writeParameters.scaledTick = tick;
+
+                AppendSongObjectData writeMethod;
+                if (c_songObjectWriteFnLookup.TryGetValue((SongObject.ID)songObject.classID, out writeMethod))
                 {
-                    case (SongObject.ID.BPM):
-                        BPM bpm = songObject as BPM;
-                        if (bpm.anchor != null)
-                        {
-                            uint anchorValue = (uint)((double)bpm.anchor * 1000000);
-                            saveString.AppendFormat(s_anchorFormat, anchorValue, tick);
-                        }
-
-                        saveString.AppendFormat(s_bpmFormat, bpm.value);
-                        break;
-
-                    case (SongObject.ID.TimeSignature):
-                        TimeSignature ts = songObject as TimeSignature;
-
-                        if (ts.denominator == 4)
-                            saveString.AppendFormat(s_tsFormat, ts.numerator);
-                        else
-                        {
-                            uint denominatorSaveVal = (uint)Mathf.Log(ts.denominator, 2);
-                            saveString.AppendFormat(s_tsDenomFormat, ts.numerator, denominatorSaveVal);
-                        }
-                        break;
-
-                    case (SongObject.ID.Section):
-                        Section section = songObject as Section;
-                        saveString.AppendFormat(s_sectionFormat, section.title);
-                        break;
-
-                    case (SongObject.ID.Event):
-                        Event songEvent = songObject as Event;
-                        saveString.AppendFormat(s_eventFormat, songEvent.title);
-                        break;
-
-                    case (SongObject.ID.ChartEvent):
-                        ChartEvent chartEvent = songObject as ChartEvent;
-                        saveString.AppendFormat(s_chartEventFormat, chartEvent.eventName);
-                        break;
-
-                    case (SongObject.ID.Starpower):
-                        Starpower sp = songObject as Starpower;
-                        saveString.AppendFormat(s_starpowerFormat, (uint)Mathf.Round(sp.length * resolutionScaleRatio));
-                        break;
-
-                    case (SongObject.ID.Note):
-                        Note note = songObject as Note;
-                        int fretNumber;
-
-                        if (instrument != Song.Instrument.Unrecognised)
-                        {
-                            if (instrument == Song.Instrument.Drums)
-                                fretNumber = GetDrumsSaveNoteNumber(note);
-
-                            else if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
-                                fretNumber = GetGHLSaveNoteNumber(note);
-
-                            else
-                                fretNumber = GetStandardSaveNoteNumber(note);
-                        }
-                        else
-                            fretNumber = note.rawNote;
-
-                        saveString.AppendFormat(s_noteFormat, fretNumber, (uint)Mathf.Round(note.length * resolutionScaleRatio));
-
-                        // Only need to get the flags of one note of a chord
-                        if (exportOptions.forced && (note.next == null || (note.next != null && note.next.tick != note.tick)))
-                        {
-                            if ((note.flags & Note.Flags.Forced) == Note.Flags.Forced)
-                            {
-                                saveString.AppendFormat(s_forcedNoteFormat, tick);
-                            }
-
-                            // Save taps line if not an open note, as open note taps cause weird artifacts under sp
-                            if (!note.IsOpenNote() && (note.flags & Note.Flags.Tap) == Note.Flags.Tap)
-                            {
-                                saveString.AppendFormat(s_tapNoteFormat, tick);
-                            }
-                        }
-                        continue;
-
-                    default:
-                        continue;
+                    writeMethod(songObject, writeParameters, saveString);
                 }
-                saveString.Append(Globals.LINE_ENDING);
+                else
+                {
+                    throw new Exception("Method not defined. Unable to write data for object " + ((SongObject.ID)songObject.classID).ToString());
+                }
 
-                //throw new System.Exception("Test error count: " + i);
+                saveString.Append(Globals.LINE_ENDING);
             }
             catch (System.Exception e)
             {
@@ -395,74 +295,149 @@ public class ChartWriter
         return saveString.ToString();
     }
 
-    int GetStandardSaveNoteNumber(Note note)
+    static int GetSaveNoteNumber(int note, Dictionary<int, int> lookupDict)
     {
-        switch (note.guitarFret)
+        int noteNumber;
+        if (!lookupDict.TryGetValue(note, out noteNumber))
         {
-            case (Note.GuitarFret.Green):
-                return 0;
-            case (Note.GuitarFret.Red):
-                return 1;
-            case (Note.GuitarFret.Yellow):
-                return 2;
-            case (Note.GuitarFret.Blue):
-                return 3;
-            case (Note.GuitarFret.Orange):
-                return 4;
-            case (Note.GuitarFret.Open):
-                return 7;                               // 5 and 6 are reserved for forced and taps properties
-            default: break;
+            noteNumber = 0;
         }
 
-        return 0;
+        return noteNumber;
     }
 
-    int GetDrumsSaveNoteNumber(Note note)
+    static int GetStandardSaveNoteNumber(Note note)
     {
-        switch (note.drumPad)
-        {
-            case (Note.DrumPad.Kick):
-                return 0;
-            case (Note.DrumPad.Red):
-                return 1;
-            case (Note.DrumPad.Yellow):
-                return 2;
-            case (Note.DrumPad.Blue):
-                return 3;
-            case (Note.DrumPad.Orange):
-                return 4;
-            case (Note.DrumPad.Green):
-                return 5;
+        return GetSaveNoteNumber((int)note.guitarFret, c_guitarNoteToSaveNumberLookup);
+    }
 
-            default: break;
+    static int GetDrumsSaveNoteNumber(Note note)
+    {
+        return GetSaveNoteNumber((int)note.drumPad, c_drumNoteToSaveNumberLookup);
+    }
+
+    static int GetGHLSaveNoteNumber(Note note)
+    {
+        return GetSaveNoteNumber((int)note.ghliveGuitarFret, c_ghlNoteToSaveNumberLookup);
+    }
+
+    #region Per-object write methods
+
+    static readonly string s_anchorFormat = string.Format(" = A {{0}}{0}{1}{{1}}", Globals.LINE_ENDING, Globals.TABSPACE);
+    static readonly string s_bpmFormat = " = B {0}";
+    static readonly string s_tsFormat = " = TS {0}";
+    static readonly string s_tsDenomFormat = " = TS {0} {1}";
+    static readonly string s_sectionFormat = " = E \"section {0}\"";
+    static readonly string s_eventFormat = " = E \"{0}\"";
+    static readonly string s_chartEventFormat = " = E {0}";
+    static readonly string s_starpowerFormat = " = S 2 {0}";
+    static readonly string s_noteFormat = " = N {0} {1}";
+
+    // Initial tick is automatically written
+    static void AppendBpmData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)
+    {
+        BPM bpm = songObject as BPM;
+        if (bpm.anchor != null)
+        {
+            uint anchorValue = (uint)((double)bpm.anchor * 1000000);
+            output.AppendFormat(s_anchorFormat, anchorValue, writeParameters.scaledTick);
         }
 
-        return 0;
+        output.AppendFormat(s_bpmFormat, bpm.value);
     }
 
-    int GetGHLSaveNoteNumber(Note note)
+    static void AppendTsData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)
     {
-        switch (note.ghliveGuitarFret)
+        TimeSignature ts = songObject as TimeSignature;
+
+        if (ts.denominator == 4)
         {
-            case (Note.GHLiveGuitarFret.White1):
-                return 0;
-            case (Note.GHLiveGuitarFret.White2):
-                return 1;
-            case (Note.GHLiveGuitarFret.White3):
-                return 2;
-            case (Note.GHLiveGuitarFret.Black1):
-                return 3;
-            case (Note.GHLiveGuitarFret.Black2):
-                return 4;
-
-            case (Note.GHLiveGuitarFret.Open):
-                return 7;
-            case (Note.GHLiveGuitarFret.Black3):
-                return 8;
-
-            default: break;
+            output.AppendFormat(s_tsFormat, ts.numerator);
         }
-
-        return 0;
+        else
+        {
+            uint denominatorSaveVal = (uint)Mathf.Log(ts.denominator, 2);
+            output.AppendFormat(s_tsDenomFormat, ts.numerator, denominatorSaveVal);
+        }
     }
+
+    static void AppendSectionData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)
+    {
+        Section section = songObject as Section;
+        output.AppendFormat(s_sectionFormat, section.title);
+    }
+
+    static void AppendEventData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)
+    {
+        Event songEvent = songObject as Event;
+        output.AppendFormat(s_eventFormat, songEvent.title);
+    }
+
+    static void AppendChartEventData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)
+    {
+        ChartEvent chartEvent = songObject as ChartEvent;
+        output.AppendFormat(s_chartEventFormat, chartEvent.eventName);
+    }
+
+    static void AppendStarpowerData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)
+    {
+        Starpower sp = songObject as Starpower;
+        output.AppendFormat(s_starpowerFormat, (uint)Mathf.Round(sp.length * writeParameters.resolutionScaleRatio));
+    }
+
+    static void AppendNoteData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)
+    {
+        Note note = songObject as Note;
+        int fretNumber;
+
+        Song.Instrument instrument = writeParameters.instrument;
+
+        if (writeParameters.instrument != Song.Instrument.Unrecognised)
+        {
+            if (instrument == Song.Instrument.Drums)
+                fretNumber = GetDrumsSaveNoteNumber(note);
+
+            else if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
+                fretNumber = GetGHLSaveNoteNumber(note);
+
+            else
+                fretNumber = GetStandardSaveNoteNumber(note);
+        }
+        else
+            fretNumber = note.rawNote;
+
+        output.AppendFormat(s_noteFormat, fretNumber, (uint)Mathf.Round(note.length * writeParameters.resolutionScaleRatio));
+
+        // Only need to get the flags of one note of a chord
+        if (note.flags != Note.Flags.None && writeParameters.exportOptions.forced && (note.next == null || (note.next != null && note.next.tick != note.tick)))
+        {
+            Note.Flags flagsToIgnore;
+            if (!ChartIOHelper.c_drumNoteDefaultFlagsLookup.TryGetValue(note.rawNote, out flagsToIgnore))
+            {
+                flagsToIgnore = Note.Flags.None;
+            }
+
+            foreach (var e in EnumX<Note.Flags>.Values)
+            {
+                bool hasFlag = (note.flags & e) == e;
+                bool shouldIgnoreFlag = (e & flagsToIgnore) != 0;
+
+                if (hasFlag && !shouldIgnoreFlag)
+                {
+                    if (e == Note.Flags.Tap && note.IsOpenNote())        // Save taps line if not an open note, as open note taps cause weird artifacts under sp
+                        continue;
+
+                    int value;
+                    if (c_guitarFlagToNumLookup.TryGetValue(e, out value))  // Todo, if different flags have different values for the same flags, we'll need to use different lookups
+                    {
+                        output.Append(Globals.LINE_ENDING);
+                        output.Append(Globals.TABSPACE + writeParameters.scaledTick);
+                        output.AppendFormat(s_noteFormat, value, 0);
+                    }
+                }
+            }
+        }
+    }
+
+    #endregion
 }

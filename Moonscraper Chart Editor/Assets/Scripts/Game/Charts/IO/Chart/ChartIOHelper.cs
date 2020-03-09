@@ -94,25 +94,96 @@ public static class ChartIOHelper
         const string QUOTESEARCH = "\"([^\"]*)\"";
         const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";
 
-        public readonly static Regex nameRegex = new Regex(@"Name = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        public readonly static Regex artistRegex = new Regex(@"Artist = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        public readonly static Regex charterRegex = new Regex(@"Charter = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        public readonly static Regex offsetRegex = new Regex(@"Offset = " + FLOATSEARCH, RegexOptions.Compiled);
-        public readonly static Regex resolutionRegex = new Regex(@"Resolution = " + FLOATSEARCH, RegexOptions.Compiled);
-        public readonly static Regex player2TypeRegex = new Regex(@"Player2 = \w+", RegexOptions.Compiled);
-        public readonly static Regex difficultyRegex = new Regex(@"Difficulty = \d+", RegexOptions.Compiled);
-        public readonly static Regex lengthRegex = new Regex(@"Length = " + FLOATSEARCH, RegexOptions.Compiled);
-        public readonly static Regex previewStartRegex = new Regex(@"PreviewStart = " + FLOATSEARCH, RegexOptions.Compiled);
-        public readonly static Regex previewEndRegex = new Regex(@"PreviewEnd = " + FLOATSEARCH, RegexOptions.Compiled);
-        public readonly static Regex genreRegex = new Regex(@"Genre = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        public readonly static Regex yearRegex = new Regex(@"Year = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        public readonly static Regex albumRegex = new Regex(@"Album = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        public readonly static Regex mediaTypeRegex = new Regex(@"MediaType = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        public readonly static Regex musicStreamRegex = new Regex(@"MusicStream = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        public readonly static Regex guitarStreamRegex = new Regex(@"GuitarStream = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        public readonly static Regex bassStreamRegex = new Regex(@"BassStream = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        public readonly static Regex rhythmStreamRegex = new Regex(@"RhythmStream = " + QUOTEVALIDATE, RegexOptions.Compiled);
-        public readonly static Regex drumStreamRegex = new Regex(@"DrumStream = " + QUOTEVALIDATE, RegexOptions.Compiled);
+        public enum MetadataValueType
+        {
+            String,
+            Float,
+            Player2,
+            Difficulty,
+            Year,
+        }
+
+        public class MetadataItem
+        {
+            string m_key;
+            Regex m_readerParseRegex;
+            string m_saveFormat;
+
+            static readonly string c_metaDataSaveFormat = string.Format("{0}{{0}} = \"{{{{0}}}}\"{1}", Globals.TABSPACE, Globals.LINE_ENDING);
+            static readonly string c_metaDataSaveFormatNoQuote = string.Format("{0}{{0}} = {{{{0}}}}{1}", Globals.TABSPACE, Globals.LINE_ENDING);
+
+            public string key { get { return m_key; } }
+            public Regex regex { get { return m_readerParseRegex; } }
+            public string saveFormat { get { return m_saveFormat; } }
+
+            public MetadataItem(string key, MetadataValueType type)
+            {
+                m_key = key;
+
+                Regex parseStrRegex = new Regex(key + " = " + QUOTEVALIDATE, RegexOptions.Compiled);
+
+                switch (type)
+                {
+                    case MetadataValueType.String:
+                        {
+                            m_readerParseRegex = parseStrRegex;
+                            m_saveFormat = string.Format(c_metaDataSaveFormat, key);
+                            break;
+                        }
+
+                    case MetadataValueType.Float:
+                        {
+                            m_readerParseRegex = new Regex(key + " = " + FLOATSEARCH, RegexOptions.Compiled);
+                            m_saveFormat = string.Format(c_metaDataSaveFormatNoQuote, key);
+                            break;
+                        }
+
+                    case MetadataValueType.Player2:
+                        {
+                            m_readerParseRegex = new Regex(key + @" = \w+", RegexOptions.Compiled);
+                            m_saveFormat = string.Format(c_metaDataSaveFormatNoQuote, key);
+                            break;
+                        }
+
+                    case MetadataValueType.Difficulty:
+                        {
+                            m_readerParseRegex = new Regex(key + @" = \d+", RegexOptions.Compiled);
+                            m_saveFormat = string.Format(c_metaDataSaveFormatNoQuote, key);
+                            break;
+                        }
+
+                    case MetadataValueType.Year:
+                        {
+                            m_readerParseRegex = parseStrRegex;
+                            m_saveFormat = string.Format("{0}{1} = \", {{0}}\"{2}", Globals.TABSPACE, "Year", Globals.LINE_ENDING);
+                            break;
+                        }
+
+                    default:
+                        throw new System.Exception("Unhandled Metadata item type");
+                }
+            }
+        }
+
+        public readonly static MetadataItem name           = new MetadataItem("Name", MetadataValueType.String);
+        public readonly static MetadataItem artist         = new MetadataItem("Artist", MetadataValueType.String);
+        public readonly static MetadataItem charter        = new MetadataItem("Charter", MetadataValueType.String);
+        public readonly static MetadataItem offset         = new MetadataItem("Offset", MetadataValueType.Float);
+        public readonly static MetadataItem resolution     = new MetadataItem("Resolution", MetadataValueType.Float);
+        public readonly static MetadataItem player2        = new MetadataItem("Player2", MetadataValueType.Player2);
+        public readonly static MetadataItem difficulty     = new MetadataItem("Difficulty", MetadataValueType.Difficulty);
+        public readonly static MetadataItem length         = new MetadataItem("Length", MetadataValueType.Float);
+        public readonly static MetadataItem previewStart   = new MetadataItem("PreviewStart", MetadataValueType.Float);
+        public readonly static MetadataItem previewEnd     = new MetadataItem("PreviewEnd", MetadataValueType.Float);
+        public readonly static MetadataItem genre          = new MetadataItem("Genre", MetadataValueType.String);
+        public readonly static MetadataItem year           = new MetadataItem("Year", MetadataValueType.Year);
+        public readonly static MetadataItem album          = new MetadataItem("Album", MetadataValueType.String);
+        public readonly static MetadataItem mediaType      = new MetadataItem("MediaType", MetadataValueType.String);
+        public readonly static MetadataItem musicStream    = new MetadataItem("MusicStream", MetadataValueType.String);
+        public readonly static MetadataItem guitarStream   = new MetadataItem("GuitarStream", MetadataValueType.String);
+        public readonly static MetadataItem bassStream     = new MetadataItem("BassStream", MetadataValueType.String);
+        public readonly static MetadataItem rhythmStream   = new MetadataItem("RhythmStream", MetadataValueType.String);
+        public readonly static MetadataItem drumStream     = new MetadataItem("DrumStream", MetadataValueType.String);
 
         public static string ParseAsString(string line)
         {
