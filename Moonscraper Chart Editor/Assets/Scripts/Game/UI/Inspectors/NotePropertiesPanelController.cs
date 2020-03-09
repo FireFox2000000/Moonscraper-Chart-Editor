@@ -75,7 +75,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
     bool IsInNoteTool()
     {
-        return editor.toolManager.currentToolId == EditorObjectToolManager.ToolID.None;
+        return editor.toolManager.currentToolId == EditorObjectToolManager.ToolID.Note;
     }
 
     public Note.Flags GetDisplayFlags()
