@@ -22,6 +22,7 @@ public class PlaceNoteController : ObjectlessTool {
     public Note.Flags desiredFlags;
     public bool forcedInteractable { get; private set; }
     public bool tapInteractable { get; private set; }
+    public bool cymbalInteractable { get; private set; }
 
     // Keyboard mode sustain dragging
     Note[] heldNotes;
@@ -67,6 +68,7 @@ public class PlaceNoteController : ObjectlessTool {
         desiredFlags = Note.Flags.None;
         forcedInteractable = true;
         tapInteractable = true;
+        cymbalInteractable = true;
 
         CurrentNotePlacementUpdate = UpdateMouseBurstMode;
 
@@ -619,6 +621,10 @@ public class PlaceNoteController : ObjectlessTool {
             // Disable tap note box for open notes
             tapInteractable = !note.IsOpenNote();
         }
+        else
+        {
+            cymbalInteractable = NoteFunctions.AllowedToBeCymbal(note);
+        }
     }
 
     public Note.Flags GetDisplayFlags()
@@ -636,6 +642,12 @@ public class PlaceNoteController : ObjectlessTool {
         {
             flags &= ~Note.Flags.Tap;
         }
+
+        if (!cymbalInteractable && gameObject.activeSelf)
+        {
+            flags &= ~Note.Flags.ProDrums_Cymbal;
+        }
+
         return flags;
     }
 }

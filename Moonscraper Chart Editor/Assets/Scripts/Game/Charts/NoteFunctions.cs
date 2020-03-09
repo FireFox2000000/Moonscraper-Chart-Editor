@@ -42,7 +42,7 @@ public static class NoteFunctions {
     {
         foreach (Note chordNote in note.chord)
         {
-            chordNote.flags = note.flags;
+            chordNote.flags = CopyChordFlags(chordNote.flags, note.flags);
         }
     }
 
@@ -202,6 +202,11 @@ public static class NoteFunctions {
         note.ApplyFlagsToChord();
     }
 
+    public static bool AllowedToBeCymbal(Note note)
+    {
+        return !note.IsOpenNote() && note.drumPad != Note.DrumPad.Red;
+    }
+
     public static Note.Flags GetFlagsToSetType(this Note note, Note.NoteType type)
     {
         Note.Flags flags = Note.Flags.None;
@@ -337,9 +342,10 @@ public static class NoteFunctions {
         foreach (Note chordNote in note.chord)
         {
             // Overwrite note flags
-            if (chordNote.flags != note.flags)
+            if (!CompareChordFlags(chordNote.flags, note.flags))
             {
-                Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, note.flags);
+                Note.Flags newFlags = CopyChordFlags(chordNote.flags, note.flags);
+                Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, newFlags);
 
                 SongEditCommand.AddAndInvokeSubAction(new DeleteAction(chordNote), subActions);
                 SongEditCommand.AddAndInvokeSubAction(new AddAction(newChordNote), subActions);
@@ -487,14 +493,32 @@ public static class NoteFunctions {
             foreach (Note chordNote in next.chord)
             {
                 // Overwrite note flags
-                if (chordNote.flags != flags)
+                Note.Flags flagsToPreserve = chordNote.flags & Note.PER_NOTE_FLAGS;
+
+                if (!CompareChordFlags(chordNote.flags, flags))
                 {
-                    Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, flags);
+                    Note.Flags newFlags = CopyChordFlags(chordNote.flags, flags);
+                    Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, newFlags);
+
                     SongEditCommand.AddAndInvokeSubAction(new DeleteAction(chordNote), subActions);
                     SongEditCommand.AddAndInvokeSubAction(new AddAction(newChordNote), subActions);
                 }
             }
         }
+    }
+
+    static Note.Flags CopyChordFlags(Note.Flags original, Note.Flags noteToCopyFrom)
+    {
+        Note.Flags flagsToPreserve = original & Note.PER_NOTE_FLAGS;
+        Note.Flags newFlags = noteToCopyFrom & ~Note.PER_NOTE_FLAGS;
+        newFlags |= flagsToPreserve;
+
+        return newFlags;
+    }
+
+    static bool CompareChordFlags(Note.Flags a, Note.Flags b)
+    {
+        return (a & ~Note.PER_NOTE_FLAGS) == (b & ~Note.PER_NOTE_FLAGS);
     }
 
     #endregion

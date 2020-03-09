@@ -72,6 +72,8 @@ public class Note : ChartObject
         ProDrums_Cymbal = 1 << 6,
     }
 
+    public const Flags PER_NOTE_FLAGS = Flags.ProDrums_Cymbal;
+
     private readonly ID _classID = ID.Note;
 
     public override int classID { get { return (int)_classID; } }
