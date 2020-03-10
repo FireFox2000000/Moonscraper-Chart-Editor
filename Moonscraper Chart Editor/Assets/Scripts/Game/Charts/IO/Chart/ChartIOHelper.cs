@@ -10,6 +10,8 @@ public static class ChartIOHelper
         , c_dataBlockEvents = "[Events]"
         ;
 
+    public const int c_proDrumsOffset = 64;
+
     public static readonly Dictionary<int, int> c_guitarNoteNumLookup = new Dictionary<int, int>()
     {
         { 0, (int)Note.GuitarFret.Green     },
@@ -36,15 +38,22 @@ public static class ChartIOHelper
         { 5, (int)Note.DrumPad.Green     },
     };
 
-    // Default flags, mark as cymbal for pro drums automatically
+    public static readonly Dictionary<int, Note.Flags> c_drumFlagNumLookup = new Dictionary<int, Note.Flags>()
+    {
+        { c_proDrumsOffset + 2, Note.Flags.ProDrums_Cymbal },       // Yellow
+        { c_proDrumsOffset + 3, Note.Flags.ProDrums_Cymbal },       // Blue
+        { c_proDrumsOffset + 5, Note.Flags.ProDrums_Cymbal },       // Green
+    };
+
+    // Default flags, mark as cymbal for pro drums automatically. Also used for choosing whether to write flag information or not if it's like this by default in the first place.
     public static readonly Dictionary<int, Note.Flags> c_drumNoteDefaultFlagsLookup = new Dictionary<int, Note.Flags>()
     {
         { (int)Note.DrumPad.Kick      , Note.Flags.None },
         { (int)Note.DrumPad.Red       , Note.Flags.None },
         { (int)Note.DrumPad.Yellow    , Note.Flags.ProDrums_Cymbal },
         { (int)Note.DrumPad.Blue      , Note.Flags.ProDrums_Cymbal },
-        { (int)Note.DrumPad.Orange    , Note.Flags.None },
-        { (int)Note.DrumPad.Green     , Note.Flags.ProDrums_Cymbal },
+        { (int)Note.DrumPad.Orange    , Note.Flags.ProDrums_Cymbal },   // Orange becomes green during 4-lane
+        { (int)Note.DrumPad.Green     , Note.Flags.None },
     };
 
     public static readonly Dictionary<int, int> c_ghlNoteNumLookup = new Dictionary<int, int>()

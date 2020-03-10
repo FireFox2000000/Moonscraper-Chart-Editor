@@ -132,7 +132,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         bool drumsMode = Globals.drumMode;
         forcedToggle.gameObject.SetActive(!drumsMode);
         tapToggle.gameObject.SetActive(!drumsMode);
-        cymbalToggle.gameObject.SetActive(drumsMode && ChartEditor.Instance.laneInfo.laneCount == 4);   // Todo, only if in pro drums mode and if in 4 lane
+        cymbalToggle.gameObject.SetActive(drumsMode && ChartEditor.Instance.laneInfo.laneCount == SongConfig.PRO_DRUMS_LANE_COUNT);
 
         if (!drumsMode)
         {

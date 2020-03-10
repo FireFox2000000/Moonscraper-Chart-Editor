@@ -18,11 +18,13 @@ public static class ChartReader
     {
         public uint tick;
         public Note.Flags flag;
+        public int noteNumber;
 
-        public NoteFlag(uint tick, Note.Flags flag)
+        public NoteFlag(uint tick, Note.Flags flag, int noteNumber)
         {
             this.tick = tick;
             this.flag = flag;
+            this.noteNumber = noteNumber;
         }
     }
 
@@ -542,10 +544,23 @@ public static class ChartReader
             // Load flags
             foreach (NoteFlag flag in flags)
             {
-                int index, length;
-                SongObjectHelper.FindObjectsAtPosition(flag.tick, chart.notes, out index, out length);
-                if (length > 0)
-                    NoteFunctions.GroupAddFlags(chart.notes, flag.flag, index, length);
+                if (flag.flag == Note.Flags.ProDrums_Cymbal)
+                {
+                    // The note number indicates which note it should attach to
+                    int noteNumber = flag.noteNumber - ChartIOHelper.c_proDrumsOffset;
+                    Debug.Assert(noteNumber >= 0, "Incorrectly parsed a note flag as a pro-drums flag. Note number was " + flag.noteNumber);
+
+                    // TODO
+                }
+                else
+                {
+                    int index, length;
+                    SongObjectHelper.FindObjectsAtPosition(flag.tick, chart.notes, out index, out length);
+                    if (length > 0)
+                    {
+                        NoteFunctions.GroupAddFlags(chart.notes, flag.flag, index, length);
+                    }
+                }
             }
 #if TIMING_DEBUG
             Debug.Log("Chart load time: " + (Time.realtimeSinceStartup - time));
@@ -578,7 +593,7 @@ public static class ChartReader
                     flags = Note.Flags.None;
                 }
 
-                Note newNote = new Note(tick, noteFret, length);
+                Note newNote = new Note(tick, noteFret, length, flags);
                 chart.Add(newNote, false);
             }
         }
@@ -589,7 +604,7 @@ public static class ChartReader
             Note.Flags flags;
             if (chartFileNoteToFlagLookup.TryGetValue(noteNumber, out flags))
             {
-                NoteFlag parsedFlag = new NoteFlag(tick, flags);
+                NoteFlag parsedFlag = new NoteFlag(tick, flags, noteNumber);
                 flagsList.Add(parsedFlag);
             }
         }
@@ -602,7 +617,7 @@ public static class ChartReader
 
     static void LoadDrumNote(Chart chart, uint tick, int noteNumber, uint length, List<NoteFlag> flagsList)
     {
-        LoadNote(chart, tick, noteNumber, length, flagsList, ChartIOHelper.c_drumNoteNumLookup, null, ChartIOHelper.c_drumNoteDefaultFlagsLookup);
+        LoadNote(chart, tick, noteNumber, length, flagsList, ChartIOHelper.c_drumNoteNumLookup, ChartIOHelper.c_drumFlagNumLookup, ChartIOHelper.c_drumNoteDefaultFlagsLookup);
     }
 
     static void LoadGHLiveNote(Chart chart, uint tick, int noteNumber, uint length, List<NoteFlag> flagsList)

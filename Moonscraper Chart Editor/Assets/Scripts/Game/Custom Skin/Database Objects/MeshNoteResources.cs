@@ -15,10 +15,12 @@ public class MeshNoteResources : ScriptableObject {
     public Renderer strumRenderer;
     public Renderer hopoRenderer;
     public Renderer tapRenderer;
+    public Renderer cymbalRenderer;
     public Renderer openRenderer;
     public Renderer spStrumRenderer;
     public Renderer spHopoRenderer;
     public Renderer spTapRenderer;
+    public Renderer spCymbalRenderer;
 
     [Header("Open note")]
     public Material[] openMaterials = new Material[5];
@@ -28,6 +30,9 @@ public class MeshNoteResources : ScriptableObject {
 
     [Header("Tap config")]
     public Material[] tapColorPalette = new Material[9];
+
+    [Header("Cymbal config")]
+    public Material[] cymbalColorPalette = new Material[9];
 
     [Header("Palette maps")]
     public int[] guitarModeLaneColorIndicies = new int[5];
@@ -75,6 +80,13 @@ public class MeshNoteResources : ScriptableObject {
         return tapColorPalette[paletteMap[noteIndex]];
     }
 
+    public Material GetCymbalMaterial(Chart.GameMode gameMode, LaneInfo laneInfo, int noteIndex)
+    {
+        int[] paletteMap = LookupPaletteMapForGameMode(gameMode, laneInfo);
+
+        return cymbalColorPalette[paletteMap[noteIndex]];
+    }
+
     public Material GetToolStrumMaterial(Chart.GameMode gameMode, LaneInfo laneInfo, int noteIndex)
     {
         return strumColorPalette[toolNoteLaneColorIndex];
@@ -83,6 +95,11 @@ public class MeshNoteResources : ScriptableObject {
     public Material GetToolTapMaterial(Chart.GameMode gameMode, LaneInfo laneInfo, int noteIndex)
     {
         return tapColorPalette[toolNoteLaneColorIndex];
+    }
+
+    public Material GetToolCymbalMaterial(Chart.GameMode gameMode, LaneInfo laneInfo, int noteIndex)
+    {
+        return cymbalColorPalette[toolNoteLaneColorIndex];
     }
 
     public Material GetStarpowerColorMaterial(Chart.GameMode gameMode, LaneInfo laneInfo, int noteIndex)

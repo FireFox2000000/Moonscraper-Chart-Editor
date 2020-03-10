@@ -49,7 +49,8 @@ public class Note : ChartObject
         Natural,
         Strum,
         Hopo,
-        Tap
+        Tap,
+        Cymbal,
     }
 
     public enum SpecialType
@@ -313,7 +314,7 @@ public class Note : ChartObject
                 if (prevIsChord || (!prevIsChord && rawNote != previous.rawNote))
                 {
                     // Check distance from previous note 
-                    int HOPODistance = (int)(65 * song.resolution / Song.STANDARD_BEAT_RESOLUTION);
+                    int HOPODistance = (int)(SongConfig.FORCED_NOTE_TICK_THRESHOLD * song.resolution / Song.STANDARD_BEAT_RESOLUTION);
 
                     if (tick - previous.tick <= HOPODistance)
                         HOPO = true;
@@ -366,16 +367,28 @@ public class Note : ChartObject
     {
         get
         {
-            if (!this.IsOpenNote() && (flags & Flags.Tap) == Flags.Tap)
+            if (this.gameMode == Chart.GameMode.Drums)
             {
-                return NoteType.Tap;
+                if (!this.IsOpenNote() && (flags & Flags.ProDrums_Cymbal) == Flags.ProDrums_Cymbal)
+                {
+                    return NoteType.Cymbal;
+                }
+
+                return NoteType.Strum;
             }
             else
             {
-                if (isHopo)
-                    return NoteType.Hopo;
+                if (!this.IsOpenNote() && (flags & Flags.Tap) == Flags.Tap)
+                {
+                    return NoteType.Tap;
+                }
                 else
-                    return NoteType.Strum;
+                {
+                    if (isHopo)
+                        return NoteType.Hopo;
+                    else
+                        return NoteType.Strum;
+                }
             }
         }
     }

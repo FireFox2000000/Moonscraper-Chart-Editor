@@ -408,32 +408,69 @@ public class ChartWriter
 
         output.AppendFormat(s_noteFormat, fretNumber, (uint)Mathf.Round(note.length * writeParameters.resolutionScaleRatio));
 
-        // Only need to get the flags of one note of a chord
-        if (note.flags != Note.Flags.None && writeParameters.exportOptions.forced && (note.next == null || (note.next != null && note.next.tick != note.tick)))
+        if (note.flags != Note.Flags.None && writeParameters.exportOptions.forced)
         {
-            Note.Flags flagsToIgnore;
-            if (!ChartIOHelper.c_drumNoteDefaultFlagsLookup.TryGetValue(note.rawNote, out flagsToIgnore))
-            {
-                flagsToIgnore = Note.Flags.None;
+            // Only need to get the flags of one note of a chord
+            if (note.next == null || (note.next != null && note.next.tick != note.tick))
+            { 
+                Note.Flags flagsToIgnore;
+                if (!ChartIOHelper.c_drumNoteDefaultFlagsLookup.TryGetValue(note.rawNote, out flagsToIgnore))
+                {
+                    flagsToIgnore = Note.Flags.None;
+                }
+
+                // Write out forced flag
+                {
+                    Note.Flags flagToTest = Note.Flags.Forced;
+                    if ((note.flags & flagToTest) != 0)
+                    {
+                        int value;
+                        if (c_guitarFlagToNumLookup.TryGetValue(flagToTest, out value))  // Todo, if different flags have different values for the same flags, we'll need to use different lookups
+                        {
+                            output.Append(Globals.LINE_ENDING);
+                            output.Append(Globals.TABSPACE + writeParameters.scaledTick);
+                            output.AppendFormat(s_noteFormat, value, 0);
+                        }
+                    }
+                }
+
+                // Write out tap flag
+                {
+                    Note.Flags flagToTest = Note.Flags.Tap;
+                    if (!note.IsOpenNote() && (note.flags & flagToTest) != 0)
+                    {
+                        int value;
+                        if (c_guitarFlagToNumLookup.TryGetValue(flagToTest, out value))  // Todo, if different flags have different values for the same flags, we'll need to use different lookups
+                        {
+                            output.Append(Globals.LINE_ENDING);
+                            output.Append(Globals.TABSPACE + writeParameters.scaledTick);
+                            output.AppendFormat(s_noteFormat, value, 0);
+                        }
+                    }
+                }
             }
 
-            foreach (var e in EnumX<Note.Flags>.Values)
+            // Write out cymbal flag for each note
+            if (false)      // TODO
             {
-                bool hasFlag = (note.flags & e) == e;
-                bool shouldIgnoreFlag = (e & flagsToIgnore) != 0;
-
-                if (hasFlag && !shouldIgnoreFlag)
+                // Need to write this out if there ISN'T a cymbal flag on yellow, blue or green.
+                // Write this out if flag is set on red or orange
+                Note.Flags flagToTest = Note.Flags.ProDrums_Cymbal;
+                if (((note.flags & flagToTest) != 0) && !note.IsOpenNote())
                 {
-                    if (e == Note.Flags.Tap && note.IsOpenNote())        // Save taps line if not an open note, as open note taps cause weird artifacts under sp
-                        continue;
+                    int value = ChartIOHelper.c_proDrumsOffset;
 
-                    int value;
-                    if (c_guitarFlagToNumLookup.TryGetValue(e, out value))  // Todo, if different flags have different values for the same flags, we'll need to use different lookups
+                    int noteOffset;
+                    if (!c_drumNoteToSaveNumberLookup.TryGetValue(note.rawNote, out noteOffset))
                     {
-                        output.Append(Globals.LINE_ENDING);
-                        output.Append(Globals.TABSPACE + writeParameters.scaledTick);
-                        output.AppendFormat(s_noteFormat, value, 0);
+                        throw new Exception("Cannot find pro drum note offset for note " + note.drumPad.ToString());
                     }
+
+                    value += noteOffset;
+
+                    output.Append(Globals.LINE_ENDING);
+                    output.Append(Globals.TABSPACE + writeParameters.scaledTick);
+                    output.AppendFormat(s_noteFormat, value, 0);
                 }
             }
         }

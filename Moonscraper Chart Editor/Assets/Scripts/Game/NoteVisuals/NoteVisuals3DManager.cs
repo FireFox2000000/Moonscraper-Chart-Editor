@@ -16,6 +16,8 @@ public class NoteVisuals3DManager : NoteVisualsManager
     Material[] resourceSharedMatsSpHopo;
     Material[] resourceSharedMatsTap;
     Material[] resourceSharedMatsSpTap;
+    Material[] resourceSharedMatsCymbal;
+    Material[] resourceSharedMatsSpCymbal;
 
     // Use this for initialization
     protected override void Awake ()
@@ -29,6 +31,8 @@ public class NoteVisuals3DManager : NoteVisualsManager
         resourceSharedMatsSpHopo = resources.spHopoRenderer.sharedMaterials;
         resourceSharedMatsTap = resources.tapRenderer.sharedMaterials;
         resourceSharedMatsSpTap = resources.spTapRenderer.sharedMaterials;
+        resourceSharedMatsCymbal = resources.cymbalRenderer.sharedMaterials;
+        resourceSharedMatsSpCymbal = resources.spCymbalRenderer.sharedMaterials;
     }
 
     // Update is called once per frame
@@ -56,7 +60,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
             ChartEditor editor = ChartEditor.Instance;
             Chart.GameMode gameMode = editor.currentGameMode;
             Note.NoteType visualNoteType = noteType;
-            if (gameMode == Chart.GameMode.Drums)
+            if (gameMode == Chart.GameMode.Drums && editor.laneInfo.laneCount != SongConfig.PRO_DRUMS_LANE_COUNT)
                 visualNoteType = Note.NoteType.Strum;
 
             // Determine materials
@@ -90,17 +94,45 @@ public class NoteVisuals3DManager : NoteVisualsManager
 
                 if (isTool)
                 {
-                    if (visualNoteType == Note.NoteType.Tap)
-                        colorMat = resources.GetToolTapMaterial(gameMode, laneInfo, note.rawNote);
-                    else
-                        colorMat = resources.GetToolStrumMaterial(gameMode, laneInfo, note.rawNote);
+                    switch (visualNoteType)
+                    {
+                        case Note.NoteType.Tap:
+                            {
+                                colorMat = resources.GetToolTapMaterial(gameMode, laneInfo, note.rawNote);
+                                break;
+                            }
+                        case Note.NoteType.Cymbal:
+                            {
+                                colorMat = resources.GetToolCymbalMaterial(gameMode, laneInfo, note.rawNote);
+                                break;
+                            }
+                        default:
+                            {
+                                colorMat = resources.GetToolStrumMaterial(gameMode, laneInfo, note.rawNote);
+                                break;
+                            }
+                    }
                 }
                 else
                 {
-                    if (visualNoteType == Note.NoteType.Tap)
-                        colorMat = resources.GetTapMaterial(gameMode, laneInfo, note.rawNote);
-                    else
-                        colorMat = resources.GetStrumMaterial(gameMode, laneInfo, note.rawNote);
+                    switch (visualNoteType)
+                    {
+                        case Note.NoteType.Tap:
+                            {
+                                colorMat = resources.GetTapMaterial(gameMode, laneInfo, note.rawNote);
+                                break;
+                            }
+                        case Note.NoteType.Cymbal:
+                            {
+                                colorMat = resources.GetCymbalMaterial(gameMode, laneInfo, note.rawNote);
+                                break;
+                            }
+                        default:
+                            {
+                                colorMat = resources.GetStrumMaterial(gameMode, laneInfo, note.rawNote);
+                                break;
+                            }
+                    }
                 }
 
                 materials = GetMaterials(colorMat, visualNoteType);
@@ -122,12 +154,16 @@ public class NoteVisuals3DManager : NoteVisualsManager
 
         switch (visualNoteType)
         {
-            case (Note.NoteType.Hopo):
+            case Note.NoteType.Hopo:
                 materials = isStarpower ? resourceSharedMatsSpHopo : resourceSharedMatsHopo;
                 break;
 
-            case (Note.NoteType.Tap):
+            case Note.NoteType.Tap:
                 materials = isStarpower ? resourceSharedMatsSpTap : resourceSharedMatsTap;
+                break;
+
+            case Note.NoteType.Cymbal:
+                materials = isStarpower ? resourceSharedMatsSpCymbal : resourceSharedMatsCymbal;
                 break;
 
             default:
