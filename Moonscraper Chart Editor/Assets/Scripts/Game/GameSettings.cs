@@ -63,7 +63,7 @@ public static class GameSettings
                 _sfxVolume = value;
         }
     }
-    public static float vol_master, vol_song, vol_guitar, vol_bass, vol_rhythm, vol_drum, audio_pan;
+    public static float vol_master, vol_song, vol_guitar, vol_bass, vol_rhythm, vol_keys, vol_drum, vol_vocals, audio_pan;
 
     public static Step snappingStep = new Step(16);
     public static int step { get { return snappingStep.value; } set { snappingStep.value = value; } }
@@ -132,6 +132,8 @@ public static class GameSettings
             vol_guitar = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Guitar Stream", 1.0f);
             vol_bass = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Bass Stream", 1.0f);
             vol_rhythm = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Rhythm Stream", 1.0f);
+			vol_keys = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Keys Stream", 1.0f);
+			vol_vocals = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Vocals Stream", 1.0f);
             vol_drum = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Drum Stream", 1.0f);
             audio_pan = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Audio Pan", 0.0f);
             sfxVolume = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "SFX", 1.0f);
@@ -201,6 +203,8 @@ public static class GameSettings
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Guitar Stream", vol_guitar);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Bass Stream", vol_bass);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Rhythm Stream", vol_rhythm);
+			iniparse.WriteValue(SECTION_NAME_AUDIO, "Keys Stream", vol_keys);
+			iniparse.WriteValue(SECTION_NAME_AUDIO, "Vocals Stream", vol_vocals);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Drum Stream", vol_drum);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Audio Pan", audio_pan);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "SFX", sfxVolume);
