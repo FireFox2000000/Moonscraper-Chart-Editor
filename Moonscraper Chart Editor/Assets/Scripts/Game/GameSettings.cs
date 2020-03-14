@@ -63,7 +63,7 @@ public static class GameSettings
                 _sfxVolume = value;
         }
     }
-    public static float vol_master, vol_song, vol_guitar, vol_bass, vol_rhythm, vol_keys, vol_drum, vol_vocals, audio_pan;
+    public static float vol_master, vol_song, vol_guitar, vol_bass, vol_rhythm, vol_keys, vol_drum, vol_vocals, audio_pan, vol_crowd;
 
     public static Step snappingStep = new Step(16);
     public static int step { get { return snappingStep.value; } set { snappingStep.value = value; } }
@@ -137,6 +137,7 @@ public static class GameSettings
             vol_drum = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Drum Stream", 1.0f);
             audio_pan = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Audio Pan", 0.0f);
             sfxVolume = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "SFX", 1.0f);
+			vol_crowd = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Crowd", 1.0f);
 
             // Need to fix old config values
             if ((int)clapProperties > (((int)ClapToggle.SECTION << 1) - 1))
@@ -208,6 +209,7 @@ public static class GameSettings
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Drum Stream", vol_drum);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Audio Pan", audio_pan);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "SFX", sfxVolume);
+			iniparse.WriteValue(SECTION_NAME_AUDIO, "Crowd", vol_crowd);
         }
         catch (System.Exception e)
         {

@@ -470,6 +470,25 @@ if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum3))
     {
         ClearAudioStream(Song.AudioInstrument.Drum4);
     }
+	
+	public void LoadCrowdStream()
+    {
+        try
+        {
+            editor.currentSong.LoadCrowdStream(GetAudioFile());
+
+            StartCoroutine(SetAudio());
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
+
+    public void ClearCrowdStream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Crowd);
+    }
 
     void ClearAudioStream(Song.AudioInstrument audio)
     {

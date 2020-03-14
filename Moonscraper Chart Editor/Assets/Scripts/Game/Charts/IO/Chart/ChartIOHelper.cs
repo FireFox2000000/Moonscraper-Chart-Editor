@@ -198,6 +198,7 @@ public static class ChartIOHelper
 		public readonly static MetadataItem drum4Stream     = new MetadataItem("Drum4Stream", MetadataValueType.String);
 		public readonly static MetadataItem vocalStream     = new MetadataItem("VocalStream", MetadataValueType.String);
 		public readonly static MetadataItem keysStream     = new MetadataItem("KeysStream", MetadataValueType.String);
+		public readonly static MetadataItem crowdStream     = new MetadataItem("CrowdStream", MetadataValueType.String);
 
         public static string ParseAsString(string line)
         {

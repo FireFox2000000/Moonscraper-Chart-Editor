@@ -25,6 +25,7 @@ public class SettingsController : DisplayMenu
     public Slider clapSourceSlider;
     public Slider sfxSlider;
 	public Slider vocalSourceSlider;
+	public Slider crowdSourceSlider;
 
     public Slider masterVolumeSlider;
     public Slider musicPanSlider;
@@ -64,6 +65,7 @@ public class SettingsController : DisplayMenu
         keysSourceSlider.value = GameSettings.vol_keys;
         drumSourceSlider.value = GameSettings.vol_drum;
 		vocalSourceSlider.value = GameSettings.vol_vocals;
+		crowdSourceSlider.value = GameSettings.vol_crowd;
         GameSettings.sfxVolume = sfxSlider.value;
 
         //editor.clapSource.volume = clapSourceSlider.value;
@@ -140,6 +142,9 @@ public class SettingsController : DisplayMenu
         rhythmSourceSlider.value = GameSettings.vol_rhythm;
         drumSourceSlider.value = GameSettings.vol_drum;
         sfxSlider.value = GameSettings.sfxVolume;
+		keysSourceSlider.value = GameSettings.vol_keys;
+		vocalSourceSlider.value = GameSettings.vol_vocals;
+		crowdSourceSlider.value = GameSettings.vol_crowd;
 
         //clapSourceSlider.value = editor.clapSource.volume;
         musicPanSlider.value = GameSettings.audio_pan * 10.0f;

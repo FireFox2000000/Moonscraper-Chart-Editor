@@ -393,6 +393,11 @@ public class Song {
     {
         LoadAudio(filepath, AudioInstrument.Vocal);
     }
+	
+	public void LoadCrowdStream(string filepath)
+    {
+        LoadAudio(filepath, AudioInstrument.Crowd);
+    }
 
 
     void LoadAudio(string filepath, AudioInstrument audio)
@@ -874,7 +879,8 @@ public class Song {
 		Drum3 = 6,
 		Drum4 = 7,
 		Vocal = 8,
-		Keys = 9
+		Keys = 9,
+		Crowd = 10
     }
 }
 

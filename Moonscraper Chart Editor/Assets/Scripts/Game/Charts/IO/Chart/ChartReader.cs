@@ -340,6 +340,10 @@ public static class ChartReader
                 {
                     AudioLoadFromChart(song, Song.AudioInstrument.Keys, line, audioDirectory);
                 }
+				else if (ChartIOHelper.MetaData.crowdStream.regex.IsMatch(line))
+                {
+                    AudioLoadFromChart(song, Song.AudioInstrument.Crowd, line, audioDirectory);
+                }
             }
 
 #if TIMING_DEBUG
