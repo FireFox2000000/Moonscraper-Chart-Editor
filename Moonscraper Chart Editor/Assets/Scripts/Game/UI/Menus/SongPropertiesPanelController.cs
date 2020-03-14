@@ -27,7 +27,12 @@ public class SongPropertiesPanelController : DisplayMenu {
     public Text guitarStream;
     public Text bassStream;
     public Text rhythmStream;
-    public Text drumStream;
+	public Text keysStream;
+	public Text vocalStream;
+    public Text drum1Stream;
+	public Text drum2Stream;
+	public Text drum3Stream;
+	public Text drum4Stream;
 
     bool init = false;
 
@@ -146,7 +151,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         }
     }
 
-    void setAudioTextLabels()
+   void setAudioTextLabels()
     {
         Song song = editor.currentSong;
         if (song.GetAudioIsLoaded(Song.AudioInstrument.Song))
@@ -196,19 +201,78 @@ public class SongPropertiesPanelController : DisplayMenu {
             rhythmStream.color = Color.red;
             rhythmStream.text = "No audio";
         }
-
-        if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum))
+		
+		if (song.GetAudioIsLoaded(Song.AudioInstrument.Keys))
         {
-            drumStream.color = Color.white;
-            drumStream.text = song.GetAudioName(Song.AudioInstrument.Drum);
-            ClipText(drumStream);
+			keysStream.color = Color.white;
+            keysStream.text = song.GetAudioName(Song.AudioInstrument.Keys);
+            ClipText(keysStream);
         }
         else
         {
-            drumStream.color = Color.red;
-            drumStream.text = "No audio";
+            keysStream.color = Color.red;
+			keysStream.text = "No audio";
         }
 
+		 if (song.GetAudioIsLoaded(Song.AudioInstrument.Vocal))
+        {
+            vocalStream.color = Color.white;
+            vocalStream.text = song.GetAudioName(Song.AudioInstrument.Vocal);
+            ClipText(vocalStream);
+        }
+        else
+        {
+            vocalStream.color = Color.red;
+            vocalStream.text = "No audio";
+        }
+		
+        if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum))
+        {
+            drum1Stream.color = Color.white;
+            drum1Stream.text = song.GetAudioName(Song.AudioInstrument.Drum);
+            ClipText(drum1Stream);
+        }
+        else
+        {
+            drum1Stream.color = Color.red;
+            drum1Stream.text = "No audio";
+        }
+		
+		if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum2))
+        {
+            drum2Stream.color = Color.white;
+            drum2Stream.text = song.GetAudioName(Song.AudioInstrument.Drum2);
+            ClipText(drum2Stream);
+        }
+        else
+        {
+            drum2Stream.color = Color.red;
+            drum2Stream.text = "No audio";
+        }
+if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum3))
+        {
+            drum3Stream.color = Color.white;
+            drum3Stream.text = song.GetAudioName(Song.AudioInstrument.Drum3);
+            ClipText(drum3Stream);
+        }
+        else
+        {
+            drum3Stream.color = Color.red;
+            drum3Stream.text = "No audio";
+        }
+		
+		if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum4))
+        {
+            drum4Stream.color = Color.white;
+            drum4Stream.text = song.GetAudioName(Song.AudioInstrument.Drum4);
+            ClipText(drum4Stream);
+        }
+        else
+        {
+            drum4Stream.color = Color.red;
+            drum4Stream.text = "No audio";
+        }
+		
         ChartEditor.isDirty = true;
     }
 
@@ -292,7 +356,46 @@ public class SongPropertiesPanelController : DisplayMenu {
         ClearAudioStream(Song.AudioInstrument.Rhythm);
     }
 
-    public void LoadDrumStream()
+   public void LoadVocalStream()
+    {
+        try
+        {
+            editor.currentSong.LoadVocalStream(GetAudioFile());
+
+            StartCoroutine(SetAudio());
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
+
+    public void ClearVocalStream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Vocal);
+    }
+	
+	public void LoadKeysStream()
+    {
+        try
+        {
+            editor.currentSong.LoadKeysStream(GetAudioFile());
+
+            StartCoroutine(SetAudio());
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
+
+    public void ClearKeysStream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Keys);
+    }
+	
+
+    public void LoadDrum1Stream()
     {
         try
         {
@@ -306,9 +409,66 @@ public class SongPropertiesPanelController : DisplayMenu {
         }
     }
 
-    public void ClearDrumStream()
+    public void ClearDrum1Stream()
     {
         ClearAudioStream(Song.AudioInstrument.Drum);
+    }
+	
+	public void LoadDrum2Stream()
+    {
+        try
+        {
+            editor.currentSong.LoadDrum2Stream(GetAudioFile());
+
+            StartCoroutine(SetAudio());
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
+
+    public void ClearDrum2Stream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Drum2);
+    }
+	
+	public void LoadDrum3Stream()
+    {
+        try
+        {
+            editor.currentSong.LoadDrum3Stream(GetAudioFile());
+
+            StartCoroutine(SetAudio());
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
+
+    public void ClearDrum3Stream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Drum3);
+    }
+	
+	public void LoadDrum4Stream()
+    {
+        try
+        {
+            editor.currentSong.LoadDrum4Stream(GetAudioFile());
+
+            StartCoroutine(SetAudio());
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
+
+    public void ClearDrum4Stream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Drum4);
     }
 
     void ClearAudioStream(Song.AudioInstrument audio)
