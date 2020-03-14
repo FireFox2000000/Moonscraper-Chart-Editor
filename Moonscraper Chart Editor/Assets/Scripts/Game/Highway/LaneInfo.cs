@@ -100,8 +100,17 @@ public class LaneInfo : MonoBehaviour {
 
     void OnLanesUpdated()
     {
-        int newLaneCount;
-        if (standardGamemodeToLaneCountMap.TryGetValue(ChartEditor.Instance.currentGameMode, out newLaneCount))
+        int newLaneCount = -1;
+        if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums && laneCount == SongConfig.PRO_DRUMS_LANE_COUNT)
+        {
+            newLaneCount = laneCount;
+        }
+        else if (!standardGamemodeToLaneCountMap.TryGetValue(ChartEditor.Instance.currentGameMode, out newLaneCount))
+        {
+            newLaneCount = -1;
+        }
+
+        if (laneCount >= 0)
             laneCount = newLaneCount;
     }
 
