@@ -27,13 +27,21 @@ public class SongPropertiesPanelController : DisplayMenu {
     public Text guitarStream;
     public Text bassStream;
     public Text rhythmStream;
-    public Text drumStream;
+	public Text keysStream;
+	public Text vocalStream;
+    public Text drum1Stream;
+	public Text drum2Stream;
+	public Text drum3Stream;
+	public Text drum4Stream;
+    public Text crowdStream;
 
     bool init = false;
 
     TimeSpan customTime = new TimeSpan();
 
     readonly ExtensionFilter audioExFilter = new ExtensionFilter("Audio files", "ogg", "mp3", "wav");
+
+    Dictionary<Song.AudioInstrument, Text> m_audioStreamTextLookup;
 
     private void Start()
     {
@@ -42,6 +50,21 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     protected override void OnEnable()
     {
+        m_audioStreamTextLookup = new Dictionary<Song.AudioInstrument, Text>()
+        {
+            { Song.AudioInstrument.Song, musicStream },
+            { Song.AudioInstrument.Guitar, guitarStream },
+            { Song.AudioInstrument.Bass, bassStream },
+            { Song.AudioInstrument.Rhythm, rhythmStream },
+            { Song.AudioInstrument.Keys, keysStream },
+            { Song.AudioInstrument.Vocals, vocalStream },
+            { Song.AudioInstrument.Drum, drum1Stream },
+            { Song.AudioInstrument.Drums_2, drum2Stream },
+            { Song.AudioInstrument.Drums_3, drum3Stream },
+            { Song.AudioInstrument.Drums_4, drum4Stream },
+            { Song.AudioInstrument.Crowd, crowdStream },
+        };
+
         bool edit = ChartEditor.isDirty;
 
         base.OnEnable();
@@ -146,69 +169,33 @@ public class SongPropertiesPanelController : DisplayMenu {
         }
     }
 
-    void setAudioTextLabels()
+   void setAudioTextLabels()
     {
         Song song = editor.currentSong;
-        if (song.GetAudioIsLoaded(Song.AudioInstrument.Song))
-        {
-            musicStream.color = Color.white;
-            musicStream.text = song.GetAudioName(Song.AudioInstrument.Song);
-            ClipText(musicStream);
-        }
-        else
-        {
-            musicStream.color = Color.red;
-            musicStream.text = "No audio";
-        }
 
-        if (song.GetAudioIsLoaded(Song.AudioInstrument.Guitar))
+        foreach (var audio in EnumX<Song.AudioInstrument>.Values)
         {
-            guitarStream.color = Color.white;
-            guitarStream.text = song.GetAudioName(Song.AudioInstrument.Guitar);
-            ClipText(guitarStream);
-        }
-        else
-        {
-            guitarStream.color = Color.red;
-            guitarStream.text = "No audio";
-        }
+            Text audioStreamText;
 
-        if (song.GetAudioIsLoaded(Song.AudioInstrument.Bass))
-        {
-            bassStream.color = Color.white;
-            bassStream.text = song.GetAudioName(Song.AudioInstrument.Bass);
-            ClipText(bassStream);
-        }
-        else
-        {
-            bassStream.color = Color.red;
-            bassStream.text = "No audio";
-        }
+            if (!m_audioStreamTextLookup.TryGetValue(audio, out audioStreamText))
+            {
+                Debug.Assert(false, "Audio stream UI Text not linked to an Audio Instrument for instrument " + audio.ToString());
+                continue;
+            }
 
-        if (song.GetAudioIsLoaded(Song.AudioInstrument.Rhythm))
-        {
-            rhythmStream.color = Color.white;
-            rhythmStream.text = song.GetAudioName(Song.AudioInstrument.Rhythm);
-            ClipText(rhythmStream);
+            if (song.GetAudioIsLoaded(audio))
+            {
+                audioStreamText.color = Color.white;
+                audioStreamText.text = song.GetAudioName(audio);
+                ClipText(audioStreamText);
+            }
+            else
+            {
+                audioStreamText.color = Color.red;
+                audioStreamText.text = "No audio";
+            }
         }
-        else
-        {
-            rhythmStream.color = Color.red;
-            rhythmStream.text = "No audio";
-        }
-
-        if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum))
-        {
-            drumStream.color = Color.white;
-            drumStream.text = song.GetAudioName(Song.AudioInstrument.Drum);
-            ClipText(drumStream);
-        }
-        else
-        {
-            drumStream.color = Color.red;
-            drumStream.text = "No audio";
-        }
-
+		
         ChartEditor.isDirty = true;
     }
 
@@ -292,7 +279,46 @@ public class SongPropertiesPanelController : DisplayMenu {
         ClearAudioStream(Song.AudioInstrument.Rhythm);
     }
 
-    public void LoadDrumStream()
+   public void LoadVocalStream()
+    {
+        try
+        {
+            editor.currentSong.LoadVocalStream(GetAudioFile());
+
+            StartCoroutine(SetAudio());
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
+
+    public void ClearVocalStream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Vocals);
+    }
+	
+	public void LoadKeysStream()
+    {
+        try
+        {
+            editor.currentSong.LoadKeysStream(GetAudioFile());
+
+            StartCoroutine(SetAudio());
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
+
+    public void ClearKeysStream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Keys);
+    }
+	
+
+    public void LoadDrum1Stream()
     {
         try
         {
@@ -306,9 +332,85 @@ public class SongPropertiesPanelController : DisplayMenu {
         }
     }
 
-    public void ClearDrumStream()
+    public void ClearDrum1Stream()
     {
         ClearAudioStream(Song.AudioInstrument.Drum);
+    }
+	
+	public void LoadDrum2Stream()
+    {
+        try
+        {
+            editor.currentSong.LoadDrum2Stream(GetAudioFile());
+
+            StartCoroutine(SetAudio());
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
+
+    public void ClearDrum2Stream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Drums_2);
+    }
+	
+	public void LoadDrum3Stream()
+    {
+        try
+        {
+            editor.currentSong.LoadDrum3Stream(GetAudioFile());
+
+            StartCoroutine(SetAudio());
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
+
+    public void ClearDrum3Stream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Drums_3);
+    }
+	
+	public void LoadDrum4Stream()
+    {
+        try
+        {
+            editor.currentSong.LoadDrum4Stream(GetAudioFile());
+
+            StartCoroutine(SetAudio());
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
+
+    public void ClearDrum4Stream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Drums_4);
+    }
+	
+	public void LoadCrowdStream()
+    {
+        try
+        {
+            editor.currentSong.LoadCrowdStream(GetAudioFile());
+
+            StartCoroutine(SetAudio());
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
+
+    public void ClearCrowdStream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Crowd);
     }
 
     void ClearAudioStream(Song.AudioInstrument audio)

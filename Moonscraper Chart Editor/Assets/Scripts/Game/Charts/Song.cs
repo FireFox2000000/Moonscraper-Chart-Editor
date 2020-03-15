@@ -363,11 +363,42 @@ public class Song {
     {
         LoadAudio(filepath, AudioInstrument.Rhythm);
     }
+	
+	    public void LoadKeysStream(string filepath)
+    {
+        LoadAudio(filepath, AudioInstrument.Keys);
+    }
 
     public void LoadDrumStream(string filepath)
     {
         LoadAudio(filepath, AudioInstrument.Drum);
     }
+	
+	public void LoadDrum2Stream(string filepath)
+	{
+	LoadAudio(filepath, AudioInstrument.Drums_2);
+	}
+	
+	public void LoadDrum3Stream(string filepath)
+	{
+	LoadAudio(filepath, AudioInstrument.Drums_3);
+	}
+	
+	public void LoadDrum4Stream(string filepath)
+	{
+	LoadAudio(filepath, AudioInstrument.Drums_4);
+	}
+	
+	public void LoadVocalStream(string filepath)
+    {
+        LoadAudio(filepath, AudioInstrument.Vocals);
+    }
+	
+	public void LoadCrowdStream(string filepath)
+    {
+        LoadAudio(filepath, AudioInstrument.Crowd);
+    }
+
 
     void LoadAudio(string filepath, AudioInstrument audio)
     {
@@ -843,7 +874,13 @@ public class Song {
         Guitar = 1,
         Bass = 2,
         Rhythm = 3,
-        Drum = 4
+        Drum = 4,
+		Drums_2 = 5,
+		Drums_3 = 6,
+		Drums_4 = 7,
+		Vocals = 8,
+		Keys = 9,
+		Crowd = 10
     }
 }
 
