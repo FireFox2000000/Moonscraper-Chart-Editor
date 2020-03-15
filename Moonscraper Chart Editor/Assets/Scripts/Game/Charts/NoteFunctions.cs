@@ -331,6 +331,9 @@ public static class NoteFunctions {
         if (note.cannotBeForced)
             flags &= ~Note.Flags.Forced;
 
+        if (!AllowedToBeCymbal(note))
+            flags &= ~Note.Flags.ProDrums_Cymbal;
+
         if (flags != note.flags)
         {
             Note newNote = new Note(note.tick, note.rawNote, note.length, flags);
