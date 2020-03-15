@@ -398,13 +398,7 @@ public class Export : DisplayMenu {
         { Song.AudioInstrument.Guitar, "guitar" },
         { Song.AudioInstrument.Bass, "bass" },
         { Song.AudioInstrument.Rhythm, "rhythm" },
-		{ Song.AudioInstrument.Keys, "keys" },
-		{ Song.AudioInstrument.Drums, "drums" },
-		{ Song.AudioInstrument.Drums_2, "drums_2" },
-		{ Song.AudioInstrument.Drums_3, "drums_3" },
-		{ Song.AudioInstrument.Drums_4, "drums_4" },
-		{ Song.AudioInstrument.Vocals, "vocals" },
-		{ Song.AudioInstrument.Crowd, "crowd" },
+        { Song.AudioInstrument.Drum, "drums" },
     };
 
     static string GetCHOggFilename(Song.AudioInstrument audio)

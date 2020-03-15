@@ -63,7 +63,7 @@ public class SettingsController : DisplayMenu
         GameSettings.vol_bass = bassSourceSlider.value;
         GameSettings.vol_rhythm = rhythmSourceSlider.value;
         keysSourceSlider.value = GameSettings.vol_keys;
-        drumSourceSlider.value = GameSettings.vol_drums;
+        drumSourceSlider.value = GameSettings.vol_drum;
 		vocalSourceSlider.value = GameSettings.vol_vocals;
 		crowdSourceSlider.value = GameSettings.vol_crowd;
         GameSettings.sfxVolume = sfxSlider.value;
