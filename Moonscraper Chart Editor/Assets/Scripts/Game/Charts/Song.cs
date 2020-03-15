@@ -874,7 +874,7 @@ public class Song {
         Guitar = 1,
         Bass = 2,
         Rhythm = 3,
-        Drums = 4,
+        Drum = 4,
 		Drums_2 = 5,
 		Drums_3 = 6,
 		Drums_4 = 7,
