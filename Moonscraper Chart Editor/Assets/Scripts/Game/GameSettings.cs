@@ -135,10 +135,10 @@ public static class GameSettings
 			vol_keys = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Keys Stream", 1.0f);
 			vol_vocals = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Vocals Stream", 1.0f);
             vol_drums = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Drum Stream", 1.0f);
+            vol_crowd = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Crowd Stream", 1.0f);
             audio_pan = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Audio Pan", 0.0f);
             sfxVolume = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "SFX", 1.0f);
-			vol_crowd = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Crowd", 1.0f);
-
+			
             // Need to fix old config values
             if ((int)clapProperties > (((int)ClapToggle.SECTION << 1) - 1))
             {
@@ -207,9 +207,9 @@ public static class GameSettings
 			iniparse.WriteValue(SECTION_NAME_AUDIO, "Keys Stream", vol_keys);
 			iniparse.WriteValue(SECTION_NAME_AUDIO, "Vocals Stream", vol_vocals);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Drum Stream", vol_drums);
+            iniparse.WriteValue(SECTION_NAME_AUDIO, "Crowd Stream", vol_crowd);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Audio Pan", audio_pan);
-            iniparse.WriteValue(SECTION_NAME_AUDIO, "SFX", sfxVolume);
-			iniparse.WriteValue(SECTION_NAME_AUDIO, "Crowd", vol_crowd);
+            iniparse.WriteValue(SECTION_NAME_AUDIO, "SFX", sfxVolume);			
         }
         catch (System.Exception e)
         {

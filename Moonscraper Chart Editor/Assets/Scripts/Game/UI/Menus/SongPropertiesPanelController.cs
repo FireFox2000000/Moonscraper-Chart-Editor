@@ -33,12 +33,15 @@ public class SongPropertiesPanelController : DisplayMenu {
 	public Text drum2Stream;
 	public Text drum3Stream;
 	public Text drum4Stream;
+    public Text crowdStream;
 
     bool init = false;
 
     TimeSpan customTime = new TimeSpan();
 
     readonly ExtensionFilter audioExFilter = new ExtensionFilter("Audio files", "ogg", "mp3", "wav");
+
+    Dictionary<Song.AudioInstrument, Text> m_audioStreamTextLookup;
 
     private void Start()
     {
@@ -47,6 +50,21 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     protected override void OnEnable()
     {
+        m_audioStreamTextLookup = new Dictionary<Song.AudioInstrument, Text>()
+        {
+            { Song.AudioInstrument.Song, musicStream },
+            { Song.AudioInstrument.Guitar, guitarStream },
+            { Song.AudioInstrument.Bass, bassStream },
+            { Song.AudioInstrument.Rhythm, rhythmStream },
+            { Song.AudioInstrument.Keys, keysStream },
+            { Song.AudioInstrument.Vocals, vocalStream },
+            { Song.AudioInstrument.Drum, drum1Stream },
+            { Song.AudioInstrument.Drums_2, drum2Stream },
+            { Song.AudioInstrument.Drums_3, drum3Stream },
+            { Song.AudioInstrument.Drums_4, drum4Stream },
+            { Song.AudioInstrument.Crowd, crowdStream },
+        };
+
         bool edit = ChartEditor.isDirty;
 
         base.OnEnable();
@@ -154,123 +172,28 @@ public class SongPropertiesPanelController : DisplayMenu {
    void setAudioTextLabels()
     {
         Song song = editor.currentSong;
-        if (song.GetAudioIsLoaded(Song.AudioInstrument.Song))
-        {
-            musicStream.color = Color.white;
-            musicStream.text = song.GetAudioName(Song.AudioInstrument.Song);
-            ClipText(musicStream);
-        }
-        else
-        {
-            musicStream.color = Color.red;
-            musicStream.text = "No audio";
-        }
 
-        if (song.GetAudioIsLoaded(Song.AudioInstrument.Guitar))
+        foreach (var audio in EnumX<Song.AudioInstrument>.Values)
         {
-            guitarStream.color = Color.white;
-            guitarStream.text = song.GetAudioName(Song.AudioInstrument.Guitar);
-            ClipText(guitarStream);
-        }
-        else
-        {
-            guitarStream.color = Color.red;
-            guitarStream.text = "No audio";
-        }
+            Text audioStreamText;
 
-        if (song.GetAudioIsLoaded(Song.AudioInstrument.Bass))
-        {
-            bassStream.color = Color.white;
-            bassStream.text = song.GetAudioName(Song.AudioInstrument.Bass);
-            ClipText(bassStream);
-        }
-        else
-        {
-            bassStream.color = Color.red;
-            bassStream.text = "No audio";
-        }
+            if (!m_audioStreamTextLookup.TryGetValue(audio, out audioStreamText))
+            {
+                Debug.Assert(false, "Audio stream UI Text not linked to an Audio Instrument for instrument " + audio.ToString());
+                continue;
+            }
 
-        if (song.GetAudioIsLoaded(Song.AudioInstrument.Rhythm))
-        {
-            rhythmStream.color = Color.white;
-            rhythmStream.text = song.GetAudioName(Song.AudioInstrument.Rhythm);
-            ClipText(rhythmStream);
-        }
-        else
-        {
-            rhythmStream.color = Color.red;
-            rhythmStream.text = "No audio";
-        }
-		
-		if (song.GetAudioIsLoaded(Song.AudioInstrument.Keys))
-        {
-			keysStream.color = Color.white;
-            keysStream.text = song.GetAudioName(Song.AudioInstrument.Keys);
-            ClipText(keysStream);
-        }
-        else
-        {
-            keysStream.color = Color.red;
-			keysStream.text = "No audio";
-        }
-
-		 if (song.GetAudioIsLoaded(Song.AudioInstrument.Vocals))
-        {
-            vocalStream.color = Color.white;
-            vocalStream.text = song.GetAudioName(Song.AudioInstrument.Vocals);
-            ClipText(vocalStream);
-        }
-        else
-        {
-            vocalStream.color = Color.red;
-            vocalStream.text = "No audio";
-        }
-		
-        if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum))
-        {
-            drum1Stream.color = Color.white;
-            drum1Stream.text = song.GetAudioName(Song.AudioInstrument.Drum);
-            ClipText(drum1Stream);
-        }
-        else
-        {
-            drum1Stream.color = Color.red;
-            drum1Stream.text = "No audio";
-        }
-		
-		if (song.GetAudioIsLoaded(Song.AudioInstrument.Drums_2))
-        {
-            drum2Stream.color = Color.white;
-            drum2Stream.text = song.GetAudioName(Song.AudioInstrument.Drums_2);
-            ClipText(drum2Stream);
-        }
-        else
-        {
-            drum2Stream.color = Color.red;
-            drum2Stream.text = "No audio";
-        }
-if (song.GetAudioIsLoaded(Song.AudioInstrument.Drums_3))
-        {
-            drum3Stream.color = Color.white;
-            drum3Stream.text = song.GetAudioName(Song.AudioInstrument.Drums_3);
-            ClipText(drum3Stream);
-        }
-        else
-        {
-            drum3Stream.color = Color.red;
-            drum3Stream.text = "No audio";
-        }
-		
-		if (song.GetAudioIsLoaded(Song.AudioInstrument.Drums_4))
-        {
-            drum4Stream.color = Color.white;
-            drum4Stream.text = song.GetAudioName(Song.AudioInstrument.Drums_4);
-            ClipText(drum4Stream);
-        }
-        else
-        {
-            drum4Stream.color = Color.red;
-            drum4Stream.text = "No audio";
+            if (song.GetAudioIsLoaded(audio))
+            {
+                audioStreamText.color = Color.white;
+                audioStreamText.text = song.GetAudioName(audio);
+                ClipText(audioStreamText);
+            }
+            else
+            {
+                audioStreamText.color = Color.red;
+                audioStreamText.text = "No audio";
+            }
         }
 		
         ChartEditor.isDirty = true;

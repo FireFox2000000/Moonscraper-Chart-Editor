@@ -193,12 +193,12 @@ public static class ChartIOHelper
         public readonly static MetadataItem bassStream     = new MetadataItem("BassStream", MetadataValueType.String);
         public readonly static MetadataItem rhythmStream   = new MetadataItem("RhythmStream", MetadataValueType.String);
         public readonly static MetadataItem drumStream     = new MetadataItem("DrumStream", MetadataValueType.String);
-		public readonly static MetadataItem drum2Stream     = new MetadataItem("Drum2Stream", MetadataValueType.String);
-		public readonly static MetadataItem drum3Stream     = new MetadataItem("Drum3Stream", MetadataValueType.String);
-		public readonly static MetadataItem drum4Stream     = new MetadataItem("Drum4Stream", MetadataValueType.String);
-		public readonly static MetadataItem vocalStream     = new MetadataItem("VocalStream", MetadataValueType.String);
+		public readonly static MetadataItem drum2Stream    = new MetadataItem("Drum2Stream", MetadataValueType.String);
+		public readonly static MetadataItem drum3Stream    = new MetadataItem("Drum3Stream", MetadataValueType.String);
+		public readonly static MetadataItem drum4Stream    = new MetadataItem("Drum4Stream", MetadataValueType.String);
+		public readonly static MetadataItem vocalStream    = new MetadataItem("VocalStream", MetadataValueType.String);
 		public readonly static MetadataItem keysStream     = new MetadataItem("KeysStream", MetadataValueType.String);
-		public readonly static MetadataItem crowdStream     = new MetadataItem("CrowdStream", MetadataValueType.String);
+		public readonly static MetadataItem crowdStream    = new MetadataItem("CrowdStream", MetadataValueType.String);
 
         public static string ParseAsString(string line)
         {
