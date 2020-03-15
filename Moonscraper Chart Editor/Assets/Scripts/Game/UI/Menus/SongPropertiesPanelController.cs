@@ -226,10 +226,10 @@ public class SongPropertiesPanelController : DisplayMenu {
             vocalStream.text = "No audio";
         }
 		
-        if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum))
+        if (song.GetAudioIsLoaded(Song.AudioInstrument.Drums))
         {
             drum1Stream.color = Color.white;
-            drum1Stream.text = song.GetAudioName(Song.AudioInstrument.Drum);
+            drum1Stream.text = song.GetAudioName(Song.AudioInstrument.Drums);
             ClipText(drum1Stream);
         }
         else
