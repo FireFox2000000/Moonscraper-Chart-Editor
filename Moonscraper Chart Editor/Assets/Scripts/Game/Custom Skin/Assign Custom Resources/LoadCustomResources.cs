@@ -55,15 +55,18 @@ public class LoadCustomResources : MonoBehaviour {
 
     void AddCustomNoteTextureIntoResources()
     {
+        // Regular notes
         for (int i = 0; i < 5; ++i)
         {
             resources.AddRange(new CustomTexture[] {
                 new CustomTexture(i + "_reg_strum", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
                 new CustomTexture(i + "_reg_hopo", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
                 new CustomTexture(i + "_reg_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
+                new CustomTexture(i + "_reg_cymbal", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
                 new CustomTexture(i + "_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
                 new CustomTexture(i + "_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
                 new CustomTexture(i + "_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
+                new CustomTexture(i + "_sp_cymbal", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
 
                 new CustomSprite(i + SkinKeys.xFretBase, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
                 new CustomSprite(i + SkinKeys.xFretCover, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
@@ -80,6 +83,7 @@ public class LoadCustomResources : MonoBehaviour {
             );
         }
 
+        // GHL
         for (int i = 0; i < 2; ++i)
         {
             resources.AddRange(new CustomTexture[] {
@@ -263,6 +267,11 @@ public class LoadCustomResources : MonoBehaviour {
             skin.reg_tap[i] = GetTextureFromLoadedResources(i + "_reg_tap", resourcesDictionary);
         }
 
+        for (int i = 0; i < skin.reg_cymbal.Length; ++i)
+        {
+            skin.reg_cymbal[i] = GetTextureFromLoadedResources(i + "_reg_cymbal", resourcesDictionary);
+        }
+
         for (int i = 0; i < skin.sp_strum.Length; ++i)
         {
             skin.sp_strum[i] = GetTextureFromLoadedResources(i + "_sp_strum", resourcesDictionary);
@@ -276,6 +285,11 @@ public class LoadCustomResources : MonoBehaviour {
         for (int i = 0; i < skin.sp_tap.Length; ++i)
         {
             skin.sp_tap[i] = GetTextureFromLoadedResources(i + "_sp_tap", resourcesDictionary);
+        }
+
+        for (int i = 0; i < skin.sp_cymbal.Length; ++i)
+        {
+            skin.sp_cymbal[i] = GetTextureFromLoadedResources(i + "_sp_cymbal", resourcesDictionary);
         }
 
         // GHL LOADING

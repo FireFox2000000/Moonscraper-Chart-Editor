@@ -15,5 +15,5 @@ public class NoteSpriteAnimationData
 {  
     public string name;
     public float speed = 1;
-    public int[] offsets = new int[1];
+    public int totalSprites = 1;
 }

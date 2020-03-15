@@ -124,7 +124,7 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                         ren.sprite = spriteResources.reg_hopo[noteArrayPos];
                 }
                 // Tap notes
-                else
+                else if (noteType == Note.NoteType.Tap)
                 {
                     if (note.guitarFret != Note.GuitarFret.Open)
                     {
@@ -133,6 +133,24 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                         else
                             ren.sprite = spriteResources.reg_tap[noteArrayPos];
                     }
+                }
+                // Cymbals
+                else if (noteType == Note.NoteType.Cymbal)
+                {
+                    if (note.guitarFret != Note.GuitarFret.Open)
+                    {
+                        if (specialType == Note.SpecialType.StarPower)
+                            ren.sprite = spriteResources.sp_cymbal[noteArrayPos];
+                        else
+                            ren.sprite = spriteResources.reg_cymbal[noteArrayPos];
+                    }
+                }
+                else // Unknown, just use strums
+                {
+                    if (specialType == Note.SpecialType.StarPower)
+                        ren.sprite = spriteResources.sp_strum[noteArrayPos];
+                    else
+                        ren.sprite = spriteResources.reg_strum[noteArrayPos];
                 }
 
                 if (note.guitarFret == Note.GuitarFret.Open)
@@ -164,37 +182,10 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                 lastUpdatedFrame = Time.frameCount;
             }
 
-            // Determine which animation offset data to use
-            //string animationName = string.Empty;
-            animationNameString.Length = 0;
+            NoteSpriteAnimationData animationData = GetCurrentAnimData(note);
 
-            if (specialType == Note.SpecialType.StarPower)
+            if (animationData != null)
             {
-                animationNameString.Append("sp_");
-            }
-            else
-            {
-                animationNameString.Append("reg_");
-            }
-
-            if (note.guitarFret == Note.GuitarFret.Open)
-            {
-                animationNameString.Insert(0, "open_");
-                //animationName = "open_" + animationName;
-            }
-
-            if (noteType == Note.NoteType.Hopo && !Globals.drumMode)
-                animationNameString.Append("hopo");
-            else if (noteType == Note.NoteType.Tap)
-                animationNameString.Append("tap");
-            else
-                animationNameString.Append("strum");
-
-            NoteSpriteAnimationData animationData;
-
-            // Search for the animation
-            if (animationDataDictionary.TryGetValue(animationNameString.ToString(), out animationData))
-            { 
                 // Get sprite name and number
                 string spriteText = lastUpdatedSprite.name;
                 string spriteName = string.Empty;
@@ -204,27 +195,65 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                 {
                     if (spriteText[i] == '_')
                     {
-                        spriteName = spriteText.Remove(i + 1);
+                        spriteName = spriteText.Remove(i + 1);      // Get the base sprite name without the number
                         spriteNumber = int.Parse(spriteText.Remove(0, i + 1));
                         break;
                     }
                 }
-                
+
                 if (spriteNumber != -1)
                 {
                     int alteredGlobalAnimationFrame = (int)(globalAnimationFrame * animationData.speed);
+
                     // Change sprite number
-                    int frame = alteredGlobalAnimationFrame - ((int)(alteredGlobalAnimationFrame / animationData.offsets.Length) * animationData.offsets.Length);
-                    spriteNumber += animationData.offsets[frame];
-                    spriteName += spriteNumber.ToString();
+                    int frame = alteredGlobalAnimationFrame - ((int)(alteredGlobalAnimationFrame / animationData.totalSprites) * animationData.totalSprites);
 
                     Sprite newSprite;
-                    if (spritesDictionary.TryGetValue(spriteName, out newSprite))
-                    {                       
-                        ren.sprite = newSprite;
-                    }
+                    string spriteKey = spriteName + frame.ToString();
+                    spritesDictionary.TryGetValue(spriteKey, out newSprite);
+
+                    Debug.Assert(newSprite, "Unable to find sprite " + spriteKey);    // Should have either gotten the next sprite or wrapped around to the base sprite. If that's not the case, it may have been named incorrectly.
+
+                    ren.sprite = newSprite;
                 }
             }
         }
+    }
+
+    NoteSpriteAnimationData GetCurrentAnimData(Note note)
+    {
+        // Determine which animation offset data to use
+        //string animationName = string.Empty;
+        animationNameString.Length = 0;
+
+        if (specialType == Note.SpecialType.StarPower)
+        {
+            animationNameString.Append("sp_");
+        }
+        else
+        {
+            animationNameString.Append("reg_");
+        }
+
+        if (note.guitarFret == Note.GuitarFret.Open)
+        {
+            animationNameString.Insert(0, "open_");
+        }
+
+        if (noteType == Note.NoteType.Hopo && !Globals.drumMode)
+            animationNameString.Append("hopo");
+        else if (noteType == Note.NoteType.Tap)
+            animationNameString.Append("tap");
+        else if (noteType == Note.NoteType.Cymbal)
+            animationNameString.Append("cymbal");
+        else
+            animationNameString.Append("strum");
+
+        NoteSpriteAnimationData animationData;
+
+        // Search for the animation
+        animationDataDictionary.TryGetValue(animationNameString.ToString(), out animationData);
+
+        return animationData;
     }
 }

@@ -16,6 +16,11 @@ public class SpriteNoteResources : ScriptableObject {
 
     public Sprite[] sustains = new Sprite[5];
 
+    [Header("Pro drums")]
+    public Sprite[] reg_cymbal = new Sprite[6];
+    public Sprite[] sp_cymbal = new Sprite[6];
+
+    [Header("GHL")]
     public Texture2D fullAtlusGhl;
     public Sprite[] reg_strum_ghl = new Sprite[3];
     public Sprite[] reg_hopo_ghl = new Sprite[3];
