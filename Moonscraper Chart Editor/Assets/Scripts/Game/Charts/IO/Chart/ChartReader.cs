@@ -318,23 +318,23 @@ public static class ChartReader
                 }
                 else if (ChartIOHelper.MetaData.drumStream.regex.IsMatch(line))
                 {
-                    AudioLoadFromChart(song, Song.AudioInstrument.Drum, line, audioDirectory);
+                    AudioLoadFromChart(song, Song.AudioInstrument.Drums, line, audioDirectory);
                 }
 				else if (ChartIOHelper.MetaData.drum2Stream.regex.IsMatch(line))
                 {
-                    AudioLoadFromChart(song, Song.AudioInstrument.Drum2, line, audioDirectory);
+                    AudioLoadFromChart(song, Song.AudioInstrument.Drums_2, line, audioDirectory);
                 }
 				else if (ChartIOHelper.MetaData.drum3Stream.regex.IsMatch(line))
                 {
-                    AudioLoadFromChart(song, Song.AudioInstrument.Drum3, line, audioDirectory);
+                    AudioLoadFromChart(song, Song.AudioInstrument.Drums_3, line, audioDirectory);
                 }
 				else if (ChartIOHelper.MetaData.drum4Stream.regex.IsMatch(line))
                 {
-                    AudioLoadFromChart(song, Song.AudioInstrument.Drum4, line, audioDirectory);
+                    AudioLoadFromChart(song, Song.AudioInstrument.Drums_4, line, audioDirectory);
                 }
 				else if (ChartIOHelper.MetaData.vocalStream.regex.IsMatch(line))
                 {
-                    AudioLoadFromChart(song, Song.AudioInstrument.Vocal, line, audioDirectory);
+                    AudioLoadFromChart(song, Song.AudioInstrument.Vocals, line, audioDirectory);
                 }
 				else if (ChartIOHelper.MetaData.keysStream.regex.IsMatch(line))
                 {

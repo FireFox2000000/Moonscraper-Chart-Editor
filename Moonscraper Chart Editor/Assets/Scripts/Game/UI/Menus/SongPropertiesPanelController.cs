@@ -214,10 +214,10 @@ public class SongPropertiesPanelController : DisplayMenu {
 			keysStream.text = "No audio";
         }
 
-		 if (song.GetAudioIsLoaded(Song.AudioInstrument.Vocal))
+		 if (song.GetAudioIsLoaded(Song.AudioInstrument.Vocals))
         {
             vocalStream.color = Color.white;
-            vocalStream.text = song.GetAudioName(Song.AudioInstrument.Vocal);
+            vocalStream.text = song.GetAudioName(Song.AudioInstrument.Vocals);
             ClipText(vocalStream);
         }
         else
@@ -238,10 +238,10 @@ public class SongPropertiesPanelController : DisplayMenu {
             drum1Stream.text = "No audio";
         }
 		
-		if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum2))
+		if (song.GetAudioIsLoaded(Song.AudioInstrument.Drums_2))
         {
             drum2Stream.color = Color.white;
-            drum2Stream.text = song.GetAudioName(Song.AudioInstrument.Drum2);
+            drum2Stream.text = song.GetAudioName(Song.AudioInstrument.Drums_2);
             ClipText(drum2Stream);
         }
         else
@@ -249,10 +249,10 @@ public class SongPropertiesPanelController : DisplayMenu {
             drum2Stream.color = Color.red;
             drum2Stream.text = "No audio";
         }
-if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum3))
+if (song.GetAudioIsLoaded(Song.AudioInstrument.Drums_3))
         {
             drum3Stream.color = Color.white;
-            drum3Stream.text = song.GetAudioName(Song.AudioInstrument.Drum3);
+            drum3Stream.text = song.GetAudioName(Song.AudioInstrument.Drums_3);
             ClipText(drum3Stream);
         }
         else
@@ -261,10 +261,10 @@ if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum3))
             drum3Stream.text = "No audio";
         }
 		
-		if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum4))
+		if (song.GetAudioIsLoaded(Song.AudioInstrument.Drums_4))
         {
             drum4Stream.color = Color.white;
-            drum4Stream.text = song.GetAudioName(Song.AudioInstrument.Drum4);
+            drum4Stream.text = song.GetAudioName(Song.AudioInstrument.Drums_4);
             ClipText(drum4Stream);
         }
         else
@@ -372,7 +372,7 @@ if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum3))
 
     public void ClearVocalStream()
     {
-        ClearAudioStream(Song.AudioInstrument.Vocal);
+        ClearAudioStream(Song.AudioInstrument.Vocals);
     }
 	
 	public void LoadKeysStream()
@@ -411,7 +411,7 @@ if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum3))
 
     public void ClearDrum1Stream()
     {
-        ClearAudioStream(Song.AudioInstrument.Drum);
+        ClearAudioStream(Song.AudioInstrument.Drums);
     }
 	
 	public void LoadDrum2Stream()
@@ -430,7 +430,7 @@ if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum3))
 
     public void ClearDrum2Stream()
     {
-        ClearAudioStream(Song.AudioInstrument.Drum2);
+        ClearAudioStream(Song.AudioInstrument.Drums_2);
     }
 	
 	public void LoadDrum3Stream()
@@ -449,7 +449,7 @@ if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum3))
 
     public void ClearDrum3Stream()
     {
-        ClearAudioStream(Song.AudioInstrument.Drum3);
+        ClearAudioStream(Song.AudioInstrument.Drums_3);
     }
 	
 	public void LoadDrum4Stream()
@@ -468,7 +468,7 @@ if (song.GetAudioIsLoaded(Song.AudioInstrument.Drum3))
 
     public void ClearDrum4Stream()
     {
-        ClearAudioStream(Song.AudioInstrument.Drum4);
+        ClearAudioStream(Song.AudioInstrument.Drums_4);
     }
 	
 	public void LoadCrowdStream()
