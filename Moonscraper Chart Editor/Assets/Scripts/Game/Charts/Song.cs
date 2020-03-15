@@ -371,7 +371,7 @@ public class Song {
 
     public void LoadDrumStream(string filepath)
     {
-        LoadAudio(filepath, AudioInstrument.Drums);
+        LoadAudio(filepath, AudioInstrument.Drum);
     }
 	
 	public void LoadDrum2Stream(string filepath)

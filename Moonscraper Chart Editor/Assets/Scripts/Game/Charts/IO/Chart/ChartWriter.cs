@@ -88,7 +88,7 @@ public class ChartWriter
             WriteSaveAudioString(Song.AudioInstrument.Bass, ChartIOHelper.MetaData.bassStream.saveFormat);
             WriteSaveAudioString(Song.AudioInstrument.Rhythm, ChartIOHelper.MetaData.rhythmStream.saveFormat);
 			WriteSaveAudioString(Song.AudioInstrument.Keys, ChartIOHelper.MetaData.keysStream.saveFormat);
-            WriteSaveAudioString(Song.AudioInstrument.Drums, ChartIOHelper.MetaData.drumStream.saveFormat);
+            WriteSaveAudioString(Song.AudioInstrument.Drum, ChartIOHelper.MetaData.drumStream.saveFormat);
 			WriteSaveAudioString(Song.AudioInstrument.Drums_2, ChartIOHelper.MetaData.drum2Stream.saveFormat);
 			WriteSaveAudioString(Song.AudioInstrument.Drums_3, ChartIOHelper.MetaData.drum3Stream.saveFormat);
 			WriteSaveAudioString(Song.AudioInstrument.Drums_4, ChartIOHelper.MetaData.drum4Stream.saveFormat);

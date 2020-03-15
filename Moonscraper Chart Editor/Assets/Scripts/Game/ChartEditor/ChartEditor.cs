@@ -684,7 +684,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);
         SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
 		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Keys), GameSettings.gameSpeed, GameSettings.vol_keys);
-        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drums), GameSettings.gameSpeed, GameSettings.vol_drums);
+        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drums);
 		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drums_2), GameSettings.gameSpeed, GameSettings.vol_drums);
 		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drums_3), GameSettings.gameSpeed, GameSettings.vol_drums);
 		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drums_4), GameSettings.gameSpeed, GameSettings.vol_drums);
