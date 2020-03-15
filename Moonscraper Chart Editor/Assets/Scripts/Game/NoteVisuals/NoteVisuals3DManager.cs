@@ -60,8 +60,6 @@ public class NoteVisuals3DManager : NoteVisualsManager
             ChartEditor editor = ChartEditor.Instance;
             Chart.GameMode gameMode = editor.currentGameMode;
             Note.NoteType visualNoteType = noteType;
-            if (gameMode == Chart.GameMode.Drums && editor.laneInfo.laneCount != SongConfig.PRO_DRUMS_LANE_COUNT)
-                visualNoteType = Note.NoteType.Strum;
 
             // Determine materials
             if (note.IsOpenNote())

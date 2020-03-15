@@ -28,11 +28,21 @@ public class NoteVisualsManager : MonoBehaviour {
         Animate();
     }
 
+    public static Note.NoteType GetVisualNoteType(Note note)
+    {
+        Note.NoteType noteType = note.type;
+
+        if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums && ChartEditor.Instance.laneInfo.laneCount != SongConfig.PRO_DRUMS_LANE_COUNT)
+            noteType = Note.NoteType.Strum;
+
+        return noteType;
+    }
+
     public virtual void UpdateVisuals() {
         Note note = nCon.note;
         if (note != null)
         {
-            noteType = note.type;
+            noteType = GetVisualNoteType(note);
 
             // Star power?
             specialType = IsStarpower(note);

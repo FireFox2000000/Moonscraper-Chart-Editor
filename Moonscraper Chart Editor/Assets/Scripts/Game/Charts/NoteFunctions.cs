@@ -204,7 +204,7 @@ public static class NoteFunctions {
 
     public static bool AllowedToBeCymbal(Note note)
     {
-        return !note.IsOpenNote() && note.drumPad != Note.DrumPad.Red;
+        return !note.IsOpenNote() && note.drumPad != Note.DrumPad.Red && note.drumPad != Note.DrumPad.Green;
     }
 
     public static Note.Flags GetFlagsToSetType(this Note note, Note.NoteType type)

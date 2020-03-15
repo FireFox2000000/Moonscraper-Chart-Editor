@@ -49,7 +49,7 @@ public class Note2D3DSelector : MonoBehaviour {
         Skin customSkin = SkinManager.Instance.currentSkin;
 
         Note note = nCon.note;
-        Note.NoteType noteType = note.type;
+        Note.NoteType noteType = NoteVisualsManager.GetVisualNoteType(note);
         Note.SpecialType specialType = NoteVisualsManager.IsStarpower(note);
 
         int arrayPos = GetSpriteArrayPos(note);
@@ -98,7 +98,7 @@ public class Note2D3DSelector : MonoBehaviour {
                     textureInSkin = customSkin.reg_hopo[arrayPos];
             }
             // Tap notes
-            else
+            else if (noteType == Note.NoteType.Tap)
             {
                 if (note.guitarFret != Note.GuitarFret.Open)
                 {
@@ -108,7 +108,13 @@ public class Note2D3DSelector : MonoBehaviour {
                         textureInSkin = customSkin.reg_tap[arrayPos];
                 }
             }
-            
+            else if (noteType == Note.NoteType.Cymbal)
+            {
+                if (specialType == Note.SpecialType.StarPower)
+                    textureInSkin = customSkin.sp_cymbal[arrayPos];
+                else
+                    textureInSkin = customSkin.reg_cymbal[arrayPos];
+            }
         }
 
         return textureInSkin;
@@ -126,6 +132,12 @@ public class Note2D3DSelector : MonoBehaviour {
                 arrayPos = 1;
             else if (note.IsOpenNote())
                 arrayPos = 2;
+        }
+        else if (Globals.drumMode && note.guitarFret != Note.GuitarFret.Open)
+        {
+            arrayPos += 1;
+            if (arrayPos > (int)Note.GuitarFret.Orange)
+                arrayPos = 0;
         }
 
         return arrayPos;
