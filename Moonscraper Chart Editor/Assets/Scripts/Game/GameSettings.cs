@@ -134,7 +134,7 @@ public static class GameSettings
             vol_rhythm = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Rhythm Stream", 1.0f);
 			vol_keys = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Keys Stream", 1.0f);
 			vol_vocals = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Vocals Stream", 1.0f);
-            vol_drum = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Drum Stream", 1.0f);
+            vol_drums = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Drum Stream", 1.0f);
             audio_pan = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Audio Pan", 0.0f);
             sfxVolume = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "SFX", 1.0f);
 			vol_crowd = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Crowd", 1.0f);
