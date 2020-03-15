@@ -33,19 +33,45 @@ public static class MidReader {
         { "beat",       true }
     };
 
+    static readonly Dictionary<Song.AudioInstrument, string[]> c_audioStreamLocationOverrideDict = new Dictionary<Song.AudioInstrument, string[]>()
+    {
+        // String list is ordered in priority. If it finds a file names with the first string it'll skip over the rest.
+        // Otherwise just does a ToString on the AudioInstrument enum
+        { Song.AudioInstrument.Drum, new string[] { "drums", "drums_1" } },
+    };
+
     public static Song ReadMidi(string path, ref CallbackState callBackState)
     {
         Song song = new Song();
         string directory = System.IO.Path.GetDirectoryName(path);
 
-        foreach(Song.AudioInstrument audio in EnumX<Song.AudioInstrument>.Values)
+        foreach (Song.AudioInstrument audio in EnumX<Song.AudioInstrument>.Values)
         {
-            string audioFilepath = directory + "\\" + audio.ToString().ToLower() + ".ogg";
+            string filename = string.Empty;
+
+            string[] locationOverrides = null;
+            if (c_audioStreamLocationOverrideDict.TryGetValue(audio, out locationOverrides))
+            {
+                foreach (string overrideFilename in locationOverrides)
+                {
+                    string testFilepath = directory + "\\" + overrideFilename.ToLower() + ".ogg";
+
+                    if (System.IO.File.Exists(testFilepath))
+                    {
+                        filename = overrideFilename;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                filename = audio.ToString();
+            }
+
+            string audioFilepath = directory + "\\" + filename.ToLower() + ".ogg";
             Debug.Log(audioFilepath);
             song.SetAudioLocation(audio, audioFilepath);
         }
-
-        //song.SetAudioLocation(Song.AudioInstrument.Song, directory + "\\song.ogg");
 
         MidiFile midi;
 
