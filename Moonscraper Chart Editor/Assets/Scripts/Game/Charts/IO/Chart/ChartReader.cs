@@ -318,7 +318,7 @@ public static class ChartReader
                 }
                 else if (ChartIOHelper.MetaData.drumStream.regex.IsMatch(line))
                 {
-                    AudioLoadFromChart(song, Song.AudioInstrument.Drums, line, audioDirectory);
+                    AudioLoadFromChart(song, Song.AudioInstrument.Drum, line, audioDirectory);
                 }
 				else if (ChartIOHelper.MetaData.drum2Stream.regex.IsMatch(line))
                 {
