@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using MiscUtil.Conversion;
+using System.Linq;
 
 public static class MidWriter {   
     const byte TRACK_NAME_EVENT = 0x03;
@@ -303,13 +304,28 @@ public static class MidWriter {
 
         SortableBytes[] em = SortableBytes.MergeAlreadySorted(easyBytes, mediumBytes);
         SortableBytes[] he = SortableBytes.MergeAlreadySorted(hardBytes, expertBytes);
-        SortableBytes[] sortedEvents = SortableBytes.MergeAlreadySorted(em, he);
+        List<SortableBytes> sortedEvents = new List<SortableBytes>(SortableBytes.MergeAlreadySorted(em, he));
 
         // Perform merge sort to re-order everything correctly
         //SortableBytes[] sortedEvents = new SortableBytes[easyBytes.Length + mediumBytes.Length + hardBytes.Length + expertBytes.Length];//byteEvents.ToArray();
         //SortableBytes.Sort(sortedEvents);
 
-        return SortableBytesToTimedEventBytes(sortedEvents, song, exportOptions);
+        // Strip out duplicate events. This may occur with cymbal flags across multiple difficulties
+        for (int i = sortedEvents.Count - 1; i >= 0; --i)
+        {
+            int next = i + 1;
+            while (next < sortedEvents.Count && sortedEvents[i].tick == sortedEvents[next].tick)
+            {
+                if (sortedEvents[i].bytes.SequenceEqual(sortedEvents[next].bytes))
+                {
+                    sortedEvents.RemoveAt(next);
+                }
+
+                ++next;
+            }
+        }
+
+        return SortableBytesToTimedEventBytes(sortedEvents.ToArray(), song, exportOptions);
     }
 
     static byte[] SortableBytesToTimedEventBytes(SortableBytes[] sortedEvents, Song song, ExportOptions exportOptions)
@@ -412,6 +428,19 @@ public static class MidWriter {
 
                         InsertionSort(eventList, forceOnEvent);
                         InsertionSort(eventList, forceOffEvent);
+                    }
+
+                    if ((note.flags & Note.Flags.ProDrums_Cymbal) == 0)     // We want to write our flags if the cymbal is toggled OFF, as these notes are cymbals by default
+                    {
+                        int tomToggleNoteNumber;
+                        if (MidIOHelper.PAD_TO_CYMBAL_LOOKUP.TryGetValue(note.drumPad, out tomToggleNoteNumber))
+                        {
+                            SortableBytes tomToggleOnEvent = new SortableBytes(note.tick, new byte[] { ON_EVENT, (byte)tomToggleNoteNumber, VELOCITY });
+                            SortableBytes tomToggleOffEvent = new SortableBytes(note.tick + 1, new byte[] { OFF_EVENT, (byte)tomToggleNoteNumber, VELOCITY });
+
+                            InsertionSort(eventList, tomToggleOnEvent);
+                            InsertionSort(eventList, tomToggleOffEvent);
+                        }
                     }
 
                     int openNote = gameMode == Chart.GameMode.GHLGuitar ? (int)Note.GHLiveGuitarFret.Open : (int)Note.GuitarFret.Open;
