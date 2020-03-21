@@ -1,3 +1,15 @@
+1.3.3.3
+	NEW FEATURES
+	-Implemented drum cymbal toggle for 4-lane drums. Only compatible reading and writing to midi files at present
+	-Added extra audio stem options (credit to Mario64iscool2)
+
+	CHANGES
+	-Move 4-lane/5-lane drums toggle off instrument dropdown and into a seperate display menu that pops up upon selecting the drum instrument.
+
+	FIXES
+	-Fixed song edit add trying to record an overwrite using the cached arrays that were out of sync, resulting in multiple errors when adding global events of any kind
+	-Fixed audio locations being overwritten with exported location when exporting ch package.
+
 1.3.3.2
 	NEW FEATURES
 	-Added the ability to rebind some controls under Options->Controls. Includes keyboard, gamepad, and joystick rebinding 
