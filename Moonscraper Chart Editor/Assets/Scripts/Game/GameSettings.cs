@@ -44,6 +44,7 @@ public static class GameSettings
     public static int clapCalibrationMS = 0;
     public static int customBgSwapTime;
     public static int targetFramerate = -1;
+    public static int drumsLaneCount = 5;
 
     public static float hyperspeed = 5.0f;
     public static float highwayLength = 0;
@@ -123,6 +124,7 @@ public static class GameSettings
             resetAfterPlay = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Reset After Play", false);
             resetAfterGameplay = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Reset After Gameplay", false);
             customBgSwapTime = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Custom Background Swap Time", 30);
+            drumsLaneCount = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Drums Lane Count", 5);
             gameplayStartDelayTime = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
             gameplayStartDelayTime = (float)(System.Math.Round(gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f); // Check that the gameplay start delay time is a multiple of 0.5 and is
 
@@ -197,6 +199,7 @@ public static class GameSettings
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Reset After Play", resetAfterPlay);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Reset After Gameplay", resetAfterGameplay);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Custom Background Swap Time", customBgSwapTime);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Drums Lane Count", drumsLaneCount);
 
             // Audio levels
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Master", vol_master);
