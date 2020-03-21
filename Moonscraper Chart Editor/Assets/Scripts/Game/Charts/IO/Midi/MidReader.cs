@@ -535,7 +535,6 @@ public static class MidReader {
             if (endPos > 0)
                 --endPos;
 
-            Debug.Log("Pro drums flag event " + flagEvent.NoteNumber + ", tick = " + tick + ", endPos = " + endPos);
             Debug.Assert(instrument == Song.Instrument.Drums);
 
             foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
