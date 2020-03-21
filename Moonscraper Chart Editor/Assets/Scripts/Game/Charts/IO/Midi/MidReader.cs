@@ -536,31 +536,31 @@ public static class MidReader {
                 --endPos;
 
             Debug.Log("Pro drums flag event " + flagEvent.NoteNumber + ", tick = " + tick + ", endPos = " + endPos);
-
-            Song.Difficulty difficulty = Song.Difficulty.Expert;
-
             Debug.Assert(instrument == Song.Instrument.Drums);
 
-            Chart chart = song.GetChart(instrument, difficulty);
-
-            int index, length;
-            SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
-
-            Note.DrumPad drumPadForFlag;
-            if (!MidIOHelper.CYMBAL_TO_PAD_LOOKUP.TryGetValue(flagEvent.NoteNumber, out drumPadForFlag))
+            foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
             {
-                Debug.Assert(false, "Unknown note number flag " + flagEvent.NoteNumber);
-                continue;
-            }
+                Chart chart = song.GetChart(instrument, difficulty);
 
-            for (int i = index; i < index + length; ++i)
-            {
-                Note note = chart.notes[i];
+                int index, length;
+                SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
 
-                if (note.drumPad == drumPadForFlag)
+                Note.DrumPad drumPadForFlag;
+                if (!MidIOHelper.CYMBAL_TO_PAD_LOOKUP.TryGetValue(flagEvent.NoteNumber, out drumPadForFlag))
                 {
-                    // Reverse cymbal flag
-                    note.flags ^= Note.Flags.ProDrums_Cymbal;
+                    Debug.Assert(false, "Unknown note number flag " + flagEvent.NoteNumber);
+                    continue;
+                }
+
+                for (int i = index; i < index + length; ++i)
+                {
+                    Note note = chart.notes[i];
+
+                    if (note.drumPad == drumPadForFlag)
+                    {
+                        // Reverse cymbal flag
+                        note.flags ^= Note.Flags.ProDrums_Cymbal;
+                    }
                 }
             }
         }
