@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public static class MidIOHelper {
     public const string EVENTS_TRACK = "EVENTS";           // Sections
@@ -15,4 +16,13 @@ public static class MidIOHelper {
     public const string VOCALS_TRACK = "PART VOCALS";
 
     public const string LYRIC_EVENT_PREFIX = "lyric ";
+
+    public static readonly Dictionary<Note.DrumPad, int> PAD_TO_CYMBAL_LOOKUP = new Dictionary<Note.DrumPad, int>()
+    {
+        { Note.DrumPad.Yellow, 110 },
+        { Note.DrumPad.Blue, 111 },
+        { Note.DrumPad.Orange, 112 },
+    };
+
+    public static readonly Dictionary<int, Note.DrumPad> CYMBAL_TO_PAD_LOOKUP = PAD_TO_CYMBAL_LOOKUP.ToDictionary((i) => i.Value, (i) => i.Key);
 }

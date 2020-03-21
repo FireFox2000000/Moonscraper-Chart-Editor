@@ -283,6 +283,9 @@ public class Song {
         _events.AddRange(song._events);
         _syncTrack.AddRange(song._syncTrack);
 
+        _manualLength = song._manualLength;
+        _length = song._length;
+
         charts = new Chart[song.charts.Length];
         for (int i = 0; i < charts.Length; ++i)
         {

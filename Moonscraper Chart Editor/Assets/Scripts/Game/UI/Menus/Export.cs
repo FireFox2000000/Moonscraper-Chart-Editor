@@ -426,7 +426,7 @@ public class Export : DisplayMenu {
 
     IEnumerator ExportCHPackage(string destFolderPath, Song song, ExportOptions exportOptions)
     {
-        Song newSong = song;//new Song(song);
+        Song newSong = new Song(song);
         LoadingTasksManager tasksManager = editor.services.loadingTasksManager;
 
         float timer = Time.realtimeSinceStartup;

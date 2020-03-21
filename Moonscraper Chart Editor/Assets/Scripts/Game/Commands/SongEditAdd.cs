@@ -153,7 +153,7 @@ public class SongEditAdd : SongEditCommand
     {
         ChartEditor editor = ChartEditor.Instance;
         Song song = editor.currentSong;
-        TryRecordOverwrite(bpm, editor.currentSong.bpms, subActions);
+        TryRecordOverwrite(bpm, editor.currentSong.syncTrack, subActions);
 
         AddAndInvokeSubAction(new AddAction(bpm), subActions);
         if (bpm.anchor != null)
@@ -183,7 +183,7 @@ public class SongEditAdd : SongEditCommand
     static void AddTimeSignature(TimeSignature timeSignature, IList<BaseAction> subActions)
     {
         ChartEditor editor = ChartEditor.Instance;
-        TryRecordOverwrite(timeSignature, editor.currentSong.timeSignatures, subActions);
+        TryRecordOverwrite(timeSignature, editor.currentSong.syncTrack, subActions);
 
         AddAndInvokeSubAction(new AddAction(timeSignature), subActions);
     }
@@ -191,7 +191,7 @@ public class SongEditAdd : SongEditCommand
     static void AddEvent(Event songEvent, IList<BaseAction> subActions)
     {
         ChartEditor editor = ChartEditor.Instance;
-        TryRecordOverwrite(songEvent, editor.currentSong.events, subActions);
+        TryRecordOverwrite(songEvent, editor.currentSong.eventsAndSections, subActions);
 
         AddAndInvokeSubAction(new AddAction(songEvent), subActions);
     }
@@ -199,7 +199,7 @@ public class SongEditAdd : SongEditCommand
     static void AddSection(Section section, IList<BaseAction> subActions)
     {
         ChartEditor editor = ChartEditor.Instance;
-        TryRecordOverwrite(section, editor.currentSong.sections, subActions);
+        TryRecordOverwrite(section, editor.currentSong.eventsAndSections, subActions);
 
         AddAndInvokeSubAction(new AddAction(section), subActions);
     }

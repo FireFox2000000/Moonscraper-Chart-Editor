@@ -224,6 +224,7 @@ public static class MidReader {
     private static void ReadNotes(IList<MidiEvent> track, Song song, Song.Instrument instrument)
     {
         List<NoteOnEvent> forceNotesList = new List<NoteOnEvent>();
+        List<NoteOnEvent> proDrumsNotesList = new List<NoteOnEvent>();
         List<SysexEvent> tapAndOpenEvents = new List<SysexEvent>();
 
         Chart unrecognised = new Chart(song, Song.Instrument.Unrecognised);
@@ -283,6 +284,17 @@ public static class MidReader {
                     continue;
                 }
 
+                if (gameMode == Chart.GameMode.Drums)
+                {
+                    Note.DrumPad dummy;
+                    if (MidIOHelper.CYMBAL_TO_PAD_LOOKUP.TryGetValue(note.NoteNumber, out dummy))
+                    {
+                        // Cymbals toggles
+                        proDrumsNotesList.Add(note);
+                        continue;
+                    }
+                }
+
                 // Determine which difficulty we are manipulating
                 try
                 {
@@ -321,15 +333,32 @@ public static class MidReader {
                 if (sus <= rbSustainFixLength)
                     sus = 0;
 
-                if (gameMode == Chart.GameMode.Drums)
-                    fret = (int)GetDrumFretType(note.NoteNumber);
-                else if (gameMode == Chart.GameMode.GHLGuitar)
-                    fret = (int)GetGHLFretType(note.NoteNumber);
-                else
-                    fret = (int)GetStandardFretType(note.NoteNumber);
+                Note.Flags flags = Note.Flags.None;
 
-                // Add the note to the correct chart
-                song.GetChart(instrument, difficulty).Add(new Note(tick, fret, sus), false);             
+                if (gameMode == Chart.GameMode.Drums)
+                {
+                    fret = (int)GetDrumFretType(note.NoteNumber);
+
+                    int cymbalToggleId;
+                    if (MidIOHelper.PAD_TO_CYMBAL_LOOKUP.TryGetValue((Note.DrumPad)fret, out cymbalToggleId))
+                    {
+                        flags |= Note.Flags.ProDrums_Cymbal;
+                    }
+                }
+                else if (gameMode == Chart.GameMode.GHLGuitar)
+                {
+                    fret = (int)GetGHLFretType(note.NoteNumber);
+                }
+                else
+                {
+                    fret = (int)GetStandardFretType(note.NoteNumber);
+                }
+
+                {
+                    // Add the note to the correct chart
+                    Note newNote = new Note(tick, fret, sus, flags);
+                    song.GetChart(instrument, difficulty).Add(newNote, false);
+                }
             }
 
             var sysexEvent = track[i] as SysexEvent;
@@ -496,6 +525,42 @@ public static class MidReader {
                     chart.notes[i].SetType(Note.NoteType.Hopo);
                 else
                     chart.notes[i].SetType(Note.NoteType.Strum);
+            }
+        }
+
+        foreach (var flagEvent in proDrumsNotesList)
+        {
+            uint tick = (uint)flagEvent.AbsoluteTime;
+            uint endPos = (uint)(flagEvent.OffEvent.AbsoluteTime - tick);
+            if (endPos > 0)
+                --endPos;
+
+            Debug.Assert(instrument == Song.Instrument.Drums);
+
+            foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
+            {
+                Chart chart = song.GetChart(instrument, difficulty);
+
+                int index, length;
+                SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
+
+                Note.DrumPad drumPadForFlag;
+                if (!MidIOHelper.CYMBAL_TO_PAD_LOOKUP.TryGetValue(flagEvent.NoteNumber, out drumPadForFlag))
+                {
+                    Debug.Assert(false, "Unknown note number flag " + flagEvent.NoteNumber);
+                    continue;
+                }
+
+                for (int i = index; i < index + length; ++i)
+                {
+                    Note note = chart.notes[i];
+
+                    if (note.drumPad == drumPadForFlag)
+                    {
+                        // Reverse cymbal flag
+                        note.flags ^= Note.Flags.ProDrums_Cymbal;
+                    }
+                }
             }
         }
     }
