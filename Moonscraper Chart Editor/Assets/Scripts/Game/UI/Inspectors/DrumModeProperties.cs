@@ -16,6 +16,9 @@ public class DrumModeProperties : UpdateableService
     [SerializeField]
     Dropdown m_laneCountDropdown;
 
+    [SerializeField]
+    Dropdown m_drumsModeOptionDropdown;
+
     readonly static Dictionary<LaneCountOptions, int> r_laneOptionToLaneCount = new Dictionary<LaneCountOptions, int>()
     {
         { LaneCountOptions.LaneCount5, 5 },
@@ -56,7 +59,10 @@ public class DrumModeProperties : UpdateableService
 
             int intLastKnownLaneCount = (int)option;
             bool forceReload = intLastKnownLaneCount != ChartEditor.Instance.laneInfo.laneCount;
+
+            m_drumsModeOptionDropdown.value = (int)GameSettings.drumsModeOptions;
             m_laneCountDropdown.value = intLastKnownLaneCount;
+
             if (forceReload)
             {
                 int desiredLaneCount;
@@ -80,5 +86,25 @@ public class DrumModeProperties : UpdateableService
             editor.uiServices.menuBar.SetLaneCount(desiredLaneCount);
             editor.uiServices.menuBar.LoadCurrentInstumentAndDifficulty();       
         }
+
+        // Not allowed 5 lane pro drums
+        if (option == LaneCountOptions.LaneCount5 && GameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums)
+        {
+            m_drumsModeOptionDropdown.value = (int)GameSettings.DrumModeOptions.Standard;
+        }
+    }
+
+    public void OnModeOptionDropdownValueChanged(int value)
+    {
+        GameSettings.DrumModeOptions option = (GameSettings.DrumModeOptions)value;
+        GameSettings.drumsModeOptions = option;
+
+        // Not allowed 5 lane pro drums 
+        if (option == GameSettings.DrumModeOptions.ProDrums && ChartEditor.Instance.laneInfo.laneCount != SongConfig.PRO_DRUMS_LANE_COUNT)
+        {
+            m_laneCountDropdown.value = (int)LaneCountOptions.LaneCount4;
+        }
+
+        ChartEditor.Instance.events.chartReloadedEvent.Fire();
     }
 }

@@ -32,6 +32,8 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             editor.events.toolChangedEvent.Register(OnToolChanged);
             initialised = true;
         }
+
+        ChartEditor.Instance.events.drumsModeOptionChangedEvent.Register(UpdateTogglesInteractable);
     }
 
     void OnToolChanged()
@@ -132,7 +134,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         bool drumsMode = Globals.drumMode;
         forcedToggle.gameObject.SetActive(!drumsMode);
         tapToggle.gameObject.SetActive(!drumsMode);
-        cymbalToggle.gameObject.SetActive(drumsMode && ChartEditor.Instance.laneInfo.laneCount == SongConfig.PRO_DRUMS_LANE_COUNT);
+        cymbalToggle.gameObject.SetActive(drumsMode && GameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums);
 
         if (!drumsMode)
         {
