@@ -69,6 +69,7 @@ public enum MSChartEditorInputActions
     ToggleMouseMode,
     ToggleNoteForced,
     ToggleNoteTap,
+    ToggleNoteCymbal,
     ToggleViewMode, 
     
     ToolNoteBurst,

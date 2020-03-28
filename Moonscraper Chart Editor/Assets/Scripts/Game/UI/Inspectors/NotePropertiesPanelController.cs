@@ -175,18 +175,17 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     {
         if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteTap) && tapToggle.interactable)
         {
-            if (tapToggle.isOn)
-                tapToggle.isOn = false;
-            else
-                tapToggle.isOn = true;
+            tapToggle.isOn = !tapToggle.isOn;
         }
 
         if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteForced) && forcedToggle.interactable)
         {
-            if (forcedToggle.isOn)
-                forcedToggle.isOn = false;
-            else
-                forcedToggle.isOn = true;
+            forcedToggle.isOn = !forcedToggle.isOn;
+        }
+
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteCymbal) && cymbalToggle.interactable)
+        {
+            cymbalToggle.isOn = !cymbalToggle.isOn;
         }
     }
     
