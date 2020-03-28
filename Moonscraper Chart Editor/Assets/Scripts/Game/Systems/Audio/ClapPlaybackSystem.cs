@@ -109,10 +109,12 @@ public class ClapPlaybackSystem : SystemManagerState.System
         else if (id == SongObject.ID.Note)
         {
             Note note = songObject as Note;
+            Note.NoteType noteType = NoteVisualsManager.GetVisualNoteType(note);
 
-            switch (note.type)
+            switch (noteType)
             {
                 case Note.NoteType.Strum:
+                case Note.NoteType.Cymbal:
                     playClap = (GameSettings.clapProperties & GameSettings.ClapToggle.STRUM) != 0;
                     break;
 
