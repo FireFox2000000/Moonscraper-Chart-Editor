@@ -37,11 +37,8 @@ public class Song {
     public float resolution = 192;
     public float offset = 0;
 
-    // Audio
-    SampleData[] audioSampleData;
-    public TempoStream[] bassAudioStreams;
-    string[] audioLocations;
-    int audioLoads = 0;
+    string[] audioLocations = new string[EnumX<AudioInstrument>.Count];
+    public SongAudioManager audioManager { get; private set; }
 
     System.Threading.Thread saveThread;
     
@@ -61,73 +58,12 @@ public class Song {
         }
     }
 
-    public AudioStream mainSongAudio
-    {
-        get
-        {
-            if (AudioManager.StreamIsValid(GetAudioStream(AudioInstrument.Song)))
-            {
-                return GetAudioStream(AudioInstrument.Song);
-            }
-
-            for (int i = 0; i < EnumX<AudioInstrument>.Count; ++i)
-            {
-                AudioInstrument audio = (AudioInstrument)i;
-                if (AudioManager.StreamIsValid(GetAudioStream(audio)))
-                {
-                    return GetAudioStream(audio);
-                }
-            }
-
-            return null;
-        }
-    }
-
-    const float c_defaultLength = 300;     // 5 minutes
-    float _length = c_defaultLength;
+    public float? manualLength = null;
     public float length
     {
         get
         {
-            if (manualLength)
-                return _length;
-            else
-            {
-                AudioStream mainStream = mainSongAudio;
-
-                if (mainStream != null)
-                {
-                    float length = mainStream.ChannelLengthInSeconds() + offset;
-
-                    if (length <= 0)
-                        return c_defaultLength;
-                    else
-                        return length;
-                }
-                else
-                {
-                    return c_defaultLength;
-                }
-            }
-        }
-        set
-        {
-            if (manualLength)
-                _length = value;
-        }
-    }
-
-    bool _manualLength = false;
-    public bool manualLength
-    {
-        get
-        {
-            return _manualLength;
-        }
-        set
-        {
-            _manualLength = value;
-            _length = length;
+            return audioManager.GetSongLength(this);
         }
     }
 
@@ -172,22 +108,14 @@ public class Song {
                 return false;
         }
     }
-    public bool isAudioLoading
-    {
-        get
-        {
-            if (audioLoads > 0)
-                return true;
-            else
-                return false;
-        }
-    }
 
     /// <summary>
     /// Default constructor for a new chart. Initialises all lists and adds locked bpm and timesignature objects.
     /// </summary>
     public Song()
     {
+        audioManager = new SongAudioManager();
+
         AUDIO_INSTUMENT_COUNT = EnumX<AudioInstrument>.Count;
         DIFFICULTY_COUNT = EnumX<Difficulty>.Count;
 
@@ -201,10 +129,6 @@ public class Song {
         sections = new SongObjectCache<Section>();
         bpms = new SongObjectCache<BPM>();
         timeSignatures = new SongObjectCache<TimeSignature>();
-
-        audioSampleData = new SampleData[AUDIO_INSTUMENT_COUNT];
-        bassAudioStreams = new TempoStream[AUDIO_INSTUMENT_COUNT];
-        audioLocations = new string[AUDIO_INSTUMENT_COUNT];
 
         Add(new BPM());
         Add(new TimeSignature());
@@ -265,9 +189,6 @@ public class Song {
         for (int i = 0; i < audioLocations.Length; ++i)
             audioLocations[i] = string.Empty;
 
-        for (int i = 0; i < audioSampleData.Length; ++i)
-            audioSampleData[i] = new SampleData(string.Empty);
-
         UpdateCache();
     }
 
@@ -283,8 +204,7 @@ public class Song {
         _events.AddRange(song._events);
         _syncTrack.AddRange(song._syncTrack);
 
-        _manualLength = song._manualLength;
-        _length = song._length;
+        manualLength = song.manualLength;
 
         charts = new Chart[song.charts.Length];
         for (int i = 0; i < charts.Length; ++i)
@@ -294,26 +214,12 @@ public class Song {
 
         for (int i = 0; i < audioLocations.Length; ++i)
         {
-            if (song.GetAudioIsLoaded((AudioInstrument)i))
-                audioLocations[i] = song.audioLocations[i];
+            audioLocations[i] = song.audioLocations[i];
         }
     }
 
     ~Song()
     {
-        FreeAudioStreams();
-    }
-
-    public void FreeAudioStreams()
-    {
-        foreach(var stream in bassAudioStreams)
-        {
-            if (stream != null)
-                stream.Dispose();
-        }
-
-        foreach (SampleData sample in audioSampleData)
-            sample.Dispose();
     }
 
     public Chart GetChart(Instrument instrument, Difficulty difficulty)
@@ -326,124 +232,6 @@ public class Song {
         {
             Debug.LogError(e.Message);
             return charts[0];
-        }
-    }
-
-    /// <summary>
-    /// Unity context only. Loads the audio provided from the .chart file into AudioClips for song, guitar and rhythm tracks.
-    /// </summary>
-    public void LoadAllAudioClips()
-    {
-#if TIMING_DEBUG
-        float time = Time.realtimeSinceStartup;
-#endif
-
-        foreach (AudioInstrument audio in EnumX<AudioInstrument>.Values)
-        {
-            LoadAudio(GetAudioLocation(audio), audio);
-        }
-#if TIMING_DEBUG
-        Debug.Log("Total audio files load time: " + (Time.realtimeSinceStartup - time));
-#endif
-    }
-
-    public void LoadMusicStream(string filepath)
-    {
-        LoadAudio(filepath, AudioInstrument.Song);
-    }
-
-    public void LoadGuitarStream(string filepath)
-    {
-        LoadAudio(filepath, AudioInstrument.Guitar);
-    }
-
-    public void LoadBassStream(string filepath)
-    {
-        LoadAudio(filepath, AudioInstrument.Bass);
-    }
-
-    public void LoadRhythmStream(string filepath)
-    {
-        LoadAudio(filepath, AudioInstrument.Rhythm);
-    }
-	
-	    public void LoadKeysStream(string filepath)
-    {
-        LoadAudio(filepath, AudioInstrument.Keys);
-    }
-
-    public void LoadDrumStream(string filepath)
-    {
-        LoadAudio(filepath, AudioInstrument.Drum);
-    }
-	
-	public void LoadDrum2Stream(string filepath)
-	{
-	LoadAudio(filepath, AudioInstrument.Drums_2);
-	}
-	
-	public void LoadDrum3Stream(string filepath)
-	{
-	LoadAudio(filepath, AudioInstrument.Drums_3);
-	}
-	
-	public void LoadDrum4Stream(string filepath)
-	{
-	LoadAudio(filepath, AudioInstrument.Drums_4);
-	}
-	
-	public void LoadVocalStream(string filepath)
-    {
-        LoadAudio(filepath, AudioInstrument.Vocals);
-    }
-	
-	public void LoadCrowdStream(string filepath)
-    {
-        LoadAudio(filepath, AudioInstrument.Crowd);
-    }
-
-
-    void LoadAudio(string filepath, AudioInstrument audio)
-    {
-        int audioStreamArrayPos = (int)audio;
-
-        if (filepath != string.Empty && File.Exists(filepath))
-        {
-#if TIMING_DEBUG
-            float time = Time.realtimeSinceStartup;
-#endif
-            // Check for valid extension
-            if (!Utility.validateExtension(filepath, Globals.validAudioExtensions))
-            {
-                throw new System.Exception("Invalid file extension");
-            }
-
-            filepath = filepath.Replace('\\', '/');
-
-            // Record the filepath
-            audioLocations[audioStreamArrayPos] = Path.GetFullPath(filepath);
-            ++audioLoads;
-
-            // Load sample data from waveform. This creates a thread on it's own.
-            audioSampleData[audioStreamArrayPos].Dispose();
-            audioSampleData[audioStreamArrayPos] = new SampleData(filepath);
-
-            // Load Audio Streams   
-            if (bassAudioStreams[audioStreamArrayPos] != null)
-                bassAudioStreams[audioStreamArrayPos].Dispose();
-
-            bassAudioStreams[audioStreamArrayPos] = AudioManager.LoadTempoStream(filepath);         
-
-            --audioLoads;
-#if TIMING_DEBUG
-            Debug.Log("Audio load time: " + (Time.realtimeSinceStartup - time));
-#endif
-            Debug.Log("Finished loading audio");
-        }
-        else
-        {
-            if (filepath != string.Empty)
-                Debug.LogError("Unable to locate audio file: " + filepath);
         }
     }
 
@@ -480,12 +268,10 @@ public class Song {
     /// <param name="time">The time (in seconds) to convert.</param>
     /// <param name="resolution">Ticks per beat, usually provided from the resolution song of a Song class.</param>
     /// <returns>Returns the calculated tick position.</returns>
-    public uint TimeToTick(float time, float resolution, bool capByLength = true)
+    public uint TimeToTick(float time, float resolution)
     {
         if (time < 0)
             time = 0;
-        else if (capByLength && time > length)
-            time = length;
 
         uint position = 0;
 
@@ -777,29 +563,9 @@ public class Song {
         return (targetResoltion / (float)resolution);
     }
 
-    public SampleData GetSampleData(AudioInstrument audio)
+    public void LoadAudio()
     {
-        return audioSampleData[(int)audio];
-    }
-
-    public SampleData[] GetSampleData()
-    {
-        return audioSampleData;
-    }
-
-    public TempoStream GetAudioStream(AudioInstrument audio)
-    {
-        return bassAudioStreams[(int)audio];
-    }
-
-    public void SetBassAudioStream(AudioInstrument audio, TempoStream stream)
-    {
-        int arrayPos = (int)audio;
-
-        if (bassAudioStreams[arrayPos] != null)
-            bassAudioStreams[arrayPos].Dispose();
-
-        bassAudioStreams[arrayPos] = stream;
+        audioManager.LoadAllAudioClips(this);
     }
 
     public string GetAudioName(AudioInstrument audio)
@@ -816,12 +582,6 @@ public class Song {
     {
         if (File.Exists(path))
             audioLocations[(int)audio] = Path.GetFullPath(path);
-    }
-
-    public bool GetAudioIsLoaded(AudioInstrument audio)
-    {
-        TempoStream stream = GetAudioStream(audio);
-        return AudioManager.StreamIsValid(stream);
     }
 
     public static Chart.GameMode InstumentToChartGameMode(Instrument instrument)

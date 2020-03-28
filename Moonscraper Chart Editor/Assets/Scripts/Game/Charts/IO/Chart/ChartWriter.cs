@@ -78,7 +78,7 @@ public class ChartWriter
                 else
                     audioString = audioLocation;
 
-                if (song.GetAudioIsLoaded(audio) || (audioString != null && audioString != string.Empty))
+                if (!string.IsNullOrEmpty(audioString))
                     saveString += string.Format(saveFormat, audioString);
             };
 
@@ -246,8 +246,8 @@ public class ChartWriter
         if (metaData.player2 != string.Empty)
             saveString += string.Format(ChartIOHelper.MetaData.player2.saveFormat, metaData.player2.ToLower());
         saveString += string.Format(ChartIOHelper.MetaData.difficulty.saveFormat, metaData.difficulty);
-        if (song.manualLength)
-            saveString += string.Format(ChartIOHelper.MetaData.length.saveFormat, song.length);
+        if (song.manualLength.HasValue)
+            saveString += string.Format(ChartIOHelper.MetaData.length.saveFormat, song.manualLength.Value);
         saveString += string.Format(ChartIOHelper.MetaData.previewStart.saveFormat, metaData.previewStart);
         saveString += string.Format(ChartIOHelper.MetaData.previewEnd.saveFormat, metaData.previewEnd);
         if (metaData.genre != string.Empty)

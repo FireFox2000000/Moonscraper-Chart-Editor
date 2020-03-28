@@ -277,7 +277,7 @@ public static class MidWriter {
             ++eventCount;
         }
 
-        uint music_end = song.TimeToTick(song.length + exportOptions.tickOffset, song.resolution * resolutionScaleRatio, false);
+        uint music_end = song.TimeToTick(song.length + exportOptions.tickOffset, song.resolution * resolutionScaleRatio);
 
         if (music_end > deltaTickSum)
             music_end -= deltaTickSum;

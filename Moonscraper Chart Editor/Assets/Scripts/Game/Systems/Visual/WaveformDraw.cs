@@ -48,7 +48,7 @@ public class WaveformDraw : MonoBehaviour {
         {
             if (waveformSelect.value == (audioIndex + 1))
             {
-                currentSample = editor.currentSong.GetSampleData((Song.AudioInstrument)audioIndex);
+                currentSample = editor.currentSong.audioManager.GetSampleData((Song.AudioInstrument)audioIndex);
             }
         }
 

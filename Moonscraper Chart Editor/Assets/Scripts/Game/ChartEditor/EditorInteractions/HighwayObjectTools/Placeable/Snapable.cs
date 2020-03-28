@@ -60,6 +60,9 @@ public abstract class Snapable : MonoBehaviour {
         {
             objectSnappedChartPos = GetSnappedPos(editor, step);
         }
+
+        // Cap to within the range of the song
+        objectSnappedChartPos = (uint)Mathf.Min(editor.maxPos, objectSnappedChartPos);
     }
 
     protected virtual void LateUpdate()

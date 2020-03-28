@@ -56,7 +56,7 @@ public class SongValidateGH3 {
         return errors;
     }
 
-    string ChartObjectPositionFix<T>(Chart chart, T[] chartObjects) where T : ChartObject
+    string ChartObjectPositionFix<T>(Chart chart, T[] chartObjects, float maxSongLength) where T : ChartObject
     {
         string errors = string.Empty;
 
@@ -64,7 +64,7 @@ public class SongValidateGH3 {
         {
             errors += chartObjects[i].ToString() + " at position " + chartObjects[i].tick.ToString() + " is beyond the length of the song. " + Globals.LINE_ENDING;
 
-            if (chartObjects[i].time > chart.song.length)
+            if (chartObjects[i].time > maxSongLength)
                 chart.Remove(chartObjects[i]);
             else
                 break;

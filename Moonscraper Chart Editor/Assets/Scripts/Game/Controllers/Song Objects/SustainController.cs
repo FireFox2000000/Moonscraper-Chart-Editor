@@ -240,6 +240,9 @@ public class SustainController : SelectableClick {
             snappedChartPos = Snapable.TickToSnappedTick(note.song.WorldYPositionToTick(editor.mouseYMaxLimit.position.y), GameSettings.step, note.song);
         }
 
+        // Cap to within the range of the song
+        snappedChartPos = (uint)Mathf.Min(editor.maxPos, snappedChartPos);
+
         return snappedChartPos;
     }
 

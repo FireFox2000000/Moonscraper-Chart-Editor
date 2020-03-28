@@ -84,6 +84,9 @@ public class StarpowerController : SongObjectController
             snappedChartPos = Snapable.TickToSnappedTick(starpower.song.WorldYPositionToTick(editor.mouseYMaxLimit.position.y), GameSettings.step, starpower.song);
         }
 
+        // Cap to within the range of the song
+        snappedChartPos = (uint)Mathf.Min(editor.maxPos, snappedChartPos);
+
         uint newLength = starpower.GetCappedLengthForPos(snappedChartPos);
         if (newLength != starpower.length)
         {

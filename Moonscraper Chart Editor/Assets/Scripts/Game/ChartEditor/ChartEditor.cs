@@ -122,6 +122,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     // Use this for initialization
     void Awake () {
         Debug.Log("Initialising " + versionNumber.text);
+
         assets = GetComponent<ChartEditorAssets>();
         selectedObjectsManager = new SelectedObjectsManager(this);
         sfxAudioStreams = new LoadedStreamStore(soundMapConfig);
@@ -181,7 +182,10 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         // Update object positions that supposed to be visible into the range of the camera
         _minPos = currentSong.WorldYPositionToTick(camYMin.position.y);
-        _maxPos = currentSong.WorldYPositionToTick(camYMax.position.y);
+
+        float maxTime = currentSong.length;
+        uint maxTick = currentSong.TimeToTick(maxTime, currentSong.resolution);
+        _maxPos = (uint)Mathf.Min(maxTick, currentSong.WorldYPositionToTick(camYMax.position.y));
 
         // Set window text to represent if the current song has been saved or not
         windowHandleManager.UpdateDirtyNotification(isDirty);
@@ -207,7 +211,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (allowedToQuit)
         {
             globals.Quit();
-            FreeAudio();
+            currentSong.audioManager.FreeAudioStreams();
             sfxAudioStreams.DisposeSounds();
             AudioManager.Dispose();
 
@@ -401,7 +405,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             return;
 
         lastLoadedFile = string.Empty;
-        FreeAudio();
+        currentSong.audioManager.FreeAudioStreams();
         currentSong = new Song();
 
         LoadSong(currentSong);
@@ -558,9 +562,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                     return;
 
                 // Free the previous audio clips
-                FreeAudio();
-
-                newSong.LoadAllAudioClips();
+                currentSong.audioManager.FreeAudioStreams();
+                newSong.LoadAudio();
             }),
         };
 
@@ -655,7 +658,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         // Load the default chart
         LoadChart(currentSong.GetChart(MenuBar.currentInstrument, MenuBar.currentDifficulty));
 
-        if (AudioManager.StreamIsValid(currentSong.GetAudioStream(Song.AudioInstrument.Song)))
+        if (AudioManager.StreamIsValid(currentSong.audioManager.GetAudioStream(Song.AudioInstrument.Song)))
         {
             movement.SetPosition(0);
         }
@@ -679,20 +682,21 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     #region Audio Functions
     public void PlayAudio(float playPoint)
     {
-        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
-        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
-        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);
-        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
-		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Keys), GameSettings.gameSpeed, GameSettings.vol_keys);
-        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drums);
-		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drums_2), GameSettings.gameSpeed, GameSettings.vol_drums);
-		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drums_3), GameSettings.gameSpeed, GameSettings.vol_drums);
-		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drums_4), GameSettings.gameSpeed, GameSettings.vol_drums);
-		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Vocals), GameSettings.gameSpeed, GameSettings.vol_vocals);
-		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Crowd), GameSettings.gameSpeed, GameSettings.vol_crowd);
+        SongAudioManager songAudioManager = currentSong.audioManager;
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Keys), GameSettings.gameSpeed, GameSettings.vol_keys);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_2), GameSettings.gameSpeed, GameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_3), GameSettings.gameSpeed, GameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_4), GameSettings.gameSpeed, GameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Vocals), GameSettings.gameSpeed, GameSettings.vol_vocals);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Crowd), GameSettings.gameSpeed, GameSettings.vol_crowd);
 
         AudioStream primaryStream = null;
-        foreach (var bassStream in currentSong.bassAudioStreams)
+        foreach (var bassStream in songAudioManager.bassAudioStreams)
         {
             if (primaryStream != null)
             {
@@ -712,7 +716,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
    public void StopAudio()
     {
-        foreach (var bassStream in currentSong.bassAudioStreams)
+        foreach (var bassStream in currentSong.audioManager.bassAudioStreams)
         {
             if (AudioManager.StreamIsValid(bassStream))
                 bassStream.Stop();
@@ -778,11 +782,6 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                 stream.tempo = speed * 100 - 100;
             }
         }
-    }
-
-    public void FreeAudio()
-    {
-        currentSong.FreeAudioStreams();
     }
 
     #endregion

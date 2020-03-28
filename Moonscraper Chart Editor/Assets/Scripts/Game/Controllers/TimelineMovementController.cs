@@ -69,7 +69,7 @@ public class TimelineMovementController : MovementController
         if (timePosition)
         {
             bool audioLoaded = false;
-            foreach (var stream in editor.currentSong.bassAudioStreams)
+            foreach (var stream in editor.currentSong.audioManager.bassAudioStreams)
             {
                 if (AudioManager.StreamIsValid(stream))
                     audioLoaded = true;

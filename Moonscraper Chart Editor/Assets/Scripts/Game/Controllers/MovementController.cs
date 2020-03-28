@@ -57,16 +57,16 @@ public abstract class MovementController : MonoBehaviour {
 
             // Make sure we're staying in sync with the audio
             {
-                Song currentSong = editor.currentSong;
+                SongAudioManager songAudioManager = editor.currentSong.audioManager;
 
                 AudioStream stream = null;
 
                 for (int i = 0; i < EnumX<Song.AudioInstrument>.Count; ++i)
                 {
                     Song.AudioInstrument audio = (Song.AudioInstrument)i;
-                    if (AudioManager.StreamIsValid(currentSong.GetAudioStream(audio)))
+                    if (AudioManager.StreamIsValid(songAudioManager.GetAudioStream(audio)))
                     {
-                        stream = currentSong.GetAudioStream(audio);
+                        stream = songAudioManager.GetAudioStream(audio);
                         break;
                     }
                 }
