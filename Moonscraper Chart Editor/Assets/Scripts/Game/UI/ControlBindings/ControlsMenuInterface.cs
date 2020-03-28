@@ -47,6 +47,7 @@ public class ControlsMenuInterface : MonoBehaviour
             if (isDefaultControlsEditor)
             {
                 actionsToEdit = JsonUtility.FromJson<MSChartEditorInput.MSChartEditorActionContainer>(defaultControlsFile.text);
+                actionsToEdit.LoadFromSaveData(actionsToEdit);
             }
             else
             {

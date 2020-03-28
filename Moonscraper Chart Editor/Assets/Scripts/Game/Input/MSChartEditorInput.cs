@@ -4,6 +4,20 @@ using UnityEngine;
 using MSE;
 using MSE.Input;
 
+// HOW TO ADD A NEW ACTION
+/*
+ * 1. Add to the enum list
+ * 2. Open Scenes/Config Editors/Input Editor
+ * 3. Click on the Input Builder object and locate the Input Config Builder script
+ * 4. Set the field "New Action Added" to the input that was just added
+ * 5. Click the button "Do post added new action setup"
+ * 6. Go to Database/Input Config
+ * 7. Scroll down to find your new action and set up the new properties
+ */
+
+// Note, above is kinda crappy. This is only because input configs are being stored as a database object and must be edited through the editor. 
+// It would be better to store these configs in another .json similar to how default controls are being stored and load/edit these within a scene.
+
 public enum MSChartEditorInputActions
 {
     ActionHistoryRedo,

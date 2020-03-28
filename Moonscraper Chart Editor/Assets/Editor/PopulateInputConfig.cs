@@ -9,6 +9,8 @@ using MSE.Input;
 public class PopulateInputConfig : Editor
 {
     SerializedProperty _inputConfigDatabase;
+    MSChartEditorInputActions _newActionAdded;
+
     void OnEnable()
     {
         _inputConfigDatabase = serializedObject.FindProperty("inputConfigDatabase");
@@ -21,7 +23,7 @@ public class PopulateInputConfig : Editor
         serializedObject.ApplyModifiedProperties();
 
         InputConfig inputConfigDatabase = ((InputConfigBuilder)target).inputConfigDatabase;
-          
+
         if (GUILayout.Button("Build Shortcut Input From Scratch"))
         {
             RepopulateInput(inputConfigDatabase);
@@ -30,6 +32,15 @@ public class PopulateInputConfig : Editor
         if (GUILayout.Button("Build Shortcut Input Keep Names"))
         {
             RepopulateInput(inputConfigDatabase, true);
+        }
+
+        EditorGUILayout.Space();
+        _newActionAdded = (MSChartEditorInputActions)EditorGUILayout.EnumPopup("New Action Added", _newActionAdded);
+
+        // Use this when adding a new input into the middle of the rest of the pack
+        if (GUILayout.Button("Do post added new action setup"))
+        {
+            InsertForNewActionAt(inputConfigDatabase, (int)_newActionAdded);
         }
     }
 
@@ -70,6 +81,22 @@ public class PopulateInputConfig : Editor
         }
 
         inputConfigDatabase.shortcutInputs = shortcutInputs;
+    }
+
+    void InsertForNewActionAt(InputConfig inputConfigDatabase, int index)
+    {
+        List<ShortcutInputConfig> list = new List<ShortcutInputConfig>(inputConfigDatabase.shortcutInputs);
+        ShortcutInputConfig newConfig = new ShortcutInputConfig();
+        newConfig.shortcut = (MSChartEditorInputActions)index;
+
+        list.Insert(index, newConfig);
+
+        for (int i = index + 1; i < list.Count; ++i)
+        {
+            list[i].shortcut = list[i].shortcut + 1;
+        }
+
+        inputConfigDatabase.shortcutInputs = list.ToArray();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
