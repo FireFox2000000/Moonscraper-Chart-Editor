@@ -102,10 +102,6 @@ public class ChartWriter
             errorList += error + Globals.LINE_ENDING;
 
             saveString = string.Empty;  // Clear all the song properties because we don't want braces left open, which will screw up the loading of the chart
-
-#if UNITY_EDITOR
-            System.Diagnostics.Debugger.Break();
-#endif
         }
 
         // SyncTrack

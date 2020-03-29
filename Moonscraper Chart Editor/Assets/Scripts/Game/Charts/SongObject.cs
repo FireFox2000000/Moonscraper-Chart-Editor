@@ -32,10 +32,6 @@ public abstract class SongObject
     {
         get
         {
-            if (song == null)
-            {
-                Debug.Log("null");
-            }
             return song.TickToWorldYPosition(tick);
         }
     }
@@ -47,7 +43,6 @@ public abstract class SongObject
     {
         get
         {
-            Debug.Assert(song != null);
             return song.TickToTime(tick, song.resolution);
         }
     }

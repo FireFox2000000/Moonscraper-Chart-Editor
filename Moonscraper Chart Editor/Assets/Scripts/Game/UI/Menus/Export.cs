@@ -162,6 +162,7 @@ public class Export : DisplayMenu {
                 {
                     try
                     {
+                        Debug.Log("Exporting CHART file to " + filepath);
                         new ChartWriter(filepath).Write(song, exportOptions, out errorMessageList);
                         //song.Save(filepath, exportOptions);
                     }
@@ -175,6 +176,7 @@ public class Export : DisplayMenu {
                 {
                     try
                     {
+                        Debug.Log("Exporting MIDI file to " + filepath);
                         MidWriter.WriteToFile(filepath, song, exportOptions);
                     }
                     catch (System.Exception e)

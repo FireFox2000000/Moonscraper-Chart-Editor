@@ -90,7 +90,6 @@ public static class MidWriter {
 
     public static void WriteToFile(string path, Song song, ExportOptions exportOptions)
     {
-        Debug.Log(path);
         short track_count = 1;
 
         float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);

@@ -364,7 +364,6 @@ public static class MidReader {
             var sysexEvent = track[i] as SysexEvent;
             if (sysexEvent != null)
             {
-                //Debug.Log(BitConverter.ToString(sysexEvent.GetData()));
                 tapAndOpenEvents.Add(sysexEvent);
             }
         }
