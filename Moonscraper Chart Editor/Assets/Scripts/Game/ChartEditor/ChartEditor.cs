@@ -120,6 +120,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public Services services { get { return globals.services; } }
     public UIServices uiServices { get { return services.uiServices; } }
 
+    System.Threading.Thread _saveThread;
+
     // Use this for initialization
     void Awake () {
         Debug.Log("Initialising " + versionNumber.text);
@@ -218,7 +220,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             sfxAudioStreams.DisposeSounds();
             AudioManager.Dispose();
 
-            while (currentSong.isSaving) ;
+            while (isSaving) ;
 
             applicationStateMachine.currentState = null; // Force call exit on current state;
         }
@@ -402,7 +404,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (!EditCheck())
             return;
 
-        while (currentSong.isSaving);
+        while (isSaving);
 
         if (errorManager.HasErrorToDisplay())
             return;
@@ -496,14 +498,14 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
     void Save (string filename, ExportOptions exportOptions)
     {
-        if (currentSong != null && !currentSong.isSaving)
+        if (currentSong != null && !isSaving)
         {
             Debug.Log("Saving to file- " + System.IO.Path.GetFullPath(filename));
           
-            currentSong.SaveAsync(filename, exportOptions);
+            SaveCurrentSongAsync(filename, exportOptions);
             lastLoadedFile = System.IO.Path.GetFullPath(filename);
 
-            if (currentSong.isSaving)
+            if (isSaving)
                 events.saveEvent.Fire();
 
             isDirty = false;
@@ -529,7 +531,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             new LoadingTask("Loading file", () =>
             {
                 // Wait for saving to complete just in case
-                while (currentSong.isSaving){ }
+                while (isSaving){ }
 
                 if (errorManager.HasErrorToDisplay())
                 {
@@ -612,7 +614,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (!EditCheck())
             yield break;
 
-        while (currentSong.isSaving)
+        while (isSaving)
             yield return null;
 
         if (errorManager.HasErrorToDisplay())
@@ -678,6 +680,68 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         currentChart = chart;
 
         songObjectPoolManager.NewChartReset();
+    }
+
+    /// <summary>
+    /// Is this song currently being saved asyncronously?
+    /// </summary>
+    public bool isSaving
+    {
+        get
+        {
+            return _saveThread != null && _saveThread.IsAlive;
+        }
+    }
+
+    /// <summary>
+    /// Starts a thread that saves the song data in a .chart format to the specified path asynchonously. Can be monitored with the "IsSaving" parameter. 
+    /// </summary>
+    /// <param name="filepath">The path and filename to save to.</param>
+    /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
+    void SaveCurrentSongAsync(string filepath, ExportOptions exportOptions)
+    {
+
+#if false
+        Song songCopy = new Song(this);
+        songCopy.Save(filepath, exportOptions);
+
+#if !UNITY_EDITOR
+        This is for debugging only you moron
+#endif
+#else
+        if (!isSaving)
+        {
+            Song songCopy = new Song(currentSong);
+
+            _saveThread = new System.Threading.Thread(() => SaveSong(songCopy, filepath, exportOptions));
+            _saveThread.Start();
+        }
+#endif
+    }
+
+    /// <summary>
+    /// Saves the song data in a .chart format to the specified path.
+    /// </summary>
+    /// <param name="filepath">The path and filename to save to.</param>
+    /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
+    void SaveSong(Song song, string filepath, ExportOptions exportOptions)
+    {
+        string saveErrorMessage;
+        try
+        {
+            new ChartWriter(filepath).Write(song, exportOptions, out saveErrorMessage);
+
+            Debug.Log("Save complete!");
+
+            if (saveErrorMessage != string.Empty)
+            {
+                errorManager.QueueErrorMessage("Save completed with the following errors: " + Globals.LINE_ENDING + saveErrorMessage);
+            }
+        }
+        catch (System.Exception e)
+        {
+            errorManager.QueueErrorMessage(Logger.LogException(e, "Save failed!"));
+        }
     }
 
     #endregion

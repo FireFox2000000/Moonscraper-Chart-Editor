@@ -28,7 +28,7 @@ public class SaveAnimController : UpdateableService {
 
         if (fadein)
             alpha += fadeSpeed * Time.deltaTime;
-        else if (!editor.currentSong.isSaving)
+        else if (!editor.isSaving)
             alpha -= fadeSpeed * Time.deltaTime;
 
         alpha = Mathf.Clamp01(alpha);

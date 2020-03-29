@@ -36,7 +36,24 @@ public class AutoSaveSystem : SystemManagerState.System
         {
             autosaveTimer = 0;
             Debug.Log("Autosaving...");
-            autosaveSong.Save(Globals.autosaveLocation, editor.currentSong.defaultExportOptions);
+
+            string saveErrorMessage;
+            try
+            {
+                new ChartWriter(Globals.autosaveLocation).Write(autosaveSong, editor.currentSong.defaultExportOptions, out saveErrorMessage);
+
+                Debug.Log("Autosave complete!");
+
+                if (saveErrorMessage != string.Empty)
+                {
+                    Debug.LogError("Autosave completed with the following errors: " + Globals.LINE_ENDING + saveErrorMessage);
+                }
+            }
+            catch (System.Exception e)
+            {
+                Logger.LogException(e, "Autosave failed!");
+            }
+
             Debug.Log("Autosave complete!");
             autosaveTimer = 0;
         });

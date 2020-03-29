@@ -38,8 +38,6 @@ public class Song {
     public float offset = 0;
 
     string[] audioLocations = new string[EnumX<AudioInstrument>.Count];
-
-    System.Threading.Thread saveThread;
     
     public ExportOptions defaultExportOptions
     {
@@ -86,20 +84,6 @@ public class Song {
     /// Read only list of a song's time signature changes.
     /// </summary>
     public SongObjectCache<TimeSignature> timeSignatures { get; private set; }
-
-    /// <summary>
-    /// Is this song currently being saved asyncronously?
-    /// </summary>
-    public bool isSaving
-    {
-        get
-        {
-            if (saveThread != null && saveThread.IsAlive)
-                return true;
-            else
-                return false;
-        }
-    }
 
     /// <summary>
     /// Default constructor for a new chart. Initialises all lists and adds locked bpm and timesignature objects.
@@ -415,57 +399,6 @@ public class Song {
             UpdateCache();
 
         return success;
-    }
-
-    /// <summary>
-    /// Starts a thread that saves the song data in a .chart format to the specified path asynchonously. Can be monitored with the "IsSaving" parameter. 
-    /// </summary>
-    /// <param name="filepath">The path and filename to save to.</param>
-    /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
-    public void SaveAsync(string filepath, ExportOptions exportOptions)
-    {
-
-#if false
-        Song songCopy = new Song(this);
-        songCopy.Save(filepath, exportOptions);
-
-#if !UNITY_EDITOR
-        This is for debugging only you moron
-#endif
-#else
-        if (!isSaving)
-        {
-            Song songCopy = new Song(this);
-
-            saveThread = new System.Threading.Thread(() => songCopy.Save(filepath, exportOptions));
-            saveThread.Start();
-        }
-#endif
-    }
-
-    /// <summary>
-    /// Saves the song data in a .chart format to the specified path.
-    /// </summary>
-    /// <param name="filepath">The path and filename to save to.</param>
-    /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
-    public void Save(string filepath, ExportOptions exportOptions)
-    {
-        string saveErrorMessage;
-        try
-        {
-            new ChartWriter(filepath).Write(this, exportOptions, out saveErrorMessage);
-
-            Debug.Log("Save complete!");
-
-            if (saveErrorMessage != string.Empty)
-            {
-                ChartEditor.Instance.errorManager.QueueErrorMessage("Save completed with the following errors: " + Globals.LINE_ENDING + saveErrorMessage);
-            }
-        }
-        catch (System.Exception e)
-        {
-            ChartEditor.Instance.errorManager.QueueErrorMessage(Logger.LogException(e, "Save failed!"));
-        }
     }
 
     public static void UpdateCacheList<T, U>(SongObjectCache<T> cache, List<U> objectsToCache)
