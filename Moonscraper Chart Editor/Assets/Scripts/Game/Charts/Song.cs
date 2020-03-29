@@ -18,8 +18,6 @@ public class Song {
     public static readonly float STANDARD_BEAT_RESOLUTION = 192.0f;
     public const uint FULL_STEP = 768;
     public const float RESOLUTIONS_PER_MEASURE = 4.0f;
-    static int DIFFICULTY_COUNT;
-    static int AUDIO_INSTUMENT_COUNT;
 
     // Song properties
     public Metadata metaData = new Metadata();
@@ -90,9 +88,6 @@ public class Song {
     /// </summary>
     public Song()
     {
-        AUDIO_INSTUMENT_COUNT = EnumX<AudioInstrument>.Count;
-        DIFFICULTY_COUNT = EnumX<Difficulty>.Count;
-
         _events = new List<Event>();
         _syncTrack = new List<SyncTrack>();
 
@@ -109,11 +104,11 @@ public class Song {
 
         // Chart initialisation
         int numberOfInstruments = EnumX<Instrument>.Count - 1;     // Don't count the "Unused" instrument
-        charts = new Chart[numberOfInstruments * DIFFICULTY_COUNT];
+        charts = new Chart[numberOfInstruments * EnumX<Difficulty>.Count];
 
         for (int i = 0; i < charts.Length; ++i)
         {
-            Instrument instrument = (Instrument)(i / DIFFICULTY_COUNT);
+            Instrument instrument = (Instrument)(i / EnumX<Difficulty>.Count);
             charts[i] = new Chart(this, instrument);
         }
 
@@ -200,7 +195,7 @@ public class Song {
     {
         try
         {
-            return charts[(int)instrument * DIFFICULTY_COUNT + (int)difficulty];
+            return charts[(int)instrument * EnumX<Difficulty>.Count + (int)difficulty];
         }
         catch (Exception e)
         {
