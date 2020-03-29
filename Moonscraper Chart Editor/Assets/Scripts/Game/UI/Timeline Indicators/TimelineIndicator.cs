@@ -23,8 +23,8 @@ public abstract class TimelineIndicator : MonoBehaviour {
     protected Vector3 GetLocalPos(uint position, Song song)
     {
         float time = song.TickToTime(position, song.resolution);
-
-        float endTime = song.length;
+        float songLength = editor.currentSongLength;
+        float endTime = songLength;
 
         if (endTime > 0)
             return handle.HandlePosToLocal(time / endTime);

@@ -87,7 +87,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         setAudioTextLabels();
         init = false;
 
-        customTime = TimeSpan.FromSeconds(editor.currentSong.length);
+        customTime = TimeSpan.FromSeconds(editor.currentSongLength);
 
         ChartEditor.isDirty = edit;
         StartCoroutine(ScrollSetDelay());
@@ -183,7 +183,7 @@ public class SongPropertiesPanelController : DisplayMenu {
                 continue;
             }
 
-            if (editor.currentSong.audioManager.GetAudioIsLoaded(audio))
+            if (editor.currentSongAudio.GetAudioIsLoaded(audio))
             {
                 audioStreamText.color = Color.white;
                 audioStreamText.text = song.GetAudioName(audio);
@@ -208,11 +208,14 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void LoadMusicStream()
     {
-        string path = GetAudioFile();
-        if (!string.IsNullOrEmpty(path))
+        try
         {
             LoadAndSetStream(Song.AudioInstrument.Song);
-        }     
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
     }
 
     public void ClearMusicStream()
@@ -391,13 +394,12 @@ public class SongPropertiesPanelController : DisplayMenu {
         try
         {
             string filepath = GetAudioFile();
-            if (editor.currentSong.audioManager.LoadAudio(filepath, audioInstrument))
+            if (editor.currentSongAudio.LoadAudio(filepath, audioInstrument))
             {
                 // Record the filepath
                 editor.currentSong.SetAudioLocation(audioInstrument, filepath);
+                StartCoroutine(SetAudio());
             }
-
-            StartCoroutine(SetAudio());
         }
         catch
         {
@@ -412,8 +414,8 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     void ClearAudioStream(Song.AudioInstrument audio)
     {
-        editor.currentSong.audioManager.GetSampleData(audio).Dispose();
-        editor.currentSong.audioManager.SetBassAudioStream(audio, null);
+        editor.currentSongAudio.GetSampleData(audio).Dispose();
+        editor.currentSongAudio.SetBassAudioStream(audio, null);
         editor.currentSong.SetAudioLocation(audio, string.Empty);
 
         setAudioTextLabels();
@@ -427,7 +429,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         {
             new LoadingTask("Loading audio", () =>
             {
-                while (editor.currentSong.audioManager.isAudioLoading) ;
+                while (editor.currentSongAudio.isAudioLoading) ;
             })
         };
 

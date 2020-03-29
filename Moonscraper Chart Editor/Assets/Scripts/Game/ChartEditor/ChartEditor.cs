@@ -47,6 +47,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public Song currentSong { get; private set; }
     public Chart currentChart { get; private set; }
     public Chart.GameMode currentGameMode { get { return currentChart.gameMode; } }
+    public SongAudioManager currentSongAudio { get; private set; }
     string currentFileName = string.Empty;
 
     [HideInInspector]
@@ -123,6 +124,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     void Awake () {
         Debug.Log("Initialising " + versionNumber.text);
 
+        currentSongAudio = new SongAudioManager();
+
         assets = GetComponent<ChartEditorAssets>();
         selectedObjectsManager = new SelectedObjectsManager(this);
         sfxAudioStreams = new LoadedStreamStore(soundMapConfig);
@@ -183,7 +186,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         // Update object positions that supposed to be visible into the range of the camera
         _minPos = currentSong.WorldYPositionToTick(camYMin.position.y);
 
-        float maxTime = currentSong.length;
+        float maxTime = currentSongLength;
         uint maxTick = currentSong.TimeToTick(maxTime, currentSong.resolution);
         _maxPos = (uint)Mathf.Min(maxTick, currentSong.WorldYPositionToTick(camYMax.position.y));
 
@@ -211,7 +214,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (allowedToQuit)
         {
             globals.Quit();
-            currentSong.audioManager.FreeAudioStreams();
+            currentSongAudio.FreeAudioStreams();
             sfxAudioStreams.DisposeSounds();
             AudioManager.Dispose();
 
@@ -405,7 +408,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             return;
 
         lastLoadedFile = string.Empty;
-        currentSong.audioManager.FreeAudioStreams();
+        currentSongAudio.FreeAudioStreams();
         currentSong = new Song();
 
         LoadSong(currentSong);
@@ -562,8 +565,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                     return;
 
                 // Free the previous audio clips
-                currentSong.audioManager.FreeAudioStreams();
-                newSong.LoadAudio();
+                currentSongAudio.FreeAudioStreams();
+                currentSongAudio.LoadAllAudioClips(newSong);
             }),
         };
 
@@ -658,7 +661,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         // Load the default chart
         LoadChart(currentSong.GetChart(MenuBar.currentInstrument, MenuBar.currentDifficulty));
 
-        if (AudioManager.StreamIsValid(currentSong.audioManager.GetAudioStream(Song.AudioInstrument.Song)))
+        if (AudioManager.StreamIsValid(currentSongAudio.GetAudioStream(Song.AudioInstrument.Song)))
         {
             movement.SetPosition(0);
         }
@@ -682,7 +685,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     #region Audio Functions
     public void PlayAudio(float playPoint)
     {
-        SongAudioManager songAudioManager = currentSong.audioManager;
+        SongAudioManager songAudioManager = currentSongAudio;
         SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
         SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
         SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);
@@ -716,7 +719,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
    public void StopAudio()
     {
-        foreach (var bassStream in currentSong.audioManager.bassAudioStreams)
+        foreach (var bassStream in currentSongAudio.bassAudioStreams)
         {
             if (AudioManager.StreamIsValid(bassStream))
                 bassStream.Stop();
@@ -780,6 +783,40 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             else
             {
                 stream.tempo = speed * 100 - 100;
+            }
+        }
+    }
+
+    public float currentSongLength
+    {
+        get
+        {
+            float DEFAULT_SONG_LENGTH = 300;     // 5 minutes
+
+            if (currentSong == null)
+                return 0;
+
+            if (currentSong.manualLength.HasValue)
+            {
+                return currentSong.manualLength.Value;
+            }
+            else
+            {
+                AudioStream mainStream = currentSongAudio.mainSongAudio;
+
+                if (mainStream != null)
+                {
+                    float length = mainStream.ChannelLengthInSeconds() + currentSong.offset;
+
+                    if (length <= 0)
+                        return DEFAULT_SONG_LENGTH;
+                    else
+                        return length;
+                }
+                else
+                {
+                    return DEFAULT_SONG_LENGTH;
+                }
             }
         }
     }

@@ -174,7 +174,7 @@ public class ClipboardObjectController : Snapable {
             }
 
             {
-                uint maxLength = editor.currentSong.TimeToTick(editor.currentSong.length, editor.currentSong.resolution);
+                uint maxLength = editor.currentSong.TimeToTick(editor.currentSongLength, editor.currentSong.resolution);
 
                 List<SongObject> newObjectsToAddIn = new List<SongObject>();
 

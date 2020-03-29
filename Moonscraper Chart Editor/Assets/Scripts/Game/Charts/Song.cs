@@ -38,7 +38,6 @@ public class Song {
     public float offset = 0;
 
     string[] audioLocations = new string[EnumX<AudioInstrument>.Count];
-    public SongAudioManager audioManager { get; private set; }
 
     System.Threading.Thread saveThread;
     
@@ -59,13 +58,6 @@ public class Song {
     }
 
     public float? manualLength = null;
-    public float length
-    {
-        get
-        {
-            return audioManager.GetSongLength(this);
-        }
-    }
 
     // Charts
     Chart[] charts;
@@ -114,8 +106,6 @@ public class Song {
     /// </summary>
     public Song()
     {
-        audioManager = new SongAudioManager();
-
         AUDIO_INSTUMENT_COUNT = EnumX<AudioInstrument>.Count;
         DIFFICULTY_COUNT = EnumX<Difficulty>.Count;
 
@@ -561,11 +551,6 @@ public class Song {
     public float ResolutionScaleRatio (float targetResoltion)
     {
         return (targetResoltion / (float)resolution);
-    }
-
-    public void LoadAudio()
-    {
-        audioManager.LoadAllAudioClips(this);
     }
 
     public string GetAudioName(AudioInstrument audio)

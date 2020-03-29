@@ -190,7 +190,7 @@ public class Services : MonoBehaviour
         get
         {
             ChartEditor editor = ChartEditor.Instance;
-            SongAudioManager songAudioManager = editor.currentSong.audioManager;
+            SongAudioManager songAudioManager = editor.currentSongAudio;
             AudioStream mainAudio = songAudioManager.mainSongAudio;
 
             float currentAudioTime = 0;

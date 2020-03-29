@@ -91,23 +91,51 @@ public static class MidWriter {
     public static void WriteToFile(string path, Song song, ExportOptions exportOptions)
     {
         Debug.Log(path);
-        short track_count = 1; 
+        short track_count = 1;
 
-        byte[] track_sync = MakeTrack(GetSyncBytes(song, exportOptions), song.name);
+        float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
+        
+        byte[] track_sync = MakeTrack(GetSyncBytes(song, exportOptions, resolutionScaleRatio), song.name);
+        byte[] track_events;
+        {
+            uint deltaTickSum;
 
-        uint end;
-        byte[] track_events = MakeTrack(GetEventBytes(song, exportOptions, null, new List<string>() { MidIOHelper.LYRIC_EVENT_PREFIX }, true, out end), MidIOHelper.EVENTS_TRACK);
+            List<byte> eventBytes = new List<byte>(GetEventBytes(
+                    song,
+                    exportOptions,
+                    null,
+                    new List<string>() { MidIOHelper.LYRIC_EVENT_PREFIX },
+                    true,
+                    resolutionScaleRatio,
+                    out deltaTickSum));
+
+            /*
+             * // Optional, not using this at the moment, use this if ever needed. Will need to pass the song length in manually though.
+            uint musicEnd = song.TimeToTick(song.length + exportOptions.tickOffset, song.resolution * resolutionScaleRatio);
+
+            if (musicEnd > deltaTickSum)
+                musicEnd -= deltaTickSum;
+            else
+                musicEnd = deltaTickSum;
+
+            // Add music_end and end text events.
+            eventBytes.AddRange(TimedEvent(musicEnd, MetaTextEvent(TEXT_EVENT, "[music_end]")));
+            eventBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[end]")));
+            */
+            track_events = MakeTrack(eventBytes.ToArray(), MidIOHelper.EVENTS_TRACK);
+        }
+
         if (track_events.Length > 0)
             track_count++;
 
-        //byte[] track_beat = MakeTrack(GenerateBeat(end, (uint)exportOptions.targetResolution), "BEAT");
+        //byte[] track_beat = MakeTrack(GenerateBeat(musicEnd, (uint)exportOptions.targetResolution), "BEAT");
         //song.GetChart(Song.Instrument.Guitar, Song.Difficulty.Expert).Add(new ChartEvent(0, "[idle_realtime]")); 
 
         List<byte[]> allTracks = new List<byte[]>();
         List<string> allTrackNames = new List<string>();
         foreach (KeyValuePair<Song.Instrument, string> entry in c_instrumentToTrackNameDict)
         {
-            byte[] bytes = GetInstrumentBytes(song, entry.Key, exportOptions);
+            byte[] bytes = GetInstrumentBytes(song, entry.Key, exportOptions, resolutionScaleRatio);
             if (bytes.Length > 0)
             {
                 Debug.LogFormat("Saving {0} track", entry.Key.ToString());
@@ -117,7 +145,7 @@ public static class MidWriter {
             }
         }
 
-        byte[] lyric_events = GetEventBytes(song, exportOptions, new List<string>() { MidIOHelper.LYRIC_EVENT_PREFIX }, null, false, out end);
+        byte[] lyric_events = GetEventBytes(song, exportOptions, new List<string>() { MidIOHelper.LYRIC_EVENT_PREFIX }, null, false, resolutionScaleRatio);
         if (lyric_events.Length > 0)
         {
             // Make a vocals track
@@ -131,7 +159,7 @@ public static class MidWriter {
         byte[][] unrecognised_tracks = new byte[song.unrecognisedCharts.Count][];
         for (int i = 0; i < unrecognised_tracks.Length; ++i)
         {
-            unrecognised_tracks[i] = GetUnrecognisedChartBytes(song.unrecognisedCharts[i], exportOptions);
+            unrecognised_tracks[i] = GetUnrecognisedChartBytes(song.unrecognisedCharts[i], exportOptions, resolutionScaleRatio);
             track_count++;
         }
 
@@ -160,7 +188,7 @@ public static class MidWriter {
         file.Close();
     }
 
-    static byte[] GetSyncBytes(Song song, ExportOptions exportOptions)
+    static byte[] GetSyncBytes(Song song, ExportOptions exportOptions, float resolutionScaleRatio)
     {
         List<byte> syncTrackBytes = new List<byte>();
 
@@ -170,8 +198,6 @@ public static class MidWriter {
             syncTrackBytes.AddRange(TimedEvent(0, TempoEvent(new BPM())));
             syncTrackBytes.AddRange(TimedEvent(0, TimeSignatureEvent(new TimeSignature())));
         }
-
-        float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
 
         // Loop through all synctrack events
         for (int i = 0; i < song.syncTrack.Count; ++i)
@@ -197,18 +223,38 @@ public static class MidWriter {
         return syncTrackBytes.ToArray();
     }
 
-    static byte[] GetEventBytes(Song song, ExportOptions exportOptions, List<string> allowedEventPrefixMaybe, List<string> ignoreEventPrefixMaybe, bool containInSquareBrackets, out uint end)
+    static byte[] GetEventBytes
+        (Song song
+        , ExportOptions exportOptions
+        , List<string> allowedEventPrefixMaybe
+        , List<string> ignoreEventPrefixMaybe
+        , bool containInSquareBrackets
+        , float resolutionScaleRatio
+        )
+    {
+        uint deltaTickSum;
+        return GetEventBytes(song, exportOptions, allowedEventPrefixMaybe, ignoreEventPrefixMaybe, containInSquareBrackets, resolutionScaleRatio, out deltaTickSum);
+    }
+
+    static byte[] GetEventBytes
+    (Song song
+    , ExportOptions exportOptions
+    , List<string> allowedEventPrefixMaybe
+    , List<string> ignoreEventPrefixMaybe
+    , bool containInSquareBrackets
+    , float resolutionScaleRatio
+    , out uint deltaTickSum
+    )
     {
         const string section_id = "section ";     // "section " is rb2 and former, "prc_" is rb3
         List<byte> eventBytes = new List<byte>();
 
         //eventBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[music_start]")));
 
-        uint deltaTickSum = 0;
-        float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
-
+        deltaTickSum = 0;
         uint previousEventTick = 0;
         int eventCount = 0;
+
         for (int i = 0; i < song.eventsAndSections.Count; ++i)
         {
             Event currentEvent = song.eventsAndSections[i];
@@ -277,23 +323,10 @@ public static class MidWriter {
             ++eventCount;
         }
 
-        uint music_end = song.TimeToTick(song.length + exportOptions.tickOffset, song.resolution * resolutionScaleRatio);
-
-        if (music_end > deltaTickSum)
-            music_end -= deltaTickSum;
-        else
-            music_end = deltaTickSum;
-
-        end = music_end;
-
-        // Add music_end and end text events.
-        //eventBytes.AddRange(TimedEvent(music_end, MetaTextEvent(TEXT_EVENT, "[music_end]")));
-        //eventBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[end]")));
-
         return eventBytes.ToArray();
     }
 
-    static byte[] GetInstrumentBytes(Song song, Song.Instrument instrument, ExportOptions exportOptions)
+    static byte[] GetInstrumentBytes(Song song, Song.Instrument instrument, ExportOptions exportOptions, float resolutionScaleRatio)
     {
         // Collect all bytes from each difficulty of the instrument, assigning the position for each event unsorted
         //List<SortableBytes> byteEvents = new List<SortableBytes>();
@@ -325,13 +358,12 @@ public static class MidWriter {
             }
         }
 
-        return SortableBytesToTimedEventBytes(sortedEvents.ToArray(), song, exportOptions);
+        return SortableBytesToTimedEventBytes(sortedEvents.ToArray(), song, exportOptions, resolutionScaleRatio);
     }
 
-    static byte[] SortableBytesToTimedEventBytes(SortableBytes[] sortedEvents, Song song, ExportOptions exportOptions)
+    static byte[] SortableBytesToTimedEventBytes(SortableBytes[] sortedEvents, Song song, ExportOptions exportOptions, float resolutionScaleRatio)
     {
         List<byte> bytes = new List<byte>();
-        float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
 
         for (int i = 0; i < sortedEvents.Length; ++i)
         {
@@ -527,7 +559,7 @@ public static class MidWriter {
         return eventList.ToArray();
     }
 
-    static byte[] GetUnrecognisedChartBytes(Chart chart, ExportOptions exportOptions)
+    static byte[] GetUnrecognisedChartBytes(Chart chart, ExportOptions exportOptions, float resolutionScaleRatio)
     {
         List<SortableBytes> eventList = new List<SortableBytes>();
 
@@ -562,7 +594,7 @@ public static class MidWriter {
             }
         }
 
-        return SortableBytesToTimedEventBytes(eventList.ToArray(), chart.song, exportOptions);
+        return SortableBytesToTimedEventBytes(eventList.ToArray(), chart.song, exportOptions, resolutionScaleRatio);
     }
 
     static byte[] GetMidiHeader(short fileFormat, short trackCount, short resolution)

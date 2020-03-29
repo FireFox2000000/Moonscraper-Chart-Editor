@@ -57,7 +57,7 @@ public abstract class MovementController : MonoBehaviour {
 
             // Make sure we're staying in sync with the audio
             {
-                SongAudioManager songAudioManager = editor.currentSong.audioManager;
+                SongAudioManager songAudioManager = editor.currentSongAudio;
 
                 AudioStream stream = null;
 

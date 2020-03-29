@@ -158,33 +158,4 @@ public class SongAudioManager
         Debug.Log("Total audio files load time: " + (Time.realtimeSinceStartup - time));
 #endif
     }
-
-    public float GetSongLength(Song song)
-    {
-        float DEFAULT_SONG_LENGTH = 300;     // 5 minutes
-
-        if (song == null)
-            return 0;
-
-        if (song.manualLength.HasValue)
-            return song.manualLength.Value;
-        else
-        {
-            AudioStream mainStream = mainSongAudio;
-
-            if (mainStream != null)
-            {
-                float length = mainStream.ChannelLengthInSeconds() + song.offset;
-
-                if (length <= 0)
-                    return DEFAULT_SONG_LENGTH;
-                else
-                    return length;
-            }
-            else
-            {
-                return DEFAULT_SONG_LENGTH;
-            }
-        }
-    }
 }
