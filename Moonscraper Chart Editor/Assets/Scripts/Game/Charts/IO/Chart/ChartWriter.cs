@@ -65,7 +65,6 @@ public class ChartWriter
         try
         {
             // Song properties
-            Debug.Log("Writing song properties");
             saveString += s_chartHeaderSong;
             saveString += GetPropertiesStringWithoutAudio(song, exportOptions);
 
@@ -111,7 +110,6 @@ public class ChartWriter
 
         // SyncTrack
         {
-            Debug.Log("Writing synctrack");
             saveString += s_chartHeaderSyncTrack;
             if (exportOptions.tickOffset > 0)
             {
@@ -129,7 +127,6 @@ public class ChartWriter
 
         // Events
         {
-            Debug.Log("Writing events");
             saveString += s_chartHeaderEvents;
             saveString += GetSaveString(song, song.eventsAndSections, exportOptions, ref errorList);
             saveString += s_chartSectionFooter;
