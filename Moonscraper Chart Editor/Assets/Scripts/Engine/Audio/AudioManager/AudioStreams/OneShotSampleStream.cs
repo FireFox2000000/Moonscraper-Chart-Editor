@@ -1,4 +1,7 @@
-﻿#if BASS_AUDIO
+﻿// Copyright (c) 2016-2020 Alexander Ong
+// See LICENSE in project root for license information.
+
+#if BASS_AUDIO
 using Un4seen.Bass;
 #endif
 

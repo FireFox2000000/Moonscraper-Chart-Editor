@@ -1,4 +1,7 @@
-﻿#define DEBUG_METHOD_CALL
+﻿// Copyright (c) 2016-2020 Alexander Ong
+// See LICENSE in project root for license information.
+
+#define DEBUG_METHOD_CALL
 
 using System.Collections;
 using System.Collections.Generic;

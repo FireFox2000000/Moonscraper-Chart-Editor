@@ -1,4 +1,7 @@
-﻿using System;       // import math lib
+﻿// Copyright (c) 2016-2020 Alexander Ong
+// See LICENSE in project root for license information.
+
+using System;       // import math lib
 
 public static class TickFunctions {
     const float SECONDS_PER_MINUTE = 60.0f;
