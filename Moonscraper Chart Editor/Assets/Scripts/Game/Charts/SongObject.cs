@@ -2,7 +2,6 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections.Generic;
 
 [System.Serializable]
 public abstract class SongObject

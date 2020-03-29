@@ -352,9 +352,6 @@ public class Song {
 
         if (autoUpdate)
             UpdateCache();
-
-        if (this == ChartEditor.Instance.currentSong)
-            ChartEditor.isDirty = true;
     }
 
     /// <summary>
@@ -375,7 +372,6 @@ public class Song {
         if (success)
         {
             syncTrackObject.song = null;
-            ChartEditor.isDirty = true;
         }
 
         if (autoUpdate)
@@ -397,9 +393,6 @@ public class Song {
 
         if (autoUpdate)
             UpdateCache();
-
-        if (this == ChartEditor.Instance.currentSong)
-            ChartEditor.isDirty = true;
     }
 
     /// <summary>
@@ -416,7 +409,6 @@ public class Song {
         if (success)
         {
             eventObject.song = null;
-            ChartEditor.isDirty = true;
         }
 
         if (autoUpdate)
@@ -784,8 +776,3 @@ public class ReadOnlyList<T> : IList<T>, IEnumerable<T>
         return _realListHandle.ToArray();
     }
 }
-
-/// <summary>
-/// Allows coroutines to be run by dynamically creating a MonoBehaviour derived instance by creating it with this class.
-/// </summary>
-class MonoWrapper : MonoBehaviour { }
