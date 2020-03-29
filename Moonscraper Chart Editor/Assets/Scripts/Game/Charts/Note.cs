@@ -314,7 +314,7 @@ public class Note : ChartObject
                 if (prevIsChord || (!prevIsChord && rawNote != previous.rawNote))
                 {
                     // Check distance from previous note 
-                    int HOPODistance = (int)(SongConfig.FORCED_NOTE_TICK_THRESHOLD * song.resolution / Song.STANDARD_BEAT_RESOLUTION);
+                    int HOPODistance = (int)(SongConfig.FORCED_NOTE_TICK_THRESHOLD * song.resolution / SongConfig.STANDARD_BEAT_RESOLUTION);
 
                     if (tick - previous.tick <= HOPODistance)
                         HOPO = true;

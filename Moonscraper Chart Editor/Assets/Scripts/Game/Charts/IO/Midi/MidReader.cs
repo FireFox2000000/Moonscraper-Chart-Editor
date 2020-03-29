@@ -233,7 +233,7 @@ public static class MidReader {
         if (instrument == Song.Instrument.Unrecognised)
             song.unrecognisedCharts.Add(unrecognised);
 
-        int rbSustainFixLength = (int)(64 * song.resolution / Song.STANDARD_BEAT_RESOLUTION);
+        int rbSustainFixLength = (int)(64 * song.resolution / SongConfig.STANDARD_BEAT_RESOLUTION);
 
         // Load all the notes
         for (int i = 0; i < track.Count; i++)

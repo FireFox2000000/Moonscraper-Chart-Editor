@@ -59,7 +59,7 @@ public class MetronomePlaybackSystem : SystemManagerState.System
         ChartEditor editor = ChartEditor.Instance;
         Song song = editor.currentSong;
         var timeSignatures = editor.currentSong.timeSignatures;
-        uint standardMeasureLengthTicks = (uint)(Song.RESOLUTIONS_PER_MEASURE * song.resolution);
+        uint standardMeasureLengthTicks = (uint)(SongConfig.RESOLUTIONS_PER_MEASURE * song.resolution);
 
         int lastTsIndex = SongObjectHelper.FindClosestPositionRoundedDown(currentTickPosition, timeSignatures);
         TimeSignature currentTimeSignature = timeSignatures[lastTsIndex];

@@ -14,11 +14,6 @@ using System.Linq;
 using System;
 
 public class Song {
-    // Constants
-    public static readonly float STANDARD_BEAT_RESOLUTION = 192.0f;
-    public const uint FULL_STEP = 768;
-    public const float RESOLUTIONS_PER_MEASURE = 4.0f;
-
     // Song properties
     public Metadata metaData = new Metadata();
     public string name
