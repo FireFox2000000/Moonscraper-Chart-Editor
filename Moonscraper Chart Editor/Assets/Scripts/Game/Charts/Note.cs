@@ -1,8 +1,6 @@
 ﻿// Copyright (c) 2016-2017 Alexander Ong
 // See LICENSE in project root for license information.
 
-#define APPLICATION_MOONSCRAPER     // Moonscraper doesn't use chart.gameMode because notes might not have charts associated with them, copy-pasting for instance and storing undo-redo
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -192,7 +190,7 @@ public class Note : ChartObject
                 return chart.gameMode;
             else
             {
-#if APPLICATION_MOONSCRAPER
+#if APPLICATION_MOONSCRAPER     // Moonscraper doesn't use note.chart.gameMode directly because notes might not have charts associated with them, esp when copy-pasting and storing undo-redo
                 return ChartEditor.Instance.currentChart.gameMode;
 #else
                 return Chart.GameMode.Unrecognised;
