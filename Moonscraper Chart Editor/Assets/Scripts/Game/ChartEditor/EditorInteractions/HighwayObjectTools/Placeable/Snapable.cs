@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -60,6 +60,9 @@ public abstract class Snapable : MonoBehaviour {
         {
             objectSnappedChartPos = GetSnappedPos(editor, step);
         }
+
+        // Cap to within the range of the song
+        objectSnappedChartPos = (uint)Mathf.Min(editor.maxPos, objectSnappedChartPos);
     }
 
     protected virtual void LateUpdate()
@@ -104,7 +107,7 @@ public abstract class Snapable : MonoBehaviour {
 
         // Old algorithm
         // Snap position based on step
-        //float factor = Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION;
+        //float factor = SongConfig.FULL_STEP / (float)step * resolution / SongConfig.STANDARD_BEAT_RESOLUTION;
         //float divisor = tick / factor;
         //float lowerBound = (int)divisor * factor;
         //float remainder = divisor - (int)divisor;
@@ -124,7 +127,7 @@ public abstract class Snapable : MonoBehaviour {
 
         if (currentSnap <= tick)
         {
-            currentSnap = TickToSnappedTick(tick + (uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION), step, song);
+            currentSnap = TickToSnappedTick(tick + (uint)(SongConfig.FULL_STEP / (float)step * resolution / SongConfig.STANDARD_BEAT_RESOLUTION), step, song);
         }
 
         return currentSnap;
@@ -137,10 +140,10 @@ public abstract class Snapable : MonoBehaviour {
 
         if (currentSnap >= tick)
         {
-            if ((uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION) >= tick)
+            if ((uint)(SongConfig.FULL_STEP / (float)step * resolution / SongConfig.STANDARD_BEAT_RESOLUTION) >= tick)
                 currentSnap = 0;
             else
-                currentSnap = TickToSnappedTick(tick - (uint)(Song.FULL_STEP / (float)step * resolution / Song.STANDARD_BEAT_RESOLUTION), step, song);
+                currentSnap = TickToSnappedTick(tick - (uint)(SongConfig.FULL_STEP / (float)step * resolution / SongConfig.STANDARD_BEAT_RESOLUTION), step, song);
         }
 
         return currentSnap;

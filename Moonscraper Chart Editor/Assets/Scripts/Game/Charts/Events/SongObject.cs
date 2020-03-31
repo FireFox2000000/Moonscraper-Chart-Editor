@@ -1,8 +1,7 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections.Generic;
 
 [System.Serializable]
 public abstract class SongObject
@@ -33,10 +32,6 @@ public abstract class SongObject
     {
         get
         {
-            if (song == null)
-            {
-                Debug.Log("null");
-            }
             return song.TickToWorldYPosition(tick);
         }
     }
@@ -48,7 +43,6 @@ public abstract class SongObject
     {
         get
         {
-            Debug.Assert(song != null);
             return song.TickToTime(tick, song.resolution);
         }
     }

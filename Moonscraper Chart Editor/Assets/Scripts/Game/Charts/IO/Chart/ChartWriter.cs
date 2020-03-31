@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -65,7 +65,6 @@ public class ChartWriter
         try
         {
             // Song properties
-            Debug.Log("Writing song properties");
             saveString += s_chartHeaderSong;
             saveString += GetPropertiesStringWithoutAudio(song, exportOptions);
 
@@ -78,7 +77,7 @@ public class ChartWriter
                 else
                     audioString = audioLocation;
 
-                if (song.GetAudioIsLoaded(audio) || (audioString != null && audioString != string.Empty))
+                if (!string.IsNullOrEmpty(audioString))
                     saveString += string.Format(saveFormat, audioString);
             };
 
@@ -103,15 +102,10 @@ public class ChartWriter
             errorList += error + Globals.LINE_ENDING;
 
             saveString = string.Empty;  // Clear all the song properties because we don't want braces left open, which will screw up the loading of the chart
-
-#if UNITY_EDITOR
-            System.Diagnostics.Debugger.Break();
-#endif
         }
 
         // SyncTrack
         {
-            Debug.Log("Writing synctrack");
             saveString += s_chartHeaderSyncTrack;
             if (exportOptions.tickOffset > 0)
             {
@@ -129,7 +123,6 @@ public class ChartWriter
 
         // Events
         {
-            Debug.Log("Writing events");
             saveString += s_chartHeaderEvents;
             saveString += GetSaveString(song, song.eventsAndSections, exportOptions, ref errorList);
             saveString += s_chartSectionFooter;
@@ -246,8 +239,8 @@ public class ChartWriter
         if (metaData.player2 != string.Empty)
             saveString += string.Format(ChartIOHelper.MetaData.player2.saveFormat, metaData.player2.ToLower());
         saveString += string.Format(ChartIOHelper.MetaData.difficulty.saveFormat, metaData.difficulty);
-        if (song.manualLength)
-            saveString += string.Format(ChartIOHelper.MetaData.length.saveFormat, song.length);
+        if (song.manualLength.HasValue)
+            saveString += string.Format(ChartIOHelper.MetaData.length.saveFormat, song.manualLength.Value);
         saveString += string.Format(ChartIOHelper.MetaData.previewStart.saveFormat, metaData.previewStart);
         saveString += string.Format(ChartIOHelper.MetaData.previewEnd.saveFormat, metaData.previewEnd);
         if (metaData.genre != string.Empty)

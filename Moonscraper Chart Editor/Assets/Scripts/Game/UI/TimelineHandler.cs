@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -120,7 +120,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
             UpdatePercentageText(newPercentageValue);
         }
 
-        bool update = (!ReferenceEquals(prevSong, editor.currentSong) || prevSongLength != editor.currentSong.length
+        bool update = (!ReferenceEquals(prevSong, editor.currentSong) || prevSongLength != editor.currentSongLength
              || previousScreenSize.x != Screen.width || previousScreenSize.y != Screen.height || 
              prevRes.height != Screen.currentResolution.height ||
              prevRes.width != Screen.currentResolution.width || prevRes.refreshRate != Screen.currentResolution.refreshRate);
@@ -162,7 +162,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         }
 
         prevSong = editor.currentSong;
-        prevSongLength = editor.currentSong.length;
+        prevSongLength = editor.currentSongLength;
         prevSPLength = editor.currentChart.starPower.Count;
         prevSectionLength = editor.currentSong.sections.Count;
         previousScreenSize.x = Screen.width;
@@ -198,7 +198,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         int i;
         for (i = 0; i < editor.currentSong.sections.Count; ++i)
         {
-            if (i < sectionIndicatorPool.Length && editor.currentSong.sections[i].time <= editor.currentSong.length)
+            if (i < sectionIndicatorPool.Length && editor.currentSong.sections[i].time <= editor.currentSongLength)
             {
                 sectionIndicatorPool[i].gameObject.SetActive(true);
                 sectionIndicatorPool[i].ExplicitUpdate();
@@ -225,7 +225,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         int i;
         for (i = 0; i < editor.currentChart.starPower.Count; ++i)
         {  
-            if (i < starpowerIndicatorPool.Length && editor.currentChart.starPower[i].time <= editor.currentSong.length)
+            if (i < starpowerIndicatorPool.Length && editor.currentChart.starPower[i].time <= editor.currentSongLength)
             {
                 starpowerIndicatorPool[i].gameObject.SetActive(true);
                 starpowerIndicatorPool[i].ExplicitUpdate();
@@ -317,7 +317,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
     }
 
     float minTimeRange = 0;
-    float maxTimeRange = 300; // editor.currentSong.length
+    float maxTimeRange = 300; // editor.currentSongLength
 
     public Vector3? TimeToLocalPosition(float timeInSeconds)
     {
@@ -348,7 +348,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
             float minTime = editor.currentSong.TickToTime(highlightRangeMin, editor.currentSong.resolution);
             float maxTime = editor.currentSong.TickToTime(highlightRangeMax, editor.currentSong.resolution);
 
-            float endTime = editor.currentSong.length;
+            float endTime = editor.currentSongLength;
 
             Vector3 minPos = Vector3.zero, maxPos = Vector3.zero;
 

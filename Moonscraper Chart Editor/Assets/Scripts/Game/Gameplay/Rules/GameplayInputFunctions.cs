@@ -1,4 +1,6 @@
-﻿
+﻿// Copyright (c) 2016-2020 Alexander Ong
+// See LICENSE in project root for license information.
+
 public static class GameplayInputFunctions  {
     public static int BitshiftToIgnoreLowerUnusedFrets(int bitmaskToShift, out int shiftCount)
     {

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -32,6 +32,8 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             editor.events.toolChangedEvent.Register(OnToolChanged);
             initialised = true;
         }
+
+        ChartEditor.Instance.events.drumsModeOptionChangedEvent.Register(UpdateTogglesInteractable);
     }
 
     void OnToolChanged()
@@ -132,7 +134,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         bool drumsMode = Globals.drumMode;
         forcedToggle.gameObject.SetActive(!drumsMode);
         tapToggle.gameObject.SetActive(!drumsMode);
-        cymbalToggle.gameObject.SetActive(drumsMode && ChartEditor.Instance.laneInfo.laneCount == SongConfig.PRO_DRUMS_LANE_COUNT);
+        cymbalToggle.gameObject.SetActive(drumsMode && GameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums);
 
         if (!drumsMode)
         {
@@ -173,18 +175,17 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     {
         if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteTap) && tapToggle.interactable)
         {
-            if (tapToggle.isOn)
-                tapToggle.isOn = false;
-            else
-                tapToggle.isOn = true;
+            tapToggle.isOn = !tapToggle.isOn;
         }
 
         if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteForced) && forcedToggle.interactable)
         {
-            if (forcedToggle.isOn)
-                forcedToggle.isOn = false;
-            else
-                forcedToggle.isOn = true;
+            forcedToggle.isOn = !forcedToggle.isOn;
+        }
+
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteCymbal) && cymbalToggle.interactable)
+        {
+            cymbalToggle.isOn = !cymbalToggle.isOn;
         }
     }
     

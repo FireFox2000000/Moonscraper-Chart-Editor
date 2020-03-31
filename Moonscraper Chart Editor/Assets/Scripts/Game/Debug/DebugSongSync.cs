@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿// Copyright (c) 2016-2020 Alexander Ong
+// See LICENSE in project root for license information.
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,16 +26,16 @@ public class DebugSongSync : MonoBehaviour
         ChartEditor editor = ChartEditor.Instance;
         if (editor.currentState == ChartEditor.State.Playing && tick)
         {
-            Song currentSong = editor.currentSong;
+            SongAudioManager songAudioManager = editor.currentSongAudio;
             visibleAudioTime = editor.services.currentAudioTime;
 
             AudioStream stream = null;
 
             foreach (Song.AudioInstrument audio in audioInstrumentEnumVals)
             {
-                if (AudioManager.StreamIsValid(currentSong.GetAudioStream(audio)))
+                if (AudioManager.StreamIsValid(songAudioManager.GetAudioStream(audio)))
                 {
-                    stream = currentSong.GetAudioStream(audio);
+                    stream = songAudioManager.GetAudioStream(audio);
                     break;
                 }
             }

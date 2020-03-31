@@ -1647,7 +1647,7 @@ TextureImporter:
       name: lane3_reg_tap_4
       rect:
         serializedVersion: 2
-        x: 1534
+        x: 1536
         y: 1344
         width: 128
         height: 64
@@ -1808,7 +1808,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1282
+        y: 1280
         width: 128
         height: 64
       alignment: 0
@@ -2128,7 +2128,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2048
-        y: 1282
+        y: 1280
         width: 128
         height: 64
       alignment: 0

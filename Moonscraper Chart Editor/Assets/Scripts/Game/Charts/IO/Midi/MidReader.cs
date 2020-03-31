@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -233,7 +233,7 @@ public static class MidReader {
         if (instrument == Song.Instrument.Unrecognised)
             song.unrecognisedCharts.Add(unrecognised);
 
-        int rbSustainFixLength = (int)(64 * song.resolution / Song.STANDARD_BEAT_RESOLUTION);
+        int rbSustainFixLength = (int)(64 * song.resolution / SongConfig.STANDARD_BEAT_RESOLUTION);
 
         // Load all the notes
         for (int i = 0; i < track.Count; i++)
@@ -364,7 +364,6 @@ public static class MidReader {
             var sysexEvent = track[i] as SysexEvent;
             if (sysexEvent != null)
             {
-                //Debug.Log(BitConverter.ToString(sysexEvent.GetData()));
                 tapAndOpenEvents.Add(sysexEvent);
             }
         }

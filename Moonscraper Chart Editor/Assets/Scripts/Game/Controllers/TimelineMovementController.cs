@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -69,7 +69,7 @@ public class TimelineMovementController : MovementController
         if (timePosition)
         {
             bool audioLoaded = false;
-            foreach (var stream in editor.currentSong.bassAudioStreams)
+            foreach (var stream in editor.currentSongAudio.bassAudioStreams)
             {
                 if (AudioManager.StreamIsValid(stream))
                     audioLoaded = true;
@@ -203,7 +203,7 @@ public class TimelineMovementController : MovementController
                         snappedPos = Snapable.TickToSnappedTick(currentPos - (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong);
                     }
 
-                    if (editor.currentSong.TickToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSong.length)
+                    if (editor.currentSong.TickToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSongLength)
                     {
                         SetPosition(snappedPos);
                     }
@@ -281,7 +281,7 @@ public class TimelineMovementController : MovementController
                     transform.position = initPos;
             }
 
-            float endYPos = TickFunctions.TimeToWorldYPosition(editor.currentSong.length);
+            float endYPos = TickFunctions.TimeToWorldYPosition(editor.currentSongLength);
             float totalDistance = endYPos - initPos.y - strikeLine.localPosition.y;
 
             if (transform.position.y + strikeLine.localPosition.y > endYPos)
@@ -305,7 +305,7 @@ public class TimelineMovementController : MovementController
     {
         if (editor.currentChart != null)
         {         
-            float endYPos = TickFunctions.TimeToWorldYPosition(editor.currentSong.length);
+            float endYPos = TickFunctions.TimeToWorldYPosition(editor.currentSongLength);
             float totalDistance = endYPos - initPos.y - strikeLine.localPosition.y;
 
             if (totalDistance > 0)
@@ -340,7 +340,7 @@ public class TimelineMovementController : MovementController
             if (i < editor.currentSong.sections.Count && Mathf.Round(editor.currentSong.sections[i].worldYPosition) > position)
                 SetPosition(editor.currentSong.sections[i].tick);
             else
-                SetPosition(editor.currentSong.TimeToTick(editor.currentSong.length, editor.currentSong.resolution));       // Jump to the end of the song
+                SetPosition(editor.currentSong.TimeToTick(editor.currentSongLength, editor.currentSong.resolution));       // Jump to the end of the song
 
         }
         // Jump backwards

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -109,7 +109,7 @@ public class DrawBeatLines : SystemManagerState.System
         uint startRange = song.WorldPositionToSnappedTick(editor.camYMin.position.y, 8);
         uint endRange = editor.maxPos;
         var timeSignatures = editor.currentSong.timeSignatures;
-        uint standardMeasureLengthTicks = (uint)(Song.RESOLUTIONS_PER_MEASURE * song.resolution);
+        uint standardMeasureLengthTicks = (uint)(SongConfig.RESOLUTIONS_PER_MEASURE * song.resolution);
 
         int startIndex = SongObjectHelper.FindClosestPositionRoundedDown(startRange, timeSignatures);   
 

@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿// Copyright (c) 2016-2020 Alexander Ong
+// See LICENSE in project root for license information.
+
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public static class SongObjectHelper {
     public const int NOTFOUND = -1;
@@ -403,7 +405,6 @@ public static void FindObjectsAtPosition<T>(uint position, IList<T> objects, out
     /// <returns>Returns whether the item was successfully removed or not (may not be removed if the objects was not found).</returns>
     public static bool Remove<T>(T item, IList<T> list, bool uniqueData = true) where T : SongObject
     {
-        ChartEditor.isDirty = true;
         int pos = FindObjectPosition(item, list);
 
         if (pos != NOTFOUND)

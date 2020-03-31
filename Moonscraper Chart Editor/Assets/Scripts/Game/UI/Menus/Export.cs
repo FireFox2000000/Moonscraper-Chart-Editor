@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -127,6 +127,7 @@ public class Export : DisplayMenu {
         if (FileExplorer.OpenFolderPanel(out saveDirectory))
         {
             Song song = editor.currentSong;
+            float songLength = editor.currentSongLength;
 
             saveDirectory = saveDirectory.Replace('\\', '/');
 
@@ -137,7 +138,7 @@ public class Export : DisplayMenu {
 
             saveDirectory += song.name + "/";
 
-            StartCoroutine(ExportCHPackage(saveDirectory, song, exportOptions));
+            StartCoroutine(ExportCHPackage(saveDirectory, song, songLength, exportOptions));
         }
     }
 
@@ -146,6 +147,8 @@ public class Export : DisplayMenu {
         LoadingTasksManager tasksManager = editor.services.loadingTasksManager;
 
         Song song = editor.currentSong;// new Song(editor.currentSong);
+        float songLength = editor.currentSongLength;
+
         exportOptions.tickOffset = TickFunctions.TimeToDis(0, delayTime, exportOptions.targetResolution, 120);
 
         float timer = Time.realtimeSinceStartup;
@@ -159,6 +162,7 @@ public class Export : DisplayMenu {
                 {
                     try
                     {
+                        Debug.Log("Exporting CHART file to " + filepath);
                         new ChartWriter(filepath).Write(song, exportOptions, out errorMessageList);
                         //song.Save(filepath, exportOptions);
                     }
@@ -172,6 +176,7 @@ public class Export : DisplayMenu {
                 {
                     try
                     {
+                        Debug.Log("Exporting MIDI file to " + filepath);
                         MidWriter.WriteToFile(filepath, song, exportOptions);
                     }
                     catch (System.Exception e)
@@ -187,7 +192,7 @@ public class Export : DisplayMenu {
         {
             tasks.Add(new LoadingTask("Generating Song.ini", () =>
             {
-                GenerateSongIni(Path.GetDirectoryName(filepath), song);
+                GenerateSongIni(Path.GetDirectoryName(filepath), song, songLength);
             }));
         }
 
@@ -286,7 +291,7 @@ public class Export : DisplayMenu {
         delayInputField.text = "2.5";
     }
 
-    static void GenerateSongIni(string path, Song song)
+    static void GenerateSongIni(string path, Song song, float songLengthSeconds)
     {
         Metadata metaData = song.metaData;
 
@@ -297,7 +302,7 @@ public class Export : DisplayMenu {
         ofs.WriteLine("album = " + metaData.album);
         ofs.WriteLine("genre = " + metaData.genre);
         ofs.WriteLine("year = " + metaData.year);
-        ofs.WriteLine("song_length = " + (int)(song.length * 1000));
+        ofs.WriteLine("song_length = " + (int)(songLengthSeconds * 1000));
         ofs.WriteLine("count = 0");
         ofs.WriteLine("diff_band = -1");
         ofs.WriteLine("diff_guitar = -1");
@@ -424,7 +429,7 @@ public class Export : DisplayMenu {
         return newAudioName;
     }
 
-    IEnumerator ExportCHPackage(string destFolderPath, Song song, ExportOptions exportOptions)
+    IEnumerator ExportCHPackage(string destFolderPath, Song song, float songLengthSeconds, ExportOptions exportOptions)
     {
         Song newSong = new Song(song);
         LoadingTasksManager tasksManager = editor.services.loadingTasksManager;
@@ -467,7 +472,7 @@ public class Export : DisplayMenu {
                 }
 
                 new ChartWriter(chartOutputFile).Write(newSong, exportOptions, out errorMessageList);
-                GenerateSongIni(destFolderPath, newSong);
+                GenerateSongIni(destFolderPath, newSong, songLengthSeconds);
             }),
         };
 

@@ -1,4 +1,7 @@
-﻿//#undef UNITY_EDITOR
+﻿// Copyright (c) 2016-2020 Alexander Ong
+// See LICENSE in project root for license information.
+
+//#undef UNITY_EDITOR
 
 public class WindowHandleManager {
     public NativeWindow nativeWindow = new NativeWindow();

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -83,6 +83,9 @@ public class StarpowerController : SongObjectController
         {
             snappedChartPos = Snapable.TickToSnappedTick(starpower.song.WorldYPositionToTick(editor.mouseYMaxLimit.position.y), GameSettings.step, starpower.song);
         }
+
+        // Cap to within the range of the song
+        snappedChartPos = (uint)Mathf.Min(editor.maxPos, snappedChartPos);
 
         uint newLength = starpower.GetCappedLengthForPos(snappedChartPos);
         if (newLength != starpower.length)

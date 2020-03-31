@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -48,7 +48,7 @@ public class WaveformDraw : MonoBehaviour {
         {
             if (waveformSelect.value == (audioIndex + 1))
             {
-                currentSample = editor.currentSong.GetSampleData((Song.AudioInstrument)audioIndex);
+                currentSample = editor.currentSongAudio.GetSampleData((Song.AudioInstrument)audioIndex);
             }
         }
 

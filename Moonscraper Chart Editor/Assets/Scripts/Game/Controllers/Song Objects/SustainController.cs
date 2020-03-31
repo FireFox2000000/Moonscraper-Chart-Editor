@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -13,6 +13,8 @@ public class SustainController : SelectableClick {
 
     LineRenderer sustainRen;
 
+    // This is the data we use to track command pushing and popping when adjusting the length of sustains. 
+    // We keep this static to minimise memory usage as there should only be one instance of dragging at a time (chord are handled as a single instance)
     static List<Note> originalDraggedNotes = new List<Note>();
     static List<SongEditCommand> sustainDragCommands = new List<SongEditCommand>();
     static int commandPushCount = 0;
@@ -35,6 +37,8 @@ public class SustainController : SelectableClick {
         {
             if (Input.GetMouseButton(1))
             {
+                ResetSustainDragData();
+
                 {
                     uint snappedSustainPos = GetSnappedSustainPos();
                     if (snappedSustainPos == nCon.note.tick)        // Only assigned if we're clicking on the note itself, otherwise we can modify the sustain instantly. 
@@ -42,10 +46,6 @@ public class SustainController : SelectableClick {
                         initialDraggingSnappedPos = snappedSustainPos;
                     }
                 }
-
-                originalDraggedNotes.Clear();
-                sustainDragCommands.Clear();
-                commandPushCount = 0;
 
                 if (!GameSettings.extendedSustainsEnabled || MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect))
                 {
@@ -109,7 +109,9 @@ public class SustainController : SelectableClick {
             --commandPushCount;
 
             Debug.Assert(commandPushCount == 0);
-        }     
+        }
+
+        ResetSustainDragData();
     }
 
     public void UpdateSustain()
@@ -171,6 +173,22 @@ public class SustainController : SelectableClick {
         }
     }
 
+    public static void ResetSustainDragData()
+    {
+        originalDraggedNotes.Clear();
+        sustainDragCommands.Clear();
+        commandPushCount = 0;
+        initialDraggingSnappedPos = null;
+    }
+
+    public static bool SustainDraggingInProgress
+    {
+        get
+        {
+            return originalDraggedNotes.Count > 0 || sustainDragCommands.Count > 0;
+        }
+    }
+
     void GenerateSustainDragCommands(bool compareWithOriginal)
     {
         if (nCon.note.song == null || Input.GetMouseButton(0) || initialDraggingSnappedPos.HasValue)
@@ -221,6 +239,9 @@ public class SustainController : SelectableClick {
         {
             snappedChartPos = Snapable.TickToSnappedTick(note.song.WorldYPositionToTick(editor.mouseYMaxLimit.position.y), GameSettings.step, note.song);
         }
+
+        // Cap to within the range of the song
+        snappedChartPos = (uint)Mathf.Min(editor.maxPos, snappedChartPos);
 
         return snappedChartPos;
     }

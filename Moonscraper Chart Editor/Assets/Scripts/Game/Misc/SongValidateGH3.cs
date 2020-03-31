@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -17,7 +17,7 @@ public class SongValidateGH3 {
         return message;
     }
 
-    void FixSong(Song song)
+    void FixSong(Song song, float maxLengthSeconds)
     {
         // GH3 will crash if there are more than 100 sections
         if (song.sections.Count > 100)
@@ -30,17 +30,17 @@ public class SongValidateGH3 {
             song.UpdateCache();
         }
 
-        SongObjectPositionFix(song, song.syncTrack);
-        SongObjectPositionFix(song, song.eventsAndSections);
+        SongObjectPositionFix(song, song.syncTrack, maxLengthSeconds);
+        SongObjectPositionFix(song, song.eventsAndSections, maxLengthSeconds);
     }
 
-    string SongObjectPositionFix<T>(Song song, IList<T> songObjects) where T : SongObject
+    string SongObjectPositionFix<T>(Song song, IList<T> songObjects, float maxLengthSeconds) where T : SongObject
     {
         string errors = string.Empty;
 
         for (int i = songObjects.Count; i >= 0; --i)
         {
-            if (songObjects[i].time > song.length)
+            if (songObjects[i].time > maxLengthSeconds)
             {
                 errors += songObjects[i].ToString() + " at position " + songObjects[i].tick.ToString() + " is beyond the length of the song. " + Globals.LINE_ENDING;
 
@@ -56,7 +56,7 @@ public class SongValidateGH3 {
         return errors;
     }
 
-    string ChartObjectPositionFix<T>(Chart chart, T[] chartObjects) where T : ChartObject
+    string ChartObjectPositionFix<T>(Chart chart, T[] chartObjects, float maxSongLength) where T : ChartObject
     {
         string errors = string.Empty;
 
@@ -64,7 +64,7 @@ public class SongValidateGH3 {
         {
             errors += chartObjects[i].ToString() + " at position " + chartObjects[i].tick.ToString() + " is beyond the length of the song. " + Globals.LINE_ENDING;
 
-            if (chartObjects[i].time > chart.song.length)
+            if (chartObjects[i].time > maxSongLength)
                 chart.Remove(chartObjects[i]);
             else
                 break;

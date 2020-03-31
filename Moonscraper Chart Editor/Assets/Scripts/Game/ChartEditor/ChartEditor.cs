@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 #define TIMING_DEBUG
@@ -47,6 +47,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public Song currentSong { get; private set; }
     public Chart currentChart { get; private set; }
     public Chart.GameMode currentGameMode { get { return currentChart.gameMode; } }
+    public SongAudioManager currentSongAudio { get; private set; }
     string currentFileName = string.Empty;
 
     [HideInInspector]
@@ -119,9 +120,14 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public Services services { get { return globals.services; } }
     public UIServices uiServices { get { return services.uiServices; } }
 
+    System.Threading.Thread _saveThread;
+
     // Use this for initialization
     void Awake () {
         Debug.Log("Initialising " + versionNumber.text);
+
+        currentSongAudio = new SongAudioManager();
+
         assets = GetComponent<ChartEditorAssets>();
         selectedObjectsManager = new SelectedObjectsManager(this);
         sfxAudioStreams = new LoadedStreamStore(soundMapConfig);
@@ -181,7 +187,10 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         // Update object positions that supposed to be visible into the range of the camera
         _minPos = currentSong.WorldYPositionToTick(camYMin.position.y);
-        _maxPos = currentSong.WorldYPositionToTick(camYMax.position.y);
+
+        float maxTime = currentSongLength;
+        uint maxTick = currentSong.TimeToTick(maxTime, currentSong.resolution);
+        _maxPos = (uint)Mathf.Min(maxTick, currentSong.WorldYPositionToTick(camYMax.position.y));
 
         // Set window text to represent if the current song has been saved or not
         windowHandleManager.UpdateDirtyNotification(isDirty);
@@ -207,11 +216,11 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (allowedToQuit)
         {
             globals.Quit();
-            FreeAudio();
+            currentSongAudio.FreeAudioStreams();
             sfxAudioStreams.DisposeSounds();
             AudioManager.Dispose();
 
-            while (currentSong.isSaving) ;
+            while (isSaving) ;
 
             applicationStateMachine.currentState = null; // Force call exit on current state;
         }
@@ -395,13 +404,13 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (!EditCheck())
             return;
 
-        while (currentSong.isSaving);
+        while (isSaving);
 
         if (errorManager.HasErrorToDisplay())
             return;
 
         lastLoadedFile = string.Empty;
-        FreeAudio();
+        currentSongAudio.FreeAudioStreams();
         currentSong = new Song();
 
         LoadSong(currentSong);
@@ -489,14 +498,14 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
     void Save (string filename, ExportOptions exportOptions)
     {
-        if (currentSong != null && !currentSong.isSaving)
+        if (currentSong != null && !isSaving)
         {
             Debug.Log("Saving to file- " + System.IO.Path.GetFullPath(filename));
           
-            currentSong.SaveAsync(filename, exportOptions);
+            SaveCurrentSongAsync(filename, exportOptions);
             lastLoadedFile = System.IO.Path.GetFullPath(filename);
 
-            if (currentSong.isSaving)
+            if (isSaving)
                 events.saveEvent.Fire();
 
             isDirty = false;
@@ -522,7 +531,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             new LoadingTask("Loading file", () =>
             {
                 // Wait for saving to complete just in case
-                while (currentSong.isSaving){ }
+                while (isSaving){ }
 
                 if (errorManager.HasErrorToDisplay())
                 {
@@ -558,9 +567,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                     return;
 
                 // Free the previous audio clips
-                FreeAudio();
-
-                newSong.LoadAllAudioClips();
+                currentSongAudio.FreeAudioStreams();
+                currentSongAudio.LoadAllAudioClips(newSong);
             }),
         };
 
@@ -606,7 +614,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (!EditCheck())
             yield break;
 
-        while (currentSong.isSaving)
+        while (isSaving)
             yield return null;
 
         if (errorManager.HasErrorToDisplay())
@@ -655,7 +663,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         // Load the default chart
         LoadChart(currentSong.GetChart(MenuBar.currentInstrument, MenuBar.currentDifficulty));
 
-        if (AudioManager.StreamIsValid(currentSong.GetAudioStream(Song.AudioInstrument.Song)))
+        if (AudioManager.StreamIsValid(currentSongAudio.GetAudioStream(Song.AudioInstrument.Song)))
         {
             movement.SetPosition(0);
         }
@@ -674,25 +682,88 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         songObjectPoolManager.NewChartReset();
     }
 
+    /// <summary>
+    /// Is this song currently being saved asyncronously?
+    /// </summary>
+    public bool isSaving
+    {
+        get
+        {
+            return _saveThread != null && _saveThread.IsAlive;
+        }
+    }
+
+    /// <summary>
+    /// Starts a thread that saves the song data in a .chart format to the specified path asynchonously. Can be monitored with the "IsSaving" parameter. 
+    /// </summary>
+    /// <param name="filepath">The path and filename to save to.</param>
+    /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
+    void SaveCurrentSongAsync(string filepath, ExportOptions exportOptions)
+    {
+
+#if false
+        Song songCopy = new Song(this);
+        songCopy.Save(filepath, exportOptions);
+
+#if !UNITY_EDITOR
+        This is for debugging only you moron
+#endif
+#else
+        if (!isSaving)
+        {
+            Song songCopy = new Song(currentSong);
+
+            _saveThread = new System.Threading.Thread(() => SaveSong(songCopy, filepath, exportOptions));
+            _saveThread.Start();
+        }
+#endif
+    }
+
+    /// <summary>
+    /// Saves the song data in a .chart format to the specified path.
+    /// </summary>
+    /// <param name="filepath">The path and filename to save to.</param>
+    /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
+    void SaveSong(Song song, string filepath, ExportOptions exportOptions)
+    {
+        string saveErrorMessage;
+        try
+        {
+            new ChartWriter(filepath).Write(song, exportOptions, out saveErrorMessage);
+
+            Debug.Log("Save complete!");
+
+            if (saveErrorMessage != string.Empty)
+            {
+                errorManager.QueueErrorMessage("Save completed with the following errors: " + Globals.LINE_ENDING + saveErrorMessage);
+            }
+        }
+        catch (System.Exception e)
+        {
+            errorManager.QueueErrorMessage(Logger.LogException(e, "Save failed!"));
+        }
+    }
+
     #endregion
 
     #region Audio Functions
     public void PlayAudio(float playPoint)
     {
-        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
-        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
-        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);
-        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
-		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Keys), GameSettings.gameSpeed, GameSettings.vol_keys);
-        SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drums);
-		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drums_2), GameSettings.gameSpeed, GameSettings.vol_drums);
-		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drums_3), GameSettings.gameSpeed, GameSettings.vol_drums);
-		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Drums_4), GameSettings.gameSpeed, GameSettings.vol_drums);
-		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Vocals), GameSettings.gameSpeed, GameSettings.vol_vocals);
-		SetStreamProperties(currentSong.GetAudioStream(Song.AudioInstrument.Crowd), GameSettings.gameSpeed, GameSettings.vol_crowd);
+        SongAudioManager songAudioManager = currentSongAudio;
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Keys), GameSettings.gameSpeed, GameSettings.vol_keys);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_2), GameSettings.gameSpeed, GameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_3), GameSettings.gameSpeed, GameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_4), GameSettings.gameSpeed, GameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Vocals), GameSettings.gameSpeed, GameSettings.vol_vocals);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Crowd), GameSettings.gameSpeed, GameSettings.vol_crowd);
 
         AudioStream primaryStream = null;
-        foreach (var bassStream in currentSong.bassAudioStreams)
+        foreach (var bassStream in songAudioManager.bassAudioStreams)
         {
             if (primaryStream != null)
             {
@@ -712,7 +783,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
    public void StopAudio()
     {
-        foreach (var bassStream in currentSong.bassAudioStreams)
+        foreach (var bassStream in currentSongAudio.bassAudioStreams)
         {
             if (AudioManager.StreamIsValid(bassStream))
                 bassStream.Stop();
@@ -780,9 +851,38 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         }
     }
 
-    public void FreeAudio()
+    public float currentSongLength
     {
-        currentSong.FreeAudioStreams();
+        get
+        {
+            float DEFAULT_SONG_LENGTH = 300;     // 5 minutes
+
+            if (currentSong == null)
+                return 0;
+
+            if (currentSong.manualLength.HasValue)
+            {
+                return currentSong.manualLength.Value;
+            }
+            else
+            {
+                AudioStream mainStream = currentSongAudio.mainSongAudio;
+
+                if (mainStream != null)
+                {
+                    float length = mainStream.ChannelLengthInSeconds() + currentSong.offset;
+
+                    if (length <= 0)
+                        return DEFAULT_SONG_LENGTH;
+                    else
+                        return length;
+                }
+                else
+                {
+                    return DEFAULT_SONG_LENGTH;
+                }
+            }
+        }
     }
 
     #endregion

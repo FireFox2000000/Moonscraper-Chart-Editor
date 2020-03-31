@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿// Copyright (c) 2016-2020 Alexander Ong
+// See LICENSE in project root for license information.
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Text;
@@ -52,6 +55,8 @@ public class StringCorruptionTest : MonoBehaviour {
     // Update is called once per frame
     void Update () {
         Song song = editor.currentSong;
+        float songLength = editor.currentSongLength;
+
         ReadClipboardFromFile();
 
         if (ValidateSectionsAndGetStopTest(song, 0))
@@ -61,7 +66,7 @@ public class StringCorruptionTest : MonoBehaviour {
         }
 
         ClearAllSections(song);
-        AddRandomSections(song);
+        AddRandomSections(song, songLength);
 
         if (ValidateSectionsAndGetStopTest(song, 1))
         {
@@ -107,9 +112,9 @@ public class StringCorruptionTest : MonoBehaviour {
         return stopTest;
     }
 
-    void AddRandomSections(Song song)
+    void AddRandomSections(Song song, float songLength)
     {
-        uint maxTickPosition = song.TimeToTick(song.length, song.resolution);
+        uint maxTickPosition = song.TimeToTick(songLength, song.resolution);
         const int maxSections = 100;
         int numberOfSections = Random.Range(0, maxSections);
 

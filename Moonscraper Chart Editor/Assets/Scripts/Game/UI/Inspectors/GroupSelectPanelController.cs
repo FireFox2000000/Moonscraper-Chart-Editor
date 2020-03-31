@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -101,7 +101,7 @@ public class GroupSelectPanelController : MonoBehaviour
 
     void SetSustain(uint length)
     {
-        uint songEndTick = editor.currentSong.TimeToTick(editor.currentSong.length, editor.currentSong.resolution);
+        uint songEndTick = editor.currentSong.TimeToTick(editor.currentSongLength, editor.currentSong.resolution);
 
         List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
 

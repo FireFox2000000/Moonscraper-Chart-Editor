@@ -59,7 +59,7 @@ public class TimeSync
         {
             if (ChartEditor.Instance.currentState == ChartEditor.State.Playing)
             {
-                var audioStream = ChartEditor.Instance.currentSong.bassAudioStreams[0];            
+                var audioStream = ChartEditor.Instance.currentSongAudio.bassAudioStreams[0];            
                 double elapsedtime = audioStream.CurrentPositionInSeconds();
 
                 audioPosition = elapsedtime;

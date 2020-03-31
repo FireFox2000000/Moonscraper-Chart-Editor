@@ -1,9 +1,8 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 //#define TIMING_DEBUG
 
-using UnityEngine;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
@@ -146,7 +145,6 @@ public class Chart  {
         }
 
         UpdateCache();
-        ChartEditor.isDirty = true;
     }
 
     /// <summary>
@@ -165,9 +163,6 @@ public class Chart  {
         if (update)
             UpdateCache();
 
-        if (this.song == ChartEditor.Instance.currentSong)
-            ChartEditor.isDirty = true;
-
         return pos;
     }
 
@@ -183,7 +178,6 @@ public class Chart  {
         }
 
         UpdateCache();
-        ChartEditor.isDirty = true;
     }
 
     /// <summary>
@@ -201,7 +195,6 @@ public class Chart  {
         {
             chartObject.chart = null;
             chartObject.song = null;
-            ChartEditor.isDirty = true;
         }
 
         if (update)

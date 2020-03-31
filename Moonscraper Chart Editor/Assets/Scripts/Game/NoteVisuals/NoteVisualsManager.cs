@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -32,8 +32,10 @@ public class NoteVisualsManager : MonoBehaviour {
     {
         Note.NoteType noteType = note.type;
 
-        if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums && ChartEditor.Instance.laneInfo.laneCount != SongConfig.PRO_DRUMS_LANE_COUNT)
+        if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums && GameSettings.drumsModeOptions == GameSettings.DrumModeOptions.Standard)
+        {
             noteType = Note.NoteType.Strum;
+        }
 
         return noteType;
     }

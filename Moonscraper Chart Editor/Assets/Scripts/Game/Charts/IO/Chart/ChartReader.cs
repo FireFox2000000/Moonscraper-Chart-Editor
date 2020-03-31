@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿// Copyright (c) 2016-2020 Alexander Ong
+// See LICENSE in project root for license information.
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -114,8 +117,6 @@ public static class ChartReader
 #if TIMING_DEBUG
         Debug.Log("Chart file load time: " + (Time.realtimeSinceStartup - time));
         time = Time.realtimeSinceStartup;
-
-        LoadAllAudioClips();
 #endif
 
         song.UpdateCache();
@@ -268,8 +269,7 @@ public static class ChartReader
                 // Length = 300
                 else if (ChartIOHelper.MetaData.length.regex.IsMatch(line))
                 {
-                    song.manualLength = true;
-                    song.length = ChartIOHelper.MetaData.ParseAsFloat(line);
+                    song.manualLength = ChartIOHelper.MetaData.ParseAsFloat(line);
                 }
 
                 // PreviewStart = 0.00

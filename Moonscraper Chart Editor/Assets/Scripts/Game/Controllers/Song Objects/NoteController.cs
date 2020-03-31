@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 //#define NOTE_TYPE_2D
@@ -111,15 +111,23 @@ public class NoteController : SongObjectController {
                 Note[] chordNotes = note.GetChord();
                 if (Input.GetMouseButton(1))
                 {
+                    if (SustainController.SustainDraggingInProgress)
+                        editor.commandStack.Pop();  // Cancel the last sustain drag action
+
                     Debug.Log("Deleted " + note + " chord at position " + note.tick + " with hold-right left-click shortcut");
                     editor.commandStack.Push(new SongEditDelete(chordNotes));
-                    
+
+                    SustainController.ResetSustainDragData();
                 }
             }
             else if (Input.GetMouseButton(1))
             {
+                if (SustainController.SustainDraggingInProgress)
+                    editor.commandStack.Pop();    // Cancel the last sustain drag action
+
                 Debug.Log("Deleted " + note + " at position " + note.tick + " with hold-right left-click shortcut");
                 editor.commandStack.Push(new SongEditDelete(note));
+                SustainController.ResetSustainDragData();
             }
         }
         else

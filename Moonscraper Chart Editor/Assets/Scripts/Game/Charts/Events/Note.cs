@@ -1,7 +1,5 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
-
-#define APPLICATION_MOONSCRAPER     // Moonscraper doesn't use chart.gameMode because notes might not have charts associated with them, copy-pasting for instance and storing undo-redo
 
 using System;
 using System.Collections;
@@ -192,7 +190,7 @@ public class Note : ChartObject
                 return chart.gameMode;
             else
             {
-#if APPLICATION_MOONSCRAPER
+#if APPLICATION_MOONSCRAPER     // Moonscraper doesn't use note.chart.gameMode directly because notes might not have charts associated with them, esp when copy-pasting and storing undo-redo
                 return ChartEditor.Instance.currentChart.gameMode;
 #else
                 return Chart.GameMode.Unrecognised;
@@ -314,7 +312,7 @@ public class Note : ChartObject
                 if (prevIsChord || (!prevIsChord && rawNote != previous.rawNote))
                 {
                     // Check distance from previous note 
-                    int HOPODistance = (int)(SongConfig.FORCED_NOTE_TICK_THRESHOLD * song.resolution / Song.STANDARD_BEAT_RESOLUTION);
+                    int HOPODistance = (int)(SongConfig.FORCED_NOTE_TICK_THRESHOLD * song.resolution / SongConfig.STANDARD_BEAT_RESOLUTION);
 
                     if (tick - previous.tick <= HOPODistance)
                         HOPO = true;

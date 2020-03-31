@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 //#undef UNITY_EDITOR
@@ -87,7 +87,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         setAudioTextLabels();
         init = false;
 
-        customTime = TimeSpan.FromSeconds(editor.currentSong.length);
+        customTime = TimeSpan.FromSeconds(editor.currentSongLength);
 
         ChartEditor.isDirty = edit;
         StartCoroutine(ScrollSetDelay());
@@ -145,9 +145,9 @@ public class SongPropertiesPanelController : DisplayMenu {
             metaData.genre = genre.text;
             metaData.mediatype = mediaType.text;
 
-            if (editor.currentSong.manualLength)
+            if (editor.currentSong.manualLength.HasValue)   // if we were already using the manual length
             {
-                editor.currentSong.length = (float)customTime.TotalSeconds;
+                editor.currentSong.manualLength = (float)customTime.TotalSeconds;
             }
 
             ChartEditor.isDirty = true;
@@ -183,7 +183,7 @@ public class SongPropertiesPanelController : DisplayMenu {
                 continue;
             }
 
-            if (song.GetAudioIsLoaded(audio))
+            if (editor.currentSongAudio.GetAudioIsLoaded(audio))
             {
                 audioStreamText.color = Color.white;
                 audioStreamText.text = song.GetAudioName(audio);
@@ -208,13 +208,14 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     public void LoadMusicStream()
     {
-        string path = GetAudioFile();
-        if (!string.IsNullOrEmpty(path))
+        try
         {
-            editor.currentSong.LoadMusicStream(path);
-
-            StartCoroutine(SetAudio());
-        }     
+            LoadAndSetStream(Song.AudioInstrument.Song);
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
     }
 
     public void ClearMusicStream()
@@ -226,9 +227,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     {
         try
         {
-            editor.currentSong.LoadGuitarStream(GetAudioFile());
-
-            StartCoroutine(SetAudio());
+            LoadAndSetStream(Song.AudioInstrument.Guitar);
         }
         catch
         {
@@ -245,9 +244,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     {
         try
         {
-            editor.currentSong.LoadBassStream(GetAudioFile());
-
-            StartCoroutine(SetAudio());
+            LoadAndSetStream(Song.AudioInstrument.Bass);
         }
         catch
         {
@@ -264,9 +261,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     {
         try
         {
-            editor.currentSong.LoadRhythmStream(GetAudioFile());
-
-            StartCoroutine(SetAudio());
+            LoadAndSetStream(Song.AudioInstrument.Rhythm);
         }
         catch
         {
@@ -283,9 +278,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     {
         try
         {
-            editor.currentSong.LoadVocalStream(GetAudioFile());
-
-            StartCoroutine(SetAudio());
+            LoadAndSetStream(Song.AudioInstrument.Vocals);
         }
         catch
         {
@@ -302,9 +295,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     {
         try
         {
-            editor.currentSong.LoadKeysStream(GetAudioFile());
-
-            StartCoroutine(SetAudio());
+            LoadAndSetStream(Song.AudioInstrument.Keys);
         }
         catch
         {
@@ -322,9 +313,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     {
         try
         {
-            editor.currentSong.LoadDrumStream(GetAudioFile());
-
-            StartCoroutine(SetAudio());
+            LoadAndSetStream(Song.AudioInstrument.Drum);
         }
         catch
         {
@@ -341,9 +330,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     {
         try
         {
-            editor.currentSong.LoadDrum2Stream(GetAudioFile());
-
-            StartCoroutine(SetAudio());
+            LoadAndSetStream(Song.AudioInstrument.Drums_2);
         }
         catch
         {
@@ -360,9 +347,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     {
         try
         {
-            editor.currentSong.LoadDrum3Stream(GetAudioFile());
-
-            StartCoroutine(SetAudio());
+            LoadAndSetStream(Song.AudioInstrument.Drums_3);
         }
         catch
         {
@@ -379,9 +364,7 @@ public class SongPropertiesPanelController : DisplayMenu {
     {
         try
         {
-            editor.currentSong.LoadDrum4Stream(GetAudioFile());
-
-            StartCoroutine(SetAudio());
+            LoadAndSetStream(Song.AudioInstrument.Drums_4);
         }
         catch
         {
@@ -398,9 +381,25 @@ public class SongPropertiesPanelController : DisplayMenu {
     {
         try
         {
-            editor.currentSong.LoadCrowdStream(GetAudioFile());
+            LoadAndSetStream(Song.AudioInstrument.Crowd);
+        }
+        catch
+        {
+            Debug.LogError("Could not open audio");
+        }
+    }
 
-            StartCoroutine(SetAudio());
+    void LoadAndSetStream(Song.AudioInstrument audioInstrument)
+    {
+        try
+        {
+            string filepath = GetAudioFile();
+            if (editor.currentSongAudio.LoadAudio(filepath, audioInstrument))
+            {
+                // Record the filepath
+                editor.currentSong.SetAudioLocation(audioInstrument, filepath);
+                StartCoroutine(SetAudio());
+            }
         }
         catch
         {
@@ -415,8 +414,9 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     void ClearAudioStream(Song.AudioInstrument audio)
     {
-        editor.currentSong.GetSampleData(audio).Dispose();
-        editor.currentSong.SetBassAudioStream(audio, null);
+        editor.currentSongAudio.GetSampleData(audio).Dispose();
+        editor.currentSongAudio.SetBassAudioStream(audio, null);
+        editor.currentSong.SetAudioLocation(audio, string.Empty);
 
         setAudioTextLabels();
     }
@@ -429,7 +429,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         {
             new LoadingTask("Loading audio", () =>
             {
-                while (editor.currentSong.isAudioLoading) ;
+                while (editor.currentSongAudio.isAudioLoading) ;
             })
         };
 

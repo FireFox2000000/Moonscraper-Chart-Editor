@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -73,6 +73,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         editor.events.hyperspeedChangeEvent.Register(SetAllPoolsDirty);
         editor.events.chartReloadedEvent.Register(SetAllPoolsDirty);
         editor.events.leftyFlipToggledEvent.Register(SetAllPoolsDirty);
+        editor.events.drumsModeOptionChangedEvent.Register(SetAllNotesDirty);
     }
 
     // Update is called once per frame
@@ -279,6 +280,13 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         SetInViewRangeDirty(song.syncTrack);
 
         TimelineHandler.Repaint();
+    }
+
+    void SetAllNotesDirty()
+    {
+        Song song = editor.currentSong;
+        Chart chart = editor.currentChart;
+        SetInViewRangeDirty(chart.notes);
     }
 
     public void SetInViewRangeDirty<T>(IList<T> songObjects) where T : SongObject

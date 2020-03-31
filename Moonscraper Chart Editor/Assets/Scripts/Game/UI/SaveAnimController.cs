@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2017 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -28,7 +28,7 @@ public class SaveAnimController : UpdateableService {
 
         if (fadein)
             alpha += fadeSpeed * Time.deltaTime;
-        else if (!editor.currentSong.isSaving)
+        else if (!editor.isSaving)
             alpha -= fadeSpeed * Time.deltaTime;
 
         alpha = Mathf.Clamp01(alpha);

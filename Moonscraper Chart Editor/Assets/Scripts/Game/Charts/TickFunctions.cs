@@ -1,6 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿// Copyright (c) 2016-2020 Alexander Ong
+// See LICENSE in project root for license information.
+
+using System;       // import math lib
 
 public static class TickFunctions {
     const float SECONDS_PER_MINUTE = 60.0f;
@@ -25,7 +26,7 @@ public static class TickFunctions {
 
     public static uint TimeToDis(float timeStart, float timeEnd, float resolution, float bpm)
     {
-        return (uint)Mathf.Round((timeEnd - timeStart) * bpm / SECONDS_PER_MINUTE * resolution);
+        return (uint)Math.Round((timeEnd - timeStart) * bpm / SECONDS_PER_MINUTE * resolution);
     }
 
     public static float WorldYPositionToTime(float worldYPosition)
@@ -40,7 +41,7 @@ public static class TickFunctions {
 
     public static uint TickScaling(uint tick, float originalResolution, float outputResolution)
     {
-        tick = (uint)Mathf.Round(tick * outputResolution / originalResolution);
+        tick = (uint)Math.Round(tick * outputResolution / originalResolution);
         return tick;
     }
 }
