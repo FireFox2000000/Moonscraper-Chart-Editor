@@ -114,6 +114,19 @@ public enum MSChartEditorInputActions
     DrumPadGreen,
     DrumPadKick,
 
+    // Pro Drums Actions
+    DrumPadProRedTom,
+    DrumPadProRedCymbal,
+    DrumPadProYellowTom,
+    DrumPadProYellowCymbal,
+    DrumPadProBlueTom,
+    DrumPadProBlueCymbal,
+    DrumPadProOrangeTom,
+    DrumPadProOrangeCymbal,
+    DrumPadProGreenTom,
+    DrumPadProGreenCymbal,
+    DrumPadProKick1,
+
     Whammy,
     StartGameplay,
 }
@@ -132,6 +145,7 @@ public static class MSChartEditorInput
 
             GameplayGuitar,
             GameplayDrums,
+            GameplayDrumsPro,
         }
 
         public static InteractionMatrix interactionMatrix = new InteractionMatrix(EnumX<CategoryType>.Count);
@@ -141,7 +155,7 @@ public static class MSChartEditorInput
             | (1 << (int)CategoryType.EditorToolNote)
             | (1 << (int)CategoryType.Global)
             ;
-        public static readonly int kGameplayCategoryMask = (1 << (int)CategoryType.GameplayGuitar) | (1 << (int)CategoryType.GameplayDrums);
+        public static readonly int kGameplayCategoryMask = (1 << (int)CategoryType.GameplayGuitar) | (1 << (int)CategoryType.GameplayDrums) | (1 << (int)CategoryType.GameplayDrumsPro);
 
         static Category()
         {
