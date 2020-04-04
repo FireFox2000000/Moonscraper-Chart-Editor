@@ -38,6 +38,11 @@ namespace MSE
                 buttons.Add(key);
             }
 
+            public void Add(IList<GamepadDevice.Button> keys)
+            {
+                buttons.AddRange(keys);
+            }
+
             public void Add(GamepadDevice.Axis axis, GamepadDevice.AxisDir dir)
             {
                 axes.Add(new AxisConfig() { axis = axis, dir = dir });
@@ -76,18 +81,46 @@ namespace MSE
                 return sb.ToString();
             }
 
-            public bool HasConflict(IInputMap other)
+            public bool HasConflict(IInputMap other, InputAction.Properties properties)
             {
                 GamepadMap otherGpMap = other as GamepadMap;
                 if (otherGpMap == null || otherGpMap.IsEmpty)
                     return false;
 
-                foreach (var button in buttons)
+                bool allowSameFrameMultiInput = properties.allowSameFrameMultiInput;
+
+                if (allowSameFrameMultiInput)
                 {
-                    foreach (var otherButton in otherGpMap.buttons)
+                    if (buttons.Count > 0 && otherGpMap.buttons.Count > 0)
                     {
-                        if (button == otherButton)
+                        // Check if they match exactly, or if one map is a sub-set of the other
+                        var smallerButtonMap = buttons.Count < otherGpMap.buttons.Count ? buttons : otherGpMap.buttons;
+                        var largerButtonMap = buttons.Count < otherGpMap.buttons.Count ? otherGpMap.buttons : buttons;
+
+                        int sameInputCount = 0;
+                        foreach (var button in smallerButtonMap)
+                        {
+                            if (largerButtonMap.Contains(button))
+                            {
+                                ++sameInputCount;
+                            }
+                        }
+
+                        if (sameInputCount == smallerButtonMap.Count)
+                        {
                             return true;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var button in buttons)
+                    {
+                        foreach (var otherButton in otherGpMap.buttons)
+                        {
+                            if (button == otherButton)
+                                return true;
+                        }
                     }
                 }
 

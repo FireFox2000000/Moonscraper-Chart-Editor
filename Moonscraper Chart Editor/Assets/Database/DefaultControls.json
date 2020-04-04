@@ -1651,6 +1651,265 @@
                 "jsMaps": []
             }
         },
+		{
+            "action": "DrumPadProRedTom",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            1,
+                            6
+                        ],
+                        "axes": []
+                    },
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "DrumPadProRedCymbal",
+            "input": {
+                "kbMaps": [],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "DrumPadProYellowTom",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            3,
+                            6
+                        ],
+                        "axes": []
+                    },
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "DrumPadProYellowCymbal",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            3,
+                            5,
+                            10
+                        ],
+                        "axes": []
+                    },
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "DrumPadProBlueTom",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            2,
+                            6
+                        ],
+                        "axes": []
+                    },
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "DrumPadProBlueCymbal",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            2,
+                            5,
+                            11
+                        ],
+                        "axes": []
+                    },
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "DrumPadProOrangeTom",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            0,
+                            6
+                        ],
+                        "axes": []
+                    },
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "DrumPadProOrangeCymbal",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            0,
+                            5
+                        ],
+                        "axes": []
+                    },
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "DrumPadProGreenTom",
+            "input": {
+                "kbMaps": [],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "DrumPadProGreenCymbal",
+            "input": {
+                "kbMaps": [],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "DrumPadProKick1",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [
+                            4
+                        ],
+                        "axes": []
+                    },
+                    {
+                        "buttons": [
+                            7
+                        ],
+                        "axes": []
+                    }
+                ],
+                "jsMaps": []
+            }
+        },
         {
             "action": "Whammy",
             "input": {

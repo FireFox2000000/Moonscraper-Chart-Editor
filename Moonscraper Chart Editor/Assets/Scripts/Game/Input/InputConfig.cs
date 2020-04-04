@@ -12,7 +12,8 @@ public class InputConfig : ScriptableObject
     const bool kHiddenInListsDefault = false;
     const bool kAnyDirectionAxisDefault = false;
     const MSChartEditorInput.Category.CategoryType kCategoryDefault = MSChartEditorInput.Category.CategoryType.Editor;
-    public static readonly InputConfig.Properties kDefaultProperties = new InputConfig.Properties { rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault, anyDirectionAxis = kAnyDirectionAxisDefault };
+    const bool kAllowSameFrameMultiInputDefault = false;
+    public static readonly InputConfig.Properties kDefaultProperties = new InputConfig.Properties { rebindable = kRebindableDefault, hiddenInLists = kHiddenInListsDefault, category = kCategoryDefault, anyDirectionAxis = kAnyDirectionAxisDefault, allowSameFrameMultiInput = kAllowSameFrameMultiInputDefault };
 
     [System.Serializable]
     public struct Properties
@@ -22,6 +23,7 @@ public class InputConfig : ScriptableObject
         public bool hiddenInLists;
         public bool anyDirectionAxis;
         public MSChartEditorInput.Category.CategoryType category;
+        public bool allowSameFrameMultiInput;
 
         public MSE.Input.InputAction.Properties ToMSEInputProperties()
         {
@@ -31,6 +33,7 @@ public class InputConfig : ScriptableObject
                 hiddenInLists = this.hiddenInLists,
                 category = (int)this.category,
                 anyDirectionAxis = this.anyDirectionAxis,
+                allowSameFrameMultiInput = this.allowSameFrameMultiInput,
             };
         }
     }

@@ -210,11 +210,25 @@ namespace MSE
 
             public IInputMap GetCurrentInput(InputAction.Properties properties)
             {
-                for (int i = 0; i < totalButtons; ++i)
+                // Check buttons
                 {
-                    if (GetButton(i))
+                    bool allowMultiInput = properties.allowSameFrameMultiInput;
+                    List<JoystickMap.ButtonConfig> buttons = new List<JoystickMap.ButtonConfig>();
+
+                    for (int i = 0; i < totalButtons; ++i)
                     {
-                        return new JoystickMap(deviceId) { new JoystickMap.ButtonConfig() { buttonIndex = i } };
+                        if (GetButton(i))
+                        {
+                            buttons.Add(new JoystickMap.ButtonConfig() { buttonIndex = i });
+
+                            if (!allowMultiInput)
+                                break;
+                        }
+                    }
+
+                    if (buttons.Count > 0)
+                    {
+                        return new JoystickMap(deviceId) { buttons };
                     }
                 }
 

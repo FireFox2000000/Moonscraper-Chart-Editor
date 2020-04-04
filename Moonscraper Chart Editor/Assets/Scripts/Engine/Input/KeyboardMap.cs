@@ -60,7 +60,7 @@ namespace MSE
             }
 
 
-            public bool HasConflict(IInputMap other)
+            public bool HasConflict(IInputMap other, InputAction.Properties properties)
             {
                 KeyboardMap otherKbMap = other as KeyboardMap;
                 if (otherKbMap == null || otherKbMap.IsEmpty)
