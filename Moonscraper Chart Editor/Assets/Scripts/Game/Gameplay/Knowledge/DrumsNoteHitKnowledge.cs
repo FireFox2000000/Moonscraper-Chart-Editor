@@ -1,25 +1,43 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-public class DrumsNoteHitKnowledge : NoteHitKnowledge  {
-
-    float[] drumHitTimes = new float[System.Enum.GetNames(typeof(Note.DrumPad)).Length];
-
-    public DrumsNoteHitKnowledge(Note note) : base(note)
+public class DrumsNoteHitKnowledge : NoteHitKnowledge
+{
+    public class InputTiming
     {
-        for (int i = 0; i < drumHitTimes.Length; ++i)
+        float[] drumHitTimes;
+
+        public InputTiming()
         {
-            drumHitTimes[i] = NULL_TIME;
+            drumHitTimes = new float[System.Enum.GetNames(typeof(Note.DrumPad)).Length];
+            Reset();
+        }
+
+        public void Reset()
+        {
+            for (int i = 0; i < drumHitTimes.Length; ++i)
+            {
+                drumHitTimes[i] = NULL_TIME;
+            }
+        }
+
+        public float GetHitTime(Note.DrumPad noteType)
+        {
+            return drumHitTimes[(int)noteType];
+        }
+
+        public void SetHitTime(Note.DrumPad noteType, float time)
+        {
+            drumHitTimes[(int)noteType] = time;
         }
     }
 
-    public float GetHitTime(Note.DrumPad noteType)
-    {
-        return drumHitTimes[(int)noteType];
-    }
+    public InputTiming standardPadTiming { get; private set; }
+    public InputTiming cymbalPadTiming { get; private set; }
 
-    public void SetHitTime(Note.DrumPad noteType, float time)
+    public DrumsNoteHitKnowledge(Note note) : base(note)
     {
-        drumHitTimes[(int)noteType] = time;
+        standardPadTiming = new InputTiming();
+        cymbalPadTiming = new InputTiming();
     }
 }

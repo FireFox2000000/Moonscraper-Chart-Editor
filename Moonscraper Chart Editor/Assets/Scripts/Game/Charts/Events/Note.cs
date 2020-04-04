@@ -358,6 +358,19 @@ public class Note : ChartObject
         }
     }
 
+    public int GetMaskWithRequiredFlags(Flags flags)
+    {
+        int mask = 0;
+
+        foreach (Note note in this.chord)
+        {
+            if (note.flags == flags)
+                mask |= (1 << note.rawNote);
+        }
+
+        return mask;
+    }
+
     /// <summary>
     /// Live calculation of what Note_Type this note would currently be. 
     /// </summary>
