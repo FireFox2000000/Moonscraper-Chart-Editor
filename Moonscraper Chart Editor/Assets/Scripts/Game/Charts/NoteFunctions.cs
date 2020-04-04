@@ -248,6 +248,11 @@ public static class NoteFunctions {
                     flags |= Note.Flags.Tap;
                 break;
 
+            case (Note.NoteType.Cymbal):
+                if (NoteFunctions.AllowedToBeCymbal(note))
+                    flags |= Note.Flags.ProDrums_Cymbal;
+                break;
+
             default:
                 break;
         }

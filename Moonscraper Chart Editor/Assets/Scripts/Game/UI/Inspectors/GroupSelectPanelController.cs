@@ -21,19 +21,35 @@ public class GroupSelectPanelController : MonoBehaviour
     Button setNoteHopo;
     [SerializeField]
     Button setNoteTap;
+    [SerializeField]
+    Button setNoteCymbal;
 
     // Use this for initialization
     void Start () {
         editor = ChartEditor.Instance;
-	}
+        editor.events.chartReloadedEvent.Register(UpdateUIActiveness);
+        editor.events.drumsModeOptionChangedEvent.Register(UpdateUIActiveness);
+
+        UpdateUIActiveness();
+
+    }
 
     void Update()
+    {
+        if (!Services.IsTyping && !Globals.modifierInputActive)
+            Shortcuts();
+    }
+
+    void UpdateUIActiveness()
     {
         fretSelectDropdown.gameObject.SetActive(!Globals.ghLiveMode);
         ghlFretSelectDropdown.gameObject.SetActive(!fretSelectDropdown.gameObject.activeSelf);
 
-        if (!Services.IsTyping && !Globals.modifierInputActive)
-            Shortcuts();
+        bool drumsMode = Globals.drumMode;
+        setNoteStrum.gameObject.SetActive(!drumsMode);
+        setNoteHopo.gameObject.SetActive(!drumsMode);
+        setNoteTap.gameObject.SetActive(!drumsMode);
+        setNoteCymbal.gameObject.SetActive(drumsMode && GameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums);
     }
 
     void Shortcuts()
@@ -140,6 +156,11 @@ public class GroupSelectPanelController : MonoBehaviour
     public void SetTap()
     {
         SetNoteType(Note.NoteType.Tap);
+    }
+
+    public void SetCymbal()
+    {
+        SetNoteType(Note.NoteType.Cymbal);
     }
 
     public void SetNoteType(Note.NoteType type)
