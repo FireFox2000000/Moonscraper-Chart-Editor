@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 public static class ChartIOHelper
 {
@@ -41,11 +42,13 @@ public static class ChartIOHelper
         { 5, (int)Note.DrumPad.Green     },
     };
 
+    public static readonly Dictionary<int, int> c_drumNoteToSaveNumberLookup = c_drumNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+
     public static readonly Dictionary<int, Note.Flags> c_drumFlagNumLookup = new Dictionary<int, Note.Flags>()
     {
-        { c_proDrumsOffset + 2, Note.Flags.ProDrums_Cymbal },       // Yellow
-        { c_proDrumsOffset + 3, Note.Flags.ProDrums_Cymbal },       // Blue
-        { c_proDrumsOffset + 5, Note.Flags.ProDrums_Cymbal },       // Green
+        { c_proDrumsOffset + 2, Note.Flags.ProDrums_Cymbal },       // Yellow save num from c_drumNoteNumLookup
+        { c_proDrumsOffset + 3, Note.Flags.ProDrums_Cymbal },       // Blue save num from c_drumNoteNumLookup
+        { c_proDrumsOffset + 4, Note.Flags.ProDrums_Cymbal },       // Orange (Green in 4-lane) save num from c_drumNoteNumLookup
     };
 
     // Default flags, mark as cymbal for pro drums automatically. Also used for choosing whether to write flag information or not if it's like this by default in the first place.

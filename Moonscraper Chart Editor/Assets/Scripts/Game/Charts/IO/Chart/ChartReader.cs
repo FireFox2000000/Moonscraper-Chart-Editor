@@ -574,7 +574,27 @@ public static class ChartReader
                     int noteNumber = flag.noteNumber - ChartIOHelper.c_proDrumsOffset;
                     Debug.Assert(noteNumber >= 0, "Incorrectly parsed a note flag as a pro-drums flag. Note number was " + flag.noteNumber);
 
-                    // TODO
+                    int index, length;
+                    SongObjectHelper.FindObjectsAtPosition(flag.tick, chart.notes, out index, out length);
+                    if (length > 0)
+                    {
+                        for (int i = index; i < index + length; ++i)
+                        {
+                            Note note = chart.notes[i];
+
+                            int saveNoteNum;
+                            if (!ChartIOHelper.c_drumNoteToSaveNumberLookup.TryGetValue(note.rawNote, out saveNoteNum))
+                            {
+                                continue;
+                            }
+
+                            if (noteNumber == saveNoteNum)
+                            {
+                                // Reverse cymbal flag
+                                note.flags ^= Note.Flags.ProDrums_Cymbal;
+                            }
+                        }
+                    }
                 }
                 else
                 {
