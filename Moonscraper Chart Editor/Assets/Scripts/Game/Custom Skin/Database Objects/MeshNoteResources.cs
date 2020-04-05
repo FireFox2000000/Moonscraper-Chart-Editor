@@ -10,6 +10,7 @@ public class MeshNoteResources : ScriptableObject {
     public MeshFilter standardModel;
     public MeshFilter spModel;
     public MeshFilter openModel;
+	public MeshFilter drumNoteModel;
 
     [Header("Note renderers")]
     public Renderer strumRenderer;

@@ -52,6 +52,10 @@ public class NoteVisuals3DManager : NoteVisualsManager
                 meshFilter.sharedMesh = resources.openModel.sharedMesh;
             else if (specialType == Note.SpecialType.StarPower)
                 meshFilter.sharedMesh = resources.spModel.sharedMesh;
+			else if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums)
+				meshFilter.sharedMesh = resources.drumNoteModel.sharedMesh;
+			else if (noteType == Note.NoteType.Cymbal)
+				meshFilter.sharedMesh = resources.standardModel.sharedMesh;
             else
                 meshFilter.sharedMesh = resources.standardModel.sharedMesh;
 
