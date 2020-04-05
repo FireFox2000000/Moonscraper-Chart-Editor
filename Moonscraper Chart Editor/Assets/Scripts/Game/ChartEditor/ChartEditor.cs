@@ -11,6 +11,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
 
+/// <summary>
+/// The central point of the entire editor. Container for all the data and systems nessacary for the editor to function.
+/// Initialises all the systems nessacary for the editor to function, and manages the current state of the application.
+/// </summary>
 [RequireComponent(typeof(ChartEditorAssets))]
 [UnitySingleton(UnitySingletonAttribute.Type.ExistsInScene, true)]
 public class ChartEditor : UnitySingleton<ChartEditor>
@@ -67,6 +71,10 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public SelectedObjectsManager selectedObjectsManager;
     public CommandStack commandStack;
 
+    /// <summary>
+    /// State machine for the entire application. 
+    /// Editor and Play states are instanciated as we need them.
+    /// </summary>
     public enum State
     {
         Editor,
@@ -74,12 +82,18 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         Menu,
         Loading,
     }
+
     public StateMachine applicationStateMachine = new StateMachine();
     SystemManagerState menuState = new SystemManagerState();
     SystemManagerState loadingState = new SystemManagerState();
     public State currentState { get; private set; }
 
-    Dictionary<State, List<SystemManagerState.ISystem>> persistentSystemsForStates = new Dictionary<State, List<SystemManagerState.ISystem>>();
+    /// <summary>
+    /// Persistent systems are systems that need to hold onto data between different states, rather than creating a new instance and destroying it every time
+    /// An example of this is the object pooling system, needs to hold onto those objects for the entire lifetime of the scene as objects always need to be visible. Would also be dumb memory-wise.
+    /// See #region State Control for full implementation
+    /// </summary>
+    Dictionary<State, List<SystemManagerState.ISystem>> persistentSystemsForStates = new Dictionary<State, List<SystemManagerState.ISystem>>();     
 
     static readonly Dictionary<string, LoadedStreamStore.StreamConfig> soundMapConfig = new Dictionary<string, LoadedStreamStore.StreamConfig>(){
             { SkinKeys.metronome,   new LoadedStreamStore.StreamConfig(System.IO.Path.Combine(Application.streamingAssetsPath, "SFX/metronome.wav")) },

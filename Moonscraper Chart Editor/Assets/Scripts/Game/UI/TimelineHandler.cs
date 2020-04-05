@@ -5,6 +5,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
 
+/// <summary>
+/// The main controller for the timeline bar UI that appears on the right of the main editor scene.
+/// Handles the dragging and chart navigation aspect in the scene
+/// </summary>
 [RequireComponent(typeof(RectTransform))]
 public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 {

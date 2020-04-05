@@ -9,6 +9,10 @@ using Un4seen.Bass;
 using Un4seen.Bass.Misc;
 #endif
 
+/// <summary>
+/// A wrapper around a custom audio engine, cause Unity's is quite bad for rhythm games. 
+/// Current custom engine is Un4seen's Bass and Bass.net. See licensing information on whether you'd allowed to use it. Currently under Non-Commerical for Moonscraper, hence why it's allowed to be here.
+/// </summary>
 public static class AudioManager {
     public static bool isDisposed { get; private set; }
     static List<AudioStream> liveAudioStreams = new List<AudioStream>();

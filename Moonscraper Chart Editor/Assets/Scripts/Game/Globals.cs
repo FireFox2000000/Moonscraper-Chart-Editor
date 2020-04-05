@@ -7,6 +7,9 @@ using System.Collections;
 using System.IO;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// Loads and processes any persistent data, like save data, as well as just convenient defines and properties that exists outside of the "Chart Editor" concept.
+/// </summary>
 public class Globals : MonoBehaviour {
     public static readonly string LINE_ENDING = "\r\n";
     public const string TABSPACE = "  ";
