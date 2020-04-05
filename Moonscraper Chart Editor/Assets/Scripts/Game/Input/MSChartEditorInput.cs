@@ -157,6 +157,9 @@ public static class MSChartEditorInput
             | (1 << (int)CategoryType.Global)
             ;
         public static readonly int kGameplayCategoryMask = (1 << (int)CategoryType.GameplayGuitar) | (1 << (int)CategoryType.GameplayDrums) | (1 << (int)CategoryType.GameplayDrumsPro);
+        public static readonly int kGameplayGuitarCategoryMask = (1 << (int)CategoryType.GameplayGuitar);
+        public static readonly int kGameplayDrumsCategoryMask = (1 << (int)CategoryType.GameplayDrums);
+        public static readonly int kGameplayDrumsProCategoryMask = (1 << (int)CategoryType.GameplayDrumsPro);
 
         static Category()
         {
