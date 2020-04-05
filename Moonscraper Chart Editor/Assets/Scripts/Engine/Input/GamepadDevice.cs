@@ -97,11 +97,25 @@ namespace MSE
 
             public IInputMap GetCurrentInput(InputAction.Properties properties)
             {
-                foreach (Button button in EnumX<Button>.Values)
+                // Check buttons
                 {
-                    if (GetButton(button))
+                    bool allowMultiInput = properties.allowSameFrameMultiInput;
+                    List<Button> buttons = new List<Button>();
+
+                    foreach (Button button in EnumX<Button>.Values)
                     {
-                        return new GamepadMap() { button };
+                        if (GetButton(button))
+                        {
+                            buttons.Add(button);
+
+                            if (!allowMultiInput)
+                                break;
+                        }
+                    }
+
+                    if (buttons.Count > 0)
+                    {
+                        return new GamepadMap() { buttons };
                     }
                 }
 

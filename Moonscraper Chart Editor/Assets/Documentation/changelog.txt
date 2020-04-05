@@ -1,3 +1,22 @@
+1.3.3.4
+	NEW FEATURES
+	-Save and restore last known drums lane count between sessions.
+	-Added cymbal toggle shortcut key on "c"
+	-Added 'set cymbal' button in note group panel. Shortcut key set to 'd'
+	-Implemented pro drums gameplay and controls. Added Xbox standard Rock Band pro kit default controls.
+	-All drums inputs can now take multiple same-frame inputs as a single actions in order to accomadate RB kits.
+
+	CHANGES
+	-Divided controls screen up into Editor, Gameplay Guitar, Gameplay Drums and Gameplay Pro Drums.
+
+	FIXES
+	-Fixed exception being thown when right and left-click deleting a note when a sustain dragging action was in process. Exception then occured clicking on any other note, breaking quite a few things.
+	-Fixed cymbal notes not clapping.
+	-Fixed shaking taps note when using custom resources
+
+	NOTES
+	-Cymbal toggles still not saving. Keeping this disabled while testing with various other programs and games take place in case changes need to be made. 
+
 1.3.3.3
 	NEW FEATURES
 	-Implemented drum cymbal toggle for 4-lane drums. Only compatible reading and writing to midi files at present

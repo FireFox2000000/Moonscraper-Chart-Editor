@@ -17,6 +17,7 @@ namespace MSE
                 public bool hiddenInLists;
                 public int category;
                 public bool anyDirectionAxis;
+                public bool allowSameFrameMultiInput;
             }
 
             [System.Serializable]
@@ -127,7 +128,7 @@ namespace MSE
             {
                 foreach(var inputMap in inputMaps)
                 {
-                    if(inputMap.HasConflict(map))
+                    if(inputMap.HasConflict(map, this.properties))
                     {
                         return true;
                     }

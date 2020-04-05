@@ -11,7 +11,7 @@ namespace MSE
         public interface IInputMap
         {
             string GetInputStr();
-            bool HasConflict(IInputMap other);
+            bool HasConflict(IInputMap other, InputAction.Properties properties);
             bool IsEmpty { get; }
             IInputMap Clone();
             bool SetFrom(IInputMap that);

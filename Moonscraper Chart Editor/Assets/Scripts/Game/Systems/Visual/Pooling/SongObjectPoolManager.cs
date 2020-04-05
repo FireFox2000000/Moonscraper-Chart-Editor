@@ -5,6 +5,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Creates a pool of objects that notes and other events can be assigned to for rendering the event.
+/// Disabled objects are considered a part of the pool and are free to assign. Active objects should be avoided as they are currently in use.
+/// Objects automatically disable themselves when they fall out of the view-range of the editor.
+/// Every frame, this manager scans the chart for all nessacary events that should be a part of the view range. 
+/// If it finds events in the view range and they aren't assigned an object (known as a controller), it assigns an appropirate one from the pool.
+/// </summary>
 public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
 {
     ChartEditor editor;

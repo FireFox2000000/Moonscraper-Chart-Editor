@@ -30,7 +30,6 @@ public class ChartWriter
     static readonly Dictionary<Song.Difficulty, string> c_difficultyToTrackNameLookup = ChartIOHelper.c_trackNameToTrackDifficultyLookup.ToDictionary((i) => i.Value, (i) => i.Key);
 
     static readonly Dictionary<int, int> c_guitarNoteToSaveNumberLookup = ChartIOHelper.c_guitarNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
-    static readonly Dictionary<int, int> c_drumNoteToSaveNumberLookup = ChartIOHelper.c_drumNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
     static readonly Dictionary<int, int> c_ghlNoteToSaveNumberLookup = ChartIOHelper.c_ghlNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
     static readonly Dictionary<Note.Flags, int> c_guitarFlagToNumLookup = ChartIOHelper.c_guitarFlagNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
 
@@ -312,7 +311,7 @@ public class ChartWriter
 
     static int GetDrumsSaveNoteNumber(Note note)
     {
-        return GetSaveNoteNumber((int)note.drumPad, c_drumNoteToSaveNumberLookup);
+        return GetSaveNoteNumber((int)note.drumPad, ChartIOHelper.c_drumNoteToSaveNumberLookup);
     }
 
     static int GetGHLSaveNoteNumber(Note note)
@@ -407,69 +406,79 @@ public class ChartWriter
 
         output.AppendFormat(s_noteFormat, fretNumber, (uint)Mathf.Round(note.length * writeParameters.resolutionScaleRatio));
 
-        if (note.flags != Note.Flags.None && writeParameters.exportOptions.forced)
+        if (writeParameters.exportOptions.forced)
         {
-            // Only need to get the flags of one note of a chord
-            if (note.next == null || (note.next != null && note.next.tick != note.tick))
-            { 
-                Note.Flags flagsToIgnore;
-                if (!ChartIOHelper.c_drumNoteDefaultFlagsLookup.TryGetValue(note.rawNote, out flagsToIgnore))
+            if (note.flags != Note.Flags.None)
+            {
+                // Only need to get the flags of one note of a chord
+                if (note.next == null || (note.next != null && note.next.tick != note.tick))
                 {
-                    flagsToIgnore = Note.Flags.None;
-                }
-
-                // Write out forced flag
-                {
-                    Note.Flags flagToTest = Note.Flags.Forced;
-                    if ((note.flags & flagToTest) != 0)
+                    Note.Flags flagsToIgnore;
+                    if (!ChartIOHelper.c_drumNoteDefaultFlagsLookup.TryGetValue(note.rawNote, out flagsToIgnore))
                     {
-                        int value;
-                        if (c_guitarFlagToNumLookup.TryGetValue(flagToTest, out value))  // Todo, if different flags have different values for the same flags, we'll need to use different lookups
+                        flagsToIgnore = Note.Flags.None;
+                    }
+
+                    // Write out forced flag
+                    {
+                        Note.Flags flagToTest = Note.Flags.Forced;
+                        if ((note.flags & flagToTest) != 0)
                         {
-                            output.Append(Globals.LINE_ENDING);
-                            output.Append(Globals.TABSPACE + writeParameters.scaledTick);
-                            output.AppendFormat(s_noteFormat, value, 0);
+                            int value;
+                            if (c_guitarFlagToNumLookup.TryGetValue(flagToTest, out value))  // Todo, if different flags have different values for the same flags, we'll need to use different lookups
+                            {
+                                output.Append(Globals.LINE_ENDING);
+                                output.Append(Globals.TABSPACE + writeParameters.scaledTick);
+                                output.AppendFormat(s_noteFormat, value, 0);
+                            }
                         }
                     }
-                }
 
-                // Write out tap flag
-                {
-                    Note.Flags flagToTest = Note.Flags.Tap;
-                    if (!note.IsOpenNote() && (note.flags & flagToTest) != 0)
+                    // Write out tap flag
                     {
-                        int value;
-                        if (c_guitarFlagToNumLookup.TryGetValue(flagToTest, out value))  // Todo, if different flags have different values for the same flags, we'll need to use different lookups
+                        Note.Flags flagToTest = Note.Flags.Tap;
+                        if (!note.IsOpenNote() && (note.flags & flagToTest) != 0)
                         {
-                            output.Append(Globals.LINE_ENDING);
-                            output.Append(Globals.TABSPACE + writeParameters.scaledTick);
-                            output.AppendFormat(s_noteFormat, value, 0);
+                            int value;
+                            if (c_guitarFlagToNumLookup.TryGetValue(flagToTest, out value))  // Todo, if different flags have different values for the same flags, we'll need to use different lookups
+                            {
+                                output.Append(Globals.LINE_ENDING);
+                                output.Append(Globals.TABSPACE + writeParameters.scaledTick);
+                                output.AppendFormat(s_noteFormat, value, 0);
+                            }
                         }
                     }
                 }
             }
 
             // Write out cymbal flag for each note
-            if (false)      // TODO
+            if (writeParameters.instrument == Song.Instrument.Drums && false)   // Disabled while CH devs are still testing
             {
-                // Need to write this out if there ISN'T a cymbal flag on yellow, blue or green.
-                // Write this out if flag is set on red or orange
-                Note.Flags flagToTest = Note.Flags.ProDrums_Cymbal;
-                if (((note.flags & flagToTest) != 0) && !note.IsOpenNote())
+                int writeValue = ChartIOHelper.c_proDrumsOffset;
+                int noteOffset;
+                if (!ChartIOHelper.c_drumNoteToSaveNumberLookup.TryGetValue(note.rawNote, out noteOffset))
                 {
-                    int value = ChartIOHelper.c_proDrumsOffset;
+                    throw new Exception("Cannot find pro drum note offset for note " + note.drumPad.ToString());
+                }
 
-                    int noteOffset;
-                    if (!c_drumNoteToSaveNumberLookup.TryGetValue(note.rawNote, out noteOffset))
-                    {
-                        throw new Exception("Cannot find pro drum note offset for note " + note.drumPad.ToString());
-                    }
+                writeValue += noteOffset;
 
-                    value += noteOffset;
+                // Need to write this out if there ISN'T a cymbal flag on the note
+                Note.Flags defaultFlagsForNote;
+                if (!ChartIOHelper.c_drumFlagNumLookup.TryGetValue(writeValue, out defaultFlagsForNote))
+                {
+                    defaultFlagsForNote = Note.Flags.None;
+                }
 
+                bool cymbalByDefault = (defaultFlagsForNote & Note.Flags.ProDrums_Cymbal) != 0;
+                bool flaggedAsCymbal = (note.flags & Note.Flags.ProDrums_Cymbal) != 0;
+                bool writeCymbalFlag = cymbalByDefault != flaggedAsCymbal;
+
+                if (writeCymbalFlag && !note.IsOpenNote())
+                {
                     output.Append(Globals.LINE_ENDING);
                     output.Append(Globals.TABSPACE + writeParameters.scaledTick);
-                    output.AppendFormat(s_noteFormat, value, 0);
+                    output.AppendFormat(s_noteFormat, writeValue, 0);
                 }
             }
         }

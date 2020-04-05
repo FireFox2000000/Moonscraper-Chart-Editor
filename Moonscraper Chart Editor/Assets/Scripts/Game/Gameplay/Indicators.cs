@@ -101,7 +101,22 @@ public class Indicators : MonoBehaviour {
                     if (bannedDrumPadInputs.ContainsKey(drumPad))
                         continue;
 
-                    if (DrumsInput.GetPadPressedInput(drumPad, laneInfo))
+                    bool lanePressed = false;
+                    switch (GameSettings.drumsModeOptions)
+                    {
+                        case GameSettings.DrumModeOptions.ProDrums:
+                            {
+                                lanePressed = DrumsInput.GetTomPressedInput(drumPad, laneInfo) || DrumsInput.GetCymbalPressedInput(drumPad, laneInfo);
+                                break;
+                            }
+                        default:
+                            {
+                                lanePressed = DrumsInput.GetPadPressedInput(drumPad, laneInfo);
+                                break;
+                            }
+                    }
+
+                    if (lanePressed)
                         animations[(int)drumPad].Press();
                     else
                         animations[(int)drumPad].Release();

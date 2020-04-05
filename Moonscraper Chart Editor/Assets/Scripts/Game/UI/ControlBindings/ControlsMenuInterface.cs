@@ -33,7 +33,9 @@ public class ControlsMenuInterface : MonoBehaviour
     enum ActionCategory
     {
         Editor,
-        Gameplay,
+        Gameplay_Guitar,
+        Gameplay_Drums,
+        Gameplay_ProDrums,
     }
 
     private void Start()
@@ -125,7 +127,7 @@ public class ControlsMenuInterface : MonoBehaviour
 
     ActionCategory GetCurrentActionCategory()
     {
-        return actionCategoryIndex % 2 == 0 ? ActionCategory.Editor : ActionCategory.Gameplay;
+        return (ActionCategory)(actionCategoryIndex % EnumX<ActionCategory>.Count);
     }
 
     int GetCurrentActionCategoryMask()
@@ -135,8 +137,14 @@ public class ControlsMenuInterface : MonoBehaviour
             case ActionCategory.Editor:
                 return MSChartEditorInput.Category.kEditorCategoryMask;
 
-            case ActionCategory.Gameplay:
-                return MSChartEditorInput.Category.kGameplayCategoryMask;
+            case ActionCategory.Gameplay_Guitar:
+                return MSChartEditorInput.Category.kGameplayGuitarCategoryMask;
+
+            case ActionCategory.Gameplay_Drums:
+                return MSChartEditorInput.Category.kGameplayDrumsCategoryMask;
+
+            case ActionCategory.Gameplay_ProDrums:
+                return MSChartEditorInput.Category.kGameplayDrumsProCategoryMask;
 
             default:
                 break;
@@ -152,8 +160,14 @@ public class ControlsMenuInterface : MonoBehaviour
             case ActionCategory.Editor:
                 return "Editor";
 
-            case ActionCategory.Gameplay:
-                return "Gameplay";
+            case ActionCategory.Gameplay_Guitar:
+                return "Gameplay - Guitar";
+
+            case ActionCategory.Gameplay_Drums:
+                return "Gameplay - Drums";
+
+            case ActionCategory.Gameplay_ProDrums:
+                return "Gameplay - Pro Drums";
 
             default:
                 break;

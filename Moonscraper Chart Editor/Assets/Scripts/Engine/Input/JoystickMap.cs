@@ -59,6 +59,11 @@ namespace MSE
                 buttons.Add(button);
             }
 
+            public void Add(IList<ButtonConfig> buttonConfigs)
+            {
+                buttons.AddRange(buttonConfigs);
+            }
+
             public void Add(int axis, JoystickDevice.AxisDir dir)
             {
                 axes.Add(new AxisConfig() { axisIndex = axis, dir = dir });
@@ -137,18 +142,56 @@ namespace MSE
                 return sb.ToString();
             }
 
-            public bool HasConflict(IInputMap other)
+            public bool HasConflict(IInputMap other, InputAction.Properties properties)
             {
                 JoystickMap otherMap = other as JoystickMap;
                 if (otherMap == null || otherMap.IsEmpty)
                     return false;
 
-                foreach (var button in buttons)
+                bool allowSameFrameMultiInput = properties.allowSameFrameMultiInput;
+
+                if (allowSameFrameMultiInput)
                 {
-                    foreach (var otherButton in otherMap.buttons)
+                    if (buttons.Count > 0 && otherMap.buttons.Count > 0)
                     {
-                        if (button.buttonIndex == otherButton.buttonIndex)
+                        // Check if they match exactly, or if one map is a sub-set of the other
+                        var smallerButtonMap = buttons.Count < otherMap.buttons.Count ? buttons : otherMap.buttons;
+                        var largerButtonMap = buttons.Count < otherMap.buttons.Count ? otherMap.buttons : buttons;
+
+                        int sameInputCount = 0;
+                        foreach (var button in smallerButtonMap)
+                        {
+                            bool contains = false;
+                            foreach (var otherButton in largerButtonMap)
+                            {
+                                if (button.buttonIndex == otherButton.buttonIndex)
+                                {
+                                    contains = true;
+                                    break;
+                                }
+                            }
+
+                            if (contains)
+                            {
+                                ++sameInputCount;
+                            }
+                        }
+
+                        if (sameInputCount == smallerButtonMap.Count)
+                        {
                             return true;
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var button in buttons)
+                    {
+                        foreach (var otherButton in otherMap.buttons)
+                        {
+                            if (button.buttonIndex == otherButton.buttonIndex)
+                                return true;
+                        }
                     }
                 }
 
