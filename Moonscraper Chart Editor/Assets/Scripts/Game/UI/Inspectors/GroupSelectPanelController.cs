@@ -62,6 +62,8 @@ public class GroupSelectPanelController : MonoBehaviour
             setNoteHopo.onClick.Invoke();
         else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetTap))
             setNoteTap.onClick.Invoke();
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetCymbal))
+            setNoteCymbal.onClick.Invoke();
     }
 
     public void ApplyFretDropdownSelection()

@@ -529,6 +529,25 @@
             }
         },
         {
+            "action": "NoteSetCymbal",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            100
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
             "action": "PlayPause",
             "input": {
                 "kbMaps": [
@@ -1651,7 +1670,7 @@
                 "jsMaps": []
             }
         },
-		{
+        {
             "action": "DrumPadProRedTom",
             "input": {
                 "kbMaps": [

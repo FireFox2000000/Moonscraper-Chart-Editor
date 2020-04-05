@@ -53,6 +53,7 @@ public enum MSChartEditorInputActions
     NoteSetStrum,
     NoteSetHopo,
     NoteSetTap,
+    NoteSetCymbal,
     
     PlayPause,
 
