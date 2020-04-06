@@ -16,6 +16,7 @@ public class MeshNoteResources : ScriptableObject {
     public Renderer strumRenderer;
     public Renderer hopoRenderer;
     public Renderer tapRenderer;
+	public Renderer drumRenderer;
     public Renderer cymbalRenderer;
     public Renderer openRenderer;
     public Renderer spStrumRenderer;
