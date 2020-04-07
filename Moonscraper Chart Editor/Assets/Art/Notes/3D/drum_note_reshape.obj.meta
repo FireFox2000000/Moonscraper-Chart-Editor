@@ -23,17 +23,17 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: GH_Note_Material_001
-    second: {fileID: 2100000, guid: 4d62dc09fef90ac49a10064eabe2c9c9, type: 2}
+    second: {fileID: 2100000, guid: 8345485a4ac2a464bb68a0b1f3e1d0dc, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: GH_Note_Material_003
-    second: {fileID: 2100000, guid: 3dfdfc202ef0bd348a6be95f51f3429e, type: 2}
+    second: {fileID: 2100000, guid: c83a470ccb3f0dd4ba9e6ac8c6e217a9, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: GH_Note_Material_005
-    second: {fileID: 2100000, guid: 326a83b9d69bda74fa865adee7fe4616, type: 2}
+    second: {fileID: 2100000, guid: ac42d701c79fb1844a6d66a6093e6cdc, type: 2}
   materials:
     importMaterials: 1
     materialName: 0

@@ -16,6 +16,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
     Material[] resourceSharedMatsSpHopo;
     Material[] resourceSharedMatsTap;
     Material[] resourceSharedMatsSpTap;
+	Material[] resourceSharedMatsDrum;
     Material[] resourceSharedMatsCymbal;
     Material[] resourceSharedMatsSpCymbal;
 
@@ -31,6 +32,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
         resourceSharedMatsSpHopo = resources.spHopoRenderer.sharedMaterials;
         resourceSharedMatsTap = resources.tapRenderer.sharedMaterials;
         resourceSharedMatsSpTap = resources.spTapRenderer.sharedMaterials;
+		resourceSharedMatsDrum = resources.drumRenderer.sharedMaterials;
         resourceSharedMatsCymbal = resources.cymbalRenderer.sharedMaterials;
         resourceSharedMatsSpCymbal = resources.spCymbalRenderer.sharedMaterials;
     }
@@ -52,9 +54,9 @@ public class NoteVisuals3DManager : NoteVisualsManager
                 meshFilter.sharedMesh = resources.openModel.sharedMesh;
             else if (specialType == Note.SpecialType.StarPower)
                 meshFilter.sharedMesh = resources.spModel.sharedMesh;
-			else if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums)
+			else if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums && noteType == Note.NoteType.Strum)
 				meshFilter.sharedMesh = resources.drumNoteModel.sharedMesh;
-			else if (noteType == Note.NoteType.Cymbal)
+			else if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums && noteType == Note.NoteType.Cymbal)
 				meshFilter.sharedMesh = resources.standardModel.sharedMesh;
             else
                 meshFilter.sharedMesh = resources.standardModel.sharedMesh;
@@ -105,7 +107,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
                             }
                         case Note.NoteType.Cymbal:
                             {
-                                colorMat = resources.GetToolCymbalMaterial(gameMode, laneInfo, note.rawNote);
+                                colorMat = resources.GetToolStrumMaterial(gameMode, laneInfo, note.rawNote);
                                 break;
                             }
                         default:
@@ -126,7 +128,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
                             }
                         case Note.NoteType.Cymbal:
                             {
-                                colorMat = resources.GetCymbalMaterial(gameMode, laneInfo, note.rawNote);
+                                colorMat = resources.GetStrumMaterial(gameMode, laneInfo, note.rawNote);
                                 break;
                             }
                         default:
