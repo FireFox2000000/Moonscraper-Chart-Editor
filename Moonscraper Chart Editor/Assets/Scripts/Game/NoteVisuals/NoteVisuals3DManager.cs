@@ -107,7 +107,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
                             }
                         case Note.NoteType.Cymbal:
                             {
-                                colorMat = resources.GetToolStrumMaterial(gameMode, laneInfo, note.rawNote);
+                                colorMat = resources.GetToolCymbalMaterial(gameMode, laneInfo, note.rawNote);
                                 break;
                             }
                         default:
@@ -128,7 +128,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
                             }
                         case Note.NoteType.Cymbal:
                             {
-                                colorMat = resources.GetStrumMaterial(gameMode, laneInfo, note.rawNote);
+                                colorMat = resources.GetCymbalMaterial(gameMode, laneInfo, note.rawNote);
                                 break;
                             }
                         default:
