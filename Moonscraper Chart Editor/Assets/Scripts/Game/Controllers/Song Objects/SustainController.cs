@@ -185,7 +185,7 @@ public class SustainController : SelectableClick {
     {
         get
         {
-            return originalDraggedNotes.Count > 0 || sustainDragCommands.Count > 0;
+            return (originalDraggedNotes.Count > 0 || sustainDragCommands.Count > 0) && commandPushCount > 0;
         }
     }
 
