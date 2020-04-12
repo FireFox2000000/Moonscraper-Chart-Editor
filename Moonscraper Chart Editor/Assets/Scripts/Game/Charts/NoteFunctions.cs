@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
+//#define OPEN_NOTES_BLOCK_EXTENDED_SUSTAINS
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -154,9 +156,15 @@ public static class NoteFunctions {
             {
                 bool nextNoteSame = next.rawNote == note.rawNote;
                 bool drumsMode = note.gameMode == Chart.GameMode.Drums;
+
+#if OPEN_NOTES_BLOCK_EXTENDED_SUSTAINS
                 bool blockedByOpenNote = next.IsOpenNote() && !drumsMode;
                 if (blockedByOpenNote || nextNoteSame)
+#else
+                if (nextNoteSame)
+#endif
                     return next;
+
             }
 
             next = next.next;
@@ -369,7 +377,7 @@ public static class NoteFunctions {
         AutoForcedCheck(chart, note, subActions);
     }
 
-    #region Note Insertion Helper Functions
+#region Note Insertion Helper Functions
 
     static Note FindReplacementNote(Note originalNote, IList<SongObject> replacementNotes)
     {
@@ -478,7 +486,12 @@ public static class NoteFunctions {
             // Cap only the sustain of the same fret type and open notes
             foreach (Note prevNote in previousNotes)
             {
-                if (noteToAdd.IsOpenNote() || prevNote.guitarFret == noteToAdd.guitarFret)
+                if (
+#if OPEN_NOTES_BLOCK_EXTENDED_SUSTAINS
+                    noteToAdd.IsOpenNote() ||
+#endif
+                    prevNote.guitarFret == noteToAdd.guitarFret
+                    )
                 {
                     uint newLength = prevNote.GetCappedLength(noteToAdd, song);
                     if (prevNote.length != newLength)
@@ -532,5 +545,5 @@ public static class NoteFunctions {
         return (a & ~Note.PER_NOTE_FLAGS) == (b & ~Note.PER_NOTE_FLAGS);
     }
 
-    #endregion
+#endregion
 }
