@@ -134,6 +134,16 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                             ren.sprite = spriteResources.reg_tap[noteArrayPos];
                     }
                 }
+				else if (Globals.drumMode && noteType == Note.NoteType.Strum)
+				{
+					if (note.guitarFret != Note.GuitarFret.Open)
+					{
+						if (specialType == Note.SpecialType.StarPower)
+							ren.sprite = spriteResources.sp_drum[noteArrayPos];
+						else
+							ren.sprite = spriteResources.reg_drum[noteArrayPos];
+					}
+				}
                 // Cymbals
                 else if (noteType == Note.NoteType.Cymbal)
                 {
