@@ -43,6 +43,8 @@ public class LoadCustomResources : MonoBehaviour {
         new CustomTexture("5_reg_hopo", OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT),
         new CustomTexture("5_sp_strum", OPEN_NOTE_TEXTURE_4X4_WIDTH, OPEN_NOTE_TEXTURE_4X4_HEIGHT),
         new CustomTexture("5_sp_hopo", OPEN_NOTE_TEXTURE_4X4_WIDTH, OPEN_NOTE_TEXTURE_4X4_HEIGHT),
+		new CustomTexture("5_reg_drum", OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT),
+		new CustomTexture("5_sp_drum", OPEN_NOTE_TEXTURE_4X4_WIDTH, OPEN_NOTE_TEXTURE_4X4_HEIGHT),
 
         new CustomTexture("2_reg_strum_ghl", GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT),
         new CustomTexture("2_reg_hopo_ghl", GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT),
@@ -63,10 +65,12 @@ public class LoadCustomResources : MonoBehaviour {
                 new CustomTexture(i + "_reg_hopo", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
                 new CustomTexture(i + "_reg_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
                 new CustomTexture(i + "_reg_cymbal", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+				new CustomTexture(i + "_reg_drum", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
                 new CustomTexture(i + "_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
                 new CustomTexture(i + "_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
                 new CustomTexture(i + "_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
                 new CustomTexture(i + "_sp_cymbal", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+				new CustomTexture(i + "_sp_drum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
 
                 new CustomSprite(i + SkinKeys.xFretBase, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
                 new CustomSprite(i + SkinKeys.xFretCover, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
@@ -271,6 +275,11 @@ public class LoadCustomResources : MonoBehaviour {
         {
             skin.reg_cymbal[i] = GetTextureFromLoadedResources(i + "_reg_cymbal", resourcesDictionary);
         }
+		
+		for (int i = 0; i < skin.reg_drum.Length; ++i)
+        {
+            skin.reg_drum[i] = GetTextureFromLoadedResources(i + "_reg_drum", resourcesDictionary);
+        }
 
         for (int i = 0; i < skin.sp_strum.Length; ++i)
         {
@@ -290,6 +299,11 @@ public class LoadCustomResources : MonoBehaviour {
         for (int i = 0; i < skin.sp_cymbal.Length; ++i)
         {
             skin.sp_cymbal[i] = GetTextureFromLoadedResources(i + "_sp_cymbal", resourcesDictionary);
+        }
+		
+		for (int i = 0; i < skin.sp_drum.Length; ++i)
+        {
+            skin.sp_drum[i] = GetTextureFromLoadedResources(i + "_sp_drum", resourcesDictionary);
         }
 
         // GHL LOADING

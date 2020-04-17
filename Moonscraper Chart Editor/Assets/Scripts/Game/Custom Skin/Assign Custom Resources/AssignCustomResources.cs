@@ -57,6 +57,8 @@ public class AssignCustomResources : MonoBehaviour {
         SetCustomTexturesToAtlus(defaultNoteSprites.sp_hopo, customSkin.sp_hopo, atlusPixels, fullTextureAtlusSize);
         SetCustomTexturesToAtlus(defaultNoteSprites.sp_tap, customSkin.sp_tap, atlusPixels, fullTextureAtlusSize);
         SetCustomTexturesToAtlus(defaultNoteSprites.sp_cymbal, customSkin.sp_cymbal, atlusPixels, fullTextureAtlusSize);
+		SetCustomTexturesToAtlus(defaultNoteSprites.reg_drum, customSkin.reg_drum, atlusPixels, fullTextureAtlusSize);
+		SetCustomTexturesToAtlus(defaultNoteSprites.sp_drum, customSkin.sp_drum, atlusPixels, fullTextureAtlusSize);
 
         Skin.AssestsAvaliable? sprites = SkinManager.Instance.noteSpritesAvaliable;
         SetCustomTexturesToAtlus(defaultNoteSprites.sustains, customSkin.sustains, atlusPixels, fullTextureAtlusSize);
