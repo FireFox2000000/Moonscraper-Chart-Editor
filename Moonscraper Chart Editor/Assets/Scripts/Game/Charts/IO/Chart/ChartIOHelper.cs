@@ -107,7 +107,7 @@ public static class ChartIOHelper
     {
         const string QUOTEVALIDATE = @"""[^""\\]*(?:\\.[^""\\]*)*""";
         const string QUOTESEARCH = "\"([^\"]*)\"";
-        const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";
+        const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";       // US culture only
 
         public enum MetadataValueType
         {
@@ -149,7 +149,7 @@ public static class ChartIOHelper
                     case MetadataValueType.Float:
                         {
                             m_readerParseRegex = new Regex(key + " = " + FLOATSEARCH, RegexOptions.Compiled);
-                            m_saveFormat = string.Format(c_metaDataSaveFormatNoQuote, key);
+                            m_saveFormat = string.Format(new System.Globalization.CultureInfo("en-US"), c_metaDataSaveFormatNoQuote, key);
                             break;
                         }
 
