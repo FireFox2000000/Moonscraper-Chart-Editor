@@ -870,32 +870,40 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         get
         {
             float DEFAULT_SONG_LENGTH = 300;     // 5 minutes
+            float songLengthInSeconds = DEFAULT_SONG_LENGTH;
 
             if (currentSong == null)
                 return 0;
 
             if (currentSong.manualLength.HasValue)
             {
-                return currentSong.manualLength.Value;
+                songLengthInSeconds = currentSong.manualLength.Value;
             }
             else
             {
-                AudioStream mainStream = currentSongAudio.mainSongAudio;
+                float length = 0;
 
-                if (mainStream != null)
+                // Find the longest valid audio track
+                for (int i = 0; i < EnumX<Song.AudioInstrument>.Count; ++i)
                 {
-                    float length = mainStream.ChannelLengthInSeconds() + currentSong.offset;
+                    Song.AudioInstrument audio = (Song.AudioInstrument)i;
+                    AudioStream stream = currentSongAudio.GetAudioStream(audio);
+                    if (AudioManager.StreamIsValid(stream))
+                    {
+                        length = Mathf.Max(length, stream.ChannelLengthInSeconds());
+                    }
+                }
 
-                    if (length <= 0)
-                        return DEFAULT_SONG_LENGTH;
-                    else
-                        return length;
-                }
-                else
-                {
-                    return DEFAULT_SONG_LENGTH;
-                }
+                if (length > 0)
+                    songLengthInSeconds = length;
             }
+
+            if (currentSong.offset < 0)
+            {
+                songLengthInSeconds -= currentSong.offset;
+            }
+
+            return Mathf.Max(songLengthInSeconds, 0);
         }
     }
 
