@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.EventSystems;
 
-// This script is automatically distributed to all input fields via the Globals script
+// This script is automatically distributed to all input fields via the UiServices script
 [RequireComponent(typeof(InputField))]
 public class InputFieldDoubleClick : MonoBehaviour { 
     InputField input;

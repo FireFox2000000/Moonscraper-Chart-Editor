@@ -92,10 +92,6 @@ public class Globals : MonoBehaviour {
         localEvents = LoadCommonEvents("local_events.txt");
         globalEvents = LoadCommonEvents("global_events.txt");
 
-        InputField[] allInputFields = Resources.FindObjectsOfTypeAll<InputField>();
-        foreach (InputField inputField in allInputFields)
-            inputField.gameObject.AddComponent<InputFieldDoubleClick>();
-
         HintMouseOver.style = hintMouseOverStyle; 
     }
 

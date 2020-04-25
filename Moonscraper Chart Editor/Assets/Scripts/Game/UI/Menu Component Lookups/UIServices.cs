@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIServices : MonoBehaviour {
 
@@ -41,6 +42,16 @@ public class UIServices : MonoBehaviour {
         editorPanels = GetComponentInChildren<EditorPanels>();
 
         Debug.Assert(editorPanels, "Unable to locate Editor Panels script");
+
+        // Every inputfield needs this attached to it
+        InputField[] allInputFields = GetComponentsInChildren<InputField>(true);
+        foreach (InputField inputField in allInputFields)
+        {
+            if (!inputField.gameObject.GetComponent<InputFieldDoubleClick>())
+            {
+                inputField.gameObject.AddComponent<InputFieldDoubleClick>();
+            }
+        }
     }
 
     public Vector2 GetUIMousePosition()
