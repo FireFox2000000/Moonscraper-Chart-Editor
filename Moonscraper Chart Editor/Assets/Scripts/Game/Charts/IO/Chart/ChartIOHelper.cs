@@ -131,6 +131,8 @@ public static class ChartIOHelper
             public Regex regex { get { return m_readerParseRegex; } }
             public string saveFormat { get { return m_saveFormat; } }
 
+            public static readonly System.Globalization.CultureInfo c_cultureInfo = new System.Globalization.CultureInfo("en-US");
+
             public MetadataItem(string key, MetadataValueType type)
             {
                 m_key = key;
@@ -149,7 +151,7 @@ public static class ChartIOHelper
                     case MetadataValueType.Float:
                         {
                             m_readerParseRegex = new Regex(key + " = " + FLOATSEARCH, RegexOptions.Compiled);
-                            m_saveFormat = string.Format(new System.Globalization.CultureInfo("en-US"), c_metaDataSaveFormatNoQuote, key);
+                            m_saveFormat = string.Format(c_cultureInfo, c_metaDataSaveFormatNoQuote, key);
                             break;
                         }
 

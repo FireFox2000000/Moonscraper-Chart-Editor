@@ -220,6 +220,7 @@ public class ChartWriter
             exportOptions.targetResolution = song.resolution;
 
         Metadata metaData = song.metaData;
+        var floatCultureInfo = ChartIOHelper.MetaData.MetadataItem.c_cultureInfo;
 
         // Song properties  
         if (metaData.name != string.Empty)
@@ -232,16 +233,16 @@ public class ChartWriter
             saveString += string.Format(ChartIOHelper.MetaData.album.saveFormat, metaData.album);
         if (metaData.year != string.Empty)
             saveString += string.Format(ChartIOHelper.MetaData.year.saveFormat, metaData.year);
-        saveString += string.Format(ChartIOHelper.MetaData.offset.saveFormat, song.offset);
+        saveString += string.Format(floatCultureInfo, ChartIOHelper.MetaData.offset.saveFormat, song.offset);
 
         saveString += string.Format(ChartIOHelper.MetaData.resolution.saveFormat, exportOptions.targetResolution);
         if (metaData.player2 != string.Empty)
             saveString += string.Format(ChartIOHelper.MetaData.player2.saveFormat, metaData.player2.ToLower());
         saveString += string.Format(ChartIOHelper.MetaData.difficulty.saveFormat, metaData.difficulty);
         if (song.manualLength.HasValue)
-            saveString += string.Format(ChartIOHelper.MetaData.length.saveFormat, song.manualLength.Value);
-        saveString += string.Format(ChartIOHelper.MetaData.previewStart.saveFormat, metaData.previewStart);
-        saveString += string.Format(ChartIOHelper.MetaData.previewEnd.saveFormat, metaData.previewEnd);
+            saveString += string.Format(floatCultureInfo, ChartIOHelper.MetaData.length.saveFormat, song.manualLength.Value);
+        saveString += string.Format(floatCultureInfo, ChartIOHelper.MetaData.previewStart.saveFormat, metaData.previewStart);
+        saveString += string.Format(floatCultureInfo, ChartIOHelper.MetaData.previewEnd.saveFormat, metaData.previewEnd);
         if (metaData.genre != string.Empty)
             saveString += string.Format(ChartIOHelper.MetaData.genre.saveFormat, metaData.genre);
         if (metaData.mediatype != string.Empty)
