@@ -461,7 +461,7 @@ public static class MidWriter {
                         InsertionSort(eventList, forceOffEvent);
                     }
 
-                    if ((note.flags & Note.Flags.ProDrums_Cymbal) == 0)     // We want to write our flags if the cymbal is toggled OFF, as these notes are cymbals by default
+                    if (instrument == Song.Instrument.Drums && ((note.flags & Note.Flags.ProDrums_Cymbal) == 0))     // We want to write our flags if the cymbal is toggled OFF, as these notes are cymbals by default
                     {
                         int tomToggleNoteNumber;
                         if (MidIOHelper.PAD_TO_CYMBAL_LOOKUP.TryGetValue(note.drumPad, out tomToggleNoteNumber))
