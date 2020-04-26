@@ -1,3 +1,17 @@
+1.3.3.6
+	NEW FEATURES
+	-Added song validator to warn users of misaligned time signatures in CH and other issues.
+
+	CHANGES
+	-Removed some outdated info from the manual
+	-Total song length now calculated from the longest audio track, rather than the first.
+
+	FIXES
+	-Fixed decimal-based metadata properties saving out with a comma under OS cultures that use commas as decimal seperators. Now saving out with a peroid instead.
+	-Negative offset now added to total song length. 
+	-Fixed tom toggles being written out into non-drums based tracks in midis.
+	-Fixed step increment getting locked/stuck on really weird step values.
+
 1.3.3.5
 	CHANGES
 	-Allow open notes to not block extended sustains anymore.
