@@ -19,11 +19,11 @@ public static class ScreenshotFunctions
         var clearFlags = camera.clearFlags;
         camera.clearFlags = CameraClearFlags.Depth;
 
-        RenderTexture rt = new RenderTexture(resWidth, resHeight, 16, RenderTextureFormat.Default);
+        RenderTexture rt = new RenderTexture(resWidth, resHeight, 32, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
         rt.antiAliasing = 8;
 
         camera.targetTexture = rt;
-        Texture2D screenShot = new Texture2D(resWidth, resHeight, TextureFormat.ARGB32, false, true);
+        Texture2D screenShot = new Texture2D(resWidth, resHeight, TextureFormat.ARGB32, false);
         camera.Render();
         RenderTexture.active = rt;
         screenShot.ReadPixels(new Rect(0, 0, resWidth, resHeight), 0, 0);
