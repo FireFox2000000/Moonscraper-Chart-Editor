@@ -188,10 +188,20 @@ public class TimelineMovementController : MovementController
                     if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveStepPositive))
                     {
                         snappedPos = Snapable.ChartIncrementStep(currentPos, GameSettings.step, editor.currentSong);
+
+                        if (snappedPos == currentPos)       // This can happen on really weird custom step values
+                        {
+                            ++snappedPos;
+                        }
                     }
                     else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveStepNegative))
                     {
                         snappedPos = Snapable.ChartDecrementStep(currentPos, GameSettings.step, editor.currentSong);
+
+                        if (snappedPos == currentPos && snappedPos > 0)     // This can happen on really weird custom step values
+                        {
+                            --snappedPos;
+                        }
                     }
                     else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveMeasurePositive))
                     {
@@ -201,7 +211,7 @@ public class TimelineMovementController : MovementController
                     else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveMeasureNegative))
                     {
                         snappedPos = Snapable.TickToSnappedTick(currentPos - (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong);
-                    }
+                    }                 
 
                     if (editor.currentSong.TickToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSongLength)
                     {
