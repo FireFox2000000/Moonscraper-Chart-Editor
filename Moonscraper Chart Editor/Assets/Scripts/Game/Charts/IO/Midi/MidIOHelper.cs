@@ -18,8 +18,13 @@ public static class MidIOHelper {
     public const string VOCALS_TRACK = "PART VOCALS";
 
     public const string LYRIC_EVENT_PREFIX = "lyric ";
+    public const byte SOLO_NOTE = 0x67;    // 103, http://docs.c3universe.com/rbndocs/index.php?title=Guitar_and_Bass_Authoring#Solo_Sections
+    public const byte STARPOWER_NOTE = 0x74;   // 116, http://docs.c3universe.com/rbndocs/index.php?title=Overdrive_and_Big_Rock_Endings
+    public const string SoloEventText = "solo";
+    public const string SoloEndEventText = "soloend";
 
-    public static readonly Dictionary<Note.DrumPad, int> PAD_TO_CYMBAL_LOOKUP = new Dictionary<Note.DrumPad, int>()
+    // http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring
+    public static readonly Dictionary<Note.DrumPad, int> PAD_TO_CYMBAL_LOOKUP = new Dictionary<Note.DrumPad, int>()     
     {
         { Note.DrumPad.Yellow, 110 },
         { Note.DrumPad.Blue, 111 },

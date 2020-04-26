@@ -15,7 +15,6 @@ public static class MidWriter {
     const byte ON_EVENT = 0x91;         // Note on channel 1
     const byte OFF_EVENT = 0x81;
     const byte VELOCITY = 0x64;         // 100
-    const byte STARPOWER_NOTE = 0x74;   // 116
 
     const byte SYSEX_START = 0xF0;
     const byte SYSEX_END = 0xF7;
@@ -424,6 +423,7 @@ public static class MidWriter {
 
         List<SortableBytes> eventList = new List<SortableBytes>();
 
+        ChartEvent soloOnEvent = null;
         foreach (ChartObject chartObject in chart.chartObjects)
         {
             Note note = chartObject as Note;           
@@ -541,8 +541,39 @@ public static class MidWriter {
             ChartEvent chartEvent = chartObject as ChartEvent;
             if (chartEvent != null && difficulty == Song.Difficulty.Expert)     // Text events cannot be split up in the file
             {
-                InsertionSort(eventList, GetChartEventBytes(chartEvent));
+                if (soloOnEvent != null && chartEvent.eventName == MidIOHelper.SoloEndEventText)
+                {
+                    GetSoloBytes(soloOnEvent, chartEvent.tick, out onEvent, out offEvent);
+                    soloOnEvent = null;
+                }
+                else if (chartEvent.eventName == MidIOHelper.SoloEventText)
+                {
+                    soloOnEvent = chartEvent;
+                }
+                else
+                {
+                    InsertionSort(eventList, GetChartEventBytes(chartEvent));
+                }
             }
+
+            if (onEvent != null && offEvent != null)
+            {
+                InsertionSort(eventList, onEvent);
+
+                if (offEvent.tick == onEvent.tick)
+                    ++offEvent.tick;
+
+                InsertionSort(eventList, offEvent);
+            }
+        }
+
+        if (soloOnEvent != null)        // Found a solo event with no end. Assume the solo lasts for the rest of the song
+        {
+            SortableBytes onEvent = null;
+            SortableBytes offEvent = null;
+
+            uint soloEndTick = chart.chartObjects[chart.chartObjects.Count - 1].tick;   // In order to get a solo event the chart objects needed to have some object in this container, no need to check size, hopefully...
+            GetSoloBytes(soloOnEvent, soloEndTick, out onEvent, out offEvent);
 
             if (onEvent != null && offEvent != null)
             {
@@ -804,8 +835,14 @@ public static class MidWriter {
 
     static void GetStarpowerBytes(Starpower sp, out SortableBytes onEvent, out SortableBytes offEvent)
     {
-        onEvent = new SortableBytes(sp.tick, new byte[] { ON_EVENT, STARPOWER_NOTE, VELOCITY });
-        offEvent = new SortableBytes(sp.tick + sp.length, new byte[] { OFF_EVENT, STARPOWER_NOTE, VELOCITY });
+        onEvent = new SortableBytes(sp.tick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_NOTE, VELOCITY });
+        offEvent = new SortableBytes(sp.tick + sp.length, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_NOTE, VELOCITY });
+    }
+
+    static void GetSoloBytes(ChartEvent solo, uint soloEndTick, out SortableBytes onEvent, out SortableBytes offEvent)
+    {
+        onEvent = new SortableBytes(solo.tick, new byte[] { ON_EVENT, MidIOHelper.SOLO_NOTE, VELOCITY });
+        offEvent = new SortableBytes(soloEndTick, new byte[] { OFF_EVENT, MidIOHelper.SOLO_NOTE, VELOCITY });
     }
 
     static SortableBytes GetChartEventBytes(ChartEvent chartEvent)

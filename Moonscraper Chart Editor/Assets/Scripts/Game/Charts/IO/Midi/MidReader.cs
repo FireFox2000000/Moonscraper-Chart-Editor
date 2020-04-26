@@ -276,10 +276,22 @@ public static class MidReader {
                 }
 
                 // Check if starpower event
-                if (note.NoteNumber == 116)
+                if (note.NoteNumber == MidIOHelper.STARPOWER_NOTE)
                 {                
                     foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
                         song.GetChart(instrument, diff).Add(new Starpower(tick, sus), false);
+
+                    continue;
+                }
+
+                if (note.NoteNumber == MidIOHelper.SOLO_NOTE)
+                {
+                    foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
+                    {
+                        Chart chart = song.GetChart(instrument, diff);
+                        chart.Add(new ChartEvent(tick, MidIOHelper.SoloEventText));
+                        chart.Add(new ChartEvent(tick + sus, MidIOHelper.SoloEndEventText));
+                    }
 
                     continue;
                 }
