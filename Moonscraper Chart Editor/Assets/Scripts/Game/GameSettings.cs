@@ -87,6 +87,9 @@ public static class GameSettings
     public static ClapToggle clapProperties = (ClapToggle)c_defaultClapVal;
     public static NotePlacementMode notePlacementMode = NotePlacementMode.Default;
 
+    public static SongValidate.ValidationOptions songValidatorModes = ~SongValidate.ValidationOptions.None;
+    public static bool autoValidateSongOnSave = true;
+
     public static MSChartEditorInput.MSChartEditorActionContainer controls = new MSChartEditorInput.MSChartEditorActionContainer();
 
     public static bool GetBoolSetting(string identifier)
@@ -140,6 +143,8 @@ public static class GameSettings
             {
                 drumsModeOptions = DrumModeOptions.Standard;
             }
+            songValidatorModes = (SongValidate.ValidationOptions)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Song Validator Modes", (int)(~SongValidate.ValidationOptions.None));
+            autoValidateSongOnSave = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Auto Validate Song On Save", true);
 
             gameplayStartDelayTime = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
             gameplayStartDelayTime = (float)(System.Math.Round(gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f); // Check that the gameplay start delay time is a multiple of 0.5 and is
@@ -217,6 +222,8 @@ public static class GameSettings
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Custom Background Swap Time", customBgSwapTime);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Drums Lane Count", drumsLaneCount);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Drums Mode", (int)drumsModeOptions);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Song Validator Modes", (int)songValidatorModes);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Auto Validate Song On Save", autoValidateSongOnSave);
 
             // Audio levels
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Master", vol_master);

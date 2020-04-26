@@ -15,6 +15,7 @@ public class SettingsController : DisplayMenu
     public Toggle sustainGapEnabledToggle;
     public Toggle resetAfterPlay;
     public Toggle resetAfterGameplay;
+    public Toggle autoValidateSongOnSave;
 
     public Slider musicSourceSlider;
     public Slider guitarSourceSlider;
@@ -156,6 +157,7 @@ public class SettingsController : DisplayMenu
 
         resetAfterPlay.isOn = GameSettings.resetAfterPlay;
         resetAfterGameplay.isOn = GameSettings.resetAfterGameplay;
+        autoValidateSongOnSave.isOn = GameSettings.autoValidateSongOnSave;
 
         gameplayStartDelayDropdown.value = (int)(GameSettings.gameplayStartDelayTime * 2.0f);
 
@@ -209,6 +211,11 @@ public class SettingsController : DisplayMenu
     public void SetExtendedSustains(bool value)
     {
         GameSettings.extendedSustainsEnabled = value;
+    }
+
+    public void SetAutoValidateSongOnSave(bool value)
+    {
+        GameSettings.autoValidateSongOnSave = value;
     }
 
     public void IncrementSustainsGapStep()

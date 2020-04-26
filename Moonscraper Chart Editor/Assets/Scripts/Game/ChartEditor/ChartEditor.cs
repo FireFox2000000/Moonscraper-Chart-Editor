@@ -523,6 +523,17 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                 events.saveEvent.Fire();
 
             isDirty = false;
+
+            if (GameSettings.autoValidateSongOnSave)
+            {
+                bool hasErrors;
+                SongValidate.GenerateReport(GameSettings.songValidatorModes, currentSong, currentSongLength, out hasErrors);
+
+                if (hasErrors)
+                {
+                    EnableMenu(uiServices.gameObject.GetComponentInChildren<ValidationMenu>(true));
+                }
+            }
         }
     }
 
