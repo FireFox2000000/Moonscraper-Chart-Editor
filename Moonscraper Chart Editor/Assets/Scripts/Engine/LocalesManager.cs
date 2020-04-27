@@ -9,8 +9,8 @@ using System.Linq;
 
 public static class LocalesManager
 {
-    static string m_decimalSeperatorStr = Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator;
-    public static char decimalSeperator { get; } = m_decimalSeperatorStr.Length > 0 ? m_decimalSeperatorStr[0] : '.';
+    static string m_decimalSeperatorStr { get { return Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator; } }
+    public static char decimalSeperator { get { return m_decimalSeperatorStr.Length > 0 ? m_decimalSeperatorStr[0] : '.'; } }
 
     public static char ValidateDecimalInput(string text, int charIndex, char addedChar)
     {

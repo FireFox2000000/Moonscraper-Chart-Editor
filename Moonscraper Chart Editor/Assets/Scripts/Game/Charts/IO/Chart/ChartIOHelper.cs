@@ -109,6 +109,8 @@ public static class ChartIOHelper
         const string QUOTESEARCH = "\"([^\"]*)\"";
         const string FLOATSEARCH = @"[\-\+]?\d+(\.\d+)?";       // US culture only
 
+        public static readonly System.Globalization.CultureInfo c_cultureInfo = new System.Globalization.CultureInfo("en-US");
+
         public enum MetadataValueType
         {
             String,
@@ -130,8 +132,6 @@ public static class ChartIOHelper
             public string key { get { return m_key; } }
             public Regex regex { get { return m_readerParseRegex; } }
             public string saveFormat { get { return m_saveFormat; } }
-
-            public static readonly System.Globalization.CultureInfo c_cultureInfo = new System.Globalization.CultureInfo("en-US");
 
             public MetadataItem(string key, MetadataValueType type)
             {
@@ -215,7 +215,7 @@ public static class ChartIOHelper
 
         public static float ParseAsFloat(string line)
         {
-            return float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
+            return float.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString(), c_cultureInfo);  // .chart format only allows '.' as decimal seperators. Need to parse correctly under any locale.
         }
 
         public static short ParseAsShort(string line)

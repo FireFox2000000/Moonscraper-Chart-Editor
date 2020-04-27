@@ -220,7 +220,7 @@ public class ChartWriter
             exportOptions.targetResolution = song.resolution;
 
         Metadata metaData = song.metaData;
-        var floatCultureInfo = ChartIOHelper.MetaData.MetadataItem.c_cultureInfo;
+        var floatCultureInfo = ChartIOHelper.MetaData.c_cultureInfo;
 
         // Song properties  
         if (metaData.name != string.Empty)
