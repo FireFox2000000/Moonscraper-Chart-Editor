@@ -2,13 +2,13 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 using System.Collections;
 using System;
 
 public class BPMController : SongObjectController {
     public BPM bpm { get { return (BPM)songObject; } set { Init(value, this); } }
-    public Text bpmText;
+    public TextMeshPro bpmText;
     public const float position = -1.0f;
 
     [SerializeField]

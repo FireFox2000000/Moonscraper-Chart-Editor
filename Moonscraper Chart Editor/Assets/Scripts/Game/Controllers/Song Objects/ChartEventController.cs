@@ -4,13 +4,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class ChartEventController : SongObjectController
 {
     public ChartEvent chartEvent { get { return (ChartEvent)songObject; } set { Init(value, this); } }
     public const float position = 3.0f;
-    public Text chartEventText;
+    public TextMeshPro chartEventText;
     public const int OFFSET_SPACING = 1;
 
     public override void UpdateSongObject()

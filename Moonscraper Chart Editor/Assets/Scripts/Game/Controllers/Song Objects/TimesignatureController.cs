@@ -2,13 +2,13 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 using System.Collections;
 
 public class TimesignatureController : SongObjectController {
 
     public TimeSignature ts { get { return (TimeSignature)songObject; } set { Init(value, this); } }
-    public Text tsText;
+    public TextMeshPro tsText;
     public const float position = 1.5f;
     uint previousNumerator = 0, previousDenominator = 0;
 
