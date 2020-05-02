@@ -11,7 +11,7 @@ namespace MSE
 {
     namespace Input
     {
-        public class JoystickDevice : IInputDevice
+        public class JoystickDevice : InputDeviceBase, IInputDevice
         {
             // Sensitivity settings
             const float kAxisDeadzoneThreshold = 0.2f;
@@ -253,7 +253,7 @@ namespace MSE
                 return null;
             }
             
-            public bool GetInput(IInputMap inputMap)
+            public override bool GetInput(IInputMap inputMap)
             {
                 JoystickMap map = inputMap as JoystickMap;
                 if (map != null && map.IsCompatibleWithDevice(this))
@@ -294,7 +294,7 @@ namespace MSE
                 return false;
             }
 
-            public bool GetInputDown(IInputMap inputMap)
+            public override bool GetInputDown(IInputMap inputMap)
             {
                 JoystickMap map = inputMap as JoystickMap;
                 if (map != null && map.IsCompatibleWithDevice(this))
@@ -342,7 +342,7 @@ namespace MSE
                 return false;
             }
 
-            public bool GetInputUp(IInputMap inputMap)
+            public override bool GetInputUp(IInputMap inputMap)
             {
                 JoystickMap map = inputMap as JoystickMap;
                 if (map != null && map.IsCompatibleWithDevice(this))

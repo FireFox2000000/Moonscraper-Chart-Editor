@@ -11,7 +11,7 @@ namespace MSE
 {
     namespace Input
     {
-        public class GamepadDevice : IInputDevice
+        public class GamepadDevice : InputDeviceBase, IInputDevice
         {
             // Sensitivity settings
             const float kAxisDeadzoneThreshold = 0.2f;
@@ -276,7 +276,7 @@ namespace MSE
                 return SDL.SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_INVALID;
             }
 
-            public bool GetInputDown(IInputMap inputMap)
+            public override bool GetInputDown(IInputMap inputMap)
             {
                 GamepadMap map = inputMap as GamepadMap;
                 if (map != null)
@@ -312,7 +312,7 @@ namespace MSE
                 return false;
             }
 
-            public bool GetInputUp(IInputMap inputMap)
+            public override bool GetInputUp(IInputMap inputMap)
             {
                 GamepadMap map = inputMap as GamepadMap;
                 if (map != null)
@@ -348,7 +348,7 @@ namespace MSE
                 return false;
             }
 
-            public bool GetInput(IInputMap inputMap)
+            public override bool GetInput(IInputMap inputMap)
             {
                 GamepadMap map = inputMap as GamepadMap;
                 if (map != null)

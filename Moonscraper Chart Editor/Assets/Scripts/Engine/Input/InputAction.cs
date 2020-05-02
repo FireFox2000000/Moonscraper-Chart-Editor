@@ -65,6 +65,43 @@ namespace MSE
                     if (jsButtonMap != null)
                         jsMaps.Add(jsButtonMap);
                 }
+
+                public delegate bool CheckInputFn(IInputMap map);
+                public bool CheckInputOnAllMapsGCFree(InputDeviceBase.CheckInputFn inputFn)
+                {
+                    // Iterate over these with array indexing to avoid GC allocs from enumerator
+                    for (int inputMapIndex = 0; inputMapIndex < kbMaps.Count; ++inputMapIndex)
+                    {
+                        IInputMap map = kbMaps[inputMapIndex];
+                        if (map != null && !map.IsEmpty)
+                        {
+                            if (inputFn(map))
+                                return true;
+                        }
+                    }
+
+                    for (int inputMapIndex = 0; inputMapIndex < gpButtonMaps.Count; ++inputMapIndex)
+                    {
+                        IInputMap map = gpButtonMaps[inputMapIndex];
+                        if (map != null && !map.IsEmpty)
+                        {
+                            if (inputFn(map))
+                                return true;
+                        }
+                    }
+
+                    for (int inputMapIndex = 0; inputMapIndex < jsMaps.Count; ++inputMapIndex)
+                    {
+                        IInputMap map = jsMaps[inputMapIndex];
+                        if (map != null && !map.IsEmpty)
+                        {
+                            if (inputFn(map))
+                                return true;
+                        }
+                    }
+
+                    return false;
+                }
             }
 
             [System.Serializable]
@@ -187,13 +224,9 @@ namespace MSE
                 {
                     IInputDevice device = devices[i];
 
-                    foreach (var map in inputMaps)
+                    if (inputMaps.CheckInputOnAllMapsGCFree(device.GetInputDownDel))
                     {
-                        if (map != null && !map.IsEmpty)
-                        {
-                            if (device.GetInputDown(map))
-                                return true;
-                        }
+                        return true;
                     }
                 }
 
@@ -206,13 +239,9 @@ namespace MSE
                 {
                     IInputDevice device = devices[i];
 
-                    foreach (var map in inputMaps)
+                    if (inputMaps.CheckInputOnAllMapsGCFree(device.GetInputUpDel))
                     {
-                        if (map != null && !map.IsEmpty)
-                        {
-                            if (device.GetInputUp(map))
-                                return true;
-                        }
+                        return true;
                     }
                 }
 
@@ -225,13 +254,9 @@ namespace MSE
                 {
                     IInputDevice device = devices[i];
 
-                    foreach (var map in inputMaps)
+                    if (inputMaps.CheckInputOnAllMapsGCFree(device.GetInputDel))
                     {
-                        if (map != null && !map.IsEmpty)
-                        {
-                            if (device.GetInput(map))
-                                return true;
-                        }
+                        return true;
                     }
                 }
 

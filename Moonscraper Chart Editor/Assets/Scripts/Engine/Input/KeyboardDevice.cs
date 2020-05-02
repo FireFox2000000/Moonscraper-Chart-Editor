@@ -10,7 +10,7 @@ namespace MSE
 {
     namespace Input
     {
-        public class KeyboardDevice : IInputDevice
+        public class KeyboardDevice : InputDeviceBase, IInputDevice
         {
             [Flags]
             public enum ModifierKeys
@@ -137,7 +137,7 @@ namespace MSE
                 return false;
             }
 
-            public bool GetInputDown(IInputMap inputMap)
+            public override bool GetInputDown(IInputMap inputMap)
             {
                 KeyboardMap map = inputMap as KeyboardMap;
                 if (map == null)
@@ -167,7 +167,7 @@ namespace MSE
                 return hasInputDir;
             }
 
-            public bool GetInputUp(IInputMap inputMap)
+            public override bool GetInputUp(IInputMap inputMap)
             {
                 KeyboardMap map = inputMap as KeyboardMap;
                 if (map == null)
@@ -197,7 +197,7 @@ namespace MSE
                 return hasInputDir;
             }
 
-            public bool GetInput(IInputMap inputMap)
+            public override bool GetInput(IInputMap inputMap)
             {
                 KeyboardMap map = inputMap as KeyboardMap;
                 if (map == null)
