@@ -58,7 +58,12 @@ public class HitWindowFeeder : MonoBehaviour {
         {
             NoteController note = physicsWindow[i];
 
-            if (hitWindow != null)
+            if (!note.isActiveAndEnabled)
+            {
+                physicsWindow.Remove(note);
+                --i;
+            }
+            else if (hitWindow != null)
             {
                 if (hitWindow.DetectEnter(note.note, time))
                 {

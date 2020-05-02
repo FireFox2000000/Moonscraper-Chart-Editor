@@ -15,6 +15,8 @@ public class PlayingState : SystemManagerState
 
     public PlayingState(bool enableBot, float playFromTime, float? resetBackToTimeOnStop = null)
     {
+        Debug.Log("Playing State Enter. Bot enabled = " + enableBot);
+
         ChartEditor editor = ChartEditor.Instance;
 
         this.playFromTime = playFromTime;
