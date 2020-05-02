@@ -7,12 +7,16 @@ using UnityEngine;
 using TimingConfig;
 
 public class HitWindowFeeder : MonoBehaviour {
-
-    [HideInInspector]
-    public HitWindow<GuitarNoteHitKnowledge> guitarHitWindow = new HitWindow<GuitarNoteHitKnowledge>(GuitarTiming.frontendHitWindowTime, GuitarTiming.backendHitWindowTime);
-    [HideInInspector]
-    public HitWindow<DrumsNoteHitKnowledge> drumsHitWindow = new HitWindow<DrumsNoteHitKnowledge>(DrumsTiming.frontendHitWindowTime, DrumsTiming.backendHitWindowTime);
     List<NoteController> physicsWindow = new List<NoteController>();
+    public IHitWindow hitWindow = null;
+
+    float initSize;
+
+    private void Awake()
+    {
+        initSize = transform.localScale.y;
+        enabled = false;
+    }
 
     void OnTriggerEnter2D(Collider2D col)
     {
@@ -44,34 +48,40 @@ public class HitWindowFeeder : MonoBehaviour {
     {
         float time = ChartEditor.Instance.currentVisibleTime;
 
-        ChartEditor editor = ChartEditor.Instance;
-        Chart.GameMode gameMode = editor.currentChart.gameMode;
-
-        // Enter window
-        for (int i = physicsWindow.Count - 1; i >= 0; --i)
+        // Enter window, need to insert in the correct order
+        for (int i = 0; i < physicsWindow.Count; ++i)
         {
             NoteController note = physicsWindow[i];
-            if (gameMode == Chart.GameMode.Guitar)
+
+            if (hitWindow != null)
             {
-                if (guitarHitWindow.DetectEnter(note.note, time))
+                if (hitWindow.DetectEnter(note.note, time))
                 {
                     physicsWindow.Remove(note);
-                }
-            }
-            else if (gameMode == Chart.GameMode.Drums)
-            {
-                if (drumsHitWindow.DetectEnter(note.note, time))
-                {
-                    physicsWindow.Remove(note);
+                    --i;
                 }
             }
         }
     }
 
+    private void OnEnable()
+    {
+        Reset();
+        transform.localScale = new Vector3(transform.localScale.x, initSize, transform.localScale.z);
+    }
+
+    private void OnDisable()
+    {
+        transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
+        hitWindow = null;
+    }
+
     public void Reset()
     {
-        guitarHitWindow.noteKnowledgeQueue.Clear();
-        drumsHitWindow.noteKnowledgeQueue.Clear();
+        if (hitWindow != null)
+        {
+            hitWindow.Clear();
+        }
         physicsWindow.Clear();
     }
 }

@@ -13,13 +13,24 @@ public class PlayingState : SystemManagerState
     bool audioStarted = false;
     List<SongObject> selectedBeforePlay = new List<SongObject>();
 
-    public PlayingState(float playFromTime, float? resetBackToTimeOnStop = null)
+    public PlayingState(bool enableBot, float playFromTime, float? resetBackToTimeOnStop = null)
     {
+        ChartEditor editor = ChartEditor.Instance;
+
         this.playFromTime = playFromTime;
         this.resetBackToTimeOnStop = resetBackToTimeOnStop;
 
+        AddSystem(new GameplayStateSystem(editor.hitWindowFeeder, enableBot));
         AddSystem(new MetronomePlaybackSystem());
-        AddSystem(new ClapPlaybackSystem(playFromTime));
+
+        if (enableBot)
+        {
+            AddSystem(new ClapPlaybackSystem(playFromTime));
+        }
+        else
+        {
+            AddSystem(new IndicatorPressedInputSystem(editor.indicators.animations, editor.currentGameMode));
+        }
     }
 
     public override void Enter()

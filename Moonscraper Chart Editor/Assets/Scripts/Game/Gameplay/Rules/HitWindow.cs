@@ -5,7 +5,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HitWindow<TNoteHitKnowledge> where TNoteHitKnowledge : NoteHitKnowledge
+public interface IHitWindow
+{
+    bool DetectEnter(Note note, float time);
+    void Clear();
+}
+
+public class HitWindow<TNoteHitKnowledge> : IHitWindow where TNoteHitKnowledge : NoteHitKnowledge
 {
     float frontendTime;
     float backendTime;
@@ -62,6 +68,11 @@ public class HitWindow<TNoteHitKnowledge> where TNoteHitKnowledge : NoteHitKnowl
 
 
         return true;
+    }
+
+    public void Clear()
+    {
+        noteKnowledgeQueue.Clear();
     }
 
     public List<TNoteHitKnowledge> DetectExit(float time)

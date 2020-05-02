@@ -15,11 +15,11 @@ public class Whammy : MonoBehaviour {
 
     LineRenderer lineRenderer;
     SetLineRendererPoints pointsController;
-    [HideInInspector]
-    public bool canWhammy = false;
 
     AnimationCurve lineCurve;
     ChartEditor.State previousApplicationMode;
+
+    public float desiredWhammy = GuitarInput.kNoWhammy;
 
     // Use this for initialization
     void Start () {
@@ -33,26 +33,32 @@ public class Whammy : MonoBehaviour {
 	void Update () {
         if (transform.localScale.y > 0)
         {
-            if (ChartEditor.Instance.currentState == ChartEditor.State.Playing && transform.localScale.y > 0 && canWhammy)
-            {
-                pointsController.UpdateLineRendererPoints();
-
-                ShiftAnimationKeys(lineCurve, keyShiftSpeed * Time.deltaTime * (GameSettings.hyperspeed / GameSettings.gameSpeed) / transform.localScale.y);
-
-                float whammyVal = (lerpedWhammyVal() + 1) * widthMultiplier;
-
-                lineCurve.AddKey(new Keyframe(0, whammyVal + 1));
-            }
-            else if (previousApplicationMode != ChartEditor.Instance.currentState)
-            {
-                OnEnable();
-            }
+            UpdateWhammy(desiredWhammy);
 
             lineRenderer.widthCurve = lineCurve;
         }
     }
 
     void OnEnable()
+    {
+        ResetWhammy();
+    }
+
+    void OnDisable()
+    {
+        ResetWhammy();
+    }
+
+    void UpdateWhammy(float desiredWhammy)
+    {
+        pointsController.UpdateLineRendererPoints();
+        ShiftAnimationKeys(lineCurve, keyShiftSpeed * Time.deltaTime * (GameSettings.hyperspeed / GameSettings.gameSpeed) / transform.localScale.y);
+
+        float whammyVal = (GetLerpedWhammyVal(desiredWhammy) + 1) * widthMultiplier;
+        lineCurve.AddKey(new Keyframe(0, whammyVal + 1));
+    }
+
+    void ResetWhammy()
     {
         // Remove all whammy animation and reset
         if (lineRenderer && lineCurve != null)
@@ -65,6 +71,8 @@ public class Whammy : MonoBehaviour {
 
             currentWhammyVal = GuitarInput.kNoWhammy;
         }
+
+        desiredWhammy = GuitarInput.kNoWhammy;
     }
 
     static void ShiftAnimationKeys(AnimationCurve lineCurve, float shiftDistance)
@@ -90,14 +98,11 @@ public class Whammy : MonoBehaviour {
     }
 
     float currentWhammyVal = GuitarInput.kNoWhammy;
-    float lerpedWhammyVal()
+    float GetLerpedWhammyVal(float desiredWhammy)
     {
         float rawVal = GuitarInput.kNoWhammy;
-        rawVal = GuitarInput.GetWhammyInput();
+        rawVal = desiredWhammy;
 
-        if (!canWhammy)
-            currentWhammyVal = GuitarInput.kNoWhammy;
-        else
         {
             if (rawVal > currentWhammyVal)
             {

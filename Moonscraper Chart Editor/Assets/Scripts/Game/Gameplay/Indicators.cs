@@ -23,17 +23,6 @@ public class Indicators : MonoBehaviour {
     public HitAnimation[] animations;
 
     SpriteRenderer[] fretRenders;
-
-    readonly Dictionary<Note.GuitarFret, bool> bannedFretInputs = new Dictionary<Note.GuitarFret, bool>()
-    {
-        {   Note.GuitarFret.Open, true },
-    };
-
-    readonly Dictionary<Note.DrumPad, bool> bannedDrumPadInputs = new Dictionary<Note.DrumPad, bool>()
-    {
-        {   Note.DrumPad.Kick, true },
-    };
-
     Dictionary<Chart.GameMode, int[]> paletteMaps;
 
     void Start()
@@ -80,71 +69,6 @@ public class Indicators : MonoBehaviour {
                 }
                 else
                     animations[i] = indicators[i].GetComponent<HitAnimation>();
-            }
-        }
-    }
-
-    // Update is called once per frame
-    void Update ()
-    {
-        ChartEditor editor = ChartEditor.Instance;
-
-        if (editor.currentState == ChartEditor.State.Playing && !GameSettings.bot)
-        {
-            Chart.GameMode gameMode = editor.currentChart.gameMode;
-            LaneInfo laneInfo = editor.laneInfo;
-
-            if (gameMode == Chart.GameMode.Drums)
-            {
-                foreach (Note.DrumPad drumPad in EnumX<Note.DrumPad>.Values)
-                {
-                    if (bannedDrumPadInputs.ContainsKey(drumPad))
-                        continue;
-
-                    bool lanePressed = false;
-                    switch (GameSettings.drumsModeOptions)
-                    {
-                        case GameSettings.DrumModeOptions.ProDrums:
-                            {
-                                lanePressed = DrumsInput.GetTomPressedInput(drumPad, laneInfo) || DrumsInput.GetCymbalPressedInput(drumPad, laneInfo);
-                                break;
-                            }
-                        default:
-                            {
-                                lanePressed = DrumsInput.GetPadPressedInput(drumPad, laneInfo);
-                                break;
-                            }
-                    }
-
-                    if (lanePressed)
-                        animations[(int)drumPad].Press();
-                    else
-                        animations[(int)drumPad].Release();
-                }
-            }
-            else
-            {
-                foreach (Note.GuitarFret fret in EnumX<Note.GuitarFret>.Values)
-                {
-                    if (bannedFretInputs.ContainsKey(fret))
-                        continue;
-
-                    if (GuitarInput.GetFretInput(fret))
-                    {
-                        animations[(int)fret].Press();
-                    }
-                    else
-                        animations[(int)fret].Release();
-
-                }
-            }
-        }
-        else
-        {
-            for (int i = 0; i < animations.Length; ++i)
-            {
-                if (!animations[i].running)
-                    animations[i].Release();
             }
         }
     }

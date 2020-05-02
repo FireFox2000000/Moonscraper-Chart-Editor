@@ -21,6 +21,8 @@ public class CameraShake : MonoBehaviour
     {
         initYPos = transform.localPosition.y;
 
+        ChartEditor.Instance.gameplayEvents.explicitMissEvent.Register(ShakeCamera);
+
         if (debugMode) ShakeCamera();
     }
 

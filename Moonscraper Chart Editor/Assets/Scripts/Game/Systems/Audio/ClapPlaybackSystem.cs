@@ -56,7 +56,7 @@ public class ClapPlaybackSystem : SystemManagerState.System
 
         uint currentTick = currentSong.TimeToTick(currentAudioTime, currentSong.resolution);
         bool hasClapped = false;
-        bool clapEnabled = GameSettings.clapEnabled && GameSettings.bot;
+        bool clapEnabled = GameSettings.clapEnabled;
         hasClapped |= UpdateClapForTracker(currentTick, noteTracker, !hasClapped && clapEnabled);
         hasClapped |= UpdateClapForTracker(currentTick, spTracker, !hasClapped && clapEnabled);
         hasClapped |= UpdateClapForTracker(currentTick, chartEventTracker, !hasClapped && clapEnabled);

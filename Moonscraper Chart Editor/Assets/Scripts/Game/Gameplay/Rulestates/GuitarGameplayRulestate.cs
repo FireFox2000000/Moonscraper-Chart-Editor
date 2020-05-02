@@ -10,12 +10,14 @@ public class GuitarGameplayRulestate : BaseGameplayRulestate {
     GuitarNoteHitAndMissDetect hitAndMissNoteDetect;
     GuitarSustainBreakDetect sustainBreakDetect;
     GuitarSustainHitKnowledge guitarSustainHitKnowledge;
+    GuitarWhammyDetect guitarWhammyDetect;
 
     public GuitarGameplayRulestate(MissFeedback missFeedbackFn) : base(missFeedbackFn)
     {
         hitAndMissNoteDetect = new GuitarNoteHitAndMissDetect(HitNote, MissNote);
         sustainBreakDetect = new GuitarSustainBreakDetect(SustainBreak);
         guitarSustainHitKnowledge = new GuitarSustainHitKnowledge();
+        guitarWhammyDetect = new GuitarWhammyDetect();
     }
 
     // Update is called once per frame
@@ -31,6 +33,7 @@ public class GuitarGameplayRulestate : BaseGameplayRulestate {
         }
 
         guitarSustainHitKnowledge.Update(time);
+        guitarWhammyDetect.Update(time, guitarSustainHitKnowledge);
         sustainBreakDetect.Update(time, guitarSustainHitKnowledge, stats.noteStreak);     
         hitAndMissNoteDetect.Update(time, hitWindow, stats.noteStreak, guitarSustainHitKnowledge);        
     }

@@ -37,9 +37,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public Globals globals;
     [SerializeField]
     ClipboardObjectController clipboard;
-    [SerializeField]
-    GameplayManager gameplayManager;
     public LaneInfo laneInfo;
+    public HitWindowFeeder hitWindowFeeder;
     [SerializeField]
     TextAsset versionNumber;
 
@@ -102,6 +101,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         };
     public LoadedStreamStore sfxAudioStreams { get; private set; }
     public ChartEditorEvents events = new ChartEditorEvents();
+    public GameplayEvents gameplayEvents = new GameplayEvents();
 
     struct UndoRedoSnapInfo
     {
@@ -940,8 +940,6 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         float startTime = TickFunctions.WorldYPositionToTime(strikelineYPos) - GameSettings.gameplayStartDelayTime - (0.01f * GameSettings.hyperspeed); // Offset to prevent errors where it removes a note that is on the strikeline
         movement.SetTime(startTime);
 
-        GameSettings.bot = false;
-
         // Hide everything behind the strikeline
         foreach (Note note in currentChart.notes)
         {
@@ -959,7 +957,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         foreach (HitAnimation hitAnim in indicators.animations)
             hitAnim.StopAnim();
 
-        SystemManagerState playingState = new PlayingState(startTime, stopResetTime);
+        SystemManagerState playingState = new PlayingState(false, startTime, stopResetTime);
         PopulatePersistentSystemsForNewState(State.Playing, playingState);
         ChangeState(State.Playing, playingState);
     }
@@ -968,7 +966,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     {
         float? stopResetTime = null;
 
-        if (GameSettings.bot && GameSettings.resetAfterPlay)
+        if (GameSettings.resetAfterPlay)
         {
             stopResetTime = currentVisibleTime;
         }
@@ -976,7 +974,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         foreach (HitAnimation hitAnim in indicators.animations)
             hitAnim.StopAnim();
 
-        SystemManagerState playingState = new PlayingState(currentVisibleTime, stopResetTime);
+        SystemManagerState playingState = new PlayingState(true, currentVisibleTime, stopResetTime);
         PopulatePersistentSystemsForNewState(State.Playing, playingState);
         ChangeState(State.Playing, playingState);
     }
@@ -1011,7 +1009,6 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             }
         }
 
-        GameSettings.bot = true;
         songObjectPoolManager.noteVisibilityRangeYPosOverride = null;
     }
     #endregion

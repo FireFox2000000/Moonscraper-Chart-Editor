@@ -47,7 +47,6 @@ public static class GameSettings
     public static bool sustainGapEnabled { get; set; }
     public static bool resetAfterPlay = false;
     public static bool resetAfterGameplay = false;
-    public static bool bot = true;
 
     public static int audioCalibrationMS = 0;                     // Increase to start the audio sooner
     public static int clapCalibrationMS = 0;
@@ -102,7 +101,6 @@ public static class GameSettings
             case ("sustainGapEnabled"): return sustainGapEnabled;
             case ("resetAfterPlay"): return resetAfterPlay;
             case ("resetAfterGameplay"): return resetAfterGameplay;
-            case ("bot"): return bot;
             default: return false;
         }
     }

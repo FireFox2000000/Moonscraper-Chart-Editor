@@ -25,8 +25,20 @@ public class NoteController : SongObjectController {
     BoxCollider2D sustainHitBox;
     BoxCollider hitBox;
 
+    bool _hit = false;
     [HideInInspector]
-    public bool hit = false;
+    public bool hit
+    {
+        get
+        {
+            return _hit;
+        }
+        set
+        {
+            _hit = value;
+            whammy.enabled = _hit;
+        }
+    }
     [HideInInspector]
     public bool sustainBroken = false;
     public bool isActivated
@@ -257,8 +269,6 @@ public class NoteController : SongObjectController {
             {
                 ManageGameplay();
             }
-            else if(whammy)
-                whammy.canWhammy = false;
         }
         else
         {
@@ -273,19 +283,10 @@ public class NoteController : SongObjectController {
 
         bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime * GameSettings.hyperspeed / GameSettings.gameSpeed);
 
-        if (GameSettings.bot && belowStrikeLine)
-        {
-            GameplayBotHit();
-        }
-
         if (hit && belowStrikeLine)
         {
             if (isActivated)
             {
-                if (GameSettings.bot)
-                {
-                    PlayIndicatorAnim();
-                }
                 DeactivateNote();
             }
 
@@ -298,15 +299,11 @@ public class NoteController : SongObjectController {
 
         if (sustainBroken)
             sustainRen.enabled = false;
-
-        if (whammy)
-            whammy.canWhammy = hit && !sustainBroken && !GameSettings.bot;
     }
 
-    void GameplayBotHit()
+    public void SetDesiredWhammy(float whammyBarValue)
     {
-        hit = true;
-        sustainBroken = false;
+        whammy.desiredWhammy = whammyBarValue;
     }
 
     void GameplaySustainHold()
