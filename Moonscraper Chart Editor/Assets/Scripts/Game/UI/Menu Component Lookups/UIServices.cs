@@ -10,6 +10,9 @@ public class UIServices : MonoBehaviour {
 
     public EditorPanels editorPanels { get; private set; }
 
+    [SerializeField]
+    GameObject gameplayUICanvas;
+
     MenuBar m_menuBar = null;
     public MenuBar menuBar
     {
@@ -52,6 +55,8 @@ public class UIServices : MonoBehaviour {
                 inputField.gameObject.AddComponent<InputFieldDoubleClick>();
             }
         }
+
+        SetGameplayUIActive(false);
     }
 
     public Vector2 GetUIMousePosition()
@@ -70,5 +75,10 @@ public class UIServices : MonoBehaviour {
     public void SetPopupBlockingEnabled(bool enabled)
     {
         _popupBlockerEnabled = enabled;
+    }
+
+    public void SetGameplayUIActive(bool active)
+    {
+        gameplayUICanvas.SetActive(active);
     }
 }

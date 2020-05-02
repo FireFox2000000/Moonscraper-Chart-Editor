@@ -11,9 +11,7 @@ public class GameplayStatsDisplay : MonoBehaviour
 
     void Start()
     {
-        ChartEditor.Instance.events.editorStateChangedEvent.Register(OnApplicationModeChanged);
         ChartEditor.Instance.gameplayEvents.gameplayUpdateEvent.Register(GameplayUpdate);
-        gameObject.SetActive(false);
     }
 
     void GameplayUpdate(in GameplayStateSystem.GameState gamestate)
@@ -49,10 +47,5 @@ public class GameplayStatsDisplay : MonoBehaviour
         noteStreakText.text = "0";
         percentHitText.text = "0%";
         totalHitText.text = "0/0";
-    }
-
-    void OnApplicationModeChanged(in ChartEditor.State editorState)
-    {
-        gameObject.SetActive(editorState == ChartEditor.State.Playing);
     }
 }

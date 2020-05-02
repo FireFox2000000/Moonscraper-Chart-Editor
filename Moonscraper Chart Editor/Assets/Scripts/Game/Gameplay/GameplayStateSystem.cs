@@ -47,6 +47,8 @@ public class GameplayStateSystem : SystemManagerState.System
         hitWindowFeeder.hitWindow = CreateHitWindow(gameplayType);
         hitWindowFeeder.enabled = true;
 
+        ChartEditor.Instance.uiServices.SetGameplayUIActive(!botEnabled);
+
         if (botEnabled)
         {
             // We want the bot to automatically hit any sustains that are currently active in the view, but for which the notes are already past the strikeline
@@ -90,6 +92,7 @@ public class GameplayStateSystem : SystemManagerState.System
     {
         missSoundSample = null;
         hitWindowFeeder.enabled = false;
+        ChartEditor.Instance.uiServices.SetGameplayUIActive(false);
     }
 
     void LoadSoundClip()
