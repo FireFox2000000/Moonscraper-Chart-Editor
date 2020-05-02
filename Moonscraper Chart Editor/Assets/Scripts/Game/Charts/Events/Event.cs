@@ -62,7 +62,7 @@ public class Event : SongObject
 
     protected override bool LessThan(SongObject b)
     {
-        if (b.classID == (int)SongObject.ID.Event && base.LessThan(b))
+        if (b.classID == (int)SongObject.ID.Event)
         {
             Event realB = b as Event;
             if (tick < b.tick)
