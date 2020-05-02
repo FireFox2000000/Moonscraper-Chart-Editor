@@ -21,6 +21,11 @@ public class HitWindowFeeder : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D col)
     {
         NoteController nCon = col.gameObject.GetComponentInParent<NoteController>();
+        TryAddNote(nCon);
+    }
+
+    public void TryAddNote(NoteController nCon)
+    {
         if (nCon && !nCon.hit && !physicsWindow.Contains(nCon))
         {
             // We only want 1 note per position so that we can compare using the note mask

@@ -37,13 +37,42 @@ public class GameplayStateSystem : SystemManagerState.System
 
     public override void SystemEnter()
     {
-        GameplayType gameplayType = DetermineGameplayType(botEnabled, ChartEditor.Instance.currentGameMode);
+        ChartEditor editor = ChartEditor.Instance;
+
+        GameplayType gameplayType = DetermineGameplayType(botEnabled, editor.currentGameMode);
         LoadSoundClip();
 
         DetermineUpdateRulestate(gameplayType, out gameplayUpdateFn, out currentRulestate);
 
         hitWindowFeeder.hitWindow = CreateHitWindow(gameplayType);
         hitWindowFeeder.enabled = true;
+
+        if (botEnabled)
+        {
+            // We want the bot to automatically hit any sustains that are currently active in the view, but for which the notes are already past the strikeline
+            Song song = editor.currentSong;
+            float currentTime = editor.currentVisibleTime;
+            uint currentTick = song.TimeToTick(currentTime, song.resolution);
+            int index = SongObjectHelper.FindClosestPositionRoundedDown(currentTick, editor.currentChart.notes);
+            if (index != SongObjectHelper.NOTFOUND)
+            {
+                Note note = editor.currentChart.notes[index];
+                List<Note> sustainNotes = new List<Note>();
+                NoteFunctions.GetPreviousOfSustains(sustainNotes, note, GameSettings.extendedSustainsEnabled);
+
+                foreach (Note chordNote in note.chord)
+                {
+                    sustainNotes.Add(chordNote);
+                }
+                foreach (Note sustainNote in sustainNotes)
+                {
+                    if (sustainNote.controller != null)
+                    {
+                        hitWindowFeeder.TryAddNote(sustainNote.controller);
+                    }
+                }
+            }
+        }
     }
 
     public override void SystemUpdate()
