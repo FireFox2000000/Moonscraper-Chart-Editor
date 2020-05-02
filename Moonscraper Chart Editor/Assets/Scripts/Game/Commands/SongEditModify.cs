@@ -28,12 +28,26 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
 
     public override void InvokeSongEditCommand()
     {
-        CloneInto(FindObjectToModify(before), after);
+        if (subActions.Count <= 0)
+        {
+            CloneInto(FindObjectToModify(before), after);
+        }
+        else
+        {
+            InvokeSubActions();
+        }
     }
 
     public override void RevokeSongEditCommand()
     {
-        CloneInto(FindObjectToModify(after), before);
+        if (subActions.Count <= 0)
+        {
+            CloneInto(FindObjectToModify(after), before);
+        }
+        else
+        {
+            RevokeSubActions();
+        }
     }
 
     void CloneInto(SongObject objectToCopyInto, SongObject objectToCopyFrom)
@@ -53,7 +67,8 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
                 break;
 
             case SongObject.ID.ChartEvent:
-                (objectToCopyInto as ChartEvent).CopyFrom((objectToCopyFrom as ChartEvent));
+                AddAndInvokeSubAction(new DeleteAction(objectToCopyInto), subActions);
+                AddAndInvokeSubAction(new AddAction(objectToCopyFrom), subActions);
                 break;
 
             case SongObject.ID.BPM:
@@ -66,7 +81,8 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
                 break;
 
             case SongObject.ID.Event:
-                (objectToCopyInto as Event).CopyFrom((objectToCopyFrom as Event));
+                AddAndInvokeSubAction(new DeleteAction(objectToCopyInto), subActions);
+                AddAndInvokeSubAction(new AddAction(objectToCopyFrom), subActions);
                 break;
 
             case SongObject.ID.Section:
