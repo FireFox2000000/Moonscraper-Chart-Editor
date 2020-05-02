@@ -64,7 +64,7 @@ public class PlaceEvent : PlaceSongObject
         // Re-do the controller's position setting
         var events = editor.currentSong.events;
 
-        int offset = 0;
+        float offset = EventController.BASE_OFFSET;
         int index, length;
         SongObjectHelper.GetRange(events, songEvent.tick, songEvent.tick, out index, out length);
 
@@ -77,6 +77,6 @@ public class PlaceEvent : PlaceSongObject
             offset += EventController.OFFSET_SPACING;
         }
 
-        transform.position = new Vector3(SongObjectController.CHART_CENTER_POS + EventController.position + offset, songEvent.worldYPosition, 0);
+        transform.position = new Vector3(SongObjectController.CHART_CENTER_POS + EventController.position, songEvent.worldYPosition, offset);
     }
 }

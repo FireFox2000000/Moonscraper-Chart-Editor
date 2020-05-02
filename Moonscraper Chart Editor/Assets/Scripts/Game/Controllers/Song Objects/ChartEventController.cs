@@ -9,15 +9,16 @@ using TMPro;
 public class ChartEventController : SongObjectController
 {
     public ChartEvent chartEvent { get { return (ChartEvent)songObject; } set { Init(value, this); } }
-    public const float position = 3.0f;
+    public const float position = 3.5f;
     public TextMeshPro chartEventText;
-    public const int OFFSET_SPACING = 1;
+    public const float OFFSET_SPACING = -0.7f;
+    public const float BASE_OFFSET = -0.5f;
 
     public override void UpdateSongObject()
     {
         if (chartEvent.chart != null)
         {
-            transform.position = new Vector3(CHART_CENTER_POS + position + GetOffset(editor, chartEvent), chartEvent.worldYPosition, 0);
+            transform.position = new Vector3(CHART_CENTER_POS + position, chartEvent.worldYPosition, GetOffset(editor, chartEvent));
 
             chartEventText.text = chartEvent.eventName;
         }
@@ -26,8 +27,6 @@ public class ChartEventController : SongObjectController
     public static float GetOffset (ChartEditor editor, ChartEvent chartEvent)
     {
         var events = editor.currentChart.events;
-
-        int offset = 0;
         int index, length;
         SongObjectHelper.GetRange(events, chartEvent.tick, chartEvent.tick, out index, out length);
 
@@ -37,12 +36,12 @@ public class ChartEventController : SongObjectController
             if (events[i].GetType() != chartEvent.GetType())
                 continue;
 
-            if (events[i] < chartEvent)
+            if (events[i] == chartEvent)
             {
-                offset += OFFSET_SPACING;
+                return BASE_OFFSET + (length - (i - index) - 1) * OFFSET_SPACING;
             }
         }
 
-        return offset;
+        return BASE_OFFSET;
     }
 }

@@ -32,7 +32,7 @@ public class PlaceChartEvent : PlaceSongObject
 
         var events = editor.currentChart.events;
 
-        int offset = 0;
+        float offset = ChartEventController.BASE_OFFSET;
         int index, length;
         SongObjectHelper.GetRange(events, chartEvent.tick, chartEvent.tick, out index, out length);
 
@@ -45,7 +45,7 @@ public class PlaceChartEvent : PlaceSongObject
             offset += ChartEventController.OFFSET_SPACING;
         }
 
-        transform.position = new Vector3(SongObjectController.CHART_CENTER_POS + ChartEventController.position + offset, chartEvent.worldYPosition, 0);
+        transform.position = new Vector3(SongObjectController.CHART_CENTER_POS + ChartEventController.position, chartEvent.worldYPosition, offset);
     }
 
     protected override void AddObject()
