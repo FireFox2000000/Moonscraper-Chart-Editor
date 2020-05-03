@@ -10,6 +10,8 @@
 	-Fixed null reference exception when spammy starting and stopping of gameplay with 0 start delay.
 	-Fixed expections being thrown when stacking chart events on top of each other.
 	-Fixed insertion of duplicate globals events
+	-Fixed all sound effects being affected by song offset property
+	-Fixed exception being thrown when trying to hit chord notes in 4 lane that have culled notes present in 5 lane.
 
 1.3.3.6
 	NEW FEATURES
