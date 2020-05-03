@@ -79,8 +79,11 @@ public class BaseGameplayRulestate {
         Note note = noteHitKnowledge.note;
         foreach (Note chordNote in note.chord)
         {
-            chordNote.controller.hit = true;
-            chordNote.controller.PlayIndicatorAnim();
+            if (chordNote.controller != null)       // Note may not actually be present on the highway due to laneinfo culling.
+            {
+                chordNote.controller.hit = true;
+                chordNote.controller.PlayIndicatorAnim();
+            }
         }
     }
 
