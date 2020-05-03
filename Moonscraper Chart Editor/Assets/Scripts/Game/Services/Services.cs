@@ -207,7 +207,7 @@ public class Services : MonoBehaviour
                 currentAudioTime = TickFunctions.WorldYPositionToTime(audioStrikelinePos);
             }
 
-            return currentAudioTime + GameSettings.clapCalibrationMS / 1000.0f;
+            return currentAudioTime + GameSettings.clapCalibrationMS / 1000.0f - editor.currentSong.offset;
         }
     }
 
