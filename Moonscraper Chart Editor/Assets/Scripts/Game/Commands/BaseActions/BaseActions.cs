@@ -134,7 +134,7 @@ public class DeleteAction : BaseAction
         {
             if (songObject.GetType().IsSubclassOf(typeof(Event)) || songObject.GetType() == typeof(Event))
             {
-                TryDeleteSongObject((Event)songObject, editor.currentSong.events);
+                TryDeleteSongObject((Event)songObject, editor.currentSong.eventsAndSections);
             }
             else
             {

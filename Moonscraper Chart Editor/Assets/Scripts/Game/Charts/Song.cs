@@ -393,7 +393,14 @@ public class Song {
     {
         var cacheObjectList = cache.EditCache();
         cacheObjectList.Clear();
-        cacheObjectList.AddRange(objectsToCache.OfType<T>());
+
+        foreach(U objectToCache in objectsToCache)
+        {
+            if (objectToCache.GetType() == typeof(T))
+            {
+                cacheObjectList.Add(objectToCache as T);
+            }
+        }
     }
 
     /// <summary>
