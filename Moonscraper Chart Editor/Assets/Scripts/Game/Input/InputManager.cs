@@ -45,7 +45,7 @@ public class InputManager : UnitySingleton<InputManager>
         }
         else
         {
-            Debug.Log("Successfully initialised SDL");
+            Debug.Log("Successfully initialised input SDL");
 
             int connectedJoysticks = SDL.SDL_NumJoysticks();
         }
@@ -205,16 +205,13 @@ public class InputManager : UnitySingleton<InputManager>
         Debug.Assert(false, "Unable to find joystick " + instanceId + " to remove");
     }
 
-    private void OnApplicationQuit()
+    public void Dispose()
     {
-        foreach(GamepadDevice gamepad in controllers)
+        foreach (GamepadDevice gamepad in controllers)
         {
             SDL.SDL_GameControllerClose(gamepad.sdlHandle);
         }
 
         controllers.Clear();
-
-        Debug.Log("Disposing SDL");
-        SDL.SDL_Quit();
     }
 }

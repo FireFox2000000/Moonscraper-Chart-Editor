@@ -4,6 +4,11 @@
 #define TIMING_DEBUG
 //#undef UNITY_EDITOR
 
+// Having SDL video initialised in the editor causes weird visual glitches within the editor. Only used in standalone builds anyway.
+#if !UNITY_EDITOR
+    #define SDL_VIDEO
+#endif
+
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
@@ -140,6 +145,22 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     void Awake () {
         Debug.Log("Initialising " + versionNumber.text);
 
+#if !UNITY_EDITOR
+        Application.wantsToQuit += QuittingEditCheck;
+#endif
+        Application.quitting += FinaliseQuit;
+
+#if SDL_VIDEO
+        // Init for window manager
+        if (SDL2.SDL.SDL_Init(SDL2.SDL.SDL_INIT_VIDEO) < 0)
+        {
+            Debug.LogError("SDL could not initialise! SDL Error: " + SDL2.SDL.SDL_GetError());
+        }
+        else
+        {
+            Debug.Log("Successfully initialised video SDL");
+        }
+#endif
         currentSongAudio = new SongAudioManager();
 
         assets = GetComponent<ChartEditorAssets>();
@@ -188,12 +209,20 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                 break;
             }
         }
-#endif  
+#endif
     }
 
     public void Update()
     {
-        foreach(var onClickFunction in onClickEventFnList)
+        if (haltThreadForQuit)
+            return;
+
+        if (quittingCheckPassed)
+        {
+            Application.Quit();
+        }
+
+        foreach (var onClickFunction in onClickEventFnList)
         {
             onClickFunction();
         }
@@ -218,42 +247,30 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     bool allowedToQuit = false;
 #endif
 
+    bool queueQuitCheck = false;
+
     void OnApplicationFocus(bool hasFocus)
     {
         windowHandleManager.OnApplicationFocus(hasFocus);
     }
 
-    void OnApplicationQuit()
+    void FinaliseQuit()
     {
-        StartCoroutine(CheckForUnsavedChangesQuit());
+        globals.Quit();
+        currentSongAudio.FreeAudioStreams();
+        sfxAudioStreams.DisposeSounds();
+        AudioManager.Dispose();
 
-        if (allowedToQuit)
-        {
-            globals.Quit();
-            currentSongAudio.FreeAudioStreams();
-            sfxAudioStreams.DisposeSounds();
-            AudioManager.Dispose();
+        Debug.Log("Disposing SDL");
+        InputManager.Instance.Dispose();
+#if SDL_VIDEO
+        SDL2.SDL.SDL_VideoQuit();
+#endif
+        SDL2.SDL.SDL_Quit();
 
-            while (isSaving) ;
+        while (isSaving) ;
 
-            applicationStateMachine.currentState = null; // Force call exit on current state;
-        }
-        // Can't run edit check here because quitting seems to run in a seperate thread
-        else
-        {
-            Application.CancelQuit();
-        }
-    }
-
-    IEnumerator CheckForUnsavedChangesQuit()
-    {
-        yield return null;
-
-        if (EditCheck())
-        {
-            allowedToQuit = true;
-            Application.Quit();
-        }       
+        applicationStateMachine.currentState = null; // Force call exit on current state;
     }
 
     bool EditCheck()
@@ -262,6 +279,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (isDirty)
         {
             NativeMessageBox.Result result = NativeMessageBox.Show("Do you want to save unsaved changes?", "Warning", NativeMessageBox.Type.YesNoCancel, windowHandleManager.nativeWindow);
+            Debug.Log("Message box result = " + result);
 
             if (result == NativeMessageBox.Result.Yes)
             {
@@ -277,6 +295,34 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         }
 
         return true;
+    }
+
+    volatile bool haltThreadForQuit = false;
+    volatile bool quittingCheckPassed = false;
+    bool QuittingEditCheck()
+    {
+        if (currentState == State.Playing)
+        {
+            ChangeStateToEditor();
+        }
+
+        if (quittingCheckPassed)
+            return true;
+
+        if (haltThreadForQuit)
+            return false;
+
+        haltThreadForQuit = true;
+
+        bool result = EditCheck();
+
+        if (result)
+        {
+            quittingCheckPassed = true;
+        }
+
+        haltThreadForQuit = false;
+        return result;
     }
 
     public void EnableMenu(DisplayMenu menu)
@@ -299,7 +345,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         RegisterPersistentSystem(State.Playing, drawBeatLinesSystem);
     }
 
-    #region State Control
+#region State Control
 
     SystemManagerState GetStateForEnum(State state)
     {
@@ -379,7 +425,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         interactionMethodManager.ChangeInteraction(type);
     }
 
-    #endregion
+#endregion
 
     void OnChartReloaded()
     {
@@ -412,7 +458,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         windowHandleManager.SetProjectStateStr(sb.ToString());
     }
 
-    #region Chart Loading/Saving
+#region Chart Loading/Saving
     public void New()
     {
         if (!EditCheck())
@@ -769,9 +815,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         }
     }
 
-    #endregion
+#endregion
 
-    #region Audio Functions
+#region Audio Functions
     public void PlayAudio(float playPoint)
     {
         SongAudioManager songAudioManager = currentSongAudio;
@@ -918,9 +964,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         }
     }
 
-    #endregion
+#endregion
 
-    #region Pause/Play Functions
+#region Pause/Play Functions
     public void StartGameplay()
     {
         if (currentState == State.Playing ||
@@ -1011,9 +1057,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         songObjectPoolManager.noteVisibilityRangeYPosOverride = null;
     }
-    #endregion
+#endregion
 
-    #region Undo/Redo/Cut/Copy/Paste etc...
+#region Undo/Redo/Cut/Copy/Paste etc...
 
     public void FillUndoRedoSnapInfo(uint tick, Globals.ViewMode viewMode)
     {
@@ -1151,5 +1197,5 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         Delete();
     }
 
-    #endregion
+#endregion
 }
