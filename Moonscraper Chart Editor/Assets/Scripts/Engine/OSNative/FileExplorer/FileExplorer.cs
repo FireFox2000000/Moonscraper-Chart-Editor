@@ -15,7 +15,13 @@ public static class FileExplorer  {
         m_platformWrapper = new FileExplorerEditor();
 #elif UNITY_STANDALONE_WIN
         m_platformWrapper = new FileExplorerWindows_gkngkc();
+#elif UNITY_STANDALONE_LINUX
+
+#elif UNITY_STANDALONE_OSX
+
 #endif
+
+        UnityEngine.Debug.Assert(m_platformWrapper != null, "Platform wrapper needs implementation!");
     }
 
     public static bool OpenFilePanel(ExtensionFilter filter, string defExt, out string resultPath)

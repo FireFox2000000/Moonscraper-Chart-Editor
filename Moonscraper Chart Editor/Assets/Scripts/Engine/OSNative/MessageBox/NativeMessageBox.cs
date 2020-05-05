@@ -33,7 +33,13 @@ public static class NativeMessageBox {
         m_platformWrapper = new NativeMessageBoxEditor();
 #elif UNITY_STANDALONE_WIN
         m_platformWrapper = new NativeMessageBoxWindows();
+#elif UNITY_STANDALONE_LINUX
+
+#elif UNITY_STANDALONE_OSX
+
 #endif
+
+        UnityEngine.Debug.Assert(m_platformWrapper != null, "Platform wrapper needs implementation!");
     }
 
     public static Result Show(string text, string caption, Type messageBoxType, NativeWindow childWindow)

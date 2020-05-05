@@ -12,7 +12,13 @@ public class NativeWindow
         m_platformWrapper = new NativeWindow_Editor();
 #elif UNITY_STANDALONE_WIN
         m_platformWrapper = new NativeWindow_Windows();
+#elif UNITY_STANDALONE_LINUX
+
+#elif UNITY_STANDALONE_OSX
+
 #endif
+
+        Debug.Assert(m_platformWrapper != null, "Platform wrapper needs implementation!");
     }
 
     public bool IsConnectedToWindow()
