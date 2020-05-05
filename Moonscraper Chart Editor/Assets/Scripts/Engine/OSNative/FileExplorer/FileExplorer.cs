@@ -16,7 +16,7 @@ public static class FileExplorer  {
 #elif UNITY_STANDALONE_WIN
         m_platformWrapper = new FileExplorerWindows_gkngkc();
 #elif UNITY_STANDALONE_LINUX
-
+        m_platformWrapper = new FileExplorerLinux();
 #elif UNITY_STANDALONE_OSX
 
 #endif
