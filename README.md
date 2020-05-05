@@ -11,7 +11,7 @@ This project contains licensed assets such as Un4seen's "bass", "Bass.Net" and s
 
 ### What is this repository for? ###
 
-* Moonscraper Chart Editor, a song editor for Guitar Hero style rhythm games made in Unity 2018.3.0f2
+* Moonscraper Chart Editor, a song editor for Guitar Hero style rhythm games made in Unity 2018.4.22f1
 
 ### How do I get set up? ###
 
