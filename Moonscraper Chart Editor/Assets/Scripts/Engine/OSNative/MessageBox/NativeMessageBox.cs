@@ -34,7 +34,7 @@ public static class NativeMessageBox {
 #elif UNITY_STANDALONE_WIN
         m_platformWrapper = new NativeMessageBoxWindows();
 #elif UNITY_STANDALONE_LINUX
-
+        m_platformWrapper = new NativeMessageBoxLinux();
 #elif UNITY_STANDALONE_OSX
 
 #endif
