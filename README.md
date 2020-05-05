@@ -15,7 +15,7 @@ This project contains licensed assets such as Un4seen's "bass", "Bass.Net" and s
 
 ### How do I get set up? ###
 
-* Download and install Unity 2018.3.0f2
+* Download and install Unity 2018.4.22f1
 * Run Unity and open the project folder with it
 
 ### Who do I talk to? ###
