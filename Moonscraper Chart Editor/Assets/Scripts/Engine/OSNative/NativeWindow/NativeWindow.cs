@@ -15,7 +15,7 @@ public class NativeWindow
 #elif UNITY_STANDALONE_LINUX
 
 #elif UNITY_STANDALONE_OSX
-
+        m_platformWrapper = new NativeWindow_OSX();
 #endif
 
         Debug.Assert(m_platformWrapper != null, "Platform wrapper needs implementation!");
