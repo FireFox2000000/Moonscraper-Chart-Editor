@@ -15,6 +15,12 @@ public class GameplayStateSystem : SystemManagerState.System
     GameplayUpdateFn gameplayUpdateFn = null;
     BaseGameplayRulestate currentRulestate;
 
+    const int HIT_WINDOW_DELAY_TOTAL_FRAMES = 2;
+    int hitWindowFrameDelayCount = HIT_WINDOW_DELAY_TOTAL_FRAMES;
+
+    delegate void UpdateFn();
+    UpdateFn currentUpdate = null;
+
     public struct GameState
     {
         public BaseGameplayRulestate.NoteStats stats;
@@ -33,6 +39,8 @@ public class GameplayStateSystem : SystemManagerState.System
     {
         this.hitWindowFeeder = hitWindowFeeder;
         this.botEnabled = botEnabled;
+
+        currentUpdate = UpdateWaitingForNotesSettled;
     }
 
     public override void SystemEnter()
@@ -45,9 +53,45 @@ public class GameplayStateSystem : SystemManagerState.System
         DetermineUpdateRulestate(gameplayType, out gameplayUpdateFn, out currentRulestate);
 
         hitWindowFeeder.hitWindow = CreateHitWindow(gameplayType);
-        hitWindowFeeder.enabled = true;
 
         ChartEditor.Instance.uiServices.SetGameplayUIActive(!botEnabled);
+    }
+
+    public override void SystemUpdate()
+    {
+        currentUpdate();
+    }
+
+    void UpdateWaitingForNotesSettled()
+    {
+        // We need to wait a couple of frames for the physics system to settle down, otherwise notes can be sprawled all over the place if we're being spammy about playing
+        --hitWindowFrameDelayCount;
+
+        if (hitWindowFrameDelayCount <= 0)
+        {
+            Init();
+            currentUpdate = UpdateGameplay;
+        }
+    }
+
+    void UpdateGameplay()
+    {
+        float currentTime = ChartEditor.Instance.currentVisibleTime;
+        gameplayUpdateFn?.Invoke(currentTime);
+
+        GameState gamestate = new GameState();
+        gamestate.stats = currentRulestate.stats;
+
+        ChartEditor.Instance.gameplayEvents.gameplayUpdateEvent.Fire(gamestate);
+    }
+
+    // Should be called once the physics system has settled down
+    void Init()
+    {
+        ChartEditor editor = ChartEditor.Instance;
+
+        Debug.Assert(!hitWindowFeeder.enabled);
+        hitWindowFeeder.enabled = true;
 
         if (botEnabled)
         {
@@ -75,17 +119,6 @@ public class GameplayStateSystem : SystemManagerState.System
                 }
             }
         }
-    }
-
-    public override void SystemUpdate()
-    {
-        float currentTime = ChartEditor.Instance.currentVisibleTime;
-        gameplayUpdateFn?.Invoke(currentTime);
-
-        GameState gamestate = new GameState();
-        gamestate.stats = currentRulestate.stats;
-
-        ChartEditor.Instance.gameplayEvents.gameplayUpdateEvent.Fire(gamestate);
     }
 
     public override void SystemExit()

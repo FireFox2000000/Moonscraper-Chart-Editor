@@ -60,10 +60,13 @@ public class HitWindow<TNoteHitKnowledge> : IHitWindow where TNoteHitKnowledge :
 
         TNoteHitKnowledge newNoteKnowledge = System.Activator.CreateInstance(typeof(TNoteHitKnowledge), note) as TNoteHitKnowledge;
         m_noteQueue.Add(newNoteKnowledge);
-
-        if (m_noteQueue.Count > 1 && m_noteQueue[m_noteQueue.Count - 1].note.tick <= m_noteQueue[m_noteQueue.Count - 2].note.tick)
+   
+        if (m_noteQueue.Count > 1) 
         {
-            Debug.LogError("Notes inserted into hit window in the wrong order");
+            uint tick1 = m_noteQueue[m_noteQueue.Count - 1].note.tick;
+            uint tick2 = m_noteQueue[m_noteQueue.Count - 2].note.tick;
+
+            Debug.Assert(tick1 > tick2, string.Format("Notes inserted into hit window in the wrong order, tick1 = {0}, tick2 = {1}", tick1, tick2));
         }
 
 

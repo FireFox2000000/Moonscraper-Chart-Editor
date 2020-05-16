@@ -26,7 +26,7 @@ public class HitWindowFeeder : MonoBehaviour {
 
     public void TryAddNote(NoteController nCon)
     {
-        if (nCon && !nCon.hit && !physicsWindow.Contains(nCon))
+        if (nCon && !nCon.hit && !physicsWindow.Contains(nCon) && nCon.note != null)
         {
             // We only want 1 note per position so that we can compare using the note mask
             foreach (NoteController insertedNCon in physicsWindow)
@@ -58,7 +58,7 @@ public class HitWindowFeeder : MonoBehaviour {
         {
             NoteController note = physicsWindow[i];
 
-            if (!note.isActiveAndEnabled)
+            if (!note.isActiveAndEnabled || note.note == null)
             {
                 physicsWindow.Remove(note);
                 --i;
