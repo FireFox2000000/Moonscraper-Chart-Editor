@@ -67,7 +67,8 @@ public static class NoteFunctions {
                 if (extendedSustainsEnabled)
                 {
                     list.Add(previous);
-                    return;
+
+                    // Continue on. Guitar can stop here early but drums doesn't overwrite open notes. Other sustains can travel through open notes in drums.
                 }
 
                 else if (list.Count > 0)
