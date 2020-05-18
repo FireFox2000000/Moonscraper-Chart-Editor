@@ -15,7 +15,7 @@ This project contains licensed assets such as Un4seen's "bass", "Bass.Net" and s
 
 ### Why is a separate fork needed? ###
 
-There are several issues that need to be resolved before the editor is usable on Linux. If you would like to help, you can find out what needs to be done on [the Linux Issues page](LINUX_TODO.md).
+There are several issues that need to be resolved before the editor is usable on Linux. If you would like to help, you can find out what needs to be done on [the Linux Issues page](./LINUX_TODO.md).
 
 ### How do I get set up? ###
 
