@@ -45,101 +45,26 @@ public class Note2D3DSelector : MonoBehaviour {
 
     bool CheckTextureInSkin()
     {
-        Texture2D textureInSkin = null;
         Skin customSkin = SkinManager.Instance.currentSkin;
 
         Note note = nCon.note;
         Note.NoteType noteType = NoteVisualsManager.GetVisualNoteType(note);
         Note.SpecialType specialType = NoteVisualsManager.IsStarpower(note);
 
-        int arrayPos = GetSpriteArrayPos(note);
-        if (Globals.ghLiveMode)
+        int arrayPos = NoteVisuals2DManager.GetNoteArrayPos(note);
+        Note.NoteType visualNoteType = noteType;
+
+        if (!Globals.ghLiveMode)
         {
-            if (noteType == Note.NoteType.Strum)
+            if (noteType == Note.NoteType.Hopo && Globals.drumMode)
             {
-                if (specialType == Note.SpecialType.StarPower)
-                    textureInSkin = customSkin.sp_strum_ghl[arrayPos];
-                else
-                    textureInSkin = customSkin.reg_strum_ghl[arrayPos];
-            }
-            else if (noteType == Note.NoteType.Hopo)
-            {
-                if (specialType == Note.SpecialType.StarPower)
-                    textureInSkin = customSkin.sp_hopo_ghl[arrayPos];
-                else
-                    textureInSkin = customSkin.reg_hopo_ghl[arrayPos];
-            }
-            // Tap notes
-            else
-            {
-                if (!note.IsOpenNote())
-                {
-                    if (specialType == Note.SpecialType.StarPower)
-                        textureInSkin = customSkin.sp_tap_ghl[arrayPos];
-                    else
-                        textureInSkin = customSkin.reg_tap_ghl[arrayPos];
-                }
-            }   
-        }
-        else
-        {
-            if (noteType == Note.NoteType.Strum)
-            {
-                if (specialType == Note.SpecialType.StarPower)
-                    textureInSkin = customSkin.sp_strum[arrayPos];
-                else
-                    textureInSkin = customSkin.reg_strum[arrayPos];
-            }
-            else if (noteType == Note.NoteType.Hopo)
-            {
-                if (specialType == Note.SpecialType.StarPower)
-                    textureInSkin = customSkin.sp_hopo[arrayPos];
-                else
-                    textureInSkin = customSkin.reg_hopo[arrayPos];
-            }
-            // Tap notes
-            else if (noteType == Note.NoteType.Tap)
-            {
-                if (note.guitarFret != Note.GuitarFret.Open)
-                {
-                    if (specialType == Note.SpecialType.StarPower)
-                        textureInSkin = customSkin.sp_tap[arrayPos];
-                    else
-                        textureInSkin = customSkin.reg_tap[arrayPos];
-                }
-            }
-            else if (noteType == Note.NoteType.Cymbal)
-            {
-                if (specialType == Note.SpecialType.StarPower)
-                    textureInSkin = customSkin.sp_cymbal[arrayPos];
-                else
-                    textureInSkin = customSkin.reg_cymbal[arrayPos];
+                visualNoteType = Note.NoteType.Strum;
             }
         }
 
-        return textureInSkin;
-    }
+        string noteKey = NoteVisuals2DManager.GetSkinKey(arrayPos, noteType, specialType, Globals.ghLiveMode);
+        Sprite[] sprites = SkinManager.Instance.currentSkin.GetSprites(noteKey);
 
-    protected int GetSpriteArrayPos(Note note)
-    {
-        int arrayPos = note.rawNote;
-
-        if (Globals.ghLiveMode)
-        {
-            arrayPos = 0;
-
-            if (note.ghliveGuitarFret >= Note.GHLiveGuitarFret.White1 && note.ghliveGuitarFret <= Note.GHLiveGuitarFret.White3)
-                arrayPos = 1;
-            else if (note.IsOpenNote())
-                arrayPos = 2;
-        }
-        else if (Globals.drumMode && note.guitarFret != Note.GuitarFret.Open)
-        {
-            arrayPos += 1;
-            if (arrayPos > (int)Note.GuitarFret.Orange)
-                arrayPos = 0;
-        }
-
-        return arrayPos;
+        return sprites != null && sprites.Length > 0;
     }
 }

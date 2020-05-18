@@ -8,7 +8,6 @@ public class AssignCustomResources : MonoBehaviour {
     public Renderer fretboard;
 
     Texture initFretboardTex;
-    public SpriteNoteResources defaultNoteSprites;
     public CustomFretManager[] customFrets = new CustomFretManager[5];
     public GHLHitAnimation[] customFretsGHL = new GHLHitAnimation[2];
 
@@ -20,8 +19,6 @@ public class AssignCustomResources : MonoBehaviour {
         {
             fretboard.sharedMaterial.mainTexture = SkinManager.Instance.GetSkinItem(SkinKeys.fretboard, initFretboardTex);
 
-            WriteCustomNoteTexturesToAtlus(defaultNoteSprites.fullAtlus);
-            WriteCustomGHLNoteTexturesToAtlus(defaultNoteSprites.fullAtlusGhl);
             Debug.Log(SkinManager.Instance.noteSpritesAvaliable);
             AssignFretSprites();
         }
@@ -35,52 +32,12 @@ public class AssignCustomResources : MonoBehaviour {
     {
         for (int i = 0; i < customTextures.Length; ++i)
         {
-            if (i < sprites.Length && customTextures[i] && sprites[i]/* && customTextures[i].width == sprites[i].texture.width && customTextures[i].height == sprites[i].texture.height*/)
+            if (i < sprites.Length && customTextures[i] && sprites[i])
             {
                 sprites[i].texture.SetPixels(customTextures[i].GetPixels());
                 sprites[i].texture.Apply();
             }
         }
-    }
-
-    void WriteCustomNoteTexturesToAtlus(Texture2D atlus)
-    {
-        Skin customSkin = SkinManager.Instance.currentSkin;
-        Color[] atlusPixels = atlus.GetPixels();
-        Utility.IntVector2 fullTextureAtlusSize = new Utility.IntVector2(atlus.width, atlus.height);
-
-        SetCustomTexturesToAtlus(defaultNoteSprites.reg_strum, customSkin.reg_strum, atlusPixels, fullTextureAtlusSize);
-        SetCustomTexturesToAtlus(defaultNoteSprites.reg_hopo, customSkin.reg_hopo, atlusPixels, fullTextureAtlusSize);
-        SetCustomTexturesToAtlus(defaultNoteSprites.reg_tap, customSkin.reg_tap, atlusPixels, fullTextureAtlusSize);
-        SetCustomTexturesToAtlus(defaultNoteSprites.reg_cymbal, customSkin.reg_cymbal, atlusPixels, fullTextureAtlusSize);
-        SetCustomTexturesToAtlus(defaultNoteSprites.sp_strum, customSkin.sp_strum, atlusPixels, fullTextureAtlusSize);
-        SetCustomTexturesToAtlus(defaultNoteSprites.sp_hopo, customSkin.sp_hopo, atlusPixels, fullTextureAtlusSize);
-        SetCustomTexturesToAtlus(defaultNoteSprites.sp_tap, customSkin.sp_tap, atlusPixels, fullTextureAtlusSize);
-        SetCustomTexturesToAtlus(defaultNoteSprites.sp_cymbal, customSkin.sp_cymbal, atlusPixels, fullTextureAtlusSize);
-
-        Skin.AssestsAvaliable? sprites = SkinManager.Instance.noteSpritesAvaliable;
-        SetCustomTexturesToAtlus(defaultNoteSprites.sustains, customSkin.sustains, atlusPixels, fullTextureAtlusSize);
-        SkinManager.Instance.noteSpritesAvaliable = sprites;
-
-        atlus.SetPixels(atlusPixels);
-        atlus.Apply();
-    }
-
-    void WriteCustomGHLNoteTexturesToAtlus(Texture2D atlus)
-    {
-        Skin customSkin = SkinManager.Instance.currentSkin;
-        Color[] atlusPixels = atlus.GetPixels();
-        Utility.IntVector2 fullTextureAtlusSize = new Utility.IntVector2(atlus.width, atlus.height);
-
-        SetCustomTexturesToAtlus(defaultNoteSprites.reg_strum_ghl, customSkin.reg_strum_ghl, atlusPixels, fullTextureAtlusSize);
-        SetCustomTexturesToAtlus(defaultNoteSprites.reg_hopo_ghl, customSkin.reg_hopo_ghl, atlusPixels, fullTextureAtlusSize);
-        SetCustomTexturesToAtlus(defaultNoteSprites.reg_tap_ghl, customSkin.reg_tap_ghl, atlusPixels, fullTextureAtlusSize);
-        SetCustomTexturesToAtlus(defaultNoteSprites.sp_strum_ghl, customSkin.sp_strum_ghl, atlusPixels, fullTextureAtlusSize);
-        SetCustomTexturesToAtlus(defaultNoteSprites.sp_hopo_ghl, customSkin.sp_hopo_ghl, atlusPixels, fullTextureAtlusSize);
-        SetCustomTexturesToAtlus(defaultNoteSprites.sp_tap_ghl, customSkin.sp_tap_ghl, atlusPixels, fullTextureAtlusSize);
-
-        atlus.SetPixels(atlusPixels);
-        atlus.Apply();
     }
 
     static void SetCustomTexturesToAtlus(Sprite[] spritesLocation, Texture2D[] customTextures, Color[] fullTextureAtlusPixels, Utility.IntVector2 fullTextureAtlusSize)
@@ -144,7 +101,7 @@ public class AssignCustomResources : MonoBehaviour {
         for (int i = 0; i < customFrets.Length; ++i)
         {
             // Standard Frets
-            Sprite sprite = SkinManager.Instance.GetSkinItem<Sprite>(i + SkinKeys.xFretBase, null);
+            Sprite sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xFretBase);
             //Sprite sprite = null;
             if (sprite)
             {
@@ -152,28 +109,28 @@ public class AssignCustomResources : MonoBehaviour {
                 customFrets[i].gameObject.SetActive(true);
             }
 
-            sprite = SkinManager.Instance.GetSkinItem<Sprite>(i + SkinKeys.xFretCover, null);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xFretCover);
             if (sprite)
             {
                 customFrets[i].fretCover = sprite;
                 customFrets[i].gameObject.SetActive(true);
             }
 
-            sprite = SkinManager.Instance.GetSkinItem<Sprite>(i + SkinKeys.xFretPress, null);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xFretPress);
             if (sprite)
             {
                 customFrets[i].fretPress = sprite;
                 customFrets[i].gameObject.SetActive(true);
             }
 
-            sprite = SkinManager.Instance.GetSkinItem<Sprite>(i + SkinKeys.xFretRelease, null);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xFretRelease);
             if (sprite)
             {
                 customFrets[i].fretRelease = sprite;
                 customFrets[i].gameObject.SetActive(true);
             }
 
-            sprite = SkinManager.Instance.GetSkinItem<Sprite>(i + SkinKeys.xFretAnim, null);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xFretAnim);
             if (sprite)
             {
                 customFrets[i].toAnimate = sprite;
@@ -181,29 +138,29 @@ public class AssignCustomResources : MonoBehaviour {
             }
 
             // Drum Frets         
-            sprite = SkinManager.Instance.GetSkinItem<Sprite>(i + SkinKeys.xDrumFretBase, null);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xDrumFretBase);
             if (sprite)
                 customFrets[i].drumFretBase = sprite;
 
-            sprite = SkinManager.Instance.GetSkinItem<Sprite>(i + SkinKeys.xDrumFretCover, null);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xDrumFretCover);
             if (sprite)
                 customFrets[i].drumFretCover = sprite;
 
-            sprite = SkinManager.Instance.GetSkinItem<Sprite>(i + SkinKeys.xDrumFretPress, null);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xDrumFretPress);
             if (sprite)
                 customFrets[i].drumFretPress = sprite;
 
-            sprite = SkinManager.Instance.GetSkinItem<Sprite>(i + SkinKeys.xDrumFretRelease, null);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xDrumFretRelease);
             if (sprite)
                 customFrets[i].drumFretRelease = sprite;
 
-            sprite = SkinManager.Instance.GetSkinItem<Sprite>(i + SkinKeys.xDrumFretAnim, null);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xDrumFretAnim);
             if (sprite)
                 customFrets[i].drumToAnimate = sprite;
         }
 
         Sprite stem = null;
-        Sprite fretStem = customSkin.GetSkinItem<Sprite>(SkinKeys.fretStem, null);
+        Sprite fretStem = SkinManager.Instance.currentSkin.GetSprite(SkinKeys.fretStem);
         if (fretStem)
         {
             stem = fretStem;
@@ -215,14 +172,14 @@ public class AssignCustomResources : MonoBehaviour {
         
         for (int i = 0; i < customFretsGHL.Length; ++i)
         {
-            Sprite sprite = SkinManager.Instance.GetSkinItem<Sprite>(i + SkinKeys.xFretBaseGhl, null);
+            Sprite sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xFretBaseGhl);
             if (sprite)
             {
                 customFretsGHL[i].baseRen.sprite = sprite;
                 customFretsGHL[i].canUse = true;
             }
 
-            sprite = SkinManager.Instance.GetSkinItem<Sprite>(i + SkinKeys.xFretPressGhl, null);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xFretPressGhl);
             if (sprite)
             {
                 customFretsGHL[i].pressRen.sprite = sprite;

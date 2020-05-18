@@ -9,19 +9,13 @@ using System.Text;
 [RequireComponent(typeof(SpriteRenderer))]
 public class NoteVisuals2DManager : NoteVisualsManager {
     SpriteRenderer ren;
-    public SpriteNoteResources spriteResources;
-    public NoteSpriteAnimations animations;
     const float ANIMATION_FRAMERATE = 30;
-
-    static Dictionary<string, Sprite> spritesDictionary = null;
-    static Dictionary<string, NoteSpriteAnimationData> animationDataDictionary = null;
 
     static int globalAnimationFrame = 0;
     static int lastUpdatedFrame = -1;
 
     const float ghlSpriteOffset = 0.4f;
 
-    Sprite lastUpdatedSprite = null;
     StringBuilder animationNameString = new StringBuilder(16, 16);
 
     // Use this for initialization
@@ -29,25 +23,6 @@ public class NoteVisuals2DManager : NoteVisualsManager {
     {
         base.Awake();
         ren = GetComponent<SpriteRenderer>();
-
-        if (spritesDictionary == null)
-        {
-            spritesDictionary = new Dictionary<string, Sprite>();
-
-            foreach (Sprite sprite in Resources.LoadAll<Sprite>(spriteResources.fullAtlus.name))
-            {
-                spritesDictionary.Add(sprite.name, sprite);
-            }
-        }
-
-        if (animationDataDictionary == null)
-        {
-            animationDataDictionary = new Dictionary<string, NoteSpriteAnimationData>();
-            foreach (NoteSpriteAnimationData animationData in animations.animations)
-            {
-                animationDataDictionary.Add(animationData.name, animationData);
-            }
-        }
     }
 
     // Update is called once per frame
@@ -60,200 +35,145 @@ public class NoteVisuals2DManager : NoteVisualsManager {
         Vector3 scale = new Vector3(1, 1, 1);
         if (note != null)
         {
+
             if (Globals.ghLiveMode && !note.IsOpenNote())
                 transform.localPosition = new Vector3(0, ghlSpriteOffset, 0);
             else
                 transform.localPosition = Vector3.zero;
 
-            if (Globals.ghLiveMode)
+            if (!Globals.ghLiveMode)
             {
-                int noteArrayPos = 0;
-
-                if (note.ghliveGuitarFret >= Note.GHLiveGuitarFret.White1 && note.ghliveGuitarFret <= Note.GHLiveGuitarFret.White3)
-                    noteArrayPos = 1;
-                else if (note.IsOpenNote())
-                    noteArrayPos = 2;
-
-                if (noteType == Note.NoteType.Strum)
-                {
-                    if (specialType == Note.SpecialType.StarPower)
-                        ren.sprite = spriteResources.sp_strum_ghl[noteArrayPos];
-                    else
-                        ren.sprite = spriteResources.reg_strum_ghl[noteArrayPos];
-                }
-                else if (noteType == Note.NoteType.Hopo)
-                {
-                    if (specialType == Note.SpecialType.StarPower)
-                        ren.sprite = spriteResources.sp_hopo_ghl[noteArrayPos];
-                    else
-                        ren.sprite = spriteResources.reg_hopo_ghl[noteArrayPos];
-                }
-                else
-                {
-                    if (!note.IsOpenNote())
-                    {
-                        if (specialType == Note.SpecialType.StarPower)
-                            ren.sprite = spriteResources.sp_tap_ghl[noteArrayPos];
-                        else
-                            ren.sprite = spriteResources.reg_tap_ghl[noteArrayPos];
-                    }
-                }
-            }
-            else
-            {
-                int noteArrayPos = (int)note.guitarFret;
-                if (Globals.drumMode && note.guitarFret != Note.GuitarFret.Open)
-                {
-                    noteArrayPos += 1;
-                    if (noteArrayPos > (int)Note.GuitarFret.Orange)
-                        noteArrayPos = 0;
-                }
-
-                if (noteType == Note.NoteType.Strum || (noteType == Note.NoteType.Hopo && Globals.drumMode))
-                {
-                    if (specialType == Note.SpecialType.StarPower)
-                        ren.sprite = spriteResources.sp_strum[noteArrayPos];
-                    else
-                        ren.sprite = spriteResources.reg_strum[noteArrayPos];
-                }
-                else if (noteType == Note.NoteType.Hopo)
-                {
-                    if (specialType == Note.SpecialType.StarPower)
-                        ren.sprite = spriteResources.sp_hopo[noteArrayPos];
-                    else
-                        ren.sprite = spriteResources.reg_hopo[noteArrayPos];
-                }
-                // Tap notes
-                else if (noteType == Note.NoteType.Tap)
-                {
-                    if (note.guitarFret != Note.GuitarFret.Open)
-                    {
-                        if (specialType == Note.SpecialType.StarPower)
-                            ren.sprite = spriteResources.sp_tap[noteArrayPos];
-                        else
-                            ren.sprite = spriteResources.reg_tap[noteArrayPos];
-                    }
-                }
-                // Cymbals
-                else if (noteType == Note.NoteType.Cymbal)
-                {
-                    if (note.guitarFret != Note.GuitarFret.Open)
-                    {
-                        if (specialType == Note.SpecialType.StarPower)
-                            ren.sprite = spriteResources.sp_cymbal[noteArrayPos];
-                        else
-                            ren.sprite = spriteResources.reg_cymbal[noteArrayPos];
-                    }
-                }
-                else // Unknown, just use strums
-                {
-                    if (specialType == Note.SpecialType.StarPower)
-                        ren.sprite = spriteResources.sp_strum[noteArrayPos];
-                    else
-                        ren.sprite = spriteResources.reg_strum[noteArrayPos];
-                }
-
                 if (note.guitarFret == Note.GuitarFret.Open)
                     scale = new Vector3(1.2f, 1, 1);
                 else if (specialType == Note.SpecialType.StarPower)
                     scale = new Vector3(1.2f, 1.2f, 1);
             }
         }
-        lastUpdatedSprite = ren.sprite;
         transform.localScale = scale;
+    }
+
+    void UpdateGlobalAnimationFrame()
+    {
+        if (Time.frameCount != lastUpdatedFrame)
+        {
+            // Determine global animation frame for syncronisation
+            globalAnimationFrame = (int)(Time.realtimeSinceStartup * ANIMATION_FRAMERATE);
+            lastUpdatedFrame = Time.frameCount;
+        }
     }
 
     protected override void Animate()
     {
         base.Animate();
 
-        if (!Globals.ghLiveMode)
-            SpriteAnimation(nCon.note);
-    }
+        Note note = nCon.note;
 
-    void SpriteAnimation(Note note)
-    {
-        if (note != null && lastUpdatedSprite != null)
+        if (note != null)
         {
-            if (Time.frameCount != lastUpdatedFrame)
+            int noteArrayPos = GetNoteArrayPos(note);
+            Note.NoteType visualNoteType = noteType;
+
+            if (!Globals.ghLiveMode)
             {
-                // Determine global animation frame for syncronisation
-                globalAnimationFrame = (int)(Time.realtimeSinceStartup * ANIMATION_FRAMERATE);
-                lastUpdatedFrame = Time.frameCount;
+                if (noteType == Note.NoteType.Hopo && Globals.drumMode)
+                {
+                    visualNoteType = Note.NoteType.Strum;
+                }
             }
 
-            NoteSpriteAnimationData animationData = GetCurrentAnimData(note);
-
-            if (animationData != null)
+            Skin skin = SkinManager.Instance.currentSkin;
+            string noteKey = GetSkinKey(noteArrayPos, noteType, specialType, Globals.ghLiveMode);
+            Sprite[] sprites = skin.GetSprites(noteKey);
+            if (sprites != null && sprites.Length > 0)
             {
-                // Get sprite name and number
-                string spriteText = lastUpdatedSprite.name;
-                string spriteName = string.Empty;
-                int spriteNumber = -1;
+                UpdateGlobalAnimationFrame();
 
-                for (int i = spriteText.Length - 1; i >= 0; --i)
-                {
-                    if (spriteText[i] == '_')
-                    {
-                        spriteName = spriteText.Remove(i + 1);      // Get the base sprite name without the number
-                        spriteNumber = int.Parse(spriteText.Remove(0, i + 1));
-                        break;
-                    }
-                }
+                // Get anim index
+                float animSpeed = 1.0f;
+                int alteredGlobalAnimationFrame = (int)(globalAnimationFrame * animSpeed);
+                int frame = alteredGlobalAnimationFrame - ((int)(alteredGlobalAnimationFrame / sprites.Length) * sprites.Length);
 
-                if (spriteNumber != -1)
-                {
-                    int alteredGlobalAnimationFrame = (int)(globalAnimationFrame * animationData.speed);
-
-                    // Change sprite number
-                    int frame = alteredGlobalAnimationFrame - ((int)(alteredGlobalAnimationFrame / animationData.totalSprites) * animationData.totalSprites);
-
-                    Sprite newSprite;
-                    string spriteKey = spriteName + frame.ToString();
-                    spritesDictionary.TryGetValue(spriteKey, out newSprite);
-
-                    Debug.Assert(newSprite, "Unable to find sprite " + spriteKey);    // Should have either gotten the next sprite or wrapped around to the base sprite. If that's not the case, it may have been named incorrectly.
-
-                    ren.sprite = newSprite;
-                }
+                // Set the final sprites
+                ren.sprite = sprites.Length > 0 ? sprites[frame] : null;
+            }
+            else
+            {
+                // Todo, show error sprite
             }
         }
     }
 
-    NoteSpriteAnimationData GetCurrentAnimData(Note note)
+    public static int GetNoteArrayPos(Note note)
     {
-        // Determine which animation offset data to use
-        //string animationName = string.Empty;
-        animationNameString.Length = 0;
+        int arrayPos = note.rawNote;
+
+        if (Globals.ghLiveMode)
+        {
+            arrayPos = 0;
+
+            if (note.ghliveGuitarFret >= Note.GHLiveGuitarFret.White1 && note.ghliveGuitarFret <= Note.GHLiveGuitarFret.White3)
+                arrayPos = 1;
+            else if (note.IsOpenNote())
+                arrayPos = 2;
+        }
+        else if (Globals.drumMode && note.guitarFret != Note.GuitarFret.Open)
+        {
+            arrayPos += 1;
+            if (arrayPos > (int)Note.GuitarFret.Orange)
+                arrayPos = 0;
+        }
+
+        return arrayPos;
+    }
+
+    static StringBuilder skinKeySb = new StringBuilder();
+    public static string GetSkinKey(int notePos, Note.NoteType noteType, Note.SpecialType specialType, bool isGhl)
+    {
+        skinKeySb.Clear();      // Reuse the same builder to reduce GC allocs
+        StringBuilder sb = skinKeySb;
+
+        sb.AppendFormat("{0}_", notePos);
 
         if (specialType == Note.SpecialType.StarPower)
         {
-            animationNameString.Append("sp_");
+            sb.AppendFormat("sp_");
         }
         else
         {
-            animationNameString.Append("reg_");
+            sb.AppendFormat("reg_");
         }
 
-        if (note.guitarFret == Note.GuitarFret.Open)
+        switch (noteType)
         {
-            animationNameString.Insert(0, "open_");
+            case Note.NoteType.Strum:
+                {
+                    sb.AppendFormat("strum");
+                    break;
+                }
+            case Note.NoteType.Hopo:
+                {
+                    sb.AppendFormat("hopo");
+                    break;
+                }
+            case Note.NoteType.Tap:
+                {
+                    sb.AppendFormat("tap");
+                    break;
+                }
+            case Note.NoteType.Cymbal:
+                {
+                    sb.AppendFormat("cymbal");
+                    break;
+                }
+            default:
+                break;
         }
 
-        if (noteType == Note.NoteType.Hopo && !Globals.drumMode)
-            animationNameString.Append("hopo");
-        else if (noteType == Note.NoteType.Tap)
-            animationNameString.Append("tap");
-        else if (noteType == Note.NoteType.Cymbal)
-            animationNameString.Append("cymbal");
-        else
-            animationNameString.Append("strum");
+        if (isGhl)
+        {
+            sb.AppendFormat("_ghl");
+        }
 
-        NoteSpriteAnimationData animationData;
-
-        // Search for the animation
-        animationDataDictionary.TryGetValue(animationNameString.ToString(), out animationData);
-
-        return animationData;
+        return sb.ToString();
     }
 }

@@ -8,9 +8,9 @@ using UnityEngine;
 public class CustomTexture : CustomResource
 {
     protected Texture2D texture;
-    int width, height;
+    int? width, height;
 
-    public CustomTexture(string name, int width, int height) : base(name, new string[] { ".png", ".jpg", ".dds" })
+    public CustomTexture(string name, int? width = null, int? height = null) : base(name, new string[] { ".png", ".jpg", ".dds" })
     {
         this.width = width;
         this.height = height;
@@ -56,7 +56,7 @@ public class CustomTexture : CustomResource
                     Debug.LogError("Unsupported texture format detected");
                     return;
             }
-            texture = new Texture2D(width, height, texFormat, false);
+            texture = new Texture2D(width.HasValue ? width.Value : www.texture.width, height.HasValue ? height.Value : www.texture.height, texFormat, false);
             www.LoadImageIntoTexture(texture);
         }
         else
@@ -71,7 +71,7 @@ public class CustomTexture : CustomResource
     }
 
     // Method from http://answers.unity3d.com/questions/555984/can-you-load-dds-textures-during-runtime.html#answer-707772
-    public static Texture2D LoadTextureDXT(byte[] ddsBytes, TextureFormat textureFormat, int width, int height)
+    public static Texture2D LoadTextureDXT(byte[] ddsBytes, TextureFormat textureFormat, int? width = null, int? height = null)
     {
         if (textureFormat != TextureFormat.DXT1 && textureFormat != TextureFormat.DXT5)
             throw new Exception("Invalid TextureFormat. Only DXT1 and DXT5 formats are supported by this method.");
@@ -80,15 +80,18 @@ public class CustomTexture : CustomResource
         if (ddsSizeCheck != 124)
             throw new Exception("Invalid DDS DXTn texture. Unable to read");  //this header byte should be 124 for DDS image files
 
-        //int height_0 = ddsBytes[13] * 256 + ddsBytes[12];
-        //int width_0 = ddsBytes[17] * 256 + ddsBytes[16];
+        int imageHeight = ddsBytes[13] * 256 + ddsBytes[12];
+        int imageWidth = ddsBytes[17] * 256 + ddsBytes[16];
+
+        int textureHeight = height.HasValue ? height.Value : imageHeight;
+        int textureWidth = width.HasValue ? width.Value : imageWidth;
 
         int DDS_HEADER_SIZE = 128;
 
         byte[] dxtBytes = new byte[ddsBytes.Length - DDS_HEADER_SIZE];
         Buffer.BlockCopy(ddsBytes, DDS_HEADER_SIZE, dxtBytes, 0, ddsBytes.Length - DDS_HEADER_SIZE);
 
-        Texture2D texture = new Texture2D(width, height, textureFormat, false);
+        Texture2D texture = new Texture2D(textureWidth, textureHeight, textureFormat, false);
         texture.LoadRawTextureData(dxtBytes);
         texture.Apply();
 

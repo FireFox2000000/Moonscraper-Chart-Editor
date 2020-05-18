@@ -6,27 +6,30 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using DaVikingCode.AssetPacker;
 
+[RequireComponent(typeof(AssetPacker))]
 public class LoadCustomResources : MonoBehaviour {
     const int FRET_PIXELS_PER_UNIT = 125;
 
     const int NOTE_TEXTURE_1X1_WIDTH = 128, NOTE_TEXTURE_1X1_HEIGHT = 64;
-    const int NOTE_TEXTURE_4X2_WIDTH = 256, NOTE_TEXTURE_4X2_HEIGHT = 256;
-    const int NOTE_TEXTURE_4X4_WIDTH = 512, NOTE_TEXTURE_4X4_HEIGHT = 256;
 
     const int OPEN_NOTE_TEXTURE_1X1_WIDTH = 512, OPEN_NOTE_TEXTURE_1X1_HEIGHT = 64;
-    const int OPEN_NOTE_TEXTURE_4X4_WIDTH = 2048, OPEN_NOTE_TEXTURE_4X4_HEIGHT = 256;
 
     const int GHL_NOTE_TEXTURE_1X1_WIDTH = 100,         GHL_NOTE_TEXTURE_1X1_HEIGHT = 100;
-    const int GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH = 400,    GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT = 50;
+    const int GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH = 400,    GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT = 40;
 
     const int GHL_FRET_WIDTH = 100, GHL_FRET_HEIGHT = 100;
 
     const int SUSTAIN_TEXTURE_WIDTH = 32, SUSTAIN_TEXTURE_HEIGHT = 32;
 
+    TextureToPack.GridSlice expectedNoteSpriteSlices = new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT);
+    TextureToPack.GridSlice expectedOpenNoteSpriteSlices = new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT);
+
     public UnityEngine.UI.Text progressText;
     public ImageFade fader;
     public SustainResources sustainResources;
+    AssetPacker assetPacker;
 
     static string skinDirectory = "Custom Resources";
 
@@ -35,82 +38,97 @@ public class LoadCustomResources : MonoBehaviour {
     List<CustomResource> resources = new List<CustomResource>()
     {
         new CustomAudioClip(SkinKeys.break0),
-        new CustomTexture(SkinKeys.fretboard, 512, 1024),
         new CustomAudioClip(SkinKeys.clap),
         new CustomAudioClip(SkinKeys.metronome),
 
-        new CustomTexture("5_reg_strum", OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("5_reg_hopo", OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("5_sp_strum", OPEN_NOTE_TEXTURE_4X4_WIDTH, OPEN_NOTE_TEXTURE_4X4_HEIGHT),
-        new CustomTexture("5_sp_hopo", OPEN_NOTE_TEXTURE_4X4_WIDTH, OPEN_NOTE_TEXTURE_4X4_HEIGHT),
-
-        new CustomTexture("2_reg_strum_ghl", GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("2_reg_hopo_ghl", GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("2_sp_strum_ghl", GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT),
-        new CustomTexture("2_sp_hopo_ghl", GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT),
-
-        new CustomSprite(SkinKeys.fretStem, 64, 16, FRET_PIXELS_PER_UNIT),
+        // Any images we don't want added to the sprite atlus
+        new CustomTexture(SkinKeys.fretboard, 512, 1024),
         new CustomTexture(SkinKeys.hitFlames, 512, 1024),
     };
 
-    void AddCustomNoteTextureIntoResources()
+    // Textures we want to pack into the sprite atlus
+    Dictionary<string, TextureToPack.GridSlice> imagesToPack = new Dictionary<string, TextureToPack.GridSlice>()    // Prefix/size pair
     {
-        // Regular notes
-        for (int i = 0; i < 5; ++i)
+        // open
+        { "5_reg_hopo",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
+        { "5_reg_strum",    new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
+        { "5_sp_hopo",      new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
+        { "5_sp_strum",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
+
+        { "2_reg_strum_ghl",        new TextureToPack.GridSlice(GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
+        { "2_reg_hopo_ghl",         new TextureToPack.GridSlice(GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
+        { "2_sp_strum_ghl",         new TextureToPack.GridSlice(GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
+        { "2_sp_hopo_ghl",          new TextureToPack.GridSlice(GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
+
+        { SkinKeys.fretStem, null },
+    };
+
+    void SetupResourcesToLoad()
+    {
+        // Textures we want to pack into the atlus, open notes already added
         {
-            resources.AddRange(new CustomTexture[] {
-                new CustomTexture(i + "_reg_strum", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_reg_hopo", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_reg_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
-                new CustomTexture(i + "_reg_cymbal", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_sp_strum", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
-                new CustomTexture(i + "_sp_hopo", NOTE_TEXTURE_4X4_WIDTH, NOTE_TEXTURE_4X4_HEIGHT),
-                new CustomTexture(i + "_sp_tap", NOTE_TEXTURE_4X2_WIDTH, NOTE_TEXTURE_4X2_HEIGHT),
-                new CustomTexture(i + "_sp_cymbal", NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT),
+            for (int i = 0; i < 5; ++i)
+            {
+                imagesToPack.Add(i + "_reg_strum", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_reg_hopo", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_reg_tap", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_reg_pad", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_reg_cymbal", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
 
-                new CustomSprite(i + SkinKeys.xFretBase, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
-                new CustomSprite(i + SkinKeys.xFretCover, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
-                new CustomSprite(i + SkinKeys.xFretPress, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
-                new CustomSprite(i + SkinKeys.xFretRelease, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
-                new CustomSprite(i + SkinKeys.xFretAnim, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
+                imagesToPack.Add(i + "_sp_strum", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_sp_hopo", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_sp_tap", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_sp_pad", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_sp_cymbal", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
 
-                new CustomSprite(i + SkinKeys.xDrumFretBase, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
-                new CustomSprite(i + SkinKeys.xDrumFretCover, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
-                new CustomSprite(i + SkinKeys.xDrumFretPress, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
-                new CustomSprite(i + SkinKeys.xDrumFretRelease, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT),
-                new CustomSprite(i + SkinKeys.xDrumFretAnim, NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT, FRET_PIXELS_PER_UNIT)
+                imagesToPack.Add(i + SkinKeys.xFretBase, null);
+                imagesToPack.Add(i + SkinKeys.xFretCover, null);
+                imagesToPack.Add(i + SkinKeys.xFretPress, null);
+                imagesToPack.Add(i + SkinKeys.xFretRelease, null);
+                imagesToPack.Add(i + SkinKeys.xFretAnim, null);
+
+                imagesToPack.Add(i + SkinKeys.xDrumFretBase, null);
+                imagesToPack.Add(i + SkinKeys.xDrumFretCover, null);
+                imagesToPack.Add(i + SkinKeys.xDrumFretPress, null);
+                imagesToPack.Add(i + SkinKeys.xDrumFretRelease, null);
+                imagesToPack.Add(i + SkinKeys.xDrumFretAnim, null);
             }
-            );
+
+            // GHL
+            for (int i = 0; i < 2; ++i)
+            {
+                imagesToPack.Add(i + "_reg_strum_ghl", new TextureToPack.GridSlice(GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_reg_hopo_ghl", new TextureToPack.GridSlice(GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_reg_tap_ghl", new TextureToPack.GridSlice(GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_sp_strum_ghl", new TextureToPack.GridSlice(GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_sp_hopo_ghl", new TextureToPack.GridSlice(GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_sp_tap_ghl", new TextureToPack.GridSlice(GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT));
+            }
+
+            for (int i = 0; i < 6; ++i)
+            {
+                imagesToPack.Add(i + SkinKeys.xFretBaseGhl, null);
+                imagesToPack.Add(i + SkinKeys.xFretPressGhl, null);
+            }
         }
 
-        // GHL
-        for (int i = 0; i < 2; ++i)
+        // Any images we're packing into the sprite sheet need to loaded as textures via our resources. Automatically add these to the list.
+        foreach (var image in imagesToPack)
         {
-            resources.AddRange(new CustomTexture[] {
-                new CustomTexture(i + "_reg_strum_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_reg_hopo_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_reg_tap_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_sp_strum_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_sp_hopo_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
-                new CustomTexture(i + "_sp_tap_ghl", GHL_NOTE_TEXTURE_1X1_WIDTH, GHL_NOTE_TEXTURE_1X1_HEIGHT),
-            }
-            );
-        }
-
-        for (int i = 0; i < 6; ++i)
-        {
-            resources.AddRange(new CustomTexture[] {
-                new CustomSprite(i + SkinKeys.xFretBaseGhl, GHL_FRET_WIDTH, GHL_FRET_HEIGHT, FRET_PIXELS_PER_UNIT),
-                new CustomSprite(i + SkinKeys.xFretPressGhl, GHL_FRET_WIDTH, GHL_FRET_HEIGHT, FRET_PIXELS_PER_UNIT),
-            }
-            );
+            resources.Add(new CustomTexture(image.Key));
         }
     }
+
+    delegate void UpdateFn();
+    UpdateFn currentState;
 
     // Use this for initialization
     void Start()
     {
         Application.runInBackground = true;
+        assetPacker = GetComponent<AssetPacker>();
+
+        currentState = UpdateWaitingForResourcesLoaded;
 
 #if UNITY_EDITOR
         skinDirectory = Directory.GetParent(Application.dataPath) + "\\" + skinDirectory;
@@ -122,7 +140,7 @@ public class LoadCustomResources : MonoBehaviour {
 
         if (Directory.Exists(skinDirectory))
         {
-            AddCustomNoteTextureIntoResources();
+            SetupResourcesToLoad();
 
             // Collect all the files
             string[] filepaths = GetAllFiles(skinDirectory).ToArray();
@@ -159,6 +177,180 @@ public class LoadCustomResources : MonoBehaviour {
     }
 
     List<CustomResource> resourcesLoading = new List<CustomResource>();
+	
+	// Update is called once per frame
+	void Update ()
+    {
+        currentState();
+    }
+
+    void UpdateWaitingForResourcesLoaded()
+    {
+        float progress = 0;
+        bool complete = true;
+
+        foreach (CustomResource resource in resourcesLoading)
+        {
+            progress += resource.www.progress;
+            if (!resource.www.isDone)
+                complete = false;
+        }
+
+        // Update progress bar
+        if (resourcesLoading.Count > 0)
+            progress /= resourcesLoading.Count;
+        else
+            progress = 1;
+
+        progressText.text = "Loading custom resources... " + Mathf.Round(progress * 100).ToString() + "%";
+
+        if (complete)
+        {
+            OnResourceLoadingComplete();
+            currentState = UpdateWaitingForPackingCompelte;
+        }
+    }
+
+    void UpdateWaitingForPackingCompelte()
+    {
+
+    }
+
+    void OnResourceLoadingComplete()
+    {
+        foreach (var imageInfo in imagesToPack)
+        {
+            Texture2D texture = GetTextureFromLoadedResources(imageInfo.Key, resourcesDictionary);
+            if (texture)
+                assetPacker.AddTextureToPack(texture, imageInfo.Value, imageInfo.Key);
+        }
+
+        progressText.text = "Packing Textures...";
+
+        assetPacker.OnProcessCompleted.AddListener(OnTexturePackingComplete);
+        assetPacker.Process();
+    }
+
+    void OnTexturePackingComplete()
+    {
+        // Transfer sprites over to skin to hold
+        Dictionary<string, Sprite[]> packedSprites = new Dictionary<string, Sprite[]>();
+
+        foreach (var imageInfo in imagesToPack)
+        {
+            Sprite[] sprites = assetPacker.GetSprites(imageInfo.Key);
+            if (sprites.Length > 0)
+            {
+                // Asset packer returns sprites via prefix. GHL specific assets have a "_ghl" suffix. Will cause ghl assets to get mixed with normal ones. Need to fix.
+                {
+                    const string GHL_ID = "_ghl";
+                    if (!imageInfo.Key.Contains(GHL_ID))
+                    {
+                        List<Sprite> spriteList = new List<Sprite>();
+                        spriteList.AddRange(sprites);
+
+                        for (int i = spriteList.Count - 1; i >= 0; --i)
+                        {
+                            if (spriteList[i].name.Contains(GHL_ID))
+                            {
+                                spriteList.RemoveAt(i);
+                            }
+                        }
+
+                        sprites = spriteList.ToArray();
+                    }
+                }
+
+                packedSprites.Add(imageInfo.Key, sprites);
+            }
+        }
+
+        progressText.text = "Loading Complete!";
+
+        StartCoroutine(LoadEditor(packedSprites));
+    }
+
+    List<string> GetAllFiles(string dir)
+    {
+        List<string> files = new List<string>();
+        try
+        {
+            foreach (string f in Directory.GetFiles(dir))
+            {
+                files.Add(f);
+            }
+            foreach (string d in Directory.GetDirectories(dir))
+            {
+                files.AddRange(GetAllFiles(d));
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError(e.Message);
+        }
+
+        return files;
+    }
+
+    static Texture2D GetTextureFromLoadedResources(string name, Dictionary<string, CustomResource> resources)
+    {
+        CustomResource resource;
+        resources.TryGetValue(name, out resource);
+
+        try
+        {
+            resource.AssignResource();
+            return resource.GetObject() as Texture2D;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    static AudioClip GetAudioClipFromLoadedResources(string name, Dictionary<string, CustomResource> resources)
+    {
+        CustomResource resource;
+        resources.TryGetValue(name, out resource);
+        try
+        {
+            resource.AssignResource();
+            return resource.GetObject() as AudioClip;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    IEnumerator LoadEditor(Dictionary<string, Sprite[]> packedSprites)
+    {
+        // Fade
+        yield return fader.fadeOut(1.0f);
+        Skin skin = new Skin();
+        LoadSettingsConfig(skin);
+
+        skin.SetSpriteSheet(packedSprites);
+
+        foreach (var skinItem in resourcesDictionary)
+        {
+            if (imagesToPack.ContainsKey(skinItem.Key))
+                continue;
+
+            skinItem.Value.AssignResource();
+
+            // Add all loaded custom assets into the skin manager. Probably move this whole loading function into there later?
+            skin.AddSkinItem(skinItem.Key, skinItem.Value.filepath, skinItem.Value.GetObject());
+        }
+
+        SkinManager.Instance.currentSkin = skin;
+
+        // Load editor
+        int buildIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+        enabled = false;
+        fader = null;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(buildIndex + 1);
+    }
 
     void LoadSettingsConfig(Skin customSkin)
     {
@@ -233,183 +425,6 @@ public class LoadCustomResources : MonoBehaviour {
             {
                 Debug.LogError("Encountered unknown exception trying to close settings.ini stage 2. " + e.Message);
             }
-        }
-    }
-
-    IEnumerator LoadEditor()
-    {
-        // Fade
-        yield return fader.fadeOut(1.0f);
-        Skin skin = new Skin();
-        LoadSettingsConfig(skin);
-
-        foreach (var skinItem in resourcesDictionary)
-        {
-            skinItem.Value.AssignResource();
-
-            // Add all loaded custom assets into the skin manager. Probably move this whole loading function into there later?
-            skin.AddSkinItem(skinItem.Key, skinItem.Value.filepath, skinItem.Value.GetObject());  
-        }      
-
-        // STANDARD NOTES
-        for (int i = 0; i < skin.reg_strum.Length; ++i)
-        {
-            skin.reg_strum[i] = GetTextureFromLoadedResources(i + "_reg_strum", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.reg_hopo.Length; ++i)
-        {
-            skin.reg_hopo[i] = GetTextureFromLoadedResources(i + "_reg_hopo", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.reg_tap.Length; ++i)
-        {
-            skin.reg_tap[i] = GetTextureFromLoadedResources(i + "_reg_tap", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.reg_cymbal.Length; ++i)
-        {
-            skin.reg_cymbal[i] = GetTextureFromLoadedResources(i + "_reg_cymbal", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.sp_strum.Length; ++i)
-        {
-            skin.sp_strum[i] = GetTextureFromLoadedResources(i + "_sp_strum", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.sp_hopo.Length; ++i)
-        {
-            skin.sp_hopo[i] = GetTextureFromLoadedResources(i + "_sp_hopo", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.sp_tap.Length; ++i)
-        {
-            skin.sp_tap[i] = GetTextureFromLoadedResources(i + "_sp_tap", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.sp_cymbal.Length; ++i)
-        {
-            skin.sp_cymbal[i] = GetTextureFromLoadedResources(i + "_sp_cymbal", resourcesDictionary);
-        }
-
-        // GHL LOADING
-        for (int i = 0; i < skin.reg_strum_ghl.Length; ++i)
-        {
-            skin.reg_strum_ghl[i] = GetTextureFromLoadedResources(i + "_reg_strum_ghl", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.reg_hopo_ghl.Length; ++i)
-        {
-            skin.reg_hopo_ghl[i] = GetTextureFromLoadedResources(i + "_reg_hopo_ghl", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.reg_tap_ghl.Length; ++i)
-        {
-            skin.reg_tap_ghl[i] = GetTextureFromLoadedResources(i + "_reg_tap_ghl", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.sp_strum_ghl.Length; ++i)
-        {
-            skin.sp_strum_ghl[i] = GetTextureFromLoadedResources(i + "_sp_strum_ghl", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.sp_hopo_ghl.Length; ++i)
-        {
-            skin.sp_hopo_ghl[i] = GetTextureFromLoadedResources(i + "_sp_hopo_ghl", resourcesDictionary);
-        }
-
-        for (int i = 0; i < skin.sp_tap_ghl.Length; ++i)
-        {
-            skin.sp_tap_ghl[i] = GetTextureFromLoadedResources(i + "_sp_tap_ghl", resourcesDictionary);
-        }
-
-        SkinManager.Instance.currentSkin = skin;
-
-        // Load editor
-        int buildIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
-        enabled = false;
-        fader = null;
-        UnityEngine.SceneManagement.SceneManager.LoadScene(buildIndex + 1);
-    }
-	
-	// Update is called once per frame
-	void Update () {
-        float progress = 0;
-        bool complete = true;
-
-        // Total all www load processes
-        foreach(CustomResource resource in resourcesLoading)
-        {
-            progress += resource.www.progress;
-            if (!resource.www.isDone)
-                complete = false;
-        }
-
-        // Update progress bar
-        if (resourcesLoading.Count > 0)
-            progress /= resourcesLoading.Count;
-        else
-            progress = 1;
-
-        progressText.text = "Loading custom resources... " + Mathf.Round(progress * 100).ToString() + "%";
-
-        // Wait until all wwws are fully loaded before editing the custom skin
-        if (complete && !fader.fadeOutRunning)
-        {
-            StartCoroutine(LoadEditor());
-        }
-    }
-
-    List<string> GetAllFiles(string dir)
-    {
-        List<string> files = new List<string>();
-        try
-        {
-            foreach (string f in Directory.GetFiles(dir))
-            {
-                files.Add(f);
-            }
-            foreach (string d in Directory.GetDirectories(dir))
-            {
-                files.AddRange(GetAllFiles(d));
-            }
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError(e.Message);
-        }
-
-        return files;
-    }
-
-    static Texture2D GetTextureFromLoadedResources(string name, Dictionary<string, CustomResource> resources)
-    {
-        CustomResource resource;
-        resources.TryGetValue(name, out resource);
-
-        try
-        {
-            resource.AssignResource();
-            return resource.GetObject() as Texture2D;
-        }
-        catch
-        {
-            return null;
-        }
-    }
-
-    static AudioClip GetAudioClipFromLoadedResources(string name, Dictionary<string, CustomResource> resources)
-    {
-        CustomResource resource;
-        resources.TryGetValue(name, out resource);
-        try
-        {
-            resource.AssignResource();
-            return resource.GetObject() as AudioClip;
-        }
-        catch
-        {
-            return null;
         }
     }
 }

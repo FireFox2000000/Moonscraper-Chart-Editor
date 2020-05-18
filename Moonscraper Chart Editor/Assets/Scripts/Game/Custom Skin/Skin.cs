@@ -8,6 +8,7 @@ using UnityEngine;
 public class Skin {
     Dictionary<string, UnityEngine.Object> m_skinObjects = new Dictionary<string, UnityEngine.Object>();
     Dictionary<string, string> m_filepaths = new Dictionary<string, string>();
+    Dictionary<string, Sprite[]> m_spriteAnimDict = new Dictionary<string, Sprite[]>();
 
     public T GetSkinItem<T>(string key, T defaultItem) where T : UnityEngine.Object
     {
@@ -37,6 +38,28 @@ public class Skin {
             m_filepaths.Add(key, filepath);
             m_skinObjects.Add(key, skinItem);
         }
+    }
+
+    public void SetSpriteSheet(Dictionary<string, Sprite[]> animDict)
+    {
+        m_spriteAnimDict = animDict;
+    }
+
+    public Sprite GetSprite(string key)
+    {
+        Sprite[] sprites = null;
+        if (m_spriteAnimDict.TryGetValue(key, out sprites) && sprites.Length > 0)
+        {
+            return sprites[0];
+        }
+        return null;
+    }
+
+    public Sprite[] GetSprites(string animKey)
+    {
+        Sprite[] sprites = null;
+        m_spriteAnimDict.TryGetValue(animKey, out sprites);
+        return sprites;
     }
 
     public Texture2D[] reg_strum = new Texture2D[6];
