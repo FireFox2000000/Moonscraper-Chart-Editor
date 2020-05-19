@@ -17,6 +17,7 @@ public class NoteVisuals2DManager : NoteVisualsManager {
     const float ghlSpriteOffset = 0.4f;
 
     StringBuilder animationNameString = new StringBuilder(16, 16);
+    Sprite[] currentAnimationData = null;
 
     // Use this for initialization
     protected override void Awake()
@@ -30,12 +31,12 @@ public class NoteVisuals2DManager : NoteVisualsManager {
     {
         base.UpdateVisuals();
 
+        currentAnimationData = null;
         Note note = nCon.note;
 
         Vector3 scale = new Vector3(1, 1, 1);
         if (note != null)
         {
-
             if (Globals.ghLiveMode && !note.IsOpenNote())
                 transform.localPosition = new Vector3(0, ghlSpriteOffset, 0);
             else
@@ -48,8 +49,27 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                 else if (specialType == Note.SpecialType.StarPower)
                     scale = new Vector3(1.2f, 1.2f, 1);
             }
+
+            // Get the current animation we should play and assign to currentAnimationData
+            {
+                int noteArrayPos = GetNoteArrayPos(note);
+                Note.NoteType visualNoteType = noteType;
+
+                if (!Globals.ghLiveMode)
+                {
+                    if (noteType == Note.NoteType.Hopo && Globals.drumMode)
+                    {
+                        visualNoteType = Note.NoteType.Strum;
+                    }
+                }
+
+                Skin skin = SkinManager.Instance.currentSkin;
+                string noteKey = GetSkinKey(noteArrayPos, noteType, specialType, Globals.ghLiveMode);
+                currentAnimationData = skin.GetSprites(noteKey);
+            }
         }
-        transform.localScale = scale;
+
+        transform.localScale = scale; 
     }
 
     void UpdateGlobalAnimationFrame()
@@ -66,40 +86,24 @@ public class NoteVisuals2DManager : NoteVisualsManager {
     {
         base.Animate();
 
-        Note note = nCon.note;
-
-        if (note != null)
+        Sprite[] sprites = currentAnimationData;
+        if (sprites != null && sprites.Length > 0)
         {
-            int noteArrayPos = GetNoteArrayPos(note);
-            Note.NoteType visualNoteType = noteType;
+            UpdateGlobalAnimationFrame();
 
-            if (!Globals.ghLiveMode)
-            {
-                if (noteType == Note.NoteType.Hopo && Globals.drumMode)
-                {
-                    visualNoteType = Note.NoteType.Strum;
-                }
-            }
+            // Get anim index
+            float animSpeed = 1.0f;
+            int alteredGlobalAnimationFrame = (int)(globalAnimationFrame * animSpeed);
+            int frame = alteredGlobalAnimationFrame - ((int)(alteredGlobalAnimationFrame / sprites.Length) * sprites.Length);
 
-            Skin skin = SkinManager.Instance.currentSkin;
-            string noteKey = GetSkinKey(noteArrayPos, noteType, specialType, Globals.ghLiveMode);
-            Sprite[] sprites = skin.GetSprites(noteKey);
-            if (sprites != null && sprites.Length > 0)
-            {
-                UpdateGlobalAnimationFrame();
-
-                // Get anim index
-                float animSpeed = 1.0f;
-                int alteredGlobalAnimationFrame = (int)(globalAnimationFrame * animSpeed);
-                int frame = alteredGlobalAnimationFrame - ((int)(alteredGlobalAnimationFrame / sprites.Length) * sprites.Length);
-
-                // Set the final sprites
-                ren.sprite = sprites.Length > 0 ? sprites[frame] : null;
-            }
-            else
-            {
-                // Todo, show error sprite
-            }
+            // Set the final sprites
+            ren.sprite = sprites.Length > 0 ? sprites[frame] : null;
+        }
+        else
+        {
+            // Report error
+            ren.sprite = null;
+            Debug.LogError("Missing sprite for 2d note");
         }
     }
 
