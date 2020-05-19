@@ -46,6 +46,11 @@ public class DrawBeatLines : SystemManagerState.System
         UpdateBeatLines4();
     }
 
+    public void SetBeatLinesActive(bool active)
+    {
+        beatLineParent.SetActive(active);
+    }
+
     void UpdateBeatLines4()
     {
         int measurePoolPos = 0, beatPoolPos = 0, quarterPoolPos = 0;
