@@ -12,9 +12,6 @@ public class PlaceNote : PlaceSongObject {
     new public NoteController controller { get { return (NoteController)base.controller; } set { base.controller = value; } }
 
     [HideInInspector]
-    public NoteVisualsManager visuals;
-
-    [HideInInspector]
     public float horizontalMouseOffset = 0;
 
     public static bool addNoteCheck
@@ -27,7 +24,6 @@ public class PlaceNote : PlaceSongObject {
 
     protected override void SetSongObjectAndController()
     {
-        visuals = GetComponentInChildren<NoteVisualsManager>();
         note = new Note(0, Note.GuitarFret.Green);
 
         controller = GetComponent<NoteController>();

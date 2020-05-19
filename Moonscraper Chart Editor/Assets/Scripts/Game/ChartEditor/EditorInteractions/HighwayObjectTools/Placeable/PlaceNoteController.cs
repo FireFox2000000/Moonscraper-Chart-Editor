@@ -561,7 +561,8 @@ public class PlaceNoteController : ObjectlessTool {
                 }
 
                 // Visuals for some reason aren't being updated in this cycle
-                notes[i].visuals.UpdateVisuals();
+                var noteObjectSelector = notes[i].controller.noteObjectSelector;
+                noteObjectSelector.UpdateSelectedGameObject();            
             }
         }
     }

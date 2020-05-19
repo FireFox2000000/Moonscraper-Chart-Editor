@@ -10,7 +10,7 @@ public class Note2D3DSelector : MonoBehaviour {
     public NoteVisuals2DManager note2D;
     public NoteVisuals3DManager note3D;
 
-    public NoteVisualsManager currentVisualsManager
+    NoteVisualsManager currentVisualsManager
     {
         get
         {
@@ -29,6 +29,8 @@ public class Note2D3DSelector : MonoBehaviour {
             Set2D();
         else
             Set3D();
+
+        currentVisualsManager.UpdateVisuals();
     }
 
     void Set2D()

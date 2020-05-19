@@ -1045,15 +1045,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         }
 
         ChangeState(State.Editor);
-
-        if (currentChart != null)
-        {
-            foreach (Note note in currentChart.notes)
-            {
-                if (note.controller)
-                    note.controller.Activate();
-            }
-        }
+        events.playbackStoppedEvent.Fire();
 
         songObjectPoolManager.noteVisibilityRangeYPosOverride = null;
     }

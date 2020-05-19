@@ -81,6 +81,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         editor.events.chartReloadedEvent.Register(SetAllPoolsDirty);
         editor.events.leftyFlipToggledEvent.Register(SetAllPoolsDirty);
         editor.events.drumsModeOptionChangedEvent.Register(SetAllNotesDirty);
+        editor.events.playbackStoppedEvent.Register(OnPlaybackStopped);
     }
 
     // Update is called once per frame
@@ -327,6 +328,20 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         {
             if (collectedStarpowerInRange[i].controller)
                 collectedStarpowerInRange[i].controller.SetDirty();
+        }
+    }
+
+    void OnPlaybackStopped()
+    {
+        // Make notes that were visually turned off during gameplay back on
+        if (editor.currentChart != null && editor.currentChart.notes.Count > 0)
+        {
+            CollectNotesInViewRange(editor.currentChart.notes);
+            for (int i = 0; i < collectedNotesInRange.Count; ++i)
+            {
+                if (collectedNotesInRange[i].controller)
+                    collectedNotesInRange[i].controller.Activate();
+            }
         }
     }
 }

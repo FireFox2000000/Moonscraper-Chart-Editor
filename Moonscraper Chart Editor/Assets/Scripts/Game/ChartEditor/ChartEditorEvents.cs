@@ -10,6 +10,7 @@ public class ChartEditorEvents
     public MSE.Event toolChangedEvent { get; private set; }
     public MSE.Event notePlacementModeChangedEvent { get; private set; }
     public MSE.Event drumsModeOptionChangedEvent { get; private set; }
+    public MSE.Event playbackStoppedEvent { get; private set; }
 
     public MSE.Event<int> lanesChangedEvent { get; private set; }
     public MSE.Event<bool> keyboardModeToggledEvent { get; private set; }
@@ -26,6 +27,7 @@ public class ChartEditorEvents
         toolChangedEvent = new MSE.Event();
         notePlacementModeChangedEvent = new MSE.Event();
         drumsModeOptionChangedEvent = new MSE.Event();
+        playbackStoppedEvent = new MSE.Event();
 
         lanesChangedEvent = new MSE.Event<int>();
         keyboardModeToggledEvent = new MSE.Event<bool>();

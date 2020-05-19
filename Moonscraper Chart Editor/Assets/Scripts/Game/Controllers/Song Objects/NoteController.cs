@@ -358,9 +358,7 @@ public class NoteController : SongObjectController {
             else
                 sustainRen.sortingOrder = 0;
 
-            if (noteObjectSelector.enabled)
-                noteObjectSelector.UpdateSelectedGameObject();
-            noteObjectSelector.currentVisualsManager.UpdateVisuals();
+            noteObjectSelector.UpdateSelectedGameObject();
 
             UpdateNotePosition();
         }
