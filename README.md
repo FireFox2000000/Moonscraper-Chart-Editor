@@ -13,6 +13,10 @@ This project contains licensed assets such as Un4seen's "bass", "Bass.Net" and s
 
 * Moonscraper Chart Editor, a song editor for Guitar Hero style rhythm games made in Unity 2018.4.22f1
 
+### Why is a separate fork needed? ###
+
+There are several issues that need to be resolved before the editor is usable on Linux. If you would like to help, you can find out what needs to be done on [the Linux Issues page](./LINUX_TODO.md).
+
 ### How do I get set up? ###
 
 * Download and install Unity 2018.4.22f1
