@@ -44,13 +44,18 @@ public class NoteVisuals2DManager : NoteVisualsManager {
 
             if (!Globals.ghLiveMode)
             {
+                // This is based on GH3 sprites. 
+                // For some reason the open note sprite sheets sourced from Exilelord's GH3+ mod don't fit compared to the rest of the sprites. 
+                // It's possible there's some weird GH3 code that are scaling them in a strage way.
+                // We're simply correcting for that and making them fit.
                 if (note.guitarFret == Note.GuitarFret.Open)
                     scale = new Vector3(1.2f, 1, 1);
                 else if (specialType == Note.SpecialType.StarPower)
                     scale = new Vector3(1.2f, 1.2f, 1);
             }
 
-            // Get the current animation we should play and assign to currentAnimationData
+            // We have a note. Here we're figuring out which set of sprites will be used to display that sprite and assigning them to currentAnimationData.
+            // The actual setting of the sprite in the renderer will happen later on in the Animate() function
             {
                 int noteArrayPos = GetNoteArrayPos(note);
                 Note.NoteType visualNoteType = noteType;
@@ -86,6 +91,9 @@ public class NoteVisuals2DManager : NoteVisualsManager {
     {
         base.Animate();
 
+        // Our animation should have already been assigned if we're active and entering here.
+        // Now we determine which sprite to show from that animation!
+        // All note animations are synced to mimic other games, esp GH3, using a global aniamtion frame
         Sprite[] sprites = currentAnimationData;
         if (sprites != null && sprites.Length > 0)
         {
@@ -107,7 +115,7 @@ public class NoteVisuals2DManager : NoteVisualsManager {
         }
     }
 
-    public static int GetNoteArrayPos(Note note)
+    public static int GetNoteArrayPos(Note note)    // Note that this isn't actually an arry position but basically an identifier for which colour to show from the custom resources. This used to be an array position before the refactor
     {
         int arrayPos = note.rawNote;
 

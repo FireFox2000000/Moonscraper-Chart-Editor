@@ -6,8 +6,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Skin {
+    // Holds misc resources such as individual textures and audio clips
     Dictionary<string, UnityEngine.Object> m_skinObjects = new Dictionary<string, UnityEngine.Object>();
+
+    // This is used to track the original filepaths of the custom assets. Used for allowing the audio system to load streams directly from files rather than use the audioclips
     Dictionary<string, string> m_filepaths = new Dictionary<string, string>();
+
+    // Holds a set of sprites that have been custom-packed onto a single texture to reduce draw calls
     Dictionary<string, Sprite[]> m_spriteAnimDict = new Dictionary<string, Sprite[]>();
 
     public T GetSkinItem<T>(string key, T defaultItem) where T : UnityEngine.Object
@@ -62,25 +67,8 @@ public class Skin {
         return sprites;
     }
 
-    public Texture2D[] reg_strum = new Texture2D[6];
-    public Texture2D[] reg_hopo = new Texture2D[6];
-    public Texture2D[] reg_tap = new Texture2D[5];
-    public Texture2D[] reg_cymbal = new Texture2D[5];
-
-    public Texture2D[] sp_strum = new Texture2D[6];
-    public Texture2D[] sp_hopo = new Texture2D[6];
-    public Texture2D[] sp_tap = new Texture2D[5];
-    public Texture2D[] sp_cymbal = new Texture2D[5];
-
     public Texture2D[] sustains = new Texture2D[5];
     public Material[] sustain_mats = new Material[6];
-
-    public Texture2D[] reg_strum_ghl = new Texture2D[3];
-    public Texture2D[] reg_hopo_ghl = new Texture2D[3];
-    public Texture2D[] reg_tap_ghl = new Texture2D[2];
-    public Texture2D[] sp_strum_ghl = new Texture2D[3];
-    public Texture2D[] sp_hopo_ghl = new Texture2D[3];
-    public Texture2D[] sp_tap_ghl = new Texture2D[2];
 
     public enum AssestsAvaliable
     {

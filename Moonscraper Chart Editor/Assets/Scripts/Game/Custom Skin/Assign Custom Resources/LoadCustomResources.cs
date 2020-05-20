@@ -23,9 +23,6 @@ public class LoadCustomResources : MonoBehaviour {
 
     const int SUSTAIN_TEXTURE_WIDTH = 32, SUSTAIN_TEXTURE_HEIGHT = 32;
 
-    TextureToPack.GridSlice expectedNoteSpriteSlices = new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT);
-    TextureToPack.GridSlice expectedOpenNoteSpriteSlices = new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT);
-
     public UnityEngine.UI.Text progressText;
     public ImageFade fader;
     public SustainResources sustainResources;
@@ -152,8 +149,7 @@ public class LoadCustomResources : MonoBehaviour {
             {
                 filepathsDictionary.Add(Path.GetFileNameWithoutExtension(path), path);
 
-                // System.Text.RegularExpressions.Regex.Match(Path.GetFileNameWithoutExtension(path), @"background-/([0-9]+)$");
-                //if ( Path.GetFileNameWithoutExtension(path).Contains("background-\d+"))
+                // Checking if the file provided is a background. We have no limit on the amount of backgrounds we can load, so we can't pre-define them like we do above.
                 if (System.Text.RegularExpressions.Regex.Match(Path.GetFileNameWithoutExtension(path), @"background-[0-9]+").Success)
                 {
                     resources.Add(new CustomTexture(Path.GetFileNameWithoutExtension(path), 1920, 1080));
@@ -213,7 +209,7 @@ public class LoadCustomResources : MonoBehaviour {
 
     void UpdateWaitingForPackingCompelte()
     {
-
+        // Empty on purpose. We don't need to do anything except wait for texture packing to finish. We already have a listener set up to change this state on the asset packer.
     }
 
     void OnResourceLoadingComplete()
