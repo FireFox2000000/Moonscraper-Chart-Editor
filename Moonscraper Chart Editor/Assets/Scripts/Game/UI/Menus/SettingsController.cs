@@ -10,7 +10,7 @@ public class SettingsController : DisplayMenu
     [SerializeField]
     RectTransform settingsMenuContentArea;
     [SerializeField]
-    RectTransform currentContent;
+    Button initialMenuItem;
 
     public Toggle clapStrum;
     public Toggle clapHopo;
@@ -43,6 +43,9 @@ public class SettingsController : DisplayMenu
 
     public Dropdown antiAliasingLevel;
 
+    Button currentButton;
+    RectTransform currentContent;
+
     public void SetSettingsGroup(RectTransform content)
     {
         if (currentContent)
@@ -60,6 +63,17 @@ public class SettingsController : DisplayMenu
         currentContent = content;
     }
 
+    public void SetCurrentButton(Button button)
+    {
+        if (currentButton)
+        {
+            currentButton.interactable = true;
+        }
+
+        currentButton = button;
+        currentButton.interactable = false;
+    }
+
     protected override void Awake()
     {
         base.Awake();      
@@ -70,7 +84,7 @@ public class SettingsController : DisplayMenu
         sustainGapInput.onValidateInput = Step.validateStepVal;
         sustainGapInput.text = GameSettings.sustainGap.ToString();
 
-        SetSettingsGroup(currentContent);
+        initialMenuItem.onClick.Invoke();
     }
 
     protected override void Update()
