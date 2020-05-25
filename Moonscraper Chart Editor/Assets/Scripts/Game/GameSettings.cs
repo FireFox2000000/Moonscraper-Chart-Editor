@@ -11,6 +11,7 @@ public static class GameSettings
 {
     const string SECTION_NAME_SETTINGS = "Settings";
     const string SECTION_NAME_AUDIO = "Audio Volume";
+    const string SECTION_NAME_GRAPHICS = "Graphics";
 
     [System.Flags]
     public enum ClapToggle
@@ -165,6 +166,9 @@ public static class GameSettings
             {
                 clapProperties = (ClapToggle)c_defaultClapVal;
             }
+
+            // Graphics Settings
+            QualitySettings.antiAliasing = iniparse.ReadValue(SECTION_NAME_GRAPHICS, "AntiAliasingLevel", QualitySettings.antiAliasing);
         }
         catch (System.Exception e)
         {
@@ -234,7 +238,10 @@ public static class GameSettings
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Drum Stream", vol_drums);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Crowd Stream", vol_crowd);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Audio Pan", audio_pan);
-            iniparse.WriteValue(SECTION_NAME_AUDIO, "SFX", sfxVolume);			
+            iniparse.WriteValue(SECTION_NAME_AUDIO, "SFX", sfxVolume);
+
+            // Graphics Settings
+            iniparse.WriteValue(SECTION_NAME_GRAPHICS, "AntiAliasingLevel", QualitySettings.antiAliasing);
         }
         catch (System.Exception e)
         {

@@ -3,10 +3,15 @@
 
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using System.Collections.Generic;
 
 public class SettingsController : DisplayMenu
 {
+    [SerializeField]
+    RectTransform settingsMenuContentArea;
+    [SerializeField]
+    RectTransform currentContent;
+
     public Toggle clapStrum;
     public Toggle clapHopo;
     public Toggle clapTap;
@@ -36,7 +41,24 @@ public class SettingsController : DisplayMenu
     public Dropdown fpsSelectDropdown;
     public Dropdown bgSwapTimeDropdown;
 
-    public Indicators strikelineFretPlacement;
+    public Dropdown antiAliasingLevel;
+
+    public void SetSettingsGroup(RectTransform content)
+    {
+        if (currentContent)
+        {
+            currentContent.gameObject.SetActive(false);
+        }
+
+        content.gameObject.SetActive(true);
+
+        Vector2 size = new Vector2();
+        size.x = settingsMenuContentArea.sizeDelta.x;
+        size.y += content.rect.height - content.localPosition.y;
+        settingsMenuContentArea.sizeDelta = size;
+
+        currentContent = content;
+    }
 
     protected override void Awake()
     {
@@ -46,7 +68,9 @@ public class SettingsController : DisplayMenu
     void Start()
     {
         sustainGapInput.onValidateInput = Step.validateStepVal;
-        sustainGapInput.text = GameSettings.sustainGap.ToString(); 
+        sustainGapInput.text = GameSettings.sustainGap.ToString();
+
+        SetSettingsGroup(currentContent);
     }
 
     protected override void Update()
@@ -160,6 +184,32 @@ public class SettingsController : DisplayMenu
         autoValidateSongOnSave.isOn = GameSettings.autoValidateSongOnSave;
 
         gameplayStartDelayDropdown.value = (int)(GameSettings.gameplayStartDelayTime * 2.0f);
+
+        // Set antiAliasingLevel dropdown
+        {
+            int antiAliasingLevelDropdownValue = 3;
+            switch (QualitySettings.antiAliasing)
+            {
+                case 0:
+                    {
+                        antiAliasingLevelDropdownValue = 0;
+                        break;
+                    }
+                case 2:
+                    {
+                        antiAliasingLevelDropdownValue = 1;
+                        break;
+                    }
+                case 4:
+                    {
+                        antiAliasingLevelDropdownValue = 2;
+                        break;
+                    }
+                default: break;
+            }
+
+            antiAliasingLevel.value = antiAliasingLevelDropdownValue;
+        }
 
         Update();
     }  
@@ -304,6 +354,33 @@ public class SettingsController : DisplayMenu
                 break;
             default:
                 break;
+        }
+    }
+
+    public void SetAntiAliasingLevel(int value)
+    {
+        switch (value)
+        {
+            case 0:
+                {
+                    QualitySettings.antiAliasing = 0;
+                    break;
+                }
+            case 1:
+                {
+                    QualitySettings.antiAliasing = 2;
+                    break;
+                }
+            case 2:
+                {
+                    QualitySettings.antiAliasing = 4;
+                    break;
+                }
+            default:
+                {
+                    QualitySettings.antiAliasing = 8;
+                    break;
+                }
         }
     }
 }
