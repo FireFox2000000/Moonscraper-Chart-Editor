@@ -62,7 +62,9 @@ public abstract class Snapable : MonoBehaviour {
         }
 
         // Cap to within the range of the song
-        objectSnappedChartPos = (uint)Mathf.Min(editor.maxPos, objectSnappedChartPos);
+        float maxTime = editor.currentSongLength;
+        uint maxTick = editor.currentSong.TimeToTick(maxTime, editor.currentSong.resolution);
+        objectSnappedChartPos = (uint)Mathf.Min(maxTick, objectSnappedChartPos);
     }
 
     protected virtual void LateUpdate()
