@@ -4,23 +4,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
 
 public class AutoSaveSystem : SystemManagerState.System
 {
     const float AUTOSAVE_RUN_INTERVAL = 60; // Once a minute
     float autosaveTimer = 0;
     Song autosaveSong = null;
-    System.Threading.Thread autosave;
+    Task currentAutosaveTask;
 
     public override void SystemUpdate()
     {
-        if (autosave == null || autosave.ThreadState != System.Threading.ThreadState.Running)
+        if (currentAutosaveTask == null || currentAutosaveTask.Status != TaskStatus.RanToCompletion)
         {
             autosaveTimer += Time.deltaTime;
 
             if (autosaveTimer > AUTOSAVE_RUN_INTERVAL)
             {
-                Autosave();
+                currentAutosaveTask = Autosave();
             }
         }
         else
@@ -29,13 +30,13 @@ public class AutoSaveSystem : SystemManagerState.System
         }
     }
 
-    void Autosave()
+    async Task Autosave()
     {
         ChartEditor editor = ChartEditor.Instance;
 
         autosaveSong = new Song(editor.currentSong);
 
-        autosave = new System.Threading.Thread(() =>
+        await Task.Run(() =>
         {
             autosaveTimer = 0;
             Debug.Log("Autosaving...");
@@ -60,7 +61,5 @@ public class AutoSaveSystem : SystemManagerState.System
             Debug.Log("Autosave complete!");
             autosaveTimer = 0;
         });
-
-        autosave.Start();
     }
 }

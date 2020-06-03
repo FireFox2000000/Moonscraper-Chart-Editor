@@ -10,35 +10,75 @@ public class SaveAnimController : UpdateableService {
     public Text saveText;
     ChartEditor editor;
 
-    bool fadein = false;
     float alpha = 0;
     public float fadeSpeed = 5;
 
-	// Use this for initialization
-	protected override void Start () {
+    delegate void UpdateFn();
+    UpdateFn currentUpdateState;
+
+    // Use this for initialization
+    protected override void Start () {
         base.Start();
         editor = ChartEditor.Instance;
         editor.events.saveEvent.Register(StartFade);
-	}
+        saveText.color = new Color(saveText.color.r, saveText.color.g, saveText.color.b, alpha);
+    }
 	
 	// Update is called once per frame
 	public override void OnServiceUpdate() {
-        if (alpha >= 1)
-            fadein = false;
+        currentUpdateState?.Invoke();
+    }
 
-        if (fadein)
+    void UpdateFadeIn()
+    {
+        if (CheckSaveConcluded())
+        {
+            // Don't bother displaying the save anim for super short saves
+            currentUpdateState = UpdateFadeOut;
+        }
+        else
+        {
             alpha += fadeSpeed * Time.deltaTime;
-        else if (!editor.isSaving)
-            alpha -= fadeSpeed * Time.deltaTime;
+            alpha = Mathf.Clamp01(alpha);
+            saveText.color = new Color(saveText.color.r, saveText.color.g, saveText.color.b, alpha);
 
+            if (alpha >= 1.0f)
+            {
+                currentUpdateState = UpdateWaitingForSaveEnd;
+            }
+        }
+    }
+
+    void UpdateWaitingForSaveEnd()
+    {
+        if (CheckSaveConcluded())
+        {
+            currentUpdateState = UpdateFadeOut;
+        }
+    }
+
+    void UpdateFadeOut()
+    {
+        alpha -= fadeSpeed * Time.deltaTime;
         alpha = Mathf.Clamp01(alpha);
+        saveText.color = new Color(saveText.color.r, saveText.color.g, saveText.color.b, alpha);
 
-        saveText.color = new Color(saveText.color.r, saveText.color.g, saveText.color.b, alpha); 
-	}
+        if (alpha <= 0)
+        {
+            currentUpdateState = null;
+        }
+    }
+
+    bool CheckSaveConcluded()
+    {
+        return !editor.isSaving;
+    }
 
     public void StartFade()
     {
-        fadein = true;
+        Debug.Log("Save event");
         alpha += fadeSpeed * Time.deltaTime;
+
+        currentUpdateState = UpdateFadeIn;
     }
 }

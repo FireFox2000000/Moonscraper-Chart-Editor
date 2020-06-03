@@ -4,7 +4,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 //using System.Windows.Forms;
-using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.IO;

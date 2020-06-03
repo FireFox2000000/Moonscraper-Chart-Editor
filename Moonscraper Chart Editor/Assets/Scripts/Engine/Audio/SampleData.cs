@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 using UnityEngine;
-using System.Threading;
+using System.Threading.Tasks;
 using System.IO;
 
 public class SampleData {
@@ -13,7 +13,7 @@ public class SampleData {
     float[] _data;
     float _length;
 
-    Thread loadThread;
+    Task loadTask;
     string filepath;
     AudioStream audioStream;
 
@@ -51,15 +51,14 @@ public class SampleData {
             this.filepath = filepath;
 
         _data = new float[0];
-        loadThread = new Thread(new ThreadStart(LoadData));
-        loadThread.Start();
+        loadTask = Task.Run(LoadData);
     }
 
     public bool IsLoading
     {
         get
         {
-            return (loadThread.ThreadState == ThreadState.Running);
+            return loadTask.Status != TaskStatus.RanToCompletion;
         }
     }
 
@@ -73,8 +72,8 @@ public class SampleData {
 
     public void Dispose()
     {
-        stop = true;
-        while (IsLoading) ;
+        stop = true;            // Flag the task to be canceled
+        while (IsLoading) ;     // Wait for the task to be canceled
 
         if (audioStream != null)
             audioStream.Dispose();

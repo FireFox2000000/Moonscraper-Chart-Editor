@@ -15,6 +15,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
+using System.Threading.Tasks;
 
 /// <summary>
 /// The central point of the entire editor. Container for all the data and systems nessacary for the editor to function.
@@ -139,7 +140,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public Services services { get { return globals.services; } }
     public UIServices uiServices { get { return services.uiServices; } }
 
-    System.Threading.Thread _saveThread;
+    Task _saveTask;
 
     // Use this for initialization
     void Awake () {
@@ -562,7 +563,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         {
             Debug.Log("Saving to file- " + System.IO.Path.GetFullPath(filename));
           
-            SaveCurrentSongAsync(filename, exportOptions);
+            _saveTask = SaveCurrentSongAsync(filename, exportOptions);
             lastLoadedFile = System.IO.Path.GetFullPath(filename);
 
             if (isSaving)
@@ -760,7 +761,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     {
         get
         {
-            return _saveThread != null && _saveThread.IsAlive;
+            return _saveTask != null && _saveTask.Status != TaskStatus.RanToCompletion;
         }
     }
 
@@ -769,7 +770,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     /// </summary>
     /// <param name="filepath">The path and filename to save to.</param>
     /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
-    void SaveCurrentSongAsync(string filepath, ExportOptions exportOptions)
+    async Task SaveCurrentSongAsync(string filepath, ExportOptions exportOptions)
     {
 
 #if false
@@ -783,9 +784,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (!isSaving)
         {
             Song songCopy = new Song(currentSong);
-
-            _saveThread = new System.Threading.Thread(() => SaveSong(songCopy, filepath, exportOptions));
-            _saveThread.Start();
+            await Task.Run(() => SaveSong(songCopy, filepath, exportOptions));
         }
 #endif
     }

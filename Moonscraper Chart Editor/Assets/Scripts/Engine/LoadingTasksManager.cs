@@ -4,14 +4,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Threading.Tasks;
 using System.Threading;
- 
+
 public class LoadingTask
 {
     public string description;
-    public ThreadStart task;
+    public Action task;
 
-    public LoadingTask(string description, ThreadStart task)
+    public LoadingTask(string description, Action task)
     {
         this.description = description;
         this.task = task;
@@ -28,13 +30,10 @@ public class LoadingTasksManager : MonoBehaviour
         loadingScreen.gameObject.SetActive(true);   // This is initially hidden so we can actually see things in the editor.
     }
 
-    public void KickTasks(IList<LoadingTask> tasks)
+    public async void KickTasks(IList<LoadingTask> tasks)
     {
-        StartCoroutine(_KickTask(tasks));
-    }
+        Debug.Assert(!isRunningTask);
 
-    IEnumerator _KickTask(IList<LoadingTask> tasks)
-    {
         isRunningTask = true;
 
         ChartEditor.Instance.ChangeStateToLoading();
@@ -45,11 +44,7 @@ public class LoadingTasksManager : MonoBehaviour
             LoadingTask currentTask = tasks[i];
             loadingScreen.loadingInformation.text = currentTask.description;
 
-            Thread taskThread = new Thread(currentTask.task);
-            taskThread.Start();
-
-            while (taskThread.ThreadState == ThreadState.Running)
-                yield return null;
+            await Task.Run(currentTask.task);
         }
 
         loadingScreen.FadeOut();
