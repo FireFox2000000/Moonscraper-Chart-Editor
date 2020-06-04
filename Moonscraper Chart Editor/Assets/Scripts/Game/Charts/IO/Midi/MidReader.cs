@@ -2,7 +2,7 @@
 // See LICENSE in project root for license information.
 
 using System;
-using System.Collections;
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using NAudio.Midi;
@@ -90,7 +90,7 @@ namespace MoonscraperChartEditor.Song.IO
         public static Song ReadMidi(string path, ref CallbackState callBackState)
         {
             Song song = new Song();
-            string directory = System.IO.Path.GetDirectoryName(path);
+            string directory = Path.GetDirectoryName(path);
 
             foreach (Song.AudioInstrument audio in EnumX<Song.AudioInstrument>.Values)
             {
@@ -101,9 +101,9 @@ namespace MoonscraperChartEditor.Song.IO
                 {
                     foreach (string overrideFilename in locationOverrides)
                     {
-                        string testFilepath = directory + "\\" + overrideFilename.ToLower() + ".ogg";
+                        string testFilepath = Path.Combine(directory, overrideFilename.ToLower() + ".ogg");
 
-                        if (System.IO.File.Exists(testFilepath))
+                        if (File.Exists(testFilepath))
                         {
                             filename = overrideFilename;
                             break;
@@ -115,7 +115,7 @@ namespace MoonscraperChartEditor.Song.IO
                     filename = audio.ToString();
                 }
 
-                string audioFilepath = directory + "\\" + filename.ToLower() + ".ogg";
+                string audioFilepath = Path.Combine(directory, filename.ToLower() + ".ogg");
                 Debug.Log(audioFilepath);
                 song.SetAudioLocation(audio, audioFilepath);
             }
