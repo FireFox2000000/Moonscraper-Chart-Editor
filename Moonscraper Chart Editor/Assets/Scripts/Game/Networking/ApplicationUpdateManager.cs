@@ -1,0 +1,79 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+using Octokit;
+
+public class ApplicationUpdateManager
+{
+#if UNITY_EDITOR
+    readonly string productHeader = "MoonscraperChartEditor_Dev";
+#else
+    readonly string productHeader = "MoonscraperChartEditor";
+#endif
+    readonly string respositoryOwner = "FireFox2000000";
+    readonly string repositoryName = "Moonscraper-Chart-Editor";
+
+    public string currentVersion { get; private set; }
+    public bool UpdateCheckInProgress { get; private set; }
+
+    public delegate void OnUpdateFoundFn(Release release);
+
+    public ApplicationUpdateManager(string currentVersion)
+    {
+        this.currentVersion = currentVersion;
+    }
+
+    public async void CheckForUpdates(OnUpdateFoundFn onUpdateFoundCallback, bool allowPreleases = false)
+    {
+        if (UpdateCheckInProgress)
+        {
+            Debug.LogError("Trying to check for an update when checking is already in progress.");
+            return;
+        }
+
+        UpdateCheckInProgress = true;
+
+        try
+        {
+            var github = new GitHubClient(new ProductHeaderValue(productHeader));
+
+            // Safety first, repo may be down or cannot be reached
+            try
+            {
+                var releases = await github.Repository.Release.GetAll(respositoryOwner, repositoryName);
+                if (releases != null && releases.Count > 0)
+                {
+                    Release latest = null;   
+                    
+                    foreach(var release in releases)
+                    {
+                        if (!release.Prerelease || allowPreleases)
+                        {
+                            latest = release;
+                            break;
+                        }
+                    }
+
+                    if (latest != null)
+                    {
+                        // Todo, compare to current version, if not newer than current, override latest to null
+                        latest = null;  // Temp disable until this logic is implemented
+                    }
+
+                    onUpdateFoundCallback(latest);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Unable to obtain information for the latest release: " + e.Message);
+            }
+        }
+        catch (Exception e)     // I don't trust that github will be around forever. Plus users may not even be connected to the internet.
+        {
+            Debug.LogError("Unable to create github client: " + e.Message);
+        }
+
+        UpdateCheckInProgress = false;
+    }
+}

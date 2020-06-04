@@ -28,6 +28,7 @@ public class Services : MonoBehaviour
 
     [HideInInspector]
     public LoadingTasksManager loadingTasksManager { get; private set; }
+    public ApplicationUpdateManager updateManager { get; private set; }
 
     Rect toolScreenArea;
     public static bool IsInDropDown = false;
@@ -216,6 +217,7 @@ public class Services : MonoBehaviour
     private void Awake()
     {
         loadingTasksManager = GetComponent<LoadingTasksManager>();
+        updateManager = new ApplicationUpdateManager(ChartEditor.Instance.versionNumber.text);
 
         mouseMonitorSystem = new MouseMonitor();
         ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Editor, mouseMonitorSystem);

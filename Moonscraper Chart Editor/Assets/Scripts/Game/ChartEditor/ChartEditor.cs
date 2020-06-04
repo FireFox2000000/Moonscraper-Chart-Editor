@@ -45,8 +45,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     ClipboardObjectController clipboard;
     public LaneInfo laneInfo;
     public HitWindowFeeder hitWindowFeeder;
-    [SerializeField]
-    TextAsset versionNumber;
+    public TextAsset versionNumber;
 
     uint _minPos;
     uint _maxPos;
@@ -92,6 +91,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     SystemManagerState menuState = new SystemManagerState();
     SystemManagerState loadingState = new SystemManagerState();
     public State currentState { get; private set; }
+    List<Action> interruptTasks = new List<Action>();
 
     /// <summary>
     /// Persistent systems are systems that need to hold onto data between different states, rather than creating a new instance and destroying it every time
@@ -211,6 +211,17 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             }
         }
 #endif
+
+        // Note, need to do this after loading game settings for this to actually take effect
+        if (GameSettings.automaticallyCheckForUpdates)
+        {
+            services.updateManager.CheckForUpdates((Octokit.Release latestRelease) => {
+                if (latestRelease != null)
+                {
+                    OnUserCheckForUpdatesComplete(latestRelease);
+                }
+            });
+        }
     }
 
     public void Update()
@@ -221,6 +232,16 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (quittingCheckPassed)
         {
             Application.Quit();
+        }
+
+        if (interruptTasks.Count > 0 && (currentState == State.Editor || currentState == State.Playing))      // Don't interrupt loading or if the user is in a menu
+        {
+            foreach (var task in interruptTasks)
+            {
+                task();
+            }
+
+            interruptTasks.Clear();
         }
 
         foreach (var onClickFunction in onClickEventFnList)
@@ -344,6 +365,38 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         RegisterPersistentSystem(State.Playing, _songObjectPoolManager);
         RegisterPersistentSystem(State.Playing, drawBeatLinesSystem);
+    }
+
+    public void QueueInterruptTask(Action task)
+    {
+        interruptTasks.Add(task);
+    }
+
+    public void UserCheckForUpdates()
+    {
+        ApplicationUpdateManager updateManager = services.updateManager;
+        updateManager.CheckForUpdates(OnUserCheckForUpdatesComplete);
+
+        LoadingTask waitForUpdateCheckTask = new LoadingTask("Checking for updates...", () =>
+        {
+            while (updateManager.UpdateCheckInProgress) ;
+        });
+
+        List<LoadingTask> tasks = new List<LoadingTask>() { waitForUpdateCheckTask };
+
+        LoadingTasksManager tasksManager = services.loadingTasksManager;
+        tasksManager.KickTasks(tasks);
+    }
+
+    void OnUserCheckForUpdatesComplete(Octokit.Release release)
+    {
+        // Queue up the action to open the menu in a safe spot, editor or playing. Don't want to try to open this up if the user already has a menu open
+        QueueInterruptTask(() =>
+        {
+            UpdatesMenu updatesMenu = uiServices.gameObject.GetComponentInChildren<UpdatesMenu>(true);
+            updatesMenu.Populate(release);
+            EnableMenu(updatesMenu.gameObject.GetComponent<DisplayMenu>());
+        });
     }
 
 #region State Control

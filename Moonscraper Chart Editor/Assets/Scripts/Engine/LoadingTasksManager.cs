@@ -51,5 +51,6 @@ public class LoadingTasksManager : MonoBehaviour
         loadingScreen.loadingInformation.text = "Complete!";
 
         isRunningTask = false;
+        ChartEditor.Instance.ChangeStateToEditor();
     }
 }

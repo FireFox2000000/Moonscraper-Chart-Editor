@@ -89,6 +89,7 @@ public static class GameSettings
 
     public static SongValidate.ValidationOptions songValidatorModes = ~SongValidate.ValidationOptions.None;
     public static bool autoValidateSongOnSave = true;
+    public static bool automaticallyCheckForUpdates = true;
 
     public static MSChartEditorInput.MSChartEditorActionContainer controls = new MSChartEditorInput.MSChartEditorActionContainer();
 
@@ -144,6 +145,7 @@ public static class GameSettings
             }
             songValidatorModes = (SongValidate.ValidationOptions)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Song Validator Modes", (int)(~SongValidate.ValidationOptions.None));
             autoValidateSongOnSave = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Auto Validate Song On Save", true);
+            automaticallyCheckForUpdates = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Auto Check For Updates", true);
 
             gameplayStartDelayTime = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
             gameplayStartDelayTime = (float)(System.Math.Round(gameplayStartDelayTime * 2.0f, System.MidpointRounding.AwayFromZero) / 2.0f); // Check that the gameplay start delay time is a multiple of 0.5 and is
@@ -226,6 +228,7 @@ public static class GameSettings
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Drums Mode", (int)drumsModeOptions);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Song Validator Modes", (int)songValidatorModes);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Auto Validate Song On Save", autoValidateSongOnSave);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Auto Check For Updates", automaticallyCheckForUpdates);    
 
             // Audio levels
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Master", vol_master);
