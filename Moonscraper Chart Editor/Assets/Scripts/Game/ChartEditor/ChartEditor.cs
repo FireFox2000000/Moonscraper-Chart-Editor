@@ -45,7 +45,6 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     ClipboardObjectController clipboard;
     public LaneInfo laneInfo;
     public HitWindowFeeder hitWindowFeeder;
-    public TextAsset versionNumber;
 
     uint _minPos;
     uint _maxPos;
@@ -144,7 +143,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
     // Use this for initialization
     void Awake () {
-        Debug.Log("Initialising " + versionNumber.text);
+        Debug.Log(string.Format("Initialising {0} v{1}", Application.productName, Application.version));
 
 #if !UNITY_EDITOR
         Application.wantsToQuit += QuittingEditCheck;
@@ -179,7 +178,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         gameObject.AddComponent<UITabbing>();
 
-        windowHandleManager = new WindowHandleManager(versionNumber.text, GetComponent<Settings>().productName);
+        windowHandleManager = new WindowHandleManager(string.Format("{0} v{1}", Application.productName, Application.version), GetComponent<Settings>().productName);
         errorManager = gameObject.AddComponent<ErrorManager>();
         toolManager.Init();
         interactionMethodManager.Init();

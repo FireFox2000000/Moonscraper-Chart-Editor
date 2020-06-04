@@ -217,7 +217,7 @@ public class Services : MonoBehaviour
     private void Awake()
     {
         loadingTasksManager = GetComponent<LoadingTasksManager>();
-        updateManager = new ApplicationUpdateManager(ChartEditor.Instance.versionNumber.text);
+        updateManager = new ApplicationUpdateManager(Application.version);
 
         mouseMonitorSystem = new MouseMonitor();
         ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Editor, mouseMonitorSystem);

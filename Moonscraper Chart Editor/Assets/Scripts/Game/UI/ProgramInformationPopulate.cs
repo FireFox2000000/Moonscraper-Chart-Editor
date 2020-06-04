@@ -8,14 +8,12 @@ using UnityEngine.UI;
 
 [RequireComponent(typeof(Text))]
 public class ProgramInformationPopulate : MonoBehaviour {
-    [SerializeField]
-    TextAsset versionNumber;
     Text programInfoText;
 
 	// Use this for initialization
 	void Start () {
         programInfoText = GetComponent<Text>();
 
-        programInfoText.text = string.Format("{0} \nBy Alexander \"FireFox\" Ong", versionNumber.text);
+        programInfoText.text = string.Format("{0} v{1} \nBy Alexander \"FireFox\" Ong.\nBuilt using Unity {2}.", Application.productName, Application.version, Application.unityVersion);
     }
 }

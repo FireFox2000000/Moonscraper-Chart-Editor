@@ -10,20 +10,18 @@ public class UpdatesMenu : MonoBehaviour
     [SerializeField]
     Text textInfo;
     [SerializeField]
-    TextAsset versionNumber;
-    [SerializeField]
     Toggle checkUpdateToggle;
 
     public void Populate(Octokit.Release latestRelease)
     {
-        string currentVersion = versionNumber.text;
+        string currentVersion = Application.version;
 
         bool hasNewerVersion = latestRelease != null;
         downloadLatestButton.gameObject.SetActive(hasNewerVersion);
 
         if (hasNewerVersion && latestRelease.Assets.Count > 0)
         {
-            textInfo.text = string.Format("A new version of Moonscraper Chart Editor is available.\n\nCurrent version- {0}\nLatest version- {1}", currentVersion, latestRelease.Name);
+            textInfo.text = string.Format("A new version of Moonscraper Chart Editor is available.\n\nCurrent version- v{0}\nLatest version- v{1}", currentVersion, latestRelease.TagName);
 
             var downloadAsset = latestRelease.Assets[0];
 
@@ -35,7 +33,7 @@ public class UpdatesMenu : MonoBehaviour
         }
         else
         {
-            textInfo.text = string.Format("Moonscraper Chart Editor is up to date. The current version is {0}", currentVersion);         
+            textInfo.text = string.Format("Moonscraper Chart Editor is up to date. The current version is v{0}", currentVersion);         
         }
     }
 
