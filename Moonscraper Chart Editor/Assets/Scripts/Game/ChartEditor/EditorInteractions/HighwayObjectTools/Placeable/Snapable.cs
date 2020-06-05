@@ -97,7 +97,7 @@ public abstract class Snapable : MonoBehaviour {
         uint tickOffsetFromLastMeasure = tick - lastMeasureTick;
         int beatsFromLastMeasureToSnap = Mathf.RoundToInt((float)tickOffsetFromLastMeasure / tickGap);
 
-        uint snappedTick = lastMeasureTick + (uint)(beatsFromLastMeasureToSnap * tickGap);
+        uint snappedTick = lastMeasureTick + (uint)(beatsFromLastMeasureToSnap * tickGap + 0.5f);
         if (endRange.HasValue)
         {
             return snappedTick < endRange.Value ? snappedTick : endRange.Value;
