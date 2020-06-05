@@ -57,8 +57,16 @@ public class ApplicationUpdateManager
 
                     if (latest != null)
                     {
-                        // Todo, compare to current version, if not newer than current, override latest to null
-                        latest = null;  // Temp disable until this logic is implemented
+                        Debug.Log("Found latest release on GitHub. Release version is " + latest.TagName);
+#if UNITY_EDITOR
+                        Debug.Assert(!IsLatestVersionNewer(currentVersion, latest.TagName), "Development version number is considered to be an earlier version of the current release. Please fix the version number.");
+#endif
+
+                        if (!IsLatestVersionNewer(currentVersion, latest.TagName))
+                        {
+                            latest = null;  // Already on the latest version
+                            Debug.Log("Application is considered to be the same or newer than the latest release. Current version is " + currentVersion);
+                        }
                     }
 
                     onUpdateFoundCallback(latest);
@@ -75,5 +83,10 @@ public class ApplicationUpdateManager
         }
 
         UpdateCheckInProgress = false;
+    }
+
+    static bool IsLatestVersionNewer(string currentVersion, string latest)
+    {
+        return string.CompareOrdinal(currentVersion, latest) < 0;
     }
 }
