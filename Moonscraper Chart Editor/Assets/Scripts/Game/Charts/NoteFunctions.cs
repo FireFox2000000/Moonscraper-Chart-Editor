@@ -125,7 +125,22 @@ public static class NoteFunctions {
             noteLength = cap.tick - note.tick;
         }
 
-        uint gapDis = (uint)(song.resolution * 4.0f / Globals.gameSettings.sustainGap);
+        uint gapDis = 0;
+        if (Globals.gameSettings.sustainGapIsTimeBased)
+        {
+            float sustainGapSeconds = Globals.gameSettings.sustainGapTimeMs / 1000.0f;
+            float gapEndTime = song.LiveTickToTime(cap.tick, song.resolution);   // Can't use the cache version as things might be being shuffled around
+            float gapStartTime = Mathf.Max(0, gapEndTime - sustainGapSeconds);
+
+            // Calculate how far this gap is in terms of ticks
+            uint startTick = song.TimeToTick(gapStartTime, song.resolution);
+            uint endTick = song.TimeToTick(gapEndTime, song.resolution);
+            gapDis = endTick - startTick;
+        }
+        else    // Tick based
+        {
+            gapDis = (uint)(song.resolution * 4.0f / Globals.gameSettings.sustainGap);
+        }
 
         if (Globals.gameSettings.sustainGapEnabled && note.length > 0 && (note.tick + note.length > cap.tick - gapDis))
         {

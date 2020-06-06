@@ -45,7 +45,8 @@ public class GameSettings
     public bool keysModeEnabled = false;
     public bool metronomeActive = false;
     public bool extendedSustainsEnabled = false;
-    public bool sustainGapEnabled { get; set; }
+    public bool sustainGapEnabled = false;
+    public bool sustainGapIsTimeBased = false;
     public bool resetAfterPlay = false;
     public bool resetAfterGameplay = false;
 
@@ -80,6 +81,7 @@ public class GameSettings
     public int step { get { return snappingStep.value; } set { snappingStep.value = value; } }
     public Step sustainGapStep;
     public int sustainGap { get { return sustainGapStep.value; } set { sustainGapStep.value = value; } }
+    public int sustainGapTimeMs = 0;
 
     public bool clapEnabled = false;
 
@@ -131,7 +133,9 @@ public class GameSettings
             extendedSustainsEnabled = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Extended sustains", false);
             clapEnabled = false;
             sustainGapEnabled = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Sustain Gap", false);
+            sustainGapIsTimeBased = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Sustain Gap Is Time Based", false);
             sustainGapStep = new Step((int)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Sustain Gap Step", (int)16));
+            sustainGapTimeMs = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Sustain Gap Time", (int)0);
             notePlacementMode = (NotePlacementMode)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Note Placement Mode", (int)NotePlacementMode.Default);
             gameplayStartDelayTime = (float)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Gameplay Start Delay", 3.0f);
             resetAfterPlay = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Reset After Play", false);
@@ -218,7 +222,9 @@ public class GameSettings
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Clap", (int)clapProperties);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Extended sustains", extendedSustainsEnabled);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Sustain Gap", sustainGapEnabled);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Sustain Gap Is Time Based", sustainGapIsTimeBased);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Sustain Gap Step", sustainGap);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Sustain Gap Time", sustainGapTimeMs);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Note Placement Mode", (int)notePlacementMode);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Gameplay Start Delay", gameplayStartDelayTime);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Reset After Play", resetAfterPlay);

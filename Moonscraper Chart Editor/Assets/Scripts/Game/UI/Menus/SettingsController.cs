@@ -18,6 +18,7 @@ public class SettingsController : DisplayMenu
     public Toggle leftyFlipToggle;
     public Toggle extendedSustainsToggle;
     public Toggle sustainGapEnabledToggle;
+    public Toggle sustainGapTimeBasedToggle;
     public Toggle resetAfterPlay;
     public Toggle resetAfterGameplay;
     public Toggle autoValidateSongOnSave;
@@ -37,6 +38,7 @@ public class SettingsController : DisplayMenu
     public Slider musicPanSlider;
 
     public InputField sustainGapInput;
+    public InputField sustainGapTimeInput;
     public Dropdown gameplayStartDelayDropdown;
     public Dropdown fpsSelectDropdown;
     public Dropdown bgSwapTimeDropdown;
@@ -83,6 +85,7 @@ public class SettingsController : DisplayMenu
     {
         sustainGapInput.onValidateInput = Step.validateStepVal;
         sustainGapInput.text = Globals.gameSettings.sustainGap.ToString();
+        sustainGapTimeInput.text = Globals.gameSettings.sustainGapTimeMs.ToString();
 
         initialMenuItem.onClick.Invoke();
     }
@@ -91,8 +94,15 @@ public class SettingsController : DisplayMenu
     {
         base.Update();
 
-        if (sustainGapInput.text != string.Empty)
+        if (!string.IsNullOrEmpty(sustainGapInput.text))
+        {
             sustainGapInput.text = Globals.gameSettings.sustainGap.ToString();
+        }
+
+        if (!string.IsNullOrEmpty(sustainGapTimeInput.text) && int.Parse(sustainGapTimeInput.text) != Globals.gameSettings.sustainGapTimeMs)
+        {
+            sustainGapTimeInput.text = Globals.gameSettings.sustainGapTimeMs.ToString();
+        }
 
         // Set all variables' values based on the UI
         Globals.gameSettings.sustainGapEnabled = sustainGapEnabledToggle.isOn;
@@ -122,6 +132,10 @@ public class SettingsController : DisplayMenu
 
         // Initialise GUI
         sustainGapEnabledToggle.isOn = Globals.gameSettings.sustainGapEnabled;
+        sustainGapTimeBasedToggle.isOn = Globals.gameSettings.sustainGapIsTimeBased;
+        sustainGapTimeInput.text = Globals.gameSettings.sustainGapTimeMs.ToString();
+
+        UpdateSustainGapInteractability();
 
         initClapToggle(clapStrum, GameSettings.ClapToggle.STRUM);
         initClapToggle(clapHopo, GameSettings.ClapToggle.HOPO);
@@ -342,6 +356,41 @@ public class SettingsController : DisplayMenu
 
         Globals.gameSettings.sustainGap = stepVal;
         sustainGapInput.text = Globals.gameSettings.sustainGap.ToString();
+    }
+
+    public void OnSustainGapTimeBasedToggled(bool value)
+    {
+        Globals.gameSettings.sustainGapIsTimeBased = value;
+
+        UpdateSustainGapInteractability();
+    }
+
+    private void UpdateSustainGapInteractability()
+    {
+        bool value = Globals.gameSettings.sustainGapIsTimeBased;
+
+        sustainGapInput.interactable = !value;
+        sustainGapTimeInput.interactable = value;
+    }
+
+    public void OnSustainGapTimeInputUpdated(string value)
+    {
+        int stepVal = 0;
+        if (!string.IsNullOrEmpty(value))
+        {
+            stepVal = int.Parse(value);
+        }
+
+        Globals.gameSettings.sustainGapTimeMs = stepVal;
+    }
+
+    public void OnSustainGapTimeEndInput(string value)
+    {
+        OnSustainGapTimeInputUpdated(value);
+        if (string.IsNullOrEmpty(value))
+        {
+            sustainGapTimeInput.text = "0";
+        }
     }
 
     public void SetBgSwapTime(int value)
