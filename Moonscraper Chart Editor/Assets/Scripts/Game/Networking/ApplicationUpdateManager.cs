@@ -74,12 +74,12 @@ public class ApplicationUpdateManager
             }
             catch (Exception e)
             {
-                Debug.LogError("Unable to obtain information for the latest release: " + e.Message);
+                Debug.LogWarning("Unable to obtain information for the latest release: " + e.Message);
             }
         }
         catch (Exception e)     // I don't trust that github will be around forever. Plus users may not even be connected to the internet.
         {
-            Debug.LogError("Unable to create github client: " + e.Message);
+            Debug.LogWarning("Unable to create github client: " + e.Message);
         }
 
         UpdateCheckInProgress = false;
