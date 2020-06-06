@@ -45,6 +45,7 @@ public class Note2D3DSelector : MonoBehaviour {
         note3D.gameObject.SetActive(true);
     }
 
+    static Dictionary<int, bool> textureInSkinCache = new Dictionary<int, bool>();
     bool CheckTextureInSkin()
     {
         Skin customSkin = SkinManager.Instance.currentSkin;
@@ -64,9 +65,23 @@ public class Note2D3DSelector : MonoBehaviour {
             }
         }
 
-        string noteKey = NoteVisuals2DManager.GetSkinKey(arrayPos, noteType, specialType, Globals.ghLiveMode);
-        Sprite[] sprites = SkinManager.Instance.currentSkin.GetSprites(noteKey);
+        bool isInSkin;
+        bool isGhl = Globals.ghLiveMode;
+        int hash = NoteVisuals2DManager.GetSkinKeyHash(arrayPos, noteType, specialType, isGhl);
+        
+        if (textureInSkinCache.TryGetValue(hash, out isInSkin))
+        {
+            return isInSkin;
+        }
+        else
+        {
+            string noteKey = NoteVisuals2DManager.GetSkinKey(arrayPos, noteType, specialType, isGhl);
+            Sprite[] sprites = SkinManager.Instance.currentSkin.GetSprites(noteKey);
 
-        return sprites != null && sprites.Length > 0;
+            isInSkin = sprites != null && sprites.Length > 0;
+            textureInSkinCache[hash] = isInSkin;
+
+            return isInSkin;
+        }
     }
 }

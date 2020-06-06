@@ -11,10 +11,13 @@ public class GuitarNoteHitKnowledge : NoteHitKnowledge
 
     public GuitarNoteHitKnowledge() : base()
     {
+        fretValidationTime = strumValidationTime = NULL_TIME;
+        strumCounter = 0;
     }
 
-    public GuitarNoteHitKnowledge(Note note) : base(note)
+    public override void SetFrom(Note note)
     {
+        base.SetFrom(note);
         fretValidationTime = strumValidationTime = NULL_TIME;
         strumCounter = 0;
     }

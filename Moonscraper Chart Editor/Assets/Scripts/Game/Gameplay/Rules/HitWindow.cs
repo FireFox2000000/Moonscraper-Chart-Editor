@@ -16,7 +16,10 @@ public class HitWindow<TNoteHitKnowledge> : IHitWindow where TNoteHitKnowledge :
     float frontendTime;
     float backendTime;
 
+    const int PoolCapacity = 100;
+
     private List<TNoteHitKnowledge> m_noteQueue;
+    private List<TNoteHitKnowledge> m_noteHitKnowledgePool;
 
     public List<TNoteHitKnowledge> noteKnowledgeQueue
     {
@@ -43,8 +46,22 @@ public class HitWindow<TNoteHitKnowledge> : IHitWindow where TNoteHitKnowledge :
     public HitWindow(float frontendTime, float backendTime)
     {
         m_noteQueue = new List<TNoteHitKnowledge>();
+        m_noteHitKnowledgePool = new List<TNoteHitKnowledge>();
         this.frontendTime = frontendTime;
         this.backendTime = backendTime;
+
+        m_noteQueue.Capacity = PoolCapacity;
+        m_noteHitKnowledgePool.Capacity = PoolCapacity;
+        PopulateHitKnowledgePool(PoolCapacity);
+    }
+
+    void PopulateHitKnowledgePool(int objectCount)
+    {
+        for (int i = 0; i < objectCount; ++i)
+        {
+            TNoteHitKnowledge newNoteKnowledge = System.Activator.CreateInstance(typeof(TNoteHitKnowledge)) as TNoteHitKnowledge;
+            m_noteHitKnowledgePool.Add(newNoteKnowledge);
+        }
     }
 
     public bool DetectEnter(Note note, float time)
@@ -58,7 +75,8 @@ public class HitWindow<TNoteHitKnowledge> : IHitWindow where TNoteHitKnowledge :
                 return false;
         }
 
-        TNoteHitKnowledge newNoteKnowledge = System.Activator.CreateInstance(typeof(TNoteHitKnowledge), note) as TNoteHitKnowledge;
+        var newNoteKnowledge = PopNoteKnowledgeFromPool();
+        newNoteKnowledge.SetFrom(note);
         m_noteQueue.Add(newNoteKnowledge);
    
         if (m_noteQueue.Count > 1) 
@@ -66,11 +84,31 @@ public class HitWindow<TNoteHitKnowledge> : IHitWindow where TNoteHitKnowledge :
             uint tick1 = m_noteQueue[m_noteQueue.Count - 1].note.tick;
             uint tick2 = m_noteQueue[m_noteQueue.Count - 2].note.tick;
 
-            Debug.Assert(tick1 > tick2, string.Format("Notes inserted into hit window in the wrong order, tick1 = {0}, tick2 = {1}", tick1, tick2));
+            if (tick1 <= tick2)     // Branch so we avoid string concates showing up in the profiler
+            {
+                Debug.Assert(false, string.Format("Notes inserted into hit window in the wrong order, tick1 = {0}, tick2 = {1}", tick1, tick2));
+            }
         }
 
 
         return true;
+    }
+
+    TNoteHitKnowledge PopNoteKnowledgeFromPool()
+    {
+        if (m_noteHitKnowledgePool.Count <= 0)
+        {
+            PopulateHitKnowledgePool(100);
+        }
+
+        var newNoteKnowledge = m_noteHitKnowledgePool[m_noteHitKnowledgePool.Count - 1]; m_noteHitKnowledgePool.RemoveAt(m_noteHitKnowledgePool.Count - 1);
+
+        return newNoteKnowledge;
+    }
+
+    void ReturnNoteKnowledgeToPool(TNoteHitKnowledge knowledge)
+    {
+        m_noteHitKnowledgePool.Add(knowledge);
     }
 
     public void Clear()
@@ -78,9 +116,10 @@ public class HitWindow<TNoteHitKnowledge> : IHitWindow where TNoteHitKnowledge :
         noteKnowledgeQueue.Clear();
     }
 
+    List<TNoteHitKnowledge> elementsRemoved = new List<TNoteHitKnowledge>();
     public List<TNoteHitKnowledge> DetectExit(float time)
     {
-        List<TNoteHitKnowledge> elementsRemoved = new List<TNoteHitKnowledge>();
+        elementsRemoved.Clear();
 
         for (int i = m_noteQueue.Count - 1; i >= 0; --i)
         {
@@ -93,6 +132,8 @@ public class HitWindow<TNoteHitKnowledge> : IHitWindow where TNoteHitKnowledge :
             if (fallenOutOfWindow || noteKnowledge.shouldExitWindow)
             {
                 elementsRemoved.Add(m_noteQueue[i]);
+
+                ReturnNoteKnowledgeToPool(m_noteQueue[i]);
                 m_noteQueue.RemoveAt(i);
             }
         }

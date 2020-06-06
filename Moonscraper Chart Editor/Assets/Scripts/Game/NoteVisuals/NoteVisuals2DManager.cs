@@ -138,9 +138,31 @@ public class NoteVisuals2DManager : NoteVisualsManager {
         return arrayPos;
     }
 
+    public static int GetSkinKeyHash(int notePos, Note.NoteType noteType, Note.SpecialType specialType, bool isGhl)
+    {
+        int result = 4;
+        int salt = 1231;
+
+        result = unchecked(result * salt + notePos);
+        result = unchecked(result * salt + (int)noteType);
+        result = unchecked(result * salt + (int)specialType);
+        result = unchecked(result * salt + (isGhl ? 1 : -1));
+
+        return result;
+    }
+
+    static Dictionary<int, string> skinKeySkinCache = new Dictionary<int, string>();
     static StringBuilder skinKeySb = new StringBuilder();
     public static string GetSkinKey(int notePos, Note.NoteType noteType, Note.SpecialType specialType, bool isGhl)
     {
+        int hash = GetSkinKeyHash(notePos, noteType, specialType, isGhl);
+
+        string stringKey;
+        if (skinKeySkinCache.TryGetValue(hash, out stringKey))
+        {
+            return stringKey;
+        }
+
         skinKeySb.Clear();      // Reuse the same builder to reduce GC allocs
         StringBuilder sb = skinKeySb;
 
@@ -186,6 +208,9 @@ public class NoteVisuals2DManager : NoteVisualsManager {
             sb.AppendFormat("_ghl");
         }
 
-        return sb.ToString();
+        stringKey = sb.ToString();
+        skinKeySkinCache[hash] = stringKey;
+
+        return stringKey;
     }
 }

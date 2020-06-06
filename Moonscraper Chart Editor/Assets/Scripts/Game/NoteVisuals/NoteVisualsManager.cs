@@ -77,15 +77,15 @@ public class NoteVisualsManager : MonoBehaviour {
     public static Note.SpecialType IsStarpower(Note note)
     {
         Note.SpecialType specialType = Note.SpecialType.None;
- 
-        foreach (Starpower sp in note.chart.starPower)
+
+        int index = SongObjectHelper.FindClosestPositionRoundedDown(note.tick, note.chart.starPower);
+        if (index != SongObjectHelper.NOTFOUND)
         {
+            Starpower sp = note.chart.starPower[index];
             if (sp.tick == note.tick || (sp.tick <= note.tick && sp.tick + sp.length > note.tick))
             {
                 specialType = Note.SpecialType.StarPower;
             }
-            else if (sp.tick > note.tick)
-                break;
         }
 
         return specialType;

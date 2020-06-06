@@ -8,11 +8,11 @@ public class NoteHitKnowledge {
     public bool hasBeenHit;
     public bool shouldExitWindow;
 
-    public NoteHitKnowledge() : this(null)
+    public NoteHitKnowledge()
     {
     }
 
-    public NoteHitKnowledge(Note note)
+    public virtual void SetFrom(Note note)
     {
         this.note = note;
         hasBeenHit = false;

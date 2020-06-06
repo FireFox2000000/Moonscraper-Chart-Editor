@@ -24,9 +24,12 @@ public class BaseGameplayRulestate {
 
     protected MissFeedback missFeedbackFn;
     public NoteStats stats;
+    Note.ChordEnumerateFn setNoteHitFn;
 
     public BaseGameplayRulestate(MissFeedback missFeedbackFn)
     {
+        setNoteHitFn = SetNoteHit;
+
         this.missFeedbackFn = missFeedbackFn;
         stats.Reset();
     }
@@ -77,13 +80,15 @@ public class BaseGameplayRulestate {
         ++stats.totalNotes;
 
         Note note = noteHitKnowledge.note;
-        foreach (Note chordNote in note.chord)
+        note.EnumerateChord(setNoteHitFn);
+    }
+
+    void SetNoteHit(Note note)
+    {
+        if (note.controller != null)       // Note may not actually be present on the highway due to laneinfo culling.
         {
-            if (chordNote.controller != null)       // Note may not actually be present on the highway due to laneinfo culling.
-            {
-                chordNote.controller.hit = true;
-                chordNote.controller.PlayIndicatorAnim();
-            }
+            note.controller.hit = true;
+            note.controller.PlayIndicatorAnim();
         }
     }
 

@@ -16,6 +16,7 @@ public class HitWindowFeeder : MonoBehaviour {
     {
         initSize = transform.localScale.y;
         enabled = false;
+        physicsWindow.Capacity = 1000;
     }
 
     void OnTriggerEnter2D(Collider2D col)

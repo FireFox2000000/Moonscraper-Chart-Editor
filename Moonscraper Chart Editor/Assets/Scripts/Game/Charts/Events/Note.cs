@@ -483,5 +483,23 @@ public class Note : ChartObject
             return GetEnumerator();
         }
     }
+
+    public delegate void ChordEnumerateFn(Note note);
+    public void EnumerateChord(ChordEnumerateFn fn)
+    {
+        Note note = this;
+        while (note.previous != null && note.previous.tick == note.tick)
+        {
+            note = note.previous;
+        }
+
+        fn(note);
+
+        while (note.next != null && note.tick == note.next.tick)
+        {
+            note = note.next;
+            fn(note);
+        }
+    }
 }
 

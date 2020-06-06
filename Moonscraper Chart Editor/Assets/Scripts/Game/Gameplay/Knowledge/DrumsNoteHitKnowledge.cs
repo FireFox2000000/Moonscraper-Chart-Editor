@@ -35,9 +35,16 @@ public class DrumsNoteHitKnowledge : NoteHitKnowledge
     public InputTiming standardPadTiming { get; private set; }
     public InputTiming cymbalPadTiming { get; private set; }
 
-    public DrumsNoteHitKnowledge(Note note) : base(note)
+    public DrumsNoteHitKnowledge() : base()
     {
         standardPadTiming = new InputTiming();
         cymbalPadTiming = new InputTiming();
+    }
+
+    public override void SetFrom(Note note)
+    {
+        base.SetFrom(note);
+        standardPadTiming.Reset();
+        cymbalPadTiming.Reset();
     }
 }
