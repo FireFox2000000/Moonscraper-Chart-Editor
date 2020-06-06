@@ -9,7 +9,8 @@ public class GameplayStateSystem : SystemManagerState.System
     bool botEnabled = true;
 
     OneShotSampleStream missSoundSample;
-    HitWindowFeeder hitWindowFeeder; 
+    HitWindowFeeder hitWindowFeeder = new HitWindowFeeder();
+    float playFromTime;
 
     delegate void GameplayUpdateFn(float time);
     GameplayUpdateFn gameplayUpdateFn = null;
@@ -35,10 +36,10 @@ public class GameplayStateSystem : SystemManagerState.System
         None,
     }
 
-    public GameplayStateSystem(HitWindowFeeder hitWindowFeeder, bool botEnabled)
+    public GameplayStateSystem(float playFromTime, bool botEnabled)
     {
-        this.hitWindowFeeder = hitWindowFeeder;
         this.botEnabled = botEnabled;
+        this.playFromTime = playFromTime;
 
         currentUpdate = UpdateWaitingForNotesSettled;
     }
@@ -69,13 +70,14 @@ public class GameplayStateSystem : SystemManagerState.System
 
         if (hitWindowFrameDelayCount <= 0)
         {
-            Init();
             currentUpdate = UpdateGameplay;
         }
     }
 
     void UpdateGameplay()
     {
+        hitWindowFeeder.Update();
+
         float currentTime = ChartEditor.Instance.currentVisibleTime;
         gameplayUpdateFn?.Invoke(currentTime);
 
@@ -85,46 +87,9 @@ public class GameplayStateSystem : SystemManagerState.System
         ChartEditor.Instance.gameplayEvents.gameplayUpdateEvent.Fire(gamestate);
     }
 
-    // Should be called once the physics system has settled down
-    void Init()
-    {
-        ChartEditor editor = ChartEditor.Instance;
-
-        Debug.Assert(!hitWindowFeeder.enabled);
-        hitWindowFeeder.enabled = true;
-
-        if (botEnabled)
-        {
-            // We want the bot to automatically hit any sustains that are currently active in the view, but for which the notes are already past the strikeline
-            Song song = editor.currentSong;
-            float currentTime = editor.currentVisibleTime;
-            uint currentTick = song.TimeToTick(currentTime, song.resolution);
-            int index = SongObjectHelper.FindClosestPositionRoundedDown(currentTick, editor.currentChart.notes);
-            if (index != SongObjectHelper.NOTFOUND)
-            {
-                Note note = editor.currentChart.notes[index];
-                List<Note> sustainNotes = new List<Note>();
-                NoteFunctions.GetPreviousOfSustains(sustainNotes, note, Globals.gameSettings.extendedSustainsEnabled);
-
-                foreach (Note chordNote in note.chord)
-                {
-                    sustainNotes.Add(chordNote);
-                }
-                foreach (Note sustainNote in sustainNotes)
-                {
-                    if (sustainNote.controller != null)
-                    {
-                        hitWindowFeeder.TryAddNote(sustainNote.controller);
-                    }
-                }
-            }
-        }
-    }
-
     public override void SystemExit()
     {
         missSoundSample = null;
-        hitWindowFeeder.enabled = false;
         ChartEditor.Instance.uiServices.SetGameplayUIActive(false);
     }
 

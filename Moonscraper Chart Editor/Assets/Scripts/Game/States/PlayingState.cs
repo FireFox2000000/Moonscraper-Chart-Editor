@@ -22,7 +22,7 @@ public class PlayingState : SystemManagerState
         this.playFromTime = playFromTime;
         this.resetBackToTimeOnStop = resetBackToTimeOnStop;
 
-        AddSystem(new GameplayStateSystem(editor.hitWindowFeeder, enableBot));
+        AddSystem(new GameplayStateSystem(playFromTime, enableBot));
         AddSystem(new MetronomePlaybackSystem());
 
         if (enableBot)

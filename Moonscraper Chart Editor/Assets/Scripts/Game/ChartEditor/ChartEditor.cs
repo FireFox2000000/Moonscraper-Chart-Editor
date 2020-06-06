@@ -44,7 +44,6 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     [SerializeField]
     ClipboardObjectController clipboard;
     public LaneInfo laneInfo;
-    public HitWindowFeeder hitWindowFeeder;
 
     uint _minPos;
     uint _maxPos;

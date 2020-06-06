@@ -6,85 +6,61 @@ using System.Collections.Generic;
 using UnityEngine;
 using TimingConfig;
 
-public class HitWindowFeeder : MonoBehaviour {
-    List<NoteController> physicsWindow = new List<NoteController>();
+public class HitWindowFeeder
+{
     public IHitWindow hitWindow = null;
 
-    float initSize;
+    int feederNoteIndex = -1;
+    uint lastAddedTick = uint.MaxValue;
 
-    private void Awake()
-    {
-        initSize = transform.localScale.y;
-        enabled = false;
-        physicsWindow.Capacity = 1000;
-    }
-
-    void OnTriggerEnter2D(Collider2D col)
-    {
-        NoteController nCon = col.gameObject.GetComponentInParent<NoteController>();
-        TryAddNote(nCon);
-    }
-
-    public void TryAddNote(NoteController nCon)
-    {
-        if (nCon && !nCon.hit && !physicsWindow.Contains(nCon) && nCon.note != null)
-        {
-            // We only want 1 note per position so that we can compare using the note mask
-            foreach (NoteController insertedNCon in physicsWindow)
-            {
-                if (nCon.note.tick == insertedNCon.note.tick)
-                    return;
-            }
-
-            // Insert into sorted position
-            for (int i = 0; i < physicsWindow.Count; ++i)
-            {
-                if (nCon.note < physicsWindow[i].note)
-                {
-                    physicsWindow.Insert(i, nCon);
-                    return;
-                }
-            }
-
-            physicsWindow.Add(nCon);
-        }
-    }
-
-    void Update()
-    {
-        float time = ChartEditor.Instance.currentVisibleTime;
-
-        // Enter window, need to insert in the correct order
-        for (int i = 0; i < physicsWindow.Count; ++i)
-        {
-            NoteController note = physicsWindow[i];
-
-            if (!note.isActiveAndEnabled || note.note == null)
-            {
-                physicsWindow.Remove(note);
-                --i;
-            }
-            else if (hitWindow != null)
-            {
-                if (hitWindow.DetectEnter(note.note, time))
-                {
-                    physicsWindow.Remove(note);
-                    --i;
-                }
-            }
-        }
-    }
-
-    private void OnEnable()
+    public HitWindowFeeder()
     {
         Reset();
-        transform.localScale = new Vector3(transform.localScale.x, initSize, transform.localScale.z);
     }
 
-    private void OnDisable()
+    public void Update()
     {
-        transform.localScale = new Vector3(transform.localScale.x, 0, transform.localScale.z);
-        hitWindow = null;
+        ChartEditor editor = ChartEditor.Instance;
+        float time = editor.currentVisibleTime;
+        Song song = editor.currentSong;
+
+        if (feederNoteIndex <= 0)
+        {
+            uint currentTick = song.TimeToTick(time, song.resolution);
+            feederNoteIndex = SongObjectHelper.FindClosestPositionRoundedDown(currentTick, editor.currentChart.notes);
+        }
+
+        if (hitWindow != null && feederNoteIndex >= 0 && feederNoteIndex < editor.currentChart.notes.Count)
+        {
+            uint maxScanTick = editor.maxPos;
+            int noteIndex = feederNoteIndex;
+
+            while (noteIndex < editor.currentChart.notes.Count)
+            {
+                Note note = editor.currentChart.notes[noteIndex];
+                if (note.tick > maxScanTick)
+                {
+                    break;
+                }
+
+                ++noteIndex;
+
+                bool validControllerAttached = note.controller != null && note.controller.isActiveAndEnabled && !note.controller.hit;
+                if (validControllerAttached && note.tick != lastAddedTick)
+                {
+                    if (!hitWindow.DetectEnter(note, time))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        lastAddedTick = note.tick;
+                    }
+
+                    feederNoteIndex = noteIndex;    // Only increase the feeder note index if we pass notes that are completely valid. The notes ahead may have simply not been loaded into view yet. Need to reproccess them once they do come into view
+                }
+            }
+        }
     }
 
     public void Reset()
@@ -93,6 +69,7 @@ public class HitWindowFeeder : MonoBehaviour {
         {
             hitWindow.Clear();
         }
-        physicsWindow.Clear();
+        feederNoteIndex = -1;
+        lastAddedTick = uint.MaxValue;
     }
 }
