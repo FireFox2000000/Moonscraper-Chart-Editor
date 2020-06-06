@@ -105,7 +105,7 @@ public class WaveformDraw : MonoBehaviour {
 
         // Turn data into world-position points to feed the line renderer
         Vector3 point = Vector3.zero;
-        float hs = GameSettings.hyperspeed / GameSettings.gameSpeed;
+        float hs = Globals.gameSettings.hyperspeed / Globals.gameSettings.gameSpeed;
         float y = 0;
 
         for (int i = startPos; i < endPos; ++i)

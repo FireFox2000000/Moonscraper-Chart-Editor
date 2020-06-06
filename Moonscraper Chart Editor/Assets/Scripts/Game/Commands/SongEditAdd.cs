@@ -19,7 +19,7 @@ public class SongEditAdd : SongEditCommand
     {
         if (subActions.Count <= 0)
         {
-            AddAndInvokeSubActions(songObjects, subActions, GameSettings.extendedSustainsEnabled);
+            AddAndInvokeSubActions(songObjects, subActions, Globals.gameSettings.extendedSustainsEnabled);
         }
         else
         {

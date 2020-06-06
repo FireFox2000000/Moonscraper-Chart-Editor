@@ -56,7 +56,7 @@ public class ControlsMenuInterface : MonoBehaviour
             }
             else
             {
-                actionsToEdit = GameSettings.controls;
+                actionsToEdit = Globals.gameSettings.controls;
             }
         }
     }

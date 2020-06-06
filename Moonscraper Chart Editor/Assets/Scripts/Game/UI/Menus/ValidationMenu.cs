@@ -20,7 +20,7 @@ public class ValidationMenu : DisplayMenu
         set
         {
             _currentOptions = value;
-            GameSettings.songValidatorModes = value;
+            Globals.gameSettings.songValidatorModes = value;
         }
     }
 
@@ -29,7 +29,7 @@ public class ValidationMenu : DisplayMenu
         base.OnEnable();
         errorText.text = errorMessage;
 
-        currentOptions = GameSettings.songValidatorModes;
+        currentOptions = Globals.gameSettings.songValidatorModes;
         validateGH3.isOn = (currentOptions & SongValidate.ValidationOptions.GuitarHero3) != 0;
         validateCH.isOn = (currentOptions & SongValidate.ValidationOptions.CloneHero) != 0;
 

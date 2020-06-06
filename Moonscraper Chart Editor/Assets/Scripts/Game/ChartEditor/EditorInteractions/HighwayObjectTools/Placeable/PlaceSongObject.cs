@@ -36,7 +36,7 @@ public abstract class PlaceSongObject : ToolObject {
     protected virtual void OnEnable()
     {
         Update();
-        OnKeysModeToggled(GameSettings.keysModeEnabled);
+        OnKeysModeToggled(Globals.gameSettings.keysModeEnabled);
     }
 
     // Update is called once per frame
@@ -77,12 +77,12 @@ public abstract class PlaceSongObject : ToolObject {
     {
         foreach (Renderer ren in renderers)
         {
-            ren.enabled = !GameSettings.keysModeEnabled;
+            ren.enabled = !Globals.gameSettings.keysModeEnabled;
         }
 
         foreach (Transform child in transform)
         {
-            child.gameObject.SetActive(!GameSettings.keysModeEnabled);
+            child.gameObject.SetActive(!Globals.gameSettings.keysModeEnabled);
         }
     }
 }

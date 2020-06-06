@@ -134,7 +134,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         bool drumsMode = Globals.drumMode;
         forcedToggle.gameObject.SetActive(!drumsMode);
         tapToggle.gameObject.SetActive(!drumsMode);
-        cymbalToggle.gameObject.SetActive(drumsMode && GameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums);
+        cymbalToggle.gameObject.SetActive(drumsMode && Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums);
 
         if (!drumsMode)
         {
@@ -145,7 +145,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             }
             else if (!IsInNoteTool())
             {
-                forcedToggle.interactable = !(currentNote.cannotBeForced && !GameSettings.keysModeEnabled);
+                forcedToggle.interactable = !(currentNote.cannotBeForced && !Globals.gameSettings.keysModeEnabled);
                 tapToggle.interactable = !currentNote.IsOpenNote();
             }
             else

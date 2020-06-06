@@ -89,7 +89,7 @@ public class Indicators : MonoBehaviour {
     public void SetStrikerPlacement(in int laneCount)
     {
         int range = indicatorParents.Length;
-        bool lefyFlip = GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip;
+        bool lefyFlip = Globals.gameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip;
         float chartCenterPos = NoteController.CHART_CENTER_POS;
 
         for (int i = 0; i < range; ++i)

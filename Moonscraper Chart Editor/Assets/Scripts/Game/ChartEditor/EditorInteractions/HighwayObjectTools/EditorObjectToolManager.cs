@@ -201,7 +201,7 @@ public class EditorObjectToolManager : System.Object
 
             bool mouseInToolArea = services.InToolArea;
             bool blockedByUI = MouseMonitor.IsUIUnderPointer();
-            bool keysModeActive = GameSettings.keysModeEnabled;
+            bool keysModeActive = Globals.gameSettings.keysModeEnabled;
             bool ctrlDraggingBpm = currentToolId == ToolID.BPM && MSE.Input.KeyboardDevice.ctrlKeyBeingPressed && Input.GetMouseButton(0);
             bool currentlyInDeleteMode = Input.GetMouseButton(1);
 

@@ -68,13 +68,13 @@ public class MenuBar : UpdateableService {
         if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleExtendedSustains))
         {
             ToggleExtendedSustains();
-            editor.globals.services.notificationBar.PushNotification("EXTENDED SUSTAINS TOGGLED " + Services.BoolToStrOnOff(GameSettings.extendedSustainsEnabled), 2, true);
+            editor.globals.services.notificationBar.PushNotification("EXTENDED SUSTAINS TOGGLED " + Services.BoolToStrOnOff(Globals.gameSettings.extendedSustainsEnabled), 2, true);
         }
 
         else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleMouseMode))
         {
             ToggleMouseLockMode();
-            editor.globals.services.notificationBar.PushNotification("KEYS MODE TOGGLED " + Services.BoolToStrOnOff(GameSettings.keysModeEnabled), 2, true);
+            editor.globals.services.notificationBar.PushNotification("KEYS MODE TOGGLED " + Services.BoolToStrOnOff(Globals.gameSettings.keysModeEnabled), 2, true);
         }
     }
 
@@ -86,20 +86,20 @@ public class MenuBar : UpdateableService {
 
     public void ToggleMouseLockMode()
     {
-        editor.services.SetKeysMode(!GameSettings.keysModeEnabled);
-        Debug.Log("Keys mode toggled " + GameSettings.keysModeEnabled);
+        editor.services.SetKeysMode(!Globals.gameSettings.keysModeEnabled);
+        Debug.Log("Keys mode toggled " + Globals.gameSettings.keysModeEnabled);
     }
 
     public void ToggleExtendedSustains()
     {
-        GameSettings.extendedSustainsEnabled = !GameSettings.extendedSustainsEnabled;
-        Debug.Log("Extended sustains toggled " + GameSettings.extendedSustainsEnabled);
+        Globals.gameSettings.extendedSustainsEnabled = !Globals.gameSettings.extendedSustainsEnabled;
+        Debug.Log("Extended sustains toggled " + Globals.gameSettings.extendedSustainsEnabled);
     }
 
     public void ToggleMetronome()
     {
-        GameSettings.metronomeActive = !GameSettings.metronomeActive;
-        Debug.Log("Metronome toggled " + GameSettings.metronomeActive);
+        Globals.gameSettings.metronomeActive = !Globals.gameSettings.metronomeActive;
+        Debug.Log("Metronome toggled " + Globals.gameSettings.metronomeActive);
     }
 
     public void SetInstrument(string value)

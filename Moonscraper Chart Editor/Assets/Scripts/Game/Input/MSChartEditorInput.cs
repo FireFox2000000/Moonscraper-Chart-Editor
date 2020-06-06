@@ -209,7 +209,7 @@ public static class MSChartEditorInput
         }
     }
 
-    static MSChartEditorActionContainer primaryInputs { get { return GameSettings.controls; } } 
+    static MSChartEditorActionContainer primaryInputs { get { return Globals.gameSettings.controls; } } 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

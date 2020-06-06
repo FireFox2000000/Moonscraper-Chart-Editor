@@ -17,10 +17,10 @@ public class EditorState : SystemManagerState
         Globals.ViewMode viewMode = Globals.viewMode;
 
         if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.StepIncrease))
-            GameSettings.snappingStep.Increment();
+            Globals.gameSettings.snappingStep.Increment();
 
         else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.StepDecrease))
-            GameSettings.snappingStep.Decrement();
+            Globals.gameSettings.snappingStep.Decrement();
 
         if (editor.groupMove.movementInProgress)
             return;

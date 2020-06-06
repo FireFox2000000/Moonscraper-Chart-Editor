@@ -212,7 +212,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 #endif
 
         // Note, need to do this after loading game settings for this to actually take effect
-        if (GameSettings.automaticallyCheckForUpdates)
+        if (Globals.gameSettings.automaticallyCheckForUpdates)
         {
             services.updateManager.CheckForUpdates((Octokit.Release latestRelease) => {
                 if (latestRelease != null)
@@ -623,10 +623,10 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
             isDirty = false;
 
-            if (GameSettings.autoValidateSongOnSave)
+            if (Globals.gameSettings.autoValidateSongOnSave)
             {
                 bool hasErrors;
-                SongValidate.GenerateReport(GameSettings.songValidatorModes, currentSong, currentSongLength, out hasErrors);
+                SongValidate.GenerateReport(Globals.gameSettings.songValidatorModes, currentSong, currentSongLength, out hasErrors);
 
                 if (hasErrors)
                 {
@@ -872,17 +872,17 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public void PlayAudio(float playPoint)
     {
         SongAudioManager songAudioManager = currentSongAudio;
-        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Song), GameSettings.gameSpeed, GameSettings.vol_song);
-        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Guitar), GameSettings.gameSpeed, GameSettings.vol_guitar);
-        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Bass), GameSettings.gameSpeed, GameSettings.vol_bass);
-        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Rhythm), GameSettings.gameSpeed, GameSettings.vol_rhythm);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Keys), GameSettings.gameSpeed, GameSettings.vol_keys);
-        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drum), GameSettings.gameSpeed, GameSettings.vol_drums);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_2), GameSettings.gameSpeed, GameSettings.vol_drums);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_3), GameSettings.gameSpeed, GameSettings.vol_drums);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_4), GameSettings.gameSpeed, GameSettings.vol_drums);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Vocals), GameSettings.gameSpeed, GameSettings.vol_vocals);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Crowd), GameSettings.gameSpeed, GameSettings.vol_crowd);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Song), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_song);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Guitar), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_guitar);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Bass), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_bass);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Rhythm), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_rhythm);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Keys), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_keys);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drum), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_2), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_3), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_4), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Vocals), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_vocals);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Crowd), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_crowd);
 
         AudioStream primaryStream = null;
         foreach (var bassStream in songAudioManager.bassAudioStreams)
@@ -947,8 +947,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             stream.tempoPitch = 0;
             stream.tempo = 0;
 
-            stream.volume = vol * GameSettings.vol_master;
-            stream.pan = GameSettings.audio_pan;
+            stream.volume = vol * Globals.gameSettings.vol_master;
+            stream.pan = Globals.gameSettings.audio_pan;
 
             if (speed < 1)
             {
@@ -1030,11 +1030,11 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         songObjectPoolManager.noteVisibilityRangeYPosOverride = strikelineYPos;
 
-        if (GameSettings.resetAfterGameplay)
+        if (Globals.gameSettings.resetAfterGameplay)
             stopResetTime = currentVisibleTime;
 
         // Set position x seconds beforehand
-        float startTime = TickFunctions.WorldYPositionToTime(strikelineYPos) - GameSettings.gameplayStartDelayTime - (0.01f * GameSettings.hyperspeed); // Offset to prevent errors where it removes a note that is on the strikeline
+        float startTime = TickFunctions.WorldYPositionToTime(strikelineYPos) - Globals.gameSettings.gameplayStartDelayTime - (0.01f * Globals.gameSettings.hyperspeed); // Offset to prevent errors where it removes a note that is on the strikeline
         movement.SetTime(startTime);
 
         // Hide everything behind the strikeline
@@ -1063,7 +1063,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     {
         float? stopResetTime = null;
 
-        if (GameSettings.resetAfterPlay)
+        if (Globals.gameSettings.resetAfterPlay)
         {
             stopResetTime = currentVisibleTime;
         }

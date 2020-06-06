@@ -131,7 +131,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
 
     void CollectNotesInViewRange(IList<Note> notes)
     {
-        bool extendedSustainsEnabled = GameSettings.extendedSustainsEnabled;
+        bool extendedSustainsEnabled = Globals.gameSettings.extendedSustainsEnabled;
 
         uint min_pos = editor.minPos;
         if (noteVisibilityRangeYPosOverride.HasValue)

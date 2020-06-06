@@ -33,7 +33,7 @@ public abstract class Snapable : MonoBehaviour {
 
     protected void UpdateSnappedPos()
     {
-        UpdateSnappedPos(GameSettings.step);
+        UpdateSnappedPos(Globals.gameSettings.step);
     }
 
     public static uint GetSnappedPos(ChartEditor editor, int step)
@@ -52,7 +52,7 @@ public abstract class Snapable : MonoBehaviour {
 
     protected void UpdateSnappedPos(int step)
     {
-        if (GameSettings.keysModeEnabled && editor.toolManager.currentToolId != EditorObjectToolManager.ToolID.Cursor)
+        if (Globals.gameSettings.keysModeEnabled && editor.toolManager.currentToolId != EditorObjectToolManager.ToolID.Cursor)
         {
             objectSnappedChartPos = editor.currentSong.WorldPositionToSnappedTick(editor.visibleStrikeline.position.y, step);
         }

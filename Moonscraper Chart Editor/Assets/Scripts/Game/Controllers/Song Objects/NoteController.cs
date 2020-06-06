@@ -281,7 +281,7 @@ public class NoteController : SongObjectController {
         Vector3 notePosition = transform.position;
         Vector3 strikelinePosition = editor.visibleStrikeline.position;
 
-        bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime * GameSettings.hyperspeed / GameSettings.gameSpeed);
+        bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime * Globals.gameSettings.hyperspeed / Globals.gameSettings.gameSpeed);
 
         if (hit && belowStrikeLine)
         {
@@ -331,7 +331,7 @@ public class NoteController : SongObjectController {
     {
         if (!note.IsOpenNote())
         {
-            bool leftyFlip = GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip;
+            bool leftyFlip = Globals.gameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip;
 
             return chartPos + ChartEditor.Instance.laneInfo.GetLanePosition(note.rawNote, leftyFlip);
         }

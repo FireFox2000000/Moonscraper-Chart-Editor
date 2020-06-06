@@ -19,7 +19,7 @@ public class PlaceSection : PlaceSongObject {
 
     protected override void Controls()
     {
-        if (!GameSettings.keysModeEnabled)
+        if (!Globals.gameSettings.keysModeEnabled)
         {
             if (Input.GetMouseButtonDown(0))
             {

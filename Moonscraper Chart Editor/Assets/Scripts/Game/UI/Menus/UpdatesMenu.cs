@@ -39,11 +39,11 @@ public class UpdatesMenu : MonoBehaviour
 
     private void OnEnable()
     {
-        checkUpdateToggle.isOn = GameSettings.automaticallyCheckForUpdates;
+        checkUpdateToggle.isOn = Globals.gameSettings.automaticallyCheckForUpdates;
     }
 
     public void OnAutoCheckUpdatesToggles(bool updatesEnabled)
     {
-        GameSettings.automaticallyCheckForUpdates = updatesEnabled;
+        Globals.gameSettings.automaticallyCheckForUpdates = updatesEnabled;
     }
 }

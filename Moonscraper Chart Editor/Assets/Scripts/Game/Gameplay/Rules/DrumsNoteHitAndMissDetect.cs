@@ -31,7 +31,7 @@ public class DrumsNoteHitAndMissDetect {
 
     public void Update(float time, HitWindow<DrumsNoteHitKnowledge> hitWindow, uint noteStreak, LaneInfo laneInfo)
     {
-        switch (GameSettings.drumsModeOptions)
+        switch (Globals.gameSettings.drumsModeOptions)
         {
             case GameSettings.DrumModeOptions.ProDrums:
                 {

@@ -7,7 +7,7 @@ using System.IO;
 using UnityEngine;
 using MSE.Input;
 
-public static class GameSettings
+public class GameSettings
 {
     const string SECTION_NAME_SETTINGS = "Settings";
     const string SECTION_NAME_AUDIO = "Audio Volume";
@@ -42,26 +42,26 @@ public static class GameSettings
         ProDrums,
     }
 
-    public static bool keysModeEnabled = false;
-    public static bool metronomeActive = false;
-    public static bool extendedSustainsEnabled = false;
-    public static bool sustainGapEnabled { get; set; }
-    public static bool resetAfterPlay = false;
-    public static bool resetAfterGameplay = false;
+    public bool keysModeEnabled = false;
+    public bool metronomeActive = false;
+    public bool extendedSustainsEnabled = false;
+    public bool sustainGapEnabled { get; set; }
+    public bool resetAfterPlay = false;
+    public bool resetAfterGameplay = false;
 
-    public static int audioCalibrationMS = 0;                     // Increase to start the audio sooner
-    public static int clapCalibrationMS = 0;
-    public static int customBgSwapTime;
-    public static int targetFramerate = -1;
-    public static int drumsLaneCount = 5;
-    public static DrumModeOptions drumsModeOptions = DrumModeOptions.Standard;
+    public int audioCalibrationMS = 0;                     // Increase to start the audio sooner
+    public int clapCalibrationMS = 0;
+    public int customBgSwapTime;
+    public int targetFramerate = -1;
+    public int drumsLaneCount = 5;
+    public DrumModeOptions drumsModeOptions = DrumModeOptions.Standard;
 
-    public static float hyperspeed = 5.0f;
-    public static float highwayLength = 0;
-    static float _sfxVolume = 1;
-    public static float gameSpeed = 1;
-    public static float gameplayStartDelayTime = 3.0f;
-    public static float sfxVolume
+    public float hyperspeed = 5.0f;
+    public float highwayLength = 0;
+    float _sfxVolume = 1;
+    public float gameSpeed = 1;
+    public float gameplayStartDelayTime = 3.0f;
+    public float sfxVolume
     {
         get { return _sfxVolume; }
         set
@@ -74,26 +74,26 @@ public static class GameSettings
                 _sfxVolume = value;
         }
     }
-    public static float vol_master, vol_song, vol_guitar, vol_bass, vol_rhythm, vol_keys, vol_drums, vol_vocals, audio_pan, vol_crowd;
+    public float vol_master, vol_song, vol_guitar, vol_bass, vol_rhythm, vol_keys, vol_drums, vol_vocals, audio_pan, vol_crowd;
 
-    public static Step snappingStep = new Step(16);
-    public static int step { get { return snappingStep.value; } set { snappingStep.value = value; } }
-    public static Step sustainGapStep;
-    public static int sustainGap { get { return sustainGapStep.value; } set { sustainGapStep.value = value; } }
+    public Step snappingStep = new Step(16);
+    public int step { get { return snappingStep.value; } set { snappingStep.value = value; } }
+    public Step sustainGapStep;
+    public int sustainGap { get { return sustainGapStep.value; } set { sustainGapStep.value = value; } }
 
-    public static bool clapEnabled = false;
+    public bool clapEnabled = false;
 
     const int c_defaultClapVal = (int)(ClapToggle.STRUM | ClapToggle.HOPO | ClapToggle.TAP);
-    public static ClapToggle clapProperties = (ClapToggle)c_defaultClapVal;
-    public static NotePlacementMode notePlacementMode = NotePlacementMode.Default;
+    public ClapToggle clapProperties = (ClapToggle)c_defaultClapVal;
+    public NotePlacementMode notePlacementMode = NotePlacementMode.Default;
 
-    public static SongValidate.ValidationOptions songValidatorModes = ~SongValidate.ValidationOptions.None;
-    public static bool autoValidateSongOnSave = true;
-    public static bool automaticallyCheckForUpdates = true;
+    public SongValidate.ValidationOptions songValidatorModes = ~SongValidate.ValidationOptions.None;
+    public bool autoValidateSongOnSave = true;
+    public bool automaticallyCheckForUpdates = true;
 
-    public static MSChartEditorInput.MSChartEditorActionContainer controls = new MSChartEditorInput.MSChartEditorActionContainer();
+    public MSChartEditorInput.MSChartEditorActionContainer controls = new MSChartEditorInput.MSChartEditorActionContainer();
 
-    public static bool GetBoolSetting(string identifier)
+    public bool GetBoolSetting(string identifier)
     {
         switch (identifier)
         {
@@ -107,11 +107,11 @@ public static class GameSettings
         }
     }
 
-    static GameSettings()
+    public GameSettings()
     {
     }
 
-    public static void Load(string configFilepath, string controllerBindingsFilepath)
+    public void Load(string configFilepath, string controllerBindingsFilepath)
     {
         INIParser iniparse = new INIParser();
 
@@ -200,7 +200,7 @@ public static class GameSettings
         }
     }
 
-    public static void Save(string configFilepath, string controllerBindingsFilepath)
+    public void Save(string configFilepath, string controllerBindingsFilepath)
     {
         INIParser iniparse = new INIParser();
 

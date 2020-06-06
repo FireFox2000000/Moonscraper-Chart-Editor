@@ -80,7 +80,7 @@ public class IndicatorPressedInputSystem : SystemManagerState.System
                 continue;
 
             bool lanePressed = false;
-            switch (GameSettings.drumsModeOptions)
+            switch (Globals.gameSettings.drumsModeOptions)
             {
                 case GameSettings.DrumModeOptions.ProDrums:
                     {

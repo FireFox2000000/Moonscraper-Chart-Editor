@@ -34,7 +34,7 @@ public class ClipboardObjectController : Snapable {
         }
         else
         {
-            pastePos = editor.currentSong.WorldPositionToSnappedTick(strikeline.position.y, GameSettings.step);
+            pastePos = editor.currentSong.WorldPositionToSnappedTick(strikeline.position.y, Globals.gameSettings.step);
         }
 
         transform.position = new Vector3(transform.position.x, editor.currentSong.TickToWorldYPosition(pastePos), transform.position.z);

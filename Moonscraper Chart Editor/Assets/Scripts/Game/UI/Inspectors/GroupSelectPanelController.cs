@@ -49,7 +49,7 @@ public class GroupSelectPanelController : MonoBehaviour
         setNoteStrum.gameObject.SetActive(!drumsMode);
         setNoteHopo.gameObject.SetActive(!drumsMode);
         setNoteTap.gameObject.SetActive(!drumsMode);
-        setNoteCymbal.gameObject.SetActive(drumsMode && GameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums);
+        setNoteCymbal.gameObject.SetActive(drumsMode && Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums);
     }
 
     void Shortcuts()

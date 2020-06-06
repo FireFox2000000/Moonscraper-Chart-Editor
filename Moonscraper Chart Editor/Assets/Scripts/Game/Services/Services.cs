@@ -115,26 +115,26 @@ public class Services : MonoBehaviour
 
     public void ToggleMouseLockMode()
     {
-        SetKeysMode(!GameSettings.keysModeEnabled);
-        Debug.Log("Keys mode toggled " + GameSettings.keysModeEnabled);
+        SetKeysMode(!Globals.gameSettings.keysModeEnabled);
+        Debug.Log("Keys mode toggled " + Globals.gameSettings.keysModeEnabled);
     }
 
     public void ToggleExtendedSustains()
     {
-        GameSettings.extendedSustainsEnabled = !GameSettings.extendedSustainsEnabled;
-        Debug.Log("Extended sustains toggled " + GameSettings.extendedSustainsEnabled);
+        Globals.gameSettings.extendedSustainsEnabled = !Globals.gameSettings.extendedSustainsEnabled;
+        Debug.Log("Extended sustains toggled " + Globals.gameSettings.extendedSustainsEnabled);
     }
 
     public void ToggleMetronome()
     {
-        GameSettings.metronomeActive = !GameSettings.metronomeActive;
-        Debug.Log("Metronome toggled " + GameSettings.metronomeActive);
+        Globals.gameSettings.metronomeActive = !Globals.gameSettings.metronomeActive;
+        Debug.Log("Metronome toggled " + Globals.gameSettings.metronomeActive);
     }
 
     public void SetKeysMode(bool enabled)
     {
-        GameSettings.keysModeEnabled = enabled;
-        ChartEditor.Instance.events.keyboardModeToggledEvent.Fire(GameSettings.keysModeEnabled);
+        Globals.gameSettings.keysModeEnabled = enabled;
+        ChartEditor.Instance.events.keyboardModeToggledEvent.Fire(Globals.gameSettings.keysModeEnabled);
     }
 
     public bool CanUndo()
@@ -158,7 +158,7 @@ public class Services : MonoBehaviour
     {
         get
         {
-            return GameSettings.audioCalibrationMS / 1000.0f * GameSettings.gameSpeed;
+            return Globals.gameSettings.audioCalibrationMS / 1000.0f * Globals.gameSettings.gameSpeed;
         }
     }
 
@@ -184,7 +184,7 @@ public class Services : MonoBehaviour
         {
             ChartEditor editor = ChartEditor.Instance;
             Vector3 strikelinePos = editor.visibleStrikeline.position;
-            float posCalibrationOffset = TickFunctions.TimeToWorldYPosition(GameSettings.audioCalibrationMS / 1000.0f) * GameSettings.gameSpeed;
+            float posCalibrationOffset = TickFunctions.TimeToWorldYPosition(Globals.gameSettings.audioCalibrationMS / 1000.0f) * Globals.gameSettings.gameSpeed;
             return strikelinePos.y + posCalibrationOffset;
         }
     }
@@ -208,7 +208,7 @@ public class Services : MonoBehaviour
                 currentAudioTime = TickFunctions.WorldYPositionToTime(audioStrikelinePos);
             }
 
-            return currentAudioTime + GameSettings.clapCalibrationMS / 1000.0f - editor.currentSong.offset;
+            return currentAudioTime + Globals.gameSettings.clapCalibrationMS / 1000.0f - editor.currentSong.offset;
         }
     }
 

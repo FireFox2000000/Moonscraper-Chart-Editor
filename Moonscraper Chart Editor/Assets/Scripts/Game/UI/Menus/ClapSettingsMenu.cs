@@ -34,15 +34,15 @@ public class ClapSettingsMenu : DisplayMenu
 
     void InitClapToggle(Toggle toggle, GameSettings.ClapToggle setting)
     {
-        toggle.isOn = (GameSettings.clapProperties & setting) != 0;
+        toggle.isOn = (Globals.gameSettings.clapProperties & setting) != 0;
     }
 
     void SetClapSetting(GameSettings.ClapToggle setting, bool value)
     {
         if (value)
-            GameSettings.clapProperties |= setting;
+            Globals.gameSettings.clapProperties |= setting;
         else
-            GameSettings.clapProperties &= ~setting;
+            Globals.gameSettings.clapProperties &= ~setting;
     }
 
     public void ApplyCurrentToggleProperties()

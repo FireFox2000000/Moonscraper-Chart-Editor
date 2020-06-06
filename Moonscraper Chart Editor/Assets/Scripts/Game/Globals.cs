@@ -22,6 +22,8 @@ public class Globals : MonoBehaviour {
     public static string[] localEvents = { };
     public static string[] globalEvents = { };
 
+    public static GameSettings gameSettings { get; private set; }
+
     [Header("Misc.")]
     [SerializeField]
     Text snapLockWarning;
@@ -61,6 +63,8 @@ public class Globals : MonoBehaviour {
 
     void Awake()
     {
+        gameSettings = new GameSettings();
+
         Application.runInBackground = true;
 
         largestRes = Screen.resolutions[0];
@@ -102,16 +106,16 @@ public class Globals : MonoBehaviour {
 
     void LoadGameSettings()
     {
-        GameSettings.Load(GetConfigPath(), GetInputBindingsPath());
+        gameSettings.Load(GetConfigPath(), GetInputBindingsPath());
 
         // Check for valid fps values
-        int fps = GameSettings.targetFramerate;
+        int fps = gameSettings.targetFramerate;
         if (fps != 60 && fps != 120 && fps != 240)
             Application.targetFrameRate = -1;
         else
             Application.targetFrameRate = fps;
 
-        AudioListener.volume = GameSettings.vol_master;
+        AudioListener.volume = gameSettings.vol_master;
     }
 
     static string[] LoadCommonEvents(string filename)
@@ -190,7 +194,7 @@ public class Globals : MonoBehaviour {
         Shortcuts();
 
         var currentTool = editor.toolManager.currentToolId;
-        snapLockWarning.gameObject.SetActive(GameSettings.keysModeEnabled && currentTool != EditorObjectToolManager.ToolID.Cursor && currentTool != EditorObjectToolManager.ToolID.Eraser);
+        snapLockWarning.gameObject.SetActive(Globals.gameSettings.keysModeEnabled && currentTool != EditorObjectToolManager.ToolID.Cursor && currentTool != EditorObjectToolManager.ToolID.Eraser);
 
         // IsTyping can still be active if this isn't manually detected
         if ((Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) && Services.IsTyping && editor.currentState == ChartEditor.State.Editor)
@@ -207,7 +211,7 @@ public class Globals : MonoBehaviour {
         if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleMetronome))
         {
             services.ToggleMetronome();
-            services.notificationBar.PushNotification("METRONOME TOGGLED " + Services.BoolToStrOnOff(GameSettings.metronomeActive), 2, true);
+            services.notificationBar.PushNotification("METRONOME TOGGLED " + Services.BoolToStrOnOff(Globals.gameSettings.metronomeActive), 2, true);
         }
 
         if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.FileSave))
@@ -225,8 +229,8 @@ public class Globals : MonoBehaviour {
 
     public void Quit()
     {
-        GameSettings.targetFramerate = Application.targetFrameRate;
-        GameSettings.Save(GetConfigPath(), GetInputBindingsPath());
+        Globals.gameSettings.targetFramerate = Application.targetFrameRate;
+        Globals.gameSettings.Save(GetConfigPath(), GetInputBindingsPath());
 
         // Delete autosaved chart. If chart is not deleted then that means there may have been a problem like a crash and the autosave should be reloaded the next time the program is opened. 
         if (File.Exists(autosaveLocation))

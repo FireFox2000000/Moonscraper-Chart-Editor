@@ -157,7 +157,7 @@ public class PlaceNote : PlaceSongObject {
 
     public static int XPosToNoteNumber(float xPos, LaneInfo laneInfo)
     {
-        if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
+        if (Globals.gameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
             xPos *= -1;
 
         float startPos = LaneInfo.positionRangeMin;

@@ -28,8 +28,8 @@ public class DisplayProperties : UpdateableService
     protected override void Start()
     {
         editor = ChartEditor.Instance;
-        hyperspeedSlider.value = GameSettings.hyperspeed;
-        highwayLengthSlider.value = GameSettings.highwayLength;
+        hyperspeedSlider.value = Globals.gameSettings.hyperspeed;
+        highwayLengthSlider.value = Globals.gameSettings.highwayLength;
 
         UpdateGameSpeedText();
 
@@ -48,8 +48,8 @@ public class DisplayProperties : UpdateableService
 
     void OnEnable()
     {
-        clapToggle.isOn = GameSettings.clapEnabled;
-        metronomeToggle.isOn = GameSettings.metronomeActive;
+        clapToggle.isOn = Globals.gameSettings.clapEnabled;
+        metronomeToggle.isOn = Globals.gameSettings.metronomeActive;
     }
 
     public override void OnServiceUpdate()
@@ -57,7 +57,7 @@ public class DisplayProperties : UpdateableService
         if (editor.currentChart.note_count != prevNoteCount)
             noteCount.text = "Notes: " + editor.currentChart.note_count.ToString();
 
-        if (GameSettings.step != prevSnappingStep)
+        if (Globals.gameSettings.step != prevSnappingStep)
             UpdateSnappingStepText();
 
         // Shortcuts
@@ -87,14 +87,14 @@ public class DisplayProperties : UpdateableService
 
     public void SetHyperspeed(float value)
     {
-        GameSettings.hyperspeed = value;
+        Globals.gameSettings.hyperspeed = value;
         editor.events.hyperspeedChangeEvent.Fire();
     }
 
     public void SetGameSpeed(float value)
     {
         value = Mathf.Round(value / 5.0f) * 5;
-        GameSettings.gameSpeed = value / 100.0f;
+        Globals.gameSettings.gameSpeed = value / 100.0f;
         UpdateGameSpeedText();
 
         editor.events.hyperspeedChangeEvent.Fire();
@@ -102,12 +102,12 @@ public class DisplayProperties : UpdateableService
 
     void UpdateGameSpeedText()
     {
-        gameSpeed.text = string.Format("Speed- x{0:0.00}", GameSettings.gameSpeed);
+        gameSpeed.text = string.Format("Speed- x{0:0.00}", Globals.gameSettings.gameSpeed);
     }
 
     public void SetHighwayLength(float value)
     {
-        GameSettings.highwayLength = value;
+        Globals.gameSettings.highwayLength = value;
 
         Vector3 pos = Vector3.zero;
         pos.y = value * 5 + minHighwayLength;
@@ -120,34 +120,34 @@ public class DisplayProperties : UpdateableService
 
     public void ToggleClap(bool value)
     {
-        GameSettings.clapEnabled = value;
+        Globals.gameSettings.clapEnabled = value;
 
         Debug.Log("Clap toggled: " + value);
     }
 
     public void ToggleMetronome(bool value)
     {
-        GameSettings.metronomeActive = value;
+        Globals.gameSettings.metronomeActive = value;
 
         Debug.Log("Metronome toggled: " + value);
     }
 
     public void IncrementSnappingStep()
     {
-        GameSettings.snappingStep.Increment();
+        Globals.gameSettings.snappingStep.Increment();
         UpdateSnappingStepText();
     }
 
     public void DecrementSnappingStep()
     {
-        GameSettings.snappingStep.Decrement();
+        Globals.gameSettings.snappingStep.Decrement();
         UpdateSnappingStepText();
     }
 
     void UpdateSnappingStepText()
     {
-        snappingStep.text = GameSettings.step.ToString();
-        prevSnappingStep = GameSettings.step;
+        snappingStep.text = Globals.gameSettings.step.ToString();
+        prevSnappingStep = Globals.gameSettings.step;
     }
 
     public void SetStep(string value)
@@ -182,7 +182,7 @@ public class DisplayProperties : UpdateableService
             }
         }
 
-        GameSettings.step = stepVal;
+        Globals.gameSettings.step = stepVal;
         UpdateSnappingStepText();
     }
 }

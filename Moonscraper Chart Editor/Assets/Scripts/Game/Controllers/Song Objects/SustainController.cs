@@ -47,7 +47,7 @@ public class SustainController : SelectableClick {
                     }
                 }
 
-                if (!GameSettings.extendedSustainsEnabled || MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect))
+                if (!Globals.gameSettings.extendedSustainsEnabled || MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect))
                 {
                     foreach (Note chordNote in nCon.note.chord)
                     {
@@ -198,7 +198,7 @@ public class SustainController : SelectableClick {
         sustainDragCommands.Clear();
 
         Song song = editor.currentSong;
-        bool extendedSustainsEnabled = GameSettings.extendedSustainsEnabled;
+        bool extendedSustainsEnabled = Globals.gameSettings.extendedSustainsEnabled;
         bool commandsActuallyChangeData = false;
 
         foreach (Note note in originalDraggedNotes)
@@ -233,11 +233,11 @@ public class SustainController : SelectableClick {
 
         if (editor.services.mouseMonitorSystem.world2DPosition != null && ((Vector2)editor.services.mouseMonitorSystem.world2DPosition).y < editor.mouseYMaxLimit.position.y)
         {
-            snappedChartPos = Snapable.TickToSnappedTick(nCon.note.song.WorldYPositionToTick(((Vector2)editor.services.mouseMonitorSystem.world2DPosition).y), GameSettings.step, note.song);
+            snappedChartPos = Snapable.TickToSnappedTick(nCon.note.song.WorldYPositionToTick(((Vector2)editor.services.mouseMonitorSystem.world2DPosition).y), Globals.gameSettings.step, note.song);
         }
         else
         {
-            snappedChartPos = Snapable.TickToSnappedTick(note.song.WorldYPositionToTick(editor.mouseYMaxLimit.position.y), GameSettings.step, note.song);
+            snappedChartPos = Snapable.TickToSnappedTick(note.song.WorldYPositionToTick(editor.mouseYMaxLimit.position.y), Globals.gameSettings.step, note.song);
         }
 
         // Cap to within the range of the song

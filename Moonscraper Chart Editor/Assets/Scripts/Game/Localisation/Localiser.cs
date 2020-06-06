@@ -13,7 +13,7 @@ public class Localiser : UnitySingleton<Localiser>
 
     public string Localise(string input)
     {
-        var currentControls = GameSettings.controls;
+        var currentControls = Globals.gameSettings.controls;
         StringBuilder sb = new StringBuilder();
 
         for (int index = 0; index < input.Length; index += c_inputStartFlag.Length)

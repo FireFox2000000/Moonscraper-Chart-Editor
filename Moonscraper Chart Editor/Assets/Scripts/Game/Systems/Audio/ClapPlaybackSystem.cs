@@ -56,7 +56,7 @@ public class ClapPlaybackSystem : SystemManagerState.System
 
         uint currentTick = currentSong.TimeToTick(currentAudioTime, currentSong.resolution);
         bool hasClapped = false;
-        bool clapEnabled = GameSettings.clapEnabled;
+        bool clapEnabled = Globals.gameSettings.clapEnabled;
         hasClapped |= UpdateClapForTracker(currentTick, noteTracker, !hasClapped && clapEnabled);
         hasClapped |= UpdateClapForTracker(currentTick, spTracker, !hasClapped && clapEnabled);
         hasClapped |= UpdateClapForTracker(currentTick, chartEventTracker, !hasClapped && clapEnabled);
@@ -82,8 +82,8 @@ public class ClapPlaybackSystem : SystemManagerState.System
 
             if (clapSettingEnabled && ObjectCanClap(so) && shouldClap)
             {
-                sampleStream.volume = GameSettings.sfxVolume * GameSettings.vol_master;
-                sampleStream.pan = GameSettings.audio_pan;
+                sampleStream.volume = Globals.gameSettings.sfxVolume * Globals.gameSettings.vol_master;
+                sampleStream.pan = Globals.gameSettings.audio_pan;
                 sampleStream.Play();
 
                 return true;
@@ -106,7 +106,7 @@ public class ClapPlaybackSystem : SystemManagerState.System
 
         if (SongObjectHelper.songObjectIdToClapOption.TryGetValue(id, out toggleValue))
         {
-            if ((GameSettings.clapProperties & toggleValue) != 0)
+            if ((Globals.gameSettings.clapProperties & toggleValue) != 0)
                 playClap = true;
         }
         else if (id == SongObject.ID.Note)
@@ -118,15 +118,15 @@ public class ClapPlaybackSystem : SystemManagerState.System
             {
                 case Note.NoteType.Strum:
                 case Note.NoteType.Cymbal:
-                    playClap = (GameSettings.clapProperties & GameSettings.ClapToggle.STRUM) != 0;
+                    playClap = (Globals.gameSettings.clapProperties & GameSettings.ClapToggle.STRUM) != 0;
                     break;
 
                 case Note.NoteType.Hopo:
-                    playClap = (GameSettings.clapProperties & GameSettings.ClapToggle.HOPO) != 0;
+                    playClap = (Globals.gameSettings.clapProperties & GameSettings.ClapToggle.HOPO) != 0;
                     break;
 
                 case Note.NoteType.Tap:
-                    playClap = (GameSettings.clapProperties & GameSettings.ClapToggle.TAP) != 0;
+                    playClap = (Globals.gameSettings.clapProperties & GameSettings.ClapToggle.TAP) != 0;
                     break;
 
                 default:

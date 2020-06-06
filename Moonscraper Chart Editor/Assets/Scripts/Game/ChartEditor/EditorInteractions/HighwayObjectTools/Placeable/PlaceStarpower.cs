@@ -24,7 +24,7 @@ public class PlaceStarpower : PlaceSongObject {
 
     protected override void Controls()
     {
-        if (!GameSettings.keysModeEnabled)
+        if (!Globals.gameSettings.keysModeEnabled)
         {
             if (Input.GetMouseButton(0))
             {
@@ -77,12 +77,12 @@ public class PlaceStarpower : PlaceSongObject {
     protected override void Update()
     {
         starpower.chart = editor.currentChart;
-        if (!GameSettings.keysModeEnabled)
+        if (!Globals.gameSettings.keysModeEnabled)
             spRen.enabled = lastPlacedSP == null;
 
         base.Update();
 
-        if ((Input.GetMouseButtonUp(0) && !GameSettings.keysModeEnabled) || (GameSettings.keysModeEnabled && Input.GetButtonUp("Add Object")))
+        if ((Input.GetMouseButtonUp(0) && !Globals.gameSettings.keysModeEnabled) || (Globals.gameSettings.keysModeEnabled && Input.GetButtonUp("Add Object")))
         {
             // Reset
             lastPlacedSP = null;

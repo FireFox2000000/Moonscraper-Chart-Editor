@@ -227,6 +227,6 @@ public abstract class SongEditCommand : ICommand {
 
     protected void SnapshotGameSettings()
     {
-        extendedSustainsEnabled = GameSettings.extendedSustainsEnabled;
+        extendedSustainsEnabled = Globals.gameSettings.extendedSustainsEnabled;
     }
 }

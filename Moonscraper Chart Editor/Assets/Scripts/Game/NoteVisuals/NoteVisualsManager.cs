@@ -32,7 +32,7 @@ public class NoteVisualsManager : MonoBehaviour {
     {
         Note.NoteType noteType = note.type;
 
-        if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums && GameSettings.drumsModeOptions == GameSettings.DrumModeOptions.Standard)
+        if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums && Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.Standard)
         {
             noteType = Note.NoteType.Strum;
         }

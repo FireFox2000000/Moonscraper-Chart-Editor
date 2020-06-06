@@ -26,7 +26,7 @@ public class PlaceTimesignature : PlaceSongObject {
 
     protected override void Controls()
     {
-        if (!GameSettings.keysModeEnabled)
+        if (!Globals.gameSettings.keysModeEnabled)
         {
             if (Input.GetMouseButtonDown(0))
             {

@@ -49,7 +49,7 @@ public class ToolPanelController : MonoBehaviour {
             viewModeToggle.isOn = !viewModeToggle.isOn;
         }
 
-        keysModePanel.gameObject.SetActive(editor.toolManager.currentToolId == EditorObjectToolManager.ToolID.Note && GameSettings.keysModeEnabled);
+        keysModePanel.gameObject.SetActive(editor.toolManager.currentToolId == EditorObjectToolManager.ToolID.Note && Globals.gameSettings.keysModeEnabled);
 
         Shortcuts();
     }

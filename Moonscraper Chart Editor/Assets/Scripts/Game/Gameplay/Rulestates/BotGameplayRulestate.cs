@@ -20,7 +20,7 @@ public class BotGameplayRulestate : BaseGameplayRulestate
                 Vector3 notePosition = nCon.transform.position;
                 Vector3 strikelinePosition = ChartEditor.Instance.visibleStrikeline.position;
 
-                bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime * GameSettings.hyperspeed / GameSettings.gameSpeed);
+                bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime * Globals.gameSettings.hyperspeed / Globals.gameSettings.gameSpeed);
                 if (belowStrikeLine)
                 {
                     HitNote(time, nextNoteToHit);

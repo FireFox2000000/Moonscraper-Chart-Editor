@@ -46,14 +46,14 @@ public abstract class MovementController : MonoBehaviour {
 
     public void PlayingMovement()
     {   
-        float speed = GameSettings.hyperspeed;
+        float speed = Globals.gameSettings.hyperspeed;
         Vector3 pos = transform.position;
         float deltaTime = Time.deltaTime;
         float positionOffset = initPos.y;
 
         {
             float timeBeforeMovement = TickFunctions.WorldYPositionToTime(pos.y - positionOffset);
-            float timeAfterMovement = timeBeforeMovement + deltaTime * GameSettings.gameSpeed;
+            float timeAfterMovement = timeBeforeMovement + deltaTime * Globals.gameSettings.gameSpeed;
 
             // Make sure we're staying in sync with the audio
             {

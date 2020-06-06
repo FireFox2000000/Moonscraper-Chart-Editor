@@ -380,7 +380,7 @@ namespace UnityEngine.UI
                     continue;
 
                 // Automatically set up a toggle state change listener
-                item.toggle.isOn = GameSettings.GetBoolSetting(item.settingsToggleKey);
+                item.toggle.isOn = Globals.gameSettings.GetBoolSetting(item.settingsToggleKey);
                 item.toggle.onValueChanged.AddListener(x => OnSelectItem(item));
 
                 // Select current option
@@ -464,7 +464,7 @@ namespace UnityEngine.UI
                 {
                     item.blockerActive = true;
                     {
-                        item.toggle.isOn = GameSettings.GetBoolSetting(item.settingsToggleKey);
+                        item.toggle.isOn = Globals.gameSettings.GetBoolSetting(item.settingsToggleKey);
                     }
                     item.blockerActive = false;
                 }

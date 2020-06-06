@@ -64,7 +64,7 @@ public class BackgroundBlending : MonoBehaviour
         {
             delayTimer += Time.deltaTime;
 
-            if (delayTimer > GameSettings.customBgSwapTime)
+            if (delayTimer > Globals.gameSettings.customBgSwapTime)
             {
                 // Need to check if we need to wrap around to the start of the array.
                 int nextBackground = currentBackground + 1;

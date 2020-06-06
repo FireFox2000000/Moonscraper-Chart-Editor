@@ -41,10 +41,10 @@ public class MetronomePlaybackSystem : SystemManagerState.System
 
         if (currentTickPos >= nextClapPos)
         {
-            if (GameSettings.metronomeActive)
+            if (Globals.gameSettings.metronomeActive)
             {
-                sampleStream.volume = GameSettings.sfxVolume * GameSettings.vol_master;
-                sampleStream.pan = GameSettings.audio_pan;
+                sampleStream.volume = Globals.gameSettings.sfxVolume * Globals.gameSettings.vol_master;
+                sampleStream.pan = Globals.gameSettings.audio_pan;
                 sampleStream.Play();
             }
 

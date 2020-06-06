@@ -145,7 +145,7 @@ public class PlaceNoteController : ObjectlessTool {
 
         KeysControlsInit();
 
-        if (GameSettings.keysModeEnabled)
+        if (Globals.gameSettings.keysModeEnabled)
         {
             if (KeysNotePlacementModePanelController.currentPlacementMode == KeysNotePlacementModePanelController.PlacementMode.Sustain)
                 CurrentNotePlacementUpdate = UpdateKeysSustainMode;
@@ -225,7 +225,7 @@ public class PlaceNoteController : ObjectlessTool {
         bool refreshActions = false;
 
         FillNotesKeyboardControlsSustainMode(laneInfo);
-        bool extendedSustainsEnabled = GameSettings.extendedSustainsEnabled;
+        bool extendedSustainsEnabled = Globals.gameSettings.extendedSustainsEnabled;
 
         // Update sustain lengths of notes that are already in
         for (int i = 0; i < heldNotes.Length; ++i)
@@ -449,7 +449,7 @@ public class PlaceNoteController : ObjectlessTool {
 
                 if (MSChartEditorInput.GetInput(NumToLaneActionLUT[i]))
                 {
-                    if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
+                    if (Globals.gameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
                     {
                         standardPlaceableNotes[leftyPos].gameObject.SetActive(true);
                         activeNotes.Add(standardPlaceableNotes[leftyPos]);
@@ -569,7 +569,7 @@ public class PlaceNoteController : ObjectlessTool {
 
     void LeftyFlipReflectionCheck(ref int noteNumber, int laneCount)
     {
-        if (GameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip && noteNumber >= 0 && noteNumber < laneCount)
+        if (Globals.gameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip && noteNumber >= 0 && noteNumber < laneCount)
             noteNumber = laneCount - (noteNumber + 1);
     }
 
@@ -617,7 +617,7 @@ public class PlaceNoteController : ObjectlessTool {
 
         if (!drumsMode)
         {
-            forcedInteractable = !(note.cannotBeForced && !GameSettings.keysModeEnabled);
+            forcedInteractable = !(note.cannotBeForced && !Globals.gameSettings.keysModeEnabled);
 
             // Disable tap note box for open notes
             tapInteractable = !note.IsOpenNote();

@@ -122,7 +122,7 @@ public class ActionBindingsMenu : MonoBehaviour
     void Awake()
     {
         if (!initialised)
-            Setup(InputManager.Instance.devices[0], GameSettings.controls, MSChartEditorInput.Category.kEditorCategoryMask);
+            Setup(InputManager.Instance.devices[0], Globals.gameSettings.controls, MSChartEditorInput.Category.kEditorCategoryMask);
     }
 
     void Init()

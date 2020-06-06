@@ -125,9 +125,9 @@ public static class NoteFunctions {
             noteLength = cap.tick - note.tick;
         }
 
-        uint gapDis = (uint)(song.resolution * 4.0f / GameSettings.sustainGap);
+        uint gapDis = (uint)(song.resolution * 4.0f / Globals.gameSettings.sustainGap);
 
-        if (GameSettings.sustainGapEnabled && note.length > 0 && (note.tick + note.length > cap.tick - gapDis))
+        if (Globals.gameSettings.sustainGapEnabled && note.length > 0 && (note.tick + note.length > cap.tick - gapDis))
         {
             if (cap.tick > (gapDis + note.tick))
             {
@@ -411,7 +411,7 @@ public static class NoteFunctions {
         Note next;
         next = note.nextSeperateNote;
 
-        if (!GameSettings.extendedSustainsEnabled)
+        if (!Globals.gameSettings.extendedSustainsEnabled)
         {
             // Get chord  
             next = note.nextSeperateNote;
@@ -457,7 +457,7 @@ public static class NoteFunctions {
     static void CapNoteCheck(Chart chart, Note noteToAdd, IList<BaseAction> subActions, Song song, bool extendedSustainsEnabled)
     {
         Note[] previousNotes = NoteFunctions.GetPreviousOfSustains(noteToAdd, extendedSustainsEnabled);
-        if (!GameSettings.extendedSustainsEnabled)
+        if (!Globals.gameSettings.extendedSustainsEnabled)
         {
             // Cap all the notes
             foreach (Note prevNote in previousNotes)

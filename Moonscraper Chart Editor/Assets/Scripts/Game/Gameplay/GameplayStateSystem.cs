@@ -104,7 +104,7 @@ public class GameplayStateSystem : SystemManagerState.System
             {
                 Note note = editor.currentChart.notes[index];
                 List<Note> sustainNotes = new List<Note>();
-                NoteFunctions.GetPreviousOfSustains(sustainNotes, note, GameSettings.extendedSustainsEnabled);
+                NoteFunctions.GetPreviousOfSustains(sustainNotes, note, Globals.gameSettings.extendedSustainsEnabled);
 
                 foreach (Note chordNote in note.chord)
                 {

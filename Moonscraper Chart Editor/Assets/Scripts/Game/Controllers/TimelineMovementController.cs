@@ -187,7 +187,7 @@ public class TimelineMovementController : MovementController
                     // Navigate to snapped pos ahead or behind
                     if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveStepPositive))
                     {
-                        snappedPos = Snapable.ChartIncrementStep(currentPos, GameSettings.step, editor.currentSong);
+                        snappedPos = Snapable.ChartIncrementStep(currentPos, Globals.gameSettings.step, editor.currentSong);
 
                         if (snappedPos == currentPos)       // This can happen on really weird custom step values
                         {
@@ -196,7 +196,7 @@ public class TimelineMovementController : MovementController
                     }
                     else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveStepNegative))
                     {
-                        snappedPos = Snapable.ChartDecrementStep(currentPos, GameSettings.step, editor.currentSong);
+                        snappedPos = Snapable.ChartDecrementStep(currentPos, Globals.gameSettings.step, editor.currentSong);
 
                         if (snappedPos == currentPos && snappedPos > 0)     // This can happen on really weird custom step values
                         {
@@ -205,12 +205,12 @@ public class TimelineMovementController : MovementController
                     }
                     else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveMeasurePositive))
                     {
-                        snappedPos = Snapable.TickToSnappedTick(currentPos + (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong);
+                        snappedPos = Snapable.TickToSnappedTick(currentPos + (uint)(editor.currentSong.resolution * 4), Globals.gameSettings.step, editor.currentSong);
                     }
                     // Page Down
                     else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveMeasureNegative))
                     {
-                        snappedPos = Snapable.TickToSnappedTick(currentPos - (uint)(editor.currentSong.resolution * 4), GameSettings.step, editor.currentSong);
+                        snappedPos = Snapable.TickToSnappedTick(currentPos - (uint)(editor.currentSong.resolution * 4), Globals.gameSettings.step, editor.currentSong);
                     }                 
 
                     if (editor.currentSong.TickToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSongLength)

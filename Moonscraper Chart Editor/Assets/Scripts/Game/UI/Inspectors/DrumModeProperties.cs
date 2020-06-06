@@ -55,7 +55,7 @@ public class DrumModeProperties : UpdateableService
         {
             LaneCountOptions option;
 
-            if (!r_laneCountToLaneOption.TryGetValue(GameSettings.drumsLaneCount, out option))
+            if (!r_laneCountToLaneOption.TryGetValue(Globals.gameSettings.drumsLaneCount, out option))
             {
                 option = LaneCountOptions.LaneCount5;
             }
@@ -63,7 +63,7 @@ public class DrumModeProperties : UpdateableService
             int intLastKnownLaneCount = (int)option;
             bool forceReload = intLastKnownLaneCount != ChartEditor.Instance.laneInfo.laneCount;
 
-            m_drumsModeOptionDropdown.value = (int)GameSettings.drumsModeOptions;
+            m_drumsModeOptionDropdown.value = (int)Globals.gameSettings.drumsModeOptions;
             m_laneCountDropdown.value = intLastKnownLaneCount;
 
             if (forceReload)
@@ -85,13 +85,13 @@ public class DrumModeProperties : UpdateableService
         int desiredLaneCount;
         if (r_laneOptionToLaneCount.TryGetValue(option, out desiredLaneCount))
         {
-            GameSettings.drumsLaneCount = desiredLaneCount;
+            Globals.gameSettings.drumsLaneCount = desiredLaneCount;
             editor.uiServices.menuBar.SetLaneCount(desiredLaneCount);
             editor.uiServices.menuBar.LoadCurrentInstumentAndDifficulty();       
         }
 
         // Not allowed 5 lane pro drums
-        if (option == LaneCountOptions.LaneCount5 && GameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums)
+        if (option == LaneCountOptions.LaneCount5 && Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums)
         {
             m_drumsModeOptionDropdown.value = (int)GameSettings.DrumModeOptions.Standard;
         }
@@ -100,7 +100,7 @@ public class DrumModeProperties : UpdateableService
     public void OnModeOptionDropdownValueChanged(int value)
     {
         GameSettings.DrumModeOptions option = (GameSettings.DrumModeOptions)value;
-        GameSettings.drumsModeOptions = option;
+        Globals.gameSettings.drumsModeOptions = option;
 
         // Not allowed 5 lane pro drums 
         if (option == GameSettings.DrumModeOptions.ProDrums && ChartEditor.Instance.laneInfo.laneCount != SongConfig.PRO_DRUMS_LANE_COUNT)
