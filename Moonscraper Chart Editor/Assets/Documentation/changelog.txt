@@ -1,3 +1,18 @@
+1.3.3.9
+	NEW FEATURES
+	-Implemented a way for Moonscraper to check and notify user for updated releases whenever a new official release is added on Github.
+	-Added functionality for sustain gap to toggle between being step-based and being time-based.
+
+	CHANGES
+	-Replaced text in contact menu with direct hyperlinks. Remove Twitter info and replaced it with github link.
+	-Yellow, Blue and Green drums pads now reads as toms by default instead of cymbals in chart files. Cymbals saving still disabled in chart files while changes are still taking place.
+	-Update Unity engine to 2018.4.23f1 (Long Term Support)
+
+	FIXES
+	-Fixed snap rounding issue on non-standard snapping values.
+	-Gameplay memory optimisation.
+	-Fixed gameplay bot dying on low framerates/high note density
+
 1.3.3.8
 	NEW FEATURES
 	-Implemented Anti Aliasing setting option. Divided up setting menu into tabs to seperate out editor, audio and graphics settings.
