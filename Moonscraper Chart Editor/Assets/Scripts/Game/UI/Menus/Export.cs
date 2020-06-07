@@ -143,13 +143,17 @@ public class Export : DisplayMenu {
             float songLength = editor.currentSongLength;
 
             saveDirectory = saveDirectory.Replace('\\', '/');
+            saveDirectory = Path.Combine(saveDirectory, song.name);
 
-            if (!saveDirectory.EndsWith("/"))
-            {
-                saveDirectory += '/';
+            // Check if files exist at the current directory and ask user before overwriting.
+            if (Directory.Exists(saveDirectory)) {
+                NativeWindow window= ChartEditor.Instance.windowHandleManager.nativeWindow;
+                NativeMessageBox.Result overwrite = NativeMessageBox.Show("Exported files exist. Overwrite?", "Warning", NativeMessageBox.Type.YesNo, window);
+
+                if (overwrite != NativeMessageBox.Result.Yes) {
+                    return;
+                }
             }
-
-            saveDirectory += song.name + "/";
 
             StartCoroutine(ExportCHPackage(saveDirectory, song, songLength, exportOptions));
         }
@@ -356,7 +360,7 @@ public class Export : DisplayMenu {
     {
         Metadata metaData = song.metaData;
 
-        StreamWriter ofs = File.CreateText(path + "/song.ini");
+        StringWriter ofs = new StringWriter();
         ofs.WriteLine("[Song]");
         ofs.WriteLine("name = " + song.name);
         ofs.WriteLine("artist = " + metaData.artist);
@@ -376,6 +380,8 @@ public class Export : DisplayMenu {
         ofs.WriteLine("frets = 0");
         ofs.WriteLine("charter = " + metaData.charter);
         ofs.WriteLine("icon = 0");
+
+        File.WriteAllText(Path.Combine(path, "song.ini"), ofs.ToString());
 
         ofs.Close();
     }
@@ -420,17 +426,7 @@ public class Export : DisplayMenu {
         float timer = Time.realtimeSinceStartup;
         string errorMessageList = string.Empty;
 
-        destFolderPath = destFolderPath.Replace('\\', '/');
-
-        if (!destFolderPath.EndsWith("/"))
-        {
-            destFolderPath += '/';
-        }
-
-        if (!Directory.Exists(destFolderPath))
-        {
-            Directory.CreateDirectory(destFolderPath);
-        }
+        Directory.CreateDirectory(destFolderPath);
 
         List<LoadingTask> tasks = new List<LoadingTask>()
         {
@@ -441,7 +437,7 @@ public class Export : DisplayMenu {
 
             new LoadingTask("Exporting chart", () =>
             {
-                string chartOutputFile = destFolderPath + "notes.chart";
+                string chartOutputFile = Path.Combine(destFolderPath, "notes.chart");
 
                 // Set audio location after audio files have already been created as set won't won't if the files don't exist
                 foreach (Song.AudioInstrument audio in EnumX<Song.AudioInstrument>.Values)
@@ -449,7 +445,7 @@ public class Export : DisplayMenu {
                     if (song.GetAudioLocation(audio) != string.Empty)
                     {
                         string audioFilename = GetCHOggFilename(audio);
-                        string audioPath = destFolderPath + audioFilename;
+                        string audioPath = Path.Combine(destFolderPath, audioFilename);
                         newSong.SetAudioLocation(audio, audioPath);
                     }
                 }
@@ -485,21 +481,18 @@ public class Export : DisplayMenu {
                 Debug.LogErrorFormat("Unable to find audio file in location {0}", audioLocation);
                 continue;
             }
-            {
-                string newAudioName = GetCHOggFilename(audio);
 
-                if (!string.IsNullOrEmpty(newAudioName))
-                {
-                    string outputFile = destFolderPath + newAudioName;
+            string newAudioName = GetCHOggFilename(audio);
 
-                    Debug.LogFormat("Converting ogg from {0} to {1}", audioLocation, outputFile);
-                    AudioManager.ConvertToOgg(audioLocation, outputFile);
-                }
-                else
-                {
-                    Debug.LogErrorFormat("Audio instrument {0} not set up in ch name dict. Skipping.", audio.ToString());
-                }
+            if (string.IsNullOrEmpty(newAudioName)) {
+                Debug.LogErrorFormat("Audio instrument {0} not set up in ch name dict. Skipping.", audio.ToString());
+                continue;
             }
+
+            string outputFile = Path.Combine(destFolderPath, newAudioName);
+
+            Debug.LogFormat("Converting ogg from {0} to {1}", audioLocation, outputFile);
+            AudioManager.ConvertToOgg(audioLocation, outputFile);
         }
     }
 }

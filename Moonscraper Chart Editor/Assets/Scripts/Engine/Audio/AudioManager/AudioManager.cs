@@ -125,7 +125,7 @@ namespace MoonscraperEngine.Audio
             if (sourcePath.EndsWith(EXTENTION))
             {
                 // Re-encoding is slow as hell, speed this up
-                System.IO.File.Copy(sourcePath, destPath);
+                System.IO.File.Copy(sourcePath, destPath, true);
             }
             else
             {

@@ -39,18 +39,21 @@ public class LoadingTasksManager : MonoBehaviour
         ChartEditor.Instance.ChangeStateToLoading();
         loadingScreen.FadeIn();
 
-        for (int i = 0; i < tasks.Count; ++i)
-        {
-            LoadingTask currentTask = tasks[i];
-            loadingScreen.loadingInformation.text = currentTask.description;
+        try {
+            for (int i = 0; i < tasks.Count; ++i)
+            {
+                LoadingTask currentTask = tasks[i];
+                loadingScreen.loadingInformation.text = currentTask.description;
 
-            await Task.Run(currentTask.task);
+                await Task.Run(currentTask.task);
+            }
+        } finally {
+            isRunningTask = false;
+
+            loadingScreen.loadingInformation.text = "Complete!";
+            loadingScreen.FadeOut();
+
+            ChartEditor.Instance.ChangeStateToEditor();
         }
-
-        loadingScreen.FadeOut();
-        loadingScreen.loadingInformation.text = "Complete!";
-
-        isRunningTask = false;
-        ChartEditor.Instance.ChangeStateToEditor();
     }
 }
