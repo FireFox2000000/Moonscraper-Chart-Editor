@@ -40,6 +40,49 @@ public static class MidReader {
         { Song.AudioInstrument.Drum, new string[] { "drums", "drums_1" } },
     };
 
+    struct NoteProcessParams
+    {
+        public Song song;
+        public Song.Instrument instrument;
+        public Chart currentUnrecognisedChart;
+        public NoteOnEvent noteEvent;
+        public List<NoteEventProcessFn> forceNotesProcessesList;
+    }
+
+    delegate void NoteEventProcessFn(in NoteProcessParams noteProcessParams);
+
+    // These dictionaries map the NoteNumber of each midi note event to a specific function of how to process them
+    static readonly Dictionary<int, NoteEventProcessFn> GuitarMidiNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
+    {
+        { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
+        { MidIOHelper.SOLO_NOTE, (in NoteProcessParams noteProcessParams) => {
+            ProcessNoteOnEventAsEvent(noteProcessParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
+        }},
+    };
+
+    static readonly Dictionary<int, NoteEventProcessFn> GhlGuitarMidiNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
+    {
+        { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
+        { MidIOHelper.SOLO_NOTE, (in NoteProcessParams noteProcessParams) => {
+            ProcessNoteOnEventAsEvent(noteProcessParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
+        }},
+    };
+
+    static readonly Dictionary<int, NoteEventProcessFn> DrumsMidiNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
+    {
+        { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
+        { MidIOHelper.SOLO_NOTE, (in NoteProcessParams noteProcessParams) => {
+            ProcessNoteOnEventAsEvent(noteProcessParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
+        }},
+    };
+
+    static MidReader()
+    {
+        BuildGuitarMidiNoteNumberToProcessFnDict();
+        BuildGhlGuitarMidiNoteNumberToProcessFnDict();
+        BuildDrumsMidiNoteNumberToProcessFnDict();
+    }
+
     public static Song ReadMidi(string path, ref CallbackState callBackState)
     {
         Song song = new Song();
@@ -230,6 +273,16 @@ public static class MidReader {
         Chart unrecognised = new Chart(song, Song.Instrument.Unrecognised);
         Chart.GameMode gameMode = Song.InstumentToChartGameMode(instrument);
 
+        NoteProcessParams processParams = new NoteProcessParams()
+        {
+            song = song,
+            currentUnrecognisedChart = unrecognised,
+            instrument = instrument,
+            forceNotesProcessesList = new List<NoteEventProcessFn>(),
+        };
+
+        var noteProcessDict = GetNoteProcessDict(gameMode);
+
         if (instrument == Song.Instrument.Unrecognised)
             song.unrecognisedCharts.Add(unrecognised);
 
@@ -261,115 +314,23 @@ public static class MidReader {
             var note = track[i] as NoteOnEvent;
             if (note != null && note.OffEvent != null)
             {
-                Song.Difficulty difficulty;
-
-                var tick = (uint)note.AbsoluteTime;
-                var sus = (uint)(note.OffEvent.AbsoluteTime - tick);
-
                 if (instrument == Song.Instrument.Unrecognised)
                 {
-                    int rawNote = SelectRawNoteValue(note.NoteNumber);
+                    var tick = (uint)note.AbsoluteTime;
+                    var sus = CalculateSustainLength(song, note);
+
+                    int rawNote = note.NoteNumber;
                     Note newNote = new Note(tick, rawNote, sus);
-                    //difficulty = SelectRawNoteDifficulty(note.NoteNumber);
                     unrecognised.Add(newNote);
                     continue;
                 }
 
-                // Check if starpower event
-                if (note.NoteNumber == MidIOHelper.STARPOWER_NOTE)
-                {                
-                    foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
-                        song.GetChart(instrument, diff).Add(new Starpower(tick, sus), false);
+                processParams.noteEvent = note;
 
-                    continue;
-                }
-
-                if (note.NoteNumber == MidIOHelper.SOLO_NOTE)
+                NoteEventProcessFn processFn;
+                if (noteProcessDict.TryGetValue(note.NoteNumber, out processFn))
                 {
-                    foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
-                    {
-                        Chart chart = song.GetChart(instrument, diff);
-                        chart.Add(new ChartEvent(tick, MidIOHelper.SoloEventText));
-                        chart.Add(new ChartEvent(tick + sus, MidIOHelper.SoloEndEventText));
-                    }
-
-                    continue;
-                }
-
-                if (gameMode == Chart.GameMode.Drums)
-                {
-                    Note.DrumPad dummy;
-                    if (MidIOHelper.CYMBAL_TO_PAD_LOOKUP.TryGetValue(note.NoteNumber, out dummy))
-                    {
-                        // Cymbals toggles
-                        proDrumsNotesList.Add(note);
-                        continue;
-                    }
-                }
-
-                // Determine which difficulty we are manipulating
-                try
-                {
-                    if (gameMode == Chart.GameMode.GHLGuitar)
-                        difficulty = SelectGHLNoteDifficulty(note.NoteNumber);
-                    else
-                        difficulty = SelectNoteDifficulty(note.NoteNumber);
-                }
-                catch
-                {
-                    continue;
-                }
-
-                // Check if we're reading a forcing event instead of a regular note
-                if (gameMode != Chart.GameMode.Drums)
-                {
-                    switch (note.NoteNumber)
-                    {
-                        case 65:
-                        case 66:
-                        case 77:
-                        case 78:
-                        case 89:
-                        case 90:
-                        case 101:
-                        case 102:
-                            forceNotesList.Add(note);       // Store the event for later processing and continue
-                            continue;
-                        default:
-                            break;
-                    }
-                }
-                
-                int fret;
-
-                if (sus <= rbSustainFixLength)
-                    sus = 0;
-
-                Note.Flags flags = Note.Flags.None;
-
-                if (gameMode == Chart.GameMode.Drums)
-                {
-                    fret = (int)GetDrumFretType(note.NoteNumber);
-
-                    int cymbalToggleId;
-                    if (MidIOHelper.PAD_TO_CYMBAL_LOOKUP.TryGetValue((Note.DrumPad)fret, out cymbalToggleId))
-                    {
-                        flags |= Note.Flags.ProDrums_Cymbal;
-                    }
-                }
-                else if (gameMode == Chart.GameMode.GHLGuitar)
-                {
-                    fret = (int)GetGHLFretType(note.NoteNumber);
-                }
-                else
-                {
-                    fret = (int)GetStandardFretType(note.NoteNumber);
-                }
-
-                {
-                    // Add the note to the correct chart
-                    Note newNote = new Note(tick, fret, sus, flags);
-                    song.GetChart(instrument, difficulty).Add(newNote, false);
+                    processFn(processParams);
                 }
             }
 
@@ -500,43 +461,9 @@ public static class MidReader {
         }
 
         // Apply forcing events
-        foreach (NoteOnEvent flagEvent in forceNotesList)
+        foreach (var process in processParams.forceNotesProcessesList)
         {
-            uint tick = (uint)flagEvent.AbsoluteTime;
-            uint endPos = (uint)(flagEvent.OffEvent.AbsoluteTime - tick);
-
-            Song.Difficulty difficulty;
-
-            // Determine which difficulty we are manipulating
-            try
-            {
-                difficulty = SelectNoteDifficulty(flagEvent.NoteNumber);
-            }
-            catch
-            {
-                continue;
-            }
-
-            Chart chart;
-            if (instrument != Song.Instrument.Unrecognised)
-                chart = song.GetChart(instrument, difficulty);
-            else
-                chart = unrecognised;
-
-            int index, length;
-            SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
-
-            for (int i = index; i < index + length; ++i)
-            {
-                if ((chart.notes[i].flags & Note.Flags.Tap) != 0)
-                    continue;
-
-                // if NoteNumber is odd force hopo, if even force strum
-                if (flagEvent.NoteNumber % 2 != 0)
-                    chart.notes[i].SetType(Note.NoteType.Hopo);
-                else
-                    chart.notes[i].SetType(Note.NoteType.Strum);
-            }
+            process(processParams);
         }
 
         foreach (var flagEvent in proDrumsNotesList)
@@ -576,131 +503,340 @@ public static class MidReader {
         }
     }
 
-    static Song.Difficulty SelectNoteDifficulty(int noteNumber)
+    static Dictionary<int, NoteEventProcessFn> GetNoteProcessDict(Chart.GameMode gameMode)
     {
-        if (noteNumber >= 60 && noteNumber <= 66)
-            return Song.Difficulty.Easy;
-        else if (noteNumber >= 72 && noteNumber <= 78)
-            return Song.Difficulty.Medium;
-        else if (noteNumber >= 84 && noteNumber <= 90)
-            return Song.Difficulty.Hard;
-        else if (noteNumber >= 96 && noteNumber <= 102)
-            return Song.Difficulty.Expert;
-        else
-            throw new System.ArgumentOutOfRangeException("Note number outside of note range");
-    }
-
-    static Song.Difficulty SelectGHLNoteDifficulty(int noteNumber)
-    {
-        if (noteNumber >= 94)
-            return Song.Difficulty.Expert;
-        else if (noteNumber >= 82)
-            return Song.Difficulty.Hard;
-        else if (noteNumber >= 70)
-            return Song.Difficulty.Medium;
-        else
-            return Song.Difficulty.Easy;
-    }
-
-
-    static Song.Difficulty SelectRawNoteDifficulty(int noteNumber)
-    {
-        if (noteNumber >= 96)
-            return Song.Difficulty.Expert;
-        else if (noteNumber >= 84)
-            return Song.Difficulty.Hard;
-        else if (noteNumber >= 72)
-            return Song.Difficulty.Medium;
-        else
-            return Song.Difficulty.Easy;
-    }
-
-    static int SelectRawNoteValue(int noteNumber)
-    {
-        // Generally starts at 60, every 12 notes is a change is difficulty
-        //return noteNumber % 12;
-        return noteNumber;
-    }
-
-    static Note.GuitarFret GetStandardFretType(int noteNumber)
-    {
-        Note.GuitarFret fret;
-        int difficultyLessNote = noteNumber % 12;
-
-        // Determine the fret type of the note
-        switch (difficultyLessNote)
+        switch (gameMode)
         {
-            case 0: fret = Note.GuitarFret.Green; break;
+            case Chart.GameMode.GHLGuitar:
+                {
+                    return GhlGuitarMidiNoteNumberToProcessFnMap;
+                }
+            case Chart.GameMode.Drums:
+                {
+                    return DrumsMidiNoteNumberToProcessFnMap;
+                }
 
-            case 1: fret = Note.GuitarFret.Red; break;
-
-            case 2: fret = Note.GuitarFret.Yellow; break;
-
-            case 3: fret = Note.GuitarFret.Blue; break;
-
-            case 4: fret = Note.GuitarFret.Orange; break;
-
-            // 5 is forced
-            default:
-                fret = Note.GuitarFret.Green; break;
+            default: break;
         }
 
-        return fret;
+        return GuitarMidiNoteNumberToProcessFnMap;
     }
 
-    static Note.DrumPad GetDrumFretType(int noteNumber)
+    delegate void BuildPerDifficultyFn(int difficultyStartRange, Song.Difficulty difficulty);
+    static void BuildGuitarMidiNoteNumberToProcessFnDict()
     {
-        Note.DrumPad fret;
-        int difficultyLessNote = noteNumber % 12;
+        const int EasyStartRange = 60;
+        const int MediumStartRange = 72;
+        const int HardStartRange = 84;
+        const int ExpertStartRange = 96;
 
-        // Determine the fret type of the note
-        switch (difficultyLessNote)
+        Dictionary<Note.GuitarFret, int> FretToMidiKey = new Dictionary<Note.GuitarFret, int>()
         {
-            case 0: fret = Note.DrumPad.Kick; break;
+            // { Note.GuitarFret.Open, 0 }, // Handled by sysex event
+            { Note.GuitarFret.Green, 0 },
+            { Note.GuitarFret.Red, 1 },
+            { Note.GuitarFret.Yellow, 2 },
+            { Note.GuitarFret.Blue, 3 },
+            { Note.GuitarFret.Orange, 4 },
+        };
 
-            case 1: fret = Note.DrumPad.Red; break;
+        BuildPerDifficultyFn BuildPerDifficulty = (int difficultyStartRange, Song.Difficulty difficulty) =>
+        {
+            foreach (var guitarFret in EnumX<Note.GuitarFret>.Values)
+            {
+                int fretOffset;
+                if (FretToMidiKey.TryGetValue(guitarFret, out fretOffset))
+                {
+                    int key = fretOffset + difficultyStartRange;
+                    int fret = (int)guitarFret;
 
-            case 2: fret = Note.DrumPad.Yellow; break;
+                    GuitarMidiNoteNumberToProcessFnMap.Add(key, (in NoteProcessParams noteProcessParams) =>
+                    {
+                        ProcessNoteOnEventAsNote(noteProcessParams, difficulty, fret);
+                    });
+                }
+            }
 
-            case 3: fret = Note.DrumPad.Blue; break;
+            // Process forced hopo or forced strum
+            {
+                int flagKey = difficultyStartRange + 5;
+                GuitarMidiNoteNumberToProcessFnMap.Add(flagKey, (in NoteProcessParams noteProcessParams) =>
+                {
+                    ProcessNoteOnEventAsForcedType(noteProcessParams, difficulty, Note.NoteType.Hopo);
+                });
+            }
+            {
+                int flagKey = difficultyStartRange + 6;
+                GuitarMidiNoteNumberToProcessFnMap.Add(flagKey, (in NoteProcessParams noteProcessParams) =>
+                {
+                    ProcessNoteOnEventAsForcedType(noteProcessParams, difficulty, Note.NoteType.Strum);
+                });
+            }
+        };
 
-            case 4: fret = Note.DrumPad.Orange; break;
-
-            case 5: fret = Note.DrumPad.Green; break;
-
-            default:
-                fret = Note.DrumPad.Red; break;
-        }
-
-        return fret;
+        BuildPerDifficulty(EasyStartRange, Song.Difficulty.Easy);
+        BuildPerDifficulty(MediumStartRange, Song.Difficulty.Medium);
+        BuildPerDifficulty(HardStartRange, Song.Difficulty.Hard);
+        BuildPerDifficulty(ExpertStartRange, Song.Difficulty.Expert);
     }
 
-    static Note.GHLiveGuitarFret GetGHLFretType(int noteNumber)
+    static void BuildGhlGuitarMidiNoteNumberToProcessFnDict()
     {
-        Note.GHLiveGuitarFret fret;
-        int difficultyLessNote = (noteNumber + 2) % 12;
+        const int EasyStartRange = 58;
+        const int MediumStartRange = 70;
+        const int HardStartRange = 82;
+        const int ExpertStartRange = 94;
 
-        // Determine the fret type of the note
-        switch (difficultyLessNote)
+        Dictionary<Note.GHLiveGuitarFret, int> FretToMidiKey = new Dictionary<Note.GHLiveGuitarFret, int>()
         {
-            case 0: fret = Note.GHLiveGuitarFret.Open; break;
+            { Note.GHLiveGuitarFret.Open, 0 },
+            { Note.GHLiveGuitarFret.White1, 1 },
+            { Note.GHLiveGuitarFret.White2, 2 },
+            { Note.GHLiveGuitarFret.White3, 3 },
+            { Note.GHLiveGuitarFret.Black1, 4 },
+            { Note.GHLiveGuitarFret.Black2, 5 },
+            { Note.GHLiveGuitarFret.Black3, 6 },
+        };
 
-            case 1: fret = Note.GHLiveGuitarFret.White1; break;
+        BuildPerDifficultyFn BuildPerDifficulty = (int difficultyStartRange, Song.Difficulty difficulty) =>
+        {
+            foreach (var guitarFret in EnumX<Note.GHLiveGuitarFret>.Values)
+            {
+                int fretOffset;
+                if (FretToMidiKey.TryGetValue(guitarFret, out fretOffset))
+                {
+                    int key = fretOffset + difficultyStartRange;
+                    int fret = (int)guitarFret;
 
-            case 2: fret = Note.GHLiveGuitarFret.White2; break;
+                    GhlGuitarMidiNoteNumberToProcessFnMap.Add(key, (in NoteProcessParams noteProcessParams) =>
+                    {
+                        ProcessNoteOnEventAsNote(noteProcessParams, difficulty, fret);
+                    });
+                }
+            }
 
-            case 3: fret = Note.GHLiveGuitarFret.White3; break;
+            // Process forced hopo or forced strum
+            {
+                int flagKey = difficultyStartRange + 7;
+                GhlGuitarMidiNoteNumberToProcessFnMap.Add(flagKey, (in NoteProcessParams noteProcessParams) =>
+                {
+                    ProcessNoteOnEventAsForcedType(noteProcessParams, difficulty, Note.NoteType.Hopo);
+                });
+            }
+            {
+                int flagKey = difficultyStartRange + 8;
+                GhlGuitarMidiNoteNumberToProcessFnMap.Add(flagKey, (in NoteProcessParams noteProcessParams) =>
+                {
+                    ProcessNoteOnEventAsForcedType(noteProcessParams, difficulty, Note.NoteType.Strum);
+                });
+            }
+        };
 
-            case 4: fret = Note.GHLiveGuitarFret.Black1; break;
+        BuildPerDifficulty(EasyStartRange, Song.Difficulty.Easy);
+        BuildPerDifficulty(MediumStartRange, Song.Difficulty.Medium);
+        BuildPerDifficulty(HardStartRange, Song.Difficulty.Hard);
+        BuildPerDifficulty(ExpertStartRange, Song.Difficulty.Expert);
+    }
 
-            case 5: fret = Note.GHLiveGuitarFret.Black2; break;
+    static void BuildDrumsMidiNoteNumberToProcessFnDict()
+    {
+        const int EasyStartRange = 60;
+        const int MediumStartRange = 72;
+        const int HardStartRange = 84;
+        const int ExpertStartRange = 96;
 
-            case 6: fret = Note.GHLiveGuitarFret.Black3; break;
+        Dictionary<Note.DrumPad, int> DrumPadToMidiKey = new Dictionary<Note.DrumPad, int>()
+        {
+            { Note.DrumPad.Kick, 0 },
+            { Note.DrumPad.Red, 1 },
+            { Note.DrumPad.Yellow, 2 },
+            { Note.DrumPad.Blue, 3 },
+            { Note.DrumPad.Orange, 4 },
+            { Note.DrumPad.Green, 5 },
+        };
 
-            default:
-                fret = Note.GHLiveGuitarFret.Black1; break;
+        Dictionary<Note.DrumPad, Note.Flags> DrumPadDefaultFlags = new Dictionary<Note.DrumPad, Note.Flags>()
+        {
+            { Note.DrumPad.Yellow, Note.Flags.ProDrums_Cymbal },
+            { Note.DrumPad.Blue, Note.Flags.ProDrums_Cymbal },
+            { Note.DrumPad.Orange, Note.Flags.ProDrums_Cymbal },
+        };
+
+        BuildPerDifficultyFn BuildPerDifficulty = (int difficultyStartRange, Song.Difficulty difficulty) =>
+        {
+            foreach (var pad in EnumX<Note.DrumPad>.Values)
+            {
+                int padOffset;
+                if (DrumPadToMidiKey.TryGetValue(pad, out padOffset))
+                { 
+                    int key = padOffset + difficultyStartRange;
+                    int fret = (int)pad;
+                    Note.Flags defaultFlags = Note.Flags.None;
+                    DrumPadDefaultFlags.TryGetValue(pad, out defaultFlags);
+
+                    DrumsMidiNoteNumberToProcessFnMap.Add(key, (in NoteProcessParams noteProcessParams) =>
+                    {
+                        ProcessNoteOnEventAsNote(noteProcessParams, difficulty, fret, defaultFlags);
+                    });
+                }
+            }
+        };
+
+        BuildPerDifficulty(EasyStartRange, Song.Difficulty.Easy);
+        BuildPerDifficulty(MediumStartRange, Song.Difficulty.Medium);
+        BuildPerDifficulty(HardStartRange, Song.Difficulty.Hard);
+        BuildPerDifficulty(ExpertStartRange, Song.Difficulty.Expert);
+
+        foreach (var keyVal in MidIOHelper.PAD_TO_CYMBAL_LOOKUP)
+        {
+            int pad = (int)keyVal.Key;
+            int midiKey = keyVal.Value;
+            DrumsMidiNoteNumberToProcessFnMap.Add(midiKey, (in NoteProcessParams noteProcessParams) =>
+            {
+                ProcessNoteOnEventAsFlagToggle(noteProcessParams, Note.Flags.ProDrums_Cymbal, pad);
+            });
+        }
+    }
+
+    static void ProcessNoteOnEventAsNote(in NoteProcessParams noteProcessParams, Song.Difficulty diff, int ingameFret, Note.Flags defaultFlags = Note.Flags.None)
+    {
+        Chart chart;
+        if (noteProcessParams.instrument == Song.Instrument.Unrecognised)
+        {
+            chart = noteProcessParams.currentUnrecognisedChart;
+        }
+        else
+        {
+            chart = noteProcessParams.song.GetChart(noteProcessParams.instrument, diff);
         }
 
-        return fret;
+        NoteOnEvent noteEvent = noteProcessParams.noteEvent;
+        var tick = (uint)noteEvent.AbsoluteTime;
+        var sus = CalculateSustainLength(noteProcessParams.song, noteEvent);
+
+        Note newNote = new Note(tick, ingameFret, sus, defaultFlags);
+        chart.Add(newNote, false);
+    }
+
+    static void ProcessNoteOnEventAsStarpower(in NoteProcessParams noteProcessParams)
+    {
+        var noteEvent = noteProcessParams.noteEvent;
+        var song = noteProcessParams.song;
+        var instrument = noteProcessParams.instrument;
+
+        var tick = (uint)noteEvent.AbsoluteTime;
+        var sus = CalculateSustainLength(song, noteEvent);
+
+        foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
+        {
+            song.GetChart(instrument, diff).Add(new Starpower(tick, sus), false);
+        }
+    }
+
+    static void ProcessNoteOnEventAsForcedType(in NoteProcessParams noteProcessParams, Song.Difficulty difficulty, Note.NoteType noteType)
+    {
+        var flagEvent = noteProcessParams.noteEvent;
+
+        // Delay the actual processing once all the notes are actually in
+        noteProcessParams.forceNotesProcessesList.Add((in NoteProcessParams processParams) =>
+        {
+            ProcessNoteOnEventAsForcedTypePostDelay(processParams, flagEvent, difficulty, noteType);
+        });
+    }
+
+    static void ProcessNoteOnEventAsForcedTypePostDelay(in NoteProcessParams noteProcessParams, NoteOnEvent noteEvent, Song.Difficulty difficulty, Note.NoteType noteType)
+    {
+        var song = noteProcessParams.song;
+        var instrument = noteProcessParams.instrument;
+
+        uint tick = (uint)noteEvent.AbsoluteTime;
+        uint endPos = (uint)(noteEvent.OffEvent.AbsoluteTime - tick);
+
+        Chart chart;
+        if (instrument != Song.Instrument.Unrecognised)
+            chart = song.GetChart(instrument, difficulty);
+        else
+            chart = noteProcessParams.currentUnrecognisedChart;
+
+        int index, length;
+        SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
+
+        for (int i = index; i < index + length; ++i)
+        {
+            if ((chart.notes[i].flags & Note.Flags.Tap) != 0)
+                continue;
+
+            chart.notes[i].SetType(noteType);
+        }
+    }
+
+    static uint CalculateSustainLength(Song song, NoteOnEvent noteEvent)
+    {
+        uint tick = (uint)noteEvent.AbsoluteTime;
+        var sus = (uint)(noteEvent.OffEvent.AbsoluteTime - tick);
+        int rbSustainFixLength = (int)(64 * song.resolution / SongConfig.STANDARD_BEAT_RESOLUTION);
+        if (sus <= rbSustainFixLength)
+            sus = 0;
+
+        return sus;
+    }
+
+    static void ProcessNoteOnEventAsEvent(NoteProcessParams noteProcessParams, string eventStartText, string eventEndText)
+    {
+        var noteEvent = noteProcessParams.noteEvent;
+        var song = noteProcessParams.song;
+        var instrument = noteProcessParams.instrument;
+
+        uint tick = (uint)noteEvent.AbsoluteTime;
+        var sus = CalculateSustainLength(song, noteEvent);
+
+        foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
+        {
+            Chart chart = song.GetChart(instrument, diff);
+            chart.Add(new ChartEvent(tick, eventStartText));
+            chart.Add(new ChartEvent(tick + sus, eventEndText));
+        }
+    }
+
+    static void ProcessNoteOnEventAsFlagToggle(in NoteProcessParams noteProcessParams, Note.Flags flags, int individualNoteSpecifier)
+    {
+        var flagEvent = noteProcessParams.noteEvent;
+
+        // Delay the actual processing once all the notes are actually in
+        noteProcessParams.forceNotesProcessesList.Add((in NoteProcessParams processParams) =>
+        {
+            ProcessNoteOnEventAsFlagTogglePostDelay(processParams, flagEvent, flags, individualNoteSpecifier);
+        });
+    }
+
+    static void ProcessNoteOnEventAsFlagTogglePostDelay(in NoteProcessParams noteProcessParams, NoteOnEvent noteEvent, Note.Flags flags, int individualNoteSpecifier)   // individualNoteSpecifier as -1 to apply to the whole chord
+    {
+        var song = noteProcessParams.song;
+        var instrument = noteProcessParams.instrument;
+
+        uint tick = (uint)noteEvent.AbsoluteTime;
+        uint endPos = (uint)(noteEvent.OffEvent.AbsoluteTime - tick);
+            --endPos;
+
+        var flagEvent = noteEvent;
+
+        foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
+        {
+            Chart chart = song.GetChart(instrument, difficulty);
+
+            int index, length;
+            SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
+
+            for (int i = index; i < index + length; ++i)
+            {
+                Note note = chart.notes[i];
+
+                if (individualNoteSpecifier < 0 || note.rawNote == individualNoteSpecifier)
+                {
+                    // Toggle flag
+                    note.flags ^= flags;
+                }
+            }
+        }
     }
 }
