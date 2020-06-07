@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
+using System;
 using System.IO;
 using UnityEngine;
 using MoonscraperEngine;
@@ -113,46 +114,51 @@ public class SongAudioManager
     {
         int audioStreamArrayPos = (int)audio;
 
-        if (filepath != string.Empty && File.Exists(filepath))
+        if (filepath == string.Empty) { return false; }
+
+        filepath = filepath.Replace('\\', '/');
+
+        // Check for valid extension
+        if (!Utility.validateExtension(filepath, Globals.validAudioExtensions))
         {
+            throw new System.Exception("Invalid file extension");
+        }
+
+        if (!File.Exists(filepath)) {
+            Debug.LogError("Unable to locate audio file: " + filepath);
+            return false;
+        }
+
 #if TIMING_DEBUG
-            float time = Time.realtimeSinceStartup;
+        float time = Time.realtimeSinceStartup;
 #endif
-            // Check for valid extension
-            if (!Utility.validateExtension(filepath, Globals.validAudioExtensions))
-            {
-                throw new System.Exception("Invalid file extension");
-            }
 
-            filepath = filepath.Replace('\\', '/');
+        ++audioLoads;
 
-            ++audioLoads;
-
+        try {
             // Load sample data from waveform. This creates a thread on it's own.
             if (audioSampleData[audioStreamArrayPos] != null)
                 audioSampleData[audioStreamArrayPos].Dispose();
             audioSampleData[audioStreamArrayPos] = new SampleData(filepath);
 
-            // Load Audio Streams   
+            // Load Audio Streams
             if (bassAudioStreams[audioStreamArrayPos] != null)
                 bassAudioStreams[audioStreamArrayPos].Dispose();
             bassAudioStreams[audioStreamArrayPos] = AudioManager.LoadTempoStream(filepath);
-
+        } catch (Exception e) {
+            Logger.LogException(e, "Could not open audio");
+            return false;
+        } finally {
             --audioLoads;
+        }
+
 #if TIMING_DEBUG
-            Debug.Log("Audio load time: " + (Time.realtimeSinceStartup - time));
+        Debug.Log("Audio load time: " + (Time.realtimeSinceStartup - time));
 #endif
-            Debug.Log("Finished loading audio");
 
-            return true;
-        }
-        else
-        {
-            if (filepath != string.Empty)
-                Debug.LogError("Unable to locate audio file: " + filepath);
-        }
+        Debug.Log("Finished loading audio");
 
-        return false;
+        return true;
     }
 
     public void LoadAllAudioClips(Song song)

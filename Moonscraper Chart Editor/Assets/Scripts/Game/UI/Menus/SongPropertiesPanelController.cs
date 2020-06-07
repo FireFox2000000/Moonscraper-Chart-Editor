@@ -69,11 +69,11 @@ public class SongPropertiesPanelController : DisplayMenu {
         bool edit = ChartEditor.isDirty;
 
         base.OnEnable();
-        
+
         init = true;
         Song song = editor.currentSong;
-        Metadata metaData = song.metaData; 
-           
+        Metadata metaData = song.metaData;
+
         songName.text = song.name;
         artist.text = metaData.artist;
         charter.text = metaData.charter;
@@ -196,7 +196,7 @@ public class SongPropertiesPanelController : DisplayMenu {
                 audioStreamText.text = "No audio";
             }
         }
-		
+
         ChartEditor.isDirty = true;
     }
 
@@ -207,190 +207,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         return audioFilepath;
     }
 
-    public void LoadMusicStream()
-    {
-        try
-        {
-            LoadAndSetStream(Song.AudioInstrument.Song);
-        }
-        catch
-        {
-            Debug.LogError("Could not open audio");
-        }
-    }
-
-    public void ClearMusicStream()
-    {
-        ClearAudioStream(Song.AudioInstrument.Song);
-    }
-
-    public void LoadGuitarStream()
-    {
-        try
-        {
-            LoadAndSetStream(Song.AudioInstrument.Guitar);
-        }
-        catch
-        {
-            Debug.LogError("Could not open audio");
-        }
-    }
-
-    public void ClearGuitarStream()
-    {
-        ClearAudioStream(Song.AudioInstrument.Guitar);
-    }
-
-    public void LoadBassStream()
-    {
-        try
-        {
-            LoadAndSetStream(Song.AudioInstrument.Bass);
-        }
-        catch
-        {
-            Debug.LogError("Could not open audio");
-        }
-    }
-
-    public void ClearBassStream()
-    {
-        ClearAudioStream(Song.AudioInstrument.Bass);
-    }
-
-    public void LoadRhythmStream()
-    {
-        try
-        {
-            LoadAndSetStream(Song.AudioInstrument.Rhythm);
-        }
-        catch
-        {
-            Debug.LogError("Could not open audio");
-        }
-    }
-
-    public void ClearRhythmStream()
-    {
-        ClearAudioStream(Song.AudioInstrument.Rhythm);
-    }
-
-   public void LoadVocalStream()
-    {
-        try
-        {
-            LoadAndSetStream(Song.AudioInstrument.Vocals);
-        }
-        catch
-        {
-            Debug.LogError("Could not open audio");
-        }
-    }
-
-    public void ClearVocalStream()
-    {
-        ClearAudioStream(Song.AudioInstrument.Vocals);
-    }
-	
-	public void LoadKeysStream()
-    {
-        try
-        {
-            LoadAndSetStream(Song.AudioInstrument.Keys);
-        }
-        catch
-        {
-            Debug.LogError("Could not open audio");
-        }
-    }
-
-    public void ClearKeysStream()
-    {
-        ClearAudioStream(Song.AudioInstrument.Keys);
-    }
-	
-
-    public void LoadDrum1Stream()
-    {
-        try
-        {
-            LoadAndSetStream(Song.AudioInstrument.Drum);
-        }
-        catch
-        {
-            Debug.LogError("Could not open audio");
-        }
-    }
-
-    public void ClearDrum1Stream()
-    {
-        ClearAudioStream(Song.AudioInstrument.Drum);
-    }
-	
-	public void LoadDrum2Stream()
-    {
-        try
-        {
-            LoadAndSetStream(Song.AudioInstrument.Drums_2);
-        }
-        catch
-        {
-            Debug.LogError("Could not open audio");
-        }
-    }
-
-    public void ClearDrum2Stream()
-    {
-        ClearAudioStream(Song.AudioInstrument.Drums_2);
-    }
-	
-	public void LoadDrum3Stream()
-    {
-        try
-        {
-            LoadAndSetStream(Song.AudioInstrument.Drums_3);
-        }
-        catch
-        {
-            Debug.LogError("Could not open audio");
-        }
-    }
-
-    public void ClearDrum3Stream()
-    {
-        ClearAudioStream(Song.AudioInstrument.Drums_3);
-    }
-	
-	public void LoadDrum4Stream()
-    {
-        try
-        {
-            LoadAndSetStream(Song.AudioInstrument.Drums_4);
-        }
-        catch
-        {
-            Debug.LogError("Could not open audio");
-        }
-    }
-
-    public void ClearDrum4Stream()
-    {
-        ClearAudioStream(Song.AudioInstrument.Drums_4);
-    }
-	
-	public void LoadCrowdStream()
-    {
-        try
-        {
-            LoadAndSetStream(Song.AudioInstrument.Crowd);
-        }
-        catch
-        {
-            Debug.LogError("Could not open audio");
-        }
-    }
-
-    void LoadAndSetStream(Song.AudioInstrument audioInstrument)
+    void LoadAudioStream(Song.AudioInstrument audioInstrument)
     {
         try
         {
@@ -402,15 +219,10 @@ public class SongPropertiesPanelController : DisplayMenu {
                 StartCoroutine(SetAudio());
             }
         }
-        catch
+        catch (Exception e)
         {
-            Debug.LogError("Could not open audio");
+            Logger.LogException(e, "Could not open audio");
         }
-    }
-
-    public void ClearCrowdStream()
-    {
-        ClearAudioStream(Song.AudioInstrument.Crowd);
     }
 
     void ClearAudioStream(Song.AudioInstrument audio)
@@ -440,4 +252,119 @@ public class SongPropertiesPanelController : DisplayMenu {
 
         setAudioTextLabels();
     }
+
+    // Unity doesn't support calling methods with enum parameters
+    // From button click handlers, so we define load/clear audio
+    // implementations for each case here.
+    #region Unity button click handlers
+    public void LoadMusicStream()
+    {
+        LoadAudioStream(Song.AudioInstrument.Song);
+    }
+
+    public void ClearMusicStream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Song);
+    }
+
+    public void LoadGuitarStream()
+    {
+        LoadAudioStream(Song.AudioInstrument.Guitar);
+    }
+
+    public void ClearGuitarStream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Guitar);
+    }
+
+    public void LoadBassStream()
+    {
+        LoadAudioStream(Song.AudioInstrument.Bass);
+    }
+
+    public void ClearBassStream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Bass);
+    }
+
+    public void LoadRhythmStream()
+    {
+        LoadAudioStream(Song.AudioInstrument.Rhythm);
+    }
+
+    public void ClearRhythmStream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Rhythm);
+    }
+
+    public void LoadVocalStream()
+    {
+        LoadAudioStream(Song.AudioInstrument.Vocals);
+    }
+
+    public void ClearVocalStream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Vocals);
+    }
+
+	public void LoadKeysStream()
+    {
+        LoadAudioStream(Song.AudioInstrument.Keys);
+    }
+
+    public void ClearKeysStream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Keys);
+    }
+
+    public void LoadDrum1Stream()
+    {
+        LoadAudioStream(Song.AudioInstrument.Drum);
+    }
+
+    public void ClearDrum1Stream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Drum);
+    }
+
+	public void LoadDrum2Stream()
+    {
+        LoadAudioStream(Song.AudioInstrument.Drums_2);
+    }
+
+    public void ClearDrum2Stream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Drums_2);
+    }
+
+	public void LoadDrum3Stream()
+    {
+        LoadAudioStream(Song.AudioInstrument.Drums_3);
+    }
+
+    public void ClearDrum3Stream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Drums_3);
+    }
+
+	public void LoadDrum4Stream()
+    {
+        LoadAudioStream(Song.AudioInstrument.Drums_4);
+    }
+
+    public void ClearDrum4Stream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Drums_4);
+    }
+
+	public void LoadCrowdStream()
+    {
+        LoadAudioStream(Song.AudioInstrument.Crowd);
+    }
+
+    public void ClearCrowdStream()
+    {
+        ClearAudioStream(Song.AudioInstrument.Crowd);
+    }
+    #endregion
 }

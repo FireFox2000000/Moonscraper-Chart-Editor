@@ -160,6 +160,9 @@ namespace MoonscraperEngine.Audio
         public static AudioStream LoadStream(string filepath)
         {
             int audioStreamHandle = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE);
+            if (audioStreamHandle == 0) {
+                throw new Exception(String.Format("Failed to load audio file: BASS error {0}", Bass.BASS_ErrorGetCode()));
+            }
 
             var newStream = new AudioStream(audioStreamHandle);
             liveAudioStreams.Add(newStream);
@@ -169,7 +172,13 @@ namespace MoonscraperEngine.Audio
         public static TempoStream LoadTempoStream(string filepath)
         {
             int audioStreamHandle = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_ASYNCFILE | BASSFlag.BASS_STREAM_PRESCAN);
+            if (audioStreamHandle == 0) {
+                throw new Exception(String.Format("Failed to load audio file: BASS error {0}", Bass.BASS_ErrorGetCode()));
+            }
             audioStreamHandle = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_TempoCreate(audioStreamHandle, BASSFlag.BASS_FX_FREESOURCE);
+            if (audioStreamHandle == 0) {
+                throw new Exception(String.Format("Failed to create tempo stream: BASS error {0}", Bass.BASS_ErrorGetCode()));
+            }
 
             var newStream = new TempoStream(audioStreamHandle);
             liveAudioStreams.Add(newStream);

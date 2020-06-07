@@ -61,7 +61,14 @@ namespace MoonscraperEngine.Audio
         {
             get
             {
-                return loadTask.Status != TaskStatus.RanToCompletion;
+                switch (loadTask.Status) {
+                    case TaskStatus.RanToCompletion:
+                    case TaskStatus.Faulted:
+                    case TaskStatus.Canceled:
+                        return false;
+                    default:
+                        return true;
+                }
             }
         }
 
