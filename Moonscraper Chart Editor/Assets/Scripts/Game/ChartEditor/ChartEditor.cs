@@ -177,7 +177,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         gameObject.AddComponent<UITabbing>();
 
-        windowHandleManager = new WindowHandleManager(string.Format("{0} v{1}", Application.productName, Application.version), GetComponent<Settings>().productName);
+        windowHandleManager = new WindowHandleManager(string.Format("{0} v{1} {2}", Application.productName, Application.version, Globals.applicationBranchName), GetComponent<Settings>().productName);
         errorManager = gameObject.AddComponent<ErrorManager>();
         toolManager.Init();
         interactionMethodManager.Init();
