@@ -56,9 +56,9 @@ public static class ChartIOHelper
     {
         { (int)Note.DrumPad.Kick      , Note.Flags.None },
         { (int)Note.DrumPad.Red       , Note.Flags.None },
-        { (int)Note.DrumPad.Yellow    , Note.Flags.ProDrums_Cymbal },
-        { (int)Note.DrumPad.Blue      , Note.Flags.ProDrums_Cymbal },
-        { (int)Note.DrumPad.Orange    , Note.Flags.ProDrums_Cymbal },   // Orange becomes green during 4-lane
+        { (int)Note.DrumPad.Yellow    , Note.Flags.None },
+        { (int)Note.DrumPad.Blue      , Note.Flags.None },
+        { (int)Note.DrumPad.Orange    , Note.Flags.None },   // Orange becomes green during 4-lane
         { (int)Note.DrumPad.Green     , Note.Flags.None },
     };
 

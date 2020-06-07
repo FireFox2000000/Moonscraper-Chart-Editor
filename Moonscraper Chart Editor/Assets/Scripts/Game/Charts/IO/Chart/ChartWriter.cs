@@ -466,7 +466,7 @@ public class ChartWriter
 
                 // Need to write this out if there ISN'T a cymbal flag on the note
                 Note.Flags defaultFlagsForNote;
-                if (!ChartIOHelper.c_drumFlagNumLookup.TryGetValue(writeValue, out defaultFlagsForNote))
+                if (!ChartIOHelper.c_drumNoteDefaultFlagsLookup.TryGetValue(note.rawNote, out defaultFlagsForNote))
                 {
                     defaultFlagsForNote = Note.Flags.None;
                 }
