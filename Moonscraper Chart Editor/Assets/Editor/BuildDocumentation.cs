@@ -30,7 +30,7 @@ public class BuildDocumentation  {
     public static void BuildGameWindowsAll()
     {
         string path = GetSavePath();
-        string folderName = string.Format("{0} v{1}", UnityEngine.Application.productName, UnityEngine.Application.version);
+        string folderName = string.Format("{0} v{1} {2}", UnityEngine.Application.productName, UnityEngine.Application.version, Globals.applicationBranchName);
         string folderPath = path + "/" + folderName;
 
         if (Directory.Exists(folderPath))
