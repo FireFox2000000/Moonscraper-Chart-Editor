@@ -94,28 +94,36 @@ namespace MoonscraperChartEditor.Song.IO
 
             foreach (Song.AudioInstrument audio in EnumX<Song.AudioInstrument>.Values)
             {
-                string filename = string.Empty;
+                // First try any specific filenames for the instrument, then try the instrument name
+                List<string> filenamesToTry = new List<string>();
 
-                string[] locationOverrides = null;
-                if (c_audioStreamLocationOverrideDict.TryGetValue(audio, out locationOverrides))
+                if (c_audioStreamLocationOverrideDict.ContainsKey(audio)) {
+                    filenamesToTry.AddRange(c_audioStreamLocationOverrideDict[audio]);
+                }
+
+                filenamesToTry.Add(audio.ToString());
+
+                // Search for each combination of filenamesToTry + audio extension until we find a file
+                string audioFilepath = null;
+
+                foreach (string testFilename in filenamesToTry)
                 {
-                    foreach (string overrideFilename in locationOverrides)
-                    {
-                        string testFilepath = Path.Combine(directory, overrideFilename.ToLower() + ".ogg");
+                    foreach (string extension in Globals.validAudioExtensions) {
+                        string testFilepath = Path.Combine(directory, testFilename.ToLower() + extension);
 
                         if (File.Exists(testFilepath))
                         {
-                            filename = overrideFilename;
+                            audioFilepath = testFilepath;
                             break;
                         }
                     }
                 }
-                else
-                {
-                    filename = audio.ToString();
+
+                // If we didn't find a file, assign a default value to the audio path
+                if (audioFilepath == null) {
+                    audioFilepath = Path.Combine(directory, audio.ToString().ToLower() + ".ogg");
                 }
 
-                string audioFilepath = Path.Combine(directory, filename.ToLower() + ".ogg");
                 Debug.Log(audioFilepath);
                 song.SetAudioLocation(audio, audioFilepath);
             }
