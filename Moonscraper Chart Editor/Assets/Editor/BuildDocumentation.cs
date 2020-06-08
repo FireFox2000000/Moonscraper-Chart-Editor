@@ -15,22 +15,70 @@ public class BuildDocumentation  {
     [MenuItem("Build Processes/Windows Build With Postprocess")]
     public static void BuildGame()
     {
-        buildSpecificPlayer(BuildTarget.StandaloneWindows);
+        string path = GetSavePath();
+        _BuildGame(path);
     }
 
     [MenuItem("Build Processes/Windows 64 Build With Postprocess")]
     public static void BuildGame64()
     {
-        buildSpecificPlayer(BuildTarget.StandaloneWindows64);
+        string path = GetSavePath();
+        _BuildGame64(path);
     }
 
-    static void buildSpecificPlayer(BuildTarget buildTarget)
+    [MenuItem("Build Processes/Build Full Windows Releases")]
+    public static void BuildGameWindowsAll()
     {
-        // Get filename.
+        string path = GetSavePath();
+        string folderName = string.Format("{0} v{1}", UnityEngine.Application.productName, UnityEngine.Application.version);
+        string folderPath = path + "/" + folderName;
+
+        if (Directory.Exists(folderPath))
+        {
+            Directory.Delete(folderPath);
+        }
+        Directory.CreateDirectory(folderPath);
+        path = folderPath;
+
+        _BuildGame(path);
+        _BuildGame64(path);
+    }
+
+    static void _BuildGame(string path)
+    {
+        string folderName = string.IsNullOrEmpty(Globals.applicationBranchName) ?
+           string.Format("{0} v{1} x86 (32 bit)", UnityEngine.Application.productName, UnityEngine.Application.version)
+           : string.Format("{0} v{1} {2} x86 (32 bit)", UnityEngine.Application.productName, UnityEngine.Application.version, Globals.applicationBranchName);
+        buildSpecificPlayer(BuildTarget.StandaloneWindows, path, folderName);
+    }
+
+    static void _BuildGame64(string path)
+    {
+        string folderName = string.IsNullOrEmpty(Globals.applicationBranchName) ?
+            string.Format("{0} v{1} x86_64 (64 bit)", UnityEngine.Application.productName, UnityEngine.Application.version)
+            : string.Format("{0} v{1} {2} x86_64 (64 bit)", UnityEngine.Application.productName, UnityEngine.Application.version, Globals.applicationBranchName);
+        buildSpecificPlayer(BuildTarget.StandaloneWindows64, path, folderName);
+    }
+
+    static string GetSavePath()
+    {
         string path = EditorUtility.SaveFolderPanel("Choose Location of Built Game", "", "");
-        
+        return path;
+    }
+
+    static void buildSpecificPlayer(BuildTarget buildTarget, string path, string folderName)
+    {
         if (path != string.Empty)
         {
+            string folderPath = path + "/" + folderName;
+            if (Directory.Exists(folderPath))
+            {
+                Directory.Delete(folderPath);
+            }
+            Directory.CreateDirectory(folderPath);
+            path = folderPath;
+            UnityEngine.Debug.Log("Building game at path: " + path);
+
             List<string> levels = new List<string>(EditorBuildSettings.scenes.Length);
 
             for (int i = 0; i < EditorBuildSettings.scenes.Length; ++i)
