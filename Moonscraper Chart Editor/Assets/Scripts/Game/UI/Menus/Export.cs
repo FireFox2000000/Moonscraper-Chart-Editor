@@ -7,8 +7,6 @@ using UnityEngine;
 using System;
 using System.IO;
 using UnityEngine.UI;
-using Un4seen.Bass.Misc;
-using Un4seen.Bass;
 using MoonscraperEngine;
 using MoonscraperEngine.Audio;
 using MoonscraperChartEditor.Song;
@@ -380,84 +378,6 @@ public class Export : DisplayMenu {
         ofs.WriteLine("icon = 0");
 
         ofs.Close();
-    }
-
-    public static void ExportWAV(string srcPath, string destPath, ExportOptions exportOptions)
-    {
-        Debug.Log("Exporting " + srcPath + " to " + destPath);
-        int stream = Bass.BASS_StreamCreateFile(srcPath, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT);
-
-        if (stream == 0 || Bass.BASS_ErrorGetCode() != BASSError.BASS_OK)
-            throw new Exception(Bass.BASS_ErrorGetCode().ToString());
-
-        WaveWriter ww = new WaveWriter(destPath, stream, true);
-
-        float[] data = new float[32768];
-        while (Bass.BASS_ChannelIsActive(stream) == BASSActive.BASS_ACTIVE_PLAYING)
-        {
-            // get the sample data as float values as well
-            int length = Bass.BASS_ChannelGetData(stream, data, 32768);
-            // and write the data to the wave file
-            if (length > 0)
-                ww.Write(data, length);
-        }
-
-        ww.Close();
-        Bass.BASS_StreamFree(stream);
-        /*
-        const int WAV_HEADER_LENGTH = 44;
-
-        
-
-        FileStream ifs = null;
-        BinaryReader br = null;
-
-        FileStream ofs = null;
-        BinaryWriter bw = null;
-        
-        try
-        {
-            ifs = new FileStream(srcPath, FileMode.Open, FileAccess.Read);
-            br = new BinaryReader(ifs);
-
-            ofs = new FileStream(destPath, FileMode.OpenOrCreate, FileAccess.Write);
-            bw = new BinaryWriter(ofs);
-
-            ifs.Seek(0, SeekOrigin.Begin);
-
-            byte[] header = br.ReadBytes(WAV_HEADER_LENGTH);
-
-            ifs.Seek(4, SeekOrigin.Begin);
-            int chunkLength = br.ReadInt32(); // bytes 4 to 7
-
-            ifs.Seek(16, SeekOrigin.Current);
-            int frequency = br.ReadInt32();
-            int byterate = br.ReadInt32();
-
-            ifs.Seek(WAV_HEADER_LENGTH, SeekOrigin.Begin);
-            byte[] chunk = br.ReadBytes(chunkLength); 
-
-            
-        }
-        catch
-        {
-            Debug.LogError("Error with writing wav file");
-        }
-        finally
-        {
-            try { br.Close(); }
-            catch { }
-
-            try { ifs.Close(); }
-            catch { }
-
-            try { bw.Close(); }
-            catch { }
-
-            try { ofs.Close(); }
-            catch { }
-        }
-        */
     }
 
     static readonly Dictionary<Song.AudioInstrument, string> audioInstrumentToCHNameMap = new Dictionary<Song.AudioInstrument, string>()
