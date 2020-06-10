@@ -485,6 +485,8 @@ public class Song {
     {
         if (File.Exists(path))
             audioLocations[(int)audio] = Path.GetFullPath(path);
+        else if (string.IsNullOrEmpty(path))
+            audioLocations[(int)audio] = string.Empty;
     }
 
     public static Chart.GameMode InstumentToChartGameMode(Instrument instrument)
