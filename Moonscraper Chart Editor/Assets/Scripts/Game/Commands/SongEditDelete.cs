@@ -67,13 +67,15 @@ public class SongEditDelete : SongEditCommand
         if (subActions != null && nextSeperateNoteFromDeleted != null)    // Overwrite can be null for special case with song edit add, as corrections can mess SEA up
         {
             // Perform note corrections
-            Note.Flags flags = nextSeperateNoteFromDeleted.flags;
+            Note.Flags wholeChordFlags = nextSeperateNoteFromDeleted.flags;
             if (nextSeperateNoteFromDeleted.cannotBeForced)
-                flags &= ~Note.Flags.Forced;
+                wholeChordFlags &= ~Note.Flags.Forced;
+
+            wholeChordFlags &= ~Note.PER_NOTE_FLAGS;
 
             foreach (Note chordNote in nextSeperateNoteFromDeleted.chord)
             {
-                if (flags != chordNote.flags)
+                if (wholeChordFlags != (chordNote.flags & ~Note.PER_NOTE_FLAGS))
                 {
                     bool willBeDeleted = false;
                     foreach (SongObject so in songObjects)
@@ -89,7 +91,7 @@ public class SongEditDelete : SongEditCommand
                     if (willBeDeleted)      // If we continue it may false flag BatchedSongEditCommand to fixed forced flag on a note that shouldn't be corrected
                         continue;
 
-                    Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, flags);
+                    Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, wholeChordFlags | (chordNote.flags & Note.PER_NOTE_FLAGS));
 
                     AddAndInvokeSubAction(new DeleteAction(chordNote), subActions);
                     AddAndInvokeSubAction(new AddAction(newChordNote, BaseAction.TypeTag.DeleteForcedCorrection), subActions);
