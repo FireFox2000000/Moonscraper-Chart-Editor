@@ -11,19 +11,19 @@ Image files
   fretboard-0		(Recommended size: 512x1024)
 
 Notes- Replace [x] with numbers 0-4 for each image
-	[x]_reg_strum		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom
-	[x]_reg_hopo		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom
-	[x]_reg_tap			Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom
-	[x]_reg_cymbal		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom
-	[x]_sp_strum		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom
-	[x]_sp_hopo			Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom
-	[x]_sp_tap			Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom
-	[x]_sp_cymbal		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom
+	[x]_reg_strum		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_reg_hopo		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_reg_tap			Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_reg_cymbal		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_strum		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_hopo			Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_tap			Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_cymbal		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 
-	5_reg_strum			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom
-	5_reg_hopo			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom
-	5_sp_strum			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom
-	5_sp_hopo			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom
+	5_reg_strum			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	5_reg_hopo			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	5_sp_strum			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	5_sp_hopo			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 
 Strikeline Frets- Replace [x] with numbers 0-4 for each image
 	[x]_fret_anim		image size (128, 64)
@@ -41,17 +41,17 @@ Strikeline Frets- Replace [x] with numbers 0-4 for each image
 	fret_stem			image size (64, 16)
 
 GHL Notes- Replace [x] with numbers 0-1 for each image
-	[x]_reg_strum_ghl		Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom
-	[x]_reg_hopo_ghl		Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom
-	[x]_reg_tap_ghl			Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom
-	[x]_sp_strum_ghl		Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom
-	[x]_sp_hopo_ghl			Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom
-	[x]_sp_tap_ghl			Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom
+	[x]_reg_strum_ghl		Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_reg_hopo_ghl		Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_reg_tap_ghl			Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_strum_ghl		Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_hopo_ghl			Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_tap_ghl			Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 
-    2_reg_strum_ghl			Individual sprite size (400, 50) aligned on sprite sheet left to right, top to bottom
-	2_reg_hopo_ghl			Individual sprite size (400, 50) aligned on sprite sheet left to right, top to bottom
-	2_sp_strum_ghl			Individual sprite size (400, 50) aligned on sprite sheet left to right, top to bottom
-	2_sp_hopo_ghl			Individual sprite size (400, 50) aligned on sprite sheet left to right, top to bottom
+    2_reg_strum_ghl			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	2_reg_hopo_ghl			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	2_sp_strum_ghl			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	2_sp_hopo_ghl			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 
 GHL Frets- Replace [x] with numbers 0-5 for each image
 	[x]_fret_base_ghl		1 note of image size (100, 100)

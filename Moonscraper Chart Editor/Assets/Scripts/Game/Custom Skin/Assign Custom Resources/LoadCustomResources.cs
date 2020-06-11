@@ -17,7 +17,7 @@ public class LoadCustomResources : MonoBehaviour {
     const int OPEN_NOTE_TEXTURE_1X1_WIDTH = 512, OPEN_NOTE_TEXTURE_1X1_HEIGHT = 64;
 
     const int GHL_NOTE_TEXTURE_1X1_WIDTH = 100,         GHL_NOTE_TEXTURE_1X1_HEIGHT = 100;
-    const int GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH = 400,    GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT = 40;
+    const int GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH = 512,    GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT = 64;
 
     const int GHL_FRET_WIDTH = 100, GHL_FRET_HEIGHT = 100;
 
@@ -147,12 +147,21 @@ public class LoadCustomResources : MonoBehaviour {
 
             foreach (string path in filepaths)
             {
-                filepathsDictionary.Add(Path.GetFileNameWithoutExtension(path), path);
+                string assetKey = Path.GetFileNameWithoutExtension(path);
+                if (!filepathsDictionary.ContainsKey(assetKey))
+                {
+                    filepathsDictionary.Add(assetKey, path);
+                }
+                else
+                {
+                    Debug.LogWarning("Found a duplicate custom asset with under a different file extenstion. Ignoring asset " + path);
+                    continue;
+                }
 
                 // Checking if the file provided is a background. We have no limit on the amount of backgrounds we can load, so we can't pre-define them like we do above.
-                if (System.Text.RegularExpressions.Regex.Match(Path.GetFileNameWithoutExtension(path), @"background-[0-9]+").Success)
+                if (System.Text.RegularExpressions.Regex.Match(assetKey, @"background-[0-9]+").Success)
                 {
-                    resources.Add(new CustomTexture(Path.GetFileNameWithoutExtension(path), 1920, 1080));
+                    resources.Add(new CustomTexture(assetKey, 1920, 1080));
                     ++bgCount;
                 }
             }

@@ -106,31 +106,38 @@ namespace DaVikingCode.AssetPacker {
                 {
                     TextureToPack.GridSlice sliceParams = itemToRaster.sliceParams;
 
-                    if (sliceParams.width > baseTexture.width || sliceParams.height > baseTexture.height)
+                    bool isValidStandaloneSprite = sliceParams.smallerSizeValid && baseTexture.width <= sliceParams.width && baseTexture.height <= sliceParams.height;
+
+                    if (!isValidStandaloneSprite && (sliceParams.width > baseTexture.width || sliceParams.height > baseTexture.height))
                     {
-                        throw new Exception(string.Format("Width and/or height of texture {0} is less than the provided slice parameters.", itemToRaster.id));
+                        Debug.LogError(string.Format("Skipping loading of texture {0}. Width and/or height of texture is less than the provided slice parameters.", itemToRaster.id));
+                        continue;
                     }
 
-                    if (!(baseTexture.width % sliceParams.width == 0 && baseTexture.height % sliceParams.height == 0))
+                    if (!isValidStandaloneSprite && !(baseTexture.width % sliceParams.width == 0 && baseTexture.height % sliceParams.height == 0))
                     {
-                        throw new Exception(string.Format("Width and/or height of texture {0} not a multiple of the provided slice parameters.", itemToRaster.id));
+                        Debug.LogError(string.Format("Skipping loading of texture {0}. Width and/or height of texture is not a multiple of the provided slice parameters.", itemToRaster.id));
+                        continue;
                     }
 
-                    int totalRows = baseTexture.height / sliceParams.height;
-                    int totalColumns = baseTexture.width / sliceParams.width;
+                    int totalRows = isValidStandaloneSprite ? 1 : baseTexture.height / sliceParams.height;
+                    int totalColumns = isValidStandaloneSprite ? 1 : baseTexture.width / sliceParams.width;
 
                     int textureIndex = 0;
+
+                    int singleSpriteWidth = baseTexture.width / totalColumns;
+                    int singleSpriteHeight = baseTexture.height / totalRows;
 
                     // Scan each slice left to right, top to bottom
                     for (int rowIndex = 0; rowIndex < totalRows; ++rowIndex)
                     {
                         for (int columnIndex = 0; columnIndex < totalColumns; ++columnIndex)
                         {
-                            int x = columnIndex * sliceParams.width;
-                            int y = (totalRows - rowIndex - 1) * sliceParams.height;    // Starting from the top, not the bottom. Specific to GH3 sprite sheets, not nesacarily universal.
+                            int x = columnIndex * singleSpriteWidth;
+                            int y = (totalRows - rowIndex - 1) * singleSpriteHeight;    // Starting from the top, not the bottom. Specific to GH3 sprite sheets, not nesacarily universal.
 
-                            Color[] pixels = baseTexture.GetPixels(x, y, sliceParams.width, sliceParams.height);
-                            Texture2D texture = new Texture2D(sliceParams.width, sliceParams.height);
+                            Color[] pixels = baseTexture.GetPixels(x, y, singleSpriteWidth, singleSpriteHeight);
+                            Texture2D texture = new Texture2D(singleSpriteWidth, singleSpriteHeight);
                             texture.SetPixels(pixels);
                             texture.Apply();
 
@@ -153,7 +160,7 @@ namespace DaVikingCode.AssetPacker {
 			List<Rect> rectangles = new List<Rect>();
 			for (int i = 0; i < textures.Count; i++)
 				if (textures[i].width > textureSize || textures[i].height > textureSize)
-					throw new Exception("A texture size is bigger than the sprite sheet size!");
+					throw new Exception("A texture size is bigger than the sprite sheet size!");    // TODO, remove this, can't catch exceptions in coroutines without tedious workarounds!
 				else
 					rectangles.Add(new Rect(0, 0, textures[i].width, textures[i].height));
 

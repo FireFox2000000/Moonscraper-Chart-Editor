@@ -7,11 +7,13 @@ namespace DaVikingCode.AssetPacker {
         {
             public int width;
             public int height;
+            public bool smallerSizeValid;   // if a file is passed in that is smaller than the provided slice params we allow it to pass as a single sprite
 
-            public GridSlice(int width, int height)
+            public GridSlice(int width, int height, bool smallerSizeValid = true)
             {
                 this.width = width;
                 this.height = height;
+                this.smallerSizeValid = smallerSizeValid;
             }
         }
 
