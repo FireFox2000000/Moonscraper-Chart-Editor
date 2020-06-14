@@ -29,6 +29,13 @@ public class SettingsController : DisplayMenu
     public Slider rhythmSourceSlider;
 	public Slider keysSourceSlider;
     public Slider drumSourceSlider;
+
+    public Slider drum2SourceSlider;
+
+    public Slider drum3SourceSlider;
+
+    public Slider drum4SourceSlider;
+
     public Slider clapSourceSlider;
     public Slider sfxSlider;
 	public Slider vocalSourceSlider;
@@ -113,6 +120,9 @@ public class SettingsController : DisplayMenu
         Globals.gameSettings.vol_rhythm = rhythmSourceSlider.value;
         Globals.gameSettings.vol_keys = keysSourceSlider.value;
         Globals.gameSettings.vol_drums = drumSourceSlider.value;
+        Globals.gameSettings.vol_drums2 = drum2SourceSlider.value;
+        Globals.gameSettings.vol_drums3 = drum3SourceSlider.value;
+        Globals.gameSettings.vol_drums4 = drum4SourceSlider.value;
         Globals.gameSettings.vol_vocals = vocalSourceSlider.value;
         Globals.gameSettings.vol_crowd = crowdSourceSlider.value;
         Globals.gameSettings.sfxVolume = sfxSlider.value;
@@ -194,6 +204,9 @@ public class SettingsController : DisplayMenu
         bassSourceSlider.value = Globals.gameSettings.vol_bass;
         rhythmSourceSlider.value = Globals.gameSettings.vol_rhythm;
         drumSourceSlider.value = Globals.gameSettings.vol_drums;
+        drum2SourceSlider.value = Globals.gameSettings.vol_drums2;
+        drum3SourceSlider.value = Globals.gameSettings.vol_drums3;
+        drum4SourceSlider.value = Globals.gameSettings.vol_drums4;
         sfxSlider.value = Globals.gameSettings.sfxVolume;
 		keysSourceSlider.value = Globals.gameSettings.vol_keys;
 		vocalSourceSlider.value = Globals.gameSettings.vol_vocals;
@@ -439,9 +452,14 @@ public class SettingsController : DisplayMenu
                     QualitySettings.antiAliasing = 4;
                     break;
                 }
-            default:
+            case 3:
                 {
                     QualitySettings.antiAliasing = 8;
+                    break;
+                }
+            case 4:
+                {
+                    QualitySettings.antiAliasing = 16;
                     break;
                 }
         }
