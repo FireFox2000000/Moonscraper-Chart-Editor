@@ -263,7 +263,7 @@ public class CursorSelect : ToolObject
                 if ((SongObject.ID)chartObject.classID == SongObject.ID.Note)
                 {
                     // If the object is within a lane that is not currently included we need to skip over this note
-                    if (((Note)chartObject).LaneNumber() > editor.laneInfo.laneCount)
+                    if (((Note)chartObject).ShouldBeCulledFromLanes(editor.laneInfo))
                     {
                         continue;
                     }

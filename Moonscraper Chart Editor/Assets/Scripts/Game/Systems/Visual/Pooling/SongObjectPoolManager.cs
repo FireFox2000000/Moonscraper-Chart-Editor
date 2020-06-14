@@ -195,7 +195,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         for (int i = collectedNotesInRange.Count - 1; i >= 0; --i)
         {
             Note note = collectedNotesInRange[i];
-            if (!note.IsOpenNote() && ((1 << note.rawNote) & editor.laneInfo.laneMask) == 0)
+            if (note.ShouldBeCulledFromLanes(editor.laneInfo))
                 collectedNotesInRange.RemoveAt(i);
         }
     }

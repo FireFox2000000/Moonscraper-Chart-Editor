@@ -197,16 +197,9 @@ public static class NoteFunctions {
             return note.guitarFret == Note.GuitarFret.Open;
     }
 
-    public static int LaneNumber(this Note note)
+    public static bool ShouldBeCulledFromLanes(this Note note, LaneInfo laneInfo)
     {
-        if (note.IsOpenNote())
-        {
-            return 0;
-        }
-        else
-        {
-            return note.rawNote + 1;    // Open notes/kicks take up the last slot, but is considered lane 0
-        }
+        return !note.IsOpenNote() && ((1 << note.rawNote) & laneInfo.laneMask) == 0;
     }
 
     /// <summary>
