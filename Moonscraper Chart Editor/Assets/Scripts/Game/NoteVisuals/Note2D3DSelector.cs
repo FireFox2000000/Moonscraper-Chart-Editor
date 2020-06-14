@@ -54,7 +54,7 @@ public class Note2D3DSelector : MonoBehaviour {
         Note.NoteType noteType = NoteVisualsManager.GetVisualNoteType(note);
         Note.SpecialType specialType = NoteVisualsManager.IsStarpower(note);
 
-        int arrayPos = NoteVisuals2DManager.GetNoteArrayPos(note);
+        int arrayPos = NoteVisuals2DManager.GetNoteArrayPos(note, ChartEditor.Instance.laneInfo);
         Note.NoteType visualNoteType = noteType;
 
         if (!Globals.ghLiveMode)

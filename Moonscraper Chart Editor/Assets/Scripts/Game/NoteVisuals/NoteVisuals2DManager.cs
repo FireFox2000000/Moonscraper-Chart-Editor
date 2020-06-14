@@ -57,7 +57,7 @@ public class NoteVisuals2DManager : NoteVisualsManager {
             // We have a note. Here we're figuring out which set of sprites will be used to display that sprite and assigning them to currentAnimationData.
             // The actual setting of the sprite in the renderer will happen later on in the Animate() function
             {
-                int noteArrayPos = GetNoteArrayPos(note);
+                int noteArrayPos = GetNoteArrayPos(note, ChartEditor.Instance.laneInfo);
                 Note.NoteType visualNoteType = noteType;
 
                 if (!Globals.ghLiveMode)
@@ -115,9 +115,14 @@ public class NoteVisuals2DManager : NoteVisualsManager {
         }
     }
 
-    public static int GetNoteArrayPos(Note note)    // Note that this isn't actually an arry position but basically an identifier for which colour to show from the custom resources. This used to be an array position before the refactor
+    public static int GetNoteArrayPos(Note note, LaneInfo laneInfo)    // Note that this isn't actually an arry position but basically an identifier for which colour to show from the custom resources. This used to be an array position before the refactor
     {
         int arrayPos = note.rawNote;
+
+        if (note.ShouldBeCulledFromLanes(laneInfo))     // Should have been culled, but we want to display it anyway, clamp it to the last lane
+        {
+            arrayPos = Mathf.Min(note.rawNote, laneInfo.laneCount - 1);    // Clamp to the edge of the lanes
+        }
 
         if (Globals.ghLiveMode)
         {
@@ -133,7 +138,7 @@ public class NoteVisuals2DManager : NoteVisualsManager {
             arrayPos += 1;
             if (arrayPos > (int)Note.GuitarFret.Orange)
                 arrayPos = 0;
-        }
+        }        
 
         return arrayPos;
     }

@@ -55,10 +55,15 @@ public class BaseGameplayRulestate {
                 {
                     foreach (Note chordNote in noteKnowledge.note.chord)
                     {
-                        chordNote.controller.sustainBroken = true;
+                        var controller = chordNote.controller;
 
-                        if (noteStreak > 0)
-                            chordNote.controller.DeactivateNote();
+                        if (controller != null)
+                        {
+                            controller.sustainBroken = true;
+
+                            if (noteStreak > 0)
+                                controller.DeactivateNote();
+                        }
                     }
 
                     ++missCount;

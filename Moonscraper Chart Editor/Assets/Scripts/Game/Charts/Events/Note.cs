@@ -113,10 +113,19 @@ public class Note : ChartObject
 
     public string GetDrumString(LaneInfo laneInfo)
     {
+        string str = null;
+
         if (laneInfo.laneCount < 5 && drumPad == DrumPad.Orange)
-            return DrumPad.Green.ToString();
+            str = DrumPad.Green.ToString();
         else
-            return drumPad.ToString();
+            str = drumPad.ToString();
+
+        if (this.ShouldBeCulledFromLanes(laneInfo))
+        {
+            str += " (Lane " + (this.rawNote + 1) + ")";
+        }
+
+        return str;
     }
 
     /// <summary>
@@ -358,6 +367,30 @@ public class Note : ChartObject
         }
     }
 
+    public int GetRawNoteLaneCapped(LaneInfo laneInfo)
+    {
+        int noteIndex = rawNote;
+
+        if (!this.IsOpenNote())
+        {
+            noteIndex = UnityEngine.Mathf.Min(rawNote, laneInfo.laneCount - 1);
+        }
+
+        return noteIndex;
+    }
+
+    public int GetMaskCappedLanes(LaneInfo laneInfo)
+    {
+        int mask = 0;
+
+        foreach (Note note in this.chord)
+        {
+            mask |= 1 << note.GetRawNoteLaneCapped(laneInfo);
+        }
+
+        return mask;
+    }
+
     public int GetMaskWithRequiredFlags(Flags flags)
     {
         int mask = 0;
@@ -366,6 +399,29 @@ public class Note : ChartObject
         {
             if (note.flags == flags)
                 mask |= (1 << note.rawNote);
+        }
+
+        return mask;
+    }
+
+    public int GetMaskWithRequiredFlagsLaneCapped(Flags flags, LaneInfo laneInfo)
+    {
+        int mask = 0;
+        int processedNotesMask = 0;
+
+        foreach (Note note in this.chord)
+        {
+            int noteIndex = note.GetRawNoteLaneCapped(laneInfo);
+            if ((processedNotesMask & (1 << noteIndex)) != 0)
+            {
+                // There may have already been a note on the edge of the lane cap. Use that note instead.
+                continue;
+            }
+
+            if (note.flags == flags)
+                mask |= (1 << note.rawNote);
+
+            processedNotesMask |= (1 << note.rawNote);
         }
 
         return mask;

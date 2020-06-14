@@ -53,7 +53,7 @@ public class DrumsNoteHitAndMissDetect {
 
         if (nextNoteToHit != null)
         {
-            int noteMask = nextNoteToHit.note.mask;
+            int noteMask = nextNoteToHit.note.GetMaskCappedLanes(laneInfo);
             DrumsNoteHitKnowledge.InputTiming hitTimingTracker = nextNoteToHit.standardPadTiming;
             bool standardPadSuccess = ShouldHitAndProcessMiss(laneInfo, time, inputMask, noteMask, hitTimingTracker);
 
@@ -80,7 +80,7 @@ public class DrumsNoteHitAndMissDetect {
             // process toms
             bool tomsHitSuccess = false;
             {
-                int tomsNoteMask = nextNoteToHit.note.GetMaskWithRequiredFlags(Note.Flags.None);
+                int tomsNoteMask = nextNoteToHit.note.GetMaskWithRequiredFlagsLaneCapped(Note.Flags.None, laneInfo);
                 DrumsNoteHitKnowledge.InputTiming tomsHitTimingTracker = nextNoteToHit.standardPadTiming;
                 tomsHitSuccess = ShouldHitAndProcessMiss(laneInfo, time, tomsInputMask, tomsNoteMask, tomsHitTimingTracker);
             }
@@ -88,7 +88,7 @@ public class DrumsNoteHitAndMissDetect {
             // process cymbals
             bool cymbalsHitSuccess = false;
             {
-                int cymbalsNoteMask = nextNoteToHit.note.GetMaskWithRequiredFlags(Note.Flags.ProDrums_Cymbal);
+                int cymbalsNoteMask = nextNoteToHit.note.GetMaskWithRequiredFlagsLaneCapped(Note.Flags.ProDrums_Cymbal, laneInfo);
                 DrumsNoteHitKnowledge.InputTiming cymbalsHitTimingTracker = nextNoteToHit.cymbalPadTiming;
                 cymbalsHitSuccess = ShouldHitAndProcessMiss(laneInfo, time, cymbalsInputMask, cymbalsNoteMask, cymbalsHitTimingTracker);
             }
