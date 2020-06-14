@@ -1,3 +1,18 @@
+1.3.4
+	CHANGES
+	-Display 5th lane notes in 4th lane if no note occupies said 4th lane. This more accurately represents the GH standard for converting 5 lane charts to 4 lane. 
+
+	FIXES
+	-Downgrade Unity version back down to 2018.3.0f2 due to issues with builds with newer versions having broken UI input.
+	-Fixed delete action writing per note flags over the whole chord.
+	-Fixed audio file locations not being cleared out properly.
+	-Handle exceptions being thrown during custom resource loading to fix application lockup during boot. Increased allowed ghl open note size due to misdocumented sizings allowed beforehand that resulted in some created packs being created incorrectly, now these packs are valid.
+	-Fixed errors when setting group fret type to open over selected chords
+	-Fixed errors when trying to reselect notes after moving notes over lanes that resulted in some notes getting overwritten by themselves
+	-Fixed group select fret selector tool not abiding by current lane count and showing guitar lane options instead of dedicated drums options.
+	-Fixed selected area scanning not culling notes based on the amount of lanes currently active.
+	-Fixed completely malformed drums hit window.
+
 1.3.3.9
 	NEW FEATURES
 	-Implemented a way for Moonscraper to check and notify user for updated releases whenever a new official release is added on Github.
