@@ -123,7 +123,7 @@ public class LaneInfo : MonoBehaviour {
         const float endOffset = positionRangeMax;
 
         float incrementFactor = (endOffset - startOffset) / (laneCount - 1.0f);
-        float position = startOffset + laneNum * incrementFactor;
+        float position = Mathf.Min(startOffset + laneNum * incrementFactor, endOffset);
 
         if (flipLefty)
             position *= -1;

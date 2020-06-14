@@ -32,9 +32,17 @@ public class NoteVisualsManager : MonoBehaviour {
     {
         Note.NoteType noteType = note.type;
 
-        if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums && Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.Standard)
+        if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums)
         {
-            noteType = Note.NoteType.Strum;
+            if (Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.Standard)
+            {
+                noteType = Note.NoteType.Strum;
+            }
+
+            if (note.ShouldBeCulledFromLanes(ChartEditor.Instance.laneInfo))
+            {
+                noteType = Note.NoteType.Tap;   // Gives the user some kind of clue that this note has come from the 5th lane
+            } 
         }
 
         return noteType;

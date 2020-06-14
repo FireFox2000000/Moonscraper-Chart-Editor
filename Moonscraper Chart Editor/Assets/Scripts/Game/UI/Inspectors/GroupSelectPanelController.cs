@@ -12,7 +12,11 @@ public class GroupSelectPanelController : MonoBehaviour
     [SerializeField]
     Dropdown fretSelectDropdown;
     [SerializeField]
+    Dropdown drumsFretSelectDropdown;
+    [SerializeField]
     Dropdown ghlFretSelectDropdown;
+    [SerializeField]
+    Dropdown drums4LaneSelectDropdown;
     [SerializeField]
     Button setNoteNatural;
     [SerializeField]
@@ -24,14 +28,59 @@ public class GroupSelectPanelController : MonoBehaviour
     [SerializeField]
     Button setNoteCymbal;
 
+    Dictionary<Chart.GameMode, Dropdown> laneSelectForGamemodeLookup = new Dictionary<Chart.GameMode, Dropdown>();
+    Dictionary<Chart.GameMode, Dictionary<int, Dropdown>> laneSelectLaneCountOverrideLookup = new Dictionary<Chart.GameMode, Dictionary<int, Dropdown>>();
+    Dropdown currentFretSelector = null;
+
     // Use this for initialization
     void Start () {
+        // Setup lane selector dictionaries and hide all selector varients
+        {
+            laneSelectForGamemodeLookup[Chart.GameMode.Guitar] = fretSelectDropdown;
+            laneSelectForGamemodeLookup[Chart.GameMode.Drums] = drumsFretSelectDropdown;
+            laneSelectForGamemodeLookup[Chart.GameMode.GHLGuitar] = ghlFretSelectDropdown;
+
+            var drumsOverrideLaneSelectDict = new Dictionary<int, Dropdown>();
+            drumsOverrideLaneSelectDict[4] = drums4LaneSelectDropdown;
+            laneSelectLaneCountOverrideLookup[Chart.GameMode.Drums] = drumsOverrideLaneSelectDict;
+
+            currentFretSelector = laneSelectForGamemodeLookup[Chart.GameMode.Guitar];
+
+            foreach (var dropKeyVal in laneSelectForGamemodeLookup)
+            {
+                dropKeyVal.Value.gameObject.SetActive(false);
+            }
+
+            foreach (var overrideKeyVal in laneSelectLaneCountOverrideLookup)
+            {
+                foreach (var dropKeyVal in overrideKeyVal.Value)
+                {
+                    dropKeyVal.Value.gameObject.SetActive(false);
+                }
+            }
+        }
+
         editor = ChartEditor.Instance;
         editor.events.chartReloadedEvent.Register(UpdateUIActiveness);
+        editor.events.lanesChangedEvent.Register(OnLanesChanged);
         editor.events.drumsModeOptionChangedEvent.Register(UpdateUIActiveness);
 
         UpdateUIActiveness();
 
+    }
+
+    Dropdown GetCurrentFretSelector(Chart.GameMode gameMode, int laneCount)
+    {
+        Dropdown dropdown = fretSelectDropdown;
+
+        Dictionary<int, Dropdown> overrideLookup;
+        if (!(laneSelectLaneCountOverrideLookup.TryGetValue(gameMode, out overrideLookup) && overrideLookup.TryGetValue(laneCount, out dropdown)))
+        {
+            // No overrides present, go with the defaults
+            laneSelectForGamemodeLookup.TryGetValue(gameMode, out dropdown);
+        }
+
+        return dropdown;
     }
 
     void Update()
@@ -40,10 +89,16 @@ public class GroupSelectPanelController : MonoBehaviour
             Shortcuts();
     }
 
+    void OnLanesChanged(in int laneCount)
+    {
+        UpdateUIActiveness();
+    }
+
     void UpdateUIActiveness()
     {
-        fretSelectDropdown.gameObject.SetActive(!Globals.ghLiveMode);
-        ghlFretSelectDropdown.gameObject.SetActive(!fretSelectDropdown.gameObject.activeSelf);
+        currentFretSelector.gameObject.SetActive(false);
+        currentFretSelector = GetCurrentFretSelector(editor.currentGameMode, editor.laneInfo.laneCount);
+        currentFretSelector.gameObject.SetActive(true);
 
         bool drumsMode = Globals.drumMode;
         setNoteStrum.gameObject.SetActive(!drumsMode);
@@ -66,15 +121,51 @@ public class GroupSelectPanelController : MonoBehaviour
             setNoteCymbal.onClick.Invoke();
     }
 
+    int GetOpenNoteForGameMode(Chart.GameMode gameMode)
+    {
+        int rawNoteValue = 0;
+        switch (gameMode)
+        {
+            case Chart.GameMode.Guitar:
+                {
+                    rawNoteValue = (int)Note.GuitarFret.Open;
+                    break;
+                }
+            case Chart.GameMode.Drums:
+                {
+                    rawNoteValue = (int)Note.DrumPad.Kick;
+                    break;
+                }
+            case Chart.GameMode.GHLGuitar:
+                {
+                    rawNoteValue = (int)Note.GHLiveGuitarFret.Open;
+                    break;
+                }
+            default:
+                {
+                    Debug.Assert(false, "Unhandled open note selection for gamemode " + editor.currentChart.gameMode);
+                    break;
+                }
+        }
+
+        return rawNoteValue;
+    }
+
     public void ApplyFretDropdownSelection()
     {
-        if (fretSelectDropdown.gameObject.activeSelf && fretSelectDropdown.value >= 0 && fretSelectDropdown.value < 6)
+        Dropdown activeDropDown = currentFretSelector;
+
+        int totalLanesPlusOpen = editor.laneInfo.laneCount + 1;
+        if (activeDropDown && activeDropDown.value >= 0 && activeDropDown.value < totalLanesPlusOpen)
         {
-            SetFretType(fretSelectDropdown.value);
-        }
-        else if (ghlFretSelectDropdown.gameObject.activeSelf && ghlFretSelectDropdown.value >= 0 && ghlFretSelectDropdown.value < 7)
-        {
-            SetFretType(ghlFretSelectDropdown.value);
+            int rawNoteValue = activeDropDown.value;
+            if (activeDropDown.value == editor.laneInfo.laneCount)
+            {
+                // Set to be the open note
+                rawNoteValue = GetOpenNoteForGameMode(editor.currentGameMode);
+            }
+
+            SetFretType(rawNoteValue);
         }
     }
 
@@ -82,7 +173,8 @@ public class GroupSelectPanelController : MonoBehaviour
     {
         List<SongObject> selected = new List<SongObject>();
 
-        List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
+        List<SongEditCommand> deleteCommands = new List<SongEditCommand>();
+        List<SongEditCommand> addCommands = new List<SongEditCommand>();
         
         foreach (ChartObject chartObject in editor.selectedObjectsManager.currentSelectedObjects)
         {
@@ -94,14 +186,19 @@ public class GroupSelectPanelController : MonoBehaviour
                     Note newNote = new Note(note);
                     newNote.rawNote = noteNumber;
 
-                    songEditCommands.Add(new SongEditDelete(note));
-                    songEditCommands.Add(new SongEditAdd(newNote));
+                    deleteCommands.Add(new SongEditDelete(note));
+                    addCommands.Add(new SongEditAdd(newNote));
                     selected.Add(newNote);
                 }
             }
             else
                 selected.Add(chartObject);
         }
+
+        // Delete commands must come first, as add commands can overwrite notes we might try to delete later
+        List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
+        songEditCommands.AddRange(deleteCommands);
+        songEditCommands.AddRange(addCommands);
 
         editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
         editor.selectedObjectsManager.TryFindAndSelectSongObjects(selected);

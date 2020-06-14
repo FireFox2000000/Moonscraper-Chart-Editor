@@ -163,7 +163,8 @@ public class SelectedObjectsManager
                 int insertionIndex = SongObjectHelper.FindObjectPosition(chartObject, chart.chartObjects);
                 if (insertionIndex != SongObjectHelper.NOTFOUND)
                 {
-                    foundSongObjects.Add(chart.chartObjects[insertionIndex]);
+                    if (!foundSongObjects.Contains(chart.chartObjects[insertionIndex]))
+                        foundSongObjects.Add(chart.chartObjects[insertionIndex]);
                 }
                 else
                 {
@@ -175,7 +176,8 @@ public class SelectedObjectsManager
                 int insertionIndex = SongObjectHelper.FindObjectPosition(syncTrack, song.syncTrack);
                 if (insertionIndex != SongObjectHelper.NOTFOUND)
                 {
-                    foundSongObjects.Add(song.syncTrack[insertionIndex]);
+                    if (!foundSongObjects.Contains(song.syncTrack[insertionIndex]))
+                        foundSongObjects.Add(song.syncTrack[insertionIndex]);
                 }
                 else
                 {
@@ -187,7 +189,8 @@ public class SelectedObjectsManager
                 int insertionIndex = SongObjectHelper.FindObjectPosition(eventObject, song.eventsAndSections);
                 if (insertionIndex != SongObjectHelper.NOTFOUND)
                 {
-                    foundSongObjects.Add(song.eventsAndSections[insertionIndex]);
+                    if (!foundSongObjects.Contains(song.eventsAndSections[insertionIndex]))
+                        foundSongObjects.Add(song.eventsAndSections[insertionIndex]);
                 }
                 else
                 {

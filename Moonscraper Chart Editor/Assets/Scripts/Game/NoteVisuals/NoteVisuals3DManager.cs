@@ -90,23 +90,30 @@ public class NoteVisuals3DManager : NoteVisualsManager
                 LaneInfo laneInfo = editor.laneInfo;
                 Material colorMat;
 
+                int noteIndex = note.rawNote;
+
+                if (note.ShouldBeCulledFromLanes(laneInfo))     // Should have been culled, but we want to display it anyway, clamp it to the last lane
+                {
+                    noteIndex = Mathf.Min(note.rawNote, laneInfo.laneCount - 1);    // Clamp to the edge of the lanes
+                }
+
                 if (isTool)
                 {
                     switch (visualNoteType)
                     {
                         case Note.NoteType.Tap:
                             {
-                                colorMat = resources.GetToolTapMaterial(gameMode, laneInfo, note.rawNote);
+                                colorMat = resources.GetToolTapMaterial(gameMode, laneInfo, noteIndex);
                                 break;
                             }
                         case Note.NoteType.Cymbal:
                             {
-                                colorMat = resources.GetToolCymbalMaterial(gameMode, laneInfo, note.rawNote);
+                                colorMat = resources.GetToolCymbalMaterial(gameMode, laneInfo, noteIndex);
                                 break;
                             }
                         default:
                             {
-                                colorMat = resources.GetToolStrumMaterial(gameMode, laneInfo, note.rawNote);
+                                colorMat = resources.GetToolStrumMaterial(gameMode, laneInfo, noteIndex);
                                 break;
                             }
                     }
@@ -117,17 +124,17 @@ public class NoteVisuals3DManager : NoteVisualsManager
                     {
                         case Note.NoteType.Tap:
                             {
-                                colorMat = resources.GetTapMaterial(gameMode, laneInfo, note.rawNote);
+                                colorMat = resources.GetTapMaterial(gameMode, laneInfo, noteIndex);
                                 break;
                             }
                         case Note.NoteType.Cymbal:
                             {
-                                colorMat = resources.GetCymbalMaterial(gameMode, laneInfo, note.rawNote);
+                                colorMat = resources.GetCymbalMaterial(gameMode, laneInfo, noteIndex);
                                 break;
                             }
                         default:
                             {
-                                colorMat = resources.GetStrumMaterial(gameMode, laneInfo, note.rawNote);
+                                colorMat = resources.GetStrumMaterial(gameMode, laneInfo, noteIndex);
                                 break;
                             }
                     }

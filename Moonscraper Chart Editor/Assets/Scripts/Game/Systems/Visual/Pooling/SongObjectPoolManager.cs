@@ -195,8 +195,18 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         for (int i = collectedNotesInRange.Count - 1; i >= 0; --i)
         {
             Note note = collectedNotesInRange[i];
-            if (!note.IsOpenNote() && ((1 << note.rawNote) & editor.laneInfo.laneMask) == 0)
+            Note prev = note.previous;
+
+            if (note.ShouldBeCulledFromLanes(editor.laneInfo))
+            {
+                if (prev == null || prev.tick != note.tick || prev.rawNote < editor.laneInfo.laneCount - 1)
+                {
+                    // if the previous note is not on the edge of the lane, then we are allowed to show this note in the remaining lane
+                    continue;
+                }
+
                 collectedNotesInRange.RemoveAt(i);
+            }
         }
     }
   

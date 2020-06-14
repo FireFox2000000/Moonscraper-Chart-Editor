@@ -197,6 +197,11 @@ public static class NoteFunctions {
             return note.guitarFret == Note.GuitarFret.Open;
     }
 
+    public static bool ShouldBeCulledFromLanes(this Note note, LaneInfo laneInfo)
+    {
+        return !note.IsOpenNote() && ((1 << note.rawNote) & laneInfo.laneMask) == 0;
+    }
+
     /// <summary>
     /// Calculates and sets the sustain length based the tick position it should end at. Will be a length of 0 if the note position is greater than the specified position.
     /// </summary>

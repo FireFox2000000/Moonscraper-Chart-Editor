@@ -384,7 +384,7 @@ public class NoteController : SongObjectController {
         if (!note.IsOpenNote())
         {
             if (note.rawNote < editor.indicators.animations.Length)
-                editor.indicators.animations[note.rawNote].PlayOneShot();
+                editor.indicators.animations[note.GetRawNoteLaneCapped(ChartEditor.Instance.laneInfo)].PlayOneShot();
         }
         else
         {

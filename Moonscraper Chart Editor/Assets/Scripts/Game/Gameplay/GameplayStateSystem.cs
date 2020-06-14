@@ -176,7 +176,7 @@ public class GameplayStateSystem : SystemManagerState.System
 
             case GameplayType.Drums:
                 {
-                    return new HitWindow<GuitarNoteHitKnowledge>(GuitarTiming.frontendHitWindowTime, GuitarTiming.backendHitWindowTime);
+                    return new HitWindow<DrumsNoteHitKnowledge>(DrumsTiming.frontendHitWindowTime, DrumsTiming.backendHitWindowTime);
                 }
         }
 
