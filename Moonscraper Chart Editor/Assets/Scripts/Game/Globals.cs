@@ -63,7 +63,6 @@ public class Globals : MonoBehaviour {
             return _services;
         }
     }
-    Resolution largestRes;
 
     void Awake()
     {
@@ -71,12 +70,6 @@ public class Globals : MonoBehaviour {
 
         Application.runInBackground = true;
 
-        largestRes = Screen.resolutions[0];
-        foreach (Resolution res in Screen.resolutions)
-        {
-            if (res.width > largestRes.width)
-                largestRes = res;
-        }
         autosaveLocation = Application.persistentDataPath + "/autosave.chart";
 
         viewMode = ViewMode.Chart;
