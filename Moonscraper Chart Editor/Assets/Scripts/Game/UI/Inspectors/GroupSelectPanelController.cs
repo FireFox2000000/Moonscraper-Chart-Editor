@@ -97,7 +97,7 @@ public class GroupSelectPanelController : MonoBehaviour
     void UpdateUIActiveness()
     {
         currentFretSelector.gameObject.SetActive(false);
-        currentFretSelector = GetCurrentFretSelector(editor.currentChart.gameMode, editor.laneInfo.laneCount);
+        currentFretSelector = GetCurrentFretSelector(editor.currentGameMode, editor.laneInfo.laneCount);
         currentFretSelector.gameObject.SetActive(true);
 
         bool drumsMode = Globals.drumMode;
@@ -121,6 +121,36 @@ public class GroupSelectPanelController : MonoBehaviour
             setNoteCymbal.onClick.Invoke();
     }
 
+    int GetOpenNoteForGameMode(Chart.GameMode gameMode)
+    {
+        int rawNoteValue = 0;
+        switch (gameMode)
+        {
+            case Chart.GameMode.Guitar:
+                {
+                    rawNoteValue = (int)Note.GuitarFret.Open;
+                    break;
+                }
+            case Chart.GameMode.Drums:
+                {
+                    rawNoteValue = (int)Note.DrumPad.Kick;
+                    break;
+                }
+            case Chart.GameMode.GHLGuitar:
+                {
+                    rawNoteValue = (int)Note.GHLiveGuitarFret.Open;
+                    break;
+                }
+            default:
+                {
+                    Debug.Assert(false, "Unhandled open note selection for gamemode " + editor.currentChart.gameMode);
+                    break;
+                }
+        }
+
+        return rawNoteValue;
+    }
+
     public void ApplyFretDropdownSelection()
     {
         Dropdown activeDropDown = currentFretSelector;
@@ -132,29 +162,7 @@ public class GroupSelectPanelController : MonoBehaviour
             if (activeDropDown.value == editor.laneInfo.laneCount)
             {
                 // Set to be the open note
-                switch (editor.currentChart.gameMode)
-                {
-                    case Chart.GameMode.Guitar:
-                        {
-                            rawNoteValue = (int)Note.GuitarFret.Open;
-                            break;
-                        }
-                    case Chart.GameMode.Drums:
-                        {
-                            rawNoteValue = (int)Note.DrumPad.Kick;
-                            break;
-                        }
-                    case Chart.GameMode.GHLGuitar:
-                        {
-                            rawNoteValue = (int)Note.GHLiveGuitarFret.Open;
-                            break;
-                        }
-                    default:
-                        {
-                            Debug.Assert(false, "Unhandled open note selection for gamemode " + editor.currentChart.gameMode);
-                            break;
-                        }
-                }
+                rawNoteValue = GetOpenNoteForGameMode(editor.currentGameMode);
             }
 
             SetFretType(rawNoteValue);
@@ -165,7 +173,8 @@ public class GroupSelectPanelController : MonoBehaviour
     {
         List<SongObject> selected = new List<SongObject>();
 
-        List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
+        List<SongEditCommand> deleteCommands = new List<SongEditCommand>();
+        List<SongEditCommand> addCommands = new List<SongEditCommand>();
         
         foreach (ChartObject chartObject in editor.selectedObjectsManager.currentSelectedObjects)
         {
@@ -177,14 +186,19 @@ public class GroupSelectPanelController : MonoBehaviour
                     Note newNote = new Note(note);
                     newNote.rawNote = noteNumber;
 
-                    songEditCommands.Add(new SongEditDelete(note));
-                    songEditCommands.Add(new SongEditAdd(newNote));
+                    deleteCommands.Add(new SongEditDelete(note));
+                    addCommands.Add(new SongEditAdd(newNote));
                     selected.Add(newNote);
                 }
             }
             else
                 selected.Add(chartObject);
         }
+
+        // Delete commands must come first, as add commands can overwrite notes we might try to delete later
+        List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
+        songEditCommands.AddRange(deleteCommands);
+        songEditCommands.AddRange(addCommands);
 
         editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
         editor.selectedObjectsManager.TryFindAndSelectSongObjects(selected);
