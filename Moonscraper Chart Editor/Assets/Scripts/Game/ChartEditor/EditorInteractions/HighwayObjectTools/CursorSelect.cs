@@ -260,6 +260,15 @@ public class CursorSelect : ToolObject
                 if ((SongObject.ID)chartObject.classID == SongObject.ID.ChartEvent)
                     offset = ChartEventController.GetOffset(editor, (ChartEvent)chartObject);
 
+                if ((SongObject.ID)chartObject.classID == SongObject.ID.Note)
+                {
+                    // If the object is within a lane that is not currently included we need to skip over this note
+                    if (((Note)chartObject).LaneNumber() > editor.laneInfo.laneCount)
+                    {
+                        continue;
+                    }
+                }
+
                 if (chartObject.tick < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject, 0, offset), areaRect))
                     chartObjectsList.Add(chartObject);
             }

@@ -197,6 +197,18 @@ public static class NoteFunctions {
             return note.guitarFret == Note.GuitarFret.Open;
     }
 
+    public static int LaneNumber(this Note note)
+    {
+        if (note.IsOpenNote())
+        {
+            return 0;
+        }
+        else
+        {
+            return note.rawNote + 1;    // Open notes/kicks take up the last slot, but is considered lane 0
+        }
+    }
+
     /// <summary>
     /// Calculates and sets the sustain length based the tick position it should end at. Will be a length of 0 if the note position is greater than the specified position.
     /// </summary>
