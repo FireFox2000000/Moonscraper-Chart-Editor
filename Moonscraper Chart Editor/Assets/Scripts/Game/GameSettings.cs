@@ -75,7 +75,7 @@ public class GameSettings
                 _sfxVolume = value;
         }
     }
-    public float vol_master, vol_song, vol_guitar, vol_bass, vol_rhythm, vol_keys, vol_drums, vol_vocals, audio_pan, vol_crowd;
+    public float vol_master, vol_song, vol_guitar, vol_bass, vol_rhythm, vol_keys, vol_drums, vol_drums2, vol_drums3, vol_drums4, vol_vocals, audio_pan, vol_crowd;
 
     public Step snappingStep = new Step(16);
     public int step { get { return snappingStep.value; } set { snappingStep.value = value; } }
@@ -163,6 +163,9 @@ public class GameSettings
 			vol_keys = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Keys Stream", 1.0f);
 			vol_vocals = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Vocals Stream", 1.0f);
             vol_drums = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Drum Stream", 1.0f);
+            vol_drums2 = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Drum 2 Stream", 1.0f);
+            vol_drums3 = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Drum 3 Stream", 1.0f);
+            vol_drums4 = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Drum 4 Stream", 1.0f);
             vol_crowd = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Crowd Stream", 1.0f);
             audio_pan = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "Audio Pan", 0.0f);
             sfxVolume = (float)iniparse.ReadValue(SECTION_NAME_AUDIO, "SFX", 1.0f);
@@ -245,6 +248,9 @@ public class GameSettings
 			iniparse.WriteValue(SECTION_NAME_AUDIO, "Keys Stream", vol_keys);
 			iniparse.WriteValue(SECTION_NAME_AUDIO, "Vocals Stream", vol_vocals);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Drum Stream", vol_drums);
+            iniparse.WriteValue(SECTION_NAME_AUDIO, "Drum 2 Stream", vol_drums2);
+            iniparse.WriteValue(SECTION_NAME_AUDIO, "Drum 3 Stream", vol_drums3);
+            iniparse.WriteValue(SECTION_NAME_AUDIO, "Drum 4 Stream", vol_drums4);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Crowd Stream", vol_crowd);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "Audio Pan", audio_pan);
             iniparse.WriteValue(SECTION_NAME_AUDIO, "SFX", sfxVolume);
