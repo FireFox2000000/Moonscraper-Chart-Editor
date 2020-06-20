@@ -7,5 +7,11 @@ using UnityEngine;
 
 public class InputConfigBuilder : MonoBehaviour
 {
-    public InputConfig inputConfigDatabase;
+    [System.Serializable]
+    public class InputProperties
+    {
+        public ShortcutInputConfig[] shortcutInputs;
+    }
+
+    public InputProperties inputProperties;
 }

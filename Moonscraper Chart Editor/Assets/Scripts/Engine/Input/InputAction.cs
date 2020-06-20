@@ -218,6 +218,8 @@ namespace MSE
                 }
             }
 
+            #region Input Queries
+
             public bool GetInputDown(IList<IInputDevice> devices)
             {
                 for (int i = 0; i < devices.Count; ++i)
@@ -290,6 +292,8 @@ namespace MSE
 
                 return null;
             }
+
+            #endregion
 
             public IInputMap GetFirstActiveInputMap()
             {

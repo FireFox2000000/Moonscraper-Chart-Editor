@@ -9,10 +9,29 @@ using MSE.Input;
 using SDL2;
 using System;
 
+/// <summary>
+/// Handles controller connection events and updates controller inputs
+/// </summary>
 [UnitySingleton(UnitySingletonAttribute.Type.LoadedFromResources, false, "Prefabs/InputManager")]
 public class InputManager : UnitySingleton<InputManager>
 {
-    public InputConfig inputPropertiesConfig;
+    [SerializeField]
+    TextAsset inputPropertiesJson;
+    InputConfig _inputProperties;
+    public InputConfig inputProperties
+    {
+        get
+        {
+            if (_inputProperties == null)
+            {
+                _inputProperties = new InputConfig();
+                InputConfig.LoadFromTextAsset(inputPropertiesJson, _inputProperties);
+            }
+
+            return _inputProperties;
+        }
+    }
+
     [SerializeField]
     TextAsset defaultControlsJson;
     [HideInInspector]
