@@ -76,14 +76,6 @@ public class Starpower : ChartObject
         length = GetCappedLengthForPos(pos);
     }
 
-    public override void Delete(bool update = true)
-    {
-        base.Delete(update);
-#if APPLICATION_MOONSCRAPER
-        ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
-#endif
-    }
-
     public void CopyFrom(Starpower sp)
     {
         tick = sp.tick;

@@ -52,20 +52,6 @@ public abstract class SongObject
         }
     }
 
-    /// <summary>
-    /// Removes this object from it's song/chart
-    /// </summary>
-    /// <param name="update">Automatically update all read-only arrays? 
-    /// If set to false, you must manually call the updateArrays() method, but is useful when deleting multiple objects as it increases performance dramatically.</param>
-    public virtual void Delete(bool update = true)
-    {
-#if APPLICATION_MOONSCRAPER
-        if (controller)
-        {
-            controller.gameObject.SetActive(false);
-        }
-#endif
-    }
     public abstract SongObject Clone();
 
     public T CloneAs<T>() where T : SongObject

@@ -68,11 +68,4 @@ public class Event : SongObject
         else
             return base.LessThan(b);
     }
-
-    public override void Delete(bool update = true)
-    {
-        base.Delete(update);
-        if (song != null)
-            song.Remove(this, update);
-    }
 }

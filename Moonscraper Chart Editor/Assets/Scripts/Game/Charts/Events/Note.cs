@@ -473,31 +473,6 @@ public class Note : ChartObject
         }
     }
 
-    public override void Delete(bool update = true)
-    {
-        base.Delete(update);
-#if APPLICATION_MOONSCRAPER
-        // Update the previous note in the case of chords with 2 notes
-        if (previous != null && previous.controller)
-            previous.controller.UpdateSongObject();
-        if (next != null && next.controller)
-            next.controller.UpdateSongObject();
-#endif
-    }
-
-    public string GetFlagsSaveString()
-    {
-        string saveString = string.Empty;
-
-        if ((flags & Flags.Forced) == Flags.Forced)
-            saveString += Globals.TABSPACE + tick + " = N 5 0 " + Globals.LINE_ENDING;
-
-        if ((flags & Flags.Tap) == Flags.Tap)
-            saveString += Globals.TABSPACE + tick + " = N 6 0 " + Globals.LINE_ENDING;
-
-        return saveString;
-    }
-
     public class Chord : IEnumerable<Note>
     {
         Note baseNote;

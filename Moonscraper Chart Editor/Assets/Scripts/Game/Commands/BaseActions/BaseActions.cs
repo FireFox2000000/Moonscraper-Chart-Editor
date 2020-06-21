@@ -139,8 +139,6 @@ public class DeleteAction : BaseAction
             else
             {
                 TryDeleteSongObject((SyncTrack)songObject, editor.currentSong.syncTrack);
-                if (songObject.classID == (int)SongObject.ID.BPM)
-                    ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
             }
         }
     }
@@ -159,7 +157,8 @@ public class DeleteAction : BaseAction
                 next = (foundSongObject as Note).nextSeperateNote;
             }
 
-            foundSongObject.Delete(false);
+            // Actual deletion of the note from the chart
+            DeleteSongObject(foundSongObject);
 
             if (next != null)
             {
@@ -174,5 +173,85 @@ public class DeleteAction : BaseAction
         {
             Debug.LogError("Delete SongObject command cannot find a song object to delete!");
         }
+    }
+
+    static void DeleteSongObject<T>(T foundSongObject) where T : SongObject
+    {
+        bool updateCache = false;
+
+        if (foundSongObject.controller)
+        {
+            foundSongObject.controller.gameObject.SetActive(false); // Forces the controller to release the note
+        }
+
+        // Update the surrounding objects based on changes made here
+        switch ((SongObject.ID)foundSongObject.classID)
+        {
+            case SongObject.ID.Starpower:
+                {
+                    ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();  // Update notes in the range
+                    break;
+                }
+
+            case SongObject.ID.BPM:
+                {
+                    ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();  // Re position all objects
+                    break;
+                }
+
+            case SongObject.ID.Note:
+                {
+                    Note note = foundSongObject as Note;
+
+                    // Update the previous note in the case of chords with 2 notes
+                    if (note.previous != null && note.previous.controller)
+                        note.previous.controller.SetDirty();
+                    if (note.next != null && note.next.controller)
+                        note.next.controller.SetDirty();
+
+                    break;
+                }
+        }
+
+        {
+            ChartObject chartObj = foundSongObject as ChartObject;
+            if (chartObj != null)
+            {
+                Chart chart = chartObj.chart;
+                if (chart != null)
+                    chart.Remove(chartObj, updateCache);
+
+                return;
+            }
+        }
+
+        {
+            SyncTrack syncObj = foundSongObject as SyncTrack;
+            if (syncObj != null)
+            {
+                if (syncObj.tick != 0)
+                {
+                    Song song = foundSongObject.song;
+                    if (song != null)
+                        song.Remove(syncObj, updateCache);
+                }
+
+                return;
+            }
+        }
+
+        {
+            Event eventObj = foundSongObject as Event;
+            if (eventObj != null)
+            {
+                Song song = foundSongObject.song;
+                if (song != null)
+                    song.Remove(eventObj, updateCache);
+
+                return;
+            }
+        }
+
+        Debug.LogError("Unhandled songobject deletion case!");
     }
 }
