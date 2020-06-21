@@ -13,6 +13,9 @@ namespace MSE
         {
         }
 
+        /// <summary>
+        /// Stores a list of input actions that can be accessed via a generic input enum for looking up actions with array indexing speed, rather then via string parsing and storing it in a dictionary
+        /// </summary>
         public class InputActionContainer<TEnum> : IInputActionContainer where TEnum : System.Enum
         {
             [SerializeField]

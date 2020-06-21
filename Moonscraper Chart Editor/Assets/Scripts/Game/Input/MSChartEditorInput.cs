@@ -12,14 +12,11 @@ using MSE.Input;
  * 1. Add to the enum list
  * 2. Open Scenes/Config Editors/Input Editor
  * 3. Click on the Input Builder object and locate the Input Config Builder script
- * 4. Set the field "New Action Added" to the input that was just added
- * 5. Click the button "Do post added new action setup"
- * 6. Go to Database/Input Config
- * 7. Scroll down to find your new action and set up the new properties
+ * 4. Click the button "Load Config From File"
+ * 5. Open the file /Assets/Database/InputPropertiesConfig.json
+ * 6. The field InputProperties/Shortcut Input will now be populated. Scroll down to find your new action and set up the new properties
+ * 7. Click the button "Save Config To File" and overwrite InputPropertiesConfig.json
  */
-
-// Note, above is kinda crappy. This is only because input configs are being stored as a database object and must be edited through the editor. 
-// It would be better to store these configs in another .json similar to how default controls are being stored and load/edit these within a scene.
 
 public enum MSChartEditorInputActions
 {
@@ -194,7 +191,7 @@ public static class MSChartEditorInput
             {
                 MSChartEditorInputActions scEnum = (MSChartEditorInputActions)i;
                 InputAction.Properties properties;
-                if (!inputManager.inputPropertiesConfig.TryGetPropertiesConfig(scEnum, out properties))
+                if (!inputManager.inputProperties.TryGetPropertiesConfig(scEnum, out properties))
                 {
                     properties = kDefaultProperties;
                 }
@@ -209,9 +206,11 @@ public static class MSChartEditorInput
         }
     }
 
-    static MSChartEditorActionContainer primaryInputs { get { return Globals.gameSettings.controls; } } 
+    static MSChartEditorActionContainer primaryInputs { get { return Globals.gameSettings.controls; } }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    #region Input Queries
 
     public static bool GetInputDown(MSChartEditorInputActions key)
     {
@@ -291,4 +290,6 @@ public static class MSChartEditorInput
 
         return false;
     }
+
+    #endregion
 }
