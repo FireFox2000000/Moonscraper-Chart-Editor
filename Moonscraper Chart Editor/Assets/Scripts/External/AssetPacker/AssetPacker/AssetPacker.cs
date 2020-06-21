@@ -20,6 +20,7 @@ namespace DaVikingCode.AssetPacker {
 		public int cacheVersion = 1;
 		public bool deletePreviousCacheVersion = true;
         public Vector2 spritePivot = Vector2.zero;
+        public bool mipChain = false;
 
 		protected Dictionary<string, Sprite> mSprites = new Dictionary<string, Sprite>();
 		protected List<TextureToPack> itemsToRaster = new List<TextureToPack>();
@@ -169,7 +170,7 @@ namespace DaVikingCode.AssetPacker {
 			int numSpriteSheet = 0;
 			while (rectangles.Count > 0) {
 
-				Texture2D texture = new Texture2D(textureSize, textureSize, TextureFormat.ARGB32, false);
+				Texture2D texture = new Texture2D(textureSize, textureSize, TextureFormat.ARGB32, mipChain);
 				Color32[] fillColor = texture.GetPixels32();
 				for (int i = 0; i < fillColor.Length; ++i)
 					fillColor[i] = Color.clear;

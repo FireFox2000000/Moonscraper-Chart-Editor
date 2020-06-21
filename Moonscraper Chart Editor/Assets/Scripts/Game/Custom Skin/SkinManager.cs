@@ -32,6 +32,10 @@ public static class SkinKeys
 
     public const string xFretBaseGhl = "_fret_base_ghl";
     public const string xFretPressGhl = "_fret_press_ghl";
+
+    public const string measureBeatLine = "beat_line_measure";
+    public const string standardBeatLine = "beat_line_standard";
+    public const string quarterBeatLine = "beat_line_quarter";
 }
 
 [UnitySingleton(UnitySingletonAttribute.Type.CreateOnNewGameObject, false)]

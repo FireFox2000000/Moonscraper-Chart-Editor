@@ -18,6 +18,7 @@ public class DrawBeatLines : SystemManagerState.System
 
     public DrawBeatLines() {
         editor = ChartEditor.Instance;
+        var skinManager = SkinManager.Instance;
 
         beatLineParent = new GameObject("Beat Lines");
 
@@ -25,19 +26,44 @@ public class DrawBeatLines : SystemManagerState.System
         GameObject beatLinePrefab = editor.assets.beatLine;
         GameObject quarterBeatLinePrefab = editor.assets.quarterBeatLine;
 
+        Sprite customMeasureSprite = skinManager.currentSkin.GetSprite(SkinKeys.measureBeatLine);
+        Sprite customBeatSprite = skinManager.currentSkin.GetSprite(SkinKeys.standardBeatLine);
+        Sprite customQuarterBeatSprite = skinManager.currentSkin.GetSprite(SkinKeys.quarterBeatLine);
+
         for (int i = 0; i < POOL_SIZE; ++i)
         {
-            measureLinePool[i] = Object.Instantiate(measureLinePrefab);
-            measureLinePool[i].transform.SetParent(beatLineParent.transform);
-            measureLinePool[i].SetActive(false);
+            {
+                measureLinePool[i] = Object.Instantiate(measureLinePrefab);
+                measureLinePool[i].transform.SetParent(beatLineParent.transform);
+                measureLinePool[i].SetActive(false);
 
-            beatLinePool[i] = Object.Instantiate(beatLinePrefab);
-            beatLinePool[i].transform.SetParent(beatLineParent.transform);
-            beatLinePool[i].SetActive(false);
+                if (customMeasureSprite)
+                {
+                    measureLinePool[i].GetComponent<SpriteRenderer>().sprite = customMeasureSprite;
+                }
+            }
 
-            quarterBeatLinePool[i] = Object.Instantiate(quarterBeatLinePrefab);
-            quarterBeatLinePool[i].transform.SetParent(beatLineParent.transform);
-            quarterBeatLinePool[i].SetActive(false);
+            {
+                beatLinePool[i] = Object.Instantiate(beatLinePrefab);
+                beatLinePool[i].transform.SetParent(beatLineParent.transform);
+                beatLinePool[i].SetActive(false);
+
+                if (customBeatSprite)
+                {
+                    beatLinePool[i].GetComponent<SpriteRenderer>().sprite = customBeatSprite;
+                }
+            }
+
+            {
+                quarterBeatLinePool[i] = Object.Instantiate(quarterBeatLinePrefab);
+                quarterBeatLinePool[i].transform.SetParent(beatLineParent.transform);
+                quarterBeatLinePool[i].SetActive(false);
+
+                if (customQuarterBeatSprite)
+                {
+                    quarterBeatLinePool[i].GetComponent<SpriteRenderer>().sprite = customQuarterBeatSprite;
+                }
+            }
         }
     }
 	
