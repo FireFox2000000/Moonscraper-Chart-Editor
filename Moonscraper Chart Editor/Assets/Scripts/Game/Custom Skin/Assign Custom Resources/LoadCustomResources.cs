@@ -58,6 +58,9 @@ public class LoadCustomResources : MonoBehaviour {
         { "2_sp_hopo_ghl",          new TextureToPack.GridSlice(GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
 
         { SkinKeys.fretStem, null },
+        { SkinKeys.measureBeatLine, null },
+        { SkinKeys.standardBeatLine, null },
+        { SkinKeys.quarterBeatLine, null },
     };
 
     void SetupResourcesToLoad()

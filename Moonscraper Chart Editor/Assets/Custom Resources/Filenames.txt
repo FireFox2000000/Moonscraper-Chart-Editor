@@ -9,6 +9,9 @@ Audio files-
 Image files
   background-[x]	(Replace "[x]" with numbers starting from 0. Recommended size: 1920x1080)
   fretboard-0		(Recommended size: 512x1024)
+  beat_line_measure		(Recommended size: 625x10, however supports variable size)
+  beat_line_standard	(Recommended size: 625x10, however supports variable size)
+  beat_line_quarter		(Recommended size: 625x10, however supports variable size)
 
 Notes- Replace [x] with numbers 0-4 for each image
 	[x]_reg_strum		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
