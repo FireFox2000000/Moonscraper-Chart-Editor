@@ -84,7 +84,7 @@ public class TimelineMovementController : MovementController
             else
             {
                 timePosition.color = Color.white;
-                timePosition.text = Utility.timeConvertion(TickFunctions.WorldYPositionToTime(strikeLine.position.y));
+                timePosition.text = Utility.timeConvertion(ChartEditor.WorldYPositionToTime(strikeLine.position.y));
             }
         }
 
@@ -292,7 +292,7 @@ public class TimelineMovementController : MovementController
                     transform.position = initPos;
             }
 
-            float endYPos = TickFunctions.TimeToWorldYPosition(editor.currentSongLength);
+            float endYPos = ChartEditor.TimeToWorldYPosition(editor.currentSongLength);
             float totalDistance = endYPos - initPos.y - strikeLine.localPosition.y;
 
             if (transform.position.y + strikeLine.localPosition.y > endYPos)
@@ -316,7 +316,7 @@ public class TimelineMovementController : MovementController
     {
         if (editor.currentChart != null)
         {         
-            float endYPos = TickFunctions.TimeToWorldYPosition(editor.currentSongLength);
+            float endYPos = ChartEditor.TimeToWorldYPosition(editor.currentSongLength);
             float totalDistance = endYPos - initPos.y - strikeLine.localPosition.y;
 
             if (totalDistance > 0)

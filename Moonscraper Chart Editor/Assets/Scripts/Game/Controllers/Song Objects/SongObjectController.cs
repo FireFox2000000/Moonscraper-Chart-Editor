@@ -52,13 +52,6 @@ public abstract class SongObjectController : SelectableClick {
 
     public override void OnSelectableMouseDrag()
     {
-        // Move note
-        // This is now being done via the cursor tool
-        /*if (moveCheck)
-        {
-            editor.groupMove.SetSongObjects(songObject);
-            songObject.Delete();
-        }*/
     }
 
     void Update()

@@ -34,7 +34,7 @@ public abstract class MovementController : MonoBehaviour {
         //if (ChartEditor.Instance.currentState == ChartEditor.State.Editor)
         {
             Vector3 pos = initPos;
-            pos.y += TickFunctions.TimeToWorldYPosition(time);
+            pos.y += ChartEditor.TimeToWorldYPosition(time);
             transform.position = pos;
         }
     }
@@ -54,7 +54,7 @@ public abstract class MovementController : MonoBehaviour {
         float positionOffset = initPos.y;
 
         {
-            float timeBeforeMovement = TickFunctions.WorldYPositionToTime(pos.y - positionOffset);
+            float timeBeforeMovement = ChartEditor.WorldYPositionToTime(pos.y - positionOffset);
             float timeAfterMovement = timeBeforeMovement + deltaTime * Globals.gameSettings.gameSpeed;
 
             // Make sure we're staying in sync with the audio
@@ -87,7 +87,7 @@ public abstract class MovementController : MonoBehaviour {
 
             float totalChangeInTime = timeAfterMovement - timeBeforeMovement;
 
-            float newTimePosition = TickFunctions.TimeToWorldYPosition(timeBeforeMovement + totalChangeInTime);
+            float newTimePosition = ChartEditor.TimeToWorldYPosition(timeBeforeMovement + totalChangeInTime);
             pos.y = newTimePosition + positionOffset;
         }
 

@@ -133,7 +133,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     {
         get
         {
-            return TickFunctions.WorldYPositionToTime(visibleStrikeline.transform.position.y);
+            return WorldYPositionToTime(visibleStrikeline.transform.position.y);
         }
     }
 
@@ -399,7 +399,17 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         });
     }
 
-#region State Control
+    public static float WorldYPositionToTime(float worldYPosition)
+    {
+        return worldYPosition / (Globals.gameSettings.hyperspeed / Globals.gameSettings.gameSpeed);
+    }
+
+    public static float TimeToWorldYPosition(float time)
+    {
+        return time * Globals.gameSettings.hyperspeed / Globals.gameSettings.gameSpeed;
+    }
+
+    #region State Control
 
     SystemManagerState GetStateForEnum(State state)
     {
@@ -1035,7 +1045,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             stopResetTime = currentVisibleTime;
 
         // Set position x seconds beforehand
-        float startTime = TickFunctions.WorldYPositionToTime(strikelineYPos) - Globals.gameSettings.gameplayStartDelayTime - (0.01f * Globals.gameSettings.hyperspeed); // Offset to prevent errors where it removes a note that is on the strikeline
+        float startTime = WorldYPositionToTime(strikelineYPos) - Globals.gameSettings.gameplayStartDelayTime - (0.01f * Globals.gameSettings.hyperspeed); // Offset to prevent errors where it removes a note that is on the strikeline
         movement.SetTime(startTime);
 
         // Hide everything behind the strikeline

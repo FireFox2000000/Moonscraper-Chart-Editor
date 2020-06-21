@@ -185,7 +185,7 @@ public class Services : MonoBehaviour
         {
             ChartEditor editor = ChartEditor.Instance;
             Vector3 strikelinePos = editor.visibleStrikeline.position;
-            float posCalibrationOffset = TickFunctions.TimeToWorldYPosition(Globals.gameSettings.audioCalibrationMS / 1000.0f) * Globals.gameSettings.gameSpeed;
+            float posCalibrationOffset = ChartEditor.TimeToWorldYPosition(Globals.gameSettings.audioCalibrationMS / 1000.0f) * Globals.gameSettings.gameSpeed;
             return strikelinePos.y + posCalibrationOffset;
         }
     }
@@ -206,7 +206,7 @@ public class Services : MonoBehaviour
             else
             {
                 float audioStrikelinePos = editor.services.sfxCalibratedStrikelinePos;
-                currentAudioTime = TickFunctions.WorldYPositionToTime(audioStrikelinePos);
+                currentAudioTime = ChartEditor.WorldYPositionToTime(audioStrikelinePos);
             }
 
             return currentAudioTime + Globals.gameSettings.clapCalibrationMS / 1000.0f - editor.currentSong.offset;

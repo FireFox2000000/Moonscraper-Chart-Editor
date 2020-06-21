@@ -180,7 +180,7 @@ public class MenuBar : UpdateableService {
             editor.Stop();
 
             // Restore to initial position
-            editor.movement.SetTime(TickFunctions.WorldYPositionToTime(initialPosition));
+            editor.movement.SetTime(ChartEditor.WorldYPositionToTime(initialPosition));
         }
     }
 

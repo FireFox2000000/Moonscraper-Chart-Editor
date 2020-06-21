@@ -85,7 +85,7 @@ public class BPMController : SongObjectController {
                 else
                     desiredWorldPos = editor.mouseYMaxLimit.position.y;
 
-                float desiredTime = TickFunctions.WorldYPositionToTime(desiredWorldPos);
+                float desiredTime = ChartEditor.WorldYPositionToTime(desiredWorldPos);
                 if (desiredTime < previousBpm.time)
                     desiredTime = previousBpm.time;
 

@@ -196,33 +196,6 @@ public class Song {
         }
     }
 
-    public uint WorldPositionToSnappedTick(float worldYPos, int step)
-    {
-        uint chartPos = WorldYPositionToTick(worldYPos);
-
-        return Snapable.TickToSnappedTick(chartPos, step, this);
-    }
-
-    public float TickToWorldYPosition(uint position)
-    {
-        return TickFunctions.TimeToWorldYPosition(TickToTime(position, resolution));
-    }
-
-    public float TickToWorldYPosition(uint position, float resolution)
-    {
-        return TickFunctions.TimeToWorldYPosition(TickToTime(position, resolution));
-    }
-
-    public uint WorldYPositionToTick(float worldYPos)
-    {
-        return TimeToTick(TickFunctions.WorldYPositionToTime(worldYPos), resolution);
-    }
-
-    public uint WorldYPositionToTick(float worldYPos, float resolution)
-    {
-        return TimeToTick(TickFunctions.WorldYPositionToTime(worldYPos), resolution);
-    }
-
     /// <summary>
     /// Converts a time value into a tick position value. May be inaccurate due to interger rounding.
     /// </summary>

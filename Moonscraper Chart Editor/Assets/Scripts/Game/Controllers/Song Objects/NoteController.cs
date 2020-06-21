@@ -150,23 +150,7 @@ public class NoteController : SongObjectController {
 
     public override void OnSelectableMouseDrag()
     {
-        // Move note        
-        if (moveCheck)
-        {
-            if (MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect))
-            {
-                Note[] chordNotes = note.GetChord();
-                editor.groupMove.StartMoveAction(chordNotes, 0);
-
-                foreach (Note chordNote in chordNotes)
-                    chordNote.Delete();
-            }
-            else
-            {
-                //base.OnSelectableMouseDrag();
-            }
-        }
-        else
+        if (!moveCheck)
         {
             sustain.OnSelectableMouseDrag();
         }

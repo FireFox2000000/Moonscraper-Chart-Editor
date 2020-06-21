@@ -29,16 +29,6 @@ public static class TickFunctions {
         return (uint)Math.Round((timeEnd - timeStart) * bpm / SECONDS_PER_MINUTE * resolution);
     }
 
-    public static float WorldYPositionToTime(float worldYPosition)
-    {
-        return worldYPosition / (Globals.gameSettings.hyperspeed / Globals.gameSettings.gameSpeed);
-    }
-
-    public static float TimeToWorldYPosition(float time)
-    {
-        return time * Globals.gameSettings.hyperspeed / Globals.gameSettings.gameSpeed;
-    }
-
     public static uint TickScaling(uint tick, float originalResolution, float outputResolution)
     {
         tick = (uint)Math.Round(tick * outputResolution / originalResolution);
