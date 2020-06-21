@@ -43,11 +43,6 @@ public class BPM : SyncTrack
 
     public float assignedTime = 0;
 
-    public static bool regexMatch(string line)
-    {
-        return new Regex(@"\d+ = B \d+").IsMatch(line);
-    }
-
     public override SongObject Clone()
     {
         return new BPM(this);

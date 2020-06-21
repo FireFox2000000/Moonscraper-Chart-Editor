@@ -26,11 +26,6 @@ public class Event : SongObject
         title = songEvent.title;
     }
 
-    public static bool regexMatch(string line)
-    {
-        return new System.Text.RegularExpressions.Regex(@"\d+ = E " + @"""[^""\\]*(?:\\.[^""\\]*)*""").IsMatch(line);
-    }
-
     public override SongObject Clone()
     {
         return new Event(this);

@@ -26,11 +26,6 @@ public class TimeSignature : SyncTrack
         denominator = ts.denominator;
     }
 
-    public static bool regexMatch(string line)
-    {
-        return new System.Text.RegularExpressions.Regex(@"\d+ = TS \d+").IsMatch(line);
-    }
-
     public override SongObject Clone()
     {
         return new TimeSignature(this);
