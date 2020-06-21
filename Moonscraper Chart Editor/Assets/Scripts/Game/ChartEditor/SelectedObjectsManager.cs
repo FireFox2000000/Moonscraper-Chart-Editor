@@ -153,6 +153,10 @@ public class SelectedObjectsManager
         Chart chart = editor.currentChart;
         foundSongObjects.Clear();
 
+        int warnChartObj = 0;
+        int warnSyncObj = 0;
+        int warnEventObj = 0;
+
         foreach (SongObject so in songObjects)
         {
             ChartObject chartObject = so as ChartObject;
@@ -168,7 +172,7 @@ public class SelectedObjectsManager
                 }
                 else
                 {
-                    Debug.LogWarning("Failed to find chart object to highlight");
+                    ++warnChartObj;
                 }
             }
             else if (syncTrack != null)
@@ -181,7 +185,7 @@ public class SelectedObjectsManager
                 }
                 else
                 {
-                    Debug.LogWarning("Failed to find synctrack to highlight");
+                    ++warnSyncObj;
                 }
             }
             else if (eventObject != null)
@@ -193,8 +197,8 @@ public class SelectedObjectsManager
                         foundSongObjects.Add(song.eventsAndSections[insertionIndex]);
                 }
                 else
-                {
-                    Debug.LogWarning("Failed to find event to highlight");
+                { 
+                    ++warnEventObj;
                 }
             }
             else
@@ -202,6 +206,15 @@ public class SelectedObjectsManager
                 Debug.LogError("Unable to handle object " + so.ToString());
             }
         }
+
+        if (warnChartObj > 0)
+            Debug.LogWarning(string.Format("Failed to find {0} chart object/s to highlight", warnChartObj));
+
+        if (warnSyncObj > 0)
+            Debug.LogWarning(string.Format("Failed to find {0} synctrack/s to highlight", warnSyncObj));
+
+        if (warnEventObj > 0)
+            Debug.LogWarning(string.Format("Failed to find {0} event/s to highlight", warnEventObj));
 
         currentSelectedObjects = foundSongObjects;
         foundSongObjects.Clear();
