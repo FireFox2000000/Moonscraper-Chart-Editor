@@ -4,6 +4,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
+using MoonscraperChartEditor.Song;
 
 /// <summary>
 /// The main controller for the timeline bar UI that appears on the right of the main editor scene.

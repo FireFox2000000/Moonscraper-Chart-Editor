@@ -3,6 +3,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using MoonscraperChartEditor.Song;
 
 public class Eraser : ToolObject {
 

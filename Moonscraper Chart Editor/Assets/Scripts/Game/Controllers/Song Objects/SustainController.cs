@@ -2,8 +2,8 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
+using MoonscraperChartEditor.Song;
 
 public class SustainController : SelectableClick {
     public NoteController nCon;

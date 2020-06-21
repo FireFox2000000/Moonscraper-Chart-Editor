@@ -1,13 +1,12 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Text;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.IO;
+using MoonscraperChartEditor.Song;
 
 // Purposefully generating as much garbage as possible, purely to test potential memory issues.
 public class StringCorruptionTest : MonoBehaviour {

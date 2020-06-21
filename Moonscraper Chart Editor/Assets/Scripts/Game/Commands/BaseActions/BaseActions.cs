@@ -1,9 +1,8 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using MoonscraperChartEditor.Song;
 
 // Provides bare bones functionality, no other validation or checking
 
@@ -171,7 +170,7 @@ public class DeleteAction : BaseAction
         }
         else
         {
-            Debug.LogError("Delete SongObject command cannot find a song object to delete!");
+            UnityEngine.Debug.LogError("Delete SongObject command cannot find a song object to delete!");
         }
     }
 
@@ -252,6 +251,6 @@ public class DeleteAction : BaseAction
             }
         }
 
-        Debug.LogError("Unhandled songobject deletion case!");
+        UnityEngine.Debug.LogError("Unhandled songobject deletion case!");
     }
 }

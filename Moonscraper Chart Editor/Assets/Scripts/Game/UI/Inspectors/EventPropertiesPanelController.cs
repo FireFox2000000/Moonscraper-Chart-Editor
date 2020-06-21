@@ -1,14 +1,13 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using MoonscraperChartEditor.Song;
 
 public class EventPropertiesPanelController : PropertiesPanelController
 {
-    public Event currentEvent { get { return currentSongObject as Event; } set { currentSongObject = value; } }
+    public MoonscraperChartEditor.Song.Event currentEvent { get { return currentSongObject as MoonscraperChartEditor.Song.Event; } set { currentSongObject = value; } }
     public ChartEvent currentChartEvent { get { return currentSongObject as ChartEvent; } set { currentSongObject = value; } }
     public Text eventName;
     [SerializeField]
@@ -119,7 +118,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
         if (currentEvent != null)
         {
             string prevName = currentEvent.title;
-            if (SongObjectHelper.FindObjectPosition(new Event(name, currentEvent.tick), editor.currentSong.events) == SongObjectHelper.NOTFOUND)
+            if (SongObjectHelper.FindObjectPosition(new MoonscraperChartEditor.Song.Event(name, currentEvent.tick), editor.currentSong.events) == SongObjectHelper.NOTFOUND)
             {
                 bool tentativeRecord, lockedRecord;
                 ShouldRecordInputField(name, currentEvent.title, out tentativeRecord, out lockedRecord);
@@ -131,8 +130,8 @@ public class EventPropertiesPanelController : PropertiesPanelController
 
                 if (tentativeRecord || lockedRecord)
                 {
-                    Event newEvent = new Event(name, currentEvent.tick);
-                    editor.commandStack.Push(new SongEditModify<Event>(currentEvent, newEvent));
+                    MoonscraperChartEditor.Song.Event newEvent = new MoonscraperChartEditor.Song.Event(name, currentEvent.tick);
+                    editor.commandStack.Push(new SongEditModify<MoonscraperChartEditor.Song.Event>(currentEvent, newEvent));
                     editor.selectedObjectsManager.SelectSongObject(newEvent, editor.currentSong.events);
                 }
             }

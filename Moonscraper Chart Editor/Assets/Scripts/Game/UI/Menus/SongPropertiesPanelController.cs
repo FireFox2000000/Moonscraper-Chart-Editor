@@ -7,9 +7,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System;
 using MoonscraperEngine;
+using MoonscraperChartEditor.Song;
 
 public class SongPropertiesPanelController : DisplayMenu {
     public Scrollbar verticalScroll;

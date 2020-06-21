@@ -1,11 +1,14 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-[System.Serializable]
-public abstract class ChartObject : SongObject
+namespace MoonscraperChartEditor.Song
 {
-    [System.NonSerialized]
-    public Chart chart;
+    [System.Serializable]
+    public abstract class ChartObject : SongObject
+    {
+        [System.NonSerialized]
+        public Chart chart;
 
-    public ChartObject(uint position) : base(position){}
+        public ChartObject(uint position) : base(position) { }
+    }
 }

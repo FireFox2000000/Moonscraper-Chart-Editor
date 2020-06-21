@@ -3,7 +3,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-using System;
+using MoonscraperChartEditor.Song;
 
 public class PlaceBPM : PlaceSongObject {
     public BPM bpm { get { return (BPM)songObject; } set { songObject = value; } }

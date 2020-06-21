@@ -3,8 +3,8 @@
 
 using UnityEngine;
 using System.Collections;
-using System;
 using MoonscraperEngine.Audio;
+using MoonscraperChartEditor.Song;
 
 public class TimelineMovementController : MovementController
 {

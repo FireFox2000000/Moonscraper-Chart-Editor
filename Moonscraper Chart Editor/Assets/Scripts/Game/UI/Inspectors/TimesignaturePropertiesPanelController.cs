@@ -1,9 +1,8 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using MoonscraperChartEditor.Song;
 
 public class TimesignaturePropertiesPanelController : PropertiesPanelController {
     public TimeSignature currentTS { get { return (TimeSignature)currentSongObject; } set { currentSongObject = value; } }

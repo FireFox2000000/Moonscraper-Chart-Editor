@@ -7,6 +7,7 @@ using System.Collections;
 using System.IO;
 using UnityEngine.EventSystems;
 using MoonscraperEngine.Audio;
+using MoonscraperChartEditor.Song;
 
 /// <summary>
 /// Loads and processes any persistent data, like save data, as well as just convenient defines and properties that exists outside of the "Chart Editor" concept.

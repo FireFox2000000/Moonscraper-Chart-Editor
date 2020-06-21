@@ -4,9 +4,7 @@
 //#define NOTE_TYPE_2D
 
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using MoonscraperChartEditor.Song;
 
 public class NoteController : SongObjectController {
     public const float OPEN_NOTE_SUSTAIN_WIDTH = 4;

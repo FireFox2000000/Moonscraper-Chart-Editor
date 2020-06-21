@@ -2,8 +2,7 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
-using System;
+using MoonscraperChartEditor.Song;
 
 public class PlaceSection : PlaceSongObject {
     public Section section { get { return (Section)songObject; } set { songObject = value; } }

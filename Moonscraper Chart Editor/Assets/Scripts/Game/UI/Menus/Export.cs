@@ -4,7 +4,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Runtime.InteropServices;
 using System;
 using System.IO;
 using UnityEngine.UI;
@@ -12,6 +11,8 @@ using Un4seen.Bass.Misc;
 using Un4seen.Bass;
 using MoonscraperEngine;
 using MoonscraperEngine.Audio;
+using MoonscraperChartEditor.Song;
+using MoonscraperChartEditor.Song.IO;
 
 public class Export : DisplayMenu {
     public Text exportingInfo;

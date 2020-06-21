@@ -2,8 +2,7 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
-//using System.Windows.Forms;
+using MoonscraperChartEditor.Song;
 
 [System.Serializable]
 public class Clipboard {

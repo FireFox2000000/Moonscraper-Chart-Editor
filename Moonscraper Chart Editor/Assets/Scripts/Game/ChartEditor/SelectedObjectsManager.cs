@@ -1,9 +1,8 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using MoonscraperChartEditor.Song;
 
 public class SelectedObjectsManager
 {
@@ -141,7 +140,7 @@ public class SelectedObjectsManager
     public T SelectSongObject<T>(T songObject, IList<T> arrToSearch) where T : SongObject
     {
         int insertionIndex = SongObjectHelper.FindObjectPosition(songObject, arrToSearch);
-        Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Failed to find songObject to highlight");
+        UnityEngine.Debug.Assert(insertionIndex != SongObjectHelper.NOTFOUND, "Failed to find songObject to highlight");
         currentSelectedObject = arrToSearch[insertionIndex];
         return currentSelectedObject as T;
     }
@@ -203,18 +202,18 @@ public class SelectedObjectsManager
             }
             else
             {
-                Debug.LogError("Unable to handle object " + so.ToString());
+                UnityEngine.Debug.LogError("Unable to handle object " + so.ToString());
             }
         }
 
         if (warnChartObj > 0)
-            Debug.LogWarning(string.Format("Failed to find {0} chart object/s to highlight", warnChartObj));
+            UnityEngine.Debug.LogWarning(string.Format("Failed to find {0} chart object/s to highlight", warnChartObj));
 
         if (warnSyncObj > 0)
-            Debug.LogWarning(string.Format("Failed to find {0} synctrack/s to highlight", warnSyncObj));
+            UnityEngine.Debug.LogWarning(string.Format("Failed to find {0} synctrack/s to highlight", warnSyncObj));
 
         if (warnEventObj > 0)
-            Debug.LogWarning(string.Format("Failed to find {0} event/s to highlight", warnEventObj));
+            UnityEngine.Debug.LogWarning(string.Format("Failed to find {0} event/s to highlight", warnEventObj));
 
         currentSelectedObjects = foundSongObjects;
         foundSongObjects.Clear();

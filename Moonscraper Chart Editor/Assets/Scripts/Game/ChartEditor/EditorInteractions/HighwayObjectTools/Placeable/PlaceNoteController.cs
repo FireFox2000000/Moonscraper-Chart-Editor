@@ -3,6 +3,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using MoonscraperChartEditor.Song;
 
 public class PlaceNoteController : ObjectlessTool {
     public PlaceNote[] standardPlaceableNotes = new PlaceNote[7];        // Starts at multi-note before heading into green (1), red (2) through to open (6)

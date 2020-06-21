@@ -1,9 +1,8 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using MoonscraperChartEditor.Song;
 
 public class SongEditAdd : SongEditCommand
 {
@@ -73,7 +72,7 @@ public class SongEditAdd : SongEditCommand
                 break;
 
             default:
-                Debug.LogError("Unhandled songobject!");
+                UnityEngine.Debug.LogError("Unhandled songobject!");
                 break;
         }
 
@@ -124,13 +123,13 @@ public class SongEditAdd : SongEditCommand
         {
             Note justAdded = chart.chartObjects[arrayPos] as Note;
             if (justAdded == null)
-                Debug.LogError("Object just added was not a note");
+                UnityEngine.Debug.LogError("Object just added was not a note");
             else
                 NoteFunctions.PerformPostChartInsertCorrections(justAdded, subActions, extendedSustainsEnabled);
         }
         else
         {
-            Debug.LogError("Unable to find note that was just added");
+            UnityEngine.Debug.LogError("Unable to find note that was just added");
         }
     }
 
@@ -166,7 +165,7 @@ public class SongEditAdd : SongEditCommand
             {
                 BPM justAdded = song.syncTrack[arrayPos] as BPM;
                 if (justAdded == null)
-                    Debug.LogError("Object just added was not a bpm");
+                    UnityEngine.Debug.LogError("Object just added was not a bpm");
                 else
                 {
                     float anchorValue = justAdded.song.LiveTickToTime(justAdded.tick, justAdded.song.resolution);
@@ -178,7 +177,7 @@ public class SongEditAdd : SongEditCommand
             }
             else
             {
-                Debug.LogError("Unable to find bpm that was just added");
+                UnityEngine.Debug.LogError("Unable to find bpm that was just added");
             }
         }
     }

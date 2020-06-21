@@ -1,18 +1,16 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.UI;
+using MoonscraperChartEditor.Song;
 
-public class CustomEventMenu : MonoBehaviour {
+public class CustomEventMenu : UnityEngine.MonoBehaviour {
 
     SongObject currentEventToCustomise = null;
     Event currentEvent { get { return currentEventToCustomise as Event; } }
     ChartEvent currentChartEvent { get { return currentEventToCustomise as ChartEvent; } }
 
-    [SerializeField]
+    [UnityEngine.SerializeField]
     InputField eventInputField;
 
     SongObject originalEvent;
@@ -60,7 +58,7 @@ public class CustomEventMenu : MonoBehaviour {
 
     public void ChangedInputEdit(string name)
     {
-        if (!Input.GetKeyDown(KeyCode.Escape))
+        if (!UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Escape))
             eventStr = name;
     }
 
@@ -83,7 +81,7 @@ public class CustomEventMenu : MonoBehaviour {
         }
         else
         {
-            Debug.LogError("Trying to update event when object is not recognised as an event");
+            UnityEngine.Debug.LogError("Trying to update event when object is not recognised as an event");
         }
     }
 }

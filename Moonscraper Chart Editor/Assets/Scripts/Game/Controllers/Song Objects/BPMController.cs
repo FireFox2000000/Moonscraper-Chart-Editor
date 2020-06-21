@@ -3,6 +3,7 @@
 
 using UnityEngine;
 using TMPro;
+using MoonscraperChartEditor.Song;
 
 public class BPMController : SongObjectController {
     public BPM bpm { get { return (BPM)songObject; } set { Init(value, this); } }

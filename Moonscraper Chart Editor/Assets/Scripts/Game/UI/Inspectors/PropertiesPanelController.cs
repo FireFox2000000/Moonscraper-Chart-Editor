@@ -1,11 +1,10 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using MoonscraperChartEditor.Song;
 
-public class PropertiesPanelController : MonoBehaviour {
+public class PropertiesPanelController : UnityEngine.MonoBehaviour {
     public Text positionText;
 
     protected ChartEditor editor;
@@ -145,7 +144,7 @@ public class PropertiesPanelController : MonoBehaviour {
             case (SongObject.ID.Section):
                 return ((Section)songObject).title.ToString();
             default:
-                Debug.LogError("Song object has no value");
+                UnityEngine.Debug.LogError("Song object has no value");
                 return string.Empty;
         }
     }

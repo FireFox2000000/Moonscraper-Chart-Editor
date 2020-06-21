@@ -18,6 +18,8 @@ using System;
 using System.Threading.Tasks;
 using MoonscraperEngine;
 using MoonscraperEngine.Audio;
+using MoonscraperChartEditor.Song;
+using MoonscraperChartEditor.Song.IO;
 
 /// <summary>
 /// The central point of the entire editor. Container for all the data and systems nessacary for the editor to function.

@@ -3,6 +3,7 @@
 
 using UnityEngine;
 using MoonscraperEngine;
+using MoonscraperChartEditor.Song;
 
 public static class GuitarInput
 {

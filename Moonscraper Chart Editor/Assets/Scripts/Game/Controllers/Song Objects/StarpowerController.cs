@@ -2,8 +2,8 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
-using System;
+using MoonscraperChartEditor.Song;
+
 
 public class StarpowerController : SongObjectController
 {

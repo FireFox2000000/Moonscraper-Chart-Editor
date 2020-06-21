@@ -3,6 +3,7 @@
 
 using UnityEngine;
 using System.Collections;
+using MoonscraperChartEditor.Song;
 
 public class StarpowerGUIController : TimelineIndicator {
     public Starpower starpower {

@@ -4,6 +4,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using MoonscraperEngine;
+using MoonscraperChartEditor.Song;
 
 public class SelectedHighlightDisplaySystem : SystemManagerState.System
 {

@@ -1,71 +1,74 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-[System.Serializable]
-public class Event : SongObject
+namespace MoonscraperChartEditor.Song
 {
-    private readonly ID _classID = ID.Event;
-
-    public override int classID { get { return (int)_classID; } }
-
-    public string title { get; private set; }
-
-    public Event(string _title, uint _position) : base(_position)
+    [System.Serializable]
+    public class Event : SongObject
     {
-        title = _title;
-    }
+        private readonly ID _classID = ID.Event;
 
-    public Event(Event songEvent) : base(songEvent.tick)
-    {
-        CopyFrom(songEvent);
-    }
+        public override int classID { get { return (int)_classID; } }
 
-    public void CopyFrom(Event songEvent)
-    {
-        tick = songEvent.tick;
-        title = songEvent.title;
-    }
+        public string title { get; private set; }
 
-    public override SongObject Clone()
-    {
-        return new Event(this);
-    }
-
-    public override bool AllValuesCompare<T>(T songObject)
-    {
-        if (this == songObject && (songObject as Event).title == title)
-            return true;
-        else
-            return false;
-    }
-
-    protected override bool Equals(SongObject b)
-    {
-        if (base.Equals(b))
+        public Event(string _title, uint _position) : base(_position)
         {
-            Event realB = b as Event;
-            return realB != null && tick == realB.tick && title == realB.title;
+            title = _title;
         }
 
-        return false;
-    }
-
-    protected override bool LessThan(SongObject b)
-    {
-        if (b.classID == (int)SongObject.ID.Event)
+        public Event(Event songEvent) : base(songEvent.tick)
         {
-            Event realB = b as Event;
-            if (tick < b.tick)
+            CopyFrom(songEvent);
+        }
+
+        public void CopyFrom(Event songEvent)
+        {
+            tick = songEvent.tick;
+            title = songEvent.title;
+        }
+
+        public override SongObject Clone()
+        {
+            return new Event(this);
+        }
+
+        public override bool AllValuesCompare<T>(T songObject)
+        {
+            if (this == songObject && (songObject as Event).title == title)
                 return true;
-            else if (tick == b.tick)
+            else
+                return false;
+        }
+
+        protected override bool Equals(SongObject b)
+        {
+            if (base.Equals(b))
             {
-                if (string.Compare(title, realB.title) < 0)
-                    return true;
+                Event realB = b as Event;
+                return realB != null && tick == realB.tick && title == realB.title;
             }
 
             return false;
         }
-        else
-            return base.LessThan(b);
+
+        protected override bool LessThan(SongObject b)
+        {
+            if (b.classID == (int)SongObject.ID.Event)
+            {
+                Event realB = b as Event;
+                if (tick < b.tick)
+                    return true;
+                else if (tick == b.tick)
+                {
+                    if (string.Compare(title, realB.title) < 0)
+                        return true;
+                }
+
+                return false;
+            }
+            else
+                return base.LessThan(b);
+        }
     }
 }

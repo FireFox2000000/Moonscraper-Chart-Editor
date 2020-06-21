@@ -3,7 +3,7 @@
 
 using UnityEngine;
 using TMPro;
-using System.Collections;
+using MoonscraperChartEditor.Song;
 
 public class TimesignatureController : SongObjectController {
 

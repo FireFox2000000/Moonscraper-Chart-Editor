@@ -2,7 +2,7 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
+using MoonscraperChartEditor.Song;
 
 public abstract class Snapable : MonoBehaviour {
     protected ChartEditor editor;
