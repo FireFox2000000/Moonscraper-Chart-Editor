@@ -26,19 +26,6 @@ public class TimeSignature : SyncTrack
         denominator = ts.denominator;
     }
 
-    internal override string GetSaveString()
-    {
-        //0 = TS 4 4
-        string saveString = Globals.TABSPACE + tick + " = TS " + numerator;
-
-        if (denominator != 4)
-            saveString +=  " " + (uint)UnityEngine.Mathf.Log(denominator, 2) + Globals.LINE_ENDING;
-        else
-            saveString += Globals.LINE_ENDING;
-
-        return saveString;
-    }
-
     public static bool regexMatch(string line)
     {
         return new System.Text.RegularExpressions.Regex(@"\d+ = TS \d+").IsMatch(line);

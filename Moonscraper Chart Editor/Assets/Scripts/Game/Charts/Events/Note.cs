@@ -476,23 +476,13 @@ public class Note : ChartObject
     public override void Delete(bool update = true)
     {
         base.Delete(update);
-
+#if APPLICATION_MOONSCRAPER
         // Update the previous note in the case of chords with 2 notes
         if (previous != null && previous.controller)
             previous.controller.UpdateSongObject();
         if (next != null && next.controller)
             next.controller.UpdateSongObject();
-    }
-
-    // Deprecated
-    internal override string GetSaveString()
-    {
-        int fretNumber = (int)guitarFret;
-
-        if (guitarFret == GuitarFret.Open)
-            fretNumber = 7;
-
-        return Globals.TABSPACE + tick + " = N " + fretNumber + " " + length + Globals.LINE_ENDING;          // 48 = N 2 0
+#endif
     }
 
     public string GetFlagsSaveString()

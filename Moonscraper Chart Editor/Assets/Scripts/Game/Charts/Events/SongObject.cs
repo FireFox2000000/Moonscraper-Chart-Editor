@@ -15,11 +15,14 @@ public abstract class SongObject
     /// The tick position of the object
     /// </summary>
     public uint tick;
+
+#if APPLICATION_MOONSCRAPER
     /// <summary>
     /// Unity only.
     /// </summary>
     [System.NonSerialized]
     public SongObjectController controller;
+#endif
 
     public abstract int classID { get; }
 
@@ -27,7 +30,8 @@ public abstract class SongObject
     {
         tick = _tick;
     }
-    
+
+#if APPLICATION_MOONSCRAPER
     public float worldYPosition
     {
         get
@@ -35,6 +39,7 @@ public abstract class SongObject
             return song.TickToWorldYPosition(tick);
         }
     }
+#endif
 
     /// <summary>
     /// Automatically converts the object's tick position into the time it will appear in the song.
@@ -47,8 +52,6 @@ public abstract class SongObject
         }
     }
 
-    internal abstract string GetSaveString();
-
     /// <summary>
     /// Removes this object from it's song/chart
     /// </summary>
@@ -56,10 +59,12 @@ public abstract class SongObject
     /// If set to false, you must manually call the updateArrays() method, but is useful when deleting multiple objects as it increases performance dramatically.</param>
     public virtual void Delete(bool update = true)
     {
+#if APPLICATION_MOONSCRAPER
         if (controller)
         {
             controller.gameObject.SetActive(false);
         }
+#endif
     }
     public abstract SongObject Clone();
 

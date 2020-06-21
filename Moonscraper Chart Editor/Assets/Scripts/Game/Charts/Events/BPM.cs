@@ -41,17 +41,6 @@ public class BPM : SyncTrack
         anchor = _bpm.anchor;
     }
 
-    internal override string GetSaveString()
-    {
-        //0 = B 140000
-        string s = string.Empty;
-        if (anchor != null)
-            s += Globals.TABSPACE + tick + " = A " + (uint)(((double)anchor) * 1000000) + Globals.LINE_ENDING;
-        s += Globals.TABSPACE + tick + " = B " + value + Globals.LINE_ENDING;
-
-        return s;
-    }
-
     public float assignedTime = 0;
 
     public static bool regexMatch(string line)

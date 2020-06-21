@@ -20,12 +20,6 @@ public class Starpower : ChartObject
         length = _starpower.length;
     }
 
-    internal override string GetSaveString()
-    {
-        // 768 = S 2 768
-        return Globals.TABSPACE + tick + " = S 2 " + length + Globals.LINE_ENDING;
-    }
-
     public override SongObject Clone()
     {
         return new Starpower(this);
@@ -85,7 +79,9 @@ public class Starpower : ChartObject
     public override void Delete(bool update = true)
     {
         base.Delete(update);
+#if APPLICATION_MOONSCRAPER
         ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
+#endif
     }
 
     public void CopyFrom(Starpower sp)

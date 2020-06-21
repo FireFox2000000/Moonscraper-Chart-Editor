@@ -59,12 +59,6 @@ public class ChartEvent : ChartObject
             return base.LessThan(b);
     }
 
-    internal override string GetSaveString()
-    {
-        // 1728 = E T
-        return Globals.TABSPACE + tick + " = E " + eventName + Globals.LINE_ENDING;
-    }
-
     public override SongObject Clone()
     {
         return new ChartEvent(this);

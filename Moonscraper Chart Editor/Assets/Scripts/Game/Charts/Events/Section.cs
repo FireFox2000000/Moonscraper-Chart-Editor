@@ -12,11 +12,6 @@ public class Section : Event
 
     public Section(Section section) : base(section.title, section.tick) { }
 
-    internal override string GetSaveString()
-    {
-        return Globals.TABSPACE + tick + " = E \"section " + title + "\"" + Globals.LINE_ENDING;
-    }
-
     new public static bool regexMatch(string line)
     {
         return new System.Text.RegularExpressions.Regex(@"\d+ = E " + @"""section [^""\\]*(?:\\.[^""\\]*)*""").IsMatch(line);

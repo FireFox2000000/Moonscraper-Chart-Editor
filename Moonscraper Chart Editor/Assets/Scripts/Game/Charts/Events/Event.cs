@@ -26,11 +26,6 @@ public class Event : SongObject
         title = songEvent.title;
     }
 
-    internal override string GetSaveString()
-    {
-        return Globals.TABSPACE + tick + " = E \"" + title + "\"" + Globals.LINE_ENDING;
-    }
-
     public static bool regexMatch(string line)
     {
         return new System.Text.RegularExpressions.Regex(@"\d+ = E " + @"""[^""\\]*(?:\\.[^""\\]*)*""").IsMatch(line);
