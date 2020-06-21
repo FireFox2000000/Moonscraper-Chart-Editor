@@ -10,6 +10,8 @@ using System.IO;
 using UnityEngine.UI;
 using Un4seen.Bass.Misc;
 using Un4seen.Bass;
+using MoonscraperEngine;
+using MoonscraperEngine.Audio;
 
 public class Export : DisplayMenu {
     public Text exportingInfo;

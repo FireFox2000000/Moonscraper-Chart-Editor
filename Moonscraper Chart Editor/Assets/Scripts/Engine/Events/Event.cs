@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace MSE
+namespace MoonscraperEngine
 {
     public class Event
     {

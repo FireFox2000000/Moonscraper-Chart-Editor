@@ -4,7 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MSE.Input;
+using MoonscraperEngine.Input;
 
 using SDL2;
 using System;
@@ -49,7 +49,7 @@ public class InputManager : UnitySingleton<InputManager>
             return _defaultControls;
         }
     }
-    public MSE.Event<IInputDevice> disconnectEvent = new MSE.Event<IInputDevice>();
+    public MoonscraperEngine.Event<IInputDevice> disconnectEvent = new MoonscraperEngine.Event<IInputDevice>();
 
     public List<IInputDevice> devices = new List<IInputDevice>() { new KeyboardDevice() };
 

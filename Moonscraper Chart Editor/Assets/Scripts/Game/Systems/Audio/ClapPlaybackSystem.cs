@@ -4,6 +4,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MoonscraperEngine;
+using MoonscraperEngine.Audio;
 
 public class ClapPlaybackSystem : SystemManagerState.System
 {

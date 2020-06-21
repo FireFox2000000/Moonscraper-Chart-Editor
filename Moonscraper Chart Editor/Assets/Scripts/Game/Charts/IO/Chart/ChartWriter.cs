@@ -8,6 +8,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 using System.Text;
+using MoonscraperEngine;
 
 public class ChartWriter
 {

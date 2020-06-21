@@ -3,6 +3,7 @@
 
 using UnityEngine;
 using System.Collections.Generic;
+using MoonscraperEngine;
 
 public class SelectedHighlightDisplaySystem : SystemManagerState.System
 {

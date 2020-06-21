@@ -278,7 +278,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         editor.songObjectPoolManager.SetAllPoolsDirty();
     }
 
-    static ICommand GenerateCommandsAdjustedForAnchors(BPM currentBPM, uint desiredBpmValue)
+    static MoonscraperEngine.ICommand GenerateCommandsAdjustedForAnchors(BPM currentBPM, uint desiredBpmValue)
     {
         List<SongEditCommand> commands = new List<SongEditCommand>();
 

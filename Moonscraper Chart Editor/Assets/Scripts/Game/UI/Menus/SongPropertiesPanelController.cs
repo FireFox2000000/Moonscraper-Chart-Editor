@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
+using MoonscraperEngine;
 
 public class SongPropertiesPanelController : DisplayMenu {
     public Scrollbar verticalScroll;

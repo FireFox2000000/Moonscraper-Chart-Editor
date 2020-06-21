@@ -3,6 +3,8 @@
 
 using UnityEngine;
 using System.Collections;
+using MoonscraperEngine;
+using MoonscraperEngine.Audio;
 
 public abstract class MovementController : MonoBehaviour {
     const float DESYNCLENIENCE = .05f / 1000.0f;

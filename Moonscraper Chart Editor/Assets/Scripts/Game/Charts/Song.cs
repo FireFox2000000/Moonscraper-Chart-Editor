@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System;
+using MoonscraperEngine;
 
 public class Song {
     // Song properties

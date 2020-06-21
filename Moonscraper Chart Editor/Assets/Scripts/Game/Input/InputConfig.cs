@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MoonscraperEngine;
 
 public class InputConfig
 {
@@ -25,9 +26,9 @@ public class InputConfig
         public MSChartEditorInput.Category.CategoryType category;
         public bool allowSameFrameMultiInput;
 
-        public MSE.Input.InputAction.Properties ToMSEInputProperties()
+        public MoonscraperEngine.Input.InputAction.Properties ToMSEInputProperties()
         {
-            return new MSE.Input.InputAction.Properties() {
+            return new MoonscraperEngine.Input.InputAction.Properties() {
                 displayName = this.displayName,
                 rebindable = this.rebindable,
                 hiddenInLists = this.hiddenInLists,
@@ -40,7 +41,7 @@ public class InputConfig
 
     public ShortcutInputConfig[] shortcutInputs;
 
-    public bool TryGetPropertiesConfig(MSChartEditorInputActions shortcut, out MSE.Input.InputAction.Properties properties)
+    public bool TryGetPropertiesConfig(MSChartEditorInputActions shortcut, out MoonscraperEngine.Input.InputAction.Properties properties)
     {
         foreach (ShortcutInputConfig config in shortcutInputs)
         {

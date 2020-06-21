@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MoonscraperEngine;
 
 /// <summary>
 /// Creates a pool of objects that notes and other events can be assigned to for rendering the event.

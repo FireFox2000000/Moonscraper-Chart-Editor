@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NAudio.Midi;
+using MoonscraperEngine;
 
 public static class MidReader {
 

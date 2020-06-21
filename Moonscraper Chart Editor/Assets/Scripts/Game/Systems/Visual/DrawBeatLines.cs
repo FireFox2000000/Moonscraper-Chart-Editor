@@ -3,6 +3,7 @@
 
 using UnityEngine;
 using System.Collections;
+using MoonscraperEngine;
 
 public class DrawBeatLines : SystemManagerState.System
 {

@@ -16,6 +16,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
 using System.Threading.Tasks;
+using MoonscraperEngine;
+using MoonscraperEngine.Audio;
 
 /// <summary>
 /// The central point of the entire editor. Container for all the data and systems nessacary for the editor to function.

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TimingConfig;
+using MoonscraperEngine;
+using MoonscraperEngine.Audio;
 
 public class GameplayStateSystem : SystemManagerState.System
 {
