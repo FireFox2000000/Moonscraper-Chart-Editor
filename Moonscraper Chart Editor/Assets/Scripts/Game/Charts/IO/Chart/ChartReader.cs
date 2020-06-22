@@ -33,6 +33,70 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
+        struct NoteEvent
+        {
+            public uint tick;
+            public int noteNumber;          
+            public uint length;
+        }
+
+        struct NoteProcessParams
+        {
+            public Chart chart;
+            public NoteEvent noteEvent;
+            public List<NoteEventProcessFn> postNotesAddedProcessList;
+        }
+
+        delegate void NoteEventProcessFn(in NoteProcessParams noteProcessParams);
+
+        // These dictionaries map the NoteNumber of each midi note event to a specific function of how to process them
+        static readonly Dictionary<int, NoteEventProcessFn> GuitarChartNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
+        {
+            { 0, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GuitarFret.Green); }},
+            { 1, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GuitarFret.Red); }},
+            { 2, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GuitarFret.Yellow); }},
+            { 3, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GuitarFret.Blue); }},
+            { 4, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GuitarFret.Orange); }},
+            { 7, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GuitarFret.Open); }},
+
+            { 5, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, Note.Flags.Forced); }},
+            { 6, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, Note.Flags.Tap); }},
+        };
+
+        static readonly Dictionary<int, NoteEventProcessFn> DrumsChartNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
+        {
+            { 0, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Kick); }},
+            { 1, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Red); }},
+            { 2, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Yellow); }},
+            { 3, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Blue); }},
+            { 4, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Orange); }},
+            { 5, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Green); }},
+
+            { ChartIOHelper.c_proDrumsOffset + 2, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Yellow, Note.Flags.ProDrums_Cymbal);
+            } },
+            { ChartIOHelper.c_proDrumsOffset + 3, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Blue, Note.Flags.ProDrums_Cymbal);
+            } },
+            { ChartIOHelper.c_proDrumsOffset + 4, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Orange, Note.Flags.ProDrums_Cymbal);
+            } },
+        };
+
+        static readonly Dictionary<int, NoteEventProcessFn> GhlChartNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
+        {
+            { 0, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GHLiveGuitarFret.White1); }},
+            { 1, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GHLiveGuitarFret.White2); }},
+            { 2, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GHLiveGuitarFret.White3); }},
+            { 3, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GHLiveGuitarFret.Black1); }},
+            { 4, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GHLiveGuitarFret.Black2); }},
+            { 8, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GHLiveGuitarFret.Black3); }},
+            { 7, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GHLiveGuitarFret.Open); }},
+
+            { 5, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, Note.Flags.Forced); }},
+            { 6, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, Note.Flags.Tap); }},
+        };
+
         public static Song ReadChart(string filepath)
         {
             try
@@ -497,6 +561,13 @@ namespace MoonscraperChartEditor.Song.IO
         float time = Time.realtimeSinceStartup;
 #endif
             List<NoteFlag> flags = new List<NoteFlag>();
+            List<NoteEventProcessFn> postNotesAddedProcessList = new List<NoteEventProcessFn>();
+
+            NoteProcessParams processParams = new NoteProcessParams()
+            {
+                chart = chart,
+                postNotesAddedProcessList = postNotesAddedProcessList
+            };
 
             chart.SetCapacity(data.Length);
 
@@ -505,6 +576,8 @@ namespace MoonscraperChartEditor.Song.IO
             const int SPLIT_TYPE = 2;
             const int SPLIT_VALUE = 3;
             const int SPLIT_LENGTH = 4;
+
+            Dictionary<int, NoteEventProcessFn> noteProcessDict = GetNoteProcessDict(chart.gameMode);
 
             try
             {
@@ -520,41 +593,51 @@ namespace MoonscraperChartEditor.Song.IO
                         switch (type)
                         {
                             case ("n"):
-                                // Split string to get note information
-                                string[] digits = splitString;
-
-                                int fret_type = int.Parse(digits[SPLIT_VALUE]);
-                                uint length = uint.Parse(digits[SPLIT_LENGTH]);
-
-                                if (instrument == Song.Instrument.Unrecognised)
                                 {
-                                    Note newNote = new Note(tick, fret_type, length);
-                                    chart.Add(newNote, false);
+                                    // Split string to get note information
+                                    string[] digits = splitString;
+
+                                    int fret_type = int.Parse(digits[SPLIT_VALUE]);
+                                    uint length = uint.Parse(digits[SPLIT_LENGTH]);
+
+                                    if (instrument == Song.Instrument.Unrecognised)
+                                    {
+                                        Note newNote = new Note(tick, fret_type, length);
+                                        chart.Add(newNote, false);
+                                    }
+                                    else
+                                    {
+                                        NoteEventProcessFn processFn;
+                                        if (noteProcessDict.TryGetValue(fret_type, out processFn))
+                                        {
+                                            NoteEvent noteEvent = new NoteEvent() { tick = tick, noteNumber = fret_type, length = length };
+                                            processParams.noteEvent = noteEvent;
+                                            processFn(processParams);
+                                        }
+                                    }
+
+                                    break;
                                 }
-                                else if (instrument == Song.Instrument.Drums)
-                                    LoadDrumNote(chart, tick, fret_type, length, flags);
-                                else if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
-                                    LoadGHLiveNote(chart, tick, fret_type, length, flags);
-                                else
-                                    LoadStandardNote(chart, tick, fret_type, length, flags);
-                                break;
 
                             case ("s"):
-                                fret_type = int.Parse(splitString[SPLIT_VALUE]);
+                                {
+                                    int fret_type = int.Parse(splitString[SPLIT_VALUE]);
 
-                                if (fret_type != 2)
-                                    continue;
+                                    if (fret_type != 2)
+                                        continue;
 
-                                length = uint.Parse(splitString[SPLIT_LENGTH]);
+                                    uint length = uint.Parse(splitString[SPLIT_LENGTH]);
 
-                                chart.Add(new Starpower(tick, length), false);
-                                break;
-
+                                    chart.Add(new Starpower(tick, length), false);
+                                    break;
+                                }
                             case ("e"):
-                                string[] strings = splitString;
-                                string eventName = strings[SPLIT_VALUE];
-                                chart.Add(new ChartEvent(tick, eventName), false);
-                                break;
+                                {
+                                    string[] strings = splitString;
+                                    string eventName = strings[SPLIT_VALUE];
+                                    chart.Add(new ChartEvent(tick, eventName), false);
+                                    break;
+                                }
                             default:
                                 break;
                         }
@@ -567,47 +650,11 @@ namespace MoonscraperChartEditor.Song.IO
                 }
                 chart.UpdateCache();
 
-                // Load flags
-                foreach (NoteFlag flag in flags)
+                foreach (var fn in postNotesAddedProcessList)
                 {
-                    if (flag.flag == Note.Flags.ProDrums_Cymbal)
-                    {
-                        // The note number indicates which note it should attach to
-                        int noteNumber = flag.noteNumber - ChartIOHelper.c_proDrumsOffset;
-                        Debug.Assert(noteNumber >= 0, "Incorrectly parsed a note flag as a pro-drums flag. Note number was " + flag.noteNumber);
-
-                        int index, length;
-                        SongObjectHelper.FindObjectsAtPosition(flag.tick, chart.notes, out index, out length);
-                        if (length > 0)
-                        {
-                            for (int i = index; i < index + length; ++i)
-                            {
-                                Note note = chart.notes[i];
-
-                                int saveNoteNum;
-                                if (!ChartIOHelper.c_drumNoteToSaveNumberLookup.TryGetValue(note.rawNote, out saveNoteNum))
-                                {
-                                    continue;
-                                }
-
-                                if (noteNumber == saveNoteNum)
-                                {
-                                    // Reverse cymbal flag
-                                    note.flags ^= Note.Flags.ProDrums_Cymbal;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        int index, length;
-                        SongObjectHelper.FindObjectsAtPosition(flag.tick, chart.notes, out index, out length);
-                        if (length > 0)
-                        {
-                            NoteFunctions.GroupAddFlags(chart.notes, flag.flag, index, length);
-                        }
-                    }
+                    fn(processParams);
                 }
+
 #if TIMING_DEBUG
             Debug.Log("Chart load time: " + (Time.realtimeSinceStartup - time));
 #endif
@@ -620,55 +667,88 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
-        static void LoadNote(Chart chart, uint tick, int noteNumber, uint length, List<NoteFlag> flagsList
-            , Dictionary<int, int> chartFileNoteToRawNoteLookup
-            , Dictionary<int, Note.Flags> chartFileNoteToFlagLookup
-            , Dictionary<int, Note.Flags> rawNoteDefaultFlagsLookup
-        )
+        static Dictionary<int, NoteEventProcessFn> GetNoteProcessDict(Chart.GameMode gameMode)
         {
-            Debug.Assert(chartFileNoteToRawNoteLookup != null, "Must provide a note lookup dictionary");
-            // Load chart file note to a raw note
+            switch (gameMode)
             {
-                int noteFret;
-                if (chartFileNoteToRawNoteLookup.TryGetValue(noteNumber, out noteFret))
-                {
-                    // Optional. Load any default flags that come with notes. Useful for automatically attaching cymbal flags for pro drums
-                    Note.Flags flags;
-                    if (rawNoteDefaultFlagsLookup == null || !rawNoteDefaultFlagsLookup.TryGetValue(noteFret, out flags))
+                case Chart.GameMode.GHLGuitar:
                     {
-                        flags = Note.Flags.None;
+                        return GhlChartNoteNumberToProcessFnMap;
+                    }
+                case Chart.GameMode.Drums:
+                    {
+                        return DrumsChartNoteNumberToProcessFnMap;
                     }
 
-                    Note newNote = new Note(tick, noteFret, length, flags);
-                    chart.Add(newNote, false);
-                }
+                default: break;
             }
 
-            // Optional. Load any flags that are parsed on a seperate tick
-            if (chartFileNoteToFlagLookup != null)
+            return GuitarChartNoteNumberToProcessFnMap;
+        }
+
+        static void ProcessNoteOnEventAsNote(in NoteProcessParams noteProcessParams, int ingameFret, Note.Flags defaultFlags = Note.Flags.None)
+        {
+            Chart chart = noteProcessParams.chart;
+
+            NoteEvent noteEvent = noteProcessParams.noteEvent;
+            var tick = noteEvent.tick;
+            var sus = noteEvent.length;
+
+            Note newNote = new Note(tick, ingameFret, sus, defaultFlags);
+            chart.Add(newNote, false);
+        }
+
+        static void ProcessNoteOnEventAsChordFlag(in NoteProcessParams noteProcessParams, Note.Flags flag)
+        {
+            var flagEvent = noteProcessParams.noteEvent;
+
+            // Delay the actual processing once all the notes are actually in
+            noteProcessParams.postNotesAddedProcessList.Add((in NoteProcessParams processParams) =>
             {
-                Note.Flags flags;
-                if (chartFileNoteToFlagLookup.TryGetValue(noteNumber, out flags))
-                {
-                    NoteFlag parsedFlag = new NoteFlag(tick, flags, noteNumber);
-                    flagsList.Add(parsedFlag);
-                }
+                ProcessNoteOnEventAsChordFlagPostDelay(processParams, flagEvent, flag);
+            });
+        }
+
+        static void ProcessNoteOnEventAsChordFlagPostDelay(in NoteProcessParams noteProcessParams, NoteEvent noteEvent, Note.Flags flag)
+        {
+            Chart chart = noteProcessParams.chart;
+
+            int index, length;
+            SongObjectHelper.FindObjectsAtPosition(noteEvent.tick, chart.notes, out index, out length);
+            if (length > 0)
+            {
+                NoteFunctions.GroupAddFlags(chart.notes, flag, index, length);
             }
         }
 
-        static void LoadStandardNote(Chart chart, uint tick, int noteNumber, uint length, List<NoteFlag> flagsList)
+        static void ProcessNoteOnEventAsNoteFlagToggle(in NoteProcessParams noteProcessParams, int rawNote, Note.Flags flag)
         {
-            LoadNote(chart, tick, noteNumber, length, flagsList, ChartIOHelper.c_guitarNoteNumLookup, ChartIOHelper.c_guitarFlagNumLookup, null);
+            var flagEvent = noteProcessParams.noteEvent;
+
+            // Delay the actual processing once all the notes are actually in
+            noteProcessParams.postNotesAddedProcessList.Add((in NoteProcessParams processParams) =>
+            {
+                ProcessNoteOnEventAsNoteFlagTogglePostDelay(processParams, rawNote, flagEvent, flag);
+            });
         }
 
-        static void LoadDrumNote(Chart chart, uint tick, int noteNumber, uint length, List<NoteFlag> flagsList)
+        static void ProcessNoteOnEventAsNoteFlagTogglePostDelay(in NoteProcessParams noteProcessParams, int rawNote, NoteEvent noteEvent, Note.Flags flag)
         {
-            LoadNote(chart, tick, noteNumber, length, flagsList, ChartIOHelper.c_drumNoteNumLookup, ChartIOHelper.c_drumFlagNumLookup, ChartIOHelper.c_drumNoteDefaultFlagsLookup);
-        }
+            Chart chart = noteProcessParams.chart;
 
-        static void LoadGHLiveNote(Chart chart, uint tick, int noteNumber, uint length, List<NoteFlag> flagsList)
-        {
-            LoadNote(chart, tick, noteNumber, length, flagsList, ChartIOHelper.c_ghlNoteNumLookup, ChartIOHelper.c_ghlFlagNumLookup, null);
+            int index, length;
+            SongObjectHelper.FindObjectsAtPosition(noteEvent.tick, chart.notes, out index, out length);
+            if (length > 0)
+            {
+                for (int i = index; i < index + length; ++i)
+                {
+                    Note note = chart.notes[i];
+                    if (note.rawNote == rawNote)
+                    {
+                        note.flags ^= flag;
+                    }
+                }
+            }
         }
     }
 }
