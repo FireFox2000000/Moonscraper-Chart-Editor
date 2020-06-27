@@ -205,4 +205,12 @@ public abstract class SongObjectController : SelectableClick {
 
         return position;
     }
+
+    protected float desiredWorldYPosition
+    {
+        get
+        {
+            return ChartEditor.WorldYPosition(songObject);
+        }
+    }
 }

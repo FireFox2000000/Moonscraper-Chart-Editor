@@ -42,7 +42,7 @@ public class BPMController : SongObjectController {
     {
         if (bpm.song != null)
         {
-            transform.position = new Vector3(CHART_CENTER_POS + position, bpm.worldYPosition, 0); 
+            transform.position = new Vector3(CHART_CENTER_POS + position, desiredWorldYPosition, 0); 
         }
 
         if (anchorColourSwitch && ren)

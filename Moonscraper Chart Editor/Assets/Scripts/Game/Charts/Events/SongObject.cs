@@ -33,16 +33,6 @@ namespace MoonscraperChartEditor.Song
             tick = _tick;
         }
 
-#if APPLICATION_MOONSCRAPER
-        public float worldYPosition
-        {
-            get
-            {
-                return song.TickToWorldYPosition(tick);
-            }
-        }
-#endif
-
         /// <summary>
         /// Automatically converts the object's tick position into the time it will appear in the song.
         /// </summary>

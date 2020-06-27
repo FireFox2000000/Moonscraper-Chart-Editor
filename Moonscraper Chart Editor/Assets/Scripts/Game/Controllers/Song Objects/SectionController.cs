@@ -15,7 +15,7 @@ public class SectionController : SongObjectController
     {
         if (section.song != null)
         {
-            transform.position = new Vector3(CHART_CENTER_POS + position, section.worldYPosition, 0);
+            transform.position = new Vector3(CHART_CENTER_POS + position, desiredWorldYPosition, 0);
 
             sectionText.text = section.title;
         }

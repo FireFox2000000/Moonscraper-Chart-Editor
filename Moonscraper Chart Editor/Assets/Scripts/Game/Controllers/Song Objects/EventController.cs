@@ -16,7 +16,7 @@ public class EventController : SongObjectController
     {
         if (songEvent.song != null)
         {
-            transform.position = new UnityEngine.Vector3(CHART_CENTER_POS + position, songEvent.worldYPosition, GetOffset(editor, this.songEvent));
+            transform.position = new UnityEngine.Vector3(CHART_CENTER_POS + position, desiredWorldYPosition, GetOffset(editor, this.songEvent));
 
             songEventText.text = songEvent.title;
         }

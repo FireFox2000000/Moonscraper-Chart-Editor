@@ -393,6 +393,11 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         return time * Globals.gameSettings.hyperspeed / Globals.gameSettings.gameSpeed;
     }
 
+    public static float WorldYPosition(SongObject songObject)
+    {
+        return songObject.song.TickToWorldYPosition(songObject.tick);
+    }
+
     #region State Control
 
     SystemManagerState GetStateForEnum(State state)
@@ -1037,7 +1042,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         {
             if (note.controller)
             {
-                if (note.worldYPosition < strikelineYPos)
+                if (WorldYPosition(note) < strikelineYPos)
                 {
                     note.controller.HideFullNote();
                 }

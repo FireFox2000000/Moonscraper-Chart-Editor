@@ -339,7 +339,7 @@ public class TimelineMovementController : MovementController
         float position = Mathf.Round(strikeLine.position.y);
 
         int i = 0;
-        while (i < editor.currentSong.sections.Count && Mathf.Round(editor.currentSong.sections[i].worldYPosition) <= position)
+        while (i < editor.currentSong.sections.Count && Mathf.Round(ChartEditor.WorldYPosition(editor.currentSong.sections[i])) <= position)
         {
             ++i;
         }
@@ -348,7 +348,7 @@ public class TimelineMovementController : MovementController
         if (direction > 0)
         {
             // Found section ahead
-            if (i < editor.currentSong.sections.Count && Mathf.Round(editor.currentSong.sections[i].worldYPosition) > position)
+            if (i < editor.currentSong.sections.Count && Mathf.Round(ChartEditor.WorldYPosition(editor.currentSong.sections[i])) > position)
                 SetPosition(editor.currentSong.sections[i].tick);
             else
                 SetPosition(editor.currentSong.TimeToTick(editor.currentSongLength, editor.currentSong.resolution));       // Jump to the end of the song
@@ -357,7 +357,7 @@ public class TimelineMovementController : MovementController
         // Jump backwards
         else
         {
-            while (i > editor.currentSong.sections.Count - 1 || (i >= 0 && Mathf.Round(editor.currentSong.sections[i].worldYPosition) >= position))
+            while (i > editor.currentSong.sections.Count - 1 || (i >= 0 && Mathf.Round(ChartEditor.WorldYPosition(editor.currentSong.sections[i])) >= position))
                 --i;
 
             if (i >= 0)

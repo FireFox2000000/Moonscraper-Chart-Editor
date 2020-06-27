@@ -17,7 +17,7 @@ public class ChartEventController : SongObjectController
     {
         if (chartEvent.chart != null)
         {
-            transform.position = new Vector3(CHART_CENTER_POS + position, chartEvent.worldYPosition, GetOffset(editor, chartEvent));
+            transform.position = new Vector3(CHART_CENTER_POS + position, desiredWorldYPosition, GetOffset(editor, chartEvent));
 
             chartEventText.text = chartEvent.eventName;
         }

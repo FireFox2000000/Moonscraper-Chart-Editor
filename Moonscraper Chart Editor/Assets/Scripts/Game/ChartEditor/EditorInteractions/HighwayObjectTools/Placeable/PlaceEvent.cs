@@ -74,6 +74,6 @@ public class PlaceEvent : PlaceSongObject
             offset += EventController.OFFSET_SPACING;
         }
 
-        transform.position = new UnityEngine.Vector3(SongObjectController.CHART_CENTER_POS + EventController.position, songEvent.worldYPosition, offset);
+        transform.position = new UnityEngine.Vector3(SongObjectController.CHART_CENTER_POS + EventController.position, ChartEditor.WorldYPosition(songEvent), offset);
     }
 }

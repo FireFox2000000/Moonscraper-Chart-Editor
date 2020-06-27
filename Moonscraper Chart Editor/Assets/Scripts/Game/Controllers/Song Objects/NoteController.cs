@@ -214,7 +214,7 @@ public class NoteController : SongObjectController {
     {
         float zPos = 0;
         // Position
-        transform.position = new Vector3(CHART_CENTER_POS + NoteToXPos(note), note.worldYPosition, zPos);
+        transform.position = new Vector3(CHART_CENTER_POS + NoteToXPos(note), desiredWorldYPosition, zPos);
     }
 
     protected override void UpdateCheck()
@@ -333,7 +333,7 @@ public class NoteController : SongObjectController {
         {
             float zPos = 0;
             // Position
-            transform.position = new Vector3(CHART_CENTER_POS + NoteToXPos(note), note.worldYPosition, zPos);
+            transform.position = new Vector3(CHART_CENTER_POS + NoteToXPos(note), desiredWorldYPosition, zPos);
 
             if (note.IsOpenNote())
                 sustainRen.sortingOrder = -1;

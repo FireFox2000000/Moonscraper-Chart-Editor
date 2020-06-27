@@ -113,23 +113,6 @@ namespace MoonscraperChartEditor.Song
             }
         }
 
-        public string GetDrumString(LaneInfo laneInfo)
-        {
-            string str = null;
-
-            if (laneInfo.laneCount < 5 && drumPad == DrumPad.Orange)
-                str = DrumPad.Green.ToString();
-            else
-                str = drumPad.ToString();
-
-            if (this.ShouldBeCulledFromLanes(laneInfo))
-            {
-                str += " (Lane " + (this.rawNote + 1) + ")";
-            }
-
-            return str;
-        }
-
         /// <summary>
         /// Properties, such as forced or taps, are stored here in a bitwise format.
         /// </summary>
@@ -145,13 +128,13 @@ namespace MoonscraperChartEditor.Song
         public Note next;
 
         public Chord chord { get { return new Chord(this); } }
-
+#if APPLICATION_MOONSCRAPER
         new public NoteController controller
         {
             get { return (NoteController)base.controller; }
             set { base.controller = value; }
         }
-
+#endif 
         public Note(uint _position,
                     int _rawNote,
                     uint _sustain = 0,
@@ -370,30 +353,6 @@ namespace MoonscraperChartEditor.Song
             }
         }
 
-        public int GetRawNoteLaneCapped(LaneInfo laneInfo)
-        {
-            int noteIndex = rawNote;
-
-            if (!this.IsOpenNote())
-            {
-                noteIndex = UnityEngine.Mathf.Min(rawNote, laneInfo.laneCount - 1);
-            }
-
-            return noteIndex;
-        }
-
-        public int GetMaskCappedLanes(LaneInfo laneInfo)
-        {
-            int mask = 0;
-
-            foreach (Note note in this.chord)
-            {
-                mask |= 1 << note.GetRawNoteLaneCapped(laneInfo);
-            }
-
-            return mask;
-        }
-
         public int GetMaskWithRequiredFlags(Flags flags)
         {
             int mask = 0;
@@ -402,29 +361,6 @@ namespace MoonscraperChartEditor.Song
             {
                 if (note.flags == flags)
                     mask |= (1 << note.rawNote);
-            }
-
-            return mask;
-        }
-
-        public int GetMaskWithRequiredFlagsLaneCapped(Flags flags, LaneInfo laneInfo)
-        {
-            int mask = 0;
-            int processedNotesMask = 0;
-
-            foreach (Note note in this.chord)
-            {
-                int noteIndex = note.GetRawNoteLaneCapped(laneInfo);
-                if ((processedNotesMask & (1 << noteIndex)) != 0)
-                {
-                    // There may have already been a note on the edge of the lane cap. Use that note instead.
-                    continue;
-                }
-
-                if (note.flags == flags)
-                    mask |= (1 << note.rawNote);
-
-                processedNotesMask |= (1 << note.rawNote);
             }
 
             return mask;
