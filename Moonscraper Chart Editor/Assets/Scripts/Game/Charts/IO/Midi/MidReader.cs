@@ -408,7 +408,10 @@ namespace MoonscraperChartEditor.Song.IO
                         SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
                         for (int k = index; k < index + length; ++k)
                         {
-                            chart.notes[k].SetType(Note.NoteType.Tap);
+                            if (!chart.notes[k].IsOpenNote())
+                            {
+                                chart.notes[k].flags = Note.Flags.Tap;
+                            }
                         }
                     }
                 }
@@ -765,12 +768,53 @@ namespace MoonscraperChartEditor.Song.IO
             int index, length;
             SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
 
+            uint lastChordTick = uint.MaxValue;
+            bool shouldBeForced = false;
+
             for (int i = index; i < index + length; ++i)
             {
                 if ((chart.notes[i].flags & Note.Flags.Tap) != 0)
                     continue;
 
-                chart.notes[i].SetType(noteType);
+                Note note = chart.notes[i];
+
+                if (lastChordTick != note.tick)
+                {
+                    shouldBeForced = false;
+
+                    if (noteType == Note.NoteType.Strum)
+                    {
+                        if (!note.isChord && note.isNaturalHopo)
+                        {
+                            shouldBeForced = true;
+                        }
+                    }
+                    else if (noteType == Note.NoteType.Hopo)
+                    {
+                        if (!note.cannotBeForced && (note.isChord || !note.isNaturalHopo))
+                        {
+                            shouldBeForced = true;
+                        }
+                    }
+                    else
+                    {
+                        continue;   // Unhandled
+                    }
+                }
+                // else we set the same forced property as before since we're on the same chord
+
+                if (shouldBeForced)
+                {
+                    note.flags |= Note.Flags.Forced;
+                }
+                else
+                {
+                    note.flags &= ~Note.Flags.Forced;
+                }
+
+                lastChordTick = note.tick;
+
+                Debug.Assert(note.type == noteType);
             }
         }
 
