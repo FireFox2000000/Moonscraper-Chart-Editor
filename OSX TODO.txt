@@ -4,8 +4,10 @@ Plugins-
   Plugins for bass, native file explorer and SDL2 have been provided, but untested as to how they actually link in with a proper XCode project. 
   
 Window handle- 
-  NativeWindow_OSX.cs need implementation. We need to get a point to the OSX application's NSWindow which is apparently what SDL is expecting
-  when it tries to converting the window pointer to an SDL window. Using the SDL window automatically allows the message box functionality to work.
+  NativeWindow_OSX.cs need implementation. 
+  
+Message box- 
+  NativeMessageBoxOSX.cs needs implementation.
   
 FileExplorer-
   The native file explorer has an already untested solution based on https://github.com/gkngkc/UnityStandaloneFileBrowser.
