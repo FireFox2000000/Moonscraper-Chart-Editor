@@ -717,7 +717,7 @@ namespace MoonscraperChartEditor.Song.IO
             SongObjectHelper.FindObjectsAtPosition(noteEvent.tick, chart.notes, out index, out length);
             if (length > 0)
             {
-                NoteFunctions.GroupAddFlags(chart.notes, flag, index, length);
+                GroupAddFlags(chart.notes, flag, index, length);
             }
         }
 
@@ -748,6 +748,14 @@ namespace MoonscraperChartEditor.Song.IO
                         note.flags ^= flag;
                     }
                 }
+            }
+        }
+
+        static void GroupAddFlags(IList<Note> notes, Note.Flags flag, int index, int length)
+        {
+            for (int i = index; i < index + length; ++i)
+            {
+                notes[i].flags = notes[i].flags | flag;
             }
         }
     }

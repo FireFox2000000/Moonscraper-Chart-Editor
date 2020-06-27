@@ -10,14 +10,6 @@ using MoonscraperChartEditor.Song;
 
 public static class NoteFunctions {
 
-    public static void GroupAddFlags(IList<Note> notes, Note.Flags flag, int index, int length)
-    {
-        for (int i = index; i < index + length; ++i)
-        {
-            notes[i].flags = notes[i].flags | flag;
-        }
-    }
-
     /// <summary>
     /// Gets all the notes (including this one) that share the same tick position as this one.
     /// </summary>
@@ -188,14 +180,6 @@ public static class NoteFunctions {
         }
 
         return null;
-    }
-
-    public static bool IsOpenNote(this Note note)
-    {
-        if (note.gameMode == Chart.GameMode.GHLGuitar)
-            return note.ghliveGuitarFret == Note.GHLiveGuitarFret.Open;
-        else
-            return note.guitarFret == Note.GuitarFret.Open;
     }
 
     public static bool ShouldBeCulledFromLanes(this Note note, LaneInfo laneInfo)

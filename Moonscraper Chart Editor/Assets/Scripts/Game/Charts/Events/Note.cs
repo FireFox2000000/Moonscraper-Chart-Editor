@@ -461,5 +461,13 @@ namespace MoonscraperChartEditor.Song
                 fn(note);
             }
         }
+
+        public bool IsOpenNote()
+        {
+            if (gameMode == Chart.GameMode.GHLGuitar)
+                return ghliveGuitarFret == GHLiveGuitarFret.Open;
+            else
+                return guitarFret == GuitarFret.Open;
+        }
     }
 }
