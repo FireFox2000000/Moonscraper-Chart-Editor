@@ -1,95 +1,81 @@
-﻿#if UNITY_STANDALONE_LINUX
-
-// Based on https://github.com/gkngkc/UnityStandaloneFileBrowser/blob/master/Assets/StandaloneFileBrowser/StandaloneFileBrowserLinux.cs
+#if UNITY_STANDALONE_LINUX
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 
 public class FileExplorerLinux : IFileExplorer
 {
     [DllImport("StandaloneFileBrowser")]
-    private static extern void DialogInit();
-    [DllImport("StandaloneFileBrowser")]
-    private static extern IntPtr DialogOpenFilePanel(string title, string directory, string extension, bool multiselect);
-    //[DllImport("StandaloneFileBrowser")]
-    //private static extern void DialogOpenFilePanelAsync(string title, string directory, string extension, bool multiselect, AsyncCallback callback);
-    [DllImport("StandaloneFileBrowser")]
-    private static extern IntPtr DialogOpenFolderPanel(string title, string directory, bool multiselect);
-    //[DllImport("StandaloneFileBrowser")]
-    //private static extern void DialogOpenFolderPanelAsync(string title, string directory, bool multiselect, AsyncCallback callback);
-    [DllImport("StandaloneFileBrowser")]
-    private static extern IntPtr DialogSaveFilePanel(string title, string directory, string defaultName, string extension);
-    //[DllImport("StandaloneFileBrowser")]
-    //private static extern void DialogSaveFilePanelAsync(string title, string directory, string defaultName, string extension, AsyncCallback callback);
+    private static extern IntPtr noc_file_dialog_open(int flags, [In] byte[] filters, string defaultPath, string defaultName);
 
-    public FileExplorerLinux()
-    {
-        DialogInit();
-    }
+    /// Create an open file dialog.
+    private static int NOC_FILE_DIALOG_OPEN = 1 << 0;
+    /// Create a save file dialog.
+    private static int NOC_FILE_DIALOG_SAVE = 1 << 1;
+    /// Open a directory.
+    private static int NOC_FILE_DIALOG_DIR = 1 << 2;
+    private static int NOC_FILE_DIALOG_OVERWRITE_CONFIRMATION = 1 << 3;
 
     public bool OpenFilePanel(ExtensionFilter filter, string defExt, out string resultPath)
     {
-        var paths = Marshal.PtrToStringAnsi(DialogOpenFilePanel(
-                "Open file",
-                "",
-                GetFilterFromFileExtensionList(new ExtensionFilter[] { filter }),
-                false));
-
-        string[] results = paths.Split((char)28);
-        resultPath = results.Length > 0 ? results[0] : string.Empty;
+        resultPath = Marshal.PtrToStringAnsi(noc_file_dialog_open(
+                NOC_FILE_DIALOG_OPEN,
+                GetFilterFromFileExtensionList(new ExtensionFilter[] { filter, new ExtensionFilter("All Files", "*") }),
+                null,
+                null));
 
         return !string.IsNullOrEmpty(resultPath);
     }
 
     public bool OpenFolderPanel(out string resultPath)
     {
-        var paths = Marshal.PtrToStringAnsi(DialogOpenFolderPanel(
-                "",
-                "",
-                false));
-
-        string[] results = paths.Split((char)28);
-        resultPath = results.Length > 0 ? results[0] : string.Empty;
+        resultPath = Marshal.PtrToStringAnsi(noc_file_dialog_open(
+                NOC_FILE_DIALOG_DIR,
+                null,
+                null,
+                null));
 
         return !string.IsNullOrEmpty(resultPath);
     }
 
     public bool SaveFilePanel(ExtensionFilter filter, string defaultFileName, string defExt, out string resultPath)
     {
-        resultPath = Marshal.PtrToStringAnsi(DialogSaveFilePanel(
-                "Save As",
-                "",
-                defaultFileName,
-                GetFilterFromFileExtensionList(new ExtensionFilter[] { filter })
-                ));
+        resultPath = Marshal.PtrToStringAnsi(noc_file_dialog_open(
+                NOC_FILE_DIALOG_SAVE | NOC_FILE_DIALOG_OVERWRITE_CONFIRMATION,
+                GetFilterFromFileExtensionList(new ExtensionFilter[] { filter, new ExtensionFilter("All Files", "*") }),
+                null,
+                $"{defaultFileName}.{defExt}"));
 
         return !string.IsNullOrEmpty(resultPath);
     }
 
-    private static string GetFilterFromFileExtensionList(ExtensionFilter[] extensions)
+    private static byte[] GetFilterFromFileExtensionList(ExtensionFilter[] extensions)
     {
+        List<byte> bytes = new List<byte>();
+
         if (extensions == null)
         {
-            return "";
+            return null;
         }
 
-        var filterString = "";
         foreach (var filter in extensions)
         {
-            filterString += filter.name + ";";
+            bytes.AddRange(Encoding.ASCII.GetBytes(filter.name));
+            bytes.Add((byte)'\0');
 
-            foreach (var ext in filter.extensions)
+            for (int i = 0; i < filter.extensions.Length; i++)
             {
-                filterString += ext + ",";
+                bytes.AddRange(Encoding.ASCII.GetBytes($"*.{filter.extensions[i]}"));
+                if (i != (filter.extensions.Length - 1))
+                    bytes.Add((byte)';');
             }
 
-            filterString = filterString.Remove(filterString.Length - 1);
-            filterString += "|";
+            bytes.Add((byte)'\0');
         }
-        filterString = filterString.Remove(filterString.Length - 1);
-        return filterString;
+
+        return bytes.ToArray();
     }
 }
 

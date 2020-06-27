@@ -589,8 +589,10 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         if (lastLoadedFile != string.Empty)
             defaultFileName = System.IO.Path.GetFileNameWithoutExtension(lastLoadedFile);
-        else
+        else if (currentSong.name != string.Empty)
             defaultFileName = new String(currentSong.name.ToCharArray());
+        else
+            defaultFileName = "Untitled";
 
         if (!forced)
             defaultFileName += "(UNFORCED)";

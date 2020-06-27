@@ -109,11 +109,15 @@ public class Export : DisplayMenu {
 
     void _ExportSong()
     {
-        string saveLocation;
-        string defaultFileName = new string(editor.currentSong.name.ToCharArray());
+        string defaultFileName;
+        if (editor.currentSong.name != string.Empty)
+            defaultFileName = new string(editor.currentSong.name.ToCharArray());
+        else
+            defaultFileName = "Untitled";
         if (!exportOptions.forced)
             defaultFileName += "(UNFORCED)";
 
+        string saveLocation;
         bool aquiredFilePath = false;
 
         // Open up file explorer and get save location

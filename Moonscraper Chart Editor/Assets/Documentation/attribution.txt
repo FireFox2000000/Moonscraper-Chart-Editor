@@ -5,7 +5,7 @@ Copyright (c) 1999-2016 Un4seen Developments Ltd. All rights reserved.
 
 ----------------------------------------------------------------------------------------
 
-BASS.NET API: Copyright 2005-2016 by radio42, Author: Bernd Niedergesaess  (bn@radio42.com). All rights reserved. 
+BASS.NET API: Copyright 2005-2016 by radio42, Author: Bernd Niedergesaess  (bn@radio42.com). All rights reserved.
 BASS.NET is the property of radio42 and is protected by copyright laws and international copyright treaties. BASS.NET is not sold, it is licensed.
 BASS and Add-Ons: All trademarks and other registered names contained in the BASS.NET package are the property of their respective owners.
 
@@ -37,6 +37,30 @@ SOFTWARE.
 
 ----------------------------------------------------------------------------------------
 
+https://github.com/guillaumechereau/noc
+
+Copyright (c) 2015 Guillaume Chereau <guillaume@noctua-software.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE.
+
+----------------------------------------------------------------------------------------
+
 The Simple DirectMedia Layer (SDL for short) is a cross-platform library
 designed to make it easy to write multi-media software, such as games
 and emulators.
@@ -55,33 +79,33 @@ Provided by sandsky0 from the Rhythm Gaming Community Discord server (downloaded
 ----------------------------------------------------------------------------------------
 
 Eraser UI Icon- http://icongal.com/gallery/icon/8544/24/eraser
-Copyright (C) 2010 Yusuke Kamiyamane. All rights reserved. 
-The icons are licensed under a Creative Commons Attribution 
+Copyright (C) 2010 Yusuke Kamiyamane. All rights reserved.
+The icons are licensed under a Creative Commons Attribution
 3.0 license. http://creativecommons.org/licenses/by/3.0/
 (as of 20/12/2016)
 
 ----------------------------------------------------------------------------------------
 
 Metronome UI Icon- https://www.iconfinder.com/icons/64462/metronome_icon
-Copyright (C) 2011 FatCow Web Hosting. All rights reserved. 
-The icons are licensed under a Creative Commons Attribution 
+Copyright (C) 2011 FatCow Web Hosting. All rights reserved.
+The icons are licensed under a Creative Commons Attribution
 3.0 Unported License (US). https://creativecommons.org/licenses/by/3.0/us/
 (as of 21/20/2016)
 
 ----------------------------------------------------------------------------------------
 
-Clap sound- https://www.freesound.org/people/ERH/sounds/31348/ 
-Copyright (C) 2007 ERH. All rights reserved. 
-The icons are licensed under a Creative Commons Attribution 
+Clap sound- https://www.freesound.org/people/ERH/sounds/31348/
+Copyright (C) 2007 ERH. All rights reserved.
+The icons are licensed under a Creative Commons Attribution
 3.0 license. https://creativecommons.org/licenses/by/3.0/
 (as of 17/10/16)
 
 ----------------------------------------------------------------------------------------
 
 Bass/guitar/instrument/music/rock icon- https://www.iconfinder.com/icons/16874/bass_guitar_instrument_music_rock_icon
-Copyright (C) Christian F. Burprich. All rights reserved. 
-The icons are licensed under a Creative Commons 
-Attribution-Noncommercial-Share Alike 3.0 Unported 
+Copyright (C) Christian F. Burprich. All rights reserved.
+The icons are licensed under a Creative Commons
+Attribution-Noncommercial-Share Alike 3.0 Unported
 license. https://creativecommons.org/licenses/by-nc-sa/3.0/)
 Changes: Removed "gp5" text.
 
@@ -93,7 +117,7 @@ Undo Icon from Turbomilk - http://www.turbomilk.com/
 ----------------------------------------------------------------------------------------
 
 Flag Icon- https://www.iconfinder.com/icons/32476/event_flag_gps_location_marker_monotone_pin_icon
-Copyright (C) Aha-Soft. All rights reserved. 
-The icons are licensed under a Creative Commons Attribution 
+Copyright (C) Aha-Soft. All rights reserved.
+The icons are licensed under a Creative Commons Attribution
 3.0 Unported License (US). https://creativecommons.org/licenses/by/3.0/us/
 (as of 02/09/2017)
