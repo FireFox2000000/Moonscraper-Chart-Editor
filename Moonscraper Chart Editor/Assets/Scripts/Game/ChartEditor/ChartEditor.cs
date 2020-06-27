@@ -4,11 +4,6 @@
 #define TIMING_DEBUG
 //#undef UNITY_EDITOR
 
-// Having SDL video initialised in the editor causes weird visual glitches within the editor. Only used in standalone builds anyway.
-#if !UNITY_EDITOR
-    #define SDL_VIDEO
-#endif
-
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
@@ -153,17 +148,6 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 #endif
         Application.quitting += FinaliseQuit;
 
-#if SDL_VIDEO
-        // Init for window manager
-        if (SDL2.SDL.SDL_Init(SDL2.SDL.SDL_INIT_VIDEO) < 0)
-        {
-            Debug.LogError("SDL could not initialise! SDL Error: " + SDL2.SDL.SDL_GetError());
-        }
-        else
-        {
-            Debug.Log("Successfully initialised video SDL");
-        }
-#endif
         currentSongAudio = new SongAudioManager();
 
         assets = GetComponent<ChartEditorAssets>();
@@ -287,9 +271,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         Debug.Log("Disposing SDL");
         InputManager.Instance.Dispose();
-#if SDL_VIDEO
-        SDL2.SDL.SDL_VideoQuit();
-#endif
+
         SDL2.SDL.SDL_Quit();
 
         while (isSaving) ;
