@@ -1,3 +1,12 @@
+1.3.4.1
+	CHANGES
+	-Added beat line to custom resources.
+
+	FIXES
+	-Fixed application hang when mass deleting a bunch of objects. Removes warning log spam.
+	-Revert SDL video implementation for window handle and message box. Was interferring with Unity's processing of window and mouse events.
+	-Optimised cache recalculation for song with large bpm changes. Fixes lag when doing things like sustain dragging where this issue would have been more obvious.
+
 1.3.4
 	CHANGES
 	-Display 5th lane notes in 4th lane if no note occupies said 4th lane. This more accurately represents the GH standard for converting 5 lane charts to 4 lane. 
