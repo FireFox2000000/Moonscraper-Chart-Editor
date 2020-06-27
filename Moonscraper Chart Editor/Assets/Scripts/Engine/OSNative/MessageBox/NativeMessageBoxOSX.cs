@@ -8,18 +8,7 @@ public class NativeMessageBoxOSX : INativeMessageBox
 {
     public NativeMessageBox.Result Show(string text, string caption, NativeMessageBox.Type messageBoxType, NativeWindow childWindow)
     {
-        IntPtr messagePtr = IntPtr.Zero;
-
-        if (childWindow != null)
-        {
-            NativeWindow_OSX winInterface = childWindow.GetInterface() as NativeWindow_OSX;
-
-            UnityEngine.Debug.Assert(winInterface != null);
-
-            messagePtr = winInterface.sdlWindowPtr;
-        }
-
-        return NativeMessageBoxSDL.Show(text, caption, messageBoxType, messagePtr);
+        throw new NotImplementedException();
     }
 }
 
