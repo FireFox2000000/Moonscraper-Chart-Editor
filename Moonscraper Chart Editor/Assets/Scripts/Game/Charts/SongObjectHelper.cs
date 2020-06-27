@@ -10,17 +10,6 @@ namespace MoonscraperChartEditor.Song
     {
         public const int NOTFOUND = -1;
 
-        public static readonly Dictionary<SongObject.ID, GameSettings.ClapToggle> songObjectIdToClapOption = new Dictionary<SongObject.ID, GameSettings.ClapToggle>()
-    {
-        // Notes are subdivided and are not applicable here
-        { SongObject.ID.Starpower,      GameSettings.ClapToggle.STARPOWER },
-        { SongObject.ID.ChartEvent,     GameSettings.ClapToggle.CHARTEVENT },
-        { SongObject.ID.BPM,            GameSettings.ClapToggle.BPM },
-        { SongObject.ID.TimeSignature,  GameSettings.ClapToggle.TS },
-        { SongObject.ID.Event,          GameSettings.ClapToggle.EVENT },
-        { SongObject.ID.Section,        GameSettings.ClapToggle.SECTION },
-    };
-
         /// <summary>
         /// Searches through the array and finds the array position of item most similar to the one provided.
         /// </summary>
@@ -276,9 +265,10 @@ namespace MoonscraperChartEditor.Song
                     // Account for overwrite
                     if (insertionPos < count && list[insertionPos] == item)
                     {
+#if APPLICATION_MOONSCRAPER
                         if (list[insertionPos].controller != null)
                             list[insertionPos].controller.gameObject.SetActive(false);
-
+#endif
                         list[insertionPos] = item;
                     }
                     else
@@ -292,12 +282,14 @@ namespace MoonscraperChartEditor.Song
                     {
                         if (list[insertionPos] == item && item.classID == list[insertionPos].classID)
                         {
+#if APPLICATION_MOONSCRAPER
                             // Overwrite 
                             if (list[insertionPos].controller != null)
                             {
                                 list[insertionPos].controller.gameObject.SetActive(false);
                                 //GameObject.Destroy(list[insertionPos].controller.gameObject);
                             }
+#endif
 
                             list[insertionPos] = item;
                         }
