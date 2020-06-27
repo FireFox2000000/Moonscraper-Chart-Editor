@@ -309,26 +309,6 @@ public static class NoteFunctions {
         return mask;
     }
 
-    public static Note.GuitarFret SaveGuitarNoteToDrumNote(Note.GuitarFret fret_type)
-    {
-        if (fret_type == Note.GuitarFret.Open)
-            return Note.GuitarFret.Green;
-        else if (fret_type == Note.GuitarFret.Orange)
-            return Note.GuitarFret.Open;
-        else
-            return fret_type + 1;
-    }
-
-    public static Note.GuitarFret LoadDrumNoteToGuitarNote(Note.GuitarFret fret_type)
-    {
-        if (fret_type == Note.GuitarFret.Open)
-            return Note.GuitarFret.Orange;
-        else if (fret_type == Note.GuitarFret.Green)
-            return Note.GuitarFret.Open;
-        else
-            return fret_type - 1;
-    }
-
     public static void PerformPreChartInsertCorrections(Note note, Chart chart, IList<BaseAction> subActions, bool extendedSustainsEnabled)
     {
         int index, length;

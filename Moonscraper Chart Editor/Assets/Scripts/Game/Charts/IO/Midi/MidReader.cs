@@ -459,7 +459,7 @@ namespace MoonscraperChartEditor.Song.IO
                         notes[k].guitarFret = Note.GuitarFret.Open;
 
                         if (gameMode == Chart.GameMode.Drums)
-                            notes[k].guitarFret = NoteFunctions.LoadDrumNoteToGuitarNote(notes[k].guitarFret);
+                            notes[k].guitarFret = LoadDrumNoteToGuitarNote(notes[k].guitarFret);
                     }
                 }
             }
@@ -842,6 +842,16 @@ namespace MoonscraperChartEditor.Song.IO
                     }
                 }
             }
+        }
+
+        static Note.GuitarFret LoadDrumNoteToGuitarNote(Note.GuitarFret fret_type)
+        {
+            if (fret_type == Note.GuitarFret.Open)
+                return Note.GuitarFret.Orange;
+            else if (fret_type == Note.GuitarFret.Green)
+                return Note.GuitarFret.Open;
+            else
+                return fret_type - 1;
         }
     }
 }
