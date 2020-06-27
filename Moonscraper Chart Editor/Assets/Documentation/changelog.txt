@@ -1,6 +1,7 @@
 1.3.4.1
 	CHANGES
 	-Added beat line to custom resources.
+	-Update Unity engine back up to 2018.4.23f1
 
 	FIXES
 	-Fixed application hang when mass deleting a bunch of objects. Removes warning log spam.
