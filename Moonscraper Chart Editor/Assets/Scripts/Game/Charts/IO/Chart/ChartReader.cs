@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace MoonscraperChartEditor.Song.IO
 {
@@ -549,13 +550,25 @@ namespace MoonscraperChartEditor.Song.IO
             Chart Loading
         **************************************************************************************/
 
-
-        public static void LoadChart(Chart chart, List<string> data, Song.Instrument instrument = Song.Instrument.Guitar)
+        static int FastStringToIntParse(string str, int index, int length)
         {
-            LoadChart(chart, data.ToArray(), instrument);
+            // https://cc.davelozinski.com/c-sharp/fastest-way-to-convert-a-string-to-an-int
+            int y = 0;
+            for (int i = index; i < index + length; i++)
+                y = y * 10 + (str[i] - '0');
+
+            return y;
         }
 
-        public static void LoadChart(Chart chart, string[] data, Song.Instrument instrument = Song.Instrument.Guitar)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static void AdvanceNextWord(string line, ref int startIndex, ref int length)
+        {
+            length = 0;
+            while (startIndex < line.Length && line[startIndex] == ' ') { ++startIndex; };
+            while ((startIndex + ++length) < line.Length && line[startIndex + length] != ' ') ;
+        }
+
+        public static void LoadChart(Chart chart, IList<string> data, Song.Instrument instrument = Song.Instrument.Guitar)
         {
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
@@ -569,13 +582,7 @@ namespace MoonscraperChartEditor.Song.IO
                 postNotesAddedProcessList = postNotesAddedProcessList
             };
 
-            chart.SetCapacity(data.Length);
-
-            const int SPLIT_POSITION = 0;
-            const int SPLIT_EQUALITY = 1;
-            const int SPLIT_TYPE = 2;
-            const int SPLIT_VALUE = 3;
-            const int SPLIT_LENGTH = 4;
+            chart.SetCapacity(data.Count);
 
             Dictionary<int, NoteEventProcessFn> noteProcessDict = GetNoteProcessDict(chart.gameMode);
 
@@ -586,19 +593,43 @@ namespace MoonscraperChartEditor.Song.IO
                 {
                     try
                     {
-                        string[] splitString = line.Split(' ');
-                        uint tick = uint.Parse(splitString[SPLIT_POSITION]);
-                        string type = splitString[SPLIT_TYPE].ToLower();
+                        int stringStartIndex = 0;
+                        int stringLength = 0;
 
-                        switch (type)
+                        // Advance to tick
+                        AdvanceNextWord(line, ref stringStartIndex, ref stringLength);
+                        uint tick = (uint)FastStringToIntParse(line, stringStartIndex, stringLength);
+
+                        // Advance to equality
                         {
-                            case ("n"):
-                                {
-                                    // Split string to get note information
-                                    string[] digits = splitString;
+                            stringStartIndex += stringLength;
+                            AdvanceNextWord(line, ref stringStartIndex, ref stringLength);
+                        }
 
-                                    int fret_type = int.Parse(digits[SPLIT_VALUE]);
-                                    uint length = uint.Parse(digits[SPLIT_LENGTH]);
+                        // Advance to type
+                        {
+                            stringStartIndex += stringLength;
+                            AdvanceNextWord(line, ref stringStartIndex, ref stringLength);
+                        }
+
+                        switch (line[stringStartIndex])    // Note this will need to be changed if keys are ever greater than 1 character long
+                        {
+                            case ('N'):
+                            case ('n'):
+                                {
+                                    // Advance to note number
+                                    {
+                                        stringStartIndex += stringLength;
+                                        AdvanceNextWord(line, ref stringStartIndex, ref stringLength);
+                                    }
+                                    int fret_type = FastStringToIntParse(line, stringStartIndex, stringLength);
+
+                                    // Advance to note length
+                                    {
+                                        stringStartIndex += stringLength;
+                                        AdvanceNextWord(line, ref stringStartIndex, ref stringLength);
+                                    }
+                                    uint length = (uint)FastStringToIntParse(line, stringStartIndex, stringLength);
 
                                     if (instrument == Song.Instrument.Unrecognised)
                                     {
@@ -619,22 +650,38 @@ namespace MoonscraperChartEditor.Song.IO
                                     break;
                                 }
 
-                            case ("s"):
+                            case ('S'):
+                            case ('s'):
                                 {
-                                    int fret_type = int.Parse(splitString[SPLIT_VALUE]);
+                                    // Advance to note number
+                                    {
+                                        stringStartIndex += stringLength;
+                                        AdvanceNextWord(line, ref stringStartIndex, ref stringLength);
+                                    }
+                                    int fret_type = FastStringToIntParse(line, stringStartIndex, stringLength);
 
                                     if (fret_type != 2)
                                         continue;
 
-                                    uint length = uint.Parse(splitString[SPLIT_LENGTH]);
+                                    // Advance to note length
+                                    {
+                                        stringStartIndex += stringLength;
+                                        AdvanceNextWord(line, ref stringStartIndex, ref stringLength);
+                                    }
+                                    uint length = (uint)FastStringToIntParse(line, stringStartIndex, stringLength);
 
                                     chart.Add(new Starpower(tick, length), false);
                                     break;
                                 }
-                            case ("e"):
+                            case ('E'):
+                            case ('e'):
                                 {
-                                    string[] strings = splitString;
-                                    string eventName = strings[SPLIT_VALUE];
+                                    // Advance to event
+                                    {
+                                        stringStartIndex += stringLength;
+                                        AdvanceNextWord(line, ref stringStartIndex, ref stringLength);
+                                    }
+                                    string eventName = line.Substring(stringStartIndex, stringLength);
                                     chart.Add(new ChartEvent(tick, eventName), false);
                                     break;
                                 }
