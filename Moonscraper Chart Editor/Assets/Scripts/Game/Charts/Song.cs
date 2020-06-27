@@ -404,9 +404,23 @@ namespace MoonscraperChartEditor.Song
         /// </summary>
         void UpdateBPMTimeValues()
         {
+            /*
+             * Essentially just an optimised version of this, as this was n^2 and bad
+             * foreach (BPM bpm in bpms)
+             * {
+             *     bpm.assignedTime = LiveTickToTime(bpm.tick, resolution);
+             * }
+            */
+
+            double time = 0;
+            BPM prevBPM = bpms[0];
+            prevBPM.assignedTime = 0;
+
             foreach (BPM bpm in bpms)
             {
-                bpm.assignedTime = LiveTickToTime(bpm.tick, resolution);
+                time += TickFunctions.DisToTime(prevBPM.tick, bpm.tick, resolution, prevBPM.value / 1000.0f);
+                bpm.assignedTime = (float)time;
+                prevBPM = bpm;
             }
         }
 
