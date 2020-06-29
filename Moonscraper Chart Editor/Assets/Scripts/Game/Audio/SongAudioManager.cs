@@ -16,8 +16,6 @@ public class SongAudioManager
     public SongAudioManager()
     {
         audioSampleData = new SampleData[EnumX<Song.AudioInstrument>.Count];
-        for (int i = 0; i < audioSampleData.Length; ++i)
-            audioSampleData[i] = new SampleData(string.Empty);
     }
 
     ~SongAudioManager()
@@ -38,19 +36,28 @@ public class SongAudioManager
 
     public void FreeAudioStreams()
     {
-        for (int i = 0; i < bassAudioStreams.Length; ++i)
+        foreach (var audio in EnumX<Song.AudioInstrument>.Values)
         {
-            var stream = bassAudioStreams[i];
+            Clear(audio);
+        }
+    }
+
+    public void Clear(Song.AudioInstrument audio)
+    {
+        {
+            var stream = GetAudioStream(audio);
             if (stream != null)
                 stream.Dispose();
 
-            bassAudioStreams[i] = null;
+            bassAudioStreams[(int)audio] = null;
         }
 
-        for (int i = 0; i < audioSampleData.Length; ++i)
         {
-            var sample = audioSampleData[i];
-            sample.Dispose();
+            var sampleData = GetSampleData(audio);
+            if (sampleData != null)
+                sampleData.Dispose();
+
+            audioSampleData[(int)audio] = null;
         }
     }
 
@@ -122,13 +129,13 @@ public class SongAudioManager
             ++audioLoads;
 
             // Load sample data from waveform. This creates a thread on it's own.
-            audioSampleData[audioStreamArrayPos].Dispose();
+            if (audioSampleData[audioStreamArrayPos] != null)
+                audioSampleData[audioStreamArrayPos].Dispose();
             audioSampleData[audioStreamArrayPos] = new SampleData(filepath);
 
             // Load Audio Streams   
             if (bassAudioStreams[audioStreamArrayPos] != null)
                 bassAudioStreams[audioStreamArrayPos].Dispose();
-
             bassAudioStreams[audioStreamArrayPos] = AudioManager.LoadTempoStream(filepath);
 
             --audioLoads;

@@ -415,8 +415,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     void ClearAudioStream(Song.AudioInstrument audio)
     {
-        editor.currentSongAudio.GetSampleData(audio).Dispose();
-        editor.currentSongAudio.SetBassAudioStream(audio, null);
+        editor.currentSongAudio.Clear(audio);
         editor.currentSong.SetAudioLocation(audio, string.Empty);
 
         setAudioTextLabels();

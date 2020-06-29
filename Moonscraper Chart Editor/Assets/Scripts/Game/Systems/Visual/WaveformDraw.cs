@@ -49,7 +49,8 @@ public class WaveformDraw : MonoBehaviour {
         {
             if (waveformSelect.value == (audioIndex + 1))
             {
-                currentSample = editor.currentSongAudio.GetSampleData((Song.AudioInstrument)audioIndex);
+                Song.AudioInstrument audioInstrument = (Song.AudioInstrument)audioIndex;
+                currentSample = editor.currentSongAudio.GetSampleData(audioInstrument);
             }
         }
 
@@ -58,13 +59,12 @@ public class WaveformDraw : MonoBehaviour {
         else if (Globals.viewMode == Globals.ViewMode.Song)
             songViewWaveformSelectionIndex = waveformSelect.value;
 
-        bool displayWaveform = waveformSelect.value > 0;// && Globals.viewMode == Globals.ViewMode.Song;
-        //waveformSelect.gameObject.SetActive(Globals.viewMode == Globals.ViewMode.Song);
+        bool displayWaveform = waveformSelect.value > 0 && currentSample != null;
 
         loadingText.gameObject.SetActive(displayWaveform && currentSample.IsLoading);
 
         // Choose whether to display the waveform or not
-        if (displayWaveform && currentSample != null && currentSample.dataLength > 0)
+        if (displayWaveform && currentSample.dataLength > 0)
         {
             UpdateWaveformPointsFullData();
 
