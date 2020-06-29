@@ -77,6 +77,7 @@ namespace MoonscraperEngine
                 system.SystemExit();
 
             hasEntered = false;
+            registeredSystems.Clear();
         }
 
         public virtual void Update()
