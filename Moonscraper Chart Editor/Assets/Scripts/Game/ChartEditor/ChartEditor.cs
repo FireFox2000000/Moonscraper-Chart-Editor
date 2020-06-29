@@ -407,8 +407,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         {
             case State.Editor: newState = new EditorState(); break;
             case State.Playing: Debug.LogError("Attempting to change state to a default Playing State. This is not allowed."); return null; // call from Play function in this editor instead
-            case State.Menu: return menuState;
-            case State.Loading: return loadingState;
+            case State.Menu: newState = menuState; break;
+            case State.Loading: newState = loadingState; break;
             default: break;
         }
 

@@ -223,6 +223,7 @@ public class Services : MonoBehaviour
         mouseMonitorSystem = new MouseMonitor();
         ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Editor, mouseMonitorSystem);
         ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Playing, mouseMonitorSystem);
+        ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Menu, mouseMonitorSystem);
     }
 
     // Use this for initialization
