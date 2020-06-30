@@ -26,6 +26,10 @@ namespace MoonscraperChartEditor.Song.IO
         public const string SoloEventText = "solo";
         public const string SoloEndEventText = "soloend";
 
+        public const int PhraseMarker = 105; // http://docs.c3universe.com/rbndocs/index.php?title=Vocal_Authoring
+        public const string PhraseStartText = "phrase_start";
+        public const string PhraseEndText = "phrase_end";
+
         // http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring
         public static readonly Dictionary<Note.DrumPad, int> PAD_TO_CYMBAL_LOOKUP = new Dictionary<Note.DrumPad, int>()
     {

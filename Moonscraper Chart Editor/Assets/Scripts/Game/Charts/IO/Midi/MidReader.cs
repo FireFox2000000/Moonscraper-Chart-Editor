@@ -156,7 +156,7 @@ namespace MoonscraperChartEditor.Song.IO
                 if (importTrackAsVocalsEvents)
                 {
                     callBackState = CallbackState.WaitingForExternalInformation;
-                    NativeMessageBox.Result result = NativeMessageBox.Show("A vocals track was found in the file. Would you like to import the text events as global lyrics events?", "Vocals Track Found", NativeMessageBox.Type.YesNo, null);
+                    NativeMessageBox.Result result = NativeMessageBox.Show("A vocals track was found in the file. Would you like to import the text events as global lyrics and phrase events?", "Vocals Track Found", NativeMessageBox.Type.YesNo, null);
                     callBackState = CallbackState.None;
                     importTrackAsVocalsEvents = result == NativeMessageBox.Result.Yes;
                 }
@@ -257,11 +257,20 @@ namespace MoonscraperChartEditor.Song.IO
             for (int i = 1; i < track.Count; ++i)
             {
                 var text = track[i] as TextEvent;
-
-                if (text != null && text.Text.Length > 0 && text.Text[0] != '[')
+                if (text != null && text.Text.Length > 0 && text.MetaEventType == MetaEventType.Lyric)
                 {
                     string lyricEvent = MidIOHelper.LYRIC_EVENT_PREFIX + text.Text;
                     song.Add(new Event(lyricEvent, (uint)text.AbsoluteTime), false);
+                }
+
+                var phrase = track[i] as NoteOnEvent;
+                if (phrase != null && phrase.OffEvent != null && phrase.NoteNumber == MidIOHelper.PhraseMarker)
+                {
+                    string phraseStartEvent = MidIOHelper.PhraseStartText;
+                    song.Add(new Event(phraseStartEvent, (uint)phrase.AbsoluteTime), false);
+
+                    string phraseEndEvent = MidIOHelper.PhraseEndText;
+                    song.Add(new Event(phraseEndEvent, (uint)phrase.OffEvent.AbsoluteTime), false);
                 }
             }
 
