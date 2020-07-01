@@ -234,15 +234,18 @@ namespace MoonscraperChartEditor.Song.IO
 
         private static void ReadSongGlobalEvents(IList<MidiEvent> track, Song song)
         {
+            const string rb2SectionPrefix = "[" + MidIOHelper.Rb2SectionPrefix;
+            const string rb3SectionPrefix = "[" + MidIOHelper.Rb3SectionPrefix;
+
             for (int i = 1; i < track.Count; ++i)
             {
                 var text = track[i] as TextEvent;
 
                 if (text != null)
                 {
-                    if (text.Text.Contains("[section "))
+                    if (text.Text.Contains(rb2SectionPrefix))
                         song.Add(new Section(text.Text.Substring(9, text.Text.Length - 10), (uint)text.AbsoluteTime), false);
-                    else if (text.Text.Contains("[prc_"))       // No idea what this actually is
+                    else if (text.Text.Contains(rb3SectionPrefix))
                         song.Add(new Section(text.Text.Substring(5, text.Text.Length - 6), (uint)text.AbsoluteTime), false);
                     else
                         song.Add(new Event(text.Text.Trim(new char[] { '[', ']' }), (uint)text.AbsoluteTime), false);

@@ -247,7 +247,24 @@ namespace MoonscraperChartEditor.Song.IO
         , out uint deltaTickSum
         )
         {
-            const string section_id = "section ";     // "section " is rb2 and former, "prc_" is rb3
+            var rbFormat = exportOptions.midiOptions.rbFormat;
+            string section_id = MidIOHelper.Rb2SectionPrefix;
+
+            switch (rbFormat)
+            {
+                case ExportOptions.MidiOptions.RBFormat.RB3:
+                    {
+                        section_id = MidIOHelper.Rb3SectionPrefix;
+                        break;
+                    }
+                case ExportOptions.MidiOptions.RBFormat.RB2:
+                default:
+                    {
+                        section_id = MidIOHelper.Rb2SectionPrefix;
+                        break;
+                    }
+            }
+
             List<byte> eventBytes = new List<byte>();
 
             //eventBytes.AddRange(TimedEvent(0, MetaTextEvent(TEXT_EVENT, "[music_start]")));
@@ -398,6 +415,7 @@ namespace MoonscraperChartEditor.Song.IO
         {
             Chart chart = song.GetChart(instrument, difficulty);
             Chart.GameMode gameMode = chart.gameMode;
+            bool writeGlobalTrackEvents = difficulty == exportOptions.midiOptions.difficultyToUseGlobalTrackEvents;
 
             if (exportOptions.copyDownEmptyDifficulty)
             {
@@ -464,42 +482,45 @@ namespace MoonscraperChartEditor.Song.IO
                             InsertionSort(eventList, forceOffEvent);
                         }
 
-                        if (instrument == Song.Instrument.Drums && ((note.flags & Note.Flags.ProDrums_Cymbal) == 0))     // We want to write our flags if the cymbal is toggled OFF, as these notes are cymbals by default
+                        if (writeGlobalTrackEvents)
                         {
-                            int tomToggleNoteNumber;
-                            if (MidIOHelper.PAD_TO_CYMBAL_LOOKUP.TryGetValue(note.drumPad, out tomToggleNoteNumber))
+                            if (instrument == Song.Instrument.Drums && ((note.flags & Note.Flags.ProDrums_Cymbal) == 0))     // We want to write our flags if the cymbal is toggled OFF, as these notes are cymbals by default
                             {
-                                SortableBytes tomToggleOnEvent = new SortableBytes(note.tick, new byte[] { ON_EVENT, (byte)tomToggleNoteNumber, VELOCITY });
-                                SortableBytes tomToggleOffEvent = new SortableBytes(note.tick + 1, new byte[] { OFF_EVENT, (byte)tomToggleNoteNumber, VELOCITY });
+                                int tomToggleNoteNumber;
+                                if (MidIOHelper.PAD_TO_CYMBAL_LOOKUP.TryGetValue(note.drumPad, out tomToggleNoteNumber))
+                                {
+                                    SortableBytes tomToggleOnEvent = new SortableBytes(note.tick, new byte[] { ON_EVENT, (byte)tomToggleNoteNumber, VELOCITY });
+                                    SortableBytes tomToggleOffEvent = new SortableBytes(note.tick + 1, new byte[] { OFF_EVENT, (byte)tomToggleNoteNumber, VELOCITY });
 
-                                InsertionSort(eventList, tomToggleOnEvent);
-                                InsertionSort(eventList, tomToggleOffEvent);
+                                    InsertionSort(eventList, tomToggleOnEvent);
+                                    InsertionSort(eventList, tomToggleOffEvent);
+                                }
                             }
-                        }
 
-                        int openNote = gameMode == Chart.GameMode.GHLGuitar ? (int)Note.GHLiveGuitarFret.Open : (int)Note.GuitarFret.Open;
-                        // Add tap sysex events
-                        if (difficulty == Song.Difficulty.Expert && note.rawNote != openNote && (note.flags & Note.Flags.Tap) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.Tap) == 0))  // This note is a tap while the previous one isn't as we're creating a range
-                        {
-                            // Find the next non-tap note
-                            Note nextNonTap = note;
-                            while (nextNonTap.next != null && nextNonTap.rawNote != openNote && (nextNonTap.next.flags & Note.Flags.Tap) != 0)
-                                nextNonTap = nextNonTap.next;
+                            int openNote = gameMode == Chart.GameMode.GHLGuitar ? (int)Note.GHLiveGuitarFret.Open : (int)Note.GuitarFret.Open;
+                            // Add tap sysex events
+                            bool isStartOfTapRange = note.rawNote != openNote && (note.flags & Note.Flags.Tap) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.Tap) == 0);
+                            if (isStartOfTapRange)  // This note is a tap while the previous one isn't as we're creating a range
+                            {
+                                // Find the next non-tap note
+                                Note nextNonTap = note;
+                                while (nextNonTap.next != null && nextNonTap.rawNote != openNote && (nextNonTap.next.flags & Note.Flags.Tap) != 0)
+                                    nextNonTap = nextNonTap.next;
 
-                            // Tap event = 08-50-53-00-00-FF-04-01, end with 01 for On, 00 for Off
-                            byte[] tapOnEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_ON, SYSEX_END };
-                            byte[] tapOffEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_OFF, SYSEX_END };
+                                // Tap event = 08-50-53-00-00-FF-04-01, end with 01 for On, 00 for Off
+                                byte[] tapOnEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_ON, SYSEX_END };
+                                byte[] tapOffEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_OFF, SYSEX_END };
 
-                            SortableBytes tapOnEvent = new SortableBytes(note.tick, tapOnEventBytes);
-                            SortableBytes tapOffEvent = new SortableBytes(nextNonTap.tick + 1, tapOffEventBytes);
+                                SortableBytes tapOnEvent = new SortableBytes(note.tick, tapOnEventBytes);
+                                SortableBytes tapOffEvent = new SortableBytes(nextNonTap.tick + 1, tapOffEventBytes);
 
-                            InsertionSort(eventList, tapOnEvent);
-                            InsertionSort(eventList, tapOffEvent);
+                                InsertionSort(eventList, tapOnEvent);
+                                InsertionSort(eventList, tapOffEvent);
+                            }
                         }
                     }
 
-                    if (gameMode != Chart.GameMode.Drums && gameMode != Chart.GameMode.GHLGuitar &&
-                        difficulty == Song.Difficulty.Expert && note.guitarFret == Note.GuitarFret.Open && (note.previous == null || (note.previous.guitarFret != Note.GuitarFret.Open)))
+                    if (gameMode != Chart.GameMode.Drums && gameMode != Chart.GameMode.GHLGuitar && note.guitarFret == Note.GuitarFret.Open && (note.previous == null || (note.previous.guitarFret != Note.GuitarFret.Open)))
                     {
                         // Find the next non-open note
                         Note nextNonOpen = note;
@@ -537,25 +558,28 @@ namespace MoonscraperChartEditor.Song.IO
                     }
                 }
 
-                Starpower sp = chartObject as Starpower;
-                if (sp != null && difficulty == Song.Difficulty.Expert)     // Starpower cannot be split up between charts in a midi file
-                    GetStarpowerBytes(sp, out onEvent, out offEvent);
-
-                ChartEvent chartEvent = chartObject as ChartEvent;
-                if (chartEvent != null && difficulty == Song.Difficulty.Expert)     // Text events cannot be split up in the file
+                if (writeGlobalTrackEvents)
                 {
-                    if (soloOnEvent != null && chartEvent.eventName == MidIOHelper.SoloEndEventText)
+                    Starpower sp = chartObject as Starpower;
+                    if (sp != null)     // Starpower cannot be split up between charts in a midi file
+                        GetStarpowerBytes(sp, out onEvent, out offEvent);
+
+                    ChartEvent chartEvent = chartObject as ChartEvent;
+                    if (chartEvent != null)     // Text events cannot be split up in the file
                     {
-                        GetSoloBytes(soloOnEvent, chartEvent.tick, out onEvent, out offEvent);
-                        soloOnEvent = null;
-                    }
-                    else if (chartEvent.eventName == MidIOHelper.SoloEventText)
-                    {
-                        soloOnEvent = chartEvent;
-                    }
-                    else
-                    {
-                        InsertionSort(eventList, GetChartEventBytes(chartEvent));
+                        if (soloOnEvent != null && chartEvent.eventName == MidIOHelper.SoloEndEventText)
+                        {
+                            GetSoloBytes(soloOnEvent, chartEvent.tick, out onEvent, out offEvent);
+                            soloOnEvent = null;
+                        }
+                        else if (chartEvent.eventName == MidIOHelper.SoloEventText)
+                        {
+                            soloOnEvent = chartEvent;
+                        }
+                        else
+                        {
+                            InsertionSort(eventList, GetChartEventBytes(chartEvent));
+                        }
                     }
                 }
 

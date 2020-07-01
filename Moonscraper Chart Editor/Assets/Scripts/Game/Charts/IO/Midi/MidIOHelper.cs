@@ -30,6 +30,9 @@ namespace MoonscraperChartEditor.Song.IO
         public const string PhraseStartText = "phrase_start";
         public const string PhraseEndText = "phrase_end";
 
+        public const string Rb2SectionPrefix = "section ";
+        public const string Rb3SectionPrefix = "prc_";
+
         // http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring
         public static readonly Dictionary<Note.DrumPad, int> PAD_TO_CYMBAL_LOOKUP = new Dictionary<Note.DrumPad, int>()
     {

@@ -5,11 +5,24 @@ namespace MoonscraperChartEditor.Song.IO
 {
     public struct ExportOptions
     {
+        public struct MidiOptions
+        {
+            public enum RBFormat
+            {
+                RB2,
+                RB3,
+            }
+
+            public Song.Difficulty difficultyToUseGlobalTrackEvents;   // Which difficulty to take things like starpower, tap, solo and tom toggle events from
+            public RBFormat rbFormat;      // Changes section name prefix
+        }
+
         public bool forced;
         public Format format;
         public uint tickOffset;
         public float targetResolution;
         public bool copyDownEmptyDifficulty;
+        public MidiOptions midiOptions;
 
         public enum Format
         {

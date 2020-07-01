@@ -44,6 +44,12 @@ namespace MoonscraperChartEditor.Song
                 exportOptions.targetResolution = this.resolution;
                 exportOptions.tickOffset = 0;
 
+                exportOptions.midiOptions = new IO.ExportOptions.MidiOptions()
+                {
+                    difficultyToUseGlobalTrackEvents = Difficulty.Expert,
+                    rbFormat = IO.ExportOptions.MidiOptions.RBFormat.RB3,
+                };
+
                 return exportOptions;
             }
         }
