@@ -98,7 +98,7 @@ public class PrefabGlobals {
         }
 
         Vector2 min = new Vector2(position.x + posOfChart + offset - colliderSize.x / 2, position.y - colliderSize.y / 2);
-        return new Rect(min, noteColliderSize);
+        return new Rect(min, colliderSize);
     }
 
     public static bool HorizontalCollisionCheck(Rect rectA, Rect rectB)

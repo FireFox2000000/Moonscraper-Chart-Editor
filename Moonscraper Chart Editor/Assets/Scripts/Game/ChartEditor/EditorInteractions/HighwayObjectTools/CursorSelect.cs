@@ -257,8 +257,6 @@ public class CursorSelect : ToolObject
             {
                 ChartObject chartObject = editor.currentChart.chartObjects[i];
                 float offset = 0;
-                if ((SongObject.ID)chartObject.classID == SongObject.ID.ChartEvent)
-                    offset = ChartEventController.GetOffset(editor, (ChartEvent)chartObject);
 
                 if ((SongObject.ID)chartObject.classID == SongObject.ID.Note)
                 {
@@ -295,8 +293,6 @@ public class CursorSelect : ToolObject
             {
                 SongObject chartObject = editor.currentSong.eventsAndSections[i];
                 float offset = 0;
-                if ((SongObject.ID)chartObject.classID == SongObject.ID.Event)
-                    offset = EventController.GetOffset(editor, (MoonscraperChartEditor.Song.Event)chartObject);
 
                 if (chartObject.tick < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject, 0, offset), areaRect))
                     chartObjectsList.Add(chartObject);
