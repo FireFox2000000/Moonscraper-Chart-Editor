@@ -36,6 +36,8 @@ public class SettingsController : DisplayMenu
     public Slider sfxSlider;
 	public Slider vocalSourceSlider;
 	public Slider crowdSourceSlider;
+    public Button UnmuteButton;
+    public Button MuteButton;
 
     public Slider masterVolumeSlider;
     public Slider musicPanSlider;
@@ -454,5 +456,35 @@ public class SettingsController : DisplayMenu
                     break;
                 }
         }
+    }
+    
+    public void MuteAllStems()
+    {
+    musicSourceSlider.value = 0;
+    guitarSourceSlider.value = 0;
+    bassSourceSlider.value = 0;
+    rhythmSourceSlider.value = 0; 
+    drumSourceSlider.value = 0;
+    drum2SourceSlider.value = 0;
+    drum3SourceSlider.value = 0;
+    drum4SourceSlider.value = 0;
+    keysSourceSlider.value = 0;
+    vocalSourceSlider.value = 0;
+    crowdSourceSlider.value = 0; 
+    }
+    
+    public void UnmuteAllStems()
+    {
+    musicSourceSlider.value = 1;
+    guitarSourceSlider.value = 1;
+    bassSourceSlider.value = 1;
+    rhythmSourceSlider.value = 1; 
+    drumSourceSlider.value = 1;
+    drum2SourceSlider.value = 1;
+    drum3SourceSlider.value = 1;
+    drum4SourceSlider.value = 1;
+    keysSourceSlider.value = 1;
+    vocalSourceSlider.value = 1;
+    crowdSourceSlider.value = 1; 
     }
 }
