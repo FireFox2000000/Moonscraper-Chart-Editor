@@ -33,6 +33,15 @@ public class InspectorSwitching : MonoBehaviour {
         eventInspector.gameObject.SetActive(false);
 
         editor = ChartEditor.Instance;
+
+        editor.events.groupMoveStart.Register(OnGroupMoveStart);
+    }
+
+    void OnGroupMoveStart()
+    {
+        // Disable to the panel immediately. Inconsistent update order may make current panel get updated for 1 frame after group move has started.
+        if (currentPropertiesPanel)
+            currentPropertiesPanel.SetActive(false);
     }
 
     // Update is called once per frame

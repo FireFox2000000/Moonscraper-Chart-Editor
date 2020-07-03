@@ -208,6 +208,7 @@ public class GroupMove : ToolObject
         eventsToEnable.AddRange(movingSongObjects.OfType<MoonscraperChartEditor.Song.Event>().ToArray());
 
         editor.selectedObjectsManager.currentSelectedObject = null;
+        editor.events.groupMoveStart.Fire();
     }
 
     public override void ToolDisable()
