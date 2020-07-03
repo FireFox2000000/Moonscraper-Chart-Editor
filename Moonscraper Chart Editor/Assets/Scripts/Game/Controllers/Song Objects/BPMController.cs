@@ -3,8 +3,7 @@
 
 using UnityEngine;
 using TMPro;
-using System.Collections;
-using System;
+using MoonscraperChartEditor.Song;
 
 public class BPMController : SongObjectController {
     public BPM bpm { get { return (BPM)songObject; } set { Init(value, this); } }
@@ -43,7 +42,7 @@ public class BPMController : SongObjectController {
     {
         if (bpm.song != null)
         {
-            transform.position = new Vector3(CHART_CENTER_POS + position, bpm.worldYPosition, 0); 
+            transform.position = new Vector3(CHART_CENTER_POS + position, desiredWorldYPosition, 0); 
         }
 
         if (anchorColourSwitch && ren)
@@ -76,7 +75,7 @@ public class BPMController : SongObjectController {
             base.OnSelectableMouseDrag();
         }
 
-        if (draggingInitialBpm != null && MSE.Input.KeyboardDevice.ctrlKeyBeingPressed && Input.GetMouseButton(1))
+        if (draggingInitialBpm != null && MoonscraperEngine.Input.KeyboardDevice.ctrlKeyBeingPressed && Input.GetMouseButton(1))
         {     
             BPM previousBpm = SongObjectHelper.GetPreviousNonInclusive(bpm.song.bpms, bpm.tick);
             if (previousBpm != null && previousBpm.anchor == null)
@@ -87,7 +86,7 @@ public class BPMController : SongObjectController {
                 else
                     desiredWorldPos = editor.mouseYMaxLimit.position.y;
 
-                float desiredTime = TickFunctions.WorldYPositionToTime(desiredWorldPos);
+                float desiredTime = ChartEditor.WorldYPositionToTime(desiredWorldPos);
                 if (desiredTime < previousBpm.time)
                     desiredTime = previousBpm.time;
 
@@ -115,7 +114,7 @@ public class BPMController : SongObjectController {
     {
         base.OnSelectableMouseDown();
 
-        if (MSE.Input.KeyboardDevice.ctrlKeyBeingPressed && Input.GetMouseButtonDown(1))
+        if (MoonscraperEngine.Input.KeyboardDevice.ctrlKeyBeingPressed && Input.GetMouseButtonDown(1))
         {
             hasPushed = false;
 

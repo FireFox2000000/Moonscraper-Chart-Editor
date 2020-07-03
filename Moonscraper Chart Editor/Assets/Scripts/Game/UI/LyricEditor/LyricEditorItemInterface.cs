@@ -1,29 +1,27 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.UI;
-using System;
+using MoonscraperChartEditor.Song;
 
-public class LyricEditorItemInterface : MonoBehaviour
+public class LyricEditorItemInterface : UnityEngine.MonoBehaviour
 {
     public const string c_lyricPrefix = "lyric ";
     Event lyricEvent = null;
     bool isSelected = false;
-    Color initTimestampColour;
+    UnityEngine.Color initTimestampColour;
 
-    [SerializeField]
+    [UnityEngine.SerializeField]
     Text timestampText;
-    [SerializeField]
+    [UnityEngine.SerializeField]
     InputField lyricInputField;
-    [SerializeField]
-    Color selectedColor;
-    [SerializeField]
-    Color invalidColor;
-    [SerializeField]
-    Color setColor;
+    [UnityEngine.SerializeField]
+    UnityEngine.Color selectedColor;
+    [UnityEngine.SerializeField]
+    UnityEngine.Color invalidColor;
+    [UnityEngine.SerializeField]
+    UnityEngine.Color setColor;
 
     public float? time
     {

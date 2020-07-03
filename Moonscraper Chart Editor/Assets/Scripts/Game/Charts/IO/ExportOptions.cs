@@ -1,22 +1,37 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-public struct ExportOptions {
-
-    public bool forced;
-    public Format format;
-    public uint tickOffset;
-    public float targetResolution;
-    public bool copyDownEmptyDifficulty;
-
-    public enum Format
+namespace MoonscraperChartEditor.Song.IO
+{
+    public struct ExportOptions
     {
-        Chart, Midi
-    }
+        public struct MidiOptions
+        {
+            public enum RBFormat
+            {
+                RB2,
+                RB3,
+            }
 
-    public enum Game
-    {
-        PhaseShift, RockBand2, RockBand3
-    }
+            public Song.Difficulty difficultyToUseGlobalTrackEvents;   // Which difficulty to take things like starpower, tap, solo and tom toggle events from
+            public RBFormat rbFormat;      // Changes section name prefix
+        }
 
+        public bool forced;
+        public Format format;
+        public uint tickOffset;
+        public float targetResolution;
+        public bool copyDownEmptyDifficulty;
+        public MidiOptions midiOptions;
+
+        public enum Format
+        {
+            Chart, Midi
+        }
+
+        public enum Game
+        {
+            PhaseShift, RockBand2, RockBand3
+        }
+    }
 }

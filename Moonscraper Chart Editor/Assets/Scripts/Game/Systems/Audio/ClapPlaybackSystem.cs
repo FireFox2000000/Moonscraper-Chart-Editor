@@ -4,6 +4,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MoonscraperEngine;
+using MoonscraperEngine.Audio;
+using MoonscraperChartEditor.Song;
 
 public class ClapPlaybackSystem : SystemManagerState.System
 {
@@ -16,7 +19,18 @@ public class ClapPlaybackSystem : SystemManagerState.System
     SongObjectTracker<BPM> bpmTracker;
     SongObjectTracker<TimeSignature> tsTracker;
     SongObjectTracker<Section> sectionTracker;
-    SongObjectTracker<Event> eventsTracker;
+    SongObjectTracker<MoonscraperChartEditor.Song.Event> eventsTracker;
+
+    static readonly Dictionary<SongObject.ID, GameSettings.ClapToggle> s_songObjectIdToClapOption = new Dictionary<SongObject.ID, GameSettings.ClapToggle>()
+    {
+        // Notes are subdivided and are not applicable here
+        { SongObject.ID.Starpower,      GameSettings.ClapToggle.STARPOWER },
+        { SongObject.ID.ChartEvent,     GameSettings.ClapToggle.CHARTEVENT },
+        { SongObject.ID.BPM,            GameSettings.ClapToggle.BPM },
+        { SongObject.ID.TimeSignature,  GameSettings.ClapToggle.TS },
+        { SongObject.ID.Event,          GameSettings.ClapToggle.EVENT },
+        { SongObject.ID.Section,        GameSettings.ClapToggle.SECTION },
+    };
 
     float playFromTime = 0;
 
@@ -44,7 +58,7 @@ public class ClapPlaybackSystem : SystemManagerState.System
         bpmTracker = new SongObjectTracker<BPM>(ChartEditor.Instance.currentSong.bpms, currentTick);
         tsTracker = new SongObjectTracker<TimeSignature>(ChartEditor.Instance.currentSong.timeSignatures, currentTick);
         sectionTracker = new SongObjectTracker<Section>(ChartEditor.Instance.currentSong.sections, currentTick);
-        eventsTracker = new SongObjectTracker<Event>(ChartEditor.Instance.currentSong.events, currentTick);
+        eventsTracker = new SongObjectTracker<MoonscraperChartEditor.Song.Event >(ChartEditor.Instance.currentSong.events, currentTick);
     }
 
     public override void SystemUpdate()
@@ -104,7 +118,7 @@ public class ClapPlaybackSystem : SystemManagerState.System
 
         bool playClap = false;
 
-        if (SongObjectHelper.songObjectIdToClapOption.TryGetValue(id, out toggleValue))
+        if (s_songObjectIdToClapOption.TryGetValue(id, out toggleValue))
         {
             if ((Globals.gameSettings.clapProperties & toggleValue) != 0)
                 playClap = true;

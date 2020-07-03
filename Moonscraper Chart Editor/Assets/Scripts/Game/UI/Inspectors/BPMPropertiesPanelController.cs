@@ -3,8 +3,8 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 using System.Collections.Generic;
+using MoonscraperChartEditor.Song;
 
 public class BPMPropertiesPanelController : PropertiesPanelController {
     public BPM currentBPM { get { return (BPM)currentSongObject; } set { currentSongObject = value; } }
@@ -278,7 +278,7 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
         editor.songObjectPoolManager.SetAllPoolsDirty();
     }
 
-    static ICommand GenerateCommandsAdjustedForAnchors(BPM currentBPM, uint desiredBpmValue)
+    static MoonscraperEngine.ICommand GenerateCommandsAdjustedForAnchors(BPM currentBPM, uint desiredBpmValue)
     {
         List<SongEditCommand> commands = new List<SongEditCommand>();
 

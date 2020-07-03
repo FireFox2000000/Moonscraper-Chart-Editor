@@ -2,8 +2,7 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections.Generic;
-using System;
+using MoonscraperChartEditor.Song;
 
 [RequireComponent(typeof(StarpowerController))]
 public class PlaceStarpower : PlaceSongObject {

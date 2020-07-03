@@ -1,10 +1,7 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using MoonscraperChartEditor.Song;
 
 public class PlaceEvent : PlaceSongObject
 {
@@ -29,7 +26,7 @@ public class PlaceEvent : PlaceSongObject
     {
         if (!Globals.gameSettings.keysModeEnabled)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (UnityEngine.Input.GetMouseButtonDown(0))
             {
                 int pos = SongObjectHelper.FindObjectPosition(songEvent, editor.currentSong.events);
                 if (pos == SongObjectHelper.NOTFOUND)
@@ -77,6 +74,6 @@ public class PlaceEvent : PlaceSongObject
             offset += EventController.OFFSET_SPACING;
         }
 
-        transform.position = new Vector3(SongObjectController.CHART_CENTER_POS + EventController.position, songEvent.worldYPosition, offset);
+        transform.position = new UnityEngine.Vector3(SongObjectController.CHART_CENTER_POS + EventController.position, ChartEditor.WorldYPosition(songEvent), offset);
     }
 }

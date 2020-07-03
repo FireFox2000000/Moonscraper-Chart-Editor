@@ -4,12 +4,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Runtime.InteropServices;
 using System;
 using System.IO;
 using UnityEngine.UI;
 using Un4seen.Bass.Misc;
 using Un4seen.Bass;
+using MoonscraperEngine;
+using MoonscraperEngine.Audio;
+using MoonscraperChartEditor.Song;
+using MoonscraperChartEditor.Song.IO;
 
 public class Export : DisplayMenu {
     public Text exportingInfo;
@@ -21,6 +24,9 @@ public class Export : DisplayMenu {
     public Toggle copyDifficultiesToggle;
     public Toggle generateIniToggle;
     public Button magmaButton;
+    public RectTransform midiSettings;
+    public Dropdown midiInstrumentDifficultyDropdown;
+    public Dropdown midiRbFormatDropdown;
 
     ExportOptions exportOptions;
     float delayTime = 0;
@@ -32,9 +38,11 @@ public class Export : DisplayMenu {
     string chPackageText = "Will export and organise all chart and audio files into the selected folder to be compatible with Clone Hero's naming structure.\n" +
         "This will also automatically re-encode audio into the .ogg format as needed.";
     string midInfoText = "Exports into the .mid format. \n\n" +
-        "Warning: \n" +
-        "\t-Audio will disconnect from file \n" +
-        "\t-Starpower, taps and open note events will be defined by the expert chart if enabled \n" +
+        "Notes: \n" +
+        "\t-Audio will disconnect from file.\n" +
+        "\t-Starpower, tap notes, open notes, solo markers and cymbal toggle events will be defined by Midi Settings: Instrument Events.\n" +
+        "\t-Rock Band Format will define the section marker prefix. RB2 uses \"section \" while RB3 will use \"prc_\".\n" +
+        "\n" +
 
         "Exporting to Magma (Rock Band) notes: \n" +
         "\t-Resolution must be 480 \n" +
@@ -63,6 +71,9 @@ public class Export : DisplayMenu {
 
         exportOptions.targetResolution = editor.currentSong.resolution;
         targetResolution.text = exportOptions.targetResolution.ToString();
+
+        SetTrackEventDifficulty(midiInstrumentDifficultyDropdown.value);
+        SetRbFormat(midiRbFormatDropdown.value);
 
         delayTime = 0;
         delayInputField.text = delayTime.ToString();
@@ -237,12 +248,60 @@ public class Export : DisplayMenu {
     {
         exportOptions.format = ExportOptions.Format.Chart;
         exportingInfo.text = chPackageToggle.isOn ? chPackageText : chartInfoText;
+        midiSettings.gameObject.SetActive(false);
     }
 
     void setAsMidFile()
     {
         exportOptions.format = ExportOptions.Format.Midi;
         exportingInfo.text = midInfoText;
+        midiSettings.gameObject.SetActive(true);
+    }
+
+    public void SetTrackEventDifficulty(int value)
+    {
+        Song.Difficulty diff;
+
+        switch (value)
+        {
+            case 1:
+                diff = Song.Difficulty.Hard;
+                break;
+
+            case 2:
+                diff = Song.Difficulty.Medium;
+                break;
+
+            case 3:
+                diff = Song.Difficulty.Easy;
+                break;
+
+            case 0:
+            default:
+                diff = Song.Difficulty.Expert;
+                break;
+        }
+
+        exportOptions.midiOptions.difficultyToUseGlobalTrackEvents = diff;
+        Debug.Log("Set midi track event difficulty");
+    }
+
+    public void SetRbFormat(int value)
+    {
+        ExportOptions.MidiOptions.RBFormat rbFormat;
+
+        switch (value)
+        {
+            case 1:
+                rbFormat = ExportOptions.MidiOptions.RBFormat.RB3;
+                break;
+            case 0:
+            default:
+                rbFormat = ExportOptions.MidiOptions.RBFormat.RB2;
+                break;
+        }
+
+        exportOptions.midiOptions.rbFormat = rbFormat;
     }
 
     public void SetResolution(string val)

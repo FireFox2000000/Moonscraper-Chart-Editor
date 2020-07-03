@@ -5,6 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using MoonscraperEngine.Input;
+using MoonscraperEngine;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -61,7 +63,7 @@ public class ControlsMenuInterface : MonoBehaviour
         }
     }
 
-    void OnDeviceDisconnect(in MSE.Input.IInputDevice device)
+    void OnDeviceDisconnect(in IInputDevice device)
     {
         deviceIndex = 0;
         RefreshActionBindingsMenu();
@@ -78,9 +80,9 @@ public class ControlsMenuInterface : MonoBehaviour
         SetDefaultControls(GetCurrentInputDevice(), GetCurrentActionCategoryMask());
     }
 
-    void SetDefaultControls(MSE.Input.IInputDevice device, int categoryMask)
+    void SetDefaultControls(IInputDevice device, int categoryMask)
     {
-        MSE.Input.InputRebinder.SetToDefault(actionsToEdit, InputManager.Instance.defaultControls, categoryMask, device);
+        InputRebinder.SetToDefault(actionsToEdit, InputManager.Instance.defaultControls, categoryMask, device);
 
         actionBindingsMenu.OnRebindComplete();
     }
@@ -119,7 +121,7 @@ public class ControlsMenuInterface : MonoBehaviour
         RefreshActionBindingsMenu();
     }
 
-    MSE.Input.IInputDevice GetCurrentInputDevice()
+    IInputDevice GetCurrentInputDevice()
     {
         // Todo, enum for current DISPLAYED device
         return InputManager.Instance.devices[deviceIndex];

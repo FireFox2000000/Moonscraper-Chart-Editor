@@ -4,6 +4,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
+using MoonscraperChartEditor.Song;
 
 /// <summary>
 /// The main controller for the timeline bar UI that appears on the right of the main editor scene.
@@ -291,7 +292,10 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         if (editor.currentState == ChartEditor.State.Editor)
         {
             Vector3 pos = handle.transform.position;
-            pos.y = editor.uiServices.uiCamera.ScreenToWorldPoint(eventData.position).y;        
+
+            var camera = editor.uiServices.uiCamera;
+            Vector2 mousePosition = Input.mousePosition;
+            pos.y = camera.ScreenToWorldPoint(mousePosition).y;        
 
             if (pos.y > transform.position.y + scaledHalfHeight)
             {

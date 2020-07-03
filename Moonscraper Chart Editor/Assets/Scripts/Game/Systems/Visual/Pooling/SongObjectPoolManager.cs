@@ -1,9 +1,10 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MoonscraperEngine;
+using MoonscraperChartEditor.Song;
 
 /// <summary>
 /// Creates a pool of objects that notes and other events can be assigned to for rendering the event.
@@ -272,7 +273,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         sectionPool.Activate(sections, index, length);
     }
 
-    public void EnableSongEvents(IList<Event> events)
+    public void EnableSongEvents(IList<MoonscraperChartEditor.Song.Event> events)
     {
         int index, length;
         SongObjectHelper.GetRange(events, editor.minPos, editor.maxPos, out index, out length);

@@ -1,10 +1,11 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
+using MoonscraperEngine;
+using MoonscraperChartEditor.Song;
+using MoonscraperChartEditor.Song.IO;
 
 public class AutoSaveSystem : SystemManagerState.System
 {

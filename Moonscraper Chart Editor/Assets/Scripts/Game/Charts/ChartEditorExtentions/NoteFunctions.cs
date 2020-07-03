@@ -6,16 +6,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MoonscraperChartEditor.Song;
 
 public static class NoteFunctions {
-
-    public static void GroupAddFlags(IList<Note> notes, Note.Flags flag, int index, int length)
-    {
-        for (int i = index; i < index + length; ++i)
-        {
-            notes[i].flags = notes[i].flags | flag;
-        }
-    }
 
     /// <summary>
     /// Gets all the notes (including this one) that share the same tick position as this one.
@@ -189,14 +182,6 @@ public static class NoteFunctions {
         return null;
     }
 
-    public static bool IsOpenNote(this Note note)
-    {
-        if (note.gameMode == Chart.GameMode.GHLGuitar)
-            return note.ghliveGuitarFret == Note.GHLiveGuitarFret.Open;
-        else
-            return note.guitarFret == Note.GuitarFret.Open;
-    }
-
     public static bool ShouldBeCulledFromLanes(this Note note, LaneInfo laneInfo)
     {
         return !note.IsOpenNote() && ((1 << note.rawNote) & laneInfo.laneMask) == 0;
@@ -306,26 +291,6 @@ public static class NoteFunctions {
         }
 
         return mask;
-    }
-
-    public static Note.GuitarFret SaveGuitarNoteToDrumNote(Note.GuitarFret fret_type)
-    {
-        if (fret_type == Note.GuitarFret.Open)
-            return Note.GuitarFret.Green;
-        else if (fret_type == Note.GuitarFret.Orange)
-            return Note.GuitarFret.Open;
-        else
-            return fret_type + 1;
-    }
-
-    public static Note.GuitarFret LoadDrumNoteToGuitarNote(Note.GuitarFret fret_type)
-    {
-        if (fret_type == Note.GuitarFret.Open)
-            return Note.GuitarFret.Orange;
-        else if (fret_type == Note.GuitarFret.Green)
-            return Note.GuitarFret.Open;
-        else
-            return fret_type - 1;
     }
 
     public static void PerformPreChartInsertCorrections(Note note, Chart chart, IList<BaseAction> subActions, bool extendedSustainsEnabled)
@@ -566,5 +531,69 @@ public static class NoteFunctions {
         return (a & ~Note.PER_NOTE_FLAGS) == (b & ~Note.PER_NOTE_FLAGS);
     }
 
-#endregion
+    #endregion
+
+    public static string GetDrumString(this Note note, LaneInfo laneInfo)
+    {
+        string str = null;
+
+        if (laneInfo.laneCount < 5 && note.drumPad == Note.DrumPad.Orange)
+            str = Note.DrumPad.Green.ToString();
+        else
+            str = note.drumPad.ToString();
+
+        if (note.ShouldBeCulledFromLanes(laneInfo))
+        {
+            str += " (Lane " + (note.rawNote + 1) + ")";
+        }
+
+        return str;
+    }
+
+    public static int GetRawNoteLaneCapped(this Note note, LaneInfo laneInfo)
+    {
+        int noteIndex = note.rawNote;
+
+        if (!note.IsOpenNote())
+        {
+            noteIndex = Mathf.Min(note.rawNote, laneInfo.laneCount - 1);
+        }
+
+        return noteIndex;
+    }
+
+    public static int GetMaskCappedLanes(this Note note, LaneInfo laneInfo)
+    {
+        int mask = 0;
+
+        foreach (Note chordNote in note.chord)
+        {
+            mask |= 1 << chordNote.GetRawNoteLaneCapped(laneInfo);
+        }
+
+        return mask;
+    }
+
+    public static int GetMaskWithRequiredFlagsLaneCapped(this Note note, Note.Flags flags, LaneInfo laneInfo)
+    {
+        int mask = 0;
+        int processedNotesMask = 0;
+
+        foreach (Note chordNote in note.chord)
+        {
+            int noteIndex = chordNote.GetRawNoteLaneCapped(laneInfo);
+            if ((processedNotesMask & (1 << noteIndex)) != 0)
+            {
+                // There may have already been a note on the edge of the lane cap. Use that note instead.
+                continue;
+            }
+
+            if (chordNote.flags == flags)
+                mask |= (1 << chordNote.rawNote);
+
+            processedNotesMask |= (1 << chordNote.rawNote);
+        }
+
+        return mask;
+    }
 }

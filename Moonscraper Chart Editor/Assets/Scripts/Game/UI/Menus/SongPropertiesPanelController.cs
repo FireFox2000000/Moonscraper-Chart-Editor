@@ -7,8 +7,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System;
+using MoonscraperEngine;
+using MoonscraperChartEditor.Song;
 
 public class SongPropertiesPanelController : DisplayMenu {
     public Scrollbar verticalScroll;
@@ -414,8 +415,7 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     void ClearAudioStream(Song.AudioInstrument audio)
     {
-        editor.currentSongAudio.GetSampleData(audio).Dispose();
-        editor.currentSongAudio.SetBassAudioStream(audio, null);
+        editor.currentSongAudio.Clear(audio);
         editor.currentSong.SetAudioLocation(audio, string.Empty);
 
         setAudioTextLabels();

@@ -3,10 +3,10 @@
 
 using UnityEngine;
 using System.Collections.Generic;
-//using System.Windows.Forms;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
 using System.IO;
+using MoonscraperChartEditor.Song;
 
 public class ClipboardObjectController : Snapable {
     public static string CLIPBOARD_FILE_LOCATION { get; private set; }

@@ -4,9 +4,7 @@
 //#define NOTE_TYPE_2D
 
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using MoonscraperChartEditor.Song;
 
 public class NoteController : SongObjectController {
     public const float OPEN_NOTE_SUSTAIN_WIDTH = 4;
@@ -150,23 +148,7 @@ public class NoteController : SongObjectController {
 
     public override void OnSelectableMouseDrag()
     {
-        // Move note        
-        if (moveCheck)
-        {
-            if (MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect))
-            {
-                Note[] chordNotes = note.GetChord();
-                editor.groupMove.StartMoveAction(chordNotes, 0);
-
-                foreach (Note chordNote in chordNotes)
-                    chordNote.Delete();
-            }
-            else
-            {
-                //base.OnSelectableMouseDrag();
-            }
-        }
-        else
+        if (!moveCheck)
         {
             sustain.OnSelectableMouseDrag();
         }
@@ -232,7 +214,7 @@ public class NoteController : SongObjectController {
     {
         float zPos = 0;
         // Position
-        transform.position = new Vector3(CHART_CENTER_POS + NoteToXPos(note), note.worldYPosition, zPos);
+        transform.position = new Vector3(CHART_CENTER_POS + NoteToXPos(note), desiredWorldYPosition, zPos);
     }
 
     protected override void UpdateCheck()
@@ -351,7 +333,7 @@ public class NoteController : SongObjectController {
         {
             float zPos = 0;
             // Position
-            transform.position = new Vector3(CHART_CENTER_POS + NoteToXPos(note), note.worldYPosition, zPos);
+            transform.position = new Vector3(CHART_CENTER_POS + NoteToXPos(note), desiredWorldYPosition, zPos);
 
             if (note.IsOpenNote())
                 sustainRen.sortingOrder = -1;

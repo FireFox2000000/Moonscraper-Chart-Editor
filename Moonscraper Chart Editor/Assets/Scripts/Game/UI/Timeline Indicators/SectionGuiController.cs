@@ -4,6 +4,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections;
+using MoonscraperChartEditor.Song;
 
 public class SectionGuiController : TimelineIndicator
 {

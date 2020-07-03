@@ -4,7 +4,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using MoonscraperChartEditor.Song;
 
 public class GroupSelect : ToolObject {
     public Transform selectedArea;

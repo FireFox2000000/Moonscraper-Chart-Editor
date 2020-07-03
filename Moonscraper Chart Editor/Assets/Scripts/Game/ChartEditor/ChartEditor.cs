@@ -4,11 +4,6 @@
 #define TIMING_DEBUG
 //#undef UNITY_EDITOR
 
-// Having SDL video initialised in the editor causes weird visual glitches within the editor. Only used in standalone builds anyway.
-#if !UNITY_EDITOR
-    #define SDL_VIDEO
-#endif
-
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
@@ -16,6 +11,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System;
 using System.Threading.Tasks;
+using MoonscraperEngine;
+using MoonscraperEngine.Audio;
+using MoonscraperChartEditor.Song;
+using MoonscraperChartEditor.Song.IO;
 
 /// <summary>
 /// The central point of the entire editor. Container for all the data and systems nessacary for the editor to function.
@@ -131,7 +130,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     {
         get
         {
-            return TickFunctions.WorldYPositionToTime(visibleStrikeline.transform.position.y);
+            return WorldYPositionToTime(visibleStrikeline.transform.position.y);
         }
     }
 
@@ -149,17 +148,6 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 #endif
         Application.quitting += FinaliseQuit;
 
-#if SDL_VIDEO
-        // Init for window manager
-        if (SDL2.SDL.SDL_Init(SDL2.SDL.SDL_INIT_VIDEO) < 0)
-        {
-            Debug.LogError("SDL could not initialise! SDL Error: " + SDL2.SDL.SDL_GetError());
-        }
-        else
-        {
-            Debug.Log("Successfully initialised video SDL");
-        }
-#endif
         currentSongAudio = new SongAudioManager();
 
         assets = GetComponent<ChartEditorAssets>();
@@ -283,9 +271,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         Debug.Log("Disposing SDL");
         InputManager.Instance.Dispose();
-#if SDL_VIDEO
-        SDL2.SDL.SDL_VideoQuit();
-#endif
+
         SDL2.SDL.SDL_Quit();
 
         while (isSaving) ;
@@ -397,7 +383,22 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         });
     }
 
-#region State Control
+    public static float WorldYPositionToTime(float worldYPosition)
+    {
+        return worldYPosition / (Globals.gameSettings.hyperspeed / Globals.gameSettings.gameSpeed);
+    }
+
+    public static float TimeToWorldYPosition(float time)
+    {
+        return time * Globals.gameSettings.hyperspeed / Globals.gameSettings.gameSpeed;
+    }
+
+    public static float WorldYPosition(SongObject songObject)
+    {
+        return songObject.song.TickToWorldYPosition(songObject.tick);
+    }
+
+    #region State Control
 
     SystemManagerState GetStateForEnum(State state)
     {
@@ -406,8 +407,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         {
             case State.Editor: newState = new EditorState(); break;
             case State.Playing: Debug.LogError("Attempting to change state to a default Playing State. This is not allowed."); return null; // call from Play function in this editor instead
-            case State.Menu: return menuState;
-            case State.Loading: return loadingState;
+            case State.Menu: newState = menuState; break;
+            case State.Loading: newState = loadingState; break;
             default: break;
         }
 
@@ -877,9 +878,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Rhythm), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_rhythm);
 		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Keys), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_keys);
         SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drum), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_2), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums2);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_3), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums3);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_4), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums4);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_2), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_3), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_4), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums);
 		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Vocals), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_vocals);
 		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Crowd), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_crowd);
 
@@ -1033,7 +1034,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             stopResetTime = currentVisibleTime;
 
         // Set position x seconds beforehand
-        float startTime = TickFunctions.WorldYPositionToTime(strikelineYPos) - Globals.gameSettings.gameplayStartDelayTime - (0.01f * Globals.gameSettings.hyperspeed); // Offset to prevent errors where it removes a note that is on the strikeline
+        float startTime = WorldYPositionToTime(strikelineYPos) - Globals.gameSettings.gameplayStartDelayTime - (0.01f * Globals.gameSettings.hyperspeed); // Offset to prevent errors where it removes a note that is on the strikeline
         movement.SetTime(startTime);
 
         // Hide everything behind the strikeline
@@ -1041,7 +1042,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         {
             if (note.controller)
             {
-                if (note.worldYPosition < strikelineYPos)
+                if (WorldYPosition(note) < strikelineYPos)
                 {
                     note.controller.HideFullNote();
                 }

@@ -2,8 +2,8 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
+using MoonscraperChartEditor.Song;
 
 public class SustainController : SelectableClick {
     public NoteController nCon;
@@ -144,7 +144,7 @@ public class SustainController : SelectableClick {
 
         if (note.length != 0)
         {
-            float lowerPos = note.worldYPosition;
+            float lowerPos = ChartEditor.WorldYPosition(note);
             float higherPos = note.song.TickToWorldYPosition(note.tick + note.length);
 
             if (higherPos > editor.camYMax.position.y)

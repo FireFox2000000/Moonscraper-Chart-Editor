@@ -2,9 +2,7 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using System;
+using MoonscraperChartEditor.Song;
 
 [RequireComponent(typeof(NoteController))]
 public class PlaceNote : PlaceSongObject {
@@ -180,25 +178,5 @@ public class PlaceNote : PlaceSongObject {
     {
         editor.commandStack.Push(new SongEditAdd(this.note));
         editor.selectedObjectsManager.SelectSongObject(note, editor.currentChart.notes);
-    }
-
-    protected static void standardOverwriteOpen(Note note)
-    {
-        if (!note.IsOpenNote() && MenuBar.currentInstrument != Song.Instrument.Drums)
-        {
-            int index, length;
-            SongObjectHelper.FindObjectsAtPosition(note.tick, note.chart.notes, out index, out length);
-
-            // Check for open notes and delete
-            for (int i = index; i < index + length; ++i)
-            //foreach (Note chordNote in chordNotes)
-            {
-                Note chordNote = note.chart.notes[i];
-                if (chordNote.IsOpenNote())
-                {
-                    chordNote.Delete();
-                }
-            }
-        }
     }
 }

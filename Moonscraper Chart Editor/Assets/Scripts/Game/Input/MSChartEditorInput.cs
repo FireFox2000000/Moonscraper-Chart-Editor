@@ -4,8 +4,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MSE;
-using MSE.Input;
+using MoonscraperEngine;
+using MoonscraperEngine.Input;
 
 // HOW TO ADD A NEW ACTION
 /*

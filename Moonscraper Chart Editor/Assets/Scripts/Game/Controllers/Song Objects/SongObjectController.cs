@@ -2,7 +2,7 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
+using MoonscraperChartEditor.Song;
 
 public abstract class SongObjectController : SelectableClick {
     public const float CHART_CENTER_POS = 0;
@@ -52,13 +52,6 @@ public abstract class SongObjectController : SelectableClick {
 
     public override void OnSelectableMouseDrag()
     {
-        // Move note
-        // This is now being done via the cursor tool
-        /*if (moveCheck)
-        {
-            editor.groupMove.SetSongObjects(songObject);
-            songObject.Delete();
-        }*/
     }
 
     void Update()
@@ -211,5 +204,13 @@ public abstract class SongObjectController : SelectableClick {
         }
 
         return position;
+    }
+
+    protected float desiredWorldYPosition
+    {
+        get
+        {
+            return ChartEditor.WorldYPosition(songObject);
+        }
     }
 }

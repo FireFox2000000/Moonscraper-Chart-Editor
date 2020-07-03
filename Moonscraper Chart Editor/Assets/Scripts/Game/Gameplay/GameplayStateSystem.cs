@@ -1,7 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using TimingConfig;
+using MoonscraperEngine;
+using MoonscraperEngine.Audio;
+using MoonscraperChartEditor.Song;
 
 public class GameplayStateSystem : SystemManagerState.System
 {

@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class GameplayEvents
 {
-    public MSE.Event explicitMissEvent { get; private set; }
-    public MSE.Event<GameplayStateSystem.GameState> gameplayUpdateEvent { get; private set; }
+    public MoonscraperEngine.Event explicitMissEvent { get; private set; }
+    public MoonscraperEngine.Event<GameplayStateSystem.GameState> gameplayUpdateEvent { get; private set; }
 
     public GameplayEvents()
     {
-        explicitMissEvent = new MSE.Event();
-        gameplayUpdateEvent = new MSE.Event<GameplayStateSystem.GameState>();
+        explicitMissEvent = new MoonscraperEngine.Event();
+        gameplayUpdateEvent = new MoonscraperEngine.Event<GameplayStateSystem.GameState>();
     }
 }

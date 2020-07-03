@@ -1,9 +1,8 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using MoonscraperChartEditor.Song;
 
 public class EventPool : SongObjectPool
 {
@@ -18,7 +17,7 @@ public class EventPool : SongObjectPool
         EventController controller = sCon as EventController;
 
         // Assign pooled objects
-        controller.songEvent = (Event)songObject;
+        controller.songEvent = (MoonscraperChartEditor.Song.Event)songObject;
         controller.gameObject.SetActive(true);
     }
 }

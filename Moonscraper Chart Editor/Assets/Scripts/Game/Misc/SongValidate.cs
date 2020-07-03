@@ -1,10 +1,9 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using System.Text;
+using MoonscraperEngine;
+using MoonscraperChartEditor.Song;
 
 public class SongValidate
 {
@@ -73,7 +72,7 @@ public class SongValidate
                     {
                         hasErrorsLocal |= true;
 
-                        Event eventObject = song.eventsAndSections[i];
+                        MoonscraperChartEditor.Song.Event eventObject = song.eventsAndSections[i];
 
                         sb.AppendFormat("\tFound event object beyond the length of the song-\n");
                         sb.AppendFormat("\t\tType = {0}, position = {1}\n", eventObject.GetType(), eventObject.tick);

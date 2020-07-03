@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 public class NativeMessageBoxWindows : INativeMessageBox
 {
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
+
     public NativeMessageBox.Result Show(string text, string caption, NativeMessageBox.Type messageBoxType, NativeWindow childWindow)
     {
         IntPtr messagePtr = IntPtr.Zero;
@@ -16,10 +19,12 @@ public class NativeMessageBoxWindows : INativeMessageBox
 
             UnityEngine.Debug.Assert(winInterface != null);
 
-            messagePtr = winInterface.sdlWindowPtr;
+            messagePtr = winInterface.windowPtr;
         }
 
-        return NativeMessageBoxSDL.Show(text, caption, messageBoxType, messagePtr);
+        int result = MessageBox(messagePtr, text.ToString(), caption.ToString(), (uint)messageBoxType);
+
+        return (NativeMessageBox.Result)result;
     }
 }
 

@@ -2,9 +2,9 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using MoonscraperChartEditor.Song;
 
 public class GroupMove : ToolObject
 {
@@ -18,7 +18,7 @@ public class GroupMove : ToolObject
     List<BPM> bpmsToEnable = new List<BPM>();
     List<TimeSignature> timeSignaturesToEnable = new List<TimeSignature>();
     List<Section> sectionsToEnable = new List<Section>();
-    List<Event> eventsToEnable = new List<Event>();
+    List<MoonscraperChartEditor.Song.Event> eventsToEnable = new List<MoonscraperChartEditor.Song.Event>();
 
     List<SongEditCommand> fullCommands = new List<SongEditCommand>();
     SongEditDelete initialDeleteCommands;
@@ -205,7 +205,7 @@ public class GroupMove : ToolObject
         bpmsToEnable.AddRange(movingSongObjects.OfType<BPM>());
         timeSignaturesToEnable.AddRange(movingSongObjects.OfType<TimeSignature>().ToArray());
         sectionsToEnable.AddRange(movingSongObjects.OfType<Section>().ToArray());
-        eventsToEnable.AddRange(movingSongObjects.OfType<Event>().ToArray());
+        eventsToEnable.AddRange(movingSongObjects.OfType<MoonscraperChartEditor.Song.Event>().ToArray());
 
         editor.selectedObjectsManager.currentSelectedObject = null;
     }

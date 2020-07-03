@@ -1,10 +1,9 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using MoonscraperChartEditor.Song;
 
 public class ChartEventController : SongObjectController
 {
@@ -18,7 +17,7 @@ public class ChartEventController : SongObjectController
     {
         if (chartEvent.chart != null)
         {
-            transform.position = new Vector3(CHART_CENTER_POS + position, chartEvent.worldYPosition, GetOffset(editor, chartEvent));
+            transform.position = new Vector3(CHART_CENTER_POS + position, desiredWorldYPosition, GetOffset(editor, chartEvent));
 
             chartEventText.text = chartEvent.eventName;
         }

@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using MSE.Input;
+using MoonscraperEngine.Input;
 
 public class ActionBindingsMenu : MonoBehaviour
 {

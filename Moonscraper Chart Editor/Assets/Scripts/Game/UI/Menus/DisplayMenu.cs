@@ -25,12 +25,22 @@ public class DisplayMenu : MonoBehaviour {
         MovementController.cancel = true;
 
         bool exitInput = MSChartEditorInput.GetInputDown(MSChartEditorInputActions.CloseMenu) && !editor.uiServices.popupBlockerEnabled;
-        if (
-            exitInput ||
-            (Input.GetMouseButtonDown(0) && !RectTransformUtility.RectangleContainsScreenPoint(mouseArea, editor.uiServices.GetUIMousePosition())) ||
-            editor.errorManager.HasErrorToDisplay()
-            )
+        bool clickedOutSideWindow = Input.GetMouseButtonDown(0) && !RectTransformUtility.RectangleContainsScreenPoint(mouseArea, editor.uiServices.GetUIMousePosition());
+
+        if (clickedOutSideWindow)
+        {
+            var mouseMonitor = editor.services.mouseMonitorSystem;
+            var uiUnderMouse = mouseMonitor.GetUIRaycastableUnderPointer();
+            DisplayMenu menu = uiUnderMouse ? uiUnderMouse.GetComponentInParent<DisplayMenu>() : null;
+            bool clickingObjectInMenu = menu && menu == this;
+
+            clickedOutSideWindow &= !clickingObjectInMenu;
+        }
+
+        if (exitInput || clickedOutSideWindow || editor.errorManager.HasErrorToDisplay())
+        {
             Disable();
+        }
     }
 
     protected virtual void OnEnable()

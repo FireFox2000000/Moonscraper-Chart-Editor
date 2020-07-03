@@ -1,9 +1,7 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using MoonscraperChartEditor.Song;
 
 public class SongEditModify<T> : SongEditCommand where T : SongObject
 {
@@ -12,8 +10,8 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
 
     public SongEditModify(T before, T after)
     {
-        Debug.Assert(after.song == null, "Must add a new song object!");
-        Debug.Assert(before.tick == after.tick, "Song object is being moved rather than modified!");
+        UnityEngine.Debug.Assert(after.song == null, "Must add a new song object!");
+        UnityEngine.Debug.Assert(before.tick == after.tick, "Song object is being moved rather than modified!");
 
         songObjects.Add(before.Clone());
         songObjects.Add(after);
@@ -22,7 +20,7 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
         {
             Note beforeNote = before as Note;
             Note afterNote = after as Note;
-            Debug.Assert(beforeNote.rawNote == afterNote.rawNote, "Note modifying is not supported by SongEditModify<T>(T, T). Use SongEditModify(Note, Note) instead.");
+            UnityEngine.Debug.Assert(beforeNote.rawNote == afterNote.rawNote, "Note modifying is not supported by SongEditModify<T>(T, T). Use SongEditModify(Note, Note) instead.");
         }
     }
 
@@ -90,7 +88,7 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
                 break;
 
             default:
-                Debug.LogError("Object to modify not supported.");
+                UnityEngine.Debug.LogError("Object to modify not supported.");
                 break;
         }
 
@@ -165,7 +163,7 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
                 return song.events[index];
 
             default:
-                Debug.LogError("Object to modify not implemented for object. Object will not be modified.");
+                UnityEngine.Debug.LogError("Object to modify not implemented for object. Object will not be modified.");
                 break;
         }
 
@@ -177,8 +175,8 @@ public class SongEditModifyValidated : SongEditAdd
 {
     public SongEditModifyValidated(Note before, Note after) : base(after)
     {
-        Debug.Assert(after.song == null, "Must add a new song object!");
-        Debug.Assert(before.tick == after.tick, "Song object is being moved rather than modified!");
-        Debug.Assert(SongEditModify<SongObject>.FindObjectToModify(before) != null, "Unable to find a song object to modify!");
+        UnityEngine.Debug.Assert(after.song == null, "Must add a new song object!");
+        UnityEngine.Debug.Assert(before.tick == after.tick, "Song object is being moved rather than modified!");
+        UnityEngine.Debug.Assert(SongEditModify<SongObject>.FindObjectToModify(before) != null, "Unable to find a song object to modify!");
     }
 }

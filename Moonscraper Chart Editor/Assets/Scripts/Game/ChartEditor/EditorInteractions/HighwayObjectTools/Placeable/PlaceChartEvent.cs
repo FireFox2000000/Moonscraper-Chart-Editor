@@ -1,10 +1,8 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using MoonscraperChartEditor.Song;
 
 public class PlaceChartEvent : PlaceSongObject
 {
@@ -45,7 +43,7 @@ public class PlaceChartEvent : PlaceSongObject
             offset += ChartEventController.OFFSET_SPACING;
         }
 
-        transform.position = new Vector3(SongObjectController.CHART_CENTER_POS + ChartEventController.position, chartEvent.worldYPosition, offset);
+        transform.position = new Vector3(SongObjectController.CHART_CENTER_POS + ChartEventController.position, ChartEditor.WorldYPosition(chartEvent), offset);
     }
 
     protected override void AddObject()

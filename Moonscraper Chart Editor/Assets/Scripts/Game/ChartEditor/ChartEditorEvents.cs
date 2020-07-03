@@ -3,36 +3,36 @@
 
 public class ChartEditorEvents
 {
-    public MSE.Event chartReloadedEvent { get; private set; }
-    public MSE.Event hyperspeedChangeEvent { get; private set; }
-    public MSE.Event leftyFlipToggledEvent { get; private set; }
-    public MSE.Event saveEvent { get; private set; }
-    public MSE.Event toolChangedEvent { get; private set; }
-    public MSE.Event notePlacementModeChangedEvent { get; private set; }
-    public MSE.Event drumsModeOptionChangedEvent { get; private set; }
-    public MSE.Event playbackStoppedEvent { get; private set; }
+    public MoonscraperEngine.Event chartReloadedEvent { get; private set; }
+    public MoonscraperEngine.Event hyperspeedChangeEvent { get; private set; }
+    public MoonscraperEngine.Event leftyFlipToggledEvent { get; private set; }
+    public MoonscraperEngine.Event saveEvent { get; private set; }
+    public MoonscraperEngine.Event toolChangedEvent { get; private set; }
+    public MoonscraperEngine.Event notePlacementModeChangedEvent { get; private set; }
+    public MoonscraperEngine.Event drumsModeOptionChangedEvent { get; private set; }
+    public MoonscraperEngine.Event playbackStoppedEvent { get; private set; }
 
-    public MSE.Event<int> lanesChangedEvent { get; private set; }
-    public MSE.Event<bool> keyboardModeToggledEvent { get; private set; }
-    public MSE.Event<Globals.ViewMode> viewModeSwitchEvent { get; private set; }
-    public MSE.Event<ChartEditor.State> editorStateChangedEvent { get; private set; }
-    public MSE.Event<EditorInteractionManager.InteractionType> editorInteractionTypeChangedEvent { get; private set; }
+    public MoonscraperEngine.Event<int> lanesChangedEvent { get; private set; }
+    public MoonscraperEngine.Event<bool> keyboardModeToggledEvent { get; private set; }
+    public MoonscraperEngine.Event<Globals.ViewMode> viewModeSwitchEvent { get; private set; }
+    public MoonscraperEngine.Event<ChartEditor.State> editorStateChangedEvent { get; private set; }
+    public MoonscraperEngine.Event<EditorInteractionManager.InteractionType> editorInteractionTypeChangedEvent { get; private set; }
 
     public ChartEditorEvents()
     {
-        chartReloadedEvent = new MSE.Event();
-        hyperspeedChangeEvent = new MSE.Event();
-        leftyFlipToggledEvent = new MSE.Event();
-        saveEvent = new MSE.Event();
-        toolChangedEvent = new MSE.Event();
-        notePlacementModeChangedEvent = new MSE.Event();
-        drumsModeOptionChangedEvent = new MSE.Event();
-        playbackStoppedEvent = new MSE.Event();
+        chartReloadedEvent = new MoonscraperEngine.Event();
+        hyperspeedChangeEvent = new MoonscraperEngine.Event();
+        leftyFlipToggledEvent = new MoonscraperEngine.Event();
+        saveEvent = new MoonscraperEngine.Event();
+        toolChangedEvent = new MoonscraperEngine.Event();
+        notePlacementModeChangedEvent = new MoonscraperEngine.Event();
+        drumsModeOptionChangedEvent = new MoonscraperEngine.Event();
+        playbackStoppedEvent = new MoonscraperEngine.Event();
 
-        lanesChangedEvent = new MSE.Event<int>();
-        keyboardModeToggledEvent = new MSE.Event<bool>();
-        viewModeSwitchEvent = new MSE.Event<Globals.ViewMode>();
-        editorStateChangedEvent = new MSE.Event<ChartEditor.State>();
-        editorInteractionTypeChangedEvent = new MSE.Event<EditorInteractionManager.InteractionType>();
+        lanesChangedEvent = new MoonscraperEngine.Event<int>();
+        keyboardModeToggledEvent = new MoonscraperEngine.Event<bool>();
+        viewModeSwitchEvent = new MoonscraperEngine.Event<Globals.ViewMode>();
+        editorStateChangedEvent = new MoonscraperEngine.Event<ChartEditor.State>();
+        editorInteractionTypeChangedEvent = new MoonscraperEngine.Event<EditorInteractionManager.InteractionType>();
     }
 }

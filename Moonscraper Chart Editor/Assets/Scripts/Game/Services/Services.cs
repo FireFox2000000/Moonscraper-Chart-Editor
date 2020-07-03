@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using MoonscraperEngine.Audio;
 
 public abstract class UpdateableService : MonoBehaviour
 {
@@ -184,7 +185,7 @@ public class Services : MonoBehaviour
         {
             ChartEditor editor = ChartEditor.Instance;
             Vector3 strikelinePos = editor.visibleStrikeline.position;
-            float posCalibrationOffset = TickFunctions.TimeToWorldYPosition(Globals.gameSettings.audioCalibrationMS / 1000.0f) * Globals.gameSettings.gameSpeed;
+            float posCalibrationOffset = ChartEditor.TimeToWorldYPosition(Globals.gameSettings.audioCalibrationMS / 1000.0f) * Globals.gameSettings.gameSpeed;
             return strikelinePos.y + posCalibrationOffset;
         }
     }
@@ -205,7 +206,7 @@ public class Services : MonoBehaviour
             else
             {
                 float audioStrikelinePos = editor.services.sfxCalibratedStrikelinePos;
-                currentAudioTime = TickFunctions.WorldYPositionToTime(audioStrikelinePos);
+                currentAudioTime = ChartEditor.WorldYPositionToTime(audioStrikelinePos);
             }
 
             return currentAudioTime + Globals.gameSettings.clapCalibrationMS / 1000.0f - editor.currentSong.offset;
@@ -222,6 +223,7 @@ public class Services : MonoBehaviour
         mouseMonitorSystem = new MouseMonitor();
         ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Editor, mouseMonitorSystem);
         ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Playing, mouseMonitorSystem);
+        ChartEditor.Instance.RegisterPersistentSystem(ChartEditor.State.Menu, mouseMonitorSystem);
     }
 
     // Use this for initialization

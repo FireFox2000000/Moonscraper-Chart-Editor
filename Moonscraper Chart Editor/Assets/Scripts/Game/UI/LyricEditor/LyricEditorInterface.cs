@@ -1,9 +1,9 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MoonscraperChartEditor.Song;
 
 public class LyricEditorInterface : MonoBehaviour
 {
@@ -88,7 +88,7 @@ public class LyricEditorInterface : MonoBehaviour
         Song currentSong = ChartEditor.Instance.currentSong;
         ClearLyricObjects();
 
-        foreach(Event eventObject in currentSong.events)
+        foreach(MoonscraperChartEditor.Song.Event eventObject in currentSong.events)
         {
             if (eventObject.title.StartsWith(LyricEditorItemInterface.c_lyricPrefix))
             {

@@ -5,13 +5,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using MSE.Input;
+using MoonscraperEngine.Input;
 
 public class RebindOverlayInterface : MonoBehaviour
 {
     InputRebinder rebinder;
-    public MSE.Event rebindCompleteEvent = new MSE.Event();
-    public MSE.Event<InputAction> inputConflictEvent = new MSE.Event<InputAction>();
+    public MoonscraperEngine.Event rebindCompleteEvent = new MoonscraperEngine.Event();
+    public MoonscraperEngine.Event<InputAction> inputConflictEvent = new MoonscraperEngine.Event<InputAction>();
 
     [SerializeField]
     Text conflictNotificationText;

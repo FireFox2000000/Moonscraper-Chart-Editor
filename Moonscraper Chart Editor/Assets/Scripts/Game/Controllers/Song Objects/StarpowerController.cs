@@ -2,8 +2,8 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
-using System;
+using MoonscraperChartEditor.Song;
+
 
 public class StarpowerController : SongObjectController
 {
@@ -52,7 +52,7 @@ public class StarpowerController : SongObjectController
     {
         if (starpower.song != null)
         {
-            transform.position = new Vector3(CHART_CENTER_POS + position, starpower.worldYPosition, 0);
+            transform.position = new Vector3(CHART_CENTER_POS + position, desiredWorldYPosition, 0);
 
             UpdateTailLength();
         }
@@ -60,7 +60,7 @@ public class StarpowerController : SongObjectController
 
     public void UpdateTailLength()
     {
-        float length = starpower.song.TickToWorldYPosition(starpower.tick + starpower.length) - starpower.worldYPosition;
+        float length = starpower.song.TickToWorldYPosition(starpower.tick + starpower.length) - desiredWorldYPosition;
 
         Vector3 scale = tail.transform.localScale;
         scale.y = length;

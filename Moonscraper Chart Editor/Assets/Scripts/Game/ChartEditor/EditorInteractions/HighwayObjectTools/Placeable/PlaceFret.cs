@@ -2,7 +2,7 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
+using MoonscraperChartEditor.Song;
 
 // Resticts so that only one fret tye can be placed down
 public class PlaceFret : PlaceNote {

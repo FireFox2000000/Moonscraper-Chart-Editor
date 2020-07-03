@@ -3,7 +3,7 @@
 
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using MoonscraperChartEditor.Song;
 
 public class SectionPropertiesPanelController : PropertiesPanelController {
     public Section currentSection { get { return (Section)currentSongObject; }

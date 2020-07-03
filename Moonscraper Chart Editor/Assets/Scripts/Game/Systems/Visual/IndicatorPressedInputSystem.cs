@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
+using MoonscraperEngine;
+using MoonscraperChartEditor.Song;
 
 public class IndicatorPressedInputSystem : SystemManagerState.System
 {

@@ -1,9 +1,8 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using MoonscraperChartEditor.Song;
 
 public class InspectorSwitching : MonoBehaviour {
     [SerializeField]
@@ -78,7 +77,7 @@ public class InspectorSwitching : MonoBehaviour {
                     currentPropertiesPanel = tsInspector.gameObject;
                     break;
                 case ((int)SongObject.ID.Event):
-                    eventInspector.currentEvent = (Event)editor.selectedObjectsManager.currentSelectedObject;
+                    eventInspector.currentEvent = (MoonscraperChartEditor.Song.Event)editor.selectedObjectsManager.currentSelectedObject;
                     currentPropertiesPanel = eventInspector.gameObject;
                     break;
                 case ((int)SongObject.ID.ChartEvent):

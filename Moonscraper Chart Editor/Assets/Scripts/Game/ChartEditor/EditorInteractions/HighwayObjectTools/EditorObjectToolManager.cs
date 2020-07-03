@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MoonscraperEngine;
 
 [System.Serializable]
 public class EditorObjectToolManager : System.Object
@@ -202,7 +203,7 @@ public class EditorObjectToolManager : System.Object
             bool mouseInToolArea = services.InToolArea;
             bool blockedByUI = MouseMonitor.IsUIUnderPointer();
             bool keysModeActive = Globals.gameSettings.keysModeEnabled;
-            bool ctrlDraggingBpm = currentToolId == ToolID.BPM && MSE.Input.KeyboardDevice.ctrlKeyBeingPressed && Input.GetMouseButton(0);
+            bool ctrlDraggingBpm = currentToolId == ToolID.BPM && MoonscraperEngine.Input.KeyboardDevice.ctrlKeyBeingPressed && Input.GetMouseButton(0);
             bool currentlyInDeleteMode = Input.GetMouseButton(1);
 
             if (waitForMouseRelease)

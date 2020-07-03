@@ -3,7 +3,7 @@
 
 using UnityEngine;
 using TMPro;
-using System.Collections;
+using MoonscraperChartEditor.Song;
 
 public class TimesignatureController : SongObjectController {
 
@@ -16,7 +16,7 @@ public class TimesignatureController : SongObjectController {
     {
         if (ts.song != null)
         {
-            transform.position = new Vector3(CHART_CENTER_POS + position, ts.worldYPosition, 0);
+            transform.position = new Vector3(CHART_CENTER_POS + position, desiredWorldYPosition, 0);
 
             if (previousNumerator != ts.numerator || previousDenominator != ts.denominator)
                 UpdateDisplay();

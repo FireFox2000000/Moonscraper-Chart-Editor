@@ -2,7 +2,8 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using MSE.Input;
+using MoonscraperEngine;
+using MoonscraperChartEditor.Song;
 
 public static class GuitarInput
 {

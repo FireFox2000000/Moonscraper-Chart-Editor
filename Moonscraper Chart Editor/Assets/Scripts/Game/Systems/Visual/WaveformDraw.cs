@@ -3,8 +3,9 @@
 
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
-using System.Collections.Generic;
+using MoonscraperEngine;
+using MoonscraperEngine.Audio;
+using MoonscraperChartEditor.Song;
 
 [RequireComponent(typeof(LineRenderer))]
 public class WaveformDraw : MonoBehaviour {
@@ -48,7 +49,8 @@ public class WaveformDraw : MonoBehaviour {
         {
             if (waveformSelect.value == (audioIndex + 1))
             {
-                currentSample = editor.currentSongAudio.GetSampleData((Song.AudioInstrument)audioIndex);
+                Song.AudioInstrument audioInstrument = (Song.AudioInstrument)audioIndex;
+                currentSample = editor.currentSongAudio.GetSampleData(audioInstrument);
             }
         }
 
@@ -57,13 +59,12 @@ public class WaveformDraw : MonoBehaviour {
         else if (Globals.viewMode == Globals.ViewMode.Song)
             songViewWaveformSelectionIndex = waveformSelect.value;
 
-        bool displayWaveform = waveformSelect.value > 0;// && Globals.viewMode == Globals.ViewMode.Song;
-        //waveformSelect.gameObject.SetActive(Globals.viewMode == Globals.ViewMode.Song);
+        bool displayWaveform = waveformSelect.value > 0 && currentSample != null;
 
         loadingText.gameObject.SetActive(displayWaveform && currentSample.IsLoading);
 
         // Choose whether to display the waveform or not
-        if (displayWaveform && currentSample != null && currentSample.dataLength > 0)
+        if (displayWaveform && currentSample.dataLength > 0)
         {
             UpdateWaveformPointsFullData();
 
@@ -92,8 +93,8 @@ public class WaveformDraw : MonoBehaviour {
         float fullOffset = -editor.currentSong.offset;
 
         // Determine what points of data to draw
-        int startPos = TimeToArrayPos(TickFunctions.WorldYPositionToTime(editor.camYMin.position.y) - fullOffset, iteration, channels, currentSample.length);
-        int endPos = TimeToArrayPos(TickFunctions.WorldYPositionToTime(editor.camYMax.position.y) - fullOffset, iteration, channels, currentSample.length);
+        int startPos = TimeToArrayPos(ChartEditor.WorldYPositionToTime(editor.camYMin.position.y) - fullOffset, iteration, channels, currentSample.length);
+        int endPos = TimeToArrayPos(ChartEditor.WorldYPositionToTime(editor.camYMax.position.y) - fullOffset, iteration, channels, currentSample.length);
 
         int pointLength = endPos - startPos;
         if (pointLength > points.Length)
