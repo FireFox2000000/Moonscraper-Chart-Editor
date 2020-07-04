@@ -136,7 +136,7 @@ public class NoteVisuals2DManager : NoteVisualsManager {
         else if (Globals.drumMode && note.guitarFret != Note.GuitarFret.Open)
         {
             arrayPos += 1;
-            if (arrayPos > (int)Note.GuitarFret.Orange)
+            if (arrayPos > (int)Note.GuitarFret.Orange || (Globals.gameSettings.drumsLaneCount == 4 && arrayPos > (int)Note.GuitarFret.Blue))
                 arrayPos = 0;
         }        
 
