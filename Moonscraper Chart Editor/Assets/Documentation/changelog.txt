@@ -1,3 +1,22 @@
+1.3.5
+	NEW FEATURES
+	-Enabled cymbals saving in .chart files
+	-Read in phrase start and phrase end events from midi vocals track when importing lyrics.
+	-Added midi export settings to specify which difficulty taps/cymbals etc whole instrument events shoudl come from. Added setting to specify with RB section specifiers.
+
+	CHANGES
+	-Chart file reading optimisations, approx 250% speedup on large files liek Crash Test 5
+
+	FIXES
+	-Fixed "ctrl-shift-s" text in file dropdown clipping past the dropdown
+	-Fixed waveform from previous song being draw even after a new song is created or an audio slot is cleared
+	-Fixed display menu exiting if clicking on a dropdown option that has spawned with options outside of the menu.
+	-Fixed timeline actinging strangly when cursor goes outside the window when dragging timeline due to engine update
+	-Take cymbals toggles from only certain difficulty. 
+	-Fixed cursor selection getting wrong collider size and wrong positions for text events.
+	-Fixed text events calling the undo command when being moved on the same frame they're clicked on occasionally.
+	-Fixed Song Properties input field tabbing navigation
+
 1.3.4.1
 	CHANGES
 	-Added beat line to custom resources.
