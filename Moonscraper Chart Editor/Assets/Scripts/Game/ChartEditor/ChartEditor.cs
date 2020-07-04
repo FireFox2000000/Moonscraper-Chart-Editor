@@ -880,9 +880,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Rhythm), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_rhythm);
 		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Keys), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_keys);
         SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drum), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_2), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_3), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_4), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_2), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums2);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_3), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums3);
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_4), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums4);
 		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Vocals), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_vocals);
 		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Crowd), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_crowd);
 
