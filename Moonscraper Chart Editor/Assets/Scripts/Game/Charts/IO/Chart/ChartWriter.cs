@@ -457,7 +457,7 @@ namespace MoonscraperChartEditor.Song.IO
                 }
 
                 // Write out cymbal flag for each note
-                if (writeParameters.instrument == Song.Instrument.Drums && false)   // Disabled while CH devs are still testing
+                if (writeParameters.instrument == Song.Instrument.Drums)
                 {
                     int writeValue = ChartIOHelper.c_proDrumsOffset;
                     int noteOffset;
@@ -468,7 +468,6 @@ namespace MoonscraperChartEditor.Song.IO
 
                     writeValue += noteOffset;
 
-                    // Need to write this out if there ISN'T a cymbal flag on the note
                     Note.Flags defaultFlagsForNote;
                     if (!ChartIOHelper.c_drumNoteDefaultFlagsLookup.TryGetValue(note.rawNote, out defaultFlagsForNote))
                     {
