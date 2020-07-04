@@ -37,9 +37,6 @@ public class SettingsController : DisplayMenu
 	public Slider vocalSourceSlider;
 	public Slider crowdSourceSlider;
 
-    public Button UnmuteButton;
-    public Button MuteButton;
-
     public Slider masterVolumeSlider;
     public Slider musicPanSlider;
 
