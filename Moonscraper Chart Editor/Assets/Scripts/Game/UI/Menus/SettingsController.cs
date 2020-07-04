@@ -29,10 +29,16 @@ public class SettingsController : DisplayMenu
     public Slider rhythmSourceSlider;
 	public Slider keysSourceSlider;
     public Slider drumSourceSlider;
+    public Slider drum2SourceSlider;
+    public Slider drum3SourceSlider;
+    public Slider drum4SourceSlider;
     public Slider clapSourceSlider;
     public Slider sfxSlider;
 	public Slider vocalSourceSlider;
 	public Slider crowdSourceSlider;
+
+    public Button UnmuteButton;
+    public Button MuteButton;
 
     public Slider masterVolumeSlider;
     public Slider musicPanSlider;
@@ -113,6 +119,9 @@ public class SettingsController : DisplayMenu
         Globals.gameSettings.vol_rhythm = rhythmSourceSlider.value;
         Globals.gameSettings.vol_keys = keysSourceSlider.value;
         Globals.gameSettings.vol_drums = drumSourceSlider.value;
+        Globals.gameSettings.vol_drums2 = drum2SourceSlider.value;
+        Globals.gameSettings.vol_drums3 = drum3SourceSlider.value;
+        Globals.gameSettings.vol_drums4 = drum4SourceSlider.value;
         Globals.gameSettings.vol_vocals = vocalSourceSlider.value;
         Globals.gameSettings.vol_crowd = crowdSourceSlider.value;
         Globals.gameSettings.sfxVolume = sfxSlider.value;
@@ -194,6 +203,9 @@ public class SettingsController : DisplayMenu
         bassSourceSlider.value = Globals.gameSettings.vol_bass;
         rhythmSourceSlider.value = Globals.gameSettings.vol_rhythm;
         drumSourceSlider.value = Globals.gameSettings.vol_drums;
+        drum2SourceSlider.value = Globals.gameSettings.vol_drums2;
+        drum3SourceSlider.value = Globals.gameSettings.vol_drums3;
+        drum4SourceSlider.value = Globals.gameSettings.vol_drums4;
         sfxSlider.value = Globals.gameSettings.sfxVolume;
 		keysSourceSlider.value = Globals.gameSettings.vol_keys;
 		vocalSourceSlider.value = Globals.gameSettings.vol_vocals;
@@ -446,4 +458,35 @@ public class SettingsController : DisplayMenu
                 }
         }
     }
+
+    public void MuteAllStems()
+    {
+    musicSourceSlider.value =  0;
+    guitarSourceSlider.value = 0;
+    bassSourceSlider.value =   0;
+    rhythmSourceSlider.value = 0;
+    drumSourceSlider.value = 0;
+    drum2SourceSlider.value = 0;
+    drum3SourceSlider.value = 0;
+    drum4SourceSlider.value = 0;
+    keysSourceSlider.value = 0;
+	vocalSourceSlider.value = 0;
+	crowdSourceSlider.value = 0;
+	}
+
+    public void UnmuteAllStems()
+    {
+    musicSourceSlider.value =  1;
+    guitarSourceSlider.value = 1;
+    bassSourceSlider.value =   1;
+    rhythmSourceSlider.value = 1;
+    drumSourceSlider.value = 1;
+    drum2SourceSlider.value = 1;
+    drum3SourceSlider.value = 1;
+    drum4SourceSlider.value = 1;
+    keysSourceSlider.value = 1;
+	vocalSourceSlider.value = 1;
+	crowdSourceSlider.value = 1;
+	}
+
 }
