@@ -820,13 +820,12 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     }
 
     /// <summary>
-    /// Starts a thread that saves the song data in a .chart format to the specified path asynchonously. Can be monitored with the "IsSaving" parameter. 
+    /// Starts a thread that saves the song data in a .chart format to the specified path asynchonously. Can be monitored with the "IsSaving" parameter.
     /// </summary>
     /// <param name="filepath">The path and filename to save to.</param>
     /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
-    async Task SaveCurrentSongAsync(string filepath, ExportOptions exportOptions)
+    Task SaveCurrentSongAsync(string filepath, ExportOptions exportOptions)
     {
-
 #if false
         Song songCopy = new Song(this);
         songCopy.Save(filepath, exportOptions);
@@ -838,9 +837,10 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (!isSaving)
         {
             Song songCopy = new Song(currentSong);
-            await Task.Run(() => SaveSong(songCopy, filepath, exportOptions));
+            return Task.Run(() => SaveSong(songCopy, filepath, exportOptions));
         }
 #endif
+        return Task.CompletedTask;
     }
 
     /// <summary>
