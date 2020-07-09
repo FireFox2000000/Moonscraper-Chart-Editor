@@ -13,7 +13,7 @@ public class NativeWindow
 #elif UNITY_STANDALONE_WIN
         m_platformWrapper = new NativeWindow_Windows();
 #elif UNITY_STANDALONE_LINUX
-
+        m_platformWrapper = new NativeWindow_Linux();
 #elif UNITY_STANDALONE_OSX
 
 #endif

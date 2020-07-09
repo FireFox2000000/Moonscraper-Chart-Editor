@@ -7,8 +7,6 @@ using UnityEngine;
 using System;
 using System.IO;
 using UnityEngine.UI;
-using Un4seen.Bass.Misc;
-using Un4seen.Bass;
 using MoonscraperEngine;
 using MoonscraperEngine.Audio;
 using MoonscraperChartEditor.Song;
@@ -109,11 +107,15 @@ public class Export : DisplayMenu {
 
     void _ExportSong()
     {
-        string saveLocation;
-        string defaultFileName = new string(editor.currentSong.name.ToCharArray());
+        string defaultFileName;
+        if (editor.currentSong.name != string.Empty)
+            defaultFileName = new string(editor.currentSong.name.ToCharArray());
+        else
+            defaultFileName = "Untitled";
         if (!exportOptions.forced)
             defaultFileName += "(UNFORCED)";
 
+        string saveLocation;
         bool aquiredFilePath = false;
 
         // Open up file explorer and get save location
@@ -141,13 +143,17 @@ public class Export : DisplayMenu {
             float songLength = editor.currentSongLength;
 
             saveDirectory = saveDirectory.Replace('\\', '/');
+            saveDirectory = Path.Combine(saveDirectory, song.name);
 
-            if (!saveDirectory.EndsWith("/"))
-            {
-                saveDirectory += '/';
+            // Check if files exist at the current directory and ask user before overwriting.
+            if (Directory.Exists(saveDirectory)) {
+                NativeWindow window= ChartEditor.Instance.windowHandleManager.nativeWindow;
+                NativeMessageBox.Result overwrite = NativeMessageBox.Show("Exported files exist. Overwrite?", "Warning", NativeMessageBox.Type.YesNo, window);
+
+                if (overwrite != NativeMessageBox.Result.Yes) {
+                    return;
+                }
             }
-
-            saveDirectory += song.name + "/";
 
             StartCoroutine(ExportCHPackage(saveDirectory, song, songLength, exportOptions));
         }
@@ -354,7 +360,7 @@ public class Export : DisplayMenu {
     {
         Metadata metaData = song.metaData;
 
-        StreamWriter ofs = File.CreateText(path + "/song.ini");
+        StringWriter ofs = new StringWriter();
         ofs.WriteLine("[Song]");
         ofs.WriteLine("name = " + song.name);
         ofs.WriteLine("artist = " + metaData.artist);
@@ -375,85 +381,9 @@ public class Export : DisplayMenu {
         ofs.WriteLine("charter = " + metaData.charter);
         ofs.WriteLine("icon = 0");
 
+        File.WriteAllText(Path.Combine(path, "song.ini"), ofs.ToString());
+
         ofs.Close();
-    }
-
-    public static void ExportWAV(string srcPath, string destPath, ExportOptions exportOptions)
-    {
-        Debug.Log("Exporting " + srcPath + " to " + destPath);
-        int stream = Bass.BASS_StreamCreateFile(srcPath, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT);
-
-        if (stream == 0 || Bass.BASS_ErrorGetCode() != BASSError.BASS_OK)
-            throw new Exception(Bass.BASS_ErrorGetCode().ToString());
-
-        WaveWriter ww = new WaveWriter(destPath, stream, true);
-
-        float[] data = new float[32768];
-        while (Bass.BASS_ChannelIsActive(stream) == BASSActive.BASS_ACTIVE_PLAYING)
-        {
-            // get the sample data as float values as well
-            int length = Bass.BASS_ChannelGetData(stream, data, 32768);
-            // and write the data to the wave file
-            if (length > 0)
-                ww.Write(data, length);
-        }
-
-        ww.Close();
-        Bass.BASS_StreamFree(stream);
-        /*
-        const int WAV_HEADER_LENGTH = 44;
-
-        
-
-        FileStream ifs = null;
-        BinaryReader br = null;
-
-        FileStream ofs = null;
-        BinaryWriter bw = null;
-        
-        try
-        {
-            ifs = new FileStream(srcPath, FileMode.Open, FileAccess.Read);
-            br = new BinaryReader(ifs);
-
-            ofs = new FileStream(destPath, FileMode.OpenOrCreate, FileAccess.Write);
-            bw = new BinaryWriter(ofs);
-
-            ifs.Seek(0, SeekOrigin.Begin);
-
-            byte[] header = br.ReadBytes(WAV_HEADER_LENGTH);
-
-            ifs.Seek(4, SeekOrigin.Begin);
-            int chunkLength = br.ReadInt32(); // bytes 4 to 7
-
-            ifs.Seek(16, SeekOrigin.Current);
-            int frequency = br.ReadInt32();
-            int byterate = br.ReadInt32();
-
-            ifs.Seek(WAV_HEADER_LENGTH, SeekOrigin.Begin);
-            byte[] chunk = br.ReadBytes(chunkLength); 
-
-            
-        }
-        catch
-        {
-            Debug.LogError("Error with writing wav file");
-        }
-        finally
-        {
-            try { br.Close(); }
-            catch { }
-
-            try { ifs.Close(); }
-            catch { }
-
-            try { bw.Close(); }
-            catch { }
-
-            try { ofs.Close(); }
-            catch { }
-        }
-        */
     }
 
     static readonly Dictionary<Song.AudioInstrument, string> audioInstrumentToCHNameMap = new Dictionary<Song.AudioInstrument, string>()
@@ -496,17 +426,7 @@ public class Export : DisplayMenu {
         float timer = Time.realtimeSinceStartup;
         string errorMessageList = string.Empty;
 
-        destFolderPath = destFolderPath.Replace('\\', '/');
-
-        if (!destFolderPath.EndsWith("/"))
-        {
-            destFolderPath += '/';
-        }
-
-        if (!Directory.Exists(destFolderPath))
-        {
-            Directory.CreateDirectory(destFolderPath);
-        }
+        Directory.CreateDirectory(destFolderPath);
 
         List<LoadingTask> tasks = new List<LoadingTask>()
         {
@@ -517,7 +437,7 @@ public class Export : DisplayMenu {
 
             new LoadingTask("Exporting chart", () =>
             {
-                string chartOutputFile = destFolderPath + "notes.chart";
+                string chartOutputFile = Path.Combine(destFolderPath, "notes.chart");
 
                 // Set audio location after audio files have already been created as set won't won't if the files don't exist
                 foreach (Song.AudioInstrument audio in EnumX<Song.AudioInstrument>.Values)
@@ -525,7 +445,7 @@ public class Export : DisplayMenu {
                     if (song.GetAudioLocation(audio) != string.Empty)
                     {
                         string audioFilename = GetCHOggFilename(audio);
-                        string audioPath = destFolderPath + audioFilename;
+                        string audioPath = Path.Combine(destFolderPath, audioFilename);
                         newSong.SetAudioLocation(audio, audioPath);
                     }
                 }
@@ -561,21 +481,18 @@ public class Export : DisplayMenu {
                 Debug.LogErrorFormat("Unable to find audio file in location {0}", audioLocation);
                 continue;
             }
-            {
-                string newAudioName = GetCHOggFilename(audio);
 
-                if (!string.IsNullOrEmpty(newAudioName))
-                {
-                    string outputFile = destFolderPath + newAudioName;
+            string newAudioName = GetCHOggFilename(audio);
 
-                    Debug.LogFormat("Converting ogg from {0} to {1}", audioLocation, outputFile);
-                    AudioManager.ConvertToOgg(audioLocation, outputFile);
-                }
-                else
-                {
-                    Debug.LogErrorFormat("Audio instrument {0} not set up in ch name dict. Skipping.", audio.ToString());
-                }
+            if (string.IsNullOrEmpty(newAudioName)) {
+                Debug.LogErrorFormat("Audio instrument {0} not set up in ch name dict. Skipping.", audio.ToString());
+                continue;
             }
+
+            string outputFile = Path.Combine(destFolderPath, newAudioName);
+
+            Debug.LogFormat("Converting ogg from {0} to {1}", audioLocation, outputFile);
+            AudioManager.ConvertToOgg(audioLocation, outputFile);
         }
     }
 }

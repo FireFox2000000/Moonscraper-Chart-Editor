@@ -131,9 +131,9 @@ public class LoadCustomResources : MonoBehaviour {
         currentState = UpdateWaitingForResourcesLoaded;
 
 #if UNITY_EDITOR
-        skinDirectory = Directory.GetParent(Application.dataPath) + "\\" + skinDirectory;
+        skinDirectory = Path.Combine(Directory.GetParent(Application.dataPath).ToString(), skinDirectory);
 #else
-        skinDirectory = DirectoryHelper.GetMainDirectory() + "\\" + skinDirectory;
+        skinDirectory = Path.Combine(DirectoryHelper.GetMainDirectory(), skinDirectory);
 #endif
 
         Debug.Log("Loading skin from directory " + skinDirectory);
@@ -367,7 +367,7 @@ public class LoadCustomResources : MonoBehaviour {
             // Load in all settings
             INIParser iniparse = new INIParser();
 
-            iniparse.Open(skinDirectory + "\\settings.ini");
+            iniparse.Open(Path.Combine(skinDirectory, "settings.ini"));
             System.Text.RegularExpressions.Regex hexRegex = new System.Text.RegularExpressions.Regex("#[a-fA-F0-9]{8,8}");
 
             for (int i = 0; i < customSkin.sustain_mats.Length; ++i)
@@ -411,7 +411,7 @@ public class LoadCustomResources : MonoBehaviour {
                 Debug.LogError("Encountered unknown exception trying to close settings.ini stage 1. " + e.Message);
             }
 
-            iniparse.Open(skinDirectory + "\\settings.ini");
+            iniparse.Open(Path.Combine(skinDirectory, "settings.ini"));
 
             for (int i = 0; i < customSkin.sustain_mats.Length; ++i)
             {

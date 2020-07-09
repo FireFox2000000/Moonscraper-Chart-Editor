@@ -1,0 +1,149 @@
+# Maintainer: bmwalters <oss at walters dot app>
+
+# NOTE:
+# This package requires a Unity engine license file to build.
+# Copy an existing activated license file to Unity_lic.ulf next to PKGBUILD,
+# or `echo "request" > Unity_lic.ulf` to begin the license activation process.
+
+pkgname=moonscraper-chart-editor-git
+_pkgname=moonscraper-chart-editor
+pkgver=1.3.1.r358.g928ab6ea
+_curpkgver=1.3.4.1
+pkgrel=1
+pkgdesc="A song editor for Guitar Hero style rhythm games made in Unity"
+url='https://github.com/FireFox2000000/moonscraper-chart-editor'
+license=(BSD)
+arch=(x86_64 i686)
+depends=('mono' 'sdl2' 'ffmpeg' 'libx11' 'gtk3' 'libbass' 'libbass_fx')
+makedepends=('git' 'unityhub' 'cmake'
+  # runtime dependencies for Unity3d
+  'desktop-file-utils' 'xdg-utils' 'gcc-libs' 'lib32-gcc-libs' 'gconf' 'nss'
+  'libgl' 'glu' 'libpng12' 'libxtst' 'libpqxx' 'npm' 'intel-tbb'
+  # used to isolate home directory files modified by Unity3d
+  'firejail')
+provides=(moonscraper-chart-editor)
+backup=("opt/$pkgname/local_events.txt"
+        "opt/$pkgname/global_events.txt"
+        "opt/$pkgname/Custom Resources/settings.ini")
+source=('git+https://github.com/bmwalters/moonscraper-chart-editor.git#branch=linux-new'
+        "$_pkgname.desktop"
+        'Unity_lic.ulf::local://Unity_lic.ulf')
+sha256sums=('SKIP'
+            '393ebe1ee7df6b667d2ff85b82eb1a58c2df7aa8728790cbb260bfa340746a54'
+            'SKIP')
+_unity3d_version=2018.4.23f1
+_unity3d_changeset=c9cf1a90e812
+
+pkgver() {
+  cd "$_pkgname"
+
+  printf "%s" "$(git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g')"
+}
+
+prepare() {
+  # Remove vendored libbass in favor of libbass dependency
+  rm -rf "$_pkgname/Moonscraper Chart Editor/Assets/Plugins/Bass Audio/Linux/x64"
+  rm -rf "$_pkgname/Moonscraper Chart Editor/Assets/Plugins/Bass Audio/Linux/x86"
+  rm -f "$_pkgname/Moonscraper Chart Editor/Assets/Plugins/Bass Audio/Linux/x64.meta"
+  rm -f "$_pkgname/Moonscraper Chart Editor/Assets/Plugins/Bass Audio/Linux/x86.meta"
+
+  # We will build this library ourselves
+  rm -f "$_pkgname/Moonscraper Chart Editor/Assets/Plugins/Native File Explorer/Linux/x64/libStandaloneFileBrowser.so"
+  rm -f "$_pkgname/Moonscraper Chart Editor/Assets/Plugins/Native File Explorer/Linux/x86/libStandaloneFileBrowser.so"
+}
+
+build() {
+  # Build libStandaloneFileBrowser helper library
+  mkdir -p build-sfb && pushd build-sfb
+  cmake "$srcdir/$_pkgname/Moonscraper Chart Editor/Assets/Plugins/Native File Explorer/Linux/Source~"
+  make
+  if [ "${CARCH}" = "i686" ]; then
+    _FBARCH=x86
+  else
+    _FBARCH=x64
+  fi
+  popd
+  cp build-sfb/libStandaloneFileBrowser.so "$_pkgname/Moonscraper Chart Editor/Assets/Plugins/Native File Explorer/Linux/$_FBARCH/libStandaloneFileBrowser.so"
+
+  cp Unity_lic.ulf Unity_lic_physical.ulf
+
+  # Install Unity via unityhub in firejail to avoid clobbering user's existing unityhub configuration.
+  firejail --noprofile --whitelist="$(pwd)" sh <<EOF
+  # Install appropriate unity3d version via unityhub
+  if [ ! -d "$(pwd)"/unity3d/$_unity3d_version ]; then
+    mkdir -p unity3d
+    unityhub --no-sandbox --headless install-path --set "$(pwd)"/unity3d
+    unityhub --no-sandbox --headless install --version $_unity3d_version --changeset $_unity3d_changeset
+  fi
+
+  # https://github.com/mono/mono/issues/6752#issuecomment-365212655
+  export TERM=xterm
+
+  # Request a manual activation file if the user has no license.
+  if [ "$(cat Unity_lic_physical.ulf)" = "request" ]; then
+    "$(pwd)"/unity3d/$_unity3d_version/Editor/Unity \
+      -batchmode \
+      -nographics \
+      -silent-crashes \
+      -createManualActivationFile \
+      -logFile - \
+      -quit
+    echo Manual activation file written to "$srcdir"/Unity_v$_unity3d_version.alf.
+    echo Activate license, save to Unity_lic.ulf, then rerun makepkg.
+    echo https://docs.unity3d.com/2018.4/Documentation/Manual/ManualActivationGuide.html
+    exit 1
+  fi
+
+  # Activate the license file.
+  "$(pwd)"/unity3d/$_unity3d_version/Editor/Unity \
+    -batchmode \
+    -manualLicenseFile Unity_lic_physical.ulf \
+    -nographics \
+    -silent-crashes \
+    -logFile - \
+    -quit
+
+  # Build the application using Unity in batch mode
+  "$(pwd)"/unity3d/$_unity3d_version/Editor/Unity \
+    -batchmode \
+    -nographics \
+    -silent-crashes \
+    -logFile - \
+    -projectPath "$_pkgname/Moonscraper Chart Editor" \
+    -executeMethod BuildDocumentation.BuildLinux \
+    -moonscraperBuildPath "$(pwd)"/build \
+    -quit
+EOF
+}
+
+package() {
+  # Install application to /opt
+  install -d "$pkgdir"/opt/$pkgname
+
+  cp -a "build/Moonscraper Chart Editor v$_curpkgver Linux (Universal)/." "$pkgdir"/opt/$pkgname
+
+  # Determine desired binary extension from arch
+  if [ "${CARCH}" = "i686" ]; then
+    _UNITY_ARCH=x86
+  else
+    _UNITY_ARCH=$CARCH
+  fi
+
+  # Install binary symlink and desktop files
+  install -d "$pkgdir"/usr/{bin,share/{pixmaps,applications}}
+
+  cat << EOF > "$pkgdir/usr/bin/$_pkgname"
+#!/bin/sh
+exec "/opt/$pkgname/Moonscraper Chart Editor.$_UNITY_ARCH" "\$@"
+EOF
+  chmod 755 "$pkgdir/usr/bin/$_pkgname"
+
+  install $_pkgname.desktop "$pkgdir"/usr/share/applications
+  ln -s "/opt/$pkgname/Moonscraper Chart Editor_Data/Resources/UnityPlayer.png" "$pkgdir"/usr/share/pixmaps/$_pkgname.png
+
+  # Install licenses
+  install -d "$pkgdir"/usr/share/licenses
+
+  install -Dm 644 "$_pkgname/LICENSE" "$pkgdir"/usr/share/licenses/$pkgname/LICENSE
+  install -Dm 644 "$_pkgname/Moonscraper Chart Editor/Assets/Documentation/attribution.txt" "$pkgdir"/usr/share/licenses/$pkgname/attribution.txt
+}
