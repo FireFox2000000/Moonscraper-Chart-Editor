@@ -25,6 +25,12 @@ public class BuildDocumentation  {
         _BuildSpecificTarget(BuildTarget.StandaloneLinuxUniversal);
     }
 
+    [MenuItem("Build Processes/macOS Build With Postprocess")]
+    public static void BuildMacOS()
+    {
+        _BuildSpecificTarget(BuildTarget.StandaloneOSX);
+    }
+
     [MenuItem("Build Processes/Build Full Releases")]
     public static void BuildAll()
     {
@@ -49,7 +55,8 @@ public class BuildDocumentation  {
         BuildTarget[] targets = {
             BuildTarget.StandaloneWindows64,
             BuildTarget.StandaloneWindows,
-            BuildTarget.StandaloneLinuxUniversal
+            BuildTarget.StandaloneLinuxUniversal,
+            BuildTarget.StandaloneOSX
         };
 
         foreach (var target in targets) {
@@ -100,6 +107,10 @@ public class BuildDocumentation  {
         case BuildTarget.StandaloneLinuxUniversal:
             architecture = "Linux (Universal)";
             executableName = applicationName;
+            break;
+        case BuildTarget.StandaloneOSX:
+            architecture = "macOS x86_64 (64 bit)";
+            executableName = applicationName + ".app";
             break;
         default:
             architecture = buildTarget.ToString();
@@ -195,5 +206,18 @@ public class BuildDocumentation  {
             }
         }
 #endif
+
+        if (buildTarget == BuildTarget.StandaloneOSX) {
+            // https://github.com/Facepunch/Facepunch.Steamworks/issues/86
+            // https://github.com/firebase/quickstart-unity/issues/152
+            // https://github.com/discord/discord-rpc/issues/253
+            // https://github.com/Facepunch/Facepunch.Steamworks/issues/36
+            // https://twitter.com/garrynewman/status/1123937490933616641
+            Directory.CreateDirectory(Path.Combine(path, executableName, "Contents/Frameworks/MonoEmbedRuntime/osx"));
+            File.Copy("Assets/Plugins/Bass Audio/macOS/libbass.dylib",
+                      Path.Combine(path, executableName, "Contents/Frameworks/MonoEmbedRuntime/osx/libbass.dylib"));
+            File.Copy("Assets/Plugins/Bass Audio/macOS/libbass_fx.dylib",
+                      Path.Combine(path, executableName, "Contents/Frameworks/MonoEmbedRuntime/osx/libbass_fx.dylib"));
+        }
     }
 }
