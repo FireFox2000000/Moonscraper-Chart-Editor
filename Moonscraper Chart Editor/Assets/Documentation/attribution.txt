@@ -147,3 +147,7 @@ Copyright (C) Aha-Soft. All rights reserved.
 The icons are licensed under a Creative Commons Attribution
 3.0 Unported License (US). https://creativecommons.org/licenses/by/3.0/us/
 (as of 02/09/2017)
+
+----------------------------------------------------------------------------------------
+
+Linux functionality provided by bmwalters https://github.com/bmwalters
