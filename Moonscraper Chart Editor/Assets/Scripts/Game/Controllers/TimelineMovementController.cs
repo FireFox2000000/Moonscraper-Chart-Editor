@@ -113,14 +113,11 @@ public class TimelineMovementController : MovementController
             lastMouseDownPos = Input.mousePosition;
         }
 
+        float scrollDelta = Input.mouseScrollDelta.y;
+
         if (editor.currentState == ChartEditor.State.Editor)
         {
             Vector2 middleClickDragPercentageDelta = GetMiddleClickDragPercentageDelta();
-
-            if (scrollDelta == 0 && focused)
-            {
-                scrollDelta = Input.mouseScrollDelta.y;
-            }
 
             if (middleClickDragPercentageDelta != Vector2.zero)
             {

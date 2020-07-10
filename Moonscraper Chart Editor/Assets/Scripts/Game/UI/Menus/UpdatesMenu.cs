@@ -23,12 +23,10 @@ public class UpdatesMenu : MonoBehaviour
         {
             textInfo.text = string.Format("A new version of Moonscraper Chart Editor is available.\n\nCurrent version- v{0}\nLatest version- v{1}", currentVersion, latestRelease.TagName);
 
-            var downloadAsset = latestRelease.Assets[0];
-
             downloadLatestButton.onClick.RemoveAllListeners();
             downloadLatestButton.onClick.AddListener(() =>
             {
-                Application.OpenURL(downloadAsset.BrowserDownloadUrl);
+                Application.OpenURL(latestRelease.HtmlUrl);
             });
         }
         else

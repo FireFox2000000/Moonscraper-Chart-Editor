@@ -738,8 +738,12 @@ namespace MoonscraperChartEditor.Song.IO
 
         static byte[] MetaTextEvent(byte m_event, string text)
         {
-            if (text.Length > 255)
-                throw new Exception("Text cannot be longer than 255 characters");
+            const int MaxTextLength = 127;
+            if (text.Length > MaxTextLength)
+            {
+                Debug.LogWarning("Text cannot be longer than " + MaxTextLength + " characters, capping string " + text);
+                text = text.Substring(0, MaxTextLength);
+            }
 
             char[] chars = text.ToCharArray();
 

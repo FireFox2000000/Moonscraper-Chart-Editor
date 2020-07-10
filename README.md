@@ -1,26 +1,37 @@
-### THIS IS NOT THE APPLICATION PROGRAM, THESE ARE THE SOURCE FILES. ###
-### If you are looking download Moonscraper Chart Editor please download from ###
-https://github.com/FireFox2000000/Moonscraper-Chart-Editor/releases
-### Or visit the GOOGLE DRIVE link in the description of the Youtube trailer video. ###
+Moonscraper Chart Editor, a song editor for Guitar Hero style rhythm games.
 
-# README #
+> **⚠️ NOTE: THIS IS NOT THE APPLICATION PROGRAM, THESE ARE THE SOURCE FILES. ⚠️**
+>
+> If you are looking to download Moonscraper Chart Editor please see the
+> [releases page](https://github.com/FireFox2000000/Moonscraper-Chart-Editor/releases).
 
-### WARNING ###
+## Compiling from Source
+Follow the instructions below for your desired platform to build and run from source.
 
-This project contains licensed assets such as Un4seen's "bass", "Bass.Net" and several icons. Please view the appropriate attribution documentation and licensing information if you intend to use these resources. 
+### All Platforms
+1. Download and install Unity 2018.4.23f1
+2. Run Unity and open the project folder with it
+3. Use the menu option Build Processes > Build Full Releases
+Note that for Linux builds that the "Auto Reference" flag on Bass.Net.Linux needs to be manually toggled on before building, and disabled when making Windows builds. Suspected bug with Unity not filtering the platforms correctly. 
 
-### What is this repository for? ###
+### Runtime dependencies (Windows)
+Required runtime dependencies are included with the build.
 
-* Moonscraper Chart Editor, a song editor for Guitar Hero style rhythm games made in Unity 2018.4.23f1
+### Runtime dependencies (Linux)
+The application requires the following dependencies to be installed:
+- `ffmpeg sdl2 libx11-6 libgtk-3-0`
+- `libbass` (included with the build)
 
-### How do I get set up? ###
+A [`PKGBUILD` file for Arch Linux](aur/PKGBUILD) is included in the repository.
 
-* Download and install Unity 2018.4.23f1
-* Run Unity and open the project folder with it
+Other distribution packagers can use the `PKGBUILD` file for reference.
 
-### Who do I talk to? ###
-
+## Who do I talk to?
 * Alexander "FireFox" Ong
-* Youtube- https://www.youtube.com/user/FireFox2000000
+* YouTube- https://www.youtube.com/user/FireFox2000000
 * Discord- FireFox#8188
 * Twitter- https://twitter.com/FireFox2000000
+
+## License
+- See [attribution.txt](Assets/Documentation/attribution.txt) for third party libraries and resources included in this repository.
+- See [LICENSE](LICENSE).

@@ -2,6 +2,7 @@
 // See LICENSE in project root for license information.
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 
 #if BASS_AUDIO
@@ -19,7 +20,6 @@ namespace MoonscraperEngine.Audio
     {
         public static bool isDisposed { get; private set; }
         static List<AudioStream> liveAudioStreams = new List<AudioStream>();
-        static string encoderDirectory = string.Empty;
 
         #region Memory
         public static bool Init(out string errString)
@@ -57,16 +57,6 @@ namespace MoonscraperEngine.Audio
 
             int bassFxVersion = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_GetVersion();  // Call this and load bass_fx plugin immediately
             UnityEngine.Debug.Log("Bass FX version = " + bassFxVersion);
-
-            encoderDirectory = Globals.realWorkingDirectory +
-#if UNITY_EDITOR
-        "/StreamingAssets/";
-#elif UNITY_STANDALONE_WIN
-        "/Moonscraper Chart Editor_Data/StreamingAssets/";
-#else
-        // Not supported/todo
-#endif
-            UnityEngine.Debug.Assert(System.IO.File.Exists(encoderDirectory + "oggenc2.exe"));
 
             return success;
         }
@@ -135,12 +125,16 @@ namespace MoonscraperEngine.Audio
             if (sourcePath.EndsWith(EXTENTION))
             {
                 // Re-encoding is slow as hell, speed this up
-                System.IO.File.Copy(sourcePath, destPath);
+                System.IO.File.Copy(sourcePath, destPath, true);
             }
             else
             {
                 string inputFile = sourcePath;
                 string outputFile = destPath;
+
+                #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+                string encoderDirectory = UnityEngine.Application.streamingAssetsPath;
+                UnityEngine.Debug.Assert(File.Exists(Path.Combine(encoderDirectory, "oggenc2.exe")));
 
                 EncoderOGG encoder = new EncoderOGG(0);
                 encoder.EncoderDirectory = encoderDirectory;
@@ -149,6 +143,13 @@ namespace MoonscraperEngine.Audio
                 {
                     UnityEngine.Debug.LogErrorFormat("Unable to encode ogg file from {0} to {1}. Error {2}", sourcePath, destPath, Bass.BASS_ErrorGetCode().ToString());
                 }
+                #elif (UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX)
+                if (!new FFmpegTranscoding().main(sourcePath, destPath)) {
+                    UnityEngine.Debug.LogErrorFormat("Unable to encode ogg file from {0} to {1}", sourcePath, destPath);
+                }
+                #else
+                UnityEngine.Debug.LogErrorFormat("Unable to encode ogg file from {0} to {1}. Platform not implemented.", sourcePath, destPath);
+                #endif
             }
         }
 
@@ -159,6 +160,9 @@ namespace MoonscraperEngine.Audio
         public static AudioStream LoadStream(string filepath)
         {
             int audioStreamHandle = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE);
+            if (audioStreamHandle == 0) {
+                throw new Exception(String.Format("Failed to load audio file: BASS error {0}", Bass.BASS_ErrorGetCode()));
+            }
 
             var newStream = new AudioStream(audioStreamHandle);
             liveAudioStreams.Add(newStream);
@@ -168,7 +172,13 @@ namespace MoonscraperEngine.Audio
         public static TempoStream LoadTempoStream(string filepath)
         {
             int audioStreamHandle = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_ASYNCFILE | BASSFlag.BASS_STREAM_PRESCAN);
+            if (audioStreamHandle == 0) {
+                throw new Exception(String.Format("Failed to load audio file: BASS error {0}", Bass.BASS_ErrorGetCode()));
+            }
             audioStreamHandle = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_TempoCreate(audioStreamHandle, BASSFlag.BASS_FX_FREESOURCE);
+            if (audioStreamHandle == 0) {
+                throw new Exception(String.Format("Failed to create tempo stream: BASS error {0}", Bass.BASS_ErrorGetCode()));
+            }
 
             var newStream = new TempoStream(audioStreamHandle);
             liveAudioStreams.Add(newStream);

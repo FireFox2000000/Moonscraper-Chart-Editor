@@ -1,132 +1,168 @@
 ﻿#define HACKY_PLUGIN_FIX
 
 using UnityEditor;
-using System.Diagnostics;
 using System.IO;
-using System.Collections.Generic;
+using System.Linq;
 
 public class BuildDocumentation  {
     const string applicationName = "Moonscraper Chart Editor";
-    static readonly string[] copyToMonoFiles = new string[]
-    {
-        "bass_fx.dll"
-    };
 
-    [MenuItem("Build Processes/Windows Build With Postprocess")]
-    public static void BuildGame()
+    [MenuItem("Build Processes/Windows x64 Build With Postprocess")]
+    public static void BuildWindows64()
     {
-        string path = GetSavePath();
-        _BuildGame(path);
+        _BuildSpecificTarget(BuildTarget.StandaloneWindows64);
     }
 
-    [MenuItem("Build Processes/Windows 64 Build With Postprocess")]
-    public static void BuildGame64()
+    [MenuItem("Build Processes/Windows x86 Build With Postprocess")]
+    public static void BuildWindows32()
     {
-        string path = GetSavePath();
-        _BuildGame64(path);
+        _BuildSpecificTarget(BuildTarget.StandaloneWindows);
     }
 
-    [MenuItem("Build Processes/Build Full Windows Releases")]
-    public static void BuildGameWindowsAll()
+    [MenuItem("Build Processes/Linux Universal Build With Postprocess")]
+    public static void BuildLinux()
     {
-        string path = GetSavePath();
-        string folderName = string.Format("{0} v{1} {2}", UnityEngine.Application.productName, UnityEngine.Application.version, Globals.applicationBranchName);
-        string folderPath = path + "/" + folderName;
+        _BuildSpecificTarget(BuildTarget.StandaloneLinuxUniversal);
+    }
 
-        if (Directory.Exists(folderPath))
-        {
-            Directory.Delete(folderPath);
+    [MenuItem("Build Processes/Build Full Releases")]
+    public static void BuildAll()
+    {
+        string parentDirectory = GetSavePath();
+
+        if (string.IsNullOrEmpty(parentDirectory)) {
+            UnityEngine.Debug.Log("Build canceled");
+            return;
         }
-        Directory.CreateDirectory(folderPath);
-        path = folderPath;
 
-        _BuildGame(path);
-        _BuildGame64(path);
-    }
+        string folderName = string.Format("{0} v{1} {2}", UnityEngine.Application.productName, UnityEngine.Application.version, Globals.applicationBranchName);
 
-    static void _BuildGame(string path)
-    {
-        string folderName = string.IsNullOrEmpty(Globals.applicationBranchName) ?
-           string.Format("{0} v{1} x86 (32 bit)", UnityEngine.Application.productName, UnityEngine.Application.version)
-           : string.Format("{0} v{1} {2} x86 (32 bit)", UnityEngine.Application.productName, UnityEngine.Application.version, Globals.applicationBranchName);
-        buildSpecificPlayer(BuildTarget.StandaloneWindows, path, folderName);
-    }
+        string path = Path.Combine(parentDirectory, folderName);
+        if (Directory.Exists(path))
+        {
+            Directory.Delete(path, true);
+        }
+        Directory.CreateDirectory(path);
 
-    static void _BuildGame64(string path)
-    {
-        string folderName = string.IsNullOrEmpty(Globals.applicationBranchName) ?
-            string.Format("{0} v{1} x86_64 (64 bit)", UnityEngine.Application.productName, UnityEngine.Application.version)
-            : string.Format("{0} v{1} {2} x86_64 (64 bit)", UnityEngine.Application.productName, UnityEngine.Application.version, Globals.applicationBranchName);
-        buildSpecificPlayer(BuildTarget.StandaloneWindows64, path, folderName);
+        BuildTarget[] targets = {
+            BuildTarget.StandaloneWindows64,
+            BuildTarget.StandaloneWindows,
+            BuildTarget.StandaloneLinuxUniversal
+        };
+
+        foreach (var target in targets) {
+            _BuildSpecificTarget(target, path);
+        }
     }
 
     static string GetSavePath()
     {
-        string path = EditorUtility.SaveFolderPanel("Choose Location of Built Game", "", "");
-        return path;
+        string commandLinePath = System.Environment.GetCommandLineArgs()
+            .SkipWhile((arg) => arg != "-moonscraperBuildPath")
+            .Skip(1)
+            .FirstOrDefault();
+
+        if (commandLinePath != null) {
+            return commandLinePath;
+        }
+
+        string chosenPath = EditorUtility.SaveFolderPanel("Choose Location of Built Game", "", "");
+
+        return chosenPath;
     }
 
-    static void buildSpecificPlayer(BuildTarget buildTarget, string path, string folderName)
+    static void _BuildSpecificTarget(BuildTarget buildTarget) {
+        string path = GetSavePath();
+
+        if (string.IsNullOrEmpty(path)) {
+            UnityEngine.Debug.Log("Build canceled");
+            return;
+        }
+
+        _BuildSpecificTarget(buildTarget, path);
+    }
+
+    static void _BuildSpecificTarget(BuildTarget buildTarget, string parentDirectory)
     {
-        if (path != string.Empty)
+        string architecture;
+        string executableName;
+        switch (buildTarget) {
+        case BuildTarget.StandaloneWindows:
+            architecture = "Windows x86 (32 bit)";
+            executableName = applicationName + ".exe";
+            break;
+        case BuildTarget.StandaloneWindows64:
+            architecture = "Windows x86_64 (64 bit)";
+            executableName = applicationName + ".exe";
+            break;
+        case BuildTarget.StandaloneLinuxUniversal:
+            architecture = "Linux (Universal)";
+            executableName = applicationName;
+            break;
+        default:
+            architecture = buildTarget.ToString();
+            executableName = applicationName;
+            break;
+        }
+
+        string folderName = string.IsNullOrEmpty(Globals.applicationBranchName) ?
+           string.Format("{0} v{1} {2}", UnityEngine.Application.productName, UnityEngine.Application.version, architecture)
+           : string.Format("{0} v{1} {2} {3}", UnityEngine.Application.productName, UnityEngine.Application.version, Globals.applicationBranchName, architecture);
+
+        string path = Path.Combine(parentDirectory, folderName);
+        if (Directory.Exists(path))
         {
-            string folderPath = path + "/" + folderName;
-            if (Directory.Exists(folderPath))
+            Directory.Delete(path, true);
+        }
+        Directory.CreateDirectory(path);
+        UnityEngine.Debug.Log($"Building game at path: '{path}'");
+
+        // Build player.
+        BuildPlayerOptions options = new BuildPlayerOptions();
+        options.options = BuildOptions.None;
+        options.target = buildTarget;
+        options.scenes = EditorBuildSettings.scenes
+            .Where((scene) => scene.enabled)
+            .Select((scene) => scene.path)
+            .ToArray();
+        options.locationPathName = Path.Combine(path, executableName);
+        var report = BuildPipeline.BuildPlayer(options);
+
+        if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
+            return;
+
+        if (Directory.Exists("Assets/Custom Resources"))
+        {
+            // Copy a file from the project folder to the build folder, alongside the built game.
+            FileUtil.CopyFileOrDirectory("Assets/Custom Resources", Path.Combine(path, "Custom Resources"));
+        }
+
+        if (Directory.Exists("Assets/Documentation"))
+        {
+            // Copy a file from the project folder to the build folder, alongside the built game.
+            FileUtil.CopyFileOrDirectory("Assets/Documentation", Path.Combine(path, "Documentation"));
+        }
+
+        if (Directory.Exists("Assets/ExtraBuildFiles"))
+        {
+            // Copy a file from the project folder to the build folder, alongside the built game.
+            foreach (string filepath in Directory.GetFiles("Assets/ExtraBuildFiles"))
             {
-                Directory.Delete(folderPath);
+                FileUtil.CopyFileOrDirectory(filepath, Path.Combine(path, Path.GetFileName(filepath)));
             }
-            Directory.CreateDirectory(folderPath);
-            path = folderPath;
-            UnityEngine.Debug.Log("Building game at path: " + path);
+        }
 
-            List<string> levels = new List<string>(EditorBuildSettings.scenes.Length);
-
-            for (int i = 0; i < EditorBuildSettings.scenes.Length; ++i)
-            {
-                EditorBuildSettingsScene scene = EditorBuildSettings.scenes[i];
-                if (scene.enabled)
-                {
-                    levels.Add(scene.path);
-                    UnityEngine.Debug.Log(scene);
-                }
-            }
-
-            // Build player.
-            var report = BuildPipeline.BuildPlayer(levels.ToArray(), path + "/" + applicationName + ".exe", buildTarget, BuildOptions.None);
-
-            if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
-                return;
-
-            if (Directory.Exists("Assets/Custom Resources"))
-            {
-                // Copy a file from the project folder to the build folder, alongside the built game.
-                clearAndDeleteDirectory(path + "/Custom Resources");
-                FileUtil.CopyFileOrDirectory("Assets/Custom Resources", path + "/Custom Resources");
-            }
-
-            if (Directory.Exists("Assets/Documentation"))
-            {
-                // Copy a file from the project folder to the build folder, alongside the built game.
-                clearAndDeleteDirectory(path + "/Documentation");
-                FileUtil.CopyFileOrDirectory("Assets/Documentation", path + "/Documentation");
-            }
-
-            if (Directory.Exists("Assets\\ExtraBuildFiles"))
-            {
-                // Copy a file from the project folder to the build folder, alongside the built game.
-                foreach (string filepath in Directory.GetFiles("Assets\\ExtraBuildFiles"))
-                {
-                    FileUtil.CopyFileOrDirectory(filepath, path + "/" + Path.GetFileName(filepath));
-                }
-
-            }
-
-            foreach (string file in Directory.GetFiles(path, "*.meta", SearchOption.AllDirectories))
-            {
-                File.Delete(file);
-            }
+        foreach (string file in Directory.GetFiles(path, "*.meta", SearchOption.AllDirectories))
+        {
+            File.Delete(file);
+        }
 
 #if HACKY_PLUGIN_FIX
+        if (buildTarget == BuildTarget.StandaloneWindows || buildTarget == BuildTarget.StandaloneWindows64) {
+            string[] copyToMonoFiles = {
+                "bass_fx.dll"
+            };
+
             string dataPath = path + "/" + applicationName + "_Data/";
             string destFolder = dataPath + "Mono/";
 
@@ -138,34 +174,11 @@ public class BuildDocumentation  {
                 string pluginPath = dataPath + "Plugins/" + file;
                 if (File.Exists(pluginPath))
                 {
-                    string dest = destFolder + file;                
+                    string dest = destFolder + file;
                     File.Copy(pluginPath, dest);
                 }
             }
+        }
 #endif
-        }
-        else
-        {
-            UnityEngine.Debug.Log("Build canceled");
-        }
-    }
-
-    static void clearAndDeleteDirectory(string path)
-    {
-        if (Directory.Exists(path))
-        {
-            DirectoryInfo di = new DirectoryInfo(path);
-
-            foreach (FileInfo file in di.GetFiles())
-            {
-                file.Delete();
-            }
-            foreach (DirectoryInfo dir in di.GetDirectories())
-            {
-                dir.Delete(true);
-            }
-
-            Directory.Delete(path);
-        }
     }
 }
