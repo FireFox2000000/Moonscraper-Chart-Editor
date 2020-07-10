@@ -15,7 +15,6 @@ public abstract class MovementController : MonoBehaviour {
     protected Globals globals;
 
     public Vector3 initPos { get; protected set; }
-    protected float scrollDelta = 0;
 
     protected bool focused = true;
     public static uint? explicitChartPos = null;
@@ -25,7 +24,7 @@ public abstract class MovementController : MonoBehaviour {
     Transform selfTransform;
 
     // Program options
-    protected float c_mouseScrollSensitivity = 0.2f;      // May miss snap gaps if placed too high
+    protected float c_mouseScrollSensitivity = 0.66f;      // May miss snap gaps if placed too high
 
     // Jump to a chart position
     public abstract void SetPosition(uint tick);
@@ -96,22 +95,5 @@ public abstract class MovementController : MonoBehaviour {
         explicitChartPos = null;
 
         lastUpdatedRealTime = Time.time;
-    }
-
-    void OnGUI()
-    {
-        if (focused)
-        {
-            if (UnityEngine.Event.current.type == EventType.ScrollWheel)
-            {
-                scrollDelta = -UnityEngine.Event.current.delta.y;
-            }
-            else
-            {
-                scrollDelta = 0;
-            }
-        }
-        else
-            scrollDelta = 0;
     }
 }
