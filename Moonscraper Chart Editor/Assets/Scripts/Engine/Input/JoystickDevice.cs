@@ -151,7 +151,12 @@ namespace MoonscraperEngine.Input
                 joystickState.axisValues[i] = rawValue;
             }
 
-            // Todo, balls and hats. Probably not supported for the current project
+            for (int i = 0; i < joystickState.hatPositions.Length; ++i)
+            {
+                joystickState.hatPositions[i] = (HatPosition)SDL.SDL_JoystickGetHat(sdlHandle, i);
+            }
+
+            // Todo, balls. Probably not supported for the current project
         }
 
         bool GetButton(int buttonIndex, in JoystickState state)
@@ -192,6 +197,35 @@ namespace MoonscraperEngine.Input
             return joystickState.axisValues[axis];
         }
 
+        HatPosition GetHat(int hatIndex, in JoystickState state)
+        {
+            if (hatIndex < state.hatPositions.Length)
+                return state.hatPositions[hatIndex];
+
+            Debug.Assert(false); // Hat index incorrect
+            return HatPosition.CENTERED;
+        }
+
+        public HatPosition GetHatPosition(int hat)
+        {
+            return GetHat(hat, GetCurrentJoystickState());
+        }
+
+        public bool GetHatPositionChanged(int hat)
+        {
+            return GetHat(hat, GetCurrentJoystickState()) != GetHat(hat, GetPreviousJoystickState());
+        }
+
+        public bool GetHatPositionEntered(int hat, HatPosition hatPosition)
+        {
+            return GetHatPosition(hat) == hatPosition && GetHat(hat, GetPreviousJoystickState()) != hatPosition;
+        }
+
+        public bool GetHatPositionExited(int hat, HatPosition hatPosition)
+        {
+            return GetHatPosition(hat) != hatPosition && GetHat(hat, GetPreviousJoystickState()) == hatPosition;
+        }
+
         public bool Connected { get { return sdlHandle != IntPtr.Zero; } }
 
         public void Disconnect()
@@ -230,23 +264,42 @@ namespace MoonscraperEngine.Input
                 }
             }
 
-            for (int i = 0; i < totalAxis; ++i)
+            // Check axis
             {
-                float axisVal = GetAxis(i);
-                float previousAxisVal = GetPreviousAxis(i);
-
-                if (Mathf.Abs(axisVal - previousAxisVal) > kRebindIntendedDeltaInputThreshold && Mathf.Abs(axisVal) > kRebindIntendedInputThreshold)
+                for (int i = 0; i < totalAxis; ++i)
                 {
-                    AxisDir dir = properties.anyDirectionAxis ? AxisDir.Any :
-                        (axisVal > 0 ? AxisDir.Positive : AxisDir.Negative);
+                    float axisVal = GetAxis(i);
+                    float previousAxisVal = GetPreviousAxis(i);
 
-                    return new JoystickMap(deviceId) { { i, dir } };
+                    if (Mathf.Abs(axisVal - previousAxisVal) > kRebindIntendedDeltaInputThreshold && Mathf.Abs(axisVal) > kRebindIntendedInputThreshold)
+                    {
+                        AxisDir dir = properties.anyDirectionAxis ? AxisDir.Any :
+                            (axisVal > 0 ? AxisDir.Positive : AxisDir.Negative);
+
+                        return new JoystickMap(deviceId) { { i, dir } };
+                    }
                 }
             }
 
             // Ball not supported, todo
 
-            // Hat not supported, todo
+            // Check hats
+            {
+                List<JoystickMap.HatConfig> hats = new List<JoystickMap.HatConfig>();
+
+                for (int i = 0; i < totalHats; ++i)
+                {
+                    if (GetHatPositionChanged(i) && GetHatPosition(i) != HatPosition.CENTERED)
+                    {
+                        hats.Add(new JoystickMap.HatConfig() { hatIndex = i, position = GetHatPosition(i), });
+                    }
+                }
+
+                if (hats.Count > 0)
+                {
+                    return new JoystickMap(deviceId) { hats };
+                }
+            }
 
             return null;
         }
@@ -282,7 +335,10 @@ namespace MoonscraperEngine.Input
 
                 foreach (var hat in map.hats)
                 {
-                    // Hat not supported, todo
+                    if (GetHatPosition(hat.hatIndex) == hat.position)
+                    {
+                        return false;
+                    }
                     return false;
                 }
 
@@ -330,8 +386,10 @@ namespace MoonscraperEngine.Input
 
                 foreach (var hat in map.hats)
                 {
-                    // Hat not supported, todo
-                    return false;
+                    if (!GetHatPositionEntered(hat.hatIndex, hat.position))
+                    {
+                        return false;
+                    }
                 }
 
                 return true;
@@ -378,8 +436,10 @@ namespace MoonscraperEngine.Input
 
                 foreach (var hat in map.hats)
                 {
-                    // Hat not supported, todo
-                    return false;
+                    if (!GetHatPositionExited(hat.hatIndex, hat.position))
+                    {
+                        return false;
+                    }
                 }
 
                 return true;
@@ -408,9 +468,21 @@ namespace MoonscraperEngine.Input
                     }
                 }
 
+                if (map.buttons.Count > 0)
+                {
+                    return 1;
+                }
+
                 // Ball not supported, todo
 
                 // Hat not supported, todo
+                foreach (var hat in map.hats)
+                {
+                    if (GetHatPosition(hat.hatIndex) != hat.position)
+                    {
+                        return 0;
+                    }
+                }
 
                 return map.buttons.Count > 0 ? (float?)1 : null;
             }

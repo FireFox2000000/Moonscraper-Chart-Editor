@@ -77,6 +77,11 @@ namespace MoonscraperEngine.Input
             hats.Add(new HatConfig() { hatIndex = hat, position = position });
         }
 
+        public void Add(IList<HatConfig> hatConfigs)
+        {
+            hats.AddRange(hatConfigs);
+        }
+
         public bool IsEmpty
         {
             get
