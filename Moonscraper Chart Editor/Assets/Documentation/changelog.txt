@@ -1,3 +1,15 @@
+1.3.5.1
+	NEW FEATURES
+	-Added Linux build support by bmwalters (https://github.com/bmwalters)
+
+	CHANGES
+	-Direct users to releases page instead of direct download when a new version is released to compensate for multi-platform releases.
+
+	FIXES
+	-Fixed PS3 controllers not getting strum inputs detected
+	-Fixed unity version not populationg in the "About" menu.
+	-Fixed midi files getting corrupted when section names were too long.
+
 1.3.5
 	NEW FEATURES
 	-Enabled cymbals saving in .chart files
