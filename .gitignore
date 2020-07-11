@@ -45,3 +45,9 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# OS-generated files
+.DS_Store
+._*
+Thumbs.db
+[Dd]esktop.ini
