@@ -214,6 +214,8 @@ public class BuildDocumentation  {
             // https://github.com/Facepunch/Facepunch.Steamworks/issues/36
             // https://twitter.com/garrynewman/status/1123937490933616641
             Directory.CreateDirectory(Path.Combine(path, executableName, "Contents/Frameworks/MonoEmbedRuntime/osx"));
+            File.Copy("Assets/Plugins/Native File Explorer/macOS/libNativeWindow.dylib",
+                      Path.Combine(path, executableName, "Contents/Frameworks/MonoEmbedRuntime/osx/libNativeWindow.dylib"));
             File.Copy("Assets/Plugins/Bass Audio/macOS/libbass.dylib",
                       Path.Combine(path, executableName, "Contents/Frameworks/MonoEmbedRuntime/osx/libbass.dylib"));
             File.Copy("Assets/Plugins/Bass Audio/macOS/libbass_fx.dylib",
