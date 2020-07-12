@@ -12,7 +12,6 @@ Follow the instructions below for your desired platform to build and run from so
 1. Download and install Unity 2018.4.23f1
 2. Run Unity and open the project folder with it
 3. Use the menu option Build Processes > Build Full Releases
-Note that for Linux builds that the "Auto Reference" flag on Bass.Net.Linux needs to be manually toggled on before building, and disabled when making Windows builds. Suspected bug with Unity not filtering the platforms correctly. 
 
 ### Runtime dependencies (Windows)
 Required runtime dependencies are included with the build.

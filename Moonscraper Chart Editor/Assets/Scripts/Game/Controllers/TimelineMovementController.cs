@@ -114,6 +114,14 @@ public class TimelineMovementController : MovementController
         }
 
         float scrollDelta = Input.mouseScrollDelta.y;
+        float scrollSensitivity = c_mouseScrollSensitivity;
+
+        if (scrollDelta == 0 && guiEventScrollDelta != 0)
+        {
+            // Use gui scroll sesitivity as a backup, as this captures laptop touchpad scroll events while mouseScrollDelta does not. 
+            scrollDelta = guiEventScrollDelta;
+            scrollSensitivity = c_guiEventScrollSensitivity;
+        }
 
         if (editor.currentState == ChartEditor.State.Editor)
         {
@@ -144,7 +152,7 @@ public class TimelineMovementController : MovementController
                 {
                     // Mouse scroll movement
                     mouseScrollMovePosition.x = transform.position.x;
-                    mouseScrollMovePosition.y = transform.position.y + (scrollDelta * c_mouseScrollSensitivity);
+                    mouseScrollMovePosition.y = transform.position.y + (scrollDelta * scrollSensitivity);
                     mouseScrollMovePosition.z = transform.position.z;
                     transform.position = mouseScrollMovePosition;
                     explicitChartPos = null;

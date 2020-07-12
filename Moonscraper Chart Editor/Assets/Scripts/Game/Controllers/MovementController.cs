@@ -20,11 +20,12 @@ public abstract class MovementController : MonoBehaviour {
     public static uint? explicitChartPos = null;
 
     protected float lastUpdatedRealTime = 0;
+    protected float guiEventScrollDelta = 0;
 
     Transform selfTransform;
 
-    // Program options
     protected float c_mouseScrollSensitivity = 0.66f;      // May miss snap gaps if placed too high
+    protected float c_guiEventScrollSensitivity = 0.2f;
 
     // Jump to a chart position
     public abstract void SetPosition(uint tick);
@@ -95,5 +96,15 @@ public abstract class MovementController : MonoBehaviour {
         explicitChartPos = null;
 
         lastUpdatedRealTime = Time.time;
+    }
+
+    void OnGUI()
+    {
+        guiEventScrollDelta = 0;
+
+        if (focused && UnityEngine.Event.current.type == EventType.ScrollWheel)
+        {
+            guiEventScrollDelta = -UnityEngine.Event.current.delta.y;
+        }
     }
 }
