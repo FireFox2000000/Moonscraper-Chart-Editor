@@ -118,6 +118,11 @@ public class ControlsMenuInterface : MonoBehaviour
     public void CycleActionCategoryBackwards()
     {
         --actionCategoryIndex;
+        if (actionCategoryIndex < 0)
+        {
+            actionCategoryIndex = EnumX<ActionCategory>.Count - 1;
+        }
+
         RefreshActionBindingsMenu();
     }
 
