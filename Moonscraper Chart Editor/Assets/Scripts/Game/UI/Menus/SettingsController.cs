@@ -456,34 +456,29 @@ public class SettingsController : DisplayMenu
         }
     }
 
+    void SetSynchronisedVolume(float volume)
+    {
+        musicSourceSlider.value = volume;
+        guitarSourceSlider.value = volume;
+        bassSourceSlider.value = volume;
+        rhythmSourceSlider.value = volume;
+        drumSourceSlider.value = volume;
+        drum2SourceSlider.value = volume;
+        drum3SourceSlider.value = volume;
+        drum4SourceSlider.value = volume;
+        keysSourceSlider.value = volume;
+        vocalSourceSlider.value = volume;
+        crowdSourceSlider.value = volume;
+    }
+
     public void MuteAllStems()
     {
-    musicSourceSlider.value =  0;
-    guitarSourceSlider.value = 0;
-    bassSourceSlider.value =   0;
-    rhythmSourceSlider.value = 0;
-    drumSourceSlider.value = 0;
-    drum2SourceSlider.value = 0;
-    drum3SourceSlider.value = 0;
-    drum4SourceSlider.value = 0;
-    keysSourceSlider.value = 0;
-	vocalSourceSlider.value = 0;
-	crowdSourceSlider.value = 0;
-	}
+        SetSynchronisedVolume(0);
+    }
 
     public void UnmuteAllStems()
     {
-    musicSourceSlider.value =  1;
-    guitarSourceSlider.value = 1;
-    bassSourceSlider.value =   1;
-    rhythmSourceSlider.value = 1;
-    drumSourceSlider.value = 1;
-    drum2SourceSlider.value = 1;
-    drum3SourceSlider.value = 1;
-    drum4SourceSlider.value = 1;
-    keysSourceSlider.value = 1;
-	vocalSourceSlider.value = 1;
-	crowdSourceSlider.value = 1;
-	}
+        SetSynchronisedVolume(1);
+    }
 
 }
