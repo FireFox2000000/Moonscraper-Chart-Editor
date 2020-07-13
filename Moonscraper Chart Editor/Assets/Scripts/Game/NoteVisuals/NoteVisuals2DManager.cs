@@ -133,10 +133,10 @@ public class NoteVisuals2DManager : NoteVisualsManager {
             else if (note.IsOpenNote())
                 arrayPos = 2;
         }
-        else if (Globals.drumMode && note.guitarFret != Note.GuitarFret.Open)
+        else if (Globals.drumMode && note.drumPad != Note.DrumPad.Kick)
         {
             arrayPos += 1;
-            if (arrayPos > (int)Note.GuitarFret.Orange)
+            if (arrayPos > (laneInfo.laneCount - 1))
                 arrayPos = 0;
         }        
 
