@@ -12,8 +12,20 @@ namespace MoonscraperChartEditor.Song.IO
 {
     public static class MidWriter
     {
-        const byte TRACK_NAME_EVENT = 0x03;
-        const byte TEXT_EVENT = 0x01;
+        // http://www.somascape.org/midi/tech/mfile.html#:~:text=a%20MIDI%20file.-,Meta%20events,useful%20within%20a%20MIDI%20file).&text=type%20specifies%20the%20type%20of%20Meta%20event%20(0%20%2D%20127).
+        enum MetaTextEventType
+        {
+            // All the events here follow the [0xFF type length] text structure
+            Text = 1,
+            Copyright = 2,
+            TrackName = 3,
+            InstrumentName = 4,
+            Lyric = 5,
+            Marker = 6,
+            CuePoint = 7,
+            ProgramName = 8,
+            DeviceName = 9,
+        }
 
         const byte ON_EVENT = 0x91;         // Note on channel 1
         const byte OFF_EVENT = 0x81;
@@ -25,6 +37,15 @@ namespace MoonscraperChartEditor.Song.IO
         const byte SYSEX_OFF = 0x00;
 
         static readonly byte[] END_OF_TRACK = new byte[] { 0, 0xFF, 0x2F, 0x00 };
+
+        struct VocalProcessingParams
+        {
+            public Song song;
+            public IList<Event> eventList;
+            public int eventListIndex;
+
+            public List<SortableBytes> out_sortableBytes;
+        }
 
         static readonly Dictionary<Song.Instrument, string> c_instrumentToTrackNameDict = new Dictionary<Song.Instrument, string>()
     {
@@ -90,11 +111,67 @@ namespace MoonscraperChartEditor.Song.IO
         { Note.NoteType.Strum, 6 },
     };
 
+        delegate void ProcessVocalEventBytesFn(in VocalProcessingParams processParams);
+        static readonly Dictionary<string, ProcessVocalEventBytesFn> vocalPrefixProcessList = new Dictionary<string, ProcessVocalEventBytesFn>()
+        {
+            { MidIOHelper.LYRIC_EVENT_PREFIX, (in VocalProcessingParams processParams) => {
+                const string prefix = MidIOHelper.LYRIC_EVENT_PREFIX;
+
+                Event songEvent = processParams.eventList[processParams.eventListIndex];
+
+                string currentEventTitle = songEvent.title;
+                string metaTextEventStr = currentEventTitle.Substring(prefix.Length, currentEventTitle.Length - prefix.Length);
+
+                SortableBytes bytes = new SortableBytes(songEvent.tick, MetaTextEvent(MetaTextEventType.Lyric, metaTextEventStr));
+                InsertionSort(processParams.out_sortableBytes, bytes);
+            }},
+
+            { MidIOHelper.PhraseStartText, (in VocalProcessingParams processParams) => {
+
+                Event phraseStartEvent = processParams.eventList[processParams.eventListIndex];
+                uint phraseEndEventTick = phraseStartEvent.tick;    // Find next phase end or the next phase start, whichever is first. 1 tick away as a backup. 
+
+                for (int i = processParams.eventListIndex + 1; i < processParams.eventList.Count; ++i)
+                {
+                    Event nextEvent = processParams.eventList[i];
+                    if (nextEvent.title.StartsWith(MidIOHelper.PhraseEndText))
+                    {
+                        phraseEndEventTick = nextEvent.tick;
+                        break;
+                    }
+                    else if(nextEvent.title.StartsWith(MidIOHelper.PhraseStartText))
+                    {
+                        phraseEndEventTick = nextEvent.tick - 1;
+                        break;
+                    }
+                }
+
+                if (phraseEndEventTick == phraseStartEvent.tick)
+                {
+                    phraseEndEventTick = processParams.eventList[processParams.eventList.Count - 1].tick + 1;
+                }
+
+                // Make a note that has the length of the two phase events
+                Note phraseNote = new Note(phraseStartEvent.tick, 0, phraseEndEventTick - phraseStartEvent.tick);
+                SortableBytes onEvent = null;
+                SortableBytes offEvent = null;
+                GetNoteNumberBytes(MidIOHelper.PhraseMarker, phraseNote, out onEvent, out offEvent);
+
+                InsertionSort(processParams.out_sortableBytes, onEvent);
+                InsertionSort(processParams.out_sortableBytes, offEvent);
+            }},
+
+            { MidIOHelper.PhraseEndText, (in VocalProcessingParams processParams) => {
+                // Do nothing, phrase start handles this. Still need to mark it here for it to be excluded from regular events track
+            }},
+        };
+
         public static void WriteToFile(string path, Song song, ExportOptions exportOptions)
         {
             short track_count = 1;
 
             float resolutionScaleRatio = song.ResolutionScaleRatio(exportOptions.targetResolution);
+            List<SortableBytes> vocalsEvents = new List<SortableBytes>();
 
             byte[] track_sync = MakeTrack(GetSyncBytes(song, exportOptions, resolutionScaleRatio), song.name);
             byte[] track_events;
@@ -104,8 +181,7 @@ namespace MoonscraperChartEditor.Song.IO
                 List<byte> eventBytes = new List<byte>(GetEventBytes(
                         song,
                         exportOptions,
-                        null,
-                        new List<string>() { MidIOHelper.LYRIC_EVENT_PREFIX },
+                        vocalsEvents,
                         true,
                         resolutionScaleRatio,
                         out deltaTickSum));
@@ -146,12 +222,11 @@ namespace MoonscraperChartEditor.Song.IO
                 }
             }
 
-            byte[] lyric_events = GetEventBytes(song, exportOptions, new List<string>() { MidIOHelper.LYRIC_EVENT_PREFIX }, null, false, resolutionScaleRatio);
-            if (lyric_events.Length > 0)
+            if (vocalsEvents.Count > 0)
             {
                 // Make a vocals track
-                Debug.Log("Lyrics events found. Saving Vocals track.");
-                byte[] bytes = lyric_events;
+                Debug.Log("Vocals events found. Saving Vocals track.");
+                byte[] bytes = SortableBytesToTimedEventBytes(vocalsEvents.ToArray(), song, exportOptions, resolutionScaleRatio);
                 allTracks.Add(bytes);
                 allTrackNames.Add(MidIOHelper.VOCALS_TRACK);
                 track_count++;
@@ -227,26 +302,26 @@ namespace MoonscraperChartEditor.Song.IO
         static byte[] GetEventBytes
             (Song song
             , ExportOptions exportOptions
-            , List<string> allowedEventPrefixMaybe
-            , List<string> ignoreEventPrefixMaybe
+            , List<SortableBytes> vocalsEvents
             , bool containInSquareBrackets
             , float resolutionScaleRatio
             )
         {
             uint deltaTickSum;
-            return GetEventBytes(song, exportOptions, allowedEventPrefixMaybe, ignoreEventPrefixMaybe, containInSquareBrackets, resolutionScaleRatio, out deltaTickSum);
+            return GetEventBytes(song, exportOptions, vocalsEvents, containInSquareBrackets, resolutionScaleRatio, out deltaTickSum);
         }
 
         static byte[] GetEventBytes
         (Song song
         , ExportOptions exportOptions
-        , List<string> allowedEventPrefixMaybe
-        , List<string> ignoreEventPrefixMaybe
+        , List<SortableBytes> vocalsEvents
         , bool containInSquareBrackets
         , float resolutionScaleRatio
         , out uint deltaTickSum
         )
         {
+            VocalProcessingParams vocalProcesingParams = new VocalProcessingParams() { song = song, out_sortableBytes = vocalsEvents };
+
             var rbFormat = exportOptions.midiOptions.rbFormat;
             string section_id = MidIOHelper.Rb2SectionPrefix;
 
@@ -273,45 +348,34 @@ namespace MoonscraperChartEditor.Song.IO
             uint previousEventTick = 0;
             int eventCount = 0;
 
+            vocalProcesingParams.eventList = song.eventsAndSections;
             for (int i = 0; i < song.eventsAndSections.Count; ++i)
             {
+                vocalProcesingParams.eventListIndex = i;
                 Event currentEvent = song.eventsAndSections[i];
                 string currentEventTitle = currentEvent.title;
-                bool allowedEvent = false;
-                string metaTextEventStr = currentEvent.title;
+                bool allowedEvent = true;
 
-                if (allowedEventPrefixMaybe != null && allowedEventPrefixMaybe.Count > 0)
+                // Check if should be processed for the vocals track instead
+                if (currentEvent as Section == null)
                 {
-                    foreach (string prefix in allowedEventPrefixMaybe)
+                    foreach (var keyVal in vocalPrefixProcessList)
                     {
-                        if (string.Compare(currentEventTitle, 0, prefix, 0, prefix.Length) == 0)
+                        string prefix = keyVal.Key;
+                        if (currentEventTitle.StartsWith(prefix))
                         {
-                            metaTextEventStr = currentEventTitle.Substring(prefix.Length, currentEventTitle.Length - prefix.Length);
-                            allowedEvent = true;
-                            break;
-                        }
-                    }
-                }
-                else if (ignoreEventPrefixMaybe != null && ignoreEventPrefixMaybe.Count > 0)
-                {
-                    allowedEvent = true;
-
-                    foreach (string prefix in ignoreEventPrefixMaybe)
-                    {
-                        if (string.Compare(currentEventTitle, 0, prefix, 0, prefix.Length) == 0)
-                        {
+                            keyVal.Value(vocalProcesingParams);
                             allowedEvent = false;
                             break;
                         }
                     }
                 }
-                else
-                {
-                    allowedEvent = true;
-                }
 
                 if (!allowedEvent)
                     continue;
+
+                string metaTextEventStr = currentEvent.title;
+                MetaTextEventType metaTextEventType = MetaTextEventType.Text;
 
                 if (currentEvent as Section != null)
                 {
@@ -335,7 +399,7 @@ namespace MoonscraperChartEditor.Song.IO
 
                 deltaTickSum += deltaTime;
 
-                eventBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(TEXT_EVENT, metaTextEventStr)));
+                eventBytes.AddRange(TimedEvent(deltaTime, MetaTextEvent(metaTextEventType, metaTextEventStr)));
 
                 previousEventTick = currentEvent.tick;
                 ++eventCount;
@@ -702,7 +766,7 @@ namespace MoonscraperChartEditor.Song.IO
 
         static byte[] MakeTrack(byte[] trackEvents, string trackName)
         {
-            byte[] trackNameEvent = TimedEvent(0, MetaTextEvent(TRACK_NAME_EVENT, trackName));
+            byte[] trackNameEvent = TimedEvent(0, MetaTextEvent(MetaTextEventType.TrackName, trackName));
 
             byte[] header = GetTrackHeader(trackNameEvent.Length + trackEvents.Length + END_OF_TRACK.Length);
             byte[] fullTrack = new byte[header.Length + trackNameEvent.Length + trackEvents.Length + END_OF_TRACK.Length];
@@ -734,6 +798,11 @@ namespace MoonscraperChartEditor.Song.IO
             Array.Copy(midiEvent, 0, timedEvent, deltaTime.Length, midiEvent.Length);
 
             return timedEvent;
+        }
+
+        static byte[] MetaTextEvent(MetaTextEventType eventType, string text)
+        {
+            return MetaTextEvent((byte)eventType, text);
         }
 
         static byte[] MetaTextEvent(byte m_event, string text)
@@ -878,7 +947,7 @@ namespace MoonscraperChartEditor.Song.IO
 
         static SortableBytes GetChartEventBytes(ChartEvent chartEvent)
         {
-            byte[] textEvent = MetaTextEvent(TEXT_EVENT, chartEvent.eventName);
+            byte[] textEvent = MetaTextEvent(MetaTextEventType.Text, chartEvent.eventName);
             return new SortableBytes(chartEvent.tick, textEvent);
         }
 
