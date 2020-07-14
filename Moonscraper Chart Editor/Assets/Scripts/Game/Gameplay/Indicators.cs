@@ -125,7 +125,7 @@ public class Indicators : MonoBehaviour {
         {
             foreach (GHLHitAnimation go in ghlCustomFrets)
             {
-                go.gameObject.SetActive(false);
+                go.gameObject.transform.parent.gameObject.SetActive(false);
             }
 
             // Check if the sprites exist for 2D
