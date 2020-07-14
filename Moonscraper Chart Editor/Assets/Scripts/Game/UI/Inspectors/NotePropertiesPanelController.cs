@@ -4,6 +4,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using MoonscraperChartEditor.Song;
+using System.Text;
 
 public class NotePropertiesPanelController : PropertiesPanelController {
     public Note currentNote { get { return (Note)currentSongObject; } set { currentSongObject = value; } }
@@ -61,12 +62,26 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         prevNote = currentNote;
     }
 
+    uint lastKnownKeysModePos = uint.MaxValue;
     void UpdateNoteStringsInfo()
     {
         bool hasCurrentNote = currentNote != null;
         bool hasPreviousNote = prevClonedNote != null;
         bool valuesAreTheSame = hasCurrentNote && hasPreviousNote && prevClonedNote.AllValuesCompare(currentNote);
-        if (currentNote != null && (prevClonedNote != currentNote || !valuesAreTheSame))
+
+        if (IsInNoteTool() && Globals.gameSettings.keysModeEnabled)
+        {
+            // Don't update the string unless the position has actually changed. Results in per-frame garbage otherwise
+            if (lastKnownKeysModePos != editor.currentTickPos)
+            {
+                positionText.text = "Position: " + editor.currentTickPos;
+                lastKnownKeysModePos = editor.currentTickPos;
+            }
+
+            fretText.text = "Fret: N/A";
+            sustainText.text = "Length: N/A";
+        }
+        else if (currentNote != null && (prevClonedNote != currentNote || !valuesAreTheSame))
         {
             string noteTypeString = string.Empty;
             if (Globals.drumMode)
@@ -83,6 +98,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             sustainText.text = "Length: " + currentNote.length.ToString();
 
             prevClonedNote.CopyFrom(currentNote);
+            lastKnownKeysModePos = uint.MaxValue;
         }
     }
 
@@ -138,7 +154,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
         if (!drumsMode)
         {
-            if (IsInNoteTool() && noteToolObject.activeSelf)
+            if (IsInNoteTool() && (noteToolObject.activeSelf || Globals.gameSettings.keysModeEnabled))
             {
                 forcedToggle.interactable = noteToolController.forcedInteractable;
                 tapToggle.interactable = noteToolController.tapInteractable;

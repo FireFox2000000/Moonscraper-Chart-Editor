@@ -186,6 +186,10 @@ public class PlaceNoteController : ObjectlessTool {
 
     void UpdateKeysBurstMode()
     {
+        forcedInteractable = true;
+        tapInteractable = true;
+        cymbalInteractable = true;
+
         LaneInfo laneInfo = editor.laneInfo;
         UpdateSnappedPos();
         KeysDraggedSustainRecordingCheck();
@@ -219,6 +223,10 @@ public class PlaceNoteController : ObjectlessTool {
 
     void UpdateKeysSustainMode()
     {
+        forcedInteractable = true;
+        tapInteractable = true;
+        cymbalInteractable = true;
+
         LaneInfo laneInfo = editor.laneInfo;
         UpdateSnappedPos();
         bool wantCommandPop = keyControlsCommands.Count > 0;
