@@ -13,7 +13,8 @@ namespace MoonscraperEngine.Input
         public enum ModifierKeys
         {
             None = 0,
-            Ctrl = 1 << 1,
+            /// <summary>ctrl on Windows and Linux, cmd on macOS</summary>
+            CtrlCmd = 1 << 1,
             Shift = 1 << 2,
             Alt = 1 << 3,
         }
@@ -22,7 +23,15 @@ namespace MoonscraperEngine.Input
         static InputFn inputDownFn = UnityEngine.Input.GetKeyDown;
         static InputFn inputUpFn = UnityEngine.Input.GetKeyUp;
         static InputFn inputGetFn = UnityEngine.Input.GetKey;
-        public static bool ctrlKeyBeingPressed { get { return UnityEngine.Input.GetKey(KeyCode.LeftControl) || UnityEngine.Input.GetKey(KeyCode.RightControl); } }
+        public static bool ctrlCmdKeyBeingPressed {
+            get {
+                #if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+                return UnityEngine.Input.GetKey(KeyCode.LeftCommand) || UnityEngine.Input.GetKey(KeyCode.RightCommand);
+                #else
+                return UnityEngine.Input.GetKey(KeyCode.LeftControl) || UnityEngine.Input.GetKey(KeyCode.RightControl);
+                #endif
+            }
+        }
         public static bool shiftKeyBeingPressed { get { return UnityEngine.Input.GetKey(KeyCode.LeftShift) || UnityEngine.Input.GetKey(KeyCode.RightShift); } }
         public static bool atlKeyBeingPressed { get { return UnityEngine.Input.GetKey(KeyCode.LeftAlt) || UnityEngine.Input.GetKey(KeyCode.RightAlt); } }
 
@@ -106,9 +115,15 @@ namespace MoonscraperEngine.Input
         {
             switch (key)
             {
+                #if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+                case KeyCode.LeftCommand:
+                case KeyCode.RightCommand:
+                    return ModifierKeys.CtrlCmd;
+                #else
                 case KeyCode.LeftControl:
                 case KeyCode.RightControl:
-                    return ModifierKeys.Ctrl;
+                    return ModifierKeys.CtrlCmd;
+                #endif
 
                 case KeyCode.LeftShift:
                 case KeyCode.RightShift:
@@ -228,7 +243,7 @@ namespace MoonscraperEngine.Input
         {
             if (modifiers == ModifierKeys.None)
             {
-                return !ctrlKeyBeingPressed && !shiftKeyBeingPressed && !atlKeyBeingPressed;
+                return !ctrlCmdKeyBeingPressed && !shiftKeyBeingPressed && !atlKeyBeingPressed;
             }
 
             ModifierKeys currentModiKeys = ModifierKeys.None;
@@ -241,8 +256,8 @@ namespace MoonscraperEngine.Input
 
                 switch (modifierEnum)
                 {
-                    case ModifierKeys.Ctrl:
-                        modifierInputActive = ctrlKeyBeingPressed;
+                    case ModifierKeys.CtrlCmd:
+                        modifierInputActive = ctrlCmdKeyBeingPressed;
                         break;
 
                     case ModifierKeys.Shift:

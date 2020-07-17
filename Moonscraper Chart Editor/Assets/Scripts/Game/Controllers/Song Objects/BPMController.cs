@@ -75,8 +75,8 @@ public class BPMController : SongObjectController {
             base.OnSelectableMouseDrag();
         }
 
-        if (draggingInitialBpm != null && MoonscraperEngine.Input.KeyboardDevice.ctrlKeyBeingPressed && Input.GetMouseButton(1))
-        {     
+        if (draggingInitialBpm != null && MoonscraperEngine.Input.KeyboardDevice.ctrlCmdKeyBeingPressed && Input.GetMouseButton(1))
+        {
             BPM previousBpm = SongObjectHelper.GetPreviousNonInclusive(bpm.song.bpms, bpm.tick);
             if (previousBpm != null && previousBpm.anchor == null)
             {
@@ -114,7 +114,7 @@ public class BPMController : SongObjectController {
     {
         base.OnSelectableMouseDown();
 
-        if (MoonscraperEngine.Input.KeyboardDevice.ctrlKeyBeingPressed && Input.GetMouseButtonDown(1))
+        if (MoonscraperEngine.Input.KeyboardDevice.ctrlCmdKeyBeingPressed && Input.GetMouseButtonDown(1))
         {
             hasPushed = false;
 

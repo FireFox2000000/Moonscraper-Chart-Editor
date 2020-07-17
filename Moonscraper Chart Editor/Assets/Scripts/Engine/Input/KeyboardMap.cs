@@ -41,7 +41,18 @@ namespace MoonscraperEngine.Input
                         if (sb.Length > 0)
                             sb.Append(" + ");
 
-                        sb.Append(modifierEnum);
+                        switch (modifierEnum) {
+                        case KeyboardDevice.ModifierKeys.CtrlCmd:
+                            #if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+                            sb.Append("Cmd");
+                            #else
+                            sb.Append("Ctrl");
+                            #endif
+                            break;
+                        default:
+                            sb.Append(modifierEnum);
+                            break;
+                        }
                     }
                 }
             }
