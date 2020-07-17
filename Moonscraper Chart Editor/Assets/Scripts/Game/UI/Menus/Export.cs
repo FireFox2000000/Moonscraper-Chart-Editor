@@ -144,7 +144,11 @@ public class Export : DisplayMenu {
             float songLength = editor.currentSongLength;
 
             saveDirectory = saveDirectory.Replace('\\', '/');
-            saveDirectory = Path.Combine(saveDirectory, FileExplorer.StripIllegalChars(song.name));
+            if (song.name != string.Empty) {
+                saveDirectory = Path.Combine(saveDirectory, FileExplorer.StripIllegalChars(song.name));
+            } else {
+                saveDirectory = Path.Combine(saveDirectory, "Untitled");
+            }
 
             // Check if files exist at the current directory and ask user before overwriting.
             if (Directory.Exists(saveDirectory)) {
