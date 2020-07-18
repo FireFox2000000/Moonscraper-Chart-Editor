@@ -17,7 +17,7 @@ public class TimelineMovementController : MovementController
     Texture2D dragCursorNegative;
 
     Vector2? middleClickDownScreenPos = null;
-    const float c_middleClickMouseDragSensitivity = 10.0f;
+    const float c_middleClickMouseDragSensitivity = 700.0f;
     const float autoscrollSpeed = 10.0f;
     readonly MSChartEditorInputActions[] arrowKeyShortcutGroup = new MSChartEditorInputActions[] { MSChartEditorInputActions.MoveStepPositive, MSChartEditorInputActions.MoveStepNegative, MSChartEditorInputActions.MoveMeasurePositive, MSChartEditorInputActions.MoveMeasureNegative };
 
@@ -134,7 +134,7 @@ public class TimelineMovementController : MovementController
                 Texture2D cursorTexture = sign >= 0 ? dragCursorPositive : dragCursorNegative;
                 Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.ForceSoftware);
 
-                scrollDelta = middleClickDragPercentageDelta.y * c_middleClickMouseDragSensitivity;
+                scrollDelta = middleClickDragPercentageDelta.y * c_middleClickMouseDragSensitivity * Time.deltaTime;
             }
 
             if (Services.IsInDropDown)
