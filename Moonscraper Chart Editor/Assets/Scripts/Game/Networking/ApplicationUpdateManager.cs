@@ -59,7 +59,7 @@ public class ApplicationUpdateManager
                     {
                         Debug.Log("Found latest release on GitHub. Release version is " + latest.TagName);
 #if UNITY_EDITOR
-                        Debug.Assert(!IsLatestVersionNewer(currentVersion, latest.TagName), "Development version number is considered to be an earlier version of the current release. Please fix the version number.");
+                        Debug.Assert(!IsLatestVersionNewer(currentVersion, latest.TagName), "Development version number is considered to be an earlier version of the current release. Please fix the version number or update your working copy.");
 #endif
 
                         if (!IsLatestVersionNewer(currentVersion, latest.TagName))
