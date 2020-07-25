@@ -20,6 +20,7 @@ namespace MoonscraperEngine.Audio
     {
         public static bool isDisposed { get; private set; }
         static List<AudioStream> liveAudioStreams = new List<AudioStream>();
+        private const int c_oggEncodingQualityKbps = 256;
 
         #region Memory
         public static bool Init(out string errString)
@@ -138,6 +139,7 @@ namespace MoonscraperEngine.Audio
 
                 EncoderOGG encoder = new EncoderOGG(0);
                 encoder.EncoderDirectory = encoderDirectory;
+                encoder.OGG_Quality = encoder.Kbps2Quality(c_oggEncodingQualityKbps);   // Should equate to about quality level 8 out of a max of 10
 
                 if (!BaseEncoder.EncodeFile(inputFile, outputFile, encoder, null, true, false))
                 {
