@@ -54,7 +54,7 @@ namespace MoonscraperChartEditor.Song
 
         protected override bool LessThan(SongObject b)
         {
-            if (b.classID == (int)SongObject.ID.Event)
+            if (this.classID == b.classID)
             {
                 Event realB = b as Event;
                 if (tick < b.tick)
