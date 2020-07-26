@@ -46,7 +46,11 @@ public class ValidationMenu : DisplayMenu
     public void ValidateSong()
     {
         bool hasErrors;
-        errorText.text = SongValidate.GenerateReport(currentOptions, editor.currentSong, editor.currentSongLength, out hasErrors);
+        SongValidate.ValidationParameters validateParams = new SongValidate.ValidationParameters() {
+            songLength = editor.currentSongLength,
+            checkMidiIssues = true,
+        };
+        errorText.text = SongValidate.GenerateReport(currentOptions, editor.currentSong, validateParams, out hasErrors);
     }
 
     void SetValidateOptions(bool value, SongValidate.ValidationOptions setting)

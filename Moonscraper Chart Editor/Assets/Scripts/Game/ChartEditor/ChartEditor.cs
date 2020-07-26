@@ -628,7 +628,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             if (Globals.gameSettings.autoValidateSongOnSave)
             {
                 bool hasErrors;
-                SongValidate.GenerateReport(Globals.gameSettings.songValidatorModes, currentSong, currentSongLength, out hasErrors);
+                SongValidate.ValidationParameters validateParams = new SongValidate.ValidationParameters() { songLength = currentSongLength, checkMidiIssues = false, };
+                SongValidate.GenerateReport(Globals.gameSettings.songValidatorModes, currentSong, validateParams, out hasErrors);
 
                 if (hasErrors)
                 {

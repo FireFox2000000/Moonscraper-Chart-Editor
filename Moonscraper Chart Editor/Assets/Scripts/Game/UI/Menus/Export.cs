@@ -220,8 +220,22 @@ public class Export : DisplayMenu {
 
         Debug.Log("Total exporting time: " + (Time.realtimeSinceStartup - timer));
 
+        if (exportOptions.format == ExportOptions.Format.Midi)
+        {
+            bool hasErrors;
+            SongValidate.ValidationParameters validateParams = new SongValidate.ValidationParameters() { songLength = editor.currentSongLength, checkMidiIssues = true, };
+            string validationErrors = SongValidate.GenerateReport(SongValidate.ValidationOptions.CloneHero, editor.currentSong, validateParams, out hasErrors);
+
+            if (hasErrors)
+            {
+                errorMessageList += '\n';
+                errorMessageList += validationErrors;
+            }
+        }
+
         if (errorMessageList != string.Empty)
         {
+            Disable();
             ChartEditor.Instance.errorManager.QueueErrorMessage("Encountered the following errors while exporting: " + Globals.LINE_ENDING + errorMessageList);
         }
     }

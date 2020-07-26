@@ -15,27 +15,33 @@ public class SongValidate
         CloneHero       = 1 << 1,
     }
 
-    public static string GenerateReport(ValidationOptions validationOptions, Song song, float songLength, out bool hasErrors)
+    public struct ValidationParameters
+    {
+        public bool checkMidiIssues;
+        public float songLength;
+    }
+
+    public static string GenerateReport(ValidationOptions validationOptions, Song song, ValidationParameters validationParams, out bool hasErrors)
     {
         StringBuilder sb = new StringBuilder();
         hasErrors = false;
 
-        sb.AppendFormat("{0}\n", CheckForErrorsMoonscraper(song, songLength, ref hasErrors));
+        sb.AppendFormat("{0}\n", CheckForErrorsMoonscraper(song, validationParams, ref hasErrors));
 
         if ((validationOptions & ValidationOptions.GuitarHero3) != 0)
         {
-            sb.AppendFormat("{0}\n", CheckForErrorsGuitarHero3(song, ref hasErrors));
+            sb.AppendFormat("{0}\n", CheckForErrorsGuitarHero3(song, validationParams, ref hasErrors));
         }
 
         if ((validationOptions & ValidationOptions.CloneHero) != 0)
         {
-            sb.AppendFormat("{0}\n", CheckForErrorsCloneHero(song, ref hasErrors));
+            sb.AppendFormat("{0}\n", CheckForErrorsCloneHero(song, validationParams, ref hasErrors));
         }
 
         return sb.ToString();
     }
 
-    static string CheckForErrorsMoonscraper(Song song, float songLength, ref bool hasErrors)
+    static string CheckForErrorsMoonscraper(Song song, ValidationParameters validationParams, ref bool hasErrors)
     {
         bool hasErrorsLocal = false;
         StringBuilder sb = new StringBuilder();
@@ -43,7 +49,7 @@ public class SongValidate
 
         // Check if any objects have exceeded the max length
         {
-            uint tick = song.TimeToTick(songLength, song.resolution);
+            uint tick = song.TimeToTick(validationParams.songLength, song.resolution);
 
             // Song objects
             {
@@ -116,7 +122,7 @@ public class SongValidate
         return sb.ToString();
     }
 
-    static string CheckForErrorsGuitarHero3(Song song, ref bool hasErrors)
+    static string CheckForErrorsGuitarHero3(Song song, ValidationParameters validationParams, ref bool hasErrors)
     {
         const int SECTION_LIMIT = 100;
 
@@ -149,7 +155,7 @@ public class SongValidate
         return sb.ToString();
     }
 
-    static string CheckForErrorsCloneHero(Song song, ref bool hasErrors)
+    static string CheckForErrorsCloneHero(Song song, ValidationParameters validationParams, ref bool hasErrors)
     {
         StringBuilder sb = new StringBuilder();
         sb.AppendLine("Clone Hero validation report: ");
@@ -173,6 +179,44 @@ public class SongValidate
                     hasErrorsLocal |= true;
                     sb.AppendFormat("\tFound misaligned Time Signature at position {0}. Time signatures must be aligned to the measure set by the previous time signature.\n", tsToTest.tick);
                 }
+            }
+        }
+
+        // If we have no starpower but more than 1 solo section then CH will interpret this as an RB1 style midi, and misinterpret the solo markers as starpower
+        if (validationParams.checkMidiIssues)
+        {
+            foreach (Song.Instrument instrument in EnumX<Song.Instrument>.Values)
+            {
+                if (instrument == Song.Instrument.Unrecognised)
+                    continue;
+
+                foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
+                {
+                    Chart chart = song.GetChart(instrument, difficulty);
+
+                    if (chart.starPower.Count <= 0)
+                    {
+                        // Check for solo markers
+                        int soloMarkerCount = 0;
+                        foreach (ChartEvent ce in chart.events)
+                        {
+                            if (ce.eventName == MoonscraperChartEditor.Song.IO.MidIOHelper.SoloEventText)
+                            {
+                                ++soloMarkerCount;
+
+                                if (soloMarkerCount > 1)
+                                {
+                                    hasErrorsLocal |= true;
+                                    sb.AppendFormat("\tTrack {0} has no starpower and more than 1 solo section. If exported to the midi format, Clone Hero will interpret this chart as an older style midi, and will misinterpret solo markers as starpower.\n", instrument);
+
+                                    goto NewInstrument;
+                                }
+                            }
+                        }
+                    }
+                }
+
+            NewInstrument:;
             }
         }
 
