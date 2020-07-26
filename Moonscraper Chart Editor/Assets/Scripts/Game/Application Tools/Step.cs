@@ -41,6 +41,13 @@ public class Step
         }
     }
 
+    public void AdjustBy(int customIncrement)
+    {
+        value = value + customIncrement;
+        value = Mathf.Clamp(value, MIN_STEP, FULL_STEP);
+        SetStep(value);
+    }
+
     public void Increment()
     {
         SetStep(value);

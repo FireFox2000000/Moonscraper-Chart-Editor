@@ -672,6 +672,48 @@
             }
         },
         {
+            "action": "StepDecreaseBy1",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 2,
+                        "keys": [
+                            113
+                        ]
+                    },
+                    {
+                        "modifiers": 2,
+                        "keys": [
+                            276
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "StepIncreaseBy1",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 2,
+                        "keys": [
+                            119
+                        ]
+                    },
+                    {
+                        "modifiers": 2,
+                        "keys": [
+                            275
+                        ]
+                    }
+                ],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
             "action": "SectionJumpPositive",
             "input": {
                 "kbMaps": [

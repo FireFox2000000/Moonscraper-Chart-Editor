@@ -309,6 +309,28 @@
             }
         },
         {
+            "mSChartEditorInputAction": "StepDecreaseBy1",
+            "properties": {
+                "displayName": "Decrease Step By 1",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 1,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
+            "mSChartEditorInputAction": "StepIncreaseBy1",
+            "properties": {
+                "displayName": "Increase Step By 1",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 1,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
             "mSChartEditorInputAction": "SectionJumpPositive",
             "properties": {
                 "displayName": "Scroll To Next Section",
