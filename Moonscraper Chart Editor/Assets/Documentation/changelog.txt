@@ -1,3 +1,17 @@
+1.3.5.3
+	NEW FEATURES
+	-Added shortcut to increase and decrease the step by 1
+
+	CHANGES
+	-Bump up ogg encoder quality to ~256 kbps/quality level 8 on Windows.
+	-CH export package option now displays progress for how many songs it still has left to encode to ogg.
+	-Added midi validation to warn users of CH misinterpreting midis with no starpower as older style midis.
+
+	FIXES
+	-Fixed exporter failing due to illegal directory characters in the song name.
+	-Fixed midi export errors not being displayed due to the export menu remaining active. 
+	-Fix for event sometimes duplicating when moved if it was on the same spot as a section.
+
 1.3.5.2
 	NEW FEATURES
 	-Added individual drums stem audio settings, courtesy of Mario64iscool2
