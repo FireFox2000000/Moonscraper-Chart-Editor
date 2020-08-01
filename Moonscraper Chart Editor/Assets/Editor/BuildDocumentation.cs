@@ -35,7 +35,9 @@ public class BuildDocumentation  {
             return;
         }
 
-        string folderName = string.Format("{0} v{1} {2}", UnityEngine.Application.productName, UnityEngine.Application.version, Globals.applicationBranchName);
+        string folderName = string.IsNullOrEmpty(Globals.applicationBranchName) ?
+            string.Format("{0} v{1}", UnityEngine.Application.productName, UnityEngine.Application.version) :
+            string.Format("{0} v{1} {2}", UnityEngine.Application.productName, UnityEngine.Application.version, Globals.applicationBranchName);
 
         string path = Path.Combine(parentDirectory, folderName);
         if (Directory.Exists(path))
