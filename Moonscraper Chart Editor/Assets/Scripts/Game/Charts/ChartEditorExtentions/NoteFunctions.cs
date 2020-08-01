@@ -347,9 +347,9 @@ public static class NoteFunctions {
         foreach (Note chordNote in note.chord)
         {
             // Overwrite note flags
-            if (!CompareChordFlags(chordNote.flags, note.flags))
+            if (!CompareChordFlags(chordNote.flags, flags))
             {
-                Note.Flags newFlags = CopyChordFlags(chordNote.flags, note.flags);
+                Note.Flags newFlags = CopyChordFlags(chordNote.flags, flags);
                 Note newChordNote = new Note(chordNote.tick, chordNote.rawNote, chordNote.length, newFlags);
 
                 SongEditCommand.AddAndInvokeSubAction(new DeleteAction(chordNote), subActions);
