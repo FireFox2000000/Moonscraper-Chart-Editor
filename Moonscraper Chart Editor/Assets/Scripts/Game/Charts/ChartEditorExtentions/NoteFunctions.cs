@@ -330,8 +330,9 @@ public static class NoteFunctions {
         if (note.IsOpenNote())
             flags &= ~Note.Flags.Tap;
 
-        if (note.cannotBeForced)
-            flags &= ~Note.Flags.Forced;
+        // Handled by SongEditCommand.GenerateForcedFlagFixupCommands
+        //if (note.cannotBeForced)
+        //    flags &= ~Note.Flags.Forced;
 
         if (!AllowedToBeCymbal(note))
             flags &= ~Note.Flags.ProDrums_Cymbal;
@@ -362,10 +363,11 @@ public static class NoteFunctions {
         CapNoteCheck(chart, note, subActions, song, extendedSustainsEnabled);
         ForwardCap(chart, note, subActions, song);
 
-        AutoForcedCheck(chart, note, subActions);
+        // Handled by SongEditCommand.GenerateForcedFlagFixupCommands
+        //AutoForcedCheck(chart, note, subActions);
     }
 
-#region Note Insertion Helper Functions
+    #region Note Insertion Helper Functions
 
     static Note FindReplacementNote(Note originalNote, IList<SongObject> replacementNotes)
     {
@@ -493,6 +495,7 @@ public static class NoteFunctions {
         }
     }
 
+    // Deprecated: Handled by SongEditCommand.GenerateForcedFlagFixupCommands
     static void AutoForcedCheck(Chart chart, Note note, IList<BaseAction> subActions)
     {
         Note next = note.nextSeperateNote;

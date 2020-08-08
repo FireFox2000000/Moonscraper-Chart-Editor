@@ -91,6 +91,7 @@ public class BatchedSongEditCommand : SongEditCommand
     protected override UndoRedoJumpInfo GetUndoRedoJumpInfo()
     {
         SongObject lowestTickSo = null;
+        SongObject highestTickSo = null;
         UndoRedoJumpInfo info = new UndoRedoJumpInfo();
 
         foreach (SongEditCommand command in commands)
@@ -102,6 +103,9 @@ public class BatchedSongEditCommand : SongEditCommand
                     SongObject so = action.songObject;
                     if (lowestTickSo == null || so.tick < lowestTickSo.tick)
                         lowestTickSo = so;
+
+                    if (highestTickSo == null || so.tick > highestTickSo.tick)
+                        highestTickSo = so;
                 }
             }
             else
@@ -110,6 +114,9 @@ public class BatchedSongEditCommand : SongEditCommand
                 {
                     if (lowestTickSo == null || so.tick < lowestTickSo.tick)
                         lowestTickSo = so;
+
+                    if (highestTickSo == null || so.tick > highestTickSo.tick)
+                        highestTickSo = so;
                 }
             }
         }
@@ -118,10 +125,16 @@ public class BatchedSongEditCommand : SongEditCommand
         {
             info.jumpToPos = lowestTickSo.tick;
             info.viewMode = lowestTickSo.GetType().IsSubclassOf(typeof(ChartObject)) ? Globals.ViewMode.Chart : Globals.ViewMode.Song;
+            info.min = lowestTickSo.tick;
         }
         else
         {
             info.jumpToPos = null;
+        }
+
+        if (highestTickSo != null)
+        {
+            info.max = highestTickSo.tick;
         }
 
         return info;

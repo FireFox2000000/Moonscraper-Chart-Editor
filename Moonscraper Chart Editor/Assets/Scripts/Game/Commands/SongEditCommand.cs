@@ -16,6 +16,10 @@ public abstract class SongEditCommand : ICommand {
 
     private List<SongEditModify<BPM>> bpmAnchorFixup = new List<SongEditModify<BPM>>();
     bool bpmAnchorFixupCommandsGenerated = false;
+
+    private List<SongEditModify<Note>> forcedFlagFixup = new List<SongEditModify<Note>>();
+    bool cannotBeForcedFixupCommandsGenerated = false;
+
     private List<SongObject> selectedSongObjects = new List<SongObject>();
 
     void AddClone(SongObject songObject)
@@ -48,14 +52,14 @@ public abstract class SongEditCommand : ICommand {
 
     public void Invoke()
     {
-        PreExecuteUpdate();
+        PreExecuteUpdate(true);
         InvokeSongEditCommand();
         PostExecuteUpdate(true);
     }
 
     public void Revoke()
     {
-        PreExecuteUpdate();
+        PreExecuteUpdate(false);
         RevokeSongEditCommand();
         PostExecuteUpdate(false);
     }
@@ -64,7 +68,7 @@ public abstract class SongEditCommand : ICommand {
 
     public abstract void RevokeSongEditCommand();
 
-    void PreExecuteUpdate()
+    void PreExecuteUpdate(bool isInvoke)
     {
         if (!preExecuteEnabled)
             return;
@@ -74,6 +78,19 @@ public abstract class SongEditCommand : ICommand {
         {
             selectedSongObjects.Add(so.Clone());
         }
+
+        if (!isInvoke)
+        {
+            foreach (ICommand command in bpmAnchorFixup)
+            {
+                command.Revoke();
+            }
+
+            foreach (ICommand command in forcedFlagFixup)
+            {
+                command.Revoke();
+            }
+        }
     }
 
     void PostExecuteUpdate(bool isInvoke)
@@ -82,10 +99,16 @@ public abstract class SongEditCommand : ICommand {
             return;
 
         ChartEditor editor = ChartEditor.Instance;
+        UndoRedoJumpInfo jumpInfo = GetUndoRedoJumpInfo();
 
         if (!bpmAnchorFixupCommandsGenerated)
         {
             GenerateFixUpBPMAnchorCommands();
+        }
+
+        if (!cannotBeForcedFixupCommandsGenerated)
+        {
+            GenerateForcedFlagFixupCommands(jumpInfo);
         }
 
         if (isInvoke)
@@ -94,12 +117,10 @@ public abstract class SongEditCommand : ICommand {
             {
                 command.Invoke();
             }
-        }
-        else
-        {
-            foreach (ICommand command in bpmAnchorFixup)
+
+            foreach (ICommand command in forcedFlagFixup)
             {
-                command.Revoke();
+                command.Invoke();
             }
         }
 
@@ -110,8 +131,6 @@ public abstract class SongEditCommand : ICommand {
             editor.selectedObjectsManager.currentSelectedObject = null;
 
         ChartEditor.isDirty = true;
-
-        UndoRedoJumpInfo jumpInfo = GetUndoRedoJumpInfo();
 
         if (jumpInfo.IsValid)
         {
@@ -126,28 +145,40 @@ public abstract class SongEditCommand : ICommand {
     {
         public bool IsValid { get { return jumpToPos.HasValue; } }
         public uint? jumpToPos;
+        public uint? min;
+        public uint? max;
         public Globals.ViewMode viewMode;
     }
 
     protected virtual UndoRedoJumpInfo GetUndoRedoJumpInfo()
     {
         SongObject lowestTickSo = null;
+        SongObject highestTickSo = null;
         UndoRedoJumpInfo info = new UndoRedoJumpInfo();
 
         foreach (SongObject songObject in songObjects)
         {
             if (lowestTickSo == null || songObject.tick < lowestTickSo.tick)
                 lowestTickSo = songObject;
+
+            if (highestTickSo == null || songObject.tick > highestTickSo.tick)
+                highestTickSo = songObject;
         }
 
         if (lowestTickSo != null)
         {
             info.jumpToPos = lowestTickSo.tick;
             info.viewMode = lowestTickSo.GetType().IsSubclassOf(typeof(ChartObject)) ? Globals.ViewMode.Chart : Globals.ViewMode.Song;
+            info.min = lowestTickSo.tick;
         }
         else
         {
             info.jumpToPos = null;
+        }
+
+        if (highestTickSo != null)
+        {
+            info.max = highestTickSo.tick;
         }
 
         return info;
@@ -224,6 +255,101 @@ public abstract class SongEditCommand : ICommand {
         bpmAnchorFixupCommandsGenerated = true;
         tempAnchorFixupBPMs.Clear();
         tempAnchorFixupSynctrack.Clear();
+    }
+
+    void GenerateForcedFlagFixupCommands(UndoRedoJumpInfo jumpInfo)
+    {
+        Chart chart = ChartEditor.Instance.currentChart;
+        if (chart.chartObjects.Count <= 0)
+        {
+            return;
+        }
+
+        int index, length;
+        SongObjectHelper.GetRange(chart.chartObjects, jumpInfo.min.GetValueOrDefault(0), jumpInfo.max.GetValueOrDefault(0), out index, out length);
+
+        Note lastCheckedNote = null;
+        for (int i = index; i < index + length; ++i)
+        {
+            if (chart.chartObjects[i].classID == (int)SongObject.ID.Note)
+            {
+                Note note = chart.chartObjects[i] as Note;
+
+                if ((note.flags & Note.Flags.Forced) != 0 && note.cannotBeForced)
+                {
+                    foreach (Note chordNote in note.chord)
+                    {
+                        Note modifiedNote = new Note(chordNote);
+                        modifiedNote.flags &= ~Note.Flags.Forced;
+
+                        SongEditModify<Note> command = new SongEditModify<Note>(chordNote, modifiedNote);
+                        command.postExecuteEnabled = false;
+                        forcedFlagFixup.Add(command);
+                    }
+                }
+
+                lastCheckedNote = note;
+            }
+        }
+
+        // Do last final check for next note that may not have been included in the range
+        if (lastCheckedNote != null)
+        {
+            Note note = lastCheckedNote.nextSeperateNote;
+
+            if (note != null && (note.flags & Note.Flags.Forced) != 0 && note.cannotBeForced)
+            {
+                foreach (Note chordNote in note.chord)
+                {
+                    Note modifiedNote = new Note(chordNote);
+                    modifiedNote.flags &= ~Note.Flags.Forced;
+
+                    SongEditModify<Note> command = new SongEditModify<Note>(chordNote, modifiedNote);
+                    command.postExecuteEnabled = false;
+                    forcedFlagFixup.Add(command);
+                }
+            }
+        }
+
+        // Get the note to start on, then we will traverse the linked list
+        /*
+        Note currentNote = null;
+        for (int i = 0; i < chart.chartObjects.Count; ++i)
+        {
+            Note note = chart.chartObjects[i] as Note;
+            if (note != null)
+            {
+                Note prev = note.previousSeperateNote;
+                if (prev != null)
+                {
+                    currentNote = prev;
+                }
+                else
+                {
+                    currentNote = note;
+                }
+            }
+        }
+
+        while (currentNote != null)
+        {
+            if ((currentNote.flags & Note.Flags.Forced) != 0 && currentNote.cannotBeForced)
+            {
+                foreach (Note chordNote in currentNote.chord)
+                {
+                    Note modifiedNote = new Note(chordNote);
+                    modifiedNote.flags &= ~Note.Flags.Forced;
+
+                    SongEditModify<Note> command = new SongEditModify<Note>(chordNote, modifiedNote);
+                    command.postExecuteEnabled = false;
+                    forcedFlagFixup.Add(command);
+                }
+            }
+
+            currentNote = currentNote.nextSeperateNote;
+        }*/
+
+        cannotBeForcedFixupCommandsGenerated = true;
     }
 
     protected void SnapshotGameSettings()
