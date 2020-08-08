@@ -469,5 +469,31 @@ namespace MoonscraperChartEditor.Song
             else
                 return guitarFret == GuitarFret.Open;
         }
+
+        public static Flags GetBannedFlagsForGameMode(Chart.GameMode gameMode)
+        {
+            Flags bannedFlags = Flags.None;
+
+            switch (gameMode)
+            {
+                case Chart.GameMode.Guitar:
+                case Chart.GameMode.GHLGuitar:
+                    {
+                        bannedFlags = Flags.ProDrums_Cymbal;
+                        break;
+                    }
+                case Chart.GameMode.Drums:
+                    {
+                        bannedFlags = Flags.Forced | Flags.Tap;
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
+
+            return bannedFlags;
+        }
     }
 }

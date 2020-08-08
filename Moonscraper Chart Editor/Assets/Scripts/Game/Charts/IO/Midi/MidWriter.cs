@@ -524,8 +524,11 @@ namespace MoonscraperChartEditor.Song.IO
 
                     if (exportOptions.forced)
                     {
+                        Note.Flags bannedFlags = Note.GetBannedFlagsForGameMode(gameMode);
+                        Note.Flags noteFlags = note.flags & ~bannedFlags;   // Last ditched error correction
+
                         // Forced notes               
-                        if ((note.flags & Note.Flags.Forced) != 0 && note.type != Note.NoteType.Tap && (note.previous == null || (note.previous.tick != note.tick)))     // Don't overlap on chords
+                        if ((noteFlags & Note.Flags.Forced) != 0 && note.type != Note.NoteType.Tap && (note.previous == null || (note.previous.tick != note.tick)))     // Don't overlap on chords
                         {
                             // Add a note
                             int difficultyNumber;
@@ -548,7 +551,7 @@ namespace MoonscraperChartEditor.Song.IO
 
                         if (writeGlobalTrackEvents)
                         {
-                            if (instrument == Song.Instrument.Drums && ((note.flags & Note.Flags.ProDrums_Cymbal) == 0))     // We want to write our flags if the cymbal is toggled OFF, as these notes are cymbals by default
+                            if (instrument == Song.Instrument.Drums && ((noteFlags & Note.Flags.ProDrums_Cymbal) == 0))     // We want to write our flags if the cymbal is toggled OFF, as these notes are cymbals by default
                             {
                                 int tomToggleNoteNumber;
                                 if (MidIOHelper.PAD_TO_CYMBAL_LOOKUP.TryGetValue(note.drumPad, out tomToggleNoteNumber))
@@ -563,7 +566,7 @@ namespace MoonscraperChartEditor.Song.IO
 
                             int openNote = gameMode == Chart.GameMode.GHLGuitar ? (int)Note.GHLiveGuitarFret.Open : (int)Note.GuitarFret.Open;
                             // Add tap sysex events
-                            bool isStartOfTapRange = note.rawNote != openNote && (note.flags & Note.Flags.Tap) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.Tap) == 0);
+                            bool isStartOfTapRange = note.rawNote != openNote && (noteFlags & Note.Flags.Tap) != 0 && (note.previous == null || (note.previous.flags & Note.Flags.Tap) == 0);
                             if (isStartOfTapRange)  // This note is a tap while the previous one isn't as we're creating a range
                             {
                                 // Find the next non-tap note

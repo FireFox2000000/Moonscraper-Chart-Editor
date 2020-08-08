@@ -640,8 +640,11 @@ public class PlaceNoteController : ObjectlessTool {
     public Note.Flags GetDisplayFlags()
     {
         Note.Flags flags = Note.Flags.None;
+        Note.Flags bannedFlags = Note.GetBannedFlagsForGameMode(editor.currentGameMode);
 
         flags = desiredFlags;
+
+        bool drumsMode = editor.currentGameMode == Chart.GameMode.Drums;
 
         if (!forcedInteractable && gameObject.activeSelf)
         {
@@ -657,6 +660,8 @@ public class PlaceNoteController : ObjectlessTool {
         {
             flags &= ~Note.Flags.ProDrums_Cymbal;
         }
+
+        flags &= ~bannedFlags;
 
         return flags;
     }

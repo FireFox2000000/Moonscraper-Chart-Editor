@@ -413,7 +413,9 @@ namespace MoonscraperChartEditor.Song.IO
 
             if (writeParameters.exportOptions.forced)
             {
-                if (note.flags != Note.Flags.None)
+                Note.Flags bannedFlags = Note.GetBannedFlagsForGameMode(Song.InstumentToChartGameMode(instrument));
+                Note.Flags noteFlags = note.flags & ~bannedFlags;   // Last ditched error correction. Can't write out forced flags as it will be confused for 5th lane drums notes on drum tracks etc.
+                if (noteFlags != Note.Flags.None)
                 {
                     // Only need to get the flags of one note of a chord
                     if (note.next == null || (note.next != null && note.next.tick != note.tick))
@@ -427,7 +429,7 @@ namespace MoonscraperChartEditor.Song.IO
                         // Write out forced flag
                         {
                             Note.Flags flagToTest = Note.Flags.Forced;
-                            if ((note.flags & flagToTest) != 0)
+                            if ((noteFlags & flagToTest) != 0)
                             {
                                 int value;
                                 if (c_guitarFlagToNumLookup.TryGetValue(flagToTest, out value))  // Todo, if different flags have different values for the same flags, we'll need to use different lookups
@@ -442,7 +444,7 @@ namespace MoonscraperChartEditor.Song.IO
                         // Write out tap flag
                         {
                             Note.Flags flagToTest = Note.Flags.Tap;
-                            if (!note.IsOpenNote() && (note.flags & flagToTest) != 0)
+                            if (!note.IsOpenNote() && (noteFlags & flagToTest) != 0)
                             {
                                 int value;
                                 if (c_guitarFlagToNumLookup.TryGetValue(flagToTest, out value))  // Todo, if different flags have different values for the same flags, we'll need to use different lookups
@@ -475,7 +477,7 @@ namespace MoonscraperChartEditor.Song.IO
                     }
 
                     bool cymbalByDefault = (defaultFlagsForNote & Note.Flags.ProDrums_Cymbal) != 0;
-                    bool flaggedAsCymbal = (note.flags & Note.Flags.ProDrums_Cymbal) != 0;
+                    bool flaggedAsCymbal = (noteFlags & Note.Flags.ProDrums_Cymbal) != 0;
                     bool writeCymbalFlag = cymbalByDefault != flaggedAsCymbal;
 
                     if (writeCymbalFlag && !note.IsOpenNote())

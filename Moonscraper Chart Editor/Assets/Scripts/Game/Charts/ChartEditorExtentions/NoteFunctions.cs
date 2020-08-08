@@ -336,6 +336,8 @@ public static class NoteFunctions {
         if (!AllowedToBeCymbal(note))
             flags &= ~Note.Flags.ProDrums_Cymbal;
 
+        flags &= ~Note.GetBannedFlagsForGameMode(chart.gameMode);   // This may happen when copying and pasting notes between instruments etc
+
         if (flags != note.flags)
         {
             Note newNote = new Note(note.tick, note.rawNote, note.length, flags);
