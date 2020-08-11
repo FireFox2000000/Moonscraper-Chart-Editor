@@ -7,11 +7,11 @@
 Moonscraper Chart Editor is a song editor for Guitar Hero style rhythm games mainly intended to support the custom song creation for games such as Guitar Hero, Clone Hero and Rock Band.
 
 ### Current games/projects that use Moonscraper code:
-- [Clone Hero](https://clonehero.net/)
+- Clone Hero (https://clonehero.net/)
 
-- [Everhood](https://store.steampowered.com/app/1229380/Everhood/)
+- Everhood (https://store.steampowered.com/app/1229380/Everhood/)
 
-- [Fret Smasher](https://www.youtube.com/watch?v=b2hnR_S70g0)
+- Fret Smasher (https://www.youtube.com/watch?v=b2hnR_S70g0)
 
 ## Compiling from Source
 Follow the instructions below for your desired platform to build and run from source.
@@ -35,8 +35,8 @@ Other distribution packagers can use the `PKGBUILD` file for reference.
 
 ## Who do I talk to?
 * Alexander "FireFox" Ong
+* Discord (Easiest link to contact me through)- https://discord.gg/bjsKTwd
 * YouTube- https://www.youtube.com/user/FireFox2000000
-* Discord- FireFox#8188
 * Twitter- https://twitter.com/FireFox2000000
 
 ## License
