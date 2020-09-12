@@ -212,7 +212,10 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             cymbalToggle.isOn = !cymbalToggle.isOn;
         }
 
-        // TODO shortcut for double kick
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteDoubleKick) && doubleKickToggle.interactable)
+        {
+            doubleKickToggle.isOn = !doubleKickToggle.isOn;
+        }
     }
 
     new void OnDisable()

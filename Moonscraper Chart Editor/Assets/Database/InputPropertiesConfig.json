@@ -205,7 +205,7 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 1,
+                "category": 7,
                 "allowSameFrameMultiInput": false
             }
         },
@@ -216,7 +216,7 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 1,
+                "category": 7,
                 "allowSameFrameMultiInput": false
             }
         },
@@ -227,7 +227,7 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 1,
+                "category": 7,
                 "allowSameFrameMultiInput": false
             }
         },
@@ -238,7 +238,7 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 1,
+                "category": 7,
                 "allowSameFrameMultiInput": false
             }
         },
@@ -425,7 +425,7 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 1,
+                "category": 3,
                 "allowSameFrameMultiInput": false
             }
         },
@@ -436,7 +436,7 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 1,
+                "category": 3,
                 "allowSameFrameMultiInput": false
             }
         },
@@ -447,7 +447,18 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 1,
+                "category": 3,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
+            "mSChartEditorInputAction": "ToggleNoteDoubleKick",
+            "properties": {
+                "displayName": "Toggle Note Double Kick",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 3,
                 "allowSameFrameMultiInput": false
             }
         },

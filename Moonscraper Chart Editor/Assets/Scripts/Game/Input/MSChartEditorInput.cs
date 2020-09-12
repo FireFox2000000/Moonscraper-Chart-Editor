@@ -73,6 +73,7 @@ public enum MSChartEditorInputActions
     ToggleNoteForced,
     ToggleNoteTap,
     ToggleNoteCymbal,
+    ToggleNoteDoubleKick,
     ToggleViewMode, 
     
     ToolNoteBurst,
@@ -138,14 +139,17 @@ public static class MSChartEditorInput
         // static int to make int conversion way easier. The lack of implicit enum->int conversion is annoying as hell.
         public enum CategoryType
         {
+            // Add new categories to the bottom of the list! Order is saved out in properties file.
             Global,
             Editor,
             EditorKeyboardMode,
             EditorToolNote,
-
+            
             GameplayGuitar,
             GameplayDrums,
             GameplayDrumsPro,
+
+            EditorToolGroupNote,
         }
 
         public static InteractionMatrix interactionMatrix = new InteractionMatrix(EnumX<CategoryType>.Count);
@@ -153,6 +157,7 @@ public static class MSChartEditorInput
             = (1 << (int)CategoryType.Editor)
             | (1 << (int)CategoryType.EditorKeyboardMode)
             | (1 << (int)CategoryType.EditorToolNote)
+            | (1 << (int)CategoryType.EditorToolGroupNote)
             | (1 << (int)CategoryType.Global)
             ;
         public static readonly int kGameplayCategoryMask = (1 << (int)CategoryType.GameplayGuitar) | (1 << (int)CategoryType.GameplayDrums) | (1 << (int)CategoryType.GameplayDrumsPro);

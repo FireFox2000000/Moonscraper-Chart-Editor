@@ -971,6 +971,25 @@
             }
         },
         {
+            "action": "ToggleNoteDoubleKick",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            120
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
             "action": "ToggleViewMode",
             "input": {
                 "kbMaps": [
