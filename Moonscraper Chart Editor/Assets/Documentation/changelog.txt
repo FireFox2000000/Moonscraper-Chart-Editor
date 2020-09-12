@@ -1,3 +1,7 @@
+1.3.5.6
+	NEW FEATURES
+	-Implemented basic double kick editing.
+
 1.3.5.5
 	FIXES
 	-Fixed lane 5 notes being mysteriously added to drums charts after reloading a drums chart that only had been editing in 4 lane.
