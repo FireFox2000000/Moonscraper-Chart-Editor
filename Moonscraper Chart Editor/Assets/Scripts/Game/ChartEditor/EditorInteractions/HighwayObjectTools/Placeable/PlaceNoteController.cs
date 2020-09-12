@@ -24,6 +24,7 @@ public class PlaceNoteController : ObjectlessTool {
     public bool forcedInteractable { get; private set; }
     public bool tapInteractable { get; private set; }
     public bool cymbalInteractable { get; private set; }
+    public bool doubleKickInteractable { get; private set; }
 
     // Keyboard mode sustain dragging
     Note[] heldNotes;
@@ -70,6 +71,7 @@ public class PlaceNoteController : ObjectlessTool {
         forcedInteractable = true;
         tapInteractable = true;
         cymbalInteractable = true;
+        doubleKickInteractable = true;
 
         CurrentNotePlacementUpdate = UpdateMouseBurstMode;
 
@@ -634,6 +636,7 @@ public class PlaceNoteController : ObjectlessTool {
         else
         {
             cymbalInteractable = NoteFunctions.AllowedToBeCymbal(note);
+            doubleKickInteractable = NoteFunctions.AllowedToBeDoubleKick(note, editor.currentDifficulty);
         }
     }
 
@@ -659,6 +662,11 @@ public class PlaceNoteController : ObjectlessTool {
         if (!cymbalInteractable && gameObject.activeSelf)
         {
             flags &= ~Note.Flags.ProDrums_Cymbal;
+        }
+
+        if (!doubleKickInteractable && gameObject.activeSelf)
+        {
+            flags &= ~Note.Flags.DoubleKick;
         }
 
         flags &= ~bannedFlags;

@@ -52,6 +52,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public Song currentSong { get; private set; }
     public Chart currentChart { get; private set; }
     public Chart.GameMode currentGameMode { get { return currentChart.gameMode; } }
+    public Song.Difficulty currentDifficulty { get { return MenuBar.currentDifficulty; } }
     public SongAudioManager currentSongAudio { get; private set; }
     string currentFileName = string.Empty;
 

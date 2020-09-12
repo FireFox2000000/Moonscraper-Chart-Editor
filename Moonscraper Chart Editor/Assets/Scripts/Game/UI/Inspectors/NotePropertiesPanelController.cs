@@ -15,6 +15,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     public Toggle tapToggle;
     public Toggle forcedToggle;
     public Toggle cymbalToggle;
+    public Toggle doubleKickToggle;
 
     public GameObject noteToolObject;
     PlaceNoteController noteToolController;
@@ -140,6 +141,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         forcedToggle.isOn = (flags & Note.Flags.Forced) != 0;
         tapToggle.isOn = (flags & Note.Flags.Tap) != 0;
         cymbalToggle.isOn = (flags & Note.Flags.ProDrums_Cymbal) != 0;
+        doubleKickToggle.isOn = (flags & Note.Flags.DoubleKick) != 0;
 
         toggleBlockingActive = false;
     }
@@ -148,9 +150,12 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     {
         // Prevent users from forcing notes when they shouldn't be forcable but retain the previous user-set forced property when using the note tool
         bool drumsMode = Globals.drumMode;
+        bool proDrumsMode = drumsMode && Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums;
+
         forcedToggle.gameObject.SetActive(!drumsMode);
         tapToggle.gameObject.SetActive(!drumsMode);
-        cymbalToggle.gameObject.SetActive(drumsMode && Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums);
+        cymbalToggle.gameObject.SetActive(proDrumsMode);
+        doubleKickToggle.gameObject.SetActive(proDrumsMode);
 
         if (!drumsMode)
         {
@@ -175,14 +180,17 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             if (IsInNoteTool() && noteToolObject.activeSelf)
             {
                 cymbalToggle.interactable = noteToolController.cymbalInteractable;
+                doubleKickToggle.interactable = noteToolController.doubleKickInteractable;
             }
             else if (!IsInNoteTool())
             {
                 cymbalToggle.interactable = NoteFunctions.AllowedToBeCymbal(currentNote);
+                doubleKickToggle.interactable = NoteFunctions.AllowedToBeDoubleKick(currentNote, editor.currentDifficulty);
             }
             else
             {
                 cymbalToggle.interactable = true;
+                doubleKickToggle.interactable = true;
             }
         }
     }
@@ -203,8 +211,10 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         {
             cymbalToggle.isOn = !cymbalToggle.isOn;
         }
+
+        // TODO shortcut for double kick
     }
-    
+
     new void OnDisable()
     {
         currentNote = null;
@@ -287,6 +297,21 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         }
     }
 
+    public void setDoubleKick()
+    {
+        if (toggleBlockingActive)
+            return;
+
+        if (IsInNoteTool())
+        {
+            SetDoubleKickNoteTool();
+        }
+        else
+        {
+            SetDoubleKickNote();
+        }
+    }
+
     void SetForcedNote()
     {
         if (currentNote == prevNote)
@@ -329,10 +354,36 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         }
 
     }
+
     void SetCymbalNoteTool()
     {
         if (cymbalToggle.interactable)
             SetNoteToolFlag(ref noteToolController.desiredFlags, cymbalToggle, Note.Flags.ProDrums_Cymbal);
+    }
+
+    void SetDoubleKickNote()
+    {
+        if (currentNote == prevNote)
+        {
+            var newFlags = currentNote.flags;
+
+            if (currentNote != null)
+            {
+                if (doubleKickToggle.isOn)
+                    newFlags |= Note.Flags.DoubleKick;
+                else
+                    newFlags &= ~Note.Flags.DoubleKick;
+            }
+
+            SetNewFlags(currentNote, newFlags);
+        }
+
+    }
+
+    void SetDoubleKickNoteTool()
+    {
+        if (doubleKickToggle.interactable)
+            SetNoteToolFlag(ref noteToolController.desiredFlags, doubleKickToggle, Note.Flags.DoubleKick);
     }
 
     void SetNewFlags(Note note, Note.Flags newFlags)

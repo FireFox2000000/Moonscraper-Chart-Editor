@@ -224,6 +224,11 @@ public static class NoteFunctions {
         return !note.IsOpenNote() && note.drumPad != Note.DrumPad.Red && note.drumPad != Note.DrumPad.Green;
     }
 
+    public static bool AllowedToBeDoubleKick(Note note, Song.Difficulty difficulty)
+    {
+        return note.IsOpenNote() && difficulty == Song.Difficulty.Expert;
+    }
+
     public static Note.Flags GetFlagsToSetType(this Note note, Note.NoteType type)
     {
         Note.Flags flags = Note.Flags.None;
