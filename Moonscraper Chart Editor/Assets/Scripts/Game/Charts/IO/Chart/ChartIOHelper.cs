@@ -17,6 +17,7 @@ namespace MoonscraperChartEditor.Song.IO
             ;
 
         public const int c_proDrumsOffset = 64;
+        public const int c_instrumentPlusOffset = 32;
 
         public static readonly Dictionary<int, int> c_guitarNoteNumLookup = new Dictionary<int, int>()
     {
@@ -51,6 +52,7 @@ namespace MoonscraperChartEditor.Song.IO
         { c_proDrumsOffset + 2, Note.Flags.ProDrums_Cymbal },       // Yellow save num from c_drumNoteNumLookup
         { c_proDrumsOffset + 3, Note.Flags.ProDrums_Cymbal },       // Blue save num from c_drumNoteNumLookup
         { c_proDrumsOffset + 4, Note.Flags.ProDrums_Cymbal },       // Orange (Green in 4-lane) save num from c_drumNoteNumLookup
+        { c_instrumentPlusOffset, Note.Flags.InstrumentPlus },      // Double Kick
     };
 
         // Default flags, mark as cymbal for pro drums automatically. Also used for choosing whether to write flag information or not if it's like this by default in the first place.

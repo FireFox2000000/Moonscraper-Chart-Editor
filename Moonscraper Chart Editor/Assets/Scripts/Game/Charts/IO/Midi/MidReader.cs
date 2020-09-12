@@ -78,6 +78,9 @@ namespace MoonscraperChartEditor.Song.IO
         { MidIOHelper.SOLO_NOTE, (in NoteProcessParams noteProcessParams) => {
             ProcessNoteOnEventAsEvent(noteProcessParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
         }},
+        { MidIOHelper.DOUBLE_KICK_NOTE, (in NoteProcessParams noteProcessParams) => {
+            ProcessNoteOnEventAsNote(noteProcessParams, Song.Difficulty.Expert, (int)Note.DrumPad.Kick, Note.Flags.InstrumentPlus);
+        }},
     };
 
         static MidReader()

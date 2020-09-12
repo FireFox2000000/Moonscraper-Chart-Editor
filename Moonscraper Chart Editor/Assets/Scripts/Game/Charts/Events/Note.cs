@@ -71,6 +71,10 @@ namespace MoonscraperChartEditor.Song
 
             // RB Pro Drums
             ProDrums_Cymbal = 1 << 6,
+
+            // Generic flag that mainly represents mechanics from Guitar Hero's Expert+ filtered drum notes such as Double Kick. This may apply to any difficulty now though.
+            InstrumentPlus = 1 << 7,
+            DoubleKick = InstrumentPlus,
         }
 
         public const Flags PER_NOTE_FLAGS = Flags.ProDrums_Cymbal;

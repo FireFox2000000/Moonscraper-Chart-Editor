@@ -25,6 +25,7 @@ namespace MoonscraperChartEditor.Song.IO
         public const byte STARPOWER_NOTE = 0x74;   // 116, http://docs.c3universe.com/rbndocs/index.php?title=Overdrive_and_Big_Rock_Endings
         public const string SoloEventText = "solo";
         public const string SoloEndEventText = "soloend";
+        public const int DOUBLE_KICK_NOTE = 95;
 
         public const int PhraseMarker = 105; // http://docs.c3universe.com/rbndocs/index.php?title=Vocal_Authoring
         public const string PhraseStartText = "phrase_start";

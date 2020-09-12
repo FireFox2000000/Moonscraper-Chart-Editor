@@ -971,6 +971,12 @@ namespace MoonscraperChartEditor.Song.IO
             int difficultyNumber;
             int offset;
 
+            // Double kick, ala instrument+, kinda hacky
+            if (gameMode == Chart.GameMode.Drums && (note.flags & Note.Flags.DoubleKick) != 0 && note.IsOpenNote())
+            {
+                return MidIOHelper.DOUBLE_KICK_NOTE;
+            }
+
             if (!c_gameModeNoteWriteOffsetDictLookup.TryGetValue(gameMode, out noteToMidiOffsetDict))
                 throw new System.Exception("Unhandled game mode, unable to get offset dictionary");
 

@@ -73,6 +73,10 @@ namespace MoonscraperChartEditor.Song.IO
             { 4, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Orange); }},
             { 5, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Green); }},
 
+            { ChartIOHelper.c_instrumentPlusOffset, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Kick, Note.Flags.DoubleKick);
+            } },
+
             { ChartIOHelper.c_proDrumsOffset + 2, (in NoteProcessParams noteProcessParams) => {
                 ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Yellow, Note.Flags.ProDrums_Cymbal);
             } },

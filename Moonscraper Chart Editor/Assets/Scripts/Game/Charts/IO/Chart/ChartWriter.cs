@@ -409,6 +409,12 @@ namespace MoonscraperChartEditor.Song.IO
             else
                 fretNumber = note.rawNote;
 
+            // Write out the instrument+ version of the note if applicable
+            if (writeParameters.exportOptions.forced && (note.flags & Note.Flags.InstrumentPlus) == Note.Flags.InstrumentPlus)
+            {
+                fretNumber += ChartIOHelper.c_instrumentPlusOffset;
+            }
+
             output.AppendFormat(s_noteFormat, fretNumber, (uint)Mathf.Round(note.length * writeParameters.resolutionScaleRatio));
 
             if (writeParameters.exportOptions.forced)
