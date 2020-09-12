@@ -121,8 +121,8 @@ public class ActionBindingsMenu : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        if (!initialised)
-            Setup(InputManager.Instance.devices[0], Globals.gameSettings.controls, MSChartEditorInput.Category.kEditorCategoryMask);
+        //if (!initialised)
+            //Setup(InputManager.Instance.devices[0], Globals.gameSettings.controls, MSChartEditorInput.Category.kEditorCategoryMask);
     }
 
     void Init()

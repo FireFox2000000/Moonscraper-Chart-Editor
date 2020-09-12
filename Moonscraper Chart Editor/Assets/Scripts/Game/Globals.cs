@@ -101,6 +101,12 @@ public class Globals : MonoBehaviour {
         StartCoroutine(AutosaveCheck());
     }
 
+    public static void LoadExternalControls(MSChartEditorInput.MSChartEditorActionContainer controls)
+    {
+        gameSettings = new GameSettings();
+        gameSettings.controls = controls;
+    }
+
     void LoadGameSettings()
     {
         gameSettings.Load(GetConfigPath(), GetInputBindingsPath());

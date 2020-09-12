@@ -40,11 +40,15 @@ public class ControlsMenuInterface : MonoBehaviour
         Gameplay_ProDrums,
     }
 
+    private void Awake()
+    {
+        SetActionsToEdit();
+        actionBindingsMenu.Setup(GetCurrentInputDevice(), actionsToEdit, GetCurrentActionCategoryMask());
+    }
+
     private void Start()
     {
         InputManager.Instance.disconnectEvent.Register(OnDeviceDisconnect);
-
-        SetActionsToEdit();
     }
 
     void SetActionsToEdit()
@@ -55,6 +59,7 @@ public class ControlsMenuInterface : MonoBehaviour
             {
                 actionsToEdit = JsonUtility.FromJson<MSChartEditorInput.MSChartEditorActionContainer>(defaultControlsFile.text);
                 actionsToEdit.LoadFromSaveData(actionsToEdit);
+                Globals.LoadExternalControls(actionsToEdit);
             }
             else
             {
