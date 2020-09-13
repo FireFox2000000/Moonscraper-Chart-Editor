@@ -60,6 +60,8 @@ public class NoteVisuals3DManager : NoteVisualsManager
             Chart.GameMode gameMode = editor.currentGameMode;
             Note.NoteType visualNoteType = noteType;
 
+            Vector3 scale = new Vector3(1, 1, 1);
+
             // Determine materials
             if (note.IsOpenNote())
             {
@@ -82,12 +84,11 @@ public class NoteVisuals3DManager : NoteVisualsManager
                         colourIndex = isTool ? 4 : 0;
                 }
 
-                Vector3 scale = new Vector3(1, 1, 1);
+                
                 if ((note.flags & Note.Flags.DoubleKick) != 0)
                 {
                     scale.x = 0.8f;
                 }
-                transform.localScale = scale;
 
                 materials[2] = resources.openMaterials[colourIndex];
             }
@@ -149,6 +150,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
                 materials = GetMaterials(colorMat, visualNoteType);
             }
 
+            transform.localScale = scale;
             noteRenderer.sharedMaterials = materials;
         }
     }
