@@ -972,7 +972,7 @@ namespace MoonscraperChartEditor.Song.IO
             int offset;
 
             // Double kick, ala instrument+, kinda hacky
-            if (gameMode == Chart.GameMode.Drums && (note.flags & Note.Flags.DoubleKick) != 0 && note.IsOpenNote())
+            if (gameMode == Chart.GameMode.Drums && (note.flags & Note.Flags.DoubleKick) != 0 && NoteFunctions.AllowedToBeDoubleKick(note, difficulty))
             {
                 return MidIOHelper.DOUBLE_KICK_NOTE;
             }

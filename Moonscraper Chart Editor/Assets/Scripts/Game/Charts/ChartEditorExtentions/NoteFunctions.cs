@@ -229,6 +229,11 @@ public static class NoteFunctions {
         return note.IsOpenNote() && difficulty == Song.Difficulty.Expert;
     }
 
+    public static bool AllowedToBeDoubleKickIgnoreDifficulty(Note note)
+    {
+        return note.IsOpenNote();
+    }
+
     public static Note.Flags GetFlagsToSetType(this Note note, Note.NoteType type)
     {
         Note.Flags flags = Note.Flags.None;
@@ -274,6 +279,11 @@ public static class NoteFunctions {
 
             default:
                 break;
+        }
+
+        if (((note.flags & Note.Flags.DoubleKick) != 0) && AllowedToBeDoubleKickIgnoreDifficulty(note))
+        {
+            flags |= Note.Flags.DoubleKick;
         }
 
         return flags;
@@ -341,6 +351,9 @@ public static class NoteFunctions {
 
         if (!AllowedToBeCymbal(note))
             flags &= ~Note.Flags.ProDrums_Cymbal;
+
+        if (!AllowedToBeDoubleKickIgnoreDifficulty(note))
+            flags &= ~Note.Flags.DoubleKick;
 
         flags &= ~Note.GetBannedFlagsForGameMode(chart.gameMode);   // This may happen when copying and pasting notes between instruments etc
 

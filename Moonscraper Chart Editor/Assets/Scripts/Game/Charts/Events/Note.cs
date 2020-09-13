@@ -77,7 +77,7 @@ namespace MoonscraperChartEditor.Song
             DoubleKick = InstrumentPlus,
         }
 
-        public const Flags PER_NOTE_FLAGS = Flags.ProDrums_Cymbal;
+        public const Flags PER_NOTE_FLAGS = Flags.ProDrums_Cymbal | Flags.InstrumentPlus;
 
         private readonly ID _classID = ID.Note;
 

@@ -44,6 +44,7 @@ namespace MoonscraperChartEditor.Song.IO
             public uint scaledTick;
             public float resolutionScaleRatio;
             public Song.Instrument instrument;
+            public Song.Difficulty difficulty;
             public ExportOptions exportOptions;
         }
         delegate void AppendSongObjectData(SongObject so, in SongObjectWriteParameters writeParameters, StringBuilder output);
@@ -176,7 +177,7 @@ namespace MoonscraperChartEditor.Song.IO
                                         break;
                                 }
 
-                                chartString = GetSaveString(song, song.GetChart(instrument, chartDiff).chartObjects, exportOptions, ref errorList, instrument);
+                                chartString = GetSaveString(song, song.GetChart(instrument, chartDiff).chartObjects, exportOptions, ref errorList, instrument, chartDiff);
 
                                 if (exit)
                                     break;
@@ -255,7 +256,14 @@ namespace MoonscraperChartEditor.Song.IO
             return saveString;
         }
 
-        string GetSaveString<T>(Song song, IList<T> list, ExportOptions exportOptions, ref string out_errorList, Song.Instrument instrument = Song.Instrument.Guitar) where T : SongObject
+        string GetSaveString<T>(
+            Song song, 
+            IList<T> list, 
+            ExportOptions exportOptions, 
+            ref string out_errorList, 
+            Song.Instrument instrument = Song.Instrument.Guitar, 
+            Song.Difficulty difficulty = Song.Difficulty.Expert
+        ) where T : SongObject
         {
             System.Text.StringBuilder saveString = new System.Text.StringBuilder();
 
@@ -264,6 +272,7 @@ namespace MoonscraperChartEditor.Song.IO
             SongObjectWriteParameters writeParameters = new SongObjectWriteParameters();
             writeParameters.resolutionScaleRatio = resolutionScaleRatio;
             writeParameters.instrument = instrument;
+            writeParameters.difficulty = difficulty;
             writeParameters.exportOptions = exportOptions;
 
             for (int i = 0; i < list.Count; ++i)
@@ -394,6 +403,7 @@ namespace MoonscraperChartEditor.Song.IO
             int fretNumber;
 
             Song.Instrument instrument = writeParameters.instrument;
+            Song.Difficulty difficulty = writeParameters.difficulty;
 
             if (writeParameters.instrument != Song.Instrument.Unrecognised)
             {
@@ -410,7 +420,7 @@ namespace MoonscraperChartEditor.Song.IO
                 fretNumber = note.rawNote;
 
             // Write out the instrument+ version of the note if applicable
-            if (writeParameters.exportOptions.forced && (note.flags & Note.Flags.InstrumentPlus) == Note.Flags.InstrumentPlus)
+            if (writeParameters.exportOptions.forced && (note.flags & Note.Flags.DoubleKick) != 0 && NoteFunctions.AllowedToBeDoubleKick(note, difficulty))
             {
                 fretNumber += ChartIOHelper.c_instrumentPlusOffset;
             }
