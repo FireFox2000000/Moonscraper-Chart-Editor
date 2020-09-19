@@ -31504,7 +31504,7 @@ MonoBehaviour:
   m_Text: "Q. How do I create and edit sustains?\nA. Sustains can adjusted on notes
     and starpower objects by right-clicking and dragging on a note, starpower, or
     an existing sustain.\n\nQ. How do I create open notes?\nA. With the note tool
-    selected, press the '6' key on your keyboard to switch to open notes. To switch
+    selected, press the '0' key on your keyboard to switch to open notes. To switch
     back, press one of the keys 1-5. \n\nQ. Why is part of my chart cutoff at the
     end?\nA. Moonscraper uses the song audio file to determine how long a song is.
     If there is no audio loaded for the song parameter, Moonscraper only gives a default
@@ -31559,7 +31559,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.13999367}
+  m_AnchoredPosition: {x: 0, y: 0.13998795}
   m_SizeDelta: {x: 0.21490002, y: 36.48}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1317847545
@@ -43119,7 +43119,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.1350098, y: -202.10005}
+  m_AnchoredPosition: {x: -1.1350098, y: -202.10007}
   m_SizeDelta: {x: -16.200012, y: 273.1942}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1783824858
