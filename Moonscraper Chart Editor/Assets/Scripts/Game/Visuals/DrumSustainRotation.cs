@@ -31,7 +31,9 @@ public class DrumSustainRotation : MonoBehaviour {
             defaultSustainResources.sustainColours[STANDARD_FRETS - 1].SetColor("_Color", sustainColors[0]);
 
             for (int i = 1; i < STANDARD_FRETS; ++i)
-                defaultSustainResources.sustainColours[i - 1].SetColor("_Color", sustainColors[i]);
+            {
+                defaultSustainResources.sustainColours[i - 1].SetColor("_Color", sustainColors[i >= laneCount ? 0 : i]);
+            }
         }
         else
         {
