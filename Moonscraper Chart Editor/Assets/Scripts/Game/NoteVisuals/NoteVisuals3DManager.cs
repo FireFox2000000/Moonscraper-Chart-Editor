@@ -84,12 +84,6 @@ public class NoteVisuals3DManager : NoteVisualsManager
                         colourIndex = isTool ? 4 : 0;
                 }
 
-                
-                if ((note.flags & Note.Flags.DoubleKick) != 0)
-                {
-                    scale.x = 0.8f;
-                }
-
                 materials[2] = resources.openMaterials[colourIndex];
             }
             else
@@ -153,6 +147,8 @@ public class NoteVisuals3DManager : NoteVisualsManager
             transform.localScale = scale;
             noteRenderer.sharedMaterials = materials;
         }
+
+        UpdateTextDisplay(note);
     }
 
     Material[] GetMaterials(Material colorMat, Note.NoteType visualNoteType)

@@ -6,6 +6,7 @@ using MoonscraperChartEditor.Song;
 
 public class NoteVisualsManager : MonoBehaviour {
     public NoteController nCon;
+    public TMPro.TextMeshPro text;
     [SerializeField]
     protected bool isTool = false;
     protected Renderer noteRenderer;
@@ -37,11 +38,6 @@ public class NoteVisualsManager : MonoBehaviour {
             {
                 noteType = Note.NoteType.Strum;
             }
-
-            if (note.ShouldBeCulledFromLanes(ChartEditor.Instance.laneInfo))
-            {
-                noteType = Note.NoteType.Tap;   // Gives the user some kind of clue that this note has come from the 5th lane
-            } 
         }
 
         return noteType;
@@ -96,5 +92,32 @@ public class NoteVisualsManager : MonoBehaviour {
         }
 
         return specialType;
+    }
+
+    protected void UpdateTextDisplay(Note note)
+    {
+        if (!text)
+            return;
+
+        bool isDoubleKick = Globals.drumMode && note.IsOpenNote() && ((note.flags & Note.Flags.DoubleKick) != 0);
+        bool culledFromLanes = note.ShouldBeCulledFromLanes(ChartEditor.Instance.laneInfo);
+
+        bool active = isDoubleKick | culledFromLanes;
+
+        Vector3 position = Vector3.zero;
+        position.z = -0.3f;  // Places the text above the note due to rotation
+
+        if (isDoubleKick)
+        {
+            position.x = 1.5f;
+            text.text = "2x";
+        }
+        else if (culledFromLanes)
+        {
+            text.text = "Lane Merged";
+        }
+
+        text.transform.localPosition = position;
+        text.gameObject.SetActive(active);
     }
 }

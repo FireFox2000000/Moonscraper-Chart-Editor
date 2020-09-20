@@ -51,10 +51,6 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                 if (note.guitarFret == Note.GuitarFret.Open)
                 {
                     float xScale = 1.2f;
-                    if ((note.flags & Note.Flags.DoubleKick) != 0)
-                    {
-                        xScale *= 0.8f;
-                    }
                     scale = new Vector3(xScale, 1, 1);
                 }
                 else if (specialType == Note.SpecialType.StarPower)
@@ -81,7 +77,9 @@ public class NoteVisuals2DManager : NoteVisualsManager {
             }
         }
 
-        transform.localScale = scale; 
+        transform.localScale = scale;
+
+        UpdateTextDisplay(note);
     }
 
     void UpdateGlobalAnimationFrame()
