@@ -52,7 +52,7 @@ public class CustomFretManager : HitAnimation
         }
     }
 
-    void SetFrets()
+    public void SetFrets()
     {
         if (Globals.drumMode)
             SetDrumFrets();
@@ -73,18 +73,28 @@ public class CustomFretManager : HitAnimation
     {
         if (drumFretBase != null)
             fretBaseRen.sprite = drumFretBase;
+        else
+            fretBaseRen.sprite = fretBase;
 
         if (drumFretCover != null)
             fretCoverRen.sprite = drumFretCover;
+        else
+            fretCoverRen.sprite = fretCover;
 
         if (drumFretPress != null)
             fretPressRen.sprite = drumFretPress;
+        else
+            fretPressRen.sprite = fretPress;
 
         if (drumFretRelease != null)
             fretReleaseRen.sprite = drumFretRelease;
+        else
+            fretReleaseRen.sprite = fretRelease;
 
         if (drumToAnimate != null)
             toAnimateRen.sprite = drumToAnimate;
+        else
+            toAnimateRen.sprite = toAnimate;
     }
 
     public override void StopAnim()

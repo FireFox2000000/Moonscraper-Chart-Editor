@@ -28,6 +28,11 @@ public class AssignCustomResources : MonoBehaviour {
         }
     }
 
+    private void Start()
+    {
+        ChartEditor.Instance.events.lanesChangedEvent.Register(OnLanesChanged);
+    }
+
     void SetSpriteTextures(Sprite[] sprites, Texture2D[] customTextures)
     {
         for (int i = 0; i < customTextures.Length; ++i)
@@ -96,12 +101,17 @@ public class AssignCustomResources : MonoBehaviour {
 
     void AssignFretSprites()
     {
+        Debug.Log("Assigning custom fret sprites");
+
         Skin customSkin = SkinManager.Instance.currentSkin;
+        int laneCount = ChartEditor.Instance.laneInfo.laneCount;
 
         for (int i = 0; i < customFrets.Length; ++i)
         {
+            int skinSpriteIndex = i >= laneCount - 1 ? customFrets.Length - 1 : i;
+
             // Standard Frets
-            Sprite sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xFretBase);
+            Sprite sprite = SkinManager.Instance.currentSkin.GetSprite(skinSpriteIndex + SkinKeys.xFretBase);
             //Sprite sprite = null;
             if (sprite)
             {
@@ -109,28 +119,28 @@ public class AssignCustomResources : MonoBehaviour {
                 customFrets[i].gameObject.SetActive(true);
             }
 
-            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xFretCover);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(skinSpriteIndex + SkinKeys.xFretCover);
             if (sprite)
             {
                 customFrets[i].fretCover = sprite;
                 customFrets[i].gameObject.SetActive(true);
             }
 
-            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xFretPress);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(skinSpriteIndex + SkinKeys.xFretPress);
             if (sprite)
             {
                 customFrets[i].fretPress = sprite;
                 customFrets[i].gameObject.SetActive(true);
             }
 
-            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xFretRelease);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(skinSpriteIndex + SkinKeys.xFretRelease);
             if (sprite)
             {
                 customFrets[i].fretRelease = sprite;
                 customFrets[i].gameObject.SetActive(true);
             }
 
-            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xFretAnim);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(skinSpriteIndex + SkinKeys.xFretAnim);
             if (sprite)
             {
                 customFrets[i].toAnimate = sprite;
@@ -138,23 +148,23 @@ public class AssignCustomResources : MonoBehaviour {
             }
 
             // Drum Frets         
-            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xDrumFretBase);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(skinSpriteIndex + SkinKeys.xDrumFretBase);
             if (sprite)
                 customFrets[i].drumFretBase = sprite;
 
-            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xDrumFretCover);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(skinSpriteIndex + SkinKeys.xDrumFretCover);
             if (sprite)
                 customFrets[i].drumFretCover = sprite;
 
-            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xDrumFretPress);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(skinSpriteIndex + SkinKeys.xDrumFretPress);
             if (sprite)
                 customFrets[i].drumFretPress = sprite;
 
-            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xDrumFretRelease);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(skinSpriteIndex + SkinKeys.xDrumFretRelease);
             if (sprite)
                 customFrets[i].drumFretRelease = sprite;
 
-            sprite = SkinManager.Instance.currentSkin.GetSprite(i + SkinKeys.xDrumFretAnim);
+            sprite = SkinManager.Instance.currentSkin.GetSprite(skinSpriteIndex + SkinKeys.xDrumFretAnim);
             if (sprite)
                 customFrets[i].drumToAnimate = sprite;
         }
@@ -185,6 +195,16 @@ public class AssignCustomResources : MonoBehaviour {
                 customFretsGHL[i].pressRen.sprite = sprite;
                 customFretsGHL[i].canUse = true;
             }
+        }
+    }
+
+    void OnLanesChanged(in int laneCount)
+    {
+        AssignFretSprites();
+
+        foreach(var fretManager in customFrets)
+        {
+            fretManager.SetFrets();
         }
     }
 
