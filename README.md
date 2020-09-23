@@ -6,6 +6,8 @@
 ## About
 Moonscraper Chart Editor is a song editor for Guitar Hero style rhythm games mainly intended to support the custom song creation for games such as Guitar Hero, Clone Hero and Rock Band.
 
+Trailer- https://www.youtube.com/watch?v=G8Qd32TZz4A
+
 ### Games that use Moonscraper code:
 - Clone Hero (https://clonehero.net/)
 
