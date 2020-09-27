@@ -109,7 +109,7 @@ public class NoteVisualsManager : MonoBehaviour {
 
         if (isDoubleKick)
         {
-            position.x = 1.5f;
+            position.x = -1.5f;
             text.text = "2x";
         }
         else if (culledFromLanes)
