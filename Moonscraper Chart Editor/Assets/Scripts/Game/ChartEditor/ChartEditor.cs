@@ -955,7 +955,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             stream.volume = vol * Globals.gameSettings.vol_master;
             stream.pan = Globals.gameSettings.audio_pan;
 
-            if (speed < 1)
+            if (speed < 1 && !Globals.gameSettings.slowdownPitchCorrectionEnabled)
             {
                 float originalFreq = stream.frequency;
 
@@ -966,10 +966,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                     freq = 100000;
 
                 stream.frequency = freq;
-#if false
-                // Pitch shifting equation
-                Bass.BASS_ChannelSetAttribute(handle, BASSAttribute.BASS_ATTRIB_TEMPO_PITCH, Mathf.Log(1.0f / speed, Mathf.Pow(2, 1.0f / 12.0f)));
-#endif
+
+                //    // Pitch shifting equation
+                //    stream.tempoPitch = Mathf.Log(1.0f / speed, Mathf.Pow(2, 1.0f / 12.0f));
             }
             else
             {

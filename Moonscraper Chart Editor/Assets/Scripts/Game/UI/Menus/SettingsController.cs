@@ -22,6 +22,7 @@ public class SettingsController : DisplayMenu
     public Toggle resetAfterPlay;
     public Toggle resetAfterGameplay;
     public Toggle autoValidateSongOnSave;
+    public Toggle slowdownPitchCorrectionEnabled;
 
     public Slider musicSourceSlider;
     public Slider guitarSourceSlider;
@@ -219,6 +220,7 @@ public class SettingsController : DisplayMenu
         resetAfterPlay.isOn = Globals.gameSettings.resetAfterPlay;
         resetAfterGameplay.isOn = Globals.gameSettings.resetAfterGameplay;
         autoValidateSongOnSave.isOn = Globals.gameSettings.autoValidateSongOnSave;
+        slowdownPitchCorrectionEnabled.isOn = Globals.gameSettings.slowdownPitchCorrectionEnabled;
 
         gameplayStartDelayDropdown.value = (int)(Globals.gameSettings.gameplayStartDelayTime * 2.0f);
 
@@ -303,6 +305,11 @@ public class SettingsController : DisplayMenu
     public void SetAutoValidateSongOnSave(bool value)
     {
         Globals.gameSettings.autoValidateSongOnSave = value;
+    }
+
+    public void SetSlowdownPitchCorrectionEnabled(bool value)
+    {
+        Globals.gameSettings.slowdownPitchCorrectionEnabled = value;
     }
 
     public void IncrementSustainsGapStep()

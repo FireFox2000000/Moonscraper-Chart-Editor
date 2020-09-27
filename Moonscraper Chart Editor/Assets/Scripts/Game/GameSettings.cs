@@ -48,6 +48,7 @@ public class GameSettings
     public bool sustainGapIsTimeBased = false;
     public bool resetAfterPlay = false;
     public bool resetAfterGameplay = false;
+    public bool slowdownPitchCorrectionEnabled = false;
 
     public int audioCalibrationMS = 0;                     // Increase to start the audio sooner
     public int clapCalibrationMS = 0;
@@ -139,6 +140,7 @@ public class GameSettings
             gameplayStartDelayTime = (float)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Gameplay Start Delay", 3.0f);
             resetAfterPlay = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Reset After Play", false);
             resetAfterGameplay = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Reset After Gameplay", false);
+            slowdownPitchCorrectionEnabled = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Slowdown Pitch Correction Enabled", false);
             customBgSwapTime = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Custom Background Swap Time", 30);
             drumsLaneCount = iniparse.ReadValue(SECTION_NAME_SETTINGS, "Drums Lane Count", 5);
             drumsModeOptions = (DrumModeOptions)iniparse.ReadValue(SECTION_NAME_SETTINGS, "Drums Mode", (int)DrumModeOptions.Standard);
@@ -231,6 +233,7 @@ public class GameSettings
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Gameplay Start Delay", gameplayStartDelayTime);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Reset After Play", resetAfterPlay);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Reset After Gameplay", resetAfterGameplay);
+            iniparse.WriteValue(SECTION_NAME_SETTINGS, "Slowdown Pitch Correction Enabled", slowdownPitchCorrectionEnabled);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Custom Background Swap Time", customBgSwapTime);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Drums Lane Count", drumsLaneCount);
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Drums Mode", (int)drumsModeOptions);
