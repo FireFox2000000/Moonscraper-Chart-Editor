@@ -27,6 +27,8 @@ public class GroupSelectPanelController : MonoBehaviour
     Button setNoteTap;
     [SerializeField]
     Button setNoteCymbal;
+    [SerializeField]
+    Button altDoubleKick;
 
     Dictionary<Chart.GameMode, Dropdown> laneSelectForGamemodeLookup = new Dictionary<Chart.GameMode, Dropdown>();
     Dictionary<Chart.GameMode, Dictionary<int, Dropdown>> laneSelectLaneCountOverrideLookup = new Dictionary<Chart.GameMode, Dictionary<int, Dropdown>>();
@@ -34,6 +36,8 @@ public class GroupSelectPanelController : MonoBehaviour
 
     // Use this for initialization
     void Start () {
+        //fretSelectDropdown = transform.Find("Fret Select").GetComponent<Dropdown>();
+
         // Setup lane selector dictionaries and hide all selector varients
         {
             laneSelectForGamemodeLookup[Chart.GameMode.Guitar] = fretSelectDropdown;
@@ -101,10 +105,12 @@ public class GroupSelectPanelController : MonoBehaviour
         currentFretSelector.gameObject.SetActive(true);
 
         bool drumsMode = Globals.drumMode;
+        bool proDrumsMode = drumsMode && Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums;
         setNoteStrum.gameObject.SetActive(!drumsMode);
         setNoteHopo.gameObject.SetActive(!drumsMode);
         setNoteTap.gameObject.SetActive(!drumsMode);
-        setNoteCymbal.gameObject.SetActive(drumsMode && Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums);
+        setNoteCymbal.gameObject.SetActive(proDrumsMode);
+        altDoubleKick.gameObject.SetActive(proDrumsMode && ChartEditor.Instance.currentDifficulty == Song.Difficulty.Expert);
     }
 
     void Shortcuts()
@@ -276,6 +282,41 @@ public class GroupSelectPanelController : MonoBehaviour
                 newNote.flags = note.GetFlagsToSetType(type);
                 songEditCommands.Add(new SongEditModifyValidated(note, newNote));
                 objectsToSelect.Add(newNote);
+            }
+        }
+
+        if (songEditCommands.Count > 0)
+        {
+            editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
+        }
+    }
+
+    public void AlternateDoubleKick()
+    {
+        List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
+
+        bool applyDoubleKick = false;
+        foreach (ChartObject chartObject in editor.selectedObjectsManager.currentSelectedObjects)
+        {
+            if (chartObject.classID == (int)SongObject.ID.Note)
+            {
+                Note note = chartObject as Note;
+                if (note.IsOpenNote())
+                {
+                    Note newNote = new Note(note);
+
+                    if (applyDoubleKick)
+                    {
+                        newNote.flags |= Note.Flags.DoubleKick;
+                    }
+                    else
+                    {
+                        newNote.flags &= ~Note.Flags.DoubleKick;
+                    }
+
+                    songEditCommands.Add(new SongEditModifyValidated(note, newNote));
+                    applyDoubleKick = !applyDoubleKick;
+                }
             }
         }
 
