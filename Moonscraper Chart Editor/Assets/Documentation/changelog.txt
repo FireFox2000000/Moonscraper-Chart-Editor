@@ -1,3 +1,13 @@
+1.3.5.9
+	NEW FEATURES
+	-Added the "Alternate Double Kick" option in the note group selector.
+	-Added checkmarks to the instrument and difficulty dropdowns to tell what chart users are on outside of looking at the window text.
+	-Added setting to enable pitch correction at slower song speeds. However still reduces audio quality when enabled, so not recommended.
+
+	CHANGES
+	-Reorganised note group selector to cover up empty space when inspecting drum notes. 
+	-Move double kick notification over to the left to prevent changes with lane merged note text.
+
 1.3.5.8
 	FIXES
 	-Fixed input misinformation in in-game FAQ screen
