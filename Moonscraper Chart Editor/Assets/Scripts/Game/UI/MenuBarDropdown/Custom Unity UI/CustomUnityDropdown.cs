@@ -25,13 +25,16 @@ namespace UnityEngine.UI
             [SerializeField]
             private Toggle m_Toggle;
             [SerializeField]
-            private string m_SettingsToggleKey;
+            private ToggleIsOnEvent m_ToggleCheckEvent;
+            [SerializeField]
+            private bool m_HideOnSelectItem = true;
 
             public Text text { get { return m_Text; } set { m_Text = value; } }
             public Image image { get { return m_Image; } set { m_Image = value; } }
             public RectTransform rectTransform { get { return m_RectTransform; } set { m_RectTransform = value; } }
             public Toggle toggle { get { return m_Toggle; } set { m_Toggle = value; } }
-            public string settingsToggleKey { get { return m_SettingsToggleKey; } set { m_SettingsToggleKey = value; } }
+            public ToggleIsOnEvent toggleCheckEvent { get { return m_ToggleCheckEvent; } set { m_ToggleCheckEvent = value; } }
+            public bool hideOnSelectItem { get { return m_HideOnSelectItem; } set { m_HideOnSelectItem = value; } }
 
             public virtual void OnPointerEnter(PointerEventData eventData)
             {
@@ -54,11 +57,14 @@ namespace UnityEngine.UI
             [SerializeField]
             private Sprite m_Image;
             [SerializeField]
-            private string m_SettingsToggleKey;
+            private ToggleIsOnEvent m_ToggleCheckEvent;
+            [SerializeField]
+            private bool m_HideOnSelectItem = true;
 
             public string text { get { return m_Text; } set { m_Text = value; } }
             public Sprite image { get { return m_Image; } set { m_Image = value; } }
-            public string settingsToggleKey { get { return m_SettingsToggleKey; } set { m_SettingsToggleKey = value; } }
+            public ToggleIsOnEvent toggleCheckEvent { get { return m_ToggleCheckEvent; } set { m_ToggleCheckEvent = value; } }
+            public bool hideOnSelectItem { get { return m_HideOnSelectItem; } set { m_HideOnSelectItem = value; } }
 
             public OptionData()
             {
@@ -97,6 +103,8 @@ namespace UnityEngine.UI
 
         [Serializable]
         public class DropdownEvent : UnityEvent<int> { }
+        [Serializable]
+        public class ToggleIsOnEvent : UnityEvent<Toggle> { }
 
         // Template used to create the dropdown.
         [SerializeField]
@@ -380,7 +388,7 @@ namespace UnityEngine.UI
                     continue;
 
                 // Automatically set up a toggle state change listener
-                item.toggle.isOn = Globals.gameSettings.GetBoolSetting(item.settingsToggleKey);
+                item.toggleCheckEvent.Invoke(item.toggle);
                 item.toggle.onValueChanged.AddListener(x => OnSelectItem(item));
 
                 // Select current option
@@ -460,14 +468,9 @@ namespace UnityEngine.UI
         {
             foreach (DropdownItem item in m_Items)
             {
-                if (item.settingsToggleKey != string.Empty)
-                {
-                    item.blockerActive = true;
-                    {
-                        item.toggle.isOn = Globals.gameSettings.GetBoolSetting(item.settingsToggleKey);
-                    }
-                    item.blockerActive = false;
-                }
+                item.blockerActive = true;
+                item.toggleCheckEvent.Invoke(item.toggle);
+                item.blockerActive = false;
             }
         }
 
@@ -554,7 +557,8 @@ namespace UnityEngine.UI
             }
             if (item)
             {
-                item.settingsToggleKey = data.settingsToggleKey;
+                item.toggleCheckEvent = data.toggleCheckEvent;
+                item.hideOnSelectItem = data.hideOnSelectItem;
             }
 
             items.Add(item);
@@ -644,7 +648,7 @@ namespace UnityEngine.UI
 
             value = selectedIndex;
 
-            if (item.settingsToggleKey == string.Empty)
+            if (item.hideOnSelectItem)
             {
                 Hide();
             }

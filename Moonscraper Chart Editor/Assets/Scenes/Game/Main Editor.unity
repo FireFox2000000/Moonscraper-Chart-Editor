@@ -850,6 +850,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1928761971}
     m_Modifications:
+    - target: {fileID: 1141047688010848, guid: e059237f4ab0a8341a8610f2299fa390, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1960828080262826, guid: e059237f4ab0a8341a8610f2299fa390, type: 3}
       propertyPath: m_Name
       value: Instrument Dropdown
@@ -872,6 +876,46 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[4].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[5].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[6].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[7].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
@@ -952,6 +996,256 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Value
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetGuitarInstrumentToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetGuitarCoopInstrumentToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetBassInstrumentToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetRhythmInstrumentToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[4].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[4].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[4].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[4].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetDrumsInstrumentToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[4].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[5].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[5].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[5].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[5].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetKeysInstrumentToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[5].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[6].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[6].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[6].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[6].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetGHLiveGuitarInstrumentToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[6].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[7].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[7].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[7].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[7].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetGHLiveBassInstrumentToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[7].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[4].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[5].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[6].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[7].m_HideOnSelectItem
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114929707378805138, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
@@ -1455,12 +1749,12 @@ PrefabInstance:
     - target: {fileID: 224833688039011170, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 14.299995
+      value: 24.51
       objectReference: {fileID: 0}
     - target: {fileID: 224833688039011170, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 27.800003
+      value: 48.212593
       objectReference: {fileID: 0}
     - target: {fileID: 224833688039011170, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
@@ -1470,7 +1764,7 @@ PrefabInstance:
     - target: {fileID: 224833688039011170, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.4
+      value: 0.4000001
       objectReference: {fileID: 0}
     - target: {fileID: 224833688039011170, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
@@ -1481,6 +1775,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0.29999924
+      objectReference: {fileID: 0}
+    - target: {fileID: 224858410814867314, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 92.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e059237f4ab0a8341a8610f2299fa390, type: 3}
@@ -2851,8 +3150,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1009914421}
   m_HandleRect: {fileID: 1009914420}
   m_Direction: 2
-  m_Value: 0.000108988854
-  m_Size: 0.9961622
+  m_Value: 0
+  m_Size: 0
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -10975,7 +11274,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.7999878, y: -101.90007}
+  m_AnchoredPosition: {x: -0.7999878, y: -101.900085}
   m_SizeDelta: {x: -23.005035, y: 203.77327}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &504753108
@@ -30450,6 +30749,26 @@ PrefabInstance:
       propertyPath: m_Options.m_Options.Array.data[3].m_Text
       value: Controls
       objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 114929707378805138, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
       propertyPath: menuEvent.Array.size
@@ -31572,7 +31891,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.14001083}
+  m_AnchoredPosition: {x: 0, y: 0.14002228}
   m_SizeDelta: {x: 0.21490002, y: 36.48}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1317847545
@@ -33107,7 +33426,37 @@ PrefabInstance:
     - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
       propertyPath: m_Value
-      value: 5
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[4].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[5].m_HideOnSelectItem
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114929707378805138, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
@@ -33584,6 +33933,31 @@ PrefabInstance:
       propertyPath: rootCanvas
       value: 
       objectReference: {fileID: 1348291767}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[4].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 114929707378805138, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
       propertyPath: menuEvent.Array.size
@@ -40901,6 +41275,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1928761971}
     m_Modifications:
+    - target: {fileID: 1141047688010848, guid: e059237f4ab0a8341a8610f2299fa390, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1960828080262826, guid: e059237f4ab0a8341a8610f2299fa390, type: 3}
       propertyPath: m_Name
       value: Difficulty Dropdown
@@ -40923,6 +41301,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
@@ -40978,6 +41376,126 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Value
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetExpertToggleCheckbox
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetHardToggleCheckbox
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetMediumToggleCheckbox
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetEasyToggleCheckbox
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_HideOnSelectItem
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114929707378805138, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
@@ -41243,15 +41761,20 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 224812020526667012, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 7.699999
+      objectReference: {fileID: 0}
     - target: {fileID: 224833688039011170, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 4.4000015
+      value: 11.79
       objectReference: {fileID: 0}
     - target: {fileID: 224833688039011170, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.4
+      value: 0.4000001
       objectReference: {fileID: 0}
     - target: {fileID: 224833688039011170, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
@@ -41261,7 +41784,7 @@ PrefabInstance:
     - target: {fileID: 224833688039011170, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 9.100006
+      value: 23.866585
       objectReference: {fileID: 0}
     - target: {fileID: 224833688039011170, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
@@ -43132,7 +43655,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.1350098, y: -202.1003}
+  m_AnchoredPosition: {x: -1.1350098, y: -202.1007}
   m_SizeDelta: {x: -16.200012, y: 273.1942}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1783824858
@@ -50231,6 +50754,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
       propertyPath: m_Options.m_Options.Array.data[0].m_Text
       value: BPM Calculator
       objectReference: {fileID: 0}
@@ -50272,7 +50810,7 @@ PrefabInstance:
     - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
       propertyPath: m_Value
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
@@ -50283,6 +50821,106 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Options.m_Options.Array.data[4].m_SettingsToggleKey
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_HideOnSelectItem
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_HideOnSelectItem
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[4].m_HideOnSelectItem
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_HideOnSelectItem
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetExtendedSustainsSettingToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetKeysModeSettingToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1928761975}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetMetronomeSettingToggle
+      objectReference: {fileID: 0}
+    - target: {fileID: 114818522284670470, guid: e059237f4ab0a8341a8610f2299fa390,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_ToggleCheckEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 114929707378805138, guid: e059237f4ab0a8341a8610f2299fa390,
         type: 3}
@@ -52396,6 +53034,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 652242549}
     m_Modifications:
+    - target: {fileID: 4080964883834491875, guid: 6d3538754e6763149bf3ab76a2bab8e5,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.049999237
+      objectReference: {fileID: 0}
     - target: {fileID: 8905959307905298820, guid: 6d3538754e6763149bf3ab76a2bab8e5,
         type: 3}
       propertyPath: m_AnchorMax.y

@@ -188,4 +188,101 @@ public class MenuBar : UpdateableService {
         playButton.interactable = editor.services.CanPlay();
         gameplayButton.interactable = !Globals.ghLiveMode && editor.services.CanPlay();
     }
+
+    #region Difficulty Checkbox Fns
+    void SetDifficultyToggle(Toggle toggle, Song.Difficulty diff)
+    {
+        toggle.isOn = ChartEditor.Instance.currentDifficulty == diff;
+    }
+
+    public void SetExpertToggleCheckbox(Toggle toggle)
+    {
+        SetDifficultyToggle(toggle, Song.Difficulty.Expert);
+    }
+
+    public void SetHardToggleCheckbox(Toggle toggle)
+    {
+        SetDifficultyToggle(toggle, Song.Difficulty.Hard);
+    }
+
+    public void SetMediumToggleCheckbox(Toggle toggle)
+    {
+        SetDifficultyToggle(toggle, Song.Difficulty.Medium);
+    }
+
+    public void SetEasyToggleCheckbox(Toggle toggle)
+    {
+        SetDifficultyToggle(toggle, Song.Difficulty.Easy);
+    }
+    #endregion
+
+    #region Instrument Checkbox Fns
+    void SetInstrumentToggle(Toggle toggle, Song.Instrument instrument)
+    {
+        toggle.isOn = ChartEditor.Instance.currentInstrument == instrument;
+    }
+
+    public void SetGuitarInstrumentToggle(Toggle toggle)
+    {
+        SetInstrumentToggle(toggle, Song.Instrument.Guitar);
+    }
+
+    public void SetGuitarCoopInstrumentToggle(Toggle toggle)
+    {
+        SetInstrumentToggle(toggle, Song.Instrument.GuitarCoop);
+    }
+
+    public void SetBassInstrumentToggle(Toggle toggle)
+    {
+        SetInstrumentToggle(toggle, Song.Instrument.Bass);
+    }
+
+    public void SetRhythmInstrumentToggle(Toggle toggle)
+    {
+        SetInstrumentToggle(toggle, Song.Instrument.Rhythm);
+    }
+
+    public void SetKeysInstrumentToggle(Toggle toggle)
+    {
+        SetInstrumentToggle(toggle, Song.Instrument.Keys);
+    }
+
+    public void SetDrumsInstrumentToggle(Toggle toggle)
+    {
+        SetInstrumentToggle(toggle, Song.Instrument.Drums);
+    }
+
+    public void SetGHLiveGuitarInstrumentToggle(Toggle toggle)
+    {
+        SetInstrumentToggle(toggle, Song.Instrument.GHLiveGuitar);
+    }
+
+    public void SetGHLiveBassInstrumentToggle(Toggle toggle)
+    {
+        SetInstrumentToggle(toggle, Song.Instrument.GHLiveBass);
+    }
+
+    #endregion
+
+    #region User Settings Toggles
+    void SetSettingsToggleCheckbox(Toggle toggle, string settingsToggleKey)
+    {
+        toggle.isOn = Globals.gameSettings.GetBoolSetting(settingsToggleKey);
+    }
+
+    public void SetExtendedSustainsSettingToggle(Toggle toggle)
+    {
+        SetSettingsToggleCheckbox(toggle, "extendedSustainsEnabled");
+    }
+
+    public void SetKeysModeSettingToggle(Toggle toggle)
+    {
+        SetSettingsToggleCheckbox(toggle, "keysModeEnabled");
+    }
+
+    public void SetMetronomeSettingToggle(Toggle toggle)
+    {
+        SetSettingsToggleCheckbox(toggle, "metronomeActive");
+    }
+    #endregion
 }
