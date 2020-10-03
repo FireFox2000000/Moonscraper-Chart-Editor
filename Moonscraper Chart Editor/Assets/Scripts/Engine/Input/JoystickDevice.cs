@@ -182,14 +182,28 @@ namespace MoonscraperEngine.Input
         {
             var joystickState = GetCurrentJoystickState();
 
-            return joystickState.axisValues[axis];
+            if (axis < joystickState.axisValues.Length)
+            {
+                return joystickState.axisValues[axis];
+            }
+
+            Debug.Assert(false); // Invalid axis index
+
+            return 0;
         }
 
         float GetPreviousAxis(int axis)
         {
             var joystickState = GetPreviousJoystickState();
 
-            return joystickState.axisValues[axis];
+            if (axis < joystickState.axisValues.Length)
+            {
+                return joystickState.axisValues[axis];
+            }
+
+            Debug.Assert(false); // Invalid axis index
+
+            return 0;
         }
 
         HatPosition GetHat(int hatIndex, in JoystickState state)
