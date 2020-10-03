@@ -111,9 +111,7 @@ namespace MoonscraperEngine.Input
 
         void FlipStateBuffer()
         {
-            ++stateCurrentBufferIndex;
-            if (stateCurrentBufferIndex > 1)
-                stateCurrentBufferIndex = 0;
+            stateCurrentBufferIndex ^= 1;
         }
 
         ref JoystickState GetCurrentJoystickState()
@@ -123,10 +121,7 @@ namespace MoonscraperEngine.Input
 
         ref JoystickState GetPreviousJoystickState()
         {
-            int previousBufferIndex = stateCurrentBufferIndex + 1;
-            if (previousBufferIndex > 1)
-                previousBufferIndex = 0;
-
+            int previousBufferIndex = stateCurrentBufferIndex ^ 1;
             return ref statesDoubleBuffer[previousBufferIndex];
         }
 

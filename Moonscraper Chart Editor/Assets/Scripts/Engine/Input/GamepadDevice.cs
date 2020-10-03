@@ -174,9 +174,7 @@ namespace MoonscraperEngine.Input
 
         void FlipGamepadStateBuffer()
         {
-            ++gamepadStateCurrentBufferIndex;
-            if (gamepadStateCurrentBufferIndex > 1)
-                gamepadStateCurrentBufferIndex = 0;
+            gamepadStateCurrentBufferIndex ^= 1;
         }
 
         ref GamepadState GetCurrentGamepadState()
@@ -186,10 +184,7 @@ namespace MoonscraperEngine.Input
 
         ref GamepadState GetPreviousGamepadState()
         {
-            int previousBufferIndex = gamepadStateCurrentBufferIndex + 1;
-            if (previousBufferIndex > 1)
-                previousBufferIndex = 0;
-
+            int previousBufferIndex = gamepadStateCurrentBufferIndex ^ 1;
             return ref statesDoubleBuffer[previousBufferIndex];
         }
 
