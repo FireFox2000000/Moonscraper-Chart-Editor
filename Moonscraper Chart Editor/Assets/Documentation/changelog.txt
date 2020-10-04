@@ -1,3 +1,13 @@
+1.3.6
+	NEW FEATURES
+	-Added group inspector option to set all selected kick notes to double kick.
+	-Allow clicking the "Natural" note type in group inspector to clear double kick flags.
+
+	FIXES
+	-Fixed application breaking due to bad joystick axis mapping.
+	-Fixed eraser tool from deleting regular notes and kick notes at the same time.
+	-Fix clap firing off on notes behind the strikeline. Also fixed the bot from hitting notes in the back end of the window upon playing.
+
 1.3.5.9
 	NEW FEATURES
 	-Added the "Alternate Double Kick" option in the note group selector.
