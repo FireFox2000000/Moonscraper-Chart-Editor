@@ -281,7 +281,7 @@ public static class NoteFunctions {
                 break;
         }
 
-        if (((note.flags & Note.Flags.DoubleKick) != 0) && AllowedToBeDoubleKickIgnoreDifficulty(note))
+        if (type != Note.NoteType.Natural && ((note.flags & Note.Flags.DoubleKick) != 0) && AllowedToBeDoubleKickIgnoreDifficulty(note))
         {
             flags |= Note.Flags.DoubleKick;
         }
