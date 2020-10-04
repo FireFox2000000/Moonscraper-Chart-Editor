@@ -28,6 +28,8 @@ public class GroupSelectPanelController : MonoBehaviour
     [SerializeField]
     Button setNoteCymbal;
     [SerializeField]
+    Button setDoubleKick;
+    [SerializeField]
     Button altDoubleKick;
 
     Dictionary<Chart.GameMode, Dropdown> laneSelectForGamemodeLookup = new Dictionary<Chart.GameMode, Dropdown>();
@@ -106,11 +108,13 @@ public class GroupSelectPanelController : MonoBehaviour
 
         bool drumsMode = Globals.drumMode;
         bool proDrumsMode = drumsMode && Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums;
+        bool doubleKickActive = proDrumsMode && ChartEditor.Instance.currentDifficulty == Song.Difficulty.Expert;
         setNoteStrum.gameObject.SetActive(!drumsMode);
         setNoteHopo.gameObject.SetActive(!drumsMode);
         setNoteTap.gameObject.SetActive(!drumsMode);
         setNoteCymbal.gameObject.SetActive(proDrumsMode);
-        altDoubleKick.gameObject.SetActive(proDrumsMode && ChartEditor.Instance.currentDifficulty == Song.Difficulty.Expert);
+        setDoubleKick.gameObject.SetActive(doubleKickActive);
+        altDoubleKick.gameObject.SetActive(doubleKickActive);
     }
 
     void Shortcuts()
@@ -282,6 +286,31 @@ public class GroupSelectPanelController : MonoBehaviour
                 newNote.flags = note.GetFlagsToSetType(type);
                 songEditCommands.Add(new SongEditModifyValidated(note, newNote));
                 objectsToSelect.Add(newNote);
+            }
+        }
+
+        if (songEditCommands.Count > 0)
+        {
+            editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
+        }
+    }
+
+    public void SetDoubleKick()
+    {
+        List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
+
+        foreach (ChartObject chartObject in editor.selectedObjectsManager.currentSelectedObjects)
+        {
+            if (chartObject.classID == (int)SongObject.ID.Note)
+            {
+                Note note = chartObject as Note;
+                if (note.IsOpenNote() && (note.flags & Note.Flags.DoubleKick) == 0)
+                {
+                    Note newNote = new Note(note);
+                    newNote.flags |= Note.Flags.DoubleKick;
+
+                    songEditCommands.Add(new SongEditModifyValidated(note, newNote));
+                }
             }
         }
 
