@@ -165,6 +165,9 @@ public class ClapPlaybackSystem : SystemManagerState.System
             if (startIndex != SongObjectHelper.NOTFOUND)
             {
                 currentIndex = startIndex;
+
+                if (objects[startIndex].tick < startTick)
+                    ++currentIndex;
             }
         }
     }

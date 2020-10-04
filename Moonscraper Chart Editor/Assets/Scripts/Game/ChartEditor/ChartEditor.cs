@@ -400,6 +400,11 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         return songObject.song.TickToWorldYPosition(songObject.tick);
     }
 
+    public static float WorldYPositionLength(Note note)
+    {
+        return note.song.TickToWorldYPosition(note.tick + note.length);
+    }
+
     #region State Control
 
     SystemManagerState GetStateForEnum(State state)
@@ -1070,6 +1075,24 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (Globals.gameSettings.resetAfterPlay)
         {
             stopResetTime = currentVisibleTime;
+        }
+
+        {
+            float strikelineYPos = visibleStrikeline.position.y;
+
+            // Hide everything behind the strikeline
+            foreach (Note note in currentChart.notes)
+            {
+                if (note.controller)
+                {
+                    if (WorldYPositionLength(note) < strikelineYPos)    // Allows the bot to continue to hit sustains upon play
+                    {
+                        note.controller.HideFullNote();
+                    }
+                    else
+                        break;
+                }
+            }
         }
 
         foreach (HitAnimation hitAnim in indicators.animations)
