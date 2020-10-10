@@ -40,7 +40,8 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     TimeSpan customTime = new TimeSpan();
 
-    readonly ExtensionFilter audioExFilter = new ExtensionFilter("Audio files", "ogg", "mp3", "wav");
+    static readonly string[] validAudioExtensions = { "ogg", "wav", "mp3", "opus" };
+    readonly ExtensionFilter audioExFilter = new ExtensionFilter("Audio files", validAudioExtensions);
 
     Dictionary<Song.AudioInstrument, Text> m_audioStreamTextLookup;
 
@@ -203,7 +204,16 @@ public class SongPropertiesPanelController : DisplayMenu {
     string GetAudioFile()
     {
         string audioFilepath = string.Empty;
-        FileExplorer.OpenFilePanel(audioExFilter, "mp3,ogg,wav", out audioFilepath);
+        string defExt = string.Empty;
+        foreach(string extention in validAudioExtensions)
+        {
+            if (defExt != string.Empty)
+                defExt += ",";
+
+            defExt += extention;
+        }
+
+        FileExplorer.OpenFilePanel(audioExFilter, defExt, out audioFilepath);
         return audioFilepath;
     }
 

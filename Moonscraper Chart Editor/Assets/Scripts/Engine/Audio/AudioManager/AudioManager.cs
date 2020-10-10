@@ -8,6 +8,7 @@ using System.Collections.Generic;
 #if BASS_AUDIO
 using Un4seen.Bass;
 using Un4seen.Bass.Misc;
+using Un4seen.Bass.AddOn.Opus;
 #endif
 
 namespace MoonscraperEngine.Audio
@@ -21,6 +22,7 @@ namespace MoonscraperEngine.Audio
         public static bool isDisposed { get; private set; }
         static List<AudioStream> liveAudioStreams = new List<AudioStream>();
         private const int c_oggEncodingQualityKbps = 256;
+        static List<int> pluginHandles = new List<int>();   // For any calls to BASS_PluginLoad
 
         #region Memory
         public static bool Init(out string errString)
@@ -28,36 +30,44 @@ namespace MoonscraperEngine.Audio
             errString = string.Empty;
             isDisposed = false;
 
-            Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_DEV_DEFAULT, 1);
-            Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATETHREADS, 1);
-            bool success = Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero);
-            if (!success)
+            bool success = false;
+
+            // Load Bass.Net
             {
-                BASSError errorCode = Bass.BASS_ErrorGetCode();
-
-                if (errorCode != BASSError.BASS_ERROR_ALREADY)
+                Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_DEV_DEFAULT, 1);
+                Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATETHREADS, 1);
+                success = Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero);
+                if (!success)
                 {
-                    UnityEngine.Debug.Log("Unable to initialise Bass.Net on default device. Will attempt to initialise with Direct Sound option enabled.");
-                    success = Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY | BASSInit.BASS_DEVICE_DSOUND, IntPtr.Zero);
+                    BASSError errorCode = Bass.BASS_ErrorGetCode();
 
-                    if (!success)
+                    if (errorCode != BASSError.BASS_ERROR_ALREADY)
                     {
-                        errString = "Failed Bass.Net initialisation. Error code " + errorCode;
-                        UnityEngine.Debug.LogError(errString);
+                        UnityEngine.Debug.Log("Unable to initialise Bass.Net on default device. Will attempt to initialise with Direct Sound option enabled.");
+                        success = Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY | BASSInit.BASS_DEVICE_DSOUND, IntPtr.Zero);
+
+                        if (!success)
+                        {
+                            errString = "Failed Bass.Net initialisation. Error code " + errorCode;
+                            UnityEngine.Debug.LogError(errString);
+                        }
+                    }
+                    else
+                    {
+                        UnityEngine.Debug.Log("Bass.Net already initialised on current device.");
                     }
                 }
                 else
                 {
-                    UnityEngine.Debug.Log("Bass.Net already initialised on current device.");
+                    UnityEngine.Debug.Log("Bass.Net initialised");
                 }
             }
-            else
-            {
-                UnityEngine.Debug.Log("Bass.Net initialised");
-            }
 
-            int bassFxVersion = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_GetVersion();  // Call this and load bass_fx plugin immediately
-            UnityEngine.Debug.Log("Bass FX version = " + bassFxVersion);
+            // Load bass fx plugin
+            {
+                int bassFxVersion = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_GetVersion();  // Call this and load bass_fx plugin immediately
+                UnityEngine.Debug.Log("Bass FX version = " + bassFxVersion);
+            }
 
             return success;
         }
@@ -76,6 +86,11 @@ namespace MoonscraperEngine.Audio
             }
 
             UnityEngine.Debug.Assert(liveAudioStreams.Count == 0, "Failed to free " + liveAudioStreams.Count + " remaining audio streams");
+
+            foreach(int pluginHandle in pluginHandles)
+            {
+                Bass.BASS_PluginFree(pluginHandle);
+            }
 
             Bass.BASS_Free();
             UnityEngine.Debug.Log("Freed Bass Audio memory");
@@ -159,10 +174,23 @@ namespace MoonscraperEngine.Audio
 
         #region Stream Loading
 
+        static int StreamCreateFile(string file, long offset, long length, BASSFlag flags)
+        {
+            int audioStreamHandle = Bass.BASS_StreamCreateFile(file, offset, length, flags);
+            if (audioStreamHandle == 0)
+            {
+                // Try an opus stream instead as a fallback
+                audioStreamHandle = BassOpus.BASS_OPUS_StreamCreateFile(file, offset, length, flags);
+            }
+
+            return audioStreamHandle;
+        }
+
         public static AudioStream LoadStream(string filepath)
         {
-            int audioStreamHandle = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE);
-            if (audioStreamHandle == 0) {
+            int audioStreamHandle = StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE);
+            if (audioStreamHandle == 0)
+            {
                 throw new Exception(String.Format("Failed to load audio file: BASS error {0}", Bass.BASS_ErrorGetCode()));
             }
 
@@ -173,12 +201,16 @@ namespace MoonscraperEngine.Audio
 
         public static TempoStream LoadTempoStream(string filepath)
         {
-            int audioStreamHandle = Bass.BASS_StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_ASYNCFILE | BASSFlag.BASS_STREAM_PRESCAN);
-            if (audioStreamHandle == 0) {
+            int audioStreamHandle = StreamCreateFile(filepath, 0, 0, BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_ASYNCFILE | BASSFlag.BASS_STREAM_PRESCAN);
+            if (audioStreamHandle == 0)
+            {
                 throw new Exception(String.Format("Failed to load audio file: BASS error {0}", Bass.BASS_ErrorGetCode()));
             }
+
             audioStreamHandle = Un4seen.Bass.AddOn.Fx.BassFx.BASS_FX_TempoCreate(audioStreamHandle, BASSFlag.BASS_FX_FREESOURCE);
-            if (audioStreamHandle == 0) {
+
+            if (audioStreamHandle == 0)
+            {
                 throw new Exception(String.Format("Failed to create tempo stream: BASS error {0}", Bass.BASS_ErrorGetCode()));
             }
 

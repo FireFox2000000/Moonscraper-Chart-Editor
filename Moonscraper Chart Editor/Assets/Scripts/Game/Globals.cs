@@ -21,7 +21,7 @@ public class Globals : MonoBehaviour {
     static string workingDirectory = string.Empty;
     public static string realWorkingDirectory { get { return workingDirectory; } }
 
-    public static readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3" };
+    public static readonly string[] validAudioExtensions = { ".ogg", ".wav", ".mp3", ".opus" };
     public static readonly string[] validTextureExtensions = { ".jpg", ".png" };
     public static string[] localEvents = { };
     public static string[] globalEvents = { };
