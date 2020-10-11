@@ -5,12 +5,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class SettingsController : DisplayMenu
+public class SettingsController : TabMenu
 {
     [SerializeField]
     RectTransform settingsMenuContentArea;
-    [SerializeField]
-    Button initialMenuItem;
 
     public Toggle clapStrum;
     public Toggle clapHopo;
@@ -47,51 +45,27 @@ public class SettingsController : DisplayMenu
     public Dropdown fpsSelectDropdown;
     public Dropdown bgSwapTimeDropdown;
 
-    public Dropdown antiAliasingLevel;
-
-    Button currentButton;
-    RectTransform currentContent;
+    public Dropdown antiAliasingLevel; 
 
     public void SetSettingsGroup(RectTransform content)
     {
-        if (currentContent)
-        {
-            currentContent.gameObject.SetActive(false);
-        }
-
-        content.gameObject.SetActive(true);
-
-        Vector2 size = new Vector2();
-        size.x = settingsMenuContentArea.sizeDelta.x;
-        size.y += content.rect.height - content.localPosition.y;
-        settingsMenuContentArea.sizeDelta = size;
-
-        currentContent = content;
-    }
-
-    public void SetCurrentButton(Button button)
-    {
-        if (currentButton)
-        {
-            currentButton.interactable = true;
-        }
-
-        currentButton = button;
-        currentButton.interactable = false;
+        SetTabGroup(content);
     }
 
     protected override void Awake()
     {
-        base.Awake();      
+        base.Awake();
+
+        menuContextArea = settingsMenuContentArea;
     }
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
+
         sustainGapInput.onValidateInput = Step.validateStepVal;
         sustainGapInput.text = Globals.gameSettings.sustainGap.ToString();
         sustainGapTimeInput.text = Globals.gameSettings.sustainGapTimeMs.ToString();
-
-        initialMenuItem.onClick.Invoke();
     }
 
     protected override void Update()

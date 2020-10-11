@@ -11,7 +11,8 @@ using System;
 using MoonscraperEngine;
 using MoonscraperChartEditor.Song;
 
-public class SongPropertiesPanelController : DisplayMenu {
+public class SongPropertiesPanelController : TabMenu
+{
     public Scrollbar verticalScroll;
 
     public InputField songName;
@@ -45,13 +46,16 @@ public class SongPropertiesPanelController : DisplayMenu {
 
     Dictionary<Song.AudioInstrument, Text> m_audioStreamTextLookup;
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         offset.onValidateInput = LocalesManager.ValidateDecimalInput;
     }
 
     protected override void OnEnable()
     {
+        ResetToInitialMenuItem();
+
         m_audioStreamTextLookup = new Dictionary<Song.AudioInstrument, Text>()
         {
             { Song.AudioInstrument.Song, musicStream },
@@ -101,7 +105,7 @@ public class SongPropertiesPanelController : DisplayMenu {
         verticalScroll.value = 1;
     }
 
-	void Apply()
+    void Apply()
     {
         editor.currentSong.name = songName.text;
         editor.currentSong.metaData.artist = artist.text;
