@@ -1,45 +1,24 @@
-1.3.6
+1.4
 	NEW FEATURES
-	-Added group inspector option to set all selected kick notes to double kick.
-	-Allow clicking the "Natural" note type in group inspector to clear double kick flags.
-
-	FIXES
-	-Fixed application breaking due to bad joystick axis mapping.
-	-Fixed eraser tool from deleting regular notes and kick notes at the same time.
-	-Fix clap firing off on notes behind the strikeline. Also fixed the bot from hitting notes in the back end of the window upon playing.
-
-1.3.5.9
-	NEW FEATURES
-	-Added the "Alternate Double Kick" option in the note group selector.
+	-Implemented double kick editing. Added group inspector option to set all selected kick notes to double kick. Allow clicking the "Natural" note type in group inspector to clear double kick flags.
 	-Added checkmarks to the instrument and difficulty dropdowns to tell what chart users are on outside of looking at the window text.
 	-Added setting to enable pitch correction at slower song speeds. However still reduces audio quality when enabled, so not recommended.
+	-Added Opus audio file reading compatibility.
 
-	CHANGES
-	-Reorganised note group selector to cover up empty space when inspecting drum notes. 
-	-Move double kick notification over to the left to prevent changes with lane merged note text.
-
-1.3.5.8
 	FIXES
+	-Fixed lane 5 notes being mysteriously added to drums charts after reloading a drums chart that only had been editing in 4 lane.
+	-Rewrite of the forced correction logic to fix the system being overly aggressive and unforcing notes that didn't need unforcing, or not unforcing notes when needed.
 	-Fixed input misinformation in in-game FAQ screen
 	-Fixed green drum sustain colour in 4-lane drums.
 	-Fixed custom frets not using 5th lane sprites in 4 lane mode.
 	-Automatically replace space characters with underscores on local track events as spaces are not supported in local track events in the .chart format.
+	-Fixed application breaking due to bad joystick axis mapping.
+	-Fixed eraser tool from deleting regular notes and kick notes at the same time.
+	-Fix clap firing off on notes behind the strikeline. Also fixed the bot from hitting notes in the back end of the window upon playing.
 
 	CHANGES
 	-Changed lane merged and double kick visual cues from note maniputation to actual text objects for clearer communication.
-
-1.3.5.7
-	FIXES
-	-Various fixes for double kick issues when combined with other notes. 
-
-1.3.5.6
-	NEW FEATURES
-	-Implemented basic double kick editing.
-
-1.3.5.5
-	FIXES
-	-Fixed lane 5 notes being mysteriously added to drums charts after reloading a drums chart that only had been editing in 4 lane.
-	-Rewrite of the forced correction logic to fix the system being overly aggressive and unforcing notes that didn't need unforcing, or not unforcing notes when needed.
+	-Reorganised note group selector to cover up empty space when inspecting drum notes. 
 
 1.3.5.4
 	FIXES
