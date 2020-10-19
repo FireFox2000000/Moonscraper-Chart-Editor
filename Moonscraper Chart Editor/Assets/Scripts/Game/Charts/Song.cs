@@ -16,6 +16,8 @@ namespace MoonscraperChartEditor.Song
     {
         // Song properties
         public Metadata metaData = new Metadata();
+        public INIParser iniProperties = new INIParser();
+
         public string name
         {
             get

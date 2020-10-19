@@ -673,6 +673,50 @@ public class INIParser
         WriteValue(SectionName, Key, Value.ToString(CultureInfo.InvariantCulture));
     }
 
+    /******* Custom stuff *************/
+
+    public string GetSectionValues(string[] SectionNames)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        foreach (var SectionName in SectionNames)
+        {
+            Dictionary<string, string> Section;
+            if (!m_Sections.TryGetValue(SectionName, out Section))
+            {
+                continue;
+            }
+
+            foreach (var keyVal in Section)
+            {
+                if (keyVal.Key.Trim() != string.Empty)
+                {
+                    sb.Append(keyVal.Key.Trim());
+                    sb.Append('=');
+                    sb.AppendLine(keyVal.Value.Trim());
+                }
+            }
+        }
+
+        return sb.ToString();
+    }
+
+    public bool IsEmpty
+    {
+        get
+        {
+            foreach (var keyVal in m_Sections)
+            {
+                if (keyVal.Value.Count > 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
+
     #endregion
 }
 

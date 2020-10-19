@@ -15,6 +15,7 @@ public class SongPropertiesPanelController : TabMenu
 {
     public Scrollbar verticalScroll;
 
+    [Header("General Settings")]
     public InputField songName;
     public InputField artist;
     public InputField charter;
@@ -25,6 +26,7 @@ public class SongPropertiesPanelController : TabMenu
     public InputField genre;
     public InputField mediaType;
 
+    [Header("Audio Settings")]
     public Text musicStream;
     public Text guitarStream;
     public Text bassStream;
@@ -37,6 +39,9 @@ public class SongPropertiesPanelController : TabMenu
 	public Text drum4Stream;
     public Text crowdStream;
 
+    [Header("Advanced Settings")]
+    public TMPro.TMP_InputField customIniSettings;
+
     bool init = false;
 
     TimeSpan customTime = new TimeSpan();
@@ -45,6 +50,7 @@ public class SongPropertiesPanelController : TabMenu
     readonly ExtensionFilter audioExFilter = new ExtensionFilter("Audio files", validAudioExtensions);
 
     Dictionary<Song.AudioInstrument, Text> m_audioStreamTextLookup;
+    readonly string[] INI_SECTION_HEADER = { "Song", "song" };
 
     protected override void Start()
     {
@@ -95,8 +101,16 @@ public class SongPropertiesPanelController : TabMenu
 
         customTime = TimeSpan.FromSeconds(editor.currentSongLength);
 
+        customIniSettings.text = song.iniProperties.GetSectionValues(INI_SECTION_HEADER);
+
         ChartEditor.isDirty = edit;
         StartCoroutine(ScrollSetDelay());
+    }
+
+    protected override void OnDisable()
+    {
+        UpdateIni();
+        base.OnDisable();
     }
 
     IEnumerator ScrollSetDelay()
@@ -158,6 +172,43 @@ public class SongPropertiesPanelController : TabMenu
 
             ChartEditor.isDirty = true;
         }
+    }
+
+    public void UpdateIni()
+    {
+        Song song = editor.currentSong;
+
+        INIParser newProperties = new INIParser();
+
+        string[] seperatingTags = { Environment.NewLine.ToString() };
+        string[] customIniLines = customIniSettings.text.Split(seperatingTags, StringSplitOptions.None);
+
+        foreach (string line in customIniLines)
+        {
+            string[] keyVal = line.Split('=');
+            if (keyVal.Length >= 1)
+            {
+                string key = keyVal[0];
+                string val = keyVal.Length > 1 ? keyVal[1] : string.Empty;
+
+                newProperties.WriteValue(INI_SECTION_HEADER[0], key, val);
+            }
+        }
+
+        song.iniProperties = newProperties;
+    }
+
+    public void RefreshIniDisplay()
+    {
+        UpdateIni();
+        customIniSettings.text = editor.currentSong.iniProperties.GetSectionValues(INI_SECTION_HEADER);
+    }
+
+    public void PopulateIniFromGeneralSettings()
+    {
+        RefreshIniDisplay();
+        SongIniFunctions.PopulateIniWithSongMetadata(editor.currentSong, editor.currentSong.iniProperties, editor.currentSongLength);
+        customIniSettings.text = editor.currentSong.iniProperties.GetSectionValues(INI_SECTION_HEADER);
     }
 
     void ClipText(Text text)

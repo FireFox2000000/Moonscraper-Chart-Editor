@@ -693,6 +693,31 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
                     error = true;
                 }
+
+                try
+                {
+                    string directory = System.IO.Path.GetDirectoryName(currentFileName);
+                    string iniPath = System.IO.Path.Combine(directory, "song.ini");
+                    if (System.IO.File.Exists(iniPath))
+                    {
+                        try
+                        {
+                            newSong.iniProperties.Open(iniPath);
+                        }
+                        catch (Exception e)
+                        {
+                            errorManager.QueueErrorMessage(Logger.LogException(e, "Failed to parse song.ini"));
+                        }
+                        finally
+                        {
+                            newSong.iniProperties.Close();
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    // TODO
+                }
             }),
 
             new LoadingTask("Loading audio", () =>
