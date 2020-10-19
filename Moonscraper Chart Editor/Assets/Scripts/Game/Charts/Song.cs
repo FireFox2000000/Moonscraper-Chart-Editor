@@ -188,6 +188,10 @@ namespace MoonscraperChartEditor.Song
             {
                 audioLocations[i] = song.audioLocations[i];
             }
+
+            iniProperties = new INIParser();
+            iniProperties.OpenFromString(string.Empty);
+            iniProperties.WriteValue(song.iniProperties);
         }
 
         ~Song()

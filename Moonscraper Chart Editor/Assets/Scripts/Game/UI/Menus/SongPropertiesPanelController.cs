@@ -191,7 +191,8 @@ public class SongPropertiesPanelController : TabMenu
                 string key = keyVal[0];
                 string val = keyVal.Length > 1 ? keyVal[1] : string.Empty;
 
-                newProperties.WriteValue(INI_SECTION_HEADER[0], key, val);
+                if (!string.IsNullOrEmpty(key))
+                    newProperties.WriteValue(INI_SECTION_HEADER[0], key, val);
             }
         }
 

@@ -894,6 +894,33 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             {
                 errorManager.QueueErrorMessage("Save completed with the following errors: " + Globals.LINE_ENDING + saveErrorMessage);
             }
+
+            string iniPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(filepath), SongIniFunctions.INI_FILENAME);
+            if (!song.iniProperties.IsEmpty)
+            {
+                Debug.Log("Saving song.ini");
+
+                INIParser parser = new INIParser();
+                try
+                {
+                    parser.Open(iniPath);
+                    parser.WriteValue(song.iniProperties);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError("Error encountered when trying to write song.ini. " + e.Message);
+                }
+                finally
+                {
+                    parser.Close();
+                }
+
+                Debug.Log("song.ini save complete!");
+            }
+            else if (System.IO.File.Exists(iniPath))
+            {
+                System.IO.File.Delete(iniPath);
+            }
         }
         catch (System.Exception e)
         {

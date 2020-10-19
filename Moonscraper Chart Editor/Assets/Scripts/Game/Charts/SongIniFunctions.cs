@@ -6,6 +6,7 @@ using MoonscraperChartEditor.Song;
 public static class SongIniFunctions
 {
     public const string INI_SECTION_HEADER = "Song";
+    public const string INI_FILENAME = "song.ini";
 
     public static void PopulateIniWithSongMetadata(Song song, INIParser ini, float songLengthSeconds)
     {

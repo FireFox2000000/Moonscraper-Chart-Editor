@@ -717,6 +717,38 @@ public class INIParser
         }
     }
 
+    // Copies all data from the ini passed into this
+    public void WriteValue(INIParser that)
+    {
+        bool autoFlush = m_AutoFlush;
+
+        m_AutoFlush = false;
+
+        // Clear all previous data
+        List<string> sectionsToDelete = new List<string>();
+        foreach (var Section in m_Sections)
+        {
+            sectionsToDelete.Add(Section.Key);
+        }
+
+        foreach (var Section in sectionsToDelete)
+        {
+            SectionDelete(Section);
+        }
+
+        foreach (var Section in that.m_Sections)
+        {
+            foreach (var SectionVal in Section.Value)
+            {
+                WriteValue(Section.Key, SectionVal.Key, SectionVal.Value);
+            }
+        }
+
+        // Finally write to the file
+        m_AutoFlush = autoFlush;
+        PerformFlush();
+    }
+
     #endregion
 }
 
