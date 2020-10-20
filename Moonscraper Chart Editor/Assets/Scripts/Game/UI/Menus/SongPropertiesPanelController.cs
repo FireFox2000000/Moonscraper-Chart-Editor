@@ -203,6 +203,7 @@ public class SongPropertiesPanelController : TabMenu
     {
         UpdateIni();
         customIniSettings.text = editor.currentSong.iniProperties.GetSectionValues(INI_SECTION_HEADER);
+        ChartEditor.isDirty = true;
     }
 
     public void PopulateIniFromGeneralSettings()
@@ -210,6 +211,29 @@ public class SongPropertiesPanelController : TabMenu
         RefreshIniDisplay();
         SongIniFunctions.PopulateIniWithSongMetadata(editor.currentSong, editor.currentSong.iniProperties, editor.currentSongLength);
         customIniSettings.text = editor.currentSong.iniProperties.GetSectionValues(INI_SECTION_HEADER);
+        ChartEditor.isDirty = true;
+    }
+
+    public void AddCloneHeroIniTags()
+    {
+        RefreshIniDisplay();
+
+        var song = editor.currentSong;
+        var iniParser = song.iniProperties;
+
+        SongIniFunctions.AddCloneHeroIniTags(song, iniParser, editor.currentSongLength);
+        customIniSettings.text = editor.currentSong.iniProperties.GetSectionValues(INI_SECTION_HEADER);
+        ChartEditor.isDirty = true;
+    }
+
+    public void OnIniInputValueChanged()
+    {
+        ChartEditor.isDirty = true;
+    }
+
+    public void OnIniInputEndEdit()
+    {
+        RefreshIniDisplay();
     }
 
     void ClipText(Text text)

@@ -77,6 +77,7 @@ public class Export : DisplayMenu {
         delayInputField.text = delayTime.ToString();
 
         chPackageToggle.isOn = false;
+        generateIniToggle.isOn = !editor.currentSong.iniProperties.IsEmpty;
     }
 
     public void OnChPackageToggle(bool enabled)
@@ -373,31 +374,26 @@ public class Export : DisplayMenu {
     static void GenerateSongIni(string path, Song song, float songLengthSeconds)
     {
         Metadata metaData = song.metaData;
+        INIParser parser = new INIParser();
 
-        StringWriter ofs = new StringWriter();
-        ofs.WriteLine("[Song]");
-        ofs.WriteLine("name = " + song.name);
-        ofs.WriteLine("artist = " + metaData.artist);
-        ofs.WriteLine("album = " + metaData.album);
-        ofs.WriteLine("genre = " + metaData.genre);
-        ofs.WriteLine("year = " + metaData.year);
-        ofs.WriteLine("song_length = " + (int)(songLengthSeconds * 1000));
-        ofs.WriteLine("count = 0");
-        ofs.WriteLine("diff_band = -1");
-        ofs.WriteLine("diff_guitar = -1");
-        ofs.WriteLine("diff_bass = -1");
-        ofs.WriteLine("diff_drums = -1");
-        ofs.WriteLine("diff_keys = -1");
-        ofs.WriteLine("diff_guitarghl = -1");
-        ofs.WriteLine("diff_bassghl = -1");
-        ofs.WriteLine("preview_start_time = 0");
-        ofs.WriteLine("frets = 0");
-        ofs.WriteLine("charter = " + metaData.charter);
-        ofs.WriteLine("icon = 0");
+        try
+        {
+            parser.Open(Path.Combine(path, "song.ini"));
 
-        File.WriteAllText(Path.Combine(path, "song.ini"), ofs.ToString());
+            // Clone explicit properties
+            parser.WriteValue(song.iniProperties);
 
-        ofs.Close();
+            // Write defaults for any missing CH tags
+            SongIniFunctions.AddCloneHeroIniTags(song, parser, songLengthSeconds);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Error encountered when trying to generate song.ini. " + e.Message);
+        }
+        finally
+        {
+            parser.Close();
+        }
     }
 
     static readonly Dictionary<Song.AudioInstrument, string> audioInstrumentToCHNameMap = new Dictionary<Song.AudioInstrument, string>()
