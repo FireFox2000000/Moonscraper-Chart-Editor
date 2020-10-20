@@ -101,7 +101,7 @@ public class SongPropertiesPanelController : TabMenu
 
         customTime = TimeSpan.FromSeconds(editor.currentSongLength);
 
-        customIniSettings.text = song.iniProperties.GetSectionValues(INI_SECTION_HEADER);
+        UpdateIniTextFromSongProperties();
 
         ChartEditor.isDirty = edit;
         StartCoroutine(ScrollSetDelay());
@@ -180,7 +180,7 @@ public class SongPropertiesPanelController : TabMenu
 
         INIParser newProperties = new INIParser();
 
-        string[] seperatingTags = { Environment.NewLine.ToString() };
+        string[] seperatingTags = { Environment.NewLine.ToString(), "\n" };
         string[] customIniLines = customIniSettings.text.Split(seperatingTags, StringSplitOptions.None);
 
         foreach (string line in customIniLines)
@@ -199,10 +199,17 @@ public class SongPropertiesPanelController : TabMenu
         song.iniProperties = newProperties;
     }
 
+    void UpdateIniTextFromSongProperties()
+    {
+        string str = editor.currentSong.iniProperties.GetSectionValues(INI_SECTION_HEADER);
+        str = str.Replace("\r\n", "\n");
+        customIniSettings.text = str;
+    }
+
     public void RefreshIniDisplay()
     {
         UpdateIni();
-        customIniSettings.text = editor.currentSong.iniProperties.GetSectionValues(INI_SECTION_HEADER);
+        UpdateIniTextFromSongProperties();
         ChartEditor.isDirty = true;
     }
 
@@ -210,7 +217,7 @@ public class SongPropertiesPanelController : TabMenu
     {
         RefreshIniDisplay();
         SongIniFunctions.PopulateIniWithSongMetadata(editor.currentSong, editor.currentSong.iniProperties, editor.currentSongLength);
-        customIniSettings.text = editor.currentSong.iniProperties.GetSectionValues(INI_SECTION_HEADER);
+        UpdateIniTextFromSongProperties();
         ChartEditor.isDirty = true;
     }
 
@@ -222,7 +229,7 @@ public class SongPropertiesPanelController : TabMenu
         var iniParser = song.iniProperties;
 
         SongIniFunctions.AddCloneHeroIniTags(song, iniParser, editor.currentSongLength);
-        customIniSettings.text = editor.currentSong.iniProperties.GetSectionValues(INI_SECTION_HEADER);
+        UpdateIniTextFromSongProperties();
         ChartEditor.isDirty = true;
     }
 
