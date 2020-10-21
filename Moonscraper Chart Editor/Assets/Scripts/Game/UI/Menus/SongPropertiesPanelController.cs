@@ -40,7 +40,7 @@ public class SongPropertiesPanelController : TabMenu
     public Text crowdStream;
 
     [Header("Advanced Settings")]
-    public TMPro.TMP_InputField customIniSettings;
+    public MS_TMPro_InputField customIniSettings;
 
     bool init = false;
 
