@@ -26,7 +26,11 @@ public class Globals : MonoBehaviour {
     public static string[] localEvents = { };
     public static string[] globalEvents = { };
 
+#if UNITY_EDITOR
+    public static readonly string CONFIG_FOLDER = Path.Combine("ExtraBuildFiles", "Config");
+#else
     public static readonly string CONFIG_FOLDER = "Config";
+#endif
 
     public static GameSettings gameSettings { get; private set; }
 
@@ -125,12 +129,9 @@ public class Globals : MonoBehaviour {
 
     static string[] LoadCommonEvents(string filename)
     {
-#if UNITY_EDITOR
-        string filepath = Path.Combine(workingDirectory, Path.Combine("ExtraBuildFiles", filename));
-#else
         string filepath = Path.Combine(workingDirectory, filename);
-#endif
         Debug.Log(Path.GetFullPath(filepath));
+
         if (File.Exists(filepath))
         {
             Debug.Log("Loading events from " + filepath);
@@ -160,9 +161,11 @@ public class Globals : MonoBehaviour {
             {
                 Debug.LogError("Error: unable to load events- " + e.Message);
             }
-
-            if (ifs != null)
-                ifs.Close();
+            finally
+            {
+                if (ifs != null)
+                    ifs.Close();
+            }
         }
         else
         {

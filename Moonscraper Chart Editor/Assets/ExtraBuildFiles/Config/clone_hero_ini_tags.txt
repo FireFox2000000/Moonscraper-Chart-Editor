@@ -1,0 +1,14 @@
+diff_band = -1
+diff_guitar = -1
+diff_bass = -1
+diff_drums = -1
+diff_keys = -1
+diff_guitarghl = -1
+diff_bassghl = -1
+preview_start_time = 0
+icon = 0
+playlist_track
+track
+album_track
+delay = 0
+loading_phrase

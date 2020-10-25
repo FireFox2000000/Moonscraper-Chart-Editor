@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using MoonscraperChartEditor.Song;
 
@@ -7,6 +8,24 @@ public static class SongIniFunctions
 {
     public const string INI_SECTION_HEADER = "Song";
     public const string INI_FILENAME = "song.ini";
+
+    const string CH_TAG_FILE = "clone_hero_ini_tags.txt";
+
+    static KeyValuePair<string, string>[] s_chTags = null;
+    static KeyValuePair<string, string>[] chTags
+    {
+        get
+        {
+            if (s_chTags == null)
+            {
+                // Only need to load this once, but need to wait for the working directory to be initialised correctly
+                s_chTags = LoadTags(Path.Combine(Globals.CONFIG_FOLDER, CH_TAG_FILE));
+                Debug.Assert(s_chTags != null);
+            }
+
+            return s_chTags;
+        }
+    }
 
     // song.ini is compatible with more games if there is a space before and after the '=' character in ini files. Ty Phase Shift.
     static string PrefixSpaceToINIValue(string val)
@@ -45,21 +64,62 @@ public static class SongIniFunctions
         AddTagIfNonExistant("song_length", ((int)(songLengthSeconds * 1000)).ToString());
         AddTagIfNonExistant("charter", metaData.charter);
 
-        AddTagIfNonExistant("count", "0");
-        AddTagIfNonExistant("diff_band", "-1");
-        AddTagIfNonExistant("diff_guitar", "-1");
-        AddTagIfNonExistant("diff_bass", "-1");
-        AddTagIfNonExistant("diff_drums", "-1");
-        AddTagIfNonExistant("diff_keys", "-1");
-        AddTagIfNonExistant("diff_guitarghl", "-1");
-        AddTagIfNonExistant("diff_bassghl", "-1");
-        AddTagIfNonExistant("preview_start_time", "0");
-        AddTagIfNonExistant("frets", "0");
-        AddTagIfNonExistant("icon", "0");
-        AddTagIfNonExistant("playlist_track", "");
-        AddTagIfNonExistant("track", "");
-        AddTagIfNonExistant("album_track", "");
-        AddTagIfNonExistant("delay", "0");
-        AddTagIfNonExistant("loading_phrase", "");
+        foreach(var tag in chTags)
+        {
+            AddTagIfNonExistant(tag.Key, tag.Value);
+        }
+    }
+
+    static KeyValuePair<string, string>[] LoadTags(string filename)
+    {
+        List<KeyValuePair<string, string>> tags = new List<KeyValuePair<string, string>>();
+
+        if (string.IsNullOrEmpty(Globals.realWorkingDirectory))
+        {
+            Debug.Assert(false, "Working directory has not been initialised yet.");
+            return null;
+        }
+
+        string filepath = Path.Combine(Globals.realWorkingDirectory, filename);
+        Debug.Log("Loading ini tags from " + Path.GetFullPath(filepath));
+
+        if (File.Exists(filepath))
+        {
+            StreamReader ifs = null;
+            try
+            {
+                ifs = File.OpenText(filepath);
+
+                while (true)
+                {
+                    string line = ifs.ReadLine();
+                    if (line == null)
+                        break;
+
+                    line.Replace('"', '\0');
+                    if (line != string.Empty)
+                    {
+                        string[] splitLines = line.Split('=');
+                        string key = splitLines[0];
+                        string val = splitLines.Length > 1 ? splitLines[1] : string.Empty;
+
+                        tags.Add(new KeyValuePair<string, string>(key.Trim(), val.Trim()));
+                    }
+                }
+
+                Debug.Log(tags.Count + " tag strings loaded");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError("Error: unable to load events- " + e.Message);
+            }
+            finally
+            {
+                if (ifs != null)
+                    ifs.Close();
+            }
+        }
+
+        return tags.ToArray();
     }
 }
