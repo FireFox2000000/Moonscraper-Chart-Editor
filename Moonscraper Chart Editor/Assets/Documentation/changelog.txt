@@ -1,3 +1,12 @@
+1.4.0.2
+	CHANGES
+	-Moved events text files under a "Config" folder.
+	-Clone hero specific ini tags now also loaded in through a config file.
+	-Increased scroll sensitivity of ini editor. 
+
+	FIXES
+	-Format ini whitespace correctly.
+
 1.4.0.1
 	NEW FEATURES
 	-Added dedicated song.ini editor under Song Properties -> Advanced.
