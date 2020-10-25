@@ -188,11 +188,11 @@ public class SongPropertiesPanelController : TabMenu
             string[] keyVal = line.Split('=');
             if (keyVal.Length >= 1)
             {
-                string key = keyVal[0];
-                string val = keyVal.Length > 1 ? keyVal[1] : string.Empty;
+                string key = keyVal[0].Trim();
+                string val = keyVal.Length > 1 ? keyVal[1].Trim() : string.Empty;
 
                 if (!string.IsNullOrEmpty(key))
-                    newProperties.WriteValue(INI_SECTION_HEADER[0], key, val);
+                    newProperties.WriteValue(INI_SECTION_HEADER[0], key + " ", " " + val);
             }
         }
 
@@ -201,7 +201,7 @@ public class SongPropertiesPanelController : TabMenu
 
     void UpdateIniTextFromSongProperties()
     {
-        string str = editor.currentSong.iniProperties.GetSectionValues(INI_SECTION_HEADER);
+        string str = editor.currentSong.iniProperties.GetSectionValues(INI_SECTION_HEADER, INIParser.Formatting.Whitespaced);
         str = str.Replace("\r\n", "\n");
         customIniSettings.text = str;
     }

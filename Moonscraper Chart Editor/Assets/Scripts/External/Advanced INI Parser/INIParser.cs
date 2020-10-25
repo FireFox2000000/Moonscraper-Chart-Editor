@@ -675,7 +675,13 @@ public class INIParser
 
     /******* Custom stuff *************/
 
-    public string GetSectionValues(string[] SectionNames)
+    public enum Formatting
+    {
+        Default,        // Leaves strings as is
+        Whitespaced,    // Adds whitespace after keys and before values if there aren't already
+    }
+
+    public string GetSectionValues(string[] SectionNames, Formatting formatting = Formatting.Default)
     {
         StringBuilder sb = new StringBuilder();
 
@@ -691,9 +697,25 @@ public class INIParser
             {
                 if (keyVal.Key.Trim() != string.Empty)
                 {
-                    sb.Append(keyVal.Key.Trim());
-                    sb.Append('=');
-                    sb.AppendLine(keyVal.Value.Trim());
+                    switch (formatting)
+                    {
+                        case Formatting.Whitespaced:
+                            {
+                                sb.Append(keyVal.Key.Trim());
+                                sb.Append(" = ");
+                                sb.AppendLine(keyVal.Value.Trim());
+                            }
+                            break;
+                        case Formatting.Default:
+                        default:
+                            {
+                                sb.Append(keyVal.Key);
+                                sb.Append('=');
+                                sb.AppendLine(keyVal.Value);
+                            }
+                            break;
+                    }
+                    
                 }
             }
         }
