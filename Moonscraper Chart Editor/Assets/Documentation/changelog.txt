@@ -1,3 +1,10 @@
+1.4.0.1
+	NEW FEATURES
+	-Added dedicated song.ini editor under Song Properties -> Advanced.
+
+	CHANGES
+	-Song Properties menu now grouped into different tabs.
+
 1.4
 	NEW FEATURES
 	-Implemented double kick editing. Added group inspector option to set all selected kick notes to double kick. Allow clicking the "Natural" note type in group inspector to clear double kick flags.
