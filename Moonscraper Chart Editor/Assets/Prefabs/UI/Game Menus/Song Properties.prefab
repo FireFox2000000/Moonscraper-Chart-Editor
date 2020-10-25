@@ -8608,7 +8608,7 @@ MonoBehaviour:
   m_Placeholder: {fileID: 58602178125031905}
   m_VerticalScrollbar: {fileID: 6906665570906587133}
   m_VerticalScrollbarEventHandler: {fileID: 0}
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 10
   m_ContentType: 0
   m_InputType: 0
   m_AsteriskChar: 42
