@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MoonscraperEngine.Input;
 
-using SDL2;
+//using SDL2;
 using System;
 
 /// <summary>
@@ -57,7 +57,7 @@ public class InputManager : UnitySingleton<InputManager>
     public List<JoystickDevice> joysticks = new List<JoystickDevice>();
 
     private void Start()
-    {
+    {/*
         Debug.Log("Initialising SDL input...");
 
         SDL.SDL_SetMainReady();
@@ -73,11 +73,12 @@ public class InputManager : UnitySingleton<InputManager>
             Debug.Log("Successfully initialised SDL input");
 
             int connectedJoysticks = SDL.SDL_NumJoysticks();
-        }
+        }*/
     }
 
     // Update is called once per frame
     void Update () {
+        /*
         SDL.SDL_Event sdlEvent;
         while (SDL.SDL_PollEvent(out sdlEvent) > 0)
         {
@@ -113,7 +114,7 @@ public class InputManager : UnitySingleton<InputManager>
 
                 default: break;
             }
-        }
+        }*/
 
         foreach(GamepadDevice gamepad in controllers)
         {
@@ -128,6 +129,7 @@ public class InputManager : UnitySingleton<InputManager>
 
     void OnControllerConnect(int index)
     {
+        /*
         IntPtr gameController = SDL.SDL_GameControllerOpen(index);
         if (gameController != IntPtr.Zero)
         {
@@ -143,11 +145,11 @@ public class InputManager : UnitySingleton<InputManager>
         else
         {
             Debug.LogError("Failed to get SDL Game Controller address " + index + ". " + SDL.SDL_GetError());
-        }
+        }*/
     }
 
     void OnJoystickConnect(int index)
-    {
+    {/*
         IntPtr joystick = SDL.SDL_JoystickOpen(index);
         if (joystick != IntPtr.Zero)
         {
@@ -163,11 +165,12 @@ public class InputManager : UnitySingleton<InputManager>
         else
         {
             Debug.LogError("Failed to get SDL Joystick address " + index + ". " + SDL.SDL_GetError());
-        }
+        }*/
     }
 
     void OnControllerDisconnect(int instanceId)
     {
+        /*
         Debug.Log("Removed controller device " + instanceId);
 
         IntPtr removedController = SDL.SDL_GameControllerFromInstanceID(instanceId);
@@ -196,10 +199,11 @@ public class InputManager : UnitySingleton<InputManager>
         }
 
         Debug.Assert(false, "Unable to find controller " + instanceId + " to remove");
+        */
     }
 
     void OnJoystickDisconnect(int instanceId)
-    {
+    {/*
         Debug.Log("Removed joystick device " + instanceId);
 
         IntPtr removedController = SDL.SDL_JoystickFromInstanceID(instanceId);
@@ -227,16 +231,16 @@ public class InputManager : UnitySingleton<InputManager>
             }
         }
 
-        Debug.Assert(false, "Unable to find joystick " + instanceId + " to remove");
+        Debug.Assert(false, "Unable to find joystick " + instanceId + " to remove");*/
     }
 
     public void Dispose()
-    {
+    {/*
         foreach (GamepadDevice gamepad in controllers)
         {
             SDL.SDL_GameControllerClose(gamepad.sdlHandle);
         }
 
-        controllers.Clear();
+        controllers.Clear();*/
     }
 }

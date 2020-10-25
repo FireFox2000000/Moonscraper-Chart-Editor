@@ -66,7 +66,7 @@ namespace MoonscraperEngine.Input
         {
             this.sdlHandle = sdlHandle;
 
-            deviceName = SDL.SDL_GameControllerName(sdlHandle);
+           // deviceName = SDL.SDL_GameControllerName(sdlHandle);
 
             statesDoubleBuffer[0] = new GamepadState() { buttonsDown = new EnumLookupTable<Button, bool>(), axisValues = new EnumLookupTable<Axis, float>() };
             statesDoubleBuffer[1] = new GamepadState() { buttonsDown = new EnumLookupTable<Button, bool>(), axisValues = new EnumLookupTable<Axis, float>() };
@@ -200,7 +200,7 @@ namespace MoonscraperEngine.Input
         }
 
         void GetState(ref GamepadState gamepadState)
-        {
+        {/*
             foreach(Button button in EnumX<Button>.Values)
             {
                 SDL.SDL_GameControllerButton sdlButton = GetSDLButtonForButton(button);
@@ -220,7 +220,7 @@ namespace MoonscraperEngine.Input
                 }
 
                 gamepadState.axisValues[axis] = rawValue;
-            }
+            }*/
         }
 
         SDL.SDL_GameControllerButton GetSDLButtonForButton(Button button)

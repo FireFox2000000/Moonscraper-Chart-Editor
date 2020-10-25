@@ -73,7 +73,7 @@ namespace MoonscraperEngine.Input
         public JoystickDevice(IntPtr sdlHandle)
         {
             this.sdlHandle = sdlHandle;
-
+            /*
             joystickType = (JoystickType)SDL.SDL_JoystickGetType(sdlHandle);
             deviceId = SDL.SDL_JoystickName(sdlHandle);
             deviceName = string.Format("{0} ({1})", deviceId, joystickType.ToString());
@@ -82,7 +82,7 @@ namespace MoonscraperEngine.Input
             totalAxis = SDL.SDL_JoystickNumAxes(sdlHandle);
             totalBalls = SDL.SDL_JoystickNumBalls(sdlHandle);
             totalHats = SDL.SDL_JoystickNumHats(sdlHandle);
-
+            */
             for (int i = 0; i < statesDoubleBuffer.Length; ++i)
             {
                 statesDoubleBuffer[i] = new JoystickState() {
@@ -91,7 +91,7 @@ namespace MoonscraperEngine.Input
                     ballValues = new Vector2[totalBalls],
                     hatPositions = new HatPosition[totalHats],
                 };
-            }              
+            }            
         }
 
         ~JoystickDevice()
@@ -126,7 +126,7 @@ namespace MoonscraperEngine.Input
         }
 
         void GetState(ref JoystickState joystickState)
-        {
+        {/*
             for (int i = 0; i < joystickState.buttonsDown.Length; ++i)
             {
                 joystickState.buttonsDown[i] = SDL.SDL_JoystickGetButton(sdlHandle, i) != 0;
@@ -150,7 +150,7 @@ namespace MoonscraperEngine.Input
             {
                 joystickState.hatPositions[i] = (HatPosition)SDL.SDL_JoystickGetHat(sdlHandle, i);
             }
-
+            */
             // Todo, balls. Probably not supported for the current project
         }
 
