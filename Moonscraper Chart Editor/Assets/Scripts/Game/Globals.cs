@@ -26,6 +26,8 @@ public class Globals : MonoBehaviour {
     public static string[] localEvents = { };
     public static string[] globalEvents = { };
 
+    public static readonly string CONFIG_FOLDER = "Config";
+
     public static GameSettings gameSettings { get; private set; }
 
     [Header("Misc.")]
@@ -90,8 +92,8 @@ public class Globals : MonoBehaviour {
         LoadGameSettings();
         Localiser.LocaliseScene();
 
-        localEvents = LoadCommonEvents("local_events.txt");
-        globalEvents = LoadCommonEvents("global_events.txt");
+        localEvents = LoadCommonEvents(Path.Combine(CONFIG_FOLDER, "local_events.txt"));
+        globalEvents = LoadCommonEvents(Path.Combine(CONFIG_FOLDER, "global_events.txt"));
 
         HintMouseOver.style = hintMouseOverStyle; 
     }
@@ -124,9 +126,9 @@ public class Globals : MonoBehaviour {
     static string[] LoadCommonEvents(string filename)
     {
 #if UNITY_EDITOR
-        string filepath = workingDirectory + "/ExtraBuildFiles/" + filename;
+        string filepath = Path.Combine(workingDirectory, Path.Combine("ExtraBuildFiles", filename));
 #else
-        string filepath = workingDirectory + "/" + filename;
+        string filepath = Path.Combine(workingDirectory, filename);
 #endif
         Debug.Log(Path.GetFullPath(filepath));
         if (File.Exists(filepath))

@@ -145,12 +145,25 @@ public class BuildDocumentation  {
             FileUtil.CopyFileOrDirectory("Assets/Documentation", Path.Combine(path, "Documentation"));
         }
 
-        if (Directory.Exists("Assets/ExtraBuildFiles"))
+        string extraFilesDir = "Assets/ExtraBuildFiles";
+        if (Directory.Exists(extraFilesDir))
         {
             // Copy a file from the project folder to the build folder, alongside the built game.
-            foreach (string filepath in Directory.GetFiles("Assets/ExtraBuildFiles"))
+            foreach (string filepath in Directory.GetFiles(extraFilesDir))
             {
                 FileUtil.CopyFileOrDirectory(filepath, Path.Combine(path, Path.GetFileName(filepath)));
+            }
+
+            foreach (string filepath in Directory.GetDirectories(extraFilesDir))
+            {    
+                string dirPath = filepath.Remove(0, extraFilesDir.Count() + 1);
+                string destPath = Path.Combine(path, dirPath);
+
+                UnityEngine.Debug.Log(filepath);
+                UnityEngine.Debug.Log(dirPath);
+                UnityEngine.Debug.Log(destPath);
+
+                FileUtil.CopyFileOrDirectory(filepath, destPath);
             }
         }
 
