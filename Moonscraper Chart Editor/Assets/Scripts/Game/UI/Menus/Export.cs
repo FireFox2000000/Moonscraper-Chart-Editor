@@ -371,7 +371,7 @@ public class Export : DisplayMenu {
         delayInputField.text = "2.5";
     }
 
-    static void GenerateSongIni(string path, Song song, float songLengthSeconds)
+    static void GenerateSongIni(string path, Song song, float songLengthSeconds, bool isChPackage = false)
     {
         Metadata metaData = song.metaData;
         INIParser parser = new INIParser();
@@ -383,8 +383,13 @@ public class Export : DisplayMenu {
             // Clone explicit properties
             parser.WriteValue(song.iniProperties);
 
-            // Write defaults for any missing CH tags
-            SongIniFunctions.AddCloneHeroIniTags(song, parser, songLengthSeconds);
+            SongIniFunctions.AddDefaultIniTags(song, parser, songLengthSeconds);
+
+            if (isChPackage)
+            {
+                // Write defaults for any missing CH tags
+                SongIniFunctions.AddCloneHeroIniTags(song, parser, songLengthSeconds);
+            }
         }
         catch (System.Exception e)
         {
@@ -492,7 +497,7 @@ public class Export : DisplayMenu {
             }
 
             new ChartWriter(chartOutputFile).Write(newSong, exportOptions, out errorMessageList);
-            GenerateSongIni(destFolderPath, newSong, songLengthSeconds);
+            GenerateSongIni(destFolderPath, newSong, songLengthSeconds, true);
         }));
 
         tasksManager.KickTasks(tasks);

@@ -49,7 +49,8 @@ public static class SongIniFunctions
     }
 
     delegate void AddTagFn(string key, string defaultVal);
-    public static void AddCloneHeroIniTags(Song song, INIParser ini, float songLengthSeconds)
+
+    public static void AddDefaultIniTags(Song song, INIParser ini, float songLengthSeconds)
     {
         Metadata metaData = song.metaData;
         AddTagFn AddTagIfNonExistant = (string key, string defaultVal) => {
@@ -63,8 +64,17 @@ public static class SongIniFunctions
         AddTagIfNonExistant("year", metaData.year);
         AddTagIfNonExistant("song_length", ((int)(songLengthSeconds * 1000)).ToString());
         AddTagIfNonExistant("charter", metaData.charter);
+    }
 
-        foreach(var tag in chTags)
+    public static void AddCloneHeroIniTags(Song song, INIParser ini, float songLengthSeconds)
+    {
+        AddTagFn AddTagIfNonExistant = (string key, string defaultVal) => {
+            ini.WriteValue(INI_SECTION_HEADER, key.Trim() + " ", ini.ReadValue(INI_SECTION_HEADER, key, PrefixSpaceToINIValue(defaultVal)));
+        };
+
+        AddDefaultIniTags(song, ini, songLengthSeconds);
+
+        foreach (var tag in chTags)
         {
             AddTagIfNonExistant(tag.Key, tag.Value);
         }

@@ -392,7 +392,8 @@ public class INIParser
                 CurrentSection = SectionPair.Value;
                 if (CurrentSection.Count > 0)
                 {
-                    sw.WriteLine();
+                    if (!string.IsNullOrEmpty(sw.ToString()))
+                        sw.WriteLine();
 
                     // *** Write the section name ***
                     sw.Write('[');
@@ -742,10 +743,6 @@ public class INIParser
     // Copies all data from the ini passed into this
     public void WriteValue(INIParser that)
     {
-        bool autoFlush = m_AutoFlush;
-
-        m_AutoFlush = false;
-
         // Clear all previous data
         List<string> sectionsToDelete = new List<string>();
         foreach (var Section in m_Sections)
@@ -765,10 +762,6 @@ public class INIParser
                 WriteValue(Section.Key, SectionVal.Key, SectionVal.Value);
             }
         }
-
-        // Finally write to the file
-        m_AutoFlush = autoFlush;
-        PerformFlush();
     }
 
     #endregion
