@@ -7,7 +7,7 @@ namespace MoonscraperChartEditor.Song
 {
     public static class TickFunctions
     {
-        const float SECONDS_PER_MINUTE = 60.0f;
+        public const float SECONDS_PER_MINUTE = 60.0f;
 
         /// <summary>
         /// Calculates the amount of time elapsed between 2 tick positions.

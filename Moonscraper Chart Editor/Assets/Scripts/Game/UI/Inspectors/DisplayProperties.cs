@@ -4,6 +4,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using MoonscraperChartEditor.Song;
 
 public class DisplayProperties : UpdateableService
 {
@@ -33,6 +34,8 @@ public class DisplayProperties : UpdateableService
     public Text tsCount;
     public Text sectionCount;
     public Text globalEventsCount;
+
+    public TMPro.TMP_Text stepNpsDisplay;
 
     ChartEditor editor;
 
@@ -120,8 +123,16 @@ public class DisplayProperties : UpdateableService
             if (currentGlobalEventCount != prevGlobalEventCount)
                 globalEventsCount.text = "Global Events: " + currentGlobalEventCount.ToString();
 
-            if (Globals.gameSettings.step != prevSnappingStep)
+            int stepValue = Globals.gameSettings.step;
+
+            if (stepValue != prevSnappingStep)
                 UpdateSnappingStepText();
+
+            var bpm = editor.currentSong.GetPrevBPM(editor.currentTickPos);
+            float bpmValue = bpm.value / 1000.0f;
+            float stepFac = SongConfig.FULL_STEP / SongConfig.STANDARD_BEAT_RESOLUTION;
+            float stepNps = bpmValue / TickFunctions.SECONDS_PER_MINUTE * (stepValue / stepFac);
+            stepNpsDisplay.text = string.Format("NPS ({2} bpm @ 1/{0}): {1}nps", stepValue, stepNps.ToString("n2"), bpmValue);
 
             prevNoteCount = currentNoteCount;
             prevSpCount = currentSpCount;
