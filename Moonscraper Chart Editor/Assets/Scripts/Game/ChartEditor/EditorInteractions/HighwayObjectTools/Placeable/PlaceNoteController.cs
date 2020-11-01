@@ -422,9 +422,7 @@ public class PlaceNoteController : ObjectlessTool {
     void MouseControlsBurstMode(LaneInfo laneInfo)
     {
         activeNotes.Clear();
-        bool openActive = false;
-        if (openNote.gameObject.activeSelf)
-            openActive = true;
+        bool openActive = openNote.gameObject.activeSelf;
 
         int maxLanes = laneInfo.laneCount;
 
