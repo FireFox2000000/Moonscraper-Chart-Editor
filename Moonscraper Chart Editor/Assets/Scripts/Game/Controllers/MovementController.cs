@@ -79,7 +79,7 @@ public abstract class MovementController : MonoBehaviour {
                     float audioTimePosition = stream.CurrentPositionInSeconds() - editor.services.totalSongAudioOffset;
                     float desyncAmount = audioTimePosition - timeAfterMovement;
 
-                    if (Mathf.Abs(desyncAmount) > DESYNCLENIENCE)
+                    if (Mathf.Abs(desyncAmount) > DESYNCLENIENCE * Globals.gameSettings.gameSpeed)
                         timeAfterMovement += desyncAmount;
                 }
             }

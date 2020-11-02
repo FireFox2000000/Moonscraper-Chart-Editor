@@ -163,7 +163,7 @@ public class Services : MonoBehaviour
     {
         get
         {
-            return Globals.gameSettings.audioCalibrationMS / 1000.0f * Globals.gameSettings.gameSpeed;
+            return Globals.gameSettings.audioCalibrationMS / 1000.0f;
         }
     }
 
