@@ -1,3 +1,14 @@
+1.4.0.3
+	NEW FEATURES
+	-Added stats menu tabbable from the display properties menu
+	-Added tool panel to toggle between open and regular notes in mouse mode without using shortcuts.
+
+	FIXES
+	-Fixed exporter not exporting custom ini correctly. Fixed "produce ini" toggle not being clickable. Fixed first-line whitespace in ini. Only auto-write CH tags in exporter if creating a CH package.
+	-Fixed rich text tags not being editable in ini editor.
+	-Fix for bot hitting notes slightly early on low speeds on low framerates.
+	-Fix potential sfx calibration error on lower speeds.
+
 1.4.0.2
 	CHANGES
 	-Moved events text files under a "Config" folder.
