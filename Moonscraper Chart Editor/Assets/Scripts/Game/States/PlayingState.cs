@@ -67,7 +67,7 @@ public class PlayingState : SystemManagerState
         if (!audioStarted)
         {
             float audioPlayPoint = playFromTime + editor.services.totalSongAudioOffset;
-            float currentTime = editor.services.currentAudioTime;
+            float currentTime = editor.services.currentVisualAudioTime;
             if (currentTime >= audioPlayPoint && currentTime > 0)
             {
                 editor.PlayAudio(currentTime);

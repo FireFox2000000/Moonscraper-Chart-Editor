@@ -27,7 +27,7 @@ public class DebugSongSync : MonoBehaviour
         if (editor.currentState == ChartEditor.State.Playing && tick)
         {
             SongAudioManager songAudioManager = editor.currentSongAudio;
-            visibleAudioTime = editor.services.currentAudioTime;
+            visibleAudioTime = editor.services.currentVisualAudioTime;
 
             AudioStream stream = null;
 

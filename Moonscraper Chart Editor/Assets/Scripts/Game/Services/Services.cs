@@ -175,7 +175,7 @@ public class Services : MonoBehaviour
         }
     }
 
-    public float currentAudioTime
+    public float currentVisualAudioTime
     {
         get
         {
