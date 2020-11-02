@@ -263,7 +263,7 @@ public class NoteController : SongObjectController {
         Vector3 notePosition = transform.position;
         Vector3 strikelinePosition = editor.visibleStrikeline.position;
 
-        bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime * Globals.gameSettings.hyperspeed / Globals.gameSettings.gameSpeed);
+        bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime / Globals.gameSettings.hyperspeed * Globals.gameSettings.gameSpeed);
 
         if (hit && belowStrikeLine)
         {

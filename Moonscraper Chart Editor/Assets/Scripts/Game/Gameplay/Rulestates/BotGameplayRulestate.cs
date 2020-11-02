@@ -20,7 +20,8 @@ public class BotGameplayRulestate : BaseGameplayRulestate
                 Vector3 notePosition = nCon.transform.position;
                 Vector3 strikelinePosition = ChartEditor.Instance.visibleStrikeline.position;
 
-                bool belowStrikeLine = notePosition.y <= strikelinePosition.y + (Time.deltaTime * Globals.gameSettings.hyperspeed / Globals.gameSettings.gameSpeed);
+                float visualOffset = Time.deltaTime / Globals.gameSettings.hyperspeed * Globals.gameSettings.gameSpeed;     // We want to hit it just before it crosses the strikeline. Looks a bit better. 
+                bool belowStrikeLine = notePosition.y <= strikelinePosition.y + visualOffset;
                 if (belowStrikeLine)
                 {
                     HitNote(time, nextNoteToHit);
