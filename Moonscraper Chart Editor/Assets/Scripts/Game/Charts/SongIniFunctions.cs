@@ -69,7 +69,8 @@ public static class SongIniFunctions
     public static void AddCloneHeroIniTags(Song song, INIParser ini, float songLengthSeconds)
     {
         AddTagFn AddTagIfNonExistant = (string key, string defaultVal) => {
-            ini.WriteValue(INI_SECTION_HEADER, key.Trim() + " ", ini.ReadValue(INI_SECTION_HEADER, key, PrefixSpaceToINIValue(defaultVal)));
+            string realKey = key.Trim() + " ";
+            ini.WriteValue(INI_SECTION_HEADER, realKey, ini.ReadValue(INI_SECTION_HEADER, realKey, PrefixSpaceToINIValue(defaultVal)));
         };
 
         AddDefaultIniTags(song, ini, songLengthSeconds);
