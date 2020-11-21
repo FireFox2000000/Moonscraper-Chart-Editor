@@ -255,11 +255,34 @@ namespace MoonscraperChartEditor.Song.IO
                 if (text != null)
                 {
                     if (text.Text.Contains(rb2SectionPrefix))
+                    {
                         song.Add(new Section(text.Text.Substring(9, text.Text.Length - 10), (uint)text.AbsoluteTime), false);
-                    else if (text.Text.Contains(rb3SectionPrefix))
-                        song.Add(new Section(text.Text.Substring(5, text.Text.Length - 6), (uint)text.AbsoluteTime), false);
+                    }
+                    else if (text.Text.Contains(rb3SectionPrefix) && text.Text.Length > 1)
+                    {
+                        string sectionText = string.Empty;
+                        char lastChar = text.Text[text.Text.Length - 1];
+                        if (lastChar == ']')
+                        {
+                            sectionText = text.Text.Substring(5, text.Text.Length - 6);
+                        }
+                        else if (lastChar == '"')
+                        {
+                            // Is in the format [prc_intro] "Intro". Strip for just the quoted section
+                            int startIndex = text.Text.IndexOf('"') + 1;
+                            sectionText = text.Text.Substring(startIndex, text.Text.Length - (startIndex + 1));
+                        }
+                        else
+                        {
+                            Debug.LogError("Found section name in an unknown format: " + text.Text);
+                        }
+
+                        song.Add(new Section(sectionText, (uint)text.AbsoluteTime), false);
+                    }
                     else
+                    {
                         song.Add(new Event(text.Text.Trim(new char[] { '[', ']' }), (uint)text.AbsoluteTime), false);
+                    }
                 }
             }
 
