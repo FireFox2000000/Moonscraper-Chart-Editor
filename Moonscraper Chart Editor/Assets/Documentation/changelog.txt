@@ -1,3 +1,13 @@
+1.4.0.4
+	CHANGELOG
+	-Output chart event title that has errored space characters in validation report.
+	-Calibration menu can now tab between input fields. 
+
+	FIXES
+	-Fixed section reading from RB3 mids with a different practice section format with specific labels.
+	-Fixed Add CH tags function never reading the current value and always adding the default, even when that tag is already present.
+	-Scale sfx offset based on game speed when reading off the audio stream directly.
+
 1.4.0.3
 	NEW FEATURES
 	-Added stats menu tabbable from the display properties menu
