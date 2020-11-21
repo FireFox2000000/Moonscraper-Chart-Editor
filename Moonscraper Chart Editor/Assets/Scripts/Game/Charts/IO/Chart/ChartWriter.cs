@@ -403,7 +403,7 @@ namespace MoonscraperChartEditor.Song.IO
             if (eventName != chartEvent.eventName)
             {
                 // Spaces were replaced, todo- notify user
-                writeParameters.errorList.AppendLine("Warning: Found a track event with space character/s. This is not allowed and has been automatically replaced with an underscore.");
+                writeParameters.errorList.AppendLine(string.Format("Warning: Found a track event \"{0}\" with space character/s. This is not allowed and has been automatically replaced with an underscore.", chartEvent.eventName));
             }
 
             output.AppendFormat(s_chartEventFormat, eventName);
