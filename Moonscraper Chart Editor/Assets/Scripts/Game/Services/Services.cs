@@ -205,15 +205,16 @@ public class Services : MonoBehaviour
             float currentAudioTime = 0;
             if (mainAudio != null && mainAudio.IsPlaying())
             {
-                currentAudioTime = mainAudio.CurrentPositionInSeconds();
+                float calibrationOffset = Globals.gameSettings.clapCalibrationMS / 1000.0f * Globals.gameSettings.gameSpeed;
+                currentAudioTime = mainAudio.CurrentPositionInSeconds() + calibrationOffset;
             }
             else
             {
                 float audioStrikelinePos = editor.services.sfxCalibratedStrikelinePos;
                 currentAudioTime = ChartEditor.WorldYPositionToTime(audioStrikelinePos);
             }
-
-            return currentAudioTime + Globals.gameSettings.clapCalibrationMS / 1000.0f - editor.currentSong.offset;
+            
+            return currentAudioTime;
         }
     }
 
