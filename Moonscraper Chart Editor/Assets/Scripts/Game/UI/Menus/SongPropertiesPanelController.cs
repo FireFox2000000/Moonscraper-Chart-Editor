@@ -177,33 +177,12 @@ public class SongPropertiesPanelController : TabMenu
     public void UpdateIni()
     {
         Song song = editor.currentSong;
-
-        INIParser newProperties = new INIParser();
-
-        string[] seperatingTags = { Environment.NewLine.ToString(), "\n" };
-        string[] customIniLines = customIniSettings.text.Split(seperatingTags, StringSplitOptions.None);
-
-        foreach (string line in customIniLines)
-        {
-            string[] keyVal = line.Split('=');
-            if (keyVal.Length >= 1)
-            {
-                string key = keyVal[0].Trim();
-                string val = keyVal.Length > 1 ? keyVal[1].Trim() : string.Empty;
-
-                if (!string.IsNullOrEmpty(key))
-                    newProperties.WriteValue(INI_SECTION_HEADER[0], key + " ", " " + val);
-            }
-        }
-
-        song.iniProperties = newProperties;
+        song.iniProperties = SongIniFunctions.SongIniFromString(customIniSettings.text);
     }
 
     void UpdateIniTextFromSongProperties()
     {
-        string str = editor.currentSong.iniProperties.GetSectionValues(INI_SECTION_HEADER, INIParser.Formatting.Whitespaced);
-        str = str.Replace("\r\n", "\n");
-        customIniSettings.text = str;
+        customIniSettings.text = SongIniFunctions.IniTextFromSongProperties(editor.currentSong.iniProperties);
     }
 
     public void RefreshIniDisplay()

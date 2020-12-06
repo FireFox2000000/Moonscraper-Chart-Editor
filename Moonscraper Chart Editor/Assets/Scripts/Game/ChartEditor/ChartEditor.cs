@@ -703,6 +703,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                         try
                         {
                             newSong.iniProperties.Open(iniPath);
+                            newSong.iniProperties = SongIniFunctions.FixupSongIniWhitespace(newSong.iniProperties);
                         }
                         catch (Exception e)
                         {

@@ -133,4 +133,39 @@ public static class SongIniFunctions
 
         return tags.ToArray();
     }
+
+    public static string IniTextFromSongProperties(INIParser iniProperties)
+    {
+        string str = iniProperties.GetSectionValues(new string[] { INI_SECTION_HEADER, "song" }, INIParser.Formatting.Whitespaced);
+        str = str.Replace("\r\n", "\n");
+        return str;
+    }
+
+    public static INIParser SongIniFromString(string str)
+    {
+        INIParser newProperties = new INIParser();
+
+        string[] seperatingTags = { System.Environment.NewLine.ToString(), "\n" };
+        string[] customIniLines = str.Split(seperatingTags, System.StringSplitOptions.None);
+
+        foreach (string line in customIniLines)
+        {
+            string[] keyVal = line.Split('=');
+            if (keyVal.Length >= 1)
+            {
+                string key = keyVal[0].Trim();
+                string val = keyVal.Length > 1 ? keyVal[1].Trim() : string.Empty;
+
+                if (!string.IsNullOrEmpty(key))
+                    newProperties.WriteValue(INI_SECTION_HEADER, key + " ", " " + val);
+            }
+        }
+
+        return newProperties;
+    }
+
+    public static INIParser FixupSongIniWhitespace(INIParser iniProperties)
+    {
+        return SongIniFromString(IniTextFromSongProperties(iniProperties));
+    }
 }
