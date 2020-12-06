@@ -205,8 +205,9 @@ public class Services : MonoBehaviour
             float currentAudioTime = 0;
             if (mainAudio != null && mainAudio.IsPlaying())
             {
+                float songOffset = ChartEditor.Instance.currentSong.offset;
                 float calibrationOffset = Globals.gameSettings.clapCalibrationMS / 1000.0f * Globals.gameSettings.gameSpeed;
-                currentAudioTime = mainAudio.CurrentPositionInSeconds() + calibrationOffset;
+                currentAudioTime = mainAudio.CurrentPositionInSeconds() + calibrationOffset - songOffset;
             }
             else
             {
