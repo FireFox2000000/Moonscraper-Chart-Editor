@@ -1,39 +1,28 @@
-1.4.0.4
-	CHANGELOG
-	-Output chart event title that has errored space characters in validation report.
-	-Calibration menu can now tab between input fields. 
-
-	FIXES
-	-Fixed section reading from RB3 mids with a different practice section format with specific labels.
-	-Fixed Add CH tags function never reading the current value and always adding the default, even when that tag is already present.
-	-Scale sfx offset based on game speed when reading off the audio stream directly.
-
-1.4.0.3
+1.4.1
 	NEW FEATURES
+	-Added dedicated song.ini editor under Song Properties -> Advanced.
 	-Added stats menu tabbable from the display properties menu
 	-Added tool panel to toggle between open and regular notes in mouse mode without using shortcuts.
 
-	FIXES
-	-Fixed exporter not exporting custom ini correctly. Fixed "produce ini" toggle not being clickable. Fixed first-line whitespace in ini. Only auto-write CH tags in exporter if creating a CH package.
-	-Fixed rich text tags not being editable in ini editor.
-	-Fix for bot hitting notes slightly early on low speeds on low framerates.
-	-Fix potential sfx calibration error on lower speeds.
-
-1.4.0.2
-	CHANGES
-	-Moved events text files under a "Config" folder.
-	-Clone hero specific ini tags now also loaded in through a config file.
-	-Increased scroll sensitivity of ini editor. 
-
-	FIXES
-	-Format ini whitespace correctly.
-
-1.4.0.1
-	NEW FEATURES
-	-Added dedicated song.ini editor under Song Properties -> Advanced.
-
 	CHANGES
 	-Song Properties menu now grouped into different tabs.
+	-Calibration menu can now tab between input fields. 
+	-Output chart event title that has errored space characters in validation report.
+	-Moved events text files under a "Config" folder.
+
+	FIXES
+	-Fixed sfx calibration being affected by song offset.
+	-Scale sfx calibration when playing at slower speeds.
+	-Fixed section reading from RB3 mids with a different practice section format with specific labels.
+	-Fix for bot hitting notes slightly early on low speeds on low framerates.
+
+Beyond 1.4.0.4
+	CHANGES
+	-Moved Offset property option from general Settings to be under Advanced->Legacy Options
+
+	FIXES
+	-Fixed sfx calibration being affected by song offset.
+	-Fixed song ini initially loading in with trimmed whitespace for it's values. Reformat on load.
 
 1.4
 	NEW FEATURES
