@@ -150,7 +150,7 @@ public static class SongIniFunctions
 
         foreach (string line in customIniLines)
         {
-            string[] keyVal = line.Split('=');
+            string[] keyVal = line.Split(new char[] { '=' }, 2);
             if (keyVal.Length >= 1)
             {
                 string key = keyVal[0].Trim();
