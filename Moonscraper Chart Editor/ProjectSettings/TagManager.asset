@@ -59,6 +59,9 @@ TagManager:
   - name: Notes
     uniqueID: 110117885
     locked: 0
+  - name: Note Hints
+    uniqueID: 124086885
+    locked: 0
   - name: Highlights
     uniqueID: 1495626305
     locked: 0
