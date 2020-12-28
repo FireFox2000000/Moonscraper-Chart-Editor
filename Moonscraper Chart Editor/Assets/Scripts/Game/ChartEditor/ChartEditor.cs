@@ -698,7 +698,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                 {
                     string directory = System.IO.Path.GetDirectoryName(currentFileName);
                     string iniPath = System.IO.Path.Combine(directory, "song.ini");
-                    if (System.IO.File.Exists(iniPath))
+                    if (newSong != null && System.IO.File.Exists(iniPath))
                     {
                         try
                         {

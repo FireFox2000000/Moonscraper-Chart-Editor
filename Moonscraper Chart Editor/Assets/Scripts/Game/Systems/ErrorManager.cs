@@ -23,7 +23,7 @@ public class ErrorManager : MonoBehaviour {
 
     public void QueueErrorMessage(string errorMessage)
     {
-        queuedErrorMessage = errorMessage;
+        queuedErrorMessage += errorMessage;
     }
 
     public bool HasErrorToDisplay()
