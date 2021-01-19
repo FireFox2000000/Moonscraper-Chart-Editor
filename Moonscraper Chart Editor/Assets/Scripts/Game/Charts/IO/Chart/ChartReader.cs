@@ -500,7 +500,21 @@ namespace MoonscraperChartEditor.Song.IO
 
                         for (int i = startIndex; i < stringSplit.Length; ++i)
                         {
-                            sb.Append(stringSplit[i].Trim('"'));
+                            int wordLength = stringSplit[i].Length;
+                            string tempWord = stringSplit[i];
+                            // Remove closing quote on last word
+                            if ((i == stringSplit.Length - 1) && (stringSplit[i][wordLength - 1] == '"'))
+                                tempWord = (tempWord.Remove(wordLength - 1));
+                            // Remove opening quote on fourth word
+                            if ((i == 3) && (tempWord[0] == '"'))
+                                tempWord = (tempWord.Substring(1));
+                            // Remove any quotes before the event starts
+                            else if (i < 3)
+                                tempWord = (tempWord.Trim('"'));
+                            // Keep formatting intact for any other word
+
+                            sb.Append(tempWord);
+
                             if (i < stringSplit.Length - 1)
                                 sb.Append(" ");
                         }
