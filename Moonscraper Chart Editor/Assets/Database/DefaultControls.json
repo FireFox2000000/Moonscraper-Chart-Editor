@@ -990,6 +990,25 @@
             }
         },
         {
+            "action": "ToggleStarpowerDrumsFillActivation",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            102
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
             "action": "ToggleViewMode",
             "input": {
                 "kbMaps": [

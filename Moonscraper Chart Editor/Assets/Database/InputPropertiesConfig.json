@@ -463,6 +463,17 @@
             }
         },
         {
+            "mSChartEditorInputAction": "ToggleStarpowerDrumsFillActivation",
+            "properties": {
+                "displayName": "Toggle Starpower Drums Fill Activation",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 8,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
             "mSChartEditorInputAction": "ToggleViewMode",
             "properties": {
                 "displayName": "Toggle View Mode",

@@ -74,6 +74,7 @@ public enum MSChartEditorInputActions
     ToggleNoteTap,
     ToggleNoteCymbal,
     ToggleNoteDoubleKick,
+    ToggleStarpowerDrumsFillActivation,
     ToggleViewMode, 
     
     ToolNoteBurst,
@@ -150,6 +151,7 @@ public static class MSChartEditorInput
             GameplayDrumsPro,
 
             EditorToolGroupNote,
+            EditorToolStarpower,
         }
 
         public static InteractionMatrix interactionMatrix = new InteractionMatrix(EnumX<CategoryType>.Count);
@@ -158,6 +160,7 @@ public static class MSChartEditorInput
             | (1 << (int)CategoryType.EditorKeyboardMode)
             | (1 << (int)CategoryType.EditorToolNote)
             | (1 << (int)CategoryType.EditorToolGroupNote)
+            | (1 << (int)CategoryType.EditorToolStarpower)
             | (1 << (int)CategoryType.Global)
             ;
         public static readonly int kGameplayCategoryMask = (1 << (int)CategoryType.GameplayGuitar) | (1 << (int)CategoryType.GameplayDrums) | (1 << (int)CategoryType.GameplayDrumsPro);

@@ -29,7 +29,7 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
         UpdateTogglesDisplay();
 
         UpdateStringsInfo();
-        // Controls();
+        Controls();
 
         prevSp = currentSp;
     }
@@ -37,6 +37,14 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
     bool IsInTool()
     {
         return editor.toolManager.currentToolId == EditorObjectToolManager.ToolID.Starpower;
+    }
+
+    void Controls()
+    {
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleStarpowerDrumsFillActivation) && drumFillToggle.gameObject.activeSelf && drumFillToggle.interactable)
+        {
+            drumFillToggle.isOn = !drumFillToggle.isOn;
+        }
     }
 
     void UpdateTogglesInteractable()

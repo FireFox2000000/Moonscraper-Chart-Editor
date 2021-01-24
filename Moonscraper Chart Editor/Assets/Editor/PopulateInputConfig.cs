@@ -8,6 +8,7 @@ public class PopulateInputConfig : Editor
     MSChartEditorInputActions _newActionAdded;
 
     static bool s_shouldReset = false;
+    string inputPropertiesPath = "Assets/Database/InputPropertiesConfig.json";
 
     void OnEnable()
     {
@@ -30,8 +31,8 @@ public class PopulateInputConfig : Editor
 
         if (GUILayout.Button("Load Config From File"))
         {
-            string filename;
-            if (FileExplorer.OpenFilePanel(new ExtensionFilter("Config files", "json"), "json", out filename))
+            string filename = inputPropertiesPath;
+            //if (FileExplorer.OpenFilePanel(new ExtensionFilter("Config files", "json"), "json", out filename))
             {
                 InputConfig inputConfig = new InputConfig();
                 InputConfig.LoadFromFile(filename, inputConfig);
@@ -40,15 +41,17 @@ public class PopulateInputConfig : Editor
         }
         if (GUILayout.Button("Save Config To File")) 
         {
-            string filename;
+            string filename = inputPropertiesPath;
 
             if (inputProperties.shortcutInputs.Length > 0)
             {
-                if (FileExplorer.SaveFilePanel(new ExtensionFilter("Config files", "json"), "InputPropertiesConfig", "json", out filename))
+                //if (FileExplorer.SaveFilePanel(new ExtensionFilter("Config files", "json"), "InputPropertiesConfig", "json", out filename))
                 {
                     InputConfig inputConfig = new InputConfig();
                     inputConfig.shortcutInputs = inputProperties.shortcutInputs;
                     InputConfig.Save(inputConfig, filename);
+
+                    Debug.Log("Input properties config saved successfully");
                 }
             }
             else
