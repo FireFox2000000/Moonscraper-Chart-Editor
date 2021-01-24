@@ -117,6 +117,12 @@ public class EventPropertiesPanelController : PropertiesPanelController
         // Make sure the user isn't editing to create 2 of the same events
         if (currentEvent != null)
         {
+            var charsToRemove = new string[] { "\"" };
+            foreach (var c in charsToRemove)
+            {
+                name = name.Replace(c, string.Empty);
+            }
+
             string prevName = currentEvent.title;
             if (SongObjectHelper.FindObjectPosition(new MoonscraperChartEditor.Song.Event(name, currentEvent.tick), editor.currentSong.events) == SongObjectHelper.NOTFOUND)
             {
