@@ -425,7 +425,7 @@ namespace MoonscraperChartEditor.Song.IO
             //SortableBytes[] sortedEvents = new SortableBytes[easyBytes.Length + mediumBytes.Length + hardBytes.Length + expertBytes.Length];//byteEvents.ToArray();
             //SortableBytes.Sort(sortedEvents);
 
-            // Strip out duplicate events. This may occur with cymbal flags across multiple difficulties
+            // Strip out duplicate events. This may occur with cymbal flags across multiple difficulties, duplicate events across difficulties etc. 
             for (int i = sortedEvents.Count - 1; i >= 0; --i)
             {
                 int next = i + 1;

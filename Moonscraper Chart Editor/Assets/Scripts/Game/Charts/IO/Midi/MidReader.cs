@@ -360,11 +360,17 @@ namespace MoonscraperChartEditor.Song.IO
                     var tick = (uint)text.AbsoluteTime;
                     var eventName = text.Text.Trim(new char[] { '[', ']' });
                     ChartEvent chartEvent = new ChartEvent(tick, eventName);
+
                     // Todo- copy text event to all difficulties
                     if (instrument == Song.Instrument.Unrecognised)
                         unrecognised.Add(chartEvent);
                     else
-                        song.GetChart(instrument, Song.Difficulty.Expert).Add(chartEvent);
+                    {
+                        foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
+                        {
+                            song.GetChart(instrument, difficulty).Add(chartEvent);
+                        }
+                    }
                 }
 
                 var note = track[i] as NoteOnEvent;
