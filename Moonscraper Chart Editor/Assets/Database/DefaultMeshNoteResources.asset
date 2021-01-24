@@ -69,6 +69,18 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 45dda14f6dd0c39458c16f935b6f52ef, type: 2}
   - {fileID: 2100000, guid: eb48e67bb0fd8f24d8915a172f213925, type: 2}
   - {fileID: 2100000, guid: 6e0acf3dcf52d294289c0253dccab4be, type: 2}
+  starpowerMaterials:
+  - {fileID: 2100000, guid: f55057ed2b5e6734e8a29fe07802bd66, type: 2}
+  - {fileID: 2100000, guid: e989572d5fefde94ba4fca494975d3b9, type: 2}
+  - {fileID: 2100000, guid: 231e0a085bfa65444b2e80e180fa34f6, type: 2}
+  - {fileID: 2100000, guid: a14ec594bcf31c645a33610978720c60, type: 2}
+  - {fileID: 2100000, guid: b976acb2702be8d4fbc80303c2d5fa46, type: 2}
+  starpowerDrumFillMaterials:
+  - {fileID: 2100000, guid: cbc53732b4d0d9b448b13e9d07ac07fd, type: 2}
+  - {fileID: 2100000, guid: e989572d5fefde94ba4fca494975d3b9, type: 2}
+  - {fileID: 2100000, guid: 231e0a085bfa65444b2e80e180fa34f6, type: 2}
+  - {fileID: 2100000, guid: a14ec594bcf31c645a33610978720c60, type: 2}
+  - {fileID: 2100000, guid: 8cd6a1685851cc346bad2cac2ffb30d3, type: 2}
   guitarModeLaneColorIndicies: 0000000001000000020000000300000004000000
   drumModeLaneColorIndicies: 0100000002000000030000000400000000000000
   drumModeLaneColorIndicies4LaneOverride: 01000000020000000300000000000000

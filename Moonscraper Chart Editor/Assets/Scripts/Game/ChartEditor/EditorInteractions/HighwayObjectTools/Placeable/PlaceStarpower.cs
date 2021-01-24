@@ -68,7 +68,7 @@ public class PlaceStarpower : PlaceSongObject {
         if (prevSpLength != newLength)
         {
             editor.commandStack.Pop();
-            editor.commandStack.Push(new SongEditAdd(new Starpower(lastPlacedSP.tick, newLength)));
+            editor.commandStack.Push(new SongEditAdd(new Starpower(lastPlacedSP.tick, newLength, lastPlacedSP.flags)));
         }
     }
 

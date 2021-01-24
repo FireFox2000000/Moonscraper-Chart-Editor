@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 33000014052604810}
   - component: {fileID: 23000011208934482}
   - component: {fileID: 65000011579827808}
+  - component: {fileID: 1270593685844765922}
   m_Layer: 11
   m_Name: Starpower
   m_TagString: Untagged
@@ -49,6 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   disableCancel: 1
   tail: {fileID: 1000013659002372}
+  visualsManager: {fileID: 1270593685844765922}
 --- !u!33 &33000014052604810
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -74,11 +76,11 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ac42d701c79fb1844a6d66a6093e6cdc, type: 2}
-  - {fileID: 2100000, guid: 8bffd34139c53b64c8c3667015fdcb7b, type: 2}
-  - {fileID: 2100000, guid: 3984cbe8686d33943881d1de17343291, type: 2}
-  - {fileID: 2100000, guid: bb748c20d61e74b4b90462546af892fa, type: 2}
-  - {fileID: 2100000, guid: 8345485a4ac2a464bb68a0b1f3e1d0dc, type: 2}
+  - {fileID: 2100000, guid: f55057ed2b5e6734e8a29fe07802bd66, type: 2}
+  - {fileID: 2100000, guid: e989572d5fefde94ba4fca494975d3b9, type: 2}
+  - {fileID: 2100000, guid: 231e0a085bfa65444b2e80e180fa34f6, type: 2}
+  - {fileID: 2100000, guid: a14ec594bcf31c645a33610978720c60, type: 2}
+  - {fileID: 2100000, guid: b976acb2702be8d4fbc80303c2d5fa46, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -111,6 +113,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.0114686, y: 0.2069766, z: 0.96196383}
   m_Center: {x: 0.00000029802322, y: 0.1044045, z: -0.007740915}
+--- !u!114 &1270593685844765922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000011034450038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f2eab713c594dc49a5b5e92685e01d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spCon: {fileID: 114000010316896372}
+  resources: {fileID: 11400000, guid: 8a807f06d4461a04a80ec08897ae99ec, type: 2}
 --- !u!1 &1000013659002372
 GameObject:
   m_ObjectHideFlags: 0

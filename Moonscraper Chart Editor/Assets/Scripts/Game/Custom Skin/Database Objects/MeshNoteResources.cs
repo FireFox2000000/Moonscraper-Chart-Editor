@@ -33,6 +33,10 @@ public class MeshNoteResources : ScriptableObject {
     [Header("Cymbal config")]
     public Material[] cymbalColorPalette = new Material[9];
 
+    [Header("Starpower config")]
+    public Material[] starpowerMaterials = new Material[5];
+    public Material[] starpowerDrumFillMaterials = new Material[5];
+
     [Header("Palette maps")]
     public int[] guitarModeLaneColorIndicies = new int[5];
     public int[] drumModeLaneColorIndicies = new int[5];

@@ -81,6 +81,12 @@ namespace MoonscraperChartEditor.Song.IO
         { MidIOHelper.DOUBLE_KICK_NOTE, (in NoteProcessParams noteProcessParams) => {
             ProcessNoteOnEventAsNote(noteProcessParams, Song.Difficulty.Expert, (int)Note.DrumPad.Kick, Note.Flags.InstrumentPlus);
         }},
+
+        { MidIOHelper.STARPOWER_DRUM_FILL_0, ProcessNoteOnEventAsDrumFill },
+        { MidIOHelper.STARPOWER_DRUM_FILL_1, ProcessNoteOnEventAsDrumFill },
+        { MidIOHelper.STARPOWER_DRUM_FILL_2, ProcessNoteOnEventAsDrumFill },
+        { MidIOHelper.STARPOWER_DRUM_FILL_3, ProcessNoteOnEventAsDrumFill },
+        { MidIOHelper.STARPOWER_DRUM_FILL_4, ProcessNoteOnEventAsDrumFill },
     };
 
         static MidReader()
@@ -783,6 +789,21 @@ namespace MoonscraperChartEditor.Song.IO
             foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
             {
                 song.GetChart(instrument, diff).Add(new Starpower(tick, sus), false);
+            }
+        }
+
+        static void ProcessNoteOnEventAsDrumFill(in NoteProcessParams noteProcessParams)
+        {
+            var noteEvent = noteProcessParams.noteEvent;
+            var song = noteProcessParams.song;
+            var instrument = noteProcessParams.instrument;
+
+            var tick = (uint)noteEvent.AbsoluteTime;
+            var sus = CalculateSustainLength(song, noteEvent);
+
+            foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
+            {
+                song.GetChart(instrument, diff).Add(new Starpower(tick, sus, Starpower.Flags.ProDrums_Activation), false);
             }
         }
 

@@ -1,25 +1,39 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
+using System;
+
 namespace MoonscraperChartEditor.Song
 {
     [System.Serializable]
     public class Starpower : ChartObject
     {
+        [Flags]
+        public enum Flags
+        {
+            None = 0,
+
+            // RB Pro Drums
+            ProDrums_Activation = 1 << 0,
+        }
+
         private readonly ID _classID = ID.Starpower;
 
         public override int classID { get { return (int)_classID; } }
 
         public uint length;
+        public Flags flags = Flags.None;
 
-        public Starpower(uint _position, uint _length) : base(_position)
+        public Starpower(uint _position, uint _length, Flags _flags = Flags.None) : base(_position)
         {
             length = _length;
+            flags = _flags;
         }
 
         public Starpower(Starpower _starpower) : base(_starpower.tick)
         {
             length = _starpower.length;
+            flags = _starpower.flags;
         }
 
         public override SongObject Clone()

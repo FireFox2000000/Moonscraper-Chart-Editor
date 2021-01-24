@@ -275,7 +275,7 @@ public class SongEditAdd : SongEditCommand
                 if (previousSp.tick + previousSp.length > sp.tick)
                 {
                     uint newLength = sp.tick - previousSp.tick;
-                    Starpower newSp = new Starpower(previousSp.tick, newLength);
+                    Starpower newSp = new Starpower(previousSp.tick, newLength, previousSp.flags);
 
                     AddAndInvokeSubAction(new DeleteAction(previousSp), subActions);
                     AddAndInvokeSubAction(new AddAction(newSp), subActions);

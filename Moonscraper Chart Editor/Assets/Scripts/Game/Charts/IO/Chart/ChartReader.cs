@@ -664,19 +664,42 @@ namespace MoonscraperChartEditor.Song.IO
                                         stringStartIndex += stringLength;
                                         AdvanceNextWord(line, ref stringStartIndex, ref stringLength);
                                     }
-                                    int fret_type = FastStringToIntParse(line, stringStartIndex, stringLength);
 
-                                    if (fret_type != 2)
-                                        continue;
+                                    int fret_type = FastStringToIntParse(line, stringStartIndex, stringLength);
 
                                     // Advance to note length
                                     {
                                         stringStartIndex += stringLength;
                                         AdvanceNextWord(line, ref stringStartIndex, ref stringLength);
                                     }
+
                                     uint length = (uint)FastStringToIntParse(line, stringStartIndex, stringLength);
 
-                                    chart.Add(new Starpower(tick, length), false);
+                                    switch (fret_type)
+                                    {
+                                        case ChartIOHelper.c_starpowerId:
+                                            {
+                                                chart.Add(new Starpower(tick, length), false);
+                                                break;
+                                            }
+
+                                        case ChartIOHelper.c_starpowerDrumFillId:
+                                            {
+                                                if (instrument == Song.Instrument.Drums)
+                                                {
+                                                    chart.Add(new Starpower(tick, length, Starpower.Flags.ProDrums_Activation), false);
+                                                }
+                                                else
+                                                {
+                                                    Debug.Assert(false, "Found drum fill flag on incompatible instrument.");
+                                                }
+                                                break;
+                                            }
+
+                                        default:
+                                            continue;
+                                    }
+
                                     break;
                                 }
                             case ('E'):

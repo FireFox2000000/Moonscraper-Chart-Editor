@@ -18,6 +18,8 @@ namespace MoonscraperChartEditor.Song.IO
 
         public const int c_proDrumsOffset = 64;
         public const int c_instrumentPlusOffset = 32;
+        public const int c_starpowerId = 2;
+        public const int c_starpowerDrumFillId = 64;
 
         public static readonly Dictionary<int, int> c_guitarNoteNumLookup = new Dictionary<int, int>()
     {

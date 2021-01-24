@@ -350,7 +350,8 @@ namespace MoonscraperChartEditor.Song.IO
         static readonly string s_sectionFormat = " = E \"section {0}\"";
         static readonly string s_eventFormat = " = E \"{0}\"";
         static readonly string s_chartEventFormat = " = E {0}";
-        static readonly string s_starpowerFormat = " = S 2 {0}";
+        static readonly string s_starpowerFormat = " = S " + ChartIOHelper.c_starpowerId + " {0}";
+        static readonly string s_starpowerDrumFillFormat = " = S " + ChartIOHelper.c_starpowerDrumFillId + " {0}";
         static readonly string s_noteFormat = " = N {0} {1}";
 
         // Initial tick is automatically written
@@ -412,7 +413,9 @@ namespace MoonscraperChartEditor.Song.IO
         static void AppendStarpowerData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)
         {
             Starpower sp = songObject as Starpower;
-            output.AppendFormat(s_starpowerFormat, (uint)Mathf.Round(sp.length * writeParameters.resolutionScaleRatio));
+            string saveFormat = sp.flags.HasFlag(Starpower.Flags.ProDrums_Activation) ? s_starpowerDrumFillFormat : s_starpowerFormat;
+
+            output.AppendFormat(saveFormat, (uint)Mathf.Round(sp.length * writeParameters.resolutionScaleRatio));
         }
 
         static void AppendNoteData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)

@@ -938,8 +938,11 @@ namespace MoonscraperChartEditor.Song.IO
 
         static void GetStarpowerBytes(Starpower sp, out SortableBytes onEvent, out SortableBytes offEvent)
         {
-            onEvent = new SortableBytes(sp.tick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_NOTE, VELOCITY });
-            offEvent = new SortableBytes(sp.tick + sp.length, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_NOTE, VELOCITY });
+            bool isDrumFill = sp.flags.HasFlag(Starpower.Flags.ProDrums_Activation);
+            byte spNote = isDrumFill ? MidIOHelper.STARPOWER_DRUM_FILL_0 : MidIOHelper.STARPOWER_NOTE;
+
+            onEvent = new SortableBytes(sp.tick, new byte[] { ON_EVENT, spNote, VELOCITY });
+            offEvent = new SortableBytes(sp.tick + sp.length, new byte[] { OFF_EVENT, spNote, VELOCITY });
         }
 
         static void GetSoloBytes(ChartEvent solo, uint soloEndTick, out SortableBytes onEvent, out SortableBytes offEvent)

@@ -8,6 +8,8 @@ using MoonscraperChartEditor.Song;
 public class StarpowerController : SongObjectController
 {
     public GameObject tail;
+    [SerializeField]
+    StarpowerVisualsManager visualsManager;
     public Starpower starpower { get { return (Starpower)songObject; } set { Init(value, this); } }
     public const float position = -3.0f;
     
@@ -55,6 +57,11 @@ public class StarpowerController : SongObjectController
             transform.position = new Vector3(CHART_CENTER_POS + position, desiredWorldYPosition, 0);
 
             UpdateTailLength();
+
+            //if (isDirty)
+            {
+                visualsManager.UpdateVisuals();
+            }
         }
     }
 
@@ -93,7 +100,7 @@ public class StarpowerController : SongObjectController
             if (wantPop)
                 editor.commandStack.Pop();
 
-            editor.commandStack.Push(new SongEditModify<Starpower>(starpower, new Starpower(starpower.tick, newLength)));
+            editor.commandStack.Push(new SongEditModify<Starpower>(starpower, new Starpower(starpower.tick, newLength, starpower.flags)));
 
             wantPop = true;
         }
