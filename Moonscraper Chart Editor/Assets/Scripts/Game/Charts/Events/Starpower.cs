@@ -43,7 +43,7 @@ namespace MoonscraperChartEditor.Song
 
         public override bool AllValuesCompare<T>(T songObject)
         {
-            if (this == songObject && (songObject as Starpower).length == length)
+            if (this == songObject && (songObject as Starpower).length == length && (songObject as Starpower).flags == flags)
                 return true;
             else
                 return false;
@@ -96,6 +96,7 @@ namespace MoonscraperChartEditor.Song
         {
             tick = sp.tick;
             length = sp.length;
+            flags = sp.flags;
         }
     }
 }

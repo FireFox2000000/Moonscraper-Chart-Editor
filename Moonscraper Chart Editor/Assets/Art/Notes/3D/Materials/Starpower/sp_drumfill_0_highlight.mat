@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: hopo_note_highlight
+  m_Name: sp_drumfill_0_highlight
   m_Shader: {fileID: 4800000, guid: 89b18f3351773cd40b880c34e6ac5614, type: 3}
   m_ShaderKeywords: _EMISSION
   m_LightmapFlags: 1
@@ -73,13 +73,13 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _Emission: 0
+    - _Emission: 1
     - _EmissionLM: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _MKGlowPower: 0.8
-    - _MKGlowTexStrength: 0
+    - _MKGlowPower: 2.5
+    - _MKGlowTexStrength: 10
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -90,8 +90,8 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.6603774, g: 0.22271551, b: 0, a: 1}
     - _EmissionColor: {r: 3.5, g: 3.5, b: 3.5, a: 1}
-    - _MKGlowColor: {r: 1, g: 1, b: 1, a: 1}
-    - _MKGlowTexColor: {r: 1, g: 1, b: 1, a: 1}
+    - _MKGlowColor: {r: 0.6037736, g: 0.13259342, b: 0, a: 1}
+    - _MKGlowTexColor: {r: 0.6415094, g: 0.21637142, b: 0, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}

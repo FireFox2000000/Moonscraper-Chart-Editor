@@ -216,6 +216,10 @@ public class ClipboardObjectController : Snapable {
                     else if (objectToAdd.GetType() == typeof(Starpower))
                     {
                         Starpower sp = (Starpower)objectToAdd;
+                        if (editor.currentInstrument != Song.Instrument.Drums)
+                        {
+                            sp.flags &= ~Starpower.Flags.ProDrums_Activation;
+                        }
                         sp.length = TickFunctions.TickScaling(sp.length, clipboard.resolution, editor.currentSong.resolution);
                     }
 
