@@ -23,6 +23,7 @@ namespace MoonscraperChartEditor.Song.IO
         public float targetResolution;
         public bool copyDownEmptyDifficulty;
         public MidiOptions midiOptions;
+        public bool isGeneralSave;
 
         public enum Format
         {

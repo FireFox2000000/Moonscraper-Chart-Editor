@@ -8,3 +8,11 @@ wail_on
 wail_off
 ow_face_on
 ow_face_off
+[mix 0 drums0]
+[mix 1 drums0]
+[mix 2 drums0]
+[mix 3 drums0]
+[mix 0 drums0d]
+[mix 1 drums0d]
+[mix 2 drums0d]
+[mix 3 drums0d]

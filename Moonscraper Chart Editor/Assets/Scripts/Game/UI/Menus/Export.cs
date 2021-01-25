@@ -180,9 +180,12 @@ public class Export : DisplayMenu {
                 {
                     try
                     {
+                        ChartWriter.ErrorReport errorReport;
+
                         Debug.Log("Exporting CHART file to " + filepath);
-                        new ChartWriter(filepath).Write(song, exportOptions, out errorMessageList);
-                        //song.Save(filepath, exportOptions);
+                        new ChartWriter(filepath).Write(song, exportOptions, out errorReport);
+
+                        errorMessageList = errorReport.errorList.ToString();
                     }
                     catch (System.Exception e)
                     {
@@ -496,8 +499,12 @@ public class Export : DisplayMenu {
                 }
             }
 
-            new ChartWriter(chartOutputFile).Write(newSong, exportOptions, out errorMessageList);
+            ChartWriter.ErrorReport errorReport;
+
+            new ChartWriter(chartOutputFile).Write(newSong, exportOptions, out errorReport);
             GenerateSongIni(destFolderPath, newSong, songLengthSeconds, true);
+
+            errorMessageList = errorReport.errorList.ToString();
         }));
 
         tasksManager.KickTasks(tasks);

@@ -141,6 +141,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
     Task _saveTask;
 
+    [HideInInspector]
+    public ChartEditorSessionFlags sessionFlags = ChartEditorSessionFlags.None;
+
     // Use this for initialization
     void Awake () {
         Debug.Log(string.Format("Initialising {0} v{1}", Application.productName, Application.version));
@@ -533,6 +536,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         currentSongAudio.FreeAudioStreams();
         currentSong = new Song();
 
+        sessionFlags &= ~ChartEditorSessionFlags.CurrentChartSavedInProprietyFormat;
+
         LoadSong(currentSong);
 
         movement.SetPosition(0);
@@ -583,7 +588,10 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     {
         if (lastLoadedFile != string.Empty)
         {
-            Save(lastLoadedFile, currentSong.defaultExportOptions);
+            var exportOptions = currentSong.defaultExportOptions;
+            exportOptions.isGeneralSave = true;
+
+            Save(lastLoadedFile, exportOptions);
             return true;
         }
         else
@@ -609,6 +617,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         {
             ExportOptions exportOptions = currentSong.defaultExportOptions;
             exportOptions.forced = forced;
+            exportOptions.isGeneralSave = true;
 
             Save(fileName, exportOptions);
             return true;
@@ -760,7 +769,10 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             lastLoadedFile = System.IO.Path.GetFullPath(currentFileName);
         else
             lastLoadedFile = string.Empty;
+
         currentSong = newSong;
+
+        sessionFlags &= ~ChartEditorSessionFlags.CurrentChartSavedInProprietyFormat;
 
         LoadSong(currentSong);
 
@@ -784,7 +796,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         Song backup = currentSong;
 
-        if (!FileExplorer.OpenFilePanel(new ExtensionFilter("Chart files", "chart", "mid"), "chart,mid", out currentFileName))
+        if (!FileExplorer.OpenFilePanel(new ExtensionFilter("Chart files", "chart", "mid"), "chart,mid,msce", out currentFileName))
         {
             currentSong = backup;
 
@@ -887,13 +899,28 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         string saveErrorMessage;
         try
         {
-            new ChartWriter(filepath).Write(song, exportOptions, out saveErrorMessage);
+            ChartWriter.ErrorReport errorReport;
+            new ChartWriter(filepath).Write(song, exportOptions, out errorReport);
 
             Debug.Log("Save complete!");
 
-            if (saveErrorMessage != string.Empty)
+            saveErrorMessage = errorReport.errorList.ToString();
+
+            bool shouldQueueErrors = errorReport.hasNonErrorFileTypeRelatedErrors;
+            if (!sessionFlags.HasFlag(ChartEditorSessionFlags.CurrentChartSavedInProprietyFormat))
+            {
+                // We haven't warned users about this particular error yet, let's queue it up.
+                shouldQueueErrors = true;
+            }
+
+            if (saveErrorMessage != string.Empty && shouldQueueErrors)
             {
                 errorManager.QueueErrorMessage("Save completed with the following errors: " + Globals.LINE_ENDING + saveErrorMessage);
+            }
+
+            if (errorReport.resultantFileType == ChartIOHelper.FileSubType.MoonscraperPropriety)
+            {
+                sessionFlags |= ChartEditorSessionFlags.CurrentChartSavedInProprietyFormat;
             }
 
             string iniPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(filepath), SongIniFunctions.INI_FILENAME);

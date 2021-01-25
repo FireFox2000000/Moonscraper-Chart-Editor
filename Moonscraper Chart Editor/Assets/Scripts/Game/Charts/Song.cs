@@ -45,6 +45,7 @@ namespace MoonscraperChartEditor.Song
                 exportOptions.format = IO.ExportOptions.Format.Chart;
                 exportOptions.targetResolution = this.resolution;
                 exportOptions.tickOffset = 0;
+                exportOptions.isGeneralSave = false;
 
                 exportOptions.midiOptions = new IO.ExportOptions.MidiOptions()
                 {

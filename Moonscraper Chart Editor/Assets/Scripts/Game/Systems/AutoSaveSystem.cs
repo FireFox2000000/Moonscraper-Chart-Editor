@@ -45,9 +45,12 @@ public class AutoSaveSystem : SystemManagerState.System
             string saveErrorMessage;
             try
             {
-                new ChartWriter(Globals.autosaveLocation).Write(autosaveSong, editor.currentSong.defaultExportOptions, out saveErrorMessage);
+                ChartWriter.ErrorReport errorReport;
+                new ChartWriter(Globals.autosaveLocation).Write(autosaveSong, editor.currentSong.defaultExportOptions, out errorReport);
 
-                if (saveErrorMessage != string.Empty)
+                saveErrorMessage = errorReport.errorList.ToString();
+
+                if (saveErrorMessage != string.Empty && errorReport.hasNonErrorFileTypeRelatedErrors)
                 {
                     Debug.LogError("Autosave completed with the following errors: " + Globals.LINE_ENDING + saveErrorMessage);
                 }

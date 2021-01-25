@@ -10,6 +10,14 @@ namespace MoonscraperChartEditor.Song.IO
 {
     public static class ChartIOHelper
     {
+        public enum FileSubType
+        {
+            Default,
+
+            // Stores space characters found in ChartEvent objects as Japanese full-width spaces. Need to convert this back when loading.
+            MoonscraperPropriety,
+        }
+
         public const string
             c_dataBlockSong = "[Song]"
             , c_dataBlockSyncTrack = "[SyncTrack]"

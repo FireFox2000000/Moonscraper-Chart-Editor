@@ -144,8 +144,6 @@ public class EventPropertiesPanelController : PropertiesPanelController
         }
         else if (currentChartEvent != null)
         {
-            name = name.Replace(' ', '_');
-
             string prevName = currentChartEvent.eventName;
             if (SongObjectHelper.FindObjectPosition(new ChartEvent(currentChartEvent.tick, name), editor.currentChart.events) == SongObjectHelper.NOTFOUND)
             {

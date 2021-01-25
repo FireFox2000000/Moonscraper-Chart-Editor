@@ -40,6 +40,23 @@ namespace MoonscraperChartEditor.Song.IO
 
         delegate void WriteAudioStreamSaveString(Song.AudioInstrument audio, string saveFormat);
 
+        public class ErrorReport
+        {
+            public StringBuilder errorList = new StringBuilder();
+            public ChartIOHelper.FileSubType resultantFileType = ChartIOHelper.FileSubType.Default;
+            public bool hasNonErrorFileTypeRelatedErrors { get; private set; }
+
+            public void AddError(string message, bool isFileTypeChangeFlag = false)
+            {
+                errorList.AppendLine(message);
+
+                if (!isFileTypeChangeFlag)
+                {
+                    hasNonErrorFileTypeRelatedErrors = true;
+                }
+            }
+        }
+
         // Link the method with which we should write our objects out with
         struct SongObjectWriteParameters
         {
@@ -48,7 +65,7 @@ namespace MoonscraperChartEditor.Song.IO
             public Song.Instrument instrument;
             public Song.Difficulty difficulty;
             public ExportOptions exportOptions;
-            public StringBuilder errorList;
+            public ErrorReport errorReport;
         }
         delegate void AppendSongObjectData(SongObject so, in SongObjectWriteParameters writeParameters, StringBuilder output);
         static readonly Dictionary<SongObject.ID, AppendSongObjectData> c_songObjectWriteFnLookup = new Dictionary<SongObject.ID, AppendSongObjectData>()
@@ -62,12 +79,11 @@ namespace MoonscraperChartEditor.Song.IO
         { SongObject.ID.Note, AppendNoteData },
     };
 
-        public void Write(Song song, ExportOptions exportOptions, out string errorList)
+        public void Write(Song song, ExportOptions exportOptions, out ErrorReport errorReport)
         {
             song.UpdateCache();
 
-            StringBuilder errorListBuilder = new StringBuilder();
-            errorList = string.Empty;
+            errorReport = new ErrorReport();
             string saveString = string.Empty;
 
             try
@@ -108,7 +124,7 @@ namespace MoonscraperChartEditor.Song.IO
             catch (System.Exception e)
             {
                 string error = Logger.LogException(e, "Error with saving song properties");
-                errorListBuilder.AppendLine(error);
+                errorReport.AddError(error);
 
                 saveString = string.Empty;  // Clear all the song properties because we don't want braces left open, which will screw up the loading of the chart
             }
@@ -123,17 +139,17 @@ namespace MoonscraperChartEditor.Song.IO
                     new BPM(), new TimeSignature()
                 };
 
-                    saveString += GetSaveString(song, defaultsList, exportOptions, errorListBuilder);
+                    saveString += GetSaveString(song, defaultsList, exportOptions, errorReport);
                 }
 
-                saveString += GetSaveString(song, song.syncTrack, exportOptions, errorListBuilder);
+                saveString += GetSaveString(song, song.syncTrack, exportOptions, errorReport);
                 saveString += s_chartSectionFooter;
             }
 
             // Events
             {
                 saveString += s_chartHeaderEvents;
-                saveString += GetSaveString(song, song.eventsAndSections, exportOptions, errorListBuilder);
+                saveString += GetSaveString(song, song.eventsAndSections, exportOptions, errorReport);
                 saveString += s_chartSectionFooter;
             }
 
@@ -155,7 +171,7 @@ namespace MoonscraperChartEditor.Song.IO
                         continue;
                     }
 
-                    string chartString = GetSaveString(song, song.GetChart(instrument, difficulty).chartObjects, exportOptions, errorListBuilder, instrument);
+                    string chartString = GetSaveString(song, song.GetChart(instrument, difficulty).chartObjects, exportOptions, errorReport, instrument);
 
                     if (chartString == string.Empty)
                     {
@@ -182,7 +198,7 @@ namespace MoonscraperChartEditor.Song.IO
                                         break;
                                 }
 
-                                chartString = GetSaveString(song, song.GetChart(instrument, chartDiff).chartObjects, exportOptions, errorListBuilder, instrument, chartDiff);
+                                chartString = GetSaveString(song, song.GetChart(instrument, chartDiff).chartObjects, exportOptions, errorReport, instrument, chartDiff);
 
                                 if (exit)
                                     break;
@@ -205,7 +221,7 @@ namespace MoonscraperChartEditor.Song.IO
             // Unrecognised charts
             foreach (Chart chart in song.unrecognisedCharts)
             {
-                string chartString = GetSaveString(song, chart.chartObjects, exportOptions, errorListBuilder, Song.Instrument.Unrecognised);
+                string chartString = GetSaveString(song, chart.chartObjects, exportOptions, errorReport, Song.Instrument.Unrecognised);
 
                 saveString += string.Format(s_chartSectionHeaderFormat, chart.name);
                 saveString += chartString;
@@ -215,14 +231,18 @@ namespace MoonscraperChartEditor.Song.IO
             try
             {
                 // Save to file
+                if (errorReport.resultantFileType == ChartIOHelper.FileSubType.MoonscraperPropriety)
+                {
+                    // Rename the file to the correct file type
+                    path = Path.ChangeExtension(path, MsceIOHelper.FileExtention);
+                }
+
                 File.WriteAllText(path, saveString, System.Text.Encoding.UTF8);
             }
             catch (Exception e)
             {
                 Logger.LogException(e, "Error when writing text to file");
             }
-
-            errorList = errorListBuilder.ToString();
         }
 
         string GetPropertiesStringWithoutAudio(Song song, ExportOptions exportOptions)
@@ -267,7 +287,7 @@ namespace MoonscraperChartEditor.Song.IO
             Song song, 
             IList<T> list, 
             ExportOptions exportOptions, 
-            StringBuilder errorList, 
+            ErrorReport errorReport, 
             Song.Instrument instrument = Song.Instrument.Guitar, 
             Song.Difficulty difficulty = Song.Difficulty.Expert
         ) where T : SongObject
@@ -281,7 +301,7 @@ namespace MoonscraperChartEditor.Song.IO
             writeParameters.instrument = instrument;
             writeParameters.difficulty = difficulty;
             writeParameters.exportOptions = exportOptions;
-            writeParameters.errorList = errorList;
+            writeParameters.errorReport = errorReport;
 
             for (int i = 0; i < list.Count; ++i)
             {
@@ -308,7 +328,7 @@ namespace MoonscraperChartEditor.Song.IO
                 catch (System.Exception e)
                 {
                     string error = Logger.LogException(e, "Error with saving object #" + i + " as " + songObject);
-                    errorList.AppendLine(error);
+                    errorReport.AddError(error);
                 }
             }
 
@@ -399,12 +419,18 @@ namespace MoonscraperChartEditor.Song.IO
             ChartEvent chartEvent = songObject as ChartEvent;
 
             string eventName = chartEvent.eventName;
-            eventName = eventName.Replace(' ', '_');
 
-            if (eventName != chartEvent.eventName)
+            if (writeParameters.exportOptions.isGeneralSave)
             {
-                // Spaces were replaced, todo- notify user
-                writeParameters.errorList.AppendLine(string.Format("Warning: Found a track event \"{0}\" with space character/s. This is not allowed and has been automatically replaced with an underscore.", chartEvent.eventName));
+                eventName = eventName.Replace(' ', MsceIOHelper.WhitespaceChartEventReplacement);
+                writeParameters.errorReport.AddError(string.Format("Warning: Found a track event \"{0}\" with space character/s. This will force the file to be saved in a propriety format and will need to be re-exported to be readable by 3rd party rhythm games.", chartEvent.eventName), true);
+
+                writeParameters.errorReport.resultantFileType = ChartIOHelper.FileSubType.MoonscraperPropriety;
+            }
+            else
+            {
+                eventName = eventName.Replace(' ', '_');
+                writeParameters.errorReport.AddError(string.Format("Warning: Found a track event \"{0}\" with space character/s. This has been automatically replaced with an underscore as these characters are not supported in these kinds of events within the .chart file format.", chartEvent.eventName));
             }
 
             output.AppendFormat(s_chartEventFormat, eventName);

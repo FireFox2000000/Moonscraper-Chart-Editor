@@ -111,11 +111,16 @@ namespace MoonscraperChartEditor.Song.IO
                 if (!File.Exists(filepath))
                     throw new Exception("File does not exist");
 
-                if (Path.GetExtension(filepath) == ".chart")
+                string extension = Path.GetExtension(filepath);
+                bool standardChartFormat = extension == ".chart";
+
+                if (standardChartFormat || extension == MsceIOHelper.FileExtention)
                 {
                     Song song = new Song();
 
-                    LoadChart(song, filepath);
+                    ChartIOHelper.FileSubType fileLoadType = standardChartFormat ? ChartIOHelper.FileSubType.Default : ChartIOHelper.FileSubType.MoonscraperPropriety;
+
+                    LoadChart(song, filepath, fileLoadType);
 
                     return song;
                 }
@@ -131,7 +136,7 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
-        static void LoadChart(Song song, string filepath)
+        static void LoadChart(Song song, string filepath, ChartIOHelper.FileSubType fileLoadType)
         {
             bool open = false;
             string dataName = string.Empty;
@@ -162,7 +167,7 @@ namespace MoonscraperChartEditor.Song.IO
                     open = false;
 
                     // Submit data
-                    SubmitChartData(song, dataName, dataStrings, filepath);
+                    SubmitChartData(song, dataName, dataStrings, fileLoadType, filepath);
 
                     dataName = string.Empty;
                     dataStrings.Clear();
@@ -177,7 +182,7 @@ namespace MoonscraperChartEditor.Song.IO
                     else if (dataStrings.Count > 0 && dataName != string.Empty)
                     {
                         // Submit data
-                        SubmitChartData(song, dataName, dataStrings, filepath);
+                        SubmitChartData(song, dataName, dataStrings, fileLoadType, filepath);
 
                         dataName = string.Empty;
                         dataStrings.Clear();
@@ -195,7 +200,7 @@ namespace MoonscraperChartEditor.Song.IO
             song.UpdateCache();
         }
 
-        static void SubmitChartData(Song song, string dataName, List<string> stringData, string filePath = "")
+        static void SubmitChartData(Song song, string dataName, List<string> stringData, ChartIOHelper.FileSubType fileLoadType, string filePath = "")
         {
             switch (dataName)
             {
@@ -234,11 +239,11 @@ namespace MoonscraperChartEditor.Song.IO
                                     instrumentParsingType = Song.Instrument.Guitar;
                                 }
 
-                                LoadChart(song.GetChart(instrument, chartDiff), stringData, instrumentParsingType);
+                                LoadChart(song.GetChart(instrument, chartDiff), stringData, instrumentParsingType, fileLoadType);
                             }
                             else
                             {
-                                LoadUnrecognisedChart(song, dataName, stringData);
+                                LoadUnrecognisedChart(song, dataName, stringData, fileLoadType);
                             }
 
                             goto OnChartLoaded;
@@ -247,7 +252,7 @@ namespace MoonscraperChartEditor.Song.IO
 
                     {
                         // Add to the unused chart list
-                        LoadUnrecognisedChart(song, dataName, stringData);
+                        LoadUnrecognisedChart(song, dataName, stringData, fileLoadType);
                         goto OnChartLoaded;
                     }
 
@@ -257,12 +262,12 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
-        static void LoadUnrecognisedChart(Song song, string dataName, List<string> stringData)
+        static void LoadUnrecognisedChart(Song song, string dataName, List<string> stringData, ChartIOHelper.FileSubType fileLoadType)
         {
             dataName = dataName.TrimStart('[');
             dataName = dataName.TrimEnd(']');
             Chart unrecognisedChart = new Chart(song, Song.Instrument.Unrecognised, dataName);
-            LoadChart(unrecognisedChart, stringData, Song.Instrument.Unrecognised);
+            LoadChart(unrecognisedChart, stringData, Song.Instrument.Unrecognised, fileLoadType);
             song.unrecognisedCharts.Add(unrecognisedChart);
         }
 
@@ -574,7 +579,7 @@ namespace MoonscraperChartEditor.Song.IO
             while ((startIndex + ++length) < line.Length && line[startIndex + length] != ' ') ;
         }
 
-        public static void LoadChart(Chart chart, IList<string> data, Song.Instrument instrument = Song.Instrument.Guitar)
+        static void LoadChart(Chart chart, IList<string> data, Song.Instrument instrument, ChartIOHelper.FileSubType fileLoadType)
         {
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
@@ -711,6 +716,12 @@ namespace MoonscraperChartEditor.Song.IO
                                         AdvanceNextWord(line, ref stringStartIndex, ref stringLength);
                                     }
                                     string eventName = line.Substring(stringStartIndex, stringLength);
+
+                                    if (fileLoadType == ChartIOHelper.FileSubType.MoonscraperPropriety)
+                                    {
+                                        eventName = eventName.Replace(MsceIOHelper.WhitespaceChartEventReplacement, ' ');
+                                    }
+
                                     chart.Add(new ChartEvent(tick, eventName), false);
                                     break;
                                 }
