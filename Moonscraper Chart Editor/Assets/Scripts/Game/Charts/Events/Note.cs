@@ -75,9 +75,13 @@ namespace MoonscraperChartEditor.Song
             // Generic flag that mainly represents mechanics from Guitar Hero's Expert+ filtered drum notes such as Double Kick. This may apply to any difficulty now though.
             InstrumentPlus = 1 << 7,
             DoubleKick = InstrumentPlus,
+
+            // FoF/PS Pro Drums
+            ProDrums_Accent = 1 << 12,
+            ProDrums_Ghost = 1 << 13,
         }
 
-        public const Flags PER_NOTE_FLAGS = Flags.ProDrums_Cymbal | Flags.InstrumentPlus;
+        public const Flags PER_NOTE_FLAGS = Flags.ProDrums_Cymbal | Flags.InstrumentPlus | Flags.ProDrums_Accent | Flags.ProDrums_Ghost;
 
         private readonly ID _classID = ID.Note;
 

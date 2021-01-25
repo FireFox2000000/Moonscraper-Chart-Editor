@@ -29,7 +29,7 @@ namespace MoonscraperChartEditor.Song.IO
 
         const byte ON_EVENT = 0x91;         // Note on channel 1
         const byte OFF_EVENT = 0x81;
-        const byte VELOCITY = 0x64;         // 100
+        const byte VELOCITY = MidIOHelper.VELOCITY;
 
         const byte SYSEX_START = 0xF0;
         const byte SYSEX_END = 0xF7;
@@ -155,7 +155,7 @@ namespace MoonscraperChartEditor.Song.IO
                 Note phraseNote = new Note(phraseStartEvent.tick, 0, phraseEndEventTick - phraseStartEvent.tick);
                 SortableBytes onEvent = null;
                 SortableBytes offEvent = null;
-                GetNoteNumberBytes(MidIOHelper.PhraseMarker, phraseNote, out onEvent, out offEvent);
+                GetNoteNumberBytes(MidIOHelper.PhraseMarker, phraseNote, VELOCITY, out onEvent, out offEvent);
 
                 InsertionSort(processParams.out_sortableBytes, onEvent);
                 InsertionSort(processParams.out_sortableBytes, offEvent);
@@ -520,7 +520,21 @@ namespace MoonscraperChartEditor.Song.IO
                 {
                     int noteNumber = GetMidiNoteNumber(note, gameMode, difficulty);
 
-                    GetNoteNumberBytes(noteNumber, note, out onEvent, out offEvent);
+                    byte velocity = VELOCITY;
+
+                    if (gameMode == Chart.GameMode.Drums)
+                    {
+                        if (note.flags.HasFlag(Note.Flags.ProDrums_Accent))
+                        {
+                            velocity = MidIOHelper.VELOCITY_ACCENT;
+                        }
+                        else if (note.flags.HasFlag(Note.Flags.ProDrums_Ghost))
+                        {
+                            velocity = MidIOHelper.VELOCITY_GHOST;
+                        }
+                    }
+
+                    GetNoteNumberBytes(noteNumber, note, velocity, out onEvent, out offEvent);
 
                     if (exportOptions.forced)
                     {
@@ -959,13 +973,13 @@ namespace MoonscraperChartEditor.Song.IO
 
         static void GetUnrecognisedChartNoteBytes(Note note, out SortableBytes onEvent, out SortableBytes offEvent)
         {
-            GetNoteNumberBytes(note.rawNote, note, out onEvent, out offEvent);
+            GetNoteNumberBytes(note.rawNote, note, VELOCITY, out onEvent, out offEvent);
         }
 
-        static void GetNoteNumberBytes(int noteNumber, Note note, out SortableBytes onEvent, out SortableBytes offEvent)
+        static void GetNoteNumberBytes(int noteNumber, Note note, byte velocity, out SortableBytes onEvent, out SortableBytes offEvent)
         {
-            onEvent = new SortableBytes(note.tick, new byte[] { ON_EVENT, (byte)noteNumber, VELOCITY });
-            offEvent = new SortableBytes(note.tick + note.length, new byte[] { OFF_EVENT, (byte)noteNumber, VELOCITY });
+            onEvent = new SortableBytes(note.tick, new byte[] { ON_EVENT, (byte)noteNumber, velocity });
+            offEvent = new SortableBytes(note.tick + note.length, new byte[] { OFF_EVENT, (byte)noteNumber, velocity });
         }
 
         static int GetMidiNoteNumber(Note note, Chart.GameMode gameMode, Song.Difficulty difficulty)

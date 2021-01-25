@@ -363,9 +363,12 @@ namespace MoonscraperChartEditor.Song.IO
 
                     // Todo- copy text event to all difficulties
                     if (instrument == Song.Instrument.Unrecognised)
+                    {
                         unrecognised.Add(chartEvent);
+                    }
                     else
                     {
+                        // Copy text event to all difficulties so that .chart format can store these properly. Midi writer will strip duplicate events just fine anyway. 
                         foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
                         {
                             song.GetChart(instrument, difficulty).Add(chartEvent);
@@ -778,8 +781,29 @@ namespace MoonscraperChartEditor.Song.IO
             NoteOnEvent noteEvent = noteProcessParams.noteEvent;
             var tick = (uint)noteEvent.AbsoluteTime;
             var sus = CalculateSustainLength(noteProcessParams.song, noteEvent);
+            var velocity = noteEvent.Velocity;
 
-            Note newNote = new Note(tick, ingameFret, sus, defaultFlags);
+            Note.Flags flags = defaultFlags;
+
+            if (noteProcessParams.instrument == Song.Instrument.Drums)
+            {
+                switch (velocity)
+                {
+                    case MidIOHelper.VELOCITY_ACCENT:
+                        {
+                            flags |= Note.Flags.ProDrums_Accent;
+                            break;
+                        }
+                    case MidIOHelper.VELOCITY_GHOST:
+                        {
+                            flags |= Note.Flags.ProDrums_Ghost;
+                            break;
+                        }
+                    default: break;
+                }
+            }
+
+            Note newNote = new Note(tick, ingameFret, sus, flags);
             chart.Add(newNote, false);
         }
 

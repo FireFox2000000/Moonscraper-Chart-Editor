@@ -42,6 +42,10 @@ namespace MoonscraperChartEditor.Song.IO
         public const string Rb2SectionPrefix = "section ";
         public const string Rb3SectionPrefix = "prc_";
 
+        public const byte VELOCITY = 0x64;              // 100
+        public const byte VELOCITY_ACCENT = 0x7f;       // 127, fof/ps
+        public const byte VELOCITY_GHOST = 0x1;         // 1, fof/ps
+
         // http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring
         public static readonly Dictionary<Note.DrumPad, int> PAD_TO_CYMBAL_LOOKUP = new Dictionary<Note.DrumPad, int>()
     {
