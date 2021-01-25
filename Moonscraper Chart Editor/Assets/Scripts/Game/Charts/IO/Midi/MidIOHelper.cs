@@ -21,8 +21,8 @@ namespace MoonscraperChartEditor.Song.IO
         public const string VOCALS_TRACK = "PART VOCALS";
 
         public const string LYRIC_EVENT_PREFIX = "lyric ";
-        public const byte SOLO_NOTE = 0x67;    // 103, http://docs.c3universe.com/rbndocs/index.php?title=Guitar_and_Bass_Authoring#Solo_Sections
-        public const byte STARPOWER_NOTE = 0x74;   // 116, http://docs.c3universe.com/rbndocs/index.php?title=Overdrive_and_Big_Rock_Endings
+        public const byte SOLO_NOTE = 0x67;                 // 103, http://docs.c3universe.com/rbndocs/index.php?title=Guitar_and_Bass_Authoring#Solo_Sections
+        public const byte STARPOWER_NOTE = 0x74;            // 116, http://docs.c3universe.com/rbndocs/index.php?title=Overdrive_and_Big_Rock_Endings
 
         // 120 - 124 http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring#Drum_Fills
         public const byte STARPOWER_DRUM_FILL_0 = 120;
@@ -34,6 +34,7 @@ namespace MoonscraperChartEditor.Song.IO
         public const string SoloEventText = "solo";
         public const string SoloEndEventText = "soloend";
         public const int DOUBLE_KICK_NOTE = 95;
+        public const byte FLAM_MARKER = 0x6d;                  // 109
 
         public const int PhraseMarker = 105; // http://docs.c3universe.com/rbndocs/index.php?title=Vocal_Authoring
         public const string PhraseStartText = "phrase_start";
