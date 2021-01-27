@@ -24,10 +24,11 @@ namespace MoonscraperChartEditor.Song.IO
         public bool copyDownEmptyDifficulty;
         public MidiOptions midiOptions;
         public bool isGeneralSave;
+        public bool substituteCHLyricChars;
 
         public enum Format
         {
-            Chart, Midi
+            Chart, Midi, Msce
         }
 
         public enum Game

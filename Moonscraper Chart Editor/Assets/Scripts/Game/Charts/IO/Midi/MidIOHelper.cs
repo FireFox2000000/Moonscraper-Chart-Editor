@@ -20,7 +20,7 @@ namespace MoonscraperChartEditor.Song.IO
         public const string GHL_BASS_TRACK = "PART BASS GHL";
         public const string VOCALS_TRACK = "PART VOCALS";
 
-        public const string LYRIC_EVENT_PREFIX = "lyric ";
+        public const string LYRIC_EVENT_PREFIX = LyricHelper.LYRIC_EVENT_PREFIX;
         public const byte SOLO_NOTE = 0x67;                 // 103, http://docs.c3universe.com/rbndocs/index.php?title=Guitar_and_Bass_Authoring#Solo_Sections
         public const byte STARPOWER_NOTE = 0x74;            // 116, http://docs.c3universe.com/rbndocs/index.php?title=Overdrive_and_Big_Rock_Endings
 

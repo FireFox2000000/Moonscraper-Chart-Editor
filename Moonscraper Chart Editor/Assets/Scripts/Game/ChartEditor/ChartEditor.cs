@@ -632,9 +632,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (currentSong != null && !isSaving)
         {
             Debug.Log("Saving to file- " + System.IO.Path.GetFullPath(filename));
-          
-            _saveTask = SaveCurrentSongAsync(filename, exportOptions);
             lastLoadedFile = System.IO.Path.GetFullPath(filename);
+
+            _saveTask = SaveCurrentSongAsync(filename, exportOptions);
 
             if (isSaving)
                 events.saveEvent.Fire();
@@ -906,11 +906,17 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
             saveErrorMessage = errorReport.errorList.ToString();
 
-            bool shouldQueueErrors = errorReport.hasNonErrorFileTypeRelatedErrors;
+            bool shouldQueueErrors = true; /*errorReport.hasNonErrorFileTypeRelatedErrors;
             if (!sessionFlags.HasFlag(ChartEditorSessionFlags.CurrentChartSavedInProprietyFormat))
             {
                 // We haven't warned users about this particular error yet, let's queue it up.
                 shouldQueueErrors = true;
+            }*/
+
+            if (errorReport.resultantFileType == ChartIOHelper.FileSubType.MoonscraperPropriety)
+            {
+                filepath = System.IO.Path.ChangeExtension(filepath, MsceIOHelper.FileExtention);
+                lastLoadedFile = filepath;
             }
 
             if (saveErrorMessage != string.Empty && shouldQueueErrors)

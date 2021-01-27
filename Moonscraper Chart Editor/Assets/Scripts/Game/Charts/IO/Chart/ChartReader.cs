@@ -218,7 +218,7 @@ namespace MoonscraperChartEditor.Song.IO
 #if SONG_DEBUG
                 Debug.Log("Loading events data");
 #endif
-                    SubmitDataGlobals(song, stringData);
+                    SubmitDataGlobals(song, stringData, fileLoadType);
                     break;
                 default:
                     // Determine what difficulty
@@ -446,7 +446,7 @@ namespace MoonscraperChartEditor.Song.IO
                 song.SetAudioLocation(streamAudio, Path.GetFullPath(audioFilepath));
         }
 
-        static void SubmitDataGlobals(Song song, List<string> stringData)
+        static void SubmitDataGlobals(Song song, List<string> stringData, ChartIOHelper.FileSubType fileLoadType)
         {
             const int TEXT_POS_TICK = 0;
             const int TEXT_POS_EVENT_TYPE = 2;
@@ -511,9 +511,23 @@ namespace MoonscraperChartEditor.Song.IO
                         }
 
                         if (isSection)
+                        {
                             song.Add(new Section(sb.ToString(), tick), false);
+                        }
                         else
-                            song.Add(new Event(sb.ToString(), tick), false);
+                        {
+                            string eventTitle = sb.ToString();
+
+                            if (LyricHelper.IsLyric(eventTitle) && fileLoadType == ChartIOHelper.FileSubType.MoonscraperPropriety)
+                            {
+                                foreach (var replacement in MsceIOHelper.LyricEventCharReplacementFromMsce)
+                                {
+                                    eventTitle = eventTitle.Replace(replacement.Key, replacement.Value);
+                                }
+                            }
+
+                            song.Add(new Event(eventTitle, tick), false);
+                        }
 
                         break;
                     case ("a"):
@@ -719,7 +733,10 @@ namespace MoonscraperChartEditor.Song.IO
 
                                     if (fileLoadType == ChartIOHelper.FileSubType.MoonscraperPropriety)
                                     {
-                                        eventName = eventName.Replace(MsceIOHelper.WhitespaceChartEventReplacement, ' ');
+                                        foreach (var replacement in MsceIOHelper.LocalEventCharReplacementFromMsce)
+                                        {
+                                            eventName = eventName.Replace(replacement.Key, replacement.Value);
+                                        }
                                     }
 
                                     chart.Add(new ChartEvent(tick, eventName), false);

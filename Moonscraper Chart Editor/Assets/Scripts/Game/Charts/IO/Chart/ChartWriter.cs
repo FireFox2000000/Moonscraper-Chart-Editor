@@ -17,6 +17,7 @@ namespace MoonscraperChartEditor.Song.IO
     public class ChartWriter
     {
         string path;
+        ExportOptions.Format format = ExportOptions.Format.Chart;
 
         public ChartWriter(string path)
         {
@@ -82,6 +83,12 @@ namespace MoonscraperChartEditor.Song.IO
         public void Write(Song song, ExportOptions exportOptions, out ErrorReport errorReport)
         {
             song.UpdateCache();
+
+            if (Path.GetExtension(path) == MsceIOHelper.FileExtention)
+            {
+                Debug.Assert(exportOptions.format == ExportOptions.Format.Chart || exportOptions.format == ExportOptions.Format.Msce);
+                exportOptions.format = ExportOptions.Format.Msce;
+            }
 
             errorReport = new ErrorReport();
             string saveString = string.Empty;
@@ -231,7 +238,7 @@ namespace MoonscraperChartEditor.Song.IO
             try
             {
                 // Save to file
-                if (errorReport.resultantFileType == ChartIOHelper.FileSubType.MoonscraperPropriety)
+                if (errorReport.resultantFileType == ChartIOHelper.FileSubType.MoonscraperPropriety || exportOptions.format == ExportOptions.Format.Msce)
                 {
                     // Rename the file to the correct file type
                     path = Path.ChangeExtension(path, MsceIOHelper.FileExtention);
@@ -411,7 +418,47 @@ namespace MoonscraperChartEditor.Song.IO
         static void AppendEventData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)
         {
             Event songEvent = songObject as Event;
-            output.AppendFormat(s_eventFormat, songEvent.title);
+            string eventName = songEvent.title;
+
+            if (songEvent.IsLyric())
+            {
+                if (writeParameters.exportOptions.substituteCHLyricChars)
+                {
+                    foreach (var charSubs in LyricHelper.CloneHeroCharSubstitutions)
+                    {
+                        eventName = eventName.Replace(charSubs.Key, charSubs.Value);
+                    }
+                }
+
+                // Check for invalid characters
+                if (writeParameters.exportOptions.isGeneralSave)
+                {
+                    string temp = eventName;
+                    foreach (var replacement in MsceIOHelper.LyricEventCharReplacementToMsce)
+                    {
+                        eventName = eventName.Replace(replacement.Key, replacement.Value);
+                    }
+
+                    if (eventName != temp && writeParameters.exportOptions.format != ExportOptions.Format.Msce)
+                    {
+                        writeParameters.errorReport.AddError(string.Format("Warning: Found a global event \"{0}\" with invalid character/s. This will force the file to be saved in a propriety format (.msce) and will need to be re-exported to be readable by 3rd party rhythm games.", songEvent.title), true);
+
+                        writeParameters.errorReport.resultantFileType = ChartIOHelper.FileSubType.MoonscraperPropriety;
+                    }
+                }
+                else
+                {
+                    string doubleQuote = "\"";
+
+                    if (eventName.Contains(doubleQuote))
+                    {
+                        eventName = eventName.Replace(doubleQuote, LyricHelper.CloneHeroCharSubstitutions[doubleQuote.ToString()]);
+                        writeParameters.errorReport.AddError(string.Format("Warning: Found a global event \"{0}\" with double quote character/s. This has been automatically replaced with a backtick character as these characters are not supported in these kinds of events within the .chart file format.", songEvent.title));
+                    }
+                }
+            }
+
+            output.AppendFormat(s_eventFormat, eventName);
         }
 
         static void AppendChartEventData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)
@@ -422,15 +469,26 @@ namespace MoonscraperChartEditor.Song.IO
 
             if (writeParameters.exportOptions.isGeneralSave)
             {
-                eventName = eventName.Replace(' ', MsceIOHelper.WhitespaceChartEventReplacement);
-                writeParameters.errorReport.AddError(string.Format("Warning: Found a track event \"{0}\" with space character/s. This will force the file to be saved in a propriety format and will need to be re-exported to be readable by 3rd party rhythm games.", chartEvent.eventName), true);
+                foreach (var replacement in MsceIOHelper.LocalEventCharReplacementToMsce)
+                {
+                    eventName = eventName.Replace(replacement.Key, replacement.Value);
+                }
 
-                writeParameters.errorReport.resultantFileType = ChartIOHelper.FileSubType.MoonscraperPropriety;
+                if (eventName != chartEvent.eventName && writeParameters.exportOptions.format != ExportOptions.Format.Msce)
+                {
+                    writeParameters.errorReport.AddError(string.Format("Warning: Found a track event \"{0}\" with invalid character/s. This will force the file to be saved in a propriety format (.msce) and will need to be re-exported to be readable by 3rd party rhythm games.", chartEvent.eventName), true);
+
+                    writeParameters.errorReport.resultantFileType = ChartIOHelper.FileSubType.MoonscraperPropriety;
+                }
             }
             else
             {
-                eventName = eventName.Replace(' ', '_');
-                writeParameters.errorReport.AddError(string.Format("Warning: Found a track event \"{0}\" with space character/s. This has been automatically replaced with an underscore as these characters are not supported in these kinds of events within the .chart file format.", chartEvent.eventName));
+                char testChar = ' ';
+                if (eventName.Contains(testChar))
+                {
+                    eventName = eventName.Replace(' ', '_');
+                    writeParameters.errorReport.AddError(string.Format("Warning: Found a track event \"{0}\" with space character/s. This has been automatically replaced with an underscore as these characters are not supported in these kinds of events within the .chart file format.", chartEvent.eventName));
+                }
             }
 
             output.AppendFormat(s_chartEventFormat, eventName);
