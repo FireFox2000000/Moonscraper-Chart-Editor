@@ -8,7 +8,6 @@
 pkgname=moonscraper-chart-editor-git
 _pkgname=moonscraper-chart-editor
 pkgver=1.3.1.r358.g928ab6ea
-_curpkgver=1.3.4.1
 pkgrel=1
 pkgdesc="A song editor for Guitar Hero style rhythm games made in Unity"
 url='https://github.com/FireFox2000000/moonscraper-chart-editor'
@@ -120,7 +119,8 @@ package() {
   # Install application to /opt
   install -d "$pkgdir"/opt/$pkgname
 
-  cp -a "build/Moonscraper Chart Editor v$_curpkgver Linux (Universal)/." "$pkgdir"/opt/$pkgname
+  VERSION=$(grep -oP 'bundleVersion: \K(.+)' < "$srcdir/$_pkgname/Moonscraper Chart Editor/ProjectSettings/ProjectSettings.asset")
+  cp -a "build/Moonscraper Chart Editor v$VERSION Linux (Universal)/." "$pkgdir"/opt/$pkgname
 
   # Determine desired binary extension from arch
   if [ "${CARCH}" = "i686" ]; then
