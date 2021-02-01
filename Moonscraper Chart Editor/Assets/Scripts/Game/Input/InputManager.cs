@@ -58,13 +58,19 @@ public class InputManager : UnitySingleton<InputManager>
 
     private void Start()
     {
+        Debug.Log("Initialising SDL input...");
+
+        SDL.SDL_SetMainReady();
+
+        Debug.Log("SDL input main ready");
+
         if (SDL.SDL_Init(SDL.SDL_INIT_GAMECONTROLLER | SDL.SDL_INIT_JOYSTICK) < 0)
         {
             Debug.LogError("SDL could not initialise! SDL Error: " + SDL.SDL_GetError());
         }
         else
         {
-            Debug.Log("Successfully initialised input SDL");
+            Debug.Log("Successfully initialised SDL input");
 
             int connectedJoysticks = SDL.SDL_NumJoysticks();
         }

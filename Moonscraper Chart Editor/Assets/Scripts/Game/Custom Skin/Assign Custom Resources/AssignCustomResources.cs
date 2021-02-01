@@ -19,7 +19,6 @@ public class AssignCustomResources : MonoBehaviour {
         {
             fretboard.sharedMaterial.mainTexture = SkinManager.Instance.GetSkinItem(SkinKeys.fretboard, initFretboardTex);
 
-            Debug.Log(SkinManager.Instance.noteSpritesAvaliable);
             AssignFretSprites();
         }
         catch (System.Exception e)
