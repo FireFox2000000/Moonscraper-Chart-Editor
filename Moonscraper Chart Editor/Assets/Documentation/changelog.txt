@@ -1,3 +1,18 @@
+1.4.1.1
+	NEW FEATURES
+	-Added ability to toggle starpower to drum fill activations under the drums instrument.
+	-Added ability to save out whitespace characters in local track text events via a propriety format until it's saved via the export menu.
+
+	CHANGES
+	-Copy track events to all difficulties when importing midi files.
+
+	FIXES
+	-Fixed ini editor stripping values like <color=#c81030>name</color> due to splitting on the secondary '=' character.
+	-Fixed layering issue with note text and custom note sprites.
+	-Fixed misleading error message when opening midi files that need to run through midifix.
+	-Remove square bracket trimming from midi as this does not properly preserve and is nessacary for some events.
+	-Can now properly save double quote characters into global event markers. Will get saved into the .msce format as this would normally break .chart formatting.
+
 1.4.1
 	NEW FEATURES
 	-Added dedicated song.ini editor under Song Properties -> Advanced.
