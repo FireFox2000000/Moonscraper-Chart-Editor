@@ -64,7 +64,7 @@ public class PlaceNote : PlaceSongObject {
     public void UpdatePrevAndNext()
     {
         // Get previous and next note
-        int pos = SongObjectHelper.FindClosestPosition(note.tick, editor.currentChart.notes);
+        int pos = SongObjectHelper.FindClosestPosition(note, editor.currentChart.notes);
         //Debug.Log(pos);
         if (pos == SongObjectHelper.NOTFOUND)
         {

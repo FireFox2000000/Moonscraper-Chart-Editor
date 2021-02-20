@@ -351,11 +351,22 @@ namespace MoonscraperChartEditor.Song
         {
             get
             {
-                //Note[] chord = this.GetChord();
-                int mask = 0;
+                // Don't interate using chord, as chord will get messed up for the tool notes which override their linked list references. 
+                int mask = 1 << rawNote;
 
-                foreach (Note note in this.chord)
+                Note note = this;
+                while (note.previous != null && note.previous.tick == tick)
+                {
+                    note = note.previous;
                     mask |= (1 << note.rawNote);
+                }
+
+                note = this;
+                while (note.next != null && note.tick == note.next.tick)
+                {
+                    note = note.next;
+                    mask |= (1 << note.rawNote);
+                }
 
                 return mask;
             }
