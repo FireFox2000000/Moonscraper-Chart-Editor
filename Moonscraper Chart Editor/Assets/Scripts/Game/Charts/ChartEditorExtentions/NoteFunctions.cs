@@ -8,7 +8,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using MoonscraperChartEditor.Song;
 
-public static class NoteFunctions {
+public static class NoteFunctions
+{
+    public struct Context
+    {
+        public bool extendedSustainsEnabled;
+        public Chart.GameMode gameMode;
+
+        public static Context MakeContext(ChartEditor editor, GameSettings settings)
+        {
+            return new Context() { extendedSustainsEnabled = settings.extendedSustainsEnabled, gameMode = editor.currentGameMode };
+        }
+    }
 
     /// <summary>
     /// Gets all the notes (including this one) that share the same tick position as this one.
@@ -44,20 +55,20 @@ public static class NoteFunctions {
         }
     }
 
-    public static void GetPreviousOfSustains(List<Note> list, Note startNote, bool extendedSustainsEnabled)
+    public static void GetPreviousOfSustains(List<Note> list, Note startNote, in Context context)
     {
         list.Clear();
 
         Note previous = startNote.previous;
 
-        int allVisited = startNote.gameMode == Chart.GameMode.GHLGuitar ? 63 : 31; // 0011 1111 for ghlive, 0001 1111 for standard
+        int allVisited = startNote.gameMode == Chart.GameMode.GHLGuitar ? 63 : 31; // 0011 1111 for ghlive, 0001 1111 for standard. Does not include open notes.
         int noteTypeVisited = 0;
 
         while (previous != null && noteTypeVisited < allVisited)
         {
             if (previous.IsOpenNote())
             {
-                if (extendedSustainsEnabled)
+                if (context.extendedSustainsEnabled)
                 {
                     list.Add(previous);
 
@@ -85,16 +96,60 @@ public static class NoteFunctions {
         }
     }
 
-    public static Note[] GetPreviousOfSustains(Note startNote, bool extendedSustainsEnabled)
+    public static Note[] GetPreviousOfSustains(Note startNote, in Context context)
     {
         List<Note> list = new List<Note>(6);
 
-        GetPreviousOfSustains(list, startNote, extendedSustainsEnabled);
+        GetPreviousOfSustains(list, startNote, context);
 
         return list.ToArray();
     }
 
-    public static void CapSustain(this Note note, Note cap, Song song)
+    public static Note GetDrumRollStartNote(Note startNote, in Context context)
+    {
+        Note root = startNote;
+
+        while (root.previous != null)
+        {
+            if (root.tick != root.previous.tick)
+            {
+                break;
+            }
+
+            root = root.previous;
+        }
+
+        Note previous = startNote.previousSeperateNote;
+
+        int allVisited = startNote.gameMode == Chart.GameMode.GHLGuitar ? 63 : 31; // 0011 1111 for ghlive, 0001 1111 for standard. Does not include open notes.
+        int noteTypeVisited = 0;
+
+        while (previous != null && noteTypeVisited < allVisited)
+        {
+            if (!previous.IsOpenNote() && previous.tick < startNote.tick && previous.length > 0)
+            {
+                if ((noteTypeVisited & (1 << previous.rawNote)) == 0)
+                {
+                    if (previous.tick + previous.length > root.tick)
+                    {
+                        root = previous;
+                        noteTypeVisited |= 1 << previous.rawNote;
+                    }
+                    else
+                    {
+                        // This roll isn't a part of the current roll, therefore the current roll is the root
+                        break;
+                    }
+                }
+            }
+
+            previous = previous.previous;
+        }
+
+        return root;
+    }
+
+    public static void CapSustain(this Note note, Note cap, Song song, in Context context)
     {
         if (cap == null)
         {
@@ -102,8 +157,18 @@ public static class NoteFunctions {
             return;
         }
 
+        if (SustainsAreDrumRollsRuleActive(context))
+        {
+            return;
+        }
+
         Note originalNote = (Note)note.Clone();
         note.length = GetCappedLength(note, cap, song);
+    }
+
+    public static bool SustainsAreDrumRollsRuleActive(in Context context)
+    {
+        return context.gameMode == Chart.GameMode.Drums;
     }
 
     public static uint GetCappedLength(this Note note, Note cap, Song song)
@@ -150,13 +215,13 @@ public static class NoteFunctions {
         return noteLength;
     }
 
-    public static Note FindNextSameFretWithinSustainExtendedCheck(this Note note, bool extendedSustainsEnabled)
+    public static Note FindNextSameFretWithinSustainExtendedCheck(this Note note, in Context context)
     {
         Note next = note.next;
 
         while (next != null)
         {
-            if (!extendedSustainsEnabled)
+            if (!context.extendedSustainsEnabled)
             {
                 if ((next.IsOpenNote() || (note.tick < next.tick)) && note.tick != next.tick)
                     return next;
@@ -191,24 +256,24 @@ public static class NoteFunctions {
     /// Calculates and sets the sustain length based the tick position it should end at. Will be a length of 0 if the note position is greater than the specified position.
     /// </summary>
     /// <param name="pos">The end-point for the sustain.</param>
-    public static void SetSustainByPos(this Note note, uint pos, Song song, bool extendedSustainsEnabled)
+    public static void SetSustainByPos(this Note note, uint pos, Song song, in Context context)
     {
         if (pos > note.tick)
             note.length = pos - note.tick;
         else
             note.length = 0;
 
-        CapSustain(note, song, extendedSustainsEnabled);
+        CapSustain(note, song, context);
     }
 
-    public static void CapSustain(this Note note, Song song, bool extendedSustainsEnabled)
+    public static void CapSustain(this Note note, Song song, in Context context)
     {
         Note nextFret;
-        nextFret = note.FindNextSameFretWithinSustainExtendedCheck(extendedSustainsEnabled);
+        nextFret = note.FindNextSameFretWithinSustainExtendedCheck(context);
 
         if (nextFret != null)
         {
-            note.CapSustain(nextFret, song);
+            note.CapSustain(nextFret, song, context);
         }
     }
 
@@ -308,7 +373,7 @@ public static class NoteFunctions {
         return mask;
     }
 
-    public static void PerformPreChartInsertCorrections(Note note, Chart chart, IList<BaseAction> subActions, bool extendedSustainsEnabled)
+    public static void PerformPreChartInsertCorrections(Note note, Chart chart, IList<BaseAction> subActions, in Context context)
     {
         int index, length;
         SongObjectHelper.GetRange(chart.chartObjects, note.tick, note.tick, out index, out length);
@@ -332,7 +397,7 @@ public static class NoteFunctions {
         }
     }
 
-    public static void PerformPostChartInsertCorrections(Note note, IList<BaseAction> subActions, bool extendedSustainsEnabled)
+    public static void PerformPostChartInsertCorrections(Note note, IList<BaseAction> subActions, in Context context)
     {
         Debug.Assert(note.chart != null, "Note has not been inserted into a chart");
         Debug.Assert(note.song != null, "Note has not been inserted into a song");
@@ -378,7 +443,7 @@ public static class NoteFunctions {
             }
         }
 
-        CapNoteCheck(chart, note, subActions, song, extendedSustainsEnabled);
+        CapNoteCheck(chart, note, subActions, song, context);
         ForwardCap(chart, note, subActions, song);
 
         // Handled by SongEditCommand.GenerateForcedFlagFixupCommands
@@ -461,10 +526,28 @@ public static class NoteFunctions {
         }
     }
 
-    static void CapNoteCheck(Chart chart, Note noteToAdd, IList<BaseAction> subActions, Song song, bool extendedSustainsEnabled)
+    static void CapNoteCheck(Chart chart, Note noteToAdd, IList<BaseAction> subActions, Song song, in Context context)
     {
-        Note[] previousNotes = NoteFunctions.GetPreviousOfSustains(noteToAdd, extendedSustainsEnabled);
-        if (!Globals.gameSettings.extendedSustainsEnabled)
+        Note[] previousNotes = GetPreviousOfSustains(noteToAdd, context);
+        bool drumRollsActive = SustainsAreDrumRollsRuleActive(context);
+
+        if (drumRollsActive)
+        {
+            if (noteToAdd.length > 0)   // Starting a new drum roll
+            {
+                foreach (Note prevNote in previousNotes)
+                {
+                    uint newLength = prevNote.GetCappedLength(noteToAdd, song);
+                    if (prevNote.length != newLength)
+                    {
+                        Note newNote = new Note(prevNote.tick, prevNote.rawNote, newLength, prevNote.flags);
+                        SongEditCommand.AddAndInvokeSubAction(new DeleteAction(prevNote), subActions);
+                        SongEditCommand.AddAndInvokeSubAction(new AddAction(newNote), subActions);
+                    }
+                }
+            }
+        }
+        else if (!Globals.gameSettings.extendedSustainsEnabled)
         {
             // Cap all the notes
             foreach (Note prevNote in previousNotes)

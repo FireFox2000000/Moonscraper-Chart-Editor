@@ -87,6 +87,11 @@ namespace MoonscraperChartEditor.Song.IO
         { MidIOHelper.STARPOWER_DRUM_FILL_2, ProcessNoteOnEventAsDrumFill },
         { MidIOHelper.STARPOWER_DRUM_FILL_3, ProcessNoteOnEventAsDrumFill },
         { MidIOHelper.STARPOWER_DRUM_FILL_4, ProcessNoteOnEventAsDrumFill },
+
+        { MidIOHelper.DRUM_ROLL_STANDARD, (in NoteProcessParams noteProcessParams) => {
+        }},
+        { MidIOHelper.DRUM_ROLL_SPECIAL, (in NoteProcessParams noteProcessParams) => {
+        }},
     };
 
         static MidReader()

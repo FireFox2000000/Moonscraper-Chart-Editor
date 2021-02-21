@@ -10,5 +10,6 @@ namespace MoonscraperChartEditor.Song
         public const float RESOLUTIONS_PER_MEASURE = 4.0f;
         public const int FORCED_NOTE_TICK_THRESHOLD = 65;
         public const int PRO_DRUMS_LANE_COUNT = 4;
+        public const int MAX_ROLL_LANES = 2;
     }
 }

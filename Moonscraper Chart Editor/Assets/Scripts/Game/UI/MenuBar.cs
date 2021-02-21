@@ -64,7 +64,7 @@ public class MenuBar : UpdateableService {
 
     void Controls()
     {
-        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleExtendedSustains))
+        if (!NoteFunctions.SustainsAreDrumRollsRuleActive(ChartEditor.Instance.currentHelperContext) && MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleExtendedSustains))
         {
             ToggleExtendedSustains();
             editor.globals.services.notificationBar.PushNotification("EXTENDED SUSTAINS TOGGLED " + Services.BoolToStrOnOff(Globals.gameSettings.extendedSustainsEnabled), 2, true);

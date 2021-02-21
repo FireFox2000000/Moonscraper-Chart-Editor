@@ -27,3 +27,9 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 3707e05e0665a1f47a99acbd696aab58, type: 2}
   - {fileID: 2100000, guid: 3707e05e0665a1f47a99acbd696aab58, type: 2}
   - {fileID: 2100000, guid: 240fec0bf1d85f448a590b35086b2421, type: 2}
+  drumRollColours:
+  - {fileID: 2100000, guid: 37e42b24adef0f440b0def17972266ff, type: 2}
+  - {fileID: 2100000, guid: 5891d88944c203640907143aa3f51884, type: 2}
+  - {fileID: 2100000, guid: 313f38611a390414ea0c7e21f2108b72, type: 2}
+  - {fileID: 2100000, guid: 7e024dcd7778dff4e98fc28aa30e5236, type: 2}
+  - {fileID: 2100000, guid: 2e31935f26e3a0e4eb2a5e6a0de2f8d1, type: 2}

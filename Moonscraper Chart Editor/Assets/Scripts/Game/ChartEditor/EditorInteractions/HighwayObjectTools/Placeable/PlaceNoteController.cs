@@ -236,7 +236,8 @@ public class PlaceNoteController : ObjectlessTool {
         bool refreshActions = false;
 
         FillNotesKeyboardControlsSustainMode(laneInfo);
-        bool extendedSustainsEnabled = Globals.gameSettings.extendedSustainsEnabled;
+
+        var context = editor.currentHelperContext;
 
         // Update sustain lengths of notes that are already in
         for (int i = 0; i < heldNotes.Length; ++i)
@@ -251,7 +252,7 @@ public class PlaceNoteController : ObjectlessTool {
                         Debug.Assert(pos != SongObjectHelper.NOTFOUND);
 
                         Note oldNote = editor.currentChart.chartObjects[pos] as Note;
-                        chordNote.SetSustainByPos(objectSnappedChartPos, editor.currentSong, extendedSustainsEnabled);
+                        chordNote.SetSustainByPos(objectSnappedChartPos, editor.currentSong, context);
                         keyControlsCommands.Add(new SongEditModifyValidated(oldNote, chordNote));
 
                         Debug.Assert(chordNote.tick + chordNote.length == objectSnappedChartPos, "Sustain was set to an incorrect length");

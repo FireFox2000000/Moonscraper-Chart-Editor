@@ -18,7 +18,7 @@ public class SongEditAdd : SongEditCommand
     {
         if (subActions.Count <= 0)
         {
-            AddAndInvokeSubActions(songObjects, subActions, Globals.gameSettings.extendedSustainsEnabled);
+            AddAndInvokeSubActions(songObjects, subActions, ChartEditor.Instance.currentHelperContext);
         }
         else
         {
@@ -31,20 +31,20 @@ public class SongEditAdd : SongEditCommand
         RevokeSubActions();
     }
 
-    public static void AddAndInvokeSubActions(IList<SongObject> songObjects, IList<BaseAction> subActions, bool extendedSustainsEnabled)
+    public static void AddAndInvokeSubActions(IList<SongObject> songObjects, IList<BaseAction> subActions, in NoteFunctions.Context context)
     {
         foreach (SongObject songObject in songObjects)
         {
-            AddAndInvokeSubActions(songObject, subActions, extendedSustainsEnabled);
+            AddAndInvokeSubActions(songObject, subActions, context);
         }
     }
 
-    static void AddAndInvokeSubActions(SongObject songObject, IList<BaseAction> subActions, bool extendedSustainsEnabled)
+    static void AddAndInvokeSubActions(SongObject songObject, IList<BaseAction> subActions, in NoteFunctions.Context context)
     {
         switch (songObject.classID)
         {
             case ((int)SongObject.ID.Note):
-                AddNote((Note)songObject, subActions, extendedSustainsEnabled);
+                AddNote((Note)songObject, subActions, context);
                 break;
 
             case ((int)SongObject.ID.Starpower):
@@ -109,13 +109,13 @@ public class SongEditAdd : SongEditCommand
         }
     }
 
-    static void AddNote(Note note, IList<BaseAction> subActions, bool extendedSustainsEnabled)
+    static void AddNote(Note note, IList<BaseAction> subActions, in NoteFunctions.Context context)
     {
         ChartEditor editor = ChartEditor.Instance;
         Chart chart = editor.currentChart;
         Song song = editor.currentSong;
 
-        NoteFunctions.PerformPreChartInsertCorrections(note, chart, subActions, extendedSustainsEnabled);
+        NoteFunctions.PerformPreChartInsertCorrections(note, chart, subActions, context);
         AddAndInvokeSubAction(new AddAction(note), subActions);
 
         int arrayPos = SongObjectHelper.FindObjectPosition(note, chart.chartObjects);
@@ -125,7 +125,7 @@ public class SongEditAdd : SongEditCommand
             if (justAdded == null)
                 UnityEngine.Debug.LogError("Object just added was not a note");
             else
-                NoteFunctions.PerformPostChartInsertCorrections(justAdded, subActions, extendedSustainsEnabled);
+                NoteFunctions.PerformPostChartInsertCorrections(justAdded, subActions, context);
         }
         else
         {

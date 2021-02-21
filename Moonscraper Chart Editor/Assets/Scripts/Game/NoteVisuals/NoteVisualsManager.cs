@@ -85,7 +85,7 @@ public class NoteVisualsManager : MonoBehaviour {
         if (index != SongObjectHelper.NOTFOUND)
         {
             Starpower sp = note.chart.starPower[index];
-            if (sp.tick == note.tick || (sp.tick <= note.tick && sp.tick + sp.length > note.tick))
+            if (!sp.flags.HasFlag(Starpower.Flags.ProDrums_Activation) && (sp.tick == note.tick || (sp.tick <= note.tick && sp.tick + sp.length > note.tick)))
             {
                 specialType = Note.SpecialType.StarPower;
             }

@@ -254,3 +254,146 @@ public class DeleteAction : BaseAction
         UnityEngine.Debug.LogError("Unhandled songobject deletion case!");
     }
 }
+
+public class CloneAction : BaseAction
+{
+    SongObject before { get { return base.songObject; } }
+    SongObject after;
+
+    public CloneAction(SongObject before, SongObject after) : base(before) { this.after = after; }
+    public CloneAction(SongObject before, SongObject after, TypeTag tag) : base(before, tag) { this.after = after; }
+
+    public override void Invoke()
+    {
+        CloneInto(FindObjectToModify(before), after);
+    }
+
+    public override void Revoke()
+    {
+        CloneInto(FindObjectToModify(after), before);
+    }
+
+    void CloneInto(SongObject objectToCopyInto, SongObject objectToCopyFrom)
+    {
+        Chart chart = ChartEditor.Instance.currentChart;
+
+        switch ((SongObject.ID)objectToCopyInto.classID)
+        {
+            case SongObject.ID.Note:
+                (objectToCopyInto as Note).CopyFrom((objectToCopyFrom as Note));
+                break;
+
+            case SongObject.ID.Starpower:
+                SongEditAdd.SetNotesDirty(objectToCopyInto as Starpower, chart.chartObjects);
+                SongEditAdd.SetNotesDirty(objectToCopyFrom as Starpower, chart.chartObjects);
+                (objectToCopyInto as Starpower).CopyFrom((objectToCopyFrom as Starpower));
+                break;
+
+            case SongObject.ID.ChartEvent:
+                // Needs to be deleted and re-added into to maintain correct sort order
+                DeleteAction.ApplyAction(objectToCopyInto);
+                AddAction.ApplyAction(objectToCopyFrom);
+                break;
+
+            case SongObject.ID.BPM:
+                (objectToCopyInto as BPM).CopyFrom((objectToCopyFrom as BPM));
+                ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
+                break;
+
+            case SongObject.ID.TimeSignature:
+                (objectToCopyInto as TimeSignature).CopyFrom((objectToCopyFrom as TimeSignature));
+                break;
+
+            case SongObject.ID.Event:
+                // Needs to be deleted and re-added into to maintain correct sort order
+                DeleteAction.ApplyAction(objectToCopyInto);
+                AddAction.ApplyAction(objectToCopyFrom);
+                break;
+
+            case SongObject.ID.Section:
+                (objectToCopyInto as Section).CopyFrom((objectToCopyFrom as Section));
+                break;
+
+            default:
+                UnityEngine.Debug.LogError("Object to modify not supported.");
+                break;
+        }
+
+        if (objectToCopyInto.controller)
+            objectToCopyInto.controller.SetDirty();
+    }
+
+    public static SongObject FindObjectToModify(SongObject so)
+    {
+        ChartEditor editor = ChartEditor.Instance;
+        Song song = editor.currentSong;
+        Chart chart = editor.currentChart;
+
+        int index;
+
+        switch ((SongObject.ID)so.classID)
+        {
+            case SongObject.ID.Note:
+                index = SongObjectHelper.FindObjectPosition(so as Note, chart.notes);
+                if (index == SongObjectHelper.NOTFOUND)
+                {
+                    return null;
+                }
+                return chart.notes[index];
+
+            case SongObject.ID.Starpower:
+                index = SongObjectHelper.FindObjectPosition(so as Starpower, chart.starPower);
+                if (index == SongObjectHelper.NOTFOUND)
+                {
+                    return null;
+                }
+                return chart.starPower[index];
+
+            case SongObject.ID.ChartEvent:
+                index = SongObjectHelper.FindObjectPosition(so as ChartEvent, chart.events);
+                if (index == SongObjectHelper.NOTFOUND)
+                {
+                    return null;
+                }
+                return chart.events[index];
+
+            case SongObject.ID.BPM:
+                index = SongObjectHelper.FindObjectPosition(so as BPM, song.bpms);
+                if (index == SongObjectHelper.NOTFOUND)
+                {
+                    return null;
+                }
+                return song.bpms[index];
+
+            case SongObject.ID.TimeSignature:
+                index = SongObjectHelper.FindObjectPosition(so as TimeSignature, song.timeSignatures);
+                if (index == SongObjectHelper.NOTFOUND)
+                {
+                    return null;
+                }
+                return song.timeSignatures[index];
+
+            case SongObject.ID.Section:
+                index = SongObjectHelper.FindObjectPosition(so as Section, song.sections);
+                if (index == SongObjectHelper.NOTFOUND)
+                {
+                    return null;
+                }
+                return song.sections[index];
+
+            case SongObject.ID.Event:
+                index = SongObjectHelper.FindObjectPosition(so as Event, song.events);
+                if (index == SongObjectHelper.NOTFOUND)
+                {
+                    return null;
+                }
+                return song.events[index];
+
+            default:
+                UnityEngine.Debug.LogError("Object to modify not implemented for object. Object will not be modified.");
+                break;
+        }
+
+        return so;
+    }
+}

@@ -47,7 +47,9 @@ public class SustainController : SelectableClick {
                     }
                 }
 
-                if (!Globals.gameSettings.extendedSustainsEnabled || MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect))
+                bool drumRollActive = NoteFunctions.SustainsAreDrumRollsRuleActive(ChartEditor.Instance.currentHelperContext);
+                bool extendedSustainsEnabled = drumRollActive || Globals.gameSettings.extendedSustainsEnabled;
+                if (!extendedSustainsEnabled || MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect))
                 {
                     foreach (Note chordNote in nCon.note.chord)
                     {
@@ -125,15 +127,17 @@ public class SustainController : SelectableClick {
             {
                 sustainRen.sharedMaterial = resources.ghlSustainColours[nCon.note.rawNote];
             }
-
-            else if (nCon.note.rawNote < customSkin.sustain_mats.Length)
+            else if (NoteFunctions.SustainsAreDrumRollsRuleActive(editor.currentHelperContext) && nCon.note.rawNote < resources.drumRollColours.Length && resources.drumRollColours[(int)nCon.note.guitarFret])
             {
-                if (customSkin.sustain_mats[(int)nCon.note.guitarFret])
-                {
-                    sustainRen.sharedMaterial = customSkin.sustain_mats[(int)nCon.note.guitarFret];
-                }
-                else
-                    sustainRen.sharedMaterial = resources.sustainColours[(int)nCon.note.guitarFret];
+                sustainRen.sharedMaterial = resources.drumRollColours[(int)nCon.note.guitarFret];
+            }
+            else if (nCon.note.rawNote < customSkin.sustain_mats.Length && customSkin.sustain_mats[(int)nCon.note.guitarFret])
+            {
+                sustainRen.sharedMaterial = customSkin.sustain_mats[(int)nCon.note.guitarFret];          
+            }
+            else
+            {
+                sustainRen.sharedMaterial = resources.sustainColours[(int)nCon.note.guitarFret];
             }
         }
     }
@@ -198,7 +202,7 @@ public class SustainController : SelectableClick {
         sustainDragCommands.Clear();
 
         Song song = editor.currentSong;
-        bool extendedSustainsEnabled = Globals.gameSettings.extendedSustainsEnabled;
+        var context = ChartEditor.Instance.currentHelperContext;
         bool commandsActuallyChangeData = false;
 
         foreach (Note note in originalDraggedNotes)
@@ -210,10 +214,10 @@ public class SustainController : SelectableClick {
             Note newNote = new Note(note);
 
             Note referenceNote = editor.currentChart.notes[pos];
-            Note capNote = referenceNote.FindNextSameFretWithinSustainExtendedCheck(extendedSustainsEnabled);
-            newNote.SetSustainByPos(snappedPos, song, extendedSustainsEnabled);
+            Note capNote = referenceNote.FindNextSameFretWithinSustainExtendedCheck(context);
+            newNote.SetSustainByPos(snappedPos, song, context);
             if (capNote != null)
-                newNote.CapSustain(capNote, song);
+                newNote.CapSustain(capNote, song, context);
 
             Note lengthComparisionNote = compareWithOriginal ? note : referenceNote;
             commandsActuallyChangeData |= lengthComparisionNote.length != newNote.length;

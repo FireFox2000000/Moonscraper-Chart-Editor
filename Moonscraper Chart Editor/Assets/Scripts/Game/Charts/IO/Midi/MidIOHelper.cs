@@ -31,6 +31,10 @@ namespace MoonscraperChartEditor.Song.IO
         public const byte STARPOWER_DRUM_FILL_3 = 123;
         public const byte STARPOWER_DRUM_FILL_4 = 124;
 
+        // http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring#Drum_Rolls
+        public const byte DRUM_ROLL_STANDARD = 126;
+        public const byte DRUM_ROLL_SPECIAL = 127;
+
         public const string SoloEventText = "solo";
         public const string SoloEndEventText = "soloend";
         public const int DOUBLE_KICK_NOTE = 95;

@@ -55,6 +55,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public Song.Instrument currentInstrument { get { return MenuBar.currentInstrument; } }
     public Song.Difficulty currentDifficulty { get { return MenuBar.currentDifficulty; } }
     public SongAudioManager currentSongAudio { get; private set; }
+    public NoteFunctions.Context currentHelperContext { get { return NoteFunctions.Context.MakeContext(this, Globals.gameSettings); } }
+
     string currentFileName = string.Empty;
 
     [HideInInspector]

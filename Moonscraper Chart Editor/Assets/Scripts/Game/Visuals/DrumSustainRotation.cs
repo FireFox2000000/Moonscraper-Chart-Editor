@@ -29,23 +29,31 @@ public class DrumSustainRotation : MonoBehaviour {
         if (Globals.drumMode)
         {
             defaultSustainResources.sustainColours[STANDARD_FRETS - 1].SetColor("_Color", sustainColors[0]);
+            defaultSustainResources.drumRollColours[STANDARD_FRETS - 1].SetColor("_Color", sustainColors[0]);
 
             for (int i = 1; i < STANDARD_FRETS; ++i)
             {
                 defaultSustainResources.sustainColours[i - 1].SetColor("_Color", sustainColors[i >= laneCount ? 0 : i]);
+                defaultSustainResources.drumRollColours[i - 1].SetColor("_Color", sustainColors[i >= laneCount ? 0 : i]);
             }
         }
         else
         {
             for (int i = 0; i < STANDARD_FRETS; ++i)
+            {
                 defaultSustainResources.sustainColours[i].SetColor("_Color", sustainColors[i]);
+                defaultSustainResources.drumRollColours[i].SetColor("_Color", sustainColors[i]);
+            }
         }
     }
 #if UNITY_EDITOR
     void OnApplicationQuit()
     {
         for (int i = 0; i < STANDARD_FRETS; ++i)
+        {
             defaultSustainResources.sustainColours[i].SetColor("_Color", sustainColors[i]);
+            defaultSustainResources.drumRollColours[i].SetColor("_Color", sustainColors[i]);
+        }
     }
 #endif
 }
