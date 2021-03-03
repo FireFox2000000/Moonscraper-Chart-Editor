@@ -19,7 +19,8 @@ namespace MoonscraperEngine
         public void Push()
         {
             if (!isAtEnd)
-                commands[++currentStackIndex].Invoke();
+                ChartEditor.Instance.events.commandStackPushPopEvent.Fire(commands[++currentStackIndex]);
+                commands[currentStackIndex].Invoke();
         }
 
         public void Push(ICommand command)
@@ -29,6 +30,7 @@ namespace MoonscraperEngine
             System.Diagnostics.StackFrame frame = stackTrace.GetFrame(1);
             Debug.LogFormat("Command Stack Push: {0} in file {1} at line {2}", frame.GetMethod().Name, System.IO.Path.GetFileName(frame.GetFileName()), frame.GetFileLineNumber());
 #endif
+            ChartEditor.Instance.events.commandStackPushPopEvent.Fire(command);
             ResetTail();
             ++currentStackIndex;
             command.Invoke();
@@ -43,12 +45,27 @@ namespace MoonscraperEngine
             Debug.LogFormat("Command Stack Pop: {0} in file {1} at line {2}", frame.GetMethod().Name, System.IO.Path.GetFileName(frame.GetFileName()), frame.GetFileLineNumber());
 #endif
             if (!isAtStart)
+                ChartEditor.Instance.events.commandStackPushPopEvent.Fire(commands[currentStackIndex]);
                 commands[currentStackIndex--].Revoke();
         }
 
         public void ResetTail()
         {
             commands.RemoveRange(currentStackIndex + 1, commands.Count - (currentStackIndex + 1));
+        }
+
+        // Removes a command from the command stack without revoking it
+        public bool Remove(ICommand command)
+        {
+            if (command == null)
+                return false;
+
+            int index = commands.IndexOf(command);
+            bool removedSuccessfully = commands.Remove(command);
+            if (removedSuccessfully && index <= currentStackIndex && !isAtStart)
+                currentStackIndex--;
+
+            return removedSuccessfully;
         }
     }
 }
