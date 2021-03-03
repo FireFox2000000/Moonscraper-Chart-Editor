@@ -3,10 +3,6 @@ using System.Collections.Generic;
 
 public class LyricEditor2Event : UnityEngine.MonoBehaviour
 {
-    static string c_phraseStartKeyword = "phrase_start";
-    static string c_phraseEndKeyword = "phrase_end";
-    static string c_lyricPrefix = "lyric ";
-
     private Event referencedEvent;
     public bool hasBeenPlaced {get; private set;}
     public string text {get; private set;}

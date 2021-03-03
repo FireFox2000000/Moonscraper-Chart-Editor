@@ -13,6 +13,10 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     [UnityEngine.SerializeField]
     UnityEngine.Color selectionColor;
 
+    static string c_phraseStartKeyword = "phrase_start";
+    static string c_phraseEndKeyword = "phrase_end";
+    static string c_lyricPrefix = "lyric ";
+
     List<LyricEditor2Event> lyricEvents = new List<LyricEditor2Event>();
     LyricEditor2Event phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword);
     LyricEditor2Event phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword);
