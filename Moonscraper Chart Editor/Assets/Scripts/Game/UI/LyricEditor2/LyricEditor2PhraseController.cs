@@ -47,6 +47,62 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
         isCurrentlyPlacingLyric = false;
     }
 
+    // Returns a value that is positive if event1 occurs after event2 and vice-
+    // versa; returns 0 if the two events have the same tick
+    int CompareLyricEvents (LyricEditor2Event event1, LyricEditor2Event event2) {
+        if (event1 == null && event2 == null) {
+            return 0;
+        } else if (event2 == null) {
+            return 1;
+        } else if (event1 == null) {
+            return -1;
+        } else {
+            return (int)event1.tick - (int)event2.tick;
+        }
+    }
+
+    // Get the tick of the first event of this phrase
+    public uint? GetFirstTick() {
+        LyricEditor2Event firstEvent = null;
+        if (CompareLyricEvents(phraseStartEvent, firstEvent) <= 0) {
+            firstEvent = phraseStartEvent;
+        }
+        if (CompareLyricEvents(phraseEndEvent, firstEvent) <= 0) {
+            firstEvent = phraseEndEvent;
+        }
+        foreach (LyricEditor2Event currentEvent in lyricEvents) {
+            if (CompareLyricEvents(currentEvent, firstEvent) <= 0) {
+                firstEvent = currentEvent;
+            }
+        }
+        if (firstEvent == null) {
+            return null;
+        } else {
+            return firstEvent.tick;
+        }
+    }
+
+    // Get the tick of the first event of this phrase
+    public uint? GetLastTick() {
+        LyricEditor2Event lastEvent = null;
+        if (CompareLyricEvents(phraseStartEvent, lastEvent) >= 0) {
+            lastEvent = phraseStartEvent;
+        }
+        if (CompareLyricEvents(phraseEndEvent, lastEvent) >= 0) {
+            lastEvent = phraseEndEvent;
+        }
+        foreach (LyricEditor2Event currentEvent in lyricEvents) {
+            if (CompareLyricEvents(currentEvent, lastEvent) >= 0) {
+                lastEvent = currentEvent;
+            }
+        }
+        if (lastEvent == null) {
+            return null;
+        } else {
+            return lastEvent.tick;
+        }
+    }
+
     // Set the phrase_start event's tick
     public void SetPhraseStart(uint tick) {
         phraseStartEvent.SetTick(tick);
