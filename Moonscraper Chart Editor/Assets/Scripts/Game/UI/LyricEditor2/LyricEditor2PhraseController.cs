@@ -38,7 +38,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
 
     // Stop placing the next lyric (useful for formatting in DisplayText())
     public void StopPlaceNextLyric() {
-        // TODO
+        isCurrentlyPlacingLyric = false;
     }
 
     // Set the phrase_start event's tick
