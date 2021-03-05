@@ -17,11 +17,11 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     static string c_phraseEndKeyword = "phrase_end";
     static string c_lyricPrefix = "lyric ";
     private bool isCurrentlyPlacingLyric = false;
-    public bool allSyllablesPlaced = false;
+    public bool allSyllablesPlaced {get; private set;} = false;
 
     List<LyricEditor2Event> lyricEvents = new List<LyricEditor2Event>();
-    LyricEditor2Event phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword);
-    LyricEditor2Event phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword);
+    public LyricEditor2Event phraseStartEvent {get; private set;} = new LyricEditor2Event(c_phraseStartKeyword);
+    public LyricEditor2Event phraseEndEvent {get; private set;} = new LyricEditor2Event(c_phraseEndKeyword);
 
 
     // Place the next lyric in lyricEvents
