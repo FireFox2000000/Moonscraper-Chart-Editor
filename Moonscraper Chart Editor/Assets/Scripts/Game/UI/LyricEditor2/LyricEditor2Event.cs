@@ -23,11 +23,11 @@ public class LyricEditor2Event : UnityEngine.MonoBehaviour
     public void SetText (string newText) {
         this.text = newText;
         if (referencedEvent != null) {
-            this.SetTime(referencedEvent.tick);
+            this.SetTick(referencedEvent.tick);
         }
     }
 
-    public void SetTime (uint tick) {
+    public void SetTick (uint tick) {
         List<SongEditCommand> commands = new List<SongEditCommand>();
 
         if (this.referencedEvent != null)
