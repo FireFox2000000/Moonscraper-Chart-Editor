@@ -16,6 +16,8 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     static string c_phraseStartKeyword = "phrase_start";
     static string c_phraseEndKeyword = "phrase_end";
     static string c_lyricPrefix = "lyric ";
+    private bool isCurrentlyPlacingLyric = false;
+    public bool allSyllablesPlaced = false;
 
     List<LyricEditor2Event> lyricEvents = new List<LyricEditor2Event>();
     LyricEditor2Event phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword);
@@ -24,7 +26,14 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
 
     // Place the next lyric in lyricEvents
     public void StartPlaceNextLyric(uint tick) {
-        // TODO
+        LyricEditor2Event currentLyric = GetNextUnplacedSyllable();
+        currentLyric.SetTick(tick);
+        isCurrentlyPlacingLyric = true;
+
+        // Check for any remaining syllables
+        if (GetNextUnplacedSyllable() == null) {
+            allSyllablesPlaced = true;
+        }
     }
 
     // Stop placing the next lyric (useful for formatting in DisplayText())
