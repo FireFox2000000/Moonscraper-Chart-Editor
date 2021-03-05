@@ -7,6 +7,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     [UnityEngine.SerializeField]
     LyricEditor2PhraseController phraseTemplate;
 
+    List<LyricEditor2PhraseController> phrases = new List<LyricEditor2PhraseController>();
+
     void OnEnable() {
         ImportExistingLyrics();
     }
@@ -18,7 +20,10 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // Destroy all phrase GameObjects and dereference their corresponding
     // phrase controller components
     void ClearPhraseObjects() {
-        // TODO
+        foreach (LyricEditor2PhraseController controller in phrases) {
+            UnityEngine.Object.Destroy(controller.gameObject);
+        }
+        phrases.Clear();
     }
 
     // Called every time the "place lyric" button is pressed; places the next
