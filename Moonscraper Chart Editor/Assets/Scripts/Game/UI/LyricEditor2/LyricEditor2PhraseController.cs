@@ -18,10 +18,12 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     static string c_lyricPrefix = "lyric ";
     private bool isCurrentlyPlacingLyric = false;
     public bool allSyllablesPlaced {get; private set;} = false;
+    public bool phraseStartPlaced {get {return phraseStartEvent.hasBeenPlaced;}}
+    public bool phraseEndPlaced {get {return phraseEndEvent.hasBeenPlaced;}}
 
     List<LyricEditor2Event> lyricEvents = new List<LyricEditor2Event>();
-    public LyricEditor2Event phraseStartEvent {get; private set;} = new LyricEditor2Event(c_phraseStartKeyword);
-    public LyricEditor2Event phraseEndEvent {get; private set;} = new LyricEditor2Event(c_phraseEndKeyword);
+    LyricEditor2Event phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword);
+    LyricEditor2Event phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword);
 
 
     void CheckForUnplacedSyllables() {
