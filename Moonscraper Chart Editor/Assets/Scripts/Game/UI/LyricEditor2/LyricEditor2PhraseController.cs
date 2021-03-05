@@ -158,7 +158,12 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     // Return a text representation of the current phrase state, using hyphen-
     // newline notation
     public string GetTextRepresentation() {
-        // TODO
-        return "";
+        string tempString = "";
+        for (int i = 0; i < lyricEvents.Count; i++) {
+            tempString += lyricEvents[i].formattedText;
+        }
+        tempString += "\n";
+        return tempString;
+    }
     }
 }
