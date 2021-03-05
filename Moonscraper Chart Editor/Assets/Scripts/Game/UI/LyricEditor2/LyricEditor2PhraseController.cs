@@ -69,8 +69,22 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
         return null;
     }
 
+    // Initialize lyricEvents using a list of string syllables. Syllables which
+    // do not end with a dash will be displayed with a trailing space
     public void InitializeSyllables(List<string> syllables) {
-        // TODO
+        phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword);
+        phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword);
+
+        for (int i = 0; i < syllables.Count; i++) {
+            string currentSyllable = syllables[i];
+            string formattedSyllable = currentSyllable.TrimEnd();
+
+            LyricEditor2Event newEvent = new LyricEditor2Event(c_lyricPrefix + formattedSyllable);
+            // Add syllables to lyricEvents
+            lyricEvents.Add(newEvent);
+            // Add formatted name to event
+            FormatAndAddSyllable(formattedSyllable, newEvent);
+        }
     }
 
     // Initialize lyricEvents using a list of events which already exist in the
