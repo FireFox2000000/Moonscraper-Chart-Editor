@@ -6,6 +6,7 @@ public class LyricEditor2Event : UnityEngine.MonoBehaviour
     private Event referencedEvent;
     public bool hasBeenPlaced {get; private set;}
     public string text {get; private set;}
+    public string formattedText;
 
 
     public LyricEditor2Event (string text) {

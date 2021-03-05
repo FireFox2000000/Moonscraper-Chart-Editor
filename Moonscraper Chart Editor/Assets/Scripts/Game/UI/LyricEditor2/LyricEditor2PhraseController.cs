@@ -51,7 +51,13 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
         phraseEndEvent.SetTick(tick);
     }
 
-    // Initialize lyricEvents using a list of string syllables
+    void FormatAndAddSyllable(string syllable, LyricEditor2Event targetEvent) {
+        if (syllable.EndsWith("-")) {
+            targetEvent.formattedText = syllable;
+        } else {
+            targetEvent.formattedText = syllable + " ";
+        }
+    }
 
     LyricEditor2Event GetNextUnplacedSyllable() {
         for (int i = 0; i < lyricEvents.Count; i++) {
