@@ -121,7 +121,38 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
 
     // Update the text content of phraseText to reflect the current phrase state
     void DisplayText() {
-        // TODO
+        string defaultColorString = UnityEngine.ColorUtility.ToHtmlStringRGBA(defaultColor);
+        string unfocusedColorString = UnityEngine.ColorUtility.ToHtmlStringRGBA(unfocusedColor);
+        string selectionColorString = UnityEngine.ColorUtility.ToHtmlStringRGBA(selectionColor);
+        string previousColor = "";
+        string textToDisplay = "";
+
+        for (int i = 0; i < lyricEvents.Count; i++) {
+            LyricEditor2Event currentEvent = lyricEvents[i];
+            string currentColor;
+
+            // Set currentColor
+            if (currentEvent.hasBeenPlaced) {
+                currentColor = unfocusedColorString;
+            } else if (isCurrentlyPlacingLyric) {
+                currentColor = selectionColorString;
+            } else {
+                currentColor = defaultColorString;
+            }
+
+            // Add color tags
+            if (currentColor != previousColor) {
+                if (previousColor != "") {
+                    textToDisplay += "</color>";
+                }
+                textToDisplay += "<color=" + currentColor + ">";
+            }
+            textToDisplay += currentEvent.formattedText;
+        }
+        // Add terminating color tag
+        textToDisplay += "</color>";
+        // Update UI text
+        phraseText.text = textToDisplay;
     }
 
     // Return a text representation of the current phrase state, using hyphen-
