@@ -43,6 +43,17 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     }
 
     // Initialize lyricEvents using a list of string syllables
+
+    LyricEditor2Event GetNextUnplacedSyllable() {
+        for (int i = 0; i < lyricEvents.Count; i++) {
+            LyricEditor2Event currentEvent = lyricEvents[i];
+            if (!currentEvent.hasBeenPlaced) {
+                return currentEvent;
+            }
+        }
+        return null;
+    }
+
     public void InitializeSyllables(List<string> syllables) {
         // TODO
     }
