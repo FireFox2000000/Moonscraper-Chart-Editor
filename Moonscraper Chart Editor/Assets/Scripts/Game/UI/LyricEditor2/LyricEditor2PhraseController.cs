@@ -43,12 +43,12 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
 
     // Set the phrase_start event's tick
     public void SetPhraseStart(uint tick) {
-        // TODO
+        phraseStartEvent.SetTick(tick);
     }
 
     // Set the phrase_end event's tick
     public void SetPhraseEnd(uint tick) {
-        // TODO
+        phraseEndEvent.SetTick(tick);
     }
 
     // Initialize lyricEvents using a list of string syllables
