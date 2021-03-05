@@ -171,5 +171,4 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
         tempString += "\n";
         return tempString;
     }
-    }
 }
