@@ -6,8 +6,10 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 {
     [UnityEngine.SerializeField]
     LyricEditor2PhraseController phraseTemplate;
-
+    LyricEditor2PhraseController currentPhrase;
     List<LyricEditor2PhraseController> phrases = new List<LyricEditor2PhraseController>();
+
+    uint currentTickPos {get {return ChartEditor.Instance.currentTickPos;}}
 
     void OnEnable() {
         ImportExistingLyrics();
@@ -29,7 +31,24 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // Called every time the "place lyric" button is pressed; places the next
     // lyric in the current phrase
     public void PlaceNextLyric() {
-        // TODO
+        if (currentPhrase == null) {
+            currentPhrase = GetNextUnfinishedPhrase();
+        }
+        if (currentPhrase != null) {
+            currentPhrase.StartPlaceNextLyric(currentTickPos);
+        }
+    }
+
+    // Get the next phrase whish does not yet have all its syllables placed
+    LyricEditor2PhraseController GetNextUnfinishedPhrase() {
+        for (int i = 0; i < phrases.Count; i++) {
+            LyricEditor2PhraseController currentPhrase = phrases[i];
+            if (!currentPhrase.allSyllablesPlaced) {
+                return currentPhrase;
+            }
+        }
+        // No incomplete phrase found
+        return null;
     }
 
     // Called every time the "place lyric" button is released; stops placing the
