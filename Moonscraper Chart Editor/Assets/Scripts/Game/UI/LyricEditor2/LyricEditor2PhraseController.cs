@@ -88,10 +88,35 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     }
 
     // Initialize lyricEvents using a list of events which already exist in the
-    // chart editor. Method should also look for phrase_start and phrase_end
-    // events and, if they exist, assign them to the appropriate variables
+    // chart editor. Method also looks for phrase_start and phrase_end events
+    // and, if they exist, assign them to the appropriate variables. Events
+    // which do not start with c_lyricPrefix are ignored
     public void InitializeSyllables(List<Event> existingEvents) {
-        // TODO
+        for (int i = 0; i < existingEvents.Count; i++) {
+            Event currentEvent = existingEvents[i];
+
+            if (currentEvent.title.Equals(c_phraseStartKeyword)) {
+                phraseStartEvent = new LyricEditor2Event(currentEvent);
+            } else if (currentEvent.title.Equals(c_phraseEndKeyword)) {
+                phraseEndEvent = new LyricEditor2Event(currentEvent);
+            } else if (currentEvent.title.StartsWith(c_lyricPrefix)) {
+                LyricEditor2Event newEvent = new LyricEditor2Event(currentEvent);
+                lyricEvents.Add(newEvent);
+
+                string formattedSyllable = currentEvent.title.TrimEnd();
+                // Remove lyric prefix
+                formattedSyllable = formattedSyllable.Substring(c_lyricPrefix.Length);
+                // Add formatted name to event
+                FormatAndAddSyllable(formattedSyllable, newEvent);
+            }
+        }
+        // Make sure phrase_start and phrase_end events exist
+        if (phraseStartEvent == null) {
+            phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword);
+        }
+        if (phraseEndEvent == null) {
+            phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword);
+        }
     }
 
     // Update the text content of phraseText to reflect the current phrase state
