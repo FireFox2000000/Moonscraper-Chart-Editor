@@ -6,6 +6,7 @@ using Un4seen.Bass;
 #endif
 
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace MoonscraperEngine.Audio
 {
@@ -13,6 +14,7 @@ namespace MoonscraperEngine.Audio
     {
         public int audioHandle { get; private set; }
         bool isDisposed { get { return audioHandle == 0; } }
+        List<int> childLinkedStreams = new List<int>();
 
         public virtual float volume
         {
@@ -50,7 +52,7 @@ namespace MoonscraperEngine.Audio
 
         public virtual bool Play(float playPoint, bool restart = false)
         {
-            Bass.BASS_ChannelSetPosition(audioHandle, playPoint);
+            CurrentPositionSeconds = playPoint;
             Bass.BASS_ChannelPlay(audioHandle, restart);
             return true;
         }
@@ -75,11 +77,18 @@ namespace MoonscraperEngine.Audio
             return Bass.BASS_ChannelSeconds2Bytes(audioHandle, position);
         }
 
-        public float CurrentPositionInSeconds()
+        public float CurrentPositionSeconds
         {
-            long bytePos = Bass.BASS_ChannelGetPosition(audioHandle);
-            double elapsedtime = Bass.BASS_ChannelBytes2Seconds(audioHandle, bytePos);
-            return (float)elapsedtime;
+            get
+            {
+                long bytePos = Bass.BASS_ChannelGetPosition(audioHandle);
+                double elapsedtime = Bass.BASS_ChannelBytes2Seconds(audioHandle, bytePos);
+                return (float)elapsedtime;
+            }
+            set
+            {
+                Bass.BASS_ChannelSetPosition(audioHandle, value);
+            }
         }
 
         public bool GetChannelLevels(ref float[] levels, float length)
@@ -90,6 +99,34 @@ namespace MoonscraperEngine.Audio
         public bool IsPlaying()
         {
             return isValid && Bass.BASS_ChannelIsActive(audioHandle) == BASSActive.BASS_ACTIVE_PLAYING;
+        }
+
+        // Call this before playing any audio
+        public void SyncWithStream(AudioStream childStream)
+        {
+            if (Bass.BASS_ChannelSetLink(this.audioHandle, childStream.audioHandle))
+            {
+                childLinkedStreams.Add(childStream.audioHandle);
+            }
+            else
+            {
+                var bassError = Bass.BASS_ErrorGetCode();
+                Debug.LogError("AudioStream SyncWithStream error: " + bassError);
+            }
+        }
+
+        public void ClearSyncedStreams()
+        {
+            foreach (int stream in childLinkedStreams)
+            {
+                if (!Bass.BASS_ChannelRemoveLink(this.audioHandle, stream))
+                {
+                    var bassError = Bass.BASS_ErrorGetCode();
+                    Debug.LogError("AudioStream ClearSyncedStreams error: " + bassError);
+                }
+            }
+
+            childLinkedStreams.Clear();
         }
     }
 }
