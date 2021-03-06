@@ -982,43 +982,24 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Crowd), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_crowd);
 
         // Set up synchronisation between all the streams otherwise they may go out of sync with each other
-        AudioStream primaryStream = null;
-        foreach (var bassStream in songAudioManager.bassAudioStreams)
-        {
-            if (bassStream != null && bassStream.isValid)
-            {
-                bassStream.CurrentPositionSeconds = playPoint;
-
-                if (primaryStream != null)
-                {
-                    primaryStream.SyncWithStream(bassStream);
-                }
-                else
-                {
-                    primaryStream = bassStream;
-                }
-            }
-        }
+        AudioStream primaryStream = songAudioManager.mainSongAudio;
 
         // Finally start playing the song
         if (primaryStream != null)
         {
-            primaryStream.Play(playPoint);
+            primaryStream.PlaySynced(playPoint, songAudioManager.bassAudioStreams);
             Debug.Log("Playing song audio at " + playPoint);
         }
     }
 
    public void StopAudio()
     {
-        foreach (var bassStream in currentSongAudio.bassAudioStreams)
-        {
-            if (AudioManager.StreamIsValid(bassStream))
-            {
-                bassStream.Stop();
+        SongAudioManager songAudioManager = currentSongAudio;
+        AudioStream primaryStream = songAudioManager.mainSongAudio;
 
-                // Synchronisation is only temporary as user may add or remove streams between different play sessions. 
-                bassStream.ClearSyncedStreams();
-            }       
+        if (primaryStream != null)
+        {
+            primaryStream.Stop();
         }
     }
 
