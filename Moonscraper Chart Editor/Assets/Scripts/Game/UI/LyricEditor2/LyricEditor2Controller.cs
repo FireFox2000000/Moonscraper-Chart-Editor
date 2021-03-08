@@ -145,5 +145,3 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         return 0;
     }
 }
-5.  Update currentTickPos to respect the song audio delay
-*/
