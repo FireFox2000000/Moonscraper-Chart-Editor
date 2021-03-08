@@ -94,10 +94,18 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
     // Called every time the "place lyric" button is released; stops placing the
     // next lyric in the current phrase and, if necessary, moves to the next
-    // phrase. phrase_start and phrase_end events should be placed here if
-    // necessary
+    // phrase. phrase_end events are placed here if necessary
     public void StopPlaceNextLyric() {
-        currentPhrase.StopPlaceNextLyric();
+        if (currentPhrase != null) {
+            currentPhrase.StopPlaceNextLyric();
+
+            // Place phrase_end event and move to next phrase if all syllables
+            // were just placed
+            if (currentPhrase.allSyllablesPlaced) {
+                currentPhrase.SetPhraseEnd(currentTickPos);
+                currentPhrase = GetNextUnfinishedPhrase();
+            }
+        }
     }
 
     // Take dash-newline formatted lyrics from the lyric input menu and parse
