@@ -20,6 +20,8 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     public bool allSyllablesPlaced {get; private set;} = false;
     public bool phraseStartPlaced {get {return phraseStartEvent.hasBeenPlaced;}}
     public bool phraseEndPlaced {get {return phraseEndEvent.hasBeenPlaced;}}
+    public uint? startTick {get {if (phraseStartPlaced) return phraseStartEvent.tick; else return null;}}
+    public uint? endTick {get {if (phraseEndPlaced) return phraseEndEvent.tick; else return null;}}
 
     List<LyricEditor2Event> lyricEvents = new List<LyricEditor2Event>();
     LyricEditor2Event phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword);
@@ -47,6 +49,8 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
         isCurrentlyPlacingLyric = false;
     }
 
+    // OLD
+    /*
     // Returns a value that is positive if event1 occurs after event2 and vice-
     // versa; returns 0 if the two events have the same tick
     int CompareLyricEvents (LyricEditor2Event event1, LyricEditor2Event event2) {
@@ -102,6 +106,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
             return lastEvent.tick;
         }
     }
+    */
 
     // Set the phrase_start event's tick
     public void SetPhraseStart(uint tick) {
