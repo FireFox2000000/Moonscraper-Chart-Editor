@@ -68,7 +68,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
             // Both events exist and are placed at the same time
             return 0;
         } else {
-            // Both events exist and are placed at differne times
+            // Both events exist and are placed at different times
             return event1.tick > event2.tick ? 1 : -1;
         }
     }
