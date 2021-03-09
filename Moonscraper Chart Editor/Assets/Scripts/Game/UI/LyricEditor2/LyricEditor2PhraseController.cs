@@ -42,6 +42,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
 
         // Check for any remaining syllables
         CheckForUnplacedSyllables();
+        DisplayText();
     }
 
     // Stop placing the next lyric (useful for formatting in DisplayText())
@@ -154,6 +155,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
             FormatAndAddSyllable(formattedSyllable, newEvent);
         }
         CheckForUnplacedSyllables();
+        DisplayText();
     }
 
     // Initialize lyricEvents using a list of events which already exist in the
@@ -187,6 +189,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
             phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword);
         }
         CheckForUnplacedSyllables();
+        DisplayText();
     }
 
     // Update the text content of phraseText to reflect the current phrase state
