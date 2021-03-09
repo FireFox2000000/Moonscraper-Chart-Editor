@@ -20,8 +20,8 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     public bool allSyllablesPlaced {get; private set;} = false;
     public bool phraseStartPlaced {get {return phraseStartEvent.hasBeenPlaced;}}
     public bool phraseEndPlaced {get {return phraseEndEvent.hasBeenPlaced;}}
-    public uint? startTick {get {if (phraseStartPlaced) return phraseStartEvent.tick; else return null;}}
-    public uint? endTick {get {if (phraseEndPlaced) return phraseEndEvent.tick; else return null;}}
+    public uint? startTick {get {return phraseStartEvent.tick;}}
+    public uint? endTick {get {return phraseEndEvent.tick;}}
 
     List<LyricEditor2Event> lyricEvents = new List<LyricEditor2Event>();
     LyricEditor2Event phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword);

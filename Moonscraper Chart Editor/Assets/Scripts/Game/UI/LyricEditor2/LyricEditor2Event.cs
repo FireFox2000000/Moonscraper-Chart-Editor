@@ -7,7 +7,7 @@ public class LyricEditor2Event
     public bool hasBeenPlaced {get; private set;}
     public string text {get; private set;}
     public string formattedText;
-    public uint tick {get {return referencedEvent.tick;}}
+    public uint? tick {get {return referencedEvent?.tick;}}
 
 
     public LyricEditor2Event (string text) {
