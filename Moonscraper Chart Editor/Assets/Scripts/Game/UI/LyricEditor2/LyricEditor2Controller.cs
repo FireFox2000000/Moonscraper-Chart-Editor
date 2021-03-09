@@ -7,6 +7,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 {
     [UnityEngine.SerializeField]
     LyricEditor2PhraseController phraseTemplate;
+    [UnityEngine.SerializeField]
+    LyricEditor2InputMenu lyricInputMenu;
     LyricEditor2PhraseController currentPhrase;
     List<LyricEditor2PhraseController> phrases = new List<LyricEditor2PhraseController>();
 
@@ -117,7 +119,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // them into phrases. Called when the user hits "submit" in the input menu
     public void InputLyrics() {
         // TODO
-        string inputLyrics = "Test 1-2-3";
+        string inputLyrics = lyricInputMenu.text ?? "";
 
         List<List<string>> parsedLyrics = ParseLyrics(inputLyrics);
         for (int i = 0; i < parsedLyrics.Count; i++) {
@@ -165,14 +167,15 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // newline notation; field should be populated with a string given by
     // GetTextRepresentation()
     public void EnableInputMenu() {
-        // TODO
+        string existingLyrics = GetTextRepresentation();
+        lyricInputMenu.Display(existingLyrics);
     }
 
     // Create a text representation of stored lyrics which can be pushed to the
     // input menu when the user wants to edit lyrics
     string GetTextRepresentation() {
         // TODO
-        return "";
+        return "Test 4-5-6";
     }
 
     // Import existing lyric events from the current song. Called in Start()

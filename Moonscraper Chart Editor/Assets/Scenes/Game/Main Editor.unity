@@ -7278,17 +7278,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 692517255}
-        m_MethodName: Display
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &340550655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14461,7 +14450,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87e5b80bdb02ef641ad35066f0580279, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayMenu: {fileID: 692517253}
   inputField: {fileID: 973513793}
 --- !u!1 &709249206
 GameObject:
@@ -19439,8 +19427,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 0
-    m_Right: 0
+    m_Left: 2
+    m_Right: 2
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 0
@@ -30355,6 +30343,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   phraseTemplate: {fileID: 862587629}
+  lyricInputMenu: {fileID: 692517255}
 --- !u!1 &1356851193
 GameObject:
   m_ObjectHideFlags: 0
@@ -40491,7 +40480,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.1350098, y: -202.10335}
+  m_AnchoredPosition: {x: -1.1350098, y: -202.10342}
   m_SizeDelta: {x: -16.200012, y: 273.1942}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1783824858
@@ -49353,7 +49342,7 @@ PrefabInstance:
     - target: {fileID: 1301899982732144092, guid: 50e7de0d989f0a74cad9c1926db9987f,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -101.999855
+      value: -101.99982
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50e7de0d989f0a74cad9c1926db9987f, type: 3}
