@@ -49,8 +49,6 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
         isCurrentlyPlacingLyric = false;
     }
 
-    // OLD
-    /*
     // Returns a value that is positive if event1 occurs after event2 and vice-
     // versa; returns 0 if the two events have the same tick
     int CompareLyricEvents (LyricEditor2Event event1, LyricEditor2Event event2) {
@@ -66,14 +64,16 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     }
 
     // Get the tick of the first event of this phrase
-    public uint? GetFirstTick() {
+    public uint? GetFirstEventTick() {
         LyricEditor2Event firstEvent = null;
+        /*
         if (CompareLyricEvents(phraseStartEvent, firstEvent) <= 0) {
             firstEvent = phraseStartEvent;
         }
         if (CompareLyricEvents(phraseEndEvent, firstEvent) <= 0) {
             firstEvent = phraseEndEvent;
         }
+        */
         foreach (LyricEditor2Event currentEvent in lyricEvents) {
             if (CompareLyricEvents(currentEvent, firstEvent) <= 0) {
                 firstEvent = currentEvent;
@@ -87,14 +87,16 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     }
 
     // Get the tick of the first event of this phrase
-    public uint? GetLastTick() {
+    public uint? GetLastEventTick() {
         LyricEditor2Event lastEvent = null;
+        /*
         if (CompareLyricEvents(phraseStartEvent, lastEvent) >= 0) {
             lastEvent = phraseStartEvent;
         }
         if (CompareLyricEvents(phraseEndEvent, lastEvent) >= 0) {
             lastEvent = phraseEndEvent;
         }
+        */
         foreach (LyricEditor2Event currentEvent in lyricEvents) {
             if (CompareLyricEvents(currentEvent, lastEvent) >= 0) {
                 lastEvent = currentEvent;
@@ -106,7 +108,6 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
             return lastEvent.tick;
         }
     }
-    */
 
     // Set the phrase_start event's tick
     public void SetPhraseStart(uint tick) {
