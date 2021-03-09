@@ -1,6 +1,7 @@
 using MoonscraperChartEditor.Song;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Text.RegularExpressions;
 
 public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 {
@@ -112,7 +113,48 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // them into phrases. Called when the user hits "submit" in the input menu
     public void InputLyrics() {
         // TODO
-        // Hint: use regex
+        string inputLyrics = "Test 1-2-3";
+
+        List<List<string>> parsedLyrics = ParseLyrics(inputLyrics);
+        for (int i = 0; i < parsedLyrics.Count; i++) {
+            LyricEditor2PhraseController newPhrase = UnityEngine.GameObject.Instantiate(phraseTemplate, phraseTemplate.transform.parent).GetComponent<LyricEditor2PhraseController>();
+            newPhrase.InitializeSyllables(parsedLyrics[i]);
+            phrases.Add(newPhrase);
+            newPhrase.gameObject.SetActive(true);
+        }
+    }
+
+    // Parse a string into a double string array (phrases of syllables) to be
+    // given as PhrUnityEngine.Debugput. Does not have an implemented time-out
+    // period in case of excessively long strings to be parsed.
+    List<List<string>> ParseLyrics(string inputString) {
+        // Start by splitting the string into phrases
+        char[] newlineCharacters = {'\n', '\r'};
+        string[] tempPhrases = inputString.Split(newlineCharacters, System.StringSplitOptions.RemoveEmptyEntries);
+
+        // Prepare the regex engine to parse each phrase
+        List<List<string>> parsedLyrics = new List<List<string>>();
+        // [^-\s]+      matches one or more characters in a syllable, excluding
+        //                  spaces and dashes
+        // (-\s?|\s?)   matches a dash, or whitespace if no dash is found
+        string regexPattern = @"[^-\s]+(-|\s?)";
+        Regex rx = new Regex(regexPattern);
+
+        foreach (string basePhrase in tempPhrases)
+        {
+            // Match each phrase
+            MatchCollection matches = rx.Matches(basePhrase);
+            // Convert the MatchCollection into a List and append that to
+            // parsedLyrics
+            List<string> matchesList = new List<string>();
+            for (int i = 0; i < matches.Count; i++)
+            {
+                matchesList.Add(matches[i].ToString());
+            }
+            parsedLyrics.Add(matchesList);
+        }
+
+        return parsedLyrics;
     }
 
     // Display a large input field for the user to enter lyrics in dash-
