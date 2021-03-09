@@ -48,6 +48,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     // Stop placing the next lyric (useful for formatting in DisplayText())
     public void StopPlaceNextLyric() {
         isCurrentlyPlacingLyric = false;
+        DisplayText();
     }
 
     // Returns a value that is positive if event1 occurs after event2 and vice-
