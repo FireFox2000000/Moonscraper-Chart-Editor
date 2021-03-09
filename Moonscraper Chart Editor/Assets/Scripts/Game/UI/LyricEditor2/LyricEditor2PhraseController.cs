@@ -16,7 +16,6 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     static string c_phraseStartKeyword = "phrase_start";
     static string c_phraseEndKeyword = "phrase_end";
     static string c_lyricPrefix = "lyric ";
-    private bool isCurrentlyPlacingLyric = false;
     public bool allSyllablesPlaced {get; private set;} = false;
     public bool phraseStartPlaced {get {return phraseStartEvent.hasBeenPlaced;}}
     public bool phraseEndPlaced {get {return phraseEndEvent.hasBeenPlaced;}}
@@ -26,6 +25,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     List<LyricEditor2Event> lyricEvents = new List<LyricEditor2Event>();
     LyricEditor2Event phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword);
     LyricEditor2Event phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword);
+    LyricEditor2Event placingLyric;
 
 
     void CheckForUnplacedSyllables() {
@@ -38,7 +38,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     public void StartPlaceNextLyric(uint tick) {
         LyricEditor2Event currentLyric = GetNextUnplacedSyllable();
         currentLyric.SetTick(tick);
-        isCurrentlyPlacingLyric = true;
+        placingLyric = currentLyric;
 
         // Check for any remaining syllables
         CheckForUnplacedSyllables();
@@ -47,7 +47,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
 
     // Stop placing the next lyric (useful for formatting in DisplayText())
     public void StopPlaceNextLyric() {
-        isCurrentlyPlacingLyric = false;
+        placingLyric = null;
         DisplayText();
     }
 
@@ -214,10 +214,10 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
             string currentColor;
 
             // Set currentColor
-            if (currentEvent.hasBeenPlaced) {
-                currentColor = unfocusedColorString;
-            } else if (isCurrentlyPlacingLyric) {
+            if (currentEvent == placingLyric) {
                 currentColor = selectionColorString;
+            } else if (currentEvent.hasBeenPlaced) {
+                currentColor = unfocusedColorString;
             } else {
                 currentColor = defaultColorString;
             }
@@ -227,7 +227,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
                 if (previousColor != "") {
                     textToDisplay += "</color>";
                 }
-                textToDisplay += "<color=" + currentColor + ">";
+                textToDisplay += "<color=#" + currentColor + ">";
                 previousColor = currentColor;
             }
             textToDisplay += currentEvent.formattedText;
