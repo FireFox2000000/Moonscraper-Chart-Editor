@@ -1,7 +1,7 @@
 ﻿using MoonscraperChartEditor.Song;
 using System.Collections.Generic;
 
-public class LyricEditor2Event : UnityEngine.MonoBehaviour
+public class LyricEditor2Event
 {
     private Event referencedEvent;
     public bool hasBeenPlaced {get; private set;}
