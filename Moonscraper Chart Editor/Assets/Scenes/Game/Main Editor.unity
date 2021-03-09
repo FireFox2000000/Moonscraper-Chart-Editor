@@ -18626,7 +18626,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ca91b7db87452a418288f77e5f75651, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  phraseText: {fileID: 0}
+  phraseText: {fileID: 572030384}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   unfocusedColor: {r: 1, g: 1, b: 1, a: 0.39215687}
   selectionColor: {r: 0.8396226, g: 0.6053883, b: 0.20198467, a: 1}
