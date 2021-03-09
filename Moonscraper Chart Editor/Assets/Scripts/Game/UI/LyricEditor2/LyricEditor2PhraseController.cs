@@ -53,14 +53,22 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     // Returns a value that is positive if event1 occurs after event2 and vice-
     // versa; returns 0 if the two events have the same tick
     int CompareLyricEvents (LyricEditor2Event event1, LyricEditor2Event event2) {
-        if (event1 == null && event2 == null) {
+        if ((event1 == null && event2 == null) ||
+            (!(event1?.hasBeenPlaced ?? true) && !(event2?.hasBeenPlaced ?? true))) {
+            // Neither event exists, or one or both events has not been placed
             return 0;
-        } else if (event2 == null) {
+        } else if ((event1 == null) || (!event1.hasBeenPlaced)) {
+            // Event 1 does not exist, or it has not been placed yet
             return 1;
-        } else if (event1 == null) {
+        } else if ((event2 == null) || (!event2.hasBeenPlaced)) {
+            // Event 2 does not exist, or it has not been placed yet
             return -1;
+        } else if (event1.tick == event2.tick) {
+            // Both events exist and are placed at the same time
+            return 0;
         } else {
-            return (int)event1.tick - (int)event2.tick;
+            // Both events exist and are placed at differne times
+            return event1.tick > event2.tick ? 1 : -1;
         }
     }
 
