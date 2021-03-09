@@ -227,6 +227,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
                     textToDisplay += "</color>";
                 }
                 textToDisplay += "<color=" + currentColor + ">";
+                previousColor = currentColor;
             }
             textToDisplay += currentEvent.formattedText;
         }
