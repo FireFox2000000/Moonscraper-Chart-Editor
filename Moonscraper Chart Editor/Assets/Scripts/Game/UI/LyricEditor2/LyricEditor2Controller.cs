@@ -27,6 +27,10 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         ClearPhraseObjects();
     }
 
+    void Start() {
+        phraseTemplate.gameObject.SetActive(false);
+    }
+
     // Destroy all phrase GameObjects and dereference their corresponding
     // phrase controller components
     void ClearPhraseObjects() {
