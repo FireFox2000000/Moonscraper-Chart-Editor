@@ -13,9 +13,9 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     [UnityEngine.SerializeField]
     UnityEngine.Color selectionColor;
 
-    static string c_phraseStartKeyword = "phrase_start";
-    static string c_phraseEndKeyword = "phrase_end";
-    static string c_lyricPrefix = "lyric ";
+    public static readonly string c_phraseStartKeyword = "phrase_start";
+    public static readonly string c_phraseEndKeyword = "phrase_end";
+    public static readonly string c_lyricPrefix = "lyric ";
     public bool allSyllablesPlaced {get; private set;} = false;
     public bool phraseStartPlaced {get {return phraseStartEvent.hasBeenPlaced;}}
     public bool phraseEndPlaced {get {return phraseEndEvent.hasBeenPlaced;}}
