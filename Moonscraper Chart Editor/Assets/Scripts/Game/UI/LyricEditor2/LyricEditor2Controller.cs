@@ -189,19 +189,70 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         return rep;
     }
 
+    static bool IsLyricEvent(Event selectedEvent) {
+        if (selectedEvent.title.StartsWith(LyricEditor2PhraseController.c_lyricPrefix) ||
+                selectedEvent.title.Equals(LyricEditor2PhraseController.c_phraseStartKeyword) ||
+                selectedEvent.title.Equals(LyricEditor2PhraseController.c_phraseEndKeyword)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // Import existing lyric events from the current song. Called in Start()
     void ImportExistingLyrics() {
-        // TODO
         // Use CompareEditorEvents (below) to sort events, then group events into
         // sections by looking for phrase_start events
+        List<Event> importedEvents = new List<Event>();
+
+        foreach (Event eventObject in ChartEditor.Instance.currentSong.events) {
+            if (IsLyricEvent(eventObject)) {
+                importedEvents.Add(eventObject);
+            }
+        }
+
+        importedEvents.Sort(CompareEditorEvents);
+
+        List<Event> tempEvents = new List<Event>();
+        for (int i = 0; i < importedEvents.Count; i++) {
+            Event currentEvent = importedEvents[i];
+            tempEvents.Add(currentEvent);
+            if (currentEvent.title.Equals(LyricEditor2PhraseController.c_phraseEndKeyword)) {
+                LyricEditor2PhraseController newPhrase = UnityEngine.GameObject.Instantiate(phraseTemplate, phraseTemplate.transform.parent).GetComponent<LyricEditor2PhraseController>();
+                newPhrase.InitializeSyllables(tempEvents);
+                phrases.Add(newPhrase);
+                newPhrase.gameObject.SetActive(true);
+                tempEvents.Clear();
+            }
+        }
     }
 
     // Compare two events for use with List.Sort(). Events should be sorted by
     // tick; if two Events have the same tick, then lyric events should be
-    // sortec before phrase_end and after phrase_start events. Unrelated events
+    // sorted before phrase_end and after phrase_start events. Unrelated events
     // can be sorted alphabetically using String.Compare()
     static int CompareEditorEvents (Event event1, Event event2) {
-        // TODO
-        return 0;
+        if (event1 == null && event2 == null) {
+            // Both events null and are equivalent
+            return 0;
+        } else if (event1 == null) {
+            // event1 null
+            return 1;
+        } else if (event2 == null) {
+            // event2 null
+            return -1;
+        } else if (event1.tick != event2.tick) {
+            // Two events at different ticks
+            return event1.tick > event2.tick ? 1 : -1;
+        } else if (event1.title.Equals(LyricEditor2PhraseController.c_phraseStartKeyword) || event2.title.Equals(LyricEditor2PhraseController.c_phraseEndKeyword)) {
+            // Two events at the same tick, event1 is phrase_start or event2 is phrase_end
+            return -1;
+        } else if (event2.title.Equals(LyricEditor2PhraseController.c_phraseStartKeyword) || event1.title.Equals(LyricEditor2PhraseController.c_phraseEndKeyword)) {
+            // Two events at the same tick, event1 is phrase_end or event2 is phrase_start
+            return 1;
+        } else {
+            // Two events at the same tick, neither is phrase_start or phrase_end
+            return System.String.Compare(event1.title, event2.title);
+        }
     }
 }
