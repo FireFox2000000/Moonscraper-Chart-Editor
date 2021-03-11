@@ -115,10 +115,18 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
     }
 
+    // Pickup all phrases
+    void PickupAllPhrases() {
+        foreach (LyricEditor2PhraseController phrase in phrases) {
+            phrase.Pickup();
+        }
+    }
+
     // Take dash-newline formatted lyrics from the lyric input menu and parse
     // them into phrases. Called when the user hits "submit" in the input menu
     public void InputLyrics() {
-        // TODO
+        PickupAllPhrases();
+        ClearPhraseObjects();
         string inputLyrics = lyricInputMenu.text ?? "";
 
         List<List<string>> parsedLyrics = ParseLyrics(inputLyrics);
