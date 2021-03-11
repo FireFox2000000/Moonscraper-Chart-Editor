@@ -199,8 +199,20 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
     }
 
+    static bool MakesValidPhrase (List<Event> potentialPhrase) {
+        for (int i = 0; i < potentialPhrase.Count; i++) {
+            if (potentialPhrase[i].title.StartsWith(LyricEditor2PhraseController.c_lyricPrefix)) {
+                return true;
+            }
+        }
+        // No lyric events found
+        return false;
+    }
+
     // Import existing lyric events from the current song. Called in Start()
     void ImportExistingLyrics() {
+        // TODO check to ensure all fully-placed phrases have their phrase_start events set
+
         // Use CompareEditorEvents (below) to sort events, then group events into
         // sections by looking for phrase_start events
         List<Event> importedEvents = new List<Event>();
@@ -218,10 +230,13 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             Event currentEvent = importedEvents[i];
             tempEvents.Add(currentEvent);
             if (currentEvent.title.Equals(LyricEditor2PhraseController.c_phraseEndKeyword)) {
-                LyricEditor2PhraseController newPhrase = UnityEngine.GameObject.Instantiate(phraseTemplate, phraseTemplate.transform.parent).GetComponent<LyricEditor2PhraseController>();
-                newPhrase.InitializeSyllables(tempEvents);
-                phrases.Add(newPhrase);
-                newPhrase.gameObject.SetActive(true);
+                if (MakesValidPhrase(tempEvents)) {
+                    LyricEditor2PhraseController newPhrase = UnityEngine.GameObject.Instantiate(phraseTemplate, phraseTemplate.transform.parent).GetComponent<LyricEditor2PhraseController>();
+                    newPhrase.InitializeSyllables(tempEvents);
+                    phrases.Add(newPhrase);
+                    newPhrase.gameObject.SetActive(true);
+                }
+                // No lyrics in the current phrase, clear temp events to avoid pollution with extra phrase events
                 tempEvents.Clear();
             }
         }
