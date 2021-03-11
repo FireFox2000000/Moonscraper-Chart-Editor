@@ -248,4 +248,14 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
         tempString += "\n";
         return tempString;
     }
+
+    // Pick up all contained lyric events, including the phrase_start and
+    // phrase_end events
+    public void Pickup() {
+        foreach (LyricEditor2Event currentEvent in lyricEvents) {
+            currentEvent.Pickup();
+        }
+        phraseStartEvent.Pickup();
+        phraseEndEvent.Pickup();
+    }
 }

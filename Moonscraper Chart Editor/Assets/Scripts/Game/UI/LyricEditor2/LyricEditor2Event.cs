@@ -21,6 +21,17 @@ public class LyricEditor2Event
         this.hasBeenPlaced = true;
     }
 
+    // Remove lyric from the editor
+    public void Pickup() {
+        List<SongEditCommand> commands = new List<SongEditCommand>();
+        if (this.referencedEvent != null) {
+            commands.Add(new SongEditDelete(this.referencedEvent));
+        }
+        this.referencedEvent = null;
+        this.hasBeenPlaced = false;
+        BatchedSongEditCommand batchedCommands = new BatchedSongEditCommand(commands);
+        ChartEditor.Instance.commandStack.Push(batchedCommands);
+    }
 
     public void SetText (string newText) {
         this.text = newText;
