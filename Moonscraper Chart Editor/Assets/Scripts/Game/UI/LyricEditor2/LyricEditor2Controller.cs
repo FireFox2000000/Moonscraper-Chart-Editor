@@ -190,7 +190,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     static bool IsLyricEvent(Event selectedEvent) {
-        if (selectedEvent.title.StartsWith(LyricEditor2PhraseController.c_lyricPrefix) ||
+        if (selectedEvent.title.TrimEnd().StartsWith(LyricEditor2PhraseController.c_lyricPrefix) ||
                 selectedEvent.title.Equals(LyricEditor2PhraseController.c_phraseStartKeyword) ||
                 selectedEvent.title.Equals(LyricEditor2PhraseController.c_phraseEndKeyword)) {
             return true;
