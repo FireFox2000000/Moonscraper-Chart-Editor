@@ -26,6 +26,11 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     void OnDisable() {
+        // Place phrase_end for current phrase if it hasn't been placed
+        // TODO verify a valid placement here
+        if (!currentPhrase.phraseEndPlaced) {
+            currentPhrase.SetPhraseEnd(currentTickPos);
+        }
         ClearPhraseObjects();
     }
 
