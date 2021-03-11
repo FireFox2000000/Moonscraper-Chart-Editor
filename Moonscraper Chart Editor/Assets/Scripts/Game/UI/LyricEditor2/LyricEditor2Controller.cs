@@ -57,6 +57,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                 break;
             }
             uint? finalTick = phrases[i].endTick;
+            if (finalTick == null) {
+                finalTick = phrases[i].GetLastEventTick();
+            }
             if (finalTick != null) {
                 return (uint)finalTick;
             }
