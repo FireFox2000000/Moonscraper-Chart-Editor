@@ -49,8 +49,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
     // Find the most recent previous phrase which has been placed and return its
     // end tick. If no such phrase exists, return 0.
-    uint GetLastSafeTick() {
-        int currentPhraseIndex = phrases.IndexOf(currentPhrase);
+    uint GetLastSafeTick(LyricEditor2PhraseController targetPhrase) {
+        int currentPhraseIndex = phrases.IndexOf(targetPhrase);
         // Iterate through up to the last 50 phrases
         for (int i = currentPhraseIndex - 1; i > currentPhraseIndex - 51; i--) {
             if (i < 0) {
@@ -65,6 +65,19 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         return 0;
     }
 
+    void AutoPlacePhraseStart (LyricEditor2PhraseController phrase) {
+        uint lastSafeTick = GetLastSafeTick(phrase);
+        // Tick calculation by set distance before first lyric
+        uint startTick1 = (uint)(phrase.GetFirstEventTick() - (int)(songResolution / phraseStartMax * 4));
+        // Tick calculation proportional to distance to last phrase
+        uint startTick2 = (uint)(lastSafeTick + (int)((phrase.GetFirstEventTick() - lastSafeTick) * phraseStartFactor));
+        // Actual start tick is the maximum of these two values
+        uint startTick = System.Math.Max(startTick1, startTick2);
+
+        // Set the start tick
+        phrase.SetPhraseStart(startTick);
+    }
+
     // Called every time the "place lyric" button is pressed; places the next
     // lyric in the current phrase, and sets the phrase's start tick, if it has
     // not been set
@@ -76,17 +89,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             currentPhrase.StartPlaceNextLyric(currentTickPos);
 
             // Set phrase_start if it is not already set
-            if (currentPhrase.startTick == null) {
-                uint lastSafeTick = GetLastSafeTick();
-                // Tick calculation by set distance before first lyric
-                uint startTick1 = (uint)(currentPhrase.GetFirstEventTick() - (int)(songResolution / phraseStartMax * 4));
-                // Tick calculation proportional to distance to last phrase
-                uint startTick2 = (uint)(lastSafeTick + (int)((currentPhrase.GetFirstEventTick() - lastSafeTick) * phraseStartFactor));
-                // Actual start tick is the maximum of these two values
-                uint startTick = System.Math.Max(startTick1, startTick2);
-
-                // Set the start tick
-                currentPhrase.SetPhraseStart(startTick);
+            if (!currentPhrase.phraseStartPlaced) {
+                AutoPlacePhraseStart(currentPhrase);
             }
         }
         // All phrases placed already, so currentPhrase was null
@@ -216,7 +220,6 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
     // Import existing lyric events from the current song. Called in Start()
     void ImportExistingLyrics() {
-        // TODO check to ensure all fully-placed phrases have their phrase_start events set
 
         // Use CompareEditorEvents (below) to sort events, then group events into
         // sections by looking for phrase_start events
@@ -243,6 +246,13 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                 }
                 // No lyrics in the current phrase, clear temp events to avoid pollution with extra phrase events
                 tempEvents.Clear();
+            }
+        }
+
+        // Check to ensure all fully-placed phrases have their phrase_start events set
+        foreach (LyricEditor2PhraseController currentPhrase in phrases) {
+            if (currentPhrase.allSyllablesPlaced && !currentPhrase.phraseStartPlaced) {
+                AutoPlacePhraseStart(currentPhrase);
             }
         }
     }
