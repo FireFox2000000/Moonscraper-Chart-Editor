@@ -174,8 +174,11 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // Create a text representation of stored lyrics which can be pushed to the
     // input menu when the user wants to edit lyrics
     string GetTextRepresentation() {
-        // TODO
-        return "Test 4-5-6";
+        string rep = "";
+        for (int i = 0; i < phrases.Count; i++) {
+            rep += phrases[i].GetTextRepresentation();
+        }
+        return rep;
     }
 
     // Import existing lyric events from the current song. Called in Start()
