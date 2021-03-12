@@ -6,6 +6,8 @@ using System.Text.RegularExpressions;
 public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 {
     [UnityEngine.SerializeField]
+    LyricEditor2AutoScroller autoScroller;
+    [UnityEngine.SerializeField]
     LyricEditor2PhraseController phraseTemplate;
     [UnityEngine.SerializeField]
     LyricEditor2InputMenu lyricInputMenu;
@@ -23,6 +25,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
     void OnEnable() {
         ImportExistingLyrics();
+        // TODO only activate auto-scrolling when song playback starts
+        autoScroller.gameObject.SetActive(true);
+        autoScroller.ScrollTo(null);
     }
 
     void OnDisable() {
@@ -32,6 +37,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             currentPhrase.SetPhraseEnd(currentTickPos);
         }
         ClearPhraseObjects();
+        autoScroller.gameObject.SetActive(false);
     }
 
     void Start() {
@@ -123,6 +129,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             if (currentPhrase.allSyllablesPlaced) {
                 currentPhrase.SetPhraseEnd(currentTickPos);
                 currentPhrase = GetNextUnfinishedPhrase();
+                autoScroller.ScrollTo(currentPhrase?.gameObject.GetComponent<UnityEngine.RectTransform>());
             }
         }
     }
@@ -147,6 +154,10 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             newPhrase.InitializeSyllables(parsedLyrics[i]);
             phrases.Add(newPhrase);
             newPhrase.gameObject.SetActive(true);
+        }
+
+        if (phrases.Count > 0) {
+            autoScroller.ScrollTo(phrases[0].gameObject.GetComponent<UnityEngine.RectTransform>());
         }
     }
 

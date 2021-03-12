@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 
+[UnityEngine.RequireComponent(typeof(UnityEngine.RectTransform))]
 public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
 {
     [UnityEngine.SerializeField]
