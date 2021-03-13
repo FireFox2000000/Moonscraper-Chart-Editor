@@ -109,7 +109,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
         }
         */
         foreach (LyricEditor2Event currentEvent in lyricEvents) {
-            if (CompareLyricEvents(currentEvent, lastEvent) >= 0) {
+            if (currentEvent != null && (CompareLyricEvents(currentEvent, lastEvent) >= 0 || lastEvent == null)) {
                 lastEvent = currentEvent;
             }
         }

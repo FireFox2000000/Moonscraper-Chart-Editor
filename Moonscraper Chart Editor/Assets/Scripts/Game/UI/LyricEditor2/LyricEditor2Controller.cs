@@ -93,7 +93,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     public void PlaceNextLyric() {
         currentPhrase = GetNextUnfinishedPhrase();
 
-        if (currentPhrase != null) {
+        if (currentPhrase != null && IsLegalToPlaceNow()) {
             // Set the next lyric's tick
             currentPhrase.StartPlaceNextLyric(currentTickPos);
 
@@ -297,6 +297,23 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         } else {
             // Two events at the same tick, neither is phrase_start or phrase_end
             return System.String.Compare(event1.title, event2.title);
+        }
+    }
+
+    // Check to see if the current tick is valid to place a lyric; if the
+    // current time falls before the last element of currentPhrase, the
+    // placement is considered invalid
+    bool IsLegalToPlaceNow() {
+        uint lastPhraseTick = GetLastSafeTick(currentPhrase);
+        if (currentTickPos < lastPhraseTick) {
+            // Current position is before last safe tick
+            return false;
+        } else if (currentTickPos < currentPhrase.startTick || currentTickPos < currentPhrase.GetLastEventTick()) {
+            // Current position is in the middle of currentPhrase
+            return false;
+        } else {
+            // No illegal state found
+            return true;
         }
     }
 }
