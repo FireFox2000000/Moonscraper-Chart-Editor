@@ -52,72 +52,26 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
         DisplayText();
     }
 
-    // Returns a value that is positive if event1 occurs after event2 and vice-
-    // versa; returns 0 if the two events have the same tick
-    int CompareLyricEvents (LyricEditor2Event event1, LyricEditor2Event event2) {
-        if ((event1 == null && event2 == null) ||
-            (!(event1?.hasBeenPlaced ?? true) && !(event2?.hasBeenPlaced ?? true))) {
-            // Neither event exists, or one or both events has not been placed
-            return 0;
-        } else if ((event1 == null) || (!event1.hasBeenPlaced)) {
-            // Event 1 does not exist, or it has not been placed yet
-            return 1;
-        } else if ((event2 == null) || (!event2.hasBeenPlaced)) {
-            // Event 2 does not exist, or it has not been placed yet
-            return -1;
-        } else if (event1.tick == event2.tick) {
-            // Both events exist and are placed at the same time
-            return 0;
-        } else {
-            // Both events exist and are placed at different times
-            return event1.tick > event2.tick ? 1 : -1;
-        }
-    }
-
     // Get the tick of the first event of this phrase
     public uint? GetFirstEventTick() {
         LyricEditor2Event firstEvent = null;
-        /*
-        if (CompareLyricEvents(phraseStartEvent, firstEvent) <= 0) {
-            firstEvent = phraseStartEvent;
-        }
-        if (CompareLyricEvents(phraseEndEvent, firstEvent) <= 0) {
-            firstEvent = phraseEndEvent;
-        }
-        */
         foreach (LyricEditor2Event currentEvent in lyricEvents) {
-            if (CompareLyricEvents(currentEvent, firstEvent) <= 0) {
+            if (firstEvent == null || (currentEvent != null && currentEvent.tick < firstEvent.tick)) {
                 firstEvent = currentEvent;
             }
         }
-        if (firstEvent == null) {
-            return null;
-        } else {
-            return firstEvent.tick;
-        }
+        return firstEvent?.tick;
     }
 
     // Get the tick of the first event of this phrase
     public uint? GetLastEventTick() {
         LyricEditor2Event lastEvent = null;
-        /*
-        if (CompareLyricEvents(phraseStartEvent, lastEvent) >= 0) {
-            lastEvent = phraseStartEvent;
-        }
-        if (CompareLyricEvents(phraseEndEvent, lastEvent) >= 0) {
-            lastEvent = phraseEndEvent;
-        }
-        */
         foreach (LyricEditor2Event currentEvent in lyricEvents) {
-            if (currentEvent != null && (CompareLyricEvents(currentEvent, lastEvent) >= 0 || lastEvent == null)) {
+            if (lastEvent == null || (currentEvent != null && currentEvent.tick > lastEvent.tick)) {
                 lastEvent = currentEvent;
             }
         }
-        if (lastEvent == null) {
-            return null;
-        } else {
-            return lastEvent.tick;
-        }
+        return lastEvent?.tick;
     }
 
     // Set the phrase_start event's tick
