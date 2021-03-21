@@ -129,7 +129,7 @@ namespace MoonscraperChartEditor.Song
         /// </summary>
         public enum ID
         {
-            TimeSignature, BPM, Anchor, Event, Section, Note, Starpower, ChartEvent
+            TimeSignature, BPM, Anchor, Event, Section, Note, Starpower, ChartEvent, LaneModifier
         }
     }
 }

@@ -30,6 +30,10 @@ namespace MoonscraperChartEditor.Song
         /// </summary>
         public SongObjectCache<ChartEvent> events { get; private set; }
         /// <summary>
+        /// Read only list of the lane modifier.
+        /// </summary>
+        public SongObjectCache<LaneModifier> laneModifiers { get; private set; }
+        /// <summary>
         /// The song this chart is connected to.
         /// </summary>
         public Song song { get { return _song; } }
@@ -60,9 +64,10 @@ namespace MoonscraperChartEditor.Song
             chartObjects = new ReadOnlyList<ChartObject>(_chartObjects);
             _gameMode = gameMode;
 
-            notes = new SongObjectCache<Note>();// new Note[0];
-            starPower = new SongObjectCache<Starpower>();// new Starpower[0];
-            events = new SongObjectCache<ChartEvent>(); // new ChartEvent[0];
+            notes = new SongObjectCache<Note>();
+            starPower = new SongObjectCache<Starpower>();
+            events = new SongObjectCache<ChartEvent>();
+            laneModifiers = new SongObjectCache<LaneModifier>();
 
             _note_count = 0;
 
@@ -95,10 +100,7 @@ namespace MoonscraperChartEditor.Song
             Song.UpdateCacheList(notes, _chartObjects);
             Song.UpdateCacheList(starPower, _chartObjects);
             Song.UpdateCacheList(events, _chartObjects);
-
-            //notes = _chartObjects.OfType<Note>().ToArray();
-            //starPower = _chartObjects.OfType<Starpower>().ToArray();
-            //events = _chartObjects.OfType<ChartEvent>().ToArray();
+            Song.UpdateCacheList(laneModifiers, _chartObjects);
 
             _note_count = GetNoteCount();
         }

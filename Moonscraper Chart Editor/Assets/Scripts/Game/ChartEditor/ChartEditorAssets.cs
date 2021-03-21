@@ -15,6 +15,7 @@ public class ChartEditorAssets : MonoBehaviour
     public GameObject tsPrefab;
     public GameObject songEventPrefab;
     public GameObject chartEventPrefab;
+    public GameObject laneModifierPrefab;
 
     [Header("Beat Line Prefabs")]
     public GameObject measureLine;

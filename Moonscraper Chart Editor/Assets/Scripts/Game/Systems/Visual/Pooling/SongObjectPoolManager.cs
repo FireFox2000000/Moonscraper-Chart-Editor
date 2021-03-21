@@ -27,6 +27,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
     SectionPool sectionPool;
     EventPool songEventPool;
     ChartEventPool chartEventPool;
+    LaneModifiersPool laneModifiersPool;
 
     GameObject noteParent;
     GameObject starpowerParent;
@@ -35,9 +36,11 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
     GameObject sectionParent;
     GameObject songEventParent;
     GameObject chartEventParent;
+    GameObject laneModifiersParent;
 
     List<Note> collectedNotesInRange = new List<Note>();
     List<Starpower> collectedStarpowerInRange = new List<Starpower>();
+    List<LaneModifier> collectedLaneModifiersInRange = new List<LaneModifier>();
     List<Note> prevSustainCache = new List<Note>();
 
     public float? noteVisibilityRangeYPosOverride;
@@ -56,6 +59,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         sectionParent = new GameObject("Sections");
         songEventParent = new GameObject("Global Events");
         chartEventParent = new GameObject("Chart Events");
+        laneModifiersParent = new GameObject("Lane Modifiers");
 
         notePool = new NotePool(noteParent, editor.assets.notePrefab, NOTE_POOL_SIZE);
         noteParent.transform.SetParent(groupMovePool.transform);
@@ -77,6 +81,9 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
 
         chartEventPool = new ChartEventPool(chartEventParent, editor.assets.chartEventPrefab, POOL_SIZE);
         chartEventParent.transform.SetParent(groupMovePool.transform);
+
+        laneModifiersPool = new LaneModifiersPool(laneModifiersParent, editor.assets.laneModifierPrefab, POOL_SIZE);
+        laneModifiersParent.transform.SetParent(groupMovePool.transform);
 
         editor.events.hyperspeedChangeEvent.Register(SetAllPoolsDirty);
         editor.events.chartReloadedEvent.Register(SetAllPoolsDirty);
@@ -121,6 +128,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
             sectionPool.Reset();
             songEventPool.Reset();
             chartEventPool.Reset();
+            laneModifiersPool.Reset();
         }
     }
 
@@ -287,6 +295,39 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         chartEventPool.Activate(events, index, length);
     }
 
+    void CollectLaneModifiersInViewRange(IList<LaneModifier> laneModifiers)
+    {
+        collectedLaneModifiersInRange.Clear();
+        int index, length;
+        SongObjectHelper.GetRange(laneModifiers, editor.minPos, editor.maxPos, out index, out length);
+        for (int i = index; i < index + length; ++i)
+        {
+            collectedLaneModifiersInRange.Add(laneModifiers[i]);
+        }
+
+        int arrayPos = SongObjectHelper.FindClosestPosition(editor.minPos, editor.currentChart.laneModifiers);
+        if (arrayPos != SongObjectHelper.NOTFOUND)
+        {
+            // Find the back-most position
+            while (arrayPos > 0 && editor.currentChart.laneModifiers[arrayPos].tick >= editor.minPos)
+            {
+                --arrayPos;
+            }
+            // Render previous sp sustain in case of overlap into current position
+            if (arrayPos >= 0 && editor.currentChart.laneModifiers[arrayPos].tick + editor.currentChart.laneModifiers[arrayPos].length > editor.minPos &&
+                (editor.currentChart.laneModifiers[arrayPos].tick + editor.currentChart.laneModifiers[arrayPos].length) < editor.maxPos)
+            {
+                collectedLaneModifiersInRange.Add(editor.currentChart.laneModifiers[arrayPos]);
+            }
+        }
+    }
+
+    public void EnableLaneModifiers(IList<LaneModifier> laneModifiers)
+    {
+        CollectLaneModifiersInViewRange(laneModifiers);
+        laneModifiersPool.Activate(collectedLaneModifiersInRange, 0, collectedLaneModifiersInRange.Count);
+    }
+
     public void SetAllPoolsDirty()
     {
         Song song = editor.currentSong;
@@ -295,6 +336,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         SetInViewRangeDirty(chart.notes);
         SetInViewRangeDirty(chart.starPower);
         SetInViewRangeDirty(chart.events);
+        SetInViewRangeDirty(chart.laneModifiers);
         SetInViewRangeDirty(song.eventsAndSections);
         SetInViewRangeDirty(song.syncTrack);
 
