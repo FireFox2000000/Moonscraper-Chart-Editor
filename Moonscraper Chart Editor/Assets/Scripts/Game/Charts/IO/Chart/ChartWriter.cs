@@ -476,7 +476,7 @@ namespace MoonscraperChartEditor.Song.IO
 
                 if (eventName != chartEvent.eventName && writeParameters.exportOptions.format != ExportOptions.Format.Msce)
                 {
-                    writeParameters.errorReport.AddError(string.Format("Warning: Found a track event \"{0}\" with invalid character/s. This will force the file to be saved in a propriety format (.msce) and will need to be re-exported to be readable by 3rd party rhythm games.", chartEvent.eventName), true);
+                    writeParameters.errorReport.AddError(string.Format("Warning: Found a track event \"{0}\" with invalid character/s for the Chart file format. This will force the file to be saved in a propriety format (.msce) and will need to be re-exported via the Export menu to be readable by 3rd party rhythm games.", chartEvent.eventName), true);
 
                     writeParameters.errorReport.resultantFileType = ChartIOHelper.FileSubType.MoonscraperPropriety;
                 }
