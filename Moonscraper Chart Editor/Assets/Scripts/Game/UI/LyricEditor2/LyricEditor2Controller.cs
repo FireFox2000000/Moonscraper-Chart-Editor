@@ -26,8 +26,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     void OnEnable() {
         ImportExistingLyrics();
         // TODO only activate auto-scrolling when song playback starts
-        autoScroller.gameObject.SetActive(true);
         autoScroller.ScrollTo(null);
+        autoScroller.SetActive(true);
     }
 
     void OnDisable() {

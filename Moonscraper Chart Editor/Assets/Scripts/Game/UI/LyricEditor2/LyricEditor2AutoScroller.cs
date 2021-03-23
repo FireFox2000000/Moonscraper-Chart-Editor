@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 
@@ -29,14 +29,22 @@ public class LyricEditor2AutoScroller : MonoBehaviour
         AutoScroll();
     }
 
-    void OnEnable () {
+    void Enable () {
         endSpacer.gameObject.SetActive(true);
         scrollRect.verticalScrollbar.enabled = false;
     }
 
-    void OnDisable () {
+    void Disable () {
         endSpacer.gameObject.SetActive(false);
         scrollRect.verticalScrollbar.enabled = true;
+    }
+
+    public void SetActive (bool active) {
+        if (active) {
+            Enable();
+        } else {
+            Disable();
+        }
     }
 
     // Smoothly interpolate between two values following the trajectory y=2x-x^2
