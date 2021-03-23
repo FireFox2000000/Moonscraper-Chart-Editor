@@ -308,7 +308,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         if (currentTickPos < lastPhraseTick) {
             // Current position is before last safe tick
             return false;
-        } else if (currentTickPos < currentPhrase.startTick || currentTickPos < currentPhrase.GetLastEventTick()) {
+        } else if (currentTickPos < currentPhrase?.startTick || currentTickPos < currentPhrase?.GetLastEventTick()) {
             // Current position is in the middle of currentPhrase
             return false;
         } else {
