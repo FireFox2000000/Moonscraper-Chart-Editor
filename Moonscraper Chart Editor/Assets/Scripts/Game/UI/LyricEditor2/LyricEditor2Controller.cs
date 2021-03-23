@@ -49,7 +49,6 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     public void OnStateChanged(in ChartEditor.State newState) {
         autoScroller.SetActive(playbackActive);
     }
-    }
 
     // Destroy all phrase GameObjects and dereference their corresponding
     // phrase controller components
