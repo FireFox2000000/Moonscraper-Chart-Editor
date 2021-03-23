@@ -61,8 +61,9 @@ public class LyricEditor2AutoScroller : MonoBehaviour
 
     // Scroll to a specific RectTransform
     public void ScrollTo(RectTransform target) {
-        // TODO ignore scroll calls to identical targets; that way ScrollTo()
-        // can be called every frame to scroll to the most applicable phrase
+        // Never mind, DON'T ignore identical scroll calls; this just causes
+        // problems with ambiguity because there is no feedback for whether
+        // the operation succeeded
         currentDeltaTime = 0;
         lastY = targetY;
         if (target != null) {
@@ -77,6 +78,10 @@ public class LyricEditor2AutoScroller : MonoBehaviour
         float scrollFactor = currentDeltaTime / scrollTime;
         float frameTargetY = smoothInterp(lastY, targetY, scrollFactor);
         float frameTargetScroll = 1 - frameTargetY / endSpacer.anchoredPosition.y;
-        scrollRect.verticalNormalizedPosition = frameTargetScroll;
+        if (endSpacer.anchoredPosition.y != 0) {
+            scrollRect.verticalNormalizedPosition = frameTargetScroll;
+        } else {
+            scrollRect.verticalNormalizedPosition = 1;
+        }
     }
 }
