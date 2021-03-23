@@ -32,6 +32,7 @@ public class LyricEditor2AutoScroller : MonoBehaviour
     void Enable () {
         endSpacer.gameObject.SetActive(true);
         scrollRect.verticalScrollbar.enabled = false;
+        lastY = 0;
     }
 
     void Disable () {
