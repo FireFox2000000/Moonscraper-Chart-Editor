@@ -21,13 +21,13 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // So with a resolution of 192, the phrase_start event should have at least 12 ticks of spacing
     static Song currentSong {get {return ChartEditor.Instance.currentSong;}}
     static float songResolution {get {return currentSong.resolution;}}
+    static bool playbackActive {get {return (ChartEditor.Instance.currentState == ChartEditor.State.Playing);}}
 
 
     void OnEnable() {
         ImportExistingLyrics();
-        // TODO only activate auto-scrolling when song playback starts
-        autoScroller.ScrollTo(null);
-        autoScroller.SetActive(true);
+        // Activate auto-scrolling if playback is active on lyric editor enable
+        autoScroller.SetActive(playbackActive);
     }
 
     void OnDisable() {
@@ -42,6 +42,13 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
     void Start() {
         phraseTemplate.gameObject.SetActive(false);
+
+        ChartEditor.Instance.events.editorStateChangedEvent.Register(OnStateChanged);
+    }
+
+    public void OnStateChanged(in ChartEditor.State newState) {
+        autoScroller.SetActive(playbackActive);
+    }
     }
 
     // Destroy all phrase GameObjects and dereference their corresponding
