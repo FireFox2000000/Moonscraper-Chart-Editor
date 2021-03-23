@@ -87,6 +87,22 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         phrase.SetPhraseStart(startTick);
     }
 
+    void AutoPlacePhraseEnd (LyricEditor2PhraseController phrase) {
+        uint lastTick = 0;
+        foreach (LyricEditor2PhraseController currentPhrase in phrases) {
+            if (currentPhrase.endTick != null) {
+                if (currentPhrase.endTick > lastTick) {
+                    lastTick = (uint)currentPhrase.endTick;
+                }
+            } else {
+                uint? currentLastTick = currentPhrase.GetLastEventTick();
+                if (currentLastTick > lastTick) {
+                    lastTick = (uint)currentLastTick;
+                }
+            }
+        }
+    }
+
     // Called every time the "place lyric" button is pressed; places the next
     // lyric in the current phrase, and sets the phrase's start tick, if it has
     // not been set
@@ -127,7 +143,11 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             // Place phrase_end event and move to next phrase if all syllables
             // were just placed
             if (currentPhrase.allSyllablesPlaced) {
-                currentPhrase.SetPhraseEnd(currentTickPos);
+                if (IsLegalToPlaceNow()) {
+                    currentPhrase.SetPhraseEnd(currentTickPos);
+                } else {
+                    AutoPlacePhraseEnd(currentPhrase);
+                }
                 currentPhrase = GetNextUnfinishedPhrase();
                 autoScroller.ScrollTo(currentPhrase?.gameObject.GetComponent<UnityEngine.RectTransform>());
             }
