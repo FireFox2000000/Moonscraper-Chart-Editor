@@ -967,6 +967,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 #region Audio Functions
     public void PlayAudio(float playPoint)
     {
+        // Update all streams to the correct volume and speed levels
         SongAudioManager songAudioManager = currentSongAudio;
         SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Song), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_song);
         SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Guitar), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_guitar);
@@ -980,58 +981,26 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Vocals), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_vocals);
 		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Crowd), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_crowd);
 
-        AudioStream primaryStream = null;
-        foreach (var bassStream in songAudioManager.bassAudioStreams)
-        {
-            if (primaryStream != null)
-            {
-                playPoint = primaryStream.CurrentPositionInSeconds();
-            }
+        // Set up synchronisation between all the streams otherwise they may go out of sync with each other
+        AudioStream primaryStream = songAudioManager.mainSongAudio;
 
-            if (primaryStream != null)
-            {
-                PlayStream(bassStream, primaryStream);
-            }
-            else if (PlayStream(bassStream, playPoint))
-            {
-                primaryStream = bassStream;
-            }
+        // Finally start playing the song
+        if (primaryStream != null)
+        {
+            primaryStream.PlaySynced(playPoint, songAudioManager.bassAudioStreams);
+            Debug.Log("Playing song audio at " + playPoint);
         }
     }
 
    public void StopAudio()
     {
-        foreach (var bassStream in currentSongAudio.bassAudioStreams)
+        SongAudioManager songAudioManager = currentSongAudio;
+        AudioStream primaryStream = songAudioManager.mainSongAudio;
+
+        if (primaryStream != null)
         {
-            if (AudioManager.StreamIsValid(bassStream))
-                bassStream.Stop();
+            primaryStream.Stop();
         }
-    }
-
-    bool PlayStream(AudioStream audioStream, float playPoint)
-    {
-        if (audioStream != null && audioStream.isValid)
-        {
-            audioStream.Play(playPoint);
-            Debug.Log("Playing stream at " + playPoint);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    bool PlayStream(AudioStream audioStream, AudioStream syncStream)
-    {
-        if (audioStream != null && audioStream.isValid)
-        {
-            audioStream.Play(syncStream.CurrentPositionInSeconds());
-            Debug.Log("Playing stream at " + syncStream.CurrentPositionInSeconds());
-
-            return true;
-        }
-
-        return false;
     }
 
     void SetStreamProperties(TempoStream stream, float speed, float vol)

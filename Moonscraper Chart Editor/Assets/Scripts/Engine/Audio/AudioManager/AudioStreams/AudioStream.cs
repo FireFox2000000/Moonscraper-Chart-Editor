@@ -6,6 +6,7 @@ using Un4seen.Bass;
 #endif
 
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace MoonscraperEngine.Audio
 {
@@ -13,6 +14,7 @@ namespace MoonscraperEngine.Audio
     {
         public int audioHandle { get; private set; }
         bool isDisposed { get { return audioHandle == 0; } }
+        List<int> childSyncedStreams = new List<int>();
 
         public virtual float volume
         {
@@ -50,14 +52,40 @@ namespace MoonscraperEngine.Audio
 
         public virtual bool Play(float playPoint, bool restart = false)
         {
-            Bass.BASS_ChannelSetPosition(audioHandle, playPoint);
+            CurrentPositionSeconds = playPoint;
             Bass.BASS_ChannelPlay(audioHandle, restart);
             return true;
+        }
+
+        public bool PlaySynced(float playPoint, IList<AudioStream> streamsToSync)
+        {
+            foreach(var stream in streamsToSync)
+            {
+                if (stream != null && stream.isValid)
+                {
+                    stream.CurrentPositionSeconds = playPoint;
+                    SyncWithStream(stream);
+                }
+            }
+
+            return Play(playPoint, false);
         }
 
         public virtual void Stop()
         {
             Bass.BASS_ChannelStop(audioHandle);
+
+            // Synchronisation is only temporary as user may add or remove streams between different play sessions. 
+            foreach (int stream in childSyncedStreams)
+            {
+                if (!Bass.BASS_ChannelRemoveLink(this.audioHandle, stream))
+                {
+                    var bassError = Bass.BASS_ErrorGetCode();
+                    Debug.LogError("AudioStream ClearSyncedStreams error: " + bassError);
+                }
+            }
+
+            childSyncedStreams.Clear();
         }
 
         public long ChannelLengthInBytes()
@@ -75,11 +103,18 @@ namespace MoonscraperEngine.Audio
             return Bass.BASS_ChannelSeconds2Bytes(audioHandle, position);
         }
 
-        public float CurrentPositionInSeconds()
+        public float CurrentPositionSeconds
         {
-            long bytePos = Bass.BASS_ChannelGetPosition(audioHandle);
-            double elapsedtime = Bass.BASS_ChannelBytes2Seconds(audioHandle, bytePos);
-            return (float)elapsedtime;
+            get
+            {
+                long bytePos = Bass.BASS_ChannelGetPosition(audioHandle);
+                double elapsedtime = Bass.BASS_ChannelBytes2Seconds(audioHandle, bytePos);
+                return (float)elapsedtime;
+            }
+            set
+            {
+                Bass.BASS_ChannelSetPosition(audioHandle, value);
+            }
         }
 
         public bool GetChannelLevels(ref float[] levels, float length)
@@ -90,6 +125,23 @@ namespace MoonscraperEngine.Audio
         public bool IsPlaying()
         {
             return isValid && Bass.BASS_ChannelIsActive(audioHandle) == BASSActive.BASS_ACTIVE_PLAYING;
+        }
+
+        // Call this before playing any audio
+        void SyncWithStream(AudioStream childStream)
+        {
+            if (audioHandle == childStream.audioHandle)
+                return;
+
+            if (Bass.BASS_ChannelSetLink(this.audioHandle, childStream.audioHandle))
+            {
+                childSyncedStreams.Add(childStream.audioHandle);
+            }
+            else
+            {
+                var bassError = Bass.BASS_ErrorGetCode();
+                Debug.LogError("AudioStream SyncWithStream error: " + bassError);
+            }
         }
     }
 }

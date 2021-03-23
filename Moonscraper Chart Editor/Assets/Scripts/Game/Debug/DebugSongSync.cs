@@ -40,7 +40,7 @@ public class DebugSongSync : MonoBehaviour
                 }
             }
 
-            audioPosition = AudioManager.StreamIsValid(stream) ? stream.CurrentPositionInSeconds() : 0;
+            audioPosition = AudioManager.StreamIsValid(stream) ? stream.CurrentPositionSeconds : 0;
 
             tick = false;
         }

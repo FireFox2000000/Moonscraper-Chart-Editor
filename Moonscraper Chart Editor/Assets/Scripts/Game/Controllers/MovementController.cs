@@ -76,7 +76,7 @@ public abstract class MovementController : MonoBehaviour {
 
                 if (AudioManager.StreamIsValid(stream) && stream.IsPlaying())
                 {
-                    float audioTimePosition = stream.CurrentPositionInSeconds() - editor.services.totalSongAudioOffset;
+                    float audioTimePosition = stream.CurrentPositionSeconds - editor.services.totalSongAudioOffset;
                     float desyncAmount = audioTimePosition - timeAfterMovement;
 
                     if (Mathf.Abs(desyncAmount) > DESYNCLENIENCE * Globals.gameSettings.gameSpeed)

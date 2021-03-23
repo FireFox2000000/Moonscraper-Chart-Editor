@@ -354,4 +354,97 @@ public class GroupSelectPanelController : MonoBehaviour
             editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
         }
     }
+
+    public void EqualiseNoteSpacing()
+    {
+        List<SongObject> notesToDelete = new List<SongObject>();
+        List<SongObject> notesToAdd = new List<SongObject>();
+
+        uint? startTickMaybe = null;
+        uint? endTickMaybe = null;
+        int totalNotes = 0;
+        foreach (ChartObject chartObject in editor.selectedObjectsManager.currentSelectedObjects)
+        {
+            if (chartObject.classID == (int)SongObject.ID.Note)
+            {
+                if (!startTickMaybe.HasValue)
+                {
+                    startTickMaybe = chartObject.tick;
+                }
+
+                if (!endTickMaybe.HasValue || chartObject.tick > endTickMaybe.Value)
+                {
+                    ++totalNotes;   // Only 1 note for chords
+                }
+
+                endTickMaybe = chartObject.tick;
+            }
+        }
+
+        if (startTickMaybe.HasValue && endTickMaybe.HasValue)
+        {
+            uint startTick = startTickMaybe.Value;
+            uint endTick = endTickMaybe.Value;
+            uint tickDiff = endTick - startTick;
+            double offsetPerNote = tickDiff / (double)(totalNotes - 1);
+
+            int index = -1;
+            uint lastTickAdded = uint.MaxValue;
+            foreach (ChartObject chartObject in editor.selectedObjectsManager.currentSelectedObjects)
+            {
+                if (chartObject.classID == (int)SongObject.ID.Note)
+                {
+                    // Keep chords at the same tick
+                    if (lastTickAdded != chartObject.tick)
+                    {
+                        ++index;
+                    }
+
+                    uint newTick = startTick + (uint)(offsetPerNote * index);
+                    Note newNote = chartObject.CloneAs<Note>();
+                    newNote.tick = newTick;
+
+                    notesToDelete.Add(chartObject);
+                    notesToAdd.Add(newNote);
+                    
+                    lastTickAdded = chartObject.tick;
+                }
+            }
+        }
+
+        if (notesToDelete.Count > 0 && notesToAdd.Count > 0)
+        {
+            List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
+            songEditCommands.Add(new SongEditDelete(notesToDelete));
+            songEditCommands.Add(new SongEditAdd(notesToAdd));
+
+            editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
+        }
+
+        // Reset the highlights back to the objects that were shifted
+        List<SongObject> highlightObjects = new List<SongObject>();
+        foreach (ChartObject chartObject in editor.selectedObjectsManager.currentSelectedObjects)
+        {
+            if (chartObject.classID != (int)SongObject.ID.Note)
+            {
+                highlightObjects.Add(chartObject);
+            }
+        }
+
+        foreach (ChartObject chartObject in notesToAdd)
+        {
+            int pos = SongObjectHelper.FindObjectPosition(chartObject, editor.currentChart.chartObjects);
+
+            if (pos != SongObjectHelper.NOTFOUND)
+            {
+                highlightObjects.Add(editor.currentChart.chartObjects[pos]);
+            }
+            else
+            {
+                Debug.LogError("Unable to re-find note after EqualiseNoteSpacing has been invoked.");
+            }
+        }
+
+        editor.selectedObjectsManager.SetCurrentSelectedObjects(highlightObjects);
+    }
 }
