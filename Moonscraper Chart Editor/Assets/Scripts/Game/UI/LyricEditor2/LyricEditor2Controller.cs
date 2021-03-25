@@ -48,6 +48,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
     public void OnStateChanged(in ChartEditor.State newState) {
         autoScroller.SetActive(playbackActive);
+        if (playbackActive) {
+            autoScroller.ScrollTo(currentPhrase?.rectTransform);
+        }
     }
 
     // Destroy all phrase GameObjects and dereference their corresponding
@@ -183,6 +186,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
 
         if (phrases.Count > 0) {
+            // Taken care of in OnStateChanged()
+            // autoScroller.ScrollTo(phrases[0].rectTransform);
+            currentPhrase = phrases[0];
         }
     }
 
