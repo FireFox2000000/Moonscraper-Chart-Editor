@@ -22,12 +22,16 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     public bool phraseEndPlaced {get {return phraseEndEvent.hasBeenPlaced;}}
     public uint? startTick {get {return phraseStartEvent.tick;}}
     public uint? endTick {get {return phraseEndEvent.tick;}}
+    public UnityEngine.RectTransform rectTransform {get; private set;}
 
     List<LyricEditor2Event> lyricEvents = new List<LyricEditor2Event>();
     LyricEditor2Event phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword);
     LyricEditor2Event phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword);
     LyricEditor2Event placingLyric;
 
+    void Start() {
+        rectTransform = GetComponent<UnityEngine.RectTransform>();
+    }
 
     void CheckForUnplacedSyllables() {
         if (GetNextUnplacedSyllable() == null) {

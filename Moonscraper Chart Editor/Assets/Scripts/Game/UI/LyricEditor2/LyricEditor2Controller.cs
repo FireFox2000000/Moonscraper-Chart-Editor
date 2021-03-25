@@ -155,7 +155,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                     AutoPlacePhraseEnd(currentPhrase);
                 }
                 currentPhrase = GetNextUnfinishedPhrase();
-                autoScroller.ScrollTo(currentPhrase?.gameObject.GetComponent<UnityEngine.RectTransform>());
+                autoScroller.ScrollTo(currentPhrase?.rectTransform);
             }
         }
     }
@@ -183,7 +183,6 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
 
         if (phrases.Count > 0) {
-            autoScroller.ScrollTo(phrases[0].gameObject.GetComponent<UnityEngine.RectTransform>());
         }
     }
 
