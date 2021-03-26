@@ -21,8 +21,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     int lastPlaybackTargetIndex = 0;
     LyricEditor2PhraseController lastPlaybackTarget = null;
 
-    static float phraseStartFactor = 0.5f;
-    static int phraseStartMax = 16; // 16 refers to one sixteenth the length of a phrase in the current song.
+    static float phrasePaddingFactor = 0.5f;
+    static int phrasePaddingMax = 16; // 16 refers to one sixteenth the length of a phrase in the current song.
     // So with a resolution of 192, the phrase_start event should have at least 12 ticks of spacing
     static Song currentSong {get {return ChartEditor.Instance.currentSong;}}
     static float songResolution {get {return currentSong.resolution;}}
@@ -95,7 +95,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                 finalTick = phrases[i].GetLastEventTick();
             }
             if (finalTick != null) {
-                return (uint)finalTick;
+                return (uint)finalTick + 1;
             }
         }
         // No previous phrase found, return 0
@@ -103,16 +103,48 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     void AutoPlacePhraseStart (LyricEditor2PhraseController phrase) {
-        uint lastSafeTick = GetFirstSafeTick(phrase);
+        uint firstSafeTick = GetFirstSafeTick(phrase);
         // Tick calculation by set distance before first lyric
-        uint startTick1 = (uint)(phrase.GetFirstEventTick() - (int)(songResolution / phraseStartMax * 4));
+        uint startTick1 = (uint)(phrase.GetFirstEventTick() - (int)(songResolution / phrasePaddingMax * 4));
         // Tick calculation proportional to distance to last phrase
-        uint startTick2 = (uint)(lastSafeTick + (int)((phrase.GetFirstEventTick() - lastSafeTick) * phraseStartFactor));
+        uint startTick2 = (uint)(firstSafeTick + (int)((phrase.GetFirstEventTick() - firstSafeTick) * phrasePaddingFactor));
         // Actual start tick is the maximum of these two values
         uint startTick = System.Math.Max(startTick1, startTick2);
 
         // Set the start tick
         phrase.SetPhraseStart(startTick);
+    }
+
+    uint LastSafeTickSpacerHelper(LyricEditor2PhraseController targetPhrase) {
+        uint targetEnd = targetPhrase.endTick ?? targetPhrase.GetFirstEventTick() ?? GetFirstSafeTick(targetPhrase);
+        targetEnd = (uint)(targetEnd - (int)(songResolution / phrasePaddingMax * 4));
+        uint songEnd = ChartEditor.Instance.currentSong.TimeToTick(ChartEditor.Instance.currentSongLength, ChartEditor.Instance.currentSong.resolution);
+        uint actualEnd = System.Math.Min(targetEnd, songEnd);
+        return actualEnd - 1;
+    }
+
+    // Find the next upcoming phrase which has been placed and return its end
+    // tick. If no such phrase exists or targetPhrase is null, return the end
+    // tick of targetPhrase plus phrasePaddingMax
+    uint GetLastSafeTick(LyricEditor2PhraseController targetPhrase) {
+        int currentPhraseIndex = phrases.IndexOf(targetPhrase);
+        if (currentPhraseIndex == -1 || targetPhrase == null) {
+            return LastSafeTickSpacerHelper(targetPhrase);
+        }
+        // Only need to look at the next phrase, since eariler phrases are
+        // always placed before later phrases
+        int i = currentPhraseIndex + 1;
+        if (i < phrases.Count) {
+            uint? firstTick = phrases[i].startTick;
+            if (firstTick == null) {
+                firstTick = phrases[i].GetFirstEventTick();
+            }
+            if (firstTick != null) {
+                return (uint)firstTick;
+            }
+        }
+        // No next phrase found, return auto-placed value
+        return LastSafeTickSpacerHelper(targetPhrase);
     }
 
     // TODO Yikes! This has not been implemented fully. Need to update
