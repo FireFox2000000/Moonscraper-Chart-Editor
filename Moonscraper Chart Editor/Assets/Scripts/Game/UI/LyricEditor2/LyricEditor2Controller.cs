@@ -16,6 +16,11 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
     uint currentTickPos {get {return ChartEditor.Instance.currentTickPos;}}
 
+    bool playbackScrolling = false;
+    uint playbackEndTick;
+    int lastPlaybackTargetIndex = 0;
+    LyricEditor2PhraseController lastPlaybackTarget = null;
+
     static float phraseStartFactor = 0.5f;
     static int phraseStartMax = 16; // 16 refers to one sixteenth the length of a phrase in the current song.
     // So with a resolution of 192, the phrase_start event should have at least 12 ticks of spacing
@@ -49,7 +54,17 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     public void OnStateChanged(in ChartEditor.State newState) {
         autoScroller.SetActive(playbackActive);
         if (playbackActive) {
-            autoScroller.ScrollTo(currentPhrase?.rectTransform);
+            if (!IsLegalToPlaceNow()) {
+                StartPlaybackScroll();
+            } else {
+                autoScroller.ScrollTo(currentPhrase?.rectTransform);
+            }
+        }
+    }
+
+    void Update() {
+        if (playbackScrolling) {
+            PlaybackScroll();
         }
     }
 
@@ -63,9 +78,13 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     // Find the most recent previous phrase which has been placed and return its
-    // end tick. If no such phrase exists, return 0.
+    // end tick. If no such phrase exists, return 0. If the passed targetPhrase
+    // is null, return the last safe tick of the entire song.
     uint GetLastSafeTick(LyricEditor2PhraseController targetPhrase) {
         int currentPhraseIndex = phrases.IndexOf(targetPhrase);
+        if (currentPhraseIndex == -1 || targetPhrase == null) {
+            currentPhraseIndex = phrases.Count;
+        }
         // Iterate through up to the last 50 phrases
         for (int i = currentPhraseIndex - 1; i > currentPhraseIndex - 51; i--) {
             if (i < 0) {
@@ -96,6 +115,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         phrase.SetPhraseStart(startTick);
     }
 
+    // TODO Yikes! This has not been implemented fully. Need to update
+    // GetLastSafeTick() signature to GetFirstSafeTick() and implement a new
+    // GetLastSafeTick() method here.
     void AutoPlacePhraseEnd (LyricEditor2PhraseController phrase) {
         uint lastTick = 0;
         foreach (LyricEditor2PhraseController currentPhrase in phrases) {
@@ -346,5 +368,48 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             // No illegal state found
             return true;
         }
+    }
+
+    // Begin auto-scrolling for lyric playback (before the user can place more
+    // phrases)
+    void StartPlaybackScroll() {
+        playbackScrolling = true;
+        lastPlaybackTargetIndex = 0;
+        LyricEditor2PhraseController firstUnplacedPhrase = GetNextUnfinishedPhrase();
+        playbackEndTick = GetLastSafeTick(firstUnplacedPhrase);
+        PlaybackScroll();
+    }
+
+    // Auto-scroll during lyric playback
+    void PlaybackScroll() {
+        // Check for playback end
+        if (currentTickPos >= playbackEndTick) {
+            playbackScrolling = false;
+            currentPhrase = GetNextUnfinishedPhrase();
+            autoScroller.ScrollTo(currentPhrase?.rectTransform);
+            return;
+        }
+
+        // TODO unexpected behaviour when all phrases have been placed (auto-
+        // scrolls to the bottom of the editor)
+
+        // Find target phrase
+        LyricEditor2PhraseController playbackTarget = lastPlaybackTarget;
+        for (int i = lastPlaybackTargetIndex; i < phrases.Count; i++) {
+            uint startBound = GetLastSafeTick(phrases[i]);
+            uint endbound; // TODO waiting on GetLastSafeTick() signature change
+            if (currentTickPos >= startBound) {
+                playbackTarget = phrases[i];
+                // update lastPlaybackTargetIndex
+                lastPlaybackTargetIndex = i;
+                break;
+            }
+        }
+        // Scroll to phrase
+        if (playbackTarget != lastPlaybackTarget) {
+            autoScroller.ScrollTo(playbackTarget?.rectTransform);
+        }
+        // Update lastPlaybackTarget
+        lastPlaybackTarget = playbackTarget;
     }
 }
