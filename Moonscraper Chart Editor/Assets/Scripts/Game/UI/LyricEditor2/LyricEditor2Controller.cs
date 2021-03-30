@@ -37,7 +37,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
     void OnDisable() {
         // Place phrase_end for current phrase if it hasn't been placed
-        if (currentPhrase != null && !currentPhrase.phraseEndPlaced) {
+        if (currentPhrase != null && !currentPhrase.phraseEndPlaced && currentPhrase.anySyllablesPlaced) {
             // Ensure valid placement
             AutoPlacePhraseEnd(currentPhrase);
         }

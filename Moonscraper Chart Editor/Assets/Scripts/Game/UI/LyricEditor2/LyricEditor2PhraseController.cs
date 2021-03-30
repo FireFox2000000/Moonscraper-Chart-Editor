@@ -18,6 +18,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     public static readonly string c_phraseEndKeyword = "phrase_end";
     public static readonly string c_lyricPrefix = "lyric ";
     public bool allSyllablesPlaced {get; private set;} = false;
+    public bool anySyllablesPlaced {get; private set;} = false;
     public bool phraseStartPlaced {get {return phraseStartEvent.hasBeenPlaced;}}
     public bool phraseEndPlaced {get {return phraseEndEvent.hasBeenPlaced;}}
     public uint? startTick {get {return phraseStartEvent.tick;}}
@@ -44,6 +45,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
         LyricEditor2Event currentLyric = GetNextUnplacedSyllable();
         currentLyric.SetTick(tick);
         placingLyric = currentLyric;
+        anySyllablesPlaced = true;
 
         // Check for any remaining syllables
         CheckForUnplacedSyllables();
@@ -67,7 +69,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
         return firstEvent?.tick;
     }
 
-    // Get the tick of the first event of this phrase
+    // Get the tick of the last event of this phrase
     public uint? GetLastEventTick() {
         LyricEditor2Event lastEvent = null;
         foreach (LyricEditor2Event currentEvent in lyricEvents) {
