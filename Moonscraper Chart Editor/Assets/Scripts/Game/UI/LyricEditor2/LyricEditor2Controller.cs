@@ -115,55 +115,38 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         phrase.SetPhraseStart(startTick);
     }
 
-    uint LastSafeTickSpacerHelper(LyricEditor2PhraseController targetPhrase) {
-        uint targetEnd = targetPhrase.endTick ?? targetPhrase.GetFirstEventTick() ?? GetFirstSafeTick(targetPhrase);
-        targetEnd = (uint)(targetEnd - (int)(songResolution / phrasePaddingMax * 4));
-        uint songEnd = ChartEditor.Instance.currentSong.TimeToTick(ChartEditor.Instance.currentSongLength, ChartEditor.Instance.currentSong.resolution);
-        uint actualEnd = System.Math.Min(targetEnd, songEnd);
-        return actualEnd - 1;
-    }
-
-    // Find the next upcoming phrase which has been placed and return its end
-    // tick. If no such phrase exists or targetPhrase is null, return the end
-    // tick of targetPhrase plus phrasePaddingMax
+    // Gets the last safe tick a given phrase can legally occupy
     uint GetLastSafeTick(LyricEditor2PhraseController targetPhrase) {
-        int currentPhraseIndex = phrases.IndexOf(targetPhrase);
-        if (currentPhraseIndex == -1 || targetPhrase == null) {
-            return LastSafeTickSpacerHelper(targetPhrase);
-        }
-        // Only need to look at the next phrase, since eariler phrases are
-        // always placed before later phrases
-        int i = currentPhraseIndex + 1;
-        if (i < phrases.Count) {
-            uint? firstTick = phrases[i].startTick;
-            if (firstTick == null) {
-                firstTick = phrases[i].GetFirstEventTick();
-            }
-            if (firstTick != null) {
-                return (uint)firstTick;
+        // Look for a next-up phrase
+        int targetIndex = phrases.IndexOf(targetPhrase);
+        if (targetIndex + 1 < phrases.Count) {
+            LyricEditor2PhraseController nextPhrase = phrases[targetIndex + 1];
+            uint? nextPhraseStart = nextPhrase.startTick ?? nextPhrase.GetFirstEventTick();
+            if (nextPhraseStart != null) {
+                return (uint)nextPhraseStart;
             }
         }
-        // No next phrase found, return auto-placed value
-        return LastSafeTickSpacerHelper(targetPhrase);
+        // No next phrase start found
+        uint songEnd = currentSong.TimeToTick(ChartEditor.Instance.currentSongLength, songResolution);
+        return songEnd;
     }
 
-    // TODO Yikes! This has not been implemented fully. Need to update
-    // GetLastSafeTick() signature to GetFirstSafeTick() and implement a new
-    // GetLastSafeTick() method here.
+    // Returns the phrase-end auto-spacing when the phrase end event is placed
+    // automatically
+    uint PhraseEndAutoSpacer(LyricEditor2PhraseController targetPhrase) {
+        uint lastSafeTick = GetLastSafeTick(targetPhrase);
+        // Tick calculation by set distance
+        uint endTick1 = (uint)(targetPhrase.GetLastEventTick() + (int)(songResolution / phrasePaddingMax * 4));
+        // Tick calculation by proportional distance
+        uint endTick2 = (uint)(lastSafeTick - (int)((targetPhrase.GetLastEventTick() - lastSafeTick) * phrasePaddingFactor));
+        // Actual start tick is the minimum of these two values
+        uint endTick = System.Math.Min(endTick1, endTick2);
+        return endTick;
+    }
+
+    // Place the end event of the target phrase automatically
     void AutoPlacePhraseEnd (LyricEditor2PhraseController phrase) {
-        uint lastTick = 0;
-        foreach (LyricEditor2PhraseController currentPhrase in phrases) {
-            if (currentPhrase.endTick != null) {
-                if (currentPhrase.endTick > lastTick) {
-                    lastTick = (uint)currentPhrase.endTick;
-                }
-            } else {
-                uint? currentLastTick = currentPhrase.GetLastEventTick();
-                if (currentLastTick > lastTick) {
-                    lastTick = (uint)currentLastTick;
-                }
-            }
-        }
+        phrase.SetPhraseEnd(PhraseEndAutoSpacer(phrase));
     }
 
     // Called every time the "place lyric" button is pressed; places the next
