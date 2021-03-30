@@ -411,9 +411,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         // Find target phrase
         LyricEditor2PhraseController playbackTarget = lastPlaybackTarget;
         for (int i = lastPlaybackTargetIndex; i < phrases.Count; i++) {
-            uint startBound = GetFirstSafeTick(phrases[i]);
-            uint endbound; // TODO waiting on GetLastSafeTick() signature change
-            if (currentTickPos >= startBound) {
+            uint endBound = phrases[i].endTick ?? PhraseEndAutoSpacer(phrases[i]);
+            if (currentTickPos < endBound) {
                 playbackTarget = phrases[i];
                 // update lastPlaybackTargetIndex
                 lastPlaybackTargetIndex = i;
