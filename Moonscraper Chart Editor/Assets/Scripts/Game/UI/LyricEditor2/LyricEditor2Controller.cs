@@ -212,6 +212,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     public void InputLyrics() {
         PickupAllPhrases();
         ClearPhraseObjects();
+        playbackScrolling = false;
         string inputLyrics = lyricInputMenu.text ?? "";
 
         List<List<string>> parsedLyrics = ParseLyrics(inputLyrics);
