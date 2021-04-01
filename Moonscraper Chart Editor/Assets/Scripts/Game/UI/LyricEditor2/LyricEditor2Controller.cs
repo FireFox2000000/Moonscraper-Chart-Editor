@@ -90,12 +90,16 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             if (i < 0) {
                 break;
             }
-            uint? finalTick = phrases[i].endTick;
-            if (finalTick == null) {
-                finalTick = phrases[i].GetLastEventTick();
-            }
-            if (finalTick != null) {
-                return (uint)finalTick + 1;
+            // Check for any placed lyrics first, as a phrase with no unplaced
+            // lyrics will not have an endTick or lastEventTick
+            if (phrases[i].anySyllablesPlaced) {
+                uint? finalTick = phrases[i].endTick;
+                if (finalTick == null) {
+                    finalTick = phrases[i].GetLastEventTick();
+                }
+                if (finalTick != null) {
+                    return (uint)finalTick + 1;
+                }
             }
         }
         // No previous phrase found, return 0
