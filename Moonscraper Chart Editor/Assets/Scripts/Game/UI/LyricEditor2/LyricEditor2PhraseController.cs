@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 [UnityEngine.RequireComponent(typeof(UnityEngine.RectTransform))]
-public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
+public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IComparable<LyricEditor2PhraseController>
 {
     [UnityEngine.SerializeField]
     Text phraseText;
@@ -24,6 +24,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
     public uint? startTick {get {return phraseStartEvent.tick;}}
     public uint? endTick {get {return phraseEndEvent.tick;}}
     public UnityEngine.RectTransform rectTransform {get; private set;}
+    public int sortID = 0;
 
     List<LyricEditor2Event> lyricEvents = new List<LyricEditor2Event>();
     LyricEditor2Event phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword);
@@ -218,5 +219,11 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour
         }
         phraseStartEvent.Pickup();
         phraseEndEvent.Pickup();
+    }
+
+    // IComparison which searches based on end tick, or start tick if an end
+    // tick does not exist
+    public int CompareTo(LyricEditor2PhraseController c) {
+        return sortID - c.sortID;
     }
 }

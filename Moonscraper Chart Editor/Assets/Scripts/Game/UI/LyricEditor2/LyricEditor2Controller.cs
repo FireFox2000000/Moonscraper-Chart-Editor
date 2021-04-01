@@ -81,7 +81,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // end tick. If no such phrase exists, return 0. If the passed targetPhrase
     // is null, return the last safe tick of the entire song.
     uint GetFirstSafeTick(LyricEditor2PhraseController targetPhrase) {
-        int currentPhraseIndex = phrases.IndexOf(targetPhrase);
+        int currentPhraseIndex = phrases.BinarySearch(targetPhrase);
         if (currentPhraseIndex == -1 || targetPhrase == null) {
             currentPhraseIndex = phrases.Count;
         }
@@ -118,7 +118,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // Gets the last safe tick a given phrase can legally occupy
     uint GetLastSafeTick(LyricEditor2PhraseController targetPhrase) {
         // Look for a next-up phrase
-        int targetIndex = phrases.IndexOf(targetPhrase);
+        int targetIndex = phrases.BinarySearch(targetPhrase);
         if (targetIndex + 1 < phrases.Count) {
             LyricEditor2PhraseController nextPhrase = phrases[targetIndex + 1];
             uint? nextPhraseStart = nextPhrase.startTick ?? nextPhrase.GetFirstEventTick();
@@ -207,6 +207,14 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
     }
 
+    // Set the search IDs of all phrase controllers based on their position in
+    // phrases
+    void UpdateSortIds() {
+        for (int i = 0; i < phrases.Count; i++) {
+            phrases[i].sortID = i;
+        }
+    }
+
     // Take dash-newline formatted lyrics from the lyric input menu and parse
     // them into phrases. Called when the user hits "submit" in the input menu
     public void InputLyrics() {
@@ -228,6 +236,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             // autoScroller.ScrollTo(phrases[0].rectTransform);
             currentPhrase = phrases[0];
         }
+
+        // Update search order
+        UpdateSortIds();
     }
 
     // Parse a string into a double string array (phrases of syllables) to be
@@ -338,6 +349,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                 AutoPlacePhraseStart(currentPhrase);
             }
         }
+
+        // Update search order
+        UpdateSortIds();
     }
 
     // Compare two events for use with List.Sort(). Events should be sorted by
