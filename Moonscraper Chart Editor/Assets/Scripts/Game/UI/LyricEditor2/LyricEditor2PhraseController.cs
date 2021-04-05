@@ -161,6 +161,9 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
         }
         CheckForUnplacedSyllables();
         DisplayText();
+        if (lyricEvents.Count > 0) {
+            anySyllablesPlaced = true;
+        }
     }
 
     // Update the text content of phraseText to reflect the current phrase state
