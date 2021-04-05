@@ -32,7 +32,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     void OnEnable() {
         ImportExistingLyrics();
         // Activate auto-scrolling if playback is active on lyric editor enable
-        autoScroller.SetActive(playbackActive);
+        autoScroller.enabled = playbackActive;
     }
 
     void OnDisable() {
@@ -42,7 +42,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             AutoPlacePhraseEnd(currentPhrase);
         }
         ClearPhraseObjects();
-        autoScroller.gameObject.SetActive(false);
+        autoScroller.enabled = false;
     }
 
     void Start() {
@@ -52,7 +52,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     public void OnStateChanged(in ChartEditor.State newState) {
-        autoScroller.SetActive(playbackActive);
+        autoScroller.enabled = playbackActive;
         if (playbackActive) {
             if (!IsLegalToPlaceNow()) {
                 StartPlaybackScroll();

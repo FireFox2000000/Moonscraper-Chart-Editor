@@ -25,27 +25,19 @@ public class LyricEditor2AutoScroller : MonoBehaviour
         endSpacer.SetAsLastSibling();
         // Update current time
         currentDeltaTime += Time.deltaTime;
-        // Scroll to next frame, if needed
+        // Scroll to next frame
         AutoScroll();
     }
 
-    void Enable () {
+    void OnEnable () {
         endSpacer.gameObject.SetActive(true);
         scrollRect.verticalScrollbar.enabled = false;
         lastY = 0;
     }
 
-    void Disable () {
+    void OnDisable () {
         endSpacer.gameObject.SetActive(false);
         scrollRect.verticalScrollbar.enabled = true;
-    }
-
-    public void SetActive (bool active) {
-        if (active) {
-            Enable();
-        } else {
-            Disable();
-        }
     }
 
     // Smoothly interpolate between two values following the trajectory y=2x-x^2
