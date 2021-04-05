@@ -430,12 +430,14 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         // Find target phrase
         LyricEditor2PhraseController playbackTarget = lastPlaybackTarget;
         for (int i = lastPlaybackTargetIndex; i < phrases.Count; i++) {
-            uint endBound = phrases[i].endTick ?? PhraseEndAutoSpacer(phrases[i]);
-            if (currentTickPos < endBound) {
-                playbackTarget = phrases[i];
-                // update lastPlaybackTargetIndex
-                lastPlaybackTargetIndex = i;
-                break;
+            if (phrases[i].anySyllablesPlaced) {
+                uint endBound = phrases[i].endTick ?? PhraseEndAutoSpacer(phrases[i]);
+                if (currentTickPos < endBound) {
+                    playbackTarget = phrases[i];
+                    // update lastPlaybackTargetIndex
+                    lastPlaybackTargetIndex = i;
+                    break;
+                }
             }
         }
         // Scroll to phrase
