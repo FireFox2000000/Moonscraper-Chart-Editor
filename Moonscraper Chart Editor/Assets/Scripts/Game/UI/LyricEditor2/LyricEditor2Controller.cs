@@ -53,6 +53,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
     public void OnStateChanged(in ChartEditor.State newState) {
         autoScroller.enabled = playbackActive;
+        playbackScrolling = playbackActive;
         if (playbackActive) {
             if (!IsLegalToPlaceNow()) {
                 StartPlaybackScroll();
