@@ -65,7 +65,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
     void Update() {
         if (playbackScrolling) {
-            PlaybackScroll();
+            PlaybackScroll(false);
         }
     }
 
@@ -411,11 +411,11 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         lastPlaybackTargetIndex = 0;
         LyricEditor2PhraseController firstUnplacedPhrase = GetNextUnfinishedPhrase();
         playbackEndTick = GetFirstSafeTick(firstUnplacedPhrase);
-        PlaybackScroll();
+        PlaybackScroll(true);
     }
 
     // Auto-scroll during lyric playback
-    void PlaybackScroll() {
+    void PlaybackScroll(bool forceScroll) {
         // Check for playback end
         if (currentTickPos >= playbackEndTick) {
             playbackScrolling = false;
@@ -441,7 +441,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             }
         }
         // Scroll to phrase
-        if (playbackTarget != lastPlaybackTarget) {
+        if (forceScroll || playbackTarget != lastPlaybackTarget) {
             autoScroller.ScrollTo(playbackTarget?.rectTransform);
         }
         // Update lastPlaybackTarget
