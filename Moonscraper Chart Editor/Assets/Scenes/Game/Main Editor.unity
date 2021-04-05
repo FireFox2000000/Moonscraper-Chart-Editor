@@ -4294,7 +4294,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000005722046, y: 19.827377}
+  m_AnchoredPosition: {x: -0.000005722046, y: 0}
   m_SizeDelta: {x: 0, y: 97.2}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &178945491
@@ -11241,7 +11241,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 980262015}
   m_HandleRect: {fileID: 980262014}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 0.7960148
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -18691,6 +18691,8 @@ MonoBehaviour:
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
   unfocusedColor: {r: 1, g: 1, b: 1, a: 0.39215687}
   selectionColor: {r: 0.8396226, g: 0.6053883, b: 0.20198467, a: 1}
+  mainController: {fileID: 1355766777}
+  sortID: 0
 --- !u!114 &862587631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25998,8 +26000,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 651365792}
   m_HandleRect: {fileID: 651365791}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 0.7978883
+  m_Value: 0.99999887
+  m_Size: 0.7978882
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -29574,7 +29576,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.14001465}
+  m_AnchoredPosition: {x: 0, y: 0.14001083}
   m_SizeDelta: {x: 0.21490002, y: 36.48}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1317847545
@@ -34849,7 +34851,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 26.68998}
+  m_AnchoredPosition: {x: 0, y: 0.000030517578}
   m_SizeDelta: {x: 0, y: 132.05553}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1532013805
@@ -40554,7 +40556,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.1350098, y: -202.10382}
+  m_AnchoredPosition: {x: -1.1350098, y: -202.104}
   m_SizeDelta: {x: -16.200012, y: 273.1942}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1783824858
@@ -49466,7 +49468,7 @@ PrefabInstance:
     - target: {fileID: 1301899982732144092, guid: 50e7de0d989f0a74cad9c1926db9987f,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -101.99962
+      value: -101.99953
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50e7de0d989f0a74cad9c1926db9987f, type: 3}

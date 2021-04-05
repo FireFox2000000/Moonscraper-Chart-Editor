@@ -447,4 +447,14 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         // Update lastPlaybackTarget
         lastPlaybackTarget = playbackTarget;
     }
+
+    public void PickupFrom(LyricEditor2PhraseController start) {
+        int startIndex = phrases.BinarySearch(start);
+        if (startIndex >= 0) {
+            for (int i = startIndex; i < phrases.Count; i++) {
+                phrases[i].Pickup();
+            }
+        }
+        currentPhrase = GetNextUnfinishedPhrase();
+    }
 }

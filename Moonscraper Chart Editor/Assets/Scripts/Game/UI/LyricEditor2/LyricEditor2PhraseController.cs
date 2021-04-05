@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 
 [UnityEngine.RequireComponent(typeof(UnityEngine.RectTransform))]
-public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IComparable<LyricEditor2PhraseController>
+public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IComparable<LyricEditor2PhraseController>, UnityEngine.EventSystems.IPointerClickHandler
 {
     [UnityEngine.SerializeField]
     Text phraseText;
@@ -13,6 +13,8 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     UnityEngine.Color unfocusedColor;
     [UnityEngine.SerializeField]
     UnityEngine.Color selectionColor;
+    [UnityEngine.SerializeField]
+    LyricEditor2Controller mainController;
 
     public static readonly string c_phraseStartKeyword = "phrase_start";
     public static readonly string c_phraseEndKeyword = "phrase_end";
@@ -222,6 +224,9 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
         }
         phraseStartEvent.Pickup();
         phraseEndEvent.Pickup();
+        allSyllablesPlaced = false;
+        anySyllablesPlaced = false;
+        DisplayText();
     }
 
     // IComparison which searches based on end tick, or start tick if an end
@@ -229,4 +234,10 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     public int CompareTo(LyricEditor2PhraseController c) {
         return sortID - c.sortID;
     }
+
+    public void OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) {
+         if (eventData.button == UnityEngine.EventSystems.PointerEventData.InputButton.Right) {
+             mainController.PickupFrom(this);
+         }
+     }
 }
