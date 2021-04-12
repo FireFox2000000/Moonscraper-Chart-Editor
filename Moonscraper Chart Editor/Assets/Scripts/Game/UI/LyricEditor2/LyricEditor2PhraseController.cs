@@ -40,6 +40,15 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     void CheckForUnplacedSyllables() {
         if (GetNextUnplacedSyllable() == null) {
             allSyllablesPlaced = true;
+        } else {
+            allSyllablesPlaced = false;
+        }
+        anySyllablesPlaced = false;
+        foreach (LyricEditor2Event syllable in lyricEvents) {
+            if (syllable.hasBeenPlaced) {
+                anySyllablesPlaced = true;
+                break;
+            }
         }
     }
 
