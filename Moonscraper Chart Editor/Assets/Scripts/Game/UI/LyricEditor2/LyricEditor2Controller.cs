@@ -5,6 +5,28 @@ using System.Text.RegularExpressions;
 
 public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 {
+    class PickupFromCommand : MoonscraperEngine.ICommand {
+        public delegate void Refresh();
+
+        Refresh refreshAfterUpdate;
+        BatchedICommand pickupCommands;
+
+        public PickupFromCommand(BatchedICommand pickupCommands, Refresh refreshAfterUpdate) {
+            this.pickupCommands = pickupCommands;
+            this.refreshAfterUpdate = refreshAfterUpdate;
+        }
+
+        public void Invoke() {
+            pickupCommands.Invoke();
+            refreshAfterUpdate();
+        }
+
+        public void Revoke() {
+            pickupCommands.Revoke();
+            refreshAfterUpdate();
+        }
+    }
+
     [UnityEngine.SerializeField]
     LyricEditor2AutoScroller autoScroller;
     [UnityEngine.SerializeField]
@@ -205,10 +227,10 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
     }
 
-    // Pickup all phrases
+    // Pickup all phrases; TODO not revokable!
     void PickupAllPhrases() {
         foreach (LyricEditor2PhraseController phrase in phrases) {
-            phrase.Pickup();
+            phrase.Pickup().Invoke();
         }
     }
 
@@ -246,7 +268,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     // Parse a string into a double string array (phrases of syllables) to be
-    // given as PhrUnityEngine.Debugput. Does not have an implemented time-out
+    // given as phrase controller input. Does not have an implemented time-out
     // period in case of excessively long strings to be parsed.
     List<List<string>> ParseLyrics(string inputString) {
         // Start by splitting the string into phrases
@@ -448,13 +470,22 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         lastPlaybackTarget = playbackTarget;
     }
 
+    private void RefreshAfterPickupFrom() {
+        currentPhrase = GetNextUnfinishedPhrase();
+    }
+
     public void PickupFrom(LyricEditor2PhraseController start) {
+        List<MoonscraperEngine.ICommand> commands = new List<MoonscraperEngine.ICommand>();
         int startIndex = phrases.BinarySearch(start);
         if (startIndex >= 0) {
             for (int i = startIndex; i < phrases.Count; i++) {
-                phrases[i].Pickup();
+                commands.Add(phrases[i].Pickup());
             }
         }
         currentPhrase = GetNextUnfinishedPhrase();
+        // Push commands to stack
+        var batchedCommands = new BatchedICommand(commands);
+        var PickupFromCommand = new PickupFromCommand(batchedCommands, RefreshAfterPickupFrom);
+        ChartEditor.Instance.commandStack.Push(PickupFromCommand);
     }
 }

@@ -5,6 +5,28 @@ using UnityEngine.UI;
 [UnityEngine.RequireComponent(typeof(UnityEngine.RectTransform))]
 public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IComparable<LyricEditor2PhraseController>, UnityEngine.EventSystems.IPointerClickHandler
 {
+    class PickupCommand : MoonscraperEngine.ICommand {
+        public delegate void Refresh();
+
+        Refresh refreshAfterUpdate;
+        BatchedICommand pickupCommands;
+
+        public PickupCommand(BatchedICommand pickupCommands, Refresh refreshAfterUpdate) {
+            this.pickupCommands = pickupCommands;
+            this.refreshAfterUpdate = refreshAfterUpdate;
+        }
+
+        public void Invoke() {
+            pickupCommands.Invoke();
+            refreshAfterUpdate();
+        }
+
+        public void Revoke() {
+            pickupCommands.Revoke();
+            refreshAfterUpdate();
+        }
+    }
+
     [UnityEngine.SerializeField]
     Text phraseText;
     [UnityEngine.SerializeField]
@@ -225,17 +247,23 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
         return tempString;
     }
 
+    private void RefreshAfterPickup() {
+        CheckForUnplacedSyllables();
+        DisplayText();
+    }
+
     // Pick up all contained lyric events, including the phrase_start and
     // phrase_end events
-    public void Pickup() {
+    public MoonscraperEngine.ICommand Pickup() {
+        List<MoonscraperEngine.ICommand> commands = new List<MoonscraperEngine.ICommand>();
         foreach (LyricEditor2Event currentEvent in lyricEvents) {
-            currentEvent.Pickup();
+            commands.Add(currentEvent.Pickup());
         }
-        phraseStartEvent.Pickup();
-        phraseEndEvent.Pickup();
-        allSyllablesPlaced = false;
-        anySyllablesPlaced = false;
-        DisplayText();
+        commands.Add(phraseStartEvent.Pickup());
+        commands.Add(phraseEndEvent.Pickup());
+        BatchedICommand batchedCommands = new BatchedICommand(commands);
+        PickupCommand pickupCommand = new PickupCommand(batchedCommands, RefreshAfterPickup);
+        return pickupCommand;
     }
 
     // IComparison which searches based on end tick, or start tick if an end

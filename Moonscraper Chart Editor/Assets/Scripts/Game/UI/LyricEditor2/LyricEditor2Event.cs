@@ -3,10 +3,39 @@ using System.Collections.Generic;
 
 public class LyricEditor2Event
 {
+    class PickupCommand : MoonscraperEngine.ICommand {
+        public delegate void RevokeCallback(string formattedText, Event oldEvent);
+        public delegate void InvokeCallback();
+
+        RevokeCallback revokeCommand;
+        InvokeCallback invokeCommand;
+        SongEditDelete deleteCommand;
+        Event referencedEvent;
+        string formattedText;
+
+        public PickupCommand(Event referencedEvent, string formattedText, InvokeCallback invokeCommand, RevokeCallback revokeCommand) {
+            this.referencedEvent = referencedEvent;
+            deleteCommand = new SongEditDelete(referencedEvent);
+            this.formattedText = formattedText;
+            this.revokeCommand = revokeCommand;
+            this.invokeCommand = invokeCommand;
+        }
+
+        public void Invoke() {
+            deleteCommand.Invoke();
+            invokeCommand();
+        }
+
+        public void Revoke() {
+            deleteCommand.Revoke();
+            revokeCommand(formattedText, (Event)deleteCommand.GetSongObjects()[0]);
+        }
+    }
+
     private Event referencedEvent;
     public bool hasBeenPlaced {get; private set;}
     public string text {get; private set;}
-    public string formattedText;
+    public string formattedText = "";
     public uint? tick {get {return referencedEvent?.tick;}}
 
 
@@ -24,24 +53,33 @@ public class LyricEditor2Event
         this.text = existingEvent?.title ?? "";
         this.hasBeenPlaced = (existingEvent != null);
     }
+
+    // Invoke a pickup command
+    public void InvokePickup() {
+        referencedEvent = null;
+        hasBeenPlaced = false;
+    }
+
+    // Revert to a previous state after Pickup() is revoked
+    public void RevokePickup(string formattedText, Event oldEvent) {
+        this.formattedText = formattedText;
+        SetEvent(oldEvent);
     }
 
     // Remove lyric from the editor
-    public void Pickup() {
-        List<SongEditCommand> commands = new List<SongEditCommand>();
+    public MoonscraperEngine.ICommand Pickup() {
+        PickupCommand command = null;
         if (this.referencedEvent != null) {
-            commands.Add(new SongEditDelete(this.referencedEvent));
+            command = new PickupCommand(referencedEvent, formattedText, InvokePickup, RevokePickup);
+            return command;
         }
-        this.referencedEvent = null;
-        this.hasBeenPlaced = false;
-        BatchedSongEditCommand batchedCommands = new BatchedSongEditCommand(commands);
-        ChartEditor.Instance.commandStack.Push(batchedCommands);
+        return null;
     }
 
-    public void SetText (string newText) {
+    public void SetText(string newText) {
         this.text = newText;
         if (referencedEvent != null) {
-            this.SetTick(referencedEvent.tick);
+            SetTick(referencedEvent.tick);
         }
     }
 
