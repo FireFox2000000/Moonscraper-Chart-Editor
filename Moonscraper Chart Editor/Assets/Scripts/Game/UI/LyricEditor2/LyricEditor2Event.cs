@@ -16,9 +16,14 @@ public class LyricEditor2Event
     }
 
     public LyricEditor2Event(Event existingEvent) {
+        SetEvent(existingEvent);
+    }
+
+    public void SetEvent(Event existingEvent) {
         referencedEvent = existingEvent;
-        this.text = existingEvent.title;
-        this.hasBeenPlaced = true;
+        this.text = existingEvent?.title ?? "";
+        this.hasBeenPlaced = (existingEvent != null);
+    }
     }
 
     // Remove lyric from the editor
