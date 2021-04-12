@@ -50,5 +50,19 @@ namespace MoonscraperEngine
         {
             commands.RemoveRange(currentStackIndex + 1, commands.Count - (currentStackIndex + 1));
         }
+
+        // Removes a command from the command stack without revoking it
+        public bool Remove(ICommand command)
+        {
+            if (command == null)
+                return false;
+
+            int index = commands.IndexOf(command);
+            bool removedSuccessfully = commands.Remove(command);
+            if (removedSuccessfully && index <= currentStackIndex && !isAtStart)
+                currentStackIndex--;
+
+            return removedSuccessfully;
+        }
     }
 }

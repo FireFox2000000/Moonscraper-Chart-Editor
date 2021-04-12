@@ -41,6 +41,10 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     bool playbackScrolling = false;
     uint playbackEndTick;
     int lastPlaybackTargetIndex = 0;
+    // commandStackPushes keeps a record of all command stack pushes so they can
+    // be removed from the main command stack (Pop() method returns void, not
+    // the revoked command; see CommandStack.cs)
+    List<PickupFromCommand> commandStackPushes = new List<PickupFromCommand>();
     LyricEditor2PhraseController lastPlaybackTarget = null;
 
     static float phrasePaddingFactor = 0.5f;
@@ -65,6 +69,10 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
         ClearPhraseObjects();
         autoScroller.enabled = false;
+        // Remove command stack commands
+        foreach (PickupFromCommand c in commandStackPushes) {
+            ChartEditor.Instance.commandStack.Remove(c);
+        }
     }
 
     void Start() {
@@ -487,5 +495,6 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         var batchedCommands = new BatchedICommand(commands);
         var PickupFromCommand = new PickupFromCommand(batchedCommands, RefreshAfterPickupFrom);
         ChartEditor.Instance.commandStack.Push(PickupFromCommand);
+        commandStackPushes.Add(PickupFromCommand);
     }
 }
