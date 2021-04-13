@@ -86,11 +86,11 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
 
     void OnEnable() {
+        // Create a new edit command set
+        editCommands = new SongEditCommandSet();
         ImportExistingLyrics();
         // Activate auto-scrolling if playback is active on lyric editor enable
         autoScroller.enabled = playbackActive;
-        // Create a new edit command set
-        editCommands = new SongEditCommandSet();
     }
 
     void OnDisable() {
