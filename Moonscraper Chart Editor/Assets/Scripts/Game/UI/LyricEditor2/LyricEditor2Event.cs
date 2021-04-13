@@ -68,10 +68,8 @@ public class LyricEditor2Event
 
     // Remove lyric from the editor
     public MoonscraperEngine.ICommand Pickup() {
-        PickupCommand command = null;
         if (this.referencedEvent != null) {
-            command = new PickupCommand(referencedEvent, formattedText, InvokePickup, RevokePickup);
-            return command;
+            return new PickupCommand(referencedEvent, formattedText, InvokePickup, RevokePickup);
         }
         return null;
     }
@@ -95,7 +93,9 @@ public class LyricEditor2Event
         commands.Add(new SongEditAdd(newLyric));
 
         BatchedSongEditCommand batchedCommands = new BatchedSongEditCommand(commands);
-        ChartEditor.Instance.commandStack.Push(batchedCommands);
+        // ChartEditor.Instance.commandStack.Push(batchedCommands);
+        batchedCommands.Invoke();
+        ChartEditor.Instance.commandStack.ResetTail();
 
         this.referencedEvent = newLyric;
         this.hasBeenPlaced = true;
