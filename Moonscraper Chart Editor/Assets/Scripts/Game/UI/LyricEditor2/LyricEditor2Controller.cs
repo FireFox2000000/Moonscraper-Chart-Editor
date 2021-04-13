@@ -409,10 +409,12 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                     phrases.Add(newPhrase);
                     newPhrase.gameObject.SetActive(true);
                 } else {
-                    // phrase_end event has no associated lyrics, delete it
-                    var deleteCommand = new SongEditDelete(currentEvent);
-                    deleteCommand.Invoke();
-                    editCommands.Add(deleteCommand);
+                    // phrase has no associated lyrics, delete it
+                    foreach (var e in tempEvents) {
+                        var deleteCommand = new SongEditDelete(e);
+                        deleteCommand.Invoke();
+                        editCommands.Add(deleteCommand);
+                    }
                 }
                 // No lyrics in the current phrase, clear temp events to avoid pollution with extra phrase events
                 tempEvents.Clear();
