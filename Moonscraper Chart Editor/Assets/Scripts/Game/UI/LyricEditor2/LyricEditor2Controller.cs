@@ -70,9 +70,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         ClearPhraseObjects();
         autoScroller.enabled = false;
         // Remove command stack commands
-        foreach (PickupFromCommand c in commandStackPushes) {
-            ChartEditor.Instance.commandStack.Remove(c);
-        }
+        ClearPickupCommands();
     }
 
     void Start() {
@@ -198,6 +196,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             if (!currentPhrase.phraseStartPlaced) {
                 AutoPlacePhraseStart(currentPhrase);
             }
+
+            // Clear command stack commands to prevent duplication after redo
+            ClearPickupCommands();
         }
         // All phrases placed already, so currentPhrase was null
     }
@@ -231,15 +232,17 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                 }
                 currentPhrase = GetNextUnfinishedPhrase();
                 autoScroller.ScrollTo(currentPhrase?.rectTransform);
+                ClearPickupCommands();
             }
         }
     }
 
-    // Pickup all phrases; TODO not revokable!
+    // Pickup all phrases; TODO not revocable!
     void PickupAllPhrases() {
-        foreach (LyricEditor2PhraseController phrase in phrases) {
+        foreach (var phrase in phrases) {
             phrase.Pickup().Invoke();
         }
+        ClearPickupCommands();
     }
 
     // Set the search IDs of all phrase controllers based on their position in
@@ -496,5 +499,12 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         var PickupFromCommand = new PickupFromCommand(batchedCommands, RefreshAfterPickupFrom);
         ChartEditor.Instance.commandStack.Push(PickupFromCommand);
         commandStackPushes.Add(PickupFromCommand);
+    }
+
+    void ClearPickupCommands() {
+        foreach (PickupFromCommand c in commandStackPushes) {
+            ChartEditor.Instance.commandStack.Remove(c);
+        }
+        commandStackPushes.Clear();
     }
 }
