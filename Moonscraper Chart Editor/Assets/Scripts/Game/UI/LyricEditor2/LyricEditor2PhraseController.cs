@@ -176,6 +176,10 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
             if (currentEvent.title.Equals(c_phraseStartKeyword)) {
                 if (phraseStartEvent == null) {
                     phraseStartEvent = new LyricEditor2Event(currentEvent);
+                } else {
+                    // phrase_start event does not correspond to any phrase,
+                    // delete it
+                    new SongEditDelete(currentEvent).Invoke();
                 }
             } else if (currentEvent.title.Equals(c_phraseEndKeyword)) {
                 phraseEndEvent = new LyricEditor2Event(currentEvent);
