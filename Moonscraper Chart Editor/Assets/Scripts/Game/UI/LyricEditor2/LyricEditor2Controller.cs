@@ -402,7 +402,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         for (int i = 0; i < importedEvents.Count; i++) {
             Event currentEvent = importedEvents[i];
             tempEvents.Add(currentEvent);
-            if (currentEvent.title.Equals(LyricEditor2PhraseController.c_phraseEndKeyword)) {
+            if (currentEvent.title.Equals(LyricEditor2PhraseController.c_phraseEndKeyword) || i == importedEvents.Count - 1) {
                 if (MakesValidPhrase(tempEvents)) {
                     LyricEditor2PhraseController newPhrase = UnityEngine.GameObject.Instantiate(phraseTemplate, phraseTemplate.transform.parent).GetComponent<LyricEditor2PhraseController>();
                     newPhrase.InitializeSyllables(tempEvents);
@@ -419,13 +419,17 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             }
         }
 
-        // Check to ensure all fully-placed phrases have their phrase_start
-        // events set; also set phrase_start events automatically if they occur
-        // after the first contained event
+        // Check to ensure all fully-placed phrases have their phrase_start and
+        // phraase_end events set; also set phrase_start events automatically if
+        // they occur after the first contained event, or phrase_end
         foreach (LyricEditor2PhraseController currentPhrase in phrases) {
             if ((currentPhrase.allSyllablesPlaced && !currentPhrase.phraseStartPlaced) ||
-                  (currentPhrase.GetFirstEventTick() > currentPhrase.startTick)) {
+                  (currentPhrase.GetFirstEventTick() < currentPhrase.startTick)) {
                 AutoPlacePhraseStart(currentPhrase);
+            }
+            if ((currentPhrase.allSyllablesPlaced && !currentPhrase.phraseEndPlaced) ||
+                  (currentPhrase.GetLastEventTick() > currentPhrase.endTick)) {
+                AutoPlacePhraseEnd(currentPhrase);
             }
         }
 
