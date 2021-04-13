@@ -383,9 +383,12 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             }
         }
 
-        // Check to ensure all fully-placed phrases have their phrase_start events set
+        // Check to ensure all fully-placed phrases have their phrase_start
+        // events set; also set phrase_start events automatically if they occur
+        // after the first contained event
         foreach (LyricEditor2PhraseController currentPhrase in phrases) {
-            if (currentPhrase.allSyllablesPlaced && !currentPhrase.phraseStartPlaced) {
+            if ((currentPhrase.allSyllablesPlaced && !currentPhrase.phraseStartPlaced) ||
+                  (currentPhrase.GetFirstEventTick() > currentPhrase.startTick)) {
                 AutoPlacePhraseStart(currentPhrase);
             }
         }
