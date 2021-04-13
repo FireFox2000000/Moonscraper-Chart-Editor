@@ -51,8 +51,8 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     public int sortID = 0;
 
     List<LyricEditor2Event> lyricEvents = new List<LyricEditor2Event>();
-    LyricEditor2Event phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword);
-    LyricEditor2Event phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword);
+    LyricEditor2Event phraseStartEvent = null;
+    LyricEditor2Event phraseEndEvent = null;
     LyricEditor2Event placingLyric;
 
     void Start() {
@@ -167,11 +167,16 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     // and, if they exist, assign them to the appropriate variables. Events
     // which do not start with c_lyricPrefix are ignored
     public void InitializeSyllables(List<Event> existingEvents) {
+        phraseStartEvent = null;
+        phraseEndEvent = null;
+
         for (int i = 0; i < existingEvents.Count; i++) {
             Event currentEvent = existingEvents[i];
 
             if (currentEvent.title.Equals(c_phraseStartKeyword)) {
-                phraseStartEvent = new LyricEditor2Event(currentEvent);
+                if (phraseStartEvent == null) {
+                    phraseStartEvent = new LyricEditor2Event(currentEvent);
+                }
             } else if (currentEvent.title.Equals(c_phraseEndKeyword)) {
                 phraseEndEvent = new LyricEditor2Event(currentEvent);
             } else if (currentEvent.title.StartsWith(c_lyricPrefix)) {
