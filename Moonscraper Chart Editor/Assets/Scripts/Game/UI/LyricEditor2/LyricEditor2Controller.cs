@@ -402,7 +402,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         for (int i = 0; i < importedEvents.Count; i++) {
             Event currentEvent = importedEvents[i];
             tempEvents.Add(currentEvent);
-            if (currentEvent.title.Equals(LyricEditor2PhraseController.c_phraseEndKeyword) || i == importedEvents.Count - 1) {
+            if (currentEvent.title.Equals(LyricEditor2PhraseController.c_phraseEndKeyword) || i == importedEvents.Count - 1 ||
+                    (importedEvents[i+1].title.Equals(LyricEditor2PhraseController.c_phraseStartKeyword))) {
                 if (MakesValidPhrase(tempEvents)) {
                     LyricEditor2PhraseController newPhrase = UnityEngine.GameObject.Instantiate(phraseTemplate, phraseTemplate.transform.parent).GetComponent<LyricEditor2PhraseController>();
                     newPhrase.InitializeSyllables(tempEvents);
