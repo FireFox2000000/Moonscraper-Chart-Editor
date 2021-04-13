@@ -26,7 +26,7 @@ public class BatchedICommand : ICommand
     }
 
     public void Revoke() {
-        for (int i = 0; i < commands.Count; i++) {
+        for (int i = commands.Count - 1; i >= 0; i--) {
             commands[i].Revoke();
         }
     }
