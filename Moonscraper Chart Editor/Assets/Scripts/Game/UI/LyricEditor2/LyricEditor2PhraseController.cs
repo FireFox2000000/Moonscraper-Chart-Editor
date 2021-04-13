@@ -145,14 +145,14 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     // Initialize lyricEvents using a list of string syllables. Syllables which
     // do not end with a dash will be displayed with a trailing space
     public void InitializeSyllables(List<string> syllables) {
-        phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword);
-        phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword);
+        phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword, mainController);
+        phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword, mainController);
 
         for (int i = 0; i < syllables.Count; i++) {
             string currentSyllable = syllables[i];
             string formattedSyllable = currentSyllable.TrimEnd();
 
-            LyricEditor2Event newEvent = new LyricEditor2Event(c_lyricPrefix + formattedSyllable);
+            LyricEditor2Event newEvent = new LyricEditor2Event(c_lyricPrefix + formattedSyllable, mainController);
             // Add syllables to lyricEvents
             lyricEvents.Add(newEvent);
             // Add formatted name to event
@@ -175,16 +175,18 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
 
             if (currentEvent.title.Equals(c_phraseStartKeyword)) {
                 if (phraseStartEvent == null) {
-                    phraseStartEvent = new LyricEditor2Event(currentEvent);
+                    phraseStartEvent = new LyricEditor2Event(currentEvent, mainController);
                 } else {
                     // phrase_start event does not correspond to any phrase,
                     // delete it
-                    new SongEditDelete(currentEvent).Invoke();
+                    var deleteCommand = new SongEditDelete(currentEvent);
+                    deleteCommand.Invoke();
+                    mainController.editCommands.Add(deleteCommand);
                 }
             } else if (currentEvent.title.Equals(c_phraseEndKeyword)) {
-                phraseEndEvent = new LyricEditor2Event(currentEvent);
+                phraseEndEvent = new LyricEditor2Event(currentEvent, mainController);
             } else if (currentEvent.title.StartsWith(c_lyricPrefix)) {
-                LyricEditor2Event newEvent = new LyricEditor2Event(currentEvent);
+                LyricEditor2Event newEvent = new LyricEditor2Event(currentEvent, mainController);
                 lyricEvents.Add(newEvent);
 
                 string formattedSyllable = currentEvent.title.TrimEnd();
@@ -196,10 +198,10 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
         }
         // Make sure phrase_start and phrase_end events exist
         if (phraseStartEvent == null) {
-            phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword);
+            phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword, mainController);
         }
         if (phraseEndEvent == null) {
-            phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword);
+            phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword, mainController);
         }
         CheckForUnplacedSyllables();
         DisplayText();

@@ -27,6 +27,35 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
     }
 
+    // Stores a set of all commands which have been invoked to modify chart
+    // events. When the lyric editor is exited, a single ICommand will be pushed
+    // to the command stack which contains all the changes which were made to
+    // events
+    public class SongEditCommandSet : MoonscraperEngine.ICommand {
+        List<SongEditCommand> commands = new List<SongEditCommand>();
+        BatchedSongEditCommand batchedCommands = null;
+
+        public void Add(SongEditCommand c) {
+            commands.Add(c);
+        }
+
+        public bool Remove(SongEditCommand c) {
+            return commands.Remove(c);
+        }
+
+        public void Invoke() {
+            if (batchedCommands == null) {
+                batchedCommands = new BatchedSongEditCommand(commands);
+            } else {
+                batchedCommands.Invoke();
+            }
+        }
+
+        public void Revoke() {
+            batchedCommands?.Revoke();
+        }
+    }
+
     [UnityEngine.SerializeField]
     LyricEditor2AutoScroller autoScroller;
     [UnityEngine.SerializeField]
@@ -45,6 +74,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // be removed from the main command stack (Pop() method returns void, not
     // the revoked command; see CommandStack.cs)
     List<PickupFromCommand> commandStackPushes = new List<PickupFromCommand>();
+    public SongEditCommandSet editCommands;
     LyricEditor2PhraseController lastPlaybackTarget = null;
 
     static float phrasePaddingFactor = 0.5f;
@@ -59,6 +89,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         ImportExistingLyrics();
         // Activate auto-scrolling if playback is active on lyric editor enable
         autoScroller.enabled = playbackActive;
+        // Create a new edit command set
+        editCommands = new SongEditCommandSet();
     }
 
     void OnDisable() {
@@ -71,6 +103,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         autoScroller.enabled = false;
         // Remove command stack commands
         ClearPickupCommands();
+        // Push batched edits to command stack
+        ChartEditor.Instance.commandStack.Push(editCommands);
     }
 
     void Start() {
@@ -376,7 +410,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                     newPhrase.gameObject.SetActive(true);
                 } else {
                     // phrase_end event has no associated lyrics, delete it
-                    new SongEditDelete(currentEvent).Invoke();
+                    var deleteCommand = new SongEditDelete(currentEvent);
+                    deleteCommand.Invoke();
+                    editCommands.Add(deleteCommand);
                 }
                 // No lyrics in the current phrase, clear temp events to avoid pollution with extra phrase events
                 tempEvents.Clear();

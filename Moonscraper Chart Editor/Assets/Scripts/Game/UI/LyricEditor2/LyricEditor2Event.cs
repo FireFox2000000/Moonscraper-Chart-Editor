@@ -10,24 +10,28 @@ public class LyricEditor2Event
         RevokeCallback revokeCommand;
         InvokeCallback invokeCommand;
         SongEditDelete deleteCommand;
+        LyricEditor2Controller mainController;
         Event referencedEvent;
         string formattedText;
 
-        public PickupCommand(Event referencedEvent, string formattedText, InvokeCallback invokeCommand, RevokeCallback revokeCommand) {
+        public PickupCommand(Event referencedEvent, string formattedText, InvokeCallback invokeCommand, RevokeCallback revokeCommand, LyricEditor2Controller mainController) {
             this.referencedEvent = referencedEvent;
             deleteCommand = new SongEditDelete(referencedEvent);
             this.formattedText = formattedText;
             this.revokeCommand = revokeCommand;
             this.invokeCommand = invokeCommand;
+            this.mainController = mainController;
         }
 
         public void Invoke() {
             deleteCommand.Invoke();
+            mainController.editCommands.Add(deleteCommand);
             invokeCommand();
         }
 
         public void Revoke() {
             deleteCommand.Revoke();
+            mainController.editCommands.Remove(deleteCommand);
             revokeCommand(formattedText, (Event)deleteCommand.GetSongObjects()[0]);
         }
     }
@@ -37,15 +41,18 @@ public class LyricEditor2Event
     public string text {get; private set;}
     public string formattedText = "";
     public uint? tick {get {return referencedEvent?.tick;}}
+    LyricEditor2Controller mainController;
 
 
-    public LyricEditor2Event (string text) {
+    public LyricEditor2Event(string text, LyricEditor2Controller controller) {
         this.text = text;
         this.hasBeenPlaced = false;
+        this.mainController = controller;
     }
 
-    public LyricEditor2Event(Event existingEvent) {
+    public LyricEditor2Event(Event existingEvent, LyricEditor2Controller controller) {
         SetEvent(existingEvent);
+        this.mainController = controller;
     }
 
     public void SetEvent(Event existingEvent) {
@@ -69,7 +76,7 @@ public class LyricEditor2Event
     // Remove lyric from the editor
     public MoonscraperEngine.ICommand Pickup() {
         if (this.referencedEvent != null) {
-            return new PickupCommand(referencedEvent, formattedText, InvokePickup, RevokePickup);
+            return new PickupCommand(referencedEvent, formattedText, InvokePickup, RevokePickup, mainController);
         }
         return null;
     }
@@ -95,6 +102,7 @@ public class LyricEditor2Event
         BatchedSongEditCommand batchedCommands = new BatchedSongEditCommand(commands);
         // ChartEditor.Instance.commandStack.Push(batchedCommands);
         batchedCommands.Invoke();
+        mainController.editCommands.Add(batchedCommands);
         ChartEditor.Instance.commandStack.ResetTail();
 
         this.referencedEvent = newLyric;
