@@ -419,6 +419,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             }
         }
 
+        // Update search order
+        UpdateSortIds();
+
         // Check to ensure all fully-placed phrases have their phrase_start and
         // phraase_end events set; also set phrase_start events automatically if
         // they occur after the first contained event, or phrase_end
@@ -432,9 +435,6 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                 AutoPlacePhraseEnd(currentPhrase);
             }
         }
-
-        // Update search order
-        UpdateSortIds();
     }
 
     // Compare two events for use with List.Sort(). Events should be sorted by
