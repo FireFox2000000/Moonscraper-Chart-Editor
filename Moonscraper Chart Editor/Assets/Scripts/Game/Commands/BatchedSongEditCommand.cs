@@ -139,4 +139,8 @@ public class BatchedSongEditCommand : SongEditCommand
 
         return info;
     }
+
+    public List<SongEditCommand> GetSongEditCommands() {
+        return commands;
+    }
 }

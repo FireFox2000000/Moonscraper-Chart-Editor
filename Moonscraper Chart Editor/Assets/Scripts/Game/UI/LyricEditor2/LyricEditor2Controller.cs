@@ -111,6 +111,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         phraseTemplate.gameObject.SetActive(false);
 
         ChartEditor.Instance.events.editorStateChangedEvent.Register(OnStateChanged);
+        ChartEditor.Instance.events.commandStackPushPopEvent.Register(onCommandStackPushPop);
     }
 
     public void OnStateChanged(in ChartEditor.State newState) {
@@ -122,6 +123,38 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             } else {
                 autoScroller.ScrollTo(currentPhrase?.rectTransform);
             }
+        }
+    }
+
+    static bool HasLyricEvents(List<SongEditCommand> commands) {
+        foreach (SongEditCommand c in commands) {
+            if (HasLyricEvents(c)) {
+                return true;
+            }
+        }
+        // No lyric events found
+        return false;
+    }
+
+    static bool HasLyricEvents(SongEditCommand command) {
+        // Check for batched commands
+        if (command is BatchedSongEditCommand batched && HasLyricEvents(batched.GetSongEditCommands())) {
+            return true;
+        }
+        // Not a batched command
+        var songObjects = command.GetSongObjects();
+        foreach (SongObject o in songObjects) {
+            if (o is Event e && IsLyricEvent(e)) {
+                return true;
+            }
+        }
+        // No lyric events found
+        return false;
+    }
+
+    public void onCommandStackPushPop(in MoonscraperEngine.ICommand command) {
+        if (command is SongEditCommand c && HasLyricEvents(c)) {
+            gameObject.SetActive(false);
         }
     }
 
