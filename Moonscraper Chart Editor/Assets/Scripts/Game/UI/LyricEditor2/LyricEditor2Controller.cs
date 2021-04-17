@@ -397,7 +397,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     static bool IsLyricEvent(Event selectedEvent) {
-        if (selectedEvent.title.TrimEnd().StartsWith(LyricEditor2PhraseController.c_lyricPrefix) ||
+        if (selectedEvent.title.StartsWith(LyricEditor2PhraseController.c_lyricPrefix) ||
                 selectedEvent.title.Equals(LyricEditor2PhraseController.c_phraseStartKeyword) ||
                 selectedEvent.title.Equals(LyricEditor2PhraseController.c_phraseEndKeyword)) {
             return true;
@@ -434,6 +434,12 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         List<Event> tempEvents = new List<Event>();
         for (int i = 0; i < importedEvents.Count; i++) {
             Event currentEvent = importedEvents[i];
+            if (currentEvent.title.TrimEnd().Equals(LyricEditor2PhraseController.c_lyricPrefix.TrimEnd())) {
+                var deleteCommand = new SongEditDelete(currentEvent);
+                deleteCommand.Invoke();
+                editCommands.Add(deleteCommand);
+                continue;
+            }
             tempEvents.Add(currentEvent);
             if (currentEvent.title.Equals(LyricEditor2PhraseController.c_phraseEndKeyword) || i == importedEvents.Count - 1 ||
                     (importedEvents[i+1].title.Equals(LyricEditor2PhraseController.c_phraseStartKeyword))) {
