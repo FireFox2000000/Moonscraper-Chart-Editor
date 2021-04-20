@@ -573,20 +573,28 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         currentPhrase = GetNextUnfinishedPhrase();
     }
 
-    public void PickupFrom(LyricEditor2PhraseController start) {
+    public void PickupFrom(LyricEditor2PhraseController start, bool pushToStack = true) {
         List<MoonscraperEngine.ICommand> commands = new List<MoonscraperEngine.ICommand>();
         int startIndex = phrases.BinarySearch(start);
         if (startIndex >= 0) {
             for (int i = startIndex; i < phrases.Count; i++) {
-                commands.Add(phrases[i].Pickup());
+                if (phrases[i].anySyllablesPlaced) {
+                    commands.Add(phrases[i].Pickup());
+                }
             }
         }
         currentPhrase = GetNextUnfinishedPhrase();
-        // Push commands to stack
-        var batchedCommands = new BatchedICommand(commands);
-        var PickupFromCommand = new PickupFromCommand(batchedCommands, RefreshAfterPickupFrom);
-        ChartEditor.Instance.commandStack.Push(PickupFromCommand);
-        commandStackPushes.Add(PickupFromCommand);
+        // Invoke commands
+        if (commands.Count > 0) {
+            var batchedCommands = new BatchedICommand(commands);
+            var pickupFromCommand = new PickupFromCommand(batchedCommands, RefreshAfterPickupFrom);
+            if (pushToStack) {
+                ChartEditor.Instance.commandStack.Push(pickupFromCommand);
+                commandStackPushes.Add(pickupFromCommand);
+            } else {
+                pickupFromCommand.Invoke();
+            }
+        }
     }
 
     void ClearPickupCommands() {
