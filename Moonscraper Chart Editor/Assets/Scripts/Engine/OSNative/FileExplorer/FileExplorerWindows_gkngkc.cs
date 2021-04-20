@@ -46,13 +46,14 @@ public class FileExplorerWindows_gkngkc : IFileExplorer
         public IntPtr Handle { get { return _hwnd; } }
     }
 
-    public bool OpenFilePanel(ExtensionFilter filter, string defExt, out string resultPath)
+    public bool OpenFilePanel(ExtensionFilter filter, string defaultDirectory, string defExt, out string resultPath)
     {
         var fd = new VistaOpenFileDialog();
         fd.Title = "Open file";
         fd.Filter = GetFilterFromFileExtensionList(filter);
         fd.FilterIndex = 1;
         fd.Multiselect = false;
+        fd.InitialDirectory = defaultDirectory;
 
         var res = fd.ShowDialog(new WindowWrapper(GetActiveWindow()));
         var filename = res == DialogResult.OK ? fd.FileNames[0] : string.Empty;
@@ -62,7 +63,7 @@ public class FileExplorerWindows_gkngkc : IFileExplorer
         return !string.IsNullOrEmpty(resultPath);
     }
 
-    public bool SaveFilePanel(ExtensionFilter filter, string defaultFileName, string defExt, out string resultPath)
+    public bool SaveFilePanel(ExtensionFilter filter, string defaultFileName, string defaultDirectory, string defExt, out string resultPath)
     {
         var fd = new VistaSaveFileDialog();
         fd.Title = "Save As";
@@ -79,6 +80,7 @@ public class FileExplorerWindows_gkngkc : IFileExplorer
         fd.FilterIndex = 1;
         fd.DefaultExt = defExt;
         fd.AddExtension = true;
+        fd.InitialDirectory = defaultDirectory;
 
         var res = fd.ShowDialog(new WindowWrapper(GetActiveWindow()));
         var filename = res == DialogResult.OK ? fd.FileName : string.Empty;

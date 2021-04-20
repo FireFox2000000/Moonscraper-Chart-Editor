@@ -4,22 +4,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FileExplorerEditor : IFileExplorer {
-
-    public bool OpenFilePanel(ExtensionFilter filter, string defExt, out string resultPath)
+public class FileExplorerEditor : IFileExplorer
+{
+    public bool OpenFilePanel(ExtensionFilter filter, string defaultDirectory, string defExt, out string resultPath)
     {
         resultPath = string.Empty;
-        resultPath = UnityEditor.EditorUtility.OpenFilePanel("Open file", "", defExt);
+        resultPath = UnityEditor.EditorUtility.OpenFilePanel("Open file", defaultDirectory, defExt);
 
         return !string.IsNullOrEmpty(resultPath);
     }
 
-    public bool SaveFilePanel(ExtensionFilter filter, string defaultFileName, string defExt, out string resultPath)
+    public bool SaveFilePanel(ExtensionFilter filter, string defaultFileName, string defaultDirectory, string defExt, out string resultPath)
     {
         resultPath = string.Empty;
 
         defaultFileName = FileExplorer.StripIllegalChars(defaultFileName);
-        resultPath = UnityEditor.EditorUtility.SaveFilePanel("Save as...", "", defaultFileName, defExt);
+        resultPath = UnityEditor.EditorUtility.SaveFilePanel("Save as...", defaultDirectory, defaultFileName, defExt);
 
         return !string.IsNullOrEmpty(resultPath);
     }

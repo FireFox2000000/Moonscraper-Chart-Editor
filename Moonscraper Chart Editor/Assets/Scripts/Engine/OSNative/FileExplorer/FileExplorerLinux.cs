@@ -18,7 +18,7 @@ public class FileExplorerLinux : IFileExplorer
     private static int NOC_FILE_DIALOG_DIR = 1 << 2;
     private static int NOC_FILE_DIALOG_OVERWRITE_CONFIRMATION = 1 << 3;
 
-    public bool OpenFilePanel(ExtensionFilter filter, string defExt, out string resultPath)
+    public bool OpenFilePanel(ExtensionFilter filter, string defaultDirectory, string defExt, out string resultPath)
     {
         resultPath = Marshal.PtrToStringAnsi(noc_file_dialog_open(
                 NOC_FILE_DIALOG_OPEN,
@@ -40,7 +40,7 @@ public class FileExplorerLinux : IFileExplorer
         return !string.IsNullOrEmpty(resultPath);
     }
 
-    public bool SaveFilePanel(ExtensionFilter filter, string defaultFileName, string defExt, out string resultPath)
+    public bool SaveFilePanel(ExtensionFilter filter, string defaultFileName, string defaultDirectory, string defExt, out string resultPath)
     {
         resultPath = Marshal.PtrToStringAnsi(noc_file_dialog_open(
                 NOC_FILE_DIALOG_SAVE | NOC_FILE_DIALOG_OVERWRITE_CONFIRMATION,

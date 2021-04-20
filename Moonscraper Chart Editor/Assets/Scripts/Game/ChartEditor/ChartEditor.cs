@@ -5,11 +5,10 @@
 //#undef UNITY_EDITOR
 
 using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using MoonscraperEngine;
 using MoonscraperEngine.Audio;
@@ -97,12 +96,12 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     /// An example of this is the object pooling system, needs to hold onto those objects for the entire lifetime of the scene as objects always need to be visible. Would also be dumb memory-wise.
     /// See #region State Control for full implementation
     /// </summary>
-    Dictionary<State, List<SystemManagerState.ISystem>> persistentSystemsForStates = new Dictionary<State, List<SystemManagerState.ISystem>>();     
+    Dictionary<State, List<SystemManagerState.ISystem>> persistentSystemsForStates = new Dictionary<State, List<SystemManagerState.ISystem>>();
 
     static readonly Dictionary<string, LoadedStreamStore.StreamConfig> soundMapConfig = new Dictionary<string, LoadedStreamStore.StreamConfig>(){
-            { SkinKeys.metronome,   new LoadedStreamStore.StreamConfig(System.IO.Path.Combine(Application.streamingAssetsPath, "SFX/metronome.wav")) },
-            { SkinKeys.clap,        new LoadedStreamStore.StreamConfig(System.IO.Path.Combine(Application.streamingAssetsPath, "SFX/clap.wav")) },
-            { SkinKeys.break0,      new LoadedStreamStore.StreamConfig(System.IO.Path.Combine(Application.streamingAssetsPath, "SFX/combobreak.wav")) },
+            { SkinKeys.metronome,   new LoadedStreamStore.StreamConfig(Path.Combine(Application.streamingAssetsPath, "SFX/metronome.wav")) },
+            { SkinKeys.clap,        new LoadedStreamStore.StreamConfig(Path.Combine(Application.streamingAssetsPath, "SFX/clap.wav")) },
+            { SkinKeys.break0,      new LoadedStreamStore.StreamConfig(Path.Combine(Application.streamingAssetsPath, "SFX/combobreak.wav")) },
         };
     public LoadedStreamStore sfxAudioStreams { get; private set; }
     public ChartEditorEvents events = new ChartEditorEvents();
@@ -115,7 +114,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     }
 
     UndoRedoSnapInfo? undoRedoSnapInfo = null;
-    public uint currentTickPos {
+    public uint currentTickPos
+    {
         get
         {
             if (MovementController.explicitChartPos != null)
@@ -145,7 +145,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public ChartEditorSessionFlags sessionFlags = ChartEditorSessionFlags.None;
 
     // Use this for initialization
-    void Awake () {
+    void Awake()
+    {
         Debug.Log(string.Format("Initialising {0} v{1}", Application.productName, Application.version));
 
 #if !UNITY_EDITOR
@@ -195,7 +196,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         string[] args = Environment.GetCommandLineArgs();
         foreach (string arg in args)
         {
-            if (System.IO.File.Exists(arg) && (System.IO.Path.GetExtension(arg) == ".chart" || System.IO.Path.GetExtension(arg) == ".mid"))
+            if (File.Exists(arg) && Path.GetExtension(arg) == ".chart" || Path.GetExtension(arg) == ".mid"))
             {
                 StartCoroutine(_Load(arg));
                 break;
@@ -206,7 +207,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         // Note, need to do this after loading game settings for this to actually take effect
         if (Globals.gameSettings.automaticallyCheckForUpdates)
         {
-            services.updateManager.CheckForUpdates((Octokit.Release latestRelease) => {
+            services.updateManager.CheckForUpdates((Octokit.Release latestRelease) =>
+            {
                 if (latestRelease != null)
                 {
                     OnUserCheckForUpdatesComplete(latestRelease);
@@ -285,7 +287,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     }
 
     bool EditCheck()
-    {    
+    {
         // Check for unsaved changes
         if (isDirty)
         {
@@ -488,7 +490,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         interactionMethodManager.ChangeInteraction(type);
     }
 
-#endregion
+    #endregion
 
     void OnChartReloaded()
     {
@@ -514,20 +516,20 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             sb.Append(Ellipsis);
         }
 
-        windowHandleManager.SetProjectNameStr(sb.ToString()); 
+        windowHandleManager.SetProjectNameStr(sb.ToString());
 
         sb.Clear();
         sb.Append(currentChart.name);
         windowHandleManager.SetProjectStateStr(sb.ToString());
     }
 
-#region Chart Loading/Saving
+    #region Chart Loading/Saving
     public void New()
     {
         if (!EditCheck())
             return;
 
-        while (isSaving);
+        while (isSaving) ;
 
         if (errorManager.HasErrorToDisplay())
             return;
@@ -563,8 +565,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     {
         Stop();
 
-        if (System.IO.File.Exists(Globals.autosaveLocation))
-            System.IO.File.Delete(Globals.autosaveLocation);
+        if (File.Exists(Globals.autosaveLocation))
+            File.Delete(Globals.autosaveLocation);
 
         StartCoroutine(_Load());
     }
@@ -603,7 +605,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         string defaultFileName;
 
         if (lastLoadedFile != string.Empty)
-            defaultFileName = System.IO.Path.GetFileNameWithoutExtension(lastLoadedFile);
+            defaultFileName = Path.GetFileNameWithoutExtension(lastLoadedFile);
         else if (currentSong.name != string.Empty)
             defaultFileName = new String(currentSong.name.ToCharArray());
         else
@@ -612,13 +614,16 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (!forced)
             defaultFileName += "(UNFORCED)";
 
+        string defaultFilePath = DefaultPathManager.GetPath(DefaultPathManager.PathType.SAVE_AS_SONG);
+
         string fileName;
-        if (FileExplorer.SaveFilePanel(new ExtensionFilter("Chart files", "chart"), defaultFileName, "chart", out fileName))
+        if (FileExplorer.SaveFilePanel(new ExtensionFilter("Chart files", "chart"), defaultFileName, defaultFilePath, "chart", out fileName))
         {
             ExportOptions exportOptions = currentSong.defaultExportOptions;
             exportOptions.forced = forced;
             exportOptions.isGeneralSave = true;
 
+            DefaultPathManager.SetPath(DefaultPathManager.PathType.SAVE_AS_SONG, fileName);
             Save(fileName, exportOptions);
             return true;
         }
@@ -627,12 +632,12 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         return false;
     }
 
-    void Save (string filename, ExportOptions exportOptions)
+    void Save(string filename, ExportOptions exportOptions)
     {
         if (currentSong != null && !isSaving)
         {
-            Debug.Log("Saving to file- " + System.IO.Path.GetFullPath(filename));
-            lastLoadedFile = System.IO.Path.GetFullPath(filename);
+            Debug.Log("Saving to file- " + Path.GetFullPath(filename));
+            lastLoadedFile = Path.GetFullPath(filename);
 
             _saveTask = SaveCurrentSongAsync(filename, exportOptions);
 
@@ -682,7 +687,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                     return;
                 }
 
-                mid = System.IO.Path.GetExtension(currentFileName) == ".mid";
+                mid = Path.GetExtension(currentFileName) == ".mid";
 
                 try
                 {
@@ -705,9 +710,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
                 try
                 {
-                    string directory = System.IO.Path.GetDirectoryName(currentFileName);
-                    string iniPath = System.IO.Path.Combine(directory, "song.ini");
-                    if (newSong != null && System.IO.File.Exists(iniPath))
+                    string directory = Path.GetDirectoryName(currentFileName);
+                    string iniPath = Path.Combine(directory, "song.ini");
+                    if (newSong != null && File.Exists(iniPath))
                     {
                         try
                         {
@@ -766,7 +771,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         }
 
         if (recordLastLoaded && currentFileName != string.Empty && !mid)
-            lastLoadedFile = System.IO.Path.GetFullPath(currentFileName);
+            lastLoadedFile = Path.GetFullPath(currentFileName);
         else
             lastLoadedFile = string.Empty;
 
@@ -796,7 +801,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         Song backup = currentSong;
 
-        if (!FileExplorer.OpenFilePanel(new ExtensionFilter("Chart files", "chart", "mid"), "chart,mid,msce", out currentFileName))
+        string defaultDirectory = DefaultPathManager.GetPath(DefaultPathManager.PathType.LOAD_SONG);
+        if (!FileExplorer.OpenFilePanel(new ExtensionFilter("Chart files", "chart", "mid"), defaultDirectory, "chart,mid,msce", out currentFileName))
         {
             currentSong = backup;
 
@@ -804,7 +810,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             yield break;
         }
 
-        Debug.Log("Loading song: " + System.IO.Path.GetFullPath(currentFileName));
+        DefaultPathManager.SetPath(DefaultPathManager.PathType.LOAD_SONG, currentFileName);
+
+        Debug.Log("Loading song: " + Path.GetFullPath(currentFileName));
 
         yield return StartCoroutine(_Load(currentFileName));
 
@@ -825,7 +833,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         }
         else
         {
-            
+
             menuBar.SetInstrument("guitar");
             menuBar.SetDifficulty("expert");
         }
@@ -915,7 +923,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
             if (errorReport.resultantFileType == ChartIOHelper.FileSubType.MoonscraperPropriety)
             {
-                filepath = System.IO.Path.ChangeExtension(filepath, MsceIOHelper.FileExtention);
+                filepath = Path.ChangeExtension(filepath, MsceIOHelper.FileExtention);
                 lastLoadedFile = filepath;
             }
 
@@ -929,7 +937,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                 sessionFlags |= ChartEditorSessionFlags.CurrentChartSavedInProprietyFormat;
             }
 
-            string iniPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(filepath), SongIniFunctions.INI_FILENAME);
+            string iniPath = Path.Combine(Path.GetDirectoryName(filepath), SongIniFunctions.INI_FILENAME);
             if (!song.iniProperties.IsEmpty)
             {
                 Debug.Log("Saving song.ini");
@@ -951,9 +959,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
                 Debug.Log("song.ini save complete!");
             }
-            else if (System.IO.File.Exists(iniPath))
+            else if (File.Exists(iniPath))
             {
-                System.IO.File.Delete(iniPath);
+                File.Delete(iniPath);
             }
         }
         catch (System.Exception e)
@@ -962,9 +970,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         }
     }
 
-#endregion
+    #endregion
 
-#region Audio Functions
+    #region Audio Functions
     public void PlayAudio(float playPoint)
     {
         // Update all streams to the correct volume and speed levels
@@ -973,13 +981,13 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Guitar), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_guitar);
         SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Bass), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_bass);
         SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Rhythm), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_rhythm);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Keys), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_keys);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Keys), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_keys);
         SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drum), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_2), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums2);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_3), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums3);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_4), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums4);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Vocals), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_vocals);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Crowd), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_crowd);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_2), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums2);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_3), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums3);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_4), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums4);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Vocals), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_vocals);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Crowd), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_crowd);
 
         // Set up synchronisation between all the streams otherwise they may go out of sync with each other
         AudioStream primaryStream = songAudioManager.mainSongAudio;
@@ -992,7 +1000,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         }
     }
 
-   public void StopAudio()
+    public void StopAudio()
     {
         SongAudioManager songAudioManager = currentSongAudio;
         AudioStream primaryStream = songAudioManager.mainSongAudio;
@@ -1079,9 +1087,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         }
     }
 
-#endregion
+    #endregion
 
-#region Pause/Play Functions
+    #region Pause/Play Functions
     public void StartGameplay()
     {
         if (currentState == State.Playing ||
@@ -1182,9 +1190,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         songObjectPoolManager.noteVisibilityRangeYPosOverride = null;
     }
-#endregion
+    #endregion
 
-#region Undo/Redo/Cut/Copy/Paste etc...
+    #region Undo/Redo/Cut/Copy/Paste etc...
 
     public void FillUndoRedoSnapInfo(uint tick, Globals.ViewMode viewMode)
     {
@@ -1292,7 +1300,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             bottomLeft = new Vector2((float)left, currentSong.TickToWorldYPosition(songObjectsCopy[0].tick));
             upperRight = new Vector2((float)right, currentSong.TickToWorldYPosition(songObjectsCopy[songObjectsCopy.Length - 1].tick));
             area = new Clipboard.SelectionArea(bottomLeft, upperRight, songObjectsCopy[0].tick, songObjectsCopy[songObjectsCopy.Length - 1].tick);
-        }        
+        }
 
         ClipboardObjectController.SetData(songObjectsCopy, area, currentSong);
     }
@@ -1322,5 +1330,5 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         Delete();
     }
 
-#endregion
+    #endregion
 }
