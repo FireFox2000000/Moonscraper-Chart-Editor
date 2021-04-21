@@ -34,6 +34,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     public class SongEditCommandSet : MoonscraperEngine.ICommand {
         List<SongEditCommand> commands = new List<SongEditCommand>();
         BatchedSongEditCommand batchedCommands = null;
+        public bool isEmpty {get {return commands.Count == 0;}}
 
         public void Add(SongEditCommand c) {
             commands.Add(c);
@@ -111,7 +112,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         // Remove command stack commands
         ClearPickupCommands();
         // Push batched edits to command stack
-        ChartEditor.Instance.commandStack.Push(editCommands);
+        if (!editCommands.isEmpty) {
+            ChartEditor.Instance.commandStack.Push(editCommands);
+        }
     }
 
     void Start() {
