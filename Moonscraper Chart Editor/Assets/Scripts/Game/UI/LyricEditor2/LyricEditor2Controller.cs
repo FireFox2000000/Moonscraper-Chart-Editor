@@ -85,8 +85,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     InputState inputState = InputState.Full;
     LyricEditor2PhraseController inputPhrase;
 
-    static float phrasePaddingFactor = 0.5f;
-    static int phrasePaddingMax = 16; // 16 refers to one sixteenth the length of a phrase in the current song.
+    static float phrasePaddingFactor = 0.8F;
+    static int phrasePaddingMax = 8; // 16 refers to one sixteenth the length of a phrase in the current song.
     // So with a resolution of 192, the phrase_start event should have at least 12 ticks of spacing
     static Song currentSong {get {return ChartEditor.Instance.currentSong;}}
     static float songResolution {get {return currentSong.resolution;}}
