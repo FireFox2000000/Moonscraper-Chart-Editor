@@ -235,7 +235,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             LyricEditor2PhraseController nextPhrase = phrases[targetIndex + 1];
             uint? nextPhraseStart = nextPhrase.startTick ?? nextPhrase.GetFirstEventTick();
             if (nextPhraseStart != null) {
-                return (uint)nextPhraseStart;
+                return (uint)nextPhraseStart - 1;
             }
         }
         // No next phrase start found
@@ -561,11 +561,11 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // current time falls before the last element of currentPhrase, the
     // placement is considered invalid
     bool IsLegalToPlaceNow() {
-        uint lastPhraseTick = GetFirstSafeTick(currentPhrase);
-        if (currentTickPos < lastPhraseTick) {
-            // Current position is before last safe tick
+        uint firstPhraseTick = GetFirstSafeTick(currentPhrase);
+        if (currentTickPos <= firstPhraseTick) {
+            // Current position is before first safe tick
             return false;
-        } else if (currentTickPos < currentPhrase?.startTick || currentTickPos < currentPhrase?.GetLastEventTick()) {
+        } else if (currentTickPos <= currentPhrase?.startTick || currentTickPos <= currentPhrase?.GetLastEventTick()) {
             // Current position is in the middle of currentPhrase
             return false;
         } else {
