@@ -56,6 +56,11 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
     }
 
+    enum InputState {
+        Full,
+        Phrase
+    }
+
     [UnityEngine.SerializeField]
     LyricEditor2AutoScroller autoScroller;
     [UnityEngine.SerializeField]
@@ -76,6 +81,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     List<PickupFromCommand> commandStackPushes = new List<PickupFromCommand>();
     public SongEditCommandSet editCommands;
     LyricEditor2PhraseController lastPlaybackTarget = null;
+    InputState inputState = InputState.Full;
+    LyricEditor2PhraseController inputPhrase;
 
     static float phrasePaddingFactor = 0.5f;
     static int phrasePaddingMax = 16; // 16 refers to one sixteenth the length of a phrase in the current song.
@@ -320,29 +327,59 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
     }
 
+    void UpdateDisplayOrder() {
+        for (int i = 0; i < phrases.Count; i++) {
+            phrases[i].transform.SetSiblingIndex(phrases[i].sortID);
+        }
+    }
+
     // Take dash-newline formatted lyrics from the lyric input menu and parse
-    // them into phrases. Called when the user hits "submit" in the input menu
+    // them into phrases. Called when the user hits "submit" in the input menu.
+    // Consider the input state!
     public void InputLyrics() {
-        PickupAllPhrases();
-        ClearPhraseObjects();
-        string inputLyrics = lyricInputMenu.text ?? "";
+        if (inputState == InputState.Full) {
+            PickupAllPhrases();
+            ClearPhraseObjects();
+            string inputLyrics = lyricInputMenu.text ?? "";
 
-        List<List<string>> parsedLyrics = ParseLyrics(inputLyrics);
-        for (int i = 0; i < parsedLyrics.Count; i++) {
-            LyricEditor2PhraseController newPhrase = UnityEngine.GameObject.Instantiate(phraseTemplate, phraseTemplate.transform.parent).GetComponent<LyricEditor2PhraseController>();
-            newPhrase.InitializeSyllables(parsedLyrics[i]);
-            phrases.Add(newPhrase);
-            newPhrase.gameObject.SetActive(true);
+            List<List<string>> parsedLyrics = ParseLyrics(inputLyrics);
+            for (int i = 0; i < parsedLyrics.Count; i++) {
+                LyricEditor2PhraseController newPhrase = UnityEngine.GameObject.Instantiate(phraseTemplate, phraseTemplate.transform.parent).GetComponent<LyricEditor2PhraseController>();
+                newPhrase.InitializeSyllables(parsedLyrics[i]);
+                phrases.Add(newPhrase);
+                newPhrase.gameObject.SetActive(true);
+            }
+
+            if (phrases.Count > 0) {
+                // Taken care of in OnStateChanged()
+                // autoScroller.ScrollTo(phrases[0].rectTransform);
+                currentPhrase = phrases[0];
+            }
+
+            // Update search order
+            UpdateSortIds();
+
+        } else if (inputState == InputState.Phrase) {
+            string inputLyrics = lyricInputMenu.text ?? "";
+            List<List<string>> parsedLyrics = ParseLyrics(inputLyrics);
+            int inputIndex = phrases.BinarySearch(inputPhrase);
+            if (inputIndex >= 0) {
+                // Update phrase content
+                PickupFrom(inputPhrase, false);
+                UnityEngine.Object.Destroy(inputPhrase.gameObject);
+                phrases.RemoveAt(inputIndex);
+                var newPhrases = new List<LyricEditor2PhraseController>();
+                for (int i = 0; i < parsedLyrics.Count; i++) {
+                    LyricEditor2PhraseController newPhrase = UnityEngine.GameObject.Instantiate(phraseTemplate, phraseTemplate.transform.parent).GetComponent<LyricEditor2PhraseController>();
+                    newPhrase.InitializeSyllables(parsedLyrics[i]);
+                    newPhrases.Add(newPhrase);
+                    newPhrase.gameObject.SetActive(true);
+                }
+                phrases.InsertRange(inputIndex, newPhrases);
+                UpdateSortIds();
+                UpdateDisplayOrder();
+            }
         }
-
-        if (phrases.Count > 0) {
-            // Taken care of in OnStateChanged()
-            // autoScroller.ScrollTo(phrases[0].rectTransform);
-            currentPhrase = phrases[0];
-        }
-
-        // Update search order
-        UpdateSortIds();
     }
 
     // Parse a string into a double string array (phrases of syllables) to be
@@ -382,8 +419,15 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // newline notation; field should be populated with a string given by
     // GetTextRepresentation()
     public void EnableInputMenu() {
+        inputState = InputState.Full;
         string existingLyrics = GetTextRepresentation();
         lyricInputMenu.Display(existingLyrics);
+    }
+
+    // Display input field with custom prepopulated field; function is called
+    // internally only, so it should not update inputState
+    void EnableInputMenu(string prefilledLyrics) {
+        lyricInputMenu.Display(prefilledLyrics);
     }
 
     // Create a text representation of stored lyrics which can be pushed to the
@@ -602,5 +646,12 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             ChartEditor.Instance.commandStack.Remove(c);
         }
         commandStackPushes.Clear();
+    }
+
+    // Opens the lyric input menu to edit the given lyrics
+    public void EditPhrase(LyricEditor2PhraseController phrase) {
+        inputPhrase = phrase;
+        inputState = InputState.Phrase;
+        EnableInputMenu(phrase.GetTextRepresentation());
     }
 }

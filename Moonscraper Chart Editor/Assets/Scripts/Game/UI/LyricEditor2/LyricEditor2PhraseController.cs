@@ -50,7 +50,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     public UnityEngine.RectTransform rectTransform {get; private set;}
     public int sortID = 0;
 
-    List<LyricEditor2Event> lyricEvents = new List<LyricEditor2Event>();
+    List<LyricEditor2Event> lyricEvents;
     LyricEditor2Event phraseStartEvent = null;
     LyricEditor2Event phraseEndEvent = null;
     LyricEditor2Event placingLyric;
@@ -147,6 +147,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     public void InitializeSyllables(List<string> syllables) {
         phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword, mainController);
         phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword, mainController);
+        lyricEvents = new List<LyricEditor2Event>();
 
         for (int i = 0; i < syllables.Count; i++) {
             string currentSyllable = syllables[i];
@@ -169,6 +170,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     public void InitializeSyllables(List<Event> existingEvents) {
         phraseStartEvent = null;
         phraseEndEvent = null;
+        lyricEvents = new List<LyricEditor2Event>();
 
         for (int i = 0; i < existingEvents.Count; i++) {
             Event currentEvent = existingEvents[i];
@@ -286,6 +288,8 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     public void OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) {
          if (eventData.button == UnityEngine.EventSystems.PointerEventData.InputButton.Right) {
              mainController.PickupFrom(this);
+         } else if (eventData.button == UnityEngine.EventSystems.PointerEventData.InputButton.Left) {
+             mainController.EditPhrase(this);
          }
      }
 }
