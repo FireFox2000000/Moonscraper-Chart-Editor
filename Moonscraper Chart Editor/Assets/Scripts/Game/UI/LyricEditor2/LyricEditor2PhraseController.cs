@@ -293,4 +293,27 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
              mainController.EditPhrase(this);
          }
      }
+
+     // Get the last event which occurs before the specified tick (does not
+     // consider phrase_start, return null if after phrase_end)
+     LyricEditor2Event GetEventAtTick(uint? tickNullable) {
+         if (!(tickNullable is uint tick) || phraseEndEvent.tick <= tick) {
+             return null;
+         }
+         LyricEditor2Event targetEvent = null;
+         for (int i = 0; i < lyricEvents.Count; i++) {
+             if (lyricEvents[i].tick <= tick) {
+                 targetEvent = lyricEvents[i];
+             } else {
+                 return targetEvent;
+             }
+         }
+         return targetEvent;
+     }
+
+     // Highlight the appropriate syllable during playback
+     public void PlaybackHighlight(uint? currentTick) {
+         placingLyric = GetEventAtTick(currentTick);
+         DisplayText();
+     }
 }

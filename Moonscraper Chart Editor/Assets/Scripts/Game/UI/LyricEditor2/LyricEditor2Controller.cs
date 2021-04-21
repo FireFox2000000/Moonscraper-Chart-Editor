@@ -133,6 +133,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             } else {
                 autoScroller.ScrollTo(currentPhrase?.rectTransform);
             }
+        } else {
+            lastPlaybackTarget?.PlaybackHighlight(null);
         }
     }
 
@@ -611,9 +613,12 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         // Scroll to phrase
         if (forceScroll || playbackTarget != lastPlaybackTarget) {
             autoScroller.ScrollTo(playbackTarget?.rectTransform);
+            lastPlaybackTarget?.PlaybackHighlight(null);
         }
         // Update lastPlaybackTarget
         lastPlaybackTarget = playbackTarget;
+        // Highlight syllables
+        playbackTarget.PlaybackHighlight(currentTickPos);
     }
 
     private void RefreshAfterPickupFrom() {
