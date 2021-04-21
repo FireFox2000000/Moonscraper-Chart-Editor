@@ -163,7 +163,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     public void onCommandStackPushPop(in MoonscraperEngine.ICommand command) {
-        if (command is SongEditCommand c && HasLyricEvents(c)) {
+        if (command is SongEditCommand c && HasLyricEvents(c) || command is SongEditCommandSet) {
             gameObject.SetActive(false);
         }
     }
