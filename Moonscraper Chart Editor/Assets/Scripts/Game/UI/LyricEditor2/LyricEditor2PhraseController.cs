@@ -256,6 +256,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
         for (int i = 0; i < lyricEvents.Count; i++) {
             tempString += lyricEvents[i].formattedText;
         }
+        tempString = tempString.TrimEnd();
         tempString += "\n";
         return tempString;
     }

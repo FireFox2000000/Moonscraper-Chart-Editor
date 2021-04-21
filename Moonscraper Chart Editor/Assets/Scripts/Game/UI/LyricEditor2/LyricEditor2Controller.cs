@@ -440,7 +440,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         for (int i = 0; i < phrases.Count; i++) {
             rep += phrases[i].GetTextRepresentation();
         }
-        return rep;
+        return rep.TrimEnd();
     }
 
     static bool IsLyricEvent(Event selectedEvent) {
