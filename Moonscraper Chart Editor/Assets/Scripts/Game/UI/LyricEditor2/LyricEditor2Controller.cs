@@ -217,7 +217,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         // Tick calculation by set distance before first lyric
         uint startTick1 = (uint)(phrase.GetFirstEventTick() - (int)(songResolution / phrasePaddingMax * 4));
         // Tick calculation proportional to distance to last phrase
-        uint startTick2 = (uint)(firstSafeTick + (int)((phrase.GetFirstEventTick() - firstSafeTick) * phrasePaddingFactor));
+        uint startTick2 = (uint)(firstSafeTick + (int)((phrase.GetFirstEventTick() - firstSafeTick) * (1 - phrasePaddingFactor)));
         // Actual start tick is the maximum of these two values
         uint startTick = System.Math.Max(startTick1, startTick2);
 
