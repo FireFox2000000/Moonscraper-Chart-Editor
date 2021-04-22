@@ -445,7 +445,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                 PickupFrom(inputPhrase, false);
                 UnityEngine.Object.Destroy(inputPhrase.gameObject);
                 phrases.RemoveAt(inputIndex);
-                
+
                 var newPhrases = CreatePhrases(inputLyrics);
                 phrases.InsertRange(inputIndex, newPhrases);
                 UpdateSortIds();
@@ -491,6 +491,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // newline notation; field should be populated with a string given by
     // GetTextRepresentation()
     public void EnableInputMenu() {
+        lyricInputMenu.SetTitle("Input Lyrics");
         inputState = InputState.Full;
         string existingLyrics = GetTextRepresentation();
         lyricInputMenu.Display(existingLyrics);
@@ -498,7 +499,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
     // Display input field with custom prepopulated field; function is called
     // internally only, so it should not update inputState
-    void EnableInputMenu(string prefilledLyrics) {
+    void EnableInputMenu(string prefilledLyrics, string title = "Edit Phrase Lyrics") {
+        lyricInputMenu.SetTitle(title);
         lyricInputMenu.Display(prefilledLyrics);
     }
 
