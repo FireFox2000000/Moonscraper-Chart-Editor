@@ -76,6 +76,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     bool playbackScrolling = false;
     uint playbackEndTick;
     int lastPlaybackTargetIndex = 0;
+    string savedUnplacedSyllables = "";
+    string savedPlacedSyllables = "";
     // commandStackPushes keeps a record of all command stack pushes so they can
     // be removed from the main command stack (Pop() method returns void, not
     // the revoked command; see CommandStack.cs)
@@ -97,11 +99,15 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         // Create a new edit command set
         editCommands = new SongEditCommandSet();
         ImportExistingLyrics();
+        AddSavedSyllables();
         // Activate auto-scrolling if playback is active on lyric editor enable
         autoScroller.enabled = playbackActive;
     }
 
     void OnDisable() {
+        // Save lyrics
+        SaveUnplacedSyllables();
+        SavePlacedSyllables();
         // Place phrase_end for current phrase if it hasn't been placed
         if (currentPhrase != null && !currentPhrase.phraseEndPlaced && currentPhrase.anySyllablesPlaced) {
             // Ensure valid placement
@@ -338,6 +344,78 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
     }
 
+    // Add phrases from last session, if the other imported lyrics match the
+    // previously-stored lyrics
+    void AddSavedSyllables() {
+        if (savedUnplacedSyllables.Length != 0 && GetTextRepresentation().Equals(savedPlacedSyllables)) {
+            int firstNewline = savedUnplacedSyllables.IndexOf('\n');
+            string firstLine = savedUnplacedSyllables.Substring(0, firstNewline);
+            List<List<string>> firstLineSyllablesRaw = ParseLyrics(firstLine);
+            if (firstLineSyllablesRaw.Count > 0) {
+                List<string> firstLineSyllables = firstLineSyllablesRaw[0];
+                phrases[phrases.Count-1].AddSyllables(firstLineSyllables);
+                phrases[phrases.Count-1].PickupPhraseEnd();
+            }
+
+            string otherLines = savedUnplacedSyllables.Substring(firstNewline+1);
+            List<LyricEditor2PhraseController> extraPhrases = CreatePhrases(otherLines);
+            phrases.AddRange(extraPhrases);
+            UpdateSortIds();
+        }
+    }
+
+    // Create a string representation of all unplaced syllables
+    void SaveUnplacedSyllables() {
+        savedUnplacedSyllables = "";
+        var incompletePhrase = GetNextUnfinishedPhrase();
+        if (incompletePhrase != null) {
+            int firstSearchIndex;
+            // Check for some, but not all, syllables placed
+            if (incompletePhrase.anySyllablesPlaced && !incompletePhrase.allSyllablesPlaced) {
+                savedUnplacedSyllables += incompletePhrase.GetTextRepresentation(onlyConsiderUnplaced: true);
+                firstSearchIndex = phrases.BinarySearch(incompletePhrase) + 1;
+            } else {
+                firstSearchIndex = phrases.BinarySearch(incompletePhrase);
+                savedUnplacedSyllables += "\n";
+            }
+
+            // Save fully-placed phrases
+            for (int i = firstSearchIndex; i < phrases.Count; i++) {
+                savedUnplacedSyllables += phrases[i].GetTextRepresentation();
+            }
+        }
+    }
+
+    // Create a string representation of all placed syllables
+    void SavePlacedSyllables() {
+        savedPlacedSyllables = "";
+        var incompletePhrase = GetNextUnfinishedPhrase();
+        if (incompletePhrase != null) {
+            int unfinishedIndex = phrases.BinarySearch(incompletePhrase);
+            for (int i = 0; i < unfinishedIndex; i++) {
+                savedPlacedSyllables += phrases[i].GetTextRepresentation();
+            }
+            savedPlacedSyllables += incompletePhrase.GetTextRepresentation(onlyConsiderPlaced: true);
+            savedPlacedSyllables = savedPlacedSyllables.TrimEnd();
+        } else {
+            savedPlacedSyllables = GetTextRepresentation();
+        }
+    }
+
+    // Creates a list of LyricEditor2PhraseController objects from a string
+    // input
+    List<LyricEditor2PhraseController> CreatePhrases(string inputLyrics) {
+        List<LyricEditor2PhraseController> createdPhrases = new List<LyricEditor2PhraseController>();
+        List<List<string>> parsedLyrics = ParseLyrics(inputLyrics);
+        for (int i = 0; i < parsedLyrics.Count; i++) {
+            LyricEditor2PhraseController newPhrase = UnityEngine.GameObject.Instantiate(phraseTemplate, phraseTemplate.transform.parent).GetComponent<LyricEditor2PhraseController>();
+            newPhrase.InitializeSyllables(parsedLyrics[i]);
+            createdPhrases.Add(newPhrase);
+            newPhrase.gameObject.SetActive(true);
+        }
+        return createdPhrases;
+    }
+
     // Take dash-newline formatted lyrics from the lyric input menu and parse
     // them into phrases. Called when the user hits "submit" in the input menu.
     // Consider the input state!
@@ -347,13 +425,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             ClearPhraseObjects();
             string inputLyrics = lyricInputMenu.text ?? "";
 
-            List<List<string>> parsedLyrics = ParseLyrics(inputLyrics);
-            for (int i = 0; i < parsedLyrics.Count; i++) {
-                LyricEditor2PhraseController newPhrase = UnityEngine.GameObject.Instantiate(phraseTemplate, phraseTemplate.transform.parent).GetComponent<LyricEditor2PhraseController>();
-                newPhrase.InitializeSyllables(parsedLyrics[i]);
-                phrases.Add(newPhrase);
-                newPhrase.gameObject.SetActive(true);
-            }
+            phrases.AddRange(CreatePhrases(inputLyrics));
 
             if (phrases.Count > 0) {
                 // Taken care of in OnStateChanged()
@@ -366,20 +438,15 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
         } else if (inputState == InputState.Phrase) {
             string inputLyrics = lyricInputMenu.text ?? "";
-            List<List<string>> parsedLyrics = ParseLyrics(inputLyrics);
+            // List<List<string>> parsedLyrics = ParseLyrics(inputLyrics);
             int inputIndex = phrases.BinarySearch(inputPhrase);
             if (inputIndex >= 0) {
                 // Update phrase content
                 PickupFrom(inputPhrase, false);
                 UnityEngine.Object.Destroy(inputPhrase.gameObject);
                 phrases.RemoveAt(inputIndex);
-                var newPhrases = new List<LyricEditor2PhraseController>();
-                for (int i = 0; i < parsedLyrics.Count; i++) {
-                    LyricEditor2PhraseController newPhrase = UnityEngine.GameObject.Instantiate(phraseTemplate, phraseTemplate.transform.parent).GetComponent<LyricEditor2PhraseController>();
-                    newPhrase.InitializeSyllables(parsedLyrics[i]);
-                    newPhrases.Add(newPhrase);
-                    newPhrase.gameObject.SetActive(true);
-                }
+                
+                var newPhrases = CreatePhrases(inputLyrics);
                 phrases.InsertRange(inputIndex, newPhrases);
                 UpdateSortIds();
                 UpdateDisplayOrder();

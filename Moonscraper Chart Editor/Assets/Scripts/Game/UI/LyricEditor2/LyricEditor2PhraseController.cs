@@ -124,6 +124,14 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
         phraseEndEvent.SetTick(tick);
     }
 
+    public void PickupPhraseStart() {
+        phraseStartEvent.Pickup().Invoke();
+    }
+
+    public void PickupPhraseEnd() {
+        phraseEndEvent.Pickup().Invoke();
+    }
+
     void FormatAndAddSyllable(string syllable, LyricEditor2Event targetEvent) {
         if (syllable.EndsWith("-")) {
             targetEvent.formattedText = syllable;
@@ -149,6 +157,10 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
         phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword, mainController);
         lyricEvents = new List<LyricEditor2Event>();
 
+        AddSyllables(syllables);
+    }
+
+    public void AddSyllables(List<string> syllables) {
         for (int i = 0; i < syllables.Count; i++) {
             string currentSyllable = syllables[i];
             string formattedSyllable = currentSyllable.TrimEnd();
@@ -251,7 +263,28 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
 
     // Return a text representation of the current phrase state, using hyphen-
     // newline notation
-    public string GetTextRepresentation() {
+    public string GetTextRepresentation(bool onlyConsiderUnplaced = false, bool onlyConsiderPlaced = false) {
+        string tempString = "";
+        for (int i = 0; i < lyricEvents.Count; i++) {
+            if (onlyConsiderUnplaced) {
+                if (!lyricEvents[i].hasBeenPlaced) {
+                    tempString += lyricEvents[i].formattedText;
+                }
+            } else if (onlyConsiderPlaced) {
+                if (lyricEvents[i].hasBeenPlaced) {
+                    tempString += lyricEvents[i].formattedText;
+                }
+            } else {
+                tempString += lyricEvents[i].formattedText;
+            }
+        }
+        tempString = tempString.TrimEnd();
+        tempString += "\n";
+        return tempString;
+    }
+
+    // Same as GetTextRepresentation(), but only consider unplaced phrases
+    public string GetUnplacedTextRepresentation() {
         string tempString = "";
         for (int i = 0; i < lyricEvents.Count; i++) {
             tempString += lyricEvents[i].formattedText;
