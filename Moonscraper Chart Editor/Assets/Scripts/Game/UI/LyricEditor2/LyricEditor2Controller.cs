@@ -442,10 +442,13 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             int inputIndex = phrases.BinarySearch(inputPhrase);
             if (inputIndex >= 0) {
                 // Update phrase content
+                // Remove existing phrases
                 PickupFrom(inputPhrase, false);
-                UnityEngine.Object.Destroy(inputPhrase.gameObject);
-                phrases.RemoveAt(inputIndex);
-
+                for (int i = inputIndex; i < phrases.Count; i++) {
+                    UnityEngine.Object.Destroy(phrases[i].gameObject);
+                }
+                phrases.RemoveRange(inputIndex, phrases.Count - inputIndex);
+                // Create new phrases
                 var newPhrases = CreatePhrases(inputLyrics);
                 phrases.InsertRange(inputIndex, newPhrases);
                 UpdateSortIds();
@@ -499,7 +502,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
     // Display input field with custom prepopulated field; function is called
     // internally only, so it should not update inputState
-    void EnableInputMenu(string prefilledLyrics, string title = "Edit Phrase Lyrics") {
+    void EnableInputMenu(string prefilledLyrics, string title = "Input Lyrics") {
         lyricInputMenu.SetTitle(title);
         lyricInputMenu.Display(prefilledLyrics);
     }
@@ -729,6 +732,11 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     public void EditPhrase(LyricEditor2PhraseController phrase) {
         inputPhrase = phrase;
         inputState = InputState.Phrase;
-        EnableInputMenu(phrase.GetTextRepresentation());
+        string rep = "";
+        int startIndex = phrases.BinarySearch(phrase);
+        for (int i = startIndex; i >= 0 && i < phrases.Count; i++) {
+            rep += phrases[i].GetTextRepresentation();
+        }
+        EnableInputMenu(rep, title: (startIndex < phrases.Count - 1) ? "Edit Phrases" : "Edit Phrase");
     }
 }
