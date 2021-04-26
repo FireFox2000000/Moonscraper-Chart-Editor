@@ -62,9 +62,6 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         Phrase
     }
 
-    static float phrasePaddingFactor = 0.8F;
-    static int phrasePaddingMax = 8; // 16 refers to one sixteenth the length of a phrase in the current song.
-    // So with a resolution of 192, the phrase_start event should have at least 12 ticks of spacing
     static Song currentSong {get {return ChartEditor.Instance.currentSong;}}
     static float songResolution {get {return currentSong.resolution;}}
     static bool playbackActive {get {return (ChartEditor.Instance.currentState == ChartEditor.State.Playing);}}
@@ -77,6 +74,13 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     LyricEditor2PhraseController phraseTemplate;
     [UnityEngine.SerializeField]
     LyricEditor2InputMenu lyricInputMenu;
+    [UnityEngine.SerializeField]
+    [UnityEngine.Range(0, 1)]
+    float phrasePaddingFactor;
+    [UnityEngine.SerializeField]
+    [UnityEngine.Tooltip("Phrase padding as 1/n measures; i.e. a value of 16 means one sixteenth note")]
+    int phrasePaddingMax; // 16 refers to one sixteenth the length of a phrase in the current song.
+    // So with a resolution of 192, the phrase_start event should have at least 12 ticks of spacing
 
     LyricEditor2PhraseController currentPhrase;
     List<LyricEditor2PhraseController> phrases = new List<LyricEditor2PhraseController>();
