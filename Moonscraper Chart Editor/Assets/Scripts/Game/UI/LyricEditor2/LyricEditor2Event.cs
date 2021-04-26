@@ -36,12 +36,12 @@ public class LyricEditor2Event
         }
     }
 
-    private Event referencedEvent;
     public bool hasBeenPlaced {get; private set;}
     public string text {get; private set;}
     public string formattedText = "";
     public uint? tick {get {return referencedEvent?.tick;}}
     LyricEditor2Controller mainController;
+    Event referencedEvent;
 
 
     public LyricEditor2Event(string text, LyricEditor2Controller controller) {
@@ -59,26 +59,6 @@ public class LyricEditor2Event
         referencedEvent = existingEvent;
         this.text = existingEvent?.title ?? "";
         this.hasBeenPlaced = (existingEvent != null);
-    }
-
-    // Invoke a pickup command
-    public void InvokePickup() {
-        referencedEvent = null;
-        hasBeenPlaced = false;
-    }
-
-    // Revert to a previous state after Pickup() is revoked
-    public void RevokePickup(string formattedText, Event oldEvent) {
-        this.formattedText = formattedText;
-        SetEvent(oldEvent);
-    }
-
-    // Remove lyric from the editor
-    public MoonscraperEngine.ICommand Pickup() {
-        if (this.referencedEvent != null) {
-            return new PickupCommand(referencedEvent, formattedText, InvokePickup, RevokePickup, mainController);
-        }
-        return null;
     }
 
     public void SetText(string newText) {
@@ -107,5 +87,25 @@ public class LyricEditor2Event
 
         this.referencedEvent = newLyric;
         this.hasBeenPlaced = true;
+    }
+
+    // Remove lyric from the editor
+    public MoonscraperEngine.ICommand Pickup() {
+        if (this.referencedEvent != null) {
+            return new PickupCommand(referencedEvent, formattedText, InvokePickup, RevokePickup, mainController);
+        }
+        return null;
+    }
+
+    // Invoke a pickup command
+    public void InvokePickup() {
+        referencedEvent = null;
+        hasBeenPlaced = false;
+    }
+
+    // Revert to a previous state after Pickup() is revoked
+    public void RevokePickup(string formattedText, Event oldEvent) {
+        this.formattedText = formattedText;
+        SetEvent(oldEvent);
     }
 }

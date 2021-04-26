@@ -41,6 +41,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     public static readonly string c_phraseStartKeyword = "phrase_start";
     public static readonly string c_phraseEndKeyword = "phrase_end";
     public static readonly string c_lyricPrefix = "lyric ";
+
     public bool allSyllablesPlaced {get; private set;} = false;
     public bool anySyllablesPlaced {get; private set;} = false;
     public bool phraseStartPlaced {get {return phraseStartEvent.hasBeenPlaced;}}
@@ -54,25 +55,6 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     LyricEditor2Event phraseStartEvent = null;
     LyricEditor2Event phraseEndEvent = null;
     LyricEditor2Event placingLyric;
-
-    void Start() {
-        rectTransform = GetComponent<UnityEngine.RectTransform>();
-    }
-
-    void CheckForUnplacedSyllables() {
-        if (GetNextUnplacedSyllable() == null) {
-            allSyllablesPlaced = true;
-        } else {
-            allSyllablesPlaced = false;
-        }
-        anySyllablesPlaced = false;
-        foreach (LyricEditor2Event syllable in lyricEvents) {
-            if (syllable.hasBeenPlaced) {
-                anySyllablesPlaced = true;
-                break;
-            }
-        }
-    }
 
     // Place the next lyric in lyricEvents
     public void StartPlaceNextLyric(uint tick) {
@@ -132,24 +114,6 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
         phraseEndEvent.Pickup().Invoke();
     }
 
-    void FormatAndAddSyllable(string syllable, LyricEditor2Event targetEvent) {
-        if (syllable.EndsWith("-")) {
-            targetEvent.formattedText = syllable;
-        } else {
-            targetEvent.formattedText = syllable + " ";
-        }
-    }
-
-    LyricEditor2Event GetNextUnplacedSyllable() {
-        for (int i = 0; i < lyricEvents.Count; i++) {
-            LyricEditor2Event currentEvent = lyricEvents[i];
-            if (!currentEvent.hasBeenPlaced) {
-                return currentEvent;
-            }
-        }
-        return null;
-    }
-
     // Initialize lyricEvents using a list of string syllables. Syllables which
     // do not end with a dash will be displayed with a trailing space
     public void InitializeSyllables(List<string> syllables) {
@@ -158,21 +122,6 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
         lyricEvents = new List<LyricEditor2Event>();
 
         AddSyllables(syllables);
-    }
-
-    public void AddSyllables(List<string> syllables) {
-        for (int i = 0; i < syllables.Count; i++) {
-            string currentSyllable = syllables[i];
-            string formattedSyllable = currentSyllable.TrimEnd();
-
-            LyricEditor2Event newEvent = new LyricEditor2Event(c_lyricPrefix + formattedSyllable, mainController);
-            // Add syllables to lyricEvents
-            lyricEvents.Add(newEvent);
-            // Add formatted name to event
-            FormatAndAddSyllable(formattedSyllable, newEvent);
-        }
-        CheckForUnplacedSyllables();
-        DisplayText();
     }
 
     // Initialize lyricEvents using a list of events which already exist in the
@@ -224,41 +173,19 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
         }
     }
 
-    // Update the text content of phraseText to reflect the current phrase state
-    void DisplayText() {
-        string defaultColorString = UnityEngine.ColorUtility.ToHtmlStringRGBA(defaultColor);
-        string unfocusedColorString = UnityEngine.ColorUtility.ToHtmlStringRGBA(unfocusedColor);
-        string selectionColorString = UnityEngine.ColorUtility.ToHtmlStringRGBA(selectionColor);
-        string previousColor = "";
-        string textToDisplay = "";
+    public void AddSyllables(List<string> syllables) {
+        for (int i = 0; i < syllables.Count; i++) {
+            string currentSyllable = syllables[i];
+            string formattedSyllable = currentSyllable.TrimEnd();
 
-        for (int i = 0; i < lyricEvents.Count; i++) {
-            LyricEditor2Event currentEvent = lyricEvents[i];
-            string currentColor;
-
-            // Set currentColor
-            if (currentEvent == placingLyric) {
-                currentColor = selectionColorString;
-            } else if (currentEvent.hasBeenPlaced) {
-                currentColor = unfocusedColorString;
-            } else {
-                currentColor = defaultColorString;
-            }
-
-            // Add color tags
-            if (currentColor != previousColor) {
-                if (previousColor != "") {
-                    textToDisplay += "</color>";
-                }
-                textToDisplay += "<color=#" + currentColor + ">";
-                previousColor = currentColor;
-            }
-            textToDisplay += currentEvent.formattedText;
+            LyricEditor2Event newEvent = new LyricEditor2Event(c_lyricPrefix + formattedSyllable, mainController);
+            // Add syllables to lyricEvents
+            lyricEvents.Add(newEvent);
+            // Add formatted name to event
+            FormatAndAddSyllable(formattedSyllable, newEvent);
         }
-        // Add terminating color tag
-        textToDisplay += "</color>";
-        // Update UI text
-        phraseText.text = textToDisplay;
+        CheckForUnplacedSyllables();
+        DisplayText();
     }
 
     // Return a text representation of the current phrase state, using hyphen-
@@ -292,11 +219,6 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
         tempString = tempString.TrimEnd();
         tempString += "\n";
         return tempString;
-    }
-
-    private void RefreshAfterPickup() {
-        CheckForUnplacedSyllables();
-        DisplayText();
     }
 
     // Pick up all contained lyric events, including the phrase_start and
@@ -349,4 +271,83 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
          placingLyric = GetEventAtTick(currentTick);
          DisplayText();
      }
+
+    void Start() {
+        rectTransform = GetComponent<UnityEngine.RectTransform>();
+    }
+
+    void CheckForUnplacedSyllables() {
+        if (GetNextUnplacedSyllable() == null) {
+            allSyllablesPlaced = true;
+        } else {
+            allSyllablesPlaced = false;
+        }
+        anySyllablesPlaced = false;
+        foreach (LyricEditor2Event syllable in lyricEvents) {
+            if (syllable.hasBeenPlaced) {
+                anySyllablesPlaced = true;
+                break;
+            }
+        }
+    }
+
+    void FormatAndAddSyllable(string syllable, LyricEditor2Event targetEvent) {
+        if (syllable.EndsWith("-")) {
+            targetEvent.formattedText = syllable;
+        } else {
+            targetEvent.formattedText = syllable + " ";
+        }
+    }
+
+    LyricEditor2Event GetNextUnplacedSyllable() {
+        for (int i = 0; i < lyricEvents.Count; i++) {
+            LyricEditor2Event currentEvent = lyricEvents[i];
+            if (!currentEvent.hasBeenPlaced) {
+                return currentEvent;
+            }
+        }
+        return null;
+    }
+
+    // Update the text content of phraseText to reflect the current phrase state
+    void DisplayText() {
+        string defaultColorString = UnityEngine.ColorUtility.ToHtmlStringRGBA(defaultColor);
+        string unfocusedColorString = UnityEngine.ColorUtility.ToHtmlStringRGBA(unfocusedColor);
+        string selectionColorString = UnityEngine.ColorUtility.ToHtmlStringRGBA(selectionColor);
+        string previousColor = "";
+        string textToDisplay = "";
+
+        for (int i = 0; i < lyricEvents.Count; i++) {
+            LyricEditor2Event currentEvent = lyricEvents[i];
+            string currentColor;
+
+            // Set currentColor
+            if (currentEvent == placingLyric) {
+                currentColor = selectionColorString;
+            } else if (currentEvent.hasBeenPlaced) {
+                currentColor = unfocusedColorString;
+            } else {
+                currentColor = defaultColorString;
+            }
+
+            // Add color tags
+            if (currentColor != previousColor) {
+                if (previousColor != "") {
+                    textToDisplay += "</color>";
+                }
+                textToDisplay += "<color=#" + currentColor + ">";
+                previousColor = currentColor;
+            }
+            textToDisplay += currentEvent.formattedText;
+        }
+        // Add terminating color tag
+        textToDisplay += "</color>";
+        // Update UI text
+        phraseText.text = textToDisplay;
+    }
+
+    void RefreshAfterPickup() {
+        CheckForUnplacedSyllables();
+        DisplayText();
+    }
 }

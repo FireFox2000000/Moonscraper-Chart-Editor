@@ -15,6 +15,19 @@ public class LyricEditor2AutoScroller : MonoBehaviour
     float lastY = 0;
     float targetY;
 
+    // Scroll to a specific RectTransform
+    public void ScrollTo(RectTransform target) {
+        // Never mind, DON'T ignore identical scroll calls; this just causes
+        // problems with ambiguity because there is no feedback for whether
+        // the operation succeeded
+        currentDeltaTime = 0;
+        lastY = targetY;
+        if (target != null) {
+            targetY = target.anchoredPosition.y;
+        } else {
+            targetY = endSpacer.anchoredPosition.y;
+        }
+    }
 
     void Start () {
 
@@ -49,20 +62,6 @@ public class LyricEditor2AutoScroller : MonoBehaviour
             return max;
         } else {
             return min + (2 - factor) * factor * (max - min);
-        }
-    }
-
-    // Scroll to a specific RectTransform
-    public void ScrollTo(RectTransform target) {
-        // Never mind, DON'T ignore identical scroll calls; this just causes
-        // problems with ambiguity because there is no feedback for whether
-        // the operation succeeded
-        currentDeltaTime = 0;
-        lastY = targetY;
-        if (target != null) {
-            targetY = target.anchoredPosition.y;
-        } else {
-            targetY = endSpacer.anchoredPosition.y;
         }
     }
 
