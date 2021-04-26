@@ -1,3 +1,9 @@
+// Copyright (c) 2016-2020 Alexander Ong
+// See LICENSE in project root for license information.
+
+// Thank you DarkAngel2096 for your previous contributions to get lyrics into
+// more charts!
+
 using MoonscraperChartEditor.Song;
 using System.Collections.Generic;
 using UnityEngine.UI;
