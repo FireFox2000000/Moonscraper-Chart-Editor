@@ -20,9 +20,6 @@ public class LyricEditor2AutoScroller : MonoBehaviour
 
     // Scroll to a specific RectTransform
     public void ScrollTo(RectTransform target) {
-        // Never mind, DON'T ignore identical scroll calls; this just causes
-        // problems with ambiguity because there is no feedback for whether
-        // the operation succeeded
         currentDeltaTime = 0;
         lastY = targetY;
         if (target != null) {
@@ -30,10 +27,6 @@ public class LyricEditor2AutoScroller : MonoBehaviour
         } else {
             targetY = endSpacer.anchoredPosition.y;
         }
-    }
-
-    void Start () {
-
     }
 
     void Update () {

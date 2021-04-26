@@ -83,7 +83,6 @@ public class LyricEditor2Event
         commands.Add(new SongEditAdd(newLyric));
 
         BatchedSongEditCommand batchedCommands = new BatchedSongEditCommand(commands);
-        // ChartEditor.Instance.commandStack.Push(batchedCommands);
         batchedCommands.Invoke();
         mainController.editCommands.Add(batchedCommands);
         ChartEditor.Instance.commandStack.ResetTail();

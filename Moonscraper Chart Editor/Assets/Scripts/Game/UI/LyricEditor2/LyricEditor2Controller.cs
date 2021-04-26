@@ -169,8 +169,6 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             phrases.AddRange(CreatePhrases(inputLyrics));
 
             if (phrases.Count > 0) {
-                // Taken care of in OnStateChanged()
-                // autoScroller.ScrollTo(phrases[0].rectTransform);
                 currentPhrase = phrases[0];
             }
 
@@ -179,10 +177,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
         } else if (inputState == InputState.Phrase) {
             string inputLyrics = lyricInputMenu.text ?? "";
-            // List<List<string>> parsedLyrics = ParseLyrics(inputLyrics);
             int inputIndex = phrases.BinarySearch(inputPhrase);
             if (inputIndex >= 0) {
-                // Update phrase content
                 // Remove existing phrases
                 PickupFrom(inputPhrase, false);
                 for (int i = inputIndex; i < phrases.Count; i++) {
@@ -574,7 +570,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         return null;
     }
 
-    // Pickup all phrases; TODO not revocable!
+    // Pickup all phrases; not revokable, as references to phrases and events
+    // are lost when ClearPickupCommands() is called
     void PickupAllPhrases() {
         foreach (var phrase in phrases) {
             phrase.Pickup().Invoke();
@@ -672,9 +669,6 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             autoScroller.ScrollTo(currentPhrase?.rectTransform);
             return;
         }
-
-        // TODO unexpected behaviour when all phrases have been placed (auto-
-        // scrolls to the bottom of the editor)
 
         // Find target phrase
         LyricEditor2PhraseController playbackTarget = lastPlaybackTarget;
