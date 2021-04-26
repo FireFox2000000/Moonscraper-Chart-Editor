@@ -295,7 +295,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     }
 
     void FormatAndAddSyllable(string syllable, LyricEditor2Event targetEvent) {
-        if (syllable.EndsWith("-")) {
+        if (syllable.EndsWith("-") || syllable.EndsWith("=")) {
             targetEvent.formattedText = syllable;
         } else {
             targetEvent.formattedText = syllable + " ";

@@ -617,10 +617,10 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
         // Prepare the regex engine to parse each phrase
         List<List<string>> parsedLyrics = new List<List<string>>();
-        // [^-\s]+      matches one or more characters in a syllable, excluding
-        //                  spaces and dashes
-        // (-\s?|\s?)   matches a dash, or whitespace if no dash is found
-        string regexPattern = @"[^-\s]+(-|\s?)";
+        // [^-^=\s]+  matches one or more characters in a syllable, excluding
+        //                  spaces, dashes, and equals signs
+        // (-|=|\s?)  matches a dash, equals sign, or trailing whitespace
+        string regexPattern = @"[^-^=\s]+(-|=|\s?)";
         Regex rx = new Regex(regexPattern);
 
         foreach (string basePhrase in tempPhrases)
