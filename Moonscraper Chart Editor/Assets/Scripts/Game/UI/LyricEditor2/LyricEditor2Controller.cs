@@ -624,7 +624,10 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // given as phrase controller input. Does not have an implemented time-out
     // period in case of excessively long strings to be parsed.
     List<List<string>> ParseLyrics(string inputString) {
-        // Start by splitting the string into phrases
+        // Remove short tags (5 characters or less), plus any other < or > keys
+        inputString = Regex.Replace(inputString, "</?[^<>]{0,5}>|<|>", System.String.Empty);
+
+        // Split into phrases
         char[] newlineCharacters = {'\n', '\r'};
         string[] tempPhrases = inputString.Split(newlineCharacters, System.StringSplitOptions.RemoveEmptyEntries);
 
