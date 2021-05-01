@@ -265,4 +265,12 @@ public class Services : MonoBehaviour
         prevScreenSize.x = Screen.width;
         prevScreenSize.y = Screen.height;
     }
+
+    public bool IsLyricEditorActive
+    {
+        get
+        {
+            return uiServices.lyricEditor.isActiveAndEnabled;
+        }
+    }
 }

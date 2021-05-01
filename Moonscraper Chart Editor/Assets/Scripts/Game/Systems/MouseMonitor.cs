@@ -34,7 +34,15 @@ public class MouseMonitor : SystemManagerState.System
     public override void SystemUpdate ()
     {
         currentRaycastFromPointer = RaycastFromPointer();
-        currentSelectableUnderMouse = GetSelectableObjectUnderMouse();
+
+        if (ChartEditor.Instance.services.IsLyricEditorActive)
+        {
+            currentSelectableUnderMouse = null;
+        }
+        else
+        {
+            currentSelectableUnderMouse = GetSelectableObjectUnderMouse();
+        }
 
         Vector2 viewportPos = mainCamera.ScreenToViewportPoint(Input.mousePosition);
 

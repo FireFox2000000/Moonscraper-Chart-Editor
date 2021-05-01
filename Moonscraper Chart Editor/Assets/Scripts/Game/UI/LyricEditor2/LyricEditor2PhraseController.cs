@@ -41,9 +41,8 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     [UnityEngine.SerializeField]
     LyricEditor2Controller mainController;
 
-    public static readonly string c_phraseStartKeyword = "phrase_start";
-    public static readonly string c_phraseEndKeyword = "phrase_end";
-    public static readonly string c_lyricPrefix = "lyric ";
+    public static readonly string c_phraseStartKeyword = LyricHelper.PhraseStartText;
+    public static readonly string c_phraseEndKeyword = LyricHelper.PhraseEndText;
 
     public bool allSyllablesPlaced {get; private set;} = false;
     public bool anySyllablesPlaced {get; private set;} = false;
@@ -53,6 +52,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     public uint? endTick {get {return phraseEndEvent.tick;}}
     public UnityEngine.RectTransform rectTransform {get; private set;}
     public int sortID = 0;
+    public int numSyllables {get {return lyricEvents?.Count ?? 0;}}
 
     List<LyricEditor2Event> lyricEvents;
     LyricEditor2Event phraseStartEvent = null;
@@ -151,13 +151,13 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
                 }
             } else if (currentEvent.title.Equals(c_phraseEndKeyword)) {
                 phraseEndEvent = new LyricEditor2Event(currentEvent, mainController);
-            } else if (currentEvent.title.StartsWith(c_lyricPrefix)) {
+            } else if (currentEvent.IsLyric()) {
                 LyricEditor2Event newEvent = new LyricEditor2Event(currentEvent, mainController);
                 lyricEvents.Add(newEvent);
 
                 string formattedSyllable = currentEvent.title.TrimEnd();
                 // Remove lyric prefix
-                formattedSyllable = formattedSyllable.Substring(c_lyricPrefix.Length);
+                formattedSyllable = formattedSyllable.Substring(LyricHelper.LYRIC_EVENT_PREFIX.Length);
                 // Add formatted name to event
                 FormatAndAddSyllable(formattedSyllable, newEvent);
             }
@@ -181,11 +181,33 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
             string currentSyllable = syllables[i];
             string formattedSyllable = currentSyllable.TrimEnd();
 
-            LyricEditor2Event newEvent = new LyricEditor2Event(c_lyricPrefix + formattedSyllable, mainController);
+            LyricEditor2Event newEvent = new LyricEditor2Event(LyricHelper.LYRIC_EVENT_PREFIX + formattedSyllable, mainController);
             // Add syllables to lyricEvents
             lyricEvents.Add(newEvent);
             // Add formatted name to event
             FormatAndAddSyllable(formattedSyllable, newEvent);
+        }
+        CheckForUnplacedSyllables();
+        DisplayText();
+    }
+
+    // Pickup the last syllable in this phrase, plus the phrase_end event if
+    // needed
+    public void PickupLastSyllable() {
+        LyricEditor2Event firstUnplaced = GetNextUnplacedSyllable();
+        if (firstUnplaced != null) {
+            int unplacedIndex = lyricEvents.IndexOf(firstUnplaced);
+            if (unplacedIndex > 0) {
+                lyricEvents[unplacedIndex - 1].Pickup().Invoke();
+            }
+            if (unplacedIndex == 1) {
+                PickupPhraseStart();
+            }
+        } else {
+            if (lyricEvents[lyricEvents.Count - 1].hasBeenPlaced) {
+                lyricEvents[lyricEvents.Count - 1].Pickup().Invoke();
+                PickupPhraseEnd();
+            }
         }
         CheckForUnplacedSyllables();
         DisplayText();
@@ -341,7 +363,9 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
                 textToDisplay += "<color=#" + currentColor + ">";
                 previousColor = currentColor;
             }
-            textToDisplay += currentEvent.formattedText;
+            // Make sure tags don't mess with anything
+            string eventTextTagless = currentEvent.formattedText.Replace("<", "<<i></i>");
+            textToDisplay += eventTextTagless;
         }
         // Add terminating color tag
         textToDisplay += "</color>";

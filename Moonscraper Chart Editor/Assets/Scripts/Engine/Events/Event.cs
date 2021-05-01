@@ -44,9 +44,9 @@ namespace MoonscraperEngine
             callbackList.Add(callbackFn);
         }
 
-        public void Deregister(EventCallback callbackFn)
+        public bool Deregister(EventCallback callbackFn)
         {
-            callbackList.Remove(callbackFn);
+            return callbackList.Remove(callbackFn);
         }
 
         public void Fire(in Params parameters)

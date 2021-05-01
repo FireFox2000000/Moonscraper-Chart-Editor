@@ -155,6 +155,17 @@
             }
         },
         {
+            "mSChartEditorInputAction": "LyricEditorSetTime",
+            "properties": {
+                "displayName": "Lyric Editor Set Time",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 0,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
             "mSChartEditorInputAction": "MoveStepPositive",
             "properties": {
                 "displayName": "Scroll Step Forward",

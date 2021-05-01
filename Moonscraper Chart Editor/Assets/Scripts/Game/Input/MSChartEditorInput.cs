@@ -41,6 +41,8 @@ public enum MSChartEditorInputActions
     FileSave,
     FileSaveAs,
 
+    LyricEditorSetTime,
+
     MoveStepPositive,
     MoveStepNegative,
     MoveMeasurePositive,
