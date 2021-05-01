@@ -337,6 +337,25 @@
             }
         },
         {
+            "action": "LyricEditorSetTime",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            13
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
             "action": "MoveStepPositive",
             "input": {
                 "kbMaps": [

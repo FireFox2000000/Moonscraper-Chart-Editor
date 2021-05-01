@@ -27,6 +27,20 @@ public class UIServices : MonoBehaviour {
         }
     }
 
+    LyricEditor2Controller m_lyricEditor = null;
+    public LyricEditor2Controller lyricEditor
+    {
+        get
+        {
+            if (!m_lyricEditor)
+            {
+                m_lyricEditor = GetComponentInChildren<LyricEditor2Controller>(true);
+            }
+
+            return m_lyricEditor;
+        }
+    }
+
     bool _popupBlockerEnabled = false;
     Camera _uiCamera;
     public Camera uiCamera

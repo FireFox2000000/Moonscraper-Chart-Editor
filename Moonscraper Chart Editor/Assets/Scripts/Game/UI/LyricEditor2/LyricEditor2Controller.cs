@@ -257,6 +257,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         AddSavedSyllables();
         // Activate auto-scrolling if playback is active on lyric editor enable
         autoScroller.enabled = playbackActive;
+
+        UnityEngine.Debug.Log("Opened lyric editor");
     }
 
     void OnDisable() {
@@ -276,6 +278,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         if (!editCommands.isEmpty) {
             ChartEditor.Instance.commandStack.Push(editCommands);
         }
+
+        UnityEngine.Debug.Log("Closed lyric editor");
     }
 
     void Start() {
@@ -286,6 +290,15 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     void Update() {
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.LyricEditorSetTime))
+        {
+            PlaceNextLyric();
+        }
+        else if (MSChartEditorInput.GetInputUp(MSChartEditorInputActions.LyricEditorSetTime))
+        {
+            StopPlaceNextLyric();
+        }
+
         if (playbackScrolling) {
             PlaybackScroll(false);
         }

@@ -846,7 +846,17 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     // Chart should be part of the current song
     public void LoadChart(Chart chart)
     {
-        commandStack = new CommandStack();
+        if (commandStack == null)
+        {
+            // Needs initialisation
+            commandStack = new CommandStack();
+            commandStack.onPushPop.Register(events.commandStackPushPopEvent.Fire);           
+        }
+        else
+        {
+            commandStack.Clear();
+        }       
+
         Stop();
 
         currentChart = chart;

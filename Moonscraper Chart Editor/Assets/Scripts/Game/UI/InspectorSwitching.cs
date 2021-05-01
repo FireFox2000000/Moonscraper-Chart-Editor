@@ -125,12 +125,21 @@ public class InspectorSwitching : MonoBehaviour {
         }
 
         if (!currentPropertiesPanel)
+        {
             canvas.SetActive(false);
+        }
         else
         {
             bool applicationModeNotPlaying = editor.currentState != ChartEditor.State.Playing;
             if (canvas.activeSelf != applicationModeNotPlaying)
+            {
                 canvas.SetActive(applicationModeNotPlaying);
-        }    
+            }
+        }
+
+        if (currentPropertiesPanel && editor.services.IsLyricEditorActive)
+        {
+            currentPropertiesPanel.SetActive(false);
+        }
     }
 }
