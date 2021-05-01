@@ -176,6 +176,12 @@ public class EditorObjectToolManager : System.Object
 
         bool ShouldToolBeActive(Services services, ToolID currentToolId)
         {
+            // Disable all tools when in lyrics editor
+            if (services.IsLyricEditorActive)
+            {
+                return false;
+            }
+
             switch (currentToolId)
             {
                 case ToolID.None:
