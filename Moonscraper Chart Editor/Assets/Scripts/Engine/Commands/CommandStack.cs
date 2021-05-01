@@ -11,16 +11,31 @@ namespace MoonscraperEngine
 {
     public class CommandStack
     {
-        List<ICommand> commands = new List<ICommand>();
-        int currentStackIndex = -1;
+        List<ICommand> commands;
+        int currentStackIndex;
+
         public bool isAtStart { get { return currentStackIndex < 0; } }
         public bool isAtEnd { get { return currentStackIndex >= commands.Count - 1; } }
+        public Event<ICommand> onPushPop = new Event<ICommand>();
+
+        public CommandStack()
+        {
+            Clear();
+        }
+
+        public void Clear()
+        {
+            commands = new List<ICommand>();
+            currentStackIndex = -1;
+        }
 
         public void Push()
         {
             if (!isAtEnd)
-                ChartEditor.Instance.events.commandStackPushPopEvent.Fire(commands[++currentStackIndex]);
+            {
+                onPushPop.Fire(commands[++currentStackIndex]);
                 commands[currentStackIndex].Invoke();
+            }
         }
 
         public void Push(ICommand command)
@@ -30,7 +45,7 @@ namespace MoonscraperEngine
             System.Diagnostics.StackFrame frame = stackTrace.GetFrame(1);
             Debug.LogFormat("Command Stack Push: {0} in file {1} at line {2}", frame.GetMethod().Name, System.IO.Path.GetFileName(frame.GetFileName()), frame.GetFileLineNumber());
 #endif
-            ChartEditor.Instance.events.commandStackPushPopEvent.Fire(command);
+            onPushPop.Fire(command);
             ResetTail();
             ++currentStackIndex;
             command.Invoke();
@@ -45,8 +60,10 @@ namespace MoonscraperEngine
             Debug.LogFormat("Command Stack Pop: {0} in file {1} at line {2}", frame.GetMethod().Name, System.IO.Path.GetFileName(frame.GetFileName()), frame.GetFileLineNumber());
 #endif
             if (!isAtStart)
-                ChartEditor.Instance.events.commandStackPushPopEvent.Fire(commands[currentStackIndex]);
+            {
+                onPushPop.Fire(commands[currentStackIndex]);
                 commands[currentStackIndex--].Revoke();
+            }
         }
 
         public void ResetTail()
