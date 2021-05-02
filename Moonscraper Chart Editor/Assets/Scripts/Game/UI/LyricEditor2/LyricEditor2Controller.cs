@@ -98,6 +98,15 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     InputState inputState = InputState.Full;
     LyricEditor2PhraseController inputPhrase;
     uint currentTickPos {get {return ChartEditor.Instance.currentTickPos;}}
+    uint currentSnappedTickPos
+    {
+        get
+        {
+            return Globals.gameSettings.lyricEditorSettings.stepSnappingEnabled 
+                ? Snapable.TickToSnappedTick(currentTickPos, Globals.gameSettings.step, ChartEditor.Instance.currentSong) 
+                : currentTickPos;
+        }
+    }
     bool playbackScrolling = false;
     uint playbackEndTick;
     int lastPlaybackTargetIndex = 0;
@@ -112,7 +121,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
         if (currentPhrase != null && IsLegalToPlaceNow()) {
             // Set the next lyric's tick
-            currentPhrase.StartPlaceNextLyric(currentTickPos);
+            currentPhrase.StartPlaceNextLyric(currentSnappedTickPos);
 
             // Set phrase_start if it is not already set
             if (!currentPhrase.phraseStartPlaced) {
@@ -136,7 +145,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             // were just placed
             if (currentPhrase.allSyllablesPlaced) {
                 if (IsLegalToPlaceNow()) {
-                    currentPhrase.SetPhraseEnd(currentTickPos);
+                    currentPhrase.SetPhraseEnd(currentSnappedTickPos);
                 } else {
                     AutoPlacePhraseEnd(currentPhrase);
                 }
@@ -483,10 +492,11 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // placement is considered invalid
     bool IsLegalToPlaceNow() {
         uint firstPhraseTick = GetFirstSafeTick(currentPhrase);
-        if (currentTickPos <= firstPhraseTick) {
+        uint snappedTick = currentSnappedTickPos;
+        if (snappedTick <= firstPhraseTick) {
             // Current position is before first safe tick
             return false;
-        } else if (currentTickPos <= currentPhrase?.startTick || currentTickPos <= currentPhrase?.GetLastEventTick()) {
+        } else if (snappedTick <= currentPhrase?.startTick || snappedTick <= currentPhrase?.GetLastEventTick()) {
             // Current position is in the middle of currentPhrase
             return false;
         } else {

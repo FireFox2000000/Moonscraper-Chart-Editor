@@ -10,6 +10,9 @@ public class SettingsController : TabMenu
     [SerializeField]
     RectTransform settingsMenuContentArea;
 
+    [SerializeField]
+    Button lyricEditorButton;
+
     public Toggle clapStrum;
     public Toggle clapHopo;
     public Toggle clapTap;
@@ -21,6 +24,7 @@ public class SettingsController : TabMenu
     public Toggle resetAfterGameplay;
     public Toggle autoValidateSongOnSave;
     public Toggle slowdownPitchCorrectionEnabled;
+    public Toggle lyricEditorStepSnappingEnabled;
 
     public Slider musicSourceSlider;
     public Slider guitarSourceSlider;
@@ -122,10 +126,7 @@ public class SettingsController : TabMenu
         initClapToggle(clapHopo, GameSettings.ClapToggle.HOPO);
         initClapToggle(clapTap, GameSettings.ClapToggle.TAP);
 
-        if (Globals.gameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip)
-            leftyFlipToggle.isOn = true;
-        else
-            leftyFlipToggle.isOn = false;
+        leftyFlipToggle.isOn = Globals.gameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip;
 
         switch(Application.targetFrameRate)
         {
@@ -186,15 +187,12 @@ public class SettingsController : TabMenu
         //clapSourceSlider.value = editor.clapSource.volume;
         musicPanSlider.value = Globals.gameSettings.audio_pan * 10.0f;
 
-        if (Globals.gameSettings.extendedSustainsEnabled)
-            extendedSustainsToggle.isOn = true;
-        else
-            extendedSustainsToggle.isOn = false;
-
+        extendedSustainsToggle.isOn = Globals.gameSettings.extendedSustainsEnabled;
         resetAfterPlay.isOn = Globals.gameSettings.resetAfterPlay;
         resetAfterGameplay.isOn = Globals.gameSettings.resetAfterGameplay;
         autoValidateSongOnSave.isOn = Globals.gameSettings.autoValidateSongOnSave;
         slowdownPitchCorrectionEnabled.isOn = Globals.gameSettings.slowdownPitchCorrectionEnabled;
+        lyricEditorStepSnappingEnabled.isOn = Globals.gameSettings.lyricEditorSettings.stepSnappingEnabled;
 
         gameplayStartDelayDropdown.value = (int)(Globals.gameSettings.gameplayStartDelayTime * 2.0f);
 
@@ -253,11 +251,7 @@ public class SettingsController : TabMenu
 
     public void SetLeftyFlip(bool value)
     {
-        if (value == true)
-            Globals.gameSettings.notePlacementMode = GameSettings.NotePlacementMode.LeftyFlip;
-        else
-            Globals.gameSettings.notePlacementMode = GameSettings.NotePlacementMode.Default;
-        
+        Globals.gameSettings.notePlacementMode = value ? GameSettings.NotePlacementMode.LeftyFlip : GameSettings.NotePlacementMode.Default;
         editor.events.leftyFlipToggledEvent.Fire();
     }
 
@@ -462,4 +456,14 @@ public class SettingsController : TabMenu
         SetSynchronisedVolume(1);
     }
 
+    public void OpenLyricEditorSettings()
+    {
+        lyricEditorButton.onClick.Invoke();
+        initialMenuItemSet = true;
+    }
+
+    public void SetLyricEditorStepSnappingEnabled(bool value)
+    {
+        Globals.gameSettings.lyricEditorSettings.stepSnappingEnabled = value;
+    }
 }
