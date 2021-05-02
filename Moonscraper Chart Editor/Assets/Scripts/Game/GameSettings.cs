@@ -16,6 +16,7 @@ public class GameSettings
     public class LyricEditorSettings
     {
         public bool stepSnappingEnabled = true;
+        public float phaseEndThreashold = 2.5f;
     }
 
     [System.Flags]
@@ -188,6 +189,7 @@ public class GameSettings
             QualitySettings.antiAliasing = iniparse.ReadValue(SECTION_NAME_GRAPHICS, "AntiAliasingLevel", QualitySettings.antiAliasing);
 
             lyricEditorSettings.stepSnappingEnabled = iniparse.ReadValue(SECTION_NAME_LYRICEDITOR, "Step Snapping", true);
+            lyricEditorSettings.phaseEndThreashold = (float)iniparse.ReadValue(SECTION_NAME_LYRICEDITOR, "Phase End Threashold", 2.5);
         }
         catch (System.Exception e)
         {
@@ -268,6 +270,10 @@ public class GameSettings
 
             // Graphics Settings
             iniparse.WriteValue(SECTION_NAME_GRAPHICS, "AntiAliasingLevel", QualitySettings.antiAliasing);
+
+            // Lyric Editor Settings
+            iniparse.WriteValue(SECTION_NAME_LYRICEDITOR, "Step Snapping", lyricEditorSettings.stepSnappingEnabled);
+            iniparse.ReadValue(SECTION_NAME_LYRICEDITOR, "Phase End Threashold", lyricEditorSettings.phaseEndThreashold);
         }
         catch (System.Exception e)
         {

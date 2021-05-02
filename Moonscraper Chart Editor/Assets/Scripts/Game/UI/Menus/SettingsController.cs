@@ -45,10 +45,11 @@ public class SettingsController : TabMenu
 
     public InputField sustainGapInput;
     public InputField sustainGapTimeInput;
+    public InputField lyricEditorPhaseEndTimeInput;
+
     public Dropdown gameplayStartDelayDropdown;
     public Dropdown fpsSelectDropdown;
     public Dropdown bgSwapTimeDropdown;
-
     public Dropdown antiAliasingLevel; 
 
     public void SetSettingsGroup(RectTransform content)
@@ -70,6 +71,7 @@ public class SettingsController : TabMenu
         sustainGapInput.onValidateInput = Step.validateStepVal;
         sustainGapInput.text = Globals.gameSettings.sustainGap.ToString();
         sustainGapTimeInput.text = Globals.gameSettings.sustainGapTimeMs.ToString();
+        lyricEditorPhaseEndTimeInput.text = Globals.gameSettings.lyricEditorSettings.phaseEndThreashold.ToString();
     }
 
     protected override void Update()
@@ -84,6 +86,11 @@ public class SettingsController : TabMenu
         if (!string.IsNullOrEmpty(sustainGapTimeInput.text) && int.Parse(sustainGapTimeInput.text) != Globals.gameSettings.sustainGapTimeMs)
         {
             sustainGapTimeInput.text = Globals.gameSettings.sustainGapTimeMs.ToString();
+        }
+
+        if (!string.IsNullOrEmpty(lyricEditorPhaseEndTimeInput.text) && float.Parse(lyricEditorPhaseEndTimeInput.text) != Globals.gameSettings.lyricEditorSettings.phaseEndThreashold)
+        {
+            lyricEditorPhaseEndTimeInput.text = Globals.gameSettings.lyricEditorSettings.phaseEndThreashold.ToString();
         }
 
         // Set all variables' values based on the UI
@@ -119,6 +126,7 @@ public class SettingsController : TabMenu
         sustainGapEnabledToggle.isOn = Globals.gameSettings.sustainGapEnabled;
         sustainGapTimeBasedToggle.isOn = Globals.gameSettings.sustainGapIsTimeBased;
         sustainGapTimeInput.text = Globals.gameSettings.sustainGapTimeMs.ToString();
+        lyricEditorPhaseEndTimeInput.text = Globals.gameSettings.lyricEditorSettings.phaseEndThreashold.ToString();
 
         UpdateSustainGapInteractability();
 
@@ -465,5 +473,25 @@ public class SettingsController : TabMenu
     public void SetLyricEditorStepSnappingEnabled(bool value)
     {
         Globals.gameSettings.lyricEditorSettings.stepSnappingEnabled = value;
+    }
+
+    public void OnLyricEditorPhaseEndTimeInputUpdated(string value)
+    {
+        float timeVal = 0;
+        if (!string.IsNullOrEmpty(value))
+        {
+            timeVal = float.Parse(value);
+        }
+
+        Globals.gameSettings.lyricEditorSettings.phaseEndThreashold = timeVal;
+    }
+
+    public void OnLyricEditorPhaseEndTimeEndInput(string value)
+    {
+        OnLyricEditorPhaseEndTimeInputUpdated(value);
+        if (string.IsNullOrEmpty(value))
+        {
+            lyricEditorPhaseEndTimeInput.text = "0";
+        }
     }
 }

@@ -120,6 +120,27 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         currentPhrase = GetNextUnfinishedPhrase();
 
         if (currentPhrase != null && IsLegalToPlaceNow()) {
+            // Distance check phase end event to this new start event. 
+            // If these two events are too close to each other then delete the phase end event to let CH automatically handle it. 
+            {
+                var lastFinishedPhase = GetPreviousPhrase(currentPhrase);
+                if (lastFinishedPhase != null)
+                {
+                    uint? endTick = lastFinishedPhase.endTick;
+                    if (endTick.HasValue)
+                    {
+                        uint endPhaseTick = endTick.Value;
+                        float oldPhaseEndTime = ChartEditor.Instance.currentSong.TickToTime(endPhaseTick);
+                        float newPhaseStartTime = ChartEditor.Instance.currentSong.TickToTime(currentSnappedTickPos);
+                        if ((newPhaseStartTime - oldPhaseEndTime) < Globals.gameSettings.lyricEditorSettings.phaseEndThreashold)
+                        {
+                            // Remove phase end event
+                            lastFinishedPhase.PickupPhraseEnd();
+                        }
+                    }
+                }
+            }
+
             // Set the next lyric's tick
             currentPhrase.StartPlaceNextLyric(currentSnappedTickPos);
 
@@ -579,6 +600,13 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         // Actual start tick is the minimum of these two values
         uint endTick = System.Math.Min(endTick1, endTick2);
         return endTick;
+    }
+
+    // Get the latest phrase which does have all its syllables placed
+    LyricEditor2PhraseController GetPreviousPhrase(LyricEditor2PhraseController phrase)
+    {
+        int previousPhraseIndex = phrases.IndexOf(phrase) - 1;
+        return previousPhraseIndex >= 0 ? phrases[previousPhraseIndex] : null;
     }
 
     // Get the next phrase which does not yet have all its syllables placed
