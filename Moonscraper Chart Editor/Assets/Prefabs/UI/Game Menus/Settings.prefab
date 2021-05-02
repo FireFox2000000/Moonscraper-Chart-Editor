@@ -1886,7 +1886,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Place Threashold Time (s):'
+  m_Text: 'Place Threshold Time (s):'
 --- !u!1 &7628943186960532743
 GameObject:
   m_ObjectHideFlags: 0
@@ -2476,7 +2476,7 @@ GameObject:
   - component: {fileID: 5231247609978067032}
   - component: {fileID: 1041234210431447827}
   m_Layer: 5
-  m_Name: Place End Phase Threashold
+  m_Name: Place End Phase Threshold
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
