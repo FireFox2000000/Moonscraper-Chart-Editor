@@ -98,6 +98,15 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     InputState inputState = InputState.Full;
     LyricEditor2PhraseController inputPhrase;
     uint currentTickPos {get {return ChartEditor.Instance.currentTickPos;}}
+    uint currentSnappedTickPos
+    {
+        get
+        {
+            return Globals.gameSettings.lyricEditorSettings.stepSnappingEnabled 
+                ? Snapable.TickToSnappedTick(currentTickPos, Globals.gameSettings.step, ChartEditor.Instance.currentSong) 
+                : currentTickPos;
+        }
+    }
     bool playbackScrolling = false;
     uint playbackEndTick;
     int lastPlaybackTargetIndex = 0;
@@ -111,8 +120,29 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         currentPhrase = GetNextUnfinishedPhrase();
 
         if (currentPhrase != null && IsLegalToPlaceNow()) {
+            // Distance check phase end event to this new start event. 
+            // If these two events are too close to each other then delete the phase end event to let CH automatically handle it. 
+            {
+                var lastFinishedPhase = GetPreviousPhrase(currentPhrase);
+                if (lastFinishedPhase != null)
+                {
+                    uint? endTick = lastFinishedPhase.endTick;
+                    if (endTick.HasValue)
+                    {
+                        uint endPhaseTick = endTick.Value;
+                        float oldPhaseEndTime = ChartEditor.Instance.currentSong.TickToTime(endPhaseTick);
+                        float newPhaseStartTime = ChartEditor.Instance.currentSong.TickToTime(currentSnappedTickPos);
+                        if ((newPhaseStartTime - oldPhaseEndTime) < Globals.gameSettings.lyricEditorSettings.phaseEndThreashold)
+                        {
+                            // Remove phase end event
+                            lastFinishedPhase.PickupPhraseEnd();
+                        }
+                    }
+                }
+            }
+
             // Set the next lyric's tick
-            currentPhrase.StartPlaceNextLyric(currentTickPos);
+            currentPhrase.StartPlaceNextLyric(currentSnappedTickPos);
 
             // Set phrase_start if it is not already set
             if (!currentPhrase.phraseStartPlaced) {
@@ -136,7 +166,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             // were just placed
             if (currentPhrase.allSyllablesPlaced) {
                 if (IsLegalToPlaceNow()) {
-                    currentPhrase.SetPhraseEnd(currentTickPos);
+                    currentPhrase.SetPhraseEnd(currentSnappedTickPos);
                 } else {
                     AutoPlacePhraseEnd(currentPhrase);
                 }
@@ -483,10 +513,11 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // placement is considered invalid
     bool IsLegalToPlaceNow() {
         uint firstPhraseTick = GetFirstSafeTick(currentPhrase);
-        if (currentTickPos <= firstPhraseTick) {
+        uint snappedTick = currentSnappedTickPos;
+        if (snappedTick <= firstPhraseTick) {
             // Current position is before first safe tick
             return false;
-        } else if (currentTickPos <= currentPhrase?.startTick || currentTickPos <= currentPhrase?.GetLastEventTick()) {
+        } else if (snappedTick <= currentPhrase?.startTick || snappedTick <= currentPhrase?.GetLastEventTick()) {
             // Current position is in the middle of currentPhrase
             return false;
         } else {
@@ -569,6 +600,13 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         // Actual start tick is the minimum of these two values
         uint endTick = System.Math.Min(endTick1, endTick2);
         return endTick;
+    }
+
+    // Get the latest phrase which does have all its syllables placed
+    LyricEditor2PhraseController GetPreviousPhrase(LyricEditor2PhraseController phrase)
+    {
+        int previousPhraseIndex = phrases.IndexOf(phrase) - 1;
+        return previousPhraseIndex >= 0 ? phrases[previousPhraseIndex] : null;
     }
 
     // Get the next phrase which does not yet have all its syllables placed

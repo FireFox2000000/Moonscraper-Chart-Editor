@@ -12,10 +12,15 @@ public class TabMenu : DisplayMenu
     Button initialMenuItem;
 
     protected RectTransform menuContextArea = null;
+    protected bool initialMenuItemSet = false;
 
     protected virtual void Start()
     {
-        ResetToInitialMenuItem();
+        if (!initialMenuItemSet)
+        {
+            ResetToInitialMenuItem();
+            initialMenuItemSet = true;
+        }
     }
 
     protected void ResetToInitialMenuItem()

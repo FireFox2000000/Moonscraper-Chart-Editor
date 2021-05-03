@@ -11,6 +11,13 @@ public class GameSettings
     const string SECTION_NAME_SETTINGS = "Settings";
     const string SECTION_NAME_AUDIO = "Audio Volume";
     const string SECTION_NAME_GRAPHICS = "Graphics";
+    const string SECTION_NAME_LYRICEDITOR = "Lyric Editor";
+
+    public class LyricEditorSettings
+    {
+        public bool stepSnappingEnabled = true;
+        public float phaseEndThreashold = 2.5f;
+    }
 
     [System.Flags]
     public enum ClapToggle
@@ -92,6 +99,7 @@ public class GameSettings
     public SongValidate.ValidationOptions songValidatorModes = ~SongValidate.ValidationOptions.None;
     public bool autoValidateSongOnSave = true;
     public bool automaticallyCheckForUpdates = true;
+    public LyricEditorSettings lyricEditorSettings = new LyricEditorSettings();
 
     public MSChartEditorInput.MSChartEditorActionContainer controls = new MSChartEditorInput.MSChartEditorActionContainer();
 
@@ -179,6 +187,9 @@ public class GameSettings
 
             // Graphics Settings
             QualitySettings.antiAliasing = iniparse.ReadValue(SECTION_NAME_GRAPHICS, "AntiAliasingLevel", QualitySettings.antiAliasing);
+
+            lyricEditorSettings.stepSnappingEnabled = iniparse.ReadValue(SECTION_NAME_LYRICEDITOR, "Step Snapping", true);
+            lyricEditorSettings.phaseEndThreashold = (float)iniparse.ReadValue(SECTION_NAME_LYRICEDITOR, "Phase End Threashold", 2.5);
         }
         catch (System.Exception e)
         {
@@ -259,6 +270,10 @@ public class GameSettings
 
             // Graphics Settings
             iniparse.WriteValue(SECTION_NAME_GRAPHICS, "AntiAliasingLevel", QualitySettings.antiAliasing);
+
+            // Lyric Editor Settings
+            iniparse.WriteValue(SECTION_NAME_LYRICEDITOR, "Step Snapping", lyricEditorSettings.stepSnappingEnabled);
+            iniparse.ReadValue(SECTION_NAME_LYRICEDITOR, "Phase End Threashold", lyricEditorSettings.phaseEndThreashold);
         }
         catch (System.Exception e)
         {
