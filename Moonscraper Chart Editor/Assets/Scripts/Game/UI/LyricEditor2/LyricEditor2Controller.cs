@@ -681,7 +681,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // period in case of excessively long strings to be parsed.
     List<List<string>> ParseLyrics(string inputString) {
         // Remove short tags (5 characters or less), plus any other < or > keys
-        inputString = Regex.Replace(inputString, "</?[^<>]{0,5}>|<|>", System.String.Empty);
+        // inputString = Regex.Replace(inputString, "</?[^<>]{0,5}>|<|>", System.String.Empty);
+        // Regex was NOT the answer
+        // https://blog.codinghorror.com/content/images/2014/Apr/stack-overflow-regex-zalgo.png
 
         // Split into phrases
         char[] newlineCharacters = {'\n', '\r'};
