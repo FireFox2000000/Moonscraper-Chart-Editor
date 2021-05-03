@@ -341,7 +341,9 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
                 textToDisplay += "<color=#" + currentColor + ">";
                 previousColor = currentColor;
             }
-            textToDisplay += currentEvent.formattedText;
+            // Make sure tags don't mess with anything
+            string eventTextTagless = currentEvent.formattedText.Replace("<", "<<i></i>");
+            textToDisplay += eventTextTagless;
         }
         // Add terminating color tag
         textToDisplay += "</color>";
