@@ -458,16 +458,29 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         UpdateSortIds();
 
         // Check to ensure all fully-placed phrases have their phrase_start and
-        // phraase_end events set; also set phrase_start events automatically if
-        // they occur after the first contained event, or phrase_end
-        foreach (LyricEditor2PhraseController currentPhrase in phrases) {
+        // phrase_end events set, if appropriate
+        for(int i = 0; i < phrases.Count; i++) {
+            LyricEditor2PhraseController currentPhrase = phrases[i];
             if ((currentPhrase.allSyllablesPlaced && !currentPhrase.phraseStartPlaced) ||
                   (currentPhrase.GetFirstEventTick() < currentPhrase.startTick)) {
                 AutoPlacePhraseStart(currentPhrase);
             }
-            if ((currentPhrase.allSyllablesPlaced && !currentPhrase.phraseEndPlaced) ||
-                  (currentPhrase.GetLastEventTick() > currentPhrase.endTick)) {
-                AutoPlacePhraseEnd(currentPhrase);
+            // Check for phrase_end is a little more complex, only auto-place
+            // phrase_end if the spacing between phrases is small enough
+            var nextPhrase = GetNextPhrase(currentPhrase);
+            if (currentPhrase.allSyllablesPlaced && !currentPhrase.phraseEndPlaced) {
+                if (nextPhrase == null) {
+                    AutoPlacePhraseEnd(currentPhrase);
+                } else {
+                    uint nextPhraseStart = (uint)nextPhrase.GetFirstEventTick();
+                    float nextPhraseStartTime = ChartEditor.Instance.currentSong.TickToTime(nextPhraseStart);
+                    uint thisPhraseEnd = PhraseEndAutoSpacer(currentPhrase);
+                    float thisPhraseEndTime = ChartEditor.Instance.currentSong.TickToTime(thisPhraseEnd);
+                    // UnityEngine.Debug.LogFormat("Time difference was calculated to be {0} (from nextPhraseStartTime {1} and thisPhraseEnd {2})", (nextPhraseStartTime - thisPhraseEndTime), nextPhraseStartTime, thisPhraseEndTime);
+                    if ((nextPhraseStartTime - thisPhraseEndTime) >= Globals.gameSettings.lyricEditorSettings.phaseEndThreashold) {
+                        AutoPlacePhraseEnd(currentPhrase);
+                    }
+                }
             }
         }
     }
@@ -607,6 +620,11 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     {
         int previousPhraseIndex = phrases.IndexOf(phrase) - 1;
         return previousPhraseIndex >= 0 ? phrases[previousPhraseIndex] : null;
+    }
+
+    LyricEditor2PhraseController GetNextPhrase(LyricEditor2PhraseController phrase) {
+        int nextIndex = phrases.IndexOf(phrase) + 1;
+        return nextIndex < phrases.Count ? phrases[nextIndex] : null;
     }
 
     // Get the next phrase which does not yet have all its syllables placed
