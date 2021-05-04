@@ -249,7 +249,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                     pickupFromCommand.Invoke();
                 }
             }
-        } else {
+        } else if (start.anySyllablesPlaced) {
             start.PickupLastSyllable();
             onePhrasePickedUp = true;
             currentPhrase = GetNextUnfinishedPhrase();
