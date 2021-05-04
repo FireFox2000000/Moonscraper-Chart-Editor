@@ -291,6 +291,13 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
     }
 
+    public void Reset() {
+        savedPlacedSyllables = "";
+        savedUnplacedSyllables = "";
+        ClearPhraseObjects();
+        OnEnable();
+    }
+
     void OnEnable() {
         // Create a new edit command set
         editCommands = new SongEditCommandSet();
@@ -329,6 +336,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
         ChartEditor.Instance.events.editorStateChangedEvent.Register(OnStateChanged);
         ChartEditor.Instance.events.commandStackPushPopEvent.Register(onCommandStackPushPop);
+        ChartEditor.Instance.events.chartReloadedEvent.Register(Reset);
     }
 
     void Update() {
