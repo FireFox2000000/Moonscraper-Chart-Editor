@@ -841,6 +841,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         }
 
         menuBar.LoadCurrentInstumentAndDifficulty();
+        events.songLoadedEvent.Fire();
     }
 
     // Chart should be part of the current song

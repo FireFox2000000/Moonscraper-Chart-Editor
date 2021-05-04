@@ -3,7 +3,8 @@
 
 public class ChartEditorEvents
 {
-    public MoonscraperEngine.Event chartReloadedEvent { get; private set; }
+    public MoonscraperEngine.Event songLoadedEvent { get; private set; }              // Fires upon loading or creating a new song
+    public MoonscraperEngine.Event chartReloadedEvent { get; private set; }         // Fires upon loading or creating a new song, or when the difficulty/instrument changes as well as drum mode
     public MoonscraperEngine.Event hyperspeedChangeEvent { get; private set; }
     public MoonscraperEngine.Event leftyFlipToggledEvent { get; private set; }
     public MoonscraperEngine.Event saveEvent { get; private set; }
@@ -22,6 +23,7 @@ public class ChartEditorEvents
 
     public ChartEditorEvents()
     {
+        songLoadedEvent = new MoonscraperEngine.Event();
         chartReloadedEvent = new MoonscraperEngine.Event();
         hyperspeedChangeEvent = new MoonscraperEngine.Event();
         leftyFlipToggledEvent = new MoonscraperEngine.Event();

@@ -102,8 +102,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     {
         get
         {
-            return Globals.gameSettings.lyricEditorSettings.stepSnappingEnabled 
-                ? Snapable.TickToSnappedTick(currentTickPos, Globals.gameSettings.step, ChartEditor.Instance.currentSong) 
+            return Globals.gameSettings.lyricEditorSettings.stepSnappingEnabled
+                ? Snapable.TickToSnappedTick(currentTickPos, Globals.gameSettings.step, ChartEditor.Instance.currentSong)
                 : currentTickPos;
         }
     }
@@ -336,7 +336,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
         ChartEditor.Instance.events.editorStateChangedEvent.Register(OnStateChanged);
         ChartEditor.Instance.events.commandStackPushPopEvent.Register(onCommandStackPushPop);
-        ChartEditor.Instance.events.chartReloadedEvent.Register(Reset);
+        ChartEditor.Instance.events.songLoadedEvent.Register(Reset);
     }
 
     void Update() {
