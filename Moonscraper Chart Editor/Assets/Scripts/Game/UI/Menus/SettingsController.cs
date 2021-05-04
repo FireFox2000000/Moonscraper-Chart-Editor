@@ -72,6 +72,7 @@ public class SettingsController : TabMenu
         sustainGapInput.text = Globals.gameSettings.sustainGap.ToString();
         sustainGapTimeInput.text = Globals.gameSettings.sustainGapTimeMs.ToString();
         lyricEditorPhaseEndTimeInput.text = Globals.gameSettings.lyricEditorSettings.phaseEndThreashold.ToString();
+        lyricEditorPhaseEndTimeInput.onValidateInput = LocalesManager.ValidateDecimalInput;
     }
 
     protected override void Update()
