@@ -296,6 +296,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         editCommands = new SongEditCommandSet();
         ImportExistingLyrics();
         AddSavedSyllables();
+        currentPhrase = GetNextUnfinishedPhrase();
         // Activate auto-scrolling if playback is active on lyric editor enable
         autoScroller.enabled = playbackActive;
 
