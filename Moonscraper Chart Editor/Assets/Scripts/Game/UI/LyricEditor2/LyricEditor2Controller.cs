@@ -108,6 +108,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
     }
     bool playbackScrolling = false;
+    bool onePhrasePickedUp = false;
     uint playbackEndTick;
     int lastPlaybackTargetIndex = 0;
     string savedUnplacedSyllables = "";
@@ -120,8 +121,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         currentPhrase = GetNextUnfinishedPhrase();
 
         if (currentPhrase != null && IsLegalToPlaceNow()) {
-            // Distance check phase end event to this new start event. 
-            // If these two events are too close to each other then delete the phase end event to let CH automatically handle it. 
+            onePhrasePickedUp = false;
+            // Distance check phase end event to this new start event.
+            // If these two events are too close to each other then delete the phase end event to let CH automatically handle it.
             {
                 var lastFinishedPhase = GetPreviousPhrase(currentPhrase);
                 if (lastFinishedPhase != null)
@@ -210,7 +212,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             int inputIndex = phrases.BinarySearch(inputPhrase);
             if (inputIndex >= 0) {
                 // Remove existing phrases
-                PickupFrom(inputPhrase, false);
+                PickupFrom(inputPhrase, false, true);
                 for (int i = inputIndex; i < phrases.Count; i++) {
                     UnityEngine.Object.Destroy(phrases[i].gameObject);
                 }
@@ -224,26 +226,35 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
     }
 
-    public void PickupFrom(LyricEditor2PhraseController start, bool pushToStack = true) {
-        List<MoonscraperEngine.ICommand> commands = new List<MoonscraperEngine.ICommand>();
-        int startIndex = phrases.BinarySearch(start);
-        if (startIndex >= 0) {
-            for (int i = startIndex; i < phrases.Count; i++) {
-                if (phrases[i].anySyllablesPlaced) {
-                    commands.Add(phrases[i].Pickup());
+    public void PickupFrom(LyricEditor2PhraseController start, bool pushToStack = true, bool forcePickupAll = false) {
+        if (forcePickupAll || HasFollowingLyrics(start) || onePhrasePickedUp) {
+            List<MoonscraperEngine.ICommand> commands = new List<MoonscraperEngine.ICommand>();
+            int startIndex = phrases.BinarySearch(start);
+            if (startIndex >= 0) {
+                for (int i = startIndex; i < phrases.Count; i++) {
+                    if (phrases[i].anySyllablesPlaced) {
+                        commands.Add(phrases[i].Pickup());
+                    }
                 }
             }
-        }
-        currentPhrase = GetNextUnfinishedPhrase();
-        // Invoke commands
-        if (commands.Count > 0) {
-            var batchedCommands = new BatchedICommand(commands);
-            var pickupFromCommand = new PickupFromCommand(batchedCommands, RefreshAfterPickupFrom);
-            if (pushToStack) {
-                ChartEditor.Instance.commandStack.Push(pickupFromCommand);
-                commandStackPushes.Add(pickupFromCommand);
-            } else {
-                pickupFromCommand.Invoke();
+            currentPhrase = GetNextUnfinishedPhrase();
+            // Invoke commands
+            if (commands.Count > 0) {
+                var batchedCommands = new BatchedICommand(commands);
+                var pickupFromCommand = new PickupFromCommand(batchedCommands, RefreshAfterPickupFrom);
+                if (pushToStack) {
+                    ChartEditor.Instance.commandStack.Push(pickupFromCommand);
+                    commandStackPushes.Add(pickupFromCommand);
+                } else {
+                    pickupFromCommand.Invoke();
+                }
+            }
+        } else {
+            start.PickupLastSyllable();
+            onePhrasePickedUp = true;
+            currentPhrase = GetNextUnfinishedPhrase();
+            if (!playbackActive) {
+                AutoPlacePhraseStartEnd(start);
             }
         }
     }
@@ -461,25 +472,29 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         // phrase_end events set, if appropriate
         for(int i = 0; i < phrases.Count; i++) {
             LyricEditor2PhraseController currentPhrase = phrases[i];
-            if ((currentPhrase.allSyllablesPlaced && !currentPhrase.phraseStartPlaced) ||
-                  (currentPhrase.GetFirstEventTick() < currentPhrase.startTick)) {
-                AutoPlacePhraseStart(currentPhrase);
-            }
-            // Check for phrase_end is a little more complex, only auto-place
-            // phrase_end if the spacing between phrases is small enough
-            var nextPhrase = GetNextPhrase(currentPhrase);
-            if (currentPhrase.allSyllablesPlaced && !currentPhrase.phraseEndPlaced) {
-                if (nextPhrase == null) {
+            AutoPlacePhraseStartEnd(currentPhrase);
+        }
+    }
+
+    void AutoPlacePhraseStartEnd(LyricEditor2PhraseController currentPhrase) {
+        if ((currentPhrase.allSyllablesPlaced && !currentPhrase.phraseStartPlaced) ||
+              (currentPhrase.GetFirstEventTick() < currentPhrase.startTick)) {
+            AutoPlacePhraseStart(currentPhrase);
+        }
+        // Check for phrase_end is a little more complex, only auto-place
+        // phrase_end if the spacing between phrases is small enough
+        var nextPhrase = GetNextPhrase(currentPhrase);
+        if (currentPhrase.allSyllablesPlaced && !currentPhrase.phraseEndPlaced) {
+            if (nextPhrase == null) {
+                AutoPlacePhraseEnd(currentPhrase);
+            } else {
+                uint nextPhraseStart = (uint)nextPhrase.GetFirstEventTick();
+                float nextPhraseStartTime = ChartEditor.Instance.currentSong.TickToTime(nextPhraseStart);
+                uint thisPhraseEnd = PhraseEndAutoSpacer(currentPhrase);
+                float thisPhraseEndTime = ChartEditor.Instance.currentSong.TickToTime(thisPhraseEnd);
+                // UnityEngine.Debug.LogFormat("Time difference was calculated to be {0} (from nextPhraseStartTime {1} and thisPhraseEnd {2})", (nextPhraseStartTime - thisPhraseEndTime), nextPhraseStartTime, thisPhraseEndTime);
+                if ((nextPhraseStartTime - thisPhraseEndTime) >= Globals.gameSettings.lyricEditorSettings.phaseEndThreashold) {
                     AutoPlacePhraseEnd(currentPhrase);
-                } else {
-                    uint nextPhraseStart = (uint)nextPhrase.GetFirstEventTick();
-                    float nextPhraseStartTime = ChartEditor.Instance.currentSong.TickToTime(nextPhraseStart);
-                    uint thisPhraseEnd = PhraseEndAutoSpacer(currentPhrase);
-                    float thisPhraseEndTime = ChartEditor.Instance.currentSong.TickToTime(thisPhraseEnd);
-                    // UnityEngine.Debug.LogFormat("Time difference was calculated to be {0} (from nextPhraseStartTime {1} and thisPhraseEnd {2})", (nextPhraseStartTime - thisPhraseEndTime), nextPhraseStartTime, thisPhraseEndTime);
-                    if ((nextPhraseStartTime - thisPhraseEndTime) >= Globals.gameSettings.lyricEditorSettings.phaseEndThreashold) {
-                        AutoPlacePhraseEnd(currentPhrase);
-                    }
                 }
             }
         }
@@ -637,6 +652,18 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
         // No incomplete phrase found
         return null;
+    }
+
+    // Checks whether a phrase has any subsequent placed lyrics
+    bool HasFollowingLyrics(LyricEditor2PhraseController phrase) {
+        int phraseIndex = phrases.BinarySearch(phrase);
+        if (phraseIndex == phrases.Count - 1) {
+            return false;
+            // Phrase is last
+        }
+        else {
+            return phrases[phraseIndex + 1].anySyllablesPlaced;
+        }
     }
 
     // Pickup all phrases; not revokable, as references to phrases and events

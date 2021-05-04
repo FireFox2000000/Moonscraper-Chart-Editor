@@ -191,6 +191,28 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
         DisplayText();
     }
 
+    // Pickup the last syllable in this phrase, plus the phrase_end event if
+    // needed
+    public void PickupLastSyllable() {
+        LyricEditor2Event firstUnplaced = GetNextUnplacedSyllable();
+        if (firstUnplaced != null) {
+            int unplacedIndex = lyricEvents.IndexOf(firstUnplaced);
+            if (unplacedIndex > 0) {
+                lyricEvents[unplacedIndex - 1].Pickup().Invoke();
+            }
+            if (unplacedIndex == 1) {
+                PickupPhraseStart();
+            }
+        } else {
+            if (lyricEvents[lyricEvents.Count - 1].hasBeenPlaced) {
+                lyricEvents[lyricEvents.Count - 1].Pickup().Invoke();
+                PickupPhraseEnd();
+            }
+        }
+        CheckForUnplacedSyllables();
+        DisplayText();
+    }
+
     // Return a text representation of the current phrase state, using hyphen-
     // newline notation
     public string GetTextRepresentation(bool onlyConsiderUnplaced = false, bool onlyConsiderPlaced = false) {
