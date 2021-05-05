@@ -824,14 +824,15 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
     void ClearPickupCommands() {
         commandStackPushes.Clear();
-        numCommandStackPushes = 0;
 
         // numCommandStackPushes gets decremented automatically, need to assign
         // to another variable first
         int pushesToDelete = numCommandStackPushes;
-        for (int i = 0; i < pushesToDelete; i++) {
+        for (int i = 0; i < pushesToDelete; ++i) {
             ChartEditor.Instance.commandStack.Pop();
         }
+
+        numCommandStackPushes = 0;
     }
 
     // Create a string representation of all unplaced syllables
