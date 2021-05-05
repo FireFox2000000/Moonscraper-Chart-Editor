@@ -94,6 +94,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // be removed from the main command stack (Pop() method returns void, not
     // the revoked command; see CommandStack.cs)
     List<PickupFromCommand> commandStackPushes = new List<PickupFromCommand>();
+    int numCommandStackPushes = 0;
     LyricEditor2PhraseController lastPlaybackTarget = null;
     InputState inputState = InputState.Full;
     LyricEditor2PhraseController inputPhrase;
@@ -243,8 +244,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                 var batchedCommands = new BatchedICommand(commands);
                 var pickupFromCommand = new PickupFromCommand(batchedCommands, RefreshAfterPickupFrom);
                 if (pushToStack) {
-                    ChartEditor.Instance.commandStack.Push(pickupFromCommand);
                     commandStackPushes.Add(pickupFromCommand);
+                    ChartEditor.Instance.commandStack.Push(pickupFromCommand);
+                    numCommandStackPushes++;
                 } else {
                     pickupFromCommand.Invoke();
                 }
@@ -285,15 +287,26 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
     }
 
-    public void onCommandStackPushPop(in MoonscraperEngine.ICommand command) {
-        if (command is SongEditCommand c && HasLyricEvents(c) || command is SongEditCommandSet) {
+    public void onCommandStackPush(in MoonscraperEngine.ICommand command) {
+        if (!(command is PickupFromCommand c && commandStackPushes.Contains(c))) {
             gameObject.SetActive(false);
+        } else {
+            numCommandStackPushes++;
+        }
+    }
+
+    public void onCommandStackPop(in MoonscraperEngine.ICommand command) {
+        if (!(command is PickupFromCommand c && commandStackPushes.Contains(c))) {
+            gameObject.SetActive(false);
+        } else {
+            numCommandStackPushes--;
         }
     }
 
     public void Reset() {
         savedPlacedSyllables = "";
         savedUnplacedSyllables = "";
+        numCommandStackPushes = 0;
         ClearPhraseObjects();
         OnEnable();
     }
@@ -335,7 +348,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         phraseTemplate.gameObject.SetActive(false);
 
         ChartEditor.Instance.events.editorStateChangedEvent.Register(OnStateChanged);
-        ChartEditor.Instance.events.commandStackPushPopEvent.Register(onCommandStackPushPop);
+        ChartEditor.Instance.events.commandStackPushEvent.Register(onCommandStackPush);
+        ChartEditor.Instance.events.commandStackPopEvent.Register(onCommandStackPop);
         ChartEditor.Instance.events.songLoadedEvent.Register(Reset);
     }
 
@@ -809,10 +823,15 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     void ClearPickupCommands() {
-        foreach (PickupFromCommand c in commandStackPushes) {
-            ChartEditor.Instance.commandStack.Remove(c);
-        }
         commandStackPushes.Clear();
+        numCommandStackPushes = 0;
+
+        // numCommandStackPushes gets decremented automatically, need to assign
+        // to another variable first
+        int pushesToDelete = numCommandStackPushes;
+        for (int i = 0; i < pushesToDelete; i++) {
+            ChartEditor.Instance.commandStack.Pop();
+        }
     }
 
     // Create a string representation of all unplaced syllables

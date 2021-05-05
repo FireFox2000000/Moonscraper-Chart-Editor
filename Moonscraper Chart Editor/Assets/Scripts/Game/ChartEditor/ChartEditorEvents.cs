@@ -19,7 +19,8 @@ public class ChartEditorEvents
     public MoonscraperEngine.Event<Globals.ViewMode> viewModeSwitchEvent { get; private set; }
     public MoonscraperEngine.Event<ChartEditor.State> editorStateChangedEvent { get; private set; }
     public MoonscraperEngine.Event<EditorInteractionManager.InteractionType> editorInteractionTypeChangedEvent { get; private set; }
-    public MoonscraperEngine.Event<MoonscraperEngine.ICommand> commandStackPushPopEvent { get; private set; }
+    public MoonscraperEngine.Event<MoonscraperEngine.ICommand> commandStackPushEvent { get; private set; }
+    public MoonscraperEngine.Event<MoonscraperEngine.ICommand> commandStackPopEvent { get; private set; }
 
     public ChartEditorEvents()
     {
@@ -39,6 +40,7 @@ public class ChartEditorEvents
         viewModeSwitchEvent = new MoonscraperEngine.Event<Globals.ViewMode>();
         editorStateChangedEvent = new MoonscraperEngine.Event<ChartEditor.State>();
         editorInteractionTypeChangedEvent = new MoonscraperEngine.Event<EditorInteractionManager.InteractionType>();
-        commandStackPushPopEvent = new MoonscraperEngine.Event<MoonscraperEngine.ICommand>();
+        commandStackPushEvent = new MoonscraperEngine.Event<MoonscraperEngine.ICommand>();
+        commandStackPopEvent = new MoonscraperEngine.Event<MoonscraperEngine.ICommand>();
     }
 }

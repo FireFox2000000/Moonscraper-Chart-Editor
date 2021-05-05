@@ -16,7 +16,8 @@ namespace MoonscraperEngine
 
         public bool isAtStart { get { return currentStackIndex < 0; } }
         public bool isAtEnd { get { return currentStackIndex >= commands.Count - 1; } }
-        public Event<ICommand> onPushPop = new Event<ICommand>();
+        public Event<ICommand> onPush = new Event<ICommand>();
+        public Event<ICommand> onPop = new Event<ICommand>();
 
         public CommandStack()
         {
@@ -33,7 +34,7 @@ namespace MoonscraperEngine
         {
             if (!isAtEnd)
             {
-                onPushPop.Fire(commands[++currentStackIndex]);
+                onPush.Fire(commands[++currentStackIndex]);
                 commands[currentStackIndex].Invoke();
             }
         }
@@ -45,7 +46,7 @@ namespace MoonscraperEngine
             System.Diagnostics.StackFrame frame = stackTrace.GetFrame(1);
             Debug.LogFormat("Command Stack Push: {0} in file {1} at line {2}", frame.GetMethod().Name, System.IO.Path.GetFileName(frame.GetFileName()), frame.GetFileLineNumber());
 #endif
-            onPushPop.Fire(command);
+            onPush.Fire(command);
             ResetTail();
             ++currentStackIndex;
             command.Invoke();
@@ -61,7 +62,7 @@ namespace MoonscraperEngine
 #endif
             if (!isAtStart)
             {
-                onPushPop.Fire(commands[currentStackIndex]);
+                onPop.Fire(commands[currentStackIndex]);
                 commands[currentStackIndex--].Revoke();
             }
         }
@@ -69,20 +70,6 @@ namespace MoonscraperEngine
         public void ResetTail()
         {
             commands.RemoveRange(currentStackIndex + 1, commands.Count - (currentStackIndex + 1));
-        }
-
-        // Removes a command from the command stack without revoking it
-        public bool Remove(ICommand command)
-        {
-            if (command == null)
-                return false;
-
-            int index = commands.IndexOf(command);
-            bool removedSuccessfully = commands.Remove(command);
-            if (removedSuccessfully && index <= currentStackIndex && !isAtStart)
-                currentStackIndex--;
-
-            return removedSuccessfully;
         }
     }
 }
