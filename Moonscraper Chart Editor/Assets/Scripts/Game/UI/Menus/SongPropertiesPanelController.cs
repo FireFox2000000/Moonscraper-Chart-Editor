@@ -31,12 +31,12 @@ public class SongPropertiesPanelController : TabMenu
     public Text guitarStream;
     public Text bassStream;
     public Text rhythmStream;
-	public Text keysStream;
-	public Text vocalStream;
+    public Text keysStream;
+    public Text vocalStream;
     public Text drum1Stream;
-	public Text drum2Stream;
-	public Text drum3Stream;
-	public Text drum4Stream;
+    public Text drum2Stream;
+    public Text drum3Stream;
+    public Text drum4Stream;
     public Text crowdStream;
 
     [Header("Advanced Settings")]
@@ -237,7 +237,7 @@ public class SongPropertiesPanelController : TabMenu
         }
     }
 
-   void setAudioTextLabels()
+    void setAudioTextLabels()
     {
         Song song = editor.currentSong;
 
@@ -270,8 +270,9 @@ public class SongPropertiesPanelController : TabMenu
     string GetAudioFile()
     {
         string audioFilepath = string.Empty;
+        string defaultDirectory = DefaultPathManager.GetPath(DefaultPathManager.PathType.LOAD_AUDIO);
         string defExt = string.Empty;
-        foreach(string extention in validAudioExtensions)
+        foreach (string extention in validAudioExtensions)
         {
             if (defExt != string.Empty)
                 defExt += ",";
@@ -279,7 +280,9 @@ public class SongPropertiesPanelController : TabMenu
             defExt += extention;
         }
 
-        FileExplorer.OpenFilePanel(audioExFilter, defExt, out audioFilepath);
+        FileExplorer.OpenFilePanel(audioExFilter, defaultDirectory, defExt, out audioFilepath);
+
+        DefaultPathManager.SetPath(DefaultPathManager.PathType.LOAD_AUDIO, audioFilepath);
         return audioFilepath;
     }
 
@@ -383,7 +386,7 @@ public class SongPropertiesPanelController : TabMenu
         ClearAudioStream(Song.AudioInstrument.Vocals);
     }
 
-	public void LoadKeysStream()
+    public void LoadKeysStream()
     {
         LoadAudioStream(Song.AudioInstrument.Keys);
     }
@@ -403,7 +406,7 @@ public class SongPropertiesPanelController : TabMenu
         ClearAudioStream(Song.AudioInstrument.Drum);
     }
 
-	public void LoadDrum2Stream()
+    public void LoadDrum2Stream()
     {
         LoadAudioStream(Song.AudioInstrument.Drums_2);
     }
@@ -413,7 +416,7 @@ public class SongPropertiesPanelController : TabMenu
         ClearAudioStream(Song.AudioInstrument.Drums_2);
     }
 
-	public void LoadDrum3Stream()
+    public void LoadDrum3Stream()
     {
         LoadAudioStream(Song.AudioInstrument.Drums_3);
     }
@@ -423,7 +426,7 @@ public class SongPropertiesPanelController : TabMenu
         ClearAudioStream(Song.AudioInstrument.Drums_3);
     }
 
-	public void LoadDrum4Stream()
+    public void LoadDrum4Stream()
     {
         LoadAudioStream(Song.AudioInstrument.Drums_4);
     }
@@ -433,7 +436,7 @@ public class SongPropertiesPanelController : TabMenu
         ClearAudioStream(Song.AudioInstrument.Drums_4);
     }
 
-	public void LoadCrowdStream()
+    public void LoadCrowdStream()
     {
         LoadAudioStream(Song.AudioInstrument.Crowd);
     }

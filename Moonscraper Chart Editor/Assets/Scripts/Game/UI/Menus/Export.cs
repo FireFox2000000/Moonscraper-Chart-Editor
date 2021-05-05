@@ -12,7 +12,8 @@ using MoonscraperEngine.Audio;
 using MoonscraperChartEditor.Song;
 using MoonscraperChartEditor.Song.IO;
 
-public class Export : DisplayMenu {
+public class Export : DisplayMenu
+{
     public Text exportingInfo;
     public Dropdown fileTypeDropdown;
     public Toggle chPackageToggle;
@@ -88,7 +89,7 @@ public class Export : DisplayMenu {
             fileTypeDropdown.value = 0;
         }
 
-        generateIniToggle.interactable = !enabled;        
+        generateIniToggle.interactable = !enabled;
         fileTypeDropdown.interactable = !enabled;
         magmaButton.interactable = !enabled;
         exportingInfo.text = chPackageToggle.isOn ? chPackageText : chartInfoText;
@@ -117,22 +118,27 @@ public class Export : DisplayMenu {
             defaultFileName += "(UNFORCED)";
 
         string saveLocation;
-        bool aquiredFilePath = false;
+        bool acquiredFilePath = false;
+
+        string defaultDirectory = DefaultPathManager.GetPath(DefaultPathManager.PathType.EXPORT_SONG);
 
         // Open up file explorer and get save location
         if (exportOptions.format == ExportOptions.Format.Chart)
         {
-            aquiredFilePath = FileExplorer.SaveFilePanel(new ExtensionFilter("Chart files", "chart"), defaultFileName, "chart", out saveLocation);
+            acquiredFilePath = FileExplorer.SaveFilePanel(new ExtensionFilter("Chart files", "chart"), defaultDirectory, defaultFileName, "chart", out saveLocation);
         }
         else if (exportOptions.format == ExportOptions.Format.Midi)
         {
-            aquiredFilePath = FileExplorer.SaveFilePanel(new ExtensionFilter("Midi files", "mid"), defaultFileName, "mid", out saveLocation);
+            acquiredFilePath = FileExplorer.SaveFilePanel(new ExtensionFilter("Midi files", "mid"), defaultDirectory, defaultFileName, "mid", out saveLocation);
         }
         else
             throw new Exception("Invalid file extension");
 
-        if (aquiredFilePath)
+        if (acquiredFilePath)
+        {
+            DefaultPathManager.SetPath(DefaultPathManager.PathType.EXPORT_SONG, saveLocation);
             StartCoroutine(_ExportSong(saveLocation));
+        }
     }
 
     public void ExportCHPackage()
@@ -147,11 +153,13 @@ public class Export : DisplayMenu {
             saveDirectory = Path.Combine(saveDirectory, FileExplorer.StripIllegalChars(song.name));
 
             // Check if files exist at the current directory and ask user before overwriting.
-            if (Directory.Exists(saveDirectory)) {
-                NativeWindow window= ChartEditor.Instance.windowHandleManager.nativeWindow;
+            if (Directory.Exists(saveDirectory))
+            {
+                NativeWindow window = ChartEditor.Instance.windowHandleManager.nativeWindow;
                 NativeMessageBox.Result overwrite = NativeMessageBox.Show("Exported files exist. Overwrite?", "Warning", NativeMessageBox.Type.YesNo, window);
 
-                if (overwrite != NativeMessageBox.Result.Yes) {
+                if (overwrite != NativeMessageBox.Result.Yes)
+                {
                     return;
                 }
             }
@@ -410,13 +418,13 @@ public class Export : DisplayMenu {
         { Song.AudioInstrument.Guitar, "guitar" },
         { Song.AudioInstrument.Bass, "bass" },
         { Song.AudioInstrument.Rhythm, "rhythm" },
-		{ Song.AudioInstrument.Keys, "keys" },
-		{ Song.AudioInstrument.Drum, "drums" },
-		{ Song.AudioInstrument.Drums_2, "drums_2" },
-		{ Song.AudioInstrument.Drums_3, "drums_3" },
-		{ Song.AudioInstrument.Drums_4, "drums_4" },
-		{ Song.AudioInstrument.Vocals, "vocals" },
-		{ Song.AudioInstrument.Crowd, "crowd" },
+        { Song.AudioInstrument.Keys, "keys" },
+        { Song.AudioInstrument.Drum, "drums" },
+        { Song.AudioInstrument.Drums_2, "drums_2" },
+        { Song.AudioInstrument.Drums_3, "drums_3" },
+        { Song.AudioInstrument.Drums_4, "drums_4" },
+        { Song.AudioInstrument.Vocals, "vocals" },
+        { Song.AudioInstrument.Crowd, "crowd" },
     };
 
     static string GetCHOggFilename(Song.AudioInstrument audio)
@@ -476,7 +484,7 @@ public class Export : DisplayMenu {
             {
                 Debug.LogFormat("Converting ogg from {0} to {1}", audioLocation, outputFile);
                 AudioManager.ConvertToOgg(audioLocation, outputFile);
-            });         
+            });
         }
 
         for (int i = 0; i < songEncodeActions.Count; ++i)

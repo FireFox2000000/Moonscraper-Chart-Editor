@@ -2,11 +2,12 @@
 // See LICENSE in project root for license information.
 
 using UnityEngine;
-using System.Collections;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
-static class Utility {
+static class Utility
+{
     public const int NOTFOUND = -1;
     static System.Text.StringBuilder timeFormatter = new System.Text.StringBuilder(32, 32);
     static readonly char[] numbers = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
@@ -283,5 +284,39 @@ public static class ColorExtension
         hex += ((int)(col.b * 255)).ToString("X2");
         hex += ((int)(col.a * 255)).ToString("X2");
         return hex;
+    }
+}
+
+// Handles the storage of default file paths for file saving/loading/exporting.
+public static class DefaultPathManager
+{
+    public enum PathType
+    {
+        LOAD_SONG,
+        SAVE_AS_SONG,
+        EXPORT_SONG,
+        LOAD_AUDIO,
+        SCREENSHOT
+    };
+
+    public static string GetPath(PathType type)
+    {
+        string path = PlayerPrefs.GetString(type.ToString());
+
+        if (!Directory.Exists(path))
+        {
+            PlayerPrefs.SetString(type.ToString(), "");
+            return "";
+        }
+
+        return path;
+    }
+
+    public static void SetPath(PathType type, string path, bool isFullPath = true)
+    {
+        if (isFullPath)
+            PlayerPrefs.SetString(type.ToString(), Path.GetDirectoryName(path));
+        else
+            PlayerPrefs.SetString(type.ToString(), path);
     }
 }

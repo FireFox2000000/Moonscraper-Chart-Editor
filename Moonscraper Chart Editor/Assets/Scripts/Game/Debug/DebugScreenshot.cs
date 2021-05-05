@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DebugScreenshot : MonoBehaviour
 {
@@ -10,8 +8,11 @@ public class DebugScreenshot : MonoBehaviour
     public void TakeScreenshot()
     {
         string filename;
-        FileExplorer.SaveFilePanel(new ExtensionFilter("Images files", "png"), "screenshot", "png", out filename);
+        string defaultDirectory = DefaultPathManager.GetPath(DefaultPathManager.PathType.SCREENSHOT);
 
+        FileExplorer.SaveFilePanel(new ExtensionFilter("Images files", "png"), "", "screenshot", "png", out filename);
+
+        DefaultPathManager.SetPath(DefaultPathManager.PathType.SCREENSHOT, filename);
         ScreenshotFunctions.SaveScreenshotToFile(filename);
     }
 
