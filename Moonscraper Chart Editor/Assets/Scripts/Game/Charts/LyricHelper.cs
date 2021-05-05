@@ -4,6 +4,8 @@ using MoonscraperChartEditor.Song;
 public static class LyricHelper
 {
     public const string LYRIC_EVENT_PREFIX = "lyric ";
+    public const string PhraseStartText = "phrase_start";
+    public const string PhraseEndText = "phrase_end";
 
     public static readonly Dictionary<string, string> CloneHeroCharSubstitutions = new Dictionary<string, string>()
     {     

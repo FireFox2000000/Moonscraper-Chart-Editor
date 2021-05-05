@@ -37,8 +37,8 @@ namespace MoonscraperChartEditor.Song.IO
         public const byte FLAM_MARKER = 0x6d;                  // 109
 
         public const int PhraseMarker = 105; // http://docs.c3universe.com/rbndocs/index.php?title=Vocal_Authoring
-        public const string PhraseStartText = "phrase_start";
-        public const string PhraseEndText = "phrase_end";
+        public const string PhraseStartText = LyricHelper.PhraseStartText;
+        public const string PhraseEndText = LyricHelper.PhraseEndText;
 
         public const string Rb2SectionPrefix = "section ";
         public const string Rb3SectionPrefix = "prc_";
