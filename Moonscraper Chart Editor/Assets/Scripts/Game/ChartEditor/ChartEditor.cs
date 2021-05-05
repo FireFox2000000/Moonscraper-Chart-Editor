@@ -851,7 +851,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         {
             // Needs initialisation
             commandStack = new CommandStack();
-            commandStack.onPushPop.Register(events.commandStackPushPopEvent.Fire);           
+            commandStack.onPush.Register(events.commandStackPushEvent.Fire);
+            commandStack.onPop.Register(events.commandStackPopEvent.Fire);
         }
         else
         {
