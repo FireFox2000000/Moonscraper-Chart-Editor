@@ -41,9 +41,8 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     [UnityEngine.SerializeField]
     LyricEditor2Controller mainController;
 
-    public static readonly string c_phraseStartKeyword = "phrase_start";
-    public static readonly string c_phraseEndKeyword = "phrase_end";
-    public static readonly string c_lyricPrefix = "lyric ";
+    public static readonly string c_phraseStartKeyword = LyricHelper.PhraseStartText;
+    public static readonly string c_phraseEndKeyword = LyricHelper.PhraseEndText;
 
     public bool allSyllablesPlaced {get; private set;} = false;
     public bool anySyllablesPlaced {get; private set;} = false;
@@ -151,13 +150,13 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
                 }
             } else if (currentEvent.title.Equals(c_phraseEndKeyword)) {
                 phraseEndEvent = new LyricEditor2Event(currentEvent, mainController);
-            } else if (currentEvent.title.StartsWith(c_lyricPrefix)) {
+            } else if (currentEvent.IsLyric()) {
                 LyricEditor2Event newEvent = new LyricEditor2Event(currentEvent, mainController);
                 lyricEvents.Add(newEvent);
 
                 string formattedSyllable = currentEvent.title.TrimEnd();
                 // Remove lyric prefix
-                formattedSyllable = formattedSyllable.Substring(c_lyricPrefix.Length);
+                formattedSyllable = formattedSyllable.Substring(LyricHelper.LYRIC_EVENT_PREFIX.Length);
                 // Add formatted name to event
                 FormatAndAddSyllable(formattedSyllable, newEvent);
             }
@@ -181,7 +180,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
             string currentSyllable = syllables[i];
             string formattedSyllable = currentSyllable.TrimEnd();
 
-            LyricEditor2Event newEvent = new LyricEditor2Event(c_lyricPrefix + formattedSyllable, mainController);
+            LyricEditor2Event newEvent = new LyricEditor2Event(LyricHelper.LYRIC_EVENT_PREFIX + formattedSyllable, mainController);
             // Add syllables to lyricEvents
             lyricEvents.Add(newEvent);
             // Add formatted name to event

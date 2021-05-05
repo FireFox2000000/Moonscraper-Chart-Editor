@@ -395,7 +395,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     static bool IsLyricEvent(Event selectedEvent) {
-        if (selectedEvent.title.StartsWith(LyricEditor2PhraseController.c_lyricPrefix) ||
+        if (selectedEvent.IsLyric() ||
                 selectedEvent.title.Equals(LyricEditor2PhraseController.c_phraseStartKeyword) ||
                 selectedEvent.title.Equals(LyricEditor2PhraseController.c_phraseEndKeyword)) {
             return true;
@@ -406,7 +406,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
     static bool MakesValidPhrase (List<Event> potentialPhrase) {
         for (int i = 0; i < potentialPhrase.Count; i++) {
-            if (potentialPhrase[i].title.StartsWith(LyricEditor2PhraseController.c_lyricPrefix)) {
+            if (potentialPhrase[i].IsLyric()) {
                 return true;
             }
         }
@@ -461,7 +461,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         List<Event> tempEvents = new List<Event>();
         for (int i = 0; i < importedEvents.Count; i++) {
             Event currentEvent = importedEvents[i];
-            if (currentEvent.title.TrimEnd().Equals(LyricEditor2PhraseController.c_lyricPrefix.TrimEnd())) {
+            if (currentEvent.title.TrimEnd().Equals(LyricHelper.LYRIC_EVENT_PREFIX.TrimEnd())) {
                 var deleteCommand = new SongEditDelete(currentEvent);
                 deleteCommand.Invoke();
                 editCommands.Add(deleteCommand);
@@ -471,7 +471,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             if (currentEvent.title.Equals(LyricEditor2PhraseController.c_phraseEndKeyword) || i == importedEvents.Count - 1 ||
                     (importedEvents[i+1].title.Equals(LyricEditor2PhraseController.c_phraseStartKeyword))) {
                 if (MakesValidPhrase(tempEvents)) {
-                    LyricEditor2PhraseController newPhrase = UnityEngine.GameObject.Instantiate(phraseTemplate, phraseTemplate.transform.parent).GetComponent<LyricEditor2PhraseController>();
+                    LyricEditor2PhraseController newPhrase = Instantiate(phraseTemplate, phraseTemplate.transform.parent).GetComponent<LyricEditor2PhraseController>();
                     newPhrase.InitializeSyllables(tempEvents);
                     phrases.Add(newPhrase);
                     newPhrase.gameObject.SetActive(true);
