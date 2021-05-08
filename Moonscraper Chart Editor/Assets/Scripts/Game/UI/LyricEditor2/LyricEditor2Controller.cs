@@ -246,7 +246,6 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                 if (pushToStack) {
                     commandStackPushes.Add(pickupFromCommand);
                     ChartEditor.Instance.commandStack.Push(pickupFromCommand);
-                    numCommandStackPushes++;
                 } else {
                     pickupFromCommand.Invoke();
                 }
