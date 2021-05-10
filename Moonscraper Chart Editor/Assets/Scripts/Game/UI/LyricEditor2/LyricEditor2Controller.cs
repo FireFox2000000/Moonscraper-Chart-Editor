@@ -822,8 +822,6 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     void ClearPickupCommands() {
-        commandStackPushes.Clear();
-
         // numCommandStackPushes gets decremented automatically, need to assign
         // to another variable first
         int pushesToDelete = numCommandStackPushes;
@@ -831,6 +829,16 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             ChartEditor.Instance.commandStack.Pop();
         }
 
+        if (commandStackPushes.Count > 0) {
+            ChartEditor.Instance.commandStack.ResetTail();
+        }
+
+        // Need to redo the changes made in those pushes
+        for (int i = 0; i < pushesToDelete; ++i) {
+            commandStackPushes[i].Invoke();
+        }
+
+        commandStackPushes.Clear();
         numCommandStackPushes = 0;
     }
 
