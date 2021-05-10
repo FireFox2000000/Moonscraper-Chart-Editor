@@ -122,6 +122,9 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         currentPhrase = GetNextUnfinishedPhrase();
 
         if (currentPhrase != null && IsLegalToPlaceNow()) {
+            // Clear command stack commands to prevent duplication after redo
+            ClearPickupCommands();
+
             onePhrasePickedUp = false;
             // Distance check phase end event to this new start event.
             // If these two events are too close to each other then delete the phase end event to let CH automatically handle it.
@@ -151,9 +154,6 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             if (!currentPhrase.phraseStartPlaced) {
                 AutoPlacePhraseStart(currentPhrase);
             }
-
-            // Clear command stack commands to prevent duplication after redo
-            ClearPickupCommands();
         }
         // All phrases placed already, so currentPhrase was null
     }
@@ -195,6 +195,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // Consider the input state!
     public void InputLyrics() {
         if (inputState == InputState.Full) {
+            ClearPickupCommands();
             PickupAllPhrases();
             ClearPhraseObjects();
             string inputLyrics = lyricInputMenu.text ?? "";
@@ -209,6 +210,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             UpdateSortIds();
 
         } else if (inputState == InputState.Phrase) {
+            ClearPickupCommands();
             string inputLyrics = lyricInputMenu.text ?? "";
             int inputIndex = phrases.BinarySearch(inputPhrase);
             if (inputIndex >= 0) {
@@ -251,6 +253,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                 }
             }
         } else if (start.anySyllablesPlaced) {
+            ClearPickupCommands();
             start.PickupLastSyllable();
             onePhrasePickedUp = true;
             currentPhrase = GetNextUnfinishedPhrase();
