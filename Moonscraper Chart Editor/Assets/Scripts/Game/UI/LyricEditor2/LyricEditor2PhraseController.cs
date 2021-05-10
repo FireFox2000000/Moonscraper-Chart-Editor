@@ -52,6 +52,7 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     public uint? endTick {get {return phraseEndEvent.tick;}}
     public UnityEngine.RectTransform rectTransform {get; private set;}
     public int sortID = 0;
+    public int numSyllables {get {return lyricEvents?.Count ?? 0;}}
 
     List<LyricEditor2Event> lyricEvents;
     LyricEditor2Event phraseStartEvent = null;

@@ -230,7 +230,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     public void PickupFrom(LyricEditor2PhraseController start, bool pushToStack = true, bool forcePickupAll = false) {
-        if (forcePickupAll || HasFollowingLyrics(start) || onePhrasePickedUp) {
+        if (forcePickupAll || onePhrasePickedUp || start.numSyllables == 1 || HasFollowingLyrics(start)) {
             List<MoonscraperEngine.ICommand> commands = new List<MoonscraperEngine.ICommand>();
             int startIndex = phrases.BinarySearch(start);
             if (startIndex >= 0) {
