@@ -385,6 +385,28 @@
             }
         },
         {
+            "action": "MoveStepMouseScroll",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 4,
+                        "keys": []
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ],
+                "jsMaps": []
+            }
+        },
+        {
             "action": "MoveMeasurePositive",
             "input": {
                 "kbMaps": [

@@ -20,6 +20,7 @@ public class TimelineMovementController : MovementController
     const float c_middleClickMouseDragSensitivity = 700.0f;
     const float autoscrollSpeed = 10.0f;
     readonly MSChartEditorInputActions[] arrowKeyShortcutGroup = new MSChartEditorInputActions[] { MSChartEditorInputActions.MoveStepPositive, MSChartEditorInputActions.MoveStepNegative, MSChartEditorInputActions.MoveMeasurePositive, MSChartEditorInputActions.MoveMeasureNegative };
+    readonly MSChartEditorInputActions[] moveStepShortcutGroup = new MSChartEditorInputActions[] { MSChartEditorInputActions.MoveStepPositive, MSChartEditorInputActions.MoveStepNegative };
 
     public override void SetPosition(uint tick)
     {
@@ -140,6 +141,8 @@ public class TimelineMovementController : MovementController
             if (Services.IsInDropDown)
                 scrollDelta = 0;
 
+            uint currentPos = explicitChartPos != null ? (uint)explicitChartPos : editor.currentTickPos;
+
             // Position changes scroll bar value
             if (scrollDelta != 0 || transform.position != prevPos || Services.HasScreenResized)
             {
@@ -147,6 +150,14 @@ public class TimelineMovementController : MovementController
                 {
                     SectionJump(scrollDelta);
                     RefreshSectionHighlight();
+                }
+                else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveStepMouseScroll))
+                {
+                    uint snappedPos = GetSnappedStepPos(scrollDelta, currentPos);
+                    if (editor.currentSong.TickToTime(snappedPos, editor.currentSong.resolution) <= editor.currentSongLength)
+                    {
+                        SetPosition(snappedPos);
+                    }
                 }
                 else
                 {
@@ -181,33 +192,14 @@ public class TimelineMovementController : MovementController
             else if (MSChartEditorInput.GetGroupInput(arrowKeyShortcutGroup))
             {
                 // Arrow key controls
-                uint currentPos;
-                if (explicitChartPos != null)
-                    currentPos = (uint)explicitChartPos;
-                else
-                    currentPos = editor.currentTickPos;
 
                 if (arrowMoveTimer == 0 || (arrowMoveTimer > ARROW_INIT_DELAY_TIME && Time.realtimeSinceStartup > lastMoveTime + ARROW_HOLD_MOVE_ITERATION_TIME))
                 {
                     uint snappedPos = currentPos;
-                    // Navigate to snapped pos ahead or behind
-                    if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveStepPositive))
+                    if (MSChartEditorInput.GetGroupInput(moveStepShortcutGroup))
                     {
-                        snappedPos = Snapable.ChartIncrementStep(currentPos, Globals.gameSettings.step, editor.currentSong);
-
-                        if (snappedPos == currentPos)       // This can happen on really weird custom step values
-                        {
-                            ++snappedPos;
-                        }
-                    }
-                    else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveStepNegative))
-                    {
-                        snappedPos = Snapable.ChartDecrementStep(currentPos, Globals.gameSettings.step, editor.currentSong);
-
-                        if (snappedPos == currentPos && snappedPos > 0)     // This can happen on really weird custom step values
-                        {
-                            --snappedPos;
-                        }
+                        float direction = MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveStepPositive) ? 1 : -1;
+                        snappedPos = GetSnappedStepPos(direction, currentPos);
                     }
                     else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveMeasurePositive))
                     {
@@ -284,6 +276,28 @@ public class TimelineMovementController : MovementController
         yield return null;
 
         UpdateTimelineHandleBasedPos();
+    }
+
+    uint GetSnappedStepPos(float direction, uint currentPos)
+    {
+        uint snappedPos = currentPos;
+        if (direction > 0)
+        {
+            snappedPos = Snapable.ChartIncrementStep(currentPos, Globals.gameSettings.step, editor.currentSong);
+            if (snappedPos == currentPos)       // This can happen on really weird custom step values
+            {
+                ++snappedPos;
+            }
+        }
+        else
+        {
+            snappedPos = Snapable.ChartDecrementStep(currentPos, Globals.gameSettings.step, editor.currentSong);
+            if (snappedPos == currentPos && snappedPos > 0)     // This can happen on really weird custom step values
+            {
+                --snappedPos;
+            }
+        }
+        return snappedPos;
     }
 
     void UpdateTimelineHandleBasedPos()

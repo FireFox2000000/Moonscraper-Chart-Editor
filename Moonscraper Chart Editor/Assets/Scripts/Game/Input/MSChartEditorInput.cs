@@ -43,6 +43,7 @@ public enum MSChartEditorInputActions
 
     MoveStepPositive,
     MoveStepNegative,
+    MoveStepMouseScroll,
     MoveMeasurePositive,
     MoveMeasureNegative,
 
