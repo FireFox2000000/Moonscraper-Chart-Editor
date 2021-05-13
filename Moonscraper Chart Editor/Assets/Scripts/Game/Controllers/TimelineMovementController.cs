@@ -20,7 +20,7 @@ public class TimelineMovementController : MovementController
     const float c_middleClickMouseDragSensitivity = 700.0f;
     const float autoscrollSpeed = 10.0f;
     readonly MSChartEditorInputActions[] arrowKeyShortcutGroup = new MSChartEditorInputActions[] { MSChartEditorInputActions.MoveStepPositive, MSChartEditorInputActions.MoveStepNegative, MSChartEditorInputActions.MoveMeasurePositive, MSChartEditorInputActions.MoveMeasureNegative };
-    readonly MSChartEditorInputActions[] moveStepShortcutGroup = new MSChartEditorInputActions[] { MSChartEditorInputActions.MoveStepPositive, MSChartEditorInputActions.MoveStepNegative };
+    readonly MSChartEditorInputActions[] moveStepActionGroup = new MSChartEditorInputActions[] { MSChartEditorInputActions.MoveStepPositive, MSChartEditorInputActions.MoveStepNegative };
 
     public override void SetPosition(uint tick)
     {
@@ -196,7 +196,7 @@ public class TimelineMovementController : MovementController
                 if (arrowMoveTimer == 0 || (arrowMoveTimer > ARROW_INIT_DELAY_TIME && Time.realtimeSinceStartup > lastMoveTime + ARROW_HOLD_MOVE_ITERATION_TIME))
                 {
                     uint snappedPos = currentPos;
-                    if (MSChartEditorInput.GetGroupInput(moveStepShortcutGroup))
+                    if (MSChartEditorInput.GetGroupInput(moveStepActionGroup))
                     {
                         float direction = MSChartEditorInput.GetInput(MSChartEditorInputActions.MoveStepPositive) ? 1 : -1;
                         snappedPos = GetSnappedStepPos(direction, currentPos);
