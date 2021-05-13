@@ -181,7 +181,7 @@
             "properties": {
                 "displayName": "",
                 "rebindable": false,
-                "hiddenInLists": false,
+                "hiddenInLists": true,
                 "anyDirectionAxis": false,
                 "category": 1,
                 "allowSameFrameMultiInput": false
