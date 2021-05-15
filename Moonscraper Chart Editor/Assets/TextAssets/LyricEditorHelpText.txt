@@ -1,0 +1,17 @@
+Welcome to the Moonscraper lyric editor.
+
+At first the editor will be blank, so to input lyrics click the "Edit Lyrics" button. 
+
+This will open an input menu where you can type or copy-paste lyrics from a song. 
+
+The lyrics will need to be formatted a specific way. Syllables are seperated with a "-" character, and phrases are seperated by line-breaks. A "=" character should be used as a substitute for a literal hyphen ("-") character, and will be reconverted by games like Clone Hero. Backtick ("`") characters are also used as a substitute for literal quote (") characters in a similar way. 
+
+Click the "Submit" button to finalise your lyrics. You should now see that the lyrics have been added into the editor. 
+
+Clicking the "Set Time" button will place one syllable wherever the strikeline currently resides, snapped to the current step if that is enabled in the options menu. If you enter playback mode you can quickly place syllables in time with the music.
+When you reach the end of a phrase, the editor will move onto the next phrase as soon as the "Set Time" button is released. This is the same time that phrases will be advanced when playing charts, so make sure to hold the button until the last lyric of the phrase has stopped being sung. 
+
+Mistakes in timing may occour when placing lyrics. If this happens, hover over the phrase and right-click on it. This will pick up the lyrics of that phrase and all the phrases that follow it, so that those lyrics can be placed again. 
+There may also be errors in the lyrics themselves as they're being placed, such as a typo or a forgotten hyphen. You can edit the contains of phrases by left-clicking on them, which will open an input menu where you can edit, add or remove the phrases at and after the phrases selected. 
+
+Once you have finished placing lyrics, don't forget to save your song!
