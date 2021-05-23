@@ -188,6 +188,17 @@
             }
         },
         {
+            "mSChartEditorInputAction": "MoveStepMouseScroll",
+            "properties": {
+                "displayName": "",
+                "rebindable": false,
+                "hiddenInLists": true,
+                "anyDirectionAxis": false,
+                "category": 1,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
             "mSChartEditorInputAction": "MoveMeasurePositive",
             "properties": {
                 "displayName": "Scroll Measure Forwards",
