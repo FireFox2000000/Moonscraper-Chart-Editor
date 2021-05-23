@@ -16,8 +16,9 @@ namespace MoonscraperEngine
 
         public bool isAtStart { get { return currentStackIndex < 0; } }
         public bool isAtEnd { get { return currentStackIndex >= commands.Count - 1; } }
-        public Event<ICommand> onPush = new Event<ICommand>();
-        public Event<ICommand> onPop = new Event<ICommand>();
+
+        protected virtual void OnPush(ICommand command) { }
+        protected virtual void OnPop(ICommand command) { }
 
         public CommandStack()
         {
@@ -34,7 +35,7 @@ namespace MoonscraperEngine
         {
             if (!isAtEnd)
             {
-                onPush.Fire(commands[++currentStackIndex]);
+                OnPush(commands[++currentStackIndex]);
                 commands[currentStackIndex].Invoke();
             }
         }
@@ -46,7 +47,7 @@ namespace MoonscraperEngine
             System.Diagnostics.StackFrame frame = stackTrace.GetFrame(1);
             Debug.LogFormat("Command Stack Push: {0} in file {1} at line {2}", frame.GetMethod().Name, System.IO.Path.GetFileName(frame.GetFileName()), frame.GetFileLineNumber());
 #endif
-            onPush.Fire(command);
+            OnPush(command);
             ResetTail();
             ++currentStackIndex;
             command.Invoke();
@@ -62,7 +63,7 @@ namespace MoonscraperEngine
 #endif
             if (!isAtStart)
             {
-                onPop.Fire(commands[currentStackIndex]);
+                OnPop(commands[currentStackIndex]);
                 commands[currentStackIndex--].Revoke();
             }
         }

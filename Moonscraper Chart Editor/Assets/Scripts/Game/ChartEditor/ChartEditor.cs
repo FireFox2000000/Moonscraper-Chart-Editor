@@ -72,7 +72,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public static bool hasFocus { get { return Application.isFocused; } }
 
     public SelectedObjectsManager selectedObjectsManager;
-    public CommandStack commandStack;
+    public CommandStack commandStack { get; private set; }
+    CommandStack m_songCommandStack;
 
     /// <summary>
     /// State machine for the entire application. 
@@ -847,12 +848,11 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     // Chart should be part of the current song
     public void LoadChart(Chart chart)
     {
-        if (commandStack == null)
+        if (m_songCommandStack == null)
         {
             // Needs initialisation
-            commandStack = new CommandStack();
-            commandStack.onPush.Register(events.commandStackPushEvent.Fire);
-            commandStack.onPop.Register(events.commandStackPopEvent.Fire);
+            m_songCommandStack = new CommandStack();
+            SetActiveCommandStack(m_songCommandStack);
         }
         else
         {
@@ -1227,7 +1227,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
     public void UndoWrapper()
     {
-        if (!commandStack.isAtStart)
+        if (!commandStack.isAtStart && services.CanUndo())
         {
             undoRedoSnapInfo = null;
 
@@ -1332,6 +1332,17 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     {
         Copy();
         Delete();
+    }
+
+    // Gives undo-redo functionality to sub-states
+    public void SetActiveCommandStack(CommandStack commandStack)
+    {
+        this.commandStack = commandStack;
+    }
+
+    public void SetDefaultCommandStack()
+    {
+        this.commandStack = m_songCommandStack;
     }
 
 #endregion

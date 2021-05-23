@@ -73,6 +73,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     static bool playbackActive {get {return (ChartEditor.Instance.currentState == ChartEditor.State.Playing);}}
 
     public SongEditCommandSet editCommands;
+    LyricEditorCommandStack m_commandStack = new LyricEditorCommandStack();
 
     [UnityEngine.SerializeField]
     LyricEditor2AutoScroller autoScroller;
@@ -291,6 +292,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     public void onCommandStackPush(in MoonscraperEngine.ICommand command) {
+        UnityEngine.Debug.Assert(command is PickupFromCommand, "Trying to push a non-lyric editor command onto the lyrics editor stack! Did you miss a call to ChartEditor.Instance.SetDefaultCommandStack?");
+
         if (!(command is PickupFromCommand c && commandStackPushes.Contains(c))) {
             gameObject.SetActive(false);
         } else {
@@ -299,6 +302,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     public void onCommandStackPop(in MoonscraperEngine.ICommand command) {
+        UnityEngine.Debug.Assert(command is PickupFromCommand, "Trying to pop a non-lyric editor command from the lyrics editor stack! Did you miss a call to ChartEditor.Instance.SetDefaultCommandStack?");
+
         if (!(command is PickupFromCommand c && commandStackPushes.Contains(c))) {
             gameObject.SetActive(false);
         } else {
@@ -315,6 +320,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     }
 
     void OnEnable() {
+        ChartEditor.Instance.SetActiveCommandStack(m_commandStack);
+
         // Create a new edit command set
         editCommands = new SongEditCommandSet();
         ImportExistingLyrics();
@@ -340,9 +347,16 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         // Remove command stack commands
         ClearPickupCommands();
         // Push batched edits to command stack
+
+        ChartEditor.Instance.SetDefaultCommandStack();
+
         if (!editCommands.isEmpty) {
+            // Push the finalised commands back onto the primary stack
             ChartEditor.Instance.commandStack.Push(editCommands);
         }
+
+        editCommands = null; // Release memory, don't wait for the next OnEnable call
+        m_commandStack.Clear();
 
         UnityEngine.Debug.Log("Closed lyric editor");
     }
@@ -351,9 +365,10 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         phraseTemplate.gameObject.SetActive(false);
 
         ChartEditor.Instance.events.editorStateChangedEvent.Register(OnStateChanged);
-        ChartEditor.Instance.events.commandStackPushEvent.Register(onCommandStackPush);
-        ChartEditor.Instance.events.commandStackPopEvent.Register(onCommandStackPop);
         ChartEditor.Instance.events.songLoadedEvent.Register(Reset);
+
+        m_commandStack.onPush.Register(onCommandStackPush);
+        m_commandStack.onPop.Register(onCommandStackPop);
     }
 
     void Update() {
