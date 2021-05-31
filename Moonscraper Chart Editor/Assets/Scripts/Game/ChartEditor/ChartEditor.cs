@@ -145,6 +145,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     [HideInInspector]
     public ChartEditorSessionFlags sessionFlags = ChartEditorSessionFlags.None;
 
+    readonly string[] ValidFileExtentions = new string[] { "chart", "mid", "msce" };
+
     // Use this for initialization
     void Awake () {
         Debug.Log(string.Format("Initialising {0} v{1}", Application.productName, Application.version));
@@ -196,10 +198,23 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         string[] args = Environment.GetCommandLineArgs();
         foreach (string arg in args)
         {
-            if (System.IO.File.Exists(arg) && (System.IO.Path.GetExtension(arg) == ".chart" || System.IO.Path.GetExtension(arg) == ".mid"))
+            if (System.IO.File.Exists(arg))
             {
-                StartCoroutine(_Load(arg));
-                break;
+                bool validExtention = false;
+                foreach (string ext in ValidFileExtentions)
+                {
+                    if (System.IO.Path.GetExtension(arg).TrimStart('.') == ext)
+                    {
+                        validExtention = true;
+                        break;
+                    }
+                }
+
+                if (validExtention)
+                {
+                    StartCoroutine(_Load(arg));
+                    break;
+                }
             }
         }
 #endif
@@ -797,7 +812,17 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         Song backup = currentSong;
 
-        if (!FileExplorer.OpenFilePanel(new ExtensionFilter("Chart files", "chart", "mid"), "chart,mid,msce", out currentFileName))
+        string defExt = string.Empty;
+        foreach(string ext in ValidFileExtentions)
+        {
+            if (!string.IsNullOrEmpty(defExt))
+            {
+                defExt += ",";
+            }
+            defExt += ext;
+        }
+
+        if (!FileExplorer.OpenFilePanel(new ExtensionFilter("Chart files", ValidFileExtentions), defExt, out currentFileName))
         {
             currentSong = backup;
 
