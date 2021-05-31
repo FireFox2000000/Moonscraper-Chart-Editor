@@ -191,7 +191,7 @@ public class SustainController : SelectableClick {
 
     void GenerateSustainDragCommands(bool compareWithOriginal)
     {
-        if (nCon.note.song == null || Input.GetMouseButton(0) || initialDraggingSnappedPos.HasValue)
+        if (nCon.note == null || nCon.note.song == null || Input.GetMouseButton(0) || initialDraggingSnappedPos.HasValue)
             return;
 
         uint snappedPos = GetSnappedSustainPos();
