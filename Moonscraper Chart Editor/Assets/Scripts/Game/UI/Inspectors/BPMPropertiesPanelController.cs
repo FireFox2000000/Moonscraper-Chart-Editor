@@ -211,7 +211,11 @@ public class BPMPropertiesPanelController : PropertiesPanelController {
 
         if ((addedChar == c_decimal && !text.Contains(c_decimal) && text.Length > 0) || (addedChar >= '0' && addedChar <= '9'))
         {
-            if ((text.Contains(c_decimal) && text.IndexOf(c_decimal) > 2 && charIndex <= text.IndexOf(c_decimal)) || (addedChar != c_decimal && !text.Contains(c_decimal) && text.Length > 2))
+            bool invalidDecimalPosition = text.Contains(c_decimal) && text.IndexOf(c_decimal) > 2 && charIndex <= text.IndexOf(c_decimal);
+            bool exceedsDigitLimitAfterDecimalPoint = text.Contains(c_decimal) && (text.Length - text.IndexOf(c_decimal)) > 3 && charIndex > text.IndexOf(c_decimal);
+            bool greaterThanMaxInts = addedChar != c_decimal && !text.Contains(c_decimal) && text.Length > 2;
+
+            if (invalidDecimalPosition || greaterThanMaxInts || exceedsDigitLimitAfterDecimalPoint)
                 return '\0';
 
             if (addedChar != c_decimal)
