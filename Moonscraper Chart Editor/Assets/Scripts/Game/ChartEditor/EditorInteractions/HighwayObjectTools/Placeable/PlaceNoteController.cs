@@ -421,8 +421,8 @@ public class PlaceNoteController : ObjectlessTool {
     List<PlaceNote> activeNotes = new List<PlaceNote>();
     void MouseControlsBurstMode(LaneInfo laneInfo)
     {
+        bool openActive = MouseModeOpenNoteActive();    // Call this before activeNotes.Clear(), otherwise always returns false.
         activeNotes.Clear();
-        bool openActive = openNote.gameObject.activeSelf;
 
         int maxLanes = laneInfo.laneCount;
 
@@ -540,6 +540,26 @@ public class PlaceNoteController : ObjectlessTool {
 
             editor.selectedObjectsManager.currentSelectedObject = primaryActiveNote;
         }
+    }
+
+    public void MouseModeSetOpenNoteActive(bool active)
+    {
+        if (active)
+        {
+            if (!activeNotes.Contains(openNote))
+            {
+                activeNotes.Add(openNote);
+            }
+        }
+        else
+        {
+            activeNotes.Remove(openNote);
+        }
+    }
+
+    public bool MouseModeOpenNoteActive()
+    {
+        return activeNotes.Contains(openNote);
     }
 
     static void UpdateNoteLinkedListRefs(IList<PlaceNote> notes)

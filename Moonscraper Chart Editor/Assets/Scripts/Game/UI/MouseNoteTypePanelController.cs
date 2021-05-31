@@ -22,18 +22,18 @@ public class MouseNoteTypePanelController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        bool openActive = noteToolController.openNote.gameObject.activeSelf;
+        bool openActive = noteToolController.MouseModeOpenNoteActive();
         m_openNoteButton.interactable = !openActive;
         m_multiNoteButton.interactable = openActive;
     }
 
     public void SetOpenNote()
     {
-        noteToolController.openNote.gameObject.SetActive(true);
+        noteToolController.MouseModeSetOpenNoteActive(true);
     }
 
     public void SetMultiNote()
     {
-        noteToolController.openNote.gameObject.SetActive(false);
+        noteToolController.MouseModeSetOpenNoteActive(false);
     }
 }
