@@ -1,3 +1,16 @@
+1.4.1.2
+	NEW FEATURES
+	-Added function in group inspector to equalise out the spacing between notes.
+	-Added Lyrics Editor courtesy of SpookySquidward
+
+	FIXES
+	-Fixed incorrect forced checks that locks out the forced checkbox option in the menu in situations where it's actually valid.
+	-Fixed multi-stream audio desync.
+	-Block invalid characters from entering song properties options
+	-Fixed note tool reverting from open note back to multi-note when tool gets disabled from being out of tool range or clicking buttons etc.
+	-Guard against greater than 3 decimal places for bpm numbers
+	-Fixed not being able to load .msce in proper builds.
+
 1.4.1.1
 	NEW FEATURES
 	-Added ability to toggle starpower to drum fill activations under the drums instrument.
