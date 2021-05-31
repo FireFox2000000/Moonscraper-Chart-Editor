@@ -56,6 +56,13 @@ public class SongPropertiesPanelController : TabMenu
     {
         base.Start();
         offset.onValidateInput = LocalesManager.ValidateDecimalInput;
+
+        songName.onValidateInput = ValidateStringMetadataInput;
+        artist.onValidateInput = ValidateStringMetadataInput;
+        charter.onValidateInput = ValidateStringMetadataInput;
+        album.onValidateInput = ValidateStringMetadataInput;
+        genre.onValidateInput = ValidateStringMetadataInput;
+        mediaType.onValidateInput = ValidateStringMetadataInput;
     }
 
     protected override void OnEnable()
@@ -327,6 +334,16 @@ public class SongPropertiesPanelController : TabMenu
             yield return null;
 
         setAudioTextLabels();
+    }
+
+    public static char ValidateStringMetadataInput(string text, int charIndex, char addedChar)
+    {
+        if (addedChar == '"')
+        {
+            return '\0';
+        }
+
+        return addedChar;
     }
 
     // Unity doesn't support calling methods with enum parameters
