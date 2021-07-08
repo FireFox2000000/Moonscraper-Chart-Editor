@@ -18,7 +18,7 @@ public static class FileExplorer  {
 #elif UNITY_STANDALONE_LINUX
         m_platformWrapper = new FileExplorerLinux();
 #elif UNITY_STANDALONE_OSX
-
+        m_platformWrapper = new FileExplorerMacOS();
 #endif
 
         UnityEngine.Debug.Assert(m_platformWrapper != null, "Platform wrapper needs implementation!");

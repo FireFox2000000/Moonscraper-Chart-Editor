@@ -209,7 +209,7 @@ public class EditorObjectToolManager : System.Object
             bool mouseInToolArea = services.InToolArea;
             bool blockedByUI = MouseMonitor.IsUIUnderPointer();
             bool keysModeActive = Globals.gameSettings.keysModeEnabled;
-            bool ctrlDraggingBpm = currentToolId == ToolID.BPM && MoonscraperEngine.Input.KeyboardDevice.ctrlKeyBeingPressed && Input.GetMouseButton(0);
+            bool ctrlDraggingBpm = currentToolId == ToolID.BPM && MoonscraperEngine.Input.KeyboardDevice.ctrlCmdKeyBeingPressed && Input.GetMouseButton(0);
             bool currentlyInDeleteMode = Input.GetMouseButton(1);
 
             if (waitForMouseRelease)

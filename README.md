@@ -36,6 +36,11 @@ A [`PKGBUILD` file for Arch Linux](aur/PKGBUILD) is included in the repository.
 
 Other distribution packagers can use the `PKGBUILD` file for reference.
 
+### Runtime dependencies (macOS)
+The application requires the following dependencies to be installed:
+- `brew install ffmpeg sdl2`
+- `libbass` (included with the build)
+
 ## Who do I talk to?
 * Alexander "FireFox" Ong
 * Discord (Easiest link to contact me through)- https://discord.gg/bjsKTwd

@@ -24,7 +24,7 @@ provides=(moonscraper-chart-editor)
 backup=("opt/$pkgname/local_events.txt"
         "opt/$pkgname/global_events.txt"
         "opt/$pkgname/Custom Resources/settings.ini")
-source=('git+https://github.com/bmwalters/moonscraper-chart-editor.git#branch=linux-new'
+source=('git+https://github.com/FireFox2000000/moonscraper-chart-editor.git'
         "$_pkgname.desktop"
         'Unity_lic.ulf::local://Unity_lic.ulf')
 sha256sums=('SKIP'

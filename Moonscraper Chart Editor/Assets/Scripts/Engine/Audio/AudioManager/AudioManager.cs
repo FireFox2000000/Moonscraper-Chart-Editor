@@ -14,7 +14,7 @@ using Un4seen.Bass.AddOn.Opus;
 namespace MoonscraperEngine.Audio
 {
     /// <summary>
-    /// A wrapper around a custom audio engine, cause Unity's is quite bad for rhythm games. 
+    /// A wrapper around a custom audio engine, cause Unity's is quite bad for rhythm games.
     /// Current custom engine is Un4seen's Bass and Bass.net. See licensing information on whether you'd allowed to use it. Currently under Non-Commerical for Moonscraper, hence why it's allowed to be here.
     /// </summary>
     public static class AudioManager
@@ -79,7 +79,7 @@ namespace MoonscraperEngine.Audio
                 UnityEngine.Debug.LogWarning("Disposing of audio manager but there are still " + liveAudioStreams.Count + " streams remaining. Remaining streams will be cleaned up by the audio manager.");
             }
 
-            // Free any remaining streams 
+            // Free any remaining streams
             for (int i = liveAudioStreams.Count - 1; i >= 0; --i)
             {
                 FreeAudioStream(liveAudioStreams[i]);
@@ -160,7 +160,7 @@ namespace MoonscraperEngine.Audio
                 {
                     UnityEngine.Debug.LogErrorFormat("Unable to encode ogg file from {0} to {1}. Error {2}", sourcePath, destPath, Bass.BASS_ErrorGetCode().ToString());
                 }
-                #elif (UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX)
+                #elif (UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX)
                 if (!new FFmpegTranscoding().main(sourcePath, destPath)) {
                     UnityEngine.Debug.LogErrorFormat("Unable to encode ogg file from {0} to {1}", sourcePath, destPath);
                 }
