@@ -4,6 +4,7 @@
 using System.Text;
 using MoonscraperEngine;
 using MoonscraperChartEditor.Song;
+using System;
 
 public class SongValidate
 {
@@ -19,6 +20,12 @@ public class SongValidate
     {
         public bool checkMidiIssues;
         public float songLength;
+    }
+
+    static string PrintObjectTime(float seconds)
+    {
+        TimeSpan time = TimeSpan.FromSeconds(seconds);
+        return time.ToString("mm':'ss'.'ff");
     }
 
     public static string GenerateReport(ValidationOptions validationOptions, Song song, ValidationParameters validationParams, out bool hasErrors)
@@ -65,7 +72,7 @@ public class SongValidate
                         SyncTrack st = song.syncTrack[i];
 
                         sb.AppendFormat("\tFound synctrack object beyond the length of the song-\n");
-                        sb.AppendFormat("\t\tType = {0}, position = {1}\n", st.GetType(), st.tick);
+                        sb.AppendFormat("\t\tType = {0}, time = {2}, position = {1}\n", st.GetType(), st.tick, PrintObjectTime(st.time));
                     }
                 }
 
@@ -81,7 +88,7 @@ public class SongValidate
                         MoonscraperChartEditor.Song.Event eventObject = song.eventsAndSections[i];
 
                         sb.AppendFormat("\tFound event object beyond the length of the song-\n");
-                        sb.AppendFormat("\t\tType = {0}, position = {1}\n", eventObject.GetType(), eventObject.tick);
+                        sb.AppendFormat("\t\tType = {0}, time = {2}, position = {1}\n", eventObject.GetType(), eventObject.tick, PrintObjectTime(eventObject.time));
                     }
                 }
             }
@@ -106,7 +113,7 @@ public class SongValidate
                         ChartObject co = chart.chartObjects[i];
 
                         sb.AppendFormat("\tFound chart object beyond the length of the song-\n");
-                        sb.AppendFormat("\t\tType = {0}, position = {1}\n", co.GetType(), co.tick);
+                        sb.AppendFormat("\t\tType = {0}, time = {2}, position = {1}\n", co.GetType(), co.tick, PrintObjectTime(co.time));
                     }
                 }
             }
@@ -141,7 +148,7 @@ public class SongValidate
             for (int i = SECTION_LIMIT; i < song.sections.Count; ++i)
             {
                 Section section = song.sections[i];
-                sb.AppendFormat("\t\tPosition = {0}, Title = {1}\n", section.tick, section.title);
+                sb.AppendFormat("\t\tTime = {2}, Position = {0}, Title = {1}\n", section.tick, section.title, PrintObjectTime(section.time));
             }
         }
 
@@ -177,7 +184,10 @@ public class SongValidate
                 if (((float)deltaTick % measureLine.tickGap) != 0)      // Doesn't line up on a measure
                 {
                     hasErrorsLocal |= true;
-                    sb.AppendFormat("\tFound misaligned Time Signature at position {0}. Time signatures must be aligned to the measure set by the previous time signature.\n", tsToTest.tick);
+                    sb.AppendFormat("\tFound misaligned Time Signature at time {1}, position {0}. Time signatures must be aligned to the measure set by the previous time signature.\n", 
+                        tsToTest.tick
+                        , PrintObjectTime(tsToTest.time)
+                    );
                 }
             }
         }
