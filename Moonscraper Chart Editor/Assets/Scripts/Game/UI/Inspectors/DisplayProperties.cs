@@ -168,7 +168,7 @@ public class DisplayProperties : UpdateableService
 
     public void SetHyperspeed(float value)
     {
-        Globals.gameSettings.hyperspeed = value;
+        Globals.gameSettings.hyperspeed.value = value;
         editor.events.hyperspeedChangeEvent.Fire();
     }
 
@@ -188,7 +188,7 @@ public class DisplayProperties : UpdateableService
 
     public void SetHighwayLength(float value)
     {
-        Globals.gameSettings.highwayLength = value;
+        Globals.gameSettings.highwayLength.value = value;
 
         Vector3 pos = Vector3.zero;
         pos.y = value * 5 + minHighwayLength;

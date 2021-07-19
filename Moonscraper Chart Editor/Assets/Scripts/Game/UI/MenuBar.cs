@@ -91,7 +91,7 @@ public class MenuBar : UpdateableService {
 
     public void ToggleExtendedSustains()
     {
-        Globals.gameSettings.extendedSustainsEnabled = !Globals.gameSettings.extendedSustainsEnabled;
+        Globals.gameSettings.extendedSustainsEnabled.value = !Globals.gameSettings.extendedSustainsEnabled;
         Debug.Log("Extended sustains toggled " + Globals.gameSettings.extendedSustainsEnabled);
     }
 

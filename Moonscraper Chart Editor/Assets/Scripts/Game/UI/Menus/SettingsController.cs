@@ -46,6 +46,7 @@ public class SettingsController : TabMenu
     public InputField sustainGapInput;
     public InputField sustainGapTimeInput;
     public InputField lyricEditorPhaseEndTimeInput;
+    public InputField newSongResolutionInputField;
 
     public Dropdown gameplayStartDelayDropdown;
     public Dropdown fpsSelectDropdown;
@@ -95,28 +96,28 @@ public class SettingsController : TabMenu
         }
 
         // Set all variables' values based on the UI
-        Globals.gameSettings.sustainGapEnabled = sustainGapEnabledToggle.isOn;
+        Globals.gameSettings.sustainGapEnabled.value = sustainGapEnabledToggle.isOn;
 
-        Globals.gameSettings.vol_song = musicSourceSlider.value;
-        Globals.gameSettings.vol_guitar = guitarSourceSlider.value;
-        Globals.gameSettings.vol_bass = bassSourceSlider.value;
-        Globals.gameSettings.vol_rhythm = rhythmSourceSlider.value;
-        Globals.gameSettings.vol_keys = keysSourceSlider.value;
-        Globals.gameSettings.vol_drums = drumSourceSlider.value;
-        Globals.gameSettings.vol_drums2 = drum2SourceSlider.value;
-        Globals.gameSettings.vol_drums3 = drum3SourceSlider.value;
-        Globals.gameSettings.vol_drums4 = drum4SourceSlider.value;
-        Globals.gameSettings.vol_vocals = vocalSourceSlider.value;
-        Globals.gameSettings.vol_crowd = crowdSourceSlider.value;
+        Globals.gameSettings.vol_song.value = musicSourceSlider.value;
+        Globals.gameSettings.vol_guitar.value = guitarSourceSlider.value;
+        Globals.gameSettings.vol_bass.value = bassSourceSlider.value;
+        Globals.gameSettings.vol_rhythm.value = rhythmSourceSlider.value;
+        Globals.gameSettings.vol_keys.value = keysSourceSlider.value;
+        Globals.gameSettings.vol_drums.value = drumSourceSlider.value;
+        Globals.gameSettings.vol_drums2.value = drum2SourceSlider.value;
+        Globals.gameSettings.vol_drums3.value = drum3SourceSlider.value;
+        Globals.gameSettings.vol_drums4.value = drum4SourceSlider.value;
+        Globals.gameSettings.vol_vocals.value = vocalSourceSlider.value;
+        Globals.gameSettings.vol_crowd.value = crowdSourceSlider.value;
         Globals.gameSettings.sfxVolume = sfxSlider.value;
 
         //editor.clapSource.volume = clapSourceSlider.value;
 
-        Globals.gameSettings.vol_master = masterVolumeSlider.value / 10.0f;
+        Globals.gameSettings.vol_master.value = masterVolumeSlider.value / 10.0f;
         AudioListener.volume = Globals.gameSettings.vol_master;
-        Globals.gameSettings.audio_pan = musicPanSlider.value / 10.0f;
+        Globals.gameSettings.audio_pan.value = musicPanSlider.value / 10.0f;
 
-        Globals.gameSettings.gameplayStartDelayTime = gameplayStartDelayDropdown.value * 0.5f;
+        Globals.gameSettings.gameplayStartDelayTime.value = gameplayStartDelayDropdown.value * 0.5f;
     }
 
     protected override void OnEnable()
@@ -128,6 +129,7 @@ public class SettingsController : TabMenu
         sustainGapTimeBasedToggle.isOn = Globals.gameSettings.sustainGapIsTimeBased;
         sustainGapTimeInput.text = Globals.gameSettings.sustainGapTimeMs.ToString();
         lyricEditorPhaseEndTimeInput.text = Globals.gameSettings.lyricEditorSettings.phaseEndThreashold.ToString();
+        newSongResolutionInputField.text = Globals.gameSettings.newSongResolution.ToString();
 
         UpdateSustainGapInteractability();
 
@@ -260,33 +262,33 @@ public class SettingsController : TabMenu
 
     public void SetLeftyFlip(bool value)
     {
-        Globals.gameSettings.notePlacementMode = value ? GameSettings.NotePlacementMode.LeftyFlip : GameSettings.NotePlacementMode.Default;
+        Globals.gameSettings.notePlacementMode.value = value ? GameSettings.NotePlacementMode.LeftyFlip : GameSettings.NotePlacementMode.Default;
         editor.events.leftyFlipToggledEvent.Fire();
     }
 
     public void SetResetAfterPlay(bool value)
     {
-        Globals.gameSettings.resetAfterPlay = value;
+        Globals.gameSettings.resetAfterPlay.value = value;
     }
 
     public void SetResetAfterGameplay(bool value)
     {
-        Globals.gameSettings.resetAfterGameplay = value;
+        Globals.gameSettings.resetAfterGameplay.value = value;
     }
 
     public void SetExtendedSustains(bool value)
     {
-        Globals.gameSettings.extendedSustainsEnabled = value;
+        Globals.gameSettings.extendedSustainsEnabled.value = value;
     }
 
     public void SetAutoValidateSongOnSave(bool value)
     {
-        Globals.gameSettings.autoValidateSongOnSave = value;
+        Globals.gameSettings.autoValidateSongOnSave.value = value;
     }
 
     public void SetSlowdownPitchCorrectionEnabled(bool value)
     {
-        Globals.gameSettings.slowdownPitchCorrectionEnabled = value;
+        Globals.gameSettings.slowdownPitchCorrectionEnabled.value = value;
     }
 
     public void IncrementSustainsGapStep()
@@ -310,9 +312,9 @@ public class SettingsController : TabMenu
     void SetClapProperties(bool value, GameSettings.ClapToggle setting)
     {
         if (value)
-            Globals.gameSettings.clapProperties |= setting;
+            Globals.gameSettings.clapProperties.value |= setting;
         else
-            Globals.gameSettings.clapProperties &= ~setting;
+            Globals.gameSettings.clapProperties.value &= ~setting;
     }
 
     public void SetStep(string value)
@@ -353,7 +355,7 @@ public class SettingsController : TabMenu
 
     public void OnSustainGapTimeBasedToggled(bool value)
     {
-        Globals.gameSettings.sustainGapIsTimeBased = value;
+        Globals.gameSettings.sustainGapIsTimeBased.value = value;
 
         UpdateSustainGapInteractability();
     }
@@ -374,7 +376,7 @@ public class SettingsController : TabMenu
             stepVal = int.Parse(value);
         }
 
-        Globals.gameSettings.sustainGapTimeMs = stepVal;
+        Globals.gameSettings.sustainGapTimeMs.value = stepVal;
     }
 
     public void OnSustainGapTimeEndInput(string value)
@@ -386,31 +388,53 @@ public class SettingsController : TabMenu
         }
     }
 
+    public void OnNewSongResolutionInputUpdated(string value)
+    {
+        
+    }
+
+    public void OnNewSongResolutionEndInput(string value)
+    {
+        OnNewSongResolutionInputUpdated(value);
+
+        int textValue = 0;
+        int.TryParse(newSongResolutionInputField.text, out textValue);
+
+        textValue = Mathf.Max(textValue, (int)MoonscraperChartEditor.Song.SongConfig.STANDARD_BEAT_RESOLUTION);
+
+        Globals.gameSettings.newSongResolution.value = textValue;
+
+        newSongResolutionInputField.text = Globals.gameSettings.newSongResolution.ToString();
+    }
+
     public void SetBgSwapTime(int value)
     {
+        int swapTime = Globals.gameSettings.customBgSwapTime;
         switch (value)
         {
             case 0:
-                Globals.gameSettings.customBgSwapTime = 10;
+                swapTime = 10;
                 break;
             case 1:
-                Globals.gameSettings.customBgSwapTime = 30;
+                swapTime = 30;
                 break;
             case 2:
-                Globals.gameSettings.customBgSwapTime = 60;
+                swapTime = 60;
                 break;
             case 3:
-                Globals.gameSettings.customBgSwapTime = 180;
+                swapTime = 180;
                 break;
             case 4:
-                Globals.gameSettings.customBgSwapTime = 300;
+                swapTime = 300;
                 break;
             case 5:
-                Globals.gameSettings.customBgSwapTime = 600;
+                swapTime = 600;
                 break;
             default:
                 break;
         }
+
+        Globals.gameSettings.customBgSwapTime.value = swapTime;
     }
 
     public void SetAntiAliasingLevel(int value)

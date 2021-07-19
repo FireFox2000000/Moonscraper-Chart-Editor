@@ -29,7 +29,7 @@ namespace MoonscraperChartEditor.Song
                 metaData.name = value;
             }
         }
-        public float resolution = 192;
+        public float resolution = SongConfig.STANDARD_BEAT_RESOLUTION;
         public float offset = 0;
 
         string[] audioLocations = new string[EnumX<AudioInstrument>.Count];

@@ -21,7 +21,7 @@ public class ValidationMenu : DisplayMenu
         set
         {
             _currentOptions = value;
-            Globals.gameSettings.songValidatorModes = value;
+            Globals.gameSettings.songValidatorModes.value = value;
         }
     }
 
@@ -75,6 +75,6 @@ public class ValidationMenu : DisplayMenu
 
     public void SetAutoValidateSongOnSave(bool value)
     {
-        Globals.gameSettings.autoValidateSongOnSave = value;
+        Globals.gameSettings.autoValidateSongOnSave.value = value;
     }
 }

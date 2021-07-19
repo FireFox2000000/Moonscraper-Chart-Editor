@@ -42,6 +42,6 @@ public class UpdatesMenu : MonoBehaviour
 
     public void OnAutoCheckUpdatesToggles(bool updatesEnabled)
     {
-        Globals.gameSettings.automaticallyCheckForUpdates = updatesEnabled;
+        Globals.gameSettings.automaticallyCheckForUpdates.value = updatesEnabled;
     }
 }

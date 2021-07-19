@@ -339,7 +339,7 @@ public class Export : DisplayMenu {
     {
         int res;
         if (!int.TryParse(val, out res))
-            res = 192;
+            res = (int)SongConfig.STANDARD_BEAT_RESOLUTION;
 
         if (res == 0)
             res = (int)(editor.currentSong.resolution);

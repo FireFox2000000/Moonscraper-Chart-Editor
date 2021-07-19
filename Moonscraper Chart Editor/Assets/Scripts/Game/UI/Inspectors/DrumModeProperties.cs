@@ -86,7 +86,7 @@ public class DrumModeProperties : UpdateableService
         int desiredLaneCount;
         if (r_laneOptionToLaneCount.TryGetValue(option, out desiredLaneCount))
         {
-            Globals.gameSettings.drumsLaneCount = desiredLaneCount;
+            Globals.gameSettings.drumsLaneCount.value = desiredLaneCount;
             editor.uiServices.menuBar.SetLaneCount(desiredLaneCount);
             editor.uiServices.menuBar.LoadCurrentInstumentAndDifficulty();       
         }

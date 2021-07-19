@@ -36,16 +36,16 @@ public class AudioCalibrationMenuScript : DisplayMenu {
         valEndEdit(val, ref Globals.gameSettings.clapCalibrationMS);
     }
 
-    void valChanged(string val, ref int calibration)
+    void valChanged(string val, ref GameSettings.IntSaveSetting calibration)
     {
         if (val != string.Empty && val != "-")
-            calibration = int.Parse(val);
+            calibration.value = int.Parse(val);
     }
 
-    void valEndEdit(string val, ref int calibration)
+    void valEndEdit(string val, ref GameSettings.IntSaveSetting calibration)
     {
         if (val == string.Empty && val == "-")
-            calibration = 0;
+            calibration.value = 0;
         else
             valChanged(val, ref calibration);
     }

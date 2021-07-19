@@ -40,9 +40,9 @@ public class ClapSettingsMenu : DisplayMenu
     void SetClapSetting(GameSettings.ClapToggle setting, bool value)
     {
         if (value)
-            Globals.gameSettings.clapProperties |= setting;
+            Globals.gameSettings.clapProperties.value |= setting;
         else
-            Globals.gameSettings.clapProperties &= ~setting;
+            Globals.gameSettings.clapProperties.value &= ~setting;
     }
 
     public void ApplyCurrentToggleProperties()

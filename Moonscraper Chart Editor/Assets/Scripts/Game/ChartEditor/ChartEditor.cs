@@ -189,6 +189,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         // Create a default song
         currentSong = new Song();
+        currentSong.resolution = Globals.gameSettings.newSongResolution;
         LoadSong(currentSong, true);
 
         yield return null;
@@ -551,6 +552,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         lastLoadedFile = string.Empty;
         currentSongAudio.FreeAudioStreams();
         currentSong = new Song();
+        currentSong.resolution = Globals.gameSettings.newSongResolution;
 
         sessionFlags &= ~ChartEditorSessionFlags.CurrentChartSavedInProprietyFormat;
 

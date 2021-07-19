@@ -7,7 +7,7 @@ using MoonscraperChartEditor.Song;
 [System.Serializable]
 public class Clipboard {
     public SongObject[] data = new SongObject[0];
-    public float resolution = 192;
+    public float resolution = SongConfig.STANDARD_BEAT_RESOLUTION;
     public Song.Instrument instrument = Song.Instrument.Guitar;
 
     uint _areaChartPosMin = 0, _areaChartPosMax = 0;
