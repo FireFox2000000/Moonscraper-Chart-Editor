@@ -69,6 +69,19 @@ namespace MoonscraperEngine.Audio
                 UnityEngine.Debug.Log("Bass FX version = " + bassFxVersion);
             }
 
+            // Load bass opus plugin for encoding
+            {
+                int handle = Bass.BASS_PluginLoad("bassopus.dll");
+                if (handle != 0)
+                {
+                    pluginHandles.Add(handle);
+                }
+                else
+                {
+                    UnityEngine.Debug.LogError("Unable to load bassopus.dll");
+                }
+            }
+
             return success;
         }
 
@@ -133,22 +146,25 @@ namespace MoonscraperEngine.Audio
             return success;
         }
 
-        public static void ConvertToOgg(string sourcePath, string destPath)
+        public static bool ConvertToOgg(string sourcePath, string destPath)
         {
             const string EXTENTION = ".ogg";
             UnityEngine.Debug.Assert(destPath.EndsWith(EXTENTION));
+
+            bool success = false;
 
             if (sourcePath.EndsWith(EXTENTION))
             {
                 // Re-encoding is slow as hell, speed this up
                 System.IO.File.Copy(sourcePath, destPath, true);
+                success = true;
             }
             else
             {
                 string inputFile = sourcePath;
                 string outputFile = destPath;
 
-                #if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR_WIN)
                 string encoderDirectory = UnityEngine.Application.streamingAssetsPath;
                 UnityEngine.Debug.Assert(File.Exists(Path.Combine(encoderDirectory, "oggenc2.exe")));
 
@@ -156,18 +172,23 @@ namespace MoonscraperEngine.Audio
                 encoder.EncoderDirectory = encoderDirectory;
                 encoder.OGG_Quality = encoder.Kbps2Quality(c_oggEncodingQualityKbps);   // Should equate to about quality level 8 out of a max of 10
 
-                if (!BaseEncoder.EncodeFile(inputFile, outputFile, encoder, null, true, false))
+                success = BaseEncoder.EncodeFile(inputFile, outputFile, encoder, null, true, false);
+                if (!success)
                 {
                     UnityEngine.Debug.LogErrorFormat("Unable to encode ogg file from {0} to {1}. Error {2}", sourcePath, destPath, Bass.BASS_ErrorGetCode().ToString());
                 }
-                #elif (UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX)
-                if (!new FFmpegTranscoding().main(sourcePath, destPath)) {
+#elif (UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX)
+                success = new FFmpegTranscoding().main(sourcePath, destPath)
+                if (!success) 
+                {
                     UnityEngine.Debug.LogErrorFormat("Unable to encode ogg file from {0} to {1}", sourcePath, destPath);
                 }
-                #else
+#else
                 UnityEngine.Debug.LogErrorFormat("Unable to encode ogg file from {0} to {1}. Platform not implemented.", sourcePath, destPath);
-                #endif
+#endif
             }
+
+            return success;
         }
 
         #endregion

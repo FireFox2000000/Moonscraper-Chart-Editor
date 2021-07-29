@@ -476,7 +476,15 @@ public class Export : DisplayMenu {
             songEncodeActions.Add(() =>
             {
                 Debug.LogFormat("Converting ogg from {0} to {1}", audioLocation, outputFile);
-                AudioManager.ConvertToOgg(audioLocation, outputFile);
+                if (!AudioManager.ConvertToOgg(audioLocation, outputFile))
+                {
+                    // Failed to re-encode, just copy the file as a backup
+                    string originalExtention = Path.GetExtension(audioLocation);
+                    string destPath = Path.ChangeExtension(outputFile, originalExtention);
+
+                    Debug.LogFormat("Unable to re-encode file, copying {0} to {1}", audioLocation, destPath);
+                    File.Copy(audioLocation, destPath, true);
+                }
             });         
         }
 
