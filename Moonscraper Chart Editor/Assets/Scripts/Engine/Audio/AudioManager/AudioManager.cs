@@ -78,7 +78,7 @@ namespace MoonscraperEngine.Audio
                 }
                 else
                 {
-                    UnityEngine.Debug.LogError("Unable to load bassopus.dll");
+                    UnityEngine.Debug.LogErrorFormat("Unable to load bassopus.dll, {0}", Bass.BASS_ErrorGetCode());
                 }
             }
 

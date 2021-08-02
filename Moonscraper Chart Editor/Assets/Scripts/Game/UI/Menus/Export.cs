@@ -31,6 +31,7 @@ public class Export : DisplayMenu {
 
     const string FILE_EXT_CHART = ".chart";
     const string FILE_EXT_MIDI = ".mid";
+    readonly string[] COPY_IF_EXTENTION = { ".opus" };
 
     string chartInfoText = "Exports into the .chart format.";
     string chPackageText = "Will export and organise all chart and audio files into the selected folder to be compatible with Clone Hero's naming structure.\n" +
@@ -475,8 +476,23 @@ public class Export : DisplayMenu {
 
             songEncodeActions.Add(() =>
             {
-                Debug.LogFormat("Converting ogg from {0} to {1}", audioLocation, outputFile);
-                if (!AudioManager.ConvertToOgg(audioLocation, outputFile))
+                bool shouldCopy = false;
+
+                foreach (string extention in COPY_IF_EXTENTION)
+                {
+                    if (audioLocation.EndsWith(extention))
+                    {
+                        shouldCopy = true;
+                    }
+                }
+
+                if (!shouldCopy)
+                {
+                    Debug.LogFormat("Converting ogg from {0} to {1}", audioLocation, outputFile);
+                    shouldCopy = !AudioManager.ConvertToOgg(audioLocation, outputFile);
+                }
+
+                if (shouldCopy)
                 {
                     // Failed to re-encode, just copy the file as a backup
                     string originalExtention = Path.GetExtension(audioLocation);
@@ -490,7 +506,7 @@ public class Export : DisplayMenu {
 
         for (int i = 0; i < songEncodeActions.Count; ++i)
         {
-            tasks.Add(new LoadingTask(string.Format("Re-encoding audio to .ogg format ({0}/{1})", i + 1, songEncodeActions.Count), songEncodeActions[i]));
+            tasks.Add(new LoadingTask(string.Format("Preparing audio track ({0}/{1})", i + 1, songEncodeActions.Count), songEncodeActions[i]));
         }
 
         tasks.Add(new LoadingTask("Exporting chart", () =>
