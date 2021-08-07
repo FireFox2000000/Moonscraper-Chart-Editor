@@ -1,25 +1,26 @@
-1.4.1.2
+1.4.2
 	NEW FEATURES
 	-Added function in group inspector to equalise out the spacing between notes.
 	-Added Lyrics Editor courtesy of SpookySquidward
+	-Added settings option to change the default chart resolution.
+	-Added ability to toggle starpower to drum fill activations under the drums instrument.
+	-Added ability to save out whitespace characters in local track text events via a propriety format until it's saved via the export menu.
+
+	CHANGES
+	-Provide timestamps for flagged objects when validating a chart.
+	-Remove GH2 solo event markers from default events list
+	-Copy opus tracks instead of re-encoding them when making a CH package.
+	-Copy track events to all difficulties when importing midi files.
 
 	FIXES
+	-Fixed whitespace at the end of song names messing up audio encoder path, resulting in audio not being exported correctly.
+	-Better metronome audio file sync courtesy of HattMeafy
 	-Fixed incorrect forced checks that locks out the forced checkbox option in the menu in situations where it's actually valid.
 	-Fixed multi-stream audio desync.
 	-Block invalid characters from entering song properties options
 	-Fixed note tool reverting from open note back to multi-note when tool gets disabled from being out of tool range or clicking buttons etc.
 	-Guard against greater than 3 decimal places for bpm numbers
 	-Fixed not being able to load .msce in proper builds.
-
-1.4.1.1
-	NEW FEATURES
-	-Added ability to toggle starpower to drum fill activations under the drums instrument.
-	-Added ability to save out whitespace characters in local track text events via a propriety format until it's saved via the export menu.
-
-	CHANGES
-	-Copy track events to all difficulties when importing midi files.
-
-	FIXES
 	-Fixed ini editor stripping values like <color=#c81030>name</color> due to splitting on the secondary '=' character.
 	-Fixed layering issue with note text and custom note sprites.
 	-Fixed misleading error message when opening midi files that need to run through midifix.
