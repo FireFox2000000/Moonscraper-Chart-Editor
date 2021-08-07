@@ -178,7 +178,7 @@ namespace MoonscraperEngine.Audio
                     UnityEngine.Debug.LogErrorFormat("Unable to encode ogg file from {0} to {1}. Error {2}", sourcePath, destPath, Bass.BASS_ErrorGetCode().ToString());
                 }
 #elif (UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX)
-                success = new FFmpegTranscoding().main(sourcePath, destPath)
+                success = new FFmpegTranscoding().main(sourcePath, destPath);
                 if (!success) 
                 {
                     UnityEngine.Debug.LogErrorFormat("Unable to encode ogg file from {0} to {1}", sourcePath, destPath);
