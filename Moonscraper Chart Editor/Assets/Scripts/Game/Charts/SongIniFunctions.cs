@@ -66,18 +66,78 @@ public static class SongIniFunctions
         AddTagIfNonExistant("charter", metaData.charter);
     }
 
+    static string GetCHDifficultyTagForInstrument(Song.Instrument instrument)
+    {
+        switch (instrument)
+        {
+            case Song.Instrument.Guitar:
+                return "diff_guitar";
+
+            case Song.Instrument.Bass:
+                return "diff_bass";
+
+            case Song.Instrument.Drums:
+                return "diff_drums";
+
+            case Song.Instrument.Keys:
+                return "diff_keys";
+
+            case Song.Instrument.GHLiveGuitar:
+                return "diff_guitarghl";
+
+            case Song.Instrument.GHLiveBass:
+                return "diff_bassghl";
+        }
+
+        return string.Empty;
+    }
+
+    static void AddTagIfAlreadyExistantAndDefault(INIParser ini, string key, string newValue, string defaultVal)
+    {
+        string realKey = key.Trim() + " ";
+        if (ini.IsKeyExists(INI_SECTION_HEADER, realKey))
+        {
+            string currentValue = ini.ReadValue(INI_SECTION_HEADER, realKey, PrefixSpaceToINIValue(defaultVal));
+
+            if (currentValue == PrefixSpaceToINIValue(defaultVal))
+            {
+                ini.WriteValue(INI_SECTION_HEADER, realKey, PrefixSpaceToINIValue(newValue));
+            }
+        }
+    }
+
     public static void AddCloneHeroIniTags(Song song, INIParser ini, float songLengthSeconds)
     {
         AddTagFn AddTagIfNonExistant = (string key, string defaultVal) => {
             string realKey = key.Trim() + " ";
             ini.WriteValue(INI_SECTION_HEADER, realKey, ini.ReadValue(INI_SECTION_HEADER, realKey, PrefixSpaceToINIValue(defaultVal)));
         };
-
+ 
         AddDefaultIniTags(song, ini, songLengthSeconds);
 
         foreach (var tag in chTags)
         {
             AddTagIfNonExistant(tag.Key, tag.Value);
+        }
+
+        // Fill out difficulty tags with metadata difficulty if it has not been initilised
+        {
+            const string UninitialisedDifficultyValue = "-1";
+            Metadata metaData = song.metaData;
+            AddTagIfAlreadyExistantAndDefault(ini, "diff_band", metaData.difficulty.ToString(), UninitialisedDifficultyValue);
+
+            foreach (Song.Instrument instrument in MoonscraperEngine.EnumX<Song.Instrument>.Values)
+            {
+                if (instrument == Song.Instrument.Unrecognised)
+                    continue;
+
+                string tag = GetCHDifficultyTagForInstrument(instrument);
+
+                if (!string.IsNullOrEmpty(tag))
+                {
+                    AddTagIfAlreadyExistantAndDefault(ini, tag, metaData.difficulty.ToString(), UninitialisedDifficultyValue);
+                }
+            }
         }
     }
 
