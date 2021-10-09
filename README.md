@@ -11,8 +11,6 @@ Trailer- https://www.youtube.com/watch?v=G8Qd32TZz4A
 ### Games that use Moonscraper code:
 - Clone Hero (https://clonehero.net/)
 
-- Fret Smasher (https://fretsmasher.com/)
-
 ### Games that use Moonscraper as a song editor:
 - Everhood (https://store.steampowered.com/app/1229380/Everhood/)
 
