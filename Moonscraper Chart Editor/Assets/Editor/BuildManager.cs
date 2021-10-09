@@ -7,37 +7,60 @@ using System.Linq;
 public class BuildManager  {
     const string applicationName = "Moonscraper Chart Editor";
 
+    [System.Flags]
+    public enum BuildFlags
+    {
+        None = 0,
+        CreateDistributable = 1 << 0,
+        SpecifyVersionNumber = 1 << 1,
+        BuildInstaller = 1 << 2,
+    }
+
     [MenuItem("Build Processes/Windows x64 Distributable")]
     public static void BuildWindows64()
     {
-        _BuildSpecificTarget(BuildTarget.StandaloneWindows64);
+        BuildSpecificTargetDistributable(BuildTarget.StandaloneWindows64);
     }
 
     [MenuItem("Build Processes/Windows x86 Distributable")]
     public static void BuildWindows32()
     {
-        _BuildSpecificTarget(BuildTarget.StandaloneWindows);
+        BuildSpecificTargetDistributable(BuildTarget.StandaloneWindows);
     }
 
     [MenuItem("Build Processes/Linux Universal Distributable")]
     public static void BuildLinux()
     {
-        _BuildSpecificTarget(BuildTarget.StandaloneLinuxUniversal);
+        BuildSpecificTargetDistributable(BuildTarget.StandaloneLinuxUniversal);
     }
 
     [MenuItem("Build Processes/Build Full Distributables")]
     public static void BuildAll_Distributable()
     {
-        BuildAll(true, true);
+        BuildAll(BuildFlags.CreateDistributable | BuildFlags.SpecifyVersionNumber);
     }
 
-    [MenuItem("Build Processes/Build Full")]
+    [MenuItem("Build Processes/Windows x64 Installer")]
+    public static void BuildWindows64Installer()
+    {
+        _BuildSpecificTarget(BuildTarget.StandaloneWindows64, Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath, "../../Installer/Builds/")), BuildFlags.BuildInstaller);
+    }
+
+    [MenuItem("Build Processes/Windows x86 Installer")]
+    public static void BuildWindows32Installer()
+    {
+        _BuildSpecificTarget(BuildTarget.StandaloneWindows, Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath, "../../Installer/Builds/")), BuildFlags.BuildInstaller);
+    }
+
+    [MenuItem("Build Processes/Build Final")]
     public static void BuildAll_Standard()
     {
-        BuildAll(false, false);
+        BuildWindows64Installer();
+        BuildWindows32Installer();
+        //BuildLinux();
     }
 
-    public static void BuildAll(bool createDistributable, bool specifyVersionNumber)
+    public static void BuildAll(BuildFlags buildFlags)
     {
         string parentDirectory = GetSavePath();
 
@@ -47,7 +70,7 @@ public class BuildManager  {
         }
 
         string folderName = UnityEngine.Application.productName;
-        if (specifyVersionNumber)
+        if ((buildFlags & BuildFlags.SpecifyVersionNumber) != 0)
         {
             folderName += string.Format(" v{0}", UnityEngine.Application.productName);
         }
@@ -71,7 +94,7 @@ public class BuildManager  {
         };
 
         foreach (var target in targets) {
-            _BuildSpecificTarget(target, path, createDistributable, specifyVersionNumber);
+            _BuildSpecificTarget(target, path, buildFlags);
         }
     }
 
@@ -91,7 +114,7 @@ public class BuildManager  {
         return chosenPath;
     }
 
-    static void _BuildSpecificTarget(BuildTarget buildTarget) {
+    static void BuildSpecificTargetDistributable(BuildTarget buildTarget) {
         string path = GetSavePath();
 
         if (string.IsNullOrEmpty(path)) {
@@ -99,30 +122,35 @@ public class BuildManager  {
             return;
         }
 
-        _BuildSpecificTarget(buildTarget, path, true, true);
+        _BuildSpecificTarget(buildTarget, path, BuildFlags.CreateDistributable | BuildFlags.SpecifyVersionNumber);
     }
 
-    static void _BuildSpecificTarget(BuildTarget buildTarget, string parentDirectory, bool createDistributable, bool specifyVersionNumber)
+    static void _BuildSpecificTarget(BuildTarget buildTarget, string parentDirectory, BuildFlags buildFlags)
     {
         string architecture;
         string executableName;
         string compressionExtension = string.Empty;
+        string installerCompileScriptPath = string.Empty;
 
         switch (buildTarget) {
         case BuildTarget.StandaloneWindows:
             architecture = "Windows x86 (32 bit)";
             executableName = applicationName + ".exe";
             compressionExtension = ".zip";
+            installerCompileScriptPath = "MSCE Win32.iss";
             break;
         case BuildTarget.StandaloneWindows64:
             architecture = "Windows x86_64 (64 bit)";
             executableName = applicationName + ".exe";
             compressionExtension = ".zip";
+            installerCompileScriptPath = "MSCE Win64.iss";
             break;
         case BuildTarget.StandaloneLinuxUniversal:
             architecture = "Linux (Universal)";
             executableName = applicationName;
             compressionExtension = ".tar.gz";
+
+            UnityEngine.Debug.Assert((buildFlags & BuildFlags.BuildInstaller) == 0, "Installer not supported for Linux builds");
             break;
         default:
             architecture = buildTarget.ToString();
@@ -132,7 +160,7 @@ public class BuildManager  {
 
         string folderName = UnityEngine.Application.productName;
 
-        if (specifyVersionNumber)
+        if ((buildFlags & BuildFlags.SpecifyVersionNumber) != 0)
         {
             folderName += string.Format(" v{0}", UnityEngine.Application.productName);
         }
@@ -229,7 +257,23 @@ public class BuildManager  {
         }
 #endif
 
-        if (createDistributable)
+        if ((buildFlags & BuildFlags.BuildInstaller) != 0 && !string.IsNullOrEmpty(installerCompileScriptPath))
+        {
+            string ScriptFolderPath = Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath, "../../Installer/Scripts/"));
+            string installerCompilePath = Path.Combine(ScriptFolderPath, installerCompileScriptPath);
+
+            using (System.Diagnostics.Process process = new System.Diagnostics.Process())
+            {
+                process.StartInfo.FileName = "E:\\Program Files (x86)\\Inno Setup 6\\ISCC.exe";
+                process.StartInfo.WorkingDirectory = ScriptFolderPath;
+                process.StartInfo.Arguments = string.Format("/dMyAppVersion={0} \"{1}\"", UnityEngine.Application.version, installerCompileScriptPath);
+                process.Start();
+
+                process.WaitForExit();
+            }
+        }
+
+        if ((buildFlags & BuildFlags.CreateDistributable) != 0)
         {
             // Compress to shareable file
             const string CompressionProgramWithoutDrive = ":\\Program Files\\7-Zip\\7z.exe";
