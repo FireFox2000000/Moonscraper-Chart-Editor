@@ -7,26 +7,37 @@ using System.Linq;
 public class BuildManager  {
     const string applicationName = "Moonscraper Chart Editor";
 
-    [MenuItem("Build Processes/Windows x64 Build With Postprocess")]
+    [MenuItem("Build Processes/Windows x64 Distributable")]
     public static void BuildWindows64()
     {
         _BuildSpecificTarget(BuildTarget.StandaloneWindows64);
     }
 
-    [MenuItem("Build Processes/Windows x86 Build With Postprocess")]
+    [MenuItem("Build Processes/Windows x86 Distributable")]
     public static void BuildWindows32()
     {
         _BuildSpecificTarget(BuildTarget.StandaloneWindows);
     }
 
-    [MenuItem("Build Processes/Linux Universal Build With Postprocess")]
+    [MenuItem("Build Processes/Linux Universal Distributable")]
     public static void BuildLinux()
     {
         _BuildSpecificTarget(BuildTarget.StandaloneLinuxUniversal);
     }
 
-    [MenuItem("Build Processes/Build Full Releases")]
-    public static void BuildAll()
+    [MenuItem("Build Processes/Build Full Distributables")]
+    public static void BuildAll_Distributable()
+    {
+        BuildAll(true, true);
+    }
+
+    [MenuItem("Build Processes/Build Full")]
+    public static void BuildAll_Standard()
+    {
+        BuildAll(false, false);
+    }
+
+    public static void BuildAll(bool createDistributable, bool specifyVersionNumber)
     {
         string parentDirectory = GetSavePath();
 
@@ -35,9 +46,16 @@ public class BuildManager  {
             return;
         }
 
-        string folderName = string.IsNullOrEmpty(Globals.applicationBranchName) ?
-            string.Format("{0} v{1}", UnityEngine.Application.productName, UnityEngine.Application.version) :
-            string.Format("{0} v{1} {2}", UnityEngine.Application.productName, UnityEngine.Application.version, Globals.applicationBranchName);
+        string folderName = UnityEngine.Application.productName;
+        if (specifyVersionNumber)
+        {
+            folderName += string.Format(" v{0}", UnityEngine.Application.productName);
+        }
+
+        if (!string.IsNullOrEmpty(Globals.applicationBranchName))
+        {
+            folderName += string.Format(" {0}", Globals.applicationBranchName);
+        }
 
         string path = Path.Combine(parentDirectory, folderName);
         if (Directory.Exists(path))
@@ -53,7 +71,7 @@ public class BuildManager  {
         };
 
         foreach (var target in targets) {
-            _BuildSpecificTarget(target, path);
+            _BuildSpecificTarget(target, path, createDistributable, specifyVersionNumber);
         }
     }
 
@@ -81,10 +99,10 @@ public class BuildManager  {
             return;
         }
 
-        _BuildSpecificTarget(buildTarget, path);
+        _BuildSpecificTarget(buildTarget, path, true, true);
     }
 
-    static void _BuildSpecificTarget(BuildTarget buildTarget, string parentDirectory)
+    static void _BuildSpecificTarget(BuildTarget buildTarget, string parentDirectory, bool createDistributable, bool specifyVersionNumber)
     {
         string architecture;
         string executableName;
@@ -112,9 +130,19 @@ public class BuildManager  {
             break;
         }
 
-        string folderName = string.IsNullOrEmpty(Globals.applicationBranchName) ?
-           string.Format("{0} v{1} {2}", UnityEngine.Application.productName, UnityEngine.Application.version, architecture)
-           : string.Format("{0} v{1} {2} {3}", UnityEngine.Application.productName, UnityEngine.Application.version, Globals.applicationBranchName, architecture);
+        string folderName = UnityEngine.Application.productName;
+
+        if (specifyVersionNumber)
+        {
+            folderName += string.Format(" v{0}", UnityEngine.Application.productName);
+        }
+
+        if (!string.IsNullOrEmpty(Globals.applicationBranchName))
+        {
+            folderName += string.Format(" {0}", Globals.applicationBranchName);
+        }
+
+        folderName += string.Format(" {0}", architecture);
 
         string path = Path.Combine(parentDirectory, folderName);
         if (Directory.Exists(path))
@@ -201,74 +229,77 @@ public class BuildManager  {
         }
 #endif
 
-        // Compress to shareable file
-        const string CompressionProgramWithoutDrive = ":\\Program Files\\7-Zip\\7z.exe";
-        string compressionProgramPath = File.Exists("E" + CompressionProgramWithoutDrive) ? "E" + CompressionProgramWithoutDrive : "C" + CompressionProgramWithoutDrive;
-
-        if (!string.IsNullOrEmpty(compressionExtension) && File.Exists(compressionProgramPath))
+        if (createDistributable)
         {
-            UnityEngine.Debug.Log("Performing compression step.");
+            // Compress to shareable file
+            const string CompressionProgramWithoutDrive = ":\\Program Files\\7-Zip\\7z.exe";
+            string compressionProgramPath = File.Exists("E" + CompressionProgramWithoutDrive) ? "E" + CompressionProgramWithoutDrive : "C" + CompressionProgramWithoutDrive;
 
-            using (System.Diagnostics.Process process = new System.Diagnostics.Process())
-            {          
-                switch (compressionExtension)
+            if (!string.IsNullOrEmpty(compressionExtension) && File.Exists(compressionProgramPath))
+            {
+                UnityEngine.Debug.Log("Performing compression step.");
+
+                using (System.Diagnostics.Process process = new System.Diagnostics.Process())
                 {
-                    case ".zip":
-                        {
-                            string compressedFile = string.Format("{0}.zip", folderName);
-                            if (File.Exists(compressedFile))
+                    switch (compressionExtension)
+                    {
+                        case ".zip":
                             {
-                                File.Delete(compressedFile);
-                            }
-
-                            process.StartInfo.FileName = compressionProgramPath;
-                            process.StartInfo.WorkingDirectory = parentDirectory;
-                            process.StartInfo.Arguments = string.Format("a \"{0}\" \"{1}\"", compressedFile, path);
-                            process.Start();
-
-                            process.WaitForExit();
-
-                            break;
-                        }
-
-                    case ".tar.gz":
-                        {
-                            {
-                                string compressedFile = string.Format("{0}.tar", folderName);
+                                string compressedFile = string.Format("{0}.zip", folderName);
                                 if (File.Exists(compressedFile))
                                 {
                                     File.Delete(compressedFile);
                                 }
 
-                                compressedFile = string.Format("{0}.tar.gz", folderName);
-                                if (File.Exists(compressedFile))
-                                {
-                                    File.Delete(compressedFile);
-                                }
+                                process.StartInfo.FileName = compressionProgramPath;
+                                process.StartInfo.WorkingDirectory = parentDirectory;
+                                process.StartInfo.Arguments = string.Format("a \"{0}\" \"{1}\"", compressedFile, path);
+                                process.Start();
+
+                                process.WaitForExit();
+
+                                break;
                             }
 
-                            process.StartInfo.FileName = compressionProgramPath;
-                            process.StartInfo.WorkingDirectory = parentDirectory;
-                            process.StartInfo.Arguments = string.Format("a \"{0}.tar\" \"{1}\"", folderName, path);
-                            process.Start();
+                        case ".tar.gz":
+                            {
+                                {
+                                    string compressedFile = string.Format("{0}.tar", folderName);
+                                    if (File.Exists(compressedFile))
+                                    {
+                                        File.Delete(compressedFile);
+                                    }
 
-                            process.WaitForExit();
+                                    compressedFile = string.Format("{0}.tar.gz", folderName);
+                                    if (File.Exists(compressedFile))
+                                    {
+                                        File.Delete(compressedFile);
+                                    }
+                                }
 
-                            process.StartInfo.FileName = compressionProgramPath;
-                            process.StartInfo.WorkingDirectory = parentDirectory;
-                            process.StartInfo.Arguments = string.Format("a \"{0}.tar.gz\" \"{1}.tar\"", folderName, folderName);
-                            process.Start();
+                                process.StartInfo.FileName = compressionProgramPath;
+                                process.StartInfo.WorkingDirectory = parentDirectory;
+                                process.StartInfo.Arguments = string.Format("a \"{0}.tar\" \"{1}\"", folderName, path);
+                                process.Start();
 
-                            process.WaitForExit();
+                                process.WaitForExit();
 
+                                process.StartInfo.FileName = compressionProgramPath;
+                                process.StartInfo.WorkingDirectory = parentDirectory;
+                                process.StartInfo.Arguments = string.Format("a \"{0}.tar.gz\" \"{1}.tar\"", folderName, folderName);
+                                process.Start();
+
+                                process.WaitForExit();
+
+                                break;
+                            }
+
+                        default:
                             break;
-                        }
-
-                    default:
-                        break;
+                    }
                 }
-            }
 
+            }
         }
     }
 }
