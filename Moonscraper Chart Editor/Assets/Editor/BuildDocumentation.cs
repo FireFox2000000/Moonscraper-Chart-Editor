@@ -88,18 +88,23 @@ public class BuildDocumentation  {
     {
         string architecture;
         string executableName;
+        string compressionExtension = string.Empty;
+
         switch (buildTarget) {
         case BuildTarget.StandaloneWindows:
             architecture = "Windows x86 (32 bit)";
             executableName = applicationName + ".exe";
+            compressionExtension = ".zip";
             break;
         case BuildTarget.StandaloneWindows64:
             architecture = "Windows x86_64 (64 bit)";
             executableName = applicationName + ".exe";
+            compressionExtension = ".zip";
             break;
         case BuildTarget.StandaloneLinuxUniversal:
             architecture = "Linux (Universal)";
             executableName = applicationName;
+            compressionExtension = ".tar.gz";
             break;
         default:
             architecture = buildTarget.ToString();
@@ -195,5 +200,73 @@ public class BuildDocumentation  {
             }
         }
 #endif
+
+        // Compress to shareable file
+        const string CompressionProgramWithoutDrive = ":\\Program Files\\7-Zip\\7z.exe";
+        string compressionProgramPath = File.Exists("E" + CompressionProgramWithoutDrive) ? "E" + CompressionProgramWithoutDrive : "C" + CompressionProgramWithoutDrive;
+
+        if (!string.IsNullOrEmpty(compressionExtension) && File.Exists(compressionProgramPath))
+        {
+            using (System.Diagnostics.Process process = new System.Diagnostics.Process())
+            {          
+                switch (compressionExtension)
+                {
+                    case ".zip":
+                        {
+                            string compressedFile = string.Format("{0}.zip", folderName);
+                            if (File.Exists(compressedFile))
+                            {
+                                File.Delete(compressedFile);
+                            }
+
+                            process.StartInfo.FileName = compressionProgramPath;
+                            process.StartInfo.WorkingDirectory = parentDirectory;
+                            process.StartInfo.Arguments = string.Format("a \"{0}\" \"{1}\"", compressedFile, path);
+                            process.Start();
+
+                            process.WaitForExit();
+
+                            break;
+                        }
+
+                    case ".tar.gz":
+                        {
+                            {
+                                string compressedFile = string.Format("{0}.tar", folderName);
+                                if (File.Exists(compressedFile))
+                                {
+                                    File.Delete(compressedFile);
+                                }
+
+                                compressedFile = string.Format("{0}.tar.gz", folderName);
+                                if (File.Exists(compressedFile))
+                                {
+                                    File.Delete(compressedFile);
+                                }
+                            }
+
+                            process.StartInfo.FileName = compressionProgramPath;
+                            process.StartInfo.WorkingDirectory = parentDirectory;
+                            process.StartInfo.Arguments = string.Format("a \"{0}.tar\" \"{1}\"", folderName, path);
+                            process.Start();
+
+                            process.WaitForExit();
+
+                            process.StartInfo.FileName = compressionProgramPath;
+                            process.StartInfo.WorkingDirectory = parentDirectory;
+                            process.StartInfo.Arguments = string.Format("a \"{0}.tar.gz\" \"{1}.tar\"", folderName, folderName);
+                            process.Start();
+
+                            process.WaitForExit();
+
+                            break;
+                        }
+
+                    default:
+                        break;
+                }
+            }
+
+        }
     }
 }
