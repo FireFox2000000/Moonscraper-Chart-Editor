@@ -4,7 +4,7 @@ using UnityEditor;
 using System.IO;
 using System.Linq;
 
-public class BuildDocumentation  {
+public class BuildManager  {
     const string applicationName = "Moonscraper Chart Editor";
 
     [MenuItem("Build Processes/Windows x64 Build With Postprocess")]
@@ -207,6 +207,8 @@ public class BuildDocumentation  {
 
         if (!string.IsNullOrEmpty(compressionExtension) && File.Exists(compressionProgramPath))
         {
+            UnityEngine.Debug.Log("Performing compression step.");
+
             using (System.Diagnostics.Process process = new System.Diagnostics.Process())
             {          
                 switch (compressionExtension)
