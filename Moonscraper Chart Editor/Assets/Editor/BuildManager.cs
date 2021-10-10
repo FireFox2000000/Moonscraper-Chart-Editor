@@ -3,9 +3,12 @@
 using UnityEditor;
 using System.IO;
 using System.Linq;
+using UnityEngine;
 
 public class BuildManager  {
     const string applicationName = "Moonscraper Chart Editor";
+    const string CompressionProgramPath = "E:\\Program Files\\7-Zip\\7z.exe";
+    const string InstallerProgramPath = "E:\\Program Files (x86)\\Inno Setup 6\\ISCC.exe";
 
     [System.Flags]
     public enum BuildFlags
@@ -43,13 +46,15 @@ public class BuildManager  {
     [MenuItem("Build Processes/Windows x64 Installer")]
     public static void BuildWindows64Installer()
     {
-        _BuildSpecificTarget(BuildTarget.StandaloneWindows64, Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath, "../../Installer/Builds/")), BuildFlags.BuildInstaller);
+        // Parent directory must match path defined in installer script
+        _BuildSpecificTarget(BuildTarget.StandaloneWindows64, Path.GetFullPath(Path.Combine(Application.dataPath, "../../Installer/Builds/")), BuildFlags.BuildInstaller);
     }
 
     [MenuItem("Build Processes/Windows x86 Installer")]
     public static void BuildWindows32Installer()
     {
-        _BuildSpecificTarget(BuildTarget.StandaloneWindows, Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath, "../../Installer/Builds/")), BuildFlags.BuildInstaller);
+        // Parent directory must match path defined in installer script
+        _BuildSpecificTarget(BuildTarget.StandaloneWindows, Path.GetFullPath(Path.Combine(Application.dataPath, "../../Installer/Builds/")), BuildFlags.BuildInstaller);
     }
 
     [MenuItem("Build Processes/Build Final")]
@@ -65,14 +70,14 @@ public class BuildManager  {
         string parentDirectory = GetSavePath();
 
         if (string.IsNullOrEmpty(parentDirectory)) {
-            UnityEngine.Debug.Log("Build canceled");
+            Debug.Log("Build canceled");
             return;
         }
 
-        string folderName = UnityEngine.Application.productName;
+        string folderName = Application.productName;
         if ((buildFlags & BuildFlags.SpecifyVersionNumber) != 0)
         {
-            folderName += string.Format(" v{0}", UnityEngine.Application.productName);
+            folderName += string.Format(" v{0}", Application.productName);
         }
 
         if (!string.IsNullOrEmpty(Globals.applicationBranchName))
@@ -118,7 +123,7 @@ public class BuildManager  {
         string path = GetSavePath();
 
         if (string.IsNullOrEmpty(path)) {
-            UnityEngine.Debug.Log("Build canceled");
+            Debug.Log("Build canceled");
             return;
         }
 
@@ -127,6 +132,12 @@ public class BuildManager  {
 
     static void _BuildSpecificTarget(BuildTarget buildTarget, string parentDirectory, BuildFlags buildFlags)
     {
+        if (!Directory.Exists(parentDirectory))
+        {
+            Debug.Log(string.Format("Output target directory does not exist. Creating directory \"{0}\"", parentDirectory));
+            Directory.CreateDirectory(parentDirectory);
+        }
+
         string architecture;
         string executableName;
         string compressionExtension = string.Empty;
@@ -150,7 +161,7 @@ public class BuildManager  {
             executableName = applicationName;
             compressionExtension = ".tar.gz";
 
-            UnityEngine.Debug.Assert((buildFlags & BuildFlags.BuildInstaller) == 0, "Installer not supported for Linux builds");
+            Debug.Assert((buildFlags & BuildFlags.BuildInstaller) == 0, "Installer not supported for Linux builds");
             break;
         default:
             architecture = buildTarget.ToString();
@@ -158,11 +169,11 @@ public class BuildManager  {
             break;
         }
 
-        string folderName = UnityEngine.Application.productName;
+        string folderName = Application.productName;
 
         if ((buildFlags & BuildFlags.SpecifyVersionNumber) != 0)
         {
-            folderName += string.Format(" v{0}", UnityEngine.Application.productName);
+            folderName += string.Format(" v{0}", Application.productName);
         }
 
         if (!string.IsNullOrEmpty(Globals.applicationBranchName))
@@ -178,7 +189,7 @@ public class BuildManager  {
             Directory.Delete(path, true);
         }
         Directory.CreateDirectory(path);
-        UnityEngine.Debug.Log($"Building game at path: '{path}'");
+        Debug.Log($"Building game at path: '{path}'");
 
         // Build player.
         BuildPlayerOptions options = new BuildPlayerOptions();
@@ -220,9 +231,9 @@ public class BuildManager  {
                 string dirPath = filepath.Remove(0, extraFilesDir.Count() + 1);
                 string destPath = Path.Combine(path, dirPath);
 
-                UnityEngine.Debug.Log(filepath);
-                UnityEngine.Debug.Log(dirPath);
-                UnityEngine.Debug.Log(destPath);
+                Debug.Log(filepath);
+                Debug.Log(dirPath);
+                Debug.Log(destPath);
 
                 FileUtil.CopyFileOrDirectory(filepath, destPath);
             }
@@ -257,33 +268,41 @@ public class BuildManager  {
         }
 #endif
 
-        if ((buildFlags & BuildFlags.BuildInstaller) != 0 && !string.IsNullOrEmpty(installerCompileScriptPath))
+        if ((buildFlags & BuildFlags.BuildInstaller) != 0)
         {
-            string ScriptFolderPath = Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath, "../../Installer/Scripts/"));
+            string ScriptFolderPath = Path.GetFullPath(Path.Combine(Application.dataPath, "../../Installer/Scripts/"));
             string installerCompilePath = Path.Combine(ScriptFolderPath, installerCompileScriptPath);
 
-            using (System.Diagnostics.Process process = new System.Diagnostics.Process())
-            {
-                process.StartInfo.FileName = "E:\\Program Files (x86)\\Inno Setup 6\\ISCC.exe";
-                process.StartInfo.WorkingDirectory = ScriptFolderPath;
-                process.StartInfo.Arguments = string.Format("/dMyAppVersion={0} \"{1}\"", UnityEngine.Application.version, installerCompileScriptPath);
-                process.Start();
+            bool installerValid = true;// File.Exists(InstallerProgramPath);
+            bool scriptValid = !string.IsNullOrEmpty(installerCompileScriptPath) && File.Exists(installerCompilePath);
 
-                process.WaitForExit();
+            Debug.Assert(installerValid);
+            Debug.Assert(scriptValid);
+
+            if (installerValid && scriptValid)
+            {
+                using (var process = new System.Diagnostics.Process())
+                {
+                    process.StartInfo.FileName = InstallerProgramPath;
+                    process.StartInfo.WorkingDirectory = ScriptFolderPath;
+                    process.StartInfo.Arguments = string.Format("/dMyAppVersion={0} \"{1}\"", Application.version, installerCompileScriptPath);
+                    process.Start();
+
+                    process.WaitForExit();
+                }
             }
         }
 
         if ((buildFlags & BuildFlags.CreateDistributable) != 0)
         {
             // Compress to shareable file
-            const string CompressionProgramWithoutDrive = ":\\Program Files\\7-Zip\\7z.exe";
-            string compressionProgramPath = File.Exists("E" + CompressionProgramWithoutDrive) ? "E" + CompressionProgramWithoutDrive : "C" + CompressionProgramWithoutDrive;
+            Debug.Assert(File.Exists(CompressionProgramPath));
 
-            if (!string.IsNullOrEmpty(compressionExtension) && File.Exists(compressionProgramPath))
+            if (!string.IsNullOrEmpty(compressionExtension) && File.Exists(CompressionProgramPath))
             {
-                UnityEngine.Debug.Log("Performing compression step.");
+                Debug.Log("Performing compression step.");
 
-                using (System.Diagnostics.Process process = new System.Diagnostics.Process())
+                using (var process = new System.Diagnostics.Process())
                 {
                     switch (compressionExtension)
                     {
@@ -295,7 +314,7 @@ public class BuildManager  {
                                     File.Delete(compressedFile);
                                 }
 
-                                process.StartInfo.FileName = compressionProgramPath;
+                                process.StartInfo.FileName = CompressionProgramPath;
                                 process.StartInfo.WorkingDirectory = parentDirectory;
                                 process.StartInfo.Arguments = string.Format("a \"{0}\" \"{1}\"", compressedFile, path);
                                 process.Start();
@@ -321,14 +340,14 @@ public class BuildManager  {
                                     }
                                 }
 
-                                process.StartInfo.FileName = compressionProgramPath;
+                                process.StartInfo.FileName = CompressionProgramPath;
                                 process.StartInfo.WorkingDirectory = parentDirectory;
                                 process.StartInfo.Arguments = string.Format("a \"{0}.tar\" \"{1}\"", folderName, path);
                                 process.Start();
 
                                 process.WaitForExit();
 
-                                process.StartInfo.FileName = compressionProgramPath;
+                                process.StartInfo.FileName = CompressionProgramPath;
                                 process.StartInfo.WorkingDirectory = parentDirectory;
                                 process.StartInfo.Arguments = string.Format("a \"{0}.tar.gz\" \"{1}.tar\"", folderName, folderName);
                                 process.Start();
@@ -342,8 +361,9 @@ public class BuildManager  {
                             break;
                     }
                 }
-
             }
         }
+
+        Debug.Log("Build target complete!");
     }
 }

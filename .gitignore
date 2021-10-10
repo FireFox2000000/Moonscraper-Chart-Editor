@@ -8,7 +8,6 @@ Assets/AssetStoreTools*
 # Moonscraper specific
 Moonscraper Chart Editor/Assets/config.ini
 Installer/bin/
-!Installer/Builds/
 
 # Visual Studio cache directory
 .vs/

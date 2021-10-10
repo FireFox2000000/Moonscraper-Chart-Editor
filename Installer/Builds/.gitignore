@@ -1,7 +1,0 @@
-# This file exists to keep the Builds folder active in git. 
-# Local builds should be made in this folder as the installer will rely on this path, but should not be committed. 
-
-# Ignore everything in this directory
-*
-# Except this file
-!.gitignore
