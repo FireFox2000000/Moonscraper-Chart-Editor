@@ -13,13 +13,12 @@ public class BGFadeHeightController : MonoBehaviour {
     [SerializeField]
     float offset;
     Renderer ren;
+    MaterialPropertyBlock matBlock;
 
-    float originalHeight;
-
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         ren = GetComponent<Renderer>();
-        originalHeight = ren.sharedMaterial.GetFloat("_HeightPosition");
+        matBlock = new MaterialPropertyBlock();
     }
 	
 	// Update is called once per frame
@@ -28,13 +27,15 @@ public class BGFadeHeightController : MonoBehaviour {
         worldFadePos.y -= offset;
         float screenHeight = Camera.main.WorldToScreenPoint(worldFadePos).y;
 
-        ren.sharedMaterial.SetFloat("_HeightPosition", screenHeight / Screen.height);
-	}
+        ren.GetPropertyBlock(matBlock);
+        matBlock.SetFloat("_HeightPosition", screenHeight / Screen.height);
+        ren.SetPropertyBlock(matBlock);
+    }
 
 #if UNITY_EDITOR
     void OnApplicationQuit()
     {
-        ren.sharedMaterial.SetFloat("_HeightPosition", originalHeight);
+        ren.SetPropertyBlock(null);
     }
 #endif
 }

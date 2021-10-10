@@ -22,6 +22,9 @@ public class BackgroundBlending : MonoBehaviour
     {
         ren = GetComponent<Renderer>();
 
+        // instanciate a copy of the material and edit that, otherwise Unity will update the timestamp of the original material asset without changes, which is very annoying for git chages detection. 
+        ren.sharedMaterial = ren.material;
+
         initBGTex = ren.sharedMaterial.mainTexture;
         LoadBackgrounds();
     }
@@ -105,11 +108,6 @@ public class BackgroundBlending : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        ren.sharedMaterial.SetFloat("_Blend", 0);
-
-        // This is purely for the sake of editor resetting, otherwise any custom textures used will be saved between testing
-#if UNITY_EDITOR
-        ren.sharedMaterial.mainTexture = initBGTex;
-#endif
+        Destroy(ren.material);
     }
 }
