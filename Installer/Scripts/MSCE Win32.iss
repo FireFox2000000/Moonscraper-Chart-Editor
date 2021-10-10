@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Moonscraper Chart Editor"
-#define MyAppVersion "1.4.2.1"           ;This is passed in via command arg
+;#define MyAppVersion "1.4.2.1"           ;This is passed in via command arg
 #define MyAppPublisher "Alexander (FireFox) Ong"
 #define MyAppURL "https://github.com/FireFox2000000"
 #define MyAppExeName "Moonscraper Chart Editor.exe"
