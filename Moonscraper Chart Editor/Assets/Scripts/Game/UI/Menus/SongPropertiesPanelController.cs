@@ -316,6 +316,34 @@ public class SongPropertiesPanelController : TabMenu
         setAudioTextLabels();
     }
 
+    public void RefreshAllAudioStreams()
+    {
+        StartCoroutine(_RefreshAllAudioStreams());
+    }
+
+    IEnumerator _RefreshAllAudioStreams()
+    {
+        LoadingTasksManager tasksManager = editor.services.loadingTasksManager;
+
+        List<LoadingTask> tasks = new List<LoadingTask>()
+        {
+            new LoadingTask("Loading audio", () =>
+            {
+                SongAudioManager audioManager = editor.currentSongAudio;
+                // Free the previous audio clips
+                audioManager.FreeAudioStreams();
+                audioManager.LoadAllAudioClips(editor.currentSong);
+            }),
+        };
+
+        tasksManager.KickTasks(tasks);
+
+        while (tasksManager.isRunningTask)
+            yield return null;
+
+        setAudioTextLabels();
+    }
+
     IEnumerator SetAudio()
     {
         LoadingTasksManager tasksManager = editor.services.loadingTasksManager;
@@ -400,7 +428,7 @@ public class SongPropertiesPanelController : TabMenu
         ClearAudioStream(Song.AudioInstrument.Vocals);
     }
 
-	public void LoadKeysStream()
+    public void LoadKeysStream()
     {
         LoadAudioStream(Song.AudioInstrument.Keys);
     }
@@ -420,7 +448,7 @@ public class SongPropertiesPanelController : TabMenu
         ClearAudioStream(Song.AudioInstrument.Drum);
     }
 
-	public void LoadDrum2Stream()
+    public void LoadDrum2Stream()
     {
         LoadAudioStream(Song.AudioInstrument.Drums_2);
     }
@@ -430,7 +458,7 @@ public class SongPropertiesPanelController : TabMenu
         ClearAudioStream(Song.AudioInstrument.Drums_2);
     }
 
-	public void LoadDrum3Stream()
+    public void LoadDrum3Stream()
     {
         LoadAudioStream(Song.AudioInstrument.Drums_3);
     }
@@ -440,7 +468,7 @@ public class SongPropertiesPanelController : TabMenu
         ClearAudioStream(Song.AudioInstrument.Drums_3);
     }
 
-	public void LoadDrum4Stream()
+    public void LoadDrum4Stream()
     {
         LoadAudioStream(Song.AudioInstrument.Drums_4);
     }
@@ -450,7 +478,7 @@ public class SongPropertiesPanelController : TabMenu
         ClearAudioStream(Song.AudioInstrument.Drums_4);
     }
 
-	public void LoadCrowdStream()
+    public void LoadCrowdStream()
     {
         LoadAudioStream(Song.AudioInstrument.Crowd);
     }

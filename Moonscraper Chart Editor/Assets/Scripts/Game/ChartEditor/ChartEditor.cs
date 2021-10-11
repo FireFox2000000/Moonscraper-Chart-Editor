@@ -287,7 +287,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     void FinaliseQuit()
     {
         globals.Quit();
-        currentSongAudio.FreeAudioStreams();
+        currentSongAudio.Dispose();
         sfxAudioStreams.DisposeSounds();
         AudioManager.Dispose();
 

@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
 using MoonscraperEngine;
 using MoonscraperEngine.Audio;
@@ -13,10 +14,21 @@ public class SongAudioManager
     public SampleData[] audioSampleData { get; private set; }
     public TempoStream[] bassAudioStreams = new TempoStream[EnumX<Song.AudioInstrument>.Count];
     int audioLoads = 0;
+    static string audioFilesPath = string.Empty;
 
     public SongAudioManager()
     {
         audioSampleData = new SampleData[EnumX<Song.AudioInstrument>.Count];
+
+        if (audioFilesPath == string.Empty)
+        {
+            audioFilesPath = Path.Combine(Application.persistentDataPath, "TempSongAudio");
+            Directory.CreateDirectory(audioFilesPath);
+        }
+        else
+        {
+            Debug.LogError("Multiple SongAudioManager instances detected, audio file copies may be overwritten");
+        }
     }
 
     ~SongAudioManager()
@@ -136,15 +148,19 @@ public class SongAudioManager
         ++audioLoads;
 
         try {
+            string copiedFilepath = Path.Combine(audioFilesPath, audio.ToString() + Path.GetExtension(filepath));
+
+            File.Copy(filepath, copiedFilepath, true);
+
             // Load sample data from waveform. This creates a thread on it's own.
             if (audioSampleData[audioStreamArrayPos] != null)
                 audioSampleData[audioStreamArrayPos].Dispose();
-            audioSampleData[audioStreamArrayPos] = new SampleData(filepath);
+            audioSampleData[audioStreamArrayPos] = new SampleData(copiedFilepath);
 
             // Load Audio Streams
             if (bassAudioStreams[audioStreamArrayPos] != null)
                 bassAudioStreams[audioStreamArrayPos].Dispose();
-            bassAudioStreams[audioStreamArrayPos] = AudioManager.LoadTempoStream(filepath);
+            bassAudioStreams[audioStreamArrayPos] = AudioManager.LoadTempoStream(copiedFilepath);
         } catch (Exception e) {
             Logger.LogException(e, "Could not open audio");
             return false;
@@ -156,7 +172,7 @@ public class SongAudioManager
         Debug.Log("Audio load time: " + (Time.realtimeSinceStartup - time));
 #endif
 
-        Debug.Log("Finished loading audio");
+        Debug.Log("Finished loading audio " + audio.ToString());
 
         return true;
     }
@@ -174,5 +190,20 @@ public class SongAudioManager
 #if TIMING_DEBUG
         Debug.Log("Total audio files load time: " + (Time.realtimeSinceStartup - time));
 #endif
+    }
+
+    public void Dispose()
+    {
+        FreeAudioStreams();
+
+        try
+        {
+            // Cleanup Temp Audio Files
+            Directory.Delete(audioFilesPath, true);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e.Message);
+        }
     }
 }
