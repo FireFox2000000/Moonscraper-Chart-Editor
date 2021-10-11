@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class BuildManager  {
     const string applicationName = "Moonscraper Chart Editor";
+
+    // TODO - Need to figure out a way not to hardcode these paths. Could embed them directly but dlls seem unnessacary when this is already working anyway. 
     const string CompressionProgramPath = "E:\\Program Files\\7-Zip\\7z.exe";
     const string InstallerProgramPath = "E:\\Program Files (x86)\\Inno Setup 6\\ISCC.exe";
 
@@ -273,7 +275,7 @@ public class BuildManager  {
             string ScriptFolderPath = Path.GetFullPath(Path.Combine(Application.dataPath, "../../Installer/Scripts/"));
             string installerCompilePath = Path.Combine(ScriptFolderPath, installerCompileScriptPath);
 
-            bool installerValid = true;// File.Exists(InstallerProgramPath);
+            bool installerValid = File.Exists(InstallerProgramPath);
             bool scriptValid = !string.IsNullOrEmpty(installerCompileScriptPath) && File.Exists(installerCompilePath);
 
             Debug.Assert(installerValid);
