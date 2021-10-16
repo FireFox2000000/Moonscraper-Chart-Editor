@@ -7388,6 +7388,7 @@ GameObject:
   - component: {fileID: 6267903903185354037}
   - component: {fileID: 8253295811512301819}
   - component: {fileID: 4155062428795400534}
+  - component: {fileID: 8028161980685748222}
   m_Layer: 5
   m_Name: Reload Audio
   m_TagString: Untagged
@@ -7501,6 +7502,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &8028161980685748222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841230658003839492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 635727e25c735994fb6f858716ba8247, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  message: Reloads any audio file changes. Shortcut key |ReloadAudio| (when editing)
+  offset: {x: 35, y: -12}
 --- !u!1 &849637934393578719
 GameObject:
   m_ObjectHideFlags: 0
@@ -15037,12 +15052,6 @@ PrefabInstance:
       objectReference: {fileID: 6101776356280202493}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4b9fb9c23f4a6a141a913978aaf17813, type: 3}
---- !u!224 &637544040001285905 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 2251066575394956838, guid: 4b9fb9c23f4a6a141a913978aaf17813,
-    type: 3}
-  m_PrefabInstance: {fileID: 1721615249206561079}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &637544040001285902 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2251066575394956857, guid: 4b9fb9c23f4a6a141a913978aaf17813,
@@ -15055,6 +15064,12 @@ MonoBehaviour:
   m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &637544040001285905 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2251066575394956838, guid: 4b9fb9c23f4a6a141a913978aaf17813,
+    type: 3}
+  m_PrefabInstance: {fileID: 1721615249206561079}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7997996431991448822
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15451,6 +15466,12 @@ PrefabInstance:
       objectReference: {fileID: 8197662372271228340}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4b9fb9c23f4a6a141a913978aaf17813, type: 3}
+--- !u!224 &8197662372271228331 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2251066575394956838, guid: 4b9fb9c23f4a6a141a913978aaf17813,
+    type: 3}
+  m_PrefabInstance: {fileID: 7997996432197673869}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &8197662372271228340 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2251066575394956857, guid: 4b9fb9c23f4a6a141a913978aaf17813,
@@ -15463,9 +15484,3 @@ MonoBehaviour:
   m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &8197662372271228331 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 2251066575394956838, guid: 4b9fb9c23f4a6a141a913978aaf17813,
-    type: 3}
-  m_PrefabInstance: {fileID: 7997996432197673869}
-  m_PrefabAsset: {fileID: 0}

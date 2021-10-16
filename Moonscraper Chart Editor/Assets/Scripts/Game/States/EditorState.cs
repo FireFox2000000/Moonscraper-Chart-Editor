@@ -29,6 +29,11 @@ public class EditorState : SystemManagerState
         else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.StepDecreaseBy1))
             Globals.gameSettings.snappingStep.AdjustBy(-1);
 
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ReloadAudio))
+        {
+            editor.ReloadAudio();
+        }
+
         if (editor.groupMove.movementInProgress)
             return;
 

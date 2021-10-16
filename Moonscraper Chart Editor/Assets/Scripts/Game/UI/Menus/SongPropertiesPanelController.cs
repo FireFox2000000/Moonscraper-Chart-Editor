@@ -323,20 +323,9 @@ public class SongPropertiesPanelController : TabMenu
 
     IEnumerator _RefreshAllAudioStreams()
     {
+        editor.ReloadAudio();
+
         LoadingTasksManager tasksManager = editor.services.loadingTasksManager;
-
-        List<LoadingTask> tasks = new List<LoadingTask>()
-        {
-            new LoadingTask("Loading audio", () =>
-            {
-                SongAudioManager audioManager = editor.currentSongAudio;
-                // Free the previous audio clips
-                audioManager.FreeAudioStreams();
-                audioManager.LoadAllAudioClips(editor.currentSong);
-            }),
-        };
-
-        tasksManager.KickTasks(tasks);
 
         while (tasksManager.isRunningTask)
             yield return null;

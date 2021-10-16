@@ -1118,9 +1118,29 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         }
     }
 
-#endregion
+    public void ReloadAudio()
+    {
+        Debug.Log("Reloading audio");
 
-#region Pause/Play Functions
+        LoadingTasksManager tasksManager = services.loadingTasksManager;
+
+        List<LoadingTask> tasks = new List<LoadingTask>()
+        {
+            new LoadingTask("Loading audio", () =>
+            {
+                SongAudioManager audioManager = currentSongAudio;
+                // Free the previous audio clips
+                audioManager.FreeAudioStreams();
+                audioManager.LoadAllAudioClips(currentSong);
+            }),
+        };
+
+        tasksManager.KickTasks(tasks);
+    }
+
+    #endregion
+
+    #region Pause/Play Functions
     public void StartGameplay()
     {
         if (currentState == State.Playing ||

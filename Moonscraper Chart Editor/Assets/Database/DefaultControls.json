@@ -591,6 +591,25 @@
             }
         },
         {
+            "action": "ReloadAudio",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            114
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
             "action": "SelectAll",
             "input": {
                 "kbMaps": [

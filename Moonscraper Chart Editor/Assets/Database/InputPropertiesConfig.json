@@ -276,6 +276,17 @@
             }
         },
         {
+            "mSChartEditorInputAction": "ReloadAudio",
+            "properties": {
+                "displayName": "Reload Audio",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 1,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
             "mSChartEditorInputAction": "SelectAll",
             "properties": {
                 "displayName": "Select All",

@@ -56,6 +56,8 @@ public enum MSChartEditorInputActions
     
     PlayPause,
 
+    ReloadAudio,
+
     SelectAll,
     SelectAllSection,
     StepDecrease,
