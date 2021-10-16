@@ -115,10 +115,24 @@ public class DrawBeatLines : SystemManagerState.System
         uint distanceFromStartRange = startRange >= currentTick ? startRange - currentTick : 0;
         currentTick += fullCycleLength * (distanceFromStartRange / fullCycleLength);    // Skip closer to where our viewport currently is, wastes cpu cycles otherwise
 
+        uint remainingFromStartRange = startRange >= currentTick ? startRange - currentTick : 0;
+        int skips = (int)(remainingFromStartRange / beatInfo.tickGap);
+        if (skips < beatInfo.repetitions)
+        {
+            currentTick += (uint)skips * beatInfo.tickGap;
+            repetitions += skips;
+        }
+
         while (currentTick < nextTSTick && currentTick <= endRange)
         {
             if (currentTick >= startRange)
-                SetBeatLinePosition(currentTick, lineObjectPool, ref poolPos);
+            {
+                if (!SetBeatLinePosition(currentTick, lineObjectPool, ref poolPos))
+                {
+                    // We've run out of beat lines to use;
+                    return poolPos - poolPosStart;
+                }
+            }
 
             currentTick += beatInfo.tickGap;
 
@@ -129,7 +143,7 @@ public class DrawBeatLines : SystemManagerState.System
             }
         }
 
-        return poolPos - poolPosStart;
+        return poolPos - poolPosStart;  // return the amount of beat lines used
     }
 
     // Calculate the beat lines directly from the time signature positions themselves
@@ -226,14 +240,18 @@ public class DrawBeatLines : SystemManagerState.System
         }
     }
 
-    void SetBeatLinePosition(uint snappedTickPos, GameObject[] beatLinePool, ref int beatLinePoolPos)
+    bool SetBeatLinePosition(uint snappedTickPos, GameObject[] beatLinePool, ref int beatLinePoolPos)
     {
         if (beatLinePoolPos < beatLinePool.Length)
         {
             beatLinePool[beatLinePoolPos].transform.position = new Vector3(0, editor.currentSong.TickToWorldYPosition(snappedTickPos), 0);
             beatLinePool[beatLinePoolPos].SetActive(true);
             ++beatLinePoolPos;
+
+            return true;
         }
+
+        return false;
     }
 
     void DisableBeatLines(int offset, GameObject[] beatLinePool)
