@@ -55,8 +55,17 @@ public class DisplayProperties : UpdateableService
         Stats,
     }
 
+    struct NpsTextValues
+    {
+        public int stepValue;
+        public float stepNps;
+        public float bpmValue;
+    }
+
     MenuTabOptions currentMenuTab = MenuTabOptions.Settings;
     const string c_menuTabTextFormat = "< {0} >";
+
+    NpsTextValues lastUpdatedNpsTextValues = new NpsTextValues();
 
     protected override void Start()
     {
@@ -123,16 +132,27 @@ public class DisplayProperties : UpdateableService
             if (currentGlobalEventCount != prevGlobalEventCount)
                 globalEventsCount.text = "Global Events: " + currentGlobalEventCount.ToString();
 
-            int stepValue = Globals.gameSettings.step;
+            {
+                int stepValue = Globals.gameSettings.step;
 
-            if (stepValue != prevSnappingStep)
-                UpdateSnappingStepText();
+                if (stepValue != prevSnappingStep)
+                    UpdateSnappingStepText();
 
-            var bpm = editor.currentSong.GetPrevBPM(editor.currentTickPos);
-            float bpmValue = bpm.value / 1000.0f;
-            float stepFac = SongConfig.FULL_STEP / SongConfig.STANDARD_BEAT_RESOLUTION;
-            float stepNps = bpmValue / TickFunctions.SECONDS_PER_MINUTE * (stepValue / stepFac);
-            stepNpsDisplay.text = string.Format("NPS ({2} bpm @ 1/{0}): {1}nps", stepValue, stepNps.ToString("n2"), bpmValue);
+                var bpm = editor.currentSong.GetPrevBPM(editor.currentTickPos);
+                float bpmValue = bpm.value / 1000.0f;
+                float stepFac = SongConfig.FULL_STEP / SongConfig.STANDARD_BEAT_RESOLUTION;
+                float stepNps = bpmValue / TickFunctions.SECONDS_PER_MINUTE * (stepValue / stepFac);
+
+                bool isDirty = lastUpdatedNpsTextValues.bpmValue != bpmValue || lastUpdatedNpsTextValues.stepNps != stepNps || lastUpdatedNpsTextValues.stepValue != stepValue;
+                if (isDirty)
+                {
+                    stepNpsDisplay.text = string.Format("NPS ({2} bpm @ 1/{0}): {1}nps", stepValue, stepNps.ToString("n2"), bpmValue);
+
+                    lastUpdatedNpsTextValues.bpmValue = bpmValue;
+                    lastUpdatedNpsTextValues.stepValue = stepValue;
+                    lastUpdatedNpsTextValues.stepNps = stepNps;
+                }
+            }
 
             prevNoteCount = currentNoteCount;
             prevSpCount = currentSpCount;
