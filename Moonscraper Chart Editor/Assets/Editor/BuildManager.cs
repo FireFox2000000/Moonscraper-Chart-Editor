@@ -175,7 +175,7 @@ public class BuildManager  {
 
         if ((buildFlags & BuildFlags.SpecifyVersionNumber) != 0)
         {
-            folderName += string.Format(" v{0}", Application.productName);
+            folderName += string.Format(" v{0}", Application.version);
         }
 
         if (!string.IsNullOrEmpty(Globals.applicationBranchName))
