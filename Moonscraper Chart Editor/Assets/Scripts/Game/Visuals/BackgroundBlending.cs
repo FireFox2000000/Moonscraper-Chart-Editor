@@ -105,9 +105,10 @@ public class BackgroundBlending : MonoBehaviour
 
         fadeRunning = false;
     }
-
+#if UNITY_EDITOR
     void OnApplicationQuit()
     {
         Destroy(ren.material);
     }
+#endif
 }
