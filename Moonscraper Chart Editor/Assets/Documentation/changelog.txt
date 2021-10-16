@@ -1,17 +1,17 @@
-1.4.2.2
+1.4.3
 	NEW FEATURES
-	-Automatically ssociate Moonscraper with both .chart and .msce files upon installation.
+	-Automatically associate Moonscraper with both .chart and .msce files upon installation.
 	-Addeded a refresh button to song properties audio tab to reload any changed/updated audio files.
+	-Added shortcut key to reload audio when editing the chart instead of having to open up the audio menu.
 
-	FIXES
-	-Fixed potential crash when users update/overwrite a loaded audio file while the application is running. 
-
-1.4.2.1
 	CHANGES
 	-Populate CH difficulty tags with metadata difficulty if not specified by the ini editor.
 
 	FIXES
+	-Fixed potential crash when users update/overwrite a loaded audio file while the application is running. 
 	-Reverted metronome audio sync changes from previous build
+	-Fixed performance tank on stupid high bpm/time signatures
+	-Slight memory optimisation
 
 1.4.2
 	NEW FEATURES
