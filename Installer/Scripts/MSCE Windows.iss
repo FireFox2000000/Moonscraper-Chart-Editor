@@ -2,7 +2,9 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Moonscraper Chart Editor"
-;#define MyAppVersion "1.4.2.1"           ;This is passed in via command arg
+#ifndef MyAppVersion
+  #define MyAppVersion "0"
+#endif
 #define MyAppPublisher "Alexander (FireFox) Ong"
 #define MyAppURL "https://github.com/FireFox2000000"
 #define MyAppExeName "Moonscraper Chart Editor.exe"
@@ -12,6 +14,21 @@
 #define MyAppAssocName1 "Moonscraper Chart File"
 #define MyAppAssocExt1 ".msce"
 #define MyAppAssocKey1 StringChange(MyAppAssocName1, " ", "") + MyAppAssocExt1
+
+#ifndef Platform
+  #define Platform "x64"
+#endif
+#if Platform == "x64"
+  #define BuildPlatformName "x86_64 (64 bit)"
+  #define InstallerPlatformName "(Win64)"
+#elif Platform == "x86"
+  #define BuildPlatformName "x86 (32 bit)"
+  #define InstallerPlatformName "(Win32)"
+#else
+; UNHANDLED PLATFORM
+#endif
+
+#define BuildSourceDir "..\Builds\Moonscraper Chart Editor Windows " + BuildPlatformName
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -30,7 +47,7 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=..\bin
-OutputBaseFilename=MSCE {#MyAppVersion} Installer (Win64)
+OutputBaseFilename=MSCE {#MyAppVersion} Installer {#InstallerPlatformName}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -43,8 +60,11 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\Builds\Moonscraper Chart Editor Windows x86_64 (64 bit)\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\Builds\Moonscraper Chart Editor Windows x86_64 (64 bit)\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{#BuildSourceDir}\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#BuildSourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "Custom Resources,Config";
+; The files in these folders can be configured by users. Try to not nuke their changes upon upgrading.
+Source: "{#BuildSourceDir}\Custom Resources\*"; DestDir: "{app}\Custom Resources"; Flags: ignoreversion recursesubdirs createallsubdirs onlyifdoesntexist
+Source: "{#BuildSourceDir}\Config\*"; DestDir: "{app}\Config"; Flags: ignoreversion recursesubdirs createallsubdirs onlyifdoesntexist
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]

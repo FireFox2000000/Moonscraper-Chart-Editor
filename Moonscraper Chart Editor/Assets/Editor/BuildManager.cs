@@ -4,6 +4,8 @@ using UnityEditor;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using System.Collections.Generic;
+using System.Text;
 
 public class BuildManager  {
     const string applicationName = "Moonscraper Chart Editor";
@@ -144,19 +146,22 @@ public class BuildManager  {
         string executableName;
         string compressionExtension = string.Empty;
         string installerCompileScriptPath = string.Empty;
+        string installerPlatform = string.Empty;
 
         switch (buildTarget) {
         case BuildTarget.StandaloneWindows:
             architecture = "Windows x86 (32 bit)";
             executableName = applicationName + ".exe";
             compressionExtension = ".zip";
-            installerCompileScriptPath = "MSCE Win32.iss";
+            installerCompileScriptPath = "MSCE Windows.iss";
+            installerPlatform = "x86";
             break;
         case BuildTarget.StandaloneWindows64:
             architecture = "Windows x86_64 (64 bit)";
             executableName = applicationName + ".exe";
             compressionExtension = ".zip";
-            installerCompileScriptPath = "MSCE Win64.iss";
+            installerCompileScriptPath = "MSCE Windows.iss";
+            installerPlatform = "x64";
             break;
         case BuildTarget.StandaloneLinuxUniversal:
             architecture = "Linux (Universal)";
@@ -283,11 +288,26 @@ public class BuildManager  {
 
             if (installerValid && scriptValid)
             {
+                Debug.Assert(!string.IsNullOrEmpty(installerPlatform));     // Unhandled platform 
+
                 using (var process = new System.Diagnostics.Process())
                 {
+                    List<string> args = new List<string>();
+                    args.Add(string.Format("/dMyAppVersion={0}", Application.version));
+                    args.Add(string.Format("/dPlatform={0}", installerPlatform));
+                    args.Add(string.Format("\"{0}\"", installerCompileScriptPath));
+
+                    StringBuilder argsSb = new StringBuilder();
+                    foreach (string arg in args)
+                    {
+                        argsSb.AppendFormat("{0} ", arg);
+                    }
+
+                    Debug.LogFormat("Installer command args: {0}", argsSb.ToString());
+
                     process.StartInfo.FileName = InstallerProgramPath;
                     process.StartInfo.WorkingDirectory = ScriptFolderPath;
-                    process.StartInfo.Arguments = string.Format("/dMyAppVersion={0} \"{1}\"", Application.version, installerCompileScriptPath);
+                    process.StartInfo.Arguments = argsSb.ToString().Trim();
                     process.Start();
 
                     process.WaitForExit();
