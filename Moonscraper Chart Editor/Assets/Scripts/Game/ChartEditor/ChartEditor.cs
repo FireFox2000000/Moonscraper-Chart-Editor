@@ -156,6 +156,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 #endif
         Application.quitting += FinaliseQuit;
 
+        SongAudioManager.ClearOldAudioCaches();
         currentSongAudio = new SongAudioManager();
 
         assets = GetComponent<ChartEditorAssets>();

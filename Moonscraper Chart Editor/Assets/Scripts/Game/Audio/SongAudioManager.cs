@@ -14,21 +14,16 @@ public class SongAudioManager
     public SampleData[] audioSampleData { get; private set; }
     public TempoStream[] bassAudioStreams = new TempoStream[EnumX<Song.AudioInstrument>.Count];
     int audioLoads = 0;
-    static string audioFilesPath = string.Empty;
+    string audioFilesPath = string.Empty;
+    const string AudioCacheFolderId = "TempSongAudio";
 
     public SongAudioManager()
     {
         audioSampleData = new SampleData[EnumX<Song.AudioInstrument>.Count];
+        audioFilesPath = Path.Combine(Application.persistentDataPath, string.Format("{0}-{1}", AudioCacheFolderId, Guid.NewGuid().ToString()));
+        Directory.CreateDirectory(audioFilesPath);
 
-        if (audioFilesPath == string.Empty)
-        {
-            audioFilesPath = Path.Combine(Application.persistentDataPath, "TempSongAudio");
-            Directory.CreateDirectory(audioFilesPath);
-        }
-        else
-        {
-            Debug.LogError("Multiple SongAudioManager instances detected, audio file copies may be overwritten");
-        }
+        Debug.Log(string.Format("Audio cache created at {0}", audioFilesPath));
     }
 
     ~SongAudioManager()
@@ -204,6 +199,26 @@ public class SongAudioManager
         catch (Exception e)
         {
             Debug.LogError(e.Message);
+        }
+    }
+
+    // In the case of a crash or shutdown failure, song cache's may still remain. 
+    public static void ClearOldAudioCaches()
+    {
+        DateTime currentDate = DateTime.Now;
+
+        string[] directories = Directory.GetDirectories(Application.persistentDataPath);
+        foreach(string directory in directories)
+        {
+            if (directory.Contains(AudioCacheFolderId))
+            {
+                DateTime creationDate = Directory.GetCreationTime(directory);
+                var delta = currentDate - creationDate;
+                if (delta.Days > 2)
+                {
+                    Directory.Delete(directory);
+                }
+            }
         }
     }
 }
