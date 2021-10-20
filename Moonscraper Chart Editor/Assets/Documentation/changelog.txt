@@ -1,4 +1,9 @@
-1.4.3
+1.4.3.2
+	FIXES
+	-Fixed crashes and audio issues when multiple instances of Moonscraper are open at the same time.
+	-Installer no longer overwrites files found in Custom Resources and Config folders if they already exist or have been edited by users. 
+
+1.4.3.1
 	NEW FEATURES
 	-Automatically associate Moonscraper with both .chart and .msce files upon installation.
 	-Addeded a refresh button to song properties audio tab to reload any changed/updated audio files.
