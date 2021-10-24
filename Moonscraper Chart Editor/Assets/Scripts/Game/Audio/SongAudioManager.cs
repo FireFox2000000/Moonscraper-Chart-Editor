@@ -216,7 +216,7 @@ public class SongAudioManager
                 var delta = currentDate - creationDate;
                 if (delta.Days > 2)
                 {
-                    Directory.Delete(directory);
+                    Directory.Delete(directory, true);
                 }
             }
         }
