@@ -1,3 +1,7 @@
+1.4.3.3
+	FIXES
+	-Fixed initialisation failure upon trying to delete leaked song cache folder
+
 1.4.3.2
 	FIXES
 	-Fixed crashes and audio issues when multiple instances of Moonscraper are open at the same time.
