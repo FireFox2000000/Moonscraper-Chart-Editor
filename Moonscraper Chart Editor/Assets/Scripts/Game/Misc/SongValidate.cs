@@ -5,6 +5,7 @@ using System.Text;
 using MoonscraperEngine;
 using MoonscraperChartEditor.Song;
 using System;
+using Game.Misc;
 
 public class SongValidate
 {
@@ -115,6 +116,24 @@ public class SongValidate
                         sb.AppendFormat("\tFound chart object beyond the length of the song-\n");
                         sb.AppendFormat("\t\tType = {0}, time = {2}, position = {1}\n", co.GetType(), co.tick, PrintObjectTime(co.time));
                     }
+                }
+            }
+        }
+
+        // Check if any phrases aren't correctly matched
+        {
+            var validationErrors = PhraseValidator.ValidateIntegrity(song);
+            if (validationErrors.Count > 0)
+            {
+                hasErrorsLocal = true;
+                foreach (var validationError in validationErrors)
+                {
+                    sb.Append($"\t{validationError.errorMessage}\n");
+                    if (!(validationError is EventValidationError eventValidationError)) continue;
+                    var songEvent = eventValidationError.songEvent;
+                    var eventTime = songEvent.time;
+                    sb.Append(
+                        $"\t\tType = {songEvent.GetType()}, time = {eventTime}, position = {PrintObjectTime(eventTime)}\n");
                 }
             }
         }
