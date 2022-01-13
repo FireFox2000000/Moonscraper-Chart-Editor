@@ -1,3 +1,8 @@
+1.4.3.4
+    FIXES
+    -Prevent initialisation failure upon trying to delete leaked song cache folder when permission is denied.
+    -Notify user via popup window of any future silent unhandled exceptions instead of ignoring them. 
+
 1.4.3.3
 	FIXES
 	-Fixed initialisation failure upon trying to delete leaked song cache folder
