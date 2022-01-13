@@ -292,7 +292,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     {
         if (type == LogType.Exception && !_ignoreExceptions)
         {
-            string message = string.Format("Moonscraper Chart Editor has encounted an unexpected error:\n\n{0}\n{1}\n\nPlease report this to your local Moonscraper developer at your earliest convienance.\nAttempt to continue?", condition, stackTrace);
+            string message = string.Format("Moonscraper Chart Editor has encounted an unexpected error:\n\n{0}\n{1}\nPlease report \"AppData\\LocalLow\\FireFox Dev\\Moonscraper Chart Editor\\output_log.txt\" to your local Moonscraper developer at your earliest convienance.\n\nAttempt to continue?", condition, stackTrace);
             NativeMessageBox.Result result = NativeMessageBox.Show(message, "Oops", NativeMessageBox.Type.YesNo, windowHandleManager.nativeWindow);
 
             switch (result)
@@ -306,6 +306,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                         UnityEditor.EditorApplication.isPlaying = false;
 #endif
                         _ignoreExceptions = true;
+
+                        Debug.Log("FORCE-QUITTING MOONSCRAPER DUE TO UNHANDLED EXCEPTION");
+
                         break;
                     }
 
