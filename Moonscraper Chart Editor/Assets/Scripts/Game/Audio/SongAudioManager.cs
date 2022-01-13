@@ -216,7 +216,14 @@ public class SongAudioManager
                 var delta = currentDate - creationDate;
                 if (delta.Days > 2)
                 {
-                    Directory.Delete(directory, true);
+                    try
+                    {
+                        Directory.Delete(directory, true);
+                    }
+                    catch(UnauthorizedAccessException e)
+                    {
+                        Debug.LogErrorFormat("Skipping deletion of temp audio directory due to UnauthorizedAccessException: {0}", e.Message);
+                    }
                 }
             }
         }
