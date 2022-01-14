@@ -73,6 +73,9 @@ public static class SongIniFunctions
             case Song.Instrument.Guitar:
                 return "diff_guitar";
 
+            case Song.Instrument.Rhythm:
+                return "diff_rhythm";
+
             case Song.Instrument.Bass:
                 return "diff_bass";
 
