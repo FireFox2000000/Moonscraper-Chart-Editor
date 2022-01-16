@@ -112,7 +112,7 @@ namespace MoonscraperChartEditor.Song.IO
                     throw new Exception("File does not exist");
 
                 string extension = Path.GetExtension(filepath);
-                bool standardChartFormat = extension == ".chart";
+                bool standardChartFormat = extension == ".chart" || extension == ".CHA";
 
                 if (standardChartFormat || extension == MsceIOHelper.FileExtention)
                 {
