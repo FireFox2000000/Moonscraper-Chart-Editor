@@ -120,24 +120,6 @@ public class SongValidate
             }
         }
 
-        // Check if any phrases aren't correctly matched
-        {
-            var validationErrors = PhraseValidator.ValidateIntegrity(song);
-            if (validationErrors.Count > 0)
-            {
-                hasErrorsLocal = true;
-                foreach (var validationError in validationErrors)
-                {
-                    sb.Append($"\t{validationError.errorMessage}\n");
-                    if (!(validationError is EventValidationError eventValidationError)) continue;
-                    var songEvent = eventValidationError.songEvent;
-                    var eventTime = songEvent.time;
-                    sb.Append(
-                        $"\t\tType = {songEvent.GetType()}, time = {eventTime}, position = {PrintObjectTime(eventTime)}\n");
-                }
-            }
-        }
-
         if (!hasErrorsLocal)
         {
             sb.AppendLine("\tNo errors detected");
@@ -207,6 +189,24 @@ public class SongValidate
                         tsToTest.tick
                         , PrintObjectTime(tsToTest.time)
                     );
+                }
+            }
+        }
+
+        // Check if any phrases aren't correctly matched
+        {
+            var validationErrors = PhraseValidator.ValidateIntegrity(song);
+            if (validationErrors.Count > 0)
+            {
+                hasErrorsLocal = true;
+                foreach (var validationError in validationErrors)
+                {
+                    sb.Append($"\t{validationError.errorMessage}\n");
+                    if (!(validationError is EventValidationError eventValidationError)) continue;
+                    var songEvent = eventValidationError.songEvent;
+                    var eventTime = songEvent.time;
+                    sb.Append(
+                        $"\t\tType = {songEvent.GetType()}, time = {eventTime}, position = {PrintObjectTime(eventTime)}\n");
                 }
             }
         }
