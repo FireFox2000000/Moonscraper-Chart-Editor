@@ -125,26 +125,33 @@ public class ClapPlaybackSystem : SystemManagerState.System
         }
         else if (id == SongObject.ID.Note)
         {
-            Note note = songObject as Note;
-            Note.NoteType noteType = NoteVisualsManager.GetVisualNoteType(note);
-
-            switch (noteType)
+            if ((Globals.gameSettings.clapProperties & GameSettings.ClapToggle.ALL_NOTES) != 0)
             {
-                case Note.NoteType.Strum:
-                case Note.NoteType.Cymbal:
-                    playClap = (Globals.gameSettings.clapProperties & GameSettings.ClapToggle.STRUM) != 0;
-                    break;
+                playClap = true;
+            }
+            else
+            {
+                Note note = songObject as Note;
+                Note.NoteType noteType = NoteVisualsManager.GetVisualNoteType(note);
 
-                case Note.NoteType.Hopo:
-                    playClap = (Globals.gameSettings.clapProperties & GameSettings.ClapToggle.HOPO) != 0;
-                    break;
+                switch (noteType)
+                {
+                    case Note.NoteType.Strum:
+                    case Note.NoteType.Cymbal:
+                        playClap = (Globals.gameSettings.clapProperties & GameSettings.ClapToggle.STRUM) != 0;
+                        break;
 
-                case Note.NoteType.Tap:
-                    playClap = (Globals.gameSettings.clapProperties & GameSettings.ClapToggle.TAP) != 0;
-                    break;
+                    case Note.NoteType.Hopo:
+                        playClap = (Globals.gameSettings.clapProperties & GameSettings.ClapToggle.HOPO) != 0;
+                        break;
 
-                default:
-                    break;
+                    case Note.NoteType.Tap:
+                        playClap = (Globals.gameSettings.clapProperties & GameSettings.ClapToggle.TAP) != 0;
+                        break;
+
+                    default:
+                        break;
+                }
             }
         }
 

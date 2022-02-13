@@ -10,6 +10,8 @@ using System;
 
 public class GameSettings
 {
+    const int VersionNumber = 1;
+    const string SECTION_NAME_METADATA = "MetaData";
     const string SECTION_NAME_SETTINGS = "Settings";
     const string SECTION_NAME_AUDIO = "Audio Volume";
     const string SECTION_NAME_GRAPHICS = "Graphics";
@@ -38,6 +40,8 @@ public class GameSettings
         TS = 1 << 6,
         EVENT = 1 << 7,
         SECTION = 1 << 8,
+
+        ALL_NOTES = 1 << 30
     }
 
     public enum NotePlacementMode
@@ -328,7 +332,7 @@ public class GameSettings
         audio_pan = new FloatSaveSetting(SECTION_NAME_AUDIO, "Audio Pan", 0.0f);
         _sfxVolume = new FloatSaveSetting(SECTION_NAME_AUDIO, "SFX", 1.0f);
 
-        clapProperties = new EnumSaveSetting<ClapToggle>(SECTION_NAME_SETTINGS, "Clap", ClapToggle.STRUM | ClapToggle.HOPO | ClapToggle.TAP);
+        clapProperties = new EnumSaveSetting<ClapToggle>(SECTION_NAME_SETTINGS, "Clap", ClapToggle.ALL_NOTES | ClapToggle.STRUM | ClapToggle.HOPO | ClapToggle.TAP);
         notePlacementMode = new EnumSaveSetting<NotePlacementMode>(SECTION_NAME_SETTINGS, "Note Placement Mode", NotePlacementMode.Default);
         songValidatorModes = new EnumSaveSetting<SongValidate.ValidationOptions>(SECTION_NAME_SETTINGS, "Song Validator Modes", ~SongValidate.ValidationOptions.None);
     }
@@ -342,6 +346,8 @@ public class GameSettings
             Debug.Log("Loading game settings");
          
             iniparse.Open(configFilepath);
+
+            int versionNumber = iniparse.ReadValue(SECTION_NAME_METADATA, "Version Number", VersionNumber);
 
             // Check for valid fps values
             clapEnabled = false;
@@ -366,10 +372,13 @@ public class GameSettings
                 }
             }
 
-            // Need to fix old config values
-            if ((int)clapProperties.value > (((int)ClapToggle.SECTION << 1) - 1))
+            if (versionNumber < 1)
             {
-                clapProperties.value = clapProperties.defaultValue;
+                // Need to fix old config values
+                if ((int)clapProperties.value > (((int)ClapToggle.SECTION << 1) - 1))
+                {
+                    clapProperties.value = clapProperties.defaultValue;
+                }
             }
 
             gameplayStartDelayTime.value = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
@@ -412,6 +421,7 @@ public class GameSettings
             Debug.Log("Saving game settings");
 
             iniparse.Open(configFilepath);
+            iniparse.WriteValue(SECTION_NAME_METADATA, "Version Number", VersionNumber);
 
             iniparse.WriteValue(SECTION_NAME_SETTINGS, "Sustain Gap Step", sustainGap);
 

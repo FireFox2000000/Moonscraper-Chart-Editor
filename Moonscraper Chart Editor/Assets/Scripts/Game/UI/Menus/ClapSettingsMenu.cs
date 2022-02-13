@@ -34,6 +34,15 @@ public class ClapSettingsMenu : DisplayMenu
 
     void InitClapToggle(Toggle toggle, GameSettings.ClapToggle setting)
     {
+        if (setting.HasFlag(GameSettings.ClapToggle.HOPO) 
+            || setting.HasFlag(GameSettings.ClapToggle.STRUM)
+            || setting.HasFlag(GameSettings.ClapToggle.TAP)
+            )
+        {
+            bool forceAllNoteClaps = (Globals.gameSettings.clapProperties & GameSettings.ClapToggle.ALL_NOTES) != 0;
+            toggle.interactable = !forceAllNoteClaps;
+        }
+        
         toggle.isOn = (Globals.gameSettings.clapProperties & setting) != 0;
     }
 
@@ -53,6 +62,11 @@ public class ClapSettingsMenu : DisplayMenu
         foreach (ClapToggleSetting clapToggleSetting in clapToggles)
         {
             SetClapSetting(clapToggleSetting.clapToggleType, clapToggleSetting.toggleUI.isOn);
+        }
+
+        foreach (ClapToggleSetting clapToggleSetting in clapToggles)
+        {
+            InitClapToggle(clapToggleSetting.toggleUI, clapToggleSetting.clapToggleType);
         }
     }
 }
