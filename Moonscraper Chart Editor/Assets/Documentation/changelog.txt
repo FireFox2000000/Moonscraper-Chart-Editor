@@ -1,3 +1,10 @@
+1.4.3.5
+    FIXES
+    -Fixed error popup halting shutdown process when shutdown isn't smooth.
+
+    NEW FEATURES
+    -Added "All" setting note to clap setting to easily toggle all notes on or off.
+
 1.4.3.4
     FIXES
     -Prevent initialisation failure upon trying to delete leaked song cache folder when permission is denied.
