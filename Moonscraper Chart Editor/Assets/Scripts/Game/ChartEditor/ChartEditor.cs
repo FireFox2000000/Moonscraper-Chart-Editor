@@ -321,6 +321,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
     void FinaliseQuit()
     {
+        Application.logMessageReceived -= HandleException;      // Don't show message box on shutdown, even if we aren't shutting down smoothly. Kinda pointless....
+
         globals.Quit();
         currentSongAudio.Dispose();
         sfxAudioStreams.DisposeSounds();
