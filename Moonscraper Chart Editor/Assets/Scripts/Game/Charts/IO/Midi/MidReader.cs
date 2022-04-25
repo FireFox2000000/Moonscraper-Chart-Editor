@@ -307,7 +307,8 @@ namespace MoonscraperChartEditor.Song.IO
                 }
 
                 var phrase = track[i] as NoteOnEvent;
-                if (phrase != null && phrase.OffEvent != null && phrase.NoteNumber == MidIOHelper.PhraseMarker)
+                if (phrase != null && phrase.OffEvent != null &&
+                    (phrase.NoteNumber == MidIOHelper.PhraseMarker || phrase.NoteNumber == MidIOHelper.PhraseMarker2))
                 {
                     string phraseStartEvent = MidIOHelper.PhraseStartText;
                     song.Add(new Event(phraseStartEvent, (uint)phrase.AbsoluteTime), false);
