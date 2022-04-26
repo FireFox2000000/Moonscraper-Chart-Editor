@@ -867,51 +867,28 @@ namespace MoonscraperChartEditor.Song.IO
             SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
 
             uint lastChordTick = uint.MaxValue;
-            bool shouldBeForced = false;
+            bool firstInChord = true;
+            Note.Flags flags = Note.Flags.None;
 
             for (int i = index; i < index + length; ++i)
             {
-                if ((chart.notes[i].flags & Note.Flags.Tap) != 0)
-                    continue;
-
                 Note note = chart.notes[i];
+                flags = note.GetFlagsToSetType(noteType);
+                firstInChord = lastChordTick != note.tick;
 
-                if (lastChordTick != note.tick)
+                // Only set flags once in a chord, except when there are per-note flags
+                if (firstInChord || (flags & Note.PER_NOTE_FLAGS) != 0)
                 {
-                    shouldBeForced = false;
-
-                    if (noteType == Note.NoteType.Strum)
+                    note.flags = flags;
+                    if (firstInChord)
                     {
-                        if (!note.isChord && note.isNaturalHopo)
-                        {
-                            shouldBeForced = true;
-                        }
+                        note.ApplyFlagsToChord();
                     }
-                    else if (noteType == Note.NoteType.Hopo)
-                    {
-                        if (!note.cannotBeForced && (note.isChord || !note.isNaturalHopo))
-                        {
-                            shouldBeForced = true;
-                        }
-                    }
-                    else
-                    {
-                        continue;   // Unhandled
-                    }
-                }
-                // else we set the same forced property as before since we're on the same chord
-
-                if (shouldBeForced)
-                {
-                    note.flags |= Note.Flags.Forced;
-                }
-                else
-                {
-                    note.flags &= ~Note.Flags.Forced;
                 }
 
                 lastChordTick = note.tick;
 
+                // TODO: Open notes marked as tap notes will make this assert fail
                 Debug.Assert(note.type == noteType);
             }
         }
