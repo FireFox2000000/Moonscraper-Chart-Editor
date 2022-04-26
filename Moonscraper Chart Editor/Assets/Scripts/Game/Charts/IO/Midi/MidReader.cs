@@ -849,6 +849,20 @@ namespace MoonscraperChartEditor.Song.IO
             });
         }
 
+        static void ProcessNoteOnEventAsModifier(in NoteProcessParams noteProcessParams, Note.NoteType noteType)
+        {
+            var flagEvent = noteProcessParams.noteEvent;
+
+            // Delay the actual processing once all the notes are actually in
+            foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
+            {
+                noteProcessParams.forceNotesProcessesList.Add((in NoteProcessParams processParams) =>
+                {
+                    ProcessNoteOnEventAsModifierPostDelay(processParams, flagEvent, diff, noteType);
+                });
+            }
+        }
+
         static void ProcessNoteOnEventAsModifierPostDelay(in NoteProcessParams noteProcessParams, NoteOnEvent noteEvent, Song.Difficulty difficulty, Note.NoteType noteType)
         {
             var song = noteProcessParams.song;
