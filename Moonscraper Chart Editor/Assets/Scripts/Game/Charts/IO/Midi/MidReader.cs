@@ -631,14 +631,14 @@ namespace MoonscraperChartEditor.Song.IO
                     int flagKey = difficultyStartRange + 5;
                     GuitarMidiNoteNumberToProcessFnMap.Add(flagKey, (in NoteProcessParams noteProcessParams) =>
                     {
-                        ProcessNoteOnEventAsForcedType(noteProcessParams, difficulty, Note.NoteType.Hopo);
+                        ProcessNoteOnEventAsModifier(noteProcessParams, difficulty, Note.NoteType.Hopo);
                     });
                 }
                 {
                     int flagKey = difficultyStartRange + 6;
                     GuitarMidiNoteNumberToProcessFnMap.Add(flagKey, (in NoteProcessParams noteProcessParams) =>
                     {
-                        ProcessNoteOnEventAsForcedType(noteProcessParams, difficulty, Note.NoteType.Strum);
+                        ProcessNoteOnEventAsModifier(noteProcessParams, difficulty, Note.NoteType.Strum);
                     });
                 }
             };
@@ -689,14 +689,14 @@ namespace MoonscraperChartEditor.Song.IO
                     int flagKey = difficultyStartRange + 7;
                     GhlGuitarMidiNoteNumberToProcessFnMap.Add(flagKey, (in NoteProcessParams noteProcessParams) =>
                     {
-                        ProcessNoteOnEventAsForcedType(noteProcessParams, difficulty, Note.NoteType.Hopo);
+                        ProcessNoteOnEventAsModifier(noteProcessParams, difficulty, Note.NoteType.Hopo);
                     });
                 }
                 {
                     int flagKey = difficultyStartRange + 8;
                     GhlGuitarMidiNoteNumberToProcessFnMap.Add(flagKey, (in NoteProcessParams noteProcessParams) =>
                     {
-                        ProcessNoteOnEventAsForcedType(noteProcessParams, difficulty, Note.NoteType.Strum);
+                        ProcessNoteOnEventAsModifier(noteProcessParams, difficulty, Note.NoteType.Strum);
                     });
                 }
             };
@@ -838,18 +838,18 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
-        static void ProcessNoteOnEventAsForcedType(in NoteProcessParams noteProcessParams, Song.Difficulty difficulty, Note.NoteType noteType)
+        static void ProcessNoteOnEventAsModifier(in NoteProcessParams noteProcessParams, Song.Difficulty difficulty, Note.NoteType noteType)
         {
             var flagEvent = noteProcessParams.noteEvent;
 
             // Delay the actual processing once all the notes are actually in
             noteProcessParams.forceNotesProcessesList.Add((in NoteProcessParams processParams) =>
             {
-                ProcessNoteOnEventAsForcedTypePostDelay(processParams, flagEvent, difficulty, noteType);
+                ProcessNoteOnEventAsModifierPostDelay(processParams, flagEvent, difficulty, noteType);
             });
         }
 
-        static void ProcessNoteOnEventAsForcedTypePostDelay(in NoteProcessParams noteProcessParams, NoteOnEvent noteEvent, Song.Difficulty difficulty, Note.NoteType noteType)
+        static void ProcessNoteOnEventAsModifierPostDelay(in NoteProcessParams noteProcessParams, NoteOnEvent noteEvent, Song.Difficulty difficulty, Note.NoteType noteType)
         {
             var song = noteProcessParams.song;
             var instrument = noteProcessParams.instrument;
