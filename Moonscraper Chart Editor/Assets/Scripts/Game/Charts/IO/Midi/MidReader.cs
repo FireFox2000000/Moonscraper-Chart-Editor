@@ -755,7 +755,26 @@ namespace MoonscraperChartEditor.Song.IO
 
                         DrumsMidiNoteNumberToProcessFnMap.Add(key, (in EventProcessParams eventProcessParams) =>
                         {
-                            ProcessNoteOnEventAsNote(eventProcessParams, difficulty, fret, defaultFlags);
+                            var noteEvent = eventProcessParams.midiEvent as NoteOnEvent;
+                            Debug.Assert(noteEvent != null, $"Wrong note event type passed to drums note process. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
+
+                            var flags = defaultFlags;
+                            switch (noteEvent.Velocity)
+                            {
+                                case MidIOHelper.VELOCITY_ACCENT:
+                                    {
+                                        flags |= Note.Flags.ProDrums_Accent;
+                                        break;
+                                    }
+                                case MidIOHelper.VELOCITY_GHOST:
+                                    {
+                                        flags |= Note.Flags.ProDrums_Ghost;
+                                        break;
+                                    }
+                                default: break;
+                            }
+
+                            ProcessNoteOnEventAsNote(eventProcessParams, difficulty, fret, flags);
                         });
                     }
                 }
@@ -777,7 +796,7 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
-        static void ProcessNoteOnEventAsNote(in EventProcessParams eventProcessParams, Song.Difficulty diff, int ingameFret, Note.Flags defaultFlags = Note.Flags.None)
+        static void ProcessNoteOnEventAsNote(in EventProcessParams eventProcessParams, Song.Difficulty diff, int ingameFret, Note.Flags flags = Note.Flags.None)
         {
             Chart chart;
             if (eventProcessParams.instrument == Song.Instrument.Unrecognised)
@@ -793,27 +812,6 @@ namespace MoonscraperChartEditor.Song.IO
             Debug.Assert(noteEvent != null, $"Wrong note event type passed to ProcessNoteOnEventAsNote. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
             var tick = (uint)noteEvent.AbsoluteTime;
             var sus = CalculateSustainLength(eventProcessParams.song, noteEvent);
-            var velocity = noteEvent.Velocity;
-
-            Note.Flags flags = defaultFlags;
-
-            if (eventProcessParams.instrument == Song.Instrument.Drums)
-            {
-                switch (velocity)
-                {
-                    case MidIOHelper.VELOCITY_ACCENT:
-                        {
-                            flags |= Note.Flags.ProDrums_Accent;
-                            break;
-                        }
-                    case MidIOHelper.VELOCITY_GHOST:
-                        {
-                            flags |= Note.Flags.ProDrums_Ghost;
-                            break;
-                        }
-                    default: break;
-                }
-            }
 
             Note newNote = new Note(tick, ingameFret, sus, flags);
             chart.Add(newNote, false);
