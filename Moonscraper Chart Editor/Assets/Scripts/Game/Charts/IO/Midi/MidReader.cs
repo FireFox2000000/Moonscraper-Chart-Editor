@@ -910,7 +910,10 @@ namespace MoonscraperChartEditor.Song.IO
 
                 lastChordTick = note.tick;
 
-                Debug.Assert(note.type == noteType);
+                Debug.Assert(
+                    note.type == noteType,
+                    $"Failed to set note as note type {noteType}.\nInstrument: {instrument}, new type: {noteType}, actual type: {note.type}, tick: {note.tick}, is open note: {note.IsOpenNote()} natural HOPO: {note.isNaturalHopo}, forceable: {!note.cannotBeForced}"
+                );
             }
         }
 
