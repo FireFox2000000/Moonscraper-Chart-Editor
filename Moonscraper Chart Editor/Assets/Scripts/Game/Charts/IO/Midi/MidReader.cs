@@ -882,6 +882,7 @@ namespace MoonscraperChartEditor.Song.IO
 
             uint lastChordTick = uint.MaxValue;
             bool firstInChord = true;
+            bool perNote = false;
             Note.Flags flags = Note.Flags.None;
 
             for (int i = index; i < index + length; ++i)
@@ -889,12 +890,13 @@ namespace MoonscraperChartEditor.Song.IO
                 Note note = chart.notes[i];
                 flags = note.GetFlagsToSetType(noteType);
                 firstInChord = lastChordTick != note.tick;
+                perNote = ((flags & Note.PER_NOTE_FLAGS) != 0) && ((flags & ~Note.PER_NOTE_FLAGS) == 0);
 
                 // Only set flags once in a chord, except when there are per-note flags
-                if (firstInChord || (flags & Note.PER_NOTE_FLAGS) != 0)
+                if (firstInChord || perNote)
                 {
                     note.flags = flags;
-                    if (firstInChord)
+                    if (firstInChord && !perNote)
                     {
                         note.ApplyFlagsToChord();
                     }
