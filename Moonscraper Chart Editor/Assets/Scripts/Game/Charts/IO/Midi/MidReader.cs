@@ -527,10 +527,20 @@ namespace MoonscraperChartEditor.Song.IO
                     SongObjectHelper.GetRange(notes, tick, tick + endPos, out index, out length);
                     for (int k = index; k < index + length; ++k)
                     {
-                        notes[k].guitarFret = Note.GuitarFret.Open;
+                        switch (gameMode)
+                        {
+                            case (Chart.GameMode.Guitar):
+                                notes[k].guitarFret = Note.GuitarFret.Open;
+                                break;
 
-                        if (gameMode == Chart.GameMode.Drums)
-                            notes[k].guitarFret = LoadDrumNoteToGuitarNote(notes[k].guitarFret);
+                            case (Chart.GameMode.GHLGuitar):
+                                notes[k].ghliveGuitarFret = Note.GHLiveGuitarFret.Open;
+                                break;
+
+                            case (Chart.GameMode.Drums):
+                                notes[k].guitarFret = LoadDrumNoteToGuitarNote(notes[k].guitarFret);
+                                break;
+                        }
                     }
                 }
             }
