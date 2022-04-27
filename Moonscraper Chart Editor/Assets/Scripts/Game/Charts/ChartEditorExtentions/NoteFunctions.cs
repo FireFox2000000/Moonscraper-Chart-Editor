@@ -289,6 +289,29 @@ public static class NoteFunctions {
         return flags;
     }
 
+    public static bool IsAllowedToBeType(this Note note, Note.NoteType type)
+    {
+        switch (type)
+        {
+            case (Note.NoteType.Natural):
+            case (Note.NoteType.Strum):
+                return true;
+
+            case (Note.NoteType.Hopo):
+                return !note.cannotBeForced;
+
+            case (Note.NoteType.Tap):
+                return !note.IsOpenNote();
+
+            case (Note.NoteType.Cymbal):
+                return NoteFunctions.AllowedToBeCymbal(note);
+
+            default:
+                // Assume no for future note types that haven't been added here yet
+                return false;
+        }
+    }
+
     public static int ExpensiveGetExtendedSustainMask(this Note note)
     {
         int mask = 0;
