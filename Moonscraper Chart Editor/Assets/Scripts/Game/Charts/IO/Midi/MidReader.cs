@@ -416,6 +416,12 @@ namespace MoonscraperChartEditor.Song.IO
             else
                 unrecognised.UpdateCache();
 
+            // Apply forcing events
+            foreach (var process in processParams.forceNotesProcessesList)
+            {
+                process(processParams);
+            }
+
             // Apply tap and open note events
             Chart[] chartsOfInstrument;
 
@@ -527,12 +533,6 @@ namespace MoonscraperChartEditor.Song.IO
                             notes[k].guitarFret = LoadDrumNoteToGuitarNote(notes[k].guitarFret);
                     }
                 }
-            }
-
-            // Apply forcing events
-            foreach (var process in processParams.forceNotesProcessesList)
-            {
-                process(processParams);
             }
 
             foreach (var flagEvent in proDrumsNotesList)
