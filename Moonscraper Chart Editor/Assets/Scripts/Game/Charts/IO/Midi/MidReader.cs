@@ -888,6 +888,12 @@ namespace MoonscraperChartEditor.Song.IO
             for (int i = index; i < index + length; ++i)
             {
                 Note note = chart.notes[i];
+                if (!note.IsAllowedToBeType(noteType))
+                {
+                    Debug.LogWarning($"Attempted to set a note as a type it is not allowed to be.\nInstrument: {instrument}, new type: {noteType}, current type: {note.type}, tick: {note.tick}, is open note: {note.IsOpenNote()} natural HOPO: {note.isNaturalHopo}, forceable: {!note.cannotBeForced}");
+                    continue;
+                }
+
                 flags = note.GetFlagsToSetType(noteType);
                 firstInChord = lastChordTick != note.tick;
                 perNote = ((flags & Note.PER_NOTE_FLAGS) != 0) && ((flags & ~Note.PER_NOTE_FLAGS) == 0);
@@ -904,7 +910,6 @@ namespace MoonscraperChartEditor.Song.IO
 
                 lastChordTick = note.tick;
 
-                // TODO: Open notes marked as tap notes will make this assert fail
                 Debug.Assert(note.type == noteType);
             }
         }
