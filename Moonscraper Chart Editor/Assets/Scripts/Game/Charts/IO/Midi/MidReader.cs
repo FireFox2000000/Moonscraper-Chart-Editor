@@ -128,6 +128,12 @@ namespace MoonscraperChartEditor.Song.IO
 
         static readonly Dictionary<string, EventProcessFn> DrumsTextEventToProcessFnMap = new Dictionary<string, EventProcessFn>()
     {
+        { "[ENABLE_CHART_DYNAMICS]", (in EventProcessParams eventProcessParams) => {
+            BuildDrumsMidiNoteNumberToProcessFnDict(enableVelocity: true);
+        }},
+        { "ENABLE_CHART_DYNAMICS", (in EventProcessParams eventProcessParams) => {
+            BuildDrumsMidiNoteNumberToProcessFnDict(enableVelocity: true);
+        }}
     };
 
         static MidReader()
@@ -745,7 +751,7 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
-        static void BuildDrumsMidiNoteNumberToProcessFnDict()
+        static void BuildDrumsMidiNoteNumberToProcessFnDict(bool enableVelocity = false)
         {
             Dictionary<Note.DrumPad, int> DrumPadToMidiKey = new Dictionary<Note.DrumPad, int>()
         {
@@ -776,29 +782,47 @@ namespace MoonscraperChartEditor.Song.IO
                         Note.Flags defaultFlags = Note.Flags.None;
                         DrumPadDefaultFlags.TryGetValue(pad, out defaultFlags);
 
-                        DrumsMidiNoteNumberToProcessFnMap.Add(key, (in EventProcessParams eventProcessParams) =>
+                        if (DrumsMidiNoteNumberToProcessFnMap.ContainsKey(key))
                         {
-                            var noteEvent = eventProcessParams.midiEvent as NoteOnEvent;
-                            Debug.Assert(noteEvent != null, $"Wrong note event type passed to drums note process. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
+                            DrumsMidiNoteNumberToProcessFnMap.Remove(key);
+                        }
 
-                            var flags = defaultFlags;
-                            switch (noteEvent.Velocity)
+                        if (enableVelocity)
+                        {
+                            DrumsMidiNoteNumberToProcessFnMap.Add(key, (in EventProcessParams eventProcessParams) =>
                             {
-                                case MidIOHelper.VELOCITY_ACCENT:
-                                    {
-                                        flags |= Note.Flags.ProDrums_Accent;
-                                        break;
-                                    }
-                                case MidIOHelper.VELOCITY_GHOST:
-                                    {
-                                        flags |= Note.Flags.ProDrums_Ghost;
-                                        break;
-                                    }
-                                default: break;
-                            }
+                                var noteEvent = eventProcessParams.midiEvent as NoteOnEvent;
+                                Debug.Assert(noteEvent != null, $"Wrong note event type passed to drums note process. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
 
-                            ProcessNoteOnEventAsNote(eventProcessParams, difficulty, fret, flags);
-                        });
+                                var flags = defaultFlags;
+                                switch (noteEvent.Velocity)
+                                {
+                                    case MidIOHelper.VELOCITY_ACCENT:
+                                        {
+                                            flags |= Note.Flags.ProDrums_Accent;
+                                            break;
+                                        }
+                                    case MidIOHelper.VELOCITY_GHOST:
+                                        {
+                                            flags |= Note.Flags.ProDrums_Ghost;
+                                            break;
+                                        }
+                                    default: break;
+                                }
+
+                                ProcessNoteOnEventAsNote(eventProcessParams, difficulty, fret, flags);
+                            });
+                        }
+                        else
+                        {
+                            DrumsMidiNoteNumberToProcessFnMap.Add(key, (in EventProcessParams eventProcessParams) =>
+                            {
+                                var noteEvent = eventProcessParams.midiEvent as NoteOnEvent;
+                                Debug.Assert(noteEvent != null, $"Wrong note event type passed to drums note process. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
+
+                                ProcessNoteOnEventAsNote(eventProcessParams, difficulty, fret, defaultFlags);
+                            });
+                        }
                     }
                 }
             };
@@ -814,6 +838,12 @@ namespace MoonscraperChartEditor.Song.IO
             {
                 int pad = (int)keyVal.Key;
                 int midiKey = keyVal.Value;
+
+                if (DrumsMidiNoteNumberToProcessFnMap.ContainsKey(midiKey))
+                {
+                    DrumsMidiNoteNumberToProcessFnMap.Remove(midiKey);
+                }
+
                 DrumsMidiNoteNumberToProcessFnMap.Add(midiKey, (in EventProcessParams eventProcessParams) =>
                 {
                     ProcessNoteOnEventAsFlagToggle(eventProcessParams, Note.Flags.ProDrums_Cymbal, pad);
