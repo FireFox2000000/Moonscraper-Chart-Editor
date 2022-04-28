@@ -58,7 +58,9 @@ namespace MoonscraperChartEditor.Song.IO
         // These dictionaries map the NoteNumber of each midi note event to a specific function of how to process them
         static readonly Dictionary<int, EventProcessFn> GuitarMidiNoteNumberToProcessFnMap = new Dictionary<int, EventProcessFn>()
     {
-        { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
+        { MidIOHelper.STARPOWER_NOTE, (in EventProcessParams eventProcessParams) => {
+            ProcessNoteOnEventAsStarpower(eventProcessParams);
+        }},
         { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
             ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
         }},
@@ -66,7 +68,9 @@ namespace MoonscraperChartEditor.Song.IO
 
         static readonly Dictionary<int, EventProcessFn> GhlGuitarMidiNoteNumberToProcessFnMap = new Dictionary<int, EventProcessFn>()
     {
-        { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
+        { MidIOHelper.STARPOWER_NOTE, (in EventProcessParams eventProcessParams) => {
+            ProcessNoteOnEventAsStarpower(eventProcessParams);
+        }},
         { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
             ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
         }},
@@ -74,7 +78,9 @@ namespace MoonscraperChartEditor.Song.IO
 
         static readonly Dictionary<int, EventProcessFn> DrumsMidiNoteNumberToProcessFnMap = new Dictionary<int, EventProcessFn>()
     {
-        { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
+        { MidIOHelper.STARPOWER_NOTE, (in EventProcessParams eventProcessParams) => {
+            ProcessNoteOnEventAsStarpower(eventProcessParams);
+        }},
         { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
             ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
         }},
@@ -82,11 +88,21 @@ namespace MoonscraperChartEditor.Song.IO
             ProcessNoteOnEventAsNote(eventProcessParams, Song.Difficulty.Expert, (int)Note.DrumPad.Kick, Note.Flags.InstrumentPlus);
         }},
 
-        { MidIOHelper.STARPOWER_DRUM_FILL_0, ProcessNoteOnEventAsDrumFill },
-        { MidIOHelper.STARPOWER_DRUM_FILL_1, ProcessNoteOnEventAsDrumFill },
-        { MidIOHelper.STARPOWER_DRUM_FILL_2, ProcessNoteOnEventAsDrumFill },
-        { MidIOHelper.STARPOWER_DRUM_FILL_3, ProcessNoteOnEventAsDrumFill },
-        { MidIOHelper.STARPOWER_DRUM_FILL_4, ProcessNoteOnEventAsDrumFill },
+        { MidIOHelper.STARPOWER_DRUM_FILL_0, (in EventProcessParams eventProcessParams) => {
+            ProcessNoteOnEventAsStarpower(eventProcessParams, Starpower.Flags.ProDrums_Activation);
+        }},
+        { MidIOHelper.STARPOWER_DRUM_FILL_1, (in EventProcessParams eventProcessParams) => {
+            ProcessNoteOnEventAsStarpower(eventProcessParams, Starpower.Flags.ProDrums_Activation);
+        }},
+        { MidIOHelper.STARPOWER_DRUM_FILL_2, (in EventProcessParams eventProcessParams) => {
+            ProcessNoteOnEventAsStarpower(eventProcessParams, Starpower.Flags.ProDrums_Activation);
+        }},
+        { MidIOHelper.STARPOWER_DRUM_FILL_3, (in EventProcessParams eventProcessParams) => {
+            ProcessNoteOnEventAsStarpower(eventProcessParams, Starpower.Flags.ProDrums_Activation);
+        }},
+        { MidIOHelper.STARPOWER_DRUM_FILL_4, (in EventProcessParams eventProcessParams) => {
+            ProcessNoteOnEventAsStarpower(eventProcessParams, Starpower.Flags.ProDrums_Activation);
+        }},
     };
 
         static MidReader()
@@ -817,7 +833,7 @@ namespace MoonscraperChartEditor.Song.IO
             chart.Add(newNote, false);
         }
 
-        static void ProcessNoteOnEventAsStarpower(in EventProcessParams eventProcessParams)
+        static void ProcessNoteOnEventAsStarpower(in EventProcessParams eventProcessParams, Starpower.Flags flags = Starpower.Flags.None)
         {
             var noteEvent = eventProcessParams.midiEvent as NoteOnEvent;
             Debug.Assert(noteEvent != null, $"Wrong note event type passed to ProcessNoteOnEventAsStarpower. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
@@ -829,23 +845,7 @@ namespace MoonscraperChartEditor.Song.IO
 
             foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
             {
-                song.GetChart(instrument, diff).Add(new Starpower(tick, sus), false);
-            }
-        }
-
-        static void ProcessNoteOnEventAsDrumFill(in EventProcessParams eventProcessParams)
-        {
-            var noteEvent = eventProcessParams.midiEvent as NoteOnEvent;
-            Debug.Assert(noteEvent != null, $"Wrong note event type passed to ProcessNoteOnEventAsDrumFill. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
-            var song = eventProcessParams.song;
-            var instrument = eventProcessParams.instrument;
-
-            var tick = (uint)noteEvent.AbsoluteTime;
-            var sus = CalculateSustainLength(song, noteEvent);
-
-            foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
-            {
-                song.GetChart(instrument, diff).Add(new Starpower(tick, sus, Starpower.Flags.ProDrums_Activation), false);
+                song.GetChart(instrument, diff).Add(new Starpower(tick, sus, flags), false);
             }
         }
 
