@@ -105,6 +105,19 @@ namespace MoonscraperChartEditor.Song.IO
         }},
     };
 
+        // These dictionaries map the text of a MIDI text event to a specific function that processes them
+        static readonly Dictionary<string, EventProcessFn> GuitarTextEventToProcessFnMap = new Dictionary<string, EventProcessFn>()
+    {
+    };
+
+        static readonly Dictionary<string, EventProcessFn> GhlGuitarTextEventToProcessFnMap = new Dictionary<string, EventProcessFn>()
+    {
+    };
+
+        static readonly Dictionary<string, EventProcessFn> DrumsTextEventToProcessFnMap = new Dictionary<string, EventProcessFn>()
+    {
+    };
+
         static MidReader()
         {
             BuildGuitarMidiNoteNumberToProcessFnDict();
@@ -355,6 +368,7 @@ namespace MoonscraperChartEditor.Song.IO
             };
 
             var noteProcessDict = GetNoteProcessDict(gameMode);
+            var textEventProcessDict = GetTextEventProcessDict(gameMode);
 
             if (instrument == Song.Instrument.Unrecognised)
                 song.unrecognisedCharts.Add(unrecognised);
@@ -385,10 +399,20 @@ namespace MoonscraperChartEditor.Song.IO
                     }
                     else
                     {
-                        // Copy text event to all difficulties so that .chart format can store these properly. Midi writer will strip duplicate events just fine anyway. 
-                        foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
+                        EventProcessFn processFn;
+                        if (textEventProcessDict.TryGetValue(eventName, out processFn))
                         {
-                            song.GetChart(instrument, difficulty).Add(chartEvent);
+                            // This text event affects parsing of the .mid file, run its function and don't parse it into the chart
+                            processParams.midiEvent = text;
+                            processFn(processParams);
+                        }
+                        else
+                        {
+                            // Copy text event to all difficulties so that .chart format can store these properly. Midi writer will strip duplicate events just fine anyway. 
+                            foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
+                            {
+                                song.GetChart(instrument, difficulty).Add(chartEvent);
+                            }
                         }
                     }
                 }
@@ -615,6 +639,25 @@ namespace MoonscraperChartEditor.Song.IO
             }
 
             return GuitarMidiNoteNumberToProcessFnMap;
+        }
+
+        static Dictionary<string, EventProcessFn> GetTextEventProcessDict(Chart.GameMode gameMode)
+        {
+            switch (gameMode)
+            {
+                case Chart.GameMode.GHLGuitar:
+                    {
+                        return GhlGuitarTextEventToProcessFnMap;
+                    }
+                case Chart.GameMode.Drums:
+                    {
+                        return DrumsTextEventToProcessFnMap;
+                    }
+
+                default: break;
+            }
+
+            return GuitarTextEventToProcessFnMap;
         }
 
         delegate void BuildPerDifficultyFn(int difficultyStartRange, Song.Difficulty difficulty);
