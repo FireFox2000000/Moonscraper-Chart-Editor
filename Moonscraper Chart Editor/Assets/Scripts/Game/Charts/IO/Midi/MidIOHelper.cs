@@ -46,6 +46,7 @@ namespace MoonscraperChartEditor.Song.IO
 
         public const string LYRIC_EVENT_PREFIX = LyricHelper.LYRIC_EVENT_PREFIX;
         public const byte SOLO_NOTE = 0x67;                 // 103, http://docs.c3universe.com/rbndocs/index.php?title=Guitar_and_Bass_Authoring#Solo_Sections
+        public const byte TAP_NOTE = 0x68;                  // 104, https://strikeline.myjetbrains.com/youtrack/issue/CH-390
         public const byte STARPOWER_NOTE = 0x74;            // 116, http://docs.c3universe.com/rbndocs/index.php?title=Overdrive_and_Big_Rock_Endings
 
         // 120 - 124 http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring#Drum_Fills

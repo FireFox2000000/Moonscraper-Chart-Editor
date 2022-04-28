@@ -61,6 +61,9 @@ namespace MoonscraperChartEditor.Song.IO
         { MidIOHelper.STARPOWER_NOTE, (in EventProcessParams eventProcessParams) => {
             ProcessNoteOnEventAsStarpower(eventProcessParams);
         }},
+        { MidIOHelper.TAP_NOTE, (in EventProcessParams eventProcessParams) => {
+            ProcessNoteOnEventAsModifier(eventProcessParams, Note.NoteType.Tap);
+        }},
         { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
             ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
         }},
@@ -70,6 +73,9 @@ namespace MoonscraperChartEditor.Song.IO
     {
         { MidIOHelper.STARPOWER_NOTE, (in EventProcessParams eventProcessParams) => {
             ProcessNoteOnEventAsStarpower(eventProcessParams);
+        }},
+        { MidIOHelper.TAP_NOTE, (in EventProcessParams eventProcessParams) => {
+            ProcessNoteOnEventAsModifier(eventProcessParams, Note.NoteType.Tap);
         }},
         { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
             ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
