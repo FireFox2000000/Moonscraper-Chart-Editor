@@ -20,6 +20,30 @@ namespace MoonscraperChartEditor.Song.IO
         public const string GHL_BASS_TRACK = "PART BASS GHL";
         public const string VOCALS_TRACK = "PART VOCALS";
 
+        public static readonly Dictionary<Song.Difficulty, int> GUITAR_DIFF_RANGE_LOOKUP = new Dictionary<Song.Difficulty, int>()
+    {
+        { Song.Difficulty.Easy, 60 },
+        { Song.Difficulty.Medium, 72 },
+        { Song.Difficulty.Hard, 84 },
+        { Song.Difficulty.Expert, 96 }
+    };
+
+        public static readonly Dictionary<Song.Difficulty, int> GHL_GUITAR_DIFF_RANGE_LOOKUP = new Dictionary<Song.Difficulty, int>()
+    {
+        { Song.Difficulty.Easy, 58 },
+        { Song.Difficulty.Medium, 70 },
+        { Song.Difficulty.Hard, 82 },
+        { Song.Difficulty.Expert, 94 }
+    };
+
+        public static readonly Dictionary<Song.Difficulty, int> DRUMS_DIFF_RANGE_LOOKUP = new Dictionary<Song.Difficulty, int>()
+    {
+        { Song.Difficulty.Easy, 60 },
+        { Song.Difficulty.Medium, 72 },
+        { Song.Difficulty.Hard, 84 },
+        { Song.Difficulty.Expert, 96 }
+    };
+
         public const string LYRIC_EVENT_PREFIX = LyricHelper.LYRIC_EVENT_PREFIX;
         public const byte SOLO_NOTE = 0x67;                 // 103, http://docs.c3universe.com/rbndocs/index.php?title=Guitar_and_Bass_Authoring#Solo_Sections
         public const byte STARPOWER_NOTE = 0x74;            // 116, http://docs.c3universe.com/rbndocs/index.php?title=Overdrive_and_Big_Rock_Endings

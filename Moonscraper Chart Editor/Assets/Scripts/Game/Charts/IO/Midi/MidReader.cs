@@ -620,11 +620,6 @@ namespace MoonscraperChartEditor.Song.IO
         delegate void BuildPerDifficultyFn(int difficultyStartRange, Song.Difficulty difficulty);
         static void BuildGuitarMidiNoteNumberToProcessFnDict()
         {
-            const int EasyStartRange = 60;
-            const int MediumStartRange = 72;
-            const int HardStartRange = 84;
-            const int ExpertStartRange = 96;
-
             Dictionary<Note.GuitarFret, int> FretToMidiKey = new Dictionary<Note.GuitarFret, int>()
         {
             // { Note.GuitarFret.Open, 0 }, // Handled by sysex event
@@ -669,19 +664,16 @@ namespace MoonscraperChartEditor.Song.IO
                 }
             };
 
-            BuildPerDifficulty(EasyStartRange, Song.Difficulty.Easy);
-            BuildPerDifficulty(MediumStartRange, Song.Difficulty.Medium);
-            BuildPerDifficulty(HardStartRange, Song.Difficulty.Hard);
-            BuildPerDifficulty(ExpertStartRange, Song.Difficulty.Expert);
+            foreach (var keyVal in MidIOHelper.GUITAR_DIFF_RANGE_LOOKUP)
+            {
+                var diff = keyVal.Key;
+                var rangeStart = keyVal.Value;
+                BuildPerDifficulty(rangeStart, diff);
+            }
         }
 
         static void BuildGhlGuitarMidiNoteNumberToProcessFnDict()
         {
-            const int EasyStartRange = 58;
-            const int MediumStartRange = 70;
-            const int HardStartRange = 82;
-            const int ExpertStartRange = 94;
-
             Dictionary<Note.GHLiveGuitarFret, int> FretToMidiKey = new Dictionary<Note.GHLiveGuitarFret, int>()
         {
             { Note.GHLiveGuitarFret.Open, 0 },
@@ -727,19 +719,16 @@ namespace MoonscraperChartEditor.Song.IO
                 }
             };
 
-            BuildPerDifficulty(EasyStartRange, Song.Difficulty.Easy);
-            BuildPerDifficulty(MediumStartRange, Song.Difficulty.Medium);
-            BuildPerDifficulty(HardStartRange, Song.Difficulty.Hard);
-            BuildPerDifficulty(ExpertStartRange, Song.Difficulty.Expert);
+            foreach (var keyVal in MidIOHelper.GHL_GUITAR_DIFF_RANGE_LOOKUP)
+            {
+                var diff = keyVal.Key;
+                var rangeStart = keyVal.Value;
+                BuildPerDifficulty(rangeStart, diff);
+            }
         }
 
         static void BuildDrumsMidiNoteNumberToProcessFnDict()
         {
-            const int EasyStartRange = 60;
-            const int MediumStartRange = 72;
-            const int HardStartRange = 84;
-            const int ExpertStartRange = 96;
-
             Dictionary<Note.DrumPad, int> DrumPadToMidiKey = new Dictionary<Note.DrumPad, int>()
         {
             { Note.DrumPad.Kick, 0 },
@@ -796,10 +785,12 @@ namespace MoonscraperChartEditor.Song.IO
                 }
             };
 
-            BuildPerDifficulty(EasyStartRange, Song.Difficulty.Easy);
-            BuildPerDifficulty(MediumStartRange, Song.Difficulty.Medium);
-            BuildPerDifficulty(HardStartRange, Song.Difficulty.Hard);
-            BuildPerDifficulty(ExpertStartRange, Song.Difficulty.Expert);
+            foreach (var keyVal in MidIOHelper.DRUMS_DIFF_RANGE_LOOKUP)
+            {
+                var diff = keyVal.Key;
+                var rangeStart = keyVal.Value;
+                BuildPerDifficulty(rangeStart, diff);
+            }
 
             foreach (var keyVal in MidIOHelper.PAD_TO_CYMBAL_LOOKUP)
             {
