@@ -114,6 +114,12 @@ namespace MoonscraperChartEditor.Song.IO
         // These dictionaries map the text of a MIDI text event to a specific function that processes them
         static readonly Dictionary<string, EventProcessFn> GuitarTextEventToProcessFnMap = new Dictionary<string, EventProcessFn>()
     {
+        { "[ENHANCED_OPENS]", (in EventProcessParams eventProcessParams) => {
+            AddGuitarOpenNoteNumbersToProcessFnDict(eventProcessParams);
+        }},
+        { "ENHANCED_OPENS", (in EventProcessParams eventProcessParams) => {
+            AddGuitarOpenNoteNumbersToProcessFnDict(eventProcessParams);
+        }}
     };
 
         static readonly Dictionary<string, EventProcessFn> GhlGuitarTextEventToProcessFnMap = new Dictionary<string, EventProcessFn>()
@@ -812,6 +818,44 @@ namespace MoonscraperChartEditor.Song.IO
                 {
                     ProcessNoteOnEventAsFlagToggle(eventProcessParams, Note.Flags.ProDrums_Cymbal, pad);
                 });
+            }
+        }
+
+        static void AddGuitarOpenNoteNumbersToProcessFnDict(in EventProcessParams eventProcessParams)
+        {
+            foreach (var keyVal in MidIOHelper.GUITAR_DIFF_RANGE_LOOKUP)
+            {
+                var diff = keyVal.Key;
+                var key = keyVal.Value - 1;
+
+                // Don't attempt to add notes multiple times
+                if (!GuitarMidiNoteNumberToProcessFnMap.ContainsKey(key))
+                {
+                    GuitarMidiNoteNumberToProcessFnMap.Add(key, (in EventProcessParams processParams) =>
+                    {
+                        ProcessNoteOnEventAsNote(processParams, diff, (int)Note.GuitarFret.Open);
+                    });
+                }
+            }
+
+            // Schedule removal of open note processing functions,
+            // such that these are only present when the current instrument has the text event to enable them
+            eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) => {
+                RemoveGuitarOpenNoteNumbersToProcessFnDict();
+            });
+        }
+
+        static void RemoveGuitarOpenNoteNumbersToProcessFnDict()
+        {
+            foreach (var keyVal in MidIOHelper.GUITAR_DIFF_RANGE_LOOKUP)
+            {
+                var diff = keyVal.Key;
+                var key = keyVal.Value - 1;
+
+                if (GuitarMidiNoteNumberToProcessFnMap.ContainsKey(key))
+                {
+                    GuitarMidiNoteNumberToProcessFnMap.Remove(key);
+                }
             }
         }
 
