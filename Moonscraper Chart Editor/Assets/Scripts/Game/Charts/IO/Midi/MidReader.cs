@@ -208,39 +208,46 @@ namespace MoonscraperChartEditor.Song.IO
                 Debug.Log("Found midi track " + trackName.Text);
 
                 string trackNameKey = trackName.Text.ToUpper();
-                if (trackNameKey == MidIOHelper.EVENTS_TRACK)
+                if (c_trackExcludesMap.ContainsKey(trackNameKey))
                 {
-                    ReadSongGlobalEvents(midi.Events[i], song);
+                    continue;
                 }
-                else if (!c_trackExcludesMap.ContainsKey(trackNameKey))
-                {
-                    bool importTrackAsVocalsEvents = trackNameKey == MidIOHelper.VOCALS_TRACK;
 
-#if !UNITY_EDITOR
-                    if (importTrackAsVocalsEvents)
-                    {
-                        callBackState = CallbackState.WaitingForExternalInformation;
-                        NativeMessageBox.Result result = NativeMessageBox.Show("A vocals track was found in the file. Would you like to import the text events as global lyrics and phrase events?", "Vocals Track Found", NativeMessageBox.Type.YesNo, null);
-                        callBackState = CallbackState.None;
-                        importTrackAsVocalsEvents = result == NativeMessageBox.Result.Yes;
-                    }
-#endif
-                    if (importTrackAsVocalsEvents)
-                    {
-                        Debug.Log("Loading lyrics from Vocals track");
-                        ReadTextEventsIntoGlobalEventsAsLyrics(midi.Events[i], song);
-                    }
-                    else
-                    {
-                        Song.Instrument instrument;
-                        if (!c_trackNameToInstrumentMap.TryGetValue(trackNameKey, out instrument))
+                switch (trackNameKey)
+                {
+                    case (MidIOHelper.EVENTS_TRACK):
                         {
-                            instrument = Song.Instrument.Unrecognised;
+                            ReadSongGlobalEvents(midi.Events[i], song);
+                            break;
                         }
 
-                        Debug.LogFormat("Loading midi track {0}", instrument);
-                        ReadNotes(midi.Events[i], song, instrument);
-                    }
+                    case (MidIOHelper.VOCALS_TRACK):
+                        {
+#if !UNITY_EDITOR
+                            callBackState = CallbackState.WaitingForExternalInformation;
+                            NativeMessageBox.Result result = NativeMessageBox.Show("A vocals track was found in the file. Would you like to import the text events as global lyrics and phrase events?", "Vocals Track Found", NativeMessageBox.Type.YesNo, null);
+                            callBackState = CallbackState.None;
+                            if (result == NativeMessageBox.Result.Yes)
+#endif
+                            {
+                                Debug.Log("Loading lyrics from Vocals track");
+                                ReadTextEventsIntoGlobalEventsAsLyrics(midi.Events[i], song);
+                            }
+                            break;
+                        }
+
+                    default:
+                        {
+                            Song.Instrument instrument;
+                            if (!c_trackNameToInstrumentMap.TryGetValue(trackNameKey, out instrument))
+                            {
+                                instrument = Song.Instrument.Unrecognised;
+                            }
+
+                            Debug.LogFormat("Loading midi track {0}", instrument);
+                            ReadNotes(midi.Events[i], song, instrument);
+                            break;
+                        }
                 }
             }
 
