@@ -143,6 +143,20 @@ namespace MoonscraperChartEditor.Song.IO
             BuildDrumsMidiNoteNumberToProcessFnDict();
         }
 
+        static bool PromptMessage(string message, string boxTitle, ref CallbackState callBackState)
+        {
+#if !UNITY_EDITOR
+            callBackState = CallbackState.WaitingForExternalInformation;
+            NativeMessageBox.Result result = NativeMessageBox.Show(message, boxTitle, NativeMessageBox.Type.YesNo, null);
+            callBackState = CallbackState.None;
+            return result == NativeMessageBox.Result.Yes;
+#else
+            // The editor freezes when its message box API is used during parsing
+            // Assume responses are Yes
+            return true;
+#endif
+        }
+
         public static Song ReadMidi(string path, ref CallbackState callBackState)
         {
             Song song = new Song();
@@ -223,12 +237,11 @@ namespace MoonscraperChartEditor.Song.IO
 
                     case (MidIOHelper.VOCALS_TRACK):
                         {
-#if !UNITY_EDITOR
-                            callBackState = CallbackState.WaitingForExternalInformation;
-                            NativeMessageBox.Result result = NativeMessageBox.Show("A vocals track was found in the file. Would you like to import the text events as global lyrics and phrase events?", "Vocals Track Found", NativeMessageBox.Type.YesNo, null);
-                            callBackState = CallbackState.None;
-                            if (result == NativeMessageBox.Result.Yes)
-#endif
+                            if (PromptMessage(
+                                "A vocals track was found in the file. Would you like to import the text events as global lyrics and phrase events?",
+                                "Vocals Track Found",
+                                ref callBackState)
+                            )
                             {
                                 Debug.Log("Loading lyrics from Vocals track");
                                 ReadTextEventsIntoGlobalEventsAsLyrics(midi.Events[i], song);
