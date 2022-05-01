@@ -258,7 +258,7 @@ namespace MoonscraperChartEditor.Song.IO
                             }
 
                             Debug.LogFormat("Loading midi track {0}", instrument);
-                            ReadNotes(midi.Events[i], song, instrument);
+                            ReadNotes(midi.Events[i], song, instrument, ref callBackState);
                             break;
                         }
                 }
@@ -388,7 +388,7 @@ namespace MoonscraperChartEditor.Song.IO
             song.UpdateCache();
         }
 
-        private static void ReadNotes(IList<MidiEvent> track, Song song, Song.Instrument instrument)
+        private static void ReadNotes(IList<MidiEvent> track, Song song, Song.Instrument instrument, ref CallbackState callBackState)
         {
             List<NoteOnEvent> forceNotesList = new List<NoteOnEvent>();
             List<SysexEvent> tapAndOpenEvents = new List<SysexEvent>();
