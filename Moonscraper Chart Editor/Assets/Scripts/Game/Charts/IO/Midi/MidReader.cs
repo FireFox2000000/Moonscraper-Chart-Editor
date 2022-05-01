@@ -37,6 +37,14 @@ namespace MoonscraperChartEditor.Song.IO
         { "beat",       true }
     };
 
+        static readonly List<Song.Instrument> c_legacyStarPowerFixupWhitelist = new List<Song.Instrument>()
+    {
+        Song.Instrument.Guitar,
+        Song.Instrument.GuitarCoop,
+        Song.Instrument.Bass,
+        Song.Instrument.Rhythm,
+    };
+
         static readonly Dictionary<Song.AudioInstrument, string[]> c_audioStreamLocationOverrideDict = new Dictionary<Song.AudioInstrument, string[]>()
     {
         // String list is ordered in priority. If it finds a file names with the first string it'll skip over the rest.
@@ -621,6 +629,32 @@ namespace MoonscraperChartEditor.Song.IO
                     }
                 }
             }
+
+            // Legacy star power fixup
+            if (c_legacyStarPowerFixupWhitelist.Contains(instrument))
+            {
+                // Only need to check one difficulty since Star Power gets copied to all difficulties
+                var chart = song.GetChart(instrument, Song.Difficulty.Expert);
+                if (chart.starPower.Count == 0)
+                {
+                    foreach (var textEvent in chart.events)
+                    {
+                        if (textEvent.eventName == MidIOHelper.SoloEventText || textEvent.eventName == MidIOHelper.SoloEndEventText)
+                        {
+                            TextEvent text = track[0] as TextEvent;
+                            if (PromptMessage(
+                                $"No Star Power phrases were found on track {text.Text}. However, solo phrases were found. These may be legacy star power phrases.\nImport these solo phrases as Star Power?",
+                                "Legacy Star Power Detected",
+                                ref callBackState)
+                            )
+                            {
+                                ProcessTextEventPairAsStarpower(in processParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         static Dictionary<int, EventProcessFn> GetNoteProcessDict(Chart.GameMode gameMode)
@@ -1094,6 +1128,59 @@ namespace MoonscraperChartEditor.Song.IO
                     {
                         // Toggle flag
                         note.flags ^= flags;
+                    }
+                }
+            }
+        }
+
+        static void ProcessTextEventPairAsStarpower(in EventProcessParams eventProcessParams, string startText, string endText, Starpower.Flags flags = Starpower.Flags.None)
+        {
+            foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
+            {
+                var song = eventProcessParams.song;
+                var instrument = eventProcessParams.instrument;
+                var chart = song.GetChart(instrument, difficulty);
+
+                var startEvents = new List<ChartEvent>();
+                var endEvents = new List<ChartEvent>();
+                for (int i = 0; i < chart.events.Count; i++)
+                {
+                    var textEvent = chart.events[i];
+                    if (textEvent.eventName == startText)
+                    {
+                        startEvents.Add(textEvent);
+                    }
+                    else if (textEvent.eventName == endText)
+                    {
+                        endEvents.Add(textEvent);
+                    }
+                }
+
+                if (startEvents.Count != endEvents.Count)
+                {
+                    Debug.LogWarning($"Mismatch between start and end event counts in ProcessTextEventPairAsStarpower. Cannont continue safely, skipping.\nInstrument: {instrument}, difficulty: {difficulty}.");
+                    return;
+                }
+
+                for (int e = 0; e < endEvents.Count; e++)
+                {
+                    for (int s = startEvents.Count; s > 0; s--)
+                    {
+                        var startEvent = startEvents[s - 1];
+                        var endEvent = endEvents[e];
+                        Debug.Assert(startEvent != null && endEvent != null, $"startEvent is null? {startEvent == null}, endEvent is null? {endEvent == null}");
+                        if (startEvent == null || endEvent == null)
+                        {
+                            continue;
+                        }
+
+                        if (startEvent.tick < endEvent.tick)
+                        {
+                            chart.Remove(startEvent);
+                            chart.Remove(endEvent);
+                            chart.Add(new Starpower(startEvent.tick, endEvent.tick - startEvent.tick), false);
+                            break;
+                        }
                     }
                 }
             }
