@@ -7,21 +7,32 @@ Audio files-
   metronome
   
 Image files
-  background-0		(Recommended size: 1920x1080)
+  background-[x]	(Replace "[x]" with numbers starting from 0. Recommended size: 1920x1080)
   fretboard-0		(Recommended size: 512x1024)
+  beat_line_measure		(Recommended size: 625x10, however supports variable size)
+  beat_line_standard	(Recommended size: 625x10, however supports variable size)
+  beat_line_quarter		(Recommended size: 625x10, however supports variable size)
 
 Notes- Replace [x] with numbers 0-4 for each image
-	[x]_reg_strum		1 note of image size (128, 64)
-	[x]_reg_hopo		1 note of image size (128, 64)
-	[x]_reg_tap			4x2 notes of image size (256, 256)
-	[x]_sp_strum		4x4 notes of image size (512, 256)
-	[x]_sp_hopo			4x4 notes of image size (512, 256)
-	[x]_sp_tap			4x2 notes of image size (256, 256)
+	[x]_reg_strum		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_reg_hopo		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_reg_tap			Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_reg_cymbal		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_reg_drum		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_strum		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_hopo			Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_tap			Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_cymbal		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_drum		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 
-	5_reg_strum			1 note of image size (512, 64)
-	5_reg_hopo			1 note of image size (512, 64)
-	5_sp_strum			4x4 notes of image size (2048, 256)
-	5_sp_hopo			4x4 notes of image size (2048, 256)
+	5_reg_strum			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	5_reg_hopo			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	5_reg_drum			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	5_reg_dbass			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	5_sp_strum			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	5_sp_hopo			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	5_sp_drum			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	5_sp_dbass			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 
 Strikeline Frets- Replace [x] with numbers 0-4 for each image
 	[x]_fret_anim		image size (128, 64)
@@ -29,3 +40,28 @@ Strikeline Frets- Replace [x] with numbers 0-4 for each image
 	[x]_fret_cover		image size (128, 64)
 	[x]_fret_press		image size (128, 64)
 	[x]_fret_release	image size (128, 64)
+
+    [x]_drum_fret_anim		image size (128, 64)
+	[x]_drum_fret_base		image size (128, 64)
+	[x]_drum_fret_cover		image size (128, 64)
+	[x]_drum_fret_press		image size (128, 64)
+	[x]_drum_fret_release	image size (128, 64)
+
+	fret_stem			image size (64, 16)
+
+GHL Notes- Replace [x] with numbers 0-1 for each image
+	[x]_reg_strum_ghl		Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_reg_hopo_ghl		Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_reg_tap_ghl			Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_strum_ghl		Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_hopo_ghl			Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_tap_ghl			Individual sprite size (100, 100) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+
+    2_reg_strum_ghl			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	2_reg_hopo_ghl			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	2_sp_strum_ghl			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	2_sp_hopo_ghl			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+
+GHL Frets- Replace [x] with numbers 0-5 for each image
+	[x]_fret_base_ghl		1 note of image size (100, 100)
+	[x]_fret_press_ghl		1 note of image size (100, 100)

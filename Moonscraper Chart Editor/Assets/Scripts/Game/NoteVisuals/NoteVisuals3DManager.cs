@@ -85,6 +85,8 @@ public class NoteVisuals3DManager : NoteVisualsManager
                 }
 
                 materials[2] = resources.openMaterials[colourIndex];
+                if (visualNoteType == Note.NoteType.DBass)
+                    materials[2] = resources.strumColorPalette[1];
             }
             else
             {

@@ -7,7 +7,8 @@ using System.Text;
 using MoonscraperChartEditor.Song;
 
 [RequireComponent(typeof(SpriteRenderer))]
-public class NoteVisuals2DManager : NoteVisualsManager {
+public class NoteVisuals2DManager : NoteVisualsManager
+{
     SpriteRenderer ren;
     const float ANIMATION_FRAMERATE = 30;
 
@@ -69,10 +70,14 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                     {
                         visualNoteType = Note.NoteType.Strum;
                     }
+                    if (Globals.drumMode && note.drumPad == Note.DrumPad.Kick && note.flags == Note.Flags.DoubleKick)
+                    {
+                        visualNoteType = Note.NoteType.DBass;
+                    }
                 }
 
                 Skin skin = SkinManager.Instance.currentSkin;
-                string noteKey = GetSkinKey(noteArrayPos, noteType, specialType, Globals.ghLiveMode);
+                string noteKey = GetSkinKey(noteArrayPos, noteType, specialType, Globals.ghLiveMode, Globals.drumMode);
                 currentAnimationData = skin.GetSprites(noteKey);
             }
         }
@@ -143,12 +148,11 @@ public class NoteVisuals2DManager : NoteVisualsManager {
             arrayPos += 1;
             if (arrayPos > (laneInfo.laneCount - 1))
                 arrayPos = 0;
-        }        
-
+        }
         return arrayPos;
     }
 
-    public static int GetSkinKeyHash(int notePos, Note.NoteType noteType, Note.SpecialType specialType, bool isGhl)
+    public static int GetSkinKeyHash(int notePos, Note.NoteType noteType, Note.SpecialType specialType, bool isGhl, bool isDrumMode)
     {
         int result = 4;
         int salt = 1231;
@@ -157,15 +161,15 @@ public class NoteVisuals2DManager : NoteVisualsManager {
         result = unchecked(result * salt + (int)noteType);
         result = unchecked(result * salt + (int)specialType);
         result = unchecked(result * salt + (isGhl ? 1 : -1));
-
+        result = unchecked(result * salt + (isDrumMode ? 1 : -1));
         return result;
     }
 
     static Dictionary<int, string> skinKeySkinCache = new Dictionary<int, string>();
     static StringBuilder skinKeySb = new StringBuilder();
-    public static string GetSkinKey(int notePos, Note.NoteType noteType, Note.SpecialType specialType, bool isGhl)
+    public static string GetSkinKey(int notePos, Note.NoteType noteType, Note.SpecialType specialType, bool isGhl, bool isDrumsMode)
     {
-        int hash = GetSkinKeyHash(notePos, noteType, specialType, isGhl);
+        int hash = GetSkinKeyHash(notePos, noteType, specialType, isGhl, isDrumsMode);
 
         string stringKey;
         if (skinKeySkinCache.TryGetValue(hash, out stringKey))
@@ -209,6 +213,11 @@ public class NoteVisuals2DManager : NoteVisualsManager {
                     sb.AppendFormat("cymbal");
                     break;
                 }
+            case Note.NoteType.DBass:
+                {
+                    sb.AppendFormat("dbass");
+                    break;
+                }
             default:
                 break;
         }
@@ -216,6 +225,11 @@ public class NoteVisuals2DManager : NoteVisualsManager {
         if (isGhl)
         {
             sb.AppendFormat("_ghl");
+        }
+
+        if (isDrumsMode)
+        {
+            sb.Replace("strum", "drum");
         }
 
         stringKey = sb.ToString();

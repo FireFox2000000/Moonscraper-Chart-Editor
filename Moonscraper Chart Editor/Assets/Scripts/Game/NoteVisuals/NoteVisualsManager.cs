@@ -36,7 +36,27 @@ public class NoteVisualsManager : MonoBehaviour {
         {
             if (Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.Standard)
             {
-                noteType = Note.NoteType.Strum;
+                if (Globals.gameSettings.drumsLaneCount == 5)
+                {
+                    switch (note.drumPad)
+                    {
+                        case Note.DrumPad.Red:
+                        case Note.DrumPad.Blue:
+                        case Note.DrumPad.Green:
+                            noteType = Note.NoteType.Strum;
+                            break;
+                        case Note.DrumPad.Yellow:
+                        case Note.DrumPad.Orange:
+                            noteType = Note.NoteType.Cymbal;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            if (note.flags == Note.Flags.DoubleKick)
+            {
+                noteType = Note.NoteType.DBass;
             }
         }
 

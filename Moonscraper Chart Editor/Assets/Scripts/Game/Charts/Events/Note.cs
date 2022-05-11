@@ -51,6 +51,7 @@ namespace MoonscraperChartEditor.Song
             Hopo,
             Tap,
             Cymbal,
+            DBass
         }
 
         public enum SpecialType

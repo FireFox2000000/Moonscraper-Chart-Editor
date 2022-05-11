@@ -59,15 +59,23 @@ public class Note2D3DSelector : MonoBehaviour {
 
         if (!Globals.ghLiveMode)
         {
-            if (noteType == Note.NoteType.Hopo && Globals.drumMode)
+            if (Globals.drumMode)
             {
-                visualNoteType = Note.NoteType.Strum;
+                if (noteType == Note.NoteType.Hopo)
+                {
+                    visualNoteType = Note.NoteType.Strum;
+                }
+                if (noteType == Note.NoteType.DBass)
+                {
+                    visualNoteType = Note.NoteType.DBass;
+                }
             }
         }
 
         bool isInSkin;
         bool isGhl = Globals.ghLiveMode;
-        int hash = NoteVisuals2DManager.GetSkinKeyHash(arrayPos, noteType, specialType, isGhl);
+        bool isDrumMode = Globals.drumMode;
+        int hash = NoteVisuals2DManager.GetSkinKeyHash(arrayPos, noteType, specialType, isGhl, isDrumMode);
         
         if (textureInSkinCache.TryGetValue(hash, out isInSkin))
         {
@@ -75,7 +83,7 @@ public class Note2D3DSelector : MonoBehaviour {
         }
         else
         {
-            string noteKey = NoteVisuals2DManager.GetSkinKey(arrayPos, noteType, specialType, isGhl);
+            string noteKey = NoteVisuals2DManager.GetSkinKey(arrayPos, noteType, specialType, isGhl, isDrumMode);
             Sprite[] sprites = SkinManager.Instance.currentSkin.GetSprites(noteKey);
 
             isInSkin = sprites != null && sprites.Length > 0;
