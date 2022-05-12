@@ -132,20 +132,21 @@ public class ClapPlaybackSystem : SystemManagerState.System
             else
             {
                 Note note = songObject as Note;
-                Note.NoteType noteType = NoteVisualsManager.GetVisualNoteType(note);
+                NoteVisualsManager.VisualNoteType noteType = NoteVisualsManager.GetVisualNoteType(note);
 
                 switch (noteType)
                 {
-                    case Note.NoteType.Strum:
-                    case Note.NoteType.Cymbal:
+                    case NoteVisualsManager.VisualNoteType.Strum:
+                    case NoteVisualsManager.VisualNoteType.Cymbal:
+                    case NoteVisualsManager.VisualNoteType.DoubleBass:
                         playClap = (Globals.gameSettings.clapProperties & GameSettings.ClapToggle.STRUM) != 0;
                         break;
 
-                    case Note.NoteType.Hopo:
+                    case NoteVisualsManager.VisualNoteType.Hopo:
                         playClap = (Globals.gameSettings.clapProperties & GameSettings.ClapToggle.HOPO) != 0;
                         break;
 
-                    case Note.NoteType.Tap:
+                    case NoteVisualsManager.VisualNoteType.Tap:
                         playClap = (Globals.gameSettings.clapProperties & GameSettings.ClapToggle.TAP) != 0;
                         break;
 

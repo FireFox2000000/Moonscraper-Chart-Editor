@@ -57,10 +57,10 @@ public class LoadCustomResources : MonoBehaviour {
         { "2_sp_strum_ghl",         new TextureToPack.GridSlice(GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
         { "2_sp_hopo_ghl",          new TextureToPack.GridSlice(GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
 
-        { "5_reg_drum",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
-        { "5_reg_dbass",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
-        { "5_sp_drum",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
-        { "5_sp_dbass",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
+        { "5_reg_kick",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
+        { "5_reg_2xkick",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
+        { "5_sp_kick",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
+        { "5_sp_2xkick",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
 
         { SkinKeys.fretStem, null },
         { SkinKeys.measureBeatLine, null },
@@ -79,14 +79,14 @@ public class LoadCustomResources : MonoBehaviour {
                 imagesToPack.Add(i + "_reg_tap", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
                 imagesToPack.Add(i + "_reg_pad", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
                 imagesToPack.Add(i + "_reg_cymbal", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
-                imagesToPack.Add(i + "_reg_drum", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_reg_tom", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
 
                 imagesToPack.Add(i + "_sp_strum", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
                 imagesToPack.Add(i + "_sp_hopo", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
                 imagesToPack.Add(i + "_sp_tap", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
                 imagesToPack.Add(i + "_sp_pad", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
                 imagesToPack.Add(i + "_sp_cymbal", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
-                imagesToPack.Add(i + "_sp_drum", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
+                imagesToPack.Add(i + "_sp_tom", new TextureToPack.GridSlice(NOTE_TEXTURE_1X1_WIDTH, NOTE_TEXTURE_1X1_HEIGHT));
 
                 imagesToPack.Add(i + SkinKeys.xFretBase, null);
                 imagesToPack.Add(i + SkinKeys.xFretCover, null);

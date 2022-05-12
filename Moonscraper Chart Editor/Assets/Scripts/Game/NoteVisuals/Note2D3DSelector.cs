@@ -51,23 +51,23 @@ public class Note2D3DSelector : MonoBehaviour {
         Skin customSkin = SkinManager.Instance.currentSkin;
 
         Note note = nCon.note;
-        Note.NoteType noteType = NoteVisualsManager.GetVisualNoteType(note);
+        NoteVisualsManager.VisualNoteType noteType = NoteVisualsManager.GetVisualNoteType(note);
         Note.SpecialType specialType = NoteVisualsManager.IsStarpower(note);
 
         int arrayPos = NoteVisuals2DManager.GetNoteArrayPos(note, ChartEditor.Instance.laneInfo);
-        Note.NoteType visualNoteType = noteType;
+        NoteVisualsManager.VisualNoteType visualNoteType = noteType;
 
         if (!Globals.ghLiveMode)
         {
             if (Globals.drumMode)
             {
-                if (noteType == Note.NoteType.Hopo)
+                if (noteType == NoteVisualsManager.VisualNoteType.Hopo)
                 {
-                    visualNoteType = Note.NoteType.Strum;
+                    visualNoteType = NoteVisualsManager.VisualNoteType.Strum;
                 }
-                if (noteType == Note.NoteType.DBass)
+                if (noteType == NoteVisualsManager.VisualNoteType.DoubleBass)
                 {
-                    visualNoteType = Note.NoteType.DBass;
+                    visualNoteType = NoteVisualsManager.VisualNoteType.DoubleBass;
                 }
             }
         }
@@ -86,6 +86,12 @@ public class Note2D3DSelector : MonoBehaviour {
             string noteKey = NoteVisuals2DManager.GetSkinKey(arrayPos, noteType, specialType, isGhl, isDrumMode);
             Sprite[] sprites = SkinManager.Instance.currentSkin.GetSprites(noteKey);
 
+            isInSkin = sprites != null && sprites.Length > 0;
+            if (!isInSkin)
+            {
+                noteKey = NoteVisuals2DManager.GetSkinKey(arrayPos, noteType, specialType, isGhl, false); //Force check 5-fret guitar textures in the event that the drum ones aren't present.
+                sprites = SkinManager.Instance.currentSkin.GetSprites(noteKey);
+            }
             isInSkin = sprites != null && sprites.Length > 0;
             textureInSkinCache[hash] = isInSkin;
 

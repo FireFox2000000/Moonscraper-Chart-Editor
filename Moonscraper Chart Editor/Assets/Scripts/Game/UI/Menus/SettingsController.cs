@@ -25,7 +25,7 @@ public class SettingsController : TabMenu
     public Toggle autoValidateSongOnSave;
     public Toggle slowdownPitchCorrectionEnabled;
     public Toggle lyricEditorStepSnappingEnabled;
-
+    public Toggle recolorDoubleKickNotes;
     public Slider musicSourceSlider;
     public Slider guitarSourceSlider;
     public Slider bassSourceSlider;
@@ -138,20 +138,33 @@ public class SettingsController : TabMenu
         initClapToggle(clapTap, GameSettings.ClapToggle.TAP);
 
         leftyFlipToggle.isOn = Globals.gameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip;
+        recolorDoubleKickNotes.isOn = Globals.gameSettings.recolorDoubleKick;
 
         switch(Application.targetFrameRate)
         {
             case (60):
                 fpsSelectDropdown.value = 0;
                 break;
-            case (120):
+            case (75):
                 fpsSelectDropdown.value = 1;
                 break;
-            case (240):
+            case (90):
                 fpsSelectDropdown.value = 2;
                 break;
-            default:
+            case (120):
                 fpsSelectDropdown.value = 3;
+                break;
+            case (144):
+                fpsSelectDropdown.value = 4;
+                break;
+            case (165):
+                fpsSelectDropdown.value = 5;
+                break;
+            case (240):
+                fpsSelectDropdown.value = 6;
+                break;
+            default:
+                fpsSelectDropdown.value = 7;
                 break;
         }
 
@@ -238,7 +251,34 @@ public class SettingsController : TabMenu
 
     public void SetFPS(int dropdownValue)
     {
-        int fps = 60 * (int)(Mathf.Pow(2, dropdownValue));
+        int fps = 60;
+        switch (dropdownValue)
+        {
+            case 0:
+                fps = 60;
+                break;
+            case 1:
+                fps = 75;
+                break;
+            case 2:
+                fps = 90;
+                break;
+            case 3:
+                fps = 120;
+                break;
+            case 4:
+                fps = 144;
+                break;
+            case 5:
+                fps = 165;
+                break;
+            case 6:
+                fps = 240;
+                break;
+            default:
+                fps = 1000;
+                break;
+        }
         if (fps > 240)
             Application.targetFrameRate = -1;
         else
@@ -264,6 +304,12 @@ public class SettingsController : TabMenu
     {
         Globals.gameSettings.notePlacementMode.value = value ? GameSettings.NotePlacementMode.LeftyFlip : GameSettings.NotePlacementMode.Default;
         editor.events.leftyFlipToggledEvent.Fire();
+    }
+
+    public void SetRecolorDoubleKickNotes(bool value)
+    {
+        Globals.gameSettings.recolorDoubleKick.value = value;
+        editor.events.kickNoteRecolorToggledEvent.Fire();
     }
 
     public void SetResetAfterPlay(bool value)

@@ -58,7 +58,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
 
             ChartEditor editor = ChartEditor.Instance;
             Chart.GameMode gameMode = editor.currentGameMode;
-            Note.NoteType visualNoteType = noteType;
+            VisualNoteType visualNoteType = noteType;
 
             Vector3 scale = new Vector3(1, 1, 1);
 
@@ -71,21 +71,21 @@ public class NoteVisuals3DManager : NoteVisualsManager
 
                 if (specialType == Note.SpecialType.StarPower)
                 {
-                    if (visualNoteType == Note.NoteType.Hopo)
+                    if (visualNoteType == VisualNoteType.Hopo)
                         colourIndex = 3;
                     else
                         colourIndex = 2;
                 }
                 else
                 {
-                    if (visualNoteType == Note.NoteType.Hopo)
+                    if (visualNoteType == VisualNoteType.Hopo)
                         colourIndex = 1;
                     else
                         colourIndex = isTool ? 4 : 0;
                 }
 
                 materials[2] = resources.openMaterials[colourIndex];
-                if (visualNoteType == Note.NoteType.DBass)
+                if (visualNoteType == VisualNoteType.DoubleBass && Globals.gameSettings.recolorDoubleKick)
                     materials[2] = resources.strumColorPalette[1];
             }
             else
@@ -104,12 +104,12 @@ public class NoteVisuals3DManager : NoteVisualsManager
                 {
                     switch (visualNoteType)
                     {
-                        case Note.NoteType.Tap:
+                        case VisualNoteType.Tap:
                             {
                                 colorMat = resources.GetToolTapMaterial(gameMode, laneInfo, noteIndex);
                                 break;
                             }
-                        case Note.NoteType.Cymbal:
+                        case VisualNoteType.Cymbal:
                             {
                                 colorMat = resources.GetToolCymbalMaterial(gameMode, laneInfo, noteIndex);
                                 break;
@@ -125,12 +125,12 @@ public class NoteVisuals3DManager : NoteVisualsManager
                 {
                     switch (visualNoteType)
                     {
-                        case Note.NoteType.Tap:
+                        case VisualNoteType.Tap:
                             {
                                 colorMat = resources.GetTapMaterial(gameMode, laneInfo, noteIndex);
                                 break;
                             }
-                        case Note.NoteType.Cymbal:
+                        case VisualNoteType.Cymbal:
                             {
                                 colorMat = resources.GetCymbalMaterial(gameMode, laneInfo, noteIndex);
                                 break;
@@ -153,7 +153,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
         UpdateTextDisplay(note);
     }
 
-    Material[] GetMaterials(Material colorMat, Note.NoteType visualNoteType)
+    Material[] GetMaterials(Material colorMat, VisualNoteType visualNoteType)
     {
         Material[] materials;
         const int STANDARD_COLOUR_MAT_POS = 1;
@@ -165,15 +165,15 @@ public class NoteVisuals3DManager : NoteVisualsManager
 
         switch (visualNoteType)
         {
-            case Note.NoteType.Hopo:
+            case VisualNoteType.Hopo:
                 materials = isStarpower ? resourceSharedMatsSpHopo : resourceSharedMatsHopo;
                 break;
 
-            case Note.NoteType.Tap:
+            case VisualNoteType.Tap:
                 materials = isStarpower ? resourceSharedMatsSpTap : resourceSharedMatsTap;
                 break;
 
-            case Note.NoteType.Cymbal:
+            case VisualNoteType.Cymbal:
                 materials = isStarpower ? resourceSharedMatsSpCymbal : resourceSharedMatsCymbal;
                 break;
 

@@ -4,7 +4,8 @@
 using UnityEngine;
 using MoonscraperChartEditor.Song;
 
-public class NoteVisualsManager : MonoBehaviour {
+public class NoteVisualsManager : MonoBehaviour
+{
     public NoteController nCon;
     public TMPro.TextMeshPro text;
     [SerializeField]
@@ -12,28 +13,67 @@ public class NoteVisualsManager : MonoBehaviour {
     protected Renderer noteRenderer;
 
     [HideInInspector]
-    public Note.NoteType noteType = Note.NoteType.Strum;
+    public VisualNoteType noteType = VisualNoteType.Strum;
     [HideInInspector]
     public Note.SpecialType specialType = Note.SpecialType.None;
 
     Note prevNote;
 
     // Use this for initialization
-    protected virtual void Awake () {
+    protected virtual void Awake()
+    {
         noteRenderer = GetComponent<Renderer>();
+        ChartEditor.Instance.events.kickNoteRecolorToggledEvent.Register(UpdateVisualsCallback);
     }
 
     void LateUpdate()
-    {        
+    {
         Animate();
     }
 
-    public static Note.NoteType GetVisualNoteType(Note note)
+    private void UpdateVisualsCallback()
     {
-        Note.NoteType noteType = note.type;
+        if (nCon.note != null)
+            UpdateVisuals();
+    }
+
+    public static VisualNoteType GetVisualNoteType(Note note)
+    {
+        VisualNoteType noteType = VisualNoteType.Strum;
+        switch (note.type)
+        {
+            case Note.NoteType.Strum:
+                if (Globals.drumMode)
+                {
+                    if (note.drumPad == Note.DrumPad.Kick)
+                        noteType = VisualNoteType.Kick;
+                    if (note.guitarFret != Note.GuitarFret.Open)
+                        noteType = VisualNoteType.Tom;
+                }
+                else
+                {
+                    noteType = VisualNoteType.Strum;
+                }
+                break;
+            case Note.NoteType.Hopo:
+                noteType = VisualNoteType.Hopo;
+                break;
+            case Note.NoteType.Tap:
+                noteType = VisualNoteType.Tap;
+                break;
+            case Note.NoteType.Cymbal:
+                noteType = VisualNoteType.Cymbal;
+                break;
+            default:
+                break;
+        }
 
         if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums)
         {
+            if (noteType == VisualNoteType.Strum)
+            {
+                noteType = VisualNoteType.Tom;
+            }
             if (Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.Standard)
             {
                 if (Globals.gameSettings.drumsLaneCount == 5)
@@ -43,27 +83,28 @@ public class NoteVisualsManager : MonoBehaviour {
                         case Note.DrumPad.Red:
                         case Note.DrumPad.Blue:
                         case Note.DrumPad.Green:
-                            noteType = Note.NoteType.Strum;
+                            noteType = VisualNoteType.Tom;
                             break;
                         case Note.DrumPad.Yellow:
                         case Note.DrumPad.Orange:
-                            noteType = Note.NoteType.Cymbal;
+                            noteType = VisualNoteType.Cymbal;
                             break;
                         default:
                             break;
                     }
                 }
             }
-            if (note.flags == Note.Flags.DoubleKick)
+            if (note.flags == Note.Flags.DoubleKick && Globals.gameSettings.recolorDoubleKick)
             {
-                noteType = Note.NoteType.DBass;
+                noteType = VisualNoteType.DoubleBass;
             }
         }
 
         return noteType;
     }
 
-    public virtual void UpdateVisuals() {
+    public virtual void UpdateVisuals()
+    {
         Note note = nCon.note;
         if (note != null)
         {
@@ -82,18 +123,18 @@ public class NoteVisualsManager : MonoBehaviour {
         }
     }
 
-    protected virtual void Animate() {}
+    protected virtual void Animate() { }
 
-    public static Note.NoteType GetTypeWithViewChange(Note note)
+    public static VisualNoteType GetTypeWithViewChange(Note note)
     {
         if (Globals.viewMode == Globals.ViewMode.Chart)
         {
-            return note.type;
+            return GetVisualNoteType(note);
         }
         else
         {
             // Do this simply because the HOPO glow by itself looks pretty cool
-            return Note.NoteType.Hopo;
+            return VisualNoteType.Hopo;
         }
     }
 
@@ -139,5 +180,16 @@ public class NoteVisualsManager : MonoBehaviour {
 
         text.transform.localPosition = position;
         text.gameObject.SetActive(active);
+    }
+
+    public enum VisualNoteType
+    {
+        Strum,
+        Hopo,
+        Tap,
+        Cymbal,
+        Tom,
+        Kick,
+        DoubleBass
     }
 }

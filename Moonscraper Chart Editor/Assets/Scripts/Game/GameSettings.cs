@@ -223,6 +223,7 @@ public class GameSettings
     // These fields are automatically saved via reflection
     public BoolSaveSetting 
         slowdownPitchCorrectionEnabled
+        , recolorDoubleKick
         , extendedSustainsEnabled
         , sustainGapEnabled
         , sustainGapIsTimeBased
@@ -290,6 +291,7 @@ public class GameSettings
             case ("sustainGapEnabled"): return sustainGapEnabled;
             case ("resetAfterPlay"): return resetAfterPlay;
             case ("resetAfterGameplay"): return resetAfterGameplay;
+            case ("recolorDoubleKick"): return recolorDoubleKick;
             default: return false;
         }
     }
@@ -304,6 +306,7 @@ public class GameSettings
         resetAfterGameplay = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Reset After Gameplay", false);
         autoValidateSongOnSave = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Auto Validate Song On Save", true);
         automaticallyCheckForUpdates = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Auto Check For Updates", true);
+        recolorDoubleKick = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Recolor Double Kick Notes", true);
 
         audioCalibrationMS = new IntSaveSetting(SECTION_NAME_SETTINGS, "Audio calibration", 0);
         clapCalibrationMS = new IntSaveSetting(SECTION_NAME_SETTINGS, "Clap calibration", 0);

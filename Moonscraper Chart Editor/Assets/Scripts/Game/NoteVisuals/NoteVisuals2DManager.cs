@@ -62,17 +62,29 @@ public class NoteVisuals2DManager : NoteVisualsManager
             // The actual setting of the sprite in the renderer will happen later on in the Animate() function
             {
                 int noteArrayPos = GetNoteArrayPos(note, ChartEditor.Instance.laneInfo);
-                Note.NoteType visualNoteType = noteType;
+                VisualNoteType visualNoteType = GetVisualNoteType(note);
 
                 if (!Globals.ghLiveMode)
                 {
-                    if (noteType == Note.NoteType.Hopo && Globals.drumMode)
+                    if (Globals.drumMode)
                     {
-                        visualNoteType = Note.NoteType.Strum;
-                    }
-                    if (Globals.drumMode && note.drumPad == Note.DrumPad.Kick && note.flags == Note.Flags.DoubleKick)
-                    {
-                        visualNoteType = Note.NoteType.DBass;
+                        switch (visualNoteType)
+                        {
+                            case VisualNoteType.Strum:
+                            case VisualNoteType.Hopo:
+                                if (note.drumPad == Note.DrumPad.Kick)
+                                {
+                                    visualNoteType = VisualNoteType.Kick;
+                                }
+                                else
+                                {
+                                    visualNoteType = VisualNoteType.Tom;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+
                     }
                 }
 
@@ -152,7 +164,7 @@ public class NoteVisuals2DManager : NoteVisualsManager
         return arrayPos;
     }
 
-    public static int GetSkinKeyHash(int notePos, Note.NoteType noteType, Note.SpecialType specialType, bool isGhl, bool isDrumMode)
+    public static int GetSkinKeyHash(int notePos, VisualNoteType noteType, Note.SpecialType specialType, bool isGhl, bool isDrumMode)
     {
         int result = 4;
         int salt = 1231;
@@ -167,7 +179,7 @@ public class NoteVisuals2DManager : NoteVisualsManager
 
     static Dictionary<int, string> skinKeySkinCache = new Dictionary<int, string>();
     static StringBuilder skinKeySb = new StringBuilder();
-    public static string GetSkinKey(int notePos, Note.NoteType noteType, Note.SpecialType specialType, bool isGhl, bool isDrumsMode)
+    public static string GetSkinKey(int notePos, VisualNoteType noteType, Note.SpecialType specialType, bool isGhl, bool isDrumsMode)
     {
         int hash = GetSkinKeyHash(notePos, noteType, specialType, isGhl, isDrumsMode);
 
@@ -193,29 +205,39 @@ public class NoteVisuals2DManager : NoteVisualsManager
 
         switch (noteType)
         {
-            case Note.NoteType.Strum:
+            case VisualNoteType.Strum:
                 {
                     sb.AppendFormat("strum");
                     break;
                 }
-            case Note.NoteType.Hopo:
+            case VisualNoteType.Hopo:
                 {
                     sb.AppendFormat("hopo");
                     break;
                 }
-            case Note.NoteType.Tap:
+            case VisualNoteType.Tap:
                 {
                     sb.AppendFormat("tap");
                     break;
                 }
-            case Note.NoteType.Cymbal:
+            case VisualNoteType.Cymbal:
                 {
                     sb.AppendFormat("cymbal");
                     break;
                 }
-            case Note.NoteType.DBass:
+            case VisualNoteType.Tom:
                 {
-                    sb.AppendFormat("dbass");
+                    sb.AppendFormat("tom");
+                    break;
+                }
+            case VisualNoteType.Kick:
+                {
+                    sb.AppendFormat("kick");
+                    break;
+                }
+            case VisualNoteType.DoubleBass:
+                {
+                    sb.AppendFormat("2xkick");
                     break;
                 }
             default:
@@ -225,11 +247,6 @@ public class NoteVisuals2DManager : NoteVisualsManager
         if (isGhl)
         {
             sb.AppendFormat("_ghl");
-        }
-
-        if (isDrumsMode)
-        {
-            sb.Replace("strum", "drum");
         }
 
         stringKey = sb.ToString();
