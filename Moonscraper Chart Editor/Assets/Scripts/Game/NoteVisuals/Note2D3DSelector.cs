@@ -87,9 +87,9 @@ public class Note2D3DSelector : MonoBehaviour {
             Sprite[] sprites = SkinManager.Instance.currentSkin.GetSprites(noteKey);
 
             isInSkin = sprites != null && sprites.Length > 0;
-            if (!isInSkin)
+            if (!isInSkin && isDrumMode)
             {
-                noteKey = NoteVisuals2DManager.GetSkinKey(arrayPos, noteType, specialType, isGhl, false); //Force check 5-fret guitar textures in the event that the drum ones aren't present.
+                noteKey = NoteVisuals2DManager.GetSkinKey(arrayPos, NoteVisualsManager.VisualNoteType.Strum, specialType, isGhl, false); //Force check 5-fret guitar textures in the event that the drum ones aren't present.
                 sprites = SkinManager.Instance.currentSkin.GetSprites(noteKey);
             }
             isInSkin = sprites != null && sprites.Length > 0;

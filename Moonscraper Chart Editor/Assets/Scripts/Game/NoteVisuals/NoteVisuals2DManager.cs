@@ -72,6 +72,7 @@ public class NoteVisuals2DManager : NoteVisualsManager
                         {
                             case VisualNoteType.Strum:
                             case VisualNoteType.Hopo:
+                            case VisualNoteType.Tap: //How??
                                 if (note.drumPad == Note.DrumPad.Kick)
                                 {
                                     visualNoteType = VisualNoteType.Kick;
@@ -91,6 +92,15 @@ public class NoteVisuals2DManager : NoteVisualsManager
                 Skin skin = SkinManager.Instance.currentSkin;
                 string noteKey = GetSkinKey(noteArrayPos, noteType, specialType, Globals.ghLiveMode, Globals.drumMode);
                 currentAnimationData = skin.GetSprites(noteKey);
+                if(currentAnimationData == null && Globals.drumMode)
+                {
+                    if (visualNoteType == VisualNoteType.Cymbal)
+                        visualNoteType = VisualNoteType.Tap;
+                    else
+                        visualNoteType = VisualNoteType.Strum;
+                    noteKey = GetSkinKey(noteArrayPos, visualNoteType, specialType, false, false);
+                    currentAnimationData = skin.GetSprites(noteKey);
+                }    
             }
         }
 
