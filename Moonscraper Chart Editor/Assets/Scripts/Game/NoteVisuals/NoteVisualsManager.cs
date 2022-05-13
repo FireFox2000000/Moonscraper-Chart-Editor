@@ -40,6 +40,7 @@ public class NoteVisualsManager : MonoBehaviour
     public static VisualNoteType GetVisualNoteType(Note note)
     {
         VisualNoteType noteType = VisualNoteType.Strum;
+        /* Initial conversion between NoteType and VisualNoteType */
         switch (note.type)
         {
             case Note.NoteType.Strum:
@@ -68,12 +69,10 @@ public class NoteVisualsManager : MonoBehaviour
                 break;
         }
 
+        /* 5-lane drums use Yellow and Orange for Cymbals,
+         * so we make the lanes display like that */
         if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums)
         {
-            if (noteType == VisualNoteType.Strum)
-            {
-                noteType = VisualNoteType.Tom;
-            }
             if (Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.Standard)
             {
                 if (Globals.gameSettings.drumsLaneCount == 5)
@@ -94,9 +93,10 @@ public class NoteVisualsManager : MonoBehaviour
                     }
                 }
             }
+            //Double-Kick VisualNoteType is only necessary when the option is set.
             if (note.flags == Note.Flags.DoubleKick && Globals.gameSettings.recolorDoubleKick)
             {
-                noteType = VisualNoteType.DoubleBass;
+                noteType = VisualNoteType.DoubleKick;
             }
         }
 
@@ -190,6 +190,6 @@ public class NoteVisualsManager : MonoBehaviour
         Cymbal,
         Tom,
         Kick,
-        DoubleBass
+        DoubleKick,
     }
 }

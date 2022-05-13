@@ -138,7 +138,7 @@ public class ClapPlaybackSystem : SystemManagerState.System
                 {
                     case NoteVisualsManager.VisualNoteType.Strum:
                     case NoteVisualsManager.VisualNoteType.Cymbal:
-                    case NoteVisualsManager.VisualNoteType.DoubleBass:
+                    case NoteVisualsManager.VisualNoteType.DoubleKick:
                         playClap = (Globals.gameSettings.clapProperties & GameSettings.ClapToggle.STRUM) != 0;
                         break;
 

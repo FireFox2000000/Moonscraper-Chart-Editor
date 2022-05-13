@@ -50,31 +50,16 @@ public class Note2D3DSelector : MonoBehaviour {
     {
         Skin customSkin = SkinManager.Instance.currentSkin;
 
+        bool isGhl = Globals.ghLiveMode;
+        bool isDrumMode = Globals.drumMode;
+
         Note note = nCon.note;
         NoteVisualsManager.VisualNoteType noteType = NoteVisualsManager.GetVisualNoteType(note);
         Note.SpecialType specialType = NoteVisualsManager.IsStarpower(note);
 
         int arrayPos = NoteVisuals2DManager.GetNoteArrayPos(note, ChartEditor.Instance.laneInfo);
-        NoteVisualsManager.VisualNoteType visualNoteType = noteType;
-
-        if (!Globals.ghLiveMode)
-        {
-            if (Globals.drumMode)
-            {
-                if (noteType == NoteVisualsManager.VisualNoteType.Hopo)
-                {
-                    visualNoteType = NoteVisualsManager.VisualNoteType.Strum;
-                }
-                if (noteType == NoteVisualsManager.VisualNoteType.DoubleBass)
-                {
-                    visualNoteType = NoteVisualsManager.VisualNoteType.DoubleBass;
-                }
-            }
-        }
 
         bool isInSkin;
-        bool isGhl = Globals.ghLiveMode;
-        bool isDrumMode = Globals.drumMode;
         int hash = NoteVisuals2DManager.GetSkinKeyHash(arrayPos, noteType, specialType, isGhl, isDrumMode);
         
         if (textureInSkinCache.TryGetValue(hash, out isInSkin))
@@ -89,7 +74,22 @@ public class Note2D3DSelector : MonoBehaviour {
             isInSkin = sprites != null && sprites.Length > 0;
             if (!isInSkin && isDrumMode)
             {
-                noteKey = NoteVisuals2DManager.GetSkinKey(arrayPos, NoteVisualsManager.VisualNoteType.Strum, specialType, isGhl, false); //Force check 5-fret guitar textures in the event that the drum ones aren't present.
+                switch(noteType)
+                {
+                    case NoteVisualsManager.VisualNoteType.Cymbal:
+                        noteKey = NoteVisuals2DManager.GetSkinKey(arrayPos, NoteVisualsManager.VisualNoteType.Tap, specialType, false, false);
+                        break;
+                    case NoteVisualsManager.VisualNoteType.DoubleKick:
+                        noteKey = NoteVisuals2DManager.GetSkinKey(arrayPos, NoteVisualsManager.VisualNoteType.Kick, specialType, false, true);
+                        break;
+                    case NoteVisualsManager.VisualNoteType.Tom:
+                    case NoteVisualsManager.VisualNoteType.Kick:
+                        noteKey = NoteVisuals2DManager.GetSkinKey(arrayPos, NoteVisualsManager.VisualNoteType.Strum, specialType, false, false);
+                        break;
+                    case NoteVisualsManager.VisualNoteType.Strum:
+                    case NoteVisualsManager.VisualNoteType.Tap:
+                        break;
+                }
                 sprites = SkinManager.Instance.currentSkin.GetSprites(noteKey);
             }
             isInSkin = sprites != null && sprites.Length > 0;

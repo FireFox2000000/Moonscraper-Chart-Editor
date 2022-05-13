@@ -85,7 +85,7 @@ public class NoteVisuals3DManager : NoteVisualsManager
                 }
 
                 materials[2] = resources.openMaterials[colourIndex];
-                if (visualNoteType == VisualNoteType.DoubleBass && Globals.gameSettings.recolorDoubleKick)
+                if (visualNoteType == VisualNoteType.DoubleKick && Globals.gameSettings.recolorDoubleKick)
                     materials[2] = resources.strumColorPalette[1];
             }
             else

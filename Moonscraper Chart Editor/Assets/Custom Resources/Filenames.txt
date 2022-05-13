@@ -18,15 +18,21 @@ Notes- Replace [x] with numbers 0-4 for each image
 	[x]_reg_hopo		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 	[x]_reg_tap			Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 	[x]_reg_cymbal		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_reg_tom			Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 	[x]_sp_strum		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 	[x]_sp_hopo			Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 	[x]_sp_tap			Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 	[x]_sp_cymbal		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	[x]_sp_tom		Individual sprite size (128, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 
 	5_reg_strum			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 	5_reg_hopo			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	5_reg_kick			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	5_reg_kick2x		Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 	5_sp_strum			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 	5_sp_hopo			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	5_sp_kick			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
+	5_sp_kick2x			Individual sprite size (512, 64) aligned on sprite sheet left to right, top to bottom, or less than the specified size for a single sprite
 
 Strikeline Frets- Replace [x] with numbers 0-4 for each image
 	[x]_fret_anim		image size (128, 64)

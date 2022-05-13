@@ -91,14 +91,24 @@ public class NoteVisuals2DManager : NoteVisualsManager
 
                 Skin skin = SkinManager.Instance.currentSkin;
                 string noteKey = GetSkinKey(noteArrayPos, noteType, specialType, Globals.ghLiveMode, Globals.drumMode);
+                bool tryDrumTex = false;
                 currentAnimationData = skin.GetSprites(noteKey);
-                if(currentAnimationData == null && Globals.drumMode)
+                if(currentAnimationData == null && Globals.drumMode) //This controls fallbacks for missing drum textures
                 {
-                    if (visualNoteType == VisualNoteType.Cymbal)
-                        visualNoteType = VisualNoteType.Tap;
+                    if (visualNoteType == VisualNoteType.Cymbal) //If cymbal textures cannot be found
+                    {
+                        visualNoteType = VisualNoteType.Tap; //Try to use tap textures
+                    }
+                    else if (visualNoteType == VisualNoteType.DoubleKick) //If double bass textures cannot be found
+                    {
+                        tryDrumTex = true;
+                        visualNoteType = VisualNoteType.Kick; //Try to use regular kick textures
+                    }
                     else
-                        visualNoteType = VisualNoteType.Strum;
-                    noteKey = GetSkinKey(noteArrayPos, visualNoteType, specialType, false, false);
+                    {
+                        visualNoteType = VisualNoteType.Strum;  //Try to use strum note textures in the event that any other drum texture fails to load
+                    }
+                    noteKey = GetSkinKey(noteArrayPos, visualNoteType, specialType, false, tryDrumTex);
                     currentAnimationData = skin.GetSprites(noteKey);
                 }    
             }
@@ -240,14 +250,14 @@ public class NoteVisuals2DManager : NoteVisualsManager
                     sb.AppendFormat("tom");
                     break;
                 }
+            case VisualNoteType.DoubleKick:
+                {
+                    sb.AppendFormat("kick_2x");
+                    break;
+                }
             case VisualNoteType.Kick:
                 {
                     sb.AppendFormat("kick");
-                    break;
-                }
-            case VisualNoteType.DoubleBass:
-                {
-                    sb.AppendFormat("2xkick");
                     break;
                 }
             default:

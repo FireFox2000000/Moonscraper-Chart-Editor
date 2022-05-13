@@ -28,7 +28,7 @@ public class LoadCustomResources : MonoBehaviour {
     public SustainResources sustainResources;
     AssetPacker assetPacker;
 
-    public static string skinDirectory = "Custom Resources";
+    static string skinDirectory = "Custom Resources";
 
     Dictionary<string, CustomResource> resourcesDictionary = new Dictionary<string, CustomResource>();
 
@@ -58,9 +58,9 @@ public class LoadCustomResources : MonoBehaviour {
         { "2_sp_hopo_ghl",          new TextureToPack.GridSlice(GHL_OPEN_NOTE_TEXTURE_1X1_WIDTH, GHL_OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
 
         { "5_reg_kick",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
-        { "5_reg_2xkick",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
+        { "5_reg_kick_2x",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
         { "5_sp_kick",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
-        { "5_sp_2xkick",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
+        { "5_sp_kick_2x",     new TextureToPack.GridSlice(OPEN_NOTE_TEXTURE_1X1_WIDTH, OPEN_NOTE_TEXTURE_1X1_HEIGHT) },
 
         { SkinKeys.fretStem, null },
         { SkinKeys.measureBeatLine, null },
@@ -222,11 +222,11 @@ public class LoadCustomResources : MonoBehaviour {
         if (complete)
         {
             OnResourceLoadingComplete();
-            currentState = UpdateWaitingForPackingCompelte;
+            currentState = UpdateWaitingForPackingComplete;
         }
     }
 
-    void UpdateWaitingForPackingCompelte()
+    void UpdateWaitingForPackingComplete()
     {
         // Empty on purpose. We don't need to do anything except wait for texture packing to finish. We already have a listener set up to change this state on the asset packer.
     }
