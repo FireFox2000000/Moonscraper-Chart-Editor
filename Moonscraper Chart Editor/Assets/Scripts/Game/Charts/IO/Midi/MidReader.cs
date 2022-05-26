@@ -436,7 +436,6 @@ namespace MoonscraperChartEditor.Song.IO
 
         private static void ReadNotes(IList<MidiEvent> track, Song song, Song.Instrument instrument, ref CallbackState callBackState)
         {
-            List<NoteOnEvent> forceNotesList = new List<NoteOnEvent>();
             List<SysexEvent> tapAndOpenEvents = new List<SysexEvent>();
 
             Chart unrecognised = new Chart(song, Song.Instrument.Unrecognised);
