@@ -151,6 +151,10 @@ namespace MoonscraperChartEditor.Song.IO
         }}
     };
 
+        // Collects warnings to display and handle at the end of parsing
+        delegate void WarningProcessFn();
+        static readonly List<(string, string, WarningProcessFn)> WarningsList = new List<(string, string, WarningProcessFn)>();
+
         static MidReader()
         {
             BuildGuitarMidiNoteNumberToProcessFnDict();
@@ -252,15 +256,14 @@ namespace MoonscraperChartEditor.Song.IO
 
                     case (MidIOHelper.VOCALS_TRACK):
                         {
-                            if (PromptMessage(
+                            WarningsList.Add((
                                 "A vocals track was found in the file. Would you like to import the text events as global lyrics and phrase events?",
                                 "Vocals Track Found",
-                                ref callBackState)
-                            )
-                            {
-                                Debug.Log("Loading lyrics from Vocals track");
-                                ReadTextEventsIntoGlobalEventsAsLyrics(midi.Events[i], song);
-                            }
+                                () => {
+                                    Debug.Log("Loading lyrics from Vocals track");
+                                    ReadTextEventsIntoGlobalEventsAsLyrics(midi.Events[i], song);
+                                }
+                            ));
                             break;
                         }
 
@@ -281,32 +284,36 @@ namespace MoonscraperChartEditor.Song.IO
                                         break;
                                     }
 
-                                    if (!PromptMessage( // NOT-ed to default to skipping when in the editor
+                                    WarningsList.Add((
                                         $"A track was already loaded for instrument {instrument}, but another track was found for this instrument: {trackNameKey}\nWould you like to overwrite the currently loaded track?",
                                         "Duplicate Instrument Track Found",
-                                        ref callBackState)
-                                    )
-                                    {
-                                        Debug.LogFormat("Skipping already-loaded part {0}", instrument);
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        Debug.LogFormat("Overwriting already-loaded part {0}", instrument);
-                                        foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
-                                        {
-                                            var chart = song.GetChart(instrument, Song.Difficulty.Expert);
-                                            chart.Clear();
-                                            chart.UpdateCache();
+                                        () => {
+                                            Debug.LogFormat("Overwriting already-loaded part {0}", instrument);
+                                            foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
+                                            {
+                                                var chart = song.GetChart(instrument, Song.Difficulty.Expert);
+                                                chart.Clear();
+                                                chart.UpdateCache();
+                                                ReadNotes(midi.Events[i], song, instrument);
+                                            }
                                         }
-                                    }
+                                    ));
                                 }
                             }
 
                             Debug.LogFormat("Loading midi track {0}", instrument);
-                            ReadNotes(midi.Events[i], song, instrument, ref callBackState);
+                            ReadNotes(midi.Events[i], song, instrument);
                             break;
                         }
+                }
+            }
+
+            // Display warnings to user, and execute action if they select Yes
+            foreach ((string message, string textboxTitle, WarningProcessFn processFn) in WarningsList)
+            {
+                if (PromptMessage(message, textboxTitle, ref callBackState))
+                {
+                    processFn();
                 }
             }
 
@@ -434,7 +441,7 @@ namespace MoonscraperChartEditor.Song.IO
             song.UpdateCache();
         }
 
-        private static void ReadNotes(IList<MidiEvent> track, Song song, Song.Instrument instrument, ref CallbackState callBackState)
+        private static void ReadNotes(IList<MidiEvent> track, Song song, Song.Instrument instrument)
         {
             List<SysexEvent> tapAndOpenEvents = new List<SysexEvent>();
 
@@ -679,14 +686,14 @@ namespace MoonscraperChartEditor.Song.IO
                         if (textEvent.eventName == MidIOHelper.SoloEventText || textEvent.eventName == MidIOHelper.SoloEndEventText)
                         {
                             TextEvent text = track[0] as TextEvent;
-                            if (PromptMessage(
+                            WarningsList.Add((
                                 $"No Star Power phrases were found on track {text.Text}. However, solo phrases were found. These may be legacy star power phrases.\nImport these solo phrases as Star Power?",
                                 "Legacy Star Power Detected",
-                                ref callBackState)
-                            )
-                            {
-                                ProcessTextEventPairAsStarpower(in processParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
-                            }
+                                () => {
+                                    Debug.Log("Loading solo events as Star Power");
+                                    ProcessTextEventPairAsStarpower(in processParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
+                                }
+                            ));
                             break;
                         }
                     }
