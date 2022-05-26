@@ -40,7 +40,8 @@ namespace MoonscraperChartEditor.Song.IO
 
         static readonly Dictionary<string, bool> c_trackExcludesMap = new Dictionary<string, bool>()
     {
-        { "beat",       true },
+        { "BEAT",       true },
+        { "VENUE",      true },
     };
 
         static readonly List<Song.Instrument> c_legacyStarPowerFixupWhitelist = new List<Song.Instrument>()
