@@ -22,19 +22,25 @@ namespace MoonscraperChartEditor.Song.IO
         static readonly Dictionary<string, Song.Instrument> c_trackNameToInstrumentMap = new Dictionary<string, Song.Instrument>()
     {
         { MidIOHelper.GUITAR_TRACK,        Song.Instrument.Guitar },
+        { MidIOHelper.GH1_GUITAR_TRACK,    Song.Instrument.Guitar },
         { MidIOHelper.GUITAR_COOP_TRACK,   Song.Instrument.GuitarCoop },
         { MidIOHelper.BASS_TRACK,          Song.Instrument.Bass },
         { MidIOHelper.RHYTHM_TRACK,        Song.Instrument.Rhythm },
         { MidIOHelper.KEYS_TRACK,          Song.Instrument.Keys },
         { MidIOHelper.DRUMS_TRACK,         Song.Instrument.Drums },
+        { MidIOHelper.DRUMS_REAL_TRACK,    Song.Instrument.Drums },
         { MidIOHelper.GHL_GUITAR_TRACK,    Song.Instrument.GHLiveGuitar },
         { MidIOHelper.GHL_BASS_TRACK,      Song.Instrument.GHLiveBass },
     };
 
+        static readonly Dictionary<string, bool> c_trackNameAutoOverrideMap = new Dictionary<string, bool>()
+    {
+        { MidIOHelper.DRUMS_REAL_TRACK,   true },
+    };
+
         static readonly Dictionary<string, bool> c_trackExcludesMap = new Dictionary<string, bool>()
     {
-        { "t1 gems",    true },
-        { "beat",       true }
+        { "beat",       true },
     };
 
         static readonly List<Song.Instrument> c_legacyStarPowerFixupWhitelist = new List<Song.Instrument>()
@@ -263,6 +269,37 @@ namespace MoonscraperChartEditor.Song.IO
                             if (!c_trackNameToInstrumentMap.TryGetValue(trackNameKey, out instrument))
                             {
                                 instrument = Song.Instrument.Unrecognised;
+                            }
+                            else
+                            {
+                                if (song.ChartExistsForInstrument(instrument))
+                                {
+                                    if (c_trackNameAutoOverrideMap.ContainsKey(trackNameKey))
+                                    {
+                                        Debug.LogFormat("Auto-skipping already-loaded part {0}", instrument);
+                                        break;
+                                    }
+
+                                    if (!PromptMessage( // NOT-ed to default to skipping when in the editor
+                                        $"A track was already loaded for instrument {instrument}, but another track was found for this instrument: {trackNameKey}\nWould you like to overwrite the currently loaded track?",
+                                        "Duplicate Instrument Track Found",
+                                        ref callBackState)
+                                    )
+                                    {
+                                        Debug.LogFormat("Skipping already-loaded part {0}", instrument);
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        Debug.LogFormat("Overwriting already-loaded part {0}", instrument);
+                                        foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
+                                        {
+                                            var chart = song.GetChart(instrument, Song.Difficulty.Expert);
+                                            chart.Clear();
+                                            chart.UpdateCache();
+                                        }
+                                    }
+                                }
                             }
 
                             Debug.LogFormat("Loading midi track {0}", instrument);
