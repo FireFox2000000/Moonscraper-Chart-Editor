@@ -498,7 +498,7 @@ namespace MoonscraperChartEditor.Song
                 case Chart.GameMode.Guitar:
                 case Chart.GameMode.GHLGuitar:
                     {
-                        bannedFlags = Flags.ProDrums_Cymbal;
+                        bannedFlags = Flags.ProDrums_Cymbal | Flags.ProDrums_Accent | Flags.ProDrums_Ghost;
                         break;
                     }
                 case Chart.GameMode.Drums:
