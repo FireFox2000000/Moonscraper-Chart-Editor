@@ -10,7 +10,7 @@ using System;
 
 public class GameSettings
 {
-    const int VersionNumber = 2;
+    const int VersionNumber = 1;
     const string SECTION_NAME_METADATA = "MetaData";
     const string SECTION_NAME_SETTINGS = "Settings";
     const string SECTION_NAME_AUDIO = "Audio Volume";
@@ -382,10 +382,6 @@ public class GameSettings
                 {
                     clapProperties.value = clapProperties.defaultValue;
                 }
-            }
-            if (versionNumber < 2)
-            {
-                recolorDoubleKick.value = recolorDoubleKick.defaultValue;
             }
 
             gameplayStartDelayTime.value = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
