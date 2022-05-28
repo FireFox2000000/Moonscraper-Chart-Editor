@@ -252,7 +252,7 @@ public class NoteVisuals2DManager : NoteVisualsManager
                 }
             case VisualNoteType.DoubleKick:
                 {
-                    sb.AppendFormat("kick_2x");
+                    sb.AppendFormat("doublekick");
                     break;
                 }
             case VisualNoteType.Kick:
