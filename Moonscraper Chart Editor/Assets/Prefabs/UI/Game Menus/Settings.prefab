@@ -5413,15 +5413,7 @@ MonoBehaviour:
     m_Options:
     - m_Text: 60
       m_Image: {fileID: 0}
-    - m_Text: 75
-      m_Image: {fileID: 0}
-    - m_Text: 90
-      m_Image: {fileID: 0}
     - m_Text: 120
-      m_Image: {fileID: 0}
-    - m_Text: 144
-      m_Image: {fileID: 0}
-    - m_Text: 165
       m_Image: {fileID: 0}
     - m_Text: 240
       m_Image: {fileID: 0}
