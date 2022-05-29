@@ -149,6 +149,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
     // Use this for initialization
     void Awake () {
+        windowHandleManager = new WindowHandleManager(string.Format("{0} v{1} {2}", Application.productName, Application.version, Globals.applicationBranchName), GetComponent<Settings>().productName);
+        Application.logMessageReceived += HandleException;
+
         Debug.Log(string.Format("Initialising {0} v{1}", Application.productName, Application.version));
 
 #if !UNITY_EDITOR
@@ -174,7 +177,6 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         gameObject.AddComponent<UITabbing>();
 
-        windowHandleManager = new WindowHandleManager(string.Format("{0} v{1} {2}", Application.productName, Application.version, Globals.applicationBranchName), GetComponent<Settings>().productName);
         errorManager = gameObject.AddComponent<ErrorManager>();
         toolManager.Init();
         interactionMethodManager.Init();
@@ -285,8 +287,42 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         windowHandleManager.OnApplicationFocus(hasFocus);
     }
 
+    volatile bool _ignoreExceptions = false;
+    void HandleException(string condition, string stackTrace, LogType type)
+    {
+        if (type == LogType.Exception && !_ignoreExceptions)
+        {
+            string message = string.Format("Moonscraper Chart Editor has encounted an unexpected error:\n\n{0}\n{1}\nPlease report \"AppData\\LocalLow\\FireFox Dev\\Moonscraper Chart Editor\\output_log.txt\" to your local Moonscraper developer at your earliest convienance.\n\nAttempt to continue?", condition, stackTrace);
+            NativeMessageBox.Result result = NativeMessageBox.Show(message, "Oops", NativeMessageBox.Type.YesNo, windowHandleManager.nativeWindow);
+
+            switch (result)
+            {
+                case NativeMessageBox.Result.No:
+                    {
+                        quittingCheckPassed = true;
+                        Application.Quit();
+
+#if UNITY_EDITOR
+                        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+                        _ignoreExceptions = true;
+
+                        Debug.Log("FORCE-QUITTING MOONSCRAPER DUE TO UNHANDLED EXCEPTION");
+
+                        break;
+                    }
+
+                default:
+                    // Ignore
+                    break;
+            }
+        }
+    }
+
     void FinaliseQuit()
     {
+        Application.logMessageReceived -= HandleException;      // Don't show message box on shutdown, even if we aren't shutting down smoothly. Kinda pointless....
+
         globals.Quit();
         currentSongAudio.Dispose();
         sfxAudioStreams.DisposeSounds();
