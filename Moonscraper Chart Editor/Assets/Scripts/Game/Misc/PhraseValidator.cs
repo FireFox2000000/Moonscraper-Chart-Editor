@@ -6,50 +6,42 @@ namespace Game.Misc
 {
     public static class PhraseValidator
     {
-        public static List<IValidationError> ValidateIntegrity(Song song)
+        private const string PhraseStart = "phrase_start";
+        private const string PhraseEnd = "phrase_end";
+        
+        public static IEnumerable<IValidationError> GetValidationErrors(Song song)
         {
-            var validationErrors = new List<IValidationError>();
             Event previousEvent = null;
-            foreach (var songEvent in song.eventsAndSections)
+            foreach (var songEvent in song.events)
             {
-                if (songEvent is Section) continue;
+                // Ignores all non-phrase events.
+                if (!(songEvent.title is PhraseStart || songEvent.title is PhraseEnd)) continue;
 
-                switch (songEvent.title)
+                if (songEvent.title is PhraseStart
+                    && previousEvent?.title is PhraseStart)
                 {
-                    case PhraseEvent.PhraseStart: {
-                        if (PhraseEvent.PhraseStart.Equals(previousEvent?.title))
-                        {
-                            validationErrors.Add(new MismatchedPhraseEventError(previousEvent));
-                        }
-
-                        break;
-                    }
-                    case PhraseEvent.PhraseEnd: {
-                        if (!PhraseEvent.PhraseStart.Equals(previousEvent?.title))
-                        {
-                            validationErrors.Add(new MismatchedPhraseEventError(songEvent));
-                        }
-
-                        break;
-                    }
-                    default:
-                        continue;
+                    yield return new MismatchedPhraseEventError(previousEvent);
                 }
-                
-                if (songEvent.tick == previousEvent?.tick)
+
+                // previousEvent is only ever null during the first iteration.
+                if (songEvent.title is PhraseEnd
+                    && (previousEvent is null || previousEvent.title is PhraseEnd))
                 {
-                    validationErrors.Add(new PhraseCollisionError(songEvent));
+                    yield return new MismatchedPhraseEventError(songEvent);
+                }
+
+                if (songEvent.CollidesWith(previousEvent))
+                {
+                    yield return new PhraseCollisionError(songEvent);
                 }
 
                 previousEvent = songEvent;
             }
 
-            if (PhraseEvent.PhraseStart.Equals(previousEvent?.title))
+            if (previousEvent?.title is PhraseStart)
             {
-                validationErrors.Add(new MismatchedPhraseEventError(previousEvent));
+                yield return new MismatchedPhraseEventError(previousEvent);
             }
-
-            return validationErrors;
         }
     }
 }

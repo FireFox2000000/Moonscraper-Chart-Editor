@@ -5,6 +5,7 @@ using System.Text;
 using MoonscraperEngine;
 using MoonscraperChartEditor.Song;
 using System;
+using System.Linq;
 using Game.Misc;
 
 public class SongValidate
@@ -195,7 +196,7 @@ public class SongValidate
 
         // Check if any phrases aren't correctly matched
         {
-            var validationErrors = PhraseValidator.ValidateIntegrity(song);
+            var validationErrors = PhraseValidator.GetValidationErrors(song).ToList();
             if (validationErrors.Count > 0)
             {
                 hasErrorsLocal = true;
