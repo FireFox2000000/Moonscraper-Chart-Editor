@@ -1,10 +1,12 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Text;
 using MoonscraperEngine;
 using MoonscraperChartEditor.Song;
 using System;
+using System.Linq;
+using Game.Misc;
 
 public class SongValidate
 {
@@ -188,6 +190,24 @@ public class SongValidate
                         tsToTest.tick
                         , PrintObjectTime(tsToTest.time)
                     );
+                }
+            }
+        }
+
+        // Check if any phrases aren't correctly matched
+        {
+            var validationErrors = PhraseValidator.GetValidationErrors(song).ToList();
+            if (validationErrors.Count > 0)
+            {
+                hasErrorsLocal = true;
+                foreach (var validationError in validationErrors)
+                {
+                    sb.Append($"\t{validationError.errorMessage}\n");
+                    if (!(validationError is EventValidationError eventValidationError)) continue;
+                    var songEvent = eventValidationError.songEvent;
+                    var eventTime = songEvent.time;
+                    sb.Append(
+                        $"\t\tType = {songEvent.GetType()}, time = {eventTime}, position = {PrintObjectTime(eventTime)}\n");
                 }
             }
         }

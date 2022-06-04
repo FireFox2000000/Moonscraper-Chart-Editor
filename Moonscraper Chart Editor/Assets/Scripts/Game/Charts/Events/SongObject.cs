@@ -43,6 +43,8 @@ namespace MoonscraperChartEditor.Song
                 return song.TickToTime(tick, song.resolution);
             }
         }
+        
+        public bool CollidesWith(SongObject other) => tick == other?.tick;
 
         public abstract SongObject Clone();
 
