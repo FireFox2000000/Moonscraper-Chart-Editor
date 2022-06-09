@@ -78,7 +78,7 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
             Debug.LogError("No starpower loaded into note inspector");
         }
 
-        drumFillToggle.isOn = drumsMode ? flags.HasFlag(Starpower.Flags.ProDrums_Activation) : false;
+        drumFillToggle.isOn = drumsMode && flags.HasFlag(Starpower.Flags.ProDrums_Activation);
 
         toggleBlockingActive = false;
     }
@@ -90,16 +90,13 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
 
         if (IsInTool())
         {
-            if (Globals.drumMode)
+            if (Globals.drumMode && drumFillToggle.interactable)
             {
-                if (drumFillToggle.interactable)
-                {
-                    SetToolFlag(drumFillToggle, Starpower.Flags.ProDrums_Activation);
-                }
+                SetToolFlag(drumFillToggle, Starpower.Flags.ProDrums_Activation);
             }
             else
             {
-               SetToolFlag(drumFillToggle, ~Starpower.Flags.ProDrums_Activation);
+               SetToolFlag(drumFillToggle, Starpower.Flags.None);
             }
         }
         else
