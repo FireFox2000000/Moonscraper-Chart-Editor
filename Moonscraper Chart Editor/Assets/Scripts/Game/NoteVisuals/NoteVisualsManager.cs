@@ -23,18 +23,11 @@ public class NoteVisualsManager : MonoBehaviour
     protected virtual void Awake()
     {
         noteRenderer = GetComponent<Renderer>();
-        ChartEditor.Instance.events.kickNoteRecolorToggledEvent.Register(UpdateVisualsCallback);
     }
 
     void LateUpdate()
     {
         Animate();
-    }
-
-    private void UpdateVisualsCallback()
-    {
-        if (nCon.note != null)
-            UpdateVisuals();
     }
 
     public static VisualNoteType GetVisualNoteType(Note note)
@@ -73,6 +66,8 @@ public class NoteVisualsManager : MonoBehaviour
          * so we make the lanes display like that */
         if (ChartEditor.Instance.currentGameMode == Chart.GameMode.Drums)
         {
+            if (note.drumPad == Note.DrumPad.Kick)
+                noteType = VisualNoteType.Kick;
             if (Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.Standard)
             {
                 if (Globals.gameSettings.drumsLaneCount == 5)

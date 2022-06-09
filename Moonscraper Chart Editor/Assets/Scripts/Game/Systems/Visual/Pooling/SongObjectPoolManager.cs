@@ -82,6 +82,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         editor.events.chartReloadedEvent.Register(SetAllPoolsDirty);
         editor.events.leftyFlipToggledEvent.Register(SetAllPoolsDirty);
         editor.events.drumsModeOptionChangedEvent.Register(SetAllNotesDirty);
+        editor.events.kickNoteRecolorToggledEvent.Register(SetAllNotesDirty);
         editor.events.playbackStoppedEvent.Register(OnPlaybackStopped);
     }
 
