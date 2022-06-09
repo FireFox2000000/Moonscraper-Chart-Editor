@@ -21,6 +21,7 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
     void Start()
     {
         ChartEditor.Instance.events.drumsModeOptionChangedEvent.Register(UpdateTogglesInteractable);
+        ChartEditor.Instance.events.chartReloadedEvent.Register(SetDrumFill);
     }
 
     protected override void Update()
@@ -66,6 +67,8 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
     {
         toggleBlockingActive = true;
 
+        bool drumsMode = Globals.drumMode;
+
         Starpower.Flags flags = currentSp.flags;
         bool inTool = IsInTool();
 
@@ -75,7 +78,7 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
             Debug.LogError("No starpower loaded into note inspector");
         }
 
-        drumFillToggle.isOn = flags.HasFlag(Starpower.Flags.ProDrums_Activation);
+        drumFillToggle.isOn = drumsMode ? flags.HasFlag(Starpower.Flags.ProDrums_Activation) : false;
 
         toggleBlockingActive = false;
     }
@@ -87,9 +90,16 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
 
         if (IsInTool())
         {
-            if (drumFillToggle.interactable)
+            if (Globals.drumMode)
             {
-                SetToolFlag(drumFillToggle, Starpower.Flags.ProDrums_Activation);
+                if (drumFillToggle.interactable)
+                {
+                    SetToolFlag(drumFillToggle, Starpower.Flags.ProDrums_Activation);
+                }
+            }
+            else
+            {
+               SetToolFlag(drumFillToggle, ~Starpower.Flags.ProDrums_Activation);
             }
         }
         else
