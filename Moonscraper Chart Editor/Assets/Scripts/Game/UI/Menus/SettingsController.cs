@@ -145,27 +145,6 @@ public class SettingsController : TabMenu
             case (60):
                 fpsSelectDropdown.value = 0;
                 break;
-            //case (75):
-            //    fpsSelectDropdown.value = 1;
-            //    break;
-            //case (90):
-            //    fpsSelectDropdown.value = 2;
-            //    break;
-            //case (120):
-            //    fpsSelectDropdown.value = 3;
-            //    break;
-            //case (144):
-            //    fpsSelectDropdown.value = 4;
-            //    break;
-            //case (165):
-            //    fpsSelectDropdown.value = 5;
-            //    break;
-            //case (240):
-            //    fpsSelectDropdown.value = 6;
-            //    break;
-            //default:
-            //    fpsSelectDropdown.value = 7;
-            //    break;
             case (120):
                 fpsSelectDropdown.value = 1;
                 break;
@@ -266,24 +245,6 @@ public class SettingsController : TabMenu
             case 0:
                 fps = 60;
                 break;
-            //case 1:
-            //    fps = 75;
-            //    break;
-            //case 2:
-            //    fps = 90;
-            //    break;
-            //case 3:
-            //    fps = 120;
-            //    break;
-            //case 4:
-            //    fps = 144;
-            //    break;
-            //case 5:
-            //    fps = 165;
-            //    break;
-            //case 6:
-            //    fps = 240;
-            //    break;
             case 1:
                 fps = 120;
                 break;
