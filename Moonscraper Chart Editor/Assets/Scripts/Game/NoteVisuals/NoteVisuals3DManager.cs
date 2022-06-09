@@ -114,6 +114,8 @@ public class NoteVisuals3DManager : NoteVisualsManager
                                 colorMat = resources.GetToolCymbalMaterial(gameMode, laneInfo, noteIndex);
                                 break;
                             }
+                        case VisualNoteType.Tom:
+                        case VisualNoteType.Kick:
                         default:
                             {
                                 colorMat = resources.GetToolStrumMaterial(gameMode, laneInfo, noteIndex);
@@ -135,6 +137,8 @@ public class NoteVisuals3DManager : NoteVisualsManager
                                 colorMat = resources.GetCymbalMaterial(gameMode, laneInfo, noteIndex);
                                 break;
                             }
+                        case VisualNoteType.Tom:
+                        case VisualNoteType.Kick:
                         default:
                             {
                                 colorMat = resources.GetStrumMaterial(gameMode, laneInfo, noteIndex);
@@ -176,7 +180,9 @@ public class NoteVisuals3DManager : NoteVisualsManager
             case VisualNoteType.Cymbal:
                 materials = isStarpower ? resourceSharedMatsSpCymbal : resourceSharedMatsCymbal;
                 break;
-
+            case VisualNoteType.Tom:
+            case VisualNoteType.Kick:
+            case VisualNoteType.DoubleKick:
             default:
                 materials = isStarpower ? resourceSharedMatsSpStrum : resourceSharedMatsStrum;
                 break;
