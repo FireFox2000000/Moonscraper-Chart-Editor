@@ -21,6 +21,7 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
     void Start()
     {
         ChartEditor.Instance.events.drumsModeOptionChangedEvent.Register(UpdateTogglesInteractable);
+        ChartEditor.Instance.events.chartReloadedEvent.Register(OnChartReloaded);
     }
 
     protected override void Update()
@@ -87,10 +88,8 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
 
         if (IsInTool())
         {
-            if (drumFillToggle.interactable)
-            {
-                SetToolFlag(drumFillToggle, Starpower.Flags.ProDrums_Activation);
-            }
+            var flags = drumFillToggle.isOn ? Starpower.Flags.ProDrums_Activation : Starpower.Flags.None;
+            SetToolFlag(drumFillToggle, flags);
         }
         else
         {
@@ -127,15 +126,20 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
         }
     }
 
-    void SetToolFlag(Toggle uiToggle, Starpower.Flags flagsToToggle)
+    void SetToolFlag(Toggle uiToggle, Starpower.Flags newFlags)
     {
-        ref Starpower.Flags flags = ref starpowerToolController.starpower.flags;
-
-        if ((flags & flagsToToggle) == 0)
-            flags |= flagsToToggle;
-        else
-            flags &= ~flagsToToggle;
-
+        starpowerToolController.starpower.flags = newFlags;
         starpowerToolController.controller.SetDirty();
+    }
+
+    void OnChartReloaded()
+    {
+        if (IsInTool() && !Globals.drumMode)
+        {
+            // Remove the ProDrums_Activation flag if we have it
+            var flags = starpowerToolController.starpower.flags;
+            flags &= ~Starpower.Flags.ProDrums_Activation;
+            SetToolFlag(drumFillToggle, flags);
+        }
     }
 }
