@@ -1157,7 +1157,7 @@ GameObject:
   - component: {fileID: 6802496230223239465}
   - component: {fileID: 7476771590033739022}
   m_Layer: 5
-  m_Name: Recolor Double Kicks Toggle
+  m_Name: Recolour Double Kicks Toggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1228,8 +1228,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 9034363377853574533}
-        m_MethodName: SetRecolorDoubleKickNotes
-        m_Mode: 0
+        m_MethodName: SetRecolourDoubleKickNotes
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1658,7 +1658,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Recolor Double Kicks:'
+  m_Text: 'Recolour Double Kicks:'
 --- !u!1 &4854542724810794330
 GameObject:
   m_ObjectHideFlags: 0
@@ -12453,7 +12453,7 @@ MonoBehaviour:
   autoValidateSongOnSave: {fileID: 9034363378403194098}
   slowdownPitchCorrectionEnabled: {fileID: 7174526720699938595}
   lyricEditorStepSnappingEnabled: {fileID: 6502817794614780150}
-  recolorDoubleKickNotes: {fileID: 7476771590033739022}
+  recolourDoubleKickNotes: {fileID: 7476771590033739022}
   musicSourceSlider: {fileID: 9034363377724597168}
   guitarSourceSlider: {fileID: 9034363377461322673}
   bassSourceSlider: {fileID: 9034363376903469492}

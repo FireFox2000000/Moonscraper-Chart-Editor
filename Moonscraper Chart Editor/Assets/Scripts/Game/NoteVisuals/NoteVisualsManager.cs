@@ -89,7 +89,7 @@ public class NoteVisualsManager : MonoBehaviour
                 }
             }
             //Double-Kick VisualNoteType is only necessary when the option is set.
-            if (note.flags == Note.Flags.DoubleKick && Globals.gameSettings.recolorDoubleKick)
+            if (note.flags == Note.Flags.DoubleKick && Globals.gameSettings.recolourDoubleKick)
             {
                 noteType = VisualNoteType.DoubleKick;
             }

@@ -25,7 +25,7 @@ public class SettingsController : TabMenu
     public Toggle autoValidateSongOnSave;
     public Toggle slowdownPitchCorrectionEnabled;
     public Toggle lyricEditorStepSnappingEnabled;
-    public Toggle recolorDoubleKickNotes;
+    public Toggle recolourDoubleKickNotes;
     public Slider musicSourceSlider;
     public Slider guitarSourceSlider;
     public Slider bassSourceSlider;
@@ -138,7 +138,7 @@ public class SettingsController : TabMenu
         initClapToggle(clapTap, GameSettings.ClapToggle.TAP);
 
         leftyFlipToggle.isOn = Globals.gameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip;
-        recolorDoubleKickNotes.isOn = Globals.gameSettings.recolorDoubleKick;
+        recolourDoubleKickNotes.isOn = Globals.gameSettings.recolourDoubleKick;
 
         switch(Application.targetFrameRate)
         {
@@ -282,10 +282,10 @@ public class SettingsController : TabMenu
         editor.events.leftyFlipToggledEvent.Fire();
     }
 
-    public void SetRecolorDoubleKickNotes(bool value)
+    public void SetRecolourDoubleKickNotes(bool value)
     {
-        Globals.gameSettings.recolorDoubleKick.value = value;
-        editor.events.kickNoteRecolorToggledEvent.Fire();
+        Globals.gameSettings.recolourDoubleKick.value = value;
+        editor.events.kickNoteRecolourToggledEvent.Fire();
     }
 
     public void SetResetAfterPlay(bool value)
