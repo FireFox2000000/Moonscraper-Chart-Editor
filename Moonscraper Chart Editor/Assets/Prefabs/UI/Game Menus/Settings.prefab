@@ -1229,7 +1229,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9034363377853574533}
         m_MethodName: SetRecolourDoubleKickNotes
-        m_Mode: 6
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
