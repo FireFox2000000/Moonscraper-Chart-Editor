@@ -60,7 +60,7 @@ namespace MoonscraperChartEditor.Song.IO
     {
         { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
         { MidIOHelper.SOLO_NOTE, (in NoteProcessParams noteProcessParams) => {
-            ProcessNoteOnEventAsEvent(noteProcessParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
+            ProcessNoteOnEventAsEvent(noteProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
         }},
     };
 
@@ -68,7 +68,7 @@ namespace MoonscraperChartEditor.Song.IO
     {
         { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
         { MidIOHelper.SOLO_NOTE, (in NoteProcessParams noteProcessParams) => {
-            ProcessNoteOnEventAsEvent(noteProcessParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
+            ProcessNoteOnEventAsEvent(noteProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
         }},
     };
 
@@ -76,7 +76,7 @@ namespace MoonscraperChartEditor.Song.IO
     {
         { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
         { MidIOHelper.SOLO_NOTE, (in NoteProcessParams noteProcessParams) => {
-            ProcessNoteOnEventAsEvent(noteProcessParams, MidIOHelper.SoloEventText, MidIOHelper.SoloEndEventText);
+            ProcessNoteOnEventAsEvent(noteProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
         }},
         { MidIOHelper.DOUBLE_KICK_NOTE, (in NoteProcessParams noteProcessParams) => {
             ProcessNoteOnEventAsNote(noteProcessParams, Song.Difficulty.Expert, (int)Note.DrumPad.Kick, Note.Flags.InstrumentPlus);
@@ -251,8 +251,8 @@ namespace MoonscraperChartEditor.Song.IO
 
         private static void ReadSongGlobalEvents(IList<MidiEvent> track, Song song)
         {
-            const string rb2SectionPrefix = "[" + MidIOHelper.Rb2SectionPrefix;
-            const string rb3SectionPrefix = "[" + MidIOHelper.Rb3SectionPrefix;
+            const string rb2SectionPrefix = "[" + MidIOHelper.SECTION_PREFIX_RB2;
+            const string rb3SectionPrefix = "[" + MidIOHelper.SECTION_PREFIX_RB3;
 
             for (int i = 1; i < track.Count; ++i)
             {
@@ -308,12 +308,12 @@ namespace MoonscraperChartEditor.Song.IO
 
                 var phrase = track[i] as NoteOnEvent;
                 if (phrase != null && phrase.OffEvent != null &&
-                    (phrase.NoteNumber == MidIOHelper.PhraseMarker || phrase.NoteNumber == MidIOHelper.PhraseMarker2))
+                    (phrase.NoteNumber == MidIOHelper.LYRICS_PHRASE_1 || phrase.NoteNumber == MidIOHelper.LYRICS_PHRASE_2))
                 {
-                    string phraseStartEvent = MidIOHelper.PhraseStartText;
+                    string phraseStartEvent = MidIOHelper.LYRICS_PHRASE_START_TEXT;
                     song.Add(new Event(phraseStartEvent, (uint)phrase.AbsoluteTime), false);
 
-                    string phraseEndEvent = MidIOHelper.PhraseEndText;
+                    string phraseEndEvent = MidIOHelper.LYRICS_PHRASE_END_TEXT;
                     song.Add(new Event(phraseEndEvent, (uint)phrase.OffEvent.AbsoluteTime), false);
                 }
             }
