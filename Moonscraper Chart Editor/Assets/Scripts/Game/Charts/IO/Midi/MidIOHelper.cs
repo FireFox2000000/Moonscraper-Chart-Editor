@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -9,7 +9,8 @@ namespace MoonscraperChartEditor.Song.IO
 {
     public static class MidIOHelper
     {
-        public const string EVENTS_TRACK = "EVENTS";           // Sections
+        // Track names
+        public const string EVENTS_TRACK = "EVENTS";
         public const string GUITAR_TRACK = "PART GUITAR";
         public const string GUITAR_COOP_TRACK = "PART GUITAR COOP";
         public const string BASS_TRACK = "PART BASS";
@@ -20,34 +21,38 @@ namespace MoonscraperChartEditor.Song.IO
         public const string GHL_BASS_TRACK = "PART BASS GHL";
         public const string VOCALS_TRACK = "PART VOCALS";
 
-        public const string LYRIC_EVENT_PREFIX = LyricHelper.LYRIC_EVENT_PREFIX;
-        public const byte SOLO_NOTE = 0x67;                 // 103, http://docs.c3universe.com/rbndocs/index.php?title=Guitar_and_Bass_Authoring#Solo_Sections
-        public const byte STARPOWER_NOTE = 0x74;            // 116, http://docs.c3universe.com/rbndocs/index.php?title=Overdrive_and_Big_Rock_Endings
+        // Note numbers
+        public const byte DOUBLE_KICK_NOTE = 95;
+        public const byte SOLO_NOTE = 103;                 // http://docs.c3universe.com/rbndocs/index.php?title=Guitar_and_Bass_Authoring#Solo_Sections
+        public const byte LYRICS_PHRASE_1 = 105;           // http://docs.c3universe.com/rbndocs/index.php?title=Vocal_Authoring
+        public const byte LYRICS_PHRASE_2 = 106;           // Rock Band charts before RB3 mark phrases using this note as well
+        public const byte FLAM_MARKER = 109;
+        public const byte STARPOWER_NOTE = 116;            // http://docs.c3universe.com/rbndocs/index.php?title=Overdrive_and_Big_Rock_Endings
 
-        // 120 - 124 http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring#Drum_Fills
+        // http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring#Drum_Fills
         public const byte STARPOWER_DRUM_FILL_0 = 120;
         public const byte STARPOWER_DRUM_FILL_1 = 121;
         public const byte STARPOWER_DRUM_FILL_2 = 122;
         public const byte STARPOWER_DRUM_FILL_3 = 123;
         public const byte STARPOWER_DRUM_FILL_4 = 124;
 
-        public const string SoloEventText = "solo";
-        public const string SoloEndEventText = "soloend";
-        public const int DOUBLE_KICK_NOTE = 95;
-        public const byte FLAM_MARKER = 0x6d;                  // 109
+        // Text events
+        public const string SOLO_EVENT_TEXT = "solo";
+        public const string SOLO_END_EVENT_TEXT = "soloend";
 
-        public const int PhraseMarker = 105; // http://docs.c3universe.com/rbndocs/index.php?title=Vocal_Authoring
-        public const int PhraseMarker2 = 106; // Rock Band charts before RB3 mark phrases using this note as well
-        public const string PhraseStartText = LyricHelper.PhraseStartText;
-        public const string PhraseEndText = LyricHelper.PhraseEndText;
+        public const string LYRIC_EVENT_PREFIX = LyricHelper.LYRIC_EVENT_PREFIX;
+        public const string LYRICS_PHRASE_START_TEXT = LyricHelper.PhraseStartText;
+        public const string LYRICS_PHRASE_END_TEXT = LyricHelper.PhraseEndText;
 
-        public const string Rb2SectionPrefix = "section ";
-        public const string Rb3SectionPrefix = "prc_";
+        public const string SECTION_PREFIX_RB2 = "section ";
+        public const string SECTION_PREFIX_RB3 = "prc_";
 
-        public const byte VELOCITY = 0x64;              // 100
-        public const byte VELOCITY_ACCENT = 0x7f;       // 127, fof/ps
-        public const byte VELOCITY_GHOST = 0x1;         // 1, fof/ps
+        // Note velocities
+        public const byte VELOCITY = 100;             // default note velocity for exporting
+        public const byte VELOCITY_ACCENT = 127;      // fof/ps
+        public const byte VELOCITY_GHOST = 1;         // fof/ps
 
+        // Lookup tables
         // http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring
         public static readonly Dictionary<Note.DrumPad, int> PAD_TO_CYMBAL_LOOKUP = new Dictionary<Note.DrumPad, int>()
     {

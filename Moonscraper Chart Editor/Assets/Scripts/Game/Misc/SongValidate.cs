@@ -230,7 +230,7 @@ public class SongValidate
                         int soloMarkerCount = 0;
                         foreach (ChartEvent ce in chart.events)
                         {
-                            if (ce.eventName == MoonscraperChartEditor.Song.IO.MidIOHelper.SoloEventText)
+                            if (ce.eventName == MoonscraperChartEditor.Song.IO.MidIOHelper.SOLO_EVENT_TEXT)
                             {
                                 ++soloMarkerCount;
 

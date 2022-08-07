@@ -126,7 +126,7 @@ namespace MoonscraperChartEditor.Song.IO
                 InsertionSort(processParams.out_sortableBytes, bytes);
             }},
 
-            { MidIOHelper.PhraseStartText, (in VocalProcessingParams processParams) => {
+            { MidIOHelper.LYRICS_PHRASE_START_TEXT, (in VocalProcessingParams processParams) => {
 
                 Event phraseStartEvent = processParams.eventList[processParams.eventListIndex];
                 uint phraseEndEventTick = phraseStartEvent.tick;    // Find next phase end or the next phase start, whichever is first. 1 tick away as a backup. 
@@ -134,12 +134,12 @@ namespace MoonscraperChartEditor.Song.IO
                 for (int i = processParams.eventListIndex + 1; i < processParams.eventList.Count; ++i)
                 {
                     Event nextEvent = processParams.eventList[i];
-                    if (nextEvent.title.StartsWith(MidIOHelper.PhraseEndText))
+                    if (nextEvent.title.StartsWith(MidIOHelper.LYRICS_PHRASE_END_TEXT))
                     {
                         phraseEndEventTick = nextEvent.tick;
                         break;
                     }
-                    else if(nextEvent.title.StartsWith(MidIOHelper.PhraseStartText))
+                    else if(nextEvent.title.StartsWith(MidIOHelper.LYRICS_PHRASE_START_TEXT))
                     {
                         phraseEndEventTick = nextEvent.tick - 1;
                         break;
@@ -155,13 +155,13 @@ namespace MoonscraperChartEditor.Song.IO
                 Note phraseNote = new Note(phraseStartEvent.tick, 0, phraseEndEventTick - phraseStartEvent.tick);
                 SortableBytes onEvent = null;
                 SortableBytes offEvent = null;
-                GetNoteNumberBytes(MidIOHelper.PhraseMarker, phraseNote, VELOCITY, out onEvent, out offEvent);
+                GetNoteNumberBytes(MidIOHelper.LYRICS_PHRASE_1, phraseNote, VELOCITY, out onEvent, out offEvent);
 
                 InsertionSort(processParams.out_sortableBytes, onEvent);
                 InsertionSort(processParams.out_sortableBytes, offEvent);
             }},
 
-            { MidIOHelper.PhraseEndText, (in VocalProcessingParams processParams) => {
+            { MidIOHelper.LYRICS_PHRASE_END_TEXT, (in VocalProcessingParams processParams) => {
                 // Do nothing, phrase start handles this. Still need to mark it here for it to be excluded from regular events track
             }},
         };
@@ -323,19 +323,19 @@ namespace MoonscraperChartEditor.Song.IO
             VocalProcessingParams vocalProcesingParams = new VocalProcessingParams() { song = song, out_sortableBytes = vocalsEvents };
 
             var rbFormat = exportOptions.midiOptions.rbFormat;
-            string section_id = MidIOHelper.Rb2SectionPrefix;
+            string section_id = MidIOHelper.SECTION_PREFIX_RB2;
 
             switch (rbFormat)
             {
                 case ExportOptions.MidiOptions.RBFormat.RB3:
                     {
-                        section_id = MidIOHelper.Rb3SectionPrefix;
+                        section_id = MidIOHelper.SECTION_PREFIX_RB3;
                         break;
                     }
                 case ExportOptions.MidiOptions.RBFormat.RB2:
                 default:
                     {
-                        section_id = MidIOHelper.Rb2SectionPrefix;
+                        section_id = MidIOHelper.SECTION_PREFIX_RB2;
                         break;
                     }
             }
@@ -648,12 +648,12 @@ namespace MoonscraperChartEditor.Song.IO
                     ChartEvent chartEvent = chartObject as ChartEvent;
                     if (chartEvent != null)     // Text events cannot be split up in the file
                     {
-                        if (soloOnEvent != null && chartEvent.eventName == MidIOHelper.SoloEndEventText)
+                        if (soloOnEvent != null && chartEvent.eventName == MidIOHelper.SOLO_END_EVENT_TEXT)
                         {
                             GetSoloBytes(soloOnEvent, chartEvent.tick, out onEvent, out offEvent);
                             soloOnEvent = null;
                         }
-                        else if (chartEvent.eventName == MidIOHelper.SoloEventText)
+                        else if (chartEvent.eventName == MidIOHelper.SOLO_EVENT_TEXT)
                         {
                             soloOnEvent = chartEvent;
                         }
