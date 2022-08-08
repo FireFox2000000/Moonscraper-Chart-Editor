@@ -53,6 +53,30 @@ namespace MoonscraperChartEditor.Song.IO
         public const byte VELOCITY_GHOST = 1;         // fof/ps
 
         // Lookup tables
+        public static readonly Dictionary<Song.Difficulty, int> GUITAR_DIFF_START_LOOKUP = new Dictionary<Song.Difficulty, int>()
+    {
+        { Song.Difficulty.Easy, 60 },
+        { Song.Difficulty.Medium, 72 },
+        { Song.Difficulty.Hard, 84 },
+        { Song.Difficulty.Expert, 96 }
+    };
+
+        public static readonly Dictionary<Song.Difficulty, int> GHL_GUITAR_DIFF_START_LOOKUP = new Dictionary<Song.Difficulty, int>()
+    {
+        { Song.Difficulty.Easy, 58 },
+        { Song.Difficulty.Medium, 70 },
+        { Song.Difficulty.Hard, 82 },
+        { Song.Difficulty.Expert, 94 }
+    };
+
+        public static readonly Dictionary<Song.Difficulty, int> DRUMS_DIFF_START_LOOKUP = new Dictionary<Song.Difficulty, int>()
+    {
+        { Song.Difficulty.Easy, 60 },
+        { Song.Difficulty.Medium, 72 },
+        { Song.Difficulty.Hard, 84 },
+        { Song.Difficulty.Expert, 96 }
+    };
+
         // http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring
         public static readonly Dictionary<Note.DrumPad, int> PAD_TO_CYMBAL_LOOKUP = new Dictionary<Note.DrumPad, int>()
     {
