@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -591,14 +591,8 @@ namespace MoonscraperChartEditor.Song.IO
             return GuitarMidiNoteNumberToProcessFnMap;
         }
 
-        delegate void BuildPerDifficultyFn(int difficultyStartRange, Song.Difficulty difficulty);
         static void BuildGuitarMidiNoteNumberToProcessFnDict()
         {
-            const int EasyStartRange = 60;
-            const int MediumStartRange = 72;
-            const int HardStartRange = 84;
-            const int ExpertStartRange = 96;
-
             Dictionary<Note.GuitarFret, int> FretToMidiKey = new Dictionary<Note.GuitarFret, int>()
         {
             // { Note.GuitarFret.Open, 0 }, // Handled by sysex event
@@ -609,8 +603,9 @@ namespace MoonscraperChartEditor.Song.IO
             { Note.GuitarFret.Orange, 4 },
         };
 
-            BuildPerDifficultyFn BuildPerDifficulty = (int difficultyStartRange, Song.Difficulty difficulty) =>
+            foreach (var difficulty in EnumX<Song.Difficulty>.Values)
             {
+                int difficultyStartRange = MidIOHelper.GUITAR_DIFF_START_LOOKUP[difficulty];
                 foreach (var guitarFret in EnumX<Note.GuitarFret>.Values)
                 {
                     int fretOffset;
@@ -642,20 +637,10 @@ namespace MoonscraperChartEditor.Song.IO
                     });
                 }
             };
-
-            BuildPerDifficulty(EasyStartRange, Song.Difficulty.Easy);
-            BuildPerDifficulty(MediumStartRange, Song.Difficulty.Medium);
-            BuildPerDifficulty(HardStartRange, Song.Difficulty.Hard);
-            BuildPerDifficulty(ExpertStartRange, Song.Difficulty.Expert);
         }
 
         static void BuildGhlGuitarMidiNoteNumberToProcessFnDict()
         {
-            const int EasyStartRange = 58;
-            const int MediumStartRange = 70;
-            const int HardStartRange = 82;
-            const int ExpertStartRange = 94;
-
             Dictionary<Note.GHLiveGuitarFret, int> FretToMidiKey = new Dictionary<Note.GHLiveGuitarFret, int>()
         {
             { Note.GHLiveGuitarFret.Open, 0 },
@@ -667,8 +652,9 @@ namespace MoonscraperChartEditor.Song.IO
             { Note.GHLiveGuitarFret.Black3, 6 },
         };
 
-            BuildPerDifficultyFn BuildPerDifficulty = (int difficultyStartRange, Song.Difficulty difficulty) =>
+            foreach (var difficulty in EnumX<Song.Difficulty>.Values)
             {
+                int difficultyStartRange = MidIOHelper.GHL_GUITAR_DIFF_START_LOOKUP[difficulty];
                 foreach (var guitarFret in EnumX<Note.GHLiveGuitarFret>.Values)
                 {
                     int fretOffset;
@@ -700,20 +686,10 @@ namespace MoonscraperChartEditor.Song.IO
                     });
                 }
             };
-
-            BuildPerDifficulty(EasyStartRange, Song.Difficulty.Easy);
-            BuildPerDifficulty(MediumStartRange, Song.Difficulty.Medium);
-            BuildPerDifficulty(HardStartRange, Song.Difficulty.Hard);
-            BuildPerDifficulty(ExpertStartRange, Song.Difficulty.Expert);
         }
 
         static void BuildDrumsMidiNoteNumberToProcessFnDict()
         {
-            const int EasyStartRange = 60;
-            const int MediumStartRange = 72;
-            const int HardStartRange = 84;
-            const int ExpertStartRange = 96;
-
             Dictionary<Note.DrumPad, int> DrumPadToMidiKey = new Dictionary<Note.DrumPad, int>()
         {
             { Note.DrumPad.Kick, 0 },
@@ -731,8 +707,9 @@ namespace MoonscraperChartEditor.Song.IO
             { Note.DrumPad.Orange, Note.Flags.ProDrums_Cymbal },
         };
 
-            BuildPerDifficultyFn BuildPerDifficulty = (int difficultyStartRange, Song.Difficulty difficulty) =>
+            foreach (var difficulty in EnumX<Song.Difficulty>.Values)
             {
+                int difficultyStartRange = MidIOHelper.DRUMS_DIFF_START_LOOKUP[difficulty];
                 foreach (var pad in EnumX<Note.DrumPad>.Values)
                 {
                     int padOffset;
@@ -750,11 +727,6 @@ namespace MoonscraperChartEditor.Song.IO
                     }
                 }
             };
-
-            BuildPerDifficulty(EasyStartRange, Song.Difficulty.Easy);
-            BuildPerDifficulty(MediumStartRange, Song.Difficulty.Medium);
-            BuildPerDifficulty(HardStartRange, Song.Difficulty.Hard);
-            BuildPerDifficulty(ExpertStartRange, Song.Difficulty.Expert);
 
             foreach (var keyVal in MidIOHelper.PAD_TO_CYMBAL_LOOKUP)
             {
