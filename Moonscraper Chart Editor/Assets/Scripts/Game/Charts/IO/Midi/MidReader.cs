@@ -170,13 +170,13 @@ namespace MoonscraperChartEditor.Song.IO
                     bool importTrackAsVocalsEvents = trackNameKey == MidIOHelper.VOCALS_TRACK;
 
 #if !UNITY_EDITOR
-                if (importTrackAsVocalsEvents)
-                {
-                    callBackState = CallbackState.WaitingForExternalInformation;
-                    NativeMessageBox.Result result = NativeMessageBox.Show("A vocals track was found in the file. Would you like to import the text events as global lyrics and phrase events?", "Vocals Track Found", NativeMessageBox.Type.YesNo, null);
-                    callBackState = CallbackState.None;
-                    importTrackAsVocalsEvents = result == NativeMessageBox.Result.Yes;
-                }
+                    if (importTrackAsVocalsEvents)
+                    {
+                        callBackState = CallbackState.WaitingForExternalInformation;
+                        NativeMessageBox.Result result = NativeMessageBox.Show("A vocals track was found in the file. Would you like to import the text events as global lyrics and phrase events?", "Vocals Track Found", NativeMessageBox.Type.YesNo, null);
+                        callBackState = CallbackState.None;
+                        importTrackAsVocalsEvents = result == NativeMessageBox.Result.Yes;
+                    }
 #endif
                     if (importTrackAsVocalsEvents)
                     {
@@ -621,8 +621,8 @@ namespace MoonscraperChartEditor.Song.IO
                     }
                 }
 
-            // Process forced hopo or forced strum
-            {
+                // Process forced hopo or forced strum
+                {
                     int flagKey = difficultyStartRange + 5;
                     GuitarMidiNoteNumberToProcessFnMap.Add(flagKey, (in EventProcessParams eventProcessParams) =>
                     {
@@ -670,8 +670,8 @@ namespace MoonscraperChartEditor.Song.IO
                     }
                 }
 
-            // Process forced hopo or forced strum
-            {
+                // Process forced hopo or forced strum
+                {
                     int flagKey = difficultyStartRange + 7;
                     GhlGuitarMidiNoteNumberToProcessFnMap.Add(flagKey, (in EventProcessParams eventProcessParams) =>
                     {
