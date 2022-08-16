@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -865,7 +865,7 @@ namespace MoonscraperChartEditor.Song.IO
         static void ProcessNoteOnEventAsEvent(EventProcessParams eventProcessParams, string eventStartText, string eventEndText)
         {
             var noteEvent = eventProcessParams.midiEvent as NoteOnEvent;
-            Debug.Assert(noteEvent != null, $"Wrong note event type passed to ProcessNoteOnEventAsEvent. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
+            Debug.Assert(noteEvent != null, $"Wrong note event type passed to {nameof(ProcessNoteOnEventAsEvent)}. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
             var song = eventProcessParams.song;
             var instrument = eventProcessParams.instrument;
 
