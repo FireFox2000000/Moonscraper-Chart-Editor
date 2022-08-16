@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -898,8 +898,6 @@ namespace MoonscraperChartEditor.Song.IO
             uint tick = (uint)noteEvent.AbsoluteTime;
             uint endPos = (uint)(noteEvent.OffEvent.AbsoluteTime - tick);
             --endPos;
-
-            var flagEvent = noteEvent;
 
             foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
             {
