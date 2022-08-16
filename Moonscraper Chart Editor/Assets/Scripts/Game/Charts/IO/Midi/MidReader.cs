@@ -89,6 +89,25 @@ namespace MoonscraperChartEditor.Song.IO
         { MidIOHelper.STARPOWER_DRUM_FILL_4, ProcessNoteOnEventAsDrumFill },
     };
 
+        // These dictionaries map the text of a MIDI text event to a specific function that processes them
+        static readonly Dictionary<string, EventProcessFn> GuitarTextEventToProcessFnMap = new Dictionary<string, EventProcessFn>()
+    {
+    };
+
+        static readonly Dictionary<string, EventProcessFn> GhlGuitarTextEventToProcessFnMap = new Dictionary<string, EventProcessFn>()
+    {
+    };
+
+        static readonly Dictionary<string, EventProcessFn> DrumsTextEventToProcessFnMap = new Dictionary<string, EventProcessFn>()
+    {
+        { MidIOHelper.CHART_DYNAMICS_TEXT, (in EventProcessParams eventProcessParams) => {
+            BuildDrumsMidiNoteNumberToProcessFnDict(enableVelocity: true);
+        }},
+        { MidIOHelper.CHART_DYNAMICS_TEXT_BRACKET, (in EventProcessParams eventProcessParams) => {
+            BuildDrumsMidiNoteNumberToProcessFnDict(enableVelocity: true);
+        }}
+    };
+
         static MidReader()
         {
             BuildGuitarMidiNoteNumberToProcessFnDict();
@@ -356,6 +375,7 @@ namespace MoonscraperChartEditor.Song.IO
             };
 
             var noteProcessDict = GetNoteProcessDict(gameMode);
+            var textEventProcessDict = GetTextEventProcessDict(gameMode);
 
             if (instrument == Song.Instrument.Unrecognised)
             {
@@ -382,10 +402,20 @@ namespace MoonscraperChartEditor.Song.IO
                     }
                     else
                     {
-                        // Copy text event to all difficulties so that .chart format can store these properly. Midi writer will strip duplicate events just fine anyway. 
-                        foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
+                        EventProcessFn processFn;
+                        if (textEventProcessDict.TryGetValue(eventName, out processFn))
                         {
-                            song.GetChart(instrument, difficulty).Add(chartEvent);
+                            // This text event affects parsing of the .mid file, run its function and don't parse it into the chart
+                            processParams.midiEvent = text;
+                            processFn(processParams);
+                        }
+                        else
+                        {
+                            // Copy text event to all difficulties so that .chart format can store these properly. Midi writer will strip duplicate events just fine anyway.
+                            foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
+                            {
+                                song.GetChart(instrument, difficulty).Add(chartEvent);
+                            }
                         }
                     }
                 }
@@ -578,6 +608,20 @@ namespace MoonscraperChartEditor.Song.IO
             return GuitarMidiNoteNumberToProcessFnMap;
         }
 
+        static Dictionary<string, EventProcessFn> GetTextEventProcessDict(Chart.GameMode gameMode)
+        {
+            switch (gameMode)
+            {
+                case Chart.GameMode.GHLGuitar:
+                    return GhlGuitarTextEventToProcessFnMap;
+                case Chart.GameMode.Drums:
+                    return DrumsTextEventToProcessFnMap;
+
+                default:
+                    return GuitarTextEventToProcessFnMap;
+            }
+        }
+
         static void BuildGuitarMidiNoteNumberToProcessFnDict()
         {
             Dictionary<Note.GuitarFret, int> FretToMidiKey = new Dictionary<Note.GuitarFret, int>()
@@ -675,7 +719,7 @@ namespace MoonscraperChartEditor.Song.IO
             };
         }
 
-        static void BuildDrumsMidiNoteNumberToProcessFnDict()
+        static void BuildDrumsMidiNoteNumberToProcessFnDict(bool enableVelocity = false)
         {
             Dictionary<Note.DrumPad, int> DrumPadToMidiKey = new Dictionary<Note.DrumPad, int>()
         {
@@ -707,10 +751,47 @@ namespace MoonscraperChartEditor.Song.IO
                         Note.Flags defaultFlags = Note.Flags.None;
                         DrumPadDefaultFlags.TryGetValue(pad, out defaultFlags);
 
-                        DrumsMidiNoteNumberToProcessFnMap.Add(key, (in EventProcessParams eventProcessParams) =>
+                        if (DrumsMidiNoteNumberToProcessFnMap.ContainsKey(key))
                         {
-                            ProcessNoteOnEventAsNote(eventProcessParams, difficulty, fret, defaultFlags);
-                        });
+                            DrumsMidiNoteNumberToProcessFnMap.Remove(key);
+                        }
+
+                        if (enableVelocity)
+                        {
+                            DrumsMidiNoteNumberToProcessFnMap.Add(key, (in EventProcessParams eventProcessParams) =>
+                            {
+                                var noteEvent = eventProcessParams.midiEvent as NoteOnEvent;
+                                Debug.Assert(noteEvent != null, $"Wrong note event type passed to drums note process. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
+
+                                var flags = defaultFlags;
+                                switch (noteEvent.Velocity)
+                                {
+                                    case MidIOHelper.VELOCITY_ACCENT:
+                                        {
+                                            flags |= Note.Flags.ProDrums_Accent;
+                                            break;
+                                        }
+                                    case MidIOHelper.VELOCITY_GHOST:
+                                        {
+                                            flags |= Note.Flags.ProDrums_Ghost;
+                                            break;
+                                        }
+                                    default: break;
+                                }
+
+                                ProcessNoteOnEventAsNote(eventProcessParams, difficulty, fret, flags);
+                            });
+                        }
+                        else
+                        {
+                            DrumsMidiNoteNumberToProcessFnMap.Add(key, (in EventProcessParams eventProcessParams) =>
+                            {
+                                var noteEvent = eventProcessParams.midiEvent as NoteOnEvent;
+                                Debug.Assert(noteEvent != null, $"Wrong note event type passed to drums note process. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
+
+                                ProcessNoteOnEventAsNote(eventProcessParams, difficulty, fret, defaultFlags);
+                            });
+                        }
                     }
                 }
             };
@@ -719,6 +800,12 @@ namespace MoonscraperChartEditor.Song.IO
             {
                 int pad = (int)keyVal.Key;
                 int midiKey = keyVal.Value;
+
+                if (DrumsMidiNoteNumberToProcessFnMap.ContainsKey(midiKey))
+                {
+                    DrumsMidiNoteNumberToProcessFnMap.Remove(midiKey);
+                }
+
                 DrumsMidiNoteNumberToProcessFnMap.Add(midiKey, (in EventProcessParams eventProcessParams) =>
                 {
                     ProcessNoteOnEventAsFlagToggle(eventProcessParams, Note.Flags.ProDrums_Cymbal, pad);
@@ -742,29 +829,8 @@ namespace MoonscraperChartEditor.Song.IO
             Debug.Assert(noteEvent != null, $"Wrong note event type passed to {nameof(ProcessNoteOnEventAsNote)}. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
             var tick = (uint)noteEvent.AbsoluteTime;
             var sus = CalculateSustainLength(eventProcessParams.song, noteEvent);
-            var velocity = noteEvent.Velocity;
 
-            Note.Flags flags = defaultFlags;
-
-            if (eventProcessParams.instrument == Song.Instrument.Drums)
-            {
-                switch (velocity)
-                {
-                    case MidIOHelper.VELOCITY_ACCENT:
-                        {
-                            flags |= Note.Flags.ProDrums_Accent;
-                            break;
-                        }
-                    case MidIOHelper.VELOCITY_GHOST:
-                        {
-                            flags |= Note.Flags.ProDrums_Ghost;
-                            break;
-                        }
-                    default: break;
-                }
-            }
-
-            Note newNote = new Note(tick, ingameFret, sus, flags);
+            Note newNote = new Note(tick, ingameFret, sus, defaultFlags);
             chart.Add(newNote, false);
         }
 
