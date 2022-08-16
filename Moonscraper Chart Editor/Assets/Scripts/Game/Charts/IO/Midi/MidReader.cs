@@ -855,8 +855,8 @@ namespace MoonscraperChartEditor.Song.IO
         {
             uint tick = (uint)noteEvent.AbsoluteTime;
             var sus = (uint)(noteEvent.OffEvent.AbsoluteTime - tick);
-            int rbSustainFixLength = (int)(64 * song.resolution / SongConfig.STANDARD_BEAT_RESOLUTION);
-            if (sus <= rbSustainFixLength)
+            int susCutoff = (int)(song.resolution / 3); // 1/12th note
+            if (sus <= susCutoff)
                 sus = 0;
 
             return sus;
