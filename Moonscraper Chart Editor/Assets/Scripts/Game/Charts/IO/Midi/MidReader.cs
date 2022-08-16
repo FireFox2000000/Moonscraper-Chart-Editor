@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -324,8 +324,6 @@ namespace MoonscraperChartEditor.Song.IO
 
         private static void ReadNotes(IList<MidiEvent> track, Song song, Song.Instrument instrument)
         {
-            List<NoteOnEvent> forceNotesList = new List<NoteOnEvent>();
-            List<NoteOnEvent> proDrumsNotesList = new List<NoteOnEvent>();
             List<SysexEvent> tapAndOpenEvents = new List<SysexEvent>();
 
             Chart unrecognised = new Chart(song, Song.Instrument.Unrecognised);
@@ -343,8 +341,6 @@ namespace MoonscraperChartEditor.Song.IO
 
             if (instrument == Song.Instrument.Unrecognised)
                 song.unrecognisedCharts.Add(unrecognised);
-
-            int rbSustainFixLength = (int)(64 * song.resolution / SongConfig.STANDARD_BEAT_RESOLUTION);
 
             // Load all the notes
             for (int i = 0; i < track.Count; i++)
@@ -532,42 +528,6 @@ namespace MoonscraperChartEditor.Song.IO
             foreach (var process in processParams.delayedProcessesList)
             {
                 process(processParams);
-            }
-
-            foreach (var flagEvent in proDrumsNotesList)
-            {
-                uint tick = (uint)flagEvent.AbsoluteTime;
-                uint endPos = (uint)(flagEvent.OffEvent.AbsoluteTime - tick);
-                if (endPos > 0)
-                    --endPos;
-
-                Debug.Assert(instrument == Song.Instrument.Drums);
-
-                foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
-                {
-                    Chart chart = song.GetChart(instrument, difficulty);
-
-                    int index, length;
-                    SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
-
-                    Note.DrumPad drumPadForFlag;
-                    if (!MidIOHelper.CYMBAL_TO_PAD_LOOKUP.TryGetValue(flagEvent.NoteNumber, out drumPadForFlag))
-                    {
-                        Debug.Assert(false, "Unknown note number flag " + flagEvent.NoteNumber);
-                        continue;
-                    }
-
-                    for (int i = index; i < index + length; ++i)
-                    {
-                        Note note = chart.notes[i];
-
-                        if (note.drumPad == drumPadForFlag)
-                        {
-                            // Reverse cymbal flag
-                            note.flags ^= Note.Flags.ProDrums_Cymbal;
-                        }
-                    }
-                }
             }
         }
 
