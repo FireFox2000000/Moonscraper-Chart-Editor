@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -46,6 +46,9 @@ namespace MoonscraperChartEditor.Song.IO
 
         public const string SECTION_PREFIX_RB2 = "section ";
         public const string SECTION_PREFIX_RB3 = "prc_";
+
+        public const string CHART_DYNAMICS_TEXT = "ENABLE_CHART_DYNAMICS";
+        public const string CHART_DYNAMICS_TEXT_BRACKET = "[ENABLE_CHART_DYNAMICS]";
 
         // Note velocities
         public const byte VELOCITY = 100;             // default note velocity for exporting

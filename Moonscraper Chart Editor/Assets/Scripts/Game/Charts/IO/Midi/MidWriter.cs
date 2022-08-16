@@ -509,6 +509,7 @@ namespace MoonscraperChartEditor.Song.IO
             List<SortableBytes> eventList = new List<SortableBytes>();
 
             ChartEvent soloOnEvent = null;
+            bool dynamicsFound = false;
             foreach (ChartObject chartObject in chart.chartObjects)
             {
                 Note note = chartObject as Note;
@@ -526,10 +527,12 @@ namespace MoonscraperChartEditor.Song.IO
                     {
                         if (note.flags.HasFlag(Note.Flags.ProDrums_Accent))
                         {
+                            dynamicsFound = true;
                             velocity = MidIOHelper.VELOCITY_ACCENT;
                         }
                         else if (note.flags.HasFlag(Note.Flags.ProDrums_Ghost))
                         {
+                            dynamicsFound = true;
                             velocity = MidIOHelper.VELOCITY_GHOST;
                         }
                     }
@@ -692,6 +695,14 @@ namespace MoonscraperChartEditor.Song.IO
 
                     InsertionSort(eventList, offEvent);
                 }
+            }
+
+            if (dynamicsFound)
+            {
+                byte[] textEvent = MetaTextEvent(MetaTextEventType.Text, "[" + MidIOHelper.CHART_DYNAMICS_TEXT + "]");
+                SortableBytes dynamicsEvent = new SortableBytes(1, textEvent); // Place at the start of the track, just after the track name event
+
+                InsertionSort(eventList, dynamicsEvent);
             }
 
             return eventList.ToArray();
