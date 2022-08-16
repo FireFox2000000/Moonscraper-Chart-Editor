@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -340,21 +340,19 @@ namespace MoonscraperChartEditor.Song.IO
             var noteProcessDict = GetNoteProcessDict(gameMode);
 
             if (instrument == Song.Instrument.Unrecognised)
+            {
+                var text = track[0] as TextEvent;
+                if (text != null)
+                    unrecognised.name = text.Text;
                 song.unrecognisedCharts.Add(unrecognised);
+            }
 
             // Load all the notes
-            for (int i = 0; i < track.Count; i++)
+            for (int i = 1; i < track.Count; i++)
             {
                 var text = track[i] as TextEvent;
                 if (text != null)
                 {
-                    if (i == 0)
-                    {
-                        if (instrument == Song.Instrument.Unrecognised)
-                            unrecognised.name = text.Text;
-                        continue;           // We don't want the first event because that is the name of the track
-                    }
-
                     var tick = (uint)text.AbsoluteTime;
                     var eventName = text.Text;
 
