@@ -485,6 +485,28 @@
             }
         },
         {
+            "mSChartEditorInputAction": "ToggleNoteAccent",
+            "properties": {
+                "displayName": "Toggle Note Accent",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 3,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
+            "mSChartEditorInputAction": "ToggleNoteGhost",
+            "properties": {
+                "displayName": "Toggle Note Ghost",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 3,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
             "mSChartEditorInputAction": "ToggleStarpowerDrumsFillActivation",
             "properties": {
                 "displayName": "Toggle Starpower Drums Fill Activation",
