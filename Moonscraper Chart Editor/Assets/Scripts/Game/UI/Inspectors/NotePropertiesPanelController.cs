@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -16,6 +16,8 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     public Toggle forcedToggle;
     public Toggle cymbalToggle;
     public Toggle doubleKickToggle;
+    public Toggle accentToggle;
+    public Toggle ghostToggle;
 
     public GameObject noteToolObject;
     PlaceNoteController noteToolController;
@@ -142,6 +144,8 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         tapToggle.isOn = (flags & Note.Flags.Tap) != 0;
         cymbalToggle.isOn = (flags & Note.Flags.ProDrums_Cymbal) != 0;
         doubleKickToggle.isOn = (flags & Note.Flags.DoubleKick) != 0;
+        accentToggle.isOn = (flags & Note.Flags.ProDrums_Accent) != 0;
+        ghostToggle.isOn = (flags & Note.Flags.ProDrums_Ghost) != 0;
 
         toggleBlockingActive = false;
     }
@@ -156,6 +160,8 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         tapToggle.gameObject.SetActive(!drumsMode);
         cymbalToggle.gameObject.SetActive(proDrumsMode);
         doubleKickToggle.gameObject.SetActive(proDrumsMode);
+        accentToggle.gameObject.SetActive(proDrumsMode);
+        ghostToggle.gameObject.SetActive(proDrumsMode);
 
         if (!drumsMode)
         {
@@ -181,16 +187,22 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             {
                 cymbalToggle.interactable = noteToolController.cymbalInteractable;
                 doubleKickToggle.interactable = noteToolController.doubleKickInteractable;
+                accentToggle.interactable = noteToolController.accentInteractable;
+                ghostToggle.interactable = noteToolController.ghostInteractable;
             }
             else if (!IsInNoteTool())
             {
                 cymbalToggle.interactable = NoteFunctions.AllowedToBeCymbal(currentNote);
                 doubleKickToggle.interactable = NoteFunctions.AllowedToBeDoubleKick(currentNote, editor.currentDifficulty);
+                accentToggle.interactable = NoteFunctions.AllowedToBeAccentOrGhost(currentNote);
+                ghostToggle.interactable = NoteFunctions.AllowedToBeAccentOrGhost(currentNote);
             }
             else
             {
                 cymbalToggle.interactable = true;
                 doubleKickToggle.interactable = true;
+                accentToggle.interactable = true;
+                ghostToggle.interactable = true;
             }
         }
     }
@@ -215,6 +227,16 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteDoubleKick) && doubleKickToggle.interactable)
         {
             doubleKickToggle.isOn = !doubleKickToggle.isOn;
+        }
+
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteAccent) && accentToggle.interactable)
+        {
+            accentToggle.isOn = !accentToggle.isOn;
+        }
+
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteGhost) && ghostToggle.interactable)
+        {
+            ghostToggle.isOn = !ghostToggle.isOn;
         }
     }
 
@@ -241,6 +263,28 @@ public class NotePropertiesPanelController : PropertiesPanelController {
     public void setDoubleKick()
     {
         SetNoteFlag(doubleKickToggle, Note.Flags.DoubleKick);
+    }
+
+    public void setAccent()
+    {
+        SetNoteFlag(accentToggle, Note.Flags.ProDrums_Accent);
+        // TODO: This doesn't seem to work correctly
+        // A note can only be either an accent or a ghost, not both
+        // if (accentToggle.isOn && ghostToggle.isOn)
+        // {
+        //     ghostToggle.isOn = false;
+        // }
+    }
+
+    public void setGhost()
+    {
+        SetNoteFlag(ghostToggle, Note.Flags.ProDrums_Ghost);
+        // TODO: This doesn't seem to work correctly
+        // A note can only be either an accent or a ghost, not both
+        // if (ghostToggle.isOn && accentToggle.isOn)
+        // {
+        //     accentToggle.isOn = false;
+        // }
     }
 
     public void SetNoteFlag(Toggle toggle, Note.Flags flag)
