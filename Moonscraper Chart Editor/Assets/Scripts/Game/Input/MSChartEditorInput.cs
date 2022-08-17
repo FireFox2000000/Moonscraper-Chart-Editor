@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -78,6 +78,8 @@ public enum MSChartEditorInputActions
     ToggleNoteTap,
     ToggleNoteCymbal,
     ToggleNoteDoubleKick,
+    ToggleNoteAccent,
+    ToggleNoteGhost,
     ToggleStarpowerDrumsFillActivation,
     ToggleViewMode, 
     
