@@ -37,6 +37,8 @@ public class PopulateInputConfig : Editor
                 InputConfig inputConfig = new InputConfig();
                 InputConfig.LoadFromFile(filename, inputConfig);
                 inputProperties.shortcutInputs = inputConfig.shortcutInputs;
+
+                Debug.Log("Input properties config loaded successfully");
             }
         }
         if (GUILayout.Button("Save Config To File")) 
