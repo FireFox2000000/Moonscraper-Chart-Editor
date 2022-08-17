@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -12,8 +12,7 @@ using MoonscraperEngine.Input;
  * 1. Add to the enum list
  * 2. Open Scenes/Config Editors/Input Editor
  * 3. Click on the Input Builder object and locate the Input Config Builder script
- * 4. Click the button "Load Config From File"
- * 5. Open the file /Assets/Database/InputPropertiesConfig.json
+ * 4. Click the button "Load Config From File", which will load /Assets/Database/InputPropertiesConfig.json
  * 6. The field InputProperties/Shortcut Input will now be populated. Scroll down to find your new action and set up the new properties
  * 7. Click the button "Save Config To File" and overwrite InputPropertiesConfig.json
  */
