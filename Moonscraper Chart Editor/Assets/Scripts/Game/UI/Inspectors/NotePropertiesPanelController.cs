@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -225,168 +225,59 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 	
     public void setTap()
     {
+        SetNoteFlag(tapToggle, Note.Flags.Tap);
+    }
+
+    public void setForced()
+    {
+        SetNoteFlag(forcedToggle, Note.Flags.Forced);
+    }
+
+    public void setCymbal()
+    {
+        SetNoteFlag(cymbalToggle, Note.Flags.ProDrums_Cymbal);
+    }
+
+    public void setDoubleKick()
+    {
+        SetNoteFlag(doubleKickToggle, Note.Flags.DoubleKick);
+    }
+
+    public void SetNoteFlag(Toggle toggle, Note.Flags flag)
+    {
         if (toggleBlockingActive)
             return;
 
         if (IsInNoteTool())
         {
-            SetTapNoteTool();
+            if (toggle.interactable)
+                SetNoteToolFlag(ref noteToolController.desiredFlags, flag);
         }
         else
         {
-            SetTapNote();
-        }
-    }
-
-    void SetTapNoteTool()
-    {
-        if (tapToggle.interactable)
-            SetNoteToolFlag(ref noteToolController.desiredFlags, tapToggle, Note.Flags.Tap);
-    }
-
-    void SetTapNote()
-    {
-        if (currentNote == prevNote)
-        {
-            var newFlags = currentNote.flags;
-
-            if (currentNote != null)
+            if (currentNote == prevNote)
             {
-                if (tapToggle.isOn)
-                    newFlags |= Note.Flags.Tap;
-                else
-                    newFlags &= ~Note.Flags.Tap;
-            }
+                var newFlags = currentNote.flags;
 
-            SetNewFlags(currentNote, newFlags);
+                if (currentNote != null)
+                {
+                    if (toggle.isOn)
+                        newFlags |= flag;
+                    else
+                        newFlags &= ~flag;
+                }
+
+                SetNewFlags(currentNote, newFlags);
+            }
         }
     }
 
-    void SetNoteToolFlag(ref Note.Flags flags, Toggle uiToggle, Note.Flags flagsToToggle)
+    void SetNoteToolFlag(ref Note.Flags flags, Note.Flags flagsToToggle)
     {
         if ((flags & flagsToToggle) == 0)
             flags |= flagsToToggle;
         else
             flags &= ~flagsToToggle;
-    }
-
-    public void setForced()
-    {
-        if (toggleBlockingActive)
-            return;
-
-        if (IsInNoteTool())
-        {
-            SetForcedNoteTool();
-        }
-        else
-        {
-            SetForcedNote();
-        }
-    }
-
-    public void setCymbal()
-    {
-        if (toggleBlockingActive)
-            return;
-
-        if (IsInNoteTool())
-        {
-            SetCymbalNoteTool();
-        }
-        else
-        {
-            SetCymbalNote();
-        }
-    }
-
-    public void setDoubleKick()
-    {
-        if (toggleBlockingActive)
-            return;
-
-        if (IsInNoteTool())
-        {
-            SetDoubleKickNoteTool();
-        }
-        else
-        {
-            SetDoubleKickNote();
-        }
-    }
-
-    void SetForcedNote()
-    {
-        if (currentNote == prevNote)
-        {
-            var newFlags = currentNote.flags;
-
-            if (currentNote != null)
-            {
-                if (forcedToggle.isOn)
-                    newFlags |= Note.Flags.Forced;
-                else
-                    newFlags &= ~Note.Flags.Forced;
-            }
-
-            SetNewFlags(currentNote, newFlags);
-        }
-    }
-
-    void SetForcedNoteTool()
-    {
-        if (forcedToggle.interactable)
-            SetNoteToolFlag(ref noteToolController.desiredFlags, forcedToggle, Note.Flags.Forced);
-    }
-
-    void SetCymbalNote()
-    {
-        if (currentNote == prevNote)
-        {
-            var newFlags = currentNote.flags;
-
-            if (currentNote != null)
-            {
-                if (cymbalToggle.isOn)
-                    newFlags |= Note.Flags.ProDrums_Cymbal;
-                else
-                    newFlags &= ~Note.Flags.ProDrums_Cymbal;
-            }
-
-            SetNewFlags(currentNote, newFlags);
-        }
-
-    }
-
-    void SetCymbalNoteTool()
-    {
-        if (cymbalToggle.interactable)
-            SetNoteToolFlag(ref noteToolController.desiredFlags, cymbalToggle, Note.Flags.ProDrums_Cymbal);
-    }
-
-    void SetDoubleKickNote()
-    {
-        if (currentNote == prevNote)
-        {
-            var newFlags = currentNote.flags;
-
-            if (currentNote != null)
-            {
-                if (doubleKickToggle.isOn)
-                    newFlags |= Note.Flags.DoubleKick;
-                else
-                    newFlags &= ~Note.Flags.DoubleKick;
-            }
-
-            SetNewFlags(currentNote, newFlags);
-        }
-
-    }
-
-    void SetDoubleKickNoteTool()
-    {
-        if (doubleKickToggle.interactable)
-            SetNoteToolFlag(ref noteToolController.desiredFlags, doubleKickToggle, Note.Flags.DoubleKick);
     }
 
     void SetNewFlags(Note note, Note.Flags newFlags)
