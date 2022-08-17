@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -26,6 +26,9 @@ namespace MoonscraperChartEditor.Song.IO
 
         public const int c_proDrumsOffset = 64;
         public const int c_instrumentPlusOffset = 32;
+        public const int c_drumsAccentOffset = 33;
+        public const int c_drumsGhostOffset = 39;
+
         public const int c_starpowerId = 2;
         public const int c_starpowerDrumFillId = 64;
 
@@ -63,6 +66,18 @@ namespace MoonscraperChartEditor.Song.IO
         { c_proDrumsOffset + 3, Note.Flags.ProDrums_Cymbal },       // Blue save num from c_drumNoteNumLookup
         { c_proDrumsOffset + 4, Note.Flags.ProDrums_Cymbal },       // Orange (Green in 4-lane) save num from c_drumNoteNumLookup
         { c_instrumentPlusOffset, Note.Flags.InstrumentPlus },      // Double Kick
+
+        { c_drumsAccentOffset + 1, Note.Flags.ProDrums_Accent },    // Red accent
+        { c_drumsAccentOffset + 2, Note.Flags.ProDrums_Accent },    // Yellow accent
+        { c_drumsAccentOffset + 3, Note.Flags.ProDrums_Accent },    // Blue accent
+        { c_drumsAccentOffset + 4, Note.Flags.ProDrums_Accent },    // Orange accent
+        { c_drumsAccentOffset + 5, Note.Flags.ProDrums_Accent },    // Green accent
+
+        { c_drumsGhostOffset + 1, Note.Flags.ProDrums_Ghost },      // Red ghost
+        { c_drumsGhostOffset + 2, Note.Flags.ProDrums_Ghost },      // Yellow ghost
+        { c_drumsGhostOffset + 3, Note.Flags.ProDrums_Ghost },      // Blue ghost
+        { c_drumsGhostOffset + 4, Note.Flags.ProDrums_Ghost },      // Orange ghost
+        { c_drumsGhostOffset + 5, Note.Flags.ProDrums_Ghost },      // Green ghost
     };
 
         // Default flags, mark as cymbal for pro drums automatically. Also used for choosing whether to write flag information or not if it's like this by default in the first place.
@@ -74,6 +89,24 @@ namespace MoonscraperChartEditor.Song.IO
         { (int)Note.DrumPad.Blue      , Note.Flags.None },
         { (int)Note.DrumPad.Orange    , Note.Flags.None },   // Orange becomes green during 4-lane
         { (int)Note.DrumPad.Green     , Note.Flags.None },
+    };
+
+        public static readonly Dictionary<int, int> c_drumNoteAccentSaveLookup = new Dictionary<int, int>()
+    {
+        { (int)Note.DrumPad.Red       , c_drumsAccentOffset + 1 },
+        { (int)Note.DrumPad.Yellow    , c_drumsAccentOffset + 2 },
+        { (int)Note.DrumPad.Blue      , c_drumsAccentOffset + 3 },
+        { (int)Note.DrumPad.Orange    , c_drumsAccentOffset + 4 },
+        { (int)Note.DrumPad.Green     , c_drumsAccentOffset + 5 },
+    };
+
+        public static readonly Dictionary<int, int> c_drumNoteGhostSaveLookup = new Dictionary<int, int>()
+    {
+        { (int)Note.DrumPad.Red       , c_drumsGhostOffset + 1 },
+        { (int)Note.DrumPad.Yellow    , c_drumsGhostOffset + 2 },
+        { (int)Note.DrumPad.Blue      , c_drumsGhostOffset + 3 },
+        { (int)Note.DrumPad.Orange    , c_drumsGhostOffset + 4 },
+        { (int)Note.DrumPad.Green     , c_drumsGhostOffset + 5 },
     };
 
         public static readonly Dictionary<int, int> c_ghlNoteNumLookup = new Dictionary<int, int>()
