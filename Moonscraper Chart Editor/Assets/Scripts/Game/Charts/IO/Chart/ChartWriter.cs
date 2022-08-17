@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 // Chart file format specifications- https://docs.google.com/document/d/1v2v0U-9HQ5qHeccpExDOLJ5CMPZZ3QytPmAG5WF0Kzs/edit?usp=sharing
@@ -579,9 +579,38 @@ namespace MoonscraperChartEditor.Song.IO
                     }
                 }
 
-                // Write out cymbal flag for each note
                 if (writeParameters.instrument == Song.Instrument.Drums)
                 {
+                    // Write out accent/ghost flags
+                    {
+                        Note.Flags flagToTest = Note.Flags.ProDrums_Accent;
+                        if ((noteFlags & flagToTest) != 0)
+                        {
+                            int value;
+                            if (ChartIOHelper.c_drumNoteAccentSaveLookup.TryGetValue(note.rawNote, out value))
+                            {
+                                output.Append(Globals.LINE_ENDING);
+                                output.Append(Globals.TABSPACE + writeParameters.scaledTick);
+                                output.AppendFormat(s_noteFormat, value, 0);
+                            }
+                        }
+                        else
+                        {
+                            flagToTest = Note.Flags.ProDrums_Ghost;
+                            if ((noteFlags & flagToTest) != 0)
+                            {
+                                int value;
+                                if (ChartIOHelper.c_drumNoteGhostSaveLookup.TryGetValue(note.rawNote, out value))
+                                {
+                                    output.Append(Globals.LINE_ENDING);
+                                    output.Append(Globals.TABSPACE + writeParameters.scaledTick);
+                                    output.AppendFormat(s_noteFormat, value, 0);
+                                }
+                            }
+                        }
+                    }
+
+                    // Write out cymbal flag for each note
                     int writeValue = ChartIOHelper.c_proDrumsOffset;
                     int noteOffset;
                     if (!ChartIOHelper.c_drumNoteToSaveNumberLookup.TryGetValue(note.rawNote, out noteOffset))

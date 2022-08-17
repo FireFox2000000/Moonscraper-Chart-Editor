@@ -88,6 +88,38 @@ namespace MoonscraperChartEditor.Song.IO
             { ChartIOHelper.c_proDrumsOffset + 4, (in NoteProcessParams noteProcessParams) => {
                 ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Orange, Note.Flags.ProDrums_Cymbal);
             } },
+
+            { ChartIOHelper.c_drumsAccentOffset + 1, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Red, Note.Flags.ProDrums_Accent);
+            } },
+            { ChartIOHelper.c_drumsAccentOffset + 2, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Yellow, Note.Flags.ProDrums_Accent);
+            } },
+            { ChartIOHelper.c_drumsAccentOffset + 3, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Blue, Note.Flags.ProDrums_Accent);
+            } },
+            { ChartIOHelper.c_drumsAccentOffset + 4, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Orange, Note.Flags.ProDrums_Accent);
+            } },
+            { ChartIOHelper.c_drumsAccentOffset + 5, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Green, Note.Flags.ProDrums_Accent);
+            } },
+
+            { ChartIOHelper.c_drumsGhostOffset + 1, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Red, Note.Flags.ProDrums_Ghost);
+            } },
+            { ChartIOHelper.c_drumsGhostOffset + 2, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Yellow, Note.Flags.ProDrums_Ghost);
+            } },
+            { ChartIOHelper.c_drumsGhostOffset + 3, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Blue, Note.Flags.ProDrums_Ghost);
+            } },
+            { ChartIOHelper.c_drumsGhostOffset + 4, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Orange, Note.Flags.ProDrums_Ghost);
+            } },
+            { ChartIOHelper.c_drumsGhostOffset + 5, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Green, Note.Flags.ProDrums_Ghost);
+            } },
         };
 
         static readonly Dictionary<int, NoteEventProcessFn> GhlChartNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
