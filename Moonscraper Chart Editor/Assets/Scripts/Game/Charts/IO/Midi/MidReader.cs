@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -534,8 +534,16 @@ namespace MoonscraperChartEditor.Song.IO
                     SongObjectHelper.GetRange(notes, tick, tick + endPos, out index, out length);
                     for (int k = index; k < index + length; ++k)
                     {
-                        if (gameMode != Chart.GameMode.Drums)
-                            notes[k].guitarFret = Note.GuitarFret.Open;
+                        switch (gameMode)
+                        {
+                            case Chart.GameMode.Guitar:
+                                notes[k].guitarFret = Note.GuitarFret.Open;
+                                break;
+                            // Usually not used, but in the case that it is, it should work properly
+                            case Chart.GameMode.GHLGuitar:
+                                notes[k].ghliveGuitarFret = Note.GHLiveGuitarFret.Open;
+                                break;
+                        }
                     }
                 }
             }
