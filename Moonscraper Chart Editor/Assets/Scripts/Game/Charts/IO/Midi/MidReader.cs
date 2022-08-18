@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -445,75 +445,30 @@ namespace MoonscraperChartEditor.Song.IO
                     chartsOfInstrument[difficultyCount++] = song.GetChart(instrument, difficulty);
             }
 
-            for (int i = 0; i < tapAndOpenEvents.Count; ++i)
+            // Exclude drums, SysEx events that may be present don't mean anything outside of Phase Shift's Real Drums
+            // Also exclude unrecognized, we don't know what is or isn't valid on these tracks
+            if (gameMode != Chart.GameMode.Drums && gameMode != Chart.GameMode.Unrecognised)
             {
-                var se1 = tapAndOpenEvents[i];
-                byte[] bytes = se1.GetData();
-
-                // Check for tap event
-                if (bytes.Length == 8 && bytes[5] == 255 && bytes[7] == 1)
+                for (int i = 0; i < tapAndOpenEvents.Count; ++i)
                 {
-                    // Identified a tap section
-                    // 8 total bytes, 5th byte is FF, 7th is 1 to start, 0 to end
-                    uint tick = (uint)se1.AbsoluteTime;
-                    uint endPos = 0;
+                    var se1 = tapAndOpenEvents[i];
+                    byte[] bytes = se1.GetData();
 
-                    // Find the end of the tap section
-                    for (int j = i; j < tapAndOpenEvents.Count; ++j)
+                    // Check for tap event
+                    if (bytes.Length == 8 && bytes[5] == 255 && bytes[7] == 1)
                     {
-                        var se2 = tapAndOpenEvents[j];
-                        var bytes2 = se2.GetData();
-                        /// Check for tap section end
-                        if (bytes2.Length == 8 && bytes2[5] == 255 && bytes2[7] == 0)
+                        // Identified a tap section
+                        // 8 total bytes, 5th byte is FF, 7th is 1 to start, 0 to end
+                        uint tick = (uint)se1.AbsoluteTime;
+                        uint endPos = 0;
+
+                        // Find the end of the tap section
+                        for (int j = i; j < tapAndOpenEvents.Count; ++j)
                         {
-                            endPos = (uint)(se2.AbsoluteTime - tick);
-
-                            if (endPos > 0)
-                                --endPos;
-
-                            break;
-                        }
-
-                    }
-
-                    // Apply tap property
-                    foreach (Chart chart in chartsOfInstrument)
-                    {
-                        int index, length;
-                        SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
-                        for (int k = index; k < index + length; ++k)
-                        {
-                            if (!chart.notes[k].IsOpenNote())
-                            {
-                                chart.notes[k].flags = Note.Flags.Tap;
-                            }
-                        }
-                    }
-                }
-
-                // Check for open notes
-                // 5th byte determines the difficulty to apply to
-                else if (bytes.Length == 8 && bytes[5] >= 0 && bytes[5] < 4 && bytes[7] == 1)
-                {
-                    uint tick = (uint)se1.AbsoluteTime;
-                    Song.Difficulty difficulty;
-                    switch (bytes[5])
-                    {
-                        case 0: difficulty = Song.Difficulty.Easy; break;
-                        case 1: difficulty = Song.Difficulty.Medium; break;
-                        case 2: difficulty = Song.Difficulty.Hard; break;
-                        case 3: difficulty = Song.Difficulty.Expert; break;
-                        default: continue;
-                    }
-
-                    uint endPos = 0;
-                    for (int j = i; j < tapAndOpenEvents.Count; ++j)
-                    {
-                        var se2 = tapAndOpenEvents[j] as SysexEvent;
-                        if (se2 != null)
-                        {
-                            var b2 = se2.GetData();
-                            if (b2.Length == 8 && b2[5] == bytes[5] && b2[7] == 0)
+                            var se2 = tapAndOpenEvents[j];
+                            var bytes2 = se2.GetData();
+                            /// Check for tap section end
+                            if (bytes2.Length == 8 && bytes2[5] == 255 && bytes2[7] == 0)
                             {
                                 endPos = (uint)(se2.AbsoluteTime - tick);
 
@@ -522,27 +477,73 @@ namespace MoonscraperChartEditor.Song.IO
 
                                 break;
                             }
+
+                        }
+
+                        // Apply tap property
+                        foreach (Chart chart in chartsOfInstrument)
+                        {
+                            int index, length;
+                            SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
+                            for (int k = index; k < index + length; ++k)
+                            {
+                                if (!chart.notes[k].IsOpenNote())
+                                {
+                                    chart.notes[k].flags = Note.Flags.Tap;
+                                }
+                            }
                         }
                     }
 
-                    int index, length;
-                    SongObjectCache<Note> notes;
-                    if (instrument == Song.Instrument.Unrecognised)
-                        notes = unrecognised.notes;
-                    else
-                        notes = song.GetChart(instrument, difficulty).notes;
-                    SongObjectHelper.GetRange(notes, tick, tick + endPos, out index, out length);
-                    for (int k = index; k < index + length; ++k)
+                    // Check for open notes
+                    // 5th byte determines the difficulty to apply to
+                    else if (bytes.Length == 8 && bytes[5] >= 0 && bytes[5] < 4 && bytes[7] == 1)
                     {
-                        switch (gameMode)
+                        uint tick = (uint)se1.AbsoluteTime;
+                        Song.Difficulty difficulty;
+                        switch (bytes[5])
                         {
-                            case Chart.GameMode.Guitar:
-                                notes[k].guitarFret = Note.GuitarFret.Open;
-                                break;
-                            // Usually not used, but in the case that it is, it should work properly
-                            case Chart.GameMode.GHLGuitar:
-                                notes[k].ghliveGuitarFret = Note.GHLiveGuitarFret.Open;
-                                break;
+                            case 0: difficulty = Song.Difficulty.Easy; break;
+                            case 1: difficulty = Song.Difficulty.Medium; break;
+                            case 2: difficulty = Song.Difficulty.Hard; break;
+                            case 3: difficulty = Song.Difficulty.Expert; break;
+                            default: continue;
+                        }
+
+                        uint endPos = 0;
+                        for (int j = i; j < tapAndOpenEvents.Count; ++j)
+                        {
+                            var se2 = tapAndOpenEvents[j] as SysexEvent;
+                            if (se2 != null)
+                            {
+                                var b2 = se2.GetData();
+                                if (b2.Length == 8 && b2[5] == bytes[5] && b2[7] == 0)
+                                {
+                                    endPos = (uint)(se2.AbsoluteTime - tick);
+
+                                    if (endPos > 0)
+                                        --endPos;
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        int index, length;
+                        SongObjectCache<Note> notes = song.GetChart(instrument, difficulty).notes;
+                        SongObjectHelper.GetRange(notes, tick, tick + endPos, out index, out length);
+                        for (int k = index; k < index + length; ++k)
+                        {
+                            switch (gameMode)
+                            {
+                                case Chart.GameMode.Guitar:
+                                    notes[k].guitarFret = Note.GuitarFret.Open;
+                                    break;
+                                // Usually not used, but in the case that it is, it should work properly
+                                case Chart.GameMode.GHLGuitar:
+                                    notes[k].ghliveGuitarFret = Note.GHLiveGuitarFret.Open;
+                                    break;
+                            }
                         }
                     }
                 }
