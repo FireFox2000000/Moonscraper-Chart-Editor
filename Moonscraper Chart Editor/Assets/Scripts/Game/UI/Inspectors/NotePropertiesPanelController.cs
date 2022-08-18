@@ -267,58 +267,49 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
     public void setAccent()
     {
-        SetNoteFlag(accentToggle, Note.Flags.ProDrums_Accent);
-        // TODO: This doesn't seem to work correctly
         // A note can only be either an accent or a ghost, not both
-        // if (accentToggle.isOn && ghostToggle.isOn)
-        // {
-        //     ghostToggle.isOn = false;
-        // }
+        SetNoteFlag(accentToggle, Note.Flags.ProDrums_Accent, Note.Flags.ProDrums_Ghost);
     }
 
     public void setGhost()
     {
-        SetNoteFlag(ghostToggle, Note.Flags.ProDrums_Ghost);
-        // TODO: This doesn't seem to work correctly
         // A note can only be either an accent or a ghost, not both
-        // if (ghostToggle.isOn && accentToggle.isOn)
-        // {
-        //     accentToggle.isOn = false;
-        // }
+        SetNoteFlag(ghostToggle, Note.Flags.ProDrums_Ghost, Note.Flags.ProDrums_Accent);
     }
 
-    void SetNoteFlag(Toggle toggle, Note.Flags flag)
+    void SetNoteFlag(Toggle toggle, Note.Flags flag, Note.Flags flagToExclude = Note.Flags.None)
     {
         if (toggleBlockingActive)
             return;
 
+        Note.Flags newFlags;
         if (IsInNoteTool())
         {
             if (toggle.interactable)
-                SetNoteToolFlag(ref noteToolController.desiredFlags, flag);
+                newFlags = noteToolController.desiredFlags;
+            else
+                return;
         }
         else
         {
-            if (currentNote == prevNote)
-            {
-                var newFlags = currentNote.flags;
-
-                if (currentNote != null)
-                {
-                    if (toggle.isOn)
-                        newFlags |= flag;
-                    else
-                        newFlags &= ~flag;
-                }
-
-                SetNewFlags(currentNote, newFlags);
-            }
+            if (currentNote == prevNote && currentNote != null)
+                newFlags = currentNote.flags;
+            else
+                return;
         }
+
+        SetNoteFlag(ref newFlags, flag, toggle.isOn);
+        if ((newFlags & flagToExclude) != Note.Flags.None)
+        {
+            SetNoteFlag(ref newFlags, flagToExclude, false);
+        }
+
+        SetNewFlags(currentNote, newFlags);
     }
 
-    void SetNoteToolFlag(ref Note.Flags flags, Note.Flags flagsToToggle)
+    void SetNoteFlag(ref Note.Flags flags, Note.Flags flagsToToggle, bool enable)
     {
-        if ((flags & flagsToToggle) == 0)
+        if (enable)
             flags |= flagsToToggle;
         else
             flags &= ~flagsToToggle;
