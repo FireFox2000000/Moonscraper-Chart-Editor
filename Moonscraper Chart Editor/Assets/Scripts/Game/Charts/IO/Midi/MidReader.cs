@@ -148,6 +148,11 @@ namespace MoonscraperChartEditor.Song.IO
                 throw new SystemException("Bad or corrupted midi file- " + e.Message);
             }
 
+            if (midi.Events == null || midi.Tracks < 1)
+            {
+                throw new InvalidOperationException("MIDI file has no tracks, unable to parse.");
+            }
+
             song.resolution = (short)midi.DeltaTicksPerQuarterNote;
 
             // Read all bpm data in first. This will also allow song.TimeToTick to function properly.
@@ -155,7 +160,14 @@ namespace MoonscraperChartEditor.Song.IO
 
             for (int i = 1; i < midi.Tracks; ++i)
             {
-                var trackName = midi.Events[i][0] as TextEvent;
+                var track = midi.Events[i];
+                if (track == null || track.Count < 1)
+                {
+                    Debug.LogWarning($"Track {i} is null or empty.");
+                    continue;
+                }
+
+                var trackName = track[0] as TextEvent;
                 if (trackName == null)
                     continue;
                 Debug.Log("Found midi track " + trackName.Text);
@@ -169,7 +181,7 @@ namespace MoonscraperChartEditor.Song.IO
                 switch (trackNameKey)
                 {
                     case MidIOHelper.EVENTS_TRACK:
-                        ReadSongGlobalEvents(midi.Events[i], song);
+                        ReadSongGlobalEvents(track, song);
                         break;
 
                     case MidIOHelper.VOCALS_TRACK:
@@ -181,7 +193,7 @@ namespace MoonscraperChartEditor.Song.IO
 #endif
                         {
                             Debug.Log("Loading lyrics from Vocals track");
-                            ReadTextEventsIntoGlobalEventsAsLyrics(midi.Events[i], song);
+                            ReadTextEventsIntoGlobalEventsAsLyrics(track, song);
                         }
                         break;
 
@@ -193,7 +205,7 @@ namespace MoonscraperChartEditor.Song.IO
                         }
 
                         Debug.LogFormat("Loading midi track {0}", instrument);
-                        ReadNotes(midi.Events[i], song, instrument);
+                        ReadNotes(track, song, instrument);
                         break;
                 }
             }
@@ -324,6 +336,11 @@ namespace MoonscraperChartEditor.Song.IO
 
         private static void ReadNotes(IList<MidiEvent> track, Song song, Song.Instrument instrument)
         {
+            if (track == null || track.Count < 1)
+            {
+                return;
+            }
+
             List<SysexEvent> tapAndOpenEvents = new List<SysexEvent>();
 
             Chart unrecognised = new Chart(song, Song.Instrument.Unrecognised);
@@ -853,7 +870,7 @@ namespace MoonscraperChartEditor.Song.IO
         {
             uint tick = (uint)noteEvent.AbsoluteTime;
             var sus = (uint)(noteEvent.OffEvent.AbsoluteTime - tick);
-            int susCutoff = (int)(song.resolution / 3); // 1/12th note
+            int susCutoff = (int)(SongConfig.MIDI_SUSTAIN_CUTOFF_THRESHOLD * song.resolution / SongConfig.STANDARD_BEAT_RESOLUTION); // 1/12th note
             if (sus <= susCutoff)
                 sus = 0;
 
