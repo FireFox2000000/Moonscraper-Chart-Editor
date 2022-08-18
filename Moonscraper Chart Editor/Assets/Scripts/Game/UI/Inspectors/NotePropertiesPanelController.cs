@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -287,7 +287,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         // }
     }
 
-    public void SetNoteFlag(Toggle toggle, Note.Flags flag)
+    void SetNoteFlag(Toggle toggle, Note.Flags flag)
     {
         if (toggleBlockingActive)
             return;
