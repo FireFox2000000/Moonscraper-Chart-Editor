@@ -338,6 +338,7 @@ namespace MoonscraperChartEditor.Song.IO
         {
             if (track == null || track.Count < 1)
             {
+                Debug.LogError($"Attempted to load null or empty track.");
                 return;
             }
 
