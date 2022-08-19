@@ -28,6 +28,10 @@ public class GroupSelectPanelController : MonoBehaviour
     [SerializeField]
     Button setNoteCymbal;
     [SerializeField]
+    Button setNoteAccent;
+    [SerializeField]
+    Button setNoteGhost;
+    [SerializeField]
     Button setDoubleKick;
     [SerializeField]
     Button altDoubleKick;
@@ -113,6 +117,8 @@ public class GroupSelectPanelController : MonoBehaviour
         setNoteHopo.gameObject.SetActive(!drumsMode);
         setNoteTap.gameObject.SetActive(!drumsMode);
         setNoteCymbal.gameObject.SetActive(proDrumsMode);
+        setNoteAccent.gameObject.SetActive(proDrumsMode);
+        setNoteGhost.gameObject.SetActive(proDrumsMode);
         setDoubleKick.gameObject.SetActive(doubleKickActive);
         altDoubleKick.gameObject.SetActive(doubleKickActive);
     }
@@ -129,6 +135,10 @@ public class GroupSelectPanelController : MonoBehaviour
             setNoteTap.onClick.Invoke();
         else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetCymbal))
             setNoteCymbal.onClick.Invoke();
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetAccent))
+            setNoteAccent.onClick.Invoke();
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetGhost))
+            setNoteGhost.onClick.Invoke();
     }
 
     int GetOpenNoteForGameMode(Chart.GameMode gameMode)
@@ -272,6 +282,16 @@ public class GroupSelectPanelController : MonoBehaviour
         SetNoteType(Note.NoteType.Cymbal);
     }
 
+    public void SetAccent()
+    {
+        SetDynamics(Note.Flags.ProDrums_Accent, Note.Flags.ProDrums_Ghost);
+    }
+
+    public void SetGhost()
+    {
+        SetDynamics(Note.Flags.ProDrums_Ghost, Note.Flags.ProDrums_Accent);
+    }
+
     public void SetNoteType(Note.NoteType type)
     {
         List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
@@ -284,6 +304,33 @@ public class GroupSelectPanelController : MonoBehaviour
                 Note note = chartObject as Note;
                 Note newNote = new Note(note);
                 newNote.flags = note.GetFlagsToSetType(type);
+                songEditCommands.Add(new SongEditModifyValidated(note, newNote));
+                objectsToSelect.Add(newNote);
+            }
+        }
+
+        if (songEditCommands.Count > 0)
+        {
+            editor.commandStack.Push(new BatchedSongEditCommand(songEditCommands));
+        }
+    }
+
+    public void SetDynamics(Note.Flags flag, Note.Flags flagToExclude)
+    {
+        List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
+        List<ChartObject> objectsToSelect = new List<ChartObject>();
+
+        foreach (ChartObject chartObject in editor.selectedObjectsManager.currentSelectedObjects)
+        {
+            if (chartObject.classID == (int)SongObject.ID.Note)
+            {
+                Note note = chartObject as Note;
+                if (note.IsOpenNote())
+                    continue;
+                Note newNote = new Note(note);
+                newNote.flags |= flag;
+                if ((newNote.flags & flagToExclude) != Note.Flags.None)
+                    newNote.flags &= ~flagToExclude;
                 songEditCommands.Add(new SongEditModifyValidated(note, newNote));
                 objectsToSelect.Add(newNote);
             }
