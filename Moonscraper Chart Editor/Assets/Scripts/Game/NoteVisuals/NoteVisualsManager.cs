@@ -99,10 +99,14 @@ public class NoteVisualsManager : MonoBehaviour {
         if (!text)
             return;
 
+        text.text = "";
+
         bool isDoubleKick = Globals.drumMode && note.IsOpenNote() && ((note.flags & Note.Flags.DoubleKick) != 0);
+        bool isAccent = Globals.drumMode && ((note.flags & Note.Flags.ProDrums_Accent) != 0);
+        bool isGhost = Globals.drumMode && ((note.flags & Note.Flags.ProDrums_Ghost) != 0);
         bool culledFromLanes = note.ShouldBeCulledFromLanes(ChartEditor.Instance.laneInfo);
 
-        bool active = isDoubleKick | culledFromLanes;
+        bool active = isDoubleKick | isAccent | isGhost | culledFromLanes;
 
         Vector3 position = Vector3.zero;
         position.z = -0.3f;  // Places the text above the note due to rotation
@@ -115,6 +119,22 @@ public class NoteVisualsManager : MonoBehaviour {
         else if (culledFromLanes)
         {
             text.text = "Lane Merged";
+        }
+
+        // Handle separately since these flags may be applied to a merged note
+        if (isAccent)
+        {
+            if (string.IsNullOrEmpty(text.text))
+                text.text = "Accent";
+            else
+                text.text += "\nAccent";
+        }
+        else if (isGhost)
+        {
+            if (string.IsNullOrEmpty(text.text))
+                text.text = "Ghost";
+            else
+                text.text += "\nGhost";
         }
 
         text.transform.localPosition = position;
