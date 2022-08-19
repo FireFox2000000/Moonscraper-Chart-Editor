@@ -58,6 +58,16 @@ namespace MoonscraperChartEditor.Song.IO
         { 5, (int)Note.DrumPad.Green     },
     };
 
+        // Flags to skip adding if the corresponding flag is already present
+        public static readonly Dictionary<Note.Flags, Note.Flags> c_noteFlagIgnoreLookup = new Dictionary<Note.Flags, Note.Flags>()
+    {
+        { Note.Flags.Forced, Note.Flags.Tap },
+        { Note.Flags.ProDrums_Ghost, Note.Flags.ProDrums_Accent },
+    };
+
+        // Flags to remove if the corresponding flag is being added
+        public static readonly Dictionary<Note.Flags, Note.Flags> c_noteFlagOverrideLookup = c_noteFlagIgnoreLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+
         public static readonly Dictionary<int, int> c_drumNoteToSaveNumberLookup = c_drumNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
 
         public static readonly Dictionary<int, Note.Flags> c_drumFlagNumLookup = new Dictionary<int, Note.Flags>()
