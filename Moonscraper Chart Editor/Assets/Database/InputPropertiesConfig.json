@@ -265,6 +265,28 @@
             }
         },
         {
+            "mSChartEditorInputAction": "NoteSetAccent",
+            "properties": {
+                "displayName": "Set Note As Accent",
+                "rebindable": false,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 1,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
+            "mSChartEditorInputAction": "NoteSetGhost",
+            "properties": {
+                "displayName": "Set Note AS Ghost",
+                "rebindable": false,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 1,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
             "mSChartEditorInputAction": "PlayPause",
             "properties": {
                 "displayName": "Play/Pause",
