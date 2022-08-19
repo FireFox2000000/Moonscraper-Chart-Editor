@@ -543,6 +543,9 @@ namespace MoonscraperChartEditor.Song.IO
                                 case Chart.GameMode.GHLGuitar:
                                     notes[k].ghliveGuitarFret = Note.GHLiveGuitarFret.Open;
                                     break;
+                                default:
+                                    Debug.Assert(false, $"Unhandled game mode for open note SysEx event: {gameMode}");
+                                    break;
                             }
                         }
                     }
