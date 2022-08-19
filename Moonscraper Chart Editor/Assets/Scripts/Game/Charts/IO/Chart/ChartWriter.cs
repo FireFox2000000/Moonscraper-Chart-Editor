@@ -541,10 +541,15 @@ namespace MoonscraperChartEditor.Song.IO
                     // Only need to get the flags of one note of a chord
                     if (note.next == null || (note.next != null && note.next.tick != note.tick))
                     {
-                        Note.Flags flagsToIgnore;
-                        if (!ChartIOHelper.c_drumNoteDefaultFlagsLookup.TryGetValue(note.rawNote, out flagsToIgnore))
+                        // Flag overrides
+                        foreach (var flags in ChartIOHelper.c_noteFlagOverrideLookup)
                         {
-                            flagsToIgnore = Note.Flags.None;
+                            // Test for higher-priority flag
+                            if ((note.flags & flags.Key) != Note.Flags.None)
+                            {
+                                // Remove lower-priority flag
+                                note.flags &= ~flags.Key;
+                            }
                         }
 
                         // Write out forced flag

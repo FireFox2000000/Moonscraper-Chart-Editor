@@ -881,7 +881,7 @@ namespace MoonscraperChartEditor.Song.IO
                     Note note = chart.notes[i];
                     if (note.rawNote == rawNote)
                     {
-                        note.flags ^= flag;
+                        AddNoteFlag(note, flag);
                     }
                 }
             }
@@ -891,7 +891,27 @@ namespace MoonscraperChartEditor.Song.IO
         {
             for (int i = index; i < index + length; ++i)
             {
-                notes[i].flags = notes[i].flags | flag;
+                AddNoteFlag(notes[i], flag);
+            }
+        }
+
+        static void AddNoteFlag(Note note, Note.Flags flag)
+        {
+            // Don't add if the flag to be added is lower-priority than a conflicting, already-added flag
+            Note.Flags prioritizedFlag;
+            if (ChartIOHelper.c_noteFlagIgnoreLookup.TryGetValue(flag, out prioritizedFlag))
+            {
+                if ((note.flags & prioritizedFlag) != Note.Flags.None)
+                    return;
+            }
+
+            note.flags |= flag;
+
+            // Remove any flags that the newly-added flag should override
+            Note.Flags flagToRemove;
+            if (ChartIOHelper.c_noteFlagOverrideLookup.TryGetValue(flag, out flagToRemove))
+            {
+                note.flags &= ~flagToRemove;
             }
         }
     }
