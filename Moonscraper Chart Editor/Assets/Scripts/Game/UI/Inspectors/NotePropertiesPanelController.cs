@@ -194,8 +194,8 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             {
                 cymbalToggle.interactable = NoteFunctions.AllowedToBeCymbal(currentNote);
                 doubleKickToggle.interactable = NoteFunctions.AllowedToBeDoubleKick(currentNote, editor.currentDifficulty);
-                accentToggle.interactable = NoteFunctions.AllowedToBeAccentOrGhost(currentNote);
-                ghostToggle.interactable = NoteFunctions.AllowedToBeAccentOrGhost(currentNote);
+                accentToggle.interactable = NoteFunctions.AllowedToBeAccent(currentNote);
+                ghostToggle.interactable = NoteFunctions.AllowedToBeGhost(currentNote);
             }
             else
             {

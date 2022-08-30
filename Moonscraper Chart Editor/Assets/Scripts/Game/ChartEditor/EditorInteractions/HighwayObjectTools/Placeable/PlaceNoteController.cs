@@ -663,8 +663,8 @@ public class PlaceNoteController : ObjectlessTool {
         {
             cymbalInteractable = NoteFunctions.AllowedToBeCymbal(note);
             doubleKickInteractable = NoteFunctions.AllowedToBeDoubleKick(note, editor.currentDifficulty);
-            accentInteractable = NoteFunctions.AllowedToBeAccentOrGhost(note);
-            ghostInteractable = NoteFunctions.AllowedToBeAccentOrGhost(note);
+            accentInteractable = NoteFunctions.AllowedToBeAccent(note);
+            ghostInteractable = NoteFunctions.AllowedToBeGhost(note);
         }
     }
 
