@@ -771,7 +771,7 @@ namespace MoonscraperChartEditor.Song.IO
                             processFnDict.Remove(key);
                         }
 
-                        if (enableVelocity)
+                        if (enableVelocity && pad != Note.DrumPad.Kick)
                         {
                             processFnDict.Add(key, (in EventProcessParams eventProcessParams) =>
                             {
