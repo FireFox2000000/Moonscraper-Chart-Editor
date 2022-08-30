@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -65,6 +65,7 @@ namespace MoonscraperChartEditor.Song.IO
         static readonly ReadOnlyDictionary<int, EventProcessFn> GuitarMidiNoteNumberToProcessFnMap = BuildGuitarMidiNoteNumberToProcessFnDict();
         static readonly ReadOnlyDictionary<int, EventProcessFn> GhlGuitarMidiNoteNumberToProcessFnMap = BuildGhlGuitarMidiNoteNumberToProcessFnDict();
         static readonly ReadOnlyDictionary<int, EventProcessFn> DrumsMidiNoteNumberToProcessFnMap = BuildDrumsMidiNoteNumberToProcessFnDict();
+        static readonly ReadOnlyDictionary<int, EventProcessFn> DrumsMidiNoteNumberToProcessFnMap_Velocity = BuildDrumsMidiNoteNumberToProcessFnDict(enableVelocity: true);
 
         // These dictionaries map the text of a MIDI text event to a specific function that processes them
         static readonly ReadOnlyDictionary<string, ProcessModificationProcessFn> GuitarTextEventToProcessFnMap = new ReadOnlyDictionary<string, ProcessModificationProcessFn>(new Dictionary<string, ProcessModificationProcessFn>()
@@ -77,12 +78,8 @@ namespace MoonscraperChartEditor.Song.IO
 
         static readonly ReadOnlyDictionary<string, ProcessModificationProcessFn> DrumsTextEventToProcessFnMap = new ReadOnlyDictionary<string, ProcessModificationProcessFn>(new Dictionary<string, ProcessModificationProcessFn>()
     {
-        { MidIOHelper.CHART_DYNAMICS_TEXT, (ref EventProcessParams eventProcessParams) => {
-            BuildDrumsMidiNoteNumberToProcessFnDict(enableVelocity: true);
-        }},
-        { MidIOHelper.CHART_DYNAMICS_TEXT_BRACKET, (ref EventProcessParams eventProcessParams) => {
-            BuildDrumsMidiNoteNumberToProcessFnDict(enableVelocity: true);
-        }}
+        { MidIOHelper.CHART_DYNAMICS_TEXT, SwitchToDrumsVelocityProcessMap },
+        { MidIOHelper.CHART_DYNAMICS_TEXT_BRACKET, SwitchToDrumsVelocityProcessMap },
     });
 
         public static Song ReadMidi(string path, ref CallbackState callBackState)
@@ -589,6 +586,18 @@ namespace MoonscraperChartEditor.Song.IO
                 default:
                     return GuitarTextEventToProcessFnMap;
             }
+        }
+
+        static void SwitchToDrumsVelocityProcessMap(ref EventProcessParams processParams)
+        {
+            if (processParams.instrument != Song.Instrument.Drums)
+            {
+                Debug.LogWarning($"Attempted to apply drums velocity process map to non-drums instrument: {processParams.instrument}");
+                return;
+            }
+
+            // Switch process map to drums velocity process map
+            processParams.noteProcessMap = DrumsMidiNoteNumberToProcessFnMap_Velocity;
         }
 
         static ReadOnlyDictionary<int, EventProcessFn> BuildGuitarMidiNoteNumberToProcessFnDict()
