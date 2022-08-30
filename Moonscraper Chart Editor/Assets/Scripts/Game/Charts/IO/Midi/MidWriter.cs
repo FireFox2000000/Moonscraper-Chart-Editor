@@ -699,7 +699,7 @@ namespace MoonscraperChartEditor.Song.IO
 
             if (dynamicsFound)
             {
-                byte[] textEvent = MetaTextEvent(MetaTextEventType.Text, "[" + MidIOHelper.CHART_DYNAMICS_TEXT + "]");
+                byte[] textEvent = MetaTextEvent(MetaTextEventType.Text, MidIOHelper.CHART_DYNAMICS_TEXT_BRACKET);
                 SortableBytes dynamicsEvent = new SortableBytes(1, textEvent); // Place at the start of the track, just after the track name event
 
                 InsertionSort(eventList, dynamicsEvent);
