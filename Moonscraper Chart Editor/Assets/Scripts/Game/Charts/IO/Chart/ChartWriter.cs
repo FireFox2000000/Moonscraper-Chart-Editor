@@ -541,16 +541,16 @@ namespace MoonscraperChartEditor.Song.IO
                     // Only need to get the flags of one note of a chord
                     if (note.next == null || (note.next != null && note.next.tick != note.tick))
                     {
-                        // Flag overrides
+#if UNITY_EDITOR
+                        // Verify that there are no conflicting flags
                         foreach (var flags in ChartIOHelper.c_noteFlagOverrideLookup)
                         {
-                            // Test for higher-priority flag
-                            if ((note.flags & flags.Key) != Note.Flags.None)
+                            if ((noteFlags & flags.Key) != Note.Flags.None && (noteFlags & flags.Value) != Note.Flags.None)
                             {
-                                // Remove lower-priority flag
-                                note.flags &= ~flags.Key;
+                                Debug.LogError($"Conflicting flags found during export. Higher priority: {flags.Key}, lower priority: {flags.Value}");
                             }
                         }
+#endif
 
                         // Write out forced flag
                         {
