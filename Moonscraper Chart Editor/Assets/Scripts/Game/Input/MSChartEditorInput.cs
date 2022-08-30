@@ -13,8 +13,8 @@ using MoonscraperEngine.Input;
  * 2. Open Scenes/Config Editors/Input Editor
  * 3. Click on the Input Builder object and locate the Input Config Builder script
  * 4. Click the button "Load Config From File", which will load /Assets/Database/InputPropertiesConfig.json
- * 6. The field InputProperties/Shortcut Input will now be populated. Scroll down to find your new action and set up the new properties
- * 7. Click the button "Save Config To File" and overwrite InputPropertiesConfig.json
+ * 5. The field InputProperties/Shortcut Input will now be populated. Scroll down to find your new action and set up the new properties
+ * 6. Click the button "Save Config To File" and overwrite InputPropertiesConfig.json
  */
 
 public enum MSChartEditorInputActions
