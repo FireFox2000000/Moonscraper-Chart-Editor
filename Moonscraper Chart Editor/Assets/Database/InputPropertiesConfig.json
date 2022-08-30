@@ -268,7 +268,7 @@
             "mSChartEditorInputAction": "NoteSetAccent",
             "properties": {
                 "displayName": "Set Note As Accent",
-                "rebindable": false,
+                "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
                 "category": 1,
@@ -278,8 +278,8 @@
         {
             "mSChartEditorInputAction": "NoteSetGhost",
             "properties": {
-                "displayName": "Set Note AS Ghost",
-                "rebindable": false,
+                "displayName": "Set Note As Ghost",
+                "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
                 "category": 1,
