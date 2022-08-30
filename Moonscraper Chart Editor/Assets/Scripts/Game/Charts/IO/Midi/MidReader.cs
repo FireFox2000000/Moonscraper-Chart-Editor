@@ -51,6 +51,8 @@ namespace MoonscraperChartEditor.Song.IO
             public Song.Instrument instrument;
             public Chart currentUnrecognisedChart;
             public MidiEvent midiEvent;
+            public ReadOnlyDictionary<int, EventProcessFn> noteProcessMap;
+            public ReadOnlyDictionary<string, ProcessModificationProcessFn> textProcessMap;
             public List<EventProcessFn> delayedProcessesList;
         }
 
@@ -339,11 +341,10 @@ namespace MoonscraperChartEditor.Song.IO
                 song = song,
                 currentUnrecognisedChart = unrecognised,
                 instrument = instrument,
+                noteProcessMap = GetNoteProcessDict(gameMode),
+                textProcessMap = GetTextEventProcessDict(gameMode),
                 delayedProcessesList = new List<EventProcessFn>(),
             };
-
-            var noteProcessDict = GetNoteProcessDict(gameMode);
-            var textEventProcessDict = GetTextEventProcessDict(gameMode);
 
             if (instrument == Song.Instrument.Unrecognised)
             {
@@ -371,7 +372,7 @@ namespace MoonscraperChartEditor.Song.IO
                     else
                     {
                         ProcessModificationProcessFn processFn;
-                        if (textEventProcessDict.TryGetValue(eventName, out processFn))
+                        if (processParams.textProcessMap.TryGetValue(eventName, out processFn))
                         {
                             // This text event affects parsing of the .mid file, run its function and don't parse it into the chart
                             processParams.midiEvent = text;
@@ -405,7 +406,7 @@ namespace MoonscraperChartEditor.Song.IO
                     processParams.midiEvent = note;
 
                     EventProcessFn processFn;
-                    if (noteProcessDict.TryGetValue(note.NoteNumber, out processFn))
+                    if (processParams.noteProcessMap.TryGetValue(note.NoteNumber, out processFn))
                     {
                         processFn(processParams);
                     }
