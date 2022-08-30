@@ -525,7 +525,7 @@ namespace MoonscraperChartEditor.Song.IO
                 fretNumber = note.rawNote;
 
             // Write out the instrument+ version of the note if applicable
-            if (writeParameters.exportOptions.forced && (note.flags & Note.Flags.DoubleKick) != 0 && NoteFunctions.AllowedToBeDoubleKick(note, difficulty))
+            if (writeParameters.exportOptions.forced && note.flags.HasFlag(Note.Flags.DoubleKick) && NoteFunctions.AllowedToBeDoubleKick(note, difficulty))
             {
                 fretNumber += ChartIOHelper.c_instrumentPlusOffset;
             }
@@ -545,7 +545,7 @@ namespace MoonscraperChartEditor.Song.IO
                         // Verify that there are no conflicting flags
                         foreach (var flags in ChartIOHelper.c_noteFlagOverrideLookup)
                         {
-                            if ((noteFlags & flags.Key) != Note.Flags.None && (noteFlags & flags.Value) != Note.Flags.None)
+                            if (noteFlags.HasFlag(flags.Key) && noteFlags.HasFlag(flags.Value))
                             {
                                 Debug.LogError($"Conflicting flags found during export. Higher priority: {flags.Key}, lower priority: {flags.Value}");
                             }
@@ -555,7 +555,7 @@ namespace MoonscraperChartEditor.Song.IO
                         // Write out forced flag
                         {
                             Note.Flags flagToTest = Note.Flags.Forced;
-                            if ((noteFlags & flagToTest) != 0)
+                            if (noteFlags.HasFlag(flagToTest))
                             {
                                 int value;
                                 if (c_guitarFlagToNumLookup.TryGetValue(flagToTest, out value))  // Todo, if different flags have different values for the same flags, we'll need to use different lookups
@@ -570,7 +570,7 @@ namespace MoonscraperChartEditor.Song.IO
                         // Write out tap flag
                         {
                             Note.Flags flagToTest = Note.Flags.Tap;
-                            if (!note.IsOpenNote() && (noteFlags & flagToTest) != 0)
+                            if (!note.IsOpenNote() && noteFlags.HasFlag(flagToTest))
                             {
                                 int value;
                                 if (c_guitarFlagToNumLookup.TryGetValue(flagToTest, out value))  // Todo, if different flags have different values for the same flags, we'll need to use different lookups
@@ -588,8 +588,7 @@ namespace MoonscraperChartEditor.Song.IO
                 {
                     // Write out accent/ghost flags
                     {
-                        Note.Flags flagToTest = Note.Flags.ProDrums_Accent;
-                        if ((noteFlags & flagToTest) != 0)
+                        if (noteFlags.HasFlag(Note.Flags.ProDrums_Accent))
                         {
                             int value;
                             if (ChartIOHelper.c_drumNoteAccentSaveLookup.TryGetValue(note.rawNote, out value))
@@ -601,8 +600,7 @@ namespace MoonscraperChartEditor.Song.IO
                         }
                         else
                         {
-                            flagToTest = Note.Flags.ProDrums_Ghost;
-                            if ((noteFlags & flagToTest) != 0)
+                            if (noteFlags.HasFlag(Note.Flags.ProDrums_Ghost))
                             {
                                 int value;
                                 if (ChartIOHelper.c_drumNoteGhostSaveLookup.TryGetValue(note.rawNote, out value))
@@ -631,8 +629,8 @@ namespace MoonscraperChartEditor.Song.IO
                         defaultFlagsForNote = Note.Flags.None;
                     }
 
-                    bool cymbalByDefault = (defaultFlagsForNote & Note.Flags.ProDrums_Cymbal) != 0;
-                    bool flaggedAsCymbal = (noteFlags & Note.Flags.ProDrums_Cymbal) != 0;
+                    bool cymbalByDefault = defaultFlagsForNote.HasFlag(Note.Flags.ProDrums_Cymbal);
+                    bool flaggedAsCymbal = noteFlags.HasFlag(Note.Flags.ProDrums_Cymbal);
                     bool writeCymbalFlag = cymbalByDefault != flaggedAsCymbal;
 
                     if (writeCymbalFlag && !note.IsOpenNote())
