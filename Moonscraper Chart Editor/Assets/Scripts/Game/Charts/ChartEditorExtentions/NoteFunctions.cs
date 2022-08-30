@@ -234,7 +234,12 @@ public static class NoteFunctions {
         return note.IsOpenNote();
     }
 
-    public static bool AllowedToBeAccentOrGhost(Note note)
+    public static bool AllowedToBeAccent(Note note)
+    {
+        return !note.IsOpenNote();
+    }
+
+    public static bool AllowedToBeGhost(Note note)
     {
         return !note.IsOpenNote();
     }
