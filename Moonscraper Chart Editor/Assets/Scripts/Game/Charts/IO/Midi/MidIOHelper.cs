@@ -47,6 +47,8 @@ namespace MoonscraperChartEditor.Song.IO
         public const string SECTION_PREFIX_RB2 = "section ";
         public const string SECTION_PREFIX_RB3 = "prc_";
 
+        // This event is valid both with and without brackets.
+        // The bracketed version follows the style of other existing .mid text events.
         public const string CHART_DYNAMICS_TEXT = "ENABLE_CHART_DYNAMICS";
         public const string CHART_DYNAMICS_TEXT_BRACKET = "[ENABLE_CHART_DYNAMICS]";
 
