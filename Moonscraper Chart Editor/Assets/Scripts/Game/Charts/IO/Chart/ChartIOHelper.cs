@@ -90,7 +90,7 @@ namespace MoonscraperChartEditor.Song.IO
         { c_drumsGhostOffset + 5, Note.Flags.ProDrums_Ghost },      // Green ghost
     };
 
-        // Default flags, mark as cymbal for pro drums automatically. Also used for choosing whether to write flag information or not if it's like this by default in the first place.
+        // Default flags for drums notes
         public static readonly Dictionary<int, Note.Flags> c_drumNoteDefaultFlagsLookup = new Dictionary<int, Note.Flags>()
     {
         { (int)Note.DrumPad.Kick      , Note.Flags.None },
