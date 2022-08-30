@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using NAudio.Midi;
 using MoonscraperEngine;
+using System.Collections.ObjectModel;
 
 namespace MoonscraperChartEditor.Song.IO
 {
@@ -56,20 +57,20 @@ namespace MoonscraperChartEditor.Song.IO
         delegate void EventProcessFn(in EventProcessParams eventProcessParams);
 
         // These dictionaries map the NoteNumber of each midi note event to a specific function of how to process them
-        static readonly Dictionary<int, EventProcessFn> GuitarMidiNoteNumberToProcessFnMap = BuildGuitarMidiNoteNumberToProcessFnDict();
-        static readonly Dictionary<int, EventProcessFn> GhlGuitarMidiNoteNumberToProcessFnMap = BuildGhlGuitarMidiNoteNumberToProcessFnDict();
-        static readonly Dictionary<int, EventProcessFn> DrumsMidiNoteNumberToProcessFnMap = BuildDrumsMidiNoteNumberToProcessFnDict();
+        static readonly ReadOnlyDictionary<int, EventProcessFn> GuitarMidiNoteNumberToProcessFnMap = BuildGuitarMidiNoteNumberToProcessFnDict();
+        static readonly ReadOnlyDictionary<int, EventProcessFn> GhlGuitarMidiNoteNumberToProcessFnMap = BuildGhlGuitarMidiNoteNumberToProcessFnDict();
+        static readonly ReadOnlyDictionary<int, EventProcessFn> DrumsMidiNoteNumberToProcessFnMap = BuildDrumsMidiNoteNumberToProcessFnDict();
 
         // These dictionaries map the text of a MIDI text event to a specific function that processes them
-        static readonly Dictionary<string, EventProcessFn> GuitarTextEventToProcessFnMap = new Dictionary<string, EventProcessFn>()
+        static readonly ReadOnlyDictionary<string, EventProcessFn> GuitarTextEventToProcessFnMap = new ReadOnlyDictionary<string, EventProcessFn>(new Dictionary<string, EventProcessFn>()
     {
-    };
+    });
 
-        static readonly Dictionary<string, EventProcessFn> GhlGuitarTextEventToProcessFnMap = new Dictionary<string, EventProcessFn>()
+        static readonly ReadOnlyDictionary<string, EventProcessFn> GhlGuitarTextEventToProcessFnMap = new ReadOnlyDictionary<string, EventProcessFn>(new Dictionary<string, EventProcessFn>()
     {
-    };
+    });
 
-        static readonly Dictionary<string, EventProcessFn> DrumsTextEventToProcessFnMap = new Dictionary<string, EventProcessFn>()
+        static readonly ReadOnlyDictionary<string, EventProcessFn> DrumsTextEventToProcessFnMap = new ReadOnlyDictionary<string, EventProcessFn>(new Dictionary<string, EventProcessFn>()
     {
         { MidIOHelper.CHART_DYNAMICS_TEXT, (in EventProcessParams eventProcessParams) => {
             BuildDrumsMidiNoteNumberToProcessFnDict(enableVelocity: true);
@@ -77,7 +78,7 @@ namespace MoonscraperChartEditor.Song.IO
         { MidIOHelper.CHART_DYNAMICS_TEXT_BRACKET, (in EventProcessParams eventProcessParams) => {
             BuildDrumsMidiNoteNumberToProcessFnDict(enableVelocity: true);
         }}
-    };
+    });
 
         public static Song ReadMidi(string path, ref CallbackState callBackState)
         {
@@ -553,7 +554,7 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
-        static Dictionary<int, EventProcessFn> GetNoteProcessDict(Chart.GameMode gameMode)
+        static ReadOnlyDictionary<int, EventProcessFn> GetNoteProcessDict(Chart.GameMode gameMode)
         {
             switch (gameMode)
             {
@@ -572,7 +573,7 @@ namespace MoonscraperChartEditor.Song.IO
             return GuitarMidiNoteNumberToProcessFnMap;
         }
 
-        static Dictionary<string, EventProcessFn> GetTextEventProcessDict(Chart.GameMode gameMode)
+        static ReadOnlyDictionary<string, EventProcessFn> GetTextEventProcessDict(Chart.GameMode gameMode)
         {
             switch (gameMode)
             {
@@ -586,7 +587,7 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
-        static Dictionary<int, EventProcessFn> BuildGuitarMidiNoteNumberToProcessFnDict()
+        static ReadOnlyDictionary<int, EventProcessFn> BuildGuitarMidiNoteNumberToProcessFnDict()
         {
             var processFnDict = new Dictionary<int, EventProcessFn>()
         {
@@ -641,10 +642,10 @@ namespace MoonscraperChartEditor.Song.IO
                 }
             };
 
-            return processFnDict;
+            return new ReadOnlyDictionary<int, EventProcessFn>(processFnDict);
         }
 
-        static Dictionary<int, EventProcessFn> BuildGhlGuitarMidiNoteNumberToProcessFnDict()
+        static ReadOnlyDictionary<int, EventProcessFn> BuildGhlGuitarMidiNoteNumberToProcessFnDict()
         {
             var processFnDict = new Dictionary<int, EventProcessFn>()
         {
@@ -700,10 +701,10 @@ namespace MoonscraperChartEditor.Song.IO
                 }
             };
 
-            return processFnDict;
+            return new ReadOnlyDictionary<int, EventProcessFn>(processFnDict);
         }
 
-        static Dictionary<int, EventProcessFn> BuildDrumsMidiNoteNumberToProcessFnDict(bool enableVelocity = false)
+        static ReadOnlyDictionary<int, EventProcessFn> BuildDrumsMidiNoteNumberToProcessFnDict(bool enableVelocity = false)
         {
             var processFnDict = new Dictionary<int, EventProcessFn>()
     {
@@ -813,7 +814,7 @@ namespace MoonscraperChartEditor.Song.IO
                 });
             }
 
-            return processFnDict;
+            return new ReadOnlyDictionary<int, EventProcessFn>(processFnDict);
         }
 
         static void ProcessNoteOnEventAsNote(in EventProcessParams eventProcessParams, Song.Difficulty diff, int ingameFret, Note.Flags defaultFlags = Note.Flags.None)
