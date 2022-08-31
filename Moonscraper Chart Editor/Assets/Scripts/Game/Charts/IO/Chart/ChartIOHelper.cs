@@ -280,5 +280,79 @@ namespace MoonscraperChartEditor.Song.IO
                 return short.Parse(Regex.Matches(line, FLOATSEARCH)[0].ToString());
             }
         }
+
+        public class NoteFlagPriority
+        {
+            public static readonly NoteFlagPriority Forced = new NoteFlagPriority(Note.Flags.Forced);
+            public static readonly NoteFlagPriority Tap = new NoteFlagPriority(Note.Flags.Tap);
+            public static readonly NoteFlagPriority InstrumentPlus = new NoteFlagPriority(Note.Flags.InstrumentPlus);
+            public static readonly NoteFlagPriority Cymbal = new NoteFlagPriority(Note.Flags.ProDrums_Cymbal);
+            public static readonly NoteFlagPriority Accent = new NoteFlagPriority(Note.Flags.ProDrums_Accent);
+            public static readonly NoteFlagPriority Ghost = new NoteFlagPriority(Note.Flags.ProDrums_Ghost);
+
+            public static readonly IReadOnlyDictionary<int, NoteFlagPriority> GuitarNoteToPriorityLookup = new Dictionary<int, NoteFlagPriority>()
+        {
+            { 5, Forced },    // Forced note marker
+            { 6, Tap    },    // Tap note marker
+        };
+
+            public static readonly IReadOnlyDictionary<int, NoteFlagPriority> GhlGuitarNoteToPriorityLookup = GuitarNoteToPriorityLookup;
+
+            public static readonly IReadOnlyDictionary<int, NoteFlagPriority> DrumsNoteToPriorityLookup = new Dictionary<int, NoteFlagPriority>()
+        {
+            { c_drumsAccentOffset + 1, Accent },    // Red accent
+            { c_drumsAccentOffset + 2, Accent },    // Yellow accent
+            { c_drumsAccentOffset + 3, Accent },    // Blue accent
+            { c_drumsAccentOffset + 4, Accent },    // Orange accent
+            { c_drumsAccentOffset + 5, Accent },    // Green accent
+
+            { c_drumsGhostOffset + 1, Ghost },      // Red ghost
+            { c_drumsGhostOffset + 2, Ghost },      // Yellow ghost
+            { c_drumsGhostOffset + 3, Ghost },      // Blue ghost
+            { c_drumsGhostOffset + 4, Ghost },      // Orange ghost
+            { c_drumsGhostOffset + 5, Ghost },      // Green ghost
+        };
+
+            public Note.Flags FlagToAdd { get; } = Note.Flags.None;
+            public Note.Flags BlockingFlag { get; } = Note.Flags.None;
+            public Note.Flags FlagToRemove { get; } = Note.Flags.None;
+
+            public NoteFlagPriority(Note.Flags flag)
+            {
+                FlagToAdd = flag;
+
+                Note.Flags blockingFlag;
+                if (c_noteBlockingFlagsLookup.TryGetValue(FlagToAdd, out blockingFlag))
+                {
+                    BlockingFlag = blockingFlag;
+                }
+
+                Note.Flags flagToRemove;
+                if (c_noteFlagsToRemoveLookup.TryGetValue(FlagToAdd, out flagToRemove))
+                {
+                    FlagToRemove = flagToRemove;
+                }
+            }
+
+            public bool TryApplyToNote(Note note)
+            {
+                // Don't add if the flag to be added is lower-priority than a conflicting, already-added flag
+                if (BlockingFlag != Note.Flags.None && note.flags.HasFlag(BlockingFlag))
+                {
+                    return false;
+                }
+
+                // Flag can be added without issue
+                note.flags |= FlagToAdd;
+
+                // Remove flags that are lower-priority than the added flag
+                if (FlagToRemove != Note.Flags.None && note.flags.HasFlag(FlagToRemove))
+                {
+                    note.flags &= ~FlagToRemove;
+                }
+
+                return true;
+            }
+        }
     }
 }
