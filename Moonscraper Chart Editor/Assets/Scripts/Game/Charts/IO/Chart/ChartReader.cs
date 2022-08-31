@@ -11,6 +11,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using MoonscraperEngine;
 
 namespace MoonscraperChartEditor.Song.IO
 {
@@ -66,61 +67,7 @@ namespace MoonscraperChartEditor.Song.IO
             { 6, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, Note.Flags.Tap); }},
         };
 
-        static readonly IReadOnlyDictionary<int, NoteEventProcessFn> DrumsChartNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
-        {
-            { 0, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Kick); }},
-            { 1, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Red); }},
-            { 2, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Yellow); }},
-            { 3, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Blue); }},
-            { 4, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Orange); }},
-            { 5, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Green); }},
-
-            { ChartIOHelper.c_instrumentPlusOffset, (in NoteProcessParams noteProcessParams) => {
-                ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Kick, Note.Flags.DoubleKick);
-            } },
-
-            { ChartIOHelper.c_proDrumsOffset + 2, (in NoteProcessParams noteProcessParams) => {
-                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Yellow, Note.Flags.ProDrums_Cymbal);
-            } },
-            { ChartIOHelper.c_proDrumsOffset + 3, (in NoteProcessParams noteProcessParams) => {
-                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Blue, Note.Flags.ProDrums_Cymbal);
-            } },
-            { ChartIOHelper.c_proDrumsOffset + 4, (in NoteProcessParams noteProcessParams) => {
-                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Orange, Note.Flags.ProDrums_Cymbal);
-            } },
-
-            { ChartIOHelper.c_drumsAccentOffset + 1, (in NoteProcessParams noteProcessParams) => {
-                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Red, Note.Flags.ProDrums_Accent);
-            } },
-            { ChartIOHelper.c_drumsAccentOffset + 2, (in NoteProcessParams noteProcessParams) => {
-                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Yellow, Note.Flags.ProDrums_Accent);
-            } },
-            { ChartIOHelper.c_drumsAccentOffset + 3, (in NoteProcessParams noteProcessParams) => {
-                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Blue, Note.Flags.ProDrums_Accent);
-            } },
-            { ChartIOHelper.c_drumsAccentOffset + 4, (in NoteProcessParams noteProcessParams) => {
-                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Orange, Note.Flags.ProDrums_Accent);
-            } },
-            { ChartIOHelper.c_drumsAccentOffset + 5, (in NoteProcessParams noteProcessParams) => {
-                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Green, Note.Flags.ProDrums_Accent);
-            } },
-
-            { ChartIOHelper.c_drumsGhostOffset + 1, (in NoteProcessParams noteProcessParams) => {
-                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Red, Note.Flags.ProDrums_Ghost);
-            } },
-            { ChartIOHelper.c_drumsGhostOffset + 2, (in NoteProcessParams noteProcessParams) => {
-                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Yellow, Note.Flags.ProDrums_Ghost);
-            } },
-            { ChartIOHelper.c_drumsGhostOffset + 3, (in NoteProcessParams noteProcessParams) => {
-                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Blue, Note.Flags.ProDrums_Ghost);
-            } },
-            { ChartIOHelper.c_drumsGhostOffset + 4, (in NoteProcessParams noteProcessParams) => {
-                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Orange, Note.Flags.ProDrums_Ghost);
-            } },
-            { ChartIOHelper.c_drumsGhostOffset + 5, (in NoteProcessParams noteProcessParams) => {
-                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Green, Note.Flags.ProDrums_Ghost);
-            } },
-        };
+        static readonly IReadOnlyDictionary<int, NoteEventProcessFn> DrumsChartNoteNumberToProcessFnMap = BuildDrumsChartNoteNumberToProcessFnMap();
 
         static readonly IReadOnlyDictionary<int, NoteEventProcessFn> GhlChartNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
         {
@@ -135,6 +82,72 @@ namespace MoonscraperChartEditor.Song.IO
             { 5, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, Note.Flags.Forced); }},
             { 6, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, Note.Flags.Tap); }},
         };
+
+        static IReadOnlyDictionary<int, NoteEventProcessFn> BuildDrumsChartNoteNumberToProcessFnMap()
+        {
+            var processFnMap = new Dictionary<int, NoteEventProcessFn>()
+        {
+            { ChartIOHelper.c_instrumentPlusOffset, (in NoteProcessParams noteProcessParams) => {
+                ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Kick, Note.Flags.DoubleKick);
+            } },
+        };
+
+            Dictionary<Note.DrumPad, int> DrumPadToChartKey = new Dictionary<Note.DrumPad, int>()
+        {
+            { Note.DrumPad.Kick, 0 },
+            { Note.DrumPad.Red, 1 },
+            { Note.DrumPad.Yellow, 2 },
+            { Note.DrumPad.Blue, 3 },
+            { Note.DrumPad.Orange, 4 },
+            { Note.DrumPad.Green, 5 },
+        };
+
+            foreach (var pad in EnumX<Note.DrumPad>.Values)
+            {
+                int padKey;
+                if (DrumPadToChartKey.TryGetValue(pad, out padKey))
+                {
+                    // Get default flags
+                    Note.Flags defaultFlags;
+                    if (!ChartIOHelper.c_drumNoteDefaultFlagsLookup.TryGetValue(padKey, out defaultFlags))
+                    {
+                        defaultFlags = Note.Flags.None;
+                    }
+
+                    // Notes
+                    processFnMap.Add(padKey, (in NoteProcessParams noteProcessParams) =>
+                    {
+                        ProcessNoteOnEventAsNote(noteProcessParams, (int)pad);
+                    });
+
+                    // Flag toggles
+                    Action<int> AddFlagToggle = (int key) => {
+                        Note.Flags toggleFlag;
+                        if (ChartIOHelper.c_drumFlagNumLookup.TryGetValue(key, out toggleFlag))
+                        {
+                            processFnMap.Add(key, (in NoteProcessParams noteProcessParams) =>
+                            {
+                                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)pad, toggleFlag);
+                            });
+                        }
+                    };
+
+                    // Cymbals
+                    int cymbalKey = padKey + ChartIOHelper.c_proDrumsOffset;
+                    AddFlagToggle(cymbalKey);
+
+                    // Accents
+                    int accentKey = padKey + ChartIOHelper.c_drumsAccentOffset;
+                    AddFlagToggle(accentKey);
+
+                    // Ghosts
+                    int ghostKey = padKey + ChartIOHelper.c_drumsGhostOffset;
+                    AddFlagToggle(ghostKey);
+                }
+            }
+
+            return processFnMap;
+        }
 
         public static Song ReadChart(string filepath)
         {
