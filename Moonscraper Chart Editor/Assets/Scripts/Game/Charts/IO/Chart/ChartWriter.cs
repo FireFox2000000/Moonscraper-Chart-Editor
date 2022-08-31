@@ -543,7 +543,7 @@ namespace MoonscraperChartEditor.Song.IO
                     {
 #if UNITY_EDITOR
                         // Verify that there are no conflicting flags
-                        foreach (var flags in ChartIOHelper.c_noteFlagOverrideLookup)
+                        foreach (var flags in ChartIOHelper.c_noteFlagsToRemoveLookup)
                         {
                             if (noteFlags.HasFlag(flags.Key) && noteFlags.HasFlag(flags.Value))
                             {
