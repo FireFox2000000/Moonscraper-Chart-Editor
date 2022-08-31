@@ -55,7 +55,7 @@ namespace MoonscraperChartEditor.Song.IO
 
         delegate void NoteEventProcessFn(in NoteProcessParams noteProcessParams);
 
-        // These dictionaries map the NoteNumber of each midi note event to a specific function of how to process them
+        // These dictionaries map the number of a note event to a specific function of how to process them
         static readonly IReadOnlyDictionary<int, NoteEventProcessFn> GuitarChartNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
         {
             { 0, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GuitarFret.Green); }},
