@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 // Chart file format specifications- https://docs.google.com/document/d/1v2v0U-9HQ5qHeccpExDOLJ5CMPZZ3QytPmAG5WF0Kzs/edit?usp=sharing
@@ -53,7 +53,7 @@ namespace MoonscraperChartEditor.Song.IO
         delegate void NoteEventProcessFn(in NoteProcessParams noteProcessParams);
 
         // These dictionaries map the NoteNumber of each midi note event to a specific function of how to process them
-        static readonly Dictionary<int, NoteEventProcessFn> GuitarChartNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
+        static readonly IReadOnlyDictionary<int, NoteEventProcessFn> GuitarChartNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
         {
             { 0, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GuitarFret.Green); }},
             { 1, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GuitarFret.Red); }},
@@ -66,7 +66,7 @@ namespace MoonscraperChartEditor.Song.IO
             { 6, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, Note.Flags.Tap); }},
         };
 
-        static readonly Dictionary<int, NoteEventProcessFn> DrumsChartNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
+        static readonly IReadOnlyDictionary<int, NoteEventProcessFn> DrumsChartNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
         {
             { 0, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Kick); }},
             { 1, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.DrumPad.Red); }},
@@ -122,7 +122,7 @@ namespace MoonscraperChartEditor.Song.IO
             } },
         };
 
-        static readonly Dictionary<int, NoteEventProcessFn> GhlChartNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
+        static readonly IReadOnlyDictionary<int, NoteEventProcessFn> GhlChartNoteNumberToProcessFnMap = new Dictionary<int, NoteEventProcessFn>()
         {
             { 0, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GHLiveGuitarFret.White1); }},
             { 1, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GHLiveGuitarFret.White2); }},
@@ -641,7 +641,7 @@ namespace MoonscraperChartEditor.Song.IO
 
             chart.SetCapacity(data.Count);
 
-            Dictionary<int, NoteEventProcessFn> noteProcessDict = GetNoteProcessDict(chart.gameMode);
+            var noteProcessDict = GetNoteProcessDict(chart.gameMode);
 
             try
             {
@@ -803,7 +803,7 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
-        static Dictionary<int, NoteEventProcessFn> GetNoteProcessDict(Chart.GameMode gameMode)
+        static IReadOnlyDictionary<int, NoteEventProcessFn> GetNoteProcessDict(Chart.GameMode gameMode)
         {
             switch (gameMode)
             {
