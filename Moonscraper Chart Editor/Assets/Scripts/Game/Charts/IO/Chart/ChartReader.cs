@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 // Chart file format specifications- https://docs.google.com/document/d/1v2v0U-9HQ5qHeccpExDOLJ5CMPZZ3QytPmAG5WF0Kzs/edit?usp=sharing
@@ -12,6 +12,8 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using MoonscraperEngine;
+
+using NoteFlagPriority = MoonscraperChartEditor.Song.IO.ChartIOHelper.NoteFlagPriority;
 
 namespace MoonscraperChartEditor.Song.IO
 {
@@ -63,8 +65,8 @@ namespace MoonscraperChartEditor.Song.IO
             { 4, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GuitarFret.Orange); }},
             { 7, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GuitarFret.Open); }},
 
-            { 5, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, Note.Flags.Forced); }},
-            { 6, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, Note.Flags.Tap); }},
+            { 5, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, NoteFlagPriority.Forced); }},
+            { 6, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, NoteFlagPriority.Tap); }},
         };
 
         static readonly IReadOnlyDictionary<int, NoteEventProcessFn> DrumsChartNoteNumberToProcessFnMap = BuildDrumsChartNoteNumberToProcessFnMap();
@@ -79,8 +81,8 @@ namespace MoonscraperChartEditor.Song.IO
             { 8, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GHLiveGuitarFret.Black3); }},
             { 7, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsNote(noteProcessParams, (int)Note.GHLiveGuitarFret.Open); }},
 
-            { 5, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, Note.Flags.Forced); }},
-            { 6, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, Note.Flags.Tap); }},
+            { 5, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, NoteFlagPriority.Forced); }},
+            { 6, (in NoteProcessParams noteProcessParams) => { ProcessNoteOnEventAsChordFlag(noteProcessParams, NoteFlagPriority.Tap); }},
         };
 
         static IReadOnlyDictionary<int, NoteEventProcessFn> BuildDrumsChartNoteNumberToProcessFnMap()
@@ -122,12 +124,12 @@ namespace MoonscraperChartEditor.Song.IO
 
                     // Flag toggles
                     Action<int> AddFlagToggle = (int key) => {
-                        Note.Flags toggleFlag;
-                        if (ChartIOHelper.c_drumFlagNumLookup.TryGetValue(key, out toggleFlag))
+                        NoteFlagPriority flagData;
+                        if (NoteFlagPriority.DrumsNoteToPriorityLookup.TryGetValue(key, out flagData))
                         {
                             processFnMap.Add(key, (in NoteProcessParams noteProcessParams) =>
                             {
-                                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)pad, toggleFlag);
+                                ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)pad, flagData);
                             });
                         }
                     };
@@ -847,18 +849,18 @@ namespace MoonscraperChartEditor.Song.IO
             chart.Add(newNote, false);
         }
 
-        static void ProcessNoteOnEventAsChordFlag(in NoteProcessParams noteProcessParams, Note.Flags flag)
+        static void ProcessNoteOnEventAsChordFlag(in NoteProcessParams noteProcessParams, NoteFlagPriority flagData)
         {
             var flagEvent = noteProcessParams.noteEvent;
 
             // Delay the actual processing once all the notes are actually in
             noteProcessParams.postNotesAddedProcessList.Add((in NoteProcessParams processParams) =>
             {
-                ProcessNoteOnEventAsChordFlagPostDelay(processParams, flagEvent, flag);
+                ProcessNoteOnEventAsChordFlagPostDelay(processParams, flagEvent, flagData);
             });
         }
 
-        static void ProcessNoteOnEventAsChordFlagPostDelay(in NoteProcessParams noteProcessParams, NoteEvent noteEvent, Note.Flags flag)
+        static void ProcessNoteOnEventAsChordFlagPostDelay(in NoteProcessParams noteProcessParams, NoteEvent noteEvent, NoteFlagPriority flagData)
         {
             Chart chart = noteProcessParams.chart;
 
@@ -866,22 +868,22 @@ namespace MoonscraperChartEditor.Song.IO
             SongObjectHelper.FindObjectsAtPosition(noteEvent.tick, chart.notes, out index, out length);
             if (length > 0)
             {
-                GroupAddFlags(chart.notes, flag, index, length);
+                GroupAddFlags(chart.notes, flagData, index, length);
             }
         }
 
-        static void ProcessNoteOnEventAsNoteFlagToggle(in NoteProcessParams noteProcessParams, int rawNote, Note.Flags flag)
+        static void ProcessNoteOnEventAsNoteFlagToggle(in NoteProcessParams noteProcessParams, int rawNote, NoteFlagPriority flagData)
         {
             var flagEvent = noteProcessParams.noteEvent;
 
             // Delay the actual processing once all the notes are actually in
             noteProcessParams.postNotesAddedProcessList.Add((in NoteProcessParams processParams) =>
             {
-                ProcessNoteOnEventAsNoteFlagTogglePostDelay(processParams, rawNote, flagEvent, flag);
+                ProcessNoteOnEventAsNoteFlagTogglePostDelay(processParams, rawNote, flagEvent, flagData);
             });
         }
 
-        static void ProcessNoteOnEventAsNoteFlagTogglePostDelay(in NoteProcessParams noteProcessParams, int rawNote, NoteEvent noteEvent, Note.Flags flag)
+        static void ProcessNoteOnEventAsNoteFlagTogglePostDelay(in NoteProcessParams noteProcessParams, int rawNote, NoteEvent noteEvent, NoteFlagPriority flagData)
         {
             Chart chart = noteProcessParams.chart;
 
@@ -894,37 +896,25 @@ namespace MoonscraperChartEditor.Song.IO
                     Note note = chart.notes[i];
                     if (note.rawNote == rawNote)
                     {
-                        AddNoteFlag(note, flag);
+                        TryAddNoteFlags(note, flagData);
                     }
                 }
             }
         }
 
-        static void GroupAddFlags(IList<Note> notes, Note.Flags flag, int index, int length)
+        static void GroupAddFlags(IList<Note> notes, NoteFlagPriority flagData, int index, int length)
         {
             for (int i = index; i < index + length; ++i)
             {
-                AddNoteFlag(notes[i], flag);
+                TryAddNoteFlags(notes[i], flagData);
             }
         }
 
-        static void AddNoteFlag(Note note, Note.Flags flag)
+        static void TryAddNoteFlags(Note note, NoteFlagPriority flagData)
         {
-            // Don't add if the flag to be added is lower-priority than a conflicting, already-added flag
-            Note.Flags prioritizedFlag;
-            if (ChartIOHelper.c_noteFlagIgnoreLookup.TryGetValue(flag, out prioritizedFlag))
+            if (!flagData.TryApplyToNote(note))
             {
-                if ((note.flags & prioritizedFlag) != Note.Flags.None)
-                    return;
-            }
-
-            note.flags |= flag;
-
-            // Remove any flags that the newly-added flag should override
-            Note.Flags flagToRemove;
-            if (ChartIOHelper.c_noteFlagOverrideLookup.TryGetValue(flag, out flagToRemove))
-            {
-                note.flags &= ~flagToRemove;
+                Debug.LogWarning($"Could not apply flag {flagData.FlagToAdd} to a note. It was blocked by existing flag {flagData.BlockingFlag}.");
             }
         }
     }
