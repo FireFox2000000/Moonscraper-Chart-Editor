@@ -39,6 +39,24 @@ namespace MoonscraperChartEditor.Song.IO
         static readonly Dictionary<int, int> c_ghlNoteToSaveNumberLookup = ChartIOHelper.c_ghlNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
         static readonly Dictionary<Note.Flags, int> c_guitarFlagToNumLookup = ChartIOHelper.c_guitarFlagNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
 
+        public static readonly Dictionary<int, int> c_drumNoteAccentSaveLookup = new Dictionary<int, int>()
+    {
+        { (int)Note.DrumPad.Red       , ChartIOHelper.c_drumsAccentOffset + 1 },
+        { (int)Note.DrumPad.Yellow    , ChartIOHelper.c_drumsAccentOffset + 2 },
+        { (int)Note.DrumPad.Blue      , ChartIOHelper.c_drumsAccentOffset + 3 },
+        { (int)Note.DrumPad.Orange    , ChartIOHelper.c_drumsAccentOffset + 4 },
+        { (int)Note.DrumPad.Green     , ChartIOHelper.c_drumsAccentOffset + 5 },
+    };
+
+        public static readonly Dictionary<int, int> c_drumNoteGhostSaveLookup = new Dictionary<int, int>()
+    {
+        { (int)Note.DrumPad.Red       , ChartIOHelper.c_drumsGhostOffset + 1 },
+        { (int)Note.DrumPad.Yellow    , ChartIOHelper.c_drumsGhostOffset + 2 },
+        { (int)Note.DrumPad.Blue      , ChartIOHelper.c_drumsGhostOffset + 3 },
+        { (int)Note.DrumPad.Orange    , ChartIOHelper.c_drumsGhostOffset + 4 },
+        { (int)Note.DrumPad.Green     , ChartIOHelper.c_drumsGhostOffset + 5 },
+    };
+
         delegate void WriteAudioStreamSaveString(Song.AudioInstrument audio, string saveFormat);
 
         public class ErrorReport
@@ -591,7 +609,7 @@ namespace MoonscraperChartEditor.Song.IO
                         if (noteFlags.HasFlag(Note.Flags.ProDrums_Accent))
                         {
                             int value;
-                            if (ChartIOHelper.c_drumNoteAccentSaveLookup.TryGetValue(note.rawNote, out value))
+                            if (c_drumNoteAccentSaveLookup.TryGetValue(note.rawNote, out value))
                             {
                                 output.Append(Globals.LINE_ENDING);
                                 output.Append(Globals.TABSPACE + writeParameters.scaledTick);
@@ -603,7 +621,7 @@ namespace MoonscraperChartEditor.Song.IO
                             if (noteFlags.HasFlag(Note.Flags.ProDrums_Ghost))
                             {
                                 int value;
-                                if (ChartIOHelper.c_drumNoteGhostSaveLookup.TryGetValue(note.rawNote, out value))
+                                if (c_drumNoteGhostSaveLookup.TryGetValue(note.rawNote, out value))
                                 {
                                     output.Append(Globals.LINE_ENDING);
                                     output.Append(Globals.TABSPACE + writeParameters.scaledTick);
