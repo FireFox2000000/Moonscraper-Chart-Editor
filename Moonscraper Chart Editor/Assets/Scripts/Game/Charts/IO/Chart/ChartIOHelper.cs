@@ -70,26 +70,6 @@ namespace MoonscraperChartEditor.Song.IO
 
         public static readonly Dictionary<int, int> c_drumNoteToSaveNumberLookup = c_drumNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
 
-        public static readonly Dictionary<int, Note.Flags> c_drumFlagNumLookup = new Dictionary<int, Note.Flags>()
-    {
-        { c_proDrumsOffset + 2, Note.Flags.ProDrums_Cymbal },       // Yellow save num from c_drumNoteNumLookup
-        { c_proDrumsOffset + 3, Note.Flags.ProDrums_Cymbal },       // Blue save num from c_drumNoteNumLookup
-        { c_proDrumsOffset + 4, Note.Flags.ProDrums_Cymbal },       // Orange (Green in 4-lane) save num from c_drumNoteNumLookup
-        { c_instrumentPlusOffset, Note.Flags.InstrumentPlus },      // Double Kick
-
-        { c_drumsAccentOffset + 1, Note.Flags.ProDrums_Accent },    // Red accent
-        { c_drumsAccentOffset + 2, Note.Flags.ProDrums_Accent },    // Yellow accent
-        { c_drumsAccentOffset + 3, Note.Flags.ProDrums_Accent },    // Blue accent
-        { c_drumsAccentOffset + 4, Note.Flags.ProDrums_Accent },    // Orange accent
-        { c_drumsAccentOffset + 5, Note.Flags.ProDrums_Accent },    // Green accent
-
-        { c_drumsGhostOffset + 1, Note.Flags.ProDrums_Ghost },      // Red ghost
-        { c_drumsGhostOffset + 2, Note.Flags.ProDrums_Ghost },      // Yellow ghost
-        { c_drumsGhostOffset + 3, Note.Flags.ProDrums_Ghost },      // Blue ghost
-        { c_drumsGhostOffset + 4, Note.Flags.ProDrums_Ghost },      // Orange ghost
-        { c_drumsGhostOffset + 5, Note.Flags.ProDrums_Ghost },      // Green ghost
-    };
-
         // Default flags for drums notes
         public static readonly Dictionary<int, Note.Flags> c_drumNoteDefaultFlagsLookup = new Dictionary<int, Note.Flags>()
     {
@@ -289,29 +269,6 @@ namespace MoonscraperChartEditor.Song.IO
             public static readonly NoteFlagPriority Cymbal = new NoteFlagPriority(Note.Flags.ProDrums_Cymbal);
             public static readonly NoteFlagPriority Accent = new NoteFlagPriority(Note.Flags.ProDrums_Accent);
             public static readonly NoteFlagPriority Ghost = new NoteFlagPriority(Note.Flags.ProDrums_Ghost);
-
-            public static readonly IReadOnlyDictionary<int, NoteFlagPriority> GuitarNoteToPriorityLookup = new Dictionary<int, NoteFlagPriority>()
-        {
-            { 5, Forced },    // Forced note marker
-            { 6, Tap    },    // Tap note marker
-        };
-
-            public static readonly IReadOnlyDictionary<int, NoteFlagPriority> GhlGuitarNoteToPriorityLookup = GuitarNoteToPriorityLookup;
-
-            public static readonly IReadOnlyDictionary<int, NoteFlagPriority> DrumsNoteToPriorityLookup = new Dictionary<int, NoteFlagPriority>()
-        {
-            { c_drumsAccentOffset + 1, Accent },    // Red accent
-            { c_drumsAccentOffset + 2, Accent },    // Yellow accent
-            { c_drumsAccentOffset + 3, Accent },    // Blue accent
-            { c_drumsAccentOffset + 4, Accent },    // Orange accent
-            { c_drumsAccentOffset + 5, Accent },    // Green accent
-
-            { c_drumsGhostOffset + 1, Ghost },      // Red ghost
-            { c_drumsGhostOffset + 2, Ghost },      // Yellow ghost
-            { c_drumsGhostOffset + 3, Ghost },      // Blue ghost
-            { c_drumsGhostOffset + 4, Ghost },      // Orange ghost
-            { c_drumsGhostOffset + 5, Ghost },      // Green ghost
-        };
 
             public Note.Flags flagToAdd { get; } = Note.Flags.None;
             public Note.Flags blockingFlag { get; } = Note.Flags.None;
