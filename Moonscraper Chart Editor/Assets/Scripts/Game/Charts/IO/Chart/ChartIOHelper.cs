@@ -68,8 +68,6 @@ namespace MoonscraperChartEditor.Song.IO
         // Flags to remove if the corresponding flag is being added
         public static readonly Dictionary<Note.Flags, Note.Flags> c_noteFlagsToRemoveLookup = c_noteBlockingFlagsLookup.ToDictionary((i) => i.Value, (i) => i.Key);
 
-        public static readonly Dictionary<int, int> c_drumNoteToSaveNumberLookup = c_drumNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
-
         // Default flags for drums notes
         public static readonly Dictionary<int, Note.Flags> c_drumNoteDefaultFlagsLookup = new Dictionary<int, Note.Flags>()
     {
