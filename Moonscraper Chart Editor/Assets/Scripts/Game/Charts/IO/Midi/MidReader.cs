@@ -19,7 +19,7 @@ namespace MoonscraperChartEditor.Song.IO
             WaitingForExternalInformation,
         }
 
-        static readonly Dictionary<string, Song.Instrument> c_trackNameToInstrumentMap = new Dictionary<string, Song.Instrument>()
+        static readonly IReadOnlyDictionary<string, Song.Instrument> c_trackNameToInstrumentMap = new Dictionary<string, Song.Instrument>()
     {
         { MidIOHelper.GUITAR_TRACK,        Song.Instrument.Guitar },
         { MidIOHelper.GUITAR_COOP_TRACK,   Song.Instrument.GuitarCoop },
@@ -31,13 +31,13 @@ namespace MoonscraperChartEditor.Song.IO
         { MidIOHelper.GHL_BASS_TRACK,      Song.Instrument.GHLiveBass },
     };
 
-        static readonly Dictionary<string, bool> c_trackExcludesMap = new Dictionary<string, bool>()
+        static readonly IReadOnlyDictionary<string, bool> c_trackExcludesMap = new Dictionary<string, bool>()
     {
         { "t1 gems",    true },
         { "beat",       true }
     };
 
-        static readonly Dictionary<Song.AudioInstrument, string[]> c_audioStreamLocationOverrideDict = new Dictionary<Song.AudioInstrument, string[]>()
+        static readonly IReadOnlyDictionary<Song.AudioInstrument, string[]> c_audioStreamLocationOverrideDict = new Dictionary<Song.AudioInstrument, string[]>()
     {
         // String list is ordered in priority. If it finds a file names with the first string it'll skip over the rest.
         // Otherwise just does a ToString on the AudioInstrument enum
@@ -609,7 +609,7 @@ namespace MoonscraperChartEditor.Song.IO
             }},
         };
 
-            Dictionary<Note.GuitarFret, int> FretToMidiKey = new Dictionary<Note.GuitarFret, int>()
+            IReadOnlyDictionary<Note.GuitarFret, int> FretToMidiKey = new Dictionary<Note.GuitarFret, int>()
         {
             // { Note.GuitarFret.Open, 0 }, // Handled by sysex event
             { Note.GuitarFret.Green, 0 },
@@ -667,7 +667,7 @@ namespace MoonscraperChartEditor.Song.IO
             }},
         };
 
-            Dictionary<Note.GHLiveGuitarFret, int> FretToMidiKey = new Dictionary<Note.GHLiveGuitarFret, int>()
+            IReadOnlyDictionary<Note.GHLiveGuitarFret, int> FretToMidiKey = new Dictionary<Note.GHLiveGuitarFret, int>()
         {
             { Note.GHLiveGuitarFret.Open, 0 },
             { Note.GHLiveGuitarFret.White1, 1 },
@@ -735,7 +735,7 @@ namespace MoonscraperChartEditor.Song.IO
         { MidIOHelper.STARPOWER_DRUM_FILL_4, ProcessNoteOnEventAsDrumFill },
     };
 
-            Dictionary<Note.DrumPad, int> DrumPadToMidiKey = new Dictionary<Note.DrumPad, int>()
+            IReadOnlyDictionary<Note.DrumPad, int> DrumPadToMidiKey = new Dictionary<Note.DrumPad, int>()
         {
             { Note.DrumPad.Kick, 0 },
             { Note.DrumPad.Red, 1 },
@@ -745,7 +745,7 @@ namespace MoonscraperChartEditor.Song.IO
             { Note.DrumPad.Green, 5 },
         };
 
-            Dictionary<Note.DrumPad, Note.Flags> DrumPadDefaultFlags = new Dictionary<Note.DrumPad, Note.Flags>()
+            IReadOnlyDictionary<Note.DrumPad, Note.Flags> DrumPadDefaultFlags = new Dictionary<Note.DrumPad, Note.Flags>()
         {
             { Note.DrumPad.Yellow, Note.Flags.ProDrums_Cymbal },
             { Note.DrumPad.Blue, Note.Flags.ProDrums_Cymbal },
