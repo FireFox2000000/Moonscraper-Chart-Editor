@@ -92,6 +92,7 @@ namespace MoonscraperChartEditor.Song.IO
                 ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Orange, NoteFlagPriority.Cymbal);
             } },
 
+            // { ChartIOHelper.c_drumsAccentOffset + 0, ... }  // Reserved for kick accents, if they should ever be a thing
             { ChartIOHelper.c_drumsAccentOffset + 1, (in NoteProcessParams noteProcessParams) => {
                 ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Red, NoteFlagPriority.Accent);
             } },
@@ -108,6 +109,7 @@ namespace MoonscraperChartEditor.Song.IO
                 ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Green, NoteFlagPriority.Accent);
             } },
 
+            // { ChartIOHelper.c_drumsGhostOffset + 0, ... }  // Reserved for kick ghosts, if they should ever be a thing
             { ChartIOHelper.c_drumsGhostOffset + 1, (in NoteProcessParams noteProcessParams) => {
                 ProcessNoteOnEventAsNoteFlagToggle(noteProcessParams, (int)Note.DrumPad.Red, NoteFlagPriority.Ghost);
             } },
