@@ -32,15 +32,15 @@ namespace MoonscraperChartEditor.Song.IO
         static readonly string s_chartHeaderTrackFormat = "[{0}{1}]" + Globals.LINE_ENDING + "{{" + Globals.LINE_ENDING;
 
         // Bi-directional dict lookups
-        static readonly Dictionary<Song.Instrument, string> c_instrumentToStrLookup = ChartIOHelper.c_instrumentStrToEnumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
-        static readonly Dictionary<Song.Difficulty, string> c_difficultyToTrackNameLookup = ChartIOHelper.c_trackNameToTrackDifficultyLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+        static readonly IReadOnlyDictionary<Song.Instrument, string> c_instrumentToStrLookup = ChartIOHelper.c_instrumentStrToEnumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+        static readonly IReadOnlyDictionary<Song.Difficulty, string> c_difficultyToTrackNameLookup = ChartIOHelper.c_trackNameToTrackDifficultyLookup.ToDictionary((i) => i.Value, (i) => i.Key);
 
-        static readonly Dictionary<int, int> c_guitarNoteToSaveNumberLookup = ChartIOHelper.c_guitarNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
-        static readonly Dictionary<int, int> c_ghlNoteToSaveNumberLookup = ChartIOHelper.c_ghlNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
-        static readonly Dictionary<Note.Flags, int> c_guitarFlagToNumLookup = ChartIOHelper.c_guitarFlagNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
-        public static readonly Dictionary<int, int> c_drumNoteToSaveNumberLookup = ChartIOHelper.c_drumNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+        static readonly IReadOnlyDictionary<int, int> c_guitarNoteToSaveNumberLookup = ChartIOHelper.c_guitarNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+        static readonly IReadOnlyDictionary<int, int> c_ghlNoteToSaveNumberLookup = ChartIOHelper.c_ghlNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+        static readonly IReadOnlyDictionary<Note.Flags, int> c_guitarFlagToNumLookup = ChartIOHelper.c_guitarFlagNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+        public static readonly IReadOnlyDictionary<int, int> c_drumNoteToSaveNumberLookup = ChartIOHelper.c_drumNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
 
-        public static readonly Dictionary<int, int> c_drumNoteAccentSaveLookup = new Dictionary<int, int>()
+        public static readonly IReadOnlyDictionary<int, int> c_drumNoteAccentSaveLookup = new Dictionary<int, int>()
     {
         // { (int)Note.DrumPad.Kick       , ChartIOHelper.c_drumsAccentOffset + 0 },  // Reserved for kick accents, if those ever become a thing
         { (int)Note.DrumPad.Red       , ChartIOHelper.c_drumsAccentOffset + 1 },
@@ -50,7 +50,7 @@ namespace MoonscraperChartEditor.Song.IO
         { (int)Note.DrumPad.Green     , ChartIOHelper.c_drumsAccentOffset + 5 },
     };
 
-        public static readonly Dictionary<int, int> c_drumNoteGhostSaveLookup = new Dictionary<int, int>()
+        public static readonly IReadOnlyDictionary<int, int> c_drumNoteGhostSaveLookup = new Dictionary<int, int>()
     {
         // { (int)Note.DrumPad.Kick       , ChartIOHelper.c_drumsGhostOffset + 0 },  // Reserved for kick ghosts, if those ever become a thing
         { (int)Note.DrumPad.Red       , ChartIOHelper.c_drumsGhostOffset + 1 },
@@ -363,7 +363,7 @@ namespace MoonscraperChartEditor.Song.IO
             return saveString.ToString();
         }
 
-        static int GetSaveNoteNumber(int note, Dictionary<int, int> lookupDict)
+        static int GetSaveNoteNumber(int note, IReadOnlyDictionary<int, int> lookupDict)
         {
             int noteNumber;
             if (!lookupDict.TryGetValue(note, out noteNumber))

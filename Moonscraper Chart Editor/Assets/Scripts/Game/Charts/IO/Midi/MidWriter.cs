@@ -47,7 +47,7 @@ namespace MoonscraperChartEditor.Song.IO
             public List<SortableBytes> out_sortableBytes;
         }
 
-        static readonly Dictionary<Song.Instrument, string> c_instrumentToTrackNameDict = new Dictionary<Song.Instrument, string>()
+        static readonly IReadOnlyDictionary<Song.Instrument, string> c_instrumentToTrackNameDict = new Dictionary<Song.Instrument, string>()
     {
         { Song.Instrument.Guitar,           MidIOHelper.GUITAR_TRACK },
         { Song.Instrument.GuitarCoop,       MidIOHelper.GUITAR_COOP_TRACK },
@@ -59,7 +59,7 @@ namespace MoonscraperChartEditor.Song.IO
         { Song.Instrument.GHLiveBass,       MidIOHelper.GHL_BASS_TRACK },
     };
 
-        static readonly Dictionary<Song.Difficulty, int> c_difficultyToMidiNoteWriteDict = new Dictionary<Song.Difficulty, int>()
+        static readonly IReadOnlyDictionary<Song.Difficulty, int> c_difficultyToMidiNoteWriteDict = new Dictionary<Song.Difficulty, int>()
     {
         { Song.Difficulty.Easy,             60 },
         { Song.Difficulty.Medium,           72 },
@@ -67,7 +67,7 @@ namespace MoonscraperChartEditor.Song.IO
         { Song.Difficulty.Expert,           96 },
     };
 
-        static readonly Dictionary<int, int> c_guitarNoteMidiWriteOffsets = new Dictionary<int, int>()
+        static readonly IReadOnlyDictionary<int, int> c_guitarNoteMidiWriteOffsets = new Dictionary<int, int>()
     {
         { (int)Note.GuitarFret.Open,     0},     // Gets replaced by an sysex event
         { (int)Note.GuitarFret.Green,    0},
@@ -77,7 +77,7 @@ namespace MoonscraperChartEditor.Song.IO
         { (int)Note.GuitarFret.Orange,   4},
     };
 
-        static readonly Dictionary<int, int> c_drumNoteMidiWriteOffsets = new Dictionary<int, int>()
+        static readonly IReadOnlyDictionary<int, int> c_drumNoteMidiWriteOffsets = new Dictionary<int, int>()
     {
         { (int)Note.DrumPad.Kick,     0},
         { (int)Note.DrumPad.Red,      1},
@@ -87,7 +87,7 @@ namespace MoonscraperChartEditor.Song.IO
         { (int)Note.DrumPad.Green,    5},
     };
 
-        static readonly Dictionary<int, int> c_ghlNoteMidiWriteOffsets = new Dictionary<int, int>()
+        static readonly IReadOnlyDictionary<int, int> c_ghlNoteMidiWriteOffsets = new Dictionary<int, int>()
     {
         { (int)Note.GHLiveGuitarFret.Open,   -2},
         { (int)Note.GHLiveGuitarFret.White1, -1},
@@ -98,21 +98,21 @@ namespace MoonscraperChartEditor.Song.IO
         { (int)Note.GHLiveGuitarFret.Black3, 4},
     };
 
-        static readonly Dictionary<Chart.GameMode, Dictionary<int, int>> c_gameModeNoteWriteOffsetDictLookup = new Dictionary<Chart.GameMode, Dictionary<int, int>>()
+        static readonly IReadOnlyDictionary<Chart.GameMode, IReadOnlyDictionary<int, int>> c_gameModeNoteWriteOffsetDictLookup = new Dictionary<Chart.GameMode, IReadOnlyDictionary<int, int>>()
     {
         { Chart.GameMode.Guitar,    c_guitarNoteMidiWriteOffsets },
         { Chart.GameMode.Drums,     c_drumNoteMidiWriteOffsets },
         { Chart.GameMode.GHLGuitar, c_ghlNoteMidiWriteOffsets },
     };
 
-        static readonly Dictionary<Note.NoteType, int> c_forcingMidiWriteOffsets = new Dictionary<Note.NoteType, int>()
+        static readonly IReadOnlyDictionary<Note.NoteType, int> c_forcingMidiWriteOffsets = new Dictionary<Note.NoteType, int>()
     {
         { Note.NoteType.Hopo, 5 },
         { Note.NoteType.Strum, 6 },
     };
 
         delegate void ProcessVocalEventBytesFn(in VocalProcessingParams processParams);
-        static readonly Dictionary<string, ProcessVocalEventBytesFn> vocalPrefixProcessList = new Dictionary<string, ProcessVocalEventBytesFn>()
+        static readonly IReadOnlyDictionary<string, ProcessVocalEventBytesFn> vocalPrefixProcessList = new Dictionary<string, ProcessVocalEventBytesFn>()
         {
             { MidIOHelper.LYRIC_EVENT_PREFIX, (in VocalProcessingParams processParams) => {
                 const string prefix = MidIOHelper.LYRIC_EVENT_PREFIX;
@@ -995,7 +995,7 @@ namespace MoonscraperChartEditor.Song.IO
 
         static int GetMidiNoteNumber(Note note, Chart.GameMode gameMode, Song.Difficulty difficulty)
         {
-            Dictionary<int, int> noteToMidiOffsetDict;
+            IReadOnlyDictionary<int, int> noteToMidiOffsetDict;
             int difficultyNumber;
             int offset;
 

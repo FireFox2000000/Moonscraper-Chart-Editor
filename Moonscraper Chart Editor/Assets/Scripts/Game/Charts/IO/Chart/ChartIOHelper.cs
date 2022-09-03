@@ -32,7 +32,7 @@ namespace MoonscraperChartEditor.Song.IO
         public const int c_starpowerId = 2;
         public const int c_starpowerDrumFillId = 64;
 
-        public static readonly Dictionary<int, int> c_guitarNoteNumLookup = new Dictionary<int, int>()
+        public static readonly IReadOnlyDictionary<int, int> c_guitarNoteNumLookup = new Dictionary<int, int>()
     {
         { 0, (int)Note.GuitarFret.Green     },
         { 1, (int)Note.GuitarFret.Red       },
@@ -42,13 +42,13 @@ namespace MoonscraperChartEditor.Song.IO
         { 7, (int)Note.GuitarFret.Open      },
     };
 
-        public static readonly Dictionary<int, Note.Flags> c_guitarFlagNumLookup = new Dictionary<int, Note.Flags>()
+        public static readonly IReadOnlyDictionary<int, Note.Flags> c_guitarFlagNumLookup = new Dictionary<int, Note.Flags>()
     {
         { 5      , Note.Flags.Forced },
         { 6      , Note.Flags.Tap },
     };
 
-        public static readonly Dictionary<int, int> c_drumNoteNumLookup = new Dictionary<int, int>()
+        public static readonly IReadOnlyDictionary<int, int> c_drumNoteNumLookup = new Dictionary<int, int>()
     {
         { 0, (int)Note.DrumPad.Kick      },
         { 1, (int)Note.DrumPad.Red       },
@@ -59,17 +59,17 @@ namespace MoonscraperChartEditor.Song.IO
     };
 
         // Flags to skip adding if the corresponding flag is already present
-        public static readonly Dictionary<Note.Flags, Note.Flags> c_noteBlockingFlagsLookup = new Dictionary<Note.Flags, Note.Flags>()
+        public static readonly IReadOnlyDictionary<Note.Flags, Note.Flags> c_noteBlockingFlagsLookup = new Dictionary<Note.Flags, Note.Flags>()
     {
         { Note.Flags.Forced, Note.Flags.Tap },
         { Note.Flags.ProDrums_Ghost, Note.Flags.ProDrums_Accent },
     };
 
         // Flags to remove if the corresponding flag is being added
-        public static readonly Dictionary<Note.Flags, Note.Flags> c_noteFlagsToRemoveLookup = c_noteBlockingFlagsLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+        public static readonly IReadOnlyDictionary<Note.Flags, Note.Flags> c_noteFlagsToRemoveLookup = c_noteBlockingFlagsLookup.ToDictionary((i) => i.Value, (i) => i.Key);
 
         // Default flags for drums notes
-        public static readonly Dictionary<int, Note.Flags> c_drumNoteDefaultFlagsLookup = new Dictionary<int, Note.Flags>()
+        public static readonly IReadOnlyDictionary<int, Note.Flags> c_drumNoteDefaultFlagsLookup = new Dictionary<int, Note.Flags>()
     {
         { (int)Note.DrumPad.Kick      , Note.Flags.None },
         { (int)Note.DrumPad.Red       , Note.Flags.None },
@@ -79,7 +79,7 @@ namespace MoonscraperChartEditor.Song.IO
         { (int)Note.DrumPad.Green     , Note.Flags.None },
     };
 
-        public static readonly Dictionary<int, int> c_ghlNoteNumLookup = new Dictionary<int, int>()
+        public static readonly IReadOnlyDictionary<int, int> c_ghlNoteNumLookup = new Dictionary<int, int>()
     {
         { 0, (int)Note.GHLiveGuitarFret.White1     },
         { 1, (int)Note.GHLiveGuitarFret.White2       },
@@ -90,9 +90,9 @@ namespace MoonscraperChartEditor.Song.IO
         { 7, (int)Note.GHLiveGuitarFret.Open      },
     };
 
-        public static readonly Dictionary<int, Note.Flags> c_ghlFlagNumLookup = c_guitarFlagNumLookup;
+        public static readonly IReadOnlyDictionary<int, Note.Flags> c_ghlFlagNumLookup = c_guitarFlagNumLookup;
 
-        public static readonly Dictionary<string, Song.Difficulty> c_trackNameToTrackDifficultyLookup = new Dictionary<string, Song.Difficulty>()
+        public static readonly IReadOnlyDictionary<string, Song.Difficulty> c_trackNameToTrackDifficultyLookup = new Dictionary<string, Song.Difficulty>()
     {
         { "Easy",   Song.Difficulty.Easy    },
         { "Medium", Song.Difficulty.Medium  },
@@ -100,7 +100,7 @@ namespace MoonscraperChartEditor.Song.IO
         { "Expert", Song.Difficulty.Expert  },
     };
 
-        public static readonly Dictionary<string, Song.Instrument> c_instrumentStrToEnumLookup = new Dictionary<string, Song.Instrument>()
+        public static readonly IReadOnlyDictionary<string, Song.Instrument> c_instrumentStrToEnumLookup = new Dictionary<string, Song.Instrument>()
     {
         { "Single",         Song.Instrument.Guitar },
         { "DoubleGuitar",   Song.Instrument.GuitarCoop },
@@ -112,7 +112,7 @@ namespace MoonscraperChartEditor.Song.IO
         { "GHLBass",        Song.Instrument.GHLiveBass },
     };
 
-        public static readonly Dictionary<Song.Instrument, Song.Instrument> c_instrumentParsingTypeLookup = new Dictionary<Song.Instrument, Song.Instrument>()
+        public static readonly IReadOnlyDictionary<Song.Instrument, Song.Instrument> c_instrumentParsingTypeLookup = new Dictionary<Song.Instrument, Song.Instrument>()
     {
         // Other instruments default to loading as a guitar type track
         { Song.Instrument.Drums,          Song.Instrument.Drums },
