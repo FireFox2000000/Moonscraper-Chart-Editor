@@ -38,6 +38,7 @@ namespace MoonscraperChartEditor.Song.IO
         static readonly Dictionary<int, int> c_guitarNoteToSaveNumberLookup = ChartIOHelper.c_guitarNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
         static readonly Dictionary<int, int> c_ghlNoteToSaveNumberLookup = ChartIOHelper.c_ghlNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
         static readonly Dictionary<Note.Flags, int> c_guitarFlagToNumLookup = ChartIOHelper.c_guitarFlagNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+        public static readonly Dictionary<int, int> c_drumNoteToSaveNumberLookup = ChartIOHelper.c_drumNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
 
         public static readonly Dictionary<int, int> c_drumNoteAccentSaveLookup = new Dictionary<int, int>()
     {
@@ -380,7 +381,7 @@ namespace MoonscraperChartEditor.Song.IO
 
         static int GetDrumsSaveNoteNumber(Note note)
         {
-            return GetSaveNoteNumber((int)note.drumPad, ChartIOHelper.c_drumNoteToSaveNumberLookup);
+            return GetSaveNoteNumber((int)note.drumPad, c_drumNoteToSaveNumberLookup);
         }
 
         static int GetGHLSaveNoteNumber(Note note)
@@ -636,7 +637,7 @@ namespace MoonscraperChartEditor.Song.IO
                     // Write out cymbal flag for each note
                     int writeValue = ChartIOHelper.c_proDrumsOffset;
                     int noteOffset;
-                    if (!ChartIOHelper.c_drumNoteToSaveNumberLookup.TryGetValue(note.rawNote, out noteOffset))
+                    if (!c_drumNoteToSaveNumberLookup.TryGetValue(note.rawNote, out noteOffset))
                     {
                         throw new Exception("Cannot find pro drum note offset for note " + note.drumPad.ToString());
                     }
