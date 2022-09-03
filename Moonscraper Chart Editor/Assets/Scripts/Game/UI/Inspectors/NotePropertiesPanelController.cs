@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -247,12 +247,14 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 	
     public void setTap()
     {
-        OnNoteFlagToggleChanged(tapToggle, Note.Flags.Tap);
+        // A note can only be forced or a tap, not both
+        OnNoteFlagToggleChanged(tapToggle, Note.Flags.Tap, Note.Flags.Forced);
     }
 
     public void setForced()
     {
-        OnNoteFlagToggleChanged(forcedToggle, Note.Flags.Forced);
+        // A note can only be forced or a tap, not both
+        OnNoteFlagToggleChanged(forcedToggle, Note.Flags.Forced, Note.Flags.Tap);
     }
 
     public void setCymbal()
