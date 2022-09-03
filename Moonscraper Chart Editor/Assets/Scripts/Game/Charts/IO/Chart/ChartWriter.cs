@@ -41,24 +41,24 @@ namespace MoonscraperChartEditor.Song.IO
         public static readonly IReadOnlyDictionary<int, int> c_drumNoteToSaveNumberLookup = ChartIOHelper.c_drumNoteNumLookup.ToDictionary((i) => i.Value, (i) => i.Key);
 
         public static readonly IReadOnlyDictionary<int, int> c_drumNoteAccentSaveLookup = new Dictionary<int, int>()
-    {
-        // { (int)Note.DrumPad.Kick       , ChartIOHelper.c_drumsAccentOffset + 0 },  // Reserved for kick accents, if those ever become a thing
-        { (int)Note.DrumPad.Red       , ChartIOHelper.c_drumsAccentOffset + 1 },
-        { (int)Note.DrumPad.Yellow    , ChartIOHelper.c_drumsAccentOffset + 2 },
-        { (int)Note.DrumPad.Blue      , ChartIOHelper.c_drumsAccentOffset + 3 },
-        { (int)Note.DrumPad.Orange    , ChartIOHelper.c_drumsAccentOffset + 4 },
-        { (int)Note.DrumPad.Green     , ChartIOHelper.c_drumsAccentOffset + 5 },
-    };
+        {
+            // { (int)Note.DrumPad.Kick       , ChartIOHelper.c_drumsAccentOffset + 0 },  // Reserved for kick accents, if those ever become a thing
+            { (int)Note.DrumPad.Red       , ChartIOHelper.c_drumsAccentOffset + 1 },
+            { (int)Note.DrumPad.Yellow    , ChartIOHelper.c_drumsAccentOffset + 2 },
+            { (int)Note.DrumPad.Blue      , ChartIOHelper.c_drumsAccentOffset + 3 },
+            { (int)Note.DrumPad.Orange    , ChartIOHelper.c_drumsAccentOffset + 4 },
+            { (int)Note.DrumPad.Green     , ChartIOHelper.c_drumsAccentOffset + 5 },
+        };
 
         public static readonly IReadOnlyDictionary<int, int> c_drumNoteGhostSaveLookup = new Dictionary<int, int>()
-    {
-        // { (int)Note.DrumPad.Kick       , ChartIOHelper.c_drumsGhostOffset + 0 },  // Reserved for kick ghosts, if those ever become a thing
-        { (int)Note.DrumPad.Red       , ChartIOHelper.c_drumsGhostOffset + 1 },
-        { (int)Note.DrumPad.Yellow    , ChartIOHelper.c_drumsGhostOffset + 2 },
-        { (int)Note.DrumPad.Blue      , ChartIOHelper.c_drumsGhostOffset + 3 },
-        { (int)Note.DrumPad.Orange    , ChartIOHelper.c_drumsGhostOffset + 4 },
-        { (int)Note.DrumPad.Green     , ChartIOHelper.c_drumsGhostOffset + 5 },
-    };
+        {
+            // { (int)Note.DrumPad.Kick       , ChartIOHelper.c_drumsGhostOffset + 0 },  // Reserved for kick ghosts, if those ever become a thing
+            { (int)Note.DrumPad.Red       , ChartIOHelper.c_drumsGhostOffset + 1 },
+            { (int)Note.DrumPad.Yellow    , ChartIOHelper.c_drumsGhostOffset + 2 },
+            { (int)Note.DrumPad.Blue      , ChartIOHelper.c_drumsGhostOffset + 3 },
+            { (int)Note.DrumPad.Orange    , ChartIOHelper.c_drumsGhostOffset + 4 },
+            { (int)Note.DrumPad.Green     , ChartIOHelper.c_drumsGhostOffset + 5 },
+        };
 
         delegate void WriteAudioStreamSaveString(Song.AudioInstrument audio, string saveFormat);
 
@@ -91,15 +91,15 @@ namespace MoonscraperChartEditor.Song.IO
         }
         delegate void AppendSongObjectData(SongObject so, in SongObjectWriteParameters writeParameters, StringBuilder output);
         static readonly Dictionary<SongObject.ID, AppendSongObjectData> c_songObjectWriteFnLookup = new Dictionary<SongObject.ID, AppendSongObjectData>()
-    {
-        { SongObject.ID.BPM, AppendBpmData },
-        { SongObject.ID.TimeSignature, AppendTsData },
-        { SongObject.ID.Event, AppendEventData },
-        { SongObject.ID.Section, AppendSectionData },
-        { SongObject.ID.Starpower, AppendStarpowerData },
-        { SongObject.ID.ChartEvent, AppendChartEventData },
-        { SongObject.ID.Note, AppendNoteData },
-    };
+        {
+            { SongObject.ID.BPM, AppendBpmData },
+            { SongObject.ID.TimeSignature, AppendTsData },
+            { SongObject.ID.Event, AppendEventData },
+            { SongObject.ID.Section, AppendSectionData },
+            { SongObject.ID.Starpower, AppendStarpowerData },
+            { SongObject.ID.ChartEvent, AppendChartEventData },
+            { SongObject.ID.Note, AppendNoteData },
+        };
 
         public void Write(Song song, ExportOptions exportOptions, out ErrorReport errorReport)
         {

@@ -33,82 +33,82 @@ namespace MoonscraperChartEditor.Song.IO
         public const int c_starpowerDrumFillId = 64;
 
         public static readonly IReadOnlyDictionary<int, int> c_guitarNoteNumLookup = new Dictionary<int, int>()
-    {
-        { 0, (int)Note.GuitarFret.Green     },
-        { 1, (int)Note.GuitarFret.Red       },
-        { 2, (int)Note.GuitarFret.Yellow    },
-        { 3, (int)Note.GuitarFret.Blue      },
-        { 4, (int)Note.GuitarFret.Orange    },
-        { 7, (int)Note.GuitarFret.Open      },
-    };
+        {
+            { 0, (int)Note.GuitarFret.Green     },
+            { 1, (int)Note.GuitarFret.Red       },
+            { 2, (int)Note.GuitarFret.Yellow    },
+            { 3, (int)Note.GuitarFret.Blue      },
+            { 4, (int)Note.GuitarFret.Orange    },
+            { 7, (int)Note.GuitarFret.Open      },
+        };
 
         public static readonly IReadOnlyDictionary<int, Note.Flags> c_guitarFlagNumLookup = new Dictionary<int, Note.Flags>()
-    {
-        { 5      , Note.Flags.Forced },
-        { 6      , Note.Flags.Tap },
-    };
+        {
+            { 5      , Note.Flags.Forced },
+            { 6      , Note.Flags.Tap },
+        };
 
         public static readonly IReadOnlyDictionary<int, int> c_drumNoteNumLookup = new Dictionary<int, int>()
-    {
-        { 0, (int)Note.DrumPad.Kick      },
-        { 1, (int)Note.DrumPad.Red       },
-        { 2, (int)Note.DrumPad.Yellow    },
-        { 3, (int)Note.DrumPad.Blue      },
-        { 4, (int)Note.DrumPad.Orange    },
-        { 5, (int)Note.DrumPad.Green     },
-    };
+        {
+            { 0, (int)Note.DrumPad.Kick      },
+            { 1, (int)Note.DrumPad.Red       },
+            { 2, (int)Note.DrumPad.Yellow    },
+            { 3, (int)Note.DrumPad.Blue      },
+            { 4, (int)Note.DrumPad.Orange    },
+            { 5, (int)Note.DrumPad.Green     },
+        };
 
         // Default flags for drums notes
         public static readonly IReadOnlyDictionary<int, Note.Flags> c_drumNoteDefaultFlagsLookup = new Dictionary<int, Note.Flags>()
-    {
-        { (int)Note.DrumPad.Kick      , Note.Flags.None },
-        { (int)Note.DrumPad.Red       , Note.Flags.None },
-        { (int)Note.DrumPad.Yellow    , Note.Flags.None },
-        { (int)Note.DrumPad.Blue      , Note.Flags.None },
-        { (int)Note.DrumPad.Orange    , Note.Flags.None },   // Orange becomes green during 4-lane
-        { (int)Note.DrumPad.Green     , Note.Flags.None },
-    };
+        {
+            { (int)Note.DrumPad.Kick      , Note.Flags.None },
+            { (int)Note.DrumPad.Red       , Note.Flags.None },
+            { (int)Note.DrumPad.Yellow    , Note.Flags.None },
+            { (int)Note.DrumPad.Blue      , Note.Flags.None },
+            { (int)Note.DrumPad.Orange    , Note.Flags.None },   // Orange becomes green during 4-lane
+            { (int)Note.DrumPad.Green     , Note.Flags.None },
+        };
 
         public static readonly IReadOnlyDictionary<int, int> c_ghlNoteNumLookup = new Dictionary<int, int>()
-    {
-        { 0, (int)Note.GHLiveGuitarFret.White1     },
-        { 1, (int)Note.GHLiveGuitarFret.White2       },
-        { 2, (int)Note.GHLiveGuitarFret.White3    },
-        { 3, (int)Note.GHLiveGuitarFret.Black1      },
-        { 4, (int)Note.GHLiveGuitarFret.Black2    },
-        { 8, (int)Note.GHLiveGuitarFret.Black3      },
-        { 7, (int)Note.GHLiveGuitarFret.Open      },
-    };
+        {
+            { 0, (int)Note.GHLiveGuitarFret.White1    },
+            { 1, (int)Note.GHLiveGuitarFret.White2    },
+            { 2, (int)Note.GHLiveGuitarFret.White3    },
+            { 3, (int)Note.GHLiveGuitarFret.Black1    },
+            { 4, (int)Note.GHLiveGuitarFret.Black2    },
+            { 8, (int)Note.GHLiveGuitarFret.Black3    },
+            { 7, (int)Note.GHLiveGuitarFret.Open      },
+        };
 
         public static readonly IReadOnlyDictionary<int, Note.Flags> c_ghlFlagNumLookup = c_guitarFlagNumLookup;
 
         public static readonly IReadOnlyDictionary<string, Song.Difficulty> c_trackNameToTrackDifficultyLookup = new Dictionary<string, Song.Difficulty>()
-    {
-        { "Easy",   Song.Difficulty.Easy    },
-        { "Medium", Song.Difficulty.Medium  },
-        { "Hard",   Song.Difficulty.Hard    },
-        { "Expert", Song.Difficulty.Expert  },
-    };
+        {
+            { "Easy",   Song.Difficulty.Easy    },
+            { "Medium", Song.Difficulty.Medium  },
+            { "Hard",   Song.Difficulty.Hard    },
+            { "Expert", Song.Difficulty.Expert  },
+        };
 
         public static readonly IReadOnlyDictionary<string, Song.Instrument> c_instrumentStrToEnumLookup = new Dictionary<string, Song.Instrument>()
-    {
-        { "Single",         Song.Instrument.Guitar },
-        { "DoubleGuitar",   Song.Instrument.GuitarCoop },
-        { "DoubleBass",     Song.Instrument.Bass },
-        { "DoubleRhythm",   Song.Instrument.Rhythm },
-        { "Drums",          Song.Instrument.Drums },
-        { "Keyboard",       Song.Instrument.Keys },
-        { "GHLGuitar",      Song.Instrument.GHLiveGuitar },
-        { "GHLBass",        Song.Instrument.GHLiveBass },
-    };
+        {
+            { "Single",         Song.Instrument.Guitar },
+            { "DoubleGuitar",   Song.Instrument.GuitarCoop },
+            { "DoubleBass",     Song.Instrument.Bass },
+            { "DoubleRhythm",   Song.Instrument.Rhythm },
+            { "Drums",          Song.Instrument.Drums },
+            { "Keyboard",       Song.Instrument.Keys },
+            { "GHLGuitar",      Song.Instrument.GHLiveGuitar },
+            { "GHLBass",        Song.Instrument.GHLiveBass },
+        };
 
         public static readonly IReadOnlyDictionary<Song.Instrument, Song.Instrument> c_instrumentParsingTypeLookup = new Dictionary<Song.Instrument, Song.Instrument>()
-    {
-        // Other instruments default to loading as a guitar type track
-        { Song.Instrument.Drums,          Song.Instrument.Drums },
-        { Song.Instrument.GHLiveGuitar ,  Song.Instrument.GHLiveGuitar },
-        { Song.Instrument.GHLiveBass ,  Song.Instrument.GHLiveBass },
-    };
+        {
+            // Other instruments default to loading as a guitar type track
+            { Song.Instrument.Drums,          Song.Instrument.Drums },
+            { Song.Instrument.GHLiveGuitar ,  Song.Instrument.GHLiveGuitar },
+            { Song.Instrument.GHLiveBass ,  Song.Instrument.GHLiveBass },
+        };
 
         public static class MetaData
         {

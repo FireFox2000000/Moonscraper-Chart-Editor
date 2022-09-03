@@ -20,29 +20,29 @@ namespace MoonscraperChartEditor.Song.IO
         }
 
         static readonly IReadOnlyDictionary<string, Song.Instrument> c_trackNameToInstrumentMap = new Dictionary<string, Song.Instrument>()
-    {
-        { MidIOHelper.GUITAR_TRACK,        Song.Instrument.Guitar },
-        { MidIOHelper.GUITAR_COOP_TRACK,   Song.Instrument.GuitarCoop },
-        { MidIOHelper.BASS_TRACK,          Song.Instrument.Bass },
-        { MidIOHelper.RHYTHM_TRACK,        Song.Instrument.Rhythm },
-        { MidIOHelper.KEYS_TRACK,          Song.Instrument.Keys },
-        { MidIOHelper.DRUMS_TRACK,         Song.Instrument.Drums },
-        { MidIOHelper.GHL_GUITAR_TRACK,    Song.Instrument.GHLiveGuitar },
-        { MidIOHelper.GHL_BASS_TRACK,      Song.Instrument.GHLiveBass },
-    };
+        {
+            { MidIOHelper.GUITAR_TRACK,        Song.Instrument.Guitar },
+            { MidIOHelper.GUITAR_COOP_TRACK,   Song.Instrument.GuitarCoop },
+            { MidIOHelper.BASS_TRACK,          Song.Instrument.Bass },
+            { MidIOHelper.RHYTHM_TRACK,        Song.Instrument.Rhythm },
+            { MidIOHelper.KEYS_TRACK,          Song.Instrument.Keys },
+            { MidIOHelper.DRUMS_TRACK,         Song.Instrument.Drums },
+            { MidIOHelper.GHL_GUITAR_TRACK,    Song.Instrument.GHLiveGuitar },
+            { MidIOHelper.GHL_BASS_TRACK,      Song.Instrument.GHLiveBass },
+        };
 
         static readonly IReadOnlyDictionary<string, bool> c_trackExcludesMap = new Dictionary<string, bool>()
-    {
-        { "t1 gems",    true },
-        { "beat",       true }
-    };
+        {
+            { "t1 gems",    true },
+            { "beat",       true }
+        };
 
         static readonly IReadOnlyDictionary<Song.AudioInstrument, string[]> c_audioStreamLocationOverrideDict = new Dictionary<Song.AudioInstrument, string[]>()
-    {
-        // String list is ordered in priority. If it finds a file names with the first string it'll skip over the rest.
-        // Otherwise just does a ToString on the AudioInstrument enum
-        { Song.AudioInstrument.Drum, new string[] { "drums", "drums_1" } },
-    };
+        {
+            // String list is ordered in priority. If it finds a file names with the first string it'll skip over the rest.
+            // Otherwise just does a ToString on the AudioInstrument enum
+            { Song.AudioInstrument.Drum, new string[] { "drums", "drums_1" } },
+        };
 
         struct EventProcessParams
         {
@@ -68,18 +68,18 @@ namespace MoonscraperChartEditor.Song.IO
 
         // These dictionaries map the text of a MIDI text event to a specific function that processes them
         static readonly IReadOnlyDictionary<string, ProcessModificationProcessFn> GuitarTextEventToProcessFnMap = new Dictionary<string, ProcessModificationProcessFn>()
-    {
-    };
+        {
+        };
 
         static readonly IReadOnlyDictionary<string, ProcessModificationProcessFn> GhlGuitarTextEventToProcessFnMap = new Dictionary<string, ProcessModificationProcessFn>()
-    {
-    };
+        {
+        };
 
         static readonly IReadOnlyDictionary<string, ProcessModificationProcessFn> DrumsTextEventToProcessFnMap = new Dictionary<string, ProcessModificationProcessFn>()
-    {
-        { MidIOHelper.CHART_DYNAMICS_TEXT, SwitchToDrumsVelocityProcessMap },
-        { MidIOHelper.CHART_DYNAMICS_TEXT_BRACKET, SwitchToDrumsVelocityProcessMap },
-    };
+        {
+            { MidIOHelper.CHART_DYNAMICS_TEXT, SwitchToDrumsVelocityProcessMap },
+            { MidIOHelper.CHART_DYNAMICS_TEXT_BRACKET, SwitchToDrumsVelocityProcessMap },
+        };
 
         public static Song ReadMidi(string path, ref CallbackState callBackState)
         {
@@ -602,22 +602,22 @@ namespace MoonscraperChartEditor.Song.IO
         static IReadOnlyDictionary<int, EventProcessFn> BuildGuitarMidiNoteNumberToProcessFnDict()
         {
             var processFnDict = new Dictionary<int, EventProcessFn>()
-        {
-            { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
-            { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
-                ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
-            }},
-        };
+            {
+                { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
+                { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
+                    ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
+                }},
+            };
 
             IReadOnlyDictionary<Note.GuitarFret, int> FretToMidiKey = new Dictionary<Note.GuitarFret, int>()
-        {
-            // { Note.GuitarFret.Open, 0 }, // Handled by sysex event
-            { Note.GuitarFret.Green, 0 },
-            { Note.GuitarFret.Red, 1 },
-            { Note.GuitarFret.Yellow, 2 },
-            { Note.GuitarFret.Blue, 3 },
-            { Note.GuitarFret.Orange, 4 },
-        };
+            {
+                // { Note.GuitarFret.Open, 0 }, // Handled by sysex event
+                { Note.GuitarFret.Green, 0 },
+                { Note.GuitarFret.Red, 1 },
+                { Note.GuitarFret.Yellow, 2 },
+                { Note.GuitarFret.Blue, 3 },
+                { Note.GuitarFret.Orange, 4 },
+            };
 
             foreach (var difficulty in EnumX<Song.Difficulty>.Values)
             {
@@ -660,23 +660,23 @@ namespace MoonscraperChartEditor.Song.IO
         static IReadOnlyDictionary<int, EventProcessFn> BuildGhlGuitarMidiNoteNumberToProcessFnDict()
         {
             var processFnDict = new Dictionary<int, EventProcessFn>()
-        {
-            { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
-            { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
-                ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
-            }},
-        };
+            {
+                { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
+                { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
+                    ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
+                }},
+            };
 
             IReadOnlyDictionary<Note.GHLiveGuitarFret, int> FretToMidiKey = new Dictionary<Note.GHLiveGuitarFret, int>()
-        {
-            { Note.GHLiveGuitarFret.Open, 0 },
-            { Note.GHLiveGuitarFret.White1, 1 },
-            { Note.GHLiveGuitarFret.White2, 2 },
-            { Note.GHLiveGuitarFret.White3, 3 },
-            { Note.GHLiveGuitarFret.Black1, 4 },
-            { Note.GHLiveGuitarFret.Black2, 5 },
-            { Note.GHLiveGuitarFret.Black3, 6 },
-        };
+            {
+                { Note.GHLiveGuitarFret.Open, 0 },
+                { Note.GHLiveGuitarFret.White1, 1 },
+                { Note.GHLiveGuitarFret.White2, 2 },
+                { Note.GHLiveGuitarFret.White3, 3 },
+                { Note.GHLiveGuitarFret.Black1, 4 },
+                { Note.GHLiveGuitarFret.Black2, 5 },
+                { Note.GHLiveGuitarFret.Black3, 6 },
+            };
 
             foreach (var difficulty in EnumX<Song.Difficulty>.Values)
             {
@@ -719,38 +719,38 @@ namespace MoonscraperChartEditor.Song.IO
         static IReadOnlyDictionary<int, EventProcessFn> BuildDrumsMidiNoteNumberToProcessFnDict(bool enableVelocity = false)
         {
             var processFnDict = new Dictionary<int, EventProcessFn>()
-    {
-        { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
-        { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
-            ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
-        }},
-        { MidIOHelper.DOUBLE_KICK_NOTE, (in EventProcessParams eventProcessParams) => {
-            ProcessNoteOnEventAsNote(eventProcessParams, Song.Difficulty.Expert, (int)Note.DrumPad.Kick, Note.Flags.InstrumentPlus);
-        }},
+            {
+                { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
+                { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
+                    ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
+                }},
+                { MidIOHelper.DOUBLE_KICK_NOTE, (in EventProcessParams eventProcessParams) => {
+                    ProcessNoteOnEventAsNote(eventProcessParams, Song.Difficulty.Expert, (int)Note.DrumPad.Kick, Note.Flags.InstrumentPlus);
+                }},
 
-        { MidIOHelper.STARPOWER_DRUM_FILL_0, ProcessNoteOnEventAsDrumFill },
-        { MidIOHelper.STARPOWER_DRUM_FILL_1, ProcessNoteOnEventAsDrumFill },
-        { MidIOHelper.STARPOWER_DRUM_FILL_2, ProcessNoteOnEventAsDrumFill },
-        { MidIOHelper.STARPOWER_DRUM_FILL_3, ProcessNoteOnEventAsDrumFill },
-        { MidIOHelper.STARPOWER_DRUM_FILL_4, ProcessNoteOnEventAsDrumFill },
-    };
+                { MidIOHelper.STARPOWER_DRUM_FILL_0, ProcessNoteOnEventAsDrumFill },
+                { MidIOHelper.STARPOWER_DRUM_FILL_1, ProcessNoteOnEventAsDrumFill },
+                { MidIOHelper.STARPOWER_DRUM_FILL_2, ProcessNoteOnEventAsDrumFill },
+                { MidIOHelper.STARPOWER_DRUM_FILL_3, ProcessNoteOnEventAsDrumFill },
+                { MidIOHelper.STARPOWER_DRUM_FILL_4, ProcessNoteOnEventAsDrumFill },
+            };
 
             IReadOnlyDictionary<Note.DrumPad, int> DrumPadToMidiKey = new Dictionary<Note.DrumPad, int>()
-        {
-            { Note.DrumPad.Kick, 0 },
-            { Note.DrumPad.Red, 1 },
-            { Note.DrumPad.Yellow, 2 },
-            { Note.DrumPad.Blue, 3 },
-            { Note.DrumPad.Orange, 4 },
-            { Note.DrumPad.Green, 5 },
-        };
+            {
+                { Note.DrumPad.Kick, 0 },
+                { Note.DrumPad.Red, 1 },
+                { Note.DrumPad.Yellow, 2 },
+                { Note.DrumPad.Blue, 3 },
+                { Note.DrumPad.Orange, 4 },
+                { Note.DrumPad.Green, 5 },
+            };
 
             IReadOnlyDictionary<Note.DrumPad, Note.Flags> DrumPadDefaultFlags = new Dictionary<Note.DrumPad, Note.Flags>()
-        {
-            { Note.DrumPad.Yellow, Note.Flags.ProDrums_Cymbal },
-            { Note.DrumPad.Blue, Note.Flags.ProDrums_Cymbal },
-            { Note.DrumPad.Orange, Note.Flags.ProDrums_Cymbal },
-        };
+            {
+                { Note.DrumPad.Yellow, Note.Flags.ProDrums_Cymbal },
+                { Note.DrumPad.Blue, Note.Flags.ProDrums_Cymbal },
+                { Note.DrumPad.Orange, Note.Flags.ProDrums_Cymbal },
+            };
 
             foreach (var difficulty in EnumX<Song.Difficulty>.Values)
             {
