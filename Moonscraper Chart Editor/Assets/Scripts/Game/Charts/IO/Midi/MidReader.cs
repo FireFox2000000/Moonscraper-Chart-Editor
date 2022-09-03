@@ -765,11 +765,6 @@ namespace MoonscraperChartEditor.Song.IO
                         Note.Flags defaultFlags = Note.Flags.None;
                         DrumPadDefaultFlags.TryGetValue(pad, out defaultFlags);
 
-                        if (processFnDict.ContainsKey(key))
-                        {
-                            processFnDict.Remove(key);
-                        }
-
                         if (enableVelocity && pad != Note.DrumPad.Kick)
                         {
                             processFnDict.Add(key, (in EventProcessParams eventProcessParams) =>
@@ -814,11 +809,6 @@ namespace MoonscraperChartEditor.Song.IO
             {
                 int pad = (int)keyVal.Key;
                 int midiKey = keyVal.Value;
-
-                if (processFnDict.ContainsKey(midiKey))
-                {
-                    processFnDict.Remove(midiKey);
-                }
 
                 processFnDict.Add(midiKey, (in EventProcessParams eventProcessParams) =>
                 {
