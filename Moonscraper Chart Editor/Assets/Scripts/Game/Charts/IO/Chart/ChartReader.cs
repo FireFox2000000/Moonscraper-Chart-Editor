@@ -902,7 +902,7 @@ namespace MoonscraperChartEditor.Song.IO
         {
             if (!flagData.TryApplyToNote(note))
             {
-                Debug.LogWarning($"Could not apply flag {flagData.FlagToAdd} to a note. It was blocked by existing flag {flagData.BlockingFlag}.");
+                Debug.LogWarning($"Could not apply flag {flagData.flagToAdd} to a note. It was blocked by existing flag {flagData.blockingFlag}.");
             }
         }
     }

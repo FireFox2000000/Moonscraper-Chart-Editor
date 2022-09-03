@@ -313,42 +313,42 @@ namespace MoonscraperChartEditor.Song.IO
             { c_drumsGhostOffset + 5, Ghost },      // Green ghost
         };
 
-            public Note.Flags FlagToAdd { get; } = Note.Flags.None;
-            public Note.Flags BlockingFlag { get; } = Note.Flags.None;
-            public Note.Flags FlagToRemove { get; } = Note.Flags.None;
+            public Note.Flags flagToAdd { get; } = Note.Flags.None;
+            public Note.Flags blockingFlag { get; } = Note.Flags.None;
+            public Note.Flags flagToRemove { get; } = Note.Flags.None;
 
             public NoteFlagPriority(Note.Flags flag)
             {
-                FlagToAdd = flag;
+                flagToAdd = flag;
 
                 Note.Flags blockingFlag;
-                if (c_noteBlockingFlagsLookup.TryGetValue(FlagToAdd, out blockingFlag))
+                if (c_noteBlockingFlagsLookup.TryGetValue(flagToAdd, out blockingFlag))
                 {
-                    BlockingFlag = blockingFlag;
+                    this.blockingFlag = blockingFlag;
                 }
 
                 Note.Flags flagToRemove;
-                if (c_noteFlagsToRemoveLookup.TryGetValue(FlagToAdd, out flagToRemove))
+                if (c_noteFlagsToRemoveLookup.TryGetValue(flagToAdd, out flagToRemove))
                 {
-                    FlagToRemove = flagToRemove;
+                    this.flagToRemove = flagToRemove;
                 }
             }
 
             public bool TryApplyToNote(Note note)
             {
                 // Don't add if the flag to be added is lower-priority than a conflicting, already-added flag
-                if (BlockingFlag != Note.Flags.None && note.flags.HasFlag(BlockingFlag))
+                if (blockingFlag != Note.Flags.None && note.flags.HasFlag(blockingFlag))
                 {
                     return false;
                 }
 
                 // Flag can be added without issue
-                note.flags |= FlagToAdd;
+                note.flags |= flagToAdd;
 
                 // Remove flags that are lower-priority than the added flag
-                if (FlagToRemove != Note.Flags.None && note.flags.HasFlag(FlagToRemove))
+                if (flagToRemove != Note.Flags.None && note.flags.HasFlag(flagToRemove))
                 {
-                    note.flags &= ~FlagToRemove;
+                    note.flags &= ~flagToRemove;
                 }
 
                 return true;
