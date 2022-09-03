@@ -247,37 +247,37 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 	
     public void setTap()
     {
-        SetNoteFlag(tapToggle, Note.Flags.Tap);
+        OnNoteFlagToggleChanged(tapToggle, Note.Flags.Tap);
     }
 
     public void setForced()
     {
-        SetNoteFlag(forcedToggle, Note.Flags.Forced);
+        OnNoteFlagToggleChanged(forcedToggle, Note.Flags.Forced);
     }
 
     public void setCymbal()
     {
-        SetNoteFlag(cymbalToggle, Note.Flags.ProDrums_Cymbal);
+        OnNoteFlagToggleChanged(cymbalToggle, Note.Flags.ProDrums_Cymbal);
     }
 
     public void setDoubleKick()
     {
-        SetNoteFlag(doubleKickToggle, Note.Flags.DoubleKick);
+        OnNoteFlagToggleChanged(doubleKickToggle, Note.Flags.DoubleKick);
     }
 
     public void setAccent()
     {
         // A note can only be either an accent or a ghost, not both
-        SetNoteFlag(accentToggle, Note.Flags.ProDrums_Accent, Note.Flags.ProDrums_Ghost);
+        OnNoteFlagToggleChanged(accentToggle, Note.Flags.ProDrums_Accent, Note.Flags.ProDrums_Ghost);
     }
 
     public void setGhost()
     {
         // A note can only be either an accent or a ghost, not both
-        SetNoteFlag(ghostToggle, Note.Flags.ProDrums_Ghost, Note.Flags.ProDrums_Accent);
+        OnNoteFlagToggleChanged(ghostToggle, Note.Flags.ProDrums_Ghost, Note.Flags.ProDrums_Accent);
     }
 
-    void SetNoteFlag(Toggle toggle, Note.Flags flag, Note.Flags flagToExclude = Note.Flags.None)
+    void OnNoteFlagToggleChanged(Toggle toggle, Note.Flags flag, Note.Flags flagToExclude = Note.Flags.None)
     {
         if (toggleBlockingActive)
             return;
@@ -298,21 +298,23 @@ public class NotePropertiesPanelController : PropertiesPanelController {
                 return;
         }
 
-        SetNoteFlag(ref newFlags, flag, toggle.isOn);
+        newFlags = ToggleFlags(newFlags, flag, toggle.isOn);
         if ((newFlags & flagToExclude) != Note.Flags.None)
         {
-            SetNoteFlag(ref newFlags, flagToExclude, false);
+            newFlags = ToggleFlags(newFlags, flagToExclude, false);
         }
 
         SetNewFlags(currentNote, newFlags);
     }
 
-    void SetNoteFlag(ref Note.Flags flags, Note.Flags flagsToToggle, bool enable)
+    Note.Flags ToggleFlags(Note.Flags flags, Note.Flags flagsToToggle, bool enabled)
     {
-        if (enable)
+        if (enabled)
             flags |= flagsToToggle;
         else
             flags &= ~flagsToToggle;
+
+        return flags;
     }
 
     void SetNewFlags(Note note, Note.Flags newFlags)
