@@ -250,6 +250,16 @@ namespace MoonscraperChartEditor.Song.IO
             public static readonly NoteFlagPriority Accent = new NoteFlagPriority(Note.Flags.ProDrums_Accent);
             public static readonly NoteFlagPriority Ghost = new NoteFlagPriority(Note.Flags.ProDrums_Ghost);
 
+            private static readonly IReadOnlyList<NoteFlagPriority> priorities = new List<NoteFlagPriority>()
+            {
+                Forced,
+                Tap,
+                InstrumentPlus,
+                Cymbal,
+                Accent,
+                Ghost,
+            };
+
             public Note.Flags flagToAdd { get; } = Note.Flags.None;
             public Note.Flags blockingFlag { get; } = Note.Flags.None;
             public Note.Flags flagToRemove { get; } = Note.Flags.None;
@@ -288,6 +298,50 @@ namespace MoonscraperChartEditor.Song.IO
                     note.flags &= ~flagToRemove;
                 }
 
+                return true;
+            }
+
+            public bool AreFlagsValid(Note.Flags flags)
+            {
+                if (flagToAdd == Note.Flags.None)
+                {
+                    // No flag to validate against
+                    return true;
+                }
+
+                if (blockingFlag != Note.Flags.None)
+                {
+                    if (flags.HasFlag(blockingFlag) && flags.HasFlag(flagToAdd))
+                    {
+                        // Note has conflicting flags
+                        return false;
+                    }
+                }
+
+                if (flagToRemove != Note.Flags.None)
+                {
+                    if (flags.HasFlag(flagToAdd) && flags.HasFlag(flagToRemove))
+                    {
+                        // Note has conflicting flags
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            public static bool AreFlagsValidForAll(Note.Flags flags, out NoteFlagPriority invalidPriority)
+            {
+                foreach (var priority in priorities)
+                {
+                    if (!priority.AreFlagsValid(flags))
+                    {
+                        invalidPriority = priority;
+                        return false;
+                    }
+                }
+
+                invalidPriority = null;
                 return true;
             }
         }

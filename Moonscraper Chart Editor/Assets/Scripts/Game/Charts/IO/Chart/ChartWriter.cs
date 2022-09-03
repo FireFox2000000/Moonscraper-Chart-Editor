@@ -564,11 +564,16 @@ namespace MoonscraperChartEditor.Song.IO
                     {
 #if UNITY_EDITOR
                         // Verify that there are no conflicting flags
-                        foreach (var flags in ChartIOHelper.c_noteFlagsToRemoveLookup)
+                        if (!ChartIOHelper.NoteFlagPriority.AreFlagsValidForAll(noteFlags, out var priority))
                         {
-                            if (noteFlags.HasFlag(flags.Key) && noteFlags.HasFlag(flags.Value))
+                            Debug.Assert(priority != null);
+                            if (priority.blockingFlag != Note.Flags.None)
                             {
-                                Debug.LogError($"Conflicting flags found during export. Higher priority: {flags.Key}, lower priority: {flags.Value}");
+                                Debug.LogError($"Conflicting flags found during export. Higher priority: {priority.blockingFlag}, lower priority: {priority.flagToAdd}");
+                            }
+                            else if (priority.flagToRemove != Note.Flags.None)
+                            {
+                                Debug.LogError($"Conflicting flags found during export. Higher priority: {priority.flagToAdd}, lower priority: {priority.flagToRemove}");
                             }
                         }
 #endif
