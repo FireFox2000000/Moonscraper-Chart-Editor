@@ -81,24 +81,6 @@ namespace MoonscraperChartEditor.Song.IO
         { (int)Note.DrumPad.Green     , Note.Flags.None },
     };
 
-        public static readonly Dictionary<int, int> c_drumNoteAccentSaveLookup = new Dictionary<int, int>()
-    {
-        { (int)Note.DrumPad.Red       , c_drumsAccentOffset + 1 },
-        { (int)Note.DrumPad.Yellow    , c_drumsAccentOffset + 2 },
-        { (int)Note.DrumPad.Blue      , c_drumsAccentOffset + 3 },
-        { (int)Note.DrumPad.Orange    , c_drumsAccentOffset + 4 },
-        { (int)Note.DrumPad.Green     , c_drumsAccentOffset + 5 },
-    };
-
-        public static readonly Dictionary<int, int> c_drumNoteGhostSaveLookup = new Dictionary<int, int>()
-    {
-        { (int)Note.DrumPad.Red       , c_drumsGhostOffset + 1 },
-        { (int)Note.DrumPad.Yellow    , c_drumsGhostOffset + 2 },
-        { (int)Note.DrumPad.Blue      , c_drumsGhostOffset + 3 },
-        { (int)Note.DrumPad.Orange    , c_drumsGhostOffset + 4 },
-        { (int)Note.DrumPad.Green     , c_drumsGhostOffset + 5 },
-    };
-
         public static readonly Dictionary<int, int> c_ghlNoteNumLookup = new Dictionary<int, int>()
     {
         { 0, (int)Note.GHLiveGuitarFret.White1     },
