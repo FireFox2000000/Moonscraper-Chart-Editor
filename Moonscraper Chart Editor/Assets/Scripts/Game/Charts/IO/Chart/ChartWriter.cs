@@ -41,6 +41,7 @@ namespace MoonscraperChartEditor.Song.IO
 
         public static readonly Dictionary<int, int> c_drumNoteAccentSaveLookup = new Dictionary<int, int>()
     {
+        // { (int)Note.DrumPad.Kick       , ChartIOHelper.c_drumsAccentOffset + 0 },  // Reserved for kick accents, if those ever become a thing
         { (int)Note.DrumPad.Red       , ChartIOHelper.c_drumsAccentOffset + 1 },
         { (int)Note.DrumPad.Yellow    , ChartIOHelper.c_drumsAccentOffset + 2 },
         { (int)Note.DrumPad.Blue      , ChartIOHelper.c_drumsAccentOffset + 3 },
@@ -50,6 +51,7 @@ namespace MoonscraperChartEditor.Song.IO
 
         public static readonly Dictionary<int, int> c_drumNoteGhostSaveLookup = new Dictionary<int, int>()
     {
+        // { (int)Note.DrumPad.Kick       , ChartIOHelper.c_drumsGhostOffset + 0 },  // Reserved for kick ghosts, if those ever become a thing
         { (int)Note.DrumPad.Red       , ChartIOHelper.c_drumsGhostOffset + 1 },
         { (int)Note.DrumPad.Yellow    , ChartIOHelper.c_drumsGhostOffset + 2 },
         { (int)Note.DrumPad.Blue      , ChartIOHelper.c_drumsGhostOffset + 3 },
