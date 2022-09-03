@@ -58,16 +58,6 @@ namespace MoonscraperChartEditor.Song.IO
         { 5, (int)Note.DrumPad.Green     },
     };
 
-        // Flags to skip adding if the corresponding flag is already present
-        public static readonly IReadOnlyDictionary<Note.Flags, Note.Flags> c_noteBlockingFlagsLookup = new Dictionary<Note.Flags, Note.Flags>()
-    {
-        { Note.Flags.Forced, Note.Flags.Tap },
-        { Note.Flags.ProDrums_Ghost, Note.Flags.ProDrums_Accent },
-    };
-
-        // Flags to remove if the corresponding flag is being added
-        public static readonly IReadOnlyDictionary<Note.Flags, Note.Flags> c_noteFlagsToRemoveLookup = c_noteBlockingFlagsLookup.ToDictionary((i) => i.Value, (i) => i.Key);
-
         // Default flags for drums notes
         public static readonly IReadOnlyDictionary<int, Note.Flags> c_drumNoteDefaultFlagsLookup = new Dictionary<int, Note.Flags>()
     {
@@ -243,6 +233,16 @@ namespace MoonscraperChartEditor.Song.IO
 
         public class NoteFlagPriority
         {
+            // Flags to skip adding if the corresponding flag is already present
+            private static readonly IReadOnlyDictionary<Note.Flags, Note.Flags> c_noteBlockingFlagsLookup = new Dictionary<Note.Flags, Note.Flags>()
+            {
+                { Note.Flags.Forced, Note.Flags.Tap },
+                { Note.Flags.ProDrums_Ghost, Note.Flags.ProDrums_Accent },
+            };
+
+            // Flags to remove if the corresponding flag is being added
+            private static readonly IReadOnlyDictionary<Note.Flags, Note.Flags> c_noteFlagsToRemoveLookup = c_noteBlockingFlagsLookup.ToDictionary((i) => i.Value, (i) => i.Key);
+
             public static readonly NoteFlagPriority Forced = new NoteFlagPriority(Note.Flags.Forced);
             public static readonly NoteFlagPriority Tap = new NoteFlagPriority(Note.Flags.Tap);
             public static readonly NoteFlagPriority InstrumentPlus = new NoteFlagPriority(Note.Flags.InstrumentPlus);
