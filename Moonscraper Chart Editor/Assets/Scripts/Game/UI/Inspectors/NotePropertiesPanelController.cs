@@ -321,11 +321,13 @@ public class NotePropertiesPanelController : PropertiesPanelController {
 
     void SetNewFlags(Note note, Note.Flags newFlags)
     {
-        if (note.flags == newFlags)
-            return;
-
         if (editor.toolManager.currentToolId == EditorObjectToolManager.ToolID.Cursor)
         {
+            if (note.flags == newFlags)
+            {
+                return;
+            }
+
             Note newNote = new Note(note.tick, note.rawNote, note.length, newFlags);
             SongEditModifyValidated command = new SongEditModifyValidated(note, newNote);
             editor.commandStack.Push(command);
