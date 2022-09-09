@@ -260,7 +260,7 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 1,
+                "category": 7,
                 "allowSameFrameMultiInput": false
             }
         },
@@ -271,7 +271,7 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 1,
+                "category": 7,
                 "allowSameFrameMultiInput": false
             }
         },
@@ -282,7 +282,7 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 1,
+                "category": 7,
                 "allowSameFrameMultiInput": false
             }
         },
