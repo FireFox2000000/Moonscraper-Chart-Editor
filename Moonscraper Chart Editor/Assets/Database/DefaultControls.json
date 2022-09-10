@@ -567,6 +567,44 @@
             }
         },
         {
+            "action": "NoteSetAccent",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            118
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "NoteSetGhost",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            122
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
             "action": "PlayPause",
             "input": {
                 "kbMaps": [
@@ -1016,6 +1054,44 @@
                         "modifiers": 0,
                         "keys": [
                             120
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "ToggleNoteAccent",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            118
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "ToggleNoteGhost",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            122
                         ]
                     },
                     {
