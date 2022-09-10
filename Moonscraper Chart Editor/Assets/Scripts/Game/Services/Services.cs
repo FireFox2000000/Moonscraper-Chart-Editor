@@ -87,19 +87,15 @@ public class Services : MonoBehaviour
         }
     }
 
-    static bool _IsTyping
+    bool _IsTyping
     {
         get
         {
-            if (
-                EventSystem.current.currentSelectedGameObject == null ||
-                (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() == null &&
-                EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() == null &&
-                EventSystem.current.currentSelectedGameObject.GetComponent<MS_TMPro_InputField>() == null)
-                )
-                return false;
-            else
-                return true;
+            return (EventSystem.current.currentSelectedGameObject != null &&
+                (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() != null ||
+                EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() != null ||
+                EventSystem.current.currentSelectedGameObject.GetComponent<MS_TMPro_InputField>() != null)) ||
+                IsBindingsMenuActive;
         }
     }
 
@@ -271,6 +267,14 @@ public class Services : MonoBehaviour
         get
         {
             return uiServices.lyricEditor.isActiveAndEnabled;
+        }
+    }
+
+    public bool IsBindingsMenuActive
+    {
+        get
+        {
+            return uiServices.bindingsMenu.isActiveAndEnabled;
         }
     }
 }
