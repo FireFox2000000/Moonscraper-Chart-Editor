@@ -41,6 +41,20 @@ public class UIServices : MonoBehaviour {
         }
     }
 
+    ActionBindingsMenu m_bindingsMenu = null;
+    public ActionBindingsMenu bindingsMenu
+    {
+        get
+        {
+            if (!m_bindingsMenu)
+            {
+                m_bindingsMenu = GetComponentInChildren<ActionBindingsMenu>(true);
+            }
+
+            return m_bindingsMenu;
+        }
+    }
+
     bool _popupBlockerEnabled = false;
     Camera _uiCamera;
     public Camera uiCamera
