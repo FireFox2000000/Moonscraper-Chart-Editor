@@ -35,6 +35,10 @@ public class GroupSelectPanelController : MonoBehaviour
     Button setDoubleKick;
     [SerializeField]
     Button altDoubleKick;
+    [SerializeField]
+    Text hitStrengthSubTitle;
+    [SerializeField]
+    Text kickTypeSubTitle;
 
     Dictionary<Chart.GameMode, Dropdown> laneSelectForGamemodeLookup = new Dictionary<Chart.GameMode, Dropdown>();
     Dictionary<Chart.GameMode, Dictionary<int, Dropdown>> laneSelectLaneCountOverrideLookup = new Dictionary<Chart.GameMode, Dictionary<int, Dropdown>>();
@@ -121,6 +125,8 @@ public class GroupSelectPanelController : MonoBehaviour
         setNoteGhost.gameObject.SetActive(proDrumsMode);
         setDoubleKick.gameObject.SetActive(doubleKickActive);
         altDoubleKick.gameObject.SetActive(doubleKickActive);
+        hitStrengthSubTitle.gameObject.SetActive(proDrumsMode);
+        kickTypeSubTitle.gameObject.SetActive(proDrumsMode);
     }
 
     void Shortcuts()
