@@ -298,7 +298,7 @@ public class GroupSelectPanelController : MonoBehaviour
         SetDynamics(Note.Flags.ProDrums_Ghost, Note.Flags.ProDrums_Accent);
     }
 
-    public void SetNoteType(Note.NoteType type)
+    void SetNoteType(Note.NoteType type)
     {
         List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
         List<ChartObject> objectsToSelect = new List<ChartObject>();
@@ -321,7 +321,7 @@ public class GroupSelectPanelController : MonoBehaviour
         }
     }
 
-    public void SetDynamics(Note.Flags flag, Note.Flags flagToExclude)
+    void SetDynamics(Note.Flags flag, Note.Flags flagToExclude)
     {
         List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
         List<ChartObject> objectsToSelect = new List<ChartObject>();
