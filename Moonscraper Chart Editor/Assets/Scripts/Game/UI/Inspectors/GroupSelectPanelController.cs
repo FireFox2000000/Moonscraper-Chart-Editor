@@ -28,6 +28,8 @@ public class GroupSelectPanelController : MonoBehaviour
     [SerializeField]
     Button setNoteCymbal;
     [SerializeField]
+    Button setNoteDyncamicsNone;
+    [SerializeField]
     Button setNoteAccent;
     [SerializeField]
     Button setNoteGhost;
@@ -122,6 +124,7 @@ public class GroupSelectPanelController : MonoBehaviour
         setNoteTap.gameObject.SetActive(!drumsMode);
         setNoteCymbal.gameObject.SetActive(proDrumsMode);
         setNoteAccent.gameObject.SetActive(proDrumsMode);
+        setNoteDyncamicsNone.gameObject.SetActive(proDrumsMode);
         setNoteGhost.gameObject.SetActive(proDrumsMode);
         setDoubleKick.gameObject.SetActive(doubleKickActive);
         altDoubleKick.gameObject.SetActive(doubleKickActive);
@@ -286,6 +289,11 @@ public class GroupSelectPanelController : MonoBehaviour
     public void SetCymbal()
     {
         SetNoteType(Note.NoteType.Cymbal);
+    }
+
+    public void SetNoDynamics()
+    {
+        SetDynamics(Note.Flags.None, Note.Flags.ProDrums_Ghost | Note.Flags.ProDrums_Accent);
     }
 
     public void SetAccent()
