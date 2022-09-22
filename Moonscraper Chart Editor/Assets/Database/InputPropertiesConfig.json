@@ -216,7 +216,7 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 7,
+                "category": 9,
                 "allowSameFrameMultiInput": false
             }
         },
@@ -227,7 +227,7 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 7,
+                "category": 9,
                 "allowSameFrameMultiInput": false
             }
         },
@@ -238,7 +238,7 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 7,
+                "category": 9,
                 "allowSameFrameMultiInput": false
             }
         },
@@ -249,7 +249,18 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 7,
+                "category": 9,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
+            "mSChartEditorInputAction": "NoteSetTom",
+            "properties": {
+                "displayName": "Set Note As Tom",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 10,
                 "allowSameFrameMultiInput": false
             }
         },
@@ -260,7 +271,18 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 7,
+                "category": 10,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
+            "mSChartEditorInputAction": "NoteSetDynamicsNone",
+            "properties": {
+                "displayName": "Set Note Dynamics None",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 10,
                 "allowSameFrameMultiInput": false
             }
         },
@@ -271,7 +293,7 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 7,
+                "category": 10,
                 "allowSameFrameMultiInput": false
             }
         },
@@ -282,7 +304,7 @@
                 "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
-                "category": 7,
+                "category": 10,
                 "allowSameFrameMultiInput": false
             }
         },

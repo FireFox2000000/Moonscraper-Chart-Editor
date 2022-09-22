@@ -26,6 +26,8 @@ public class GroupSelectPanelController : MonoBehaviour
     [SerializeField]
     Button setNoteTap;
     [SerializeField]
+    Button setNoteTom;
+    [SerializeField]
     Button setNoteCymbal;
     [SerializeField]
     Button setNoteDyncamicsNone;
@@ -46,9 +48,25 @@ public class GroupSelectPanelController : MonoBehaviour
     Dictionary<Chart.GameMode, Dictionary<int, Dropdown>> laneSelectLaneCountOverrideLookup = new Dictionary<Chart.GameMode, Dictionary<int, Dropdown>>();
     Dropdown currentFretSelector = null;
 
+    Dictionary<MSChartEditorInputActions, Button> shortcutBindings;
+
     // Use this for initialization
     void Start () {
         //fretSelectDropdown = transform.Find("Fret Select").GetComponent<Dropdown>();
+
+         shortcutBindings = new Dictionary<MSChartEditorInputActions, Button>()
+         {
+             { MSChartEditorInputActions.NoteSetNatural, setNoteNatural },
+             { MSChartEditorInputActions.NoteSetStrum, setNoteStrum },
+             { MSChartEditorInputActions.NoteSetHopo, setNoteHopo },
+             { MSChartEditorInputActions.NoteSetTap, setNoteTap},
+             { MSChartEditorInputActions.NoteSetTom, setNoteTom },
+             { MSChartEditorInputActions.NoteSetCymbal, setNoteCymbal },
+             { MSChartEditorInputActions.NoteSetDynamicsNone, setNoteDyncamicsNone },
+             { MSChartEditorInputActions.NoteSetAccent, setNoteAccent },
+             { MSChartEditorInputActions.NoteSetGhost, setNoteGhost },
+
+         };
 
         // Setup lane selector dictionaries and hide all selector varients
         {
@@ -102,7 +120,7 @@ public class GroupSelectPanelController : MonoBehaviour
     void Update()
     {
         if (!Services.IsTyping && !Globals.modifierInputActive)
-            Shortcuts();
+            UpdateShortcuts();
     }
 
     void OnLanesChanged(in int laneCount)
@@ -119,9 +137,11 @@ public class GroupSelectPanelController : MonoBehaviour
         bool drumsMode = Globals.drumMode;
         bool proDrumsMode = drumsMode && Globals.gameSettings.drumsModeOptions == GameSettings.DrumModeOptions.ProDrums;
         bool doubleKickActive = proDrumsMode && ChartEditor.Instance.currentDifficulty == Song.Difficulty.Expert;
+        setNoteNatural.gameObject.SetActive(!drumsMode);
         setNoteStrum.gameObject.SetActive(!drumsMode);
         setNoteHopo.gameObject.SetActive(!drumsMode);
         setNoteTap.gameObject.SetActive(!drumsMode);
+        setNoteTom.gameObject.SetActive(drumsMode);
         setNoteCymbal.gameObject.SetActive(proDrumsMode);
         setNoteAccent.gameObject.SetActive(proDrumsMode);
         setNoteDyncamicsNone.gameObject.SetActive(proDrumsMode);
@@ -132,22 +152,15 @@ public class GroupSelectPanelController : MonoBehaviour
         kickTypeSubTitle.gameObject.SetActive(proDrumsMode);
     }
 
-    void Shortcuts()
+    void UpdateShortcuts()
     {
-        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetNatural))
-            setNoteNatural.onClick.Invoke();
-        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetStrum))
-            setNoteStrum.onClick.Invoke();
-        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetHopo))
-            setNoteHopo.onClick.Invoke();
-        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetTap))
-            setNoteTap.onClick.Invoke();
-        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetCymbal))
-            setNoteCymbal.onClick.Invoke();
-        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetAccent))
-            setNoteAccent.onClick.Invoke();
-        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.NoteSetGhost))
-            setNoteGhost.onClick.Invoke();
+        foreach (var kv in shortcutBindings)
+        {
+            if (MSChartEditorInput.GetInputDown(kv.Key) && kv.Value.isActiveAndEnabled)
+            {
+                kv.Value.onClick.Invoke();
+            }
+        }
     }
 
     int GetOpenNoteForGameMode(Chart.GameMode gameMode)
@@ -284,6 +297,11 @@ public class GroupSelectPanelController : MonoBehaviour
     public void SetTap()
     {
         SetNoteType(Note.NoteType.Tap);
+    }
+
+    public void SetTom()
+    {
+        SetNoteType(Note.NoteType.Natural);
     }
 
     public void SetCymbal()

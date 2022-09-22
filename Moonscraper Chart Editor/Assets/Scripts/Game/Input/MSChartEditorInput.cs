@@ -51,7 +51,9 @@ public enum MSChartEditorInputActions
     NoteSetStrum,
     NoteSetHopo,
     NoteSetTap,
+    NoteSetTom,
     NoteSetCymbal,
+    NoteSetDynamicsNone,
     NoteSetAccent,
     NoteSetGhost,
     
@@ -159,6 +161,8 @@ public static class MSChartEditorInput
 
             EditorToolGroupNote,
             EditorToolStarpower,
+            EditorToolGroupNoteGuitar,
+            EditorToolGroupNoteDrums,
         }
 
         public static InteractionMatrix interactionMatrix = new InteractionMatrix(EnumX<CategoryType>.Count);
@@ -169,6 +173,8 @@ public static class MSChartEditorInput
             | (1 << (int)CategoryType.EditorToolGroupNote)
             | (1 << (int)CategoryType.EditorToolStarpower)
             | (1 << (int)CategoryType.Global)
+            | (1 << (int)CategoryType.EditorToolGroupNoteGuitar)
+            | (1 << (int)CategoryType.EditorToolGroupNoteDrums)
             ;
         public static readonly int kGameplayCategoryMask = (1 << (int)CategoryType.GameplayGuitar) | (1 << (int)CategoryType.GameplayDrums) | (1 << (int)CategoryType.GameplayDrumsPro);
         public static readonly int kGameplayGuitarCategoryMask = (1 << (int)CategoryType.GameplayGuitar);
@@ -179,8 +185,11 @@ public static class MSChartEditorInput
         {
             interactionMatrix.SetInteractableAll((int)CategoryType.Global);
 
+            interactionMatrix.SetInteractable((int)CategoryType.EditorToolGroupNoteGuitar, (int)CategoryType.EditorToolGroupNote);
+            interactionMatrix.SetInteractable((int)CategoryType.EditorToolGroupNoteDrums, (int)CategoryType.EditorToolGroupNote);
+
             // Set editor interactions
-            foreach(var value in EnumX<CategoryType>.Values)
+            foreach (var value in EnumX<CategoryType>.Values)
             {
                 // Every category interacts with itself
                 interactionMatrix.SetInteractable((int)value, (int)value);

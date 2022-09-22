@@ -548,6 +548,25 @@
             }
         },
         {
+            "action": "NoteSetTom",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            116
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
             "action": "NoteSetCymbal",
             "input": {
                 "kbMaps": [
@@ -555,6 +574,25 @@
                         "modifiers": 0,
                         "keys": [
                             100
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
+            "action": "NoteSetDynamicsNone",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            120
                         ]
                     },
                     {
