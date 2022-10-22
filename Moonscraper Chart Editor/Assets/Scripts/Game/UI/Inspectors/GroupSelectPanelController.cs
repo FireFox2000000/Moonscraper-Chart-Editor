@@ -337,7 +337,9 @@ public class GroupSelectPanelController : MonoBehaviour
                 Note newNote = new Note(note);
                 newNote.flags = note.GetFlagsToSetType(type);
                 if (flagsToKeep != Note.Flags.None)
+                {
                     newNote.flags |= note.flags & flagsToKeep;
+                }
                 songEditCommands.Add(new SongEditModifyValidated(note, newNote));
                 objectsToSelect.Add(newNote);
             }
