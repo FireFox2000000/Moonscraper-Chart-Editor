@@ -301,12 +301,12 @@ public class GroupSelectPanelController : MonoBehaviour
 
     public void SetTom()
     {
-        SetNoteType(Note.NoteType.Natural);
+        SetNoteType(Note.NoteType.Natural, Note.Flags.ProDrums_Accent | Note.Flags.ProDrums_Ghost);
     }
 
     public void SetCymbal()
     {
-        SetNoteType(Note.NoteType.Cymbal);
+        SetNoteType(Note.NoteType.Cymbal, Note.Flags.ProDrums_Accent | Note.Flags.ProDrums_Ghost);
     }
 
     public void SetNoDynamics()
@@ -324,7 +324,7 @@ public class GroupSelectPanelController : MonoBehaviour
         SetDynamics(Note.Flags.ProDrums_Ghost, Note.Flags.ProDrums_Accent);
     }
 
-    void SetNoteType(Note.NoteType type)
+    void SetNoteType(Note.NoteType type, Note.Flags flagsToKeep = Note.Flags.None)
     {
         List<SongEditCommand> songEditCommands = new List<SongEditCommand>();
         List<ChartObject> objectsToSelect = new List<ChartObject>();
@@ -336,6 +336,8 @@ public class GroupSelectPanelController : MonoBehaviour
                 Note note = chartObject as Note;
                 Note newNote = new Note(note);
                 newNote.flags = note.GetFlagsToSetType(type);
+                if (flagsToKeep != Note.Flags.None)
+                    newNote.flags |= note.flags & flagsToKeep;
                 songEditCommands.Add(new SongEditModifyValidated(note, newNote));
                 objectsToSelect.Add(newNote);
             }
