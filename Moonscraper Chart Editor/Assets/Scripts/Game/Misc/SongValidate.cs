@@ -194,24 +194,6 @@ public class SongValidate
             }
         }
 
-        // Check if any phrases aren't correctly matched
-        {
-            var validationErrors = PhraseValidator.GetValidationErrors(song).ToList();
-            if (validationErrors.Count > 0)
-            {
-                hasErrorsLocal = true;
-                foreach (var validationError in validationErrors)
-                {
-                    sb.Append($"\t{validationError.errorMessage}\n");
-                    if (!(validationError is EventValidationError eventValidationError)) continue;
-                    var songEvent = eventValidationError.songEvent;
-                    var eventTime = songEvent.time;
-                    sb.Append(
-                        $"\t\tType = {songEvent.GetType()}, time = {eventTime}, position = {PrintObjectTime(eventTime)}\n");
-                }
-            }
-        }
-
         // If we have no starpower but more than 1 solo section then CH will interpret this as an RB1 style midi, and misinterpret the solo markers as starpower
         if (validationParams.checkMidiIssues)
         {
