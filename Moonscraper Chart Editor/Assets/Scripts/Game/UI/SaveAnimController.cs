@@ -31,21 +31,13 @@ public class SaveAnimController : UpdateableService {
 
     void UpdateFadeIn()
     {
-        if (CheckSaveConcluded())
-        {
-            // Don't bother displaying the save anim for super short saves
-            currentUpdateState = UpdateFadeOut;
-        }
-        else
-        {
-            alpha += fadeSpeed * Time.deltaTime;
-            alpha = Mathf.Clamp01(alpha);
-            saveText.color = new Color(saveText.color.r, saveText.color.g, saveText.color.b, alpha);
+        alpha += fadeSpeed * Time.deltaTime;
+        alpha = Mathf.Clamp01(alpha);
+        saveText.color = new Color(saveText.color.r, saveText.color.g, saveText.color.b, alpha);
 
-            if (alpha >= 1.0f)
-            {
-                currentUpdateState = UpdateWaitingForSaveEnd;
-            }
+        if (alpha >= 1.0f)
+        {
+            currentUpdateState = UpdateWaitingForSaveEnd;
         }
     }
 
