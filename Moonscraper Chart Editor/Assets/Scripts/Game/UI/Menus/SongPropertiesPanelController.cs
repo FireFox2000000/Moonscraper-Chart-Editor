@@ -52,9 +52,8 @@ public class SongPropertiesPanelController : TabMenu
     Dictionary<Song.AudioInstrument, Text> m_audioStreamTextLookup;
     readonly string[] INI_SECTION_HEADER = { "Song", "song" };
 
-    protected override void Start()
+    protected void Start()
     {
-        base.Start();
         offset.onValidateInput = LocalesManager.ValidateDecimalInput;
 
         songName.onValidateInput = ValidateStringMetadataInput;

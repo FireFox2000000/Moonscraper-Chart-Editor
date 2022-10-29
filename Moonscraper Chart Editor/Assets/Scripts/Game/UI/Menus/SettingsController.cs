@@ -65,10 +65,8 @@ public class SettingsController : TabMenu
         menuContextArea = settingsMenuContentArea;
     }
 
-    protected override void Start()
+    protected void Start()
     {
-        base.Start();
-
         sustainGapInput.onValidateInput = Step.validateStepVal;
         sustainGapInput.text = Globals.gameSettings.sustainGap.ToString();
         sustainGapTimeInput.text = Globals.gameSettings.sustainGapTimeMs.ToString();
@@ -90,9 +88,13 @@ public class SettingsController : TabMenu
             sustainGapTimeInput.text = Globals.gameSettings.sustainGapTimeMs.ToString();
         }
 
-        if (!string.IsNullOrEmpty(lyricEditorPhaseEndTimeInput.text) && float.Parse(lyricEditorPhaseEndTimeInput.text) != Globals.gameSettings.lyricEditorSettings.phaseEndThreashold)
         {
-            lyricEditorPhaseEndTimeInput.text = Globals.gameSettings.lyricEditorSettings.phaseEndThreashold.ToString();
+            float phaseEndTimeInput = 0;
+            bool parseSuccess = float.TryParse(lyricEditorPhaseEndTimeInput.text, out phaseEndTimeInput);
+            if (!string.IsNullOrEmpty(lyricEditorPhaseEndTimeInput.text) && (phaseEndTimeInput != Globals.gameSettings.lyricEditorSettings.phaseEndThreashold || lyricEditorPhaseEndTimeInput.text.StartsWith(".")))
+            {
+                lyricEditorPhaseEndTimeInput.text = Globals.gameSettings.lyricEditorSettings.phaseEndThreashold.ToString();
+            }
         }
 
         // Set all variables' values based on the UI
@@ -492,7 +494,6 @@ public class SettingsController : TabMenu
     public void OpenLyricEditorSettings()
     {
         lyricEditorButton.onClick.Invoke();
-        initialMenuItemSet = true;
     }
 
     public void SetLyricEditorStepSnappingEnabled(bool value)
@@ -503,9 +504,9 @@ public class SettingsController : TabMenu
     public void OnLyricEditorPhaseEndTimeInputUpdated(string value)
     {
         float timeVal = 0;
-        if (!string.IsNullOrEmpty(value))
+        if (!string.IsNullOrEmpty(value) && !float.TryParse(value, out timeVal))
         {
-            timeVal = float.Parse(value);
+            return;
         }
 
         Globals.gameSettings.lyricEditorSettings.phaseEndThreashold = timeVal;

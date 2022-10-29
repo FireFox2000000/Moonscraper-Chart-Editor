@@ -14,8 +14,10 @@ public class TabMenu : DisplayMenu
     protected RectTransform menuContextArea = null;
     protected bool initialMenuItemSet = false;
 
-    protected virtual void Start()
+    protected override void Awake()
     {
+        base.Awake();
+
         if (!initialMenuItemSet)
         {
             ResetToInitialMenuItem();
