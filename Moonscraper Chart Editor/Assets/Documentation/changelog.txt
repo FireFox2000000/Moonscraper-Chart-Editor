@@ -1,3 +1,20 @@
+1.4.3.6
+    FIXES
+    -Import MIDI note 106 on Vocals as a vocals phrase
+    -Fixed sp tool retaining drum fill flag when switching to a different instrument
+    -Fixed exception when trying to parse raw decimal point as float in lyrics settings
+    -Fixed settings menu breaking when loading the lyric editor settings directly before menu initialisation
+    -Save now notification always pops up upon saving again
+    -Remove phrase validation for CH
+    -Disable keybinds while in the key bindings menu
+
+    NEW FEATURES
+    -Added diff_rhythm as default clone hero ini tag
+    -Added drum dynamics flags "Accent" and "Ghost"
+
+    CHANGES
+    -Replced drums "Natural" button with "Tom" button
+
 1.4.3.5
     FIXES
     -Fixed error popup halting shutdown process when shutdown isn't smooth.
