@@ -648,6 +648,10 @@ namespace MoonscraperChartEditor.Song.IO
                     if (sp != null)     // Starpower cannot be split up between charts in a midi file
                         GetStarpowerBytes(sp, out onEvent, out offEvent);
 
+                    DrumRoll roll = chartObject as DrumRoll;
+                    if (roll != null)
+                        GetDrumRollBytes(roll, out onEvent, out offEvent);
+
                     ChartEvent chartEvent = chartObject as ChartEvent;
                     if (chartEvent != null)     // Text events cannot be split up in the file
                     {
@@ -724,6 +728,10 @@ namespace MoonscraperChartEditor.Song.IO
                 Starpower sp = chartObject as Starpower;
                 if (sp != null)     // Starpower cannot be split up between charts in a midi file
                     GetStarpowerBytes(sp, out onEvent, out offEvent);
+
+                DrumRoll roll = chartObject as DrumRoll;
+                if (roll != null)
+                    GetDrumRollBytes(roll, out onEvent, out offEvent);
 
                 ChartEvent chartEvent = chartObject as ChartEvent;
                 if (chartEvent != null)     // Text events cannot be split up in the file
@@ -968,6 +976,14 @@ namespace MoonscraperChartEditor.Song.IO
 
             onEvent = new SortableBytes(sp.tick, new byte[] { ON_EVENT, spNote, VELOCITY });
             offEvent = new SortableBytes(sp.tick + sp.length, new byte[] { OFF_EVENT, spNote, VELOCITY });
+        }
+
+        static void GetDrumRollBytes(DrumRoll roll, out SortableBytes onEvent, out SortableBytes offEvent)
+        {
+            byte note = roll.type == DrumRoll.Type.Standard ? MidIOHelper.DRUM_ROLL_STANDARD : MidIOHelper.DRUM_ROLL_SPECIAL;
+
+            onEvent = new SortableBytes(roll.tick, new byte[] { ON_EVENT, note, VELOCITY });
+            offEvent = new SortableBytes(roll.tick + roll.length, new byte[] { OFF_EVENT, note, VELOCITY });
         }
 
         static void GetSoloBytes(ChartEvent solo, uint soloEndTick, out SortableBytes onEvent, out SortableBytes offEvent)

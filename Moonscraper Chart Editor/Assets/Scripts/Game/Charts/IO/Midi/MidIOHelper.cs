@@ -36,6 +36,10 @@ namespace MoonscraperChartEditor.Song.IO
         public const byte STARPOWER_DRUM_FILL_3 = 123;
         public const byte STARPOWER_DRUM_FILL_4 = 124;
 
+        // Drum rolls - http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring#Drum_Rolls
+        public const byte DRUM_ROLL_STANDARD = 126;
+        public const byte DRUM_ROLL_SPECIAL = 127;
+
         // Text events
         public const string SOLO_EVENT_TEXT = "solo";
         public const string SOLO_END_EVENT_TEXT = "soloend";

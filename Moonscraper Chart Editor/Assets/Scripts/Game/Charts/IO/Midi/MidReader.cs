@@ -733,6 +733,12 @@ namespace MoonscraperChartEditor.Song.IO
                 { MidIOHelper.STARPOWER_DRUM_FILL_2, ProcessNoteOnEventAsDrumFill },
                 { MidIOHelper.STARPOWER_DRUM_FILL_3, ProcessNoteOnEventAsDrumFill },
                 { MidIOHelper.STARPOWER_DRUM_FILL_4, ProcessNoteOnEventAsDrumFill },
+                { MidIOHelper.DRUM_ROLL_STANDARD, (in EventProcessParams eventProcessParams) => {
+                    ProcessNoteOnEventAsDrumRoll(eventProcessParams, DrumRoll.Type.Standard);
+                }},
+                { MidIOHelper.DRUM_ROLL_SPECIAL, (in EventProcessParams eventProcessParams) => {
+                    ProcessNoteOnEventAsDrumRoll(eventProcessParams, DrumRoll.Type.Special);
+                }},
             };
 
             IReadOnlyDictionary<Note.DrumPad, int> DrumPadToMidiKey = new Dictionary<Note.DrumPad, int>()
@@ -869,6 +875,22 @@ namespace MoonscraperChartEditor.Song.IO
             foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
             {
                 song.GetChart(instrument, diff).Add(new Starpower(tick, sus, Starpower.Flags.ProDrums_Activation), false);
+            }
+        }
+
+        static void ProcessNoteOnEventAsDrumRoll(in EventProcessParams eventProcessParams, DrumRoll.Type type)
+        {
+            var noteEvent = eventProcessParams.midiEvent as NoteOnEvent;
+            Debug.Assert(noteEvent != null, $"Wrong note event type passed to {nameof(ProcessNoteOnEventAsDrumRoll)}. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
+            var song = eventProcessParams.song;
+            var instrument = eventProcessParams.instrument;
+
+            var tick = (uint)noteEvent.AbsoluteTime;
+            var sus = CalculateSustainLength(song, noteEvent);
+
+            foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
+            {
+                song.GetChart(instrument, diff).Add(new DrumRoll(tick, sus, type), false);
             }
         }
 
