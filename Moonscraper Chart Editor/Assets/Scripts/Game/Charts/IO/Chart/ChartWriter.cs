@@ -529,7 +529,7 @@ namespace MoonscraperChartEditor.Song.IO
         static void AppendDrumRollData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)
         {
             DrumRoll roll = songObject as DrumRoll;
-            string saveFormat = roll.type.HasFlag(DrumRoll.Type.Standard) ? s_drumRollStandardFormat : s_drumRollSpecialFormat;
+            string saveFormat = roll.type == DrumRoll.Type.Standard ? s_drumRollStandardFormat : s_drumRollSpecialFormat;
 
             output.AppendFormat(saveFormat, (uint)Mathf.Round(roll.length * writeParameters.resolutionScaleRatio));
         }
