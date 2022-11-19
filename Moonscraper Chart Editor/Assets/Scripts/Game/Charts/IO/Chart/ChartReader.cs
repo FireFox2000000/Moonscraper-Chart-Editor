@@ -754,12 +754,26 @@ namespace MoonscraperChartEditor.Song.IO
 
                                         case ChartIOHelper.c_drumRollStandardId:
                                             {
-                                                chart.Add(new DrumRoll(tick, length, DrumRoll.Type.Standard), false);
+                                                if (instrument == Song.Instrument.Drums)
+                                                {
+                                                    chart.Add(new DrumRoll(tick, length, DrumRoll.Type.Standard), false);
+                                                }
+                                                else
+                                                {
+                                                    Debug.Assert(false, "Found standard drum roll flag on incompatible instrument.");
+                                                }
                                                 break;
                                             }
                                         case ChartIOHelper.c_drumRollSpecialId:
                                             {
-                                                chart.Add(new DrumRoll(tick, length, DrumRoll.Type.Special), false);
+                                                if (instrument == Song.Instrument.Drums)
+                                                {
+                                                    chart.Add(new DrumRoll(tick, length, DrumRoll.Type.Special), false);
+                                                }
+                                                else
+                                                {
+                                                    Debug.Assert(false, "Found special drum roll flag on incompatible instrument.");
+                                                }
                                                 break;
                                             }
 
