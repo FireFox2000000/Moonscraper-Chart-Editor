@@ -97,6 +97,7 @@ namespace MoonscraperChartEditor.Song.IO
             { SongObject.ID.Event, AppendEventData },
             { SongObject.ID.Section, AppendSectionData },
             { SongObject.ID.Starpower, AppendStarpowerData },
+            { SongObject.ID.DrumRoll, AppendDrumRollData },
             { SongObject.ID.ChartEvent, AppendChartEventData },
             { SongObject.ID.Note, AppendNoteData },
         };
@@ -400,6 +401,8 @@ namespace MoonscraperChartEditor.Song.IO
         static readonly string s_chartEventFormat = " = E {0}";
         static readonly string s_starpowerFormat = " = S " + ChartIOHelper.c_starpowerId + " {0}";
         static readonly string s_starpowerDrumFillFormat = " = S " + ChartIOHelper.c_starpowerDrumFillId + " {0}";
+        static readonly string s_drumRollStandardFormat = " = S " + ChartIOHelper.c_drumRollStandardId + " {0}";
+        static readonly string s_drumRollSpecialFormat = " = S " + ChartIOHelper.c_drumRollSpecialId + " {0}";
         static readonly string s_noteFormat = " = N {0} {1}";
 
         // Initial tick is automatically written
@@ -521,6 +524,14 @@ namespace MoonscraperChartEditor.Song.IO
             string saveFormat = sp.flags.HasFlag(Starpower.Flags.ProDrums_Activation) ? s_starpowerDrumFillFormat : s_starpowerFormat;
 
             output.AppendFormat(saveFormat, (uint)Mathf.Round(sp.length * writeParameters.resolutionScaleRatio));
+        }
+
+        static void AppendDrumRollData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)
+        {
+            DrumRoll roll = songObject as DrumRoll;
+            string saveFormat = roll.type.HasFlag(DrumRoll.Type.Standard) ? s_drumRollStandardFormat : s_drumRollSpecialFormat;
+
+            output.AppendFormat(saveFormat, (uint)Mathf.Round(roll.length * writeParameters.resolutionScaleRatio));
         }
 
         static void AppendNoteData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)

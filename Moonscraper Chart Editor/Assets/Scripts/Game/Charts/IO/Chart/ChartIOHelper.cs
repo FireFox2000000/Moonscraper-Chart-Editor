@@ -31,6 +31,8 @@ namespace MoonscraperChartEditor.Song.IO
 
         public const int c_starpowerId = 2;
         public const int c_starpowerDrumFillId = 64;
+        public const int c_drumRollStandardId = 65;
+        public const int c_drumRollSpecialId = 66;
 
         public static readonly IReadOnlyDictionary<int, int> c_guitarNoteNumLookup = new Dictionary<int, int>()
         {

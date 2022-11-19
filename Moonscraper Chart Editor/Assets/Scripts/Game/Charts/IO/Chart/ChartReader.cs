@@ -752,6 +752,17 @@ namespace MoonscraperChartEditor.Song.IO
                                                 break;
                                             }
 
+                                        case ChartIOHelper.c_drumRollStandardId:
+                                            {
+                                                chart.Add(new DrumRoll(tick, length, DrumRoll.Type.Standard), false);
+                                                break;
+                                            }
+                                        case ChartIOHelper.c_drumRollSpecialId:
+                                            {
+                                                chart.Add(new DrumRoll(tick, length, DrumRoll.Type.Special), false);
+                                                break;
+                                            }
+
                                         default:
                                             continue;
                                     }
