@@ -1,3 +1,7 @@
+1.4.4
+    FIXES
+    -Application no longer deletes manually added drum roll triggers
+
 1.4.3.6
     FIXES
     -Import MIDI note 106 on Vocals as a vocals phrase
