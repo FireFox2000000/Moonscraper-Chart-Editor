@@ -77,12 +77,20 @@ public class AddAction : BaseAction
                             chordNote.controller.SetDirty();
                     }
                 }
+
+                // TODO, dirty roll lanes as well
+
                 break;
 
             case (int)SongObject.ID.Starpower:
                 Starpower sp = songObject as Starpower;
                 chart.Add(sp, false);
                 SongEditAdd.SetNotesDirty(sp, editor.currentChart.chartObjects);
+                break;
+
+            case (int)SongObject.ID.DrumRoll:
+                DrumRoll drumRoll = songObject as DrumRoll;
+                chart.Add(drumRoll, false);
                 break;
 
             case (int)SongObject.ID.ChartEvent:

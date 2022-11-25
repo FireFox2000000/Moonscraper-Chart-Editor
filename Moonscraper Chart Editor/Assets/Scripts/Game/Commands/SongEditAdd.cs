@@ -51,6 +51,10 @@ public class SongEditAdd : SongEditCommand
                 AddStarpower((Starpower)songObject, subActions);
                 break;
 
+            case ((int)SongObject.ID.DrumRoll):
+                AddDrumRoll((DrumRoll)songObject, subActions);
+                break;
+
             case ((int)SongObject.ID.ChartEvent):
                 AddChartEvent((ChartEvent)songObject, subActions);
                 break;
@@ -141,6 +145,16 @@ public class SongEditAdd : SongEditCommand
         CapPrevAndNextPreInsert(sp, editor.currentChart, subActions);
 
         AddAndInvokeSubAction(new AddAction(sp), subActions);
+    }
+
+    static void AddDrumRoll(DrumRoll drumRoll, IList<BaseAction> subActions)
+    {
+        ChartEditor editor = ChartEditor.Instance;
+        TryRecordOverwrite(drumRoll, editor.currentChart.chartObjects, subActions);
+
+        CapPrevAndNextPreInsert(drumRoll, editor.currentChart, subActions);
+
+        AddAndInvokeSubAction(new AddAction(drumRoll), subActions);
     }
 
     static void AddChartEvent(ChartEvent chartEvent, IList<BaseAction> subActions)
@@ -288,6 +302,77 @@ public class SongEditAdd : SongEditCommand
                 if (sp.tick + sp.length > nextSp.tick)
                 {
                     sp.length = nextSp.tick - sp.tick;
+                }
+            }
+        }
+    }
+
+    static void CapPrevAndNextPreInsert(DrumRoll drumRoll, Chart chart, IList<BaseAction> subActions)
+    {
+        int arrayPos = SongObjectHelper.FindClosestPosition(drumRoll, chart.chartObjects);
+
+        if (arrayPos != SongObjectHelper.NOTFOUND)       // Found an object that matches
+        {
+            DrumRoll previousDrumRoll = null;
+            DrumRoll nextDrumRoll = null;
+
+            bool currentArrayPosIsDrumRoll = chart.chartObjects[arrayPos] as DrumRoll == null;
+
+            // Find the previous drum roll
+            {
+                int previousIndex = currentArrayPosIsDrumRoll ? arrayPos - 1 : arrayPos;
+                while (previousIndex >= 0 && chart.chartObjects[previousIndex].tick < drumRoll.tick)
+                {
+                    DrumRoll maybeDrumRoll = chart.chartObjects[previousIndex] as DrumRoll;
+                    if (maybeDrumRoll == null)
+                    {
+                        --previousIndex;
+                    }
+                    else
+                    {
+                        previousDrumRoll = maybeDrumRoll;
+                        break;
+                    }
+                }
+            }
+
+            // Find the next drum roll
+            {
+                int nextDrumRollIndex = currentArrayPosIsDrumRoll ? arrayPos + 1 : arrayPos;
+                while (nextDrumRollIndex < chart.chartObjects.Count && chart.chartObjects[nextDrumRollIndex].tick > drumRoll.tick)
+                {
+                    DrumRoll maybeDrumRoll = chart.chartObjects[nextDrumRollIndex] as DrumRoll;
+                    if (maybeDrumRoll == null)
+                    {
+                        ++nextDrumRollIndex;
+                    }
+                    else
+                    {
+                        nextDrumRoll = maybeDrumRoll;
+                        break;
+                    }
+                }
+            }
+
+            if (previousDrumRoll != null)
+            {
+                // Cap previous sp
+                if (previousDrumRoll.tick + previousDrumRoll.length > drumRoll.tick)
+                {
+                    uint newLength = drumRoll.tick - previousDrumRoll.tick;
+                    DrumRoll newSp = new DrumRoll(previousDrumRoll.tick, newLength, previousDrumRoll.type);
+
+                    AddAndInvokeSubAction(new DeleteAction(previousDrumRoll), subActions);
+                    AddAndInvokeSubAction(new AddAction(newSp), subActions);
+                }
+            }
+
+            if (nextDrumRoll != null)
+            {
+                // Cap self
+                if (drumRoll.tick + drumRoll.length > nextDrumRoll.tick)
+                {
+                    drumRoll.length = nextDrumRoll.tick - drumRoll.tick;
                 }
             }
         }

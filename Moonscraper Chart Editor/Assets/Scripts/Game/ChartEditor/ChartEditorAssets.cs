@@ -10,6 +10,7 @@ public class ChartEditorAssets : MonoBehaviour
     [Header("Song Object Prefabs")]
     public GameObject notePrefab;
     public GameObject starpowerPrefab;
+    public GameObject drumRollPrefab;
     public GameObject sectionPrefab;
     public GameObject bpmPrefab;
     public GameObject tsPrefab;

@@ -22,6 +22,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
 
     NotePool notePool;
     StarpowerPool spPool;
+    DrumRollPool drumRollPool;
     BPMPool bpmPool;
     TimesignaturePool tsPool;
     SectionPool sectionPool;
@@ -30,6 +31,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
 
     GameObject noteParent;
     GameObject starpowerParent;
+    GameObject drumRollParent;
     GameObject bpmParent;
     GameObject timesignatureParent;
     GameObject sectionParent;
@@ -38,6 +40,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
 
     List<Note> collectedNotesInRange = new List<Note>();
     List<Starpower> collectedStarpowerInRange = new List<Starpower>();
+    List<DrumRoll> collectedDrumRollsInRange = new List<DrumRoll>();
     List<Note> prevSustainCache = new List<Note>();
 
     public float? noteVisibilityRangeYPosOverride;
@@ -51,6 +54,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
 
         noteParent = new GameObject("Notes");
         starpowerParent = new GameObject("Starpowers");
+        drumRollParent = new GameObject("Drum Rolls");
         bpmParent = new GameObject("BPMs");
         timesignatureParent = new GameObject("Time Signatures");
         sectionParent = new GameObject("Sections");
@@ -62,6 +66,9 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
 
         spPool = new StarpowerPool(starpowerParent, editor.assets.starpowerPrefab, POOL_SIZE);
         starpowerParent.transform.SetParent(groupMovePool.transform);
+
+        drumRollPool = new DrumRollPool(drumRollParent, editor.assets.drumRollPrefab, POOL_SIZE);
+        drumRollParent.transform.SetParent(groupMovePool.transform);
 
         bpmPool = new BPMPool(bpmParent, editor.assets.bpmPrefab, POOL_SIZE);
         bpmParent.transform.SetParent(groupMovePool.transform);
@@ -94,7 +101,14 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         if (Globals.viewMode == Globals.ViewMode.Chart)
         {
             if (editor.currentChart.starPower.Count > 0)
+            {
                 EnableSP(editor.currentChart.starPower);
+            }
+
+            if (editor.currentChart.drumRoll.Count > 0)
+            {
+                EnableDrumRoll(editor.currentChart.drumRoll);
+            }
 
             EnableChartEvents(editor.currentChart.events);
         }
@@ -116,6 +130,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         {
             notePool.Reset();
             spPool.Reset();
+            drumRollPool.Reset();
             bpmPool.Reset();
             tsPool.Reset();
             sectionPool.Reset();
@@ -248,6 +263,39 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
     {
         CollectStarpowerInViewRange(starpowers);
         spPool.Activate(collectedStarpowerInRange, 0, collectedStarpowerInRange.Count);
+    }
+
+    void CollectDrumRollsInViewRange(IList<DrumRoll> drumRolls)
+    {
+        collectedDrumRollsInRange.Clear();
+        int index, length;
+        SongObjectHelper.GetRange(drumRolls, editor.minPos, editor.maxPos, out index, out length);
+        for (int i = index; i < index + length; ++i)
+        {
+            collectedDrumRollsInRange.Add(drumRolls[i]);
+        }
+
+        int arrayPos = SongObjectHelper.FindClosestPosition(editor.minPos, editor.currentChart.drumRoll);
+        if (arrayPos != SongObjectHelper.NOTFOUND)
+        {
+            // Find the back-most position
+            while (arrayPos > 0 && editor.currentChart.drumRoll[arrayPos].tick >= editor.minPos)
+            {
+                --arrayPos;
+            }
+            // Render previous sp sustain in case of overlap into current position
+            if (arrayPos >= 0 && editor.currentChart.drumRoll[arrayPos].tick + editor.currentChart.drumRoll[arrayPos].length > editor.minPos &&
+                (editor.currentChart.drumRoll[arrayPos].tick + editor.currentChart.drumRoll[arrayPos].length) < editor.maxPos)
+            {
+                collectedDrumRollsInRange.Add(editor.currentChart.drumRoll[arrayPos]);
+            }
+        }
+    }
+
+    public void EnableDrumRoll(IList<DrumRoll> drumRolls)
+    {
+        CollectDrumRollsInViewRange(drumRolls);
+        drumRollPool.Activate(collectedDrumRollsInRange, 0, collectedDrumRollsInRange.Count);
     }
 
     public void EnableBPM(IList<BPM> bpms)
