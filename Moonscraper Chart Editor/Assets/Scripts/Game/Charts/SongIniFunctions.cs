@@ -90,6 +90,9 @@ public static class SongIniFunctions
 
             case Song.Instrument.GHLiveBass:
                 return "diff_bassghl";
+
+            case Song.Instrument.GHLiveRhythm:
+                return "diff_rhythmghl";
         }
 
         return string.Empty;

@@ -149,6 +149,12 @@ namespace MoonscraperChartEditor.Song
                     case (Instrument.GHLiveBass):
                         instrumentName += "GHLive Bass - ";
                         break;
+                    case (Instrument.GHLiveRhythm):
+                        instrumentName += "GHLive Rhythm - ";
+                        break;
+                    case (Instrument.GHLiveCoop):
+                        instrumentName += "GHLive Co-op - ";
+                        break;
                     default:
                         continue;
                 }
@@ -509,6 +515,8 @@ namespace MoonscraperChartEditor.Song
 
                 case (Instrument.GHLiveGuitar):
                 case (Instrument.GHLiveBass):
+                case (Instrument.GHLiveRhythm):
+                case (Instrument.GHLiveCoop):
                     return Chart.GameMode.GHLGuitar;
 
                 default:
@@ -528,14 +536,16 @@ namespace MoonscraperChartEditor.Song
 
         public enum Instrument
         {
-            Guitar = 0,
-            GuitarCoop = 1,
-            Bass = 2,
-            Rhythm = 3,
-            Keys = 4,
-            Drums = 5,
-            GHLiveGuitar = 6,
-            GHLiveBass = 7,
+            Guitar,
+            GuitarCoop,
+            Bass,
+            Rhythm,
+            Keys,
+            Drums,
+            GHLiveGuitar,
+            GHLiveBass,
+            GHLiveRhythm,
+            GHLiveCoop,
             Unrecognised = 99,
         }
 

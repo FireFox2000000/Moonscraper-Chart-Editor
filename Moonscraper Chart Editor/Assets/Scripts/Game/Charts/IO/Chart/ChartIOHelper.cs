@@ -34,6 +34,15 @@ namespace MoonscraperChartEditor.Song.IO
         public const int c_drumRollStandardId = 65;
         public const int c_drumRollSpecialId = 66;
 
+        public enum TrackLoadType
+        {
+            Guitar,
+            Drums,
+            GHLiveGuitar,
+
+            Unrecognised
+        }
+
         public static readonly IReadOnlyDictionary<int, int> c_guitarNoteNumLookup = new Dictionary<int, int>()
         {
             { 0, (int)Note.GuitarFret.Green     },
@@ -102,14 +111,18 @@ namespace MoonscraperChartEditor.Song.IO
             { "Keyboard",       Song.Instrument.Keys },
             { "GHLGuitar",      Song.Instrument.GHLiveGuitar },
             { "GHLBass",        Song.Instrument.GHLiveBass },
+            { "GHLRhythm",      Song.Instrument.GHLiveRhythm },
+            { "GHLCoop",        Song.Instrument.GHLiveCoop },
         };
 
-        public static readonly IReadOnlyDictionary<Song.Instrument, Song.Instrument> c_instrumentParsingTypeLookup = new Dictionary<Song.Instrument, Song.Instrument>()
+        public static readonly IReadOnlyDictionary<Song.Instrument, TrackLoadType> c_instrumentParsingTypeLookup = new Dictionary<Song.Instrument, TrackLoadType>()
         {
             // Other instruments default to loading as a guitar type track
-            { Song.Instrument.Drums,          Song.Instrument.Drums },
-            { Song.Instrument.GHLiveGuitar ,  Song.Instrument.GHLiveGuitar },
-            { Song.Instrument.GHLiveBass ,  Song.Instrument.GHLiveBass },
+            { Song.Instrument.Drums, TrackLoadType.Drums },
+            { Song.Instrument.GHLiveGuitar, TrackLoadType.GHLiveGuitar },
+            { Song.Instrument.GHLiveBass,  TrackLoadType.GHLiveGuitar },
+            { Song.Instrument.GHLiveRhythm,  TrackLoadType.GHLiveGuitar },
+            { Song.Instrument.GHLiveCoop,  TrackLoadType.GHLiveGuitar },
         };
 
         public static class MetaData

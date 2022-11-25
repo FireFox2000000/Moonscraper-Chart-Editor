@@ -193,7 +193,8 @@ public class ClipboardObjectController : Snapable {
                     {
                         Note note = (Note)objectToAdd;
 
-                        if (clipboard.instrument == Song.Instrument.GHLiveGuitar || clipboard.instrument == Song.Instrument.GHLiveBass)
+                        var gameMode = Song.InstumentToChartGameMode(clipboard.instrument);
+                        if (gameMode == Chart.GameMode.GHLGuitar)
                         {
                             // Pasting from a ghl track
                             if (!Globals.ghLiveMode)

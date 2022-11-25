@@ -82,13 +82,32 @@ namespace MoonscraperChartEditor.Song.IO
         // Link the method with which we should write our objects out with
         struct SongObjectWriteParameters
         {
+            private Song.Instrument m_instrument;
+
             public uint scaledTick;
             public float resolutionScaleRatio;
-            public Song.Instrument instrument;
+            public ChartIOHelper.TrackLoadType trackLoadType { get; private set; }
+            public Song.Instrument instrument
+            {
+                get { return m_instrument; }
+                set 
+                { 
+                    m_instrument = value;
+
+                    ChartIOHelper.TrackLoadType instrumentParsingType;
+                    if (!ChartIOHelper.c_instrumentParsingTypeLookup.TryGetValue(instrument, out instrumentParsingType))
+                    {
+                        instrumentParsingType = ChartIOHelper.TrackLoadType.Guitar;
+                    }
+
+                    trackLoadType = instrumentParsingType;
+                }
+            }
             public Song.Difficulty difficulty;
             public ExportOptions exportOptions;
             public ErrorReport errorReport;
         }
+
         delegate void AppendSongObjectData(SongObject so, in SongObjectWriteParameters writeParameters, StringBuilder output);
         static readonly Dictionary<SongObject.ID, AppendSongObjectData> c_songObjectWriteFnLookup = new Dictionary<SongObject.ID, AppendSongObjectData>()
         {
@@ -544,17 +563,30 @@ namespace MoonscraperChartEditor.Song.IO
 
             if (writeParameters.instrument != Song.Instrument.Unrecognised)
             {
-                if (instrument == Song.Instrument.Drums)
-                    fretNumber = GetDrumsSaveNoteNumber(note);
-
-                else if (instrument == Song.Instrument.GHLiveGuitar || instrument == Song.Instrument.GHLiveBass)
-                    fretNumber = GetGHLSaveNoteNumber(note);
-
-                else
-                    fretNumber = GetStandardSaveNoteNumber(note);
+                switch (writeParameters.trackLoadType)
+                {
+                    case ChartIOHelper.TrackLoadType.Drums:
+                        {
+                            fretNumber = GetDrumsSaveNoteNumber(note);
+                            break;
+                        }
+                    case ChartIOHelper.TrackLoadType.GHLiveGuitar:
+                        {
+                            fretNumber = GetGHLSaveNoteNumber(note);
+                            break;
+                        }
+                    case ChartIOHelper.TrackLoadType.Guitar:
+                    default:
+                        {
+                            fretNumber = GetDrumsSaveNoteNumber(note);
+                            break;
+                        }
+                }
             }
             else
+            {
                 fretNumber = note.rawNote;
+            }
 
             // Write out the instrument+ version of the note if applicable
             if (writeParameters.exportOptions.forced && note.flags.HasFlag(Note.Flags.DoubleKick) && NoteFunctions.AllowedToBeDoubleKick(note, difficulty))

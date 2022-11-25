@@ -270,10 +270,10 @@ namespace MoonscraperChartEditor.Song.IO
                             Song.Instrument instrument;
                             if (ChartIOHelper.c_instrumentStrToEnumLookup.TryGetValue(instrumentKey, out instrument))
                             {
-                                Song.Instrument instrumentParsingType;
+                                ChartIOHelper.TrackLoadType instrumentParsingType;
                                 if (!ChartIOHelper.c_instrumentParsingTypeLookup.TryGetValue(instrument, out instrumentParsingType))
                                 {
-                                    instrumentParsingType = Song.Instrument.Guitar;
+                                    instrumentParsingType = ChartIOHelper.TrackLoadType.Guitar;
                                 }
 
                                 LoadChart(song.GetChart(instrument, chartDiff), stringData, instrumentParsingType, fileLoadType);
@@ -304,7 +304,7 @@ namespace MoonscraperChartEditor.Song.IO
             dataName = dataName.TrimStart('[');
             dataName = dataName.TrimEnd(']');
             Chart unrecognisedChart = new Chart(song, Song.Instrument.Unrecognised, dataName);
-            LoadChart(unrecognisedChart, stringData, Song.Instrument.Unrecognised, fileLoadType);
+            LoadChart(unrecognisedChart, stringData, ChartIOHelper.TrackLoadType.Unrecognised, fileLoadType);
             song.unrecognisedCharts.Add(unrecognisedChart);
         }
 
@@ -630,7 +630,7 @@ namespace MoonscraperChartEditor.Song.IO
             while ((startIndex + ++length) < line.Length && line[startIndex + length] != ' ') ;
         }
 
-        static void LoadChart(Chart chart, IList<string> data, Song.Instrument instrument, ChartIOHelper.FileSubType fileLoadType)
+        static void LoadChart(Chart chart, IList<string> data, ChartIOHelper.TrackLoadType instrument, ChartIOHelper.FileSubType fileLoadType)
         {
 #if TIMING_DEBUG
         float time = Time.realtimeSinceStartup;
@@ -693,7 +693,7 @@ namespace MoonscraperChartEditor.Song.IO
                                     }
                                     uint length = (uint)FastStringToIntParse(line, stringStartIndex, stringLength);
 
-                                    if (instrument == Song.Instrument.Unrecognised)
+                                    if (instrument == ChartIOHelper.TrackLoadType.Unrecognised)
                                     {
                                         Note newNote = new Note(tick, fret_type, length);
                                         chart.Add(newNote, false);
@@ -741,7 +741,7 @@ namespace MoonscraperChartEditor.Song.IO
 
                                         case ChartIOHelper.c_starpowerDrumFillId:
                                             {
-                                                if (instrument == Song.Instrument.Drums)
+                                                if (instrument == ChartIOHelper.TrackLoadType.Drums)
                                                 {
                                                     chart.Add(new Starpower(tick, length, Starpower.Flags.ProDrums_Activation), false);
                                                 }
@@ -754,7 +754,7 @@ namespace MoonscraperChartEditor.Song.IO
 
                                         case ChartIOHelper.c_drumRollStandardId:
                                             {
-                                                if (instrument == Song.Instrument.Drums)
+                                                if (instrument == ChartIOHelper.TrackLoadType.Drums)
                                                 {
                                                     chart.Add(new DrumRoll(tick, length, DrumRoll.Type.Standard), false);
                                                 }
@@ -766,7 +766,7 @@ namespace MoonscraperChartEditor.Song.IO
                                             }
                                         case ChartIOHelper.c_drumRollSpecialId:
                                             {
-                                                if (instrument == Song.Instrument.Drums)
+                                                if (instrument == ChartIOHelper.TrackLoadType.Drums)
                                                 {
                                                     chart.Add(new DrumRoll(tick, length, DrumRoll.Type.Special), false);
                                                 }
