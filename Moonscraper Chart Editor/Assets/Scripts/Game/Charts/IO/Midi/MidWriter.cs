@@ -57,6 +57,9 @@ namespace MoonscraperChartEditor.Song.IO
             { Song.Instrument.Drums,            MidIOHelper.DRUMS_TRACK },
             { Song.Instrument.GHLiveGuitar,     MidIOHelper.GHL_GUITAR_TRACK },
             { Song.Instrument.GHLiveBass,       MidIOHelper.GHL_BASS_TRACK },
+            { Song.Instrument.GHLiveRhythm,     MidIOHelper.GHL_RHYTHM_TRACK },
+            { Song.Instrument.GHLiveCoop,       MidIOHelper.GHL_GUITAR_COOP_TRACK },
+
         };
 
         static readonly IReadOnlyDictionary<Song.Difficulty, int> c_difficultyToMidiNoteWriteDict = new Dictionary<Song.Difficulty, int>()

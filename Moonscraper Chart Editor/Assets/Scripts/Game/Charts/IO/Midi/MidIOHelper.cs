@@ -19,6 +19,8 @@ namespace MoonscraperChartEditor.Song.IO
         public const string DRUMS_TRACK = "PART DRUMS";
         public const string GHL_GUITAR_TRACK = "PART GUITAR GHL";
         public const string GHL_BASS_TRACK = "PART BASS GHL";
+        public const string GHL_RHYTHM_TRACK = "PART RHYTHM GHL";
+        public const string GHL_GUITAR_COOP_TRACK = "PART GUITAR COOP GHL";
         public const string VOCALS_TRACK = "PART VOCALS";
 
         // Note numbers
