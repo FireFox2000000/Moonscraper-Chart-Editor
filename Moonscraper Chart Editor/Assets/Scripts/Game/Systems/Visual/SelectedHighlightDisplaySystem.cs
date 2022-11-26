@@ -46,21 +46,22 @@ public class SelectedHighlightDisplaySystem : SystemManagerState.System
         {
             if (showHighlight && pos < index + length && viewRange[pos].controller != null && viewRange[pos].controller.gameObject.activeSelf)
             {
-                selectedHighlight.transform.position = viewRange[pos].controller.transform.position;
-
                 Collider col3d = viewRange[pos].controller.GetComponent<Collider>();
                 Collider2D col = viewRange[pos].controller.GetComponent<Collider2D>();
 
-                Vector3 scale = viewRange[pos].controller.transform.localScale;
+                Bounds bounds;
 
                 if (col3d)
-                    scale = col3d.bounds.size;
+                {
+                    bounds = col3d.bounds;
+                }
                 else
-                    scale = col.bounds.size;
+                {
+                    bounds = col.bounds;
+                }
 
-                if (scale.z == 0)
-                    scale.z = 0.1f;
-                selectedHighlight.transform.localScale = scale;
+                selectedHighlight.transform.localPosition = bounds.center;
+                selectedHighlight.transform.localScale = bounds.size;
 
                 selectedHighlight.SetActive(true);
                 ++pos;

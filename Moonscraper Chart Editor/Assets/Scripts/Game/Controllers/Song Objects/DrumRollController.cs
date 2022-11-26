@@ -9,6 +9,21 @@ public class DrumRollController : SongObjectController
     public const float position = 0.0f;
     bool m_wantPop = false;
 
+    [SerializeField]
+    GameObject m_triggerVisualsPlane;
+    [SerializeField]
+    BoxCollider m_collision;
+
+    float m_triggerVisualsInitZScale = 1.0f;
+    Transform m_triggerVisualsTransform;
+
+    protected override void Awake()
+    {
+        m_triggerVisualsTransform = m_triggerVisualsPlane.transform;
+        m_triggerVisualsInitZScale = m_triggerVisualsPlane.transform.localScale.z;
+        base.Awake();
+    }
+
     protected override void OnEnable()
     {
         base.OnEnable();
@@ -25,7 +40,7 @@ public class DrumRollController : SongObjectController
             {
                 UpdateLength();
 
-                //visualsManager.UpdateVisuals();
+                // Update lanes
             }
         }
     }
@@ -67,15 +82,30 @@ public class DrumRollController : SongObjectController
 
     void UpdateLength()
     {
-        //float length = drumRoll.song.TickToWorldYPosition(drumRoll.tick + drumRoll.length) - desiredWorldYPosition;
-        //
-        //Vector3 scale = tail.transform.localScale;
-        //scale.y = length;
-        //tail.transform.localScale = scale;
-        //
-        //Vector3 position = transform.position;
-        //position.y += length / 2.0f;
-        //tail.transform.position = position;
+        float length = drumRoll.song.TickToWorldYPosition(drumRoll.tick + drumRoll.length) - desiredWorldYPosition;
+        length = Mathf.Max(length, 0.1f);
+
+        {
+            var scale = m_triggerVisualsTransform.localScale;
+            scale.z = m_triggerVisualsInitZScale * length;
+            m_triggerVisualsTransform.localScale = scale;
+        }
+
+        {
+            Vector3 position = transform.position;
+            position.y += length / 2.0f;
+            m_triggerVisualsTransform.transform.position = position;
+        }
+
+        {
+            var collisionSize = m_collision.size;
+            collisionSize.z = length;
+            m_collision.size = collisionSize;
+
+            Vector3 position = m_collision.center;
+            position.z = length / 2.0f;
+            m_collision.center = position;
+        }
     }
 
     void TailDrag()

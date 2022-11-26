@@ -97,20 +97,22 @@ public class HoverHighlightDisplaySystem : SystemManagerState.System
                 if (i < highlights.Length)
                 {
                     highlights[i].SetActive(true);
-                    highlights[i].transform.position = songObjects[i].transform.position;
 
-                    Vector3 scale = songObjects[i].transform.localScale;
+                    Bounds bounds;
                     Collider col3d = songObjects[i].GetComponent<Collider>();
                     Collider2D col = songObjects[i].GetComponent<Collider2D>();
 
                     if (col3d)
-                        scale = col3d.bounds.size;
+                    {
+                        bounds = col3d.bounds;
+                    }
                     else
-                        scale = col.bounds.size;
+                    {
+                        bounds = col.bounds;
+                    }
 
-                    if (scale.z == 0)
-                        scale.z = 0.1f;
-                    highlights[i].transform.localScale = scale;
+                    highlights[i].transform.localPosition = bounds.center;
+                    highlights[i].transform.localScale = bounds.size;
                 }
             }
         }

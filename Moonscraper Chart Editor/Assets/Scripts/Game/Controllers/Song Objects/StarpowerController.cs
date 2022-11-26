@@ -16,7 +16,7 @@ public class StarpowerController : SongObjectController
     Starpower unmodifiedSP = null;
     bool wantPop = false;
 
-    new void Awake()
+    protected override void Awake()
     {
         base.Awake();
     }

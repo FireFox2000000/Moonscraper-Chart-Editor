@@ -64,6 +64,10 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
                 (objectToCopyInto as Starpower).CopyFrom((objectToCopyFrom as Starpower));
                 break;
 
+            case SongObject.ID.DrumRoll:
+                (objectToCopyInto as DrumRoll).CopyFrom((objectToCopyFrom as DrumRoll));
+                break;
+
             case SongObject.ID.ChartEvent:
                 AddAndInvokeSubAction(new DeleteAction(objectToCopyInto), subActions);
                 AddAndInvokeSubAction(new AddAction(objectToCopyFrom), subActions);
@@ -121,6 +125,14 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
                     return null;
                 }
                 return chart.starPower[index];
+
+            case SongObject.ID.DrumRoll:
+                index = SongObjectHelper.FindObjectPosition(so as DrumRoll, chart.drumRoll);
+                if (index == SongObjectHelper.NOTFOUND)
+                {
+                    return null;
+                }
+                return chart.drumRoll[index];
 
             case SongObject.ID.ChartEvent:
                 index = SongObjectHelper.FindObjectPosition(so as ChartEvent, chart.events);

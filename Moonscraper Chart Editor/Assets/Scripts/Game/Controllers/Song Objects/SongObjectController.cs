@@ -16,7 +16,7 @@ public abstract class SongObjectController : SelectableClick {
     public bool disableCancel = true;
     private bool isTool = false;
 
-    protected void Awake()
+    protected virtual void Awake()
     {
         editor = ChartEditor.Instance;
         isTool = GetComponent<ToolObject>();
