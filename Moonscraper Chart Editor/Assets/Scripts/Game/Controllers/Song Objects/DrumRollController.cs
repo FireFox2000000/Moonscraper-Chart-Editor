@@ -20,6 +20,8 @@ public class DrumRollController : SongObjectController
     float m_triggerVisualsInitZScale = 1.0f;
     Transform m_triggerVisualsTransform;
 
+    List<Note.DrumPad> m_drumPadRollPriority = new List<Note.DrumPad>();
+
     protected override void Awake()
     {
         m_triggerVisualsTransform = m_triggerVisualsPlane.transform;
@@ -150,36 +152,54 @@ public class DrumRollController : SongObjectController
     void SetLanePosition(GameObject laneVisuals, int drumRollNoteIndex)
     {
         // Find all the notes that are meant to be within this lane
-        var notes = ChartEditor.Instance.currentChart.notes;
+        var notes = editor.currentChart.notes;
+        Debug.Log("Priority list notes " + notes.Count);
+
         int start, length;
         SongObjectHelper.GetRange(notes, drumRoll.tick, drumRoll.tick + drumRoll.length, out start, out length);
 
-        int noteMask = GetNoteMaskInRange(start, length);
-        int totalLanesActive = 0;
-        int currentLane = 0;
-        int activeLanesTarget = drumRollNoteIndex + 1;
+        m_drumPadRollPriority.Clear();
+        GetDrumLanesToRenderPriority(start, length, m_drumPadRollPriority);
 
-        while (currentLane < MoonscraperEngine.EnumX<Note.DrumPad>.Count)
+        if (drumRollNoteIndex < m_drumPadRollPriority.Count)
         {
-            int currentLaneMask = 1 << currentLane;
-            if ((noteMask & currentLaneMask) != 0)
+            Note.DrumPad pad = m_drumPadRollPriority[drumRollNoteIndex];
+            bool leftyFlip = Globals.gameSettings.notePlacementMode == GameSettings.NotePlacementMode.LeftyFlip;
+            var lanePosition = ChartEditor.Instance.laneInfo.GetLanePosition((int)pad, leftyFlip);
+
+            // Figure out the total size of the lane
+            uint tickMin = uint.MaxValue;
+            uint tickMax = uint.MinValue;
+            for (int i = start; i < start + length; ++i)
             {
-                ++totalLanesActive;
+                Note note = notes[i];
+                if (note.drumPad == pad)
+                {
+                    if (note.tick < tickMin)
+                    {
+                        tickMin = note.tick;
+                    }
+
+                    if (note.tick > tickMax)
+                    {
+                        tickMax = note.tick;
+                    }
+                }
             }
 
-            if (totalLanesActive == activeLanesTarget)
-            {
-                break;
-            }
-            else
-            {
-                ++currentLane;
-            }
-        }
+            Debug.Assert(tickMin <= tickMax);
 
-        // Successfully found a lane to render
-        if (totalLanesActive == activeLanesTarget)
-        {
+            Song song = drumRoll.song;
+            float yMin = song.TickToWorldYPosition(tickMin);
+            float yMax = song.TickToWorldYPosition(tickMax);
+            float laneCentrePos = Mathf.Lerp(yMin, yMax, 0.5f);
+
+            laneVisuals.transform.position = new Vector3(CHART_CENTER_POS + lanePosition, laneCentrePos, 0);
+
+            var scale = laneVisuals.transform.localScale;
+            scale.y = yMax - yMin;
+            laneVisuals.transform.localScale = scale;
+
             laneVisuals.SetActive(true);
         }
         else
@@ -188,7 +208,7 @@ public class DrumRollController : SongObjectController
         }
     }
 
-    int GetNoteMaskInRange(int start, int length)
+    static void GetDrumLanesToRenderPriority(int start, int length, List<Note.DrumPad> drumPadPriority)
     {
         int noteMask = 0;
         var notes = ChartEditor.Instance.currentChart.notes;
@@ -200,10 +220,12 @@ public class DrumRollController : SongObjectController
                 continue;
             }
 
+            if ((noteMask & (1 << (int)note.drumPad)) == 0)
+            {
+                drumPadPriority.Add(note.drumPad);
+            }
             noteMask |= 1 << (int)note.drumPad;
         }
-
-        return noteMask;
     }
 
     void TailDrag()

@@ -312,15 +312,37 @@ public class SongEditAdd : SongEditCommand
 
     #region DrumRoll Helper Functions
 
-    public static void SetDrumRollsDirty(Note note, IList<ChartObject> drumRolls)
+    public static void SetDrumRollsDirty(Note note, IList<ChartObject> chartObjects)
     {
-        int start, length;
-        SongObjectHelper.GetRange(drumRolls, note.tick, note.tick + note.length, out start, out length);
+        int position = SongObjectHelper.FindClosestPositionRoundedDown(note.tick, chartObjects);
 
-        for (int i = start; i < start + length; ++i)
+        if (position != SongObjectHelper.NOTFOUND)
         {
-            if (drumRolls[i].classID == (int)SongObject.ID.DrumRoll && drumRolls[i].controller)
-                drumRolls[i].controller.SetDirty();
+            DrumRoll previousDrumRoll = null;
+            bool currentArrayPosIsDrumRoll = chartObjects[position] as DrumRoll == null;
+
+            // Find the previous drum roll
+            {
+                int previousIndex = currentArrayPosIsDrumRoll ? position - 1 : position;
+                while (previousIndex >= 0 && chartObjects[previousIndex].tick < note.tick)
+                {
+                    if (chartObjects[previousIndex].classID != (int)SongObject.ID.DrumRoll)
+                    {
+                        --previousIndex;
+                    }
+                    else
+                    {
+                        previousDrumRoll = chartObjects[previousIndex] as DrumRoll;
+                        UnityEngine.Debug.Assert(previousDrumRoll != null);
+                        break;
+                    }
+                }
+            }
+
+            if (previousDrumRoll != null)
+            {
+                previousDrumRoll.controller.SetDirty();
+            }
         }
     }
 
