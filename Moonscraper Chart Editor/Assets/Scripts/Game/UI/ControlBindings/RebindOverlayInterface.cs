@@ -27,7 +27,7 @@ public class RebindOverlayInterface : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.CloseMenu))
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.CloseMenu, allowedDuringRebind: true))
         {
             Close(false);
         }

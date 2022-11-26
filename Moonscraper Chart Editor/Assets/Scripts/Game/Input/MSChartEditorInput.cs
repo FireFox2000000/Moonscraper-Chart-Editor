@@ -237,10 +237,16 @@ public static class MSChartEditorInput
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     #region Input Queries
+    // Note, bool allowedDuringRebind should actually be replaced with flags of some kind. Just need quick fix right now.
 
-    public static bool GetInputDown(MSChartEditorInputActions key)
+    static bool BlockedByRebind(bool allowedDuringRebind)
     {
-        if (ChartEditor.hasFocus && !Services.IsTyping)
+        return !allowedDuringRebind && Services.IsBindingsMenuActive;
+    }
+
+    public static bool GetInputDown(MSChartEditorInputActions key, bool allowedDuringRebind = false)
+    {
+        if (ChartEditor.hasFocus && !Services.IsTyping && !BlockedByRebind(allowedDuringRebind))
         {
             return primaryInputs.GetActionConfig(key).GetInputDown(InputManager.Instance.devices);
         }
@@ -248,9 +254,9 @@ public static class MSChartEditorInput
         return false;
     }
 
-    public static bool GetInputUp(MSChartEditorInputActions key)
+    public static bool GetInputUp(MSChartEditorInputActions key, bool allowedDuringRebind = false)
     {
-        if (ChartEditor.hasFocus && !Services.IsTyping)
+        if (ChartEditor.hasFocus && !Services.IsTyping && !BlockedByRebind(allowedDuringRebind))
         {
             return primaryInputs.GetActionConfig(key).GetInputUp(InputManager.Instance.devices);
         }
@@ -258,9 +264,9 @@ public static class MSChartEditorInput
         return false;
     }
 
-    public static bool GetInput(MSChartEditorInputActions key)
+    public static bool GetInput(MSChartEditorInputActions key, bool allowedDuringRebind = false)
     {
-        if (ChartEditor.hasFocus && !Services.IsTyping)
+        if (ChartEditor.hasFocus && !Services.IsTyping && !BlockedByRebind(allowedDuringRebind))
         {
             return primaryInputs.GetActionConfig(key).GetInput(InputManager.Instance.devices);
         }
@@ -268,15 +274,15 @@ public static class MSChartEditorInput
         return false;
     }
 
-    public static float GetAxis(MSChartEditorInputActions key)
+    public static float GetAxis(MSChartEditorInputActions key, bool allowedDuringRebind = false)
     {
-        float? value = GetAxisMaybe(key);
+        float? value = GetAxisMaybe(key, allowedDuringRebind);
         return value.HasValue ? value.Value : 0;
     }
 
-    public static float? GetAxisMaybe(MSChartEditorInputActions key)
+    public static float? GetAxisMaybe(MSChartEditorInputActions key, bool allowedDuringRebind = false)
     {
-        if (ChartEditor.hasFocus && !Services.IsTyping)
+        if (ChartEditor.hasFocus && !Services.IsTyping && !BlockedByRebind(allowedDuringRebind))
         {
             return primaryInputs.GetActionConfig(key).GetAxisMaybe(InputManager.Instance.devices);
         }
@@ -284,33 +290,33 @@ public static class MSChartEditorInput
         return null;
     }
 
-    public static bool GetGroupInputDown(MSChartEditorInputActions[] keys)
+    public static bool GetGroupInputDown(MSChartEditorInputActions[] keys, bool allowedDuringRebind = false)
     {
         foreach (MSChartEditorInputActions key in keys)
         {
-            if (GetInputDown(key))
+            if (GetInputDown(key, allowedDuringRebind))
                 return true;
         }
 
         return false;
     }
 
-    public static bool GetGroupInputUp(MSChartEditorInputActions[] keys)
+    public static bool GetGroupInputUp(MSChartEditorInputActions[] keys, bool allowedDuringRebind = false)
     {
         foreach (MSChartEditorInputActions key in keys)
         {
-            if (GetInputUp(key))
+            if (GetInputUp(key, allowedDuringRebind))
                 return true;
         }
 
         return false;
     }
 
-    public static bool GetGroupInput(MSChartEditorInputActions[] keys)
+    public static bool GetGroupInput(MSChartEditorInputActions[] keys, bool allowedDuringRebind = false)
     {
         foreach (MSChartEditorInputActions key in keys)
         {
-            if (GetInput(key))
+            if (GetInput(key, allowedDuringRebind))
                 return true;
         }
 

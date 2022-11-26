@@ -94,8 +94,7 @@ public class Services : MonoBehaviour
             return (EventSystem.current.currentSelectedGameObject != null &&
                 (EventSystem.current.currentSelectedGameObject.GetComponent<InputField>() != null ||
                 EventSystem.current.currentSelectedGameObject.GetComponent<TMPro.TMP_InputField>() != null ||
-                EventSystem.current.currentSelectedGameObject.GetComponent<MS_TMPro_InputField>() != null)) ||
-                IsBindingsMenuActive;
+                EventSystem.current.currentSelectedGameObject.GetComponent<MS_TMPro_InputField>() != null));
         }
     }
 
@@ -270,11 +269,11 @@ public class Services : MonoBehaviour
         }
     }
 
-    public bool IsBindingsMenuActive
+    public static bool IsBindingsMenuActive
     {
         get
         {
-            return uiServices.bindingsMenu.isActiveAndEnabled;
+            return ChartEditor.Instance.uiServices.bindingsMenu.isActiveAndEnabled;
         }
     }
 }
