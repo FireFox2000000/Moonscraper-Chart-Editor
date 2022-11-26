@@ -244,17 +244,24 @@ public class MouseMonitor : SystemManagerState.System
                     if (selectedObject.GetComponent<SelectableClick>())
                     {
                         if (selectable == null)
+                        {
                             selectable = selectedObject;
+                        }
                         else if (selectedObject.transform.position.y == selectable.transform.position.y && world2DPosition != null)
                         {
                             // Take the one closest to the mouse
                             float mouseX = ((Vector2)world2DPosition).x;
                             selectable = Mathf.Abs(selectedObject.transform.position.x - mouseX) < Mathf.Abs(selectable.transform.position.x - mouseX) ? selectedObject : selectable;
                         }
+                        // Drum rolls get lowest priority clicking
+                        else if (selectable.transform.GetComponent<DrumRollController>() != null)
+                        {
+                            selectable = selectedObject;
+                        }
                         else
+                        {
                             break;
-
-                        //return selectedObject;
+                        }
                     }
                 }
 
