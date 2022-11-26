@@ -264,7 +264,7 @@ public class MenuBar : UpdateableService {
 
     public void SetGHLiveRhythmInstrumentToggle(Toggle toggle)
     {
-        SetInstrumentToggle(toggle, Song.Instrument.Rhythm);
+        SetInstrumentToggle(toggle, Song.Instrument.GHLiveRhythm);
     }
 
     public void SetGHLiveCoopInstrumentToggle(Toggle toggle)
