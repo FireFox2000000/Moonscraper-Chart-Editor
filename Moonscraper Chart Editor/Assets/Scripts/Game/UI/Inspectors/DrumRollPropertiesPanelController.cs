@@ -12,6 +12,7 @@ public class DrumRollPropertiesPanelController : PropertiesPanelController
     Dropdown drumRollTypeDropdown;
 
     bool m_dropdownBlockingActive = false;
+    bool m_queueClearUiSelected = false;
 
     protected override void Update()
     {
@@ -20,6 +21,12 @@ public class DrumRollPropertiesPanelController : PropertiesPanelController
         m_dropdownBlockingActive = true;
         drumRollTypeDropdown.value = (int)currentDrumRoll.type;
         m_dropdownBlockingActive = false;
+
+        // Dropdown is stealing focus from our scrolling input, clear after selecting the dropdown
+        if (m_queueClearUiSelected)
+        {
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     void UpdateStringsInfo()
@@ -40,5 +47,7 @@ public class DrumRollPropertiesPanelController : PropertiesPanelController
             clone.type = type;
             editor.commandStack.Push(new SongEditModify<DrumRoll>(currentDrumRoll, clone));
         }
+
+        m_queueClearUiSelected = true;
     }
 }
