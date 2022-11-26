@@ -578,7 +578,7 @@ namespace MoonscraperChartEditor.Song.IO
                     case ChartIOHelper.TrackLoadType.Guitar:
                     default:
                         {
-                            fretNumber = GetDrumsSaveNoteNumber(note);
+                            fretNumber = GetStandardSaveNoteNumber(note);
                             break;
                         }
                 }
