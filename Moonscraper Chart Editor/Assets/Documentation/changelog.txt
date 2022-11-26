@@ -1,3 +1,8 @@
+1.4.6
+    FIXES
+    -Fixed Guitar-based instruments charts saving data incorrectly
+    -Fixed rebinding menu "Escape to cancel" not functioning
+
 1.4.5
     NEW FEATURES
     -Added GHL Rhythm and GHL Co-op to instruments list
