@@ -11,6 +11,7 @@ public class EditorObjectToolManager : System.Object
 {
     public enum ToolID
     {
+        // Add new tools to the bottom to prevent menus desycing
         None,
 
         Cursor,
@@ -21,6 +22,7 @@ public class EditorObjectToolManager : System.Object
         BPM,
         TimeSignature,
         Section,
+        DrumRoll,
     }
 
     public enum ViewModeMaybe

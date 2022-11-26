@@ -11,9 +11,15 @@ public class DrumRollPropertiesPanelController : PropertiesPanelController
     [SerializeField]
     Dropdown drumRollTypeDropdown;
 
+    bool m_dropdownBlockingActive = false;
+
     protected override void Update()
     {
         UpdateStringsInfo();
+
+        m_dropdownBlockingActive = true;
+        drumRollTypeDropdown.value = (int)currentDrumRoll.type;
+        m_dropdownBlockingActive = false;
     }
 
     void UpdateStringsInfo()
@@ -24,6 +30,9 @@ public class DrumRollPropertiesPanelController : PropertiesPanelController
 
     public void ApplyRollTypeDropdownSelection(int option)
     {
+        if (m_dropdownBlockingActive)
+            return;
+
         DrumRoll.Type type = (DrumRoll.Type)option;
         if (type != currentDrumRoll.type)
         {
