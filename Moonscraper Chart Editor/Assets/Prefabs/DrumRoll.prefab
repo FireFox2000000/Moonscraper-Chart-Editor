@@ -134,7 +134,7 @@ SpriteRenderer:
   m_SortingLayerID: -627222025
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 45fa70f8baf1eb740a2439c00a9a73fc, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 13a5a9b054da1d84c8cd898df1421fd4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -156,7 +156,6 @@ GameObject:
   - component: {fileID: 951138960416199738}
   - component: {fileID: 6520193786012655096}
   - component: {fileID: 7216545340623342842}
-  - component: {fileID: 2599235711223779324}
   m_Layer: 11
   m_Name: Trigger Visuals
   m_TagString: Untagged
@@ -223,20 +222,6 @@ MeshRenderer:
   m_SortingLayerID: -61525345
   m_SortingLayer: 1
   m_SortingOrder: 0
---- !u!64 &2599235711223779324
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3235193782699679370}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &3872635143845074100
 GameObject:
   m_ObjectHideFlags: 0
