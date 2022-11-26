@@ -342,6 +342,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
 
         SetInViewRangeDirty(chart.notes);
         SetInViewRangeDirty(chart.starPower);
+        SetInViewRangeDirty(chart.drumRoll);
         SetInViewRangeDirty(chart.events);
         SetInViewRangeDirty(song.eventsAndSections);
         SetInViewRangeDirty(song.syncTrack);
@@ -387,6 +388,17 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         {
             if (collectedStarpowerInRange[i].controller)
                 collectedStarpowerInRange[i].controller.SetDirty();
+        }
+    }
+
+    public void SetInViewRangeDirty(IList<DrumRoll> songObjects)
+    {
+        CollectDrumRollsInViewRange(songObjects);
+
+        for (int i = 0; i < collectedDrumRollsInRange.Count; ++i)
+        {
+            if (collectedDrumRollsInRange[i].controller)
+                collectedDrumRollsInRange[i].controller.SetDirty();
         }
     }
 

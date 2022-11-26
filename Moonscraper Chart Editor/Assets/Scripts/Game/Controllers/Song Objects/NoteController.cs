@@ -46,7 +46,8 @@ public class NoteController : SongObjectController {
             return noteVisuals.gameObject.activeSelf;
         }
     }
-    new void Awake()
+
+    protected override void Awake()
     {
         base.Awake();
         sustainRen = sustain.GetComponent<Renderer>();

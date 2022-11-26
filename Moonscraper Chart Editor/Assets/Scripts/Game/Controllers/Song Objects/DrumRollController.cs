@@ -5,7 +5,7 @@ using MoonscraperChartEditor.Song;
 
 public class DrumRollController : SongObjectController
 {
-    public DrumRoll drumRoll { get { return (DrumRoll)songObject; } set { Init(value, this); } }
+    public DrumRoll drumRoll { get { return (DrumRoll)songObject; } set { Init(value); } }
     public const float position = 0.0f;
     bool m_wantPop = false;
 
@@ -73,6 +73,15 @@ public class DrumRollController : SongObjectController
                 }
             }
         }
+
+        isDirty = false;
+    }
+
+    void Init(DrumRoll drumRoll)
+    {
+        base.Init(drumRoll, this);
+        SetDirty();
+        UpdateSongObject();
     }
 
     public override void OnSelectableMouseDown()
