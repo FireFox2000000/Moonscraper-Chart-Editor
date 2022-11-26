@@ -4535,7 +4535,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0.000036239624, y: 0.0000076293945}
-  m_SizeDelta: {x: 0, y: 97.2}
+  m_SizeDelta: {x: 0, y: 114.23808}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &178945491
 GameObject:
@@ -9666,8 +9666,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 2.7999954, y: -13.349}
-  m_SizeDelta: {x: 8.699997, y: -26.697495}
+  m_AnchoredPosition: {x: 2.7999954, y: -11.57}
+  m_SizeDelta: {x: 8.699997, y: -30.247093}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &459061100
 MonoBehaviour:
@@ -9871,6 +9871,7 @@ MonoBehaviour:
   timeSignatureSelect: {fileID: 1902616181}
   sectionSelect: {fileID: 78626835}
   eventSelect: {fileID: 1031443472}
+  drumRollSelect: {fileID: 1905662923}
   globalEventSprite: {fileID: 21300000, guid: 95f69c1ce9d886c439f058f6fc4737bd, type: 3}
 --- !u!1 &465921347
 GameObject:
@@ -11793,8 +11794,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 980262015}
   m_HandleRect: {fileID: 980262014}
   m_Direction: 2
-  m_Value: 0.9999989
-  m_Size: 0.9272916
+  m_Value: 0.9999997
+  m_Size: 0.75791836
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -41885,7 +41886,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.1350098, y: -202.1064}
+  m_AnchoredPosition: {x: -1.1350098, y: -202.10652}
   m_SizeDelta: {x: -16.200012, y: 273.1942}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1783824858
@@ -44663,7 +44664,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1905662920
 RectTransform:
   m_ObjectHideFlags: 0
@@ -44680,7 +44681,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 44.269978, y: -102}
+  m_AnchoredPosition: {x: 22.16998, y: -102}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1905662921
@@ -44695,7 +44696,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 635727e25c735994fb6f858716ba8247, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  message: 'Starpower\nShortcut Key: |ToolSelectStarpower|'
+  message: Roll Lane
   offset: {x: 10, y: -10}
 --- !u!114 &1905662922
 MonoBehaviour:
@@ -44745,7 +44746,7 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1905662924}
   m_OnClick:
     m_PersistentCalls:
@@ -44779,7 +44780,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bf1a278cf0199334ab883f606b9f72db, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 647951f3538a2d642bcf0c096b0ea1b9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -51520,7 +51521,7 @@ PrefabInstance:
     - target: {fileID: 1301899982732144092, guid: 50e7de0d989f0a74cad9c1926db9987f,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -101.99833
+      value: -101.99827
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50e7de0d989f0a74cad9c1926db9987f, type: 3}

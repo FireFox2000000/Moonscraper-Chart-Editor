@@ -27,6 +27,8 @@ public class ToolPanelController : MonoBehaviour {
     Button sectionSelect;
     [SerializeField]
     Button eventSelect;
+    [SerializeField]
+    Button drumRollSelect;
 
     [SerializeField]
     Sprite globalEventSprite;
@@ -41,6 +43,7 @@ public class ToolPanelController : MonoBehaviour {
         localEventSprite = eventImage.sprite;
 
         editor.events.viewModeSwitchEvent.Register(OnViewModeSwitch);
+        editor.events.chartReloadedEvent.Register(TryEnableRollLaneButton);
     }
 
     // Update is called once per frame
@@ -84,6 +87,9 @@ public class ToolPanelController : MonoBehaviour {
 
         else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToolSelectEvent))
             eventSelect.onClick.Invoke();
+
+        else if (false)
+            drumRollSelect.onClick.Invoke();
     }
 
     public void ToggleSongViewMode(bool globalView)
@@ -106,5 +112,10 @@ public class ToolPanelController : MonoBehaviour {
         {
             viewModeToggle.isOn = globalView;
         }
+    }
+
+    void TryEnableRollLaneButton()
+    {
+        drumRollSelect.interactable = Globals.drumMode;
     }
 }
