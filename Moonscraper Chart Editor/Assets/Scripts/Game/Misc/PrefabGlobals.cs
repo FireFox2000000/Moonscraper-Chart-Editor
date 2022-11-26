@@ -7,7 +7,14 @@ using MoonscraperChartEditor.Song;
 // Stores all collider information for group select collision detection
 public class PrefabGlobals {
     static bool hasBeenInitialised = false;
-    static Vector2 noteColliderSize, spColliderSize, chartEventColliderSize, bpmColliderSize, tsColliderSize, sectionColliderSize, eventColliderSize;
+    static Vector2 noteColliderSize, 
+        spColliderSize, 
+        chartEventColliderSize, 
+        bpmColliderSize, 
+        tsColliderSize, 
+        sectionColliderSize, 
+        eventColliderSize,
+        drumRollColliderSize;
 
     static void Init()
     {
@@ -21,6 +28,7 @@ public class PrefabGlobals {
         tsColliderSize = GetColliderSize(editor.assets.tsPrefab);
         sectionColliderSize = GetColliderSize(editor.assets.sectionPrefab);
         eventColliderSize = GetColliderSize(editor.assets.songEventPrefab);
+        drumRollColliderSize = GetColliderSize(editor.assets.drumRollPrefab);
 
         hasBeenInitialised = true;
     }
@@ -92,6 +100,10 @@ public class PrefabGlobals {
             case (SongObject.ID.Event):
                 colliderSize = eventColliderSize;
                 position = new Vector2(EventController.position, 0);
+                break;
+            case (SongObject.ID.DrumRoll):
+                colliderSize = drumRollColliderSize;
+                position = new Vector2(DrumRollController.position, 0);
                 break;
             default:
                 return new Rect();

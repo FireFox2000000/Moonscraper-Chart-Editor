@@ -253,10 +253,10 @@ public class CursorSelect : ToolObject
             int index, length;
             SongObjectHelper.GetRange(editor.currentChart.chartObjects, minLimitInclusive, maxLimitNonInclusive, out index, out length);
 
+            float offset = 0;
             for (int i = index; i < index + length; ++i)
             {
                 ChartObject chartObject = editor.currentChart.chartObjects[i];
-                float offset = 0;
 
                 if ((SongObject.ID)chartObject.classID == SongObject.ID.Note)
                 {
@@ -267,8 +267,50 @@ public class CursorSelect : ToolObject
                     }
                 }
 
-                if (chartObject.tick < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject, 0, offset), areaRect))
+                // Add the whole length for roll lanes, not just the root
+                if ((SongObject.ID)chartObject.classID == SongObject.ID.DrumRoll)
+                {
+                    // This is handled in a second loop below. Drum rolls need the length of the whole trigger.
+                    // SongObjectHelper.GetRange has not accounted for the tail of the trigger.
+                    // Either we search backward indefinately or do a second loop over just the drum roll objects
+                    // themselves, which is prefering to avoid scanning the whole chart backwards every time.
+                    continue;
+                }
+                else if (chartObject.tick < maxLimitNonInclusive && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(chartObject, 0, offset), areaRect))
+                {
                     chartObjectsList.Add(chartObject);
+                }
+            }
+
+            // Drum roll specific search to avoid indefinite backwards search
+            {
+                SongObjectHelper.GetRange(editor.currentChart.drumRoll, minLimitInclusive, maxLimitNonInclusive, out index, out length);
+                if (index > 0)
+                {
+                    --index;
+                    ++length;
+                }
+
+                if (index + length <= editor.currentChart.drumRoll.Count - 1)
+                {
+                    ++length;
+                }
+
+                for (int i = index; i < index + length; ++i)
+                {
+                    DrumRoll drumRoll = editor.currentChart.drumRoll[i];
+
+                    uint endTick = drumRoll.tick + drumRoll.length;
+                    bool tailInView = endTick >= minLimitInclusive && endTick < maxLimitNonInclusive;
+                    bool rootInView = drumRoll.tick >= minLimitInclusive && drumRoll.tick < maxLimitNonInclusive;
+                    bool bodyInView = drumRoll.tick <= minLimitInclusive && endTick >= maxLimitNonInclusive;
+
+                    bool drumRollInTickRange = tailInView || rootInView || bodyInView;
+                    if (drumRollInTickRange && PrefabGlobals.HorizontalCollisionCheck(PrefabGlobals.GetCollisionRect(drumRoll, 0, offset), areaRect))
+                    {
+                        chartObjectsList.Add(drumRoll);
+                    }
+                }
             }
         }
         else
