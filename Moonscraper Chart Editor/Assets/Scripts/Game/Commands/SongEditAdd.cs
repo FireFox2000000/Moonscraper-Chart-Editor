@@ -324,7 +324,7 @@ public class SongEditAdd : SongEditCommand
             // Find the previous drum roll
             {
                 int previousIndex = currentArrayPosIsDrumRoll ? position - 1 : position;
-                while (previousIndex >= 0 && chartObjects[previousIndex].tick < note.tick)
+                while (previousIndex >= 0 && chartObjects[previousIndex].tick <= note.tick)
                 {
                     if (chartObjects[previousIndex].classID != (int)SongObject.ID.DrumRoll)
                     {

@@ -153,7 +153,6 @@ public class DrumRollController : SongObjectController
     {
         // Find all the notes that are meant to be within this lane
         var notes = editor.currentChart.notes;
-        Debug.Log("Priority list notes " + notes.Count);
 
         int start, length;
         SongObjectHelper.GetRange(notes, drumRoll.tick, drumRoll.tick + drumRoll.length, out start, out length);
@@ -212,16 +211,20 @@ public class DrumRollController : SongObjectController
     {
         int noteMask = 0;
         var notes = ChartEditor.Instance.currentChart.notes;
+
         for (int i = start; i < start + length; ++i)
         {
             var note = notes[i];
+
             if (note.drumPad == Note.DrumPad.Kick)
             {
                 continue;
             }
 
-            if ((noteMask & (1 << (int)note.drumPad)) == 0)
+            bool padAlreadyAdded = (noteMask & (1 << (int)note.drumPad)) != 0;
+            if (!padAlreadyAdded)
             {
+                // Sort by tick, left to right
                 drumPadPriority.Add(note.drumPad);
             }
             noteMask |= 1 << (int)note.drumPad;
