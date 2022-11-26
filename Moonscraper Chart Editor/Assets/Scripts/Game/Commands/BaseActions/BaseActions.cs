@@ -78,8 +78,7 @@ public class AddAction : BaseAction
                     }
                 }
 
-                // TODO, dirty roll lanes as well
-
+                SongEditAdd.SetDrumRollsDirty(note, editor.currentChart.chartObjects);
                 break;
 
             case (int)SongObject.ID.Starpower:

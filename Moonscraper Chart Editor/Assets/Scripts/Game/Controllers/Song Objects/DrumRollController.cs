@@ -14,6 +14,9 @@ public class DrumRollController : SongObjectController
     [SerializeField]
     BoxCollider m_collision;
 
+    [SerializeField]
+    GameObject[] m_laneVisuals;
+
     float m_triggerVisualsInitZScale = 1.0f;
     Transform m_triggerVisualsTransform;
 
@@ -40,7 +43,34 @@ public class DrumRollController : SongObjectController
             {
                 UpdateLength();
 
-                // Update lanes
+                int laneVisualIndex = 0;
+                switch (drumRoll.type)
+                {
+                    case DrumRoll.Type.Standard:
+                        {
+                            Debug.Assert(m_laneVisuals.Length > 0);
+                            SetLanePosition(m_laneVisuals[laneVisualIndex], laneVisualIndex);
+                            ++laneVisualIndex;
+
+                            break;
+                        }
+                    case DrumRoll.Type.Special:
+                        {
+                            Debug.Assert(m_laneVisuals.Length > 1);
+                            SetLanePosition(m_laneVisuals[laneVisualIndex], laneVisualIndex);
+                            ++laneVisualIndex;
+
+                            SetLanePosition(m_laneVisuals[laneVisualIndex], laneVisualIndex);
+                            ++laneVisualIndex;
+
+                            break;
+                        }
+                }
+
+                for (int i = laneVisualIndex; i < m_laneVisuals.Length; ++i)
+                {
+                    m_laneVisuals[laneVisualIndex].SetActive(false);
+                }
             }
         }
     }
@@ -106,6 +136,65 @@ public class DrumRollController : SongObjectController
             position.z = length / 2.0f;
             m_collision.center = position;
         }
+    }
+
+    void SetLanePosition(GameObject laneVisuals, int drumRollNoteIndex)
+    {
+        // Find all the notes that are meant to be within this lane
+        var notes = ChartEditor.Instance.currentChart.notes;
+        int start, length;
+        SongObjectHelper.GetRange(notes, drumRoll.tick, drumRoll.tick + drumRoll.length, out start, out length);
+
+        int noteMask = GetNoteMaskInRange(start, length);
+        int totalLanesActive = 0;
+        int currentLane = 0;
+        int activeLanesTarget = drumRollNoteIndex + 1;
+
+        while (currentLane < MoonscraperEngine.EnumX<Note.DrumPad>.Count)
+        {
+            int currentLaneMask = 1 << currentLane;
+            if ((noteMask & currentLaneMask) != 0)
+            {
+                ++totalLanesActive;
+            }
+
+            if (totalLanesActive == activeLanesTarget)
+            {
+                break;
+            }
+            else
+            {
+                ++currentLane;
+            }
+        }
+
+        // Successfully found a lane to render
+        if (totalLanesActive == activeLanesTarget)
+        {
+            laneVisuals.SetActive(true);
+        }
+        else
+        {
+            laneVisuals.SetActive(false);
+        }
+    }
+
+    int GetNoteMaskInRange(int start, int length)
+    {
+        int noteMask = 0;
+        var notes = ChartEditor.Instance.currentChart.notes;
+        for (int i = start; i < start + length; ++i)
+        {
+            var note = notes[i];
+            if (note.drumPad == Note.DrumPad.Kick)
+            {
+                continue;
+            }
+
+            noteMask |= 1 << (int)note.drumPad;
+        }
+
+        return noteMask;
     }
 
     void TailDrag()

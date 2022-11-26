@@ -55,6 +55,8 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
         switch ((SongObject.ID)objectToCopyInto.classID)
         {
             case SongObject.ID.Note:
+                SongEditAdd.SetDrumRollsDirty(objectToCopyInto as Note, chart.chartObjects);
+                SongEditAdd.SetDrumRollsDirty(objectToCopyFrom as Note, chart.chartObjects);
                 (objectToCopyInto as Note).CopyFrom((objectToCopyFrom as Note));
                 break;
 

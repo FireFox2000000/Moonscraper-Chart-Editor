@@ -130,6 +130,8 @@ public class SongEditAdd : SongEditCommand
                 UnityEngine.Debug.LogError("Object just added was not a note");
             else
                 NoteFunctions.PerformPostChartInsertCorrections(justAdded, subActions, extendedSustainsEnabled);
+
+            SetDrumRollsDirty(note, chart.chartObjects);
         }
         else
         {
@@ -304,6 +306,21 @@ public class SongEditAdd : SongEditCommand
                     sp.length = nextSp.tick - sp.tick;
                 }
             }
+        }
+    }
+    #endregion
+
+    #region DrumRoll Helper Functions
+
+    public static void SetDrumRollsDirty(Note note, IList<ChartObject> drumRolls)
+    {
+        int start, length;
+        SongObjectHelper.GetRange(drumRolls, note.tick, note.tick + note.length, out start, out length);
+
+        for (int i = start; i < start + length; ++i)
+        {
+            if (drumRolls[i].classID == (int)SongObject.ID.DrumRoll && drumRolls[i].controller)
+                drumRolls[i].controller.SetDirty();
         }
     }
 
