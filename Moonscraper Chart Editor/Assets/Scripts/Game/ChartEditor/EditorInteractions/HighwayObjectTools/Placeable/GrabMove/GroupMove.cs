@@ -14,6 +14,7 @@ public class GroupMove : ToolObject
 
     List<Note> notesToEnable = new List<Note>();
     List<Starpower> starpowerToEnable = new List<Starpower>();
+    List<DrumRoll> drumRollsToEnable = new List<DrumRoll>();
     List<ChartEvent> chartEventsToEnable = new List<ChartEvent>();
     List<BPM> bpmsToEnable = new List<BPM>();
     List<TimeSignature> timeSignaturesToEnable = new List<TimeSignature>();
@@ -93,6 +94,7 @@ public class GroupMove : ToolObject
                 // Enable objects into the pool
                 editor.songObjectPoolManager.EnableNotes(notesToEnable);
                 editor.songObjectPoolManager.EnableSP(starpowerToEnable);
+                editor.songObjectPoolManager.EnableDrumRoll(drumRollsToEnable);
                 editor.songObjectPoolManager.EnableChartEvents(chartEventsToEnable);
                 editor.songObjectPoolManager.EnableBPM(bpmsToEnable);
                 editor.songObjectPoolManager.EnableTS(timeSignaturesToEnable);
@@ -131,6 +133,7 @@ public class GroupMove : ToolObject
 
         notesToEnable.Clear();
         starpowerToEnable.Clear();
+        drumRollsToEnable.Clear();
         chartEventsToEnable.Clear();
         bpmsToEnable.Clear();
         timeSignaturesToEnable.Clear();
@@ -201,6 +204,7 @@ public class GroupMove : ToolObject
 
         notesToEnable.AddRange(movingSongObjects.OfType<Note>());
         starpowerToEnable.AddRange(movingSongObjects.OfType<Starpower>());
+        drumRollsToEnable.AddRange(movingSongObjects.OfType<DrumRoll>());
         chartEventsToEnable.AddRange(movingSongObjects.OfType<ChartEvent>());
         bpmsToEnable.AddRange(movingSongObjects.OfType<BPM>());
         timeSignaturesToEnable.AddRange(movingSongObjects.OfType<TimeSignature>().ToArray());
