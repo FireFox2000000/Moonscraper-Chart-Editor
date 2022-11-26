@@ -43,7 +43,6 @@ public class ToolPanelController : MonoBehaviour {
         localEventSprite = eventImage.sprite;
 
         editor.events.viewModeSwitchEvent.Register(OnViewModeSwitch);
-        editor.events.chartReloadedEvent.Register(TryEnableRollLaneButton);
     }
 
     // Update is called once per frame
@@ -112,10 +111,5 @@ public class ToolPanelController : MonoBehaviour {
         {
             viewModeToggle.isOn = globalView;
         }
-    }
-
-    void TryEnableRollLaneButton()
-    {
-        drumRollSelect.interactable = Globals.drumMode;
     }
 }
