@@ -111,6 +111,13 @@ public class HoverHighlightDisplaySystem : SystemManagerState.System
                         bounds = col.bounds;
                     }
 
+                    if (bounds.size.z == 0)
+                    {
+                        var size = bounds.size;
+                        size.z = 0.1f;
+                        bounds.size = size;
+                    }
+
                     highlights[i].transform.localPosition = bounds.center;
                     highlights[i].transform.localScale = bounds.size;
                 }
