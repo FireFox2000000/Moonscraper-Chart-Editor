@@ -1,3 +1,11 @@
+1.4.5
+    NEW FEATURES
+    -Added GHL Rhythm and GHL Co-op to instruments list
+    -Added ability to add and edit drum roll triggers
+
+    FIXES
+    -Fixed group fret selection dropdown option not functioning
+
 1.4.4
     FIXES
     -Application no longer deletes manually added drum roll triggers
