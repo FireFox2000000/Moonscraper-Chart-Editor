@@ -12,6 +12,8 @@ public class InspectorSwitching : MonoBehaviour {
     [SerializeField]
     StarpowerPropertiesPanelController spInspector;
     [SerializeField]
+    DrumRollPropertiesPanelController drumRollInspector;
+    [SerializeField]
     SectionPropertiesPanelController sectionInspector;
     [SerializeField]
     BPMPropertiesPanelController bpmInspector;
@@ -30,6 +32,7 @@ public class InspectorSwitching : MonoBehaviour {
     void Start () {
         noteInspector.gameObject.SetActive(false);
         spInspector.gameObject.SetActive(false);
+        drumRollInspector.gameObject.SetActive(false);
         sectionInspector.gameObject.SetActive(false);
         bpmInspector.gameObject.SetActive(false);
         tsInspector.gameObject.SetActive(false);
@@ -79,6 +82,10 @@ public class InspectorSwitching : MonoBehaviour {
                 case ((int)SongObject.ID.Starpower):
                     spInspector.currentSp = (Starpower)editor.selectedObjectsManager.currentSelectedObject;
                     currentPropertiesPanel = spInspector.gameObject;
+                    break;
+                case ((int)SongObject.ID.DrumRoll):
+                    drumRollInspector.currentDrumRoll = (DrumRoll)editor.selectedObjectsManager.currentSelectedObject;
+                    currentPropertiesPanel = drumRollInspector.gameObject;
                     break;
                 case ((int)SongObject.ID.Section):
                     sectionInspector.currentSection = (Section)editor.selectedObjectsManager.currentSelectedObject;
