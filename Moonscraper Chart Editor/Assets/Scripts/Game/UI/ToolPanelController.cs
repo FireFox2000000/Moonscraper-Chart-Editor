@@ -43,6 +43,10 @@ public class ToolPanelController : MonoBehaviour {
         localEventSprite = eventImage.sprite;
 
         editor.events.viewModeSwitchEvent.Register(OnViewModeSwitch);
+        editor.events.toolChangedEvent.Register(RefreshAvailableTools);
+        editor.events.chartReloadedEvent.Register(RefreshAvailableTools);
+
+        RefreshAvailableTools();
     }
 
     // Update is called once per frame
@@ -111,5 +115,10 @@ public class ToolPanelController : MonoBehaviour {
         {
             viewModeToggle.isOn = globalView;
         }
+    }
+
+    void RefreshAvailableTools()
+    {
+        drumRollSelect.gameObject.SetActive(Globals.drumMode);
     }
 }

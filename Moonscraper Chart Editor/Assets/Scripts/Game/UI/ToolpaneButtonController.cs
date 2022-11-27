@@ -10,13 +10,9 @@ public class ToolpaneButtonController : MonoBehaviour {
     public EditorObjectToolManager.ToolID toolId;
     private Button button;
 
-    [SerializeField]
-    bool m_drumsOnlyTool = false;
-
     void Start()
     {
         ChartEditor.Instance.events.toolChangedEvent.Register(RefreshInteractability);
-        ChartEditor.Instance.events.chartReloadedEvent.Register(RefreshInteractability);
 
         button = GetComponent<Button>();
         if (ChartEditor.Instance.toolManager.currentToolId == toolId)
@@ -28,27 +24,24 @@ public class ToolpaneButtonController : MonoBehaviour {
         }
     }
 
-	void RefreshInteractability() 
+    void OnDisable()
     {
-        bool isMyTool = ChartEditor.Instance.toolManager.currentToolId == toolId;
-        if (m_drumsOnlyTool)
+        if (ChartEditor.InstanceExists)
         {
-            button.interactable = Globals.drumMode && !isMyTool;
-            if (!Globals.drumMode && isMyTool)
+            bool isMyTool = ChartEditor.Instance.toolManager.currentToolId == toolId;
+            if (isMyTool)
             {
                 ChartEditor.Instance.toolManager.ChangeTool(EditorObjectToolManager.ToolID.Cursor);
             }
-            else
-            {
-                enabled = isMyTool;
-            }
         }
-        else
-        {
-            button.interactable = !isMyTool;
-            enabled = isMyTool;
-        }
-	}
+    }
+
+    void RefreshInteractability() 
+    {
+        bool isMyTool = ChartEditor.Instance.toolManager.currentToolId == toolId;
+        button.interactable = !isMyTool;
+        enabled = isMyTool;
+    }
 
     // if the tool is this one, enable the script, else disable
     public void Press()
