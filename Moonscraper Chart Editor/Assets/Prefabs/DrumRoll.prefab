@@ -67,6 +67,7 @@ MonoBehaviour:
   - {fileID: 1000013659002372}
   - {fileID: 3872635143845074100}
   resources: {fileID: 11400000, guid: a0aae115afa03df4e9021d16de34b436, type: 2}
+  laneVisualAlpha: 0.5
 --- !u!1 &1000013659002372
 GameObject:
   m_ObjectHideFlags: 0

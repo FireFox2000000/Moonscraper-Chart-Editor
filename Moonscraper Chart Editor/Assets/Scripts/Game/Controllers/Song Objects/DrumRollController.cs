@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoonscraperChartEditor.Song;
@@ -19,6 +19,14 @@ public class DrumRollController : SongObjectController
 
     [SerializeField]
     SustainResources resources;
+
+    [SerializeField]
+    float laneVisualAlpha;
+
+#if UNITY_EDITOR
+    // Allow alpha to change when editing value via editor
+    float lastAlpha;
+#endif
 
     float m_triggerVisualsInitZScale = 1.0f;
     Transform m_triggerVisualsTransform;
@@ -53,7 +61,12 @@ public class DrumRollController : SongObjectController
         {
             transform.position = new Vector3(CHART_CENTER_POS + position, desiredWorldYPosition, 0);
 
+#if UNITY_EDITOR
+            // Check alpha value, otherwise it won't update when changed in the editor until a note in the lane is modified
+            if (isDirty || laneVisualAlpha != lastAlpha)
+#else
             if (isDirty)
+#endif
             {
                 UpdateLength();
 
@@ -85,6 +98,10 @@ public class DrumRollController : SongObjectController
                 {
                     m_laneVisuals[laneVisualIndex].SetActive(false);
                 }
+
+#if UNITY_EDITOR
+                lastAlpha = laneVisualAlpha;
+#endif
             }
         }
 
@@ -232,7 +249,7 @@ public class DrumRollController : SongObjectController
                     color = resources.sustainColours[colorIndex].color;
                 }
 
-                color.a = 0.5f;
+                color.a = Mathf.Clamp(laneVisualAlpha, 0.0f, 1.0f);
                 sprite.color = color;
             }
 
