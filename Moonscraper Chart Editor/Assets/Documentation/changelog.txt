@@ -1,3 +1,14 @@
+1.4.7
+    FIXES
+    -Fixed roll lanes visuals not updating when deleting notes
+    -Fixed hotkeys for note properties changes still being active outside of their expected game modes
+    -Drum roll textures now properly tile along the highway
+    -Fixed exception case when sometimes trying to refresh roll lane visuals
+
+    CHANGES
+    -Added colour to roll lane sprites
+    -Completely hide roll lane tool button if user is not editing a drums track.
+
 1.4.6
     FIXES
     -Fixed Guitar-based instruments charts saving data incorrectly
