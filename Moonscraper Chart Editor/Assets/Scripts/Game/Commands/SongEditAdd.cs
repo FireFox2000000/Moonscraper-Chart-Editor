@@ -131,7 +131,7 @@ public class SongEditAdd : SongEditCommand
             else
                 NoteFunctions.PerformPostChartInsertCorrections(justAdded, subActions, extendedSustainsEnabled);
 
-            SetDrumRollsDirty(note, chart.chartObjects);
+            SetDrumRollsDirty(note.tick, chart.chartObjects);
         }
         else
         {
@@ -312,9 +312,9 @@ public class SongEditAdd : SongEditCommand
 
     #region DrumRoll Helper Functions
 
-    public static void SetDrumRollsDirty(Note note, IList<ChartObject> chartObjects)
+    public static void SetDrumRollsDirty(uint tickOfInterest, IList<ChartObject> chartObjects)
     {
-        int position = SongObjectHelper.FindClosestPositionRoundedDown(note.tick, chartObjects);
+        int position = SongObjectHelper.FindClosestPositionRoundedDown(tickOfInterest, chartObjects);
 
         if (position != SongObjectHelper.NOTFOUND)
         {
@@ -324,7 +324,7 @@ public class SongEditAdd : SongEditCommand
             // Find the previous drum roll
             {
                 int previousIndex = currentArrayPosIsDrumRoll ? position - 1 : position;
-                while (previousIndex >= 0 && chartObjects[previousIndex].tick <= note.tick)
+                while (previousIndex >= 0 && chartObjects[previousIndex].tick <= tickOfInterest)
                 {
                     if (chartObjects[previousIndex].classID != (int)SongObject.ID.DrumRoll)
                     {

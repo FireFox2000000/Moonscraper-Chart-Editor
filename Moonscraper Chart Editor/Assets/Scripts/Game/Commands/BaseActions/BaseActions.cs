@@ -78,7 +78,7 @@ public class AddAction : BaseAction
                     }
                 }
 
-                SongEditAdd.SetDrumRollsDirty(note, editor.currentChart.chartObjects);
+                SongEditAdd.SetDrumRollsDirty(note.tick, editor.currentChart.chartObjects);
                 break;
 
             case (int)SongObject.ID.Starpower:
@@ -157,10 +157,13 @@ public class DeleteAction : BaseAction
         {
             T foundSongObject = arrayToSearch[arrayPos];
 
+            bool isNote = (SongObject.ID)foundSongObject.classID == SongObject.ID.Note;
+
             Note next = null;
-            if ((SongObject.ID)foundSongObject.classID == SongObject.ID.Note)
+            if (isNote)
             {
                 next = (foundSongObject as Note).nextSeperateNote;
+
             }
 
             // Actual deletion of the note from the chart
@@ -173,6 +176,12 @@ public class DeleteAction : BaseAction
                     if (chordNote.controller)
                         chordNote.controller.SetDirty();
                 }
+            }
+
+            if (isNote)
+            {
+                ChartEditor editor = ChartEditor.Instance;
+                SongEditAdd.SetDrumRollsDirty(foundSongObject.tick, editor.currentChart.chartObjects);
             }
         }
         else
