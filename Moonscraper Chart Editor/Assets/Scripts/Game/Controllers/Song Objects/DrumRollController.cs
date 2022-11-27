@@ -33,6 +33,8 @@ public class DrumRollController : SongObjectController
 
     List<Note.DrumPad> m_drumPadRollPriority = new List<Note.DrumPad>();
 
+    const float MinVisualLength = 0.1f;
+
     protected override void Awake()
     {
         m_triggerVisualsTransform = m_triggerVisualsPlane.transform;
@@ -140,7 +142,7 @@ public class DrumRollController : SongObjectController
     void UpdateLength()
     {
         float length = drumRoll.song.TickToWorldYPosition(drumRoll.tick + drumRoll.length) - desiredWorldYPosition;
-        length = Mathf.Max(length, 0.1f);
+        length = Mathf.Max(length, MinVisualLength);
 
         {
             var scale = m_triggerVisualsTransform.localScale;
