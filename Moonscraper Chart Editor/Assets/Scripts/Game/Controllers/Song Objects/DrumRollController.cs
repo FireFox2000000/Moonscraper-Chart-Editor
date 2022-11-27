@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoonscraperChartEditor.Song;
@@ -18,7 +18,7 @@ public class DrumRollController : SongObjectController
     GameObject[] m_laneVisuals;
 
     [SerializeField]
-    public SustainResources resources;
+    SustainResources resources;
 
     float m_triggerVisualsInitZScale = 1.0f;
     Transform m_triggerVisualsTransform;
