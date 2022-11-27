@@ -17,6 +17,9 @@ public class DrumRollController : SongObjectController
     [SerializeField]
     GameObject[] m_laneVisuals;
 
+    [SerializeField]
+    public SustainResources resources;
+
     float m_triggerVisualsInitZScale = 1.0f;
     Transform m_triggerVisualsTransform;
     MaterialPropertyBlock m_triggerVisualsPropertyBlock;
@@ -213,6 +216,25 @@ public class DrumRollController : SongObjectController
             var scale = laneVisuals.transform.localScale;
             scale.y = yMax - yMin;
             laneVisuals.transform.localScale = scale;
+
+            Skin customSkin = SkinManager.Instance.currentSkin;
+            int colorIndex = (int)pad;
+            if (colorIndex < customSkin.sustain_mats.Length)
+            {
+                var sprite = laneVisuals.GetComponent<SpriteRenderer>();
+                Color color;
+                if (customSkin.sustain_mats[colorIndex])
+                {
+                    color = customSkin.sustain_mats[colorIndex].color;
+                }
+                else
+                {
+                    color = resources.sustainColours[colorIndex].color;
+                }
+
+                color.a = 0.5f;
+                sprite.color = color;
+            }
 
             laneVisuals.SetActive(true);
         }
