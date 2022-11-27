@@ -339,7 +339,7 @@ public class SongEditAdd : SongEditCommand
                 }
             }
 
-            if (previousDrumRoll != null)
+            if (previousDrumRoll != null && previousDrumRoll.controller)
             {
                 previousDrumRoll.controller.SetDirty();
             }
