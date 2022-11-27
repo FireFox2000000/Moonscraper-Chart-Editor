@@ -18,15 +18,11 @@ public class DrumRollController : SongObjectController
     GameObject[] m_laneVisuals;
 
     [SerializeField]
-    SustainResources resources;
+    SustainResources m_resources;
 
     [SerializeField]
-    float laneVisualAlpha;
-
-#if UNITY_EDITOR
-    // Allow alpha to change when editing value via editor
-    float lastAlpha;
-#endif
+    [Range(0.0f, 1.0f)]
+    float m_laneVisualAlpha = 0.5f;
 
     float m_triggerVisualsInitZScale = 1.0f;
     Transform m_triggerVisualsTransform;
@@ -61,12 +57,7 @@ public class DrumRollController : SongObjectController
         {
             transform.position = new Vector3(CHART_CENTER_POS + position, desiredWorldYPosition, 0);
 
-#if UNITY_EDITOR
-            // Check alpha value, otherwise it won't update when changed in the editor until a note in the lane is modified
-            if (isDirty || laneVisualAlpha != lastAlpha)
-#else
             if (isDirty)
-#endif
             {
                 UpdateLength();
 
@@ -98,10 +89,6 @@ public class DrumRollController : SongObjectController
                 {
                     m_laneVisuals[laneVisualIndex].SetActive(false);
                 }
-
-#if UNITY_EDITOR
-                lastAlpha = laneVisualAlpha;
-#endif
             }
         }
 
@@ -246,10 +233,11 @@ public class DrumRollController : SongObjectController
                 }
                 else
                 {
-                    color = resources.sustainColours[colorIndex].color;
+                    color = m_resources.sustainColours[colorIndex].color;
                 }
 
-                color.a = Mathf.Clamp(laneVisualAlpha, 0.0f, 1.0f);
+                Debug.Assert(m_laneVisualAlpha >= 0.0f && m_laneVisualAlpha <= 1.0f, "Lane visual alpha out of range");
+                color.a = Mathf.Clamp(m_laneVisualAlpha, 0.0f, 1.0f);
                 sprite.color = color;
             }
 
