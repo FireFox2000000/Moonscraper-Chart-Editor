@@ -591,6 +591,7 @@ namespace MoonscraperChartEditor.Song.IO
             // Write out the instrument+ version of the note if applicable
             if (writeParameters.exportOptions.forced && note.flags.HasFlag(Note.Flags.DoubleKick) && NoteFunctions.AllowedToBeDoubleKick(note, difficulty))
             {
+                Debug.Assert(writeParameters.trackLoadType == ChartIOHelper.TrackLoadType.Drums, "Writing out double kick value on non-drums track");
                 fretNumber += ChartIOHelper.c_instrumentPlusOffset;
             }
 

@@ -207,35 +207,46 @@ public class NotePropertiesPanelController : PropertiesPanelController {
         }
     }
 
+    static bool ToggleIsValid(Toggle toggle)
+    {
+        return toggle.interactable && toggle.isActiveAndEnabled;
+    }
+
     void Controls()
     {
-        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteTap) && tapToggle.interactable)
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteTap) && ToggleIsValid(tapToggle))
         {
+            Debug.Log("ToggleNoteTap");
             tapToggle.isOn = !tapToggle.isOn;
         }
 
-        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteForced) && forcedToggle.interactable)
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteForced) && ToggleIsValid(forcedToggle))
         {
+            Debug.Log("ToggleNoteForced");
             forcedToggle.isOn = !forcedToggle.isOn;
         }
 
-        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteCymbal) && cymbalToggle.interactable)
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteCymbal) && ToggleIsValid(cymbalToggle))
         {
+            Debug.Log("ToggleNoteCymbal");
             cymbalToggle.isOn = !cymbalToggle.isOn;
         }
 
-        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteDoubleKick) && doubleKickToggle.interactable)
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteDoubleKick) && ToggleIsValid(doubleKickToggle))
         {
+            Debug.Log("ToggleNoteDoubleKick");
             doubleKickToggle.isOn = !doubleKickToggle.isOn;
         }
 
-        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteAccent) && accentToggle.interactable)
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteAccent) && ToggleIsValid(accentToggle))
         {
+            Debug.Log("ToggleNoteAccent");
             accentToggle.isOn = !accentToggle.isOn;
         }
 
-        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteGhost) && ghostToggle.interactable)
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToggleNoteGhost) && ToggleIsValid(ghostToggle))
         {
+            Debug.Log("ToggleNoteGhost");
             ghostToggle.isOn = !ghostToggle.isOn;
         }
     }
