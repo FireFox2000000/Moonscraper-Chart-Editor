@@ -19,6 +19,10 @@ public class DrumRollController : SongObjectController
 
     float m_triggerVisualsInitZScale = 1.0f;
     Transform m_triggerVisualsTransform;
+    MaterialPropertyBlock m_triggerVisualsPropertyBlock;
+    Renderer m_triggerVisualsRenderer;
+    Vector4 m_triggerVisualsInitTransform;
+    const string c_triggerVisualsTransformVecId = "_MainTex_ST";
 
     List<Note.DrumPad> m_drumPadRollPriority = new List<Note.DrumPad>();
 
@@ -26,6 +30,11 @@ public class DrumRollController : SongObjectController
     {
         m_triggerVisualsTransform = m_triggerVisualsPlane.transform;
         m_triggerVisualsInitZScale = m_triggerVisualsPlane.transform.localScale.z;
+        m_triggerVisualsPropertyBlock = new MaterialPropertyBlock();
+        m_triggerVisualsRenderer = m_triggerVisualsPlane.GetComponent<Renderer>();
+
+        m_triggerVisualsRenderer.GetPropertyBlock(m_triggerVisualsPropertyBlock);
+        m_triggerVisualsInitTransform = m_triggerVisualsRenderer.sharedMaterial.GetVector(c_triggerVisualsTransformVecId);
         base.Awake();
     }
 
@@ -130,6 +139,12 @@ public class DrumRollController : SongObjectController
             var scale = m_triggerVisualsTransform.localScale;
             scale.z = m_triggerVisualsInitZScale * length;
             m_triggerVisualsTransform.localScale = scale;
+            
+            var propertyTransform = m_triggerVisualsInitTransform;
+            propertyTransform.y *= length;
+            m_triggerVisualsRenderer.GetPropertyBlock(m_triggerVisualsPropertyBlock);
+            m_triggerVisualsPropertyBlock.SetVector(c_triggerVisualsTransformVecId, propertyTransform);
+            m_triggerVisualsRenderer.SetPropertyBlock(m_triggerVisualsPropertyBlock);
         }
 
         {
