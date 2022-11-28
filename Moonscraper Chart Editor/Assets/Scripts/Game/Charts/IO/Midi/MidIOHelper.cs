@@ -26,7 +26,7 @@ namespace MoonscraperChartEditor.Song.IO
         // Note numbers
         public const byte DOUBLE_KICK_NOTE = 95;
         public const byte SOLO_NOTE = 103;                 // http://docs.c3universe.com/rbndocs/index.php?title=Guitar_and_Bass_Authoring#Solo_Sections
-        public const byte TAP_NOTE = 104;                  // https://github.com/TheNathannator/GuitarGame_ChartFormats/blob/main/doc/FileFormats/.mid/Standard/5-Fret Guitar.md
+        public const byte TAP_NOTE_CH = 104;               // https://github.com/TheNathannator/GuitarGame_ChartFormats/blob/main/doc/FileFormats/.mid/Standard/5-Fret Guitar.md
         public const byte LYRICS_PHRASE_1 = 105;           // http://docs.c3universe.com/rbndocs/index.php?title=Vocal_Authoring
         public const byte LYRICS_PHRASE_2 = 106;           // Rock Band charts before RB3 mark phrases using this note as well
         public const byte FLAM_MARKER = 109;

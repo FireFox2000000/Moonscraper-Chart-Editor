@@ -622,7 +622,7 @@ namespace MoonscraperChartEditor.Song.IO
             var processFnDict = new Dictionary<int, EventProcessFn>()
             {
                 { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
-                { MidIOHelper.TAP_NOTE, (in EventProcessParams eventProcessParams) => {
+                { MidIOHelper.TAP_NOTE_CH, (in EventProcessParams eventProcessParams) => {
                     ProcessNoteOnEventAsForcedType(eventProcessParams, Note.NoteType.Tap);
                 }},
                 { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
@@ -685,7 +685,7 @@ namespace MoonscraperChartEditor.Song.IO
             var processFnDict = new Dictionary<int, EventProcessFn>()
             {
                 { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
-                { MidIOHelper.TAP_NOTE, (in EventProcessParams eventProcessParams) => {
+                { MidIOHelper.TAP_NOTE_CH, (in EventProcessParams eventProcessParams) => {
                     ProcessNoteOnEventAsForcedType(eventProcessParams, Note.NoteType.Tap);
                 }},
                 { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
