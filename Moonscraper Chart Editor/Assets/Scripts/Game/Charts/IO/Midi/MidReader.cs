@@ -926,6 +926,7 @@ namespace MoonscraperChartEditor.Song.IO
             SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
 
             uint lastChordTick = uint.MaxValue;
+            bool expectedForceFailure = true; // Whether or not it is expected that the actual type will not match the expected type
             bool shouldBeForced = false;
 
             for (int i = index; i < index + length; ++i)
@@ -939,6 +940,7 @@ namespace MoonscraperChartEditor.Song.IO
                 // Check if the chord has changed
                 if (lastChordTick != note.tick)
                 {
+                    expectedForceFailure = false;
                     shouldBeForced = false;
 
                     if (noteType == Note.NoteType.Strum)
@@ -950,6 +952,13 @@ namespace MoonscraperChartEditor.Song.IO
                     }
                     else if (noteType == Note.NoteType.Hopo)
                     {
+                        // Forcing consecutive same-fret HOPOs is possible in charts, but we do not allow it
+                        // (see RB2's chart of Steely Dan - Bodhisattva)
+                        if (!note.isNaturalHopo && note.cannotBeForced)
+                        {
+                            expectedForceFailure = true;
+                        }
+
                         if (!note.cannotBeForced && (note.isChord || !note.isNaturalHopo))
                         {
                             shouldBeForced = true;
@@ -973,7 +982,7 @@ namespace MoonscraperChartEditor.Song.IO
 
                 lastChordTick = note.tick;
 
-                Debug.Assert(note.type == noteType, $"Failed to set forced type! Expected: {noteType}  Actual: {note.type}\non {difficulty} {instrument} at tick {note.tick} ({TimeSpan.FromSeconds(note.time):mm':'ss'.'ff})");
+                Debug.Assert(note.type == noteType || expectedForceFailure, $"Failed to set forced type! Expected: {noteType}  Actual: {note.type}  Natural HOPO: {note.isNaturalHopo}  Chord: {note.isChord}  Forceable: {!note.cannotBeForced}\non {difficulty} {instrument} at tick {note.tick} ({TimeSpan.FromSeconds(note.time):mm':'ss'.'ff})");
             }
         }
 
