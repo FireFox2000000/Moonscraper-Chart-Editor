@@ -27,6 +27,8 @@ public class DrumRollPropertiesPanelController : PropertiesPanelController
         {
             UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
         }
+
+        Controls();
     }
 
     void UpdateStringsInfo()
@@ -41,13 +43,32 @@ public class DrumRollPropertiesPanelController : PropertiesPanelController
             return;
 
         DrumRoll.Type type = (DrumRoll.Type)option;
-        if (type != currentDrumRoll.type)
-        {
-            var clone = currentDrumRoll.CloneAs<DrumRoll>();
-            clone.type = type;
-            editor.commandStack.Push(new SongEditModify<DrumRoll>(currentDrumRoll, clone));
-        }
+        PushRollTypeCommand(type);
 
         m_queueClearUiSelected = true;
+    }
+
+    void Controls()
+    {
+        if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.DrumRollSetSingle))
+        {
+            Debug.Log("DrumRollSetSingle");
+            PushRollTypeCommand(DrumRoll.Type.Standard);
+        }
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.DrumRollSetDouble))
+        {
+            Debug.Log("DrumRollSetDouble");
+            PushRollTypeCommand(DrumRoll.Type.Special);
+        }
+    }
+
+    void PushRollTypeCommand(DrumRoll.Type desiredType)
+    {
+        if (desiredType != currentDrumRoll.type)
+        {
+            var clone = currentDrumRoll.CloneAs<DrumRoll>();
+            clone.type = desiredType;
+            editor.commandStack.Push(new SongEditModify<DrumRoll>(currentDrumRoll, clone));
+        }
     }
 }

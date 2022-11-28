@@ -85,7 +85,10 @@ public enum MSChartEditorInputActions
     ToggleNoteGhost,
     ToggleStarpowerDrumsFillActivation,
     ToggleViewMode, 
-    
+
+    DrumRollSetSingle,
+    DrumRollSetDouble,
+
     ToolNoteBurst,
     ToolNoteHold,
     ToolSelectCursor,
@@ -164,6 +167,8 @@ public static class MSChartEditorInput
             EditorToolStarpower,
             EditorToolGroupNoteGuitar,
             EditorToolGroupNoteDrums,
+
+            EditorToolDrumRoll,
         }
 
         public static InteractionMatrix interactionMatrix = new InteractionMatrix(EnumX<CategoryType>.Count);
@@ -176,6 +181,7 @@ public static class MSChartEditorInput
             | (1 << (int)CategoryType.Global)
             | (1 << (int)CategoryType.EditorToolGroupNoteGuitar)
             | (1 << (int)CategoryType.EditorToolGroupNoteDrums)
+            | (1 << (int)CategoryType.EditorToolDrumRoll)
             ;
         public static readonly int kGameplayCategoryMask = (1 << (int)CategoryType.GameplayGuitar) | (1 << (int)CategoryType.GameplayDrums) | (1 << (int)CategoryType.GameplayDrumsPro);
         public static readonly int kGameplayGuitarCategoryMask = (1 << (int)CategoryType.GameplayGuitar);

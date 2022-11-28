@@ -573,6 +573,28 @@
             }
         },
         {
+            "mSChartEditorInputAction": "DrumRollSetSingle",
+            "properties": {
+                "displayName": "Set Drum Roll Single",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 11,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
+            "mSChartEditorInputAction": "DrumRollSetDouble",
+            "properties": {
+                "displayName": "Set Drum Roll Double",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 11,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
             "mSChartEditorInputAction": "ToolNoteBurst",
             "properties": {
                 "displayName": "Note Tool Burst Mode (Keys)",
