@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -964,48 +964,55 @@ namespace MoonscraperChartEditor.Song.IO
                     expectedForceFailure = false;
                     shouldBeForced = false;
 
-                    if (noteType == Note.NoteType.Strum)
+                    switch (noteType)
                     {
-                        if (!note.isChord && note.isNaturalHopo)
+                        case (Note.NoteType.Strum):
                         {
-                            shouldBeForced = true;
-                        }
-                    }
-                    else if (noteType == Note.NoteType.Hopo)
-                    {
-                        // Forcing consecutive same-fret HOPOs is possible in charts, but we do not allow it
-                        // (see RB2's chart of Steely Dan - Bodhisattva)
-                        if (!note.isNaturalHopo && note.cannotBeForced)
-                        {
-                            expectedForceFailure = true;
-                        }
-
-                        if (!note.cannotBeForced && (note.isChord || !note.isNaturalHopo))
-                        {
-                            shouldBeForced = true;
-                        }
-                    }
-                    else if (noteType == Note.NoteType.Tap)
-                    {
-                        if (!note.IsOpenNote())
-                        {
-                            note.flags |= Note.Flags.Tap;
-                            // Forced flag will be removed shortly after here
-                        }
-                        else
-                        {
-                            // Open notes cannot become taps, they become HOPOs instead
-                            expectedForceFailure = true;
-                            // In the case that consecutive open notes are marked as taps, only the first will become a HOPO
-                            if (!note.cannotBeForced && !note.isNaturalHopo)
+                            if (!note.isChord && note.isNaturalHopo)
                             {
                                 shouldBeForced = true;
                             }
+                            break;
                         }
-                    }
-                    else
-                    {
-                        continue;   // Unhandled
+
+                        case (Note.NoteType.Hopo):
+                        {
+                            // Forcing consecutive same-fret HOPOs is possible in charts, but we do not allow it
+                            // (see RB2's chart of Steely Dan - Bodhisattva)
+                            if (!note.isNaturalHopo && note.cannotBeForced)
+                            {
+                                expectedForceFailure = true;
+                            }
+
+                            if (!note.cannotBeForced && (note.isChord || !note.isNaturalHopo))
+                            {
+                                shouldBeForced = true;
+                            }
+                            break;
+                        }
+
+                        case (Note.NoteType.Tap):
+                        {
+                            if (!note.IsOpenNote())
+                            {
+                                note.flags |= Note.Flags.Tap;
+                                // Forced flag will be removed shortly after here
+                            }
+                            else
+                            {
+                                // Open notes cannot become taps, they become HOPOs instead
+                                expectedForceFailure = true;
+                                // In the case that consecutive open notes are marked as taps, only the first will become a HOPO
+                                if (!note.cannotBeForced && !note.isNaturalHopo)
+                                {
+                                    shouldBeForced = true;
+                                }
+                            }
+                            break;
+                        }
+
+                        default:
+                            continue; // Unhandled
                     }
 
                     if (shouldBeForced)
