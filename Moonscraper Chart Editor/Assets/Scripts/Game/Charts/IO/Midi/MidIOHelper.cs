@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -26,6 +26,7 @@ namespace MoonscraperChartEditor.Song.IO
         // Note numbers
         public const byte DOUBLE_KICK_NOTE = 95;
         public const byte SOLO_NOTE = 103;                 // http://docs.c3universe.com/rbndocs/index.php?title=Guitar_and_Bass_Authoring#Solo_Sections
+        public const byte TAP_NOTE = 104;                  // https://strikeline.myjetbrains.com/youtrack/issue/CH-390
         public const byte LYRICS_PHRASE_1 = 105;           // http://docs.c3universe.com/rbndocs/index.php?title=Vocal_Authoring
         public const byte LYRICS_PHRASE_2 = 106;           // Rock Band charts before RB3 mark phrases using this note as well
         public const byte FLAM_MARKER = 109;

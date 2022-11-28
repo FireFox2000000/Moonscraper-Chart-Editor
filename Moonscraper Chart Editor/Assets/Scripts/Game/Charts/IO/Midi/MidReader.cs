@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -606,6 +606,9 @@ namespace MoonscraperChartEditor.Song.IO
             var processFnDict = new Dictionary<int, EventProcessFn>()
             {
                 { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
+                { MidIOHelper.TAP_NOTE, (in EventProcessParams eventProcessParams) => {
+                    ProcessNoteOnEventAsForcedType(eventProcessParams, Note.NoteType.Tap);
+                }},
                 { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
                     ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
                 }},
@@ -664,6 +667,9 @@ namespace MoonscraperChartEditor.Song.IO
             var processFnDict = new Dictionary<int, EventProcessFn>()
             {
                 { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
+                { MidIOHelper.TAP_NOTE, (in EventProcessParams eventProcessParams) => {
+                    ProcessNoteOnEventAsForcedType(eventProcessParams, Note.NoteType.Tap);
+                }},
                 { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
                     ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
                 }},
@@ -896,6 +902,21 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
+        static void ProcessNoteOnEventAsForcedType(in EventProcessParams eventProcessParams, Note.NoteType noteType)
+        {
+            var flagEvent = eventProcessParams.midiEvent as NoteOnEvent;
+            Debug.Assert(flagEvent != null, $"Wrong note event type passed to {nameof(ProcessNoteOnEventAsForcedType)}. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
+
+            foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
+            {
+                // Delay the actual processing once all the notes are actually in
+                eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+                {
+                    ProcessNoteOnEventAsForcedTypePostDelay(processParams, flagEvent, diff, noteType);
+                });
+            }
+        }
+
         static void ProcessNoteOnEventAsForcedType(in EventProcessParams eventProcessParams, Song.Difficulty difficulty, Note.NoteType noteType)
         {
             var flagEvent = eventProcessParams.midiEvent as NoteOnEvent;
@@ -964,20 +985,39 @@ namespace MoonscraperChartEditor.Song.IO
                             shouldBeForced = true;
                         }
                     }
+                    else if (noteType == Note.NoteType.Tap)
+                    {
+                        if (!note.IsOpenNote())
+                        {
+                            note.flags |= Note.Flags.Tap;
+                            // Forced flag will be removed shortly after here
+                        }
+                        else
+                        {
+                            // Open notes cannot become taps, they become HOPOs instead
+                            expectedForceFailure = true;
+                            // In the case that consecutive open notes are marked as taps, only the first will become a HOPO
+                            if (!note.cannotBeForced && !note.isNaturalHopo)
+                            {
+                                shouldBeForced = true;
+                            }
+                        }
+                    }
                     else
                     {
                         continue;   // Unhandled
                     }
-                }
-                // else we set the same forced property as before since we're on the same chord
 
-                if (shouldBeForced)
-                {
-                    note.flags |= Note.Flags.Forced;
-                }
-                else
-                {
-                    note.flags &= ~Note.Flags.Forced;
+                    if (shouldBeForced)
+                    {
+                        note.flags |= Note.Flags.Forced;
+                    }
+                    else
+                    {
+                        note.flags &= ~Note.Flags.Forced;
+                    }
+
+                    note.ApplyFlagsToChord();
                 }
 
                 lastChordTick = note.tick;
