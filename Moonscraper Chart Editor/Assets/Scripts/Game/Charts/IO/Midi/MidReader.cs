@@ -930,11 +930,13 @@ namespace MoonscraperChartEditor.Song.IO
 
             for (int i = index; i < index + length; ++i)
             {
+                // Tap marking overrides all other forcing
                 if ((chart.notes[i].flags & Note.Flags.Tap) != 0)
                     continue;
 
                 Note note = chart.notes[i];
 
+                // Check if the chord has changed
                 if (lastChordTick != note.tick)
                 {
                     shouldBeForced = false;
