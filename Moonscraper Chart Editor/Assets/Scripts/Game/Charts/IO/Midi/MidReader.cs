@@ -1018,7 +1018,8 @@ namespace MoonscraperChartEditor.Song.IO
                             }
                             else
                             {
-                                // Open notes cannot become taps, they become HOPOs instead
+                                // Open notes cannot become taps
+                                // CH handles this by turning them into open HOPOs, we'll do the same here for consistency with them
                                 expectedForceFailure = true;
                                 // In the case that consecutive open notes are marked as taps, only the first will become a HOPO
                                 if (!note.cannotBeForced && !note.isNaturalHopo)
