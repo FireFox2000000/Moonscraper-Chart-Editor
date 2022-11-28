@@ -651,6 +651,7 @@ namespace MoonscraperChartEditor.Song.IO
                     if (sp != null)     // Starpower cannot be split up between charts in a midi file
                     {
                         // Starpower notes marked as a drum roll are written as 5 notes instead of 1
+                        // http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring#Drum_Fills
                         SortableBytes[] onEvents;
                         SortableBytes[] offEvents;
                         GetStarpowerBytes(sp, out onEvents, out offEvents);
@@ -1011,6 +1012,7 @@ namespace MoonscraperChartEditor.Song.IO
         {
             bool isDrumFill = sp.flags.HasFlag(Starpower.Flags.ProDrums_Activation);
             // Drum fills are 5 notes instead of one
+            // http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring#Drum_Fills
             if (isDrumFill)
             {
                 // Ensure that these remain in the same order in both arrays
