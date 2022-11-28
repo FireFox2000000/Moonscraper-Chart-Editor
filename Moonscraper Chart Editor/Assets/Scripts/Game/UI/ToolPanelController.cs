@@ -91,7 +91,7 @@ public class ToolPanelController : MonoBehaviour {
         else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToolSelectEvent))
             eventSelect.onClick.Invoke();
 
-        else if (false)
+        else if (drumRollSelect.isActiveAndEnabled && MSChartEditorInput.GetInputDown(MSChartEditorInputActions.ToolSelectDrumRoll))
             drumRollSelect.onClick.Invoke();
     }
 

@@ -683,6 +683,17 @@
             }
         },
         {
+            "mSChartEditorInputAction": "ToolSelectDrumRoll",
+            "properties": {
+                "displayName": "Select Roll Lane Trigger Tool",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 1,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
             "mSChartEditorInputAction": "ToolNoteLane1",
             "properties": {
                 "displayName": "Note Tool Lane 1",

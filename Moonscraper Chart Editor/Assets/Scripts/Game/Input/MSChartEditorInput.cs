@@ -96,6 +96,7 @@ public enum MSChartEditorInputActions
     ToolSelectTimeSignature,
     ToolSelectSection,
     ToolSelectEvent,
+    ToolSelectDrumRoll,
 
     ToolNoteLane1,
     ToolNoteLane2,

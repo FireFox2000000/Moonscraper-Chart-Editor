@@ -1425,6 +1425,25 @@
             }
         },
         {
+            "action": "ToolSelectDrumRoll",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            59
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [],
+                "jsMaps": []
+            }
+        },
+        {
             "action": "ToolNoteLane1",
             "input": {
                 "kbMaps": [
