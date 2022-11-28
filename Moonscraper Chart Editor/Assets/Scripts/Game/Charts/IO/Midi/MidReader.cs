@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -971,7 +971,7 @@ namespace MoonscraperChartEditor.Song.IO
 
                 lastChordTick = note.tick;
 
-                Debug.Assert(note.type == noteType);
+                Debug.Assert(note.type == noteType, $"Failed to set forced type! Expected: {noteType}  Actual: {note.type}\non {difficulty} {instrument} at tick {note.tick} ({TimeSpan.FromSeconds(note.time):mm':'ss'.'ff})");
             }
         }
 
