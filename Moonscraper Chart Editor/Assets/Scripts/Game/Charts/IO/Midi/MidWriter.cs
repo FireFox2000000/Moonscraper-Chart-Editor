@@ -1014,33 +1014,35 @@ namespace MoonscraperChartEditor.Song.IO
 
         static (SortableBytes, SortableBytes)[] GetStarpowerBytes(Starpower sp)
         {
+            uint startTick = sp.tick;
+            uint endTick = sp.tick + sp.length;
             bool isDrumFill = sp.flags.HasFlag(Starpower.Flags.ProDrums_Activation);
             // Drum fills are 5 notes instead of one
             // http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring#Drum_Fills
             if (isDrumFill)
             {
                 return new (SortableBytes, SortableBytes)[] {
-                    (new SortableBytes(sp.tick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_0, VELOCITY }),
-                    new SortableBytes(sp.tick + sp.length, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_0, VELOCITY })),
+                    (new SortableBytes(startTick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_0, VELOCITY }),
+                    new SortableBytes(endTick, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_0, VELOCITY })),
 
-                    (new SortableBytes(sp.tick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_1, VELOCITY }),
-                    new SortableBytes(sp.tick + sp.length, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_1, VELOCITY })),
+                    (new SortableBytes(startTick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_1, VELOCITY }),
+                    new SortableBytes(endTick, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_1, VELOCITY })),
 
-                    (new SortableBytes(sp.tick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_2, VELOCITY }),
-                    new SortableBytes(sp.tick + sp.length, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_2, VELOCITY })),
+                    (new SortableBytes(startTick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_2, VELOCITY }),
+                    new SortableBytes(endTick, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_2, VELOCITY })),
 
-                    (new SortableBytes(sp.tick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_3, VELOCITY }),
-                    new SortableBytes(sp.tick + sp.length, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_3, VELOCITY })),
+                    (new SortableBytes(startTick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_3, VELOCITY }),
+                    new SortableBytes(endTick, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_3, VELOCITY })),
 
-                    (new SortableBytes(sp.tick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_4, VELOCITY }),
-                    new SortableBytes(sp.tick + sp.length, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_4, VELOCITY }))
+                    (new SortableBytes(startTick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_4, VELOCITY }),
+                    new SortableBytes(endTick, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_4, VELOCITY }))
                 };
             }
             else
             {
                 return new (SortableBytes, SortableBytes)[] {
-                    (new SortableBytes(sp.tick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_NOTE, VELOCITY }),
-                    new SortableBytes(sp.tick + sp.length, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_NOTE, VELOCITY }))
+                    (new SortableBytes(startTick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_NOTE, VELOCITY }),
+                    new SortableBytes(endTick, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_NOTE, VELOCITY }))
                 };
             }
         }
