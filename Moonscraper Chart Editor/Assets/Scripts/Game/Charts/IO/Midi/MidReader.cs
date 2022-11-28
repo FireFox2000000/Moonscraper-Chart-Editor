@@ -64,6 +64,7 @@ namespace MoonscraperChartEditor.Song.IO
 
         // These dictionaries map the NoteNumber of each midi note event to a specific function of how to process them
         static readonly IReadOnlyDictionary<int, EventProcessFn> GuitarMidiNoteNumberToProcessFnMap = BuildGuitarMidiNoteNumberToProcessFnDict();
+        static readonly IReadOnlyDictionary<int, EventProcessFn> GuitarMidiNoteNumberToProcessFnMap_EnhancedOpens = BuildGuitarMidiNoteNumberToProcessFnDict(enhancedOpens: true);
         static readonly IReadOnlyDictionary<int, EventProcessFn> GhlGuitarMidiNoteNumberToProcessFnMap = BuildGhlGuitarMidiNoteNumberToProcessFnDict();
         static readonly IReadOnlyDictionary<int, EventProcessFn> DrumsMidiNoteNumberToProcessFnMap = BuildDrumsMidiNoteNumberToProcessFnDict();
         static readonly IReadOnlyDictionary<int, EventProcessFn> DrumsMidiNoteNumberToProcessFnMap_Velocity = BuildDrumsMidiNoteNumberToProcessFnDict(enableVelocity: true);
@@ -71,6 +72,8 @@ namespace MoonscraperChartEditor.Song.IO
         // These dictionaries map the text of a MIDI text event to a specific function that processes them
         static readonly IReadOnlyDictionary<string, ProcessModificationProcessFn> GuitarTextEventToProcessFnMap = new Dictionary<string, ProcessModificationProcessFn>()
         {
+            { MidIOHelper.ENHANCED_OPENS_TEXT, SwitchToGuitarEnhancedOpensProcessMap },
+            { MidIOHelper.ENHANCED_OPENS_TEXT_BRACKET, SwitchToGuitarEnhancedOpensProcessMap }
         };
 
         static readonly IReadOnlyDictionary<string, ProcessModificationProcessFn> GhlGuitarTextEventToProcessFnMap = new Dictionary<string, ProcessModificationProcessFn>()
@@ -589,6 +592,19 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
+        static void SwitchToGuitarEnhancedOpensProcessMap(ref EventProcessParams processParams)
+        {
+            var gameMode = Song.InstumentToChartGameMode(processParams.instrument);
+            if (gameMode != Chart.GameMode.Guitar)
+            {
+                Debug.LogWarning($"Attempted to apply guitar enhanced opens process map to non-guitar instrument: {processParams.instrument}");
+                return;
+            }
+
+            // Switch process map to guitar enhanced opens process map
+            processParams.noteProcessMap = GuitarMidiNoteNumberToProcessFnMap_EnhancedOpens;
+        }
+
         static void SwitchToDrumsVelocityProcessMap(ref EventProcessParams processParams)
         {
             if (processParams.instrument != Song.Instrument.Drums)
@@ -601,7 +617,7 @@ namespace MoonscraperChartEditor.Song.IO
             processParams.noteProcessMap = DrumsMidiNoteNumberToProcessFnMap_Velocity;
         }
 
-        static IReadOnlyDictionary<int, EventProcessFn> BuildGuitarMidiNoteNumberToProcessFnDict()
+        static IReadOnlyDictionary<int, EventProcessFn> BuildGuitarMidiNoteNumberToProcessFnDict(bool enhancedOpens = false)
         {
             var processFnDict = new Dictionary<int, EventProcessFn>()
             {
@@ -614,15 +630,17 @@ namespace MoonscraperChartEditor.Song.IO
                 }},
             };
 
-            IReadOnlyDictionary<Note.GuitarFret, int> FretToMidiKey = new Dictionary<Note.GuitarFret, int>()
+            var FretToMidiKey = new Dictionary<Note.GuitarFret, int>()
             {
-                // { Note.GuitarFret.Open, 0 }, // Handled by sysex event
                 { Note.GuitarFret.Green, 0 },
                 { Note.GuitarFret.Red, 1 },
                 { Note.GuitarFret.Yellow, 2 },
                 { Note.GuitarFret.Blue, 3 },
                 { Note.GuitarFret.Orange, 4 },
             };
+
+            if (enhancedOpens)
+                FretToMidiKey.Add(Note.GuitarFret.Open, -1);
 
             foreach (var difficulty in EnumX<Song.Difficulty>.Values)
             {

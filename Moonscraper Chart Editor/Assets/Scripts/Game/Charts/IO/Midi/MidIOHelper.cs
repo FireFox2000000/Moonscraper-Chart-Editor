@@ -54,10 +54,12 @@ namespace MoonscraperChartEditor.Song.IO
         public const string SECTION_PREFIX_RB2 = "section ";
         public const string SECTION_PREFIX_RB3 = "prc_";
 
-        // This event is valid both with and without brackets.
-        // The bracketed version follows the style of other existing .mid text events.
+        // These events are valid both with and without brackets.
+        // The bracketed versions follow the style of other existing .mid text events.
         public const string CHART_DYNAMICS_TEXT = "ENABLE_CHART_DYNAMICS";
         public const string CHART_DYNAMICS_TEXT_BRACKET = "[ENABLE_CHART_DYNAMICS]";
+        public const string ENHANCED_OPENS_TEXT = "ENHANCED_OPENS";
+        public const string ENHANCED_OPENS_TEXT_BRACKET = "[ENHANCED_OPENS]";
 
         // Note velocities
         public const byte VELOCITY = 100;             // default note velocity for exporting
