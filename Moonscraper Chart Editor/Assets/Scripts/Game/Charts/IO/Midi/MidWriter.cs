@@ -658,7 +658,7 @@ namespace MoonscraperChartEditor.Song.IO
                         if (onEvents != null && offEvents != null && onEvents.Length == offEvents.Length)
                         {
                             // An assumption is made here that the MIDI notes are paired by index
-                            for (int i = 0; i < onEvents.Length && i < offEvents.Length; i++)
+                            for (int i = 0; i < onEvents.Length && i < offEvents.Length; ++i)
                             {
                                 InsertionSort(eventList, onEvents[i]);
 
@@ -756,7 +756,7 @@ namespace MoonscraperChartEditor.Song.IO
                     if (onEvents != null && offEvents != null && onEvents.Length == offEvents.Length)
                     {
                         // An assumption is made here that the MIDI notes are paired by index
-                        for (int i = 0; i < onEvents.Length && i < offEvents.Length; i++)
+                        for (int i = 0; i < onEvents.Length && i < offEvents.Length; ++i)
                         {
                             InsertionSort(eventList, onEvents[i]);
 
