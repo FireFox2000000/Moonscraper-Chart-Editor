@@ -1030,6 +1030,7 @@ namespace MoonscraperChartEditor.Song.IO
                         }
 
                         default:
+                            Debug.Assert(false, $"Unhandled note type {noteType} in .mid forced type processing");
                             continue; // Unhandled
                     }
 
