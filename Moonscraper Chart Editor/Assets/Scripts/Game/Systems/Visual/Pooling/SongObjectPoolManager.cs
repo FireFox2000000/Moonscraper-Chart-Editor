@@ -149,23 +149,23 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
     {
         bool extendedSustainsEnabled = Globals.gameSettings.extendedSustainsEnabled;
 
-        uint min_pos = editor.minPos;
+        uint minPos = editor.minPos;
         if (noteVisibilityRangeYPosOverride.HasValue)
         {
             uint gameplayPos = editor.currentSong.WorldYPositionToTick(noteVisibilityRangeYPosOverride.Value, editor.currentSong.resolution);
-            if (min_pos < gameplayPos)
-                min_pos = gameplayPos;
+            if (minPos < gameplayPos)
+                minPos = gameplayPos;
         }
 
         collectedNotesInRange.Clear();
         int index, length;
-        SongObjectHelper.GetRange(notes, min_pos, editor.maxPos, out index, out length);
+        SongObjectHelper.GetRange(notes, minPos, editor.maxPos, out index, out length);
         for (int i = index; i < index + length; ++i)
         {
             collectedNotesInRange.Add(notes[i]);
         }
 
-        if (min_pos == editor.minPos)
+        if (minPos == editor.minPos)
         {
             if (collectedNotesInRange.Count > 0)
             {
@@ -187,20 +187,23 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
                         --minArrayPos;
 
                     Note minNote = editor.currentChart.notes[minArrayPos];
-
-                    if (minNote.tick + minNote.length > editor.minPos && minNote.tick < editor.maxPos)
+                    bool rootBehindMin = minNote.tick < editor.minPos;
+                    bool tailAheadMin = (minNote.tick + minNote.length) >= editor.minPos;
+                    if (tailAheadMin && rootBehindMin)
                     {
                         foreach (Note note in minNote.chord)
                         {
-                            if (note.tick + note.length > editor.minPos)
+                            if ((note.tick + note.length) >= editor.minPos)
+                            {
                                 collectedNotesInRange.Add(note);
+                            }
                         }
                     }
 
                     NoteFunctions.GetPreviousOfSustains(prevSustainCache, minNote, extendedSustainsEnabled);
                     foreach (Note prevNote in prevSustainCache)
                     {
-                        if (prevNote.tick + prevNote.length > editor.minPos)
+                        if ((prevNote.tick + prevNote.length) >= editor.minPos)
                             collectedNotesInRange.Add(prevNote);
                     }
                 }
@@ -255,9 +258,8 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
             if (arrayPos >= 0)
             {
                 var sp = editor.currentChart.starPower[arrayPos];
-                bool rootBehindMin = sp.tick < editor.minPos;
                 bool tailAheadMin = (sp.tick + sp.length) >= editor.minPos;
-                if (rootBehindMin && tailAheadMin)
+                if (tailAheadMin)
                 {
                     collectedStarpowerInRange.Add(sp);
                 }
@@ -296,9 +298,8 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
             if (arrayPos >= 0)
             {
                 var drumRoll = editor.currentChart.drumRoll[arrayPos];
-                bool rootBehindMin = drumRoll.tick < editor.minPos;
                 bool tailAheadMin = (drumRoll.tick + drumRoll.length) >= editor.minPos;
-                if (rootBehindMin && tailAheadMin)
+                if (tailAheadMin)
                 {
                     results.Add(drumRoll);
                 }
