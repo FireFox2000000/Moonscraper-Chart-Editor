@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -26,6 +26,7 @@ namespace MoonscraperChartEditor.Song.IO
         // Note numbers
         public const byte DOUBLE_KICK_NOTE = 95;
         public const byte SOLO_NOTE = 103;                 // http://docs.c3universe.com/rbndocs/index.php?title=Guitar_and_Bass_Authoring#Solo_Sections
+        public const byte TAP_NOTE_CH = 104;               // https://github.com/TheNathannator/GuitarGame_ChartFormats/blob/main/doc/FileFormats/.mid/Standard/5-Fret Guitar.md
         public const byte LYRICS_PHRASE_1 = 105;           // http://docs.c3universe.com/rbndocs/index.php?title=Vocal_Authoring
         public const byte LYRICS_PHRASE_2 = 106;           // Rock Band charts before RB3 mark phrases using this note as well
         public const byte FLAM_MARKER = 109;
@@ -53,10 +54,12 @@ namespace MoonscraperChartEditor.Song.IO
         public const string SECTION_PREFIX_RB2 = "section ";
         public const string SECTION_PREFIX_RB3 = "prc_";
 
-        // This event is valid both with and without brackets.
-        // The bracketed version follows the style of other existing .mid text events.
+        // These events are valid both with and without brackets.
+        // The bracketed versions follow the style of other existing .mid text events.
         public const string CHART_DYNAMICS_TEXT = "ENABLE_CHART_DYNAMICS";
         public const string CHART_DYNAMICS_TEXT_BRACKET = "[ENABLE_CHART_DYNAMICS]";
+        public const string ENHANCED_OPENS_TEXT = "ENHANCED_OPENS";
+        public const string ENHANCED_OPENS_TEXT_BRACKET = "[ENHANCED_OPENS]";
 
         // Note velocities
         public const byte VELOCITY = 100;             // default note velocity for exporting

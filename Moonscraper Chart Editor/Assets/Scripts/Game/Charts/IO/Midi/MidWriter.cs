@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -649,7 +649,28 @@ namespace MoonscraperChartEditor.Song.IO
                 {
                     Starpower sp = chartObject as Starpower;
                     if (sp != null)     // Starpower cannot be split up between charts in a midi file
-                        GetStarpowerBytes(sp, out onEvent, out offEvent);
+                    {
+                        // Starpower notes marked as a drum roll are written as 5 notes instead of 1
+                        // http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring#Drum_Fills
+                        var events = GetStarpowerBytes(sp);
+                        if (events != null)
+                        {
+                            for (int i = 0; i < events.Length; ++i)
+                            {
+                                (var spOnEvent, var spOffEvent) = events[i];
+                                Debug.Assert(spOnEvent != null && spOffEvent != null, "Invalid starpower event pair in MIDI export!");
+                                if (spOnEvent == null || spOffEvent == null)
+                                    continue;
+
+                                InsertionSort(eventList, spOnEvent);
+
+                                if (spOffEvent.tick == spOnEvent.tick)
+                                    ++spOffEvent.tick;
+
+                                InsertionSort(eventList, spOffEvent);
+                            }
+                        }
+                    }
 
                     DrumRoll roll = chartObject as DrumRoll;
                     if (roll != null)
@@ -730,7 +751,26 @@ namespace MoonscraperChartEditor.Song.IO
 
                 Starpower sp = chartObject as Starpower;
                 if (sp != null)     // Starpower cannot be split up between charts in a midi file
-                    GetStarpowerBytes(sp, out onEvent, out offEvent);
+                {
+                    var events = GetStarpowerBytes(sp);
+                    if (events != null)
+                    {
+                        for (int i = 0; i < events.Length; ++i)
+                        {
+                            (var spOnEvent, var spOffEvent) = events[i];
+                            Debug.Assert(spOnEvent != null && spOffEvent != null, "Invalid starpower event pair in MIDI export!");
+                            if (spOnEvent == null || spOffEvent == null)
+                                continue;
+
+                            InsertionSort(eventList, spOnEvent);
+
+                            if (spOffEvent.tick == spOnEvent.tick)
+                                ++spOffEvent.tick;
+
+                            InsertionSort(eventList, spOffEvent);
+                        }
+                    }
+                }
 
                 DrumRoll roll = chartObject as DrumRoll;
                 if (roll != null)
@@ -972,13 +1012,39 @@ namespace MoonscraperChartEditor.Song.IO
         /* CHART EVENT BYTE DETERMINING 
         ***********************************************************************************************/
 
-        static void GetStarpowerBytes(Starpower sp, out SortableBytes onEvent, out SortableBytes offEvent)
+        static (SortableBytes, SortableBytes)[] GetStarpowerBytes(Starpower sp)
         {
+            uint startTick = sp.tick;
+            uint endTick = sp.tick + sp.length;
             bool isDrumFill = sp.flags.HasFlag(Starpower.Flags.ProDrums_Activation);
-            byte spNote = isDrumFill ? MidIOHelper.STARPOWER_DRUM_FILL_0 : MidIOHelper.STARPOWER_NOTE;
+            // Drum fills are 5 notes instead of one
+            // http://docs.c3universe.com/rbndocs/index.php?title=Drum_Authoring#Drum_Fills
+            if (isDrumFill)
+            {
+                return new (SortableBytes, SortableBytes)[] {
+                    (new SortableBytes(startTick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_0, VELOCITY }),
+                    new SortableBytes(endTick, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_0, VELOCITY })),
 
-            onEvent = new SortableBytes(sp.tick, new byte[] { ON_EVENT, spNote, VELOCITY });
-            offEvent = new SortableBytes(sp.tick + sp.length, new byte[] { OFF_EVENT, spNote, VELOCITY });
+                    (new SortableBytes(startTick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_1, VELOCITY }),
+                    new SortableBytes(endTick, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_1, VELOCITY })),
+
+                    (new SortableBytes(startTick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_2, VELOCITY }),
+                    new SortableBytes(endTick, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_2, VELOCITY })),
+
+                    (new SortableBytes(startTick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_3, VELOCITY }),
+                    new SortableBytes(endTick, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_3, VELOCITY })),
+
+                    (new SortableBytes(startTick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_4, VELOCITY }),
+                    new SortableBytes(endTick, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_DRUM_FILL_4, VELOCITY }))
+                };
+            }
+            else
+            {
+                return new (SortableBytes, SortableBytes)[] {
+                    (new SortableBytes(startTick, new byte[] { ON_EVENT, MidIOHelper.STARPOWER_NOTE, VELOCITY }),
+                    new SortableBytes(endTick, new byte[] { OFF_EVENT, MidIOHelper.STARPOWER_NOTE, VELOCITY }))
+                };
+            }
         }
 
         static void GetDrumRollBytes(DrumRoll roll, out SortableBytes onEvent, out SortableBytes offEvent)

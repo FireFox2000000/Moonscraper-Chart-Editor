@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -64,6 +64,7 @@ namespace MoonscraperChartEditor.Song.IO
 
         // These dictionaries map the NoteNumber of each midi note event to a specific function of how to process them
         static readonly IReadOnlyDictionary<int, EventProcessFn> GuitarMidiNoteNumberToProcessFnMap = BuildGuitarMidiNoteNumberToProcessFnDict();
+        static readonly IReadOnlyDictionary<int, EventProcessFn> GuitarMidiNoteNumberToProcessFnMap_EnhancedOpens = BuildGuitarMidiNoteNumberToProcessFnDict(enhancedOpens: true);
         static readonly IReadOnlyDictionary<int, EventProcessFn> GhlGuitarMidiNoteNumberToProcessFnMap = BuildGhlGuitarMidiNoteNumberToProcessFnDict();
         static readonly IReadOnlyDictionary<int, EventProcessFn> DrumsMidiNoteNumberToProcessFnMap = BuildDrumsMidiNoteNumberToProcessFnDict();
         static readonly IReadOnlyDictionary<int, EventProcessFn> DrumsMidiNoteNumberToProcessFnMap_Velocity = BuildDrumsMidiNoteNumberToProcessFnDict(enableVelocity: true);
@@ -71,6 +72,8 @@ namespace MoonscraperChartEditor.Song.IO
         // These dictionaries map the text of a MIDI text event to a specific function that processes them
         static readonly IReadOnlyDictionary<string, ProcessModificationProcessFn> GuitarTextEventToProcessFnMap = new Dictionary<string, ProcessModificationProcessFn>()
         {
+            { MidIOHelper.ENHANCED_OPENS_TEXT, SwitchToGuitarEnhancedOpensProcessMap },
+            { MidIOHelper.ENHANCED_OPENS_TEXT_BRACKET, SwitchToGuitarEnhancedOpensProcessMap }
         };
 
         static readonly IReadOnlyDictionary<string, ProcessModificationProcessFn> GhlGuitarTextEventToProcessFnMap = new Dictionary<string, ProcessModificationProcessFn>()
@@ -589,6 +592,19 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
+        static void SwitchToGuitarEnhancedOpensProcessMap(ref EventProcessParams processParams)
+        {
+            var gameMode = Song.InstumentToChartGameMode(processParams.instrument);
+            if (gameMode != Chart.GameMode.Guitar)
+            {
+                Debug.LogWarning($"Attempted to apply guitar enhanced opens process map to non-guitar instrument: {processParams.instrument}");
+                return;
+            }
+
+            // Switch process map to guitar enhanced opens process map
+            processParams.noteProcessMap = GuitarMidiNoteNumberToProcessFnMap_EnhancedOpens;
+        }
+
         static void SwitchToDrumsVelocityProcessMap(ref EventProcessParams processParams)
         {
             if (processParams.instrument != Song.Instrument.Drums)
@@ -601,25 +617,30 @@ namespace MoonscraperChartEditor.Song.IO
             processParams.noteProcessMap = DrumsMidiNoteNumberToProcessFnMap_Velocity;
         }
 
-        static IReadOnlyDictionary<int, EventProcessFn> BuildGuitarMidiNoteNumberToProcessFnDict()
+        static IReadOnlyDictionary<int, EventProcessFn> BuildGuitarMidiNoteNumberToProcessFnDict(bool enhancedOpens = false)
         {
             var processFnDict = new Dictionary<int, EventProcessFn>()
             {
                 { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
+                { MidIOHelper.TAP_NOTE_CH, (in EventProcessParams eventProcessParams) => {
+                    ProcessNoteOnEventAsForcedType(eventProcessParams, Note.NoteType.Tap);
+                }},
                 { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
                     ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
                 }},
             };
 
-            IReadOnlyDictionary<Note.GuitarFret, int> FretToMidiKey = new Dictionary<Note.GuitarFret, int>()
+            var FretToMidiKey = new Dictionary<Note.GuitarFret, int>()
             {
-                // { Note.GuitarFret.Open, 0 }, // Handled by sysex event
                 { Note.GuitarFret.Green, 0 },
                 { Note.GuitarFret.Red, 1 },
                 { Note.GuitarFret.Yellow, 2 },
                 { Note.GuitarFret.Blue, 3 },
                 { Note.GuitarFret.Orange, 4 },
             };
+
+            if (enhancedOpens)
+                FretToMidiKey.Add(Note.GuitarFret.Open, -1);
 
             foreach (var difficulty in EnumX<Song.Difficulty>.Values)
             {
@@ -664,6 +685,9 @@ namespace MoonscraperChartEditor.Song.IO
             var processFnDict = new Dictionary<int, EventProcessFn>()
             {
                 { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
+                { MidIOHelper.TAP_NOTE_CH, (in EventProcessParams eventProcessParams) => {
+                    ProcessNoteOnEventAsForcedType(eventProcessParams, Note.NoteType.Tap);
+                }},
                 { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
                     ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
                 }},
@@ -896,6 +920,21 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
+        static void ProcessNoteOnEventAsForcedType(in EventProcessParams eventProcessParams, Note.NoteType noteType)
+        {
+            var flagEvent = eventProcessParams.midiEvent as NoteOnEvent;
+            Debug.Assert(flagEvent != null, $"Wrong note event type passed to {nameof(ProcessNoteOnEventAsForcedType)}. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
+
+            foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
+            {
+                // Delay the actual processing once all the notes are actually in
+                eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+                {
+                    ProcessNoteOnEventAsForcedTypePostDelay(processParams, flagEvent, diff, noteType);
+                });
+            }
+        }
+
         static void ProcessNoteOnEventAsForcedType(in EventProcessParams eventProcessParams, Song.Difficulty difficulty, Note.NoteType noteType)
         {
             var flagEvent = eventProcessParams.midiEvent as NoteOnEvent;
@@ -926,52 +965,91 @@ namespace MoonscraperChartEditor.Song.IO
             SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
 
             uint lastChordTick = uint.MaxValue;
+            bool expectedForceFailure = true; // Whether or not it is expected that the actual type will not match the expected type
             bool shouldBeForced = false;
 
             for (int i = index; i < index + length; ++i)
             {
+                // Tap marking overrides all other forcing
                 if ((chart.notes[i].flags & Note.Flags.Tap) != 0)
                     continue;
 
                 Note note = chart.notes[i];
 
+                // Check if the chord has changed
                 if (lastChordTick != note.tick)
                 {
+                    expectedForceFailure = false;
                     shouldBeForced = false;
 
-                    if (noteType == Note.NoteType.Strum)
+                    switch (noteType)
                     {
-                        if (!note.isChord && note.isNaturalHopo)
+                        case (Note.NoteType.Strum):
                         {
-                            shouldBeForced = true;
+                            if (!note.isChord && note.isNaturalHopo)
+                            {
+                                shouldBeForced = true;
+                            }
+                            break;
                         }
+
+                        case (Note.NoteType.Hopo):
+                        {
+                            // Forcing consecutive same-fret HOPOs is possible in charts, but we do not allow it
+                            // (see RB2's chart of Steely Dan - Bodhisattva)
+                            if (!note.isNaturalHopo && note.cannotBeForced)
+                            {
+                                expectedForceFailure = true;
+                            }
+
+                            if (!note.cannotBeForced && (note.isChord || !note.isNaturalHopo))
+                            {
+                                shouldBeForced = true;
+                            }
+                            break;
+                        }
+
+                        case (Note.NoteType.Tap):
+                        {
+                            if (!note.IsOpenNote())
+                            {
+                                note.flags |= Note.Flags.Tap;
+                                // Forced flag will be removed shortly after here
+                            }
+                            else
+                            {
+                                // Open notes cannot become taps
+                                // CH handles this by turning them into open HOPOs, we'll do the same here for consistency with them
+                                expectedForceFailure = true;
+                                // In the case that consecutive open notes are marked as taps, only the first will become a HOPO
+                                if (!note.cannotBeForced && !note.isNaturalHopo)
+                                {
+                                    shouldBeForced = true;
+                                }
+                            }
+                            break;
+                        }
+
+                        default:
+                            Debug.Assert(false, $"Unhandled note type {noteType} in .mid forced type processing");
+                            continue; // Unhandled
                     }
-                    else if (noteType == Note.NoteType.Hopo)
+
+                    if (shouldBeForced)
                     {
-                        if (!note.cannotBeForced && (note.isChord || !note.isNaturalHopo))
-                        {
-                            shouldBeForced = true;
-                        }
+                        note.flags |= Note.Flags.Forced;
                     }
                     else
                     {
-                        continue;   // Unhandled
+                        note.flags &= ~Note.Flags.Forced;
                     }
-                }
-                // else we set the same forced property as before since we're on the same chord
 
-                if (shouldBeForced)
-                {
-                    note.flags |= Note.Flags.Forced;
-                }
-                else
-                {
-                    note.flags &= ~Note.Flags.Forced;
+                    note.ApplyFlagsToChord();
                 }
 
                 lastChordTick = note.tick;
 
-                Debug.Assert(note.type == noteType);
+                Debug.Assert(note.type == noteType || expectedForceFailure, $"Failed to set forced type! Expected: {noteType}  Actual: {note.type}  Natural HOPO: {note.isNaturalHopo}  Chord: {note.isChord}  Forceable: {!note.cannotBeForced}\non {difficulty} {instrument} at tick {note.tick} ({TimeSpan.FromSeconds(note.time):mm':'ss'.'ff})");
             }
         }
 
