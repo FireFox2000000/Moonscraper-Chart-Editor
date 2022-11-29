@@ -1,3 +1,16 @@
+1.4.8
+    FIXES
+    -Fixed highlights not rendering over drum rolls properly
+    -Fixed long drum rolls not rendering properly 
+    -Fixed rare disappearing starpower bug
+    -Fixed highlights not rendering over long drum rolls
+
+    NEW FEATURES
+    -Implemented tool select shortcut key for drum roll tool onto semicolon (;)
+    -Implemented drum roll dropdown shortcut keys on z and x
+    -Add midi support for note-based tap marker and ENHANCED_OPENS text event
+    -Fix to midi drum fill writing
+
 1.4.7
     FIXES
     -Fixed roll lanes visuals not updating when deleting notes
