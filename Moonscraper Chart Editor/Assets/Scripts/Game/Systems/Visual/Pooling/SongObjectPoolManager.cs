@@ -250,11 +250,17 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
             {
                 --arrayPos;
             }
+
             // Render previous sp sustain in case of overlap into current position
-            if (arrayPos >= 0 && editor.currentChart.starPower[arrayPos].tick + editor.currentChart.starPower[arrayPos].length > editor.minPos &&
-                (editor.currentChart.starPower[arrayPos].tick + editor.currentChart.starPower[arrayPos].length) < editor.maxPos)
+            if (arrayPos >= 0)
             {
-                collectedStarpowerInRange.Add(editor.currentChart.starPower[arrayPos]);
+                var sp = editor.currentChart.starPower[arrayPos];
+                bool rootBehindMin = sp.tick < editor.minPos;
+                bool tailAheadMin = (sp.tick + sp.length) >= editor.minPos;
+                if (rootBehindMin && tailAheadMin)
+                {
+                    collectedStarpowerInRange.Add(sp);
+                }
             }
         }
     }
@@ -265,14 +271,16 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
         spPool.Activate(collectedStarpowerInRange, 0, collectedStarpowerInRange.Count);
     }
 
-    void CollectDrumRollsInViewRange(IList<DrumRoll> drumRolls)
+    static void CollectDrumRollsInViewRange(IList<DrumRoll> drumRolls, IList<DrumRoll> results)
     {
-        collectedDrumRollsInRange.Clear();
+        var editor = ChartEditor.Instance;
+
+        results.Clear();
         int index, length;
         SongObjectHelper.GetRange(drumRolls, editor.minPos, editor.maxPos, out index, out length);
         for (int i = index; i < index + length; ++i)
         {
-            collectedDrumRollsInRange.Add(drumRolls[i]);
+            results.Add(drumRolls[i]);
         }
 
         int arrayPos = SongObjectHelper.FindClosestPosition(editor.minPos, editor.currentChart.drumRoll);
@@ -283,18 +291,24 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
             {
                 --arrayPos;
             }
-            // Render previous sp sustain in case of overlap into current position
-            if (arrayPos >= 0 && editor.currentChart.drumRoll[arrayPos].tick + editor.currentChart.drumRoll[arrayPos].length > editor.minPos &&
-                (editor.currentChart.drumRoll[arrayPos].tick + editor.currentChart.drumRoll[arrayPos].length) < editor.maxPos)
+
+            // Render previous drum roll in case of overlap into current position
+            if (arrayPos >= 0)
             {
-                collectedDrumRollsInRange.Add(editor.currentChart.drumRoll[arrayPos]);
+                var drumRoll = editor.currentChart.drumRoll[arrayPos];
+                bool rootBehindMin = drumRoll.tick < editor.minPos;
+                bool tailAheadMin = (drumRoll.tick + drumRoll.length) >= editor.minPos;
+                if (rootBehindMin && tailAheadMin)
+                {
+                    results.Add(drumRoll);
+                }
             }
         }
     }
 
     public void EnableDrumRoll(IList<DrumRoll> drumRolls)
     {
-        CollectDrumRollsInViewRange(drumRolls);
+        CollectDrumRollsInViewRange(drumRolls, collectedDrumRollsInRange);
         drumRollPool.Activate(collectedDrumRollsInRange, 0, collectedDrumRollsInRange.Count);
     }
 
@@ -393,7 +407,7 @@ public class SongObjectPoolManager : SystemManagerState.MonoBehaviourSystem
 
     public void SetInViewRangeDirty(IList<DrumRoll> songObjects)
     {
-        CollectDrumRollsInViewRange(songObjects);
+        CollectDrumRollsInViewRange(songObjects, collectedDrumRollsInRange);
 
         for (int i = 0; i < collectedDrumRollsInRange.Count; ++i)
         {
