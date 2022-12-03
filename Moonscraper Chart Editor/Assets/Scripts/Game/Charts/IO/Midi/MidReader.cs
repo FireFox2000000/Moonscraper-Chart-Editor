@@ -35,8 +35,8 @@ namespace MoonscraperChartEditor.Song.IO
 
         static readonly IReadOnlyDictionary<string, bool> c_trackExcludesMap = new Dictionary<string, bool>()
         {
-            { "t1 gems",    true },
-            { "beat",       true }
+            { MidIOHelper.GH1_GUITAR_TRACK, true },
+            { MidIOHelper.BEAT_TRACK,       true },
         };
 
         static readonly IReadOnlyDictionary<Song.AudioInstrument, string[]> c_audioStreamLocationOverrideDict = new Dictionary<Song.AudioInstrument, string[]>()
