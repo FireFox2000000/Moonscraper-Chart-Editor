@@ -86,8 +86,27 @@ namespace MoonscraperChartEditor.Song.IO
             { MidIOHelper.CHART_DYNAMICS_TEXT_BRACKET, SwitchToDrumsVelocityProcessMap },
         };
 
+        // For handling things that require user intervention
+        delegate void MessageProcessFn(MessageProcessParams processParams);
+        struct MessageProcessParams
+        {
+            public string title;
+            public string message;
+            public Song currentSong;
+            public Song.Instrument instrument;
+            public int trackNumber;
+            public MessageProcessFn processFn;
+            public bool executeInEditor;
+        }
+
+        static readonly List<MessageProcessParams> messageList = new List<MessageProcessParams>();
+
         public static Song ReadMidi(string path, ref CallbackState callBackState)
         {
+            // Ensure messages list is cleared
+            messageList.Clear();
+
+            // Initialize new song
             Song song = new Song();
             string directory = Path.GetDirectoryName(path);
 
@@ -175,16 +194,18 @@ namespace MoonscraperChartEditor.Song.IO
                         break;
 
                     case MidIOHelper.VOCALS_TRACK:
-#if !UNITY_EDITOR
-                        callBackState = CallbackState.WaitingForExternalInformation;
-                        NativeMessageBox.Result result = NativeMessageBox.Show("A vocals track was found in the file. Would you like to import the text events as global lyrics and phrase events?", "Vocals Track Found", NativeMessageBox.Type.YesNo, null);
-                        callBackState = CallbackState.None;
-                        if (result == NativeMessageBox.Result.Yes)
-#endif
+                        messageList.Add(new MessageProcessParams()
                         {
-                            Debug.Log("Loading lyrics from Vocals track");
-                            ReadTextEventsIntoGlobalEventsAsLyrics(track, song);
-                        }
+                            message = "A vocals track was found in the file. Would you like to import the text events as global lyrics and phrase events?",
+                            title = "Vocals Track Found",
+                            executeInEditor = true,
+                            currentSong = song,
+                            trackNumber = i,
+                            processFn = (MessageProcessParams processParams) => {
+                                Debug.Log("Loading lyrics from Vocals track");
+                                ReadTextEventsIntoGlobalEventsAsLyrics(midi.Events[processParams.trackNumber], processParams.currentSong);
+                            }
+                        });
                         break;
 
                     default:
@@ -199,6 +220,31 @@ namespace MoonscraperChartEditor.Song.IO
                         break;
                 }
             }
+
+            // Display warnings to user, and execute action if they select Yes (or in editor and params say to execute)
+            foreach (var processParams in messageList)
+            {
+#if UNITY_EDITOR // The editor freezes when its message box API is used during parsing
+                if (!processParams.executeInEditor)
+                {
+                    Debug.Log("Auto-skipping action for warning: " + processParams.message);
+                }
+                else
+                {
+                    Debug.Log("Auto-executing action for warning: " + processParams.message);
+#else
+                callBackState = CallbackState.WaitingForExternalInformation;
+                NativeMessageBox.Result result = NativeMessageBox.Show(processParams.message, processParams.title, NativeMessageBox.Type.YesNo, null);
+                callBackState = CallbackState.None;
+                if (result == NativeMessageBox.Result.Yes)
+                {
+#endif
+                    processParams.processFn(processParams);
+                }
+            }
+
+            // Clear messages list
+            messageList.Clear();
 
             return song;
         }
