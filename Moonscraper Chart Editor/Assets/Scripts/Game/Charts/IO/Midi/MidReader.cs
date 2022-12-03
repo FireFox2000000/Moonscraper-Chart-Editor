@@ -552,7 +552,7 @@ namespace MoonscraperChartEditor.Song.IO
                 }
             }
 
-            // Apply forcing events
+            // Run delayed processes
             foreach (var process in processParams.delayedProcessesList)
             {
                 process(processParams);
