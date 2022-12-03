@@ -254,17 +254,17 @@ namespace MoonscraperChartEditor.Song.IO
                 }
             }
 
-            // Display warnings to user, and execute action if they select Yes (or in editor and params say to execute)
+            // Display messages to user, and execute action if they select Yes (or in editor and params say to execute)
             foreach (var processParams in messageList)
             {
 #if UNITY_EDITOR // The editor freezes when its message box API is used during parsing
                 if (!processParams.executeInEditor)
                 {
-                    Debug.Log("Auto-skipping action for warning: " + processParams.message);
+                    Debug.Log("Auto-skipping action for message: " + processParams.message);
                 }
                 else
                 {
-                    Debug.Log("Auto-executing action for warning: " + processParams.message);
+                    Debug.Log("Auto-executing action for message: " + processParams.message);
 #else
                 callBackState = CallbackState.WaitingForExternalInformation;
                 NativeMessageBox.Result result = NativeMessageBox.Show(processParams.message, processParams.title, NativeMessageBox.Type.YesNo, null);
