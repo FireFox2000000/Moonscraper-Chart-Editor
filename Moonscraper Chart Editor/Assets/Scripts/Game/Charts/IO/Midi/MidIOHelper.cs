@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -104,5 +104,75 @@ namespace MoonscraperChartEditor.Song.IO
         };
 
         public static readonly IReadOnlyDictionary<int, Note.DrumPad> CYMBAL_TO_PAD_LOOKUP = PAD_TO_CYMBAL_LOOKUP.ToDictionary((i) => i.Value, (i) => i.Key);
+
+        // SysEx event format
+        // https://dwsk.proboards.com/thread/404/song-standard-advancements
+
+        // Data as given by NAudio:
+        // sysexData[0]: SysEx event length
+        // sysexData[1-3]: Header
+        // sysexData[4]: Event type
+        // sysexData[5]: Difficulty
+        // sysexData[6]: Event code
+        // sysexData[7]: Event value
+
+        // This length and the following indicies may need to be adjusted if the MIDI parsing library ever changes.
+        // They both account for the length value that NAudio provides as the first value.
+        public const int SYSEX_LENGTH = 8;
+
+        public const int SYSEX_INDEX_HEADER_1 = 1;
+        public const int SYSEX_INDEX_HEADER_2 = 2;
+        public const int SYSEX_INDEX_HEADER_3 = 3;
+        public const int SYSEX_INDEX_TYPE = 4;
+        public const int SYSEX_INDEX_DIFFICULTY = 5;
+        public const int SYSEX_INDEX_CODE = 6;
+        public const int SYSEX_INDEX_VALUE = 7;
+
+        public const char SYSEX_HEADER_1 = 'P'; // 0x50
+        public const char SYSEX_HEADER_2 = 'S'; // 0x53
+        public const char SYSEX_HEADER_3 = '\0'; // 0x00
+
+        public const byte SYSEX_TYPE_PHRASE = 0x00;
+
+        public const byte SYSEX_DIFFICULTY_EASY = 0x00;
+        public const byte SYSEX_DIFFICULTY_MEDIUM = 0x01;
+        public const byte SYSEX_DIFFICULTY_HARD = 0x02;
+        public const byte SYSEX_DIFFICULTY_EXPERT = 0x03;
+        public const byte SYSEX_DIFFICULTY_ALL = 0xFF;
+
+        public static readonly Dictionary<byte, Song.Difficulty> SYSEX_TO_MS_DIFF_LOOKUP = new Dictionary<byte, Song.Difficulty>()
+        {
+            { SYSEX_DIFFICULTY_EASY, Song.Difficulty.Easy },
+            { SYSEX_DIFFICULTY_MEDIUM, Song.Difficulty.Medium },
+            { SYSEX_DIFFICULTY_HARD, Song.Difficulty.Hard },
+            { SYSEX_DIFFICULTY_EXPERT, Song.Difficulty.Expert }
+        };
+
+        public static readonly Dictionary<Song.Difficulty, byte> MS_TO_SYSEX_DIFF_LOOKUP = SYSEX_TO_MS_DIFF_LOOKUP.ToDictionary((i) => i.Value, (i) => i.Key);
+
+        public const byte SYSEX_CODE_GUITAR_OPEN = 0x01;
+        public const byte SYSEX_CODE_GUITAR_TAP = 0x04;
+
+        // These codes aren't used by us, they're here for informational/future purposes
+        public const byte SYSEX_CODE_REAL_DRUMS_HIHAT_OPEN = 0x05;
+        public const byte SYSEX_CODE_REAL_DRUMS_HIHAT_PEDAL = 0x06;
+        public const byte SYSEX_CODE_REAL_DRUMS_SNARE_RIMSHOT = 0x07;
+        public const byte SYSEX_CODE_REAL_DRUMS_HIHAT_SIZZLE = 0x08;
+        public const byte SYSEX_CODE_REAL_DRUMS_CYMBAL_AND_TOM_YELLOW = 0x11;
+        public const byte SYSEX_CODE_REAL_DRUMS_CYMBAL_AND_TOM_BLUE = 0x12;
+        public const byte SYSEX_CODE_REAL_DRUMS_CYMBAL_AND_TOM_GREEN = 0x13;
+        public const byte SYSEX_CODE_PRO_GUITAR_SLIDE_UP = 0x02;
+        public const byte SYSEX_CODE_PRO_GUITAR_SLIDE_DOWN = 0x03;
+        public const byte SYSEX_CODE_PRO_GUITAR_PALM_MUTE = 0x09;
+        public const byte SYSEX_CODE_PRO_GUITAR_VIBRATO = 0x0A;
+        public const byte SYSEX_CODE_PRO_GUITAR_HARMONIC = 0x0B;
+        public const byte SYSEX_CODE_PRO_GUITAR_PINCH_HARMONIC = 0x0C;
+        public const byte SYSEX_CODE_PRO_GUITAR_BEND = 0x0D;
+        public const byte SYSEX_CODE_PRO_GUITAR_ACCENT = 0x0E;
+        public const byte SYSEX_CODE_PRO_GUITAR_POP = 0x0F;
+        public const byte SYSEX_CODE_PRO_GUITAR_SLAP = 0x10;
+
+        public const byte SYSEX_VALUE_PHRASE_START = 0x01;
+        public const byte SYSEX_VALUE_PHRASE_END = 0x00;
     }
 }
