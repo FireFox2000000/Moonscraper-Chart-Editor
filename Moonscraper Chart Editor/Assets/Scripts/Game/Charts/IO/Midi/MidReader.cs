@@ -22,11 +22,13 @@ namespace MoonscraperChartEditor.Song.IO
         static readonly IReadOnlyDictionary<string, Song.Instrument> c_trackNameToInstrumentMap = new Dictionary<string, Song.Instrument>()
         {
             { MidIOHelper.GUITAR_TRACK,        Song.Instrument.Guitar },
+            { MidIOHelper.GH1_GUITAR_TRACK,    Song.Instrument.Guitar },
             { MidIOHelper.GUITAR_COOP_TRACK,   Song.Instrument.GuitarCoop },
             { MidIOHelper.BASS_TRACK,          Song.Instrument.Bass },
             { MidIOHelper.RHYTHM_TRACK,        Song.Instrument.Rhythm },
             { MidIOHelper.KEYS_TRACK,          Song.Instrument.Keys },
             { MidIOHelper.DRUMS_TRACK,         Song.Instrument.Drums },
+            { MidIOHelper.DRUMS_REAL_TRACK,    Song.Instrument.Drums },
             { MidIOHelper.GHL_GUITAR_TRACK,    Song.Instrument.GHLiveGuitar },
             { MidIOHelper.GHL_BASS_TRACK,      Song.Instrument.GHLiveBass },
             { MidIOHelper.GHL_RHYTHM_TRACK,    Song.Instrument.GHLiveRhythm },
@@ -35,7 +37,6 @@ namespace MoonscraperChartEditor.Song.IO
 
         static readonly IReadOnlyDictionary<string, bool> c_trackExcludesMap = new Dictionary<string, bool>()
         {
-            { MidIOHelper.GH1_GUITAR_TRACK, true },
             { MidIOHelper.BEAT_TRACK,       true },
         };
 
