@@ -679,6 +679,9 @@ namespace MoonscraperChartEditor.Song.IO
                                         MidIOHelper.SOLO_EVENT_TEXT,
                                         MidIOHelper.SOLO_END_EVENT_TEXT
                                     );
+                                    // Update instrument's caches
+                                    foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
+                                        messageParams.currentSong.GetChart(messageParams.instrument, diff).UpdateCache();
                                 }
                             });
                             break;
@@ -1260,57 +1263,49 @@ namespace MoonscraperChartEditor.Song.IO
                 var instrument = eventProcessParams.instrument;
                 var chart = song.GetChart(instrument, difficulty);
 
-                // Retrieve start and end events
-                var startEvents = new List<ChartEvent>();
-                var endEvents = new List<ChartEvent>();
+                // Convert start and end events into phrases
+                uint? currentStartTick = null;
                 for (int i = 0; i < chart.events.Count; ++i)
                 {
                     var textEvent = chart.events[i];
                     if (textEvent.eventName == startText)
                     {
-                        startEvents.Add(textEvent);
-                    }
-                    else if (textEvent.eventName == endText)
-                    {
-                        endEvents.Add(textEvent);
-                    }
-                }
+                        // Remove text event
+                        chart.Remove(textEvent, false);
 
-                // Don't process if there aren't the same number of start and end events
-                if (startEvents.Count != endEvents.Count)
-                {
-                    Debug.LogWarning($"Mismatch between start and end event counts on {difficulty} {instrument}. Cannont continue safely, skipping.");
-                    return;
-                }
-
-                // Pair together start and end events
-                for (int endIndex = 0; endIndex < endEvents.Count; ++endIndex)
-                {
-                    var endEvent = endEvents[endIndex];
-                    Debug.Assert(endEvent != null, $"Null end event in {nameof(ProcessTextEventPairAsStarpower)}");
-                    if (endEvent == null)
-                    {
-                        continue;
-                    }
-
-                    // Start events are searched in reverse order in order to find the closest one that
-                    // doesn't start after the current end event index
-                    for (int startIndex = startEvents.Count - 1; startIndex >= 0; --startIndex)
-                    {
-                        var startEvent = startEvents[startIndex];
-                        Debug.Assert(startEvent != null, $"Null start event in {nameof(ProcessTextEventPairAsStarpower)}");
-                        if (startEvent == null)
+                        uint startTick = textEvent.tick;
+                        // Only one start event can be active at a time
+                        if (currentStartTick != null)
                         {
+                            Debug.LogError($"A previous start event at tick {currentStartTick.Value} is interrupted by another start event at tick {startTick}!");
                             continue;
                         }
 
-                        if (startEvent.tick < endEvent.tick)
+                        currentStartTick = startTick;
+                    }
+                    else if (textEvent.eventName == endText)
+                    {
+                        // Remove text event
+                        chart.Remove(textEvent, false);
+
+                        uint endTick = textEvent.tick;
+                        // Events must pair up
+                        if (currentStartTick == null)
                         {
-                            chart.Remove(startEvent);
-                            chart.Remove(endEvent);
-                            chart.Add(new Starpower(startEvent.tick, endEvent.tick - startEvent.tick), false);
-                            break;
+                            Debug.LogError($"End event at tick {endTick} does not have a corresponding start event!");
+                            continue;
                         }
+
+                        uint startTick = currentStartTick.GetValueOrDefault();
+                        // Current start must occur before the current end
+                        if (currentStartTick > textEvent.tick)
+                        {
+                            Debug.LogError($"Start event at tick {endTick} occurs before end event at {endTick}!");
+                            continue;
+                        }
+
+                        chart.Add(new Starpower(startTick, endTick - startTick), false);
+                        currentStartTick = null;
                     }
                 }
             }
