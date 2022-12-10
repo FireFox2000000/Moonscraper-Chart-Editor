@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -64,6 +64,7 @@ namespace MoonscraperChartEditor.Song.IO
             public MidiEvent midiEvent;
             public IReadOnlyDictionary<int, EventProcessFn> noteProcessMap;
             public IReadOnlyDictionary<string, ProcessModificationProcessFn> textProcessMap;
+            public IReadOnlyDictionary<byte, EventProcessFn> sysexProcessMap;
             public List<EventProcessFn> delayedProcessesList;
         }
 
@@ -96,6 +97,26 @@ namespace MoonscraperChartEditor.Song.IO
             { MidIOHelper.CHART_DYNAMICS_TEXT_BRACKET, SwitchToDrumsVelocityProcessMap },
         };
 
+        static readonly Dictionary<byte, EventProcessFn> GuitarSysExEventToProcessFnMap = new Dictionary<byte, EventProcessFn>()
+        {
+            { MidIOHelper.SYSEX_CODE_GUITAR_OPEN, ProcessSysExEventPairAsOpenNoteModifier },
+            { MidIOHelper.SYSEX_CODE_GUITAR_TAP, (in EventProcessParams eventProcessParams) => {
+                ProcessSysExEventPairAsForcedType(eventProcessParams, Note.NoteType.Tap);
+            }},
+        };
+
+        static readonly Dictionary<byte, EventProcessFn> GhlGuitarSysExEventToProcessFnMap = new Dictionary<byte, EventProcessFn>()
+        {
+            { MidIOHelper.SYSEX_CODE_GUITAR_OPEN, ProcessSysExEventPairAsOpenNoteModifier },
+            { MidIOHelper.SYSEX_CODE_GUITAR_TAP, (in EventProcessParams eventProcessParams) => {
+                ProcessSysExEventPairAsForcedType(eventProcessParams, Note.NoteType.Tap);
+            }},
+        };
+
+        static readonly Dictionary<byte, EventProcessFn> DrumsSysExEventToProcessFnMap = new Dictionary<byte, EventProcessFn>()
+        {
+        };
+
         // For handling things that require user intervention
         delegate void MessageProcessFn(MessageProcessParams processParams);
         struct MessageProcessParams
@@ -108,7 +129,6 @@ namespace MoonscraperChartEditor.Song.IO
             public MessageProcessFn processFn;
             public bool executeInEditor;
         }
-
         public static Song ReadMidi(string path, ref CallbackState callBackState)
         {
             // Initialize new song
@@ -426,7 +446,7 @@ namespace MoonscraperChartEditor.Song.IO
 
             Debug.Assert(messageList != null, $"No message list provided to {nameof(ReadNotes)}!");
 
-            List<SysexEvent> tapAndOpenEvents = new List<SysexEvent>();
+            var sysexEventQueue = new List<PhaseShiftSysExStart>();
 
             Chart unrecognised = new Chart(song, Song.Instrument.Unrecognised);
             Chart.GameMode gameMode = Song.InstumentToChartGameMode(instrument);
@@ -438,6 +458,7 @@ namespace MoonscraperChartEditor.Song.IO
                 instrument = instrument,
                 noteProcessMap = GetNoteProcessDict(gameMode),
                 textProcessMap = GetTextEventProcessDict(gameMode),
+                sysexProcessMap = GetSysExEventProcessDict(gameMode),
                 delayedProcessesList = new List<EventProcessFn>(),
             };
 
@@ -510,9 +531,38 @@ namespace MoonscraperChartEditor.Song.IO
                 var sysexEvent = track[i] as SysexEvent;
                 if (sysexEvent != null)
                 {
-                    tapAndOpenEvents.Add(sysexEvent);
+                    PhaseShiftSysEx psEvent;
+                    if (!PhaseShiftSysEx.TryParse(sysexEvent, out psEvent))
+                    {
+                        // SysEx event is not a Phase Shift SysEx event
+                        Debug.LogWarning($"Encountered unknown SysEx event: {BitConverter.ToString(sysexEvent.GetData())}");
+                        continue;
+                    }
+
+                    if (psEvent.type != MidIOHelper.SYSEX_TYPE_PHRASE)
+                    {
+                        Debug.LogWarning($"Encountered unknown Phase Shift SysEx event type {psEvent.type}");
+                        continue;
+                    }
+
+                    if (psEvent.value == MidIOHelper.SYSEX_VALUE_PHRASE_START)
+                    {
+                        sysexEventQueue.Add(new PhaseShiftSysExStart(psEvent));
+                    }
+                    else if (psEvent.value == MidIOHelper.SYSEX_VALUE_PHRASE_END && TryPairSysExEvents(sysexEventQueue, psEvent, out var eventPair, out int index))
+                    {
+                        sysexEventQueue.RemoveAt(index);
+                        processParams.midiEvent = eventPair;
+                        EventProcessFn processFn;
+                        if (processParams.sysexProcessMap.TryGetValue(psEvent.code, out processFn))
+                        {
+                            processFn(processParams);
+                        }
+                    }
                 }
             }
+
+            Debug.Assert(sysexEventQueue.Count == 0, $"SysEx event queue was not fully processed! Remaining event count: {sysexEventQueue.Count}");
 
             // Update all chart arrays
             if (instrument != Song.Instrument.Unrecognised)
@@ -522,129 +572,6 @@ namespace MoonscraperChartEditor.Song.IO
             }
             else
                 unrecognised.UpdateCache();
-
-            // Apply tap and open note events
-            Chart[] chartsOfInstrument;
-
-            if (instrument == Song.Instrument.Unrecognised)
-            {
-                chartsOfInstrument = new Chart[] { unrecognised };
-            }
-            else
-            {
-                chartsOfInstrument = new Chart[EnumX<Song.Difficulty>.Count];
-
-                int difficultyCount = 0;
-                foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
-                    chartsOfInstrument[difficultyCount++] = song.GetChart(instrument, difficulty);
-            }
-
-            // Exclude drums, SysEx events that may be present don't mean anything outside of Phase Shift's Real Drums
-            // Also exclude unrecognized, we don't know what is or isn't valid on these tracks
-            if (gameMode != Chart.GameMode.Drums && gameMode != Chart.GameMode.Unrecognised)
-            {
-                for (int i = 0; i < tapAndOpenEvents.Count; ++i)
-                {
-                    var se1 = tapAndOpenEvents[i];
-                    byte[] bytes = se1.GetData();
-
-                    // Check for tap event
-                    if (bytes.Length == 8 && bytes[5] == 255 && bytes[7] == 1)
-                    {
-                        // Identified a tap section
-                        // 8 total bytes, 5th byte is FF, 7th is 1 to start, 0 to end
-                        uint tick = (uint)se1.AbsoluteTime;
-                        uint endPos = 0;
-
-                        // Find the end of the tap section
-                        for (int j = i; j < tapAndOpenEvents.Count; ++j)
-                        {
-                            var se2 = tapAndOpenEvents[j];
-                            var bytes2 = se2.GetData();
-                            /// Check for tap section end
-                            if (bytes2.Length == 8 && bytes2[5] == 255 && bytes2[7] == 0)
-                            {
-                                endPos = (uint)(se2.AbsoluteTime - tick);
-
-                                if (endPos > 0)
-                                    --endPos;
-
-                                break;
-                            }
-
-                        }
-
-                        // Apply tap property
-                        foreach (Chart chart in chartsOfInstrument)
-                        {
-                            int index, length;
-                            SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
-                            for (int k = index; k < index + length; ++k)
-                            {
-                                if (!chart.notes[k].IsOpenNote())
-                                {
-                                    chart.notes[k].flags = Note.Flags.Tap;
-                                }
-                            }
-                        }
-                    }
-
-                    // Check for open notes
-                    // 5th byte determines the difficulty to apply to
-                    else if (bytes.Length == 8 && bytes[5] >= 0 && bytes[5] < 4 && bytes[7] == 1)
-                    {
-                        uint tick = (uint)se1.AbsoluteTime;
-                        Song.Difficulty difficulty;
-                        switch (bytes[5])
-                        {
-                            case 0: difficulty = Song.Difficulty.Easy; break;
-                            case 1: difficulty = Song.Difficulty.Medium; break;
-                            case 2: difficulty = Song.Difficulty.Hard; break;
-                            case 3: difficulty = Song.Difficulty.Expert; break;
-                            default: continue;
-                        }
-
-                        uint endPos = 0;
-                        for (int j = i; j < tapAndOpenEvents.Count; ++j)
-                        {
-                            var se2 = tapAndOpenEvents[j] as SysexEvent;
-                            if (se2 != null)
-                            {
-                                var b2 = se2.GetData();
-                                if (b2.Length == 8 && b2[5] == bytes[5] && b2[7] == 0)
-                                {
-                                    endPos = (uint)(se2.AbsoluteTime - tick);
-
-                                    if (endPos > 0)
-                                        --endPos;
-
-                                    break;
-                                }
-                            }
-                        }
-
-                        int index, length;
-                        SongObjectCache<Note> notes = song.GetChart(instrument, difficulty).notes;
-                        SongObjectHelper.GetRange(notes, tick, tick + endPos, out index, out length);
-                        for (int k = index; k < index + length; ++k)
-                        {
-                            switch (gameMode)
-                            {
-                                case Chart.GameMode.Guitar:
-                                    notes[k].guitarFret = Note.GuitarFret.Open;
-                                    break;
-                                // Usually not used, but in the case that it is, it should work properly
-                                case Chart.GameMode.GHLGuitar:
-                                    notes[k].ghliveGuitarFret = Note.GHLiveGuitarFret.Open;
-                                    break;
-                                default:
-                                    Debug.Assert(false, $"Unhandled game mode for open note SysEx event: {gameMode}");
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
 
             // Apply forcing events
             foreach (var process in processParams.delayedProcessesList)
@@ -701,6 +628,33 @@ namespace MoonscraperChartEditor.Song.IO
             return false;
         }
 
+        static bool TryPairSysExEvents(IList<PhaseShiftSysExStart> startEvents, PhaseShiftSysEx endEvent, out PhaseShiftSysExStart eventPair, out int index)
+        {
+            if (startEvents == null)
+                throw new ArgumentNullException(nameof(startEvents));
+
+            if (endEvent == null)
+                throw new ArgumentNullException(nameof(endEvent));
+
+            // Iterate through event queue in reverse to find the corresponding start event
+            for (int startIndex = startEvents.Count - 1; startIndex >= 0; startIndex--)
+            {
+                var startEvent = startEvents[startIndex];
+                if (startEvent.AbsoluteTime <= endEvent.AbsoluteTime && startEvent.MatchesWith(endEvent))
+                {
+                    startEvent.endEvent = endEvent;
+                    eventPair = startEvent;
+                    index = startIndex;
+                    return true;
+                }
+            }
+
+            Debug.Assert(false, $"SysEx end event without a matching start event!\n{endEvent}");
+            eventPair = null;
+            index = -1;
+            return false;
+        }
+
         static IReadOnlyDictionary<int, EventProcessFn> GetNoteProcessDict(Chart.GameMode gameMode)
         {
             switch (gameMode)
@@ -731,6 +685,23 @@ namespace MoonscraperChartEditor.Song.IO
 
                 default:
                     return GuitarTextEventToProcessFnMap;
+            }
+        }
+
+        static IReadOnlyDictionary<byte, EventProcessFn> GetSysExEventProcessDict(Chart.GameMode gameMode)
+        {
+            switch (gameMode)
+            {
+                case Chart.GameMode.Guitar:
+                    return GuitarSysExEventToProcessFnMap;
+                case Chart.GameMode.GHLGuitar:
+                    return GhlGuitarSysExEventToProcessFnMap;
+                case Chart.GameMode.Drums:
+                    return DrumsSysExEventToProcessFnMap;
+
+                // Don't process any SysEx events on unrecognized tracks
+                default:
+                    return new Dictionary<byte, EventProcessFn>();
             }
         }
 
@@ -1067,12 +1038,15 @@ namespace MoonscraperChartEditor.Song.IO
             var flagEvent = eventProcessParams.midiEvent as NoteOnEvent;
             Debug.Assert(flagEvent != null, $"Wrong note event type passed to {nameof(ProcessNoteOnEventAsForcedType)}. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
 
+            uint startTick = (uint)flagEvent.AbsoluteTime;
+            uint endTick = (uint)flagEvent.OffEvent.AbsoluteTime;
+
             foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
             {
                 // Delay the actual processing once all the notes are actually in
                 eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
                 {
-                    ProcessNoteOnEventAsForcedTypePostDelay(processParams, flagEvent, diff, noteType);
+                    ProcessEventAsForcedTypePostDelay(processParams, startTick, endTick, diff, noteType);
                 });
             }
         }
@@ -1082,20 +1056,20 @@ namespace MoonscraperChartEditor.Song.IO
             var flagEvent = eventProcessParams.midiEvent as NoteOnEvent;
             Debug.Assert(flagEvent != null, $"Wrong note event type passed to {nameof(ProcessNoteOnEventAsForcedType)}. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
 
+            uint startTick = (uint)flagEvent.AbsoluteTime;
+            uint endTick = (uint)flagEvent.OffEvent.AbsoluteTime;
+
             // Delay the actual processing once all the notes are actually in
             eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
             {
-                ProcessNoteOnEventAsForcedTypePostDelay(processParams, flagEvent, difficulty, noteType);
+                ProcessEventAsForcedTypePostDelay(processParams, startTick, endTick, difficulty, noteType);
             });
         }
 
-        static void ProcessNoteOnEventAsForcedTypePostDelay(in EventProcessParams eventProcessParams, NoteOnEvent noteEvent, Song.Difficulty difficulty, Note.NoteType noteType)
+        static void ProcessEventAsForcedTypePostDelay(in EventProcessParams eventProcessParams, uint startTick, uint endTick, Song.Difficulty difficulty, Note.NoteType noteType)
         {
             var song = eventProcessParams.song;
             var instrument = eventProcessParams.instrument;
-
-            uint tick = (uint)noteEvent.AbsoluteTime;
-            uint endPos = (uint)(noteEvent.OffEvent.AbsoluteTime - tick);
 
             Chart chart;
             if (instrument != Song.Instrument.Unrecognised)
@@ -1104,7 +1078,7 @@ namespace MoonscraperChartEditor.Song.IO
                 chart = eventProcessParams.currentUnrecognisedChart;
 
             int index, length;
-            SongObjectHelper.GetRange(chart.notes, tick, tick + endPos, out index, out length);
+            SongObjectHelper.GetRange(chart.notes, startTick, endTick, out index, out length);
 
             uint lastChordTick = uint.MaxValue;
             bool expectedForceFailure = true; // Whether or not it is expected that the actual type will not match the expected type
@@ -1319,6 +1293,105 @@ namespace MoonscraperChartEditor.Song.IO
                     }
                 }
             }
+        }
+
+        static void ProcessSysExEventPairAsForcedType(in EventProcessParams eventProcessParams, Note.NoteType noteType)
+        {
+            var startEvent = eventProcessParams.midiEvent as PhaseShiftSysExStart;
+            Debug.Assert(startEvent != null, $"Wrong note event type passed to {nameof(ProcessSysExEventPairAsForcedType)}. Expected: {typeof(PhaseShiftSysExStart)}, Actual: {eventProcessParams.midiEvent.GetType()}");
+            var endEvent = startEvent.endEvent;
+            Debug.Assert(endEvent != null, $"No end event supplied to {nameof(ProcessSysExEventPairAsForcedType)}.");
+
+            uint startTick = (uint)startEvent.AbsoluteTime;
+            uint endTick = (uint)endEvent.AbsoluteTime;
+
+            if (startEvent.difficulty == MidIOHelper.SYSEX_DIFFICULTY_ALL)
+            {
+                foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
+                {
+                    eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+                    {
+                        ProcessEventAsForcedTypePostDelay(processParams, startTick, endTick, diff, noteType);
+                    });
+                }
+            }
+            else
+            {
+                var diff = MidIOHelper.SYSEX_TO_MS_DIFF_LOOKUP[startEvent.difficulty];
+                eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+                {
+                    ProcessEventAsForcedTypePostDelay(processParams, startTick, endTick, diff, noteType);
+                });
+            }
+        }
+
+        static void ProcessSysExEventPairAsOpenNoteModifier(in EventProcessParams eventProcessParams)
+        {
+            var startEvent = eventProcessParams.midiEvent as PhaseShiftSysExStart;
+            Debug.Assert(startEvent != null, $"Wrong note event type passed to {nameof(ProcessSysExEventPairAsOpenNoteModifier)}. Expected: {typeof(PhaseShiftSysExStart)}, Actual: {eventProcessParams.midiEvent.GetType()}");
+            var endEvent = startEvent.endEvent;
+            Debug.Assert(endEvent != null, $"No end event supplied to {nameof(ProcessSysExEventPairAsOpenNoteModifier)}.");
+
+            uint startTick = (uint)startEvent.AbsoluteTime;
+            uint endTick = (uint)endEvent.AbsoluteTime;
+            // Exclude the last tick of the phrase
+            if (endTick > 0)
+                --endTick;
+
+            if (startEvent.difficulty == MidIOHelper.SYSEX_DIFFICULTY_ALL)
+            {
+                foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
+                {
+                    eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+                    {
+                        ProcessEventAsOpenNoteModifierPostDelay(processParams, startTick, endTick, diff);
+                    });
+                }
+            }
+            else
+            {
+                var diff = MidIOHelper.SYSEX_TO_MS_DIFF_LOOKUP[startEvent.difficulty];
+                eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+                {
+                    ProcessEventAsOpenNoteModifierPostDelay(processParams, startTick, endTick, diff);
+                });
+            }
+        }
+
+        static void ProcessEventAsOpenNoteModifierPostDelay(in EventProcessParams processParams, uint startTick, uint endTick, Song.Difficulty difficulty)
+        {
+            var instrument = processParams.instrument;
+            var gameMode = Song.InstumentToChartGameMode(instrument);
+            var song = processParams.song;
+
+            Chart chart;
+            if (instrument == Song.Instrument.Unrecognised)
+                chart = processParams.currentUnrecognisedChart;
+            else
+                chart = song.GetChart(instrument, difficulty);
+
+            int index, length;
+            SongObjectHelper.GetRange(chart.notes, startTick, endTick, out index, out length);
+            for (int i = index; i < index + length; ++i)
+            {
+                switch (gameMode)
+                {
+                    case (Chart.GameMode.Guitar):
+                        chart.notes[i].guitarFret = Note.GuitarFret.Open;
+                        break;
+
+                    // Usually not used, but in the case that it is it should work properly
+                    case (Chart.GameMode.GHLGuitar):
+                        chart.notes[i].ghliveGuitarFret = Note.GHLiveGuitarFret.Open;
+                        break;
+
+                    default:
+                        Debug.Assert(false, $"Unhandled game mode for open note modifier: {gameMode} (instrument: {instrument})");
+                        break;
+                }
+            }
+
+            chart.UpdateCache();
         }
     }
 }

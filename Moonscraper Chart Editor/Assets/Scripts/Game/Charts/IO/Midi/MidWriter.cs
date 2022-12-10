@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -33,8 +33,6 @@ namespace MoonscraperChartEditor.Song.IO
 
         const byte SYSEX_START = 0xF0;
         const byte SYSEX_END = 0xF7;
-        const byte SYSEX_ON = 0x01;
-        const byte SYSEX_OFF = 0x00;
 
         static readonly byte[] END_OF_TRACK = new byte[] { 0, 0xFF, 0x2F, 0x00 };
 
@@ -594,12 +592,9 @@ namespace MoonscraperChartEditor.Song.IO
                                 while (nextNonTap.next != null && nextNonTap.rawNote != openNote && nextNonTap.next.flags.HasFlag(Note.Flags.Tap))
                                     nextNonTap = nextNonTap.next;
 
-                                // Tap event = 08-50-53-00-00-FF-04-01, end with 01 for On, 00 for Off
-                                byte[] tapOnEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_ON, SYSEX_END };
-                                byte[] tapOffEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, 0xFF, 0x04, SYSEX_OFF, SYSEX_END };
-
-                                SortableBytes tapOnEvent = new SortableBytes(note.tick, tapOnEventBytes);
-                                SortableBytes tapOffEvent = new SortableBytes(nextNonTap.tick + 1, tapOffEventBytes);
+                                SortableBytes tapOnEvent;
+                                SortableBytes tapOffEvent;
+                                GetPhaseShiftSysExEventBytes(note.tick, nextNonTap.tick + 1, MidIOHelper.SYSEX_CODE_GUITAR_TAP, out tapOnEvent, out tapOffEvent);
 
                                 InsertionSort(eventList, tapOnEvent);
                                 InsertionSort(eventList, tapOffEvent);
@@ -614,31 +609,9 @@ namespace MoonscraperChartEditor.Song.IO
                         while (nextNonOpen.next != null && nextNonOpen.next.guitarFret == Note.GuitarFret.Open)
                             nextNonOpen = nextNonOpen.next;
 
-                        byte diff;
-
-                        switch (difficulty)
-                        {
-                            case (Song.Difficulty.Easy):
-                                diff = 0;
-                                break;
-                            case (Song.Difficulty.Medium):
-                                diff = 1;
-                                break;
-                            case (Song.Difficulty.Hard):
-                                diff = 2;
-                                break;
-                            case (Song.Difficulty.Expert):
-                                diff = 3;
-                                break;
-                            default:
-                                continue;
-                        }
-
-                        byte[] openOnEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, diff, 0x01, SYSEX_ON, SYSEX_END };
-                        byte[] openOffEventBytes = new byte[] { SYSEX_START, 0x08, 0x50, 0x53, 0x00, 0x00, diff, 0x01, SYSEX_OFF, SYSEX_END };
-
-                        SortableBytes openOnEvent = new SortableBytes(note.tick, openOnEventBytes);
-                        SortableBytes openOffEvent = new SortableBytes(nextNonOpen.tick + 1, openOffEventBytes);
+                        SortableBytes openOnEvent;
+                        SortableBytes openOffEvent;
+                        GetPhaseShiftSysExEventBytes(note.tick, nextNonOpen.tick + 1, difficulty, MidIOHelper.SYSEX_CODE_GUITAR_OPEN, out openOnEvent, out openOffEvent);
 
                         InsertionSort(eventList, openOnEvent);
                         InsertionSort(eventList, openOffEvent);
@@ -1065,6 +1038,49 @@ namespace MoonscraperChartEditor.Song.IO
         {
             byte[] textEvent = MetaTextEvent(MetaTextEventType.Text, chartEvent.eventName);
             return new SortableBytes(chartEvent.tick, textEvent);
+        }
+
+        static void GetPhaseShiftSysExEventBytes(uint startTick, uint endTick, byte code, out SortableBytes startEvent, out SortableBytes endEvent)
+        {
+            startEvent = GetPhaseShiftSysExEventBytes(startTick, code, start: true);
+            endEvent = GetPhaseShiftSysExEventBytes(endTick, code, start: false);
+        }
+
+        static void GetPhaseShiftSysExEventBytes(uint startTick, uint endTick, Song.Difficulty difficulty, byte code, out SortableBytes startEvent, out SortableBytes endEvent)
+        {
+            startEvent = GetPhaseShiftSysExEventBytes(startTick, difficulty, code, start: true);
+            endEvent = GetPhaseShiftSysExEventBytes(endTick, difficulty, code, start: false);
+        }
+
+        static SortableBytes GetPhaseShiftSysExEventBytes(uint tick, byte code, bool start)
+        {
+            return GetPhaseShiftSysExEventBytes(tick, MidIOHelper.SYSEX_DIFFICULTY_ALL, code, start);
+        }
+
+        static SortableBytes GetPhaseShiftSysExEventBytes(uint tick, Song.Difficulty difficulty, byte code, bool start)
+        {
+            return GetPhaseShiftSysExEventBytes(tick, MidIOHelper.MS_TO_SYSEX_DIFF_LOOKUP[difficulty], code, start);
+        }
+
+        static SortableBytes GetPhaseShiftSysExEventBytes(uint tick, byte difficulty, byte code, bool start)
+        {
+            if (!MidIOHelper.MS_TO_SYSEX_DIFF_LOOKUP.ContainsValue(difficulty) && difficulty != MidIOHelper.SYSEX_DIFFICULTY_ALL)
+                throw new ArgumentOutOfRangeException(nameof(difficulty), difficulty, "The given difficulty is not valid.");
+
+            byte[] eventBytes = new byte[] {
+                SYSEX_START,
+                MidIOHelper.SYSEX_LENGTH,
+                (byte)MidIOHelper.SYSEX_HEADER_1,
+                (byte)MidIOHelper.SYSEX_HEADER_2,
+                (byte)MidIOHelper.SYSEX_HEADER_3,
+                MidIOHelper.SYSEX_TYPE_PHRASE,
+                difficulty,
+                code,
+                start ? MidIOHelper.SYSEX_VALUE_PHRASE_START : MidIOHelper.SYSEX_VALUE_PHRASE_END,
+                SYSEX_END
+            };
+
+            return new SortableBytes(tick, eventBytes);
         }
 
         static void GetUnrecognisedChartNoteBytes(Note note, out SortableBytes onEvent, out SortableBytes offEvent)
