@@ -653,42 +653,48 @@ namespace MoonscraperChartEditor.Song.IO
             {
                 // Only need to check one difficulty since Star Power gets copied to all difficulties
                 var chart = song.GetChart(instrument, Song.Difficulty.Expert);
-                if (chart.starPower.Count == 0)
+                if (chart.starPower.Count == 0 && (ContainsTextEvent(chart.events, MidIOHelper.SOLO_EVENT_TEXT) || ContainsTextEvent(chart.events, MidIOHelper.SOLO_END_EVENT_TEXT)))
                 {
-                    foreach (var textEvent in chart.events)
+                    TextEvent text = track[0] as TextEvent;
+                    Debug.Assert(text != null, "Track name not found when processing legacy starpower fixups");
+                    messageList?.Add(new MessageProcessParams()
                     {
-                        if (textEvent.eventName == MidIOHelper.SOLO_EVENT_TEXT || textEvent.eventName == MidIOHelper.SOLO_END_EVENT_TEXT)
-                        {
-                            TextEvent text = track[0] as TextEvent;
-                            Debug.Assert(text != null, "Track name not found when processing legacy starpower fixups");
-                            messageList?.Add(new MessageProcessParams()
-                            {
-                                message = $"No Star Power phrases were found on track {text.Text}. However, solo phrases were found. These may be legacy star power phrases.\nImport these solo phrases as Star Power?",
-                                title = "Legacy Star Power Detected",
-                                executeInEditor = true,
-                                currentSong = processParams.song,
-                                instrument = processParams.instrument,
-                                processFn = (messageParams) => {
-                                    Debug.Log("Loading solo events as Star Power");
-                                    ProcessTextEventPairAsStarpower(
-                                        new EventProcessParams()
-                                        {
-                                            song = messageParams.currentSong,
-                                            instrument = messageParams.instrument
-                                        },
-                                        MidIOHelper.SOLO_EVENT_TEXT,
-                                        MidIOHelper.SOLO_END_EVENT_TEXT
-                                    );
-                                    // Update instrument's caches
-                                    foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
-                                        messageParams.currentSong.GetChart(messageParams.instrument, diff).UpdateCache();
-                                }
-                            });
-                            break;
+                        message = $"No Star Power phrases were found on track {text.Text}. However, solo phrases were found. These may be legacy star power phrases.\nImport these solo phrases as Star Power?",
+                        title = "Legacy Star Power Detected",
+                        executeInEditor = true,
+                        currentSong = processParams.song,
+                        instrument = processParams.instrument,
+                        processFn = (messageParams) => {
+                            Debug.Log("Loading solo events as Star Power");
+                            ProcessTextEventPairAsStarpower(
+                                new EventProcessParams()
+                                {
+                                    song = messageParams.currentSong,
+                                    instrument = messageParams.instrument
+                                },
+                                MidIOHelper.SOLO_EVENT_TEXT,
+                                MidIOHelper.SOLO_END_EVENT_TEXT
+                            );
+                            // Update instrument's caches
+                            foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
+                                messageParams.currentSong.GetChart(messageParams.instrument, diff).UpdateCache();
                         }
-                    }
+                    });
                 }
             }
+        }
+
+        static bool ContainsTextEvent(IList<ChartEvent> events, string text)
+        {
+            foreach (var textEvent in events)
+            {
+                if (textEvent.eventName == text)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         static IReadOnlyDictionary<int, EventProcessFn> GetNoteProcessDict(Chart.GameMode gameMode)
