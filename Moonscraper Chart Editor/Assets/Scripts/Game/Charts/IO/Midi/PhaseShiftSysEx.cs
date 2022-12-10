@@ -8,10 +8,10 @@ namespace MoonscraperChartEditor.Song.IO
 {
     public class PhaseShiftSysEx : MidiEvent
     {
-        public byte Type;
-        public byte Difficulty;
-        public byte Code;
-        public byte Value;
+        public byte type;
+        public byte difficulty;
+        public byte code;
+        public byte value;
 
         protected PhaseShiftSysEx()
         { }
@@ -19,10 +19,10 @@ namespace MoonscraperChartEditor.Song.IO
         protected PhaseShiftSysEx(PhaseShiftSysEx other)
         {
             AbsoluteTime = other.AbsoluteTime;
-            Type = other.Type;
-            Difficulty = other.Difficulty;
-            Code = other.Code;
-            Value = other.Value;
+            type = other.type;
+            difficulty = other.difficulty;
+            code = other.code;
+            value = other.value;
         }
 
         public PhaseShiftSysEx(SysexEvent sysex) : base(sysex.AbsoluteTime, sysex.Channel, sysex.CommandCode)
@@ -45,10 +45,10 @@ namespace MoonscraperChartEditor.Song.IO
             if (IsPhaseShiftSysex(sysexData))
             {
                 psSysex.AbsoluteTime = sysex.AbsoluteTime;
-                psSysex.Type = sysexData[MidIOHelper.SYSEX_INDEX_TYPE];
-                psSysex.Difficulty = sysexData[MidIOHelper.SYSEX_INDEX_DIFFICULTY];
-                psSysex.Code = sysexData[MidIOHelper.SYSEX_INDEX_CODE];
-                psSysex.Value = sysexData[MidIOHelper.SYSEX_INDEX_VALUE];
+                psSysex.type = sysexData[MidIOHelper.SYSEX_INDEX_TYPE];
+                psSysex.difficulty = sysexData[MidIOHelper.SYSEX_INDEX_DIFFICULTY];
+                psSysex.code = sysexData[MidIOHelper.SYSEX_INDEX_CODE];
+                psSysex.value = sysexData[MidIOHelper.SYSEX_INDEX_VALUE];
 
                 return true;
             }
@@ -73,19 +73,18 @@ namespace MoonscraperChartEditor.Song.IO
 
         public bool MatchesWith(PhaseShiftSysEx otherEvent)
         {
-            return Type == otherEvent.Type && Difficulty == otherEvent.Difficulty && Code == otherEvent.Code;
+            return type == otherEvent.type && difficulty == otherEvent.difficulty && code == otherEvent.code;
         }
 
         public override string ToString()
         {
-            return $"AbsoluteTime: {AbsoluteTime}, Type: {Type}, Difficulty: {Difficulty}, Code: {Code}, Value: {Value}";
+            return $"AbsoluteTime: {AbsoluteTime}, Type: {type}, Difficulty: {difficulty}, Code: {code}, Value: {value}";
         }
     }
 
     public class PhaseShiftSysExStart : PhaseShiftSysEx
     {
-        private PhaseShiftSysEx endEvent;
-        public PhaseShiftSysEx EndEvent
+        public PhaseShiftSysEx endEvent
         {
             get => endEvent;
             set
@@ -101,9 +100,9 @@ namespace MoonscraperChartEditor.Song.IO
         {
             get
             {
-                if (EndEvent != null)
+                if (endEvent != null)
                 {
-                    return EndEvent.AbsoluteTime - AbsoluteTime;
+                    return endEvent.AbsoluteTime - AbsoluteTime;
                 }
 
                 // No end event to get a length from
@@ -119,13 +118,13 @@ namespace MoonscraperChartEditor.Song.IO
             if (start.AbsoluteTime < end.AbsoluteTime)
                 throw new ArgumentException($"The start event of a SysEx pair must occur before the end event.\nStart: {start}\nEnd: {end}", nameof(start));
 
-            EndEvent = end;
+            endEvent = end;
         }
 
         public override string ToString()
         {
-            if (EndEvent != null)
-                return $"AbsoluteTime: {AbsoluteTime}, Length: {Length}, Type: {Type}, Difficulty: {Difficulty}, Code: {Code}, Value: {Value}";
+            if (endEvent != null)
+                return $"AbsoluteTime: {AbsoluteTime}, Length: {Length}, Type: {type}, Difficulty: {difficulty}, Code: {code}, Value: {value}";
             else
                 return base.ToString();
         }

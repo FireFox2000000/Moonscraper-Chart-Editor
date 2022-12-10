@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -539,22 +539,22 @@ namespace MoonscraperChartEditor.Song.IO
                         continue;
                     }
 
-                    if (psEvent.Type != MidIOHelper.SYSEX_TYPE_PHRASE)
+                    if (psEvent.type != MidIOHelper.SYSEX_TYPE_PHRASE)
                     {
-                        Debug.LogWarning($"Encountered unknown Phase Shift SysEx event type {psEvent.Type}");
+                        Debug.LogWarning($"Encountered unknown Phase Shift SysEx event type {psEvent.type}");
                         continue;
                     }
 
-                    if (psEvent.Value == MidIOHelper.SYSEX_VALUE_PHRASE_START)
+                    if (psEvent.value == MidIOHelper.SYSEX_VALUE_PHRASE_START)
                     {
                         sysexEventQueue.Add(new PhaseShiftSysExStart(psEvent));
                     }
-                    else if (psEvent.Value == MidIOHelper.SYSEX_VALUE_PHRASE_END && TryPairSysExEvents(sysexEventQueue, psEvent, out var eventPair, out int index))
+                    else if (psEvent.value == MidIOHelper.SYSEX_VALUE_PHRASE_END && TryPairSysExEvents(sysexEventQueue, psEvent, out var eventPair, out int index))
                     {
                         sysexEventQueue.RemoveAt(index);
                         processParams.midiEvent = eventPair;
                         EventProcessFn processFn;
-                        if (processParams.sysexProcessMap.TryGetValue(psEvent.Code, out processFn))
+                        if (processParams.sysexProcessMap.TryGetValue(psEvent.code, out processFn))
                         {
                             processFn(processParams);
                         }
@@ -642,7 +642,7 @@ namespace MoonscraperChartEditor.Song.IO
                 var startEvent = startEvents[startIndex];
                 if (startEvent.AbsoluteTime <= endEvent.AbsoluteTime && startEvent.MatchesWith(endEvent))
                 {
-                    startEvent.EndEvent = endEvent;
+                    startEvent.endEvent = endEvent;
                     eventPair = startEvent;
                     index = startIndex;
                     return true;
@@ -1299,13 +1299,13 @@ namespace MoonscraperChartEditor.Song.IO
         {
             var startEvent = eventProcessParams.midiEvent as PhaseShiftSysExStart;
             Debug.Assert(startEvent != null, $"Wrong note event type passed to {nameof(ProcessSysExEventPairAsForcedType)}. Expected: {typeof(PhaseShiftSysExStart)}, Actual: {eventProcessParams.midiEvent.GetType()}");
-            var endEvent = startEvent.EndEvent;
+            var endEvent = startEvent.endEvent;
             Debug.Assert(endEvent != null, $"No end event supplied to {nameof(ProcessSysExEventPairAsForcedType)}.");
 
             uint startTick = (uint)startEvent.AbsoluteTime;
             uint endTick = (uint)endEvent.AbsoluteTime;
 
-            if (startEvent.Difficulty == MidIOHelper.SYSEX_DIFFICULTY_ALL)
+            if (startEvent.difficulty == MidIOHelper.SYSEX_DIFFICULTY_ALL)
             {
                 foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
                 {
@@ -1317,7 +1317,7 @@ namespace MoonscraperChartEditor.Song.IO
             }
             else
             {
-                var diff = MidIOHelper.SYSEX_TO_MS_DIFF_LOOKUP[startEvent.Difficulty];
+                var diff = MidIOHelper.SYSEX_TO_MS_DIFF_LOOKUP[startEvent.difficulty];
                 eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
                 {
                     ProcessEventAsForcedTypePostDelay(processParams, startTick, endTick, diff, noteType);
@@ -1329,7 +1329,7 @@ namespace MoonscraperChartEditor.Song.IO
         {
             var startEvent = eventProcessParams.midiEvent as PhaseShiftSysExStart;
             Debug.Assert(startEvent != null, $"Wrong note event type passed to {nameof(ProcessSysExEventPairAsOpenNoteModifier)}. Expected: {typeof(PhaseShiftSysExStart)}, Actual: {eventProcessParams.midiEvent.GetType()}");
-            var endEvent = startEvent.EndEvent;
+            var endEvent = startEvent.endEvent;
             Debug.Assert(endEvent != null, $"No end event supplied to {nameof(ProcessSysExEventPairAsOpenNoteModifier)}.");
 
             uint startTick = (uint)startEvent.AbsoluteTime;
@@ -1338,7 +1338,7 @@ namespace MoonscraperChartEditor.Song.IO
             if (endTick > 0)
                 --endTick;
 
-            if (startEvent.Difficulty == MidIOHelper.SYSEX_DIFFICULTY_ALL)
+            if (startEvent.difficulty == MidIOHelper.SYSEX_DIFFICULTY_ALL)
             {
                 foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
                 {
@@ -1350,7 +1350,7 @@ namespace MoonscraperChartEditor.Song.IO
             }
             else
             {
-                var diff = MidIOHelper.SYSEX_TO_MS_DIFF_LOOKUP[startEvent.Difficulty];
+                var diff = MidIOHelper.SYSEX_TO_MS_DIFF_LOOKUP[startEvent.difficulty];
                 eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
                 {
                     ProcessEventAsOpenNoteModifierPostDelay(processParams, startTick, endTick, diff);
