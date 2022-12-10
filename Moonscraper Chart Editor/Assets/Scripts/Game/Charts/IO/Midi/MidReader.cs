@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -549,30 +549,15 @@ namespace MoonscraperChartEditor.Song.IO
                     {
                         sysexEventQueue.Add(new PhaseShiftSysExStart(psEvent));
                     }
-                    else if (psEvent.Value == MidIOHelper.SYSEX_VALUE_PHRASE_END)
+                    else if (psEvent.Value == MidIOHelper.SYSEX_VALUE_PHRASE_END && TryPairSysExEvents(sysexEventQueue, psEvent, out var eventPair, out int index))
                     {
-                        // Iterate through event queue in reverse to find the corresponding start event
-                        bool foundMatch = false;
-                        for (int startIndex = sysexEventQueue.Count - 1; startIndex >= 0; startIndex--)
+                        sysexEventQueue.RemoveAt(index);
+                        processParams.midiEvent = eventPair;
+                        EventProcessFn processFn;
+                        if (processParams.sysexProcessMap.TryGetValue(psEvent.Code, out processFn))
                         {
-                            var startEvent = sysexEventQueue[startIndex];
-                            if (startEvent.AbsoluteTime <= psEvent.AbsoluteTime && startEvent.MatchesWith(psEvent))
-                            {
-                                sysexEventQueue.RemoveAt(startIndex);
-                                startEvent.EndEvent = psEvent;
-                                foundMatch = true;
-
-                                processParams.midiEvent = startEvent;
-                                EventProcessFn processFn;
-                                if (processParams.sysexProcessMap.TryGetValue(psEvent.Code, out processFn))
-                                {
-                                    processFn(processParams);
-                                }
-                                break;
-                            }
+                            processFn(processParams);
                         }
-
-                        Debug.Assert(foundMatch, $"SysEx end event without a matching start event\n{psEvent}");
                     }
                 }
             }
@@ -638,6 +623,33 @@ namespace MoonscraperChartEditor.Song.IO
                 }
             }
 
+            return false;
+        }
+
+        static bool TryPairSysExEvents(IList<PhaseShiftSysExStart> startEvents, PhaseShiftSysEx endEvent, out PhaseShiftSysExStart eventPair, out int index)
+        {
+            if (startEvents == null)
+                throw new ArgumentNullException(nameof(startEvents));
+
+            if (endEvent == null)
+                throw new ArgumentNullException(nameof(endEvent));
+
+            // Iterate through event queue in reverse to find the corresponding start event
+            for (int startIndex = startEvents.Count - 1; startIndex >= 0; startIndex--)
+            {
+                var startEvent = startEvents[startIndex];
+                if (startEvent.AbsoluteTime <= endEvent.AbsoluteTime && startEvent.MatchesWith(endEvent))
+                {
+                    startEvent.EndEvent = endEvent;
+                    eventPair = startEvent;
+                    index = startIndex;
+                    return true;
+                }
+            }
+
+            Debug.Assert(false, $"SysEx end event without a matching start event!\n{endEvent}");
+            eventPair = null;
+            index = -1;
             return false;
         }
 
