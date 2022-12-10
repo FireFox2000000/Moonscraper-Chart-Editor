@@ -220,7 +220,8 @@ namespace MoonscraperChartEditor.Song.IO
                         {
                             instrument = Song.Instrument.Unrecognised;
                         }
-                        else if (song.ChartExistsForInstrument(instrument))
+
+                        if ((instrument != Song.Instrument.Unrecognised) && song.ChartExistsForInstrument(instrument))
                         {
                             messageList.Add(new MessageProcessParams()
                             {
@@ -241,11 +242,12 @@ namespace MoonscraperChartEditor.Song.IO
                                     ReadNotes(midi.Events[processParams.trackNumber], messageList, processParams.currentSong, processParams.instrument);
                                 }
                             });
-                            break;
                         }
-
-                        Debug.LogFormat("Loading midi track {0}", instrument);
-                        ReadNotes(track, messageList, song, instrument);
+                        else
+                        {
+                            Debug.LogFormat("Loading midi track {0}", instrument);
+                            ReadNotes(track, messageList, song, instrument);
+                        }
                         break;
                 }
             }
