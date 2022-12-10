@@ -655,7 +655,7 @@ namespace MoonscraperChartEditor.Song.IO
             {
                 // Only need to check one difficulty since Star Power gets copied to all difficulties
                 var chart = song.GetChart(instrument, Song.Difficulty.Expert);
-                if (chart.starPower.Count == 0 && (ContainsTextEvent(chart.events, MidIOHelper.SOLO_EVENT_TEXT) || ContainsTextEvent(chart.events, MidIOHelper.SOLO_END_EVENT_TEXT)))
+                if (chart.starPower.Count <= 0 && (ContainsTextEvent(chart.events, MidIOHelper.SOLO_EVENT_TEXT) || ContainsTextEvent(chart.events, MidIOHelper.SOLO_END_EVENT_TEXT)))
                 {
                     TextEvent text = track[0] as TextEvent;
                     Debug.Assert(text != null, "Track name not found when processing legacy starpower fixups");
