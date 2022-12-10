@@ -220,24 +220,16 @@ namespace MoonscraperChartEditor.Song
 
         public bool ChartExistsForInstrument(Instrument instrument)
         {
-            try
+            foreach (Difficulty difficulty in EnumX<Difficulty>.Values)
             {
-                int startIndex = (int)instrument * EnumX<Difficulty>.Count;
-                for (int i = startIndex; i < startIndex + EnumX<Difficulty>.Count; i++)
+                var chart = GetChart(instrument, difficulty);
+                if (chart.chartObjects.Count > 0)
                 {
-                    if (charts[i].chartObjects.Count != 0)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
+            }
 
-                return false;
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e.Message);
-                return false;
-            }
+            return false;
         }
 
         /// <summary>
