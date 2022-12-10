@@ -562,6 +562,8 @@ namespace MoonscraperChartEditor.Song.IO
                 }
             }
 
+            Debug.Assert(sysexEventQueue.Count == 0, $"SysEx event queue was not fully processed! Remaining event count: {sysexEventQueue.Count}");
+
             // Update all chart arrays
             if (instrument != Song.Instrument.Unrecognised)
             {
