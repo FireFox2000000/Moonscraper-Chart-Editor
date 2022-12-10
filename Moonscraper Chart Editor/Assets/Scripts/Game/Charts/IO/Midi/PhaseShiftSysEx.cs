@@ -84,15 +84,16 @@ namespace MoonscraperChartEditor.Song.IO
 
     public class PhaseShiftSysExStart : PhaseShiftSysEx
     {
+        private PhaseShiftSysEx m_endEvent;
         public PhaseShiftSysEx endEvent
         {
-            get => endEvent;
+            get => m_endEvent;
             set
             {
                 if (value.AbsoluteTime < AbsoluteTime)
                     throw new ArgumentException($"The end event of a SysEx pair must occur after the start event.\nStart: {this}\nEnd: {value}", nameof(value));
 
-                endEvent = value;
+                m_endEvent = value;
             }
         }
 
@@ -100,9 +101,9 @@ namespace MoonscraperChartEditor.Song.IO
         {
             get
             {
-                if (endEvent != null)
+                if (m_endEvent != null)
                 {
-                    return endEvent.AbsoluteTime - AbsoluteTime;
+                    return m_endEvent.AbsoluteTime - AbsoluteTime;
                 }
 
                 // No end event to get a length from
@@ -118,12 +119,12 @@ namespace MoonscraperChartEditor.Song.IO
             if (start.AbsoluteTime < end.AbsoluteTime)
                 throw new ArgumentException($"The start event of a SysEx pair must occur before the end event.\nStart: {start}\nEnd: {end}", nameof(start));
 
-            endEvent = end;
+            m_endEvent = end;
         }
 
         public override string ToString()
         {
-            if (endEvent != null)
+            if (m_endEvent != null)
                 return $"AbsoluteTime: {AbsoluteTime}, Length: {Length}, Type: {type}, Difficulty: {difficulty}, Code: {code}, Value: {value}";
             else
                 return base.ToString();
