@@ -107,16 +107,14 @@ namespace MoonscraperChartEditor.Song.IO
             public bool executeInEditor;
         }
 
-        static readonly List<MessageProcessParams> messageList = new List<MessageProcessParams>();
-
         public static Song ReadMidi(string path, ref CallbackState callBackState)
         {
-            // Ensure messages list is cleared
-            messageList.Clear();
-
             // Initialize new song
             Song song = new Song();
             string directory = Path.GetDirectoryName(path);
+
+            // Make message list
+            var messageList = new List<MessageProcessParams>();
 
             foreach (Song.AudioInstrument audio in EnumX<Song.AudioInstrument>.Values)
             {
@@ -240,14 +238,14 @@ namespace MoonscraperChartEditor.Song.IO
                                         chart.UpdateCache();
                                     }
 
-                                    ReadNotes(midi.Events[processParams.trackNumber], processParams.currentSong, processParams.instrument);
+                                    ReadNotes(midi.Events[processParams.trackNumber], messageList, processParams.currentSong, processParams.instrument);
                                 }
                             });
                             break;
                         }
 
                         Debug.LogFormat("Loading midi track {0}", instrument);
-                        ReadNotes(track, song, instrument);
+                        ReadNotes(track, messageList, song, instrument);
                         break;
                 }
             }
@@ -273,9 +271,6 @@ namespace MoonscraperChartEditor.Song.IO
                     processParams.processFn(processParams);
                 }
             }
-
-            // Clear messages list
-            messageList.Clear();
 
             return song;
         }
@@ -401,13 +396,15 @@ namespace MoonscraperChartEditor.Song.IO
             song.UpdateCache();
         }
 
-        private static void ReadNotes(IList<MidiEvent> track, Song song, Song.Instrument instrument)
+        private static void ReadNotes(IList<MidiEvent> track, IList<MessageProcessParams> messageList, Song song, Song.Instrument instrument)
         {
             if (track == null || track.Count < 1)
             {
                 Debug.LogError($"Attempted to load null or empty track.");
                 return;
             }
+
+            Debug.Assert(messageList != null, $"No message list provided to {nameof(ReadNotes)}!");
 
             List<SysexEvent> tapAndOpenEvents = new List<SysexEvent>();
 
@@ -648,7 +645,7 @@ namespace MoonscraperChartEditor.Song.IO
                         {
                             TextEvent text = track[0] as TextEvent;
                             Debug.Assert(text != null, "Track name not found when processing legacy starpower fixups");
-                            messageList.Add(new MessageProcessParams()
+                            messageList?.Add(new MessageProcessParams()
                             {
                                 message = $"No Star Power phrases were found on track {text.Text}. However, solo phrases were found. These may be legacy star power phrases.\nImport these solo phrases as Star Power?",
                                 title = "Legacy Star Power Detected",
