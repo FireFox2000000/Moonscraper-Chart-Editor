@@ -250,29 +250,45 @@ namespace MoonscraperChartEditor.Song.IO
                 }
             }
 
-            // Display messages to user, and execute action if they select Yes (or in editor and params say to execute)
+            // Display messages to user
+            ProcessPendingUserMessages(messageList, ref callBackState);
+
+            return song;
+        }
+
+        static void ProcessPendingUserMessages(IList<MessageProcessParams> messageList, ref CallbackState callBackState)
+        {
+            if (messageList == null)
+            {
+                Debug.Assert(false, $"No message list provided to {nameof(ProcessPendingUserMessages)}!");
+                return;
+            }
+
             foreach (var processParams in messageList)
             {
-#if UNITY_EDITOR // The editor freezes when its message box API is used during parsing
+#if UNITY_EDITOR
+                // The editor freezes when its message box API is used during parsing,
+                // we use the params to determine whether or not to execute actions instead
                 if (!processParams.executeInEditor)
                 {
                     Debug.Log("Auto-skipping action for message: " + processParams.message);
+                    continue;
                 }
                 else
                 {
                     Debug.Log("Auto-executing action for message: " + processParams.message);
+                    processParams.processFn(processParams);
+                }
 #else
                 callBackState = CallbackState.WaitingForExternalInformation;
                 NativeMessageBox.Result result = NativeMessageBox.Show(processParams.message, processParams.title, NativeMessageBox.Type.YesNo, null);
                 callBackState = CallbackState.None;
                 if (result == NativeMessageBox.Result.Yes)
                 {
-#endif
                     processParams.processFn(processParams);
                 }
+#endif
             }
-
-            return song;
         }
 
         static void ReadTrack(IList<MidiEvent> track)
