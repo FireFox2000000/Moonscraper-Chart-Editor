@@ -218,6 +218,20 @@ namespace MoonscraperChartEditor.Song
             }
         }
 
+        public bool ChartExistsForInstrument(Instrument instrument)
+        {
+            foreach (Difficulty difficulty in EnumX<Difficulty>.Values)
+            {
+                var chart = GetChart(instrument, difficulty);
+                if (chart.chartObjects.Count > 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Converts a time value into a tick position value. May be inaccurate due to interger rounding.
         /// </summary>
