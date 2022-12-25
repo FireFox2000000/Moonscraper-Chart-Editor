@@ -53,18 +53,12 @@ public class SongAudioManager
     public void Clear(Song.AudioInstrument audio)
     {
         {
-            var stream = GetAudioStream(audio);
-            if (stream != null)
-                stream.Dispose();
-
+            GetAudioStream(audio)?.Dispose();
             bassAudioStreams[(int)audio] = null;
         }
 
         {
-            var sampleData = GetSampleData(audio);
-            if (sampleData != null)
-                sampleData.Dispose();
-
+            GetSampleData(audio)?.Dispose();
             audioSampleData[(int)audio] = null;
         }
     }
@@ -119,6 +113,8 @@ public class SongAudioManager
 
     public bool LoadAudio(string filepath, Song.AudioInstrument audio)
     {
+        Clear(audio);
+
         int audioStreamArrayPos = (int)audio;
 
         if (filepath == string.Empty) { return false; }
@@ -128,10 +124,11 @@ public class SongAudioManager
         // Check for valid extension
         if (!Utility.validateExtension(filepath, Globals.validAudioExtensions))
         {
-            throw new System.Exception("Invalid file extension");
+            throw new Exception("Invalid file extension");
         }
 
-        if (!File.Exists(filepath)) {
+        if (!File.Exists(filepath)) 
+        {
             Debug.LogError("Unable to locate audio file: " + filepath);
             return false;
         }
@@ -142,24 +139,23 @@ public class SongAudioManager
 
         ++audioLoads;
 
-        try {
+        try
+        {
             string copiedFilepath = Path.Combine(audioFilesPath, audio.ToString() + Path.GetExtension(filepath));
-
             File.Copy(filepath, copiedFilepath, true);
 
             // Load sample data from waveform. This creates a thread on it's own.
-            if (audioSampleData[audioStreamArrayPos] != null)
-                audioSampleData[audioStreamArrayPos].Dispose();
             audioSampleData[audioStreamArrayPos] = new SampleData(copiedFilepath);
-
-            // Load Audio Streams
-            if (bassAudioStreams[audioStreamArrayPos] != null)
-                bassAudioStreams[audioStreamArrayPos].Dispose();
             bassAudioStreams[audioStreamArrayPos] = AudioManager.LoadTempoStream(copiedFilepath);
-        } catch (Exception e) {
-            Logger.LogException(e, "Could not open audio");
+        } 
+        catch (Exception e) 
+        {
+            Logger.LogException(e, $"Could not open audio file \"{filepath}\"");
+            ChartEditor.Instance.errorManager.QueueErrorMessage(Logger.LogException(e, $"Could not open audio file \"{filepath}\""));
             return false;
-        } finally {
+        } 
+        finally 
+        {
             --audioLoads;
         }
 
