@@ -8,23 +8,27 @@ using UnityEngine.UI;
 [UnityEngine.RequireComponent(typeof(UnityEngine.RectTransform))]
 public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IComparable<LyricEditor2PhraseController>, UnityEngine.EventSystems.IPointerClickHandler
 {
-    class PickupCommand : MoonscraperEngine.ICommand {
+    class PickupCommand : MoonscraperEngine.ICommand 
+    {
         public delegate void Refresh();
 
         Refresh refreshAfterUpdate;
         BatchedICommand pickupCommands;
 
-        public PickupCommand(BatchedICommand pickupCommands, Refresh refreshAfterUpdate) {
+        public PickupCommand(BatchedICommand pickupCommands, Refresh refreshAfterUpdate) 
+        {
             this.pickupCommands = pickupCommands;
             this.refreshAfterUpdate = refreshAfterUpdate;
         }
 
-        public void Invoke() {
+        public void Invoke() 
+        {
             pickupCommands.Invoke();
             refreshAfterUpdate();
         }
 
-        public void Revoke() {
+        public void Revoke() 
+        {
             pickupCommands.Revoke();
             refreshAfterUpdate();
         }
@@ -60,7 +64,8 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     LyricEditor2Event placingLyric;
 
     // Place the next lyric in lyricEvents
-    public void StartPlaceNextLyric(uint tick) {
+    public void StartPlaceNextLyric(uint tick) 
+    {
         LyricEditor2Event currentLyric = GetNextUnplacedSyllable();
         currentLyric.SetTick(tick);
         placingLyric = currentLyric;
@@ -72,16 +77,20 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     }
 
     // Stop placing the next lyric (useful for formatting in DisplayText())
-    public void StopPlaceNextLyric() {
+    public void StopPlaceNextLyric() 
+    {
         placingLyric = null;
         DisplayText();
     }
 
     // Get the tick of the first event of this phrase
-    public uint? GetFirstEventTick() {
+    public uint? GetFirstEventTick() 
+    {
         LyricEditor2Event firstEvent = null;
-        foreach (LyricEditor2Event currentEvent in lyricEvents) {
-            if (firstEvent == null || (currentEvent != null && currentEvent.tick < firstEvent.tick)) {
+        foreach (LyricEditor2Event currentEvent in lyricEvents) 
+        {
+            if (firstEvent == null || (currentEvent != null && currentEvent.tick < firstEvent.tick)) 
+            {
                 firstEvent = currentEvent;
             }
         }
@@ -89,10 +98,13 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     }
 
     // Get the tick of the last event of this phrase
-    public uint? GetLastEventTick() {
+    public uint? GetLastEventTick() 
+    {
         LyricEditor2Event lastEvent = null;
-        foreach (LyricEditor2Event currentEvent in lyricEvents) {
-            if (lastEvent == null || (currentEvent != null && currentEvent.tick > lastEvent.tick)) {
+        foreach (LyricEditor2Event currentEvent in lyricEvents) 
+        {
+            if (lastEvent == null || (currentEvent != null && currentEvent.tick > lastEvent.tick)) 
+            {
                 lastEvent = currentEvent;
             }
         }
@@ -100,26 +112,31 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     }
 
     // Set the phrase_start event's tick
-    public void SetPhraseStart(uint tick) {
+    public void SetPhraseStart(uint tick) 
+    {
         phraseStartEvent.SetTick(tick);
     }
 
     // Set the phrase_end event's tick
-    public void SetPhraseEnd(uint tick) {
+    public void SetPhraseEnd(uint tick) 
+    {
         phraseEndEvent.SetTick(tick);
     }
 
-    public void PickupPhraseStart() {
+    public void PickupPhraseStart() 
+    {
         phraseStartEvent.Pickup().Invoke();
     }
 
-    public void PickupPhraseEnd() {
+    public void PickupPhraseEnd() 
+    {
         phraseEndEvent.Pickup().Invoke();
     }
 
     // Initialize lyricEvents using a list of string syllables. Syllables which
     // do not end with a dash will be displayed with a trailing space
-    public void InitializeSyllables(List<string> syllables) {
+    public void InitializeSyllables(List<string> syllables) 
+    {
         phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword, mainController);
         phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword, mainController);
         lyricEvents = new List<LyricEditor2Event>();
@@ -131,27 +148,37 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     // chart editor. Method also looks for phrase_start and phrase_end events
     // and, if they exist, assign them to the appropriate variables. Events
     // which do not start with c_lyricPrefix are ignored
-    public void InitializeSyllables(List<Event> existingEvents) {
+    public void InitializeSyllables(List<Event> existingEvents) 
+    {
         phraseStartEvent = null;
         phraseEndEvent = null;
         lyricEvents = new List<LyricEditor2Event>();
 
-        for (int i = 0; i < existingEvents.Count; i++) {
+        for (int i = 0; i < existingEvents.Count; ++i) 
+        {
             Event currentEvent = existingEvents[i];
 
-            if (currentEvent.title.Equals(c_phraseStartKeyword)) {
-                if (phraseStartEvent == null) {
+            if (currentEvent.title.Equals(c_phraseStartKeyword)) 
+            {
+                if (phraseStartEvent == null) 
+                {
                     phraseStartEvent = new LyricEditor2Event(currentEvent, mainController);
-                } else {
+                } 
+                else 
+                {
                     // phrase_start event does not correspond to any phrase,
                     // delete it
                     var deleteCommand = new SongEditDelete(currentEvent);
                     deleteCommand.Invoke();
                     mainController.editCommands.Add(deleteCommand);
                 }
-            } else if (currentEvent.title.Equals(c_phraseEndKeyword)) {
+            } 
+            else if (currentEvent.title.Equals(c_phraseEndKeyword)) 
+            {
                 phraseEndEvent = new LyricEditor2Event(currentEvent, mainController);
-            } else if (currentEvent.IsLyric()) {
+            } 
+            else if (currentEvent.IsLyric()) 
+            {
                 LyricEditor2Event newEvent = new LyricEditor2Event(currentEvent, mainController);
                 lyricEvents.Add(newEvent);
 
@@ -163,171 +190,234 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
             }
         }
         // Make sure phrase_start and phrase_end events exist
-        if (phraseStartEvent == null) {
+        if (phraseStartEvent == null) 
+        {
             phraseStartEvent = new LyricEditor2Event(c_phraseStartKeyword, mainController);
         }
-        if (phraseEndEvent == null) {
+        if (phraseEndEvent == null) 
+        {
             phraseEndEvent = new LyricEditor2Event(c_phraseEndKeyword, mainController);
         }
+
         CheckForUnplacedSyllables();
         DisplayText();
-        if (lyricEvents.Count > 0) {
+
+        if (lyricEvents.Count > 0) 
+        {
             anySyllablesPlaced = true;
         }
     }
 
-    public void AddSyllables(List<string> syllables) {
-        for (int i = 0; i < syllables.Count; i++) {
+    public void AddSyllables(List<string> syllables) 
+    {
+        for (int i = 0; i < syllables.Count; ++i) 
+        {
             string currentSyllable = syllables[i];
             string formattedSyllable = currentSyllable.TrimEnd();
 
             LyricEditor2Event newEvent = new LyricEditor2Event(LyricHelper.LYRIC_EVENT_PREFIX + formattedSyllable, mainController);
+            
             // Add syllables to lyricEvents
             lyricEvents.Add(newEvent);
+
             // Add formatted name to event
             FormatAndAddSyllable(formattedSyllable, newEvent);
         }
+
         CheckForUnplacedSyllables();
         DisplayText();
     }
 
     // Pickup the last syllable in this phrase, plus the phrase_end event if
     // needed
-    public void PickupLastSyllable() {
+    public void PickupLastSyllable() 
+    {
         LyricEditor2Event firstUnplaced = GetNextUnplacedSyllable();
-        if (firstUnplaced != null) {
+        if (firstUnplaced != null) 
+        {
             int unplacedIndex = lyricEvents.IndexOf(firstUnplaced);
-            if (unplacedIndex > 0) {
+            if (unplacedIndex > 0) 
+            {
                 lyricEvents[unplacedIndex - 1].Pickup().Invoke();
             }
-            if (unplacedIndex == 1) {
+
+            if (unplacedIndex == 1) 
+            {
                 PickupPhraseStart();
             }
-        } else {
-            if (lyricEvents[lyricEvents.Count - 1].hasBeenPlaced) {
+        } 
+        else 
+        {
+            
+            if (lyricEvents[lyricEvents.Count - 1].hasBeenPlaced) 
+            {
                 lyricEvents[lyricEvents.Count - 1].Pickup().Invoke();
                 PickupPhraseEnd();
             }
         }
+
         CheckForUnplacedSyllables();
         DisplayText();
     }
 
     // Return a text representation of the current phrase state, using hyphen-
     // newline notation
-    public string GetTextRepresentation(bool onlyConsiderUnplaced = false, bool onlyConsiderPlaced = false) {
+    public string GetTextRepresentation(bool onlyConsiderUnplaced = false, bool onlyConsiderPlaced = false) 
+    {
         string tempString = "";
-        for (int i = 0; i < lyricEvents.Count; i++) {
-            if (onlyConsiderUnplaced) {
-                if (!lyricEvents[i].hasBeenPlaced) {
+        for (int i = 0; i < lyricEvents.Count; ++i) 
+        {
+            if (onlyConsiderUnplaced) 
+            {
+                if (!lyricEvents[i].hasBeenPlaced) 
+                {
                     tempString += lyricEvents[i].formattedText;
                 }
-            } else if (onlyConsiderPlaced) {
-                if (lyricEvents[i].hasBeenPlaced) {
+            } 
+            else if (onlyConsiderPlaced) 
+            {
+                if (lyricEvents[i].hasBeenPlaced) 
+                {
                     tempString += lyricEvents[i].formattedText;
                 }
-            } else {
+            } 
+            else 
+            {
                 tempString += lyricEvents[i].formattedText;
             }
         }
+
         tempString = tempString.TrimEnd();
         tempString += "\n";
+
         return tempString;
     }
 
     // Same as GetTextRepresentation(), but only consider unplaced phrases
-    public string GetUnplacedTextRepresentation() {
+    public string GetUnplacedTextRepresentation() 
+    {
         string tempString = "";
-        for (int i = 0; i < lyricEvents.Count; i++) {
+        for (int i = 0; i < lyricEvents.Count; ++i) 
+        {
             tempString += lyricEvents[i].formattedText;
         }
+
         tempString = tempString.TrimEnd();
         tempString += "\n";
+
         return tempString;
     }
 
     // Pick up all contained lyric events, including the phrase_start and
     // phrase_end events
-    public MoonscraperEngine.ICommand Pickup() {
+    public MoonscraperEngine.ICommand Pickup() 
+    {
         List<MoonscraperEngine.ICommand> commands = new List<MoonscraperEngine.ICommand>();
-        foreach (LyricEditor2Event currentEvent in lyricEvents) {
+
+        foreach (LyricEditor2Event currentEvent in lyricEvents) 
+        {
             commands.Add(currentEvent.Pickup());
         }
+
         commands.Add(phraseStartEvent.Pickup());
         commands.Add(phraseEndEvent.Pickup());
+
         BatchedICommand batchedCommands = new BatchedICommand(commands);
         PickupCommand pickupCommand = new PickupCommand(batchedCommands, RefreshAfterPickup);
+
         return pickupCommand;
     }
 
     // IComparison which searches based on end tick, or start tick if an end
     // tick does not exist
-    public int CompareTo(LyricEditor2PhraseController c) {
+    public int CompareTo(LyricEditor2PhraseController c) 
+    {
         return sortID - c.sortID;
     }
 
-    public void OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) {
-         if (eventData.button == UnityEngine.EventSystems.PointerEventData.InputButton.Right) {
-             mainController.PickupFrom(this);
-         } else if (eventData.button == UnityEngine.EventSystems.PointerEventData.InputButton.Left) {
-             mainController.EditPhrase(this);
-         }
-     }
+    public void OnPointerClick (UnityEngine.EventSystems.PointerEventData eventData) 
+    {
+        if (eventData.button == UnityEngine.EventSystems.PointerEventData.InputButton.Right) 
+        {
+            mainController.PickupFrom(this);
+        } 
+        else if (eventData.button == UnityEngine.EventSystems.PointerEventData.InputButton.Left) 
+        {
+            mainController.EditPhrase(this);
+        }
+    }
 
-     // Get the last event which occurs before the specified tick (does not
-     // consider phrase_start, return null if after phrase_end)
-     LyricEditor2Event GetEventAtTick(uint? tickNullable) {
-         if (!(tickNullable is uint tick) || phraseEndEvent.tick <= tick) {
-             return null;
-         }
-         LyricEditor2Event targetEvent = null;
-         for (int i = 0; i < lyricEvents.Count; i++) {
-             if (lyricEvents[i].tick <= tick) {
-                 targetEvent = lyricEvents[i];
-             } else {
-                 return targetEvent;
-             }
-         }
-         return targetEvent;
-     }
+    // Get the last event which occurs before the specified tick (does not
+    // consider phrase_start, return null if after phrase_end)
+    LyricEditor2Event GetEventAtTick(uint? tickNullable) 
+    {
+        if (!(tickNullable is uint tick) || phraseEndEvent.tick <= tick) 
+        {
+            return null;
+        }
 
-     // Highlight the appropriate syllable during playback
-     public void PlaybackHighlight(uint? currentTick) {
-         placingLyric = GetEventAtTick(currentTick);
-         DisplayText();
-     }
+        LyricEditor2Event targetEvent = null;
+        for (int i = 0; i < lyricEvents.Count; ++i) 
+        {
+            if (lyricEvents[i].tick <= tick) 
+            {
+                targetEvent = lyricEvents[i];
+            } 
+            else 
+            {
+                return targetEvent;
+            }
+        }
 
-    void Start() {
+        return targetEvent;
+    }
+
+    // Highlight the appropriate syllable during playback
+    public void PlaybackHighlight(uint? currentTick) 
+    {
+        placingLyric = GetEventAtTick(currentTick);
+        DisplayText();
+    }
+
+    void Start() 
+    {
         rectTransform = GetComponent<UnityEngine.RectTransform>();
     }
 
-    void CheckForUnplacedSyllables() {
-        if (GetNextUnplacedSyllable() == null) {
-            allSyllablesPlaced = true;
-        } else {
-            allSyllablesPlaced = false;
-        }
+    void CheckForUnplacedSyllables() 
+    {
+        allSyllablesPlaced = GetNextUnplacedSyllable() == null;
         anySyllablesPlaced = false;
-        foreach (LyricEditor2Event syllable in lyricEvents) {
-            if (syllable.hasBeenPlaced) {
+
+        foreach (LyricEditor2Event syllable in lyricEvents) 
+        {
+            if (syllable.hasBeenPlaced) 
+            {
                 anySyllablesPlaced = true;
                 break;
             }
         }
     }
 
-    void FormatAndAddSyllable(string syllable, LyricEditor2Event targetEvent) {
-        if (syllable.EndsWith("-") || syllable.EndsWith("=")) {
+    void FormatAndAddSyllable(string syllable, LyricEditor2Event targetEvent) 
+    {
+        if (syllable.EndsWith("-") || syllable.EndsWith("=")) 
+        {
             targetEvent.formattedText = syllable;
-        } else {
+        } 
+        else 
+        {
             targetEvent.formattedText = syllable + " ";
         }
     }
 
-    LyricEditor2Event GetNextUnplacedSyllable() {
-        for (int i = 0; i < lyricEvents.Count; i++) {
+    LyricEditor2Event GetNextUnplacedSyllable() 
+    {
+        for (int i = 0; i < lyricEvents.Count; ++i) 
+        {
             LyricEditor2Event currentEvent = lyricEvents[i];
-            if (!currentEvent.hasBeenPlaced) {
+            if (!currentEvent.hasBeenPlaced) 
+            {
                 return currentEvent;
             }
         }
@@ -342,38 +432,50 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
         string previousColor = "";
         string textToDisplay = "";
 
-        for (int i = 0; i < lyricEvents.Count; i++) {
+        for (int i = 0; i < lyricEvents.Count; i++) 
+        {
             LyricEditor2Event currentEvent = lyricEvents[i];
             string currentColor;
 
             // Set currentColor
-            if (currentEvent == placingLyric) {
+            if (currentEvent == placingLyric) 
+            {
                 currentColor = selectionColorString;
-            } else if (currentEvent.hasBeenPlaced) {
+            } 
+            else if (currentEvent.hasBeenPlaced) 
+            {
                 currentColor = unfocusedColorString;
-            } else {
+            } 
+            else 
+            {
                 currentColor = defaultColorString;
             }
 
             // Add color tags
-            if (currentColor != previousColor) {
-                if (previousColor != "") {
+            if (currentColor != previousColor) 
+            {
+                if (previousColor != "") 
+                {
                     textToDisplay += "</color>";
                 }
                 textToDisplay += "<color=#" + currentColor + ">";
                 previousColor = currentColor;
             }
+
             // Make sure tags don't mess with anything
             string eventTextTagless = currentEvent.formattedText.Replace("<", "<<i></i>");
             textToDisplay += eventTextTagless;
         }
+
         // Add terminating color tag
         textToDisplay += "</color>";
+
         // Update UI text
         phraseText.text = textToDisplay;
     }
 
-    void RefreshAfterPickup() {
+    void RefreshAfterPickup() 
+    {
         CheckForUnplacedSyllables();
         DisplayText();
     }
