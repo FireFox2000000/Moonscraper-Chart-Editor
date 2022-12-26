@@ -340,7 +340,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         SaveUnplacedSyllables();
         SavePlacedSyllables();
         // Place phrase_end for current phrase if it hasn't been placed
-        if (currentPhrase != null && !currentPhrase.phraseEndPlaced && currentPhrase.anySyllablesPlaced) {
+        if (currentPhrase != null && !currentPhrase.phraseEndPlaced && currentPhrase.anySyllablesPlaced)
+        {
             // Ensure valid placement
             AutoPlacePhraseEnd(currentPhrase);
         }
@@ -350,11 +351,15 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         ClearPickupCommands();
         // Push batched edits to command stack
 
-        ChartEditor.Instance.SetDefaultCommandStack();
+        if (ChartEditor.InstanceExists)
+        {
+            ChartEditor.Instance.SetDefaultCommandStack();
 
-        if (!editCommands.isEmpty) {
-            // Push the finalised commands back onto the primary stack
-            ChartEditor.Instance.commandStack.Push(editCommands);
+            if (!editCommands.isEmpty) 
+            {
+                // Push the finalised commands back onto the primary stack
+                ChartEditor.Instance.commandStack.Push(editCommands);
+            }
         }
 
         editCommands = null; // Release memory, don't wait for the next OnEnable call
