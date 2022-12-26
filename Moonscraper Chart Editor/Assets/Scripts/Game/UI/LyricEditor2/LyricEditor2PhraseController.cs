@@ -425,7 +425,8 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     }
 
     // Update the text content of phraseText to reflect the current phrase state
-    void DisplayText() {
+    void DisplayText() 
+    {
         string defaultColorString = UnityEngine.ColorUtility.ToHtmlStringRGBA(defaultColor);
         string unfocusedColorString = UnityEngine.ColorUtility.ToHtmlStringRGBA(unfocusedColor);
         string selectionColorString = UnityEngine.ColorUtility.ToHtmlStringRGBA(selectionColor);
