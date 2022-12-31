@@ -47,6 +47,6 @@ public static class FileExplorer  {
             filename = filename.Replace(c.ToString(), "");
         }
 
-        return filename;
+        return filename.Trim();
     }
 }
