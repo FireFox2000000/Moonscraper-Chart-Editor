@@ -53,7 +53,13 @@ namespace MoonscraperEngine.Audio
         public virtual bool Play(float playPoint, bool restart = false)
         {
             CurrentPositionSeconds = playPoint;
-            Bass.BASS_ChannelPlay(audioHandle, restart);
+
+            if (!Bass.BASS_ChannelPlay(audioHandle, restart))
+            {
+                var bassError = Bass.BASS_ErrorGetCode();
+                Debug.LogError("AudioStream BASS_ChannelPlay error: " + bassError);
+            }
+
             return true;
         }
 
@@ -113,7 +119,11 @@ namespace MoonscraperEngine.Audio
             }
             set
             {
-                Bass.BASS_ChannelSetPosition(audioHandle, value);
+                if (!Bass.BASS_ChannelSetPosition(audioHandle, value))
+                {
+                    var bassError = Bass.BASS_ErrorGetCode();
+                    Debug.LogError("AudioStream BASS_ChannelSetPosition error: " + bassError);
+                }
             }
         }
 
