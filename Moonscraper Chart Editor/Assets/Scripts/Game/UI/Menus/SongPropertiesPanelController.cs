@@ -352,9 +352,15 @@ public class SongPropertiesPanelController : TabMenu
         setAudioTextLabels();
     }
 
+    static readonly HashSet<char> s_metadataBannedChars = new HashSet<char>()
+    {
+        '"',
+        '\n'
+    };
+
     public static char ValidateStringMetadataInput(string text, int charIndex, char addedChar)
     {
-        if (addedChar == '"')
+        if (s_metadataBannedChars.Contains(addedChar))
         {
             return '\0';
         }
