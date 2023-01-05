@@ -1,3 +1,9 @@
+1.4.10
+    FIXES
+    -Upon loading new audio, always clear to prevent previous audio leaking into new songs. Communicate audio loading failures to users.
+    -Fixed sp fill flag bleeding into onto non-drums track when changing charts.
+    -Strip leading and trailing newline chars from filename to fix save breaking and ban newline chars from metadata fields.
+
 1.4.9
     CHANGES
     -Read Midi "T1 GEMS" and "PART DRUMS_REAL_PS" tracks. Exclude Venue track.
