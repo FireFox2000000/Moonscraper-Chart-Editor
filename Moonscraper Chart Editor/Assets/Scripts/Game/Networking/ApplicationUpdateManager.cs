@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using Octokit;
 
+
 public class ApplicationUpdateManager
 {
 #if UNITY_EDITOR
@@ -22,6 +23,8 @@ public class ApplicationUpdateManager
     public ApplicationUpdateManager(string currentVersion)
     {
         this.currentVersion = currentVersion;
+
+        UnitTest();
     }
 
     public async void CheckForUpdates(OnUpdateFoundFn onUpdateFoundCallback, bool allowPreleases = false)
@@ -87,6 +90,19 @@ public class ApplicationUpdateManager
 
     static bool IsLatestVersionNewer(string currentVersion, string latest)
     {
-        return string.CompareOrdinal(currentVersion, latest) < 0;
+        var version1 = new Version(currentVersion);
+        var version2 = new Version(latest);
+
+        return version1.CompareTo(version2) < 0;
+    }
+
+    static void UnitTest()
+    {
+        Debug.Assert(!IsLatestVersionNewer("1.4.10", "1.4.10"));
+        Debug.Assert(IsLatestVersionNewer("1.0", "1.4.9"));
+        Debug.Assert(IsLatestVersionNewer("1.0", "2.0"));
+        Debug.Assert(IsLatestVersionNewer("1.3.9", "1.4.9"));
+        Debug.Assert(IsLatestVersionNewer("1.4.9", "1.4.10"));
+        Debug.Assert(IsLatestVersionNewer("1.4.10", "1.5.0"));
     }
 }
