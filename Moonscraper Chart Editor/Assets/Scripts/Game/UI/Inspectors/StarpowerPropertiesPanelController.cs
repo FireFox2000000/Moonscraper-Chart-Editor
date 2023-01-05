@@ -22,6 +22,7 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
     {
         ChartEditor.Instance.events.drumsModeOptionChangedEvent.Register(UpdateTogglesInteractable);
         ChartEditor.Instance.events.chartReloadedEvent.Register(OnChartReloaded);
+        ChartEditor.Instance.events.toolChangedEvent.Register(OnToolChanged);
     }
 
     protected override void Update()
@@ -132,7 +133,7 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
         starpowerToolController.controller.SetDirty();
     }
 
-    void OnChartReloaded()
+    void ValidateAllowedFlags()
     {
         if (IsInTool() && !Globals.drumMode)
         {
@@ -141,5 +142,15 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
             flags &= ~Starpower.Flags.ProDrums_Activation;
             SetToolFlag(drumFillToggle, flags);
         }
+    }
+
+    void OnChartReloaded()
+    {
+        ValidateAllowedFlags();
+    }
+
+    void OnToolChanged()
+    {
+        ValidateAllowedFlags();
     }
 }
