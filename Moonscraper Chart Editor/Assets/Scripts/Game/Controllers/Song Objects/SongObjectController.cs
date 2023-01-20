@@ -64,7 +64,7 @@ public abstract class SongObjectController : SelectableClick {
 
     protected virtual void UpdateCheck()
     {
-        if (songObject != null && songObject.tick >= editor.minPos && songObject.tick < editor.maxPos)
+        if (songObject != null && songObject.tick >= editor.minPos && songObject.tick <= editor.maxPos)
         {
             if (editor.currentState == ChartEditor.State.Editor)
             {
