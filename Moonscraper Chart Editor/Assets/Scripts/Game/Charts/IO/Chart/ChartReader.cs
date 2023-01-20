@@ -476,7 +476,7 @@ namespace MoonscraperChartEditor.Song.IO
             string audioFilepath = ChartIOHelper.MetaData.ParseAsString(line);
 
             // Check if it's already the full path. If not, make it relative to the chart file.
-            if (!File.Exists(audioFilepath))
+            if (!Path.IsPathRooted(audioFilepath))
                 audioFilepath = Path.Combine(audioDirectory, audioFilepath);
 
             if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions))
