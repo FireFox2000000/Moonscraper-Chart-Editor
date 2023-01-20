@@ -1,3 +1,7 @@
+1.5.0
+    FIXES
+    -Fixed relative pathing check that resulted in incorrect audio loading when opening the application by directly opening that file.
+
 1.4.10
     FIXES
     -Upon loading new audio, always clear to prevent previous audio leaking into new songs. Communicate audio loading failures to users.
