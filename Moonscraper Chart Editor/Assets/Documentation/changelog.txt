@@ -1,6 +1,7 @@
 1.5.0
     FIXES
     -Fixed relative pathing check that resulted in incorrect audio loading when opening the application by directly opening that file.
+    -Fixed non-note objects not being activated when placed on the last valid spot on the chart.
 
 1.4.10
     FIXES
