@@ -31,7 +31,7 @@ namespace MoonscraperEngine.Audio
 
         public override bool Play(float playPoint = 0, bool restart = false)
         {
-            int channel = Bass.BASS_SampleGetChannel(audioHandle, false);
+            int channel = Bass.BASS_SampleGetChannel(audioHandle, BASSFlag.BASS_DEFAULT);
 
             bool isPlaying = Bass.BASS_ChannelIsActive(channel) != BASSActive.BASS_ACTIVE_STOPPED && Bass.BASS_ChannelIsActive(channel) != BASSActive.BASS_ACTIVE_PAUSED;
             if (onlyPlayIfStopped && isPlaying)
