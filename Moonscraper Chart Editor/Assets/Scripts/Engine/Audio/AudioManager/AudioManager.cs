@@ -34,6 +34,8 @@ namespace MoonscraperEngine.Audio
 
             // Load Bass.Net
             {
+				UnityEngine.Debug.Log($"Bass version: {Bass.BASS_GetVersion()}");
+
                 if (!Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_DEV_DEFAULT, 1))
                 {
                     UnityEngine.Debug.LogWarning($"BASS_SetConfig dev default {Bass.BASS_ErrorGetCode()}");
