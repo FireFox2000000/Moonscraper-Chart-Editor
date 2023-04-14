@@ -152,7 +152,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         windowHandleManager = new WindowHandleManager(string.Format("{0} v{1} {2}", Application.productName, Application.version, Globals.applicationBranchName), GetComponent<Settings>().productName);
         Application.logMessageReceived += HandleException;
 
-        Debug.Log(string.Format("Initialising {0} v{1}", Application.productName, Application.version));
+        string branchName = string.IsNullOrEmpty(Globals.applicationBranchName) ? "main" : Globals.applicationBranchName;
+        Debug.Log(string.Format("Initialising {0} v{1} Branch {2}", Application.productName, Application.version, branchName));
 
 #if !UNITY_EDITOR
         Application.wantsToQuit += QuittingEditCheck;
