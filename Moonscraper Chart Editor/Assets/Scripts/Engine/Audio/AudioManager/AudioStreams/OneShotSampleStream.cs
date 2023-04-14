@@ -59,7 +59,7 @@ namespace MoonscraperEngine.Audio
                 return true;
             }
             else
-                UnityEngine.Debug.LogError($"Error when playing {this.GetType()} stream: {Bass.BASS_ErrorGetCode()}, {audioHandle}");
+                UnityEngine.Debug.LogError($"Error when getting oneshot channel stream: {Bass.BASS_ErrorGetCode()}, {audioHandle}");
 
             return false;
         }

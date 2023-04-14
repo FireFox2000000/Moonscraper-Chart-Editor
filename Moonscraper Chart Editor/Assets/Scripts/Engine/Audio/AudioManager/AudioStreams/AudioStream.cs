@@ -56,7 +56,7 @@ namespace MoonscraperEngine.Audio
 
             if (!Bass.BASS_ChannelPlay(audioHandle, restart))
             {
-                Debug.LogError($"AudioStream BASS_ChannelPlay error on handle {audioHandle}: {Bass.BASS_ErrorGetCode()}");
+                Debug.LogError($"AudioStream BASS_ChannelPlay error on {this.GetType()} handle {audioHandle}: {Bass.BASS_ErrorGetCode()}");
             }
 
             return true;
@@ -124,7 +124,7 @@ namespace MoonscraperEngine.Audio
                 if (!Bass.BASS_ChannelSetPosition(audioHandle, value))
                 {
                     var bassError = Bass.BASS_ErrorGetCode();
-                    Debug.LogError($"AudioStream BASS_ChannelSetPosition error on handle {audioHandle}: {bassError}");
+                    Debug.LogError($"AudioStream BASS_ChannelSetPosition error on {this.GetType()} handle {audioHandle}: {bassError}");
                 }
             }
         }
