@@ -31,8 +31,6 @@ namespace MoonscraperEngine.Audio
 
         public override bool Play(float playPoint = 0, bool restart = false)
         {
-            base.Play(playPoint, restart);
-
             int channel = Bass.BASS_SampleGetChannel(audioHandle, false);
 
             bool isPlaying = Bass.BASS_ChannelIsActive(channel) != BASSActive.BASS_ACTIVE_STOPPED && Bass.BASS_ChannelIsActive(channel) != BASSActive.BASS_ACTIVE_PAUSED;
@@ -43,14 +41,25 @@ namespace MoonscraperEngine.Audio
 
             if (channel != 0)
             {
-                Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, volume);
-                Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, pan);
+                if (!Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, volume))
+                {
+                    UnityEngine.Debug.LogError($"Failed to set volume attribute on one shot stream channel {channel}");
+                }
 
-                Bass.BASS_ChannelPlay(channel, restart);
+                if (!Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, pan))
+                {
+                    UnityEngine.Debug.LogError($"Failed to set pan attribute on one shot stream channel {channel}");
+                }
+
+                if (!Bass.BASS_ChannelPlay(channel, restart))
+                {
+                    UnityEngine.Debug.LogError($"Failed to play one shot stream channel {channel}");
+                }
+
                 return true;
             }
             else
-                UnityEngine.Debug.LogError("Error when playing sample stream: " + Bass.BASS_ErrorGetCode() + ", " + audioHandle);
+                UnityEngine.Debug.LogError($"Error when playing {this.GetType()} stream: {Bass.BASS_ErrorGetCode()}, {audioHandle}");
 
             return false;
         }
