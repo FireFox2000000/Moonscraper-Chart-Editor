@@ -34,8 +34,16 @@ namespace MoonscraperEngine.Audio
 
             // Load Bass.Net
             {
-                Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_DEV_DEFAULT, 1);
-                Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATETHREADS, 1);
+                if (!Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_DEV_DEFAULT, 1))
+                {
+                    UnityEngine.Debug.LogError($"BASS_SetConfig dev default {Bass.BASS_ErrorGetCode()}");
+                }
+
+                if (!Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATETHREADS, 1))
+                {
+                    UnityEngine.Debug.LogError($"BASS_SetConfig update threads {Bass.BASS_ErrorGetCode()}");
+                }
+
                 success = Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero);
                 if (!success)
                 {
@@ -102,10 +110,17 @@ namespace MoonscraperEngine.Audio
 
             foreach(int pluginHandle in pluginHandles)
             {
-                Bass.BASS_PluginFree(pluginHandle);
+                if (!Bass.BASS_PluginFree(pluginHandle))
+                {
+                    UnityEngine.Debug.LogError($"Failed to free plugin handle {pluginHandle}, {Bass.BASS_ErrorGetCode()}");
+                }
             }
 
-            Bass.BASS_Free();
+            if (!Bass.BASS_Free())
+            {
+                UnityEngine.Debug.LogError($"Failed to free bass, {Bass.BASS_ErrorGetCode()}");
+            }
+
             UnityEngine.Debug.Log("Freed Bass Audio memory");
             isDisposed = true;
         }
@@ -246,6 +261,11 @@ namespace MoonscraperEngine.Audio
 
             int audioStreamHandle = Bass.BASS_SampleLoad(filepath, 0, 0, maxSimultaneousPlaybacks, BASSFlag.BASS_DEFAULT);
 
+            if (audioStreamHandle == 0)
+            {
+                UnityEngine.Debug.LogError($"Failed to load sample for path {filepath}, {Bass.BASS_ErrorGetCode()}");
+            }
+
             var newStream = new OneShotSampleStream(audioStreamHandle, maxSimultaneousPlaybacks);
             liveAudioStreams.Add(newStream);
             return newStream;
@@ -261,6 +281,11 @@ namespace MoonscraperEngine.Audio
         public static OneShotSampleStream LoadSampleStream(byte[] streamBytes, int maxSimultaneousPlaybacks)
         {
             int audioStreamHandle = Bass.BASS_SampleLoad(streamBytes, 0, streamBytes.Length, maxSimultaneousPlaybacks, BASSFlag.BASS_DEFAULT);
+
+            if (audioStreamHandle == 0)
+            {
+                UnityEngine.Debug.LogError($"Failed to load sample for sample stream bytes, {Bass.BASS_ErrorGetCode()}");
+            }
 
             var newStream = new OneShotSampleStream(audioStreamHandle, maxSimultaneousPlaybacks);
             liveAudioStreams.Add(newStream);
@@ -279,25 +304,37 @@ namespace MoonscraperEngine.Audio
         public static float GetAttribute(AudioStream audioStream, AudioAttributes attribute)
         {
             float value = 0;
-            Bass.BASS_ChannelGetAttribute(audioStream.audioHandle, (BASSAttribute)attribute, ref value);
+            if (!Bass.BASS_ChannelGetAttribute(audioStream.audioHandle, (BASSAttribute)attribute, ref value))
+            {
+                UnityEngine.Debug.LogError($"Failed to get audiostream attribute {attribute} for handle {audioStream.audioHandle}, {Bass.BASS_ErrorGetCode()}");
+            }
             return value;
         }
 
         public static void SetAttribute(AudioStream audioStream, AudioAttributes attribute, float value)
         {
-            Bass.BASS_ChannelSetAttribute(audioStream.audioHandle, (BASSAttribute)attribute, value);
+            if (!Bass.BASS_ChannelSetAttribute(audioStream.audioHandle, (BASSAttribute)attribute, value))
+            {
+                UnityEngine.Debug.LogError($"Failed to set audiostream attribute {attribute} for handle {audioStream.audioHandle}, {Bass.BASS_ErrorGetCode()}");
+            }
         }
 
         public static float GetAttribute(TempoStream audioStream, TempoAudioAttributes attribute)
         {
             float value = 0;
-            Bass.BASS_ChannelGetAttribute(audioStream.audioHandle, (BASSAttribute)attribute, ref value);
+            if (!Bass.BASS_ChannelGetAttribute(audioStream.audioHandle, (BASSAttribute)attribute, ref value))
+            {
+                UnityEngine.Debug.LogError($"Failed to get tempo stream attribute {attribute} for handle {audioStream.audioHandle}, {Bass.BASS_ErrorGetCode()}");
+            }
             return value;
         }
 
         public static void SetAttribute(TempoStream audioStream, TempoAudioAttributes attribute, float value)
         {
-            Bass.BASS_ChannelSetAttribute(audioStream.audioHandle, (BASSAttribute)attribute, value);
+            if (!Bass.BASS_ChannelSetAttribute(audioStream.audioHandle, (BASSAttribute)attribute, value))
+            {
+                UnityEngine.Debug.LogError($"Failed to set tempo stream attribute {attribute} for handle {audioStream.audioHandle}, {Bass.BASS_ErrorGetCode()}");
+            }
         }
 
         #endregion

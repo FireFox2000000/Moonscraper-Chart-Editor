@@ -56,8 +56,7 @@ namespace MoonscraperEngine.Audio
 
             if (!Bass.BASS_ChannelPlay(audioHandle, restart))
             {
-                var bassError = Bass.BASS_ErrorGetCode();
-                Debug.LogError("AudioStream BASS_ChannelPlay error: " + bassError);
+                Debug.LogError($"AudioStream BASS_ChannelPlay error on handle {audioHandle}: {Bass.BASS_ErrorGetCode()}");
             }
 
             return true;
@@ -79,7 +78,10 @@ namespace MoonscraperEngine.Audio
 
         public virtual void Stop()
         {
-            Bass.BASS_ChannelStop(audioHandle);
+            if (!Bass.BASS_ChannelStop(audioHandle))
+            {
+                Debug.LogError($"AudioStream BASS_ChannelStop error on handle {audioHandle}: {Bass.BASS_ErrorGetCode()}");
+            }
 
             // Synchronisation is only temporary as user may add or remove streams between different play sessions. 
             foreach (int stream in childSyncedStreams)
@@ -87,7 +89,7 @@ namespace MoonscraperEngine.Audio
                 if (!Bass.BASS_ChannelRemoveLink(this.audioHandle, stream))
                 {
                     var bassError = Bass.BASS_ErrorGetCode();
-                    Debug.LogError("AudioStream ClearSyncedStreams error: " + bassError);
+                    Debug.LogError($"AudioStream ClearSyncedStreams error on handle {this.audioHandle}: {bassError}");
                 }
             }
 
@@ -122,7 +124,7 @@ namespace MoonscraperEngine.Audio
                 if (!Bass.BASS_ChannelSetPosition(audioHandle, value))
                 {
                     var bassError = Bass.BASS_ErrorGetCode();
-                    Debug.LogError("AudioStream BASS_ChannelSetPosition error: " + bassError);
+                    Debug.LogError($"AudioStream BASS_ChannelSetPosition error on handle {audioHandle}: {bassError}");
                 }
             }
         }
