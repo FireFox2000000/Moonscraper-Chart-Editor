@@ -402,12 +402,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         // Save lyrics
         SaveUnplacedSyllables();
         SavePlacedSyllables();
-        // Place phrase_end for current phrase if it hasn't been placed
-        if (currentPhrase != null && !currentPhrase.phraseEndPlaced && currentPhrase.anySyllablesPlaced)
-        {
-            // Ensure valid placement
-            AutoPlacePhraseEnd(currentPhrase);
-        }
+
         ClearPhraseObjects();
         autoScroller.enabled = false;
         // Remove command stack commands
@@ -635,14 +630,6 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
         // Update search order
         UpdateSortIds();
-
-        // Check to ensure all fully-placed phrases have their phrase_start and
-        // phrase_end events set, if appropriate
-        for (int i = 0; i < phrases.Count; i++) 
-        {
-            LyricEditor2PhraseController currentPhrase = phrases[i];
-            AutoPlacePhraseStartEnd(currentPhrase);
-        }
     }
 
     void AutoPlacePhraseStartEnd(LyricEditor2PhraseController currentPhrase) 
