@@ -36,7 +36,7 @@ namespace MoonscraperEngine.Audio
             {
                 if (!Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_DEV_DEFAULT, 1))
                 {
-                    UnityEngine.Debug.LogError($"BASS_SetConfig dev default {Bass.BASS_ErrorGetCode()}");
+                    UnityEngine.Debug.LogWarning($"BASS_SetConfig dev default {Bass.BASS_ErrorGetCode()}");
                 }
 
                 if (!Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATETHREADS, 1))
