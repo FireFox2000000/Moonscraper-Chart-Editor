@@ -12,6 +12,7 @@ namespace MoonscraperChartEditor.Song.IO
 {
     public static class MidReader
     {
+        const int SOLO_END_CORRECTION_OFFSET = -1;
 
         public enum CallbackState
         {
@@ -604,7 +605,8 @@ namespace MoonscraperChartEditor.Song.IO
                                     instrument = messageParams.instrument
                                 },
                                 MidIOHelper.SOLO_EVENT_TEXT,
-                                MidIOHelper.SOLO_END_EVENT_TEXT
+                                MidIOHelper.SOLO_END_EVENT_TEXT,
+                                Starpower.Flags.None
                             );
                             // Update instrument's caches
                             foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
@@ -739,7 +741,7 @@ namespace MoonscraperChartEditor.Song.IO
                     ProcessNoteOnEventAsForcedType(eventProcessParams, Note.NoteType.Tap);
                 }},
                 { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
-                    ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
+                    ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, 0, MidIOHelper.SOLO_END_EVENT_TEXT, SOLO_END_CORRECTION_OFFSET);
                 }},
             };
 
@@ -802,7 +804,7 @@ namespace MoonscraperChartEditor.Song.IO
                     ProcessNoteOnEventAsForcedType(eventProcessParams, Note.NoteType.Tap);
                 }},
                 { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
-                    ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
+                    ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, 0, MidIOHelper.SOLO_END_EVENT_TEXT, SOLO_END_CORRECTION_OFFSET);
                 }},
             };
 
@@ -861,7 +863,7 @@ namespace MoonscraperChartEditor.Song.IO
             {
                 { MidIOHelper.STARPOWER_NOTE, ProcessNoteOnEventAsStarpower },
                 { MidIOHelper.SOLO_NOTE, (in EventProcessParams eventProcessParams) => {
-                    ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, MidIOHelper.SOLO_END_EVENT_TEXT);
+                    ProcessNoteOnEventAsEvent(eventProcessParams, MidIOHelper.SOLO_EVENT_TEXT, 0, MidIOHelper.SOLO_END_EVENT_TEXT, SOLO_END_CORRECTION_OFFSET);
                 }},
                 { MidIOHelper.DOUBLE_KICK_NOTE, (in EventProcessParams eventProcessParams) => {
                     ProcessNoteOnEventAsNote(eventProcessParams, Song.Difficulty.Expert, (int)Note.DrumPad.Kick, Note.Flags.InstrumentPlus);
@@ -1180,15 +1182,19 @@ namespace MoonscraperChartEditor.Song.IO
             return sus;
         }
 
-        static void ProcessNoteOnEventAsEvent(EventProcessParams eventProcessParams, string eventStartText, string eventEndText)
+        static void ProcessNoteOnEventAsEvent(EventProcessParams eventProcessParams, string eventStartText, int tickStartOffset, string eventEndText, int tickEndOffset)
         {
             var noteEvent = eventProcessParams.midiEvent as NoteOnEvent;
             Debug.Assert(noteEvent != null, $"Wrong note event type passed to {nameof(ProcessNoteOnEventAsEvent)}. Expected: {typeof(NoteOnEvent)}, Actual: {eventProcessParams.midiEvent.GetType()}");
             var song = eventProcessParams.song;
             var instrument = eventProcessParams.instrument;
 
-            uint tick = (uint)noteEvent.AbsoluteTime;
-            var sus = CalculateSustainLength(song, noteEvent);
+            uint tick = (uint)(noteEvent.AbsoluteTime + tickStartOffset);            
+            uint sus = CalculateSustainLength(song, noteEvent);
+            if (sus >= tickEndOffset)
+            {
+                sus = (uint)(sus + tickEndOffset);
+            }
 
             foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
             {
@@ -1239,7 +1245,7 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
-        static void ProcessTextEventPairAsStarpower(in EventProcessParams eventProcessParams, string startText, string endText, Starpower.Flags flags = Starpower.Flags.None)
+        static void ProcessTextEventPairAsStarpower(in EventProcessParams eventProcessParams, string startText, string endText, Starpower.Flags flags)
         {
             foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
             {

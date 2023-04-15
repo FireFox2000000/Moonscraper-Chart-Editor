@@ -34,6 +34,8 @@ namespace MoonscraperChartEditor.Song.IO
         const byte SYSEX_START = 0xF0;
         const byte SYSEX_END = 0xF7;
 
+        const int SOLO_END_CORRECTION_OFFSET = 1;
+
         static readonly byte[] END_OF_TRACK = new byte[] { 0, 0xFF, 0x2F, 0x00 };
 
         struct VocalProcessingParams
@@ -654,7 +656,10 @@ namespace MoonscraperChartEditor.Song.IO
                     {
                         if (soloOnEvent != null && chartEvent.eventName == MidIOHelper.SOLO_END_EVENT_TEXT)
                         {
-                            GetSoloBytes(soloOnEvent, chartEvent.tick, out onEvent, out offEvent);
+                            // Note-off tick for a solo marker in midi does not count as part of the solo, however does in .chart
+                            // Manually offset by 1 tick to make sure all notes in the solo are included
+                            uint endTick = Math.Max(soloOnEvent.tick, chartEvent.tick + SOLO_END_CORRECTION_OFFSET);
+                            GetSoloBytes(soloOnEvent, endTick, out onEvent, out offEvent);
                             soloOnEvent = null;
                         }
                         else if (chartEvent.eventName == MidIOHelper.SOLO_EVENT_TEXT)
