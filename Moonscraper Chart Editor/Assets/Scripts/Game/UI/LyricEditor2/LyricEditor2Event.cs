@@ -64,14 +64,17 @@ public class LyricEditor2Event
         this.hasBeenPlaced = (existingEvent != null);
     }
 
-    public void SetText(string newText) {
+    public void SetText(string newText) 
+    {
         this.text = newText;
-        if (referencedEvent != null) {
+        if (referencedEvent != null) 
+        {
             SetTick(referencedEvent.tick);
         }
     }
 
-    public void SetTick (uint tick) {
+    public void SetTick (uint tick) 
+    {
         List<SongEditCommand> commands = new List<SongEditCommand>();
 
         if (this.referencedEvent != null)
@@ -85,15 +88,16 @@ public class LyricEditor2Event
         BatchedSongEditCommand batchedCommands = new BatchedSongEditCommand(commands);
         batchedCommands.Invoke();
         mainController.editCommands.Add(batchedCommands);
-        ChartEditor.Instance.commandStack.ResetTail();
 
         this.referencedEvent = newLyric;
         this.hasBeenPlaced = true;
     }
 
     // Remove lyric from the editor
-    public MoonscraperEngine.ICommand Pickup() {
-        if (this.referencedEvent != null) {
+    public MoonscraperEngine.ICommand Pickup() 
+    {
+        if (this.referencedEvent != null) 
+        {
             return new PickupCommand(referencedEvent, formattedText, InvokePickup, RevokePickup, mainController);
         }
         return null;

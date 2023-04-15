@@ -72,7 +72,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public static bool hasFocus { get { return Application.isFocused; } }
 
     public SelectedObjectsManager selectedObjectsManager;
-    public CommandStack commandStack { get; private set; }
+    public CommandStack commandStack => m_songCommandStack;
     CommandStack m_songCommandStack;
 
     /// <summary>
@@ -917,7 +917,6 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         {
             // Needs initialisation
             m_songCommandStack = new CommandStack();
-            SetActiveCommandStack(m_songCommandStack);
         }
         else
         {
@@ -1417,17 +1416,6 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     {
         Copy();
         Delete();
-    }
-
-    // Gives undo-redo functionality to sub-states
-    public void SetActiveCommandStack(CommandStack commandStack)
-    {
-        this.commandStack = commandStack;
-    }
-
-    public void SetDefaultCommandStack()
-    {
-        this.commandStack = m_songCommandStack;
     }
 
 #endregion

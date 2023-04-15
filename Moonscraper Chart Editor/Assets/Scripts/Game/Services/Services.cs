@@ -140,13 +140,13 @@ public class Services : MonoBehaviour
     public bool CanUndo()
     {
         ChartEditor editor = ChartEditor.Instance;
-        return !editor.commandStack.isAtStart && !editor.groupMove.movementInProgress;
+        return !editor.commandStack.isAtStart && !editor.groupMove.movementInProgress && !IsLyricEditorActive;
     }
 
     public bool CanRedo()
     {
         ChartEditor editor = ChartEditor.Instance;
-        return !editor.commandStack.isAtEnd && !editor.groupMove.movementInProgress;
+        return !editor.commandStack.isAtEnd && !editor.groupMove.movementInProgress && !IsLyricEditorActive;
     }
 
     public bool CanPlay()

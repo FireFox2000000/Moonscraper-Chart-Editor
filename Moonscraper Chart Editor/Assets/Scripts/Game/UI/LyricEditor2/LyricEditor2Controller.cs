@@ -285,7 +285,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                 if (pushToStack) 
                 {
                     commandStackPushes.Add(pickupFromCommand);
-                    ChartEditor.Instance.commandStack.Push(pickupFromCommand);
+                    m_commandStack.Push(pickupFromCommand);
                 } 
                 else 
                 {
@@ -380,13 +380,19 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         savedPlacedSyllables = "";
         savedUnplacedSyllables = "";
         numCommandStackPushes = 0;
-        ClearPhraseObjects();
-        Reset();
+
+        // Close the lyric editor, prevent stomping over the active command stack
+        CloseLyricEditor();
+    }
+
+    public void OnChartLoaded()
+    {
+        // Close the lyric editor, prevent stomping over the active command stack
+        CloseLyricEditor();
     }
 
     void OnEnable() 
     {
-        ChartEditor.Instance.SetActiveCommandStack(m_commandStack);
         Reset();
         UnityEngine.Debug.Log("Opened lyric editor");
     }
@@ -410,8 +416,6 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
         if (ChartEditor.InstanceExists)
         {
-            ChartEditor.Instance.SetDefaultCommandStack();
-
             if (!editCommands.isEmpty) 
             {
                 // Push the finalised commands back onto the primary stack
@@ -431,6 +435,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
 
         ChartEditor.Instance.events.editorStateChangedEvent.Register(OnStateChanged);
         ChartEditor.Instance.events.songLoadedEvent.Register(OnSongLoaded);
+        ChartEditor.Instance.events.chartReloadedEvent.Register(OnChartLoaded);
 
         m_commandStack.onPush.Register(onCommandStackPush);
         m_commandStack.onPop.Register(onCommandStackPop);
@@ -461,6 +466,11 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         currentPhrase = GetNextUnfinishedPhrase();
         // Activate auto-scrolling if playback is active on lyric editor enable
         autoScroller.enabled = playbackActive;
+    }
+
+    void CloseLyricEditor()
+    {
+        gameObject.SetActive(false);
     }
 
     static bool HasLyricEvents(List<SongEditCommand> commands) 
@@ -1027,12 +1037,12 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         int pushesToDelete = numCommandStackPushes;
         for (int i = 0; i < pushesToDelete; ++i) 
         {
-            ChartEditor.Instance.commandStack.Pop();
+            m_commandStack.Pop();
         }
 
         if (commandStackPushes.Count > 0) 
         {
-            ChartEditor.Instance.commandStack.ResetTail();
+            m_commandStack.ResetTail();
         }
 
         // Need to redo the changes made in those pushes
