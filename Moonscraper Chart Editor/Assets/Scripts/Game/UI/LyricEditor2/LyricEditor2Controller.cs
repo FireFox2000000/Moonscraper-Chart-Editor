@@ -375,27 +375,19 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         }
     }
 
-    public void Reset() 
+    public void OnSongLoaded() 
     {
         savedPlacedSyllables = "";
         savedUnplacedSyllables = "";
         numCommandStackPushes = 0;
         ClearPhraseObjects();
-        OnEnable();
+        Reset();
     }
 
     void OnEnable() 
     {
         ChartEditor.Instance.SetActiveCommandStack(m_commandStack);
-
-        // Create a new edit command set
-        editCommands = new SongEditCommandSet();
-        ImportExistingLyrics();
-        AddSavedSyllables();
-        currentPhrase = GetNextUnfinishedPhrase();
-        // Activate auto-scrolling if playback is active on lyric editor enable
-        autoScroller.enabled = playbackActive;
-
+        Reset();
         UnityEngine.Debug.Log("Opened lyric editor");
     }
 
@@ -438,7 +430,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         phraseTemplate.gameObject.SetActive(false);
 
         ChartEditor.Instance.events.editorStateChangedEvent.Register(OnStateChanged);
-        ChartEditor.Instance.events.songLoadedEvent.Register(Reset);
+        ChartEditor.Instance.events.songLoadedEvent.Register(OnSongLoaded);
 
         m_commandStack.onPush.Register(onCommandStackPush);
         m_commandStack.onPop.Register(onCommandStackPop);
@@ -459,6 +451,16 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
         {
             PlaybackScroll(false);
         }
+    }
+
+    void Reset()
+    {
+        editCommands = new SongEditCommandSet();
+        ImportExistingLyrics();
+        AddSavedSyllables();
+        currentPhrase = GetNextUnfinishedPhrase();
+        // Activate auto-scrolling if playback is active on lyric editor enable
+        autoScroller.enabled = playbackActive;
     }
 
     static bool HasLyricEvents(List<SongEditCommand> commands) 
@@ -669,6 +671,8 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     // previously-stored lyrics
     void AddSavedSyllables() 
     {
+        UnityEngine.Debug.Log("savedUnplacedSyllables: " + savedUnplacedSyllables);
+        UnityEngine.Debug.Log("phrase text representation: " + GetTextRepresentation());
         if (savedUnplacedSyllables.Length != 0 && GetTextRepresentation().Equals(savedPlacedSyllables)) 
         {
             int firstNewline = savedUnplacedSyllables.IndexOf('\n');
