@@ -52,21 +52,20 @@ public class GroupSelectPanelController : MonoBehaviour
 
     // Use this for initialization
     void Start () {
-        //fretSelectDropdown = transform.Find("Fret Select").GetComponent<Dropdown>();
-
-         shortcutBindings = new Dictionary<MSChartEditorInputActions, Button>()
-         {
-             { MSChartEditorInputActions.NoteSetNatural, setNoteNatural },
-             { MSChartEditorInputActions.NoteSetStrum, setNoteStrum },
-             { MSChartEditorInputActions.NoteSetHopo, setNoteHopo },
-             { MSChartEditorInputActions.NoteSetTap, setNoteTap},
-             { MSChartEditorInputActions.NoteSetTom, setNoteTom },
-             { MSChartEditorInputActions.NoteSetCymbal, setNoteCymbal },
-             { MSChartEditorInputActions.NoteSetDynamicsNone, setNoteDyncamicsNone },
-             { MSChartEditorInputActions.NoteSetAccent, setNoteAccent },
-             { MSChartEditorInputActions.NoteSetGhost, setNoteGhost },
-
-         };
+        shortcutBindings = new Dictionary<MSChartEditorInputActions, Button>()
+        {
+            { MSChartEditorInputActions.NoteSetNatural, setNoteNatural },
+            { MSChartEditorInputActions.NoteSetStrum, setNoteStrum },
+            { MSChartEditorInputActions.NoteSetHopo, setNoteHopo },
+            { MSChartEditorInputActions.NoteSetTap, setNoteTap},
+            { MSChartEditorInputActions.NoteSetTom, setNoteTom },
+            { MSChartEditorInputActions.NoteSetCymbal, setNoteCymbal },
+            { MSChartEditorInputActions.NoteSetDynamicsNone, setNoteDyncamicsNone },
+            { MSChartEditorInputActions.NoteSetAccent, setNoteAccent },
+            { MSChartEditorInputActions.NoteSetGhost, setNoteGhost },
+            { MSChartEditorInputActions.NoteSetDoubleKick, setDoubleKick },
+            { MSChartEditorInputActions.NoteSetAltDoubleKick, altDoubleKick },
+        };
 
         // Setup lane selector dictionaries and hide all selector varients
         {

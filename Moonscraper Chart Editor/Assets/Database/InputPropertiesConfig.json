@@ -309,6 +309,28 @@
             }
         },
         {
+            "mSChartEditorInputAction": "NoteSetDoubleKick",
+            "properties": {
+                "displayName": "Set Note As Double Kick",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 10,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
+            "mSChartEditorInputAction": "NoteSetAltDoubleKick",
+            "properties": {
+                "displayName": "Set Note As Alt Double Kick",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 10,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
             "mSChartEditorInputAction": "PlayPause",
             "properties": {
                 "displayName": "Play/Pause",

@@ -56,6 +56,8 @@ public enum MSChartEditorInputActions
     NoteSetDynamicsNone,
     NoteSetAccent,
     NoteSetGhost,
+    NoteSetDoubleKick,
+    NoteSetAltDoubleKick,
     
     PlayPause,
 

@@ -226,12 +226,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2232520411469283127}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 635727e25c735994fb6f858716ba8247, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  message: 'Shortcut Key: |NoteSetHopo|'
+  message: 'Shortcut Key: |NoteSetDoubleKick|'
   offset: {x: 30, y: -7}
 --- !u!1 &2711470189067222324
 GameObject:
@@ -443,12 +443,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2828143583632944304}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 635727e25c735994fb6f858716ba8247, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  message: 'Shortcut Key: |NoteSetHopo|'
+  message: 'Shortcut Key: |NoteSetAltDoubleKick|'
   offset: {x: 30, y: -7}
 --- !u!1 &2837148607887702371
 GameObject:
@@ -2434,7 +2434,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 8905959308192499609}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.20837185
+  m_Size: 0.21405676
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
