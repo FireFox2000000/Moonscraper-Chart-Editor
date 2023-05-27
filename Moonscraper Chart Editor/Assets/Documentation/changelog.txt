@@ -1,3 +1,7 @@
+1.5.0.2
+    FIXES
+    -Updated audio backend
+
 1.5.0.1
     FIXES
     -Fixed lyric editor error that occoured after changing instrument/difficulty or loading a new song and editing the chart.
