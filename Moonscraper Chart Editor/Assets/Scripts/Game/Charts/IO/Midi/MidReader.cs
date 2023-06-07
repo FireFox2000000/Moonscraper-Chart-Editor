@@ -11,6 +11,9 @@ using MoonscraperEngine;
 
 namespace MoonscraperChartEditor.Song.IO
 {
+    using NoteEventQueue = List<(NoteEvent note, long tick)>;
+    using SysExEventQueue = List<(PhaseShiftSysEx sysex, long tick)>;
+
     public static class MidReader
     {
         const int SOLO_END_CORRECTION_OFFSET = -1;
@@ -442,8 +445,8 @@ namespace MoonscraperChartEditor.Song.IO
 
             Debug.Assert(messageList != null, $"No message list provided to {nameof(ReadNotes)}!");
 
-            var unpairedNoteQueue = new List<(NoteOnEvent note, long tick)>();
-            var unpairedSysexQueue = new List<(PhaseShiftSysEx sysex, long tick)>();
+            var unpairedNoteQueue = new NoteEventQueue();
+            var unpairedSysexQueue = new SysExEventQueue();
 
             Chart unrecognised = new Chart(song, Song.Instrument.Unrecognised);
             Chart.GameMode gameMode = Song.InstumentToChartGameMode(instrument);
@@ -461,8 +464,8 @@ namespace MoonscraperChartEditor.Song.IO
 
             if (instrument == Song.Instrument.Unrecognised)
             {
-                if (track.Events[0] is SequenceTrackNameEvent trackName)
-                    unrecognised.name = trackName.Text;
+                if (track.Events[0] is SequenceTrackNameEvent unrecognizedTrackName)
+                    unrecognised.name = unrecognizedTrackName.Text;
                 song.unrecognisedCharts.Add(unrecognised);
             }
 
@@ -479,161 +482,17 @@ namespace MoonscraperChartEditor.Song.IO
                     startTick = absoluteTick
                 };
 
-                if (trackEvent is TextEvent text)
+                if (trackEvent is NoteEvent note)
                 {
-                    var tick = (uint)absoluteTick;
-                    var eventName = text.Text;
-
-                    ChartEvent chartEvent = new ChartEvent(tick, eventName);
-
-                    if (instrument == Song.Instrument.Unrecognised)
-                    {
-                        unrecognised.Add(chartEvent);
-                    }
-                    else
-                    {
-                        ProcessModificationProcessFn processFn;
-                        if (processParams.textProcessMap.TryGetValue(eventName, out processFn))
-                        {
-                            // This text event affects parsing of the .mid file, run its function and don't parse it into the chart
-                            processFn(ref processParams);
-                        }
-                        else
-                        {
-                            // Copy text event to all difficulties so that .chart format can store these properly. Midi writer will strip duplicate events just fine anyway.
-                            foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
-                            {
-                                song.GetChart(instrument, difficulty).Add(chartEvent);
-                            }
-                        }
-                    }
+                    ProcessNoteEvent(ref processParams, unpairedNoteQueue, note, absoluteTick);
                 }
-
-                if (trackEvent is NoteOnEvent noteOn)
+                else if (trackEvent is BaseTextEvent text)
                 {
-                    // Check for duplicates
-                    // (a corresponding note off must be found, two note ons that are the same are disallowed)
-                    bool duplicate = false;
-                    foreach (var (note, _) in unpairedNoteQueue)
-                    {
-                        if (note.NoteNumber == noteOn.NoteNumber && note.Channel == noteOn.Channel)
-                        {
-                            Debug.LogWarning($"Found duplicate note on event at tick {absoluteTick}!");
-                            duplicate = true;
-                            break;
-                        }
-                    }
-
-                    if (!duplicate)
-                        unpairedNoteQueue.Add((noteOn, absoluteTick));
+                    ProcessTextEvent(ref processParams, text, absoluteTick);
                 }
-
-                if (trackEvent is NoteOffEvent noteOff)
+                else if (trackEvent is SysExEvent sysex)
                 {
-                    // Get note on event
-                    (NoteOnEvent note, long tick) queuedOn = default;
-                    foreach (var queued in unpairedNoteQueue)
-                    {
-                        if (queued.note.NoteNumber == noteOff.NoteNumber && queued.note.Channel == noteOff.Channel)
-                        {
-                            queuedOn = queued;
-                            break;
-                        }
-                    }
-
-                    if (queuedOn.note == null)
-                    {
-                        Debug.LogWarning($"Found note off with no corresponding note on at tick {absoluteTick}!");
-                        continue;
-                    }
-                    unpairedNoteQueue.Remove(queuedOn);
-
-                    if (instrument == Song.Instrument.Unrecognised)
-                    {
-                        var tick = (uint)absoluteTick;
-                        var sus = AdjustSustainLength(song, (uint)(absoluteTick - queuedOn.tick));
-
-                        int rawNote = queuedOn.note.NoteNumber;
-                        Note newNote = new Note(tick, rawNote, sus);
-                        unrecognised.Add(newNote);
-                        continue;
-                    }
-
-                    processParams.timedEvent.midiEvent = queuedOn.note;
-                    processParams.timedEvent.startTick = queuedOn.tick;
-                    processParams.timedEvent.endTick = absoluteTick;
-
-                    EventProcessFn processFn;
-                    if (processParams.noteProcessMap.TryGetValue(queuedOn.note.NoteNumber, out processFn))
-                    {
-                        processFn(processParams);
-                    }
-                }
-
-                if (trackEvent is SysExEvent sysex)
-                {
-                    PhaseShiftSysEx psEvent;
-                    if (!PhaseShiftSysEx.TryParse(sysex, out psEvent))
-                    {
-                        // SysEx event is not a Phase Shift SysEx event
-                        Debug.LogWarning($"Encountered unknown SysEx event: {BitConverter.ToString(sysex.Data)}");
-                        continue;
-                    }
-
-                    if (psEvent.type != MidIOHelper.SYSEX_TYPE_PHRASE)
-                    {
-                        Debug.LogWarning($"Encountered unknown Phase Shift SysEx event type {psEvent.type}");
-                        continue;
-                    }
-
-                    if (psEvent.value == MidIOHelper.SYSEX_VALUE_PHRASE_START)
-                    {
-                        // Check for duplicates
-                        // (a corresponding note off must be found, two note ons that are the same are disallowed)
-                        bool duplicate = false;
-                        foreach (var (queuedSysex, _) in unpairedSysexQueue)
-                        {
-                            if (queuedSysex.MatchesWith(psEvent))
-                            {
-                                Debug.LogWarning($"Found duplicate SysEx start event at tick {absoluteTick}!");
-                                duplicate = true;
-                                break;
-                            }
-                        }
-
-                        if (!duplicate)
-                            unpairedSysexQueue.Add((psEvent, absoluteTick));
-                    }
-                    else if (psEvent.value == MidIOHelper.SYSEX_VALUE_PHRASE_END)
-                    {
-                        // Get sysex start event
-                        (PhaseShiftSysEx sysex, long tick) queuedOn = default;
-                        foreach (var queued in unpairedSysexQueue)
-                        {
-                            if (queued.sysex.MatchesWith(psEvent))
-                            {
-                                queuedOn = queued;
-                                break;
-                            }
-                        }
-
-                        if (queuedOn.sysex == null)
-                        {
-                            Debug.LogWarning($"Found PS SysEx end with no corresponding start at tick {absoluteTick}!");
-                            continue;
-                        }
-                        unpairedSysexQueue.Remove(queuedOn);
-
-                        processParams.timedEvent.midiEvent = queuedOn.sysex;
-                        processParams.timedEvent.startTick = queuedOn.tick;
-                        processParams.timedEvent.endTick = absoluteTick;
-
-                        EventProcessFn processFn;
-                        if (processParams.sysexProcessMap.TryGetValue(psEvent.code, out processFn))
-                        {
-                            processFn(processParams);
-                        }
-                    }
+                    ProcessSysExEvent(ref processParams, unpairedSysexQueue, sysex, absoluteTick);
                 }
             }
 
@@ -656,40 +515,205 @@ namespace MoonscraperChartEditor.Song.IO
             }
 
             // Legacy star power fixup
-            if (c_legacyStarPowerFixupWhitelist.Contains(instrument))
+            if (track.Events[0] is SequenceTrackNameEvent trackName)
+                FixupStarPowerIfNeeded(ref processParams, messageList, trackName);
+        }
+
+        static void FixupStarPowerIfNeeded(ref EventProcessParams processParams, IList<MessageProcessParams> messageList,
+            SequenceTrackNameEvent trackName)
+        {
+            Debug.Assert(trackName != null, "Track name not given when processing legacy starpower fixups");
+            if (trackName == null)
+                return;
+
+            // Check if instrument is allowed to be fixed up
+            if (!c_legacyStarPowerFixupWhitelist.Contains(processParams.instrument))
+                return;
+
+            // Only need to check one difficulty since Star Power gets copied to all difficulties
+            var chart = processParams.song.GetChart(processParams.instrument, Song.Difficulty.Expert);
+            if (chart.starPower.Count > 0 || !ContainsTextEvent(chart.events, MidIOHelper.SOLO_EVENT_TEXT) || !ContainsTextEvent(chart.events, MidIOHelper.SOLO_END_EVENT_TEXT))
+                return;
+
+            messageList?.Add(new MessageProcessParams()
             {
-                // Only need to check one difficulty since Star Power gets copied to all difficulties
-                var chart = song.GetChart(instrument, Song.Difficulty.Expert);
-                if (chart.starPower.Count <= 0 && (ContainsTextEvent(chart.events, MidIOHelper.SOLO_EVENT_TEXT) || ContainsTextEvent(chart.events, MidIOHelper.SOLO_END_EVENT_TEXT)))
+                message = $"No Star Power phrases were found on track {trackName.Text}. However, solo phrases were found. These may be legacy star power phrases.\nImport these solo phrases as Star Power?",
+                title = "Legacy Star Power Detected",
+                executeInEditor = true,
+                currentSong = processParams.song,
+                instrument = processParams.instrument,
+                processFn = (messageParams) => {
+                    Debug.Log("Loading solo events as Star Power");
+                    ProcessTextEventPairAsStarpower(
+                        new EventProcessParams()
+                        {
+                            song = messageParams.currentSong,
+                            instrument = messageParams.instrument
+                        },
+                        MidIOHelper.SOLO_EVENT_TEXT,
+                        MidIOHelper.SOLO_END_EVENT_TEXT,
+                        Starpower.Flags.None
+                    );
+                    // Update instrument's caches
+                    foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
+                        messageParams.currentSong.GetChart(messageParams.instrument, diff).UpdateCache();
+                }
+            });
+        }
+
+        static void ProcessNoteEvent(ref EventProcessParams processParams, NoteEventQueue unpairedNotes,
+            NoteEvent note, long absoluteTick)
+        {
+            if (note.EventType == MidiEventType.NoteOn)
+            {
+                // Check for duplicates
+                if (TryFindMatchingNote(unpairedNotes, note, out _, out _, out _))
+                    Debug.LogWarning($"Found duplicate note on at tick {absoluteTick}!");
+                else
+                    unpairedNotes.Add((note, absoluteTick));
+            }
+            else if (note.EventType == MidiEventType.NoteOff)
+            {
+                if (!TryFindMatchingNote(unpairedNotes, note, out var noteStart, out long startTick, out int startIndex))
                 {
-                    var text = track.Events[0] as TextEvent;
-                    Debug.Assert(text != null, "Track name not found when processing legacy starpower fixups");
-                    messageList?.Add(new MessageProcessParams()
-                    {
-                        message = $"No Star Power phrases were found on track {text.Text}. However, solo phrases were found. These may be legacy star power phrases.\nImport these solo phrases as Star Power?",
-                        title = "Legacy Star Power Detected",
-                        executeInEditor = true,
-                        currentSong = processParams.song,
-                        instrument = processParams.instrument,
-                        processFn = (messageParams) => {
-                            Debug.Log("Loading solo events as Star Power");
-                            ProcessTextEventPairAsStarpower(
-                                new EventProcessParams()
-                                {
-                                    song = messageParams.currentSong,
-                                    instrument = messageParams.instrument
-                                },
-                                MidIOHelper.SOLO_EVENT_TEXT,
-                                MidIOHelper.SOLO_END_EVENT_TEXT,
-                                Starpower.Flags.None
-                            );
-                            // Update instrument's caches
-                            foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
-                                messageParams.currentSong.GetChart(messageParams.instrument, diff).UpdateCache();
-                        }
-                    });
+                    Debug.LogWarning($"Found note off with no corresponding note on at tick {absoluteTick}!");
+                    return;
+                }
+                unpairedNotes.RemoveAt(startIndex);
+
+                if (processParams.instrument == Song.Instrument.Unrecognised)
+                {
+                    var tick = (uint)absoluteTick;
+                    var sus = AdjustSustainLength(processParams.song, (uint)(absoluteTick - startTick));
+
+                    int rawNote = noteStart.NoteNumber;
+                    Note newNote = new Note(tick, rawNote, sus);
+                    processParams.currentUnrecognisedChart.Add(newNote);
+                    return;
+                }
+
+                processParams.timedEvent.midiEvent = noteStart;
+                processParams.timedEvent.startTick = startTick;
+                processParams.timedEvent.endTick = absoluteTick;
+
+                if (processParams.noteProcessMap.TryGetValue(noteStart.NoteNumber, out var processFn))
+                {
+                    processFn(processParams);
                 }
             }
+        }
+
+        static void ProcessTextEvent(ref EventProcessParams processParams, BaseTextEvent text, long absoluteTick)
+        {
+            var tick = (uint)absoluteTick;
+            var eventName = text.Text;
+
+            ChartEvent chartEvent = new ChartEvent(tick, eventName);
+
+            if (processParams.instrument == Song.Instrument.Unrecognised)
+            {
+                processParams.currentUnrecognisedChart.Add(chartEvent);
+            }
+            else
+            {
+                if (processParams.textProcessMap.TryGetValue(eventName, out var processFn))
+                {
+                    // This text event affects parsing of the .mid file, run its function and don't parse it into the chart
+                    processFn(ref processParams);
+                }
+                else
+                {
+                    // Copy text event to all difficulties so that .chart format can store these properly. Midi writer will strip duplicate events just fine anyway.
+                    foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
+                    {
+                        processParams.song.GetChart(processParams.instrument, difficulty).Add(chartEvent);
+                    }
+                }
+            }
+        }
+
+        static void ProcessSysExEvent(ref EventProcessParams processParams, SysExEventQueue unpairedSysex,
+            SysExEvent sysex, long absoluteTick)
+        {
+            if (!PhaseShiftSysEx.TryParse(sysex, out var psEvent))
+            {
+                // SysEx event is not a Phase Shift SysEx event
+                Debug.LogWarning($"Encountered unknown SysEx event: {BitConverter.ToString(sysex.Data)}");
+                return;
+            }
+
+            if (psEvent.type != MidIOHelper.SYSEX_TYPE_PHRASE)
+            {
+                Debug.LogWarning($"Encountered unknown Phase Shift SysEx event type {psEvent.type}");
+                return;
+            }
+
+            if (psEvent.value == MidIOHelper.SYSEX_VALUE_PHRASE_START)
+            {
+                // Check for duplicates
+                if (TryFindMatchingSysEx(unpairedSysex, psEvent, out _, out _, out _))
+                    Debug.LogWarning($"Found duplicate SysEx start event at tick {absoluteTick}!");
+                else
+                    unpairedSysex.Add((psEvent, absoluteTick));
+            }
+            else if (psEvent.value == MidIOHelper.SYSEX_VALUE_PHRASE_END)
+            {
+                if (!TryFindMatchingSysEx(unpairedSysex, psEvent, out var sysexStart, out long startTick, out int startIndex))
+                {
+                    Debug.LogWarning($"Found PS SysEx end with no corresponding start at tick {absoluteTick}!");
+                    return;
+                }
+                unpairedSysex.RemoveAt(startIndex);
+
+                processParams.timedEvent.midiEvent = sysexStart;
+                processParams.timedEvent.startTick = startTick;
+                processParams.timedEvent.endTick = absoluteTick;
+
+                if (processParams.sysexProcessMap.TryGetValue(psEvent.code, out var processFn))
+                {
+                    processFn(processParams);
+                }
+            }
+        }
+
+        static bool TryFindMatchingNote(NoteEventQueue unpairedNotes, NoteEvent noteToMatch,
+            out NoteEvent matchingNote, out long matchTick, out int matchIndex)
+        {
+            for (int i = 0; i < unpairedNotes.Count; i++)
+            {
+                var queued = unpairedNotes[i];
+                if (queued.note.NoteNumber == noteToMatch.NoteNumber && queued.note.Channel == noteToMatch.Channel)
+                {
+                    (matchingNote, matchTick) = queued;
+                    matchIndex = i;
+                    return true;
+                }
+            }
+
+            matchingNote = null;
+            matchTick = -1;
+            matchIndex = -1;
+            return false;
+        }
+
+        static bool TryFindMatchingSysEx(SysExEventQueue unpairedSysex, PhaseShiftSysEx sysexToMatch,
+            out PhaseShiftSysEx matchingSysex, out long matchTick, out int matchIndex)
+        {
+            for (int i = 0; i < unpairedSysex.Count; i++)
+            {
+                var queued = unpairedSysex[i];
+                if (queued.sysex.MatchesWith(sysexToMatch))
+                {
+                    (matchingSysex, matchTick) = queued;
+                    matchIndex = i;
+                    return true;
+                }
+            }
+
+            matchingSysex = null;
+            matchTick = -1;
+            matchIndex = -1;
+            return false;
         }
 
         static bool ContainsTextEvent(IList<ChartEvent> events, string text)
