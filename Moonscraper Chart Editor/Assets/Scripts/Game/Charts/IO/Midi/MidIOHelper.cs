@@ -108,25 +108,23 @@ namespace MoonscraperChartEditor.Song.IO
         // SysEx event format
         // https://dwsk.proboards.com/thread/404/song-standard-advancements
 
-        // Data as given by NAudio:
-        // sysexData[0]: SysEx event length
-        // sysexData[1-3]: Header
-        // sysexData[4]: Event type
-        // sysexData[5]: Difficulty
-        // sysexData[6]: Event code
-        // sysexData[7]: Event value
+        // Data as provided by DryWetMidi:
+        // sysexData[0-2]: Header
+        // sysexData[3]: Event type
+        // sysexData[4]: Difficulty
+        // sysexData[5]: Event code
+        // sysexData[6]: Event value
+        // sysexData[7]: SysEx terminator (F7)
 
-        // This length and the following indicies may need to be adjusted if the MIDI parsing library ever changes.
-        // They both account for the length value that NAudio provides as the first value.
         public const int SYSEX_LENGTH = 8;
 
-        public const int SYSEX_INDEX_HEADER_1 = 1;
-        public const int SYSEX_INDEX_HEADER_2 = 2;
-        public const int SYSEX_INDEX_HEADER_3 = 3;
-        public const int SYSEX_INDEX_TYPE = 4;
-        public const int SYSEX_INDEX_DIFFICULTY = 5;
-        public const int SYSEX_INDEX_CODE = 6;
-        public const int SYSEX_INDEX_VALUE = 7;
+        public const int SYSEX_INDEX_HEADER_1 = 0;
+        public const int SYSEX_INDEX_HEADER_2 = 1;
+        public const int SYSEX_INDEX_HEADER_3 = 2;
+        public const int SYSEX_INDEX_TYPE = 3;
+        public const int SYSEX_INDEX_DIFFICULTY = 4;
+        public const int SYSEX_INDEX_CODE = 5;
+        public const int SYSEX_INDEX_VALUE = 6;
 
         public const char SYSEX_HEADER_1 = 'P'; // 0x50
         public const char SYSEX_HEADER_2 = 'S'; // 0x53
