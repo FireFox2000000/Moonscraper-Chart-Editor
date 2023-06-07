@@ -81,6 +81,7 @@ namespace MoonscraperChartEditor.Song.IO
             return $"DeltaTime: {DeltaTime}, Type: {type}, Difficulty: {difficulty}, Code: {code}, Value: {value}";
         }
 
+        // Required for MidiEvent
         protected override MidiEvent CloneEvent()
         {
             return new PhaseShiftSysEx(this);
