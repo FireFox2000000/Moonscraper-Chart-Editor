@@ -346,7 +346,7 @@ namespace MoonscraperChartEditor.Song.IO
                 }
             foreach (var timesig in tempoMap.GetTimeSignatureChanges())
                 {
-                song.Add(new TimeSignature((uint)timesig.Time, (uint)timesig.Value.Numerator, (uint)Math.Pow(2, timesig.Value.Denominator)), false);
+                song.Add(new TimeSignature((uint)timesig.Time, (uint)timesig.Value.Numerator, (uint)timesig.Value.Denominator), false);
                 }
 
             song.UpdateCache();
