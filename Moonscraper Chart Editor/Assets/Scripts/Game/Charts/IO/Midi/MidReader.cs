@@ -442,8 +442,8 @@ namespace MoonscraperChartEditor.Song.IO
 
             Debug.Assert(messageList != null, $"No message list provided to {nameof(ReadNotes)}!");
 
-            var noteQueue = new List<(NoteOnEvent note, long tick)>();
-            var sysexEventQueue = new List<(PhaseShiftSysEx sysex, long tick)>();
+            var unpairedNoteQueue = new List<(NoteOnEvent note, long tick)>();
+            var unpairedSysexQueue = new List<(PhaseShiftSysEx sysex, long tick)>();
 
             Chart unrecognised = new Chart(song, Song.Instrument.Unrecognised);
             Chart.GameMode gameMode = Song.InstumentToChartGameMode(instrument);
@@ -514,7 +514,7 @@ namespace MoonscraperChartEditor.Song.IO
                     // Check for duplicates
                     // (a corresponding note off must be found, two note ons that are the same are disallowed)
                     bool duplicate = false;
-                    foreach (var (note, _) in noteQueue)
+                    foreach (var (note, _) in unpairedNoteQueue)
                     {
                         if (note.NoteNumber == noteOn.NoteNumber && note.Channel == noteOn.Channel)
                         {
@@ -525,14 +525,14 @@ namespace MoonscraperChartEditor.Song.IO
                     }
 
                     if (!duplicate)
-                        noteQueue.Add((noteOn, absoluteTick));
+                        unpairedNoteQueue.Add((noteOn, absoluteTick));
                 }
 
                 if (trackEvent is NoteOffEvent noteOff)
                 {
                     // Get note on event
                     (NoteOnEvent note, long tick) queuedOn = default;
-                    foreach (var queued in noteQueue)
+                    foreach (var queued in unpairedNoteQueue)
                     {
                         if (queued.note.NoteNumber == noteOff.NoteNumber && queued.note.Channel == noteOff.Channel)
                         {
@@ -546,7 +546,7 @@ namespace MoonscraperChartEditor.Song.IO
                         Debug.LogWarning($"Found note off with no corresponding note on at tick {absoluteTick}!");
                         continue;
                     }
-                    noteQueue.Remove(queuedOn);
+                    unpairedNoteQueue.Remove(queuedOn);
 
                     if (instrument == Song.Instrument.Unrecognised)
                     {
@@ -591,7 +591,7 @@ namespace MoonscraperChartEditor.Song.IO
                         // Check for duplicates
                         // (a corresponding note off must be found, two note ons that are the same are disallowed)
                         bool duplicate = false;
-                        foreach (var (queuedSysex, _) in sysexEventQueue)
+                        foreach (var (queuedSysex, _) in unpairedSysexQueue)
                         {
                             if (queuedSysex.MatchesWith(psEvent))
                             {
@@ -602,13 +602,13 @@ namespace MoonscraperChartEditor.Song.IO
                         }
 
                         if (!duplicate)
-                            sysexEventQueue.Add((psEvent, absoluteTick));
+                            unpairedSysexQueue.Add((psEvent, absoluteTick));
                     }
                     else if (psEvent.value == MidIOHelper.SYSEX_VALUE_PHRASE_END)
                     {
                         // Get sysex start event
                         (PhaseShiftSysEx sysex, long tick) queuedOn = default;
-                        foreach (var queued in sysexEventQueue)
+                        foreach (var queued in unpairedSysexQueue)
                         {
                             if (queued.sysex.MatchesWith(psEvent))
                             {
@@ -622,7 +622,7 @@ namespace MoonscraperChartEditor.Song.IO
                             Debug.LogWarning($"Found PS SysEx end with no corresponding start at tick {absoluteTick}!");
                             continue;
                         }
-                        sysexEventQueue.Remove(queuedOn);
+                        unpairedSysexQueue.Remove(queuedOn);
 
                         processParams.timedEvent.midiEvent = queuedOn.sysex;
                         processParams.timedEvent.startTick = queuedOn.tick;
@@ -637,8 +637,8 @@ namespace MoonscraperChartEditor.Song.IO
                 }
             }
 
-            Debug.Assert(noteQueue.Count == 0, $"Note queue was not fully processed! Remaining event count: {noteQueue.Count}");
-            Debug.Assert(sysexEventQueue.Count == 0, $"SysEx event queue was not fully processed! Remaining event count: {sysexEventQueue.Count}");
+            Debug.Assert(unpairedNoteQueue.Count == 0, $"Note queue was not fully processed! Remaining event count: {unpairedNoteQueue.Count}");
+            Debug.Assert(unpairedSysexQueue.Count == 0, $"SysEx event queue was not fully processed! Remaining event count: {unpairedSysexQueue.Count}");
 
             // Update all chart arrays
             if (instrument != Song.Instrument.Unrecognised)
