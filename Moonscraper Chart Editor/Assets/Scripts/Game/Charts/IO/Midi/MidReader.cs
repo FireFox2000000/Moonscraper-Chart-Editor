@@ -584,7 +584,7 @@ namespace MoonscraperChartEditor.Song.IO
                 if (processParams.instrument == Song.Instrument.Unrecognised)
                 {
                     var tick = (uint)absoluteTick;
-                    var sus = AdjustSustainLength(processParams.song, (uint)(absoluteTick - startTick));
+                    var sus = SanitiseSustainLength(processParams.song, (uint)(absoluteTick - startTick));
 
                     int rawNote = noteStart.NoteNumber;
                     Note newNote = new Note(tick, rawNote, sus);
@@ -1049,7 +1049,7 @@ namespace MoonscraperChartEditor.Song.IO
 
             var timedEvent = eventProcessParams.timedEvent;
             uint tick = (uint)timedEvent.startTick;
-            uint sus = AdjustSustainLength(eventProcessParams.song, (uint)timedEvent.length);
+            uint sus = SanitiseSustainLength(eventProcessParams.song, (uint)timedEvent.length);
 
             Note newNote = new Note(tick, ingameFret, sus, defaultFlags);
             chart.Add(newNote, false);
@@ -1062,7 +1062,7 @@ namespace MoonscraperChartEditor.Song.IO
 
             var timedEvent = eventProcessParams.timedEvent;
             uint tick = (uint)timedEvent.startTick;
-            uint sus = AdjustSustainLength(eventProcessParams.song, (uint)timedEvent.length);
+            uint sus = SanitiseSustainLength(eventProcessParams.song, (uint)timedEvent.length);
 
             foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
             {
@@ -1077,7 +1077,7 @@ namespace MoonscraperChartEditor.Song.IO
 
             var timedEvent = eventProcessParams.timedEvent;
             uint tick = (uint)timedEvent.startTick;
-            uint sus = AdjustSustainLength(eventProcessParams.song, (uint)timedEvent.length);
+            uint sus = SanitiseSustainLength(eventProcessParams.song, (uint)timedEvent.length);
 
             foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
             {
@@ -1092,7 +1092,7 @@ namespace MoonscraperChartEditor.Song.IO
 
             var timedEvent = eventProcessParams.timedEvent;
             uint tick = (uint)timedEvent.startTick;
-            uint sus = AdjustSustainLength(eventProcessParams.song, (uint)timedEvent.length);
+            uint sus = SanitiseSustainLength(eventProcessParams.song, (uint)timedEvent.length);
 
             foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
             {
@@ -1232,9 +1232,10 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
-        static uint AdjustSustainLength(Song song, uint length)
+        static uint SanitiseSustainLength(Song song, uint length)
         {
-            int susCutoff = (int)(SongConfig.MIDI_SUSTAIN_CUTOFF_THRESHOLD * song.resolution / SongConfig.STANDARD_BEAT_RESOLUTION); // 1/12th note
+            // Apply sustain cutoff (notes less than 1/12th note in length will not become sustains)
+            int susCutoff = (int)(SongConfig.MIDI_SUSTAIN_CUTOFF_THRESHOLD * song.resolution / SongConfig.STANDARD_BEAT_RESOLUTION);
             if (length <= susCutoff)
                 length = 0;
 
@@ -1248,7 +1249,7 @@ namespace MoonscraperChartEditor.Song.IO
 
             var timedEvent = eventProcessParams.timedEvent;
             uint tick = (uint)timedEvent.startTick;
-            uint sus = AdjustSustainLength(eventProcessParams.song, (uint)timedEvent.length);
+            uint sus = SanitiseSustainLength(eventProcessParams.song, (uint)timedEvent.length);
             if (sus >= tickEndOffset)
             {
                 sus = (uint)(sus + tickEndOffset);
