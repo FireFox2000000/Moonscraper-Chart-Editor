@@ -343,11 +343,11 @@ namespace MoonscraperChartEditor.Song.IO
             foreach (var tempo in tempoMap.GetTempoChanges())
             {
                 song.Add(new BPM((uint)tempo.Time, (uint)(tempo.Value.BeatsPerMinute * 1000)), false);
-                }
+            }
             foreach (var timesig in tempoMap.GetTimeSignatureChanges())
-                {
+            {
                 song.Add(new TimeSignature((uint)timesig.Time, (uint)timesig.Value.Numerator, (uint)timesig.Value.Denominator), false);
-                }
+            }
 
             song.UpdateCache();
         }
