@@ -52,11 +52,14 @@ public class AutoSaveSystem : SystemManagerState.System
 
                 if (saveErrorMessage != string.Empty && errorReport.hasNonErrorFileTypeRelatedErrors)
                 {
-                    Debug.LogError("Autosave completed with the following errors: " + Globals.LINE_ENDING + saveErrorMessage);
+                    string errorMessage = "Autosave completed with the following errors: " + System.Environment.NewLine + saveErrorMessage;
+                    ChartEditor.Instance.errorManager.QueueErrorMessage(errorMessage);
+                    Debug.LogError(errorMessage);
                 }
             }
             catch (System.Exception e)
             {
+                ChartEditor.Instance.errorManager.QueueErrorMessage("Autosave failed!" + System.Environment.NewLine + e.Message);
                 Logger.LogException(e, "Autosave failed!");
             }
 
