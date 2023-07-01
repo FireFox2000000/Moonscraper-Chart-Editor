@@ -1,3 +1,10 @@
+1.5.0.3
+    FIXES
+    -Fixed midi loading on broken midi files (now accounts for overrun error)
+
+    CHANGES
+    -Report autosave errors/failures to the end user instead of just writing into the log. 
+
 1.5.0.2
     FIXES
     -Updated audio backend
