@@ -8,6 +8,7 @@ using UnityEngine;
 public class ErrorManager : MonoBehaviour {
     ErrorMessage errorMenu;
     string queuedErrorMessage = string.Empty;
+    object messageLock = new object();
 
     private void Start()
     {
@@ -23,12 +24,18 @@ public class ErrorManager : MonoBehaviour {
 
     public void QueueErrorMessage(string errorMessage)
     {
-        queuedErrorMessage += errorMessage;
+        lock (messageLock)
+        {
+            queuedErrorMessage += errorMessage;
+        }
     }
 
     public bool HasErrorToDisplay()
     {
-        return !string.IsNullOrEmpty(queuedErrorMessage);
+        lock (messageLock)
+        {
+            return !string.IsNullOrEmpty(queuedErrorMessage);
+        }
     }
 
     void DisplayErrorMenu()
