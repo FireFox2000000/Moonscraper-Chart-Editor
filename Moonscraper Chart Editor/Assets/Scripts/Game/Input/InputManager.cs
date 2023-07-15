@@ -58,21 +58,35 @@ public class InputManager : UnitySingleton<InputManager>
 
     private void Start()
     {
-        Debug.Log("Initialising SDL input...");
-
-        SDL.SDL_SetMainReady();
-
-        Debug.Log("SDL input main ready");
-
-        if (SDL.SDL_Init(SDL.SDL_INIT_GAMECONTROLLER | SDL.SDL_INIT_JOYSTICK) < 0)
+        try
         {
-            Debug.LogError("SDL could not initialise! SDL Error: " + SDL.SDL_GetError());
+            Debug.Log("Initialising SDL input...");
+
+            SDL.SDL_SetMainReady();
+
+            Debug.Log("SDL input main ready");
+
+            if (SDL.SDL_Init(SDL.SDL_INIT_GAMECONTROLLER | SDL.SDL_INIT_JOYSTICK) < 0)
+            {
+                Debug.LogError("SDL could not initialise! SDL Error: " + SDL.SDL_GetError());
+            }
+            else
+            {
+                Debug.Log("Successfully initialised SDL input");
+
+                int connectedJoysticks = SDL.SDL_NumJoysticks();
+            }
         }
-        else
+        catch (DllNotFoundException ex)
         {
-            Debug.Log("Successfully initialised SDL input");
+#if (UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX)
+            string message = "SDL2 Linux runtime dependency not found. Please install the dependency (\"ffmpeg libsdl2-2.0-0 libx11-6 libgtk-3-0\") and restart the application.";
+            NativeMessageBox.Show(message, "Oops", NativeMessageBox.Type.OK, ChartEditor.Instance.windowHandleManager.nativeWindow);
 
-            int connectedJoysticks = SDL.SDL_NumJoysticks();
+            ChartEditor.Instance.ForceQuit();
+#else
+            throw ex;
+#endif
         }
     }
 

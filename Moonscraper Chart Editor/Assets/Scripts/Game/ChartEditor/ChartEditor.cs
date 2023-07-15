@@ -300,15 +300,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             {
                 case NativeMessageBox.Result.No:
                     {
-                        quittingCheckPassed = true;
-                        Application.Quit();
-
-#if UNITY_EDITOR
-                        UnityEditor.EditorApplication.isPlaying = false;
-#endif
-                        _ignoreExceptions = true;
-
                         Debug.Log("FORCE-QUITTING MOONSCRAPER DUE TO UNHANDLED EXCEPTION");
+
+                        ForceQuit();
 
                         break;
                     }
@@ -318,6 +312,19 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                     break;
             }
         }
+    }
+
+    public void ForceQuit()
+    {
+        quittingCheckPassed = true;
+        Application.Quit();
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+        _ignoreExceptions = true;
+
+        Debug.Log("Triggered force-quit of application");
     }
 
     void FinaliseQuit()
