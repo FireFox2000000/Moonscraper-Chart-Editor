@@ -6,6 +6,16 @@ using System.Collections.Generic;
 
 public class NativeMessageBoxWindows : INativeMessageBox
 {
+    public enum WinType
+    {
+        OK = 0,
+        OKCancel = 1,
+        AbortRetryIgnore = 2,
+        YesNoCancel = 3,
+        YesNo = 4,
+        RetryCancel = 5,
+    }
+
     [DllImport("user32.dll", SetLastError = true)]
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
 
@@ -22,9 +32,24 @@ public class NativeMessageBoxWindows : INativeMessageBox
             messagePtr = winInterface.windowPtr;
         }
 
-        int result = MessageBox(messagePtr, text.ToString(), caption.ToString(), (uint)messageBoxType);
+        WinType boxType = TranslateMessageBoxType(messageBoxType);
+
+        int result = MessageBox(messagePtr, text.ToString(), caption.ToString(), (uint)boxType);
 
         return (NativeMessageBox.Result)result;
+    }
+
+    WinType TranslateMessageBoxType(NativeMessageBox.Type messageBoxType)
+    {
+        switch (messageBoxType)
+        {
+            case NativeMessageBox.Type.OK: return WinType.OK;
+            case NativeMessageBox.Type.YesNo: return WinType.YesNo;
+            case NativeMessageBox.Type.YesNoCancel: return WinType.YesNoCancel;
+
+            default:
+                throw new NotImplementedException("NativeMessageBox.Type to WinType not implemented for message box type " + messageBoxType);
+        };
     }
 }
 

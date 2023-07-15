@@ -8,6 +8,10 @@ public class NativeMessageBoxEditor : INativeMessageBox
     {
         switch (messageBoxType)
         {
+            case NativeMessageBox.Type.OK:
+                UnityEditor.EditorUtility.DisplayDialog(caption, text, "Ok");
+                return NativeMessageBox.Result.OK;
+
             case NativeMessageBox.Type.YesNo:
                 return UnityEditor.EditorUtility.DisplayDialog(caption, text, "Yes", "No") ? NativeMessageBox.Result.Yes : NativeMessageBox.Result.No;
 
@@ -25,10 +29,12 @@ public class NativeMessageBoxEditor : INativeMessageBox
                 }
 
                 break;
-            default: break;
+            default:
+                break;
         }
 
-        throw new NotSupportedException();
+        UnityEngine.Debug.Assert(false, "Unhandled messagebox type " + messageBoxType);
+        throw new NotImplementedException();
     }
 }
 

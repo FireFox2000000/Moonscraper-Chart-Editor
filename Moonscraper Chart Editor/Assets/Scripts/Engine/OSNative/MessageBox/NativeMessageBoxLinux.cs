@@ -23,6 +23,9 @@ public class NativeMessageBoxLinux : INativeMessageBox
     {
         int flags = 0;
         switch (messageBoxType) {
+        case NativeMessageBox.Type.OK:
+            flags |= SFB_MESSAGE_BOX_OK;
+            break;
         case NativeMessageBox.Type.YesNo:
             flags |= SFB_MESSAGE_BOX_YESNO;
             break;
