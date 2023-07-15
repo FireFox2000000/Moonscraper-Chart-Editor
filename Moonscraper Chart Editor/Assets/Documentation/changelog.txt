@@ -1,3 +1,7 @@
+1.5.0.4
+    CHANGES
+    -Inform linux users of SDL2 not being installed correctly.
+
 1.5.0.3
     FIXES
     -Fixed midi loading on broken midi files (now accounts for overrun error)
