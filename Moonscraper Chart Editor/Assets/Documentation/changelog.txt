@@ -1,28 +1,17 @@
-1.5.0.4
-    CHANGES
-    -Inform linux users of SDL2 not being installed correctly.
-
-1.5.0.3
+1.5.1
     FIXES
     -Fixed midi loading on broken midi files (now accounts for overrun error)
-
-    CHANGES
-    -Report autosave errors/failures to the end user instead of just writing into the log. 
-
-1.5.0.2
-    FIXES
     -Updated audio backend
-
-1.5.0.1
-    FIXES
     -Fixed lyric editor error that occoured after changing instrument/difficulty or loading a new song and editing the chart.
     -Removed lyric editor auto-phrase end placements to respect manual phrase end deletions.
 
     CHANGES
+    -Inform linux users of SDL2 not being installed correctly.
+    -Report autosave errors/failures to the end user instead of just writing into the log. 
     -Added hotkeys to group select "Double Kick" and "Alt Double Kick" buttons
     -Added extra debugging information for audio failures
     -Midi solo end exporting now increases by 1 tick to compensate for exclusivily of midi files solo note behaviour. Midi file opening reduces solo end by 1 tick to compensate for this.
-
+    
 1.5.0
     FIXES
     -Fixed relative pathing check that resulted in incorrect audio loading when opening the application by directly opening that file.
