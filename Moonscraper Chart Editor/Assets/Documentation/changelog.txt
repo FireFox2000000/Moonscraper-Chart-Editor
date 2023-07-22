@@ -1,3 +1,11 @@
+1.5.2
+    FIXES
+    -Fixed midi not reading tom markers correctly
+    -Fixed midi hopo/tap/cybal marking etc not excluding their end tick as part of the affected range of notes
+    
+    CHANGES
+    -Change autosave to only notify users of actual errors, not warnings. Warnings still notified upon manual saves. 
+
 1.5.1
     FIXES
     -Fixed midi loading on broken midi files (now accounts for overrun error)
