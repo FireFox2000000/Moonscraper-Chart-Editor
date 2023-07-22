@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Alexander Ong
+﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -1102,17 +1102,9 @@ namespace MoonscraperChartEditor.Song.IO
 
         static void ProcessTimedEventAsForcedType(in EventProcessParams eventProcessParams, Note.NoteType noteType)
         {
-            var timedEvent = eventProcessParams.timedEvent;
-            uint startTick = (uint)timedEvent.startTick;
-            uint endTick = (uint)timedEvent.endTick;
-
             foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
             {
-                // Delay the actual processing once all the notes are actually in
-                eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
-                {
-                    ProcessEventAsForcedTypePostDelay(processParams, startTick, endTick, diff, noteType);
-                });
+                ProcessTimedEventAsForcedType(eventProcessParams, diff, noteType);
             }
         }
 
@@ -1121,6 +1113,9 @@ namespace MoonscraperChartEditor.Song.IO
             var timedEvent = eventProcessParams.timedEvent;
             uint startTick = (uint)timedEvent.startTick;
             uint endTick = (uint)timedEvent.endTick;
+            // Exclude the last tick of the phrase
+            if (endTick > startTick)
+                --endTick;
 
             // Delay the actual processing once all the notes are actually in
             eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
@@ -1268,7 +1263,9 @@ namespace MoonscraperChartEditor.Song.IO
             var timedEvent = eventProcessParams.timedEvent;
             uint startTick = (uint)timedEvent.startTick;
             uint endTick = (uint)timedEvent.endTick;
-            --endTick;
+            // Exclude the last tick of the phrase
+            if (endTick > startTick)
+                --endTick;
 
             // Delay the actual processing once all the notes are actually in
             eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
@@ -1366,6 +1363,9 @@ namespace MoonscraperChartEditor.Song.IO
 
             uint startTick = (uint)timedEvent.startTick;
             uint endTick = (uint)timedEvent.endTick;
+            // Exclude the last tick of the phrase
+            if (endTick > startTick)
+                --endTick;
 
             if (startEvent.difficulty == MidIOHelper.SYSEX_DIFFICULTY_ALL)
             {
@@ -1396,7 +1396,7 @@ namespace MoonscraperChartEditor.Song.IO
             uint startTick = (uint)timedEvent.startTick;
             uint endTick = (uint)timedEvent.endTick;
             // Exclude the last tick of the phrase
-            if (endTick > 0)
+            if (endTick > startTick)
                 --endTick;
 
             if (startEvent.difficulty == MidIOHelper.SYSEX_DIFFICULTY_ALL)
