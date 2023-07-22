@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -1265,22 +1265,22 @@ namespace MoonscraperChartEditor.Song.IO
 
         static void ProcessTimedEventAsFlagToggle(in EventProcessParams eventProcessParams, Note.Flags flags, int individualNoteSpecifier)
         {
-            // Delay the actual processing once all the notes are actually in
-            eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
-            {
-                ProcessTimedEventAsFlagTogglePostDelay(processParams, flags, individualNoteSpecifier);
-            });
-        }
-
-        static void ProcessTimedEventAsFlagTogglePostDelay(in EventProcessParams eventProcessParams, Note.Flags flags, int individualNoteSpecifier)   // individualNoteSpecifier as -1 to apply to the whole chord
-        {
-            var song = eventProcessParams.song;
-            var instrument = eventProcessParams.instrument;
-
             var timedEvent = eventProcessParams.timedEvent;
             uint startTick = (uint)timedEvent.startTick;
             uint endTick = (uint)timedEvent.endTick;
             --endTick;
+
+            // Delay the actual processing once all the notes are actually in
+            eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+            {
+                ProcessTimedEventAsFlagTogglePostDelay(processParams, startTick, endTick, flags, individualNoteSpecifier);
+            });
+        }
+
+        static void ProcessTimedEventAsFlagTogglePostDelay(in EventProcessParams eventProcessParams, uint startTick, uint endTick, Note.Flags flags, int individualNoteSpecifier)   // individualNoteSpecifier as -1 to apply to the whole chord
+        {
+            var song = eventProcessParams.song;
+            var instrument = eventProcessParams.instrument;
 
             foreach (Song.Difficulty difficulty in EnumX<Song.Difficulty>.Values)
             {
