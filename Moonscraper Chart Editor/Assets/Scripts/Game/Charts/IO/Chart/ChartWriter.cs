@@ -64,13 +64,33 @@ namespace MoonscraperChartEditor.Song.IO
 
         public class ErrorReport
         {
-            public StringBuilder errorList = new StringBuilder();
+            StringBuilder errorList = new StringBuilder();
+            StringBuilder warningList = new StringBuilder();
+
             public ChartIOHelper.FileSubType resultantFileType = ChartIOHelper.FileSubType.Default;
             public bool hasNonErrorFileTypeRelatedErrors { get; private set; }
+
+            public string GetFullReport()
+            {
+                return errorList.ToString() + "\n" + warningList.ToString();
+            }
+
+            public bool HasErrors => errorList.Length > 0;
+            public bool HasErrorsOrWarnings => warningList.Length > 0;
 
             public void AddError(string message, bool isFileTypeChangeFlag = false)
             {
                 errorList.AppendLine(message);
+
+                if (!isFileTypeChangeFlag)
+                {
+                    hasNonErrorFileTypeRelatedErrors = true;
+                }
+            }
+
+            public void AddWarning(string message, bool isFileTypeChangeFlag = false)
+            {
+                warningList.AppendLine(message);
 
                 if (!isFileTypeChangeFlag)
                 {
@@ -484,7 +504,7 @@ namespace MoonscraperChartEditor.Song.IO
 
                     if (eventName != temp && writeParameters.exportOptions.format != ExportOptions.Format.Msce)
                     {
-                        writeParameters.errorReport.AddError(string.Format("Warning: Found a global event \"{0}\" with invalid character/s. This will force the file to be saved in a propriety format (.msce) and will need to be re-exported to be readable by 3rd party rhythm games.", songEvent.title), true);
+                        writeParameters.errorReport.AddWarning(string.Format("Warning: Found a global event \"{0}\" with invalid character/s. This will force the file to be saved in a propriety format (.msce) and will need to be re-exported to be readable by 3rd party rhythm games.", songEvent.title), true);
 
                         writeParameters.errorReport.resultantFileType = ChartIOHelper.FileSubType.MoonscraperPropriety;
                     }
@@ -496,7 +516,7 @@ namespace MoonscraperChartEditor.Song.IO
                     if (eventName.Contains(doubleQuote))
                     {
                         eventName = eventName.Replace(doubleQuote, LyricHelper.CloneHeroCharSubstitutions[doubleQuote.ToString()]);
-                        writeParameters.errorReport.AddError(string.Format("Warning: Found a global event \"{0}\" with double quote character/s. This has been automatically replaced with a backtick character as these characters are not supported in these kinds of events within the .chart file format.", songEvent.title));
+                        writeParameters.errorReport.AddWarning(string.Format("Warning: Found a global event \"{0}\" with double quote character/s. This has been automatically replaced with a backtick character as these characters are not supported in these kinds of events within the .chart file format.", songEvent.title));
                     }
                 }
             }
@@ -519,7 +539,7 @@ namespace MoonscraperChartEditor.Song.IO
 
                 if (eventName != chartEvent.eventName && writeParameters.exportOptions.format != ExportOptions.Format.Msce)
                 {
-                    writeParameters.errorReport.AddError(string.Format("Warning: Found a track event \"{0}\" with invalid character/s for the Chart file format. This will force the file to be saved in a propriety format (.msce) and will need to be re-exported via the Export menu to be readable by 3rd party rhythm games.", chartEvent.eventName), true);
+                    writeParameters.errorReport.AddWarning(string.Format("Warning: Found a track event \"{0}\" with invalid character/s for the Chart file format. This will force the file to be saved in a propriety format (.msce) and will need to be re-exported via the Export menu to be readable by 3rd party rhythm games.", chartEvent.eventName), true);
 
                     writeParameters.errorReport.resultantFileType = ChartIOHelper.FileSubType.MoonscraperPropriety;
                 }
@@ -530,7 +550,7 @@ namespace MoonscraperChartEditor.Song.IO
                 if (eventName.Contains(testChar))
                 {
                     eventName = eventName.Replace(' ', '_');
-                    writeParameters.errorReport.AddError(string.Format("Warning: Found a track event \"{0}\" with space character/s. This has been automatically replaced with an underscore as these characters are not supported in these kinds of events within the .chart file format.", chartEvent.eventName));
+                    writeParameters.errorReport.AddWarning(string.Format("Warning: Found a track event \"{0}\" with space character/s. This has been automatically replaced with an underscore as these characters are not supported in these kinds of events within the .chart file format.", chartEvent.eventName));
                 }
             }
 

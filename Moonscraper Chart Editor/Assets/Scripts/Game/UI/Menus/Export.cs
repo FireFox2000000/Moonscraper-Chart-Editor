@@ -187,7 +187,10 @@ public class Export : DisplayMenu {
                         Debug.Log("Exporting CHART file to " + filepath);
                         new ChartWriter(filepath).Write(song, exportOptions, out errorReport);
 
-                        errorMessageList = errorReport.errorList.ToString();
+                        if (errorReport.HasErrorsOrWarnings)
+                        {
+                            errorMessageList = errorReport.GetFullReport().ToString();
+                        }
                     }
                     catch (System.Exception e)
                     {
@@ -529,7 +532,10 @@ public class Export : DisplayMenu {
             new ChartWriter(chartOutputFile).Write(newSong, exportOptions, out errorReport);
             GenerateSongIni(destFolderPath, newSong, songLengthSeconds, true);
 
-            errorMessageList = errorReport.errorList.ToString();
+            if (errorReport.HasErrorsOrWarnings)
+            {
+                errorMessageList += errorReport.GetFullReport().ToString();
+            }
         }));
 
         tasksManager.KickTasks(tasks);

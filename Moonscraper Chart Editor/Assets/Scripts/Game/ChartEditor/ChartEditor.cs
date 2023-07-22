@@ -979,15 +979,12 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     /// <param name="forced">Will the notes from each chart have their flag properties saved into the file?</param>
     void SaveSong(Song song, string filepath, ExportOptions exportOptions)
     {
-        string saveErrorMessage;
         try
         {
             ChartWriter.ErrorReport errorReport;
             new ChartWriter(filepath).Write(song, exportOptions, out errorReport);
 
             Debug.Log("Save complete!");
-
-            saveErrorMessage = errorReport.errorList.ToString();
 
             bool shouldQueueErrors = true; /*errorReport.hasNonErrorFileTypeRelatedErrors;
             if (!sessionFlags.HasFlag(ChartEditorSessionFlags.CurrentChartSavedInProprietyFormat))
@@ -1002,8 +999,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                 lastLoadedFile = filepath;
             }
 
-            if (saveErrorMessage != string.Empty && shouldQueueErrors)
+            if (errorReport.HasErrorsOrWarnings && shouldQueueErrors)
             {
+                string saveErrorMessage = errorReport.GetFullReport();
                 errorManager.QueueErrorMessage("Save completed with the following errors: " + Globals.LINE_ENDING + saveErrorMessage);
             }
 
