@@ -98,7 +98,7 @@ namespace MoonscraperEngine.Audio
 
         public long ChannelLengthInBytes()
         {
-            return Bass.BASS_ChannelGetLength(audioHandle, BASSMode.BASS_POS_BYTE);
+            return Bass.BASS_ChannelGetLength(audioHandle, BASSMode.BASS_POS_BYTES);
         }
 
         public float ChannelLengthInSeconds()
