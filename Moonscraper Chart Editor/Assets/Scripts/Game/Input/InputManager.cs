@@ -80,7 +80,7 @@ public class InputManager : UnitySingleton<InputManager>
         catch (DllNotFoundException ex)
         {
 #if (UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX)
-            string message = "SDL2 Linux runtime dependency not found. Please install the dependency (\"ffmpeg libsdl2-2.0-0 libx11-6 libgtk-3-0\") and restart the application.";
+            string message = "SDL2 Linux runtime dependency not found. Please install required dependencies (ffmpeg, sdl2, libx11-6, libgtk-3-0) and restart the application.";
             NativeMessageBox.Show(message, "Oops", NativeMessageBox.Type.OK, ChartEditor.Instance.windowHandleManager.nativeWindow);
 
             ChartEditor.Instance.ForceQuit();
