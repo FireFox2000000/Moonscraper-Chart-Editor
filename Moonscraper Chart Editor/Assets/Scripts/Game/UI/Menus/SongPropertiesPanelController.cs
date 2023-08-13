@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.IO;
 using MoonscraperEngine;
 using MoonscraperChartEditor.Song;
 
@@ -294,16 +295,21 @@ public class SongPropertiesPanelController : TabMenu
         try
         {
             string filepath = GetAudioFile();
-            if (editor.currentSongAudio.LoadAudio(filepath, audioInstrument))
-            {
-                // Record the filepath
-                editor.currentSong.SetAudioLocation(audioInstrument, filepath);
-                StartCoroutine(SetAudio());
-            }
+            LoadInstrumentAudioFromPath(audioInstrument, filepath);
         }
         catch (Exception e)
         {
             Logger.LogException(e, "Could not open audio");
+        }
+    }
+
+    void LoadInstrumentAudioFromPath(Song.AudioInstrument audioInstrument, string filepath)
+    {
+        if (editor.currentSongAudio.LoadAudio(filepath, audioInstrument))
+        {
+            // Record the filepath
+            editor.currentSong.SetAudioLocation(audioInstrument, filepath);
+            StartCoroutine(SetAudio());
         }
     }
 
@@ -318,6 +324,54 @@ public class SongPropertiesPanelController : TabMenu
     public void RefreshAllAudioStreams()
     {
         StartCoroutine(_RefreshAllAudioStreams());
+    }
+
+    public void GetInstrumentAudioByFileNames()
+    {
+        FileExplorer.OpenFolderPanel(out string resultPath);
+        foreach (var filePath in Directory.GetFiles(resultPath, "*.ogg"))
+        {
+            Song.AudioInstrument instrument;
+            switch(Path.GetFileName(filePath)) {
+                case "song.ogg":
+                    instrument = Song.AudioInstrument.Song;
+                    break;
+                case "guitar.ogg":
+                    instrument = Song.AudioInstrument.Guitar;
+                    break;
+                case "bass.ogg":
+                    instrument = Song.AudioInstrument.Bass;
+                    break;
+                case "rhythm.ogg":
+                    instrument = Song.AudioInstrument.Rhythm;
+                    break;
+                case "vocals.ogg":
+                    instrument = Song.AudioInstrument.Vocals;
+                    break;
+                case "drums.ogg":
+                case "drums_1.ogg":
+                    instrument = Song.AudioInstrument.Drum;
+                    break;
+                case "drums_2.ogg":
+                    instrument = Song.AudioInstrument.Drums_2;
+                    break;
+                case "drums_3.ogg":
+                    instrument = Song.AudioInstrument.Drums_3;
+                    break;
+                case "drums_4.ogg":
+                    instrument = Song.AudioInstrument.Drums_4;
+                    break;
+                case "keys.ogg":
+                    instrument = Song.AudioInstrument.Keys;
+                    break;
+                case "crowd.ogg":
+                    instrument = Song.AudioInstrument.Crowd;
+                    break;
+                default:
+                    continue;
+            }
+            LoadInstrumentAudioFromPath(instrument, filePath);
+        }
     }
 
     IEnumerator _RefreshAllAudioStreams()
