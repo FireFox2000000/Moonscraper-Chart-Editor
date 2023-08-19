@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.IO;
+using System.Linq;
 using MoonscraperEngine;
 using MoonscraperChartEditor.Song;
 
@@ -328,46 +329,50 @@ public class SongPropertiesPanelController : TabMenu
 
     public void GetInstrumentAudioByFileNames()
     {
+        // TODO: there HAS to be a way to just detect the current folder, right???
         FileExplorer.OpenFolderPanel(out string resultPath);
-        foreach (var filePath in Directory.GetFiles(resultPath, "*.ogg"))
+        var filesInDir = Directory.GetFiles(resultPath, "*.*");
+        foreach (var filePath in filesInDir.Where(x => validAudioExtensions.Contains(Path.GetExtension(x).TrimStart('.'))))
         {
             Song.AudioInstrument instrument;
-            switch(Path.GetFileName(filePath)) {
-                case "song.ogg":
+            switch(Path.GetFileNameWithoutExtension(filePath)) {
+                case "song":
                     instrument = Song.AudioInstrument.Song;
                     break;
-                case "guitar.ogg":
+                case "guitar":
                     instrument = Song.AudioInstrument.Guitar;
                     break;
-                case "bass.ogg":
+                case "bass":
                     instrument = Song.AudioInstrument.Bass;
                     break;
-                case "rhythm.ogg":
+                case "rhythm":
                     instrument = Song.AudioInstrument.Rhythm;
                     break;
-                case "vocals.ogg":
+                case "vocals":
                     instrument = Song.AudioInstrument.Vocals;
                     break;
-                case "drums.ogg":
-                case "drums_1.ogg":
+                case "drums":
+                case "drums_1":
                     instrument = Song.AudioInstrument.Drum;
                     break;
-                case "drums_2.ogg":
+                case "drums_2":
                     instrument = Song.AudioInstrument.Drums_2;
                     break;
-                case "drums_3.ogg":
+                case "drums_3":
                     instrument = Song.AudioInstrument.Drums_3;
                     break;
-                case "drums_4.ogg":
+                case "drums_4":
                     instrument = Song.AudioInstrument.Drums_4;
                     break;
-                case "keys.ogg":
+                case "keys":
                     instrument = Song.AudioInstrument.Keys;
                     break;
-                case "crowd.ogg":
+                case "crowd":
                     instrument = Song.AudioInstrument.Crowd;
                     break;
                 default:
+                    // would like to use a switch expression, but since this enum is non-nullable,
+                    // gotta use a continue to skip unwanted files
                     continue;
             }
             LoadInstrumentAudioFromPath(instrument, filePath);
