@@ -300,12 +300,12 @@ public class GroupSelectPanelController : MonoBehaviour
 
     public void SetTom()
     {
-        SetNoteType(Note.NoteType.Natural, Note.Flags.ProDrums_Accent | Note.Flags.ProDrums_Ghost);
+        SetNoteType(Note.NoteType.Natural, Note.Flags.ProDrums_Accent | Note.Flags.ProDrums_Ghost | Note.Flags.DoubleKick);
     }
 
     public void SetCymbal()
     {
-        SetNoteType(Note.NoteType.Cymbal, Note.Flags.ProDrums_Accent | Note.Flags.ProDrums_Ghost);
+        SetNoteType(Note.NoteType.Cymbal, Note.Flags.ProDrums_Accent | Note.Flags.ProDrums_Ghost | Note.Flags.DoubleKick);
     }
 
     public void SetNoDynamics()
