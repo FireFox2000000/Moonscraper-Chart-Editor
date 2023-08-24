@@ -79,7 +79,8 @@ namespace MoonscraperChartEditor.Song.IO
             public IReadOnlyDictionary<int, EventProcessFn> noteProcessMap;
             public IReadOnlyDictionary<string, ProcessModificationProcessFn> textProcessMap;
             public IReadOnlyDictionary<byte, EventProcessFn> sysexProcessMap;
-            public List<EventProcessFn> delayedProcessesList;
+            public List<EventProcessFn> forcingProcessList;
+            public List<EventProcessFn> sysexProcessList;
         }
 
         // Delegate for functions that parse something into the chart
@@ -459,7 +460,8 @@ namespace MoonscraperChartEditor.Song.IO
                 noteProcessMap = GetNoteProcessDict(gameMode),
                 textProcessMap = GetTextEventProcessDict(gameMode),
                 sysexProcessMap = GetSysExEventProcessDict(gameMode),
-                delayedProcessesList = new List<EventProcessFn>(),
+                forcingProcessList = new List<EventProcessFn>(),
+                sysexProcessList = new List<EventProcessFn>(),
             };
 
             if (instrument == Song.Instrument.Unrecognised)
@@ -508,8 +510,15 @@ namespace MoonscraperChartEditor.Song.IO
             else
                 unrecognised.UpdateCache();
 
+            // Apply SysEx events first
+            // These are separate to prevent forcing issues on open notes marked via SysEx
+            foreach (var process in processParams.sysexProcessList)
+            {
+                process(processParams);
+            }
+
             // Apply forcing events
-            foreach (var process in processParams.delayedProcessesList)
+            foreach (var process in processParams.forcingProcessList)
             {
                 process(processParams);
             }
@@ -1118,7 +1127,7 @@ namespace MoonscraperChartEditor.Song.IO
                 --endTick;
 
             // Delay the actual processing once all the notes are actually in
-            eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+            eventProcessParams.forcingProcessList.Add((in EventProcessParams processParams) =>
             {
                 ProcessEventAsForcedTypePostDelay(processParams, startTick, endTick, difficulty, noteType);
             });
@@ -1268,7 +1277,7 @@ namespace MoonscraperChartEditor.Song.IO
                 --endTick;
 
             // Delay the actual processing once all the notes are actually in
-            eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+            eventProcessParams.forcingProcessList.Add((in EventProcessParams processParams) =>
             {
                 ProcessTimedEventAsFlagTogglePostDelay(processParams, startTick, endTick, flags, individualNoteSpecifier);
             });
@@ -1371,7 +1380,7 @@ namespace MoonscraperChartEditor.Song.IO
             {
                 foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
                 {
-                    eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+                    eventProcessParams.sysexProcessList.Add((in EventProcessParams processParams) =>
                     {
                         ProcessEventAsForcedTypePostDelay(processParams, startTick, endTick, diff, noteType);
                     });
@@ -1380,7 +1389,7 @@ namespace MoonscraperChartEditor.Song.IO
             else
             {
                 var diff = MidIOHelper.SYSEX_TO_MS_DIFF_LOOKUP[startEvent.difficulty];
-                eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+                eventProcessParams.sysexProcessList.Add((in EventProcessParams processParams) =>
                 {
                     ProcessEventAsForcedTypePostDelay(processParams, startTick, endTick, diff, noteType);
                 });
@@ -1403,7 +1412,7 @@ namespace MoonscraperChartEditor.Song.IO
             {
                 foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
                 {
-                    eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+                    eventProcessParams.sysexProcessList.Add((in EventProcessParams processParams) =>
                     {
                         ProcessEventAsOpenNoteModifierPostDelay(processParams, startTick, endTick, diff);
                     });
@@ -1412,7 +1421,7 @@ namespace MoonscraperChartEditor.Song.IO
             else
             {
                 var diff = MidIOHelper.SYSEX_TO_MS_DIFF_LOOKUP[startEvent.difficulty];
-                eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+                eventProcessParams.sysexProcessList.Add((in EventProcessParams processParams) =>
                 {
                     ProcessEventAsOpenNoteModifierPostDelay(processParams, startTick, endTick, diff);
                 });
