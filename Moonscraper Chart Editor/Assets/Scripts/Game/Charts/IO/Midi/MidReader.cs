@@ -511,7 +511,23 @@ namespace MoonscraperChartEditor.Song.IO
                 unrecognised.UpdateCache();
 
             // Apply SysEx events first
-            // These are separate to prevent forcing issues on open notes marked via SysEx
+            //
+            // These are separate to prevent force marker issues on open notes marked via SysEx:
+            // combining them or processing forcing first could result in the natural HOPO state of the note being
+            // wrong, since the note hadn't been turned into an open note yet.
+            //
+            // This would cause the wrong flags to be applied when processing forcing, resulting in one of two things:
+            // - An open note that followed a green note would ignore any forcing, since at force time it would still
+            //   be green and already appear to be the correct note type, due to not being a natural HOPO.
+            // - Consecutive open notes would be marked as forced and become all HOPOs, since at force time they were
+            //   still green, but in-between forcing the previous and forcing this one, the previous was then marked
+            //   as an open note, causing it to have the wrong force state and also causing the current note to have
+            //   the wrong natural HOPO state.
+            //
+            // Tap marking is not affected, as that trumps all other forcing, and opens can't be marked as taps
+            // (nor are they converted to HOPOs, as we don't allow consecutive HOPOs of the same fret).
+            //
+            // TL;DR, ensure fret changes occur *before* applying forcing, or else natural HOPO states can be wrong.
             foreach (var process in processParams.sysexProcessList)
             {
                 process(processParams);
