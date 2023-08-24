@@ -125,12 +125,12 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
 
     public void PickupPhraseStart() 
     {
-        phraseStartEvent.Pickup().Invoke();
+        phraseStartEvent.Pickup()?.Invoke();
     }
 
     public void PickupPhraseEnd() 
     {
-        phraseEndEvent.Pickup().Invoke();
+        phraseEndEvent.Pickup()?.Invoke();
     }
 
     // Initialize lyricEvents using a list of string syllables. Syllables which
