@@ -682,7 +682,7 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
                 phrase.AddSyllables(firstLineSyllables);
                 if (phrase.phraseEndPlaced)
                 {
-                    phrases[phrases.Count - 1].PickupPhraseEnd();
+                    phrase.PickupPhraseEnd();
                 }
             }
 
