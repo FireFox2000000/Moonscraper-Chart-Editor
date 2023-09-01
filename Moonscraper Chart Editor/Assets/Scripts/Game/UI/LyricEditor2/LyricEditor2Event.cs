@@ -17,7 +17,8 @@ public class LyricEditor2Event
         Event referencedEvent = null;
         string formattedText = string.Empty;
 
-        public PickupCommand(Event referencedEvent, string formattedText, InvokeCallback invokeCommand, RevokeCallback revokeCommand, LyricEditor2Controller mainController) {
+        public PickupCommand(Event referencedEvent, string formattedText, InvokeCallback invokeCommand, RevokeCallback revokeCommand, LyricEditor2Controller mainController) 
+        {
             this.referencedEvent = referencedEvent;
             deleteCommand = new SongEditDelete(referencedEvent);
             this.formattedText = formattedText;
@@ -26,39 +27,44 @@ public class LyricEditor2Event
             this.mainController = mainController;
         }
 
-        public void Invoke() {
+        public void Invoke() 
+        {
             deleteCommand.Invoke();
             mainController.editCommands.Add(deleteCommand);
             invokeCommand();
         }
 
-        public void Revoke() {
+        public void Revoke() 
+        {
             deleteCommand.Revoke();
             mainController.editCommands.Remove(deleteCommand);
             revokeCommand(formattedText, (Event)deleteCommand.GetSongObjects()[0]);
         }
     }
 
-    public bool hasBeenPlaced {get; private set;}
-    public string text {get; private set;}
+    public bool hasBeenPlaced { get; private set; }
+    public string text { get; private set; }
     public string formattedText = "";
-    public uint? tick {get {return referencedEvent?.tick;}}
+    public uint? tick => referencedEvent?.tick;
     LyricEditor2Controller mainController;
     Event referencedEvent;
 
 
-    public LyricEditor2Event(string text, LyricEditor2Controller controller) {
+    public LyricEditor2Event(string text, LyricEditor2Controller controller) 
+    {
         this.text = text;
         this.hasBeenPlaced = false;
         this.mainController = controller;
     }
 
-    public LyricEditor2Event(Event existingEvent, LyricEditor2Controller controller) {
+    public LyricEditor2Event(Event existingEvent, LyricEditor2Controller controller) 
+    {
         SetEvent(existingEvent);
         this.mainController = controller;
     }
 
-    public void SetEvent(Event existingEvent) {
+    public void SetEvent(Event existingEvent) 
+    {
         referencedEvent = existingEvent;
         this.text = existingEvent?.title ?? "";
         this.hasBeenPlaced = (existingEvent != null);

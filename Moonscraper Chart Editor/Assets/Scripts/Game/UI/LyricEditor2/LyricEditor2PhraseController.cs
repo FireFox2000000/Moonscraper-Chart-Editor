@@ -48,20 +48,20 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     public static readonly string c_phraseStartKeyword = LyricHelper.PhraseStartText;
     public static readonly string c_phraseEndKeyword = LyricHelper.PhraseEndText;
 
-    public bool allSyllablesPlaced {get; private set;} = false;
-    public bool anySyllablesPlaced {get; private set;} = false;
-    public bool phraseStartPlaced {get {return phraseStartEvent.hasBeenPlaced;}}
-    public bool phraseEndPlaced {get {return phraseEndEvent.hasBeenPlaced;}}
-    public uint? startTick {get {return phraseStartEvent.tick;}}
-    public uint? endTick {get {return phraseEndEvent.tick;}}
-    public UnityEngine.RectTransform rectTransform {get; private set;}
+    public bool allSyllablesPlaced { get; private set; } = false;
+    public bool anySyllablesPlaced { get; private set; } = false;
+    public bool phraseStartPlaced => phraseStartEvent.hasBeenPlaced;
+    public bool phraseEndPlaced => phraseEndEvent.hasBeenPlaced;
+    public uint? startTick => phraseStartEvent.tick;
+    public uint? endTick => phraseEndEvent.tick;
+    public UnityEngine.RectTransform rectTransform { get; private set; }
     public int sortID = 0;
-    public int numSyllables {get {return lyricEvents?.Count ?? 0;}}
+    public int numSyllables => lyricEvents?.Count ?? 0;
 
-    List<LyricEditor2Event> lyricEvents;
+    List<LyricEditor2Event> lyricEvents = null;
     LyricEditor2Event phraseStartEvent = null;
     LyricEditor2Event phraseEndEvent = null;
-    LyricEditor2Event placingLyric;
+    LyricEditor2Event placingLyric = null;
 
     // Place the next lyric in lyricEvents
     public void StartPlaceNextLyric(uint tick) 
