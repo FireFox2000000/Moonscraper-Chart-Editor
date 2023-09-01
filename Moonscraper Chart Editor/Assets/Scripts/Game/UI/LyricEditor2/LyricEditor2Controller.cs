@@ -678,8 +678,12 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
             if (firstLineSyllablesRaw.Count > 0) 
             {
                 List<string> firstLineSyllables = firstLineSyllablesRaw[0];
-                phrases[phrases.Count-1].AddSyllables(firstLineSyllables);
-                phrases[phrases.Count-1].PickupPhraseEnd();
+                var phrase = phrases[phrases.Count - 1];
+                phrase.AddSyllables(firstLineSyllables);
+                if (phrase.phraseEndPlaced)
+                {
+                    phrases[phrases.Count - 1].PickupPhraseEnd();
+                }
             }
 
             string otherLines = savedUnplacedSyllables.Substring(firstNewline+1);

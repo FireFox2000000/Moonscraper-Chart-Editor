@@ -14,8 +14,8 @@ public class LyricEditor2Event
         InvokeCallback invokeCommand;
         SongEditDelete deleteCommand;
         LyricEditor2Controller mainController;
-        Event referencedEvent;
-        string formattedText;
+        Event referencedEvent = null;
+        string formattedText = string.Empty;
 
         public PickupCommand(Event referencedEvent, string formattedText, InvokeCallback invokeCommand, RevokeCallback revokeCommand, LyricEditor2Controller mainController) {
             this.referencedEvent = referencedEvent;
@@ -96,21 +96,25 @@ public class LyricEditor2Event
     // Remove lyric from the editor
     public MoonscraperEngine.ICommand Pickup() 
     {
-        if (this.referencedEvent != null) 
+        if (this.referencedEvent == null)
         {
-            return new PickupCommand(referencedEvent, formattedText, InvokePickup, RevokePickup, mainController);
+            UnityEngine.Debug.Assert(false, "Lyric editor event is not referencing a lyric event, cannot pickup");
+            return null;
         }
-        return null;
+
+        return new PickupCommand(referencedEvent, formattedText, OnPickupInvoked, OnPickupRevoked, mainController);
     }
 
     // Invoke a pickup command
-    public void InvokePickup() {
+    void OnPickupInvoked() 
+    {
         referencedEvent = null;
         hasBeenPlaced = false;
     }
 
     // Revert to a previous state after Pickup() is revoked
-    public void RevokePickup(string formattedText, Event oldEvent) {
+    void OnPickupRevoked(string formattedText, Event oldEvent) 
+    {
         this.formattedText = formattedText;
         SetEvent(oldEvent);
     }

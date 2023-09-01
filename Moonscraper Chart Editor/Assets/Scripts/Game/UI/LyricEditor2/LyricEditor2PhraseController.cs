@@ -125,11 +125,13 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
 
     public void PickupPhraseStart() 
     {
+        UnityEngine.Debug.Assert(phraseStartPlaced, "Attempting to remove a phrase start event that does not exist");
         phraseStartEvent.Pickup().Invoke();
     }
 
     public void PickupPhraseEnd() 
     {
+        UnityEngine.Debug.Assert(phraseEndPlaced, "Attempting to remove a phrase end event that does not exist");
         phraseEndEvent.Pickup().Invoke();
     }
 
