@@ -1,3 +1,12 @@
+1.5.3.1
+    FIXES
+    -Fix SysEx open note forcing issues in .mid
+    -Fix group-select Tom button removing 2x kick flag
+    -Fixed error trying to remove a phrase end even that didn't exist upon lyric editor reopening.
+
+    CHANGES
+    -Remove leading silence on default clap sfx
+
 1.5.3
     FIXES
     -Fixed waveform display desync (reverted audio backend changes to 1.5.0 version)
