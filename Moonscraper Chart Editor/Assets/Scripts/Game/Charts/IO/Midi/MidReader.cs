@@ -79,7 +79,8 @@ namespace MoonscraperChartEditor.Song.IO
             public IReadOnlyDictionary<int, EventProcessFn> noteProcessMap;
             public IReadOnlyDictionary<string, ProcessModificationProcessFn> textProcessMap;
             public IReadOnlyDictionary<byte, EventProcessFn> sysexProcessMap;
-            public List<EventProcessFn> delayedProcessesList;
+            public List<EventProcessFn> forcingProcessList;
+            public List<EventProcessFn> sysexProcessList;
         }
 
         // Delegate for functions that parse something into the chart
@@ -459,7 +460,8 @@ namespace MoonscraperChartEditor.Song.IO
                 noteProcessMap = GetNoteProcessDict(gameMode),
                 textProcessMap = GetTextEventProcessDict(gameMode),
                 sysexProcessMap = GetSysExEventProcessDict(gameMode),
-                delayedProcessesList = new List<EventProcessFn>(),
+                forcingProcessList = new List<EventProcessFn>(),
+                sysexProcessList = new List<EventProcessFn>(),
             };
 
             if (instrument == Song.Instrument.Unrecognised)
@@ -508,8 +510,31 @@ namespace MoonscraperChartEditor.Song.IO
             else
                 unrecognised.UpdateCache();
 
+            // Apply SysEx events first
+            //
+            // These are separate to prevent force marker issues on open notes marked via SysEx:
+            // combining them or processing forcing first could result in the natural HOPO state of the note being
+            // wrong, since the note hadn't been turned into an open note yet.
+            //
+            // This would cause the wrong flags to be applied when processing forcing, resulting in one of two things:
+            // - An open note that followed a green note would ignore any forcing, since at force time it would still
+            //   be green and already appear to be the correct note type, due to not being a natural HOPO.
+            // - Consecutive open notes would be marked as forced and become all HOPOs, since at force time they were
+            //   still green, but in-between forcing the previous and forcing this one, the previous was then marked
+            //   as an open note, causing it to have the wrong force state and also causing the current note to have
+            //   the wrong natural HOPO state.
+            //
+            // Tap marking is not affected, as that trumps all other forcing, and opens can't be marked as taps
+            // (nor are they converted to HOPOs, as we don't allow consecutive HOPOs of the same fret).
+            //
+            // TL;DR, ensure fret changes occur *before* applying forcing, or else natural HOPO states can be wrong.
+            foreach (var process in processParams.sysexProcessList)
+            {
+                process(processParams);
+            }
+
             // Apply forcing events
-            foreach (var process in processParams.delayedProcessesList)
+            foreach (var process in processParams.forcingProcessList)
             {
                 process(processParams);
             }
@@ -1118,7 +1143,7 @@ namespace MoonscraperChartEditor.Song.IO
                 --endTick;
 
             // Delay the actual processing once all the notes are actually in
-            eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+            eventProcessParams.forcingProcessList.Add((in EventProcessParams processParams) =>
             {
                 ProcessEventAsForcedTypePostDelay(processParams, startTick, endTick, difficulty, noteType);
             });
@@ -1268,7 +1293,7 @@ namespace MoonscraperChartEditor.Song.IO
                 --endTick;
 
             // Delay the actual processing once all the notes are actually in
-            eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+            eventProcessParams.forcingProcessList.Add((in EventProcessParams processParams) =>
             {
                 ProcessTimedEventAsFlagTogglePostDelay(processParams, startTick, endTick, flags, individualNoteSpecifier);
             });
@@ -1371,7 +1396,7 @@ namespace MoonscraperChartEditor.Song.IO
             {
                 foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
                 {
-                    eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+                    eventProcessParams.sysexProcessList.Add((in EventProcessParams processParams) =>
                     {
                         ProcessEventAsForcedTypePostDelay(processParams, startTick, endTick, diff, noteType);
                     });
@@ -1380,7 +1405,7 @@ namespace MoonscraperChartEditor.Song.IO
             else
             {
                 var diff = MidIOHelper.SYSEX_TO_MS_DIFF_LOOKUP[startEvent.difficulty];
-                eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+                eventProcessParams.sysexProcessList.Add((in EventProcessParams processParams) =>
                 {
                     ProcessEventAsForcedTypePostDelay(processParams, startTick, endTick, diff, noteType);
                 });
@@ -1403,7 +1428,7 @@ namespace MoonscraperChartEditor.Song.IO
             {
                 foreach (Song.Difficulty diff in EnumX<Song.Difficulty>.Values)
                 {
-                    eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+                    eventProcessParams.sysexProcessList.Add((in EventProcessParams processParams) =>
                     {
                         ProcessEventAsOpenNoteModifierPostDelay(processParams, startTick, endTick, diff);
                     });
@@ -1412,7 +1437,7 @@ namespace MoonscraperChartEditor.Song.IO
             else
             {
                 var diff = MidIOHelper.SYSEX_TO_MS_DIFF_LOOKUP[startEvent.difficulty];
-                eventProcessParams.delayedProcessesList.Add((in EventProcessParams processParams) =>
+                eventProcessParams.sysexProcessList.Add((in EventProcessParams processParams) =>
                 {
                     ProcessEventAsOpenNoteModifierPostDelay(processParams, startTick, endTick, diff);
                 });
