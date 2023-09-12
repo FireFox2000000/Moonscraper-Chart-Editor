@@ -10,9 +10,17 @@ public class ErrorMessage : DisplayMenu {
     public string errorMessage = "No error";
     public Text errorText;
 
+    const int MAX_CHARS = 4096;
+
     protected override void OnEnable()
     {
         base.OnEnable();
+
+        if (errorMessage.Length > MAX_CHARS)
+        {
+            errorMessage = errorMessage.Substring(0, MAX_CHARS).Trim();
+            errorMessage += "...";
+        }
         errorText.text = errorMessage;
     }
 }
