@@ -1,11 +1,12 @@
-1.5.3.1
-    FIXES
+1.5.4
+     FIXES
     -Fix SysEx open note forcing issues in .mid
     -Fix group-select Tom button removing 2x kick flag
     -Fixed error trying to remove a phrase end even that didn't exist upon lyric editor reopening.
+    -Fixed "Mesh cannot have more than 65000 vertices" error when trying to display long error messages. 
 
     CHANGES
-    -Remove leading silence on default clap sfx
+    -Remove leading silence on default clap sfx   
 
 1.5.3
     FIXES
