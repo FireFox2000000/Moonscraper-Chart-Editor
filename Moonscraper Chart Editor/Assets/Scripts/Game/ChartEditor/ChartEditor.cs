@@ -65,7 +65,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     SongObjectPoolManager _songObjectPoolManager;
     public SongObjectPoolManager songObjectPoolManager { get { return _songObjectPoolManager; } }
 
-    string lastLoadedFile = string.Empty;
+    public string lastLoadedFile { get; private set; } = string.Empty;
     public WindowHandleManager windowHandleManager { get; private set; }
     [HideInInspector]
     public ErrorManager errorManager { get; private set; }

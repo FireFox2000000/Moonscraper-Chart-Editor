@@ -345,9 +345,7 @@ public class SongPropertiesPanelController : TabMenu
 
     public void GetInstrumentAudioByFileNames()
     {
-        // TODO: there HAS to be a way to just detect the current folder, right???
-        FileExplorer.OpenFolderPanel(out string resultPath);
-        var filesInDir = Directory.GetFiles(resultPath, "*.*");
+        var filesInDir = Directory.GetFiles(Path.GetDirectoryName(ChartEditor.Instance.lastLoadedFile), "*.*");
         var invalidFilenamesFound = new List<string>();
 
         foreach (var filePath in filesInDir.Where(x => validAudioExtensions.Contains(Path.GetExtension(x).TrimStart('.'))))
