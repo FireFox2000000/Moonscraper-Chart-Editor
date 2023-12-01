@@ -1,13 +1,14 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
+#define SDL_INPUT
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MoonscraperEngine.Input;
-
-using SDL2;
 using System;
+using SDL2;
 
 /// <summary>
 /// Handles controller connection events and updates controller inputs
@@ -60,13 +61,19 @@ public class InputManager : UnitySingleton<InputManager>
     {
         try
         {
-            Debug.Log("Initialising SDL input...");
+#if SDL_INPUT
+            const uint SDL_FLAGS = SDL.SDL_INIT_GAMECONTROLLER | SDL.SDL_INIT_JOYSTICK;
+#else
+            // Having sporatic boot issues, disable if necessary
+            const uint SDL_FLAGS = 0;
+#endif
+            Debug.LogFormat("Initialising SDL input {0}", SDL_FLAGS);
 
             SDL.SDL_SetMainReady();
 
             Debug.Log("SDL input main ready");
 
-            if (SDL.SDL_Init(SDL.SDL_INIT_GAMECONTROLLER | SDL.SDL_INIT_JOYSTICK) < 0)
+            if (SDL.SDL_Init(SDL_FLAGS) != 0)
             {
                 Debug.LogError("SDL could not initialise! SDL Error: " + SDL.SDL_GetError());
             }
@@ -76,6 +83,7 @@ public class InputManager : UnitySingleton<InputManager>
 
                 int connectedJoysticks = SDL.SDL_NumJoysticks();
             }
+
         }
         catch (DllNotFoundException ex)
         {
@@ -91,7 +99,8 @@ public class InputManager : UnitySingleton<InputManager>
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update () 
+    {
         SDL.SDL_Event sdlEvent;
         while (SDL.SDL_PollEvent(out sdlEvent) > 0)
         {
@@ -129,7 +138,7 @@ public class InputManager : UnitySingleton<InputManager>
             }
         }
 
-        foreach(GamepadDevice gamepad in controllers)
+        foreach (GamepadDevice gamepad in controllers)
         {
             gamepad.Update(ChartEditor.hasFocus);
         }
@@ -139,7 +148,6 @@ public class InputManager : UnitySingleton<InputManager>
             joystick.Update(ChartEditor.hasFocus);
         }
     }
-
     void OnControllerConnect(int index)
     {
         IntPtr gameController = SDL.SDL_GameControllerOpen(index);

@@ -9,10 +9,17 @@ using System.Collections;
 public class ToolpaneButtonController : MonoBehaviour {
     public EditorObjectToolManager.ToolID toolId;
     private Button button;
+    bool aliveCheck = false;
+
+    void Awake()
+    {
+        aliveCheck = true;
+    }
 
     void Start()
     {
         ChartEditor.Instance.events.toolChangedEvent.Register(RefreshInteractability);
+        ChartEditor.Instance.events.applicationShutdown.Register(OnShutdown);
 
         button = GetComponent<Button>();
         if (ChartEditor.Instance.toolManager.currentToolId == toolId)
@@ -24,9 +31,14 @@ public class ToolpaneButtonController : MonoBehaviour {
         }
     }
 
+    void OnShutdown()
+    {
+        aliveCheck = false;
+    }
+
     void OnDisable()
     {
-        if (ChartEditor.InstanceExists)
+        if (aliveCheck)
         {
             bool isMyTool = ChartEditor.Instance.toolManager.currentToolId == toolId;
             if (isMyTool)

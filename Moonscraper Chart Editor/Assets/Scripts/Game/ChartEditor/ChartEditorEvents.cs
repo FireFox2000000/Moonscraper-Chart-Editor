@@ -13,6 +13,7 @@ public class ChartEditorEvents
     public MoonscraperEngine.Event drumsModeOptionChangedEvent { get; private set; }
     public MoonscraperEngine.Event playbackStoppedEvent { get; private set; }
     public MoonscraperEngine.Event groupMoveStart { get; private set; }
+    public MoonscraperEngine.Event applicationShutdown { get; private set; }
 
     public MoonscraperEngine.Event<int> lanesChangedEvent { get; private set; }
     public MoonscraperEngine.Event<bool> keyboardModeToggledEvent { get; private set; }
@@ -32,6 +33,7 @@ public class ChartEditorEvents
         drumsModeOptionChangedEvent = new MoonscraperEngine.Event();
         playbackStoppedEvent = new MoonscraperEngine.Event();
         groupMoveStart = new MoonscraperEngine.Event();
+        applicationShutdown = new MoonscraperEngine.Event();
 
         lanesChangedEvent = new MoonscraperEngine.Event<int>();
         keyboardModeToggledEvent = new MoonscraperEngine.Event<bool>();
