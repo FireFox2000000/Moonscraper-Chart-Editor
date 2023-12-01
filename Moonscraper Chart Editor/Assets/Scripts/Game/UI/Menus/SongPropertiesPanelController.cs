@@ -49,6 +49,22 @@ public class SongPropertiesPanelController : TabMenu
     TimeSpan customTime = new TimeSpan();
 
     static readonly string[] validAudioExtensions = { "ogg", "wav", "mp3", "opus" };
+    static readonly string[] validFilenames =
+    {
+        "song",
+        "guitar",
+        "bass",
+        "rhythm",
+        "vocals",
+        "drums",
+        "drums_1",
+        "drums_2",
+        "drums_3",
+        "drums_4",
+        "keys",
+        "crowd",
+        "preview",
+    };
     readonly ExtensionFilter audioExFilter = new ExtensionFilter("Audio files", validAudioExtensions);
 
     Dictionary<Song.AudioInstrument, Text> m_audioStreamTextLookup;
@@ -332,10 +348,13 @@ public class SongPropertiesPanelController : TabMenu
         // TODO: there HAS to be a way to just detect the current folder, right???
         FileExplorer.OpenFolderPanel(out string resultPath);
         var filesInDir = Directory.GetFiles(resultPath, "*.*");
+        var invalidFilenamesFound = new List<string>();
+
         foreach (var filePath in filesInDir.Where(x => validAudioExtensions.Contains(Path.GetExtension(x).TrimStart('.'))))
         {
             Song.AudioInstrument instrument;
-            switch(Path.GetFileNameWithoutExtension(filePath)) {
+            var fileName = Path.GetFileNameWithoutExtension(filePath);
+            switch(fileName) {
                 case "song":
                     instrument = Song.AudioInstrument.Song;
                     break;
@@ -371,11 +390,21 @@ public class SongPropertiesPanelController : TabMenu
                     instrument = Song.AudioInstrument.Crowd;
                     break;
                 default:
-                    // would like to use a switch expression, but since this enum is non-nullable,
-                    // gotta use a continue to skip unwanted files
+                    if (!validFilenames.Contains(fileName))
+                    {
+                        invalidFilenamesFound.Add(Path.GetFileName(filePath));
+                    }
                     continue;
             }
             LoadInstrumentAudioFromPath(instrument, filePath);
+        }
+        if (invalidFilenamesFound.Count > 0)
+        {
+            var filenamesMessage = $"Invalid filename(s) detected:{Globals.LINE_ENDING}"
+                + string.Join(Globals.LINE_ENDING, invalidFilenamesFound);
+            ChartEditor.Instance.errorManager.QueueErrorMessage(filenamesMessage
+                + $"{Globals.LINE_ENDING}{Globals.LINE_ENDING}Acceptable filenames:{Globals.LINE_ENDING}"
+                + string.Join(Globals.LINE_ENDING, validFilenames));
         }
     }
 
