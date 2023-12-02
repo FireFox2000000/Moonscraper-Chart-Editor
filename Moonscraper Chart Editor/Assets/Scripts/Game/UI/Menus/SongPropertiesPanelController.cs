@@ -401,8 +401,10 @@ public class SongPropertiesPanelController : TabMenu
             var filenamesMessage = $"Invalid filename(s) detected:{Globals.LINE_ENDING}"
                 + string.Join(Globals.LINE_ENDING, invalidFilenamesFound);
             ChartEditor.Instance.errorManager.QueueErrorMessage(filenamesMessage
-                + $"{Globals.LINE_ENDING}{Globals.LINE_ENDING}Acceptable filenames:{Globals.LINE_ENDING}"
-                + string.Join(Globals.LINE_ENDING, validFilenames));
+                + $"{Globals.LINE_ENDING}{Globals.LINE_ENDING}Accepted filenames:{Globals.LINE_ENDING}"
+                + string.Join(Globals.LINE_ENDING, validFilenames)
+                + $"{Globals.LINE_ENDING}{Globals.LINE_ENDING}Accepted file types:{Globals.LINE_ENDING}"
+                + string.Join(Globals.LINE_ENDING, validAudioExtensions));
         }
     }
 
