@@ -49,21 +49,24 @@ public class SongPropertiesPanelController : TabMenu
     TimeSpan customTime = new TimeSpan();
 
     static readonly string[] validAudioExtensions = { "ogg", "wav", "mp3", "opus" };
-    static readonly string[] validFilenames =
+    /// <summary>
+    /// null value indicates a valid filename that doesn't tie to a specific instrument (e.g. the song preview)
+    /// </summary>
+    static readonly Dictionary<string, Song.AudioInstrument?> validFilenames = new Dictionary<string, Song.AudioInstrument?>
     {
-        "song",
-        "guitar",
-        "bass",
-        "rhythm",
-        "vocals",
-        "drums",
-        "drums_1",
-        "drums_2",
-        "drums_3",
-        "drums_4",
-        "keys",
-        "crowd",
-        "preview",
+        { "song", Song.AudioInstrument.Song },
+        { "guitar", Song.AudioInstrument.Guitar },
+        { "bass", Song.AudioInstrument.Bass },
+        { "rhythm", Song.AudioInstrument.Rhythm },
+        { "vocals", Song.AudioInstrument.Vocals },
+        { "drums", Song.AudioInstrument.Drum },
+        { "drums_1", Song.AudioInstrument.Drum },
+        { "drums_2", Song.AudioInstrument.Drums_2 },
+        { "drums_3", Song.AudioInstrument.Drums_3 },
+        { "drums_4", Song.AudioInstrument.Drums_4 },
+        { "keys", Song.AudioInstrument.Keys },
+        { "crowd", Song.AudioInstrument.Crowd },
+        { "preview", null },
     };
     readonly ExtensionFilter audioExFilter = new ExtensionFilter("Audio files", validAudioExtensions);
 
@@ -355,51 +358,18 @@ public class SongPropertiesPanelController : TabMenu
 
         foreach (var filePath in filesInDir.Where(x => validAudioExtensions.Contains(Path.GetExtension(x).TrimStart('.'))))
         {
-            Song.AudioInstrument instrument;
             var fileName = Path.GetFileNameWithoutExtension(filePath);
-            switch(fileName) {
-                case "song":
-                    instrument = Song.AudioInstrument.Song;
-                    break;
-                case "guitar":
-                    instrument = Song.AudioInstrument.Guitar;
-                    break;
-                case "bass":
-                    instrument = Song.AudioInstrument.Bass;
-                    break;
-                case "rhythm":
-                    instrument = Song.AudioInstrument.Rhythm;
-                    break;
-                case "vocals":
-                    instrument = Song.AudioInstrument.Vocals;
-                    break;
-                case "drums":
-                case "drums_1":
-                    instrument = Song.AudioInstrument.Drum;
-                    break;
-                case "drums_2":
-                    instrument = Song.AudioInstrument.Drums_2;
-                    break;
-                case "drums_3":
-                    instrument = Song.AudioInstrument.Drums_3;
-                    break;
-                case "drums_4":
-                    instrument = Song.AudioInstrument.Drums_4;
-                    break;
-                case "keys":
-                    instrument = Song.AudioInstrument.Keys;
-                    break;
-                case "crowd":
-                    instrument = Song.AudioInstrument.Crowd;
-                    break;
-                default:
-                    if (!validFilenames.Contains(fileName))
-                    {
-                        invalidFilenamesFound.Add(Path.GetFileName(filePath));
-                    }
-                    continue;
+            if (validFilenames.TryGetValue(fileName, out var instrument))
+            {
+                if (instrument.HasValue)
+                {
+                    LoadInstrumentAudioFromPath(instrument.Value, filePath);
+                }
             }
-            LoadInstrumentAudioFromPath(instrument, filePath);
+            else
+            {
+                invalidFilenamesFound.Add(Path.GetFileName(filePath));
+            }
         }
         if (invalidFilenamesFound.Count > 0)
         {
@@ -407,7 +377,7 @@ public class SongPropertiesPanelController : TabMenu
                 + string.Join(Globals.LINE_ENDING, invalidFilenamesFound);
             ChartEditor.Instance.errorManager.QueueErrorMessage(filenamesMessage
                 + $"{Globals.LINE_ENDING}{Globals.LINE_ENDING}Accepted filenames:{Globals.LINE_ENDING}"
-                + string.Join(Globals.LINE_ENDING, validFilenames)
+                + string.Join(Globals.LINE_ENDING, validFilenames.Keys)
                 + $"{Globals.LINE_ENDING}{Globals.LINE_ENDING}Accepted file types:{Globals.LINE_ENDING}"
                 + string.Join(Globals.LINE_ENDING, validAudioExtensions));
         }
