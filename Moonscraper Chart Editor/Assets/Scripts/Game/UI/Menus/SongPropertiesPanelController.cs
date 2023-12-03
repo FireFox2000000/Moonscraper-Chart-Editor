@@ -345,7 +345,12 @@ public class SongPropertiesPanelController : TabMenu
 
     public void GetInstrumentAudioByFileNames()
     {
-        var filesInDir = Directory.GetFiles(Path.GetDirectoryName(ChartEditor.Instance.lastLoadedFile), "*.*");
+        var currentDir = ChartEditor.Instance.lastLoadedFile;
+        if (string.IsNullOrWhiteSpace(currentDir))
+        {
+            FileExplorer.OpenFolderPanel(out currentDir);
+        }
+        var filesInDir = Directory.GetFiles(Path.GetDirectoryName(currentDir), "*.*");
         var invalidFilenamesFound = new List<string>();
 
         foreach (var filePath in filesInDir.Where(x => validAudioExtensions.Contains(Path.GetExtension(x).TrimStart('.'))))
