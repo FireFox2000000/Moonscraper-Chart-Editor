@@ -52,7 +52,7 @@ public class SongPropertiesPanelController : TabMenu
     /// <summary>
     /// null value indicates a valid filename that doesn't tie to a specific instrument (e.g. the song preview)
     /// </summary>
-    static readonly Dictionary<string, Song.AudioInstrument?> validFilenames = new Dictionary<string, Song.AudioInstrument?>
+    static readonly Dictionary<string, Song.AudioInstrument?> validRBCloneHeroFilenames = new Dictionary<string, Song.AudioInstrument?>
     {
         { "song", Song.AudioInstrument.Song },
         { "guitar", Song.AudioInstrument.Guitar },
@@ -346,7 +346,7 @@ public class SongPropertiesPanelController : TabMenu
         StartCoroutine(_RefreshAllAudioStreams());
     }
 
-    public void GetInstrumentAudioByFileNames()
+    public void LoadCloneHeroAudioFromDirectory()
     {
         var currentDir = ChartEditor.Instance.lastLoadedFile;
         if (string.IsNullOrWhiteSpace(currentDir))
@@ -359,7 +359,7 @@ public class SongPropertiesPanelController : TabMenu
         foreach (var filePath in filesInDir.Where(x => validAudioExtensions.Contains(Path.GetExtension(x).TrimStart('.'))))
         {
             var fileName = Path.GetFileNameWithoutExtension(filePath);
-            if (validFilenames.TryGetValue(fileName, out var instrument))
+            if (validRBCloneHeroFilenames.TryGetValue(fileName, out var instrument))
             {
                 if (instrument.HasValue)
                 {
@@ -377,7 +377,7 @@ public class SongPropertiesPanelController : TabMenu
                 + string.Join(Globals.LINE_ENDING, invalidFilenamesFound);
             ChartEditor.Instance.errorManager.QueueErrorMessage(filenamesMessage
                 + $"{Globals.LINE_ENDING}{Globals.LINE_ENDING}Accepted filenames:{Globals.LINE_ENDING}"
-                + string.Join(Globals.LINE_ENDING, validFilenames.Keys)
+                + string.Join(Globals.LINE_ENDING, validRBCloneHeroFilenames.Keys)
                 + $"{Globals.LINE_ENDING}{Globals.LINE_ENDING}Accepted file types:{Globals.LINE_ENDING}"
                 + string.Join(Globals.LINE_ENDING, validAudioExtensions));
         }

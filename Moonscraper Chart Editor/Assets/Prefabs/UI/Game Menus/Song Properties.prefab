@@ -8560,7 +8560,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 7997996431628227347}
-        m_MethodName: GetInstrumentAudioByFileNames
+        m_MethodName: LoadCloneHeroAudioFromDirectory
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
