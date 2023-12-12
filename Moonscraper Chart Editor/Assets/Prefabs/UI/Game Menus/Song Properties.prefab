@@ -8458,7 +8458,7 @@ GameObject:
   - component: {fileID: 6716707529465691135}
   - component: {fileID: 5039129485703762914}
   m_Layer: 5
-  m_Name: Detect Files
+  m_Name: Auto-Detect CH Files
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8481,8 +8481,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -166.4, y: 12.3}
-  m_SizeDelta: {x: 105.329956, y: 30}
+  m_AnchoredPosition: {x: -177.13, y: 12.301}
+  m_SizeDelta: {x: 144.94394, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5088942807149204877
 CanvasRenderer:
@@ -8582,7 +8582,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 635727e25c735994fb6f858716ba8247, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  message: Detects audio files from selected folder based on their filenames
+  message: Detects audio files in the current folder and associates them to their
+    related instrument in Clone Hero, based on filename
   offset: {x: 35, y: -12}
 --- !u!1 &2914963047358506737
 GameObject:
@@ -14840,8 +14841,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.000045776367, y: 0}
+  m_SizeDelta: {x: -0.000061035156, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &743135145702712896
 CanvasRenderer:
@@ -14871,7 +14872,7 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 12
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 10
@@ -14882,7 +14883,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Detect Files
+  m_Text: Auto-Detect CH Files
 --- !u!1 &8515073031841296689
 GameObject:
   m_ObjectHideFlags: 0
