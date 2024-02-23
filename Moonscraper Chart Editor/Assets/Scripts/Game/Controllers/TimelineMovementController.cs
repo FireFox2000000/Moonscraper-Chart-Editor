@@ -132,7 +132,7 @@ public class TimelineMovementController : MovementController
                 float sign = Mathf.Sign(middleClickDragPercentageDelta.y);
 
                 Texture2D cursorTexture = sign >= 0 ? dragCursorPositive : dragCursorNegative;
-                Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.ForceSoftware);
+                Cursor.SetCursor(cursorTexture, Vector2.zero, CursorMode.Auto);
 
                 scrollDelta = middleClickDragPercentageDelta.y * c_middleClickMouseDragSensitivity * Time.deltaTime;
             }
