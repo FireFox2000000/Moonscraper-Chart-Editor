@@ -6,6 +6,7 @@ using MoonscraperChartEditor.Song;
 
 public static class SongIniFunctions
 {
+    public const string Deprecated_INI_SECTION_HEADER = "Song";
     public const string INI_SECTION_HEADER = "song";
     public const string INI_FILENAME = "song.ini";
 
@@ -203,6 +204,12 @@ public static class SongIniFunctions
     public static string IniTextFromSongProperties(INIParser iniProperties)
     {
         string str = iniProperties.GetSectionValues(new string[] { INI_SECTION_HEADER, "song" }, INIParser.Formatting.Whitespaced);
+        
+        if (string.IsNullOrEmpty(str))
+        {
+            str = iniProperties.GetSectionValues(new string[] { Deprecated_INI_SECTION_HEADER, "song" }, INIParser.Formatting.Whitespaced);
+        }
+        
         str = str.Replace("\r\n", "\n");
         return str;
     }
