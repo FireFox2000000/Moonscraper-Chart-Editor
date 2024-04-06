@@ -9,6 +9,8 @@ using UnityEngine;
 using MoonscraperEngine.Input;
 using System;
 using SDL2;
+using System.Threading.Tasks;
+using System.Threading;
 
 /// <summary>
 /// Handles controller connection events and updates controller inputs
@@ -16,6 +18,8 @@ using SDL2;
 [UnitySingleton(UnitySingletonAttribute.Type.LoadedFromResources, false, "Prefabs/InputManager")]
 public class InputManager : UnitySingleton<InputManager>
 {
+    const int SDL_INIT_TIMEOUT_MILLISECONDS = 10000;
+
     [SerializeField]
     TextAsset inputPropertiesJson;
     InputConfig _inputProperties;
@@ -37,6 +41,9 @@ public class InputManager : UnitySingleton<InputManager>
     TextAsset defaultControlsJson;
     [HideInInspector]
     MSChartEditorInput.MSChartEditorActionContainer _defaultControls;
+
+    volatile bool sdlInitialised = false;
+
     public MSChartEditorInput.MSChartEditorActionContainer defaultControls
     {
         get
@@ -59,48 +66,84 @@ public class InputManager : UnitySingleton<InputManager>
 
     private void Start()
     {
-        try
+        InitSdl();
+    }
+
+    async void InitSdl()
+    {
+        using (CancellationTokenSource cancellationTokenSource = new CancellationTokenSource())
         {
+            Task task = Task.Factory.StartNew(() =>
+            {
 #if SDL_INPUT
-            const uint SDL_FLAGS = SDL.SDL_INIT_GAMECONTROLLER | SDL.SDL_INIT_JOYSTICK;
+                const uint SDL_FLAGS = SDL.SDL_INIT_GAMECONTROLLER | SDL.SDL_INIT_JOYSTICK;
 #else
-            // Having sporatic boot issues, disable if necessary
-            const uint SDL_FLAGS = 0;
+                // Having sporatic boot issues, disable if necessary
+                const uint SDL_FLAGS = 0;
 #endif
-            Debug.LogFormat("Initialising SDL input {0}", SDL_FLAGS);
+                Debug.LogFormat("Initialising SDL input {0}", SDL_FLAGS);
 
-            SDL.SDL_SetMainReady();
+                SDL.SDL_SetMainReady();
 
-            Debug.Log("SDL input main ready");
+                Debug.Log("SDL input main ready");
 
-            if (SDL.SDL_Init(SDL_FLAGS) != 0)
+                if (SDL.SDL_Init(SDL_FLAGS) != 0)
+                {
+                    Debug.LogError("SDL could not initialise! SDL Error: " + SDL.SDL_GetError());
+                }
+                else
+                {
+                    sdlInitialised = true;
+                    Debug.Log("Successfully initialised SDL input");
+                }
+
+            }, cancellationTokenSource.Token);
+
+            var firstCompleteTask = await Task.WhenAny(task, Task.Delay(SDL_INIT_TIMEOUT_MILLISECONDS));
+            if (firstCompleteTask != task)
             {
-                Debug.LogError("SDL could not initialise! SDL Error: " + SDL.SDL_GetError());
+                cancellationTokenSource.Cancel();
+
+                string message = "Controller input failed to initialise due to time out.";
+                NativeMessageBox.Show(message, "Error", NativeMessageBox.Type.OK, ChartEditor.Instance.windowHandleManager.nativeWindow);
             }
-            else
+            else if (firstCompleteTask.IsFaulted)
             {
-                Debug.Log("Successfully initialised SDL input");
-
-                int connectedJoysticks = SDL.SDL_NumJoysticks();
-            }
-
-        }
-        catch (DllNotFoundException ex)
-        {
+                foreach (var ex in task.Exception?.InnerExceptions)
+                {
+                    if (ex is DllNotFoundException dlNotFoundException)
+                    {
 #if (UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX)
-            string message = "SDL2 Linux runtime dependency not found. Please install required dependencies (ffmpeg, sdl2, libx11-6, libgtk-3-0) and restart the application.";
-            NativeMessageBox.Show(message, "Oops", NativeMessageBox.Type.OK, ChartEditor.Instance.windowHandleManager.nativeWindow);
+        string message = "SDL2 Linux runtime dependency not found. Please install required dependencies (ffmpeg, sdl2, libx11-6, libgtk-3-0) and restart the application.";
+        NativeMessageBox.Show(message, "Oops", NativeMessageBox.Type.OK, ChartEditor.Instance.windowHandleManager.nativeWindow);
 
-            ChartEditor.Instance.ForceQuit();
+        ChartEditor.Instance.ForceQuit();
 #else
-            throw ex;
+                        throw dlNotFoundException;
 #endif
+                    }
+                    else
+                    {
+                        throw ex;
+                    }
+                }
+            }
         }
     }
 
     // Update is called once per frame
     void Update () 
     {
+        UpdateSdl();
+    }
+
+    void UpdateSdl()
+    {
+        if (!sdlInitialised)
+        {
+            return;
+        }
+
         SDL.SDL_Event sdlEvent;
         while (SDL.SDL_PollEvent(out sdlEvent) > 0)
         {
@@ -148,6 +191,7 @@ public class InputManager : UnitySingleton<InputManager>
             joystick.Update(ChartEditor.hasFocus);
         }
     }
+
     void OnControllerConnect(int index)
     {
         IntPtr gameController = SDL.SDL_GameControllerOpen(index);
@@ -254,6 +298,11 @@ public class InputManager : UnitySingleton<InputManager>
 
     public void Dispose()
     {
+        if (!sdlInitialised)
+        {
+            return;
+        }
+
         foreach (GamepadDevice gamepad in controllers)
         {
             SDL.SDL_GameControllerClose(gamepad.sdlHandle);
