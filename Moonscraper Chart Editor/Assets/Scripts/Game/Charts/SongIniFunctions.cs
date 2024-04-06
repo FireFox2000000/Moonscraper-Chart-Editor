@@ -6,7 +6,7 @@ using MoonscraperChartEditor.Song;
 
 public static class SongIniFunctions
 {
-    public const string INI_SECTION_HEADER = "Song";
+    public const string INI_SECTION_HEADER = "song";
     public const string INI_FILENAME = "song.ini";
 
     const string CH_TAG_FILE = "clone_hero_ini_tags.txt";
