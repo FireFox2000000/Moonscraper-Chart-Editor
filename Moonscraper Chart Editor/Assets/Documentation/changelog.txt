@@ -1,3 +1,9 @@
+1.5.5
+    FIXES
+    -Fixed "song.ini" files saving out "song" header with the incorrect capitalisation
+    -Prevent startup hang that could occour from failed input initialisation. Input is now initialised in the background and prompts the user if input has not initialised within 10 seconds. 
+    -Fixed cursor disappearing on Linux when clicking the middle mouse button. 
+
 1.5.4
      FIXES
     -Fix SysEx open note forcing issues in .mid
