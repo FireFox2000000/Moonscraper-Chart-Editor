@@ -203,13 +203,8 @@ public static class SongIniFunctions
 
     public static string IniTextFromSongProperties(INIParser iniProperties)
     {
-        string str = iniProperties.GetSectionValues(new string[] { INI_SECTION_HEADER, "song" }, INIParser.Formatting.Whitespaced);
-        
-        if (string.IsNullOrEmpty(str))
-        {
-            str = iniProperties.GetSectionValues(new string[] { Deprecated_INI_SECTION_HEADER, "song" }, INIParser.Formatting.Whitespaced);
-        }
-        
+        string str = iniProperties.GetSectionValues(new string[] { INI_SECTION_HEADER, Deprecated_INI_SECTION_HEADER }, INIParser.Formatting.Whitespaced);
+
         str = str.Replace("\r\n", "\n");
         return str;
     }
