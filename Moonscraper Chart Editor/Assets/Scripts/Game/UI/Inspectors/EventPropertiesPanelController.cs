@@ -27,6 +27,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
     GameObject globalEventButtonParent;
 
     bool updateInputField = true;
+    System.Action deferredUpdateAction = null;
 
     void Start()
     {
@@ -51,7 +52,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
 
         Destroy(container.transform);
 
-        RectTransform rectTrans = container.AddComponent<RectTransform>();       
+        RectTransform rectTrans = container.AddComponent<RectTransform>();
 
         container.transform.SetParent(scrollViewContentBox);
         rectTrans.anchorMin = new Vector2(0, 1);
@@ -82,7 +83,14 @@ public class EventPropertiesPanelController : PropertiesPanelController
 
     protected override void Update()
     {
+        if (deferredUpdateAction != null)
+        {
+            deferredUpdateAction();
+            deferredUpdateAction = null;
+        }
+
         base.Update();
+
         if ((currentChartEvent != null && currentChartEvent != previous) || currentEvent != previous)
             updateInputField = true;
 
@@ -112,18 +120,11 @@ public class EventPropertiesPanelController : PropertiesPanelController
         UpdateInfoDisplay();
     }
 
-    public void UpdateEventName(string name)
+    void UpdateDeferredEventName(string name)
     {
         // Make sure the user isn't editing to create 2 of the same events
         if (currentEvent != null)
         {
-            var charsToRemove = new string[] { "\"" };
-            foreach (var c in charsToRemove)
-            {
-                name = name.Replace(c, string.Empty);
-            }
-
-            string prevName = currentEvent.title;
             if (SongObjectHelper.FindObjectPosition(new MoonscraperChartEditor.Song.Event(name, currentEvent.tick), editor.currentSong.events) == SongObjectHelper.NOTFOUND)
             {
                 bool tentativeRecord, lockedRecord;
@@ -144,7 +145,6 @@ public class EventPropertiesPanelController : PropertiesPanelController
         }
         else if (currentChartEvent != null)
         {
-            string prevName = currentChartEvent.eventName;
             if (SongObjectHelper.FindObjectPosition(new ChartEvent(currentChartEvent.tick, name), editor.currentChart.events) == SongObjectHelper.NOTFOUND)
             {
                 bool tentativeRecord, lockedRecord;
@@ -161,6 +161,20 @@ public class EventPropertiesPanelController : PropertiesPanelController
                     editor.commandStack.Push(new SongEditModify<ChartEvent>(currentChartEvent, newChartEvent));
                     editor.selectedObjectsManager.SelectSongObject(newChartEvent, editor.currentChart.events);
                 }
+            }
+        }
+    }
+
+    public void UpdateEventName(string name)
+    {
+        if (currentEvent != null)
+        {
+            if (name != currentEvent.title)
+            {
+                deferredUpdateAction = () =>
+                {
+                    UpdateDeferredEventName(name);
+                };
             }
         }
     }
