@@ -151,7 +151,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
                 {
                     ChartEvent newChartEvent = new ChartEvent(currentChartEvent.tick, name);
                     editor.commandStack.Push(new SongEditModify<ChartEvent>(currentChartEvent, newChartEvent));
-                    editor.selectedObjectsManager.SelectSongObject(newChartEvent, editor.currentChart.events);
+                    currentSongObject = editor.selectedObjectsManager.SelectSongObject(newChartEvent, editor.currentChart.events);
                     Update();
                     LateUpdate();
                 }
