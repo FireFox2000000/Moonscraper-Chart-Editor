@@ -166,10 +166,7 @@ public class EventPropertiesPanelController : PropertiesPanelController
             return;
         }
 
-        if (currentEvent != null)
-        {
-            UpdateDeferredEventName(name);
-        }
+        UpdateDeferredEventName(name);
     }
 
     void UpdateInfoDisplay()
