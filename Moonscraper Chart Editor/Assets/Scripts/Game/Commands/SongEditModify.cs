@@ -71,10 +71,12 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
                 break;
 
             case SongObject.ID.ChartEvent:
-                AddAndInvokeSubAction(new DeleteAction(objectToCopyInto), subActions);
-                AddAndInvokeSubAction(new AddAction(objectToCopyFrom), subActions);
-                break;
-
+                {
+                    // Invoke delete and add to ensure we maintain correct sorting, as these can duplicate at the same tick
+                    AddAndInvokeSubAction(new DeleteAction(objectToCopyInto), subActions);
+                    AddAndInvokeSubAction(new AddAction(objectToCopyFrom), subActions);
+                    break;
+                }
             case SongObject.ID.BPM:
                 (objectToCopyInto as BPM).CopyFrom((objectToCopyFrom as BPM));
                 ChartEditor.Instance.songObjectPoolManager.SetAllPoolsDirty();
@@ -85,10 +87,12 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
                 break;
 
             case SongObject.ID.Event:
-                AddAndInvokeSubAction(new DeleteAction(objectToCopyInto), subActions);
-                AddAndInvokeSubAction(new AddAction(objectToCopyFrom), subActions);
-                break;
-
+                {
+                    // Invoke delete and add to ensure we maintain correct sorting, as these can duplicate at the same tick
+                    AddAndInvokeSubAction(new DeleteAction(objectToCopyInto), subActions);
+                    AddAndInvokeSubAction(new AddAction(objectToCopyFrom), subActions);
+                    break;
+                }
             case SongObject.ID.Section:
                 (objectToCopyInto as Section).CopyFrom((objectToCopyFrom as Section));
                 break;

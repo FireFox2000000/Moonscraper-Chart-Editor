@@ -21,13 +21,8 @@ public class EventPropertiesPanelController : PropertiesPanelController
     [SerializeField]
     InputField eventNameInputField;
 
-    SongObject previous;
-
     GameObject localEventButtonParent;
     GameObject globalEventButtonParent;
-
-    bool updateInputField = true;
-    System.Action deferredUpdateAction = null;
 
     void Start()
     {
@@ -83,23 +78,9 @@ public class EventPropertiesPanelController : PropertiesPanelController
 
     protected override void Update()
     {
-        if (deferredUpdateAction != null)
-        {
-            deferredUpdateAction();
-            deferredUpdateAction = null;
-        }
-
         base.Update();
 
-        if ((currentChartEvent != null && currentChartEvent != previous) || currentEvent != previous)
-            updateInputField = true;
-
         UpdateInfoDisplay();
-
-        if (currentChartEvent != null)
-            previous = currentChartEvent;
-        else
-            previous = currentEvent;
 
         localEventButtonParent.SetActive(Globals.viewMode == Globals.ViewMode.Chart);
         globalEventButtonParent.SetActive(!localEventButtonParent.activeSelf);
@@ -116,7 +97,6 @@ public class EventPropertiesPanelController : PropertiesPanelController
 
     public void EndEdit(string name)
     {
-        updateInputField = true;
         UpdateInfoDisplay();
     }
 
@@ -125,6 +105,11 @@ public class EventPropertiesPanelController : PropertiesPanelController
         // Make sure the user isn't editing to create 2 of the same events
         if (currentEvent != null)
         {
+            if (name == currentEvent.title)
+            {
+                return;
+            }
+
             if (SongObjectHelper.FindObjectPosition(new MoonscraperChartEditor.Song.Event(name, currentEvent.tick), editor.currentSong.events) == SongObjectHelper.NOTFOUND)
             {
                 bool tentativeRecord, lockedRecord;
@@ -139,12 +124,19 @@ public class EventPropertiesPanelController : PropertiesPanelController
                 {
                     MoonscraperChartEditor.Song.Event newEvent = new MoonscraperChartEditor.Song.Event(name, currentEvent.tick);
                     editor.commandStack.Push(new SongEditModify<MoonscraperChartEditor.Song.Event>(currentEvent, newEvent));
-                    editor.selectedObjectsManager.SelectSongObject(newEvent, editor.currentSong.events);
+                    currentSongObject = editor.selectedObjectsManager.SelectSongObject(newEvent, editor.currentSong.events);
+                    Update();
+                    LateUpdate();
                 }
             }
         }
         else if (currentChartEvent != null)
         {
+            if (name == currentChartEvent.eventName)
+            {
+                return;
+            }
+
             if (SongObjectHelper.FindObjectPosition(new ChartEvent(currentChartEvent.tick, name), editor.currentChart.events) == SongObjectHelper.NOTFOUND)
             {
                 bool tentativeRecord, lockedRecord;
@@ -160,6 +152,8 @@ public class EventPropertiesPanelController : PropertiesPanelController
                     ChartEvent newChartEvent = new ChartEvent(currentChartEvent.tick, name);
                     editor.commandStack.Push(new SongEditModify<ChartEvent>(currentChartEvent, newChartEvent));
                     editor.selectedObjectsManager.SelectSongObject(newChartEvent, editor.currentChart.events);
+                    Update();
+                    LateUpdate();
                 }
             }
         }
@@ -167,15 +161,14 @@ public class EventPropertiesPanelController : PropertiesPanelController
 
     public void UpdateEventName(string name)
     {
+        if (newSongObject)
+        {
+            return;
+        }
+
         if (currentEvent != null)
         {
-            if (name != currentEvent.title)
-            {
-                deferredUpdateAction = () =>
-                {
-                    UpdateDeferredEventName(name);
-                };
-            }
+            UpdateDeferredEventName(name);
         }
     }
 
@@ -195,29 +188,36 @@ public class EventPropertiesPanelController : PropertiesPanelController
             eventTitle = currentChartEvent.eventName;
         }
         else
-            return;
-
-        //if (updateInputField)
         {
-            positionText.text = "Position: " + position.ToString();
-            eventName.text = eventTitle;
-            eventNameInputField.text = eventTitle;
+            return;
         }
+
+        positionText.text = "Position: " + position.ToString();
+        eventName.text = eventTitle;
+        eventNameInputField.text = eventTitle;
     }
 
     void OnViewModeSwitch(in Globals.ViewMode viewMode)
     {
         if (viewMode == Globals.ViewMode.Chart)
+        {
             inspectorTitle.text = "Local Event";
+        }
         else if (viewMode == Globals.ViewMode.Song)
+        {
             inspectorTitle.text = "Global Event";
+        }
     }
 
     public void ActivateCustomEventMenu()
     {
         if (currentChartEvent != null)
+        {
             customEventMenu.StartEdit(currentChartEvent);
+        }
         else
+        {
             customEventMenu.StartEdit(currentEvent);
+        }
     }
 }

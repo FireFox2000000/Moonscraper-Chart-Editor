@@ -4,7 +4,8 @@
 using UnityEngine.UI;
 using MoonscraperChartEditor.Song;
 
-public class PropertiesPanelController : UnityEngine.MonoBehaviour {
+public class PropertiesPanelController : UnityEngine.MonoBehaviour
+{
     public Text positionText;
 
     protected ChartEditor editor;
@@ -44,11 +45,13 @@ public class PropertiesPanelController : UnityEngine.MonoBehaviour {
             // Fucking awful but it works. Basically a work-around due to how you can no longer use != to compare between events because they compare the strings of their titles.
             if (!(currentSongObject != null && prevSongObject != null && currentSongObject.GetType() == prevSongObjectRef.GetType() &&
                 ReferenceEquals(prevSongObjectRef, currentSongObject)))
+            {
                 ResetActionRecording();
+            }
         }
     }
 
-    private void LateUpdate()
+    protected void LateUpdate()
     {
         prevSongObject = currentSongObject.Clone();
         prevSongObjectRef = currentSongObject;
@@ -60,7 +63,9 @@ public class PropertiesPanelController : UnityEngine.MonoBehaviour {
         lockedRecord = false;
 
         if (ignoreEmptyLabels && string.IsNullOrEmpty(newLabel))
+        {
             return;
+        }
 
         if (currentSongObject == null || prevSongObject == null || prevSongObject != currentSongObject)
         {
@@ -74,21 +79,29 @@ public class PropertiesPanelController : UnityEngine.MonoBehaviour {
         string value = newLabel;
 
         if (value.Equals(oldLabel))
+        {
             return;
+        }
 
         // Check if there's a record already in
         if (!commandRecordingInProcess || lastKnownDirection == ValueDirection.NONE)
         {
             if (value.Length < oldLabel.Length)
+            {
                 lastKnownDirection = ValueDirection.DOWN;
+            }
             else if (value.Length > oldLabel.Length)
+            {
                 lastKnownDirection = ValueDirection.UP;
+            }
             else
+            {
                 lastKnownDirection = ValueDirection.NONE;
+            }
 
             lockedRecord = !commandRecordingInProcess;
             tentativeRecord = true;
-            commandRecordingInProcess = true;            
+            commandRecordingInProcess = true;
         }
         // Else check if a new record needs to overwrite this current one or if this one needs to be edited
         else if (commandRecordingInProcess)
