@@ -1,3 +1,7 @@
+1.5.7
+    FIXES
+    -Fixed null reference exception upon modifying global/local names caused by multiple inputs being sent to the input field on the same frame.
+
 1.5.6
     FIXES
     -Fixed regression from "song" ini section values being duplicated when loading ini file and/or clicking "Add CH Tags" button.
