@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -18,6 +18,7 @@ public class SettingsController : TabMenu
     public Toggle clapTap;
     public Toggle leftyFlipToggle;
     public Toggle extendedSustainsToggle;
+    public Toggle openTapChordsToggle;
     public Toggle sustainGapEnabledToggle;
     public Toggle sustainGapTimeBasedToggle;
     public Toggle resetAfterPlay;
@@ -201,6 +202,7 @@ public class SettingsController : TabMenu
         musicPanSlider.value = Globals.gameSettings.audio_pan * 10.0f;
 
         extendedSustainsToggle.isOn = Globals.gameSettings.extendedSustainsEnabled;
+        openTapChordsToggle.isOn = Globals.gameSettings.openTapChordsEnabled;
         resetAfterPlay.isOn = Globals.gameSettings.resetAfterPlay;
         resetAfterGameplay.isOn = Globals.gameSettings.resetAfterGameplay;
         autoValidateSongOnSave.isOn = Globals.gameSettings.autoValidateSongOnSave;
@@ -281,6 +283,11 @@ public class SettingsController : TabMenu
     public void SetExtendedSustains(bool value)
     {
         Globals.gameSettings.extendedSustainsEnabled.value = value;
+    }
+
+    public void SetOpenTapChords(bool value)
+    {
+        Globals.gameSettings.openTapChordsEnabled.value = value;
     }
 
     public void SetAutoValidateSongOnSave(bool value)

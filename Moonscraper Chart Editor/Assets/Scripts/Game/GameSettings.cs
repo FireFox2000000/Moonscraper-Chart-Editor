@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System.Collections;
@@ -224,6 +224,7 @@ public class GameSettings
     public BoolSaveSetting 
         slowdownPitchCorrectionEnabled
         , extendedSustainsEnabled
+        , openTapChordsEnabled
         , sustainGapEnabled
         , sustainGapIsTimeBased
         , resetAfterPlay
@@ -287,6 +288,7 @@ public class GameSettings
             case ("keysModeEnabled"): return keysModeEnabled;
             case ("metronomeActive"): return metronomeActive;
             case ("extendedSustainsEnabled"): return extendedSustainsEnabled;
+            case ("openTapChordsEnabled"): return openTapChordsEnabled;
             case ("sustainGapEnabled"): return sustainGapEnabled;
             case ("resetAfterPlay"): return resetAfterPlay;
             case ("resetAfterGameplay"): return resetAfterGameplay;
@@ -298,6 +300,7 @@ public class GameSettings
     {
         slowdownPitchCorrectionEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Slowdown Pitch Correction Enabled", false);
         extendedSustainsEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Extended sustains", false);
+        openTapChordsEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Open Chords & Tap Opens", false);
         sustainGapEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Sustain Gap", false);
         sustainGapIsTimeBased = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Sustain Gap Is Time Based", false);
         resetAfterPlay = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Reset After Play", false);
