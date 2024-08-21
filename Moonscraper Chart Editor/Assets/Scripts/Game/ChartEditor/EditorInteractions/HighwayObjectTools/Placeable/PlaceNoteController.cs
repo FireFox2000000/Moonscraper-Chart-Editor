@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -657,7 +657,7 @@ public class PlaceNoteController : ObjectlessTool {
             forcedInteractable = !(note.cannotBeForced && !Globals.gameSettings.keysModeEnabled);
 
             // Disable tap note box for open notes
-            tapInteractable = !note.IsOpenNote();
+            tapInteractable = note.IsOpenNote() && Globals.gameSettings.openTapChordsEnabled || !note.IsOpenNote();
         }
         else
         {

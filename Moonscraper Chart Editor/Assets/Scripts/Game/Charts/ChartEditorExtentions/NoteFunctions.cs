@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 //#define OPEN_NOTES_BLOCK_EXTENDED_SUSTAINS
@@ -278,7 +278,7 @@ public static class NoteFunctions {
                 break;
 
             case (Note.NoteType.Tap):
-                if (!note.IsOpenNote())
+                 if (!note.IsOpenNote() && !Globals.gameSettings.openTapChordsEnabled)
                     flags |= Note.Flags.Tap;
                 break;
 
@@ -334,7 +334,7 @@ public static class NoteFunctions {
 
                 bool sameFret = note.guitarFret == overwriteNote.guitarFret;
                 bool isOverwritableOpenNote = (note.IsOpenNote() || overwriteNote.IsOpenNote()) && !Globals.drumMode;
-                if (isOverwritableOpenNote || sameFret)
+                if ((isOverwritableOpenNote && !Globals.gameSettings.openTapChordsEnabled) || sameFret)
                 {
                     SongEditCommand.AddAndInvokeSubAction(new DeleteAction(overwriteNote), subActions);
                 }
@@ -352,8 +352,8 @@ public static class NoteFunctions {
 
         Note.Flags flags = note.flags;
 
-        if (note.IsOpenNote())
-            flags &= ~Note.Flags.Tap;
+        if (note.IsOpenNote() && !Globals.gameSettings.openTapChordsEnabled)
+             flags &= ~Note.Flags.Tap;
 
         // Handled by SongEditCommand.GenerateForcedFlagFixupCommands
         //if (note.cannotBeForced)

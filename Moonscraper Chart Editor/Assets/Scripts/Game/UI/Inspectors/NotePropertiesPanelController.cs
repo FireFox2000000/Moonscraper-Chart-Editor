@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -173,7 +173,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             else if (!IsInNoteTool())
             {
                 forcedToggle.interactable = !(currentNote.cannotBeForced && !Globals.gameSettings.keysModeEnabled);
-                tapToggle.interactable = !currentNote.IsOpenNote();
+                tapToggle.interactable = (currentNote.IsOpenNote() && Globals.gameSettings.openTapChordsEnabled) || noteToolController.tapInteractable;
             }
             else
             {
