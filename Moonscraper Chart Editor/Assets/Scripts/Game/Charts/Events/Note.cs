@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -403,7 +403,7 @@ namespace MoonscraperChartEditor.Song
                 }
                 else
                 {
-                    if (!this.IsOpenNote() && (flags & Flags.Tap) == Flags.Tap)
+                    if ((flags & Flags.Tap) == Flags.Tap)
                     {
                         return NoteType.Tap;
                     }

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using System;
@@ -586,12 +586,12 @@ namespace MoonscraperChartEditor.Song.IO
 
                             int openNote = gameMode == Chart.GameMode.GHLGuitar ? (int)Note.GHLiveGuitarFret.Open : (int)Note.GuitarFret.Open;
                             // Add tap sysex events
-                            bool isStartOfTapRange = note.rawNote != openNote && noteFlags.HasFlag(Note.Flags.Tap) && (note.previous == null || (note.previous.flags & Note.Flags.Tap) == 0);
+                            bool isStartOfTapRange = noteFlags.HasFlag(Note.Flags.Tap) && (note.previous == null || (note.previous.flags & Note.Flags.Tap) == 0);
                             if (isStartOfTapRange)  // This note is a tap while the previous one isn't as we're creating a range
                             {
                                 // Find the next non-tap note
                                 Note nextNonTap = note;
-                                while (nextNonTap.next != null && nextNonTap.rawNote != openNote && nextNonTap.next.flags.HasFlag(Note.Flags.Tap))
+                                while (nextNonTap.next != null && nextNonTap.next.flags.HasFlag(Note.Flags.Tap))
                                     nextNonTap = nextNonTap.next;
 
                                 SortableBytes tapOnEvent;

@@ -194,6 +194,48 @@ public class SongValidate
             }
         }
 
+        foreach (var instrument in EnumX<Song.Instrument>.Values)
+        {
+            if (instrument != Song.Instrument.Drums && instrument != Song.Instrument.Unrecognised)
+            {
+                foreach (var difficulty in EnumX<Song.Difficulty>.Values)
+                {
+                    var chart = song.GetChart(instrument, difficulty);
+
+                    for (var i = 0; i < chart.notes.Count; i++)
+                    {
+                        var note = chart.notes[i];
+
+                        if (!note.IsOpenNote())
+                        {
+                            continue;
+                        }
+
+                        bool previousSameTick = note.previous != null && note.tick == note.previous.tick;
+                        bool nextSameTick = note.next != null && note.tick == note.next.tick;
+
+                        // Open chords are not supported in Clone Hero (yet)
+                        if (previousSameTick || nextSameTick)
+                        {
+                            sb.AppendFormat("\tFound Open chord at time {1}, position {0}.\n",
+                                note.tick, PrintObjectTime(note.time));
+
+                            hasErrorsLocal |= true;
+                        }
+
+                        // Neither are Tap opens
+                        if ((note.flags & Note.Flags.Tap) != 0)
+                        {
+                            sb.AppendFormat("\tFound Tap Open note at time {1}, position {0}.\n",
+                                note.tick, PrintObjectTime(note.time));
+
+                            hasErrorsLocal |= true;
+                        }
+                    }
+                }
+            }
+        }
+
         // If we have no starpower but more than 1 solo section then CH will interpret this as an RB1 style midi, and misinterpret the solo markers as starpower
         if (validationParams.checkMidiIssues)
         {

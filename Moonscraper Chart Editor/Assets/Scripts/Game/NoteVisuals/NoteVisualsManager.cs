@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016-2020 Alexander Ong
+// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
 using UnityEngine;
@@ -106,7 +106,9 @@ public class NoteVisualsManager : MonoBehaviour {
         bool isGhost = Globals.drumMode && ((note.flags & Note.Flags.ProDrums_Ghost) != 0);
         bool culledFromLanes = note.ShouldBeCulledFromLanes(ChartEditor.Instance.laneInfo);
 
-        bool active = isDoubleKick | isAccent | isGhost | culledFromLanes;
+        bool isOpenTap = !Globals.drumMode && note.IsOpenNote() && (note.flags & Note.Flags.Tap) != 0;
+
+        bool active = isDoubleKick | isAccent | isGhost | culledFromLanes | isOpenTap;
 
         Vector3 position = Vector3.zero;
         position.z = -0.3f;  // Places the text above the note due to rotation
@@ -135,6 +137,12 @@ public class NoteVisualsManager : MonoBehaviour {
                 text.text = "Ghost";
             else
                 text.text += "\nGhost";
+        }
+
+        if (isOpenTap)
+        {
+            position.x = -1.5f;
+            text.text = "Tap";
         }
 
         text.transform.localPosition = position;

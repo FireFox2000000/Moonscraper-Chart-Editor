@@ -660,7 +660,7 @@ namespace MoonscraperChartEditor.Song.IO
                         // Write out tap flag
                         {
                             Note.Flags flagToTest = Note.Flags.Tap;
-                            if (!note.IsOpenNote() && noteFlags.HasFlag(flagToTest))
+                            if (noteFlags.HasFlag(flagToTest))
                             {
                                 int value;
                                 if (c_guitarFlagToNumLookup.TryGetValue(flagToTest, out value))  // Todo, if different flags have different values for the same flags, we'll need to use different lookups

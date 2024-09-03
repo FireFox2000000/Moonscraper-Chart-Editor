@@ -71,14 +71,14 @@ public class NoteVisuals3DManager : NoteVisualsManager
 
                 if (specialType == Note.SpecialType.StarPower)
                 {
-                    if (visualNoteType == Note.NoteType.Hopo)
+                    if (visualNoteType == Note.NoteType.Hopo || visualNoteType == Note.NoteType.Tap)
                         colourIndex = 3;
                     else
                         colourIndex = 2;
                 }
                 else
                 {
-                    if (visualNoteType == Note.NoteType.Hopo)
+                    if (visualNoteType == Note.NoteType.Hopo || visualNoteType == Note.NoteType.Tap)
                         colourIndex = 1;
                     else
                         colourIndex = isTool ? 4 : 0;
