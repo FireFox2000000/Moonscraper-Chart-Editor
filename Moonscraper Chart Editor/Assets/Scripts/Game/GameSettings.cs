@@ -224,7 +224,8 @@ public class GameSettings
     public BoolSaveSetting 
         slowdownPitchCorrectionEnabled
         , extendedSustainsEnabled
-        , openTapChordsEnabled
+        , openChordsEnabled
+        , tapOpensEnabled
         , sustainGapEnabled
         , sustainGapIsTimeBased
         , resetAfterPlay
@@ -288,7 +289,8 @@ public class GameSettings
             case ("keysModeEnabled"): return keysModeEnabled;
             case ("metronomeActive"): return metronomeActive;
             case ("extendedSustainsEnabled"): return extendedSustainsEnabled;
-            case ("openTapChordsEnabled"): return openTapChordsEnabled;
+            case ("openChordsEnabled"): return openChordsEnabled;
+            case ("tapOpensEnabled"): return tapOpensEnabled;
             case ("sustainGapEnabled"): return sustainGapEnabled;
             case ("resetAfterPlay"): return resetAfterPlay;
             case ("resetAfterGameplay"): return resetAfterGameplay;
@@ -300,7 +302,8 @@ public class GameSettings
     {
         slowdownPitchCorrectionEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Slowdown Pitch Correction Enabled", false);
         extendedSustainsEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Extended sustains", false);
-        openTapChordsEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Open Chords & Tap Opens", false);
+        openChordsEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Open Chords", false);
+        tapOpensEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Tap Opens", false);
         sustainGapEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Sustain Gap", false);
         sustainGapIsTimeBased = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Sustain Gap Is Time Based", false);
         resetAfterPlay = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Reset After Play", false);

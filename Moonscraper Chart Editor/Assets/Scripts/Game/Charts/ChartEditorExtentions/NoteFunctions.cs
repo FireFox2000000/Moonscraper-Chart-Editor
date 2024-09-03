@@ -278,7 +278,7 @@ public static class NoteFunctions {
                 break;
 
             case (Note.NoteType.Tap):
-                if (!note.IsOpenNote() && !Globals.gameSettings.openTapChordsEnabled)
+                if (!note.IsOpenNote() && !Globals.gameSettings.tapOpensEnabled)
                     flags |= Note.Flags.Tap;
                 break;
 
@@ -334,7 +334,7 @@ public static class NoteFunctions {
 
                 bool sameFret = note.guitarFret == overwriteNote.guitarFret;
                 bool isOverwritableOpenNote = (note.IsOpenNote() || overwriteNote.IsOpenNote()) && !Globals.drumMode;
-                if ((isOverwritableOpenNote && !Globals.gameSettings.openTapChordsEnabled) || sameFret)
+                if ((isOverwritableOpenNote && !Globals.gameSettings.openChordsEnabled) || sameFret)
                 {
                     SongEditCommand.AddAndInvokeSubAction(new DeleteAction(overwriteNote), subActions);
                 }
@@ -352,7 +352,7 @@ public static class NoteFunctions {
 
         Note.Flags flags = note.flags;
 
-        if (note.IsOpenNote() && !Globals.gameSettings.openTapChordsEnabled)
+        if (note.IsOpenNote() && !Globals.gameSettings.tapOpensEnabled)
             flags &= ~Note.Flags.Tap;
 
         // Handled by SongEditCommand.GenerateForcedFlagFixupCommands

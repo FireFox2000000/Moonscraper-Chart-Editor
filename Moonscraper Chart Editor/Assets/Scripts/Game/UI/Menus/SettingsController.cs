@@ -202,7 +202,12 @@ public class SettingsController : TabMenu
         musicPanSlider.value = Globals.gameSettings.audio_pan * 10.0f;
 
         extendedSustainsToggle.isOn = Globals.gameSettings.extendedSustainsEnabled;
-        openTapChordsToggle.isOn = Globals.gameSettings.openTapChordsEnabled;
+        openTapChordsToggle.isOn = Globals.gameSettings.openChordsEnabled || Globals.gameSettings.tapOpensEnabled;
+
+        // Make sure both open chords and tap open chords are set to the same value
+        // This is because the game settings are separate but controlled by the same UI toggle
+        Globals.gameSettings.openChordsEnabled.value = Globals.gameSettings.tapOpensEnabled.value = openTapChordsToggle.isOn;
+
         resetAfterPlay.isOn = Globals.gameSettings.resetAfterPlay;
         resetAfterGameplay.isOn = Globals.gameSettings.resetAfterGameplay;
         autoValidateSongOnSave.isOn = Globals.gameSettings.autoValidateSongOnSave;
@@ -287,7 +292,8 @@ public class SettingsController : TabMenu
 
     public void SetOpenTapChords(bool value)
     {
-        Globals.gameSettings.openTapChordsEnabled.value = value;
+        Globals.gameSettings.openChordsEnabled.value = value;
+        Globals.gameSettings.tapOpensEnabled.value = value;
     }
 
     public void SetAutoValidateSongOnSave(bool value)

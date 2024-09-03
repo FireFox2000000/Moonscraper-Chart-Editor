@@ -173,7 +173,7 @@ public class NotePropertiesPanelController : PropertiesPanelController {
             else if (!IsInNoteTool())
             {
                 forcedToggle.interactable = !(currentNote.cannotBeForced && !Globals.gameSettings.keysModeEnabled);
-                tapToggle.interactable = (currentNote.IsOpenNote() && Globals.gameSettings.openTapChordsEnabled) || !currentNote.IsOpenNote();
+                tapToggle.interactable = (currentNote.IsOpenNote() && Globals.gameSettings.tapOpensEnabled) || !currentNote.IsOpenNote();
             }
             else
             {
