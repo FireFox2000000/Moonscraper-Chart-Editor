@@ -198,18 +198,24 @@ public class SongValidate
         {
             if (instrument != Song.Instrument.Drums && instrument != Song.Instrument.Unrecognised)
             {
-                Chart lastChart = null;
                 foreach (var difficulty in EnumX<Song.Difficulty>.Values)
                 {
                     var chart = song.GetChart(instrument, difficulty);
 
-                    foreach (var note in chart.notes)
+                    for (var i = 0; i < chart.notes.Count; i++)
                     {
+                        var note = chart.notes[i];
+
+                        if (!note.IsOpenNote())
+                        {
+                            continue;
+                        }
+
                         bool previousSameTick = note.previous != null && note.tick == note.previous.tick;
                         bool nextSameTick = note.next != null && note.tick == note.next.tick;
 
                         // Open chords are not supported in Clone Hero (yet)
-                        if (note.IsOpenNote() && (previousSameTick || nextSameTick))
+                        if (previousSameTick || nextSameTick)
                         {
                             sb.AppendFormat("\tFound Open chord at time {1}, position {0}.\n",
                                 note.tick, PrintObjectTime(note.time));
@@ -218,7 +224,7 @@ public class SongValidate
                         }
 
                         // Neither are Tap opens
-                        if (note.IsOpenNote() && (note.flags & Note.Flags.Tap) != 0)
+                        if ((note.flags & Note.Flags.Tap) != 0)
                         {
                             sb.AppendFormat("\tFound Tap Open note at time {1}, position {0}.\n",
                                 note.tick, PrintObjectTime(note.time));
