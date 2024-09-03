@@ -278,7 +278,7 @@ public static class NoteFunctions {
                 break;
 
             case (Note.NoteType.Tap):
-                 if (!note.IsOpenNote() && !Globals.gameSettings.openTapChordsEnabled)
+                if (!note.IsOpenNote() && !Globals.gameSettings.openTapChordsEnabled)
                     flags |= Note.Flags.Tap;
                 break;
 
@@ -353,7 +353,7 @@ public static class NoteFunctions {
         Note.Flags flags = note.flags;
 
         if (note.IsOpenNote() && !Globals.gameSettings.openTapChordsEnabled)
-             flags &= ~Note.Flags.Tap;
+            flags &= ~Note.Flags.Tap;
 
         // Handled by SongEditCommand.GenerateForcedFlagFixupCommands
         //if (note.cannotBeForced)
