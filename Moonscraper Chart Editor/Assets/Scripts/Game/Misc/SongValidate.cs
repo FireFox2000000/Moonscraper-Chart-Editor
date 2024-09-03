@@ -203,14 +203,6 @@ public class SongValidate
                 {
                     var chart = song.GetChart(instrument, difficulty);
 
-                    // Skip if chart is same as last
-                    if (chart == lastChart)
-                    {
-                        continue;
-                    }
-
-                    lastChart = chart;
-
                     foreach (var note in chart.notes)
                     {
                         bool previousSameTick = note.previous != null && note.tick == note.previous.tick;
