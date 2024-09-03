@@ -657,7 +657,7 @@ public class PlaceNoteController : ObjectlessTool {
             forcedInteractable = !(note.cannotBeForced && !Globals.gameSettings.keysModeEnabled);
 
             // Disable tap note box for open notes
-            tapInteractable = note.IsOpenNote() && Globals.gameSettings.openTapChordsEnabled || !note.IsOpenNote();
+            tapInteractable = note.IsOpenNote() && Globals.gameSettings.tapOpensEnabled || !note.IsOpenNote();
         }
         else
         {
