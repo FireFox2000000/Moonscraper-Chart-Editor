@@ -233,7 +233,7 @@ public class Export : DisplayMenu {
         {
             bool hasErrors;
             SongValidate.ValidationParameters validateParams = new SongValidate.ValidationParameters() { songLength = editor.currentSongLength, checkMidiIssues = true, };
-            string validationErrors = SongValidate.GenerateReport(SongValidate.ValidationOptions.CloneHero, editor.currentSong, validateParams, out hasErrors);
+            string validationErrors = SongValidate.GenerateReport(Globals.gameSettings.songValidatorModes, editor.currentSong, validateParams, out hasErrors);
 
             if (hasErrors)
             {
