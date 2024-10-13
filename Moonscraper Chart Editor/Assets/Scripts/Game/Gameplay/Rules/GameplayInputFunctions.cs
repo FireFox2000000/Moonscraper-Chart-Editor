@@ -22,7 +22,9 @@ public static class GameplayInputFunctions  {
 
     public static bool ValidateFrets(Note note, int inputMask, uint noteStreak, int extendedSustainsMask = 0)
     {
-        inputMask &= ~(extendedSustainsMask & ~note.mask);
+        int noteMask = note.mask;
+
+        inputMask &= ~(extendedSustainsMask & ~noteMask);
 
         if (inputMask == 0)
         {
@@ -33,17 +35,26 @@ public static class GameplayInputFunctions  {
             // Chords
             if (note.isChord)
             {
-                // Regular chords
-                if (noteStreak == 0 || note.type == Note.NoteType.Strum)
+                // Open chords must hit non-open frets exactly
+                int openNoteBit = 1 << (int)Note.GuitarFret.Open;
+                bool isOpenChord = (noteMask & openNoteBit) != 0 && noteMask != openNoteBit;
+                if (isOpenChord)
                 {
-                    return inputMask == note.mask;
+                    // So pretend the open note doesn't exist for validation
+                    noteMask &= ~openNoteBit;
+                }
+
+                // Regular chords
+                if (noteStreak == 0 || note.type == Note.NoteType.Strum || isOpenChord)
+                {
+                    return inputMask == noteMask;
                 }
                 // HOPO or tap chords. Insert Exile chord anchor logic.
                 else
                 {
                     // Bit-shift to the right to compensate for anchor logic
                     int shiftCount = 0;
-                    int shiftedNoteMask = BitshiftToIgnoreLowerUnusedFrets(note.mask, out shiftCount);
+                    int shiftedNoteMask = BitshiftToIgnoreLowerUnusedFrets(noteMask, out shiftCount);
                     
                     int shiftedInputMask = inputMask >> shiftCount;
 
