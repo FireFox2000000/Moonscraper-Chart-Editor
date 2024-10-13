@@ -10,7 +10,7 @@ using System;
 
 public class GameSettings
 {
-    const int VersionNumber = 1;
+    const int VersionNumber = 2;
     const string SECTION_NAME_METADATA = "MetaData";
     const string SECTION_NAME_SETTINGS = "Settings";
     const string SECTION_NAME_AUDIO = "Audio Volume";
@@ -340,7 +340,7 @@ public class GameSettings
 
         clapProperties = new EnumSaveSetting<ClapToggle>(SECTION_NAME_SETTINGS, "Clap", ClapToggle.ALL_NOTES | ClapToggle.STRUM | ClapToggle.HOPO | ClapToggle.TAP);
         notePlacementMode = new EnumSaveSetting<NotePlacementMode>(SECTION_NAME_SETTINGS, "Note Placement Mode", NotePlacementMode.Default);
-        songValidatorModes = new EnumSaveSetting<SongValidate.ValidationOptions>(SECTION_NAME_SETTINGS, "Song Validator Modes", ~SongValidate.ValidationOptions.None);
+        songValidatorModes = new EnumSaveSetting<SongValidate.ValidationOptions>(SECTION_NAME_SETTINGS, "Song Validator Modes", SongValidate.ValidationOptions.GuitarHero3 | SongValidate.ValidationOptions.CloneHero);
     }
 
     public void Load(string configFilepath, string controllerBindingsFilepath)
@@ -385,6 +385,12 @@ public class GameSettings
                 {
                     clapProperties.value = clapProperties.defaultValue;
                 }
+            }
+
+            if (versionNumber < 2)
+            {
+                // Need to fix song validator defaults change from ~None to Gh3|CH
+                songValidatorModes.value &= SongValidate.ValidationOptions.GuitarHero3 | SongValidate.ValidationOptions.CloneHero;
             }
 
             gameplayStartDelayTime.value = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
