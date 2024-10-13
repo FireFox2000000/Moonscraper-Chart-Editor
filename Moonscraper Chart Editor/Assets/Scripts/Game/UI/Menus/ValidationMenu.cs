@@ -12,6 +12,7 @@ public class ValidationMenu : DisplayMenu
     public Text errorText;
     public Toggle validateGH3;
     public Toggle validateCH;
+    public Toggle validateYarg;
     public Toggle autoValidateSongOnSave;
 
     SongValidate.ValidationOptions _currentOptions = ~SongValidate.ValidationOptions.None;
@@ -33,6 +34,7 @@ public class ValidationMenu : DisplayMenu
         currentOptions = Globals.gameSettings.songValidatorModes;
         validateGH3.isOn = (currentOptions & SongValidate.ValidationOptions.GuitarHero3) != 0;
         validateCH.isOn = (currentOptions & SongValidate.ValidationOptions.CloneHero) != 0;
+        validateYarg.isOn = (currentOptions & SongValidate.ValidationOptions.Yarg) != 0;
         autoValidateSongOnSave.isOn = Globals.gameSettings.autoValidateSongOnSave;
 
         ValidateSong();
@@ -70,6 +72,12 @@ public class ValidationMenu : DisplayMenu
     public void SetValidateCHToggle(bool value)
     {
         SetValidateOptions(value, SongValidate.ValidationOptions.CloneHero);
+        ValidateSong();
+    }
+
+    public void SetValidateYARGToggle(bool value)
+    {
+        SetValidateOptions(value, SongValidate.ValidationOptions.Yarg);
         ValidateSong();
     }
 
