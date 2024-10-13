@@ -94,7 +94,10 @@ public class InputManager : UnitySingleton<InputManager>
                 else
                 {
                     sdlInitialised = true;
-                    Debug.Log("Successfully initialised SDL input");
+
+                    SDL.SDL_GetVersion(out var sdlVersion);
+
+                    Debug.Log($"Successfully initialised SDL input, version {sdlVersion.major}.{sdlVersion.minor}.{sdlVersion.patch}");
                 }
 
             }, cancellationTokenSource.Token);
