@@ -13837,6 +13837,7 @@ MonoBehaviour:
   errorText: {fileID: 1946865838}
   validateGH3: {fileID: 520676799}
   validateCH: {fileID: 1044378401}
+  validateYarg: {fileID: 309661743}
   autoValidateSongOnSave: {fileID: 5465485}
 --- !u!222 &626687146
 CanvasRenderer:
@@ -30926,7 +30927,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.13999557}
+  m_AnchoredPosition: {x: 0, y: 0.13998795}
   m_SizeDelta: {x: 0.21490002, y: 36.48}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1317847545
@@ -41968,7 +41969,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1.1350098, y: -206.68004}
+  m_AnchoredPosition: {x: -1.1350098, y: -206.68016}
   m_SizeDelta: {x: -16.200012, y: 264.03912}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1783824858
@@ -51623,7 +51624,7 @@ PrefabInstance:
     - target: {fileID: 1301899982732144092, guid: 50e7de0d989f0a74cad9c1926db9987f,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -101.997925
+      value: -101.99786
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 50e7de0d989f0a74cad9c1926db9987f, type: 3}
