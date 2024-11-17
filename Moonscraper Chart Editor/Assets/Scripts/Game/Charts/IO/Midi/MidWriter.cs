@@ -666,6 +666,9 @@ namespace MoonscraperChartEditor.Song.IO
                         }
                     }
 
+                    // Open notes on guitar tracks did not originally have an assigned number.
+                    // The initial workaround was to apply an sysex event to flag open notes.
+                    // Enhanced opens are the v2 of this system, which is required for open chords on guitar tracks to work.
                     if (!enhancedOpens && gameMode == Chart.GameMode.Guitar && note.guitarFret == Note.GuitarFret.Open && (note.previous == null || (note.previous.guitarFret != Note.GuitarFret.Open)))
                     {
                         // Find the next non-open note
