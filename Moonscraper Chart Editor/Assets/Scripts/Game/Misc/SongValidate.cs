@@ -5,21 +5,43 @@ using System.Text;
 using MoonscraperEngine;
 using MoonscraperChartEditor.Song;
 using System;
-using System.Linq;
-using Game.Misc;
 
 public class SongValidate
 {
     // Will crash GH3 if this section limit is exceeded
     const int GH3_SECTION_LIMIT = 100;
 
-    [System.Flags]
-    public enum ValidationOptions
+    [Flags]
+    public enum PlatformValidationFlags
     {
         None            = 0,
         GuitarHero3     = 1 << 0,
         CloneHero       = 1 << 1,
         Yarg            = 1 << 2,
+    }
+
+    public readonly struct FeatureValidationOptions
+    {
+        public readonly bool openChordsAllowed;
+        public readonly bool openTapsAllowed;
+        public readonly int sectionLimit;
+        public readonly bool checkForTSPlacementErrors;
+        public readonly bool checkForMidiSoloSpMisread;
+
+        public FeatureValidationOptions(
+            bool openChordsAllowed
+            , bool openTapsAllowed
+            , int sectionLimit
+            , bool checkForTSPlacementErrors
+            , bool checkForMidiSoloSpMisread
+            )
+        {
+            this.openChordsAllowed = openChordsAllowed;
+            this.openTapsAllowed = openTapsAllowed;
+            this.sectionLimit = sectionLimit;
+            this.checkForTSPlacementErrors = checkForTSPlacementErrors;
+            this.checkForMidiSoloSpMisread = checkForMidiSoloSpMisread;
+        }
     }
 
     public struct ValidationParameters
@@ -34,41 +56,34 @@ public class SongValidate
         return time.ToString("mm':'ss'.'ff");
     }
 
-    public static string GenerateReport(ValidationOptions validationOptions, Song song, ValidationParameters validationParams, out bool hasErrors)
+    public static string GenerateReport(PlatformValidationFlags validationOptions, Song song, ValidationParameters validationParams, out bool hasErrors)
     {
-        StringBuilder sb = new StringBuilder();
+        ValidationMenuSongValidateReport report = new ValidationMenuSongValidateReport();
         hasErrors = false;
 
-        sb.AppendFormat("{0}\n", CheckForErrorsMoonscraper(song, validationParams, ref hasErrors));
+        CheckForErrorsMoonscraper(song, validationParams, report);
 
-        bool openChordsAllowed = (validationOptions & ValidationOptions.Yarg) != 0;
-        bool openTapsAllowed = (validationOptions & ValidationOptions.Yarg) != 0;
-        int sectionLimit = (validationOptions & ValidationOptions.GuitarHero3) != 0 ? GH3_SECTION_LIMIT : int.MaxValue;
-        bool checkForTSPlacementErrors = (validationOptions & (ValidationOptions.CloneHero | ValidationOptions.Yarg)) != 0;
-        bool checkForMidiSoloSpMisread = validationParams.checkMidiIssues && (validationOptions & (ValidationOptions.CloneHero | ValidationOptions.Yarg)) != 0;
+        FeatureValidationOptions featureValidationOptions = new FeatureValidationOptions(
+            openChordsAllowed: (validationOptions & PlatformValidationFlags.Yarg) != 0,
+            openTapsAllowed: (validationOptions & PlatformValidationFlags.Yarg) != 0,
+            sectionLimit: (validationOptions & PlatformValidationFlags.GuitarHero3) != 0 ? GH3_SECTION_LIMIT : int.MaxValue,
+            checkForTSPlacementErrors: (validationOptions & (PlatformValidationFlags.CloneHero | PlatformValidationFlags.Yarg)) != 0,
+            checkForMidiSoloSpMisread: validationParams.checkMidiIssues && (validationOptions & (PlatformValidationFlags.CloneHero | PlatformValidationFlags.Yarg)) != 0
+        );
 
-        if (sectionLimit < int.MaxValue)
+        if (featureValidationOptions.sectionLimit < int.MaxValue)
         {
-            StringBuilder errors = new StringBuilder();
-            CheckForSectionLimitErrors(song, sectionLimit, errors);
-            hasErrors |= errors.Length > 0;
-            sb.Append(errors.ToString());
+            CheckForSectionLimitErrors(song, featureValidationOptions.sectionLimit, report);
         }
 
-        if (checkForTSPlacementErrors)
+        if (featureValidationOptions.checkForTSPlacementErrors)
         {
-            StringBuilder errors = new StringBuilder();
-            CheckForTimeSignaturePlacementErrors(song, errors);
-            hasErrors |= errors.Length > 0;
-            sb.Append(errors.ToString());
+            CheckForTimeSignaturePlacementErrors(song, report);
         }
 
-        if (checkForMidiSoloSpMisread)
+        if (featureValidationOptions.checkForMidiSoloSpMisread)
         {
-            StringBuilder errors = new StringBuilder();
-            CheckForRockBandMidiSoloStarpowerMisRead(song, errors);
-            hasErrors |= errors.Length > 0;
-            sb.Append(errors.ToString());
+            CheckForRockBandMidiSoloStarpowerMisRead(song, report);
         }
 
         foreach (var instrument in EnumX<Song.Instrument>.Values)
@@ -77,34 +92,41 @@ public class SongValidate
             {
                 foreach (var difficulty in EnumX<Song.Difficulty>.Values)
                 {
-                    var chart = song.GetChart(instrument, difficulty);
-
-                    if (!openChordsAllowed)
-                    {
-                        var errors = CheckForOpenChords(chart);
-                        hasErrors |= errors.Length > 0;
-                        sb.Append(errors.ToString());
-                    }
-
-                    if (!openTapsAllowed)
-                    {
-                        var errors = CheckForOpenTaps(chart);
-                        hasErrors |= errors.Length > 0;
-                        sb.Append(errors.ToString());
-                    }
+                    ValidateChart(song, instrument, difficulty, featureValidationOptions, report);
                 }
             }
         }
 
-        return sb.ToString();
+        hasErrors = report.HasErrors;
+        return report.ToString();
     }
 
-    static string CheckForErrorsMoonscraper(Song song, ValidationParameters validationParams, ref bool hasErrors)
+    public static void ValidateChart(
+        Song song
+        , Song.Instrument instrument
+        , Song.Difficulty difficulty
+        , in FeatureValidationOptions featureValidationOptions
+        , ISongValidateReport report
+        )
     {
-        bool hasErrorsLocal = false;
-        StringBuilder sb = new StringBuilder();
-        sb.AppendLine("Moonscraper validation report: ");
+        if (instrument != Song.Instrument.Drums && instrument != Song.Instrument.Unrecognised)
+        {
+            var chart = song.GetChart(instrument, difficulty);
 
+            if (!featureValidationOptions.openChordsAllowed)
+            {
+                CheckForOpenChords(chart, report);
+            }
+
+            if (!featureValidationOptions.openTapsAllowed)
+            {
+                CheckForOpenTaps(chart, report);
+            }
+        }
+    }
+
+    static void CheckForErrorsMoonscraper(Song song, ValidationParameters validationParams, ISongValidateReport report)
+    {
         // Check if any objects have exceeded the max length
         {
             uint tick = song.TimeToTick(validationParams.songLength, song.resolution);
@@ -118,12 +140,7 @@ public class SongValidate
 
                     for (int i = index; i < length; ++i)
                     {
-                        hasErrorsLocal |= true;
-
-                        SyncTrack st = song.syncTrack[i];
-
-                        sb.AppendFormat("\tFound synctrack object beyond the length of the song-\n");
-                        sb.AppendFormat("\t\tType = {0}, time = {2}, position = {1}\n", st.GetType(), st.tick, PrintObjectTime(st.time));
+                        report.NotifySongObjectBeyondExpectedLength(song.syncTrack[i]);
                     }
                 }
 
@@ -134,12 +151,7 @@ public class SongValidate
 
                     for (int i = index; i < length; ++i)
                     {
-                        hasErrorsLocal |= true;
-
-                        MoonscraperChartEditor.Song.Event eventObject = song.eventsAndSections[i];
-
-                        sb.AppendFormat("\tFound event object beyond the length of the song-\n");
-                        sb.AppendFormat("\t\tType = {0}, time = {2}, position = {1}\n", eventObject.GetType(), eventObject.tick, PrintObjectTime(eventObject.time));
+                        report.NotifySongObjectBeyondExpectedLength(song.eventsAndSections[i]);
                     }
                 }
             }
@@ -159,42 +171,21 @@ public class SongValidate
 
                     for (int i = index; i < length; ++i)
                     {
-                        hasErrorsLocal |= true;
-
-                        ChartObject co = chart.chartObjects[i];
-
-                        sb.AppendFormat("\tFound chart object beyond the length of the song-\n");
-                        sb.AppendFormat("\t\tType = {0}, time = {2}, position = {1}\n", co.GetType(), co.tick, PrintObjectTime(co.time));
+                        report.NotifySongObjectBeyondExpectedLength(chart.chartObjects[i]);
                     }
                 }
             }
         }
-
-        if (!hasErrorsLocal)
-        {
-            sb.AppendLine("\tNo errors detected");
-        }
-
-        hasErrors |= hasErrorsLocal;
-
-        return sb.ToString();
     }
 
-    static void CheckForSectionLimitErrors(Song song, int sectionLimit, StringBuilder sb)
+    static void CheckForSectionLimitErrors(Song song, int sectionLimit, ISongValidateReport report)
     {
         if (song.sections.Count > 100)
         {
-            sb.AppendFormat("Section count has exceeded limit of {0} sections\n", sectionLimit);
-            sb.AppendFormat("Affected sections:\n");
-
-            for (int i = sectionLimit; i < song.sections.Count; ++i)
-            {
-                Section section = song.sections[i];
-                sb.AppendFormat("\tTime = {2}, Position = {0}, Title = {1}\n", section.tick, section.title, PrintObjectTime(section.time));
-            }
+            report.NotifySectionLimitError(song, sectionLimit);
         }
     }
-    static void CheckForTimeSignaturePlacementErrors(Song song, StringBuilder sb)
+    static void CheckForTimeSignaturePlacementErrors(Song song, ISongValidateReport report)
     {
         var timeSignatures = song.timeSignatures;
         for (int tsIndex = 1; tsIndex < timeSignatures.Count; ++tsIndex)
@@ -208,15 +199,12 @@ public class SongValidate
             var measureLine = measureInfo.measureLine;
             if (((float)deltaTick % measureLine.tickGap) != 0)      // Doesn't line up on a measure
             {
-                sb.AppendFormat("Found misaligned Time Signature at time {1}, position {0}. Time signatures must be aligned to the measure set by the previous time signature.\n",
-                    tsToTest.tick
-                    , PrintObjectTime(tsToTest.time)
-                );
+                report.NotifyTimeSignaturePlacementError(tsToTest);
             }
         }
     }
 
-    static void CheckForRockBandMidiSoloStarpowerMisRead(Song song, StringBuilder sb)
+    static void CheckForRockBandMidiSoloStarpowerMisRead(Song song, ISongValidateReport report)
     {
         // If we have no starpower but more than 1 solo section then CH will interpret this as an RB1 style midi, and misinterpret the solo markers as starpower
         foreach (Song.Instrument instrument in EnumX<Song.Instrument>.Values)
@@ -240,7 +228,7 @@ public class SongValidate
 
                             if (soloMarkerCount > 1)
                             {
-                                sb.AppendFormat("Track {0} has no starpower and more than 1 solo section. If exported to the midi format, Clone Hero will interpret this chart as an older style midi, and will misinterpret solo markers as starpower.\n", instrument);
+                                report.NotifyRockBandMidiSoloStarpowerMisRead(instrument);
 
                                 goto NewInstrument;
                             }
@@ -253,10 +241,8 @@ public class SongValidate
         }
     }
 
-    static StringBuilder CheckForOpenChords(Chart chart)
+    static void CheckForOpenChords(Chart chart, ISongValidateReport report)
     {
-        StringBuilder sb = new StringBuilder();
-
         for (var i = 0; i < chart.notes.Count; i++)
         {
             var note = chart.notes[i];
@@ -272,15 +258,12 @@ public class SongValidate
             // Open chords are not supported in Clone Hero (yet)
             if (previousSameTick || nextSameTick)
             {
-                sb.AppendFormat("Found Open chord at time {1}, position {0}.\n",
-                    note.tick, PrintObjectTime(note.time));
+                report.NotifyOpenChordFound(note);
             }
         }
-
-        return sb;
     }
 
-    static StringBuilder CheckForOpenTaps(Chart chart)
+    static void CheckForOpenTaps(Chart chart, ISongValidateReport report)
     {
         StringBuilder sb = new StringBuilder();
 
@@ -296,11 +279,8 @@ public class SongValidate
             // Neither are Tap opens
             if ((note.flags & Note.Flags.Tap) != 0)
             {
-                sb.AppendFormat("Found Tap Open note at time {1}, position {0}.\n",
-                    note.tick, PrintObjectTime(note.time));
+                report.NotifyOpenTapFound(note);
             }
         }
-
-        return sb;
     }
 }

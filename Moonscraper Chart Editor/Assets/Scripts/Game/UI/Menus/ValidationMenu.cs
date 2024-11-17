@@ -15,8 +15,8 @@ public class ValidationMenu : DisplayMenu
     public Toggle validateYarg;
     public Toggle autoValidateSongOnSave;
 
-    SongValidate.ValidationOptions _currentOptions = ~SongValidate.ValidationOptions.None;
-    SongValidate.ValidationOptions currentOptions
+    SongValidate.PlatformValidationFlags _currentOptions = ~SongValidate.PlatformValidationFlags.None;
+    SongValidate.PlatformValidationFlags currentOptions
     {
         get { return _currentOptions; }
         set
@@ -32,9 +32,9 @@ public class ValidationMenu : DisplayMenu
         errorText.text = errorMessage;
 
         currentOptions = Globals.gameSettings.songValidatorModes;
-        validateGH3.isOn = (currentOptions & SongValidate.ValidationOptions.GuitarHero3) != 0;
-        validateCH.isOn = (currentOptions & SongValidate.ValidationOptions.CloneHero) != 0;
-        validateYarg.isOn = (currentOptions & SongValidate.ValidationOptions.Yarg) != 0;
+        validateGH3.isOn = (currentOptions & SongValidate.PlatformValidationFlags.GuitarHero3) != 0;
+        validateCH.isOn = (currentOptions & SongValidate.PlatformValidationFlags.CloneHero) != 0;
+        validateYarg.isOn = (currentOptions & SongValidate.PlatformValidationFlags.Yarg) != 0;
         autoValidateSongOnSave.isOn = Globals.gameSettings.autoValidateSongOnSave;
 
         ValidateSong();
@@ -55,7 +55,7 @@ public class ValidationMenu : DisplayMenu
         errorText.text = SongValidate.GenerateReport(currentOptions, editor.currentSong, validateParams, out hasErrors);
     }
 
-    void SetValidateOptions(bool value, SongValidate.ValidationOptions setting)
+    void SetValidateOptions(bool value, SongValidate.PlatformValidationFlags setting)
     {
         if (value)
             currentOptions |= setting;
@@ -65,19 +65,19 @@ public class ValidationMenu : DisplayMenu
 
     public void SetValidateGH3Toggle(bool value)
     {
-        SetValidateOptions(value, SongValidate.ValidationOptions.GuitarHero3);
+        SetValidateOptions(value, SongValidate.PlatformValidationFlags.GuitarHero3);
         ValidateSong();
     }
 
     public void SetValidateCHToggle(bool value)
     {
-        SetValidateOptions(value, SongValidate.ValidationOptions.CloneHero);
+        SetValidateOptions(value, SongValidate.PlatformValidationFlags.CloneHero);
         ValidateSong();
     }
 
     public void SetValidateYARGToggle(bool value)
     {
-        SetValidateOptions(value, SongValidate.ValidationOptions.Yarg);
+        SetValidateOptions(value, SongValidate.PlatformValidationFlags.Yarg);
         ValidateSong();
     }
 

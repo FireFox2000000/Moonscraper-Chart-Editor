@@ -271,7 +271,7 @@ public class GameSettings
 
     public EnumSaveSetting<ClapToggle> clapProperties;
     public EnumSaveSetting<NotePlacementMode> notePlacementMode;
-    public EnumSaveSetting<SongValidate.ValidationOptions> songValidatorModes;
+    public EnumSaveSetting<SongValidate.PlatformValidationFlags> songValidatorModes;
 
     public Step snappingStep = new Step(16);
     public int step { get { return snappingStep.value; } set { snappingStep.value = value; } }
@@ -340,7 +340,7 @@ public class GameSettings
 
         clapProperties = new EnumSaveSetting<ClapToggle>(SECTION_NAME_SETTINGS, "Clap", ClapToggle.ALL_NOTES | ClapToggle.STRUM | ClapToggle.HOPO | ClapToggle.TAP);
         notePlacementMode = new EnumSaveSetting<NotePlacementMode>(SECTION_NAME_SETTINGS, "Note Placement Mode", NotePlacementMode.Default);
-        songValidatorModes = new EnumSaveSetting<SongValidate.ValidationOptions>(SECTION_NAME_SETTINGS, "Song Validator Modes", SongValidate.ValidationOptions.GuitarHero3 | SongValidate.ValidationOptions.CloneHero);
+        songValidatorModes = new EnumSaveSetting<SongValidate.PlatformValidationFlags>(SECTION_NAME_SETTINGS, "Song Validator Modes", SongValidate.PlatformValidationFlags.GuitarHero3 | SongValidate.PlatformValidationFlags.CloneHero);
     }
 
     public void Load(string configFilepath, string controllerBindingsFilepath)
@@ -390,7 +390,7 @@ public class GameSettings
             if (versionNumber < 2)
             {
                 // Need to fix song validator defaults change from ~None to Gh3|CH
-                songValidatorModes.value &= SongValidate.ValidationOptions.GuitarHero3 | SongValidate.ValidationOptions.CloneHero;
+                songValidatorModes.value &= SongValidate.PlatformValidationFlags.GuitarHero3 | SongValidate.PlatformValidationFlags.CloneHero;
             }
 
             gameplayStartDelayTime.value = Mathf.Clamp(gameplayStartDelayTime, 0, 3.0f);
