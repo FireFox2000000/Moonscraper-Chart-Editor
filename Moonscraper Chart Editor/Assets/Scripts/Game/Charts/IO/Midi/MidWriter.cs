@@ -80,6 +80,16 @@ namespace MoonscraperChartEditor.Song.IO
             { (int)Note.GuitarFret.Orange,   4},
         };
 
+        static readonly IReadOnlyDictionary<int, int> c_guitarNoteEnhancedOpensMidiWriteOffsets = new Dictionary<int, int>()
+        {
+            { (int)Note.GuitarFret.Open,     -1},
+            { (int)Note.GuitarFret.Green,    0},
+            { (int)Note.GuitarFret.Red,      1},
+            { (int)Note.GuitarFret.Yellow,   2},
+            { (int)Note.GuitarFret.Blue,     3},
+            { (int)Note.GuitarFret.Orange,   4},
+        };
+
         static readonly IReadOnlyDictionary<int, int> c_drumNoteMidiWriteOffsets = new Dictionary<int, int>()
         {
             { (int)Note.DrumPad.Kick,     0},
@@ -101,12 +111,35 @@ namespace MoonscraperChartEditor.Song.IO
             { (int)Note.GHLiveGuitarFret.Black3, 4},
         };
 
-        static readonly IReadOnlyDictionary<Chart.GameMode, IReadOnlyDictionary<int, int>> c_gameModeNoteWriteOffsetDictLookup = new Dictionary<Chart.GameMode, IReadOnlyDictionary<int, int>>()
+        static IReadOnlyDictionary<int, int> GetNoteWriteOffsetLookup(Chart.GameMode gameMode, bool enhancedOpens)
         {
-            { Chart.GameMode.Guitar,    c_guitarNoteMidiWriteOffsets },
-            { Chart.GameMode.Drums,     c_drumNoteMidiWriteOffsets },
-            { Chart.GameMode.GHLGuitar, c_ghlNoteMidiWriteOffsets },
-        };
+            switch (gameMode)
+            {
+                case Chart.GameMode.Guitar:
+                    {
+                        if (enhancedOpens)
+                        {
+                            return c_guitarNoteEnhancedOpensMidiWriteOffsets;
+                        }
+                        else
+                        {
+                            return c_guitarNoteMidiWriteOffsets;
+                        }
+                    }
+                case Chart.GameMode.Drums:
+                    {
+                        return c_drumNoteMidiWriteOffsets;
+                    }
+                case Chart.GameMode.GHLGuitar:
+                    {
+                        return c_ghlNoteMidiWriteOffsets;
+                    }
+                default:
+                    {
+                        throw new NotImplementedException($"Unhandled game mode {gameMode}, unable to get offset dictionary");
+                    }
+            }
+        }
 
         static readonly IReadOnlyDictionary<Note.NoteType, int> c_forcingMidiWriteOffsets = new Dictionary<Note.NoteType, int>()
         {
@@ -413,20 +446,49 @@ namespace MoonscraperChartEditor.Song.IO
 
         static byte[] GetInstrumentBytes(Song song, Song.Instrument instrument, ExportOptions exportOptions, float resolutionScaleRatio)
         {
+            // Preprocess and determine if enhanced opens should be enabled or not
+            bool enhancedOpens = false;
+            if (Song.InstumentToChartGameMode(instrument) == Chart.GameMode.Guitar)
+            {
+                ChartFeatureChecker report = new ChartFeatureChecker();
+                SongValidate.FeatureValidationOptions options = new SongValidate.FeatureValidationOptions(
+                    openChordsAllowed: false,
+                    openTapsAllowed: false,
+                    sectionLimit: 0,
+                    checkForTSPlacementErrors: false,
+                    checkForMidiSoloSpMisread: false
+                    );
+
+                SongValidate.ValidateChart(song, instrument, Song.Difficulty.Easy, options, report);
+                SongValidate.ValidateChart(song, instrument, Song.Difficulty.Medium, options, report);
+                SongValidate.ValidateChart(song, instrument, Song.Difficulty.Hard, options, report);
+                SongValidate.ValidateChart(song, instrument, Song.Difficulty.Expert, options, report);
+
+                enhancedOpens = report.HasOpenChords;
+            }
+
+            if (enhancedOpens)
+            {
+                Debug.Log($"Enhanced opened enabled for midi track {instrument}");
+            }
+
             // Collect all bytes from each difficulty of the instrument, assigning the position for each event unsorted
-            //List<SortableBytes> byteEvents = new List<SortableBytes>();
-            SortableBytes[] easyBytes = GetChartSortableBytes(song, instrument, Song.Difficulty.Easy, exportOptions);
-            SortableBytes[] mediumBytes = GetChartSortableBytes(song, instrument, Song.Difficulty.Medium, exportOptions);
-            SortableBytes[] hardBytes = GetChartSortableBytes(song, instrument, Song.Difficulty.Hard, exportOptions);
-            SortableBytes[] expertBytes = GetChartSortableBytes(song, instrument, Song.Difficulty.Expert, exportOptions);
+            SortableBytes[] easyBytes = GetChartSortableBytes(song, instrument, Song.Difficulty.Easy, enhancedOpens, exportOptions);
+            SortableBytes[] mediumBytes = GetChartSortableBytes(song, instrument, Song.Difficulty.Medium, enhancedOpens, exportOptions);
+            SortableBytes[] hardBytes = GetChartSortableBytes(song, instrument, Song.Difficulty.Hard, enhancedOpens, exportOptions);
+            SortableBytes[] expertBytes = GetChartSortableBytes(song, instrument, Song.Difficulty.Expert, enhancedOpens, exportOptions);
 
             SortableBytes[] em = SortableBytes.MergeAlreadySorted(easyBytes, mediumBytes);
             SortableBytes[] he = SortableBytes.MergeAlreadySorted(hardBytes, expertBytes);
-            List<SortableBytes> sortedEvents = new List<SortableBytes>(SortableBytes.MergeAlreadySorted(em, he));
 
-            // Perform merge sort to re-order everything correctly
-            //SortableBytes[] sortedEvents = new SortableBytes[easyBytes.Length + mediumBytes.Length + hardBytes.Length + expertBytes.Length];//byteEvents.ToArray();
-            //SortableBytes.Sort(sortedEvents);
+            List<SortableBytes> sortedEvents = new List<SortableBytes>(SortableBytes.MergeAlreadySorted(em, he));
+           
+            if (enhancedOpens && sortedEvents.Count > 0)
+            {
+                SortableBytes enhanceOpenFlagBytes = GetChartEventBytes(new ChartEvent(0, MidIOHelper.ENHANCED_OPENS_TEXT_BRACKET));
+                Debug.Assert(enhanceOpenFlagBytes.tick <= sortedEvents[0].tick);
+                sortedEvents.Insert(0, enhanceOpenFlagBytes);
+            }
 
             // Strip out duplicate events. This may occur with cymbal flags across multiple difficulties, duplicate events across difficulties etc. 
             for (int i = sortedEvents.Count - 1; i >= 0; --i)
@@ -478,7 +540,7 @@ namespace MoonscraperChartEditor.Song.IO
             eventList.Insert(index + 1, sortableByte);
         }
 
-        static SortableBytes[] GetChartSortableBytes(Song song, Song.Instrument instrument, Song.Difficulty difficulty, ExportOptions exportOptions)
+        static SortableBytes[] GetChartSortableBytes(Song song, Song.Instrument instrument, Song.Difficulty difficulty, bool enhancedOpens, ExportOptions exportOptions)
         {
             Chart chart = song.GetChart(instrument, difficulty);
             Chart.GameMode gameMode = chart.gameMode;
@@ -522,7 +584,7 @@ namespace MoonscraperChartEditor.Song.IO
 
                 if (note != null)
                 {
-                    int noteNumber = GetMidiNoteNumber(note, gameMode, difficulty);
+                    int noteNumber = GetMidiNoteNumber(note, gameMode, difficulty, enhancedOpens);
 
                     byte velocity = VELOCITY;
 
@@ -604,7 +666,7 @@ namespace MoonscraperChartEditor.Song.IO
                         }
                     }
 
-                    if (gameMode != Chart.GameMode.Drums && gameMode != Chart.GameMode.GHLGuitar && note.guitarFret == Note.GuitarFret.Open && (note.previous == null || (note.previous.guitarFret != Note.GuitarFret.Open)))
+                    if (!enhancedOpens && gameMode == Chart.GameMode.Guitar && note.guitarFret == Note.GuitarFret.Open && (note.previous == null || (note.previous.guitarFret != Note.GuitarFret.Open)))
                     {
                         // Find the next non-open note
                         Note nextNonOpen = note;
@@ -1099,7 +1161,7 @@ namespace MoonscraperChartEditor.Song.IO
             offEvent = new SortableBytes(note.tick + note.length, new byte[] { OFF_EVENT, (byte)noteNumber, velocity });
         }
 
-        static int GetMidiNoteNumber(Note note, Chart.GameMode gameMode, Song.Difficulty difficulty)
+        static int GetMidiNoteNumber(Note note, Chart.GameMode gameMode, Song.Difficulty difficulty, bool enhancedOpens)
         {
             IReadOnlyDictionary<int, int> noteToMidiOffsetDict;
             int difficultyNumber;
@@ -1111,16 +1173,50 @@ namespace MoonscraperChartEditor.Song.IO
                 return MidIOHelper.DOUBLE_KICK_NOTE;
             }
 
-            if (!c_gameModeNoteWriteOffsetDictLookup.TryGetValue(gameMode, out noteToMidiOffsetDict))
-                throw new System.Exception("Unhandled game mode, unable to get offset dictionary");
+            noteToMidiOffsetDict = GetNoteWriteOffsetLookup(gameMode, enhancedOpens);
 
             if (!noteToMidiOffsetDict.TryGetValue(note.rawNote, out offset))
-                throw new System.Exception("Unhandled note, unable to get offset");
+                throw new NotImplementedException($"Unhandled note {note.rawNote}, unable to get offset");
 
             if (!c_difficultyToMidiNoteWriteDict.TryGetValue(difficulty, out difficultyNumber))
-                throw new System.Exception("Unhandled difficulty");
+                throw new NotImplementedException($"Unhandled difficulty {difficulty}");
 
             return difficultyNumber + offset;
+        }
+
+        class ChartFeatureChecker : ISongValidateReport
+        {
+            bool _hasOpenChords = false;
+            bool _hasOpenTaps = false;
+
+            public bool HasOpenChords => _hasOpenChords;
+            public bool HasOpenTaps => _hasOpenTaps;
+
+            public void NotifyOpenChordFound(Note note)
+            {
+                _hasOpenChords = true;
+            }
+
+            public void NotifyOpenTapFound(Note note)
+            {
+                _hasOpenTaps = true;
+            }
+
+            public void NotifyRockBandMidiSoloStarpowerMisRead(Song.Instrument instrument)
+            {
+            }
+
+            public void NotifySectionLimitError(Song song, int sectionLimit)
+            {
+            }
+
+            public void NotifySongObjectBeyondExpectedLength(SongObject song)
+            {
+            }
+
+            public void NotifyTimeSignaturePlacementError(TimeSignature ts)
+            {
+            }
         }
     }
 }
