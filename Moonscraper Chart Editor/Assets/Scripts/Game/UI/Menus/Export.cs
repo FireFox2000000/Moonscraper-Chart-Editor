@@ -150,7 +150,7 @@ public class Export : DisplayMenu {
 
             // Check if files exist at the current directory and ask user before overwriting.
             if (Directory.Exists(saveDirectory)) {
-                NativeWindow window= ChartEditor.Instance.windowHandleManager.nativeWindow;
+                NativeWindow window = ChartEditor.Instance.windowHandleManager.nativeWindow;
                 NativeMessageBox.Result overwrite = NativeMessageBox.Show("Exported files exist. Overwrite?", "Warning", NativeMessageBox.Type.YesNo, window);
 
                 if (overwrite != NativeMessageBox.Result.Yes) {
