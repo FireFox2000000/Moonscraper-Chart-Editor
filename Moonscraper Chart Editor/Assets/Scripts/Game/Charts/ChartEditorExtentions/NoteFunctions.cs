@@ -278,7 +278,7 @@ public static class NoteFunctions {
                 break;
 
             case (Note.NoteType.Tap):
-                if (!note.IsOpenNote() && !Globals.gameSettings.tapOpensEnabled)
+                if (!note.IsOpenNote() || Globals.gameSettings.tapOpensEnabled)
                     flags |= Note.Flags.Tap;
                 break;
 
