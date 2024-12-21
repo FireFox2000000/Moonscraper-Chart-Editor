@@ -19,6 +19,7 @@ public class SettingsController : TabMenu
     public Toggle leftyFlipToggle;
     public Toggle extendedSustainsToggle;
     public Toggle openTapChordsToggle;
+    public Toggle consecutiveForcingToggle;
     public Toggle sustainGapEnabledToggle;
     public Toggle sustainGapTimeBasedToggle;
     public Toggle resetAfterPlay;
@@ -203,6 +204,7 @@ public class SettingsController : TabMenu
 
         extendedSustainsToggle.isOn = Globals.gameSettings.extendedSustainsEnabled;
         openTapChordsToggle.isOn = Globals.gameSettings.openChordsEnabled || Globals.gameSettings.tapOpensEnabled;
+        consecutiveForcingToggle.isOn = Globals.gameSettings.consecutiveForcingEnabled;
 
         // Make sure both open chords and tap open chords are set to the same value
         // This is because the game settings are separate but controlled by the same UI toggle
@@ -294,6 +296,11 @@ public class SettingsController : TabMenu
     {
         Globals.gameSettings.openChordsEnabled.value = value;
         Globals.gameSettings.tapOpensEnabled.value = value;
+    }
+
+    public void SetConsecutiveForcing(bool value)
+    {
+        Globals.gameSettings.consecutiveForcingEnabled.value = value;
     }
 
     public void SetAutoValidateSongOnSave(bool value)
