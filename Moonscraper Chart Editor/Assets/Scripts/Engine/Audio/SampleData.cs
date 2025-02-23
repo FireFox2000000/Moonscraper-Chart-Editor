@@ -134,5 +134,15 @@ namespace MoonscraperEngine.Audio
                 }
             }
         }
+
+        public delegate void ReadDataFn(float[] data, float length);
+
+        public void ReadData(ReadDataFn readFn)
+        {
+            lock (dataLock)
+            {
+                readFn(_data, _length);
+            }
+        }
     }
 }

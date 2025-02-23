@@ -13,12 +13,18 @@ public class WaveformDraw : MonoBehaviour {
     LineRenderer lineRen;
 
     SampleData currentSample = null;
+    SampleData.ReadDataFn updateWaveformPointsFullData;
 
     public Dropdown waveformSelect;
     public Text loadingText;
 
     int chartViewWaveformSelectionIndex = 0;
     int songViewWaveformSelectionIndex = 1;
+
+    public WaveformDraw()
+    {
+        updateWaveformPointsFullData = UpdateWaveformPointsFullData;
+    }
 
     // Use this for initialization
     void Start () {
@@ -66,7 +72,7 @@ public class WaveformDraw : MonoBehaviour {
         // Choose whether to display the waveform or not
         if (displayWaveform && currentSample.dataLength > 0)
         {
-            UpdateWaveformPointsFullData();
+            currentSample.ReadData(updateWaveformPointsFullData);
 
             // Then activate
             lineRen.enabled = true;
@@ -79,22 +85,22 @@ public class WaveformDraw : MonoBehaviour {
     }
 
     Vector3[] points = new Vector3[0];
-    void UpdateWaveformPointsFullData()
+    void UpdateWaveformPointsFullData(float[] data, float sampleLength)
     {
-        if (currentSample.dataLength <= 0 || currentSample == null)
+        if (data == null || data.Length <= 0)
         {
             return;
         }
 
-        float sampleRate = currentSample.length / currentSample.dataLength;// currentClip.samples / currentClip.length;
+        float sampleRate = sampleLength / data.Length;
         float scaling = 1;
         const int iteration = 1;// 20;
         int channels = 1;// currentSample.channels;
         float fullOffset = -editor.currentSong.offset;
 
         // Determine what points of data to draw
-        int startPos = TimeToArrayPos(ChartEditor.WorldYPositionToTime(editor.camYMin.position.y) - fullOffset, iteration, channels, currentSample.length);
-        int endPos = TimeToArrayPos(ChartEditor.WorldYPositionToTime(editor.camYMax.position.y) - fullOffset, iteration, channels, currentSample.length);
+        int startPos = TimeToArrayPos(ChartEditor.WorldYPositionToTime(editor.camYMin.position.y) - fullOffset, iteration, channels, sampleLength);
+        int endPos = TimeToArrayPos(ChartEditor.WorldYPositionToTime(editor.camYMax.position.y) - fullOffset, iteration, channels, sampleLength);
 
         int pointLength = endPos - startPos;
         if (pointLength > points.Length)
@@ -111,7 +117,7 @@ public class WaveformDraw : MonoBehaviour {
 
         for (int i = startPos; i < endPos; ++i)
         {
-            point.x = currentSample.At(i) * scaling;
+            point.x = data[i] * scaling;
 
             // Manual inlining of Song.TimeToWorldYPosition
             float time = i * sampleRate + fullOffset;
@@ -128,7 +134,7 @@ public class WaveformDraw : MonoBehaviour {
         }
 
         lineRen.positionCount = points.Length;
-        lineRen.SetPositions(points);
+        lineRen.SetPositions(points);  
     }
 
     int TimeToArrayPos(float time, int iteration, int channels, float totalAudioLength)
