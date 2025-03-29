@@ -4,6 +4,7 @@
 using System.Runtime.InteropServices;
 using System;
 using System.IO;
+using System.Linq;
 
 public static class FileExplorer  {
 
@@ -42,10 +43,10 @@ public static class FileExplorer  {
     public static string StripIllegalChars(string filename)
     {
         const string invalidFileChars = "!@#$%^&*\"\'<>\\/:|?";
-        foreach (char c in invalidFileChars)
-        {
-            filename = filename.Replace(c.ToString(), "");
-        }
+
+        filename = new string(filename.Where(c => {
+            return !char.IsControl(c) && !invalidFileChars.Contains(c);
+        }).ToArray());
 
         return filename.Trim();
     }

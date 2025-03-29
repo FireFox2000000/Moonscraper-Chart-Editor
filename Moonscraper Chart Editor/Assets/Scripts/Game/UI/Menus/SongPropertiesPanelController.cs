@@ -360,7 +360,7 @@ public class SongPropertiesPanelController : TabMenu
 
     public static char ValidateStringMetadataInput(string text, int charIndex, char addedChar)
     {
-        if (s_metadataBannedChars.Contains(addedChar))
+        if (s_metadataBannedChars.Contains(addedChar) || char.IsControl(addedChar))
         {
             return '\0';
         }
