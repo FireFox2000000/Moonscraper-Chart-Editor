@@ -1,3 +1,11 @@
+1.5.8
+    NEW FEATURES
+    -Added ability to make Open Tap notes and Open chords for guitar-style instruments. This can be enabled under Options/Settings/Editor/Enable Open Chords & Tap Opens.
+
+    FIXES
+    -Fixed error popup upon spamming the audio reload hotkey
+    -Fixed save file dialog failure due to control characters being present in the song name. Updated the input validation to strip these out accordingly.
+
 1.5.7
     FIXES
     -Fixed null reference exception upon modifying global/local names caused by multiple inputs being sent to the input field on the same frame.
