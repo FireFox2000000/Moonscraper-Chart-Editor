@@ -10,9 +10,11 @@ using System.Text;
 public class BuildManager  {
     const string applicationName = "Moonscraper Chart Editor";
 
-    // TODO - Need to figure out a way not to hardcode these paths. Could embed them directly but dlls seem unnessacary when this is already working anyway. 
-    const string CompressionProgramPath = "E:\\Program Files\\7-Zip\\7z.exe";
-    const string InstallerProgramPath = "E:\\Program Files (x86)\\Inno Setup 6\\ISCC.exe";
+    // 7-Zip.exe location
+    static readonly string CompressionProgramPath = System.Environment.GetEnvironmentVariable("7-Zip");
+
+    // Inno Setup 6 ISCC.exe location
+    static readonly string InstallerProgramPath = System.Environment.GetEnvironmentVariable("ISCC");
 
     [System.Flags]
     public enum BuildFlags
@@ -280,10 +282,10 @@ public class BuildManager  {
             string ScriptFolderPath = Path.GetFullPath(Path.Combine(Application.dataPath, "../../Installer/Scripts/"));
             string installerCompilePath = Path.Combine(ScriptFolderPath, installerCompileScriptPath);
 
-            bool installerValid = File.Exists(InstallerProgramPath);
+            bool installerValid = !string.IsNullOrEmpty(InstallerProgramPath) && File.Exists(InstallerProgramPath);
             bool scriptValid = !string.IsNullOrEmpty(installerCompileScriptPath) && File.Exists(installerCompilePath);
 
-            Debug.Assert(installerValid);
+            Debug.Assert(installerValid, "Path to Inno Installer not set in environment variables, cannot proceed with build.");
             Debug.Assert(scriptValid);
 
             if (installerValid && scriptValid)
@@ -318,7 +320,11 @@ public class BuildManager  {
         if ((buildFlags & BuildFlags.CreateDistributable) != 0)
         {
             // Compress to shareable file
-            Debug.Assert(File.Exists(CompressionProgramPath));
+            if (CompressionProgramPath == null || !File.Exists(CompressionProgramPath))
+            {
+                Debug.Assert(false, "Path to 7-Zip not set in environment variables, cannot proceed with build compression.");
+                return;
+            }
 
             if (!string.IsNullOrEmpty(compressionExtension) && File.Exists(CompressionProgramPath))
             {
