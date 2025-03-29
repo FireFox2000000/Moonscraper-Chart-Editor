@@ -1,6 +1,7 @@
 1.5.8
     NEW FEATURES
     -Added ability to make Open Tap notes and Open chords for guitar-style instruments. This can be enabled under Options/Settings/Editor/Enable Open Chords & Tap Opens.
+    -Added YARG option to the Song Validator.
 
     FIXES
     -Fixed error popup upon spamming the audio reload hotkey
