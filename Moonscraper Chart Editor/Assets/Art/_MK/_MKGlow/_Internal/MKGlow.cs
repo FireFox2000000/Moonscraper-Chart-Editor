@@ -329,7 +329,17 @@ namespace MKGlowSystem
 
             if (GlowType == MKGlowType.Selective)
             {
-                glowTexture = RenderTexture.GetTemporary((int)((GetComponent<Camera>().pixelWidth) / samples), (int)((GetComponent<Camera>().pixelHeight) / samples), 16, RenderTextureFormat.Default);
+                Camera camera = GetComponent<Camera>();
+                int width = (int)((camera.pixelWidth) / samples);
+                int heigth = (int)((camera.pixelHeight) / samples);
+
+                // Failure case, camera space too small. Has Windows resized our window much smaller than intended?
+                if (width <= 0 || heigth <= 0)
+                {
+                    return;
+                }
+
+                glowTexture = RenderTexture.GetTemporary(width, heigth, 16, RenderTextureFormat.Default);
                 SetupGlowCamera();
                 SetupKeywords();
                 GlowCamera.RenderWithShader(glowRenderShader, "RenderType");//
@@ -386,6 +396,12 @@ namespace MKGlowSystem
 
         protected void PerformSelectiveGlow(ref RenderTexture source, ref RenderTexture dest)
         {
+            if (glowTexture == null)
+            {
+                Graphics.Blit(source, dest);
+                return;
+            }
+
             Vector2 TextureSize;
             TextureSize.x = source.width / Samples;
             TextureSize.y = source.height / Samples;
