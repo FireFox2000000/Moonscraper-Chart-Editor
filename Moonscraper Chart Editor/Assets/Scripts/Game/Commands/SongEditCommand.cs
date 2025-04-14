@@ -215,15 +215,19 @@ public abstract class SongEditCommand : ICommand {
             return;
 
         Song song = ChartEditor.Instance.currentSong;
-        var bpms = song.bpms;
+        var syncTrack = song.syncTrack;
 
         tempAnchorFixupBPMs.Clear();
         tempAnchorFixupSynctrack.Clear();
-        foreach (BPM bpm in bpms)
+
+        foreach (SyncTrack sync in syncTrack)
         {
-            BPM clone = bpm.CloneAs<BPM>();
-            tempAnchorFixupBPMs.Add(clone);
-            tempAnchorFixupSynctrack.Add(clone);
+            if (sync is BPM bpm)
+            {
+                BPM clone = bpm.CloneAs<BPM>();
+                tempAnchorFixupBPMs.Add(clone);
+                tempAnchorFixupSynctrack.Add(clone);
+            }
         }
         
         // Fix up any anchors
