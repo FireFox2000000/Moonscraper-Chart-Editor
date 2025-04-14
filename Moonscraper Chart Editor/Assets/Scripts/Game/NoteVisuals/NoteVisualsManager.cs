@@ -57,7 +57,8 @@ public class NoteVisualsManager : MonoBehaviour {
                 noteRenderer = GetComponent<Renderer>();
             noteRenderer.sortingOrder = -(int)note.tick;
 
-            if (Globals.drumMode && note.guitarFret == Note.GuitarFret.Open)
+            // Ensure that open notes are always rendered below standard notes when played as chords
+            if (note.guitarFret == Note.GuitarFret.Open)
                 noteRenderer.sortingOrder -= 1;
         }
     }
