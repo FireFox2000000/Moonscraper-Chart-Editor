@@ -226,6 +226,7 @@ public class GameSettings
         , extendedSustainsEnabled
         , openChordsEnabled
         , tapOpensEnabled
+        , consecutiveForcingEnabled
         , sustainGapEnabled
         , sustainGapIsTimeBased
         , resetAfterPlay
@@ -291,6 +292,7 @@ public class GameSettings
             case ("extendedSustainsEnabled"): return extendedSustainsEnabled;
             case ("openChordsEnabled"): return openChordsEnabled;
             case ("tapOpensEnabled"): return tapOpensEnabled;
+            case ("consecutiveForcingEnabled"): return consecutiveForcingEnabled;
             case ("sustainGapEnabled"): return sustainGapEnabled;
             case ("resetAfterPlay"): return resetAfterPlay;
             case ("resetAfterGameplay"): return resetAfterGameplay;
@@ -304,6 +306,7 @@ public class GameSettings
         extendedSustainsEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Extended sustains", false);
         openChordsEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Open Chords", false);
         tapOpensEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Tap Opens", false);
+        consecutiveForcingEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Consecutive Forcing", false);
         sustainGapEnabled = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Sustain Gap", false);
         sustainGapIsTimeBased = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Sustain Gap Is Time Based", false);
         resetAfterPlay = new BoolSaveSetting(SECTION_NAME_SETTINGS, "Reset After Play", false);
