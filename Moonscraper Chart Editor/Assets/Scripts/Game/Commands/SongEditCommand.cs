@@ -218,45 +218,42 @@ public abstract class SongEditCommand : ICommand {
             return;
 
         Song song = ChartEditor.Instance.currentSong;
-        var syncTrack = song.syncTrack;
+        var bpms = song.bpms;
 
         BPM firstBpm = null;
         BPM previousBpm = null;
 
         // Fix up any anchors
-        foreach (SyncTrack sync in syncTrack)
+        foreach (BPM bpm in bpms)
         {
-            if (sync is BPM bpm)
+            if (bpm.anchor != null && previousBpm != null && firstBpm != null)
             {
-                if (bpm.anchor != null && previousBpm != null && firstBpm != null)
+                BPM bpmToAdjust = previousBpm;
+
+                double deltaTime = (double)bpm.anchor - Song.LiveTickToTime(bpmToAdjust.tick, song.resolution, firstBpm, song.syncTrack);
+                uint newValue = (uint)Mathf.Round((float)(TickFunctions.DisToBpm(bpmToAdjust.tick, bpm.tick, deltaTime, song.resolution) * 1000.0d));
+
+                if (deltaTime > 0 && newValue > 0)
                 {
-                    BPM bpmToAdjust = previousBpm;
-
-                    double deltaTime = (double)bpm.anchor - Song.LiveTickToTime(bpmToAdjust.tick, song.resolution, firstBpm, syncTrack);
-                    uint newValue = (uint)Mathf.Round((float)(TickFunctions.DisToBpm(bpmToAdjust.tick, bpm.tick, deltaTime, song.resolution) * 1000.0d));
-
-                    if (deltaTime > 0 && newValue > 0)
+                    if (bpmToAdjust.value != newValue)
                     {
-                        if (bpmToAdjust.value != newValue)
-                        {
-                            BPM original = bpmToAdjust.CloneAs<BPM>();
+                        BPM original = bpmToAdjust.CloneAs<BPM>();
 
-                            // Manually invoke the modify effect
-                            bpmToAdjust.value = newValue;
+                        // Manually invoke the modify effect
+                        bpmToAdjust.value = newValue;
 
-                            SongEditModify<BPM> command = new SongEditModify<BPM>(original, bpmToAdjust.CloneAs<BPM>());
-                            command.postExecuteEnabled = false;
-                            bpmAnchorFixup.Add(command);
-                        }
+                        SongEditModify<BPM> command = new SongEditModify<BPM>(original, bpmToAdjust.CloneAs<BPM>());
+                        command.postExecuteEnabled = false;
+                        bpmAnchorFixup.Add(command);
                     }
                 }
-
-                if (firstBpm == null)
-                {
-                    firstBpm = bpm;
-                }
-                previousBpm = bpm;
             }
+
+            if (firstBpm == null)
+            {
+                firstBpm = bpm;
+            }
+            previousBpm = bpm;
         }
 
         bpmAnchorFixupCommandsGenerated = true;
