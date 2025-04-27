@@ -1,3 +1,7 @@
+1.5.10
+    FIXES
+    -Additional fixes to errors upon tempo mapping involving anchored bpms. 
+
 1.5.9
     FIXES
     -Fixed RenderTexture startup crash upon Windows resizing the application to unexpected pixel sizes.
