@@ -101,7 +101,8 @@ public abstract class SongEditCommand : ICommand {
         ChartEditor editor = ChartEditor.Instance;
         UndoRedoJumpInfo jumpInfo = GetUndoRedoJumpInfo();
 
-        if (!bpmAnchorFixupCommandsGenerated)
+        bool generateBPMAnchorComamnds = !bpmAnchorFixupCommandsGenerated;
+        if (generateBPMAnchorComamnds)
         {
             GenerateFixUpBPMAnchorCommands();
         }
@@ -113,9 +114,13 @@ public abstract class SongEditCommand : ICommand {
 
         if (isInvoke)
         {
-            foreach (ICommand command in bpmAnchorFixup)
+            // Checking to see if we already manually invoked these commands
+            if (!generateBPMAnchorComamnds)
             {
-                command.Invoke();
+                foreach (ICommand command in bpmAnchorFixup)
+                {
+                    command.Invoke();
+                }
             }
 
             foreach (ICommand command in forcedFlagFixup)
@@ -207,8 +212,6 @@ public abstract class SongEditCommand : ICommand {
         subActions.Add(action);
     }
 
-    static List<BPM> tempAnchorFixupBPMs = new List<BPM>();
-    static List<SyncTrack> tempAnchorFixupSynctrack = new List<SyncTrack>();
     void GenerateFixUpBPMAnchorCommands()
     {
         if (bpmAnchorFixup.Count > 0)
@@ -217,48 +220,46 @@ public abstract class SongEditCommand : ICommand {
         Song song = ChartEditor.Instance.currentSong;
         var syncTrack = song.syncTrack;
 
-        tempAnchorFixupBPMs.Clear();
-        tempAnchorFixupSynctrack.Clear();
+        BPM firstBpm = null;
+        BPM previousBpm = null;
 
+        // Fix up any anchors
         foreach (SyncTrack sync in syncTrack)
         {
             if (sync is BPM bpm)
             {
-                BPM clone = bpm.CloneAs<BPM>();
-                tempAnchorFixupBPMs.Add(clone);
-                tempAnchorFixupSynctrack.Add(clone);
-            }
-        }
-        
-        // Fix up any anchors
-        for (int i = 0; i < tempAnchorFixupBPMs.Count; ++i)
-        {
-            if (tempAnchorFixupBPMs[i].anchor != null && i > 0)
-            {
-                BPM anchorBPM = tempAnchorFixupBPMs[i];
-                BPM bpmToAdjust = tempAnchorFixupBPMs[i - 1];
-
-                double deltaTime = (double)anchorBPM.anchor - Song.LiveTickToTime(bpmToAdjust.tick, song.resolution, tempAnchorFixupBPMs[0], tempAnchorFixupSynctrack);
-                uint newValue = (uint)Mathf.Round((float)(TickFunctions.DisToBpm(bpmToAdjust.tick, anchorBPM.tick, deltaTime, song.resolution) * 1000.0d));
-
-                if (deltaTime > 0 && newValue > 0)
+                if (bpm.anchor != null && previousBpm != null && firstBpm != null)
                 {
-                    if (bpmToAdjust.value != newValue)
-                    {
-                        BPM original = bpmToAdjust.CloneAs<BPM>();
-                        bpmToAdjust.value = newValue;
+                    BPM bpmToAdjust = previousBpm;
 
-                        SongEditModify<BPM> command = new SongEditModify<BPM>(original, bpmToAdjust);
-                        command.postExecuteEnabled = false;
-                        bpmAnchorFixup.Add(command);
+                    double deltaTime = (double)bpm.anchor - Song.LiveTickToTime(bpmToAdjust.tick, song.resolution, firstBpm, syncTrack);
+                    uint newValue = (uint)Mathf.Round((float)(TickFunctions.DisToBpm(bpmToAdjust.tick, bpm.tick, deltaTime, song.resolution) * 1000.0d));
+
+                    if (deltaTime > 0 && newValue > 0)
+                    {
+                        if (bpmToAdjust.value != newValue)
+                        {
+                            BPM original = bpmToAdjust.CloneAs<BPM>();
+
+                            // Manually invoke the modify effect
+                            bpmToAdjust.value = newValue;
+
+                            SongEditModify<BPM> command = new SongEditModify<BPM>(original, bpmToAdjust.CloneAs<BPM>());
+                            command.postExecuteEnabled = false;
+                            bpmAnchorFixup.Add(command);
+                        }
                     }
                 }
+
+                if (firstBpm == null)
+                {
+                    firstBpm = bpm;
+                }
+                previousBpm = bpm;
             }
         }
 
         bpmAnchorFixupCommandsGenerated = true;
-        tempAnchorFixupBPMs.Clear();
-        tempAnchorFixupSynctrack.Clear();
     }
 
     void GenerateForcedFlagFixupCommands(UndoRedoJumpInfo jumpInfo)

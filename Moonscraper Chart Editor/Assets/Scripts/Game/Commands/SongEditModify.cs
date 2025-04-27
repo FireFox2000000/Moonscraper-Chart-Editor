@@ -149,12 +149,13 @@ public class SongEditModify<T> : SongEditCommand where T : SongObject
                 return chart.events[index];
 
             case SongObject.ID.BPM:
-                index = SongObjectHelper.FindObjectPosition(so as BPM, song.bpms);
+                index = SongObjectHelper.FindObjectPosition(so as BPM, song.syncTrack);
                 if (index == SongObjectHelper.NOTFOUND)
                 {
+                    UnityEngine.Debug.Log($"Unable to find BPM at tick {so.tick} for value { (so as BPM).value }");
                     return null;
                 }
-                return song.bpms[index];
+                return song.syncTrack[index];
 
             case SongObject.ID.TimeSignature:
                 index = SongObjectHelper.FindObjectPosition(so as TimeSignature, song.timeSignatures);
