@@ -412,7 +412,9 @@ public class PlaceNoteController : ObjectlessTool {
                     Debug.Log("Adding note");
                     currentlyAddingNotes.Add(allPlaceableNotes[notePos].note.Clone());
                 }
-                else if (MSChartEditorInput.GetInputDown(GetInputForNoteIndex(inputOnKeyboard, laneCount)) && currentPlacementMode == KeysPlacementMode.Deleting)
+                else if (pos != SongObjectHelper.NOTFOUND   // Prevent the user from trying to add a note while deleting, i.e. holding one key and simultaneously pressing another
+                    && MSChartEditorInput.GetInputDown(GetInputForNoteIndex(inputOnKeyboard, laneCount)) 
+                    && currentPlacementMode == KeysPlacementMode.Deleting)
                 {
                     Debug.Log("Removed " + editor.currentChart.notes[pos].rawNote + " note at position " + editor.currentChart.notes[pos].tick + " using keyboard controls");
                     currentlyAddingNotes.Add(editor.currentChart.notes[pos]);
