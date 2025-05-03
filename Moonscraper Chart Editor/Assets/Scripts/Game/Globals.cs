@@ -235,14 +235,18 @@ public class Globals : MonoBehaviour {
             editor.New();
     }
 
-    public void Quit()
+    public void Quit(bool deleteAutosave)
     {
         Globals.gameSettings.targetFramerate.value = Application.targetFrameRate;
         Globals.gameSettings.Save(GetConfigPath(), GetInputBindingsPath());
 
         // Delete autosaved chart. If chart is not deleted then that means there may have been a problem like a crash and the autosave should be reloaded the next time the program is opened. 
-        if (File.Exists(autosaveLocation))
+
+        if (deleteAutosave && File.Exists(autosaveLocation))
+        {
             File.Delete(autosaveLocation);
+            Debug.Log("Autosave deleted");
+        }
     }
 
     string GetConfigPath()

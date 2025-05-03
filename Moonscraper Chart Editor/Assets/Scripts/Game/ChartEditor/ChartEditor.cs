@@ -317,6 +317,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     public void ForceQuit()
     {
         quittingCheckPassed = true;
+        didForceQuit = true;
         Application.Quit();
 
 #if UNITY_EDITOR
@@ -332,7 +333,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         events.applicationShutdown.Fire();
         Application.logMessageReceived -= HandleException;      // Don't show message box on shutdown, even if we aren't shutting down smoothly. Kinda pointless....
 
-        globals.Quit();
+        globals.Quit(deleteAutosave: !didForceQuit);
         currentSongAudio.Dispose();
         sfxAudioStreams.DisposeSounds();
         AudioManager.Dispose();
@@ -373,6 +374,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
     volatile bool haltThreadForQuit = false;
     volatile bool quittingCheckPassed = false;
+    volatile bool didForceQuit = false;
     bool QuittingEditCheck()
     {
         if (currentState == State.Playing)
