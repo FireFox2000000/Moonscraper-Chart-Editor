@@ -1,3 +1,10 @@
+1.5.11
+    FIXES
+    -Fixed exception error when using keys mode in some circumstances when removing notes. 
+
+    CHANGES
+    -App no longer deletes the crash recovery autosave if the user selects "no" on exception error message popups. 
+
 1.5.10
     FIXES
     -Additional fixes to errors upon tempo mapping involving anchored bpms. 
