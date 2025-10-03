@@ -1,3 +1,6 @@
+1.5.12
+    -Applied Unity remediation security patch for Windows https://unity.com/security/sept-2025-01/remediation
+
 1.5.11
     FIXES
     -Fixed exception error when using keys mode in some circumstances when removing notes. 
