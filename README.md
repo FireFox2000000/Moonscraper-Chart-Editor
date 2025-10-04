@@ -14,7 +14,10 @@ Trailer- https://www.youtube.com/watch?v=G8Qd32TZz4A
 ### Games that use Moonscraper as a song editor:
 - Everhood (https://store.steampowered.com/app/1229380/Everhood/)
 
-## Compiling from Source
+## Running the application as a general user
+Download and run the latest version of the installer found in the [releases section](https://github.com/FireFox2000000/Moonscraper-Chart-Editor/releases) of this repo.
+
+## Compiling from source as a developer
 Follow the instructions below for your desired platform to build and run from source.
 
 ### All Platforms
