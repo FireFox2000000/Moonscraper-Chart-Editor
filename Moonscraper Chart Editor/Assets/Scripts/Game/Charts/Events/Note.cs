@@ -422,11 +422,13 @@ namespace MoonscraperChartEditor.Song
         {
             get
             {
-                Note seperatePrevious = previousSeperateNote;
+                if (!Globals.gameSettings.consecutiveForcingEnabled)
+                {
+                    Note seperatePrevious = previousSeperateNote;
 
-                if ((seperatePrevious == null) || (seperatePrevious != null && mask == seperatePrevious.mask))
-                    return true;
-
+                    if ((seperatePrevious == null) || (seperatePrevious != null && mask == seperatePrevious.mask))
+                        return true;
+                }
                 return false;
             }
         }
