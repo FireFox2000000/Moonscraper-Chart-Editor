@@ -13,9 +13,6 @@ public class BuildManager  {
     // 7-Zip.exe location
     static readonly string CompressionProgramPath = System.Environment.GetEnvironmentVariable("7-Zip");
 
-    // Security Patch application location
-    static readonly string UnityApplicationPatcherProgramPath = Path.GetFullPath(Path.Combine(Application.dataPath, "../../UnityApplicationPatcher-1.0.6-Win/UnityApplicationPatcherCLI.exe"));
-    
     // Inno Setup 6 ISCC.exe location
     static readonly string InstallerProgramPath = System.Environment.GetEnvironmentVariable("ISCC");
 
@@ -128,16 +125,6 @@ public class BuildManager  {
         return chosenPath;
     }
 
-    enum UnityApplicationPatcher_ExitCode
-    {
-        Success = 0,
-        PatchFailed = 1,
-        PatchNotFound = 2,
-        ExceptionCaught = 3,
-        InvalidCommandLineArg = 64,
-        PatchAlreadyApplied = 183,
-    }
-
     static void BuildSpecificTargetDistributable(BuildTarget buildTarget) {
         string path = GetSavePath();
 
@@ -226,36 +213,6 @@ public class BuildManager  {
 
         if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
             return;
-
-        switch (buildTarget)
-        {
-            case BuildTarget.StandaloneWindows:
-            case BuildTarget.StandaloneWindows64:
-                {
-                    Debug.Log("Applying security patch");
-
-                    UnityApplicationPatcher_ExitCode resultCode = RunUnityApplicationPatcher(path, string.Format("-windows -applicationPath \"{0}\"", path));
-                    switch (resultCode)
-                    {
-                        case UnityApplicationPatcher_ExitCode.Success:
-                        case UnityApplicationPatcher_ExitCode.PatchAlreadyApplied:
-                            {
-                                break;
-                            }
-                        default:
-                            {
-                                Debug.LogErrorFormat("Application patch failed due to code {0}. Aborting build", resultCode);
-                                return;
-                            }
-                    }
-                    break;
-                }
-
-            default:
-                {
-                    break;
-                }
-        }  
 
         if (Directory.Exists("Assets/Custom Resources"))
         {
@@ -436,36 +393,5 @@ public class BuildManager  {
         }
 
         Debug.Log("Build target complete!");
-    }
-
-    /// <returns>Exit code</returns>
-    static UnityApplicationPatcher_ExitCode RunUnityApplicationPatcher(string workingDirectoryPath, string args)
-    {
-        using (var process = new System.Diagnostics.Process())
-        {
-            process.StartInfo.FileName = UnityApplicationPatcherProgramPath;
-            process.StartInfo.WorkingDirectory = workingDirectoryPath;
-            process.StartInfo.Arguments = args;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.UseShellExecute = false;
-            process.OutputDataReceived += (sender, e) => {
-                if (e.Data != null)
-                    Debug.Log(e.Data);
-            };
-            process.ErrorDataReceived += (sender, e) =>{
-                if (e.Data != null)
-                    Debug.LogError(e.Data);
-            };
-
-            process.Start();
-
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-
-            process.WaitForExit();
-
-            return (UnityApplicationPatcher_ExitCode)process.ExitCode;
-        }
     }
 }
