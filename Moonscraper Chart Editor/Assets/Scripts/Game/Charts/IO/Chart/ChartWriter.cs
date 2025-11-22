@@ -17,7 +17,6 @@ namespace MoonscraperChartEditor.Song.IO
     public class ChartWriter
     {
         string path;
-        ExportOptions.Format format = ExportOptions.Format.Chart;
 
         public ChartWriter(string path)
         {

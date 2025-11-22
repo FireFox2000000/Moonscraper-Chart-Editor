@@ -1,3 +1,7 @@
+1.6.0
+    -Updated to Unity3D 6000.0.62f1 LTS.
+    -Drop support for Linux 32 bit distributables.
+
 1.5.12
     -Applied Unity remediation security patch for Windows https://unity.com/security/sept-2025-01/remediation
 

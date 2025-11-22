@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Networking;
 
 namespace DaVikingCode.AssetPacker {
 
@@ -96,11 +97,10 @@ namespace DaVikingCode.AssetPacker {
 
                 if (!baseTexture)
                 {
-                    WWW loader = new WWW("file:///" + itemToRaster.file);
+                    UnityWebRequest loader = UnityWebRequestTexture.GetTexture("file:///" + itemToRaster.file);
+                    yield return loader.SendWebRequest();
 
-                    yield return loader;
-
-                    baseTexture = loader.texture;
+                    baseTexture = DownloadHandlerTexture.GetContent(loader);
                 }
 
                 if (itemToRaster.sliceParams != null)
@@ -250,16 +250,15 @@ namespace DaVikingCode.AssetPacker {
 			int numFiles = Directory.GetFiles(savePath).Length;
 
 			for (int i = 0; i < numFiles / 2; ++i) {
+				UnityWebRequest loaderTexture = UnityWebRequestTexture.GetTexture("file:///" + savePath + "/data" + i + ".png");
+				yield return loaderTexture.SendWebRequest();
 
-				WWW loaderTexture = new WWW("file:///" + savePath + "/data" + i + ".png");
-				yield return loaderTexture;
+				UnityWebRequest loaderJSON = UnityWebRequest.Get("file:///" + savePath + "/data" + i + ".json");
+				yield return loaderJSON.SendWebRequest();
 
-				WWW loaderJSON = new WWW("file:///" + savePath + "/data" + i + ".json");
-				yield return loaderJSON;
+				TextureAssets textureAssets = JsonUtility.FromJson<TextureAssets> (loaderJSON.downloadHandler.text);
 
-				TextureAssets textureAssets = JsonUtility.FromJson<TextureAssets> (loaderJSON.text);
-
-				Texture2D t = loaderTexture.texture; // prevent creating a new Texture2D each time.
+				Texture2D t = DownloadHandlerTexture.GetContent(loaderTexture); // prevent creating a new Texture2D each time.
                 foreach (TextureAsset textureAsset in textureAssets.assets)
                 {
                     Sprite sprite = Sprite.Create(t, new Rect(textureAsset.x, textureAsset.y, textureAsset.width, textureAsset.height), spritePivot, pixelsPerUnit, 0, SpriteMeshType.FullRect);

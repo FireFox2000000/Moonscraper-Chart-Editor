@@ -3,7 +3,7 @@
 //											 //
 // Created by Michael Kremmel                //
 // www.michaelkremmel.de                     //
-// Copyright © 2015 All rights reserved.     //
+// Copyright ï¿½ 2015 All rights reserved.     //
 ///////////////////////////////////////////////
 
 using UnityEngine;
@@ -221,7 +221,7 @@ namespace MKGlowSystem
                 return;
             }
 
-            if(!SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.Default) || !SystemInfo.supportsImageEffects)
+            if(!SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.Default))
             {
                 enabled = false;
                 Debug.LogWarning("Glow not supported by platform");

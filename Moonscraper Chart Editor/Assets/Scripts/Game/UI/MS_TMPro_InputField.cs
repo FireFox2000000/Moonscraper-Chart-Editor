@@ -1016,7 +1016,7 @@ public class MS_TMPro_InputField : Selectable,
             // Cache reference to Vertical Scrollbar RectTransform and add listener.
             if (m_VerticalScrollbar != null)
             {
-                m_TextComponent.ignoreRectMaskCulling = true;
+                //m_TextComponent.ignoreRectMaskCulling = true;
                 m_VerticalScrollbar.onValueChanged.AddListener(OnScrollbarValueChange);
             }
 
@@ -3964,9 +3964,9 @@ public class MS_TMPro_InputField : Selectable,
             return;
 
         if (multiLine)
-            m_TextComponent.enableWordWrapping = true;
+            m_TextComponent.textWrappingMode = TextWrappingModes.Normal;
         else
-            m_TextComponent.enableWordWrapping = false;
+            m_TextComponent.textWrappingMode = TextWrappingModes.NoWrap;
     }
 
     // Control Rich Text option on the text component.

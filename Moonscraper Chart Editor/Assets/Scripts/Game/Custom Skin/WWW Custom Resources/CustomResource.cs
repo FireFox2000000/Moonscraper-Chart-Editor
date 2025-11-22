@@ -1,14 +1,15 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Networking;
 
 public abstract class CustomResource
 {
     public string name { get; private set; }
     public string filepath { get; private set; }
-    public WWW www { get; private set; }
+    public UnityWebRequest www { get; protected set; }
     protected readonly string[] validExtentions;
 
     protected CustomResource(string name, string[] validExtentions)
@@ -17,7 +18,7 @@ public abstract class CustomResource
         this.validExtentions = validExtentions;
     }
 
-    public virtual bool InitWWW(Dictionary<string, string> files)
+    protected bool validFile(Dictionary<string, string> files)
     {
         string file = string.Empty;
 
@@ -26,14 +27,14 @@ public abstract class CustomResource
 
         if (file != string.Empty)
         {
-            filepath = file;
-            www = new WWW("file://" + file);
+            filepath = "file://" + file;
             return true;
         }
-        else
-            return false;
-    }
 
+        return false;
+    }
+    
     public abstract void AssignResource();
     public abstract UnityEngine.Object GetObject();
+    public abstract bool InitWWW(Dictionary<string, string> files);
 }

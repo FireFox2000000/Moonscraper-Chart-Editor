@@ -6,7 +6,7 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class SpriteGlow : MonoBehaviour
 {
-    [ColorUsage(true, true, 0f, 8f, 0.125f, 3f)]
+    [ColorUsage(true, true)]
     public Color GlowColor = Color.white;
 
     [Range(0, 16)]
