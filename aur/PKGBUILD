@@ -1,7 +1,7 @@
 # Maintainer: bmwalters <oss at walters dot app>
 
 pkgname=moonscraper-chart-editor
-pkgver=1.5.12.u6000.0.62f1
+pkgver=1.6.0.u6000.0.62f1
 pkgrel=1
 pkgdesc="A song editor for Guitar Hero style rhythm games made in Unity"
 url='https://github.com/FireFox2000000/moonscraper-chart-editor'

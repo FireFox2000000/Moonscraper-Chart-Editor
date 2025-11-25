@@ -1,3 +1,8 @@
+1.6.0
+    CHANGES
+    -Update Unity engine to 6000.0.62f1 (Long Term Support)
+    -Remove Linux universal build, all Linux builds will be x64 only
+
 1.5.12
     -Applied Unity remediation security patch for Windows https://unity.com/security/sept-2025-01/remediation
 

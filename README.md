@@ -21,7 +21,7 @@ Download and run the latest version of the installer found in the [releases sect
 Follow the instructions below for your desired platform to build and run from source.
 
 ### All Platforms
-1. Download and install Unity 2018.4.23f1
+1. Download and install Unity 6000.0.62f1
 2. Run Unity and open the project folder with it
 3. Use the menu option Build Processes > Build Full Releases
   - Note that 7zip and Inno Setup are required to be installed to build distributables and installers respectively. 
