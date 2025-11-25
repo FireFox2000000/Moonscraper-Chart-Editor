@@ -11,7 +11,7 @@ public class BuildManager  {
     const string applicationName = "Moonscraper Chart Editor";
 
     // 7-Zip.exe location
-    static readonly string CompressionProgramPath = System.Environment.GetEnvironmentVariable("7-Zip");
+    static readonly string CompressionProgramPath = System.Environment.GetEnvironmentVariable("SEVENZIP") != null ? System.Environment.GetEnvironmentVariable("SEVENZIP") : System.Environment.GetEnvironmentVariable("7-Zip");
 
     // Inno Setup 6 ISCC.exe location
     static readonly string InstallerProgramPath = System.Environment.GetEnvironmentVariable("ISCC");
@@ -37,10 +37,10 @@ public class BuildManager  {
         BuildSpecificTargetDistributable(BuildTarget.StandaloneWindows);
     }
 
-    [MenuItem("Build Processes/Linux Universal Distributable")]
+    [MenuItem("Build Processes/Linux x64 Distributable")]
     public static void BuildLinux()
     {
-        BuildSpecificTargetDistributable(BuildTarget.StandaloneLinuxUniversal);
+        BuildSpecificTargetDistributable(BuildTarget.StandaloneLinux64);
     }
 
     [MenuItem("Build Processes/Build Full Distributables")]
@@ -83,7 +83,7 @@ public class BuildManager  {
         string folderName = Application.productName;
         if ((buildFlags & BuildFlags.SpecifyVersionNumber) != 0)
         {
-            folderName += string.Format(" v{0}", Application.productName);
+            folderName += string.Format(" v{0}", Application.version);
         }
 
         if (!string.IsNullOrEmpty(Globals.applicationBranchName))
@@ -101,7 +101,7 @@ public class BuildManager  {
         BuildTarget[] targets = {
             BuildTarget.StandaloneWindows64,
             BuildTarget.StandaloneWindows,
-            BuildTarget.StandaloneLinuxUniversal
+            BuildTarget.StandaloneLinux64
         };
 
         foreach (var target in targets) {
@@ -165,8 +165,8 @@ public class BuildManager  {
             installerCompileScriptPath = "MSCE Windows.iss";
             installerPlatform = "x64";
             break;
-        case BuildTarget.StandaloneLinuxUniversal:
-            architecture = "Linux (Universal)";
+        case BuildTarget.StandaloneLinux64:
+            architecture = "Linux (64 bit)";
             executableName = applicationName;
             compressionExtension = ".tar.gz";
 
