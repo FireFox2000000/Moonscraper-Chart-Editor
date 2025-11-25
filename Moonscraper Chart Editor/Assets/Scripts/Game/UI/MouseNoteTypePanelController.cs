@@ -6,9 +6,9 @@ using UnityEngine.UI;
 public class MouseNoteTypePanelController : MonoBehaviour
 {
     [SerializeField]
-    Button m_multiNoteButton;
+    Button m_multiNoteButton = null;
     [SerializeField]
-    Button m_openNoteButton;
+    Button m_openNoteButton = null;
 
     public GameObject noteToolObject;
     PlaceNoteController noteToolController;

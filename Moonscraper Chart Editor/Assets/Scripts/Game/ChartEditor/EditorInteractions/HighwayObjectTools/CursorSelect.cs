@@ -9,14 +9,14 @@ public class CursorSelect : ToolObject
 {
     // Cursor variables
     [SerializeField]
-    GroupMove groupMove;
+    GroupMove groupMove = null;
     bool mouseDownOverUI = false;
     Vector3 mousePos = Vector3.zero;
     GameObject clickedSelectableObject;
 
     // Group selection variables
     [SerializeField]
-    SpriteRenderer draggingArea;            // Shows the current area the user is dragging in
+    SpriteRenderer draggingArea = null;            // Shows the current area the user is dragging in
     Color initColor;
 
     bool addMode = true;

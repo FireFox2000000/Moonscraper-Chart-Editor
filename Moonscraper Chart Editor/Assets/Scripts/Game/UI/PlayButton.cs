@@ -12,9 +12,9 @@ public class PlayButton : MonoBehaviour {
     Image buttonImage;
 
     [SerializeField]
-    Sprite playSprite;
+    Sprite playSprite = null;
     [SerializeField]
-    Sprite pauseSprite;
+    Sprite pauseSprite = null;
 
     void Start()
     {

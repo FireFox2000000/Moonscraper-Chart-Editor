@@ -10,39 +10,39 @@ public class GroupSelectPanelController : MonoBehaviour
 {
     ChartEditor editor;
     [SerializeField]
-    Dropdown fretSelectDropdown;
+    Dropdown fretSelectDropdown = null;
     [SerializeField]
-    Dropdown drumsFretSelectDropdown;
+    Dropdown drumsFretSelectDropdown = null;
     [SerializeField]
-    Dropdown ghlFretSelectDropdown;
+    Dropdown ghlFretSelectDropdown = null;
     [SerializeField]
-    Dropdown drums4LaneSelectDropdown;
+    Dropdown drums4LaneSelectDropdown = null;
     [SerializeField]
-    Button setNoteNatural;
+    Button setNoteNatural = null;
     [SerializeField]
-    Button setNoteStrum;
+    Button setNoteStrum = null;
     [SerializeField]
-    Button setNoteHopo;
+    Button setNoteHopo = null;
     [SerializeField]
-    Button setNoteTap;
+    Button setNoteTap = null;
     [SerializeField]
-    Button setNoteTom;
+    Button setNoteTom = null;
     [SerializeField]
-    Button setNoteCymbal;
+    Button setNoteCymbal = null;
     [SerializeField]
-    Button setNoteDyncamicsNone;
+    Button setNoteDyncamicsNone = null;
     [SerializeField]
-    Button setNoteAccent;
+    Button setNoteAccent = null;
     [SerializeField]
-    Button setNoteGhost;
+    Button setNoteGhost = null;
     [SerializeField]
-    Button setDoubleKick;
+    Button setDoubleKick = null;
     [SerializeField]
-    Button altDoubleKick;
+    Button altDoubleKick = null;
     [SerializeField]
-    Text hitStrengthSubTitle;
+    Text hitStrengthSubTitle = null;
     [SerializeField]
-    Text kickTypeSubTitle;
+    Text kickTypeSubTitle = null;
 
     Dictionary<Chart.GameMode, Dropdown> laneSelectForGamemodeLookup = new Dictionary<Chart.GameMode, Dropdown>();
     Dictionary<Chart.GameMode, Dictionary<int, Dropdown>> laneSelectLaneCountOverrideLookup = new Dictionary<Chart.GameMode, Dictionary<int, Dropdown>>();

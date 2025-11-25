@@ -14,7 +14,7 @@ using MoonscraperChartEditor.Song;
 public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 {
     [SerializeField]
-    GameObject handle;
+    GameObject handle = null;
     public UnityEngine.UI.Text percentage;
     public GameObject sectionIndicatorPrefab;
     public GameObject starpowerIndicatorPrefab;

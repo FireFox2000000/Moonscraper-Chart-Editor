@@ -11,7 +11,7 @@ public class DropdownNotification : MonoBehaviour {
     [SerializeField]
     float dropdownDistance = 1.0f;
     [SerializeField]
-    UnityEngine.UI.Text notificationText;
+    UnityEngine.UI.Text notificationText = null;
 
     class NotificationData
     {

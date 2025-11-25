@@ -8,10 +8,10 @@ using System.Collections.Generic;
 public class SettingsController : TabMenu
 {
     [SerializeField]
-    RectTransform settingsMenuContentArea;
+    RectTransform settingsMenuContentArea = null;
 
     [SerializeField]
-    Button lyricEditorButton;
+    Button lyricEditorButton = null;
 
     public Toggle clapStrum;
     public Toggle clapHopo;

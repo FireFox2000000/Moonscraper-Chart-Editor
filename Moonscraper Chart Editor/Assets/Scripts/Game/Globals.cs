@@ -36,9 +36,9 @@ public class Globals : MonoBehaviour {
 
     [Header("Misc.")]
     [SerializeField]
-    Text snapLockWarning;
+    Text snapLockWarning = null;
     [SerializeField]
-    GUIStyle hintMouseOverStyle;
+    GUIStyle hintMouseOverStyle = null;
 
     public static bool drumMode
     {

@@ -8,11 +8,11 @@ using UnityEngine.UI;
 
 public class DropshadowSizing : MonoBehaviour {
     [SerializeField]
-    CustomUnityDropdown dropdown;
+    CustomUnityDropdown dropdown = null;
     [SerializeField]
-    Dropdown standardDropdown;
+    Dropdown standardDropdown = null;
     [SerializeField]
-    RectTransform item;
+    RectTransform item = null;
     [SerializeField]
     Vector2 offset = new Vector2(5, -7);
     RectTransform rectTransform;

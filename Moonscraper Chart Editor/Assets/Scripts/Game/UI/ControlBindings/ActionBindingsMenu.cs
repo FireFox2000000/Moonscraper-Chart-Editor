@@ -12,22 +12,22 @@ public class ActionBindingsMenu : MonoBehaviour
     [SerializeField]
     bool disablePropertyRestrictions = false;
     [SerializeField]
-    RectTransform content;
+    RectTransform content = null;
     [SerializeField]
-    Text actionNamePrefab;
+    Text actionNamePrefab = null;
     [SerializeField]
-    Button actionInputPrefab;
+    Button actionInputPrefab = null;
     [SerializeField]
-    RebindOverlayInterface rebindInterface;
+    RebindOverlayInterface rebindInterface = null;
 
     [SerializeField]
     float rowHeight = 50;
     [SerializeField]
-    float leftSizePadding;
+    float leftSizePadding = 0.0f;
     [SerializeField]
-    float xPaddingAfterName;
+    float xPaddingAfterName = 0.0f;
     [SerializeField]
-    float xPaddingBetweenInputButtons;
+    float xPaddingBetweenInputButtons = 0.0f;
 
     RectTransform rectTransform;
 

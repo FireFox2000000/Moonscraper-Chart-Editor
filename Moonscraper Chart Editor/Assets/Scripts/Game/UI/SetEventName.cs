@@ -8,9 +8,9 @@ using UnityEngine;
 public class SetEventName : MonoBehaviour {
 
     [SerializeField]
-    EventPropertiesPanelController ePropCon;
+    EventPropertiesPanelController ePropCon = null;
     [SerializeField]
-    new UnityEngine.UI.Text name;
+    new UnityEngine.UI.Text name = null;
 	
 	public void SetEvent()
     {

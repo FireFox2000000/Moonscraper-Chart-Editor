@@ -6,7 +6,7 @@ using System.Collections;
 
 public abstract class ToolObject : Snapable {
     [SerializeField]
-    EditorObjectToolManager.ToolID toolId;
+    EditorObjectToolManager.ToolID toolId = default;
 
     public EditorObjectToolManager.ToolID GetTool()
     {

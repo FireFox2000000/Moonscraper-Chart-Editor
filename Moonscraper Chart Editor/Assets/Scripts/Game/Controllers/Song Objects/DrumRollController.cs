@@ -10,15 +10,15 @@ public class DrumRollController : SongObjectController
     bool m_wantPop = false;
 
     [SerializeField]
-    GameObject m_triggerVisualsPlane;
+    GameObject m_triggerVisualsPlane = null;
     [SerializeField]
-    BoxCollider m_collision;
+    BoxCollider m_collision = null;
 
     [SerializeField]
-    GameObject[] m_laneVisuals;
+    GameObject[] m_laneVisuals = null;
 
     [SerializeField]
-    SustainResources m_resources;
+    SustainResources m_resources = null;
 
     [SerializeField]
     [Range(0.0f, 1.0f)]

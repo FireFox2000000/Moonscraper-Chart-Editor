@@ -10,13 +10,13 @@ using UnityEngine.UI;
 [ExecuteInEditMode]
 public class ShortcutFormatting : MonoBehaviour {
     [SerializeField]
-    TextAsset shortcutText;
+    TextAsset shortcutText = null;
     [SerializeField]
-    Text headingTextField;
+    Text headingTextField = null;
     [SerializeField]
-    Text keysTextField;
+    Text keysTextField = null;
     [SerializeField]
-    Text valuesTextField;
+    Text valuesTextField = null;
 
     const char HEADER_ID = '\t';
     const char KEYVALUE_SPLIT_ID = '|';

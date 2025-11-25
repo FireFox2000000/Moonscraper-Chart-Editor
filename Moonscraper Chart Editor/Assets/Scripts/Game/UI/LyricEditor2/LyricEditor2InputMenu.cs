@@ -7,9 +7,9 @@ using UnityEngine.UI;
 public class LyricEditor2InputMenu : MonoBehaviour
 {
     [SerializeField]
-    InputField inputField;
+    InputField inputField = null;
     [SerializeField]
-    Text title;
+    Text title = null;
 
     public string text {get {return inputField.text;}}
 

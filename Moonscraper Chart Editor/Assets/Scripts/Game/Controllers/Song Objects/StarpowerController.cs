@@ -9,7 +9,7 @@ public class StarpowerController : SongObjectController
 {
     public GameObject tail;
     [SerializeField]
-    StarpowerVisualsManager visualsManager;
+    StarpowerVisualsManager visualsManager = null;
     public Starpower starpower { get { return (Starpower)songObject; } set { Init(value, this); } }
     public const float position = -3.0f;
     

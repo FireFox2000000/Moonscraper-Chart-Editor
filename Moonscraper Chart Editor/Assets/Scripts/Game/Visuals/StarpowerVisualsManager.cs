@@ -5,11 +5,11 @@ using MoonscraperChartEditor.Song;
 public class StarpowerVisualsManager : MonoBehaviour
 {
     [SerializeField]
-    StarpowerController spCon;
+    StarpowerController spCon = null;
     Renderer spRenderer;
 
     [SerializeField]
-    MeshNoteResources resources;
+    MeshNoteResources resources = null;
     Material[] resourceSharedMatsSp;
     Material[] resourceSharedMatsSpDrumFill;
 

@@ -24,7 +24,7 @@ public class DisplayProperties : UpdateableService
     public Transform maxHighwayLength;
     public float minHighwayLength = 11.75f;
     [SerializeField]
-    BGFadeHeightController bgFade;
+    BGFadeHeightController bgFade = null;
 
     [Header("Stats")]
     public Text noteCount;

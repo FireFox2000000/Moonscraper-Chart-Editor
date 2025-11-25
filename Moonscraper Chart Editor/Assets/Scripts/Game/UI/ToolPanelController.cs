@@ -12,26 +12,26 @@ public class ToolPanelController : MonoBehaviour {
     public MouseNoteTypePanelController mouseModePanel;
 
     [SerializeField]
-    Button cursorSelect;
+    Button cursorSelect = null;
     [SerializeField]
-    Button eraserSelect;
+    Button eraserSelect = null;
     [SerializeField]
-    Button noteSelect;
+    Button noteSelect = null;
     [SerializeField]
-    Button starpowerSelect;
+    Button starpowerSelect = null;
     [SerializeField]
-    Button bpmSelect;
+    Button bpmSelect = null;
     [SerializeField]
-    Button timeSignatureSelect;
+    Button timeSignatureSelect = null;
     [SerializeField]
-    Button sectionSelect;
+    Button sectionSelect = null;
     [SerializeField]
-    Button eventSelect;
+    Button eventSelect = null;
     [SerializeField]
-    Button drumRollSelect;
+    Button drumRollSelect = null;
 
     [SerializeField]
-    Sprite globalEventSprite;
+    Sprite globalEventSprite = null;
     Sprite localEventSprite;
     Image eventImage;
 

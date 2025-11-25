@@ -35,15 +35,15 @@ public class LyricEditor2PhraseController : UnityEngine.MonoBehaviour, System.IC
     }
 
     [UnityEngine.SerializeField]
-    Text phraseText;
+    Text phraseText = null;
     [UnityEngine.SerializeField]
-    UnityEngine.Color defaultColor;
+    UnityEngine.Color defaultColor = default;
     [UnityEngine.SerializeField]
-    UnityEngine.Color unfocusedColor;
+    UnityEngine.Color unfocusedColor = default;
     [UnityEngine.SerializeField]
-    UnityEngine.Color selectionColor;
+    UnityEngine.Color selectionColor = default;
     [UnityEngine.SerializeField]
-    LyricEditor2Controller mainController;
+    LyricEditor2Controller mainController = null;
 
     public static readonly string c_phraseStartKeyword = LyricHelper.PhraseStartText;
     public static readonly string c_phraseEndKeyword = LyricHelper.PhraseEndText;

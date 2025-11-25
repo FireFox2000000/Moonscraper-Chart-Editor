@@ -6,11 +6,11 @@ using UnityEngine.UI;
 public class UpdatesMenu : MonoBehaviour
 {
     [SerializeField]
-    Button downloadLatestButton;
+    Button downloadLatestButton = null;
     [SerializeField]
-    Text textInfo;
+    Text textInfo = null;
     [SerializeField]
-    Toggle checkUpdateToggle;
+    Toggle checkUpdateToggle = null;
 
     public void Populate(Octokit.Release latestRelease)
     {

@@ -10,7 +10,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Text))]
 public class TextAssetToUIText : MonoBehaviour {
     [SerializeField]
-    TextAsset textAsset;
+    TextAsset textAsset = null;
 
     Text textUI;
     // Use this for initialization

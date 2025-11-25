@@ -15,17 +15,17 @@ using UnityEditor;
 public class ControlsMenuInterface : MonoBehaviour
 {
     [SerializeField]
-    ActionBindingsMenu actionBindingsMenu;
+    ActionBindingsMenu actionBindingsMenu = null;
     [SerializeField]
-    Text actionCategoryText;
+    Text actionCategoryText = null;
     [SerializeField]
-    Text deviceText;
+    Text deviceText = null;
 
     [Header("Default Controls Editor")]
     [SerializeField]
     bool isDefaultControlsEditor = false;
     [SerializeField]
-    TextAsset defaultControlsFile;
+    TextAsset defaultControlsFile = null;
 
     int actionCategoryIndex = 0;
     int deviceIndex = 0;

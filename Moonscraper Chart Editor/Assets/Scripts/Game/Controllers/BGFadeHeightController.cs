@@ -9,9 +9,9 @@ using UnityEngine;
 [RequireComponent(typeof(Renderer))]
 public class BGFadeHeightController : MonoBehaviour {
     [SerializeField]
-    Transform objectMaxPosition;
+    Transform objectMaxPosition = null;
     [SerializeField]
-    float offset;
+    float offset = 0.0f;
     Renderer ren;
     MaterialPropertyBlock matBlock;
 

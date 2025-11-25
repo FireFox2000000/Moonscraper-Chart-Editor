@@ -18,10 +18,10 @@ public class DrumModeProperties : UpdateableService
     }
 
     [SerializeField]
-    Dropdown m_laneCountDropdown;
+    Dropdown m_laneCountDropdown = null;
 
     [SerializeField]
-    Dropdown m_drumsModeOptionDropdown;
+    Dropdown m_drumsModeOptionDropdown = null;
 
     readonly static Dictionary<LaneCountOptions, int> r_laneOptionToLaneCount = new Dictionary<LaneCountOptions, int>()
     {

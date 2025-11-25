@@ -11,7 +11,7 @@ public class CustomEventMenu : UnityEngine.MonoBehaviour {
     ChartEvent currentChartEvent { get { return currentEventToCustomise as ChartEvent; } }
 
     [UnityEngine.SerializeField]
-    InputField eventInputField;
+    InputField eventInputField = null;
 
     SongObject originalEvent;
     string eventStr = string.Empty;

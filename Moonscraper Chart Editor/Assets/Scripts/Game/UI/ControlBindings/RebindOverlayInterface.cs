@@ -14,7 +14,7 @@ public class RebindOverlayInterface : MonoBehaviour
     public MoonscraperEngine.Event<InputAction> inputConflictEvent = new MoonscraperEngine.Event<InputAction>();
 
     [SerializeField]
-    Text conflictNotificationText;
+    Text conflictNotificationText = null;
     const string conflictFormatStr = "Cannot remap to {0} as it is already in use by {1}";
 
     IInputDevice device;

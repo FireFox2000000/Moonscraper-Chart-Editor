@@ -20,7 +20,7 @@ public class EditorInteractionManager : System.Object
     }
 
     [SerializeField]
-    InteractionConfig[] editorInteractions;
+    InteractionConfig[] editorInteractions = null;
     InteractionConfig currentInteraction = null;
 
     public void Init()

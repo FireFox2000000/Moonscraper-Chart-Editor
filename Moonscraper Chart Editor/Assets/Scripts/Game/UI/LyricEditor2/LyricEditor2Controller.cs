@@ -89,17 +89,17 @@ public class LyricEditor2Controller : UnityEngine.MonoBehaviour
     LyricEditorCommandStack m_commandStack = new LyricEditorCommandStack();
 
     [UnityEngine.SerializeField]
-    LyricEditor2AutoScroller autoScroller;
+    LyricEditor2AutoScroller autoScroller = null;
     [UnityEngine.SerializeField]
-    LyricEditor2PhraseController phraseTemplate;
+    LyricEditor2PhraseController phraseTemplate = null;
     [UnityEngine.SerializeField]
-    LyricEditor2InputMenu lyricInputMenu;
+    LyricEditor2InputMenu lyricInputMenu = null;
     [UnityEngine.SerializeField]
     [UnityEngine.Range(0, 1)]
-    float phrasePaddingFactor;
+    float phrasePaddingFactor = 0.0f;
     [UnityEngine.SerializeField]
     [UnityEngine.Tooltip("Phrase padding as 1/n measures; i.e. a value of 16 means one sixteenth note")]
-    int phrasePaddingMax; // 16 refers to one sixteenth the length of a phrase in the current song.
+    int phrasePaddingMax = 0; // 16 refers to one sixteenth the length of a phrase in the current song.
     // So with a resolution of 192, the phrase_start event should have at least 12 ticks of spacing
 
     LyricEditor2PhraseController currentPhrase;

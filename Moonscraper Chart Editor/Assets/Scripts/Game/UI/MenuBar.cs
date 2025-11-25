@@ -10,9 +10,9 @@ public class MenuBar : UpdateableService {
 
     [Header("Disableable UI")]
     [SerializeField]
-    Button undoButton;
+    Button undoButton = null;
     [SerializeField]
-    Button redoButton;
+    Button redoButton = null;
 
     [Header("Shortcuts")]
     [SerializeField]
@@ -20,13 +20,13 @@ public class MenuBar : UpdateableService {
 
     [Header("Preview Mode")]
     [SerializeField]
-    GameObject[] disableDuringPreview;
+    GameObject[] disableDuringPreview = null;
 
     [Header("Misc")]
     [SerializeField]
-    Button playButton;
+    Button playButton = null;
     [SerializeField]
-    Button gameplayButton;
+    Button gameplayButton = null;
 
     public static Song.Instrument currentInstrument = Song.Instrument.Guitar;
     public static Song.Difficulty currentDifficulty = Song.Difficulty.Expert;

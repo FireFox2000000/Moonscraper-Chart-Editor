@@ -11,7 +11,7 @@ using UnityEngine.UI;
 public class PopulateUITextFromTextAsset : MonoBehaviour
 {
     [SerializeField]
-    TextAsset textAsset;
+    TextAsset textAsset = null;
 
     Text uiText;
 

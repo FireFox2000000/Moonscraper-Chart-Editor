@@ -21,7 +21,7 @@ public class InputManager : UnitySingleton<InputManager>
     const int SDL_INIT_TIMEOUT_MILLISECONDS = 10000;
 
     [SerializeField]
-    TextAsset inputPropertiesJson;
+    TextAsset inputPropertiesJson = null;
     InputConfig _inputProperties;
     public InputConfig inputProperties
     {
@@ -38,7 +38,7 @@ public class InputManager : UnitySingleton<InputManager>
     }
 
     [SerializeField]
-    TextAsset defaultControlsJson;
+    TextAsset defaultControlsJson = null;
     [HideInInspector]
     MSChartEditorInput.MSChartEditorActionContainer _defaultControls;
 

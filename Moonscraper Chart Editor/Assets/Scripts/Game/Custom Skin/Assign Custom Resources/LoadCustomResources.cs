@@ -199,7 +199,7 @@ public class LoadCustomResources : MonoBehaviour {
 
         foreach (CustomResource resource in resourcesLoading)
         {
-            progress += resource.www.progress;
+            progress += resource.www.downloadProgress;
             if (!resource.www.isDone)
                 complete = false;
         }

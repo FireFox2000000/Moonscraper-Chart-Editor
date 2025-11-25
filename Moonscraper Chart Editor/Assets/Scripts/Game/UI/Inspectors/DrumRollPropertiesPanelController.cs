@@ -7,9 +7,9 @@ public class DrumRollPropertiesPanelController : PropertiesPanelController
     public DrumRoll currentDrumRoll { get { return (DrumRoll)currentSongObject; } set { currentSongObject = value; } }
 
     [SerializeField]
-    Text lengthText;
+    Text lengthText = null;
     [SerializeField]
-    Dropdown drumRollTypeDropdown;
+    Dropdown drumRollTypeDropdown = null;
 
     bool m_dropdownBlockingActive = false;
     bool m_queueClearUiSelected = false;

@@ -7,9 +7,9 @@ using UnityEngine;
 
 public class EventToolSwitcher : ToolObject {
     [SerializeField]
-    GameObject chartEventTool;
+    GameObject chartEventTool = null;
     [SerializeField]
-    GameObject songEventTool;
+    GameObject songEventTool = null;
 	// Update is called once per frame
 	new void Update () {
         bool useChartTool = Globals.viewMode == Globals.ViewMode.Chart;

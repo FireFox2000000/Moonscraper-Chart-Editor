@@ -47,7 +47,7 @@ public class EditorObjectToolManager : System.Object
     }
 
     [SerializeField]
-    ToolConfig[] tools;
+    ToolConfig[] tools = null;
     ToolConfig currentTool = null;
     public bool isToolActive { get; private set; }
     const ToolID DEFAULT_TOOL = ToolID.Cursor;

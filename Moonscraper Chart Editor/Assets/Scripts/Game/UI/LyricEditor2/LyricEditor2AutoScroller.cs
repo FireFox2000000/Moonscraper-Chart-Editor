@@ -8,11 +8,11 @@ using UnityEngine;
 public class LyricEditor2AutoScroller : MonoBehaviour
 {
     [SerializeField]
-    ScrollRect scrollRect;
+    ScrollRect scrollRect = null;
     [SerializeField]
-    RectTransform endSpacer;
+    RectTransform endSpacer = null;
     [SerializeField]
-    float scrollTime;
+    float scrollTime = 0.0f;
 
     float currentDeltaTime = 0;
     float lastY = 0;

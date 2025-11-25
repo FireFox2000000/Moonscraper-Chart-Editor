@@ -7,7 +7,6 @@ using UnityEngine;
 
 public class DisplayMenuCrashTest : MonoBehaviour {
     Export exportMenu;
-    bool running = false;
 
 	// Use this for initialization
 	void Start () {

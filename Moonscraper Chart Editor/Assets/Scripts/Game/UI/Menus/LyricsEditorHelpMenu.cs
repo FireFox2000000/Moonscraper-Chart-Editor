@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class LyricsEditorHelpMenu : MonoBehaviour
 {
     [SerializeField]
-    TextAsset tutorialText;
+    TextAsset tutorialText = null;
     Text textField;
 
     // Start is called before the first frame update

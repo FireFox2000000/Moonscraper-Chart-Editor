@@ -7,10 +7,10 @@ using MoonscraperChartEditor.Song;
 // Resticts so that only one fret tye can be placed down
 public class PlaceFret : PlaceNote {
     [SerializeField]
-    Note.GuitarFret standardFret;
+    Note.GuitarFret standardFret = default;
 
     [SerializeField]
-    Note.GHLiveGuitarFret ghliveFret;
+    Note.GHLiveGuitarFret ghliveFret = default;
 
     protected override void Awake()
     {

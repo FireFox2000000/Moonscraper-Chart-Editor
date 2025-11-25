@@ -9,7 +9,7 @@ public class TabMenu : DisplayMenu
     RectTransform currentContent;
 
     [SerializeField]
-    Button initialMenuItem;
+    Button initialMenuItem = null;
 
     protected RectTransform menuContextArea = null;
     protected bool initialMenuItemSet = false;

@@ -11,12 +11,12 @@ public class BPMController : SongObjectController {
     public const float position = -1.0f;
 
     [SerializeField]
-    bool anchorColourSwitch;
+    bool anchorColourSwitch = false;
 
     [SerializeField]
-    Material ogMat;
+    Material ogMat = null;
     [SerializeField]
-    Material anchorMat;
+    Material anchorMat = null;
 
     Renderer ren;
     uint prevBPMValue = 0;

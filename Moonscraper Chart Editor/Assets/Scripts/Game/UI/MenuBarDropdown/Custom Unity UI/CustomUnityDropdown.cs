@@ -137,7 +137,7 @@ namespace UnityEngine.UI
         public float fadeSpeed { get { return m_FadeSpeed; } set { m_FadeSpeed = value; Refresh(); } }*/
 
         [SerializeField]
-        private Canvas rootCanvas;
+        private Canvas rootCanvas = null;
 
         [SerializeField]
         private int m_Value;

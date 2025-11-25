@@ -148,7 +148,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     readonly string[] ValidFileExtentions = new string[] { "chart", "mid", "msce" };
 
     // Use this for initialization
-    void Awake () {
+    new void Awake () {
+        base.Awake();
+
         windowHandleManager = new WindowHandleManager(string.Format("{0} v{1} {2}", Application.productName, Application.version, Globals.applicationBranchName), GetComponent<Settings>().productName);
         Application.logMessageReceived += HandleException;
 
@@ -274,14 +276,6 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
         applicationStateMachine.Update();
     }
-
-#if UNITY_EDITOR
-    bool allowedToQuit = true;        // Won't be save checking if in editor
-#else
-    bool allowedToQuit = false;
-#endif
-
-    bool queueQuitCheck = false;
 
     void OnApplicationFocus(bool hasFocus)
     {
@@ -790,7 +784,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // TODO
                 }

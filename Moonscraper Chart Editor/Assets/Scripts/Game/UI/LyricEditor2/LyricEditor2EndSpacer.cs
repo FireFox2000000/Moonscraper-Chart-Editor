@@ -7,7 +7,7 @@ public class LyricEditor2EndSpacer : MonoBehaviour
 {
     LayoutElement layout;
     [SerializeField]
-    RectTransform viewport;
+    RectTransform viewport = null;
 
     public void Resize() {
         Rect viewportSize = viewport.rect;

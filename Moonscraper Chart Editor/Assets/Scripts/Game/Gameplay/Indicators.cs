@@ -15,10 +15,10 @@ public class Indicators : MonoBehaviour {
     [SerializeField]
     CustomFretManager[] customIndicators = new CustomFretManager[FRET_COUNT];
     [SerializeField]
-    GHLHitAnimation[] ghlCustomFrets;
+    GHLHitAnimation[] ghlCustomFrets = null;
 
     [SerializeField]
-    LaneInfo laneInfo;
+    LaneInfo laneInfo = null;
 
     [HideInInspector]
     public HitAnimation[] animations;

@@ -8,12 +8,12 @@ public class StarpowerPropertiesPanelController : PropertiesPanelController
     bool toggleBlockingActive;
 
     [SerializeField]
-    Text sustainText;
+    Text sustainText = null;
     [SerializeField]
-    Toggle drumFillToggle;
+    Toggle drumFillToggle = null;
 
     [SerializeField]
-    PlaceStarpower starpowerToolController;
+    PlaceStarpower starpowerToolController = null;
 
     Starpower prevSp = new Starpower(0, 0);
 

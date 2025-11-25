@@ -12,9 +12,9 @@ public class TimelineMovementController : MovementController
     public Transform strikeLine;
     public UnityEngine.UI.Text timePosition;
     [SerializeField]
-    Texture2D dragCursorPositive;
+    Texture2D dragCursorPositive = null;
     [SerializeField]
-    Texture2D dragCursorNegative;
+    Texture2D dragCursorNegative = null;
 
     Vector2? middleClickDownScreenPos = null;
     const float c_middleClickMouseDragSensitivity = 700.0f;

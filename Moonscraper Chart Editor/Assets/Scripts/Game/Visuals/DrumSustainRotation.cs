@@ -8,7 +8,7 @@ using UnityEngine;
 public class DrumSustainRotation : MonoBehaviour {
     const int STANDARD_FRETS = 5;
     [SerializeField]
-    SustainResources defaultSustainResources;
+    SustainResources defaultSustainResources = null;
 
     Color[] sustainColors;
 

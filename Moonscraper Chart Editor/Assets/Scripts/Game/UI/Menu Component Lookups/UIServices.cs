@@ -11,7 +11,7 @@ public class UIServices : MonoBehaviour {
     public EditorPanels editorPanels { get; private set; }
 
     [SerializeField]
-    GameObject gameplayUICanvas;
+    GameObject gameplayUICanvas = null;
 
     MenuBar m_menuBar = null;
     public MenuBar menuBar

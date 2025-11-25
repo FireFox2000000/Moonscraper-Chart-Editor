@@ -19,7 +19,7 @@ public class Fire : MonoBehaviour
     Renderer ren;
 
     [SerializeField]
-    NoteController nCon;
+    NoteController nCon = null;
 
     Transform t;
 

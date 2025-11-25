@@ -11,15 +11,15 @@ public class EventPropertiesPanelController : PropertiesPanelController
     public ChartEvent currentChartEvent { get { return currentSongObject as ChartEvent; } set { currentSongObject = value; } }
     public Text eventName;
     [SerializeField]
-    Text inspectorTitle;
+    Text inspectorTitle = null;
     [SerializeField]
-    Button eventOptionTemplate;
+    Button eventOptionTemplate = null;
     [SerializeField]
-    RectTransform scrollViewContentBox;
+    RectTransform scrollViewContentBox = null;
     [SerializeField]
-    CustomEventMenu customEventMenu;
+    CustomEventMenu customEventMenu = null;
     [SerializeField]
-    InputField eventNameInputField;
+    InputField eventNameInputField = null;
 
     GameObject localEventButtonParent;
     GameObject globalEventButtonParent;

@@ -6,23 +6,23 @@ using MoonscraperChartEditor.Song;
 
 public class InspectorSwitching : MonoBehaviour {
     [SerializeField]
-    GameObject canvas;
+    GameObject canvas = null;
     [SerializeField]
-    NotePropertiesPanelController noteInspector;
+    NotePropertiesPanelController noteInspector = null;
     [SerializeField]
-    StarpowerPropertiesPanelController spInspector;
+    StarpowerPropertiesPanelController spInspector = null;
     [SerializeField]
-    DrumRollPropertiesPanelController drumRollInspector;
+    DrumRollPropertiesPanelController drumRollInspector = null;
     [SerializeField]
-    SectionPropertiesPanelController sectionInspector;
+    SectionPropertiesPanelController sectionInspector = null;
     [SerializeField]
-    BPMPropertiesPanelController bpmInspector;
+    BPMPropertiesPanelController bpmInspector = null;
     [SerializeField]
-    TimesignaturePropertiesPanelController tsInspector;
+    TimesignaturePropertiesPanelController tsInspector = null;
     [SerializeField]
-    EventPropertiesPanelController eventInspector;
+    EventPropertiesPanelController eventInspector = null;
     [SerializeField]
-    GameObject groupSelectInspector;
+    GameObject groupSelectInspector = null;
 
     ChartEditor editor;
 

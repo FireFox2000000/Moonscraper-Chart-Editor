@@ -2,8 +2,10 @@
 // See LICENSE in project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class CustomTexture : CustomResource
 {
@@ -21,7 +23,7 @@ public class CustomTexture : CustomResource
         if (www.isDone)
         {
             TextureFormat texFormat;
-            string extension = Path.GetExtension(www.url);
+            string extension = Path.GetExtension(filepath);
 
             switch (extension)
             {
@@ -34,7 +36,7 @@ public class CustomTexture : CustomResource
                 case (".dds"):
                     try
                     {
-                        texture = LoadTextureDXT(www.bytes, TextureFormat.DXT5, width, height);
+                        texture = LoadTextureDXT(www.downloadHandler.data, TextureFormat.DXT5, width, height);
                     }
                     catch (Exception e)
                     {
@@ -42,7 +44,7 @@ public class CustomTexture : CustomResource
 
                         try
                         {
-                            texture = LoadTextureDXT(www.bytes, TextureFormat.DXT1, width, height);
+                            texture = LoadTextureDXT(www.downloadHandler.data, TextureFormat.DXT1, width, height);
                             Debug.Log("DTX1 read successful");
                         }
                         catch (Exception e1)
@@ -56,8 +58,9 @@ public class CustomTexture : CustomResource
                     Debug.LogError("Unsupported texture format detected");
                     return;
             }
-            texture = new Texture2D(width.HasValue ? width.Value : www.texture.width, height.HasValue ? height.Value : www.texture.height, texFormat, false);
-            www.LoadImageIntoTexture(texture);
+            Texture2D t = DownloadHandlerTexture.GetContent(www);
+            texture = new Texture2D(width.HasValue ? width.Value : t.width, height.HasValue ? height.Value : t.height, texFormat, false);
+            ImageConversion.LoadImage(texture, www.downloadHandler.data);
         }
         else
         {
@@ -68,6 +71,17 @@ public class CustomTexture : CustomResource
     public override UnityEngine.Object GetObject()
     {
         return texture;
+    }
+
+    public override bool InitWWW(Dictionary<string, string> files)
+    {
+        if (!validateFile(files))
+            return false;
+
+        www = UnityWebRequestTexture.GetTexture(filepath);
+        www.SendWebRequest();
+
+        return true;
     }
 
     // Method from http://answers.unity3d.com/questions/555984/can-you-load-dds-textures-during-runtime.html#answer-707772
