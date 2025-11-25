@@ -47,7 +47,7 @@ Shader "Custom/SpriteBillboarding"
 				vertexOutput output;
 
 				output.pos = mul(UNITY_MATRIX_P,
-					mul(UNITY_MATRIX_MV, float4(0.0, 0.0, 0.0, 1.0))
+					UnityObjectToViewPos(float4(0.0, 0.0, 0.0, 1.0))
 					+ float4(input.vertex.x, input.vertex.y, 0.0, 0.0)
 					* float4(1.0, 1.0, 1.0, 1.0));
 

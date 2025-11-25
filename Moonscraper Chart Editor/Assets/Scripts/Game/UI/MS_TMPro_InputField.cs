@@ -1009,14 +1009,12 @@ public class MS_TMPro_InputField : Selectable,
         {
             m_TextComponent.RegisterDirtyVerticesCallback(MarkGeometryAsDirty);
             m_TextComponent.RegisterDirtyVerticesCallback(UpdateLabel);
-            //m_TextComponent.ignoreRectMaskCulling = multiLine;
 
             //m_DefaultTransformPosition = m_TextComponent.rectTransform.localPosition;
 
             // Cache reference to Vertical Scrollbar RectTransform and add listener.
             if (m_VerticalScrollbar != null)
             {
-                m_TextComponent.ignoreRectMaskCulling = true;
                 m_VerticalScrollbar.onValueChanged.AddListener(OnScrollbarValueChange);
             }
 
@@ -3964,9 +3962,9 @@ public class MS_TMPro_InputField : Selectable,
             return;
 
         if (multiLine)
-            m_TextComponent.enableWordWrapping = true;
+            m_TextComponent.textWrappingMode = TextWrappingModes.Normal;
         else
-            m_TextComponent.enableWordWrapping = false;
+            m_TextComponent.textWrappingMode = TextWrappingModes.NoWrap;
     }
 
     // Control Rich Text option on the text component.

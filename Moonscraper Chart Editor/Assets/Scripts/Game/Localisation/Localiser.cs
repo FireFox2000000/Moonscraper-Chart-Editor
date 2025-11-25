@@ -83,7 +83,7 @@ public class Localiser : UnitySingleton<Localiser>
 
     public static void LocaliseScene()
     {
-        GameObject[] gos = (GameObject[])GameObject.FindObjectsOfType(typeof(GameObject));
+        GameObject[] gos = (GameObject[])GameObject.FindObjectsByType(typeof(GameObject), FindObjectsSortMode.None);
         foreach (GameObject go in gos)
         {
             if (go && go.transform.parent == null)

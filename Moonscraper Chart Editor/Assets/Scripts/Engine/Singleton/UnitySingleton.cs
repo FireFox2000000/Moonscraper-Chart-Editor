@@ -113,7 +113,7 @@ public abstract class UnitySingleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         if (type == UnitySingletonAttribute.Type.ExistsInScene)
         {
-            instance = GameObject.FindObjectOfType<T>();
+            instance = GameObject.FindAnyObjectByType<T>();
             if (instance == null)
             {
                 if (warn)

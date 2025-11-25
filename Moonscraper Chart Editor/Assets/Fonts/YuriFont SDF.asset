@@ -26,6 +26,7 @@ MonoBehaviour:
     m_StyleName: Medium
     m_PointSize: 90
     m_Scale: 1
+    m_UnitsPerEM: 1000
     m_LineHeight: 99
     m_AscentLine: 75.060005
     m_CapLine: 57
