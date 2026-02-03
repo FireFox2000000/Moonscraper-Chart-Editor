@@ -4,7 +4,7 @@
             "mSChartEditorInputAction": "ActionHistoryRedo",
             "properties": {
                 "displayName": "Redo",
-                "rebindable": false,
+                "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
                 "category": 0,
@@ -15,7 +15,7 @@
             "mSChartEditorInputAction": "ActionHistoryUndo",
             "properties": {
                 "displayName": "Undo",
-                "rebindable": false,
+                "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
                 "category": 0,
@@ -70,7 +70,7 @@
             "mSChartEditorInputAction": "ClipboardCopy",
             "properties": {
                 "displayName": "Copy",
-                "rebindable": false,
+                "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
                 "category": 0,
@@ -81,7 +81,7 @@
             "mSChartEditorInputAction": "ClipboardCut",
             "properties": {
                 "displayName": "Cut",
-                "rebindable": false,
+                "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
                 "category": 0,
@@ -92,7 +92,7 @@
             "mSChartEditorInputAction": "ClipboardPaste",
             "properties": {
                 "displayName": "Paste",
-                "rebindable": false,
+                "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
                 "category": 0,
@@ -103,7 +103,7 @@
             "mSChartEditorInputAction": "Delete",
             "properties": {
                 "displayName": "Delete",
-                "rebindable": false,
+                "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
                 "category": 0,
@@ -114,7 +114,7 @@
             "mSChartEditorInputAction": "FileLoad",
             "properties": {
                 "displayName": "Load File",
-                "rebindable": false,
+                "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
                 "category": 0,
@@ -125,7 +125,7 @@
             "mSChartEditorInputAction": "FileNew",
             "properties": {
                 "displayName": "New Chart",
-                "rebindable": false,
+                "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
                 "category": 0,
@@ -136,7 +136,7 @@
             "mSChartEditorInputAction": "FileSave",
             "properties": {
                 "displayName": "Save",
-                "rebindable": false,
+                "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
                 "category": 0,
@@ -147,7 +147,7 @@
             "mSChartEditorInputAction": "FileSaveAs",
             "properties": {
                 "displayName": "Save As",
-                "rebindable": false,
+                "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
                 "category": 0,
@@ -334,7 +334,7 @@
             "mSChartEditorInputAction": "PlayPause",
             "properties": {
                 "displayName": "Play/Pause",
-                "rebindable": false,
+                "rebindable": true,
                 "hiddenInLists": false,
                 "anyDirectionAxis": false,
                 "category": 0,
