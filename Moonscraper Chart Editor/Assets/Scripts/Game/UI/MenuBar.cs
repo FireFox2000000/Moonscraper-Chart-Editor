@@ -272,6 +272,11 @@ public class MenuBar : UpdateableService {
         SetInstrumentToggle(toggle, Song.Instrument.GHLiveCoop);
     }
 
+    public void SetGHLiveKeysInstrumentToggle(Toggle toggle)
+    {
+        SetInstrumentToggle(toggle, Song.Instrument.GHLiveKeys);
+    }
+
     #endregion
 
     #region User Settings Toggles

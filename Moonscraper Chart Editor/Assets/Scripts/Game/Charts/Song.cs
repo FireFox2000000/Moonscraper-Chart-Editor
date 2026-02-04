@@ -155,6 +155,9 @@ namespace MoonscraperChartEditor.Song
                     case (Instrument.GHLiveCoop):
                         instrumentName += "GHLive Co-op - ";
                         break;
+                    case (Instrument.GHLiveKeys):
+                        instrumentName += "GHLive Keys - ";
+                        break;
                     default:
                         continue;
                 }
@@ -531,6 +534,7 @@ namespace MoonscraperChartEditor.Song
                 case (Instrument.GHLiveBass):
                 case (Instrument.GHLiveRhythm):
                 case (Instrument.GHLiveCoop):
+                case (Instrument.GHLiveKeys):
                     return Chart.GameMode.GHLGuitar;
 
                 default:
@@ -560,6 +564,7 @@ namespace MoonscraperChartEditor.Song
             GHLiveBass,
             GHLiveRhythm,
             GHLiveCoop,
+            GHLiveKeys,
             Unrecognised = 99,
         }
 

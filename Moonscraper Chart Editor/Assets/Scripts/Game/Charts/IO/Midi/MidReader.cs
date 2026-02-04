@@ -38,6 +38,7 @@ namespace MoonscraperChartEditor.Song.IO
             { MidIOHelper.GHL_BASS_TRACK,      Song.Instrument.GHLiveBass },
             { MidIOHelper.GHL_RHYTHM_TRACK,    Song.Instrument.GHLiveRhythm },
             { MidIOHelper.GHL_GUITAR_COOP_TRACK, Song.Instrument.GHLiveCoop },
+            { MidIOHelper.GHL_KEYS_TRACK,       Song.Instrument.GHLiveKeys },
         };
 
         static readonly IReadOnlyDictionary<string, bool> c_trackExcludesMap = new Dictionary<string, bool>()
