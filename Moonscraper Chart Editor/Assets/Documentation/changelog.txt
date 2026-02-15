@@ -1,3 +1,7 @@
+1.5.13
+    -Removed rebinding restrictions on a variety of controls
+    -Added Ghl Keys track
+
 1.5.12
     -Applied Unity remediation security patch for Windows https://unity.com/security/sept-2025-01/remediation
 
