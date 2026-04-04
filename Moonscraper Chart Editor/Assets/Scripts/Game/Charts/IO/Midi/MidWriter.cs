@@ -277,7 +277,7 @@ namespace MoonscraperChartEditor.Song.IO
 
             byte[] header = GetMidiHeader(1, track_count, (short)(exportOptions.targetResolution));
 
-            FileStream file = File.Open(path, FileMode.OpenOrCreate);
+            FileStream file = File.Open(path, FileMode.Create);
             BinaryWriter bw = new BinaryWriter(file);
 
             bw.Write(header);
