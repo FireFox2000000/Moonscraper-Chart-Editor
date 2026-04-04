@@ -966,7 +966,7 @@ namespace MoonscraperChartEditor.Song.IO
             bytes[2] = 0x03;            // Size
 
             // Microseconds per quarter note for the last 3 bytes stored as a 24-bit binary
-            byte[] microPerSec = EndianBitConverter.Big.GetBytes((uint)(6.0f * Mathf.Pow(10, 10) / bpm.value));
+            byte[] microPerSec = EndianBitConverter.Big.GetBytes((uint)Mathf.Round(6.0f * Mathf.Pow(10, 10) / bpm.value));
 
             Array.Copy(microPerSec, 1, bytes, 3, 3);        // Offset of 1 and length of 3 cause 24 bit
 
