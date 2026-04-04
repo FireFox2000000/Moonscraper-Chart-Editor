@@ -344,7 +344,7 @@ namespace MoonscraperChartEditor.Song.IO
         {
             foreach (var tempo in tempoMap.GetTempoChanges())
             {
-                song.Add(new BPM((uint)tempo.Time, (uint)(tempo.Value.BeatsPerMinute * 1000)), false);
+                song.Add(new BPM((uint)tempo.Time, (uint)Math.Round(tempo.Value.BeatsPerMinute * 1000)), false);
             }
             foreach (var timesig in tempoMap.GetTimeSignatureChanges())
             {
