@@ -8,6 +8,8 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.IO;
+using System.Linq;
 using MoonscraperEngine;
 using MoonscraperChartEditor.Song;
 
@@ -47,6 +49,25 @@ public class SongPropertiesPanelController : TabMenu
     TimeSpan customTime = new TimeSpan();
 
     static readonly string[] validAudioExtensions = { "ogg", "wav", "mp3", "opus" };
+    /// <summary>
+    /// null value indicates a valid filename that doesn't tie to a specific instrument (e.g. the song preview)
+    /// </summary>
+    static readonly Dictionary<string, Song.AudioInstrument?> validRBCloneHeroFilenames = new Dictionary<string, Song.AudioInstrument?>
+    {
+        { "song", Song.AudioInstrument.Song },
+        { "guitar", Song.AudioInstrument.Guitar },
+        { "bass", Song.AudioInstrument.Bass },
+        { "rhythm", Song.AudioInstrument.Rhythm },
+        { "vocals", Song.AudioInstrument.Vocals },
+        { "drums", Song.AudioInstrument.Drum },
+        { "drums_1", Song.AudioInstrument.Drum },
+        { "drums_2", Song.AudioInstrument.Drums_2 },
+        { "drums_3", Song.AudioInstrument.Drums_3 },
+        { "drums_4", Song.AudioInstrument.Drums_4 },
+        { "keys", Song.AudioInstrument.Keys },
+        { "crowd", Song.AudioInstrument.Crowd },
+        { "preview", null },
+    };
     readonly ExtensionFilter audioExFilter = new ExtensionFilter("Audio files", validAudioExtensions);
 
     Dictionary<Song.AudioInstrument, Text> m_audioStreamTextLookup;
@@ -294,16 +315,21 @@ public class SongPropertiesPanelController : TabMenu
         try
         {
             string filepath = GetAudioFile();
-            if (editor.currentSongAudio.LoadAudio(filepath, audioInstrument))
-            {
-                // Record the filepath
-                editor.currentSong.SetAudioLocation(audioInstrument, filepath);
-                StartCoroutine(SetAudio());
-            }
+            LoadInstrumentAudioFromPath(audioInstrument, filepath);
         }
         catch (Exception e)
         {
             Logger.LogException(e, "Could not open audio");
+        }
+    }
+
+    void LoadInstrumentAudioFromPath(Song.AudioInstrument audioInstrument, string filepath)
+    {
+        if (editor.currentSongAudio.LoadAudio(filepath, audioInstrument))
+        {
+            // Record the filepath
+            editor.currentSong.SetAudioLocation(audioInstrument, filepath);
+            StartCoroutine(SetAudio());
         }
     }
 
@@ -318,6 +344,43 @@ public class SongPropertiesPanelController : TabMenu
     public void RefreshAllAudioStreams()
     {
         StartCoroutine(_RefreshAllAudioStreams());
+    }
+
+    public void LoadCloneHeroAudioFromDirectory()
+    {
+        var currentDir = ChartEditor.Instance.lastLoadedFile;
+        if (string.IsNullOrWhiteSpace(currentDir))
+        {
+            FileExplorer.OpenFolderPanel(out currentDir);
+        }
+        var filesInDir = Directory.GetFiles(Path.GetDirectoryName(currentDir), "*.*");
+        var invalidFilenamesFound = new List<string>();
+
+        foreach (var filePath in filesInDir.Where(x => validAudioExtensions.Contains(Path.GetExtension(x).TrimStart('.'))))
+        {
+            var fileName = Path.GetFileNameWithoutExtension(filePath);
+            if (validRBCloneHeroFilenames.TryGetValue(fileName, out var instrument))
+            {
+                if (instrument.HasValue)
+                {
+                    LoadInstrumentAudioFromPath(instrument.Value, filePath);
+                }
+            }
+            else
+            {
+                invalidFilenamesFound.Add(Path.GetFileName(filePath));
+            }
+        }
+        if (invalidFilenamesFound.Count > 0)
+        {
+            var filenamesMessage = $"Invalid filename(s) detected:{Globals.LINE_ENDING}"
+                + string.Join(Globals.LINE_ENDING, invalidFilenamesFound);
+            ChartEditor.Instance.errorManager.QueueErrorMessage(filenamesMessage
+                + $"{Globals.LINE_ENDING}{Globals.LINE_ENDING}Accepted filenames:{Globals.LINE_ENDING}"
+                + string.Join(Globals.LINE_ENDING, validRBCloneHeroFilenames.Keys)
+                + $"{Globals.LINE_ENDING}{Globals.LINE_ENDING}Accepted file types:{Globals.LINE_ENDING}"
+                + string.Join(Globals.LINE_ENDING, validAudioExtensions));
+        }
     }
 
     IEnumerator _RefreshAllAudioStreams()
