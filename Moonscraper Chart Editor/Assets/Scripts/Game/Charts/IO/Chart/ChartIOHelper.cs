@@ -33,6 +33,7 @@ namespace MoonscraperChartEditor.Song.IO
         public const int c_starpowerDrumFillId = 64;
         public const int c_drumRollStandardId = 65;
         public const int c_drumRollSpecialId = 66;
+        public const int c_drumRollKickId = 67;
 
         public enum TrackLoadType
         {
