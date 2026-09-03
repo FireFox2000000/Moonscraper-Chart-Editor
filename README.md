@@ -2,6 +2,8 @@
 >
 > If you are looking to download Moonscraper Chart Editor please see the
 > [releases page](https://github.com/FireFox2000000/Moonscraper-Chart-Editor/releases).
+>
+> The releases page is the only official source for binary distribution. Any alternative sources should NOT be trusted. 
 
 ## About
 Moonscraper Chart Editor is a song editor for Guitar Hero style rhythm games mainly intended to support the custom song creation for games such as Guitar Hero, Clone Hero and Rock Band.
@@ -13,8 +15,9 @@ Trailer- https://www.youtube.com/watch?v=G8Qd32TZz4A
 ### Games that use Moonscraper code:
 - Clone Hero (https://clonehero.net/)
 
-### Games that use Moonscraper as a song editor:
+### Games that use Moonscraper for tooling:
 - Everhood (https://store.steampowered.com/app/1229380/Everhood/)
+- Stage Tour (https://stagetour.com/)
 
 ## Running the application as a general user
 Download and run the latest version of the installer found in the [releases section](https://github.com/FireFox2000000/Moonscraper-Chart-Editor/releases) of this repo.
@@ -50,3 +53,4 @@ Other distribution packagers can use the `PKGBUILD` file for reference.
 - See [attribution.txt](https://github.com/FireFox2000000/Moonscraper-Chart-Editor/blob/master/Moonscraper%20Chart%20Editor/Assets/Documentation/attribution.txt) for third party libraries and resources included in this repository.
 - See [LICENSE](LICENSE).
 - The BASS audio library (a dependency of this application) is a commercial product. While it is free for non-commercial use, please ensure to obtain a valid licence if you plan on distributing any application using it commercially.
+- The "Moonscraper" and "Moonscraper Chart Editor" branding and namesake are not covered by the licensing. Copyright to the application and it's branding is automatically granted to only Alexander "FireFox" Ong as per Australian copyright law. Although the source is free to use within the guidance of the linked license, do not use the Moonscraper Chart Editor namesake, attempt to act as the copyright holder, or violate copyright in any way without expressing permission from myself. 
