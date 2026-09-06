@@ -4,4 +4,4 @@ remote_theme: "jekyll/minima@c6e74bb"
 plugins:
 - jekyll-remote-theme # add this line to the plugins list if you already have one
 minima:
-  hide_site_feed_link: true 
+  skin: dark
