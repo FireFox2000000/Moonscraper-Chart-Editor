@@ -14,9 +14,3 @@ Moonscraper Chart Editor is a song editor for Guitar Hero style rhythm games, pr
 ### Games that use Moonscraper for tooling:
 - [Everhood](https://store.steampowered.com/app/1229380/Everhood/)
 - [Stage Tour](https://stagetour.com/)
-
-## Who do I talk to?
-* Alexander "FireFox" Ong
-* [Discord](https://discord.gg/bjsKTwd) (Easiest link to contact me through)
-* [YouTube](https://www.youtube.com/user/FireFox2000000)
-* [Twitter](https://twitter.com/FireFox2000000)
