@@ -1,1 +1,0 @@
-https://github.com/DaVikingCode/UnityRuntimeSpriteSheetsGenerator with modifications made specifically for Moonscraper
