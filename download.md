@@ -4,7 +4,7 @@ title: Download
 permalink: /download/
 ---
 
-Download the latest installed of Moonscraper Chart Editor for Windows or Linux [here](https://github.com/FireFox2000000/Moonscraper-Chart-Editor/releases/latest).
+The latest versions of Moonscraper Chart Editor for Windows and Linux can be downloaded from [Github releases](https://github.com/FireFox2000000/Moonscraper-Chart-Editor/releases/latest).
 
 For Windows:
 - Download the installer for either Win64 (recommended) or Win32 for 32 bit machines.
