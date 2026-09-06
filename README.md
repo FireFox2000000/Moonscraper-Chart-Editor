@@ -6,23 +6,11 @@
 > The releases page is the only official source for binary distribution. Any alternative sources should NOT be trusted. 
 
 ## About
-Moonscraper Chart Editor is a song editor for Guitar Hero style rhythm games, primarily intended to support the custom song creation community for games such as Guitar Hero 3, Clone Hero and Rock Band and more.
+Visit the [About page](https://firefox2000000.github.io/Moonscraper-Chart-Editor/) for more information and download links.
 
-Trailer- https://www.youtube.com/watch?v=G8Qd32TZz4A
+*Note that as Moonscraper Chart Editor 2 is currently in development this repository will no longer receive any major updates.
 
-*Please note that as Moonscraper Chart Editor 2 is currently in development this repository will no longer receive any major updates.
-
-### Games that use Moonscraper code:
-- Clone Hero (https://clonehero.net/)
-
-### Games that use Moonscraper for tooling:
-- Everhood (https://store.steampowered.com/app/1229380/Everhood/)
-- Stage Tour (https://stagetour.com/)
-
-## Running the application as a general user
-Download and run the latest version of the installer found in the [releases section](https://github.com/FireFox2000000/Moonscraper-Chart-Editor/releases) of this repo.
-
-## Compiling from source as a developer
+## Compiling from source 
 Follow the instructions below for your desired platform to build and run from source.
 
 ### All Platforms
@@ -42,12 +30,6 @@ The application requires the following dependencies to be installed:
 A [`PKGBUILD` file for Arch Linux](aur/PKGBUILD) is included in the repository.
 
 Other distribution packagers can use the `PKGBUILD` file for reference.
-
-## Who do I talk to?
-* Alexander "FireFox" Ong
-* Discord (Easiest link to contact me through)- https://discord.gg/bjsKTwd
-* YouTube- https://www.youtube.com/user/FireFox2000000
-* Twitter- https://twitter.com/FireFox2000000
 
 ## License
 - See [attribution.txt](https://github.com/FireFox2000000/Moonscraper-Chart-Editor/blob/master/Moonscraper%20Chart%20Editor/Assets/Documentation/attribution.txt) for third party libraries and resources included in this repository.
