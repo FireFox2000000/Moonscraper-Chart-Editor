@@ -10,11 +10,11 @@ Moonscraper Chart Editor is a song editor for Guitar Hero style rhythm games, pr
 {% include youtube.html id="G8Qd32TZz4A" %}
 
 ### Games that use Moonscraper code:
-- Clone Hero (https://clonehero.net/)
+- [Clone Hero](https://clonehero.net/)
 
 ### Games that use Moonscraper for tooling:
-- Everhood (https://store.steampowered.com/app/1229380/Everhood/)
-- Stage Tour (https://stagetour.com/)
+- [Everhood](https://store.steampowered.com/app/1229380/Everhood/)
+- [Stage Tour](https://stagetour.com/)
 
 ### Runtime dependencies (Windows)
 Required runtime dependencies are included with the build.
@@ -30,6 +30,6 @@ Other distribution packagers can use the `PKGBUILD` file for reference.
 
 ## Who do I talk to?
 * Alexander "FireFox" Ong
-* Discord (Easiest link to contact me through)- https://discord.gg/bjsKTwd
-* YouTube- https://www.youtube.com/user/FireFox2000000
-* Twitter- https://twitter.com/FireFox2000000
+* [Discord](https://discord.gg/bjsKTwd) (Easiest link to contact me through)
+* [YouTube](https://www.youtube.com/user/FireFox2000000)
+* [Twitter](https://twitter.com/FireFox2000000)
