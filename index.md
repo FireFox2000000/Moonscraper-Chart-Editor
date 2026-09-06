@@ -1,5 +1,15 @@
 ## Download
-Download Moonscraper Chart Editor for Windows or Linux from the repository [releases page](https://github.com/FireFox2000000/Moonscraper-Chart-Editor/releases).
+Download the latest installed of Moonscraper Chart Editor for Windows or Linux [here](https://github.com/FireFox2000000/Moonscraper-Chart-Editor/releases/latest).
+
+For Windows:
+- Download the installer for either Win64 (recommended) or Win32 for 32 bit machines.
+
+For Linux:
+- Download and unpack the Linux.Universal.tar.gz package. The application also requires the following dependencies to be installed:
+  - `ffmpeg sdl2 libx11-6 libgtk-3-0`
+  - `libbass` (included with the build)
+- A [`PKGBUILD` file for Arch Linux](aur/PKGBUILD) is included in the repository.
+Other distribution packagers can use the `PKGBUILD` file for reference.
 
 ## About
 Moonscraper Chart Editor is a song editor for Guitar Hero style rhythm games, primarily intended to support the custom song creation community for games such as Guitar Hero 3, Clone Hero and Rock Band and more.
@@ -15,18 +25,6 @@ Moonscraper Chart Editor is a song editor for Guitar Hero style rhythm games, pr
 ### Games that use Moonscraper for tooling:
 - [Everhood](https://store.steampowered.com/app/1229380/Everhood/)
 - [Stage Tour](https://stagetour.com/)
-
-### Runtime dependencies (Windows)
-Required runtime dependencies are included with the build.
-
-### Runtime dependencies (Linux)
-The application requires the following dependencies to be installed:
-- `ffmpeg sdl2 libx11-6 libgtk-3-0`
-- `libbass` (included with the build)
-
-A [`PKGBUILD` file for Arch Linux](aur/PKGBUILD) is included in the repository.
-
-Other distribution packagers can use the `PKGBUILD` file for reference.
 
 ## Who do I talk to?
 * Alexander "FireFox" Ong
