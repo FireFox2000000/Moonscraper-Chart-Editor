@@ -7,3 +7,5 @@ minima:
   nav_pages:
     - home.md
     - download.md
+  hide_site_feed_link: true
+  skin: dark
