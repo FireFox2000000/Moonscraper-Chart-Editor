@@ -2,6 +2,7 @@ title: Moonscraper Chart Editor
 remote_theme: "jekyll/minima@4de3223"
 plugins:
 - jekyll-remote-theme # add this line to the plugins list if you already have one
+- jekyll-sitemap
 minima:
   nav_pages:
     - download.md
