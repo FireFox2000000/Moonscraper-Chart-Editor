@@ -5,6 +5,7 @@ Moonscraper Chart Editor is a song editor for Guitar Hero style rhythm games, pr
 
 {% include youtube.html id="G8Qd32TZz4A" %}
 
+
 ## Download
 Download the latest installed of Moonscraper Chart Editor for Windows or Linux [here](https://github.com/FireFox2000000/Moonscraper-Chart-Editor/releases/latest).
 
