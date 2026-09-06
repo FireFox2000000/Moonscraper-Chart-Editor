@@ -3,3 +3,6 @@ description: Moonscraper Chart Editor is a song editor for Guitar Hero style rhy
 remote_theme: pages-themes/midnight@v0.2.0
 plugins:
 - jekyll-remote-theme # add this line to the plugins list if you already have one
+aux_links:
+  "My Link Text":
+    - "https://example.com"
