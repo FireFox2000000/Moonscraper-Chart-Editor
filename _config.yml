@@ -1,5 +1,7 @@
 title: Moonscraper Chart Editor
 remote_theme: "jekyll/minima@4de3223"
+description: >
+    Moonscraper Chart Editor is a song editor for Guitar Hero style rhythm games, primarily intended to support the custom song creation community for games such as Guitar Hero 3, Clone Hero and Rock Band and more.
 plugins:
 - jekyll-remote-theme # add this line to the plugins list if you already have one
 - jekyll-sitemap
