@@ -10,6 +10,5 @@ minima:
   nav_pages:
     - download.md
     - contact.md
-    - devlog.md
   hide_site_feed_link: true
   skin: dark
