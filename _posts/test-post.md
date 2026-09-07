@@ -1,0 +1,5 @@
+---
+layout: post
+---
+
+Test post
