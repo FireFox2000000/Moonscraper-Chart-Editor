@@ -2,7 +2,7 @@
 layout: home
 ---
 
-Hello! I'm FireFox, and welcome to my dinky little website for Moonscraper Chart Editor!
+Hello! I'm FireFox, and welcome to my website for Moonscraper Chart Editor!
 
 Moonscraper Chart Editor is a song editor for Guitar Hero style rhythm games, primarily intended to support the custom song creation community for games such as Guitar Hero 3, Clone Hero and Rock Band and more.
 
