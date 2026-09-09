@@ -1,9 +1,9 @@
 > **⚠️ NOTE: THIS IS NOT THE APPLICATION PROGRAM, THESE ARE THE SOURCE FILES. ⚠️**
 >
 > If you are looking to download Moonscraper Chart Editor please see the
-> [releases page](https://github.com/FireFox2000000/Moonscraper-Chart-Editor/releases).
+> [releases page](https://github.com/FireFox2000000/Moonscraper-Chart-Editor/releases) or visit the [official website](https://moonscrapercharteditor.com/).
 >
-> The releases page is the only official source for binary distribution. Any alternative sources should NOT be trusted. 
+> The releases page and moonscrapercharteditor.com are the only official sources for distribution. Any alternative sources should NOT be trusted. 
 
 ## About
 Visit the [About page](https://firefox2000000.github.io/Moonscraper-Chart-Editor/) for more information and download links.
