@@ -1,5 +1,5 @@
 ---
 layout: feed
-title: Devlog
+title: News & Devlog
 permalink: /devlog/
 ---
