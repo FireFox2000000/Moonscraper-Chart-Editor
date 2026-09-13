@@ -24,7 +24,7 @@ For those who may have missed it, Moonscraper Chart Editor 2 was teased last yea
 
 {% include youtube.html id="iaLBjju17cs" %}
 
-But what was not clear was that this is actually a complete rebuild of Moonscraper from the ground up, which is why MSCE1 hasn’t been getting any updates for ages. But why would I go ahead and ditch everything to start from scratch?
+But what was not clear was that this is actually a complete rebuild of Moonscraper from the ground up, which is why MSCE1 hasn’t been getting any updates for ages. Though why would I go ahead and ditch everything to start from scratch?
 
 A few years ago I was sent a random message on Discord, and surprisingly it wasn’t a scam! It was actually someone who introduced themselves as someone from the Lanota community. [Lanota](https://youtu.be/VqzPE0dCFKo?si=HVOEPqtXD9Ui_uRE), if you aren’t aware, is a rhythm game for Android and Switch that plays out similar to Tap Tap, but the notes come at you from a circular highway, kind of like a mix of Guitar Hero and Maimai. I personally tried it out on Switch. Fun game, can recommend. 
 
@@ -39,8 +39,6 @@ At this point I’ve been working in the games industry as a professional progra
 And so after one weekend in full game jam mode I had this:
 
 {% include youtube.html id="EiHnghPOWM4" %}
-
-
 
 3 different tracks, 3 different game visuals, 1 song. Ah fuck, this is feasible isn’t it?
 
@@ -62,7 +60,5 @@ So far I think almost every system has gotten a full rewrite: audio systems are 
 A major focus from the start was for performance improvements as well, with Exilelord’s Crash Test 5 chart being set as a benchmark. Moonscraper 1 could barely hold a framerate when rendering out this chart as soon as it got even slightly intense. Moonscraper 2 can render that same instance many, many times over while still holding a playable framerate (this is specific to my machine, mileage will vary based on the final release and your own machine’s capabilities):
 
 {% include youtube.html id="FPCKPxYm9ts" %}
-
-
 
 And that’s it so far. Well, so far with what I actually want to show, gotta keep some cards close to the chest. I can’t say that a Lanota editor will ever be built, especially with Clone Hero, YARG and Stage Tour ramping interest back up into the GH community and into the mainstream for Guitar Hero-style games again. But maybe one day, it’ll certainly stick in the back of my mind. Maybe a fork of MS2 could exist for someone else to take the reins on that? Though I’m still considering whether MSCE2 should even be open source or not, as MSCE1 being open source had both positives and negatives. Might consider open sourcing only parts of MSCE2? License it out non-commercially only? Who knows really, I need to focus on actually making the damn thing first. I hope you look forward to what I have in store in the future. ⸜(｡˃ ᵕ ˂ )⸝
