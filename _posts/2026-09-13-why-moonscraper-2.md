@@ -20,6 +20,8 @@ That’s it, post over.
 
 You want more? Okay fine. But only because you asked nicely.
 
+---
+
 For those who may have missed it, Moonscraper Chart Editor 2 was teased last year as a little Christmas present to the community. So yes, Moonscraper 2 confirmed:
 
 {% include youtube.html id="iaLBjju17cs" %}
