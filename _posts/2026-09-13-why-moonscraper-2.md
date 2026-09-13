@@ -40,6 +40,8 @@ And so after one weekend in full game jam mode I had this:
 
 {% include youtube.html id="EiHnghPOWM4" %}
 
+
+
 3 different tracks, 3 different game visuals, 1 song. Ah fuck, this is feasible isn’t it?
 
 Let’s take a look at this in some closer detail!
@@ -60,5 +62,7 @@ So far I think almost every system has gotten a full rewrite: audio systems are 
 A major focus from the start was for performance improvements as well, with Exilelord’s Crash Test 5 chart being set as a benchmark. Moonscraper 1 could barely hold a framerate when rendering out this chart as soon as it got even slightly intense. Moonscraper 2 can render that same instance many, many times over while still holding a playable framerate (this is specific to my machine, mileage will vary based on the final release and your own machine’s capabilities):
 
 {% include youtube.html id="FPCKPxYm9ts" %}
+
+
 
 And that’s it so far. Well, so far with what I actually want to show, gotta keep some cards close to the chest. I can’t say that a Lanota editor will ever be built, especially with Clone Hero, YARG and Stage Tour ramping interest back up into the GH community and into the mainstream for Guitar Hero-style games again. But maybe one day, it’ll certainly stick in the back of my mind. Maybe a fork of MS2 could exist for someone else to take the reins on that? Though I’m still considering whether MSCE2 should even be open source or not, as MSCE1 being open source had both positives and negatives. Might consider open sourcing only parts of MSCE2? License it out non-commercially only? Who knows really, I need to focus on actually making the damn thing first. I hope you look forward to what I have in store in the future. ⸜(｡˃ ᵕ ˂ )⸝
