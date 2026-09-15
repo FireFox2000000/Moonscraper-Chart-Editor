@@ -714,7 +714,12 @@ namespace MoonscraperChartEditor.Song.IO
 
                     DrumRoll roll = chartObject as DrumRoll;
                     if (roll != null)
-                        GetDrumRollBytes(roll, out onEvent, out offEvent);
+                    {
+                        if (!TryGetDrumRollBytes(roll, out onEvent, out offEvent))
+                        {
+                            continue;
+                        }
+                    }
 
                     ChartEvent chartEvent = chartObject as ChartEvent;
                     if (chartEvent != null)     // Text events cannot be split up in the file
@@ -817,7 +822,12 @@ namespace MoonscraperChartEditor.Song.IO
 
                 DrumRoll roll = chartObject as DrumRoll;
                 if (roll != null)
-                    GetDrumRollBytes(roll, out onEvent, out offEvent);
+                {
+                    if (!TryGetDrumRollBytes(roll, out onEvent, out offEvent))
+                    {
+                        continue;
+                    }
+                }
 
                 ChartEvent chartEvent = chartObject as ChartEvent;
                 if (chartEvent != null)     // Text events cannot be split up in the file
@@ -1090,12 +1100,39 @@ namespace MoonscraperChartEditor.Song.IO
             }
         }
 
-        static void GetDrumRollBytes(DrumRoll roll, out SortableBytes onEvent, out SortableBytes offEvent)
+        static bool TryGetDrumRollBytes(DrumRoll roll, out SortableBytes onEvent, out SortableBytes offEvent)
         {
-            byte note = roll.type == DrumRoll.Type.Standard ? MidIOHelper.DRUM_ROLL_STANDARD : MidIOHelper.DRUM_ROLL_SPECIAL;
+            byte note = 0;
+            switch (roll.type)
+            {
+                case DrumRoll.Type.Standard:
+                    {
+                        note = MidIOHelper.DRUM_ROLL_STANDARD;
+                        break;
+                    }
+                case DrumRoll.Type.Special:
+                    {
+                        note = MidIOHelper.DRUM_ROLL_SPECIAL;
+                        break;
+                    }
+                case DrumRoll.Type.Kick:
+                    {
+                        note = MidIOHelper.DRUM_ROLL_KICK;
+                        break;
+                    }
+                default:
+                    {
+                        Debug.LogError($"Unhandled  roll type {roll.type}");
+                        onEvent = null;
+                        offEvent = null;
+                        return false;
+                    }
+            }
 
             onEvent = new SortableBytes(roll.tick, new byte[] { ON_EVENT, note, VELOCITY });
             offEvent = new SortableBytes(roll.tick + roll.length, new byte[] { OFF_EVENT, note, VELOCITY });
+
+            return true;
         }
 
         static void GetSoloBytes(ChartEvent solo, uint soloEndTick, out SortableBytes onEvent, out SortableBytes offEvent)

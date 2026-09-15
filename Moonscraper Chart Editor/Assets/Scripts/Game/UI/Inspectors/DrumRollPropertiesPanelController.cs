@@ -60,6 +60,7 @@ public class DrumRollPropertiesPanelController : PropertiesPanelController
             Debug.Log("DrumRollSetDouble");
             PushRollTypeCommand(DrumRoll.Type.Special);
         }
+        // TODO KickRoll shortcut
     }
 
     void PushRollTypeCommand(DrumRoll.Type desiredType)
