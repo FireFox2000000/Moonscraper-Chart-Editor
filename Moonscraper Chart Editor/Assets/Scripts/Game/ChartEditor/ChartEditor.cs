@@ -769,6 +769,9 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                     error = true;
                 }
 
+                if (mid && newSong != null)
+                    SetCloneHeroAudioLocations(newSong, System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(currentFileName)));
+
                 try
                 {
                     string directory = System.IO.Path.GetDirectoryName(currentFileName);
@@ -845,6 +848,17 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 #if TIMING_DEBUG
         Debug.Log("Total load time: " + (Time.realtimeSinceStartup - totalLoadTime));
 #endif
+    }
+
+    /// <summary>
+    /// Sets the song's audio to the files Clone Hero would find in the song's directory.
+    /// </summary>
+    void SetCloneHeroAudioLocations(Song song, string directory)
+    {
+        foreach (var audioFile in CloneHeroAudioFiles.FindAudioFiles(directory))
+        {
+            song.SetAudioLocation(audioFile.Key, audioFile.Value);
+        }
     }
 
     IEnumerator _Load()

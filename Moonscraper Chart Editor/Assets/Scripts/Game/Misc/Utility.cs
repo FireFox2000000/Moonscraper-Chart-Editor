@@ -51,14 +51,14 @@ static class Utility {
         return int.Parse(sVal);
     }
 
-    public static bool validateExtension(string filepath, string[] validExtensions)
+    public static bool validateExtension(string filepath, string[] validExtensions, StringComparison comparison = StringComparison.Ordinal)
     {
         // Need to check extension
         string extension = System.IO.Path.GetExtension(filepath);
 
         foreach (string validExtension in validExtensions)
         {
-            if (extension == validExtension)
+            if (string.Equals(extension, validExtension, comparison))
                 return true;
         }
         return false;
