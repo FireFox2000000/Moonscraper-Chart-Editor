@@ -67,6 +67,14 @@ namespace MoonscraperChartEditor.Song.IO
             return audioFiles;
         }
 
+        /// <summary>
+        /// The name, without extension, that Clone Hero looks for first for an audio instrument.
+        /// </summary>
+        public static string GetFilename(Song.AudioInstrument audio)
+        {
+            return c_audioInstrumentToFilenames[audio][0];
+        }
+
         static string FindFirstFile(Dictionary<string, string> filesByName, string[] filenames)
         {
             foreach (string filename in filenames)

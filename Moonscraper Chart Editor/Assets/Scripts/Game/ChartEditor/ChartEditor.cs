@@ -769,7 +769,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                     error = true;
                 }
 
-                if (mid && newSong != null)
+                // The autosave isn't in the song's directory, the audio file locations saved in it are the only record of the song's audio
+                if (newSong != null && recordLastLoaded)
                     SetCloneHeroAudioLocations(newSong, System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(currentFileName)));
 
                 try
@@ -852,12 +853,41 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 
     /// <summary>
     /// Sets the song's audio to the files Clone Hero would find in the song's directory.
+    /// Audio file locations read from a .chart only fill audio instruments that Clone Hero would find no file for, and the user is told which files to rename.
     /// </summary>
     void SetCloneHeroAudioLocations(Song song, string directory)
     {
-        foreach (var audioFile in CloneHeroAudioFiles.FindAudioFiles(directory))
+        var cloneHeroAudioFiles = CloneHeroAudioFiles.FindAudioFiles(directory);
+        var cloneHeroFiles = new HashSet<string>(cloneHeroAudioFiles.Values, StringComparer.OrdinalIgnoreCase);
+        string[] chartAudioFiles = new string[EnumX<Song.AudioInstrument>.Count];
+
+        foreach (Song.AudioInstrument audio in EnumX<Song.AudioInstrument>.Values)
         {
-            song.SetAudioLocation(audioFile.Key, audioFile.Value);
+            string audioFile;
+            chartAudioFiles[(int)audio] = song.GetAudioLocation(audio);
+            song.SetAudioLocation(audio, cloneHeroAudioFiles.TryGetValue(audio, out audioFile) ? audioFile : string.Empty);
+        }
+
+        System.Text.StringBuilder renameList = new System.Text.StringBuilder();
+        foreach (Song.AudioInstrument audio in EnumX<Song.AudioInstrument>.Values)
+        {
+            string chartAudioFile = chartAudioFiles[(int)audio];
+
+            // Only fill audio instruments Clone Hero finds nothing for, and never with a file Clone Hero already finds for another audio instrument
+            if (chartAudioFile == string.Empty || cloneHeroAudioFiles.ContainsKey(audio) || cloneHeroFiles.Contains(chartAudioFile))
+                continue;
+
+            song.SetAudioLocation(audio, chartAudioFile);
+
+            bool inSongDirectory = string.Equals(System.IO.Path.GetDirectoryName(chartAudioFile), directory, StringComparison.OrdinalIgnoreCase);
+            renameList.AppendFormat("{0} -> {1}{2}{3}", inSongDirectory ? System.IO.Path.GetFileName(chartAudioFile) : chartAudioFile,
+                CloneHeroAudioFiles.GetFilename(audio), System.IO.Path.GetExtension(chartAudioFile).ToLowerInvariant(), Globals.LINE_ENDING);
+        }
+
+        if (renameList.Length > 0)
+        {
+            errorManager.QueueErrorMessage("Some of this chart's audio was only found through file names saved in the chart. Clone Hero and YARG ignore those names and only find audio by its file name in the chart's folder." + Globals.LINE_ENDING
+                + "To play this song in those games, give these files the following names in the chart's folder:" + Globals.LINE_ENDING + renameList.ToString());
         }
     }
 
