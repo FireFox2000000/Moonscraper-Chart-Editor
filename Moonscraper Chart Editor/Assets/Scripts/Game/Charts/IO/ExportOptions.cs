@@ -25,6 +25,7 @@ namespace MoonscraperChartEditor.Song.IO
         public MidiOptions midiOptions;
         public bool isGeneralSave;
         public bool substituteCHLyricChars;
+        public bool writeAudioLocations;    // Games find audio by file name, only the autosave needs these to recover the song's audio
 
         public enum Format
         {

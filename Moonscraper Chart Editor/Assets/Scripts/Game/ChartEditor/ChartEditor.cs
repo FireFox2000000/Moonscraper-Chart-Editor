@@ -892,6 +892,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         if (renameList.Length > 0)
         {
             errorManager.QueueErrorMessage("Some of this chart's audio was only found through file names saved in the chart. Clone Hero and YARG ignore those names and only find audio by its file name in the chart's folder." + Globals.LINE_ENDING
+                + "Moonscraper will remember these files on this computer, but no longer saves their names into the chart." + Globals.LINE_ENDING
                 + "To play this song in those games, give these files the following names in the chart's folder:" + Globals.LINE_ENDING + renameList.ToString());
         }
     }
