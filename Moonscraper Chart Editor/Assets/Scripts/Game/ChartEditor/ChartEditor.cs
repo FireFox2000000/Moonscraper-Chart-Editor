@@ -699,6 +699,7 @@ public class ChartEditor : UnitySingleton<ChartEditor>
         {
             Debug.Log("Saving to file- " + System.IO.Path.GetFullPath(filename));
             lastLoadedFile = System.IO.Path.GetFullPath(filename);
+            RecordAudioOverrides();
 
             _saveTask = SaveCurrentSongAsync(filename, exportOptions);
 
@@ -852,8 +853,8 @@ public class ChartEditor : UnitySingleton<ChartEditor>
     }
 
     /// <summary>
-    /// Sets the song's audio to the files Clone Hero would find in the song's directory.
-    /// Audio file locations read from a .chart only fill audio instruments that Clone Hero would find no file for, and the user is told which files to rename.
+    /// Sets the song's audio to the files Clone Hero would find in the song's directory, unless the user chose other files for that directory.
+    /// Audio file locations read from a .chart only fill audio instruments that are still empty. These are remembered as the user's choice, and the user is told which files to rename.
     /// </summary>
     void SetCloneHeroAudioLocations(Song song, string directory)
     {
@@ -868,13 +869,15 @@ public class ChartEditor : UnitySingleton<ChartEditor>
             song.SetAudioLocation(audio, cloneHeroAudioFiles.TryGetValue(audio, out audioFile) ? audioFile : string.Empty);
         }
 
+        AudioOverrides.Apply(song, directory);
+
         System.Text.StringBuilder renameList = new System.Text.StringBuilder();
         foreach (Song.AudioInstrument audio in EnumX<Song.AudioInstrument>.Values)
         {
             string chartAudioFile = chartAudioFiles[(int)audio];
 
-            // Only fill audio instruments Clone Hero finds nothing for, and never with a file Clone Hero already finds for another audio instrument
-            if (chartAudioFile == string.Empty || cloneHeroAudioFiles.ContainsKey(audio) || cloneHeroFiles.Contains(chartAudioFile))
+            // Only fill audio instruments that Clone Hero and the user's choices leave empty, and never with a file Clone Hero already finds for another audio instrument
+            if (chartAudioFile == string.Empty || cloneHeroAudioFiles.ContainsKey(audio) || cloneHeroFiles.Contains(chartAudioFile) || song.GetAudioLocation(audio) != string.Empty)
                 continue;
 
             song.SetAudioLocation(audio, chartAudioFile);
@@ -884,11 +887,23 @@ public class ChartEditor : UnitySingleton<ChartEditor>
                 CloneHeroAudioFiles.GetFilename(audio), System.IO.Path.GetExtension(chartAudioFile).ToLowerInvariant(), Globals.LINE_ENDING);
         }
 
+        AudioOverrides.Record(song, directory);
+
         if (renameList.Length > 0)
         {
             errorManager.QueueErrorMessage("Some of this chart's audio was only found through file names saved in the chart. Clone Hero and YARG ignore those names and only find audio by its file name in the chart's folder." + Globals.LINE_ENDING
                 + "To play this song in those games, give these files the following names in the chart's folder:" + Globals.LINE_ENDING + renameList.ToString());
         }
+    }
+
+    /// <summary>
+    /// Remembers the current song's audio where it differs from the files Clone Hero would find in the chart's directory.
+    /// A chart that hasn't been saved yet has no directory, so its audio is remembered when it's first saved.
+    /// </summary>
+    public void RecordAudioOverrides()
+    {
+        if (lastLoadedFile != string.Empty)
+            AudioOverrides.Record(currentSong, System.IO.Path.GetDirectoryName(lastLoadedFile));
     }
 
     IEnumerator _Load()

@@ -298,6 +298,7 @@ public class SongPropertiesPanelController : TabMenu
             {
                 // Record the filepath
                 editor.currentSong.SetAudioLocation(audioInstrument, filepath);
+                editor.RecordAudioOverrides();
                 StartCoroutine(SetAudio());
             }
         }
@@ -311,6 +312,7 @@ public class SongPropertiesPanelController : TabMenu
     {
         editor.currentSongAudio.Clear(audio);
         editor.currentSong.SetAudioLocation(audio, string.Empty);
+        editor.RecordAudioOverrides();
 
         setAudioTextLabels();
     }
