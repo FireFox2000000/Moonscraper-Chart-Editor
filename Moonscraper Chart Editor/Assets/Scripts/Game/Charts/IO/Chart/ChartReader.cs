@@ -479,7 +479,7 @@ namespace MoonscraperChartEditor.Song.IO
             if (!Path.IsPathRooted(audioFilepath))
                 audioFilepath = Path.Combine(audioDirectory, audioFilepath);
 
-            if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions))
+            if (File.Exists(audioFilepath) && Utility.validateExtension(audioFilepath, Globals.validAudioExtensions, StringComparison.OrdinalIgnoreCase))
                 song.SetAudioLocation(streamAudio, Path.GetFullPath(audioFilepath));
         }
 

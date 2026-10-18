@@ -45,7 +45,9 @@ public class AutoSaveSystem : SystemManagerState.System
             try
             {
                 ChartWriter.ErrorReport errorReport;
-                new ChartWriter(Globals.autosaveLocation).Write(autosaveSong, editor.currentSong.defaultExportOptions, out errorReport);
+                ExportOptions exportOptions = editor.currentSong.defaultExportOptions;
+                exportOptions.writeAudioLocations = true;   // The autosave isn't in the song's directory, recovering from a crash needs these to find the audio
+                new ChartWriter(Globals.autosaveLocation).Write(autosaveSong, exportOptions, out errorReport);
 
                 if (errorReport.HasErrors && errorReport.hasNonErrorFileTypeRelatedErrors)
                 {

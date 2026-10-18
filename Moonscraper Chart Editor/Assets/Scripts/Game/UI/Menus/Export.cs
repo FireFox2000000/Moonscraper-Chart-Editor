@@ -516,17 +516,6 @@ public class Export : DisplayMenu {
         {
             string chartOutputFile = Path.Combine(destFolderPath, "notes.chart");
 
-            // Set audio location after audio files have already been created as set won't won't if the files don't exist
-            foreach (Song.AudioInstrument audio in EnumX<Song.AudioInstrument>.Values)
-            {
-                if (song.GetAudioLocation(audio) != string.Empty)
-                {
-                    string audioFilename = GetCHOggFilename(audio);
-                    string audioPath = Path.Combine(destFolderPath, audioFilename);
-                    newSong.SetAudioLocation(audio, audioPath);
-                }
-            }
-
             ChartWriter.ErrorReport errorReport;
 
             new ChartWriter(chartOutputFile).Write(newSong, exportOptions, out errorReport);
