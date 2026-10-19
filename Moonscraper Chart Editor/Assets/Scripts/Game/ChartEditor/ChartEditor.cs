@@ -1051,19 +1051,19 @@ public class ChartEditor : UnitySingleton<ChartEditor>
 #region Audio Functions
     public void PlayAudio(float playPoint)
     {
-        // Update all streams to the correct volume and speed levels
+        // Update all streams to the correct volume and speed levels, silencing any that are muted or not soloed
         SongAudioManager songAudioManager = currentSongAudio;
-        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Song), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_song);
-        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Guitar), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_guitar);
-        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Bass), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_bass);
-        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Rhythm), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_rhythm);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Keys), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_keys);
-        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drum), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_2), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums2);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_3), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums3);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_4), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_drums4);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Vocals), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_vocals);
-		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Crowd), Globals.gameSettings.gameSpeed, Globals.gameSettings.vol_crowd);
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Song), Globals.gameSettings.gameSpeed, StemMute.GetVolume(Song.AudioInstrument.Song, Globals.gameSettings.vol_song));
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Guitar), Globals.gameSettings.gameSpeed, StemMute.GetVolume(Song.AudioInstrument.Guitar, Globals.gameSettings.vol_guitar));
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Bass), Globals.gameSettings.gameSpeed, StemMute.GetVolume(Song.AudioInstrument.Bass, Globals.gameSettings.vol_bass));
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Rhythm), Globals.gameSettings.gameSpeed, StemMute.GetVolume(Song.AudioInstrument.Rhythm, Globals.gameSettings.vol_rhythm));
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Keys), Globals.gameSettings.gameSpeed, StemMute.GetVolume(Song.AudioInstrument.Keys, Globals.gameSettings.vol_keys));
+        SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drum), Globals.gameSettings.gameSpeed, StemMute.GetVolume(Song.AudioInstrument.Drum, Globals.gameSettings.vol_drums));
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_2), Globals.gameSettings.gameSpeed, StemMute.GetVolume(Song.AudioInstrument.Drums_2, Globals.gameSettings.vol_drums2));
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_3), Globals.gameSettings.gameSpeed, StemMute.GetVolume(Song.AudioInstrument.Drums_3, Globals.gameSettings.vol_drums3));
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Drums_4), Globals.gameSettings.gameSpeed, StemMute.GetVolume(Song.AudioInstrument.Drums_4, Globals.gameSettings.vol_drums4));
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Vocals), Globals.gameSettings.gameSpeed, StemMute.GetVolume(Song.AudioInstrument.Vocals, Globals.gameSettings.vol_vocals));
+		SetStreamProperties(songAudioManager.GetAudioStream(Song.AudioInstrument.Crowd), Globals.gameSettings.gameSpeed, StemMute.GetVolume(Song.AudioInstrument.Crowd, Globals.gameSettings.vol_crowd));
 
         // Set up synchronisation between all the streams otherwise they may go out of sync with each other
         AudioStream primaryStream = songAudioManager.mainSongAudio;

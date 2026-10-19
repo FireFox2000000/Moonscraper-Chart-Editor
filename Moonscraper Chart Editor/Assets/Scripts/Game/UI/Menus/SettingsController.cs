@@ -4,6 +4,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using MoonscraperChartEditor.Song;
 
 public class SettingsController : TabMenu
 {
@@ -66,8 +67,26 @@ public class SettingsController : TabMenu
         menuContextArea = settingsMenuContentArea;
     }
 
+    StemMuteButtons stemMuteButtons;
+
     protected void Start()
     {
+        stemMuteButtons = new StemMuteButtons(new Dictionary<Song.AudioInstrument, Slider>()
+        {
+            { Song.AudioInstrument.Song, musicSourceSlider },
+            { Song.AudioInstrument.Guitar, guitarSourceSlider },
+            { Song.AudioInstrument.Bass, bassSourceSlider },
+            { Song.AudioInstrument.Rhythm, rhythmSourceSlider },
+            { Song.AudioInstrument.Keys, keysSourceSlider },
+            { Song.AudioInstrument.Drum, drumSourceSlider },
+            { Song.AudioInstrument.Drums_2, drum2SourceSlider },
+            { Song.AudioInstrument.Drums_3, drum3SourceSlider },
+            { Song.AudioInstrument.Drums_4, drum4SourceSlider },
+            { Song.AudioInstrument.Vocals, vocalSourceSlider },
+            { Song.AudioInstrument.Crowd, crowdSourceSlider },
+        });
+        stemMuteButtons.Refresh();
+
         sustainGapInput.onValidateInput = Step.validateStepVal;
         sustainGapInput.text = Globals.gameSettings.sustainGap.ToString();
         sustainGapTimeInput.text = Globals.gameSettings.sustainGapTimeMs.ToString();
@@ -126,6 +145,10 @@ public class SettingsController : TabMenu
     protected override void OnEnable()
     {
         base.OnEnable();
+
+        // The song's audio may have changed since the menu was last open. Start creates the buttons the first time.
+        if (stemMuteButtons != null)
+            stemMuteButtons.Refresh();
 
         // Initialise GUI
         sustainGapEnabledToggle.isOn = Globals.gameSettings.sustainGapEnabled;
