@@ -16,7 +16,8 @@ public class NativeMessageBoxWindows : INativeMessageBox
         RetryCancel = 5,
     }
 
-    [DllImport("user32.dll", SetLastError = true)]
+    // Unicode, because Mono passes ANSI strings as UTF-8, which Windows reads in the system code page, turning "ý" into "Ã½"
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
 
     public NativeMessageBox.Result Show(string text, string caption, NativeMessageBox.Type messageBoxType, NativeWindow childWindow)
