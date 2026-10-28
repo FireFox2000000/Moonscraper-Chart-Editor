@@ -122,7 +122,7 @@ public class SongAudioManager
         filepath = filepath.Replace('\\', '/');
 
         // Check for valid extension
-        if (!Utility.validateExtension(filepath, Globals.validAudioExtensions))
+        if (!Utility.validateExtension(filepath, Globals.validAudioExtensions, StringComparison.OrdinalIgnoreCase))
         {
             throw new Exception("Invalid file extension");
         }

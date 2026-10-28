@@ -94,6 +94,7 @@ public class Globals : MonoBehaviour {
         }
 
         LoadGameSettings();
+        AudioOverrides.Load(Application.persistentDataPath + "/audio_overrides.json");
         Localiser.LocaliseScene();
 
         localEvents = LoadCommonEvents(Path.Combine(CONFIG_FOLDER, "local_events.txt"));
