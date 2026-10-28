@@ -530,27 +530,14 @@ namespace MoonscraperChartEditor.Song.IO
 
             string eventName = chartEvent.eventName;
 
-            if (writeParameters.exportOptions.isGeneralSave)
+            // Track events are read to the end of the line, so spaces can be saved into a .chart as they are.
+            // Msce files still store them as full-width spaces, as older versions of the editor read only the first word.
+            // The [Events] section is written before any track, so resultantFileType is already final here.
+            if (writeParameters.exportOptions.format == ExportOptions.Format.Msce || writeParameters.errorReport.resultantFileType == ChartIOHelper.FileSubType.MoonscraperPropriety)
             {
                 foreach (var replacement in MsceIOHelper.LocalEventCharReplacementToMsce)
                 {
                     eventName = eventName.Replace(replacement.Key, replacement.Value);
-                }
-
-                if (eventName != chartEvent.eventName && writeParameters.exportOptions.format != ExportOptions.Format.Msce)
-                {
-                    writeParameters.errorReport.AddWarning(string.Format("Warning: Found a track event \"{0}\" with invalid character/s for the Chart file format. This will force the file to be saved in a propriety format (.msce) and will need to be re-exported via the Export menu to be readable by 3rd party rhythm games.", chartEvent.eventName), true);
-
-                    writeParameters.errorReport.resultantFileType = ChartIOHelper.FileSubType.MoonscraperPropriety;
-                }
-            }
-            else
-            {
-                char testChar = ' ';
-                if (eventName.Contains(testChar))
-                {
-                    eventName = eventName.Replace(' ', '_');
-                    writeParameters.errorReport.AddWarning(string.Format("Warning: Found a track event \"{0}\" with space character/s. This has been automatically replaced with an underscore as these characters are not supported in these kinds of events within the .chart file format.", chartEvent.eventName));
                 }
             }
 

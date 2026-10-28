@@ -791,7 +791,11 @@ namespace MoonscraperChartEditor.Song.IO
                                         stringStartIndex += stringLength;
                                         AdvanceNextWord(line, ref stringStartIndex, ref stringLength);
                                     }
-                                    string eventName = line.Substring(stringStartIndex, stringLength);
+
+                                    // The event is the rest of the line, as it can contain spaces. E.g. "mix 3 drums0d"
+                                    string eventName = line.Substring(stringStartIndex);
+                                    if (eventName.Length <= 0)
+                                        break;
 
                                     if (fileLoadType == ChartIOHelper.FileSubType.MoonscraperPropriety)
                                     {
