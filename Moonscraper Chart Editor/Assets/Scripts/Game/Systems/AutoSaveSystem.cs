@@ -16,7 +16,8 @@ public class AutoSaveSystem : SystemManagerState.System
 
     public override void SystemUpdate()
     {
-        if (currentAutosaveTask == null || currentAutosaveTask.Status != TaskStatus.RanToCompletion)
+        // Count towards the next autosave only while none is running
+        if (currentAutosaveTask == null || currentAutosaveTask.IsCompleted)
         {
             autosaveTimer += Time.deltaTime;
 
