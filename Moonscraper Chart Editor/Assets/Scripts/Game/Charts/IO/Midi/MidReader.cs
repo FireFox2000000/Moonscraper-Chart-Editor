@@ -978,6 +978,9 @@ namespace MoonscraperChartEditor.Song.IO
                 { MidIOHelper.DRUM_ROLL_SPECIAL, (in EventProcessParams eventProcessParams) => {
                     ProcessTimedEventAsDrumRoll(eventProcessParams, DrumRoll.Type.Special);
                 }},
+                { MidIOHelper.DRUM_ROLL_KICK, (in EventProcessParams eventProcessParams) => {
+                    ProcessTimedEventAsDrumRoll(eventProcessParams, DrumRoll.Type.Kick);
+                }},
             };
 
             IReadOnlyDictionary<Note.DrumPad, int> DrumPadToMidiKey = new Dictionary<Note.DrumPad, int>()

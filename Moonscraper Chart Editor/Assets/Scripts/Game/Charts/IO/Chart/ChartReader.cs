@@ -776,6 +776,18 @@ namespace MoonscraperChartEditor.Song.IO
                                                 }
                                                 break;
                                             }
+                                        case ChartIOHelper.c_drumRollKickId:
+                                            {
+                                                if (instrument == ChartIOHelper.TrackLoadType.Drums)
+                                                {
+                                                    chart.Add(new DrumRoll(tick, length, DrumRoll.Type.Kick), false);
+                                                }
+                                                else
+                                                {
+                                                    Debug.Assert(false, "Found special drum roll flag on incompatible instrument.");
+                                                }
+                                                break;
+                                            }
 
                                         default:
                                             continue;

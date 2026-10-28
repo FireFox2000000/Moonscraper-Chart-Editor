@@ -12,6 +12,7 @@ namespace MoonscraperChartEditor.Song
         {
             Standard,
             Special,
+            Kick,
         }
 
         private readonly ID _classID = ID.DrumRoll;

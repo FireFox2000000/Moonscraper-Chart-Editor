@@ -85,11 +85,17 @@ public class DrumRollController : SongObjectController
 
                             break;
                         }
+                    case DrumRoll.Type.Kick:
+                        {
+                            // Display no lanes.
+                            // TODO We may want to add different visuals here
+                            break;
+                        }
                 }
 
                 for (int i = laneVisualIndex; i < m_laneVisuals.Length; ++i)
                 {
-                    m_laneVisuals[laneVisualIndex].SetActive(false);
+                    m_laneVisuals[i].SetActive(false);
                 }
             }
         }

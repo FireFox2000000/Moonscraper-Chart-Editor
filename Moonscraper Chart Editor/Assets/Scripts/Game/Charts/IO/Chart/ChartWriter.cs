@@ -442,6 +442,7 @@ namespace MoonscraperChartEditor.Song.IO
         static readonly string s_starpowerDrumFillFormat = " = S " + ChartIOHelper.c_starpowerDrumFillId + " {0}";
         static readonly string s_drumRollStandardFormat = " = S " + ChartIOHelper.c_drumRollStandardId + " {0}";
         static readonly string s_drumRollSpecialFormat = " = S " + ChartIOHelper.c_drumRollSpecialId + " {0}";
+        static readonly string s_drumRollKickFormat = " = S " + ChartIOHelper.c_drumRollKickId + " {0}";
         static readonly string s_noteFormat = " = N {0} {1}";
 
         // Initial tick is automatically written
@@ -568,7 +569,31 @@ namespace MoonscraperChartEditor.Song.IO
         static void AppendDrumRollData(SongObject songObject, in SongObjectWriteParameters writeParameters, StringBuilder output)
         {
             DrumRoll roll = songObject as DrumRoll;
-            string saveFormat = roll.type == DrumRoll.Type.Standard ? s_drumRollStandardFormat : s_drumRollSpecialFormat;
+            string saveFormat = string.Empty;
+
+            switch (roll.type)
+            {
+                case DrumRoll.Type.Standard:
+                    {
+                        saveFormat = s_drumRollStandardFormat;
+                        break;
+                    }
+                case DrumRoll.Type.Special:
+                    {
+                        saveFormat = s_drumRollSpecialFormat;
+                        break;
+                    }
+                case DrumRoll.Type.Kick:
+                    {
+                        saveFormat = s_drumRollKickFormat;
+                        break;
+                    }
+                default:
+                    {
+                        Debug.LogError($"Roll type {roll.type} not implemented");
+                        return;
+                    }
+            }
 
             output.AppendFormat(saveFormat, (uint)Mathf.Round(roll.length * writeParameters.resolutionScaleRatio));
         }
