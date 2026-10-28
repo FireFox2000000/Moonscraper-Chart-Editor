@@ -109,13 +109,10 @@ public class Export : DisplayMenu {
 
     void _ExportSong()
     {
-        string defaultFileName;
-        if (editor.currentSong.name != string.Empty)
-            defaultFileName = new string(editor.currentSong.name.ToCharArray());
-        else
-            defaultFileName = "Untitled";
+        // Clone Hero and YARG read a song folder's chart from notes.chart or notes.mid
+        string defaultFileName = "notes";
         if (!exportOptions.forced)
-            defaultFileName += "(UNFORCED)";
+            defaultFileName += " (UNFORCED)";
 
         string saveLocation;
         bool aquiredFilePath = false;
