@@ -44,7 +44,10 @@ public class MetronomePlaybackSystem : SystemManagerState.System
         {
             if (Globals.gameSettings.metronomeActive)
             {
-                sampleStream.volume = Globals.gameSettings.sfxVolume * Globals.gameSettings.vol_master;
+                float sfxVolume = Globals.gameSettings.IsAudioTrackMuted(GameSettings.SfxAudioTrackIndex)
+                    ? 0
+                    : Globals.gameSettings.sfxVolume;
+                sampleStream.volume = sfxVolume * Globals.gameSettings.vol_master;
                 sampleStream.pan = Globals.gameSettings.audio_pan;
                 sampleStream.Play();
             }

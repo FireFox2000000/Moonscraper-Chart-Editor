@@ -188,6 +188,29 @@ public class GameSettings
     public bool metronomeActive = false;
     public bool clapEnabled = false;
     public float gameSpeed = 1;
+    public const int SfxAudioTrackIndex = 11;
+    public bool[] mutedAudioTracks = new bool[SfxAudioTrackIndex + 1];
+    public bool[] soloAudioTracks = new bool[SfxAudioTrackIndex + 1];
+
+    public bool IsAudioTrackMuted(int trackIndex)
+    {
+        if (mutedAudioTracks[trackIndex])
+        {
+            return true;
+        }
+
+        bool hasSoloedTrack = false;
+        for (int i = 0; i < soloAudioTracks.Length; ++i)
+        {
+            if (soloAudioTracks[i])
+            {
+                hasSoloedTrack = true;
+                break;
+            }
+        }
+
+        return hasSoloedTrack && !soloAudioTracks[trackIndex];
+    }
 
     // Custom accessors around private save settings for finer control
     public DrumModeOptions drumsModeOptions
@@ -563,4 +586,3 @@ public class GameSettings
         }
     }
 }
-

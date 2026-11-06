@@ -7,6 +7,15 @@ using System.Collections.Generic;
 
 public class SettingsController : TabMenu
 {
+    class AudioTrackControl
+    {
+        public Slider slider;
+        public Button muteButton;
+        public Button soloButton;
+    }
+
+    readonly List<AudioTrackControl> audioTrackControls = new List<AudioTrackControl>();
+
     [SerializeField]
     RectTransform settingsMenuContentArea;
 
@@ -54,6 +63,17 @@ public class SettingsController : TabMenu
     public Dropdown bgSwapTimeDropdown;
     public Dropdown antiAliasingLevel; 
 
+    void Start()
+    {
+        CreateAudioTrackControls();
+
+        sustainGapInput.onValidateInput = Step.validateStepVal;
+        sustainGapInput.text = Globals.gameSettings.sustainGap.ToString();
+        sustainGapTimeInput.text = Globals.gameSettings.sustainGapTimeMs.ToString();
+        lyricEditorPhaseEndTimeInput.text = Globals.gameSettings.lyricEditorSettings.phaseEndThreashold.ToString();
+        lyricEditorPhaseEndTimeInput.onValidateInput = LocalesManager.ValidateDecimalInput;
+    }
+
     public void SetSettingsGroup(RectTransform content)
     {
         SetTabGroup(content);
@@ -64,15 +84,6 @@ public class SettingsController : TabMenu
         base.Awake();
 
         menuContextArea = settingsMenuContentArea;
-    }
-
-    protected void Start()
-    {
-        sustainGapInput.onValidateInput = Step.validateStepVal;
-        sustainGapInput.text = Globals.gameSettings.sustainGap.ToString();
-        sustainGapTimeInput.text = Globals.gameSettings.sustainGapTimeMs.ToString();
-        lyricEditorPhaseEndTimeInput.text = Globals.gameSettings.lyricEditorSettings.phaseEndThreashold.ToString();
-        lyricEditorPhaseEndTimeInput.onValidateInput = LocalesManager.ValidateDecimalInput;
     }
 
     protected override void Update()
@@ -101,18 +112,13 @@ public class SettingsController : TabMenu
         // Set all variables' values based on the UI
         Globals.gameSettings.sustainGapEnabled.value = sustainGapEnabledToggle.isOn;
 
-        Globals.gameSettings.vol_song.value = musicSourceSlider.value;
-        Globals.gameSettings.vol_guitar.value = guitarSourceSlider.value;
-        Globals.gameSettings.vol_bass.value = bassSourceSlider.value;
-        Globals.gameSettings.vol_rhythm.value = rhythmSourceSlider.value;
-        Globals.gameSettings.vol_keys.value = keysSourceSlider.value;
-        Globals.gameSettings.vol_drums.value = drumSourceSlider.value;
-        Globals.gameSettings.vol_drums2.value = drum2SourceSlider.value;
-        Globals.gameSettings.vol_drums3.value = drum3SourceSlider.value;
-        Globals.gameSettings.vol_drums4.value = drum4SourceSlider.value;
-        Globals.gameSettings.vol_vocals.value = vocalSourceSlider.value;
-        Globals.gameSettings.vol_crowd.value = crowdSourceSlider.value;
-        Globals.gameSettings.sfxVolume = sfxSlider.value;
+        for (int i = 0; i < audioTrackControls.Count; ++i)
+        {
+            if (!IsAudioTrackMuted(i))
+            {
+                SetAudioTrackVolume(i, audioTrackControls[i].slider.value);
+            }
+        }
 
         //editor.clapSource.volume = clapSourceSlider.value;
 
@@ -121,6 +127,9 @@ public class SettingsController : TabMenu
         Globals.gameSettings.audio_pan.value = musicPanSlider.value / 10.0f;
 
         Globals.gameSettings.gameplayStartDelayTime.value = gameplayStartDelayDropdown.value * 0.5f;
+
+        UpdateAudioTrackControlVisuals();
+        editor.ApplyAudioTrackVolumes();
     }
 
     protected override void OnEnable()
@@ -244,6 +253,193 @@ public class SettingsController : TabMenu
 
         Update();
     }  
+
+    void CreateAudioTrackControls()
+    {
+        Slider[] trackSliders =
+        {
+            musicSourceSlider,
+            guitarSourceSlider,
+            bassSourceSlider,
+            rhythmSourceSlider,
+            drumSourceSlider,
+            drum2SourceSlider,
+            drum3SourceSlider,
+            drum4SourceSlider,
+            vocalSourceSlider,
+            keysSourceSlider,
+            crowdSourceSlider,
+            sfxSlider
+        };
+
+        for (int i = 0; i < trackSliders.Length; ++i)
+        {
+            RectTransform sliderTransform = trackSliders[i].GetComponent<RectTransform>();
+            RectTransform parent = sliderTransform.parent as RectTransform;
+            float controlsStartX = sliderTransform.anchoredPosition.x + sliderTransform.rect.width * 0.5f + 32;
+
+            AudioTrackControl control = new AudioTrackControl();
+            control.slider = trackSliders[i];
+            control.muteButton = CreateAudioButton(parent, "Mute", controlsStartX, sliderTransform.anchoredPosition.y, 52, 26);
+            control.soloButton = CreateAudioButton(parent, "Solo", controlsStartX + 56, sliderTransform.anchoredPosition.y, 52, 26);
+
+            int trackIndex = i;
+            control.muteButton.onClick.AddListener(delegate { ToggleAudioTrackMute(trackIndex); });
+            control.soloButton.onClick.AddListener(delegate { ToggleAudioTrackSolo(trackIndex); });
+            audioTrackControls.Add(control);
+        }
+
+        RectTransform firstSliderTransform = musicSourceSlider.GetComponent<RectTransform>();
+        RectTransform controlsParent = firstSliderTransform.parent as RectTransform;
+        RectTransform lastSliderTransform = trackSliders[trackSliders.Length - 1].GetComponent<RectTransform>();
+        float resetButtonX = lastSliderTransform.anchoredPosition.x;
+        float resetButtonY = lastSliderTransform.anchoredPosition.y - 36;
+        CreateAudioButton(controlsParent, "Reset Volumes", resetButtonX, resetButtonY, 112, 26)
+            .onClick.AddListener(ResetAudioTrackVolumes);
+        controlsParent.sizeDelta = new Vector2(
+            controlsParent.sizeDelta.x,
+            Mathf.Max(controlsParent.sizeDelta.y, -resetButtonY + 26));
+
+        UpdateAudioTrackControlVisuals();
+    }
+
+    Button CreateAudioButton(RectTransform parent, string label, float x, float y, float width, float height)
+    {
+        GameObject buttonObject = new GameObject(label + " Button", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(Button));
+        buttonObject.transform.SetParent(parent, false);
+
+        RectTransform buttonTransform = buttonObject.GetComponent<RectTransform>();
+        buttonTransform.anchorMin = new Vector2(0, 1);
+        buttonTransform.anchorMax = new Vector2(0, 1);
+        buttonTransform.pivot = new Vector2(0.5f, 0.5f);
+        buttonTransform.anchoredPosition = new Vector2(x, y);
+        buttonTransform.sizeDelta = new Vector2(width, height);
+
+        Image background = buttonObject.GetComponent<Image>();
+        background.color = new Color(0.08f, 0.28f, 0.4f, 1);
+
+        Button button = buttonObject.GetComponent<Button>();
+        button.targetGraphic = background;
+        button.navigation = new Navigation { mode = Navigation.Mode.None };
+
+        GameObject labelObject = new GameObject("Label", typeof(RectTransform), typeof(CanvasRenderer), typeof(Text));
+        labelObject.transform.SetParent(buttonObject.transform, false);
+        RectTransform labelTransform = labelObject.GetComponent<RectTransform>();
+        labelTransform.anchorMin = Vector2.zero;
+        labelTransform.anchorMax = Vector2.one;
+        labelTransform.offsetMin = Vector2.zero;
+        labelTransform.offsetMax = Vector2.zero;
+
+        Text text = labelObject.GetComponent<Text>();
+        text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        text.fontSize = 14;
+        text.alignment = TextAnchor.MiddleCenter;
+        text.color = Color.white;
+        text.text = label;
+        text.raycastTarget = false;
+
+        return button;
+    }
+
+    void ToggleAudioTrackMute(int trackIndex)
+    {
+        Globals.gameSettings.mutedAudioTracks[trackIndex] = !Globals.gameSettings.mutedAudioTracks[trackIndex];
+        UpdateAudioTrackControlVisuals();
+        editor.ApplyAudioTrackVolumes();
+    }
+
+    void ToggleAudioTrackSolo(int trackIndex)
+    {
+        Globals.gameSettings.soloAudioTracks[trackIndex] = !Globals.gameSettings.soloAudioTracks[trackIndex];
+        UpdateAudioTrackControlVisuals();
+        editor.ApplyAudioTrackVolumes();
+    }
+
+    void ResetAudioTrackVolumes()
+    {
+        for (int i = 0; i < audioTrackControls.Count; ++i)
+        {
+            Globals.gameSettings.mutedAudioTracks[i] = false;
+            SetAudioTrackVolume(i, 1);
+        }
+
+        for (int i = 0; i < Globals.gameSettings.soloAudioTracks.Length; ++i)
+        {
+            Globals.gameSettings.soloAudioTracks[i] = false;
+        }
+
+        UpdateAudioTrackControlVisuals();
+        editor.ApplyAudioTrackVolumes();
+    }
+
+    bool IsAudioTrackMuted(int trackIndex)
+    {
+        return Globals.gameSettings.IsAudioTrackMuted(trackIndex);
+    }
+
+    void UpdateAudioTrackControlVisuals()
+    {
+        for (int i = 0; i < audioTrackControls.Count; ++i)
+        {
+            AudioTrackControl control = audioTrackControls[i];
+            bool muted = IsAudioTrackMuted(i);
+            bool soloed = Globals.gameSettings.soloAudioTracks[i];
+
+            control.slider.value = muted ? 0 : GetAudioTrackVolume(i);
+            control.slider.interactable = !muted;
+            SetAudioButtonState(control.muteButton, Globals.gameSettings.mutedAudioTracks[i], "Mute", "Unmute");
+            SetAudioButtonState(control.soloButton, soloed, "Solo", "Unsolo");
+        }
+    }
+
+    void SetAudioButtonState(Button button, bool active, string inactiveLabel, string activeLabel)
+    {
+        Text label = button.GetComponentInChildren<Text>();
+        label.text = active ? activeLabel : inactiveLabel;
+        button.GetComponent<Image>().color = active
+            ? new Color(0.08f, 0.5f, 0.68f, 1)
+            : new Color(0.08f, 0.28f, 0.4f, 1);
+    }
+
+    float GetAudioTrackVolume(int trackIndex)
+    {
+        switch (trackIndex)
+        {
+            case 0: return Globals.gameSettings.vol_song;
+            case 1: return Globals.gameSettings.vol_guitar;
+            case 2: return Globals.gameSettings.vol_bass;
+            case 3: return Globals.gameSettings.vol_rhythm;
+            case 4: return Globals.gameSettings.vol_drums;
+            case 5: return Globals.gameSettings.vol_drums2;
+            case 6: return Globals.gameSettings.vol_drums3;
+            case 7: return Globals.gameSettings.vol_drums4;
+            case 8: return Globals.gameSettings.vol_vocals;
+            case 9: return Globals.gameSettings.vol_keys;
+            case 10: return Globals.gameSettings.vol_crowd;
+            case GameSettings.SfxAudioTrackIndex: return Globals.gameSettings.sfxVolume;
+            default: throw new System.ArgumentOutOfRangeException("trackIndex");
+        }
+    }
+
+    void SetAudioTrackVolume(int trackIndex, float volume)
+    {
+        switch (trackIndex)
+        {
+            case 0: Globals.gameSettings.vol_song.value = volume; break;
+            case 1: Globals.gameSettings.vol_guitar.value = volume; break;
+            case 2: Globals.gameSettings.vol_bass.value = volume; break;
+            case 3: Globals.gameSettings.vol_rhythm.value = volume; break;
+            case 4: Globals.gameSettings.vol_drums.value = volume; break;
+            case 5: Globals.gameSettings.vol_drums2.value = volume; break;
+            case 6: Globals.gameSettings.vol_drums3.value = volume; break;
+            case 7: Globals.gameSettings.vol_drums4.value = volume; break;
+            case 8: Globals.gameSettings.vol_vocals.value = volume; break;
+            case 9: Globals.gameSettings.vol_keys.value = volume; break;
+            case 10: Globals.gameSettings.vol_crowd.value = volume; break;
+            case GameSettings.SfxAudioTrackIndex: Globals.gameSettings.sfxVolume = volume; break;
+            default: throw new System.ArgumentOutOfRangeException("trackIndex");
+        }
+    }
 
     public void SetFPS(int dropdownValue)
     {
