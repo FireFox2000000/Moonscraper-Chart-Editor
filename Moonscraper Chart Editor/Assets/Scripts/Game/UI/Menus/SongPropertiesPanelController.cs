@@ -97,7 +97,7 @@ public class SongPropertiesPanelController : TabMenu
         album.text = metaData.album;
         year.text = metaData.year;
         offset.text = song.offset.ToString();
-        difficulty.text = metaData.difficulty.ToString();
+        difficulty.text = metaData.hasDifficulty ? metaData.difficulty.ToString() : string.Empty;
         genre.text = metaData.genre;
         mediaType.text = metaData.mediatype;
 
@@ -165,7 +165,7 @@ public class SongPropertiesPanelController : TabMenu
             }
             catch
             {
-                metaData.difficulty = 0;
+                metaData.difficulty = Metadata.NoDifficulty;
             }
 
             metaData.genre = genre.text;

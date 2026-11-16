@@ -5,8 +5,12 @@ namespace MoonscraperChartEditor.Song
 {
     public class Metadata
     {
+        // The difficulty of a song that has none set. Earlier versions wrote a difficulty of 0 into every chart, so 0 is also none.
+        public const int NoDifficulty = -1;
+
         string m_name, m_artist, m_charter, m_player2, m_genre, m_mediatype, m_album;
-        
+        int m_difficulty;
+
         public string name { get { return m_name; } set { m_name = MakeValidMetadataString(value); } }
         public string artist { get { return m_artist; } set { m_artist = MakeValidMetadataString(value); } }
         public string charter { get { return m_charter; } set { m_charter = MakeValidMetadataString(value); } }
@@ -16,16 +20,18 @@ namespace MoonscraperChartEditor.Song
         public string album { get { return m_album; } set { m_album = MakeValidMetadataString(value); } }
         public string year;
 
-        public int difficulty;
-        public float previewStart, previewEnd;
+        public int difficulty { get { return m_difficulty; } set { m_difficulty = value > 0 ? value : NoDifficulty; } }
+        public bool hasDifficulty { get { return m_difficulty != NoDifficulty; } }
+
+        // Preview times are only written when a loaded chart has them, since games choose a preview when there is none
+        public float? previewStart, previewEnd;
 
         public Metadata()
         {
-            name = artist = charter = album = year = string.Empty;
+            name = artist = charter = album = year = genre = string.Empty;
             player2 = "Bass";
-            difficulty = 0;
-            previewStart = previewEnd = 0;
-            genre = "rock";
+            difficulty = NoDifficulty;
+            previewStart = previewEnd = null;
             mediatype = "cd";
         }
 
