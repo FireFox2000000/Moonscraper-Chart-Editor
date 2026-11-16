@@ -1,12 +1,15 @@
 diff_band = -1
 diff_guitar = -1
+diff_guitar_coop = -1
 diff_rhythm = -1
 diff_bass = -1
 diff_drums = -1
 diff_keys = -1
 diff_guitarghl = -1
+diff_guitar_coop_ghl = -1
 diff_bassghl = -1
-diff_rhythmghl = -1
+diff_rhythm_ghl = -1
+diff_keys_ghl = -1
 preview_start_time = 0
 icon = 0
 playlist_track
