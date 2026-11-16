@@ -128,6 +128,7 @@ public static class SongIniFunctions
         }
 
         // Fill out difficulty tags with metadata difficulty if it has not been initilised
+        if (song.metaData.hasDifficulty)
         {
             const string UninitialisedDifficultyValue = "-1";
             Metadata metaData = song.metaData;

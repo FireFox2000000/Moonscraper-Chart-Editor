@@ -187,7 +187,7 @@ namespace MoonscraperChartEditor.Song.IO
 
                         case MetadataValueType.Difficulty:
                             {
-                                m_readerParseRegex = new Regex(key + @" = \d+", RegexOptions.Compiled);
+                                m_readerParseRegex = new Regex(key + @" = -?\d+", RegexOptions.Compiled);
                                 m_saveFormat = string.Format(c_metaDataSaveFormatNoQuote, key);
                                 break;
                             }

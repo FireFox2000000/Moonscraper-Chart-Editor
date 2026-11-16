@@ -338,11 +338,14 @@ namespace MoonscraperChartEditor.Song.IO
             saveString += string.Format(ChartIOHelper.MetaData.resolution.saveFormat, exportOptions.targetResolution);
             if (metaData.player2 != string.Empty)
                 saveString += string.Format(ChartIOHelper.MetaData.player2.saveFormat, metaData.player2.ToLower());
-            saveString += string.Format(ChartIOHelper.MetaData.difficulty.saveFormat, metaData.difficulty);
+            if (metaData.hasDifficulty)
+                saveString += string.Format(ChartIOHelper.MetaData.difficulty.saveFormat, metaData.difficulty);
             if (song.manualLength.HasValue)
                 saveString += string.Format(floatCultureInfo, ChartIOHelper.MetaData.length.saveFormat, song.manualLength.Value);
-            saveString += string.Format(floatCultureInfo, ChartIOHelper.MetaData.previewStart.saveFormat, metaData.previewStart);
-            saveString += string.Format(floatCultureInfo, ChartIOHelper.MetaData.previewEnd.saveFormat, metaData.previewEnd);
+            if (metaData.previewStart.HasValue)
+                saveString += string.Format(floatCultureInfo, ChartIOHelper.MetaData.previewStart.saveFormat, metaData.previewStart.Value);
+            if (metaData.previewEnd.HasValue)
+                saveString += string.Format(floatCultureInfo, ChartIOHelper.MetaData.previewEnd.saveFormat, metaData.previewEnd.Value);
             if (metaData.genre != string.Empty)
                 saveString += string.Format(ChartIOHelper.MetaData.genre.saveFormat, metaData.genre);
             if (metaData.mediatype != string.Empty)

@@ -378,7 +378,7 @@ namespace MoonscraperChartEditor.Song.IO
                     // Difficulty = 0
                     else if (ChartIOHelper.MetaData.difficulty.regex.IsMatch(line))
                     {
-                        metaData.difficulty = int.Parse(Regex.Matches(line, @"\d+")[0].ToString());
+                        metaData.difficulty = int.Parse(Regex.Matches(line, @"-?\d+")[0].ToString());
                     }
 
                     // Length = 300
