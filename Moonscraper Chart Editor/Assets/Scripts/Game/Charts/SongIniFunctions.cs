@@ -11,6 +11,12 @@ public static class SongIniFunctions
     public const string INI_FILENAME = "song.ini";
 
     const string CH_TAG_FILE = "clone_hero_ini_tags.txt";
+    const string GHL_RHYTHM_DIFFICULTY_TAG = "diff_rhythm_ghl";
+    // Earlier versions wrote GHL rhythm's difficulty under this name, which Clone Hero and YARG don't read
+    const string OLD_GHL_RHYTHM_DIFFICULTY_TAG = "diff_rhythmghl";
+    // Pro drums' difficulties, which rate the drums chart
+    static readonly string[] PRO_DRUMS_DIFFICULTY_TAGS = { "diff_drums_real", "diff_drums_real_ps" };
+    const string UninitialisedDifficultyValue = "-1";
 
     static KeyValuePair<string, string>[] s_chTags = null;
     static KeyValuePair<string, string>[] chTags
@@ -74,6 +80,9 @@ public static class SongIniFunctions
             case Song.Instrument.Guitar:
                 return "diff_guitar";
 
+            case Song.Instrument.GuitarCoop:
+                return "diff_guitar_coop";
+
             case Song.Instrument.Rhythm:
                 return "diff_rhythm";
 
@@ -93,10 +102,27 @@ public static class SongIniFunctions
                 return "diff_bassghl";
 
             case Song.Instrument.GHLiveRhythm:
-                return "diff_rhythmghl";
+                return GHL_RHYTHM_DIFFICULTY_TAG;
+
+            case Song.Instrument.GHLiveCoop:
+                return "diff_guitar_coop_ghl";
+
+            case Song.Instrument.GHLiveKeys:
+                return "diff_keys_ghl";
         }
 
         return string.Empty;
+    }
+
+    static bool InstrumentHasNotes(Song song, Song.Instrument instrument)
+    {
+        foreach (Song.Difficulty difficulty in MoonscraperEngine.EnumX<Song.Difficulty>.Values)
+        {
+            if (song.GetChart(instrument, difficulty).notes.Count > 0)
+                return true;
+        }
+
+        return false;
     }
 
     static void AddTagIfAlreadyExistantAndDefault(INIParser ini, string key, string newValue, string defaultVal)
@@ -122,14 +148,40 @@ public static class SongIniFunctions
  
         AddDefaultIniTags(song, ini, songLengthSeconds);
 
+        // Difficulty tags are only for instruments the chart has notes for
+        HashSet<string> unchartedDifficultyTags = new HashSet<string>();
+        foreach (Song.Instrument instrument in MoonscraperEngine.EnumX<Song.Instrument>.Values)
+        {
+            string tag = GetCHDifficultyTagForInstrument(instrument);
+
+            if (!string.IsNullOrEmpty(tag) && !InstrumentHasNotes(song, instrument))
+            {
+                unchartedDifficultyTags.Add(tag);
+
+                if (instrument == Song.Instrument.Drums)
+                {
+                    unchartedDifficultyTags.UnionWith(PRO_DRUMS_DIFFICULTY_TAGS);
+                }
+            }
+        }
+
+        string oldGhlRhythmKey = OLD_GHL_RHYTHM_DIFFICULTY_TAG + " ";
+        string ghlRhythmKey = GHL_RHYTHM_DIFFICULTY_TAG + " ";
+        if (ini.IsKeyExists(INI_SECTION_HEADER, oldGhlRhythmKey) && !ini.IsKeyExists(INI_SECTION_HEADER, ghlRhythmKey) && !unchartedDifficultyTags.Contains(GHL_RHYTHM_DIFFICULTY_TAG))
+        {
+            ini.WriteValue(INI_SECTION_HEADER, ghlRhythmKey, ini.ReadValue(INI_SECTION_HEADER, oldGhlRhythmKey, string.Empty));
+        }
+
         foreach (var tag in chTags)
         {
-            AddTagIfNonExistant(tag.Key, tag.Value);
+            if (!unchartedDifficultyTags.Contains(tag.Key))
+            {
+                AddTagIfNonExistant(tag.Key, tag.Value);
+            }
         }
 
         // Fill out difficulty tags with metadata difficulty if it has not been initilised
         {
-            const string UninitialisedDifficultyValue = "-1";
             Metadata metaData = song.metaData;
             AddTagIfAlreadyExistantAndDefault(ini, "diff_band", metaData.difficulty.ToString(), UninitialisedDifficultyValue);
 
@@ -144,6 +196,22 @@ public static class SongIniFunctions
                 {
                     AddTagIfAlreadyExistantAndDefault(ini, tag, metaData.difficulty.ToString(), UninitialisedDifficultyValue);
                 }
+            }
+        }
+
+        foreach (string tag in unchartedDifficultyTags)
+        {
+            ini.KeyDelete(INI_SECTION_HEADER, tag + " ");
+        }
+
+        ini.KeyDelete(INI_SECTION_HEADER, oldGhlRhythmKey);
+
+        // A difficulty of -1 is no difficulty, so its tag does nothing
+        foreach (string key in ini.GetKeys(INI_SECTION_HEADER))
+        {
+            if (key.Trim().StartsWith("diff_") && ini.ReadValue(INI_SECTION_HEADER, key, string.Empty).Trim() == UninitialisedDifficultyValue)
+            {
+                ini.KeyDelete(INI_SECTION_HEADER, key);
             }
         }
     }

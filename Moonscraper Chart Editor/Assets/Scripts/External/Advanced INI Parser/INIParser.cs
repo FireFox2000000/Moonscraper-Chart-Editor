@@ -489,7 +489,7 @@ public class INIParser
                 Section.Remove(Key);
 
                 //Also delete in modified cache if exist
-                if (m_Modified.TryGetValue(SectionName, out Section)) Section.Remove(SectionName);
+                if (m_Modified.TryGetValue(SectionName, out Section)) Section.Remove(Key);
 
                 // *** Automatic flushing : immediately write any modification to the file ***
                 if (m_AutoFlush) PerformFlush();
@@ -722,6 +722,18 @@ public class INIParser
         }
 
         return sb.ToString();
+    }
+
+    // The keys of a section, in order
+    public List<string> GetKeys(string SectionName)
+    {
+        Dictionary<string, string> Section;
+        if (!m_Sections.TryGetValue(SectionName, out Section))
+        {
+            return new List<string>();
+        }
+
+        return new List<string>(Section.Keys);
     }
 
     public bool IsEmpty
