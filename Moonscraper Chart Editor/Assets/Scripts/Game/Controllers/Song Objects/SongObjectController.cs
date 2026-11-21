@@ -104,9 +104,7 @@ public abstract class SongObjectController : SelectableClick {
         {
             var selectedObjectsManager = editor.selectedObjectsManager;
 
-            if (Globals.modifierInputActive || Globals.secondaryInputActive)
-                selectedObjectsManager.ModifierClick(songObject, Globals.modifierInputActive, Globals.secondaryInputActive);
-            else if (!selectedObjectsManager.IsSelected(songObject))
+            if (!selectedObjectsManager.ModifierClick(songObject, Globals.clickModifierInputActive, Globals.secondaryInputActive) && !selectedObjectsManager.IsSelected(songObject))
                 selectedObjectsManager.currentSelectedObject = songObject;
         }
 

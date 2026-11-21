@@ -49,7 +49,7 @@ public class CursorSelect : ToolObject
                 clickedSelectableObject = mouseMonitor.currentSelectableUnderMouse;
 
                 // Reset if the user is making a new selection or deselecting the old
-                if (!clickedSelectableObject && !Globals.modifierInputActive && !Globals.secondaryInputActive && !mouseDownOverUI)
+                if (!clickedSelectableObject && !Globals.clickModifierInputActive && !Globals.secondaryInputActive && !mouseDownOverUI)
                 {
                     editor.selectedObjectsManager.currentSelectedObject = null;
                 }
@@ -76,7 +76,7 @@ public class CursorSelect : ToolObject
 
             // Dragging mouse for group move
             else if (Input.GetMouseButton(0) && mousePos != Input.mousePosition && editor.selectedObjectsManager.currentSelectedObjects.Count > 0 && clickedSelectableObject && !mouseDownOverUI &&
-                !Globals.modifierInputActive && !Globals.secondaryInputActive)
+                !Globals.clickModifierInputActive && !Globals.secondaryInputActive)
             {
                 // Find anchor point
                 int anchorPoint = SongObjectHelper.NOTFOUND;
@@ -118,7 +118,7 @@ public class CursorSelect : ToolObject
             }
 
             // Check for deselection of all objects
-            if (Input.GetMouseButtonUp(0) && !mouseMonitor.currentSelectableUnderMouse && !MouseMonitor.IsUIUnderPointer() && mousePos == Input.mousePosition && !Globals.modifierInputActive)
+            if (Input.GetMouseButtonUp(0) && !mouseMonitor.currentSelectableUnderMouse && !MouseMonitor.IsUIUnderPointer() && mousePos == Input.mousePosition && !Globals.clickModifierInputActive && !Globals.secondaryInputActive)
             {
                 editor.selectedObjectsManager.currentSelectedObject = null;
                 mousePos = Vector3.zero;
@@ -156,7 +156,7 @@ public class CursorSelect : ToolObject
 
         if (Globals.secondaryInputActive)
             addMode = true;
-        else if (Globals.modifierInputActive)
+        else if (Globals.clickModifierInputActive)
         {
             addMode = false;
             col = Color.red;

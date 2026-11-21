@@ -60,7 +60,7 @@ public class NoteController : SongObjectController {
         {
             var selectedObjectsManager = editor.selectedObjectsManager;
 
-            if (selectedObjectsManager.ModifierClick(songObject, Globals.modifierInputActive, Globals.secondaryInputActive))
+            if (selectedObjectsManager.ModifierClick(songObject, Globals.clickModifierInputActive,Globals.secondaryInputActive))
                 return;
 
             // Regular clicking

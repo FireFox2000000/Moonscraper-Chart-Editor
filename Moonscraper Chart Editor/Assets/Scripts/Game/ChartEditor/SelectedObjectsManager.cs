@@ -132,10 +132,25 @@ public class SelectedObjectsManager
         }
     }
 
-    // A click with the Cursor tool on songObject with Ctrl or Shift held: Ctrl toggles it, and Shift selects the range from
-    // the selected object of its group nearest it to it, inclusive. Returns false when it leaves the click to the caller.
+    // A click with the Cursor tool on songObject with Ctrl or Shift held: Ctrl toggles it, Shift selects the range from the
+    // selected object of its group nearest it to it, inclusive, and Ctrl+Shift adds that range. With nothing of its group
+    // selected, Ctrl+Shift adds it alone. Returns false when it leaves the click to the caller, as for a plain click.
     public bool ModifierClick(SongObject songObject, bool ctrl, bool shift)
     {
+        if (shift)
+        {
+            List<SongObject> range = GetClickRange(songObject);
+            if (range != null)
+            {
+                if (ctrl)
+                    AddToSelectedObjects(range);
+                else
+                    currentSelectedObjects = range;
+
+                return true;
+            }
+        }
+
         if (ctrl)
         {
             if (IsSelected(songObject))
@@ -144,16 +159,6 @@ public class SelectedObjectsManager
                 AddToSelectedObjects(songObject);
 
             return true;
-        }
-
-        if (shift)
-        {
-            List<SongObject> range = GetClickRange(songObject);
-            if (range != null)
-            {
-                currentSelectedObjects = range;
-                return true;
-            }
         }
 
         return false;
@@ -190,6 +195,8 @@ public class SelectedObjectsManager
         {
             case ClickGroup.Chart:
                 AddRange(editor.currentChart.chartObjects, min, max, range);
+                // Skip notes in hidden lanes, as the drag box does
+                range.RemoveAll(chartObject => chartObject is Note && ((Note)chartObject).ShouldBeCulledFromLanes(editor.laneInfo));
                 break;
             case ClickGroup.SyncTrack:
                 AddRange(editor.currentSong.syncTrack, min, max, range);
