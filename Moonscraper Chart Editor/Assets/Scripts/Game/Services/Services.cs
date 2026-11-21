@@ -259,6 +259,49 @@ public class Services : MonoBehaviour
     {
         prevScreenSize.x = Screen.width;
         prevScreenSize.y = Screen.height;
+
+        LeaveTextBoxOnEsc();
+    }
+
+    // The text box that was being edited when this last ran
+    GameObject editedTextBox;
+
+    // Esc ends a text box's editing but leaves the text box selected, which keeps IsTyping on and blocks every shortcut,
+    // Close Menu and Deselect All included. Once Esc has ended the editing, take the selection off the text box. This runs
+    // after the frame's updates, so the Esc that leaves the text box does nothing else, and the next Esc acts as it does
+    // outside a text box.
+    void LeaveTextBoxOnEsc()
+    {
+        GameObject selected = EventSystem.current ? EventSystem.current.currentSelectedGameObject : null;
+        bool focused = false, canceled = false;
+        if (selected)
+        {
+            InputField input = selected.GetComponent<InputField>();
+            TMPro.TMP_InputField tmpInput = selected.GetComponent<TMPro.TMP_InputField>();
+            MS_TMPro_InputField msInput = selected.GetComponent<MS_TMPro_InputField>();
+            if (input)
+            {
+                focused = input.isFocused;
+                canceled = input.wasCanceled;
+            }
+            else if (tmpInput)
+            {
+                focused = tmpInput.isFocused;
+                canceled = tmpInput.wasCanceled;
+            }
+            else if (msInput)
+            {
+                focused = msInput.isFocused;
+                canceled = msInput.wasCanceled;
+            }
+        }
+
+        // A text box selected again after an Esc says it was cancelled until its editing starts, so only a text box that
+        // was being edited when this last ran counts
+        if (selected && selected == editedTextBox && !focused && canceled)
+            EventSystem.current.SetSelectedGameObject(null);
+
+        editedTextBox = focused ? selected : null;
     }
 
     public bool IsLyricEditorActive
