@@ -89,7 +89,7 @@ public class GroupSelect : ToolObject {
 
                 if (Globals.secondaryInputActive)
                     addMode = true;
-                else if (Globals.modifierInputActive)
+                else if (Globals.clickModifierInputActive)
                 {
                     addMode = false;
                     col = Color.red;

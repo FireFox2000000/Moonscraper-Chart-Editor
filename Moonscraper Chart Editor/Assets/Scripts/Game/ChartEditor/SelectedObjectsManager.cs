@@ -132,6 +132,96 @@ public class SelectedObjectsManager
         }
     }
 
+    // A click with the Cursor tool on songObject with Ctrl or Shift held: Ctrl toggles it, Shift selects the range from the
+    // selected object of its group nearest it to it, inclusive, and Ctrl+Shift adds that range. With nothing of its group
+    // selected, Ctrl+Shift adds it alone. Returns false when it leaves the click to the caller, as for a plain click.
+    public bool ModifierClick(SongObject songObject, bool ctrl, bool shift)
+    {
+        if (shift)
+        {
+            List<SongObject> range = GetClickRange(songObject);
+            if (range != null)
+            {
+                if (ctrl)
+                    AddToSelectedObjects(range);
+                else
+                    currentSelectedObjects = range;
+
+                return true;
+            }
+        }
+
+        if (ctrl)
+        {
+            if (IsSelected(songObject))
+                RemoveFromSelectedObjects(songObject);
+            else
+                AddToSelectedObjects(songObject);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    // The group a Shift+click range stays in: the current chart's objects in Chart view, and in Song view each side of the
+    // highway, with events on the left, sections on the right, and BPMs and time signatures in the middle
+    enum ClickGroup { Chart, SyncTrack, Sections, Events }
+
+    static ClickGroup GetClickGroup(SongObject songObject)
+    {
+        if (songObject is ChartObject)
+            return ClickGroup.Chart;
+        if (songObject is SyncTrack)
+            return ClickGroup.SyncTrack;
+        if (songObject is Section)
+            return ClickGroup.Sections;
+        return ClickGroup.Events;
+    }
+
+    // The objects of songObject's group from the selected one of that group nearest it to it, or null when none is selected
+    List<SongObject> GetClickRange(SongObject songObject)
+    {
+        ClickGroup group = GetClickGroup(songObject);
+        List<SongObject> anchors = currentSelectedObjectsList.FindAll(selected => GetClickGroup(selected) == group);
+        int pos = SongObjectHelper.FindClosestPosition(songObject, anchors);
+        if (pos == SongObjectHelper.NOTFOUND)
+            return null;
+
+        uint min = System.Math.Min(anchors[pos].tick, songObject.tick);
+        uint max = System.Math.Max(anchors[pos].tick, songObject.tick);
+        List<SongObject> range = new List<SongObject>();
+        switch (group)
+        {
+            case ClickGroup.Chart:
+                AddRange(editor.currentChart.chartObjects, min, max, range);
+                // Skip notes in hidden lanes, as the drag box does
+                range.RemoveAll(chartObject => chartObject is Note && ((Note)chartObject).ShouldBeCulledFromLanes(editor.laneInfo));
+                break;
+            case ClickGroup.SyncTrack:
+                AddRange(editor.currentSong.syncTrack, min, max, range);
+                break;
+            case ClickGroup.Sections:
+                AddRange(editor.currentSong.sections, min, max, range);
+                break;
+            default:
+                AddRange(editor.currentSong.events, min, max, range);
+                break;
+        }
+
+        return range;
+    }
+
+    static void AddRange<T>(IList<T> objects, uint min, uint max, List<SongObject> range) where T : SongObject
+    {
+        int index, length;
+        SongObjectHelper.GetRange(objects, min, max, out index, out length);
+        for (int i = index; i < index + length; ++i)
+        {
+            range.Add(objects[i]);
+        }
+    }
+
     public bool IsSelected(SongObject songObject)
     {
         return (SongObjectHelper.FindObjectPosition(songObject, currentSelectedObjects) != SongObjectHelper.NOTFOUND);

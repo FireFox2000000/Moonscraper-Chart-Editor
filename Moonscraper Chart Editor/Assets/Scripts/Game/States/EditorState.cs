@@ -9,9 +9,33 @@ using MoonscraperEngine;
 
 public class EditorState : SystemManagerState
 {
+    // Whether a dropdown's list or a menu bar menu was open when this state last ran. The Esc press that closes one is
+    // only for the dropdown: the event system can close a list before this state runs, and the menu bar closes its menu
+    // after it.
+    static bool s_dropdownWasOpen;
+
+    // Whether a menu bar menu is open, or a dropdown's list: the list's current item takes the UI selection when it opens,
+    // and the dropdown takes it back when it closes.
+    static bool DropdownOpen()
+    {
+        if (UnityEngine.UI.CustomUnityDropdown.anyExpanded)
+            return true;
+
+        GameObject selected = EventSystem.current.currentSelectedGameObject;
+        if (selected == null)
+            return false;
+
+        UnityEngine.UI.Dropdown dropdown = selected.GetComponentInParent<UnityEngine.UI.Dropdown>();
+        return dropdown != null && dropdown.gameObject != selected;
+    }
+
     public override void Update()
     {
         base.Update();
+
+        bool dropdownOpen = DropdownOpen();
+        bool escForDropdown = dropdownOpen || s_dropdownWasOpen;
+        s_dropdownWasOpen = dropdownOpen;
 
         ChartEditor editor = ChartEditor.Instance;
         Services services = editor.services;
@@ -63,6 +87,10 @@ public class EditorState : SystemManagerState
         {
             editor.toolManager.ChangeTool(EditorObjectToolManager.ToolID.Cursor);
             editor.selectedObjectsManager.HighlightCurrentSection(viewMode);
+        }
+        else if (MSChartEditorInput.GetInputDown(MSChartEditorInputActions.DeselectAll) && !escForDropdown)
+        {
+            editor.selectedObjectsManager.currentSelectedObject = null;
         }
 
         if (!Input.GetMouseButton(0) && !Input.GetMouseButton(1))

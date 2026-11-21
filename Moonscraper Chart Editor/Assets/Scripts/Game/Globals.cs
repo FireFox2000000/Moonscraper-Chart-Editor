@@ -212,6 +212,8 @@ public class Globals : MonoBehaviour {
     }
 
     public static bool modifierInputActive { get { return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightCommand); } }
+    // Ctrl for the mouse: either Ctrl key, or either Command key on a Mac. The panels' shortcuts still read modifierInputActive.
+    public static bool clickModifierInputActive { get { return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftCommand) || Input.GetKey(KeyCode.RightCommand); } }
     public static bool secondaryInputActive { get { return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift); } }
 
     void Shortcuts()

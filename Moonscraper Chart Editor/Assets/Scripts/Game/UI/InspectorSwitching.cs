@@ -23,6 +23,8 @@ public class InspectorSwitching : MonoBehaviour {
     EventPropertiesPanelController eventInspector;
     [SerializeField]
     GameObject groupSelectInspector;
+    [SerializeField]
+    GameObject eventGroupSelectInspector;
 
     ChartEditor editor;
 
@@ -54,11 +56,16 @@ public class InspectorSwitching : MonoBehaviour {
     void Update() {
         if ((editor.toolManager.currentToolId == EditorObjectToolManager.ToolID.Cursor) && editor.selectedObjectsManager.currentSelectedObjects.Count > 1)
         {
-            if (!currentPropertiesPanel || currentPropertiesPanel != groupSelectInspector)
+            // Song view has a panel only for several events
+            GameObject groupPanel = groupSelectInspector;
+            if (Globals.viewMode == Globals.ViewMode.Song && EventGroupSelectPanelController.HasSeveralEvents(editor.selectedObjectsManager.currentSelectedObjects))
+                groupPanel = eventGroupSelectInspector;
+
+            if (!currentPropertiesPanel || currentPropertiesPanel != groupPanel)
             {
                 if (currentPropertiesPanel)
                     currentPropertiesPanel.SetActive(false);
-                currentPropertiesPanel = groupSelectInspector;
+                currentPropertiesPanel = groupPanel;
             }
             if (currentPropertiesPanel && !currentPropertiesPanel.gameObject.activeSelf)
                 currentPropertiesPanel.gameObject.SetActive(true);
