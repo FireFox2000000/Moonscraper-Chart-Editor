@@ -19,6 +19,24 @@ public class UIHoverBar : UpdateableService {
     public override void OnServiceUpdate() {
         bool menuBarObjectUnderMouse = false;
 
+        // Esc closes the open menu. Nothing has to hold the UI selection for it, and it ends hover switching, as a click
+        // that closes the menu does.
+        if (inUIBar && !mouseUpBlock && lastShownDropdown && MSChartEditorInput.GetInputDown(MSChartEditorInputActions.CloseMenu))
+        {
+            Dropdown lastDropdown = lastShownDropdown.GetComponentInParent<Dropdown>();
+            CustomUnityDropdown lastInstantDropdown = lastShownDropdown.GetComponentInParent<CustomUnityDropdown>();
+
+            if (lastDropdown)
+                lastDropdown.Hide();
+
+            if (lastInstantDropdown)
+                lastInstantDropdown.Hide();
+
+            EventSystem.current.SetSelectedGameObject(null);
+            inUIBar = false;
+            currentElement = -1;
+        }
+
         if (ChartEditor.Instance.currentState != ChartEditor.State.Loading && inUIBar)
         {
             // Get a list of all the objects currently under the mouse to get past the blocker

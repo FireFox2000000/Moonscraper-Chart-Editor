@@ -43,7 +43,7 @@ namespace UnityEngine.UI
 
             public virtual void OnCancel(BaseEventData eventData)
             {
-                Dropdown dropdown = GetComponentInParent<Dropdown>();
+                CustomUnityDropdown dropdown = GetComponentInParent<CustomUnityDropdown>();
                 if (dropdown)
                     dropdown.Hide();
             }
