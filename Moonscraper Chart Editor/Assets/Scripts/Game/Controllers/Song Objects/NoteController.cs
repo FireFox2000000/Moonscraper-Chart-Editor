@@ -60,46 +60,8 @@ public class NoteController : SongObjectController {
         {
             var selectedObjectsManager = editor.selectedObjectsManager;
 
-            // Ctrl-clicking
-            if (Globals.modifierInputActive)
-            {
-                if (selectedObjectsManager.IsSelected(songObject))
-                    selectedObjectsManager.RemoveFromSelectedObjects(songObject);
-                else
-                    selectedObjectsManager.AddToSelectedObjects(songObject);
-
+            if (selectedObjectsManager.ModifierClick(songObject, Globals.modifierInputActive, Globals.secondaryInputActive))
                 return;
-            }
-
-            // Shift-clicking
-            if (Globals.secondaryInputActive)
-            {
-                int pos = SongObjectHelper.FindClosestPosition(this.songObject, editor.selectedObjectsManager.currentSelectedObjects);
-
-                if (pos != SongObjectHelper.NOTFOUND)
-                {
-                    uint min;
-                    uint max;
-
-                    if (editor.selectedObjectsManager.currentSelectedObjects[pos].tick > songObject.tick)
-                    {
-                        max = editor.selectedObjectsManager.currentSelectedObjects[pos].tick;
-                        min = songObject.tick;
-                    }
-                    else
-                    {
-                        min = editor.selectedObjectsManager.currentSelectedObjects[pos].tick;
-                        max = songObject.tick;
-                    }
-
-                    var chartObjects = editor.currentChart.chartObjects;
-                    int index, length;
-                    SongObjectHelper.GetRange(chartObjects, min, max, out index, out length);
-                    selectedObjectsManager.SetCurrentSelectedObjects(chartObjects, index, length);
-
-                    return;
-                }
-            }
 
             // Regular clicking
             if (!selectedObjectsManager.IsSelected(songObject))

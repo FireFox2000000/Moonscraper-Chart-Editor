@@ -102,54 +102,10 @@ public abstract class SongObjectController : SelectableClick {
     {
         if (editor.toolManager.currentToolId == EditorObjectToolManager.ToolID.Cursor && editor.currentState == ChartEditor.State.Editor && Input.GetMouseButtonDown(0) && !Input.GetMouseButton(1))
         {
-            // Shift-clicking
-            // Find the closest object already selected
-            // Select all objects in range of that found and the clicked object
-
             var selectedObjectsManager = editor.selectedObjectsManager;
 
-            if (Globals.viewMode == Globals.ViewMode.Chart && (Globals.modifierInputActive || Globals.secondaryInputActive))
-            {
-                // Ctrl-clicking
-                if (Globals.modifierInputActive)
-                {
-                    if (selectedObjectsManager.IsSelected(songObject))
-                        selectedObjectsManager.RemoveFromSelectedObjects(songObject);
-                    else
-                        selectedObjectsManager.AddToSelectedObjects(songObject);
-                }
-                // Shift-clicking
-                else
-                {
-                    int pos = SongObjectHelper.FindClosestPosition(this.songObject, editor.selectedObjectsManager.currentSelectedObjects);
-
-                    if (pos != SongObjectHelper.NOTFOUND)
-                    {
-                        uint min;
-                        uint max;
-
-                        if (editor.selectedObjectsManager.currentSelectedObjects[pos].tick > songObject.tick)
-                        {
-                            max = editor.selectedObjectsManager.currentSelectedObjects[pos].tick;
-                            min = songObject.tick;
-                        }
-                        else
-                        {
-                            min = editor.selectedObjectsManager.currentSelectedObjects[pos].tick;
-                            max = songObject.tick;
-                        }
-
-                        var chartObjects = editor.currentChart.chartObjects;
-                        int index, length;
-                        SongObjectHelper.GetRange(chartObjects, min, max, out index, out length);
-                        editor.selectedObjectsManager.currentSelectedObjects.Clear();
-                        for (int i = index; i < index + length; ++i)
-                        {
-                            editor.selectedObjectsManager.currentSelectedObjects.Add(chartObjects[i]);
-                        }
-                    }
-                }
-            }
+            if (Globals.modifierInputActive || Globals.secondaryInputActive)
+                selectedObjectsManager.ModifierClick(songObject, Globals.modifierInputActive, Globals.secondaryInputActive);
             else if (!selectedObjectsManager.IsSelected(songObject))
                 selectedObjectsManager.currentSelectedObject = songObject;
         }
