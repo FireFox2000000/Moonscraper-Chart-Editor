@@ -67,24 +67,18 @@ public class HoverHighlightDisplaySystem : SystemManagerState.System
         {
             songObjects.Clear();
 
-            if (MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect))
+            // Chord Select highlights a note's or a sustain's whole chord; any other object keeps its own highlight
+            NoteController nCon = songObject.GetComponent<NoteController>();
+            SustainController sCon = songObject.GetComponent<SustainController>();
+            if (MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect) && nCon)
             {
-                // Check if we're over a note
-                NoteController nCon = songObject.GetComponent<NoteController>();
-                if (nCon)
-                {
-                    foreach (Note note in nCon.note.chord)
-                        songObjects.Add(note.controller.gameObject);
-                }
-                else
-                {
-                    SustainController sCon = songObject.GetComponent<SustainController>();
-                    if (sCon)
-                    {
-                        foreach (Note note in sCon.nCon.note.chord)
-                            songObjects.Add(note.controller.sustain.gameObject);
-                    }
-                }
+                foreach (Note note in nCon.note.chord)
+                    songObjects.Add(note.controller.gameObject);
+            }
+            else if (MSChartEditorInput.GetInput(MSChartEditorInputActions.ChordSelect) && sCon)
+            {
+                foreach (Note note in sCon.nCon.note.chord)
+                    songObjects.Add(note.controller.sustain.gameObject);
             }
             else
             {
