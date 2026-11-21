@@ -6,8 +6,6 @@ using Event = MoonscraperChartEditor.Song.Event;
 // Song view's panel for a selection of several global events (lyrics, phrase markers and the rest)
 public class EventGroupSelectPanelController : MonoBehaviour
 {
-    public const string BlockedNotification = "NOT SPACED: AN EVENT WOULD REPLACE AN UNSELECTED ONE";
-
     public static bool HasSeveralEvents(IList<SongObject> songObjects)
     {
         int events = 0;
@@ -57,11 +55,11 @@ public class EventGroupSelectPanelController : MonoBehaviour
     }
 
     // Spaces the selected events as GroupSelectPanelController.EqualiseNoteSpacing spaces notes. Sections, BPMs and time
-    // signatures in the selection stay where they are.
+    // signatures in the selection stay where they are. An event that lands on an unselected event with the same title
+    // replaces it, which loses nothing, and undo restores both.
     public void EqualiseEventSpacing()
     {
         ChartEditor editor = ChartEditor.Instance;
-        Song song = editor.currentSong;
 
         List<SongObject> eventsToDelete = new List<SongObject>();
         List<uint> ticks = new List<uint>();
@@ -83,16 +81,6 @@ public class EventGroupSelectPanelController : MonoBehaviour
         {
             Event newEvent = eventsToDelete[i].CloneAs<Event>();
             newEvent.tick = newTicks[i];
-
-            // An event added at the tick of an event with the same title replaces it. Selected events can't meet one another,
-            // because they move to different ticks unless they shared one, but one could land on an unselected event.
-            int existing = SongObjectHelper.FindObjectPosition(newEvent, song.eventsAndSections);
-            if (existing != SongObjectHelper.NOTFOUND && !eventsToDelete.Exists(e => ReferenceEquals(e, song.eventsAndSections[existing])))
-            {
-                editor.services.notificationBar.PushNotification(BlockedNotification, 3, true);
-                return;
-            }
-
             eventsToAdd.Add(newEvent);
         }
 
