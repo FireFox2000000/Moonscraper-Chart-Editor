@@ -772,6 +772,30 @@
             }
         },
         {
+            "action": "DeselectAll",
+            "input": {
+                "kbMaps": [
+                    {
+                        "modifiers": 0,
+                        "keys": [
+                            27
+                        ]
+                    },
+                    {
+                        "modifiers": 0,
+                        "keys": []
+                    }
+                ],
+                "gpButtonMaps": [
+                    {
+                        "buttons": [],
+                        "axes": []
+                    }
+                ],
+                "jsMaps": []
+            }
+        },
+        {
             "action": "StepDecrease",
             "input": {
                 "kbMaps": [

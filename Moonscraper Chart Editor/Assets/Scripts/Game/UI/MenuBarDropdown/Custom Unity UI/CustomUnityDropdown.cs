@@ -319,6 +319,20 @@ namespace UnityEngine.UI
             Hide();
         }
 
+        public bool isExpanded { get { return m_Dropdown != null; } }
+
+        // The menus shown, so anyExpanded tells whether one is open without searching the scene
+        static readonly List<CustomUnityDropdown> s_shown = new List<CustomUnityDropdown>();
+
+        public static bool anyExpanded
+        {
+            get
+            {
+                s_shown.RemoveAll(menu => menu == null || !menu.isExpanded);
+                return s_shown.Count > 0;
+            }
+        }
+
         // Show the dropdown.
         //
         // Plan for dropdown scrolling to ensure dropdown is contained within screen.
@@ -354,6 +368,8 @@ namespace UnityEngine.UI
             m_Dropdown = CreateDropdownList(m_Template.gameObject);
             m_Dropdown.name = "Dropdown List";
             m_Dropdown.SetActive(true);
+            if (!s_shown.Contains(this))
+                s_shown.Add(this);
 
             // Make drop-down RectTransform have same values as original.
             RectTransform dropdownRectTransform = m_Dropdown.transform as RectTransform;

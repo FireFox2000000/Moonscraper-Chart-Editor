@@ -375,6 +375,17 @@
             }
         },
         {
+            "mSChartEditorInputAction": "DeselectAll",
+            "properties": {
+                "displayName": "Deselect All",
+                "rebindable": true,
+                "hiddenInLists": false,
+                "anyDirectionAxis": false,
+                "category": 1,
+                "allowSameFrameMultiInput": false
+            }
+        },
+        {
             "mSChartEditorInputAction": "StepDecrease",
             "properties": {
                 "displayName": "Decrease Step",
