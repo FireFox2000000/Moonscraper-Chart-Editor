@@ -482,7 +482,8 @@ public class GroupSelectPanelController : MonoBehaviour
                         ++index;
                     }
 
-                    uint newTick = startTick + (uint)(offsetPerNote * index);
+                    // The last note stays on the last tick; rounding its offset down could leave it a tick early
+                    uint newTick = index == totalNotes - 1 ? endTick : startTick + (uint)(offsetPerNote * index);
                     Note newNote = chartObject.CloneAs<Note>();
                     newNote.tick = newTick;
 
